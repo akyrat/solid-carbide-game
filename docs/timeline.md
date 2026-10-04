@@ -40,3 +40,8 @@ Entry format:
 - Decision or change: when a task becomes `done`, tasks whose dependencies are now all `done` move from `blocked` to `open` in the same commit. Every agent reads `tasks/README.md` before starting any task, and every task file lists it first in `files_to_read_first`. `CLAUDE.md` is unchanged.
 - Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-002, T-003 (`files_to_read_first` updated)
+
+## 2026-10-04: Freesound redirect URI dropped
+- Decision or change: the board has no redirect URI for its Freesound credentials, so none is used. The Freesound login link carries only the client id, Freesound shows the code on its own page, and `FREESOUND_REDIRECT_URI` is removed from `.env.example` and the README.
+- Documents touched: `README.md`
+- Tasks: T-002 (login step updated)

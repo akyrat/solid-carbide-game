@@ -40,7 +40,6 @@ Create API credentials at https://freesound.org/apiv2/apply/ while logged in. Th
 ```
 FREESOUND_CLIENT_ID=      # "Client id" column
 FREESOUND_API_KEY=        # "Client secret/Api key" column
-FREESOUND_REDIRECT_URI=   # the callback URL set for the credentials
 ```
 
 Downloading original sound files requires a one-time browser login (OAuth2). The SFX Agent gives you a link; you open it, log in, approve access, and paste the code Freesound shows back to the agent. The agent stores the resulting access tokens in `.secrets/`, which is also git-ignored, and renews them on its own.

@@ -24,7 +24,7 @@ A test run to prove the SFX Agent can use the board's Freesound credentials to d
 The credentials are in `.env` at the repo root, as described in the root README's "Secrets and API keys" section. Never print secret values, write them to any other file, or put them in a commit.
 
 1. Write a reusable download script (the SFX Agent will use it for all future sounds). It reads the credentials from `.env`, runs the Freesound OAuth2 flow, stores the access and refresh tokens in `.secrets/`, and renews the access token when it expires instead of asking the board again.
-2. The one-time login needs the board: give the board the authorization link, the board logs in and approves, then pastes back the code Freesound shows. The code expires quickly, so be ready to use it as soon as it arrives.
+2. The one-time login needs the board: give the board the authorization link, the board logs in and approves, then pastes back the code Freesound shows. The code expires quickly, so be ready to use it as soon as it arrives. There is no redirect URI: build the authorization link from `FREESOUND_CLIENT_ID` and `response_type=code` only, so Freesound shows the code on its own page for the board to copy. The token exchange needs only the client id, the client secret (`FREESOUND_API_KEY`) and the code. If Freesound rejects a request without a redirect URI, stop and report it to the Project Lead instead of working around it.
 3. Search Freesound and download the **original** files (not previews) for:
    - 3 sounds of a car engine idling
    - 3 sounds of tires screeching in a drift
