@@ -19,6 +19,32 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 4. Give it your first request: the minimal drift prototype, working with the Driving & Drift Agent.
 5. Switch agents on as you need them. Early on, the Project Lead, Driving & Drift and QA/Integration are enough.
 
+## Secrets and API keys
+
+API keys and other secrets go in a file called `.env` at the repository root, next to this README. `.env` is git-ignored and must never be committed. `.env.example` lists every variable the project expects, with no real values: copy it to `.env` and fill it in.
+
+### Freesound (used by the SFX Agent)
+
+Create API credentials at https://freesound.org/apiv2/apply/ while logged in. The table on that page shows the values to copy:
+
+```
+FREESOUND_CLIENT_ID=      # "Client id" column
+FREESOUND_API_KEY=        # "Client secret/Api key" column
+FREESOUND_REDIRECT_URI=   # the callback URL set for the credentials
+```
+
+Downloading original sound files requires a one-time browser login (OAuth2). The SFX Agent gives you a link; you open it, log in, approve access, and paste the code Freesound shows back to the agent. The agent stores the resulting access tokens in `.secrets/`, which is also git-ignored, and renews them on its own.
+
+### PixelLab (used by the Asset Generation Agent)
+
+Log in at https://pixellab.ai/account and copy your API token:
+
+```
+PIXELLAB_API_KEY=         # API token from your PixelLab account page
+```
+
+Generations are paid from your PixelLab subscription or USD credits, so the account needs one of these before the agent can generate anything.
+
 ## Suggested first tasks for the Project Lead
 
 - Write the staleness check script that flags separate documents that changed after the long GDD was last regenerated, and long GDD changes the short GDD hasn't caught up with. Run it at the start of each session and before milestones.
