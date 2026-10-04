@@ -1,7 +1,7 @@
 ---
 id: T-002
 title: Freesound test run: download 3 engine idle and 3 tire drift sounds
-status: blocked
+status: open
 from: project-lead
 to: sfx
 depends_on: [T-001]
@@ -19,7 +19,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-A test run to prove the SFX Agent can use the board's Freesound credentials to download original sound files. Blocked until T-001 is done, so that `.gitignore` protects `.env` and `.secrets/` before any credentials are used.
+A test run to prove the SFX Agent can use the board's Freesound credentials to download original sound files. It depends on T-001 (done), so that `.gitignore` protects `.env` and `.secrets/` before any credentials are used.
 
 The credentials are in `.env` at the repo root, as described in the root README's "Secrets and API keys" section. Never print secret values, write them to any other file, or put them in a commit.
 

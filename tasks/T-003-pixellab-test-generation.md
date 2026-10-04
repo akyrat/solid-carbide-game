@@ -1,7 +1,7 @@
 ---
 id: T-003
 title: PixelLab test run: generate 1 isometric tile and 1 still car image
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 depends_on: [T-001]
@@ -19,7 +19,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-A test run to prove the Asset Generation Agent can use the board's PixelLab API token to generate images and keep a record of each one. Blocked until T-001 is done, so that `.gitignore` protects `.env` before the token is used.
+A test run to prove the Asset Generation Agent can use the board's PixelLab API token to generate images and keep a record of each one. It depends on T-001 (done), so that `.gitignore` protects `.env` before the token is used.
 
 The token is `PIXELLAB_API_KEY` in `.env` at the repo root, as described in the root README's "Secrets and API keys" section. Never print its value, write it to any other file, or put it in a commit.
 
