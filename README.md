@@ -81,6 +81,6 @@ Generations are paid from your PixelLab subscription or USD credits, so the acco
 
 ## Notes
 
-- The agent files use Claude Code's markdown format with a short header. Check the Claude Code documentation (https://docs.claude.com/en/docs/claude-code/overview) for the current format and options, since details may change.
-- As far as I know, agents don't call each other directly in Claude Code. The Project Lead session routes work between them using the task files.
+- The agent files use Claude Code's markdown format with a short header. Check the Claude Code documentation (https://code.claude.com/docs/en/sub-agents) for the current format and options, since details may change.
+- Agents don't talk to each other in this project. Claude Code would allow it, but the Project Lead routes all work between them through task files on purpose, so every piece of work is on record. Details: [How agents actually communicate](agent-notes/agents-interactions.md#1-how-the-agents-connect).
 - The task file template, the folder names, and the `agent-notes/` location were chosen when building this export. Change them if your setup prefers something else.

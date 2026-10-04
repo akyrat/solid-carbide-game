@@ -70,3 +70,8 @@ Entry format:
 - Decision or change: the README has an "Agent Crew" section, and `agent-notes/agents-interactions.md` gives the shared overview: two diagrams generated from the agents' working copies by `tools/generate_agent_diagrams.py`, what each agent produces, and why this crew is needed for the MVP as the Final GDD defines it. T-005 passed QA round 1 on all 9 criteria, and the board confirmed the diagrams render and read well.
 - Documents touched: `README.md`, `agent-notes/agents-interactions.md`
 - Tasks: T-005
+
+## 2026-10-04: Agents communicate only through the Project Lead
+- Decision or change: research into the Claude Code documentation showed agents can message each other directly, start their own agents, or run as an experimental agent team. The README's claim that they can't was wrong. The board chose to keep routing all work through the Project Lead with task files, so every piece of work stays on record; it may revisit this when collaborating agents first need to settle details together. The overview now explains that the diagrams show dependencies between agents' work, not conversations.
+- Documents touched: `README.md`, `agent-notes/agents-interactions.md`
+- Tasks: none

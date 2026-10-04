@@ -6,6 +6,13 @@ The other files in this folder are each agent's own working copy of its relation
 
 ## 1. How the agents connect
 
+**How agents actually communicate.** The diagrams show how each agent's work depends on the others, not conversations between them. In this project, every piece of work goes through the Project Lead: it starts each agent with a task file, collects the result, and relays any question between agents or to the board. A background agent cannot ask the board anything directly. Agents also share information through the repo: they read each other's code, data and documents, and each other's task files and result notes.
+
+- **Hands work to:** one agent's output becomes another agent's input. The work travels through the repo, and the Project Lead schedules it with task files.
+- **Collaborates with:** two agents' work has to fit together. In practice that happens through linked task files from the same request, agents reading each other's work, and questions relayed by the Project Lead.
+
+Claude Code does let agents message each other directly (with `SendMessage`, if the other agent was started with a name), start agents of their own, or work as an experimental "agent team" with a shared task list. This project deliberately does not use these. Routing everything through the Project Lead keeps an official record of all work in task files, keeps game ideas coming only from the board, and lets the Project Lead set acceptance criteria before work starts. The board decided this on 2026-10-04 and may revisit it, for example when two collaborating agents first need to settle details together.
+
 The diagrams and tables below are generated from the agents' **working copies** (`agent-notes/<agent>.md`), which reflect how the agents actually work. The original relationships in the agent definitions (`.claude/agents/`) may differ. The relationships are guidelines, not strict rules.
 
 Do not edit the generated part by hand. After changing a working copy, regenerate it from the repo root:
