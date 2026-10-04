@@ -50,3 +50,8 @@ Entry format:
 - Decision or change: the SFX Agent's Freesound downloader and audio import check work, and T-002 passed QA round 1 on all 9 criteria (the board ran the two Godot checks that permissions blocked for QA). The board decided the game uses only CC0 and CC BY sounds, so the two CC BY-NC test sounds were deleted; 4 CC0 test sounds remain. The downloader does not filter by license yet.
 - Documents touched: `docs/unfiled-game-details.md`, `game/README.md`
 - Tasks: T-002
+
+## 2026-10-04: T-003 done: PixelLab pipeline works
+- Decision or change: the Asset Generation Agent's PixelLab client works, and T-003 passed QA round 1 on all 8 criteria. It made exactly 2 generation calls: a 32x32 isometric tile (it came out as a cube, PixelLab's default "block" shape) and a 64x64 still car image. The board kept both images. The PixelLab account is on a trial plan with no USD credits and 17 of 40 trial generations left.
+- Documents touched: `game/README.md`
+- Tasks: T-003

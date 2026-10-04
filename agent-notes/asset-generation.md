@@ -24,4 +24,5 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- T-003: the SFX Agent also writes Python API tools in `game/tools/` and shares the Python test command and `game/README.md` with me. Keep tools flat in `game/tools/` (`test_*.py` next to them) so one test command covers both, and edit only my own README section.
+- PixelLab's `GET /balance` can lag behind a just-finished async job: check it again a minute later before reporting a mismatch.

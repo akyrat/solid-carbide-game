@@ -1,0 +1,36 @@
+{
+  "file": "asphalt-road-tile.png",
+  "endpoint": "/create-isometric-tile",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "plain asphalt road tile",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "isometric_tile_size": 32
+  },
+  "prompt": "plain asphalt road tile",
+  "job_id": "ff81b007-7bcc-4f2a-999d-359afce89388",
+  "tile_id": "fe1293a2-e569-4251-ab5c-c0bb9fafd3a1",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-04T15:40:16+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "tasks/T-003-pixellab-test-generation.md",
+    "https://api.pixellab.ai/v2/llms.txt",
+    "https://api.pixellab.ai/v2/openapi.json (POST /create-isometric-tile, GET /background-jobs/{job_id}, GET /isometric-tiles/{tile_id})"
+  ],
+  "task": "T-003",
+  "job_status": "completed",
+  "notes": "Pipeline test run. Deliberately generic prompt: the Visual style document is not written yet, so no style decision was made. Optional parameters left at PixelLab defaults except isometric_tile_size=32 to match the 32x32 canvas.",
+  "generator": "game/tools/pixellab_client.py"
+}

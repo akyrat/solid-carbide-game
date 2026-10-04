@@ -1,0 +1,36 @@
+{
+  "file": "sports-car.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "generic sports car",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "isometric": true,
+    "no_background": true
+  },
+  "prompt": "generic sports car",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-04T15:40:38+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "tasks/T-003-pixellab-test-generation.md",
+    "https://api.pixellab.ai/v2/llms.txt",
+    "https://api.pixellab.ai/v2/openapi.json (POST /create-image-pixflux)"
+  ],
+  "task": "T-003",
+  "job_status": null,
+  "notes": "Pipeline test run. Deliberately generic prompt: the Visual style document is not written yet, so no style decision was made. Optional parameters left at PixelLab defaults except isometric=true and no_background=true, as the task specifies. Direct endpoint: no background job, so job_id is null.",
+  "generator": "game/tools/pixellab_client.py"
+}
