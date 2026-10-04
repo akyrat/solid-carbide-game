@@ -15,3 +15,8 @@ Entry format:
 - Decision or change: defined all eleven agent roles, their relationships, the common rules for every agent, and the workflow for task files and QA. Recorded game details so far in the documents.
 - Documents touched: all the separate documents in `docs/`
 - Tasks: none yet
+
+## 2026-10-04: Project setup assigned, Freesound chosen
+- Decision or change: QA/Integration owns the technical setup every code agent needs (Godot 4.6.2 project, headless runner, test suite, screenshot script, `.gitignore`, `.env.example`). The SFX Agent will source sound effects from Freesound through its API; the board has created an account. API keys live in a git-ignored `.env` at the repo root.
+- Documents touched: none yet (T-001 updates `game/README.md`)
+- Tasks: T-001
