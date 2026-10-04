@@ -6,7 +6,7 @@ from: project-lead
 to: sfx
 depends_on: [T-001]
 documents_affected: []
-files_to_read_first: [README.md, game/README.md, .env.example]
+files_to_read_first: [tasks/README.md, README.md, game/README.md, .env.example]
 files_expected_to_change: [the Freesound download script and its tests, downloaded sound files and their metadata JSON files]
 qa_rounds: 0
 ---

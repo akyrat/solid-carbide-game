@@ -6,7 +6,7 @@ from: project-lead
 to: asset-generation
 depends_on: [T-001]
 documents_affected: []
-files_to_read_first: [README.md, game/README.md, .env.example, .claude/agents/asset-generation.md]
+files_to_read_first: [tasks/README.md, README.md, game/README.md, .env.example, .claude/agents/asset-generation.md]
 files_expected_to_change: [the PixelLab client script and its tests, generated images and their record files]
 qa_rounds: 0
 ---

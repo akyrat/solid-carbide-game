@@ -35,3 +35,8 @@ Entry format:
 - Decision or change: the Godot 4.6.2 project, headless test runner (GUT 9.6.1), screenshot tool, `.gitignore`, `.gitattributes` and `.env.example` are in place. T-001 passed QA round 1 on all 10 criteria, and the board confirmed the project opens correctly in the Godot editor. T-002 and T-003 are no longer blocked by it.
 - Documents touched: `README.md`, `game/README.md`
 - Tasks: T-001
+
+## 2026-10-04: Task status rules and required reading
+- Decision or change: when a task becomes `done`, tasks whose dependencies are now all `done` move from `blocked` to `open` in the same commit. Every agent reads `tasks/README.md` before starting any task, and every task file lists it first in `files_to_read_first`. `CLAUDE.md` is unchanged.
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
+- Tasks: T-002, T-003 (`files_to_read_first` updated)

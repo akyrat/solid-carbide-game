@@ -6,7 +6,7 @@ from: project-lead
 to: agent-name
 depends_on: []
 documents_affected: []
-files_to_read_first: []
+files_to_read_first: [tasks/README.md]
 files_expected_to_change: []
 qa_rounds: 0
 ---
