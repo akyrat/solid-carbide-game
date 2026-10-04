@@ -1,11 +1,29 @@
+---
+title: Game loop architecture
+gdd_order: 1
+scope: The overall flow of the game. Short, and reworked if the loop changes (not expected).
+agents_work_on: []
+agents_read: [qa-integration]
+---
+
 # Game loop architecture
 
-The overall flow of the game. Short, and reworked if the loop changes (not expected).
+## Summary
 
-*Maintained by the Project Lead. Agents: QA/Integration Agent (reads it). This is a source-of-truth document: content changes happen here first, then flow down to the long GDD and the short GDD.*
+(To be written.)
 
+## Decisions
 
+(To be written.)
 
 ## Content
 
 (To be written.)
+
+## Open questions
+
+(None yet.)
+
+## References
+
+(None yet.)

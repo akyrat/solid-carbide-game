@@ -22,3 +22,48 @@ Game decisions live in these documents, and the documents are the source of trut
 | Short GDD | `short-gdd/` |
 | Timeline record | `timeline.md` |
 | Unfiled game details | `unfiled-game-details.md` |
+
+## How separate documents are written
+
+The eight separate documents (Extended narrative to Garage design in the table above) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.
+
+```markdown
+---
+title: Drifting
+gdd_order: 2
+scope: One sentence on what this document covers.
+agents_work_on: [driving-drift]
+agents_read: []
+---
+
+# Drifting
+
+## Summary
+
+## Decisions
+
+## Content
+
+## Open questions
+
+## References
+```
+
+**Header (front matter):** `title` is the chapter title in the long GDD. `gdd_order` is the chapter's position (1, 2, 3...). `scope` says what the document covers. `agents_work_on` and `agents_read` list agent names as in `.claude/agents/`. The Project Lead maintains every document.
+
+**The five sections, always present, always in this order, and the only `##` headings allowed:**
+
+- **Summary:** two to four sentences on what this part of the game is. It opens the document's chapter in the long GDD, and the short GDD condenses it.
+- **Decisions:** one bullet per decision, ending with the date it was made, for example `(2026-10-04)`. Only decisions the board made. Ideas under consideration go in Open questions.
+- **Content:** the full description, in prose, tables or diagrams. Use `###` subheadings freely. Content explains the decisions without repeating them.
+- **Open questions:** what is still undecided. Open questions stay in this document and are not copied into the long GDD.
+- **References:** links to research, reports and prototypes. The long GDD links to them; it does not copy them.
+
+A section with nothing in it yet says `(To be written.)` or, for Open questions and References, `(None yet.)`.
+
+**Writing rules:**
+
+- Never write "see above" or "as mentioned earlier". Refer to another document by name and section, for example "Drifting, Decisions".
+- Links are relative to the `docs/` folder, so they still work in the long GDD.
+- Mermaid diagrams and relative image links are fine.
+- One home for each fact: if a fact belongs in another document, link to it.

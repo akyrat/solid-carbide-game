@@ -1,15 +1,31 @@
+---
+title: Weapons
+gdd_order: 5
+scope: Which weapons exist and their progression trees.
+agents_work_on: [weapon-behavior]
+agents_read: [game-data]
+---
+
 # Weapons
 
-Which weapons exist and their progression trees.
+## Summary
 
-*Maintained by the Project Lead. Agents: Weapon Behavior Agent (works on it), Game Data Agent (reads it). This is a source-of-truth document: content changes happen here first, then flow down to the long GDD and the short GDD.*
+(To be written.)
 
-## Parked for later
+## Decisions
+
+(To be written.)
+
+## Content
+
+(To be written.)
+
+## Open questions
 
 - What are the 3 weapons?
 - What are the auto-fire and targeting rules?
 - Where does the curve for the 20 upgrade levels per weapon come from?
 
-## Content
+## References
 
-(To be written.)
+(None yet.)

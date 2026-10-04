@@ -75,3 +75,18 @@ Entry format:
 - Decision or change: research into the Claude Code documentation showed agents can message each other directly, start their own agents, or run as an experimental agent team. The README's claim that they can't was wrong. The board chose to keep routing all work through the Project Lead with task files, so every piece of work stays on record; it may revisit this when collaborating agents first need to settle details together. The overview now explains that the diagrams show dependencies between agents' work, not conversations.
 - Documents touched: `README.md`, `agent-notes/agents-interactions.md`
 - Tasks: none
+
+## 2026-10-04: Drift reference is the board's Unity prototype; reverse on S
+- Decision or change: the board has built two drift prototypes. The older one, in Unity (`C:\Users\andre\drift-to-survive`), is the one the board is happy with, and Solid Carbide's driving and drifting will copy it. The newer one is not used. The car can reverse with S, as in the Unity prototype. The Driving & Drift Agent will study the Unity prototype and write a report with graphics and a plan for porting it to Godot. The short GDD's controls wording is noted for its next update.
+- Documents touched: `docs/drifting.md`, `docs/short-gdd/README.md`
+- Tasks: T-006
+
+## 2026-10-04: Unity prototype details: version, saved tuning, drift curve, camera
+- Decision or change: the reference is the Unity prototype's current state, with the driving values the board tuned in its pause menu (saved in the Windows registry). The drift curve is the one the Unity prototype uses, replacing the plan to choose between three candidate curves by playtesting. The camera behaves like the Unity prototype's by default. T-006 now covers saved tuning, the drift curve and the camera. `CLAUDE.md`'s description of the Drifting document no longer says the first prototype wasn't successful (approved by the board).
+- Documents touched: `docs/drifting.md`, `docs/short-gdd/README.md`, `CLAUDE.md`
+- Tasks: T-006
+
+## 2026-10-04: One structure for all separate documents; long GDD generator planned
+- Decision or change: every separate document now has a header (title, chapter order, scope, agents) and the same five sections: Summary, Decisions (each dated), Content, Open questions, References. The structure is defined in `docs/README.md`. Open questions stay in their own documents and are never copied into the long GDD. "Ideas under consideration" moved from Decisions to Open questions (the boss shield, and the far-future trick system). A task for the long GDD generator and staleness check was written now, to be worked on once the documents have real content; the board wants to see whether it still fits by then.
+- Documents touched: `docs/README.md`, all eight separate documents
+- Tasks: T-006 (updated to the new structure), T-007

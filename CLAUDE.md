@@ -53,7 +53,7 @@ Takes the board's requests, checks what is feasible, delegates to the right agen
 The short GDD is in `docs/short-gdd/`. The long GDD is `docs/long-gdd.md`. Separate documents:
 
 - **Extended narrative** (`docs/extended-narrative.md`): The deeper story context. Most of it is never shown to players, but it feeds the theme and helps generate ideas. Agents: Asset Generation Agent (reads it), Narrative Theme Agent (works on it).
-- **Drifting** (`docs/drifting.md`): Research on drifting, prototypes built (the board's first prototype wasn't very successful), and conclusions and decisions that affect drift. Agents: Driving & Drift Agent (works on it).
+- **Drifting** (`docs/drifting.md`): Research on drifting, the prototypes built so far, and conclusions and decisions that affect drift. Agents: Driving & Drift Agent (works on it).
 - **Visual style** (`docs/visual-style.md`): The visual style for generated art (pixel art, isometric). May connect to the narrative theme. Agents: Level/Challenge Design Agent (reads it), UI Agent (reads it), Asset Generation Agent (works on it), Narrative Theme Agent (reads it).
 - **Weapons** (`docs/weapons.md`): Which weapons exist and their progression trees. Agents: Weapon Behavior Agent (works on it), Game Data Agent (reads it).
 - **Enemies** (`docs/enemies.md`): Which enemies exist, what they look like, how they move, deal damage, and behave. Agents: Enemy Behavior Agent (works on it), Game Data Agent (reads it).
