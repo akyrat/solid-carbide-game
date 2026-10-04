@@ -1,14 +1,14 @@
 ---
 id: T-005
 title: Agent Crew README section and agents-interactions overview
-status: open
+status: done
 from: project-lead
 to: project-lead
 depends_on: []
 documents_affected: [README.md, agent-notes/agents-interactions.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, README.md, .claude/agents/, agent-notes/, docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf, docs/README.md]
 files_expected_to_change: [README.md, agent-notes/agents-interactions.md, tools/generate_agent_diagrams.py, tools/test_generate_agent_diagrams.py]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,18 +54,62 @@ Document the script's usage in the "How the agents connect" section of `agents-i
 
 ## Acceptance criteria
 
-- [ ] `README.md` has an "Agent Crew" section listing all 11 roles (Project Lead plus the 10 agents in `.claude/agents/`), each with a one-line description, and a working relative link to `agent-notes/agents-interactions.md` (QA: pass / fail)
-- [ ] `agent-notes/agents-interactions.md` exists and has the three sections described above, in that order (QA: pass / fail)
-- [ ] The file contains exactly two Mermaid code blocks, one for hand-offs and one for collaborations, and every one of the 11 roles plus the board appears as a node in the hand-offs diagram (QA: pass / fail)
-- [ ] Every relationship entry in the working copies appears in the generated diagrams or tables. QA checks a sample of at least 10 entries across at least 5 agents by hand, and the script reports no unmatched entries (QA: pass / fail)
-- [ ] `python tools/generate_agent_diagrams.py --check` exits 0 on the committed state. After QA temporarily adds a collaboration line to one working copy, `--check` exits non-zero; QA then reverts the change (QA: pass / fail)
-- [ ] Running the script leaves the hand-written sections (2 and 3) byte-for-byte unchanged (QA: pass / fail)
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass / fail)
-- [ ] Section 3 refers to the Final GDD as the MVP definition, and states that output quality depends on how well the documents define the game (QA: pass / fail)
-- [ ] No file under `.claude/agents/`, `game/` or `docs/` changed, except `docs/timeline.md` (QA: pass / fail)
+- [x] `README.md` has an "Agent Crew" section listing all 11 roles (Project Lead plus the 10 agents in `.claude/agents/`), each with a one-line description, and a working relative link to `agent-notes/agents-interactions.md` (QA: pass)
+- [x] `agent-notes/agents-interactions.md` exists and has the three sections described above, in that order (QA: pass)
+- [x] The file contains exactly two Mermaid code blocks, one for hand-offs and one for collaborations, and every one of the 11 roles plus the board appears as a node in the hand-offs diagram (QA: pass)
+- [x] Every relationship entry in the working copies appears in the generated diagrams or tables. QA checks a sample of at least 10 entries across at least 5 agents by hand, and the script reports no unmatched entries (QA: pass)
+- [x] `python tools/generate_agent_diagrams.py --check` exits 0 on the committed state. After QA temporarily adds a collaboration line to one working copy, `--check` exits non-zero; QA then reverts the change (QA: pass)
+- [x] Running the script leaves the hand-written sections (2 and 3) byte-for-byte unchanged (QA: pass)
+- [x] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass)
+- [x] Section 3 refers to the Final GDD as the MVP definition, and states that output quality depends on how well the documents define the game (QA: pass)
+- [x] No file under `.claude/agents/`, `game/` or `docs/` changed, except `docs/timeline.md` (QA: pass)
 
 The board checks that both diagrams render and read well on the repository host, as the playtest for this task.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Project Lead on 2026-10-04.
+
+### What was built
+
+- **`README.md`:** a new "Agent Crew" section after "Layout": a one-paragraph intro, a link to `agent-notes/agents-interactions.md`, and a table of all 11 roles with a one-line description each. The "Layout" list now also mentions the overview file and the new `tools/` folder.
+- **`agent-notes/agents-interactions.md`:** the three sections in order. Section 1 has a hand-written intro (generated from the working copies, how to regenerate, originals may differ), then the generated part between the markers: a hand-offs diagram (`flowchart TD`, 12 nodes including the board, 33 edges) with a table, and a collaborations diagram (`flowchart LR`, 9 nodes, 13 edges) with a table. Sections 2 and 3 are hand-written. Section 3 is based on the Final GDD's scope and constraints, maps each MVP part to its agent, and lists the empty and thin documents.
+- **`tools/generate_agent_diagrams.py`:** the generator (standard library only). `--check` exits 1 when out of date. Exit 3 lists unmatched entries on stderr. It keeps the file's existing line endings.
+- **`tools/test_generate_agent_diagrams.py`:** 19 tests for parsing, de-duplication, labels, marker replacement, `--check`, line endings and error cases.
+
+### Commands
+
+- Regenerate: `python tools/generate_agent_diagrams.py`
+- Check: `python tools/generate_agent_diagrams.py --check`
+- Tests: `python -m unittest discover -s tools -p "test_*.py"`
+
+### Choices made
+
+- **Edge labels** keep the first clause of the relationship text, capped at 6 words. The ten Project Lead hand-offs all start with "Task files", so they are labelled just "task files". The full text is in the table under each diagram.
+- **"Listed by"** in both tables shows whether both agents list a relationship or only one. Today everything is listed by both sides, except board to Project Lead, because the board has no working copy.
+- **The generator lives in `tools/` at the repo root**, separate from `game/tools/`, because it is project tooling, not game tooling.
+
+### Self-check
+
+The generator reports no unmatched entries (exit 0), `--check` exits 0, and all 19 tests pass. I did not render the diagrams: per the task, the board checks that they render and read well.
+
+Documents affected: `README.md`, `agent-notes/agents-interactions.md`. Both updated.
+
+### QA round 1
+
+Checked by the QA/Integration Agent on 2026-10-04. All 9 criteria pass.
+
+- **README:** the "Agent Crew" table has 11 rows: the Project Lead plus the 10 files in `.claude/agents/`, each with one line. The link `agent-notes/agents-interactions.md` is relative to the repo root and the file exists.
+- **Structure:** sections 1, 2 and 3 appear in order. `grep -c '```mermaid'` gives 2: hand-offs (`flowchart TD`, 12 nodes including the board, 33 edges) and collaborations (`flowchart LR`, 9 nodes, 13 edges). All 11 roles and the board are nodes in the hand-offs diagram.
+- **Coverage:** I checked more than 10 entries by hand across sfx, ui, game-data, level-challenge, narrative-theme and enemy-behavior. Every one is in a table with its de-duplicated edge. A script check of all 91 list entries in the 11 working copies found every entry's text in the generated tables.
+- **`--check`:** exits 0 on the current state. With `- Game Data Agent: QA test line.` added under "Collaborates with" in `agent-notes/sfx.md`, it exits 1 and leaves the file unchanged. With an unknown role (`- Mystery Agent: ...`), it exits 3 and reports `unmatched: SFX Agent: Collaborates with: 'Mystery Agent'`. Afterwards `agent-notes/sfx.md` was restored: `cmp` with the backup matched and `git status` was clean.
+- **Hand-written sections:** while sfx.md had the test line, I ran the script without `--check`. It rewrote the generated part (the test line appeared), and the text before BEGIN and after END was byte-for-byte identical to a copy taken outside the repo. After restoring sfx.md and running it again, the whole file was byte-identical to the original.
+- **Tests:** `python -m unittest discover -s tools -p "test_*.py"` ran 19 tests, all OK.
+- **Section 3:** it names the Final GDD (`docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf`) as the MVP definition and says "The output can only be as good as the documents." It also says Visual style and Game loop architecture are empty, and both still read "(To be written.)".
+- **Unchanged files:** `git status` and `git diff --stat` show no changes under `.claude/agents/`, `game/` or `docs/`. The T-005 creation commit (2dcd712) touched only `docs/timeline.md` and this task file.
+- **Mermaid:** I read the syntax and it looks valid: node ids are snake_case, labels are quoted, edges use `-->|"label"|` and `---`. All 67 body lines match those patterns. Labels shortened with "…" are inside quotes. I did not render it: rendering is the board's playtest.
+- **Observations:** `tools/__pycache__/` is created by the test run, and `.gitignore` already ignores it. Python on Windows does not resolve Git Bash `/tmp` paths, so I passed comparison files by their Windows path. I found no defects.
+
+### Board review
+
+2026-10-04: the board checked that both diagrams render and read well, and marked the task `done`.

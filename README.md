@@ -6,10 +6,29 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 
 - `CLAUDE.md`: the Project Lead's standing instructions. The Claude Code session you talk to acts as the Project Lead.
 - `.claude/agents/`: one file per agent (ten agents). The Project Lead delegates to them.
-- `agent-notes/`: each agent's working copy of its relationships, which it updates from experience.
+- `agent-notes/`: each agent's working copy of its relationships, which it updates from experience. `agent-notes/agents-interactions.md` is the shared overview of the whole crew.
 - `docs/`: the documents. The separate documents are the source of truth, then the long GDD, then the short GDD.
 - `tasks/`: task files, the official record of all work.
 - `game/`: the Godot project.
+- `tools/`: project tooling that is not part of the game, such as the agent diagram generator.
+
+## Agent Crew
+
+The board (the game's designer) talks to the Project Lead, which turns requests into task files for the other ten agents. How they connect, what each one produces and why this crew is needed for the MVP: [agent-notes/agents-interactions.md](agent-notes/agents-interactions.md).
+
+| Role | What it does |
+|---|---|
+| Project Lead | Takes the board's requests, splits them into task files with acceptance criteria, keeps the documents and timeline in sync, and suggests a priority order. Writes no game code. |
+| Driving & Drift | Builds the car's driving and drift, the tuning tools for the board's playtests, and the script that checks a challenge is drivable. |
+| Enemy Behavior | Builds how enemies and the boss spawn, move, attack and scale over a run, plus coin drops and the boss's vulnerability window. |
+| Weapon Behavior | Builds how each weapon fires and behaves, as the Weapons document defines it. |
+| Game Data | Writes stats and upgrade paths as JSON, balances the numbers, and saves progress between runs. |
+| Level/Challenge Design | Builds the map and its driving challenges, and checks each challenge is drivable before handing it over. |
+| UI | Builds the HUD, menus and garage screen. Displays screens and collects input only. |
+| Asset Generation | Generates pixel art through PixelLab from the Visual style document, and records every asset. |
+| SFX | Finds and downloads sound effects, records their sources and licenses, and sets direction for where sounds and music play. |
+| Narrative Theme | Reviews text and story content for consistency with the story, and writes only when the board asks. |
+| QA/Integration | Checks every task's acceptance criteria, runs the tests, and reports pass or fail per criterion. |
 
 ## Getting started
 
