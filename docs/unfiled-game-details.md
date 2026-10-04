@@ -1,0 +1,8 @@
+# Unfiled game details
+
+These details have no document yet. Decide where they belong (for example, a new HUD and menus document), then move them there.
+
+## HUD and menus
+
+- What must the HUD show at minimum: HP, timer, challenge arrow, XP?
+- What does the weapon menu look like when it pops open after a challenge?
