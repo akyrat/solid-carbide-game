@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[node name="ScreenshotFixture" type="Node2D"]
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.1, 0.1, 0.2, 1)
+
+[node name="Marker" type="ColorRect" parent="."]
+offset_left = 270.0
+offset_top = 130.0
+offset_right = 370.0
+offset_bottom = 230.0
+color = Color(1, 0.2, 0.6, 1)

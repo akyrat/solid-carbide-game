@@ -23,6 +23,16 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 
 API keys and other secrets go in a file called `.env` at the repository root, next to this README. `.env` is git-ignored and must never be committed. `.env.example` lists every variable the project expects, with no real values: copy it to `.env` and fill it in.
 
+### Godot (used by every agent that runs the game or its tests)
+
+Godot is not on the PATH. The test and screenshot scripts in `game/tools/` read the location of the Godot 4.6.2 console executable from `GODOT_BIN`, so no script contains the path itself. Use the `_console.exe` build, so output reaches the terminal. Forward slashes work from both Git Bash and PowerShell:
+
+```
+GODOT_BIN=C:/Tools/Godot/Godot_v4.6.2-stable_win64_console.exe   # full path to the Godot console executable
+```
+
+If `GODOT_BIN` is already set in the environment, the scripts use that value instead of `.env`. How to run the tests and take screenshots: `game/README.md`.
+
 ### Freesound (used by the SFX Agent)
 
 Create API credentials at https://freesound.org/apiv2/apply/ while logged in. The table on that page shows the values to copy:

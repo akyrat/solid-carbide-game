@@ -1,0 +1,23 @@
+# Secrets: never commit
+.env
+.secrets/
+
+# Godot 4 cache and generated files
+.godot/
+game/.godot/
+*.translation
+export_presets.cfg
+*.tmp
+mono_crash.*.json
+
+# Exported builds
+game/build/
+
+# Test and screenshot output
+game/test-output/
+/screenshots/
+
+# OS and editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini

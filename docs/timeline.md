@@ -30,3 +30,8 @@ Entry format:
 - Decision or change: the Asset Generation Agent uses the PixelLab v2 API with the board's API token kept in `.env`. A test run generates 1 isometric road tile and 1 still car image with generic descriptions, using the cheapest endpoints, to prove the pipeline and the asset record before the Visual style document is written. No style decision is made.
 - Documents touched: `README.md`
 - Tasks: T-003
+
+## 2026-10-04: T-001 done: Godot project and test suite in place
+- Decision or change: the Godot 4.6.2 project, headless test runner (GUT 9.6.1), screenshot tool, `.gitignore`, `.gitattributes` and `.env.example` are in place. T-001 passed QA round 1 on all 10 criteria, and the board confirmed the project opens correctly in the Godot editor. T-002 and T-003 are no longer blocked by it.
+- Documents touched: `README.md`, `game/README.md`
+- Tasks: T-001
