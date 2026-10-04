@@ -45,3 +45,8 @@ Entry format:
 - Decision or change: the board has no redirect URI for its Freesound credentials, so none is used. The Freesound login link carries only the client id, Freesound shows the code on its own page, and `FREESOUND_REDIRECT_URI` is removed from `.env.example` and the README.
 - Documents touched: `README.md`
 - Tasks: T-002 (login step updated)
+
+## 2026-10-04: T-002 done: Freesound pipeline works; sound license rule
+- Decision or change: the SFX Agent's Freesound downloader and audio import check work, and T-002 passed QA round 1 on all 9 criteria (the board ran the two Godot checks that permissions blocked for QA). The board decided the game uses only CC0 and CC BY sounds, so the two CC BY-NC test sounds were deleted; 4 CC0 test sounds remain. The downloader does not filter by license yet.
+- Documents touched: `docs/unfiled-game-details.md`, `game/README.md`
+- Tasks: T-002

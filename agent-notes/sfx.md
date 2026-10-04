@@ -21,4 +21,5 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- Freesound downloads go through `game/tools/freesound.py`, and the board logs in only once. If it exits with code 3, the login has to be redone. The Project Lead relays the link and the code, because the board cannot talk to this agent directly.
+- After downloading, check imports with `game/tools/check_audio.sh`. Only wav, ogg and mp3 import in Godot.

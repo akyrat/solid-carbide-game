@@ -1,0 +1,16 @@
+{
+  "schema": "solid-carbide/sfx-metadata/1",
+  "source": "freesound",
+  "freesound_id": 401552,
+  "name": "SFX_Car_Engine_Outside_Idle.wav",
+  "username": "GiocoSound",
+  "freesound_url": "https://freesound.org/people/GiocoSound/sounds/401552/",
+  "license_name": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "search_query": "car engine idle",
+  "download_date": "2026-10-04",
+  "file": "401552_sfx-car-engine-outside-idle.wav",
+  "original_type": "wav",
+  "duration_s": 3.11767,
+  "filesize_bytes": 898624
+}

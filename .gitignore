@@ -21,3 +21,7 @@ game/test-output/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Python bytecode (tools)
+__pycache__/
+*.pyc

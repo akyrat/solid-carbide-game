@@ -17,7 +17,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 | `audio/` | Sound effects and music |
 | `tests/unit/` | GUT test scripts (`test_*.gd`), in subfolders if you like |
 | `tests/fixtures/` | Scenes and files that exist only for tests |
-| `tools/` | Test runner, screenshot tool and shared shell helpers. Not game code |
+| `tools/` | Test runner, screenshot tool, audio import checker, Freesound downloader and shared shell helpers. Not game code |
 | `addons/gut/` | The GUT test framework (9.6.1). Do not edit |
 
 The `.godot/` folder is Godot's cache. It is git-ignored and rebuilt automatically. Keep the `.uid` files Godot creates next to scripts: they belong in git.
@@ -41,6 +41,16 @@ powershell -ExecutionPolicy Bypass -File game/tools/run_tests.ps1
 This imports the project, then runs every test under `game/tests/` headless (no window) with GUT. It prints `TESTS PASSED` and exits with code 0 when every test passes. It exits non-zero when a test fails, or when any script fails to parse or load. (On its own, GUT silently skips a test file with a parse error, so the runner treats a parse error as a failure.)
 
 To run only some tests, add GUT options after the command. For example, `-gselect=test_sample` runs only test scripts whose name contains `test_sample`, and `-gunit_test_name=drift` runs only tests whose name contains `drift`.
+
+### Python tool tests
+
+Some tools in `game/tools/` are Python scripts (standard library only, Python 3.9+). Their tests are `game/tools/test_*.py` and run with Python's own test runner, not GUT:
+
+```
+python -m unittest discover -s game/tools -p "test_*.py"
+```
+
+It prints `OK` and exits with code 0 when every test passes. Run it alongside `run_tests.sh` before handing a task over.
 
 ### Writing tests
 
@@ -78,3 +88,45 @@ bash game/tools/screenshot.sh res://tests/fixtures/screenshot_fixture.tscn scree
 ```
 
 The image is the size of the game window (Godot's default 1152x648 until the project sets a resolution).
+
+## Downloading sounds from Freesound
+
+`game/tools/freesound.py` (used by the SFX Agent) searches Freesound and downloads the **original** sound files, not previews, with a metadata JSON next to each one. It reads `FREESOUND_CLIENT_ID` and `FREESOUND_API_KEY` from `.env` (see [Secrets and API keys](../README.md#secrets-and-api-keys)) and needs Python 3.9+ (standard library only). Run it from the repo root.
+
+**One-time login.** Downloading originals needs the board's Freesound login (OAuth2):
+
+```
+python game/tools/freesound.py auth-url          # prints the login link for the board
+python game/tools/freesound.py login <code>      # exchange the code Freesound shows after approving
+```
+
+The code expires within minutes, so run `login` as soon as it arrives. The tokens are stored in `.secrets/freesound_token.json` (git-ignored). The access token is renewed automatically with the refresh token, so later runs do not need the board. `python game/tools/freesound.py status` checks the stored login without downloading anything.
+
+**Download:**
+
+```
+python game/tools/freesound.py download --query "car engine idle" --count 3 --out game/audio/sfx/<folder>
+```
+
+- Only Godot-importable formats (wav, ogg, mp3) are picked, and originals over 5 MB are skipped (`--max-bytes`, 0 = no limit). It does not filter by license.
+- `--count` is how many sounds the folder should hold in total. Sounds already there (found by the Freesound id in their JSON) count towards it and are never downloaded twice, so re-running the same command downloads nothing, though it still checks (and if needed renews) the login.
+- Each sound is saved as `<id>_<name>.<ext>` with `<id>_<name>.json` next to it. The JSON holds `freesound_id`, `name`, `username`, `freesound_url`, `license_name`, `license_url`, `search_query`, `download_date`, plus `file`, `original_type`, `duration_s` and `filesize_bytes`.
+- Exit codes: 0 = done; 1 = request failed or fewer sounds found than asked; 2 = credentials missing from `.env`; 3 = login needed (run `auth-url` and `login` again).
+
+## Checking audio imports
+
+Checks that every `.wav`, `.ogg` and `.mp3` under a folder was imported by Godot and loads as a non-empty AudioStream. Runs headless and imports the project first.
+
+**Git Bash:**
+
+```
+bash game/tools/check_audio.sh [res://folder]
+```
+
+**PowerShell:**
+
+```
+powershell -ExecutionPolicy Bypass -File game/tools/check_audio.ps1 [res://folder]
+```
+
+The folder defaults to `res://audio`. It prints one `OK` or `FAIL` line per file. Exit codes: 0 = all load; 1 = bad arguments or no audio files found; 2 = at least one file failed.
