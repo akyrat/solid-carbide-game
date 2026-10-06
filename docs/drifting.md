@@ -20,6 +20,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The camera behaves like the Unity prototype's camera by default (how it follows the car, its zoom and any look-ahead), unless the board decides otherwise later. (2026-10-04)
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. (2026-10-06)
+- The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)
+- The camera zoom is a player setting with a slider in the settings menu. The board picks its default by playtesting the Godot car (task T-010). (2026-10-06)
+- The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60. (2026-10-06)
+- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. The board will playtest whether it feels the same; if not, the game may go back to a flat top-down view. (2026-10-06)
 
 ## Content
 
@@ -48,6 +52,8 @@ Facts from the report (Unity prototype report, sections 1 to 7). No new decision
 ## Open questions
 
 - What does the boost effect look like?
+- What is the default camera zoom? (Task T-010.)
+- Does the isometric drawing feel the same as the flat top-down prototype? (Board playtest.)
 - Far-future idea: a trick system for the car (front flips, back flips, in the style of Olli Olli World). Long-term only.
 
 ## References

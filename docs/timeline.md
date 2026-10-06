@@ -105,3 +105,7 @@ Entry format:
 - Decision or change: the board likes the Unity prototype's instant jump to cruise speed on W and wants a short "boost" effect to emphasise it. A placeholder version is written as T-008 for the Driving & Drift Agent, blocked until the Godot car exists. The final look is an open question; its art task comes once the board describes it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-008
+## 2026-10-06: Drift build decisions: Grass stage, zoom slider, 50 Hz, isometric drawing
+- Decision or change: the reference feel is the Unity prototype's Grass stage. The camera zoom stays a player setting with a slider; the board picks the default by playtesting (T-010), and the UI Agent builds the settings slider (T-011). The Godot car runs physics at 50 steps per second, converting the values for 60 only if 50 is not possible. Physics stays flat top-down and is drawn isometrically; the board will playtest whether it feels the same and may go back to flat top-down. The boost art is a linked task for the Asset Generation Agent (T-009).
+- Documents touched: `docs/drifting.md`
+- Tasks: T-008 (updated), T-009, T-010, T-011
