@@ -119,3 +119,8 @@ Entry format:
 - Decision or change: the car is drawn in 16 directions. Before any pixel art, the Asset Generation Agent draws simple placeholder rectangle sprites with a script, not PixelLab, in a flat and an isometric set (T-013); the board's newer prototype made its images the same way (a Godot script, checked read-only). The drift prototype (T-012) now depends on those placeholders, not on the final art. The final pixel-art car (T-014) is made with PixelLab's 8-direction tools plus its Rotate tool for the in-between directions, and is blocked until the board describes the car. The PixelLab account is now on Tier 2 "Pixel Artisan" (5,000 generations a month).
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-012 (updated), T-013, T-014
+
+## 2026-10-07: One git branch per task
+- Decision or change: the board asked that agents use git branches, so unfinished work doesn't pile up uncommitted. Each task that changes the game, its tools or assets gets its own branch in its own worktree folder; the agent commits there, QA checks there, and the Project Lead merges into `master` once the board marks the task done. The rule is in `tasks/README.md`, which every agent reads before starting a task.
+- Documents touched: `tasks/README.md`
+- Tasks: none
