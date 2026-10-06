@@ -100,3 +100,8 @@ Entry format:
 - Decision or change: the Driving & Drift Agent's report on the Unity prototype (`docs/drifting/unity-prototype-report.md`, with charts from `tools/unity_drift_charts.py`) passed QA round 1 on all 11 criteria, and the board reviewed it. Main finding: the car keeps 98% of its sideways speed per physics step while the engine resets forward speed every step, so turning at speed builds a slide faster than the straight-line top speed. The driving values come from the project files; only the camera zoom is still a saved setting.
 - Documents touched: `docs/drifting.md`, `docs/drifting/unity-prototype-report.md`
 - Tasks: T-006
+
+## 2026-10-06: Boost effect when W snaps to cruise speed
+- Decision or change: the board likes the Unity prototype's instant jump to cruise speed on W and wants a short "boost" effect to emphasise it. A placeholder version is written as T-008 for the Driving & Drift Agent, blocked until the Godot car exists. The final look is an open question; its art task comes once the board describes it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-008

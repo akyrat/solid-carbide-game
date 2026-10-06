@@ -19,6 +19,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The drift curve is the one the Unity prototype uses. This replaces the earlier plan to choose between three candidate curves (square root, linear or exponential) by playtesting. Drift is not meant to be realistic. (2026-10-04)
 - The camera behaves like the Unity prototype's camera by default (how it follows the car, its zoom and any look-ahead), unless the board decides otherwise later. (2026-10-04)
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
+- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. (2026-10-06)
 
 ## Content
 
@@ -46,6 +47,7 @@ Facts from the report (Unity prototype report, sections 1 to 7). No new decision
 
 ## Open questions
 
+- What does the boost effect look like?
 - Far-future idea: a trick system for the car (front flips, back flips, in the style of Olli Olli World). Long-term only.
 
 ## References
