@@ -124,3 +124,8 @@ Entry format:
 - Decision or change: the board asked that agents use git branches, so unfinished work doesn't pile up uncommitted. Each task that changes the game, its tools or assets gets its own branch in its own worktree folder; the agent commits there, QA checks there, and the Project Lead merges into `master` once the board marks the task done. The rule is in `tasks/README.md`, which every agent reads before starting a task.
 - Documents touched: `tasks/README.md`
 - Tasks: none
+
+## 2026-10-07: Smaller driving questions tracked
+- Decision or change: the Unity prototype report's remaining open questions (the jump on Space, arrow-key steering, gamepad support, collision feel, and a possibly rotating camera in an older version) are now tracked in Drifting, Open questions. No decisions made.
+- Documents touched: `docs/drifting.md`
+- Tasks: none
