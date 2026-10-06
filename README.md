@@ -32,11 +32,32 @@ The board (the game's designer) talks to the Project Lead, which turns requests 
 
 ## Getting started
 
-1. Create a git repository here and make a first commit.
-2. Open a terminal in this folder and run `claude`.
-3. Ask the Project Lead to read its instructions and list the agents it can see. If anything is missing, fix it now.
-4. Give it your first request: the minimal drift prototype, working with the Driving & Drift Agent.
-5. Switch agents on as you need them. Early on, the Project Lead, Driving & Drift and QA/Integration are enough.
+**What to install:**
+
+- [Claude Code](https://code.claude.com/docs/en/overview)
+- Git
+- Godot 4.6.2: the console build (`_console.exe`) is what the scripts use
+- Python 3.9 or newer, for the project's tools (standard library only)
+
+**Set up:**
+
+1. Clone this repository and open a terminal in its root folder.
+2. Copy `.env.example` to `.env` and fill it in. "Secrets and API keys" below says where each value comes from. You need `GODOT_BIN` to run anything; the Freesound and PixelLab keys only when those agents fetch sounds or generate art.
+3. Check that everything works, from the repo root:
+
+   ```bash
+   bash game/tools/run_tests.sh                               # the game's Godot tests
+   python -m unittest discover -s game/tools -p "test_*.py"    # the game's Python tools
+   python -m unittest discover -s tools -p "test_*.py"         # the project tools
+   python tools/generate_agent_diagrams.py --check            # the agent diagrams are up to date
+   ```
+
+   `game/README.md` has the PowerShell versions and the other game tools.
+
+**Working on the game:**
+
+- Run `claude` in the repo root. The session you talk to is the Project Lead: describe what you want in plain words, and it writes the task files, starts the agents, and brings the results back for your review.
+- `tasks/` shows every piece of work and its status. `docs/timeline.md` records every decision in order, so it's the place to catch up on where things stand.
 
 ## Secrets and API keys
 
@@ -73,14 +94,7 @@ PIXELLAB_API_KEY=         # API token from your PixelLab account page
 
 Generations are paid from your PixelLab subscription or USD credits, so the account needs one of these before the agent can generate anything.
 
-## Suggested first tasks for the Project Lead
-
-- Write the staleness check script that flags separate documents that changed after the long GDD was last regenerated, and long GDD changes the short GDD hasn't caught up with. Run it at the start of each session and before milestones.
-- Decide where HUD and menu details belong (see `docs/unfiled-game-details.md`).
-- Update the short GDD wording noted in `docs/short-gdd/README.md`.
-
 ## Notes
 
 - The agent files use Claude Code's markdown format with a short header. Check the Claude Code documentation (https://code.claude.com/docs/en/sub-agents) for the current format and options, since details may change.
 - Agents don't talk to each other in this project. Claude Code would allow it, but the Project Lead routes all work between them through task files on purpose, so every piece of work is on record. Details: [How agents actually communicate](agent-notes/agents-interactions.md#1-how-the-agents-connect).
-- The task file template, the folder names, and the `agent-notes/` location were chosen when building this export. Change them if your setup prefers something else.
