@@ -4,7 +4,7 @@ title: Board decides the default camera zoom
 status: blocked
 from: project-lead
 to: board
-depends_on: []
+depends_on: [T-012]
 documents_affected: [docs/drifting.md]
 files_to_read_first: [docs/drifting.md, docs/drifting/unity-prototype-report.md]
 files_expected_to_change: [docs/drifting.md]
@@ -19,7 +19,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**A decision for the board, not work for an agent.** Blocked until the Godot car exists with its camera zoom slider (built by the Driving & Drift Agent in the Godot driving task, to be written; it will be added to `depends_on`).
+**A decision for the board, not work for an agent.** Blocked until the Godot car exists with its camera zoom slider (built by the Driving & Drift Agent in T-012).
 
 The camera zoom stays a player setting with a slider (Drifting, Decisions). The board playtests the Godot car, tries zoom levels on the slider, and picks the default the game starts with. The Unity prototype's default was 14.4 (half the screen height, in car lengths: about 29 car lengths top to bottom), on a slider from 6 to 20; the board's own saved value there could not be read exactly (Unity prototype report, section 7).
 

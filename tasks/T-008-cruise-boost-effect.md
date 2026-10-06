@@ -4,7 +4,7 @@ title: Short "boost" effect when W snaps the car to cruise speed
 status: blocked
 from: project-lead
 to: driving-drift
-depends_on: []
+depends_on: [T-012]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md]
 files_expected_to_change: [the car's code and scene, and their tests]
@@ -19,7 +19,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until the Godot car exists.** The task that builds the car's driving in Godot is not written yet; when it is, it goes in `depends_on`.
+**Blocked until the Godot car exists** (T-012), which exposes the signal for the jump to cruise speed.
 
 When the player presses W and the car jumps instantly to cruise speed (Drifting, Decisions; the jump is described in the Unity prototype report, section 4, step 5), a short "boost" effect plays to emphasise that jump.
 

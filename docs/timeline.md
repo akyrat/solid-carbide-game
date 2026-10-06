@@ -109,3 +109,8 @@ Entry format:
 - Decision or change: the reference feel is the Unity prototype's Grass stage. The camera zoom stays a player setting with a slider; the board picks the default by playtesting (T-010), and the UI Agent builds the settings slider (T-011). The Godot car runs physics at 50 steps per second, converting the values for 60 only if 50 is not possible. Physics stays flat top-down and is drawn isometrically; the board will playtest whether it feels the same and may go back to flat top-down. The boost art is a linked task for the Asset Generation Agent (T-009).
 - Documents touched: `docs/drifting.md`
 - Tasks: T-008 (updated), T-009, T-010, T-011
+
+## 2026-10-06: Godot drift prototype task written
+- Decision or change: T-012 asks the Driving & Drift Agent to build the first playable piece: the Unity car copied exactly at 50 physics steps per second, a tuning panel with a slider for every driving setting, a camera with a zoom slider, and a switch between flat top-down and isometric drawing for the board's playtest. The jump, arrow keys and gamepad are left out for now. T-008 and T-010 now depend on it.
+- Documents touched: none yet (T-012 updates `docs/drifting.md` and `game/README.md`)
+- Tasks: T-012, T-008 and T-010 (updated)
