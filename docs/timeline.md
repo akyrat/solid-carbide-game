@@ -139,3 +139,8 @@ Entry format:
 - Decision or change: every task now has an `epic` (the game area it belongs to, following the game area docs) and a `milestone` (`mvp` or `final-release`). The lists are in `tasks/README.md`; what each milestone includes is decided in the game area docs. All 14 existing tasks were filled in, including the done ones; all are `mvp` for now.
 - Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-001 to T-014 (headers updated)
+
+## 2026-10-07: Game loop written; weapons, enemy scaling, pause and co-op decided
+- Decision or change: the game loop from the Final GDD is now in Game loop architecture, confirmed by the board with two changes: enemies grow slightly in number over a run but don't get tougher, and the MVP has 2 weapons with 1 offered per challenge (final release: around 8 to 12 weapons, 3 offered). Escape pauses the game; the MVP shows only "Paused" with a hint (T-015), and a full pause menu with settings comes in the final release (T-016). The final release adds local co-op for 2 and 4 players with split screen (new epic `local-coop`). The boost effect (T-008, T-009) moved to the final release. T-012's tuning panel moved from Escape to Tab. Two game loop questions remain open: XP from drift time, and the kaiju's meteor challenges versus the GDD's challenges near the kaiju.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/unfiled-game-details.md`, `docs/short-gdd/README.md`, `tasks/README.md`
+- Tasks: T-008 and T-009 (milestone), T-012 (Tab), T-015, T-016

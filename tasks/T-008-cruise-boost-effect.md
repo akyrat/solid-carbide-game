@@ -5,7 +5,7 @@ status: blocked
 from: project-lead
 to: driving-drift
 epic: driving
-milestone: mvp
+milestone: final-release
 depends_on: [T-012]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md]

@@ -20,6 +20,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Before the meteors land, a danger warning area shows on the ground for 2 seconds. A meteor that lands on the player deals damage and knocks them back. (2026-10-03)
 - Landed meteors become obstacles, laid out as one of the challenge designs (for example, two meteors). Once they land, a guide arrow appears between them, for example a curved figure-eight, to show this is the challenge to complete. (2026-10-03)
 - The boss becomes vulnerable only by completing the challenges its own meteors create. Those use a different color than the challenges already on the map. (2026-10-03)
+- Over a run, the number of enemies grows slightly. Enemies do not get tougher. (2026-10-07)
 
 ## Content
 
@@ -30,7 +31,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Idea under consideration: a semi-transparent shield on the boss, in the same color as the arrow of the challenge it spawned, to signal that it is invulnerable.
 - How long does the boss stay vulnerable after a challenge is completed?
 - How often does the boss use the meteor move, and can it start another while a challenge is still uncompleted?
-- How does enemy pressure scale across the 7 minutes before the boss?
+- How exactly does the number of enemies grow across the 7 minutes before the boss?
 
 ## References
 

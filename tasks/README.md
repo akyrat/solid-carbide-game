@@ -38,6 +38,7 @@ Every task file has an `epic` and a `milestone` in its header.
 | `art` | Generated and placeholder art | Visual style |
 | `sound` | Sound effects and music | (none yet) |
 | `tooling` | Project setup, test tools and documentation tooling | (not a game area) |
+| `local-coop` | Local co-op for 2 players (screen split in halves) and 4 players (split in quarters). Future release | Game loop architecture |
 
 **Milestone:** the release the work is needed for.
 

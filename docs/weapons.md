@@ -14,7 +14,8 @@ agents_read: [game-data]
 
 ## Decisions
 
-(To be written.)
+- The MVP has 2 weapons. Each completed challenge offers 1 of them to choose. (2026-10-07)
+- The final release has around 8 to 12 weapons, and each completed challenge offers 3 to choose from. (2026-10-07)
 
 ## Content
 
@@ -22,7 +23,7 @@ agents_read: [game-data]
 
 ## Open questions
 
-- What are the 3 weapons?
+- What are the 2 MVP weapons?
 - What are the auto-fire and targeting rules?
 - Where does the curve for the 20 upgrade levels per weapon come from?
 

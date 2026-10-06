@@ -4,6 +4,7 @@ These details have no document yet. Decide where they belong (for example, a new
 
 ## HUD and menus
 
+- Escape pauses the game. In the MVP the pause screen only says "Paused", with a hint that Escape resumes. A full pause menu, with settings, comes in the final release. (Board decision, 2026-10-07.)
 - What must the HUD show at minimum: HP, timer, challenge arrow, XP?
 - What does the weapon menu look like when it pops open after a challenge?
 
