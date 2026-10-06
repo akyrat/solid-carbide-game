@@ -149,3 +149,8 @@ Entry format:
 - Decision or change: the camera zoom is fixed, not a player setting; the board picks it by playtesting (T-010), so the settings-slider task T-011 is cancelled and deleted. A drift longer than 1 second gives XP for every second it lasts, each worth 10% of the level-1 XP bar. The kaiju's meteor challenges are the only ones that make it vulnerable, replacing the Final GDD's challenges spawning near it. New open questions on drift XP are in Game loop architecture.
 - Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/enemies.md`, `docs/short-gdd/README.md`
 - Tasks: T-010 (updated), T-011 (cancelled and deleted)
+
+## 2026-10-07: Drift XP details; game loop architecture complete
+- Decision or change: once a drift passes 1 second, every second counts, the first included. Each second gives a fixed amount of XP, 10% of the level-1 XP bar, which becomes a smaller share as the bar grows. "Drifting" for XP uses the Unity prototype's definition: W or S held together with A or D. Game loop architecture has no open questions left.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: none

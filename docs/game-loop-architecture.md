@@ -18,7 +18,9 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - The player only drives. The car's weapons fire automatically. (2026-10-07)
 - Enemies come in from the edges of the screen, in numbers that grow over the run (how they scale: Enemies, Decisions). (2026-10-07)
 - XP comes only from driving, never from kills: from completed challenges, and from drifting. (2026-10-07)
-- A drift that lasts longer than 1 second gives XP for every second it lasts. Each second is worth 10% of the XP bar at level 1, so drifting gives only a little XP. (2026-10-07)
+- A drift that lasts longer than 1 second gives XP for every second it lasts, the first second included (a 3-second drift gives 3 seconds' worth). (2026-10-07)
+- Each second of drifting gives a fixed amount of XP: 10% of the XP bar at level 1. The amount does not grow with the bar, so at higher levels it is a smaller share of the bar and drifting gives only a little XP. (2026-10-07)
+- "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3). (2026-10-07)
 - Completing a challenge flashes a score and opens a weapon choice (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run. (2026-10-07)
 - Enemies drop coins. (2026-10-07)
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
@@ -52,9 +54,7 @@ flowchart TD
 
 ## Open questions
 
-- Does the first second of a drift count, once the drift passes 1 second?
-- What counts as "drifting" for XP? In the Unity prototype the code counts any moment W or S is held together with A or D (Unity prototype report, section 3), even with almost no slide.
-- Does a drift's XP per second stay at 10% of the level-1 bar at higher levels, or change as the bar grows?
+(None yet.)
 
 ## References
 
