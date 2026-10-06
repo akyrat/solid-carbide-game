@@ -90,3 +90,13 @@ Entry format:
 - Decision or change: every separate document now has a header (title, chapter order, scope, agents) and the same five sections: Summary, Decisions (each dated), Content, Open questions, References. The structure is defined in `docs/README.md`. Open questions stay in their own documents and are never copied into the long GDD. "Ideas under consideration" moved from Decisions to Open questions (the boss shield, and the far-future trick system). A task for the long GDD generator and staleness check was written now, to be worked on once the documents have real content; the board wants to see whether it still fits by then.
 - Documents touched: `docs/README.md`, all eight separate documents
 - Tasks: T-006 (updated to the new structure), T-007
+
+## 2026-10-06: README "Getting started" brought up to date
+- Decision or change: the board updated the root README: "Getting started" now lists what to install, the `.env` setup and the commands that check the setup, and how to work with the Project Lead. The outdated "Suggested first tasks" section was removed; each item is tracked elsewhere (T-007, `docs/unfiled-game-details.md`, `docs/short-gdd/README.md`). Committed by the board.
+- Documents touched: `README.md`
+- Tasks: none
+
+## 2026-10-06: T-006 done: Unity prototype report
+- Decision or change: the Driving & Drift Agent's report on the Unity prototype (`docs/drifting/unity-prototype-report.md`, with charts from `tools/unity_drift_charts.py`) passed QA round 1 on all 11 criteria, and the board reviewed it. Main finding: the car keeps 98% of its sideways speed per physics step while the engine resets forward speed every step, so turning at speed builds a slide faster than the straight-line top speed. The driving values come from the project files; only the camera zoom is still a saved setting.
+- Documents touched: `docs/drifting.md`, `docs/drifting/unity-prototype-report.md`
+- Tasks: T-006
