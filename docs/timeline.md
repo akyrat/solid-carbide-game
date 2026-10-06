@@ -129,3 +129,8 @@ Entry format:
 - Decision or change: the Unity prototype report's remaining open questions (the jump on Space, arrow-key steering, gamepad support, collision feel, and a possibly rotating camera in an older version) are now tracked in Drifting, Open questions. No decisions made.
 - Documents touched: `docs/drifting.md`
 - Tasks: none
+
+## 2026-10-07: T-013 done: placeholder car sprites
+- Decision or change: the Asset Generation Agent's script draws two placeholder sheets (flat top-down and isometric, 16 directions, a blue rectangle with a yellow nose), with no PixelLab calls. It passed QA round 1 on all 8 criteria and the board reviewed it. The isometric frames step evenly in world heading, so on screen the steps are uneven; the board kept it that way. Merged from branch `task/T-013-placeholder-car-sprites`, the first task done on its own branch. T-012 is now unblocked.
+- Documents touched: `game/README.md`
+- Tasks: T-013, T-012 (unblocked)

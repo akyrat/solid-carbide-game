@@ -17,7 +17,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 | `audio/` | Sound effects and music |
 | `tests/unit/` | GUT test scripts (`test_*.gd`), in subfolders if you like |
 | `tests/fixtures/` | Scenes and files that exist only for tests |
-| `tools/` | Test runner, screenshot tool, audio import checker, Freesound downloader, PixelLab client and shared shell helpers. Not game code |
+| `tools/` | Test runner, screenshot tool, audio import checker, Freesound downloader, PixelLab client, placeholder car sheet generator and shared shell helpers. Not game code |
 | `addons/gut/` | The GUT test framework (9.6.1). Do not edit |
 
 The `.godot/` folder is Godot's cache. It is git-ignored and rebuilt automatically. Keep the `.uid` files Godot creates next to scripts: they belong in git.
@@ -158,3 +158,31 @@ python game/tools/pixellab_client.py generate --endpoint create-image-pixflux \
 - Exit codes: 0 = saved (or balance shown); 1 = token missing, bad parameters, request failed, job failed or polling timed out; 2 = bad command-line arguments.
 
 Its Python tests (`game/tools/test_pixellab_client.py`) run with the Python tool tests command above and never call PixelLab. `game/tests/unit/test_pixellab_assets.gd`, part of the GUT suite, checks that every generated PNG under `art/` loads in Godot with the size its record gives.
+
+## Placeholder car sprite sheets
+
+`game/tools/generate_car_sheets.gd` (task T-013, Asset Generation Agent) draws the placeholder car: a plain 32 x 16 pixel rectangle with a differently coloured nose, in 16 directions. It is drawn pixel by pixel by a script, not generated with PixelLab, and running it again gives byte-identical files. The drawing code is `game/tools/car_sheet_generator.gd`; its tests are `game/tests/unit/test_car_sheets.gd` (part of the GUT suite).
+
+**Regenerate the sheets** (headless, from the repo root):
+
+```
+bash game/tools/generate_car_sheets.sh
+```
+
+```
+powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1
+```
+
+It overwrites, in `game/art/placeholders/car/`:
+
+- `car_flat.png`: the flat top-down view.
+- `car_iso.png`: the same rectangle in a 2:1 isometric projection, screen = (x - y, (x + y) / 2), flat (no box height).
+- `car_flat.json` and `car_iso.json`: the layout below, plus a `record` (script, command, settings, placeholder) and the nose's world heading and screen angle for every frame.
+
+**Layout** (the same for both sheets, and for the full-art sheets that replace them later):
+
+- One row of 16 frames, each 64 x 64 pixels; frame `i` starts at x = `i * 64`. The sheet is 1024 x 64.
+- Frames are indexed by the car's heading in the flat physics world (Godot axes, y down). Frame 0 is heading 0 degrees, nose along world +x (pointing right in the flat view, down-right in the isometric view). Each next frame adds 22.5 degrees, turning clockwise on screen, the way Godot's `rotation` grows. For a car body whose nose is +x at rotation 0, the frame is `posmod(roundi(rotation / deg_to_rad(22.5)), 16)` in both views.
+- In the isometric sheet the world headings are 22.5 degrees apart, so the nose's angle on screen is not evenly spaced (the JSON lists it per frame).
+- The car's centre is the point (32, 32) in frame pixel coordinates (top-left of the frame = 0, 0), the middle of the frame: a `Sprite2D` with `centered = true`, `hframes = 16` and no offset puts the car's centre on the node's origin.
+- Scale: 1 world pixel = 1 sprite pixel in the flat view; the isometric sheet projects those same world pixels.

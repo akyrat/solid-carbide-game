@@ -26,3 +26,5 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 - T-003: the SFX Agent also writes Python API tools in `game/tools/` and shares the Python test command and `game/README.md` with me. Keep tools flat in `game/tools/` (`test_*.py` next to them) so one test command covers both, and edit only my own README section.
 - PixelLab's `GET /balance` can lag behind a just-finished async job: check it again a minute later before reporting a mismatch.
+- T-013: placeholder art can be drawn by a headless Godot script instead of PixelLab (no cost, deterministic). Keep the drawing in a separate script the GUT tests can preload, so tests can rebuild the sheet and compare it to the committed one. Avoid an `endpoint` key in a script-made record JSON: `test_pixellab_assets.gd` treats JSON with `endpoint` and `image` as a PixelLab record.
+- In a fresh worktree the first Godot import rewrites committed `.import` files with LF line endings. The content is unchanged; `git add` on them clears the false "modified" status.
