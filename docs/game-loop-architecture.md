@@ -26,6 +26,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer. (2026-10-07)
 - Between runs, coins are spent in the Garage on permanent car upgrades that improve driving in the next run. (2026-10-07)
+- The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). The MVP goes straight to the Garage. (2026-10-07)
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player. (2026-10-07)
 
 ## Content
@@ -47,14 +48,15 @@ flowchart TD
     win -- yes --> won([Win])
     win -- no --> lost([Loss])
     drive -- HP reaches 0 --> lost
-    won --> garage[Garage: spend coins on permanent car upgrades]
-    lost --> garage
+    won --> recap[Recap screen: kills per enemy type and other stats, final release only]
+    lost --> recap
+    recap --> garage[Garage: spend coins on permanent car upgrades]
     garage --> start
 ```
 
 ## Open questions
 
-(None yet.)
+- Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
 
 ## References
 

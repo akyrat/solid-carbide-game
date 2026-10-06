@@ -154,3 +154,8 @@ Entry format:
 - Decision or change: once a drift passes 1 second, every second counts, the first included. Each second gives a fixed amount of XP, 10% of the level-1 XP bar, which becomes a smaller share as the bar grows. "Drifting" for XP uses the Unity prototype's definition: W or S held together with A or D. Game loop architecture has no open questions left.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: none
+
+## 2026-10-07: Recap screen after each run (final release)
+- Decision or change: in the final release, a recap screen follows every run, win or loss, showing kills per enemy type and other stats the board will choose. Written as T-017 for the UI Agent, blocked until the board lists the stats and describes the look, and until the game has a complete run. Counting the stats will be linked tasks for the agents that own them.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/short-gdd/README.md`
+- Tasks: T-017

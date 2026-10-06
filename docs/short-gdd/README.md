@@ -13,3 +13,4 @@ Known wording to update when the Project Lead next edits the GDD:
 - The final release adds local co-op for 2 and 4 players with split screen (decided in `docs/game-loop-architecture.md`).
 - Game Specificity says challenges keep spawning near the kaiju. Now its own meteor challenges are the only ones that make it vulnerable (decided in `docs/enemies.md`).
 - XP from drifting: a drift longer than 1 second gives a little XP per second (decided in `docs/game-loop-architecture.md`).
+- The final release adds a recap screen after each run, win or loss, with kills per enemy type and other stats (decided in `docs/game-loop-architecture.md`).
