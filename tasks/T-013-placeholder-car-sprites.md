@@ -1,7 +1,7 @@
 ---
 id: T-013
 title: Simple placeholder car sprites in 16 directions, drawn by a script (no PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 depends_on: []
