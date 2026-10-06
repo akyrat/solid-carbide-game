@@ -144,3 +144,8 @@ Entry format:
 - Decision or change: the game loop from the Final GDD is now in Game loop architecture, confirmed by the board with two changes: enemies grow slightly in number over a run but don't get tougher, and the MVP has 2 weapons with 1 offered per challenge (final release: around 8 to 12 weapons, 3 offered). Escape pauses the game; the MVP shows only "Paused" with a hint (T-015), and a full pause menu with settings comes in the final release (T-016). The final release adds local co-op for 2 and 4 players with split screen (new epic `local-coop`). The boost effect (T-008, T-009) moved to the final release. T-012's tuning panel moved from Escape to Tab. Two game loop questions remain open: XP from drift time, and the kaiju's meteor challenges versus the GDD's challenges near the kaiju.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/unfiled-game-details.md`, `docs/short-gdd/README.md`, `tasks/README.md`
 - Tasks: T-008 and T-009 (milestone), T-012 (Tab), T-015, T-016
+
+## 2026-10-07: Fixed camera zoom; XP from drifting; meteor challenges only
+- Decision or change: the camera zoom is fixed, not a player setting; the board picks it by playtesting (T-010), so the settings-slider task T-011 is cancelled and deleted. A drift longer than 1 second gives XP for every second it lasts, each worth 10% of the level-1 XP bar. The kaiju's meteor challenges are the only ones that make it vulnerable, replacing the Final GDD's challenges spawning near it. New open questions on drift XP are in Game loop architecture.
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/enemies.md`, `docs/short-gdd/README.md`
+- Tasks: T-010 (updated), T-011 (cancelled and deleted)

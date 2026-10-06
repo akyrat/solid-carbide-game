@@ -11,3 +11,5 @@ Known wording to update when the Project Lead next edits the GDD:
 - Player Experience says each enemy gets tougher over the run. Now only their number grows, slightly (decided in `docs/enemies.md`).
 - Technical Feasibility caps weapons at 3 with 2 offered per level-up. Now the MVP has 2 weapons with 1 offered per challenge, and the final release around 8 to 12 with 3 offered (decided in `docs/weapons.md`).
 - The final release adds local co-op for 2 and 4 players with split screen (decided in `docs/game-loop-architecture.md`).
+- Game Specificity says challenges keep spawning near the kaiju. Now its own meteor challenges are the only ones that make it vulnerable (decided in `docs/enemies.md`).
+- XP from drifting: a drift longer than 1 second gives a little XP per second (decided in `docs/game-loop-architecture.md`).

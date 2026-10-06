@@ -21,6 +21,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Landed meteors become obstacles, laid out as one of the challenge designs (for example, two meteors). Once they land, a guide arrow appears between them, for example a curved figure-eight, to show this is the challenge to complete. (2026-10-03)
 - The boss becomes vulnerable only by completing the challenges its own meteors create. Those use a different color than the challenges already on the map. (2026-10-03)
 - Over a run, the number of enemies grows slightly. Enemies do not get tougher. (2026-10-07)
+- The kaiju's meteor challenges are the only challenges that make it vulnerable. They replace the Final GDD's plan of challenges spawning near the kaiju. (2026-10-07)
 
 ## Content
 
