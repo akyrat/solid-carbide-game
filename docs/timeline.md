@@ -134,3 +134,8 @@ Entry format:
 - Decision or change: the Asset Generation Agent's script draws two placeholder sheets (flat top-down and isometric, 16 directions, a blue rectangle with a yellow nose), with no PixelLab calls. It passed QA round 1 on all 8 criteria and the board reviewed it. The isometric frames step evenly in world heading, so on screen the steps are uneven; the board kept it that way. Merged from branch `task/T-013-placeholder-car-sprites`, the first task done on its own branch. T-012 is now unblocked.
 - Documents touched: `game/README.md`
 - Tasks: T-013, T-012 (unblocked)
+
+## 2026-10-07: Epics and milestones for tasks
+- Decision or change: every task now has an `epic` (the game area it belongs to, following the game area docs) and a `milestone` (`mvp` or `final-release`). The lists are in `tasks/README.md`; what each milestone includes is decided in the game area docs. All 14 existing tasks were filled in, including the done ones; all are `mvp` for now.
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
+- Tasks: T-001 to T-014 (headers updated)

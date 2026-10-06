@@ -4,6 +4,8 @@ title: Full pixel-art car sprites in 16 directions (PixelLab)
 status: blocked
 from: project-lead
 to: asset-generation
+epic: art
+milestone: mvp
 depends_on: [T-013]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, game/README.md]

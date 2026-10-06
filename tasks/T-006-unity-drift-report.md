@@ -4,6 +4,8 @@ title: Report on driving, drifting and reverse in the board's Unity prototype, a
 status: done
 from: project-lead
 to: driving-drift
+epic: driving
+milestone: mvp
 depends_on: []
 documents_affected: [docs/drifting/unity-prototype-report.md, docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, .claude/agents/driving-drift.md, game/README.md]

@@ -4,6 +4,8 @@ title: Board decides the default camera zoom
 status: blocked
 from: project-lead
 to: board
+epic: driving
+milestone: mvp
 depends_on: [T-012]
 documents_affected: [docs/drifting.md]
 files_to_read_first: [docs/drifting.md, docs/drifting/unity-prototype-report.md]

@@ -20,3 +20,30 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 - **QA checks the task in the same folder.**
 - **When the board marks the task done,** the Project Lead merges the branch into `master`, then removes the worktree and deletes the branch.
 - **Documentation-only work** (for example the Project Lead's own document edits) is committed straight to `master`.
+
+## Epics and milestones
+
+Every task file has an `epic` and a `milestone` in its header.
+
+**Epic:** the area of the game the work belongs to. The epics follow the game area docs in `docs/`.
+
+| Epic id | Covers | Game area doc |
+|---|---|---|
+| `driving` | The car's driving, drift and camera | Drifting |
+| `enemies` | Enemies and the boss | Enemies |
+| `weapons` | Weapons and their upgrades | Weapons |
+| `level-challenges` | The map and its driving challenges | Level design |
+| `garage` | The garage and persistent car upgrades | Garage design |
+| `hud-menus` | The HUD, menus and settings | (none yet; see `docs/unfiled-game-details.md`) |
+| `art` | Generated and placeholder art | Visual style |
+| `sound` | Sound effects and music | (none yet) |
+| `tooling` | Project setup, test tools and documentation tooling | (not a game area) |
+
+**Milestone:** the release the work is needed for.
+
+| Milestone id | Means |
+|---|---|
+| `mvp` | The first complete version: the game the Final GDD describes, as updated by the game area docs. |
+| `final-release` | The full game. |
+
+What each milestone includes is decided in the game area docs (for example, how many weapons the MVP has), not here. A new epic or milestone is added here first, with the board's agreement.

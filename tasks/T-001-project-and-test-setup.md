@@ -4,6 +4,8 @@ title: Set up the Godot project, headless runner and test suite
 status: done
 from: project-lead
 to: qa-integration
+epic: tooling
+milestone: mvp
 depends_on: []
 documents_affected: [game/README.md, README.md]
 files_to_read_first: [CLAUDE.md, README.md, game/README.md, tasks/_TEMPLATE.md, docs/game-loop-architecture.md]

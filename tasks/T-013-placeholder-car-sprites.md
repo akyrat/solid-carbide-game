@@ -4,6 +4,8 @@ title: Simple placeholder car sprites in 16 directions, drawn by a script (no Pi
 status: done
 from: project-lead
 to: asset-generation
+epic: art
+milestone: mvp
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/drifting/unity-prototype-report.md, game/README.md]

@@ -4,6 +4,8 @@ title: Boost animation art for the jump to cruise speed
 status: blocked
 from: project-lead
 to: asset-generation
+epic: art
+milestone: mvp
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, tasks/T-008-cruise-boost-effect.md]

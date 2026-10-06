@@ -4,6 +4,8 @@ title: Camera zoom slider in the settings menu
 status: blocked
 from: project-lead
 to: ui
+epic: hud-menus
+milestone: mvp
 depends_on: [T-010]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, tasks/T-010-decide-default-camera-zoom.md]

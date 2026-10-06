@@ -4,6 +4,8 @@ title: Freesound test run: download 3 engine idle and 3 tire drift sounds
 status: done
 from: project-lead
 to: sfx
+epic: sound
+milestone: mvp
 depends_on: [T-001]
 documents_affected: []
 files_to_read_first: [tasks/README.md, README.md, game/README.md, .env.example]

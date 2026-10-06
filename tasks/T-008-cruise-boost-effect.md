@@ -4,6 +4,8 @@ title: Short "boost" effect when W snaps the car to cruise speed
 status: blocked
 from: project-lead
 to: driving-drift
+epic: driving
+milestone: mvp
 depends_on: [T-012]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md]

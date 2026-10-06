@@ -4,6 +4,8 @@ title: Long GDD generator and document staleness check
 status: open
 from: project-lead
 to: project-lead
+epic: tooling
+milestone: mvp
 depends_on: []
 documents_affected: [docs/long-gdd.md, docs/README.md, docs/short-gdd/README.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, docs/README.md, docs/long-gdd.md, docs/short-gdd/README.md]

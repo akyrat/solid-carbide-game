@@ -4,6 +4,8 @@ title: Freesound downloader: accept only CC0 and CC BY sounds
 status: open
 from: project-lead
 to: sfx
+epic: sound
+milestone: mvp
 depends_on: [T-002]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, game/README.md, game/tools/freesound.py, game/tools/test_freesound.py, tasks/T-002-freesound-test-download.md]
