@@ -1,7 +1,7 @@
 ---
 id: T-013
 title: Simple placeholder car sprites in 16 directions, drawn by a script (no PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 depends_on: []
@@ -109,3 +109,7 @@ powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1
 **Observations for the Project Lead.**
 - **Criterion 3 wording, isometric sheet:** the nose turns by 22.5 degrees per frame in **world** heading, not on screen. On screen the steps are uneven: about 24, 40, 40, 24, 15, 12 degrees, repeating. On screen the isometric car is a parallelogram whose shape changes per frame (a near-square at world 45 and 225, a long rectangle at 135 and 315). This is the correct projection of a flat rectangle and matches the flat physics, so I passed the criterion. But the task's literal wording "turns steadily by 22.5 degrees" holds on screen only for the flat sheet. If the board wants evenly spaced on-screen angles in the isometric view, that is a different convention and needs a decision. This affects T-014 too.
 - **Diff against `master`:** `git diff master --stat` also shows deletions in `docs/drifting.md` and `docs/timeline.md`. These only appear because `master` moved on after the branch was made (commit e66712a). `git diff master...HEAD` shows the branch does not touch `docs/`.
+
+### Board review
+
+2026-10-07: the board reviewed the sheets and marked the task `done`. The isometric sheet keeps even 22.5-degree steps in world heading (uneven on screen); the board did not ask for a change.
