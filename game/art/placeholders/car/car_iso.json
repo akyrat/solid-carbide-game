@@ -1,0 +1,125 @@
+{
+	"center_note": "point in frame pixel coordinates (top-left of the frame = 0, 0) where the car's centre sits; it is the frame's middle, so a Sprite2D with centered = true and no offset lines it up",
+	"center_px": {
+		"x": 32.0,
+		"y": 32.0
+	},
+	"columns": 16,
+	"file": "car_iso.png",
+	"frame0_faces": "world heading 0 degrees: nose along world +x (screen right in the flat view)",
+	"frame0_heading_deg": 0.0,
+	"frame_count": 16,
+	"frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula for both views",
+	"frame_height": 64,
+	"frame_width": 64,
+	"frames": [
+		{
+			"heading_deg": 0.0,
+			"index": 0,
+			"nose_screen_angle_deg": 26.57
+		},
+		{
+			"heading_deg": 22.5,
+			"index": 1,
+			"nose_screen_angle_deg": 50.36
+		},
+		{
+			"heading_deg": 45.0,
+			"index": 2,
+			"nose_screen_angle_deg": 90.0
+		},
+		{
+			"heading_deg": 67.5,
+			"index": 3,
+			"nose_screen_angle_deg": 129.64
+		},
+		{
+			"heading_deg": 90.0,
+			"index": 4,
+			"nose_screen_angle_deg": 153.43
+		},
+		{
+			"heading_deg": 112.5,
+			"index": 5,
+			"nose_screen_angle_deg": 168.3
+		},
+		{
+			"heading_deg": 135.0,
+			"index": 6,
+			"nose_screen_angle_deg": 180.0
+		},
+		{
+			"heading_deg": 157.5,
+			"index": 7,
+			"nose_screen_angle_deg": 191.7
+		},
+		{
+			"heading_deg": 180.0,
+			"index": 8,
+			"nose_screen_angle_deg": 206.57
+		},
+		{
+			"heading_deg": 202.5,
+			"index": 9,
+			"nose_screen_angle_deg": 230.36
+		},
+		{
+			"heading_deg": 225.0,
+			"index": 10,
+			"nose_screen_angle_deg": 270.0
+		},
+		{
+			"heading_deg": 247.5,
+			"index": 11,
+			"nose_screen_angle_deg": 309.64
+		},
+		{
+			"heading_deg": 270.0,
+			"index": 12,
+			"nose_screen_angle_deg": 333.43
+		},
+		{
+			"heading_deg": 292.5,
+			"index": 13,
+			"nose_screen_angle_deg": 348.3
+		},
+		{
+			"heading_deg": 315.0,
+			"index": 14,
+			"nose_screen_angle_deg": 360.0
+		},
+		{
+			"heading_deg": 337.5,
+			"index": 15,
+			"nose_screen_angle_deg": 11.7
+		}
+	],
+	"order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
+	"placeholder": true,
+	"projection": "2:1 isometric: screen = (x - y, (x + y) / 2), world pixels, no box height",
+	"record": {
+		"command": "bash game/tools/generate_car_sheets.sh (or powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1)",
+		"made_by": "script (no PixelLab, no prompt)",
+		"notes": "Placeholder until the full car art (T-014), which uses the same layout. Deterministic: running the generator again gives byte-identical files, so no generation time is stored.",
+		"resources_consulted": [
+			"tasks/T-013-placeholder-car-sprites.md",
+			"docs/visual-style.md",
+			"docs/drifting.md",
+			"docs/drifting/unity-prototype-report.md",
+			"C:/solid-carbide-prototype-drifting/tools/generate_car_sheet.gd (read-only, for the approach)"
+		],
+		"script": "game/tools/car_sheet_generator.gd (drawing), game/tools/generate_car_sheets.gd (writes the files)",
+		"settings": {
+			"body_color": "#2e86ff",
+			"car_length_px": 32.0,
+			"car_width_px": 16.0,
+			"nose_color": "#ffe600",
+			"nose_length_px": 8.0,
+			"sampling": "pixel centre inside the rectangle, no anti-aliasing, no outline, no shading"
+		},
+		"task": "T-013"
+	},
+	"rows": 1,
+	"step_deg": 22.5,
+	"view": "iso"
+}
