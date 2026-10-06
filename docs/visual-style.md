@@ -14,7 +14,8 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Decisions
 
-(To be written.)
+- The car is drawn in 16 directions, 22.5 degrees apart. (2026-10-07)
+- Until the final pixel art exists, the car uses simple placeholder sprites: plain rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set. (2026-10-07)
 
 ## Content
 
@@ -22,7 +23,8 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Open questions
 
-(None yet.)
+- What does the car look like, and at what size (32 or 64 pixels)? (Needed for task T-014.)
+- Is the final car art drawn for the isometric view, the flat top-down view, or both?
 
 ## References
 
