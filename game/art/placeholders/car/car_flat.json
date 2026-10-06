@@ -6,7 +6,7 @@
 	},
 	"columns": 16,
 	"file": "car_flat.png",
-	"frame0_faces": "world heading 0 degrees: nose along world +x (screen right in the flat view)",
+	"frame0_faces": "world heading 0 degrees, nose along world +x: drawn pointing right on screen",
 	"frame0_heading_deg": 0.0,
 	"frame_count": 16,
 	"frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula for both views",

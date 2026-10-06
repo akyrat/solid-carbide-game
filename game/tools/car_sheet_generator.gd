@@ -119,7 +119,9 @@ static func describe(view: String, png_file: String, command: String) -> Diction
 		"rows": 1,
 		"step_deg": STEP_DEG,
 		"frame0_heading_deg": 0.0,
-		"frame0_faces": "world heading 0 degrees: nose along world +x (screen right in the flat view)",
+		"frame0_faces": "world heading 0 degrees, nose along world +x: %s" % (
+			"drawn pointing down-right on screen (2:1 isometric, 26.57 degrees below the horizontal)"
+			if view == "iso" else "drawn pointing right on screen"),
 		"order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
 		"frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula for both views",
 		"center_px": {"x": CENTER.x, "y": CENTER.y},
