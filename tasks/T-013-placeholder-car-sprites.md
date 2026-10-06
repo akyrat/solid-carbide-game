@@ -1,14 +1,14 @@
 ---
 id: T-013
 title: Simple placeholder car sprites in 16 directions, drawn by a script (no PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/drifting/unity-prototype-report.md, game/README.md]
 files_expected_to_change: [the sprite-sheet generator script and its tests, the two placeholder sprite sheets with their record files, game/README.md]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,14 +37,14 @@ The Godot drift prototype (T-012) needs car sprites in 16 directions before full
 
 ## Acceptance criteria
 
-- [ ] Two sprite sheets exist, one flat top-down and one isometric, each with exactly 16 frames of equal size, and Godot imports both without errors (QA: pass / fail)
-- [ ] Each sheet has a JSON file next to it giving frame size, frame count, which direction frame 0 faces, the order of the frames, and the car's centre pixel (QA: pass / fail)
-- [ ] Looking at both sheets, every frame shows a single-colour rectangle with a distinct nose, and the nose turns steadily by 22.5 degrees from frame to frame (QA: pass / fail)
-- [ ] Running the generator script twice produces byte-identical sheets (QA: pass / fail)
-- [ ] The script's tests pass, and the full GUT suite and all Python tool tests pass (QA: pass / fail)
-- [ ] No PixelLab call was made: the PixelLab generation log has no new entries, and the result notes confirm it (QA: pass / fail)
-- [ ] `game/README.md` documents how to regenerate the sheets (QA: pass / fail)
-- [ ] `C:\solid-carbide-prototype-drifting` is unchanged: from inside that folder, in Git Bash, `find . -type f -not -path "./.godot/*" | sort | while read f; do sha256sum "$f"; done | sha256sum` prints `1778247395cd589804e00120f341b24cac138144b7cb1dea75e08c95850846de` (27 files, fingerprinted on 2026-10-07) (QA: pass / fail)
+- [x] Two sprite sheets exist, one flat top-down and one isometric, each with exactly 16 frames of equal size, and Godot imports both without errors (QA: pass)
+- [x] Each sheet has a JSON file next to it giving frame size, frame count, which direction frame 0 faces, the order of the frames, and the car's centre pixel (QA: pass)
+- [x] Looking at both sheets, every frame shows a single-colour rectangle with a distinct nose, and the nose turns steadily by 22.5 degrees from frame to frame (QA: pass)
+- [x] Running the generator script twice produces byte-identical sheets (QA: pass)
+- [x] The script's tests pass, and the full GUT suite and all Python tool tests pass (QA: pass)
+- [x] No PixelLab call was made: the PixelLab generation log has no new entries, and the result notes confirm it (QA: pass)
+- [x] `game/README.md` documents how to regenerate the sheets (QA: pass)
+- [x] `C:\solid-carbide-prototype-drifting` is unchanged: from inside that folder, in Git Bash, `find . -type f -not -path "./.godot/*" | sort | while read f; do sha256sum "$f"; done | sha256sum` prints `1778247395cd589804e00120f341b24cac138144b7cb1dea75e08c95850846de` (27 files, fingerprinted on 2026-10-07) (QA: pass)
 
 ## Result notes
 
@@ -92,3 +92,20 @@ powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1
 **Problems.**
 - On the worktree's first Godot import, Godot rewrote 33 committed `.import` files (GUT addon, test-run art and audio) with LF line endings. Their content is unchanged (same git blob hashes), so nothing was committed for them; `git add` cleared the false "modified" status.
 - The commit "document the placeholder car sheets in game/README.md" also contains a small generator change (a clearer `frame0_faces` text per view) and the two regenerated JSON files.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-07.** Checked from scratch in `C:\solid-carbide-worktrees\T-013`. All 8 criteria pass.
+
+- **Sheets:** both PNGs are 1024 x 64 (RGBA), so 16 frames of 64 x 64. `--import` on the worktree prints no error (only Godot's usual "ObjectDB instances leaked at exit" warning). Both `.ctex` files are in `.godot/imported`, and the GUT test `test_godot_imports_sheets` passes.
+- **JSON:** both files give `frame_width`/`frame_height` 64, `frame_count` 16, `frame0_heading_deg` 0 with `frame0_faces`, `order` (clockwise, i * 22.5), `step_deg` 22.5, `center_px` (32, 32), `frame_from_rotation`, plus a `record` with `made_by: script (no PixelLab, no prompt)` and `placeholder: true`.
+- **Visual and measured:** I enlarged both sheets and looked at them. Every frame has exactly two colours (#2e86ff body, #ffe600 nose) with a clear nose. My own script measured the direction from the body centroid to the nose centroid. Flat sheet: 0, 22.6, 45, 67.4, ... 337.4 degrees on screen, steps of 22.5 within rounding. Isometric sheet, after un-projecting with screen = (x - y, (x + y) / 2): world headings 0, 22.8, 45, 67.2, ... 337.6 degrees, steps of 22.5 within rounding. Every frame's centroid is at the frame's middle.
+- **Determinism:** I ran `bash game/tools/generate_car_sheets.sh` twice (exit 0 both times). The sha256 of all six files in `game/art/placeholders/car/` was identical before, after the first run and after the second, and `git status` stayed clean.
+- **Tests:** `bash game/tools/run_tests.sh` gave TESTS PASSED (5 scripts, 20 tests, including 9/9 in `test_car_sheets.gd`), exit 0. `python -m unittest discover -s game/tools -p "test_*.py"`: 45 tests OK. Root `tools/` (`-s tools`): 42 tests OK.
+- **PixelLab:** `git diff master -- game/art/pixellab-generation-log.jsonl` is empty and the log has 2 lines. In the prototype folder, PixelLab is mentioned only in its `CLAUDE.md`, as possible future drop-in art.
+- **README:** `game/README.md` has a section "Placeholder car sprite sheets" with the Git Bash and PowerShell regenerate commands, the output files and the layout.
+- **Prototype folder:** the fingerprint command printed `1778247395cd589804e00120f341b24cac138144b7cb1dea75e08c95850846de` (27 files).
+
+**Observations for the Project Lead.**
+- **Criterion 3 wording, isometric sheet:** the nose turns by 22.5 degrees per frame in **world** heading, not on screen. On screen the steps are uneven: about 24, 40, 40, 24, 15, 12 degrees, repeating. On screen the isometric car is a parallelogram whose shape changes per frame (a near-square at world 45 and 225, a long rectangle at 135 and 315). This is the correct projection of a flat rectangle and matches the flat physics, so I passed the criterion. But the task's literal wording "turns steadily by 22.5 degrees" holds on screen only for the flat sheet. If the board wants evenly spaced on-screen angles in the isometric view, that is a different convention and needs a decision. This affects T-014 too.
+- **Diff against `master`:** `git diff master --stat` also shows deletions in `docs/drifting.md` and `docs/timeline.md`. These only appear because `master` moved on after the branch was made (commit e66712a). `git diff master...HEAD` shows the branch does not touch `docs/`.
