@@ -18,7 +18,8 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - The car counts as in the challenge as long as any part of it is touching the corridor. (2026-10-03)
 - The MVP map is a city laid out as a grid: blocks of buildings, with roads running between the blocks. (How it looks: Visual style, Decisions.) (2026-10-07)
 - Roads are between 5 and 10 times as wide as the player's car. A street never widens along its length; instead, some streets are wider than others, and a wide road can join a narrower one. (2026-10-07)
-- Map sizes are measured in units, where 1 unit is the car's width (the smaller of its two dimensions). (2026-10-07)
+- Map sizes are measured in units, where 1 unit is the drawn car's width (the smaller of its two dimensions; Drifting, Decisions). It is the same unit the driving values use. (2026-10-07)
+- The MVP map is 80 by 80 units: an 8-unit perimeter road on each side, around 4 blocks of 10 and 3 roads of 8 in each direction. (2026-10-07)
 - A wide road, 8 units wide, runs around the whole edge of the map. The map ends in a hard stop at its edges. (2026-10-07)
 - Inside the perimeter road, building blocks of 10 by 10 units are laid out in a 4 by 4 grid, separated by roads 8 units wide (3 roads in each direction). (2026-10-07)
 - The centre of the map is an open square of 28 by 28 units with no blocks. Its ground is gravel, not road. (2026-10-07)
@@ -35,8 +36,6 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 ## Open questions
 
 - What do the 3 obstacle patterns look like? Are they also the MVP's 3 challenge types (the Final GDD promises 3)? (The board will explain the challenges and obstacles next.)
-- The map's total size: the board said 72 by 72 units, but the layout above adds up to 80 by 80 (4 blocks of 10, plus 3 roads of 8, plus the 8-unit perimeter road on both sides). Which part changes?
-- Is the car 2 or 3 units long (2:1 or 3:1)?
 - How many obstacle pattern groups does the MVP map have, and where can they be placed?
 - After the MVP: the board plans to draw future maps by hand, and may explore generating a new map for every run.
 - Which 30% of pattern groups become challenges: chosen at random each run, or fixed? Rounded how?

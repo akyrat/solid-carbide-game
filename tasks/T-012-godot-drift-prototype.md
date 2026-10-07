@@ -1,12 +1,12 @@
 ---
 id: T-012
 title: Godot drift prototype: copy the Unity car, with tuning sliders and a flat/isometric view switch
-status: open
+status: blocked
 from: project-lead
 to: driving-drift
 epic: driving
 milestone: mvp
-depends_on: [T-013]
+depends_on: [T-013, T-018]
 documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, docs/drifting/unity-prototype-report.md, game/README.md, .claude/agents/driving-drift.md]
 files_expected_to_change: [the drift prototype scene, the car's script and settings, the tuning panel, their tests, project.godot (physics rate, input map), docs/drifting.md, game/README.md]
@@ -21,13 +21,13 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-The car is drawn with T-013's simple placeholder sprites (T-013 is done; the sheets and their layout are documented in `game/README.md`, "Placeholder car sprite sheets").
+**Blocked until T-018 is done.** The car is drawn with simple placeholder sprites (T-013 made the script and layout and is done; the sheets and their layout are documented in `game/README.md`, "Placeholder car sprite sheets").
 
 The first playable piece of Solid Carbide: the car, driving and drifting exactly like the board's Unity prototype, so the board can playtest it. The decisions are in Drifting, Decisions; how the Unity car works, with every value, is in the Unity prototype report (`docs/drifting/unity-prototype-report.md`), especially sections 4 (step by step), 5 (values) and 8 (porting to Godot). Copy it faithfully: do not improve or redesign the handling. Where the report and a decision disagree, the decision wins; where something is unclear, ask through the result notes rather than guess. The Unity project itself is not needed; if consulted, it is read-only.
 
 **What to build: a drift prototype scene**
 
-- **The car:** drawn with the simple placeholder sprites from T-013 (plain rectangles, 16 directions, one sheet for the flat view and one for the isometric view). Show the frame closest to the car's heading, reading the layout from the JSON file next to each sheet, so the full pixel-art sheets (T-014) drop in later with no code change. The car's physics shape stays as the report describes.
+- **The car:** drawn with the simple placeholder sprites from T-018 (plain 3:1 rectangles, made with T-013's script; 16 directions, one sheet for the flat view and one for the isometric view). Show the frame closest to the car's heading, reading the layout from the JSON file next to each sheet, so the full pixel-art sheets (T-014) drop in later with no code change. The car's physics body stays a 1 by 1 unit square, as the report describes; the drawn car is 1 unit wide and 3 long, centred on it, so it sticks out at the front and back (Drifting, Decisions).
 - **The ground:** flat and empty, like the Unity Grass stage (no off-road slowdown, no obstacles), with a simple grid or markers so movement and speed are visible.
 - **Controls:** W forward, S brake and reverse, A and D steer, exactly as the report's section 2 describes for the keyboard. Tab opens and closes the tuning panel. Escape is not used here: it pauses the game, built separately in T-015. Not in this task: the jump on Space, the arrow keys, the gamepad. They stay open questions for the board.
 - **Movement:** the report's section 4, step by step, at **50 physics steps per second** (Drifting, Decisions). Include the coded drift amount, the one-step lag between rotation and velocity, the instant jump to cruise, braking, the snap into reverse, and coasting. Expose a clear signal when W makes the car jump to cruise speed, for the boost effect in T-008 (do not build the effect here).

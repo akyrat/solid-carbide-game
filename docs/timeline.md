@@ -179,3 +179,8 @@ Entry format:
 - Decision or change: map sizes are in units of the car's width. An 8-unit road runs around the edge of the map, which ends in a hard stop. Inside it, 10 by 10 building blocks sit in a 4 by 4 grid with 8-unit roads between them, and the centre is an open 28 by 28 square of gravel with no blocks. The board's stated total of 72 by 72 doesn't match the layout (which adds up to 80 by 80); this and the car's length (2 or 3 units) are open questions.
 - Documents touched: `docs/level-design.md`
 - Tasks: none
+
+## 2026-10-07: 80 by 80 map; car drawn 3:1
+- Decision or change: the MVP map is 80 by 80 units (the board's 72 didn't match the layout; the board chose to keep every road and block size and grow the map). The car is drawn 1 unit wide and 3 units long; this is the drawing only, and the physics body stays the Unity prototype's 1 by 1 square, so collisions behave the same. 1 unit is the drawn car's width and the unit the driving values use. The placeholder sprites are redrawn at 3:1 (T-018), and the drift prototype (T-012) now waits for them.
+- Documents touched: `docs/level-design.md`, `docs/drifting.md`, `docs/visual-style.md`
+- Tasks: T-018, T-012 and T-014 (updated)

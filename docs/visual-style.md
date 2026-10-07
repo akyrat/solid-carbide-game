@@ -17,8 +17,8 @@ agents_read: [level-challenge, ui, narrative-theme]
 - The first map's city is cyberpunk and futuristic, in a Tokyo style, with skyscrapers and modern buildings. (2026-10-07)
 - All roads are asphalt. (2026-10-07)
 - When the car drives behind a building, the building turns see-through so the car stays visible. (2026-10-07)
-- The car is drawn in 16 directions, 22.5 degrees apart. (2026-10-07)
-- Until the final pixel art exists, the car uses simple placeholder sprites: plain rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set. (2026-10-07)
+- The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions). (2026-10-07)
+- Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set. (2026-10-07)
 
 ## Content
 
