@@ -14,3 +14,4 @@ Known wording to update when the Project Lead next edits the GDD:
 - Game Specificity says challenges keep spawning near the kaiju. Now its own meteor challenges are the only ones that make it vulnerable (decided in `docs/enemies.md`).
 - XP from drifting: a drift longer than 1 second gives a little XP per second (decided in `docs/game-loop-architecture.md`).
 - The final release adds a recap screen after each run, win or loss, with kills per enemy type and other stats (decided in `docs/game-loop-architecture.md`).
+- The map is now described as a Tokyo-style cyberpunk city grid with roads 5 to 10 car-widths wide, obstacles in set patterns, and 30% of pattern groups becoming challenges (decided in `docs/level-design.md` and `docs/visual-style.md`).
