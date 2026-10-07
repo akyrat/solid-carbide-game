@@ -174,3 +174,8 @@ Entry format:
 - Decision or change: for the MVP, the Level/Challenge Design Agent makes the map once and every run uses it. After the MVP, the board plans to draw maps by hand and may explore generating a new map each run (recorded as an open question).
 - Documents touched: `docs/level-design.md`
 - Tasks: none
+
+## 2026-10-07: MVP map layout
+- Decision or change: map sizes are in units of the car's width. An 8-unit road runs around the edge of the map, which ends in a hard stop. Inside it, 10 by 10 building blocks sit in a 4 by 4 grid with 8-unit roads between them, and the centre is an open 28 by 28 square of gravel with no blocks. The board's stated total of 72 by 72 doesn't match the layout (which adds up to 80 by 80); this and the car's length (2 or 3 units) are open questions.
+- Documents touched: `docs/level-design.md`
+- Tasks: none
