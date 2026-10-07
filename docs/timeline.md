@@ -194,3 +194,8 @@ Entry format:
 - Decision or change: in the MVP, obstacles are circles drawn as boulders, with a diameter of 1, 2 or 3 car lengths (3, 6 or 9 units). A challenge has up to 2 obstacles of any of those sizes, and its arrow path is shaped to them with the Driving & Drift Agent's scripts for what the car can actually drive. Open: a 9-unit obstacle is wider than every 8-unit road.
 - Documents touched: `docs/level-design.md`, `docs/visual-style.md`
 - Tasks: none yet
+
+## 2026-10-07: Map editor, readiness summary and status line
+- Decision or change: the board and the Project Lead draw the map in Crash City Grid, a private claude.ai page (linked from Level design, References): cells, boulders, pattern groups, challenges and their arrows, saved for the Project Lead to read. A readiness summary (MVP Docs Readiness page) puts the game area docs at about 43% of an MVP-ready first draft. The Project Lead keeps those estimates in `docs/mvp-readiness.json`, which a Claude Code status line (`tools/statusline.py`, set in `.claude/settings.json`) shows at the bottom of the terminal.
+- Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
+- Tasks: none
