@@ -1,7 +1,7 @@
 ---
 id: T-018
 title: Redraw the placeholder car sprites at 3:1
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -96,3 +96,7 @@ powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1
 - **Frame size 64 -> 80:** frame 0's direction, the frame order, the rotation-to-frame formula and "centre = middle of the frame" are all unchanged, so code that reads `frame_width`/`frame_height`/`center_px` from the JSON, or uses a `Sprite2D` with `centered = true` and `hframes = 16`, needs no change. Code that hard-coded 64 or (32, 32) would. The task explicitly allows the frame size to grow if the JSON says so, which it does, so I read this as consistent with keeping T-013's layout convention. The growth is needed: the isometric car reaches about 35.8 pixels from the centre, more than 64 / 2. Nothing in the repo reads the sheets yet (searched for `car_flat`/`car_iso`).
 - The 1 x 3 unit size in the JSON is the drawing only; the README notes the physics body is 1 x 1 unit, so the drawing sticks out past it at the front and back. That matches the master commit "car drawn 3:1 with a 1 by 1 physics body".
 - No `.import` files were rewritten by my Godot runs in this worktree; `git status` stayed clean throughout.
+
+### Board review
+
+2026-10-07: the board reviewed the 3:1 sheets and marked the task `done`.
