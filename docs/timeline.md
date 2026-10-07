@@ -169,3 +169,8 @@ Entry format:
 - Decision or change: the board does no level design itself; the Level/Challenge Design Agent makes the map from the rules in Level design and the board's descriptions and drawings. Drawings are stored in a folder named after their game area doc and linked from its References.
 - Documents touched: `docs/level-design.md`, `docs/README.md`
 - Tasks: none
+
+## 2026-10-07: The MVP map is made once
+- Decision or change: for the MVP, the Level/Challenge Design Agent makes the map once and every run uses it. After the MVP, the board plans to draw maps by hand and may explore generating a new map each run (recorded as an open question).
+- Documents touched: `docs/level-design.md`
+- Tasks: none
