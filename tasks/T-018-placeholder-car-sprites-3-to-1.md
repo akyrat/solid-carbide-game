@@ -1,7 +1,7 @@
 ---
 id: T-018
 title: Redraw the placeholder car sprites at 3:1
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
