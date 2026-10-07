@@ -24,6 +24,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - Inside the perimeter road, building blocks of 10 by 10 units are laid out in a 4 by 4 grid, separated by roads 8 units wide (3 roads in each direction). (2026-10-07)
 - The centre of the map is an open square of 28 by 28 units with no blocks. Its ground is gravel, not road. (2026-10-07)
 - Obstacles are placed on the roads. In the MVP the only obstacle is a crashed meteor boulder; more kinds come later. (2026-10-07)
+- In the MVP, obstacles are circles. Each has a diameter of 1, 2 or 3 times the car's length (the drawn car is 3 units long, so 3, 6 or 9 units). (2026-10-07)
+- In the MVP, a challenge includes up to 2 obstacles, each of any of the three sizes. (2026-10-07)
+- Each challenge's arrow path is shaped to its obstacles, using scripts from the Driving & Drift Agent that show what the car can actually drive and how it behaves. (2026-10-07)
 - Some obstacles are on the map from the start; others appear during the run, dropped by the boss (Enemies, Decisions). (2026-10-07)
 - The obstacles on the map from the start are placed in set patterns, called obstacle pattern groups. The MVP has 3 patterns, which the board will define. (2026-10-07)
 - For the MVP, the board does no level design itself. The Level/Challenge Design Agent makes the map once, following the rules in this document and the board's descriptions and drawings, and every run uses that same map. (2026-10-07)
@@ -41,6 +44,8 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - Which 30% of pattern groups become challenges: chosen at random each run, or fixed? Rounded how?
 - What happens to a challenge after it is completed: does it disappear, stay, or respawn elsewhere?
 - How does the challenge corridor (Decisions) relate to the painted arrow: does the arrow mark the corridor?
+- A 9-unit obstacle (3 car lengths) is wider than every road on the map (8 units), so it would block a road completely. Where can the largest obstacles go: only in junctions and the gravel centre, or are some roads wider?
+- Are the 3 MVP obstacle patterns still to be defined by the board, now that a challenge is up to 2 obstacles of 3 sizes?
 
 ## References
 

@@ -189,3 +189,8 @@ Entry format:
 - Decision or change: the placeholder sheets now show a 48 by 16 pixel car (1 by 3 units, 16 pixels per unit) in 80 by 80 frames, with the car's size added to the layout files. It passed QA round 1 on all 7 criteria and the board reviewed it. Merged from `task/T-018-placeholder-car-sprites-3-to-1`. T-012, the drift prototype, is now unblocked.
 - Documents touched: `game/README.md`
 - Tasks: T-018, T-012 (unblocked)
+
+## 2026-10-07: MVP obstacles and challenge arrows
+- Decision or change: in the MVP, obstacles are circles drawn as boulders, with a diameter of 1, 2 or 3 car lengths (3, 6 or 9 units). A challenge has up to 2 obstacles of any of those sizes, and its arrow path is shaped to them with the Driving & Drift Agent's scripts for what the car can actually drive. Open: a 9-unit obstacle is wider than every 8-unit road.
+- Documents touched: `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: none yet
