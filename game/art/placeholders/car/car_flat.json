@@ -1,8 +1,17 @@
 {
+	"car_size_note": "the car's drawn size in the flat world, before any projection: 1 unit wide, 3 units long, px_per_unit sprite pixels per unit in the flat view (the isometric sheet projects the same world pixels). This is the drawing only; the physics body's size is in docs/drifting.md (Decisions). To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
+	"car_size_px": {
+		"length": 48.0,
+		"width": 16.0
+	},
+	"car_size_units": {
+		"length": 3.0,
+		"width": 1.0
+	},
 	"center_note": "point in frame pixel coordinates (top-left of the frame = 0, 0) where the car's centre sits; it is the frame's middle, so a Sprite2D with centered = true and no offset lines it up",
 	"center_px": {
-		"x": 32.0,
-		"y": 32.0
+		"x": 40.0,
+		"y": 40.0
 	},
 	"columns": 16,
 	"file": "car_flat.png",
@@ -10,8 +19,8 @@
 	"frame0_heading_deg": 0.0,
 	"frame_count": 16,
 	"frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula for both views",
-	"frame_height": 64,
-	"frame_width": 64,
+	"frame_height": 80,
+	"frame_width": 80,
 	"frames": [
 		{
 			"heading_deg": 0.0,
@@ -97,11 +106,13 @@
 	"order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
 	"placeholder": true,
 	"projection": "flat top-down: screen = world (1 world pixel = 1 sprite pixel)",
+	"px_per_unit": 16.0,
 	"record": {
 		"command": "bash game/tools/generate_car_sheets.sh (or powershell -ExecutionPolicy Bypass -File game/tools/generate_car_sheets.ps1)",
 		"made_by": "script (no PixelLab, no prompt)",
 		"notes": "Placeholder until the full car art (T-014), which uses the same layout. Deterministic: running the generator again gives byte-identical files, so no generation time is stored.",
 		"resources_consulted": [
+			"tasks/T-018-placeholder-car-sprites-3-to-1.md",
 			"tasks/T-013-placeholder-car-sprites.md",
 			"docs/visual-style.md",
 			"docs/drifting.md",
@@ -111,13 +122,13 @@
 		"script": "game/tools/car_sheet_generator.gd (drawing), game/tools/generate_car_sheets.gd (writes the files)",
 		"settings": {
 			"body_color": "#2e86ff",
-			"car_length_px": 32.0,
+			"car_length_px": 48.0,
 			"car_width_px": 16.0,
 			"nose_color": "#ffe600",
 			"nose_length_px": 8.0,
 			"sampling": "pixel centre inside the rectangle, no anti-aliasing, no outline, no shading"
 		},
-		"task": "T-013"
+		"task": "T-013 (first 2:1 version), T-018 (redrawn at 3:1)"
 	},
 	"rows": 1,
 	"step_deg": 22.5,

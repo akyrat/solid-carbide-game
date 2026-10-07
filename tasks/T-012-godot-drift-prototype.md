@@ -1,7 +1,7 @@
 ---
 id: T-012
 title: Godot drift prototype: copy the Unity car, with tuning sliders and a flat/isometric view switch
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 epic: driving
@@ -21,7 +21,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-018 is done.** The car is drawn with simple placeholder sprites (T-013 made the script and layout and is done; the sheets and their layout are documented in `game/README.md`, "Placeholder car sprite sheets").
+The car is drawn with simple placeholder sprites (T-013 made the script and layout, T-018 redrew them at 3:1 with 80 by 80 frames, and both are done; the sheets and their layout are documented in `game/README.md`, "Placeholder car sprite sheets").
 
 The first playable piece of Solid Carbide: the car, driving and drifting exactly like the board's Unity prototype, so the board can playtest it. The decisions are in Drifting, Decisions; how the Unity car works, with every value, is in the Unity prototype report (`docs/drifting/unity-prototype-report.md`), especially sections 4 (step by step), 5 (values) and 8 (porting to Godot). Copy it faithfully: do not improve or redesign the handling. Where the report and a decision disagree, the decision wins; where something is unclear, ask through the result notes rather than guess. The Unity project itself is not needed; if consulted, it is read-only.
 

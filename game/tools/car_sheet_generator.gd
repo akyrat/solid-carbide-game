@@ -1,6 +1,6 @@
 extends RefCounted
-## Draws the placeholder car sprite sheets (task T-013): a plain rectangle with a
-## differently coloured nose, in 16 directions, for the flat top-down view and the
+## Draws the placeholder car sprite sheets (tasks T-013 and T-018): a plain 3:1
+## rectangle (1 unit wide, 3 units long) with a differently coloured nose, in 16 directions, for the flat top-down view and the
 ## isometric view. No PixelLab: every pixel is computed here, so the output is the
 ## same on every run.
 ##
@@ -20,15 +20,24 @@ extends RefCounted
 ##   frame = (0, 0)), which is the middle of the frame: a Sprite2D with
 ##   `centered = true` and no offset puts the car's centre on the node's origin.
 
-const FRAME := 64
+## Frame size: square, large enough for the 48 x 16 car in every direction in both
+## views. The widest case is the isometric view, where the car reaches about 35.8
+## pixels from the centre on screen (sqrt(2) * the half-diagonal 25.3), so 80 x 80
+## (40 each side of the centre) leaves an empty margin all round.
+const FRAME := 80
 const DIRECTIONS := 16
 const STEP_DEG := 22.5
-const CENTER := Vector2(32.0, 32.0)
+const CENTER := Vector2(40.0, 40.0)
 
-## Car footprint in world pixels (length along the nose x width across it).
-const LENGTH := 32.0
-const WIDTH := 16.0
-## How far back from the front edge the nose patch reaches.
+## Pixels per world unit: the car is 1 unit wide (Drifting, Decisions).
+const PX_PER_UNIT := 16.0
+## Car's drawn size in world units (length along the nose x width across it), 3:1.
+const LENGTH_UNITS := 3.0
+const WIDTH_UNITS := 1.0
+## Car's drawn size in world pixels.
+const LENGTH := LENGTH_UNITS * PX_PER_UNIT  # 48
+const WIDTH := WIDTH_UNITS * PX_PER_UNIT  # 16
+## How far back from the front edge the nose patch reaches (as in T-013).
 const NOSE_LENGTH := 8.0
 
 const BODY_COLOR := Color8(46, 134, 255)  # 2e86ff
@@ -125,6 +134,10 @@ static func describe(view: String, png_file: String, command: String) -> Diction
 		"order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
 		"frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula for both views",
 		"center_px": {"x": CENTER.x, "y": CENTER.y},
+		"car_size_units": {"width": WIDTH_UNITS, "length": LENGTH_UNITS},
+		"car_size_px": {"width": WIDTH, "length": LENGTH},
+		"px_per_unit": PX_PER_UNIT,
+		"car_size_note": "the car's drawn size in the flat world, before any projection: 1 unit wide, 3 units long, px_per_unit sprite pixels per unit in the flat view (the isometric sheet projects the same world pixels). This is the drawing only; the physics body's size is in docs/drifting.md (Decisions). To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
 		"center_note": "point in frame pixel coordinates (top-left of the frame = 0, 0) where the car's centre sits; it is the frame's middle, so a Sprite2D with centered = true and no offset lines it up",
 		"projection": projection,
 		"frames": frames,
@@ -132,7 +145,7 @@ static func describe(view: String, png_file: String, command: String) -> Diction
 			"made_by": "script (no PixelLab, no prompt)",
 			"script": "game/tools/car_sheet_generator.gd (drawing), game/tools/generate_car_sheets.gd (writes the files)",
 			"command": command,
-			"task": "T-013",
+			"task": "T-013 (first 2:1 version), T-018 (redrawn at 3:1)",
 			"settings": {
 				"car_length_px": LENGTH,
 				"car_width_px": WIDTH,
@@ -142,6 +155,7 @@ static func describe(view: String, png_file: String, command: String) -> Diction
 				"sampling": "pixel centre inside the rectangle, no anti-aliasing, no outline, no shading",
 			},
 			"resources_consulted": [
+				"tasks/T-018-placeholder-car-sprites-3-to-1.md",
 				"tasks/T-013-placeholder-car-sprites.md",
 				"docs/visual-style.md",
 				"docs/drifting.md",

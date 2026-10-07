@@ -184,3 +184,8 @@ Entry format:
 - Decision or change: the MVP map is 80 by 80 units (the board's 72 didn't match the layout; the board chose to keep every road and block size and grow the map). The car is drawn 1 unit wide and 3 units long; this is the drawing only, and the physics body stays the Unity prototype's 1 by 1 square, so collisions behave the same. 1 unit is the drawn car's width and the unit the driving values use. The placeholder sprites are redrawn at 3:1 (T-018), and the drift prototype (T-012) now waits for them.
 - Documents touched: `docs/level-design.md`, `docs/drifting.md`, `docs/visual-style.md`
 - Tasks: T-018, T-012 and T-014 (updated)
+
+## 2026-10-07: T-018 done: placeholder car sprites at 3:1
+- Decision or change: the placeholder sheets now show a 48 by 16 pixel car (1 by 3 units, 16 pixels per unit) in 80 by 80 frames, with the car's size added to the layout files. It passed QA round 1 on all 7 criteria and the board reviewed it. Merged from `task/T-018-placeholder-car-sprites-3-to-1`. T-012, the drift prototype, is now unblocked.
+- Documents touched: `game/README.md`
+- Tasks: T-018, T-012 (unblocked)
