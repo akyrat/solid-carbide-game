@@ -67,3 +67,4 @@ A section with nothing in it yet says `(To be written.)` or, for Open questions 
 - Links are relative to the `docs/` folder, so they still work in the long GDD.
 - Mermaid diagrams and relative image links are fine.
 - One home for each fact: if a fact belongs in another document, link to it.
+- The board's drawings and sketches are stored in a folder named after the game area doc they belong to (for example `docs/level-design/`), and linked from that doc's References.

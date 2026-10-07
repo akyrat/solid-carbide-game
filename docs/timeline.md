@@ -164,3 +164,8 @@ Entry format:
 - Decision or change: the MVP map is a city grid of building blocks with roads between them, 5 to 10 car-widths wide; a street never widens along its length, but wide roads can join narrower ones. Obstacles (MVP: crashed meteor boulders) stand on the roads, some from the start in set patterns (3 patterns for the MVP, to be defined), some dropped later by the boss. 30% of the pattern groups become challenges, each marked by an animated arrow painted on the ground. The city is Tokyo-style cyberpunk with skyscrapers, the roads are asphalt, and buildings turn see-through when the car is behind them (how to do this in Godot needs looking into).
 - Documents touched: `docs/level-design.md`, `docs/visual-style.md`, `docs/short-gdd/README.md`
 - Tasks: none yet
+
+## 2026-10-07: The Level/Challenge Design Agent makes the map
+- Decision or change: the board does no level design itself; the Level/Challenge Design Agent makes the map from the rules in Level design and the board's descriptions and drawings. Drawings are stored in a folder named after their game area doc and linked from its References.
+- Documents touched: `docs/level-design.md`, `docs/README.md`
+- Tasks: none
