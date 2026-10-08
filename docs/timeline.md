@@ -349,3 +349,8 @@ Entry format:
 - Decision or change: the original `Solid_Carbide_-_Final_GDD.pdf` is historical and no longer a source of truth; the game area docs are. `CLAUDE.md` (approved by the board) now names `docs/short-gdd/short-gdd.md` as the short GDD, the crew notes define the MVP by the game area docs, and the two game area docs that cite the PDF label it as superseded. The short GDD folder's README and `docs/README.md` say the same in T-025. Long GDD regenerated.
 - Documents touched: `CLAUDE.md`, `agent-notes/agents-interactions.md`, `docs/game-loop-architecture.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`
 - Tasks: T-025
+
+## 2026-10-08: Livestream combo idea (T-028)
+- Decision or change: the board's idea of a "livestream combo" (consecutive tricks without a collision grow a multiplier on likes, shown as a vertical "current viewers" bar next to the likes bar; a collision cuts it by 80%, and after a 2-second chain interval with no trick it drops exponentially) is recorded as an exploration ticket, assumed after the MVP. It is the counterbalance to the helping-people idea in Extended narrative. No game area doc changes until the board settles it.
+- Documents touched: none yet
+- Tasks: T-028
