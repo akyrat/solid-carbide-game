@@ -50,5 +50,14 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 ## References
 
-- Car look references (a 1967 Ford Mustang fastback): ![Black with stripes](visual-style/reference-car-mustang-1967-black-striped.jpg) for the two stripes down the middle, and ![Dark green](visual-style/reference-car-mustang-1967-dark-green.jpg) for the colour.
-- Technical style reference (only for the technical specs above; not the actual car, colours or mood): ![Reference car](visual-style/reference-car-technical-style.png) `visual-style/reference-car-technical-style.png`, 128 by 128 pixels, 29 colours.
+- **Car look, colour:** a dark-green 1967 Ford Mustang fastback (inspiration only; no real badges).
+
+  ![Dark-green 1967 Mustang fastback](visual-style/reference-car-mustang-1967-dark-green.jpg)
+
+- **Car look, stripes:** the two stripes down the middle, from a black 1967 Mustang fastback (inspiration only).
+
+  ![Black 1967 Mustang fastback with two white stripes](visual-style/reference-car-mustang-1967-black-striped.jpg)
+
+- **Technical style:** only for the technical specs in Decisions (128 by 128 pixels, 29 colours); not the actual car, colours or mood.
+
+  ![Pixel-art reference car for the technical style](visual-style/reference-car-technical-style.png)

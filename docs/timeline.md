@@ -334,3 +334,8 @@ Entry format:
 - Decision or change: the root README gets the final car at its top right, taken from a T-014 frame with no new generation (T-026, MVP, after T-014). A promotional key-art scene (the car drifting through the neon city, minions closing in, the shielded kaiju behind) is made with PixelLab for the README and later pitch material (T-027, final release, after T-014 and the future minion and kaiju art tasks).
 - Documents touched: none yet (both tasks update `README.md`)
 - Tasks: T-026, T-027
+
+## 2026-10-08: Visual style references tidied
+- Decision or change: Visual style's three reference images each get their own line and caption, so they read cleanly in the long GDD. No new decisions.
+- Documents touched: `docs/visual-style.md`
+- Tasks: none
