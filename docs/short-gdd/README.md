@@ -21,4 +21,4 @@ Known wording to update when the Project Lead next edits the GDD:
 - The map is now described as a Tokyo-style cyberpunk city grid with roads 5 to 10 car-widths wide, obstacles in set patterns, and 30% of pattern groups becoming challenges (decided in `docs/level-design.md` and `docs/visual-style.md`).
 - The game now opens on a main menu (Start, Garage, Quit) and returns there after each run; the MVP garage sells acceleration, car HP and a weapon damage bonus (decided in `docs/game-loop-architecture.md` and `docs/garage-design.md`).
 - The HUD now shows HP, a countdown timer, XP and level, coins, the challenge arrow and the kaiju's health, and level-ups pause the game (decided in `docs/hud-and-menus.md`).
-- Narrative Theme: runs are livestreamed, XP is shown as likes, and the tone is satirical about Greenbull (decided in `docs/extended-narrative.md`).
+- Narrative Theme: runs are livestreamed, XP is shown as likes, and the tone is satirical about Redgull (decided in `docs/extended-narrative.md`).

@@ -1,13 +1,13 @@
 ---
 name: narrative-theme
-description: "Use to review text and story content for consistency with the story (Crash City, Stunt Driver, Greenbull). It reviews and writes only when explicitly told to."
+description: "Use to review text and story content for consistency with the story (Crash City, Stunt Driver, Redgull). It reviews and writes only when explicitly told to."
 ---
 
 # Narrative Theme Agent
 
 *In this project, "the board" is the game's designer, the person who talks to the Project Lead.*
 
-Keeps any dialog, text, or flavor content other agents produce consistent with the Crash City, Stunt Driver, and Greenbull story.
+Keeps any dialog, text, or flavor content other agents produce consistent with the Crash City, Stunt Driver, and Redgull story.
 
 ## Responsibilities
 

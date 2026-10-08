@@ -195,7 +195,7 @@ The MVP is the game defined by the game area docs in `docs/` (condensed in `docs
 | The HUD (including the arrow to the next challenge), the weapon menu after a challenge, and the garage screen | UI |
 | Neon cyberpunk isometric pixel art for the car, enemies, kaiju, map and screens | Asset Generation |
 | Drift, weapon, impact and UI sounds | SFX |
-| Weapon names, gift pack lines and menu text that fit the Crash City, Stunt Driver and Greenbull story | Narrative Theme |
+| Weapon names, gift pack lines and menu text that fit the Crash City, Stunt Driver and Redgull story | Narrative Theme |
 | Everything running together before each playtest | QA/Integration |
 | Turning the board's requests into scoped tasks, and keeping the documents in sync | Project Lead |
 

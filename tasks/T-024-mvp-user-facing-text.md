@@ -27,7 +27,7 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until T-022 is done:** the weapon text must describe the weapons as they actually behave (the Unity prototype weapons report).
 
-The board asked the Narrative Theme Agent to write the game's user-facing text, using Extended narrative to get the tone (Extended narrative, Decisions). This task writes every piece of text the MVP shows the player, in one data file the UI and other code will read. Write in the tone Extended narrative sets: satirical, tongue-in-cheek, Greenbull out of touch, the player's fun slightly unethical. Players only ever see "likes", never "XP".
+The board asked the Narrative Theme Agent to write the game's user-facing text, using Extended narrative to get the tone (Extended narrative, Decisions). This task writes every piece of text the MVP shows the player, in one data file the UI and other code will read. Write in the tone Extended narrative sets: satirical, tongue-in-cheek, Redgull out of touch, the player's fun slightly unethical. Players only ever see "likes", never "XP".
 
 Write `game/data/text/mvp-text.json`, with one clearly named key per string, covering at least:
 
@@ -41,7 +41,7 @@ Write `game/data/text/mvp-text.json`, with one clearly named key per string, cov
 
 Keep each string short enough for a game screen, and note any that must fit a tight space. Do not invent game mechanics: describe only what the documents decide. Where the documents don't give enough to write a string, list it as an open question in the result notes rather than guessing what the game does.
 
-In `docs/extended-narrative.md`, add a short `### MVP text` subsection under Content: where the file is, and the voice choices you made (for example how Greenbull speaks, how likes are shown). Do not change Summary, Decisions or Open questions. Follow `docs/README.md`.
+In `docs/extended-narrative.md`, add a short `### MVP text` subsection under Content: where the file is, and the voice choices you made (for example how Redgull speaks, how likes are shown). Do not change Summary, Decisions or Open questions. Follow `docs/README.md`.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 

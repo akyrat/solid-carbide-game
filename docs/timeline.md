@@ -286,7 +286,7 @@ Entry format:
 - Tasks: none
 
 ## 2026-10-08: Extended narrative: tone, livestream and likes; text and visuals checks on tasks
-- Decision or change: Extended narrative now sets the game's tone (satirical, tongue-in-cheek about an out-of-touch Greenbull; the player's fun is slightly unethical), names the player Stunt Driver, makes every run a livestream where challenges earn likes, and shows XP to players only as likes; filling the likes bar earns a gift pack. Greenbull funds the car's upgrades (from the Final GDD). It changes rarely and is read before any user-facing text or graphics are made. The Narrative Theme Agent writes all user-facing text, including how likes are shown (T-024, after T-022). The main menu shows "SOLID CARBIDE" with a discreet "(work in progress)". After-MVP ideas recorded: "Stan D. River", plot frames between levels, people in need of help, plane-dropped gift packs, difficulty modifiers. Every task now says whether it has user-facing text and whether it changes visuals, and then lists Extended narrative (and Visual style for visuals) to read first; the template and all existing tasks are updated.
+- Decision or change: Extended narrative now sets the game's tone (satirical, tongue-in-cheek about an out-of-touch Redgull; the player's fun is slightly unethical), names the player Stunt Driver, makes every run a livestream where challenges earn likes, and shows XP to players only as likes; filling the likes bar earns a gift pack. Redgull funds the car's upgrades (from the Final GDD). It changes rarely and is read before any user-facing text or graphics are made. The Narrative Theme Agent writes all user-facing text, including how likes are shown (T-024, after T-022). The main menu shows "SOLID CARBIDE" with a discreet "(work in progress)". After-MVP ideas recorded: "Stan D. River", plot frames between levels, people in need of help, plane-dropped gift packs, difficulty modifiers. Every task now says whether it has user-facing text and whether it changes visuals, and then lists Extended narrative (and Visual style for visuals) to read first; the template and all existing tasks are updated.
 - Documents touched: `docs/extended-narrative.md`, `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`, `docs/short-gdd/README.md`, `docs/mvp-readiness.json`, `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-024; T-001 to T-023 (headers updated)
 
@@ -296,7 +296,7 @@ Entry format:
 - Tasks: T-014 (updated)
 
 ## 2026-10-08: Visual style: palette, mood, car, city and creatures
-- Decision or change: a dark navy and purple night with pink, cyan and Greenbull-green neon; night-time with a retro feel. The car is inspired by a 1967 Ford Mustang fastback, dark green with two parallel stripes down its middle (reference photos saved in `docs/visual-style/`). Tokyo-style towers with vertical signs, lit windows and satirical Greenbull billboards; cracked asphalt with lane lines and crossings; dusty gravel centre; dark boulders with glowing cracks; a glowing painted challenge arrow that draws itself, pulses and fades; a red warning circle, falling meteor and dust burst for the kaiju's attack; a Godzilla-style kaiju; light-green four-legged scaled lizards as the minion, walking towards the player. Open: stripe colour and livery, how "retro" shapes the glow, effects, and whether the minion still copies a Unity enemy's stats.
+- Decision or change: a dark navy and purple night with pink, cyan and Redgull-green neon; night-time with a retro feel. The car is inspired by a 1967 Ford Mustang fastback, dark green with two parallel stripes down its middle (reference photos saved in `docs/visual-style/`). Tokyo-style towers with vertical signs, lit windows and satirical Redgull billboards; cracked asphalt with lane lines and crossings; dusty gravel centre; dark boulders with glowing cracks; a glowing painted challenge arrow that draws itself, pulses and fades; a red warning circle, falling meteor and dust burst for the kaiju's attack; a Godzilla-style kaiju; light-green four-legged scaled lizards as the minion, walking towards the player. Open: stripe colour and livery, how "retro" shapes the glow, effects, and whether the minion still copies a Unity enemy's stats.
 - Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
 - Tasks: none
 
@@ -311,7 +311,7 @@ Entry format:
 - Tasks: none
 
 ## 2026-10-08: See-through rule, no livery for the MVP, car bounces off walls
-- Decision or change: the no-semi-transparent-pixels rule covers pixels inside sprites; the game may fade whole objects (the kaiju's shield, buildings). The MVP car has no livery (Greenbull livery is after the MVP). The car bounces off walls slightly. Visual style has no MVP questions left.
+- Decision or change: the no-semi-transparent-pixels rule covers pixels inside sprites; the game may fade whole objects (the kaiju's shield, buildings). The MVP car has no livery (Redgull livery is after the MVP). The car bounces off walls slightly. Visual style has no MVP questions left.
 - Documents touched: `docs/visual-style.md`, `docs/drifting.md`, `docs/mvp-readiness.json`
 - Tasks: T-019 (updated)
 
@@ -354,3 +354,8 @@ Entry format:
 - Decision or change: the board's idea of a "livestream combo" (consecutive tricks without a collision grow a multiplier on likes, shown as a vertical "current viewers" bar next to the likes bar; a collision cuts it by 80%, and after a 2-second chain interval with no trick it drops exponentially) is recorded as an exploration ticket, assumed after the MVP. It is the counterbalance to the helping-people idea in Extended narrative. No game area doc changes until the board settles it.
 - Documents touched: none yet
 - Tasks: T-028
+
+## 2026-10-08: Greenbull renamed Redgull
+- Decision or change: the energy-drink brand is renamed from Greenbull to **Redgull** everywhere, including earlier timeline entries (board). The colour decisions are unchanged: the palette's brand neon is still green ("Redgull-green"). The historical Final GDD PDF is left as it is. Long GDD regenerated.
+- Documents touched: `docs/extended-narrative.md`, `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `docs/timeline.md`, `agent-notes/agents-interactions.md`, `.claude/agents/narrative-theme.md` (approved by the board)
+- Tasks: T-024 (wording), T-025 (short GDD)
