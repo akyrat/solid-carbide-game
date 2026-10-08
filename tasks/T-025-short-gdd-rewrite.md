@@ -1,7 +1,7 @@
 ---
 id: T-025
 title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 epic: tooling
