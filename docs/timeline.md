@@ -359,3 +359,8 @@ Entry format:
 - Decision or change: the energy-drink brand is renamed from Greenbull to **Redgull** everywhere, including earlier timeline entries (board). The colour decisions are unchanged: the palette's brand neon is still green ("Redgull-green"). The historical Final GDD PDF is left as it is. Long GDD regenerated.
 - Documents touched: `docs/extended-narrative.md`, `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `docs/timeline.md`, `agent-notes/agents-interactions.md`, `.claude/agents/narrative-theme.md` (approved by the board)
 - Tasks: T-024 (wording), T-025 (short GDD)
+
+## 2026-10-08: Redgull's logo and colour
+- Decision or change: Redgull's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling, which suits the story. The company's theme colour is red, used only on Redgull's own things: logo, billboards and, in the MVP, the weapons (not all red; included where it fits). It does not affect the car, enemies, map or anything else. Correction: the board never defined a brand colour; the "Greenbull-green" neon in the palette was wrongly attributed to the brand. It is removed, so the city's neon accents are pink and cyan.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`
+- Tasks: T-025 (short GDD)

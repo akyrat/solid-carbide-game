@@ -20,6 +20,7 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 - Each level's final boss is a different type of monster. The kaiju is the first level's boss, in Crash City. (2026-10-03)
 - The player is **Stunt Driver**, a stunt driver sponsored by the energy-drink brand **Redgull**, sent into each disaster just to drift and show off. (2026-10-08)
 - **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Redgull is not evil, just completely out of touch and focused on profit. Playing is fun, but the player should sense that what they are doing is slightly unethical, and the game highlights this whenever it can. (2026-10-08)
+- Redgull's logo, a sketched seagull with red eyes, looks **slightly evil and unsettling** on purpose, which suits the company's role in the story (the logo's look and the company's red: Visual style, Decisions). (2026-10-08)
 - Every run is **livestreamed** to Redgull's audience. Completing challenges earns **likes**. (2026-10-08)
 - **Likes are XP.** Players only ever see "likes", never "XP"; the board and the agents may say XP internally. Each level threshold is a likes threshold, and filling the likes bar earns a **gift pack**: the weapon reward on level-up. (2026-10-08)
 - **Redgull funds the car's upgrades** between runs, all in service of the sponsorship. (2026-10-08, from the Final GDD)
