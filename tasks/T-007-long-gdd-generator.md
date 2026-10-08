@@ -1,7 +1,7 @@
 ---
 id: T-007
 title: Long GDD generator and document staleness check
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: project-lead
 epic: tooling
@@ -12,7 +12,7 @@ depends_on: []
 documents_affected: [docs/long-gdd.md, docs/README.md, docs/short-gdd/README.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, docs/README.md, docs/long-gdd.md, docs/short-gdd/README.md]
 files_expected_to_change: [tools/generate_long_gdd.py, tools/test_generate_long_gdd.py, docs/long-gdd.md, docs/README.md, docs/short-gdd/README.md]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,17 +66,17 @@ Using temporary folders with sample documents: validation (each kind of structur
 
 ## Acceptance criteria
 
-- [ ] `python tools/generate_long_gdd.py` regenerates `docs/long-gdd.md`, and running it a second time leaves the file byte-for-byte unchanged (QA: pass / fail)
-- [ ] The long GDD has one chapter per separate document, in `gdd_order` order, each with the document's Summary, Decisions, Content and References, and no text from any Open questions section (QA: pass / fail)
-- [ ] For 3 decisions picked by QA from different separate documents, the decision text appears in the matching long GDD chapter, without its date note (QA: pass / fail)
-- [ ] No decision bullet in `docs/long-gdd.md` ends with a date note such as "(2026-10-08)" (QA: pass / fail)
-- [ ] Every relative link and image in `docs/long-gdd.md` resolves to an existing file (QA: pass / fail)
-- [ ] Right after generation, `--check` lists no game area doc as stale (it still reports the short GDD as stale until T-025, as step 3 says). After QA temporarily edits one separate document, it names that document as changed; QA then restores the file (QA: pass / fail)
-- [ ] After QA temporarily adds an extra `##` heading to one separate document, the generator exits 2, names the file and line, and leaves `docs/long-gdd.md` unchanged; QA then restores the file (QA: pass / fail)
-- [ ] `--check` reports the short GDD as stale or up to date according to the line in `docs/short-gdd/README.md` (QA: pass / fail)
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass / fail)
-- [ ] `docs/README.md` documents both commands (QA: pass / fail)
-- [ ] No separate document's text changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass / fail)
+- [x] `python tools/generate_long_gdd.py` regenerates `docs/long-gdd.md`, and running it a second time leaves the file byte-for-byte unchanged (QA: pass)
+- [x] The long GDD has one chapter per separate document, in `gdd_order` order, each with the document's Summary, Decisions, Content and References, and no text from any Open questions section (QA: pass)
+- [x] For 3 decisions picked by QA from different separate documents, the decision text appears in the matching long GDD chapter, without its date note (QA: pass)
+- [x] No decision bullet in `docs/long-gdd.md` ends with a date note such as "(2026-10-08)" (QA: pass)
+- [x] Every relative link and image in `docs/long-gdd.md` resolves to an existing file (QA: pass)
+- [x] Right after generation, `--check` lists no game area doc as stale (it still reports the short GDD as stale until T-025, as step 3 says). After QA temporarily edits one separate document, it names that document as changed; QA then restores the file (QA: pass)
+- [x] After QA temporarily adds an extra `##` heading to one separate document, the generator exits 2, names the file and line, and leaves `docs/long-gdd.md` unchanged; QA then restores the file (QA: pass)
+- [x] `--check` reports the short GDD as stale or up to date according to the line in `docs/short-gdd/README.md` (QA: pass)
+- [x] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass)
+- [x] `docs/README.md` documents both commands (QA: pass)
+- [x] No separate document's text changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass)
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
@@ -98,3 +98,27 @@ Written by the Project Lead on 2026-10-08.
 **Game area doc fixes, made on `master` and merged in (not part of this branch's own changes):** Weapons linked to the T-022 report before it exists (now plain text until it does), and Visual style had no Summary (written from its decisions). Both are in the timeline.
 
 **Self-check:** generation byte-identical on a second run; 9 chapters in order, no open questions; date notes left: 0; broken links or images: 0; `--check` lists no game area doc and reports the short GDD (exit 1, as designed); the structure checks are covered by tests; all Python tool tests pass (root `tools/` and `game/tools/`); no game area doc's text changed on this branch; nothing under `game/` or `.claude/agents/` changed.
+
+### QA round 1
+
+Checked by the QA/Integration Agent on 2026-10-08 in `C:\solid-carbide-worktrees\T-007`. All 11 criteria pass.
+
+- **1:** `python tools/generate_long_gdd.py` run twice; SHA-256 of `docs/long-gdd.md` was `e353f545...2359` before, after the first and after the second run (exit 0, "already up to date (9 chapters)").
+- **2:** 9 chapters; their order (Game loop architecture 1, Drifting 2, Level design 3, Enemies 4, Weapons 5, Garage design 6, Visual style 7, Extended narrative 8, HUD and menus 9) matches every doc's `gdd_order`. A script compared the first 60 characters of all 24 Open questions lines from the nine docs against the long GDD: 0 found. Sections missing from a chapter (Content in Enemies, Weapons, Garage design, Visual style, HUD and menus; References in Enemies and Garage design) are "(To be written.)" / "(None yet.)" in the source, so leaving them out is as specified.
+- **3:** Drifting ("The car bounces off walls slightly..."), Enemies ("Over a run, the number of enemies grows slightly..." and "The kaiju's health is set so that...") and HUD and menus ("Escape pauses the game...") found in their chapters with the date note gone. "; replaces ..." notes (Drifting zoom, Level design boulders and patterns) are also removed, with the colon before sub-bullets kept.
+- **4:** 0 occurrences of "(2026-" and of any "(YYYY-MM-DD" in the file.
+- **5:** 22 relative links and images checked by script against `docs/`: 0 broken; the table of contents anchors also resolve.
+- **6:** `--check` right after generation: only "short GDD: not yet updated" (exit 1). With a line appended to `docs/garage-design.md`: "garage-design.md: changed since the long GDD was generated" (exit 1). File restored from a copy; `git status` clean.
+- **7:** With `## Something` added before `## Content` in `docs/enemies.md`: "structure problem: enemies.md: line 30: unknown section heading '## Something'", "nothing was written", exit 2; `docs/long-gdd.md` hash unchanged; `--check` also exits 2. File restored; `git status` clean.
+- **8:** With the line "never": stale (exit 1). Set temporarily to the current long GDD fingerprint: "in sync" (exit 0). Set to a wrong 64-digit value: stale (exit 1). File restored; `git status` clean.
+- **9:** `python -m unittest discover -s tools -p "test_*.py"`: 62 tests OK (12 in `test_generate_long_gdd.py`). `game/tools` Python tests: 45 OK.
+- **10:** `docs/README.md`, "How the long and short GDD are made", documents both commands, the exit codes and what `--check` reports.
+- **11:** `git diff master...HEAD --stat` touches only `docs/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, this task file and the two `tools/` files.
+
+**Observations for the board's review (not failures):**
+- Content is renamed "Details" in the long GDD, but decision text still says "see Content, 'Prototypes so far'" (Drifting) and "(Content, 'MVP challenges')" (Level design), so those pointers name a heading that doesn't exist in the long GDD.
+- Other cross-references read as written for the separate doc: "References" inside Visual style's decisions ("from the board's reference image, References"; "See the reference photos in References"), and "(below)" in Weapons' decisions.
+- Five chapters (Enemies, Weapons, Garage design, Visual style, HUD and menus) are only a summary plus a decision list, so the long GDD reads more like a set of decision lists than one flowing document; this follows the docs having no Content yet.
+- Visual style's References put three images inline in the middle of sentences, and the third is followed by its file path as code, which renders awkwardly.
+- No separator between the last chapter (HUD and menus) and "Source fingerprints" in contrast with the blank-line gap between chapters; cosmetic.
+- The tests have no explicit link-handling test (description section 4 lists one); links are passed through unchanged, so the generated file's links were checked directly instead.
