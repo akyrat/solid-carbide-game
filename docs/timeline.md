@@ -279,3 +279,8 @@ Entry format:
 - Decision or change: a new game area doc, HUD and menus, holds what used to be unfiled: the pause decision, plus the new HUD and level-up decisions. The HUD shows the car's HP as a bar, a timer counting down from 8:00, the XP bar and level, coins collected, an arrow to the nearest challenge, and the kaiju's health once it appears. Levelling up pauses the game; the level-up screen shows plain cards, each with a title and a description. Open: where each HUD element goes on screen. Listed in `docs/README.md` and as the `hud-menus` epic's game area doc.
 - Documents touched: `docs/hud-and-menus.md`, `docs/unfiled-game-details.md`, `docs/README.md`, `tasks/README.md`, `agent-notes/agents-interactions.md`, `docs/short-gdd/README.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: HUD layout; HUD and menus added to the definitions
+- Decision or change: the UI Agent proposes the first HUD layout and the board adjusts it in playtest. With the board's approval, `CLAUDE.md` now lists HUD and menus among the documents the Project Lead maintains, and the UI Agent's definition lists it as a document it works on. HUD and menus has no MVP questions left.
+- Documents touched: `docs/hud-and-menus.md`, `CLAUDE.md`, `.claude/agents/ui.md`, `docs/mvp-readiness.json`
+- Tasks: none

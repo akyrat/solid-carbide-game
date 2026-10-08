@@ -60,6 +60,7 @@ The short GDD is in `docs/short-gdd/`. The long GDD is `docs/long-gdd.md`. Separ
 - **Game loop architecture** (`docs/game-loop-architecture.md`): The overall flow of the game. Short, and reworked if the loop changes (not expected). Agents: QA/Integration Agent (reads it).
 - **Level design** (`docs/level-design.md`): What the map looks like, plus designs for the driving challenges. At first the board defines the challenges geometrically or visually, then agents build from that. Agents: Enemy Behavior Agent (reads it), Level/Challenge Design Agent (works on it).
 - **Garage design** (`docs/garage-design.md`): The garage's visual UI style, persistent car upgrades, the current car stats display, and future scope for unlockable cars with different driving styles. Agents: Driving & Drift Agent (reads it), Game Data Agent (reads it), UI Agent (works on it).
+- **HUD and menus** (`docs/hud-and-menus.md`): What the player sees on screen during a run (the HUD) and the menus around it: pause, level-up and their look. Agents: UI Agent (works on it), Narrative Theme Agent (reads it), Asset Generation Agent (reads it).
 
 Game decisions live in these documents, never in agent definitions.
 

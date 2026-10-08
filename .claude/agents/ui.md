@@ -17,7 +17,7 @@ Builds the HUD, menus, and the garage screen where car upgrades are bought.
 
 Documents live in `docs/`. The Project Lead maintains them. The documents are the source of truth for the game.
 
-- **Works on:** Garage design
+- **Works on:** Garage design, HUD and menus
 - **Reads:** Visual style
 
 ## Relationships
