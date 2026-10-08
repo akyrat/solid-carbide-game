@@ -364,3 +364,8 @@ Entry format:
 - Decision or change: Redgull's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling, which suits the story. The company's theme colour is red, used only on Redgull's own things: logo, billboards and, in the MVP, the weapons (not all red; included where it fits). It does not affect the car, enemies, map or anything else. Correction: the board never defined a brand colour; the "Greenbull-green" neon in the palette was wrongly attributed to the brand. It is removed, so the city's neon accents are pink and cyan.
 - Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`
 - Tasks: T-025 (short GDD)
+
+## 2026-10-08: The city is not Redgull's
+- Decision or change: the city has nothing to do with Redgull: the buildings carry none of its colours or branding (the "satirical Redgull billboards" are dropped from the buildings). Occasional Redgull banners may be added later as separate assets placed on buildings.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`
+- Tasks: T-025 (short GDD)
