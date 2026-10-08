@@ -21,6 +21,16 @@ agents_read: [level-challenge, ui, narrative-theme]
 - **Pixel-art technical style** (from the board's reference image, References): true pixel art drawn at its final size, never scaled up; hard pixel edges with no anti-aliasing and no semi-transparent pixels; transparent backgrounds; a dark, almost black **selective outline** (broken by lighter highlight pixels); **detailed shading**; **high detail**; a limited palette of about **30 colours per sprite**. (2026-10-08)
 - **Scale:** about **40 pixels per unit** (1 unit = the car's width), so the car is about 120 pixels long. The car's frames are **128 by 128 pixels**. Everything else in the world (buildings, boulders, enemies, ground) is drawn at the same scale. (2026-10-08)
 - **View:** a 3/4 isometric view, seeing the top and one side. The final car art is drawn for the isometric view only; the flat top-down view keeps the placeholder. (2026-10-08)
+- **Palette:** a dark navy and purple night base, with pink, cyan and Greenbull-green neon accents. (2026-10-08)
+- **Mood:** the game is set at night and should feel retro. (2026-10-08)
+- **The car:** inspired by a 1967 Ford Mustang fastback, in dark green, with two parallel racing stripes running down its middle (bonnet, roof and boot). See the reference photos in References. (2026-10-08)
+- **Buildings:** Tokyo-style towers with vertical signs, lit windows, and satirical Greenbull billboards. (2026-10-08)
+- **Ground:** asphalt roads with lane lines and crossings, cracked by the disaster; the centre is dusty gravel. (2026-10-08)
+- **Boulders:** dark rock with glowing cracks. (2026-10-08)
+- **Challenge arrow:** a glowing painted arrow that draws itself along the path, pulses while the challenge is open, and fades when it is completed. (2026-10-08)
+- **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact. (2026-10-08)
+- **The kaiju:** a giant monster several times the car's size, in the style of Godzilla. (2026-10-08)
+- **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player. (2026-10-08)
 - The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions). (2026-10-07)
 - Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set. (2026-10-07)
 
@@ -30,18 +40,12 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Open questions
 
-- What does the car look like: type of car, colours, any Greenbull livery? (Needed for task T-014.)
-- The palette: the main colours, and which neon accents.
-- Neon and lighting: is it night? Do only signs and windows glow, or more?
-- Buildings: style, height variation, signs, Greenbull billboards?
-- Ground: road markings on the asphalt; how the gravel centre looks.
-- Boulders: plain crashed meteor rocks, or glowing or smoking?
-- The kaiju's meteor attack: the meteor, the danger area on the ground, the impact.
-- The kaiju's look, and the minion's look (the minion comes with the pick from task T-023).
+- What colour are the car's two stripes (the black reference car's are white)? And does the car carry any Greenbull livery or stickers?
+- How does the retro feel shape the glow? Suggestion: glow is drawn into the sprites themselves as bright pixels with small, stepped halos (no smooth blur or bloom effects), which keeps the retro pixel look.
 - Effects: bullets, exhaust flames, enemy deaths, coin pickups. Described by the board, or left to the Asset Generation Agent within the palette and style?
 - How can buildings turn see-through when the car is behind them? Being researched in task T-020.
-- What does the painted challenge arrow look like, and how is it animated?
 
 ## References
 
+- Car look references (a 1967 Ford Mustang fastback): ![Black with stripes](visual-style/reference-car-mustang-1967-black-striped.jpg) for the two stripes down the middle, and ![Dark green](visual-style/reference-car-mustang-1967-dark-green.jpg) for the colour.
 - Technical style reference (only for the technical specs above; not the actual car, colours or mood): ![Reference car](visual-style/reference-car-technical-style.png) `visual-style/reference-car-technical-style.png`, 128 by 128 pixels, 29 colours.

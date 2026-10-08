@@ -22,6 +22,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - The boss becomes vulnerable only by completing the challenges its own meteors create. Those use a different color than the challenges already on the map. (2026-10-03)
 - Over a run, the number of enemies grows slightly. Enemies do not get tougher. (2026-10-07)
 - The kaiju's meteor challenges are the only challenges that make it vulnerable. They replace the Final GDD's plan of challenges spawning near the kaiju. (2026-10-07)
+- The MVP minion walks on four legs towards the player (how it looks: Visual style, Decisions). (2026-10-08)
 - The kaiju's health is set so that it takes about 4 vulnerability windows to kill it; the Game Data Agent turns that into a number, together with the player's weapon damage. (2026-10-08)
 - The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, how long the kaiju stays vulnerable after a challenge, and how often it drops meteors (including whether it can drop more while a challenge is still open). The board judges them in playtests. (2026-10-08)
 
@@ -31,7 +32,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 ## Open questions
 
-- Which enemy is the MVP minion? The board will pick one of the Unity prototype's three regular enemies (Monster1, Monster4, Monster7) after the report in task T-023 describes them.
+- The minion's look and movement are now decided (Visual style, Decisions: light-green scaled lizards walking on four legs towards the player). Does it still copy one of the Unity prototype's regular enemies (Monster1, Monster4, Monster7, report in task T-023) for everything else, such as health, contact damage and knockback, or are those left to the Game Data Agent?
 - (After MVP) Idea under consideration: a semi-transparent shield on the boss, in the same color as the arrow of the challenge it spawned, to signal that it is invulnerable.
 
 ## References
