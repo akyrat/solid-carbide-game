@@ -183,9 +183,9 @@ Game details are not repeated here. Each entry points to the document that holds
 
 ## 3. Why this crew is needed for the MVP
 
-The MVP is the game described in the Final GDD (`docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf`). It sets the scope at one car, one map, one minion enemy type plus the kaiju, 3 driving-challenge types, and 3 weapons (2 offered per level-up, each upgradeable up to 20 times), with 8-minute runs and the kaiju arriving at the 7-minute mark. Each part of that game has one agent that builds it:
+The MVP is the game defined by the game area docs in `docs/` (condensed in `docs/long-gdd.md`). It was first scoped by the original Final GDD PDF, which is now historical and no longer a source of truth. The scope is one car, one map, one minion enemy type plus the kaiju, 3 driving-challenge types and 2 weapons (the gun and the exhaust flamethrower), with 8-minute runs and the kaiju arriving at the 7-minute mark. Each part of that game has one agent that builds it:
 
-| MVP part (Final GDD) | Built by |
+| MVP part | Built by |
 |---|---|
 | The car and its drift, the one core skill everything rests on ("Drift Feel is King") | Driving & Drift |
 | Minions that swarm the player and grow in number and toughness, coin drops, and the kaiju with its vulnerability window | Enemy Behavior |

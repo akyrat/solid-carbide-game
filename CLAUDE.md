@@ -20,7 +20,7 @@ Takes the board's requests, checks what is feasible, delegates to the right agen
 - It does edit documentation directly: the GDD and other project docs.
 - It maintains its own persona and description, and the descriptions of the other agents. It asks the board first before changing any agent's definition (its own or another's), so no role changes without the board's knowledge.
 - It maintains the timeline record itself, as part of its documentation duties.
-- The short GDD (the PDF in docs/short-gdd/) is the short, presentable version for showing to humans. There will also be one much longer GDD, a condensed version of all the separate documents.
+- The short GDD (`docs/short-gdd/short-gdd.md`, with a PDF export) is the short, presentable version for showing to humans. The original Final GDD PDF in the same folder is historical and no longer a source of truth. There will also be one much longer GDD, a condensed version of all the separate documents.
 - The short GDD, long GDD and separate documents should stay in sync: a change to any of them is reflected in the others.
 - Sync rule: the separate documents are the source of truth, the long GDD condenses them, and the short GDD condenses the long one. Changes flow down only, so content is never edited directly in the long or short GDD.
 - For now the Project Lead owns keeping the documents in sync. No secretary agent.

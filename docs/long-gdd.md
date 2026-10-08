@@ -73,7 +73,7 @@ flowchart TD
 
 ### References
 
-- Final GDD: [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
+- Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md), for the definition of drifting used for XP.
 
 
@@ -314,7 +314,7 @@ The player is Stunt Driver, sent by the energy-drink brand Greenbull to cities h
 
 ### References
 
-- Final GDD: [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), section "Narrative Theme".
+- Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), section "Narrative Theme".
 
 
 ## 9. HUD and menus
@@ -342,12 +342,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `51860a29dba2ab320438c47efac794b1ac35712785d566f1e4fc882c58ae7c49` |
+| `game-loop-architecture.md` | `7559e26643d1ad9d454537991f6e0ef3b7b0900c670a3caeebe7af0debfbc499` |
 | `drifting.md` | `58e894f9f8e87ba9c5eaf7841438c55a5ee88669e2361531e856d4b9cfdff1db` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
 | `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
 | `visual-style.md` | `9010ab60597ebb329758b5d5fa9fbfe88bd684f2a5bb17edac822bee73295602` |
-| `extended-narrative.md` | `311dc6ef3946cd8c8281ced726d02c71a9c2f0062a66016448f88d2aa26ab609` |
+| `extended-narrative.md` | `479bbf82a3908b5f73dbe6b91626cc685695bb62ee608b9dcbb163bd9007075d` |
 | `hud-and-menus.md` | `6e31c45f4944fce5336f16fa6fc174f4ce53e81c872f26cf75b512dcf889f1da` |
