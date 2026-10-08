@@ -122,3 +122,11 @@ Checked by the QA/Integration Agent on 2026-10-08 in `C:\solid-carbide-worktrees
 - Visual style's References put three images inline in the middle of sentences, and the third is followed by its file path as code, which renders awkwardly.
 - No separator between the last chapter (HUD and menus) and "Source fingerprints" in contrast with the blank-line gap between chapters; cosmetic.
 - The tests have no explicit link-handling test (description section 4 lists one); links are passed through unchanged, so the generated file's links were checked directly instead.
+
+### Fixes after QA round 1
+
+Made by the Project Lead on 2026-10-08, from QA's reading notes, at the board's request:
+- The long GDD keeps each game area doc's "Content" heading (it said "Details"), so decisions that point to "Content, ..." resolve inside the chapter.
+- Visual style's references (a game area doc edit, made on `master` and merged in) now put each image on its own line with a caption.
+- Added `test_links_and_images_pass_through_unchanged` (the link-handling test the task asked for). 13 tests now.
+- Regenerated `docs/long-gdd.md`.

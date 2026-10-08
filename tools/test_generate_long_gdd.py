@@ -109,6 +109,7 @@ class GenerateTests(unittest.TestCase):
     def test_content_headings_shifted_and_code_fences_untouched(self):
         self.docs.run()
         text = self.docs.long()
+        self.assertIn("### Content", text)
         self.assertIn("#### Details here", text)
         self.assertIn("```mermaid\n## not a heading\n```", text)
 
@@ -117,6 +118,26 @@ class GenerateTests(unittest.TestCase):
         first = (self.docs.path / "long-gdd.md").read_bytes()
         self.docs.run()
         self.assertEqual(first, (self.docs.path / "long-gdd.md").read_bytes())
+
+    def test_links_and_images_pass_through_unchanged(self):
+        content = "See [the report](drifting/report.md) and ![a picture](level-design/a.svg).
+
+![Own line](visual-style/ref.png)"
+        refs = "- [Elsewhere](weapons.md#decisions) and an outside link: [Godot](https://godotengine.org)"
+        docs = Docs({"a.md": area_doc("Links", 1, content=content).replace("## References
+
+(None yet.)", "## References
+
+" + refs)})
+        try:
+            docs.run()
+            text = docs.long()
+            for link in ("[the report](drifting/report.md)", "![a picture](level-design/a.svg)",
+                         "![Own line](visual-style/ref.png)", "[Elsewhere](weapons.md#decisions)",
+                         "[Godot](https://godotengine.org)", "[a.md](a.md)"):
+                self.assertIn(link, text)
+        finally:
+            docs.close()
 
     def test_empty_chapter_says_not_written(self):
         docs = Docs({"a.md": area_doc("Empty", 1, decisions="(To be written.)", summary="(To be written.)")})

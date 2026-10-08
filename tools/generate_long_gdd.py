@@ -187,7 +187,7 @@ def render(docs):
             out += ["### Decisions", "", shift_headings(strip_date_notes(s["Decisions"])), ""]
             wrote = True
         if not is_placeholder(s["Content"]):
-            out += ["### Details", "", shift_headings(s["Content"]), ""]
+            out += ["### Content", "", shift_headings(s["Content"]), ""]
             wrote = True
         if not is_placeholder(s["References"]):
             out += ["### References", "", shift_headings(s["References"]), ""]

@@ -42,7 +42,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). The MVP goes straight to the Garage.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 
-### Details
+### Content
 
 #### One run
 
@@ -98,7 +98,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60.
 - The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. The board will playtest whether it feels the same; if not, the game may go back to a flat top-down view.
 
-### Details
+### Content
 
 #### Prototypes so far
 
@@ -165,7 +165,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - The board draws each challenge as its own drawing in Crash City Grid (References): one drawing per arrow path, kept in a folder per obstacle pattern. Every drawing in a pattern's folder has the same boulders; only the arrow differs.
 - The board's drawings are rough sketches of each challenge's general shape, not exact layouts. The Level/Challenge Design Agent makes them fit the map (for example the 8-unit roads), with whatever reasonable adjustments that needs (size, spacing, how tight the loops are), while keeping the shape: how many boulders, which way the arrow goes around each one, and the overall path (a loop, a figure-eight). The Driving & Drift Agent's check confirms the fitted versions can be driven.
 
-### Details
+### Content
 
 #### MVP challenges
 
@@ -280,8 +280,17 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 ### References
 
-- Car look references (a 1967 Ford Mustang fastback): ![Black with stripes](visual-style/reference-car-mustang-1967-black-striped.jpg) for the two stripes down the middle, and ![Dark green](visual-style/reference-car-mustang-1967-dark-green.jpg) for the colour.
-- Technical style reference (only for the technical specs above; not the actual car, colours or mood): ![Reference car](visual-style/reference-car-technical-style.png) `visual-style/reference-car-technical-style.png`, 128 by 128 pixels, 29 colours.
+- **Car look, colour:** a dark-green 1967 Ford Mustang fastback (inspiration only; no real badges).
+
+  ![Dark-green 1967 Mustang fastback](visual-style/reference-car-mustang-1967-dark-green.jpg)
+
+- **Car look, stripes:** the two stripes down the middle, from a black 1967 Mustang fastback (inspiration only).
+
+  ![Black 1967 Mustang fastback with two white stripes](visual-style/reference-car-mustang-1967-black-striped.jpg)
+
+- **Technical style:** only for the technical specs in Decisions (128 by 128 pixels, 29 colours); not the actual car, colours or mood.
+
+  ![Pixel-art reference car for the technical style](visual-style/reference-car-technical-style.png)
 
 
 ## 8. Extended narrative
@@ -339,6 +348,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
-| `visual-style.md` | `e06af9c66d8ad5d004ee3e3678892fb7cd7088cb8e1f221c27166ecc6f655900` |
+| `visual-style.md` | `9010ab60597ebb329758b5d5fa9fbfe88bd684f2a5bb17edac822bee73295602` |
 | `extended-narrative.md` | `311dc6ef3946cd8c8281ced726d02c71a9c2f0062a66016448f88d2aa26ab609` |
 | `hud-and-menus.md` | `6e31c45f4944fce5336f16fa6fc174f4ce53e81c872f26cf75b512dcf889f1da` |
