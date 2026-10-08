@@ -19,6 +19,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 - The Game Data Agent works out how weapon upgrades scale from level to level. (2026-10-08)
 - **Starting gun:** the player starts every run with it. It has no visible weapon on the car, only the bullets it fires. It fires only when an enemy is within range, aims automatically, and fires at set intervals. (2026-10-08)
 - **Exhaust flamethrower:** fires flames out of the car's exhaust, only while the car is drifting. (2026-10-08)
+- Both MVP weapons copy the behaviour of the matching weapons in the board's Unity prototype (its starting gun and its Flame Exhaust): targeting, firing, the flame's shape and what turns it on. A report on how they work there is task T-022. (2026-10-08)
 
 ## Content
 
@@ -26,11 +27,10 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ## Open questions
 
-- Starting gun: which enemy does it aim at when several are in range (for example the nearest)? Its range, interval and damage are balancing numbers for the Game Data Agent.
-- Exhaust flamethrower: does it use the same "drifting" as XP (W or S held together with A or D; Game loop architecture, Decisions)? Does the flame point straight back from the exhaust, and does it damage every enemy it touches?
+- Level-ups in the MVP: the player starts with the gun. Does the first level-up simply give the flamethrower? Once the player has both, what does a level-up offer, and what does an upgrade change in the MVP?
 - (After MVP) Upgrading how often the starting gun fires.
 - How many upgrade levels does each weapon have (the Final GDD says up to 20), what do upgrades change (the Final GDD says damage, projectile count or size, attack speed), and does choosing a weapon you already have upgrade it?
 
 ## References
 
-(None yet.)
+- Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md) (being written in task T-022).

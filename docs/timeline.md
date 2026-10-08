@@ -249,3 +249,8 @@ Entry format:
 - Decision or change: the MVP weapons are a starting gun (every run starts with it; no visible weapon, only bullets; fires automatically at set intervals at enemies within range, aiming itself) and an exhaust flamethrower that fires only while drifting. Upgrading the gun's fire rate comes after the MVP. Open: the gun's target choice, the flamethrower's drifting definition and flame shape, and how level-ups and upgrades work in the MVP.
 - Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: MVP weapons copy the Unity prototype's
+- Decision or change: the starting gun and the exhaust flamethrower copy the behaviour of the matching weapons in the board's Unity prototype. T-022 asks the Weapon Behavior Agent to study them there, read-only, and write a report, as T-006 did for driving. Still open: how level-ups and upgrades work in the MVP.
+- Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
+- Tasks: T-022
