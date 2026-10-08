@@ -20,7 +20,7 @@ Game decisions live in these documents, and the documents are the source of trut
 | Garage design | `garage-design.md` |
 | HUD and menus | `hud-and-menus.md` |
 | Long GDD | `long-gdd.md` |
-| Short GDD | `short-gdd/` |
+| Short GDD | `short-gdd/short-gdd.md` (PDF: `short-gdd/short-gdd.pdf`; the original Final GDD PDF is kept there as history) |
 | Timeline record | `timeline.md` |
 | Unfiled game details | `unfiled-game-details.md` |
 
@@ -30,6 +30,8 @@ Game decisions live in these documents, and the documents are the source of trut
   - Regenerate it after changing a game area doc: `python tools/generate_long_gdd.py` (it writes nothing and exits 2 if a game area doc breaks the structure below, naming the file and line).
   - Staleness check, run at the start of each session and before milestones: `python tools/generate_long_gdd.py --check`. It changes nothing, lists every game area doc changed, added or removed since the long GDD was generated, and says whether the short GDD has caught up (exit 0 in sync, 1 stale, 2 structure problem).
 - **Short GDD:** the pitch version, readable in one sitting. Written by the Project Lead from the long GDD in Markdown (`short-gdd/short-gdd.md`), with a PDF exported from it for sharing (task T-025). Visuals come later. (Board decision, 2026-10-08.)
+  - Export the PDF after changing it: `python tools/export_short_gdd_pdf.py` (needs Microsoft Edge and an internet connection, for the Markdown and diagram libraries).
+  - After bringing it up to date with the long GDD, update the "Last updated from long GDD" line in `short-gdd/README.md`, so the staleness check passes.
 
 ## How separate documents are written
 

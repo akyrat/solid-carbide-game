@@ -1,7 +1,7 @@
 ---
 id: T-025
 title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 epic: tooling
@@ -52,4 +52,16 @@ The board's review: read the short GDD (and the PDF) and judge whether it works 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Project Lead on 2026-10-08.
+
+**Built:**
+- `docs/short-gdd/short-gdd.md`: the pitch, about 1,270 words (3 PDF pages). Sections: a fact table, Pitch, The world and the tone, Design pillars (with a loop diagram), The game (with a run diagram), Player experience, The look, The MVP and what comes after (a table), How it's made. It follows the Final GDD's order where it still fits and describes the game as the long GDD does. It names no real car or character (the car is "a late-sixties fastback muscle car"), following Visual style's rule.
+- Dropped from the original on purpose, because the long GDD (and so the game area docs) has no such content: the original's Technical Feasibility and Budget sections (the 5-week window, Claude and PixelLab costs). They can come back if the board records them in a game area doc.
+- `tools/export_short_gdd_pdf.py`: wraps the Markdown in a page that renders it with marked and mermaid (pinned versions from the jsDelivr CDN), then prints it with Microsoft Edge in headless mode to `docs/short-gdd/short-gdd.pdf`. Needs Edge (or `EDGE_BIN`) and an internet connection. Checked by rendering the pages: both diagrams appear as diagrams.
+- `tools/test_export_short_gdd_pdf.py`: 3 tests for the page building (the Markdown can't break out of the script, the libraries are loaded, Mermaid blocks are converted).
+- `docs/short-gdd/README.md`: the sync line set to the current long GDD fingerprint; the original Final GDD PDF described as the historical original; the 14 pending wording changes recorded as applied.
+- `docs/README.md`: the documents table points to the new short GDD and PDF; the export command and the sync-line step are documented.
+
+**Self-check:** word count 1,265 (under 2,500); each of the 14 old wording changes is reflected (Project Lead and the agents in "How it's made"; reverse on S; no drift-curve chart; enemies grow only in number; 2 MVP weapons and 8 to 12 later; co-op; meteor challenges only; likes from drifts; the city map and challenges; main menu and garage; HUD and pause; livestream and likes); the PDF opens and shows both diagrams; `python tools/generate_long_gdd.py --check` exits 0; the original PDF is unchanged; no game area doc, nothing under `game/` or `.claude/agents/` changed; all Python tool tests pass.
+
+**Note for the board:** the old wording list said "1 offered per challenge" for weapons; the short GDD uses the later decision (a gift pack on each level-up).
