@@ -23,7 +23,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until:** T-013 is done (it fixes the sheet layout this art must match), **and** the board has described the car: what it looks like, its size (32 or 64 pixels), and which view or views it is drawn for (isometric, flat top-down, or both; each view is a separate set). The look belongs in the Visual style document, which is still empty. The Project Lead adds the description here and unblocks the task.
+**Blocked until:** T-013 is done (it fixes the sheet layout this art must match), **and** the board has described what the car looks like (Visual style, Open questions). The technical style is decided (Visual style, Decisions): 128 by 128 pixel frames, about 40 pixels per unit, selective dark outline, detailed shading, high detail, about 30 colours, and the isometric view only. The Project Lead adds the description here and unblocks the task.
 
 The final pixel-art car, drawn 3 times as long as it is wide (Drifting, Decisions), in **16 directions**, 22.5 degrees apart, replacing the placeholder sheets from T-013. It must use exactly T-013's layout and JSON convention, so the drift prototype picks it up with no code change.
 
