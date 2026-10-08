@@ -10,8 +10,8 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 
 | Folder | What goes in it |
 | --- | --- |
-| `scenes/` | Scenes (`.tscn`) |
-| `scripts/` | Game GDScript (`.gd`) |
+| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype |
+| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel |
 | `data/` | Game data as JSON |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
@@ -186,3 +186,39 @@ It overwrites, in `game/art/placeholders/car/`:
 - In the isometric sheet the world headings are 22.5 degrees apart, so the nose's angle on screen is not evenly spaced (the JSON lists it per frame).
 - The car's centre is the point (40, 40) in frame pixel coordinates (top-left of the frame = 0, 0), the middle of the frame: a `Sprite2D` with `centered = true`, `hframes = 16` and no offset puts the car's centre on the node's origin.
 - Scale: 1 world pixel = 1 sprite pixel in the flat view; the isometric sheet projects those same world pixels. One unit is 16 pixels, so to draw the car at its world size, scale the sprite by (world size of 1 unit) / `px_per_unit`. The size is the drawing only: the car's physics body is a 1 by 1 unit square (Drifting, Decisions), so the drawing sticks out 1 unit past it at the front and back.
+
+## Drift prototype
+
+The first playable piece (task T-012): the car driving and drifting like the board's Unity prototype, on a flat, empty ground with a grid, with a tuning panel and a flat / isometric view switch. It is the project's main scene.
+
+**Run it:**
+
+- From the Godot editor: open the `game/` folder as a project and press F5 (Run Project), or open `scenes/drift_prototype/drift_prototype.tscn` and press F6.
+- Without the editor, from the repo root in Git Bash: `"$GODOT_BIN" --path game` (with `GODOT_BIN` from `.env`). In PowerShell: `& $env:GODOT_BIN --path game` after setting `$env:GODOT_BIN` to the same path.
+
+**Keys:**
+
+| Key | Does |
+| --- | --- |
+| W | Forward: jumps to cruise speed, then speeds up to top speed |
+| S | Brakes while moving forward, then reverses |
+| A / D | Rotate the car left / right (at any speed, also standing still) |
+| Tab | Opens and closes the tuning panel |
+| V | Switches between the flat top-down and the isometric view |
+
+Escape is not used here (pause is task T-015). There is no jump, no arrow-key steering and no gamepad.
+
+**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the Unity values, an "Isometric view" toggle (same as V), a "Physics interpolation" toggle (off by default, like Unity), the camera zoom slider (6 to 20, starting at 14.4) and one slider per handling setting. Every slider starts at the Unity value and applies at once; hover a slider or its label for a tooltip. Changes are not saved: restarting goes back to the Unity values.
+
+**How it is built** (`scripts/driving/`):
+
+- `car_model.gd`: the movement, step by step as in the Unity prototype report, section 4, in units (1 unit = the car's width). No nodes, so tests run it directly. Its `cruise_jump(from_speed, w_just_pressed)` signal fires when W makes the car jump up to cruise speed (for the boost effect, task T-008).
+- `car_tuning.gd`: the handling values (defaults = the Unity values) and the slider list with labels, ranges and tooltips.
+- `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step.
+- `drift_prototype.gd`: builds the scene. The physics world is never drawn; the `View` node draws the ground grid and the car sprite either flat or through the 2:1 isometric projection screen = (x - y, (x + y) / 2), and places the camera exactly on the drawn car (no rotation, no smoothing). Switching views changes only the drawing.
+- `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
+- `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
+
+**Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the sheets are drawn at scale 1. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
+
+**Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) and `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`.

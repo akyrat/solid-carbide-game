@@ -10,7 +10,7 @@ agents_read: []
 
 ## Summary
 
-Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, and the car can also reverse. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
+Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, with a higher top speed chosen after the board's playtest of the Godot version, and the car can also reverse. The player sets the camera zoom in the pause menu. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
 
 ## Decisions
 
@@ -23,9 +23,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. (2026-10-06)
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)
-- The camera zoom is fixed: players cannot change it. The board picks the value by playtesting the Godot car with the prototype's zoom slider (task T-010). (2026-10-07; replaces the 2026-10-06 decision that the zoom is a player setting)
+- The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions. (2026-10-08; replaces the 2026-10-07 decision that the zoom is fixed)
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60. (2026-10-06)
-- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. The board will playtest whether it feels the same; if not, the game may go back to a flat top-down view. (2026-10-06)
+- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. (2026-10-06)
+- The board playtested the Godot drift prototype in the isometric view and is very happy with it. The game uses the isometric view and the Unity values, with two changes: the top speed is **3.0 times** cruise speed (Unity: 2.5), and **physics interpolation is on**, for smoother motion between physics steps. The jump to cruise speed stays at 11. (2026-10-08)
 
 ## Content
 
@@ -51,11 +52,23 @@ Facts from the report (Unity prototype report, sections 1 to 7). No new decision
 - A coded "drift amount" ramps from 0 to 1 in 0.08 seconds and back in 0.33 seconds. With the current car values it does not change the handling; it drives the drift effects.
 - The camera is orthographic, sits exactly on the car every frame, never rotates, and has no smoothing or look-ahead. Its zoom (default 14.4, half the visible height in world units) is a saved pause-menu setting.
 
+### Godot drift prototype
+
+The Godot copy of the Unity car (task T-012), for the board's playtest.
+
+- **Where:** the scene `game/scenes/drift_prototype/drift_prototype.tscn`, the project's main scene, with its code in `game/scripts/driving/`. How it is built, its keys and how to run it: `game/README.md`, "Drift prototype".
+- **How to run it:** open `game/` in Godot 4.6 and press F5, or run `"$GODOT_BIN" --path game` from the repo root.
+- **Controls:** W, S, A and D as in the Unity prototype (Unity prototype report, section 2). Tab opens the tuning panel, V switches the view. No jump, arrow keys or gamepad.
+- **Ground:** flat and empty, like the Unity Grass stage, with a grid (a thin line every unit, a stronger one every 5 units) and a marker at the start point.
+- **Movement:** the Unity prototype report's section 4, step by step, at 50 physics steps per second, with the Unity values (report, section 5). The GUT tests check it against the report's numbers. One difference: the comparison that decides whether W snaps to cruise speed (and S to reverse cruise speed) ignores rounding errors below 0.000000001 units per second. Without it, at some headings the forward speed reads back a hair under cruise speed and W would snap to cruise speed on every step instead of climbing to top speed.
+- **Boost signal:** the car signals each time W makes it jump up to cruise speed, with the speed before the jump and whether W was just pressed. During a held W + A or W + D drift the slide pulls the forward speed under cruise speed, so the jump happens on most steps of the drift too (with W not just pressed).
+- **Scale and camera:** 16 pixels per unit, the scale of the placeholder car sheets. The camera sits exactly on the drawn car, never rotates and has no smoothing or look-ahead. Its zoom is Unity's orthographic size, half the visible height in units.
+- **View switch:** the physics always runs in the flat top-down world. V, or the panel's "Isometric view" toggle, switches only the drawing: flat top-down with the flat placeholder sheet, or a standard 2:1 isometric projection (screen = (x - y, (x + y) / 2)) of the same world with the isometric sheet. It can be switched mid-drive; the car's position, speed and rotation do not change.
+- **Tuning panel (Tab):** one slider per setting in the report's section 8 list except off-road damping and the physics rate (cruise speed, top speed multiplier, time to top speed, coast slowdown, turn speed, steering sensitivity, base sideways grip, drift grip at low and high speed, drift speed reference, drift enter and exit rates), plus the camera zoom (6 to 20, starting at 14.4). Each slider starts at the Unity value, applies live and has a tooltip. One button resets everything to the Unity values. A "Physics interpolation" toggle (off, as in Unity) smooths the motion between physics steps. A readout shows speed, drift angle and drift amount. Nothing is saved between runs.
+
 ## Open questions
 
 - (After MVP) What does the boost effect look like?
-- What is the camera zoom? (Task T-010.)
-- Does the isometric drawing feel the same as the flat top-down prototype? (Board playtest.)
 - (After MVP) Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
 - (After MVP) Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
 - (After MVP) Should gamepad support carry over (triggers as on/off, analog stick steering)?
@@ -66,3 +79,4 @@ Facts from the report (Unity prototype report, sections 1 to 7). No new decision
 ## References
 
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md).
+- Godot drift prototype: [../game/README.md](../game/README.md), section "Drift prototype".

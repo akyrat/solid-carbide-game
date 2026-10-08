@@ -369,3 +369,18 @@ Entry format:
 - Decision or change: the city has nothing to do with Redgull: the buildings carry none of its colours or branding (the "satirical Redgull billboards" are dropped from the buildings). After the MVP, occasional Redgull banners may be added as separate assets placed on buildings (board); their art task is written then.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`
 - Tasks: T-025 (short GDD)
+
+## 2026-10-08: T-012 done: Godot drift prototype
+- Decision or change: the board playtested the Godot drift prototype, adjusted some settings on the tuning panel and is very happy with the drift. It passed QA round 1 on all 11 criteria. Merged from `task/T-012-godot-drift-prototype`. T-008, T-015 and T-021 are unblocked. The board also wants the camera zoom slider kept as a player setting in the pause menu, which reverses the fixed-zoom decision; T-010 stays blocked until that is recorded.
+- Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `game/README.md`
+- Tasks: T-012 (done), T-008, T-015, T-021 (unblocked), T-010
+
+## 2026-10-08: Drift defaults after the playtest; zoom slider in the MVP pause screen
+- Decision or change: after playtesting T-012 the game keeps the Unity values except: top speed 3.0 times cruise speed (Unity 2.5), physics interpolation on, and the isometric view (the board is happy with it, so the flat-view fallback question is closed). The jump to cruise speed stays at 11. The camera zoom becomes a player setting again: a slider (6 to 20, default 14.4) on the MVP pause screen, saved between sessions. T-029 sets the new defaults; T-015 now builds the pause screen with the zoom slider in one ticket (board); T-010 is done.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`
+- Tasks: T-029 (new), T-015 (updated), T-010 (done)
+
+## 2026-10-08: Short GDD tone wording; design pillars ticket
+- Decision or change: "tongue-in-cheek" is a working phrase only, not for a pitch, so it is removed from the short GDD's tone line, which now reads "The tone is **satirical**." (T-025). The game area docs keep it as an internal note. The short GDD's design pillars read like agent instructions; the board will rework them into presentable pillars (T-030), and the Project Lead then records them in a game area doc and carries them down to the long and short GDD.
+- Documents touched: `docs/short-gdd/short-gdd.md` (T-025 branch)
+- Tasks: T-025, T-030 (new)

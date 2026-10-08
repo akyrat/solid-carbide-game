@@ -1,7 +1,7 @@
 ---
 id: T-008
 title: Short "boost" effect when W snaps the car to cruise speed
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 epic: driving
@@ -23,7 +23,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until the Godot car exists** (T-012), which exposes the signal for the jump to cruise speed.
+**Unblocked: T-012 is done** (2026-10-08). The Godot car exposes the signal for the jump to cruise speed.
 
 When the player presses W and the car jumps instantly to cruise speed (Drifting, Decisions; the jump is described in the Unity prototype report, section 4, step 5), a short "boost" effect plays to emphasise that jump.
 

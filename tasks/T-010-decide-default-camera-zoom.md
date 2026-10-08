@@ -1,7 +1,7 @@
 ---
 id: T-010
 title: Board decides the camera zoom
-status: blocked
+status: done
 from: project-lead
 to: board
 epic: driving
@@ -34,9 +34,9 @@ When the board has decided, the Project Lead records the value in Drifting, Deci
 
 ## Acceptance criteria
 
-- [ ] The board's chosen zoom is recorded in `docs/drifting.md`, Decisions, with the date (Project Lead checks)
-- [ ] The timeline records the decision (Project Lead checks)
+- [x] The board's chosen zoom is recorded in `docs/drifting.md`, Decisions, with the date (Project Lead checks)
+- [x] The timeline records the decision (Project Lead checks)
 
 ## Result notes
 
-Written when the board has decided.
+After playtesting T-012 (2026-10-08), the board decided the zoom is not fixed after all: it is a player setting, a slider in the pause menu (built in T-015, MVP), with the Unity default of 14.4 and range 6 to 20, saved between sessions. Recorded in Drifting and HUD and menus, Decisions.
