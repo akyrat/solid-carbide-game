@@ -1,7 +1,7 @@
 ---
 id: T-012
 title: Godot drift prototype: copy the Unity car, with tuning sliders and a flat/isometric view switch
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 epic: driving
@@ -12,7 +12,7 @@ depends_on: [T-013, T-018]
 documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, docs/drifting/unity-prototype-report.md, game/README.md, .claude/agents/driving-drift.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the drift prototype scene, the car's script and settings, the tuning panel, their tests, project.godot (physics rate, input map), docs/drifting.md, game/README.md]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,17 +45,17 @@ The first playable piece of Solid Carbide: the car, driving and drifting exactly
 
 ## Acceptance criteria
 
-- [ ] `game/project.godot` sets 50 physics ticks per second, and the input map binds W, S, A and D to the car's actions (QA: pass / fail)
-- [ ] GUT tests show the speed profile matches the report: W from standstill gives 11 on the first step, top speed 27.5 is reached 69 steps after cruise, coasting from 27.5 reaches 0 in 3.33 s (27.5 / 8.25; ±1 step), S from 27.5 reaches 0 in 2.3 s (±1 step) and then snaps to -11, and W while reversing snaps to +11 (QA: pass / fail)
-- [ ] GUT tests show the rotation rate is 191.9 degrees per second both at standstill and at top speed (QA: pass / fail)
-- [ ] GUT tests of W + A held from top speed show the drift angle passing 45 degrees at 0.28 s (±0.04 s), and settling at a total speed of 33.9 (±0.5) and a drift angle of 75 degrees (±2), matching `tools/unity_drift_charts.py --summary` (QA: pass / fail)
-- [ ] The car's default values equal the "Value in project files (used)" column of the report's section 5, checked for every slider setting (QA: pass / fail)
-- [ ] Every setting in the report's section 8 list, except off-road damping and the physics rate, has a slider; a test shows changing a slider changes the movement, and the reset button restores every Unity value (QA: pass / fail)
-- [ ] A test shows switching between flat and isometric view, mid-drive, leaves the car's position, velocity and rotation identical to a run without switching (QA: pass / fail)
-- [ ] Screenshots (with the T-001 screenshot tool) of the prototype in flat view and in isometric view each show the ground grid and the car drawn with the matching T-013 sheet, facing its heading (QA: pass / fail)
-- [ ] The camera stays centred on the car and never rotates while the car turns, shown by a test or by two screenshots at different car rotations; the zoom slider covers 6 to 20 and starts at 14.4 (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
-- [ ] `game/README.md` explains how to run the prototype and its keys; `docs/drifting.md` has a `### Godot drift prototype` subsection in Content, still follows the five-section structure, and its Summary, Decisions and Open questions are unchanged (QA: pass / fail)
+- [x] `game/project.godot` sets 50 physics ticks per second, and the input map binds W, S, A and D to the car's actions (QA: pass)
+- [x] GUT tests show the speed profile matches the report: W from standstill gives 11 on the first step, top speed 27.5 is reached 69 steps after cruise, coasting from 27.5 reaches 0 in 3.33 s (27.5 / 8.25; ±1 step), S from 27.5 reaches 0 in 2.3 s (±1 step) and then snaps to -11, and W while reversing snaps to +11 (QA: pass)
+- [x] GUT tests show the rotation rate is 191.9 degrees per second both at standstill and at top speed (QA: pass)
+- [x] GUT tests of W + A held from top speed show the drift angle passing 45 degrees at 0.28 s (±0.04 s), and settling at a total speed of 33.9 (±0.5) and a drift angle of 75 degrees (±2), matching `tools/unity_drift_charts.py --summary` (QA: pass)
+- [x] The car's default values equal the "Value in project files (used)" column of the report's section 5, checked for every slider setting (QA: pass)
+- [x] Every setting in the report's section 8 list, except off-road damping and the physics rate, has a slider; a test shows changing a slider changes the movement, and the reset button restores every Unity value (QA: pass)
+- [x] A test shows switching between flat and isometric view, mid-drive, leaves the car's position, velocity and rotation identical to a run without switching (QA: pass)
+- [x] Screenshots (with the T-001 screenshot tool) of the prototype in flat view and in isometric view each show the ground grid and the car drawn with the matching T-013 sheet, facing its heading (QA: pass)
+- [x] The camera stays centred on the car and never rotates while the car turns, shown by a test or by two screenshots at different car rotations; the zoom slider covers 6 to 20 and starts at 14.4 (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
+- [x] `game/README.md` explains how to run the prototype and its keys; `docs/drifting.md` has a `### Godot drift prototype` subsection in Content, still follows the five-section structure, and its Summary, Decisions and Open questions are unchanged (QA: pass)
 
 **The board's playtest:** drive it in flat view and compare the feel with the Unity prototype on Grass, then switch to isometric and judge whether it feels the same (Drifting, Open questions).
 
@@ -165,3 +165,38 @@ Command: `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_dem
 ### Criterion clarified by the Project Lead before QA (2026-10-08)
 
 Criterion 2 said coasting reaches 0 in "3.3 s (±1 step)". The report rounds the exact value, 27.5 / 8.25 = 3.333 s, to 3.3 s; the criterion means the exact value. It now reads "3.33 s (27.5 / 8.25; ±1 step)". The measured 3.34 s (167 steps) is within one step of it.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-08.** All 11 criteria pass. Checked in `C:\solid-carbide-worktrees\T-012` on `task/T-012-godot-drift-prototype`; the agent's result notes were not relied on.
+
+**Commands and outcomes:**
+
+- `bash game/tools/run_tests.sh`: TESTS PASSED, 7 scripts, 54/54 tests, 14226 asserts (`test_drift_model.gd` 17/17, `test_drift_prototype.gd` 14/14).
+- `python -m unittest discover -p "test_*.py"` in `game/tools` (45 OK) and in `tools` (50 OK).
+- `python tools/unity_drift_charts.py --summary`: top 27.5, ramp 0.23913 and coast 0.165 per step, 191.90 deg/s, W from rest at top at 1.40 s, W + A from top at 3 s forward 8.83 / sideways 32.70 / slip 74.9 / total 33.87, slip 45/60/70 deg at 0.28/0.38/0.52 s, 9.0 deg and 27.50 two seconds after releasing A. The GUT tests assert these same numbers (most to 0.01 or tighter). Coast 27.5 / 0.165 = 166.7, so 167 steps = 3.34 s, within one step of 3.333 s; brake 27.5 / 0.23913 = 115 steps = 2.30 s. The script rewrote no chart (`git status` clean afterwards).
+- `bash game/tools/screenshot.sh` with `drift_prototype_demo_{flat,iso}.tscn` at 120 and 300 frames, `drift_prototype_demo_iso_panel.tscn` at 200 and the main scene at 30, saved in the git-ignored `screenshots/qa/`.
+
+**Per criterion:**
+
+1. `project.godot`: `common/physics_ticks_per_second=50`, `physics_interpolation=false`; `car_accelerate`/`car_reverse`/`car_steer_left`/`car_steer_right` on physical W/S/A/D (87/83/65/68), plus Tab and V. No Escape.
+2. `test_w_from_standstill_gives_cruise_on_first_step`, `test_top_speed_reached_69_steps_after_cruise`, `test_coasting_from_top_speed_reaches_zero_in_3_3_s` (167 steps, against 3.333 s ± 1 step, as clarified), `test_braking_..._then_snaps_to_reverse` (2.30 s, then -11), `test_w_while_reversing_snaps_to_cruise`.
+3. `test_rotation_rate_at_standstill` and `_at_top_speed`: 191.9 deg/s to 1e-6.
+4. `test_drift_angle_passes_45_degrees_at_0_28_s` (± 0.04) and `test_held_drift_settles_at_33_9_and_75_degrees` (also 33.87 / 74.9 to 0.01 / 0.05).
+5. `car_tuning.gd` defaults compared by hand with section 5: 11, 202, 2.5, 2.3, 0.3, 0.95, 0.98, 0.98, 0.98, 20, 12, 3. All equal; `test_defaults_equal_unity_values` checks the same.
+6. `CarTuning.SETTINGS` has the 12 section 8 settings with the section 8 labels and ranges, plus the zoom slider; off-road damping and physics rate left out. Tests: changing cruise speed and turn speed changes the movement; reset puts every slider and value back.
+7. `test_view_switch_mid_drive_leaves_the_car_unchanged`: exact `assert_eq` on x, y, vx, vy, rotation and drift amount over a 200-step route, switching every 17 steps. `set_view` never touches the car.
+8. My screenshots: flat view shows the square grid and the flat sheet (blue body, yellow nose, nose up at rest, turning with the drift); isometric view shows the projected grid and the isometric sheet. The frame is picked from the JSON layout (`car_sprite.gd`), checked by `test_sprite_frame_follows_heading`.
+9. In all my screenshots the car is at the screen centre and the grid stays square to the screen (flat) or fixed in its 2:1 projection (iso), with the car at different headings. `test_camera_stays_on_the_car_and_never_rotates` (both views, three rotations each) and `test_zoom_slider_range_and_default` (6 to 20, starts at 14.4) pass.
+10. See the commands above.
+11. `game/README.md`, "Drift prototype", has how to run it (editor F5/F6, command line in Git Bash and PowerShell) and a key table. `git diff master...HEAD -- docs/drifting.md` shows only additions: the `### Godot drift prototype` subsection in Content and one References line. Still five `##` sections; Summary, Decisions and Open questions unchanged.
+
+**`car_model.gd` against the report's section 4:** steps 1 to 7 match line by line: S ignored while W held; drifting = (W or S) and |steer| > 0.01; rotation built but applied only after the velocity (the one-step lag); forward/sideways split on the old heading; the step 5 branches; grip from the new forward speed with the three grips clamped to 0..1 (as the chart script does); velocity written back on the old heading; position += velocity * dt. Step 8's damping is left out, which is correct for Grass (damping 0). **`CRUISE_EPSILON` (1e-9):** I reproduced the problem in Python with the report's formulas in 64-bit floats: W from rest stayed stuck at 11 at 39 of the same 400 test headings without the guard, and at none with it. The guard only matters when the forward speed is within 1e-9 of cruise, where the exact maths would have it equal to cruise, so it changes none of the report's behaviour. Real drops under cruise (in a drift, or coasting) are far larger and still snap.
+
+**Observations for the playtest:**
+
+- `cruise_jump` fires on most steps of a held W + A/D drift (the forward speed keeps dropping under cruise, as in Unity), with `w_just_pressed` false. T-008 will need to choose which jumps play the boost.
+- The isometric car is a flat parallelogram (no box height), as T-018 drew it, and its screen angle is unevenly spaced between frames: worth judging in the iso playtest.
+- V as the view key, the drift prototype as the main scene and the on-screen key hint are the agent's choices, not fixed by the task.
+- Physics interpolation could only be checked in tests and stills; whether motion looks smoother with it on is for the playtest.
+- No command was blocked. The Godot imports left no `.import` changes in this round.
