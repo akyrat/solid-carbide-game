@@ -1,7 +1,7 @@
 ---
 id: T-007
 title: Long GDD generator and document staleness check
-status: needs-playtest
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -130,3 +130,7 @@ Made by the Project Lead on 2026-10-08, from QA's reading notes, at the board's 
 - Visual style's references (a game area doc edit, made on `master` and merged in) now put each image on its own line with a caption.
 - Added `test_links_and_images_pass_through_unchanged` (the link-handling test the task asked for). 13 tests now.
 - Regenerated `docs/long-gdd.md`.
+
+### Board review
+
+2026-10-08: the board reviewed the long GDD (after the post-QA fixes) and marked the task `done`.
