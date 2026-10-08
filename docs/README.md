@@ -18,6 +18,7 @@ Game decisions live in these documents, and the documents are the source of trut
 | Game loop architecture | `game-loop-architecture.md` |
 | Level design | `level-design.md` |
 | Garage design | `garage-design.md` |
+| HUD and menus | `hud-and-menus.md` |
 | Long GDD | `long-gdd.md` |
 | Short GDD | `short-gdd/` |
 | Timeline record | `timeline.md` |
@@ -25,7 +26,7 @@ Game decisions live in these documents, and the documents are the source of trut
 
 ## How separate documents are written
 
-The eight separate documents (Extended narrative to Garage design in the table above) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.
+The nine separate documents (Extended narrative to HUD and menus in the table above; the board calls them game area docs) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.
 
 ```markdown
 ---

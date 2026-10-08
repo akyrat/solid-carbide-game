@@ -34,7 +34,7 @@ Every task file has an `epic` and a `milestone` in its header.
 | `weapons` | Weapons and their upgrades | Weapons |
 | `level-challenges` | The map and its driving challenges | Level design |
 | `garage` | The garage and persistent car upgrades | Garage design |
-| `hud-menus` | The HUD, menus and settings | (none yet; see `docs/unfiled-game-details.md`) |
+| `hud-menus` | The HUD, menus and settings | HUD and menus |
 | `art` | Generated and placeholder art | Visual style |
 | `sound` | Sound effects and music | (none yet) |
 | `tooling` | Project setup, test tools and documentation tooling | (not a game area) |

@@ -274,3 +274,8 @@ Entry format:
 - Decision or change: the game opens on a main menu (Start, Garage, Quit) and returns there when a run ends. The MVP garage sells three permanent upgrades, each about 10 levels: acceleration, car HP, and a weapon damage bonus in percent; the Game Data Agent sets prices and per-level effects. The garage screen is a plain list in the MVP; its look, more upgrades and unlockable cars come after the MVP.
 - Documents touched: `docs/garage-design.md`, `docs/game-loop-architecture.md`, `docs/short-gdd/README.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: HUD and menus game area doc
+- Decision or change: a new game area doc, HUD and menus, holds what used to be unfiled: the pause decision, plus the new HUD and level-up decisions. The HUD shows the car's HP as a bar, a timer counting down from 8:00, the XP bar and level, coins collected, an arrow to the nearest challenge, and the kaiju's health once it appears. Levelling up pauses the game; the level-up screen shows plain cards, each with a title and a description. Open: where each HUD element goes on screen. Listed in `docs/README.md` and as the `hud-menus` epic's game area doc.
+- Documents touched: `docs/hud-and-menus.md`, `docs/unfiled-game-details.md`, `docs/README.md`, `tasks/README.md`, `agent-notes/agents-interactions.md`, `docs/short-gdd/README.md`, `docs/mvp-readiness.json`
+- Tasks: none

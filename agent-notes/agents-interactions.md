@@ -175,7 +175,7 @@ Game details are not repeated here. Each entry points to the document that holds
 | **Weapon Behavior** | The Godot code for how each weapon fires and behaves, including its upgrades in code. Builds weapons; does not design them. | `docs/weapons.md` |
 | **Game Data** | Stats and upgrade paths as JSON for weapons, enemies and garage car upgrades, the balancing of those numbers, and saving and loading progress between runs. | `docs/weapons.md`, `docs/enemies.md`, `docs/garage-design.md` |
 | **Level/Challenge Design** | The map and its driving challenges, each checked as drivable with the Driving & Drift verification script before hand-over. | `docs/level-design.md` |
-| **UI** | The HUD, menus and garage screen. Displays screens and collects input only; the logic behind an action belongs to the agent that owns the thing being changed. | `docs/garage-design.md`, `docs/visual-style.md` |
+| **UI** | The HUD, menus and garage screen. Displays screens and collects input only; the logic behind an action belongs to the agent that owns the thing being changed. | `docs/hud-and-menus.md`, `docs/garage-design.md`, `docs/visual-style.md` |
 | **Asset Generation** | Pixel art generated through PixelLab, with a record of every asset (prompt, settings, sources, cost). Creates assets but never judges them. | `docs/visual-style.md`, `docs/extended-narrative.md` |
 | **SFX** | Sound effects downloaded from Freesound, with source and license metadata next to each, and direction for where sounds and music play. Music is made by a human musician. | `docs/unfiled-game-details.md` (sound licenses) |
 | **Narrative Theme** | Reviews of text and story content for consistency with the story, and new text only when the board asks for it. | `docs/extended-narrative.md` |

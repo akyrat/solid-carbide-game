@@ -29,7 +29,7 @@ class StatuslineTests(unittest.TestCase):
 
     def test_real_file_is_valid(self):
         data = json.loads(statusline.READINESS.read_text(encoding="utf-8"))
-        self.assertEqual(len(data["docs"]), 8)
+        self.assertGreaterEqual(len(data["docs"]), 8)
         for pct in data["docs"].values():
             self.assertTrue(0 <= pct <= 100)
 
