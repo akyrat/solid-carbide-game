@@ -1,0 +1,55 @@
+---
+id: T-025
+title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
+status: blocked
+from: project-lead
+to: project-lead
+epic: tooling
+milestone: mvp
+user_facing_text: no
+changes_visuals: no
+depends_on: [T-007]
+documents_affected: [docs/short-gdd/short-gdd.md, docs/short-gdd/README.md, docs/README.md]
+files_to_read_first: [tasks/README.md, CLAUDE.md, docs/README.md, docs/long-gdd.md, docs/short-gdd/README.md, docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf, docs/extended-narrative.md]
+files_expected_to_change: [docs/short-gdd/short-gdd.md, docs/short-gdd/short-gdd.pdf, the PDF export script and its tests, docs/short-gdd/README.md, docs/README.md]
+qa_rounds: 0
+---
+
+<!--
+status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
+epic and milestone: one of the ids listed in tasks/README.md.
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+**Blocked until T-007 is done:** the short GDD condenses the generated long GDD.
+
+The short GDD is the pitch version: something a person can read in one sitting without getting tired (board, 2026-10-08). The board chose Markdown as its source, with a PDF exported from it for sharing. It condenses the long GDD, which is generated from the game area docs; changes only flow down (`CLAUDE.md`, `docs/README.md`). Condensing is judgement work, so the Project Lead writes it; keeping the documents in sync is the Project Lead's job.
+
+1. **Write `docs/short-gdd/short-gdd.md`** from `docs/long-gdd.md`. Keep the original Final GDD's spirit and order where it still fits (pitch, design pillars, the game, player experience, the AI team, feasibility), but describe the game as the long GDD now does. Every change listed in `docs/short-gdd/README.md` ("known wording to update") must be reflected. Keep it short: a few pages. Mermaid diagrams are welcome; other visuals come later (board).
+2. **PDF export:** a documented command that turns the Markdown into `docs/short-gdd/short-gdd.pdf`, including any Mermaid diagrams. Use what this machine has (for example Microsoft Edge's headless "print to PDF" on an HTML rendering of the Markdown); record the choice in the result notes. Running it twice must give the same text content.
+3. **Keep the original:** `Solid_Carbide_-_Final_GDD.pdf` stays as the historical original, since many decisions cite it. Say so in `docs/short-gdd/README.md`.
+4. **Sync line:** update the "last updated from long GDD" line in `docs/short-gdd/README.md` (created by T-007) to the current long GDD fingerprint, so `python tools/generate_long_gdd.py --check` reports the short GDD as up to date. Replace the "known wording to update" list with a note that it has been applied.
+5. **Docs:** in `docs/README.md`, list the new files in the documents table and document the export command.
+
+Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
+
+## Acceptance criteria
+
+- [ ] `docs/short-gdd/short-gdd.md` exists and can be read in one sitting (QA records its word count; under about 2,500 words) (QA: pass / fail)
+- [ ] For each item in the old "known wording to update" list (as of the task's start, from git history), the short GDD reflects the change (QA: pass / fail)
+- [ ] For 5 facts picked by QA from different chapters of `docs/long-gdd.md`, the short GDD does not contradict them (QA: pass / fail)
+- [ ] The documented export command produces `docs/short-gdd/short-gdd.pdf`, which opens, and any Mermaid diagram appears as a diagram, not as code (QA: pass / fail)
+- [ ] `python tools/generate_long_gdd.py --check` exits 0 (long and short GDD in sync) (QA: pass / fail)
+- [ ] `Solid_Carbide_-_Final_GDD.pdf` is unchanged, and `docs/short-gdd/README.md` describes it as the historical original (QA: pass / fail)
+- [ ] No game area doc changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass / fail)
+- [ ] All Python tool tests pass (QA: pass / fail)
+
+The board's review: read the short GDD (and the PDF) and judge whether it works as a pitch.
+
+## Result notes
+
+Written by the agent when it finishes.

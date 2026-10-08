@@ -23,7 +23,9 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**On hold until the board says to start.** The board wants this worked on once the separate documents have real content. It was written on 2026-10-04, right after the document structure was agreed, so that the board can see whether the task still fits when the time comes. If the structure in `docs/README.md` changed in the meantime, follow `docs/README.md`, not any detail repeated here, and note the difference in the result notes.
+Written on 2026-10-04 and put on hold until the game area docs had real content; reviewed and updated on 2026-10-08, when the MVP game area docs were done. The board chose a script only, with no agent rewriting (2026-10-08): the long GDD is exact and never drifts from the game area docs. If anything here disagrees with `docs/README.md`, follow `docs/README.md` and note the difference in the result notes.
+
+**Changes since 2026-10-04 to handle:** there are now nine game area docs (HUD and menus was added); Content sections hold images and tables (for example the challenge drawings in Level design); and open questions that can wait start with "(After MVP)" (all open questions are left out anyway).
 
 The separate documents are the source of truth, the long GDD condenses them, and the short GDD condenses the long GDD (`CLAUDE.md`, `docs/README.md`). This task writes the script that builds the long GDD from the separate documents, and the staleness check the Project Lead runs at the start of each session and before milestones. The Project Lead does it itself: it is documentation tooling.
 
@@ -36,10 +38,11 @@ Python 3.9+, standard library only, in `tools/` with the other project tooling.
 - **Output, `docs/long-gdd.md`:** a fixed header (title, the sync rule, "generated, do not edit by hand" with the command to regenerate), a table of contents, then one chapter per separate document in `gdd_order` order:
   - The chapter heading is the document's `title`.
   - The Summary, then the Decisions, then the Content, with every heading shifted down one level so the chapter structure holds.
+  - **Decisions without their dates:** each decision bullet ends with a date note in parentheses, for example "(2026-10-08)" or "(2026-10-07; replaces ...)". Leave that note out, so the long GDD reads as a description of the game rather than a log. The dates stay in the game area docs and the timeline.
   - The References, as links only.
   - **Open questions are left out.** They stay in their own documents (board decision, 2026-10-04).
   - Sections that still say "(To be written.)" or "(None yet.)" are left out. A chapter with nothing written yet says so in one line.
-- **Links** in the separate documents are relative to `docs/` and must still resolve from `docs/long-gdd.md`.
+- **Links and images** in the separate documents are relative to `docs/` and must still resolve from `docs/long-gdd.md`.
 - **Source fingerprints:** at the end of the long GDD, a table of each separate document and a fingerprint of its contents (for example SHA-256), so the check below can tell which documents changed since the last generation. No timestamps: generating twice from the same documents must give a byte-identical file.
 
 ### 2. Staleness check: `--check`
@@ -65,14 +68,17 @@ Using temporary folders with sample documents: validation (each kind of structur
 
 - [ ] `python tools/generate_long_gdd.py` regenerates `docs/long-gdd.md`, and running it a second time leaves the file byte-for-byte unchanged (QA: pass / fail)
 - [ ] The long GDD has one chapter per separate document, in `gdd_order` order, each with the document's Summary, Decisions, Content and References, and no text from any Open questions section (QA: pass / fail)
-- [ ] For 3 decisions picked by QA from different separate documents, the decision text appears in the matching long GDD chapter (QA: pass / fail)
-- [ ] Every relative link in `docs/long-gdd.md` resolves to an existing file (QA: pass / fail)
+- [ ] For 3 decisions picked by QA from different separate documents, the decision text appears in the matching long GDD chapter, without its date note (QA: pass / fail)
+- [ ] No decision bullet in `docs/long-gdd.md` ends with a date note such as "(2026-10-08)" (QA: pass / fail)
+- [ ] Every relative link and image in `docs/long-gdd.md` resolves to an existing file (QA: pass / fail)
 - [ ] `--check` exits 0 right after generation. After QA temporarily edits one separate document, it exits 1 and names that document; QA then restores the file (QA: pass / fail)
-- [ ] After QA temporarily adds a sixth `##` heading to one separate document, the generator exits 2, names the file and line, and leaves `docs/long-gdd.md` unchanged; QA then restores the file (QA: pass / fail)
+- [ ] After QA temporarily adds an extra `##` heading to one separate document, the generator exits 2, names the file and line, and leaves `docs/long-gdd.md` unchanged; QA then restores the file (QA: pass / fail)
 - [ ] `--check` reports the short GDD as stale or up to date according to the line in `docs/short-gdd/README.md` (QA: pass / fail)
 - [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass / fail)
 - [ ] `docs/README.md` documents both commands (QA: pass / fail)
 - [ ] No separate document's text changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass / fail)
+
+Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 The board's review: read the generated long GDD and judge whether it reads as one document.
 
