@@ -239,3 +239,8 @@ Entry format:
 - Decision or change: the board's challenge drawings capture the general shape only. The Level/Challenge Design Agent makes fitted versions that work on the map (for example on the 8-unit roads), adjusting size, spacing and tightness while keeping the number of boulders, the arrow's direction around each, and the overall path; the Driving & Drift Agent's check confirms they can be driven. This answers where challenges go. T-019 now waits only on what counts as completing a challenge; T-021 checks the fitted versions.
 - Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
 - Tasks: T-019, T-021 (updated)
+
+## 2026-10-08: Completing a challenge; Level design done for the MVP
+- Decision or change: a challenge is completed when the drawn car touches its corridor continuously from the arrow's start to its end, in the arrow's direction; leaving midway means starting again. Level design has no MVP questions left (100%). T-019 is unblocked.
+- Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
+- Tasks: T-019 (unblocked)

@@ -38,6 +38,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - Which pattern groups are challenges is set in advance, the same every run. The Level/Challenge Design Agent makes the first choice, and the board adjusts it if needed. (2026-10-08)
 - The painted arrow marks the challenge's corridor (the corridor in the first Decision). The arrow is as wide as the car is long (3 units), so the player doesn't have to follow its centre line exactly: the car only has to touch the arrow. The Driving & Drift Agent's scripts make sure each path is drivable. (2026-10-08)
 - The Level/Challenge Design Agent decides how many copies of each pattern are placed on the map, and where. (2026-10-08)
+- A challenge is completed when the drawn car touches its corridor continuously from the arrow's start to its end, in the arrow's direction. Leaving the corridor midway means starting again from the start. (2026-10-08)
 - When a challenge is completed, its arrow disappears and the player gets XP on the XP bar. The group's boulders stay on the map as plain obstacles for the rest of the run. (2026-10-08)
 - When a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one of its arrows. (2026-10-08)
 - The board draws each challenge as its own drawing in Crash City Grid (References): one drawing per arrow path, kept in a folder per obstacle pattern. Every drawing in a pattern's folder has the same boulders; only the arrow differs. (2026-10-08)
@@ -61,7 +62,6 @@ The board's sketches of the 3 MVP challenges, one per arrow path. They show the 
 
 ## Open questions
 
-- What exactly counts as completing a challenge? For example: the drawn car touches the corridor continuously from the arrow's start to its end, in its direction. (Blocks task T-019.)
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References
