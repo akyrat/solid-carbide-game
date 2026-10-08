@@ -46,7 +46,7 @@ The first playable piece of Solid Carbide: the car, driving and drifting exactly
 ## Acceptance criteria
 
 - [ ] `game/project.godot` sets 50 physics ticks per second, and the input map binds W, S, A and D to the car's actions (QA: pass / fail)
-- [ ] GUT tests show the speed profile matches the report: W from standstill gives 11 on the first step, top speed 27.5 is reached 69 steps after cruise, coasting from 27.5 reaches 0 in 3.3 s (±1 step), S from 27.5 reaches 0 in 2.3 s (±1 step) and then snaps to -11, and W while reversing snaps to +11 (QA: pass / fail)
+- [ ] GUT tests show the speed profile matches the report: W from standstill gives 11 on the first step, top speed 27.5 is reached 69 steps after cruise, coasting from 27.5 reaches 0 in 3.33 s (27.5 / 8.25; ±1 step), S from 27.5 reaches 0 in 2.3 s (±1 step) and then snaps to -11, and W while reversing snaps to +11 (QA: pass / fail)
 - [ ] GUT tests show the rotation rate is 191.9 degrees per second both at standstill and at top speed (QA: pass / fail)
 - [ ] GUT tests of W + A held from top speed show the drift angle passing 45 degrees at 0.28 s (±0.04 s), and settling at a total speed of 33.9 (±0.5) and a drift angle of 75 degrees (±2), matching `tools/unity_drift_charts.py --summary` (QA: pass / fail)
 - [ ] The car's default values equal the "Value in project files (used)" column of the report's section 5, checked for every slider setting (QA: pass / fail)
@@ -161,3 +161,7 @@ Command: `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_dem
 9. The camera stays centred and never rotates: yes. This is shown by a test (three car rotations in each view, camera position equals the drawn car, rotation 0, no smoothing) and by the screenshot pairs. The zoom slider is 6 to 20 and starts at 14.4.
 10. Full GUT suite and all Python tool tests pass: yes.
 11. `game/README.md` explains how to run the prototype and its keys. `docs/drifting.md` has the subsection in Content and keeps its five sections, with Summary, Decisions and Open questions unchanged: yes (`git diff master -- docs/drifting.md` shows only additions in Content and References).
+
+### Criterion clarified by the Project Lead before QA (2026-10-08)
+
+Criterion 2 said coasting reaches 0 in "3.3 s (±1 step)". The report rounds the exact value, 27.5 / 8.25 = 3.333 s, to 3.3 s; the criterion means the exact value. It now reads "3.33 s (27.5 / 8.25; ±1 step)". The measured 3.34 s (167 steps) is within one step of it.
