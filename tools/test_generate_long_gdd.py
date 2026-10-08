@@ -120,15 +120,9 @@ class GenerateTests(unittest.TestCase):
         self.assertEqual(first, (self.docs.path / "long-gdd.md").read_bytes())
 
     def test_links_and_images_pass_through_unchanged(self):
-        content = "See [the report](drifting/report.md) and ![a picture](level-design/a.svg).
-
-![Own line](visual-style/ref.png)"
+        content = "See [the report](drifting/report.md) and ![a picture](level-design/a.svg).\n\n![Own line](visual-style/ref.png)"
         refs = "- [Elsewhere](weapons.md#decisions) and an outside link: [Godot](https://godotengine.org)"
-        docs = Docs({"a.md": area_doc("Links", 1, content=content).replace("## References
-
-(None yet.)", "## References
-
-" + refs)})
+        docs = Docs({"a.md": area_doc("Links", 1, content=content).replace("## References\n\n(None yet.)", "## References\n\n" + refs)})
         try:
             docs.run()
             text = docs.long()
