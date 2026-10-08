@@ -299,3 +299,8 @@ Entry format:
 - Decision or change: a dark navy and purple night with pink, cyan and Greenbull-green neon; night-time with a retro feel. The car is inspired by a 1967 Ford Mustang fastback, dark green with two parallel stripes down its middle (reference photos saved in `docs/visual-style/`). Tokyo-style towers with vertical signs, lit windows and satirical Greenbull billboards; cracked asphalt with lane lines and crossings; dusty gravel centre; dark boulders with glowing cracks; a glowing painted challenge arrow that draws itself, pulses and fades; a red warning circle, falling meteor and dust burst for the kaiju's attack; a Godzilla-style kaiju; light-green four-legged scaled lizards as the minion, walking towards the player. Open: stripe colour and livery, how "retro" shapes the glow, effects, and whether the minion still copies a Unity enemy's stats.
 - Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Glow, references, stripes and minion stats
+- Decision or change: glow is drawn into the sprites (bright pixels with stepped halos, no engine blur or bloom). Real-world references are inspiration only: no real logos or badges, no exact copies of existing characters. The car's two stripes are white. The minion doesn't copy a Unity enemy; the Game Data Agent sets its health, contact damage and knockback.
+- Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
+- Tasks: none

@@ -23,7 +23,9 @@ agents_read: [level-challenge, ui, narrative-theme]
 - **View:** a 3/4 isometric view, seeing the top and one side. The final car art is drawn for the isometric view only; the flat top-down view keeps the placeholder. (2026-10-08)
 - **Palette:** a dark navy and purple night base, with pink, cyan and Greenbull-green neon accents. (2026-10-08)
 - **Mood:** the game is set at night and should feel retro. (2026-10-08)
-- **The car:** inspired by a 1967 Ford Mustang fastback, in dark green, with two parallel racing stripes running down its middle (bonnet, roof and boot). See the reference photos in References. (2026-10-08)
+- **Glow:** drawn into the sprites themselves, as bright pixels with small, stepped halos of darker shades. No smooth blur or bloom effects from the engine, which keeps the retro pixel look. (2026-10-08)
+- **Real-world references are inspiration only:** generated art never shows real brand logos or badges (for example no Ford or Shelby badges), and creatures are never exact copies of existing characters (the kaiju is Godzilla-style, not Godzilla). (2026-10-08)
+- **The car:** inspired by a 1967 Ford Mustang fastback, in dark green, with two parallel white racing stripes running down its middle (bonnet, roof and boot). See the reference photos in References. (2026-10-08)
 - **Buildings:** Tokyo-style towers with vertical signs, lit windows, and satirical Greenbull billboards. (2026-10-08)
 - **Ground:** asphalt roads with lane lines and crossings, cracked by the disaster; the centre is dusty gravel. (2026-10-08)
 - **Boulders:** dark rock with glowing cracks. (2026-10-08)
@@ -40,8 +42,7 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Open questions
 
-- What colour are the car's two stripes (the black reference car's are white)? And does the car carry any Greenbull livery or stickers?
-- How does the retro feel shape the glow? Suggestion: glow is drawn into the sprites themselves as bright pixels with small, stepped halos (no smooth blur or bloom effects), which keeps the retro pixel look.
+- Does the car carry any Greenbull livery or stickers?
 - Effects: bullets, exhaust flames, enemy deaths, coin pickups. Described by the board, or left to the Asset Generation Agent within the palette and style?
 - How can buildings turn see-through when the car is behind them? Being researched in task T-020.
 
