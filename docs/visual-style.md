@@ -30,6 +30,7 @@ agents_read: [level-challenge, ui, narrative-theme]
 - **Ground:** asphalt roads with lane lines and crossings, cracked by the disaster; the centre is dusty gravel. (2026-10-08)
 - **Boulders:** dark rock with glowing cracks. (2026-10-08)
 - **Challenge arrow:** a glowing painted arrow that draws itself along the path, pulses while the challenge is open, and fades when it is completed. Arrows of the challenges on the map are **blue**; arrows of the challenges the kaiju's meteors create are **green**. (2026-10-08)
+- **See-through rule:** the no-semi-transparent-pixels rule covers the pixels inside each sprite. The game itself may fade a whole object, such as the kaiju's shield or a building the car drives behind. (2026-10-08)
 - **Kaiju shield:** while the kaiju can't be hurt, it is surrounded by a **green, see-through, oval shield**, the same green as its challenges' arrows. When one of those challenges is completed, the shield disappears and the kaiju shows its normal look while it can be hurt. (2026-10-08)
 - **Effects** (gun bullets, exhaust flames, enemy hits and deaths, burning, coins, car damage, drift smoke and tire tracks, challenge completed, level-up): designed by the Asset Generation Agent within the palette, glow and pixel style above. (2026-10-08)
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact. (2026-10-08)
@@ -44,8 +45,7 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Open questions
 
-- Does the car carry any Greenbull livery or stickers?
-- How is see-through drawn, given the rule of no semi-transparent pixels? Suggestion: that rule applies to the pixels inside each sprite; the game itself may fade a whole object (the kaiju's shield, buildings the car drives behind). Alternatively the shield could be drawn with a dithered (checkerboard) pattern, the retro way to show transparency.
+- (After MVP) Does the car carry any Greenbull livery or stickers? In the MVP it is kept simple: dark green with two white stripes.
 - How can buildings turn see-through when the car is behind them? Being researched in task T-020.
 
 ## References

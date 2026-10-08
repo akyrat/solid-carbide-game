@@ -309,3 +309,8 @@ Entry format:
 - Decision or change: the Asset Generation Agent designs the effects within the palette, glow and pixel style. Map challenge arrows are blue; the kaiju's meteor challenges have green arrows. While the kaiju can't be hurt it sits in a green, see-through oval shield; completing one of its challenges removes the shield and it shows its normal look while vulnerable (the shield idea moved from "after MVP" to decided). Open: how see-through is drawn under the no-semi-transparent-pixels rule.
 - Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: See-through rule, no livery for the MVP, car bounces off walls
+- Decision or change: the no-semi-transparent-pixels rule covers pixels inside sprites; the game may fade whole objects (the kaiju's shield, buildings). The MVP car has no livery (Greenbull livery is after the MVP). The car bounces off walls slightly. Visual style has no MVP questions left.
+- Documents touched: `docs/visual-style.md`, `docs/drifting.md`, `docs/mvp-readiness.json`
+- Tasks: T-019 (updated)
