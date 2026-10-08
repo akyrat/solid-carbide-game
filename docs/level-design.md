@@ -41,12 +41,13 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - When a challenge is completed, its arrow disappears and the player gets XP on the XP bar. The group's boulders stay on the map as plain obstacles for the rest of the run. (2026-10-08)
 - When a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one of its arrows. (2026-10-08)
 - The board draws each challenge as its own drawing in Crash City Grid (References): one drawing per arrow path, kept in a folder per obstacle pattern. Every drawing in a pattern's folder has the same boulders; only the arrow differs. (2026-10-08)
+- The board's drawings are rough sketches of each challenge's general shape, not exact layouts. The Level/Challenge Design Agent makes them fit the map (for example the 8-unit roads), with whatever reasonable adjustments that needs (size, spacing, how tight the loops are), while keeping the shape: how many boulders, which way the arrow goes around each one, and the overall path (a loop, a figure-eight). The Driving & Drift Agent's check confirms the fitted versions can be driven. (2026-10-08)
 
 ## Content
 
 ### MVP challenges
 
-The board's drawings of the 3 MVP challenges, one per arrow path. Each drawing's data (boulders and arrow points, in units from the sheet's centre) is in a `.json` file next to its picture. The pale band is the 3-unit corridor, the white dot is the start, and the arrowhead is the finish.
+The board's sketches of the 3 MVP challenges, one per arrow path. They show the general shape only; the fitted versions on the map are the Level/Challenge Design Agent's (Decisions). Each drawing's data (boulders and arrow points, in units from the sheet's centre) is in a `.json` file next to its picture. The pale band is the 3-unit corridor, the white dot is the start, and the arrowhead is the finish.
 
 | Pattern | Challenge | How the arrow goes |
 |---|---|---|
@@ -60,7 +61,6 @@ The board's drawings of the 3 MVP challenges, one per arrow path. Each drawing's
 
 ## Open questions
 
-- The challenges, with their 3-unit corridors, measure about 11 by 12, 11 by 13 and 11 by 20 units, but every road is 8 units wide. Where can challenges go: only the gravel centre (and junctions, if they fit), wider roads, or smaller drawings? (Blocks task T-019.)
 - What exactly counts as completing a challenge? For example: the drawn car touches the corridor continuously from the arrow's start to its end, in its direction. (Blocks task T-019.)
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
 

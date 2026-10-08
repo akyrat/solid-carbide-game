@@ -234,3 +234,8 @@ Entry format:
 - Decision or change: open questions that can wait start with "(After MVP)" (rule in `docs/README.md`): the recap screen, the boost look, the test jump, arrow keys, gamepad, the possibly rotating old camera, the trick system, post-MVP maps, the boss shield and per-boss names. Balancing numbers go to the Game Data Agent (with the Enemy Behavior Agent for enemies): weapon upgrade scaling, enemy number growth, coin drops, the kaiju's vulnerability window and meteor frequency. New MVP questions recorded in Enemies (the minion, the kaiju's health) and Weapons (upgrade levels and what they change). Readiness: 51%.
 - Documents touched: `docs/README.md`, `docs/game-loop-architecture.md`, `docs/drifting.md`, `docs/level-design.md`, `docs/enemies.md`, `docs/weapons.md`, `docs/extended-narrative.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Challenge drawings are rough sketches
+- Decision or change: the board's challenge drawings capture the general shape only. The Level/Challenge Design Agent makes fitted versions that work on the map (for example on the 8-unit roads), adjusting size, spacing and tightness while keeping the number of boulders, the arrow's direction around each, and the overall path; the Driving & Drift Agent's check confirms they can be driven. This answers where challenges go. T-019 now waits only on what counts as completing a challenge; T-021 checks the fitted versions.
+- Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
+- Tasks: T-019, T-021 (updated)
