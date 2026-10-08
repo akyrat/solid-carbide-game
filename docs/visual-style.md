@@ -10,7 +10,7 @@ agents_read: [level-challenge, ui, narrative-theme]
 
 ## Summary
 
-(To be written.)
+Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at night in a neon, Tokyo-style cyberpunk city: dark navy and purple, lit by pink, cyan and Greenbull-green neon drawn into the sprites. The player drives a dark-green, Mustang-inspired car with white stripes through cracked streets, past dark boulders with glowing cracks, chased by green lizard minions and a Godzilla-style kaiju. All art follows one technical style: hard-edged pixel art at about 40 pixels per unit, with a selective dark outline, detailed shading and a limited palette.
 
 ## Decisions
 

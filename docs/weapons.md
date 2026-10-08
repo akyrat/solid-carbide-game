@@ -33,4 +33,4 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ## References
 
-- Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md) (being written in task T-022).
+- Unity prototype weapons report: `weapons/unity-weapons-report.md`, being written in task T-022 (it becomes a link once it exists).
