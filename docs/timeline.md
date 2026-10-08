@@ -379,3 +379,8 @@ Entry format:
 - Decision or change: after playtesting T-012 the game keeps the Unity values except: top speed 3.0 times cruise speed (Unity 2.5), physics interpolation on, and the isometric view (the board is happy with it, so the flat-view fallback question is closed). The jump to cruise speed stays at 11. The camera zoom becomes a player setting again: a slider (6 to 20, default 14.4) on the MVP pause screen, saved between sessions. T-029 sets the new defaults; T-015 now builds the pause screen with the zoom slider in one ticket (board); T-010 is done.
 - Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`
 - Tasks: T-029 (new), T-015 (updated), T-010 (done)
+
+## 2026-10-08: Short GDD tone wording; design pillars ticket
+- Decision or change: "tongue-in-cheek" is a working phrase only, not for a pitch, so it is removed from the short GDD's tone line, which now reads "The tone is **satirical**." (T-025). The game area docs keep it as an internal note. The short GDD's design pillars read like agent instructions; the board will rework them into presentable pillars (T-030), and the Project Lead then records them in a game area doc and carries them down to the long and short GDD.
+- Documents touched: `docs/short-gdd/short-gdd.md` (T-025 branch)
+- Tasks: T-025, T-030 (new)
