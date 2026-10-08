@@ -384,3 +384,8 @@ Entry format:
 - Decision or change: "tongue-in-cheek" is a working phrase only, not for a pitch, so it is removed from the short GDD's tone line, which now reads "The tone is **satirical**." (T-025). The game area docs keep it as an internal note. The short GDD's design pillars read like agent instructions; the board will rework them into presentable pillars (T-030), and the Project Lead then records them in a game area doc and carries them down to the long and short GDD.
 - Documents touched: `docs/short-gdd/short-gdd.md` (T-025 branch)
 - Tasks: T-025, T-030 (new)
+
+## 2026-10-09: T-025 done: short GDD as a pitch; visualisation tools ticket
+- Decision or change: the board approved the short GDD (`docs/short-gdd/short-gdd.md`, with `short-gdd.pdf` exported by `tools/export_short_gdd_pdf.py`). It passed QA round 2 on all 8 criteria; during review "tongue-in-cheek" was removed from its tone line and the design pillars were sent to the board to rework (T-030). Merged from `task/T-025-short-gdd-rewrite`; long and short GDD in sync. The board will build its own HTML visualisation tools at some point (T-031). The MVP docs status line is to be removed. Next: the full MVP task board.
+- Documents touched: `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`, `docs/README.md`
+- Tasks: T-025 (done), T-030, T-031 (new)

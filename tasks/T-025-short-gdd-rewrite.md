@@ -1,7 +1,7 @@
 ---
 id: T-025
 title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
-status: open
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -12,7 +12,7 @@ depends_on: [T-007]
 documents_affected: [docs/short-gdd/short-gdd.md, docs/short-gdd/README.md, docs/README.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, docs/README.md, docs/long-gdd.md, docs/short-gdd/README.md, docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf, docs/extended-narrative.md]
 files_expected_to_change: [docs/short-gdd/short-gdd.md, docs/short-gdd/short-gdd.pdf, the PDF export script and its tests, docs/short-gdd/README.md, docs/README.md]
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -39,17 +39,73 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `docs/short-gdd/short-gdd.md` exists and can be read in one sitting (QA records its word count; under about 2,500 words) (QA: pass / fail)
-- [ ] For each item in the old "known wording to update" list (as of the task's start, from git history), the short GDD reflects the change (QA: pass / fail)
-- [ ] For 5 facts picked by QA from different chapters of `docs/long-gdd.md`, the short GDD does not contradict them (QA: pass / fail)
-- [ ] The documented export command produces `docs/short-gdd/short-gdd.pdf`, which opens, and any Mermaid diagram appears as a diagram, not as code (QA: pass / fail)
-- [ ] `python tools/generate_long_gdd.py --check` exits 0 (long and short GDD in sync) (QA: pass / fail)
-- [ ] `Solid_Carbide_-_Final_GDD.pdf` is unchanged, and `docs/short-gdd/README.md` describes it as the historical original (QA: pass / fail)
-- [ ] No game area doc changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [x] `docs/short-gdd/short-gdd.md` exists and can be read in one sitting (QA records its word count; under about 2,500 words) (QA: pass)
+- [x] For each item in the old "known wording to update" list (as of the task's start, from git history), the short GDD reflects the change (QA: pass)
+- [x] For 5 facts picked by QA from different chapters of `docs/long-gdd.md`, the short GDD does not contradict them (QA round 1: fail: Player experience says "an 80 by 80 grid of blocks"; Level design says the map is 80 by 80 units with a 4 by 4 grid of 10-unit blocks; QA round 2: pass)
+- [x] The documented export command produces `docs/short-gdd/short-gdd.pdf`, which opens, and any Mermaid diagram appears as a diagram, not as code (QA: pass)
+- [x] `python tools/generate_long_gdd.py --check` exits 0 (long and short GDD in sync) (QA: pass)
+- [x] `Solid_Carbide_-_Final_GDD.pdf` is unchanged, and `docs/short-gdd/README.md` describes it as the historical original (QA: pass)
+- [x] No game area doc changed, and nothing under `game/` or `.claude/agents/` changed (QA: pass)
+- [x] All Python tool tests pass (QA: pass)
 
 The board's review: read the short GDD (and the PDF) and judge whether it works as a pitch.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Project Lead on 2026-10-08.
+
+**Built:**
+- `docs/short-gdd/short-gdd.md`: the pitch, about 1,270 words (3 PDF pages). Sections: a fact table, Pitch, The world and the tone, Design pillars (with a loop diagram), The game (with a run diagram), Player experience, The look, The MVP and what comes after (a table), How it's made. It follows the Final GDD's order where it still fits and describes the game as the long GDD does. It names no real car or character (the car is "a late-sixties fastback muscle car"), following Visual style's rule.
+- Dropped from the original on purpose, because the long GDD (and so the game area docs) has no such content: the original's Technical Feasibility and Budget sections (the 5-week window, Claude and PixelLab costs). They can come back if the board records them in a game area doc.
+- `tools/export_short_gdd_pdf.py`: wraps the Markdown in a page that renders it with marked and mermaid (pinned versions from the jsDelivr CDN), then prints it with Microsoft Edge in headless mode to `docs/short-gdd/short-gdd.pdf`. Needs Edge (or `EDGE_BIN`) and an internet connection. Checked by rendering the pages: both diagrams appear as diagrams.
+- `tools/test_export_short_gdd_pdf.py`: 3 tests for the page building (the Markdown can't break out of the script, the libraries are loaded, Mermaid blocks are converted).
+- `docs/short-gdd/README.md`: the sync line set to the current long GDD fingerprint; the original Final GDD PDF described as the historical original; the 14 pending wording changes recorded as applied.
+- `docs/README.md`: the documents table points to the new short GDD and PDF; the export command and the sync-line step are documented.
+
+**Self-check:** word count 1,265 (under 2,500); each of the 14 old wording changes is reflected (Project Lead and the agents in "How it's made"; reverse on S; no drift-curve chart; enemies grow only in number; 2 MVP weapons and 8 to 12 later; co-op; meteor challenges only; likes from drifts; the city map and challenges; main menu and garage; HUD and pause; livestream and likes); the PDF opens and shows both diagrams; `python tools/generate_long_gdd.py --check` exits 0; the original PDF is unchanged; no game area doc, nothing under `game/` or `.claude/agents/` changed; all Python tool tests pass.
+
+**Note for the board:** the old wording list said "1 offered per challenge" for weapons; the short GDD uses the later decision (a gift pack on each level-up).
+
+### QA round 1
+
+QA/Integration, 2026-10-08, in `C:\solid-carbide-worktrees\T-025`.
+
+- Word count (`wc -w docs/short-gdd/short-gdd.md`): 1,264. Pass.
+- Old "known wording to update" list (`git show master:docs/short-gdd/README.md`), 14 items: all reflected (Project Lead named; SFX no longer described as integrating; S brakes and reverses; no drift-curve chart; enemies "a few more", not tougher; 2 MVP weapons, 8 to 12 later with 3 offered; co-op for 2 or 4; only the kaiju's meteor challenges drop its shield; drifts longer than a second give likes; run recap in the after-MVP table; Tokyo-style city grid, set patterns, about 30% challenges; main menu and garage upgrades; HUD and Escape pause; livestream, likes, satirical tone). Pass. Small note: the new `short-gdd/README.md` sentence says "14 wording changes" but its list in brackets names 13 (the recap screen is missing); the short GDD itself has the recap.
+- 5 facts from the long GDD: run length and kaiju at 7:00 with win and loss rules (ch. 1): consistent. Controls W, S reverse, A and D (ch. 2): consistent. Map size (ch. 3): **contradicted**: the short GDD says "an 80 by 80 grid of blocks"; the long GDD says 80 by 80 units, with a 4 by 4 grid of 10 by 10 blocks. Enemies grow only slightly in number and the kaiju takes about 4 windows (ch. 4): consistent. MVP level-up offers 2 choices, the first being the flamethrower or a gun upgrade (ch. 5): consistent. Fail.
+- Claims not supported by the long GDD: "Map: more cities, hand-drawn, maybe a new map each run" comes from an open question in `level-design.md` (open questions are not in the long GDD), so it reads as a plan when it is still open. "PC (Windows)" and "No AI runs inside the shipped game" come from the original Final GDD, and the team description from `CLAUDE.md`, not from the long GDD. "About 30% of them" says "about" where Level design says 30% of pattern groups, and "them" reads as the boulders rather than the pattern groups. Observations only, not counted as fails.
+- `python tools/export_short_gdd_pdf.py`: exit 0, wrote the PDF. The bytes changed (hash differs) but the extracted text is identical to the committed PDF. Opened with PyMuPDF: 3 pages, no Mermaid source in the text ("flowchart", "-->" absent), diagram labels present as text; rendered pages show both diagrams drawn as flowcharts (page 1 the loop, page 2 the run). Committed PDF restored with `git checkout`. Pass.
+- `python tools/generate_long_gdd.py --check`: "In sync: 9 game area docs, the long GDD and the short GDD", exit 0. Pass.
+- `git diff master -- docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf`: empty; `docs/short-gdd/README.md` calls it the "historical original". Pass.
+- `git diff master...HEAD --stat`: only `docs/README.md`, `docs/short-gdd/README.md`, `short-gdd.md`, `short-gdd.pdf`, the task file and the two tool files. No game area doc, nothing under `game/` or `.claude/agents/`. Pass.
+- `python -m unittest discover -s tools -p "test_*.py"`: 66 tests OK. `game/tools` Python tests: 45 tests OK. Pass.
+- Also noted: the long GDD is itself inconsistent on where a run ends (Game loop architecture says the main menu, its recap line says "the MVP goes straight to the Garage"); the short GDD follows the main menu. "Enemies are pressure, not a resource" sits next to "monsters drop coins", which reads as a contradiction within the pillar.
+
+Result: 7 of 8 criteria pass; criterion 3 fails on the map size wording. Status left `in-qa` for the Project Lead.
+
+### QA round 2
+
+QA/Integration, 2026-10-08, in `C:\solid-carbide-worktrees\T-025`, at commit 3ebd876. All 8 criteria re-checked independently.
+
+1. Word count (`wc -w docs/short-gdd/short-gdd.md`): 1,279, under 2,500. Pass.
+2. The 14 items of the old "known wording to update" list (`git show d6956ff:docs/short-gdd/README.md`, the task's start) are all still reflected: Project Lead named; SFX described as finding sound effects, not integrating; S brakes and reverses; no drift-curve chart; monsters "a few more as the run goes on", not tougher; 2 MVP weapons, 8 to 12 later with three offered; local co-op for 2 or 4 with split screen; only the kaiju's meteor challenges drop its shield; drifts longer than a second add likes; run recap in the after-MVP table; Tokyo-style city of blocks and roads, set patterns, 30% of patterns as challenges; main menu (Start, Garage, Quit) and the three garage upgrades; HUD contents, gift-pack pause and Escape pause; livestream, likes and satirical tone. Pass. The round 1 note is fixed: `docs/short-gdd/README.md` now lists the recap screen, 14 items in brackets.
+3. 5 facts from different chapters of `docs/long-gdd.md`, none contradicted. Pass.
+   - Map size (ch. 3, Level design): long GDD says 80 by 80 units, 1 unit = the car's width, a 4 by 4 grid of 10 by 10 blocks with 8-unit roads, an 8-unit perimeter road and a 28 by 28 gravel square in the centre. Short GDD: "80 by 80 units (one unit is a car's width), laid out as a 4 by 4 grid of city blocks with roads between them, a wide road around the edge and an open gravel square in the middle". Consistent. "30% of these patterns are challenges" matches "30% of the obstacle pattern groups".
+   - Driving (ch. 2, Drifting): W snaps to a cruise speed, S brakes then reverses, A and D steer and drift; the car bounces off buildings and boulders. Consistent.
+   - Weapons (ch. 5): the starting gun fires only at enemies in range and aims itself; the flamethrower fires out of the exhaust only while drifting; each level-up offers 2 choices, the first being the flamethrower or a gun upgrade; weapons reset each run. Consistent.
+   - Garage (ch. 6): three upgrades of about 10 levels each (acceleration, car HP, weapon damage bonus), bought with coins, opened from the main menu. Consistent.
+   - HUD and menus (ch. 8): HP, a timer counting down from 8:00, the likes bar and level, coins, the nearest-challenge arrow, the kaiju's health once it appears; Escape pauses; level-up pauses. Consistent.
+   - Also re-read: the pillar now ends "Kills never give likes.", and the after-MVP map cell says "how maps are made is still open" instead of presenting the open question as a plan.
+4. `python tools/export_short_gdd_pdf.py`: exit 0, wrote `docs/short-gdd/short-gdd.pdf` (107,473 bytes). Opened with PyMuPDF: 3 pages, extracted text identical to the committed PDF, no Mermaid source in the text ("flowchart", "-->", fences absent), diagram labels present. Rendered pages: page 1 shows the pillar loop and page 2 the run flow, both drawn as flowcharts. The committed PDF was restored with `git checkout`; the working tree is clean. Pass.
+5. `python tools/generate_long_gdd.py --check`: "In sync: 9 game area docs, the long GDD and the short GDD", exit 0. Pass.
+6. `git diff master...HEAD` and `git diff d6956ff HEAD` on `docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf`: both empty. `docs/short-gdd/README.md` calls it the "historical original", now also "no longer a source of truth". Pass.
+7. `git diff master...HEAD --name-only`: `docs/README.md`, `docs/short-gdd/README.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, this task file, `tools/export_short_gdd_pdf.py`, `tools/test_export_short_gdd_pdf.py`. No game area doc, nothing under `game/` or `.claude/agents/`. Pass.
+8. `python -m unittest discover -s tools -p "test_*.py"`: 66 tests OK. `python -m unittest discover -s game/tools -p "test_*.py"`: 45 tests OK. Pass.
+
+Observation, not counted: the long GDD still disagrees with itself on where a run ends (Game loop architecture says the main menu; its recap line says "the MVP goes straight to the Garage"). The short GDD follows the main menu. That is a game area doc question for the Project Lead, not a fault of this task.
+
+Result: 8 of 8 criteria pass. Status set to `needs-playtest`.
+
+### Board review (2026-10-09)
+
+Approved by the board. Changes made during review: "tongue-in-cheek" removed from the tone line (a working phrase only); the design pillars are to be reworked by the board in T-030.
