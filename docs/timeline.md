@@ -344,3 +344,8 @@ Entry format:
 - Decision or change: `tools/generate_long_gdd.py` builds `docs/long-gdd.md` from the nine game area docs (script only; open questions and decision dates left out) and `--check` reports stale game area docs and whether the short GDD has caught up. It passed QA round 1 on all 11 criteria; after QA's reading notes the Content heading was kept and a link test added; the board reviewed the long GDD. Merged from `task/T-007-long-gdd-generator`. T-025 (short GDD) is unblocked.
 - Documents touched: `docs/long-gdd.md`, `docs/README.md`, `docs/short-gdd/README.md`
 - Tasks: T-007, T-025 (unblocked)
+
+## 2026-10-08: The Final GDD PDF is historical
+- Decision or change: the original `Solid_Carbide_-_Final_GDD.pdf` is historical and no longer a source of truth; the game area docs are. `CLAUDE.md` (approved by the board) now names `docs/short-gdd/short-gdd.md` as the short GDD, the crew notes define the MVP by the game area docs, and the two game area docs that cite the PDF label it as superseded. The short GDD folder's README and `docs/README.md` say the same in T-025. Long GDD regenerated.
+- Documents touched: `CLAUDE.md`, `agent-notes/agents-interactions.md`, `docs/game-loop-architecture.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`
+- Tasks: T-025
