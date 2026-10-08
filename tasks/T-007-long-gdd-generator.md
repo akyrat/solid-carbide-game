@@ -1,7 +1,7 @@
 ---
 id: T-007
 title: Long GDD generator and document staleness check
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 epic: tooling
