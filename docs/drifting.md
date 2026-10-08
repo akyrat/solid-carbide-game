@@ -10,7 +10,7 @@ agents_read: []
 
 ## Summary
 
-Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, and the car can also reverse. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
+Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, with a higher top speed chosen after the board's playtest of the Godot version, and the car can also reverse. The player sets the camera zoom in the pause menu. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
 
 ## Decisions
 
@@ -23,9 +23,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. (2026-10-06)
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)
-- The camera zoom is fixed: players cannot change it. The board picks the value by playtesting the Godot car with the prototype's zoom slider (task T-010). (2026-10-07; replaces the 2026-10-06 decision that the zoom is a player setting)
+- The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions. (2026-10-08; replaces the 2026-10-07 decision that the zoom is fixed)
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60. (2026-10-06)
-- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. The board will playtest whether it feels the same; if not, the game may go back to a flat top-down view. (2026-10-06)
+- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. (2026-10-06)
+- The board playtested the Godot drift prototype in the isometric view and is very happy with it. The game uses the isometric view and the Unity values, with two changes: the top speed is **3.0 times** cruise speed (Unity: 2.5), and **physics interpolation is on**, for smoother motion between physics steps. The jump to cruise speed stays at 11. (2026-10-08)
 
 ## Content
 
@@ -68,8 +69,6 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 ## Open questions
 
 - (After MVP) What does the boost effect look like?
-- What is the camera zoom? (Task T-010.)
-- Does the isometric drawing feel the same as the flat top-down prototype? (Board playtest.)
 - (After MVP) Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
 - (After MVP) Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
 - (After MVP) Should gamepad support carry over (triggers as on/off, analog stick steering)?

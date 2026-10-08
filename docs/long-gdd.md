@@ -81,7 +81,7 @@ flowchart TD
 
 *Source: [drifting.md](drifting.md). How the car drives, drifts and reverses, the prototypes built so far, and the research and decisions behind them.*
 
-Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, and the car can also reverse. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
+Drifting is the one core skill of Solid Carbide. The car's driving and drifting copy the board's older Unity prototype, including its drift curve and its camera, with a higher top speed chosen after the board's playtest of the Godot version, and the car can also reverse. The player sets the camera zoom in the pause menu. The player drives with W to go forward, S to reverse, and A and D to steer and drift.
 
 ### Decisions
 
@@ -94,9 +94,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on.
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump.
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
-- The camera zoom is fixed: players cannot change it. The board picks the value by playtesting the Godot car with the prototype's zoom slider (task T-010).
+- The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions.
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60.
-- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically. The board will playtest whether it feels the same; if not, the game may go back to a flat top-down view.
+- The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically.
+- The board playtested the Godot drift prototype in the isometric view and is very happy with it. The game uses the isometric view and the Unity values, with two changes: the top speed is **3.0 times** cruise speed (Unity: 2.5), and **physics interpolation is on**, for smoother motion between physics steps. The jump to cruise speed stays at 11.
 
 ### Content
 
@@ -338,7 +339,7 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 
 *Source: [hud-and-menus.md](hud-and-menus.md). What the player sees on screen during a run (the HUD) and the menus around it: pause, level-up and their look. Which screens exist and how they connect is in Game loop architecture.*
 
-During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP bar and level, the coins collected, an arrow pointing to the nearest challenge, and the kaiju's health once it appears. Levelling up pauses the game and shows the weapon choice as simple cards. Escape pauses the game. In the MVP every screen is kept plain; their visual style comes after the MVP.
+During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP bar and level, the coins collected, an arrow pointing to the nearest challenge, and the kaiju's health once it appears. Levelling up pauses the game and shows the weapon choice as simple cards. Escape pauses the game, and the pause screen has a camera zoom slider. In the MVP every screen is kept plain; their visual style comes after the MVP.
 
 ### Decisions
 
@@ -346,7 +347,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - When the player levels up, the game pauses and the level-up screen shows the options (what is offered: Weapons, Decisions). Each option has a title and a description. In the MVP it is kept simple: plain cards, each with a button to take it.
 - The UI Agent proposes a first layout for where each HUD element goes on screen, and the board adjusts it in playtest.
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
-- Escape pauses the game. In the MVP the pause screen only says "Paused", with a hint that Escape resumes. A full pause menu, with settings, comes in the final release.
+- Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider (Drifting, Decisions). A full pause menu, with more settings, comes in the final release.
 
 ### References
 
@@ -360,11 +361,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `7559e26643d1ad9d454537991f6e0ef3b7b0900c670a3caeebe7af0debfbc499` |
-| `drifting.md` | `7d08c49b04527a0d65758178443b8b37f41b9cc4e76e031b29ab213b4defc47a` |
+| `drifting.md` | `ecd823170cfb2fc3aeb0131be03edc96ece92a70da0b61097ee0c6357cfb5aab` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
 | `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
 | `visual-style.md` | `6e18814df916f877b778c176ce990627ba2371fed5992bbfaef62488a1f2ef85` |
 | `extended-narrative.md` | `60114f359c77518844054b509a5061fd0fbcbc3b164cfe69a61def7f35b73054` |
-| `hud-and-menus.md` | `6e31c45f4944fce5336f16fa6fc174f4ce53e81c872f26cf75b512dcf889f1da` |
+| `hud-and-menus.md` | `b5ee3740e27a7383dbed14644d0f18d8813d3659ddd7844d8c054efdbfea22d5` |

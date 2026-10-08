@@ -374,3 +374,8 @@ Entry format:
 - Decision or change: the board playtested the Godot drift prototype, adjusted some settings on the tuning panel and is very happy with the drift. It passed QA round 1 on all 11 criteria. Merged from `task/T-012-godot-drift-prototype`. T-008, T-015 and T-021 are unblocked. The board also wants the camera zoom slider kept as a player setting in the pause menu, which reverses the fixed-zoom decision; T-010 stays blocked until that is recorded.
 - Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `game/README.md`
 - Tasks: T-012 (done), T-008, T-015, T-021 (unblocked), T-010
+
+## 2026-10-08: Drift defaults after the playtest; zoom slider in the MVP pause screen
+- Decision or change: after playtesting T-012 the game keeps the Unity values except: top speed 3.0 times cruise speed (Unity 2.5), physics interpolation on, and the isometric view (the board is happy with it, so the flat-view fallback question is closed). The jump to cruise speed stays at 11. The camera zoom becomes a player setting again: a slider (6 to 20, default 14.4) on the MVP pause screen, saved between sessions. T-029 sets the new defaults; T-015 now builds the pause screen with the zoom slider in one ticket (board); T-010 is done.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`
+- Tasks: T-029 (new), T-015 (updated), T-010 (done)
