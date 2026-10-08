@@ -214,3 +214,8 @@ Entry format:
 - Decision or change: a challenge's painted arrow is as wide as the car is long (3 units) and is the corridor; the car only has to touch it, and the Driving & Drift Agent's scripts make sure each path is drivable. The Level/Challenge Design Agent decides how many copies of each pattern go on the map, and where. Crash City Grid now draws arrows at their real 3-unit width. One of the two Single Boulder arrows is meant to go counter-clockwise; it will be redrawn.
 - Documents touched: `docs/level-design.md`
 - Tasks: none
+
+## 2026-10-08: MVP challenges drawn and saved; level 1 XP
+- Decision or change: the board drew the 3 MVP challenges in Crash City Grid (Single Boulder: a clockwise and a counter-clockwise loop; Two Boulders: a figure-eight). They are saved in `docs/level-design/` as data and pictures by the new `tools/export_challenge_drawings.py`, and shown in Level design, Content. "The car" touching a challenge corridor is the drawn car (1 by 3). At level 1 one completed challenge levels the player up to level 2 with a weapon choice; the Game Data Agent works out the XP scaling. New open question: does the weapon choice open on every challenge or only on level-up? Level design is at 90%, with no MVP questions left.
+- Documents touched: `docs/level-design.md`, `docs/game-loop-architecture.md`, `docs/mvp-readiness.json`
+- Tasks: none

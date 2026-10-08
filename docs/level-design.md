@@ -15,7 +15,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 ## Decisions
 
 - A challenge is defined as a curved corridor with a width, so there is room for tolerance. (2026-10-03)
-- The car counts as in the challenge as long as any part of it is touching the corridor. (2026-10-03)
+- The car counts as in the challenge as long as any part of it is touching the corridor. "The car" here is the drawn car (1 by 3 units), not its smaller physics body. (2026-10-03; drawn car confirmed 2026-10-08)
 - The MVP map is a city laid out as a grid: blocks of buildings, with roads running between the blocks. (How it looks: Visual style, Decisions.) (2026-10-07)
 - Roads are between 5 and 10 times as wide as the player's car. A street never widens along its length; instead, some streets are wider than others, and a wide road can join a narrower one. (2026-10-07)
 - Map sizes are measured in units, where 1 unit is the drawn car's width (the smaller of its two dimensions; Drifting, Decisions). It is the same unit the driving values use. (2026-10-07)
@@ -29,9 +29,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - Each challenge's arrow path is shaped to its obstacles, using scripts from the Driving & Drift Agent that show what the car can actually drive and how it behaves. (2026-10-07)
 - Some obstacles are on the map from the start; others appear during the run, dropped by the boss (Enemies, Decisions). (2026-10-07)
 - The obstacles on the map from the start are placed in set patterns, called obstacle pattern groups. The board defines the patterns. (2026-10-07)
-- The MVP has 2 obstacle patterns (2026-10-08; replaces the earlier plan of 3):
-  - **Pattern 1:** 1 boulder, with 2 possible challenges (2 different arrow paths around the same boulder).
-  - **Pattern 2:** 2 boulders, with 1 possible challenge.
+- The MVP has 2 obstacle patterns, each drawn by the board (Content, "MVP challenges") (2026-10-08; replaces the earlier plan of 3):
+  - **Single Boulder:** 1 boulder, with 2 possible challenges: one loop clockwise and one counter-clockwise around it.
+  - **Two Boulders:** 2 boulders, with 1 possible challenge: a figure-eight around both.
 - A pattern can have several possible challenges: each challenge is a different arrow path around the same obstacles. (2026-10-08)
 - For the MVP, the board does no level design itself. The Level/Challenge Design Agent makes the map once, following the rules in this document and the board's descriptions and drawings, and every run uses that same map. (2026-10-07)
 - 30% of the obstacle pattern groups on the map become challenges. Each challenge gets an arrow that appears under it, animated as if painted on the ground, showing the player how to drive the challenge. The arrow's animation is designed in advance. (2026-10-07)
@@ -44,14 +44,25 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 
 ## Content
 
-(To be written.)
+### MVP challenges
+
+The board's drawings of the 3 MVP challenges, one per arrow path. Each drawing's data (boulders and arrow points, in units from the sheet's centre) is in a `.json` file next to its picture. The pale band is the 3-unit corridor, the white dot is the start, and the arrowhead is the finish.
+
+| Pattern | Challenge | How the arrow goes |
+|---|---|---|
+| Single Boulder | [arrow 1](level-design/single-boulder/arrow-1.svg) | One loop around the boulder, clockwise |
+| Single Boulder | [arrow 2](level-design/single-boulder/arrow-2.svg) | One loop around the boulder, counter-clockwise |
+| Two Boulders | [arrow 1](level-design/two-boulders/arrow-1.svg) | A figure-eight: clockwise around the top boulder, counter-clockwise around the bottom one |
+
+![Single Boulder, arrow 1](level-design/single-boulder/arrow-1.svg)
+![Single Boulder, arrow 2](level-design/single-boulder/arrow-2.svg)
+![Two Boulders, arrow 1](level-design/two-boulders/arrow-1.svg)
 
 ## Open questions
 
-- What are the exact layouts of the 2 patterns and their 3 arrow paths? The board will draw them in Crash City Grid, one drawing per arrow. (Together they give the MVP 3 challenge types, matching the 3 the Final GDD promises.)
-- How much XP does a completed challenge give?
 - After the MVP: the board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References
 
+- The board's challenge drawings: `docs/level-design/` (Content, "MVP challenges"). They are exported from Crash City Grid with `python tools/export_challenge_drawings.py <folder of downloaded drawings>`.
 - Crash City Grid, the map editor the board and the Project Lead draw the map in: https://claude.ai/artifact/R9AUtdNttfHKNgeqGDCPAH (private to the board). Each map is saved as an 80 by 80 grid of cells, plus its boulders, pattern groups, challenges and arrow paths, in units from the map centre; the Project Lead reads it and copies what the Level/Challenge Design Agent needs into its tasks.

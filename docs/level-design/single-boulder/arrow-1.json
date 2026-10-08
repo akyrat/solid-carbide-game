@@ -1,0 +1,111 @@
+{
+  "pattern": "Single Boulder",
+  "name": "Single Boulder - arrow 1",
+  "units": "1 unit = the car's width; the car is 1 x 3 units",
+  "origin": "x and y in units from the sheet's centre, x to the right, y down",
+  "width": 24,
+  "height": 24,
+  "legend": {
+    "R": "road",
+    "G": "gravel",
+    "B": "building",
+    ".": "empty"
+  },
+  "rows": [
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR"
+  ],
+  "boulders": [
+    {
+      "x": 2.5,
+      "y": -4.5,
+      "diameter": 3
+    }
+  ],
+  "arrow": {
+    "points": [
+      [
+        0,
+        -8
+      ],
+      [
+        1,
+        -8
+      ],
+      [
+        2,
+        -8
+      ],
+      [
+        4,
+        -7.5
+      ],
+      [
+        6,
+        -7
+      ],
+      [
+        6.5,
+        -5.5
+      ],
+      [
+        6.5,
+        -3.5
+      ],
+      [
+        5,
+        -1.5
+      ],
+      [
+        2.5,
+        -0.5
+      ],
+      [
+        -1,
+        -1.5
+      ],
+      [
+        -1,
+        -3.5
+      ],
+      [
+        -0.5,
+        -6
+      ],
+      [
+        2,
+        -9
+      ]
+    ],
+    "around_boulders": [
+      {
+        "boulder": 0,
+        "degrees": 389,
+        "direction": "clockwise"
+      }
+    ],
+    "corridor_width": 3.0
+  }
+}

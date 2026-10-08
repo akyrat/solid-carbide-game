@@ -21,6 +21,8 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - A drift that lasts longer than 1 second gives XP for every second it lasts, the first second included (a 3-second drift gives 3 seconds' worth). (2026-10-07)
 - Each second of drifting gives a fixed amount of XP: 10% of the XP bar at level 1. The amount does not grow with the bar, so at higher levels it is a smaller share of the bar and drifting gives only a little XP. (2026-10-07)
 - "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3). (2026-10-07)
+- At level 1, completing one challenge fills the XP bar: the player reaches level 2 and gets the weapon choice. (2026-10-08)
+- How much XP challenges and drifting give at each level, and how much XP each level needs, is worked out by the Game Data Agent as sensible XP scaling, within the decisions here. (2026-10-08)
 - Completing a challenge flashes a score and opens a weapon choice (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run. (2026-10-07)
 - Enemies drop coins. (2026-10-07)
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
@@ -56,6 +58,7 @@ flowchart TD
 
 ## Open questions
 
+- Does the weapon choice open on every completed challenge, or only when the XP bar fills and the player levels up? At level 1 the two are the same; from level 2 on, a single challenge may no longer fill the bar.
 - Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
 
 ## References
