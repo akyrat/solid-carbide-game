@@ -23,4 +23,7 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- T-012: the movement lives in a node-free model (`game/scripts/driving/car_model.gd`), so movement tests run step by step without the physics server. Keep it that way; the car node only moves the body.
+- `tools/unity_drift_charts.py --summary` is the reference for movement numbers; the GUT tests in `test_drift_model.gd` check the same numbers.
+- Overlap with the UI Agent: the drift prototype's tuning panel is a playtest tool, not game UI. The car exposes speed, drift angle and drift amount (on the model) for a HUD later.
+- Overlap with the Asset Generation Agent: car sheets are read through their JSON layout; a new sheet needs no code change as long as the JSON keeps the same fields.
