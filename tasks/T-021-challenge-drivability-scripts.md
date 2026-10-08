@@ -1,7 +1,7 @@
 ---
 id: T-021
 title: Challenge drivability check and driven-line tool
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 epic: level-challenges
@@ -24,7 +24,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-012 is done:** the check must use the real Godot car, not a copy of its rules.
+**Unblocked: T-012 is done** (2026-10-08). The check must use the real Godot car, not a copy of its rules.
 
 The Driving & Drift Agent provides the script that checks a challenge design can be driven (its role), and the Level/Challenge Design Agent runs it before handing a challenge over. The board decided each challenge's arrow is a corridor 3 units wide, and the drawn car (1 by 3 units) only has to touch it; the boulders are 3 units across and the car's physics body is 1 by 1 (Level design and Drifting, Decisions). The board drew the 3 MVP challenges in `docs/level-design/` (one `.json` per arrow, with its boulders and arrow points).
 

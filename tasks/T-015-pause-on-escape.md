@@ -1,7 +1,7 @@
 ---
 id: T-015
 title: Escape pauses the game, with a simple "Paused" screen
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus
@@ -24,7 +24,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-012 is done:** the drift prototype is the first thing there is to pause.
+**Unblocked: T-012 is done** (2026-10-08). The drift prototype is the first thing there is to pause.
 
 Escape pauses the game (HUD and menus, Decisions). For the MVP the pause screen is as simple as possible: the word "Paused" and a hint that Escape resumes. Pressing Escape again resumes. A full pause menu with settings comes later (T-016, final release); do not build it here.
 

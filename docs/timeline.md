@@ -369,3 +369,8 @@ Entry format:
 - Decision or change: the city has nothing to do with Redgull: the buildings carry none of its colours or branding (the "satirical Redgull billboards" are dropped from the buildings). After the MVP, occasional Redgull banners may be added as separate assets placed on buildings (board); their art task is written then.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`
 - Tasks: T-025 (short GDD)
+
+## 2026-10-08: T-012 done: Godot drift prototype
+- Decision or change: the board playtested the Godot drift prototype, adjusted some settings on the tuning panel and is very happy with the drift. It passed QA round 1 on all 11 criteria. Merged from `task/T-012-godot-drift-prototype`. T-008, T-015 and T-021 are unblocked. The board also wants the camera zoom slider kept as a player setting in the pause menu, which reverses the fixed-zoom decision; T-010 stays blocked until that is recorded.
+- Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `game/README.md`
+- Tasks: T-012 (done), T-008, T-015, T-021 (unblocked), T-010
