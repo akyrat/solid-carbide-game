@@ -209,3 +209,8 @@ Entry format:
 - Decision or change: when a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one arrow. A completed challenge's boulders stay as plain obstacles for the rest of the run. The board draws each challenge in Crash City Grid as its own drawing, grouped in a folder per obstacle pattern; drawings in a folder share their boulders and differ only in the arrow. The editor now supports this ("New challenge drawing").
 - Documents touched: `docs/level-design.md`
 - Tasks: none
+
+## 2026-10-08: Challenge corridor width; pattern copies left to the agent
+- Decision or change: a challenge's painted arrow is as wide as the car is long (3 units) and is the corridor; the car only has to touch it, and the Driving & Drift Agent's scripts make sure each path is drivable. The Level/Challenge Design Agent decides how many copies of each pattern go on the map, and where. Crash City Grid now draws arrows at their real 3-unit width. One of the two Single Boulder arrows is meant to go counter-clockwise; it will be redrawn.
+- Documents touched: `docs/level-design.md`
+- Tasks: none
