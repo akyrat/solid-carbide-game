@@ -265,8 +265,8 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Glow:** drawn into the sprites themselves, as bright pixels with small, stepped halos of darker shades. No smooth blur or bloom effects from the engine, which keeps the retro pixel look.
 - **Real-world references are inspiration only:** generated art never shows real brand logos or badges (for example no Ford or Shelby badges), and creatures are never exact copies of existing characters (the kaiju is Godzilla-style, not Godzilla).
 - **The car:** inspired by a 1967 Ford Mustang fastback, in dark green, with two parallel white racing stripes running down its middle (bonnet, roof and boot). See the reference photos in References.
-- **Buildings:** Tokyo-style towers with vertical signs and lit windows. The city has nothing to do with Redgull, so the buildings carry none of its colours or branding. Occasional Redgull banners may be added later as separate assets placed on the buildings, not drawn into them.
-- **Redgull's look:** the company's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling (why: Extended narrative, Decisions). Red is the company's theme colour, used only on things that belong to Redgull: its logo, its banners (later) and, in the MVP, the weapons, which arrive as Redgull gift packs. They don't have to be all red; red is included where it fits. It does not change the colour of the car, the enemies, the map or anything else.
+- **Buildings:** Tokyo-style towers with vertical signs and lit windows. The city has nothing to do with Redgull, so the buildings carry none of its colours or branding. After the MVP, occasional Redgull banners may be added as separate assets placed on the buildings, not drawn into them.
+- **Redgull's look:** the company's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling (why: Extended narrative, Decisions). Red is the company's theme colour, used only on things that belong to Redgull: its logo, its banners (after the MVP) and, in the MVP, the weapons, which arrive as Redgull gift packs. They don't have to be all red; red is included where it fits. It does not change the colour of the car, the enemies, the map or anything else.
 - **Ground:** asphalt roads with lane lines and crossings, cracked by the disaster; the centre is dusty gravel.
 - **Boulders:** dark rock with glowing cracks.
 - **Challenge arrow:** a glowing painted arrow that draws itself along the path, pulses while the challenge is open, and fades when it is completed. Arrows of the challenges on the map are **blue**; arrows of the challenges the kaiju's meteors create are **green**.
@@ -350,6 +350,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
-| `visual-style.md` | `d27e9455f8f51d05d923f60569ff4c7d57a6544506596554755601cf89486825` |
+| `visual-style.md` | `6e18814df916f877b778c176ce990627ba2371fed5992bbfaef62488a1f2ef85` |
 | `extended-narrative.md` | `60114f359c77518844054b509a5061fd0fbcbc3b164cfe69a61def7f35b73054` |
 | `hud-and-menus.md` | `6e31c45f4944fce5336f16fa6fc174f4ce53e81c872f26cf75b512dcf889f1da` |

@@ -366,6 +366,6 @@ Entry format:
 - Tasks: T-025 (short GDD)
 
 ## 2026-10-08: The city is not Redgull's
-- Decision or change: the city has nothing to do with Redgull: the buildings carry none of its colours or branding (the "satirical Redgull billboards" are dropped from the buildings). Occasional Redgull banners may be added later as separate assets placed on buildings.
+- Decision or change: the city has nothing to do with Redgull: the buildings carry none of its colours or branding (the "satirical Redgull billboards" are dropped from the buildings). After the MVP, occasional Redgull banners may be added as separate assets placed on buildings (board); their art task is written then.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`
 - Tasks: T-025 (short GDD)
