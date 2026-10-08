@@ -264,3 +264,8 @@ Entry format:
 - Decision or change: the board will pick the MVP minion from the Unity prototype's three regular enemies (Monster1, Monster4, Monster7). T-023 asks the Enemy Behavior Agent to describe all three, plus what they share and how the prototype spawns them, read-only. The prototype's XP drops don't carry over.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-023
+
+## 2026-10-08: Kaiju health
+- Decision or change: the kaiju takes about 4 vulnerability windows to kill; the Game Data Agent sets the actual number with the weapon damage. Enemies' only MVP question left is which Unity enemy becomes the minion (after T-023).
+- Documents touched: `docs/enemies.md`, `docs/mvp-readiness.json`
+- Tasks: none
