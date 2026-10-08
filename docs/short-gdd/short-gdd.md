@@ -64,7 +64,7 @@ The map is one city: 80 by 80 units (one unit is a car's width), laid out as a 4
 
 ## The look
 
-Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cyan neon, with vertical signs, lit windows and satirical Redgull billboards over cracked asphalt. Redgull's logo is a sketched seagull with red eyes, slightly evil and unsettling, and the company's red shows up only on its own things, such as its billboards and the weapons it sends. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
+Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cyan neon, with vertical signs and lit windows over cracked asphalt. Redgull's logo is a sketched seagull with red eyes, slightly evil and unsettling, and the company's red shows up only on its own things, such as the weapons it sends; the city itself is not Redgull's. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
 
 ## The MVP, and what comes after
 
