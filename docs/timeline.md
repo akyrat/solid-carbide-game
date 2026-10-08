@@ -269,3 +269,8 @@ Entry format:
 - Decision or change: the kaiju takes about 4 vulnerability windows to kill; the Game Data Agent sets the actual number with the weapon damage. Enemies' only MVP question left is which Unity enemy becomes the minion (after T-023).
 - Documents touched: `docs/enemies.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: MVP garage and main menu
+- Decision or change: the game opens on a main menu (Start, Garage, Quit) and returns there when a run ends. The MVP garage sells three permanent upgrades, each about 10 levels: acceleration, car HP, and a weapon damage bonus in percent; the Game Data Agent sets prices and per-level effects. The garage screen is a plain list in the MVP; its look, more upgrades and unlockable cars come after the MVP.
+- Documents touched: `docs/garage-design.md`, `docs/game-loop-architecture.md`, `docs/short-gdd/README.md`, `docs/mvp-readiness.json`
+- Tasks: none

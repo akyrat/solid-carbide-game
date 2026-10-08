@@ -15,3 +15,4 @@ Known wording to update when the Project Lead next edits the GDD:
 - XP from drifting: a drift longer than 1 second gives a little XP per second (decided in `docs/game-loop-architecture.md`).
 - The final release adds a recap screen after each run, win or loss, with kills per enemy type and other stats (decided in `docs/game-loop-architecture.md`).
 - The map is now described as a Tokyo-style cyberpunk city grid with roads 5 to 10 car-widths wide, obstacles in set patterns, and 30% of pattern groups becoming challenges (decided in `docs/level-design.md` and `docs/visual-style.md`).
+- The game now opens on a main menu (Start, Garage, Quit) and returns there after each run; the MVP garage sells acceleration, car HP and a weapon damage bonus (decided in `docs/game-loop-architecture.md` and `docs/garage-design.md`).

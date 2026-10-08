@@ -10,7 +10,7 @@ agents_read: [qa-integration]
 
 ## Summary
 
-Solid Carbide is played in 8-minute runs. The player only drives: completing driving challenges and drifting earn XP, each level-up brings a weapon choice, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 7 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it. Between runs, coins buy permanent car upgrades in the Garage, and the next run begins.
+Solid Carbide is played in 8-minute runs. The player only drives: completing driving challenges and drifting earn XP, each level-up brings a weapon choice, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 7 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it. Between runs, the player is back at the main menu, where the Garage spends coins on permanent car upgrades, and Start begins the next run.
 
 ## Decisions
 
@@ -27,7 +27,8 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - Enemies drop coins. (2026-10-07)
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer. (2026-10-07)
-- Between runs, coins are spent in the Garage on permanent car upgrades that improve driving in the next run. (2026-10-07)
+- Between runs, coins are spent in the Garage on permanent car upgrades that improve the car in the next run (which upgrades: Garage design, Decisions). (2026-10-07)
+- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Quit. When a run ends, win or loss, the player returns to the main menu. (2026-10-08)
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). The MVP goes straight to the Garage. (2026-10-07)
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player. (2026-10-07)
 
@@ -37,6 +38,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 
 ```mermaid
 flowchart TD
+    launch([Game launches]) --> menu
     start([Run starts: 8:00 on the clock]) --> drive[Drive and drift]
     drive --> drift{Drift longer than 1 s?}
     drift -- yes --> dxp[A little XP per second] --> drive
@@ -54,8 +56,9 @@ flowchart TD
     drive -- HP reaches 0 --> lost
     won --> recap[Recap screen: kills per enemy type and other stats, final release only]
     lost --> recap
-    recap --> garage[Garage: spend coins on permanent car upgrades]
-    garage --> start
+    recap --> menu[Main menu: Start, Garage, Quit]
+    menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
+    menu -- Start --> start
 ```
 
 ## Open questions
