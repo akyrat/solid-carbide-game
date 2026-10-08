@@ -314,3 +314,8 @@ Entry format:
 - Decision or change: the no-semi-transparent-pixels rule covers pixels inside sprites; the game may fade whole objects (the kaiju's shield, buildings). The MVP car has no livery (Greenbull livery is after the MVP). The car bounces off walls slightly. Visual style has no MVP questions left.
 - Documents touched: `docs/visual-style.md`, `docs/drifting.md`, `docs/mvp-readiness.json`
 - Tasks: T-019 (updated)
+
+## 2026-10-08: Bounce off boulders, level-up flow, T-023 cancelled
+- Decision or change: the car bounces off boulders as it does off walls (enemies still open). The MVP level-up offers 2 choices: first "get the flamethrower" or "upgrade the gun", then "upgrade the gun" or "upgrade the flamethrower". T-023 (Unity enemies report) is cancelled and deleted: the board defined the minion itself and its stats go to the Game Data Agent. Weapons has no MVP questions left.
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
+- Tasks: T-023 (cancelled), T-022 (updated)
