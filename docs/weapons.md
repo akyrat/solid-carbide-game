@@ -14,8 +14,8 @@ agents_read: [game-data]
 
 ## Decisions
 
-- The MVP has 2 weapons. Each completed challenge offers 1 of them to choose. (2026-10-07)
-- The final release has around 8 to 12 weapons, and each completed challenge offers 3 to choose from. (2026-10-07)
+- The MVP has 2 weapons. Each level-up offers 1 of them to choose. (2026-10-07)
+- The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from. (2026-10-07)
 
 ## Content
 

@@ -219,3 +219,8 @@ Entry format:
 - Decision or change: the board drew the 3 MVP challenges in Crash City Grid (Single Boulder: a clockwise and a counter-clockwise loop; Two Boulders: a figure-eight). They are saved in `docs/level-design/` as data and pictures by the new `tools/export_challenge_drawings.py`, and shown in Level design, Content. "The car" touching a challenge corridor is the drawn car (1 by 3). At level 1 one completed challenge levels the player up to level 2 with a weapon choice; the Game Data Agent works out the XP scaling. New open question: does the weapon choice open on every challenge or only on level-up? Level design is at 90%, with no MVP questions left.
 - Documents touched: `docs/level-design.md`, `docs/game-loop-architecture.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Weapon choice only on level-up
+- Decision or change: the weapon choice opens only when the XP bar fills and the player levels up, not on every completed challenge. A completed challenge flashes a score and gives XP. Game loop architecture (decision and run flowchart) and Weapons updated.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
+- Tasks: none

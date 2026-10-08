@@ -10,7 +10,7 @@ agents_read: [qa-integration]
 
 ## Summary
 
-Solid Carbide is played in 8-minute runs. The player only drives: completing driving challenges earns XP and weapon choices, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 7 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it. Between runs, coins buy permanent car upgrades in the Garage, and the next run begins.
+Solid Carbide is played in 8-minute runs. The player only drives: completing driving challenges and drifting earn XP, each level-up brings a weapon choice, weapons fire on their own at the enemies swarming in, and enemies drop coins. At 7 minutes the kaiju arrives, and the player has the last 60 seconds to defeat it. Between runs, coins buy permanent car upgrades in the Garage, and the next run begins.
 
 ## Decisions
 
@@ -23,7 +23,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3). (2026-10-07)
 - At level 1, completing one challenge fills the XP bar: the player reaches level 2 and gets the weapon choice. (2026-10-08)
 - How much XP challenges and drifting give at each level, and how much XP each level needs, is worked out by the Game Data Agent as sensible XP scaling, within the decisions here. (2026-10-08)
-- Completing a challenge flashes a score and opens a weapon choice (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run. (2026-10-07)
+- Completing a challenge flashes a score and gives XP. The weapon choice opens only when the XP bar fills and the player levels up (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run. (2026-10-07; weapon choice on level-up only, 2026-10-08)
 - Enemies drop coins. (2026-10-07)
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer. (2026-10-07)
@@ -41,7 +41,9 @@ flowchart TD
     drive --> drift{Drift longer than 1 s?}
     drift -- yes --> dxp[A little XP per second] --> drive
     drive --> challenge{Challenge completed?}
-    challenge -- yes --> xp[Score and XP] --> choice[Weapon choice] --> drive
+    challenge -- yes --> xp[Score and XP] --> lvl{XP bar full?}
+    lvl -- yes --> choice[Level up: weapon choice] --> drive
+    lvl -- no --> drive
     challenge -- no --> drive
     drive --> enemies[Enemies swarm in; weapons fire automatically; enemies drop coins] --> drive
     drive --> boss{7:00 reached?}
@@ -58,7 +60,6 @@ flowchart TD
 
 ## Open questions
 
-- Does the weapon choice open on every completed challenge, or only when the XP bar fills and the player levels up? At level 1 the two are the same; from level 2 on, a single challenge may no longer fill the bar.
 - Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
 
 ## References
