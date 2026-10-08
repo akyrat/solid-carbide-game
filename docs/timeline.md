@@ -204,3 +204,8 @@ Entry format:
 - Decision or change: MVP boulders are all 3 units across, so they never block a road (replacing 3, 6 or 9). The MVP has 2 obstacle patterns, defined by the board: Pattern 1 is 1 boulder with 2 possible challenge arrows, Pattern 2 is 2 boulders with 1. A pattern can have several possible challenges, each a different arrow path. Which pattern groups are challenges (30%) is preset and the same every run; the Level/Challenge Design Agent chooses first and the board adjusts. The arrow marks the challenge's corridor. A completed challenge's arrow disappears and the player gets XP. The HUD layout is still undefined. Crash City Grid now places 3-unit boulders only and lets a group hold several arrows. Level design readiness: 70%.
 - Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Challenge drawings per pattern folder
+- Decision or change: when a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one arrow. A completed challenge's boulders stay as plain obstacles for the rest of the run. The board draws each challenge in Crash City Grid as its own drawing, grouped in a folder per obstacle pattern; drawings in a folder share their boulders and differ only in the arrow. The editor now supports this ("New challenge drawing").
+- Documents touched: `docs/level-design.md`
+- Tasks: none

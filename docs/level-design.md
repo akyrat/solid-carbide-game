@@ -37,7 +37,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - 30% of the obstacle pattern groups on the map become challenges. Each challenge gets an arrow that appears under it, animated as if painted on the ground, showing the player how to drive the challenge. The arrow's animation is designed in advance. (2026-10-07)
 - Which pattern groups are challenges is set in advance, the same every run. The Level/Challenge Design Agent makes the first choice, and the board adjusts it if needed. (2026-10-08)
 - The painted arrow marks the challenge's corridor (the corridor in the first Decision). (2026-10-08)
-- When a challenge is completed, its arrow disappears and the player gets XP on the XP bar. (2026-10-08)
+- When a challenge is completed, its arrow disappears and the player gets XP on the XP bar. The group's boulders stay on the map as plain obstacles for the rest of the run. (2026-10-08)
+- When a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one of its arrows. (2026-10-08)
+- The board draws each challenge as its own drawing in Crash City Grid (References): one drawing per arrow path, kept in a folder per obstacle pattern. Every drawing in a pattern's folder has the same boulders; only the arrow differs. (2026-10-08)
 
 ## Content
 
@@ -45,11 +47,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 
 ## Open questions
 
-- What are the exact layouts of the 2 patterns and their 3 arrow paths? The board will draw them in Crash City Grid. (Together they give the MVP 3 challenge types, matching the 3 the Final GDD promises.)
-- When a Pattern 1 group is a challenge, which of its 2 arrow paths does it use: chosen by the Level/Challenge Design Agent, or both available?
+- What are the exact layouts of the 2 patterns and their 3 arrow paths? The board will draw them in Crash City Grid, one drawing per arrow. (Together they give the MVP 3 challenge types, matching the 3 the Final GDD promises.)
 - How much XP does a completed challenge give, and how wide is a challenge corridor?
-- Once a challenge's arrow disappears, does that group stay a plain obstacle group for the rest of the run?
-- How many obstacle pattern groups does the MVP map have, and where can they be placed?
+- How many copies of each of the 2 patterns are placed on the map, and where? (30% of them become challenges.)
 - After the MVP: the board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References
