@@ -14,7 +14,7 @@
 
 Humanitarian crises are breaking out around the world, and Redgull sends its stunt driver to each disaster zone, one city per level. The first is Crash City and its kaiju.
 
-The tone is **satirical and tongue-in-cheek**. Redgull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Redgull **gift packs**. Redgull also funds the car's upgrades, all in service of the sponsorship.
+The tone is **satirical**. Redgull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Redgull **gift packs**. Redgull also funds the car's upgrades, all in service of the sponsorship.
 
 ## Design pillars
 
