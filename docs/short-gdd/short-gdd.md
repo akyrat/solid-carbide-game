@@ -8,13 +8,13 @@
 
 **In one sentence:** *Solid Carbide* is a driving roguelite where you survive by out-drifting monsters and pulling off driving challenges for a livestream audience that rewards you with weapons.
 
-**In one paragraph:** Monsters have overrun Crash City, and the energy-drink brand Greenbull has sent its sponsored Stunt Driver in, not to help, but to drift for the cameras. Every run is livestreamed. Completing driving challenges and holding long drifts earns likes; filling the likes bar levels you up and Greenbull drops you a gift pack: a new weapon or an upgrade. Your weapons fire on their own, so you only ever drive. Monsters swarm in and drop coins, which buy permanent car upgrades in the garage between runs. At the 7-minute mark a Godzilla-style kaiju arrives behind a green shield, and the only way through it is to complete the challenges its own meteors create. One minute, one kaiju, one skill: drifting.
+**In one paragraph:** Monsters have overrun Crash City, and the energy-drink brand Redgull has sent its sponsored Stunt Driver in, not to help, but to drift for the cameras. Every run is livestreamed. Completing driving challenges and holding long drifts earns likes; filling the likes bar levels you up and Redgull drops you a gift pack: a new weapon or an upgrade. Your weapons fire on their own, so you only ever drive. Monsters swarm in and drop coins, which buy permanent car upgrades in the garage between runs. At the 7-minute mark a Godzilla-style kaiju arrives behind a green shield, and the only way through it is to complete the challenges its own meteors create. One minute, one kaiju, one skill: drifting.
 
 ## The world and the tone
 
-Humanitarian crises are breaking out around the world, and Greenbull sends its stunt driver to each disaster zone, one city per level. The first is Crash City and its kaiju.
+Humanitarian crises are breaking out around the world, and Redgull sends its stunt driver to each disaster zone, one city per level. The first is Crash City and its kaiju.
 
-The tone is **satirical and tongue-in-cheek**. Greenbull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Greenbull **gift packs**. Greenbull also funds the car's upgrades, all in service of the sponsorship.
+The tone is **satirical and tongue-in-cheek**. Redgull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Redgull **gift packs**. Redgull also funds the car's upgrades, all in service of the sponsorship.
 
 ## Design pillars
 
@@ -64,7 +64,7 @@ The map is one city: 80 by 80 units (one unit is a car's width), laid out as a 4
 
 ## The look
 
-Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink, cyan and Greenbull-green neon, with vertical signs, lit windows and satirical Greenbull billboards over cracked asphalt. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
+Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink, cyan and Redgull-green neon, with vertical signs, lit windows and satirical Redgull billboards over cracked asphalt. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
 
 ## The MVP, and what comes after
 

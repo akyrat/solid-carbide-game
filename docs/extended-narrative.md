@@ -10,19 +10,19 @@ agents_read: [asset-generation]
 
 ## Summary
 
-The player is Stunt Driver, sent by the energy-drink brand Greenbull to cities hit by humanitarian crises and disasters, just to drift for the cameras. Every run is livestreamed to Greenbull's audience: good driving earns likes, and likes earn gift packs. The tone is satirical and tongue-in-cheek: Greenbull isn't evil, just completely out of touch, and the player should sense that their fun is slightly unethical. Each city is a level with its own monster boss; the first is Crash City and its kaiju.
+The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit by humanitarian crises and disasters, just to drift for the cameras. Every run is livestreamed to Redgull's audience: good driving earns likes, and likes earn gift packs. The tone is satirical and tongue-in-cheek: Redgull isn't evil, just completely out of touch, and the player should sense that their fun is slightly unethical. Each city is a level with its own monster boss; the first is Crash City and its kaiju.
 
 ## Decisions
 
 - This document changes rarely. It puts the game on the rails: it decides what can be developed in future and how the plot justifies it, so it may hold details that only become useful later. (2026-10-08)
 - Agents read it before producing any user-facing text or graphics, together with Visual style for graphics (how tasks enforce this: `tasks/README.md`). (2026-10-08)
-- Overarching plot: humanitarian crises are happening around the world. Greenbull sends the player to each affected city, and each city is a new level. (2026-10-03)
+- Overarching plot: humanitarian crises are happening around the world. Redgull sends the player to each affected city, and each city is a new level. (2026-10-03)
 - Each level's final boss is a different type of monster. The kaiju is the first level's boss, in Crash City. (2026-10-03)
-- The player is **Stunt Driver**, a stunt driver sponsored by the energy-drink brand **Greenbull**, sent into each disaster just to drift and show off. (2026-10-08)
-- **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Greenbull is not evil, just completely out of touch and focused on profit. Playing is fun, but the player should sense that what they are doing is slightly unethical, and the game highlights this whenever it can. (2026-10-08)
-- Every run is **livestreamed** to Greenbull's audience. Completing challenges earns **likes**. (2026-10-08)
+- The player is **Stunt Driver**, a stunt driver sponsored by the energy-drink brand **Redgull**, sent into each disaster just to drift and show off. (2026-10-08)
+- **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Redgull is not evil, just completely out of touch and focused on profit. Playing is fun, but the player should sense that what they are doing is slightly unethical, and the game highlights this whenever it can. (2026-10-08)
+- Every run is **livestreamed** to Redgull's audience. Completing challenges earns **likes**. (2026-10-08)
 - **Likes are XP.** Players only ever see "likes", never "XP"; the board and the agents may say XP internally. Each level threshold is a likes threshold, and filling the likes bar earns a **gift pack**: the weapon reward on level-up. (2026-10-08)
-- **Greenbull funds the car's upgrades** between runs, all in service of the sponsorship. (2026-10-08, from the Final GDD)
+- **Redgull funds the car's upgrades** between runs, all in service of the sponsorship. (2026-10-08, from the Final GDD)
 - Weapon names, the level-up wording, descriptions and other user-facing text are written by the Narrative Theme Agent, using this document to get the tone; the board doesn't define them. That agent also chooses how likes are shown (the word, a heart icon, or both). (2026-10-08)
 
 ## Content
