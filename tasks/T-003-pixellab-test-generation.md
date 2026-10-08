@@ -6,6 +6,8 @@ from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: [T-001]
 documents_affected: []
 files_to_read_first: [tasks/README.md, README.md, game/README.md, .env.example, .claude/agents/asset-generation.md]

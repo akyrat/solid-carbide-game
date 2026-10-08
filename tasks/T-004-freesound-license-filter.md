@@ -6,6 +6,8 @@ from: project-lead
 to: sfx
 epic: sound
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: [T-002]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, game/README.md, game/tools/freesound.py, game/tools/test_freesound.py, tasks/T-002-freesound-test-download.md]

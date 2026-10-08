@@ -6,6 +6,8 @@ from: project-lead
 to: enemy-behavior
 epic: enemies
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [docs/enemies/unity-enemies-report.md, docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting/unity-prototype-report.md, .claude/agents/enemy-behavior.md]

@@ -6,6 +6,8 @@ from: project-lead
 to: weapon-behavior
 epic: weapons
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [docs/weapons/unity-weapons-report.md, docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/weapons.md, docs/game-loop-architecture.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, .claude/agents/weapon-behavior.md]

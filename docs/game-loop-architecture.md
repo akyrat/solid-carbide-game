@@ -63,6 +63,8 @@ flowchart TD
 
 ## Open questions
 
+- (After MVP) Gift-pack drops: a plane flies over and drops the gift pack on the ground, and the reward screen opens when the player drives over it, so driving isn't interrupted. In the MVP the reward screen opens as soon as the player levels up.
+- (After MVP) Difficulty modifiers the player can turn on for a level after completing it the first time; the plot might also tie into them (Extended narrative).
 - (After MVP) Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
 
 ## References

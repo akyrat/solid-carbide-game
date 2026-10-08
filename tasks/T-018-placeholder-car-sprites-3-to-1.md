@@ -6,6 +6,8 @@ from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: [T-013]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, tasks/T-013-placeholder-car-sprites.md, game/README.md]

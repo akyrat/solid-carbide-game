@@ -6,6 +6,8 @@ from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/drifting/unity-prototype-report.md, game/README.md]

@@ -6,9 +6,11 @@ from: project-lead
 to: ui
 epic: hud-menus
 milestone: mvp
+user_facing_text: yes
+changes_visuals: yes
 depends_on: [T-012]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, game/README.md, tasks/T-012-godot-drift-prototype.md]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, tasks/T-012-godot-drift-prototype.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the pause screen scene and script, their tests, the input map in game/project.godot, game/README.md]
 qa_rounds: 0
 ---
@@ -24,7 +26,7 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until T-012 is done:** the drift prototype is the first thing there is to pause.
 
-Escape pauses the game (`docs/unfiled-game-details.md`, "HUD and menus"). For the MVP the pause screen is as simple as possible: the word "Paused" and a hint that Escape resumes. Pressing Escape again resumes. A full pause menu with settings comes later (T-016, final release); do not build it here.
+Escape pauses the game (HUD and menus, Decisions). For the MVP the pause screen is as simple as possible: the word "Paused" and a hint that Escape resumes. Pressing Escape again resumes. A full pause menu with settings comes later (T-016, final release); do not build it here.
 
 - While paused, everything in the game stops: the car's physics and any timers.
 - Escape is a named action in the input map, so the final-release menu can reuse it.

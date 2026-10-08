@@ -6,6 +6,8 @@ from: project-lead
 to: driving-drift
 epic: driving
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [docs/drifting/unity-prototype-report.md, docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, .claude/agents/driving-drift.md, game/README.md]

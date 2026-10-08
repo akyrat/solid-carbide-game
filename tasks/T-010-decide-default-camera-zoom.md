@@ -6,9 +6,11 @@ from: project-lead
 to: board
 epic: driving
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: [T-012]
 documents_affected: [docs/drifting.md]
-files_to_read_first: [docs/drifting.md, docs/drifting/unity-prototype-report.md]
+files_to_read_first: [docs/drifting.md, docs/drifting/unity-prototype-report.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [docs/drifting.md]
 qa_rounds: 0
 ---

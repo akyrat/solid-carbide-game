@@ -6,9 +6,11 @@ from: project-lead
 to: ui
 epic: hud-menus
 milestone: final-release
+user_facing_text: yes
+changes_visuals: yes
 depends_on: [T-015]
 documents_affected: []
-files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, docs/visual-style.md, tasks/T-015-pause-on-escape.md]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, tasks/T-015-pause-on-escape.md, docs/extended-narrative.md]
 files_expected_to_change: [the pause menu scene and script, and their tests]
 qa_rounds: 0
 ---

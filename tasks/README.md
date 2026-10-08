@@ -48,3 +48,13 @@ Every task file has an `epic` and a `milestone` in its header.
 | `final-release` | The full game. |
 
 What each milestone includes is decided in the game area docs (for example, how many weapons the MVP has), not here. A new epic or milestone is added here first, with the board's agreement.
+
+## User-facing text and visuals
+
+Every task file says in its header whether it adds or changes anything the player reads or sees:
+
+- `user_facing_text: yes` when the task adds or changes any words the player sees in the game (menus, HUD, weapon names, descriptions, messages). The task then lists `docs/extended-narrative.md` in `files_to_read_first`, so the text fits the game's story and tone.
+- `changes_visuals: yes` when the task adds or changes anything the player sees (art, sprites, effects, screens, the camera). The task then lists both `docs/visual-style.md` and `docs/extended-narrative.md` in `files_to_read_first`.
+
+Otherwise each field is `no`. The Project Lead sets both fields when writing a task.
+

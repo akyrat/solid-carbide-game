@@ -6,6 +6,8 @@ from: project-lead
 to: project-lead
 epic: tooling
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [README.md, agent-notes/agents-interactions.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, README.md, .claude/agents/, agent-notes/, docs/short-gdd/Solid_Carbide_-_Final_GDD.pdf, docs/README.md]

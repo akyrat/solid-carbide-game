@@ -6,10 +6,12 @@ from: project-lead
 to: level-challenge
 epic: level-challenges
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: []
 documents_affected: [docs/level-design.md, game/README.md]
 files_expected_to_change: [the map scene and its scripts, the map's layout data file, their tests, screenshots, docs/level-design.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/README.md, docs/level-design.md, docs/level-design/, docs/game-loop-architecture.md, docs/visual-style.md, docs/drifting.md, game/README.md, .claude/agents/level-challenge.md]
+files_to_read_first: [tasks/README.md, docs/README.md, docs/level-design.md, docs/level-design/, docs/game-loop-architecture.md, docs/visual-style.md, docs/drifting.md, game/README.md, .claude/agents/level-challenge.md, docs/extended-narrative.md]
 qa_rounds: 0
 ---
 

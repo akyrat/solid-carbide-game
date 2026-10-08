@@ -6,9 +6,11 @@ from: project-lead
 to: driving-drift
 epic: driving
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: [T-013, T-018]
 documents_affected: [docs/drifting.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, docs/drifting/unity-prototype-report.md, game/README.md, .claude/agents/driving-drift.md]
+files_to_read_first: [tasks/README.md, docs/README.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, docs/drifting/unity-prototype-report.md, game/README.md, .claude/agents/driving-drift.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the drift prototype scene, the car's script and settings, the tuning panel, their tests, project.godot (physics rate, input map), docs/drifting.md, game/README.md]
 qa_rounds: 0
 ---

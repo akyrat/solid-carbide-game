@@ -6,9 +6,11 @@ from: project-lead
 to: driving-drift
 epic: driving
 milestone: final-release
+user_facing_text: no
+changes_visuals: yes
 depends_on: [T-012]
 documents_affected: []
-files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md]
+files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the car's code and scene, and their tests]
 qa_rounds: 0
 ---

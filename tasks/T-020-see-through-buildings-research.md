@@ -6,9 +6,11 @@ from: project-lead
 to: level-challenge
 epic: level-challenges
 milestone: mvp
+user_facing_text: no
+changes_visuals: yes
 depends_on: []
 documents_affected: [docs/visual-style.md]
-files_to_read_first: [tasks/README.md, docs/README.md, docs/visual-style.md, docs/level-design.md, docs/drifting.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/README.md, docs/visual-style.md, docs/level-design.md, docs/drifting.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [a research report under docs/visual-style/, a small test scene and script under game/, their tests, screenshots under docs/visual-style/, docs/visual-style.md]
 qa_rounds: 0
 ---

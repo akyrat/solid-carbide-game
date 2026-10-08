@@ -6,6 +6,8 @@ from: project-lead
 to: project-lead
 epic: tooling
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [docs/long-gdd.md, docs/README.md, docs/short-gdd/README.md]
 files_to_read_first: [tasks/README.md, CLAUDE.md, docs/README.md, docs/long-gdd.md, docs/short-gdd/README.md]

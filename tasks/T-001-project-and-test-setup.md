@@ -6,6 +6,8 @@ from: project-lead
 to: qa-integration
 epic: tooling
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: [game/README.md, README.md]
 files_to_read_first: [CLAUDE.md, README.md, game/README.md, tasks/_TEMPLATE.md, docs/game-loop-architecture.md]

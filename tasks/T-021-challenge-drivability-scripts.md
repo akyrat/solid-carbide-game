@@ -6,6 +6,8 @@ from: project-lead
 to: driving-drift
 epic: level-challenges
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: [T-012]
 documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/level-design.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, docs/level-design/, game/README.md, .claude/agents/driving-drift.md, .claude/agents/level-challenge.md]

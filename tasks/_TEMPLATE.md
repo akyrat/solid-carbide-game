@@ -6,6 +6,8 @@ from: project-lead
 to: agent-name
 epic: epic-id
 milestone: mvp
+user_facing_text: no
+changes_visuals: no
 depends_on: []
 documents_affected: []
 files_to_read_first: [tasks/README.md]
@@ -16,6 +18,7 @@ qa_rounds: 0
 <!--
 status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
 epic and milestone: one of the ids listed in tasks/README.md.
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 qa_rounds: how many times QA has checked this task. The maximum is 2.
 A task is not done until every document listed in documents_affected has been updated.
 -->
