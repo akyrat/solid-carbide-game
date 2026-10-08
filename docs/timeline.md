@@ -339,3 +339,8 @@ Entry format:
 - Decision or change: Visual style's three reference images each get their own line and caption, so they read cleanly in the long GDD. No new decisions.
 - Documents touched: `docs/visual-style.md`
 - Tasks: none
+
+## 2026-10-08: T-007 done: long GDD generator and staleness check
+- Decision or change: `tools/generate_long_gdd.py` builds `docs/long-gdd.md` from the nine game area docs (script only; open questions and decision dates left out) and `--check` reports stale game area docs and whether the short GDD has caught up. It passed QA round 1 on all 11 criteria; after QA's reading notes the Content heading was kept and a link test added; the board reviewed the long GDD. Merged from `task/T-007-long-gdd-generator`. T-025 (short GDD) is unblocked.
+- Documents touched: `docs/long-gdd.md`, `docs/README.md`, `docs/short-gdd/README.md`
+- Tasks: T-007, T-025 (unblocked)
