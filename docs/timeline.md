@@ -304,3 +304,8 @@ Entry format:
 - Decision or change: glow is drawn into the sprites (bright pixels with stepped halos, no engine blur or bloom). Real-world references are inspiration only: no real logos or badges, no exact copies of existing characters. The car's two stripes are white. The minion doesn't copy a Unity enemy; the Game Data Agent sets its health, contact damage and knockback.
 - Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Effects, challenge arrow colours and the kaiju's shield
+- Decision or change: the Asset Generation Agent designs the effects within the palette, glow and pixel style. Map challenge arrows are blue; the kaiju's meteor challenges have green arrows. While the kaiju can't be hurt it sits in a green, see-through oval shield; completing one of its challenges removes the shield and it shows its normal look while vulnerable (the shield idea moved from "after MVP" to decided). Open: how see-through is drawn under the no-semi-transparent-pixels rule.
+- Documents touched: `docs/visual-style.md`, `docs/enemies.md`, `docs/mvp-readiness.json`
+- Tasks: none
