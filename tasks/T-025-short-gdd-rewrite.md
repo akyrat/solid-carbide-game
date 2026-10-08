@@ -1,7 +1,7 @@
 ---
 id: T-025
 title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
-status: needs-playtest
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -105,3 +105,7 @@ QA/Integration, 2026-10-08, in `C:\solid-carbide-worktrees\T-025`, at commit 3eb
 Observation, not counted: the long GDD still disagrees with itself on where a run ends (Game loop architecture says the main menu; its recap line says "the MVP goes straight to the Garage"). The short GDD follows the main menu. That is a game area doc question for the Project Lead, not a fault of this task.
 
 Result: 8 of 8 criteria pass. Status set to `needs-playtest`.
+
+### Board review (2026-10-09)
+
+Approved by the board. Changes made during review: "tongue-in-cheek" removed from the tone line (a working phrase only); the design pillars are to be reworked by the board in T-030.
