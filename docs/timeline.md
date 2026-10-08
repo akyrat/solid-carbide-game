@@ -224,3 +224,8 @@ Entry format:
 - Decision or change: the weapon choice opens only when the XP bar fills and the player levels up, not on every completed challenge. A completed challenge flashes a score and gives XP. Game loop architecture (decision and run flowchart) and Weapons updated.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/weapons.md`
 - Tasks: none
+
+## 2026-10-08: Tickets for the map, see-through buildings and challenge drivability
+- Decision or change: T-019 (Level/Challenge Design) builds the MVP map with placeholder colours, places the pattern copies and preset challenges, and signals completed challenges; it is blocked on two board questions, now open in Level design: the challenges (11 to 13 units wide with their corridors) don't fit on the 8-unit roads, and what exactly counts as completing a challenge. T-020 (Level/Challenge Design) researches see-through buildings with a small test scene. T-021 (Driving & Drift) writes the challenge drivability check and driven-line tool, after T-012. All are epic `level-challenges`, milestone `mvp`.
+- Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
+- Tasks: T-019, T-020, T-021

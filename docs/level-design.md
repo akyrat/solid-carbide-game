@@ -60,6 +60,8 @@ The board's drawings of the 3 MVP challenges, one per arrow path. Each drawing's
 
 ## Open questions
 
+- The challenges, with their 3-unit corridors, measure about 11 by 12, 11 by 13 and 11 by 20 units, but every road is 8 units wide. Where can challenges go: only the gravel centre (and junctions, if they fit), wider roads, or smaller drawings? (Blocks task T-019.)
+- What exactly counts as completing a challenge? For example: the drawn car touches the corridor continuously from the arrow's start to its end, in its direction. (Blocks task T-019.)
 - After the MVP: the board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References
