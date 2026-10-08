@@ -329,3 +329,13 @@ Entry format:
 - Decision or change: Visual style gets a Summary written from its decisions (no new decisions). Weapons' reference to the not-yet-written T-022 report is plain text until the report exists, so the long GDD has no dead links.
 - Documents touched: `docs/visual-style.md`, `docs/weapons.md`
 - Tasks: none
+
+## 2026-10-08: README car image and key-art scene
+- Decision or change: the root README gets the final car at its top right, taken from a T-014 frame with no new generation (T-026, MVP, after T-014). A promotional key-art scene (the car drifting through the neon city, minions closing in, the shielded kaiju behind) is made with PixelLab for the README and later pitch material (T-027, final release, after T-014 and the future minion and kaiju art tasks).
+- Documents touched: none yet (both tasks update `README.md`)
+- Tasks: T-026, T-027
+
+## 2026-10-08: Visual style references tidied
+- Decision or change: Visual style's three reference images each get their own line and caption, so they read cleanly in the long GDD. No new decisions.
+- Documents touched: `docs/visual-style.md`
+- Tasks: none
