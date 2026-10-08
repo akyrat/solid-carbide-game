@@ -244,3 +244,8 @@ Entry format:
 - Decision or change: a challenge is completed when the drawn car touches its corridor continuously from the arrow's start to its end, in the arrow's direction; leaving midway means starting again. Level design has no MVP questions left (100%). T-019 is unblocked.
 - Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
 - Tasks: T-019 (unblocked)
+
+## 2026-10-08: The 2 MVP weapons
+- Decision or change: the MVP weapons are a starting gun (every run starts with it; no visible weapon, only bullets; fires automatically at set intervals at enemies within range, aiming itself) and an exhaust flamethrower that fires only while drifting. Upgrading the gun's fire rate comes after the MVP. Open: the gun's target choice, the flamethrower's drifting definition and flame shape, and how level-ups and upgrades work in the MVP.
+- Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
+- Tasks: none
