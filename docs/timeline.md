@@ -254,3 +254,8 @@ Entry format:
 - Decision or change: the starting gun and the exhaust flamethrower copy the behaviour of the matching weapons in the board's Unity prototype. T-022 asks the Weapon Behavior Agent to study them there, read-only, and write a report, as T-006 did for driving. Still open: how level-ups and upgrades work in the MVP.
 - Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
 - Tasks: T-022
+
+## 2026-10-08: MVP weapon upgrades copy the Unity prototype's
+- Decision or change: the two MVP weapons' upgrades copy the Unity prototype's upgrade tiers; the Game Data Agent balances from those values. T-022 now also covers the prototype's upgrade tiers and how its level-up chooses what to offer. The board confirms the level-up flow against the report.
+- Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
+- Tasks: T-022 (updated)
