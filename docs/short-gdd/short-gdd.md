@@ -20,7 +20,7 @@ The tone is **satirical and tongue-in-cheek**. Greenbull isn't evil, just comple
 
 - **Drift feel is king.** The car's handling copies a drift prototype the designer is happy with, and it is tuned by playing it before any final art exists.
 - **Drive to get stronger.** Likes, and so new weapons, come only from driving: challenges and drifts. Never from kills.
-- **Destroy to upgrade the car.** Monsters drop coins; coins buy permanent upgrades in the garage. Enemies are pressure, not a resource.
+- **Destroy to upgrade the car.** Monsters drop coins; coins buy permanent upgrades in the garage. Kills never give likes.
 
 ```mermaid
 flowchart LR
@@ -35,7 +35,7 @@ flowchart LR
 **A run lasts 8 minutes.** The player starts at the main menu (Start, Garage, Quit) and returns there after every run, win or loss.
 
 - **Driving:** W drives forward, S brakes and reverses, A and D steer and drift. The car jumps straight to a cruising speed and builds a long, fast slide when turned, which carries more speed than driving straight.
-- **Challenges:** obstacles of crashed meteor boulders stand on the roads in set patterns. About 30% of them are challenges, each marked by a glowing arrow painted on the ground. Follow the arrow from start to finish, staying on it, and the challenge is complete: the arrow fades and the stream sends likes. The MVP has 3 kinds: a clockwise and a counter-clockwise loop around one boulder, and a figure-eight around two.
+- **Challenges:** obstacles of crashed meteor boulders stand on the roads in set patterns. 30% of these patterns are challenges, each marked by a glowing arrow painted on the ground. Follow the arrow from start to finish, staying on it, and the challenge is complete: the arrow fades and the stream sends likes. The MVP has 3 kinds: a clockwise and a counter-clockwise loop around one boulder, and a figure-eight around two.
 - **Likes and gift packs:** challenges give most of the likes; drifts longer than a second add a little. Each time the likes bar fills, the game pauses for a gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
 - **Weapons:** the car starts every run with a **gun** that aims and fires on its own at monsters in range. The second weapon is a **flamethrower out of the exhaust that fires only while drifting**. The weapons reset every run.
 - **Monsters:** light-green, four-legged lizards come in from the edges of the screen, a few more as the run goes on. They hurt the car on contact and drop coins.
@@ -60,7 +60,7 @@ flowchart TD
 
 The player only drives; everything else reacts. The screen shows the car's health, a timer counting down from 8:00, the likes bar and level, the coins collected, an arrow pointing to the nearest challenge, and the kaiju's health once it arrives. Escape pauses the game.
 
-The map is one city: an 80 by 80 grid of blocks with roads between them, a wide road around the edge and an open gravel square in the middle. The car bounces off buildings and boulders, and buildings turn see-through when the car drives behind them.
+The map is one city: 80 by 80 units (one unit is a car's width), laid out as a 4 by 4 grid of city blocks with roads between them, a wide road around the edge and an open gravel square in the middle. The car bounces off buildings and boulders, and buildings turn see-through when the car drives behind them.
 
 ## The look
 
@@ -72,7 +72,7 @@ Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink, cyan a
 |---|---|---|
 | Weapons | 2: the gun and the exhaust flamethrower | 8 to 12, three offered per gift pack |
 | Bosses | the kaiju in Crash City | a different monster boss for each city |
-| Map | one city, made once | more cities, hand-drawn, maybe a new map each run |
+| Map | one city, made once | more cities, one per level (how maps are made is still open) |
 | Challenges | 3 kinds, around boulders | more obstacle kinds |
 | Garage | 3 upgrades, a plain list | more upgrades, unlockable cars |
 | Players | single player | local co-op for 2 or 4, split screen |

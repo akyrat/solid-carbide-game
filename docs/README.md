@@ -20,7 +20,7 @@ Game decisions live in these documents, and the documents are the source of trut
 | Garage design | `garage-design.md` |
 | HUD and menus | `hud-and-menus.md` |
 | Long GDD | `long-gdd.md` |
-| Short GDD | `short-gdd/short-gdd.md` (PDF: `short-gdd/short-gdd.pdf`; the original Final GDD PDF is kept there as history) |
+| Short GDD | `short-gdd/short-gdd.md` (PDF: `short-gdd/short-gdd.pdf`; the original Final GDD PDF is kept there as history and is no longer a source of truth) |
 | Timeline record | `timeline.md` |
 | Unfiled game details | `unfiled-game-details.md` |
 
