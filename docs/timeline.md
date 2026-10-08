@@ -199,3 +199,8 @@ Entry format:
 - Decision or change: the board and the Project Lead draw the map in Crash City Grid, a private claude.ai page (linked from Level design, References): cells, boulders, pattern groups, challenges and their arrows, saved for the Project Lead to read. A readiness summary (MVP Docs Readiness page) puts the game area docs at about 43% of an MVP-ready first draft. The Project Lead keeps those estimates in `docs/mvp-readiness.json`, which a Claude Code status line (`tools/statusline.py`, set in `.claude/settings.json`) shows at the bottom of the terminal.
 - Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
 - Tasks: none
+
+## 2026-10-08: Obstacle patterns and challenges
+- Decision or change: MVP boulders are all 3 units across, so they never block a road (replacing 3, 6 or 9). The MVP has 2 obstacle patterns, defined by the board: Pattern 1 is 1 boulder with 2 possible challenge arrows, Pattern 2 is 2 boulders with 1. A pattern can have several possible challenges, each a different arrow path. Which pattern groups are challenges (30%) is preset and the same every run; the Level/Challenge Design Agent chooses first and the board adjusts. The arrow marks the challenge's corridor. A completed challenge's arrow disappears and the player gets XP. The HUD layout is still undefined. Crash City Grid now places 3-unit boulders only and lets a group hold several arrows. Level design readiness: 70%.
+- Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
+- Tasks: none

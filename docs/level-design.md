@@ -24,13 +24,20 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - Inside the perimeter road, building blocks of 10 by 10 units are laid out in a 4 by 4 grid, separated by roads 8 units wide (3 roads in each direction). (2026-10-07)
 - The centre of the map is an open square of 28 by 28 units with no blocks. Its ground is gravel, not road. (2026-10-07)
 - Obstacles are placed on the roads. In the MVP the only obstacle is a crashed meteor boulder; more kinds come later. (2026-10-07)
-- In the MVP, obstacles are circles. Each has a diameter of 1, 2 or 3 times the car's length (the drawn car is 3 units long, so 3, 6 or 9 units). (2026-10-07)
-- In the MVP, a challenge includes up to 2 obstacles, each of any of the three sizes. (2026-10-07)
+- In the MVP, obstacles are circles, all 3 units across (one car length), so they never block a road. (2026-10-08; replaces the 2026-10-07 decision of 3, 6 or 9 units)
+- In the MVP, a challenge includes up to 2 obstacles. (2026-10-07)
 - Each challenge's arrow path is shaped to its obstacles, using scripts from the Driving & Drift Agent that show what the car can actually drive and how it behaves. (2026-10-07)
 - Some obstacles are on the map from the start; others appear during the run, dropped by the boss (Enemies, Decisions). (2026-10-07)
-- The obstacles on the map from the start are placed in set patterns, called obstacle pattern groups. The MVP has 3 patterns, which the board will define. (2026-10-07)
+- The obstacles on the map from the start are placed in set patterns, called obstacle pattern groups. The board defines the patterns. (2026-10-07)
+- The MVP has 2 obstacle patterns (2026-10-08; replaces the earlier plan of 3):
+  - **Pattern 1:** 1 boulder, with 2 possible challenges (2 different arrow paths around the same boulder).
+  - **Pattern 2:** 2 boulders, with 1 possible challenge.
+- A pattern can have several possible challenges: each challenge is a different arrow path around the same obstacles. (2026-10-08)
 - For the MVP, the board does no level design itself. The Level/Challenge Design Agent makes the map once, following the rules in this document and the board's descriptions and drawings, and every run uses that same map. (2026-10-07)
 - 30% of the obstacle pattern groups on the map become challenges. Each challenge gets an arrow that appears under it, animated as if painted on the ground, showing the player how to drive the challenge. The arrow's animation is designed in advance. (2026-10-07)
+- Which pattern groups are challenges is set in advance, the same every run. The Level/Challenge Design Agent makes the first choice, and the board adjusts it if needed. (2026-10-08)
+- The painted arrow marks the challenge's corridor (the corridor in the first Decision). (2026-10-08)
+- When a challenge is completed, its arrow disappears and the player gets XP on the XP bar. (2026-10-08)
 
 ## Content
 
@@ -38,14 +45,12 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 
 ## Open questions
 
-- What do the 3 obstacle patterns look like? Are they also the MVP's 3 challenge types (the Final GDD promises 3)? (The board will explain the challenges and obstacles next.)
+- What are the exact layouts of the 2 patterns and their 3 arrow paths? The board will draw them in Crash City Grid. (Together they give the MVP 3 challenge types, matching the 3 the Final GDD promises.)
+- When a Pattern 1 group is a challenge, which of its 2 arrow paths does it use: chosen by the Level/Challenge Design Agent, or both available?
+- How much XP does a completed challenge give, and how wide is a challenge corridor?
+- Once a challenge's arrow disappears, does that group stay a plain obstacle group for the rest of the run?
 - How many obstacle pattern groups does the MVP map have, and where can they be placed?
 - After the MVP: the board plans to draw future maps by hand, and may explore generating a new map for every run.
-- Which 30% of pattern groups become challenges: chosen at random each run, or fixed? Rounded how?
-- What happens to a challenge after it is completed: does it disappear, stay, or respawn elsewhere?
-- How does the challenge corridor (Decisions) relate to the painted arrow: does the arrow mark the corridor?
-- A 9-unit obstacle (3 car lengths) is wider than every road on the map (8 units), so it would block a road completely. Where can the largest obstacles go: only in junctions and the gravel centre, or are some roads wider?
-- Are the 3 MVP obstacle patterns still to be defined by the board, now that a challenge is up to 2 obstacles of 3 sizes?
 
 ## References
 
