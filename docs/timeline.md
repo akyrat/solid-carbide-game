@@ -259,3 +259,8 @@ Entry format:
 - Decision or change: the two MVP weapons' upgrades copy the Unity prototype's upgrade tiers; the Game Data Agent balances from those values. T-022 now also covers the prototype's upgrade tiers and how its level-up chooses what to offer. The board confirms the level-up flow against the report.
 - Documents touched: `docs/weapons.md`, `docs/mvp-readiness.json`
 - Tasks: T-022 (updated)
+
+## 2026-10-08: MVP minion to be picked from the Unity prototype's enemies
+- Decision or change: the board will pick the MVP minion from the Unity prototype's three regular enemies (Monster1, Monster4, Monster7). T-023 asks the Enemy Behavior Agent to describe all three, plus what they share and how the prototype spawns them, read-only. The prototype's XP drops don't carry over.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-023

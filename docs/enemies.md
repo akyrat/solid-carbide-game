@@ -30,10 +30,10 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 ## Open questions
 
-- What is the MVP minion like: how it looks, how it moves, how much contact damage it does, and how much health it has? (The Final GDD has one minion type.)
+- Which enemy is the MVP minion? The board will pick one of the Unity prototype's three regular enemies (Monster1, Monster4, Monster7) after the report in task T-023 describes them.
 - How much health does the kaiju have?
 - (After MVP) Idea under consideration: a semi-transparent shield on the boss, in the same color as the arrow of the challenge it spawned, to signal that it is invulnerable.
 
 ## References
 
-(None yet.)
+- Unity prototype enemies report: [enemies/unity-enemies-report.md](enemies/unity-enemies-report.md) (being written in task T-023).
