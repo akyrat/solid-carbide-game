@@ -14,8 +14,9 @@ agents_read: [game-data]
 
 ## Decisions
 
-- The MVP has 2 weapons. Each level-up offers 1 of them to choose. (2026-10-07)
-- The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from. (2026-10-07)
+- The MVP has 2 weapons. Each level-up offers 1 of them to choose. (2026-10-07; per level-up rather than per challenge since 2026-10-08)
+- The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from. (2026-10-07; per level-up since 2026-10-08)
+- The Game Data Agent works out how weapon upgrades scale from level to level. (2026-10-08)
 
 ## Content
 
@@ -25,7 +26,7 @@ agents_read: [game-data]
 
 - What are the 2 MVP weapons?
 - What are the auto-fire and targeting rules?
-- Where does the curve for the 20 upgrade levels per weapon come from?
+- How many upgrade levels does each weapon have (the Final GDD says up to 20), what do upgrades change (the Final GDD says damage, projectile count or size, attack speed), and does choosing a weapon you already have upgrade it?
 
 ## References
 

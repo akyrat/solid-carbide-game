@@ -229,3 +229,8 @@ Entry format:
 - Decision or change: T-019 (Level/Challenge Design) builds the MVP map with placeholder colours, places the pattern copies and preset challenges, and signals completed challenges; it is blocked on two board questions, now open in Level design: the challenges (11 to 13 units wide with their corridors) don't fit on the 8-unit roads, and what exactly counts as completing a challenge. T-020 (Level/Challenge Design) researches see-through buildings with a small test scene. T-021 (Driving & Drift) writes the challenge drivability check and driven-line tool, after T-012. All are epic `level-challenges`, milestone `mvp`.
 - Documents touched: `docs/level-design.md`, `docs/mvp-readiness.json`
 - Tasks: T-019, T-020, T-021
+
+## 2026-10-08: MVP and after-MVP questions separated; balancing handed to Game Data
+- Decision or change: open questions that can wait start with "(After MVP)" (rule in `docs/README.md`): the recap screen, the boost look, the test jump, arrow keys, gamepad, the possibly rotating old camera, the trick system, post-MVP maps, the boss shield and per-boss names. Balancing numbers go to the Game Data Agent (with the Enemy Behavior Agent for enemies): weapon upgrade scaling, enemy number growth, coin drops, the kaiju's vulnerability window and meteor frequency. New MVP questions recorded in Enemies (the minion, the kaiju's health) and Weapons (upgrade levels and what they change). Readiness: 51%.
+- Documents touched: `docs/README.md`, `docs/game-loop-architecture.md`, `docs/drifting.md`, `docs/level-design.md`, `docs/enemies.md`, `docs/weapons.md`, `docs/extended-narrative.md`, `docs/mvp-readiness.json`
+- Tasks: none

@@ -60,7 +60,7 @@ flowchart TD
 
 ## Open questions
 
-- Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
+- (After MVP) Which stats does the recap screen show besides kills per enemy type, and what does it look like? (Task T-017.)
 
 ## References
 

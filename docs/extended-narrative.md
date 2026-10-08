@@ -23,7 +23,7 @@ Humanitarian crises are happening around the world, and Greenbull sends the play
 
 ## Open questions
 
-- Is "kaiju" the right word for the bosses across the whole game, or does each level get its own kind of monster and name?
+- (After MVP) Is "kaiju" the right word for the bosses across the whole game, or does each level get its own kind of monster and name?
 - What text does the first slice actually have: weapon names, gift pack lines, menu copy?
 
 ## References

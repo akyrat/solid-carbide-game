@@ -22,6 +22,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - The boss becomes vulnerable only by completing the challenges its own meteors create. Those use a different color than the challenges already on the map. (2026-10-03)
 - Over a run, the number of enemies grows slightly. Enemies do not get tougher. (2026-10-07)
 - The kaiju's meteor challenges are the only challenges that make it vulnerable. They replace the Final GDD's plan of challenges spawning near the kaiju. (2026-10-07)
+- The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, how long the kaiju stays vulnerable after a challenge, and how often it drops meteors (including whether it can drop more while a challenge is still open). The board judges them in playtests. (2026-10-08)
 
 ## Content
 
@@ -29,10 +30,9 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 ## Open questions
 
-- Idea under consideration: a semi-transparent shield on the boss, in the same color as the arrow of the challenge it spawned, to signal that it is invulnerable.
-- How long does the boss stay vulnerable after a challenge is completed?
-- How often does the boss use the meteor move, and can it start another while a challenge is still uncompleted?
-- How exactly does the number of enemies grow across the 7 minutes before the boss?
+- What is the MVP minion like: how it looks, how it moves, how much contact damage it does, and how much health it has? (The Final GDD has one minion type.)
+- How much health does the kaiju have?
+- (After MVP) Idea under consideration: a semi-transparent shield on the boss, in the same color as the arrow of the challenge it spawned, to signal that it is invulnerable.
 
 ## References
 

@@ -52,15 +52,15 @@ Facts from the report (Unity prototype report, sections 1 to 7). No new decision
 
 ## Open questions
 
-- What does the boost effect look like?
+- (After MVP) What does the boost effect look like?
 - What is the camera zoom? (Task T-010.)
 - Does the isometric drawing feel the same as the flat top-down prototype? (Board playtest.)
-- Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
-- Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
-- Should gamepad support carry over (triggers as on/off, analog stick steering)?
+- (After MVP) Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
+- (After MVP) Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
+- (After MVP) Should gamepad support carry over (triggers as on/off, analog stick steering)?
 - Should collisions with walls and enemies feel like the Unity prototype's (Box2D), and if so, in the movement prototype or later?
-- Does the board remember a version of the Unity prototype whose camera rotated with the car? An old saved setting suggests one existed; the current version's camera never rotates.
-- Far-future idea: a trick system for the car (front flips, back flips, in the style of Olli Olli World). Long-term only.
+- (After MVP) Does the board remember a version of the Unity prototype whose camera rotated with the car? An old saved setting suggests one existed; the current version's camera never rotates.
+- (After MVP) Far-future idea: a trick system for the car (front flips, back flips, in the style of Olli Olli World). Long-term only.
 
 ## References
 

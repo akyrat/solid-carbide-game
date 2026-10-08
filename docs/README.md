@@ -56,7 +56,7 @@ agents_read: []
 - **Summary:** two to four sentences on what this part of the game is. It opens the document's chapter in the long GDD, and the short GDD condenses it.
 - **Decisions:** one bullet per decision, ending with the date it was made, for example `(2026-10-04)`. Only decisions the board made. Ideas under consideration go in Open questions.
 - **Content:** the full description, in prose, tables or diagrams. Use `###` subheadings freely. Content explains the decisions without repeating them.
-- **Open questions:** what is still undecided. Open questions stay in this document and are not copied into the long GDD.
+- **Open questions:** what is still undecided. Open questions stay in this document and are not copied into the long GDD. A question that can wait until after the MVP starts with "(After MVP)"; the others must be answered for the MVP.
 - **References:** links to research, reports and prototypes. The long GDD links to them; it does not copy them.
 
 A section with nothing in it yet says `(To be written.)` or, for Open questions and References, `(None yet.)`.

@@ -1,14 +1,14 @@
 {
-  "note": "The Project Lead's estimate of how close each game area doc is to an MVP-ready first draft: every MVP feature it covers has its decisions written down. Updated by the Project Lead whenever a game area doc changes. Read by tools/statusline.py.",
+  "note": "The Project Lead's estimate of how close each game area doc is to an MVP-ready first draft: every MVP feature it covers has its decisions written down. Updated by the Project Lead whenever a game area doc changes. Read by tools/statusline.py. Questions marked \"(After MVP)\" don't count.",
   "updated": "2026-10-08",
   "docs": {
-    "Game loop architecture": 95,
-    "Drifting": 85,
+    "Game loop architecture": 100,
+    "Drifting": 95,
     "Level design": 85,
-    "Enemies": 40,
-    "Extended narrative": 30,
+    "Enemies": 50,
+    "Extended narrative": 35,
     "Visual style": 25,
-    "Weapons": 10,
+    "Weapons": 15,
     "Garage design": 5
   }
 }
