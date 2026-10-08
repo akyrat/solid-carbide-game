@@ -1,7 +1,7 @@
 ---
 id: T-007
 title: Long GDD generator and document staleness check
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 epic: tooling
@@ -71,7 +71,7 @@ Using temporary folders with sample documents: validation (each kind of structur
 - [ ] For 3 decisions picked by QA from different separate documents, the decision text appears in the matching long GDD chapter, without its date note (QA: pass / fail)
 - [ ] No decision bullet in `docs/long-gdd.md` ends with a date note such as "(2026-10-08)" (QA: pass / fail)
 - [ ] Every relative link and image in `docs/long-gdd.md` resolves to an existing file (QA: pass / fail)
-- [ ] `--check` exits 0 right after generation. After QA temporarily edits one separate document, it exits 1 and names that document; QA then restores the file (QA: pass / fail)
+- [ ] Right after generation, `--check` lists no game area doc as stale (it still reports the short GDD as stale until T-025, as step 3 says). After QA temporarily edits one separate document, it names that document as changed; QA then restores the file (QA: pass / fail)
 - [ ] After QA temporarily adds an extra `##` heading to one separate document, the generator exits 2, names the file and line, and leaves `docs/long-gdd.md` unchanged; QA then restores the file (QA: pass / fail)
 - [ ] `--check` reports the short GDD as stale or up to date according to the line in `docs/short-gdd/README.md` (QA: pass / fail)
 - [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass / fail)
@@ -84,4 +84,17 @@ The board's review: read the generated long GDD and judge whether it reads as on
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Project Lead on 2026-10-08.
+
+**Criterion change before QA:** the original criterion 5 said `--check` exits 0 right after generation, which contradicts step 3 (the short GDD is reported as stale until T-025 rewrites it). The criterion now says no game area doc is listed as stale right after generation. `--check` exits 1 today only because of the short GDD.
+
+**Built:**
+- `tools/generate_long_gdd.py`: reads every `docs/*.md` with a `gdd_order` (nine game area docs; `docs/README.md`'s example front matter sits in a code block, so it is not picked up). It validates the structure first and writes nothing on a problem (exit 2, file and line). It writes `docs/long-gdd.md`: a header, a table of contents, then one chapter per doc in `gdd_order` order with its scope line, Summary, Decisions (each bullet's trailing date note removed, a colon before sub-bullets kept), Content under "Details" and References. Every heading is shifted down one level outside code fences. Open questions and placeholder sections are left out. A table of SHA-256 fingerprints (of each doc with line endings normalised) closes the file. No timestamps, so it is byte-identical on every run.
+- `--check`: lists every game area doc changed, added or removed since generation, and compares `docs/short-gdd/README.md`'s "Last updated from long GDD:" line with the long GDD's fingerprint (exit 0 / 1 / 2).
+- `tools/test_generate_long_gdd.py`: 12 tests (order, open questions left out, date notes, heading shifting with code fences, byte-identical output, empty chapters, each structure problem, and check: in sync, changed, added, removed, short GDD behind, check changes nothing).
+- `docs/README.md`: both commands, under "How the long and short GDD are made". `docs/short-gdd/README.md`: the "Last updated from long GDD: never" line.
+- `docs/long-gdd.md`: generated for real (9 chapters, about 5,400 words).
+
+**Game area doc fixes, made on `master` and merged in (not part of this branch's own changes):** Weapons linked to the T-022 report before it exists (now plain text until it does), and Visual style had no Summary (written from its decisions). Both are in the timeline.
+
+**Self-check:** generation byte-identical on a second run; 9 chapters in order, no open questions; date notes left: 0; broken links or images: 0; `--check` lists no game area doc and reports the short GDD (exit 1, as designed); the structure checks are covered by tests; all Python tool tests pass (root `tools/` and `game/tools/`); no game area doc's text changed on this branch; nothing under `game/` or `.claude/agents/` changed.

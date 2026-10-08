@@ -228,7 +228,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ### References
 
-- Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md) (being written in task T-022).
+- Unity prototype weapons report: `weapons/unity-weapons-report.md`, being written in task T-022 (it becomes a link once it exists).
 
 
 ## 6. Garage design
@@ -248,6 +248,8 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 ## 7. Visual style
 
 *Source: [visual-style.md](visual-style.md). The visual style for generated art (pixel art, isometric). May connect to the narrative theme.*
+
+Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at night in a neon, Tokyo-style cyberpunk city: dark navy and purple, lit by pink, cyan and Greenbull-green neon drawn into the sprites. The player drives a dark-green, Mustang-inspired car with white stripes through cracked streets, past dark boulders with glowing cracks, chased by green lizard minions and a Godzilla-style kaiju. All art follows one technical style: hard-edged pixel art at about 40 pixels per unit, with a selective dark outline, detailed shading and a limited palette.
 
 ### Decisions
 
@@ -335,8 +337,8 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `58e894f9f8e87ba9c5eaf7841438c55a5ee88669e2361531e856d4b9cfdff1db` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
 | `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
-| `weapons.md` | `08fb3ac0b26259900c297b0a8c779650f6f4a265e3db1db31e1eafa504bb76e4` |
+| `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
-| `visual-style.md` | `f7c41a4ccfc242dd88fe42bafaa88f6d384387678560ec4c0f48adda1a82c98d` |
+| `visual-style.md` | `e06af9c66d8ad5d004ee3e3678892fb7cd7088cb8e1f221c27166ecc6f655900` |
 | `extended-narrative.md` | `311dc6ef3946cd8c8281ced726d02c71a9c2f0062a66016448f88d2aa26ab609` |
 | `hud-and-menus.md` | `6e31c45f4944fce5336f16fa6fc174f4ce53e81c872f26cf75b512dcf889f1da` |

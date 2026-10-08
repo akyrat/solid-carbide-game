@@ -1,5 +1,9 @@
 # Short GDD
 
+Last updated from long GDD: never
+
+(The line above is read by `python tools/generate_long_gdd.py --check`. It holds the SHA-256 fingerprint of the long GDD the short GDD was last updated from, or "never" until the short GDD is first rewritten from a generated long GDD in task T-025.)
+
 The short, presentable GDD for showing to humans (`Solid_Carbide_-_Final_GDD.pdf`). It condenses the long GDD. Changes flow down only: it is never the place to make a content change first.
 
 Known wording to update when the Project Lead next edits the GDD:
