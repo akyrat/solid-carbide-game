@@ -54,6 +54,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: look at the map screenshot and the list of pattern copies and challenges, and adjust if needed.
 
+Board review files: [docs/level-design/mvp-map.png, docs/level-design/mvp-map-iso.png, game/scenes/level/mvp_map_overview.tscn, game/data/level/mvp_map.json]
+
 ## Result notes
 
 **Level/Challenge Design Agent, 2026-10-09.** Built on branch `task/T-019-build-mvp-map`.
