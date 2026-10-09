@@ -48,6 +48,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: look at the screenshots and choose the look.
 
+Board review files: [docs/visual-style/see-through-buildings.md, docs/visual-style/see-through-behind_alpha60.png, docs/visual-style/see-through-behind_alpha35.png, docs/visual-style/see-through-behind_alpha15.png, docs/visual-style/see-through-cutout.png, game/scenes/see_through_demo/see_through_demo.tscn]
+
 ## Result notes
 
 Researched and built by the Level/Challenge Design Agent.
