@@ -12,6 +12,7 @@ depends_on: []
 documents_affected: [docs/weapons/unity-weapons-report.md, docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/weapons.md, docs/game-loop-architecture.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, .claude/agents/weapon-behavior.md]
 files_expected_to_change: [docs/weapons/unity-weapons-report.md, docs/weapons/ (pictures, if any), docs/weapons.md]
+model: opus
 qa_rounds: 0
 ---
 

@@ -440,3 +440,12 @@ Entry format:
   Art for these areas comes with the Visual style batch.
 - Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-033, T-034, T-035 (new); T-019, T-020, T-021, T-029 (model set)
+
+## 2026-10-09: Game loop, Enemies and Weapons tickets
+- Decision or change: MVP tickets for three more areas:
+  - Game loop: T-036 (the run scene, the 8-minute clock, car health, coins, win and loss), T-037 (likes and levels from challenges and drifts; a level-up pauses the run) and T-038 (the run's numbers, and the game data convention)
+  - Weapons: T-040 (weapon numbers), T-041 (starting gun), T-042 (exhaust flamethrower), T-043 (the level-up offers); T-022 gets its model
+  - Enemies: T-039 (enemy numbers), T-044 (minions and coins), T-045 (the kaiju, its shield and windows) and T-046 (the meteor attack)
+  Meteor challenges give XP like any challenge, as Game loop architecture reads. Art, text and the screens come in later batches.
+- Documents touched: none
+- Tasks: T-036 to T-046 (new), T-022 (model set)
