@@ -39,6 +39,8 @@ Every task file has an `epic` and a `milestone` in its header.
 | `hud-menus` | The HUD, menus and settings | HUD and menus |
 | `art` | Generated and placeholder art | Visual style |
 | `sound` | Sound effects and music | (none yet) |
+| `game-loop` | The run itself: timer, likes and levels, level-up flow, win and loss, the main menu and the flow between screens | Game loop architecture |
+| `narrative` | Story and user-facing text: tone, wording, names | Extended narrative |
 | `tooling` | Project setup, test tools and documentation tooling | (not a game area) |
 | `local-coop` | Local co-op for 2 players (screen split in halves) and 4 players (split in quarters). Future release | Game loop architecture |
 

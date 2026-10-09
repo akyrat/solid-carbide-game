@@ -394,3 +394,8 @@ Entry format:
 - Decision or change: the board asked for an HTML task board: four lanes (To do, In progress, QA, Done) with draggable tickets, and a game-areas view with one bubble per game area doc showing its tickets and how much is done, plus an overall MVP figure that says it only counts existing tickets. Built by the Project Lead as a published page; the task files stay the source of truth (`tools/taskboard_sync.py` exports them to the page and applies the board's moves back). Next: agents read the game area docs and write every missing MVP ticket; post-MVP tickets come later (board).
 - Documents touched: `docs/README.md`, `tasks/README.md`
 - Tasks: T-032 (new), T-031
+
+## 2026-10-09: New epics: game-loop and narrative
+- Decision or change: two epics added with the board's agreement, so tickets for these game area docs have their own place on the task board: `game-loop` (Game loop architecture) and `narrative` (Extended narrative).
+- Documents touched: `tasks/README.md`
+- Tasks: T-032
