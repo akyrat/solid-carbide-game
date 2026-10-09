@@ -33,6 +33,15 @@ Game decisions live in these documents, and the documents are the source of trut
   - Export the PDF after changing it: `python tools/export_short_gdd_pdf.py` (needs Microsoft Edge and an internet connection, for the Markdown and diagram libraries).
   - After bringing it up to date with the long GDD, update the "Last updated from long GDD" line in `short-gdd/README.md`, so the staleness check passes.
 
+## The task board
+
+The board's task board is a published page: <https://claude.ai/artifact/3MeqfoLeaSWXxWbCb5A7op> (source: `tools/taskboard/taskboard.html`, task T-032). It has two views: four lanes (To do, In progress, QA, Done) to drag tickets between, and one bubble per game area doc showing how much of its work is done.
+
+The task files in `tasks/` stay the source of truth. The page keeps a copy of their headers in its own database, which the Project Lead refreshes:
+
+- `python tools/taskboard_sync.py export OUT_DIR` writes one JSON document per task, which the Project Lead loads into the page.
+- A drag on the page only marks the ticket "Moved". The Project Lead applies moves to the task files with `python tools/taskboard_sync.py apply MOVES_JSON`, commits, and exports again.
+
 ## How separate documents are written
 
 The nine separate documents (Extended narrative to HUD and menus in the table above; the board calls them game area docs) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.

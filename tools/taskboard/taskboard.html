@@ -1,0 +1,491 @@
+<title>Solid Carbide Task Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a night-city control room. Board view = four lanes; Areas view = one bubble per game area doc. Single dark look on purpose (the game's own night palette). */
+:root {
+  color-scheme: dark;
+  --night: #0d1029;
+  --panel: #151a3d;
+  --panel-2: #1c2250;
+  --line: #2b3270;
+  --ink: #e9eaf8;
+  --muted: #9ba1cc;
+  --faint: #6b71a3;
+  --pink: #ff4f9a;
+  --cyan: #3ee6ff;
+  --todo: #8d93c4;
+  --doing: #ff4f9a;
+  --qa: #ffc35c;
+  --done: #5fe3a6;
+  --warn: #ff8a5c;
+  --display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--night); color: var(--ink); }
+body { font: 14px/1.45 var(--body); padding-inline: 16px; padding-block: 0 40px; min-height: 100%; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 24px; padding-block: 20px 14px; border-bottom: 1px solid var(--line); }
+.brand small { display: block; font: 600 11px/1 var(--display); letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); margin-bottom: 6px; }
+.brand h1 { margin: 0; font: 700 26px/1.1 var(--display); letter-spacing: .02em; text-wrap: balance; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.tabs { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 3px; }
+.tabs button { background: none; border: 0; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-family: var(--display); font-weight: 600; letter-spacing: .03em; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 -2px 0 var(--pink); }
+.toggle { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; user-select: none; }
+.toggle input { accent-color: var(--pink); width: 16px; height: 16px; }
+.syncline { width: 100%; display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--faint); font-size: 12px; }
+.syncline .pending { color: var(--qa); }
+
+/* Board */
+.board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 18px; align-items: start; }
+@media (max-width: 900px) { .board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .board { grid-template-columns: minmax(0, 1fr); } }
+.lane { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; min-height: 160px; display: flex; flex-direction: column; transition: border-color .15s, background .15s; }
+.lane.over { border-color: var(--cyan); background: #182051; }
+.lane > h2 { margin: 0; padding: 12px 14px 10px; display: flex; align-items: center; gap: 8px; font: 600 13px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; }
+.lane > h2 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+.lane > h2 .n { margin-left: auto; font-family: var(--mono); color: var(--muted); letter-spacing: 0; }
+.cards { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 12px; min-height: 60px; }
+.empty-lane { color: var(--faint); font-size: 12px; padding: 8px 4px; }
+
+.card { position: relative; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c, var(--todo)); border-radius: 7px; padding: 8px 10px 9px; cursor: grab; touch-action: pan-y; user-select: none; transition: transform .12s, border-color .12s; }
+.card:hover { border-color: #3d468f; border-left-color: var(--c); }
+.card.dragging { opacity: .35; }
+.card .row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.card .id { font: 500 11.5px/1 var(--mono); color: var(--cyan); }
+.card .title { margin-top: 5px; font-size: 13px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.chip { font: 600 10.5px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; background: #252c63; color: var(--muted); }
+.chip.agent { margin-left: auto; }
+.chip.blocked { background: #3a2a4a; color: #d9a6ff; }
+.chip.playtest { background: #3d3418; color: var(--qa); }
+.chip.flagged { background: #47231b; color: var(--warn); }
+.chip.later { background: transparent; border: 1px solid var(--line); }
+.chip.moved { background: #1d3d4a; color: var(--cyan); }
+.ghost { position: fixed; z-index: 50; pointer-events: none; width: 240px; transform: rotate(-2deg); box-shadow: 0 14px 30px rgba(0,0,0,.45); cursor: grabbing; }
+
+/* Areas */
+.summary { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px 28px; align-items: center; margin-top: 22px; padding: 18px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+@media (max-width: 600px) { .summary { grid-template-columns: minmax(0, 1fr); } }
+.big { font: 700 54px/1 var(--display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.big span { font-size: 22px; color: var(--muted); margin-left: 2px; }
+.big-label { font: 600 11px/1.2 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+.meter { height: 8px; border-radius: 4px; background: #232a5e; overflow: hidden; margin-bottom: 10px; }
+.meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--pink), var(--cyan)); }
+.caveat { margin: 0; color: var(--muted); max-width: 70ch; font-size: 13px; }
+.caveat strong { color: var(--warn); font-weight: 600; }
+
+.bubbles { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px 26px; margin-top: 26px; padding-block: 6px; }
+.bubble { --d: 150px; width: var(--d); height: var(--d); max-width: 100%; border-radius: 50%; position: relative; border: 2px solid var(--c); background: radial-gradient(circle at 35% 30%, #222a63, var(--panel) 70%); overflow: hidden; cursor: pointer; padding: 0; display: grid; place-items: center; text-align: center; transition: transform .2s, box-shadow .2s; box-shadow: 0 0 0 0 transparent, 0 0 22px -6px var(--c); }
+.bubble:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 0 34px -4px var(--c); }
+.bubble.none { border-style: dashed; --c: var(--warn); }
+.bubble.excluded { --c: var(--faint); }
+.bubble .fill { position: absolute; left: 0; right: 0; bottom: 0; height: var(--p); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 45%, transparent), color-mix(in srgb, var(--c) 22%, transparent)); }
+.bubble .fill::before { content: ""; position: absolute; left: -50%; width: 200%; height: 14px; top: -7px; background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--c) 45%, transparent) 60%, transparent 62%) 0 0 / 40px 14px repeat-x; animation: wave 4s linear infinite; }
+@keyframes wave { to { transform: translateX(40px); } }
+.bubble .txt { position: relative; padding: 10px; }
+.bubble .name { font: 600 14px/1.15 var(--display); letter-spacing: .03em; text-wrap: balance; }
+.bubble .pct { font: 700 22px/1.1 var(--display); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.bubble .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* Area overlay */
+.overlay { position: fixed; inset: 0; z-index: 40; background: rgba(6, 8, 24, .82); backdrop-filter: blur(3px); display: grid; place-items: center; padding: 16px; overflow-y: auto; }
+.area-panel { width: min(980px, 100%); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px 22px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 20px; }
+@media (max-width: 760px) { .area-panel { grid-template-columns: minmax(0, 1fr); } }
+.area-head { grid-column: 1 / -1; display: flex; align-items: start; gap: 12px; }
+.area-head h2 { margin: 0; font: 700 22px/1.15 var(--display); }
+.area-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.close { margin-left: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.sphere { position: relative; width: min(100%, 520px); aspect-ratio: 1; max-width: 100%; justify-self: center; border-radius: 50%; border: 2px solid var(--c); background: radial-gradient(circle at 35% 30%, #232b66, #12163a 72%); overflow: hidden; box-shadow: 0 0 50px -10px var(--c); }
+.sphere .fill { position: absolute; left: 0; right: 0; bottom: 0; height: var(--p); background: color-mix(in srgb, var(--c) 16%, transparent); border-top: 1px solid color-mix(in srgb, var(--c) 50%, transparent); }
+.sphere .nothing { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; padding: 18%; color: var(--muted); }
+.floater { position: absolute; transform: translate(-50%, -50%); animation: bob var(--t) ease-in-out var(--delay) infinite alternate; }
+.floater button { display: block; max-width: 150px; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 6px; padding: 5px 8px; cursor: pointer; text-align: left; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
+.floater .id { font: 500 11px/1 var(--mono); color: var(--cyan); }
+.floater .t { display: block; font-size: 11.5px; line-height: 1.25; margin-top: 3px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+@keyframes bob { from { translate: 0 -5px; } to { translate: 4px 6px; } }
+.side h3 { margin: 4px 0 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.side ul { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 6px; }
+.side li { display: flex; gap: 8px; align-items: baseline; font-size: 12.5px; }
+.side li .id { font: 500 11px/1 var(--mono); color: var(--cyan); flex: none; }
+.side li .s { margin-left: auto; flex: none; font-size: 11px; color: var(--c); }
+.counts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 16px; }
+.counts div { background: var(--panel-2); border-radius: 6px; padding: 7px 8px; text-align: center; }
+.counts b { display: block; font: 700 18px/1 var(--display); color: var(--c); }
+.counts small { font-size: 10.5px; color: var(--muted); }
+
+/* Ticket detail */
+dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(460px, calc(100% - 32px)); }
+dialog::backdrop { background: rgba(6, 8, 24, .7); }
+dialog h2 { margin: 6px 0 12px; font: 600 18px/1.25 var(--display); text-wrap: balance; }
+dialog dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0 0 16px; font-size: 13px; }
+dialog dt { color: var(--muted); }
+dialog dd { margin: 0; overflow-wrap: anywhere; }
+dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
+.moveto { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.moveto button { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+.moveto button[disabled] { opacity: .45; cursor: default; }
+.note { color: var(--faint); font-size: 12px; margin: 0; }
+.dialog-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+.notice { margin-top: 24px; padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .floater, .bubble .fill::before { animation: none; }
+  .bubble, .card { transition: none; }
+}
+</style>
+
+<header class="top">
+  <div class="brand">
+    <small>Solid Carbide · MVP</small>
+    <h1>Task Board</h1>
+  </div>
+  <div class="controls">
+    <div class="tabs" role="tablist" aria-label="View">
+      <button id="tab-board" role="tab" aria-selected="true" aria-controls="view-board">Board</button>
+      <button id="tab-areas" role="tab" aria-selected="false" aria-controls="view-areas">Game areas</button>
+    </div>
+    <label class="toggle" for="mvp-only"><input type="checkbox" id="mvp-only" checked> MVP only</label>
+  </div>
+  <div class="syncline" id="syncline">Loading tickets…</div>
+</header>
+
+<main>
+  <section id="view-board" role="tabpanel" aria-labelledby="tab-board">
+    <div class="board" id="board"></div>
+  </section>
+  <section id="view-areas" role="tabpanel" aria-labelledby="tab-areas" hidden>
+    <div class="summary" id="summary"></div>
+    <div class="bubbles" id="bubbles"></div>
+  </section>
+  <div class="notice" id="notice" hidden></div>
+</main>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<dialog id="detail" aria-labelledby="detail-title">
+  <div class="row"><span class="id" id="detail-id"></span></div>
+  <h2 id="detail-title"></h2>
+  <dl id="detail-fields"></dl>
+  <div class="moveto" id="detail-move" role="group" aria-label="Move to"></div>
+  <p class="note">A move is a request: the Project Lead applies it to the task file at the next sync.</p>
+  <div class="dialog-actions"><button class="close" id="detail-close">Close</button></div>
+</dialog>
+
+<script>
+const LANES = [
+  { key: "todo", name: "To do", color: "var(--todo)", statuses: ["open", "blocked"], target: "open" },
+  { key: "doing", name: "In progress", color: "var(--doing)", statuses: ["in-progress"], target: "in-progress" },
+  { key: "qa", name: "QA", color: "var(--qa)", statuses: ["in-qa", "needs-playtest", "flagged-for-review"], target: "in-qa" },
+  { key: "done", name: "Done", color: "var(--done)", statuses: ["done"], target: "done" },
+];
+// One bubble per game area doc (docs/), matched through each ticket's epic. Tooling is shown but left out of the MVP figure.
+const AREAS = [
+  { name: "Drifting", doc: "drifting.md", epics: ["driving"], color: "#3ee6ff" },
+  { name: "Level design", doc: "level-design.md", epics: ["level-challenges"], color: "#7aa2ff" },
+  { name: "Enemies", doc: "enemies.md", epics: ["enemies"], color: "#8be36b" },
+  { name: "Weapons", doc: "weapons.md", epics: ["weapons"], color: "#ff4f9a" },
+  { name: "Game loop", doc: "game-loop-architecture.md", epics: ["game-loop", "local-coop"], color: "#ffc35c" },
+  { name: "HUD and menus", doc: "hud-and-menus.md", epics: ["hud-menus"], color: "#c58bff" },
+  { name: "Garage design", doc: "garage-design.md", epics: ["garage"], color: "#ff9f5c" },
+  { name: "Visual style", doc: "visual-style.md", epics: ["art"], color: "#ff6fd0" },
+  { name: "Extended narrative", doc: "extended-narrative.md", epics: ["narrative"], color: "#9ff0d8" },
+  { name: "Sound", doc: null, epics: ["sound"], color: "#6fd0ff" },
+  { name: "Tooling", doc: null, epics: ["tooling"], color: "#8d93c4", excluded: true },
+];
+const AGENTS = {
+  "driving-drift": "Drift", "enemy-behavior": "Enemies", "weapon-behavior": "Weapons", "game-data": "Data",
+  "level-challenge": "Level", "ui": "UI", "asset-generation": "Art", "sfx": "SFX", "narrative-theme": "Narrative",
+  "qa-integration": "QA", "project-lead": "Lead", "board": "Board",
+};
+const STATUS_TEXT = {
+  "open": "To do", "blocked": "Blocked", "in-progress": "In progress", "in-qa": "In QA",
+  "needs-playtest": "Needs playtest", "flagged-for-review": "Flagged for review", "done": "Done",
+};
+
+let tickets = [];
+let meta = null;
+let db = null;
+let loaded = false;
+let openArea = null;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const laneOf = (status) => LANES.find((l) => l.statuses.includes(status)) || LANES[0];
+const areaOf = (t) => AREAS.find((a) => a.epics.includes(t.epic));
+const mvpOnly = () => $("mvp-only").checked;
+const visible = () => tickets.filter((t) => !mvpOnly() || t.milestone === "mvp");
+const idNum = (id) => parseInt(String(id).replace(/\D/g, ""), 10) || 0;
+
+function badges(t) {
+  const out = [];
+  if (t.status === "blocked") out.push('<span class="chip blocked">Blocked</span>');
+  if (t.status === "needs-playtest") out.push('<span class="chip playtest">Playtest</span>');
+  if (t.status === "flagged-for-review") out.push('<span class="chip flagged">Flagged</span>');
+  if (t.milestone && t.milestone !== "mvp") out.push('<span class="chip later">After MVP</span>');
+  if (t.file_status && t.status !== t.file_status) out.push('<span class="chip moved" title="Moved here on the board; not yet applied to the task file">Moved</span>');
+  return out.join("");
+}
+
+function renderBoard() {
+  const list = visible();
+  $("board").innerHTML = LANES.map((lane) => {
+    const items = list.filter((t) => laneOf(t.status).key === lane.key).sort((a, b) => idNum(a.id) - idNum(b.id));
+    const cards = items.map((t) => `
+      <article class="card" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}">
+        <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
+        <div class="title">${esc(t.title)}</div>
+      </article>`).join("");
+    return `<section class="lane" data-lane="${lane.key}" style="--c:${lane.color}">
+      <h2><span class="dot"></span>${lane.name}<span class="n">${items.length}</span></h2>
+      <div class="cards">${cards || '<div class="empty-lane">Nothing here.</div>'}</div>
+    </section>`;
+  }).join("");
+}
+
+function areaStats(area) {
+  const items = visible().filter((t) => area.epics.includes(t.epic));
+  const done = items.filter((t) => t.status === "done").length;
+  return { items, done, pct: items.length ? Math.round((done / items.length) * 100) : 0 };
+}
+
+function renderAreas() {
+  const counted = visible().filter((t) => { const a = areaOf(t); return a && !a.excluded; });
+  const done = counted.filter((t) => t.status === "done").length;
+  const pct = counted.length ? Math.round((done / counted.length) * 100) : 0;
+  const empty = AREAS.filter((a) => !a.excluded && areaStats(a).items.length === 0).map((a) => a.name);
+  $("summary").innerHTML = `
+    <div><div class="big">${pct}<span>%</span></div><div class="big-label">${mvpOnly() ? "MVP" : "All"} tickets done</div></div>
+    <div style="min-width:0">
+      <div class="meter"><i style="width:${pct}%"></i></div>
+      <p class="caveat">${done} of ${counted.length} game tickets are done (tooling not counted).
+      <strong>This only counts tickets that exist.</strong> The task board does not cover the whole MVP yet${empty.length ? `: ${empty.join(", ")} ${empty.length === 1 ? "has" : "have"} no tickets at all` : ""}. The figure means more once every game area doc has its MVP tickets.</p>
+    </div>`;
+  const max = Math.max(1, ...AREAS.map((a) => areaStats(a).items.length));
+  $("bubbles").innerHTML = AREAS.map((a, i) => {
+    const s = areaStats(a);
+    const d = Math.round(130 + 110 * Math.sqrt(s.items.length / max));
+    const cls = ["bubble", s.items.length ? "" : "none", a.excluded ? "excluded" : ""].join(" ");
+    const sub = s.items.length ? `${s.done} of ${s.items.length} done` : "No tickets yet";
+    return `<button class="${cls}" data-area="${i}" style="--d:${d}px;--c:${a.color};--p:${s.pct}%" aria-label="${esc(a.name)}: ${sub}">
+      <span class="fill"></span>
+      <span class="txt"><span class="name">${esc(a.name)}</span>
+      <span class="pct">${s.items.length ? s.pct + "%" : "–"}</span>
+      <span class="sub">${sub}${a.excluded ? " · not counted" : ""}</span></span>
+    </button>`;
+  }).join("");
+}
+
+function renderOverlay() {
+  if (openArea === null) { $("overlay").hidden = true; return; }
+  const a = AREAS[openArea];
+  const s = areaStats(a);
+  const n = s.items.length;
+  const floaters = s.items.sort((x, y) => idNum(x.id) - idNum(y.id)).map((t, i) => {
+    // Golden-angle spiral keeps the tickets spread evenly inside the circle.
+    const r = n === 1 ? 0 : 34 * Math.sqrt((i + 0.6) / n);
+    const ang = i * 2.39996;
+    const x = 50 + r * Math.cos(ang), y = 50 + r * Math.sin(ang);
+    const lane = laneOf(t.status);
+    return `<div class="floater" style="left:${x}%;top:${y}%;--t:${(3 + (i % 5) * 0.7).toFixed(1)}s;--delay:-${(i * 0.9) % 4}s">
+      <button data-id="${esc(t.id)}" style="--c:${lane.color}"><span class="id">${esc(t.id)}</span><span class="t">${esc(t.title)}</span></button></div>`;
+  }).join("");
+  const count = (key) => s.items.filter((t) => laneOf(t.status).key === key).length;
+  $("overlay").innerHTML = `
+    <div class="area-panel" role="dialog" aria-modal="true" aria-labelledby="area-title" style="--c:${a.color}">
+      <div class="area-head">
+        <div><h2 id="area-title">${esc(a.name)}</h2>
+        <p>${a.doc ? `Game area doc: docs/${esc(a.doc)}` : "No game area doc"}${a.excluded ? " · not counted in the MVP figure" : ""} · ${n ? `${s.pct}% done` : "no tickets yet"}</p></div>
+        <button class="close" id="area-close">Close</button>
+      </div>
+      <div class="sphere" style="--p:${s.pct}%"><span class="fill"></span>
+        ${floaters || `<div class="nothing">No ${mvpOnly() ? "MVP " : ""}tickets for this area yet.</div>`}
+      </div>
+      <div class="side">
+        <h3>Progress</h3>
+        <div class="counts">${LANES.map((l) => `<div style="--c:${l.color}"><b>${count(l.key)}</b><small>${l.name}</small></div>`).join("")}</div>
+        <h3>Tickets</h3>
+        <ul>${s.items.map((t) => { const l = laneOf(t.status); return `<li style="--c:${l.color}"><span class="id">${esc(t.id)}</span><span>${esc(t.title)}</span><span class="s">${STATUS_TEXT[t.status] || t.status}</span></li>`; }).join("") || "<li>None yet.</li>"}</ul>
+      </div>
+    </div>`;
+  $("overlay").hidden = false;
+}
+
+function renderSync() {
+  const moved = tickets.filter((t) => t.file_status && t.status !== t.file_status).length;
+  const when = meta?.synced_at ? new Date(meta.synced_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : null;
+  $("syncline").innerHTML = loaded
+    ? `<span>${tickets.length} tickets from tasks/${when ? ` · last synced ${esc(when)}` : ""}</span>` +
+      (moved ? `<span class="pending">${moved} move${moved === 1 ? "" : "s"} waiting for the Project Lead to apply</span>` : "")
+    : "Loading tickets…";
+}
+
+function render() {
+  renderSync();
+  if (loaded && !tickets.length) {
+    $("notice").hidden = false;
+    $("notice").textContent = db
+      ? "No tickets loaded yet. The Project Lead fills this board from the task files in tasks/."
+      : "This view can't reach the board's data. Open the page signed in to see the tickets.";
+  } else $("notice").hidden = true;
+  renderBoard();
+  renderAreas();
+  renderOverlay();
+}
+
+// Ticket detail and moving
+let detailId = null;
+function openDetail(id) {
+  const t = tickets.find((x) => x.id === id);
+  if (!t) return;
+  detailId = id;
+  $("detail-id").textContent = t.id;
+  $("detail-title").textContent = t.title;
+  const area = areaOf(t);
+  const rows = [
+    ["Status", STATUS_TEXT[t.status] || t.status],
+    ["Agent", AGENTS[t.to] ? `${AGENTS[t.to]} (${t.to})` : t.to],
+    ["Area", area ? area.name : t.epic],
+    ["Milestone", t.milestone === "mvp" ? "MVP" : t.milestone === "final-release" ? "Final release" : t.milestone],
+    ["Depends on", (t.depends_on || []).join(", ") || "Nothing"],
+    ["File", `<span class="file">${esc(t.file)}</span>`],
+  ];
+  if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
+  $("detail-fields").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${k === "File" ? v : esc(v)}</dd>`).join("");
+  const cur = laneOf(t.status).key;
+  $("detail-move").innerHTML = LANES.map((l) => `<button data-lane="${l.key}" style="--c:${l.color}" ${l.key === cur ? "disabled" : ""}>${l.name}</button>`).join("");
+  if (!$("detail").open) $("detail").showModal();
+}
+
+function toast(msg) {
+  const el = document.createElement("div");
+  el.className = "toast"; el.setAttribute("role", "status"); el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+
+async function moveTicket(id, laneKey) {
+  const t = tickets.find((x) => x.id === id);
+  const lane = LANES.find((l) => l.key === laneKey);
+  if (!t || !lane || laneOf(t.status).key === laneKey) return;
+  // Back to the column the file already says: restore the file's own status (so "blocked" stays blocked).
+  const status = lane.statuses.includes(t.file_status) ? t.file_status : lane.target;
+  const before = t.status;
+  t.status = status;
+  render();
+  if (!db) { t.status = before; render(); toast("Moves can't be saved in this view."); return; }
+  try {
+    await db.collection("tickets").doc(id).update({ status, moved_at: new Date().toISOString() });
+    toast(`${id} moved to ${lane.name}`);
+  } catch (e) {
+    t.status = before; render();
+    toast(e?.code === "invalid_argument" ? "You can view this board but not move tickets." : "Couldn't save the move. Try again.");
+  }
+}
+
+// Dragging cards between lanes (mouse: after a small move; touch: after a short hold so scrolling still works)
+let drag = null;
+function laneAt(x, y) {
+  const el = document.elementFromPoint(x, y);
+  return el ? el.closest(".lane") : null;
+}
+document.addEventListener("pointerdown", (e) => {
+  const card = e.target.closest(".card");
+  if (!card || e.button > 0) return;
+  drag = { card, id: card.dataset.id, x: e.clientX, y: e.clientY, started: false, touch: e.pointerType !== "mouse", ready: e.pointerType === "mouse", pid: e.pointerId };
+  if (drag.touch) drag.timer = setTimeout(() => { if (drag) { drag.ready = true; startDrag(e.clientX, e.clientY); } }, 280);
+});
+function startDrag(x, y) {
+  drag.started = true;
+  drag.card.classList.add("dragging");
+  const ghost = drag.card.cloneNode(true);
+  ghost.classList.remove("dragging");
+  ghost.classList.add("ghost");
+  ghost.style.width = drag.card.offsetWidth + "px";
+  document.body.appendChild(ghost);
+  drag.ghost = ghost;
+  try { drag.card.setPointerCapture(drag.pid); } catch {}
+  moveGhost(x, y);
+}
+function moveGhost(x, y) {
+  drag.ghost.style.left = x - 20 + "px";
+  drag.ghost.style.top = y - 14 + "px";
+  document.querySelectorAll(".lane.over").forEach((l) => l.classList.remove("over"));
+  const lane = laneAt(x, y);
+  if (lane) lane.classList.add("over");
+}
+document.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.pid) return;
+  const dist = Math.hypot(e.clientX - drag.x, e.clientY - drag.y);
+  if (!drag.started) {
+    if (drag.touch && !drag.ready && dist > 8) { clearTimeout(drag.timer); drag = null; return; }
+    if (drag.ready && dist > 5) startDrag(e.clientX, e.clientY);
+    return;
+  }
+  e.preventDefault();
+  moveGhost(e.clientX, e.clientY);
+}, { passive: false });
+function endDrag(e, cancelled) {
+  if (!drag || (e && e.pointerId !== drag.pid)) return;
+  clearTimeout(drag.timer);
+  const d = drag; drag = null;
+  document.querySelectorAll(".lane.over").forEach((l) => l.classList.remove("over"));
+  if (!d.started) { if (!cancelled) openDetail(d.id); return; }
+  d.ghost.remove();
+  d.card.classList.remove("dragging");
+  const lane = !cancelled && laneAt(e.clientX, e.clientY);
+  if (lane) moveTicket(d.id, lane.dataset.lane);
+}
+document.addEventListener("pointerup", (e) => endDrag(e, false));
+document.addEventListener("pointercancel", (e) => endDrag(e, true));
+document.addEventListener("touchmove", (e) => { if (drag?.started) e.preventDefault(); }, { passive: false });
+document.addEventListener("contextmenu", (e) => { if (drag?.touch) e.preventDefault(); });
+document.addEventListener("keydown", (e) => {
+  const card = e.target.closest?.(".card");
+  if (card && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openDetail(card.dataset.id); }
+  if (e.key === "Escape" && openArea !== null && !$("detail").open) { openArea = null; renderOverlay(); }
+});
+
+// View switching and other controls
+function showView(which) {
+  const board = which === "board";
+  $("tab-board").setAttribute("aria-selected", board);
+  $("tab-areas").setAttribute("aria-selected", !board);
+  $("view-board").hidden = !board;
+  $("view-areas").hidden = board;
+  try { localStorage.setItem("tb-view", which); } catch {}
+}
+$("tab-board").addEventListener("click", () => showView("board"));
+$("tab-areas").addEventListener("click", () => showView("areas"));
+$("mvp-only").addEventListener("change", () => { render(); try { localStorage.setItem("tb-mvp", $("mvp-only").checked ? "1" : "0"); } catch {} });
+$("bubbles").addEventListener("click", (e) => { const b = e.target.closest(".bubble"); if (b) { openArea = +b.dataset.area; renderOverlay(); $("area-close")?.focus(); } });
+$("overlay").addEventListener("click", (e) => {
+  if (e.target.id === "overlay" || e.target.id === "area-close") { openArea = null; renderOverlay(); return; }
+  const f = e.target.closest(".floater button"); if (f) openDetail(f.dataset.id);
+});
+$("detail-close").addEventListener("click", () => $("detail").close());
+$("detail").addEventListener("click", (e) => { if (e.target === $("detail")) $("detail").close(); });
+$("detail-move").addEventListener("click", (e) => { const b = e.target.closest("button[data-lane]"); if (b && detailId) { moveTicket(detailId, b.dataset.lane); $("detail").close(); } });
+try {
+  if (localStorage.getItem("tb-view") === "areas") showView("areas");
+  if (localStorage.getItem("tb-mvp") === "0") $("mvp-only").checked = false;
+} catch {}
+
+render();
+
+(async () => {
+  db = await window.claude?.use?.("db") ?? null;
+  if (!db) { loaded = true; render(); return; }
+  db.collection("tickets").onSnapshot((snap) => {
+    tickets = snap.docs.map((d) => d.data()).filter(Boolean).map((d) => ({ ...d }));
+    loaded = true;
+    render();
+  }, () => { loaded = true; render(); });
+  db.doc("meta/sync").onSnapshot((snap) => { meta = snap.exists ? snap.data() : null; renderSync(); }, () => {});
+})();
+</script>

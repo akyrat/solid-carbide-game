@@ -389,3 +389,8 @@ Entry format:
 - Decision or change: the board approved the short GDD (`docs/short-gdd/short-gdd.md`, with `short-gdd.pdf` exported by `tools/export_short_gdd_pdf.py`). It passed QA round 2 on all 8 criteria; during review "tongue-in-cheek" was removed from its tone line and the design pillars were sent to the board to rework (T-030). Merged from `task/T-025-short-gdd-rewrite`; long and short GDD in sync. The board will build its own HTML visualisation tools at some point (T-031). The MVP docs status line is to be removed. Next: the full MVP task board.
 - Documents touched: `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`, `docs/README.md`
 - Tasks: T-025 (done), T-030, T-031 (new)
+
+## 2026-10-09: Task board page (T-032)
+- Decision or change: the board asked for an HTML task board: four lanes (To do, In progress, QA, Done) with draggable tickets, and a game-areas view with one bubble per game area doc showing its tickets and how much is done, plus an overall MVP figure that says it only counts existing tickets. Built by the Project Lead as a published page; the task files stay the source of truth (`tools/taskboard_sync.py` exports them to the page and applies the board's moves back). Next: agents read the game area docs and write every missing MVP ticket; post-MVP tickets come later (board).
+- Documents touched: `docs/README.md`, `tasks/README.md`
+- Tasks: T-032 (new), T-031

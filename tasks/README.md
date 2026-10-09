@@ -4,6 +4,8 @@ One file per task, named `T-001-short-title.md`, using `_TEMPLATE.md`. Tasks are
 
 Every agent reads this file before starting any task. Every task file lists it first in `files_to_read_first`.
 
+The board follows these tasks on its task board page (`docs/README.md`, "The task board"); the task files here remain the source of truth.
+
 ## Status rules
 
 - A task whose `depends_on` lists any task that is not `done` starts as `blocked`.
