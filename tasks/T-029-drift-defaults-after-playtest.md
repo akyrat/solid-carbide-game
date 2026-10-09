@@ -1,7 +1,7 @@
 ---
 id: T-029
 title: Set the drift prototype's defaults from the board's playtest
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 epic: driving
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, tasks/T-012-godot-drift-prototype.md, game/README.md]
 files_expected_to_change: [game/scripts/driving/car_tuning.gd, game/scripts/driving/tuning_panel.gd, game/scripts/driving/drift_prototype.gd, game/project.godot, their tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,14 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] In `car_tuning.gd`, `top_speed_multiplier` defaults to 3.0 and `forward_speed` to 11. Every other default equals the Unity value in the Unity prototype report, section 5 (QA compares by hand) (QA: pass / fail)
-- [ ] `game/project.godot` has physics interpolation on (QA: pass / fail)
-- [ ] A test shows that with the default tuning, holding W from standstill reaches a top speed of 33 (3.0 × 11), within one step's rounding (QA: pass / fail)
-- [ ] The T-012 tests that check the Unity behaviour (cruise, coasting, braking, rotation, drift angle) still pass, using the Unity values explicitly (QA: pass / fail)
-- [ ] A screenshot taken right after the prototype starts shows the isometric view (QA: pass / fail)
-- [ ] A test shows that the panel's reset button restores top speed 3.0, physics interpolation on and zoom 14.4 (QA: pass / fail)
-- [ ] `game/README.md` describes the new defaults (or points to Drifting, Decisions) (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] In `car_tuning.gd`, `top_speed_multiplier` defaults to 3.0 and `forward_speed` to 11. Every other default equals the Unity value in the Unity prototype report, section 5 (QA compares by hand) (QA: pass)
+- [x] `game/project.godot` has physics interpolation on (QA: pass)
+- [x] A test shows that with the default tuning, holding W from standstill reaches a top speed of 33 (3.0 × 11), within one step's rounding (QA: pass)
+- [x] The T-012 tests that check the Unity behaviour (cruise, coasting, braking, rotation, drift angle) still pass, using the Unity values explicitly (QA: pass)
+- [x] A screenshot taken right after the prototype starts shows the isometric view (QA: pass)
+- [x] A test shows that the panel's reset button restores top speed 3.0, physics interpolation on and zoom 14.4 (QA: pass)
+- [x] `game/README.md` describes the new defaults (or points to Drifting, Decisions) (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -61,3 +61,22 @@ Done on branch task/T-029-drift-defaults-after-playtest.
 - Screenshot of the main scene right after start (`screenshot.sh`) shows the isometric view.
 - Results: GUT 56/56 pass; Python tests 115 pass.
 - Documents affected: `game/README.md` updated.
+
+### QA round 1
+
+Checked by QA/Integration on 2026-10-09, in `C:\solid-carbide-worktrees\T-029` on branch `task/T-029-drift-defaults-after-playtest` (commit 1bdb076). All 8 criteria pass.
+
+1. **Defaults in `car_tuning.gd`: pass.** Compared by hand with the "Value in project files (used)" column of the Unity prototype report, section 5: forward_speed 11, turn_speed 202, top_speed_multiplier **3.0** (Unity 2.5, as the task asks), time_to_top_speed 2.3, coast_decel_multiplier 0.3, steer_sensitivity 0.95, drift_factor 0.98, drift_grip_low_speed 0.98, drift_grip_high_speed 0.98, drift_speed_reference 20, drift_enter_rate 12, drift_exit_rate 3. The new `UNITY` constant holds all twelve Unity values correctly (2.5 for top speed). Physics rate stays 50 per second in `project.godot`.
+2. **Physics interpolation on: pass.** `game/project.godot` has `common/physics_interpolation=true`; `drift_prototype.gd` also starts with it on.
+3. **Top speed 33 test: pass.** `test_drift_model.gd::test_default_tuning_holding_w_reaches_top_speed_33` uses the untouched default tuning, checks the jump to 11 on the first step, then 33 within one step's ramp (33 / 2.3 x 0.02). It passes.
+4. **T-012 Unity tests: pass.** Every test in `test_drift_model.gd` builds its car through `_new_car()` (directly or via `_car_at`/`_drift_run`), which now calls `tuning.reset_to_unity()`; the expected numbers (TOP = 27.5, cruise, coasting, braking, rotation, drift angle) are unchanged and all pass. `test_drift_prototype.gd` also checks `unity_values()` against the report's numbers.
+5. **Screenshot right after start is isometric: pass.** My own screenshot of the main scene (`res://scenes/drift_prototype/drift_prototype.tscn`) after 5 frames shows the diamond isometric grid with the car centred. A second screenshot mid-drive (`drift_prototype_demo_iso.tscn`, 400 frames, interpolation on) shows the car centred on screen.
+6. **Reset test: pass.** `test_drift_prototype.gd::test_reset_restores_every_game_value` sets every slider to its maximum and interpolation off, presses the reset button, and checks every value back to the game's (top speed multiplier 3.0), interpolation on (the scene's flag, the tree and the toggle) and zoom 14.4. Slider tooltips still give the Unity values.
+7. **`game/README.md`: pass.** The Drift prototype section lists the new defaults (3.0 / 33, cruise 11, interpolation on, isometric start), points to Drifting, Decisions, 2026-10-08, and describes the reset button's new behaviour.
+8. **Full suites: pass.** GUT: 56/56 tests, 7 scripts, `TESTS PASSED`, exit 0. Python: `game/tools` 45 tests OK, `tools` 70 tests OK (115 in total, matching the result notes).
+
+**Other checks.**
+
+- **Driving logic unchanged:** `git diff master...HEAD -- game/scripts/driving/car_model.gd` is empty. `car.gd` is untouched too.
+- **The camera test turning interpolation off is justified.** I ran a throwaway copy of `test_camera_stays_on_the_car_and_never_rotates` with interpolation on (removed afterwards, not committed). Every placement check still passes with interpolation on: camera position equals the drawn car, sprite equals the drawn car, camera rotation 0. Only the last check (`get_screen_center_position()` equals the camera's position after `force_update_scroll()`) fails, because with interpolation on the screen centre is only updated on rendered frames, and this test steps the car directly without ticking frames. With real physics and process frames and interpolation on, the screen centre was 6 px from the drawn car, less than one step's travel, which is the interpolation itself; the camera and the car sprite are both interpolated, so the car stays centred (confirmed by the mid-drive screenshot). No hidden camera problem.
+- **Minor, not a failure:** the header comment in `car_tuning.gd` dates the board's decision 2026-10-09; Drifting, Decisions dates it 2026-10-08. Cosmetic only.
