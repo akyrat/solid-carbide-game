@@ -49,6 +49,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: look at the driven lines and judge whether the challenges play as intended.
 
+Board review files: [docs/level-design/single-boulder/arrow-1.driven.svg, docs/level-design/single-boulder/arrow-2.driven.svg, docs/level-design/two-boulders/arrow-1.driven.svg]
+
 ## Result notes
 
 Written by the agent when it finishes.
