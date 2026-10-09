@@ -1,0 +1,105 @@
+{
+  "pattern": "Single Boulder",
+  "name": "Single Boulder - arrow 2 (fitted)",
+  "sketch": "Single Boulder - arrow 2",
+  "fitted_for": "a crossing of two 8-unit roads, the pattern's centre on the crossing's centre",
+  "units": "1 unit = the car's width; the car is 1 x 3 units",
+  "origin": "x and y in units from the pattern's centre, x to the right, y down",
+  "width": 24,
+  "height": 24,
+  "legend": {
+    "R": "road",
+    "G": "gravel",
+    "B": "building",
+    ".": "empty"
+  },
+  "rows": [
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "RRRRRRRRRRRRRRRRRRRRRRRR",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB"
+  ],
+  "boulders": [
+    {
+      "x": 0.0,
+      "y": 0.0,
+      "diameter": 3.0
+    }
+  ],
+  "arrow": {
+    "points": [
+      [
+        1.6,
+        -4.0
+      ],
+      [
+        -1.0,
+        -2.5
+      ],
+      [
+        -2.599,
+        -0.52
+      ],
+      [
+        -3.5,
+        1.5
+      ],
+      [
+        -1.6,
+        4.5
+      ],
+      [
+        1.6,
+        5.0
+      ],
+      [
+        2.303,
+        2.303
+      ],
+      [
+        4.0,
+        1.0
+      ],
+      [
+        2.5,
+        -1.5
+      ],
+      [
+        -0.5,
+        -3.5
+      ],
+      [
+        -1.6,
+        -5.0
+      ]
+    ],
+    "around_boulders": [
+      {
+        "boulder": 0,
+        "degrees": 400,
+        "direction": "counter-clockwise"
+      }
+    ],
+    "corridor_width": 3.0
+  }
+}

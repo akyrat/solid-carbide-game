@@ -60,6 +60,47 @@ The board's sketches of the 3 MVP challenges, one per arrow path. They show the 
 ![Single Boulder, arrow 2](level-design/single-boulder/arrow-2.svg)
 ![Two Boulders, arrow 1](level-design/two-boulders/arrow-1.svg)
 
+### MVP map
+
+The MVP map as built in Godot (task T-019), in flat placeholder colours: dark grey roads, the tan gravel centre, purple buildings, dark boulders with an orange rim, and blue challenge arrows. The art replaces the colours later.
+
+![The MVP map, flat top-down](level-design/mvp-map.png)
+
+![The MVP map, isometric](level-design/mvp-map-iso.png)
+
+**Coordinates.** Positions are in units from the map's centre, x to the right and y down, as in Crash City Grid, so the map runs from -40 to 40. The blocks start at -32, -14, 4 and 22 on each axis; the gravel centre runs from -14 to 14. The road crossings are at -36, -18, 0, 18 and 36 on each axis (0, 0 is in the gravel).
+
+**Fitted patterns.** Each sketch has a fitted version next to it (`arrow-1.fitted.json` and `.svg`), made by a script from the sketch. The sketch's boulders are kept, 3 units across and as far apart as drawn, and its arrow points are moved as little as possible until the arrow's centre line stays at least 2 units from each boulder's centre (the rock's radius plus half the car's width) and the 3-unit corridor stays at least 0.25 units from every building:
+
+| Fitted version | Made to fit | Around each boulder |
+|---|---|---|
+| [Single Boulder, arrow 1](level-design/single-boulder/arrow-1.fitted.svg) | A crossing of two 8-unit roads, the boulder on its centre | Clockwise, 387 degrees (sketch: 389) |
+| [Single Boulder, arrow 2](level-design/single-boulder/arrow-2.fitted.svg) | A crossing of two 8-unit roads, the boulder on its centre | Counter-clockwise, 400 degrees (sketch: 431) |
+| [Two Boulders, arrow 1](level-design/two-boulders/arrow-1.fitted.svg) | A straight 8-unit road, the boulders on its centre line, 7 units apart | Clockwise 408 degrees, then counter-clockwise 339 (sketch: 422 and 332) |
+
+The figure-eight is squeezed across the road (its loops are 4.5 units wide at the centre line instead of about 8) and keeps its length along it.
+
+**Pattern copies and challenges.** 12 copies; 30% of 12 is 3.6, rounded half up to 4 challenges. The rotation turns the fitted version clockwise on screen.
+
+| Copy | Pattern | Centre | Rotation | Challenge |
+|---|---|---|---|---|
+| copy-01 | Single Boulder | -18, -18 | 0 | challenge-1, arrow 1 (clockwise) |
+| copy-02 | Single Boulder | 0, -18 | 0 | |
+| copy-03 | Single Boulder | 18, -18 | 0 | |
+| copy-04 | Single Boulder | -18, 0 | 0 | |
+| copy-05 | Single Boulder | 18, 0 | 0 | |
+| copy-06 | Single Boulder | -18, 18 | 0 | |
+| copy-07 | Single Boulder | 0, 18 | 0 | |
+| copy-08 | Single Boulder | 18, 18 | 0 | challenge-2, arrow 2 (counter-clockwise) |
+| copy-09 | Two Boulders | 0, -36 (top side of the perimeter road) | 90 | challenge-3 |
+| copy-10 | Two Boulders | 36, 0 (right side) | 0 | |
+| copy-11 | Two Boulders | 0, 36 (bottom side) | 90 | challenge-4 |
+| copy-12 | Two Boulders | -36, 0 (left side) | 0 | |
+
+**Completing a challenge.** The map checks the drawn car (a 3 by 1 unit rectangle on the car's position and heading) against each open challenge every physics step. A run starts when the car touches the arrow's start; it moves forward while the car keeps touching the corridor, and only along the stretch of arrow the car is on, so crossing a figure-eight or passing the start of a loop does not skip ahead. Not touching the corridor at all, even for one step, ends the run. Reaching the arrow's end completes the challenge.
+
+**Drivability.** The fitted challenges have not yet been checked with the Driving & Drift Agent's script (task T-021). All 4 challenges need that check.
+
 ## Open questions
 
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
@@ -67,4 +108,5 @@ The board's sketches of the 3 MVP challenges, one per arrow path. They show the 
 ## References
 
 - The board's challenge drawings: `docs/level-design/` (Content, "MVP challenges"). They are exported from Crash City Grid with `python tools/export_challenge_drawings.py <folder of downloaded drawings>`.
+- The MVP map's layout data (Content, "MVP map"): [../game/data/level/mvp_map.json](../game/data/level/mvp_map.json), with the buildings, ground cells, pattern copies, boulders and challenges (arrow points and centre lines) in units from the map's centre. It and the fitted patterns are made with `python game/tools/build_mvp_map.py`; how to open the map in Godot: [../game/README.md](../game/README.md), section "MVP map".
 - Crash City Grid, the map editor the board and the Project Lead draw the map in: https://claude.ai/artifact/R9AUtdNttfHKNgeqGDCPAH (private to the board). Each map is saved as an 80 by 80 grid of cells, plus its boulders, pattern groups, challenges and arrow paths, in units from the map centre; the Project Lead reads it and copies what the Level/Challenge Design Agent needs into its tasks.
