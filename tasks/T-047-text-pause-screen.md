@@ -1,7 +1,7 @@
 ---
 id: T-047
 title: Text: the pause screen
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -46,4 +46,11 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+| Key | Where it appears | Text | Length (chars) |
+|---|---|---|---|
+| paused.title | Pause screen, large title shown while the game is paused | Paused | 6 |
+| paused.hint | Pause screen, under the title, tells the player how to resume | Press Escape to get back to the stream. | 39 |
+| paused.zoom_label | Pause screen, label next to the camera zoom slider | Camera zoom, for the fans | 25 |
+
+Limits: title 20, hint 50, zoom label 25. The title keeps HUD and menus' meaning ("Paused"). The hint names Escape and nods to the livestream audience waiting; the zoom label nods to the viewers. No "XP" or "experience".
+
