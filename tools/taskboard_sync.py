@@ -7,8 +7,10 @@ then the page is refreshed from the files.
 
 Usage, from the repo root:
 
-  python tools/taskboard_sync.py export OUT_DIR
+  python tools/taskboard_sync.py export OUT_DIR [WORKTREES_DIR]
       Writes one JSON document per task to OUT_DIR/<id>.json, plus OUT_DIR/_meta.json.
+      With WORKTREES_DIR (normally C:/solid-carbide-worktrees), a task whose branch is open
+      in WORKTREES_DIR/<id> is read from there, since its task file is edited on its branch.
 
   python tools/taskboard_sync.py apply MOVES_JSON
       MOVES_JSON is a list of {"id": "T-012", "status": "in-progress"} objects (the
@@ -27,6 +29,11 @@ STATUSES = ["open", "in-progress", "in-qa", "needs-playtest", "blocked", "flagge
 HEADER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 FIELD_RE = re.compile(r"^(\w+): ?(.*)$", re.M)
 LIST_FIELDS = {"depends_on", "documents_affected", "files_to_read_first", "files_expected_to_change"}
+REVIEW_RE = re.compile(r"^The board's review:\s*(.+)$", re.M)
+REVIEW_FILES_RE = re.compile(r"^Board review files:\s*(.+)$", re.M)
+NOTES_RE = re.compile(r"^## Result notes[ \t]*\n(.*)\Z", re.S | re.M)
+NOTES_PLACEHOLDER = "Written by the agent when it finishes."
+NOTES_MAX = 20000
 
 
 def parse_list(value):
@@ -47,11 +54,29 @@ def parse_header(text):
     return fields
 
 
-def ticket(path):
-    """The document the page shows for one task file."""
-    fields = parse_header(path.read_text(encoding="utf-8"))
+def review_parts(text):
+    """The board's review line, the files it names, and the result notes, from a task file."""
+    text = text.replace("\r\n", "\n")
+    review = REVIEW_RE.search(text)
+    files = REVIEW_FILES_RE.search(text)
+    notes = NOTES_RE.search(text)
+    notes_text = notes.group(1).strip() if notes else ""
+    if notes_text == NOTES_PLACEHOLDER:
+        notes_text = ""
+    if len(notes_text) > NOTES_MAX:
+        notes_text = notes_text[:NOTES_MAX] + "\n\n(Cut short here; the rest is in the task file.)"
+    return (review.group(1).strip() if review else "",
+            parse_list(files.group(1)) if files else [],
+            notes_text)
+
+
+def ticket(path, folder=""):
+    """The document the page shows for one task file. `folder` is the task's branch folder, if open."""
+    text = path.read_text(encoding="utf-8")
+    fields = parse_header(text)
     if not fields or "id" not in fields:
         return None
+    review, review_files, notes = review_parts(text)
     return {
         "id": fields["id"],
         "title": fields.get("title", ""),
@@ -63,6 +88,11 @@ def ticket(path):
         "file": f"tasks/{path.name}",
         "model": fields.get("model", ""),
         "file_status": fields.get("status", "open"),   # the page marks a ticket as moved when status differs
+        "qa_rounds": int(fields.get("qa_rounds", "0") or 0),
+        "review": review,
+        "review_files": review_files,
+        "result_notes": notes,
+        "folder": folder,
     }
 
 
@@ -70,10 +100,18 @@ def task_files(tasks_dir=TASKS_DIR):
     return sorted(tasks_dir.glob("T-*.md"))
 
 
-def export(out_dir, tasks_dir=TASKS_DIR):
+def export(out_dir, tasks_dir=TASKS_DIR, worktrees_dir=None):
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    tickets = [t for t in (ticket(p) for p in task_files(tasks_dir)) if t]
+    tickets = []
+    for path in task_files(tasks_dir):
+        folder = Path(worktrees_dir) / path.name[:5] if worktrees_dir else None
+        if folder and (folder / "tasks" / path.name).exists():
+            t = ticket(folder / "tasks" / path.name, str(folder))
+        else:
+            t = ticket(path)
+        if t:
+            tickets.append(t)
     for t in tickets:
         (out_dir / f"{t['id']}.json").write_text(json.dumps(t, indent=2), encoding="utf-8")
     meta = {"synced_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "count": len(tickets)}
@@ -114,8 +152,8 @@ def apply_moves(moves, tasks_dir=TASKS_DIR):
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    if len(argv) == 2 and argv[0] == "export":
-        tickets = export(argv[1])
+    if len(argv) in (2, 3) and argv[0] == "export":
+        tickets = export(argv[1], worktrees_dir=argv[2] if len(argv) == 3 else None)
         print(f"exported {len(tickets)} tickets to {argv[1]}")
         return 0
     if len(argv) == 2 and argv[0] == "apply":

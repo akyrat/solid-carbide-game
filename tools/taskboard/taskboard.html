@@ -121,7 +121,26 @@ header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: 
 .counts small { font-size: 10.5px; color: var(--muted); }
 
 /* Ticket detail */
-dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(460px, calc(100% - 32px)); }
+dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(720px, calc(100% - 32px)); max-height: calc(100% - 48px); overflow-y: auto; }
+.review { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c, var(--qa)); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 10px; }
+.review h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.review h3 .chip { margin-left: auto; color: var(--c, var(--qa)); }
+.review .ask { margin: 0; font-size: 14px; line-height: 1.5; }
+.review .ask.quiet { color: var(--muted); font-size: 13px; }
+.paths { display: grid; gap: 6px; }
+.path { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; font-size: 12px; }
+.path .label { color: var(--muted); }
+.path code { font-family: var(--mono); color: var(--cyan); overflow-wrap: anywhere; }
+.path button { background: var(--panel); border: 1px solid var(--line); border-radius: 5px; padding: 3px 8px; cursor: pointer; font-size: 11.5px; }
+details.notes { border-top: 1px solid var(--line); padding-top: 8px; }
+details.notes summary { cursor: pointer; color: var(--muted); font: 600 12px/1.4 var(--display); letter-spacing: .1em; text-transform: uppercase; }
+.notes-body { font-size: 13px; line-height: 1.5; overflow-x: auto; }
+.notes-body table { border-collapse: collapse; margin: 8px 0; font-size: 12.5px; }
+.notes-body th, .notes-body td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+.notes-body th { background: var(--panel); }
+.notes-body code { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
+.notes-body pre { white-space: pre-wrap; font-family: var(--mono); font-size: 12px; }
+.notes-body h3, .notes-body h4 { font: 600 14px/1.3 var(--display); margin: 12px 0 4px; }
 dialog::backdrop { background: rgba(6, 8, 24, .7); }
 dialog h2 { margin: 6px 0 12px; font: 600 18px/1.25 var(--display); text-wrap: balance; }
 dialog dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0 0 16px; font-size: 13px; }
@@ -174,12 +193,15 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="row"><span class="id" id="detail-id"></span></div>
   <h2 id="detail-title"></h2>
+  <section class="review" id="detail-review" aria-label="Your review"></section>
   <dl id="detail-fields"></dl>
   <div class="moveto" id="detail-move" role="group" aria-label="Move to"></div>
   <p class="note">A move is a request: the Project Lead applies it to the task file at the next sync.</p>
   <div class="dialog-actions"><button class="close" id="detail-close">Close</button></div>
 </dialog>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script>
 const LANES = [
   { key: "todo", name: "To do", color: "var(--todo)", statuses: ["open", "blocked"], target: "open" },
@@ -360,11 +382,61 @@ function openDetail(id) {
     ["File", `<span class="file">${esc(t.file)}</span>`],
   ];
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
+  renderReview(t);
   $("detail-fields").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${k === "File" ? v : esc(v)}</dd>`).join("");
   const cur = laneOf(t.status).key;
   $("detail-move").innerHTML = LANES.map((l) => `<button data-lane="${l.key}" style="--c:${l.color}" ${l.key === cur ? "disabled" : ""}>${l.name}</button>`).join("");
   if (!$("detail").open) $("detail").showModal();
 }
+
+// "Your review": what the board checks on this ticket, where to look, and the agent's and QA's notes.
+const REPO = "C:\\solid-carbide-game";
+const winPath = (p) => String(p).replace(/\//g, "\\");
+function reviewState(t) {
+  if (t.status === "needs-playtest") return { chip: "Ready for you", color: "var(--qa)" };
+  if (t.status === "flagged-for-review") return { chip: "Flagged: needs your call", color: "var(--warn)" };
+  if (t.status === "in-qa") return { chip: "QA is checking it", color: "var(--muted)" };
+  if (t.status === "done") return { chip: "Done", color: "var(--done)" };
+  if (t.status === "cancelled") return { chip: "Cancelled", color: "var(--faint)" };
+  return { chip: "Not ready yet", color: "var(--faint)" };
+}
+function renderNotes(md) {
+  try {
+    if (window.marked && window.DOMPurify) return window.DOMPurify.sanitize(window.marked.parse(md));
+  } catch {}
+  return `<pre>${esc(md)}</pre>`;
+}
+function renderReview(t) {
+  const st = reviewState(t);
+  const base = t.folder ? winPath(t.folder) : REPO;
+  const paths = [];
+  if (t.folder) paths.push(["Task folder", base]);
+  paths.push(["Task file", `${base}\\${winPath(t.file)}`]);
+  (t.review_files || []).forEach((f) => paths.push(["Look at", /^[A-Za-z]:/.test(f) ? winPath(f) : `${base}\\${winPath(f)}`]));
+  const ask = t.review
+    ? `<p class="ask">${esc(t.review.charAt(0).toUpperCase() + t.review.slice(1))}</p>`
+    : `<p class="ask quiet">Nothing specific is asked of you: QA's checks cover this one. A glance at the notes below is enough.</p>`;
+  const qa = t.qa_rounds ? `<p class="ask quiet">QA has checked it ${t.qa_rounds === 1 ? "once" : "twice"}; the result is in the notes.</p>` : "";
+  const notes = t.result_notes
+    ? `<details class="notes"${t.status === "needs-playtest" ? " open" : ""}><summary>Agent's and QA's notes</summary><div class="notes-body">${renderNotes(t.result_notes)}</div></details>`
+    : "";
+  const el = $("detail-review");
+  el.style.setProperty("--c", st.color);
+  el.innerHTML = `<h3>Your review <span class="chip">${st.chip}</span></h3>${ask}${qa}
+    <div class="paths">${paths.map(([label, p]) => `<div class="path"><span class="label">${label}</span><code>${esc(p)}</code><button type="button" data-copy="${esc(p)}">Copy</button></div>`).join("")}</div>
+    ${notes}`;
+}
+$("detail-review").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-copy]");
+  if (!b) return;
+  try { await navigator.clipboard.writeText(b.dataset.copy); toast("Path copied"); }
+  catch {
+    const code = b.previousElementSibling;
+    const range = document.createRange(); range.selectNodeContents(code);
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+    toast("Press Ctrl+C to copy the selected path");
+  }
+});
 
 function toast(msg) {
   const el = document.createElement("div");

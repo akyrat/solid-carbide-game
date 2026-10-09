@@ -54,6 +54,10 @@ Every task file has an `epic` and a `milestone` in its header.
 
 What each milestone includes is decided in the game area docs (for example, how many weapons the MVP has), not here. A new epic or milestone is added here first, with the board's agreement.
 
+## The board's review
+
+When a task needs the board to look at, read, listen to or play something, its task file says so in one line starting `The board's review:`. A line starting `Board review files:` lists the files to open, relative to the task's folder. The task board shows both, with the agent's and QA's result notes, when the board clicks a ticket.
+
 ## Models
 
 Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:

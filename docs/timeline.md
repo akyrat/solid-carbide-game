@@ -460,3 +460,8 @@ Entry format:
   - T-078: QA's full run from the main menu before the MVP playtest
 - Documents touched: `CLAUDE.md`, `tasks/README.md`
 - Tasks: T-047 to T-078 (new); T-009, T-014, T-015 (updated)
+
+## 2026-10-09: Task board shows the board's review
+- Decision or change: clicking a ticket on the task board now shows "Your review": what the board is asked to check (the task's "The board's review:" line), whether it is ready, the task's folder and file and the files to open ("Board review files:"), each with a copy button, and the agent's and QA's result notes. The sync reads each open task from its branch folder. The convention is in `tasks/README.md`, "The board's review".
+- Documents touched: `tasks/README.md`
+- Tasks: T-032; T-020, T-029, T-038 (review lines added on their branches)
