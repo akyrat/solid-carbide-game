@@ -1,7 +1,7 @@
 ---
 id: T-038
 title: The run's numbers: likes (XP) per challenge, drift and level, and the car's starting health
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 epic: game-loop
@@ -58,4 +58,27 @@ The board's review: look at the level table and the starting health.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Data Agent.
+
+**Produced:** `game/data/run.json`; loader `game/scripts/data/game_data.gd` and typed reader `game/scripts/data/run_data.gd`; tests `game/tests/unit/test_run_data.gd`; "Game data" section in `game/README.md`; one line in References of `docs/game-loop-architecture.md`. Full GUT suite and Python tests pass.
+
+**Proposed numbers (for the board to judge).** Unit: the level-1 bar = 100 XP. Drift = 10 XP per second at every level (fixed). Challenge XP grows 10% per level (100 x 1.1^(L-1)); the bar grows 25% per level (100 x 1.25^(L-1)). Leftover XP carries over (no XP is wasted, and one big gain can give two level-ups, each opening its choice). Max level 12 (11 level-ups), then the bar stops.
+
+| Level | XP to next | XP per challenge | Challenges needed | Drift-seconds needed |
+|---|---|---|---|---|
+| 1 | 100 | 100 | 1.0 | 10 |
+| 2 | 125 | 110 | 1.1 | 12.5 |
+| 3 | 156 | 121 | 1.3 | 15.6 |
+| 4 | 195 | 133 | 1.5 | 19.5 |
+| 5 | 244 | 146 | 1.7 | 24.4 |
+| 6 | 305 | 161 | 1.9 | 30.5 |
+| 7 | 381 | 177 | 2.2 | 38.1 |
+| 8 | 477 | 195 | 2.4 | 47.7 |
+| 9 | 596 | 214 | 2.8 | 59.6 |
+| 10 | 745 | 236 | 3.2 | 74.5 |
+| 11 | 931 | 259 | 3.6 | 93.1 |
+| 12 | max | 285 | n/a | n/a |
+
+Reasoning: the first level-up is one challenge (decision). The bar grows faster than challenge XP so each level takes a bit longer, while drifting (fixed 10) shrinks from 10% of the bar to about 1% at level 11, as the decisions intend. Reaching level 12 takes about 22.6 challenges of pure challenge XP, or fewer with drifting; with a challenge about every 20 to 25 s over the 7 minutes before the kaiju that is a good run, while an average run reaches about level 9 to 10. 11 level-ups are enough for the flamethrower plus upgrade tiers for both weapons. The T-022 weapons report (upgrade tier count) is not done, so the level count is a guess to revisit once it is, along with how often challenges appear (Level design).
+
+**Starting car health: 100.** It matches the 100-based XP scale so percentages read plainly, gives room for the garage's HP upgrade (about 10 levels, e.g. +10 per level, to be set in the garage data task), and enemy damage can then be balanced as "a minion contact hit is about 5 to 10, so 10 to 20 hits".

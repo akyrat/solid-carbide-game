@@ -12,7 +12,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 | --- | --- |
 | `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype |
 | `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel |
-| `data/` | Game data as JSON |
+| `data/` | Game data as JSON (see "Game data") |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
 | `tests/unit/` | GUT test scripts (`test_*.gd`), in subfolders if you like |
@@ -222,3 +222,12 @@ Escape is not used here (pause is task T-015). There is no jump, no arrow-key st
 **Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the sheets are drawn at scale 1. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
 
 **Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) and `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`.
+
+## Game data
+
+Written by the Game Data Agent (task T-038); the enemy, weapon and garage data tasks follow the same convention.
+
+- **Where:** one JSON file per area under `game/data/` (`run.json` for the run's XP, levels and car starting health). Keys are `snake_case`. A `_comment` key may explain a file. Numbers are proposals the board judges in playtests, and are changed in the file, never in code.
+- **Loader:** `scripts/data/game_data.gd` (`GameData`). `GameData.load_file("run")` reads `res://data/run.json`; `GameData.get_value(data, "car.starting_health")` reads a dotted path (array indexes as numbers). Both return `{ok, data, error}`: a missing file, invalid JSON or missing value gives `ok = false` and a clear `error` message. `GameData.unwrap(result)` returns the data, or `push_error`s the message and returns null.
+- **Typed readers:** for each data file, a small class next to the loader wraps it so game code does not index dictionaries. `scripts/data/run_data.gd` (`RunData`) gives `xp_needed(level)`, `challenge_xp(level)`, `drift_xp_per_second()`, `max_level()`, `carries_over()` and `starting_health()`.
+- **Tests:** `tests/unit/test_run_data.gd`. New data files get a test that loads them through the loader.
