@@ -1,7 +1,7 @@
 ---
 id: T-038
 title: The run's numbers: likes (XP) per challenge, drift and level, and the car's starting health
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/weapons.md, docs/garage-design.md, docs/enemies.md, game/README.md]
 files_expected_to_change: [JSON data files under game/data/, a small loader with tests, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -82,3 +82,17 @@ Written by the Game Data Agent.
 Reasoning: the first level-up is one challenge (decision). The bar grows faster than challenge XP so each level takes a bit longer, while drifting (fixed 10) shrinks from 10% of the bar to about 1% at level 11, as the decisions intend. Reaching level 12 takes about 22.6 challenges of pure challenge XP, or fewer with drifting; with a challenge about every 20 to 25 s over the 7 minutes before the kaiju that is a good run, while an average run reaches about level 9 to 10. 11 level-ups are enough for the flamethrower plus upgrade tiers for both weapons. The T-022 weapons report (upgrade tier count) is not done, so the level count is a guess to revisit once it is, along with how often challenges appear (Level design).
 
 **Starting car health: 100.** It matches the 100-based XP scale so percentages read plainly, gives room for the garage's HP upgrade (about 10 levels, e.g. +10 per level, to be set in the garage data task), and enemy damage can then be balanced as "a minion contact hit is about 5 to 10, so 10 to 20 hits".
+
+### QA round 1
+
+Checked by QA/Integration in the task's worktree. Full GUT suite: 60 of 60 tests pass (8 scripts). Python tool tests: 45 pass, OK. The data table in the result notes matches `game/data/run.json` and the stated growth (bar 100 x 1.25^(L-1), challenge XP 100 x 1.1^(L-1), rounded). The numbers themselves are for the board to judge.
+
+- [x] Data files are valid JSON under `game/data/`, and a test loads them through the loader: PASS (`run.json` parses; `test_loads_through_loader`)
+- [x] Level 1's threshold equals one challenge at level 1: PASS (100 = 100; `test_level_1_threshold_is_one_challenge`)
+- [x] XP per drift second is 10% of the level-1 threshold and the same at every level: PASS (10 = 10% of 100; single fixed value, no per-level drift key; `test_drift_second_is_10_percent_of_level_1_and_constant`)
+- [x] Loader gives a clear error for a missing file or value: PASS (`test_missing_file_gives_clear_error`, `test_missing_value_gives_clear_error`)
+- [x] Result notes have the level table, the reasoning, and a proposed starting health with a reason: PASS (health 100, reasoned)
+- [x] `game/README.md` has "Game data"; `docs/game-loop-architecture.md` only gains one References line (Summary, Decisions, Open questions unchanged per diff): PASS
+- [x] Full GUT suite and all Python tool tests pass: PASS
+
+Result: all criteria pass. Status set to needs-playtest. The board's review: the level table and the starting health.
