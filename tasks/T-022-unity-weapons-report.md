@@ -1,7 +1,7 @@
 ---
 id: T-022
 title: Report on the starting gun and the exhaust flamethrower in the board's Unity prototype
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 epic: weapons
@@ -13,7 +13,7 @@ documents_affected: [docs/weapons/unity-weapons-report.md, docs/weapons.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/weapons.md, docs/game-loop-architecture.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, .claude/agents/weapon-behavior.md]
 files_expected_to_change: [docs/weapons/unity-weapons-report.md, docs/weapons/ (pictures, if any), docs/weapons.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,12 +45,12 @@ Describe the prototype faithfully: do not improve or redesign the weapons. The o
 
 ## Acceptance criteria
 
-- [ ] `docs/weapons/unity-weapons-report.md` exists and has the 7 sections listed above, in that order, and says which Unity weapon is the starting gun and why (QA: pass / fail)
-- [ ] For 5 values picked by QA from the two tables, the value and its file and line or field match the Unity project's files, including any asset or scene override (QA: pass / fail)
-- [ ] The flamethrower section names exactly what turns it on and off in the prototype's code, matching the code (QA: pass / fail)
-- [ ] `docs/weapons.md` has the `### Unity prototype weapons` subsection and links the report, still follows the five-section structure, and its Summary, Decisions and Open questions are unchanged (QA: pass / fail)
-- [ ] The Unity project is unchanged: in `C:\Users\andre\drift-to-survive`, `git rev-parse HEAD` prints `126e7ec3845fa4023aa0854569a5449be3d4c2a6`, `git status --porcelain` prints exactly ` M .cursor/rules/project.mdc`, ` M docs/ideas.md` and `?? docs/ISOMETRIC_MAP_GENERATOR_PLAN.md`, and `git diff | sha256sum` prints `428db3b753a54e4752759f534f28e444bebd7dd54c30894f960e66e98fadcd30` (QA: pass / fail)
-- [ ] No file under `game/`, `.claude/agents/` or other `docs/` files changed, apart from `docs/weapons.md` and `docs/weapons/` (QA: pass / fail)
+- [x] `docs/weapons/unity-weapons-report.md` exists and has the 7 sections listed above, in that order, and says which Unity weapon is the starting gun and why (QA: pass)
+- [x] For 5 values picked by QA from the two tables, the value and its file and line or field match the Unity project's files, including any asset or scene override (QA: pass)
+- [x] The flamethrower section names exactly what turns it on and off in the prototype's code, matching the code (QA: pass)
+- [x] `docs/weapons.md` has the `### Unity prototype weapons` subsection and links the report, still follows the five-section structure, and its Summary, Decisions and Open questions are unchanged (QA: pass)
+- [x] The Unity project is unchanged: in `C:\Users\andre\drift-to-survive`, `git rev-parse HEAD` prints `126e7ec3845fa4023aa0854569a5449be3d4c2a6`, `git status --porcelain` prints exactly ` M .cursor/rules/project.mdc`, ` M docs/ideas.md` and `?? docs/ISOMETRIC_MAP_GENERATOR_PLAN.md`, and `git diff | sha256sum` prints `428db3b753a54e4752759f534f28e444bebd7dd54c30894f960e66e98fadcd30` (QA: pass)
+- [x] No file under `game/`, `.claude/agents/` or other `docs/` files changed, apart from `docs/weapons.md` and `docs/weapons/` (QA: pass)
 
 The board's review: read the report and judge whether it matches the weapons as the board remembers them.
 
@@ -79,3 +79,31 @@ Done by the Weapon Behavior Agent, 2026-10-09.
 **Documents affected:**
 - `docs/weapons/unity-weapons-report.md` (new).
 - `docs/weapons.md`: new `### Unity prototype weapons` subsection under Content (replacing "(To be written.)"), and the References entry is now a link to the report. Summary, Decisions and Open questions unchanged.
+
+### QA round 1
+
+QA/Integration Agent, 2026-10-09. Checked in `C:\solid-carbide-worktrees\T-022` on `task/T-022-unity-weapons-report`. The Unity project was only read (files and read-only git commands).
+
+| # | Criterion | Result |
+|---|---|---|
+| 1 | Report exists, 7 sections in order, names the starting gun and why | **pass**: sections 1 to 7 in the order asked (report lines 15, 27, 63, 139, 209, 289, 311). Says the starting gun is the Simple Gun (`Weapon_MachineGun.asset`). Checked the reasons: the `Stage_Grass.unity` line 75228 `weaponData` guid is `Weapon_MachineGun.asset.meta`'s, and `PlayerInventory.EnsureStartingWeapon` (lines 54-67) adds the `SimpleGunWeapon` data with tier 1 |
+| 2 | 5 table values match the Unity files, overrides included | **pass**: 9 table rows checked, all match (list below) |
+| 3 | Flamethrower on/off matches the code | **pass**: `IsExhaustActive` (FlameExhaustWeapon.cs 120-130) returns true when `exhaustAlwaysActive` is set, or while `Time.time < _exhaustLingerUntil`, which every frame the gate holds is pushed to now + linger. `IsDriftGateSatisfied` (113-118) = `_car.IsDrifting` and speed squared >= 0.85 squared. `IsDrifting` (PlayerCarController.cs 44) = (accelerate or reverse > 0) and abs(steer) > 0.01. Linger comes from `weaponData.flamePostDriftLingerSeconds` (lines 132-137) = 0.2 (asset line 22); the 0.5 fallback is used only when there is no data. Tier 8 calls `SetExhaustAlwaysActive(true)` (WeaponTierEffectApplicator.cs 166-168). All as the report says |
+| 4 | `docs/weapons.md` subsection, link, five sections, Summary, Decisions and Open questions unchanged | **pass**: `git diff master...HEAD -- docs/weapons.md` changes only Content ("(To be written.)" replaced by `### Unity prototype weapons` with a link to the report) and the References entry (now a link). Headings are still Summary, Decisions, Content, Open questions, References |
+| 5 | Unity project unchanged | **pass**: HEAD `126e7ec3845fa4023aa0854569a5449be3d4c2a6`; `git status --porcelain` shows exactly ` M .cursor/rules/project.mdc`, ` M docs/ideas.md`, `?? docs/ISOMETRIC_MAP_GENERATOR_PLAN.md`; `git diff \| sha256sum` = `428db3b753a54e4752759f534f28e444bebd7dd54c30894f960e66e98fadcd30` |
+| 6 | No other files changed | **pass**: `git diff master...HEAD --name-only` lists only `docs/weapons.md`, `docs/weapons/unity-weapons-report.md` and this task file. Nothing under `game/` or `.claude/agents/`; working tree clean |
+
+**Claims checked against the Unity source (all match):**
+
+1. Gun range 12, base interval 1.2, damage 2 (`baseDamage`), bullet speed 15, 1 bullet per volley: `Weapon_MachineGun.asset` lines 42, 43, 45, 46, 47. `WeaponData.damage` returns `baseDamage` (WeaponData.cs 171, 189).
+2. Scene overrides: `delayBetweenBullets` 0.05, `extraDelayBetweenVolleys` 0.06, both overrides 0 (`Stage_Grass.unity` lines 75229-75232).
+3. 1.26 s target check: `EffectiveFireInterval` = base / (attack speed x tier) + extra delay (SimpleGunWeapon.cs 64-73); `Update` sets `_timer = 0` (line 82) before `TryFire`, which returns at once with no targets (line 91). So targets are checked only once per interval.
+4. The flame uses the gun's damage: `GetEffectiveDamage` (FlameExhaustWeapon.cs 355-363) reads `_weaponStats.Damage`. `WeaponStats.EnsureInit` (lines 27-35) seeds it from the `SimpleGunWeapon`'s data (damage 2). The flame asset's `damage: 1` (line 45) is used only when there is no `WeaponStats`. Rounding is at line 324.
+5. Bullet hit circle compared with drawn size: prefab scale 2 (`Bullet.prefab` line 33), trigger (line 154), `m_Radius: 0.5` (line 159), so radius 1. The sprite is 16 px wide at 100 px per unit (`Bullet.png.meta` lines 54, 121-122): 0.16 x 2 = 0.32. Colour (line 88) and sorting order 5 (line 85) also match.
+6. Bullet lifetime: `Bullet.Update` (lines 103-110) checks distance only when the pierce mode is not None, so non-piercing bullets that miss are never removed. Non-pierce is released on the first hit (lines 129-131); PierceFirstEnemy after 2 hits (132-134); 36 units (line 27).
+7. Flame rectangle: half-width 1.05, depth 2.6, inner 0.35 (lines 54, 57, 60, 284-286); `RangeReference` 12 (line 15); asset range 30 (line 42); car half-size from the collider's world bounds (307-315); collider 1 x 1 (`Stage_Grass.unity` line 75305); ramp 0.5 to 1 over 1 s (lines 46, 50, 200-205); tick 0.2 (line 21); burn 0.38 s and tint (1, 0.62, 0.38) (lines 73, 76).
+8. Gun tiers: asset steps (lines 48-69) are +2 bullets, Fire rate + and ++, Reach, +2 bullets, Fire rate +++, Pierce. Effects: +2 projectiles, fire rate x 1.2, range multiplier 1.5, pierce first (WeaponTierEffectApplicator.cs 68-79). Tier 3 is 1.2/1.2 + 0.06 = 1.06 s; tier 5 is 12 x 1.5 = 18.
+9. Flame tiers: asset steps (lines 48-70) are Bigger plume x 2, Hotter flame, Longer burn tint, Bigger plume (+30%), Steering, Always-on. Effects: plume x 1.2, damage x 1.2, burn +0.5 s, plume x 1.3, turn speed +20% of current, always on (lines 150-168). Tier 2 is a multiplier of 2.5 x 1.2 = 3.0; tier 6 is a total of 1.2 x 1.2 x 1.3 = 1.872.
+10. The Flame Exhaust is added at pick-up and switches off the tyre smoke (PlayerInventory.cs 208-214). The tier cap is checked in `TryUpgradeWeaponTier` (232-245).
+
+**Not a fail, for the Project Lead:** the long GDD is now stale for Weapons (`docs/weapons.md` changed). That is expected; the Project Lead regenerates it at merge.
