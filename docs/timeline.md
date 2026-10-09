@@ -404,3 +404,8 @@ Entry format:
 - Decision or change: whenever the Project Lead writes a task that shows the player any text, it also writes a linked task for the Narrative Theme Agent to produce that text. Unlike art, text never uses placeholders: the main task depends on the text task, so the text is written first. Added to `CLAUDE.md` (approved by the board) and `tasks/README.md`.
 - Documents touched: `CLAUDE.md`, `tasks/README.md`
 - Tasks: none yet (T-024 unchanged)
+
+## 2026-10-09: T-024 cancelled
+- Decision or change: T-024 ("write all of the MVP's user-facing text") is cancelled and deleted (board). Player-facing text is now written per task: each task that shows text gets a linked Narrative Theme task first (see the previous entry).
+- Documents touched: none
+- Tasks: T-024 (cancelled)
