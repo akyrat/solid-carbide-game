@@ -50,6 +50,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [x] `game/README.md` describes the new defaults (or points to Drifting, Decisions) (QA: pass)
 - [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
+The board's review: open this folder's game/project.godot in Godot and run it. It starts in the isometric view; drive and check that top speed 3.0 and the smoother motion (physics interpolation) feel right. Tab opens the tuning panel.
+
+Board review files: [game/project.godot, game/README.md]
+
 ## Result notes
 
 Done on branch task/T-029-drift-defaults-after-playtest.
