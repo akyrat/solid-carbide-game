@@ -356,6 +356,7 @@ function openDetail(id) {
     ["Area", area ? area.name : t.epic],
     ["Milestone", t.milestone === "mvp" ? "MVP" : t.milestone === "final-release" ? "Final release" : t.milestone],
     ["Depends on", (t.depends_on || []).join(", ") || "Nothing"],
+    ["Model", t.model ? t.model[0].toUpperCase() + t.model.slice(1) : "Not set"],
     ["File", `<span class="file">${esc(t.file)}</span>`],
   ];
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);

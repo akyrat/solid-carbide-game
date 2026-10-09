@@ -431,3 +431,12 @@ Entry format:
   Long GDD regenerated; the short GDD's team line updated.
 - Documents touched: `docs/drifting.md`, `docs/enemies.md`, `docs/game-loop-architecture.md`, `docs/garage-design.md`, `docs/visual-style.md`, `docs/unfiled-game-details.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`, `CLAUDE.md`, `.claude/agents/game-loop.md`, `agent-notes/game-loop.md`, `agent-notes/project-lead.md`, `agent-notes/agents-interactions.md`
 - Tasks: none yet (MVP tickets next)
+
+## 2026-10-09: Models per task; Drifting and Level design tickets
+- Decision or change: every task now names the model its agent runs on (`model: sonnet` or `opus`), chosen per task by the Project Lead (board); the rule is in `tasks/README.md`, "Models". First MVP ticket batch:
+  - Drifting: T-033 (car collisions: bounce off walls and boulders, knockback for enemies to call)
+  - Level design: T-034 (buildings turn see-through, after T-019 and T-020) and T-035 (challenges created during a run, for the kaiju's meteors, after T-019)
+  - Models set on T-019, T-020, T-021 and T-029
+  Art for these areas comes with the Visual style batch.
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
+- Tasks: T-033, T-034, T-035 (new); T-019, T-020, T-021, T-029 (model set)

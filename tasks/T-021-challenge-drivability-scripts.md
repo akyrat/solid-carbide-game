@@ -12,6 +12,7 @@ depends_on: [T-012]
 documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/level-design.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, docs/level-design/, game/README.md, .claude/agents/driving-drift.md, .claude/agents/level-challenge.md]
 files_expected_to_change: [the drivability script and its tests, result files for the 3 MVP challenges under docs/level-design/, docs/level-design.md, game/README.md]
+model: opus
 qa_rounds: 0
 ---
 

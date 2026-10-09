@@ -61,6 +61,7 @@ def ticket(path):
         "milestone": fields.get("milestone", ""),
         "depends_on": fields.get("depends_on", []),
         "file": f"tasks/{path.name}",
+        "model": fields.get("model", ""),
         "file_status": fields.get("status", "open"),   # the page marks a ticket as moved when status differs
     }
 

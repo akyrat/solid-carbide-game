@@ -54,6 +54,13 @@ Every task file has an `epic` and a `milestone` in its header.
 
 What each milestone includes is decided in the game area docs (for example, how many weapons the MVP has), not here. A new epic or milestone is added here first, with the board's agreement.
 
+## Models
+
+Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:
+
+- **sonnet:** clearly scoped work: art, sound, data files, simple screens, reports, and QA checks.
+- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA once. QA of a task the board is about to playtest also runs on opus.
+
 ## User-facing text and visuals
 
 Every task file says in its header whether it adds or changes anything the player reads or sees:

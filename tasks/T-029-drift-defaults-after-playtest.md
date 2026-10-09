@@ -12,6 +12,7 @@ depends_on: [T-012]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, tasks/T-012-godot-drift-prototype.md, game/README.md]
 files_expected_to_change: [game/scripts/driving/car_tuning.gd, game/scripts/driving/tuning_panel.gd, game/scripts/driving/drift_prototype.gd, game/project.godot, their tests, game/README.md]
+model: sonnet
 qa_rounds: 0
 ---
 
