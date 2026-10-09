@@ -1,7 +1,7 @@
 ---
 id: T-029
 title: Set the drift prototype's defaults from the board's playtest
-status: open
+status: in-qa
 from: project-lead
 to: driving-drift
 epic: driving
@@ -52,4 +52,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done on branch task/T-029-drift-defaults-after-playtest.
+
+- `car_tuning.gd`: `top_speed_multiplier` default 3.0 (top speed 33), `forward_speed` 11, all others unchanged. New `UNITY` constant holds the Unity values (`unity_values()` and `reset_to_unity()` use it); new `default_values()` and `reset_to_defaults()`. Slider tooltip for top speed mentions both values.
+- `project.godot`: physics interpolation on. `drift_prototype.gd`: starts in "iso" with interpolation on (V still toggles).
+- `tuning_panel.gd`: reset button is now "Reset all to game values": defaults, interpolation on, zoom 14.4 (view left as is). Tooltips still show Unity values.
+- Tests: `test_drift_model.gd` Unity tests now call `tuning.reset_to_unity()` explicitly; new test that default tuning holding W reaches 33. `test_drift_prototype.gd`: defaults test (Unity except top speed 3.0), starts-in-iso test, reset test (3.0, interpolation on, zoom 14.4), interpolation on in project settings. The camera test turns interpolation off for itself (interpolation blends the camera between steps in a test that never ticks frames).
+- Screenshot of the main scene right after start (`screenshot.sh`) shows the isometric view.
+- Results: GUT 56/56 pass; Python tests 115 pass.
+- Documents affected: `game/README.md` updated.

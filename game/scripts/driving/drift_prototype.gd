@@ -21,10 +21,10 @@ const ACTION_TOGGLE_VIEW := "toggle_view"
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 
 ## "flat" or "iso".
-var view := "flat"
+var view := "iso"
 ## Camera zoom as Unity's orthographic size: half the visible height, in units.
 var zoom := 14.4
-var physics_interpolation := false
+var physics_interpolation := true
 
 var physics_world: Node2D
 var car: CharacterBody2D

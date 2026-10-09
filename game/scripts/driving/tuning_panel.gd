@@ -2,7 +2,7 @@ extends CanvasLayer
 ## The drift prototype's tuning panel (a playtest tool, not part of the game's
 ## UI). One slider per setting in CarTuning.SETTINGS plus the camera zoom, an
 ## isometric view toggle, a physics interpolation toggle, a live readout and a
-## button that puts every slider back to its Unity value. Changes apply live.
+## button that puts every slider back to the game's values. Changes apply live.
 ## Tab opens and closes it (handled by the drift prototype scene).
 
 const CarTuning := preload("res://scripts/driving/car_tuning.gd")
@@ -54,9 +54,9 @@ func setup(p: Node) -> void:
 	box.add_child(readout)
 
 	reset_button = Button.new()
-	reset_button.text = "Reset all to Unity values"
-	reset_button.tooltip_text = "Puts every slider back to the value the Unity prototype uses, and turns physics interpolation off."
-	reset_button.pressed.connect(reset_to_unity)
+	reset_button.text = "Reset all to game values"
+	reset_button.tooltip_text = "Puts every slider back to the game's value, turns physics interpolation on and sets the camera zoom to 14.4. Each slider's tooltip still shows the Unity value."
+	reset_button.pressed.connect(reset_to_defaults)
 	box.add_child(reset_button)
 
 	view_toggle = CheckButton.new()
@@ -67,7 +67,7 @@ func setup(p: Node) -> void:
 
 	interpolation_toggle = CheckButton.new()
 	interpolation_toggle.text = "Physics interpolation"
-	interpolation_toggle.tooltip_text = "Off (Unity's look): the car moves in 50 steps per second, so on a faster screen the world shifts in small steps. On: smoother motion between steps."
+	interpolation_toggle.tooltip_text = "On (the game's default; Unity had it off): smooth motion between the car's 50 steps per second. Off: on a faster screen the world shifts in small steps."
 	interpolation_toggle.toggled.connect(func(on: bool) -> void: prototype.set_physics_interpolation(on))
 	box.add_child(interpolation_toggle)
 
@@ -117,12 +117,12 @@ func _on_slider(key: String, v: float) -> void:
 	_value_labels[key].text = _fmt(v, sliders[key].step)
 
 
-## Puts every slider and the setting behind it back to its Unity value, and
-## turns physics interpolation off (Unity's car is not interpolated).
-func reset_to_unity() -> void:
-	prototype.car.tuning.reset_to_unity()
+## Puts every slider and the setting behind it back to the game's value, turns
+## physics interpolation on and sets the zoom to 14.4. (The view is left as is.)
+func reset_to_defaults() -> void:
+	prototype.car.tuning.reset_to_defaults()
 	prototype.set_zoom(UNITY_ZOOM)
-	prototype.set_physics_interpolation(false)
+	prototype.set_physics_interpolation(true)
 	refresh()
 
 

@@ -2,7 +2,9 @@ extends RefCounted
 ## The car's handling values, copied from the board's Unity prototype.
 ##
 ## Defaults are the "Value in project files (used)" column of the Unity prototype
-## report, section 5 (docs/drifting/unity-prototype-report.md). SETTINGS lists the
+## report, section 5 (docs/drifting/unity-prototype-report.md), except top speed
+## multiplier, which the board set to 3.0 after playtesting (Drifting, Decisions,
+## 2026-10-09). UNITY keeps the Unity values for reference. SETTINGS lists the
 ## tuning sliders from the report's section 8 ("Proposed settings for the Godot
 ## prototype"), except off-road damping and the physics rate.
 ##
@@ -14,7 +16,7 @@ var forward_speed := 11.0
 ## Body rotation rate before the sensitivity multiplier (degrees/s).
 var turn_speed := 202.0
 ## Top speed = forward_speed * top_speed_multiplier.
-var top_speed_multiplier := 2.5
+var top_speed_multiplier := 3.0
 ## Sets the ramp rate top / time, used for speeding up, braking and reverse (s).
 var time_to_top_speed := 2.3
 ## Coasting loses top speed * this per second.
@@ -34,6 +36,22 @@ var drift_enter_rate := 12.0
 ## How fast the drift amount falls to 0 (per s).
 var drift_exit_rate := 3.0
 
+## The Unity prototype's values, by setting key (report section 5).
+const UNITY := {
+	"forward_speed": 11.0,
+	"turn_speed": 202.0,
+	"top_speed_multiplier": 2.5,
+	"time_to_top_speed": 2.3,
+	"coast_decel_multiplier": 0.3,
+	"steer_sensitivity": 0.95,
+	"drift_factor": 0.98,
+	"drift_grip_low_speed": 0.98,
+	"drift_grip_high_speed": 0.98,
+	"drift_speed_reference": 20.0,
+	"drift_enter_rate": 12.0,
+	"drift_exit_rate": 3.0,
+}
+
 ## One entry per slider. "key" is the property above. "label" is the
 ## plain-language label from the report's section 8; "name" is the setting's
 ## name there. "tip" explains the slider for its tooltip.
@@ -44,7 +62,7 @@ const SETTINGS := [
 		"min": 4.0, "max": 25.0, "step": 0.1},
 	{"key": "top_speed_multiplier", "name": "Top speed multiplier", "unit": "x cruise",
 		"label": "Top speed as a multiple of cruise speed",
-		"tip": "Top speed = cruise speed x this. Unity: 11 x 2.5 = 27.5 units/s.",
+		"tip": "Top speed = cruise speed x this. Game default: 11 x 3.0 = 33 units/s (Unity: 11 x 2.5 = 27.5).",
 		"min": 1.0, "max": 4.0, "step": 0.05},
 	{"key": "time_to_top_speed", "name": "Time to top speed", "unit": "s",
 		"label": "Bigger = slower climb from cruise to top, and slower braking",
@@ -111,6 +129,11 @@ func turn_rate() -> float:
 
 ## The Unity values, by setting key.
 static func unity_values() -> Dictionary:
+	return UNITY.duplicate()
+
+
+## The game's default values, by setting key.
+static func default_values() -> Dictionary:
 	var fresh = load("res://scripts/driving/car_tuning.gd").new()
 	var out := {}
 	for s in SETTINGS:
@@ -120,6 +143,12 @@ static func unity_values() -> Dictionary:
 
 ## Puts every setting back to its Unity value.
 func reset_to_unity() -> void:
-	var values := unity_values()
+	for key in UNITY:
+		set(key, UNITY[key])
+
+
+## Puts every setting back to the game's default value.
+func reset_to_defaults() -> void:
+	var values := default_values()
 	for key in values:
 		set(key, values[key])
