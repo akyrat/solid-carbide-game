@@ -1,17 +1,18 @@
 ---
 id: T-014
 title: Full pixel-art car sprites in 16 directions (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-013]
+depends_on: [T-013, T-012]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [the car sprite sheets and their record files]
+model: sonnet
 qa_rounds: 0
 ---
 
@@ -23,7 +24,9 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until:** T-013 is done (it fixes the sheet layout this art must match), **and** the board has described what the car looks like (Visual style, Open questions). The technical style is decided (Visual style, Decisions): 128 by 128 pixel frames, about 40 pixels per unit, selective dark outline, detailed shading, high detail, about 30 colours, and the isometric view only. The Project Lead adds the description here and unblocks the task.
+**Unblocked (2026-10-09):** T-013 and T-012 are done, and the car's look is now decided in Visual style, Decisions: inspired by a 1967 Ford Mustang fastback, dark green, two parallel white racing stripes, no real badges or logos (reference photos in Visual style, References). The technical style is decided there too: 128 by 128 pixel frames, about 40 pixels per unit, selective dark outline, detailed shading, high detail, about 30 colours, and the isometric view only.
+
+This art task swaps its sprites in for the placeholders itself (`tasks/README.md`, "Art replaces placeholders"): the drift prototype must show the final car.
 
 The final pixel-art car, drawn 3 times as long as it is wide (Drifting, Decisions), in **16 directions**, 22.5 degrees apart, replacing the placeholder sheets from T-013. It must use exactly T-013's layout and JSON convention, so the drift prototype picks it up with no code change.
 
@@ -38,7 +41,13 @@ The final pixel-art car, drawn 3 times as long as it is wide (Drifting, Decision
 
 ## Acceptance criteria
 
-To be finalised when the board's description is in. They will cover: 16 frames per required view in T-013's exact layout and JSON convention, Godot imports them, every call recorded with its cost, balance before and after, and, if the drift prototype (T-012) is done by then, a screenshot of it showing the new sheets with no code change.
+- [ ] The isometric sheet has 16 frames of 128 by 128 pixels, 22.5 degrees apart, in T-013's exact layout and JSON convention, and Godot imports it (QA: pass / fail)
+- [ ] A check script shows every frame follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass / fail)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
+- [ ] A screenshot of the drift prototype in the isometric view shows the final car, with no change to the driving code (QA: pass / fail)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+
+The board's review: judge the car's look; one round only, so problems are reported rather than regenerated.
 
 ## Result notes
 

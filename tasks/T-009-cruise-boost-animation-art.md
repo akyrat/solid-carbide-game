@@ -8,7 +8,7 @@ epic: art
 milestone: final-release
 user_facing_text: no
 changes_visuals: yes
-depends_on: []
+depends_on: [T-008]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, tasks/T-008-cruise-boost-effect.md, docs/extended-narrative.md]
 files_expected_to_change: [the boost animation frames and their record files]

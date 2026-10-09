@@ -1,17 +1,18 @@
 ---
 id: T-015
 title: Escape pauses the game, with a simple pause screen and the camera zoom slider
-status: open
+status: blocked
 from: project-lead
 to: ui
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes
 changes_visuals: yes
-depends_on: [T-012]
+depends_on: [T-012, T-047]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-012-godot-drift-prototype.md, docs/extended-narrative.md, docs/visual-style.md]
+files_to_read_first: [tasks/README.md, tasks/T-047-text-pause-screen.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-012-godot-drift-prototype.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the pause screen scene and script, the saved zoom setting, their tests, the input map in game/project.godot, game/README.md]
+model: sonnet
 qa_rounds: 0
 ---
 
@@ -24,7 +25,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Unblocked: T-012 is done** (2026-10-08). The drift prototype is the first thing there is to pause.
+**Blocked until T-047 (the pause screen's text) is done.** T-012 is done (2026-10-08): the drift prototype is the first thing there is to pause. Use exactly T-047's text for the screen's words and the slider's label (`tasks/README.md`, "User-facing text and visuals").
 
 Escape pauses the game (HUD and menus, Decisions). For the MVP the pause screen is as simple as possible: the word "Paused", a hint that Escape resumes, and **one setting: the camera zoom slider** (board, 2026-10-08; Drifting, Decisions). Pressing Escape again resumes. A full pause menu with more settings comes later (T-016, final release); do not build it here.
 
@@ -40,7 +41,7 @@ Escape pauses the game (HUD and menus, Decisions). For the MVP the pause screen 
 
 - [ ] A test shows that pressing Escape pauses the game: the car's position and velocity do not change over several frames while paused (QA: pass / fail)
 - [ ] A test shows that pressing Escape again resumes, and the car continues from exactly where it was (QA: pass / fail)
-- [ ] A screenshot of the paused game shows the word "Paused", a hint that Escape resumes, and the zoom slider (QA: pass / fail)
+- [ ] A screenshot of the paused game shows T-047's title and hint, and the zoom slider with T-047's label (QA: pass / fail)
 - [ ] A test shows the slider runs from 6 to 20 with a default of 14.4, and that moving it changes the camera zoom (QA: pass / fail)
 - [ ] A test shows the chosen zoom is saved and read back when the game starts again (for example: set it, save, then a new instance reads the same value), and that with no settings file the zoom is 14.4 (QA: pass / fail)
 - [ ] Escape is an action in the input map in `game/project.godot` (QA: pass / fail)

@@ -449,3 +449,14 @@ Entry format:
   Meteor challenges give XP like any challenge, as Game loop architecture reads. Art, text and the screens come in later batches.
 - Documents touched: none
 - Tasks: T-036 to T-046 (new), T-022 (model set)
+
+## 2026-10-09: Art swaps itself in; HUD, menus, Garage, Visual style and Sound tickets
+- Decision or change: when work has a visual and a functional side, the art task depends on the functional task and swaps its final art in for the placeholder itself (board; option a). Recorded in `CLAUDE.md` and `tasks/README.md`; T-009 now depends on T-008; T-014 is unblocked, since Visual style now describes the car. The rest of the MVP ticket board:
+  - text tasks for the Narrative Theme Agent, which the screens depend on: T-047 (pause; T-015 now depends on it), T-048 (HUD), T-051 (level-up screen), T-053 (main menu) and T-059 (garage)
+  - HUD and menus: T-049 and T-050 (HUD), T-052 (level-up screen), T-054 (main menu), and T-055 (screen flow, for the Game Loop Agent)
+  - Garage: T-056 (numbers), T-057 (saving and buying), T-058 (screen), and T-060 to T-062 (each upgrade applied by the agent owning the thing it changes)
+  - Visual style: T-063 to T-075 (map ground, buildings, boulders, arrows and their animation, minion, kaiju and shield, meteor attack, weapon effects, hit, coin and damage effects, drift smoke, challenge and level-up effects, the Redgull logo)
+  - Sound: T-076 (find) and T-077 (play in game)
+  - T-078: QA's full run from the main menu before the MVP playtest
+- Documents touched: `CLAUDE.md`, `tasks/README.md`
+- Tasks: T-047 to T-078 (new); T-009, T-014, T-015 (updated)
