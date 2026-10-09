@@ -1,7 +1,7 @@
 ---
 id: T-022
 title: Report on the starting gun and the exhaust flamethrower in the board's Unity prototype
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 epic: weapons
