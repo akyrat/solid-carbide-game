@@ -399,3 +399,8 @@ Entry format:
 - Decision or change: two epics added with the board's agreement, so tickets for these game area docs have their own place on the task board: `game-loop` (Game loop architecture) and `narrative` (Extended narrative).
 - Documents touched: `tasks/README.md`
 - Tasks: T-032
+
+## 2026-10-09: Player-facing text comes from the Narrative Theme Agent, per task
+- Decision or change: whenever the Project Lead writes a task that shows the player any text, it also writes a linked task for the Narrative Theme Agent to produce that text. Unlike art, text never uses placeholders: the main task depends on the text task, so the text is written first. Added to `CLAUDE.md` (approved by the board) and `tasks/README.md`.
+- Documents touched: `CLAUDE.md`, `tasks/README.md`
+- Tasks: none yet (T-024 unchanged)

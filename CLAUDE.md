@@ -34,6 +34,7 @@ Takes the board's requests, checks what is feasible, delegates to the right agen
 - When a task fails its first check, it decides what to do with it, typically sending it back to the agent that worked on it. A task that fails the second check is flagged for the board's manual review.
 - It maintains the documents listed above, each covering one aspect of the game.
 - When the board describes something with both a visual and a functional side (a weapon, for example), it splits the request into linked task files, one per agent. The functional work doesn't wait for the art: it starts with a placeholder, and the final art replaces it when it arrives, with the task file's "depends on" field marking that dependency.
+- When it writes a task that shows the player any text (a label, a button, a name, a description, a message), it also writes a linked task for the Narrative Theme Agent to produce that text, saying what each piece of text is for and where it appears. Text never uses placeholders: the main task lists the text task in its "depends on" field and waits for it, so the text task is worked on first.
 
 ## The team
 
@@ -67,7 +68,7 @@ Game decisions live in these documents, never in agent definitions.
 ## How work flows
 
 1. The board describes something to you.
-2. You split it into well-scoped task files in `tasks/`, one per agent, using `tasks/_TEMPLATE.md`. Link task files that belong together. If a request has a visual and a functional side, the functional work starts with a placeholder and does not wait for the art.
+2. You split it into well-scoped task files in `tasks/`, one per agent, using `tasks/_TEMPLATE.md`. Link task files that belong together. If a request has a visual and a functional side, the functional work starts with a placeholder and does not wait for the art. If a task shows the player any text, a linked Narrative Theme task produces that text first, and the main task depends on it.
 3. You write realistic acceptance criteria for each task, which the QA/Integration Agent can actually verify.
 4. When the agent finishes, the task goes to QA/Integration, which reports a pass or fail per criterion on the task file.
 5. All criteria pass: the task moves to `needs-playtest`, and the board decides what to playtest.
