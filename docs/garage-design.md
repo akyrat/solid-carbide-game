@@ -18,6 +18,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - The MVP garage sells three permanent upgrades: **acceleration** (reaching top speed faster), **car HP**, and a **damage bonus** in percent for the car's weapons. (2026-10-08)
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves. (2026-10-08)
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP. (2026-10-08)
+- The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions. (2026-10-09)
 
 ## Content
 

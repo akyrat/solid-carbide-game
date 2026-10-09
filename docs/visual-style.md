@@ -34,6 +34,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **See-through rule:** the no-semi-transparent-pixels rule covers the pixels inside each sprite. The game itself may fade a whole object, such as the kaiju's shield or a building the car drives behind. (2026-10-08)
 - **Kaiju shield:** while the kaiju can't be hurt, it is surrounded by a **green, see-through, oval shield**, the same green as its challenges' arrows. When one of those challenges is completed, the shield disappears and the kaiju shows its normal look while it can be hurt. (2026-10-08)
 - **Effects** (gun bullets, exhaust flames, enemy hits and deaths, burning, coins, car damage, drift smoke and tire tracks, challenge completed, level-up): designed by the Asset Generation Agent within the palette, glow and pixel style above. (2026-10-08)
+- Art details these decisions leave open (for example how many directions and animation frames the minion and the kaiju have, or how many building and ground-tile variants there are) are proposed by the Asset Generation Agent in each art task; the board judges them. (2026-10-09)
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact. (2026-10-08)
 - **The kaiju:** a giant monster several times the car's size, in the style of Godzilla. (2026-10-08)
 - **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player. (2026-10-08)

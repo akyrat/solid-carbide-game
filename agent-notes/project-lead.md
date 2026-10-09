@@ -20,6 +20,7 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 - Asset Generation Agent: Task files for which art to generate.
 - SFX Agent: Task files for sound effects to find and integrate.
 - Narrative Theme Agent: Task files for story text to write or review.
+- Game Loop Agent: Task files for the run, its state and the flow between screens.
 - QA/Integration Agent: Task files for what to check before a playtest.
 
 ## Notes from experience

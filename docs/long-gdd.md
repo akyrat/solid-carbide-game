@@ -33,13 +33,13 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3).
 - At level 1, completing one challenge fills the XP bar: the player reaches level 2 and gets the weapon choice.
 - How much XP challenges and drifting give at each level, and how much XP each level needs, is worked out by the Game Data Agent as sensible XP scaling, within the decisions here.
-- Completing a challenge flashes a score and gives XP. The weapon choice opens only when the XP bar fills and the player levels up (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run.
-- Enemies drop coins.
+- Completing a challenge flashes a score, the likes it gave, and gives XP. The weapon choice opens only when the XP bar fills and the player levels up (how many weapons are offered: Weapons, Decisions). The weapons chosen reset at the start of every run.
+- Enemies drop coins. The coins collected in a run are kept whether the run is won or lost.
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions).
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer.
 - Between runs, coins are spent in the Garage on permanent car upgrades that improve the car in the next run (which upgrades: Garage design, Decisions).
-- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Quit. When a run ends, win or loss, the player returns to the main menu.
-- The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). The MVP goes straight to the Garage.
+- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Quit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP.
+- The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 
 ### Content
@@ -91,8 +91,9 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The camera behaves like the Unity prototype's camera by default (how it follows the car, its zoom and any look-ahead), unless the board decides otherwise later.
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back.
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way.
+- The car does not bounce off enemies: they only damage it.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on.
-- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump.
+- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release).
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
 - The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions.
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60.
@@ -223,6 +224,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - While the kaiju can't be hurt, it shows a shield; completing one of its meteor challenges removes the shield for the vulnerability window (how it looks: Visual style, Decisions).
 - The kaiju's health is set so that it takes about 4 vulnerability windows to kill it; the Game Data Agent turns that into a number, together with the player's weapon damage.
 - The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, how long the kaiju stays vulnerable after a challenge, and how often it drops meteors (including whether it can drop more while a challenge is still open). The board judges them in playtests.
+- Where and how minions spawn, and how often their contact damage applies, are proposed by the Enemy Behavior Agent with the Game Data Agent; the board judges them in playtests. So is how many of the kaiju's meteor challenges can be open at once.
+- Killing the kaiju ends the run at once, as a win.
 
 
 ## 5. Weapons
@@ -259,6 +262,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - The MVP garage sells three permanent upgrades: **acceleration** (reaching top speed faster), **car HP**, and a **damage bonus** in percent for the car's weapons.
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves.
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
+- The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
 
 
 ## 7. Visual style
@@ -289,6 +293,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **See-through rule:** the no-semi-transparent-pixels rule covers the pixels inside each sprite. The game itself may fade a whole object, such as the kaiju's shield or a building the car drives behind.
 - **Kaiju shield:** while the kaiju can't be hurt, it is surrounded by a **green, see-through, oval shield**, the same green as its challenges' arrows. When one of those challenges is completed, the shield disappears and the kaiju shows its normal look while it can be hurt.
 - **Effects** (gun bullets, exhaust flames, enemy hits and deaths, burning, coins, car damage, drift smoke and tire tracks, challenge completed, level-up): designed by the Asset Generation Agent within the palette, glow and pixel style above.
+- Art details these decisions leave open (for example how many directions and animation frames the minion and the kaiju have, or how many building and ground-tile variants there are) are proposed by the Asset Generation Agent in each art task; the board judges them.
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact.
 - **The kaiju:** a giant monster several times the car's size, in the style of Godzilla.
 - **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player.
@@ -360,12 +365,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `7559e26643d1ad9d454537991f6e0ef3b7b0900c670a3caeebe7af0debfbc499` |
-| `drifting.md` | `ecd823170cfb2fc3aeb0131be03edc96ece92a70da0b61097ee0c6357cfb5aab` |
+| `game-loop-architecture.md` | `977baa7e8ef95ef4437f85b5837b2bfe732fbddc7136d3346c7211956248bc98` |
+| `drifting.md` | `4e5cce3b748557a7c58a5cfb65e911261507385540c0dbbc2ba88866d1591b7a` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
-| `enemies.md` | `f54ff2705fcc7d744fd9c2092fb5817402adc42a5a6ee6c5787d07b86b2d5a72` |
+| `enemies.md` | `6cd725b1ff56158790a73d8afee4ddba21e1f33e16abb72c80c0ce7c5f3d8d28` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
-| `garage-design.md` | `3160f6f73ef8735a68e50c6706f2f8182dd630654d90b1d353125a2d8dd1cc0d` |
-| `visual-style.md` | `6e18814df916f877b778c176ce990627ba2371fed5992bbfaef62488a1f2ef85` |
+| `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
+| `visual-style.md` | `fc2e1c4ed2ee60aadccfba9c90ac8d1255713c69f4886101e933405a38db418e` |
 | `extended-narrative.md` | `60114f359c77518844054b509a5061fd0fbcbc3b164cfe69a61def7f35b73054` |
 | `hud-and-menus.md` | `b5ee3740e27a7383dbed14644d0f18d8813d3659ddd7844d8c054efdbfea22d5` |

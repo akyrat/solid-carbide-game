@@ -80,6 +80,6 @@ Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cya
 
 ## How it's made
 
-Solid Carbide is built by a small studio of AI agents run with Claude Code. The designer is the board, and the **Project Lead** turns the board's requests into task files and keeps the documents in sync. Ten specialist agents build the game: driving and drift, enemies, weapons, game data, the map and challenges, the UI, pixel art (generated through PixelLab), sound effects (music is made by a human), the story's tone, and QA, which checks every task before the board plays it. No AI runs inside the shipped game.
+Solid Carbide is built by a small studio of AI agents run with Claude Code. The designer is the board, and the **Project Lead** turns the board's requests into task files and keeps the documents in sync. Eleven specialist agents build the game: driving and drift, enemies, weapons, the run itself, game data, the map and challenges, the UI, pixel art (generated through PixelLab), sound effects (music is made by a human), the story's tone, and QA, which checks every task before the board plays it. No AI runs inside the shipped game.
 
 Every decision lives in one of the game area documents, the long GDD is generated from them, and this short GDD condenses the long one.

@@ -26,6 +26,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - While the kaiju can't be hurt, it shows a shield; completing one of its meteor challenges removes the shield for the vulnerability window (how it looks: Visual style, Decisions). (2026-10-08)
 - The kaiju's health is set so that it takes about 4 vulnerability windows to kill it; the Game Data Agent turns that into a number, together with the player's weapon damage. (2026-10-08)
 - The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, how long the kaiju stays vulnerable after a challenge, and how often it drops meteors (including whether it can drop more while a challenge is still open). The board judges them in playtests. (2026-10-08)
+- Where and how minions spawn, and how often their contact damage applies, are proposed by the Enemy Behavior Agent with the Game Data Agent; the board judges them in playtests. So is how many of the kaiju's meteor challenges can be open at once. (2026-10-09)
+- Killing the kaiju ends the run at once, as a win. (2026-10-09)
 
 ## Content
 

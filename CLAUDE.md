@@ -41,6 +41,7 @@ Takes the board's requests, checks what is feasible, delegates to the right agen
 - **Driving & Drift Agent** (`driving-drift`): Car handling and drift physics
 - **Enemy Behavior Agent** (`enemy-behavior`): How enemies spawn, move, and scale
 - **Weapon Behavior Agent** (`weapon-behavior`): How each weapon fires
+- **Game Loop Agent** (`game-loop`): The run itself: timer, likes and levels, health, win and loss, screen flow
 - **Game Data Agent** (`game-data`): Stats and upgrade data others read
 - **Level/Challenge Design Agent** (`level-challenge`): The map and its driving challenges
 - **UI Agent** (`ui`): HUD, menus, garage screen
@@ -58,7 +59,7 @@ The short GDD is in `docs/short-gdd/`. The long GDD is `docs/long-gdd.md`. Separ
 - **Visual style** (`docs/visual-style.md`): The visual style for generated art (pixel art, isometric). May connect to the narrative theme. Agents: Level/Challenge Design Agent (reads it), UI Agent (reads it), Asset Generation Agent (works on it), Narrative Theme Agent (reads it).
 - **Weapons** (`docs/weapons.md`): Which weapons exist and their progression trees. Agents: Weapon Behavior Agent (works on it), Game Data Agent (reads it).
 - **Enemies** (`docs/enemies.md`): Which enemies exist, what they look like, how they move, deal damage, and behave. Agents: Enemy Behavior Agent (works on it), Game Data Agent (reads it).
-- **Game loop architecture** (`docs/game-loop-architecture.md`): The overall flow of the game. Short, and reworked if the loop changes (not expected). Agents: QA/Integration Agent (reads it).
+- **Game loop architecture** (`docs/game-loop-architecture.md`): The overall flow of the game. Short, and reworked if the loop changes (not expected). Agents: Game Loop Agent (works on it), QA/Integration Agent (reads it).
 - **Level design** (`docs/level-design.md`): What the map looks like, plus designs for the driving challenges. At first the board defines the challenges geometrically or visually, then agents build from that. Agents: Enemy Behavior Agent (reads it), Level/Challenge Design Agent (works on it).
 - **Garage design** (`docs/garage-design.md`): The garage's visual UI style, persistent car upgrades, the current car stats display, and future scope for unlockable cars with different driving styles. Agents: Driving & Drift Agent (reads it), Game Data Agent (reads it), UI Agent (works on it).
 - **HUD and menus** (`docs/hud-and-menus.md`): What the player sees on screen during a run (the HUD) and the menus around it: pause, level-up and their look. Agents: UI Agent (works on it), Narrative Theme Agent (reads it), Asset Generation Agent (reads it).
@@ -111,6 +112,7 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 - Asset Generation Agent: Task files for which art to generate.
 - SFX Agent: Task files for sound effects to find and integrate.
 - Narrative Theme Agent: Task files for story text to write or review.
+- Game Loop Agent: Task files for the run, its state and the flow between screens.
 - QA/Integration Agent: Task files for what to check before a playtest.
 
 ## First priority

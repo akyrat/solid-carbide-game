@@ -414,3 +414,20 @@ Entry format:
 - Decision or change: tasks are never deleted (board). A task that is no longer wanted gets the new status `cancelled`, with a note saying why and when, and the task board shows it in the Done lane (left out of progress figures). The three tasks deleted earlier are restored from git history and marked cancelled: T-011 (camera zoom settings slider, cancelled 2026-10-07), T-023 (Unity enemies report, 2026-10-08) and T-024 (all MVP user-facing text, 2026-10-09).
 - Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-011, T-023, T-024 (restored, cancelled), T-032
+
+## 2026-10-09: MVP gaps settled (board's defaults); new Game Loop Agent
+- Decision or change: after nine agents listed every MVP feature from the game area docs (about 135, fewer than a quarter ticketed), the board accepted the Project Lead's defaults for the gaps they found:
+  - a new **Game Loop Agent** builds the run itself (timer, likes and levels, car health, win and loss, screen flow)
+  - a run ends straight at the main menu with no message (the old "MVP goes to the Garage" line is corrected)
+  - the car does not bounce off enemies
+  - the boost effect is after the MVP
+  - minion spawning and contact-damage rate, and how many kaiju challenges can be open at once, are proposed by Enemy Behavior with Game Data
+  - killing the kaiju ends the run at once as a win
+  - coins are kept on a loss
+  - a challenge's score flash shows the likes gained
+  - coins and upgrade levels are saved to disk
+  - the MVP has basic sound effects
+  - art details the docs leave open are proposed in each art task
+  Long GDD regenerated; the short GDD's team line updated.
+- Documents touched: `docs/drifting.md`, `docs/enemies.md`, `docs/game-loop-architecture.md`, `docs/garage-design.md`, `docs/visual-style.md`, `docs/unfiled-game-details.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`, `CLAUDE.md`, `.claude/agents/game-loop.md`, `agent-notes/game-loop.md`, `agent-notes/project-lead.md`, `agent-notes/agents-interactions.md`
+- Tasks: none yet (MVP tickets next)

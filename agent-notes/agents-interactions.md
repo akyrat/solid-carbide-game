@@ -38,6 +38,7 @@ flowchart TD
     driving_drift["Driving & Drift"]
     enemy_behavior["Enemy Behavior"]
     game_data["Game Data"]
+    game_loop["Game Loop"]
     level_challenge["Level/Challenge Design"]
     narrative_theme["Narrative Theme"]
     qa_integration["QA/Integration"]
@@ -49,6 +50,7 @@ flowchart TD
     project_lead -->|"task files"| driving_drift
     project_lead -->|"task files"| enemy_behavior
     project_lead -->|"task files"| game_data
+    project_lead -->|"task files"| game_loop
     project_lead -->|"task files"| level_challenge
     project_lead -->|"task files"| narrative_theme
     project_lead -->|"task files"| qa_integration
@@ -59,16 +61,24 @@ flowchart TD
     asset_generation -->|"Map and obstacle art"| level_challenge
     asset_generation -->|"HUD, menu and garage art"| ui
     asset_generation -->|"Weapon and projectile art"| weapon_behavior
+    driving_drift -->|"The car's drift state"| game_loop
     driving_drift -->|"The verification script that checks a…"| level_challenge
     driving_drift -->|"Movement code to check"| qa_integration
     driving_drift -->|"Speed and drift state to show…"| ui
+    enemy_behavior -->|"Damage dealt to the car, coins…"| game_loop
     enemy_behavior -->|"Enemy code to check"| qa_integration
     enemy_behavior -->|"Enemy positions and health for weapons…"| weapon_behavior
     game_data -->|"Car stats and car upgrade values…"| driving_drift
     game_data -->|"Enemy stats and how they scale…"| enemy_behavior
+    game_data -->|"The numbers the run uses, such…"| game_loop
     game_data -->|"The numbers the garage and weapon…"| ui
     game_data -->|"Weapon stats and upgrade paths"| weapon_behavior
+    game_loop -->|"The coins collected in a run,…"| game_data
+    game_loop -->|"A full run to check"| qa_integration
+    game_loop -->|"The values the HUD shows, and…"| ui
+    game_loop -->|"The level-up choice to apply to…"| weapon_behavior
     level_challenge -->|"The map layout and where enemies…"| enemy_behavior
+    level_challenge -->|"The signal that a challenge was…"| game_loop
     level_challenge -->|"The map and challenges to check"| qa_integration
     level_challenge -->|"Challenge positions"| ui
     narrative_theme -->|"Menu, weapon and gift pack text"| ui
@@ -86,6 +96,7 @@ flowchart TD
 | Project Lead | Driving & Drift | Task files for car movement, starting with the minimal drift prototype. | both |
 | Project Lead | Enemy Behavior | Task files for enemy spawning, movement and scaling. | both |
 | Project Lead | Game Data | Task files for stats and upgrade paths. | both |
+| Project Lead | Game Loop | Task files for the run, its state and the flow between screens. | both |
 | Project Lead | Level/Challenge Design | Task files for the map and its challenges. | both |
 | Project Lead | Narrative Theme | Task files for story text to write or review. | both |
 | Project Lead | QA/Integration | Task files for what to check before a playtest. | both |
@@ -96,16 +107,24 @@ flowchart TD
 | Asset Generation | Level/Challenge Design | Map and obstacle art. | both |
 | Asset Generation | UI | HUD, menu and garage art, which replaces the placeholders. | both |
 | Asset Generation | Weapon Behavior | Weapon and projectile art, which replaces the placeholders. | both |
+| Driving & Drift | Game Loop | The car's drift state, for likes from drifting. | Game Loop only |
 | Driving & Drift | Level/Challenge Design | The verification script that checks a challenge design is achievable with the driving mechanics. | both |
 | Driving & Drift | QA/Integration | Movement code to check. | both |
 | Driving & Drift | UI | Speed and drift state to show on the HUD. | both |
+| Enemy Behavior | Game Loop | Damage dealt to the car, coins dropped, and the boss's defeat. | Game Loop only |
 | Enemy Behavior | QA/Integration | Enemy code to check. | both |
 | Enemy Behavior | Weapon Behavior | Enemy positions and health for weapons to target. | both |
 | Game Data | Driving & Drift | Car stats and car upgrade values that the drift code reads. | both |
 | Game Data | Enemy Behavior | Enemy stats and how they scale over a run. | both |
+| Game Data | Game Loop | The numbers the run uses, such as likes per level and the car's health. | Game Loop only |
 | Game Data | UI | The numbers the garage and weapon menus display. | both |
 | Game Data | Weapon Behavior | Weapon stats and upgrade paths. | both |
+| Game Loop | Game Data | The coins collected in a run, to save. | Game Loop only |
+| Game Loop | QA/Integration | A full run to check. | Game Loop only |
+| Game Loop | UI | The values the HUD shows, and when to open each screen. | Game Loop only |
+| Game Loop | Weapon Behavior | The level-up choice to apply to the car's weapons. | Game Loop only |
 | Level/Challenge Design | Enemy Behavior | The map layout and where enemies can spawn. | both |
+| Level/Challenge Design | Game Loop | The signal that a challenge was completed. | Game Loop only |
 | Level/Challenge Design | QA/Integration | The map and challenges to check. | both |
 | Level/Challenge Design | UI | Challenge positions, for the arrow that points to the next one. | both |
 | Narrative Theme | UI | Menu, weapon and gift pack text. | both |
@@ -125,6 +144,7 @@ flowchart LR
     driving_drift["Driving & Drift"]
     enemy_behavior["Enemy Behavior"]
     game_data["Game Data"]
+    game_loop["Game Loop"]
     level_challenge["Level/Challenge Design"]
     narrative_theme["Narrative Theme"]
     sfx["SFX"]
@@ -137,9 +157,11 @@ flowchart LR
     driving_drift --- game_data
     driving_drift --- level_challenge
     driving_drift --- sfx
+    enemy_behavior --- game_loop
     enemy_behavior --- level_challenge
     enemy_behavior --- sfx
     enemy_behavior --- weapon_behavior
+    game_loop --- ui
     sfx --- ui
     sfx --- weapon_behavior
     ui --- weapon_behavior
@@ -154,9 +176,11 @@ flowchart LR
 | Driving & Drift and Game Data | The values behind the drift settings and car upgrades are tuned together. | both |
 | Driving & Drift and Level/Challenge Design | Challenges have to be drivable with the chosen drift, so they tune obstacle spacing and track width together. | both |
 | Driving & Drift and SFX | Drift sounds need to follow how the drift actually behaves. | both |
+| Enemy Behavior and Game Loop | When the boss arrives and how its defeat ends the run. | Game Loop only |
 | Enemy Behavior and Level/Challenge Design | Where enemies spawn depends on the map layout, so each adjusts to the other. | both |
 | Enemy Behavior and SFX | Each enemy gets the right sounds for how it moves and attacks. | both |
 | Enemy Behavior and Weapon Behavior | Weapon damage and enemy health and speed have to be balanced against each other. | both |
+| Game Loop and UI | How the screens connect and what each one shows. | Game Loop only |
 | SFX and UI | Music is associated with screens, such as the menu or the garage, and UI sounds go with the interface. | both |
 | SFX and Weapon Behavior | Firing and impact sounds match how each weapon behaves. | both |
 | UI and Weapon Behavior | How the weapon menu looks and what each choice shows. | both |
@@ -179,6 +203,7 @@ Game details are not repeated here. Each entry points to the document that holds
 | **Asset Generation** | Pixel art generated through PixelLab, with a record of every asset (prompt, settings, sources, cost). Creates assets but never judges them. | `docs/visual-style.md`, `docs/extended-narrative.md` |
 | **SFX** | Sound effects downloaded from Freesound, with source and license metadata next to each, and direction for where sounds and music play. Music is made by a human musician. | `docs/unfiled-game-details.md` (sound licenses) |
 | **Narrative Theme** | Reviews of text and story content for consistency with the story, and new text only when the board asks for it. | `docs/extended-narrative.md` |
+| **Game Loop** | The Godot code for the run itself and the glue between the other agents' work: the run timer, likes and levels, the car's health, win and loss, and the flow between screens. | `docs/game-loop-architecture.md` |
 | **QA/Integration** | A pass or fail for each acceptance criterion on every task, the project's test tooling, and a full test-suite run before each playtest. | `docs/game-loop-architecture.md` |
 
 ## 3. Why this crew is needed for the MVP
@@ -196,6 +221,7 @@ The MVP is the game defined by the game area docs in `docs/` (condensed in `docs
 | Neon cyberpunk isometric pixel art for the car, enemies, kaiju, map and screens | Asset Generation |
 | Drift, weapon, impact and UI sounds | SFX |
 | Weapon names, gift pack lines and menu text that fit the Crash City, Stunt Driver and Redgull story | Narrative Theme |
+| The run itself: the timer, likes and levels, the car's health, win and loss, and the flow between the main menu, the run and the garage | Game Loop |
 | Everything running together before each playtest | QA/Integration |
 | Turning the board's requests into scoped tasks, and keeping the documents in sync | Project Lead |
 

@@ -20,8 +20,9 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The camera behaves like the Unity prototype's camera by default (how it follows the car, its zoom and any look-ahead), unless the board decides otherwise later. (2026-10-04)
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back. (2026-10-07)
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way. (2026-10-08)
+- The car does not bounce off enemies: they only damage it. (2026-10-09)
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
-- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. (2026-10-06)
+- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). (2026-10-06; after the MVP, 2026-10-09)
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)
 - The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions. (2026-10-08; replaces the 2026-10-07 decision that the zoom is fixed)
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60. (2026-10-06)
@@ -72,7 +73,6 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 - (After MVP) Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
 - (After MVP) Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
 - (After MVP) Should gamepad support carry over (triggers as on/off, analog stick steering)?
-- Does the car also bounce off enemies, or do they only damage it?
 - (After MVP) Does the board remember a version of the Unity prototype whose camera rotated with the car? An old saved setting suggests one existed; the current version's camera never rotates.
 - (After MVP) Far-future idea: a trick system for the car (front flips, back flips, in the style of Olli Olli World). Long-term only.
 
