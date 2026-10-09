@@ -1,7 +1,7 @@
 ---
 id: T-020
 title: Research: buildings turn see-through when the car is behind them
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -13,7 +13,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/visual-style.md, docs/level-design.md, docs/drifting.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [a research report under docs/visual-style/, a small test scene and script under game/, their tests, screenshots under docs/visual-style/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,3 +60,14 @@ Researched and built by the Level/Challenge Design Agent.
 - **Documents affected:** `docs/visual-style.md` (a factual note under Content and the report in References; Summary, Decisions and Open questions untouched). The long GDD is now stale for Visual style; regenerate it when merging.
 - Running Godot rewrote line endings of existing `.import` files; those changes were not committed.
 - Not measured: performance with a real map's number of buildings.
+
+### QA round 1
+
+- [x] Report compares approaches and recommends one: PASS. Three approaches (A fade, B Area2D, C shader cut-out) in a table, A recommended, with Limits, a section on what the real map needs, and Open questions at the end.
+- [x] Test scene headless, fade/return test: PASS. Full GUT suite ran with no errors (63/63); test_see_through_buildings.gd covers fade when behind and return when the car leaves.
+- [x] Screenshots exist and are linked: PASS. Five PNGs under docs/visual-style/ (front, behind at 60/35/15, cut-out), all linked from the report. Viewed front, 35% and cut-out: they show what the report says (car clear of building; ghosted building with car visible; round hole around the car).
+- [x] No PixelLab call: PASS. game/art/pixellab-generation-log.jsonl is not in the branch diff against master.
+- [x] visual-style.md: PASS. Diff only touches Content (factual note) and References (link); Summary, Decisions, Open questions and the five-section structure are unchanged.
+- [x] Full GUT suite and Python tool tests: PASS. GUT 63/63 (TESTS PASSED); Python 45 tests OK.
+
+Other checks: the commit contains no .import files (the line-ending changes to .import files are uncommitted in the working tree and were left as is). Look and fade values are left to the board.
