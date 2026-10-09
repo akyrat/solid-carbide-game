@@ -60,6 +60,14 @@ The board's sketches of the 3 MVP challenges, one per arrow path. They show the 
 ![Single Boulder, arrow 2](level-design/single-boulder/arrow-2.svg)
 ![Two Boulders, arrow 1](level-design/two-boulders/arrow-1.svg)
 
+### Drivability check
+
+The Driving & Drift Agent's drivability check (References) drove the board's sketches with the car's driving code (task T-021), both with the Unity prototype's top speed and with the board's top speed of 3.0 times cruise speed (Drifting, Decisions); the results were the same:
+
+- Single Boulder, arrow 1: drivable: yes.
+- Single Boulder, arrow 2: drivable: yes.
+- Two Boulders, arrow 1: drivable: yes.
+
 ## Open questions
 
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
@@ -67,4 +75,5 @@ The board's sketches of the 3 MVP challenges, one per arrow path. They show the 
 ## References
 
 - The board's challenge drawings: `docs/level-design/` (Content, "MVP challenges"). They are exported from Crash City Grid with `python tools/export_challenge_drawings.py <folder of downloaded drawings>`.
+- Drivability check (task T-021): `game/tools/check_challenge.sh`, explained in `game/README.md` ("Challenge drivability check"). The lines the car drove on the board's sketches: [Single Boulder, arrow 1](level-design/single-boulder/arrow-1.driven.svg), [Single Boulder, arrow 2](level-design/single-boulder/arrow-2.driven.svg), [Two Boulders, arrow 1](level-design/two-boulders/arrow-1.driven.svg) (data in the `.driven.json` next to each).
 - Crash City Grid, the map editor the board and the Project Lead draw the map in: https://claude.ai/artifact/R9AUtdNttfHKNgeqGDCPAH (private to the board). Each map is saved as an 80 by 80 grid of cells, plus its boulders, pattern groups, challenges and arrow paths, in units from the map centre; the Project Lead reads it and copies what the Level/Challenge Design Agent needs into its tasks.
