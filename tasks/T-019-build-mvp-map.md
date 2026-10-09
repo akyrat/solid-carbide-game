@@ -1,7 +1,7 @@
 ---
 id: T-019
 title: Build the MVP map: city grid, obstacle patterns and preset challenges
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 epic: level-challenges
