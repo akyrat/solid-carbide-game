@@ -1,7 +1,7 @@
 ---
 id: T-053
 title: Text: the main menu buttons
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -44,4 +44,10 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+| key | where it appears | text | length |
+|---|---|---|---|
+| menu.start | Main menu button that begins a run | Go Live | 7 |
+| menu.garage | Main menu button that opens the Garage | Redgull Garage | 14 |
+| menu.quit | Main menu button that quits the game | Log Off | 7 |
+
+Notes: "Go Live" fits the livestream premise, and a run is a broadcast. "Redgull Garage" names where Redgull funds the car's upgrades. "Log Off" is the social-media way to leave. No text mentions XP or experience.
