@@ -1,7 +1,7 @@
 ---
 id: T-048
 title: Text: the HUD
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -50,4 +50,21 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Final text. Lengths count the placeholder as written (a rendered number is shorter).
+
+| key | where it appears | text | length |
+|---|---|---|---|
+| hud.likes | label of the likes (XP) bar, next to the heart icon | Likes | 5 |
+| hud.level | current level, beside the likes bar; `{level}` is the number | Hype Lv {level} | 15 |
+| hud.coins | label for the coins collected this run; the count follows it | Brand Coins | 11 |
+| hud.health | label of the car's health bar (it needs one) | Car Health | 10 |
+| hud.kaiju | label of the kaiju's health bar, shown once it appears | Kaiju (Co-Star) | 15 |
+| hud.score_flash | flashed when a challenge is completed; `{likes}` is the likes gained | Trending! +{likes} Likes | 24 |
+
+The timer is digits only and has no text.
+
+**Likes choice: both the word and an icon.** The likes bar is labelled "Likes" and carries a heart icon at its left end, as on a social media post. The word keeps it readable at a glance; the heart gives the livestream feel.
+
+**Icon description (for the Project Lead's art task):** a small, plain heart, solid Redgull red, with a thin dark outline so it reads on any background. Flat, no shine. It should look like the like button of a social app, and be small enough to sit beside the bar's label. Until the art exists, the HUD uses a placeholder shape.
+
+Notes: no text contains "XP" or "experience". "Brand Coins" and "Kaiju (Co-Star)" are the satirical touches (Redgull treating coins as brand money and the monster as a livestream co-star); if the board finds them unclear, plain "Coins" and "Kaiju Health" also fit the limits.
