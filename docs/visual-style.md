@@ -43,7 +43,9 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 ## Content
 
-(To be written.)
+### See-through buildings
+
+Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
 ## Open questions
 
@@ -63,3 +65,5 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Technical style:** only for the technical specs in Decisions (128 by 128 pixels, 29 colours); not the actual car, colours or mood.
 
   ![Pixel-art reference car for the technical style](visual-style/reference-car-technical-style.png)
+
+- **See-through buildings:** [research report, demo and screenshots (T-020)](visual-style/see-through-buildings.md).

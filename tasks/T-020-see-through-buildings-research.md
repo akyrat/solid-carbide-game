@@ -1,7 +1,7 @@
 ---
 id: T-020
 title: Research: buildings turn see-through when the car is behind them
-status: open
+status: in-qa
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
+status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
 epic and milestone: one of the ids listed in tasks/README.md.
 qa_rounds: how many times QA has checked this task. The maximum is 2.
 A task is not done until every document listed in documents_affected has been updated.
@@ -50,4 +50,13 @@ The board's review: look at the screenshots and choose the look.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Researched and built by the Level/Challenge Design Agent.
+
+- **Report:** `docs/visual-style/see-through-buildings.md` compares three approaches (A: fade the whole building using depth order plus screen overlap; B: an `Area2D` behind each building; C: a shader cut-out around the car) and recommends A, with limits, what the real map must do, and open questions for the board.
+- **Demo:** `game/scenes/see_through_demo/see_through_demo.tscn` (W S A D), code in `game/scripts/level/` (`see_through_building.gd`, `see_through_demo.gd`, `see_through_cutout.gdshader`). It implements A and also C as `Mode.CUTOUT`, so the board can compare.
+- **Tests:** `game/tests/unit/test_see_through_buildings.gd` (9 tests: fades when behind, returns when the car leaves, stays solid in front, beside is not behind, gradual fade, cut-out mode, draw order). Full GUT suite: 63/63 pass; Python tool tests: 45 OK.
+- **Screenshots** (linked from the report): car in front; behind at 60%, 35% and 15% visible; behind with a cut-out. Fixtures: `game/tests/fixtures/see_through_*.tscn`.
+- **No PixelLab call:** `game/art/pixellab-generation-log.jsonl` is unchanged.
+- **Documents affected:** `docs/visual-style.md` (a factual note under Content and the report in References; Summary, Decisions and Open questions untouched). The long GDD is now stale for Visual style; regenerate it when merging.
+- Running Godot rewrote line endings of existing `.import` files; those changes were not committed.
+- Not measured: performance with a real map's number of buildings.

@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/see_through_demo_shot.gd" id="1_shot"]
+
+[node name="Shot" type="Node"]
+script = ExtResource("1_shot")
+car_world = Vector2(96, -150)
+car_heading = 0.5
+see_through_alpha = 0.6
+mode = 0
