@@ -1,7 +1,7 @@
 ---
 id: T-053
 title: Text: the main menu buttons
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -13,7 +13,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, .claude/agents/narrative-theme.md, docs/game-loop-architecture.md, tasks/T-054-main-menu.md]
 files_expected_to_change: [tasks/T-053-text-main-menu.md (result notes only)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,9 +36,9 @@ Write the final text in this task's result notes, as a table: key, where it appe
 
 ## Acceptance criteria
 
-- [ ] The result notes have menu.start, menu.garage and menu.quit (QA: pass / fail)
-- [ ] Every text in the table fits the length limit given for it (QA: pass / fail)
-- [ ] No text contains "XP" or "experience" (QA: pass / fail)
+- [x] The result notes have menu.start, menu.garage and menu.quit (QA: pass)
+- [x] Every text in the table fits the length limit given for it (QA: pass)
+- [x] No text contains "XP" or "experience" (QA: pass)
 
 The board's review: read the text and judge whether it has the right voice.
 
@@ -51,3 +51,11 @@ The board's review: read the text and judge whether it has the right voice.
 | menu.quit | Main menu button that quits the game | Log Off | 7 |
 
 Notes: "Go Live" fits the livestream premise, and a run is a broadcast. "Redgull Garage" names where Redgull funds the car's upgrades. "Log Off" is the social-media way to leave. No text mentions XP or experience.
+
+### QA round 1
+
+- **Criterion 1 (menu.start, menu.garage, menu.quit present): pass.** All three keys are in the result notes table.
+- **Criterion 2 (length limit of 15 characters): pass.** Counted independently: "Go Live" 7, "Redgull Garage" 14, "Log Off" 7. The stated lengths are correct and all are within 15.
+- **Criterion 3 (no "XP" or "experience"): pass.** Searched the table texts; neither appears. (The notes line saying so is not player text.)
+- Diff versus master: only tasks/T-053-text-main-menu.md changed.
+- Voice review is the board's and was not judged.
