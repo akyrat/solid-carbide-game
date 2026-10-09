@@ -16,7 +16,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
+status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 qa_rounds: how many times QA has checked this task. The maximum is 2.

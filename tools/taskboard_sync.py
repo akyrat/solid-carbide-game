@@ -23,7 +23,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TASKS_DIR = ROOT / "tasks"
-STATUSES = ["open", "in-progress", "in-qa", "needs-playtest", "blocked", "flagged-for-review", "done"]
+STATUSES = ["open", "in-progress", "in-qa", "needs-playtest", "blocked", "flagged-for-review", "done", "cancelled"]
 HEADER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 FIELD_RE = re.compile(r"^(\w+): ?(.*)$", re.M)
 LIST_FIELDS = {"depends_on", "documents_affected", "files_to_read_first", "files_expected_to_change"}

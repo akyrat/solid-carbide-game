@@ -65,6 +65,8 @@ header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: 
 .chip.playtest { background: #3d3418; color: var(--qa); }
 .chip.flagged { background: #47231b; color: var(--warn); }
 .chip.later { background: transparent; border: 1px solid var(--line); }
+.chip.cancelled { background: #2a2d45; color: var(--faint); text-decoration: line-through; }
+.card.is-cancelled .title { color: var(--faint); }
 .chip.moved { background: #1d3d4a; color: var(--cyan); }
 .ghost { position: fixed; z-index: 50; pointer-events: none; width: 240px; transform: rotate(-2deg); box-shadow: 0 14px 30px rgba(0,0,0,.45); cursor: grabbing; }
 
@@ -183,7 +185,7 @@ const LANES = [
   { key: "todo", name: "To do", color: "var(--todo)", statuses: ["open", "blocked"], target: "open" },
   { key: "doing", name: "In progress", color: "var(--doing)", statuses: ["in-progress"], target: "in-progress" },
   { key: "qa", name: "QA", color: "var(--qa)", statuses: ["in-qa", "needs-playtest", "flagged-for-review"], target: "in-qa" },
-  { key: "done", name: "Done", color: "var(--done)", statuses: ["done"], target: "done" },
+  { key: "done", name: "Done", color: "var(--done)", statuses: ["done", "cancelled"], target: "done" },
 ];
 // One bubble per game area doc (docs/), matched through each ticket's epic. Tooling is shown but left out of the MVP figure.
 const AREAS = [
@@ -206,7 +208,7 @@ const AGENTS = {
 };
 const STATUS_TEXT = {
   "open": "To do", "blocked": "Blocked", "in-progress": "In progress", "in-qa": "In QA",
-  "needs-playtest": "Needs playtest", "flagged-for-review": "Flagged for review", "done": "Done",
+  "needs-playtest": "Needs playtest", "flagged-for-review": "Flagged for review", "done": "Done", "cancelled": "Cancelled",
 };
 
 let tickets = [];
@@ -227,6 +229,7 @@ function badges(t) {
   if (t.status === "blocked") out.push('<span class="chip blocked">Blocked</span>');
   if (t.status === "needs-playtest") out.push('<span class="chip playtest">Playtest</span>');
   if (t.status === "flagged-for-review") out.push('<span class="chip flagged">Flagged</span>');
+  if (t.status === "cancelled") out.push('<span class="chip cancelled">Cancelled</span>');
   if (t.milestone && t.milestone !== "mvp") out.push('<span class="chip later">After MVP</span>');
   if (t.file_status && t.status !== t.file_status) out.push('<span class="chip moved" title="Moved here on the board; not yet applied to the task file">Moved</span>');
   return out.join("");
@@ -237,7 +240,7 @@ function renderBoard() {
   $("board").innerHTML = LANES.map((lane) => {
     const items = list.filter((t) => laneOf(t.status).key === lane.key).sort((a, b) => idNum(a.id) - idNum(b.id));
     const cards = items.map((t) => `
-      <article class="card" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}">
+      <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}">
         <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
       </article>`).join("");
@@ -249,13 +252,13 @@ function renderBoard() {
 }
 
 function areaStats(area) {
-  const items = visible().filter((t) => area.epics.includes(t.epic));
+  const items = visible().filter((t) => area.epics.includes(t.epic) && t.status !== "cancelled");
   const done = items.filter((t) => t.status === "done").length;
   return { items, done, pct: items.length ? Math.round((done / items.length) * 100) : 0 };
 }
 
 function renderAreas() {
-  const counted = visible().filter((t) => { const a = areaOf(t); return a && !a.excluded; });
+  const counted = visible().filter((t) => { const a = areaOf(t); return a && !a.excluded && t.status !== "cancelled"; });
   const done = counted.filter((t) => t.status === "done").length;
   const pct = counted.length ? Math.round((done / counted.length) * 100) : 0;
   const empty = AREAS.filter((a) => !a.excluded && areaStats(a).items.length === 0).map((a) => a.name);

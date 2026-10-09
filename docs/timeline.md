@@ -409,3 +409,8 @@ Entry format:
 - Decision or change: T-024 ("write all of the MVP's user-facing text") is cancelled and deleted (board). Player-facing text is now written per task: each task that shows text gets a linked Narrative Theme task first (see the previous entry).
 - Documents touched: none
 - Tasks: T-024 (cancelled)
+
+## 2026-10-09: Tasks are never deleted; cancelled tasks restored
+- Decision or change: tasks are never deleted (board). A task that is no longer wanted gets the new status `cancelled`, with a note saying why and when, and the task board shows it in the Done lane (left out of progress figures). The three tasks deleted earlier are restored from git history and marked cancelled: T-011 (camera zoom settings slider, cancelled 2026-10-07), T-023 (Unity enemies report, 2026-10-08) and T-024 (all MVP user-facing text, 2026-10-09).
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`
+- Tasks: T-011, T-023, T-024 (restored, cancelled), T-032

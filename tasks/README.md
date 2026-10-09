@@ -8,6 +8,7 @@ The board follows these tasks on its task board page (`docs/README.md`, "The tas
 
 ## Status rules
 
+- Tasks are never deleted. A task that is no longer wanted gets `status: cancelled`, with a short note in its result notes saying why and when, so its content stays on record.
 - A task whose `depends_on` lists any task that is not `done` starts as `blocked`.
 - When a task becomes `done`, every task whose `depends_on` tasks are now all `done` moves from `blocked` to `open`, in the same commit that marks the task `done`.
 
