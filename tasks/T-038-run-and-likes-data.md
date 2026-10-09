@@ -56,6 +56,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: look at the level table and the starting health.
 
+Board review files: [game/data/run.json]
+
 ## Result notes
 
 Written by the Game Data Agent.
