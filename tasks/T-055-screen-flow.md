@@ -1,7 +1,7 @@
 ---
 id: T-055
 title: Screen flow: main menu, run, garage, back to the menu
-status: open
+status: done
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -51,3 +51,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Board review
+
+Merged on QA's pass (no board review needed), 2026-10-10.
