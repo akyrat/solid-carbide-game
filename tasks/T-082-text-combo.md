@@ -1,7 +1,7 @@
 ---
 id: T-082
 title: Text: the trick names and the combo counter
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -13,7 +13,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/drifting.md, .claude/agents/narrative-theme.md, tasks/T-083-hud-combo-and-trick-popups.md]
 files_expected_to_change: [tasks/T-082-text-combo.md (result notes only)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,3 +55,13 @@ Text for T-083, final. Use exactly this text. Lengths are characters as shown to
 | combo.added | Next to the trick name in the popup; `{amount}` is replaced by what the trick added to the multiplier, e.g. "+0.3" | +{amount} | 5 as shown with e.g. "+0.3"; 8 at most for "+{amount}" with a value up to "+10.5" |
 
 Notes: names are plain and recognisable as the tricks (the board prefers simple labels) and written in capitals with an exclamation mark for the comic look. Nothing contains "XP" or "experience". The multiplier multiplies likes in the game, so the counter says only "Combo".
+
+### QA round 1
+
+Lengths counted by QA, as the player sees them (placeholders at their largest realistic value).
+
+- Criterion 1, all five keys present in the result notes: pass.
+- Criterion 2, lengths within limits: pass. "LONG DRIFT!" 11, "FULL 360!" 9, "ALT DRIFT!" 10 (limit 16 each). "Combo x12.5" 11 (limit 15). "+10.5" 5 (limit 8). Minor note: "+0.3" is 4 characters, not 5 as the table says; this does not affect the limit.
+- Criterion 3, no "XP" or "experience": pass.
+
+Only this task file changed versus master. The board's voice review is left to the board.
