@@ -1,0 +1,71 @@
+{
+  "_comment": "XP and levels. xp_needed = XP to go from this level to the next (last level: none). Leftover XP carries over. Proposed numbers; the board judges them in playtests.",
+  "drift_xp_per_second": 10,
+  "max_level": 12,
+  "carry_over_xp": true,
+  "levels": [
+    {
+      "level": 1,
+      "xp_needed": 100,
+      "challenge_xp": 100
+    },
+    {
+      "level": 2,
+      "xp_needed": 125,
+      "challenge_xp": 110
+    },
+    {
+      "level": 3,
+      "xp_needed": 156,
+      "challenge_xp": 121
+    },
+    {
+      "level": 4,
+      "xp_needed": 195,
+      "challenge_xp": 133
+    },
+    {
+      "level": 5,
+      "xp_needed": 244,
+      "challenge_xp": 146
+    },
+    {
+      "level": 6,
+      "xp_needed": 305,
+      "challenge_xp": 161
+    },
+    {
+      "level": 7,
+      "xp_needed": 381,
+      "challenge_xp": 177
+    },
+    {
+      "level": 8,
+      "xp_needed": 477,
+      "challenge_xp": 195
+    },
+    {
+      "level": 9,
+      "xp_needed": 596,
+      "challenge_xp": 214
+    },
+    {
+      "level": 10,
+      "xp_needed": 745,
+      "challenge_xp": 236
+    },
+    {
+      "level": 11,
+      "xp_needed": 931,
+      "challenge_xp": 259
+    },
+    {
+      "level": 12,
+      "xp_needed": 0,
+      "challenge_xp": 285
+    }
+  ],
+  "car": {
+    "starting_health": 100
+  }
+}

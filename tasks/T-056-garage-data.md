@@ -1,7 +1,7 @@
 ---
 id: T-056
 title: Garage numbers: 3 upgrades, about 10 levels each, prices and effects
-status: blocked
+status: open
 from: project-lead
 to: game-data
 epic: garage

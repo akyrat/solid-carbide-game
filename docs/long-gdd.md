@@ -77,6 +77,7 @@ flowchart TD
 
 - Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md), for the definition of drifting used for XP.
+- Run numbers (XP per challenge, XP per level, drift XP, car starting health): [game/data/run.json](../game/data/run.json), read through `game/scripts/data/run_data.gd`.
 
 
 ## 2. Drifting
@@ -373,7 +374,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `2e502f2a04acdbdfda4356c380144266868d8bc97166fc69ed4c999dfd2c2e48` |
+| `game-loop-architecture.md` | `6af6a90f739f2088837fac34a09790a77aff488744396fabd05f30a9a648eeba` |
 | `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |

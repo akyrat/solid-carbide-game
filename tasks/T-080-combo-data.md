@@ -1,7 +1,7 @@
 ---
 id: T-080
 title: Combo numbers: what each trick adds, the drain, and how the combo raises spawning
-status: blocked
+status: open
 from: project-lead
 to: game-data
 epic: game-loop
