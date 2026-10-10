@@ -1,7 +1,7 @@
 ---
 id: T-087
 title: Fix: the map generator reads the drivability check's output as sketches
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-qa | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -42,4 +42,4 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Fix: `game/tools/build_mvp_map.py` now reads a sketch only when its name matches `^arrow-\d+\.json$` (`SKETCH_NAME`), so `.fitted.json` and `.driven.json` files are never read. New test `WriteTest.test_only_the_sketches_are_read` puts `.driven.json` and `.fitted.json` files (with junk content) next to the sketches and shows the build result is identical and still has 3 sketches. The existing write test now also ignores `*.driven.*` when it copies the sketches. Running the generator changes nothing apart from line endings (`git diff --ignore-space-at-eol` is empty); the line-ending-only changes were not committed. Tests: game/tools 61 OK, tools 72 OK, GUT TESTS PASSED. The worktree had no `.env`, so I copied it from the main folder (git-ignored).

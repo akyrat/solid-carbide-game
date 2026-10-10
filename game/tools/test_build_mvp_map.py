@@ -124,7 +124,7 @@ class WriteTest(unittest.TestCase):
         try:
             for pattern in B.FIT_CONTEXTS:
                 shutil.copytree(B.SKETCH_DIR / pattern, tmp / pattern,
-                                ignore=shutil.ignore_patterns("*.fitted.*"))
+                                ignore=shutil.ignore_patterns("*.fitted.*", "*.driven.*"))
             before = {p: p.read_bytes() for p in tmp.rglob("*") if p.is_file()}
             self.assertEqual(len(before), 6)
             B.write(tmp, tmp / "map.json")
@@ -132,6 +132,25 @@ class WriteTest(unittest.TestCase):
                 self.assertEqual(p.read_bytes(), data)
             self.assertTrue((tmp / "single-boulder" / "arrow-1.fitted.svg").exists())
             self.assertTrue((tmp / "map.json").exists())
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_only_the_sketches_are_read(self):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            for pattern in B.FIT_CONTEXTS:
+                shutil.copytree(B.SKETCH_DIR / pattern, tmp / pattern,
+                                ignore=shutil.ignore_patterns("*.fitted.*", "*.driven.*"))
+            clean, _ = B.build(tmp)
+            for pattern in B.FIT_CONTEXTS:
+                d = tmp / pattern
+                for f in sorted(d.glob("arrow-*.json")):
+                    stem = f.name[:-len(".json")]
+                    (d / (stem + ".driven.json")).write_text('{"driven": true}', encoding="utf-8")
+                    (d / (stem + ".fitted.json")).write_text('{"fitted": true}', encoding="utf-8")
+            again, _ = B.build(tmp)
+            self.assertEqual(again, clean)
+            self.assertEqual(len(again), 3)
         finally:
             shutil.rmtree(tmp)
 
