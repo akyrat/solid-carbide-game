@@ -42,6 +42,8 @@ The task files in `tasks/` stay the source of truth. The page keeps a copy of th
 - `python tools/taskboard_sync.py export OUT_DIR` writes one JSON document per task, which the Project Lead loads into the page.
 - A drag on the page only marks the ticket "Moved". The Project Lead applies moves to the task files with `python tools/taskboard_sync.py apply MOVES_JSON`, commits, and exports again.
 
+**Which tickets to do next:** `python tools/ticket_impact.py` lists the unfinished MVP tickets with the most other tickets waiting on them, directly and down the chain (`--top N` for more rows, `--all` to include later milestones).
+
 ## How separate documents are written
 
 The nine separate documents (Extended narrative to HUD and menus in the table above; the board calls them game area docs) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.
