@@ -354,6 +354,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - All roads are asphalt.
 - Obstacles are drawn as boulders (in the MVP, crashed meteor boulders; Level design, Decisions).
 - When the car drives behind a building, the building turns see-through so the car stays visible.
+- How buildings turn see-through (from task T-020's research): the whole building fades while the car is behind it, to **15% visible**, over **0.15 seconds**, and fades back when the car comes out. Only buildings actually covering the car fade. In the MVP only the car is kept visible this way, not enemies or the kaiju; the board may revisit this after playtests.
 - **Pixel-art technical style** (from the board's reference image, References): true pixel art drawn at its final size, never scaled up; hard pixel edges with no anti-aliasing and no semi-transparent pixels; transparent backgrounds; a dark, almost black **selective outline** (broken by lighter highlight pixels); **detailed shading**; **high detail**; a limited palette of about **30 colours per sprite**.
 - **Scale:** about **40 pixels per unit** (1 unit = the car's width), so the car is about 120 pixels long. The car's frames are **128 by 128 pixels**. Everything else in the world (buildings, boulders, enemies, ground) is drawn at the same scale.
 - **View:** a 3/4 isometric view, seeing the top and one side. The final car art is drawn for the isometric view only; the flat top-down view keeps the placeholder.
@@ -377,6 +378,12 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions).
 - Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set.
 
+### Content
+
+#### See-through buildings
+
+Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
+
 ### References
 
 - **Car look, colour:** a dark-green 1967 Ford Mustang fastback (inspiration only; no real badges).
@@ -390,6 +397,8 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Technical style:** only for the technical specs in Decisions (128 by 128 pixels, 29 colours); not the actual car, colours or mood.
 
   ![Pixel-art reference car for the technical style](visual-style/reference-car-technical-style.png)
+
+- **See-through buildings:** [research report, demo and screenshots (T-020)](visual-style/see-through-buildings.md).
 
 
 ## 8. Extended narrative
@@ -449,6 +458,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `d1ccd943fb4f41b534596917bf069e91f9bb075c90808f2b6a3d126cdd709c64` |
 | `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
-| `visual-style.md` | `fc2e1c4ed2ee60aadccfba9c90ac8d1255713c69f4886101e933405a38db418e` |
+| `visual-style.md` | `620687e6e450eea0617007be696c86d4f5d68ef9b28c9ff7e9875a356cf2574b` |
 | `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |
 | `hud-and-menus.md` | `be4fff07a342de2be0dc3b877ffa8ca2146502405b8cf05308b9e14f53618915` |

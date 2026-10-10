@@ -1,7 +1,7 @@
 ---
 id: T-034
 title: Buildings turn see-through when the car is behind them
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -31,7 +31,7 @@ A task is not done until every document listed in documents_affected has been up
 
 In the isometric view, a tall building can hide the car. Visual style, Decisions says a building the car drives behind turns see-through. The game fades the whole object, so no sprite needs semi-transparent pixels.
 
-Build it on the MVP map, following the approach T-020 recommends:
+Build it on the MVP map, following the approach T-020 recommends and the values the board chose (Visual style, Decisions: fade to 15% visible over 0.15 seconds, car only):
 - When the car is behind a building (hidden by it on screen), that building fades.
 - When the car comes out, the building fades back.
 - Only the buildings actually covering the car fade, not the whole city.

@@ -490,3 +490,8 @@ Entry format:
 - Decision or change: the board approved the report on the starting gun and the exhaust flamethrower in the Unity prototype (`docs/weapons/unity-weapons-report.md`); its open questions are answered in Weapons, Decisions. Merged. T-040 (weapon numbers) is unblocked.
 - Documents touched: `docs/weapons.md`, `docs/weapons/unity-weapons-report.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-022 (done), T-040 (unblocked)
+
+## 2026-10-10: T-029 and T-020 done; how buildings go see-through
+- Decision or change: the board played T-029 (the drift defaults) and approved it. For see-through buildings (T-020's research), the board chose: fade the whole building to 15% visible over 0.15 seconds while the car is behind it; only the car is kept visible in the MVP, not enemies or the kaiju. Recorded in Visual style, Decisions. Both merged. Unblocked: T-034 (see-through build), T-073 (drift smoke art), T-079 (trick detection); T-033 (car collisions) can now start.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-029, T-020 (done); T-034, T-073, T-079 (unblocked)

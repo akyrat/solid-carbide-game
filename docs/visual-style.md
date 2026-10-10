@@ -18,6 +18,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - All roads are asphalt. (2026-10-07)
 - Obstacles are drawn as boulders (in the MVP, crashed meteor boulders; Level design, Decisions). (2026-10-07)
 - When the car drives behind a building, the building turns see-through so the car stays visible. (2026-10-07)
+- How buildings turn see-through (from task T-020's research): the whole building fades while the car is behind it, to **15% visible**, over **0.15 seconds**, and fades back when the car comes out. Only buildings actually covering the car fade. In the MVP only the car is kept visible this way, not enemies or the kaiju; the board may revisit this after playtests. (2026-10-10)
 - **Pixel-art technical style** (from the board's reference image, References): true pixel art drawn at its final size, never scaled up; hard pixel edges with no anti-aliasing and no semi-transparent pixels; transparent backgrounds; a dark, almost black **selective outline** (broken by lighter highlight pixels); **detailed shading**; **high detail**; a limited palette of about **30 colours per sprite**. (2026-10-08)
 - **Scale:** about **40 pixels per unit** (1 unit = the car's width), so the car is about 120 pixels long. The car's frames are **128 by 128 pixels**. Everything else in the world (buildings, boulders, enemies, ground) is drawn at the same scale. (2026-10-08)
 - **View:** a 3/4 isometric view, seeing the top and one side. The final car art is drawn for the isometric view only; the flat top-down view keeps the placeholder. (2026-10-08)
@@ -43,12 +44,13 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 ## Content
 
-(To be written.)
+### See-through buildings
+
+Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
 ## Open questions
 
 - (After MVP) Does the car carry any Redgull livery or stickers? In the MVP it is kept simple: dark green with two white stripes.
-- How can buildings turn see-through when the car is behind them? Being researched in task T-020.
 
 ## References
 
@@ -63,3 +65,5 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Technical style:** only for the technical specs in Decisions (128 by 128 pixels, 29 colours); not the actual car, colours or mood.
 
   ![Pixel-art reference car for the technical style](visual-style/reference-car-technical-style.png)
+
+- **See-through buildings:** [research report, demo and screenshots (T-020)](visual-style/see-through-buildings.md).
