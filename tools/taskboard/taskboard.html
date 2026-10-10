@@ -61,6 +61,8 @@ header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: 
 .card .title { margin-top: 5px; font-size: 13px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .chip { font: 600 10.5px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; background: #252c63; color: var(--muted); }
 .chip.agent { margin-left: auto; }
+.card.is-mine { border: 2px solid var(--pink); border-left-width: 4px; background: color-mix(in srgb, var(--pink) 12%, var(--panel-2)); }
+.mine-label { font: 700 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--pink); margin-bottom: 7px; }
 .chip.blocked { background: #3a2a4a; color: #d9a6ff; }
 .chip.playtest { background: #3d3418; color: var(--qa); }
 .chip.flagged { background: #47231b; color: var(--warn); }
@@ -260,9 +262,13 @@ function badges(t) {
 function renderBoard() {
   const list = visible();
   $("board").innerHTML = LANES.map((lane) => {
-    const items = list.filter((t) => laneOf(t.status).key === lane.key).sort((a, b) => idNum(a.id) - idNum(b.id));
+    // The board's own tickets come first in every lane, with a big label.
+    const mine = (t) => t.to === "board";
+    const items = list.filter((t) => laneOf(t.status).key === lane.key)
+      .sort((a, b) => (mine(b) - mine(a)) || (idNum(a.id) - idNum(b.id)));
     const cards = items.map((t) => `
-      <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}">
+      <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}${mine(t) ? " is-mine" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}${mine(t) ? ", your ticket" : ""}">
+        ${mine(t) ? '<div class="mine-label">Your ticket</div>' : ""}
         <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
       </article>`).join("");
