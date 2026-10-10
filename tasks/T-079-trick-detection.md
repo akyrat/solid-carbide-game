@@ -1,7 +1,7 @@
 ---
 id: T-079
 title: Tricks: detect extended drifts, 360s and alternate drifts
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 epic: driving
