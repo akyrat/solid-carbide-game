@@ -81,6 +81,20 @@ class FittedTest(unittest.TestCase):
             buildings = B.context_buildings(B.FIT_CONTEXTS[pattern])
             self.assertLessEqual(B.violations(B.smooth(data["arrow"]["points"]), boulders, buildings), 1e-9)
 
+    def test_challenge_designs_are_the_fitted_versions(self):
+        designs = self.layout["challenge_designs"]
+        self.assertEqual([d["id"] for d in designs],
+                         ["single-boulder/arrow-1", "single-boulder/arrow-2", "two-boulders/arrow-1"])
+        for d in designs:
+            fv = self.fitted[(d["pattern"], d["arrow"])]
+            self.assertEqual(d["boulders"], fv["boulders"])
+            self.assertEqual(d["corridor_width"], 3.0)
+            for got, want in zip(d["points"], fv["arrow"]["points"]):
+                self.assertAlmostEqual(got[0], want[0], places=3)
+                self.assertAlmostEqual(got[1], want[1], places=3)
+            self.assertEqual(d["centre_line"][0], d["points"][0])
+            self.assertEqual(d["centre_line"][-1], d["points"][-1])
+
     def test_files_on_disk_are_up_to_date(self):
         for (pattern, arrow), data in self.fitted.items():
             path = B.SKETCH_DIR / pattern / (arrow + ".fitted.json")
@@ -126,7 +140,10 @@ class WriteTest(unittest.TestCase):
                 shutil.copytree(B.SKETCH_DIR / pattern, tmp / pattern,
                                 ignore=shutil.ignore_patterns("*.fitted.*"))
             before = {p: p.read_bytes() for p in tmp.rglob("*") if p.is_file()}
-            self.assertEqual(len(before), 6)
+            # The 3 sketches (.json and .svg); any other files there (such as the T-021
+            # check's .driven.* files) must be left alone too.
+            self.assertEqual(len([p for p in before if "." not in p.name.split(".", 1)[0]
+                                  and p.name.count(".") == 1]), 6)
             B.write(tmp, tmp / "map.json")
             for p, data in before.items():
                 self.assertEqual(p.read_bytes(), data)

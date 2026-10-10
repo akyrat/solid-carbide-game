@@ -356,7 +356,9 @@ def build(sketch_dir=SKETCH_DIR):
     fitted = {}
     for pattern in sorted(FIT_CONTEXTS):
         for f in sorted((Path(sketch_dir) / pattern).glob("arrow-*.json")):
-            if f.name.endswith(".fitted.json"):
+            if "." in f.stem:
+                # Only the board's sketches (arrow-1.json), not the files made from them
+                # (arrow-1.fitted.json here, arrow-1.driven.json from the T-021 check).
                 continue
             sketch = json.loads(f.read_text(encoding="utf-8"))
             fitted[(pattern, f.stem)] = fit_sketch(sketch, pattern)
@@ -404,6 +406,22 @@ def build(sketch_dir=SKETCH_DIR):
             "centre_line": line,
         })
 
+    # The 3 challenge designs, unplaced (centred on the pattern's centre, rotation 0), for the
+    # challenges created during a run by the kaiju's meteors (task T-035).
+    designs = []
+    for (pattern, arrow), fv in sorted(fitted.items()):
+        pts = [[round(x, 3), round(y, 3)] for x, y in fv["arrow"]["points"]]
+        designs.append({
+            "id": "%s/%s" % (pattern, arrow),
+            "pattern": pattern,
+            "arrow": arrow,
+            "fitted": "docs/level-design/%s/%s.fitted.json" % (pattern, arrow),
+            "boulders": [{"x": b["x"], "y": b["y"], "diameter": b["diameter"]} for b in fv["boulders"]],
+            "corridor_width": CORRIDOR_WIDTH,
+            "points": pts,
+            "centre_line": [[round(x, 3), round(y, 3)] for x, y in smooth(pts)],
+        })
+
     half = MAP_SIZE / 2
     layout = {
         "name": "MVP map",
@@ -430,6 +448,8 @@ def build(sketch_dir=SKETCH_DIR):
         "pattern_copies": copies,
         "challenges": challenges,
         "centre_line": "each challenge's centre_line is its arrow points drawn as in the sketches' pictures: quadratic curves through the midpoints between points, straight ends",
+        "challenge_designs_note": "the fitted challenge designs in units from the pattern's centre, rotation 0; the map places them during a run for the kaiju's meteor challenges (T-035)",
+        "challenge_designs": designs,
     }
     return fitted, layout
 

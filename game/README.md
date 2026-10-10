@@ -293,6 +293,20 @@ Running it twice gives identical files. Its tests (`game/tools/test_build_mvp_ma
 - `challenge_arrow.gd`: the placeholder arrow (a blue band as wide as the corridor, a white start dot and an arrowhead).
 - `map_overview.gd`: the overview scenes, with a camera that fits the whole map.
 
+**Meteor challenges** (task T-035, for the Enemy Behavior Agent's meteor attack). The kaiju's meteors land as one of the 3 challenge designs; the map places it, draws its arrow in green, and checks it with the same completion rule as the preset challenges. Positions are in units from the map's centre (x right, y down); the angle is in radians, clockwise on screen, like `Node2D.rotation` (0 = the design as fitted: the Two Boulders runs along y).
+
+| Function or signal | Does |
+| --- | --- |
+| `challenge_design_ids()` | The designs: `"single-boulder/arrow-1"`, `"single-boulder/arrow-2"`, `"two-boulders/arrow-1"` |
+| `can_place_meteor_challenge(design_id, centre, angle) -> bool` | The placement check: true when none of the design's boulders and no part of its 3-unit corridor overlaps a building, a boulder already on the map (preset or meteor) or the map's edge. False for an unknown design |
+| `add_meteor_challenge(design_id, centre, angle) -> String` | Creates the challenge: boulders (static bodies on layer 1, in `meteor_boulder_bodies`), the green arrow, and its completion check. Returns its id (`"meteor-1"`, `"meteor-2"`, ...), or `""` for an unknown design. It does not run the placement check: call `can_place_meteor_challenge` first |
+| `meteor_challenge_completed(challenge_id)` (signal) | Fired once when a meteor challenge is completed, with the id `add_meteor_challenge` returned. Its arrow disappears and its boulders stay. Preset challenges send `challenge_completed` instead, never this one, and meteor challenges never send `challenge_completed` |
+| `meteor_challenge_ids()`, `open_meteor_challenge_ids()` | All meteor challenges in creation order, and those not completed yet. Any number can be open at once |
+| `get_meteor_challenge(id)`, `is_meteor_challenge(id)`, `is_challenge_completed(id)` | A meteor challenge's placed boulders and centre line (units), whether an id is a meteor challenge, and whether a challenge (preset or meteor) is completed |
+| `place_design(design_id, centre, angle)`, `get_challenge_design(design_id)`, `all_boulders()` | Helpers: a design's placed boulders and centre line without creating it, a design as stored (unplaced), and every boulder on the map now |
+
+The designs come from `challenge_designs` in `data/level/mvp_map.json` (the fitted versions, unplaced), written by `build_mvp_map.py`. Screenshot of a meteor challenge beside a preset one: `bash game/tools/screenshot.sh res://tests/fixtures/meteor_challenge_demo.tscn screenshots/meteor_challenge.png 10` (`..._iso.tscn` for isometric).
+
 The car does not collide with the map yet: the drift car's collision response (bouncing off walls and boulders, Drifting, Decisions) is the Driving & Drift Agent's.
 
-**Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges.
+**Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges. `tests/unit/test_meteor_challenges.gd`: creating each design at a position and angle, completing meteor challenges (one or several) and their signal, preset challenges not sending it, and the placement check.

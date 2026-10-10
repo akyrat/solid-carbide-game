@@ -109,6 +109,18 @@ The figure-eight is squeezed across the road (its loops are 4.5 units wide at th
 
 **Drivability.** The fitted challenges have not yet been checked with the Driving & Drift Agent's script (task T-021). All 4 challenges need that check.
 
+### Meteor challenges
+
+The challenges the kaiju's meteors create during a run (task T-035; when and where the kaiju drops them: Enemies). The map can place any of the 3 fitted challenge designs (Single Boulder arrow 1 and arrow 2, Two Boulders arrow 1) at any position and angle, with the fitted boulders (3 units across) and the arrow corridor drawn in green, while the map's preset challenges stay blue. They follow the same completion rule as the preset challenges; when one is completed, its arrow disappears and its boulders stay as plain obstacles, and the map sends a separate signal for meteor challenges, so the kaiju's shield can tell them from the preset ones. Several can be open at once, each completed on its own.
+
+A placement check says whether a design fits at a spot: none of its boulders and no part of its 3-unit corridor may overlap a building, a boulder already on the map (the pattern copies' or another meteor challenge's) or the map's edge.
+
+The designs are stored unplaced (units from the pattern's centre, angle 0) in the layout data, under `challenge_designs`. The functions and the signal are listed in `game/README.md` ("MVP map", "Meteor challenges").
+
+![A meteor challenge with its green arrow (in the gravel) beside preset challenge-1 with its blue arrow](level-design/meteor-challenge.png)
+
+![The same, isometric](level-design/meteor-challenge-iso.png)
+
 ## Open questions
 
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
