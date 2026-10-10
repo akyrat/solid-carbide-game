@@ -16,6 +16,7 @@ const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
+const HudScene := preload("res://scenes/hud/hud.tscn")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -34,6 +35,7 @@ const VIEW := "iso"
 signal world_rebuilt
 
 var state: RunState
+var hud: Hud
 var map: Node2D
 var physics_world: Node2D
 var car: CharacterBody2D
@@ -77,6 +79,10 @@ func _ready() -> void:
 	state.name = "RunState"
 	state.add_to_group("run_state")
 	add_child(state)
+
+	hud = HudScene.instantiate()
+	add_child(hud)
+	hud.bind(state)
 
 	get_viewport().size_changed.connect(_apply_zoom)
 	_apply_zoom()

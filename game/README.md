@@ -391,6 +391,8 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 
 **Run it:** in the Godot editor, open `scenes/run/run.tscn` and press F6. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/run/run.tscn screenshots/run.png 30`. Keys: W, S, A and D, as in the drift prototype. Run on its own like this, nothing happens on screen when the run ends and Escape does not pause; started from the main menu (see "Screen flow"), Escape pauses and the end of the run goes back to the menu.
 
+**The HUD** (task T-090): `scenes/hud/hud.tscn` with `scripts/hud/hud.gd` (`Hud`, a CanvasLayer) is added by the run scene and bound to the run's state (`run.hud`). For now it shows only the timer (`hud.timer_label`, M:SS from `time_left_text()`), so it appears in every run, also one started from the main menu. What it shows: `docs/hud-and-menus.md`, Content. Tests: `tests/unit/hud/test_hud_timer.gd`, part of the GUT suite.
+
 **The scene** (`scripts/run/run.gd`, root node `Run`):
 
 - Children: `Map` (the MVP map scene, drawn in the isometric view), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the car's sprite and the `Camera`) and `RunState` (the state, below).

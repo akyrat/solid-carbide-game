@@ -1,7 +1,7 @@
 ---
 id: T-090
 title: HUD: the run timer
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -43,4 +43,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built (UI Agent): the HUD scene `game/scenes/hud/hud.tscn` with `game/scripts/hud/hud.gd` (`Hud`, a CanvasLayer), added by `run.gd` and bound to the run state (`run.hud`). It shows only the timer, M:SS in big cyan digits at the top centre, following `time_left_changed` and `time_left_text()`. Because the run scene creates it, the timer shows in every run, also one started from the main menu (T-055); a test covers that path.
+
+Tests (`game/tests/unit/hud/test_hud_timer.gd`): starts at 8:00; the label follows time left from 8:00 to 0:00; resets on a fresh run; stops while paused; shows in a run started through the screen flow. Full GUT suite: 198 passing, TESTS PASSED. Python tool tests: 62 OK. Screenshot: `screenshots/run_timer.png` (git-ignored) shows 8:00 at the top.
+
+Documents updated: `docs/hud-and-menus.md` (new "The HUD" in Content only), `game/README.md` ("The run": the HUD paragraph). The master merge (T-055) was clean.
