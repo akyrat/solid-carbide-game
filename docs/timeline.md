@@ -495,3 +495,8 @@ Entry format:
 - Decision or change: the board played T-029 (the drift defaults) and approved it. For see-through buildings (T-020's research), the board chose: fade the whole building to 15% visible over 0.15 seconds while the car is behind it; only the car is kept visible in the MVP, not enemies or the kaiju. Recorded in Visual style, Decisions. Both merged. Unblocked: T-034 (see-through build), T-073 (drift smoke art), T-079 (trick detection); T-033 (car collisions) can now start.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-029, T-020 (done); T-034, T-073, T-079 (unblocked)
+
+## 2026-10-10: Text for the pause screen, HUD and main menu approved
+- Decision or change: the board approved the Narrative Theme Agent's text, with changes: the main menu buttons are simply Start, Garage and Exit (Game loop architecture now says Exit, not Quit), and the HUD's coins label is just "Coins". The pause screen text is approved as is ("Paused", "Press Escape to get back to the stream.", "Camera zoom, for the fans"), as is the rest of the HUD ("Likes" with a heart icon in Redgull red, "Hype Lv {level}", "Car Health", "Kaiju (Co-Star)", "Trending! +{likes} Likes"). The heart icon's art is T-086. Merged T-047, T-048 and T-053; T-015 (pause screen) and T-054 (main menu) are unblocked.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`
+- Tasks: T-047, T-048, T-053 (done); T-015, T-054 (unblocked); T-086 (new); T-054, T-055 (Exit)
