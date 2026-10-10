@@ -1,7 +1,7 @@
 ---
 id: T-016
 title: Full pause menu with settings
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus

@@ -12,6 +12,8 @@ const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const GroundGridScript := preload("res://scripts/driving/ground_grid.gd")
 const TuningPanelScript := preload("res://scripts/driving/tuning_panel.gd")
+const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
+const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
 const ACTION_TOGGLE_PANEL := "toggle_tuning_panel"
 const ACTION_TOGGLE_VIEW := "toggle_view"
@@ -34,6 +36,7 @@ var car_sprite: Sprite2D
 var camera: Camera2D
 var panel: CanvasLayer
 var hint: CanvasLayer
+var pause_screen: CanvasLayer
 
 
 func _ready() -> void:
@@ -74,15 +77,22 @@ func _ready() -> void:
 	hint = CanvasLayer.new()
 	hint.name = "Hint"
 	var hint_label := Label.new()
-	hint_label.text = "W/S drive, A/D steer   Tab: tuning panel   V: flat / isometric view"
+	hint_label.text = "W/S drive, A/D steer   Tab: tuning panel   V: flat / isometric view   Esc: pause"
 	hint_label.position = Vector2(8, 4)
 	hint_label.add_theme_font_size_override("font_size", 12)
 	hint.add_child(hint_label)
 	add_child(hint)
 
+	zoom = GameSettingsScript.load_zoom()
+	pause_screen = PauseScreenScript.new()
+	pause_screen.name = "PauseScreenLayer"
+	add_child(pause_screen)
+	pause_screen.setup(self)
+
 	set_physics_interpolation(physics_interpolation)
 	set_view(view)
 	set_zoom(zoom)
+	panel.refresh()
 	get_viewport().size_changed.connect(_apply_zoom)
 	car.stepped.connect(sync_view)
 
