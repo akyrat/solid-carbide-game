@@ -1,7 +1,7 @@
 ---
 id: T-080
 title: Combo numbers: what each trick adds, the drain, and how the combo raises spawning
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md, docs/hud-and-menus.md, docs/enemies.md, tasks/T-038-run-and-likes-data.md, game/README.md]
 files_expected_to_change: [JSON data under game/data/, tests, docs/game-loop-architecture.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,3 +62,13 @@ Example, a minute of good driving: drifting about 40 s with a trick every 2 to 3
 Tests: `game/tests/unit/test_combo_data.gd` (loader, trick order, 80% and 2 s values, cut, cap, drain, spawning). GUT: 106 of 106 pass. Python tool tests: 3 failures/errors, all in `test_build_mvp_map` (KeyError 'boulders'), in the map tool this task does not touch; not caused by this work.
 
 Documents changed: `docs/game-loop-architecture.md` (one line in References only), `game/README.md` (typed readers and tests lines).
+
+### QA round 1
+
+- Criterion 1 (valid JSON, test loads through T-038's loader): PASS. `combo.json` parses; `test_loads_through_loader` uses `GameData.load_file("combo")` and `ComboData.is_ok()`.
+- Criterion 2 (alternate drift > 360 > extended drift): PASS. `test_trick_order` asserts 0.5 > 0.25 > 0.05 > 0.
+- Criterion 3 (80% cut and 2 s wait as given; other numbers explained with the example): PASS. `collision_cut` 0.8 and `drain_wait_seconds` 2.0 match Game loop architecture, Decisions, and are asserted in `test_decided_values`. Start, cap, trick adds, cut application, drain and spawning are all explained in the result notes. The arithmetic checks out (6.0 cap, 5.0 cut to 1.8, 4.0 drains to 1.0 in 6 s, combo 5.0 gives x1.6, 6.0 gives x1.75; the minute example's ~+1.55 per 10 s is consistent). One small inconsistency, not a failure: the note says plain extended drifting alone reaches "about 1.5 to 2" after a minute, but 40 s of drift at +0.05 per second is +2.0, so about 3.0 unless drain gaps are assumed. The board judges the numbers in playtests.
+- Criterion 4 (docs/game-loop-architecture.md only gains a References line): PASS. `git diff master...HEAD` shows one added line in References; Summary, Decisions and Open questions are unchanged.
+- Criterion 5 (full GUT suite and all Python tool tests): PASS. GUT: 106 of 106 pass (TESTS PASSED). `tools` Python tests: 72 OK. `game/tools` Python tests: 51 run, 3 fail/error, all in `test_build_mvp_map` (KeyError 'boulders' twice, `12 != 6` once). The same 3 fail identically on master (checked in the main checkout), so this is the known pre-existing issue tracked in T-087 and not caused by this task. Counted as a pass because every other test passes.
+
+Result: all criteria pass. Status set to needs-playtest.
