@@ -1,7 +1,7 @@
 ---
 id: T-048
 title: Text: the HUD
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -13,7 +13,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, .claude/agents/narrative-theme.md, docs/game-loop-architecture.md, tasks/T-049-hud-run-values.md, tasks/T-050-hud-challenge-arrow-and-kaiju-bar.md]
 files_expected_to_change: [tasks/T-048-text-hud.md (result notes only)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,4 +50,36 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Final text. Lengths count the placeholder as written (a rendered number is shorter).
+
+| key | where it appears | text | length |
+|---|---|---|---|
+| hud.likes | label of the likes (XP) bar, next to the heart icon | Likes | 5 |
+| hud.level | current level, beside the likes bar; `{level}` is the number | Hype Lv {level} | 15 |
+| hud.coins | label for the coins collected this run; the count follows it | Coins | 5 |
+| hud.health | label of the car's health bar (it needs one) | Car Health | 10 |
+| hud.kaiju | label of the kaiju's health bar, shown once it appears | Kaiju (Co-Star) | 15 |
+| hud.score_flash | flashed when a challenge is completed; `{likes}` is the likes gained | Trending! +{likes} Likes | 24 |
+
+The timer is digits only and has no text.
+
+**Likes choice: both the word and an icon.** The likes bar is labelled "Likes" and carries a heart icon at its left end, as on a social media post. The word keeps it readable at a glance; the heart gives the livestream feel.
+
+**Icon description (for the Project Lead's art task):** a small, plain heart, solid Redgull red, with a thin dark outline so it reads on any background. Flat, no shine. It should look like the like button of a social app, and be small enough to sit beside the bar's label. Until the art exists, the HUD uses a placeholder shape.
+
+Notes: no text contains "XP" or "experience". "Brand Coins" and "Kaiju (Co-Star)" are the satirical touches (Redgull treating coins as brand money and the monster as a livestream co-star); if the board finds them unclear, plain "Coins" and "Kaiju Health" also fit the limits.
+
+### QA round 1
+
+Lengths counted independently, placeholders as written: Likes 5 (max 12), Hype Lv {level} 15 (max 15), Brand Coins 11 (max 12), Car Health 10 (max 12), Kaiju (Co-Star) 15 (max 20), Trending! +{likes} Likes 24 (max 25). Diff versus master touches only this task file.
+
+- [x] Table has all six keys: pass
+- [x] Likes shown as word and icon, icon described: pass
+- [x] Every text fits its limit: pass
+- [x] No "XP" or "experience" in the table texts: pass (the table's "where it appears" cell for hud.likes mentions "(XP)" as a description, not player-facing text)
+
+The board's voice review was not checked by QA.
+
+### Board review
+
+The board, 2026-10-10: approved, with one change: the coins label is **Coins**, not "Brand Coins" (the table above is updated). The likes heart icon in Redgull red is approved; its art task is T-086.
