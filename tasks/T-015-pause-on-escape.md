@@ -1,7 +1,7 @@
 ---
 id: T-015
 title: Escape pauses the game, with a simple pause screen and the camera zoom slider
-status: open
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
+status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done
 epic and milestone: one of the ids listed in tasks/README.md.
 qa_rounds: how many times QA has checked this task. The maximum is 2.
 A task is not done until every document listed in documents_affected has been updated.
