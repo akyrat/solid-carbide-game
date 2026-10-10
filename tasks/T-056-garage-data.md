@@ -1,7 +1,7 @@
 ---
 id: T-056
 title: Garage numbers: 3 upgrades, about 10 levels each, prices and effects
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 epic: garage
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-qa | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -47,4 +47,27 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Data Agent.
+
+**Produced:** `game/data/garage.json`; typed reader `game/scripts/data/garage_data.gd`; tests `game/tests/unit/test_garage_data.gd`; one line in References of `docs/garage-design.md`; a "Garage" bullet in `game/README.md` ("Game data"). Full GUT suite passes (105 tests). The Python tool tests have 1 failure and 2 errors in `test_build_mvp_map.py` (KeyError 'boulders'); they fail the same way on clean master, so they are not from this task.
+
+**Assumption (T-039 not done):** an average run gives about 250 coins (a good run about 400). All three upgrades together cost 4665 coins, about 19 average runs, so the first level is affordable after one run and a full garage takes a long time. Revisit once T-039's drop numbers exist.
+
+**Numbers (for the board to judge).** Prices start at 40 (damage 60, the strongest effect) and grow 25% per level, rounded to 5. Acceleration: -0.1 s of time to top speed per level, from the car's 2.3 s down to 1.3 s (43% faster). Car health: +10 per level, from T-038's 100 up to 200. Damage bonus: +5% per level, up to +50%.
+
+| Level | Acceleration price | Time to top speed | Car health price | Starting health | Damage price | Damage bonus |
+|---|---|---|---|---|---|---|
+| 0 | | 2.3 s | | 100 | | +0% |
+| 1 | 40 | 2.2 s | 40 | 110 | 60 | +5% |
+| 2 | 50 | 2.1 s | 50 | 120 | 75 | +10% |
+| 3 | 60 | 2.0 s | 60 | 130 | 95 | +15% |
+| 4 | 80 | 1.9 s | 80 | 140 | 115 | +20% |
+| 5 | 100 | 1.8 s | 100 | 150 | 145 | +25% |
+| 6 | 120 | 1.7 s | 120 | 160 | 185 | +30% |
+| 7 | 155 | 1.6 s | 155 | 170 | 230 | +35% |
+| 8 | 190 | 1.5 s | 190 | 180 | 285 | +40% |
+| 9 | 240 | 1.4 s | 240 | 190 | 360 | +45% |
+| 10 | 300 | 1.3 s | 300 | 200 | 445 | +50% |
+| Total | 1335 | | 1335 | | 1995 | |
+
+Reasoning: linear effects with prices that grow steadily make each level feel the same size while costing more, so the player keeps choosing between the three. Damage costs 50% more because +50% damage is the strongest effect. Each upgrade stays a flat, readable step for the plain-list garage. The health base matches `run.json`; acceleration's base matches the tuning's `time_to_top_speed`. Nothing here applies the upgrades to the car; that is for the Driving, Game Loop and Weapon agents, reading `GarageData`.

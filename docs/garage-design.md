@@ -32,4 +32,4 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 
 ## References
 
-(None yet.)
+- The upgrade prices and effects: `game/data/garage.json` (task T-056).
