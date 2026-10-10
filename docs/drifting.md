@@ -21,6 +21,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back. (2026-10-07)
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way. (2026-10-08)
 - The car does not bounce off enemies: they only damage it. (2026-10-09)
+- The MVP has three **tricks**, all done with the car's existing driving (what tricks are worth: Game loop architecture, Decisions): (2026-10-10)
+  - **Extended drift:** every second of drifting counts as one low-value trick.
+  - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
+  - **Alternate drift:** drift forwards, release W while still steering, switch to S and drift backwards, then back to W, so the car draws semicircles. Each switch between a forward and a backward drift while keeping the same steering direction counts as one high-value trick. The Driving & Drift Agent proposes the timing limits; the board tunes them.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). (2026-10-06; after the MVP, 2026-10-09)
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)

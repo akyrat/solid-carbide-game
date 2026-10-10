@@ -35,7 +35,7 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 - (After MVP) Is "kaiju" the right word for the bosses across the whole game, or does each level get its own kind of monster and name?
 - (After MVP) Stunt Driver's real name might be "Stan D. River", revealed later in the plot.
 - (After MVP) The plot advances with each completed level, shown as still frames with subtitles and no animation, in a very consistent style. There is no specific plot yet. The board may later give the plot its own game area doc.
-- (After MVP) People in need of help, to highlight the unethical side; a concept to experiment with, which could go deep. For example: civilians waving from building windows, or short animations of people eaten by monsters just before the player can do anything. The player can never really save them: if the player kills a monster before it reaches a person, the person just runs away, gives no reward, and can still be attacked by other monsters. Later, rewards for "ethical" actions could be balanced by likes dropping when the player isn't doing enough tricks.
+- (After MVP) People in need of help, to highlight the unethical side; a concept to experiment with, which could go deep. For example: civilians waving from building windows, or short animations of people eaten by monsters just before the player can do anything. The player can never really save them: if the player kills a monster before it reaches a person, the person just runs away, gives no reward, and can still be attacked by other monsters. Later, rewards for "ethical" actions could be balanced by likes dropping when the player isn't doing enough tricks. The combo is that counterbalance (Game loop architecture, Decisions).
 
 ## References
 

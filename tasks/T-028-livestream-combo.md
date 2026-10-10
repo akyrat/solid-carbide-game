@@ -1,7 +1,7 @@
 ---
 id: T-028
 title: Explore a "livestream combo" (viewers multiplier on likes)
-status: open
+status: done
 from: project-lead
 to: project-lead
 epic: driving
@@ -55,4 +55,4 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Result notes
 
-Written by the agent when it finishes.
+The board settled the combo on 2026-10-10, as part of the MVP: three tricks (extended drift, 360, alternate drift) raise a multiplier on all likes; a collision with anything cuts it by 80%; it drains after 2 seconds without a trick; a counter next to the likes bar and comic-style popups from the car show it; a higher combo also raises minion spawning, to be judged in playtests. Recorded in Drifting, Game loop architecture, HUD and menus and Enemies, Decisions. Build tasks: T-079 to T-085.

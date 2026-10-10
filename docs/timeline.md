@@ -465,3 +465,13 @@ Entry format:
 - Decision or change: clicking a ticket on the task board now shows "Your review": what the board is asked to check (the task's "The board's review:" line), whether it is ready, the task's folder and file and the files to open ("Board review files:"), each with a copy button, and the agent's and QA's result notes. The sync reads each open task from its branch folder. The convention is in `tasks/README.md`, "The board's review".
 - Documents touched: `tasks/README.md`
 - Tasks: T-032; T-020, T-029, T-038 (review lines added on their branches)
+
+## 2026-10-10: Tricks and the combo, in the MVP
+- Decision or change: the board settled the combo (T-028 done), as part of the MVP:
+  - three tricks done with the existing driving: extended drift (each drifting second, low value), 360 (a full turn in one unbroken drift, mid value) and alternate drift (switching between forward and backward drifts with the same steering, high value)
+  - each trick raises a combo multiplier on all likes; a collision with anything, enemies included, cuts it by 80%; after 2 seconds without a trick it drains
+  - the HUD shows a combo counter next to the likes bar, and each trick pops its name out from the car in comic-style letters
+  - a higher combo also raises minion spawning, with an off switch, to be judged in playtests
+  The likes from drifting seconds stay. The combo is the counterbalance Extended narrative's helping-people idea asked for. Build tasks: T-079 (trick detection), T-080 (numbers), T-081 (the combo), T-082 (text), T-083 (counter and popups), T-084 (popup art), T-085 (spawning); T-033 now also sends a collision signal. Long and short GDD updated.
+- Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/enemies.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
+- Tasks: T-028 (done), T-079 to T-085 (new), T-033 (updated)

@@ -28,6 +28,8 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - The player only drives. The car's weapons fire automatically.
 - Enemies come in from the edges of the screen, in numbers that grow over the run (how they scale: Enemies, Decisions).
 - XP comes only from driving, never from kills: from completed challenges, and from drifting.
+- **Combo:** tricks (Drifting, Decisions) raise a combo multiplier, and the multiplier multiplies all XP gained (from challenges and from drifting). Each trick adds to the multiplier: extended drifts a little, a 360 more, an alternate drift the most. Colliding with anything, enemies included, cuts the combo by 80%. If no trick follows within 2 seconds, the combo drains away quickly. The Game Data Agent proposes the numbers; the board judges them in playtests. The XP from drifting seconds stays as it is, alongside the extended-drift trick. Part of the MVP.
+- The higher the combo, the more enemies spawn (how: Enemies, Decisions). The board will judge in playtests whether to keep this.
 - A drift that lasts longer than 1 second gives XP for every second it lasts, the first second included (a 3-second drift gives 3 seconds' worth).
 - Each second of drifting gives a fixed amount of XP: 10% of the XP bar at level 1. The amount does not grow with the bar, so at higher levels it is a smaller share of the bar and drifting gives only a little XP.
 - "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3).
@@ -92,6 +94,10 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back.
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way.
 - The car does not bounce off enemies: they only damage it.
+- The MVP has three **tricks**, all done with the car's existing driving (what tricks are worth: Game loop architecture, Decisions):
+  - **Extended drift:** every second of drifting counts as one low-value trick.
+  - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
+  - **Alternate drift:** drift forwards, release W while still steering, switch to S and drift backwards, then back to W, so the car draws semicircles. Each switch between a forward and a backward drift while keeping the same steering direction counts as one high-value trick. The Driving & Drift Agent proposes the timing limits; the board tunes them.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on.
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release).
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
@@ -226,6 +232,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, how long the kaiju stays vulnerable after a challenge, and how often it drops meteors (including whether it can drop more while a challenge is still open). The board judges them in playtests.
 - Where and how minions spawn, and how often their contact damage applies, are proposed by the Enemy Behavior Agent with the Game Data Agent; the board judges them in playtests. So is how many of the kaiju's meteor challenges can be open at once.
 - Killing the kaiju ends the run at once, as a win.
+- The higher the player's combo (Game loop architecture, Decisions), the more minions spawn, on top of the slow growth over the run. It can be switched off, so the board can judge in playtests whether to keep it; the Game Data Agent proposes how strongly the combo raises spawning.
 
 
 ## 5. Weapons
@@ -350,6 +357,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 
 - During a run, the HUD shows: the car's HP as a bar; the run timer, counting down from 8:00; the XP bar, shown to the player as a likes bar (Extended narrative, Decisions), and the current level; the coins collected this run; an arrow near the car pointing to the nearest challenge; and the kaiju's health once it appears.
 - When the player levels up, the game pauses and the level-up screen shows the options (what is offered: Weapons, Decisions). Each option has a title and a description. In the MVP it is kept simple: plain cards, each with a button to take it.
+- The HUD shows the current combo multiplier as a counter next to the likes bar. When the player completes a trick, a short comic-style text pops out from the car with the trick's name and what it added to the multiplier (combo: Game loop architecture, Decisions). Extended-drift popups are smaller than the others, since they come every second.
 - The UI Agent proposes a first layout for where each HUD element goes on screen, and the board adjusts it in playtest.
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider (Drifting, Decisions). A full pause menu, with more settings, comes in the final release.
@@ -365,12 +373,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `977baa7e8ef95ef4437f85b5837b2bfe732fbddc7136d3346c7211956248bc98` |
-| `drifting.md` | `4e5cce3b748557a7c58a5cfb65e911261507385540c0dbbc2ba88866d1591b7a` |
+| `game-loop-architecture.md` | `2e502f2a04acdbdfda4356c380144266868d8bc97166fc69ed4c999dfd2c2e48` |
+| `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
 | `level-design.md` | `5fe14b544c7565a7ba44b8ea1e5094beb0cceaaccd9391124f1840848129f712` |
-| `enemies.md` | `6cd725b1ff56158790a73d8afee4ddba21e1f33e16abb72c80c0ce7c5f3d8d28` |
+| `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
 | `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
 | `visual-style.md` | `fc2e1c4ed2ee60aadccfba9c90ac8d1255713c69f4886101e933405a38db418e` |
-| `extended-narrative.md` | `60114f359c77518844054b509a5061fd0fbcbc3b164cfe69a61def7f35b73054` |
-| `hud-and-menus.md` | `b5ee3740e27a7383dbed14644d0f18d8813d3659ddd7844d8c054efdbfea22d5` |
+| `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |
+| `hud-and-menus.md` | `be4fff07a342de2be0dc3b877ffa8ca2146502405b8cf05308b9e14f53618915` |
