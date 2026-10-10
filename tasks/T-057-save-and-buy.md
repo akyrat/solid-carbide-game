@@ -1,7 +1,7 @@
 ---
 id: T-057
 title: Saving coins and upgrade levels, and buying an upgrade
-status: blocked
+status: open
 from: project-lead
 to: game-data
 epic: garage

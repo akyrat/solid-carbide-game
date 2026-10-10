@@ -515,3 +515,13 @@ Entry format:
 - Decision or change: a task that passes QA is marked done and merged straight away unless it asks for the board's review (every art task does). Feel and balance are judged in the board's playtest sessions. Recorded in `CLAUDE.md` (approved by the board) and `tasks/README.md`. Second wave started: T-036, T-040, T-033, T-035, T-080, T-056, T-082, T-054, T-015.
 - Documents touched: `CLAUDE.md`, `tasks/README.md`
 - Tasks: T-015, T-033, T-035, T-036, T-040, T-054, T-056, T-080, T-082
+
+## 2026-10-10: Second wave: T-054, T-080, T-056 and T-040 merged
+- Decision or change: merged on QA's pass under the new rule (no board review needed): T-054 (the main menu: title, Start, Garage, Exit), T-080 (combo numbers: x1 to a cap of x6; +0.05 per drift second, +0.25 per 360, +0.5 per alternate drift; a crash keeps 20% of the combo above x1; drains 0.5 per second after 2 s; up to 1.75 times the minion spawning), T-056 (garage numbers: 10 levels each; acceleration to 1.3 s to top speed, health to 200, damage to +50%; about 4,665 coins for everything) and T-040 (weapon numbers from the Unity report, with the board's three fixes). The numbers are judged in the playtest sessions. Known issue: three map-generator tests fail on master since the T-019 and T-021 merge (fix: T-087). Unblocked: T-039 (enemy numbers), T-059 (garage text).
+- Documents touched: `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`, `docs/garage-design.md`, `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-054, T-080, T-056, T-040 (done); T-039, T-059 (unblocked)
+
+## 2026-10-10: T-015, T-082 and T-036 done
+- Decision or change: the board approved the combo text (T-082: LONG DRIFT!, FULL 360!, ALT DRIFT!, Combo x{multiplier}, +{amount}). Merged on QA's pass: T-015 (Escape pauses the game; the pause screen with the approved text and the camera zoom slider, saved between sessions) and T-036 (the run: the MVP map and the car, the 8-minute clock with boss time at 1:00 left, car health from the run data, coins, win and loss; the car starts in the centre of the map). The run is drawn isometric only. Unblocked: T-037 (likes and levels) and others; T-016 stays blocked until the board describes the full pause menu. T-087 (the map-generator fix) started.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-015, T-036, T-082 (done); T-037 and others (unblocked); T-087 (started)

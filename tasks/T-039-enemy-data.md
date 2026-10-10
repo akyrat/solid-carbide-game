@@ -1,7 +1,7 @@
 ---
 id: T-039
 title: Enemy numbers: minions, spawning, coins and the kaiju
-status: blocked
+status: open
 from: project-lead
 to: game-data
 epic: enemies
@@ -48,8 +48,6 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A test shows the kaiju's health divided by the damage the MVP weapons deal in one vulnerability window (from T-040's data; the assumptions are in the result notes) is about 4 (QA: pass / fail)
 - [ ] The result notes explain every number, and `docs/enemies.md` points to the data in References, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
-
-The board's review: the numbers are judged in playtests.
 
 ## Result notes
 

@@ -48,3 +48,4 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 ## References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
+- Weapon numbers (base values and the 7 upgrade tiers of each weapon): [../game/data/weapons.json](../game/data/weapons.json), read through `game/scripts/data/weapon_data.gd`.

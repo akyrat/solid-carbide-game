@@ -1,7 +1,7 @@
 ---
 id: T-059
 title: Text: the garage screen
-status: blocked
+status: open
 from: project-lead
 to: narrative-theme
 epic: narrative

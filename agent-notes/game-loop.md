@@ -26,4 +26,5 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- T-036: the run's state is a node (`RunState`) that other agents reach through `run.state` or the `run_state` group; they call its functions (damage, coins, kaiju killed) and listen to its signals (boss time, run ended, HUD values). Pausing the run is Godot's tree pause, shared with the pause screen and the level-up choice (UI Agent).
+- Starting a new run rebuilds the map and the car, so anything holding them (enemies, the likes counter) should listen for `world_rebuilt` or `run_started`.

@@ -73,11 +73,26 @@ flowchart TD
     menu -- Start --> start
 ```
 
+#### The run scene
+
+The run is one Godot scene (task T-036; how to use it: [game/README.md](../game/README.md), section "The run"). It loads the MVP map (Level design, Content, "MVP map") and puts the drift car (Drifting) on it, at the centre of the map, in the gravel square, with the camera following the car in the isometric view, as in the drift prototype.
+
+The run owns its state: the clock (8:00 counting down, stopping while the game is paused), the car's health (starting at the value in [game/data/run.json](../game/data/run.json)), and the coins collected in the run. Other parts of the game plug into it:
+
+- At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
+- Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
+- Health reaching 0, or the clock reaching 0:00, ends the run as a loss.
+- Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
+- The HUD reads the time left, the health and the coins from the run (HUD and menus).
+
+Starting a new run resets the map, the car and the state. Returning to the main menu when a run ends comes with the screen flow, in a later task.
+
 ### References
 
 - Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md), for the definition of drifting used for XP.
 - Run numbers (XP per challenge, XP per level, drift XP, car starting health): [game/data/run.json](../game/data/run.json), read through `game/scripts/data/run_data.gd`.
+- Combo numbers (what each trick adds, the cap, the collision cut, the drain, how the combo raises spawning): [game/data/combo.json](../game/data/combo.json), read through `game/scripts/data/combo_data.gd`.
 
 
 ## 2. Drifting
@@ -254,6 +269,18 @@ The figure-eight is squeezed across the road (its loops are 4.5 units wide at th
 
 **Drivability.** The fitted challenges have not yet been checked with the Driving & Drift Agent's script (task T-021). All 4 challenges need that check.
 
+#### Meteor challenges
+
+The challenges the kaiju's meteors create during a run (task T-035; when and where the kaiju drops them: Enemies). The map can place any of the 3 fitted challenge designs (Single Boulder arrow 1 and arrow 2, Two Boulders arrow 1) at any position and angle, with the fitted boulders (3 units across) and the arrow corridor drawn in green, while the map's preset challenges stay blue. They follow the same completion rule as the preset challenges; when one is completed, its arrow disappears and its boulders stay as plain obstacles, and the map sends a separate signal for meteor challenges, so the kaiju's shield can tell them from the preset ones. Several can be open at once, each completed on its own.
+
+A placement check says whether a design fits at a spot: none of its boulders and no part of its 3-unit corridor may overlap a building, a boulder already on the map (the pattern copies' or another meteor challenge's) or the map's edge.
+
+The designs are stored unplaced (units from the pattern's centre, angle 0) in the layout data, under `challenge_designs`. The functions and the signal are listed in `game/README.md` ("MVP map", "Meteor challenges").
+
+![A meteor challenge with its green arrow (in the gravel) beside preset challenge-1 with its blue arrow](level-design/meteor-challenge.png)
+
+![The same, isometric](level-design/meteor-challenge-iso.png)
+
 ### References
 
 - The board's challenge drawings: `docs/level-design/` (Content, "MVP challenges"). They are exported from Crash City Grid with `python tools/export_challenge_drawings.py <folder of downloaded drawings>`.
@@ -325,6 +352,7 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 ### References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
+- Weapon numbers (base values and the 7 upgrade tiers of each weapon): [../game/data/weapons.json](../game/data/weapons.json), read through `game/scripts/data/weapon_data.gd`.
 
 
 ## 6. Garage design
@@ -340,6 +368,10 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves.
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
+
+### References
+
+- The upgrade prices and effects: `game/data/garage.json` (task T-056).
 
 
 ## 7. Visual style
@@ -441,6 +473,14 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider (Drifting, Decisions). A full pause menu, with more settings, comes in the final release.
 
+### Content
+
+#### Main menu
+
+A plain screen (task T-054) with a dark navy background. The title "SOLID CARBIDE" is in big cyan letters, with a small grey "(work in progress)" under it. Below are three buttons in a column: Start, Garage and Exit (text approved in T-053). The menu only shows the screen: pressing a button sends the signal `start_pressed`, `garage_pressed` or `exit_pressed`, and what happens next is the screen flow (T-055). Keyboard focus starts on Start. The scene is `game/scenes/menu/main_menu.tscn`; how to open it is in `game/README.md`, "Main menu".
+
+(The pause and level-up screens: to be written.)
+
 ### References
 
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
@@ -452,12 +492,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `c535844d0956ec8428a4489634ecb2220bafe9059c01209f9b4f32d461118416` |
+| `game-loop-architecture.md` | `42970d788a7ebb37c25c9141f442a6bec3748a843c0c416354b07708f7c6e6dc` |
 | `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
-| `level-design.md` | `6f73fa5d924ebf05c818659605cb63135fe781cfa280a9ce5e8a7de20bd4a0fb` |
+| `level-design.md` | `3a6351ae9f6c9b81e9c3d63fdb2d96acbc468d532f20570d9ab60f395b192506` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
-| `weapons.md` | `d1ccd943fb4f41b534596917bf069e91f9bb075c90808f2b6a3d126cdd709c64` |
-| `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
+| `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
+| `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `620687e6e450eea0617007be696c86d4f5d68ef9b28c9ff7e9875a356cf2574b` |
 | `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |
-| `hud-and-menus.md` | `be4fff07a342de2be0dc3b877ffa8ca2146502405b8cf05308b9e14f53618915` |
+| `hud-and-menus.md` | `2de6000c560df9811f72463dee6f58e550da1ab6f11a976733290a1845c01ea3` |
