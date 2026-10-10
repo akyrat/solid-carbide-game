@@ -1,7 +1,7 @@
 ---
 id: T-037
 title: Likes (XP) and levels: from challenges and drifts, level-up pauses the run
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 epic: game-loop

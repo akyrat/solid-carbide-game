@@ -73,6 +73,20 @@ flowchart TD
     menu -- Start --> start
 ```
 
+#### The run scene
+
+The run is one Godot scene (task T-036; how to use it: [game/README.md](../game/README.md), section "The run"). It loads the MVP map (Level design, Content, "MVP map") and puts the drift car (Drifting) on it, at the centre of the map, in the gravel square, with the camera following the car in the isometric view, as in the drift prototype.
+
+The run owns its state: the clock (8:00 counting down, stopping while the game is paused), the car's health (starting at the value in [game/data/run.json](../game/data/run.json)), and the coins collected in the run. Other parts of the game plug into it:
+
+- At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
+- Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
+- Health reaching 0, or the clock reaching 0:00, ends the run as a loss.
+- Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
+- The HUD reads the time left, the health and the coins from the run (HUD and menus).
+
+Starting a new run resets the map, the car and the state. Returning to the main menu when a run ends comes with the screen flow, in a later task.
+
 ### References
 
 - Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
@@ -466,7 +480,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `0e58f1072f02541e71075a94dd328e1443417e4fd1560f95266f99d7bdc6d458` |
+| `game-loop-architecture.md` | `42970d788a7ebb37c25c9141f442a6bec3748a843c0c416354b07708f7c6e6dc` |
 | `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
 | `level-design.md` | `6f73fa5d924ebf05c818659605cb63135fe781cfa280a9ce5e8a7de20bd4a0fb` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
