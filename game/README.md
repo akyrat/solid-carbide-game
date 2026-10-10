@@ -217,7 +217,7 @@ The first playable piece (task T-012): the car driving and drifting like the boa
 
 There is no jump, no arrow-key steering and no gamepad.
 
-**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4, wall bounce 0.25), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4), one slider per handling setting and, in a "Collisions" group at the bottom, the wall bounce slider (task T-033: 0 to 1, proposed default 0.25; see "Car collisions"). Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
+**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount, and the last trick, how long ago it was and how many of each trick so far), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4, wall bounce 0.25, the trick limits), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4), one slider per handling setting and, in a "Collisions" group at the bottom, the wall bounce slider (task T-033: 0 to 1, proposed default 0.25; see "Car collisions") and, in a "Tricks" group under it, the alternate drift's limits (task T-079; see "Tricks"). Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
 
 **Test room** (task T-033): a few walls and one boulder (3 units across) around the start point, so the board can try the bounce: a closed square of walls 40 units from the start on every side, an L-shaped wall to the right of the start (its corner about 25 units right and 25 up) and the boulder 12 units right and 12 up. Placeholder colours, the MVP map's. The real map is the MVP map (below).
 
@@ -225,7 +225,8 @@ There is no jump, no arrow-key steering and no gamepad.
 
 - `car_model.gd`: the movement, step by step as in the Unity prototype report, section 4, in units (1 unit = the car's width). No nodes, so tests run it directly. Its `cruise_jump(from_speed, w_just_pressed)` signal fires when W makes the car jump up to cruise speed (for the boost effect, task T-008).
 - `car_tuning.gd`: the handling values (defaults = the Unity values except top speed multiplier 3.0; the `UNITY` constant keeps the Unity values) and the slider list with labels, ranges and tooltips.
-- `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step. It also handles collisions, the `hit_obstacle` signal and knockback (see "Car collisions").
+- `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step. It also handles collisions, the `hit_obstacle` signal and knockback (see "Car collisions"), and the `trick` signal (see "Tricks").
+- `trick_detector.gd`: finds the tricks in the car's driving (see "Tricks"). No nodes, so tests run it directly.
 - `drift_prototype.gd`: builds the scene. The physics world is never drawn; the `View` node draws the ground grid and the car sprite either flat or through the 2:1 isometric projection screen = (x - y, (x + y) / 2), and places the camera exactly on the drawn car (no rotation, no smoothing). Switching views changes only the drawing.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
 - `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
@@ -233,7 +234,7 @@ There is no jump, no arrow-key steering and no gamepad.
 
 **Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the sheets are drawn at scale 1. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
 
-**Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite) and `tests/unit/test_car_collisions.gd` (bounce, enemies, the hit signal, knockback, layers, the test room and the bounce slider), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`. `res://tests/fixtures/drift_prototype_room_flat.tscn` and `..._iso.tscn` drive the car into the test boulder, zoomed out to show the walls (40 frames is enough).
+**Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite), `tests/unit/test_car_collisions.gd` (bounce, enemies, the hit signal, knockback, layers, the test room and the bounce slider) and `tests/unit/test_tricks.gd` (the three tricks, the trick signal, the trick sliders and readout, and the movement being the same with detection on and off), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`. `res://tests/fixtures/drift_prototype_room_flat.tscn` and `..._iso.tscn` drive the car into the test boulder, zoomed out to show the walls (40 frames is enough).
 
 ## Car collisions
 
@@ -275,6 +276,45 @@ func apply_knockback(direction: Vector2, strength: float) -> void
 Call it on the car node to knock the car back, for example for a minion hit or a meteor impact (Enemy Behavior Agent; the strengths are game data). `direction` is in the flat physics world (x right, y down) and does not need to be normalized; a zero direction is ignored. `strength` is a speed in units per second. On the car's next physics step, after the driving model's own update, `direction.normalized() * strength` is added to the car's velocity. Several calls before one step add up. `pending_knockback()` returns what is waiting.
 
 From then on the push is ordinary speed: the part across the nose fades with the sideways grip (like a drift), the part along the nose changes the forward speed (with W held and the nose against the push, W snaps it back to cruise speed on the step after, as after a bounce), and a push into a wall bounces off it and emits `hit_obstacle`.
+
+## Tricks
+
+Task T-079. The MVP's three tricks are decided in Drifting, Decisions. The car finds them in its own driving and never changes how it drives to do it: `scripts/driving/trick_detector.gd` (`TrickDetector`) only reads the driving model after each physics step. Every car (the drift prototype's and the run's) has one, `car.tricks`.
+
+### Trick signal
+
+```
+signal trick(trick_id: String)
+```
+
+The car node (`scripts/driving/car.gd`) emits it once per trick, at the physics step the trick is completed, for the combo (task T-081) and the trick popups. Several tricks can complete on the same step; each gets its own signal.
+
+| Trick id | Trick | Fires |
+| --- | --- | --- |
+| `extended_drift` | Extended drift | Every full second of one unbroken drift: 3.5 s of drifting gives 3 |
+| `three_sixty` | 360 | Each time the car's heading has turned a full 360 degrees in one direction during one unbroken drift: 720 degrees gives 2 |
+| `alternate_drift` | Alternate drift | Each switch between a forward drift and a backward drift with the same steering side, once the new drift has lasted the shortest drift time |
+
+The ids are constants on `TrickDetector` (`TRICK_EXTENDED_DRIFT`, `TRICK_THREE_SIXTY`, `TRICK_ALTERNATE_DRIFT`, and the list `TRICK_IDS`); they match the keys of `trick_add` in `data/combo.json`. `car.tricks.last_trick`, `car.tricks.seconds_since_last` and `car.tricks.counts` (trick id to count) are there for readouts; `car.tricks.reset()` forgets every drift in progress and the counts. `car.detect_tricks = false` turns detection off.
+
+### How each trick is found
+
+- **Drifting** is the driving model's own `is_drifting`, the Unity definition: W, or S without W, held together with A or D. A **break** is any physics step on which the car is not drifting.
+- **Extended drift:** drifting time adds up step by step; each full second (`EXTENDED_DRIFT_SECONDS`) is one trick. A break starts the second again; changing steering side or between W and S without a break does not.
+- **360:** the heading's change adds up step by step while drifting. Turning the other way starts the count again from that step; a break starts it from zero. A full turn (360 degrees, 94 steps with the default turn speed) is one trick, and the count carries on towards the next one.
+- **Alternate drift:** the driving is cut into drift segments, each with one direction (W: forward, S without W: backward) and one steering side. A switch counts when, in order: a segment lasts at least the **shortest drift** time; it ends (W or S released, or straight from W to S); within the **switch time** a segment starts in the other direction with the same steering side; and that segment also lasts the shortest drift time, at which moment the trick fires. Holding S before releasing W counts as a switch with no gap. A segment too short to count breaks the chain. While **keep steering** is on, letting go of A or D (or pressing the other one) between the two drifts cancels the trick. Forward to backward and backward to forward each count, so W, S, W, S with A held all the way gives 3.
+
+### Alternate drift limits
+
+The limits are tuning values in `scripts/driving/car_tuning.gd` (`TRICK_SETTINGS`), read live, with sliders in the tuning panel's "Tricks" group. The panel's reset puts them back to these proposed values, for the board to tune:
+
+| Setting | Key | Proposed | Slider |
+| --- | --- | --- | --- |
+| Switch time: longest time from the end of one drift to the start of the opposite one | `alternate_max_switch_seconds` | 0.5 s | 0 to 2 s |
+| Shortest drift: how long both drifts must last; the trick fires when the new one reaches it | `alternate_min_drift_seconds` | 0.3 s | 0 to 2 s |
+| Keep steering: A or D must stay held on the same side during the switch | `alternate_keep_steering` | on | on / off toggle |
+
+The extended drift's second and the 360's full turn are Decisions, so they are constants, not sliders.
 
 ## Pause screen
 

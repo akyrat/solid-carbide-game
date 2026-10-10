@@ -17,6 +17,7 @@ extends CharacterBody2D
 ## apply_knockback() is how other code (minion hits, meteor impacts) pushes it.
 
 const CarModel := preload("res://scripts/driving/car_model.gd")
+const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -53,8 +54,16 @@ signal hit_obstacle(collider: Object, shape_index: int, normal: Vector2, impact_
 ## Emitted when W makes the car jump up to cruise speed (for the boost effect,
 ## task T-008). See CarModel.cruise_jump for the arguments.
 signal cruise_jump(from_speed: float, w_just_pressed: bool)
+## Emitted once per trick the car does (task T-079), with the trick's id:
+## "extended_drift", "three_sixty" or "alternate_drift" (TrickDetector.TRICK_IDS).
+## For the combo (task T-081) and the trick popups. See trick_detector.gd.
+signal trick(trick_id: String)
 
 var model = CarModel.new()
+## Watches the driving for tricks (task T-079). It only reads the model.
+var tricks = TrickDetector.new()
+## When false, no tricks are detected (tests compare the movement both ways).
+var detect_tricks := true
 ## The handling values (shared with the tuning panel).
 var tuning:
 	get:
@@ -69,6 +78,10 @@ var scripted_input := [false, false, 0.0]
 var _pending_knockback := Vector2.ZERO
 ## Obstacles the car is touching: "collider id:shape index" -> surface normal.
 var _contacts := {}
+
+
+func _init() -> void:
+	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
 
 
 func _ready() -> void:
@@ -104,7 +117,10 @@ func physics_step() -> void:
 		w = scripted_input[0]
 		s = scripted_input[1]
 		steer = scripted_input[2]
+	var rotation_before: float = model.rotation
 	model.update_velocity(w, s, steer)
+	if detect_tricks:
+		tricks.observe(model, w, s, steer, rotation_before)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
