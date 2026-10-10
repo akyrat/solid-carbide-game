@@ -1,7 +1,7 @@
 ---
 id: T-055
 title: Screen flow: main menu, run, garage, back to the menu
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, tasks/T-036-run-scene-and-state.md, tasks/T-054-main-menu.md, game/README.md]
 files_expected_to_change: [the scene flow code, game/project.godot (main scene), tests, docs/game-loop-architecture.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,13 +40,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test starts the game and shows the main menu is the first screen (QA: pass / fail)
-- [ ] A test presses Start and shows a fresh run begins (QA: pass / fail)
-- [ ] A test ends a run as a win and as a loss and shows both return to the main menu (QA: pass / fail)
-- [ ] A test presses Garage and shows the main menu stays as it is, with no error (QA: pass / fail)
-- [ ] `game/project.godot`'s main scene is the main menu, and `game/README.md` says how to open the drift prototype (QA: pass / fail)
-- [ ] `docs/game-loop-architecture.md` describes the flow in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test starts the game and shows the main menu is the first screen (QA: pass)
+- [x] A test presses Start and shows a fresh run begins (QA: pass)
+- [x] A test ends a run as a win and as a loss and shows both return to the main menu (QA: pass)
+- [x] A test presses Garage and shows the main menu stays as it is, with no error (QA: pass)
+- [x] `game/project.godot`'s main scene is the main menu, and `game/README.md` says how to open the drift prototype (QA: pass)
+- [x] `docs/game-loop-architecture.md` describes the flow in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -62,3 +62,22 @@ Game Loop Agent, 2026-10-10.
 **For QA:** criteria 1 to 4: `bash game/tools/run_tests.sh -gselect=test_screen_flow`. Criterion 5: `game/project.godot` line `run/main_scene`, and `game/README.md`, "Drift prototype", "Run it". Criterion 6: `docs/game-loop-architecture.md`, Content, new "Screen flow" subsection (and one sentence in "The run scene" updated); Summary, Decisions and Open questions untouched.
 
 **Documents affected (updated):** `docs/game-loop-architecture.md` (Content), `game/README.md` (new "Screen flow" section; "Folder layout", "Main menu", "Drift prototype" and "The run" updated). Also my working copy, `agent-notes/game-loop.md`.
+
+### QA round 1
+
+QA/Integration Agent, 2026-10-10. Checked in the T-055 worktree, branch `task/T-055-screen-flow`. Result: **all 7 criteria pass.**
+
+1. **Main menu is the first screen: pass.** `test_the_game_opens_on_the_main_menu` passes. In a separate check, a QA driver script started the project's own main scene (read from `run/main_scene`) in a real window: the main menu was the only screen (screenshot `screenshots/qa_t055/01_launch_menu.png`: title, "(work in progress)", Start, Garage, Exit).
+2. **Start begins a fresh run: pass.** `test_start_begins_a_fresh_run` and `test_a_second_run_from_the_menu_is_fresh` pass. In the live window, a real mouse click on Start replaced the menu with the run: running, 0 coins, full health, clock counting down (479.8 s after 40 frames) (`02_after_start_run.png`). The second run started after a win was fresh too.
+3. **Win and loss return to the menu: pass.** The win test, the loss-on-health test and the loss-on-the-clock test all pass. In the live window, all three endings went straight back to the main menu as the only screen, with no message (`04_after_win_menu.png`).
+4. **Garage does nothing, no error: pass.** `test_garage_does_nothing_yet` passes. In the live window, a real click on Garage left the same menu on screen with no run, and the log had no errors (`05_after_garage.png`).
+5. **Main scene and drift prototype instructions: pass.** `game/project.godot` has `run/main_scene="res://scenes/game/game.tscn"` (the screen flow, which opens on the main menu). `game/README.md`, "Drift prototype", "Run it", gives the editor (F6) and command-line ways to open it. The documented command (`--path game res://scenes/drift_prototype/drift_prototype.tscn`) ran for 90 frames, exited with code 0 and logged no errors. A screenshot of the scene shows the drift prototype (`06_drift_prototype.png`).
+6. **Game loop architecture doc: pass.** In `git diff master...HEAD -- docs/game-loop-architecture.md`, the only changes are in Content: one sentence in "The run scene" and a new "Screen flow" subsection. Summary, Decisions and Open questions are unchanged.
+7. **Full test suites: pass.** Full GUT suite (`bash game/tools/run_tests.sh`): 193/193, TESTS PASSED, exit 0. The 57 orphans and one GUT warning (inner class `TestRoom` skipped) are already on master. Python: `game/tools` 62 tests OK, `tools` 75 tests OK.
+
+Other checks in the live window, beyond the criteria: a real Escape key press paused the run and showed the pause screen (`03_paused.png`), and a second press resumed it. A real click on Exit closed the game: the process exited with code 0. The log for the whole session (launch, 3 runs, pause, Garage, Exit) had no errors or warnings. Screenshots are in the worktree's git-ignored `screenshots/qa_t055/`. The QA driver script was kept outside the repo.
+
+Notes for the Project Lead, not failures:
+- Exit's real `get_tree().quit()` isn't covered by a GUT test. `test_the_default_exit_quits_the_tree` only checks that the callable is valid. The live check above covers it.
+- The run has no HUD yet (no timer on screen), so for now the board can't see the clock during a playtest. That's outside T-055.
+- This task has no `The board's review:` line. Under `tasks/README.md`, "Status rules", that would mean `done`. Status is set to `needs-playtest` as the Project Lead asked, since this is the board's first playable build.
