@@ -485,3 +485,8 @@ Entry format:
 - Decision or change: the board answered the Unity weapons report's 11 open questions with the Project Lead's suggestions. The MVP copies the prototype's weapons as they are, including their quirks (the flame using the gun's damage, the large bullet hit circle, the gun checking for targets once per interval, no knockback, the compounding steering tier, the visual-only tier 5, reversing counting as drifting), with three fixes: no rounding of damage, a flame area that doesn't grow on diagonals, and missed bullets removed past the gun's range. A weapon at its last tier is no longer offered; if both are, the level-up is skipped.
 - Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-022, T-040, T-041, T-042, T-043
+
+## 2026-10-10: T-022 done: the Unity weapons report
+- Decision or change: the board approved the report on the starting gun and the exhaust flamethrower in the Unity prototype (`docs/weapons/unity-weapons-report.md`); its open questions are answered in Weapons, Decisions. Merged. T-040 (weapon numbers) is unblocked.
+- Documents touched: `docs/weapons.md`, `docs/weapons/unity-weapons-report.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-022 (done), T-040 (unblocked)

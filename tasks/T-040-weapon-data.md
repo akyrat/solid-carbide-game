@@ -1,7 +1,7 @@
 ---
 id: T-040
 title: Weapon numbers: the gun, the flamethrower and their upgrade tiers
-status: blocked
+status: open
 from: project-lead
 to: game-data
 epic: weapons
