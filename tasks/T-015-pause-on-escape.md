@@ -1,7 +1,7 @@
 ---
 id: T-015
 title: Escape pauses the game, with a simple pause screen and the camera zoom slider
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus

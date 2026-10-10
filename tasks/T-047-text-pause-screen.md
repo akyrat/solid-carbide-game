@@ -1,7 +1,7 @@
 ---
 id: T-047
 title: Text: the pause screen
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -13,7 +13,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, .claude/agents/narrative-theme.md, tasks/T-015-pause-on-escape.md]
 files_expected_to_change: [tasks/T-047-text-pause-screen.md (result notes only)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,4 +46,25 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+| Key | Where it appears | Text | Length (chars) |
+|---|---|---|---|
+| paused.title | Pause screen, large title shown while the game is paused | Paused | 6 |
+| paused.hint | Pause screen, under the title, tells the player how to resume | Press Escape to get back to the stream. | 39 |
+| paused.zoom_label | Pause screen, label next to the camera zoom slider | Camera zoom, for the fans | 25 |
+
+Limits: title 20, hint 50, zoom label 25. The title keeps HUD and menus' meaning ("Paused"). The hint names Escape and nods to the livestream audience waiting; the zoom label nods to the viewers. No "XP" or "experience".
+
+### QA round 1
+
+Lengths counted independently (wc -m): title 6 of 20, hint 39 of 50, zoom label 25 of 25.
+
+- [x] The result notes have a table with paused.title, paused.hint and paused.zoom_label: PASS
+- [x] paused.hint names the Escape key: PASS ("Press Escape to get back to the stream.")
+- [x] Every text in the table fits the length limit given for it: PASS (stated lengths match the real counts)
+- [x] No text contains "XP" or "experience": PASS
+
+Branch diff versus master changes only this task file. The board's voice review is still pending.
+
+### Board review
+
+The board, 2026-10-10: approved as is.
