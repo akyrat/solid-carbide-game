@@ -1,7 +1,7 @@
 ---
 id: T-054
 title: The main menu: title, Start, Garage, Exit
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus
