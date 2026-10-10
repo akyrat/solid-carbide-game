@@ -540,3 +540,8 @@ Entry format:
 - Decision or change: the first T-055 merge had failed silently, so master marked it done without its code (575d755); the code is now merged (e0eb101) and the game opens on the main menu. The Project Lead now checks each merge succeeded before marking a task done. T-079 (trick detection) passed QA and waits for the board's playtest; master was merged into its branch for that. Drifting's description of the tuning panel's reset now says it restores the game's values, not the Unity ones.
 - Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-055, T-079
+
+## 2026-10-10: T-090 done; Playtest 1 ready
+- Decision or change: T-090 (the HUD's run timer) merged on QA's pass. With T-055, the bare loop is playable from the main folder: the main menu, Start, the run on the MVP map with the timer counting down from 8:00, Escape to pause, back to the menu when the run ends.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-090 (done)

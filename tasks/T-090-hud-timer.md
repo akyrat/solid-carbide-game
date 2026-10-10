@@ -1,7 +1,7 @@
 ---
 id: T-090
 title: HUD: the run timer
-status: open
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,11 +13,11 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-048-text-hud.md, game/README.md]
 files_expected_to_change: [the HUD scene and script, the run scene, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -43,4 +43,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built (UI Agent): the HUD scene `game/scenes/hud/hud.tscn` with `game/scripts/hud/hud.gd` (`Hud`, a CanvasLayer), added by `run.gd` and bound to the run state (`run.hud`). It shows only the timer, M:SS in big cyan digits at the top centre, following `time_left_changed` and `time_left_text()`. Because the run scene creates it, the timer shows in every run, also one started from the main menu (T-055); a test covers that path.
+
+Tests (`game/tests/unit/hud/test_hud_timer.gd`): starts at 8:00; the label follows time left from 8:00 to 0:00; resets on a fresh run; stops while paused; shows in a run started through the screen flow. Full GUT suite: 198 passing, TESTS PASSED. Python tool tests: 62 OK. Screenshot: `screenshots/run_timer.png` (git-ignored) shows 8:00 at the top.
+
+Documents updated: `docs/hud-and-menus.md` (new "The HUD" in Content only), `game/README.md` ("The run": the HUD paragraph). The master merge (T-055) was clean.
+
+### QA round 1
+
+All criteria pass.
+
+- [x] Test shows M:SS from 8:00 down to 0:00: PASS. `test_timer_follows_the_run_from_8_00_to_0_00` steps time left through 8:00, 7:00, 6:59, 1:01, 1:00, 0:09, 0:01, 0:00 and the label matches `time_left_text()`; the start state and a fresh run both show 8:00.
+- [x] Screenshot of the run shows the timer: PASS. QA's own screenshot: launched the project's main scene (`game.tscn`, the main menu), sent a real Enter key press to the focused Start button, and captured the run after 200 frames (`screenshots/qa_run_timer.png`, git-ignored). It shows big cyan "8:00" at the top centre over the map and car; the run was present, the menu gone, and the label read 8:00 (about 0.8 s of run time had elapsed).
+- [x] Timer stops while paused: PASS. `test_timer_stops_while_paused` shows the clock runs unpaused, then after pausing for 30 frames neither time left nor the label moves, and it runs again on unpause.
+- [x] `docs/hud-and-menus.md`: PASS. `git diff master...HEAD` adds only a "The HUD" subsection under Content (4 lines); Summary, Decisions and Open questions are unchanged. `game/README.md` is also updated.
+- [x] Full GUT suite and Python tests: PASS. GUT: 198 of 198 passing, TESTS PASSED. Python: `game/tools` 62 OK, `tools` 75 OK.
+
+Note: the working tree shows modified `addons/gut/fonts/*.import` files after Godot's import; QA did not commit them.
+
+### Board review
+
+Merged on QA's pass (no board review needed), 2026-10-10. Completes Playtest 1 (the bare loop).
