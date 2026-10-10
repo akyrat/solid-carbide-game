@@ -1,7 +1,7 @@
 ---
 id: T-054
 title: The main menu: title, Start, Garage, Exit
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-053-text-main-menu.md, game/README.md]
 files_expected_to_change: [the main menu scene and script, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -51,3 +51,11 @@ Built the main menu: `game/scenes/menu/main_menu.tscn` and `game/scripts/menu/ma
 - Python tool tests: 3 of 51 fail in `test_build_mvp_map.py` (KeyError 'boulders'). They fail the same way on `master` without this task's changes, so they are not caused by it.
 - Screenshot: `screenshots/main_menu.png` (git-ignored) shows the title, the work-in-progress line and the three buttons.
 - Documents updated: `docs/hud-and-menus.md` (Content only), `game/README.md` (Main menu).
+
+### QA round 1
+
+- **Criterion 1 (screenshot): pass.** My own screenshot (`screenshots/qa_menu.png`, 1152x648) shows "SOLID CARBIDE" in big letters, the "(work in progress)" line under it, and three buttons: Start, Garage, Exit.
+- **Criterion 2 (labels test): pass.** `test_button_labels_are_the_approved_text` asserts "Start", "Garage", "Exit", which match T-053's table (menu.start, menu.garage, menu.quit) as approved in its "Board review" section.
+- **Criterion 3 (signals test): pass.** Three tests press each button and assert its signal fires and the others do not.
+- **Criterion 4 (docs): pass.** `git diff master...HEAD` on `docs/hud-and-menus.md` changes only the Content section; Summary, Decisions and Open questions are untouched. `game/project.godot` is not in the diff, so the main scene is unchanged (still the drift prototype).
+- **Criterion 5 (all tests): pass.** Full GUT suite: 105 of 105 pass. `tools` Python tests: 72 of 72 pass. `game/tools` Python tests: 48 of 51 pass; the 3 failures in `test_build_mvp_map.py` (KeyError 'boulders', tracked in T-087) fail identically on master (same two setUpClass errors and the same one failure), so they are pre-existing and not this task's fault.
