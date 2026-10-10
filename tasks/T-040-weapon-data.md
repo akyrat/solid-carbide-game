@@ -1,7 +1,7 @@
 ---
 id: T-040
 title: Weapon numbers: the gun, the flamethrower and their upgrade tiers
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 epic: weapons
@@ -13,7 +13,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/weapons/unity-weapons-report.md, tasks/T-038-run-and-likes-data.md, game/README.md]
 files_expected_to_change: [JSON data under game/data/, tests, docs/weapons.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,3 +67,14 @@ Written by the Game Data Agent.
 - The drift ramp, linger, tick and tint values come straight from the report; the particle settings (art side) are not stored.
 
 **Python tool tests:** 51 run, 1 failure and 2 errors, all in `test_build_mvp_map.py` (`KeyError: 'boulders'`). They fail the same way on `master` in `C:\solid-carbide-game` with no change from this task, so this is not caused by T-040; the Project Lead should look at it. No files changed outside the list above.
+
+### QA round 1
+
+By the QA/Integration Agent. Result: all four criteria pass.
+
+- [x] **Valid JSON under `game/data/`, loaded through T-038's loader: PASS.** `game/data/weapons.json` parses; `test_weapon_data.gd` loads it with `GameData.load_file("weapons")` and reads it through `GameData.get_value`.
+- [x] **Base values and tier changes match the report's tables: PASS.** Checked by hand against report sections 2 to 5. Gun: damage 2, range 12, base interval 1.2 + 0.06 = 1.26 s, 1 bullet, 0.05 s between bullets, speed 15, tiers +2 bullets, x1.2 fire rate (three times, giving 1.06 / 0.893 / 0.754 s), range x1.5 (18), +2 bullets (5), pierce 1. Flamethrower: tick 0.2 s, size multiplier 2.5, half-width 1.05, depth 2.6, inner edge 0.35, start 0.5, ramp 1 s, flash 0.38 s, tint (1, 0.62, 0.38, 1), tiers x1.2 / damage x1.2 / x1.2 / flash +0.5 (0.88) / x1.3 (4.68) / turn x1.2 / always on. Decisions: the three fixes are in the data (tier 3 flame damage 2.4 with no rounding; car_half_size fixed at 0.5 so the area is 2.625 x 3.25 in every direction; missed bullets removed at the range, 12 or 18). Copied quirks are present (hit radius 1, one target check per interval, no knockback, flame damage 2). Differences are explained in the result notes.
+- [x] **`docs/weapons.md` only gains a References line: PASS.** `git diff master...HEAD -- docs/weapons.md` shows one added line, in References; Summary, Decisions and Open questions are untouched.
+- [x] **Full GUT suite and all Python tool tests pass: PASS.** GUT: 109 of 109 pass (`TESTS PASSED`). `tools` Python tests: 72 OK. `game/tools` Python tests: 51 run, 1 failure and 2 errors, all in `test_build_mvp_map.py` (`KeyError: 'boulders'`, `12 != 6`). I ran the same set on `master` in `C:\solid-carbide-game` and it fails identically; this is the known issue tracked in T-087, not caused by this task. Every other test passes, so the criterion counts as a pass.
+
+Note: the working tree shows many modified `.import` files (Godot rewrote them when the tests imported the project). They are not part of the task and were not committed.
