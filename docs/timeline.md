@@ -500,3 +500,8 @@ Entry format:
 - Decision or change: the board approved the Narrative Theme Agent's text, with changes: the main menu buttons are simply Start, Garage and Exit (Game loop architecture now says Exit, not Quit), and the HUD's coins label is just "Coins". The pause screen text is approved as is ("Paused", "Press Escape to get back to the stream.", "Camera zoom, for the fans"), as is the rest of the HUD ("Likes" with a heart icon in Redgull red, "Hype Lv {level}", "Car Health", "Kaiju (Co-Star)", "Trending! +{likes} Likes"). The heart icon's art is T-086. Merged T-047, T-048 and T-053; T-015 (pause screen) and T-054 (main menu) are unblocked.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`
 - Tasks: T-047, T-048, T-053 (done); T-015, T-054 (unblocked); T-086 (new); T-054, T-055 (Exit)
+
+## 2026-10-10: T-032 done: the task board page
+- Decision or change: the board is happy with the task board page as it is (lanes, game-area bubbles, "Your review" with files and notes). Marked done; it was approved by the board directly rather than through QA.
+- Documents touched: none
+- Tasks: T-032 (done)

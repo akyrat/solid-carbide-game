@@ -1,7 +1,7 @@
 ---
 id: T-032
 title: Task board page with drag-and-drop lanes and a game-areas view
-status: in-progress
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -47,8 +47,12 @@ Dragging into a lane sets that lane's first status. Dragging back into the lane 
 - [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including `test_taskboard_sync.py` (export reads every real task file; apply changes only the header's status line and keeps line endings) (QA: pass / fail)
 - [ ] `python tools/taskboard_sync.py export OUT` writes one JSON per task file, with id, title, status, file_status, to, epic, milestone, depends_on and file (QA: pass / fail)
 - [ ] `docs/README.md` lists the task board, its link, and how syncing works; `tasks/README.md` points to it (QA: pass / fail)
-- [ ] The board has used the page and is happy with it (board review)
+- [x] The board has used the page and is happy with it (board review, 2026-10-10)
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the Project Lead on 2026-10-09 and extended the same day (models, cancelled tickets, "Your review" with files and result notes, reading open tasks from their branch folders). The tool tests pass (`tools/test_taskboard_sync.py`). This task was not sent to QA; the board approved it after using the page.
+
+### Board review
+
+The board, 2026-10-10: happy with the task board as it is. Done.
