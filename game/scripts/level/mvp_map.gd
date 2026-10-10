@@ -16,6 +16,13 @@ extends Node2D
 ## or call update_car() once per physics step. Each challenge then checks the
 ## completion rule (challenge_tracker.gd). When one is completed, its arrow
 ## disappears, its boulders stay, and challenge_completed fires once.
+##
+## Meteor challenges (task T-035): during a run, the kaiju's meteor attack can
+## place one of the 3 challenge designs (the fitted versions, in the layout
+## data's challenge_designs) anywhere with add_meteor_challenge(). It gets
+## boulders and a green arrow, follows the same completion rule, and on
+## completion sends meteor_challenge_completed (never challenge_completed).
+## can_place_meteor_challenge() says whether a design fits at a spot.
 
 const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
@@ -27,9 +34,14 @@ const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## How thick the invisible wall beyond the map's edge is, in units.
 const EDGE_WALL_THICKNESS := 8.0
+## Spacing (units) of the corridor samples the placement check tests.
+const PLACEMENT_STEP := 0.1
 
-## Fired once when a challenge is completed (XP and the HUD hook in here later).
+## Fired once when a preset challenge is completed (XP and the HUD hook in here later).
 signal challenge_completed(challenge_id: String)
+## Fired once when a meteor challenge (add_meteor_challenge) is completed, with
+## the id add_meteor_challenge returned. Preset challenges never send it.
+signal meteor_challenge_completed(challenge_id: String)
 
 ## Placeholder colours (Visual style: night, dark navy and purple).
 var outside_color := Color(0.03, 0.03, 0.06)
@@ -39,6 +51,9 @@ var building_color := Color(0.22, 0.15, 0.38)
 var building_edge_color := Color(0.45, 0.30, 0.70)
 var boulder_color := Color(0.13, 0.12, 0.15)
 var boulder_edge_color := Color(0.95, 0.45, 0.25)
+## Visual style, Decisions: the arrows of the kaiju's meteor challenges are green.
+var meteor_band_color := Color(0.25, 0.85, 0.35, 0.45)
+var meteor_line_color := Color(0.50, 1.0, 0.55, 1.0)
 
 ## Optional: the car to check the challenges against every physics step.
 var car: Node2D = null
@@ -57,6 +72,15 @@ var boulder_bodies: Array[StaticBody2D] = []
 var trackers: Dictionary = {}
 ## challenge id -> ChallengeArrow node
 var arrows: Dictionary = {}
+var boulders_draw: Node2D
+## Meteor challenges: id -> {id, design, centre, angle, boulders,
+## corridor_width, centre_line}, everything placed, in units.
+var meteor_challenges: Dictionary = {}
+## Meteor challenge ids, in the order they were created.
+var _meteor_ids: Array = []
+## One static body per meteor challenge, for its boulders (layer 1).
+var meteor_boulder_bodies: Array[StaticBody2D] = []
+var _meteor_count := 0
 
 
 static func load_layout(path: String = LAYOUT_PATH) -> Dictionary:
@@ -98,7 +122,7 @@ func _build() -> void:
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
-	var boulders_draw := _BouldersDraw.new()
+	boulders_draw = _BouldersDraw.new()
 	boulders_draw.name = "Boulders"
 	boulders_draw.map = self
 	view_root.add_child(boulders_draw)
@@ -186,8 +210,9 @@ func get_challenge(challenge_id: String) -> Dictionary:
 	return {}
 
 
+## True once a challenge (preset or meteor) has been completed.
 func is_challenge_completed(challenge_id: String) -> bool:
-	return trackers[challenge_id].is_completed
+	return trackers.has(challenge_id) and trackers[challenge_id].is_completed
 
 
 ## Checks every open challenge against the drawn car, given in units (centre)
@@ -201,7 +226,196 @@ func update_car(car_centre_units: Vector2, car_rotation: float) -> void:
 
 func _complete(challenge_id: String) -> void:
 	arrows[challenge_id].visible = false
-	challenge_completed.emit(challenge_id)
+	if meteor_challenges.has(challenge_id):
+		meteor_challenge_completed.emit(challenge_id)
+	else:
+		challenge_completed.emit(challenge_id)
+
+
+# ---- Meteor challenges (task T-035) ---------------------------------------------------------
+
+## The ids of the challenge designs a meteor challenge can use:
+## "single-boulder/arrow-1", "single-boulder/arrow-2", "two-boulders/arrow-1".
+func challenge_design_ids() -> Array:
+	var out := []
+	for d in layout.get("challenge_designs", []):
+		out.append(d.id)
+	return out
+
+
+## One design as in the layout data (unplaced: units from the pattern's centre,
+## rotation 0), or {} for an unknown id.
+func get_challenge_design(design_id: String) -> Dictionary:
+	for d in layout.get("challenge_designs", []):
+		if d.id == design_id:
+			return d
+	return {}
+
+
+## A design placed at `centre` (units from the map's centre) and turned by
+## `angle` (radians, clockwise on screen, like Node2D.rotation): its boulders
+## ({x, y, diameter}) and its arrow's centre line, in map units. {} for an
+## unknown design.
+func place_design(design_id: String, centre: Vector2, angle: float) -> Dictionary:
+	var d := get_challenge_design(design_id)
+	if d.is_empty():
+		return {}
+	var boulders := []
+	for b in d.boulders:
+		var p := Vector2(float(b.x), float(b.y)).rotated(angle) + centre
+		boulders.append({"x": p.x, "y": p.y, "diameter": float(b.diameter)})
+	var line := PackedVector2Array()
+	for p in points_of(d.centre_line):
+		line.append(p.rotated(angle) + centre)
+	return {"boulders": boulders, "centre_line": line, "corridor_width": float(d.corridor_width)}
+
+
+## Every boulder on the map now: the pattern copies' and the meteor challenges'
+## ({x, y, diameter} in units).
+func all_boulders() -> Array:
+	var out := []
+	for copy in layout.pattern_copies:
+		out.append_array(copy.boulders)
+	for id in _meteor_ids:
+		out.append_array(meteor_challenges[id].boulders)
+	return out
+
+
+## The placement check: true when the design fits at `centre` and `angle`
+## (as in place_design): none of its boulders and no part of its corridor
+## overlaps a building, another boulder already on the map, or the map's edge.
+func can_place_meteor_challenge(design_id: String, centre: Vector2, angle: float) -> bool:
+	var placed := place_design(design_id, centre, angle)
+	if placed.is_empty():
+		return false
+	var m := rect_of(layout.map.rect)
+	var buildings := []
+	for b in layout.buildings:
+		buildings.append(rect_of(b))
+	var others := all_boulders()
+	# Circles that must fit: each new boulder, and the corridor as circles of
+	# half its width along the centre line, every PLACEMENT_STEP units.
+	var circles := []
+	for b in placed.boulders:
+		circles.append([Vector2(b.x, b.y), b.diameter / 2.0])
+	var r: float = placed.corridor_width / 2.0
+	for p in _densify(placed.centre_line, PLACEMENT_STEP):
+		circles.append([p, r])
+	for c in circles:
+		var p: Vector2 = c[0]
+		var radius: float = c[1]
+		if p.x - radius < m.position.x or p.x + radius > m.end.x:
+			return false
+		if p.y - radius < m.position.y or p.y + radius > m.end.y:
+			return false
+		for rect in buildings:
+			if _rect_distance(p, rect) < radius:
+				return false
+		for o in others:
+			if p.distance_to(Vector2(float(o.x), float(o.y))) < radius + float(o.diameter) / 2.0:
+				return false
+	return true
+
+
+## Creates a meteor challenge during the run: places the design (see
+## place_design) with its boulders (static bodies on layer 1, like the map's)
+## and its green arrow, and starts checking the completion rule. Returns the new
+## challenge's id ("meteor-1", "meteor-2", ...), or "" for an unknown design.
+## It does not run the placement check; call can_place_meteor_challenge first.
+func add_meteor_challenge(design_id: String, centre: Vector2, angle: float) -> String:
+	var placed := place_design(design_id, centre, angle)
+	if placed.is_empty():
+		push_error("Unknown challenge design: %s" % design_id)
+		return ""
+	_meteor_count += 1
+	var id := "meteor-%d" % _meteor_count
+	var line: PackedVector2Array = placed.centre_line
+	meteor_challenges[id] = {
+		"id": id,
+		"design": design_id,
+		"centre": centre,
+		"angle": angle,
+		"boulders": placed.boulders,
+		"corridor_width": placed.corridor_width,
+		"centre_line": line,
+	}
+	_meteor_ids.append(id)
+
+	var body := StaticBody2D.new()
+	body.name = "Boulders_%s" % id.replace("-", "_")
+	body.set_meta("challenge_id", id)
+	physics_root.add_child(body)
+	var j := 0
+	for b in placed.boulders:
+		var shape := CircleShape2D.new()
+		shape.radius = float(b.diameter) / 2.0 * PX_PER_UNIT
+		var cs := CollisionShape2D.new()
+		cs.name = "Boulder%d" % (j + 1)
+		cs.shape = shape
+		cs.position = Vector2(b.x, b.y) * PX_PER_UNIT
+		body.add_child(cs)
+		j += 1
+	meteor_boulder_bodies.append(body)
+
+	var tracker := ChallengeTracker.new()
+	tracker.setup(id, line, placed.corridor_width)
+	trackers[id] = tracker
+	var arrow := ChallengeArrow.new()
+	arrow.name = "Arrow_%s" % id.replace("-", "_")
+	arrow.centre_line = line
+	arrow.corridor_width = placed.corridor_width
+	arrow.px_per_unit = PX_PER_UNIT
+	arrow.band_color = meteor_band_color
+	arrow.line_color = meteor_line_color
+	arrows_root.add_child(arrow)
+	arrows[id] = arrow
+	boulders_draw.queue_redraw()
+	return id
+
+
+## Meteor challenge ids, in the order they were created (open and completed).
+func meteor_challenge_ids() -> Array:
+	return _meteor_ids.duplicate()
+
+
+## One meteor challenge's record (see add_meteor_challenge), or {}.
+func get_meteor_challenge(challenge_id: String) -> Dictionary:
+	return meteor_challenges.get(challenge_id, {})
+
+
+## True for an id add_meteor_challenge returned.
+func is_meteor_challenge(challenge_id: String) -> bool:
+	return meteor_challenges.has(challenge_id)
+
+
+## Meteor challenges not completed yet.
+func open_meteor_challenge_ids() -> Array:
+	var out := []
+	for id in _meteor_ids:
+		if not trackers[id].is_completed:
+			out.append(id)
+	return out
+
+
+static func _rect_distance(p: Vector2, r: Rect2) -> float:
+	var dx := maxf(maxf(r.position.x - p.x, 0.0), p.x - r.end.x)
+	var dy := maxf(maxf(r.position.y - p.y, 0.0), p.y - r.end.y)
+	return Vector2(dx, dy).length()
+
+
+## The line's points plus extra points so no two are more than `step` apart.
+static func _densify(line: PackedVector2Array, step: float) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	if line.is_empty():
+		return out
+	out.append(line[0])
+	for i in range(1, line.size()):
+		var a := line[i - 1]
+		var b := line[i]
+		var n := maxi(1, ceili(a.distance_to(b) / step))
+		for k in range(1, n + 1):
+			out.append(a.lerp(b, float(k) / float(n)))
+	return out
 
 
 func _physics_process(_delta: float) -> void:
@@ -234,15 +448,14 @@ class _GroundDraw extends Node2D:
 		draw_rect(Rect2(m.position * u, m.size * u), map.building_edge_color, false, 3.0)
 
 
-## Draws every boulder, over the arrows.
+## Draws every boulder (the pattern copies' and the meteor challenges'), over the arrows.
 class _BouldersDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
 		var u: float = map.PX_PER_UNIT
-		for copy in map.layout.pattern_copies:
-			for b in copy.boulders:
-				var c := Vector2(float(b.x), float(b.y)) * u
-				var r := float(b.diameter) / 2.0 * u
-				draw_circle(c, r, map.boulder_color)
-				draw_arc(c, r - 1.0, 0.0, TAU, 32, map.boulder_edge_color, 2.0)
+		for b in map.all_boulders():
+			var c := Vector2(float(b.x), float(b.y)) * u
+			var r := float(b.diameter) / 2.0 * u
+			draw_circle(c, r, map.boulder_color)
+			draw_arc(c, r - 1.0, 0.0, TAU, 32, map.boulder_edge_color, 2.0)

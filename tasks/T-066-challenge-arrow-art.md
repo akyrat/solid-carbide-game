@@ -1,7 +1,7 @@
 ---
 id: T-066
 title: Art: the challenge arrows, blue and green
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art
