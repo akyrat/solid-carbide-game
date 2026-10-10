@@ -1,7 +1,7 @@
 ---
 id: T-035
 title: Challenges created during a run, for the kaiju's meteors
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 epic: level-challenges

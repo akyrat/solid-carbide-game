@@ -1,0 +1,183 @@
+{
+  "pattern": "Two Boulders",
+  "name": "Two Boulders - arrow 1 (fitted)",
+  "sketch": "Two Boulders - arrow 1",
+  "fitted_for": "a straight 8-unit road running along y, the pattern's centre on the road's centre line",
+  "units": "1 unit = the car's width; the car is 1 x 3 units",
+  "origin": "x and y in units from the pattern's centre, x to the right, y down",
+  "width": 24,
+  "height": 24,
+  "legend": {
+    "R": "road",
+    "G": "gravel",
+    "B": "building",
+    ".": "empty"
+  },
+  "rows": [
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB",
+    "BBBBBBBBRRRRRRRRBBBBBBBB"
+  ],
+  "boulders": [
+    {
+      "x": 0.0,
+      "y": -3.5,
+      "diameter": 3.0
+    },
+    {
+      "x": 0.0,
+      "y": 3.5,
+      "diameter": 3.0
+    }
+  ],
+  "arrow": {
+    "points": [
+      [
+        -2.25,
+        -8.5
+      ],
+      [
+        -1.0,
+        -7.5
+      ],
+      [
+        1.0,
+        -6.0
+      ],
+      [
+        2.25,
+        -4.5
+      ],
+      [
+        2.25,
+        -3.0
+      ],
+      [
+        2.25,
+        -1.5
+      ],
+      [
+        1.5,
+        0.0
+      ],
+      [
+        -0.5,
+        0.5
+      ],
+      [
+        -2.0,
+        1.0
+      ],
+      [
+        -2.25,
+        2.0
+      ],
+      [
+        -2.25,
+        3.5
+      ],
+      [
+        -2.25,
+        5.5
+      ],
+      [
+        -2.25,
+        7.0
+      ],
+      [
+        -1.5,
+        8.0
+      ],
+      [
+        0.0,
+        8.5
+      ],
+      [
+        2.25,
+        7.5
+      ],
+      [
+        2.25,
+        6.0
+      ],
+      [
+        2.25,
+        4.0
+      ],
+      [
+        2.25,
+        1.5
+      ],
+      [
+        0.0,
+        0.0
+      ],
+      [
+        -2.0,
+        -1.0
+      ],
+      [
+        -2.25,
+        -2.0
+      ],
+      [
+        -2.25,
+        -3.5
+      ],
+      [
+        -2.25,
+        -5.0
+      ],
+      [
+        -1.5,
+        -6.5
+      ],
+      [
+        2.0,
+        -7.5
+      ],
+      [
+        2.25,
+        -8.0
+      ],
+      [
+        2.25,
+        -8.5
+      ]
+    ],
+    "around_boulders": [
+      {
+        "boulder": 0,
+        "degrees": 408,
+        "direction": "clockwise"
+      },
+      {
+        "boulder": 1,
+        "degrees": 339,
+        "direction": "counter-clockwise"
+      }
+    ],
+    "corridor_width": 3.0
+  }
+}

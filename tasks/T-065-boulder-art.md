@@ -1,7 +1,7 @@
 ---
 id: T-065
 title: Art: crashed meteor boulders
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: ground tiles for the MVP map (roads, crossings, gravel centre)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

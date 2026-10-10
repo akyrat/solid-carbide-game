@@ -475,3 +475,8 @@ Entry format:
   The likes from drifting seconds stay. The combo is the counterbalance Extended narrative's helping-people idea asked for. Build tasks: T-079 (trick detection), T-080 (numbers), T-081 (the combo), T-082 (text), T-083 (counter and popups), T-084 (popup art), T-085 (spawning); T-033 now also sends a collision signal. Long and short GDD updated.
 - Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/enemies.md`, `docs/extended-narrative.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
 - Tasks: T-028 (done), T-079 to T-085 (new), T-033 (updated)
+
+## 2026-10-10: T-038, T-021 and T-019 done
+- Decision or change: the board approved three tasks on QA's pass, without a separate review: T-038 (the run's numbers and the game data convention; the numbers are judged in the balancing playtest), T-021 (the challenge drivability check; the board's three sketches are all drivable, but only with coasting or braking, never with W held) and T-019 (the MVP map: 12 pattern copies, 4 preset challenges, fitted versions of the sketches; the layout can be adjusted after playing). Merged; the fitted challenges still need the drivability check. Unblocked: T-035, T-036, T-056, T-063, T-065, T-080. Long GDD regenerated.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-019, T-021, T-038 (done); T-035, T-036, T-056, T-063, T-065, T-080 (unblocked)

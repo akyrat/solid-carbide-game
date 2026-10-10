@@ -10,9 +10,9 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 
 | Folder | What goes in it |
 | --- | --- |
-| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype |
-| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel |
-| `data/` | Game data as JSON (see "Game data") |
+| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype; `level/` is the MVP map |
+| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges |
+| `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
 | `tests/unit/` | GUT test scripts (`test_*.gd`), in subfolders if you like |
@@ -267,3 +267,32 @@ The drawing passes if any drive passes; the saved line is the quickest passing d
 The drawn car only has to touch the corridor, and it is 3 units long, so its centre can be up to about 3 units from the arrow's centre line. A quick drive can therefore cut inside a loop, close to a boulder, and the driven-line pictures show where it does. The drawn car may also overlap a boulder in the picture: only the 1 by 1 physics body collides.
 
 The code is `tools/challenge_checker.gd` (the check and the picture) and `tools/check_challenge.gd` (the command line); its tests are `tests/unit/test_challenge_checker.gd`, part of the GUT suite.
+
+## MVP map
+
+The city map (task T-019): the 80 by 80 unit city grid, the obstacle pattern copies and the preset challenges, in flat placeholder colours. What it contains and why: `docs/level-design.md`, Content, "MVP map".
+
+**Open it:**
+
+- In the Godot editor: open `scenes/level/mvp_map_overview.tscn` (the whole map, flat top-down) or `scenes/level/mvp_map_overview_iso.tscn` (isometric) and press F6 (Run Current Scene). `scenes/level/mvp_map.tscn` is the map itself, without a camera, for putting into a run.
+- Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/level/mvp_map_overview.tscn screenshots/mvp_map.png 10` (use `..._iso.tscn` for the isometric view).
+
+**Layout data:** `data/level/mvp_map.json` holds the whole map in units from the map's centre (x right, y down): the buildings, an 80 by 80 grid of ground cells (R road, G gravel, B building), the pattern copies with their boulders, and the challenges with their arrow points and centre lines. It and the fitted patterns next to the board's sketches (`docs/level-design/<pattern>/<arrow>.fitted.json` and `.svg`) are made by a script; do not edit them by hand. To change the copies or which ones are challenges, edit `COPIES` and `CHALLENGES` at the top of the script and run it:
+
+```
+python game/tools/build_mvp_map.py
+```
+
+Running it twice gives identical files. Its tests (`game/tools/test_build_mvp_map.py`) run with the Python tool tests and fail if the files on disk are out of date.
+
+**How it is built** (`scripts/level/`):
+
+- `mvp_map.gd`: builds the map from the layout data. Same units and physics as the drift car: 16 pixels per unit, the map's centre on the node's origin. The `Physics` child holds static bodies on collision layer 1 (the buildings and the map's edge in `Walls`, and one body per pattern copy for its boulders), never drawn. The `View` child draws the map, flat or isometric (`set_view("flat" | "iso")`), like the drift prototype.
+- To check the challenges, set the map's `car` to the car node (its position in the same flat world pixels, nose along +x at rotation 0), or call `update_car(centre_in_units, rotation)` once per physics step. When a challenge is completed, its arrow is hidden, its boulders stay, and the map emits `challenge_completed(challenge_id)` once. `challenge_ids()`, `get_challenge(id)` and `is_challenge_completed(id)` give the challenges and their positions.
+- `challenge_tracker.gd`: the completion rule for one challenge (no nodes, so tests run it directly).
+- `challenge_arrow.gd`: the placeholder arrow (a blue band as wide as the corridor, a white start dot and an arrowhead).
+- `map_overview.gd`: the overview scenes, with a camera that fits the whole map.
+
+The car does not collide with the map yet: the drift car's collision response (bouncing off walls and boulders, Drifting, Decisions) is the Driving & Drift Agent's.
+
+**Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges.

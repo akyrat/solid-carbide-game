@@ -1,7 +1,7 @@
 ---
 id: T-036
 title: The run: scene, 8-minute clock, car health, coins, win and loss
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 epic: game-loop
