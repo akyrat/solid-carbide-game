@@ -1,7 +1,7 @@
 ---
 id: T-082
 title: Text: the trick names and the combo counter
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -44,4 +44,14 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Text for T-083, final. Use exactly this text. Lengths are characters as shown to the player.
+
+| Key | Where it appears | Text | Length |
+|---|---|---|---|
+| trick.extended_drift | Small popup from the car, every second of an extended drift | LONG DRIFT! | 11 |
+| trick.360 | Popup from the car when the heading turns a full 360 | FULL 360! | 9 |
+| trick.alternate_drift | Popup from the car on each forward/backward switch in an alternate drift | ALT DRIFT! | 10 |
+| combo.label | Combo counter next to the likes bar; `{multiplier}` is replaced by the current multiplier, e.g. "Combo x2.5" | Combo x{multiplier} | 10 as shown with a one-digit multiplier (e.g. "Combo x2.5"); 11 at "x12.5"; the template itself is 19 because of the placeholder |
+| combo.added | Next to the trick name in the popup; `{amount}` is replaced by what the trick added to the multiplier, e.g. "+0.3" | +{amount} | 5 as shown with e.g. "+0.3"; 8 at most for "+{amount}" with a value up to "+10.5" |
+
+Notes: names are plain and recognisable as the tricks (the board prefers simple labels) and written in capitals with an exclamation mark for the comic look. Nothing contains "XP" or "experience". The multiplier multiplies likes in the game, so the counter says only "Combo".
