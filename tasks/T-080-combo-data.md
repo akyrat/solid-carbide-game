@@ -1,7 +1,7 @@
 ---
 id: T-080
 title: Combo numbers: what each trick adds, the drain, and how the combo raises spawning
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 epic: game-loop
@@ -49,4 +49,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Proposed numbers (all in `game/data/combo.json`, read through `game/scripts/data/combo_data.gd`; the board judges them in playtests):
+
+- Start multiplier 1.0 (no combo). Maximum 6.0, so XP can at most sextuple and spawning stays bounded.
+- Each trick adds: extended drift +0.05 (per second of drift), 360 +0.25 (720 = two), alternate drift +0.5 per switch. That is 1 : 5 : 10, so the order is extended < 360 < alternate.
+- Collision cut 80% and wait 2 s are as decided. The cut applies to the part above the start value: new = 1 + (m - 1) x 0.2. So 5.0 becomes 1.8, and a combo of 1.0 stays 1.0 (never below the start).
+- Drain: after the 2 s wait, 0.5 per second, down to 1.0. A combo of 4.0 left alone takes 6 s to fall to 1.0, which is quick but lets a short pause survive.
+- Spawning: +0.15 on the minion spawn rate for each multiplier point above 1.0, capped at x1.75, with an `enabled` switch (Enemies: it can be switched off). Combo 3.0 gives x1.3, combo 5.0 gives x1.6, combo 6.0 gives x1.75.
+
+Example, a minute of good driving: drifting about 40 s with a trick every 2 to 3 s. Per 10 s: about 6 s of extended drift (+0.30), one 360 (+0.25), two alternate switches (+1.0), total about +1.5 per 10 s, minus almost no drain because tricks keep coming. The multiplier passes 3 after about 13 s, reaches about 5 near 27 s and sits near the 6.0 cap for the rest of the minute, so XP flows at roughly 4 to 6 times and spawning at about x1.6 to x1.75. Plain extended drifting alone (+0.05 per second) only reaches about 1.5 to 2 after a minute, and a collision at 5.0 drops it to 1.8. If the board finds it too easy to hit the cap, lower `max_multiplier` or the alternate add; both are single numbers.
+
+Tests: `game/tests/unit/test_combo_data.gd` (loader, trick order, 80% and 2 s values, cut, cap, drain, spawning). GUT: 106 of 106 pass. Python tool tests: 3 failures/errors, all in `test_build_mvp_map` (KeyError 'boulders'), in the map tool this task does not touch; not caused by this work.
+
+Documents changed: `docs/game-loop-architecture.md` (one line in References only), `game/README.md` (typed readers and tests lines).
