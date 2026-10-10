@@ -1,7 +1,7 @@
 ---
 id: T-054
 title: The main menu: title, Start, Garage, Exit
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-qa | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -45,4 +45,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built the main menu: `game/scenes/menu/main_menu.tscn` and `game/scripts/menu/main_menu.gd`. A dark background, "SOLID CARBIDE" in big cyan letters, a small grey "(work in progress)" under it, and three buttons with the approved text (Start, Garage, Exit). Each button emits `start_pressed`, `garage_pressed` or `exit_pressed`. The project's main scene is unchanged.
+
+- Tests: `game/tests/unit/test_main_menu.gd` (5 tests: title and subtitle, exact button text, each signal). Full GUT suite: 105 of 105 pass.
+- Python tool tests: 3 of 51 fail in `test_build_mvp_map.py` (KeyError 'boulders'). They fail the same way on `master` without this task's changes, so they are not caused by it.
+- Screenshot: `screenshots/main_menu.png` (git-ignored) shows the title, the work-in-progress line and the three buttons.
+- Documents updated: `docs/hud-and-menus.md` (Content only), `game/README.md` (Main menu).
