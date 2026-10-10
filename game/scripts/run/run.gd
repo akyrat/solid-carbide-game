@@ -40,6 +40,11 @@ var car: CharacterBody2D
 var view_root: Node2D
 var car_sprite: Sprite2D
 var camera: Camera2D
+## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
+## slider changes it through set_zoom() (task T-055).
+var zoom := ZOOM
+## The pause screen refreshes a tuning panel when there is one; the run has none.
+var panel: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -121,8 +126,14 @@ func sync_view() -> void:
 	camera.position = drawn
 
 
+## Sets the camera zoom (Unity's orthographic size), as the pause screen's slider does.
+func set_zoom(orthographic_size: float) -> void:
+	zoom = orthographic_size
+	_apply_zoom()
+
+
 ## Godot's zoom is a magnification: visible height in pixels / (2 * size * px per unit).
 func _apply_zoom() -> void:
 	var height := get_viewport().get_visible_rect().size.y
-	var z := height / (2.0 * ZOOM * CarScript.PX_PER_UNIT)
+	var z := height / (2.0 * zoom * CarScript.PX_PER_UNIT)
 	camera.zoom = Vector2(z, z)

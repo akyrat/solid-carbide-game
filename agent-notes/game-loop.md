@@ -28,3 +28,4 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 - T-036: the run's state is a node (`RunState`) that other agents reach through `run.state` or the `run_state` group; they call its functions (damage, coins, kaiju killed) and listen to its signals (boss time, run ended, HUD values). Pausing the run is Godot's tree pause, shared with the pause screen and the level-up choice (UI Agent).
 - Starting a new run rebuilds the map and the car, so anything holding them (enemies, the likes counter) should listen for `world_rebuilt` or `run_started`.
+- T-055: the screen flow (`GameFlow`, the main scene) owns which screen is on show and adds the pause screen to each run, so the run scene stays a plain scene other agents can open on its own. Screens are swapped deferred from `run_ended`, since the run ends inside its own processing.

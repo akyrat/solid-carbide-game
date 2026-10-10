@@ -10,8 +10,8 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 
 | Folder | What goes in it |
 | --- | --- |
-| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype; `level/` is the MVP map; `run/` is the run |
-| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state |
+| `scenes/` | Scenes (`.tscn`). `game/game.tscn` is the main scene (the screen flow); `drift_prototype/` is the drift prototype; `level/` is the MVP map; `run/` is the run |
+| `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state |
 | `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
@@ -189,20 +189,31 @@ It overwrites, in `game/art/placeholders/car/`:
 
 ## Main menu
 
-The main menu (task T-054, UI Agent): `scenes/menu/main_menu.tscn` with its script `scripts/menu/main_menu.gd` (`MainMenu`). What it shows: `docs/hud-and-menus.md`, Content. It is not the project's main scene yet; connecting the screens is task T-055.
+The main menu (task T-054, UI Agent): `scenes/menu/main_menu.tscn` with its script `scripts/menu/main_menu.gd` (`MainMenu`). What it shows: `docs/hud-and-menus.md`, Content. The game opens on it through the screen flow (see "Screen flow").
 
 - **Open it:** in the editor, open the scene and press F6. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/menu/main_menu.tscn screenshots/main_menu.png 20`.
 - **Signals:** `start_pressed`, `garage_pressed`, `exit_pressed`, one per button. The menu does nothing else when a button is pressed.
 - **Tests:** `tests/unit/test_main_menu.gd` (the texts and each signal), part of the GUT suite.
 
+## Screen flow
+
+Task T-055 (Game Loop Agent). `scenes/game/game.tscn` (script `scripts/game/game_flow.gd`, class `GameFlow`) is the project's main scene: pressing F5 in the editor, or `"$GODOT_BIN" --path game`, starts the game on the main menu. The flow is Game loop architecture, Content, "Screen flow".
+
+- **Start** removes the menu and starts a fresh run (`scenes/run/run.tscn`), with the pause screen (Escape) added to the run and the camera zoom read from the saved setting.
+- **When the run ends,** win or loss (`RunState.run_ended`), the run is removed and the main menu comes back straight away, with no message.
+- **Garage** does nothing yet (task T-089 wires it to the garage screen).
+- **Exit** closes the game (`get_tree().quit()`, through `quit_game`, which tests replace).
+- Only one screen is on show at a time, as the only child of `Game`: `game.menu` or `game.run` (the other is null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
+- **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage, Exit, Escape during a run, and the zoom.
+
 ## Drift prototype
 
-The first playable piece (task T-012): the car driving and drifting like the board's Unity prototype, on a flat, empty ground with a grid, with a tuning panel and a flat / isometric view switch. It is the project's main scene. After the board's playtest (task T-029) it differs from the Unity prototype in four defaults (see Drifting, Decisions, 2026-10-08): top speed multiplier 3.0 (top speed 33; Unity 2.5), cruise jump still 11, physics interpolation on, and it starts in the isometric view. Every other driving value is the Unity value.
+The first playable piece (task T-012): the car driving and drifting like the board's Unity prototype, on a flat, empty ground with a grid, with a tuning panel and a flat / isometric view switch. It is no longer the project's main scene (the main menu is, since task T-055); it stays as a tuning tool. After the board's playtest (task T-029) it differs from the Unity prototype in four defaults (see Drifting, Decisions, 2026-10-08): top speed multiplier 3.0 (top speed 33; Unity 2.5), cruise jump still 11, physics interpolation on, and it starts in the isometric view. Every other driving value is the Unity value.
 
 **Run it:**
 
-- From the Godot editor: open the `game/` folder as a project and press F5 (Run Project), or open `scenes/drift_prototype/drift_prototype.tscn` and press F6.
-- Without the editor, from the repo root in Git Bash: `"$GODOT_BIN" --path game` (with `GODOT_BIN` from `.env`). In PowerShell: `& $env:GODOT_BIN --path game` after setting `$env:GODOT_BIN` to the same path.
+- From the Godot editor: open the `game/` folder as a project, open `scenes/drift_prototype/drift_prototype.tscn` and press F6 (Run Current Scene). F5 starts the game on the main menu instead.
+- Without the editor, from the repo root in Git Bash: `"$GODOT_BIN" --path game res://scenes/drift_prototype/drift_prototype.tscn` (with `GODOT_BIN` from `.env`). In PowerShell: `& $env:GODOT_BIN --path game res://scenes/drift_prototype/drift_prototype.tscn` after setting `$env:GODOT_BIN` to the same path.
 
 **Keys:**
 
@@ -418,7 +429,7 @@ The map's static bodies are on collision layer 1, which the drift car (`scripts/
 
 The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drift car together under a camera that follows the car, and holds the run's state: the 8-minute clock, the car's health, the coins collected this run, and win and loss (Game loop architecture, Decisions). The drift prototype stays as it is, as a tuning tool.
 
-**Run it:** in the Godot editor, open `scenes/run/run.tscn` and press F6. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/run/run.tscn screenshots/run.png 30`. Keys: W, S, A and D, as in the drift prototype. Nothing happens on screen when the run ends yet (the screen flow and the HUD are later tasks).
+**Run it:** in the Godot editor, open `scenes/run/run.tscn` and press F6. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/run/run.tscn screenshots/run.png 30`. Keys: W, S, A and D, as in the drift prototype. Run on its own like this, nothing happens on screen when the run ends and Escape does not pause; started from the main menu (see "Screen flow"), Escape pauses and the end of the run goes back to the menu.
 
 **The scene** (`scripts/run/run.gd`, root node `Run`):
 
