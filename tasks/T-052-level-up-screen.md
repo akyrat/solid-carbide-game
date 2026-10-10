@@ -29,7 +29,7 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until T-043 (the choices) and T-051 (their text) are done.**
 
-When the player levels up, the run pauses (T-037) and this screen shows the 2 choices T-043 offers, as plain cards: each with a title, a description and a button to take it (HUD and menus, Decisions). Taking one calls T-043's function, which applies it and resumes the run. Use exactly T-051's text.
+When the player levels up, turn on T-037's level-up pause so the run pauses and this screen shows the 2 choices T-043 offers, as plain cards: each with a title, a description and a button to take it (HUD and menus, Decisions). Taking one calls T-043's function, which applies it and resumes the run. Use exactly T-051's text.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 

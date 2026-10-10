@@ -1,16 +1,16 @@
 ---
 id: T-055
 title: Screen flow: main menu, run, garage, back to the menu
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 epic: game-loop
 milestone: mvp
 user_facing_text: no
 changes_visuals: no
-depends_on: [T-054, T-058, T-036]
+depends_on: [T-054, T-036]
 documents_affected: [docs/game-loop-architecture.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, tasks/T-036-run-scene-and-state.md, tasks/T-054-main-menu.md, tasks/T-058-garage-screen.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, tasks/T-036-run-scene-and-state.md, tasks/T-054-main-menu.md, game/README.md]
 files_expected_to_change: [the scene flow code, game/project.godot (main scene), tests, docs/game-loop-architecture.md, game/README.md]
 model: opus
 qa_rounds: 0
@@ -27,13 +27,13 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-054 (the main menu), T-058 (the garage screen) and T-036 (the run) are done.**
+T-054 (the main menu) and T-036 (the run) are done. The garage screen isn't built yet: the board wants the bare playable loop first (2026-10-10), so the Garage button is left unwired here and wired in T-089.
 
 Connect the screens as Game loop architecture, Decisions describes:
 - The game opens on the main menu. Make it the project's main scene. The drift prototype stays available as a tool; say how to open it in `game/README.md`.
 - **Start** begins a fresh run (T-036).
 - When a run ends, win or loss, the game goes straight back to the main menu, with no message.
-- **Garage** opens the garage screen (T-058). Its back button returns to the main menu.
+- **Garage** does nothing yet (T-089 wires it to the garage screen later).
 - **Exit** closes the game.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
@@ -43,7 +43,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A test starts the game and shows the main menu is the first screen (QA: pass / fail)
 - [ ] A test presses Start and shows a fresh run begins (QA: pass / fail)
 - [ ] A test ends a run as a win and as a loss and shows both return to the main menu (QA: pass / fail)
-- [ ] A test opens the garage and goes back, and shows the main menu again (QA: pass / fail)
+- [ ] A test presses Garage and shows the main menu stays as it is, with no error (QA: pass / fail)
 - [ ] `game/project.godot`'s main scene is the main menu, and `game/README.md` says how to open the drift prototype (QA: pass / fail)
 - [ ] `docs/game-loop-architecture.md` describes the flow in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)

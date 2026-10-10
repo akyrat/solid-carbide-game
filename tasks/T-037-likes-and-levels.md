@@ -33,7 +33,7 @@ XP is shown to players as **likes** (Extended narrative, Decisions); in code and
 
 1. **From challenges:**
    - When the map's "challenge completed" signal fires (T-019), add that level's XP for a challenge, from T-038's data.
-   - Send a "score" signal with the amount gained. The HUD's score flash will show it (the score is the likes gained).
+   - Send a "score" signal with the amount gained. The challenge popup from the car (T-092) will show it (the score is the likes gained).
    - Game loop architecture says completed challenges give XP, with no exception, so the kaiju's meteor challenges (T-035's signal) give XP the same way.
 2. **From drifting:**
    - "Drifting" uses the Unity prototype's definition: W or S held together with A or D (report, section 3). The car from T-012 already knows its drift state.
@@ -43,10 +43,9 @@ XP is shown to players as **likes** (Extended narrative, Decisions); in code and
    - When XP reaches the current level's threshold, the player levels up.
    - Leftover XP and how thresholds grow follow T-038's data.
    - Send a "level up" signal with the new level.
-4. **Level-up pauses the run** until the player has made the weapon choice:
-   - The clock stops, and the car and enemies freeze.
-   - The level-up screen (UI) and applying the choice (Weapon Behavior) are later tasks. This task provides a public function to call when the choice is made, which resumes the run.
-   - If two level-ups happen at once, the second waits until the first choice is made.
+4. **Level-up and the weapon choice:** in the end a level-up pauses the run until the player has made the weapon choice. That screen (T-052) doesn't exist yet, and the board wants to playtest likes and levels before it (2026-10-10). So:
+   - Provide the pause: a switch, off for now, that makes a level-up stop the clock and freeze the car until a public "choice made" function is called. If two level-ups happen at once, the second waits for the first choice. T-052 turns the switch on.
+   - While the switch is off, a level-up just raises the level and the run carries on.
 5. **Values for the HUD:** current XP, the current level's threshold and the level, readable at any time, with a signal when they change.
 6. **Reset** with every new run (T-036).
 
@@ -58,8 +57,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 - [ ] A test fires the map's "challenge completed" signal at level 1 and shows the XP bar fills, the level becomes 2, the "level up" signal fires once and the "score" signal carries the XP gained (QA: pass / fail)
 - [ ] A test holds a drift for 0.9 seconds and shows no XP, then holds one for 3 seconds and shows exactly 3 seconds' worth of XP (QA: pass / fail)
-- [ ] A test shows the run is paused after a level-up (the clock doesn't advance) and resumes after the choice-made function is called (QA: pass / fail)
-- [ ] A test with two level-ups at once shows the second waits for the first choice (QA: pass / fail)
+- [ ] A test with the pause switch off shows a level-up raises the level and the clock keeps running (QA: pass / fail)
+- [ ] A test with the switch on shows the run is paused after a level-up and resumes after the choice-made function is called, and two level-ups at once wait one after the other (QA: pass / fail)
 - [ ] A test shows a completed meteor challenge (T-035's signal, simulated) gives the same XP as a preset challenge (QA: pass / fail)
 - [ ] A test shows XP and level reset when a new run starts (QA: pass / fail)
 - [ ] `game/README.md` documents the new signals and functions. `docs/game-loop-architecture.md` describes them in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)

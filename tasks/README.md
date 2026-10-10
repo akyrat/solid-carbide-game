@@ -25,6 +25,16 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 - **When the board marks the task done,** the Project Lead merges the branch into `master`, then removes the worktree and deletes the branch.
 - **Documentation-only work** (for example the Project Lead's own document edits) is committed straight to `master`.
 
+## Building in playable steps
+
+The board's way of building the game (2026-10-10): always aim for the smallest playable version of the work, playtest it, then build on it. The Project Lead orders and splits tasks so each wave ends in something the board can play. The current steps toward the MVP:
+
+1. **Bare loop:** the main menu, Start, the run on the MVP map with the timer running down, pause, back to the menu (Garage not wired yet).
+2. **Tricks:** trick popups from the car, so the board can check and tune the tricks.
+3. **Likes:** the likes bar and the level going up from drifting (no level-up screen yet).
+4. **Combo and challenges:** the combo stacking on likes; challenges giving likes, with a popup from the car; the fitted challenges checked as drivable and fun.
+5. **Minions,** then **the weapons,** then the kaiju, the garage, sound and art.
+
 ## Epics and milestones
 
 Every task file has an `epic` and a `milestone` in its header.
