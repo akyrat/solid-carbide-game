@@ -31,6 +31,8 @@ Linked to T-008, where the Driving & Drift Agent builds the boost with a placeho
 
 To be written when the board's description is in. They will cover: the frames exist with their record files, Godot imports them, and the frame size and count match what T-008's effect expects.
 
+The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+
 ## Result notes
 
 Written by the agent when it finishes.

@@ -56,7 +56,7 @@ What each milestone includes is decided in the game area docs (for example, how 
 
 ## The board's review
 
-When a task needs the board to look at, read, listen to or play something, its task file says so in one line starting `The board's review:`. A line starting `Board review files:` lists the files to open, relative to the task's folder. The task board shows both, with the agent's and QA's result notes, when the board clicks a ticket.
+When a task needs the board to look at, read, listen to or play something, its task file says so in one line starting `The board's review:`. **Every Asset Generation task gets the board's review** (board, 2026-10-10): the board stays in control of how the assets look and their style. Until an asset's art task is done, the game uses placeholders. A line starting `Board review files:` lists the files to open, relative to the task's folder. The task board shows both, with the agent's and QA's result notes, when the board clicks a ticket.
 
 ## Models
 

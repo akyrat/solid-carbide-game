@@ -39,6 +39,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 To be finalised when the task is unblocked. They will cover: the image and its record (prompts, references, settings, every call with its cost, balance before and after), one round of generation, the README showing it under the title, and the art following Visual style (palette, pixel style, no real logos).
 
+The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+
 ## Result notes
 
 Written by the agent when it finishes.

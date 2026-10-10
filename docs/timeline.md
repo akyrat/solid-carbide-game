@@ -505,3 +505,8 @@ Entry format:
 - Decision or change: the board is happy with the task board page as it is (lanes, game-area bubbles, "Your review" with files and notes). Marked done; it was approved by the board directly rather than through QA.
 - Documents touched: none
 - Tasks: T-032 (done)
+
+## 2026-10-10: Every art task is reviewed by the board
+- Decision or change: anything the Asset Generation Agent makes needs the board's review, so the board stays in control of how the assets look and their style (`tasks/README.md`, "The board's review"). Every art task now says so, T-009 and T-027 included. Until each asset's art task is done, the game uses placeholders.
+- Documents touched: `tasks/README.md`
+- Tasks: T-009, T-027 (review line added)
