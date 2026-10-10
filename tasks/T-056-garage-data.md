@@ -45,8 +45,6 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The result notes have the table and the reasoning, and `docs/garage-design.md` points to the data in References, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: the numbers are judged in playtests.
-
 ## Result notes
 
 Written by the agent when it finishes.
