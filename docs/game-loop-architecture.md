@@ -75,7 +75,19 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
 
-Starting a new run resets the map, the car and the state. Returning to the main menu when a run ends comes with the screen flow, in a later task.
+Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
+
+### Screen flow
+
+One screen is on show at a time (task T-055; how to use it: [game/README.md](../game/README.md), section "Screen flow"):
+
+- The game opens on the main menu (HUD and menus, Content).
+- **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
+- When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
+- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Not wired yet: until the garage screen exists, the button does nothing (task T-089).
+- **Exit** closes the game.
+
+The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 
 ## Open questions
 
