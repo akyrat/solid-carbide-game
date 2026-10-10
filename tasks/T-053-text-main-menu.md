@@ -46,9 +46,9 @@ The board's review: read the text and judge whether it has the right voice.
 
 | key | where it appears | text | length |
 |---|---|---|---|
-| menu.start | Main menu button that begins a run | Go Live | 7 |
-| menu.garage | Main menu button that opens the Garage | Redgull Garage | 14 |
-| menu.quit | Main menu button that quits the game | Log Off | 7 |
+| menu.start | Main menu button that begins a run | Start | 5 |
+| menu.garage | Main menu button that opens the Garage | Garage | 6 |
+| menu.quit | Main menu button that quits the game | Exit | 4 |
 
 Notes: "Go Live" fits the livestream premise, and a run is a broadcast. "Redgull Garage" names where Redgull funds the car's upgrades. "Log Off" is the social-media way to leave. No text mentions XP or experience.
 
@@ -59,3 +59,7 @@ Notes: "Go Live" fits the livestream premise, and a run is a broadcast. "Redgull
 - **Criterion 3 (no "XP" or "experience"): pass.** Searched the table texts; neither appears. (The notes line saying so is not player text.)
 - Diff versus master: only tasks/T-053-text-main-menu.md changed.
 - Voice review is the board's and was not judged.
+
+### Board review
+
+The board, 2026-10-10: keep the main menu simple. The final text is **Start**, **Garage** and **Exit** (the table above is updated; the agent's first version was Go Live, Redgull Garage, Log Off). Approved.
