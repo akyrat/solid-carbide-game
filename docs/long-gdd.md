@@ -303,6 +303,10 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 - Both MVP weapons copy the behaviour of the matching weapons in the board's Unity prototype (its starting gun and its Flame Exhaust): targeting, firing, the flame's shape and what turns it on. A report on how they work there is task T-022.
 - Their upgrades also copy the Unity prototype's: the same upgrade tiers and what each tier changes.
 - **Level-up flow in the MVP:** each level-up offers 2 choices and the player takes 1. The player starts every run with the gun, so the first level-up offers "get the flamethrower" or "upgrade the gun"; once the player has both, each level-up offers "upgrade the gun" or "upgrade the flamethrower".
+- A weapon at its last upgrade tier is no longer offered: the level-up offers the other weapon's next tier instead, and if both are at their last tier, the level-up is skipped and the run goes on.
+- Where the Unity prototype's weapons behave in unexpected ways (Unity weapons report, section 7), the MVP copies them, with three fixes:
+  - **Copied:** the flame uses the gun's damage (2), not its own (1); the bullet's hit circle stays 2 units across, larger than it is drawn; the gun looks for a target only once per firing interval; the weapons never push enemies back; the flame's steering tier makes the car steer 20% faster, compounding; the flame's tier 5 only makes the burn flash last longer; reversing while steering counts as drifting, so the flame comes on.
+  - **Fixed:** damage is not rounded to whole numbers, so the flame's "hotter flame" tier always adds damage; the flame's area is the same size whichever way the car faces; a bullet that misses is removed once it has flown past the gun's range.
 
 ### References
 
@@ -429,7 +433,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
 | `level-design.md` | `6f73fa5d924ebf05c818659605cb63135fe781cfa280a9ce5e8a7de20bd4a0fb` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
-| `weapons.md` | `b0b46ed322a604e43a9cf08d30079301606c3bd6df5502302bfcdb1a59e06a97` |
+| `weapons.md` | `7f6c153cbb21a1a6ce542dabf2c08d3c30e140423455ca853a98bc5e888ab732` |
 | `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
 | `visual-style.md` | `fc2e1c4ed2ee60aadccfba9c90ac8d1255713c69f4886101e933405a38db418e` |
 | `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |

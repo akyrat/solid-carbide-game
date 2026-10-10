@@ -480,3 +480,8 @@ Entry format:
 - Decision or change: the board approved three tasks on QA's pass, without a separate review: T-038 (the run's numbers and the game data convention; the numbers are judged in the balancing playtest), T-021 (the challenge drivability check; the board's three sketches are all drivable, but only with coasting or braking, never with W held) and T-019 (the MVP map: 12 pattern copies, 4 preset challenges, fitted versions of the sketches; the layout can be adjusted after playing). Merged; the fitted challenges still need the drivability check. Unblocked: T-035, T-036, T-056, T-063, T-065, T-080. Long GDD regenerated.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-019, T-021, T-038 (done); T-035, T-036, T-056, T-063, T-065, T-080 (unblocked)
+
+## 2026-10-10: The Unity weapons' quirks: copy, with three fixes
+- Decision or change: the board answered the Unity weapons report's 11 open questions with the Project Lead's suggestions. The MVP copies the prototype's weapons as they are, including their quirks (the flame using the gun's damage, the large bullet hit circle, the gun checking for targets once per interval, no knockback, the compounding steering tier, the visual-only tier 5, reversing counting as drifting), with three fixes: no rounding of damage, a flame area that doesn't grow on diagonals, and missed bullets removed past the gun's range. A weapon at its last tier is no longer offered; if both are, the level-up is skipped.
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-022, T-040, T-041, T-042, T-043
