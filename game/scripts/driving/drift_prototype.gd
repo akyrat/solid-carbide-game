@@ -7,11 +7,16 @@ extends Node2D
 ## flat or in a 2:1 isometric projection; switching only changes the drawing.
 ## The camera sits exactly on the drawn car, never rotates and has no smoothing,
 ## like the Unity camera (report section 7).
+##
+## A test room (task T-033: a few walls and a boulder, test_room.gd) lets the
+## board try the car's bounce. Its static bodies are in PhysicsWorld; the View
+## draws them.
 
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const GroundGridScript := preload("res://scripts/driving/ground_grid.gd")
 const TuningPanelScript := preload("res://scripts/driving/tuning_panel.gd")
+const TestRoomScript := preload("res://scripts/driving/test_room.gd")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
@@ -32,6 +37,7 @@ var physics_world: Node2D
 var car: CharacterBody2D
 var view_root: Node2D
 var ground: Node2D
+var test_room: Node2D
 var car_sprite: Sprite2D
 var camera: Camera2D
 var panel: CanvasLayer
@@ -55,6 +61,10 @@ func _ready() -> void:
 	ground.name = "Ground"
 	ground.px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(ground)
+	test_room = TestRoomScript.new()
+	test_room.name = "TestRoom"
+	view_root.add_child(test_room)
+	test_room.build_bodies(physics_world)
 	car_sprite = CarSpriteScript.new()
 	car_sprite.name = "CarSprite"
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
@@ -115,6 +125,7 @@ func view_transform() -> Transform2D:
 func set_view(v: String) -> void:
 	view = v
 	ground.transform = view_transform()
+	test_room.transform = view_transform()
 	car_sprite.use_sheet(v)
 	sync_view()
 	car_sprite.reset_physics_interpolation()

@@ -217,20 +217,64 @@ The first playable piece (task T-012): the car driving and drifting like the boa
 
 There is no jump, no arrow-key steering and no gamepad.
 
-**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4) and one slider per handling setting. Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
+**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4, wall bounce 0.25), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4), one slider per handling setting and, in a "Collisions" group at the bottom, the wall bounce slider (task T-033: 0 to 1, proposed default 0.25; see "Car collisions"). Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
+
+**Test room** (task T-033): a few walls and one boulder (3 units across) around the start point, so the board can try the bounce: a closed square of walls 40 units from the start on every side, an L-shaped wall to the right of the start (its corner about 25 units right and 25 up) and the boulder 12 units right and 12 up. Placeholder colours, the MVP map's. The real map is the MVP map (below).
 
 **How it is built** (`scripts/driving/`):
 
 - `car_model.gd`: the movement, step by step as in the Unity prototype report, section 4, in units (1 unit = the car's width). No nodes, so tests run it directly. Its `cruise_jump(from_speed, w_just_pressed)` signal fires when W makes the car jump up to cruise speed (for the boost effect, task T-008).
 - `car_tuning.gd`: the handling values (defaults = the Unity values except top speed multiplier 3.0; the `UNITY` constant keeps the Unity values) and the slider list with labels, ranges and tooltips.
-- `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step.
+- `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step. It also handles collisions, the `hit_obstacle` signal and knockback (see "Car collisions").
 - `drift_prototype.gd`: builds the scene. The physics world is never drawn; the `View` node draws the ground grid and the car sprite either flat or through the 2:1 isometric projection screen = (x - y, (x + y) / 2), and places the camera exactly on the drawn car (no rotation, no smoothing). Switching views changes only the drawing.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
 - `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
+- `test_room.gd`: the test room's walls and boulder (static bodies on layer 1, under `PhysicsWorld`) and their drawing.
 
 **Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the sheets are drawn at scale 1. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
 
-**Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) and `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`.
+**Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite) and `tests/unit/test_car_collisions.gd` (bounce, enemies, the hit signal, knockback, layers, the test room and the bounce slider), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`. `res://tests/fixtures/drift_prototype_room_flat.tscn` and `..._iso.tscn` drive the car into the test boulder, zoomed out to show the walls (40 frames is enough).
+
+## Car collisions
+
+Task T-033. What the car does when it hits things is decided in Drifting, Decisions: it bounces slightly off walls (buildings and the map's edge) and boulders, and does not bounce off enemies, which only damage it. Minions and meteors knock it back (Enemies, Decisions).
+
+### Collision layers
+
+Every task that adds physics bodies uses these layers. They are named in `project.godot` (Project Settings, Layer Names, 2D Physics), and `scripts/driving/car.gd` has them as constants (`LAYER_OBSTACLES`, `LAYER_CAR`, `LAYER_ENEMIES`, `LAYER_PICKUPS`).
+
+| Layer | Bit value | Name | What is on it | Set up as |
+| --- | --- | --- | --- | --- |
+| 1 | 1 | `obstacles` | Walls, buildings, the map's edge and boulders: everything the car bounces off. The MVP map's `Walls` and `Boulders_*` bodies, and the drift prototype's test room | `StaticBody2D` on layer 1, mask none |
+| 2 | 2 | `car` | The player's car (`car.gd`) | Layer 2, mask 1: it collides only with obstacles |
+| 3 | 4 | `enemies` | Minions, the kaiju, meteors | Layer 3. Their mask must not include layer 2, so they and the car never push each other. To touch or damage the car, use an `Area2D` whose mask includes layer 2 |
+| 4 | 8 | `pickups` | Coins and other pickups | `Area2D` on layer 4 with mask 2, to notice the car driving over it |
+
+Walls and boulders share layer 1 because the MVP map builds them that way and the car treats them the same. To tell them apart (for example in the combo), use the body `hit_obstacle` reports: on the MVP map, `map.walls` is the buildings and the edge, and `map.boulder_bodies` the boulders. Weapons and their projectiles have no layer yet; the weapon tasks add one (the next free number) to this table.
+
+### Bounce
+
+When the car's 1 by 1 unit body hits anything on layer 1, it stops against it for that physics step, and the part of its velocity going into the surface is reversed and scaled by the wall bounce setting (`tuning.wall_bounce`, the tuning panel's "Wall bounce" slider). The part along the surface is kept, so after a glancing hit the car carries on along the wall while being pushed off it. 0 = no bounce (it slides along), 1 = it bounces back as fast as it hit. The proposed default is **0.25**: a head-on hit at cruise speed (11 units/s) bounces back at 2.75 units/s, one at top speed (33) at 8.25. The board judges it in a playtest. The Unity prototype has no bounce (report, section 3).
+
+After the bounce the driving model carries on as usual. Holding W with the nose against the wall snaps the car back to cruise speed into it on the next step, so it stays pressed against the wall; let go of W, reverse or steer away to leave it. The drawn car (1 by 3 units) may overlap a wall or boulder: only the body collides.
+
+### Collision signal
+
+```
+signal hit_obstacle(collider: Object, shape_index: int, normal: Vector2, impact_speed: float)
+```
+
+The car emits it once per hit on anything on layer 1, for the combo (task T-081). `collider` is the `StaticBody2D` hit and `shape_index` which of its shapes (which building or boulder); `normal` is the surface normal, pointing out of the obstacle towards the car; `impact_speed` is the car's speed into the surface in units per second, before the bounce. Staying pressed against the same obstacle is one hit: it counts again only once the car has been more than 0.25 units away from it (`REARM_GAP_UNITS`).
+
+### Knockback
+
+```
+func apply_knockback(direction: Vector2, strength: float) -> void
+```
+
+Call it on the car node to knock the car back, for example for a minion hit or a meteor impact (Enemy Behavior Agent; the strengths are game data). `direction` is in the flat physics world (x right, y down) and does not need to be normalized; a zero direction is ignored. `strength` is a speed in units per second. On the car's next physics step, after the driving model's own update, `direction.normalized() * strength` is added to the car's velocity. Several calls before one step add up. `pending_knockback()` returns what is waiting.
+
+From then on the push is ordinary speed: the part across the nose fades with the sideways grip (like a drift), the part along the nose changes the forward speed (with W held and the nose against the push, W snaps it back to cruise speed on the step after, as after a bounce), and a push into a wall bounces off it and emits `hit_obstacle`.
 
 ## Pause screen
 
@@ -326,7 +370,7 @@ Running it twice gives identical files. Its tests (`game/tools/test_build_mvp_ma
 
 The designs come from `challenge_designs` in `data/level/mvp_map.json` (the fitted versions, unplaced), written by `build_mvp_map.py`. Screenshot of a meteor challenge beside a preset one: `bash game/tools/screenshot.sh res://tests/fixtures/meteor_challenge_demo.tscn screenshots/meteor_challenge.png 10` (`..._iso.tscn` for isometric).
 
-The car does not collide with the map yet: the drift car's collision response (bouncing off walls and boulders, Drifting, Decisions) is the Driving & Drift Agent's.
+The map's static bodies are on collision layer 1, which the drift car (`scripts/driving/car.gd`) collides with and bounces off (see "Car collisions"). Putting the car into the map is for the run's scene.
 
 **Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges. `tests/unit/test_meteor_challenges.gd`: creating each design at a position and angle, completing meteor challenges (one or several) and their signal, preset challenges not sending it, and the placement check.
 

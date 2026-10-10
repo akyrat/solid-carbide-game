@@ -35,6 +35,10 @@ var drift_speed_reference := 20.0
 var drift_enter_rate := 12.0
 ## How fast the drift amount falls to 0 (per s).
 var drift_exit_rate := 3.0
+## How much of its speed into a wall or boulder the car keeps, bouncing back
+## off it (0 = no bounce, it slides along; 1 = full bounce). Not from the Unity
+## prototype (no bounce there); proposed for the board's playtest (task T-033).
+var wall_bounce := 0.25
 
 ## The Unity prototype's values, by setting key (report section 5).
 const UNITY := {
@@ -107,6 +111,18 @@ const SETTINGS := [
 ]
 
 
+## Collision settings (task T-033). Not part of the Unity prototype, so they are
+## kept apart from SETTINGS and have no Unity value; the tuning panel shows them
+## in their own group. Same fields as SETTINGS, plus "unity_note".
+const COLLISION_SETTINGS := [
+	{"key": "wall_bounce", "name": "Wall bounce", "unit": "x impact speed",
+		"label": "How hard the car bounces off walls and boulders",
+		"tip": "Share of the speed going into a wall, building or boulder that the car keeps, bouncing back off it. The speed along the wall is kept. 0 = no bounce (it slides along), 1 = it bounces back as fast as it hit. Game default 0.25.",
+		"unity_note": "Unity: no bounce, it stops against the wall (0)",
+		"min": 0.0, "max": 1.0, "step": 0.01},
+]
+
+
 ## Top speed in units/s.
 func top_speed() -> float:
 	return forward_speed * top_speed_multiplier
@@ -136,7 +152,7 @@ static func unity_values() -> Dictionary:
 static func default_values() -> Dictionary:
 	var fresh = load("res://scripts/driving/car_tuning.gd").new()
 	var out := {}
-	for s in SETTINGS:
+	for s in SETTINGS + COLLISION_SETTINGS:
 		out[s.key] = fresh.get(s.key)
 	return out
 

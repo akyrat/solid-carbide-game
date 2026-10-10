@@ -525,3 +525,8 @@ Entry format:
 - Decision or change: the board approved the combo text (T-082: LONG DRIFT!, FULL 360!, ALT DRIFT!, Combo x{multiplier}, +{amount}). Merged on QA's pass: T-015 (Escape pauses the game; the pause screen with the approved text and the camera zoom slider, saved between sessions) and T-036 (the run: the MVP map and the car, the 8-minute clock with boss time at 1:00 left, car health from the run data, coins, win and loss; the car starts in the centre of the map). The run is drawn isometric only. Unblocked: T-037 (likes and levels) and others; T-016 stays blocked until the board describes the full pause menu. T-087 (the map-generator fix) started.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-015, T-036, T-082 (done); T-037 and others (unblocked); T-087 (started)
+
+## 2026-10-10: T-033 and T-035 done; meteor challenges avoid other challenges
+- Decision or change: the board drove T-033 (car collisions) and approved it with the bounce strength of 0.25; the car staying pressed against a wall and a nose-on knockback being cancelled while W is held are fine (Drifting, Decisions). T-035 (challenges created during a run) merged on QA's pass. The board decided a meteor challenge must never land on another challenge's arrow corridor (Level design, Decisions); fix task T-088. Merged: T-033, T-035.
+- Documents touched: `docs/drifting.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-033, T-035 (done); T-088 (new)

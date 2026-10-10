@@ -110,6 +110,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back.
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way.
 - The car does not bounce off enemies: they only damage it.
+- The bounce off walls and boulders sends the car back at a quarter of the speed it hit with (bounce strength 0.25). While W is held the car stays pressed against the wall, and a knockback against the car's nose is cancelled, because W keeps snapping the car back to cruise speed; the board is fine with both.
 - The MVP has three **tricks**, all done with the car's existing driving (what tricks are worth: Game loop architecture, Decisions):
   - **Extended drift:** every second of drifting counts as one low-value trick.
   - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
@@ -158,6 +159,7 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 - **Boost signal:** the car signals each time W makes it jump up to cruise speed, with the speed before the jump and whether W was just pressed. During a held W + A or W + D drift the slide pulls the forward speed under cruise speed, so the jump happens on most steps of the drift too (with W not just pressed).
 - **Scale and camera:** 16 pixels per unit, the scale of the placeholder car sheets. The camera sits exactly on the drawn car, never rotates and has no smoothing or look-ahead. Its zoom is Unity's orthographic size, half the visible height in units.
 - **View switch:** the physics always runs in the flat top-down world. V, or the panel's "Isometric view" toggle, switches only the drawing: flat top-down with the flat placeholder sheet, or a standard 2:1 isometric projection (screen = (x - y, (x + y) / 2)) of the same world with the isometric sheet. It can be switched mid-drive; the car's position, speed and rotation do not change.
+- **Collisions (task T-033):** the car's 1 by 1 unit body bounces off walls, buildings, the map's edge and boulders, and drives through enemies without bouncing. How hard it bounces is a tuning panel slider, "Wall bounce", in a "Collisions" group at the bottom of the panel: the share of its speed into the wall the car keeps, bouncing back (0 = no bounce, 1 = full bounce). The proposed default is 0.25, for the board to judge in a playtest; the Unity prototype has no bounce. The prototype has a test room for trying it: a few walls and a boulder 3 units across. The car also signals each hit (for the combo) and can be knocked back by other code (minions, meteors). Details, the collision layers and the knockback function: `game/README.md`, "Car collisions".
 - **Tuning panel (Tab):** one slider per setting in the report's section 8 list except off-road damping and the physics rate (cruise speed, top speed multiplier, time to top speed, coast slowdown, turn speed, steering sensitivity, base sideways grip, drift grip at low and high speed, drift speed reference, drift enter and exit rates), plus the camera zoom (6 to 20, starting at 14.4). Each slider starts at the Unity value, applies live and has a tooltip. One button resets everything to the Unity values. A "Physics interpolation" toggle (off, as in Unity) smooths the motion between physics steps. A readout shows speed, drift angle and drift amount. Nothing is saved between runs.
 
 ### References
@@ -203,6 +205,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - When a pattern with several possible arrows becomes a challenge, the Level/Challenge Design Agent picks one of its arrows.
 - The board draws each challenge as its own drawing in Crash City Grid (References): one drawing per arrow path, kept in a folder per obstacle pattern. Every drawing in a pattern's folder has the same boulders; only the arrow differs.
 - The board's drawings are rough sketches of each challenge's general shape, not exact layouts. The Level/Challenge Design Agent makes them fit the map (for example the 8-unit roads), with whatever reasonable adjustments that needs (size, spacing, how tight the loops are), while keeping the shape: how many boulders, which way the arrow goes around each one, and the overall path (a loop, a figure-eight). The Driving & Drift Agent's check confirms the fitted versions can be driven.
+- A challenge the kaiju's meteors create never lands on another challenge: its boulders and its arrow corridor must not overlap any other challenge's arrow corridor, preset or meteor.
 
 ### Content
 
@@ -493,8 +496,8 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `42970d788a7ebb37c25c9141f442a6bec3748a843c0c416354b07708f7c6e6dc` |
-| `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
-| `level-design.md` | `3a6351ae9f6c9b81e9c3d63fdb2d96acbc468d532f20570d9ab60f395b192506` |
+| `drifting.md` | `626622dcbdec58c67cc9ccef11ae6ad85fbc9f9642dd57bf1bbcb1ccb0bf913f` |
+| `level-design.md` | `e729faa792102fbfec5216de834fc6a2813d865622cb39b01a7e145c765cc766` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
