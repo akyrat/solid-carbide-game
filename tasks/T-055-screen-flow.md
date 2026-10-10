@@ -34,7 +34,7 @@ Connect the screens as Game loop architecture, Decisions describes:
 - **Start** begins a fresh run (T-036).
 - When a run ends, win or loss, the game goes straight back to the main menu, with no message.
 - **Garage** opens the garage screen (T-058). Its back button returns to the main menu.
-- **Quit** closes the game.
+- **Exit** closes the game.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 

@@ -40,7 +40,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions).
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer.
 - Between runs, coins are spent in the Garage on permanent car upgrades that improve the car in the next run (which upgrades: Garage design, Decisions).
-- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Quit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP.
+- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Exit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP.
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 
@@ -68,7 +68,7 @@ flowchart TD
     drive -- HP reaches 0 --> lost
     won --> recap[Recap screen: kills per enemy type and other stats, final release only]
     lost --> recap
-    recap --> menu[Main menu: Start, Garage, Quit]
+    recap --> menu[Main menu: Start, Garage, Exit]
     menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
     menu -- Start --> start
 ```
@@ -452,7 +452,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `6af6a90f739f2088837fac34a09790a77aff488744396fabd05f30a9a648eeba` |
+| `game-loop-architecture.md` | `c535844d0956ec8428a4489634ecb2220bafe9059c01209f9b4f32d461118416` |
 | `drifting.md` | `6e59fb1a63439006ba2cbdf113324fc5384827cdf199918475e5cc8bcba2cde0` |
 | `level-design.md` | `6f73fa5d924ebf05c818659605cb63135fe781cfa280a9ce5e8a7de20bd4a0fb` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |

@@ -1,6 +1,6 @@
 ---
 id: T-054
-title: The main menu: title, Start, Garage, Quit
+title: The main menu: title, Start, Garage, Exit
 status: blocked
 from: project-lead
 to: ui
@@ -31,7 +31,7 @@ A task is not done until every document listed in documents_affected has been up
 
 Build the main menu (HUD and menus and Game loop architecture, Decisions), kept plain for the MVP:
 - The title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" under it.
-- Three buttons, with T-053's text: Start, Garage and Quit. Each sends a signal; what happens next is the screen flow (T-055).
+- Three buttons, with T-053's text: Start, Garage and Exit. Each sends a signal; what happens next is the screen flow (T-055).
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 

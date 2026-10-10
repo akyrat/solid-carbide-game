@@ -30,7 +30,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: completing dri
 - At the 7-minute mark the kaiju spawns. It moves slowly toward the player, deals contact damage, and can only be damaged during a window opened by completing a challenge (how: Enemies, Decisions). (2026-10-07)
 - Win: defeat the kaiju within the final 60 seconds. Loss: the car's HP reaches 0 at any point, or the kaiju survives the timer. (2026-10-07)
 - Between runs, coins are spent in the Garage on permanent car upgrades that improve the car in the next run (which upgrades: Garage design, Decisions). (2026-10-07)
-- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Quit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP. (2026-10-08; no message, 2026-10-09)
+- The game opens on a main menu with three buttons: Start (begins a run), Garage, and Exit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP. (2026-10-08; no message, 2026-10-09; Exit rather than Quit, 2026-10-10)
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu. (2026-10-07; corrected 2026-10-09, it said the MVP goes to the Garage)
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player. (2026-10-07)
 
@@ -58,7 +58,7 @@ flowchart TD
     drive -- HP reaches 0 --> lost
     won --> recap[Recap screen: kills per enemy type and other stats, final release only]
     lost --> recap
-    recap --> menu[Main menu: Start, Garage, Quit]
+    recap --> menu[Main menu: Start, Garage, Exit]
     menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
     menu -- Start --> start
 ```
