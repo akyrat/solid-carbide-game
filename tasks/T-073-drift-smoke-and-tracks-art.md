@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke and tyre tracks
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

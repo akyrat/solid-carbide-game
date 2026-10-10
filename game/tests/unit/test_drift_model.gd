@@ -13,6 +13,8 @@ const TOP := 27.5
 func _new_car() -> Object:
 	var m = CarModel.new()
 	m.dt = DT
+	# These tests prove the Unity behaviour, so they use the Unity values, not the game defaults.
+	m.tuning.reset_to_unity()
 	return m
 
 
@@ -232,3 +234,14 @@ func test_w_reaches_top_speed_at_every_heading() -> void:
 		for i in 100:
 			r.step(false, true, 0.0)
 		assert_almost_eq(r.forward_speed(), -TOP, 1e-6, "reverse, heading %d" % k)
+
+
+func test_default_tuning_holding_w_reaches_top_speed_33() -> void:
+	var m = CarModel.new()
+	m.dt = DT
+	assert_almost_eq(m.tuning.top_speed(), 33.0, 1e-9)
+	m.step(true, false, 0.0)
+	assert_almost_eq(m.forward_speed(), 11.0, 1e-9, "jump to cruise stays 11")
+	for i in 300:
+		m.step(true, false, 0.0)
+	assert_almost_eq(m.forward_speed(), 33.0, 33.0 / 2.3 * DT, "top speed 3.0 x 11 within one step")

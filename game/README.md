@@ -189,7 +189,7 @@ It overwrites, in `game/art/placeholders/car/`:
 
 ## Drift prototype
 
-The first playable piece (task T-012): the car driving and drifting like the board's Unity prototype, on a flat, empty ground with a grid, with a tuning panel and a flat / isometric view switch. It is the project's main scene.
+The first playable piece (task T-012): the car driving and drifting like the board's Unity prototype, on a flat, empty ground with a grid, with a tuning panel and a flat / isometric view switch. It is the project's main scene. After the board's playtest (task T-029) it differs from the Unity prototype in four defaults (see Drifting, Decisions, 2026-10-08): top speed multiplier 3.0 (top speed 33; Unity 2.5), cruise jump still 11, physics interpolation on, and it starts in the isometric view. Every other driving value is the Unity value.
 
 **Run it:**
 
@@ -208,12 +208,12 @@ The first playable piece (task T-012): the car driving and drifting like the boa
 
 Escape is not used here (pause is task T-015). There is no jump, no arrow-key steering and no gamepad.
 
-**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the Unity values, an "Isometric view" toggle (same as V), a "Physics interpolation" toggle (off by default, like Unity), the camera zoom slider (6 to 20, starting at 14.4) and one slider per handling setting. Every slider starts at the Unity value and applies at once; hover a slider or its label for a tooltip. Changes are not saved: restarting goes back to the Unity values.
+**Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4) and one slider per handling setting. Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
 
 **How it is built** (`scripts/driving/`):
 
 - `car_model.gd`: the movement, step by step as in the Unity prototype report, section 4, in units (1 unit = the car's width). No nodes, so tests run it directly. Its `cruise_jump(from_speed, w_just_pressed)` signal fires when W makes the car jump up to cruise speed (for the boost effect, task T-008).
-- `car_tuning.gd`: the handling values (defaults = the Unity values) and the slider list with labels, ranges and tooltips.
+- `car_tuning.gd`: the handling values (defaults = the Unity values except top speed multiplier 3.0; the `UNITY` constant keeps the Unity values) and the slider list with labels, ranges and tooltips.
 - `car.gd`: the car's `CharacterBody2D` in the flat physics world, a 1 x 1 unit square, running the model once per physics step (50 per second, set in `project.godot`). It relays `cruise_jump` and emits `stepped` after every step.
 - `drift_prototype.gd`: builds the scene. The physics world is never drawn; the `View` node draws the ground grid and the car sprite either flat or through the 2:1 isometric projection screen = (x - y, (x + y) / 2), and places the camera exactly on the drawn car (no rotation, no smoothing). Switching views changes only the drawing.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.

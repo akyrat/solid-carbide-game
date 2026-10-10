@@ -64,7 +64,7 @@ func _has_key(action: String, keycode: Key) -> bool:
 
 func test_project_runs_physics_at_50_ticks() -> void:
 	assert_eq(ProjectSettings.get_setting("physics/common/physics_ticks_per_second"), 50)
-	assert_false(ProjectSettings.get_setting("physics/common/physics_interpolation"), "interpolation off by default")
+	assert_true(ProjectSettings.get_setting("physics/common/physics_interpolation"), "interpolation on by default")
 
 
 func test_input_map_binds_wasd_and_tab() -> void:
@@ -80,12 +80,28 @@ func test_input_map_binds_wasd_and_tab() -> void:
 
 # --- Defaults and sliders ---------------------------------------------------------------
 
-func test_defaults_equal_unity_values() -> void:
+func test_defaults_equal_unity_values_except_top_speed() -> void:
 	var t = CarTuning.new()
 	for key in UNITY_VALUES:
-		assert_almost_eq(float(t.get(key)), UNITY_VALUES[key], 1e-12, key)
-	assert_almost_eq(t.top_speed(), 27.5, 1e-12)
+		var expected: float = 3.0 if key == "top_speed_multiplier" else UNITY_VALUES[key]
+		assert_almost_eq(float(t.get(key)), expected, 1e-12, key)
+	assert_almost_eq(t.forward_speed, 11.0, 1e-12)
+	assert_almost_eq(t.top_speed(), 33.0, 1e-12)
 	assert_almost_eq(t.turn_rate(), 191.9, 1e-9)
+	for key in UNITY_VALUES:
+		assert_almost_eq(float(CarTuning.unity_values()[key]), UNITY_VALUES[key], 1e-12, "unity_values %s" % key)
+	t.reset_to_unity()
+	assert_almost_eq(t.top_speed(), 27.5, 1e-12)
+
+
+func test_prototype_starts_in_iso_view_with_interpolation() -> void:
+	var p := _scene()
+	assert_eq(p.view, "iso")
+	assert_eq(p.car_sprite.texture.resource_path, "res://art/placeholders/car/car_iso.png")
+	assert_true(p.physics_interpolation)
+	assert_true(get_tree().physics_interpolation)
+	assert_true(p.panel.view_toggle.button_pressed)
+	assert_true(p.panel.interpolation_toggle.button_pressed)
 
 
 func test_every_section_8_setting_has_a_slider_starting_at_unity_value() -> void:
@@ -99,11 +115,11 @@ func test_every_section_8_setting_has_a_slider_starting_at_unity_value() -> void
 		var sl: HSlider = sliders[key]
 		assert_almost_eq(sl.min_value, SECTION_8_RANGES[key][0], 1e-9, "%s min" % key)
 		assert_almost_eq(sl.max_value, SECTION_8_RANGES[key][1], 1e-9, "%s max" % key)
-		var expected: float = 14.4 if key == "camera_zoom" else UNITY_VALUES[key]
-		assert_almost_eq(sl.value, expected, 1e-6, "%s starts at the Unity value" % key)
+		var expected: float = 14.4 if key == "camera_zoom" else _game_value(key)
+		assert_almost_eq(sl.value, expected, 1e-6, "%s starts at the game value" % key)
 		assert_ne(sl.tooltip_text, "", "%s has a tooltip" % key)
 	for key in UNITY_VALUES:
-		assert_almost_eq(float(p.car.tuning.get(key)), UNITY_VALUES[key], 1e-12, "car uses Unity %s" % key)
+		assert_almost_eq(float(p.car.tuning.get(key)), _game_value(key), 1e-12, "car uses game value %s" % key)
 
 
 func test_slider_labels_are_the_section_8_labels() -> void:
@@ -131,30 +147,36 @@ func test_changing_a_slider_changes_the_movement() -> void:
 	assert_almost_eq(p.zoom, 8.0, 1e-9)
 
 
-func test_reset_restores_every_unity_value() -> void:
+func _game_value(key: String) -> float:
+	return 3.0 if key == "top_speed_multiplier" else UNITY_VALUES[key]
+
+
+func test_reset_restores_every_game_value() -> void:
 	var p := _scene()
 	for key in p.panel.sliders:
 		var sl: HSlider = p.panel.sliders[key]
 		sl.value = sl.max_value
-	p.set_physics_interpolation(true)
+	p.set_physics_interpolation(false)
 	assert_almost_eq(p.car.tuning.forward_speed, 25.0, 1e-9)
 	p.panel.reset_button.pressed.emit()
 	for key in UNITY_VALUES:
-		assert_almost_eq(float(p.car.tuning.get(key)), UNITY_VALUES[key], 1e-12, "%s reset" % key)
-		assert_almost_eq(p.panel.sliders[key].value, UNITY_VALUES[key], 1e-6, "%s slider reset" % key)
+		assert_almost_eq(float(p.car.tuning.get(key)), _game_value(key), 1e-12, "%s reset" % key)
+		assert_almost_eq(p.panel.sliders[key].value, _game_value(key), 1e-6, "%s slider reset" % key)
+	assert_almost_eq(p.car.tuning.top_speed_multiplier, 3.0, 1e-12)
 	assert_almost_eq(p.zoom, 14.4, 1e-12)
 	assert_almost_eq(p.panel.sliders["camera_zoom"].value, 14.4, 1e-6)
-	assert_false(p.physics_interpolation, "interpolation back off")
-	assert_false(p.panel.interpolation_toggle.button_pressed)
+	assert_true(p.physics_interpolation, "interpolation back on")
+	assert_true(get_tree().physics_interpolation)
+	assert_true(p.panel.interpolation_toggle.button_pressed)
 
 
 func test_interpolation_toggle() -> void:
 	var p := _scene()
-	assert_false(get_tree().physics_interpolation)
-	p.panel.interpolation_toggle.button_pressed = true
 	assert_true(get_tree().physics_interpolation)
 	p.panel.interpolation_toggle.button_pressed = false
 	assert_false(get_tree().physics_interpolation)
+	p.panel.interpolation_toggle.button_pressed = true
+	assert_true(get_tree().physics_interpolation)
 
 
 # --- View switch ------------------------------------------------------------------------
@@ -196,6 +218,8 @@ func test_view_switch_mid_drive_leaves_the_car_unchanged() -> void:
 func test_view_switch_changes_only_the_drawing() -> void:
 	var p := _scene()
 	_drive(p, 40, true, false, 1.0)
+	assert_eq(p.view, "iso", "starts isometric")
+	p.panel.view_toggle.button_pressed = false
 	assert_eq(p.view, "flat")
 	assert_eq(p.car_sprite.texture.resource_path, "res://art/placeholders/car/car_flat.png")
 	assert_eq(p.ground.transform, Transform2D.IDENTITY)
@@ -212,6 +236,9 @@ func test_view_switch_changes_only_the_drawing() -> void:
 
 func test_camera_stays_on_the_car_and_never_rotates() -> void:
 	var p := _scene()
+	# Interpolation (on by default) blends the camera between steps; this test checks
+	# the camera's own placement, so it turns interpolation off.
+	p.set_physics_interpolation(false)
 	assert_true(p.camera.is_current())
 	assert_true(p.camera.ignore_rotation)
 	assert_false(p.camera.position_smoothing_enabled)
