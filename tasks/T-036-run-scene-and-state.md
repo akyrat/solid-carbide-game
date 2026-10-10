@@ -1,7 +1,7 @@
 ---
 id: T-036
 title: The run: scene, 8-minute clock, car health, coins, win and loss
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -67,4 +67,38 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Loop Agent.
+
+**Produced:**
+
+- `game/scenes/run/run.tscn` with `game/scripts/run/run.gd`: the run scene. It loads the MVP map (`scenes/level/mvp_map.tscn`, isometric view), puts the T-012 car (`scripts/driving/car.gd`) on it with its sprite, and the camera follows the drawn car exactly as in the drift prototype (zoom 14.4, no rotation, no smoothing). The map checks its challenges against the car. The drift prototype scene is unchanged.
+- `game/scripts/run/run_state.gd` (`RunState`, child node `RunState`, group `run_state`): the clock, health, coins, win and loss, with the public functions and signals listed in `game/README.md`, "The run": `start_run()`, `damage_car(amount)`, `add_coins(amount)`, `kaiju_killed()`, `advance(seconds)`; signals `run_started`, `boss_time`, `run_ended(result, coins)`, `time_left_changed`, `health_changed`, `coins_changed`.
+- Tests: `game/tests/unit/run/test_run_state.gd` (10 tests) and `game/tests/unit/run/test_run_scene.gd` (4 tests).
+- Docs: `game/README.md` (new section "The run", folder table) and `docs/game-loop-architecture.md` (new Content subsection "The run scene"; Summary, Decisions and Open questions unchanged).
+
+**Where each criterion is shown:**
+
+1. Fresh run: `test_run_scene.gd::test_run_starts_with_map_car_and_fresh_state` and `test_run_state.gd::test_fresh_run_values` (8:00, health = `RunData.starting_health()` = 100, 0 coins, map with its 4 challenges and the car loaded).
+2. Boss time and clock loss: `test_boss_time_fires_once_at_seven_minutes`, `test_clock_runs_out_is_a_loss`, `test_big_step_still_sends_boss_time_and_ends`.
+3. Damage to 0: `test_damage_to_zero_is_a_loss_once` (loss once, with the 5 coins collected).
+4. Kaiju killed: `test_kaiju_killed_is_a_win_at_once` (win, 12 coins, the clock stops).
+5. Pause: `test_clock_does_not_advance_while_paused` (real frames with `get_tree().paused = true`).
+6. Second run: `test_run_state.gd::test_second_run_resets_everything` and `test_run_scene.gd::test_second_run_resets_world_and_state` (fresh map with every challenge open, car back at the start, standing still, state reset).
+7. Screenshot: `bash game/tools/screenshot.sh res://scenes/run/run.tscn screenshots/T-036-run.png 30` shows the car in the gravel square of the MVP map, with boulders and buildings around it.
+
+**Choices I made (the docs leave them open):**
+
+- **Start position:** the centre of the map (0, 0 units), in the 28 x 28 gravel square, the one open space (nearest boulder edge 16.5 units away). Heading: nose along -y, the drift prototype's start (CarModel's default).
+- **View:** isometric, the drift prototype's starting view; no V key to switch in the run.
+- **Run length and boss time** are constants in `run_state.gd` (`RUN_SECONDS = 480`, `BOSS_TIME_LEFT = 60`), because they are Decisions in Game loop architecture, not balancing numbers. `run.json` holds only T-038's numbers. If the board wants them in data, it is a one-line move.
+- **Pause** means Godot's `get_tree().paused`; the state node is pausable, so the clock stops on its own. T-015 (pause screen) and T-037 (level-up pause) should pause the run this way.
+- **`time_left_changed`** fires when the shown whole second changes (and on start), not every frame; `time_left` is readable any time. The clock shows seconds rounded up ("0:01" in the last second, "1:00" exactly at boss time).
+- **After the run ends,** `damage_car`, `add_coins` and `kaiju_killed` are ignored and the clock stops, so `run_ended` fires only once. Damage and coin amounts that are not positive are ignored.
+- **`kaiju_killed()` before boss time** still ends the run as a win (the function does not check whether the kaiju exists; the Enemy Behavior Agent only calls it when it dies).
+- **Starting a new run** (`run.start_run()`) replaces the map and car with fresh ones, so every challenge is open again and the car stands still at the start; it emits `world_rebuilt` first, so other code can pick up the new `run.map` and `run.car`. `RunState.start_run()` alone resets only the state.
+- **Max health** = starting health from `run.json`; the garage HP upgrade will raise it in its own task.
+- Clock comparisons allow a 0.000001 s rounding margin, so summed frame times still hit boss time and 0:00 exactly.
+
+**Tests run:** full GUT suite: 114 of 114 pass (13 scripts), `TESTS PASSED`.
+
+**Python tool tests: 3 fail, and the failures are not from this task.** `python -m unittest discover -s game/tools -p "test_*.py"`: 51 run, 1 failure and 2 errors, all in `test_build_mvp_map.py`, and the same 3 fail on `master` (fbb424b). Cause: `build_mvp_map.py` reads every `docs/level-design/<pattern>/arrow-*.json`, and that now includes the `arrow-*.driven.json` files that `check_challenge --save` wrote (T-021), which have no `boulders` (`KeyError: 'boulders'`, and 12 sketches found instead of 6). The fix belongs to the Level/Challenge Design Agent's tool (for example, only read `arrow-<n>.json`), so I did not change it. This task's criterion "all Python tool tests pass" cannot pass until that is fixed.
