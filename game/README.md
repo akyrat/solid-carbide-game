@@ -10,8 +10,8 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 
 | Folder | What goes in it |
 | --- | --- |
-| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype; `level/` is the MVP map |
-| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges |
+| `scenes/` | Scenes (`.tscn`). `drift_prototype/` is the drift prototype; `level/` is the MVP map; `run/` is the run |
+| `scripts/` | Game GDScript (`.gd`). `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state |
 | `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
@@ -296,3 +296,48 @@ Running it twice gives identical files. Its tests (`game/tools/test_build_mvp_ma
 The car does not collide with the map yet: the drift car's collision response (bouncing off walls and boulders, Drifting, Decisions) is the Driving & Drift Agent's.
 
 **Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges.
+
+## The run
+
+The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drift car together under a camera that follows the car, and holds the run's state: the 8-minute clock, the car's health, the coins collected this run, and win and loss (Game loop architecture, Decisions). The drift prototype stays as it is, as a tuning tool.
+
+**Run it:** in the Godot editor, open `scenes/run/run.tscn` and press F6. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/run/run.tscn screenshots/run.png 30`. Keys: W, S, A and D, as in the drift prototype. Nothing happens on screen when the run ends yet (the screen flow and the HUD are later tasks).
+
+**The scene** (`scripts/run/run.gd`, root node `Run`):
+
+- Children: `Map` (the MVP map scene, drawn in the isometric view), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the car's sprite and the `Camera`) and `RunState` (the state, below).
+- The car starts at the centre of the map (0, 0 units, in the gravel square), nose along -y, as in the drift prototype. The camera sits exactly on the drawn car, zoom 14.4, as in the drift prototype. The map checks its challenges against the car (`map.car`).
+- `run.start_run()` starts a fresh run: it replaces the map (every challenge open again) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
+
+**The state** (`scripts/run/run_state.gd`, class `RunState`). Reach it with `run.state`, or from anywhere with `get_tree().get_first_node_in_group("run_state")`.
+
+| Function | Does |
+| --- | --- |
+| `start_run()` | Resets the state for a fresh run: health = max health = the starting health in `data/run.json`, 8:00 on the clock, 0 coins. Use `run.start_run()` to reset the map and car too |
+| `damage_car(amount: float)` | Takes `amount` off the car's health (stops at 0). At 0 the run ends as a loss. Ignored when the run is over or `amount` is not positive |
+| `add_coins(amount: int)` | Adds coins collected this run. Ignored when the run is over or `amount` is not positive |
+| `kaiju_killed()` | The Enemy Behavior Agent calls it when the kaiju dies: the run ends at once as a win. Ignored when the run is over |
+| `advance(seconds: float)` | Moves the clock forward by hand (tests). The clock otherwise runs on its own in `_process` |
+| `is_running()` | True from `start_run()` until the run ends |
+| `time_left_text()` | The time left as M:SS ("8:00" ... "0:01", "0:00"), rounded up to whole seconds |
+| `shown_seconds()`, `time_elapsed()` | The time left in whole seconds as the clock shows it; seconds since the run started |
+
+| Value | Is |
+| --- | --- |
+| `time_left` | Seconds left, 480 at the start, 0 at the end |
+| `health`, `max_health` | The car's health now, and its full health |
+| `coins` | Coins collected this run |
+| `result` | "" while the run is going, then "win" or "loss" |
+
+| Signal | Fires |
+| --- | --- |
+| `run_started()` | When a fresh run starts (after every value is reset) |
+| `boss_time()` | Once per run, when 7 minutes have passed (1:00 left). The kaiju spawns on it |
+| `run_ended(result: String, coins: int)` | Once per run: "win" (kaiju killed) or "loss" (health at 0, or the clock reaching 0:00), with this run's coins, kept either way. Saving them is a Game Data task that listens here |
+| `time_left_changed(seconds_left: float)` | When the clock shows a different whole second (and on start) |
+| `health_changed(health: float, max_health: float)` | When the car takes damage (and on start) |
+| `coins_changed(coins: int)` | When coins are added (and on start) |
+
+**Pause:** the clock runs in `_process` with the default (pausable) process mode, so setting `get_tree().paused = true` stops it. Anything that pauses the run (the pause screen, the level-up choice) does it that way. The run's length (8 minutes) and the boss's arrival (7 minutes in) are constants in `run_state.gd`, `RUN_SECONDS` and `BOSS_TIME_LEFT`, because they are Decisions, not balancing numbers.
+
+**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run) and `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car), part of the GUT suite.
