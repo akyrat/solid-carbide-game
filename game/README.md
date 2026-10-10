@@ -205,8 +205,9 @@ The first playable piece (task T-012): the car driving and drifting like the boa
 | A / D | Rotate the car left / right (at any speed, also standing still) |
 | Tab | Opens and closes the tuning panel |
 | V | Switches between the flat top-down and the isometric view |
+| Escape | Pauses and resumes. The pause screen shows the title, a hint and the camera zoom slider (see "Pause screen") |
 
-Escape is not used here (pause is task T-015). There is no jump, no arrow-key steering and no gamepad.
+There is no jump, no arrow-key steering and no gamepad.
 
 **Tuning panel** (Tab): a live readout (speed, forward and sideways speed, drift angle, drift amount), a button that resets everything to the game's values (the defaults above, interpolation on, zoom 14.4), an "Isometric view" toggle (same as V; on at start), a "Physics interpolation" toggle (on by default), the camera zoom slider (6 to 20, starting at 14.4) and one slider per handling setting. Every slider starts at the game's value and applies at once; hover a slider or its label for a tooltip, which also shows the Unity value. Changes are not saved: restarting goes back to the defaults.
 
@@ -222,6 +223,14 @@ Escape is not used here (pause is task T-015). There is no jump, no arrow-key st
 **Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the sheets are drawn at scale 1. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
 
 **Tests:** `tests/unit/test_drift_model.gd` (the movement against the report's numbers) and `tests/unit/test_drift_prototype.gd` (settings, input map, sliders, reset, view switch, camera, sprite), part of the GUT suite. For screenshots of a scripted drive, use the fixtures `res://tests/fixtures/drift_prototype_demo_flat.tscn` and `..._iso.tscn` (add `_panel` for the panel open) with the screenshot tool, for example `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_demo_iso.tscn screenshots/drift_iso.png 400`.
+
+## Pause screen
+
+Task T-015 (UI Agent). Escape (the `pause` action in the input map) pauses the whole game tree and shows the pause screen: the title, a hint that Escape resumes, and one setting, the camera zoom slider (6 to 20, default 14.4, the same value as the tuning panel's zoom slider; moving either updates the other). Pressing Escape again resumes from exactly where the car was. The tuning panel (Tab) does not work while paused. The texts are from task T-047. A full pause menu with more settings is task T-016.
+
+- `scripts/ui/pause_screen.gd`: the screen. It keeps processing while the tree is paused, handles Escape and sets the zoom on the scene it belongs to.
+- `scripts/ui/game_settings.gd` (`GameSettings`): the saved zoom, in `user://settings.cfg` (section `camera`, key `zoom`). Read when the game starts; no file, a bad value or no value gives 14.4, and a saved value outside 6 to 20 is clamped. The pause slider saves on every change; the tuning panel's zoom slider and its reset button do not save.
+- **Tests:** `tests/unit/test_pause_screen.gd` (part of the GUT suite) uses a test settings file, never the real one. For a screenshot of the paused game: `bash game/tools/screenshot.sh res://tests/fixtures/pause_screen_demo.tscn screenshots/pause.png 300`.
 
 ## Game data
 

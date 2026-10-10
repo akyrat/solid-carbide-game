@@ -1,7 +1,7 @@
 ---
 id: T-015
 title: Escape pauses the game, with a simple pause screen and the camera zoom slider
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -50,4 +50,10 @@ Escape pauses the game (HUD and menus, Decisions). For the MVP the pause screen 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built (UI Agent): Escape (`pause` action in `game/project.godot`, the only change there) pauses and resumes the whole tree. The pause screen (`game/scripts/ui/pause_screen.gd`) shows T-047's title "Paused", hint "Press Escape to get back to the stream." and zoom label "Camera zoom, for the fans", over a dimmed game, with a 6 to 20 slider (default 14.4). It sets the zoom through the prototype's `set_zoom` and refreshes the tuning panel's slider, so both show the same value. The zoom is saved to `user://settings.cfg` by `game/scripts/ui/game_settings.gd` and read at start (no file or bad value gives 14.4). The prototype's on-screen key hint now ends with "Esc: pause" (not in T-047's list; a short key reminder like the existing ones, flag to the Project Lead if text for it is wanted).
+
+Tests: `game/tests/unit/test_pause_screen.gd` (8 tests: action in input map, pause freezes position, velocity and rotation over 8 physics frames, resume continues from the same spot, texts, slider range, default and camera zoom, panel and pause slider agree, save and read back by a new instance, default with no file, bad values). `test_drift_prototype.gd` now points the settings at a missing file so it starts at the default. Full GUT suite: 108 tests passed. Python tool tests: 3 failures in `test_build_mvp_map.py` (KeyError 'boulders' reading the sketches), which also fail without my changes and are unrelated to this task.
+
+Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/pause_screen_demo.tscn screenshots/pause_screen.png 300` (shows title, hint, label and slider; the car drawn behind the text is part of the dimmed game).
+
+Documents affected: `game/README.md` (Escape in the keys table, new "Pause screen" section).

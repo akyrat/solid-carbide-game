@@ -39,6 +39,15 @@ const SECTION_8_RANGES := {
 }
 
 
+func before_each() -> void:
+	# No saved settings file, so the zoom starts at its default.
+	GameSettings.path = "user://test_no_such_settings.cfg"
+
+
+func after_each() -> void:
+	GameSettings.path = GameSettings.DEFAULT_PATH
+
+
 func _scene() -> Node2D:
 	var p: Node2D = SCENE.instantiate()
 	add_child_autofree(p)
