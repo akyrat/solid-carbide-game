@@ -85,7 +85,19 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
 
-Starting a new run resets the map, the car and the state. Returning to the main menu when a run ends comes with the screen flow, in a later task.
+Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
+
+#### Screen flow
+
+One screen is on show at a time (task T-055; how to use it: [game/README.md](../game/README.md), section "Screen flow"):
+
+- The game opens on the main menu (HUD and menus, Content).
+- **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
+- When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
+- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Not wired yet: until the garage screen exists, the button does nothing (task T-089).
+- **Exit** closes the game.
+
+The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 
 ### References
 
@@ -496,7 +508,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `42970d788a7ebb37c25c9141f442a6bec3748a843c0c416354b07708f7c6e6dc` |
+| `game-loop-architecture.md` | `2d328d2652ad5ff68cb130e2e931e125e2aff1bd17a7b94ed3110e1621c7c793` |
 | `drifting.md` | `626622dcbdec58c67cc9ccef11ae6ad85fbc9f9642dd57bf1bbcb1ccb0bf913f` |
 | `level-design.md` | `e729faa792102fbfec5216de834fc6a2813d865622cb39b01a7e145c765cc766` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
