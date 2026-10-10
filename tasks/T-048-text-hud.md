@@ -56,7 +56,7 @@ Final text. Lengths count the placeholder as written (a rendered number is short
 |---|---|---|---|
 | hud.likes | label of the likes (XP) bar, next to the heart icon | Likes | 5 |
 | hud.level | current level, beside the likes bar; `{level}` is the number | Hype Lv {level} | 15 |
-| hud.coins | label for the coins collected this run; the count follows it | Brand Coins | 11 |
+| hud.coins | label for the coins collected this run; the count follows it | Coins | 5 |
 | hud.health | label of the car's health bar (it needs one) | Car Health | 10 |
 | hud.kaiju | label of the kaiju's health bar, shown once it appears | Kaiju (Co-Star) | 15 |
 | hud.score_flash | flashed when a challenge is completed; `{likes}` is the likes gained | Trending! +{likes} Likes | 24 |
@@ -79,3 +79,7 @@ Lengths counted independently, placeholders as written: Likes 5 (max 12), Hype L
 - [x] No "XP" or "experience" in the table texts: pass (the table's "where it appears" cell for hud.likes mentions "(XP)" as a description, not player-facing text)
 
 The board's voice review was not checked by QA.
+
+### Board review
+
+The board, 2026-10-10: approved, with one change: the coins label is **Coins**, not "Brand Coins" (the table above is updated). The likes heart icon in Redgull red is approved; its art task is T-086.
