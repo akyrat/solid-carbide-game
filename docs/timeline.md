@@ -510,3 +510,8 @@ Entry format:
 - Decision or change: anything the Asset Generation Agent makes needs the board's review, so the board stays in control of how the assets look and their style (`tasks/README.md`, "The board's review"). Every art task now says so, T-009 and T-027 included. Until each asset's art task is done, the game uses placeholders.
 - Documents touched: `tasks/README.md`
 - Tasks: T-009, T-027 (review line added)
+
+## 2026-10-10: Tasks without a board review merge on QA's pass
+- Decision or change: a task that passes QA is marked done and merged straight away unless it asks for the board's review (every art task does). Feel and balance are judged in the board's playtest sessions. Recorded in `CLAUDE.md` (approved by the board) and `tasks/README.md`. Second wave started: T-036, T-040, T-033, T-035, T-080, T-056, T-082, T-054, T-015.
+- Documents touched: `CLAUDE.md`, `tasks/README.md`
+- Tasks: T-015, T-033, T-035, T-036, T-040, T-054, T-056, T-080, T-082

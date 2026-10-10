@@ -72,7 +72,7 @@ Game decisions live in these documents, never in agent definitions.
 2. You split it into well-scoped task files in `tasks/`, one per agent, using `tasks/_TEMPLATE.md`. Link task files that belong together. If a request has a visual and a functional side, the functional work starts with a placeholder and does not wait for the art; the art task depends on it and swaps the art in. If a task shows the player any text, a linked Narrative Theme task produces that text first, and the main task depends on it.
 3. You write realistic acceptance criteria for each task, which the QA/Integration Agent can actually verify.
 4. When the agent finishes, the task goes to QA/Integration, which reports a pass or fail per criterion on the task file.
-5. All criteria pass: the task moves to `needs-playtest`, and the board decides what to playtest.
+5. All criteria pass: if the task asks for the board's review (a `The board's review:` line, which every art task has), it moves to `needs-playtest` and waits for the board. Otherwise you mark it done and merge it straight away, and tell the board briefly. Feel and balance are judged in the board's playtest sessions, not ticket by ticket.
 6. A criterion fails the first time: you decide what to do, typically sending it back to the agent that worked on it, then straight to QA again.
 7. It fails a second time: set the status to `flagged-for-review` for the board's manual review.
 8. Record every decision in `docs/timeline.md`, listing the documents it touched.
