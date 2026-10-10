@@ -28,6 +28,7 @@ may change):
 """
 
 import json
+import re
 import math
 import re
 import sys
@@ -35,6 +36,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SKETCH_DIR = ROOT / "docs" / "level-design"
+SKETCH_NAME = re.compile(r"^arrow-\d+\.json$")
 MAP_OUT = ROOT / "game" / "data" / "level" / "mvp_map.json"
 
 # ---- The map (Level design, Decisions) -------------------------------------------------
@@ -356,7 +358,7 @@ def build(sketch_dir=SKETCH_DIR):
     fitted = {}
     for pattern in sorted(FIT_CONTEXTS):
         for f in sorted((Path(sketch_dir) / pattern).glob("arrow-*.json")):
-            if f.name.endswith(".fitted.json"):
+            if not SKETCH_NAME.match(f.name):  # only the board's sketches, not .fitted/.driven files
                 continue
             sketch = json.loads(f.read_text(encoding="utf-8"))
             fitted[(pattern, f.stem)] = fit_sketch(sketch, pattern)
