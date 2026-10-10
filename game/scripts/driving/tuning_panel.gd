@@ -16,8 +16,11 @@ const UNITY_ZOOM := 14.4
 
 ## The drift prototype scene this panel tunes.
 var prototype: Node
-## key -> HSlider, for every slider including "camera_zoom".
+## key -> HSlider, for every driving slider including "camera_zoom".
 var sliders := {}
+## key -> HSlider, for the collision settings (CarTuning.COLLISION_SETTINGS),
+## shown in their own group after the driving sliders.
+var collision_sliders := {}
 var _value_labels := {}
 var view_toggle: CheckButton
 var interpolation_toggle: CheckButton
@@ -55,7 +58,7 @@ func setup(p: Node) -> void:
 
 	reset_button = Button.new()
 	reset_button.text = "Reset all to game values"
-	reset_button.tooltip_text = "Puts every slider back to the game's value, turns physics interpolation on and sets the camera zoom to 14.4. Each slider's tooltip still shows the Unity value."
+	reset_button.tooltip_text = "Puts every slider back to the game's value, turns physics interpolation on and sets the camera zoom to 14.4 (the wall bounce too). Each slider's tooltip still shows the Unity value."
 	reset_button.pressed.connect(reset_to_defaults)
 	box.add_child(reset_button)
 
@@ -74,17 +77,28 @@ func setup(p: Node) -> void:
 	_add_slider(box, ZOOM_SETTING, UNITY_ZOOM)
 	for s in CarTuning.SETTINGS:
 		_add_slider(box, s, prototype.car.tuning.get(s.key))
+	var collisions_title := Label.new()
+	collisions_title.text = "Collisions (not in the Unity prototype)"
+	box.add_child(HSeparator.new())
+	box.add_child(collisions_title)
+	for s in CarTuning.COLLISION_SETTINGS:
+		_add_slider(box, s, prototype.car.tuning.get(s.key), true)
 	refresh()
 
 
-func _add_slider(box: VBoxContainer, s: Dictionary, value: float) -> void:
+func _add_slider(box: VBoxContainer, s: Dictionary, value: float, collision := false) -> void:
+	var into: Dictionary = collision_sliders if collision else sliders
 	var label := Label.new()
 	label.text = s.label
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.custom_minimum_size.x = 300.0
 	label.add_theme_font_size_override("font_size", 13)
 	label.mouse_filter = Control.MOUSE_FILTER_PASS
-	var tip := "%s (Unity value %s %s).\n%s" % [s.name, _fmt(_unity_value(s.key), s.step), s.unit, s.tip]
+	var tip: String
+	if s.has("unity_note"):
+		tip = "%s (%s).\n%s" % [s.name, s.unity_note, s.tip]
+	else:
+		tip = "%s (Unity value %s %s).\n%s" % [s.name, _fmt(_unity_value(s.key), s.step), s.unit, s.tip]
 	label.tooltip_text = tip
 	box.add_child(label)
 	var row := HBoxContainer.new()
@@ -103,7 +117,7 @@ func _add_slider(box: VBoxContainer, s: Dictionary, value: float) -> void:
 	row.add_child(slider)
 	row.add_child(value_label)
 	box.add_child(row)
-	sliders[s.key] = slider
+	into[s.key] = slider
 	_value_labels[s.key] = value_label
 	slider.value_changed.connect(func(v: float) -> void: _on_slider(s.key, v))
 	value_label.text = _fmt(value, s.step)
@@ -114,7 +128,12 @@ func _on_slider(key: String, v: float) -> void:
 		prototype.set_zoom(v)
 	else:
 		prototype.car.tuning.set(key, v)
-	_value_labels[key].text = _fmt(v, sliders[key].step)
+	_value_labels[key].text = _fmt(v, _slider(key).step)
+
+
+## The slider for a setting key, driving or collision.
+func _slider(key: String) -> HSlider:
+	return sliders[key] if sliders.has(key) else collision_sliders[key]
 
 
 ## Puts every slider and the setting behind it back to the game's value, turns
@@ -128,10 +147,10 @@ func reset_to_defaults() -> void:
 
 ## Moves every control to match the current values, without re-applying them.
 func refresh() -> void:
-	for key in sliders:
+	for key in sliders.keys() + collision_sliders.keys():
 		var v: float = prototype.zoom if key == "camera_zoom" else prototype.car.tuning.get(key)
-		sliders[key].set_value_no_signal(v)
-		_value_labels[key].text = _fmt(v, sliders[key].step)
+		_slider(key).set_value_no_signal(v)
+		_value_labels[key].text = _fmt(v, _slider(key).step)
 	view_toggle.set_pressed_no_signal(prototype.view == "iso")
 	interpolation_toggle.set_pressed_no_signal(prototype.physics_interpolation)
 

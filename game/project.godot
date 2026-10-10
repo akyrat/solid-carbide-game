@@ -51,6 +51,13 @@ toggle_view={
 ]
 }
 
+[layer_names]
+
+2d_physics/layer_1="obstacles"
+2d_physics/layer_2="car"
+2d_physics/layer_3="enemies"
+2d_physics/layer_4="pickups"
+
 [physics]
 
 common/physics_ticks_per_second=50

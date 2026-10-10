@@ -1,7 +1,7 @@
 ---
 id: T-033
 title: Car collisions: bounce off walls and boulders, and take knockback
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 epic: driving
@@ -64,4 +64,27 @@ The board's review: try the bounce in the drift prototype and pick the bounce st
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Driving & Drift Agent, 2026-10-10.**
+
+**Built:**
+
+- **Solid body and bounce** (`game/scripts/driving/car.gd`): the car's 1 by 1 unit body now moves with `move_and_collide`. With nothing in the way it still moves by the model's own 64-bit step, exactly as before. On a hit it stops against the obstacle for that step, and the part of its velocity going into the surface is reversed and scaled by the new `wall_bounce` setting; the part along the surface is kept. The driving model (`car_model.gd`) is unchanged.
+- **Proposed bounce default: 0.25.** A head-on hit at cruise speed (11) bounces back at 2.75 units/s (it rolls about 0.4 units when W is let go); a hit at top speed (33) bounces back at 8.25 units/s (about 3.4 units). For the board to judge.
+- **Bounce slider:** "Wall bounce" (0 to 1, step 0.01) in a new "Collisions (not in the Unity prototype)" group at the bottom of the tuning panel (`tuning_panel.gd`, `collision_sliders`). The value is `CarTuning.wall_bounce`, listed in a separate `CarTuning.COLLISION_SETTINGS`, because it has no Unity value; the T-012 test that checks one slider per Unity setting "and no extras" therefore still passes unchanged. The reset button restores 0.25.
+- **Enemies:** the car is on layer 2 with mask 1 (obstacles only), so nothing on the enemy layer (3) can block it or make it bounce.
+- **Collision signal:** `hit_obstacle(collider, shape_index, normal, impact_speed)`, emitted once per hit on anything on layer 1. Staying pressed against the same obstacle shape counts as one hit; it re-arms once the car is more than 0.25 units away from it.
+- **Knockback:** `apply_knockback(direction: Vector2, strength: float)` on the car node. It adds `direction.normalized() * strength` (units/s) to the car's velocity on the next physics step, after the model's own update. Calls add up and a zero direction is ignored. `pending_knockback()` shows what is waiting.
+- **Collision layers:** 1 obstacles (walls, buildings, map edge, boulders), 2 car, 3 enemies, 4 pickups. They are named in `project.godot` and are constants in `car.gd`. Walls and boulders share layer 1 because the MVP map (T-019) already puts both there; a test checks the map's bodies are on it. The table and the rules for enemies (no mask on layer 2; damage through an `Area2D`) and pickups are in `game/README.md`, "Car collisions".
+- **Test room** (`game/scripts/driving/test_room.gd`, added to the drift prototype): a closed square of walls 40 units out, an L-shaped wall to the right of the start, and a boulder 3 units across at (12, -12) units. Placeholder colours are the MVP map's. It is placed outside the reach of every existing scripted drive (tests and the screenshot demo).
+- **Screenshot fixtures:** `game/tests/fixtures/drift_prototype_room_flat.tscn` and `..._iso.tscn` (the demo fixture gained `start_units` and `zoom`). `bash game/tools/screenshot.sh res://tests/fixtures/drift_prototype_room_iso.tscn screenshots/T-033-room-iso.png 40` shows the car against the boulder with the walls around it. My copies are in the worktree's git-ignored `screenshots/T-033-room-flat.png` and `T-033-room-iso.png`.
+
+**Tests:** `game/tests/unit/test_car_collisions.gd` (18 tests): straight into a wall and into a 3-unit boulder (no pass-through; bounces away at impact x 0.25, more than 0 and less than the impact speed; rolls away when W is let go; still not through after 150 steps of W), a hit at top speed, a glancing hit, driving away afterwards, bounce 0 and 1, an enemy-layer body leaving the car's position and velocity exactly as without it, the signal once per hit (also for a boulder), knockback (from standstill, while driving, adding up, into a wall), the layers (also the MVP map's), the test room, and the slider and reset. Full GUT suite: 118 of 118 pass, including the T-012 and T-029 tests, unmodified.
+
+**Python tool tests: 3 of 51 fail, but not because of this task.** They fail the same way with my changes stashed. `test_build_mvp_map.py` errors with `KeyError: 'boulders'`, because `build_mvp_map.py` reads every `docs/level-design/<pattern>/arrow-*.json`, which now also matches the `arrow-*.driven.json` and `arrow-*.fitted.json` files that T-021's check and T-019's build write next to the sketches. So the three failures come from T-019 and T-021 together on master, not from this task. The Level/Challenge Design Agent's fix (only reading `arrow-<n>.json`) needs its own task.
+
+**What the board should know for the playtest:**
+
+- **W held into a wall:** the car stays pressed against the wall. W snaps the forward speed back to cruise on the next step (the Unity model), so the bounce shows when W is let go, when reversing, or on glancing hits, where the slide carries the car off the wall.
+- **Knockback while W is held:** the part of a push along the nose, against the direction W drives, is cancelled one step later by the same snap to cruise. Only the sideways part stays, fading like a drift. A minion pushing head-on into a car holding W will therefore barely move it. If the board wants knockback to be felt no matter what, that needs a decision (for example a short moment where W does not snap), and the Enemy Behavior or Game Data task is the place to raise it.
+
+**Documents affected:** `docs/drifting.md` (Content, "Godot drift prototype": a Collisions bullet with the bounce slider; Summary, Decisions and Open questions are unchanged). `game/README.md` (drift prototype panel and test room, the new "Car collisions" section with the layers, bounce, signal and knockback, and the MVP map note about collisions updated).
