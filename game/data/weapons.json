@@ -1,0 +1,51 @@
+{
+  "_comment": "The two MVP weapons, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to 8 are the 7 upgrades. No knockback (the weapons never push enemies).",
+  "max_tier": 8,
+  "gun": {
+    "damage": 2,
+    "range": 12,
+    "base_fire_interval": 1.2,
+    "extra_delay_between_volleys": 0.06,
+    "bullets_per_volley": 1,
+    "delay_between_bullets": 0.05,
+    "bullet_speed": 15,
+    "bullet_hit_radius": 1,
+    "bullet_drawn_size": 0.32,
+    "targets_checked": "once per fire interval, closest enemy first",
+    "missed_bullet_max_travel": "range",
+    "tiers": [
+      { "tier": 2, "effect": "add_bullets", "value": 2 },
+      { "tier": 3, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 4, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 5, "effect": "range_multiplier", "value": 1.5 },
+      { "tier": 6, "effect": "add_bullets", "value": 2 },
+      { "tier": 7, "effect": "fire_rate_multiplier", "value": 1.2 },
+      { "tier": 8, "effect": "pierce", "value": 1 }
+    ]
+  },
+  "flamethrower": {
+    "damage": 2,
+    "tick_interval": 0.2,
+    "min_speed": 0.85,
+    "linger": 0.2,
+    "car_half_size": 0.5,
+    "inner_edge_multiplier": 0.35,
+    "depth_multiplier": 2.6,
+    "half_width_multiplier": 1.05,
+    "base_size_multiplier": 2.5,
+    "ramp_start_fraction": 0.5,
+    "ramp_seconds": 1,
+    "burn_flash_seconds": 0.38,
+    "burn_flash_tint": [1, 0.62, 0.38, 1],
+    "always_on": false,
+    "tiers": [
+      { "tier": 2, "effect": "size_multiplier", "value": 1.2 },
+      { "tier": 3, "effect": "damage_multiplier", "value": 1.2 },
+      { "tier": 4, "effect": "size_multiplier", "value": 1.2 },
+      { "tier": 5, "effect": "add_burn_flash_seconds", "value": 0.5 },
+      { "tier": 6, "effect": "size_multiplier", "value": 1.3 },
+      { "tier": 7, "effect": "turn_speed_multiplier", "value": 1.2 },
+      { "tier": 8, "effect": "always_on", "value": 1 }
+    ]
+  }
+}
