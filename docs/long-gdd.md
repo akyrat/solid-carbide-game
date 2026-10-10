@@ -441,6 +441,14 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider (Drifting, Decisions). A full pause menu, with more settings, comes in the final release.
 
+### Content
+
+#### Main menu
+
+A plain screen (task T-054) with a dark navy background. The title "SOLID CARBIDE" is in big cyan letters, with a small grey "(work in progress)" under it. Below are three buttons in a column: Start, Garage and Exit (text approved in T-053). The menu only shows the screen: pressing a button sends the signal `start_pressed`, `garage_pressed` or `exit_pressed`, and what happens next is the screen flow (T-055). Keyboard focus starts on Start. The scene is `game/scenes/menu/main_menu.tscn`; how to open it is in `game/README.md`, "Main menu".
+
+(The pause and level-up screens: to be written.)
+
 ### References
 
 - The screens and how they connect (main menu, run, garage): Game loop architecture, Decisions.
@@ -460,4 +468,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `797dba89da21033fdea74602d46398889a21dbd24d9ab809627be84e660c1e62` |
 | `visual-style.md` | `620687e6e450eea0617007be696c86d4f5d68ef9b28c9ff7e9875a356cf2574b` |
 | `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |
-| `hud-and-menus.md` | `be4fff07a342de2be0dc3b877ffa8ca2146502405b8cf05308b9e14f53618915` |
+| `hud-and-menus.md` | `2de6000c560df9811f72463dee6f58e550da1ab6f11a976733290a1845c01ea3` |

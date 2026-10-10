@@ -23,7 +23,11 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 
 ## Content
 
-(To be written.)
+### Main menu
+
+A plain screen (task T-054) with a dark navy background. The title "SOLID CARBIDE" is in big cyan letters, with a small grey "(work in progress)" under it. Below are three buttons in a column: Start, Garage and Exit (text approved in T-053). The menu only shows the screen: pressing a button sends the signal `start_pressed`, `garage_pressed` or `exit_pressed`, and what happens next is the screen flow (T-055). Keyboard focus starts on Start. The scene is `game/scenes/menu/main_menu.tscn`; how to open it is in `game/README.md`, "Main menu".
+
+(The pause and level-up screens: to be written.)
 
 ## Open questions
 
