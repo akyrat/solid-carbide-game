@@ -238,7 +238,8 @@ Written by the Game Data Agent (task T-038); the enemy, weapon and garage data t
 - **Where:** one JSON file per area under `game/data/` (`run.json` for the run's XP, levels and car starting health). Keys are `snake_case`. A `_comment` key may explain a file. Numbers are proposals the board judges in playtests, and are changed in the file, never in code.
 - **Loader:** `scripts/data/game_data.gd` (`GameData`). `GameData.load_file("run")` reads `res://data/run.json`; `GameData.get_value(data, "car.starting_health")` reads a dotted path (array indexes as numbers). Both return `{ok, data, error}`: a missing file, invalid JSON or missing value gives `ok = false` and a clear `error` message. `GameData.unwrap(result)` returns the data, or `push_error`s the message and returns null.
 - **Typed readers:** for each data file, a small class next to the loader wraps it so game code does not index dictionaries. `scripts/data/run_data.gd` (`RunData`) gives `xp_needed(level)`, `challenge_xp(level)`, `drift_xp_per_second()`, `max_level()`, `carries_over()` and `starting_health()`. `scripts/data/combo_data.gd` (`ComboData`, from `combo.json`) gives `trick_add(trick)`, `after_trick()`, `after_collision()`, `after_idle()` and `spawn_multiplier()`.
-- **Tests:** `tests/unit/test_run_data.gd`, `tests/unit/test_combo_data.gd`. New data files get a test that loads them through the loader.
+- **Garage:** `garage.json` holds the 3 upgrades (`acceleration`, `car_health`, `damage_bonus`), 10 levels each, with a `price` and a `value` per level and a `base_value` for level 0. `scripts/data/garage_data.gd` (`GarageData`) gives `max_level()`, `price(upgrade, level)` and `value(upgrade, level)`. Tests: `tests/unit/test_garage_data.gd`.
+- **Tests:** `tests/unit/test_run_data.gd`, `tests/unit/test_combo_data.gd`, `tests/unit/test_garage_data.gd`. New data files get a test that loads them through the loader.
 
 ## Challenge drivability check
 
