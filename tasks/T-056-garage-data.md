@@ -1,7 +1,7 @@
 ---
 id: T-056
 title: Garage numbers: 3 upgrades, about 10 levels each, prices and effects
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 epic: garage
@@ -13,11 +13,11 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, docs/drifting.md, docs/weapons.md, tasks/T-038-run-and-likes-data.md, game/README.md]
 files_expected_to_change: [JSON data under game/data/, tests, docs/garage-design.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
-status: in-qa | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -71,3 +71,14 @@ Written by the Game Data Agent.
 | Total | 1335 | | 1335 | | 1995 | |
 
 Reasoning: linear effects with prices that grow steadily make each level feel the same size while costing more, so the player keeps choosing between the three. Damage costs 50% more because +50% damage is the strongest effect. Each upgrade stays a flat, readable step for the plain-list garage. The health base matches `run.json`; acceleration's base matches the tuning's `time_to_top_speed`. Nothing here applies the upgrades to the car; that is for the Driving, Game Loop and Weapon agents, reading `GarageData`.
+
+### QA round 1
+
+Written by the QA/Integration Agent. Result: all four criteria pass.
+
+- **Criterion 1 (valid JSON, test loads it through the loader): pass.** `game/data/garage.json` parses; `test_loads_through_loader` uses `GameData.load_file("garage")` and `GarageData`. Three upgrades (acceleration, car health, damage bonus in percent), 10 levels each, matching Garage design, Decisions. Level 0 values match the game: car health 100 = `car.starting_health` in `run.json`; acceleration 2.3 s = `time_to_top_speed` in `car_tuning.gd`; damage bonus 0. A test (`test_bases_match_the_game`) checks these.
+- **Criterion 2 (price and effect per level, prices never down, effects only improve): pass.** I checked the file directly: every level 1-10 has a price and value; prices never decrease (acceleration and health 40 to 300, damage 60 to 445); acceleration time falls 2.3 to 1.3, health and damage rise. Tests cover each of these and pass.
+- **Criterion 3 (result notes table and reasoning; garage-design.md only gains a References line): pass.** The notes have the table and reasoning, and the table matches the JSON. `git diff master...HEAD -- docs/garage-design.md` shows one line changed, in References only. Note: the agent had also edited the status legend comment in this task file; I restored it to the template text.
+- **Criterion 4 (full GUT suite and Python tests): pass.** GUT: 105 of 105 tests pass (TESTS PASSED). `tools` Python tests: 72 OK. `game/tools` Python tests: 51 run, 1 failure and 2 errors, all in `test_build_mvp_map.py` (KeyError 'boulders', 12 != 6). They fail identically on master (51 run, 1 failure, 2 errors), so they are the known pre-existing issue tracked in T-087, not from this task. Counted as a pass.
+
+Not judged: the balance of the numbers (the board's playtests).
