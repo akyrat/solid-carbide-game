@@ -1,7 +1,7 @@
 ---
 id: T-083
 title: HUD: the combo counter, and the combo amount on trick popups
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -45,4 +45,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, built on branch task/T-083-hud-combo.
+
+- Combo counter: `combo_label` in `game/scripts/hud/hud.gd`, to the right of the likes row, showing "Combo x{multiplier}" (T-082 text) from the run state's `combo_changed` (`Hud.combo_text()`, up to two decimals, e.g. "Combo x1.0", "Combo x2.5", "Combo x3.05"). Placeholder look: bold pink, dark outline, not red; clear of the timer, coins and health bar.
+- Trick popups: `TrickPopups.bind_combo()` (run binds it) shows each trick from `combo_trick` as "NAME +amount" in T-082's `combo.added` text (`trick_text()`): "LONG DRIFT! +0.05", "FULL 360! +0.25", "ALT DRIFT! +0.5". At the cap (`added` 0) only the name shows, no "+0". Once bound, the car's own `trick` signal no longer makes a popup (so no double popups); the drift prototype is unchanged (names only).
+- Tests: new `game/tests/unit/hud/test_hud_combo.gd` (7 tests); two assertions in `test_trick_popups.gd` updated for the amount. Full GUT suite 284/284 and Python tool tests 67/67 pass.
+- Screenshot fixture `game/tests/fixtures/combo_demo.tscn`; I looked at `screenshots/combo.png` (a run from the main menu, combo x3.05, one popup per trick): counter and popups readable, nothing overlaps the timer, coins or health bar.
+- Docs: `docs/hud-and-menus.md` (Content only), `game/README.md`.

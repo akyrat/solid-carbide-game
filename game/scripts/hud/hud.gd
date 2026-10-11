@@ -25,6 +25,12 @@ const TEXT_HEALTH := "Car Health"
 const TEXT_LIKES := "Likes"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
+# Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".
+const TEXT_COMBO := "Combo x{multiplier}"
+## Combo counter placeholder look (not red: only the heart is). T-084 is the final art.
+const COMBO_FONT_SIZE := 30
+const COMBO_COLOR := Color(1.0, 0.25, 0.75)
+const COMBO_GAP := 20
 
 var timer_label: Label
 var health_label: Label
@@ -35,7 +41,9 @@ var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
 var heart: Control
-## The left column; the combo counter (T-081) goes next to the likes bar.
+## The combo counter (T-083), to the right of the likes row.
+var combo_label: Label
+## The left column; the combo counter (T-083) goes next to the likes bar.
 var left_column: VBoxContainer
 var likes_row: HBoxContainer
 var _state: RunState
@@ -46,6 +54,7 @@ func _ready() -> void:
 	_build_timer()
 	_build_left()
 	_build_coins()
+	_build_combo()
 
 
 func _build_timer() -> void:
@@ -115,6 +124,30 @@ func _build_coins() -> void:
 	box.add_child(coins_value_label)
 
 
+func _build_combo() -> void:
+	combo_label = _make_label("ComboLabel", combo_text(1.0))
+	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
+	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
+	combo_label.add_theme_constant_override("outline_size", 10)
+	add_child(combo_label)
+	_place_combo()
+	likes_row.resized.connect(_place_combo)
+	combo_label.resized.connect(_place_combo)
+
+
+## Puts the counter right of the likes row, centred on the row's height.
+func _place_combo() -> void:
+	var row_rect := likes_row.get_global_rect()
+	combo_label.position = Vector2(
+		row_rect.end.x + COMBO_GAP,
+		row_rect.position.y + (row_rect.size.y - combo_label.size.y) / 2.0)
+
+
+## "Combo x2.5": the multiplier without trailing zeros.
+static func combo_text(multiplier: float) -> String:
+	return TEXT_COMBO.format({"multiplier": String.num(multiplier, 2)})
+
+
 func _make_label(label_name: String, text: String) -> Label:
 	var l := Label.new()
 	l.name = label_name
@@ -163,15 +196,18 @@ func bind(state: RunState) -> void:
 		_state.health_changed.disconnect(_on_health_changed)
 		_state.xp_changed.disconnect(_on_xp_changed)
 		_state.coins_changed.disconnect(_on_coins_changed)
+		_state.combo_changed.disconnect(_on_combo_changed)
 	_state = state
 	_state.time_left_changed.connect(_on_time_left_changed)
 	_state.health_changed.connect(_on_health_changed)
 	_state.xp_changed.connect(_on_xp_changed)
 	_state.coins_changed.connect(_on_coins_changed)
+	_state.combo_changed.connect(_on_combo_changed)
 	timer_label.text = _state.time_left_text()
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
 	_on_coins_changed(_state.coins)
+	_on_combo_changed(_state.combo)
 
 
 func _on_time_left_changed(_seconds_left: float) -> void:
@@ -196,3 +232,7 @@ func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
 
 func _on_coins_changed(coins: int) -> void:
 	coins_value_label.text = str(coins)
+
+
+func _on_combo_changed(multiplier: float) -> void:
+	combo_label.text = combo_text(multiplier)
