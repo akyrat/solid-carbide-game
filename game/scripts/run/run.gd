@@ -9,6 +9,9 @@ extends Node2D
 ## prototype starts in. The camera sits exactly on the drawn car (no rotation,
 ## no smoothing).
 ##
+## The run scene connects the map's challenge signals and the car's drift
+## state to the state's likes (XP) and levels (task T-037).
+##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
 
@@ -124,11 +127,20 @@ func _build_world() -> void:
 	car.model.rotation = START_ROTATION
 	physics_world.add_child(car)
 	car.stepped.connect(sync_view)
+	car.stepped.connect(_on_car_stepped)
+	# Likes (XP): every completed challenge, preset or meteor (T-037).
+	map.challenge_completed.connect(state.challenge_completed)
+	map.meteor_challenge_completed.connect(state.challenge_completed)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	map.car = car
 	sync_view()
 	car_sprite.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+## Feeds the car's drift state to the run's likes after each physics step.
+func _on_car_stepped() -> void:
+	state.drift_step(car.model.is_drifting, car.model.dt)
 
 
 ## Places the drawn car and the camera on the car's current position.

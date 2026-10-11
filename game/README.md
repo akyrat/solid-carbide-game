@@ -475,6 +475,35 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 | `health_changed(health: float, max_health: float)` | When the car takes damage (and on start) |
 | `coins_changed(coins: int)` | When coins are added (and on start) |
 
+**Likes (XP) and levels** (task T-037; the rules are Game loop architecture, Decisions, the numbers are `data/run.json` through `RunData`). The run scene connects the map's `challenge_completed` and `meteor_challenge_completed` to `state.challenge_completed`, and after every car physics step calls `state.drift_step(car.model.is_drifting, car.model.dt)`. Drifting is the driving model's `is_drifting` (the Unity definition: W, or S without W, held with A or D). No combo yet (step 4).
+
+| Function | Does |
+| --- | --- |
+| `challenge_completed(challenge_id: String)` | A challenge (preset or meteor) was completed: sends `score` with the current level's `challenge_xp`, then adds it as XP |
+| `drift_step(drifting: bool, delta: float)` | One physics step of the car's drift state. An unbroken drift gives `drift_xp_per_second` when it reaches 1 s (the first second included), then again at each further full second: 0.9 s gives nothing, 3 s gives 3 seconds' worth, 3.5 s gives 3. A step without drifting ends the drift |
+| `add_xp(amount: float)` | Adds XP. Each time XP reaches the level's threshold, the level goes up by one and `level_up` fires; leftover XP carries over (`carry_over_xp`), so one gain can give several level-ups. At the top level (`max_level`) XP stays at 0 and the bar stops |
+| `xp_needed()` | The current level's threshold (0 at the top level) |
+| `is_max_level()` | True at the top level |
+| `choice_made()` | The player made the level-up's weapon choice (T-052 calls it): the next waiting choice starts, or the run resumes. Ignored when no choice is waiting |
+| `is_waiting_for_choice()`, `choice_level()` | Whether the run is paused for a choice, and the level whose choice is on show (0 for none) |
+
+| Value | Is |
+| --- | --- |
+| `xp` | XP toward the next level (after leftovers), 0 at the start |
+| `level` | The level, 1 at the start |
+| `pause_on_level_up` | The level-up pause switch, **off for now**. Off: a level-up raises the level and the run carries on. On (T-052 turns it on): each level-up pauses the run (`get_tree().paused`, so the clock and the car stop) until `choice_made()`; two level-ups at once wait one after the other |
+| `pending_choices` | The levels whose choice is waiting, oldest first (switch on only) |
+
+| Signal | Fires |
+| --- | --- |
+| `xp_changed(xp: float, xp_needed: float, level: int)` | When XP or the level changes, and on start. For the HUD's likes bar (T-049) |
+| `score(amount: float, challenge_id: String)` | When a challenge is completed, with the XP (likes) it gave. For the challenge popup (T-092) |
+| `level_up(new_level: int)` | Once per level reached, switch on or off |
+| `level_up_choice_started(new_level: int)` | Switch on: the run is now paused for that level's choice (T-052 opens its screen here) |
+| `level_up_choice_made(new_level: int)` | Switch on: `choice_made()` closed that level's choice |
+
+A new run (`start_run()`) resets XP to 0 and the level to 1, forgets the drift in progress and any waiting choice (unpausing if it was waiting). Nothing is added after the run ends.
+
 **Pause:** the clock runs in `_process` with the default (pausable) process mode, so setting `get_tree().paused = true` stops it. Anything that pauses the run (the pause screen, the level-up choice) does it that way. The run's length (8 minutes) and the boss's arrival (7 minutes in) are constants in `run_state.gd`, `RUN_SECONDS` and `BOSS_TIME_LEFT`, because they are Decisions, not balancing numbers.
 
-**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run) and `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car), part of the GUT suite.
+**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP), part of the GUT suite.

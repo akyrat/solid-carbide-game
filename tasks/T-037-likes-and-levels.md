@@ -1,7 +1,7 @@
 ---
 id: T-037
 title: Likes (XP) and levels: from challenges and drifts, level-up pauses the run
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -66,4 +66,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Loop Agent.
+
+**Built:** likes (XP) and levels in the run's state, `game/scripts/run/run_state.gd` (`RunState`), wired up in `game/scripts/run/run.gd`; tests in `game/tests/unit/run/test_run_likes.gd` (15 tests). Full GUT suite: 249 of 249 pass. Python tool tests: 67, OK.
+
+- **Challenges:** the run scene connects the map's `challenge_completed` and `meteor_challenge_completed` to `state.challenge_completed(id)`, which sends `score(amount, challenge_id)` with the current level's `challenge_xp` and adds it as XP. Meteor challenges give the same XP as preset ones.
+- **Drifting:** after every car physics step the run calls `state.drift_step(car.model.is_drifting, car.model.dt)` (the model's `is_drifting` is the Unity definition). An unbroken drift gives `drift_xp_per_second` when it reaches 1 s, then at each further full second, so the bar fills while the player drifts. 0.9 s gives nothing, 3 s gives 3 seconds' worth. Reading of the decision worth the board knowing: only full seconds count, so 3.5 s gives 3 seconds' worth, not 3.5. This XP is tracked by the run itself, not from the car's `extended_drift` trick, which stays separate (Decisions, Combo).
+- **Levels:** `add_xp` levels up each time XP reaches `xp_needed(level)`, with leftover XP carried over as `run.json` says; `level_up(new_level)` fires once per level. At `max_level` the bar stops (XP stays 0; challenges still send their score).
+- **The pause switch:** `pause_on_level_up`, off. On, each level-up pauses the scene tree (clock and car stop) and sends `level_up_choice_started(level)`; `choice_made()` sends `level_up_choice_made(level)` and starts the next waiting choice or resumes. Two level-ups at once wait one after the other.
+- **For the HUD (T-049):** `xp`, `xp_needed()`, `level`, and `xp_changed(xp, xp_needed, level)` on every change and on start.
+- **Reset:** `start_run()` resets XP, level, the drift in progress and any waiting choice (unpausing if it was waiting). Nothing is added after the run ends.
+- **For T-052:** the pause uses `get_tree().paused`, the same as the Escape pause screen. Pressing Escape twice during a level-up choice would currently resume the run, so T-052 should keep the pause screen from resuming while `state.is_waiting_for_choice()` is true.
+
+**Documents updated:** `game/README.md` ("The run": the new functions, values and signals, and the tests), `docs/game-loop-architecture.md` (a new "Likes and levels" part in Content; Summary, Decisions and Open questions unchanged).
