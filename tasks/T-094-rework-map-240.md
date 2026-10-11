@@ -1,7 +1,7 @@
 ---
 id: T-094
 title: Rework (T-019): the MVP map, three times bigger (240 by 240)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -13,7 +13,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md, tasks/T-035-runtime-meteor-challenges.md, tasks/T-087-fix-map-generator-reads-driven-files.md, game/README.md]
 files_expected_to_change: [game/tools/build_mvp_map.py and its tests, game/data/level/mvp_map.json, the map's code and tests, docs/level-design.md, docs/level-design/ (screenshots), game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,13 +39,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test reading the layout data shows the map is 240 by 240 units, with the 8-unit perimeter road, 10 by 10 blocks and 8-unit roads, and an open gravel centre with no blocks (QA: pass / fail)
-- [ ] A test shows every boulder is 3 units across and every pattern copy matches its fitted version, unchanged from T-019 (QA: pass / fail)
-- [ ] A test shows the number of preset challenges is 30% of the pattern copies, rounded as before, and the same on every run (QA: pass / fail)
-- [ ] A test shows no challenge corridor or boulder overlaps a building or lies outside the map (QA: pass / fail)
-- [ ] The run, the screen flow and the meteor challenges' tests all pass on the bigger map, and a screenshot of the run shows the car in the centre (QA: pass / fail)
-- [ ] New map screenshots (flat and isometric) are in `docs/level-design/`, and `docs/level-design.md` describes the bigger map in Content without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test reading the layout data shows the map is 240 by 240 units, with the 8-unit perimeter road, 10 by 10 blocks and 8-unit roads, and an open gravel centre with no blocks (QA: pass)
+- [x] A test shows every boulder is 3 units across and every pattern copy matches its fitted version, unchanged from T-019 (QA: pass)
+- [x] A test shows the number of preset challenges is 30% of the pattern copies, rounded as before, and the same on every run (QA: pass)
+- [x] A test shows no challenge corridor or boulder overlaps a building or lies outside the map (QA: pass)
+- [x] The run, the screen flow and the meteor challenges' tests all pass on the bigger map, and a screenshot of the run shows the car in the centre (QA: pass)
+- [x] New map screenshots (flat and isometric) are in `docs/level-design/`, and `docs/level-design.md` describes the bigger map in Content without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -90,3 +90,17 @@ No PixelLab call. The `.import` line-ending changes Godot made were not committe
 - `game/README.md`: the "MVP map" section (size, ground grid, how to change copies and challenges).
 
 Also updated my working notes, `agent-notes/level-challenge.md`. `python tools/generate_long_gdd.py --check` reports the long GDD stale for level-design.md, as expected; regenerating it is the Project Lead's job.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-11.** Checked on branch `task/T-094-rework-map-240` in `C:\solid-carbide-worktrees\T-094`. Criterion 1's "240 by 240" read as 242 by 242, per the Project Lead's ruling (master's Level design, Decisions now says 242). All 7 criteria pass.
+
+1. **Pass.** Own script over `mvp_map.json`: map and ground grid 242 x 242; every cell less than 8 from the edge is road; 144 buildings, all 10 x 10, on 13 columns and rows starting at -113, 18 apart (8-unit roads), the first and last right against the perimeter road; gravel -41 to 41 (82 x 82) with no building in it (169 - 25 = 144); every ground cell matches buildings, gravel and roads (0 mismatches). Branch tests `test_map_is_242_by_242_centred_on_the_origin`, `test_blocks_are_the_13_by_13_grid_minus_the_centre`, `test_perimeter_road_is_8_wide_and_roads_are_8_wide` and the Python `test_map_is_242_by_242_with_8_unit_roads_and_10_unit_blocks` pass.
+2. **Pass.** All 128 boulders are 3 units. Each of the 80 copies' boulders, and each of the 24 challenges' arrow points, equal its fitted version rotated and placed (own check, tolerance 0.001); the 3 `challenge_designs` equal the fitted files. `git diff master...HEAD` shows no change to the sketches or fitted versions in `docs/level-design/single-boulder/` and `two-boulders/`, and the worktree is clean there after running the Python tests.
+3. **Pass.** 24 challenges = floor(80 x 0.3 + 0.5), on 24 distinct copies, matching the copies flagged as challenges (14 Two Boulders, 5 Single Boulder arrow 1, 5 arrow 2). Same every run: `build()` called twice gives identical output, equal byte for byte to the file on disk; the GUT test `test_challenges_are_the_same_every_run` passes.
+4. **Pass.** Own check (corridor = centre line sampled every 0.1 unit, 1.5 either side): smallest gap from any challenge corridor to a building or the map edge is 0.25 units; for every copy with any of its pattern's arrows also 0.25; boulders at least 2.5 units clear of buildings and the edge; no boulders overlap (closest centres 7 units apart); no copy in the gravel.
+5. **Pass.** In the full suite: `test_screen_flow.gd` 16/16, `test_run_scene.gd` 4/4, `test_hud_timer.gd` 5/5, `test_meteor_challenges.gd` 12/12, `test_mvp_map.gd` 19/19. I launched the main scene (`scenes/game/game.tscn`) through a temporary fixture (not committed, deleted after) that pressed the menu's Start button after 10 frames: the run came up with the car at 0, 0 units, centred on screen on the gravel, and the HUD timer showing 8:00. Whole-map overview screenshots (flat and isometric) show the 13 x 13 grid, the gravel centre and the blue challenge arrows, and match the committed ones. (The overview prints Godot's "Camera2D overridden to physics process mode" warning; `map_overview.gd` is unchanged since T-019, so not new.)
+6. **Pass.** `mvp-map.png`, `mvp-map-iso.png`, `meteor-challenge.png` and `meteor-challenge-iso.png` replaced (1152 x 648), showing the bigger map and the meteor challenge beside preset challenge-8. `git diff master...HEAD -- docs/level-design.md` touches only Content ("MVP map" and one caption plus the drivability line in "Meteor challenges"); Summary, Decisions and Open questions are unchanged by this branch. `git merge-tree` reports a clean merge with master's own Decisions edit. Note for the Project Lead: Content's "Size" paragraph says 242 is "the nearest size to the 240 in Decisions"; once merged, Decisions says 242, so that wording could be tidied.
+7. **Pass.** `bash game/tools/run_tests.sh`: TESTS PASSED, 223/223 in 23 scripts (the 1 warning is GUT ignoring the inner class TestRoom, as before). `python -m unittest discover -s game/tools -p "test_*.py"`: OK (66). `python -m unittest discover -s tools -p "test_*.py"`: OK (75).
+
+No command was blocked. Godot's `.import` line-ending changes in the worktree were left uncommitted.
