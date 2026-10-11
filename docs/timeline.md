@@ -555,3 +555,8 @@ Entry format:
 - Decision or change: merged on QA's pass: T-093 (pause screen: "Camera zoom level", the zoom changes live while paused, the timer no longer overlaps "Paused"), T-091 (trick popups from the car in pink and cyan, no red) and T-094 (the MVP map at 242 by 242: 13 by 13 blocks, an 82 by 82 gravel centre, 80 pattern copies, 24 challenges). With T-079 (trick detection) already merged, the board's combined playtest is ready from the main folder.
 - Documents touched: `docs/level-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-091, T-093, T-094 (done)
+
+## 2026-10-11: Combined playtest feedback: everything three times bigger, compact pause strip
+- Decision or change: after the combined playtest the board wants the whole city three times bigger, not just more small blocks: the MVP map is 240 by 240 with a 24-unit perimeter road, a 4 by 4 grid of 30 by 30 blocks, 24-unit roads and an 84 by 84 gravel centre; the boulders and challenges stay sized to the car (board's answers). Roads are now 24 units wide, replacing "5 to 10 times the car's width" (Level design, Decisions). The pause screen's strip covers the top half of the screen and must be compact. Rework tasks T-095 (pause strip) and T-096 (the map). Short GDD updated.
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
+- Tasks: T-095, T-096 (new)
