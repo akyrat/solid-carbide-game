@@ -1,7 +1,7 @@
 ---
 id: T-095
 title: Rework (T-093): a compact pause strip
-status: open
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,11 +13,11 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, tasks/T-093-rework-pause-zoom.md, game/README.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [the pause screen scene and script, tests, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -40,4 +40,17 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the UI Agent. The strip was tall because it reserved 100 px of empty space above its content for the timer. It now starts just below the timer (`STRIP_TOP` = 92 px) and is only as tall as its content (about 111 px of 648, 17%); title, hint and the zoom label, slider and value (now on one row) are tighter. The map is visible above and below it. Test `test_the_pause_strip_is_compact_and_below_the_timer` (test_screen_flow.gd): no overlap with the timer, under a quarter of the screen, height equals its content's minimum. Fixture `pause_from_menu_demo.tscn` for the screenshot of a paused run started from the main menu (own screenshot checked, not committed). Full GUT suite passes (TESTS PASSED), Python tool tests OK.
+Documents updated: docs/hud-and-menus.md, game/README.md.
+
+### QA round 1
+
+- Screenshot criterion: PASS. QA's own screenshot of a run started from the main menu, then paused (fixture pause_from_menu_demo.tscn, 1152x648): the strip is a thin band from y=92 to about y=203 (about 17% of the height), directly below the "8:00" timer, with no overlap, and the rest of the screen shows the map.
+- Strip height and no-overlap test: PASS. test_the_pause_strip_is_compact_and_below_the_timer exists and passes in the full suite.
+- T-093 and T-015 tests: PASS. The label is still "Camera zoom level" (asserted in test_the_zoom_slider_zooms_the_view_at_once_while_a_run_is_paused) and the live zoom while paused tests pass.
+- Full GUT suite and Python tests: PASS. GUT 234 of 234 passing (TESTS PASSED); python unittest game/tools OK (66); tools OK (75).
+- Docs check: docs/hud-and-menus.md diff is one line, the pause-screen bullet under Decisions, extended with the compact strip decision; Summary and Open questions are unchanged. game/README.md also updated.
+
+### Board review
+
+Merged on QA's pass, 2026-10-11. The agent added the compact strip to HUD and menus, Decisions; the Project Lead keeps it, since it records the board's feedback.
