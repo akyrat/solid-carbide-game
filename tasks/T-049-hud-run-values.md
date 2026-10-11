@@ -1,7 +1,7 @@
 ---
 id: T-049
 title: HUD: likes bar and level, health, coins
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -48,4 +48,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built the rest of the HUD in `game/scripts/hud/hud.gd`: top left the "Car Health" bar, then a likes row (placeholder Redgull-red heart, "Likes", "Hype Lv {level}") over the likes bar; top right "Coins" with the count; the timer stays at the top centre. All follow the run state's `health_changed`, `xp_changed` and `coins_changed`; the likes bar stays full at the top level. Room is kept right of the likes row for the combo counter (T-081). Texts are T-048's final ones ("Coins", not "Brand Coins").
+
+Tests: `game/tests/unit/hud/test_hud_values.gd` (7 tests: each value changes, fresh run resets, max level, exact labels, heart is the only red). Full GUT suite passes (256 tests), Python tool tests pass (67). Screenshot of a run started from the main menu (fixture `game/tests/fixtures/hud_from_menu_demo.tscn`) checked: all parts show, nothing overlaps the timer.
+
+Documents updated: `docs/hud-and-menus.md` (Content only), `game/README.md`.
