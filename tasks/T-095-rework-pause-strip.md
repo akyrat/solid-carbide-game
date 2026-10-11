@@ -1,7 +1,7 @@
 ---
 id: T-095
 title: Rework (T-093): a compact pause strip
-status: open
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: open | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
