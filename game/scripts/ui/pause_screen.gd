@@ -7,6 +7,8 @@ extends CanvasLayer
 
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
+## Space left above the content for the HUD run timer (T-093).
+const STRIP_TOP_MARGIN := 100.0
 const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
@@ -20,6 +22,7 @@ var hint_label: Label
 var zoom_label: Label
 var _value_label: Label
 var _root: Control
+var strip: PanelContainer
 var _saved_cam: Array = []
 
 
@@ -36,9 +39,13 @@ func setup(t: Node) -> void:
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
 	# The panel sits at the top, over a dark strip, so the map behind stays clear.
-	var strip := PanelContainer.new()
+	strip = PanelContainer.new()
 	strip.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	strip.self_modulate = Color(0, 0, 0, 0.7)
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0, 0, 0, 0.7)
+	style.content_margin_top = STRIP_TOP_MARGIN
+	style.content_margin_bottom = 12.0
+	strip.add_theme_stylebox_override("panel", style)
 	_root.add_child(strip)
 	var center := CenterContainer.new()
 	strip.add_child(center)

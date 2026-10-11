@@ -63,3 +63,7 @@ Checked by the QA/Integration Agent. Own screenshots (not committed) were taken 
 - [x] Full GUT suite and Python tests: PASS. GUT 225/225 (TESTS PASSED), `game/tools` Python tests 62 OK, `tools` Python tests 75 OK.
 
 Notes for the Project Lead (not failures): the HUD's run timer ("8:00") draws over the "Paused" title at the top of the screen, so the two overlap; there is no committed test for the camera being restored on resume.
+
+### Rework after QA
+
+The pause strip drew over the HUD run timer. The strip now keeps 100 px free above its content (`STRIP_TOP_MARGIN`), so the title sits below the timer. New tests in `tests/unit/game/test_screen_flow.gd`: the title does not overlap the timer, and the camera settings are restored on resume. Full GUT suite and Python tests pass.

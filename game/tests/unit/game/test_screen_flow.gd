@@ -212,3 +212,27 @@ func test_a_run_ending_while_paused_still_returns_unpaused() -> void:
 	await wait_process_frames(2)
 	assert_not_null(game.menu)
 	assert_false(get_tree().paused)
+
+
+func test_the_pause_title_does_not_overlap_the_run_timer() -> void:
+	_press(game.menu.start_button)
+	game.pause_screen.pause()
+	await wait_process_frames(2)
+	var timer: Label = game.run.hud.timer_label
+	var title: Label = game.pause_screen.title_label
+	assert_false(timer.get_global_rect().intersects(title.get_global_rect()), "timer and title are apart")
+
+
+func test_the_camera_settings_come_back_on_resume() -> void:
+	_press(game.menu.start_button)
+	var cam: Camera2D = game.run.camera
+	var mode := cam.process_mode
+	var callback := cam.process_callback
+	var interp := cam.physics_interpolation_mode
+	game.pause_screen.pause()
+	assert_eq(cam.process_callback, Camera2D.CAMERA2D_PROCESS_IDLE, "follows every frame while paused")
+	assert_eq(cam.physics_interpolation_mode, Node.PHYSICS_INTERPOLATION_MODE_OFF)
+	game.pause_screen.resume()
+	assert_eq(cam.process_mode, mode)
+	assert_eq(cam.process_callback, callback)
+	assert_eq(cam.physics_interpolation_mode, interp)
