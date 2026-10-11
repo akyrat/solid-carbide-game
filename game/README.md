@@ -329,11 +329,11 @@ The extended drift's second and the 360's full turn are Decisions, so they are c
 
 ## Pause screen
 
-Task T-015 (UI Agent). Escape (the `pause` action in the input map) pauses the whole game tree and shows the pause screen: the title, a hint that Escape resumes, and one setting, the camera zoom slider (6 to 20, default 14.4, the same value as the tuning panel's zoom slider; moving either updates the other). Pressing Escape again resumes from exactly where the car was. The tuning panel (Tab) does not work while paused. The texts are from task T-047. A full pause menu with more settings is task T-016.
+Task T-015 (UI Agent). Escape (the `pause` action in the input map) pauses the whole game tree and shows the pause screen: the title, a hint that Escape resumes, and one setting, the camera zoom slider (6 to 20, default 14.4, the same value as the tuning panel's zoom slider; moving either updates the other). Pressing Escape again resumes from exactly where the car was. The tuning panel (Tab) does not work while paused. The texts are from task T-047. The slider's label is "Camera zoom level" (T-093). The panel sits in a strip at the top over a light dim, and moving the slider zooms the view behind it at once while everything stays paused (the camera normally updates in the physics step, which does not run while paused, so while paused it updates every frame with physics interpolation off, and resuming puts it back). A full pause menu with more settings is task T-016.
 
 - `scripts/ui/pause_screen.gd`: the screen. It keeps processing while the tree is paused, handles Escape and sets the zoom on the scene it belongs to.
 - `scripts/ui/game_settings.gd` (`GameSettings`): the saved zoom, in `user://settings.cfg` (section `camera`, key `zoom`). Read when the game starts; no file, a bad value or no value gives 14.4, and a saved value outside 6 to 20 is clamped. The pause slider saves on every change; the tuning panel's zoom slider and its reset button do not save.
-- **Tests:** `tests/unit/test_pause_screen.gd` (part of the GUT suite) uses a test settings file, never the real one. For a screenshot of the paused game: `bash game/tools/screenshot.sh res://tests/fixtures/pause_screen_demo.tscn screenshots/pause.png 300`.
+- **Tests:** `tests/unit/test_pause_screen.gd` (part of the GUT suite) uses a test settings file, never the real one. For a screenshot of the paused game: `bash game/tools/screenshot.sh res://tests/fixtures/pause_screen_demo.tscn screenshots/pause.png 300`; `pause_screen_demo_in.tscn` and `pause_screen_demo_out.tscn` do the same with the slider moved to 7 and 19 after pausing.
 
 ## Game data
 

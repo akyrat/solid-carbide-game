@@ -2,6 +2,9 @@ extends Node
 ## Test fixture for a screenshot of the pause screen (task T-015): drives the
 ## prototype for a few steps, then pauses it.
 
+## When above 0, the slider is set to this value right after pausing (T-093).
+@export var slider_value := 0.0
+
 var prototype: Node2D
 var _steps := 0
 
@@ -18,3 +21,5 @@ func _on_stepped() -> void:
 	_steps += 1
 	if _steps == 30:
 		prototype.pause_screen.pause()
+		if slider_value > 0.0:
+			prototype.pause_screen.zoom_slider.value = slider_value

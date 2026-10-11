@@ -170,6 +170,28 @@ func test_the_pause_zoom_slider_zooms_the_run() -> void:
 	assert_gt(game.run.camera.zoom.x, before.x, "a smaller size zooms in")
 
 
+func test_the_zoom_slider_zooms_the_view_at_once_while_a_run_is_paused() -> void:
+	_press(game.menu.start_button)
+	await wait_physics_frames(3)
+	game.pause_screen.pause()
+	assert_eq(game.pause_screen.zoom_label.text, "Camera zoom level")
+	var remaining: float = game.run.state.time_left
+	var pos: Vector2 = game.run.car.position
+	var view: Viewport = game.run.get_viewport()
+	var before: float = view.get_canvas_transform().get_scale().y
+	game.pause_screen.zoom_slider.value = 7.0
+	await wait_process_frames(2)
+	var zoomed_in: float = view.get_canvas_transform().get_scale().y
+	assert_gt(zoomed_in, before, "the view zooms in")
+	game.pause_screen.zoom_slider.value = 19.0
+	await wait_process_frames(2)
+	assert_lt(view.get_canvas_transform().get_scale().y, before, "and out")
+	await wait_physics_frames(5)
+	assert_true(get_tree().paused)
+	assert_eq(game.run.car.position, pos, "the car stays paused")
+	assert_almost_eq(game.run.state.time_left, remaining, 1e-9, "the clock stays paused")
+
+
 func test_a_run_uses_the_saved_zoom() -> void:
 	GameSettings.save_zoom(10.0)
 	_press(game.menu.start_button)
@@ -190,3 +212,27 @@ func test_a_run_ending_while_paused_still_returns_unpaused() -> void:
 	await wait_process_frames(2)
 	assert_not_null(game.menu)
 	assert_false(get_tree().paused)
+
+
+func test_the_pause_title_does_not_overlap_the_run_timer() -> void:
+	_press(game.menu.start_button)
+	game.pause_screen.pause()
+	await wait_process_frames(2)
+	var timer: Label = game.run.hud.timer_label
+	var title: Label = game.pause_screen.title_label
+	assert_false(timer.get_global_rect().intersects(title.get_global_rect()), "timer and title are apart")
+
+
+func test_the_camera_settings_come_back_on_resume() -> void:
+	_press(game.menu.start_button)
+	var cam: Camera2D = game.run.camera
+	var mode := cam.process_mode
+	var callback := cam.process_callback
+	var interp := cam.physics_interpolation_mode
+	game.pause_screen.pause()
+	assert_eq(cam.process_callback, Camera2D.CAMERA2D_PROCESS_IDLE, "follows every frame while paused")
+	assert_eq(cam.physics_interpolation_mode, Node.PHYSICS_INTERPOLATION_MODE_OFF)
+	game.pause_screen.resume()
+	assert_eq(cam.process_mode, mode)
+	assert_eq(cam.process_callback, callback)
+	assert_eq(cam.physics_interpolation_mode, interp)

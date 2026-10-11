@@ -70,7 +70,7 @@ func test_pause_screen_texts_and_slider_label() -> void:
 	var p := _scene()
 	assert_eq(p.pause_screen.title_label.text, "Paused")
 	assert_eq(p.pause_screen.hint_label.text, "Press Escape to get back to the stream.")
-	assert_eq(p.pause_screen.zoom_label.text, "Camera zoom, for the fans")
+	assert_eq(p.pause_screen.zoom_label.text, "Camera zoom level")
 
 
 func test_slider_range_default_and_it_moves_the_camera() -> void:
@@ -119,3 +119,25 @@ func test_bad_saved_values_fall_back_or_clamp() -> void:
 	cfg.set_value("camera", "zoom", 99.0)
 	cfg.save(TEST_PATH)
 	assert_almost_eq(GameSettings.load_zoom(), 20.0, 1e-12)
+
+
+func _view_scale(p: Node) -> float:
+	return p.get_viewport().get_canvas_transform().get_scale().y
+
+
+func test_slider_zooms_the_view_at_once_while_paused_in_the_prototype() -> void:
+	var p := _scene()
+	await wait_physics_frames(5)
+	p.pause_screen.pause()
+	var pos: Vector2 = p.car.position
+	var before := _view_scale(p)
+	p.pause_screen.zoom_slider.value = 8.0
+	await wait_process_frames(2)
+	assert_gt(_view_scale(p), before, "the drawn view zooms in")
+	assert_almost_eq(_view_scale(p), p.camera.zoom.y, 1e-5)
+	p.pause_screen.zoom_slider.value = 18.0
+	await wait_process_frames(2)
+	assert_lt(_view_scale(p), before, "and out again")
+	await wait_physics_frames(5)
+	assert_true(get_tree().paused)
+	assert_eq(p.car.position, pos, "the car stays paused")
