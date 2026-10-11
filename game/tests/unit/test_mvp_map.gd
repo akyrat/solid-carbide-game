@@ -56,27 +56,30 @@ func make_map() -> Node2D:
 
 # ---- Criterion 1: the city grid -----------------------------------------------------------
 
-## Level design asks for 240 by 240 (task T-094). With the 8-unit perimeter
-## road, 10 by 10 blocks and 8-unit roads unchanged, 13 blocks a side give 242,
-## the nearest size those parts can make (18 x 13 + 8).
-const SIZE := 242
-const HALF := 121
-const BLOCKS := 13
-## The gravel centre: the middle 5 by 5 blocks and the roads between them.
-const GRAVEL := Rect2(-41, -41, 82, 82)
+## Level design (task T-096): 240 by 240, the first plan's layout with
+## everything three times bigger: a 24-unit perimeter road, a 4 by 4 grid of
+## 30 by 30 blocks and 24-unit roads (24 + 4 x 30 + 3 x 24 + 24 = 240).
+const SIZE := 240
+const HALF := 120
+const BLOCKS := 4
+const BLOCK := 30
+const ROAD := 24
+const PERIMETER := 24
+## The gravel centre: the middle 2 by 2 blocks and the road between them.
+const GRAVEL := Rect2(-42, -42, 84, 84)
 
 
-## Start of each block along one axis: after the 8-unit perimeter road, a block
-## of 10 then a road of 8, repeated.
+## Start of each block along one axis: after the 24-unit perimeter road, a block
+## of 30 then a road of 24, repeated.
 func block_starts() -> Array:
 	var starts := []
 	for i in BLOCKS:
-		starts.append(-HALF + 8 + i * (10 + 8))
+		starts.append(-HALF + PERIMETER + i * (BLOCK + ROAD))
 	return starts
 
 
-func test_map_is_242_by_242_centred_on_the_origin() -> void:
-	assert_eq(8 + BLOCKS * 10 + (BLOCKS - 1) * 8 + 8, SIZE, "perimeter road, blocks and roads fill the map")
+func test_map_is_240_by_240_centred_on_the_origin() -> void:
+	assert_eq(PERIMETER + BLOCKS * BLOCK + (BLOCKS - 1) * ROAD + PERIMETER, SIZE, "perimeter road, blocks and roads fill the map")
 	assert_eq(int(layout.map.width), SIZE)
 	assert_eq(int(layout.map.height), SIZE)
 	assert_eq(MvpMap.rect_of(layout.map.rect), Rect2(-HALF, -HALF, SIZE, SIZE))
@@ -85,18 +88,18 @@ func test_map_is_242_by_242_centred_on_the_origin() -> void:
 		assert_eq(row.length(), SIZE)
 
 
-func test_blocks_are_the_13_by_13_grid_minus_the_centre() -> void:
-	# Level design: 8-unit perimeter road, then blocks of 10 with 8-unit roads between.
+func test_blocks_are_the_4_by_4_grid_minus_the_centre() -> void:
+	# Level design: 24-unit perimeter road, then blocks of 30 with 24-unit roads between.
 	var starts := block_starts()
-	assert_eq(starts[0], -113)
-	assert_eq(starts[BLOCKS - 1] + 10, HALF - 8)
+	assert_eq(starts, [-96, -42, 12, 66])
+	assert_eq(starts[BLOCKS - 1] + BLOCK, HALF - PERIMETER)
 	var expected := {}
 	for y in starts:
 		for x in starts:
-			var r := Rect2(x, y, 10, 10)
+			var r := Rect2(x, y, BLOCK, BLOCK)
 			if not GRAVEL.encloses(r):
 				expected[r] = true
-	assert_eq(expected.size(), 13 * 13 - 5 * 5)
+	assert_eq(expected.size(), 4 * 4 - 2 * 2)
 	var got := {}
 	for b in layout.buildings:
 		got[MvpMap.rect_of(b)] = true
@@ -116,9 +119,9 @@ func expected_cell(i: int, j: int, starts: Array) -> String:
 	var in_x := false
 	var in_y := false
 	for s in starts:
-		if c.x > s and c.x < s + 10:
+		if c.x > s and c.x < s + BLOCK:
 			in_x = true
-		if c.y > s and c.y < s + 10:
+		if c.y > s and c.y < s + BLOCK:
 			in_y = true
 	if GRAVEL.has_point(c):
 		return "G"
@@ -139,34 +142,34 @@ func test_ground_cells_match_the_rules() -> void:
 				fail_test("cell %d, %d is %s, want %s" % [i, j, got, want])
 				return
 			counts[got] += 1
-	assert_eq(counts.B, 144 * 100)
-	assert_eq(counts.G, 82 * 82)
-	assert_eq(counts.R, SIZE * SIZE - 144 * 100 - 82 * 82)
+	assert_eq(counts.B, 12 * BLOCK * BLOCK)
+	assert_eq(counts.G, 84 * 84)
+	assert_eq(counts.R, SIZE * SIZE - 12 * BLOCK * BLOCK - 84 * 84)
 
 
-func test_perimeter_road_is_8_wide_and_roads_are_8_wide() -> void:
-	assert_eq(int(layout.perimeter_road_width), 8)
-	assert_eq(int(layout.road_width), 8)
-	assert_eq(int(layout.block_size), 10)
+func test_perimeter_road_is_24_wide_and_roads_are_24_wide() -> void:
+	assert_eq(int(layout.perimeter_road_width), PERIMETER)
+	assert_eq(int(layout.road_width), ROAD)
+	assert_eq(int(layout.block_size), BLOCK)
 	for j in SIZE:
 		var row: String = layout.ground_rows[j]
 		for i in SIZE:
 			var edge := mini(mini(i, SIZE - 1 - i), mini(j, SIZE - 1 - j))
-			if edge < 8 and row[i] != "R":
+			if edge < PERIMETER and row[i] != "R":
 				fail_test("cell %d, %d on the perimeter road is %s" % [i, j, row[i]])
 				return
-	# Every block is 10 by 10, and the gap between neighbouring blocks along a row is 8 units.
+	# Every block is 30 by 30, and the gap between neighbouring blocks along a row is 24 units.
 	var xs := []
 	for b in layout.buildings:
-		assert_eq(MvpMap.rect_of(b).size, Vector2(10, 10))
-		if float(b.y) == -113.0:
+		assert_eq(MvpMap.rect_of(b).size, Vector2(BLOCK, BLOCK))
+		if float(b.y) == -96.0:
 			xs.append(float(b.x))
 	xs.sort()
 	assert_eq(xs.size(), BLOCKS)
-	assert_eq(xs[0], -113.0, "8 units of perimeter road on the left")
-	assert_eq(xs[BLOCKS - 1] + 10.0, 113.0, "8 units of perimeter road on the right")
+	assert_eq(xs[0], -96.0, "24 units of perimeter road on the left")
+	assert_eq(xs[BLOCKS - 1] + BLOCK, 96.0, "24 units of perimeter road on the right")
 	for k in range(1, xs.size()):
-		assert_eq(xs[k] - (xs[k - 1] + 10.0), 8.0)
+		assert_eq(xs[k] - (xs[k - 1] + BLOCK), float(ROAD))
 
 
 func test_buildings_and_edges_block_the_car() -> void:

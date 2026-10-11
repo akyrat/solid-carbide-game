@@ -560,3 +560,8 @@ Entry format:
 - Decision or change: after the combined playtest the board wants the whole city three times bigger, not just more small blocks: the MVP map is 240 by 240 with a 24-unit perimeter road, a 4 by 4 grid of 30 by 30 blocks, 24-unit roads and an 84 by 84 gravel centre; the boulders and challenges stay sized to the car (board's answers). Roads are now 24 units wide, replacing "5 to 10 times the car's width" (Level design, Decisions). The pause screen's strip covers the top half of the screen and must be compact. Rework tasks T-095 (pause strip) and T-096 (the map). Short GDD updated.
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
 - Tasks: T-095, T-096 (new)
+
+## 2026-10-11: Second playtest build ready
+- Decision or change: merged on QA's pass: T-095 (a compact pause strip below the timer) and T-096 (the MVP map with everything three times bigger: 240 by 240, 4 by 4 blocks of 30 by 30, 24-unit roads, an 84 by 84 gravel centre; the fitted challenges are now the board's sketches exactly, moved into place; 60 pattern copies, 18 challenges). The board's next playtest is ready from the main folder.
+- Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-095, T-096 (done)

@@ -1,4 +1,4 @@
-"""Tests for build_mvp_map.py (task T-019). Run: python -m unittest discover -s game/tools -p "test_*.py"."""
+"""Tests for build_mvp_map.py (tasks T-019, T-094, T-096). Run: python -m unittest discover -s game/tools -p "test_*.py"."""
 
 import json
 import math
@@ -68,6 +68,24 @@ class FittedTest(unittest.TestCase):
                 self.assertGreater(t["degrees"], 270)
                 self.assertLess(abs(t["degrees"] - s["degrees"]), 120)
 
+    def test_fitted_on_24_unit_roads_is_the_sketch_moved_onto_the_pattern_centre(self):
+        # Task T-096: on 24-unit roads no arrow point needs nudging, so each fitted version keeps
+        # its sketch's whole path, only moved so the boulders sit on the crossing's centre or the
+        # road's centre line; the turns around each boulder are exactly the sketch's.
+        for (pattern, arrow), data in self.fitted.items():
+            sk = self.sketch(pattern, arrow)
+            old = [(b["x"], b["y"]) for b in sk["boulders"]]
+            new = [(b["x"], b["y"]) for b in data["boulders"]]
+            dx = sum(p[0] for p in new) / len(new) - sum(p[0] for p in old) / len(old)
+            dy = sum(p[1] for p in new) / len(new) - sum(p[1] for p in old) / len(old)
+            for (ox, oy), (nx, ny) in zip(old, new):
+                self.assertAlmostEqual(ox + dx, nx, places=6)
+                self.assertAlmostEqual(oy + dy, ny, places=6)
+            for (sx, sy), (fx, fy) in zip(sk["arrow"]["points"], data["arrow"]["points"]):
+                self.assertAlmostEqual(sx + dx, fx, places=3, msg=(pattern, arrow))
+                self.assertAlmostEqual(sy + dy, fy, places=3, msg=(pattern, arrow))
+            self.assertEqual(data["arrow"]["around_boulders"], sk["arrow"]["around_boulders"])
+
     def test_fitted_keeps_point_count_and_boulder_size(self):
         for (pattern, arrow), data in self.fitted.items():
             sk = self.sketch(pattern, arrow)
@@ -111,55 +129,63 @@ class MapTest(unittest.TestCase):
     def setUpClass(cls):
         _, cls.layout = B.build()
 
-    def test_map_is_242_by_242_with_8_unit_roads_and_10_unit_blocks(self):
-        # 240 asked for; 13 blocks of 10 with 8-unit roads and the 8-unit perimeter road give 242.
+    def test_map_is_240_by_240_everything_three_times_bigger(self):
+        # Level design, Decisions (task T-096): 24-unit perimeter road, 4 by 4 blocks of 30,
+        # 24-unit roads: 2 x 24 + 4 x 30 + 3 x 24 = 240.
         self.assertEqual(B.PERIMETER_ROAD * 2 + B.BLOCKS_PER_SIDE * B.BLOCK + (B.BLOCKS_PER_SIDE - 1) * B.ROAD,
                          B.MAP_SIZE)
-        self.assertEqual(self.layout["map"]["width"], 242)
-        self.assertEqual(self.layout["map"]["height"], 242)
-        self.assertEqual(self.layout["map"]["rect"], {"x": -121.0, "y": -121.0, "w": 242, "h": 242})
-        self.assertEqual(self.layout["perimeter_road_width"], 8)
-        self.assertEqual(self.layout["road_width"], 8)
-        self.assertEqual(self.layout["block_size"], 10)
-        self.assertEqual(B.block_ranges()[0], -113)
-        self.assertEqual(B.block_ranges()[-1], 103)
+        self.assertEqual(self.layout["map"]["width"], 240)
+        self.assertEqual(self.layout["map"]["height"], 240)
+        self.assertEqual(self.layout["map"]["rect"], {"x": -120.0, "y": -120.0, "w": 240, "h": 240})
+        self.assertEqual(self.layout["perimeter_road_width"], 24)
+        self.assertEqual(self.layout["road_width"], 24)
+        self.assertEqual(self.layout["block_size"], 30)
+        self.assertEqual(B.block_ranges(), [-96, -42, 12, 66])
+        self.assertEqual(B.road_lines(), [-108, -54, 0, 54, 108])
 
     def test_blocks_outside_the_gravel(self):
-        # 13 by 13 blocks, minus the middle 5 by 5 under the gravel.
-        self.assertEqual(len(self.layout["buildings"]), 13 * 13 - 5 * 5)
-        self.assertEqual(self.layout["gravel"], {"x": -41.0, "y": -41.0, "w": 82, "h": 82})
+        # 4 by 4 blocks, minus the middle 2 by 2 under the 84 by 84 gravel.
+        self.assertEqual(len(self.layout["buildings"]), 4 * 4 - 2 * 2)
+        self.assertEqual(self.layout["gravel"], {"x": -42.0, "y": -42.0, "w": 84, "h": 84})
         rows = self.layout["ground_rows"]
-        self.assertEqual(len(rows), 242)
-        self.assertTrue(all(len(r) == 242 for r in rows))
-        self.assertEqual(sum(r.count("B") for r in rows), 144 * 100)
-        self.assertEqual(sum(r.count("G") for r in rows), 82 * 82)
+        self.assertEqual(len(rows), 240)
+        self.assertTrue(all(len(r) == 240 for r in rows))
+        self.assertEqual(sum(r.count("B") for r in rows), 12 * 30 * 30)
+        self.assertEqual(sum(r.count("G") for r in rows), 84 * 84)
         for b in self.layout["buildings"]:
-            self.assertEqual((b["w"], b["h"]), (10, 10))
+            self.assertEqual((b["w"], b["h"]), (30, 30))
             g = self.layout["gravel"]
-            self.assertTrue(b["x"] + 10 <= g["x"] or b["x"] >= g["x"] + g["w"]
-                            or b["y"] + 10 <= g["y"] or b["y"] >= g["y"] + g["h"])
+            self.assertTrue(b["x"] + 30 <= g["x"] or b["x"] >= g["x"] + g["w"]
+                            or b["y"] + 30 <= g["y"] or b["y"] >= g["y"] + g["h"])
 
     def test_copies_on_roads_outside_the_gravel(self):
         copies = self.layout["pattern_copies"]
-        self.assertEqual(len(copies), 80)
-        self.assertEqual(len({tuple(c["centre"]) for c in copies}), 80)
-        half = 121
+        self.assertEqual(len(copies), 60)
+        self.assertEqual(len({tuple(c["centre"]) for c in copies}), 60)
+        half = 120
+        lines = B.road_lines()
         for c in copies:
             x, y = c["centre"]
             self.assertFalse(B.in_gravel(x, y), c["id"])
             self.assertLess(abs(x), half)
             self.assertLess(abs(y), half)
+            # On a road's centre line: a Single Boulder where two cross, a Two Boulders along one.
+            if c["pattern"] == "single-boulder":
+                self.assertTrue(x in lines and y in lines, c["id"])
+            else:
+                along_y = c["rotation_degrees"] == 0
+                self.assertIn(x if along_y else y, lines, c["id"])
             for b in c["boulders"]:
                 self.assertEqual(b["diameter"], 3.0)
         kinds = [c["pattern"] for c in copies]
-        self.assertEqual(kinds.count("single-boulder"), 32)
-        self.assertEqual(kinds.count("two-boulders"), 48)
+        self.assertEqual(kinds.count("single-boulder"), 24)
+        self.assertEqual(kinds.count("two-boulders"), 36)
 
     def test_challenges_are_thirty_percent(self):
         rule = self.layout["challenge_rule"]
-        self.assertEqual(rule["copies"], 80)
-        self.assertEqual(rule["challenges"], B.challenge_count(80))
-        self.assertEqual(rule["challenges"], 24)
+        self.assertEqual(rule["copies"], 60)
+        self.assertEqual(rule["challenges"], B.challenge_count(60))
+        self.assertEqual(rule["challenges"], 18)
         self.assertEqual(len(self.layout["challenges"]), rule["challenges"])
         arrows = {(c["pattern"], c["arrow"]) for c in self.layout["challenges"]}
         self.assertEqual(arrows, {("single-boulder", "arrow-1"), ("single-boulder", "arrow-2"),

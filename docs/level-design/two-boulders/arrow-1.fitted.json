@@ -2,11 +2,11 @@
   "pattern": "Two Boulders",
   "name": "Two Boulders - arrow 1 (fitted)",
   "sketch": "Two Boulders - arrow 1",
-  "fitted_for": "a straight 8-unit road running along y, the pattern's centre on the road's centre line",
+  "fitted_for": "a straight 24-unit road running along y, the pattern's centre on the road's centre line",
   "units": "1 unit = the car's width; the car is 1 x 3 units",
   "origin": "x and y in units from the pattern's centre, x to the right, y down",
-  "width": 24,
-  "height": 24,
+  "width": 32,
+  "height": 32,
   "legend": {
     "R": "road",
     "G": "gravel",
@@ -14,30 +14,38 @@
     ".": "empty"
   },
   "rows": [
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB",
-    "BBBBBBBBRRRRRRRRBBBBBBBB"
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB",
+    "BBBBRRRRRRRRRRRRRRRRRRRRRRRRBBBB"
   ],
   "boulders": [
     {
@@ -54,7 +62,7 @@
   "arrow": {
     "points": [
       [
-        -2.25,
+        -2.5,
         -8.5
       ],
       [
@@ -66,15 +74,15 @@
         -6.0
       ],
       [
-        2.25,
+        3.0,
         -4.5
       ],
       [
-        2.25,
+        3.0,
         -3.0
       ],
       [
-        2.25,
+        2.5,
         -1.5
       ],
       [
@@ -90,19 +98,19 @@
         1.0
       ],
       [
-        -2.25,
+        -2.5,
         2.0
       ],
       [
-        -2.25,
+        -3.5,
         3.5
       ],
       [
-        -2.25,
+        -3.5,
         5.5
       ],
       [
-        -2.25,
+        -3.0,
         7.0
       ],
       [
@@ -114,19 +122,19 @@
         8.5
       ],
       [
-        2.25,
+        2.5,
         7.5
       ],
       [
-        2.25,
+        3.5,
         6.0
       ],
       [
-        2.25,
+        4.0,
         4.0
       ],
       [
-        2.25,
+        2.5,
         1.5
       ],
       [
@@ -138,15 +146,15 @@
         -1.0
       ],
       [
-        -2.25,
+        -3.5,
         -2.0
       ],
       [
-        -2.25,
+        -4.0,
         -3.5
       ],
       [
-        -2.25,
+        -2.5,
         -5.0
       ],
       [
@@ -158,23 +166,23 @@
         -7.5
       ],
       [
-        2.25,
+        3.0,
         -8.0
       ],
       [
-        2.25,
+        3.5,
         -8.5
       ]
     ],
     "around_boulders": [
       {
         "boulder": 0,
-        "degrees": 408,
+        "degrees": 422,
         "direction": "clockwise"
       },
       {
         "boulder": 1,
-        "degrees": 339,
+        "degrees": 332,
         "direction": "counter-clockwise"
       }
     ],
