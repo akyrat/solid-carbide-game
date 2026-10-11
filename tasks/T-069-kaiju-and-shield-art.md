@@ -1,6 +1,6 @@
 ---
 id: T-069
-title: Art: the kaiju and its green shield
+title: Art: the kaiju
 status: blocked
 from: project-lead
 to: asset-generation
@@ -29,7 +29,7 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until T-045 (the kaiju, with placeholders) is done.**
 
-The kaiju, as Visual style, Decisions describes it: a giant Godzilla-style monster several times the car's size, never a copy of Godzilla. Propose its size, directions and walk frames. Also its shield: a green, see-through oval around it (the game fades the whole object, so the sprite has no semi-transparent pixels), the same green as the kaiju's challenge arrows. Swap both in for T-045's placeholders.
+The kaiju, as Visual style, Decisions describes it: a giant Godzilla-style monster several times the car's size, never a copy of Godzilla. Propose its size, directions and walk frames. Swap it in for T-045's placeholder. It has no shield in the MVP (Enemies, Decisions, 2026-10-11); the shield moved to T-099, after the MVP.
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
 
@@ -43,7 +43,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 - [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot shows the final kaiju with its shield, and one with the shield down (QA: pass / fail)
+- [ ] A screenshot shows the final kaiju in a run (QA: pass / fail)
 - [ ] T-045's tests still pass (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 

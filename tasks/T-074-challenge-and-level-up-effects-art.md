@@ -1,6 +1,6 @@
 ---
 id: T-074
-title: Art: the challenge completed and level-up effects
+title: Art: the level-up effect
 status: open
 from: project-lead
 to: asset-generation
@@ -8,9 +8,9 @@ epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-019, T-037]
+depends_on: [T-037]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, docs/game-loop-architecture.md, tasks/T-019-build-mvp-map.md, tasks/T-037-likes-and-levels.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/game-loop-architecture.md, tasks/T-037-likes-and-levels.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
 qa_rounds: 0
@@ -27,9 +27,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-019 (challenges) and T-037 (levels) are done.**
-
-Two effects from Visual style, Decisions: one when a challenge is completed (on the map's "challenge completed" signal), and one when the player levels up (on T-037's "level up" signal, before the level-up screen).
+The level-up effect from Visual style, Decisions: it plays when the player levels up (on T-037's "level up" signal, before the level-up screen). The challenge completed effect moved to T-100, after the MVP (2026-10-11).
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
 
@@ -43,8 +41,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 - [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot shows each effect at its moment (QA: pass / fail)
-- [ ] T-019's and T-037's tests still pass (QA: pass / fail)
+- [ ] A screenshot shows the effect at a level-up (QA: pass / fail)
+- [ ] T-037's tests still pass (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.

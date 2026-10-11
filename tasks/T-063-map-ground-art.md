@@ -8,7 +8,7 @@ epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-019]
+depends_on: [T-019, T-097]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
@@ -44,7 +44,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
 - [ ] A screenshot of the whole map shows the final ground tiles in place of the flat colours (QA: pass / fail)
-- [ ] T-019's tests still pass: the layout, roads and challenges are unchanged (QA: pass / fail)
+- [ ] T-019's tests still pass: the layout, roads and boulders are unchanged (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.

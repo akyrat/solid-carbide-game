@@ -5,7 +5,7 @@ status: open
 from: project-lead
 to: level-challenge
 epic: level-challenges
-milestone: mvp
+milestone: final-release
 user_facing_text: no
 changes_visuals: no
 depends_on: [T-035]
@@ -26,6 +26,8 @@ A task is not done until every document listed in documents_affected has been up
 -->
 
 ## Description
+
+**Moved after the MVP (2026-10-11): challenges are left out of the MVP (Level design, Decisions). Not to be started unless the board brings challenges back.**
 
 T-035's placement check lets a meteor challenge land on a preset challenge's arrow. The board decided it must not (Level design, Decisions, 2026-10-10): a meteor challenge's boulders and its arrow corridor must not overlap any other challenge's arrow corridor, preset or meteor.
 

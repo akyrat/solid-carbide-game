@@ -29,7 +29,7 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until the screen flow (T-055), the HUD (T-050), the level-up screen (T-052), the kaiju's attack (T-046) and the garage upgrades (T-060, T-061, T-062) are done.**
 
-Before the board plays the MVP, check that everything runs together, as Game loop architecture describes a run: from the main menu, Start begins a run; the car drives on the map; challenges and drifts give likes and level-ups; the level-up screen applies a choice; minions come in, are shot and drop coins; the kaiju arrives with 1:00 left and attacks; a win and a loss both return to the main menu; the coins are banked and the garage can spend them; the upgrades bought apply in the next run.
+Before the board plays the MVP, check that everything runs together, as Game loop architecture describes a run: from the main menu, Start begins a run; the car drives on the map; drifts give likes and level-ups; the level-up screen applies a choice; minions come in, are shot and drop coins; the kaiju arrives with 1:00 left, attacks, and can be brought down; a win and a loss both return to the main menu; the coins are banked and the garage can spend them; the upgrades bought apply in the next run.
 
 Write it as an automated end-to-end test where it can be, and a short manual checklist for what can't be automated. Report anything that doesn't connect.
 

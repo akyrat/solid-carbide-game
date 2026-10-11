@@ -5,7 +5,7 @@ status: blocked
 from: project-lead
 to: level-challenge
 epic: level-challenges
-milestone: mvp
+milestone: final-release
 user_facing_text: no
 changes_visuals: yes
 depends_on: [T-066]
@@ -26,6 +26,8 @@ A task is not done until every document listed in documents_affected has been up
 -->
 
 ## Description
+
+**Moved after the MVP (2026-10-11): challenges are left out of the MVP (Level design, Decisions). Not to be started unless the board brings challenges back.**
 
 **Blocked until T-066 (the arrow art) is done.**
 
