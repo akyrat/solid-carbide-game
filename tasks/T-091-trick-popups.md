@@ -1,7 +1,7 @@
 ---
 id: T-091
 title: Trick popups: the trick's name pops out from the car
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, tasks/T-079-trick-detection.md, tasks/T-082-text-combo.md, tasks/T-036-run-scene-and-state.md, game/README.md]
 files_expected_to_change: [the popup scene and script, the run scene, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -48,3 +48,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 ## Result notes
 
 Built `scripts/hud/trick_popups.gd` (`TrickPopups`): LONG DRIFT! (16 px), FULL 360! and ALT DRIFT! (28 px) pop out 50 px above the car, grow quickly, rise 40 px and fade in 1 s, as outlined neon pink text on a dark navy shape with a cyan edge (not Redgull red). It is in the run (rebinds to each new car, so it works after Start from the menu and for a second run) and in the drift prototype. `show_popup(text, position, size)` takes any text for T-092. Tests: `tests/unit/test_trick_popups.gd` (6 tests, passing); screenshot fixture `tests/fixtures/trick_popups_demo.tscn`, picture at `screenshots/trick_popups.png` (git-ignored). Documents updated: `docs/hud-and-menus.md` (Content, new Trick popups section), `game/README.md`. Touched `run.gd` and `drift_prototype.gd` by a few lines each; not the pause screen or map files.
+
+### QA round 1
+
+1. Each trick signal shows T-082's name near the car, rising and going away: pass. Signals emitted on the run's car show exactly LONG DRIFT!, FULL 360!, ALT DRIFT! (matches tasks/T-082-text-combo.md); popup starts 50 px above the car, rises, fades and is freed. Also checked in a throwaway test (removed) that a run started from the main menu (game.tscn) twice shows the popup each time, and the drift prototype test pops a popup from a real drive.
+2. Extended-drift popup is smaller: pass. 16 px against 28 px, asserted by test_extended_drift_is_smaller.
+3. Screenshots show a popup for each trick, in the run: pass. My own screenshot of the demo fixture shows all three popups in the run; readable, clear of the 8:00 timer, neon pink text on navy with a cyan edge, no Redgull red. Minor note: the font looks regular weight rather than bold; placeholder, T-084 restyles.
+4. docs/hud-and-menus.md: pass. `git diff master...HEAD` adds only a "Trick popups" subsection under Content; Summary, Decisions and Open questions unchanged.
+5. Full GUT suite and Python tests: pass. GUT 229/229 passing; `game/tools` 62 OK; `tools` 75 OK.
