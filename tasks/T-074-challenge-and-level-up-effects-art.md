@@ -1,7 +1,7 @@
 ---
 id: T-074
 title: Art: the challenge completed and level-up effects
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

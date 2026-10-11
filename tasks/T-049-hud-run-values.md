@@ -1,7 +1,7 @@
 ---
 id: T-049
 title: HUD: likes bar and level, health, coins
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus

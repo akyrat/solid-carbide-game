@@ -1,7 +1,7 @@
 ---
 id: T-081
 title: The combo: tricks raise a multiplier on likes; collisions cut it; it drains
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 epic: game-loop

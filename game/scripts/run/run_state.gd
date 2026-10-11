@@ -2,7 +2,8 @@ class_name RunState
 extends Node
 ## The run's state (task T-036): the 8-minute clock, the car's health, the
 ## coins collected this run, and win and loss (Game loop architecture,
-## Decisions). Other agents' work plugs in through the signals and public
+## Decisions). Task T-037 adds likes (XP) and levels: from completed
+## challenges and from drifting, with level-ups and the level-up pause switch. Other agents' work plugs in through the signals and public
 ## functions below; game/README.md, "The run", lists them.
 ##
 ## The clock counts down in _process, so it stops whenever the scene tree is
@@ -12,7 +13,7 @@ extends Node
 ## The run's length and the boss's arrival are Game loop architecture,
 ## Decisions ("A run lasts 8 minutes", "At the 7-minute mark the kaiju
 ## spawns"), not balancing numbers, so they are constants here. The car's
-## starting health comes from res://data/run.json (RunData).
+## starting health and the XP numbers come from res://data/run.json (RunData).
 
 ## The run lasts 8 minutes.
 const RUN_SECONDS := 480.0
@@ -40,6 +41,21 @@ signal time_left_changed(seconds_left: float)
 signal health_changed(health: float, max_health: float)
 ## The coins collected this run changed.
 signal coins_changed(coins: int)
+## XP or the level changed (XP gained, a level-up, or a new run). For the
+## HUD's likes bar: `xp` out of `xp_needed` (0 at the top level), at `level`.
+signal xp_changed(xp: float, xp_needed: float, level: int)
+## A challenge (preset or meteor) was completed: `amount` is the XP (likes)
+## it gave, for the challenge popup (T-092).
+signal score(amount: float, challenge_id: String)
+## The player reached `new_level`. Fires once per level, even when one gain
+## gives several level-ups.
+signal level_up(new_level: int)
+## The switch is on and the run is now paused for the weapon choice of
+## `new_level` (T-052 opens its screen on this). With several level-ups at
+## once, it fires again for the next level after each choice_made().
+signal level_up_choice_started(new_level: int)
+## The weapon choice for `new_level` was made (choice_made()).
+signal level_up_choice_made(new_level: int)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -47,6 +63,21 @@ var health := 0.0
 var max_health := 0.0
 ## Coins collected this run.
 var coins := 0
+## XP (shown to players as likes) toward the next level, after leftovers.
+var xp := 0.0
+## The level now, 1 at the start of a run.
+var level := 1
+## The level-up pause switch (T-052 turns it on). Off: a level-up just raises
+## the level and the run carries on. On: a level-up pauses the run (the scene
+## tree, so the clock and the car stop) until choice_made() is called.
+var pause_on_level_up := false
+## Seconds the current unbroken drift has lasted (0 when not drifting).
+var drift_seconds := 0.0
+## Full drift seconds of the current drift already turned into XP.
+var drift_seconds_paid := 0
+## Levels reached whose weapon choice has not been made yet, oldest first.
+## The first one is the choice on show. Only used while the switch is on.
+var pending_choices: Array[int] = []
 ## True from start_run() until the run ends.
 var running := false
 ## "" while the run is going (or before the first one), then "win" or "loss".
@@ -70,11 +101,20 @@ func start_run() -> void:
 	coins = 0
 	result = ""
 	boss_time_sent = false
+	xp = 0.0
+	level = 1
+	drift_seconds = 0.0
+	drift_seconds_paid = 0
+	var was_waiting := not pending_choices.is_empty()
+	pending_choices.clear()
+	if was_waiting:
+		_set_paused(false)
 	running = true
 	run_started.emit()
 	time_left_changed.emit(time_left)
 	health_changed.emit(health, max_health)
 	coins_changed.emit(coins)
+	xp_changed.emit(xp, xp_needed(), level)
 
 
 func _process(delta: float) -> void:
@@ -147,6 +187,106 @@ func kaiju_killed() -> void:
 
 func is_running() -> bool:
 	return running
+
+
+## XP needed to go from the current level to the next (0 at the top level).
+func xp_needed() -> float:
+	return _run_data.xp_needed(level) if _run_data != null else 0.0
+
+
+## True at the top level (run.json's max_level): the bar stops filling.
+func is_max_level() -> bool:
+	return _run_data != null and level >= _run_data.max_level()
+
+
+## A challenge was completed (the map's challenge_completed or
+## meteor_challenge_completed; the run scene connects both). Gives the current
+## level's challenge XP and sends `score` with it. Ignored when the run is
+## not going.
+func challenge_completed(challenge_id: String = "") -> void:
+	if not running:
+		return
+	var amount := _run_data.challenge_xp(level)
+	score.emit(amount, challenge_id)
+	add_xp(amount)
+
+
+## Feeds the car's drift state for one physics step of `delta` seconds (the
+## run scene calls it after every car step). Once an unbroken drift reaches
+## 1 second, it gives the drift XP for that first second, then for each
+## further full second (a 3-second drift gives 3 seconds' worth; 0.9 s gives
+## none). A step without drifting ends the drift.
+func drift_step(drifting: bool, delta: float) -> void:
+	if not running:
+		return
+	if not drifting:
+		drift_seconds = 0.0
+		drift_seconds_paid = 0
+		return
+	drift_seconds += delta
+	var full := int(floor(drift_seconds + EPSILON))
+	if full > drift_seconds_paid:
+		var seconds := full - drift_seconds_paid
+		drift_seconds_paid = full
+		add_xp(_run_data.drift_xp_per_second() * seconds)
+
+
+## Adds `amount` XP. Each time it reaches the level's threshold the player
+## levels up (level_up fires per level); leftover XP carries over if run.json
+## says so. At the top level XP no longer adds up. Ignored when the run is
+## not going or `amount` is not positive.
+func add_xp(amount: float) -> void:
+	if not running or amount <= 0.0 or is_max_level():
+		return
+	xp += amount
+	var reached: Array[int] = []
+	while not is_max_level() and xp >= xp_needed() - EPSILON:
+		xp = maxf(xp - xp_needed(), 0.0) if _run_data.carries_over() else 0.0
+		level += 1
+		reached.append(level)
+	if is_max_level():
+		xp = 0.0
+	xp_changed.emit(xp, xp_needed(), level)
+	for l in reached:
+		level_up.emit(l)
+		if pause_on_level_up:
+			pending_choices.append(l)
+			if pending_choices.size() == 1:
+				_start_choice()
+
+
+## True while the run is paused waiting for a level-up's weapon choice.
+func is_waiting_for_choice() -> bool:
+	return not pending_choices.is_empty()
+
+
+## The level whose weapon choice is on show, or 0 when none is.
+func choice_level() -> int:
+	return pending_choices[0] if not pending_choices.is_empty() else 0
+
+
+## The player made the weapon choice on show (T-052 calls it). The next
+## waiting level-up's choice starts, or, if none is left, the run resumes.
+## Ignored when no choice is waiting.
+func choice_made() -> void:
+	if pending_choices.is_empty():
+		return
+	var done: int = pending_choices.pop_front()
+	level_up_choice_made.emit(done)
+	if pending_choices.is_empty():
+		_set_paused(false)
+	else:
+		_start_choice()
+
+
+func _start_choice() -> void:
+	_set_paused(true)
+	level_up_choice_started.emit(pending_choices[0])
+
+
+func _set_paused(paused: bool) -> void:
+	if is_inside_tree():
+		get_tree().paused = paused
 
 
 func _end(r: String) -> void:

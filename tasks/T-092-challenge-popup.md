@@ -1,7 +1,7 @@
 ---
 id: T-092
 title: Challenge completed: the likes gained pop out from the car
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus

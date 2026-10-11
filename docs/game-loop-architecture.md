@@ -75,6 +75,17 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
 
+### Likes and levels
+
+The run also owns the likes (XP) and the level (task T-037; how to use it: [game/README.md](../game/README.md), section "The run"; the numbers: [game/data/run.json](../game/data/run.json)):
+
+- Every completed challenge, preset or the kaiju's meteor challenges, gives the current level's challenge XP, and the run sends a "score" signal with it for the challenge popup.
+- The run follows the car's drift state step by step: once an unbroken drift reaches 1 second it gives the drift XP for that second, then for each further full second.
+- When XP reaches the level's threshold the level goes up (leftover XP carries over, so one gain can give several level-ups), and the run sends "level up" with the new level. At the top level the bar stops.
+- The HUD reads the XP, the level's threshold and the level, with a signal whenever they change.
+- A level-up can pause the run (clock and car) until the weapon choice is made, one choice after another when several level-ups come at once. This pause is a switch, off until the level-up screen exists (task T-052): for now a level-up just raises the level and the run carries on.
+- A new run starts back at level 1 with no XP.
+
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
 ### Screen flow
