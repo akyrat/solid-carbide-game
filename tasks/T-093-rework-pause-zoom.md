@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, tasks/T-015-pause-on-escape.md, tasks/T-047-text-pause-screen.md, game/README.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [the pause screen scene and script, tests, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -67,3 +67,15 @@ Notes for the Project Lead (not failures): the HUD's run timer ("8:00") draws ov
 ### Rework after QA
 
 The pause strip drew over the HUD run timer. The strip now keeps 100 px free above its content (`STRIP_TOP_MARGIN`), so the title sits below the timer. New tests in `tests/unit/game/test_screen_flow.gd`: the title does not overlap the timer, and the camera settings are restored on resume. Full GUT suite and Python tests pass.
+
+### QA round 2
+
+Checked by the QA/Integration Agent after commit 8b95b79. Own screenshots (not committed; throwaway fixture removed) of a run started from the main menu, then paused, at slider 19 (the saved default) and 7.
+
+- [x] Label "Camera zoom level" and the map visible behind the pause screen: PASS. The label shows in the screenshots, the map and challenges are visible below the top strip, and the HUD timer "8:00" now sits above the "Paused" title with no overlap.
+- [x] Test moves the slider while paused, zoom changes at once, car and clock stay paused: PASS. `test_the_zoom_slider_zooms_the_view_at_once_while_a_run_is_paused` and the prototype test pass in the full suite.
+- [x] Two screenshots at different slider values show different zoom: PASS. At 7 the view is close on the car; at 19 it is zoomed out with the map visible.
+- [x] T-015's tests still pass: PASS. test_pause_screen.gd passes; the new tests for the title not overlapping the timer and the camera settings restored on resume also pass.
+- [x] Full GUT suite and Python tests: PASS. GUT 227/227 (TESTS PASSED), `game/tools` Python tests 62 OK, `tools` Python tests 75 OK.
+
+All criteria pass; status set to needs-playtest.
