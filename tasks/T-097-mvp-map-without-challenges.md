@@ -1,7 +1,7 @@
 ---
 id: T-097
 title: Take the challenges out of the MVP map (no arrows, the boulders stay), and add meteor boulders
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 epic: level-challenges
