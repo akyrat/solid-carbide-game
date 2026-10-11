@@ -590,3 +590,8 @@ Entry format:
 - Decision or change: T-081 merged on QA's pass. The run keeps a combo multiplier from 1.0: tricks raise it by `combo.json`'s amounts up to the cap, it drains to 1.0 after 2 seconds without a trick, a collision or damage cuts 80% of the part above 1.0, and it multiplies all likes. Two readings for the board's playtest: a hit does not restart the 2-second wait, and the first drift second already earns 1.05 times its likes, because the extended-drift trick fires just before it. T-083 (the HUD combo counter) is unblocked.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-081 (done), T-083 (unblocked)
+
+## 2026-10-11: T-083 done; likes and combo playtest ready
+- Decision or change: T-083 merged on QA's pass. The HUD shows "Combo x{multiplier}" to the right of the likes row, and each trick popup shows the combo it added ("LONG DRIFT! +0.05", "FULL 360! +0.25", "ALT DRIFT! +0.5"; the name only at the cap). With T-049, T-081 and T-092, the likes and combo step of "Building in playable steps" is playable from the main folder. QA noted that while paused, the pause strip covers the lower half of the likes row, the likes bar and the combo counter; left for the board's playtest.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-083 (done)

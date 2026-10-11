@@ -28,7 +28,7 @@ func test_each_trick_shows_its_text_near_the_car_rises_and_goes() -> void:
 		var shown: Array = tp.popups()
 		assert_eq(shown.size(), before + 1, "%s shows a popup" % id)
 		var pop = shown.back()
-		assert_eq(pop.text, NAMES[id])
+		assert_true(pop.text.begins_with(NAMES[id]), "the name first (the amount follows, T-083)")
 		var start: Vector2 = pop.position
 		assert_lt(start.distance_to(run.car_sprite.position), 80.0, "near the car")
 		assert_lt(start.y, run.car_sprite.position.y, "above the car, clear of it")
@@ -64,7 +64,7 @@ func test_popups_follow_the_new_car_after_a_second_run() -> void:
 	add_child_autofree(run)
 	run.start_run()
 	run.car.trick.emit("three_sixty")
-	assert_eq(_popup_texts(run.trick_popups), ["FULL 360!"])
+	assert_eq(_popup_texts(run.trick_popups), ["FULL 360! +0.25"])
 
 
 func test_any_text_can_be_shown() -> void:

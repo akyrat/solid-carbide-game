@@ -16,6 +16,8 @@ const TEXTS := {
 	"three_sixty": "FULL 360!",
 	"alternate_drift": "ALT DRIFT!",
 }
+## Combo amount text approved in task T-082 (combo.added); {amount} is what the trick added.
+const ADDED_TEXT := "+{amount}"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
 const SCORE_TEXT := "Trending! +{likes} Likes"
 ## Font sizes in drawn pixels. Extended drift comes every second, so it is smaller.
@@ -82,6 +84,11 @@ var _car: Node = null
 var _car_position: Callable
 ## Returns the car's drawn position for the challenge popup (set by bind_score()).
 var _score_car_position: Callable
+## Returns the car's drawn position for the combo popups (set by bind_combo()).
+var _combo_car_position: Callable
+## True once bind_combo() is used: the run state's combo_trick then shows the
+## trick popups (with the amount added), not the car's trick signal.
+var _from_combo := false
 
 
 ## Shows the popups for a car's `trick` signal. `car_position` is a Callable
@@ -102,12 +109,37 @@ func bind_score(run_state: Node, car_position: Callable) -> void:
 		run_state.score.connect(_on_score)
 
 
+## Shows the trick popups from a run state's `combo_trick` signal (task T-083):
+## the trick's name and what it added to the combo. Once used, the car's own
+## `trick` signal no longer shows a popup (the run state hears it too).
+func bind_combo(run_state: Node, car_position: Callable) -> void:
+	_combo_car_position = car_position
+	_from_combo = true
+	if not run_state.combo_trick.is_connected(_on_combo_trick):
+		run_state.combo_trick.connect(_on_combo_trick)
+
+
+## The popup text for a trick: its name and, when it added something, "+{amount}".
+## At the cap the trick adds nothing and only the name shows.
+static func trick_text(trick_id: String, added: float) -> String:
+	var text: String = TEXTS.get(trick_id, "")
+	if text != "" and added > 0.0:
+		text += " " + ADDED_TEXT.format({"amount": String.num(added, 2)})
+	return text
+
+
+func _on_combo_trick(trick_id: String, added: float, _multiplier: float) -> void:
+	if not TEXTS.has(trick_id):
+		return
+	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id])
+
+
 func _on_score(amount: float, _challenge_id: String) -> void:
 	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL)
 
 
 func _on_trick(trick_id: String) -> void:
-	if not TEXTS.has(trick_id):
+	if _from_combo or not TEXTS.has(trick_id):
 		return
 	show_popup(TEXTS[trick_id], _car_position.call(), SIZES[trick_id])
 
