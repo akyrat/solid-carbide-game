@@ -14,7 +14,7 @@ func before_each() -> void:
 func test_run_starts_with_map_car_and_fresh_state() -> void:
 	assert_not_null(run.map, "map loaded")
 	assert_eq(run.map.challenge_ids().size(), run.map.layout.challenges.size(), "the MVP map's challenges")
-	assert_eq(run.map.challenge_ids().size(), 24, "30% of the 80 pattern copies (T-094)")
+	assert_eq(run.map.challenge_ids().size(), 18, "30% of the 60 pattern copies (T-096)")
 	assert_not_null(run.car, "car loaded")
 	assert_eq(run.car.get_script(), preload("res://scripts/driving/car.gd"))
 	assert_eq(run.map.car, run.car, "the map checks challenges against the car")

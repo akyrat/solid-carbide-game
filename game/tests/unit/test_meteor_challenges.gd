@@ -203,33 +203,36 @@ func test_placement_accepts_a_free_spot() -> void:
 		for deg in [0.0, 45.0, 90.0, 200.0]:
 			assert_true(map.can_place_meteor_challenge(design_id, Vector2.ZERO, deg_to_rad(deg)),
 					"%s at the gravel centre, %d degrees" % [design_id, deg])
-	# A straight stretch of the perimeter road, between two pattern copies.
-	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-54.0, -117.0), deg_to_rad(90.0)))
-	# An empty road crossing (crossings 2, 1), along the road.
-	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-63.0, -81.0), deg_to_rad(90.0)))
+	# The 24-unit perimeter road, between two pattern copies, laid across the road.
+	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-67.5, -108.0), 0.0))
+	# An inner road (x = -54), between the Single Boulder copy at -54, -54 and the
+	# Two Boulders copy at -54, -81.
+	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-54.0, -66.0), 0.0))
 
 
 func test_placement_rejects_a_building() -> void:
 	var map := make_map()
 	for design_id in DESIGNS:
-		# On a building block (-77..-67).
-		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-72.0, -72.0), 0.0), design_id)
-	# The Two Boulders fits along an 8-unit road (0.25 units from the blocks on
-	# either side), but laid across one, it reaches into the blocks.
-	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-81.0, -63.0), 0.0))
-	assert_false(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-81.0, -72.0), deg_to_rad(90.0)))
-	# A Single Boulder fits on an empty crossing, but not pushed against a block's corner.
-	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-45.0, -63.0), 0.0))
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-47.0, -65.0), 0.0))
+		# On a building block (-96..-66).
+		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-81.0, -81.0), 0.0), design_id)
+	# The Two Boulders fits across the 24-unit perimeter road, but moved 4 units
+	# towards the blocks it reaches into them.
+	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-67.5, -108.0), 0.0))
+	assert_false(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-67.5, -104.0), 0.0))
+	# A Single Boulder fits on the road, but not pushed against a block's corner (-66, -66).
+	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-54.0, -66.0), 0.0))
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-62.0, -70.0), 0.0))
 
 
 func test_placement_rejects_another_boulder() -> void:
 	var map := make_map()
-	# On a pattern copy's boulder (a Single Boulder at -63, -63).
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-63.0, -63.0), 0.0))
-	# In the gravel near its edge, so its corridor reaches the boulder of the
-	# Two Boulders copy at -45, -9 (its boulders at -48.5 and -41.5).
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-36.5, -9.0), 0.0))
+	# On a pattern copy's boulder (a Single Boulder at -54, -54).
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-54.0, -54.0), 0.0))
+	# Between two boulders of the Two Boulders copy at -27, -54 (its boulders at
+	# -30.5 and -23.5), so its corridor reaches them.
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-27.0, -50.0), 0.0))
+	# Further into the gravel it fits.
+	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-27.0, -36.0), 0.0))
 	# On a meteor challenge's boulder: free before, not after.
 	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-2", Vector2(6.0, 0.0), 0.0))
 	map.add_meteor_challenge("single-boulder/arrow-1", Vector2(6.0, 0.0), 0.0)
@@ -240,7 +243,7 @@ func test_placement_rejects_another_boulder() -> void:
 func test_placement_rejects_the_map_edge() -> void:
 	var map := make_map()
 	for design_id in DESIGNS:
-		# The map runs from -121 to 121.
+		# The map runs from -120 to 120.
 		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-120.0, -72.0), 0.0), design_id)
 		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-72.0, 120.0), 0.0), design_id)
 		assert_false(map.can_place_meteor_challenge(design_id, Vector2(125.0, 0.0), 0.0), design_id)

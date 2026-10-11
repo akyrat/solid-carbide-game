@@ -12,8 +12,8 @@ changes them) and writes:
                                                         pattern copies, boulders, challenges
 
 All coordinates are in units (1 unit = the car's width), x to the right, y down.
-The map's origin is its centre, as in Crash City Grid, so the map runs from -121 to 121
-(242 by 242, task T-094; the first map, task T-019, was 80 by 80).
+The map's origin is its centre, as in Crash City Grid, so the map runs from -120 to 120
+(240 by 240, task T-096: the first map's 80 by 80 layout, task T-019, three times bigger).
 Running it twice gives identical files. Standard library only.
 
 How a sketch is fitted (Level design, Decisions: keep the number of boulders, the
@@ -41,17 +41,15 @@ MAP_OUT = ROOT / "game" / "data" / "level" / "mvp_map.json"
 
 # ---- The map (Level design, Decisions) -------------------------------------------------
 
-# Level design asks for 240 by 240 (2026-10-11). With the 8-unit perimeter road, the 10 by 10
-# blocks and the 8-unit roads kept as they are (task T-094: only the city grows), a grid of
-# N blocks is 18 N + 8 units across (N = 4 gave the first map's 80), so exactly 240 cannot be
-# made: 13 blocks give 242, the nearest. The map is therefore 242 by 242.
-MAP_SIZE = 242         # units, square
-PERIMETER_ROAD = 8     # the road around the edge
-BLOCK = 10             # building blocks are 10 by 10
-ROAD = 8               # roads between blocks
-BLOCKS_PER_SIDE = 13   # 13 by 13 grid of blocks
-GRAVEL = 82            # the open gravel square in the centre: the middle 5 by 5 blocks
-                       # and the roads between them (the first map's 28 was 2 by 2)
+# Level design (2026-10-11, task T-096): 240 by 240, the first plan's 80 by 80 layout with
+# everything three times bigger. 2 x 24 (perimeter road) + 4 x 30 (blocks) + 3 x 24 (roads) = 240.
+MAP_SIZE = 240         # units, square
+PERIMETER_ROAD = 24    # the road around the edge
+BLOCK = 30             # building blocks are 30 by 30
+ROAD = 24              # roads between blocks
+BLOCKS_PER_SIDE = 4    # 4 by 4 grid of blocks
+GRAVEL = 84            # the open gravel square in the centre: the middle 2 by 2 blocks
+                       # and the road between them
 
 CORRIDOR_WIDTH = 3.0   # the arrow is as wide as the car is long
 BOULDER_DIAMETER = 3.0
@@ -63,8 +61,10 @@ BUILDING_MARGIN = 0.25    # corridor edge to the nearest building
 SAMPLES_PER_CURVE = 16    # centre line samples per quadratic piece
 
 # Where each fitted pattern is made to fit, in pattern coordinates (pattern centre = 0, 0):
-# "intersection": an 8 by 8 crossing of two 8-unit roads (buildings where |x| >= 4 and |y| >= 4);
-# "road": a straight 8-unit road running along y (buildings where |x| >= 4).
+# "intersection": a 24 by 24 crossing of two 24-unit roads (buildings where |x| >= 12 and |y| >= 12);
+# "road": a straight 24-unit road running along y (buildings where |x| >= 12).
+# On 24-unit roads every sketch fits as drawn (task T-096), so the fitted versions are the
+# sketches moved onto the pattern's centre, with no arrow point nudged.
 FIT_CONTEXTS = {
     "single-boulder": "intersection",
     "two-boulders": "road",
@@ -78,8 +78,6 @@ FITTED_BOULDERS = {
 }
 
 CHALLENGE_SHARE = 0.30
-# Perimeter-road T-junctions (by crossing index, on every side) that get a Two Boulders copy.
-PERIMETER_COPY_INDICES = (1, 4, 7, 10)
 
 
 def crossings():
@@ -87,38 +85,48 @@ def crossings():
     return [s + BLOCK + ROAD / 2 for s in block_ranges()[:-1]]
 
 
+def road_lines():
+    """The centre line of every road along one axis, the perimeter road's two sides included."""
+    edge = MAP_SIZE / 2 - PERIMETER_ROAD / 2
+    return [-edge] + crossings() + [edge]
+
+
+def block_middles():
+    """The middle of each block along one axis: the middle of each stretch of road between two
+    crossings."""
+    return [s + BLOCK / 2 for s in block_ranges()]
+
+
 def in_gravel(x, y):
     g = GRAVEL / 2
     return abs(x) < g and abs(y) < g
+
+
+def _num(v):
+    return int(v) if v == int(v) else v
 
 
 def make_copies():
     """The pattern copies on the map: (pattern, centre x, centre y, rotation in degrees clockwise),
     in reading order (top to bottom, then left to right).
 
-    Crossings are numbered 0 to 11 along each axis. A crossing whose two numbers are both even
-    gets a Single Boulder; both odd, a Two Boulders (turned to run along x or y in alternate
-    pairs); the others stay empty, so the nearest other copy along a road is 36 units away.
-    No copy in the gravel. Along each side of the perimeter road, a Two Boulders turned to run
-    along it at crossings 1, 4, 7 and 10. Turning by whole quarter turns keeps clockwise
-    clockwise.
+    Task T-096 (240 by 240, 24-unit roads): a Single Boulder on the centre of every place where
+    two road centre lines cross (the crossings, the perimeter road's T-junctions and its corners),
+    and a Two Boulders on the middle of every stretch of road between them, turned to run along
+    the road. No copy in the gravel. Neighbouring copies are 27 units apart. Turning by whole
+    quarter turns keeps clockwise clockwise.
     """
-    xs = crossings()
-    edge = MAP_SIZE / 2 - PERIMETER_ROAD / 2
+    lines = road_lines()
+    middles = block_middles()
     out = []
-    for j, y in enumerate(xs):
-        for i, x in enumerate(xs):
-            if in_gravel(x, y):
-                continue
-            if i % 2 == 0 and j % 2 == 0:
-                out.append(("single-boulder", x, y, 0))
-            elif i % 2 == 1 and j % 2 == 1:
-                out.append(("two-boulders", x, y, 0 if (i // 2 + j // 2) % 2 == 0 else 90))
-    for i in PERIMETER_COPY_INDICES:
-        c = xs[i]
-        out += [("two-boulders", c, -edge, 90), ("two-boulders", c, edge, 90),
-                ("two-boulders", -edge, c, 0), ("two-boulders", edge, c, 0)]
-    out = [(p, int(x) if x == int(x) else x, int(y) if y == int(y) else y, d) for p, x, y, d in out]
+    for y in lines:
+        for x in lines:
+            out.append(("single-boulder", x, y, 0))
+    for v in lines:
+        for m in middles:
+            out.append(("two-boulders", v, m, 0))    # along a road running along y
+            out.append(("two-boulders", m, v, 90))   # along a road running along x
+    out = [(p, _num(x), _num(y), d) for p, x, y, d in out if not in_gravel(x, y)]
     out.sort(key=lambda c: (c[2], c[1]))
     return out
 
@@ -204,12 +212,13 @@ def rect_distance(px, py, rect):
 
 def context_buildings(context):
     """The buildings around a fitted pattern, as rectangles in pattern coordinates."""
-    far = 30.0
+    far = float(BLOCK)
+    h = ROAD / 2
     if context == "intersection":
-        return [(4.0, 4.0, far, far), (-4.0 - far, 4.0, far, far),
-                (4.0, -4.0 - far, far, far), (-4.0 - far, -4.0 - far, far, far)]
+        return [(h, h, far, far), (-h - far, h, far, far),
+                (h, -h - far, far, far), (-h - far, -h - far, far, far)]
     if context == "road":
-        return [(4.0, -far, far, 2 * far), (-4.0 - far, -far, far, 2 * far)]
+        return [(h, -far, far, 2 * far), (-h - far, -far, far, 2 * far)]
     raise ValueError(context)
 
 
@@ -292,7 +301,7 @@ def fit_sketch(sketch, pattern):
     buildings = context_buildings(context)
     pts = fit_points(moved, new, buildings)
     boulders = [{"x": x, "y": y, "diameter": BOULDER_DIAMETER} for x, y in new]
-    size = 24
+    size = ROAD + 8   # the picture shows the road and the edge of the buildings around it
     rows = []
     for j in range(size):
         row = ""
@@ -307,8 +316,8 @@ def fit_sketch(sketch, pattern):
         "name": sketch["name"] + " (fitted)",
         "sketch": sketch["name"],
         "fitted_for": {
-            "intersection": "a crossing of two 8-unit roads, the pattern's centre on the crossing's centre",
-            "road": "a straight 8-unit road running along y, the pattern's centre on the road's centre line",
+            "intersection": "a crossing of two %d-unit roads, the pattern's centre on the crossing's centre" % ROAD,
+            "road": "a straight %d-unit road running along y, the pattern's centre on the road's centre line" % ROAD,
         }[context],
         "units": sketch["units"],
         "origin": "x and y in units from the pattern's centre, x to the right, y down",
@@ -466,7 +475,7 @@ def build(sketch_dir=SKETCH_DIR):
     half = MAP_SIZE / 2
     layout = {
         "name": "MVP map",
-        "task": "T-019, T-094 (242 by 242)",
+        "task": "T-019, T-094, T-096 (240 by 240, everything three times bigger)",
         "generated_by": "python game/tools/build_mvp_map.py",
         "units": "1 unit = the car's width; the car is drawn 1 x 3 units",
         "origin": "x and y in units from the map's centre, x to the right, y down; rectangles give their top-left corner",
