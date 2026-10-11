@@ -192,7 +192,11 @@ func test_run_scene_drift_gives_xp() -> void:
 	var steps := int(ceil(1.0 / run.car.model.dt)) + 3
 	await wait_physics_frames(steps)
 	assert_true(run.car.model.is_drifting)
-	assert_eq(run.state.xp, data.drift_xp_per_second(), "one second of drift in the run")
+	# T-081: the extended-drift trick at the 1 s mark raises the combo before
+	# that second's drift XP is paid, so the second is multiplied by it.
+	assert_gt(run.state.combo, 1.0, "the extended-drift trick raised the combo")
+	assert_almost_eq(run.state.xp, data.drift_xp_per_second() * run.state.combo, 0.000001,
+			"one second of drift in the run, times the combo")
 
 
 func test_new_run_resets_xp_and_level() -> void:

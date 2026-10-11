@@ -86,6 +86,16 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 - A level-up can pause the run (clock and car) until the weapon choice is made, one choice after another when several level-ups come at once. This pause is a switch, off until the level-up screen exists (task T-052): for now a level-up just raises the level and the run carries on.
 - A new run starts back at level 1 with no XP.
 
+### The combo
+
+The run also owns the combo (task T-081; how to use it: [game/README.md](../game/README.md), section "The run"; the numbers: [game/data/combo.json](../game/data/combo.json)):
+
+- Each trick the car does raises the combo multiplier by that trick's amount, up to a cap. The run sends a signal with the trick, the amount added and the new multiplier, for the trick popups.
+- The multiplier multiplies all XP gained: each completed challenge's XP (the "score" signal carries the multiplied amount) and each drift second's XP.
+- Hitting a wall, a building, the map edge or a boulder cuts the combo by 80%, and so does any damage to the car (enemies, meteors). The cut applies to the part of the multiplier above "no combo".
+- When no trick has come for 2 seconds, the combo drains, down to "no combo". A trick restarts the wait.
+- The HUD and enemy spawning read the multiplier, with a signal whenever it changes. It stops while the run is paused and resets with every new run.
+
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
 ### Screen flow

@@ -1,7 +1,7 @@
 ---
 id: T-081
 title: The combo: tricks raise a multiplier on likes; collisions cut it; it drains
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -50,4 +50,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Game Loop Agent, 2026-10-11.**
+
+Built:
+- `game/scripts/run/run_state.gd`: the combo in the run's state, with combo.json's numbers through `ComboData`. `combo` (the multiplier, 1.0 at the start of a run) and `combo_idle` (seconds since the last trick). `add_trick(trick_id)` raises it by `trick_add`, held at `max_multiplier`, restarts the drain wait and sends `combo_trick(trick_id, added, multiplier)` (`added` is the real rise: the data's amount, less at the cap). `collision()` cuts it with `ComboData.after_collision` (80% of the part above 1.0). `damage_car()` calls `collision()`, so any damage counts as a collision. The drain runs in `advance()` with the clock: after 2 s without a trick it drains at `drain_per_second` down to 1.0, so it stops while paused and paused time doesn't count toward the wait. `combo_changed(multiplier)` fires on every change and on start. `combo_spawn_multiplier()` passes `ComboData.spawn_multiplier` through for T-085. All XP gained is multiplied: `challenge_completed()` (the `score` signal carries the multiplied likes), the drift seconds of `drift_step()`, and `add_xp()`. Trick ids that are not one of the car's tricks are ignored. A new run resets the combo, and nothing changes after the run ends.
+- `game/scripts/run/run.gd`: connects the car's `trick` to `state.add_trick` and `hit_obstacle` to `state.collision()` in every rebuilt world, so it also works in a run started from the main menu.
+- Tests: `game/tests/unit/run/test_run_combo.gd` (19 tests: tricks and the signal, the cap, unknown ids, likes from a challenge and a drift second multiplied, the collision signal through the run scene, damage, the drain and a trick stopping it, a new run, pause, after the run ends, a run started from the main menu). Full GUT suite 268/268 and Python tool tests 67/67 pass.
+- Changed one T-037 test (`test_run_scene_drift_gives_xp` in `test_run_likes.gd`): in a real run the extended-drift trick at the 1 s mark raises the combo before that second's drift likes are paid (the car sends `trick` during its step, before `stepped`), so the first drift second is now multiplied by 1.05. The test now expects the drift likes times the combo.
+
+Notes for the Project Lead:
+- The car's T-079 trick popups (`scripts/hud/trick_popups.gd`) still listen to the car directly. T-083 can switch them to `combo_trick` for the amount added.
+- Collisions don't restart the 2 s drain wait (the Decision doesn't say they should).
+
+Documents affected: `docs/game-loop-architecture.md` (new Content section "The combo"; Summary, Decisions and Open questions unchanged), `game/README.md` ("The run": the combo's functions, values and signals, and the tests).
