@@ -567,7 +567,13 @@ A plain screen (task T-054) with a dark navy background. The title "SOLID CARBID
 
 #### The HUD
 
-The first piece of the HUD (task T-090) is the run timer. It shows the time left in minutes and seconds (M:SS), counting down from 8:00 to 0:00, in big cyan digits with a dark outline at the top centre of the screen. It only shows what the run reports (the run owns the time) and stops moving while the game is paused. It needs no text. It is shown in every run, whether the run scene is opened on its own or started from the main menu. The rest of the HUD (T-049) is added to the same scene, `game/scenes/hud/hud.tscn`, which the run scene places on screen; how to open it is in `game/README.md`, "The run".
+The first piece of the HUD (task T-090) is the run timer. It shows the time left in minutes and seconds (M:SS), counting down from 8:00 to 0:00, in big cyan digits with a dark outline at the top centre of the screen. It only shows what the run reports (the run owns the time) and stops moving while the game is paused. It needs no text. It is shown in every run, whether the run scene is opened on its own or started from the main menu. The rest of the HUD (task T-049, a first layout the board adjusts in playtest) is in the same scene, `game/scenes/hud/hud.tscn`, which the run scene places on screen; how to open it is in `game/README.md`, "The run". It only shows what the run reports, and the texts are from T-048:
+
+- **Top left:** the label "Car Health" with the car's health bar under it (green fill). Under that, the likes row: a small heart, the word "Likes", and "Hype Lv {level}" at the right end of the row (for example "Hype Lv 2"). Under the row is the likes bar (purple fill), which fills toward the next level and starts again after a level-up; at the top level it stays full. The heart is a placeholder shape in Redgull red until its art task (T-086); no other part of the HUD is red. The space to the right of the likes row is kept free for the combo counter (T-081).
+- **Top right:** "Coins" followed by the number collected this run, in yellow.
+- **Top centre:** the timer, as above.
+
+The arrow to the nearest challenge and the kaiju's health bar are T-050. The HUD stays clear of the trick popups (near the car) and the pause strip (below the timer).
 
 #### Trick popups
 
@@ -594,4 +600,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `620687e6e450eea0617007be696c86d4f5d68ef9b28c9ff7e9875a356cf2574b` |
 | `extended-narrative.md` | `24f49796395c2b308878a2c8340564997f977c566de2df5655c7f79123895b32` |
-| `hud-and-menus.md` | `4e59fada2ab9897e08f978e40ffd03bc0ba8a3aa254e3980594930b09968a5f3` |
+| `hud-and-menus.md` | `0f16693d9c37ffacf5f8e6eb31899d518dd84c5dd9b1c6ed4f172fdd4d1fde5f` |

@@ -580,3 +580,8 @@ Entry format:
 - Decision or change: T-092 merged on QA's pass. A completed challenge shows "Trending! +{likes} Likes" rising from the car, with the likes it gave. The work was paused at the board's request and resumed the same day.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-092 (done)
+
+## 2026-10-11: T-049 done: HUD likes bar, health and coins
+- Decision or change: T-049 merged on QA's pass. The HUD now shows "Car Health" with a health bar (top left), the likes row (a placeholder heart in Redgull red, "Likes", "Hype Lv {level}") with the likes bar under it, and "Coins" with the count (top right), around the timer. Space is kept beside the likes row for the combo counter (T-083). T-086 (the heart's art) is unblocked.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-049 (done), T-086 (unblocked)

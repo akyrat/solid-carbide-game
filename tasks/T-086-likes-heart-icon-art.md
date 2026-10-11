@@ -1,7 +1,7 @@
 ---
 id: T-086
 title: Art: the heart icon on the likes bar
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art
