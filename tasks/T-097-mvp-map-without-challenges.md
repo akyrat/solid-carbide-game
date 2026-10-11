@@ -1,7 +1,7 @@
 ---
 id: T-097
 title: Take the challenges out of the MVP map (no arrows, the boulders stay), and add meteor boulders
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -13,7 +13,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/enemies.md, tasks/T-096-rework-map-everything-x3.md, tasks/T-035-runtime-meteor-challenges.md, tasks/T-037-likes-and-levels.md, game/README.md]
 files_expected_to_change: [the map's scripts and data, game/tools/build_mvp_map.py, tests, docs/level-design.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -38,13 +38,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test on the map from a run started from the main menu shows it has no challenges and draws no challenge arrows (QA: pass / fail)
-- [ ] A test shows every pattern copy's boulders are still on the map, at the same positions as before this task (QA: pass / fail)
-- [ ] A test drives through where the challenges were and shows the run never sends `score`; drifting still gives likes (QA: pass / fail)
-- [ ] A test shows the new function places a boulder the car bounces off, and the placement check rejects a building, another boulder and the map's edge (QA: pass / fail)
-- [ ] A screenshot of a run started from the main menu shows boulders and no arrows (QA: pass / fail)
-- [ ] `game/README.md` says how to turn challenges back on and documents the new function. `docs/level-design.md` Content matches, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test on the map from a run started from the main menu shows it has no challenges and draws no challenge arrows (QA: pass)
+- [x] A test shows every pattern copy's boulders are still on the map, at the same positions as before this task (QA: pass)
+- [x] A test drives through where the challenges were and shows the run never sends `score`; drifting still gives likes (QA: pass)
+- [x] A test shows the new function places a boulder the car bounces off, and the placement check rejects a building, another boulder and the map's edge (QA: pass)
+- [x] A screenshot of a run started from the main menu shows boulders and no arrows (QA: pass)
+- [x] `game/README.md` says how to turn challenges back on and documents the new function. `docs/level-design.md` Content matches, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -69,3 +69,17 @@ No PixelLab call. Godot's `.import` line-ending changes and the build script's l
 - `game/README.md`: "MVP map" (challenges off, what is kept, how to turn them back on, the meteor boulder functions, the new tests and fixture), "Collision layers" (`meteor_boulder_bodies`), "The run" (new runs drop meteor boulders; no challenge signals fire while off).
 
 Also updated my working notes, `agent-notes/level-challenge.md`. The long GDD will be stale for level-design.md; regenerating it is the Project Lead's job.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-11.** Checked on branch `task/T-097-mvp-map-without-challenges` at e0ebae0. All 7 criteria pass.
+
+1. **No challenges, no arrows in a run from the main menu: pass.** `test_mvp_map_no_challenges.gd` opens `game.tscn`, presses Start and checks `challenge_ids()`, `trackers`, `arrows`, the arrow layer and every node in the game (no `ChallengeArrow`), and again after a new run. My own temporary test (not committed) confirmed it from the menu: challenges 0, arrows 0, trackers 0.
+2. **Boulders at the same positions as before: pass.** `mvp_map.json` is byte-identical to master's and `_build_boulders` is unchanged. My temporary test read master's `mvp_map.json` and compared it with the bodies the branch's map builds in a run from the menu: 96 of 96 boulder shapes (position and size) match exactly. The agent's test also compares against a map with challenges on.
+3. **Never sends `score`, drifting still gives likes: pass.** The test drives the run's car along all 18 former arrows: no `challenge_completed`, no `meteor_challenge_completed`, no `score`; the same drive with challenges on completes all 18, so the drive is real. A drift in a run from the menu gives likes.
+4. **Meteor boulder function and placement check: pass.** The placement check rejects a building (inside and over its edge), a map boulder, another meteor boulder and the map's edges, and accepts free and just-touching spots. The placed boulder has the map boulders' layer, mask, shape and size, and the real car driving into it in a run hits it (`hit_obstacle` reports its body), bounces back and does not pass through.
+5. **Screenshot: pass.** I took my own (`map_from_menu_demo.tscn`, 30 frames): the HUD at 8:00, the car on the road, several orange-rimmed boulders including the meteor boulder, and no arrows. The fixture printed `challenges=0 arrows=0 meteor boulders=1`.
+6. **Docs: pass.** `game/README.md` "MVP map" says how to turn challenges back on (`CHALLENGES_ENABLED := true` in `mvp_map.gd`, or per map or run) and lists `can_place_meteor_boulder` and `add_meteor_boulder`. I tried the switch: with the constant set to true, a run from the menu has 18 challenges, 18 arrows and 18 trackers again (reverted, not committed). `git diff master...HEAD -- docs/level-design.md` changes only Content ("MVP map", the new "Meteor boulders", "Meteor challenges" retitled); Summary, Decisions and Open questions are untouched.
+7. **Full suite: pass.** `bash game/tools/run_tests.sh`: TESTS PASSED, 294/294 in 30 scripts (the one ERROR line is the expected one from `test_unknown_design_is_refused`). `python -m unittest discover -s tools -p "test_*.py"`: OK (75). `python -m unittest discover -s game/tools -p "test_*.py"`: OK (67).
+
+**Changes to existing tests do not weaken them.** No test was deleted (test counts per changed file are the same as master's or higher). `test_mvp_map.gd` and `test_meteor_challenges.gd` switch challenges on in `make_map()`; the meteor challenge fixture does too. The two assertions taken out of `test_run_scene.gd`'s second-run test (18 challenges, all open again on a new run) moved into a new test there that switches challenges on. `test_run_likes.gd`, `test_challenge_popup.gd` and the popup fixture now take the challenge id from the layout data, so they still check the run turns the map's signal into likes and a popup.
