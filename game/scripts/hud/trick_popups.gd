@@ -4,7 +4,7 @@ extends Node2D
 ## name appears at the car, rises a little and fades. The challenge popup
 ## (task T-092) reuses this: call show_popup() with any text.
 ##
-## Placeholder look: a bold outlined text on a yellow burst-like shape; the
+## Placeholder look: a bold outlined text on a dark navy shape; the
 ## final comic look is task T-084. The node is a child of the world view, so
 ## it draws in the same (isometric) drawn space as the car sprite.
 
@@ -66,13 +66,13 @@ class PopupText extends Node2D:
 		shape.append(Vector2(half.x + 8, 0))
 		shape.append(Vector2(half.x, half.y))
 		shape.append(Vector2(-half.x, half.y))
-		draw_colored_polygon(shape, Color(1.0, 0.85, 0.1))
+		draw_colored_polygon(shape, Color(0.12, 0.08, 0.30))
 		var closed := shape.duplicate()
 		closed.append(shape[0])
-		draw_polyline(closed, Color(0.1, 0.05, 0.15), 3.0)
+		draw_polyline(closed, Color(0.0, 0.9, 1.0), 3.0)
 		var origin := Vector2(-size.x / 2.0, size.y / 4.0)
-		draw_string_outline(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 6, Color(0.1, 0.05, 0.15))
-		draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(0.9, 0.1, 0.2))
+		draw_string_outline(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 6, Color(0.04, 0.02, 0.12))
+		draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1.0, 0.25, 0.75))
 
 
 var _car: Node = null
