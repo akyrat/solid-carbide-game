@@ -61,7 +61,7 @@ flowchart TD
 
 The player only drives; everything else reacts. The screen shows the car's health, a timer counting down from 8:00, the likes bar and level, the coins collected, an arrow pointing to the nearest challenge, and the kaiju's health once it arrives. Escape pauses the game.
 
-The map is one city: 80 by 80 units (one unit is a car's width), laid out as a 4 by 4 grid of city blocks with roads between them, a wide road around the edge and an open gravel square in the middle. The car bounces off buildings and boulders, and buildings turn see-through when the car drives behind them.
+The map is one city: 240 by 240 units (one unit is a car's width), a grid of about 13 by 13 city blocks with roads between them, a wide road around the edge and an open gravel square in the middle. The car bounces off buildings and boulders, and buildings turn see-through when the car drives behind them.
 
 ## The look
 

@@ -68,3 +68,5 @@ Branch diff versus master changes only this task file. The board's voice review 
 ### Board review
 
 The board, 2026-10-10: approved as is.
+
+The board, 2026-10-11, after playing it: the zoom slider's label is **Camera zoom level**, not "Camera zoom, for the fans". Changed in T-093.

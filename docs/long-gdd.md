@@ -193,10 +193,10 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - The MVP map is a city laid out as a grid: blocks of buildings, with roads running between the blocks. (How it looks: Visual style, Decisions.)
 - Roads are between 5 and 10 times as wide as the player's car. A street never widens along its length; instead, some streets are wider than others, and a wide road can join a narrower one.
 - Map sizes are measured in units, where 1 unit is the drawn car's width (the smaller of its two dimensions; Drifting, Decisions). It is the same unit the driving values use.
-- The MVP map is 80 by 80 units: an 8-unit perimeter road on each side, around 4 blocks of 10 and 3 roads of 8 in each direction.
+- The MVP map is **240 by 240 units**, three times as wide and tall as first planned: an 8-unit perimeter road on each side, around a grid of 10 by 10 blocks separated by 8-unit roads, with many more blocks than before. After playing the 80 by 80 map, the board found it far too small; the roads, blocks, boulders and challenges stay the same size, there is simply more city.
 - A wide road, 8 units wide, runs around the whole edge of the map. The map ends in a hard stop at its edges.
-- Inside the perimeter road, building blocks of 10 by 10 units are laid out in a 4 by 4 grid, separated by roads 8 units wide (3 roads in each direction).
-- The centre of the map is an open square of 28 by 28 units with no blocks. Its ground is gravel, not road.
+- Inside the perimeter road, building blocks of 10 by 10 units are laid out in a grid, separated by roads 8 units wide. For 240 by 240 that is about 13 blocks in each direction; the Level/Challenge Design Agent fits the exact count.
+- The centre of the map is an open square with no blocks. Its ground is gravel, not road. On the bigger map it grows in proportion (about three times as wide); the Level/Challenge Design Agent fits it to the grid.
 - Obstacles are placed on the roads. In the MVP the only obstacle is a crashed meteor boulder; more kinds come later.
 - In the MVP, obstacles are circles, all 3 units across (one car length), so they never block a road.
 - In the MVP, a challenge includes up to 2 obstacles.
@@ -514,7 +514,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `2d328d2652ad5ff68cb130e2e931e125e2aff1bd17a7b94ed3110e1621c7c793` |
 | `drifting.md` | `e65aa5ae0ded84f52439319382a3f4aa746d0d7e218fee1c7c893d42f9544d27` |
-| `level-design.md` | `e729faa792102fbfec5216de834fc6a2813d865622cb39b01a7e145c765cc766` |
+| `level-design.md` | `4617068a1ffa8bbd8081fc4119f1d85ffed67b85c27bca56bccaedba490641ef` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |

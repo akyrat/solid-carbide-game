@@ -545,3 +545,8 @@ Entry format:
 - Decision or change: T-090 (the HUD's run timer) merged on QA's pass. With T-055, the bare loop is playable from the main folder: the main menu, Start, the run on the MVP map with the timer counting down from 8:00, Escape to pause, back to the menu when the run ends.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-090 (done)
+
+## 2026-10-11: Playtest 1 feedback: bigger map, zoom slider
+- Decision or change: after playing the bare loop, the board found the map far too small. The MVP map becomes 240 by 240 units: the same 8-unit roads, 10 by 10 blocks, boulders and challenges, with many more blocks (about 13 each way) and a proportionally bigger gravel centre (Level design, Decisions). The pause screen's zoom label becomes "Camera zoom level" (the board's wording), and the zoom must visibly change while the slider moves. Rework tasks: T-093 (pause screen) and T-094 (the map). Short GDD updated.
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
+- Tasks: T-093, T-094 (new); T-047 (board note)
