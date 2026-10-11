@@ -27,7 +27,8 @@ func test_score_signal_shows_text_with_likes_near_car_then_goes() -> void:
 func test_completed_challenge_in_the_run_shows_the_popup() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
-	run.map.challenge_completed.emit(run.map.challenge_ids()[0])
+	# Challenges are off in the MVP (T-097): the signal stands in for one.
+	run.map.challenge_completed.emit(str(run.map.layout.challenges[0].id))
 	var texts: Array = run.trick_popups.popups().map(func(x) -> String: return x.text)
 	assert_eq(texts.size(), 1)
 	assert_true(texts[0].begins_with("Trending! +"), texts[0])

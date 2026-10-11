@@ -11,6 +11,10 @@ changes them) and writes:
   game/data/level/mvp_map.json                          the whole map: ground, buildings,
                                                         pattern copies, boulders, challenges
 
+Challenges are left out of the MVP (task T-097): the map in the game ignores the
+challenges written here unless mvp_map.gd's CHALLENGES_ENABLED is true. They are still
+written, unchanged, so challenges can come back without rebuilding anything.
+
 All coordinates are in units (1 unit = the car's width), x to the right, y down.
 The map's origin is its centre, as in Crash City Grid, so the map runs from -120 to 120
 (240 by 240, task T-096: the first map's 80 by 80 layout, task T-019, three times bigger).
