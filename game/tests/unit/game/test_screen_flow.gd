@@ -223,6 +223,19 @@ func test_the_pause_title_does_not_overlap_the_run_timer() -> void:
 	assert_false(timer.get_global_rect().intersects(title.get_global_rect()), "timer and title are apart")
 
 
+func test_the_pause_strip_is_compact_and_below_the_timer() -> void:
+	_press(game.menu.start_button)
+	game.pause_screen.pause()
+	await wait_process_frames(2)
+	var strip: Control = game.pause_screen.strip
+	var timer: Label = game.run.hud.timer_label
+	var screen_h := float(ProjectSettings.get_setting("display/window/size/viewport_height"))
+	assert_false(strip.get_global_rect().intersects(timer.get_global_rect()), "strip and timer are apart")
+	assert_lt(strip.size.y, screen_h * 0.25, "the strip is a thin band")
+	assert_almost_eq(strip.size.y, strip.get_combined_minimum_size().y, 1.0, "only as tall as its content")
+	assert_lt(strip.get_global_rect().end.y, screen_h * 0.4, "most of the map stays visible")
+
+
 func test_the_camera_settings_come_back_on_resume() -> void:
 	_press(game.menu.start_button)
 	var cam: Camera2D = game.run.camera

@@ -7,8 +7,9 @@ extends CanvasLayer
 
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
-## Space left above the content for the HUD run timer (T-093).
-const STRIP_TOP_MARGIN := 100.0
+## The strip starts this far from the top of the screen, just below the HUD
+## run timer, so the two never overlap (T-093, T-095).
+const STRIP_TOP := 92.0
 const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
@@ -41,35 +42,37 @@ func setup(t: Node) -> void:
 	# The panel sits at the top, over a dark strip, so the map behind stays clear.
 	strip = PanelContainer.new()
 	strip.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	strip.offset_top = STRIP_TOP
+	strip.offset_bottom = STRIP_TOP  # grows down to fit its content only
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0, 0, 0, 0.7)
-	style.content_margin_top = STRIP_TOP_MARGIN
-	style.content_margin_bottom = 12.0
+	style.content_margin_top = 8.0
+	style.content_margin_bottom = 10.0
 	strip.add_theme_stylebox_override("panel", style)
 	_root.add_child(strip)
 	var center := CenterContainer.new()
 	strip.add_child(center)
 	var box := VBoxContainer.new()
-	box.custom_minimum_size.x = 420.0
-	box.add_theme_constant_override("separation", 12)
+	box.custom_minimum_size.x = 520.0
+	box.add_theme_constant_override("separation", 4)
 	center.add_child(box)
 
 	title_label = Label.new()
 	title_label.text = TEXT_TITLE
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", 36)
+	title_label.add_theme_font_size_override("font_size", 28)
 	box.add_child(title_label)
 	hint_label = Label.new()
 	hint_label.text = TEXT_HINT
 	hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint_label.add_theme_font_size_override("font_size", 18)
+	hint_label.add_theme_font_size_override("font_size", 16)
 	box.add_child(hint_label)
 	zoom_label = Label.new()
 	zoom_label.text = TEXT_ZOOM_LABEL
 	zoom_label.add_theme_font_size_override("font_size", 16)
-	box.add_child(zoom_label)
 	var row := HBoxContainer.new()
 	box.add_child(row)
+	row.add_child(zoom_label)
 	zoom_slider = HSlider.new()
 	zoom_slider.name = "ZoomSlider"
 	zoom_slider.min_value = GameSettingsScript.MIN_ZOOM

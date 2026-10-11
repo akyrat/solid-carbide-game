@@ -1,7 +1,7 @@
 ---
 id: T-095
 title: Rework (T-093): a compact pause strip
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -40,4 +40,5 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the UI Agent. The strip was tall because it reserved 100 px of empty space above its content for the timer. It now starts just below the timer (`STRIP_TOP` = 92 px) and is only as tall as its content (about 111 px of 648, 17%); title, hint and the zoom label, slider and value (now on one row) are tighter. The map is visible above and below it. Test `test_the_pause_strip_is_compact_and_below_the_timer` (test_screen_flow.gd): no overlap with the timer, under a quarter of the screen, height equals its content's minimum. Fixture `pause_from_menu_demo.tscn` for the screenshot of a paused run started from the main menu (own screenshot checked, not committed). Full GUT suite passes (TESTS PASSED), Python tool tests OK.
+Documents updated: docs/hud-and-menus.md, game/README.md.
