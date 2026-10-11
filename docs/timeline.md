@@ -565,3 +565,8 @@ Entry format:
 - Decision or change: merged on QA's pass: T-095 (a compact pause strip below the timer) and T-096 (the MVP map with everything three times bigger: 240 by 240, 4 by 4 blocks of 30 by 30, 24-unit roads, an 84 by 84 gravel centre; the fitted challenges are now the board's sketches exactly, moved into place; 60 pattern copies, 18 challenges). The board's next playtest is ready from the main folder.
 - Documents touched: `docs/hud-and-menus.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-095, T-096 (done)
+
+## 2026-10-11: Second playtest: approved
+- Decision or change: the board played the build with the three-times-bigger map, the compact pause strip, the live zoom and the trick popups, and called it perfect. Next step in "Building in playable steps": likes and levels.
+- Documents touched: none
+- Tasks: T-091, T-093, T-094, T-095, T-096 (played)
