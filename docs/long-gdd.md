@@ -246,13 +246,15 @@ The Driving & Drift Agent's drivability check (References) drove the board's ske
 
 #### MVP map
 
-The MVP map as built in Godot (task T-019), in flat placeholder colours: dark grey roads, the tan gravel centre, purple buildings, dark boulders with an orange rim, and blue challenge arrows. The art replaces the colours later.
+The MVP map as built in Godot (task T-019, made three times bigger after Playtest 1 in task T-094), in flat placeholder colours: dark grey roads, the tan gravel centre, purple buildings, dark boulders with an orange rim, and blue challenge arrows. The art replaces the colours later.
 
 ![The MVP map, flat top-down](level-design/mvp-map.png)
 
 ![The MVP map, isometric](level-design/mvp-map-iso.png)
 
-**Coordinates.** Positions are in units from the map's centre, x to the right and y down, as in Crash City Grid, so the map runs from -40 to 40. The blocks start at -32, -14, 4 and 22 on each axis; the gravel centre runs from -14 to 14. The road crossings are at -36, -18, 0, 18 and 36 on each axis (0, 0 is in the gravel).
+**Size.** The map is **242 by 242 units**, as Decisions says: the nearest size to the board's "three times bigger" that the unchanged parts can make. Across the map there are the two 8-unit sides of the perimeter road, the blocks of 10 and the 8-unit roads between them, so a grid of N blocks is 18 N + 8 units across (4 blocks made the first map's 80); 12 blocks would give 224 and 13 give 242. The map has 13 by 13 blocks. The gravel centre is the middle 5 by 5 blocks and the roads between them, 82 by 82 units (the first map's was 28, so about three times as wide), which leaves 144 blocks.
+
+**Coordinates.** Positions are in units from the map's centre, x to the right and y down, as in Crash City Grid, so the map runs from -121 to 121. The perimeter road runs from the edge to 113 units from the centre; the blocks start at -113, -95, -77 and so on every 18 units up to 103 on each axis; the gravel centre runs from -41 to 41. The road crossings inside the perimeter road are at -99, -81, -63, -45, -27, -9, 9, 27, 45, 63, 81 and 99 on each axis (numbered 0 to 11 below); the perimeter road's centre line is at -117 and 117. The car starts at 0, 0, in the gravel.
 
 **Fitted patterns.** Each sketch has a fitted version next to it (`arrow-1.fitted.json` and `.svg`), made by a script from the sketch. The sketch's boulders are kept, 3 units across and as far apart as drawn, and its arrow points are moved as little as possible until the arrow's centre line stays at least 2 units from each boulder's centre (the rock's radius plus half the car's width) and the 3-unit corridor stays at least 0.25 units from every building:
 
@@ -264,26 +266,103 @@ The MVP map as built in Godot (task T-019), in flat placeholder colours: dark gr
 
 The figure-eight is squeezed across the road (its loops are 4.5 units wide at the centre line instead of about 8) and keeps its length along it.
 
-**Pattern copies and challenges.** 12 copies; 30% of 12 is 3.6, rounded half up to 4 challenges. The rotation turns the fitted version clockwise on screen.
+**Pattern copies.** 80 copies: 32 Single Boulder and 48 Two Boulders. None is in the gravel.
+
+- Road crossings whose two numbers (0 to 11, above) are both even have a Single Boulder on the crossing's centre.
+- Crossings whose two numbers are both odd have a Two Boulders, running along y or along x in alternate pairs.
+- The other crossings are empty, so along any road the next copy is 36 units away.
+- On each side of the perimeter road, a Two Boulders running along it where crossings 1, 4, 7 and 10 join it.
+
+Every copy has room for any of its pattern's arrows, clear of buildings, the map's edge and the other copies, so which copies are challenges can change later without moving them.
+
+**Challenges.** 30% of 80 is 24 challenges (rounded half up, as before): 10 Single Boulder (5 with arrow 1, 5 with arrow 2) and 14 Two Boulders. They are the same every run. They are chosen evenly through the copies in reading order (top to bottom, then left to right), which spreads them over the whole map; the Single Boulder ones take arrow 1 and arrow 2 in turn. The rotation turns the fitted version clockwise on screen.
 
 | Copy | Pattern | Centre | Rotation | Challenge |
 |---|---|---|---|---|
-| copy-01 | Single Boulder | -18, -18 | 0 | challenge-1, arrow 1 (clockwise) |
-| copy-02 | Single Boulder | 0, -18 | 0 | |
-| copy-03 | Single Boulder | 18, -18 | 0 | |
-| copy-04 | Single Boulder | -18, 0 | 0 | |
-| copy-05 | Single Boulder | 18, 0 | 0 | |
-| copy-06 | Single Boulder | -18, 18 | 0 | |
-| copy-07 | Single Boulder | 0, 18 | 0 | |
-| copy-08 | Single Boulder | 18, 18 | 0 | challenge-2, arrow 2 (counter-clockwise) |
-| copy-09 | Two Boulders | 0, -36 (top side of the perimeter road) | 90 | challenge-3 |
-| copy-10 | Two Boulders | 36, 0 (right side) | 0 | |
-| copy-11 | Two Boulders | 0, 36 (bottom side) | 90 | challenge-4 |
-| copy-12 | Two Boulders | -36, 0 (left side) | 0 | |
+| copy-01 | Two Boulders | -81, -117 (top side of the perimeter road) | 90 |  |
+| copy-02 | Two Boulders | -27, -117 (top side of the perimeter road) | 90 | challenge-1, arrow 1 (figure-eight) |
+| copy-03 | Two Boulders | 27, -117 (top side of the perimeter road) | 90 |  |
+| copy-04 | Two Boulders | 81, -117 (top side of the perimeter road) | 90 |  |
+| copy-05 | Single Boulder | -99, -99 | 0 |  |
+| copy-06 | Single Boulder | -63, -99 | 0 | challenge-2, arrow 1 (clockwise) |
+| copy-07 | Single Boulder | -27, -99 | 0 |  |
+| copy-08 | Single Boulder | 9, -99 | 0 |  |
+| copy-09 | Single Boulder | 45, -99 | 0 | challenge-3, arrow 2 (counter-clockwise) |
+| copy-10 | Single Boulder | 81, -99 | 0 |  |
+| copy-11 | Two Boulders | -117, -81 (left side) | 0 |  |
+| copy-12 | Two Boulders | -81, -81 | 0 | challenge-4, arrow 1 (figure-eight) |
+| copy-13 | Two Boulders | -45, -81 | 90 |  |
+| copy-14 | Two Boulders | -9, -81 | 0 |  |
+| copy-15 | Two Boulders | 27, -81 | 90 |  |
+| copy-16 | Two Boulders | 63, -81 | 0 | challenge-5, arrow 1 (figure-eight) |
+| copy-17 | Two Boulders | 99, -81 | 90 |  |
+| copy-18 | Two Boulders | 117, -81 (right side) | 0 |  |
+| copy-19 | Single Boulder | -99, -63 | 0 | challenge-6, arrow 1 (clockwise) |
+| copy-20 | Single Boulder | -63, -63 | 0 |  |
+| copy-21 | Single Boulder | -27, -63 | 0 |  |
+| copy-22 | Single Boulder | 9, -63 | 0 | challenge-7, arrow 2 (counter-clockwise) |
+| copy-23 | Single Boulder | 45, -63 | 0 |  |
+| copy-24 | Single Boulder | 81, -63 | 0 |  |
+| copy-25 | Two Boulders | -81, -45 | 90 |  |
+| copy-26 | Two Boulders | -45, -45 | 0 | challenge-8, arrow 1 (figure-eight) |
+| copy-27 | Two Boulders | -9, -45 | 90 |  |
+| copy-28 | Two Boulders | 27, -45 | 0 |  |
+| copy-29 | Two Boulders | 63, -45 | 90 | challenge-9, arrow 1 (figure-eight) |
+| copy-30 | Two Boulders | 99, -45 | 0 |  |
+| copy-31 | Two Boulders | -117, -27 (left side) | 0 |  |
+| copy-32 | Single Boulder | -99, -27 | 0 | challenge-10, arrow 1 (clockwise) |
+| copy-33 | Single Boulder | -63, -27 | 0 |  |
+| copy-34 | Single Boulder | 45, -27 | 0 |  |
+| copy-35 | Single Boulder | 81, -27 | 0 |  |
+| copy-36 | Two Boulders | 117, -27 (right side) | 0 | challenge-11, arrow 1 (figure-eight) |
+| copy-37 | Two Boulders | -81, -9 | 0 |  |
+| copy-38 | Two Boulders | -45, -9 | 90 |  |
+| copy-39 | Two Boulders | 63, -9 | 0 | challenge-12, arrow 1 (figure-eight) |
+| copy-40 | Two Boulders | 99, -9 | 90 |  |
+| copy-41 | Single Boulder | -99, 9 | 0 |  |
+| copy-42 | Single Boulder | -63, 9 | 0 | challenge-13, arrow 2 (counter-clockwise) |
+| copy-43 | Single Boulder | 45, 9 | 0 |  |
+| copy-44 | Single Boulder | 81, 9 | 0 |  |
+| copy-45 | Two Boulders | -117, 27 (left side) | 0 |  |
+| copy-46 | Two Boulders | -81, 27 | 90 | challenge-14, arrow 1 (figure-eight) |
+| copy-47 | Two Boulders | -45, 27 | 0 |  |
+| copy-48 | Two Boulders | 63, 27 | 90 |  |
+| copy-49 | Two Boulders | 99, 27 | 0 | challenge-15, arrow 1 (figure-eight) |
+| copy-50 | Two Boulders | 117, 27 (right side) | 0 |  |
+| copy-51 | Single Boulder | -99, 45 | 0 |  |
+| copy-52 | Single Boulder | -63, 45 | 0 | challenge-16, arrow 1 (clockwise) |
+| copy-53 | Single Boulder | -27, 45 | 0 |  |
+| copy-54 | Single Boulder | 9, 45 | 0 |  |
+| copy-55 | Single Boulder | 45, 45 | 0 |  |
+| copy-56 | Single Boulder | 81, 45 | 0 | challenge-17, arrow 2 (counter-clockwise) |
+| copy-57 | Two Boulders | -81, 63 | 0 |  |
+| copy-58 | Two Boulders | -45, 63 | 90 |  |
+| copy-59 | Two Boulders | -9, 63 | 0 | challenge-18, arrow 1 (figure-eight) |
+| copy-60 | Two Boulders | 27, 63 | 90 |  |
+| copy-61 | Two Boulders | 63, 63 | 0 |  |
+| copy-62 | Two Boulders | 99, 63 | 90 | challenge-19, arrow 1 (figure-eight) |
+| copy-63 | Two Boulders | -117, 81 (left side) | 0 |  |
+| copy-64 | Single Boulder | -99, 81 | 0 |  |
+| copy-65 | Single Boulder | -63, 81 | 0 |  |
+| copy-66 | Single Boulder | -27, 81 | 0 | challenge-20, arrow 1 (clockwise) |
+| copy-67 | Single Boulder | 9, 81 | 0 |  |
+| copy-68 | Single Boulder | 45, 81 | 0 |  |
+| copy-69 | Single Boulder | 81, 81 | 0 | challenge-21, arrow 2 (counter-clockwise) |
+| copy-70 | Two Boulders | 117, 81 (right side) | 0 |  |
+| copy-71 | Two Boulders | -81, 99 | 90 |  |
+| copy-72 | Two Boulders | -45, 99 | 0 | challenge-22, arrow 1 (figure-eight) |
+| copy-73 | Two Boulders | -9, 99 | 90 |  |
+| copy-74 | Two Boulders | 27, 99 | 0 |  |
+| copy-75 | Two Boulders | 63, 99 | 90 |  |
+| copy-76 | Two Boulders | 99, 99 | 0 | challenge-23, arrow 1 (figure-eight) |
+| copy-77 | Two Boulders | -81, 117 (bottom side of the perimeter road) | 90 |  |
+| copy-78 | Two Boulders | -27, 117 (bottom side of the perimeter road) | 90 |  |
+| copy-79 | Two Boulders | 27, 117 (bottom side of the perimeter road) | 90 | challenge-24, arrow 1 (figure-eight) |
+| copy-80 | Two Boulders | 81, 117 (bottom side of the perimeter road) | 90 |  |
 
 **Completing a challenge.** The map checks the drawn car (a 3 by 1 unit rectangle on the car's position and heading) against each open challenge every physics step. A run starts when the car touches the arrow's start; it moves forward while the car keeps touching the corridor, and only along the stretch of arrow the car is on, so crossing a figure-eight or passing the start of a loop does not skip ahead. Not touching the corridor at all, even for one step, ends the run. Reaching the arrow's end completes the challenge.
 
-**Drivability.** The fitted challenges have not yet been checked with the Driving & Drift Agent's script (task T-021). All 4 challenges need that check.
+**Drivability.** The fitted challenges have not yet been checked with the Driving & Drift Agent's script (task T-021). The 24 challenges are copies of the 3 fitted versions, so checking those 3 covers them all.
 
 #### Meteor challenges
 
@@ -293,7 +372,7 @@ A placement check says whether a design fits at a spot: none of its boulders and
 
 The designs are stored unplaced (units from the pattern's centre, angle 0) in the layout data, under `challenge_designs`. The functions and the signal are listed in `game/README.md` ("MVP map", "Meteor challenges").
 
-![A meteor challenge with its green arrow (in the gravel) beside preset challenge-1 with its blue arrow](level-design/meteor-challenge.png)
+![A meteor challenge with its green arrow (at the gravel's corner) beside preset challenge-8 with its blue arrow](level-design/meteor-challenge.png)
 
 ![The same, isometric](level-design/meteor-challenge-iso.png)
 
@@ -519,7 +598,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `2d328d2652ad5ff68cb130e2e931e125e2aff1bd17a7b94ed3110e1621c7c793` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
-| `level-design.md` | `c7de632a8e2fe4efd8ecc065a7df1a70fe927e4d0eb56f684403682a2e124232` |
+| `level-design.md` | `c9aac697618b4ba2db1fb89c4f4ced1052dbdbff950e1af0c91aeb8153d27a23` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |

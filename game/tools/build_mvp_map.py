@@ -12,7 +12,8 @@ changes them) and writes:
                                                         pattern copies, boulders, challenges
 
 All coordinates are in units (1 unit = the car's width), x to the right, y down.
-The map's origin is its centre, as in Crash City Grid, so the map runs from -40 to 40.
+The map's origin is its centre, as in Crash City Grid, so the map runs from -121 to 121
+(242 by 242, task T-094; the first map, task T-019, was 80 by 80).
 Running it twice gives identical files. Standard library only.
 
 How a sketch is fitted (Level design, Decisions: keep the number of boulders, the
@@ -28,7 +29,6 @@ may change):
 """
 
 import json
-import re
 import math
 import re
 import sys
@@ -41,12 +41,17 @@ MAP_OUT = ROOT / "game" / "data" / "level" / "mvp_map.json"
 
 # ---- The map (Level design, Decisions) -------------------------------------------------
 
-MAP_SIZE = 80          # units, square
+# Level design asks for 240 by 240 (2026-10-11). With the 8-unit perimeter road, the 10 by 10
+# blocks and the 8-unit roads kept as they are (task T-094: only the city grows), a grid of
+# N blocks is 18 N + 8 units across (N = 4 gave the first map's 80), so exactly 240 cannot be
+# made: 13 blocks give 242, the nearest. The map is therefore 242 by 242.
+MAP_SIZE = 242         # units, square
 PERIMETER_ROAD = 8     # the road around the edge
 BLOCK = 10             # building blocks are 10 by 10
 ROAD = 8               # roads between blocks
-BLOCKS_PER_SIDE = 4    # 4 by 4 grid of blocks
-GRAVEL = 28            # the open gravel square in the centre
+BLOCKS_PER_SIDE = 13   # 13 by 13 grid of blocks
+GRAVEL = 82            # the open gravel square in the centre: the middle 5 by 5 blocks
+                       # and the roads between them (the first map's 28 was 2 by 2)
 
 CORRIDOR_WIDTH = 3.0   # the arrow is as wide as the car is long
 BOULDER_DIAMETER = 3.0
@@ -72,35 +77,69 @@ FITTED_BOULDERS = {
     "two-boulders": [(0.0, -3.5), (0.0, 3.5)],
 }
 
-# The pattern copies on the map: (pattern, centre x, centre y, rotation in degrees clockwise).
-# Single Boulder on every road crossing inside the perimeter road (the centre crossing is
-# gravel); Two Boulders along the middle of each side of the perimeter road, turned to run
-# along it. Turning by whole quarter turns keeps clockwise clockwise.
-COPIES = [
-    ("single-boulder", -18, -18, 0),
-    ("single-boulder", 0, -18, 0),
-    ("single-boulder", 18, -18, 0),
-    ("single-boulder", -18, 0, 0),
-    ("single-boulder", 18, 0, 0),
-    ("single-boulder", -18, 18, 0),
-    ("single-boulder", 0, 18, 0),
-    ("single-boulder", 18, 18, 0),
-    ("two-boulders", 0, -36, 90),
-    ("two-boulders", 36, 0, 0),
-    ("two-boulders", 0, 36, 90),
-    ("two-boulders", -36, 0, 0),
-]
-
 CHALLENGE_SHARE = 0.30
-# Which copies are challenges (index into COPIES, arrow name). Fixed, the same every run.
-# Spread over the map: two opposite Single Boulder crossings (one of each arrow) and the
-# Two Boulders on the top and bottom sides.
-CHALLENGES = [
-    (0, "arrow-1"),
-    (7, "arrow-2"),
-    (8, "arrow-1"),
-    (10, "arrow-1"),
-]
+# Perimeter-road T-junctions (by crossing index, on every side) that get a Two Boulders copy.
+PERIMETER_COPY_INDICES = (1, 4, 7, 10)
+
+
+def crossings():
+    """Centre of each road crossing inside the perimeter road, along one axis (units)."""
+    return [s + BLOCK + ROAD / 2 for s in block_ranges()[:-1]]
+
+
+def in_gravel(x, y):
+    g = GRAVEL / 2
+    return abs(x) < g and abs(y) < g
+
+
+def make_copies():
+    """The pattern copies on the map: (pattern, centre x, centre y, rotation in degrees clockwise),
+    in reading order (top to bottom, then left to right).
+
+    Crossings are numbered 0 to 11 along each axis. A crossing whose two numbers are both even
+    gets a Single Boulder; both odd, a Two Boulders (turned to run along x or y in alternate
+    pairs); the others stay empty, so the nearest other copy along a road is 36 units away.
+    No copy in the gravel. Along each side of the perimeter road, a Two Boulders turned to run
+    along it at crossings 1, 4, 7 and 10. Turning by whole quarter turns keeps clockwise
+    clockwise.
+    """
+    xs = crossings()
+    edge = MAP_SIZE / 2 - PERIMETER_ROAD / 2
+    out = []
+    for j, y in enumerate(xs):
+        for i, x in enumerate(xs):
+            if in_gravel(x, y):
+                continue
+            if i % 2 == 0 and j % 2 == 0:
+                out.append(("single-boulder", x, y, 0))
+            elif i % 2 == 1 and j % 2 == 1:
+                out.append(("two-boulders", x, y, 0 if (i // 2 + j // 2) % 2 == 0 else 90))
+    for i in PERIMETER_COPY_INDICES:
+        c = xs[i]
+        out += [("two-boulders", c, -edge, 90), ("two-boulders", c, edge, 90),
+                ("two-boulders", -edge, c, 0), ("two-boulders", edge, c, 0)]
+    out = [(p, int(x) if x == int(x) else x, int(y) if y == int(y) else y, d) for p, x, y, d in out]
+    out.sort(key=lambda c: (c[2], c[1]))
+    return out
+
+
+def make_challenges(copies):
+    """Which copies are challenges: (index into copies, arrow name). Fixed, the same every run.
+    30% of the copies, spread evenly through the reading order (copy number (k + 0.5) n / count),
+    so they are spread over the whole map. Single Boulder challenges take arrow 1 and arrow 2
+    in turn."""
+    n = len(copies)
+    count = challenge_count(n)
+    out = []
+    single = 0
+    for k in range(count):
+        ci = int((k + 0.5) * n / count)
+        if copies[ci][0] == "single-boulder":
+            out.append((ci, "arrow-1" if single % 2 == 0 else "arrow-2"))
+            single += 1
+        else:
+            out.append((ci, "arrow-1"))
+    return out
 
 
 def challenge_count(copies):
@@ -331,7 +370,7 @@ def blocks():
 
 
 def ground_rows(buildings):
-    """The 80 by 80 ground, one letter per 1-unit cell, in the sketches' legend."""
+    """The whole ground, one letter per 1-unit cell, in the sketches' legend."""
     half = MAP_SIZE // 2
     g = gravel_rect()
     rows = []
@@ -364,8 +403,9 @@ def build(sketch_dir=SKETCH_DIR):
             fitted[(pattern, f.stem)] = fit_sketch(sketch, pattern)
 
     buildings = blocks()
+    copy_list = make_copies()
     copies = []
-    for i, (pattern, cx, cy, deg) in enumerate(COPIES):
+    for i, (pattern, cx, cy, deg) in enumerate(copy_list):
         base = next(v for (p, _), v in sorted(fitted.items()) if p == pattern)
         copies.append({
             "id": "copy-%02d" % (i + 1),
@@ -383,10 +423,11 @@ def build(sketch_dir=SKETCH_DIR):
             "challenge": None,
         })
 
-    if len(CHALLENGES) != challenge_count(len(COPIES)):
-        raise ValueError("CHALLENGES must hold 30% of the copies")
+    chosen = make_challenges(copy_list)
+    if len(chosen) != challenge_count(len(copy_list)):
+        raise ValueError("the challenges must be 30% of the copies")
     challenges = []
-    for n, (ci, arrow) in enumerate(CHALLENGES):
+    for n, (ci, arrow) in enumerate(chosen):
         copy = copies[ci]
         fv = fitted[(copy["pattern"], arrow)]
         cx, cy = copy["centre"]
@@ -425,7 +466,7 @@ def build(sketch_dir=SKETCH_DIR):
     half = MAP_SIZE / 2
     layout = {
         "name": "MVP map",
-        "task": "T-019",
+        "task": "T-019, T-094 (242 by 242)",
         "generated_by": "python game/tools/build_mvp_map.py",
         "units": "1 unit = the car's width; the car is drawn 1 x 3 units",
         "origin": "x and y in units from the map's centre, x to the right, y down; rectangles give their top-left corner",

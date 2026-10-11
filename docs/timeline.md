@@ -550,3 +550,8 @@ Entry format:
 - Decision or change: after playing the bare loop, the board found the map far too small. The MVP map becomes 240 by 240 units: the same 8-unit roads, 10 by 10 blocks, boulders and challenges, with many more blocks (about 13 each way) and a proportionally bigger gravel centre (Level design, Decisions). The pause screen's zoom label becomes "Camera zoom level" (the board's wording), and the zoom must visibly change while the slider moves. Rework tasks: T-093 (pause screen) and T-094 (the map). Short GDD updated.
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/short-gdd.md`, `docs/short-gdd/short-gdd.pdf`, `docs/short-gdd/README.md`
 - Tasks: T-093, T-094 (new); T-047 (board note)
+
+## 2026-10-11: Combined playtest ready
+- Decision or change: merged on QA's pass: T-093 (pause screen: "Camera zoom level", the zoom changes live while paused, the timer no longer overlaps "Paused"), T-091 (trick popups from the car in pink and cyan, no red) and T-094 (the MVP map at 242 by 242: 13 by 13 blocks, an 82 by 82 gravel centre, 80 pattern copies, 24 challenges). With T-079 (trick detection) already merged, the board's combined playtest is ready from the main folder.
+- Documents touched: `docs/level-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-091, T-093, T-094 (done)

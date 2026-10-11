@@ -57,6 +57,14 @@ func drive_challenge(map: Node2D, body: Node2D, id: String) -> void:
 	drive(map, body, path_poses(line))
 
 
+## How many boulders the map's own pattern copies have.
+func preset_boulder_count(map: Node2D) -> int:
+	var n := 0
+	for copy in map.layout.pattern_copies:
+		n += copy.boulders.size()
+	return n
+
+
 func is_green(c: Color) -> bool:
 	return c.g > 0.6 and c.g > c.r + 0.2 and c.g > c.b + 0.2
 
@@ -121,7 +129,7 @@ func test_each_design_is_created_at_the_given_position_and_angle() -> void:
 		for preset in map.challenge_ids():
 			assert_true(map.arrows[preset].band_color.b > map.arrows[preset].band_color.g)
 		# The drawing includes the new boulders.
-		assert_eq(map.all_boulders().size(), 16 + d.boulders.size())
+		assert_eq(map.all_boulders().size(), preset_boulder_count(map) + d.boulders.size())
 
 
 func test_unknown_design_is_refused() -> void:
@@ -152,7 +160,7 @@ func test_driving_a_meteor_challenge_sends_its_signal_once() -> void:
 		assert_eq(bodies.size(), 1)
 		assert_true(is_instance_valid(bodies[0]) and bodies[0].is_inside_tree())
 		assert_eq(bodies[0].get_child_count(), map.get_meteor_challenge(id).boulders.size())
-		assert_eq(map.all_boulders().size(), 16 + map.get_meteor_challenge(id).boulders.size())
+		assert_eq(map.all_boulders().size(), preset_boulder_count(map) + map.get_meteor_challenge(id).boulders.size())
 		# Driving it again sends nothing more.
 		drive_challenge(map, body, id)
 		assert_signal_emit_count(map, "meteor_challenge_completed", 1)
@@ -196,28 +204,32 @@ func test_placement_accepts_a_free_spot() -> void:
 			assert_true(map.can_place_meteor_challenge(design_id, Vector2.ZERO, deg_to_rad(deg)),
 					"%s at the gravel centre, %d degrees" % [design_id, deg])
 	# A straight stretch of the perimeter road, between two pattern copies.
-	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-18.0, -36.0), deg_to_rad(90.0)))
+	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-54.0, -117.0), deg_to_rad(90.0)))
+	# An empty road crossing (crossings 2, 1), along the road.
+	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-63.0, -81.0), deg_to_rad(90.0)))
 
 
 func test_placement_rejects_a_building() -> void:
 	var map := make_map()
 	for design_id in DESIGNS:
-		# On a building block (-32..-22).
-		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-27.0, -27.0), 0.0), design_id)
+		# On a building block (-77..-67).
+		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-72.0, -72.0), 0.0), design_id)
 	# The Two Boulders fits along an 8-unit road (0.25 units from the blocks on
 	# either side), but laid across one, it reaches into the blocks.
-	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-27.0, -36.0), deg_to_rad(90.0)))
-	assert_false(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-18.0, -27.0), deg_to_rad(90.0)))
-	# A Single Boulder pushed against a block's corner.
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-20.0, -20.0), 0.0))
+	assert_true(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-81.0, -63.0), 0.0))
+	assert_false(map.can_place_meteor_challenge("two-boulders/arrow-1", Vector2(-81.0, -72.0), deg_to_rad(90.0)))
+	# A Single Boulder fits on an empty crossing, but not pushed against a block's corner.
+	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-45.0, -63.0), 0.0))
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-47.0, -65.0), 0.0))
 
 
 func test_placement_rejects_another_boulder() -> void:
 	var map := make_map()
-	# On a pattern copy's boulder (copy-04 at -18, 0).
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-18.0, 0.0), 0.0))
-	# Close to the gravel's edge, so its corridor reaches copy-04's boulder.
-	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-13.5, 0.0), 0.0))
+	# On a pattern copy's boulder (a Single Boulder at -63, -63).
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-63.0, -63.0), 0.0))
+	# In the gravel near its edge, so its corridor reaches the boulder of the
+	# Two Boulders copy at -45, -9 (its boulders at -48.5 and -41.5).
+	assert_false(map.can_place_meteor_challenge("single-boulder/arrow-1", Vector2(-36.5, -9.0), 0.0))
 	# On a meteor challenge's boulder: free before, not after.
 	assert_true(map.can_place_meteor_challenge("single-boulder/arrow-2", Vector2(6.0, 0.0), 0.0))
 	map.add_meteor_challenge("single-boulder/arrow-1", Vector2(6.0, 0.0), 0.0)
@@ -228,9 +240,10 @@ func test_placement_rejects_another_boulder() -> void:
 func test_placement_rejects_the_map_edge() -> void:
 	var map := make_map()
 	for design_id in DESIGNS:
-		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-39.0, -27.0), 0.0), design_id)
-		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-27.0, 39.0), 0.0), design_id)
-		assert_false(map.can_place_meteor_challenge(design_id, Vector2(45.0, 0.0), 0.0), design_id)
+		# The map runs from -121 to 121.
+		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-120.0, -72.0), 0.0), design_id)
+		assert_false(map.can_place_meteor_challenge(design_id, Vector2(-72.0, 120.0), 0.0), design_id)
+		assert_false(map.can_place_meteor_challenge(design_id, Vector2(125.0, 0.0), 0.0), design_id)
 
 
 # ---- Criterion 5: several at once -------------------------------------------------------------
@@ -270,5 +283,7 @@ func test_screenshot_fixture_shows_a_meteor_challenge_beside_a_preset_one() -> v
 	assert_eq(demo.meteor_id, "meteor-1")
 	var map: Node2D = demo.map
 	assert_true(map.arrows["meteor-1"].visible and is_green(map.arrows["meteor-1"].band_color))
-	assert_true(map.arrows["challenge-1"].visible)
-	assert_eq(map.get_meteor_challenge("meteor-1").design, map.get_challenge("challenge-1").pattern + "/" + map.get_challenge("challenge-1").arrow)
+	var preset: String = demo.PRESET_ID
+	assert_true(map.arrows[preset].visible)
+	assert_false(is_green(map.arrows[preset].band_color), "the preset arrow stays blue")
+	assert_eq(map.get_meteor_challenge("meteor-1").design, map.get_challenge(preset).pattern + "/" + map.get_challenge(preset).arrow)
