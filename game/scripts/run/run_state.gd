@@ -3,7 +3,11 @@ extends Node
 ## The run's state (task T-036): the 8-minute clock, the car's health, the
 ## coins collected this run, and win and loss (Game loop architecture,
 ## Decisions). Task T-037 adds likes (XP) and levels: from completed
-## challenges and from drifting, with level-ups and the level-up pause switch. Other agents' work plugs in through the signals and public
+## challenges and from drifting, with level-ups and the level-up pause switch.
+## Task T-081 adds the combo: tricks raise a multiplier on all XP gained,
+## collisions (and damage to the car) cut it, and it drains when no trick
+## follows in time (numbers: res://data/combo.json, ComboData). Other agents'
+## work plugs in through the signals and public
 ## functions below; game/README.md, "The run", lists them.
 ##
 ## The clock counts down in _process, so it stops whenever the scene tree is
@@ -25,6 +29,8 @@ const EPSILON := 0.000001
 
 const RESULT_WIN := "win"
 const RESULT_LOSS := "loss"
+
+const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 
 ## A fresh run has started (start_run). Every value is back at its start.
 signal run_started
@@ -56,6 +62,13 @@ signal level_up(new_level: int)
 signal level_up_choice_started(new_level: int)
 ## The weapon choice for `new_level` was made (choice_made()).
 signal level_up_choice_made(new_level: int)
+## A trick raised the combo (T-081): `trick_id` is the car's trick, `added`
+## how much the multiplier went up (the data's amount, less if the cap was
+## reached), `multiplier` the new value. For the trick popups (T-083).
+signal combo_trick(trick_id: String, added: float, multiplier: float)
+## The combo multiplier changed (a trick, a collision, the drain, or a new
+## run). For the HUD's combo counter (T-083) and enemy spawning (T-085).
+signal combo_changed(multiplier: float)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -83,18 +96,28 @@ var running := false
 ## "" while the run is going (or before the first one), then "win" or "loss".
 var result := ""
 var boss_time_sent := false
+## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
+## start_multiplier (1.0, no combo) at the start of a run.
+var combo := 1.0
+## Seconds since the last trick (or since the run started). The combo drains
+## once this passes combo.json's drain_wait_seconds.
+var combo_idle := 0.0
 
 var _run_data: RunData
+var _combo_data: ComboData
 
 
-func _init(run_data: RunData = null) -> void:
+func _init(run_data: RunData = null, combo_data: ComboData = null) -> void:
 	_run_data = run_data
+	_combo_data = combo_data
 
 
 ## Starts a fresh run from the start: full health, 8:00, 0 coins.
 func start_run() -> void:
 	if _run_data == null:
 		_run_data = RunData.new()
+	if _combo_data == null:
+		_combo_data = ComboData.new()
 	max_health = _run_data.starting_health()
 	health = max_health
 	time_left = RUN_SECONDS
@@ -105,6 +128,8 @@ func start_run() -> void:
 	level = 1
 	drift_seconds = 0.0
 	drift_seconds_paid = 0
+	combo = _combo_data.start_multiplier()
+	combo_idle = 0.0
 	var was_waiting := not pending_choices.is_empty()
 	pending_choices.clear()
 	if was_waiting:
@@ -115,6 +140,7 @@ func start_run() -> void:
 	health_changed.emit(health, max_health)
 	coins_changed.emit(coins)
 	xp_changed.emit(xp, xp_needed(), level)
+	combo_changed.emit(combo)
 
 
 func _process(delta: float) -> void:
@@ -131,6 +157,7 @@ func advance(seconds: float) -> void:
 		time_left = 0.0
 	if shown_seconds() != shown_before:
 		time_left_changed.emit(time_left)
+	_drain_combo(seconds)
 	if not boss_time_sent and time_left <= BOSS_TIME_LEFT + EPSILON:
 		boss_time_sent = true
 		boss_time.emit()
@@ -162,6 +189,9 @@ func time_left_text() -> String:
 func damage_car(amount: float) -> void:
 	if not running or amount <= 0.0:
 		return
+	# Enemies and meteors damage the car by hitting it: any damage counts as
+	# a collision and cuts the combo (Game loop architecture, Decisions).
+	collision()
 	health = maxf(health - amount, 0.0)
 	health_changed.emit(health, max_health)
 	if health <= 0.0:
@@ -206,9 +236,9 @@ func is_max_level() -> bool:
 func challenge_completed(challenge_id: String = "") -> void:
 	if not running:
 		return
-	var amount := _run_data.challenge_xp(level)
+	var amount := _run_data.challenge_xp(level) * combo
 	score.emit(amount, challenge_id)
-	add_xp(amount)
+	_gain_xp(amount)
 
 
 ## Feeds the car's drift state for one physics step of `delta` seconds (the
@@ -231,11 +261,67 @@ func drift_step(drifting: bool, delta: float) -> void:
 		add_xp(_run_data.drift_xp_per_second() * seconds)
 
 
-## Adds `amount` XP. Each time it reaches the level's threshold the player
-## levels up (level_up fires per level); leftover XP carries over if run.json
+## The car did a trick (the run scene connects the car's `trick` signal): the
+## combo goes up by the trick's amount in combo.json, held at the cap, and the
+## drain wait starts again. Sends combo_trick, then combo_changed. Ignored
+## when the run is not going, and for an id that is not one of the car's
+## tricks (TrickDetector.TRICK_IDS).
+func add_trick(trick_id: String) -> void:
+	if not running or not TrickDetector.TRICK_IDS.has(trick_id):
+		return
+	var before := combo
+	combo = _combo_data.after_trick(combo, trick_id)
+	combo_idle = 0.0
+	combo_trick.emit(trick_id, combo - before, combo)
+	if combo != before:
+		combo_changed.emit(combo)
+
+
+## The car collided with something (the run scene connects the car's
+## `hit_obstacle`; damage_car() calls it too): the combo is cut as combo.json
+## says (80% of the part above the start value). Ignored when the run is not
+## going.
+func collision() -> void:
+	if not running:
+		return
+	_set_combo(_combo_data.after_collision(combo))
+
+
+## How much the minion spawn rate is multiplied at the current combo
+## (combo.json's spawning; 1.0 with no combo). For enemy spawning (T-085).
+func combo_spawn_multiplier() -> float:
+	return _combo_data.spawn_multiplier(combo) if _combo_data != null else 1.0
+
+
+func _drain_combo(seconds: float) -> void:
+	var before_idle := combo_idle
+	combo_idle += seconds
+	var wait := _combo_data.drain_wait_seconds()
+	var draining := maxf(combo_idle - wait, 0.0) - maxf(before_idle - wait, 0.0)
+	if draining > 0.0:
+		_set_combo(maxf(combo - draining * _combo_data.drain_per_second(),
+				_combo_data.start_multiplier()))
+
+
+func _set_combo(value: float) -> void:
+	if value == combo:
+		return
+	combo = value
+	combo_changed.emit(combo)
+
+
+## Adds `amount` XP gained by driving, multiplied by the combo (Game loop
+## architecture, Decisions: the multiplier multiplies all XP gained).
+## Ignored when the run is not going or `amount` is not positive.
+func add_xp(amount: float) -> void:
+	_gain_xp(amount * combo)
+
+
+## Adds `amount` XP, already multiplied by the combo. Each time it reaches
+## the level's threshold the player levels up (level_up fires per level); leftover XP carries over if run.json
 ## says so. At the top level XP no longer adds up. Ignored when the run is
 ## not going or `amount` is not positive.
-func add_xp(amount: float) -> void:
+func _gain_xp(amount: float) -> void:
 	if not running or amount <= 0.0 or is_max_level():
 		return
 	xp += amount

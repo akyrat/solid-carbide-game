@@ -585,3 +585,8 @@ Entry format:
 - Decision or change: T-049 merged on QA's pass. The HUD now shows "Car Health" with a health bar (top left), the likes row (a placeholder heart in Redgull red, "Likes", "Hype Lv {level}") with the likes bar under it, and "Coins" with the count (top right), around the timer. Space is kept beside the likes row for the combo counter (T-083). T-086 (the heart's art) is unblocked.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-049 (done), T-086 (unblocked)
+
+## 2026-10-11: T-081 done: the combo
+- Decision or change: T-081 merged on QA's pass. The run keeps a combo multiplier from 1.0: tricks raise it by `combo.json`'s amounts up to the cap, it drains to 1.0 after 2 seconds without a trick, a collision or damage cuts 80% of the part above 1.0, and it multiplies all likes. Two readings for the board's playtest: a hit does not restart the 2-second wait, and the first drift second already earns 1.05 times its likes, because the extended-drift trick fires just before it. T-083 (the HUD combo counter) is unblocked.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-081 (done), T-083 (unblocked)

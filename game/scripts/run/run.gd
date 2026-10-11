@@ -10,7 +10,8 @@ extends Node2D
 ## no smoothing).
 ##
 ## The run scene connects the map's challenge signals and the car's drift
-## state to the state's likes (XP) and levels (task T-037).
+## state to the state's likes (XP) and levels (task T-037), and the car's
+## tricks and collisions to the combo (task T-081).
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
@@ -133,11 +134,20 @@ func _build_world() -> void:
 	# Likes (XP): every completed challenge, preset or meteor (T-037).
 	map.challenge_completed.connect(state.challenge_completed)
 	map.meteor_challenge_completed.connect(state.challenge_completed)
+	# The combo (T-081): tricks raise it, hitting a wall, building, map edge
+	# or boulder cuts it (damage to the car cuts it inside the state).
+	car.trick.connect(state.add_trick)
+	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	map.car = car
 	sync_view()
 	car_sprite.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+## The car hit a wall, building, map edge or boulder: a collision for the combo.
+func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+	state.collision()
 
 
 ## Feeds the car's drift state to the run's likes after each physics step.

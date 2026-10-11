@@ -1,7 +1,7 @@
 ---
 id: T-083
 title: HUD: the combo counter, and the combo amount on trick popups
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus
