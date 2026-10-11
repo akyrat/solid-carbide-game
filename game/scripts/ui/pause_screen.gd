@@ -10,7 +10,7 @@ const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
-const TEXT_ZOOM_LABEL := "Camera zoom, for the fans"
+const TEXT_ZOOM_LABEL := "Camera zoom level"
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -20,6 +20,7 @@ var hint_label: Label
 var zoom_label: Label
 var _value_label: Label
 var _root: Control
+var _saved_cam: Array = []
 
 
 func setup(t: Node) -> void:
@@ -31,12 +32,16 @@ func setup(t: Node) -> void:
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_root)
 	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
+	dim.color = Color(0, 0, 0, 0.2)  # light, so the zoom shows behind it
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dim)
+	# The panel sits at the top, over a dark strip, so the map behind stays clear.
+	var strip := PanelContainer.new()
+	strip.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	strip.self_modulate = Color(0, 0, 0, 0.7)
+	_root.add_child(strip)
 	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(center)
+	strip.add_child(center)
 	var box := VBoxContainer.new()
 	box.custom_minimum_size.x = 420.0
 	box.add_theme_constant_override("separation", 12)
@@ -45,7 +50,7 @@ func setup(t: Node) -> void:
 	title_label = Label.new()
 	title_label.text = TEXT_TITLE
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title_label.add_theme_font_size_override("font_size", 48)
+	title_label.add_theme_font_size_override("font_size", 36)
 	box.add_child(title_label)
 	hint_label = Label.new()
 	hint_label.text = TEXT_HINT
@@ -98,11 +103,32 @@ func pause() -> void:
 	_update_value_label()
 	get_tree().paused = true
 	visible = true
+	_camera_follows_while_paused(true)
 
 
 func resume() -> void:
+	_camera_follows_while_paused(false)
 	get_tree().paused = false
 	visible = false
+
+
+## The camera normally updates in the physics step, which does not run while
+## paused, so a zoom change would not show. While paused it updates every
+## frame instead (T-093); resuming puts it back.
+func _camera_follows_while_paused(on: bool) -> void:
+	var cam = target.get("camera")
+	if not (cam is Camera2D):
+		return
+	if on:
+		_saved_cam = [cam.process_mode, cam.process_callback, cam.physics_interpolation_mode]
+		cam.process_mode = Node.PROCESS_MODE_ALWAYS
+		cam.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_OFF
+		cam.process_callback = Camera2D.CAMERA2D_PROCESS_IDLE
+	elif not _saved_cam.is_empty():
+		cam.process_mode = _saved_cam[0]
+		cam.process_callback = _saved_cam[1]
+		cam.physics_interpolation_mode = _saved_cam[2]
+		_saved_cam = []
 
 
 func _on_zoom_changed(v: float) -> void:

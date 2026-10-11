@@ -20,7 +20,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - When the player completes a challenge, the likes it gave pop out from the car the same way, not on the HUD (the score flash in Game loop architecture, Decisions). (2026-10-10)
 - The UI Agent proposes a first layout for where each HUD element goes on screen, and the board adjusts it in playtest. (2026-10-08)
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath. (2026-10-08)
-- Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider (Drifting, Decisions). A full pause menu, with more settings, comes in the final release. (2026-10-07; zoom slider added 2026-10-08)
+- Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider, labelled "Camera zoom level", which zooms the view behind the screen live while the game stays paused (Drifting, Decisions). A full pause menu, with more settings, comes in the final release. (2026-10-07; zoom slider added 2026-10-08)
 
 ## Content
 

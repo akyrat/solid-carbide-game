@@ -1,7 +1,7 @@
 ---
 id: T-093
 title: Rework (T-015): zoom label, and see the zoom change while moving the slider
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -17,7 +17,7 @@ qa_rounds: 0
 ---
 
 <!--
-status: in-progress | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+status: in-qa | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
@@ -44,4 +44,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the UI Agent. Changes:
+- Label is now "Camera zoom level" (pause_screen.gd).
+- Cause of the invisible zoom: the camera updates in the physics step (and with physics interpolation), which does not run while paused. While paused the pause screen now makes the camera update every frame (idle callback, interpolation off, always processing) and restores it on resume. Works for both the drift prototype and the run, as both use the pause screen's `target.camera`.
+- Pause screen layout: the panel is a dark strip at the top and the dim over the map is light (0.2), so the map stays visible behind it.
+- Tests: test_pause_screen.gd (label updated; new live-zoom test in the prototype) and tests/unit/game/test_screen_flow.gd (new test in a run started from the main menu: view scale changes at once, car and clock stay paused). Full GUT suite 225/225 passes; Python tool tests OK.
+- Screenshots (not committed): pause_screen_demo.tscn, _in (slider 7) and _out (slider 19) fixtures; the two paused views differ clearly in zoom and the map is visible.
+- Documents updated: docs/hud-and-menus.md, game/README.md.
