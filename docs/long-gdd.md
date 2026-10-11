@@ -194,9 +194,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - The MVP map is a city laid out as a grid: blocks of buildings, with roads running between the blocks. (How it looks: Visual style, Decisions.)
 - Roads are between 5 and 10 times as wide as the player's car. A street never widens along its length; instead, some streets are wider than others, and a wide road can join a narrower one.
 - Map sizes are measured in units, where 1 unit is the drawn car's width (the smaller of its two dimensions; Drifting, Decisions). It is the same unit the driving values use.
-- The MVP map is **240 by 240 units**, three times as wide and tall as first planned: an 8-unit perimeter road on each side, around a grid of 10 by 10 blocks separated by 8-unit roads, with many more blocks than before. After playing the 80 by 80 map, the board found it far too small; the roads, blocks, boulders and challenges stay the same size, there is simply more city.
+- The MVP map is **242 by 242 units** (about three times as wide and tall as first planned; exactly 240 can't be built from 10-unit blocks and 8-unit roads, so 13 by 13 blocks give 242): an 8-unit perimeter road on each side, around a grid of 10 by 10 blocks separated by 8-unit roads, with many more blocks than before. After playing the 80 by 80 map, the board found it far too small; the roads, blocks, boulders and challenges stay the same size, there is simply more city.
 - A wide road, 8 units wide, runs around the whole edge of the map. The map ends in a hard stop at its edges.
-- Inside the perimeter road, building blocks of 10 by 10 units are laid out in a grid, separated by roads 8 units wide. For 240 by 240 that is about 13 blocks in each direction; the Level/Challenge Design Agent fits the exact count.
+- Inside the perimeter road, building blocks of 10 by 10 units are laid out in a grid, separated by roads 8 units wide. On the 242 by 242 map that is 13 blocks in each direction.
 - The centre of the map is an open square with no blocks. Its ground is gravel, not road. On the bigger map it grows in proportion (about three times as wide); the Level/Challenge Design Agent fits it to the grid.
 - Obstacles are placed on the roads. In the MVP the only obstacle is a crashed meteor boulder; more kinds come later.
 - In the MVP, obstacles are circles, all 3 units across (one car length), so they never block a road.
@@ -515,7 +515,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `2d328d2652ad5ff68cb130e2e931e125e2aff1bd17a7b94ed3110e1621c7c793` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
-| `level-design.md` | `4617068a1ffa8bbd8081fc4119f1d85ffed67b85c27bca56bccaedba490641ef` |
+| `level-design.md` | `c7de632a8e2fe4efd8ecc065a7df1a70fe927e4d0eb56f684403682a2e124232` |
 | `enemies.md` | `2933890c1e53b6b8310617bddea00f7b319eeb5e1a3aa4abeadc8ad20583efcb` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
