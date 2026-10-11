@@ -1,7 +1,7 @@
 ---
 id: T-094
 title: Rework (T-019): the MVP map, three times bigger (240 by 240)
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 epic: level-challenges
