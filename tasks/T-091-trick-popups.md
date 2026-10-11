@@ -1,7 +1,7 @@
 ---
 id: T-091
 title: Trick popups: the trick's name pops out from the car
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -47,4 +47,4 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built `scripts/hud/trick_popups.gd` (`TrickPopups`): LONG DRIFT! (16 px), FULL 360! and ALT DRIFT! (28 px) pop out 50 px above the car, grow quickly, rise 40 px and fade in 1 s, on a placeholder yellow shape with outlined red text. It is in the run (rebinds to each new car, so it works after Start from the menu and for a second run) and in the drift prototype. `show_popup(text, position, size)` takes any text for T-092. Tests: `tests/unit/test_trick_popups.gd` (6 tests, passing); screenshot fixture `tests/fixtures/trick_popups_demo.tscn`, picture at `screenshots/trick_popups.png` (git-ignored). Documents updated: `docs/hud-and-menus.md` (Content, new Trick popups section), `game/README.md`. Touched `run.gd` and `drift_prototype.gd` by a few lines each; not the pause screen or map files.

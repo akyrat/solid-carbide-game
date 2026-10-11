@@ -17,6 +17,7 @@ const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const HudScene := preload("res://scenes/hud/hud.tscn")
+const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -42,6 +43,7 @@ var car: CharacterBody2D
 var view_root: Node2D
 var car_sprite: Sprite2D
 var camera: Camera2D
+var trick_popups: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -66,6 +68,10 @@ func _ready() -> void:
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(car_sprite)
 	car_sprite.use_sheet(VIEW)
+
+	trick_popups = TrickPopupsScript.new()
+	trick_popups.name = "TrickPopups"
+	view_root.add_child(trick_popups)
 
 	camera = Camera2D.new()
 	camera.name = "Camera"
@@ -118,6 +124,7 @@ func _build_world() -> void:
 	car.model.rotation = START_ROTATION
 	physics_world.add_child(car)
 	car.stepped.connect(sync_view)
+	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	map.car = car
 	sync_view()
 	car_sprite.reset_physics_interpolation()
