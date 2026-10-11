@@ -48,8 +48,11 @@ func turn_around(points: PackedVector2Array, c: Vector2) -> float:
 	return rad_to_deg(total)
 
 
+## A map with its challenges switched on: they are left out of the MVP (task
+## T-097) but kept, so these tests keep them working for when they come back.
 func make_map() -> Node2D:
 	var map: Node2D = MapScene.instantiate()
+	map.challenges_enabled = true
 	add_child_autofree(map)
 	return map
 

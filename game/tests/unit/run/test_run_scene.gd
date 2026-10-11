@@ -13,8 +13,8 @@ func before_each() -> void:
 
 func test_run_starts_with_map_car_and_fresh_state() -> void:
 	assert_not_null(run.map, "map loaded")
-	assert_eq(run.map.challenge_ids().size(), run.map.layout.challenges.size(), "the MVP map's challenges")
-	assert_eq(run.map.challenge_ids().size(), 18, "30% of the 60 pattern copies (T-096)")
+	assert_eq(run.map.challenge_ids(), [], "no challenges in the MVP (T-097)")
+	assert_eq(run.map.boulder_bodies.size(), 60, "the 60 pattern copies (T-096)")
 	assert_not_null(run.car, "car loaded")
 	assert_eq(run.car.get_script(), preload("res://scripts/driving/car.gd"))
 	assert_eq(run.map.car, run.car, "the map checks challenges against the car")
@@ -60,11 +60,8 @@ func test_second_run_resets_world_and_state() -> void:
 	run.state.damage_car(1000.0)
 	assert_eq(ended, [["loss", 5]])
 	var old_map = run.map
-	run.map._complete(run.map.challenge_ids()[0])
 	run.start_run()
 	assert_ne(run.map, old_map, "a fresh map")
-	for id in run.map.challenge_ids():
-		assert_false(run.map.is_challenge_completed(id), "every challenge open again")
 	assert_eq(run.car.position, run.START_POSITION_UNITS * 16.0, "car back at the start")
 	assert_eq(Vector2(run.car.model.vx, run.car.model.vy), Vector2.ZERO, "car standing still")
 	assert_eq(run.map.car, run.car)
@@ -73,3 +70,19 @@ func test_second_run_resets_world_and_state() -> void:
 	assert_eq(run.state.coins, 0)
 	assert_true(run.state.is_running())
 	assert_eq(run.get_node("Map"), run.map)
+
+
+## Challenges are left out of the MVP but kept (T-097): switched on, a run's map
+## has the 18 preset challenges again, and a second run opens them all again.
+func test_challenges_switched_on_come_back_and_reset_on_a_new_run() -> void:
+	run.challenges_enabled = true
+	run.start_run()
+	assert_eq(run.map.challenge_ids().size(), run.map.layout.challenges.size(), "the MVP map's challenges")
+	assert_eq(run.map.challenge_ids().size(), 18, "30% of the 60 pattern copies (T-096)")
+	assert_eq(run.map.arrows.size(), 18, "their arrows")
+	run.map._complete(run.map.challenge_ids()[0])
+	var old_map = run.map
+	run.start_run()
+	assert_ne(run.map, old_map, "a fresh map")
+	for id in run.map.challenge_ids():
+		assert_false(run.map.is_challenge_completed(id), "every challenge open again")

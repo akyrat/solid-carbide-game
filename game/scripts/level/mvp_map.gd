@@ -23,6 +23,17 @@ extends Node2D
 ## boulders and a green arrow, follows the same completion rule, and on
 ## completion sends meteor_challenge_completed (never challenge_completed).
 ## can_place_meteor_challenge() says whether a design fits at a spot.
+##
+## Challenges are left out of the MVP (Level design, Decisions, 2026-10-11):
+## with challenges_enabled false (the default, CHALLENGES_ENABLED) the map
+## builds no trackers and no arrows, so it never sends challenge_completed; the
+## pattern copies' boulders stay as plain obstacles. The challenge code and data
+## are kept, unused: set CHALLENGES_ENABLED to true to bring them back.
+##
+## Meteor boulders (task T-097): the kaiju's meteors leave plain boulders where
+## they land. add_meteor_boulder() places one during a run (same size, look and
+## collision as the map's boulders); can_place_meteor_boulder() is its
+## placement check. A new run builds a new map, so they go with the old one.
 
 const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
@@ -36,6 +47,12 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 const EDGE_WALL_THICKNESS := 8.0
 ## Spacing (units) of the corridor samples the placement check tests.
 const PLACEMENT_STEP := 0.1
+## Challenges are left out of the MVP (Level design, Decisions, 2026-10-11).
+## The one switch to bring them back: true builds the preset challenges (arrows
+## and completion checks) on every map, the run's included.
+const CHALLENGES_ENABLED := false
+## Fallback boulder size (units across) if the layout data has no boulder.
+const DEFAULT_BOULDER_DIAMETER := 3.0
 
 ## Fired once when a preset challenge is completed (XP and the HUD hook in here later).
 signal challenge_completed(challenge_id: String)
@@ -57,6 +74,9 @@ var meteor_line_color := Color(0.50, 1.0, 0.55, 1.0)
 
 ## Optional: the car to check the challenges against every physics step.
 var car: Node2D = null
+## Whether this map builds its preset challenges. Set before the map enters the
+## tree; the default is CHALLENGES_ENABLED (off in the MVP).
+var challenges_enabled := CHALLENGES_ENABLED
 
 ## The layout data, as loaded from LAYOUT_PATH.
 var layout: Dictionary = {}
@@ -81,6 +101,8 @@ var _meteor_ids: Array = []
 ## One static body per meteor challenge, for its boulders (layer 1).
 var meteor_boulder_bodies: Array[StaticBody2D] = []
 var _meteor_count := 0
+## Meteor boulders (add_meteor_boulder): {x, y, diameter} in units, in order.
+var meteor_boulders: Array = []
 
 
 static func load_layout(path: String = LAYOUT_PATH) -> Dictionary:
@@ -129,7 +151,8 @@ func _build() -> void:
 
 	_build_walls()
 	_build_boulders()
-	_build_challenges()
+	if challenges_enabled:
+		_build_challenges()
 	set_view(view)
 
 
@@ -194,16 +217,21 @@ func _build_challenges() -> void:
 		arrows[ch.id] = arrow
 
 
-## Challenge ids, in the layout data's order.
+## Challenge ids, in the layout data's order. Empty when challenges are off.
 func challenge_ids() -> Array:
 	var out := []
+	if not challenges_enabled:
+		return out
 	for ch in layout.challenges:
 		out.append(ch.id)
 	return out
 
 
-## The layout data entry for one challenge (points in units), or {}.
+## The layout data entry for one challenge (points in units), or {}
+## ({} too when challenges are off).
 func get_challenge(challenge_id: String) -> Dictionary:
+	if not challenges_enabled:
+		return {}
 	for ch in layout.challenges:
 		if ch.id == challenge_id:
 			return ch
@@ -270,15 +298,72 @@ func place_design(design_id: String, centre: Vector2, angle: float) -> Dictionar
 	return {"boulders": boulders, "centre_line": line, "corridor_width": float(d.corridor_width)}
 
 
-## Every boulder on the map now: the pattern copies' and the meteor challenges'
-## ({x, y, diameter} in units).
+## Every boulder on the map now: the pattern copies', the meteor challenges'
+## and the meteor boulders' ({x, y, diameter} in units).
 func all_boulders() -> Array:
 	var out := []
 	for copy in layout.pattern_copies:
 		out.append_array(copy.boulders)
 	for id in _meteor_ids:
 		out.append_array(meteor_challenges[id].boulders)
+	out.append_array(meteor_boulders)
 	return out
+
+
+# ---- Meteor boulders (task T-097) -----------------------------------------------------------
+
+## How big a boulder is (units across): the same as the map's own boulders.
+func boulder_diameter() -> float:
+	for copy in layout.get("pattern_copies", []):
+		for b in copy.boulders:
+			return float(b.diameter)
+	return DEFAULT_BOULDER_DIAMETER
+
+
+## The placement check for a meteor boulder: true when a boulder centred on
+## `centre` (units from the map's centre) lies wholly inside the map and does
+## not overlap a building or any boulder already on the map (the pattern
+## copies', meteor challenges' or other meteor boulders'). Touching is allowed.
+func can_place_meteor_boulder(centre: Vector2) -> bool:
+	var r := boulder_diameter() / 2.0
+	var m := rect_of(layout.map.rect)
+	if centre.x - r < m.position.x or centre.x + r > m.end.x:
+		return false
+	if centre.y - r < m.position.y or centre.y + r > m.end.y:
+		return false
+	for b in layout.buildings:
+		if _rect_distance(centre, rect_of(b)) < r:
+			return false
+	for o in all_boulders():
+		if centre.distance_to(Vector2(float(o.x), float(o.y))) < r + float(o.diameter) / 2.0:
+			return false
+	return true
+
+
+## Places one plain boulder at `centre` (units from the map's centre) during a
+## run, where a meteor landed: the same size, look and collision as the map's
+## boulders (a static body on collision layer 1, the car bounces off it). No
+## challenge or arrow comes with it. Returns its body, which is also added to
+## meteor_boulder_bodies. It does not run the placement check: call
+## can_place_meteor_boulder first.
+func add_meteor_boulder(centre: Vector2) -> StaticBody2D:
+	var d := boulder_diameter()
+	var boulder := {"x": centre.x, "y": centre.y, "diameter": d}
+	meteor_boulders.append(boulder)
+	var body := StaticBody2D.new()
+	body.name = "Boulders_meteor_boulder_%d" % meteor_boulders.size()
+	body.set_meta("meteor_boulder", meteor_boulders.size())
+	physics_root.add_child(body)
+	var shape := CircleShape2D.new()
+	shape.radius = d / 2.0 * PX_PER_UNIT
+	var cs := CollisionShape2D.new()
+	cs.name = "Boulder1"
+	cs.shape = shape
+	cs.position = centre * PX_PER_UNIT
+	body.add_child(cs)
+	meteor_boulder_bodies.append(body)
+	boulders_draw.queue_redraw()
+	return body
 
 
 ## The placement check: true when the design fits at `centre` and `angle`

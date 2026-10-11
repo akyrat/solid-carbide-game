@@ -174,7 +174,9 @@ func test_meteor_challenge_gives_same_xp_as_preset() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
 	_listen(run.state)
-	run.map.challenge_completed.emit(run.map.challenge_ids()[0])
+	# Challenges are off in the MVP (T-097); the run still turns the map's
+	# signals into likes, for when they come back.
+	run.map.challenge_completed.emit(str(run.map.layout.challenges[0].id))
 	var preset_xp: float = scores[0][0]
 	run.start_run()
 	run.map.meteor_challenge_completed.emit("meteor-1")

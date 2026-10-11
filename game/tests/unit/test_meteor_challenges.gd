@@ -10,8 +10,11 @@ const U := 16.0
 const DESIGNS := ["single-boulder/arrow-1", "single-boulder/arrow-2", "two-boulders/arrow-1"]
 
 
+## A map with its challenges switched on: they are left out of the MVP (task
+## T-097) but kept, so these tests keep them working for when they come back.
 func make_map() -> Node2D:
 	var map: Node2D = MapScene.instantiate()
+	map.challenges_enabled = true
 	add_child_autofree(map)
 	return map
 

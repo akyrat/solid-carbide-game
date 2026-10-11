@@ -17,6 +17,7 @@ var meteor_id := ""
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color(0.03, 0.03, 0.06))
 	map = MapScene.instantiate()
+	map.challenges_enabled = true  # off in the MVP (T-097), kept for later
 	add_child(map)
 	map.set_view("iso" if iso else "flat")
 	# The same design as the preset challenge, in the gravel beside it.

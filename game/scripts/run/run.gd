@@ -17,6 +17,7 @@ extends Node2D
 ## tree with get_tree().get_first_node_in_group("run_state").
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
+const MapScript := preload("res://scripts/level/mvp_map.gd")
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
@@ -53,6 +54,10 @@ var trick_popups: Node2D
 var zoom := ZOOM
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
+## Whether the run's map has challenges. Off in the MVP (Level design,
+## Decisions, 2026-10-11); the default follows the map's CHALLENGES_ENABLED.
+## Read by start_run() each time it builds a new map.
+var challenges_enabled: bool = MapScript.CHALLENGES_ENABLED
 
 
 func _ready() -> void:
@@ -102,7 +107,8 @@ func _ready() -> void:
 	start_run()
 
 
-## Starts a fresh run: a new map (every challenge open again), the car back
+## Starts a fresh run: a new map (every challenge open again, when challenges
+## are on; meteor boulders from the last run gone), the car back
 ## at the start, and the state reset (full health, 8:00, 0 coins).
 func start_run() -> void:
 	_build_world()
@@ -120,6 +126,7 @@ func _build_world() -> void:
 
 	map = MapScene.instantiate()
 	map.name = "Map"
+	map.challenges_enabled = challenges_enabled
 	add_child(map)
 	move_child(map, 0)  # drawn under the car
 	map.set_view(VIEW)

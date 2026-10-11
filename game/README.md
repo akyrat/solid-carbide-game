@@ -262,7 +262,7 @@ Every task that adds physics bodies uses these layers. They are named in `projec
 | 3 | 4 | `enemies` | Minions, the kaiju, meteors | Layer 3. Their mask must not include layer 2, so they and the car never push each other. To touch or damage the car, use an `Area2D` whose mask includes layer 2 |
 | 4 | 8 | `pickups` | Coins and other pickups | `Area2D` on layer 4 with mask 2, to notice the car driving over it |
 
-Walls and boulders share layer 1 because the MVP map builds them that way and the car treats them the same. To tell them apart (for example in the combo), use the body `hit_obstacle` reports: on the MVP map, `map.walls` is the buildings and the edge, and `map.boulder_bodies` the boulders. Weapons and their projectiles have no layer yet; the weapon tasks add one (the next free number) to this table.
+Walls and boulders share layer 1 because the MVP map builds them that way and the car treats them the same. To tell them apart (for example in the combo), use the body `hit_obstacle` reports: on the MVP map, `map.walls` is the buildings and the edge, `map.boulder_bodies` the pattern copies' boulders and `map.meteor_boulder_bodies` the boulders meteors left. Weapons and their projectiles have no layer yet; the weapon tasks add one (the next free number) to this table.
 
 ### Bounce
 
@@ -391,7 +391,11 @@ The code is `tools/challenge_checker.gd` (the check and the picture) and `tools/
 
 ## MVP map
 
-The city map (task T-019, made bigger in tasks T-094 and T-096): the 240 by 240 unit city grid (24-unit roads, 30 by 30 blocks), the obstacle pattern copies and the preset challenges, in flat placeholder colours. What it contains and why: `docs/level-design.md`, Content, "MVP map".
+The city map (task T-019, made bigger in tasks T-094 and T-096): the 240 by 240 unit city grid (24-unit roads, 30 by 30 blocks) and the obstacle pattern copies, in flat placeholder colours. What it contains and why: `docs/level-design.md`, Content, "MVP map".
+
+**Challenges are off in the MVP** (task T-097; Level design, Decisions). The map builds no challenge trackers and no arrows, so it never sends `challenge_completed`, and the run never sends `score`; the pattern copies' boulders stay as plain obstacles. Everything for challenges is kept, unused, and still tested with challenges switched on: the 18 preset challenges and the 3 fitted designs in `data/level/mvp_map.json` (the build script still writes them), `challenge_tracker.gd` (the completion rule), `challenge_arrow.gd` (the arrows), the meteor challenge functions below, the run's wiring of both challenge signals to the likes, the challenge popup, and the drivability check.
+
+**Turning challenges back on:** in `scripts/level/mvp_map.gd`, set `const CHALLENGES_ENABLED := true`. Every map then builds its preset challenges (arrows and completion checks), the run's included, since the run's `challenges_enabled` defaults to that constant. For one map or run only (tests, fixtures), set `map.challenges_enabled = true` before the map enters the tree, or `run.challenges_enabled = true` and then `run.start_run()`. Then update the tests in `tests/unit/test_mvp_map_no_challenges.gd`, which check they are off, and `test_run_scene.gd`'s first test.
 
 **Open it:**
 
@@ -409,12 +413,22 @@ Running it twice gives identical files. Its tests (`game/tools/test_build_mvp_ma
 **How it is built** (`scripts/level/`):
 
 - `mvp_map.gd`: builds the map from the layout data. Same units and physics as the drift car: 16 pixels per unit, the map's centre on the node's origin. The `Physics` child holds static bodies on collision layer 1 (the buildings and the map's edge in `Walls`, and one body per pattern copy for its boulders), never drawn. The `View` child draws the map, flat or isometric (`set_view("flat" | "iso")`), like the drift prototype.
-- To check the challenges, set the map's `car` to the car node (its position in the same flat world pixels, nose along +x at rotation 0), or call `update_car(centre_in_units, rotation)` once per physics step. When a challenge is completed, its arrow is hidden, its boulders stay, and the map emits `challenge_completed(challenge_id)` once. `challenge_ids()`, `get_challenge(id)` and `is_challenge_completed(id)` give the challenges and their positions.
-- `challenge_tracker.gd`: the completion rule for one challenge (no nodes, so tests run it directly).
+- To check the challenges (when switched on), set the map's `car` to the car node (its position in the same flat world pixels, nose along +x at rotation 0), or call `update_car(centre_in_units, rotation)` once per physics step. When a challenge is completed, its arrow is hidden, its boulders stay, and the map emits `challenge_completed(challenge_id)` once. `challenge_ids()`, `get_challenge(id)` and `is_challenge_completed(id)` give the challenges and their positions.
+- `challenge_tracker.gd`: the completion rule for one challenge (no nodes, so tests run it directly). Unused while challenges are off.
 - `challenge_arrow.gd`: the placeholder arrow (a blue band as wide as the corridor, a white start dot and an arrowhead).
 - `map_overview.gd`: the overview scenes, with a camera that fits the whole map.
 
-**Meteor challenges** (task T-035, for the Enemy Behavior Agent's meteor attack). The kaiju's meteors land as one of the 3 challenge designs; the map places it, draws its arrow in green, and checks it with the same completion rule as the preset challenges. Positions are in units from the map's centre (x right, y down); the angle is in radians, clockwise on screen, like `Node2D.rotation` (0 = the design as fitted: the Two Boulders runs along y).
+**Meteor boulders** (task T-097, for the Enemy Behavior Agent's meteor attack, T-046). The kaiju's meteors leave plain boulders where they land (Enemies, Decisions): no challenge and no arrow. Positions are in units from the map's centre (x right, y down).
+
+| Function | Does |
+|---|---|
+| `can_place_meteor_boulder(centre: Vector2) -> bool` | The placement check: true when a boulder centred on `centre` lies wholly inside the map (-120 to 120) and does not overlap a building or any boulder already on the map (a pattern copy's, another meteor boulder's or a meteor challenge's). Just touching is allowed |
+| `add_meteor_boulder(centre: Vector2) -> StaticBody2D` | Places one boulder: the same size (`boulder_diameter()`, 3 units, read from the map's own boulders), look (drawn with the map's boulders) and collision (a circle on a `StaticBody2D` on layer 1, under the map's `Physics`, so the car bounces off it and `hit_obstacle` reports it) as the map's boulders. Returns its body, also added to `meteor_boulder_bodies`. It does not run the placement check: call `can_place_meteor_boulder` first |
+| `meteor_boulders` | The placed meteor boulders, `{x, y, diameter}` in units, in order. `all_boulders()` includes them |
+
+A new run (`run.start_run()`) builds a new map, so meteor boulders go with the old one. Screenshot of a run started from the main menu, with one meteor boulder by the crossing at 0, -54 and no arrows: `bash game/tools/screenshot.sh res://tests/fixtures/map_from_menu_demo.tscn screenshots/map_from_menu.png 30`.
+
+**Meteor challenges** (task T-035; off in the MVP, kept for later: the kaiju's meteors leave plain boulders instead, above). These functions work whether or not preset challenges are switched on, but nothing in the game calls them. The kaiju's meteors land as one of the 3 challenge designs; the map places it, draws its arrow in green, and checks it with the same completion rule as the preset challenges. Positions are in units from the map's centre (x right, y down); the angle is in radians, clockwise on screen, like `Node2D.rotation` (0 = the design as fitted: the Two Boulders runs along y).
 
 | Function or signal | Does |
 | --- | --- |
@@ -430,7 +444,7 @@ The designs come from `challenge_designs` in `data/level/mvp_map.json` (the fitt
 
 The map's static bodies are on collision layer 1, which the drift car (`scripts/driving/car.gd`) collides with and bounces off (see "Car collisions"). Putting the car into the map is for the run's scene.
 
-**Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges. `tests/unit/test_meteor_challenges.gd`: creating each design at a position and angle, completing meteor challenges (one or several) and their signal, preset challenges not sending it, and the placement check.
+**Tests:** `tests/unit/test_mvp_map.gd` (part of the GUT suite): the grid against Level design, the boulders and fitted patterns against the sketches, the 30% rule, nothing overlapping a building or leaving the map, and a stand-in body driving the challenges (with challenges switched on). `tests/unit/test_meteor_challenges.gd` (switched on too): creating each design at a position and angle, completing meteor challenges (one or several) and their signal, preset challenges not sending it, and the placement check. `tests/unit/test_mvp_map_no_challenges.gd` (task T-097): a run started from the main menu has no challenges and no arrows, every pattern copy's boulders are where the layout data puts them (the same as with challenges on), driving the car along every former challenge's arrow never sends `score` while drifting still gives likes, and the meteor boulders (placement check, size and collision, the car bouncing off one, a new run leaving them behind).
 
 ## The run
 
@@ -444,7 +458,7 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 
 - Children: `Map` (the MVP map scene, drawn in the isometric view), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the car's sprite and the `Camera`) and `RunState` (the state, below).
 - The car starts at the centre of the map (0, 0 units, in the gravel square), nose along -y, as in the drift prototype. The camera sits exactly on the drawn car, zoom 14.4, as in the drift prototype. The map checks its challenges against the car (`map.car`).
-- `run.start_run()` starts a fresh run: it replaces the map (every challenge open again) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
+- `run.start_run()` starts a fresh run: it replaces the map (meteor boulders gone; every challenge open again when challenges are on) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
 
 **The state** (`scripts/run/run_state.gd`, class `RunState`). Reach it with `run.state`, or from anywhere with `get_tree().get_first_node_in_group("run_state")`.
 
@@ -475,7 +489,7 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 | `health_changed(health: float, max_health: float)` | When the car takes damage (and on start) |
 | `coins_changed(coins: int)` | When coins are added (and on start) |
 
-**Likes (XP) and levels** (task T-037; the rules are Game loop architecture, Decisions, the numbers are `data/run.json` through `RunData`). The run scene connects the map's `challenge_completed` and `meteor_challenge_completed` to `state.challenge_completed`, and after every car physics step calls `state.drift_step(car.model.is_drifting, car.model.dt)`. Drifting is the driving model's `is_drifting` (the Unity definition: W, or S without W, held with A or D). All XP gained is multiplied by the combo (below).
+**Likes (XP) and levels** (task T-037; the rules are Game loop architecture, Decisions, the numbers are `data/run.json` through `RunData`). The run scene connects the map's `challenge_completed` and `meteor_challenge_completed` to `state.challenge_completed` (neither fires while challenges are off in the MVP, so likes come from drifting only), and after every car physics step calls `state.drift_step(car.model.is_drifting, car.model.dt)`. Drifting is the driving model's `is_drifting` (the Unity definition: W, or S without W, held with A or D). All XP gained is multiplied by the combo (below).
 
 | Function | Does |
 | --- | --- |

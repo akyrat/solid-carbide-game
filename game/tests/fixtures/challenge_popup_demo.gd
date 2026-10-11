@@ -1,6 +1,7 @@
 extends Node
 ## Test fixture for a screenshot of the challenge popup (task T-092): opens the
-## game, presses Start, then completes a challenge.
+## game, presses Start, then sends the map's challenge_completed for a preset
+## challenge (challenges are off in the MVP, task T-097, so it stands in for one).
 
 var game: Node
 var _frames := 0
@@ -16,4 +17,4 @@ func _process(_delta: float) -> void:
 	_frames += 1
 	if _frames == 20:
 		var run: Node = get_tree().get_first_node_in_group("run_state").get_parent()
-		run.map.challenge_completed.emit(run.map.challenge_ids()[0])
+		run.map.challenge_completed.emit(str(run.map.layout.challenges[0].id))

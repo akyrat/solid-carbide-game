@@ -1,7 +1,7 @@
 ---
 id: T-097
 title: Take the challenges out of the MVP map (no arrows, the boulders stay), and add meteor boulders
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -48,4 +48,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Level/Challenge Design Agent, 2026-10-11.** Built on branch `task/T-097-mvp-map-without-challenges`.
+
+**Challenges off, kept for later.** One switch: `const CHALLENGES_ENABLED := false` in `game/scripts/level/mvp_map.gd`, read into each map's `challenges_enabled` (set before it enters the tree). When off, the map builds no trackers and no arrows, `challenge_ids()` is empty and `get_challenge()` returns {}, so it never sends `challenge_completed` and the run never sends `score`. The run (`run.gd`) has its own `challenges_enabled`, defaulting to the constant, which it hands to every map it builds. Nothing else changed: the pattern copies, their boulder bodies and the layout data are as before, and the challenge code (tracker, arrows, meteor challenge functions, the run's signal wiring, the popup, the drivability check) and the 18 challenges and 3 fitted designs in `mvp_map.json` are kept. **To turn challenges back on:** set `CHALLENGES_ENABLED` to true (written in `game/README.md`, "MVP map"); then the tests that check they are off need updating.
+
+**Meteor boulders** (for T-046): `can_place_meteor_boulder(centre) -> bool` (wholly inside the map, no overlap with a building or any boulder already there; touching allowed) and `add_meteor_boulder(centre) -> StaticBody2D` (a 3-unit circle, size read from the map's own boulders, on a `StaticBody2D` on layer 1 under the map's `Physics`, drawn with the other boulders; also in `meteor_boulder_bodies`; listed in `meteor_boulders` and `all_boulders()`). A new run builds a new map, so they go with it.
+
+**Tests.** New `game/tests/unit/test_mvp_map_no_challenges.gd` (9 tests): a run started from the main menu has no challenges, no trackers and no `ChallengeArrow` anywhere in the game (and a new run neither); the 60 copies' 96 boulder shapes are where the layout data puts them and identical to a map with challenges on; the run's car put along every one of the 18 former challenge arrows sends no `challenge_completed` and no `score`, while the same drive on a run with challenges on completes all 18; drifting in a run from the menu gives likes; the placement check rejects a building (inside and overlapping an edge), a map boulder, a meteor boulder and the map's edges, and accepts free and just-touching spots; a placed boulder matches the map's boulders (layer, mask, circle, size); the real car driving into one in a run hits it (`hit_obstacle` reports its body), bounces back and never passes through; a new run leaves meteor boulders behind. Kept tests switched challenges on in their `make_map()` (`test_mvp_map.gd`, `test_meteor_challenges.gd`); `test_run_scene.gd` now checks no challenges, with a new test that switching them on brings back 18 that reset on a new run; `test_run_likes.gd`, `test_challenge_popup.gd` and the challenge popup fixture take the challenge id from the layout data instead of `challenge_ids()`; the meteor challenge fixture switches challenges on.
+
+- `bash game/tools/run_tests.sh`: TESTS PASSED, 294/294 (30 scripts). The one ERROR line is the expected one from `test_unknown_design_is_refused`.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: OK (67). `python -m unittest discover -s tools -p "test_*.py"`: OK (75).
+- `build_mvp_map.py` reran with identical output (only a docstring note added); the layout data is unchanged.
+
+**Checked by eye:** new fixture `game/tests/fixtures/map_from_menu_demo.tscn` opens `game.tscn`, presses Start, puts the car on the road at 4, -46 (by the crossing at 0, -54 where challenge-6 was), zooms to 20 and places a meteor boulder at -4, -47. It printed `challenges=0 arrows=0 meteor boulders=1`, and the screenshot (`bash game/tools/screenshot.sh res://tests/fixtures/map_from_menu_demo.tscn screenshots/map_from_menu.png 30`) shows the HUD at 8:00, the car, the crossing boulder, the meteor boulder, other copies' boulders and no arrows. Saved as `docs/level-design/meteor-boulder-run.png`. The map overviews (`docs/level-design/mvp-map.png`, `mvp-map-iso.png`) were retaken: boulders, no arrows. The meteor challenge pictures are kept as they were (that fixture switches challenges on).
+
+No PixelLab call. Godot's `.import` line-ending changes and the build script's line-ending-only rewrites were not committed.
+
+**Documents affected:**
+- `docs/level-design.md`: Content only: "MVP map" (no challenges in the MVP, the parts about challenges marked as for when they come back, no blue arrows in the colours), a new "Meteor boulders" section with the run screenshot, and "Meteor challenges" marked off in the MVP, kept for later. Summary, Decisions and Open questions unchanged.
+- `game/README.md`: "MVP map" (challenges off, what is kept, how to turn them back on, the meteor boulder functions, the new tests and fixture), "Collision layers" (`meteor_boulder_bodies`), "The run" (new runs drop meteor boulders; no challenge signals fire while off).
+
+Also updated my working notes, `agent-notes/level-challenge.md`. The long GDD will be stale for level-design.md; regenerating it is the Project Lead's job.
