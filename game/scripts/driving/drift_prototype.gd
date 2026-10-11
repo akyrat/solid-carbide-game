@@ -17,6 +17,7 @@ const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const GroundGridScript := preload("res://scripts/driving/ground_grid.gd")
 const TuningPanelScript := preload("res://scripts/driving/tuning_panel.gd")
 const TestRoomScript := preload("res://scripts/driving/test_room.gd")
+const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
@@ -39,6 +40,7 @@ var view_root: Node2D
 var ground: Node2D
 var test_room: Node2D
 var car_sprite: Sprite2D
+var trick_popups: Node2D
 var camera: Camera2D
 var panel: CanvasLayer
 var hint: CanvasLayer
@@ -69,6 +71,11 @@ func _ready() -> void:
 	car_sprite.name = "CarSprite"
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(car_sprite)
+
+	trick_popups = TrickPopupsScript.new()
+	trick_popups.name = "TrickPopups"
+	view_root.add_child(trick_popups)
+	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 
 	camera = Camera2D.new()
 	camera.name = "Camera"

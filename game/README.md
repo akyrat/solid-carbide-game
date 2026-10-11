@@ -327,6 +327,13 @@ The limits are tuning values in `scripts/driving/car_tuning.gd` (`TRICK_SETTINGS
 
 The extended drift's second and the 360's full turn are Decisions, so they are constants, not sliders.
 
+## Trick popups
+
+Task T-091 (UI Agent). When the car's `trick` signal fires, the trick's name pops out above the car, rises and fades (text from T-082, wording in `docs/hud-and-menus.md`, "Trick popups").
+
+- `scripts/hud/trick_popups.gd` (`TrickPopups`): a node in the world view (next to the car sprite) in both the run (`run.trick_popups`) and the drift prototype (`prototype.trick_popups`). `bind(car, car_position_callable)` listens to a car's `trick`; the run binds again each time it builds a new car. `show_popup(text, drawn_position, font_size)` shows any text, which the challenge popup (T-092) will use. `popups()` lists the popups showing. Sizes are `SIZE_NORMAL` (28) and `SIZE_SMALL` (16, extended drift).
+- **Tests:** `tests/unit/test_trick_popups.gd` (part of the GUT suite): each trick's text near the car, rising and going away, the small extended-drift popup, a second run, any text, and a drive in the prototype. Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/trick_popups_demo.tscn screenshots/trick_popups.png 10`.
+
 ## Pause screen
 
 Task T-015 (UI Agent). Escape (the `pause` action in the input map) pauses the whole game tree and shows the pause screen: the title, a hint that Escape resumes, and one setting, the camera zoom slider (6 to 20, default 14.4, the same value as the tuning panel's zoom slider; moving either updates the other). Pressing Escape again resumes from exactly where the car was. The tuning panel (Tab) does not work while paused. The texts are from task T-047. The slider's label is "Camera zoom level" (T-093). The panel sits in a strip at the top over a light dim, and moving the slider zooms the view behind it at once while everything stays paused (the camera normally updates in the physics step, which does not run while paused, so while paused it updates every frame with physics interpolation off, and resuming puts it back). A full pause menu with more settings is task T-016.

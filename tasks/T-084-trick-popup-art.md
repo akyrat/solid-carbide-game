@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art
