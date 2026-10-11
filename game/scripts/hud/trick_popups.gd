@@ -16,6 +16,8 @@ const TEXTS := {
 	"three_sixty": "FULL 360!",
 	"alternate_drift": "ALT DRIFT!",
 }
+## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
+const SCORE_TEXT := "Trending! +{likes} Likes"
 ## Font sizes in drawn pixels. Extended drift comes every second, so it is smaller.
 const SIZE_NORMAL := 28
 const SIZE_SMALL := 16
@@ -78,6 +80,8 @@ class PopupText extends Node2D:
 var _car: Node = null
 ## Returns the car's drawn position (set by bind()).
 var _car_position: Callable
+## Returns the car's drawn position for the challenge popup (set by bind_score()).
+var _score_car_position: Callable
 
 
 ## Shows the popups for a car's `trick` signal. `car_position` is a Callable
@@ -88,6 +92,18 @@ func bind(car: Node, car_position: Callable) -> void:
 	_car = car
 	_car_position = car_position
 	car.trick.connect(_on_trick)
+
+
+## Shows the challenge popup for a run state's `score` signal (task T-092).
+## `car_position` returns where the car is drawn.
+func bind_score(run_state: Node, car_position: Callable) -> void:
+	_score_car_position = car_position
+	if not run_state.score.is_connected(_on_score):
+		run_state.score.connect(_on_score)
+
+
+func _on_score(amount: float, _challenge_id: String) -> void:
+	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL)
 
 
 func _on_trick(trick_id: String) -> void:

@@ -570,3 +570,13 @@ Entry format:
 - Decision or change: the board played the build with the three-times-bigger map, the compact pause strip, the live zoom and the trick popups, and called it perfect. Next step in "Building in playable steps": likes and levels.
 - Documents touched: none
 - Tasks: T-091, T-093, T-094, T-095, T-096 (played)
+
+## 2026-10-11: T-037 done: likes and levels
+- Decision or change: T-037 merged on QA's pass. The run now counts likes (XP) from completed challenges (meteor challenges included) and from drifts longer than a second (whole seconds only, so 3.5 seconds gives 3 seconds' worth), with levels and their thresholds from `run.json`. The level-up pause is built but switched off until the weapon choice screen (T-052); T-052 now also says Escape must not resume the run during a level-up choice.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-037 (done), T-052 (note added)
+
+## 2026-10-11: T-092 done: challenge popup
+- Decision or change: T-092 merged on QA's pass. A completed challenge shows "Trending! +{likes} Likes" rising from the car, with the likes it gave. The work was paused at the board's request and resumed the same day.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
+- Tasks: T-092 (done)
