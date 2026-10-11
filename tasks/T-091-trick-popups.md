@@ -1,7 +1,7 @@
 ---
 id: T-091
 title: Trick popups: the trick's name pops out from the car
-status: blocked
+status: open
 from: project-lead
 to: ui
 epic: hud-menus

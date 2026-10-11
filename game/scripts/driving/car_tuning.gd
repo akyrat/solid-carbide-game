@@ -39,6 +39,17 @@ var drift_exit_rate := 3.0
 ## off it (0 = no bounce, it slides along; 1 = full bounce). Not from the Unity
 ## prototype (no bounce there); proposed for the board's playtest (task T-033).
 var wall_bounce := 0.25
+## Alternate-drift trick (task T-079; trick_detector.gd). Proposed limits for
+## the board to tune; not from the Unity prototype, and they never change how
+## the car drives.
+## Longest time between the end of one drift and the start of the opposite one
+## (forward to backward or back), in seconds.
+var alternate_max_switch_seconds := 0.5
+## Shortest time each of the two drifts must last, in seconds. The trick fires
+## when the new drift reaches it.
+var alternate_min_drift_seconds := 0.3
+## When true, A or D must stay held on the same side during the switch.
+var alternate_keep_steering := true
 
 ## The Unity prototype's values, by setting key (report section 5).
 const UNITY := {
@@ -123,6 +134,24 @@ const COLLISION_SETTINGS := [
 ]
 
 
+## Trick detection settings (task T-079). Not handling values: they only
+## decide when trick_detector.gd counts an alternate drift. The tuning panel
+## shows them in their own group. "toggle": true marks an on/off setting.
+const TRICK_SETTINGS := [
+	{"key": "alternate_max_switch_seconds", "name": "Alternate drift: switch time", "unit": "s",
+		"label": "Alternate drift: longest switch between W and S",
+		"tip": "Longest time from the end of the forward drift (W released) to the start of the backward drift (S held), or the other way round. 0 = S must already be held when W is released. Proposed 0.5 s.",
+		"min": 0.0, "max": 2.0, "step": 0.05},
+	{"key": "alternate_min_drift_seconds", "name": "Alternate drift: shortest drift", "unit": "s",
+		"label": "Alternate drift: how long each drift must last",
+		"tip": "Both the drift before the switch and the drift after it must last at least this long; the trick counts when the new drift reaches it. Stops quick W / S taps from counting. Proposed 0.3 s (a half circle takes about 0.94 s).",
+		"min": 0.0, "max": 2.0, "step": 0.05},
+	{"key": "alternate_keep_steering", "name": "Alternate drift: keep steering", "toggle": true,
+		"label": "Alternate drift: A or D must stay held during the switch",
+		"tip": "On: letting go of A or D (or pressing the other one) between the two drifts cancels the trick. Off: only the two drifts need the same steering. Proposed on."},
+]
+
+
 ## Top speed in units/s.
 func top_speed() -> float:
 	return forward_speed * top_speed_multiplier
@@ -152,7 +181,7 @@ static func unity_values() -> Dictionary:
 static func default_values() -> Dictionary:
 	var fresh = load("res://scripts/driving/car_tuning.gd").new()
 	var out := {}
-	for s in SETTINGS + COLLISION_SETTINGS:
+	for s in SETTINGS + COLLISION_SETTINGS + TRICK_SETTINGS:
 		out[s.key] = fresh.get(s.key)
 	return out
 
