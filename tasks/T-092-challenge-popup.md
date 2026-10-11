@@ -1,7 +1,7 @@
 ---
 id: T-092
 title: Challenge completed: the likes gained pop out from the car
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -42,4 +42,6 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+The run state's `score` signal now shows a popup "Trending! +{likes} Likes" (T-048 text) rising from the car, through T-091's `show_popup`. Added `TrickPopups.bind_score()`, bound once in `run.gd`; fixed the previous agent's missing `_score_car_position` variable. Tests: `game/tests/unit/test_challenge_popup.gd`. Screenshot fixture `game/tests/fixtures/challenge_popup_demo.tscn` (run from the main menu, challenge completed): popup shows "Trending! +100 Likes" above the car, clear of the timer. Full GUT suite and Python tool tests pass.
+
+Documents affected and updated: `docs/hud-and-menus.md` (Content, Trick popups), `game/README.md`.

@@ -89,6 +89,8 @@ func _ready() -> void:
 	state.add_to_group("run_state")
 	add_child(state)
 
+	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
+
 	hud = HudScene.instantiate()
 	add_child(hud)
 	hud.bind(state)
