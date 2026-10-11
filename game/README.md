@@ -384,14 +384,14 @@ The code is `tools/challenge_checker.gd` (the check and the picture) and `tools/
 
 ## MVP map
 
-The city map (task T-019): the 80 by 80 unit city grid, the obstacle pattern copies and the preset challenges, in flat placeholder colours. What it contains and why: `docs/level-design.md`, Content, "MVP map".
+The city map (task T-019, made bigger in task T-094): the 242 by 242 unit city grid, the obstacle pattern copies and the preset challenges, in flat placeholder colours. What it contains and why: `docs/level-design.md`, Content, "MVP map".
 
 **Open it:**
 
 - In the Godot editor: open `scenes/level/mvp_map_overview.tscn` (the whole map, flat top-down) or `scenes/level/mvp_map_overview_iso.tscn` (isometric) and press F6 (Run Current Scene). `scenes/level/mvp_map.tscn` is the map itself, without a camera, for putting into a run.
 - Screenshot, from the repo root: `bash game/tools/screenshot.sh res://scenes/level/mvp_map_overview.tscn screenshots/mvp_map.png 10` (use `..._iso.tscn` for the isometric view).
 
-**Layout data:** `data/level/mvp_map.json` holds the whole map in units from the map's centre (x right, y down): the buildings, an 80 by 80 grid of ground cells (R road, G gravel, B building), the pattern copies with their boulders, and the challenges with their arrow points and centre lines. It and the fitted patterns next to the board's sketches (`docs/level-design/<pattern>/<arrow>.fitted.json` and `.svg`) are made by a script; do not edit them by hand. To change the copies or which ones are challenges, edit `COPIES` and `CHALLENGES` at the top of the script and run it:
+**Layout data:** `data/level/mvp_map.json` holds the whole map in units from the map's centre (x right, y down): the buildings, a 242 by 242 grid of ground cells (R road, G gravel, B building), the pattern copies with their boulders, and the challenges with their arrow points and centre lines. It and the fitted patterns next to the board's sketches (`docs/level-design/<pattern>/<arrow>.fitted.json` and `.svg`) are made by a script; do not edit them by hand. The map's size is set by `MAP_SIZE`, `BLOCKS_PER_SIDE` and `GRAVEL` at the top of the script; where the copies go by `make_copies()` and which ones are challenges by `make_challenges()`. After a change, run it:
 
 ```
 python game/tools/build_mvp_map.py
