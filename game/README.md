@@ -163,11 +163,7 @@ Its Python tests (`game/tools/test_pixellab_client.py`) run with the Python tool
 
 `game/art/car/car_sw_front.png` (128 x 128, with its record `car_sw_front.json` and the PixelLab log entry): the dark-green 1967 Mustang GT with two white stripes, nose at the bottom-left of the screen (PixelLab direction `south-west`). It matches frame 4 of the placeholder isometric sheet (heading 90 degrees, nose on screen at 153.43 degrees, down-left along the isometric axis). It is **not in the game yet**: no scene, script or placeholder sheet uses it; T-101 builds the full set and does the swap. Check it against Visual style's technical rules with `python game/tools/check_sprite_rules.py game/art/car/car_sw_front.png` (tests: `game/tools/test_check_sprite_rules.py`).
 
-The board's follow-up (2026-10-12): `game/art/car/car_sw_front_noshadow.png` is the same sprite without the shadow under the car, made by `python game/tools/remove_car_shadow.py game/art/car/car_sw_front.png game/art/car/car_sw_front_noshadow.png` (no PixelLab call; tests: `game/tools/test_remove_car_shadow.py`). Only the shadow pixels became transparent; every other pixel is unchanged. Its record is `car_sw_front_noshadow.json`.
-
-`game/art/car/car_sw_front_noshadow_pixellab.png` (T-014, board request): the same car after a PixelLab `/inpaint` of the shadow area (mask `car_sw_front_noshadow_pixellab_mask.png`); see the task's result notes. The client's HTTP read timeout is now 600 seconds.
-
-`game/art/car/car_sw_front_v2.png` (T-014, fourth note): a fresh generation with "no shadow" in the prompt, same settings as the first sprite; a shadow is still visible and it has 61 colours (see the task's result notes).
+Archived versions (2026-10-12): the board approved this original, shadow included. The other versions (a script-made shadowless copy, a PixelLab inpaint, a fresh generation) and T-003's test art are not game art; they are kept in `art-archive/` at the repo root, outside the Godot project, with a table of what each is in `art-archive/README.md`. `game/tools/remove_car_shadow.py` is kept; its test reads the archived copy.
 
 ## Placeholder car sprite sheets
 

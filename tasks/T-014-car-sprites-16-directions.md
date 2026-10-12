@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -119,3 +119,8 @@ Check script: 128x128, transparent corners and no semi-transparent pixels pass; 
 
 
 2026-10-12, fifth note: the board approved the **original** sprite, `car_sw_front.png`, shadow included; it stays in `game/art/car/` and is the one T-101 builds on. New rule (Visual style, Decisions, 2026-10-12): every generated asset is kept, and only clean, game-ready art lives under `game/art/`. Move every other version from this task (the script-edited one, the PixelLab inpaint result and its mask, the fresh `_v2` generation), with their records, to `art-archive/T-014/`, and T-003's test-run art (`game/art/_test-run/`) to `art-archive/T-003/`. Delete nothing. No more generations.
+
+### Archiving (Asset Generation Agent, 2026-10-12)
+
+No PixelLab calls. With `git mv` (nothing deleted): `car_sw_front_noshadow.png`, `car_sw_front_noshadow_pixellab.png`, `car_sw_front_noshadow_pixellab_mask.png` and `car_sw_front_v2.png`, with their `.json` records, moved from `game/art/car/` to `art-archive/T-014/`; T-003's `sports-car` and `asphalt-road-tile` (png and json) moved from `game/art/_test-run/` to `art-archive/T-003/`. Their Godot `.import` files were removed (removed with `git rm`; they are generated). Before moving T-003's art I searched the repo: no scene, script or test names it (the GUT test `test_pixellab_assets.gd` scans `res://art` generically and handles the folder being empty of them). `art-archive/` is outside `game/` (the Godot project root), so Godot does not import it. `art-archive/README.md` lists each file with its task, what it was, why it was not used and its original path; the generation log is unchanged. `game/README.md` no longer lists archived files as game art and points to the archive. `game/tools/test_remove_car_shadow.py` now reads the archived shadowless copy. Game art now under `game/art/car/`: only the approved `car_sw_front.png` (+ json, import). Documents affected: `game/README.md`, `art-archive/README.md`.
+

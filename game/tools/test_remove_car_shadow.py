@@ -5,6 +5,7 @@ import check_sprite_rules as c
 import remove_car_shadow as r
 
 ART = Path(__file__).resolve().parents[1] / "art" / "car"
+ARCHIVE = Path(__file__).resolve().parents[2] / "art-archive" / "T-014"
 
 
 class T(unittest.TestCase):
@@ -24,7 +25,7 @@ class T(unittest.TestCase):
 
     def test_committed_file_matches_the_script(self):
         _, _, rows = c.decode_png((ART / "car_sw_front.png").read_bytes())
-        _, _, got = c.decode_png((ART / "car_sw_front_noshadow.png").read_bytes())
+        _, _, got = c.decode_png((ARCHIVE / "car_sw_front_noshadow.png").read_bytes())
         self.assertEqual(r.remove_shadow(rows)[0], got)
 
 
