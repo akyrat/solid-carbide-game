@@ -192,7 +192,7 @@ The designs are stored unplaced (units from the pattern's centre, angle 0) in th
 
 ## Open questions
 
-- The building blocks get pavements (Visual style, Decisions, 2026-10-12). How wide are they, do they take room from the 30 by 30 block or from the 24-unit road, and can the car drive on them?
+- (After MVP) Pavements along the building blocks (board, 2026-10-12): how wide, whether they take room from the blocks or the roads, and whether the car can drive on them.
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References

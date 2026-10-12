@@ -630,3 +630,8 @@ Entry format:
 - Decision or change: the board described the ground (Visual style, Decisions): white lane lines, zebra crossings at the junctions, pavements along the building blocks, light cracks. How wide the pavements are and whether the car drives on them is a new open question (Level design). As with the car, T-063 is scoped down to one asphalt road tile for the board's review, not yet in the map; the full ground set and the swap-in move to new task T-103.
 - Documents touched: `docs/visual-style.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-063 (rescoped, started), T-103 (new)
+
+## 2026-10-12: The road tile approved; no pavements in the MVP
+- Decision or change: the board edited the white line of the script-fixed road tile by hand (removing the "+" marks at the tile joins) and approved it as the road tile (T-063). Pavements move after the MVP (Visual style, Decisions; Level design, Open questions): the roads meet the building blocks directly. T-103 (the full ground set) updated to match.
+- Documents touched: `docs/visual-style.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-063 (approved), T-103 (changed)
