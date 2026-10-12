@@ -1,7 +1,7 @@
 ---
 id: T-108
 title: Remove the leftover T-103 worktree folder
-status: open
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -12,7 +12,7 @@ depends_on: []
 documents_affected: []
 files_to_read_first: [docs/working-with-the-board.md]
 files_expected_to_change: [C:/solid-carbide-worktrees/T-103 (removed)]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -32,9 +32,14 @@ Once the board has closed Godot: remove the folder (and its git worktree entry, 
 
 ## Acceptance criteria
 
-- [ ] `git worktree list` shows no T-103 (QA: pass / fail)
-- [ ] The folder `C:\solid-carbide-worktrees\T-103` is gone (QA: pass / fail)
+- [ ] `git worktree list` shows no T-103 (QA: pass)
+- [ ] The folder `C:\solid-carbide-worktrees\T-103` is gone (QA: pass)
 
 ## Result notes
 
-Written when the work is done.
+Done by the Project Lead (2026-10-13), on the board's go ("remove the leftover folder").
+
+- Before removing it, the folder (3.2 MB) was compared with master: its tracked files were older copies of files in master (README, tasks), and the only files not in master were 12 git-ignored screenshots from T-103's work and QA (`screenshots/t103_*.png`, `screenshots/qa/qa_*.png`). Those were copied into master's own git-ignored `screenshots/` folder (same names, nothing overwritten), so nothing is lost.
+- Removed `C:\solid-carbide-worktrees\T-103` and ran `git worktree prune`; `git worktree list` shows only the main folder.
+
+- QA (2026-10-13): both criteria pass; worktree list shows only master, the T-103 folder is gone, and all 12 screenshots are present (5 t103_*.png in screenshots, 7 qa_*.png in screenshots/qa).

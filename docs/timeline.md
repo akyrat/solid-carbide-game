@@ -675,3 +675,8 @@ Entry format:
 - Decision or change: the board asked to move the working-with-the-board document out of the repo root. It is now `docs/working-with-the-board.md`, still loaded by `CLAUDE.md` with the same weight, and listed in `docs/README.md`. Earlier timeline entries and finished tickets keep the old name as history.
 - Documents touched: `docs/working-with-the-board.md` (moved from `WORKING-WITH-THE-BOARD.md`), `CLAUDE.md`, `docs/README.md`
 - Tasks: T-108 (files to read first)
+
+## 2026-10-13: T-108 done: the leftover T-103 folder is removed
+- Decision or change: on the board's go, the leftover folder `C:\solid-carbide-worktrees\T-103` is removed and git's worktree list pruned. It held only older copies of files in master, plus 12 git-ignored screenshots from T-103's work and QA, which were copied into master's `screenshots/` first. The board keeps the two "Ready" counts as they are (the overview leaves out the board's own tickets, the Ready filter includes them), and pushes master to GitHub itself.
+- Documents touched: none
+- Tasks: T-108 (done)
