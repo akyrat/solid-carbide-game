@@ -35,6 +35,24 @@ class T(unittest.TestCase):
         self.assertFalse(d["about 5 colours or fewer"])
         self.assertFalse(d["transparent background (corners)"])
 
+    def test_sheet_checks_each_frame(self):
+        # Two 8x8 frames side by side: the first is good, the second has a semi-transparent pixel.
+        def px(x, y):
+            if x < 8:
+                return (10, 20, 30, 255) if 2 <= x < 5 and 2 <= y < 5 else (0, 0, 0, 0)
+            return (1, 2, 3, 128) if (x, y) == (12, 4) else (0, 0, 0, 0)
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "sheet.png"
+            p.write_bytes(make_png(16, 8, px))
+            out = c.check_sheet(str(p), 2, size=8)
+            self.assertEqual(len(out), 2)
+            self.assertTrue(all(ok for _, ok, _ in out[0][0]))
+            self.assertEqual(out[0][1]["bbox"], (2, 2, 4, 4))
+            self.assertFalse(dict((n, ok) for n, ok, _ in out[1][0])["no semi-transparent pixels"])
+            self.assertEqual(c.main([str(p), "--size", "8", "--frames", "2"]), 1)
+            with self.assertRaises(ValueError):
+                c.check_sheet(str(p), 3, size=8)
+
 
 if __name__ == "__main__":
     unittest.main()

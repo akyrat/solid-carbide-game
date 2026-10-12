@@ -106,7 +106,7 @@ func test_defaults_equal_unity_values_except_top_speed() -> void:
 func test_prototype_starts_in_iso_view_with_interpolation() -> void:
 	var p := _scene()
 	assert_eq(p.view, "iso")
-	assert_eq(p.car_sprite.texture.resource_path, "res://art/placeholders/car/car_iso.png")
+	assert_eq(p.car_sprite.texture.resource_path, "res://art/car/car_iso.png")
 	assert_true(p.physics_interpolation)
 	assert_true(get_tree().physics_interpolation)
 	assert_true(p.panel.view_toggle.button_pressed)
@@ -234,7 +234,7 @@ func test_view_switch_changes_only_the_drawing() -> void:
 	assert_eq(p.ground.transform, Transform2D.IDENTITY)
 	p.panel.view_toggle.button_pressed = true
 	assert_eq(p.view, "iso")
-	assert_eq(p.car_sprite.texture.resource_path, "res://art/placeholders/car/car_iso.png")
+	assert_eq(p.car_sprite.texture.resource_path, "res://art/car/car_iso.png")
 	var c: Vector2 = p.car.position
 	assert_eq(p.car_sprite.position, Vector2(c.x - c.y, (c.x + c.y) / 2.0), "2:1 isometric projection")
 	p.set_view("flat")
@@ -292,8 +292,12 @@ func test_sprite_frame_follows_heading() -> void:
 	assert_eq(sp.frame_for_rotation(deg_to_rad(360.0 + 90.0)), 4)
 	_drive(p, 30, false, false, -1.0)
 	assert_eq(sp.frame, sp.frame_for_rotation(p.car.rotation), "frame updated after steering")
-	assert_eq(sp.scale, Vector2.ONE, "16 px per unit sheet in a 16 px per unit world")
-	assert_eq(sp.offset, Vector2.ZERO, "centre pixel is the frame middle")
+	# Isometric view (the start): the final car, 32 px per unit, in a 16 px per unit world.
+	assert_eq(sp.scale, Vector2(0.5, 0.5), "final iso sheet: 32 px per unit drawn in a 16 px per unit world")
+	assert_eq(sp.offset, Vector2(64.0, 64.0) - Vector2(64.5, 65.5), "the sheet's centre pixel on the node's origin")
+	p.set_view("flat")
+	assert_eq(sp.scale, Vector2.ONE, "flat placeholder: 16 px per unit sheet in a 16 px per unit world")
+	assert_eq(sp.offset, Vector2.ZERO, "flat placeholder: centre pixel is the frame middle")
 
 
 func test_physics_body_is_1_by_1_unit() -> void:

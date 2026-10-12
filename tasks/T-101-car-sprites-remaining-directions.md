@@ -1,7 +1,7 @@
 ---
 id: T-101
 title: Full pixel-art car sprites: the other 15 directions, and swap them in (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -87,3 +87,65 @@ API re-checked today (https://api.pixellab.ai/v2/llms.txt, https://www.pixellab.
 2. `POST /rotate` (direct), 8 times, one per even frame (frame 4 from the approved original, the others from step 1's images): `direction_change: 22`, the same sign every time, `isometric: true`, `from_view`/`to_view: high top-down` (the API's default is "side"), `from_direction` = the source's compass direction, `image_guidance_scale: 7.5`, and `color_image` = the approved sprite, which forces its palette (about 30 colours, the same greens and whites). The sign convention of `direction_change` is not documented; with one sign for all 8, the 8 results cover all 8 odd frames whichever way it turns, and I place each by its measured heading. Expected cost: about 1 generation each.
 
 Expected total: about 30 to 50 generations from 4996. The client (`game/tools/pixellab_client.py`) gained `/rotate` and `/generate-8-rotations-v3` (multi-image results, each image saved with its own record; poll limit 20 minutes for that job), HTTP timeout 600 s, with tests. No regeneration: frames that come out wrong are reported, not redone.
+
+### What was done
+
+**Calls made (9, one round, no regeneration; all in `game/art/pixellab-generation-log.jsonl`, each with its record JSON next to its image):**
+
+| # | Endpoint | Input | Settings | Result | Cost |
+|---|---|---|---|---|---|
+| 1 | `/generate-8-rotations-v3` | `first_frame` = `car_sw_front.png` | `no_background: true`; description: T-014's car text without the direction words, plus "isometric pixel art game sprite, same camera and same size in every direction" (full text in the records) | 8 images, 128 x 128, in the order south-west, south, south-east, east, north-east, north, north-west, west (the response has no labels; I read the order from the pictures) | 2 generations |
+| 2 to 9 | `/rotate` (8 calls) | `from_image` = frame 4 (the original), then frames 0, 2, 6, 8, 10, 12, 14 | `direction_change: 22`, `isometric: true`, `from_view`/`to_view: high top-down`, `from_direction` = the source's compass direction, `to_direction: null`, `image_guidance_scale: 7.5`, `color_image` = `car_sw_front.png`; no prompt (the endpoint has none) | one 128 x 128 image each; +22 turned the car clockwise on screen, so each gives the next (odd) frame | 1 generation each |
+
+**Cost and balance:** 10 generations ($0.00, subscription), less than the 30 to 50 planned (v3 cost 2, not 20 to 40). Balance before **4996** of 5000, after **4986** of 5000 (checked twice).
+
+**Files:** sources in `game/art/car/frames/` (7 v3 images and 8 rotations, with records); the sheet `game/art/car/car_iso.png` + `car_iso.json` (built by `game/tools/build_car_sheet.py`); `car_sw_front.png` unchanged and used as frame 4. **Archived:** `art-archive/T-101/car_rot8_v3_0.png` (+ `.json`), v3's redraw of the south-west direction, not used because frame 4 is the approved original; listed in `art-archive/README.md`. Nothing deleted.
+
+**Processing (no generation, no new pixels), so the sheet meets the technical rules:** the rotations came back with 210 to 272 colours each and the v3 images with 49 each (the forced palette of `/rotate` did not hold). `build_car_sheet.py` maps every opaque pixel to the nearest colour (CIELAB) of the approved sprite's own 33-colour palette, and moves each frame by whole pixels (at most 4) so its bounding-box centre sits where the approved sprite's does. Side by side at 2x I could not see a difference from the raw frames; the raw PixelLab frames stay in `game/art/car/frames/` for comparison. If the board prefers the raw colours, that is a change to this script, not a new generation.
+
+**Layout:** T-013's convention (one row of 16 frames, frame 0 = heading 0, clockwise, `frame = posmod(roundi(rotation / 22.5 deg), 16)`), with this sheet's own values: frame 128 x 128, `center_px` (64.5, 65.5) (the approved sprite's bounding-box centre), `px_per_unit` 32, `placeholder: false`, the palette, and per frame its source, the colours before and after, the move, the ideal screen angle and the angle I see.
+
+**In the game:** `scripts/driving/car_sprite.gd` now points its `"iso"` sheet at `res://art/car/car_iso` (a path change only; it reads the JSON as before). The run (`game.tscn`, Start) and the drift prototype both start in the isometric view, so both show the final car; the flat view keeps the placeholder (Visual style). No change to the driving code (`car.gd`, `car_model.gd`, `run.gd`, `drift_prototype.gd` untouched). The sprite is drawn at scale 0.5 (16 world px per unit / 32), so the car is about 3 units long: the screenshots with the 3 x 1 footprint drawn over them show the car covering about the footprint's length in most directions (a little shorter in the side views, frames 6 and 14). Note: at the default camera zoom (14.4) one sprite pixel is about 0.7 screen pixels, so the art is shown a little below its native size and a few thin lines drop out; at zoom 10 it is about 1:1.
+
+### Heading of every frame (the board judges)
+
+Nose angle on screen, in degrees clockwise from screen right. "Ideal" is the game's 2:1 projection (`car_iso.json`); "seen" is my estimate from the pictures (about plus or minus 5 degrees). PixelLab draws its isometric diagonals flatter than 2:1 (the approved frame 4 too), so most frames are 5 to 15 degrees off.
+
+| Frame | Heading | Ideal | Seen | Source | Note |
+|---|---|---|---|---|---|
+| 0 | 0 | 27 | 25 | v3 (south-east) | |
+| 1 | 22.5 | 50 | 70 | rotate of 0 | **about 20 off**, points almost straight down |
+| 2 | 45 | 90 | 90 | v3 (south) | |
+| 3 | 67.5 | 130 | 120 | rotate of 2 | 10 off |
+| 4 | 90 | 153 | 163 | approved original | 10 off (as in T-014) |
+| 5 | 112.5 | 168 | 170 | rotate of 4 | |
+| 6 | 135 | 180 | 170 | v3 (west) | 10 off, nose slightly down |
+| 7 | 157.5 | 192 | 182 | rotate of 6 | 10 off, side view, nose left |
+| 8 | 180 | 207 | 200 | v3 (north-west) | |
+| 9 | 202.5 | 230 | 218 | rotate of 8 | 12 off |
+| 10 | 225 | 270 | 260 | v3 (north) | 10 off, tilted left |
+| 11 | 247.5 | 310 | 270 | rotate of 10 | **about 40 off: the car points straight up, almost the same heading as frame 10** (the rotation barely turned it) |
+| 12 | 270 | 333 | 320 | v3 (north-east) | 13 off |
+| 13 | 292.5 | 348 | 343 | rotate of 12 | |
+| 14 | 315 | 0 | 0 | v3 (east) | flat side view |
+| 15 | 337.5 | 12 | 17 | rotate of 14 | |
+
+### Look of the frames (not a judgement; problems reported, not regenerated)
+
+- **Frames 1 and 11** are the worst for heading (above). Frame 11 is a straight rear view, so when the car turns from frame 10 through 11 to 12 it seems to pause and then jump.
+- **Side views 6, 7 and 14** look lower and flatter than the approved high top-down frame 4 (v3 chose a lower camera for west and east); frame 7 has a broken white line along its side and a dented-looking roof.
+- **Shadow:** every frame has a dark opaque shadow under it, as frame 4 does, but it does not always fall the same way: mostly down and to the right of the car, smaller in the side views (6, 7, 14) and longer under the front in frames 1 and 3.
+- **Colours and stripes:** the same palette in every frame; two white stripes with a green gap show in every frame, clearly in the front and rear views (2, 10, 11), while in the side views they read as one white band over the roof. The v3 frames' pinkish rear window was mapped to frame 4's lavender.
+- **On the dark grid** of the drift prototype the car's near-black outline and shadow blend into the background; on the run's gravel the car stands out.
+
+### Checks
+
+- **Rules** (`python game/tools/check_sprite_rules.py game/art/car/car_iso.png --frames 16`): all 16 frames are 128 x 128, with transparent corners and 0 semi-transparent pixels. Colours per frame: 31, 31, 30, 29, 33, 30, 27, 32, 29, 32, 30, 32, 31, 30, 27, 31, all from the approved sprite's 33-colour palette. With the default limit of 30, the frames with 31 to 33 print FAIL on that line only (the approved frame 4 has 33, judged "about 30" in T-014); with `--max-colors 33` every frame passes.
+- **Godot imports** the sheet. GUT `test_car_final_sheet.gd` checks the size, the layout JSON, frame 4 identical to `car_sw_front.png` in its visible pixels, no semi-transparent pixels, only the approved palette, and that the run and the drift prototype use it at scale 0.5 with the car's drawing 3 units long.
+- **Tests:** full GUT suite `bash game/tools/run_tests.sh`: 300/300 passed (TESTS PASSED; the one warning, "Ignoring Inner Class TestRoom", was there before). Python: `python -m unittest discover -s game/tools -p "test_*.py"` 86 OK; `-s tools` 75 OK. Line-ending-only `.import` changes from the Godot runs were not committed.
+
+**Screenshots** (git-ignored, in this task's folder, `screenshots/T-101/`): the run started from the main menu (`game.tscn`, Start, the car turned to each heading and driving forward with W): `run_frame00.png` to `run_frame15.png` (one per frame), `run_all16_grid.png` (the 16 cars cropped and enlarged 2x) and `run_all16_grid_overlay.png` (the same with the driving direction in red, the 3 x 1 unit drawing footprint in yellow and the 1 x 1 physics body in cyan); the drift prototype in the isometric view: `drift_prototype_iso.png` (400 frames) and `drift_prototype_iso_200.png` (200 frames). New fixture: `tests/fixtures/car_art_from_menu_demo.tscn` (heading from `CAR_HEADING_DEG`).
+
+**Files created:** `game/art/car/car_iso.png` (+ `.import`), `car_iso.json`, `game/art/car/frames/` (15 PNGs with records and `.import` files), `art-archive/T-101/car_rot8_v3_0.png` + `.json`, `game/tools/build_car_sheet.py`, `game/tools/test_build_car_sheet.py`, `game/tests/unit/test_car_final_sheet.gd` (+ `.uid`), `game/tests/fixtures/car_art_from_menu_demo.gd` (+ `.uid`) and `.tscn`. **Changed:** `game/scripts/driving/car_sprite.gd` (iso sheet path and comment), `game/tests/unit/test_drift_prototype.gd` (iso path and scale), `game/tools/pixellab_client.py` and its tests, `game/tools/check_sprite_rules.py` (`--frames`) and its tests, `game/art/pixellab-generation-log.jsonl`, `game/README.md`, `art-archive/README.md`, `agent-notes/asset-generation.md`, this task file.
+
+**Documents affected:** `game/README.md` (new section "The final car sheet (T-101)", the PixelLab client's endpoints, the T-014 section, the layout and pixel-scale notes) and `art-archive/README.md`. No game area doc changed.
