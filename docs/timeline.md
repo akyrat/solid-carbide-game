@@ -615,3 +615,8 @@ Entry format:
 - Decision or change: after trying to remove the first car sprite's shadow (a script edit, two PixelLab inpaint calls, one of which timed out but was charged, and a fresh generation with "no shadow" in the prompt, which still drew a shadow and a different car), the board approved the original sprite, shadow included. New rule (Visual style, Decisions): every generated asset is kept; only clean, game-ready art lives under `game/art/`, and every other generation is archived with its record in `art-archive/`, one folder per task. T-014's other versions and T-003's test-run art move there. Balance: 4,996 of 5,000 generations.
 - Documents touched: `docs/visual-style.md`, `tasks/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-014 (approved; archiving the other versions)
+
+## 2026-10-12: T-014 done; car art next, then map tiles, enemies later
+- Decision or change: T-014 merged after the board's review and QA round 2: the approved car sprite (`game/art/car/car_sw_front.png`, front to the bottom-left, shadow included) is in master, not yet in the game; the other versions and T-003's test art are in `art-archive/`. The board set the next steps: the car's other 15 directions, put into the game for a playtest (T-101, started), then generating map tile art. Enemies come much later ("Building in playable steps", `tasks/README.md`).
+- Documents touched: `tasks/README.md`, `game/README.md`
+- Tasks: T-014 (done), T-101 (started)

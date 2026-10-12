@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ccipi8w4qvtx6"
-path="res://.godot/imported/asphalt-road-tile.png-65f20bb0765ce2cba535606c58b882a4.ctex"
+uid="uid://c25bcefpiudl3"
+path="res://.godot/imported/car_sw_front.png-f623fefc00230927f2c9a0cc35825128.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/_test-run/iso-tile/asphalt-road-tile.png"
-dest_files=["res://.godot/imported/asphalt-road-tile.png-65f20bb0765ce2cba535606c58b882a4.ctex"]
+source_file="res://art/car/car_sw_front.png"
+dest_files=["res://.godot/imported/car_sw_front.png-f623fefc00230927f2c9a0cc35825128.ctex"]
 
 [params]
 

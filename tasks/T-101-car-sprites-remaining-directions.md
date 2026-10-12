@@ -1,7 +1,7 @@
 ---
 id: T-101
 title: Full pixel-art car sprites: the other 15 directions, and swap them in (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

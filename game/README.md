@@ -159,6 +159,12 @@ python game/tools/pixellab_client.py generate --endpoint create-image-pixflux \
 
 Its Python tests (`game/tools/test_pixellab_client.py`) run with the Python tool tests command above and never call PixelLab. `game/tests/unit/test_pixellab_assets.gd`, part of the GUT suite, checks that every generated PNG under `art/` loads in Godot with the size its record gives.
 
+## The first final car sprite (T-014)
+
+`game/art/car/car_sw_front.png` (128 x 128, with its record `car_sw_front.json` and the PixelLab log entry): the dark-green 1967 Mustang GT with two white stripes, nose at the bottom-left of the screen (PixelLab direction `south-west`). It matches frame 4 of the placeholder isometric sheet (heading 90 degrees, nose on screen at 153.43 degrees, down-left along the isometric axis). It is **not in the game yet**: no scene, script or placeholder sheet uses it; T-101 builds the full set and does the swap. Check it against Visual style's technical rules with `python game/tools/check_sprite_rules.py game/art/car/car_sw_front.png` (tests: `game/tools/test_check_sprite_rules.py`).
+
+Archived versions (2026-10-12): the board approved this original, shadow included. The other versions (a script-made shadowless copy, a PixelLab inpaint, a fresh generation) and T-003's test art are not game art; they are kept in `art-archive/` at the repo root, outside the Godot project, with a table of what each is in `art-archive/README.md`. `game/tools/remove_car_shadow.py` is kept; its test reads the archived copy.
+
 ## Placeholder car sprite sheets
 
 `game/tools/generate_car_sheets.gd` (tasks T-013 and T-018, Asset Generation Agent) draws the placeholder car: a plain 48 x 16 pixel rectangle, 3 times as long as it is wide (1 unit wide, 3 units long, 16 pixels per unit), with a differently coloured nose (the front 8 pixels), in 16 directions. It is drawn pixel by pixel by a script, not generated with PixelLab, and running it again gives byte-identical files. The drawing code is `game/tools/car_sheet_generator.gd`; its tests are `game/tests/unit/test_car_sheets.gd` (part of the GUT suite).
