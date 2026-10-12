@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -84,3 +84,7 @@ Written by the agent when it finishes.
 5. **Tests: pass.** Full GUT suite 294/294 (`TESTS PASSED`); `tools` Python tests 75 OK; `game/tools` Python tests 70 OK. Line-ending-only .import changes from the Godot run were left uncommitted.
 
 Board review files: `game/art/car/car_sw_front.png`.
+
+### Board review
+
+2026-10-12: the board loves the sprite and wants to see a version **without the shadow** under the car. Keep the original (`car_sw_front.png`) as it is and add the shadowless version next to it; the car itself must stay exactly the same. Removing the shadow by script is preferred (no generation). The shadow's colour is also used for the windows, the side of the body and the tyres, so a colour swap alone won't do; if a clean result needs PixelLab (for example inpainting only the shadow area with a mask), that is allowed for this one fix (board's request), with one call, recorded like the first.
