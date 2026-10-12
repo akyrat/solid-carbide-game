@@ -104,16 +104,16 @@ No PixelLab call, no cost (balance 4971). The approved tile is `game/art/ground/
 
 Tests: Python tool tests and GUT pass. Files changed this step: `game/art/ground/road_tile.png`, `road_tile.json` (+ `.import`), the moves above, `art-archive/README.md`, `game/README.md`, this task file.
 
-### QA round 1
-
-QA/Integration Agent, 2026-10-12, on branch task/T-063-first-road-tile at 0ca2d59. All criteria pass.
-
-- Tile is a PNG under game/art/ with size and repeat in the notes: PASS. game/art/ground/road_tile.png, 128 x 64 px, 2 x 2 units, neighbours (+64,+32) and (-64,+32), 12 tiles across a 24-unit road; stated in the notes and road_tile.json. Tiled 8 x 8 in a QA script: 0 gaps, 0 overlaps.
-- Check script: PASS. `build_road_tile.py check` passes all six checks (128 x 64, 0 semi-transparent, transparent corners, no stray pixels, 9 colours, diamond filled).
-- Mock-up with the final car: PASS. art-archive/T-063/road_mockup.png (1328 x 728) exists (archived, which is fine).
-- Record: PASS. One /create-tiles-pro call, 15 generations, balance 4986 to 4971, with prompt and settings in game/art/pixellab-generation-log.jsonl and art-archive/T-063/road_tiles.json; second log entry is a free GET recovery. The board's hand edit is recorded on road_tile.json ("made_by").
-- Approved tile identical to the board's indexed original: PASS. Both converted to RGBA, the difference image is empty (identical).
-- Archive rule: PASS. game/art/ground/ holds only road_tile.png, .json and .import; every other tile, mock-up and raw original is in art-archive/T-063/ with rows in art-archive/README.md (T-063 rows list them all); the only files deleted on the branch are .import files; no .import files under art-archive/.
-- No scene or game script changed: PASS. `git diff master...HEAD` touches only docs/README, art, art-archive, the log, game/tools Python files and the task file.
-- Tests: PASS. Full GUT suite 300 of 300 passing (TESTS PASSED); tools tests 75 OK; game/tools tests 97 OK. (GUT's re-import touched addons .import files; reverted, not committed.)
+### QA round 1
+
+QA/Integration Agent, 2026-10-12, on branch task/T-063-first-road-tile at 0ca2d59. All criteria pass.
+
+- Tile is a PNG under game/art/ with size and repeat in the notes: PASS. game/art/ground/road_tile.png, 128 x 64 px, 2 x 2 units, neighbours (+64,+32) and (-64,+32), 12 tiles across a 24-unit road; stated in the notes and road_tile.json. Tiled 8 x 8 in a QA script: 0 gaps, 0 overlaps.
+- Check script: PASS. `build_road_tile.py check` passes all six checks (128 x 64, 0 semi-transparent, transparent corners, no stray pixels, 9 colours, diamond filled).
+- Mock-up with the final car: PASS. art-archive/T-063/road_mockup.png (1328 x 728) exists (archived, which is fine).
+- Record: PASS. One /create-tiles-pro call, 15 generations, balance 4986 to 4971, with prompt and settings in game/art/pixellab-generation-log.jsonl and art-archive/T-063/road_tiles.json; second log entry is a free GET recovery. The board's hand edit is recorded on road_tile.json ("made_by").
+- Approved tile identical to the board's indexed original: PASS. Both converted to RGBA, the difference image is empty (identical).
+- Archive rule: PASS. game/art/ground/ holds only road_tile.png, .json and .import; every other tile, mock-up and raw original is in art-archive/T-063/ with rows in art-archive/README.md (T-063 rows list them all); the only files deleted on the branch are .import files; no .import files under art-archive/.
+- No scene or game script changed: PASS. `git diff master...HEAD` touches only docs/README, art, art-archive, the log, game/tools Python files and the task file.
+- Tests: PASS. Full GUT suite 300 of 300 passing (TESTS PASSED); tools tests 75 OK; game/tools tests 97 OK. (GUT's re-import touched addons .import files; reverted, not committed.)
 
