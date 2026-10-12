@@ -680,3 +680,8 @@ Entry format:
 - Decision or change: on the board's go, the leftover folder `C:\solid-carbide-worktrees\T-103` is removed and git's worktree list pruned. It held only older copies of files in master, plus 12 git-ignored screenshots from T-103's work and QA, which were copied into master's `screenshots/` first. The board keeps the two "Ready" counts as they are (the overview leaves out the board's own tickets, the Ready filter includes them), and pushes master to GitHub itself.
 - Documents touched: none
 - Tasks: T-108 (done)
+
+## 2026-10-13: T-026 refined in Planning; a watcher for the board's drags
+- Decision or change: the board dragged T-026 (the car image in the README) into the new Planning column and settled its open questions: the first approved sprite (front to the bottom-left), shadow kept, scaled exactly 2 times to 256 by 256, reviewed in VS Code's Markdown preview plus a screenshot. T-026 started (Asset Generation, no PixelLab calls). The board's drag only reached the Project Lead with the board's next message, so on the board's go the Project Lead now keeps a watcher on the board's moves during a session and replies to a drag straight away (Working with the board, "The task board").
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-026 (planning, then in progress)

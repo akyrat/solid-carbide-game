@@ -44,6 +44,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - It runs on this computer at http://localhost:8765 and starts with each session (`docs/README.md`, "The task board").
 - The board moves tasks by dragging cards. Its moves reach you through hooks: with its next message, when an agent comes back, and before you finish a turn.
 - Act on them as on any request from the board (for a task moved to Planning, read it and bring its open questions to the board; start the agent for a task moved to In progress, run QA for one moved to QA, merge one marked Done after a playtest), and report back what you did.
+- So a drag gets a reply without the board typing anything (board, 2026-10-13): at the start of every session, start a Monitor (30 minutes, re-armed each time it expires) that prints each new line of `.board/board-inbox.jsonl`, polling once a second. When it fires, act on the move, then mark it heard so the hooks don't hand it over again: `python -c "import sys; sys.path.insert(0, '.claude/hooks'); import board_gate as g; g.take_inbox()"`.
 - The old claude.ai task board page is retired.
 
 ## Environment
