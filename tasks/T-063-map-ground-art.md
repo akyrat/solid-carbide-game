@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -87,3 +87,9 @@ Written by the agent when it finishes.
 ### Board review
 
 2026-10-12: the board saw the six tiles and mock-ups (the Project Lead's view: the dotted diamond edges make the road read as a grid, the asphalt is very dark and the white line faint). The board chose to try a **script fix first, no generation**: take tile 1, remove the dotted outline along its diamond edge so repeated tiles join without a visible grid, and brighten the white line a little so it reads clearly against the asphalt. Keep the original six tiles as they are; save the fixed tile as a new file with a record saying how it was made. Make a new mock-up with it. Pixels and colours must come from the tile's own palette (no new colours, unless the line needs one brighter white; then say so).
+
+### Script fix of tile 1 (Asset Generation Agent, 2026-10-12, after the board's review)
+
+No PixelLab call, no cost (balance still 4971). `game/art/ground/road_tile_1_fixed.png` (+ `road_tile_1_fixed.json`) and the mock-up `road_mockup_1_fixed.png`, made by `python game/tools/build_road_tile.py fix` from `road_tile_1.png`; `road_tile_0..5` are unchanged. Steps: the tile is cut to the exact tiling footprint (the raw edge made 67 gaps and some overlaps when tiled; now 0 and 0); dark edge pixels become the tile's own colours from further in; a few transparent holes are filled; every line pixel becomes the tile's own brightest white (223, 221, 218), so **no new colour** (9 colours). Check script: all pass. Python tool tests and GUT pass (see below).
+
+**What I see in the mock-up at full size:** the grid is gone; the road reads as one asphalt surface, and the line is clearly brighter. Still visible: (1) the same faint crack streaks repeat in every tile in a regular pattern; (2) the white line has a small "+" mark where each tile joins (the line's end dashes and the corner pixels meet); (3) the dashes are still short and broken, and the line is still one unit off centre; (4) the asphalt is still very dark; (5) the lane lines' dash gaps are uneven. The side lanes are the same stand-in as before.

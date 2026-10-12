@@ -1,0 +1,14 @@
+{
+ "file": "road_tile_1_fixed.png",
+ "made_from": "game/art/ground/road_tile_1.png (unchanged)",
+ "made_by": "python game/tools/build_road_tile.py fix game/art/ground/road_tile_1.png game/art/ground/road_tile_1_fixed.png (script, no PixelLab call, no cost; board's review 2026-10-12)",
+ "steps": [
+  "pixels outside the exact tiling footprint (rows 0-31: 4*(y+1) wide, rows 32-62: 4*(63-y) wide, row 63 empty) made transparent, so tiles meet with no gaps and no overlaps (checked: 0 gaps, 0 overlaps when tiled)",
+  "dark pixels (luminance below 60) within 4 pixels of the edge replaced by the tile's own colour 4 to 10 pixels further in along the row, else the usual asphalt colour (48,46,62)",
+  "a few transparent holes inside the footprint filled from the nearest opaque pixel in the row",
+  "every line pixel (luminance 100 or more) set to the tile's own brightest white (223,221,218)"
+ ],
+ "colours": "9, all from road_tile_1.png; no new colour",
+ "size": "128 x 64, 2 x 2 units, same repeat as road_tiles.json",
+ "mockup": "road_mockup_1_fixed.png"
+}

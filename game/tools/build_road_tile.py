@@ -9,6 +9,7 @@ pixel row is kept (nearest row, no new colours, no new pixels) to give 128 x 64.
 
 Commands (run from the repo root):
   python game/tools/build_road_tile.py process RAW.png OUT.png   # 128x128 -> 128x64
+  python game/tools/build_road_tile.py fix TILE.png OUT.png      # no outline, brighter line (board, 2026-10-12)
   python game/tools/build_road_tile.py check TILE.png            # technical rules for a tile
   python game/tools/build_road_tile.py mockup TILE.png CAR_SHEET.png OUT.png
 
@@ -61,6 +62,88 @@ def check_tile(rows, max_colors=30):
     out.append(("diamond is filled (about half the canvas)", 0.4 * w * h <= opaque <= 0.6 * w * h,
                 "%d opaque of %d" % (opaque, w * h)))
     return out
+
+
+def footprint(x, y):
+    """True if pixel (x, y) is inside the exact 2:1 diamond that tiles the plane with offsets (+-64, +32).
+
+    Rows 0..31 are 4 * (y + 1) pixels wide, rows 32..62 are 4 * (63 - y), row 63 is empty,
+    so a row of the plane is always covered exactly once (no gaps, no overlaps).
+    """
+    if y < 32:
+        return 62 - 2 * y <= x <= 65 + 2 * y
+    k = y - 32
+    return 2 + 2 * k <= x <= 125 - 2 * k
+
+
+def inner_distance(x, y):
+    """Rough distance in pixels from the diamond's edge, measured along the row."""
+    if y < 32:
+        return min(x - (62 - 2 * y), (65 + 2 * y) - x)
+    k = y - 32
+    return min(x - (2 + 2 * k), (125 - 2 * k) - x)
+
+
+def remove_outline(rows, band=4, dark=60):
+    """Script fix (T-063, tile 1): no dotted dark outline along the diamond edge.
+
+    1. Pixels outside the exact tiling footprint become transparent (this also removes the
+       edge pixels that overlap or leave gaps between neighbouring tiles).
+    2. Every dark pixel (luminance below `dark`) within `band` pixels of the edge is replaced by
+       the colour of the pixel `band` pixels further in along its row (from the tile's own pixels);
+       if that is dark too, it is looked for further in, then by the tile's usual asphalt colour.
+    """
+    lum = lambda p: 0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2]
+    h, w = len(rows), len(rows[0])
+    out = [[p if footprint(x, y) else T for x, p in enumerate(r)] for y, r in enumerate(rows)]
+    asphalt = Counter(p for r in out for p in r if p[3] and 30 < lum(p) < 60).most_common(1)[0][0]
+    for y in range(h):
+        for x in range(w):
+            p = out[y][x]
+            if not p[3] or lum(p) >= dark or inner_distance(x, y) >= band:
+                continue
+            step = 1 if x < w / 2 else -1
+            new = asphalt
+            for d in (band, band + 2, band + 4, band + 6):
+                q = rows[y][x + step * d] if 0 <= x + step * d < w else T
+                if q[3] and lum(q) >= dark:
+                    new = q
+                    break
+            out[y][x] = new
+    # holes inside the footprint (the raw tile had a few transparent pixels there): the colour of the
+    # nearest opaque pixel in the same row
+    for y in range(h):
+        for x in range(w):
+            if footprint(x, y) and not out[y][x][3]:
+                for d in range(1, w):
+                    cand = [out[y][x + s] for s in (-d, d) if 0 <= x + s < w and out[y][x + s][3]]
+                    if cand:
+                        out[y][x] = cand[0]
+                        break
+    return out
+
+
+def brighten_line(rows, threshold=100):
+    """Script fix: every line pixel (luminance at least `threshold`) becomes the tile's own brightest white."""
+    lum = lambda p: 0.3 * p[0] + 0.59 * p[1] + 0.11 * p[2]
+    white = max((p for r in rows for p in r if p[3]), key=lum)
+    return [[white if p[3] and lum(p) >= threshold else p for p in r] for r in rows]
+
+
+def tiling_report(rows):
+    """Tiles the diamond on the lattice and counts gaps and overlaps in the middle: (gaps, overlaps)."""
+    cov = Counter()
+    for i in range(-3, 4):
+        for j in range(-3, 4):
+            ox, oy = (i - j) * 64, (i + j) * 32
+            for y, r in enumerate(rows):
+                for x, p in enumerate(r):
+                    if p[3]:
+                        cov[(ox + x, oy + y)] += 1
+    cells = [(x, y) for x in range(-120, 120) for y in range(-40, 40)]
+    gaps = sum(1 for c in cells if cov[c] == 0)
+    overlaps = sum(1 for c in cells if cov[c] > 1)
+    return gaps, overlaps
 
 
 def paint_out_lines(rows):
@@ -127,6 +210,9 @@ def main(argv=None):
     c = sub.add_parser("check")
     c.add_argument("tile")
     c.add_argument("--max-colors", type=int, default=30)
+    f = sub.add_parser("fix")
+    f.add_argument("tile")
+    f.add_argument("out")
     m = sub.add_parser("mockup")
     m.add_argument("tile")
     m.add_argument("car_sheet")
@@ -139,6 +225,11 @@ def main(argv=None):
         rows = squash_half(load(a.raw))
         write_png(a.out, rows)
         print("wrote", a.out, "%dx%d" % (len(rows[0]), len(rows)))
+        return 0
+    if a.cmd == "fix":
+        rows = brighten_line(remove_outline(load(a.tile)))
+        write_png(a.out, rows)
+        print("wrote", a.out, "gaps, overlaps when tiled:", tiling_report(rows))
         return 0
     if a.cmd == "check":
         res = check_tile(load(a.tile), a.max_colors)

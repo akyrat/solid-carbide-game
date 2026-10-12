@@ -58,6 +58,28 @@ class TileTests(unittest.TestCase):
         out = b.paint_out_lines(rows)
         self.assertEqual(out[32][60], A)
 
+    def test_footprint_tiles_the_plane_exactly(self):
+        full = [[A] * 128 for _ in range(64)]
+        rows = [[p if b.footprint(x, y) else T for x, p in enumerate(r)] for y, r in enumerate(full)]
+        self.assertEqual(b.tiling_report(rows), (0, 0))
+
+    def test_remove_outline_replaces_dark_edge_pixels_and_fills_holes(self):
+        rows = diamond(128, 64)
+        rows[10][44] = (6, 6, 9, 255)       # a dark pixel at the edge of row 10 (x from 42)
+        rows[10][51] = T                      # a hole inside the footprint
+        out = b.remove_outline(rows)
+        self.assertEqual(out[10][44], A)
+        self.assertEqual(out[10][51], A)
+        self.assertEqual(b.tiling_report(out), (0, 0))
+
+    def test_brighten_line_uses_the_tiles_own_white_only(self):
+        rows = diamond(128, 64)
+        rows[32][60] = W
+        rows[32][61] = (150, 150, 150, 255)
+        out = b.brighten_line(rows)
+        self.assertEqual(out[32][61], W)
+        self.assertLessEqual({p for r in out for p in r}, {p for r in rows for p in r})
+
     def test_mockup_has_road_and_car(self):
         tile = diamond(128, 64)
         car = [[(200, 0, 0, 255)] * 8 for _ in range(8)]
