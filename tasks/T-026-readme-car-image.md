@@ -1,7 +1,7 @@
 ---
 id: T-026
 title: Car image at the top right of the root README
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
