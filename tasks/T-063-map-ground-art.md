@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -93,3 +93,5 @@ Written by the agent when it finishes.
 No PixelLab call, no cost (balance still 4971). `game/art/ground/road_tile_1_fixed.png` (+ `road_tile_1_fixed.json`) and the mock-up `road_mockup_1_fixed.png`, made by `python game/tools/build_road_tile.py fix` from `road_tile_1.png`; `road_tile_0..5` are unchanged. Steps: the tile is cut to the exact tiling footprint (the raw edge made 67 gaps and some overlaps when tiled; now 0 and 0); dark edge pixels become the tile's own colours from further in; a few transparent holes are filled; every line pixel becomes the tile's own brightest white (223, 221, 218), so **no new colour** (9 colours). Check script: all pass. Python tool tests and GUT pass (see below).
 
 **What I see in the mock-up at full size:** the grid is gone; the road reads as one asphalt surface, and the line is clearly brighter. Still visible: (1) the same faint crack streaks repeat in every tile in a regular pattern; (2) the white line has a small "+" mark where each tile joins (the line's end dashes and the corner pixels meet); (3) the dashes are still short and broken, and the line is still one unit off centre; (4) the asphalt is still very dark; (5) the lane lines' dash gaps are uneven. The side lanes are the same stand-in as before.
+
+2026-10-12, second note: the board fixed the white line of `road_tile_1_fixed.png` by hand, saved as `road_tile_1_board.png` (it removed the "+" marks at the tile joins; saved by the board's editor as an indexed-colour PNG). The board **approved this tile** as the road tile. Finish: save it as an 8-bit RGBA PNG (same pixels), with a record saying the board edited the line by hand from `road_tile_1_fixed.png`; make its mock-up. Per the archive rule, `game/art/ground/` keeps only the approved tile and its record: move every other tile (0 to 5, `road_tile_1_fixed`), every mock-up and the board's indexed original to `art-archive/T-063/` with their records and rows in `art-archive/README.md`. T-103 may take tiles from the archive to break up the repeating cracks.
