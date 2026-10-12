@@ -1,3 +1,5 @@
+<img src="docs/readme/car.png" align="right" width="256" alt="The Solid Carbide car">
+
 # Solid Carbide
 
 A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju attack, built in Godot 4 by a team of Claude Code agents. This repository holds both the documentation and the game.

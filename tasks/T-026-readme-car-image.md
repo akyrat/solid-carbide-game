@@ -1,7 +1,7 @@
 ---
 id: T-026
 title: Car image at the top right of the root README
-status: planning
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md]
 files_expected_to_change: [README.md, the README image file and its record]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,14 +43,26 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The README image file exists, and its record names the T-101 sheet and frame it came from and the scale factor (QA: pass / fail)
-- [ ] The image is the final car (T-101), not the placeholder: its pixels match the named frame scaled by the recorded whole number (QA: pass / fail)
-- [ ] The top of `README.md` has a right-aligned `<img>` tag pointing to the image, and the path resolves (QA: pass / fail)
-- [ ] Rendered on GitHub (or in a Markdown preview), the image sits at the top right without hiding the title or the first lines (QA: pass / fail, with a screenshot or description)
-- [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` is unchanged (QA: pass / fail)
+- [ ] The README image file exists, and its record names the T-101 sheet and frame it came from and the scale factor (QA: pass)
+- [ ] The image is the final car (T-101), not the placeholder: its pixels match the named frame scaled by the recorded whole number (QA: pass)
+- [ ] The top of `README.md` has a right-aligned `<img>` tag pointing to the image, and the path resolves (QA: pass)
+- [ ] Rendered on GitHub (or in a Markdown preview), the image sits at the top right without hiding the title or the first lines (QA: pass) Screenshot shows the car top right, title and first lines visible.
+- [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` is unchanged (QA: pass)
 
 The board's review: look at the top of the README in VS Code's Markdown preview of `C:\solid-carbide-worktrees\T-026\README.md`, or the agent's screenshot.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Board review files: README.md, T-026-readme-top.png
+
+Made (Sonnet, no PixelLab call; `game/art/pixellab-generation-log.jsonl` untouched):
+
+- `docs/readme/car.png`: 256 x 256 RGBA, `game/art/car/car_sw_front.png` scaled exactly 2x nearest-neighbour, shadow kept.
+- `docs/readme/car.md`: the record (source = `car_sw_front.png`, which is frame 4 counting from 0 of `game/art/car/car_iso.png`; scale 2x).
+- `tools/make_readme_car.py`: the scaling script. `tools/test_make_readme_car.py`: its test.
+- `README.md`: `<img src="docs/readme/car.png" align="right" width="256" ...>` added as the first line, before the title.
+- `T-026-readme-top.png`: screenshot of the README's Markdown rendered to HTML (headless Chrome, 1000 x 600). The car sits at the top right, title and first lines fully visible, text wraps beside it.
+
+Checked: `python -m unittest tools/test_make_readme_car.py` passes (3 tests: exact 2x nearest scaling on a synthetic image, committed `car.png` pixel-identical to the source frame scaled 2x, source frame identical to frame 4 of the sheet). The `<img>` path resolves (the screenshot shows the image).
+
+QA (round 1, 2026-10-13): all five criteria pass. Own PIL check: `docs/readme/car.png` (256x256) is pixel-identical to `car_sw_front.png` resized 2x nearest; `car_sw_front.png` equals frame 4 of `car_iso.png` (2048x128, 16 frames). `car.md` names source, frame and 2x. README line 1 is a right-aligned `<img src="docs/readme/car.png" align="right" width="256">`; the path exists. Agent screenshot shows the car top right, title and text visible, text wrapping beside it (not re-rendered by me). `pixellab-generation-log.jsonl` has no diff versus master. `python -m unittest discover -s tools -p "test_*.py"`: 115 tests OK.

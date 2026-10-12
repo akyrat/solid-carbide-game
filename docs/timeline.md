@@ -685,3 +685,8 @@ Entry format:
 - Decision or change: the board dragged T-026 (the car image in the README) into the new Planning column and settled its open questions: the first approved sprite (front to the bottom-left), shadow kept, scaled exactly 2 times to 256 by 256, reviewed in VS Code's Markdown preview plus a screenshot. T-026 started (Asset Generation, no PixelLab calls). The board's drag only reached the Project Lead with the board's next message, so on the board's go the Project Lead now keeps a watcher on the board's moves during a session and replies to a drag straight away (Working with the board, "The task board").
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-026 (planning, then in progress)
+
+## 2026-10-13: T-026 done: the car at the top right of the README
+- Decision or change: the board marked T-026 done on the task board after reviewing it. The root README now opens with the final car (the first approved sprite, front to the bottom-left, shadow kept) at the top right, scaled exactly 2 times to 256 by 256 (`docs/readme/car.png`, record in `docs/readme/car.md`, made by `tools/make_readme_car.py` with a test). No PixelLab calls. The review screenshot stays out of the repo, in the git-ignored `screenshots/`.
+- Documents touched: `README.md`
+- Tasks: T-026 (done)
