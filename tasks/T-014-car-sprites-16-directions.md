@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
