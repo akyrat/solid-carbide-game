@@ -10,6 +10,7 @@ commands that kept it filled, are gone (2026-10-12).
 A library, not a command: import it from tools/ (see tools/taskboard/server.py).
 """
 
+import os
 import re
 import subprocess
 import sys
@@ -94,11 +95,17 @@ def task_files(tasks_dir=None):
     return sorted((TASKS_DIR if tasks_dir is None else tasks_dir).glob("T-*.md"))
 
 
+def no_window():
+    """creationflags for subprocess: on Windows, a console program (git) started from the board's
+    server, which has no console, would otherwise open a terminal window every time (T-110)."""
+    return 0x08000000 if os.name == "nt" else 0   # subprocess.CREATE_NO_WINDOW
+
+
 def task_folders(root=None):
     """{task id: worktree folder} for every open task branch, from `git worktree list`."""
     try:
         out = subprocess.run(["git", "-C", str(ROOT if root is None else root), "worktree", "list", "--porcelain"],
-                             capture_output=True, text=True, check=True).stdout
+                             capture_output=True, text=True, check=True, creationflags=no_window()).stdout
     except (OSError, subprocess.CalledProcessError):
         return {}
     folders, path = {}, None

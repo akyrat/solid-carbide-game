@@ -1,7 +1,7 @@
 ---
 id: T-110
 title: The task board stops opening terminal windows
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 epic: tooling
