@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -95,3 +95,11 @@ No PixelLab call, no cost (balance still 4971). `game/art/ground/road_tile_1_fix
 **What I see in the mock-up at full size:** the grid is gone; the road reads as one asphalt surface, and the line is clearly brighter. Still visible: (1) the same faint crack streaks repeat in every tile in a regular pattern; (2) the white line has a small "+" mark where each tile joins (the line's end dashes and the corner pixels meet); (3) the dashes are still short and broken, and the line is still one unit off centre; (4) the asphalt is still very dark; (5) the lane lines' dash gaps are uneven. The side lanes are the same stand-in as before.
 
 2026-10-12, second note: the board fixed the white line of `road_tile_1_fixed.png` by hand, saved as `road_tile_1_board.png` (it removed the "+" marks at the tile joins; saved by the board's editor as an indexed-colour PNG). The board **approved this tile** as the road tile. Finish: save it as an 8-bit RGBA PNG (same pixels), with a record saying the board edited the line by hand from `road_tile_1_fixed.png`; make its mock-up. Per the archive rule, `game/art/ground/` keeps only the approved tile and its record: move every other tile (0 to 5, `road_tile_1_fixed`), every mock-up and the board's indexed original to `art-archive/T-063/` with their records and rows in `art-archive/README.md`. T-103 may take tiles from the archive to break up the repeating cracks.
+
+### The board's approved tile (Asset Generation Agent, 2026-10-12)
+
+No PixelLab call, no cost (balance 4971). The approved tile is `game/art/ground/road_tile.png` with `road_tile.json`: the board's hand-edited `road_tile_1_board.png` (indexed colour) saved as 8-bit RGBA, **identical pixel for pixel** (checked: same pixel list, 9 colours, alpha 0 or 255 only). Check script: all pass. **Size and repeat:** 128 x 64 pixels, 2 x 2 units, neighbours at (+64, +32) and (-64, +32), exact footprint (0 gaps, 0 overlaps); a 24-unit road is 12 tiles across. Mock-up with the car: `art-archive/T-063/road_mockup.png` (the line is clean, the "+" marks are gone; the faint cracks still repeat in every tile, and the line is one unit off the road's centre in a 12-tile road).
+
+**Archive rule applied:** `game/art/ground/` holds only the approved tile and its record. Tiles 0 to 5, `road_tile_1_fixed.png` (+ record), the board's indexed original, every mock-up (including the new one) and `road_tiles.json` are in `art-archive/T-063/` (with the six raw 128 x 128 originals in `raw/`), listed in `art-archive/README.md`; their Godot `.import` files were removed. Nothing deleted. **T-103 can take tiles from the archive** (for example other crack variations to break up the repeat).
+
+Tests: Python tool tests and GUT pass. Files changed this step: `game/art/ground/road_tile.png`, `road_tile.json` (+ `.import`), the moves above, `art-archive/README.md`, `game/README.md`, this task file.

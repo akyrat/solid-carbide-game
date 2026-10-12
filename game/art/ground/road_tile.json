@@ -1,0 +1,10 @@
+{
+ "file": "road_tile.png",
+ "what": "The approved road tile (board, 2026-10-12): a 2:1 isometric diamond, 128 x 64 pixels, 2 x 2 units, a white dashed lane line along world y (lower-left to upper-right), light cracks, no pavement or crossing.",
+ "made_by": "the board, by hand: the white line of road_tile_1_fixed.png edited (the '+' marks at the tile joins removed). The editor saved an indexed-colour PNG (road_tile_1_board.png, archived); this file is the same pixels as 8-bit RGBA (checked pixel for pixel).",
+ "approved": "2026-10-12",
+ "lineage": "PixelLab /create-tiles-pro call (job 4054b369-2315-473c-9e05-01723cd64b31, tile 1 of 6, 15 generations) -> squashed to 2:1 -> script fix (edge outline removed, line brightened) -> board's hand edit. Full call record: art-archive/T-063/road_tiles.json and raw/.",
+ "size": "128 x 64 pixels = 2 x 2 units at 32 art pixels per unit (drawn at scale 0.5 in the game: 64 x 32 screen pixels)",
+ "repeat": "neighbours at (+64, +32) across the road (world x) and (-64, +32) along it (world y); a 24-unit road is 12 tiles across; exact footprint, 0 gaps and 0 overlaps when tiled",
+ "mockup": "art-archive/T-063/road_mockup.png"
+}
