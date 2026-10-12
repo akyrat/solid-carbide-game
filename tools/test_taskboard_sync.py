@@ -6,6 +6,7 @@
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -78,6 +79,22 @@ class TaskboardSyncTests(unittest.TestCase):
     def test_tickets_now_reads_master_without_a_branch(self):
         tickets = tb.tickets_now(self.tasks, {})
         self.assertEqual([t["status"] for t in tickets], ["blocked"])
+
+    def run_task_folders_as(self, os_name):
+        done = mock.Mock(stdout="worktree C:/w/T-900\nbranch refs/heads/task/T-900-test\n")
+        with mock.patch.object(tb.os, "name", os_name), mock.patch.object(tb.subprocess, "run", return_value=done) as run:
+            folders = tb.task_folders()
+        return folders, run.call_args.kwargs.get("creationflags")
+
+    def test_task_folders_opens_no_window_on_windows(self):
+        # The board's server has no console; without this flag git opens a terminal window on every refresh (T-110).
+        folders, flags = self.run_task_folders_as("nt")
+        self.assertEqual(flags, 0x08000000)
+        self.assertEqual(folders, {"T-900": Path("C:/w/T-900")})
+
+    def test_task_folders_passes_no_flags_elsewhere(self):
+        _, flags = self.run_task_folders_as("posix")
+        self.assertEqual(flags, 0)
 
     def test_real_task_files_all_parse(self):
         for path in tb.task_files():
