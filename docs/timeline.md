@@ -640,3 +640,8 @@ Entry format:
 - Decision or change: T-063 merged after the board's approval and QA: the board's hand-edited road tile (`game/art/ground/road_tile.png`, 2 by 2 units, white dashed line, light cracks) is in master, not yet in the map. The other tiles, the script fix and the mock-ups are in `art-archive/T-063/`. T-103 (the rest of the ground, put into the map) is unblocked and waits for the board's go, since it needs PixelLab generations.
 - Documents touched: `game/README.md`, `art-archive/README.md`
 - Tasks: T-063 (done), T-103 (unblocked)
+
+## 2026-10-12: T-103 done: the ground in the map
+- Decision or change: the board played a run with the full ground set and approved it ("it looks great"); T-103 merged. The MVP map's isometric view now shows the final ground: asphalt roads built from the approved tile with mixed crack variants, centred white lines, zebra crossings at every junction, the edge road and the gravel centre. One PixelLab call (15 generations; balance 4,956); everything else made by script. Raw tiles in `art-archive/T-103/`. A usage limit cut off the first agent after its PixelLab call; a second agent finished from the saved images without calling again. The buildings, boulders and the area outside the map are still placeholders. The task board page belongs to the previous account and could not be updated from this one.
+- Documents touched: `game/README.md`, `art-archive/README.md`
+- Tasks: T-103 (done)

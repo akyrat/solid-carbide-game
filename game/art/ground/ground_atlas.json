@@ -1,0 +1,810 @@
+{
+ "file": "ground_atlas.png",
+ "task": "T-103",
+ "what": "The MVP map's ground tiles: a grid of 8 columns of 128 x 64 isometric diamonds (2 x 2 units each, drawn at scale 0.5), dusty gravel and asphalt with its white centre line and zebra crossings, roads along world y and along world x.",
+ "made_by": "python game/tools/build_ground_tiles.py (no PixelLab call in this step)",
+ "sources": {
+  "approved road tile": "game/art/ground/road_tile.png (board-approved, T-063)",
+  "PixelLab call": "one /create-tiles-pro call of T-103 (job f6cf663e-3d60-472a-b5df-b03c6d79fc71, 15 generations, style image road_tile.png); raw tiles and their records in art-archive/T-103/raw/",
+  "used": "gravel: tiles [0, 1, 2]; asphalt: tiles [4, 5, 6, 7, 9]; not used: 3 and 8"
+ },
+ "pixellab_calls": [
+  {
+   "endpoint": "/create-tiles-pro",
+   "job_id": "f6cf663e-3d60-472a-b5df-b03c6d79fc71",
+   "settings": "style_images: [game/art/ground/road_tile.png] (128 x 64); tile_type isometric, tile_size 128, tile_view top-down (ignored with a style image); no tile_feature",
+   "prompt": "in the log line of the call (game/art/pixellab-generation-log.jsonl) and in each raw record in art-archive/T-103/raw/",
+   "cost": "15 generations ($0.00, subscription)",
+   "balance_before": 4971,
+   "balance_after": 4956,
+   "result": "10 tiles: 0-3 dusty gravel, 4-9 plain asphalt; one round, nothing regenerated"
+  }
+ ],
+ "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
+ "layout": "game/data/level/mvp_ground.json",
+ "tiles": [
+  {
+   "index": 0,
+   "name": "gravel0",
+   "atlas_xy": [
+    0,
+    0
+   ],
+   "made": "T-103 PixelLab tile 0 (dusty gravel), edge outline removed (fix_edges)"
+  },
+  {
+   "index": 1,
+   "name": "gravel1",
+   "atlas_xy": [
+    128,
+    0
+   ],
+   "made": "T-103 PixelLab tile 1 (dusty gravel), edge outline removed (fix_edges)"
+  },
+  {
+   "index": 2,
+   "name": "gravel2",
+   "atlas_xy": [
+    256,
+    0
+   ],
+   "made": "T-103 PixelLab tile 2 (dusty gravel), edge outline removed (fix_edges)"
+  },
+  {
+   "index": 3,
+   "name": "y_plain_a0",
+   "atlas_xy": [
+    384,
+    0
+   ],
+   "made": "along world y: the approved road_tile.png with its line removed (remove_line)"
+  },
+  {
+   "index": 4,
+   "name": "x_plain_a0",
+   "atlas_xy": [
+    512,
+    0
+   ],
+   "made": "along world x (mirrored): the approved road_tile.png with its line removed (remove_line)"
+  },
+  {
+   "index": 5,
+   "name": "y_line_r_a0",
+   "atlas_xy": [
+    640,
+    0
+   ],
+   "made": "along world y: a0 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 6,
+   "name": "x_line_r_a0",
+   "atlas_xy": [
+    768,
+    0
+   ],
+   "made": "along world x (mirrored): a0 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 7,
+   "name": "y_line_l_a0",
+   "atlas_xy": [
+    896,
+    0
+   ],
+   "made": "along world y: a0 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 8,
+   "name": "x_line_l_a0",
+   "atlas_xy": [
+    0,
+    64
+   ],
+   "made": "along world x (mirrored): a0 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 9,
+   "name": "y_zebra_a0",
+   "atlas_xy": [
+    128,
+    64
+   ],
+   "made": "along world y: a0 + zebra stripes"
+  },
+  {
+   "index": 10,
+   "name": "x_zebra_a0",
+   "atlas_xy": [
+    256,
+    64
+   ],
+   "made": "along world x (mirrored): a0 + zebra stripes"
+  },
+  {
+   "index": 11,
+   "name": "y_zebra_e0_a0",
+   "atlas_xy": [
+    384,
+    64
+   ],
+   "made": "along world y: a0 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 12,
+   "name": "x_zebra_e0_a0",
+   "atlas_xy": [
+    512,
+    64
+   ],
+   "made": "along world x (mirrored): a0 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 13,
+   "name": "y_zebra_e1_a0",
+   "atlas_xy": [
+    640,
+    64
+   ],
+   "made": "along world y: a0 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 14,
+   "name": "x_zebra_e1_a0",
+   "atlas_xy": [
+    768,
+    64
+   ],
+   "made": "along world x (mirrored): a0 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 15,
+   "name": "y_plain_a0m",
+   "atlas_xy": [
+    896,
+    64
+   ],
+   "made": "along world y: a0 mirrored left-right (cracks run the other way)"
+  },
+  {
+   "index": 16,
+   "name": "x_plain_a0m",
+   "atlas_xy": [
+    0,
+    128
+   ],
+   "made": "along world x (mirrored): a0 mirrored left-right (cracks run the other way)"
+  },
+  {
+   "index": 17,
+   "name": "y_line_r_a0m",
+   "atlas_xy": [
+    128,
+    128
+   ],
+   "made": "along world y: a0m + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 18,
+   "name": "x_line_r_a0m",
+   "atlas_xy": [
+    256,
+    128
+   ],
+   "made": "along world x (mirrored): a0m + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 19,
+   "name": "y_line_l_a0m",
+   "atlas_xy": [
+    384,
+    128
+   ],
+   "made": "along world y: a0m + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 20,
+   "name": "x_line_l_a0m",
+   "atlas_xy": [
+    512,
+    128
+   ],
+   "made": "along world x (mirrored): a0m + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 21,
+   "name": "y_zebra_a0m",
+   "atlas_xy": [
+    640,
+    128
+   ],
+   "made": "along world y: a0m + zebra stripes"
+  },
+  {
+   "index": 22,
+   "name": "x_zebra_a0m",
+   "atlas_xy": [
+    768,
+    128
+   ],
+   "made": "along world x (mirrored): a0m + zebra stripes"
+  },
+  {
+   "index": 23,
+   "name": "y_zebra_e0_a0m",
+   "atlas_xy": [
+    896,
+    128
+   ],
+   "made": "along world y: a0m + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 24,
+   "name": "x_zebra_e0_a0m",
+   "atlas_xy": [
+    0,
+    192
+   ],
+   "made": "along world x (mirrored): a0m + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 25,
+   "name": "y_zebra_e1_a0m",
+   "atlas_xy": [
+    128,
+    192
+   ],
+   "made": "along world y: a0m + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 26,
+   "name": "x_zebra_e1_a0m",
+   "atlas_xy": [
+    256,
+    192
+   ],
+   "made": "along world x (mirrored): a0m + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 27,
+   "name": "y_plain_g4",
+   "atlas_xy": [
+    384,
+    192
+   ],
+   "made": "along world y: T-103 PixelLab tile 4 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 28,
+   "name": "x_plain_g4",
+   "atlas_xy": [
+    512,
+    192
+   ],
+   "made": "along world x (mirrored): T-103 PixelLab tile 4 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 29,
+   "name": "y_line_r_g4",
+   "atlas_xy": [
+    640,
+    192
+   ],
+   "made": "along world y: g4 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 30,
+   "name": "x_line_r_g4",
+   "atlas_xy": [
+    768,
+    192
+   ],
+   "made": "along world x (mirrored): g4 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 31,
+   "name": "y_line_l_g4",
+   "atlas_xy": [
+    896,
+    192
+   ],
+   "made": "along world y: g4 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 32,
+   "name": "x_line_l_g4",
+   "atlas_xy": [
+    0,
+    256
+   ],
+   "made": "along world x (mirrored): g4 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 33,
+   "name": "y_zebra_g4",
+   "atlas_xy": [
+    128,
+    256
+   ],
+   "made": "along world y: g4 + zebra stripes"
+  },
+  {
+   "index": 34,
+   "name": "x_zebra_g4",
+   "atlas_xy": [
+    256,
+    256
+   ],
+   "made": "along world x (mirrored): g4 + zebra stripes"
+  },
+  {
+   "index": 35,
+   "name": "y_zebra_e0_g4",
+   "atlas_xy": [
+    384,
+    256
+   ],
+   "made": "along world y: g4 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 36,
+   "name": "x_zebra_e0_g4",
+   "atlas_xy": [
+    512,
+    256
+   ],
+   "made": "along world x (mirrored): g4 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 37,
+   "name": "y_zebra_e1_g4",
+   "atlas_xy": [
+    640,
+    256
+   ],
+   "made": "along world y: g4 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 38,
+   "name": "x_zebra_e1_g4",
+   "atlas_xy": [
+    768,
+    256
+   ],
+   "made": "along world x (mirrored): g4 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 39,
+   "name": "y_plain_g5",
+   "atlas_xy": [
+    896,
+    256
+   ],
+   "made": "along world y: T-103 PixelLab tile 5 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 40,
+   "name": "x_plain_g5",
+   "atlas_xy": [
+    0,
+    320
+   ],
+   "made": "along world x (mirrored): T-103 PixelLab tile 5 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 41,
+   "name": "y_line_r_g5",
+   "atlas_xy": [
+    128,
+    320
+   ],
+   "made": "along world y: g5 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 42,
+   "name": "x_line_r_g5",
+   "atlas_xy": [
+    256,
+    320
+   ],
+   "made": "along world x (mirrored): g5 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 43,
+   "name": "y_line_l_g5",
+   "atlas_xy": [
+    384,
+    320
+   ],
+   "made": "along world y: g5 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 44,
+   "name": "x_line_l_g5",
+   "atlas_xy": [
+    512,
+    320
+   ],
+   "made": "along world x (mirrored): g5 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 45,
+   "name": "y_zebra_g5",
+   "atlas_xy": [
+    640,
+    320
+   ],
+   "made": "along world y: g5 + zebra stripes"
+  },
+  {
+   "index": 46,
+   "name": "x_zebra_g5",
+   "atlas_xy": [
+    768,
+    320
+   ],
+   "made": "along world x (mirrored): g5 + zebra stripes"
+  },
+  {
+   "index": 47,
+   "name": "y_zebra_e0_g5",
+   "atlas_xy": [
+    896,
+    320
+   ],
+   "made": "along world y: g5 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 48,
+   "name": "x_zebra_e0_g5",
+   "atlas_xy": [
+    0,
+    384
+   ],
+   "made": "along world x (mirrored): g5 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 49,
+   "name": "y_zebra_e1_g5",
+   "atlas_xy": [
+    128,
+    384
+   ],
+   "made": "along world y: g5 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 50,
+   "name": "x_zebra_e1_g5",
+   "atlas_xy": [
+    256,
+    384
+   ],
+   "made": "along world x (mirrored): g5 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 51,
+   "name": "y_plain_g6",
+   "atlas_xy": [
+    384,
+    384
+   ],
+   "made": "along world y: T-103 PixelLab tile 6 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 52,
+   "name": "x_plain_g6",
+   "atlas_xy": [
+    512,
+    384
+   ],
+   "made": "along world x (mirrored): T-103 PixelLab tile 6 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 53,
+   "name": "y_line_r_g6",
+   "atlas_xy": [
+    640,
+    384
+   ],
+   "made": "along world y: g6 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 54,
+   "name": "x_line_r_g6",
+   "atlas_xy": [
+    768,
+    384
+   ],
+   "made": "along world x (mirrored): g6 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 55,
+   "name": "y_line_l_g6",
+   "atlas_xy": [
+    896,
+    384
+   ],
+   "made": "along world y: g6 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 56,
+   "name": "x_line_l_g6",
+   "atlas_xy": [
+    0,
+    448
+   ],
+   "made": "along world x (mirrored): g6 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 57,
+   "name": "y_zebra_g6",
+   "atlas_xy": [
+    128,
+    448
+   ],
+   "made": "along world y: g6 + zebra stripes"
+  },
+  {
+   "index": 58,
+   "name": "x_zebra_g6",
+   "atlas_xy": [
+    256,
+    448
+   ],
+   "made": "along world x (mirrored): g6 + zebra stripes"
+  },
+  {
+   "index": 59,
+   "name": "y_zebra_e0_g6",
+   "atlas_xy": [
+    384,
+    448
+   ],
+   "made": "along world y: g6 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 60,
+   "name": "x_zebra_e0_g6",
+   "atlas_xy": [
+    512,
+    448
+   ],
+   "made": "along world x (mirrored): g6 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 61,
+   "name": "y_zebra_e1_g6",
+   "atlas_xy": [
+    640,
+    448
+   ],
+   "made": "along world y: g6 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 62,
+   "name": "x_zebra_e1_g6",
+   "atlas_xy": [
+    768,
+    448
+   ],
+   "made": "along world x (mirrored): g6 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 63,
+   "name": "y_plain_g7",
+   "atlas_xy": [
+    896,
+    448
+   ],
+   "made": "along world y: T-103 PixelLab tile 7 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 64,
+   "name": "x_plain_g7",
+   "atlas_xy": [
+    0,
+    512
+   ],
+   "made": "along world x (mirrored): T-103 PixelLab tile 7 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 65,
+   "name": "y_line_r_g7",
+   "atlas_xy": [
+    128,
+    512
+   ],
+   "made": "along world y: g7 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 66,
+   "name": "x_line_r_g7",
+   "atlas_xy": [
+    256,
+    512
+   ],
+   "made": "along world x (mirrored): g7 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 67,
+   "name": "y_line_l_g7",
+   "atlas_xy": [
+    384,
+    512
+   ],
+   "made": "along world y: g7 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 68,
+   "name": "x_line_l_g7",
+   "atlas_xy": [
+    512,
+    512
+   ],
+   "made": "along world x (mirrored): g7 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 69,
+   "name": "y_zebra_g7",
+   "atlas_xy": [
+    640,
+    512
+   ],
+   "made": "along world y: g7 + zebra stripes"
+  },
+  {
+   "index": 70,
+   "name": "x_zebra_g7",
+   "atlas_xy": [
+    768,
+    512
+   ],
+   "made": "along world x (mirrored): g7 + zebra stripes"
+  },
+  {
+   "index": 71,
+   "name": "y_zebra_e0_g7",
+   "atlas_xy": [
+    896,
+    512
+   ],
+   "made": "along world y: g7 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 72,
+   "name": "x_zebra_e0_g7",
+   "atlas_xy": [
+    0,
+    576
+   ],
+   "made": "along world x (mirrored): g7 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 73,
+   "name": "y_zebra_e1_g7",
+   "atlas_xy": [
+    128,
+    576
+   ],
+   "made": "along world y: g7 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 74,
+   "name": "x_zebra_e1_g7",
+   "atlas_xy": [
+    256,
+    576
+   ],
+   "made": "along world x (mirrored): g7 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 75,
+   "name": "y_plain_g9",
+   "atlas_xy": [
+    384,
+    576
+   ],
+   "made": "along world y: T-103 PixelLab tile 9 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 76,
+   "name": "x_plain_g9",
+   "atlas_xy": [
+    512,
+    576
+   ],
+   "made": "along world x (mirrored): T-103 PixelLab tile 9 (plain asphalt), edge outline removed"
+  },
+  {
+   "index": 77,
+   "name": "y_line_r_g9",
+   "atlas_xy": [
+    640,
+    576
+   ],
+   "made": "along world y: g9 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 78,
+   "name": "x_line_r_g9",
+   "atlas_xy": [
+    768,
+    576
+   ],
+   "made": "along world x (mirrored): g9 + the approved line moved 1 unit, right half"
+  },
+  {
+   "index": 79,
+   "name": "y_line_l_g9",
+   "atlas_xy": [
+    896,
+    576
+   ],
+   "made": "along world y: g9 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 80,
+   "name": "x_line_l_g9",
+   "atlas_xy": [
+    0,
+    640
+   ],
+   "made": "along world x (mirrored): g9 + the approved line moved 1 unit, left half"
+  },
+  {
+   "index": 81,
+   "name": "y_zebra_g9",
+   "atlas_xy": [
+    128,
+    640
+   ],
+   "made": "along world y: g9 + zebra stripes"
+  },
+  {
+   "index": 82,
+   "name": "x_zebra_g9",
+   "atlas_xy": [
+    256,
+    640
+   ],
+   "made": "along world x (mirrored): g9 + zebra stripes"
+  },
+  {
+   "index": 83,
+   "name": "y_zebra_e0_g9",
+   "atlas_xy": [
+    384,
+    640
+   ],
+   "made": "along world y: g9 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 84,
+   "name": "x_zebra_e0_g9",
+   "atlas_xy": [
+    512,
+    640
+   ],
+   "made": "along world x (mirrored): g9 + zebra stripes, road edge at wx = 0"
+  },
+  {
+   "index": 85,
+   "name": "y_zebra_e1_g9",
+   "atlas_xy": [
+    640,
+    640
+   ],
+   "made": "along world y: g9 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 86,
+   "name": "x_zebra_e1_g9",
+   "atlas_xy": [
+    768,
+    640
+   ],
+   "made": "along world x (mirrored): g9 + zebra stripes, road edge at wx = 2"
+  }
+ ]
+}

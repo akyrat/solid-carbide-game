@@ -177,11 +177,21 @@ Archived versions (2026-10-12): the board approved this original, shadow include
 
 ## The first road tile (T-063)
 
-`game/art/ground/road_tile.png` (128 x 64 pixels, 8-bit RGBA, 9 colours) and its record `road_tile.json`: the board-approved asphalt road tile (2026-10-12): dark navy-purple asphalt, light cracks, a white dashed lane line. Not in the map yet: T-103 does that.
+`game/art/ground/road_tile.png` (128 x 64 pixels, 8-bit RGBA, 9 colours) and its record `road_tile.json`: the board-approved asphalt road tile (2026-10-12): dark navy-purple asphalt, light cracks, a white dashed lane line. Since T-103 the map's ground is built from it (next section).
 
 - **Size and repeat:** a 2:1 isometric diamond of 128 x 64 art pixels, **2 x 2 units** at the car art's density (32 art pixels per unit); the game draws art at scale 0.5, so it covers 64 x 32 screen pixels. Neighbours sit at (+64, +32) pixels across the road (world x) and (-64, +32) along it (world y); the tile is cut to the exact footprint, so repeats have 0 gaps and 0 overlaps. The line runs along world y. A road 24 units wide is 12 tiles across, so a centred line needs a double line or a centre-line piece (T-103).
 - **How it was made:** one PixelLab `/create-tiles-pro` call (six variations) -> tile 1 squashed to 2:1 -> `build_road_tile.py fix` (edge outline removed, line brightened) -> the board edited the line by hand. Everything else (the other five tiles, the script-fix step, the board's indexed original and every mock-up, including the approved tile's `road_mockup.png`) is in `art-archive/T-063/`; T-103 may take tiles from there to break up the repeating cracks.
 - **Tool:** `game/tools/build_road_tile.py` (`process`, `fix`, `check`, `mockup`; tests in `game/tools/test_build_road_tile.py`). Check the tile: `python game/tools/build_road_tile.py check game/art/ground/road_tile.png`.
+
+## The map's ground (T-103)
+
+In a run (the isometric view) the map's roads and gravel centre are drawn from `game/art/ground/ground_atlas.png` (with its record `ground_atlas.json`): 87 tiles of 128 x 64 pixels, each a 2 x 2 unit isometric diamond drawn at half size (32 art pixels per unit), placed one per cell as listed in `game/data/level/mvp_ground.json` (120 x 120 cells, -1 for building cells). The flat view, the outside of the map and the buildings keep their placeholder colours.
+
+- **Tiles:** 3 dusty gravel tiles and, for 7 asphalt bases (the approved `road_tile.png` without its line, mirrored, and 5 plain asphalt tiles), plain asphalt, the centre line in two halves (a 24-unit road's centre is a tile edge), and zebra crossings (full, and with the road's edge on either side), each along world y and mirrored for world x. The bases are mixed across the map by a fixed hash, so the cracks don't repeat regularly.
+- **Where things go:** zebra crossings one tile deep, 2 units before every box where 3 or 4 roads meet; the centre line along every road, stopping 6 units before a junction box; junction boxes plain asphalt.
+- **How it is made:** `python game/tools/build_ground_tiles.py` builds the atlas, its record and the layout from the approved road tile, the raw tiles of T-103's one PixelLab call (in `art-archive/T-103/raw/`) and `data/level/mvp_map.json` (read only). No new colours: every pixel comes from those tiles. Run it again after the map's layout changes.
+- **Check:** `python game/tools/build_ground_tiles.py check` (Visual style's technical rules and the exact footprint, every tile); `python game/tools/build_ground_tiles.py mockup OUT.png [I0 J0 I1 J1]` draws the ground (or the cells I0..I1, J0..J1) as the game does. Tests: `game/tools/test_build_ground_tiles.py` and `game/tests/unit/test_mvp_map_ground.gd`.
+- **Drawing:** `scripts/level/mvp_map.gd` (`_GroundTiles`), drawn in screen pixels under the map's `View` node, between the outside colour and the buildings. Screenshots of a run: `tests/fixtures/ground_from_menu_demo.tscn` (`GROUND_X`, `GROUND_Y`, `GROUND_HEADING_DEG`, `GROUND_ZOOM`).
 - **The client** (`pixellab_client.py`) now knows `create-tiles-pro`: `/tiles-pro/{tile_id}` answers with storage URLs, which it downloads (the storage host refuses Python's default user agent) and saves one PNG and record per tile.
 
 ## Placeholder car sprite sheets

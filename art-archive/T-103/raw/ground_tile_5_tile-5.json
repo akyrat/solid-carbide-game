@@ -1,0 +1,123 @@
+{
+  "file": "ground_tile_5_tile-5.png",
+  "endpoint": "/create-tiles-pro",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "1). flat top view of dusty gravel ground, small loose grey and dull brown stones and pebbles with pale dust, at night, slightly purple tinted, no lines, no road paint 2). flat top view of dusty gravel ground, scattered loose stones and pebbles of mixed sizes with patches of dust, at night, slightly purple tinted, no lines 3). flat top view of dusty gravel ground, fine gravel with a few larger stones and light dust, at night, slightly purple tinted, no lines 4). flat top view of dusty gravel ground, packed gravel and dust with faint tyre marks, at night, slightly purple tinted, no lines 5). flat top view of plain dark night-time city asphalt, a few thin light cracks, no lane line, no road markings 6). flat top view of plain dark night-time city asphalt, fine grain, one thin light crack, no lane line, no road markings",
+    "tile_type": "isometric",
+    "tile_size": 128,
+    "tile_view": "top-down",
+    "style_images": [
+      {
+        "base64": "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",
+        "width": 128,
+        "height": 64
+      }
+    ]
+  },
+  "prompt": "1). flat top view of dusty gravel ground, small loose grey and dull brown stones and pebbles with pale dust, at night, slightly purple tinted, no lines, no road paint 2). flat top view of dusty gravel ground, scattered loose stones and pebbles of mixed sizes with patches of dust, at night, slightly purple tinted, no lines 3). flat top view of dusty gravel ground, fine gravel with a few larger stones and light dust, at night, slightly purple tinted, no lines 4). flat top view of dusty gravel ground, packed gravel and dust with faint tyre marks, at night, slightly purple tinted, no lines 5). flat top view of plain dark night-time city asphalt, a few thin light cracks, no lane line, no road markings 6). flat top view of plain dark night-time city asphalt, fine grain, one thin light crack, no lane line, no road markings",
+  "job_id": "f6cf663e-3d60-472a-b5df-b03c6d79fc71",
+  "tile_id": "353d4d0a-b0b4-4798-a8c3-4ac0ed322a56",
+  "usage": {
+    "type": "generations",
+    "generations": 15.0
+  },
+  "generated_at": "2026-10-12T19:35:11+00:00",
+  "image": {
+    "width": 128,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "tasks/T-103-map-ground-art-full-set.md",
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "docs/level-design.md",
+    "tasks/T-063-map-ground-art.md",
+    "game/art/ground/road_tile.png",
+    "https://api.pixellab.ai/v2/openapi.json",
+    "https://www.pixellab.ai/llms.txt"
+  ],
+  "task": "T-103",
+  "job_status": "completed",
+  "notes": "T-103 single round: gravel centre tiles (1-4) and plain asphalt variants (5-6), style_images = the board-approved road_tile.png (128 x 64), so the tiles copy its 2:1 diamond, palette and style. tile_type/tile_size/tile_view are ignored by the API when style_images is given.",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 5,
+  "result_label": "tile_5",
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "ground_tile_0_tile-0.png",
+    "ground_tile_1_tile-1.png",
+    "ground_tile_2_tile-2.png",
+    "ground_tile_3_tile-3.png",
+    "ground_tile_4_tile-4.png",
+    "ground_tile_5_tile-5.png",
+    "ground_tile_6_tile-6.png",
+    "ground_tile_7_tile-7.png",
+    "ground_tile_8_tile-8.png",
+    "ground_tile_9_tile-9.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 15.0
+    },
+    "storage_urls": {
+      "tile_0": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_0.png",
+      "tile_1": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_1.png",
+      "tile_2": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_2.png",
+      "tile_3": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_3.png",
+      "tile_4": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_4.png",
+      "tile_5": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_5.png",
+      "tile_6": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_6.png",
+      "tile_7": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_7.png",
+      "tile_8": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_8.png",
+      "tile_9": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/353d4d0a-b0b4-4798-a8c3-4ac0ed322a56/tile_9.png"
+    },
+    "kind": "tiles",
+    "tile_rules": null,
+    "tiles": [
+      {
+        "name": "tile_0",
+        "base64": "<5820 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_1",
+        "base64": "<6220 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_2",
+        "base64": "<5424 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_3",
+        "base64": "<4792 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_4",
+        "base64": "<1628 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_5",
+        "base64": "<1444 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_6",
+        "base64": "<1264 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_7",
+        "base64": "<1716 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_8",
+        "base64": "<2540 characters of base64 image data, saved as the PNG>"
+      },
+      {
+        "name": "tile_9",
+        "base64": "<1036 characters of base64 image data, saved as the PNG>"
+      }
+    ]
+  }
+}
