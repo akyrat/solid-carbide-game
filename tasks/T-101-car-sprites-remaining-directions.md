@@ -10,9 +10,9 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-014]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
+files_to_read_first: [art-archive/README.md, tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [the car sprite sheets and their record files, the PixelLab generation log, game/README.md]
-model: sonnet
+model: opus
 qa_rounds: 0
 ---
 
@@ -27,7 +27,15 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Waits for the board's review of T-014's first sprite (2026-10-12).** Split from T-014. Don't start until the board has approved that sprite; the board may add notes from its review here.
+**The board approved T-014's first sprite and asked for this task (2026-10-12):** the other 15 directions, put into the actual game so the board can playtest the car in a run. Split from T-014.
+
+**What T-014 learned (read its result notes and board review):**
+- The approved sprite is `game/art/car/car_sw_front.png` (frame 4 of T-013's isometric layout), shadow included. Every other frame must match it: the same car, colours, stripes and size, and a shadow drawn the same way, falling the same way on screen in every direction, so the car looks consistent as it turns.
+- PixelLab draws a shadow under isometric cars even with "no shadow" in the prompt; don't fight it, match it.
+- `create-image-pixflux`'s `direction` is a loose guide; check every frame's real heading on screen against T-013's frame angles (`car_iso.json`) and say in the result notes how close each is.
+- Slow calls: use a long HTTP timeout (T-014 used 600 s); a timed-out call is still charged.
+- **Archive rule** (Visual style, Decisions, 2026-10-12): every generation that is not used goes to `art-archive/T-101/` with its record; nothing generated is deleted.
+- The board has approved the generations this task needs. Plan the calls first, write the plan and its expected cost in the result notes before calling, and keep to one round: don't regenerate frames you don't like; report them.
 
 The car's look and technical style: Visual style, Decisions ("The car" and the technical rules), as T-014 used them.
 
@@ -54,9 +62,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A check script shows every frame follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
 - [ ] A screenshot of the drift prototype in the isometric view shows the final car, with no change to the driving code (QA: pass / fail)
+- [ ] In a run started from the main menu (`game.tscn`), the car is the final art at the right size (about 3 units long, matching its collisions), and screenshots of it driving in several directions show the frames match the car's heading (QA: pass / fail)
+- [ ] Every unused generation is in `art-archive/T-101/` with its record, and `art-archive/README.md` lists it (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the car's look in all 16 directions; one round only, so problems are reported rather than regenerated.
+The board's review: playtest the car in a run and judge its look in all 16 directions; one round only, so problems are reported rather than regenerated.
+Board review files: the final car sheet under `game/art/`.
 
 ## Result notes
 
