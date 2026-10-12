@@ -59,6 +59,7 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 ENDPOINTS: dict[str, dict[str, Any]] = {
     "/create-image-pixflux": {"mode": "direct"},
     "/create-image-bitforge": {"mode": "direct"},
+    "/inpaint": {"mode": "direct"},
     "/create-isometric-tile": {
         "mode": "async",
         "result_path": "/isometric-tiles/{tile_id}",
