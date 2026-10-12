@@ -1,0 +1,45 @@
+{
+  "file": "car_sw_front.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "1967 Ford Mustang GT fastback sports car, dark green body paint, two parallel white racing stripes running down the full length of the car over the bonnet, roof and boot, centred on the car, with a gap of green between the two stripes, front of the car pointing to the bottom-left, rear to the top-right, no badges, no logos, no text, night-time neon cyberpunk game sprite",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "direction": "south-west",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "1967 Ford Mustang GT fastback sports car, dark green body paint, two parallel white racing stripes running down the full length of the car over the bonnet, roof and boot, centred on the car, with a gap of green between the two stripes, front of the car pointing to the bottom-left, rear to the top-right, no badges, no logos, no text, night-time neon cyberpunk game sprite",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-12T17:04:02+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "tasks/T-014-car-sprites-16-directions.md",
+    "docs/visual-style/reference-car-mustang-1967-dark-green.jpg",
+    "docs/visual-style/reference-car-mustang-1967-black-striped.jpg",
+    "https://api.pixellab.ai/v2/llms.txt",
+    "https://api.pixellab.ai/v2/openapi.json"
+  ],
+  "task": "T-014",
+  "job_status": null,
+  "notes": "T-014 single round; one sprite, front at bottom-left (south-west)",
+  "generator": "game/tools/pixellab_client.py"
+}

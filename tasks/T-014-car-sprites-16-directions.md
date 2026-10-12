@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -52,3 +52,23 @@ Board review files: the new sprite PNG(s) under `game/art/`.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Asset Generation Agent, 2026-10-12**
+
+**Sprite:** `game/art/car/car_sw_front.png` (128x128 RGBA), record `game/art/car/car_sw_front.json`, log entry in `game/art/pixellab-generation-log.jsonl`. One call, one image, no regeneration.
+
+**Endpoint: `POST /create-image-pixflux`** (direct, existing client). Why: after re-reading llms.txt and the OpenAPI spec, it is the cheap single-image endpoint that takes 128x128 (area up to 400x400), `isometric`, `no_background`, a `direction` (south-west), outline/shading/detail settings, and a `view`. Bitforge was not used: it is limited to 200x200 and its extra feature, a style image, would risk copying the reference car's colours and angle; the object endpoints cost far more and make several directions at once (not wanted now). No style image was used.
+
+**Settings:** `image_size` 128x128, `isometric: true`, `no_background: true`, `view: high top-down`, `direction: south-west`, `outline: selective outline`, `shading: detailed shading`, `detail: highly detailed`, `text_guidance_scale` 8. Full prompt in the record. Resources consulted: Visual style (The car, technical rules, both reference photos), this task, llms.txt and the OpenAPI spec.
+
+**Cost and balance:** 1 subscription generation ($0.00 USD). Balance before: 5000 of 5000 generations (plan Tier 2, USD credits $0.00). After: 4999 of 5000.
+
+**Direction:** the nose points south-west on screen. It matches **frame 4** of T-013's 16-frame isometric sheet (heading 90 degrees, nose along world +y, screen angle 153.43 degrees, down-left). Note for T-101: PixelLab's "south-west" is a loose guide; in the picture the nose angle on screen is roughly 25 to 30 degrees below the horizontal, close to frame 4's, not a steep 45 degree diagonal (frame 3 is 129.64 degrees).
+
+**Check script:** `game/tools/check_sprite_rules.py` (tests `game/tools/test_check_sprite_rules.py`, 3 tests). Result for the sprite: 128x128 PASS; transparent background (all four corners alpha 0) PASS; semi-transparent pixels 0, PASS; **33 distinct opaque colours** against about 30 (the script's limit is 30, so it reports FAIL; 3 over, which I read as "about 30" but QA and the board decide); car bounding box x 6 to 122, y 23 to 107 (117 wide, 85 tall).
+
+**What I see in it (not a judgement):** a dark-green fastback coupe seen from above-right, nose at the bottom-left with a chrome grille and a small yellow light, tail at the top-right with a small red light, two wheels visible on the near side, a darker body shade and cyan-green highlights. Two white stripes run over the bonnet, roof and boot. Possible problems: (1) the two stripes are close together and the gap between them is thin and dark-green; on the bonnet they read almost as one wide white band, and the stripes sit slightly off-centre toward one side; (2) the car looks about 1.4 to 1.5 times as long as the bounding box is tall and its body looks shorter and chunkier than the 3:1 proportion in Drifting; the sprite is about 117 pixels wide, so the length is near the 120 pixel target; (3) the sprite includes a dark shadow under the car made of opaque pixels (no transparency), which would be drawn as part of the car; (4) a few windscreen/chrome pixels are very light lavender, and the roof reads as one dark glass shape rather than a body-colour roof with stripes (the roof stripes show only partly); (5) 33 colours.
+
+**Tests:** full GUT suite 294/294 passed (`bash game/tools/run_tests.sh`); Python tool tests `python -m unittest discover -s game/tools -p "test_*.py"`: 70 OK. The headless Godot run rewrote some tracked `.import` files; I restored them, and kept only the new `car_sw_front.png.import`.
+
+**Files:** created `game/art/car/car_sw_front.png`, `.json`, `.png.import`, `game/tools/check_sprite_rules.py`, `game/tools/test_check_sprite_rules.py`; changed `game/art/pixellab-generation-log.jsonl`, `game/README.md` (new section "The first final car sprite (T-014)"), this task file. No scene, game script or placeholder sheet changed. Documents affected: `game/README.md`.
