@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>[hidden] { display: none !important; } body { margin: 0; } img { max-width: 100%; }</style>
 <title>Solid Carbide Task Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -153,7 +159,82 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 .moveto button { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
 .moveto button[disabled] { opacity: .45; cursor: default; }
 .note { color: var(--faint); font-size: 12px; margin: 0; }
+.notefield { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; align-items: end; margin-bottom: 10px; }
+.notefield label { grid-column: 1 / -1; color: var(--muted); font-size: 12px; }
+.notefield textarea { width: 100%; min-width: 0; resize: vertical; background: var(--panel-2); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; font: 13px/1.4 var(--body); }
+.cancel-task { background: #47231b; color: var(--warn); border: 1px solid #6a3324; border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+.syncline .live { color: var(--done); }
+.syncline .down { color: var(--warn); }
 .dialog-actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+/* Overview strip */
+.overview { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+@media (max-width: 900px) { .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .overview { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { text-align: left; background: var(--panel); border: 1px solid var(--line); border-top: 2px solid var(--c); border-radius: 9px; padding: 10px 12px 11px; cursor: pointer; display: grid; gap: 4px; min-width: 0; transition: border-color .15s, background .15s; }
+.tile:hover { background: var(--panel-2); border-color: color-mix(in srgb, var(--c) 60%, var(--line)); }
+.tile.is-hot { background: color-mix(in srgb, var(--c) 10%, var(--panel)); }
+.tile .k { font: 600 11px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.tile .v { font: 700 30px/1 var(--display); color: var(--c); font-variant-numeric: tabular-nums; }
+.tile .v small { font-size: 15px; color: var(--muted); margin-left: 3px; }
+.tile .s { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tile .meter { margin: 3px 0 0; height: 5px; }
+.loadrow { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-top: 10px; font-size: 12px; color: var(--muted); }
+.loadrow .lbl { font: 600 11px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.load { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 0; cursor: pointer; color: var(--muted); }
+.load:hover b { color: var(--ink); }
+.load b { font: 600 12px/1 var(--display); color: var(--ink); letter-spacing: .03em; }
+.load .bar { display: inline-flex; height: 6px; border-radius: 3px; overflow: hidden; background: #232a5e; }
+.load .bar i { display: block; height: 100%; }
+.load .n { font-family: var(--mono); font-size: 11px; }
+
+/* Inbox */
+.inbox { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 16px; margin-top: 18px; align-items: start; }
+@media (max-width: 760px) { .inbox { grid-template-columns: minmax(0, 1fr); } }
+.folders { display: grid; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+@media (max-width: 760px) { .folders { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); } }
+.folders button { display: flex; align-items: center; gap: 8px; text-align: left; background: none; border: 0; border-radius: 6px; padding: 8px 10px; cursor: pointer; color: var(--muted); }
+.folders button:hover { background: var(--panel-2); color: var(--ink); }
+.folders button[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 3px 0 0 var(--c, var(--pink)); }
+.folders .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--c); flex: none; }
+.folders .n { margin-left: auto; font-family: var(--mono); font-size: 11.5px; }
+.inbox-main { min-width: 0; display: grid; gap: 10px; }
+.inbox-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.inbox-head h2 { margin: 0; font: 700 18px/1.2 var(--display); letter-spacing: .02em; }
+.inbox-head p { margin: 0; color: var(--muted); font-size: 12.5px; flex: 1 1 260px; }
+.inbox-head button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px; }
+.rows { display: grid; gap: 6px; }
+.irow { display: grid; grid-template-columns: 10px 62px minmax(0, 1fr) auto; gap: 4px 10px; align-items: start; text-align: left; width: 100%; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 8px; padding: 9px 12px; cursor: pointer; }
+.irow:hover { background: var(--panel-2); }
+.irow .unread { width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: transparent; }
+.irow.is-unread .unread { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.irow.is-unread .t { font-weight: 600; }
+.irow .id { font: 500 12px/1.5 var(--mono); color: var(--cyan); }
+.irow .t { font-size: 13.5px; line-height: 1.35; }
+.irow .why { display: block; margin-top: 3px; font-size: 12px; color: var(--muted); }
+.irow .why b { color: var(--ink); font-weight: 500; }
+.irow .tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: flex-end; }
+@media (max-width: 520px) { .irow { grid-template-columns: 10px minmax(0, 1fr); } .irow .id { grid-column: 2; } .irow .body { grid-column: 2; } .irow .tags { grid-column: 2; justify-content: flex-start; } }
+.empty-inbox { padding: 22px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
+
+/* Dependency links */
+.chip.ready { background: #183d33; color: var(--done); }
+.chip.waits { background: #2a2d55; color: #b7bcf0; }
+.chip.check { background: #47231b; color: var(--warn); }
+.deps { display: grid; gap: 10px; margin: 0 0 16px; padding: 12px 14px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; }
+.deps h3 { margin: 0; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+.deps h3 .chip { margin-left: auto; }
+.deps .group { display: grid; gap: 6px; }
+.deps .group > span { font-size: 12px; color: var(--faint); }
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.dlink { display: inline-flex; align-items: center; gap: 7px; max-width: 100%; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 6px; padding: 5px 9px; cursor: pointer; font-size: 12px; text-align: left; }
+.dlink:hover { border-color: color-mix(in srgb, var(--c) 60%, var(--line)); }
+.dlink .id { font: 500 11.5px/1 var(--mono); color: var(--cyan); flex: none; }
+.dlink .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 30ch; }
+.dlink .st { color: var(--c); font-size: 11px; flex: none; }
+.deps .none { font-size: 12.5px; color: var(--muted); }
+.unblocks { display: grid; gap: 6px; margin-top: 4px; }
+
 
 .notice { margin-top: 24px; padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
@@ -163,6 +244,8 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   .bubble, .card { transition: none; }
 }
 </style>
+</head>
+<body>
 
 <header class="top">
   <div class="brand">
@@ -172,6 +255,7 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   <div class="controls">
     <div class="tabs" role="tablist" aria-label="View">
       <button id="tab-board" role="tab" aria-selected="true" aria-controls="view-board">Board</button>
+      <button id="tab-inbox" role="tab" aria-selected="false" aria-controls="view-inbox">Inbox</button>
       <button id="tab-areas" role="tab" aria-selected="false" aria-controls="view-areas">Game areas</button>
     </div>
     <label class="toggle" for="mvp-only"><input type="checkbox" id="mvp-only" checked> MVP only</label>
@@ -180,8 +264,19 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 </header>
 
 <main>
+  <section class="overview" id="overview" aria-label="Overview"></section>
+  <div class="loadrow" id="loadrow"></div>
   <section id="view-board" role="tabpanel" aria-labelledby="tab-board">
     <div class="board" id="board"></div>
+  </section>
+  <section id="view-inbox" role="tabpanel" aria-labelledby="tab-inbox" hidden>
+    <div class="inbox">
+      <nav class="folders" id="folders" aria-label="Inbox folders"></nav>
+      <div class="inbox-main">
+        <div class="inbox-head" id="inbox-head"></div>
+        <div class="rows" id="rows"></div>
+      </div>
+    </div>
   </section>
   <section id="view-areas" role="tabpanel" aria-labelledby="tab-areas" hidden>
     <div class="summary" id="summary"></div>
@@ -196,9 +291,15 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   <div class="row"><span class="id" id="detail-id"></span></div>
   <h2 id="detail-title"></h2>
   <section class="review" id="detail-review" aria-label="Your review"></section>
+  <section class="deps" id="detail-deps" aria-label="Dependencies"></section>
   <dl id="detail-fields"></dl>
   <div class="moveto" id="detail-move" role="group" aria-label="Move to"></div>
-  <p class="note">A move is a request: the Project Lead applies it to the task file at the next sync.</p>
+  <div class="notefield">
+    <label for="detail-note">Note for the move</label>
+    <textarea id="detail-note" rows="2" placeholder="Needed to cancel a task or send a playtest back; added to the task's result notes"></textarea>
+    <button type="button" class="cancel-task" id="detail-cancel">Cancel task</button>
+  </div>
+  <p class="note">A move changes the task file straight away, through the status script, so the workflow rules apply. The Project Lead hears about it at its next step.</p>
   <div class="dialog-actions"><button class="close" id="detail-close">Close</button></div>
 </dialog>
 
@@ -228,7 +329,7 @@ const AREAS = [
 const AGENTS = {
   "driving-drift": "Drift", "enemy-behavior": "Enemies", "weapon-behavior": "Weapons", "game-data": "Data",
   "level-challenge": "Level", "ui": "UI", "asset-generation": "Art", "sfx": "SFX", "narrative-theme": "Narrative",
-  "qa-integration": "QA", "project-lead": "Lead", "board": "Board",
+  "qa-integration": "QA", "game-loop": "Loop", "project-lead": "Lead", "board": "Board",
 };
 const STATUS_TEXT = {
   "open": "To do", "blocked": "Blocked", "in-progress": "In progress", "in-qa": "In QA",
@@ -237,9 +338,9 @@ const STATUS_TEXT = {
 
 let tickets = [];
 let meta = null;
-let db = null;
 let loaded = false;
 let openArea = null;
+let version = null, lastRead = null, serverDown = false, seenLoaded = false;   // live data from the local server
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const laneOf = (status) => LANES.find((l) => l.statuses.includes(status)) || LANES[0];
@@ -248,9 +349,66 @@ const mvpOnly = () => $("mvp-only").checked;
 const visible = () => tickets.filter((t) => !mvpOnly() || t.milestone === "mvp");
 const idNum = (id) => parseInt(String(id).replace(/\D/g, ""), 10) || 0;
 
+// Dependencies: built from each task's depends_on field.
+let index = new Map();     // id -> ticket
+let dependents = new Map(); // id -> tickets that list it in depends_on
+const closed = (s) => s === "done" || s === "cancelled";
+function buildIndex() {
+  index = new Map(tickets.map((t) => [t.id, t]));
+  dependents = new Map();
+  tickets.forEach((t) => (t.depends_on || []).forEach((d) => {
+    if (!dependents.has(d)) dependents.set(d, []);
+    dependents.get(d).push(t);
+  }));
+}
+const depsOf = (t) => (t.depends_on || []).map((id) => index.get(id) || { id, title: "Not found", status: "open", missing: true });
+const waitingOn = (t) => depsOf(t).filter((d) => !closed(d.status));
+const blocksOf = (t) => dependents.get(t.id) || [];
+// Everything further down the chain that is still open: what finishing this ticket helps unblock.
+function downstream(t) {
+  const seen = new Set(), queue = [t.id];
+  while (queue.length) {
+    for (const d of dependents.get(queue.shift()) || []) {
+      if (seen.has(d.id) || closed(d.status)) continue;
+      seen.add(d.id); queue.push(d.id);
+    }
+  }
+  return seen.size;
+}
+// ready: open and nothing to wait for. waits: something it depends on is unfinished.
+// check: the file says blocked, but everything it depends on is finished.
+function readiness(t) {
+  if (!["open", "blocked"].includes(t.status)) return null;
+  const w = waitingOn(t).length;
+  if (w) return "waits";
+  return t.status === "blocked" ? "check" : "ready";
+}
+const needsYou = (t) => t.status === "needs-playtest" || t.status === "flagged-for-review" || (t.to === "board" && !closed(t.status));
+const statusColor = (s) => s === "blocked" ? "#b7bcf0" : laneOf(s).color;
+
+// "Changed" folder: statuses you have seen, kept in this browser only.
+let seen = {};
+function loadSeen() {
+  let stored = null;
+  try { stored = JSON.parse(localStorage.getItem("tbp-seen") || "null"); } catch {}
+  if (stored && typeof stored === "object") { seen = stored; return; }
+  // First visit: everything counts as seen except what needs you.
+  seen = {};
+  tickets.forEach((t) => { if (!needsYou(t)) seen[t.id] = t.status; });
+  saveSeen();
+}
+function saveSeen() { try { localStorage.setItem("tbp-seen", JSON.stringify(seen)); } catch {} }
+const isUnread = (t) => seen[t.id] !== t.status;
+function markSeen(t) { if (seen[t.id] !== t.status) { seen[t.id] = t.status; saveSeen(); return true; } return false; }
+
 function badges(t) {
   const out = [];
-  if (t.status === "blocked") out.push('<span class="chip blocked">Blocked</span>');
+  const r = readiness(t);
+  const w = r === "waits" ? waitingOn(t).length : 0;
+  if (t.status === "blocked") out.push(`<span class="chip blocked">${r === "waits" ? `Waits on ${w}` : "Blocked"}</span>`);
+  if (r === "check") out.push('<span class="chip check" title="Marked blocked, but everything it depends on is done">Can start?</span>');
+  if (r === "ready") out.push('<span class="chip ready">Ready</span>');
+  if (r === "waits" && t.status === "open") out.push(`<span class="chip waits">Waits on ${w}</span>`);
   if (t.status === "needs-playtest") out.push('<span class="chip playtest">Playtest</span>');
   if (t.status === "flagged-for-review") out.push('<span class="chip flagged">Flagged</span>');
   if (t.status === "cancelled") out.push('<span class="chip cancelled">Cancelled</span>');
@@ -347,23 +505,119 @@ function renderOverlay() {
   $("overlay").hidden = false;
 }
 
+// Inbox
+const FOLDERS = [
+  { key: "you", name: "Needs you", color: "var(--pink)", test: needsYou,
+    blurb: "Playtests waiting for you, tasks flagged after two failed QA rounds, and tickets assigned to you." },
+  { key: "ready", name: "Ready to start", color: "var(--done)", test: (t) => readiness(t) === "ready" && !needsYou(t),
+    blurb: "Open, with everything they depend on finished. The ones that unblock the most come first." },
+  { key: "moving", name: "In progress", color: "var(--qa)", test: (t) => t.status === "in-progress" || t.status === "in-qa",
+    blurb: "An agent or QA is working on these on their task branches." },
+  { key: "waiting", name: "Waiting", color: "#b7bcf0", test: (t) => (readiness(t) === "waits" || readiness(t) === "check") && !needsYou(t),
+    blurb: "Waiting on other tickets. “Can start?” means the file says blocked, but everything it depends on is finished." },
+  { key: "changed", name: "Changed", color: "var(--cyan)", test: isUnread,
+    blurb: "Status changed since you last opened the ticket. Remembered in this browser only." },
+  { key: "all", name: "All open", color: "var(--muted)", test: (t) => !closed(t.status),
+    blurb: "Every ticket that isn't done or cancelled." },
+];
+let folder = "you";
+let agentFilter = null;
+const agentName = (key) => AGENTS[key] || key;
+
+function why(t) {
+  const r = readiness(t);
+  const list = (arr) => arr.map((d) => `<b>${esc(d.id)}</b> (${esc(STATUS_TEXT[d.status] || d.status)})`).join(", ");
+  if (t.status === "needs-playtest") return t.review ? `QA passed. Your review: ${esc(t.review)}` : "QA passed. Waiting for your playtest.";
+  if (t.status === "flagged-for-review") return "Failed QA twice. Needs your call.";
+  if (t.to === "board" && !closed(t.status)) return `Assigned to you · ${esc(STATUS_TEXT[t.status] || t.status)}.`;
+  if (t.status === "in-progress") return t.folder ? `Being worked on in <b>${esc(t.folder)}</b>.` : "Being worked on.";
+  if (t.status === "in-qa") return `QA is checking it${t.qa_rounds ? ` (round ${t.qa_rounds + 1})` : ""}.`;
+  if (r === "check") return `Marked blocked, but everything it depends on is finished: ${list(depsOf(t))}.`;
+  if (r === "waits") return `Waiting on ${list(waitingOn(t))}.`;
+  if (r === "ready") {
+    const n = downstream(t);
+    return `${(t.depends_on || []).length ? "Everything it depends on is done." : "No dependencies."}${n ? ` Finishing it unblocks <b>${n}</b>.` : ""}`;
+  }
+  return esc(STATUS_TEXT[t.status] || t.status) + ".";
+}
+
+function folderItems(key) {
+  const f = FOLDERS.find((x) => x.key === key);
+  let items = visible().filter(f.test);
+  if (agentFilter) items = items.filter((t) => t.to === agentFilter);
+  if (key === "ready") return items.sort((a, b) => downstream(b) - downstream(a) || idNum(a.id) - idNum(b.id));
+  if (key === "waiting") return items.sort((a, b) => (readiness(b) === "check") - (readiness(a) === "check") || waitingOn(a).length - waitingOn(b).length || idNum(a.id) - idNum(b.id));
+  return items.sort((a, b) => idNum(a.id) - idNum(b.id));
+}
+
+function renderInbox() {
+  $("folders").innerHTML = FOLDERS.map((f) => {
+    const n = folderItems(f.key).length;
+    return `<button type="button" data-folder="${f.key}" aria-pressed="${f.key === folder}" style="--c:${f.color}"><span class="dot"></span>${f.name}<span class="n">${n}</span></button>`;
+  }).join("");
+  const f = FOLDERS.find((x) => x.key === folder);
+  const items = folderItems(folder);
+  const actions = [];
+  if (agentFilter) actions.push(`<button type="button" data-act="clear-agent">Show all agents</button>`);
+  if (folder === "changed" && items.length) actions.push(`<button type="button" data-act="seen-all">Mark all as seen</button>`);
+  $("inbox-head").innerHTML = `<h2>${f.name}${agentFilter ? ` · ${esc(agentName(agentFilter))}` : ""}</h2><p>${f.blurb}</p>${actions.join("")}`;
+  $("rows").innerHTML = items.length ? items.map((t) => {
+    const unread = isUnread(t);
+    return `<button type="button" class="irow${unread ? " is-unread" : ""}" data-id="${esc(t.id)}" style="--c:${statusColor(t.status)}" aria-label="${esc(t.id)} ${esc(t.title)}${unread ? ", changed" : ""}">
+      <span class="unread"></span><span class="id">${esc(t.id)}</span>
+      <span class="body"><span class="t">${esc(t.title)}</span><span class="why">${why(t)}</span></span>
+      <span class="tags"><span class="chip">${esc(agentName(t.to))}</span><span class="chip" style="color:${statusColor(t.status)}">${esc(STATUS_TEXT[t.status] || t.status)}</span></span>
+    </button>`;
+  }).join("") : `<div class="empty-inbox">${folder === "you" ? "Nothing is waiting on you." : "Nothing here."}</div>`;
+}
+
+function renderOverview() {
+  const list = visible();
+  const you = list.filter(needsYou);
+  const ready = list.filter(FOLDERS[1].test).sort((a, b) => downstream(b) - downstream(a));
+  const moving = list.filter(FOLDERS[2].test);
+  const waiting = list.filter(FOLDERS[3].test);
+  const canStart = waiting.filter((t) => readiness(t) === "check").length;
+  const counted = list.filter((t) => t.status !== "cancelled");
+  const done = counted.filter((t) => t.status === "done").length;
+  const pct = counted.length ? Math.round((done / counted.length) * 100) : 0;
+  const tile = (key, color, label, value, sub, hot) => `<button type="button" class="tile${hot ? " is-hot" : ""}" data-folder="${key}" style="--c:${color}">
+    <span class="k">${label}</span><span class="v">${value}</span><span class="s">${sub}</span></button>`;
+  $("overview").innerHTML = [
+    tile("you", "var(--pink)", "Needs you", you.length, you.length ? `${esc(you[0].id)} ${esc(you[0].title)}` : "Nothing waiting", you.length > 0),
+    tile("ready", "var(--done)", "Ready to start", ready.length, !ready.length ? "Nothing ready" : downstream(ready[0]) ? `${esc(ready[0].id)} unblocks ${downstream(ready[0])}` : `${esc(ready[0].id)} ${esc(ready[0].title)}`, false),
+    tile("moving", "var(--qa)", "In progress", moving.length, moving.length ? [...new Set(moving.map((t) => agentName(t.to)))].join(", ") : "No agent working", false),
+    tile("waiting", "#b7bcf0", "Waiting", waiting.length, canStart ? `${canStart} marked blocked could start` : "On other tickets", canStart > 0),
+    `<button type="button" class="tile" data-view="areas" style="--c:var(--done)"><span class="k">Done</span><span class="v">${done}<small>/ ${counted.length}</small></span><span class="meter"><i style="width:${pct}%"></i></span></button>`,
+  ].join("");
+  // Open work by agent: ready, in progress, waiting.
+  const open = list.filter((t) => !closed(t.status) && t.to !== "board");
+  const agents = [...new Set(open.map((t) => t.to))].sort((a, b) => open.filter((t) => t.to === b).length - open.filter((t) => t.to === a).length);
+  $("loadrow").innerHTML = agents.length ? `<span class="lbl">Open work by agent</span>` + agents.map((a) => {
+    const mine = open.filter((t) => t.to === a);
+    const seg = (count, color) => count ? `<i style="width:${count * 6}px;background:${color}"></i>` : "";
+    const r = mine.filter((t) => readiness(t) === "ready").length;
+    const m = mine.filter((t) => ["in-progress", "in-qa", "needs-playtest", "flagged-for-review"].includes(t.status)).length;
+    const w = mine.length - r - m;
+    return `<button type="button" class="load" data-agent="${esc(a)}" title="${r} ready, ${m} in progress, ${w} waiting"><b>${esc(agentName(a))}</b><span class="bar">${seg(m, "var(--qa)")}${seg(r, "var(--done)")}${seg(w, "#4a5196")}</span><span class="n">${mine.length}</span></button>`;
+  }).join("") : "";
+}
+
 function renderSync() {
-  const moved = tickets.filter((t) => t.file_status && t.status !== t.file_status).length;
-  const when = meta?.synced_at ? new Date(meta.synced_at).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }) : null;
-  $("syncline").innerHTML = loaded
-    ? `<span>${tickets.length} tickets from tasks/${when ? ` · last synced ${esc(when)}` : ""}</span>` +
-      (moved ? `<span class="pending">${moved} move${moved === 1 ? "" : "s"} waiting for the Project Lead to apply</span>` : "")
-    : "Loading tickets…";
+  const when = lastRead ? lastRead.toLocaleTimeString(undefined, { timeStyle: "medium" }) : null;
+  $("syncline").innerHTML = !loaded ? "Loading tickets…"
+    : serverDown ? `<span class="down">The board server isn't answering. Start it with: python tools/taskboard/server.py</span>`
+    : `<span>${tickets.length} tickets from tasks/ and the open task branches</span><span class="live">● Live${when ? ` · read ${esc(when)}` : ""}</span>`;
 }
 
 function render() {
   renderSync();
   if (loaded && !tickets.length) {
     $("notice").hidden = false;
-    $("notice").textContent = db
-      ? "No tickets loaded yet. The Project Lead fills this board from the task files in tasks/."
-      : "This view can't reach the board's data. Open the page signed in to see the tickets.";
+    $("notice").textContent = serverDown ? "The board server isn't running, so there are no tickets to show." : "No task files found in tasks/.";
   } else $("notice").hidden = true;
+  renderOverview();
+  renderInbox();
   renderBoard();
   renderAreas();
   renderOverlay();
@@ -383,12 +637,13 @@ function openDetail(id) {
     ["Agent", AGENTS[t.to] ? `${AGENTS[t.to]} (${t.to})` : t.to],
     ["Area", area ? area.name : t.epic],
     ["Milestone", t.milestone === "mvp" ? "MVP" : t.milestone === "final-release" ? "Final release" : t.milestone],
-    ["Depends on", (t.depends_on || []).join(", ") || "Nothing"],
     ["Model", t.model ? t.model[0].toUpperCase() + t.model.slice(1) : "Not set"],
     ["File", `<span class="file">${esc(t.file)}</span>`],
   ];
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
   renderReview(t);
+  renderDeps(t);
+  if (markSeen(t)) { renderOverview(); renderInbox(); }
   $("detail-fields").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${k === "File" ? v : esc(v)}</dd>`).join("");
   const cur = laneOf(t.status).key;
   $("detail-move").innerHTML = LANES.map((l) => `<button data-lane="${l.key}" style="--c:${l.color}" ${l.key === cur ? "disabled" : ""}>${l.name}</button>`).join("");
@@ -444,29 +699,53 @@ $("detail-review").addEventListener("click", async (e) => {
   }
 });
 
-function toast(msg) {
+function renderDeps(t) {
+  const link = (d) => `<button type="button" class="dlink" data-id="${esc(d.id)}" style="--c:${statusColor(d.status)}"${d.missing ? " disabled" : ""}>
+    <span class="id">${esc(d.id)}</span><span class="tt">${esc(d.title)}</span><span class="st">${esc(STATUS_TEXT[d.status] || d.status)}</span></button>`;
+  const deps = depsOf(t), blocks = blocksOf(t), down = downstream(t);
+  const r = readiness(t);
+  const chip = r === "ready" ? '<span class="chip ready">Ready to start</span>'
+    : r === "waits" ? `<span class="chip waits">Waiting on ${waitingOn(t).length}</span>`
+    : r === "check" ? '<span class="chip check">Can start?</span>' : "";
+  const openBlocks = blocks.filter((b) => !closed(b.status)).length;
+  $("detail-deps").innerHTML = `<h3>Dependencies ${chip}</h3>
+    ${r === "check" ? '<p class="none">The task file says blocked, but everything it depends on is finished. It may be ready to start.</p>' : ""}
+    <div class="group"><span>Depends on</span>${deps.length ? `<div class="links">${deps.map(link).join("")}</div>` : '<span class="none">Nothing. It can start any time.</span>'}</div>
+    <div class="group"><span>Blocks</span>${blocks.length ? `<div class="links">${blocks.sort((a, b) => idNum(a.id) - idNum(b.id)).map(link).join("")}</div>` : '<span class="none">Nothing waits on this.</span>'}</div>
+    ${down > openBlocks ? `<p class="none">Finishing it helps unblock ${down} unfinished tickets in total, counting ones further down the chain.</p>` : ""}`;
+}
+$("detail-deps").addEventListener("click", (e) => { const b = e.target.closest("button.dlink"); if (b && !b.disabled) openDetail(b.dataset.id); });
+
+function toast(msg, ms = 2600) {
+  document.querySelectorAll(".toast").forEach((x) => x.remove());
   const el = document.createElement("div");
   el.className = "toast"; el.setAttribute("role", "status"); el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2600);
+  setTimeout(() => el.remove(), ms);
 }
 
-async function moveTicket(id, laneKey) {
+// A move goes to the local server, which runs the status script: the task file changes, or the move is refused with a reason.
+async function moveTicket(id, laneKey, note = "", statusOverride = null) {
   const t = tickets.find((x) => x.id === id);
   const lane = LANES.find((l) => l.key === laneKey);
-  if (!t || !lane || laneOf(t.status).key === laneKey) return;
-  // Back to the column the file already says: restore the file's own status (so "blocked" stays blocked).
-  const status = lane.statuses.includes(t.file_status) ? t.file_status : lane.target;
+  if (!t || (!statusOverride && (!lane || laneOf(t.status).key === laneKey))) return false;
+  const status = statusOverride || lane.target;
   const before = t.status;
   t.status = status;
   render();
-  if (!db) { t.status = before; render(); toast("Moves can't be saved in this view."); return; }
   try {
-    await db.collection("tickets").doc(id).update({ status, moved_at: new Date().toISOString() });
-    toast(`${id} moved to ${lane.name}`);
+    const res = await fetch("/api/move", { method: "POST", headers: { "Content-Type": "application/json", "X-Board": "1" },
+      body: JSON.stringify({ id, status, note }) });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(body.error || "The board server refused the move.");
+    markSeen(t);
+    toast(`${id} moved to ${STATUS_TEXT[status] || status}`);
+    await refresh(true);
+    return true;
   } catch (e) {
     t.status = before; render();
-    toast(e?.code === "invalid_argument" ? "You can view this board but not move tickets." : "Couldn't save the move. Try again.");
+    toast(String(e.message || e).replace(/^Refused\. /, ""), 7000);
+    return false;
   }
 }
 
@@ -534,16 +813,32 @@ document.addEventListener("keydown", (e) => {
 });
 
 // View switching and other controls
+const VIEWS = ["board", "inbox", "areas"];
 function showView(which) {
-  const board = which === "board";
-  $("tab-board").setAttribute("aria-selected", board);
-  $("tab-areas").setAttribute("aria-selected", !board);
-  $("view-board").hidden = !board;
-  $("view-areas").hidden = board;
-  try { localStorage.setItem("tb-view", which); } catch {}
+  VIEWS.forEach((v) => {
+    $(`tab-${v}`).setAttribute("aria-selected", v === which);
+    $(`view-${v}`).hidden = v !== which;
+  });
+  try { localStorage.setItem("tbp-view", which); } catch {}
 }
-$("tab-board").addEventListener("click", () => showView("board"));
-$("tab-areas").addEventListener("click", () => showView("areas"));
+VIEWS.forEach((v) => $(`tab-${v}`).addEventListener("click", () => showView(v)));
+function openFolder(key, agent = null) {
+  folder = key; agentFilter = agent;
+  renderInbox(); showView("inbox");
+}
+$("overview").addEventListener("click", (e) => {
+  const b = e.target.closest(".tile"); if (!b) return;
+  if (b.dataset.view) showView(b.dataset.view); else openFolder(b.dataset.folder);
+});
+$("loadrow").addEventListener("click", (e) => { const b = e.target.closest(".load"); if (b) openFolder("all", b.dataset.agent); });
+$("folders").addEventListener("click", (e) => { const b = e.target.closest("button[data-folder]"); if (b) { folder = b.dataset.folder; renderInbox(); } });
+$("inbox-head").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  if (b.dataset.act === "clear-agent") agentFilter = null;
+  if (b.dataset.act === "seen-all") { folderItems("changed").forEach((t) => { seen[t.id] = t.status; }); saveSeen(); renderOverview(); }
+  renderInbox();
+});
+$("rows").addEventListener("click", (e) => { const b = e.target.closest(".irow"); if (b) openDetail(b.dataset.id); });
 $("mvp-only").addEventListener("change", () => { render(); try { localStorage.setItem("tb-mvp", $("mvp-only").checked ? "1" : "0"); } catch {} });
 $("bubbles").addEventListener("click", (e) => { const b = e.target.closest(".bubble"); if (b) { openArea = +b.dataset.area; renderOverlay(); $("area-close")?.focus(); } });
 $("overlay").addEventListener("click", (e) => {
@@ -552,22 +847,48 @@ $("overlay").addEventListener("click", (e) => {
 });
 $("detail-close").addEventListener("click", () => $("detail").close());
 $("detail").addEventListener("click", (e) => { if (e.target === $("detail")) $("detail").close(); });
-$("detail-move").addEventListener("click", (e) => { const b = e.target.closest("button[data-lane]"); if (b && detailId) { moveTicket(detailId, b.dataset.lane); $("detail").close(); } });
+$("detail-move").addEventListener("click", async (e) => {
+  const b = e.target.closest("button[data-lane]");
+  if (!b || !detailId) return;
+  if (await moveTicket(detailId, b.dataset.lane, $("detail-note").value.trim())) { $("detail-note").value = ""; $("detail").close(); }
+});
+$("detail-cancel").addEventListener("click", async () => {
+  if (!detailId) return;
+  const note = $("detail-note").value.trim();
+  if (!note) { toast("Write why in the note first: a cancelled task keeps a note saying why.", 5000); $("detail-note").focus(); return; }
+  if (await moveTicket(detailId, null, note, "cancelled")) { $("detail-note").value = ""; $("detail").close(); }
+});
 try {
-  if (localStorage.getItem("tb-view") === "areas") showView("areas");
+  const v = localStorage.getItem("tbp-view");
+  if (VIEWS.includes(v)) showView(v);
   if (localStorage.getItem("tb-mvp") === "0") $("mvp-only").checked = false;
 } catch {}
 
 render();
 
-(async () => {
-  db = await window.claude?.use?.("db") ?? null;
-  if (!db) { loaded = true; render(); return; }
-  db.collection("tickets").onSnapshot((snap) => {
-    tickets = snap.docs.map((d) => d.data()).filter(Boolean).map((d) => ({ ...d }));
-    loaded = true;
-    render();
-  }, () => { loaded = true; render(); });
-  db.doc("meta/sync").onSnapshot((snap) => { meta = snap.exists ? snap.data() : null; renderSync(); }, () => {});
-})();
+// Live data: the local server reads the task files on every request. The page checks for changes every 2 seconds.
+async function refresh(force = false) {
+  try {
+    if (!force) {
+      const v = await (await fetch("/api/version", { cache: "no-store" })).json();
+      if (v.version === version && !serverDown) return;
+    }
+    const data = await (await fetch("/api/tickets", { cache: "no-store" })).json();
+    tickets = data.tickets || [];
+    version = data.version;
+    lastRead = new Date();
+    serverDown = false;
+    buildIndex();
+    if (!seenLoaded) { loadSeen(); seenLoaded = true; }
+  } catch {
+    serverDown = true;
+  }
+  loaded = true;
+  render();
+  if (detailId && $("detail").open && tickets.some((t) => t.id === detailId)) openDetail(detailId);
+}
+refresh(true);
+setInterval(() => { if (!drag?.started) refresh(); }, 2000);
 </script>
+</body>
+</html>
