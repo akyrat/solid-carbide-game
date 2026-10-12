@@ -1,7 +1,7 @@
 ---
 id: T-110
 title: The task board stops opening terminal windows
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 epic: tooling
@@ -39,11 +39,11 @@ Board review files: none (run `python tools/taskboard/server.py` from `C:\solid-
 
 ## Acceptance criteria
 
-- [ ] `task_folders` in `tools/taskboard_sync.py` runs `git` with `subprocess.CREATE_NO_WINDOW` when `os.name == "nt"`, and with no extra flags otherwise. (QA: pass / fail)
-- [ ] No other subprocess call in `tools/taskboard/server.py`, `tools/taskboard_sync.py` or `tools/task_status.py` (or in anything they import from `tools/`) starts a program without `CREATE_NO_WINDOW` on Windows; QA checks by searching those files for `subprocess`. (QA: pass / fail)
-- [ ] `tools/test_taskboard_sync.py` has a test that fails if `task_folders` stops passing `CREATE_NO_WINDOW` on Windows (the test patches `os.name` and `subprocess.run`, so it runs on any system). (QA: pass / fail)
-- [ ] `task_folders()` still returns this task's own folder for `T-110` when run from the task's folder. (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`, and the Godot tests as described in `game/README.md`. (QA: pass / fail)
+- [ ] `task_folders` in `tools/taskboard_sync.py` runs `git` with `subprocess.CREATE_NO_WINDOW` when `os.name == "nt"`, and with no extra flags otherwise. (QA: pass)
+- [ ] No other subprocess call in `tools/taskboard/server.py`, `tools/taskboard_sync.py` or `tools/task_status.py` (or in anything they import from `tools/`) starts a program without `CREATE_NO_WINDOW` on Windows; QA checks by searching those files for `subprocess`. (QA: pass)
+- [ ] `tools/test_taskboard_sync.py` has a test that fails if `task_folders` stops passing `CREATE_NO_WINDOW` on Windows (the test patches `os.name` and `subprocess.run`, so it runs on any system). (QA: pass)
+- [ ] `task_folders()` still returns this task's own folder for `T-110` when run from the task's folder. (QA: pass)
+- [ ] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`, and the Godot tests as described in `game/README.md`. (QA: pass)
 
 ## Result notes
 
@@ -53,3 +53,11 @@ Done by the Project Lead (2026-10-13).
 - `tools/test_taskboard_sync.py`: two tests patch `os.name` and `subprocess.run`: on `nt` the flag is passed (and the worktree listing is still parsed), elsewhere it is 0. With the fix stashed, the test file fails; with it, it passes.
 - `task_folders()` run in this folder returns `{'T-110': C:\solid-carbide-worktrees\T-110}`.
 - Tests: `tools` 106 OK; `game/tools` 111 OK; Godot 307 of 307 passing (`TESTS PASSED`, exit 0). Godot's `.import` line-ending noise from the test run is left uncommitted.
+
+### QA (QA/Integration, 2026-10-13, round 1)
+
+- 1 pass: `task_folders` passes `creationflags=no_window()`, which is 0x08000000 on `nt` (equal to `subprocess.CREATE_NO_WINDOW`, checked) and 0 otherwise.
+- 2 pass: searched `server.py`, `taskboard_sync.py`, `task_status.py` for `subprocess`, `Popen`, `os.system`, `os.popen`, `startfile`, `spawn`, `webbrowser`; the only process start is the `git worktree list` call. Their only imports from `tools/` are `taskboard_sync` and `task_status`.
+- 3 pass: with `creationflags=no_window()` removed from the call, both new tests fail (7 run, 2 failures); with the fix restored, they pass.
+- 4 pass: `task_folders()` run from this folder returns `C:\solid-carbide-worktrees\T-110` for `T-110`.
+- 5 pass: `tools` 106 OK; `game/tools` 111 OK; Godot 307 of 307 passing, `TESTS PASSED`, exit 0. Godot's `.import` line-ending changes left uncommitted.
