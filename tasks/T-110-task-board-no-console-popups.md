@@ -1,7 +1,7 @@
 ---
 id: T-110
 title: The task board stops opening terminal windows
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: project-lead
 epic: tooling
@@ -13,7 +13,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/taskboard/server.py, tools/taskboard_sync.py, .claude/hooks/board_gate.py]
 files_expected_to_change: [tools/taskboard_sync.py, tools/test_taskboard_sync.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
