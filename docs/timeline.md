@@ -665,3 +665,8 @@ Entry format:
 - Decision or change: the board found a terminal window popping up every 2 seconds and taking the focus while the task board page was open. Cause: the server, started by the session hook without a console, ran `git worktree list` on every refresh, and Windows gave each `git` run a new console window. The server now runs `git` with Windows' no-window flag, and a test guards it. The board checked it ("LGTM") and T-110 is merged.
 - Documents touched: none (tooling)
 - Tasks: T-110 (new, done)
+
+## 2026-10-13: T-111 done: Planning column, reorderable columns and filters on the task board
+- Decision or change: the board asked for a Planning column between To do and In progress: when it mentions a ticket, it drags it there and refines it with the Project Lead until its open questions are answered. New status `planning` (optional): `open` or `blocked` to `planning`; `planning` to `in-progress` only when its dependencies are done, or back to `open` or `blocked`, or cancelled; `in-progress` back to `planning`. The hook tells the Project Lead to bring a planning ticket's open questions to the board. The board then widened the same ticket: the columns can be put in any order by dragging their headers, and the board can be filtered by Ready, Can start?, Waiting and each status, several at once. Both are remembered in the board's browser. Passed QA round 2; the board approved it ("board looks great") and asked for the task board work in one commit, so T-111 is squash-merged.
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `WORKING-WITH-THE-BOARD.md`
+- Tasks: T-111 (new, done)

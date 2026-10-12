@@ -8,6 +8,7 @@ The board follows these tasks on its local task board (`docs/README.md`, "The ta
 
 ## Status rules
 
+- `planning`: the board is refining the ticket with the Project Lead, answering its open questions before work starts (board, 2026-10-13). The board drags a ticket to the Planning column when it mentions it; the Project Lead reads the ticket and brings its open questions to the board. It is optional: a ticket can go straight from `open` to `in-progress`.
 - When QA passes every criterion: a task with a `The board's review:` line moves to `needs-playtest` for the board; any other task is marked `done` and merged by the Project Lead straight away (board, 2026-10-10).
 - Tasks are never deleted. A task that is no longer wanted gets `status: cancelled`, with a short note in its result notes saying why and when, so its content stays on record.
 - A task whose `depends_on` lists any task that is not `done` starts as `blocked`.
@@ -25,7 +26,9 @@ python C:/solid-carbide-game/tools/task_status.py T-012 cancelled --note "Why, a
 
 Always use the main repo's copy of the script, also from a task's branch folder: it finds open task branches and changes the task file where it lives. It checks the workflow, so a task can't skip a phase:
 
-- `open`/`blocked` → `in-progress` only when every task in `depends_on` is `done`.
+- `open`/`blocked` → `planning` always (a blocked ticket can be refined while it waits).
+- `open`/`blocked`/`planning` → `in-progress` only when every task in `depends_on` is `done`.
+- `planning` → `open` or `blocked`, and `in-progress` → `planning`, to go back.
 - `in-progress` → `in-qa` only once the agent has written its result notes.
 - Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
 - `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.

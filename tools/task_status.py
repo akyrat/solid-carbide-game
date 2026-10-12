@@ -100,13 +100,20 @@ def allowed(fields, text, folders):
     if old in FINAL:
         return ok, {"*": f"{old} is final. Write a new task instead (for example \"Rework ({fields.get('id')}): ...\")."}
     if old == "open":
+        rule("planning", True, "")
         rule("in-progress", not deps, f"it depends on unfinished tasks: {', '.join(deps)}")
         rule("blocked", True, "")
     if old == "blocked":
+        rule("planning", True, "", "refined with the board while it waits")
         rule("open", not deps, f"it still depends on unfinished tasks: {', '.join(deps)}")
         rule("in-progress", not deps, f"it still depends on unfinished tasks: {', '.join(deps)}")
+    if old == "planning":
+        rule("in-progress", not deps, f"it depends on unfinished tasks: {', '.join(deps)}")
+        rule("open", True, "")
+        rule("blocked", True, "")
     if old == "in-progress":
         rule("in-qa", has_result_notes(text), "the agent hasn't written its result notes yet")
+        rule("planning", True, "", "back to refining with the board")
         rule("blocked", True, "")
         rule("open", True, "")
     if old == "in-qa":

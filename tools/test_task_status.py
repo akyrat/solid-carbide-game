@@ -105,6 +105,42 @@ class StatusRules(Base):
         self.move("T-002", "in-progress")
         self.assertEqual(self.status("T-002"), "in-progress")
 
+    def test_planning_from_to_do_and_blocked(self):
+        self.put("T-001", status="in-progress")
+        self.put("T-002")
+        self.put("T-003", status="blocked", depends_on="T-001")
+        self.move("T-002", "planning")
+        self.move("T-003", "planning")   # refined while it still waits
+        self.assertEqual((self.status("T-002"), self.status("T-003")), ("planning", "planning"))
+
+    def test_planning_starts_only_when_dependencies_are_done(self):
+        self.put("T-001", status="in-progress")
+        self.put("T-002", status="planning", depends_on="T-001")
+        self.assertIn("T-001 (in-progress)", self.refused("T-002", "in-progress"))
+        self.put("T-001", status="done")
+        self.move("T-002", "in-progress")
+        self.assertEqual(self.status("T-002"), "in-progress")
+
+    def test_planning_goes_back_to_open_or_blocked_or_is_cancelled(self):
+        for back in ("open", "blocked"):
+            self.put("T-001", status="planning")
+            self.move("T-001", back)
+            self.assertEqual(self.status("T-001"), back)
+        self.put("T-001", status="planning")
+        self.assertIn("--note", self.refused("T-001", "cancelled"))
+        self.move("T-001", "cancelled", "Not wanted")
+        self.assertEqual(self.status("T-001"), "cancelled")
+
+    def test_planning_cannot_skip_the_work(self):
+        self.put("T-001", status="planning")
+        for skip in ("in-qa", "needs-playtest", "done", "flagged-for-review"):
+            self.assertIn("Allowed now: in-progress, open, blocked, cancelled", self.refused("T-001", skip))
+
+    def test_in_progress_goes_back_to_planning(self):
+        self.put("T-001", status="in-progress")
+        self.move("T-001", "planning")
+        self.assertEqual(self.status("T-001"), "planning")
+
     def test_qa_needs_result_notes(self):
         self.put("T-001", status="in-progress")
         self.assertIn("result notes", self.refused("T-001", "in-qa"))
@@ -312,6 +348,11 @@ class Handover(Base):
         out = self.run_hook(gate.stop, {"stop_hook_active": False})
         self.assertEqual(out["decision"], "block")
         self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": False}))
+
+    def test_a_move_to_planning_asks_for_the_open_questions(self):
+        text = gate.describe_moves([{"id": "T-002", "from": "open", "to": "planning"}])
+        self.assertIn("T-002 open → planning", text)
+        self.assertIn("planning, read the ticket and bring its open questions to the board", text)
 
     def test_stop_never_loops(self):
         self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": True}))

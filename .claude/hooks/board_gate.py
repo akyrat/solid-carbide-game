@@ -159,7 +159,8 @@ def describe_moves(moves):
             part += f" (note: {m['note']})"
         parts.append(part)
     return ("The board moved these tasks on the task board (the task files are already changed): "
-            + "; ".join(parts) + ". Act on them: start the agent for a task moved to in-progress, run QA for one "
+            + "; ".join(parts) + ". Act on them: for a task moved to planning, read the ticket and bring its open "
+            "questions to the board; start the agent for a task moved to in-progress, run QA for one "
             "moved to in-qa, merge one the board marked done after a playtest, and tell the board what you did.")
 
 

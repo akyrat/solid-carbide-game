@@ -43,7 +43,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## The task board
 - It runs on this computer at http://localhost:8765 and starts with each session (`docs/README.md`, "The task board").
 - The board moves tasks by dragging cards. Its moves reach you through hooks: with its next message, when an agent comes back, and before you finish a turn.
-- Act on them as on any request from the board (start the agent for a task moved to In progress, run QA for one moved to QA, merge one marked Done after a playtest), and report back what you did.
+- Act on them as on any request from the board (for a task moved to Planning, read it and bring its open questions to the board; start the agent for a task moved to In progress, run QA for one moved to QA, merge one marked Done after a playtest), and report back what you did.
 - The old claude.ai task board page is retired.
 
 ## Environment
