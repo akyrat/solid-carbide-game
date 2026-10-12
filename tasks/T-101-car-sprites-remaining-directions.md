@@ -1,7 +1,7 @@
 ---
 id: T-101
 title: Full pixel-art car sprites: the other 15 directions, and swap them in (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [art-archive/README.md, tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [the car sprite sheets and their record files, the PixelLab generation log, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -63,7 +63,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
 - [x] A screenshot of the drift prototype in the isometric view shows the final car, with no change to the driving code (QA: pass)
 - [x] In a run started from the main menu (`game.tscn`), the car is the final art at the right size (about 3 units long, matching its collisions), and screenshots of it driving in several directions show the frames match the car's heading (QA: pass)
-- [ ] Every unused generation is in `art-archive/T-101/` with its record, and `art-archive/README.md` lists it (QA: fail)
+- [ ] Every unused generation is in `art-archive/T-101/` with its record, and `art-archive/README.md` lists it (QA: pass)
 - [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the car in a run and judge its look in all 16 directions; one round only, so problems are reported rather than regenerated.
@@ -170,3 +170,16 @@ No PixelLab calls (balance unchanged at 4986). With `git mv` (nothing deleted), 
 
 Tests: full GUT suite 300/300 (TESTS PASSED); Python `game/tools` 86 OK, `tools` 75 OK. Documents affected: `game/README.md` and `art-archive/README.md`.
 
+
+### QA round 2
+
+**QA/Integration Agent, 2026-10-12. Result: all criteria pass. Status set to `needs-playtest`.** No PixelLab calls made. Checked on branch `task/T-101-car-directions` at b4c7db9. Only the archive criterion failed in round 1, so round 2 rechecks it and re-runs everything that could have been affected.
+
+- **Archive criterion: PASS.** `art-archive/T-101/` holds `car_rot8_v3_0.png` (+ json) and `frames/` with the other 15 raw PNGs, each with its json record. `art-archive/README.md` has 16 T-101 rows covering them all. `game/art/` holds only `car/` (`car_iso`, `car_sw_front`, with json), `placeholders/`, and `pixellab-generation-log.jsonl`. `git log --diff-filter=D --name-only master..HEAD` lists only 15 `game/art/car/frames/*.png.import` files (generated Godot files). The raw frames show as 100% renames (nothing altered or deleted).
+- **Sheet unchanged: PASS.** `car_iso.png` is identical to commit db72f6f. Re-running `build_car_sheet.py` from the archive gives a byte-identical file (same sha256, prefix `0eb4d158`). Only the 15 `source` paths in `car_iso.json` differ from round 1.
+- **Nothing references the archive: PASS.** No `.gd`, `.tscn`, `.tres` or `project.godot` in `game/` mentions `art-archive`; only the build script's source path does.
+- **Run from the main menu: PASS.** `game.tscn` shows the main menu; the Start path (fixture `car_art_from_menu_demo`) shows the run with the final pixel-art car from `car_iso.png` (frame 4 at heading 90).
+- **Tests: PASS.** Full GUT suite 300/300 (31 scripts, TESTS PASSED). `tools` Python tests 75 OK. `game/tools` Python tests OK.
+- Round 1 results for the other six criteria are unchanged (no art, code or test changes since).
+
+Line-ending-only changes to `.import` files and `project.godot` made by running Godot were discarded, not committed.
