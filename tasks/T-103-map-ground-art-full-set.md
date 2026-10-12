@@ -52,3 +52,22 @@ Board review files: the ground art under `game/art/` and the screenshots.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Asset Generation Agent, 2026-10-12**
+
+### Plan and expected cost (written before any PixelLab call)
+
+API re-checked (https://api.pixellab.ai/v2/openapi.json, https://www.pixellab.ai/llms.txt). `/create-tiles-pro` now takes **`style_images`**: reference tiles whose style, palette and *shape* the new tiles copy (tile_type, size and view are then ignored). Passing the approved `road_tile.png` (128 x 64) should give tiles in its 2:1 diamond and night palette directly.
+
+Tiles the map needs (2 x 2 units each, the approved tile's grid; every map edge, block, road and the gravel square sits on even units, so the grid fits the layout exactly):
+
+| Tile | How it is made | Cost |
+|---|---|---|
+| Plain asphalt (road without a line; junction boxes) | Script: the approved tile with its white line pixels replaced by the asphalt beside them | 0 |
+| Crack variants of the asphalt (to break up the repeat) | Script: the plain tile mirrored and shifted by whole units on its own seamless repeat (cracks land elsewhere), plus any plain asphalt the generation call gives | 0 |
+| Centre line of a 24-unit road (centred: the line falls on a tile edge) | Script: the approved tile's own line moved by 1 unit, split into a left-half and a right-half tile, over the plain asphalt | 0 |
+| Roads along world x | Script: every along-y tile mirrored left-right (swapping world x and y is a left-right flip of the 2:1 diamond) | 0 |
+| Zebra crossings at junctions | Script: white stripes (the approved tile's own white) drawn as simple shapes on the plain asphalt; cracks kept over the paint | 0 |
+| Dusty gravel centre (84 x 84 units) | **PixelLab**: one `/create-tiles-pro` call | ~15 generations |
+
+**The one call:** `/create-tiles-pro`, `style_images: [road_tile.png]` (128 x 64), no `tile_feature` (it cannot be combined with style images), description numbering the variations: mostly dusty gravel, plus plain cracked asphalt without lines in the same call (extra variants at no extra cost). T-063's call of the same endpoint at 128 px cost 15 generations for 6 tiles, so **expected cost: about 15 generations** (subscription; balance before: **4971** of 5000). Raw output to `art-archive/T-103/raw/`; tiles used in the game are processed by script (palette check, exact footprint) into `game/art/ground/`. One round only: whatever comes back is used or archived, not regenerated.
