@@ -32,8 +32,10 @@ The board's way of building the game (2026-10-10): always aim for the smallest p
 1. **Bare loop:** the main menu, Start, the run on the MVP map with the timer running down, pause, back to the menu (Garage not wired yet).
 2. **Tricks:** trick popups from the car, so the board can check and tune the tricks.
 3. **Likes:** the likes bar and the level going up from drifting (no level-up screen yet).
-4. **Combo and challenges:** the combo stacking on likes; challenges giving likes, with a popup from the car; the fitted challenges checked as drivable and fun.
-5. **Minions,** then **the weapons,** then the kaiju, the garage, sound and art.
+4. **Combo and challenges:** the combo stacking on likes; challenges giving likes, with a popup from the car; the fitted challenges checked as drivable and fun. (Played 2026-10-11: challenges were then left out of the MVP.)
+5. **The car's art in the game:** the final car in all 16 directions, playtested in a run (board, 2026-10-12).
+6. **Map tiles:** generating the map's tile art (board, 2026-10-12).
+7. **Later:** minions, then the weapons, then the kaiju, the garage and sound. The board moved enemies much later on 2026-10-12.
 
 ## Epics and milestones
 
