@@ -1,8 +1,13 @@
 extends Node2D
 ## The MVP map (task T-019): the city grid, the obstacle pattern copies and the
 ## preset challenges, built from the layout data file
-## (data/level/mvp_map.json, made by game/tools/build_mvp_map.py). Flat
-## placeholder colours; the art comes later.
+## (data/level/mvp_map.json, made by game/tools/build_mvp_map.py).
+##
+## Ground art (task T-103): in the isometric view the roads and the gravel
+## centre are drawn from the ground tile atlas (art/ground/ground_atlas.png),
+## one 2 x 2 unit tile per cell as listed in data/level/mvp_ground.json (both
+## made by game/tools/build_ground_tiles.py). The flat view, the outside of the
+## map and the buildings keep the flat placeholder colours.
 ##
 ## Units and physics match the drift car (scripts/driving/car.gd): 16 pixels per
 ## unit, the flat top-down physics world, the map's centre on this node's origin.
@@ -39,6 +44,8 @@ const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
 
 const LAYOUT_PATH := "res://data/level/mvp_map.json"
+## The ground tiles' layout (T-103): the atlas tile on every 2 x 2 unit cell.
+const GROUND_PATH := "res://data/level/mvp_ground.json"
 ## Pixels per unit, the same as Car.PX_PER_UNIT.
 const PX_PER_UNIT := 16.0
 ## The same 2:1 isometric projection as the drift prototype.
@@ -80,6 +87,8 @@ var challenges_enabled := CHALLENGES_ENABLED
 
 ## The layout data, as loaded from LAYOUT_PATH.
 var layout: Dictionary = {}
+## The ground tiles' layout, as loaded from GROUND_PATH ({} if missing).
+var ground_layout: Dictionary = {}
 ## "flat" or "iso".
 var view := "flat"
 
@@ -93,6 +102,9 @@ var trackers: Dictionary = {}
 ## challenge id -> ChallengeArrow node
 var arrows: Dictionary = {}
 var boulders_draw: Node2D
+var ground_draw: Node2D
+var ground_tiles: Node2D
+var buildings_draw: Node2D
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -125,6 +137,8 @@ static func points_of(arr: Array) -> PackedVector2Array:
 func _ready() -> void:
 	if layout.is_empty():
 		layout = load_layout()
+	if ground_layout.is_empty():
+		ground_layout = load_layout(GROUND_PATH)
 	_build()
 
 
@@ -137,10 +151,18 @@ func _build() -> void:
 	view_root.name = "View"
 	add_child(view_root)
 
-	var ground := _GroundDraw.new()
-	ground.name = "Ground"
-	ground.map = self
-	view_root.add_child(ground)
+	ground_draw = _GroundDraw.new()
+	ground_draw.name = "Ground"
+	ground_draw.map = self
+	view_root.add_child(ground_draw)
+	ground_tiles = _GroundTiles.new()
+	ground_tiles.name = "GroundTiles"
+	ground_tiles.map = self
+	view_root.add_child(ground_tiles)
+	buildings_draw = _BuildingsDraw.new()
+	buildings_draw.name = "Buildings"
+	buildings_draw.map = self
+	view_root.add_child(buildings_draw)
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -512,9 +534,30 @@ func _physics_process(_delta: float) -> void:
 func set_view(v: String) -> void:
 	view = v
 	view_root.transform = ISO_TRANSFORM if v == "iso" else Transform2D.IDENTITY
+	if ground_tiles != null:
+		ground_tiles.visible = v == "iso" and ground_tiles.has_art()
+		# The tiles are drawn in screen pixels: undo the view's projection.
+		ground_tiles.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+		ground_draw.queue_redraw()
 
 
-## Draws the ground, the gravel centre and the buildings.
+## True when the isometric view draws the ground art (T-103) instead of the
+## flat road and gravel colours.
+func uses_ground_art() -> bool:
+	return ground_tiles != null and ground_tiles.visible
+
+
+## Where the top vertex of cell (i, j) of the ground layout is drawn, in the
+## map's screen pixels of the isometric view (the cell's corner with the
+## smallest world x and y, projected).
+func ground_cell_top(i: int, j: int) -> Vector2:
+	var cell := float(ground_layout.cell_units)
+	var corner := Vector2(float(ground_layout.origin[0]) + i * cell, float(ground_layout.origin[1]) + j * cell)
+	return ISO_TRANSFORM * (corner * PX_PER_UNIT)
+
+
+## Draws the outside of the map, and the road and gravel placeholder colours
+## when the ground art is not drawn (the flat view).
 class _GroundDraw extends Node2D:
 	var map
 
@@ -523,9 +566,57 @@ class _GroundDraw extends Node2D:
 		var m: Rect2 = map.rect_of(map.layout.map.rect)
 		var t: float = map.EDGE_WALL_THICKNESS
 		draw_rect(Rect2((m.position - Vector2(t, t)) * u, (m.size + Vector2(2 * t, 2 * t)) * u), map.outside_color)
+		if map.uses_ground_art():
+			return
 		draw_rect(Rect2(m.position * u, m.size * u), map.road_color)
 		var g: Rect2 = map.rect_of(map.layout.gravel)
 		draw_rect(Rect2(g.position * u, g.size * u), map.gravel_color)
+
+
+## The ground art (T-103): one atlas tile per 2 x 2 unit cell, in screen pixels
+## of the isometric view. Each tile is 128 x 64 art pixels drawn at the art's
+## scale (half size: 32 art pixels per unit, 16 world pixels per unit); the
+## tiles' exact footprints fit together with no gap or overlap.
+class _GroundTiles extends Node2D:
+	var map
+	var atlas: Texture2D
+
+	func _init() -> void:
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+	func has_art() -> bool:
+		if atlas == null and not map.ground_layout.is_empty():
+			atlas = load(str(map.ground_layout.atlas))
+		return atlas != null
+
+	func _draw() -> void:
+		if not has_art():
+			return
+		var g: Dictionary = map.ground_layout
+		var tw := float(g.tile_px[0])
+		var th := float(g.tile_px[1])
+		var cols := int(g.atlas_columns)
+		var s: float = float(g.cell_units) * map.PX_PER_UNIT * 2.0 / tw  # 0.5
+		var size := Vector2(tw, th) * s
+		var cells: Array = g.cells
+		for j in cells.size():
+			var row: Array = cells[j]
+			for i in row.size():
+				var k := int(row[i])
+				if k < 0:
+					continue
+				var top: Vector2 = map.ground_cell_top(i, j)
+				var src := Rect2((k % cols) * tw, (k / cols) * th, tw, th)
+				draw_texture_rect_region(atlas, Rect2(top - Vector2(size.x / 2.0, 0.0), size), src)
+
+
+## Draws the buildings (flat placeholder colours) over the ground.
+class _BuildingsDraw extends Node2D:
+	var map
+
+	func _draw() -> void:
+		var u: float = map.PX_PER_UNIT
+		var m: Rect2 = map.rect_of(map.layout.map.rect)
 		for b in map.layout.buildings:
 			var r: Rect2 = map.rect_of(b)
 			draw_rect(Rect2(r.position * u, r.size * u), map.building_color)

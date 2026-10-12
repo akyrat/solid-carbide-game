@@ -409,6 +409,18 @@ def record(tiles):
                              "art-archive/T-103/raw/",
             "used": "gravel: tiles %s; asphalt: tiles %s; not used: 3 and 8" % (GRAVEL_RAW, ASPHALT_RAW),
         },
+        "pixellab_calls": [{
+            "endpoint": "/create-tiles-pro",
+            "job_id": "f6cf663e-3d60-472a-b5df-b03c6d79fc71",
+            "settings": "style_images: [game/art/ground/road_tile.png] (128 x 64); tile_type isometric, "
+                        "tile_size 128, tile_view top-down (ignored with a style image); no tile_feature",
+            "prompt": "in the log line of the call (game/art/pixellab-generation-log.jsonl) and in each raw "
+                      "record in art-archive/T-103/raw/",
+            "cost": "15 generations ($0.00, subscription)",
+            "balance_before": 4971,
+            "balance_after": 4956,
+            "result": "10 tiles: 0-3 dusty gravel, 4-9 plain asphalt; one round, nothing regenerated",
+        }],
         "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
         "layout": "game/data/level/mvp_ground.json",
         "tiles": [{"index": k, "name": name, "atlas_xy": [(k % ATLAS_COLS) * W, (k // ATLAS_COLS) * H], "made": how}

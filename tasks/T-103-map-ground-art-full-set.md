@@ -1,7 +1,7 @@
 ---
 id: T-103
 title: Art: the full ground set for the MVP map, put into the map (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -71,3 +71,33 @@ Tiles the map needs (2 x 2 units each, the approved tile's grid; every map edge,
 | Dusty gravel centre (84 x 84 units) | **PixelLab**: one `/create-tiles-pro` call | ~15 generations |
 
 **The one call:** `/create-tiles-pro`, `style_images: [road_tile.png]` (128 x 64), no `tile_feature` (it cannot be combined with style images), description numbering the variations: mostly dusty gravel, plus plain cracked asphalt without lines in the same call (extra variants at no extra cost). T-063's call of the same endpoint at 128 px cost 15 generations for 6 tiles, so **expected cost: about 15 generations** (subscription; balance before: **4971** of 5000). Raw output to `art-archive/T-103/raw/`; tiles used in the game are processed by script (palette check, exact footprint) into `game/art/ground/`. One round only: whatever comes back is used or archived, not regenerated.
+
+### Result (Asset Generation Agent, 2026-10-12)
+
+**Cost and balance.** One PixelLab call, as planned: `/create-tiles-pro`, style image `road_tile.png`, job `f6cf663e-3d60-472a-b5df-b03c6d79fc71`, **15 generations** ($0.00, subscription). Balance before **4971**, after **4956** of 5000 (checked read-only after the call). One round: nothing regenerated. Prompt and settings: the call's line in `game/art/pixellab-generation-log.jsonl`, each raw record in `art-archive/T-103/raw/`, and `pixellab_calls` in `game/art/ground/ground_atlas.json`. The call returned 10 tiles (128 x 64, already the game's 2:1 diamond): 0-3 dusty gravel, 4-9 plain asphalt.
+
+**Chosen from the call.** Gravel 0, 1, 2; asphalt 4, 5, 6, 7, 9. Not used: 3 (gravel with long tyre-mark stripes in one direction, would repeat visibly over the 84 x 84 gravel square) and 8 (asphalt with big pale patches, reads as a different surface). All 10 raw tiles stay in `art-archive/T-103/raw/` with their records, listed in `art-archive/README.md`.
+
+**Made by script, no generation** (`game/tools/build_ground_tiles.py`): `game/art/ground/ground_atlas.png` (87 tiles) + `ground_atlas.json` (how each tile was made) and `game/data/level/mvp_ground.json` (the tile on each 2 x 2 unit cell). The dark outline along the generated tiles' diamond edge removed (mirrored from further in); plain asphalt from the approved tile with its line painted out (and mirrored); the centre line as two half tiles (the approved tile's own line moved 1 unit, so it sits on the 24-unit road's centre, a tile edge); zebra crossings (0.5-unit white stripes in the approved tile's white, cracks kept over the paint) one tile deep, 2 units before every box where 3 or 4 roads meet, with edge pieces at both road edges; roads along world x are the along-y tiles mirrored. Seven asphalt bases mixed by a fixed hash. No new colours (tested: every atlas pixel comes from the approved tile or the raw tiles). `game/art/ground/` holds only `road_tile.png` and the atlas, with their records.
+
+**In the map.** `scripts/level/mvp_map.gd`: in the isometric view (the run's), a `GroundTiles` node draws the atlas tiles in screen pixels (the view's projection undone), between the outside colour and the buildings; the road and gravel placeholder colours are then not drawn. The flat view, the buildings and the outside keep the placeholders. Physics, layout and boulders unchanged (`mvp_map.json` not touched).
+
+**Check script.** `python game/tools/build_ground_tiles.py check`: ALL PASS for all 87 tiles (128 x 64, no semi-transparent pixels, transparent outside the diamond, 30 colours or fewer, exact tiling footprint).
+
+**Tests.** New: `game/tools/test_build_ground_tiles.py` (14: grid covers the map; every cell matches the layout, no gaps; zebra at every arm of all 4 four-way, 4 three-way inner and 12 edge junctions; centre line on the road centre; exact footprint; technical rules; no new colours; mirroring; committed files up to date) and `game/tests/unit/test_mvp_map_ground.gd` (7: layout covers the map, atlas size, tiles line up with buildings/collisions and the gravel square, iso draws the art and flat the placeholders, tile positions match the projection, draw order). Full GUT suite: **307 of 307 passing**, TESTS PASSED (T-019's and T-097's map tests included). Python tool tests: game/tools **111 OK**, tools **75 OK**.
+
+**Screenshots** (a run from the main menu, `tests/fixtures/ground_from_menu_demo.tscn`; in the git-ignored `screenshots/` of this branch's folder):
+- `screenshots/t103_straight.png`: road between two junctions (-54, -81), centre line and zebra crossings at both ends;
+- `screenshots/t103_junction.png`: 4-way junction (-54, -54), zebra crossings on all four arms;
+- `screenshots/t103_edge_road.png`: the edge road (-108, -81), the map's edge and a T-junction crossing;
+- `screenshots/t103_gravel.png`: the gravel centre (-30, -30) meeting the roads;
+- `screenshots/t103_overview.png`: zoomed out (orthographic size 45): blocks, roads, crossings and gravel lined up.
+No gaps or seams between tiles seen; the ground meets the building blocks and the map edge where the collisions are.
+
+**Problems the board should know (not regenerated: one round).**
+- The **gravel shows a patchwork**: the three gravel tiles differ in brightness and have streaks, so the 2 x 2 unit grid is visible as lighter and darker diamonds across the gravel square (clearest zoomed out).
+- The **centre line is thin and faint** at game scale (the approved tile's own dashed line, 1 to 2 art pixels wide), much weaker than the zebra crossings.
+- Faint crack patterns of the same base still repeat here and there, though mixing seven bases breaks up the regular repeat.
+- The buildings, the outside of the map and the flat view still use placeholder colours (out of scope).
+
+**Documents affected.** `game/README.md` (new section "The map's ground (T-103)"), `art-archive/README.md` (T-103 rows). Files: `game/art/ground/ground_atlas.png` (+ `.json`, `.import`), `game/data/level/mvp_ground.json`, `game/tools/build_ground_tiles.py`, `game/tools/test_build_ground_tiles.py`, `game/scripts/level/mvp_map.gd`, `game/tests/unit/test_mvp_map_ground.gd`, `game/tests/fixtures/ground_from_menu_demo.gd`/`.tscn`, `game/art/pixellab-generation-log.jsonl`, `art-archive/T-103/raw/`, this task file.
