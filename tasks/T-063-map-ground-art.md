@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -9,7 +9,7 @@ milestone: mvp
 user_facing_text: no
 changes_visuals: yes
 depends_on: [T-019, T-097]
-documents_affected: [game/README.md]
+documents_affected: [game/README.md, art-archive/README.md]
 files_to_read_first: [art-archive/README.md, tasks/T-101-car-sprites-remaining-directions.md, tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md]
 files_expected_to_change: [a ground tile PNG and its record under game/art/, a mock-up image, the PixelLab generation log, game/README.md]
 model: sonnet
@@ -57,3 +57,29 @@ Board review files: the tile PNG under `game/art/` and the mock-up image.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Asset Generation Agent, 2026-10-12**
+
+**Endpoint, and why.** Re-checked https://api.pixellab.ai/v2/openapi.json and llms.txt. I used `POST /create-tiles-pro` (`tile_type: isometric`, `tile_size: 128`, `tile_view: top-down`, no `tile_feature`), not T-003's `/create-isometric-tile`. Why: `/create-isometric-tile` has a 64 x 64 canvas limit and a 16 or 32 pixel tile, so a tile would cover 1 unit at the car's density, too small for a lane line and cracks; `/create-tiles-pro` goes to 128 pixels and has a no-depth "top-down" view for a flat surface. The `roads` autotile feature was not used (it makes 18 junction pieces, which is T-103's scope). One call, prompt asked for "1). ..." one tile. Full prompt and settings: `game/art/ground/road_tiles.json`, each raw record in `art-archive/T-063/raw/`, and the log `game/art/pixellab-generation-log.jsonl`.
+
+**Cost and balance.** One call, **15 generations** ($0.00, subscription). Balance before 4986 of 5000, after **4971**. The call returned **six tile variations**, all kept. One round only: no regeneration. The log has two entries for the call: the first run ended in an error because the client could not find the images (the result holds download URLs, not image data); the job had finished and was charged once, so I fixed the client and saved the images by a free `GET /tiles-pro/{tile_id}` (second log entry says so). No second generation.
+
+**What I made.** `game/art/ground/road_tile_0.png` to `road_tile_5.png` (the board picks one), `road_tiles.json`, mock-ups `road_mockup_0.png` to `road_mockup_5.png`. Dark navy-purple asphalt, a white dashed lane line, light cracks, no pavement or crossing. Each has 9 to 18 colours.
+
+**Size and repeat.** The diamond is **128 x 64 pixels, 2 x 2 units** at the car art's density (32 art pixels per unit; the game draws art at scale 0.5, so 64 x 32 screen pixels). Neighbours sit at (+64, +32) across the road (world x) and (-64, +32) along it (world y). A 24-unit road is **12 tiles across**; the lane line runs along the road in the tile's middle, so it repeats as a dashed line down the road. Dashed (not solid) because the dashes show direction and motion at drift speed, and PixelLab made them.
+
+**Processing (no generation).** PixelLab returned a **128 x 128 canvas with a 1:1 diamond**, not the game's 2:1. I kept every second pixel row to make 128 x 64 (`game/tools/build_road_tile.py process`; no new pixels or colours; a top-down square seen at 45 degrees squashed 2:1 is the isometric projection). The raw 128 x 128 images are in `art-archive/T-063/raw/` and listed in `art-archive/README.md`.
+
+**Check script.** `python game/tools/build_road_tile.py check game/art/ground/road_tile_N.png`: all six pass (size 128 x 64, no semi-transparent pixels, transparent outside the diamond, 30 colours or fewer, diamond filled). Python tool tests: 94 OK. GUT: 300 passing, TESTS PASSED. No scene or script changed.
+
+**Mock-up.** Each `road_mockup_N.png` shows the tile as a road 24 units wide and 16 long, with the final car (frame 4) on it at the same art scale, so the tile-to-car scale is as in the game. The line is in column 6 of 12, so it is **one unit off the road's centre**: a tile whose line is centred cannot centre a 12-tile road (a double line or a centre-line piece would solve it in T-103). The side lanes in the mock-up are the same tile with the white pixels painted out by script, a stand-in because there is no plain tile yet.
+
+**Problems the board should know (not regenerated).**
+- Every tile has a **dotted dark outline along its diamond edge**, so the repeat shows a visible grid; the cracks at the corners meet as small star shapes where four tiles join. They do not tile seamlessly.
+- The tiles are **dark and low contrast** (near-black purple), and the white dashes are thin and broken, so the line is faint at game scale.
+- **Tile 5's line runs along the other axis** (world x), so it does not line up with the mock-up's road.
+- The line does not always run exactly through the edge midpoints, so dashes do not always meet across a join.
+- No plain asphalt tile (needed for the side lanes): for T-103.
+- PixelLab's `tile_view: top-down` gave a 1:1 diamond; a 2:1 one needs the squash above (or another view setting, a new generation).
+
+**Files.** New: `game/art/ground/` (tiles, mock-ups, `road_tiles.json`, Godot `.import` files), `art-archive/T-063/raw/` (6 raw PNGs and records), `game/tools/build_road_tile.py` and its tests. Changed: `game/tools/pixellab_client.py` (+ `create-tiles-pro`, URL download with a user agent, 2 tests), `game/art/pixellab-generation-log.jsonl`, `game/README.md` (new section), `art-archive/README.md`.

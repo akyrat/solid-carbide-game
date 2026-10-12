@@ -1,0 +1,25 @@
+{
+ "what": "Six candidate road tiles from ONE /create-tiles-pro call (T-063), processed to the game's 2:1 diamond. road_tile_N.png is raw tile N squashed from 128x128 to 128x64 by keeping every second pixel row (game/tools/build_road_tile.py process); no new pixels or colours.",
+ "raw_originals": "art-archive/T-063/raw/road_tile_N_tile-N.png (+ .json), 128x128 as PixelLab returned them",
+ "call": {
+  "endpoint": "/create-tiles-pro",
+  "job_id": "4054b369-2315-473c-9e05-01723cd64b31",
+  "tile_id": "0a33a2bd-ac8d-4023-9bd2-50de21ef6964",
+  "cost": "15 generations ($0.00, subscription)",
+  "balance_before": 4986,
+  "balance_after": 4971,
+  "request_params": {
+   "description": "1). flat top view of a stretch of night-time city asphalt road, dark navy and purple tinted charcoal asphalt with fine grain, one white dashed lane line running along the road through the middle of the tile from one edge to the opposite edge, a few thin light cracks in the asphalt, no pavement, no zebra crossing, no kerb, retro pixel art, hard pixel edges, limited palette, detailed shading",
+   "tile_type": "isometric",
+   "tile_size": 128,
+   "tile_view": "top-down"
+  }
+ },
+ "size": {
+  "pixels": "128 x 64 (a 2:1 diamond)",
+  "units": "2 x 2 units at the car art's density (32 art pixels per unit); the game draws art at scale 0.5, so 64 x 32 screen pixels"
+ },
+ "repeat": "Lattice offsets (+64, +32) per tile across the road (world x) and (-64, +32) along it (world y), in art pixels. The lane line runs along world y (lower-left to upper-right on screen) in tiles 0 to 4; tile 5's line runs along world x.",
+ "mockups": "road_mockup_N.png: the tile as a road 24 units wide (12 tiles) by 16 units long with the final car (frame 4) on it. The plain side lanes there are the same tile with the white pixels painted out by script (a stand-in; no plain tile exists yet).",
+ "generator": "game/tools/pixellab_client.py, game/tools/build_road_tile.py"
+}

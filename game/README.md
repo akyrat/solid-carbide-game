@@ -175,6 +175,14 @@ Archived versions (2026-10-12): the board approved this original, shadow include
 - **Check the rules** for every frame: `python game/tools/check_sprite_rules.py game/art/car/car_iso.png --frames 16` (each frame has 27 to 33 colours, all from the approved sprite; the default limit is 30, so frames with 31 to 33 print FAIL on that line only; add `--max-colors 33` to check against the approved sprite's own count).
 - **Screenshots** of the car in a run started from the main menu, in any direction: `CAR_HEADING_DEG=<degrees> bash game/tools/screenshot.sh res://tests/fixtures/car_art_from_menu_demo.tscn screenshots/car.png 40` (heading 0 = frame 0; frame = heading / 22.5).
 
+## The first road tile (T-063)
+
+`game/art/ground/`: six candidate asphalt road tiles (`road_tile_0.png` to `road_tile_5.png`, 128 x 64 pixels each) from one PixelLab `/create-tiles-pro` call, with `road_tiles.json` (the call, cost, size and repeat) and mock-ups `road_mockup_0.png` to `road_mockup_5.png` (the tile repeated as a road 24 units wide with the final car on it). Not in the map yet: T-103 does that after the board chooses.
+
+- **Size and repeat:** a 2:1 isometric diamond of 128 x 64 art pixels, **2 x 2 units** at the car art's density (32 art pixels per unit); the game draws art at scale 0.5, so it covers 64 x 32 screen pixels. Neighbours sit at (+64, +32) pixels across the road (world x) and (-64, +32) along it (world y). A road 24 units wide is 12 tiles across.
+- **Raw originals** (128 x 128, a 1:1 diamond) are in `art-archive/T-063/raw/`. `game/tools/build_road_tile.py process` keeps every second row to make the 2:1 diamond (no new pixels or colours); `check` runs the technical rules (size, no semi-transparent pixels, transparent outside the diamond, 30 colours or fewer); `mockup` builds the mock-up. Tests: `game/tools/test_build_road_tile.py`.
+- **The client** (`pixellab_client.py`) now knows `create-tiles-pro`: `/tiles-pro/{tile_id}` answers with storage URLs, which it downloads (the storage host refuses Python's default user agent) and saves one PNG and record per tile.
+
 ## Placeholder car sprite sheets
 
 `game/tools/generate_car_sheets.gd` (tasks T-013 and T-018, Asset Generation Agent) draws the placeholder car: a plain 48 x 16 pixel rectangle, 3 times as long as it is wide (1 unit wide, 3 units long, 16 pixels per unit), with a differently coloured nose (the front 8 pixels), in 16 directions. It is drawn pixel by pixel by a script, not generated with PixelLab, and running it again gives byte-identical files. The drawing code is `game/tools/car_sheet_generator.gd`; its tests are `game/tests/unit/test_car_sheets.gd` (part of the GUT suite).

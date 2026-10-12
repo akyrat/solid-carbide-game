@@ -67,6 +67,12 @@ ENDPOINTS: dict[str, dict[str, Any]] = {
     "/generate-8-rotations-v3": {
         "mode": "async", "multi_image": True, "poll_timeout": 1200.0, "needs_description": False,
     },
+    # T-063: several tile variations; the POST returns the tile set's id, the job's
+    # result is fetched from GET /tiles-pro/{tile_id} as a `tiles` list (each saved with its own record).
+    "/create-tiles-pro": {
+        "mode": "async", "multi_image": True, "result_path": "/tiles-pro/{tile_id}", "ids": ["tile_id"],
+        "poll_timeout": 1200.0,
+    },
     "/create-isometric-tile": {
         "mode": "async",
         "result_path": "/isometric-tiles/{tile_id}",
@@ -198,10 +204,11 @@ def extract_images(response: dict[str, Any]) -> list[tuple[str | None, str]]:
     a base64 string, a {"base64": ...} dict, or a dict holding such an image under
     `image`, with an optional `direction` or `name` label.
     """
-    lists = [response.get("images")]
+    lists = [response.get("images"), response.get("tiles")]
     last = response.get("last_response")
     if isinstance(last, dict):
         lists.append(last.get("images"))
+        lists.append(last.get("tiles"))
     for items in lists:
         if not isinstance(items, list) or not items:
             continue
@@ -303,6 +310,16 @@ def append_log(log_path: Path, entry: dict[str, Any], token: str) -> None:
 
 class Http:
     """Minimal JSON-over-HTTPS client. Replace in tests."""
+
+    def download(self, url: str) -> bytes:
+        """Fetch a file from a storage URL (no token is sent: the URL is public)."""
+        # The storage host answers 403 to Python's default user agent.
+        req = urllib.request.Request(url, method="GET", headers={"User-Agent": "curl/8.0"})
+        try:
+            with urllib.request.urlopen(req, timeout=HTTP_TIMEOUT_SECONDS) as resp:
+                return resp.read()
+        except (urllib.error.HTTPError, urllib.error.URLError) as exc:
+            raise PixelLabError(redact(f"Could not download {url}: {exc}", self.token)) from None
 
     def __init__(self, token: str, base: str = API_BASE):
         self.token = token
@@ -450,6 +467,14 @@ def generate(
             if result.get("usage") and not usage:
                 usage = result.get("usage")
         if spec.get("multi_image"):
+            if isinstance(result.get("storage_urls"), dict) and not (result.get("images") or result.get("tiles")):
+                # /tiles-pro answers with storage URLs (tile_0, tile_1, ...), not image data.
+                urls = result["storage_urls"]
+                order = sorted(urls, key=lambda k: (len(k), k))
+                result = dict(result)
+                result["tiles"] = [
+                    {"name": k, "base64": base64.b64encode(http.download(urls[k])).decode("ascii")} for k in order
+                ]
             records = _save_images(
                 extract_images(result), endpoint=endpoint, params=params, job_id=job_id, ids=ids,
                 usage=usage, consulted=consulted, out_dir=out_dir, name=name, task=task, notes=notes,

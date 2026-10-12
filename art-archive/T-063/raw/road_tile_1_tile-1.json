@@ -1,0 +1,63 @@
+{
+  "file": "road_tile_1_tile-1.png",
+  "endpoint": "/create-tiles-pro",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "1). flat top view of a stretch of night-time city asphalt road, dark navy and purple tinted charcoal asphalt with fine grain, one white dashed lane line running along the road through the middle of the tile from one edge to the opposite edge, a few thin light cracks in the asphalt, no pavement, no zebra crossing, no kerb, retro pixel art, hard pixel edges, limited palette, detailed shading",
+    "tile_type": "isometric",
+    "tile_size": 128,
+    "tile_view": "top-down"
+  },
+  "prompt": "1). flat top view of a stretch of night-time city asphalt road, dark navy and purple tinted charcoal asphalt with fine grain, one white dashed lane line running along the road through the middle of the tile from one edge to the opposite edge, a few thin light cracks in the asphalt, no pavement, no zebra crossing, no kerb, retro pixel art, hard pixel edges, limited palette, detailed shading",
+  "job_id": "4054b369-2315-473c-9e05-01723cd64b31",
+  "tile_id": "0a33a2bd-ac8d-4023-9bd2-50de21ef6964",
+  "usage": {
+    "type": "generations",
+    "generations": 15.0
+  },
+  "generated_at": "2026-10-12T18:47:17+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "tasks/T-063-map-ground-art.md",
+    "docs/visual-style.md",
+    "https://api.pixellab.ai/v2/openapi.json",
+    "https://api.pixellab.ai/v2/llms.txt",
+    "tasks/T-003-pixellab-test-generation.md"
+  ],
+  "task": "T-063",
+  "job_status": "completed",
+  "notes": "T-063 single round: isometric 128px road tile, flat top view. Saved by a free GET /tiles-pro/{tile_id} after the client's first run failed to find images (the response holds storage_urls, not image data); the client was then fixed. No second generation call.",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 1,
+  "result_label": "tile_1",
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "road_tile_0_tile-0.png",
+    "road_tile_1_tile-1.png",
+    "road_tile_2_tile-2.png",
+    "road_tile_3_tile-3.png",
+    "road_tile_4_tile-4.png",
+    "road_tile_5_tile-5.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 15.0
+    },
+    "storage_urls": {
+      "tile_0": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_0.png",
+      "tile_1": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_1.png",
+      "tile_2": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_2.png",
+      "tile_3": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_3.png",
+      "tile_4": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_4.png",
+      "tile_5": "https://backblaze.pixellab.ai/file/pixellab-tiles/a6231a68-cea2-4f54-84e8-8ad5ba9fa7e2/0a33a2bd-ac8d-4023-9bd2-50de21ef6964/tile_5.png"
+    },
+    "kind": "tiles",
+    "tile_rules": null
+  }
+}
