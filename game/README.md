@@ -165,6 +165,8 @@ Its Python tests (`game/tools/test_pixellab_client.py`) run with the Python tool
 
 The board's follow-up (2026-10-12): `game/art/car/car_sw_front_noshadow.png` is the same sprite without the shadow under the car, made by `python game/tools/remove_car_shadow.py game/art/car/car_sw_front.png game/art/car/car_sw_front_noshadow.png` (no PixelLab call; tests: `game/tools/test_remove_car_shadow.py`). Only the shadow pixels became transparent; every other pixel is unchanged. Its record is `car_sw_front_noshadow.json`.
 
+`game/art/car/car_sw_front_noshadow_pixellab.png` (T-014, board request): the same car after a PixelLab `/inpaint` of the shadow area (mask `car_sw_front_noshadow_pixellab_mask.png`); see the task's result notes. The client's HTTP read timeout is now 600 seconds.
+
 ## Placeholder car sprite sheets
 
 `game/tools/generate_car_sheets.gd` (tasks T-013 and T-018, Asset Generation Agent) draws the placeholder car: a plain 48 x 16 pixel rectangle, 3 times as long as it is wide (1 unit wide, 3 units long, 16 pixels per unit), with a differently coloured nose (the front 8 pixels), in 16 directions. It is drawn pixel by pixel by a script, not generated with PixelLab, and running it again gives byte-identical files. The drawing code is `game/tools/car_sheet_generator.gd`; its tests are `game/tests/unit/test_car_sheets.gd` (part of the GUT suite).

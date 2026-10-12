@@ -44,7 +44,7 @@ from typing import Any, Callable
 API_BASE = "https://api.pixellab.ai/v2"
 POLL_INTERVAL_SECONDS = 5.0
 POLL_TIMEOUT_SECONDS = 600.0  # 10 minutes
-HTTP_TIMEOUT_SECONDS = 120.0
+HTTP_TIMEOUT_SECONDS = 600.0  # raised from 120 for T-014: a slow /inpaint call timed out
 TOKEN_VAR = "PIXELLAB_API_KEY"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]

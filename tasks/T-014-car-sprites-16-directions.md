@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -89,6 +89,8 @@ Board review files: `game/art/car/car_sw_front.png`.
 
 2026-10-12: the board loves the sprite and wants to see a version **without the shadow** under the car. Keep the original (`car_sw_front.png`) as it is and add the shadowless version next to it; the car itself must stay exactly the same. Removing the shadow by script is preferred (no generation). The shadow's colour is also used for the windows, the side of the body and the tyres, so a colour swap alone won't do; if a clean result needs PixelLab (for example inpainting only the shadow area with a mask), that is allowed for this one fix (board's request), with one call, recorded like the first.
 
+2026-10-12, third note: the first inpaint call timed out and was charged; the board approved one retry.
+
 ### Shadowless version (Asset Generation Agent, 2026-10-12)
 
 `game/art/car/car_sw_front_noshadow.png` (record `car_sw_front_noshadow.json`), next to the unchanged original. **No PixelLab call** (cost 0; balance unchanged at 4999 of 5000 generations). Made by `game/tools/remove_car_shadow.py` (tests `game/tools/test_remove_car_shadow.py`). The shadow shares its colour with the windows, body side and tyres, so a pixel is made transparent only if it is one of the four near-black colours, connected to the transparent background through such colours, below a hand-placed line along the car's lower edge, and outside two wheel ellipses. 734 pixels changed, all to fully transparent; every other pixel is identical to the original (the test checks this). Check script: size, transparent corners and no semi-transparent pixels pass; still 33 colours (the same palette). I looked at it enlarged on light and dark backgrounds: no stray shadow dots remain and no body, window or tyre part is cut. Side effects to know: the bumper's chrome now has no dark underline, so its lower edge looks lighter and slightly ragged, and a small dark spur remains beside the rear tyre. Python tests 72 OK. Documents affected: `game/README.md`.
@@ -100,4 +102,10 @@ Board review files: `game/art/car/car_sw_front.png`.
 Endpoint `POST /inpaint` (direct; max area 200x200, takes an inpainting image, a mask, `no_background`, isometric and direction settings; `/inpaint-v3` is asynchronous and Pro-priced, and was not needed). I added `/inpaint` to `game/tools/pixellab_client.py` as a direct endpoint. Request: the original `car_sw_front.png` as the inpainting image, the mask `game/art/car/car_sw_front_noshadow_pixellab_mask.png` (white = redraw: the 734 shadow pixels grown by 2 pixels, so the bumper's lower edge, the tyre bottoms and the spot beside the rear tyre are included, plus nearby transparent pixels), 128x128, `no_background: true`, `isometric: true`, `direction: south-west`, `view: high top-down`, selective outline, detailed shading, highly detailed, `text_guidance_scale` 3; prompt and negative description are in the log entry. Balance before: 4999 of 5000.
 
 **The client's read timed out after 120 seconds ("The read operation timed out") and no image was saved.** The log entry says `error`. The balance afterwards reads **4998**, so the call was charged (1 generation) even though the result never reached us; a direct endpoint gives no job id to fetch it later. As instructed (one call only, never retry), I made **no second call**. The output files `car_sw_front_noshadow_pixellab.png` and its record do not exist. Decision for the board or Project Lead: whether to allow one more inpaint call (the same request is saved in the log and mask; the client's HTTP timeout could first be raised from 120 s).
+
+### PixelLab shadowless retry (Asset Generation Agent, 2026-10-12)
+
+The board-approved retry (third note) of the same `/inpaint` request: same original image, same mask (`car_sw_front_noshadow_pixellab_mask.png`), same settings and prompt (in the log and the record). The client's HTTP read timeout was raised from 120 s to 600 s first. Balance before 4998, after **4997** of 5000 (1 generation, $0.00). Saved as `game/art/car/car_sw_front_noshadow_pixellab.png` with its record `.json`; the log has the earlier timed-out entry and this one (2 inpaint calls in all, 2 generations charged). The original and the script version are unchanged.
+
+Check script: 128x128, transparent corners and no semi-transparent pixels pass; **49 colours** (the original had 33, so the inpainting added colours). 534 pixels differ from the original. Seen enlarged on light and dark backgrounds (not a judgement): the car is recognisably the same (stripes, windows, wheels, green, direction), the bumper's lower edge was redrawn as a lighter chrome bar with a small orange light below it. **A shadow is still there**: a hard-edged dark wedge under the whole car, smaller and flatter than the original but still a dark ground shape beside the wheels and under the bumper, so the shadow was reduced, not removed. The body shading and the tyres look slightly changed in places.
 
