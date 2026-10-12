@@ -85,6 +85,8 @@ Every task file says in its header whether it adds or changes anything the playe
 
 Otherwise each field is `no`. The Project Lead sets both fields when writing a task.
 
+**Generated art is archived, never deleted.** Only clean, game-ready art goes under `game/art/`; every other generation goes to `art-archive/<task id>/` with its record (Visual style, Decisions).
+
 **Art replaces placeholders.** When work has a visual and a functional side, the functional task builds it with a placeholder and does not wait for the art. The linked art task lists the functional task in `depends_on` and, once its art is made, swaps it in for the placeholder itself; its acceptance criteria include seeing the final art in the game.
 
 **Player-facing text comes from the Narrative Theme Agent.** When a task has `user_facing_text: yes`, the Project Lead also writes a linked text task for the Narrative Theme Agent: what each piece of text is for, where it appears, any space limit, and the facts it must state. That agent writes the final text in its task's result notes. The main task lists the text task in `depends_on` and uses exactly that text: no placeholder text, and no wording of the building agent's own. If an agent finds its work needs text that its text task doesn't cover, it doesn't write any; it says so in its result notes and the Project Lead gets the text from the Narrative Theme Agent.
