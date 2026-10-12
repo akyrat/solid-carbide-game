@@ -605,3 +605,8 @@ Entry format:
 - Decision or change: T-097 merged on QA's pass. The MVP map has no challenge arrows and no challenges; all 60 pattern copies and their 96 boulders stay where they were, as plain obstacles. The challenge code, data and tests are kept, switched off by one setting in the map script (`CHALLENGES_ENABLED`; how to turn them back on is in `game/README.md`). The map can now place a meteor boulder during a run, with a placement check, for the kaiju's attack (T-046).
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`
 - Tasks: T-097 (done)
+
+## 2026-10-12: The first car sprite; the car's stripes
+- Decision or change: the board wants to start on the car art with one sprite only: the car on the screen diagonal from top-right to bottom-left, front at the bottom-left. The board described the car: like a 1967 Ford Mustang GT, dark green as the main colour, two white stripes down its length, centred as much as possible with a gap between them (Visual style, Decisions; no real badges, as before). T-014 is scoped down to that one sprite, not yet put into the game; the other 15 directions and the swap-in move to new task T-101, which waits for the board's review. T-026 and T-027 now wait for T-101.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-014 (rescoped, started), T-101 (new), T-026, T-027 (depend on T-101)

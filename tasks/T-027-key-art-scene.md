@@ -8,9 +8,9 @@ epic: art
 milestone: final-release
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-014]
+depends_on: [T-101]
 documents_affected: [README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/enemies.md, docs/level-design.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-003-pixellab-test-generation.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/enemies.md, docs/level-design.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md, tasks/T-003-pixellab-test-generation.md]
 files_expected_to_change: [the key-art image and its record, README.md]
 qa_rounds: 0
 ---
@@ -25,7 +25,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Final release. Blocked until T-014 (the final car) is done, and until the minion's and the kaiju's final art exist** (those art tasks are not written yet; when they are, the Project Lead adds them to `depends_on`), so the scene matches the real assets.
+**Final release. Blocked until T-101 (the final car in all 16 directions) is done, and until the minion's and the kaiju's final art exist** (those art tasks are not written yet; when they are, the Project Lead adds them to `depends_on`), so the scene matches the real assets.
 
 A promotional key-art scene, not a screenshot: the dark-green, Mustang-style car with white stripes drifting through the neon, Tokyo-style city at night, green lizard minions closing in, and the Godzilla-style kaiju in its green shield in the background (all as Visual style, Decisions describes them).
 
