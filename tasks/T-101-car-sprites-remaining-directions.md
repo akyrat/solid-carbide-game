@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [art-archive/README.md, tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [the car sprite sheets and their record files, the PixelLab generation log, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,13 +58,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The isometric sheet has 16 frames of 128 by 128 pixels, 22.5 degrees apart, in T-013's exact layout and JSON convention, including T-014's sprite in its frame, and Godot imports it (QA: pass / fail)
-- [ ] A check script shows every frame follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot of the drift prototype in the isometric view shows the final car, with no change to the driving code (QA: pass / fail)
-- [ ] In a run started from the main menu (`game.tscn`), the car is the final art at the right size (about 3 units long, matching its collisions), and screenshots of it driving in several directions show the frames match the car's heading (QA: pass / fail)
-- [ ] Every unused generation is in `art-archive/T-101/` with its record, and `art-archive/README.md` lists it (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] The isometric sheet has 16 frames of 128 by 128 pixels, 22.5 degrees apart, in T-013's exact layout and JSON convention, including T-014's sprite in its frame, and Godot imports it (QA: pass)
+- [x] A check script shows every frame follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass)
+- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [x] A screenshot of the drift prototype in the isometric view shows the final car, with no change to the driving code (QA: pass)
+- [x] In a run started from the main menu (`game.tscn`), the car is the final art at the right size (about 3 units long, matching its collisions), and screenshots of it driving in several directions show the frames match the car's heading (QA: pass)
+- [ ] Every unused generation is in `art-archive/T-101/` with its record, and `art-archive/README.md` lists it (QA: fail)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the car in a run and judge its look in all 16 directions; one round only, so problems are reported rather than regenerated.
 Board review files: the final car sheet under `game/art/`.
@@ -149,3 +149,18 @@ Nose angle on screen, in degrees clockwise from screen right. "Ideal" is the gam
 **Files created:** `game/art/car/car_iso.png` (+ `.import`), `car_iso.json`, `game/art/car/frames/` (15 PNGs with records and `.import` files), `art-archive/T-101/car_rot8_v3_0.png` + `.json`, `game/tools/build_car_sheet.py`, `game/tools/test_build_car_sheet.py`, `game/tests/unit/test_car_final_sheet.gd` (+ `.uid`), `game/tests/fixtures/car_art_from_menu_demo.gd` (+ `.uid`) and `.tscn`. **Changed:** `game/scripts/driving/car_sprite.gd` (iso sheet path and comment), `game/tests/unit/test_drift_prototype.gd` (iso path and scale), `game/tools/pixellab_client.py` and its tests, `game/tools/check_sprite_rules.py` (`--frames`) and its tests, `game/art/pixellab-generation-log.jsonl`, `game/README.md`, `art-archive/README.md`, `agent-notes/asset-generation.md`, this task file.
 
 **Documents affected:** `game/README.md` (new section "The final car sheet (T-101)", the PixelLab client's endpoints, the T-014 section, the layout and pixel-scale notes) and `art-archive/README.md`. No game area doc changed.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-12. Result: six criteria pass, one fails (the archive rule). Status stays `in-qa` for the Project Lead.** No PixelLab calls made. Checked on branch `task/T-101-car-directions` at b5c4e84.
+
+1. **Sheet, layout, import: pass.** `game/art/car/car_iso.png` is 2048 x 128, one row of 16 frames of 128 x 128. `car_iso.json` uses T-013's keys and convention (columns 16, `frame0_heading_deg` 0, the same `frame_from_rotation` formula, 22.5-degree steps, `nose_screen_angle_deg` per frame as in the placeholder), with this sheet's own size, centre and `px_per_unit` 32. Frame 4 cropped from the sheet is byte-identical in all RGBA bytes to `game/art/car/car_sw_front.png` (QA's own Pillow check), and `car_sw_front.png` is unchanged from master. Godot imports it (`.import` committed, GUT `test_sheet_is_16_frames_of_128_and_imports` passes, and the game loads `res://art/car/car_iso.png` in QA's runs).
+2. **Technical rules: pass.** QA ran `python game/tools/check_sprite_rules.py game/art/car/car_iso.png --frames 16`: every frame 128 x 128, transparent corners, 0 semi-transparent pixels. Colours per frame 27 to 33 (eight frames print FAIL on the colour line only, at 31 to 33 against the script's limit of 30). Judged as T-014 did: the approved frame 4 has 33 and was judged "about 30", and every frame uses only that sprite's 33-colour palette (GUT checks this), so all are within "about 30".
+3. **Record: pass.** `game/art/pixellab-generation-log.jsonl` has 9 new T-101 lines: 1 `/generate-8-rotations-v3` (2 generations) and 8 `/rotate` (1 each), 10 generations in all. Each image has a record JSON with the full request settings (`direction_change` 22, views, `from_direction`, `isometric`, `image_guidance_scale`, `color_image`), the prompt (v3's description; `/rotate` has no prompt field, recorded as empty) and usage. Balance before 4996 and after 4986 are in the result notes (consistent with 10 generations; not re-verifiable without a PixelLab call, as in T-014). One round, no regeneration.
+4. **Drift prototype, no driving code change: pass.** QA's own screenshot (`drift_prototype.tscn`, 120 frames, isometric view by default) shows the final green car with white stripes. `git diff master...HEAD -- game/scripts game/scenes` changes only `game/scripts/driving/car_sprite.gd`, and only the iso sheet path and a comment; `car.gd`, `car_model.gd`, `run.gd`, `drift_prototype.gd` and every scene are untouched.
+5. **Run from the main menu, size and heading: pass.** QA's own screenshots with the fixture (`game.tscn`, Start pressed, car turned and driving forward) at headings 0, 45, 90, 157.5, 247.5 and 315: each uses `res://art/car/car_iso.png` at scale 0.5 and picks frames 0, 2, 4, 7, 11, 14; the car's nose points the way the car drives in each, broadly (down-right, down, down-left, left, up, right). Size: 96 px drawing length x 0.5 = 48 world px = 3 units at 16 px per unit (GUT asserts this), and the agent's overlay screenshot shows the car covering its 3 x 1 footprint in every direction, a little shorter in the side views. The heading errors the agent reports (frame 11 about 40 degrees, frame 1 about 20) are visible and are for the board's review.
+6. **Archive: FAIL.** `art-archive/T-101/` holds only v3's unused south-west image, and the README lists it. But the agent left the 15 raw PixelLab generations (7 v3 images and 8 rotations, with records and Godot `.import` files) in `game/art/car/frames/`. The game does not use them (only the processed `car_iso.png` is loaded; the only reference is `build_car_sheet.py`'s source path), and they are not game-ready: QA's check script finds 210 to 272 colours in each rotation and 49 in each v3 image, against the rule's "about 30". Visual style, Decisions (2026-10-12) says `game/art/` holds only clean, game-ready art and every other generation is archived in `art-archive/<task>/` with its record. Suggested fix (no new generation): move `game/art/car/frames/*.png` and `*.json` to `art-archive/T-101/` (drop their `.import` files, as T-014 did), point `build_car_sheet.py`'s source folder and the `source` paths in `car_iso.json` at the archive (outside `game/`, so Godot won't import them; the sheet's pixels need not change), add the 15 files to the table in `art-archive/README.md`, and update `game/README.md` where it mentions the folder.
+7. **Tests: pass.** Full GUT suite `bash game/tools/run_tests.sh`: 300/300 passing, TESTS PASSED (1 known warning). Python: `game/tools` 86 tests OK, `tools` 75 tests OK. Line-ending-only `.import` changes from the Godot runs were left uncommitted.
+
+For the board's review later (not QA failures): the heading errors in frames 1 and 11, the flatter side views (6, 7, 14), and shadows that don't fall the same way in every frame, all reported by the agent and visible in QA's screenshots.
+
