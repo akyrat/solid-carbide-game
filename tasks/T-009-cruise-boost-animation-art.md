@@ -8,7 +8,7 @@ epic: art
 milestone: final-release
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-008]
+depends_on: [T-008, T-105]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, tasks/T-008-cruise-boost-effect.md, docs/extended-narrative.md]
 files_expected_to_change: [the boost animation frames and their record files]
@@ -23,7 +23,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until the board describes what the boost looks like** (Drifting, Open questions) **and the Visual style document has content.** The Project Lead adds the description here and unblocks the task.
+**Blocked until the board describes what the boost looks like** (T-105; Drifting, Open questions). The Project Lead adds the description here.
 
 Linked to T-008, where the Driving & Drift Agent builds the boost with a placeholder. This task makes the final animation that replaces it: a short effect played when W makes the car jump to cruise speed. One round of generation, recorded like every other asset.
 

@@ -30,17 +30,22 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## Merging (Project Lead)
 - Check a merge really happened: `if git merge --no-ff --no-commit <branch>; then ...`.
 - Revert Godot's line-ending-only `.import` noise before committing; never commit it.
-- After marking a task done (`python tools/finish_task.py`), check the tasks it unblocks: some also wait on things not in `depends_on` (T-016, T-027). Set those back to `blocked`.
+- Mark the task done on its branch, before merging: `python tools/task_status.py <id> done --note "<the board's review note>"`.
 - Regenerate the long GDD and the short GDD's fingerprint (`python tools/update_short_gdd_fingerprint.py`), run all three test sets, add a timeline entry, commit, then remove the worktree and branch. Removing a worktree fails while Godot has the folder open; ask the board to close it.
-- After any change, compare every ticket against the task board page, not just the ones you touched.
 
 ## Several Project Leads at once
 - Only one instance merges into `master` at a time. Before choosing a new ticket number, check `tasks/` and `git log` on `master`. Pull `master` before editing docs or the timeline.
+- All instances share one task board server. If the board says its port is taken, tell the board.
 
 ## Course work
 - `course-material/`: one folder per assignment, kept apart from the game. Short, in the board's voice, linking to real files rather than copying them.
 
+## The task board
+- It runs on this computer at http://localhost:8765 and starts with each session (`docs/README.md`, "The task board").
+- The board moves tasks by dragging cards. Its moves reach you through hooks: with its next message, when an agent comes back, and before you finish a turn.
+- Act on them as on any request from the board (start the agent for a task moved to In progress, run QA for one moved to QA, merge one marked Done after a playtest), and report back what you did.
+- The old claude.ai task board page is retired.
+
 ## Environment
-- The task board page (https://claude.ai/artifact/3MeqfoLeaSWXxWbCb5A7op) belongs to the board's first Claude account. Since the board switched accounts on 2026-10-12, it can't be written from the new one: ask the board which account a session runs on before trying to sync it.
 - Secrets only in `.env`. The Unity prototype (`C:\Users\andre\drift-to-survive`) is read-only.
 - If a session or agent is cut off (usage limits), rebuild the state from the worktrees and task files before relaunching, and tell a relaunched agent what was already done and paid for.

@@ -81,6 +81,8 @@ Game decisions live in these documents, never in agent definitions.
 7. It fails a second time: set the status to `flagged-for-review` for the board's manual review.
 8. Record every decision in `docs/timeline.md`, listing the documents it touched.
 
+Every status change in these steps goes through `python tools/task_status.py` (`tasks/README.md`, "Changing a task's status"). The board follows and moves tasks on the local task board (`docs/README.md`, "The task board"): its drags change the task files through the same script, and hooks tell you what it moved. Act on those moves as on any request from the board.
+
 Nothing about the game gets changed outside a task file, except documentation and agent definitions (which you change only after asking the board first).
 
 ## Common rules for every agent

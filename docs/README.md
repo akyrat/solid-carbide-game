@@ -35,12 +35,15 @@ Game decisions live in these documents, and the documents are the source of trut
 
 ## The task board
 
-The board's task board is a published page: <https://claude.ai/artifact/3MeqfoLeaSWXxWbCb5A7op> (source: `tools/taskboard/taskboard.html`, task T-032). It has two views: four lanes (To do, In progress, QA, Done) to drag tickets between, and one bubble per game area doc showing how much of its work is done.
+The task board runs on this computer at <http://localhost:8765> (`tools/taskboard/server.py`, page `tools/taskboard/taskboard.html`). A hook starts it whenever a Claude Code session opens in this repo and shows its address; to start it by hand: `python tools/taskboard/server.py` (`--status`, `--stop`). Views: four lanes (To do, In progress, QA, Done) to drag tickets between, an Inbox (what needs the board, what is ready to start, what is waiting on what), and one bubble per game area doc showing how much of its work is done. Every ticket shows what it depends on and what it blocks.
 
-The task files in `tasks/` stay the source of truth. The page keeps a copy of their headers in its own database, which the Project Lead refreshes:
+The task files in `tasks/` are the board's only data. The server reads them, and the open task branches, every time the page checks (every 2 seconds), so the board is never behind and needs no sync.
 
-- `python tools/taskboard_sync.py export OUT_DIR` writes one JSON document per task, which the Project Lead loads into the page.
-- A drag on the page only marks the ticket "Moved". The Project Lead applies moves to the task files with `python tools/taskboard_sync.py apply MOVES_JSON`, commits, and exports again.
+- **Every status change goes through `python tools/task_status.py T-012 <status>`,** which checks the workflow rules (`tasks/README.md`, "Changing a task's status"). Hooks refuse direct edits to a task file's `status` and `qa_rounds` lines.
+- **A drag on the board is a real move:** the server runs the same status script, so the task file changes straight away, or the card snaps back with the reason. Cancelling, or sending a playtest back, needs a note, written in the ticket's details.
+- **The Project Lead hears about the board's moves** through hooks (`.claude/hooks/board_gate.py`): with the board's next message, when an agent comes back, and before it finishes a turn. It then acts on them (starts the agent, runs QA, merges after a playtest).
+- `.board/` (git-ignored) holds the moves log, the board's inbox for the Project Lead, and the server's log.
+- The page published earlier on claude.ai (task T-032) is gone, together with the `export` and `apply` commands that kept it filled (2026-10-12).
 
 **Which tickets to do next:** `python tools/ticket_impact.py` lists the unfinished MVP tickets with the most other tickets waiting on them, directly and down the chain (`--top N` for more rows, `--all` to include later milestones).
 

@@ -4,7 +4,7 @@ One file per task, named `T-001-short-title.md`, using `_TEMPLATE.md`. Tasks are
 
 Every agent reads this file before starting any task. Every task file lists it first in `files_to_read_first`.
 
-The board follows these tasks on its task board page (`docs/README.md`, "The task board"); the task files here remain the source of truth.
+The board follows these tasks on its local task board (`docs/README.md`, "The task board"), which reads these files directly; the task files here remain the source of truth.
 
 ## Status rules
 
@@ -12,6 +12,26 @@ The board follows these tasks on its task board page (`docs/README.md`, "The tas
 - Tasks are never deleted. A task that is no longer wanted gets `status: cancelled`, with a short note in its result notes saying why and when, so its content stays on record.
 - A task whose `depends_on` lists any task that is not `done` starts as `blocked`.
 - When a task becomes `done`, every task whose `depends_on` tasks are now all `done` moves from `blocked` to `open`, in the same commit that marks the task `done`.
+
+## Changing a task's status
+
+A task changes status only through the status script, never by editing its `status` or `qa_rounds` line (hooks refuse that edit):
+
+```
+python C:/solid-carbide-game/tools/task_status.py T-012             # where it is, and the moves allowed now
+python C:/solid-carbide-game/tools/task_status.py T-012 in-qa        # move it
+python C:/solid-carbide-game/tools/task_status.py T-012 cancelled --note "Why, and when"
+```
+
+Always use the main repo's copy of the script, also from a task's branch folder: it finds open task branches and changes the task file where it lives. It checks the workflow, so a task can't skip a phase:
+
+- `open`/`blocked` → `in-progress` only when every task in `depends_on` is `done`.
+- `in-progress` → `in-qa` only once the agent has written its result notes.
+- Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
+- `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.
+- Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`.
+
+Each move shows on the task board within a couple of seconds. The board moves tasks there too, through this same script, so its moves follow these rules (`docs/README.md`, "The task board").
 
 ## Git branches
 

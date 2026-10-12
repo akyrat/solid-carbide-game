@@ -8,7 +8,7 @@ epic: hud-menus
 milestone: final-release
 user_facing_text: yes
 changes_visuals: yes
-depends_on: []
+depends_on: [T-106, T-078]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/visual-style.md, docs/extended-narrative.md]
 files_expected_to_change: [the recap screen scene and script, and their tests]
@@ -24,7 +24,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Final release. Blocked until** the board has listed the stats the screen shows beyond kills, and described its look; until the game has a complete run (enemies, the kaiju, win and loss) for the screen to follow; and until the Visual style document has content. The Project Lead adds these here, with the tasks it depends on, and unblocks it.
+**Final release. Blocked until** the board has listed the stats the screen shows beyond kills, and described its look (T-106), and until the game has a complete run (enemies, the kaiju, win and loss) for the screen to follow (T-078, the full-run check). The Project Lead adds the board's list here.
 
 Right after a run ends, whether the player won or lost, a recap screen shows how the run went (Game loop architecture, Decisions):
 

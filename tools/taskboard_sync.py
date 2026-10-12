@@ -1,30 +1,24 @@
-"""Keep the task board page (tools/taskboard/taskboard.html) in step with the task files.
+"""Read the task files the way the task board shows them.
 
-The task files in tasks/ are the source of truth. The page shows them from its own small
-database, which the Project Lead fills with this script's output, and the board can drag
-tickets between columns there. A drag is a request: it is applied to the task files here,
-then the page is refreshed from the files.
+The task files in tasks/ are the source of truth. The local task board
+(tools/taskboard/server.py) reads them through tickets_now() on every refresh, including
+open tasks from their branch folders (found with `git worktree list`), so it never needs a
+sync. tools/task_status.py and the hooks (.claude/hooks/board_gate.py) use the same parsing
+helpers. The earlier task board page published on claude.ai, and the export and apply
+commands that kept it filled, are gone (2026-10-12).
 
-Usage, from the repo root:
-
-  python tools/taskboard_sync.py export OUT_DIR [WORKTREES_DIR]
-      Writes one JSON document per task to OUT_DIR/<id>.json, plus OUT_DIR/_meta.json.
-      With WORKTREES_DIR (normally C:/solid-carbide-worktrees), a task whose branch is open
-      in WORKTREES_DIR/<id> is read from there, since its task file is edited on its branch.
-
-  python tools/taskboard_sync.py apply MOVES_JSON
-      MOVES_JSON is a list of {"id": "T-012", "status": "in-progress"} objects (the
-      tickets the board moved). Sets each task file's status line and prints what changed.
+A library, not a command: import it from tools/ (see tools/taskboard/server.py).
 """
 
-import json
 import re
+import subprocess
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 TASKS_DIR = ROOT / "tasks"
+STATE_DIR = ROOT / ".board"   # git-ignored: moves log, board inbox, server log
+BRANCH_RE = re.compile(r"refs/heads/task/(T-\d+)-")
 STATUSES = ["open", "in-progress", "in-qa", "needs-playtest", "blocked", "flagged-for-review", "done", "cancelled"]
 HEADER_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 FIELD_RE = re.compile(r"^(\w+): ?(.*)$", re.M)
@@ -96,74 +90,44 @@ def ticket(path, folder=""):
     }
 
 
-def task_files(tasks_dir=TASKS_DIR):
-    return sorted(tasks_dir.glob("T-*.md"))
+def task_files(tasks_dir=None):
+    return sorted((TASKS_DIR if tasks_dir is None else tasks_dir).glob("T-*.md"))
 
 
-def export(out_dir, tasks_dir=TASKS_DIR, worktrees_dir=None):
-    out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
+def task_folders(root=None):
+    """{task id: worktree folder} for every open task branch, from `git worktree list`."""
+    try:
+        out = subprocess.run(["git", "-C", str(ROOT if root is None else root), "worktree", "list", "--porcelain"],
+                             capture_output=True, text=True, check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return {}
+    folders, path = {}, None
+    for line in out.splitlines():
+        if line.startswith("worktree "):
+            path = Path(line[len("worktree "):])
+        match = BRANCH_RE.match(line[len("branch "):]) if line.startswith("branch ") else None
+        if match and path:
+            folders[match.group(1)] = path
+    return folders
+
+
+def tickets_now(tasks_dir=None, folders=None):
+    """Every task as the board shows it, reading open tasks from their branch folders."""
+    folders = task_folders() if folders is None else folders
     tickets = []
     for path in task_files(tasks_dir):
-        folder = Path(worktrees_dir) / path.name[:5] if worktrees_dir else None
+        folder = folders.get(path.name[:5])
         if folder and (folder / "tasks" / path.name).exists():
             t = ticket(folder / "tasks" / path.name, str(folder))
         else:
             t = ticket(path)
         if t:
             tickets.append(t)
-    for t in tickets:
-        (out_dir / f"{t['id']}.json").write_text(json.dumps(t, indent=2), encoding="utf-8")
-    meta = {"synced_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "count": len(tickets)}
-    (out_dir / "_meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return tickets
 
 
-def set_status(text, status):
-    """The task file's text with its header's status line set to `status`."""
-    if status not in STATUSES:
-        raise ValueError(f"unknown status: {status}")
-    newline = "\r\n" if "\r\n" in text else "\n"
-    match = HEADER_RE.match(text.replace("\r\n", "\n"))
-    if not match:
-        raise ValueError("no header")
-    header = re.sub(r"^status: .*$", f"status: {status}", match.group(1), count=1, flags=re.M)
-    body = text.replace("\r\n", "\n")[match.end():]
-    return f"---\n{header}\n---\n{body}".replace("\n", newline)
-
-
-def apply_moves(moves, tasks_dir=TASKS_DIR):
-    """Apply the board's moves to the task files; returns (id, old, new) for each change."""
-    by_id = {}
-    for path in task_files(tasks_dir):
-        fields = parse_header(path.read_text(encoding="utf-8"))
-        if fields and "id" in fields:
-            by_id[fields["id"]] = (path, fields.get("status"))
-    changed = []
-    for move in moves:
-        path, old = by_id[move["id"]]
-        if old == move["status"]:
-            continue
-        text = path.read_bytes().decode("utf-8")   # keeps CRLF line endings as they are
-        path.write_bytes(set_status(text, move["status"]).encode("utf-8"))
-        changed.append((move["id"], old, move["status"]))
-    return changed
-
-
-def main(argv=None):
-    argv = sys.argv[1:] if argv is None else argv
-    if len(argv) in (2, 3) and argv[0] == "export":
-        tickets = export(argv[1], worktrees_dir=argv[2] if len(argv) == 3 else None)
-        print(f"exported {len(tickets)} tickets to {argv[1]}")
-        return 0
-    if len(argv) == 2 and argv[0] == "apply":
-        moves = json.loads(Path(argv[1]).read_text(encoding="utf-8"))
-        for tid, old, new in apply_moves(moves):
-            print(f"{tid}: {old} -> {new}")
-        return 0
-    print(__doc__, file=sys.stderr)
-    return 2
-
-
-if __name__ == "__main__":
-    sys.exit(main())
+def utf8_output():
+    """Windows consoles default to a code page that can't print arrows; always write UTF-8."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")

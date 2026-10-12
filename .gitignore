@@ -25,3 +25,6 @@ desktop.ini
 # Python bytecode (tools)
 __pycache__/
 *.pyc
+
+# Local task board state: moves log, the board's inbox, server log (tools/taskboard/server.py)
+.board/
