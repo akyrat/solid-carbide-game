@@ -645,3 +645,8 @@ Entry format:
 - Decision or change: the board played a run with the full ground set and approved it ("it looks great"); T-103 merged. The MVP map's isometric view now shows the final ground: asphalt roads built from the approved tile with mixed crack variants, centred white lines, zebra crossings at every junction, the edge road and the gravel centre. One PixelLab call (15 generations; balance 4,956); everything else made by script. Raw tiles in `art-archive/T-103/`. A usage limit cut off the first agent after its PixelLab call; a second agent finished from the saved images without calling again. The buildings, boulders and the area outside the map are still placeholders. The task board page belongs to the previous account and could not be updated from this one.
 - Documents touched: `game/README.md`, `art-archive/README.md`
 - Tasks: T-103 (done)
+
+## 2026-10-12: Course material folder
+- Decision or change: the board asked for a place for course assignments, kept apart from the game: `course-material/`, one folder per assignment. The first, `asset-pipeline/`, is a short readme for the board's tutor showing the asset pipeline, the board's workflow and examples of the board's feedback (the car's shadow, the hand-edited road line), linking to the real agents, task files, art and archive rather than copying them.
+- Documents touched: `course-material/README.md`, `course-material/asset-pipeline/README.md`
+- Tasks: none (documentation)
