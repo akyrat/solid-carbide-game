@@ -25,4 +25,4 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- 2026-10-12, the local task board: the board follows and moves tasks at http://localhost:8765, which reads the task files directly. Every status change goes through `python tools/task_status.py` (hooks refuse hand edits of `status` and `qa_rounds`), and it enforces the workflow: no start before `depends_on` is done, no QA without result notes, every criterion marked before leaving QA. So a task that waits on a board decision or an unwritten task needs that dependency as a real ticket in `depends_on` (T-104 to T-106 for T-009, T-016, T-017), or the auto-unblock reopens it. The board's drags reach me through hooks; I act on them like requests and report back. On a task branch, mark it done there before merging.
