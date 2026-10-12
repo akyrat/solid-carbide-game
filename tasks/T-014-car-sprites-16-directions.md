@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -92,3 +92,5 @@ Board review files: `game/art/car/car_sw_front.png`.
 ### Shadowless version (Asset Generation Agent, 2026-10-12)
 
 `game/art/car/car_sw_front_noshadow.png` (record `car_sw_front_noshadow.json`), next to the unchanged original. **No PixelLab call** (cost 0; balance unchanged at 4999 of 5000 generations). Made by `game/tools/remove_car_shadow.py` (tests `game/tools/test_remove_car_shadow.py`). The shadow shares its colour with the windows, body side and tyres, so a pixel is made transparent only if it is one of the four near-black colours, connected to the transparent background through such colours, below a hand-placed line along the car's lower edge, and outside two wheel ellipses. 734 pixels changed, all to fully transparent; every other pixel is identical to the original (the test checks this). Check script: size, transparent corners and no semi-transparent pixels pass; still 33 colours (the same palette). I looked at it enlarged on light and dark backgrounds: no stray shadow dots remain and no body, window or tyre part is cut. Side effects to know: the bumper's chrome now has no dark underline, so its lower edge looks lighter and slightly ragged, and a small dark spur remains beside the rear tyre. Python tests 72 OK. Documents affected: `game/README.md`.
+
+2026-10-12, second note: the board doesn't like how the script-edited versions look and asks for a shadowless version made with PixelLab, using a generation (board's request). Use **one** PixelLab call that keeps the car: inpaint the original `car_sw_front.png` with a mask over the shadow area, including the bumper's lower edge and the spot beside the rear tyre, so PixelLab redraws them cleanly with a transparent background. Keep the original and the script version as they are, and save the result as a new file with its own record. If inpainting can't be done at this size or can't keep the background transparent, stop and report; don't make a fresh generation of a different car.
