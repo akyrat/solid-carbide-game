@@ -1,7 +1,7 @@
 ---
 id: T-103
 title: Art: the full ground set for the MVP map, put into the map (PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
