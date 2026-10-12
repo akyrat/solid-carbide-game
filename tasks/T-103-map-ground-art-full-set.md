@@ -1,7 +1,7 @@
 ---
 id: T-103
 title: Art: the full ground set for the MVP map, put into the map (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md, art-archive/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, tasks/T-063-map-ground-art.md, tasks/T-019-build-mvp-map.md, tasks/T-097-mvp-map-without-challenges.md, tasks/T-101-car-sprites-remaining-directions.md, art-archive/README.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the map's scenes and drawing code, tests, art-archive/, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Every ground tile is under `game/art/` with its record, and a check script shows each follows Visual style's technical rules (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] In a run started from the main menu, the map shows the final ground (roads, white lines, zebra crossings, the edge road, gravel centre) with no gaps or seams, lined up with the map's layout and collisions (screenshots) (QA: pass / fail)
-- [ ] T-019's and T-097's map tests still pass: the layout and boulders are unchanged (QA: pass / fail)
-- [ ] Every unused or raw generation is in `art-archive/T-103/` with its record and listed in `art-archive/README.md` (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] Every ground tile is under `game/art/` with its record, and a check script shows each follows Visual style's technical rules (QA: pass)
+- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [x] In a run started from the main menu, the map shows the final ground (roads, white lines, zebra crossings, the edge road, gravel centre) with no gaps or seams, lined up with the map's layout and collisions (screenshots) (QA: pass)
+- [x] T-019's and T-097's map tests still pass: the layout and boulders are unchanged (QA: pass)
+- [x] Every unused or raw generation is in `art-archive/T-103/` with its record and listed in `art-archive/README.md` (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest a run and judge the ground's look; one round only, so problems are reported rather than regenerated.
 Board review files: the ground art under `game/art/` and the screenshots.
@@ -101,3 +101,23 @@ No gaps or seams between tiles seen; the ground meets the building blocks and th
 - The buildings, the outside of the map and the flat view still use placeholder colours (out of scope).
 
 **Documents affected.** `game/README.md` (new section "The map's ground (T-103)"), `art-archive/README.md` (T-103 rows). Files: `game/art/ground/ground_atlas.png` (+ `.json`, `.import`), `game/data/level/mvp_ground.json`, `game/tools/build_ground_tiles.py`, `game/tools/test_build_ground_tiles.py`, `game/scripts/level/mvp_map.gd`, `game/tests/unit/test_mvp_map_ground.gd`, `game/tests/fixtures/ground_from_menu_demo.gd`/`.tscn`, `game/art/pixellab-generation-log.jsonl`, `art-archive/T-103/raw/`, this task file.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-12.** Checked on `task/T-103-ground-full-set` at 2ef75da. No PixelLab calls made. **All 6 criteria pass.** Status set to needs-playtest.
+
+1. **Tiles under `game/art/` with records, check script: pass.** `game/art/ground/` holds only `road_tile.png` (+ `.json`) and `ground_atlas.png` (+ `ground_atlas.json`), each with its `.import`. `python game/tools/build_ground_tiles.py check`: ALL PASS for all 87 atlas tiles. The approved `road_tile.png` and its record are byte-identical to master (`git diff master..HEAD` is empty for both).
+2. **PixelLab record, one round: pass.** The branch adds exactly one line to `game/art/pixellab-generation-log.jsonl`: `/create-tiles-pro`, task T-103, job `f6cf663e-...`, full prompt, 15 generations, 10 files. Settings (style image `road_tile.png`, tile_type, size and view) are in each raw record's `request_params` and in `pixellab_calls` in `ground_atlas.json`, which also gives the cost (15 generations, $0.00) and the balance from 4971 to 4956. There are no other T-103 calls, and the plan was written before the call (commit 34598c2, before 2b3854b).
+3. **Final ground in a run from the main menu, lined up, no gaps or seams: pass.** These are my own screenshots, taken with a scratch fixture that starts `game.tscn`, presses Start, places the car and holds W. The fixture was deleted afterwards and not committed. The screenshots are in the git-ignored `screenshots/qa/` of the branch folder:
+   - `qa_straight.png`, at (0, -70): a straight road with its centre line and zebra crossings at both junctions;
+   - `qa_junction.png`, at (50, 58): a 4-way junction with zebra crossings on all four arms;
+   - `qa_edge_road.png`, at (108, 20): the edge road meeting the map edge cleanly, and a T-junction crossing;
+   - `qa_gravel.png`, at (20, 15): the gravel centre;
+   - `qa_overview.png`, zoomed out to 45: the blocks, roads, crossings, boulders and gravel lined up;
+   - `qa_collision.png`: the car driven at a block stops at x = -11.5, which is the block edge (-12) plus half the car's width. On screen it stops at the drawn block edge.
+   I saw no gaps or seams between tiles. The ground meets the blocks and the map edge where the collisions are. The car drives normally on the art: at full throttle its speed rises from 213 to 305 over 20 frames.
+4. **T-019 and T-097 map tests, layout and boulders unchanged: pass.** `game/data/level/mvp_map.json` is untouched. `test_mvp_map.gd` and `test_mvp_map_no_challenges.gd` are unchanged and pass. The flat view still works: with `map.set_view("flat")` the run draws the placeholder colours and `uses_ground_art()` is false (screenshot `qa_flat.png`), and the GUT test for it passes.
+5. **Archive: pass.** All 10 raw tiles are in `art-archive/T-103/raw/`, each with its `.json` record. `art-archive/README.md` has 4 T-103 rows covering tiles 0-9 (used as sources: 0-2, 4-7, 9; not used: 3, 8, with reasons). `git log --diff-filter=D master..HEAD` lists nothing, so nothing was deleted. There are no `.import` files under `art-archive/`.
+6. **Full GUT suite and Python tool tests: pass.** `bash game/tools/run_tests.sh`: 307 of 307 passing, TESTS PASSED, exit code 0. Its 1 warning is GUT ignoring an inner class, which is not a failure. `python -m unittest discover -s tools -p "test_*.py"`: 75 OK. `-s game/tools`: 111 OK.
+
+**For the board's review, not QA failures.** The gravel shows a clear light/dark diamond grid, most visible in `qa_gravel.png` and `qa_overview.png`. The centre line is thin and faint next to the zebra crossings. The buildings and the outside of the map are still placeholder colours, which is out of scope.
