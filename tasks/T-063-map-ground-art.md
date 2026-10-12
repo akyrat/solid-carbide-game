@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
