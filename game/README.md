@@ -175,6 +175,15 @@ Archived versions (2026-10-12): the board approved this original, shadow include
 - **Check the rules** for every frame: `python game/tools/check_sprite_rules.py game/art/car/car_iso.png --frames 16` (each frame has 27 to 33 colours, all from the approved sprite; the default limit is 30, so frames with 31 to 33 print FAIL on that line only; add `--max-colors 33` to check against the approved sprite's own count).
 - **Screenshots** of the car in a run started from the main menu, in any direction: `CAR_HEADING_DEG=<degrees> bash game/tools/screenshot.sh res://tests/fixtures/car_art_from_menu_demo.tscn screenshots/car.png 40` (heading 0 = frame 0; frame = heading / 22.5).
 
+## The first road tile (T-063)
+
+`game/art/ground/road_tile.png` (128 x 64 pixels, 8-bit RGBA, 9 colours) and its record `road_tile.json`: the board-approved asphalt road tile (2026-10-12): dark navy-purple asphalt, light cracks, a white dashed lane line. Not in the map yet: T-103 does that.
+
+- **Size and repeat:** a 2:1 isometric diamond of 128 x 64 art pixels, **2 x 2 units** at the car art's density (32 art pixels per unit); the game draws art at scale 0.5, so it covers 64 x 32 screen pixels. Neighbours sit at (+64, +32) pixels across the road (world x) and (-64, +32) along it (world y); the tile is cut to the exact footprint, so repeats have 0 gaps and 0 overlaps. The line runs along world y. A road 24 units wide is 12 tiles across, so a centred line needs a double line or a centre-line piece (T-103).
+- **How it was made:** one PixelLab `/create-tiles-pro` call (six variations) -> tile 1 squashed to 2:1 -> `build_road_tile.py fix` (edge outline removed, line brightened) -> the board edited the line by hand. Everything else (the other five tiles, the script-fix step, the board's indexed original and every mock-up, including the approved tile's `road_mockup.png`) is in `art-archive/T-063/`; T-103 may take tiles from there to break up the repeating cracks.
+- **Tool:** `game/tools/build_road_tile.py` (`process`, `fix`, `check`, `mockup`; tests in `game/tools/test_build_road_tile.py`). Check the tile: `python game/tools/build_road_tile.py check game/art/ground/road_tile.png`.
+- **The client** (`pixellab_client.py`) now knows `create-tiles-pro`: `/tiles-pro/{tile_id}` answers with storage URLs, which it downloads (the storage host refuses Python's default user agent) and saves one PNG and record per tile.
+
 ## Placeholder car sprite sheets
 
 `game/tools/generate_car_sheets.gd` (tasks T-013 and T-018, Asset Generation Agent) draws the placeholder car: a plain 48 x 16 pixel rectangle, 3 times as long as it is wide (1 unit wide, 3 units long, 16 pixels per unit), with a differently coloured nose (the front 8 pixels), in 16 directions. It is drawn pixel by pixel by a script, not generated with PixelLab, and running it again gives byte-identical files. The drawing code is `game/tools/car_sheet_generator.gd`; its tests are `game/tests/unit/test_car_sheets.gd` (part of the GUT suite).

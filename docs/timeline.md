@@ -635,3 +635,8 @@ Entry format:
 - Decision or change: the board edited the white line of the script-fixed road tile by hand (removing the "+" marks at the tile joins) and approved it as the road tile (T-063). Pavements move after the MVP (Visual style, Decisions; Level design, Open questions): the roads meet the building blocks directly. T-103 (the full ground set) updated to match.
 - Documents touched: `docs/visual-style.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-063 (approved), T-103 (changed)
+
+## 2026-10-12: T-063 done: the road tile
+- Decision or change: T-063 merged after the board's approval and QA: the board's hand-edited road tile (`game/art/ground/road_tile.png`, 2 by 2 units, white dashed line, light cracks) is in master, not yet in the map. The other tiles, the script fix and the mock-ups are in `art-archive/T-063/`. T-103 (the rest of the ground, put into the map) is unblocked and waits for the board's go, since it needs PixelLab generations.
+- Documents touched: `game/README.md`, `art-archive/README.md`
+- Tasks: T-063 (done), T-103 (unblocked)

@@ -277,6 +277,30 @@ class GenerateTests(unittest.TestCase):
         self.assertEqual(len(log), 1)
         self.assertEqual(log[0]["files"], rec["file"])
 
+    def test_tiles_pro_fetches_tiles_list_from_its_result_path(self):
+        tiles = [{"index": i, "base64": png_b64(32, 16)} for i in range(2)]
+        http = FakeHttp([
+            (200, {"background_job_id": "job-t", "tile_id": "tid-1", "status": "processing"}),
+            (200, {"status": "completed", "last_response": {"tile_id": "tid-1"}}),
+            (200, {"tiles": tiles, "usage": {"type": "generations", "generations": 1}}),
+        ])
+        rec = self.run_gen(http, "/create-tiles-pro", {"description": "1). road", "tile_type": "isometric"}, name="road")
+        self.assertEqual(rec["file"], ["road_0.png", "road_1.png"])
+        self.assertEqual(http.calls[-1][:2], ("GET", "/tiles-pro/tid-1"))
+
+    def test_tiles_pro_storage_urls_are_downloaded(self):
+        class UrlHttp(FakeHttp):
+            def download(self, url):
+                return make_png(32, 16)
+        http = UrlHttp([
+            (200, {"background_job_id": "job-t", "tile_id": "tid-2", "status": "processing"}),
+            (200, {"status": "completed", "last_response": {}}),
+            (200, {"kind": "tiles", "storage_urls": {"tile_0": "https://x/0.png", "tile_1": "https://x/1.png"},
+                   "usage": {"type": "generations", "generations": 15}}),
+        ])
+        rec = self.run_gen(http, "/create-tiles-pro", {"description": "1). road"}, name="road")
+        self.assertEqual(rec["file"], ["road_0_tile-0.png", "road_1_tile-1.png"])
+
     def test_multi_image_refuses_to_overwrite(self):
         out = self.dir / "out"
         out.mkdir()
