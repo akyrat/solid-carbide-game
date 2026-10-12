@@ -2,11 +2,16 @@ extends Sprite2D
 ## Draws the car from a 16-direction sprite sheet, picking the frame closest to
 ## the car's heading. The layout (frame size, frame count, step, centre pixel,
 ## pixels per unit) is read from the JSON file next to each sheet, so the full
-## pixel-art sheets (task T-014) drop in with no code change.
+## pixel-art sheets drop in with no code change.
+##
+## The isometric view uses the final pixel-art car (task T-101, 128 x 128
+## frames, scaled to the world from its px_per_unit); the flat view keeps the
+## placeholder (Visual style, Decisions: the final car is drawn for the
+## isometric view only).
 
 const SHEETS := {
 	"flat": "res://art/placeholders/car/car_flat",
-	"iso": "res://art/placeholders/car/car_iso",
+	"iso": "res://art/car/car_iso",
 }
 
 var layout := {}

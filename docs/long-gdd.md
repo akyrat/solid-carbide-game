@@ -509,7 +509,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact.
 - **The kaiju:** a giant monster several times the car's size, in the style of Godzilla.
 - **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player.
-- The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions).
+- The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions). At some point (not scheduled yet) it moves to **32 directions**, 11.25 degrees apart, built from the approved 16 (board, 2026-10-12).
 - Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set.
 
 ### Content
@@ -615,6 +615,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `426f70392214aaf25e4a3293e1a84e5ff99e18d9e814a3f2fbbb0987d7bf5b44` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
-| `visual-style.md` | `970bae4999409f935501d1b6655790447107d32e7b0c888dc5d1ebd623b7d52a` |
+| `visual-style.md` | `5082b21addeb6417be58b2587e1c8a71e84c20547bc5886575204531d3fd53f4` |
 | `extended-narrative.md` | `b57fa97780483828e67b4b5670b12e345e9d28f9aa1d93c70cd8a68e3146991b` |
 | `hud-and-menus.md` | `cd34679fdbe0a6d78f5157994dd2780d1b7a869bef25bd7727f3c86d5d667a1e` |

@@ -620,3 +620,8 @@ Entry format:
 - Decision or change: T-014 merged after the board's review and QA round 2: the approved car sprite (`game/art/car/car_sw_front.png`, front to the bottom-left, shadow included) is in master, not yet in the game; the other versions and T-003's test art are in `art-archive/`. The board set the next steps: the car's other 15 directions, put into the game for a playtest (T-101, started), then generating map tile art. Enemies come much later ("Building in playable steps", `tasks/README.md`).
 - Documents touched: `tasks/README.md`, `game/README.md`
 - Tasks: T-014 (done), T-101 (started)
+
+## 2026-10-12: T-101 done: the car in 16 directions; 32 directions later
+- Decision or change: the board played the final car in a run and really likes its look; T-101 merged as is (16 directions from the approved sprite, 10 generations; raw generations in `art-archive/T-101/`). The board wants 32 directions at some point (Visual style, Decisions): new task T-102, final-release milestone, not scheduled. T-027 stays blocked (it also waits for the minion's and kaiju's art). Next: the map tiles.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`, `art-archive/README.md`
+- Tasks: T-101 (done), T-102 (new), T-026 (unblocked)

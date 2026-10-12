@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Checks a generated sprite against Visual style's technical rules (T-014).
 
-Usage: python game/tools/check_sprite_rules.py SPRITE.png [--size 128] [--max-colors 30]
+Usage: python game/tools/check_sprite_rules.py SPRITE.png [--size 128] [--max-colors 30] [--frames N]
+
+With --frames N the PNG is a one-row sheet of N frames (T-101), and each frame
+is checked on its own.
 
 Rules checked: exact frame size, RGBA, transparent background (all four corners
 and some border pixels fully transparent), no semi-transparent pixels (alpha is
@@ -60,6 +63,12 @@ def check(path, size=128, max_colors=30):
     """Returns (results, info): results is a list of (rule, ok, detail)."""
     with open(path, "rb") as f:
         w, h, rows = decode_png(f.read())
+    return check_rows(rows, size, max_colors)
+
+
+def check_rows(rows, size=128, max_colors=30):
+    """The same checks on decoded rows (a list of rows of (r, g, b, a))."""
+    h, w = len(rows), len(rows[0])
     px = [p for r in rows for p in r]
     results = [("frame size %dx%d" % (size, size), (w, h) == (size, size), "%dx%d" % (w, h))]
     corners = [rows[0][0], rows[0][-1], rows[-1][0], rows[-1][-1]]
@@ -76,12 +85,39 @@ def check(path, size=128, max_colors=30):
     return results, info
 
 
+def split_sheet(rows, frames):
+    """Splits a one-row sheet into `frames` equal frames (lists of rows)."""
+    w = len(rows[0])
+    if w % frames:
+        raise ValueError("sheet width %d is not a multiple of %d frames" % (w, frames))
+    fw = w // frames
+    return [[r[i * fw:(i + 1) * fw] for r in rows] for i in range(frames)]
+
+
+def check_sheet(path, frames, size=128, max_colors=30):
+    """Checks every frame of a one-row sheet. Returns a list of (results, info), one per frame."""
+    with open(path, "rb") as f:
+        w, h, rows = decode_png(f.read())
+    return [check_rows(fr, size, max_colors) for fr in split_sheet(rows, frames)]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("sprite")
     ap.add_argument("--size", type=int, default=128)
     ap.add_argument("--max-colors", type=int, default=30)
+    ap.add_argument("--frames", type=int, default=0,
+                    help="treat the PNG as a one-row sheet of this many frames and check each frame")
     a = ap.parse_args(argv)
+    if a.frames:
+        all_ok = True
+        for i, (results, info) in enumerate(check_sheet(a.sprite, a.frames, a.size, a.max_colors)):
+            ok = all(r[1] for r in results)
+            all_ok = all_ok and ok
+            print("frame %2d: %s  %s  bbox %s" % (i, "PASS" if ok else "FAIL",
+                  "; ".join("%s %s" % (d, "ok" if k else "FAIL (%s)" % n) for n, k, d in results), info["bbox"]))
+        print("ALL FRAMES PASS" if all_ok else "SOME FRAMES FAIL")
+        return 0 if all_ok else 1
     results, info = check(a.sprite, a.size, a.max_colors)
     for rule, ok, detail in results:
         print("%s  %s: %s" % ("PASS" if ok else "FAIL", rule, detail))
