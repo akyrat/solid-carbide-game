@@ -47,4 +47,9 @@ Board review files: none (run `python tools/taskboard/server.py` from `C:\solid-
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Project Lead (2026-10-13).
+
+- `tools/taskboard_sync.py`: new `no_window()` returns the `CREATE_NO_WINDOW` flag (0x08000000) on Windows and 0 elsewhere; `task_folders` passes it to its `git worktree list` call. That is the only subprocess call in `server.py`, `taskboard_sync.py` and `task_status.py`. The hook's own start of the server (`.claude/hooks/board_gate.py`) already used `CREATE_NO_WINDOW`.
+- `tools/test_taskboard_sync.py`: two tests patch `os.name` and `subprocess.run`: on `nt` the flag is passed (and the worktree listing is still parsed), elsewhere it is 0. With the fix stashed, the test file fails; with it, it passes.
+- `task_folders()` run in this folder returns `{'T-110': C:\solid-carbide-worktrees\T-110}`.
+- Tests: `tools` 106 OK; `game/tools` 111 OK; Godot 307 of 307 passing (`TESTS PASSED`, exit 0). Godot's `.import` line-ending noise from the test run is left uncommitted.
