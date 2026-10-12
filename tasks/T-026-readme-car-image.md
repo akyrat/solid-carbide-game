@@ -1,7 +1,7 @@
 ---
 id: T-026
 title: Car image at the top right of the root README
-status: planning
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -53,4 +53,14 @@ The board's review: look at the top of the README in VS Code's Markdown preview 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Board review files: README.md, T-026-readme-top.png
+
+Made (Sonnet, no PixelLab call; `game/art/pixellab-generation-log.jsonl` untouched):
+
+- `docs/readme/car.png`: 256 x 256 RGBA, `game/art/car/car_sw_front.png` scaled exactly 2x nearest-neighbour, shadow kept.
+- `docs/readme/car.md`: the record (source = `car_sw_front.png`, which is frame 4 counting from 0 of `game/art/car/car_iso.png`; scale 2x).
+- `tools/make_readme_car.py`: the scaling script. `tools/test_make_readme_car.py`: its test.
+- `README.md`: `<img src="docs/readme/car.png" align="right" width="256" ...>` added as the first line, before the title.
+- `T-026-readme-top.png`: screenshot of the README's Markdown rendered to HTML (headless Chrome, 1000 x 600). The car sits at the top right, title and first lines fully visible, text wraps beside it.
+
+Checked: `python -m unittest tools/test_make_readme_car.py` passes (3 tests: exact 2x nearest scaling on a synthetic image, committed `car.png` pixel-identical to the source frame scaled 2x, source frame identical to frame 4 of the sheet). The `<img>` path resolves (the screenshot shows the image).
