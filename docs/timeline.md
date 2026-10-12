@@ -610,3 +610,8 @@ Entry format:
 - Decision or change: the board wants to start on the car art with one sprite only: the car on the screen diagonal from top-right to bottom-left, front at the bottom-left. The board described the car: like a 1967 Ford Mustang GT, dark green as the main colour, two white stripes down its length, centred as much as possible with a gap between them (Visual style, Decisions; no real badges, as before). T-014 is scoped down to that one sprite, not yet put into the game; the other 15 directions and the swap-in move to new task T-101, which waits for the board's review. T-026 and T-027 now wait for T-101.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-014 (rescoped, started), T-101 (new), T-026, T-027 (depend on T-101)
+
+## 2026-10-12: The first car sprite approved; generated art is archived, never deleted
+- Decision or change: after trying to remove the first car sprite's shadow (a script edit, two PixelLab inpaint calls, one of which timed out but was charged, and a fresh generation with "no shadow" in the prompt, which still drew a shadow and a different car), the board approved the original sprite, shadow included. New rule (Visual style, Decisions): every generated asset is kept; only clean, game-ready art lives under `game/art/`, and every other generation is archived with its record in `art-archive/`, one folder per task. T-014's other versions and T-003's test-run art move there. Balance: 4,996 of 5,000 generations.
+- Documents touched: `docs/visual-style.md`, `tasks/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-014 (approved; archiving the other versions)
