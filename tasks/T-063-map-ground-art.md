@@ -1,7 +1,7 @@
 ---
 id: T-063
 title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -83,3 +83,7 @@ Written by the agent when it finishes.
 - PixelLab's `tile_view: top-down` gave a 1:1 diamond; a 2:1 one needs the squash above (or another view setting, a new generation).
 
 **Files.** New: `game/art/ground/` (tiles, mock-ups, `road_tiles.json`, Godot `.import` files), `art-archive/T-063/raw/` (6 raw PNGs and records), `game/tools/build_road_tile.py` and its tests. Changed: `game/tools/pixellab_client.py` (+ `create-tiles-pro`, URL download with a user agent, 2 tests), `game/art/pixellab-generation-log.jsonl`, `game/README.md` (new section), `art-archive/README.md`.
+
+### Board review
+
+2026-10-12: the board saw the six tiles and mock-ups (the Project Lead's view: the dotted diamond edges make the road read as a grid, the asphalt is very dark and the white line faint). The board chose to try a **script fix first, no generation**: take tile 1, remove the dotted outline along its diamond edge so repeated tiles join without a visible grid, and brighten the white line a little so it reads clearly against the asphalt. Keep the original six tiles as they are; save the fixed tile as a new file with a record saying how it was made. Make a new mock-up with it. Pixels and colours must come from the tile's own palette (no new colours, unless the line needs one brighter white; then say so).
