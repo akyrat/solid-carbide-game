@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [a car sprite PNG and its record under game/art/, the PixelLab generation log, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -124,3 +124,15 @@ Check script: 128x128, transparent corners and no semi-transparent pixels pass; 
 
 No PixelLab calls. With `git mv` (nothing deleted): `car_sw_front_noshadow.png`, `car_sw_front_noshadow_pixellab.png`, `car_sw_front_noshadow_pixellab_mask.png` and `car_sw_front_v2.png`, with their `.json` records, moved from `game/art/car/` to `art-archive/T-014/`; T-003's `sports-car` and `asphalt-road-tile` (png and json) moved from `game/art/_test-run/` to `art-archive/T-003/`. Their Godot `.import` files were removed (removed with `git rm`; they are generated). Before moving T-003's art I searched the repo: no scene, script or test names it (the GUT test `test_pixellab_assets.gd` scans `res://art` generically and handles the folder being empty of them). `art-archive/` is outside `game/` (the Godot project root), so Godot does not import it. `art-archive/README.md` lists each file with its task, what it was, why it was not used and its original path; the generation log is unchanged. `game/README.md` no longer lists archived files as game art and points to the archive. `game/tools/test_remove_car_shadow.py` now reads the archived shadowless copy. Game art now under `game/art/car/`: only the approved `car_sw_front.png` (+ json, import). Documents affected: `game/README.md`, `art-archive/README.md`.
 
+
+### QA round 2
+
+**QA/Integration Agent, 2026-10-12. Result: all criteria pass and the archive check passes; needs-playtest (the board already approved the sprite, T-101 can build on it).**
+
+1. **PNG and frame note: pass.** `game/art/car/car_sw_front.png` is byte-identical to commit ef3f8b3; 128x128; notes say frame 4.
+2. **Technical rules: pass.** Check script: size, transparent corners, 0 semi-transparent pixels pass; 33 colours (script limit 30; judged "about 30" as in round 1, and the board approved this sprite).
+3. **Record: pass, with a count note.** The log has 4 T-014 lines (first sprite, timed-out inpaint with `error` and no usage, inpaint retry, `_v2`), each with endpoint, prompt/settings and usage 1 generation (the timed-out one has no usage but the balance dropped, noted in the result notes). Balances in the notes run 5000, 4999, 4998, 4997, 4996, which is exactly 4 charged calls. The brief said 5 calls; QA finds 4 (the log, the records and the balance chain agree on 4), so nothing is missing. Balances live in the task notes only, not in the log.
+4. **Diff scope: pass.** `git diff master..HEAD` touches no .tscn, .gd game script or placeholder sheet (only tools scripts, tests, README, art, archive, task file). Nothing in game/ references archived files (grep for art-archive, _test-run, noshadow, _v2: none).
+5. **Tests: pass.** Full GUT suite passed (All tests passed); `game/tools` Python 72 OK; `tools` Python 75 OK. Line-ending .import changes discarded, not committed.
+
+**Archive check: pass.** `art-archive/` holds T-014 (noshadow, noshadow_pixellab, its mask, v2, with .json records) and T-003 (sports-car, asphalt-road-tile, png and json). `git log --diff-filter=D --name-only master..HEAD` lists only two `.import` files. `game/art/` holds only `car/` (approved png, json, import), `placeholders/` and the log. `art-archive/README.md` lists all 6 entries with task, what it was, why unused and original path (the mask has no .json record by design; it is an input).
