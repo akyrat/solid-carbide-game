@@ -650,3 +650,8 @@ Entry format:
 - Decision or change: the board asked for a place for course assignments, kept apart from the game: `course-material/`, one folder per assignment. The first, `asset-pipeline/`, is a short readme for the board's tutor showing the asset pipeline, the board's workflow and examples of the board's feedback (the car's shadow, the hand-edited road line), linking to the real agents, task files, art and archive rather than copying them.
 - Documents touched: `course-material/README.md`, `course-material/asset-pipeline/README.md`
 - Tasks: none (documentation)
+
+## 2026-10-12: Working with the board; Project Lead helpers in tools/
+- Decision or change: so the board can run several Project Lead sessions without losing how they work together, the habits and rules from this session that lived only in the conversation are now in `WORKING-WITH-THE-BOARD.md`, loaded by `CLAUDE.md` with the same weight (board's approval). It covers talking to the board, showing work, art and spending, building in playable steps, merging, several Project Leads at once, course work and the environment, including that the task board page belongs to the board's first account. The Project Lead's merge helpers, until now in a temporary session folder, moved into `tools/` with tests: `finish_task.py` and `update_short_gdd_fingerprint.py`.
+- Documents touched: `CLAUDE.md`, `WORKING-WITH-THE-BOARD.md`
+- Tasks: none (documentation and Project Lead tooling)
