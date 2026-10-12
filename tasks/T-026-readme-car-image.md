@@ -1,7 +1,7 @@
 ---
 id: T-026
 title: Car image at the top right of the root README
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md]
 files_expected_to_change: [README.md, the README image file and its record]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,7 +46,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The README image file exists, and its record names the T-101 sheet and frame it came from and the scale factor (QA: pass)
 - [ ] The image is the final car (T-101), not the placeholder: its pixels match the named frame scaled by the recorded whole number (QA: pass)
 - [ ] The top of `README.md` has a right-aligned `<img>` tag pointing to the image, and the path resolves (QA: pass)
-- [ ] Rendered on GitHub (or in a Markdown preview), the image sits at the top right without hiding the title or the first lines (QA: pass: screenshot shows car top right, title and first lines visible)
+- [ ] Rendered on GitHub (or in a Markdown preview), the image sits at the top right without hiding the title or the first lines (QA: pass) Screenshot shows the car top right, title and first lines visible.
 - [ ] No PixelLab call was made: `game/art/pixellab-generation-log.jsonl` is unchanged (QA: pass)
 
 The board's review: look at the top of the README in VS Code's Markdown preview of `C:\solid-carbide-worktrees\T-026\README.md`, or the agent's screenshot.
