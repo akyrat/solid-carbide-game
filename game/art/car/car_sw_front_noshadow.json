@@ -1,0 +1,17 @@
+{
+  "file": "car_sw_front_noshadow.png",
+  "derived_from": "car_sw_front.png",
+  "method": "script, no PixelLab call",
+  "generator": "game/tools/remove_car_shadow.py",
+  "command": "python game/tools/remove_car_shadow.py game/art/car/car_sw_front.png game/art/car/car_sw_front_noshadow.png",
+  "usage": {
+    "type": "generations",
+    "generations": 0
+  },
+  "generated_at": "2026-10-12",
+  "notes": "734 shadow pixels made transparent (near-black colours, connected to the background, below a hand-placed line along the car's lower edge, outside two wheel ellipses); all other pixels identical to the original",
+  "task": "T-014",
+  "resources_consulted": [
+    "tasks/T-014-car-sprites-16-directions.md (Board review)"
+  ]
+}

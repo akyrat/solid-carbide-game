@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -88,3 +88,7 @@ Board review files: `game/art/car/car_sw_front.png`.
 ### Board review
 
 2026-10-12: the board loves the sprite and wants to see a version **without the shadow** under the car. Keep the original (`car_sw_front.png`) as it is and add the shadowless version next to it; the car itself must stay exactly the same. Removing the shadow by script is preferred (no generation). The shadow's colour is also used for the windows, the side of the body and the tyres, so a colour swap alone won't do; if a clean result needs PixelLab (for example inpainting only the shadow area with a mask), that is allowed for this one fix (board's request), with one call, recorded like the first.
+
+### Shadowless version (Asset Generation Agent, 2026-10-12)
+
+`game/art/car/car_sw_front_noshadow.png` (record `car_sw_front_noshadow.json`), next to the unchanged original. **No PixelLab call** (cost 0; balance unchanged at 4999 of 5000 generations). Made by `game/tools/remove_car_shadow.py` (tests `game/tools/test_remove_car_shadow.py`). The shadow shares its colour with the windows, body side and tyres, so a pixel is made transparent only if it is one of the four near-black colours, connected to the transparent background through such colours, below a hand-placed line along the car's lower edge, and outside two wheel ellipses. 734 pixels changed, all to fully transparent; every other pixel is identical to the original (the test checks this). Check script: size, transparent corners and no semi-transparent pixels pass; still 33 colours (the same palette). I looked at it enlarged on light and dark backgrounds: no stray shadow dots remain and no body, window or tyre part is cut. Side effects to know: the bumper's chrome now has no dark underline, so its lower edge looks lighter and slightly ragged, and a small dark spur remains beside the rear tyre. Python tests 72 OK. Documents affected: `game/README.md`.
