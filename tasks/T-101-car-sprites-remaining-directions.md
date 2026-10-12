@@ -72,3 +72,18 @@ Board review files: the final car sheet under `game/art/`.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Asset Generation Agent, 2026-10-12**
+
+### Plan (written before any PixelLab call)
+
+API re-checked today (https://api.pixellab.ai/v2/llms.txt, https://www.pixellab.ai/llms.txt, https://api.pixellab.ai/v2/openapi.json, and the docs pages for Rotate, Rotating a character and Create 8-directional sprite (Pro)). Still no 16-direction tool; the 8-direction tools give south, south-west, west, north-west, north, north-east, east, south-east.
+
+**Direction mapping.** PixelLab's 8 compass directions in the isometric view are 45 degrees apart in world heading, so they are T-013's even frames: south-east = frame 0, south = 2, south-west = 4 (T-014's approved sprite), west = 6, north-west = 8, north = 10, north-east = 12, east = 14. The odd frames are the in-betweens.
+
+**Calls (9 in all, one round):**
+
+1. `POST /generate-8-rotations-v3` (async; listed first under Rotate, so PixelLab's default; takes one reference frame up to 256 pixels and keeps its size), once: `first_frame` = the approved `game/art/car/car_sw_front.png`, `no_background: true`, `description` = T-014's car description without the direction words. Gives the 8 even frames. Its south-west image is not used (frame 4 stays the approved original) and goes to the archive. Cost: not published for v3; the Pro 8-rotation tool costs 25 generations at this size, so I expect about 20 to 40 generations.
+2. `POST /rotate` (direct), 8 times, one per even frame (frame 4 from the approved original, the others from step 1's images): `direction_change: 22`, the same sign every time, `isometric: true`, `from_view`/`to_view: high top-down` (the API's default is "side"), `from_direction` = the source's compass direction, `image_guidance_scale: 7.5`, and `color_image` = the approved sprite, which forces its palette (about 30 colours, the same greens and whites). The sign convention of `direction_change` is not documented; with one sign for all 8, the 8 results cover all 8 odd frames whichever way it turns, and I place each by its measured heading. Expected cost: about 1 generation each.
+
+Expected total: about 30 to 50 generations from 4996. The client (`game/tools/pixellab_client.py`) gained `/rotate` and `/generate-8-rotations-v3` (multi-image results, each image saved with its own record; poll limit 20 minutes for that job), HTTP timeout 600 s, with tests. No regeneration: frames that come out wrong are reported, not redone.

@@ -244,6 +244,57 @@ class GenerateTests(unittest.TestCase):
         self.assertNotIn(TOKEN, str(ctx.exception))
         self.assertNotIn(TOKEN, self.log.read_text())
 
+    def test_rotate_needs_no_description(self):
+        params = {"image_size": {"width": 32, "height": 32}, "from_image": {"type": "base64", "base64": png_b64(32, 32, False)},
+                  "direction_change": 22}
+        http = FakeHttp([(200, {"image": {"type": "base64", "base64": png_b64(32, 32)}, "usage": {"type": "generations", "generations": 1}})])
+        rec = self.run_gen(http, "/rotate", params)
+        self.assertEqual(len(http.calls), 1)
+        self.assertEqual(http.calls[0][2], params, "the body is sent as given, with no extra keys")
+        self.assertEqual(rec["prompt"], "")
+        self.assertTrue((self.dir / "out" / "asset.png").exists())
+
+    def test_multi_image_job_saves_every_image_with_a_record(self):
+        images = [{"type": "base64", "base64": png_b64(48, 48)} for _ in range(3)]
+        images[1] = {"direction": "south-west", "image": {"type": "base64", "base64": png_b64(48, 48)}}
+        http = FakeHttp([
+            (200, {"background_job_id": "job-8", "status": "processing", "usage": {"type": "generations", "generations": 20}}),
+            (200, {"status": "completed", "last_response": {"images": images, "note": "x"}}),
+        ])
+        rec = self.run_gen(http, "/generate-8-rotations-v3", {"first_frame": {"base64": png_b64(48, 48)}, "description": "car"}, name="rot")
+        self.assertEqual(rec["file"], ["rot_0.png", "rot_1_south-west.png", "rot_2.png"])
+        self.assertEqual(sum(1 for c in http.calls if c[0] == "POST"), 1)
+        for i, f in enumerate(rec["file"]):
+            self.assertEqual(pc.png_info((self.dir / "out" / f).read_bytes())["width"], 48)
+            r = json.loads((self.dir / "out" / f.replace(".png", ".json")).read_text())
+            self.assertEqual(r["file"], f)
+            self.assertEqual(r["result_index"], i)
+            self.assertEqual(r["job_id"], "job-8")
+            self.assertEqual(r["usage"]["generations"], 20)
+            self.assertIn("whole call", r["usage_note"])
+            self.assertNotIn("base64,", json.dumps(r["response_meta"]), "image data is not repeated in the record")
+        log = [json.loads(l) for l in self.log.read_text().splitlines()]
+        self.assertEqual(len(log), 1)
+        self.assertEqual(log[0]["files"], rec["file"])
+
+    def test_multi_image_refuses_to_overwrite(self):
+        out = self.dir / "out"
+        out.mkdir()
+        (out / "rot_0.png").write_bytes(make_png(4, 4))
+        http = FakeHttp([])
+        with self.assertRaisesRegex(pc.PixelLabError, "overwrite"):
+            self.run_gen(http, "/generate-8-rotations-v3", {"first_frame": {"base64": "x"}}, name="rot")
+        self.assertEqual(http.calls, [])
+
+    def test_multi_image_poll_timeout_is_longer(self):
+        http = FakeHttp([(200, {"background_job_id": "j", "status": "processing"})] + [(200, {"status": "processing"})] * 400)
+        clock = FakeClock()
+        with self.assertRaises(pc.PollTimeout) as ctx:
+            pc.generate(http, endpoint="/generate-8-rotations-v3", params={"first_frame": {"base64": "x"}},
+                        out_dir=self.dir / "out", name="rot", consulted=["x"], task="T", log_path=self.log,
+                        poll_kwargs={"interval": 5, "clock": clock, "sleep": clock.sleep}, echo=lambda s: None)
+        self.assertIn("limit 1200 s", str(ctx.exception))
+
     def test_unknown_endpoint_and_missing_fields(self):
         http = FakeHttp([])
         with self.assertRaises(pc.PixelLabError):

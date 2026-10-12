@@ -60,6 +60,13 @@ ENDPOINTS: dict[str, dict[str, Any]] = {
     "/create-image-pixflux": {"mode": "direct"},
     "/create-image-bitforge": {"mode": "direct"},
     "/inpaint": {"mode": "direct"},
+    # T-101: /rotate has no prompt field (the request schema forbids extra keys).
+    "/rotate": {"mode": "direct", "needs_description": False},
+    # T-101: one job returns several images in last_response.images; each is
+    # saved as <name>_<index>[_<label>].png with its own record.
+    "/generate-8-rotations-v3": {
+        "mode": "async", "multi_image": True, "poll_timeout": 1200.0, "needs_description": False,
+    },
     "/create-isometric-tile": {
         "mode": "async",
         "result_path": "/isometric-tiles/{tile_id}",
@@ -182,6 +189,56 @@ def extract_image_b64(response: dict[str, Any]) -> str:
         if isinstance(img, str) and img:
             return img
     raise PixelLabError("No image found in the PixelLab response.")
+
+
+def extract_images(response: dict[str, Any]) -> list[tuple[str | None, str]]:
+    """Find every base64 image in a multi-image result, with a label if one is given.
+
+    Looks at `images` in the response and in its `last_response`. Each item may be
+    a base64 string, a {"base64": ...} dict, or a dict holding such an image under
+    `image`, with an optional `direction` or `name` label.
+    """
+    lists = [response.get("images")]
+    last = response.get("last_response")
+    if isinstance(last, dict):
+        lists.append(last.get("images"))
+    for items in lists:
+        if not isinstance(items, list) or not items:
+            continue
+        out: list[tuple[str | None, str]] = []
+        for item in items:
+            label = None
+            img: Any = item
+            if isinstance(item, dict):
+                raw_label = item.get("direction") or item.get("name") or item.get("label")
+                label = str(raw_label) if raw_label else None
+                if isinstance(item.get("image"), (dict, str)):
+                    img = item["image"]
+            if isinstance(img, dict) and isinstance(img.get("base64"), str) and img["base64"]:
+                out.append((label, img["base64"]))
+            elif isinstance(img, str) and img:
+                out.append((label, img))
+            else:
+                raise PixelLabError("An item in the result's image list holds no image.")
+        return out
+    raise PixelLabError("No image list found in the PixelLab response.")
+
+
+def strip_images(obj: Any) -> Any:
+    """A copy of a response with long base64 strings replaced, to keep in a record."""
+    if isinstance(obj, dict):
+        return {k: strip_images(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [strip_images(v) for v in obj]
+    if isinstance(obj, str) and (len(obj) > 500 or obj.startswith("data:image")):
+        return f"<{len(obj)} characters of base64 image data, saved as the PNG>"
+    return obj
+
+
+def safe_label(label: str | None) -> str:
+    if not label:
+        return ""
+    return "_" + "".join(c if c.isalnum() else "-" for c in label.lower()).strip("-")
 
 
 # --------------------------------------------------------------- record ----
@@ -341,15 +398,19 @@ def generate(
         raise PixelLabError(f"Unknown endpoint {endpoint}. Known: {', '.join(sorted(ENDPOINTS))}")
     if not consulted:
         raise PixelLabError("List at least one resource consulted (--consulted).")
-    if not params.get("description"):
+    spec = ENDPOINTS[endpoint]
+    if spec.get("needs_description", True) and not params.get("description"):
         raise PixelLabError("Request params need a 'description' (the prompt).")
     png_path = out_dir / f"{name}.png"
     record_path = out_dir / f"{name}.json"
     if png_path.exists() or record_path.exists():
         raise PixelLabError(f"{png_path} or its record already exists. Refusing to overwrite (no regeneration).")
+    if spec.get("multi_image") and out_dir.is_dir() and any(out_dir.glob(f"{name}_*")):
+        raise PixelLabError(f"Files named {name}_* already exist in {out_dir}. Refusing to overwrite (no regeneration).")
     assert_no_token(params, http.token)
-
-    spec = ENDPOINTS[endpoint]
+    poll_kwargs = dict(poll_kwargs or {})
+    if "poll_timeout" in spec and "timeout" not in poll_kwargs:
+        poll_kwargs["timeout"] = spec["poll_timeout"]
     log_entry: dict[str, Any] = {
         "time": now_iso(), "endpoint": endpoint, "name": name, "out_dir": str(out_dir).replace("\\", "/"),
         "task": task, "prompt": params.get("description"),
@@ -374,13 +435,13 @@ def generate(
                 raise PixelLabError(f"POST {endpoint} returned no background_job_id.")
             ids = {k: payload.get(k) for k in spec.get("ids", [])}
             log_entry.update({"job_id": job_id, **ids})
-            echo(f"  job {job_id} submitted, polling every {int((poll_kwargs or {}).get('interval', POLL_INTERVAL_SECONDS))} s")
-            job = poll_job(http, job_id, echo=echo, **(poll_kwargs or {}))
+            echo(f"  job {job_id} submitted, polling every {int(poll_kwargs.get('interval', POLL_INTERVAL_SECONDS))} s")
+            job = poll_job(http, job_id, echo=echo, **poll_kwargs)
             job_status = job.get("status")
             if job.get("usage") and not usage:
                 usage = job.get("usage")
             try:
-                extract_image_b64(job)
+                (extract_images if spec.get("multi_image") else extract_image_b64)(job)
                 result = job
             except PixelLabError:
                 path = spec["result_path"].format(**ids)
@@ -388,6 +449,16 @@ def generate(
                 result = check(st, res, f"GET {path}", http.token)
             if result.get("usage") and not usage:
                 usage = result.get("usage")
+        if spec.get("multi_image"):
+            records = _save_images(
+                extract_images(result), endpoint=endpoint, params=params, job_id=job_id, ids=ids,
+                usage=usage, consulted=consulted, out_dir=out_dir, name=name, task=task, notes=notes,
+                job_status=job_status, response_meta=strip_images(result), token=http.token,
+            )
+            files = [r["file"] for r in records]
+            log_entry.update({"result": "saved", "usage": usage, "files": files})
+            echo(f"  saved {len(files)} images in {out_dir}: {', '.join(files)}; usage {json.dumps(usage)}")
+            return {"file": files, "job_id": job_id, "usage": usage, "image": [r["image"] for r in records]}
         png_bytes = decode_base64_png(extract_image_b64(result))
         info = png_info(png_bytes)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -406,6 +477,36 @@ def generate(
         raise
     finally:
         append_log(log_path, log_entry, http.token)
+
+
+def _save_images(images, *, endpoint, params, job_id, ids, usage, consulted, out_dir, name, task,
+                 notes, job_status, response_meta, token) -> list[dict[str, Any]]:
+    """Save each image of a multi-image result with its own record.
+
+    The call's usage is for the whole call, not per image: each record says so.
+    """
+    decoded = [(label, decode_base64_png(b64)) for label, b64 in images]  # validate all first
+    out_dir.mkdir(parents=True, exist_ok=True)
+    stems = [f"{name}_{i}{safe_label(label)}" for i, (label, _) in enumerate(decoded)]
+    records = []
+    for i, ((label, data), stem) in enumerate(zip(decoded, stems)):
+        png_path = out_dir / f"{stem}.png"
+        png_path.write_bytes(data)
+        record = build_record(
+            endpoint=endpoint, params=params, job_id=job_id, ids=ids, usage=usage,
+            consulted=consulted, png=png_info(data), png_file=png_path.name, task=task,
+            generated_at=now_iso(), notes=notes, job_status=job_status,
+        )
+        record.update({
+            "result_index": i,
+            "result_label": label,
+            "usage_note": "usage is for the whole call, shared by all its images",
+            "call_files": [f"{s}.png" for s in stems],
+            "response_meta": response_meta,
+        })
+        write_json(out_dir / f"{stem}.json", record, token)
+        records.append(record)
+    return records
 
 
 # ------------------------------------------------------------------ CLI ----
