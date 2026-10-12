@@ -10,7 +10,7 @@ user_facing_text: no
 changes_visuals: no
 depends_on: []
 documents_affected: []
-files_to_read_first: [WORKING-WITH-THE-BOARD.md]
+files_to_read_first: [docs/working-with-the-board.md]
 files_expected_to_change: [C:/solid-carbide-worktrees/T-103 (removed)]
 qa_rounds: 0
 ---

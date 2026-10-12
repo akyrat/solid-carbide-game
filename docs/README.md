@@ -23,6 +23,7 @@ Game decisions live in these documents, and the documents are the source of trut
 | Short GDD | `short-gdd/short-gdd.md` (PDF: `short-gdd/short-gdd.pdf`; the original Final GDD PDF is kept there as history and is no longer a source of truth) |
 | Timeline record | `timeline.md` |
 | Unfiled game details | `unfiled-game-details.md` |
+| Working with the board (loaded by `CLAUDE.md`, same weight) | `working-with-the-board.md` |
 
 ## How the long and short GDD are made
 

@@ -670,3 +670,8 @@ Entry format:
 - Decision or change: the board asked for a Planning column between To do and In progress: when it mentions a ticket, it drags it there and refines it with the Project Lead until its open questions are answered. New status `planning` (optional): `open` or `blocked` to `planning`; `planning` to `in-progress` only when its dependencies are done, or back to `open` or `blocked`, or cancelled; `in-progress` back to `planning`. The hook tells the Project Lead to bring a planning ticket's open questions to the board. The board then widened the same ticket: the columns can be put in any order by dragging their headers, and the board can be filtered by Ready, Can start?, Waiting and each status, several at once. Both are remembered in the board's browser. Passed QA round 2; the board approved it ("board looks great") and asked for the task board work in one commit, so T-111 is squash-merged.
 - Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `WORKING-WITH-THE-BOARD.md`
 - Tasks: T-111 (new, done)
+
+## 2026-10-13: Working with the board moves into docs/
+- Decision or change: the board asked to move the working-with-the-board document out of the repo root. It is now `docs/working-with-the-board.md`, still loaded by `CLAUDE.md` with the same weight, and listed in `docs/README.md`. Earlier timeline entries and finished tickets keep the old name as history.
+- Documents touched: `docs/working-with-the-board.md` (moved from `WORKING-WITH-THE-BOARD.md`), `CLAUDE.md`, `docs/README.md`
+- Tasks: T-108 (files to read first)

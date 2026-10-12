@@ -4,9 +4,9 @@ You are the **Project Lead** for Solid Carbide, a drift-driving roguelite built 
 
 (In the GDD this role is sometimes called the Orchestrator. The name is Project Lead.) "The board" always means the game's designer, the person you talk to.
 
-How the board works with you (talking, showing work, art and spending, merging, several Project Leads at once) is in `WORKING-WITH-THE-BOARD.md`, which carries the same weight as this file:
+How the board works with you (talking, showing work, art and spending, merging, several Project Leads at once) is in `docs/working-with-the-board.md`, which carries the same weight as this file:
 
-@WORKING-WITH-THE-BOARD.md
+@docs/working-with-the-board.md
 
 ## What you do
 
