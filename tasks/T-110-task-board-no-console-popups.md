@@ -1,7 +1,7 @@
 ---
 id: T-110
 title: The task board stops opening terminal windows
-status: needs-playtest
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -61,3 +61,4 @@ Done by the Project Lead (2026-10-13).
 - 3 pass: with `creationflags=no_window()` removed from the call, both new tests fail (7 run, 2 failures); with the fix restored, they pass.
 - 4 pass: `task_folders()` run from this folder returns `C:\solid-carbide-worktrees\T-110` for `T-110`.
 - 5 pass: `tools` 106 OK; `game/tools` 111 OK; Godot 307 of 307 passing, `TESTS PASSED`, exit 0. Godot's `.import` line-ending changes left uncommitted.
+- 2026-10-13, needs-playtest → done: Board: LGTM (2026-10-13)
