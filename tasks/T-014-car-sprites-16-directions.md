@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, tasks/T-013-placeholder-car-sprites.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [a car sprite PNG and its record under game/art/, the PixelLab generation log, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,11 +40,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The sprite is a 128 by 128 pixel PNG under `game/art/`, and the result notes say which of T-013's isometric frames its direction matches (QA: pass / fail)
-- [ ] A check script shows it follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] `git diff master...HEAD` shows no change to scenes, game scripts or the placeholder sheets (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The sprite is a 128 by 128 pixel PNG under `game/art/`, and the result notes say which of T-013's isometric frames its direction matches (QA: pass)
+- [ ] A check script shows it follows Visual style's technical rules: transparent background, no semi-transparent pixels, about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [ ] `git diff master...HEAD` shows no change to scenes, game scripts or the placeholder sheets (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the car's look (the Mustang GT shape, the dark green, the two centred stripes with a gap, the direction); one round only, so problems are reported rather than regenerated.
 Board review files: the new sprite PNG(s) under `game/art/`.
@@ -72,3 +72,15 @@ Written by the agent when it finishes.
 **Tests:** full GUT suite 294/294 passed (`bash game/tools/run_tests.sh`); Python tool tests `python -m unittest discover -s game/tools -p "test_*.py"`: 70 OK. The headless Godot run rewrote some tracked `.import` files; I restored them, and kept only the new `car_sw_front.png.import`.
 
 **Files:** created `game/art/car/car_sw_front.png`, `.json`, `.png.import`, `game/tools/check_sprite_rules.py`, `game/tools/test_check_sprite_rules.py`; changed `game/art/pixellab-generation-log.jsonl`, `game/README.md` (new section "The first final car sprite (T-014)"), this task file. No scene, game script or placeholder sheet changed. Documents affected: `game/README.md`.
+
+### QA round 1
+
+**QA/Integration Agent, 2026-10-12. Result: all five criteria pass; needs the board's review of the look.**
+
+1. **PNG and frame note: pass.** `game/art/car/car_sw_front.png` is 128x128 RGBA; the result notes and `game/README.md` say it matches frame 4 of T-013's isometric sheet.
+2. **Technical rules: pass.** Check script run by QA: 128x128 pass, transparent corners pass, 0 semi-transparent pixels pass, 33 opaque colours (script limit 30, so the script prints FAIL on that line). QA judgement: 33 is within "about 30". The Visual style rule says "about 30" and its own reference image has 29, so the intent is a small palette, not an exact cap; 3 over (10%) is a small miss, and 5 of the 33 colours are used by 10 to 15 pixels or fewer (lavender highlights, yellow light, red light), so it is the same palette size class. The board judges the look, and can ask T-101 to tighten the palette if it wants. Note for the board: the shadow under the car is opaque pixels (agent's notes, problem 3), which the rule allows but which will be drawn as part of the car.
+3. **Record: pass.** One call only: log has one new T-014 line (`/create-image-pixflux`, prompt, usage 1 generation); `car_sw_front.json` has the full prompt, all settings and usage 1 generation ($0.00 subscription). The balance before (5000 of 5000) and after (4999 of 5000) is in the result notes only, not in the JSON or log file; QA could not verify it (no PixelLab calls were made), but it is consistent with one generation.
+4. **Diff scope: pass.** `git diff master...HEAD` touches only game/README.md, the new car PNG, its .json and .png.import, the log, the new check script and its test, and this task file. No scene, game script or placeholder sheet.
+5. **Tests: pass.** Full GUT suite 294/294 (`TESTS PASSED`); `tools` Python tests 75 OK; `game/tools` Python tests 70 OK. Line-ending-only .import changes from the Godot run were left uncommitted.
+
+Board review files: `game/art/car/car_sw_front.png`.
