@@ -34,7 +34,7 @@
         "x": -1,
         "y": 2
       },
-      "source": "game/art/car/frames/car_rot8_v3_2.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_2.png"
     },
     {
       "colours_after": 31,
@@ -48,7 +48,7 @@
         "x": -1,
         "y": 4
       },
-      "source": "game/art/car/frames/car_rot22_from_f00_south-east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f00_south-east.png"
     },
     {
       "colours_after": 30,
@@ -62,7 +62,7 @@
         "x": -1,
         "y": 0
       },
-      "source": "game/art/car/frames/car_rot8_v3_1.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_1.png"
     },
     {
       "colours_after": 29,
@@ -76,7 +76,7 @@
         "x": 2,
         "y": 3
       },
-      "source": "game/art/car/frames/car_rot22_from_f02_south.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f02_south.png"
     },
     {
       "colours_after": 33,
@@ -104,7 +104,7 @@
         "x": 1,
         "y": 2
       },
-      "source": "game/art/car/frames/car_rot22_from_f04_sw.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f04_sw.png"
     },
     {
       "colours_after": 27,
@@ -118,7 +118,7 @@
         "x": 0,
         "y": 1
       },
-      "source": "game/art/car/frames/car_rot8_v3_7.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_7.png"
     },
     {
       "colours_after": 32,
@@ -132,7 +132,7 @@
         "x": 1,
         "y": 4
       },
-      "source": "game/art/car/frames/car_rot22_from_f06_west.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f06_west.png"
     },
     {
       "colours_after": 29,
@@ -146,7 +146,7 @@
         "x": 1,
         "y": -2
       },
-      "source": "game/art/car/frames/car_rot8_v3_6.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_6.png"
     },
     {
       "colours_after": 32,
@@ -160,7 +160,7 @@
         "x": 0,
         "y": -1
       },
-      "source": "game/art/car/frames/car_rot22_from_f08_north-west.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f08_north-west.png"
     },
     {
       "colours_after": 30,
@@ -174,7 +174,7 @@
         "x": -3,
         "y": -3
       },
-      "source": "game/art/car/frames/car_rot8_v3_5.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_5.png"
     },
     {
       "colours_after": 32,
@@ -188,7 +188,7 @@
         "x": 2,
         "y": -2
       },
-      "source": "game/art/car/frames/car_rot22_from_f10_north.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png"
     },
     {
       "colours_after": 31,
@@ -202,7 +202,7 @@
         "x": 2,
         "y": 2
       },
-      "source": "game/art/car/frames/car_rot8_v3_4.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_4.png"
     },
     {
       "colours_after": 30,
@@ -216,7 +216,7 @@
         "x": 1,
         "y": 2
       },
-      "source": "game/art/car/frames/car_rot22_from_f12_north-east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f12_north-east.png"
     },
     {
       "colours_after": 27,
@@ -230,7 +230,7 @@
         "x": 1,
         "y": 4
       },
-      "source": "game/art/car/frames/car_rot8_v3_3.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_3.png"
     },
     {
       "colours_after": 31,
@@ -244,7 +244,7 @@
         "x": 3,
         "y": 1
       },
-      "source": "game/art/car/frames/car_rot22_from_f14_east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f14_east.png"
     }
   ],
   "order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",

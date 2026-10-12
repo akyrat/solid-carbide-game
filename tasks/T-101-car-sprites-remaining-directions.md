@@ -164,3 +164,9 @@ Nose angle on screen, in degrees clockwise from screen right. "Ideal" is the gam
 
 For the board's review later (not QA failures): the heading errors in frames 1 and 11, the flatter side views (6, 7, 14), and shadows that don't fall the same way in every frame, all reported by the agent and visible in QA's screenshots.
 
+### Archive fix after QA round 1 (Asset Generation Agent, 2026-10-12)
+
+No PixelLab calls (balance unchanged at 4986). With `git mv` (nothing deleted), the 15 raw PixelLab frames and their record JSONs moved from `game/art/car/frames/` to `art-archive/T-101/frames/`, and their Godot `.import` files were removed (`git rm`; they are generated). `game/art/car/` now holds only game-ready art: `car_sw_front.png` and `car_iso.png` with their JSON and `.import` files. `build_car_sheet.py` reads its sources from `art-archive/T-101/frames/`, and the `source` paths in `car_iso.json` point there. Rebuilding gives a byte-identical `car_iso.png` (sha256 `0eb4d158...0e9e` before and after); only the 15 `source` lines of `car_iso.json` changed. `art-archive/README.md` lists all 15 files: what each one is, that it is the raw source the sheet was built from, and its original path. `game/README.md` ("The final car sheet (T-101)") now points at the archive. The earlier notes above that say `game/art/car/frames/` describe the state before this fix.
+
+Tests: full GUT suite 300/300 (TESTS PASSED); Python `game/tools` 86 OK, `tools` 75 OK. Documents affected: `game/README.md` and `art-archive/README.md`.
+

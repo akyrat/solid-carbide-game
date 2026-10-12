@@ -4,7 +4,8 @@
 Usage, from the repo root:  python game/tools/build_car_sheet.py
 
 Reads the 16 source frames listed in SOURCES (the approved T-014 sprite for
-frame 4, and the T-101 PixelLab generations for the others) and writes
+frame 4, and the raw T-101 PixelLab generations, archived in
+art-archive/T-101/frames/, for the others) and writes
 game/art/car/car_iso.png (one row of 16 frames of 128 x 128) and
 game/art/car/car_iso.json, in T-013's layout and JSON convention, so
 scripts/driving/car_sprite.gd reads it like the placeholder sheet.
@@ -46,7 +47,9 @@ OUT_JSON = "game/art/car/car_iso.json"
 # car comes out about 3 units long on average over the 16 directions.
 PX_PER_UNIT = 32.0
 
-_F = "game/art/car/frames/"
+# The raw PixelLab frames are archived (not game-ready on their own: 49 to 272
+# colours); this script reads them from the archive.
+_F = "art-archive/T-101/frames/"
 # frame index -> (source PNG, how it was made, the nose angle on screen as seen
 # by the Asset Generation Agent, in degrees clockwise from screen right; approximate)
 SOURCES = {
