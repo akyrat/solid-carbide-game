@@ -11,10 +11,12 @@ Me ──► Project Lead ──► task file ──► Asset Generation agent �
 ```
 
 1. **I describe the asset** in plain words to the **Project Lead**, the agent I talk to. It records my decisions in the design docs ([`docs/visual-style.md`](../../docs/visual-style.md)) and writes a **task file**: what to make, and acceptance criteria that can be checked.
-2. **The Asset Generation agent** ([definition](../../.claude/agents/asset-generation.md)) calls the [PixelLab](https://www.pixellab.ai) API, then post-processes by script: fitting the game's isometric view, cutting tiles so they join, keeping to the palette. Each call is logged with its prompt, settings and cost ([`game/art/pixellab-generation-log.jsonl`](../../game/art/pixellab-generation-log.jsonl)).
+2. **The Asset Generation agent** ([definition](../../.claude/agents/asset-generation.md)) reads the visual style and the game's [extended narrative](../../docs/extended-narrative.md) (the story and tone behind the game), so its art stays close to the game's style and world. It calls the [PixelLab](https://www.pixellab.ai) API, then post-processes by script: fitting the game's isometric view, cutting tiles so they join, keeping to the palette. Each call is logged with its prompt, settings and cost ([`game/art/pixellab-generation-log.jsonl`](../../game/art/pixellab-generation-log.jsonl)).
 3. **The QA agent** ([definition](../../.claude/agents/qa-integration.md)) checks every criterion, runs the tests and takes its own screenshots in the game. It writes a pass or fail on the task file.
 4. **I review the result**, in pictures or by playing the game. I approve it, give feedback, or edit it myself.
 5. **Approved art goes into the game** (`game/art/`). **Everything else is archived, never deleted** ([`art-archive/`](../../art-archive/README.md)), with a note on why it wasn't used.
+
+**All output of this pipeline** is in two folders: [`game/art/`](../../game/art/) holds the approved, game-ready art, and [`art-archive/`](../../art-archive/README.md) holds every other generation (rejected versions, failed attempts, raw PixelLab output), one folder per task.
 
 All 12 agents are defined in [`.claude/agents/`](../../.claude/agents/) and [`CLAUDE.md`](../../CLAUDE.md). Every decision is recorded in [`docs/timeline.md`](../../docs/timeline.md).
 
