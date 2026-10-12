@@ -625,3 +625,8 @@ Entry format:
 - Decision or change: the board played the final car in a run and really likes its look; T-101 merged as is (16 directions from the approved sprite, 10 generations; raw generations in `art-archive/T-101/`). The board wants 32 directions at some point (Visual style, Decisions): new task T-102, final-release milestone, not scheduled. T-027 stays blocked (it also waits for the minion's and kaiju's art). Next: the map tiles.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`, `game/README.md`, `art-archive/README.md`
 - Tasks: T-101 (done), T-102 (new), T-026 (unblocked)
+
+## 2026-10-12: The ground's look; the first road tile
+- Decision or change: the board described the ground (Visual style, Decisions): white lane lines, zebra crossings at the junctions, pavements along the building blocks, light cracks. How wide the pavements are and whether the car drives on them is a new open question (Level design). As with the car, T-063 is scoped down to one asphalt road tile for the board's review, not yet in the map; the full ground set and the swap-in move to new task T-103.
+- Documents touched: `docs/visual-style.md`, `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-063 (rescoped, started), T-103 (new)

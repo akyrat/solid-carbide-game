@@ -498,7 +498,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **The car:** inspired by a 1967 Ford Mustang GT fastback, in dark green as the main colour, with two parallel white racing stripes running down its length (bonnet, roof and boot), centred on the car as much as possible, with a gap of body colour between the two stripes. See the reference photos in References.
 - **Buildings:** Tokyo-style towers with vertical signs and lit windows. The city has nothing to do with Redgull, so the buildings carry none of its colours or branding. After the MVP, occasional Redgull banners may be added as separate assets placed on the buildings, not drawn into them.
 - **Redgull's look:** the company's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling (why: Extended narrative, Decisions). Red is the company's theme colour, used only on things that belong to Redgull: its logo, its banners (after the MVP) and, in the MVP, the weapons, which arrive as Redgull gift packs. They don't have to be all red; red is included where it fits. It does not change the colour of the car, the enemies, the map or anything else.
-- **Ground:** asphalt roads with lane lines and crossings, cracked by the disaster; the centre is dusty gravel.
+- **Ground:** asphalt roads with **white** lane lines and **zebra crossings** at the junctions, with **light cracks** from the disaster; **pavements** run along the building blocks; the centre is dusty gravel.
 - **Boulders:** dark rock with glowing cracks.
 - **Challenge arrow** (after the MVP, if challenges come back; Level design, Decisions, 2026-10-11): a glowing painted arrow that draws itself along the path, pulses while the challenge is open, and fades when it is completed. Arrows of the challenges on the map are **blue**; arrows of the challenges the kaiju's meteors create are **green**.
 - **See-through rule:** the no-semi-transparent-pixels rule covers the pixels inside each sprite. The game itself may fade a whole object, such as the kaiju's shield or a building the car drives behind.
@@ -611,10 +611,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `9cb6f215e7558a30cdb7b46a327e56513831a85b2c4352c4d418a98c702b7784` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
-| `level-design.md` | `4d806974efd8870acc86a7878dfac97cbf6848edf3b3ccf217b15a8e753992a1` |
+| `level-design.md` | `e0e92adc0b85173d93070ef6b465e88ace4f08be2bbba3ec4a9cdf57e29acb1d` |
 | `enemies.md` | `426f70392214aaf25e4a3293e1a84e5ff99e18d9e814a3f2fbbb0987d7bf5b44` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
-| `visual-style.md` | `5082b21addeb6417be58b2587e1c8a71e84c20547bc5886575204531d3fd53f4` |
+| `visual-style.md` | `0ea17b377482831c59bcc96c6f4ff9be0efc87caacc767f6ed5ca6010bd1a95f` |
 | `extended-narrative.md` | `b57fa97780483828e67b4b5670b12e345e9d28f9aa1d93c70cd8a68e3146991b` |
 | `hud-and-menus.md` | `cd34679fdbe0a6d78f5157994dd2780d1b7a869bef25bd7727f3c86d5d667a1e` |
