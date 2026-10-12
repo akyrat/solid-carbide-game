@@ -1,7 +1,7 @@
 ---
 id: T-014
 title: The first pixel-art car sprite: one direction, front to the bottom-left (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -117,3 +117,5 @@ One call to `POST /create-image-pixflux` with the same settings as the first spr
 
 Check script: 128x128, transparent corners and no semi-transparent pixels pass; **61 colours** (limit about 30, so it fails; the first sprite had 33). Seen enlarged on light and dark backgrounds (not a judgement): **a shadow is still visible**, a hard-edged dark wedge under the car, beside both wheels and under the bumper, much like the first sprite's. This is a different car from the first sprite: brighter, more saturated green, a visible red interior through the windows, a black air scoop on the bonnet, wider white stripes with a thin dark line inside them on the bonnet, a chrome bumper with a dark grille. The "no shadow" wording did not remove the shadow. No further calls made.
 
+
+2026-10-12, fifth note: the board approved the **original** sprite, `car_sw_front.png`, shadow included; it stays in `game/art/car/` and is the one T-101 builds on. New rule (Visual style, Decisions, 2026-10-12): every generated asset is kept, and only clean, game-ready art lives under `game/art/`. Move every other version from this task (the script-edited one, the PixelLab inpaint result and its mask, the fresh `_v2` generation), with their records, to `art-archive/T-014/`, and T-003's test-run art (`game/art/_test-run/`) to `art-archive/T-003/`. Delete nothing. No more generations.
