@@ -810,3 +810,8 @@ Entry format:
 - Decision or change: after playtesting the drift smoke (T-121 and T-073), the board wants each puff to last much less: in a full-circle drift the trail should cover about 20 degrees of the circle instead of about half. T-073 goes back to the Asset Generation Agent to cut the puffs' lifetime to about a ninth.
 - Documents touched: none
 - Tasks: T-073 (back to in progress)
+
+## 2026-10-13: Camera options: smoothing and the dynamic camera
+- Decision or change: the board wants to try two camera options, each a checkbox on the pause screen, off by default and saved: camera smoothing, and the "dynamic camera", whose zoom follows the car's speed from a min (very low speed) to a max (top forward speed), easing there with a short delay. The board tunes the min and max in playtests with two temporary pause-screen buttons that store the zoom slider's current value; the values are written where the Project Lead can copy them into the defaults. The checkbox names are the board's own words ("Camera smoothing", "Dynamic camera"), and the tuning buttons ("Set min zoom", "Set max zoom") are a temporary tool for the board, removed once the values are settled, so no separate text task. T-123 (Driving & Drift) builds the camera behaviour; T-124 (UI) adds the controls on top of T-123's branch; the board playtests both together.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
+- Tasks: T-123 (new), T-124 (new)
