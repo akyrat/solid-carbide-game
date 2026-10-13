@@ -26,6 +26,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - Small playable steps, each ending in a playtest (`tasks/README.md`, "Building in playable steps"). The board reorders steps freely; update that list when it does.
 - Feel and balance are judged in playtests, not ticket by ticket.
 - Nothing user-facing merges before the board has played it (board, 2026-10-13). Every task that changes what the player sees, reads or hears gets a `The board's review:` line, placeholders included, so it waits in `needs-playtest`. Only work the player never meets (data, tooling, tests, docs) merges straight after QA.
+- Quick tuning with an agent (board, 2026-10-14): when the board wants to work directly with an agent, on any task it names, it does so in the Project Lead's session. The Project Lead resumes the agent that did the work, with its memory of it, and passes the board's tweaks on word for word, in the task's own folder so the board plays each change straight away. No QA between tweaks; each tweak is still written in the ticket's result notes; one QA round runs at the end, before merging.
 - The board often scopes down ("only one for now", "post MVP", "much later"). Record it in the docs, split the ticket, move the rest to a later milestone, and delete nothing.
 
 ## Merging (Project Lead)

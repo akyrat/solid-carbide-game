@@ -865,3 +865,8 @@ Entry format:
 - Decision or change: the board wants the comic popups to be white rounded rectangles instead of jagged bursts, keeping the black border and black lettering. Added to T-125's current rework.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-125
+
+## 2026-10-14: Quick tuning with an agent, through the Project Lead
+- Decision or change: the board can work directly with any agent, on whatever it wants to tune, in the Project Lead's session: the Project Lead resumes the agent that did the work and passes the board's tweaks on word for word, in the task's folder, with no QA between tweaks and one QA round before merging. Every tweak is still recorded in the ticket.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
