@@ -855,3 +855,8 @@ Entry format:
 - Decision or change: the board's drags reach only the first session whose hooks read the shared inbox, so the "each session acts on its own tickets" rule can't work yet. The board chose to name each session itself (for example "Camera", "Tools"; a session without a name asks). T-127 adds a `lead:` owner on each ticket, gives every session its own read position in the inbox so all sessions see every drag and act only on their own or unowned tickets (claiming an unowned one first), and shows the owner on each card with a filter by owner, so the board sees every session's tickets in one view.
 - Documents touched: none yet (T-127 updates `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `docs/working-with-the-board.md`)
 - Tasks: T-127 (new)
+
+## 2026-10-14: Trick popups: three at most, eased rise
+- Decision or change: before playtesting T-125's second round, the board decided the popups should be small enough that up to three stack at once under the height limit (never more; the oldest makes room), and that their rise should ease out: fast at first, slowing towards the end as they fade. T-125 is reworked; its status stays in QA meanwhile, since the status script won't move it out while its round-1 marks still pass.
+- Documents touched: none yet (HUD and menus, Content, with the rework)
+- Tasks: T-125
