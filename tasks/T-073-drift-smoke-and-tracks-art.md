@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -71,3 +71,9 @@ Documents affected, all updated: `game/README.md` ("Drift smoke", the tools list
 5. Full suites: pass. GUT 426 / 426 (1 known warning: inner class TestRoom); `game/tools` 155 OK; `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
 
 - 2026-10-13, in-progress → in-qa: Smoke puff art drawn by script and swapped in; tests pass
+- 2026-10-13, needs-playtest → in-progress: board playtest: smoke lasts too long; in a full-circle drift it should cover about 20 degrees of the circle, not half
+
+### The board's playtest, 2026-10-13 (round 1): shorter smoke
+
+Each puff lasts too long: drifting in a full circle, the smoke trail covers about half the circle. The board wants it to cover about **20 degrees** of the circle. The trail's length follows the puffs' lifetime, so cut `lifetime` in `drift_smoke.tscn` to about a ninth (from 0.7 s to roughly 0.08 s, with its randomness), measured in a real full-circle drift, and adjust the size curve and spawn rate only as needed so the short trail still reads as smoke. Report the measured arc. Nothing else changes.
+
