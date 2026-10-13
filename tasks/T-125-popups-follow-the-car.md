@@ -41,11 +41,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass)
-- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass)
-- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass)
-- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass)
-- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass)
+- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass, round 2)
+- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass, round 2)
+- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass, round 2)
+- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass, round 2)
+- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass, round 2)
 
 The board's review: playtest tricks at speed (together with T-084's look) and judge whether the popups are readable.
 
@@ -109,3 +109,24 @@ Done on branch `task/T-125-popups-follow-the-car`. Status left as `in-qa`.
 - **Screenshots** (run, fast drift, a 360 at frame 10, a LONG DRIFT every 12 frames; fixture `popups_follow_demo.gd`): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_r3_a.png` (frame 26) and `popups_follow_r3_b.png` (frame 31): three stacked rounded popups above the car.
 - **Docs:** `docs/hud-and-menus.md` Decisions (new line for the rounded rectangles, placed after the "Trick popups stay with the car" line because the line "The trick popups look like real comic book popups ..." is not in that file) and Content "Trick popups"; `game/README.md` "Trick popups" (Comic look, round 3 paragraph, screenshot commands).
 - Documents affected: `docs/hud-and-menus.md`, `game/README.md`.
+
+### QA round 2 (QA/Integration Agent, 2026-10-14), the last round
+
+Judged on T-125's own diff from `task/T-084-trick-popup-art` (rounds 1 to 3). All five criteria pass, and the board's round-2 and round-3 requests are met.
+
+- Offset from the drawn car: pass. The follow tests are unchanged in substance and pass: constant offset `START_OFFSET + stack - rise` from a moving car every 0.05 s over the whole life, placement in `_physics_process`, and run, challenge ("Trending") and prototype popups each following `car_sprite.position`. The new eased rise is part of the checked offset (`pop.rise()`).
+- No overlap: pass. Rectangle-overlap checks pass for four tricks on one step in the run (now asserts at most 3 show), three stacked without a camera, popups born 0.1 s apart, and twelve under the limit at zoom 1.5. In my own run (below) the three stacked popups never overlapped.
+- Screenshots: pass. `screenshots/popups_follow_r3_a.png` (frame 26) and `_r3_b.png` (frame 31): ground and drift marks moved, three white rounded popups stacked above the car, apart, well below the timer. I retook frame 28 myself (same picture, three stacked above the car).
+- Docs: pass. HUD and menus, Content "Trick popups" says the popups follow the car and describes the cap at a quarter of the screen height, three at most, the 30 px start, the 20 px cubic ease-out rise and the rounded rectangle; Decisions has the follow line (2026-10-13) and the rounded-rectangle line (2026-10-14). game/README.md "Trick popups" covers following, the limit, `MAX_POPUPS`, the ease-out and the rounded look. Minor stale wording, not blocking: HUD and menus Content still says extended-drift popups are "smaller and flatter (a shorter burst)", and game/README.md's Tests line still says "the burst fits each text".
+- Tests: pass. Full GUT suite 438/438 (43 scripts; the same 2 warnings as round 1, neither from T-125). Python: game/tools 152 OK, tools 115 OK. T-091, T-083, T-092 and T-084 test files pass. Changed older tests judged not weakened: `test_hud_combo.gd` now counts popups with the trick's own text (still catches a doubled popup, which the 3-popup cap would otherwise make uncountable); the run overlap test went from at most 4 to at most 3 (stronger); the no-camera stacking test from 4 to 3 with a check that the fourth made the oldest leave; the T-084 art tests only renamed burst to bubble, and the checks that matter (no semi-transparent pixels, transparent border, no colour near Redgull red, white and black only with a black border, letters black on one baseline, fits each text, cached) are untouched, with a new stepped-corner test added. `test_popups_are_smaller_than_before` went from exactly 0.6 to below 0.6, as round 3 intends.
+
+The board's requests, checked separately:
+- Three at most, all fitting under the limit at zoom 14.4 and 1152x648: pass. Measured in the real run (a temporary fixture, removed afterwards, emitting a trick every 5 frames): always 3 popups, highest top edge at 193.6 px against the quarter line at 162. A unit test shows three of the biggest fit without any having to make room.
+- Limit at other sizes and zooms: pass. Real run at 800x900, zoom 7 (close): one popup fits at a time, top edge 278 px against 225. At 1600x500, zoom 25 (far): three, highest top 192.9 against 125. The unit test covers 1152x648 and 640x900 at camera zoom 1 and 2, with 20 popups over 2 s.
+- Eased rise: pass. `rise()` is `RISE * (1 - (1 - t)^3)` over the 1 s life; the test checks each step is no larger than the one before, more rise in the first half, full rise at the end.
+- White rounded rectangles, black border and lettering, stepped corners, no semi-transparent pixels, no red: pass (art tests above; at zoom 7 the enlarged popup shows clean stepped corners and hard pixels).
+
+For the board's playtest (not a failure): at the default zoom the popups are now drawn at about 0.7 screen pixels per popup pixel, so nearest filtering drops pixel rows and columns. The small LONG DRIFT! lettering is hard to read in the screenshots (enlarged it reads like "SONG DRIFT"), and the rounded corners are barely visible. The 360 popup reads. At closer zooms everything reads cleanly. The board should judge readability in the playtest.
+
+Godot's line-ending-only `.import` changes were left uncommitted.
+
