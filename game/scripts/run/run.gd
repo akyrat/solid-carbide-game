@@ -14,7 +14,9 @@ extends Node2D
 ## tricks and collisions to the combo (task T-081), and plays the level-up
 ## effect on the car at every level-up (task T-112). While the car drifts,
 ## its rear tyres leave drift marks (task T-117) on the map's ground, under
-## the buildings and the car.
+## the buildings and the car. Buildings that cover the car fade (task T-034,
+## in the map); sync_view() puts the car's drawing into the buildings' depth
+## order through View's z_index.
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
@@ -199,6 +201,9 @@ func sync_view() -> void:
 	car_sprite.position = drawn
 	car_sprite.set_heading(car.rotation)
 	camera.position = drawn
+	# See-through buildings (T-034): the car's drawing (with its effects and
+	# popups) goes under the buildings that cover it and over the rest.
+	view_root.z_index = map.car_z_index(car.position / CarScript.PX_PER_UNIT, car.rotation)
 	if level_up_burst != null:
 		level_up_burst.position = drawn
 
