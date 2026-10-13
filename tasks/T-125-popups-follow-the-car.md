@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -58,4 +58,4 @@ Built (UI Agent), branch `task/T-125-popups-follow-the-car` (from T-084's branch
 - Tests: `tests/unit/test_trick_popups_follow.gd` (9 tests: constant offset from a moving car over the whole life, physics-step placement, no follow stays put, run, challenge and prototype popups follow, popups born together and a little apart do not overlap, stack resets). Full GUT suite: 429 passed. Python tool tests: game/tools and tools both OK (unittest discover, exit 0).
 - Screenshots (fast drift, car driven with scripted full throttle and steering, a 360 and a long drift at frame 10): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_14.png` and `popups_follow_24.png` (fixture `tests/fixtures/popups_follow_demo.tscn`). The popups sit above the car in both, stacked and not overlapping. The camera is centred on the car, so the car stays in the middle in both; the ground scrolls.
 - Docs: HUD and menus, Decisions (line taken word for word from master) and Content, "Trick popups"; game/README.md, "Trick popups". Godot's .import noise reverted. When T-084 merges first, the Decisions line sits next to its comic-look line and may need a trivial conflict resolution.
-
+- 2026-10-13, in-progress → in-qa: ready for QA
