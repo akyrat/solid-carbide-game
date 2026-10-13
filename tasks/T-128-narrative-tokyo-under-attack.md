@@ -1,7 +1,7 @@
 ---
 id: T-128
 title: Narrative: downtown Tokyo under the kaiju's attack, and the alert banners
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 epic: narrative
@@ -13,7 +13,7 @@ documents_affected: [docs/extended-narrative.md, docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/visual-style.md, docs/level-design.md, docs/enemies.md, docs/hud-and-menus.md]
 files_expected_to_change: [docs/extended-narrative.md, docs/visual-style.md (only to keep it in sync, through the Project Lead)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -91,3 +91,4 @@ Visual style, Decisions, already carries the 2026-10-14 redesign entry. Proposed
 4. PASS, with minor notes. Damage level, pavement look and banner words are written as proposals and questions. Small narrative embellishments in Content (banners put up "by hand or by the city", "drawn by someone in a hurry", a first look at the kaiju before it appears) are interpretation of purpose, not new game content; the Project Lead may trim them.
 
 Flags (not fails): brief item 1 says "40 px per unit", copying Visual style's "about 40"; the game draws at 32 art pixels per unit, so T-064/T-129/T-130 should be told 32. Also the notes say the task's named Visual style sections do not exist by those names (correct).
+- 2026-10-14, in-qa → done: QA round 1 pass
