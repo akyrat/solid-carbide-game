@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/README.md, tasks/T-121-drift-smoke.md, tasks/T-118-drift-marks-art.md, tasks/T-074-challenge-and-level-up-effects-art.md]
 files_expected_to_change: [a smoke drawing script and its test, smoke sprites under game/art/ and their record, T-121's smoke scene, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
