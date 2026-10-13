@@ -800,3 +800,8 @@ Entry format:
 - Decision or change: the board found agents had been started on Opus although their task files said Sonnet (an agent started without a model runs on the Project Lead's model). On the board's request, the hooks now enforce `tasks/README.md`, "Models": an agent whose prompt names a task starts only when the Agent call passes that task's model; the QA/Integration Agent needs sonnet, or opus when the task has a board's review line. The agents already running were left to finish on Opus, on the board's say-so. Passed QA round 1; tooling, so merged.
 - Documents touched: `tasks/README.md`
 - Tasks: T-122 (done)
+
+## 2026-10-13: The trick popups become black-and-white comic popups
+- Decision or change: after playtesting T-084's neon comic popups, the board wants them to look like real comic book popups: a white bubble with a black border and black letters, in a heavy, slanted comic font like its reference image (Bangers already is that style and stays), with the letters on one straight baseline. T-084 goes back to the Asset Generation Agent.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-084 (back to in progress)
