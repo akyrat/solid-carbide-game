@@ -1,7 +1,7 @@
 ---
 id: T-120
 title: Data: the likes bar drains four times faster
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 epic: game-loop
