@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, tasks/T-083-hud-combo-and-trick-popups.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the popup scene, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -124,3 +124,4 @@ Code read: `game/scripts/hud/trick_popup_art.gd` (palette with index 0 transpare
 **For the board (not a fail):** Bangers has capitals only, so the approved text "Trending! +{likes} Likes" (T-048) shows as "TRENDING! +{likes} LIKES". The board decides whether that is fine.
 
 Godot's line-ending-only `.import` changes from the test run were left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all criteria pass
