@@ -1,7 +1,7 @@
 ---
 id: T-119
 title: Data: the kaiju drops a few coins when defeated
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 epic: enemies
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/garage-design.md, game/data/enemies.json, tasks/T-039-enemy-data.md, game/README.md]
 files_expected_to_change: [game/data/enemies.json, game/scripts/data/enemy_data.gd, its tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
