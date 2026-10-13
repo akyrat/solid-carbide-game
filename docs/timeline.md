@@ -830,3 +830,8 @@ Entry format:
 - Decision or change: the board wants to jump from a ticket to that ticket's version of the game. It chose a launcher over an embedded web build (a browser page can't hold a native Godot window, and a web export would need the Compatibility renderer instead of Forward+). A new Builds tab lists `master` and every worktree, each with "Play" and "Open in editor" buttons that start Godot on that folder; ticket cards with a worktree get a Play button too. Embedding the game in the page stays a possible later step.
 - Documents touched: none yet (T-126 updates `docs/README.md` and `docs/working-with-the-board.md`)
 - Tasks: T-126 (new)
+
+## 2026-10-14: T-121 and T-073 done: drift smoke
+- Decision or change: the board playtested the drift smoke and approved it ("LGTM"). While the car drifts, puffs come off both rear tyres: a script-drawn cool grey-violet cloud puff (no PixelLab), each living 0.13 s, 50 a second, capped at 64, so in a full-circle drift the trail covers about 20 degrees (the board's request after the first version covered about half the circle). Puffs stay where they were left, grow then pop out, and sit in the car's depth order. Both passed QA (T-073 in two rounds).
+- Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
+- Tasks: T-121 (done), T-073 (done)
