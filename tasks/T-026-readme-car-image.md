@@ -4,6 +4,7 @@ title: Car image at the top right of the root README
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

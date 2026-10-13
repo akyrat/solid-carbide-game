@@ -1,9 +1,10 @@
 ---
 id: T-127
 title: Named Project Lead sessions: ticket owners, owner labels, and every session sees every drag
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

@@ -4,6 +4,7 @@ title: Camera zoom slider in the settings menu
 status: cancelled
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 depends_on: [T-010]

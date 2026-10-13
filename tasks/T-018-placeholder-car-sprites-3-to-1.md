@@ -4,6 +4,7 @@ title: Redraw the placeholder car sprites at 3:1
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

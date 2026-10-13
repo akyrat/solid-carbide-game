@@ -4,6 +4,7 @@ title: Key-art scene graphic for the README and pitch material
 status: blocked
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: final-release
 user_facing_text: no

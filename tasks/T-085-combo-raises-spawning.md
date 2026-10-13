@@ -4,6 +4,7 @@ title: The combo raises minion spawning (can be switched off)
 status: blocked
 from: project-lead
 to: enemy-behavior
+lead:
 epic: enemies
 milestone: mvp
 user_facing_text: no

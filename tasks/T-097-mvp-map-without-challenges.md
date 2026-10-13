@@ -4,6 +4,7 @@ title: Take the challenges out of the MVP map (no arrows, the boulders stay), an
 status: done
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: mvp
 user_facing_text: no

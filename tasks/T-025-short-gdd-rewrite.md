@@ -4,6 +4,7 @@ title: Rewrite the short GDD as a pitch, in Markdown with a PDF export
 status: done
 from: project-lead
 to: project-lead
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

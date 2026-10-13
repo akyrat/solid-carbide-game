@@ -4,6 +4,7 @@ title: Find the MVP's sound effects
 status: blocked
 from: project-lead
 to: sfx
+lead:
 epic: sound
 milestone: mvp
 user_facing_text: no

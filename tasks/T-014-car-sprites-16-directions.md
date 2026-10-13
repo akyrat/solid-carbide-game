@@ -4,6 +4,7 @@ title: The first pixel-art car sprite: one direction, front to the bottom-left (
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

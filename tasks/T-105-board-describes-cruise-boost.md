@@ -4,6 +4,7 @@ title: Board describes what the cruise boost looks like
 status: open
 from: project-lead
 to: board
+lead:
 epic: art
 milestone: final-release
 user_facing_text: no

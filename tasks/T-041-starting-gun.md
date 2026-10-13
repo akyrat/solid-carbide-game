@@ -4,6 +4,7 @@ title: The starting gun: aims itself and fires at enemies in range
 status: blocked
 from: project-lead
 to: weapon-behavior
+lead:
 epic: weapons
 milestone: mvp
 user_facing_text: no

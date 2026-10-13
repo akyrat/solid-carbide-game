@@ -4,6 +4,7 @@ title: Art: the minion (light green lizard), walking
 status: blocked
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

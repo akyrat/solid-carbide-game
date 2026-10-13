@@ -4,6 +4,7 @@ title: Short, specific title
 status: open
 from: project-lead
 to: agent-name
+lead:
 epic: epic-id
 milestone: mvp
 user_facing_text: no

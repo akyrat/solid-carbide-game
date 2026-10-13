@@ -4,6 +4,7 @@ title: Long GDD generator and document staleness check
 status: done
 from: project-lead
 to: project-lead
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

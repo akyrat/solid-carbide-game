@@ -4,6 +4,7 @@ title: The challenge arrow draws itself, pulses while open, and fades when compl
 status: blocked
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: final-release
 user_facing_text: no

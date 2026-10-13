@@ -4,6 +4,7 @@ title: Board decides the camera zoom
 status: done
 from: project-lead
 to: board
+lead:
 epic: driving
 milestone: mvp
 user_facing_text: no

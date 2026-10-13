@@ -4,6 +4,7 @@ title: The exhaust flamethrower: fires only while drifting
 status: blocked
 from: project-lead
 to: weapon-behavior
+lead:
 epic: weapons
 milestone: mvp
 user_facing_text: no
