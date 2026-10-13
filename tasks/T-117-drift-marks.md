@@ -1,7 +1,7 @@
 ---
 id: T-117
 title: Drift marks: the rear tyres leave marks on the ground while drifting (placeholder)
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 epic: driving
