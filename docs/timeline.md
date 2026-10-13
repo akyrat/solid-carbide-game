@@ -870,3 +870,8 @@ Entry format:
 - Decision or change: the board can work directly with any agent, on whatever it wants to tune, in the Project Lead's session: the Project Lead resumes the agent that did the work and passes the board's tweaks on word for word, in the task's folder, with no QA between tweaks and one QA round before merging. Every tweak is still recorded in the ticket.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: none
+
+## 2026-10-14: Record: the board's go for T-064's sample tower
+- Decision or change: recorded late (QA found the gap): on 2026-10-13 the board gave the go for T-064's one sample tower ("go and generate the sample building"), 1 generation. The full set of 7 more followed the board's go on 2026-10-14. Balance after all 8 calls: 4946 of 5000 (a later free query; the result notes said 4947 because of the API's lag).
+- Documents touched: none
+- Tasks: T-064
