@@ -37,6 +37,8 @@ The UI Agent builds the screen and shows the numbers only. Counting them during 
 
 To be written when the board's list of stats and description are in.
 
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
 ## Result notes
 
 Written by the agent when it finishes.

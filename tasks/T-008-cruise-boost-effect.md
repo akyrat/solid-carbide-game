@@ -41,6 +41,8 @@ When the player presses W and the car jumps instantly to cruise speed (Drifting,
 - [ ] A screenshot taken just after pressing W shows the placeholder effect (QA: pass / fail)
 - [ ] The full test suite passes (QA: pass / fail)
 
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
 ## Result notes
 
 Written by the agent when it finishes.

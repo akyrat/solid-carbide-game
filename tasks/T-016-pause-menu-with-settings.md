@@ -32,6 +32,8 @@ Replaces the MVP's simple "Paused" screen (T-015) with a full pause menu that in
 
 To be written when the board's description is in.
 
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
 ## Result notes
 
 Written by the agent when it finishes.

@@ -43,6 +43,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] `docs/level-design.md` describes the animation in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
 ## Result notes
 
 Written by the agent when it finishes.
