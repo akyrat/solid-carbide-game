@@ -1,7 +1,7 @@
 ---
 id: T-113
 title: HUD: health bar upright at the top left, likes bar along the bottom
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: ui
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, tasks/T-049-hud-run-values.md, tasks/T-083-hud-combo-and-trick-popups.md, game/README.md]
 files_expected_to_change: [game/scenes/hud/hud.tscn, game/scripts/hud/hud.gd, the HUD's tests, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -104,3 +104,4 @@ QA/Integration, round 2 (2026-10-13), in the worktree on branch task/T-113-hud-v
 - **Screenshots: pass.** `screenshots/T-113-r2-1152x648.png` and `T-113-r2-1920x1080.png` (a run from the main menu) show the health bar upright at the top left with "Car Health" directly above, flush with its left edge; the likes bar across the bottom centre, half the width, filling left to right; heart and "Likes" at the left end, "Hype Lv 2" ending at the right end, on one line; "Combo x1.75" centred above; timer and coins clear. Enlarged crops: heart's left edge and "Hype Lv"'s right edge sit exactly on the bar's ends, nothing staggered or floating. I retook the 1152x648 shot from the current code: the HUD regions are pixel-identical to the committed one (QA copy deleted). Note for the board: at 1920x1080 the text keeps its pixel size, so it reads smaller relative to the screen.
 - **Docs: pass.** `docs/hud-and-menus.md`, Content, "The HUD": "Top left" and new "Bottom centre" bullets describe the new layout, plus the pause band note; the Decisions section is identical to master's. `game/README.md`, "The HUD" paragraph, describes the T-113 layout and `test_hud_layout.gd`.
 - **Full suites: pass.** GUT 330/330, TESTS PASSED (the one existing inner-class warning). Python `game/tools` 125 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 2: all six criteria pass
