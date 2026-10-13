@@ -740,3 +740,8 @@ Entry format:
 - Decision or change: the board wants drift marks. While the car drifts, its two rear tyres leave dark marks on the ground; each stays about 6 seconds, then fades out as a whole. Details settled by the Project Lead: marks only during the car's own drift state, one per rear tyre, drawn over the ground and under everything else, capped in number; the texture drawn by script (no PixelLab), as with the level-up particles. T-117 (Driving & Drift) builds them with a placeholder line; T-118 (Asset Generation) draws the texture on top of T-117's branch, and the board playtests both together. T-073 keeps only the drift smoke.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-117 (new), T-118 (new, depends on T-117), T-073 (narrowed to drift smoke)
+
+## 2026-10-13: T-117 and T-118 done: drift marks
+- Decision or change: the board playtested the drift marks and approved them ("LGTM"). While the car drifts, each rear tyre leaves a mark under it, with a script-drawn tyre texture (an 8 by 8 tile, three dark rubber colours, a chevron tread, ragged edges; no PixelLab). Each mark stays 6 seconds, fades out over 1 second as a whole and is removed, with a cap of 800 pieces. The marks are drawn on the ground, under the buildings, boulders, car and HUD, in the run and the drift prototype. All tests pass on master after both merges (383 GUT, 141 and 115 Python).
+- Documents touched: `game/README.md`
+- Tasks: T-117 (done), T-118 (done)
