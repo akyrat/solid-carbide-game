@@ -840,3 +840,8 @@ Entry format:
 - Decision or change: with two Project Lead sessions running, the board's drags on the task board reach both. Each session now acts only on moves for tickets it planned or started; a move on a ticket nobody owns yet goes to the session the board is talking to.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: none
+
+## 2026-10-14: Buildings: dense narrow towers, kanji-like signs kept; popups lower and smaller
+- Decision or change: on T-064's sample tower, the board took the Project Lead's recommendations: blocks are packed densely with narrow towers (about 49 per block) instead of 16 wider ones, the remaining 7 base towers are generated the same narrow way (about 7 generations), and the signs' kanji-like marks are kept as long as they are not real words. Also, playtesting T-125, the board wants the stacked trick popups to go at most half way from the car to the top of the screen (they reached the timer) and to be a bit smaller; T-125 goes back to the UI Agent.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064 (full set), T-125 (back to in progress)
