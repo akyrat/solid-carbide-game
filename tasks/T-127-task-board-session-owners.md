@@ -1,7 +1,7 @@
 ---
 id: T-127
 title: Named Project Lead sessions: ticket owners, owner labels, and every session sees every drag
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead:
@@ -14,7 +14,7 @@ documents_affected: [tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/w
 files_to_read_first: [tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/working-with-the-board.md, .claude/hooks/board_gate.py, .claude/settings.json, tools/task_status.py, tools/taskboard_sync.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tasks/T-111-task-board-planning-column.md, tasks/T-126-task-board-builds-tab.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/task_status.py, tools/test_task_status.py, tools/taskboard_sync.py, tools/test_taskboard_sync.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/board_inbox.py, tools/test_board_inbox.py, tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/working-with-the-board.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
