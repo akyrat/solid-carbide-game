@@ -4,11 +4,13 @@ extends Node2D
 ## name appears at the car, rises a little and fades. The challenge popup
 ## (task T-092) reuses this: call show_popup() with any text.
 ##
-## Placeholder look: a bold outlined text on a dark navy shape; the
-## final comic look is task T-084. The node is a child of the world view, so
-## it draws in the same (isometric) drawn space as the car sprite.
+## The comic look (task T-084) is baked by trick_popup_art.gd: a jagged burst
+## around the text lettered in Bangers, one pixel image per text and size. The
+## node is a child of the world view, so it draws in the same (isometric)
+## drawn space as the car sprite.
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
+const Art := preload("res://scripts/hud/trick_popup_art.gd")
 
 ## Texts approved in task T-082.
 const TEXTS := {
@@ -20,7 +22,9 @@ const TEXTS := {
 const ADDED_TEXT := "+{amount}"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
 const SCORE_TEXT := "Trending! +{likes} Likes"
-## Font sizes in drawn pixels. Extended drift comes every second, so it is smaller.
+## Sizes: SIZE_SMALL or less bakes the small popup, anything more the normal one
+## (the numbers are the old drawn font sizes). Extended drift comes every
+## second, so it is smaller.
 const SIZE_NORMAL := 28
 const SIZE_SMALL := 16
 const SIZES := {
@@ -28,6 +32,8 @@ const SIZES := {
 	"three_sixty": SIZE_NORMAL,
 	"alternate_drift": SIZE_NORMAL,
 }
+## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
+const PIXEL_SCALE := 0.8
 ## Seconds a popup lasts, and how far it rises (drawn pixels).
 const LIFETIME := 1.0
 const RISE := 40.0
@@ -58,25 +64,16 @@ class PopupText extends Node2D:
 	func _process(dt: float) -> void:
 		advance(dt)
 
+	func _ready() -> void:
+		# Hard pixel edges, never smoothed (Visual style).
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
 	func _draw() -> void:
-		var font := ThemeDB.fallback_font
-		var size := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size)
-		var half := size / 2.0 + Vector2(10, 4)
-		var shape := PackedVector2Array()
-		# A simple burst: a hexagon-like shape with pointed sides.
-		shape.append(Vector2(-half.x - 8, 0))
-		shape.append(Vector2(-half.x, -half.y))
-		shape.append(Vector2(half.x, -half.y))
-		shape.append(Vector2(half.x + 8, 0))
-		shape.append(Vector2(half.x, half.y))
-		shape.append(Vector2(-half.x, half.y))
-		draw_colored_polygon(shape, Color(0.12, 0.08, 0.30))
-		var closed := shape.duplicate()
-		closed.append(shape[0])
-		draw_polyline(closed, Color(0.0, 0.9, 1.0), 3.0)
-		var origin := Vector2(-size.x / 2.0, size.y / 4.0)
-		draw_string_outline(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 6, Color(0.04, 0.02, 0.12))
-		draw_string(font, origin, text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1.0, 0.25, 0.75))
+		if text == "":
+			return
+		var tex := Art.texture(text, Art.style_for(font_size))
+		var size := Vector2(tex.get_size()) * PIXEL_SCALE
+		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
 
 
 var _car: Node = null
