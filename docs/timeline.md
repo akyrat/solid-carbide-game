@@ -775,3 +775,8 @@ Entry format:
 - Decision or change: the board reviewed the boulder samples and approved two as the boulder variants: the first PixelLab sample with its stone disc removed by a free script, and the second, lower, boxy PixelLab sample. 2 generations were used in all (balance 4954 of 5000). T-065 now puts both into the game (no more PixelLab calls), sized to the 3-unit collision circle, for the board's playtest. The T-034 folder was deleted once Godot was closed.
 - Documents touched: none
 - Tasks: T-065 (in progress)
+
+## 2026-10-13: Starting the building art and the comic look of the trick popups
+- Decision or change: the board asked to start the Tokyo-style buildings for the city blocks (T-064) and the pixel-art comic-book look of the trick popups (T-084). Both start with a plan only, no PixelLab calls: a block is 30 by 30 units (about 1200 pixels across at 40 pixels per unit), far bigger than one PixelLab image, so the Asset Generation Agent first proposes how to fill a block, the variants and the cost; for the popups it proposes script-drawn bursts versus generated ones, and a licensed pixel font. The board then gives the go for one sample of each.
+- Documents touched: none
+- Tasks: T-064, T-084 (in progress, planning first)
