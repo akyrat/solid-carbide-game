@@ -42,12 +42,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test places the car behind a building (covered by it on screen) and shows that building becomes see-through, while a building not covering the car stays fully opaque (QA: pass / fail)
-- [ ] A test moves the car out from behind the building and shows it becomes fully opaque again (QA: pass / fail)
-- [ ] Two screenshots, the car behind a building and the car in the open, show the fade (QA: pass / fail)
-- [ ] The fade changes only the building's whole-object transparency: no sprite file was changed (QA: pass / fail)
-- [ ] `docs/level-design.md` describes the see-through behaviour in Content without changing Summary, Decisions or Open questions, and `game/README.md` says how it works for whoever adds the final building art (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test places the car behind a building (covered by it on screen) and shows that building becomes see-through, while a building not covering the car stays fully opaque (QA: pass)
+- [x] A test moves the car out from behind the building and shows it becomes fully opaque again (QA: pass)
+- [x] Two screenshots, the car behind a building and the car in the open, show the fade (QA: pass)
+- [x] The fade changes only the building's whole-object transparency: no sprite file was changed (QA: pass)
+- [x] `docs/level-design.md` describes the see-through behaviour in Content without changing Summary, Decisions or Open questions, and `game/README.md` says how it works for whoever adds the final building art (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: drive behind buildings and judge whether the fade reads well.
 
@@ -65,5 +65,27 @@ Built by the Level/Challenge Design Agent, following T-020's approach A (whole-b
 - **For the board to judge in the playtest:** the placeholder height (15 units); and under a faded building the dark night colour shows, because the ground art (T-103) has no tiles on the blocks.
 - **Documents affected:** `docs/level-design.md` (Content only: a new "See-through buildings" subsection, a sentence in "MVP map" and the retaken iso picture; Summary, Decisions and Open questions unchanged), `game/README.md` ("MVP map": the building node and a "See-through buildings" part). Also my working copy `agent-notes/level-challenge.md`. The long GDD is stale for Level design; regenerate it when merging.
 - Godot's line-ending-only `.import` changes were reverted, not committed. No PixelLab call.
+
+## QA round 1 (QA/Integration Agent, 2026-10-13)
+
+All six criteria pass. Checked in C:\solid-carbide-worktrees\T-034 against the branch point (`git diff master...HEAD`).
+
+1. **Pass.** `test_building_covering_the_car_fades_and_one_not_covering_stays_opaque` puts the car on the road behind the block (12, 66, 30, 30), where the block covers it on screen. After 0.3 s that block is `covering` at alpha 0.15, the far block and every other building stay at 1.0, and `covering_buildings()` is just that block. The same check runs in a run started from the main menu.
+2. **Pass.** `test_building_becomes_fully_opaque_again_when_the_car_comes_out`: after the car moves to the open, and again after it moves in front of the block, the block is back at alpha 1.0. The 0.15 s timing is tested both ways.
+3. **Pass.** In `docs/level-design/see-through-behind.png` the block over the car is see-through: the car, the road and the block's outline show through it. In `see-through-open.png` the same block is solid purple with the car in front of it. Under the faded block the untiled ground shows as near-black, as the result notes say.
+4. **Pass.** The fade only changes the building node's `modulate.a`: no tint, no shader, the colours stay opaque (`test_fade_changes_only_the_whole_buildings_alpha`), and art under the node fades with it. The diff since the branch point changes no file under `game/art/` and no sprite or `.import` file. The only PNGs are the three pictures in `docs/level-design/`.
+5. **Pass.** `docs/level-design.md`: Summary, Decisions, Open questions and References are byte-identical to master's (checked with a script). Only Content changed: the new "See-through buildings" subsection and one sentence in "MVP map". `game/README.md`, "MVP map", "See-through buildings", tells whoever adds the final building art (T-064) how to keep the fade: put a child sprite under the building node, set `draw_placeholder` false, and set `height_units` or `custom_silhouette`.
+6. **Pass.** I ran both myself. Full GUT suite: 398/398, TESTS PASSED (`test_see_through_map.gd` 15/15). Python: `game/tools` ran 141 tests OK, `tools` ran 115 tests OK.
+
+Also checked, as asked:
+- **Drift marks:** `DriftMarks` sits in `map.view_root` right after the ground tiles at z 0, and every building is at z 2 or higher. The car's `View` is at z 1 or higher, so the order is still ground, marks, buildings, car. A test checks this.
+- **The car's draw order:** `car_z_index()` puts the car just under the lowest building that covers it, and over every building otherwise. So the car is drawn over a block it is in front of (tested with IN_FRONT, and in the run).
+- **Merging:** the branch merges into the current master without conflicts (`git merge-tree`).
+- **Import noise:** Godot's line-ending-only `.import` changes are left uncommitted.
+
+For the board (not fails):
+- The 15-unit placeholder height for the buildings is the agent's own choice, not a board decision.
+- Under a faded block the dark night colour shows, because the ground art has no tiles there.
+- Enemies aren't drawn in the run yet. When they are, they will be at z 0 under every building unless they join the depth order. The fade is car-only by decision.
 
 Board review files: [docs/level-design/see-through-behind.png, docs/level-design/see-through-open.png, game/scenes/run/run.tscn]
