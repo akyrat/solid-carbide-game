@@ -35,11 +35,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A screenshot shows each trick's popup in the final comic style (QA: pass / fail)
-- [ ] The font's source and licence are recorded, and the licence allows commercial use (QA: pass / fail)
-- [ ] Every PixelLab call is recorded with its prompt, settings and cost, and the balance before and after (QA: pass / fail)
-- [ ] T-091's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A screenshot shows each trick's popup in the final comic style (QA: pass)
+- [x] The font's source and licence are recorded, and the licence allows commercial use (QA: pass)
+- [x] Every PixelLab call is recorded with its prompt, settings and cost, and the balance before and after (QA: pass)
+- [x] T-091's tests still pass (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
@@ -110,3 +110,17 @@ The board approved going ahead and wanted to playtest rather than look at more i
 **Screenshots** (copied to `art-archive/T-084/`; screenshots/ is git-ignored): `T-084_trick_popups_demo.png` (all four popups in a run: LONG DRIFT! +0.05 small, FULL 360! +0.25, ALT DRIFT! +0.5, Trending! +120 Likes), `T-084_combo_demo.png` (the real combo path: each trick fires through the run state), `T-084_challenge_popup_demo.png`. Fixture `game/tests/fixtures/trick_popups_demo.gd` now shows all of them.
 
 **Documents updated:** `game/README.md` (Trick popups, font source and licence), `docs/hud-and-menus.md` (Content, "Trick popups"). `game/tools/build_trick_popup.py` (round 1 sample builder) is left as is and no longer used by the game. Godot's line-ending-only .import changes were reverted (the new `Bangers-Regular.ttf.import` is committed).
+
+### QA round 1 (2026-10-13, QA/Integration Agent): all criteria pass
+
+1. **Screenshot of each trick's popup: pass.** `art-archive/T-084/T-084_trick_popups_demo.png` shows all four popups in a run in the comic style (jagged navy burst, stepped cyan edge, Bangers lettering, pink name, cyan amount): LONG DRIFT! +0.05 (small, flatter burst), FULL 360! +0.25, ALT DRIFT! +0.5 and TRENDING! +120 LIKES. `T-084_combo_demo.png` shows the three tricks through the real combo path. QA retook the trick screenshot and the challenge screenshot itself (frames 30 and 40): both show the comic popups ("TRENDING! +100 LIKES" above the car). Note: the committed `T-084_challenge_popup_demo.png` shows no popup at all (taken at a frame when it was not on screen); the popup itself works, the archived image just misses it. Worth replacing before the board looks at the archive.
+2. **Font source and licence, commercial use: pass.** `game/fonts/bangers/bangers.json` records Bangers Regular 2.100, Vernon Adams, the google/fonts commit `66928797...`, upstream commit, URLs and hashes; `game/README.md` ("Trick popups", Font) records the same source, commit and SIL OFL 1.1; `game/fonts/bangers/OFL.txt` is next to the font and is the OFL 1.1 text. OFL 1.1 lets the font be used, bundled and sold with software (a commercial game included); only selling the font on its own is excluded.
+3. **PixelLab calls recorded: pass (none made).** No commit, changed file or art record on the branch involves PixelLab; the burst is script-drawn and the lettering is the downloaded font. 0 calls, 0 cost.
+4. **T-091's tests still pass: pass.** `git diff master...HEAD -- game/tests` changes no existing test (only the new `test_trick_popup_art.gd` and the screenshot fixture), so T-091, T-083 and T-092 tests are not weakened. `test_trick_popups.gd` 6/6, `test_challenge_popup.gd` 2/2, and the combo tests pass in the full run.
+5. **Full GUT suite and all Python tool tests: pass.** GUT (`bash game/tools/run_tests.sh`): 418 of 418, TESTS PASSED, exit 0 (the one warning is the existing TestRoom inner class). `game/tools`: 152 tests OK. `tools`: 115 tests OK.
+
+Code read: `game/scripts/hud/trick_popup_art.gd` (palette with index 0 transparent, two styles, cache per text and size, fixed seed) and `game/tests/unit/test_trick_popup_art.gd` (10 tests, check real baked pixels, not only constants). Small tidy-up, not a fail: a stray `pass` sits after `test_no_colour_near_redgull_red`.
+
+**For the board (not a fail):** Bangers has capitals only, so the approved text "Trending! +{likes} Likes" (T-048) shows as "TRENDING! +{likes} LIKES". The board decides whether that is fine.
+
+Godot's line-ending-only `.import` changes from the test run were left uncommitted.
