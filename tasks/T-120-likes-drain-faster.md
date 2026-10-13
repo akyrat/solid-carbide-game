@@ -44,4 +44,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Data Agent, 2026-10-13. Commit 847d0f2 on `task/T-120-likes-drain-faster`.
+
+- `game/data/run.json`: `likes_drain.bar_share_per_second` 0.02 -> **0.08**. `enabled` (true) and `extra_wait_seconds` (0.0) are unchanged. The `_comment` now gives 0.08 as the board's playtest value (2026-10-13, four times the first proposal of 0.02): a full bar empties in 12.5 s, 8 likes a second at level 1. "Proposed numbers" is gone.
+- `game/tests/unit/test_run_data.gd`: `test_likes_drain_is_slow_next_to_drifting` (below half a drift second's XP, at least 30 s per bar) is replaced by `test_likes_drain_is_the_boards_playtest_speed`, which pins 0.08, a full bar in 12.5 s and 8 likes a second at level 1. In `test_likes_drain_scales_with_the_level_bar`, the pinned "2 XP/s at level 1" now reads the speed from the data.
+- `game/tests/unit/run/test_run_likes_drain.gd` (T-115) needed no change. Every test there reads the speed through `RunData.likes_drain_xp_per_second()`. I checked each timed case at 0.08 (for example 50 XP at level 1 over 5 s leaves 10 XP; a 3 XP bar still sends more than 10 `xp_changed` signals before it empties). They all pass unchanged: when it starts, the floor, no drain while paused or while a choice waits, and the rest.
+- `game/README.md`: the RunData reader line now gives 0.08 (a full bar in 12.5 s, 8 likes a second at level 1). The `likes_drain_demo` screenshot command for "the bar emptying" moves from frame 600 to frame 90, because at the new speed the demo's fifth of level 2's bar (25 likes) is gone in about 2.5 s. I did not take that screenshot.
+- Tests: the full GUT suite passes (`bash game/tools/run_tests.sh`: 41 scripts, 408 of 408 tests, TESTS PASSED). Python tool tests: `game/tools` ran 141 tests, OK; `tools` exited 0, OK. Godot's line-ending-only `.import` changes were reverted and not committed. `project.godot` was not touched.
+- Documents affected: `game/README.md` (updated). The Game loop architecture doc gives no drain number, so it needs no change.
+
