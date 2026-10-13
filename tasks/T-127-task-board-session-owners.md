@@ -1,7 +1,7 @@
 ---
 id: T-127
 title: Named Project Lead sessions: ticket owners, owner labels, and every session sees every drag
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead:
