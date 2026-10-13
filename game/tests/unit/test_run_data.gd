@@ -54,12 +54,14 @@ func test_likes_drain_loads_with_sensible_values() -> void:
 	assert_eq(rd.likes_drain_extra_wait_seconds(), 0.0, "the board's rule: starts when the combo has drained")
 
 
-func test_likes_drain_is_slow_next_to_drifting() -> void:
+func test_likes_drain_is_the_boards_playtest_speed() -> void:
+	# T-120: the board's playtest value, four times T-114's first proposal.
 	var rd := RunData.new()
-	# At level 1 the drain is well below what one drift second gives.
-	assert_lt(rd.likes_drain_xp_per_second(1), rd.drift_xp_per_second() * 0.5)
-	# A full bar takes at least 30 seconds to empty, at every level.
-	assert_gte(1.0 / rd.likes_drain_bar_share_per_second(), 30.0)
+	assert_almost_eq(rd.likes_drain_bar_share_per_second(), 0.08, 0.0001)
+	# A full bar empties in 12.5 seconds, at every level.
+	assert_almost_eq(1.0 / rd.likes_drain_bar_share_per_second(), 12.5, 0.0001)
+	# 8 likes a second at level 1.
+	assert_almost_eq(rd.likes_drain_xp_per_second(1), 8.0, 0.0001)
 
 
 func test_likes_drain_scales_with_the_level_bar() -> void:
@@ -68,4 +70,4 @@ func test_likes_drain_scales_with_the_level_bar() -> void:
 	for l in range(1, rd.max_level()):
 		assert_almost_eq(rd.likes_drain_xp_per_second(l), share * rd.xp_needed(l), 0.0001)
 	assert_eq(rd.likes_drain_xp_per_second(rd.max_level()), 0.0, "no bar at max level")
-	assert_almost_eq(rd.likes_drain_xp_per_second(1), 2.0, 0.0001)
+	assert_almost_eq(rd.likes_drain_xp_per_second(1), share * rd.xp_needed(1), 0.0001)
