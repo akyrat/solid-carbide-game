@@ -8,10 +8,10 @@ epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-029]
+depends_on: []
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/drifting.md, tasks/T-029-drift-defaults-after-playtest.md]
-files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, game/README.md, tasks/T-121-drift-smoke.md, tasks/T-118-drift-marks-art.md, tasks/T-074-challenge-and-level-up-effects-art.md]
+files_expected_to_change: [a smoke drawing script and its test, smoke sprites under game/art/ and their record, T-121's smoke scene, game/README.md]
 model: sonnet
 qa_rounds: 0
 ---
@@ -27,29 +27,23 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Tyre tracks moved to T-117 and T-118 (board, 2026-10-13): this task is now the drift smoke only.** Before it starts, the Project Lead splits off a functional smoke task with a placeholder, as for the tracks, and checks with the board whether the smoke can be drawn by script instead of PixelLab.
+The final look of the drift smoke (Visual style, Decisions, "Drift smoke", 2026-10-13). T-121 builds the working smoke with a placeholder; this task draws the real smoke sprites and swaps them in. The tyre tracks moved to T-117 and T-118 (done).
 
-**Blocked until T-029 (the car's new defaults) is done.**
+**Branch:** create your branch `task/T-073-drift-smoke-art` from T-121's branch (not from master), in your own folder `C:\solid-carbide-worktrees\T-073`, so the board playtests both from your folder. T-121 merges first, then this task.
 
-Drift smoke and tyre tracks (Visual style, Decisions), shown while the car drifts (the car's drift state from T-012). The tracks fade over time as whole objects. Hook them to the car, in the drift prototype and the run.
+**No PixelLab** (board, 2026-10-13: no sample review, straight to the playtest): write a script that draws the smoke puff sprites, a few sizes or frames (for example a puff that grows, then breaks up in pixel steps), within Visual style, Decisions: pixel art, no anti-aliasing, no semi-transparent pixels (use dithering or stepped shapes for softness), a transparent background, about 30 colours or fewer, the night palette (cool grey-violet smoke, perhaps a faint neon tint from the city), not Redgull red. It must read on both the dark asphalt and the dusty gravel. Propose the shapes, colours, sizes and any retuning of T-121's settings in the result notes, and judge honestly how it reads.
 
-Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
-
-Use the existing client, `game/tools/pixellab_client.py`. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. The board judges the result.
-
-This art task swaps its art in for the placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
-
-Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
+Swap the sprites into T-121's smoke scene without changing when or how smoke is emitted. Keep the script and its output: game-ready art under `game/art/`, with a short record; anything unused in `art-archive/T-073/`.
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot of the car drifting shows the smoke and tracks behind it, and none while driving straight (QA: pass / fail)
-- [ ] The T-012 and T-029 tests still pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass / fail)
+- [ ] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass / fail)
+- [ ] Screenshots of the car drifting on asphalt and on gravel show the new smoke behind the rear tyres (QA: pass / fail)
+- [ ] T-121's tests still pass (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+The board's review: playtest drifting in a run and judge the smoke (together with T-121).
 
 ## Result notes
 
