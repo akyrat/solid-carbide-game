@@ -98,3 +98,26 @@ The board gave the go for the sample only: exactly one PixelLab call for one tow
 - **Settings:** `image_size` 384 x 400, `text_guidance_scale` 8, `outline` selective outline, `shading` detailed shading, `detail` highly detailed, `view` high top-down, `direction` south-east, `isometric` true, `no_background` true (PixelLab gives a blank, not transparent, background above 200 x 200; the clean script removes it), `seed` 64064.
 - **Palette image (`color_image`):** `art-archive/T-064/palette.png`, 29 colours made by `python game/tools/build_buildings.py palette` from approved art only: the 16 navy, purple and grey night shades of `game/art/ground/ground_atlas.png` and the 13 pink, cyan and violet neon colours of `game/art/effects/level_up_particles.png`. Every colour is more than 0.5 from Redgull red.
 - **Expected cost:** about 1 generation (the cost at 384 x 400 is not published). If it costs more than 2, I stop and report before anything else.
+
+### Sample round, result (2026-10-13)
+
+**Call made: 1** (`/create-image-pixflux`, request exactly as planned above, first try, no resend). **Cost: 1 generation.** Balance before 4954, after 4953 of 5000 (`GET /balance` showed 4954 straight after the call and 4953 a few minutes later: the known lag). Record: `art-archive/T-064/raw/tower_01.json`, and a line in `game/art/pixellab-generation-log.jsonl`. No further call was made. Nothing was swapped into the game.
+
+**What came back.** One tower, 2 x 2 units of footprint and about 8.6 units of wall, on a flat opaque grey-purple background (as the API documents above 200 x 200). The forced palette held: the raw image already used only the 29 palette colours. The iso angle is the game's 2:1 (the base corners drop 32 px over 64 px), so it lines up with the ground.
+
+**Free steps** (`game/tools/build_buildings.py build`, tests in `game/tools/test_build_buildings.py`, all 151 Python tool tests pass):
+
+- Clean: flood fill of the border background from the edges, palette mapping, specks removed, cropped. `art-archive/T-064/tower_01_clean.png`, 131 x 350: transparent corners, 0 semi-transparent pixels, 29 colours, closest colour to Redgull red 0.535 (> 0.5). `python game/tools/build_buildings.py check` passes; `check_sprite_rules.py` passes every rule except its fixed square frame size, which does not apply to a 131 x 350 building.
+- Measured: footprint 2.0 units, wall 8.62 units, floors repeat every 20 px (band rows 178 to 198 used for height changes).
+- Variants: 12 versions (mirror x pink/cyan swap x 9, 12, 15 units), all pass the same checks (27 to 29 colours): `tower_01_variants.png`.
+- Mock-ups (still images, at the game's art density, nothing scaled): `block_mockup_plan*.png` (the plan's 4 x 4 grid, 6 x 6 cells, 2-unit alleys) and, because the tower came out 2 x 2 instead of 6 x 6, a free alternative `block_mockup_dense*.png` (7 x 7 grid on 4.5-unit pitch, about 2.5-unit alleys). The `_with_car` versions put the game's car sprite on the street in front of the block's south-west side.
+- Previews: `tower_01_preview_2x.png` and `tower_01_preview_4x.png`, dark and light backgrounds side by side.
+
+**Problems to report (not regenerated):**
+
+1. **The signs show kanji- and katakana-like marks** on all four panels, despite "no letters" in the prompt and "text, letters, words, kanji" in the (deprecated, probably ignored) negative prompt. They are not readable words as far as I can tell, but they clearly read as Japanese writing. The board decides whether that is acceptable or needs a text task / a script edit of the sign panels.
+2. **The footprint is 2 x 2 units, not the planned 6 x 6.** PixelLab drew the "narrow" tower at a third of the planned width, so in the plan's 4 x 4 layout each tower stands alone in a 6 x 6 cell: the block reads as sparse, not too dense. A dense layout of the same tower (49 per block) reads much more like a Tokyo block. For the full set, either prompt for a wide, chunky building (still unproven) or keep 2 x 2 towers and pack them closer; the mock-ups show both.
+3. Repeating the floor band also repeats the sign's glyph panels, which shows on the 15-unit versions; mirroring moves the sign to the other wall and flips the lit side.
+4. The bottom rows are a little ragged where PixelLab's base shadow met the background; on the dark alley colour it does not show.
+
+Status stays in-progress: waiting for the board's judgement of the sample and its decision on the layout before the 7 remaining calls.

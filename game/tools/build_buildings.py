@@ -364,56 +364,66 @@ def side_by_side(img, scale, dark=(14, 12, 24), light=(225, 225, 230), gap=8):
     return out
 
 
-def variant_plan(block_seed=0):
-    """16 places of a 4 x 4 block: (mirror, swap, height). Neighbours differ (a fixed hash)."""
-    heights = (9, 12, 15)
+HEIGHTS = (9, 12, 15)
+
+
+def variant_plan(n=4, block_seed=0, heights=HEIGHTS):
+    """n x n places of a block: (mirror, swap, height), from a fixed hash so neighbours vary."""
     plan = []
-    for gy in range(4):
+    for gy in range(n):
         row = []
-        for gx in range(4):
-            hsh = (gx * 73856093) ^ (gy * 19349663) ^ (block_seed * 83492791)
+        for gx in range(n):
+            hsh = ((gx * 73856093) ^ (gy * 19349663) ^ (block_seed * 83492791)) & 0xFFFF
             row.append({
                 "mirror": (gx + gy) % 2 == 1,
                 "swap": (gx + 2 * gy + block_seed) % 3 == 0,
-                "height": heights[(hsh + gx + gy) % 3],
+                "height": heights[(hsh + gx + 2 * gy) % len(heights)],
             })
         plan.append(row)
     return plan
 
 
-def build_mockup(tower, band, base_height_units, alley_color=(24, 23, 36), ground=None, pal=None, block_seed=0):
-    """One 30 x 30 block: a 4 x 4 grid of 6 x 6 towers with 2-unit alleys, drawn back to front."""
-    pal = pal or sorted(opaque_colors(tower), key=sum)
-    swap = neon_swap_map(pal)
-    plan = variant_plan(block_seed)
-    margin_top = 15 * UNIT_UP + 64
-    W, H = 30 * UNIT_W * 2 + 32, 30 * UNIT_H * 2 + margin_top + 32
-    ox, oy = W // 2, margin_top
-    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    # the block's ground: the dark night colour (no ground tiles under the blocks, T-103)
+def tower_version(tower, v, band, base_height_units, swap):
+    img = tower
+    if v["swap"]:
+        img = recolor(img, swap)
+    if v["mirror"]:
+        img = mirror(img)
+    extra = int(round((v["height"] - base_height_units) * UNIT_UP))
+    if extra > 0:
+        img = stretch(img, band[0], band[1], extra)
+    elif extra < 0:
+        img = shorten(img, band[0], band[1], -extra)
+    return img
+
+
+def build_mockup(tower, band, base_height_units, footprint_units, n=4, cell=6, pitch=8,
+                 block=30, alley_color=(24, 23, 36), block_seed=0):
+    """One block x block unit block: an n x n grid of cells (cell units, `pitch` apart, so
+    pitch - cell units of alley), one tower per cell with its footprint centred, back to front.
+    Returns (image, origin): origin is the block's north corner in the image."""
     from PIL import ImageDraw
+    pal = sorted(opaque_colors(tower), key=sum)
+    swap = neon_swap_map(pal)
+    plan = variant_plan(n, block_seed)
+    top = int(max(HEIGHTS) * UNIT_UP + footprint_units * UNIT_H * 2 + 96)
+    W, H = block * UNIT_W * 2 + 64, block * UNIT_H * 2 + top + 64
+    ox, oy = W // 2, top
+    out = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(out)
-    pts = [iso(0, 0), iso(30, 0), iso(30, 30), iso(0, 30)]
+    pts = [iso(0, 0), iso(block, 0), iso(block, block), iso(0, block)]
     d.polygon([(ox + x, oy + y) for x, y in pts], fill=alley_color + (255,))
-    order = sorted(((gx, gy) for gx in range(4) for gy in range(4)), key=lambda t: (t[0] + t[1], t[0]))
+    start = (block - ((n - 1) * pitch + cell)) / 2.0
+    off = (cell - footprint_units) / 2.0
+    order = sorted(((gx, gy) for gx in range(n) for gy in range(n)), key=lambda t: (t[0] + t[1], t[0]))
     for gx, gy in order:
-        v = plan[gy][gx]
-        img = tower
-        if v["swap"]:
-            img = recolor(img, swap)
-        if v["mirror"]:
-            img = mirror(img)
-        extra = int(round((v["height"] - base_height_units) * UNIT_UP))
-        if extra > 0:
-            img = stretch(img, band[0], band[1], extra)
-        elif extra < 0:
-            img = shorten(img, band[0], band[1], -extra)
-        # place the tower's bottom corner on the footprint's south corner
-        ux, uy = gx * 8 + 6, gy * 8 + 6
+        img = tower_version(tower, plan[gy][gx], band, base_height_units, swap)
+        ux = start + gx * pitch + off + footprint_units  # the footprint's south corner
+        uy = start + gy * pitch + off + footprint_units
         sx, sy = iso(ux, uy)
         by, bx = base_line(img)
         out.alpha_composite(img, (int(round(ox + sx - bx)), int(round(oy + sy - by))))
-    return crop_to_content(out, pad=4)
+    return out, (ox, oy)
 
 
 def shorten(img, band_top, band_bottom, remove):
@@ -431,6 +441,103 @@ def car_frame(index=0):
     return sheet.crop((index * 128, 0, index * 128 + 128, 128))
 
 
+def measure(tower):
+    """The clean tower's geometry: footprint (units, from its width), wall height (units,
+    from the left corner's vertical edge), and a band of whole floors to repeat (period by
+    autocorrelation of the rows in the middle of the walls)."""
+    w, h = tower.size
+    px = tower.load()
+    left = []
+    for y in range(h):
+        xs = [x for x in range(w) if px[x, y][3]]
+        left.append(xs[0] if xs else None)
+    xmin = min(x for x in left if x is not None)
+    rows = [y for y, x in enumerate(left) if x is not None and x <= xmin + 1]
+    wall_top, wall_bottom = rows[0], rows[-1]
+    footprint = round((w - 2) / (2 * UNIT_W) * 2) / 2  # to the nearest half unit
+    wall_units = (wall_bottom - wall_top) / UNIT_UP
+    mid = (wall_top + wall_bottom) // 2
+    lo, hi = mid - 50, mid + 30
+
+    def diff(P):
+        tot = 0
+        for y in range(lo, hi):
+            for x in range(w):
+                a, b = px[x, y], px[x, y + P]
+                tot += abs(a[0] - b[0]) + abs(a[1] - b[1]) + abs(a[2] - b[2]) + abs(a[3] - b[3])
+        return tot
+
+    period = min(range(12, 48), key=diff)
+    return {"footprint_units": footprint, "wall_top": wall_top, "wall_bottom": wall_bottom,
+            "wall_units": round(wall_units, 2), "band": [mid, mid + period], "floor_period_px": period}
+
+
+def variants_sheet(tower, band, base_units, swap, gap=8):
+    """All 12 script versions of one tower (mirror x swap x 3 heights) in one row."""
+    vs = [{"mirror": m, "swap": sw, "height": ht} for ht in HEIGHTS for sw in (False, True) for m in (False, True)]
+    imgs = [tower_version(tower, v, band, base_units, swap) for v in vs]
+    H = max(i.size[1] for i in imgs)
+    out = Image.new("RGBA", (sum(i.size[0] for i in imgs) + gap * (len(imgs) - 1), H), (0, 0, 0, 0))
+    x = 0
+    for im in imgs:
+        out.alpha_composite(im, (x, H - im.size[1]))
+        x += im.size[0] + gap
+    return out, vs
+
+
+def with_car(block_img, origin, car_index=6, at=(12.0, 33.5), bg=(14, 12, 24)):
+    """The block mock-up with the car (frame `car_index` of the game's sheet, same art
+    density) on the street at ground units `at` relative to the block's north corner."""
+    out = Image.new("RGBA", block_img.size, bg + (255,))
+    out.alpha_composite(block_img)
+    car = car_frame(car_index)
+    sx, sy = iso(*at)
+    out.alpha_composite(car, (int(origin[0] + sx - 64), int(origin[1] + sy - 64)))
+    return out
+
+
+def build_all(raw, palette_png, out_dir):
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    pal = palette_from_image(palette_png)
+    tower = clean(raw, pal)
+    tower.save(out_dir / "tower_01_clean.png")
+    geo = measure(tower)
+    band, fp, base = geo["band"], geo["footprint_units"], geo["wall_units"]
+    swap = neon_swap_map(pal)
+    side_by_side(tower, 2).save(out_dir / "tower_01_preview_2x.png")
+    side_by_side(tower, 4).save(out_dir / "tower_01_preview_4x.png")
+    sheet, vs = variants_sheet(tower, band, base, swap)
+    sheet.save(out_dir / "tower_01_variants.png")
+    side_by_side(sheet, 2).save(out_dir / "tower_01_variants_preview_2x.png")
+    outputs = {}
+    layouts = {
+        "plan": dict(n=4, cell=6, pitch=8),       # the plan: 16 towers, 6 x 6 cells, 2-unit alleys
+        "dense": dict(n=7, cell=3, pitch=4.5),    # free alternative fitted to the tower's real 2 x 2 footprint
+    }
+    for name, lay in layouts.items():
+        blk, origin = build_mockup(tower, band, base, fp, **lay)
+        cropped = crop_to_content(blk, pad=4)
+        cropped.save(out_dir / f"block_mockup_{name}.png")
+        with_car(blk, origin).save(out_dir / f"block_mockup_{name}_with_car.png")
+        outputs[name] = lay
+    report = sprite_report(tower)
+    variant_reports = [sprite_report(tower_version(tower, v, band, base, swap)) for v in vs]
+    record = {
+        "task": "T-064",
+        "generator": "game/tools/build_buildings.py build (free, no PixelLab call)",
+        "source": str(Path(raw).as_posix()),
+        "palette": str(Path(palette_png).as_posix()),
+        "geometry": geo,
+        "clean_tower_check": report,
+        "variants": [dict(v, check=r) for v, r in zip(vs, variant_reports)],
+        "neon_swap_map": {"%d,%d,%d" % k: list(v) for k, v in swap.items()},
+        "mockups": outputs,
+    }
+    (out_dir / "build_record.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    return record
+
+
 # ---------------------------------------------------------------- main ----
 
 def main(argv=None):
@@ -441,6 +548,8 @@ def main(argv=None):
     p = sub.add_parser("clean"); p.add_argument("raw"); p.add_argument("--palette", required=True)
     p.add_argument("--out", required=True); p.add_argument("--tolerance", type=int, default=24)
     p = sub.add_parser("check"); p.add_argument("png")
+    p = sub.add_parser("build"); p.add_argument("raw"); p.add_argument("--palette", required=True)
+    p.add_argument("--out-dir", required=True)
     a = ap.parse_args(argv)
     if a.cmd == "palette":
         pal = build_palette()
@@ -454,6 +563,10 @@ def main(argv=None):
         img = clean(a.raw, palette_from_image(a.palette), a.tolerance)
         img.save(a.out)
         print(json.dumps(sprite_report(img)))
+    elif a.cmd == "build":
+        rec = build_all(a.raw, a.palette, a.out_dir)
+        print(json.dumps({"geometry": rec["geometry"], "check": rec["clean_tower_check"]}))
+        return 0 if rec["clean_tower_check"]["pass"] and all(v["check"]["pass"] for v in rec["variants"]) else 1
     elif a.cmd == "check":
         rep = sprite_report(Image.open(a.png))
         print(json.dumps(rep))
