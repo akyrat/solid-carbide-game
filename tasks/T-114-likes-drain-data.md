@@ -1,7 +1,7 @@
 ---
 id: T-114
 title: Data: how fast the likes bar drains
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 epic: game-loop
