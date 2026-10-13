@@ -187,3 +187,56 @@ The board prefers the first sample and rejected the second. It asked for a free 
 - Created: `game/tools/remove_boulder_base.py`, `game/tools/test_remove_boulder_base.py`, `art-archive/T-065/boulder_sample_nobase.png` + `.json`, `boulder_sample_nobase_preview.png`, `boulder_sample_nobase_compare.png`, `boulder_sample_nobase_car_scale.png`
 - Changed: `art-archive/README.md` (T-065 rows), `game/README.md` (tool note), this task file
 - Status stays `in-progress`. Documents affected: `game/README.md` (tool note). Visual style unchanged.
+
+**Asset Generation Agent, 2026-10-13: the two approved variants, swapped in (no PixelLab call)**
+
+The board approved two samples as the boulder variants: `art-archive/T-065/boulder_sample_nobase.png` (the first sample without its disc) and `art-archive/T-065/boulder_sample2.png` (the low, boxy second sample). No PixelLab call this round: balance unchanged at **4954 of 5000**, task total **2 generations** (one per sample the board allowed).
+
+Before starting, current `master` was merged into the branch (`git merge master`): automatic, **no conflicts** (it brought T-034's see-through buildings, T-117's drift marks, T-119 and others).
+
+### Game-ready art (`game/art/boulders/`)
+
+| File | Made from | How |
+| --- | --- | --- |
+| `boulder_a.png` (+ `.json`) | `art-archive/T-065/boulder_sample_nobase.png` | Pixel for pixel the approved sprite (160 x 160). History: PixelLab `/create-image-pixflux` (1 generation) -> `reduce_palette.py` (48 -> 30 colours) -> `remove_boulder_base.py` (disc removed) |
+| `boulder_b.png` (+ `.json`) | `art-archive/T-065/boulder_sample2.png` | The approved sprite with 32 fully transparent rows added on top (160 x 128 -> 160 x 160, so every boulder frame is the same size and passes the sprite check); no rock pixel changed. History: PixelLab `/create-image-bitforge` with style image (1 generation) -> one-off stray-pixel cleanup -> `reduce_palette.py` (37 -> 30) |
+| `boulder_a_mirror.png`, `boulder_b_mirror.png` (+ `.json`) | the two above | **Extra variants (free):** the same pixels flipped left to right. The board can drop them: `python game/tools/build_boulder_art.py build --no-mirrors` rewrites `boulders.json` with only a and b (then delete the two mirror files) |
+| `boulders.json` | all four | The variant list the map reads: texture, opaque box and convex outline of each |
+
+- Made by `python game/tools/build_boulder_art.py build` (new; `check` confirms the committed files match a fresh build; tests `game/tools/test_build_boulder_art.py`, 10). Each `.json` record names its archive source, the PixelLab call and every cleanup script. The archive copies are kept unchanged (`art-archive/README.md` has a row saying they are now the sources of game art).
+- **Sprite check**, `python game/tools/check_sprite_rules.py game/art/boulders/<file>.png --size 160`, all four: **all PASS** (160 x 160, transparent corners, 0 semi-transparent pixels, 30 colours; a and a_mirror 7693 opaque pixels, b and b_mirror 8185).
+
+### Swapped in
+
+- `scripts/level/mvp_map.gd`: in the isometric view (the run) every boulder, the pattern copies' **and** the kaiju's landed meteor boulders (`add_meteor_boulder`, T-097) and the meteor challenge boulders (T-035, off in the MVP), is a `Sprite2D` under the map's new `BoulderSprites` node, nearest filtering, drawn in screen pixels like the ground tiles. The flat view keeps the placeholder circles. Bodies, collision circles, sizes, placement and the placement checks are untouched.
+- **Variant per boulder:** a hash of the boulder's centre (to a hundredth of a unit), so the same boulder always gets the same variant, every map and every run. The 96 map boulders use all four variants, roughly evenly (the demo run counted a 27, a_mirror 22, b 22, b_mirror 26, with one meteor boulder added).
+- **Size (my proposal, as before):** each sprite's opaque width equals the 3-unit collision circle's on-screen width (3 x 16 x sqrt 2 = 67.9 screen px), centred on the circle, with its lowest opaque pixel on the circle's front edge. Variant a: scale 0.686, about 68 x 71 screen px (as tall as it is wide). Variant b: scale 0.547, about 68 x 52 screen px.
+- **Depth order:** buildings are now spaced 3 apart in z (`BUILDING_Z_STEP`, was 2), so each gap has two levels. A boulder gets a z once, when placed: under the lowest building that covers it (behind it and overlapping on screen), else over every building. The car (`car_z_index`) goes under any boulder it is behind (smaller x + y) and overlaps on screen, and otherwise over boulders at the same level (tree order). Drift marks stay at z 0 under the boulders (T-117's tests pass). `map_building.gd` got `iso_silhouette()` (the outline whatever the view) so boulders can be ordered at build time; its behaviour is unchanged. Boulders do not fade (only buildings do; nothing asked for it).
+
+### Screenshots (repo-root `screenshots/` in the worktree, git-ignored)
+
+- `C:\solid-carbide-worktrees\T-065\screenshots\T-065_boulders_behind.png`: a run started from the main menu (zoom 20, the widest), the boulders in the obstacle patterns around the crossing at 27, -54, one meteor boulder, a boulder correctly hidden behind a building at the bottom right; the car just behind a variant-b boulder (car z 37, under the boulder at 38).
+- `C:\solid-carbide-worktrees\T-065\screenshots\T-065_boulders_front.png`: the same with the car in front of the pattern.
+- `C:\solid-carbide-worktrees\T-065\screenshots\T-065_boulders_behind_crop3x.png`, `..._front_crop3x.png` and `T-065_boulders_crops_side_by_side.png`: 220 x 150 crops around the car, enlarged 3x nearest-neighbour (behind left, in front right).
+- Fixtures: `game/tests/fixtures/boulder_art_behind.tscn`, `boulder_art_front.tscn` (`boulder_art_demo.gd`); commands in `game/README.md`.
+
+### Tests
+
+- New `tests/unit/test_boulder_art.gd` (10 tests): one sprite per boulder, art files 160 x 160, variants stable and all used, drawn width and place against the collision circle, nearest filtering and the flat view, collision circles unchanged (radius 1.5 units), meteor boulders and meteor challenge boulders get sprites, a boulder behind a building drawn under it, the car under a boulder it is behind and still over the buildings below.
+- T-019's tests (`test_mvp_map.gd`, `test_mvp_map_no_challenges.gd`, `test_mvp_map_ground.gd`), the collision tests (`test_car_collisions.gd`), T-034's (`test_see_through_map.gd`) and T-117's (`test_drift_marks.gd`): pass unchanged.
+- Full GUT suite: **418 of 418 pass** (42 scripts; the one warning, "Ignoring Inner Class TestRoom", was there before). Python tool tests: `game/tools` **166 OK**, `tools` **115 OK**.
+
+### Honest judgement (the board decides)
+
+- **Works:** the boulders read as dark rocks with glowing magenta cracks on the asphalt, clearly better than the placeholders; four variants break up the repetition; the depth order looks right in the screenshots (a boulder behind a building is hidden by it, the car behind a boulder is hidden by it).
+- **Variant a** still stands tall (as tall as wide), so it hides the car more than b; at its 0.69 scale it keeps its glow well.
+- **Variant b** is drawn at 0.55 of its pixels, the smallest scale; with nearest filtering some art pixels are dropped, so its grey speckle texture looks noisy and its single crack is thin. Its flat magenta crack glows less than a's, so a and b look like two different kinds of rock. Free options if that bothers the board: draw b a little larger than its circle, or drop b (and its mirror) from `boulders.json`.
+- **Mirrors:** mirrored shading puts the light on the other side; Visual style fixes no light direction, so I think it passes, but it is the board's call.
+- The 57 transparent specks inside variant a (from the first sample) are still there, as before.
+- The drift prototype's test room boulder (T-033) keeps its placeholder circle: it is not on the MVP map and this task did not ask for it.
+
+### Files (this round)
+
+- Created: `game/art/boulders/` (4 sprites, their `.import` files, 4 records, `boulders.json`), `game/tools/build_boulder_art.py`, `game/tools/test_build_boulder_art.py`, `game/tests/unit/test_boulder_art.gd`, `game/tests/fixtures/boulder_art_demo.gd`, `boulder_art_behind.tscn`, `boulder_art_front.tscn`
+- Changed: `game/scripts/level/mvp_map.gd` (boulder sprites, z step 3, the car under covering boulders), `game/scripts/level/map_building.gd` (`iso_silhouette()`), `game/README.md` (new section "The boulders (T-065)", the draw order, the tool note), `art-archive/README.md`, this task file
+- Documents affected: `game/README.md`. Visual style unchanged (the variants and sizes are proposals in these notes for the board to judge).

@@ -80,6 +80,13 @@ func is_behind(p: Vector2) -> bool:
 func silhouette() -> PackedVector2Array:
 	if view != "iso":
 		return PackedVector2Array()
+	return iso_silhouette()
+
+
+## The building's outline in the isometric view whatever the current view
+## (custom_silhouette, or the box's six outer corners). The map uses it to put
+## the boulders in the depth order once, when they are placed (task T-065).
+func iso_silhouette() -> PackedVector2Array:
 	if not custom_silhouette.is_empty():
 		return custom_silhouette
 	var u := PX_PER_UNIT
