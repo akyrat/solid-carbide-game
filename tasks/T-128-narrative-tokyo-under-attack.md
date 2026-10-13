@@ -1,7 +1,7 @@
 ---
 id: T-128
 title: Narrative: downtown Tokyo under the kaiju's attack, and the alert banners
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 epic: narrative
