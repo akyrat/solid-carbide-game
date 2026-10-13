@@ -41,12 +41,12 @@ Work on the same branch and folder. Propose sizes in the result notes. Take scre
 
 ## Acceptance criteria
 
-- [ ] A GUT test shows the health bar is upright at the top left with "Car Health" directly above it, left-aligned with the bar; and the likes bar is horizontal, centred at the bottom, filling left to right, with the likes row (heart and "Likes" at the left end, "Hype Lv" at the right end, same baseline) directly above it and the combo counter centred above that (QA: pass / fail)
-- [ ] The same test shows none of the HUD elements' rectangles overlap (bars, labels, heart, combo counter, timer, coins) at the supported window sizes (QA: pass / fail)
-- [ ] The existing HUD tests still pass: the bars follow the run's health, likes and level, the likes bar starts again after a level-up and stays full at the top level, and the combo counter follows the multiplier (QA: pass / fail)
-- [ ] Screenshots of a run started from the main menu, at 1152x648 and 1920x1080, show the layout above (QA: pass / fail)
-- [ ] HUD and menus, Content, "The HUD", and game/README.md describe the new layout (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A GUT test shows the health bar is upright at the top left with "Car Health" directly above it, left-aligned with the bar; and the likes bar is horizontal, centred at the bottom, filling left to right, with the likes row (heart and "Likes" at the left end, "Hype Lv" at the right end, same baseline) directly above it and the combo counter centred above that (QA: pass)
+- [x] The same test shows none of the HUD elements' rectangles overlap (bars, labels, heart, combo counter, timer, coins) at the supported window sizes (QA: pass)
+- [x] The existing HUD tests still pass: the bars follow the run's health, likes and level, the likes bar starts again after a level-up and stays full at the top level, and the combo counter follows the multiplier (QA: pass)
+- [x] Screenshots of a run started from the main menu, at 1152x648 and 1920x1080, show the layout above (QA: pass)
+- [x] HUD and menus, Content, "The HUD", and game/README.md describe the new layout (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the run and judge the new layout, especially how the text sits.
 
@@ -95,3 +95,12 @@ UI Agent, same branch and worktree.
 - **Docs:** `docs/hud-and-menus.md`. In Content, "The HUD", the "Top left" bullet is rewritten, a new "Bottom centre" bullet is added, and the pause band note is updated. The Decisions line is brought in line with master's 2026-10-13 decision so the merge is clean. `game/README.md`: "The HUD" paragraph under "The run". The fixture's comment is updated too.
 - 2026-10-13, needs-playtest → in-progress: board playtest: text placing horrible; likes bar to the bottom
 - 2026-10-13, in-progress → in-qa: round 2: likes bar horizontal at the bottom centre, health bar under Car Health; GUT 330/330, Python 125 + 115 OK
+
+QA/Integration, round 2 (2026-10-13), in the worktree on branch task/T-113-hud-vertical-bars, against the reworked criteria:
+
+- **GUT layout test: pass.** `game/tests/unit/hud/test_hud_layout.gd` (7/7). Health: `FILL_BOTTOM_TO_TOP`, height > 4x width, at the left margin, in the top-left quarter and top half; "Car Health" left edge equal to the bar's (0.5 px), its bottom above the bar's top and within 10 px, at the top margin. Likes: `FILL_BEGIN_TO_END`, width > 10x height, half the view wide and centred (1 px), 16 px from the bottom; heart's left edge on the bar's left end, "Likes" right of the heart, "Hype Lv"'s right edge on the bar's right end, "Likes" and "Hype Lv" same top and height (same baseline), row and "Hype Lv" within 10 px above the bar, heart vertically centred on "Likes"; combo centred over the bar (1 px) and within 10 px above the row. Checked in a run (level-up, combo, coins), at all four sizes, after a resize and after the texts grow. Font sizes per group also tested. `test_hud_combo.gd`'s placement test now runs in a 1152x648 SubViewport and checks centred above the row and clear of the bar, labels, timer, coins and health bar.
+- **No overlaps: pass.** Same file: pairwise no-intersection (with a non-zero-size check) among the health bar, likes bar, "Car Health", heart, "Likes", "Hype Lv", combo, timer and coins at 1152x648, 1280x720, 1920x1080 and 1024x576 with the longest texts (Hype Lv 99, Combo x5.75, 99999 coins), in a run, and after a resize; also clear of the screen's middle (car and popups) and of the pause strip's text and slider.
+- **Existing HUD tests: pass.** `test_hud_values.gd` is byte-identical to master (`git diff master...HEAD` empty) and passes 7/7 (health, likes and level follow the run, the likes bar restarts after a level-up and stays full at the top level). `test_hud_combo.gd` passes 7/7; the counter still follows the multiplier, only the placement test changed.
+- **Screenshots: pass.** `screenshots/T-113-r2-1152x648.png` and `T-113-r2-1920x1080.png` (a run from the main menu) show the health bar upright at the top left with "Car Health" directly above, flush with its left edge; the likes bar across the bottom centre, half the width, filling left to right; heart and "Likes" at the left end, "Hype Lv 2" ending at the right end, on one line; "Combo x1.75" centred above; timer and coins clear. Enlarged crops: heart's left edge and "Hype Lv"'s right edge sit exactly on the bar's ends, nothing staggered or floating. I retook the 1152x648 shot from the current code: the HUD regions are pixel-identical to the committed one (QA copy deleted). Note for the board: at 1920x1080 the text keeps its pixel size, so it reads smaller relative to the screen.
+- **Docs: pass.** `docs/hud-and-menus.md`, Content, "The HUD": "Top left" and new "Bottom centre" bullets describe the new layout, plus the pause band note; the Decisions section is identical to master's. `game/README.md`, "The HUD" paragraph, describes the T-113 layout and `test_hud_layout.gd`.
+- **Full suites: pass.** GUT 330/330, TESTS PASSED (the one existing inner-class warning). Python `game/tools` 125 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
