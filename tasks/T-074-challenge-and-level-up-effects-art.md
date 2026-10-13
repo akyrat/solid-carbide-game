@@ -1,7 +1,7 @@
 ---
 id: T-074
 title: Art: the level-up effect
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -89,3 +89,4 @@ Written by the Asset Generation Agent, 2026-10-13, on `task/T-074-level-up-parti
 
 The worktree's line-ending-only `.import` changes from Godot were left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all five criteria pass
+- 2026-10-13, needs-playtest → done: LGTM (board, playtest 2026-10-13); violet cross kept as is

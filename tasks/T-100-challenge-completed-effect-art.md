@@ -1,7 +1,7 @@
 ---
 id: T-100
 title: Art: the challenge completed effect
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art
