@@ -1,7 +1,7 @@
 ---
 id: T-121
 title: Drift smoke: the rear tyres puff smoke while drifting (placeholder)
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 epic: driving
@@ -88,3 +88,4 @@ Checked in `C:\solid-carbide-worktrees\T-121` on `task/T-121-drift-smoke` (commi
 6. **Pass.** Run by QA: full GUT suite 426 of 426 pass (`TESTS PASSED`, 42 scripts, 53339 asserts, exit 0; includes `test_drift_smoke.gd`, `test_drift_marks.gd`, `test_drift_marks_art.gd`, `test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`). The one GUT warning is the old "Ignoring Inner Class TestRoom". Python: `game/tools` 141 tests OK, `tools` 115 tests OK. Godot's line-ending-only `.import` changes left uncommitted.
 
 **For the board (not a fail):** puffs left far behind the car take the car's current depth against buildings, so for their short life (about 0.7 s) they can show over or under a building they are not next to. No criterion requires otherwise. The agent proposes no fade at all (puffs pop out); that is for the board's playtest.
+- 2026-10-14, needs-playtest → done: LGTM (board playtest, 2026-10-14)
