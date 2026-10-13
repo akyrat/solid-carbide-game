@@ -38,9 +38,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `game/data/enemies.json` gives the kaiju a 100% coin drop of a few coins, read through `enemy_data.gd`, and a GUT test checks the chance is 1 and the count is above 0 (QA: pass / fail)
-- [ ] The result notes explain the number of coins; nothing in the JSON comment or game/README.md still says the kaiju drops no coins (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] `game/data/enemies.json` gives the kaiju a 100% coin drop of a few coins, read through `enemy_data.gd`, and a GUT test checks the chance is 1 and the count is above 0 (QA: pass)
+- [x] The result notes explain the number of coins; nothing in the JSON comment or game/README.md still says the kaiju drops no coins (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -65,3 +65,9 @@ Neither the JSON comment nor game/README.md said in words that the kaiju drops n
 **Tests** (run in the task folder): full GUT suite 393/393 passing (40 scripts, `bash game/tools/run_tests.sh`, TESTS PASSED); Python tool tests `game/tools` 141 passed, `tools` 115 passed. Godot's line-ending-only `.import` changes from the test run were left out of the commit (project.godot was not touched).
 
 **Documents affected:** game/README.md (updated). No game area doc changed: Enemies, Decisions already records the board's decision.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13, in `C:\solid-carbide-worktrees\T-119`):
+- Criterion 1, pass. `enemies.json` has a new `kaiju_coins` section with `drop_chance` 1.0 and `coins_per_drop` 10. `EnemyData.kaiju_coins()` reads it through the same `_section()` helper as the other sections, and `kaiju_coins_on_defeat()` returns `roundi(chance * count)` = 10. GUT `test_kaiju_always_drops_a_few_coins` asserts chance == 1.0, count 10, `assert_gt(..., 0)`, and that it is between 2 and 10 minion drops and under 25 coins. It ran and passed. The new section is also in the key and positive-value checks.
+- Criterion 2, pass. The result notes explain 10 coins: 5 minion drops, 4% of the roughly 250 coins in a run, a quarter of the cheapest garage level (40), and only in a won run. A search of `enemies.json` and `game/README.md` for "no coin", "drops none", "no drop" and "0 coins" finds nothing about the kaiju. The only hit is `start_run()` resetting coins to 0, which is unrelated. Both now describe `kaiju_coins`. T-039's task file is unchanged, as history.
+- Criterion 3, pass. Full GUT suite: 393/393 passing across 40 scripts (TESTS PASSED). The one warning ("Ignoring Inner Class TestRoom") is unrelated and was already there. Python: `game/tools` 141 passed, `tools` 115 passed.
+- Godot's line-ending-only `.import` changes from the test run were left uncommitted.
