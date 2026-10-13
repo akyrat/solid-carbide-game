@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-123-camera-options.md, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd (and its scene), its tests, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -64,3 +64,4 @@ The board's review: playtest the run with both options, tune the dynamic camera'
   - Documents affected: docs/hud-and-menus.md, game/README.md.
 - 2026-10-14, QA/Integration, round 2: all five criteria pass. Only T-124's own diff from `task/T-123-camera-options` was judged. Side finding for the Project Lead (not an acceptance criterion): the round-1 prototype fixture `game/tests/fixtures/pause_screen_demo_dynamic.tscn` calls `camera_follow.set_dynamic(true)` without a test settings file, so it saves into the player's real `user://settings.cfg`; that file now reads `zoom=11.6` and `dynamic=true` (last written 2026-10-13 23:57, when the agent took `T-124-pause-dynamic.png`). The board's playtest will start with the dynamic camera on and zoom 11.6 unless the file is reset or the box is unticked. The run fixtures are not affected.
 - 2026-10-14, in-progress → in-qa: round 2: visible checkboxes and buttons on a nearly opaque strip, run screenshots on gravel and asphalt, HUD and menus Content written
+- 2026-10-14, in-qa → needs-playtest: QA round 2: all criteria pass; side note on the prototype fixture writing the real settings file
