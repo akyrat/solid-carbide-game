@@ -1,7 +1,7 @@
 ---
 id: T-121
 title: Drift smoke: the rear tyres puff smoke while drifting (placeholder)
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 epic: driving
