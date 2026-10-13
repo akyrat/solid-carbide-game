@@ -1,7 +1,7 @@
 ---
 id: T-065
 title: Art: crashed meteor boulders
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -240,3 +240,4 @@ Before starting, current `master` was merged into the branch (`git merge master`
 - Created: `game/art/boulders/` (4 sprites, their `.import` files, 4 records, `boulders.json`), `game/tools/build_boulder_art.py`, `game/tools/test_build_boulder_art.py`, `game/tests/unit/test_boulder_art.gd`, `game/tests/fixtures/boulder_art_demo.gd`, `boulder_art_behind.tscn`, `boulder_art_front.tscn`
 - Changed: `game/scripts/level/mvp_map.gd` (boulder sprites, z step 3, the car under covering boulders), `game/scripts/level/map_building.gd` (`iso_silhouette()`), `game/README.md` (new section "The boulders (T-065)", the draw order, the tool note), `art-archive/README.md`, this task file
 - Documents affected: `game/README.md`. Visual style unchanged (the variants and sizes are proposals in these notes for the board to judge).
+- 2026-10-13, in-progress → in-qa: Both approved variants (plus free mirrored copies) game-ready and swapped in; no PixelLab call (4954 of 5000, task total 2). Sprite check PASS on all four; GUT 418/418; Python 166 + 115 OK.
