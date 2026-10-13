@@ -1,8 +1,9 @@
 class_name Hud
 extends CanvasLayer
-## The run's HUD (tasks T-090 and T-049): the timer at the top centre, the
-## car's health bar, the likes bar with the heart and the level at the top
-## left, and the coins at the top right. The HUD only shows values: the run
+## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
+## the car's health bar and the likes bar standing upright side by side at the
+## top left (labels stacked under them, each starting at its bar's left edge),
+## and the coins at the top right. The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
 ## `coins_changed`). The texts are from T-048.
 
@@ -12,7 +13,13 @@ const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 const MARGIN := 16
-const BAR_SIZE := Vector2(240, 22)
+## Upright bars (T-113): narrow, filling from the bottom up.
+const BAR_SIZE := Vector2(24, 160)
+## Space between the health bar and the likes bar.
+const BAR_GAP := 12
+## Space between the bars and the first label line, and between label lines.
+const LABEL_GAP := 6
+const LINE_GAP := 2
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const LIKES_COLOR := Color(0.7, 0.45, 1.0)
 const COINS_COLOR := Color(1.0, 0.82, 0.25)
@@ -41,10 +48,11 @@ var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
 var heart: Control
-## The combo counter (T-083), to the right of the likes row.
+## The combo counter (T-083), to the right of the likes bar, near its top.
 var combo_label: Label
-## The left column; the combo counter (T-083) goes next to the likes bar.
-var left_column: VBoxContainer
+## The top-left area holding both bars and their labels (T-113).
+var left_column: Control
+## The heart and "Likes", under the likes bar.
 var likes_row: HBoxContainer
 var _state: RunState
 
@@ -73,21 +81,22 @@ func _build_timer() -> void:
 
 
 func _build_left() -> void:
-	left_column = VBoxContainer.new()
+	left_column = Control.new()
 	left_column.name = "Left"
-	left_column.add_theme_constant_override("separation", 6)
 	left_column.position = Vector2(MARGIN, MARGIN)
+	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(left_column)
+
+	health_bar = _make_bar("HealthBar", HEALTH_COLOR)
+	left_column.add_child(health_bar)
+	likes_bar = _make_bar("LikesBar", LIKES_COLOR)
+	left_column.add_child(likes_bar)
 
 	health_label = _make_label("HealthLabel", TEXT_HEALTH)
 	left_column.add_child(health_label)
-	health_bar = _make_bar("HealthBar", HEALTH_COLOR)
-	left_column.add_child(health_bar)
-
 	likes_row = HBoxContainer.new()
 	likes_row.name = "LikesRow"
-	likes_row.add_theme_constant_override("separation", 8)
-	likes_row.custom_minimum_size.x = BAR_SIZE.x
+	likes_row.add_theme_constant_override("separation", 6)
 	left_column.add_child(likes_row)
 	heart = Control.new()
 	heart.name = "Heart"
@@ -100,11 +109,26 @@ func _build_left() -> void:
 	likes_label = _make_label("LikesLabel", TEXT_LIKES)
 	likes_row.add_child(likes_label)
 	level_label = _make_label("LevelLabel", TEXT_LEVEL.format({"level": 1}))
-	level_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	likes_row.add_child(level_label)
-	likes_bar = _make_bar("LikesBar", LIKES_COLOR)
-	left_column.add_child(likes_bar)
+	left_column.add_child(level_label)
+	_layout_left()
+	for c: Control in [health_label, likes_row, level_label]:
+		c.resized.connect(_layout_left)
+
+
+## The bars side by side, health on the left; under them three label lines,
+## each starting at its bar's left edge: "Car Health", then the heart and
+## "Likes", then "Hype Lv {level}".
+func _layout_left() -> void:
+	health_bar.position = Vector2.ZERO
+	health_bar.size = BAR_SIZE
+	likes_bar.position = Vector2(BAR_SIZE.x + BAR_GAP, 0.0)
+	likes_bar.size = BAR_SIZE
+	var y := BAR_SIZE.y + LABEL_GAP
+	for line: Array in [[health_label, 0.0], [likes_row, likes_bar.position.x], [level_label, likes_bar.position.x]]:
+		var c: Control = line[0]
+		c.size = c.get_combined_minimum_size()
+		c.position = Vector2(line[1], y)
+		y += c.size.y + LINE_GAP
 
 
 func _build_coins() -> void:
@@ -131,16 +155,13 @@ func _build_combo() -> void:
 	combo_label.add_theme_constant_override("outline_size", 10)
 	add_child(combo_label)
 	_place_combo()
-	likes_row.resized.connect(_place_combo)
 	combo_label.resized.connect(_place_combo)
 
 
-## Puts the counter right of the likes row, centred on the row's height.
+## Puts the counter right of the likes bar, level with the bar's top.
 func _place_combo() -> void:
-	var row_rect := likes_row.get_global_rect()
-	combo_label.position = Vector2(
-		row_rect.end.x + COMBO_GAP,
-		row_rect.position.y + (row_rect.size.y - combo_label.size.y) / 2.0)
+	var bar := likes_bar.get_global_rect()
+	combo_label.position = Vector2(bar.end.x + COMBO_GAP, bar.position.y)
 
 
 ## "Combo x2.5": the multiplier without trailing zeros.
@@ -163,6 +184,7 @@ func _make_bar(bar_name: String, fill: Color) -> ProgressBar:
 	var b := ProgressBar.new()
 	b.name = bar_name
 	b.custom_minimum_size = BAR_SIZE
+	b.fill_mode = ProgressBar.FILL_BOTTOM_TO_TOP
 	b.show_percentage = false
 	b.min_value = 0.0
 	b.max_value = 1.0

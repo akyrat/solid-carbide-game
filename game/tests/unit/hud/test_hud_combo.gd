@@ -33,15 +33,20 @@ func test_counter_holds_at_the_cap() -> void:
 	assert_eq(r.hud.combo_label.text, "Combo x6.0")
 
 
-func test_counter_is_right_of_the_likes_row_and_clear_of_the_rest() -> void:
+func test_counter_is_right_of_the_likes_bar_and_clear_of_the_rest() -> void:
 	var r := _run()
 	await get_tree().process_frame
 	var hud: Hud = r.hud
 	var c := hud.combo_label.get_global_rect()
-	assert_gt(c.position.x, hud.likes_row.get_global_rect().end.x, "right of the likes row")
+	var bar := hud.likes_bar.get_global_rect()
+	assert_gt(c.position.x, bar.end.x, "right of the likes bar (T-113)")
+	assert_lt(c.position.y, bar.position.y + bar.size.y / 2.0, "near the bar's top")
 	assert_false(c.intersects(hud.timer_label.get_global_rect()), "clear of the timer")
 	assert_false(c.intersects(hud.coins_label.get_global_rect()), "clear of the coins")
 	assert_false(c.intersects(hud.health_bar.get_global_rect()), "clear of the health bar")
+	assert_false(c.intersects(bar), "clear of the likes bar")
+	for l: Control in [hud.health_label, hud.likes_row, hud.level_label]:
+		assert_false(c.intersects(l.get_global_rect()), "clear of %s" % l.name)
 
 
 func test_counter_is_not_red() -> void:

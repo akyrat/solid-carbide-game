@@ -49,4 +49,14 @@ The board's review: playtest the run and judge the new layout.
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, built on branch task/T-113-hud-vertical-bars (worktree C:\solid-carbide-worktrees\T-113).
+
+- **Proposed bar sizes:** both bars 24 x 160 pixels (`Hud.BAR_SIZE`), 12 pixels apart (`BAR_GAP`), 16 pixels from the screen's top and left edges. Health on the far left, likes just right of it; both `ProgressBar.FILL_BOTTOM_TO_TOP`. Same fill colours (green, purple) and frame as before; same signals and behaviour (likes bar starts again after a level-up, stays full at the top level).
+- **Proposed label layout:** three short lines under the bars, each starting at its bar's left edge (a staircase), so long texts never overlap: "Car Health" (under the health bar); the heart and "Likes" (under the likes bar); "Hype Lv {level}" (under that). Only T-048's approved texts, no new text. The whole top-left block is about 76 x 255 pixels (to y = 270 at 1152x648).
+- **Combo counter:** right of the likes bar, 20 pixels from it, level with the bar's top (x 96, y 16 at 1152x648); "Combo x5.75" ends around x 270.
+- **Keeping clear:** the block stays in the left quarter and the top half; it is clear of the timer, the coins, the middle of the screen (car and trick popups) and the pause strip's centred text and slider. While paused, the strip's dark band (full width from y 92, task T-095) still runs over the lower part of the bars, as it ran over the old bars on master; its text and slider are untouched. Flagging it in case the board wants the band itself narrowed.
+- **Code:** `game/scripts/hud/hud.gd` (`_build_left()`, new `_layout_left()`, `_place_combo()` now follows the likes bar; `left_column` is now a plain Control). The `hud.tscn` scene needed no change (the HUD is built in code).
+- **Tests:** new `game/tests/unit/hud/test_hud_layout.gd` (7 tests: upright and bottom-up, side by side at the top left with a small gap, labels under their bars, no overlaps among bars, labels, heart, combo, timer and coins at 1152x648, 1280x720, 1920x1080 and 1024x576, clear of the screen's middle, clear of the pause strip's content in a run from the main menu). Headless, Godot's root viewport is only 64x64, so these tests lay the HUD out in a window-sized SubViewport. `test_hud_combo.gd`: the placement test now checks "right of the likes bar, near its top" and clear of every label. Existing `test_hud_values.gd` unchanged and passing.
+- **Results:** full GUT suite 330/330, TESTS PASSED. Python: `game/tools` 125 OK, `tools` 115 OK.
+- **Screenshot:** `screenshots/T-113-hud.png` in the worktree (a run started from the main menu: 30% damage, Hype Lv 2, 37 coins, Combo x1.75), from `bash game/tools/screenshot.sh res://tests/fixtures/hud_from_menu_demo.tscn screenshots/T-113-hud.png 30`. The fixture now also adds a combo.
+- **Docs:** `docs/hud-and-menus.md` (Content, "The HUD" only), `game/README.md` ("The HUD" paragraph under "The run").

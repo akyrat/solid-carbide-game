@@ -1,7 +1,8 @@
 extends Node
 ## Test fixture for a screenshot of the HUD in a run started from the main
 ## menu (task T-049): opens the game, presses Start, then gives the run some
-## damage, likes and coins so every part of the HUD shows a value.
+## damage, likes, coins and a combo so every part of the HUD shows a value
+## (since T-113 the health and likes bars stand upright at the top left).
 
 
 func _ready() -> void:
@@ -14,3 +15,5 @@ func _ready() -> void:
 	state.damage_car(state.max_health * 0.3)
 	state.add_xp(state.xp_needed() * 1.4)
 	state.add_coins(37)
+	state.add_trick("alternate_drift")
+	state.add_trick("three_sixty")
