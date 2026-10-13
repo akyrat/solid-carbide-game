@@ -1,7 +1,7 @@
 ---
 id: T-112
 title: Level-up particles from the car (placeholder squares)
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 epic: game-loop
