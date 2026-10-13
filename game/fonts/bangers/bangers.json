@@ -1,0 +1,32 @@
+{
+ "what": "Bangers, the comic-book lettering for the trick popups (task T-084). Downloaded on the board's go (2026-10-13); not modified.",
+ "font": "Bangers Regular",
+ "designer": "Vernon Adams",
+ "copyright": "Copyright 2010 The Bangers Project Authors (https://github.com/googlefonts/bangers)",
+ "version": "Version 2.100 (name table: 2.100;NeWT;Bangers-Regular)",
+ "licence": "SIL Open Font License, Version 1.1 (OFL.txt in this folder). Allows use, bundling and selling with software, commercial games included; the licence text ships with the font; a modified font may not use the reserved name; the font may not be sold on its own.",
+ "source": {
+  "repository": "https://github.com/google/fonts/tree/main/ofl/bangers",
+  "google_fonts_commit": "66928797f271fed5ee428544e7229685e2d90127",
+  "last_commit_touching_ofl_bangers": "c13390277dfb1fcc7415d84ef7ef9cfc1e52f8c1 (2026-03-03)",
+  "upstream": "https://github.com/googlefonts/bangers at ca6d2f15db343ee373e9c62a127f3a48cd251228 (from METADATA.pb)",
+  "downloaded": "2026-10-13",
+  "urls": [
+   "https://raw.githubusercontent.com/google/fonts/66928797f271fed5ee428544e7229685e2d90127/ofl/bangers/Bangers-Regular.ttf",
+   "https://raw.githubusercontent.com/google/fonts/66928797f271fed5ee428544e7229685e2d90127/ofl/bangers/OFL.txt"
+  ]
+ },
+ "files": {
+  "Bangers-Regular.ttf": {
+   "bytes": 93148,
+   "git_blob_sha1": "9b0f8c1f1b45e7bb4971b7d6a8604f9aacacdd32",
+   "sha256": "4160a7311de9342674cce9160cde9fcbb30f48190397d86ff1b70b455af65824"
+  },
+  "OFL.txt": {
+   "bytes": 4479,
+   "git_blob_sha1": "bf717d4be410cf7616b9bd345b40ab4817a26e6f",
+   "sha256": "630dd5a307c0657b094d324e069b390edf90182fe5003639e06c02a0e5769af7"
+  }
+ },
+ "checks_on_download": "Downloaded into an empty scratch folder first. Both git blob hashes match the ones GitHub lists for ofl/bangers; the TTF starts with the TrueType tag 00 01 00 00 and parses with fontTools (OS/2 fsType 0, installable embedding); OFL.txt is the SIL Open Font License 1.1 text."
+}
