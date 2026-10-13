@@ -2,7 +2,8 @@ extends Node
 ## Test fixture for a screenshot of the HUD in a run started from the main
 ## menu (task T-049): opens the game, presses Start, then gives the run some
 ## damage, likes, coins and a combo so every part of the HUD shows a value
-## (since T-113 the health and likes bars stand upright at the top left).
+## (since T-113 the health bar stands upright at the top left and the likes bar
+## lies across the bottom centre).
 
 
 func _ready() -> void:

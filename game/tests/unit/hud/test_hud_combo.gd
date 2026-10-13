@@ -33,14 +33,19 @@ func test_counter_holds_at_the_cap() -> void:
 	assert_eq(r.hud.combo_label.text, "Combo x6.0")
 
 
-func test_counter_is_right_of_the_likes_bar_and_clear_of_the_rest() -> void:
-	var r := _run()
+func test_counter_is_centred_above_the_likes_row_and_clear_of_the_rest() -> void:
+	# Headless, the root viewport is only 64x64: lay the run out in a window-sized one.
+	var sv := SubViewport.new()
+	sv.size = Vector2i(1152, 648)
+	add_child_autofree(sv)
+	var r: Node2D = RUN.instantiate()
+	sv.add_child(r)
 	await get_tree().process_frame
 	var hud: Hud = r.hud
 	var c := hud.combo_label.get_global_rect()
 	var bar := hud.likes_bar.get_global_rect()
-	assert_gt(c.position.x, bar.end.x, "right of the likes bar (T-113)")
-	assert_lt(c.position.y, bar.position.y + bar.size.y / 2.0, "near the bar's top")
+	assert_almost_eq(c.get_center().x, bar.get_center().x, 1.0, "centred over the likes bar (T-113)")
+	assert_lte(c.end.y, hud.likes_row.get_global_rect().position.y, "above the likes row")
 	assert_false(c.intersects(hud.timer_label.get_global_rect()), "clear of the timer")
 	assert_false(c.intersects(hud.coins_label.get_global_rect()), "clear of the coins")
 	assert_false(c.intersects(hud.health_bar.get_global_rect()), "clear of the health bar")
