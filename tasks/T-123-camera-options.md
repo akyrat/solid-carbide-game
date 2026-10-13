@@ -1,7 +1,7 @@
 ---
 id: T-123
 title: Camera options: smoothing and the dynamic camera (zoom follows speed)
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 epic: driving
@@ -90,3 +90,4 @@ Driving & Drift Agent, 2026-10-13. Branch `task/T-123-camera-options`, folder `C
 
 For the board (not fails): the dynamic camera uses the car's speed in any direction, not only forward, so a fast slide or reverse also zooms out (the agent says why above; forward-only is a small change if the board wants it). Nothing stops the min being set above the max; then the camera zooms in with speed.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass.
+- 2026-10-14, needs-playtest → done: approved with T-124 (board, task board, 2026-10-14)
