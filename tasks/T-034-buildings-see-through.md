@@ -1,7 +1,7 @@
 ---
 id: T-034
 title: Buildings turn see-through when the car is behind them
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -90,3 +90,4 @@ For the board (not fails):
 
 Board review files: [docs/level-design/see-through-behind.png, docs/level-design/see-through-open.png, game/scenes/run/run.tscn]
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass
+- 2026-10-13, needs-playtest → done: board playtest: see-through buildings work amazing
