@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/boulder_art_demo.gd" id="1_demo"]
+
+[node name="BoulderArtFront" type="Node"]
+script = ExtResource("1_demo")
+car_at = Vector2(28, -50)
+heading = 0.0

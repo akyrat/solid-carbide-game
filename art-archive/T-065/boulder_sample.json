@@ -1,0 +1,10 @@
+{
+  "file": "boulder_sample.png",
+  "source": "art-archive/T-065/boulder_sample_raw.png (one PixelLab /create-image-pixflux call; its record is boulder_sample_raw.json)",
+  "made_by": "python game/tools/reduce_palette.py reduce boulder_sample_raw.png boulder_sample.png (default --max-colors 30)",
+  "change": "palette only: 48 colours -> 30, each removed colour merged into the nearest kept one; no new colours, alpha and shape unchanged",
+  "image": {"width": 160, "height": 160},
+  "pixellab_calls": 0,
+  "task": "T-065",
+  "status": "sample for the board's review, not game-ready"
+}

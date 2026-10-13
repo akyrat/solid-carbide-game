@@ -49,6 +49,20 @@ extends Node2D
 ## the car comes out. With `car` set the map does this every frame; otherwise
 ## call update_see_through(). car_z_index() says where the car goes in the
 ## depth order (the run puts its car drawing there).
+##
+## Boulder art (task T-065): in the isometric view every boulder (the pattern
+## copies', the meteor challenges' and the meteor boulders') is drawn as one of
+## the boulder sprites listed in art/boulders/boulders.json (made by
+## game/tools/build_boulder_art.py), in screen pixels with nearest filtering.
+## The variant comes from the boulder's position (boulder_variant), so the same
+## boulder always gets the same sprite. Each sprite's opaque width is fitted to
+## its collision circle's on-screen width and its bottom stands on the
+## circle's front edge (boulder_sprite_rect). Boulders take part in the depth
+## order: a boulder is drawn under the buildings that cover it (it is behind
+## them and they overlap on screen) and over the rest, and the car is drawn
+## under a boulder it is behind and overlaps on screen (car_z_index). The
+## flat view keeps the placeholder circles. Only the drawing changed: the
+## boulders' bodies, sizes and placement are as before.
 
 const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
@@ -71,6 +85,8 @@ const PLACEMENT_STEP := 0.1
 const CHALLENGES_ENABLED := false
 ## Fallback boulder size (units across) if the layout data has no boulder.
 const DEFAULT_BOULDER_DIAMETER := 3.0
+## The boulder sprites (T-065): variants, their opaque boxes and outlines.
+const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 ## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
 ## building is while it covers the car (0.15 = 15%), and how long the fade
 ## takes, in seconds (both ways).
@@ -84,10 +100,13 @@ const BUILDING_HEIGHT_UNITS := 15.0
 const CAR_LENGTH_UNITS := 3.0
 const CAR_WIDTH_UNITS := 1.0
 const CAR_HEIGHT_UNITS := 1.0
-## z_index of the first building in depth order; each next one is 2 higher,
-## leaving room for the car between any two. The ground, drift marks, arrows
-## and boulders stay at 0, under every building.
+## z_index of the first building in depth order; each next one is
+## BUILDING_Z_STEP higher, leaving two levels between any two buildings: the
+## upper one for the boulders and the car in front of them, the lower one for
+## the car while a boulder covers it (T-065). The ground, drift marks, arrows
+## and the flat view's placeholder boulders stay at 0, under every building.
 const BUILDING_Z_BASE := 2
+const BUILDING_Z_STEP := 3
 
 ## Fired once when a preset challenge is completed (XP and the HUD hook in here later).
 signal challenge_completed(challenge_id: String)
@@ -117,6 +136,10 @@ var challenges_enabled := CHALLENGES_ENABLED
 var layout: Dictionary = {}
 ## The ground tiles' layout, as loaded from GROUND_PATH ({} if missing).
 var ground_layout: Dictionary = {}
+## The boulder sprites' list, as loaded from BOULDER_ART_PATH ({} if missing).
+var boulder_art: Dictionary = {}
+## The boulder variants' textures, in boulder_art's order.
+var boulder_textures: Array[Texture2D] = []
 ## "flat" or "iso".
 var view := "flat"
 
@@ -130,6 +153,12 @@ var trackers: Dictionary = {}
 ## challenge id -> ChallengeArrow node
 var arrows: Dictionary = {}
 var boulders_draw: Node2D
+## Holds one sprite per boulder (T-065), in screen pixels of the isometric view.
+var boulder_sprites_root: Node2D
+## The boulder sprites, in the order they were made (the map's own first).
+var boulder_sprites: Array = []
+## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
+var _boulder_sprite_by_key: Dictionary = {}
 var ground_draw: Node2D
 var ground_tiles: Node2D
 ## The container of the building nodes (named "Buildings"); it also draws the map's outline.
@@ -170,6 +199,9 @@ func _ready() -> void:
 		layout = load_layout()
 	if ground_layout.is_empty():
 		ground_layout = load_layout(GROUND_PATH)
+	if boulder_art.is_empty():
+		boulder_art = load_layout(BOULDER_ART_PATH)
+	_load_boulder_textures()
 	_build()
 
 
@@ -202,9 +234,14 @@ func _build() -> void:
 	boulders_draw.name = "Boulders"
 	boulders_draw.map = self
 	view_root.add_child(boulders_draw)
+	boulder_sprites_root = Node2D.new()
+	boulder_sprites_root.name = "BoulderSprites"
+	boulder_sprites_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	view_root.add_child(boulder_sprites_root)
 
 	_build_walls()
 	_build_boulders()
+	_sync_boulder_sprites()
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
@@ -233,7 +270,7 @@ func _build_buildings() -> void:
 			return p.depth_key() < q.depth_key()
 		return p.footprint.position.x < q.footprint.position.x)
 	for k in order.size():
-		order[k].z_index = BUILDING_Z_BASE + 2 * k
+		order[k].z_index = BUILDING_Z_BASE + BUILDING_Z_STEP * k
 
 
 func _build_walls() -> void:
@@ -443,6 +480,7 @@ func add_meteor_boulder(centre: Vector2) -> StaticBody2D:
 	body.add_child(cs)
 	meteor_boulder_bodies.append(body)
 	boulders_draw.queue_redraw()
+	_sync_boulder_sprites()
 	return body
 
 
@@ -535,6 +573,7 @@ func add_meteor_challenge(design_id: String, centre: Vector2, angle: float) -> S
 	arrows_root.add_child(arrow)
 	arrows[id] = arrow
 	boulders_draw.queue_redraw()
+	_sync_boulder_sprites()
 	return id
 
 
@@ -644,18 +683,133 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 	for b in buildings:
 		if b.covers(car_centre_units, shape):
 			z = mini(z, b.z_index - 1)
+	# Boulders (T-065): under every boulder sprite that covers the car.
+	var box := _bounds(shape)
+	for s in boulder_sprites:
+		if s.covers(car_centre_units, shape, box):
+			z = mini(z, s.z_index - 1)
 	return z
 
 
 ## A z_index over every building (the car's when nothing covers it).
 func top_z_index() -> int:
-	return BUILDING_Z_BASE + 2 * buildings.size()
+	return BUILDING_Z_BASE + BUILDING_Z_STEP * buildings.size()
+
+
+# ---- Boulder art (task T-065) ---------------------------------------------------------------
+
+func _load_boulder_textures() -> void:
+	boulder_textures.clear()
+	for v in boulder_art.get("variants", []):
+		var tex = load(str(v.texture))
+		if tex is Texture2D:
+			boulder_textures.append(tex)
+		else:
+			push_error("Missing boulder texture: %s" % v.texture)
+			boulder_textures.clear()
+			return
+
+
+## True when the isometric view draws the boulder sprites instead of the
+## placeholder circles.
+func uses_boulder_art() -> bool:
+	return view == "iso" and not boulder_textures.is_empty()
+
+
+## A boulder's identity for its sprite: its centre, to a hundredth of a unit.
+static func boulder_key(b: Dictionary) -> String:
+	return "%d,%d" % [roundi(float(b.x) * 100.0), roundi(float(b.y) * 100.0)]
+
+
+## Which variant (index into boulder_art.variants) a boulder is drawn with:
+## from its position only, so it is the same on every map and every run.
+func boulder_variant(b: Dictionary) -> int:
+	var n := maxi(boulder_textures.size(), 1)
+	return posmod(boulder_key(b).hash(), n)
+
+
+## Where a boulder's sprite is drawn, in the map's screen pixels (isometric
+## view): the sprite's opaque width equals the collision circle's on-screen
+## width (diameter x sqrt 2), centred on the circle, and the bottom of its
+## opaque pixels stands on the circle's front edge. Returns
+## {position, scale, rect (the opaque box on screen)}.
+func boulder_sprite_rect(b: Dictionary, variant: int) -> Dictionary:
+	var v: Dictionary = boulder_art.variants[variant]
+	var bb: Array = v.bbox
+	var x0 := float(bb[0])
+	var y1 := float(bb[3])
+	var w := float(bb[2]) - x0
+	var h := y1 - float(bb[1])
+	var d := float(b.diameter) * PX_PER_UNIT
+	var s := d * sqrt(2.0) / w
+	var c := ISO_TRANSFORM * (Vector2(float(b.x), float(b.y)) * PX_PER_UNIT)
+	var bottom := c + Vector2(0.0, d * sqrt(2.0) / 4.0)
+	var pos := Vector2(bottom.x - (x0 + w / 2.0) * s, bottom.y - y1 * s)
+	var rect := Rect2(Vector2(bottom.x - w * s / 2.0, bottom.y - h * s), Vector2(w * s, h * s))
+	return {"position": pos, "scale": s, "rect": rect}
+
+
+## Makes the sprite of every boulder that has none yet (the map's at build
+## time, the meteors' as they land), with its place in the depth order.
+func _sync_boulder_sprites() -> void:
+	if boulder_textures.is_empty() or boulder_sprites_root == null:
+		return
+	for b in all_boulders():
+		var key := boulder_key(b)
+		if _boulder_sprite_by_key.has(key):
+			continue
+		var k := boulder_variant(b)
+		var r := boulder_sprite_rect(b, k)
+		var sp := _BoulderSprite.new()
+		sp.name = "Boulder%03d" % (boulder_sprites.size() + 1)
+		sp.texture = boulder_textures[k]
+		sp.centered = false
+		sp.position = r.position
+		sp.scale = Vector2(r.scale, r.scale)
+		sp.variant = str(boulder_art.variants[k].id)
+		sp.centre_units = Vector2(float(b.x), float(b.y))
+		var outline := PackedVector2Array()
+		for p in boulder_art.variants[k].hull:
+			outline.append(r.position + Vector2(float(p[0]), float(p[1])) * r.scale)
+		sp.outline = outline
+		sp.box = r.rect
+		sp.z_index = _boulder_z(sp.centre_units, outline)
+		boulder_sprites_root.add_child(sp)
+		boulder_sprites.append(sp)
+		_boulder_sprite_by_key[key] = sp
+
+
+## A boulder's z_index: just under the lowest building that covers it (the
+## boulder is behind the building and they overlap on screen), or over every
+## building. The car's level for that place, so the car in front of the
+## boulder (later in the tree) is drawn over it.
+func _boulder_z(centre_units: Vector2, outline: PackedVector2Array) -> int:
+	var z := top_z_index()
+	for b in buildings:
+		if b.is_behind(centre_units) and not Geometry2D.intersect_polygons(b.iso_silhouette(), outline).is_empty():
+			z = mini(z, b.z_index - 1)
+	return z
+
+
+static func _bounds(points: PackedVector2Array) -> Rect2:
+	if points.is_empty():
+		return Rect2()
+	var r := Rect2(points[0], Vector2.ZERO)
+	for p in points:
+		r = r.expand(p)
+	return r
 
 
 ## Switches the drawing between "flat" and "iso". Never touches the physics.
 func set_view(v: String) -> void:
 	view = v
 	view_root.transform = ISO_TRANSFORM if v == "iso" else Transform2D.IDENTITY
+	if boulder_sprites_root != null:
+		# Boulder sprites (T-065) in screen pixels: undo the view's projection.
+		boulder_sprites_root.visible = uses_boulder_art()
+		boulder_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+	if boulders_draw != null:
+		boulders_draw.queue_redraw()
 	if ground_tiles != null:
 		ground_tiles.visible = v == "iso" and ground_tiles.has_art()
 		# The tiles are drawn in screen pixels: undo the view's projection.
@@ -747,14 +901,39 @@ class _BuildingsDraw extends Node2D:
 		draw_rect(Rect2(m.position * u, m.size * u), map.building_edge_color, false, 3.0)
 
 
-## Draws every boulder (the pattern copies' and the meteor challenges'), over the arrows.
+## Draws every boulder (the pattern copies', the meteor challenges' and the
+## meteor boulders') as a placeholder circle, over the arrows, when the
+## boulder sprites are not drawn (the flat view).
 class _BouldersDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
+		if map.uses_boulder_art():
+			return
 		var u: float = map.PX_PER_UNIT
 		for b in map.all_boulders():
 			var c := Vector2(float(b.x), float(b.y)) * u
 			var r := float(b.diameter) / 2.0 * u
 			draw_circle(c, r, map.boulder_color)
 			draw_arc(c, r - 1.0, 0.0, TAU, 32, map.boulder_edge_color, 2.0)
+
+
+## One boulder's sprite (T-065), in the map's screen pixels (isometric view).
+class _BoulderSprite extends Sprite2D:
+	## The variant's id in boulders.json ("a", "b_mirror", ...).
+	var variant := ""
+	## The boulder's centre on the ground, in units.
+	var centre_units := Vector2.ZERO
+	## The outline of its opaque pixels on screen (convex), and its box.
+	var outline := PackedVector2Array()
+	var box := Rect2()
+
+	## True when the boulder covers the car: the car's centre (units) is
+	## behind the boulder's centre (smaller x + y, farther from the viewer)
+	## and the car's screen shape overlaps the boulder's outline.
+	func covers(car_centre_units: Vector2, car_shape: PackedVector2Array, car_box: Rect2) -> bool:
+		if car_centre_units.x + car_centre_units.y >= centre_units.x + centre_units.y:
+			return false
+		if not box.intersects(car_box):
+			return false
+		return not Geometry2D.intersect_polygons(outline, car_shape).is_empty()

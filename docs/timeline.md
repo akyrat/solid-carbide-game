@@ -815,3 +815,8 @@ Entry format:
 - Decision or change: the board wants to try two camera options, each a checkbox on the pause screen, off by default and saved: camera smoothing, and the "dynamic camera", whose zoom follows the car's speed from a min (very low speed) to a max (top forward speed), easing there with a short delay. The board tunes the min and max in playtests with two temporary pause-screen buttons that store the zoom slider's current value; the values are written where the Project Lead can copy them into the defaults. The checkbox names are the board's own words ("Camera smoothing", "Dynamic camera"), and the tuning buttons ("Set min zoom", "Set max zoom") are a temporary tool for the board, removed once the values are settled, so no separate text task. T-123 (Driving & Drift) builds the camera behaviour; T-124 (UI) adds the controls on top of T-123's branch; the board playtests both together.
 - Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
 - Tasks: T-123 (new), T-124 (new)
+
+## 2026-10-13: T-065 done: the boulder art is in
+- Decision or change: the board playtested the boulders and approved them ("LGTM"). The map's boulders (obstacle patterns, the kaiju's meteor boulders) now use the two approved PixelLab samples (the first with its stone disc removed by a free script, and the lower boxy one), plus a free mirrored copy of each, picked per boulder by a stable hash and sized to the 3-unit collision circle. Buildings and the car draw in the right order around them; collisions are unchanged. 2 generations used in all (balance 4954 of 5000 after T-065; T-064's sample took it to 4953). Passed QA round 1.
+- Documents touched: `game/README.md`
+- Tasks: T-065 (done)
