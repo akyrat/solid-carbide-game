@@ -115,9 +115,28 @@ PROMPT = (
 NEGATIVE = "text, letters, words, kanji, numbers, logo, red, ground, street, road, car, people, sky, background"
 
 
-def request_body(palette_png, seed=64064):
+# Base towers 2..8 (task T-064 full set): the sample's prompt with the roof, the sign placement,
+# the window pattern and the height varied. The sample (tower 1) keeps PROMPT.
+PROMPT_HEAD = "a single narrow Tokyo-style cyberpunk skyscraper tower at night, isometric, square footprint, "
+PROMPT_TAIL = "pink and cyan neon glow drawn in pixels, retro pixel art"
+TOWER_VARIANTS = {
+    2: "flat roof with a water tank and a small antenna, dark navy concrete walls, narrow vertical columns of small lit windows, one very tall vertical neon sign board along the left edge with abstract glowing stripes and shapes, no letters, ",
+    3: "stepped setback roof with a tall radio mast, dark purple concrete walls, wide horizontal bands of lit windows, vertical neon sign boards stacked on the right corner with abstract glowing shapes, no letters, ",
+    4: "slanted roof with rooftop air conditioning units, dark navy and grey walls, a checkerboard pattern of lit and dark windows, a big vertical neon sign board hanging from the front corner with abstract glowing marks, no letters, ",
+    5: "roof garden with a small glowing billboard on top, dark purple walls, tall arched windows in rows, two thin vertical neon signs on the left wall with abstract glowing stripes, no letters, ",
+    6: "flat roof with a helipad circle and antennas, dark navy walls with horizontal ribs, dense rows of tiny lit windows, a vertical neon sign board on the right wall with abstract glowing shapes, no letters, ",
+    7: "pointed spire roof with a blinking light, dark violet concrete walls, tall windows in pairs, vertical neon sign boards on both corners with abstract glowing stripes, no letters, ",
+    8: "boxy roof with ventilation pipes and a satellite dish, dark navy walls with balconies, irregular scattered lit windows, a glowing vertical neon sign board on the left corner with abstract shapes, no letters, ",
+}
+
+
+def tower_prompt(n):
+    return PROMPT if n == 1 else PROMPT_HEAD + TOWER_VARIANTS[n] + PROMPT_TAIL
+
+
+def request_body(palette_png, seed=64064, prompt=None):
     return {
-        "description": PROMPT,
+        "description": prompt or PROMPT,
         "negative_description": NEGATIVE,
         "image_size": {"width": 384, "height": 400},
         "text_guidance_scale": 8,
@@ -545,6 +564,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("palette"); p.add_argument("--out", required=True)
     p = sub.add_parser("request"); p.add_argument("--palette", required=True); p.add_argument("--out", required=True)
+    p = sub.add_parser("requests"); p.add_argument("--palette", required=True); p.add_argument("--out-dir", required=True)
     p = sub.add_parser("clean"); p.add_argument("raw"); p.add_argument("--palette", required=True)
     p.add_argument("--out", required=True); p.add_argument("--tolerance", type=int, default=24)
     p = sub.add_parser("check"); p.add_argument("png")
@@ -559,6 +579,12 @@ def main(argv=None):
         body = request_body(a.palette)
         Path(a.out).write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8")
         print("wrote", a.out)
+    elif a.cmd == "requests":
+        for n in range(2, 9):
+            body = request_body(a.palette, seed=64064 + n, prompt=tower_prompt(n))
+            f = Path(a.out_dir) / f"tower_{n:02d}_request.json"
+            f.write_text(json.dumps(body, indent=2) + "\n", encoding="utf-8")
+            print("wrote", f)
     elif a.cmd == "clean":
         img = clean(a.raw, palette_from_image(a.palette), a.tolerance)
         img.save(a.out)

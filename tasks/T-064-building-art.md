@@ -121,3 +121,19 @@ The board gave the go for the sample only: exactly one PixelLab call for one tow
 4. The bottom rows are a little ragged where PixelLab's base shadow met the background; on the dark alley colour it does not show.
 
 Status stays in-progress: waiting for the board's judgement of the sample and its decision on the layout before the 7 remaining calls.
+
+### Full set, planned calls (2026-10-14, written before calling)
+
+The board approved the sample (narrow towers, dense layout of about 49 per block, kanji-like sign marks accepted) and gave the go for up to 7 more calls, one per new base tower.
+
+- **Balance before:** 4953 of 5000 generations (subscription), 0.00 USD credits.
+- **Calls:** 7 x `POST /create-image-pixflux` through `game/tools/pixellab_client.py` (timeout 600 s), one per base tower 2 to 8, same settings as the sample (384 x 400, `text_guidance_scale` 8, selective outline, detailed shading, highly detailed, high top-down, south-east, isometric, `no_background`, same negative prompt, same `art-archive/T-064/palette.png` as `color_image`), seed 64064 + tower number. Request bodies: `art-archive/T-064/tower_02_request.json` ... `tower_08_request.json` (made by `python game/tools/build_buildings.py requests`). One round: no resend, no regeneration.
+- **Prompts** (each is "a single narrow Tokyo-style cyberpunk skyscraper tower at night, isometric, square footprint, " + the part below + "pink and cyan neon glow drawn in pixels, retro pixel art"):
+  2. flat roof with a water tank and a small antenna, dark navy concrete walls, narrow vertical columns of small lit windows, one very tall vertical neon sign board along the left edge with abstract glowing stripes and shapes, no letters
+  3. stepped setback roof with a tall radio mast, dark purple concrete walls, wide horizontal bands of lit windows, vertical neon sign boards stacked on the right corner with abstract glowing shapes, no letters
+  4. slanted roof with rooftop air conditioning units, dark navy and grey walls, a checkerboard pattern of lit and dark windows, a big vertical neon sign board hanging from the front corner with abstract glowing marks, no letters
+  5. roof garden with a small glowing billboard on top, dark purple walls, tall arched windows in rows, two thin vertical neon signs on the left wall with abstract glowing stripes, no letters
+  6. flat roof with a helipad circle and antennas, dark navy walls with horizontal ribs, dense rows of tiny lit windows, a vertical neon sign board on the right wall with abstract glowing shapes, no letters
+  7. pointed spire roof with a blinking light, dark violet concrete walls, tall windows in pairs, vertical neon sign boards on both corners with abstract glowing stripes, no letters
+  8. boxy roof with ventilation pipes and a satellite dish, dark navy walls with balconies, irregular scattered lit windows, a glowing vertical neon sign board on the left corner with abstract shapes, no letters
+- **Expected cost:** 1 generation per call (the sample cost 1 at this size), 7 in all. If any call costs more than 2 generations I stop and report.
