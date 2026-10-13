@@ -1,0 +1,39 @@
+{
+  "file": "boulder_sample_nobase.png",
+  "source": "art-archive/T-065/boulder_sample.png (the first sample: one PixelLab /create-image-pixflux call, palette reduced to 30; see boulder_sample.json and boulder_sample_raw.json)",
+  "made_by": "python game/tools/remove_boulder_base.py build",
+  "change": "the stone disc, its pebbles and its magenta edge removed below row 81 (rows above it unchanged); the rock's lower edge traced along its own dark outline, gaps closed with a rounded guide curve; every rock pixel on the new lower edge set to the sprite's outline colour [3, 3, 2]; no new colours",
+  "canvas": "kept at 160 x 160, the rock in the same place as in the first sample (not trimmed)",
+  "image": {
+    "width": 160,
+    "height": 160
+  },
+  "rock_bbox": {
+    "x0": 32,
+    "y0": 16,
+    "x1": 130,
+    "y1": 119,
+    "width": 99,
+    "height": 104
+  },
+  "colours_before": 30,
+  "colours_after": 30,
+  "new_colours": 0,
+  "stats": {
+    "removed_pixels": 3020,
+    "outline_recoloured_pixels": 64,
+    "spurs_removed": 2,
+    "inner_transparent_pixels_left_as_they_were": 57
+  },
+  "car_scale_preview": {
+    "car_px_per_unit": 32.0,
+    "circle_width_car_px": 135.765,
+    "rock_width_px": 99,
+    "rock_height_px": 104,
+    "scale": 1.371
+  },
+  "known_issue": "the first sample already has 57 fully transparent pixels inside the rock (mostly in the crack glow); left as they are",
+  "pixellab_calls": 0,
+  "task": "T-065",
+  "status": "sample for the board's review, not game-ready"
+}

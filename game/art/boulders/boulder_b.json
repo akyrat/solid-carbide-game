@@ -1,0 +1,28 @@
+{
+  "file": "boulder_b.png",
+  "variant": "b",
+  "source": "art-archive/T-065/boulder_sample2.png",
+  "mirrored": false,
+  "made_by": "python game/tools/build_boulder_art.py build",
+  "history": [
+    "PixelLab POST /create-image-bitforge with the first sample as style image (style strength 35), 1 generation (record: art-archive/T-065/boulder_sample2_raw.json; log: game/art/pixellab-generation-log.jsonl)",
+    "one-off stray-pixel cleanup (thin 1-pixel lines and 5 detached specks removed), then palette 37 -> 30 colours by python game/tools/reduce_palette.py reduce (art-archive/T-065/boulder_sample2.json)",
+    "padded from 160 x 128 to 160 x 160 with 32 fully transparent rows on top by python game/tools/build_boulder_art.py build (no pixel of the rock changed)"
+  ],
+  "image": {
+    "width": 160,
+    "height": 160
+  },
+  "bbox": {
+    "x0": 22,
+    "y0": 42,
+    "x1": 146,
+    "y1": 138,
+    "width": 124,
+    "height": 96
+  },
+  "colours": 30,
+  "pixellab_calls_for_this_file": 0,
+  "task": "T-065",
+  "status": "game-ready (the board approved both samples as boulder variants, 2026-10-13)"
+}

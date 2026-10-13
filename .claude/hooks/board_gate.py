@@ -7,6 +7,8 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
 - PreToolUse Edit/Write/MultiEdit: refuses changes to a task file's status or qa_rounds line.
   Moves go through tools/task_status.py, which checks the workflow rules.
 - PreToolUse Bash/PowerShell: refuses shell commands that rewrite those lines.
+- PreToolUse Agent: refuses to start an agent on a task unless it runs on the task's model
+  (tasks/README.md, "Models").
 - UserPromptSubmit, PostToolUse Agent: hands the Project Lead the moves the board made on the
   task board since it last heard (.board/board-inbox.jsonl), so it acts on them.
 - Stop: if the board moved something while the Project Lead was working, it gets one more turn
@@ -95,6 +97,43 @@ def pre_shell(tool_input):
     if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\b(status|qa_rounds)\s*:", cmd):
         return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.")
     return 0
+
+
+# --- An agent runs on its task's model (tasks/README.md, "Models") ---
+
+TASK_ID_RE = re.compile(r"\bT-\d+\b")
+QA_AGENT = "qa-integration"
+
+
+def task_file(tid):
+    files = sorted(tb.TASKS_DIR.glob(f"{tid}-*.md"))
+    return files[0] if files else None
+
+
+def model_needed(agent, text):
+    """The model an agent must run on for a task, from the task file's text."""
+    if agent == QA_AGENT:
+        return "opus" if re.search(r"^The board's review:", text, re.M) else "sonnet"
+    return (tb.parse_header(text) or {}).get("model")
+
+
+def pre_agent(tool_input):
+    agent = tool_input.get("subagent_type") or ""
+    if agent == "fork":
+        return 0
+    match = TASK_ID_RE.search(tool_input.get("prompt") or "")
+    file = task_file(match.group(0)) if match else None
+    if file is None:
+        return 0
+    needed = model_needed(agent, file.read_bytes().decode("utf-8"))
+    if not needed or tool_input.get("model") == needed:
+        return 0
+    why = ("QA of a task with a board's review line runs on opus, other QA on sonnet"
+           if agent == QA_AGENT else f"{file.name} says model: {needed}")
+    given = tool_input.get("model") or "none (it would run on the Project Lead's model)"
+    return deny(f"This agent works on {match.group(0)} and must run on {needed} ({why}); the call passes "
+                f"model: {given}. Relaunch it with model: \"{needed}\", or change the task file's model "
+                f"line first if the task now needs another model (tasks/README.md, \"Models\").")
 
 
 # --- The local task board ---
@@ -212,6 +251,8 @@ def main():
             return pre_edit(tool, tool_input)
         if tool in ("Bash", "PowerShell"):
             return pre_shell(tool_input)
+        if tool == "Agent":
+            return pre_agent(tool_input)
     if event == "UserPromptSubmit":
         return hand_over("UserPromptSubmit")
     if event == "PostToolUse" and tool == "Agent":

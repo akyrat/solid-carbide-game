@@ -790,3 +790,58 @@ Entry format:
 - Decision or change: the board wants the drift smoke started, with no sample review: it goes straight to the board's playtest. As with the drift marks, T-121 (Driving & Drift) builds the smoke with a placeholder, and T-073 (Asset Generation, rewritten) draws the smoke sprites by script (no PixelLab) on top of T-121's branch. Details settled by the Project Lead: puffs from both rear tyres only while drifting, left in the world, growing then shrinking or breaking up, capped in number, in the map's depth order.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-121 (new), T-073 (rewritten: script-drawn smoke, built on T-121)
+
+## 2026-10-13: T-120 done: the likes drain four times faster
+- Decision or change: `likes_drain.bar_share_per_second` in `game/data/run.json` is now 0.08, the board's value: a full bar empties in 12.5 s, 8 likes a second at level 1. Tests pin the new speed; T-115's drain tests are unchanged and pass. Passed QA round 1; a number the board set itself, so merged after QA as agreed, and the board feels it in its next playtest.
+- Documents touched: `game/README.md`, `docs/game-loop-architecture.md` (wording, earlier the same day)
+- Tasks: T-120 (done)
+
+## 2026-10-13: T-122 done: agents run on their task's model, enforced
+- Decision or change: the board found agents had been started on Opus although their task files said Sonnet (an agent started without a model runs on the Project Lead's model). On the board's request, the hooks now enforce `tasks/README.md`, "Models": an agent whose prompt names a task starts only when the Agent call passes that task's model; the QA/Integration Agent needs sonnet, or opus when the task has a board's review line. The agents already running were left to finish on Opus, on the board's say-so. Passed QA round 1; tooling, so merged.
+- Documents touched: `tasks/README.md`
+- Tasks: T-122 (done)
+
+## 2026-10-13: The trick popups become black-and-white comic popups
+- Decision or change: after playtesting T-084's neon comic popups, the board wants them to look like real comic book popups: a white bubble with a black border and black letters, in a heavy, slanted comic font like its reference image (Bangers already is that style and stays), with the letters on one straight baseline. T-084 goes back to the Asset Generation Agent.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-084 (back to in progress)
+
+## 2026-10-13: Drift smoke shorter
+- Decision or change: after playtesting the drift smoke (T-121 and T-073), the board wants each puff to last much less: in a full-circle drift the trail should cover about 20 degrees of the circle instead of about half. T-073 goes back to the Asset Generation Agent to cut the puffs' lifetime to about a ninth.
+- Documents touched: none
+- Tasks: T-073 (back to in progress)
+
+## 2026-10-13: Camera options: smoothing and the dynamic camera
+- Decision or change: the board wants to try two camera options, each a checkbox on the pause screen, off by default and saved: camera smoothing, and the "dynamic camera", whose zoom follows the car's speed from a min (very low speed) to a max (top forward speed), easing there with a short delay. The board tunes the min and max in playtests with two temporary pause-screen buttons that store the zoom slider's current value; the values are written where the Project Lead can copy them into the defaults. The checkbox names are the board's own words ("Camera smoothing", "Dynamic camera"), and the tuning buttons ("Set min zoom", "Set max zoom") are a temporary tool for the board, removed once the values are settled, so no separate text task. T-123 (Driving & Drift) builds the camera behaviour; T-124 (UI) adds the controls on top of T-123's branch; the board playtests both together.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
+- Tasks: T-123 (new), T-124 (new)
+
+## 2026-10-13: T-065 done: the boulder art is in
+- Decision or change: the board playtested the boulders and approved them ("LGTM"). The map's boulders (obstacle patterns, the kaiju's meteor boulders) now use the two approved PixelLab samples (the first with its stone disc removed by a free script, and the lower boxy one), plus a free mirrored copy of each, picked per boulder by a stable hash and sized to the 3-unit collision circle. Buildings and the car draw in the right order around them; collisions are unchanged. 2 generations used in all (balance 4954 of 5000 after T-065; T-064's sample took it to 4953). Passed QA round 1.
+- Documents touched: `game/README.md`
+- Tasks: T-065 (done)
+
+## 2026-10-13: Trick popups follow the car
+- Decision or change: playtesting the comic popups, the board found they stay where they appeared while the car drives on, so they are hard to read. Each popup now follows the car for its whole life. T-084 had used both QA rounds, so this is a follow-up, T-125 (UI), built on T-084's branch so the board playtests both together.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-125 (new)
+
+## 2026-10-13: A Builds tab on the task board
+- Decision or change: the board wants to jump from a ticket to that ticket's version of the game. It chose a launcher over an embedded web build (a browser page can't hold a native Godot window, and a web export would need the Compatibility renderer instead of Forward+). A new Builds tab lists `master` and every worktree, each with "Play" and "Open in editor" buttons that start Godot on that folder; ticket cards with a worktree get a Play button too. Embedding the game in the page stays a possible later step.
+- Documents touched: none yet (T-126 updates `docs/README.md` and `docs/working-with-the-board.md`)
+- Tasks: T-126 (new)
+
+## 2026-10-14: T-121 and T-073 done: drift smoke
+- Decision or change: the board playtested the drift smoke and approved it ("LGTM"). While the car drifts, puffs come off both rear tyres: a script-drawn cool grey-violet cloud puff (no PixelLab), each living 0.13 s, 50 a second, capped at 64, so in a full-circle drift the trail covers about 20 degrees (the board's request after the first version covered about half the circle). Puffs stay where they were left, grow then pop out, and sit in the car's depth order. Both passed QA (T-073 in two rounds).
+- Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
+- Tasks: T-121 (done), T-073 (done)
+
+## 2026-10-14: Several Project Leads: each acts on its own tickets
+- Decision or change: with two Project Lead sessions running, the board's drags on the task board reach both. Each session now acts only on moves for tickets it planned or started; a move on a ticket nobody owns yet goes to the session the board is talking to.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
+
+## 2026-10-14: Buildings: dense narrow towers, kanji-like signs kept; popups lower and smaller
+- Decision or change: on T-064's sample tower, the board took the Project Lead's recommendations: blocks are packed densely with narrow towers (about 49 per block) instead of 16 wider ones, the remaining 7 base towers are generated the same narrow way (about 7 generations), and the signs' kanji-like marks are kept as long as they are not real words. Also, playtesting T-125, the board wants the stacked trick popups to go at most half way from the car to the top of the screen (they reached the timer) and to be a bit smaller; T-125 goes back to the UI Agent.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064 (full set), T-125 (back to in progress)

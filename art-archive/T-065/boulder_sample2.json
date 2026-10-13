@@ -1,0 +1,10 @@
+{
+  "file": "boulder_sample2.png",
+  "source": "art-archive/T-065/boulder_sample2_raw.png (one PixelLab /create-image-bitforge call with the first sample as style image; its record is boulder_sample2_raw.json)",
+  "made_by": "a one-off cleanup (no PixelLab call), then python game/tools/reduce_palette.py reduce (default --max-colors 30)",
+  "change": "stray pixels only, then palette: (1) peeled away thin 1-pixel lines (opaque pixels with 2 or fewer opaque neighbours, repeated until none left: 41 pixels, the two thin dark 'ground lines' left and right of the rock); (2) removed the 5 small blobs not touching the rock (157 pixels: floating magenta specks and loose grey pebbles); (3) 37 colours -> 30, each removed colour merged into the nearest kept one. No new colours, no semi-transparency.",
+  "image": {"width": 160, "height": 128},
+  "pixellab_calls": 0,
+  "task": "T-065",
+  "status": "second sample for the board's review, not game-ready"
+}

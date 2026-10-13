@@ -1,0 +1,76 @@
+{
+ "file": "drift_smoke_puff.png",
+ "task": "T-073",
+ "what": "The drift smoke's puff: one 24 x 24 sprite, a lumpy cloud lit from the top left (neon-tinted highlight, light, mid, dark, deep violet rim), bands blended by a checkerboard dither, outer ring chequered away for a ragged soft edge. The smoke scene scales it over the puff's life, so it grows, then shrinks and pops out.",
+ "grid": [
+  "........................",
+  "..........R.R...........",
+  ".........R.R.R..........",
+  "........RRRMRRR.R.......",
+  ".....R.R.RMMMR.R.R.R....",
+  "....R.RRRMMMMDRRRRR.R...",
+  "...R.RMMMMMLMMDMDMDR....",
+  "....RMMMLMLLLMMMMMMRR...",
+  "...RRMMLLLLLLLMLMMDR.R..",
+  "....RMLLLLHHHLLLLMDRR...",
+  "...RRMMLLHHHHHLLMMDR....",
+  "....RMMLLHHHHHHLMMDRR...",
+  "...RRMMLLHHHLHLLMMDR....",
+  "....RMMLLLHHHLLLMDDRR...",
+  "...RRMMLLLLHLLLLMMDR.R..",
+  "....RDMMLLLLLLLMMMDDR...",
+  "...RRDDMMMMLMMMMDDDDRR..",
+  "....RRDDMDMMMMMDDDDRR...",
+  ".....RRRRDDMDDDDDRRR....",
+  "......R.RRDDDDRRR.R.....",
+  ".........RRDDR.R.R......",
+  "..........RRR.R.........",
+  "...........R.R..........",
+  "........................"
+ ],
+ "palette": {
+  "H": [
+   224,
+   232,
+   250
+  ],
+  "L": [
+   198,
+   192,
+   226
+  ],
+  "M": [
+   166,
+   158,
+   198
+  ],
+  "D": [
+   136,
+   128,
+   172
+  ],
+  "R": [
+   74,
+   68,
+   110
+  ]
+ },
+ "colors": 5,
+ "made_by": "game/tools/build_drift_smoke.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
+ "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no Redgull red; body lighter than both grounds. Check: python game/tools/build_drift_smoke.py check",
+ "grounds": {
+  "asphalt": [
+   48,
+   46,
+   62
+  ],
+  "gravel": [
+   99,
+   86,
+   107
+  ]
+ },
+ "used_by": "game/scenes/driving/drift_smoke.tscn (puff_texture)",
+ "archive": "art-archive/T-073/: the preview over asphalt and gravel at four sizes",
+ "status": "proposal for the board's review (T-073, with T-121)"
+}

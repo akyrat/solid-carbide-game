@@ -16,7 +16,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit|Bash|PowerShell",
+        "matcher": "Edit|Write|MultiEdit|Bash|PowerShell|Agent",
         "hooks": [{ "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/board_gate.py\"", "timeout": 30 }]
       }
     ],
