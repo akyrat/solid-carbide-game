@@ -1,7 +1,7 @@
 ---
 id: T-116
 title: HUD: hide the combo counter when there is no combo
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -66,3 +66,4 @@ UI Agent, 2026-10-13. Branch `task/T-116-hide-combo-at-no-combo`, made from `tas
 3. Pass. `screenshots/t116_no_combo.png` (from the main menu, no counter above the likes row) and `screenshots/t116_combo.png` ("Combo x1.75" above the row); the likes row and bar are in the same place in both.
 4. Pass. HUD and menus, Content, "The HUD" and `game/README.md` say the counter is hidden at no combo; the Decisions section is identical to master's.
 5. Pass. GUT 339/339 (36 scripts), `game/tools` 125 passed, `tools` 115 passed, run by QA.
+- 2026-10-13, needs-playtest → done: LGTM (board playtest, 2026-10-13)
