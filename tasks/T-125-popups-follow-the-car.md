@@ -41,11 +41,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass, round 2)
-- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass, round 2)
-- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass, round 2)
-- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass, round 2)
-- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass, round 2)
+- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass)
+- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass)
+- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass)
+- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass)
+- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest tricks at speed (together with T-084's look) and judge whether the popups are readable.
 
