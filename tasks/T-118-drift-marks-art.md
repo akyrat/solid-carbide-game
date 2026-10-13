@@ -1,7 +1,7 @@
 ---
 id: T-118
 title: Art: the drift marks' tyre texture, drawn by script
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
