@@ -850,3 +850,8 @@ Entry format:
 - Decision or change: the task board has a Builds tab listing `master` and every worktree, each with "Play" (runs that version of the game) and "Open in editor" (opens it in Godot). A ticket's detail view has "Play this build" and a link to its Builds entry; they sit in the detail view rather than on the card because cards are dragged. The server only launches folders from its own worktree list, using `GODOT_BIN` from `.env`. Tooling, so merged straight after QA (passed round 1).
 - Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
 - Tasks: T-126 (done)
+
+## 2026-10-14: Named Project Lead sessions and ticket owners
+- Decision or change: the board's drags reach only the first session whose hooks read the shared inbox, so the "each session acts on its own tickets" rule can't work yet. The board chose to name each session itself (for example "Camera", "Tools"; a session without a name asks). T-127 adds a `lead:` owner on each ticket, gives every session its own read position in the inbox so all sessions see every drag and act only on their own or unowned tickets (claiming an unowned one first), and shows the owner on each card with a filter by owner, so the board sees every session's tickets in one view.
+- Documents touched: none yet (T-127 updates `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `docs/working-with-the-board.md`)
+- Tasks: T-127 (new)
