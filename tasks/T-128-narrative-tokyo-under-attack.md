@@ -38,10 +38,10 @@ The board asks for the Narrative Theme Agent to be consulted so the look stays c
 
 ## Acceptance criteria
 
-- [ ] Extended narrative, Content, describes the city under attack, the kaiju unnamed, and the alert banners' purpose, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The result notes propose the banners' form (picture-only or with words; the exact words if any) for the board, and say which go on buildings and which on the pavement (QA: pass / fail)
-- [ ] The result notes give the one art brief for T-064, T-129 and T-130 (palette and lighting, signs, damage level, pavement, what stays out), consistent with Visual style, Decisions (QA: pass / fail)
-- [ ] Nothing new is invented beyond the board's direction; anything that would be new is written as a question for the board (QA: pass / fail)
+- [ ] Extended narrative, Content, describes the city under attack, the kaiju unnamed, and the alert banners' purpose, without changing Summary, Decisions or Open questions (QA round 1: PASS)
+- [ ] The result notes propose the banners' form (picture-only or with words; the exact words if any) for the board, and say which go on buildings and which on the pavement (QA round 1: PASS)
+- [ ] The result notes give the one art brief for T-064, T-129 and T-130 (palette and lighting, signs, damage level, pavement, what stays out), consistent with Visual style, Decisions (QA round 1: PASS)
+- [ ] Nothing new is invented beyond the board's direction; anything that would be new is written as a question for the board (QA round 1: PASS)
 
 ## Result notes
 
@@ -82,3 +82,12 @@ Visual style, Decisions, already carries the 2026-10-14 redesign entry. Proposed
 3. Damage level: light to medium (proposed), or heavier (fires, collapsed buildings)?
 4. Pavement: the look proposed above (lighter cool grey, raised kerb, light cracks), or something else?
 5. Should the story say anything about the people who put up the banners (for example civilians visible, or only their signs)? Proposed: only the signs for now; civilians stay in Extended narrative, Open questions.
+
+### QA round 1 (qa-integration, 2026-10-14)
+
+1. PASS. Diff against the merge base (94aead6; master has not moved on this file) touches only Content in docs/extended-narrative.md; Summary, Decisions and Open questions are unchanged. Content describes the city under attack at night, the kaiju only as "the kaiju", and the banners' purpose.
+2. PASS. Result notes section 1 recommends picture-only, gives optional words (ALERT, KAIJU ALERT, STAY INSIDE) marked for the board's approval, and splits large banners on buildings and small standing signs on the pavement.
+3. PASS. Section 2 is one brief covering palette and lighting, signs, damage level, pavement and what stays out, with skyscrapers and shorter buildings; consistent with Visual style (night neon, no engine bloom, no semi-transparent pixels, Redgull's look, 2 by 2 and 6 skyscrapers per the 2026-10-14 entry).
+4. PASS, with minor notes. Damage level, pavement look and banner words are written as proposals and questions. Small narrative embellishments in Content (banners put up "by hand or by the city", "drawn by someone in a hurry", a first look at the kaiju before it appears) are interpretation of purpose, not new game content; the Project Lead may trim them.
+
+Flags (not fails): brief item 1 says "40 px per unit", copying Visual style's "about 40"; the game draws at 32 art pixels per unit, so T-064/T-129/T-130 should be told 32. Also the notes say the task's named Visual style sections do not exist by those names (correct).
