@@ -845,3 +845,8 @@ Entry format:
 - Decision or change: on T-064's sample tower, the board took the Project Lead's recommendations: blocks are packed densely with narrow towers (about 49 per block) instead of 16 wider ones, the remaining 7 base towers are generated the same narrow way (about 7 generations), and the signs' kanji-like marks are kept as long as they are not real words. Also, playtesting T-125, the board wants the stacked trick popups to go at most half way from the car to the top of the screen (they reached the timer) and to be a bit smaller; T-125 goes back to the UI Agent.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-064 (full set), T-125 (back to in progress)
+
+## 2026-10-14: T-126 done: the Builds tab on the task board
+- Decision or change: the task board has a Builds tab listing `master` and every worktree, each with "Play" (runs that version of the game) and "Open in editor" (opens it in Godot). A ticket's detail view has "Play this build" and a link to its Builds entry; they sit in the detail view rather than on the card because cards are dragged. The server only launches folders from its own worktree list, using `GODOT_BIN` from `.env`. Tooling, so merged straight after QA (passed round 1).
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-126 (done)

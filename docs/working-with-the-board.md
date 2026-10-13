@@ -11,7 +11,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 
 ## Showing work
 - Send images with SendUserFile: enlarged (nearest-neighbour), on a dark and a light background, side by side for comparisons. Always say where the real files are (full Windows paths).
-- Work that needs the board's review is played from the task's own folder before merging: tell the board to open `C:\solid-carbide-worktrees\<id>\game\project.godot`.
+- Work that needs the board's review is played from the task's own folder before merging: tell the board to open `C:\solid-carbide-worktrees\<id>\game\project.godot`, or to press Play on the ticket's entry in the Builds tab of the task board (http://localhost:8765), which starts the same game; Open in editor opens the project in Godot.
 - The board can open files itself; when it asks where the files are, give paths, not more images.
 
 ## Art and money
