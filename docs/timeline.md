@@ -750,3 +750,8 @@ Entry format:
 - Decision or change: the board agreed the next wave: T-034 (buildings turn see-through when the car is behind them) and T-039 (enemy numbers, data only) start now, and T-065 (crashed meteor boulders) gets the PixelLab go for one sample boulder, which the board reviews before the rest are made. Old test logs left in the worktrees folder were deleted on the board's go.
 - Documents touched: none
 - Tasks: T-034, T-039, T-065 (in progress)
+
+## 2026-10-13: T-039 done: enemy numbers
+- Decision or change: `game/data/enemies.json` (read through `enemy_data.gd`) holds the proposed enemy numbers: minion health 4, speed 6, contact damage 5 every 0.5 s; 12 minions at the start rising to 20 at 7:00; 60% drop chance of 2 coins; kaiju health 500 (about 48.5 s to kill for an average level-8 run); 3 meteors every 8 s. Passed QA round 1; data only, so merged. Flagged for the board: the kaiju drops no coins (Game loop architecture says enemies drop coins), meteors aim within 10 units of the car, minions are replaced as they die, and the count holds during the kaiju's minute. T-044 (minions) is unblocked.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-039 (done), T-044 (open)

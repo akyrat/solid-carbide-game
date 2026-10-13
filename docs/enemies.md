@@ -37,4 +37,4 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 ## References
 
-(None yet.)
+- Enemy numbers (the minion, how many minions are kept around over the run, coin drops, the kaiju and its meteor attack): [../game/data/enemies.json](../game/data/enemies.json), read through `game/scripts/data/enemy_data.gd`; the reasons for each number are in task T-039's result notes.
