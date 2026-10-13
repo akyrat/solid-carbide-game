@@ -102,3 +102,18 @@ The board's go covers one sample boulder only. Plan: **one** PixelLab call, `POS
 - Changed: `game/art/pixellab-generation-log.jsonl` (1 entry), `art-archive/README.md` (T-065 rows), `game/README.md` (the palette tool, in "Generating art with PixelLab"), this task file
 - Not done yet (waiting for the board): the other variants, the swap into the game, the screenshot. Status left `in-progress`.
 - Documents affected so far: `game/README.md` (tool note). Visual style unchanged.
+
+**Asset Generation Agent, 2026-10-13: the second sample (the board's go for exactly one more call)**
+
+The board judged the first sample's shape weak (a tall smooth egg on a stone disc with a magenta edge, few cracks) but liked the colours and technique, and gave the go for exactly **one** more PixelLab call: a low, wide, jagged crashed meteor rock lying directly on the ground, no base, more and finer glowing cracks. No other variants, no swap into the game yet.
+
+### Planned call (written before calling)
+
+- **Endpoint:** `POST /create-image-bitforge` (direct). PixelLab's OpenAPI schema confirms it takes a `style_image` with a `style_strength` (0 to 100) and a `negative_description`, up to 200 x 200. The cleaned first sample (`art-archive/T-065/boulder_sample.png`, 30 colours) goes in as the style image, so its colours and pixel technique carry over. Style strength **35** (my choice: enough to carry the palette, low enough not to copy the egg shape and disc). No `color_image` (a forced palette could also pull back the disc's colours; `reduce_palette.py` handles the colour count for free afterwards).
+- **Canvas (my proposal):** 160 x 128. A 3-unit footprint at about 40 px per unit is about 120 x 60 px in the 2:1 isometric view; a low rock needs much less height than the 160 x 160 frame gave the egg.
+- **Prompt:** "a low wide jagged crashed meteor rock lying directly on the ground, a flat irregular slab of broken dark navy-purple and charcoal rock, much wider than tall, sharp angular edges and chipped facets, split open by heat with many fine branching glowing neon magenta-pink cracks with white-hot cores and small stepped glow, isometric 3/4 view from above, no base, no platform, no pedestal, no disc, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges"
+- **Negative description:** "base, pedestal, platform, plinth, disc, stone ring, crater rim, pebbles, tall, egg, smooth round boulder, ground shadow, text"
+- **Settings:** `image_size` 160 x 128, `isometric: true`, `no_background: true`, `view: "high top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`, `text_guidance_scale: 8`, `style_strength: 35`, `style_image` = the first sample (base64 PNG). HTTP read timeout 600 s (the client's `HTTP_TIMEOUT_SECONDS`).
+- **Expected cost:** about 1 generation.
+- **Balance before:** 4955 of 5000 subscription generations, USD credits $0.00.
+- Output: `art-archive/T-065/boulder_sample2_raw.png` (+ record), cleaned to `boulder_sample2.png`. One call only; not regenerated whatever comes out.
