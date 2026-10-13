@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, tasks/T-083-hud-combo-and-trick-popups.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the popup scene, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -165,3 +165,4 @@ Every criterion checked again independently after the board's rework request.
 - For the board (not a fail): at the small size the "1" of "+100" reads a bit like a "T" and the "L" of "LONG" like an "I" (Bangers without smoothing at 20 px). Judge it in the playtest.
 
 Godot's line-ending-only `.import` changes from the test runs were left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 2: all criteria pass
