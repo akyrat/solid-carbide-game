@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -49,3 +49,4 @@ The board's review: playtest the run with both options, tune the dynamic camera'
 ## Result notes
 
 - 2026-10-13, open → blocked: starts once T-123 is in QA; builds on T-123's branch
+- 2026-10-13, blocked → open: T-123 is in QA; T-124 builds on its branch
