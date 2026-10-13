@@ -41,6 +41,8 @@ Minions and coins are placeholders for now (simple shapes in the palette; minion
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
+**Draw order (from T-034's QA, 2026-10-13):** once T-034 (see-through buildings) is merged, buildings get a depth order and the car is drawn just under the buildings covering it. Minions must get a place in that order too (see `map.car_z_index()` and game/README.md, "See-through buildings"), or they will be drawn under every building even when in front of one. The fade itself stays car-only.
+
 ## Acceptance criteria
 
 - [ ] A test simulates the run's clock and shows there are more minions at the end of the 7 minutes than at the start, as the data says (QA: pass / fail)
