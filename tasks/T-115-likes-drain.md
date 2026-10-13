@@ -51,3 +51,26 @@ The board's review: playtest a run and judge how the drain feels (speed, when it
 ## Result notes
 
 - 2026-10-13, open → blocked: waits for T-114
+
+**Game Loop Agent, 2026-10-13.** Branch `task/T-115-likes-drain`, folder `C:\solid-carbide-worktrees\T-115`.
+
+What was built (`game/scripts/run/run_state.gd`):
+- `_drain_likes(seconds)`, called from `advance()` right after the combo's own drain. While the combo is at "no combo" (`has_no_combo()`: `combo` at combo.json's `start_multiplier`), it counts `likes_drain_idle`; once that passes `RunData.likes_drain_extra_wait_seconds()` (0 now), XP goes down by `RunData.likes_drain_xp_per_second(level)` per second (T-114's numbers, read, not copied), clamped at 0. The level is never touched, so it never goes down. The wait is split exactly across frames, so the speed does not depend on the frame size.
+- Any trick raises the combo above "no combo", which stops the drain and resets `likes_drain_idle`; it starts again once the combo has drained again. A new run resets it.
+- No drain while paused (it runs inside `advance()`, which runs from the pausable `_process`), after the run ends (`advance()` stops when `running` is false), or while a level-up weapon choice is waiting (an explicit check too, for when `advance()` is called by hand).
+- Each frame it takes XP away it sends `xp_changed(xp, xp_needed, level)`, which the HUD already follows, so the likes bar visibly empties. No signal once the bar is empty. No HUD changes.
+- `is_likes_draining()` says whether it is draining right now, for tests and readouts.
+
+**Top level decision:** the drain does not apply at the top level. There XP is always 0 and the HUD shows the bar full, so there is nothing to drain; `likes_drain_xp_per_second(max_level)` is 0 too (T-114).
+
+Note for the playtest: the HUD's likes bar has a step of 1 (whole likes), so at level 1's 2 likes per second it moves one like every half second; on a 100-like bar this reads as a slow, steady empty. If the board wants it smoother, that is a HUD task (step 0), not this one.
+
+Tests: `game/tests/unit/run/test_run_likes_drain.gd`, 19 tests: no drain while the combo is above "no combo" (through its wait and most of its drain); the drain starts once the combo is gone; the speed at level 1 and at level 4 matches `likes_drain_xp_per_second`; the speed is the same with big frames; a trick stops it until the combo has drained again; XP stops at 0 with the level unchanged; a 400-second drain at level 6 never goes below 0, never changes the level and fires no `level_up`; `xp_changed` fires with falling values and the level's bar, and stops once empty; no drain after a win, after the clock runs out, while the tree is paused (real frames), while a weapon choice waits, at the top level; the extra wait (a test RunData with 1.5 s) delays it and restarts after a trick; switched off means no drain; a new run resets the wait; and in a real run scene the HUD's likes bar goes down with the run's XP.
+
+Results, in the task folder: full GUT suite 345/345 passing (35 scripts, `TESTS PASSED`, exit 0); `game/tools` Python tests 125 OK; `tools` Python tests 115 OK. Godot's line-ending-only `.import` changes were reverted, not committed (`project.godot` was not touched).
+
+Screenshots (git-ignored, in the task folder), from the new fixture `res://tests/fixtures/likes_drain_demo.tscn` (a run from the main menu, level 2 with a fifth of its bar, then no input; it prints time, XP and level every half second):
+- `screenshots/T-115-likes-drain-1-emptying.png` (600 frames, about 2.6 s in, clock 7:58): the bar at about 15% (18.7 of 125), Hype Lv 2, Combo x1.0.
+- `screenshots/T-115-likes-drain-2-empty.png` (3500 frames, about 14.6 s in, clock 7:46): the bar empty (0 of 125, since about 10 s in), still Hype Lv 2.
+
+Documents affected: `docs/game-loop-architecture.md` (Content, "Likes and levels": the likes drain bullet), `game/README.md` (The run: the likes drain paragraph and table, `xp_changed`, the tests line).
