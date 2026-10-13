@@ -1,7 +1,7 @@
 ---
 id: T-034
 title: Buildings turn see-through when the car is behind them
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 epic: level-challenges
