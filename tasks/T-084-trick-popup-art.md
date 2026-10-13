@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -125,3 +125,13 @@ Code read: `game/scripts/hud/trick_popup_art.gd` (palette with index 0 transpare
 
 Godot's line-ending-only `.import` changes from the test run were left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all criteria pass
+- 2026-10-13, needs-playtest → in-progress: board playtest: make it look like a real comic popup: white bubble, black border, black letters (font like the board's ACTION! sample, letters on one straight baseline)
+
+### The board's playtest, 2026-10-13 (round 1): rework
+
+Not approved yet. The board wants the popups to look like real comic book popups:
+- the bubble's background **white**, with **black** borders;
+- the letters **black** (names and amounts alike);
+- a font like the board's reference ("ACTION!": heavy, condensed, slanted comic capitals; a watermarked stock image, used only as a reference, nothing copied from it). Bangers is that style, so it stays. The reference's letters bob up and down; ours stay on one straight baseline.
+
+Keep everything else: the jagged burst fitted to each text, the small extended-drift size, the timing, the code API, the tests' rules (no semi-transparent pixels, no Redgull red). Update the tests that pinned pink names and cyan amounts.
