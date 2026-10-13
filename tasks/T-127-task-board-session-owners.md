@@ -14,7 +14,7 @@ documents_affected: [tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/w
 files_to_read_first: [tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/working-with-the-board.md, .claude/hooks/board_gate.py, .claude/settings.json, tools/task_status.py, tools/taskboard_sync.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tasks/T-111-task-board-planning-column.md, tasks/T-126-task-board-builds-tab.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/task_status.py, tools/test_task_status.py, tools/taskboard_sync.py, tools/test_taskboard_sync.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/board_inbox.py, tools/test_board_inbox.py, tasks/README.md, tasks/_TEMPLATE.md, docs/README.md, docs/working-with-the-board.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -51,17 +51,17 @@ While testing, never stop or restart the live task board server on port 8765, an
 
 ## Acceptance criteria
 
-- [ ] `tasks/_TEMPLATE.md` and every task file in `tasks/` have a `lead:` header line, empty on all existing tickets. QA checks with a script over `tasks/`. (QA: pass / fail)
-- [ ] `task_status.py --lead` sets an empty owner, works with and without a status move, refuses a different existing owner without `--take-over`, and accepts it with `--take-over`. Unit tests cover each case. A hand edit of the `lead:` line is refused by the hook (QA checks by running the hook's pre-edit check on a sample edit). (QA: pass / fail)
-- [ ] `board_inbox.py name` registers, renames and refuses a name another session holds. Unit tests cover each case, with a temporary state folder. (QA: pass / fail)
-- [ ] With two sessions A and B in a temporary state folder, tickets owned by A, by B and unowned, and moves appended to the inbox: A's hand-over shows its own moves and the unowned ones (with the claim note) but not B's, and B likewise. Each move is handed to each session at most once, across hooks and the watcher together. Nothing empties or renames the inbox. Unit tests cover this. (QA: pass / fail)
-- [ ] A session without a name gets every move plus a reminder to get a name. The SessionStart hook's output includes the session id and the command to register a name. Unit tests cover both. (QA: pass / fail)
-- [ ] `board_inbox.py watch` prints one line per new relevant move and advances the shared cursor. QA checks it against a temporary state folder by appending moves while it runs. (QA: pass / fail)
-- [ ] `/api/tickets` includes `lead` for each ticket, and `/api/builds` includes each worktree's owner. QA checks with a server on another port. (QA: pass / fail)
-- [ ] The page shows an owner label on owned cards and an owner filter (one button per owner present, plus "Unowned"), saved in local storage inside try/catch. QA checks the page's code. The page's script passes `node --check`. (QA: pass / fail)
-- [ ] Existing behaviour is unchanged: drags still move tickets through `task_status.py`, and the existing hook messages for each kind of move still read the same. The existing tests pass. (QA: pass / fail)
-- [ ] `tasks/README.md` (the `lead` field and `--lead`), `tasks/_TEMPLATE.md`, `docs/README.md` ("The task board": owner labels and filter) and `docs/working-with-the-board.md` (session names, the new watcher command, and how unowned moves are claimed) describe the system as built. (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`, and the Godot tests as described in `game/README.md`. (QA: pass / fail)
+- [ ] `tasks/_TEMPLATE.md` and every task file in `tasks/` have a `lead:` header line, empty on all existing tickets. QA checks with a script over `tasks/`. (QA: pass: 128 files (127 tickets + template), each exactly one empty lead line)
+- [ ] `task_status.py --lead` sets an empty owner, works with and without a status move, refuses a different existing owner without `--take-over`, and accepts it with `--take-over`. Unit tests cover each case. A hand edit of the `lead:` line is refused by the hook (QA checks by running the hook's pre-edit check on a sample edit). (QA: pass: hook pre_edit denies a lead edit naming task_status.py --lead; unit tests (Lead class, 10) pass)
+- [ ] `board_inbox.py name` registers, renames and refuses a name another session holds. Unit tests cover each case, with a temporary state folder. (QA: pass: name registers, renames, refuses a live holder (also case-insensitive); tested via CLI and unit tests)
+- [ ] With two sessions A and B in a temporary state folder, tickets owned by A, by B and unowned, and moves appended to the inbox: A's hand-over shows its own moves and the unowned ones (with the claim note) but not B's, and B likewise. Each move is handed to each session at most once, across hooks and the watcher together. Nothing empties or renames the inbox. Unit tests cover this. (QA: pass: 24 board_inbox tests incl. two sessions, once-only, inbox never emptied; cursor stays 129 = inbox size)
+- [ ] A session without a name gets every move plus a reminder to get a name. The SessionStart hook's output includes the session id and the command to register a name. Unit tests cover both. (QA: pass: unnamed session and SessionStart message covered by unit tests)
+- [ ] `board_inbox.py watch` prints one line per new relevant move and advances the shared cursor. QA checks it against a temporary state folder by appending moves while it runs. (QA: pass: watch run live against a temp-less worktree .board: printed 2 appended moves with claim note, cursor advanced to inbox size)
+- [ ] `/api/tickets` includes `lead` for each ticket, and `/api/builds` includes each worktree's owner. QA checks with a server on another port. (QA: pass: server on port 8797: 127 tickets all with lead; 7 builds all with lead (empty))
+- [ ] The page shows an owner label on owned cards and an owner filter (one button per owner present, plus "Unowned"), saved in local storage inside try/catch. QA checks the page's code. The page's script passes `node --check`. (QA: pass: code reviewed: tbp-owners in try/catch, Unowned button, owner chips on cards and Builds; node --check ok)
+- [ ] Existing behaviour is unchanged: drags still move tickets through `task_status.py`, and the existing hook messages for each kind of move still read the same. The existing tests pass. (QA: pass: tools 171 OK; hook message text unchanged per describe_moves; drags go via task_status)
+- [ ] `tasks/README.md` (the `lead` field and `--lead`), `tasks/_TEMPLATE.md`, `docs/README.md` ("The task board": owner labels and filter) and `docs/working-with-the-board.md` (session names, the new watcher command, and how unowned moves are claimed) describe the system as built. (QA: pass: docs describe lead field, --lead, watcher, owner filter; take_inbox references gone)
+- [ ] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"`, and the Godot tests as described in `game/README.md`. (QA: pass: tools 171 OK, game/tools 180 OK, Godot TESTS PASSED)
 
 ## Result notes
 
@@ -121,3 +121,10 @@ Built by the Project Lead's agent (2026-10-14), on branch `task/T-127-task-board
 3. Every session reads its session id from the next hook message (the name reminder), asks the board for its name if it hasn't one, and registers it: `python tools/board_inbox.py name <session id> <Name>`.
 4. Every session starts the new watcher in a Monitor (30 minutes, re-armed each time): `python tools/board_inbox.py watch <session id>`.
 5. Every session claims the tickets it planned or started: `python tools/task_status.py T-NNN --lead <Name>` (for tickets with an open branch, see the merge note under "For QA").
+
+## QA round 1 (2026-10-14)
+
+All 11 criteria pass. Extra findings (no failures):
+
+- Upgrade path: with an existing inbox of 2 lines and an old heard-file in a temp state folder, a session with no cursor got nothing on its first take (cursor set at end), then got only the line appended afterwards, once. Nothing crashed; the heard-file is ignored.
+- Merge conflicts with open branches (throwaway clone, master + T-127 vs master alone): no new conflict from the `lead:` line. T-064: clean. T-084 (art-archive/README.md), T-123 (game/README.md, drift_prototype.gd, run.gd), T-124 (same plus its own task file), T-125 (art-archive/README.md, docs/hud-and-menus.md, add/add on its task file) conflict identically with or without T-127, so none come from T-127. T-073 and T-121 have no open branch. Note: T-124's task-file conflict is on master already.
