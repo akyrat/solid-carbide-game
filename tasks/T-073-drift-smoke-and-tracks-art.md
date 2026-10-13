@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -102,3 +102,4 @@ Documents affected: `game/README.md` ("Drift smoke": numbers, tests).
 4. T-121's tests: pass. `test_drift_smoke.gd` 19 / 19 (18 of T-121's, adapted, plus the arc test).
 5. Full suites: pass. GUT 427 / 427 (1 known warning); `game/tools` 155 OK; `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 2: all criteria pass; trail about 20 to 25 degrees
+- 2026-10-14, needs-playtest → done: LGTM (board playtest, 2026-10-14)
