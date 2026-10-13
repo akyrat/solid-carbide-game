@@ -65,3 +65,7 @@ The board's review: playtest the run with both options, tune the dynamic camera'
 - 2026-10-14, QA/Integration, round 2: all five criteria pass. Only T-124's own diff from `task/T-123-camera-options` was judged. Side finding for the Project Lead (not an acceptance criterion): the round-1 prototype fixture `game/tests/fixtures/pause_screen_demo_dynamic.tscn` calls `camera_follow.set_dynamic(true)` without a test settings file, so it saves into the player's real `user://settings.cfg`; that file now reads `zoom=11.6` and `dynamic=true` (last written 2026-10-13 23:57, when the agent took `T-124-pause-dynamic.png`). The board's playtest will start with the dynamic camera on and zoom 11.6 unless the file is reset or the box is unticked. The run fixtures are not affected.
 - 2026-10-14, in-progress → in-qa: round 2: visible checkboxes and buttons on a nearly opaque strip, run screenshots on gravel and asphalt, HUD and menus Content written
 - 2026-10-14, in-qa → needs-playtest: QA round 2: all criteria pass; side note on the prototype fixture writing the real settings file
+
+### Quick tuning
+
+- 2026-10-14, board (playtest): top forward speed halved as an experiment, 33 to 16.5 units/s (`top_speed_multiplier` 3.0 to 1.5 in `game/scripts/driving/car_tuning.gd`; cruise speed stays 11); one separate commit, "T-124 quick tuning (board): top forward speed halved, experiment", to revert cleanly.
