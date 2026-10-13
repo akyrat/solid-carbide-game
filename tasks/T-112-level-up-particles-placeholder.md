@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A GUT test shows that emitting T-037's "level up" signal starts the level-up effect on the car, and that it is not playing before (QA: pass / fail)
-- [ ] A GUT test or a check on the scene shows the particles use nearest-neighbour filtering, have no alpha fade (colour ramp / modulate alpha stays 1) and are not Redgull red (QA: pass / fail)
-- [ ] A screenshot shows the placeholder burst around the car at a level-up in the run scene (QA: pass / fail)
-- [ ] game/README.md says how the effect is triggered and which scene and settings T-074 changes to swap the art; Game loop architecture says the run plays it on a level-up (QA: pass / fail)
-- [ ] T-037's tests, the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A GUT test shows that emitting T-037's "level up" signal starts the level-up effect on the car, and that it is not playing before (QA: pass)
+- [x] A GUT test or a check on the scene shows the particles use nearest-neighbour filtering, have no alpha fade (colour ramp / modulate alpha stays 1) and are not Redgull red (QA: pass)
+- [x] A screenshot shows the placeholder burst around the car at a level-up in the run scene (QA: pass)
+- [x] game/README.md says how the effect is triggered and which scene and settings T-074 changes to swap the art; Game loop architecture says the run plays it on a level-up (QA: pass)
+- [x] T-037's tests, the full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -65,3 +65,14 @@ Written by the Game Loop Agent, 2026-10-13, on `task/T-112-level-up-particles-pl
 **Screenshot:** `C:\solid-carbide-worktrees\T-112\screenshots\T-112-level-up-burst.png` (git-ignored), and an enlarged crop around the car, `T-112-level-up-burst-zoom.png` in the same folder: the placeholder burst around the car at a level-up (HUD shows Lv 2) in a run started from the main menu. Retake it with `bash game/tools/screenshot.sh res://tests/fixtures/level_up_burst_demo.tscn screenshots/T-112-level-up-burst.png 40` (fixture `game/tests/fixtures/level_up_burst_demo.tscn`).
 
 **Documents updated:** `game/README.md` ("The run": "The level-up effect": trigger, scene, settings T-074 changes, screenshot, tests), `docs/game-loop-architecture.md` (Content, "Likes and levels": the run plays the level-up effect on every level-up).
+
+## QA notes
+
+QA round 1, QA/Integration Agent, 2026-10-13, in `C:\solid-carbide-worktrees\T-112` on `task/T-112-level-up-particles-placeholder`. All five criteria pass.
+
+1. **Level-up signal starts the effect: pass.** `tests/unit/run/test_level_up_burst.gd` checks the burst is in the run and not emitting before a level-up, that `state.level_up.emit(2)` starts it at the car's drawn position, and that a real level-up from `add_xp()` starts it. All pass in the full suite run below.
+2. **Nearest, no alpha fade, not red: pass.** Read `game/scenes/run/level_up_burst.tscn`: `texture_filter = 1` (Nearest), `color` and both `color_ramp` stops are alpha 1, no modulate set, the texture is a 4 x 4 opaque RGBA8 square of one colour (204, 242, 255), pale cyan, not Redgull red. Shrinks through `scale_amount_curve` instead of fading. `process_mode = 3` (Always). The GUT tests `test_pixel_rules_nearest_no_alpha_fade` and `test_placeholder_is_a_small_light_square_not_redgull_red` check the same and pass.
+3. **Screenshot: pass.** `screenshots/T-112-level-up-burst.png` and `-zoom.png` show square pale-cyan particles all around the car, HUD at Hype Lv 2, in the run scene with the HUD. QA retook it with the documented command (`game/tools/screenshot.sh res://tests/fixtures/level_up_burst_demo.tscn ...`) and got the same picture (retake deleted afterwards).
+4. **Documents: pass.** `game/README.md`, "The run", "The level-up effect", says it is triggered by the run state's `level_up` signal, names `scenes/run/level_up_burst.tscn` and lists the settings T-074 changes and the ones to keep. `docs/game-loop-architecture.md`, "Likes and levels", has the line that the run plays the level-up effect on every level-up.
+5. **Tests: pass.** `bash game/tools/run_tests.sh`: 318 of 318, 33 scripts, `TESTS PASSED`, exit 0 (includes T-037's `test_run_likes.gd` and the 11 tests of `test_level_up_burst.gd`; the one warning is GUT ignoring an inner class, not a failure). `python -m unittest discover -s game/tools -p "test_*.py"`: 111 tests OK. `python -m unittest discover -s tools -p "test_*.py"`: 115 tests OK.
+
