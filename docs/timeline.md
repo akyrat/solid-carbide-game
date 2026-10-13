@@ -805,3 +805,8 @@ Entry format:
 - Decision or change: after playtesting T-084's neon comic popups, the board wants them to look like real comic book popups: a white bubble with a black border and black letters, in a heavy, slanted comic font like its reference image (Bangers already is that style and stays), with the letters on one straight baseline. T-084 goes back to the Asset Generation Agent.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-084 (back to in progress)
+
+## 2026-10-13: Drift smoke shorter
+- Decision or change: after playtesting the drift smoke (T-121 and T-073), the board wants each puff to last much less: in a full-circle drift the trail should cover about 20 degrees of the circle instead of about half. T-073 goes back to the Asset Generation Agent to cut the puffs' lifetime to about a ninth.
+- Documents touched: none
+- Tasks: T-073 (back to in progress)
