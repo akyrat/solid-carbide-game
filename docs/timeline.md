@@ -720,3 +720,8 @@ Entry format:
 - Decision or change: the board put the likes drain in the MVP and decided it starts once the combo has fully drained; any trick stops it, and it never takes the bar below the start of the current level. T-114 (Game Data) proposes the speed; T-115 (Game Loop) builds it and goes to the board's playtest.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-114 (new), T-115 (new, depends on T-114)
+
+## 2026-10-13: T-114 done: the likes drain numbers
+- Decision or change: `game/data/run.json` has a `likes_drain` block, read through `run_data.gd`: on, 2% of the current level's bar per second (a full bar empties in 50 seconds; 2 likes a second at level 1, against 10 for a second of drifting), no extra wait after the combo has drained. A share of the bar rather than a flat amount, so it feels equally slow at every level. Proposed numbers; the board judges them in T-115's playtest (at level 11 the drain is 18.6 likes a second; halving the share is a one-number change). Passed QA round 1; data only, so merged straight away. T-115 is unblocked.
+- Documents touched: `game/README.md`
+- Tasks: T-114 (done), T-115 (open)

@@ -1,6 +1,6 @@
 class_name RunData
 extends RefCounted
-## The run's numbers from res://data/run.json: XP per challenge, XP per level, drift XP, starting health.
+## The run's numbers from res://data/run.json: XP per challenge, XP per level, drift XP, starting health, the likes drain.
 
 var _data: Dictionary = {}
 var error: String = ""
@@ -50,3 +50,26 @@ func xp_needed(level: int) -> float:
 ## XP one completed challenge gives at `level`.
 func challenge_xp(level: int) -> float:
 	return float(_row(level)["challenge_xp"])
+
+
+## Whether the likes bar drains once the combo has fully drained (Game loop architecture, Decisions).
+func likes_drain_enabled() -> bool:
+	return bool(_data["likes_drain"]["enabled"])
+
+
+## Share of the current level's XP bar (xp_needed) the drain removes per second.
+func likes_drain_bar_share_per_second() -> float:
+	return float(_data["likes_drain"]["bar_share_per_second"])
+
+
+## Extra seconds to wait after the combo has fully drained before the likes drain starts (0 = at once).
+func likes_drain_extra_wait_seconds() -> float:
+	return float(_data["likes_drain"]["extra_wait_seconds"])
+
+
+## XP the drain removes per second at `level`: the bar share times that level's bar.
+## 0 when the drain is off, and at max level (no bar to fill).
+func likes_drain_xp_per_second(level: int) -> float:
+	if not likes_drain_enabled():
+		return 0.0
+	return likes_drain_bar_share_per_second() * xp_needed(level)

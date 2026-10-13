@@ -67,5 +67,11 @@
   ],
   "car": {
     "starting_health": 100
+  },
+  "likes_drain": {
+    "_comment": "Likes drain (Game loop architecture, Decisions, 2026-10-13): once the combo has fully drained, the likes bar empties slowly, never below the start of the current level. Proposed: a share of the current level's bar per second, not a flat XP amount, so a full bar always takes the same time to empty (1 / 0.02 = 50 s) at every level; a flat amount would be harsh at level 1 and meaningless at level 11 (931 XP). 0.02 is 2 XP/s at level 1, a fifth of a drift second's 10 XP, and the drain only ever eats progress made inside the current level. extra_wait_seconds is an optional pause after the combo has drained before the drain starts; 0 follows the board's rule (the combo's own 2 s wait and drain already give a buffer). Proposed numbers; the board judges them in playtests.",
+    "enabled": true,
+    "bar_share_per_second": 0.02,
+    "extra_wait_seconds": 0.0
   }
 }
