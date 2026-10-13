@@ -90,3 +90,10 @@ Done, branch `task/T-125-popups-follow-the-car`, folder `C:\solid-carbide-worktr
 - Screenshots (fast drift, a 360 at frame 10 then a LONG DRIFT every 12 frames; fixture changed): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_r2_a.png` (frame 20) and `popups_follow_r2_b.png` (frame 40). One small popup above the car, well below the timer; only one shows because of the policy above.
 - Docs: `docs/hud-and-menus.md` Content "Trick popups" and `game/README.md` "Trick popups".
 - 2026-10-14, in-progress → in-qa: Round 2: smaller and capped at half way to the top
+
+### The board's feedback, 2026-10-14 (before playtesting round 2): three at most, eased rise
+
+Given before any playtest of round 2. The status stays `in-qa` while this is reworked (the status script refuses to move a task out of QA while its round-1 marks still read "pass"); QA round 2 runs after it.
+- Make every popup **small enough that up to 3 can be stacked** at once under the quarter-of-the-screen limit at the default zoom (and never more than 3: the oldest makes room for a fourth). Scale the normal and extended-drift sizes and the start offset as needed.
+- Make the rise **smooth: fast at the start and slowing towards the end**, where the popup fades out (an ease-out curve), instead of a constant speed.
+
