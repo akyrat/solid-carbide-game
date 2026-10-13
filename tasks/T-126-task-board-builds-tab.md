@@ -1,7 +1,7 @@
 ---
 id: T-126
 title: A Builds tab on the task board that opens each worktree's game in Godot
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -13,7 +13,7 @@ documents_affected: [docs/README.md, docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/working-with-the-board.md, tools/taskboard/server.py, tools/taskboard/taskboard.html, game/README.md, .env.example]
 files_expected_to_change: [tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/test_taskboard_server.py, docs/README.md, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
