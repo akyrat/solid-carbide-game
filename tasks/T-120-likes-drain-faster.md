@@ -1,7 +1,7 @@
 ---
 id: T-120
 title: Data: the likes bar drains four times faster
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/data/run.json, tasks/T-114-likes-drain-data.md, tasks/T-115-likes-drain.md, game/README.md]
 files_expected_to_change: [game/data/run.json, the run data and likes drain tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
