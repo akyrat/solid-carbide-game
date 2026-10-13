@@ -37,6 +37,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## Several Project Leads at once
 - Only one instance merges into `master` at a time. Before choosing a new ticket number, check `tasks/` and `git log` on `master`. Pull `master` before editing docs or the timeline.
 - All instances share one task board server. If the board says its port is taken, tell the board.
+- Each instance acts only on the board's moves for tickets it planned or started, and leaves the rest to the instance that owns them (board, 2026-10-14). The board's moves reach every instance; this keeps two instances from acting on the same move. A move on a ticket no instance owns yet goes to whichever instance the board is talking to.
 
 ## Course work
 - `course-material/`: one folder per assignment, kept apart from the game. Short, in the board's voice, linking to real files rather than copying them.

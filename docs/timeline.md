@@ -835,3 +835,8 @@ Entry format:
 - Decision or change: the board playtested the drift smoke and approved it ("LGTM"). While the car drifts, puffs come off both rear tyres: a script-drawn cool grey-violet cloud puff (no PixelLab), each living 0.13 s, 50 a second, capped at 64, so in a full-circle drift the trail covers about 20 degrees (the board's request after the first version covered about half the circle). Puffs stay where they were left, grow then pop out, and sit in the car's depth order. Both passed QA (T-073 in two rounds).
 - Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
 - Tasks: T-121 (done), T-073 (done)
+
+## 2026-10-14: Several Project Leads: each acts on its own tickets
+- Decision or change: with two Project Lead sessions running, the board's drags on the task board reach both. Each session now acts only on moves for tickets it planned or started; a move on a ticket nobody owns yet goes to the session the board is talking to.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
