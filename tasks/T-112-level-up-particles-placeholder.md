@@ -47,4 +47,21 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Loop Agent, 2026-10-13, on `task/T-112-level-up-particles-placeholder` in `C:\solid-carbide-worktrees\T-112`.
+
+**Built:** the level-up effect scene `game/scenes/run/level_up_burst.tscn` (a `CPUParticles2D`, script `game/scripts/run/level_up_burst.gd` with only `play()` and `is_playing()`), added by the run scene (`game/scripts/run/run.gd`) as `run.level_up_burst` under `View`, drawn over the car. The run connects the state's `level_up` signal (T-037) to it; `sync_view()` keeps it on the drawn car every step, and `local_coords` is on, so the particles move with the car while they play.
+
+- **Settings in the scene, not in code:** texture, `amount` 32, `lifetime` 0.7 s, `explosiveness` 1 (all at once), `one_shot`, `spread` 180 (all around), `emission_sphere_radius` 40, `initial_velocity` 180 to 280, `damping` 200 to 260, `scale_amount_curve` (full size until 60% of the life, then shrinks to a quarter). T-074 changes only this scene to swap the art and retune; `game/README.md`, "The run", "The level-up effect", lists exactly what to change and what to keep.
+- **Placeholder:** a 4 x 4 pixel square in one light colour, pale cyan (204, 242, 255), fully opaque, stored in the scene as an `ImageTexture` sub-resource (built by a script, no file under `game/art/`). `color` and the colour ramp are white with alpha 1. Not Redgull red.
+- **Pixel rules:** `texture_filter` Nearest; no alpha fade (colour, colour ramp, modulate all alpha 1; the texture has no semi-transparent pixels). Particles shrink instead of fading.
+- **Several level-ups at once:** one burst in total. One gain that gives two levels sends `level_up` twice in the same moment; each call restarts the same burst, so they show as one.
+- **Paused run:** the scene sets `process_mode` to Always, so the burst keeps playing while the tree is paused for the level-up screen (T-052). Tested with the T-037 pause switch on: the run pauses and the burst still processes.
+- A new run does not clear a burst in progress; it finishes on its own within 0.7 s.
+
+**Tests:** `game/tests/unit/run/test_level_up_burst.gd`, 11 tests: not playing before a level-up; the `level_up` signal emitted by hand starts it on the car; a real level-up starts it; it follows the car; two level-ups at once; one burst that ends on its own; still playing while paused; the settings live in the scene; nearest-neighbour and no alpha fade; a 2 to 4 px light square of one colour, far from Redgull red (`Hud.HEART_COLOR`) and not any red; a run started from the main menu.
+
+**Results:** full GUT suite 318 of 318 pass (`TESTS PASSED`, exit 0, includes T-037's `test_run_likes.gd`). Python tool tests: `game/tools` 111 tests OK, `tools` 115 tests OK. No PixelLab calls.
+
+**Screenshot:** `C:\solid-carbide-worktrees\T-112\screenshots\T-112-level-up-burst.png` (git-ignored), and an enlarged crop around the car, `T-112-level-up-burst-zoom.png` in the same folder: the placeholder burst around the car at a level-up (HUD shows Lv 2) in a run started from the main menu. Retake it with `bash game/tools/screenshot.sh res://tests/fixtures/level_up_burst_demo.tscn screenshots/T-112-level-up-burst.png 40` (fixture `game/tests/fixtures/level_up_burst_demo.tscn`).
+
+**Documents updated:** `game/README.md` ("The run": "The level-up effect": trigger, scene, settings T-074 changes, screenshot, tests), `docs/game-loop-architecture.md` (Content, "Likes and levels": the run plays the level-up effect on every level-up).
