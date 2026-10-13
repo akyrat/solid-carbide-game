@@ -1,7 +1,7 @@
 ---
 id: T-115
 title: The likes bar drains when the combo has drained
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -82,3 +82,4 @@ Documents affected: `docs/game-loop-architecture.md` (Content, "Likes and levels
 4. Pass. `screenshots/T-115-likes-drain-1-emptying.png` (7:58, bar about 15%, Hype Lv 2, Combo x1.0) and `-2-empty.png` (7:46, bar empty, still Hype Lv 2).
 5. Pass. Game loop architecture, Content, "Likes and levels" has the "Likes drain" bullet; game/README.md has the drain paragraph, its table, the `xp_changed` row and the tests line. The worktree's Decisions section is identical to master's.
 6. Pass. Run by QA in the task folder: GUT 345/345 (35 scripts, `TESTS PASSED`, exit 0; `test_run_likes_drain.gd` 19/19), `game/tools` Python 125 OK, `tools` Python 115 OK. No `.import` changes left in the working tree.
+- 2026-10-13, needs-playtest → done: LGTM (board playtest, 2026-10-13)
