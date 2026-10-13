@@ -825,3 +825,8 @@ Entry format:
 - Decision or change: playtesting the comic popups, the board found they stay where they appeared while the car drives on, so they are hard to read. Each popup now follows the car for its whole life. T-084 had used both QA rounds, so this is a follow-up, T-125 (UI), built on T-084's branch so the board playtests both together.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-125 (new)
+
+## 2026-10-13: A Builds tab on the task board
+- Decision or change: the board wants to jump from a ticket to that ticket's version of the game. It chose a launcher over an embedded web build (a browser page can't hold a native Godot window, and a web export would need the Compatibility renderer instead of Forward+). A new Builds tab lists `master` and every worktree, each with "Play" and "Open in editor" buttons that start Godot on that folder; ticket cards with a worktree get a Play button too. Embedding the game in the page stays a possible later step.
+- Documents touched: none yet (T-126 updates `docs/README.md` and `docs/working-with-the-board.md`)
+- Tasks: T-126 (new)
