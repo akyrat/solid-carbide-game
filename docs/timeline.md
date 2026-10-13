@@ -785,3 +785,8 @@ Entry format:
 - Decision or change: the board wants the likes drain quadrupled: 8% of the current level's bar a second instead of 2% (a full bar empties in 12.5 s; 8 likes a second at level 1). Only the number changes. T-120 (Game Data) changes it and its tests; data only, so it merges after QA, and the board feels it in the next playtest.
 - Documents touched: none
 - Tasks: T-120 (new)
+
+## 2026-10-13: Drift smoke
+- Decision or change: the board wants the drift smoke started, with no sample review: it goes straight to the board's playtest. As with the drift marks, T-121 (Driving & Drift) builds the smoke with a placeholder, and T-073 (Asset Generation, rewritten) draws the smoke sprites by script (no PixelLab) on top of T-121's branch. Details settled by the Project Lead: puffs from both rear tyres only while drifting, left in the world, growing then shrinking or breaking up, capped in number, in the map's depth order.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-121 (new), T-073 (rewritten: script-drawn smoke, built on T-121)
