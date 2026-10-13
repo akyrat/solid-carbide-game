@@ -53,4 +53,15 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Asset Generation Agent, 2026-10-13: the sample (one boulder)**
+
+### Planned call (written before calling)
+
+The board's go covers one sample boulder only. Plan: **one** PixelLab call, `POST /create-image-pixflux` (direct endpoint, the same one that made the approved car), saved to `art-archive/T-065/` (not game-ready until the board approves it).
+
+- **Size proposal (mine, for the board to judge):** a 160 x 160 canvas. A 3-unit circle seen in the game's 2:1 isometric view is about 136 x 68 art pixels at the car art's density (32 art px per unit, `car_iso.json`), or about 170 x 85 at 40 px per unit; the rock rises above its footprint, so 160 x 160 leaves room for the rock's height. The exact draw scale is fitted to the 3-unit collision circle when the art is swapped in (as the car's 32 px per unit was), not now.
+- **Crack colour proposal (mine):** the docs say only "glowing cracks"; I ask for neon magenta-pink cracks with a white-hot core (the palette's pink accent, not Redgull red).
+- **Prompt:** "a large crashed meteor boulder, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked all over with bright glowing neon magenta-pink cracks with white-hot cores and small stepped glow around them, sitting on the ground, roughly round footprint, seen from above in isometric 3/4 view, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges"
+- **Settings:** `image_size` 160 x 160, `isometric: true`, `no_background: true`, `view: "high top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`, `text_guidance_scale: 8` (as the approved car, minus `direction`, which a round rock does not need). HTTP read timeout 600 s (the client's).
+- **Expected cost:** 1 generation (the 128 x 128 car cost 1; the larger canvas could cost a little more).
+- **Balance before:** 4956 of 5000 subscription generations (Tier 2: Pixel Artisan), USD credits $0.00.
