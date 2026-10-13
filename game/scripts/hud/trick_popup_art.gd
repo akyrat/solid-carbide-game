@@ -1,11 +1,11 @@
 class_name TrickPopupArt
 extends RefCounted
 ## Bakes the comic-style trick popups (task T-084): one hard-edged pixel image
-## per text and size, a jagged comic burst sized to fit the lettering, the text
+## per text and size, a white rounded rectangle sized to fit the lettering, the text
 ## in Bangers (res://fonts/bangers/, SIL OFL 1.1) with smoothing off.
 ##
-## Look (the board's playtest, 2026-10-13): a real comic popup. A white jagged
-## burst with a black border, every letter black (trick name and amount alike) in
+## Look (the board's playtest, 2026-10-13): a real comic popup. A white rounded
+## rectangle (stepped corners) with a black border, every letter black (trick name and amount alike) in
 ## Bangers on one straight baseline, hard pixel edges, no semi-transparent
 ## pixels, no Redgull red. Black on white reads on the dark asphalt and on the
 ## dusty gravel alike, since the black border separates the burst from both.
@@ -26,19 +26,19 @@ const PALETTE := [
 	Color8(0, 0, 0),        # burst border
 ]
 
-## Per size: font pixel size, text outline and shadow thickness, spike length
-## range, spike spacing along the edge and how flat the burst is. No text
+## Per size: font pixel size, text outline and shadow thickness. No text
 ## outline or shadow: black letters on white need none.
 const STYLES := {
-	"normal": {"font_px": 32, "outline": 0, "shadow": 0, "spike_min": 8.0, "spike_max": 13.0, "spacing": 24.0, "flat": 1.0},
-	"small": {"font_px": 20, "outline": 0, "shadow": 0, "spike_min": 5.0, "spike_max": 8.0, "spacing": 22.0, "flat": 0.8},
+	"normal": {"font_px": 32, "outline": 0, "shadow": 0},
+	"small": {"font_px": 20, "outline": 0, "shadow": 0},
 }
-const SUPERELLIPSE_N := 4.0  # how boxy the burst's base shape is (2 = oval)
-const EDGE := 3              # room the burst border needs around the text, in pixels
-const BASE_SAMPLES := 720    # points on the base curve before the spikes go on
-## Spikes pointing sideways (left and right tips) are this much shorter.
-const SIDE_SPIKE := 0.5
-const SEED := 84
+## Rounded rectangle (board, 2026-10-14): space between the text and the image
+## edge (a 1 pixel transparent rim, the 2 pixel border, then padding), the
+## border width and the corner radius, all in popup pixels.
+const MARGIN_X := 8
+const MARGIN_Y := 6
+const BORDER := 2
+const CORNER := 5
 
 static var _font: FontFile = null
 static var _cache := {}
@@ -71,24 +71,16 @@ static func bake(text: String, style: String) -> Image:
 	var letters := _letter(text, style)  # {"idx": PackedByteArray, "w", "h"}
 	var tw: int = letters.w
 	var th: int = letters.h
-	var poly := _burst_polygon(tw, th, style)
-	var max_x := 0.0
-	var max_y := 0.0
-	for p in poly:
-		max_x = maxf(max_x, absf(p.x))
-		max_y = maxf(max_y, absf(p.y))
-	var w := 2 * int(ceil(max_x)) + 5
-	var h := 2 * int(ceil(max_y)) + 5
-	var fill := _fill_polygon(poly, w, h)
-	var outer := _dilate_cross(fill, w, h)
-	var e1 := _erode_cross(fill, w, h)
+	var w := tw + 2 * MARGIN_X
+	var h := th + 2 * MARGIN_Y
 	var idx := PackedByteArray()
 	idx.resize(w * h)
-	for i in w * h:
-		if e1[i] != 0:
-			idx[i] = BURST_FILL
-		elif outer[i] != 0 or fill[i] != 0:
-			idx[i] = BURST_BORDER  # the border is 2 popup pixels wide
+	for y in h:
+		for x in w:
+			if _in_round_rect(x, y, w, h, 1, CORNER):
+				idx[y * w + x] = BURST_BORDER
+			if _in_round_rect(x, y, w, h, 1 + BORDER, CORNER - BORDER):
+				idx[y * w + x] = BURST_FILL
 	var ox := (w - tw) / 2
 	var oy := (h - th) / 2
 	var li: PackedByteArray = letters.idx
@@ -111,14 +103,8 @@ static func bake(text: String, style: String) -> Image:
 ## The text box of a baked popup (x, y, w, h in popup pixels) and its size.
 static func text_box(text: String, style: String) -> Rect2i:
 	var letters := _letter(text, style)
-	var poly := _burst_polygon(letters.w, letters.h, style)
-	var max_x := 0.0
-	var max_y := 0.0
-	for p in poly:
-		max_x = maxf(max_x, absf(p.x))
-		max_y = maxf(max_y, absf(p.y))
-	var w := 2 * int(ceil(max_x)) + 5
-	var h := 2 * int(ceil(max_y)) + 5
+	var w: int = letters.w + 2 * MARGIN_X
+	var h: int = letters.h + 2 * MARGIN_Y
 	return Rect2i((w - letters.w) / 2, (h - letters.h) / 2, letters.w, letters.h)
 
 
@@ -216,107 +202,18 @@ static func _crop(idx: PackedByteArray, w: int, h: int) -> Dictionary:
 	return {"idx": out, "w": nw, "h": nh}
 
 
-static func _dilate_square(m: PackedByteArray, w: int, h: int, r: int) -> PackedByteArray:
-	var out := PackedByteArray()
-	out.resize(w * h)
-	for y in h:
-		for x in w:
-			if m[y * w + x] != 0:
-				for yy in range(maxi(0, y - r), mini(h, y + r + 1)):
-					for xx in range(maxi(0, x - r), mini(w, x + r + 1)):
-						out[yy * w + xx] = 1
-	return out
-
-
-static func _dilate_cross(m: PackedByteArray, w: int, h: int) -> PackedByteArray:
-	var out := m.duplicate()
-	for y in h:
-		for x in w:
-			if m[y * w + x] != 0:
-				if x > 0:
-					out[y * w + x - 1] = 1
-				if x < w - 1:
-					out[y * w + x + 1] = 1
-				if y > 0:
-					out[(y - 1) * w + x] = 1
-				if y < h - 1:
-					out[(y + 1) * w + x] = 1
-	return out
-
-
-static func _erode_cross(m: PackedByteArray, w: int, h: int) -> PackedByteArray:
-	var out := PackedByteArray()
-	out.resize(w * h)
-	for y in range(1, h - 1):
-		for x in range(1, w - 1):
-			var o := y * w + x
-			if m[o] != 0 and m[o - w] != 0 and m[o + w] != 0 and m[o - 1] != 0 and m[o + 1] != 0:
-				out[o] = 1
-	return out
-
-
-## The burst's jagged outline around a text box centred on (0, 0).
-static func _burst_polygon(text_w: int, text_h: int, style: String) -> PackedVector2Array:
-	var st: Dictionary = STYLES[style]
-	var k := pow(2.0, 1.0 / SUPERELLIPSE_N)
-	var a := (text_w / 2.0) * k + EDGE + 1
-	var b := (text_h / 2.0) * k * float(st.flat) + EDGE + 1
-	b = maxf(b, text_h / 2.0 + EDGE + 1)
-	# Sample the base curve densely, then place points evenly by arc length.
-	var e := 2.0 / SUPERELLIPSE_N
-	var base := PackedVector2Array()
-	for j in BASE_SAMPLES:
-		var t := TAU * j / BASE_SAMPLES
-		var c := cos(t)
-		var s := sin(t)
-		base.append(Vector2(a * signf(c) * pow(absf(c), e), b * signf(s) * pow(absf(s), e)))
-	var cum := PackedFloat64Array([0.0])
-	for j in range(1, BASE_SAMPLES + 1):
-		cum.append(cum[-1] + base[j - 1].distance_to(base[j % BASE_SAMPLES]))
-	var perimeter: float = cum[-1]
-	var spikes := maxi(8, int(round(perimeter / float(st.spacing))))
-	var rnd := RandomNumberGenerator.new()
-	rnd.seed = ("%d|%d|%d|%s" % [SEED, text_w, text_h, style]).hash()
-	var pts := PackedVector2Array()
-	var j := 0
-	for i in 2 * spikes:
-		var target := fposmod(perimeter * (i + rnd.randf_range(-0.15, 0.15)) / (2 * spikes), perimeter)
-		while not (cum[j] <= target and target < cum[j + 1]):
-			j = (j + 1) % BASE_SAMPLES
-		var bp := base[j]
-		if i % 2 == 0:
-			var p0 := base[(j - 1 + BASE_SAMPLES) % BASE_SAMPLES]
-			var p1 := base[(j + 1) % BASE_SAMPLES]
-			var nrm := Vector2(p1.y - p0.y, -(p1.x - p0.x)).normalized()
-			var rad := bp.normalized()
-			var dir := (nrm + rad).normalized()
-			var out := rnd.randf_range(st.spike_min, st.spike_max)
-			out *= lerpf(1.0, SIDE_SPIKE, pow(absf(dir.x), 4.0))
-			pts.append(bp + dir * out)
-		else:
-			pts.append(bp)
-	return pts
-
-
-## Pixels whose centre is inside the polygon (scanline, even-odd), as a mask.
-static func _fill_polygon(poly: PackedVector2Array, w: int, h: int) -> PackedByteArray:
-	var out := PackedByteArray()
-	out.resize(w * h)
-	var cx := w / 2.0
-	var cy := h / 2.0
-	var n := poly.size()
-	for y in h:
-		var py := y + 0.5 - cy
-		var xs: Array[float] = []
-		for i in n:
-			var p1 := poly[i]
-			var p2 := poly[(i + 1) % n]
-			if (p1.y > py) != (p2.y > py):
-				xs.append(p1.x + (py - p1.y) * (p2.x - p1.x) / (p2.y - p1.y))
-		xs.sort()
-		for q in range(0, xs.size() - 1, 2):
-			var x0 := int(ceil(xs[q] + cx - 0.5))
-			var x1 := int(ceil(xs[q + 1] + cx - 0.5)) - 1
-			for x in range(maxi(x0, 0), mini(x1, w - 1) + 1):
-				out[y * w + x] = 1
-	return out
+## True when the pixel (x, y) is inside the rounded rectangle that is the
+## w x h image shrunk by `inset` on every side, with corner radius `r`. Pixel
+## centres are tested, so the corners are stepped pixels with no smoothing.
+static func _in_round_rect(x: int, y: int, w: int, h: int, inset: int, r: int) -> bool:
+	var x0 := inset
+	var y0 := inset
+	var x1 := w - inset
+	var y1 := h - inset
+	var px := x + 0.5
+	var py := y + 0.5
+	if px < x0 or px > x1 or py < y0 or py > y1:
+		return false
+	var cx := clampf(px, x0 + r, x1 - r)
+	var cy := clampf(py, y0 + r, y1 - r)
+	return (px - cx) * (px - cx) + (py - cy) * (py - cy) <= r * r

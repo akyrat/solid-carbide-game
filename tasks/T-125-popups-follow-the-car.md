@@ -97,3 +97,15 @@ Given before any playtest of round 2. The status stays `in-qa` while this is rew
 - Make every popup **small enough that up to 3 can be stacked** at once under the quarter-of-the-screen limit at the default zoom (and never more than 3: the oldest makes room for a fourth). Scale the normal and extended-drift sizes and the start offset as needed.
 - Make the rise **smooth: fast at the start and slowing towards the end**, where the popup fades out (an ease-out curve), instead of a constant speed.
 
+
+### Round 3 (UI Agent, 2026-10-14)
+
+Done on branch `task/T-125-popups-follow-the-car`. Status left as `in-qa`.
+
+- **Three at most:** `MAX_POPUPS` 3; `show_popup` removes the oldest popup while three show, so a fourth makes room. Sizes: `PIXEL_SCALE` 0.6 to 0.5, `START_OFFSET` (0, -50) to (0, -30), `RISE` 40 to 20. At the default zoom 14.4 and window 1152x648 (camera zoom 1.40625, limit 115.2 drawn px) three of the biggest popups stack with room to spare (about 107 of 115 drawn px used). Both sizes scale together via `PIXEL_SCALE`.
+- **Eased rise:** `rise()` is a cubic ease-out, `RISE * (1 - (1 - t)^3)`, same 1 s life; most of the rise happens in the first half. (Round 2 had a quadratic ease; now stronger and over a smaller rise.)
+- **Rounded rectangles (board's added request, same round):** `trick_popup_art.gd` replaces the jagged burst with a white rounded rectangle: black 2 px border, black Bangers lettering, fitted to each text with `MARGIN_X` 8 / `MARGIN_Y` 6 padding, corners of radius `CORNER` 5 drawn in stepped pixels (pixel centres tested, no smoothing, only opaque or fully transparent pixels, three colours). All burst code removed. Because the box is flatter, a popup is now 37 px tall (was about 65).
+- **Tests:** `test_trick_popups_follow.gd`: three of the biggest fit at the default zoom and window, never more than three (and the oldest makes room for a fourth), the rise is ease-out (steps never grow, more in the first half than the second, full RISE at the end), top limit still holds at 1152x648 and 640x900, zoom 1 and 2; older tests adjusted to a three-popup cap. `test_trick_popup_art.gd`: burst-shape checks renamed to the bubble, plus stepped rounded corners and small padding; black/white only, black border, no red, fits each text and cached are kept. Full GUT suite: 438 passed, 0 failed. Python: game/tools 115 OK, tools OK.
+- **Screenshots** (run, fast drift, a 360 at frame 10, a LONG DRIFT every 12 frames; fixture `popups_follow_demo.gd`): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_r3_a.png` (frame 26) and `popups_follow_r3_b.png` (frame 31): three stacked rounded popups above the car.
+- **Docs:** `docs/hud-and-menus.md` Decisions (new line for the rounded rectangles, placed after the "Trick popups stay with the car" line because the line "The trick popups look like real comic book popups ..." is not in that file) and Content "Trick popups"; `game/README.md` "Trick popups" (Comic look, round 3 paragraph, screenshot commands).
+- Documents affected: `docs/hud-and-menus.md`, `game/README.md`.

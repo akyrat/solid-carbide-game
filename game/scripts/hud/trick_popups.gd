@@ -33,13 +33,15 @@ const SIZES := {
 	"alternate_drift": SIZE_NORMAL,
 }
 ## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
-## Task T-125 round 2: 75% of the old 0.8, for the normal and the small size alike.
-const PIXEL_SCALE := 0.6
+## Task T-125 round 3: 0.5 so that three popups stack under the top limit at the default zoom.
+const PIXEL_SCALE := 0.5
 ## Seconds a popup lasts, and how far it rises (drawn pixels).
 const LIFETIME := 1.0
-const RISE := 40.0
+const RISE := 20.0
+## Popups showing at once, at most: a fourth makes the oldest leave (task T-125 round 3).
+const MAX_POPUPS := 3
 ## Start offset above the car's drawn centre, clear of the car and the HUD timer.
-const START_OFFSET := Vector2(0, -50)
+const START_OFFSET := Vector2(0, -30)
 ## PopupText scale at birth, growing to 1 for a quick "pop".
 const POP_FROM := 0.5
 const POP_TIME := 0.12
@@ -72,7 +74,8 @@ class PopupText extends Node2D:
 
 	func rise() -> float:
 		var t := clampf(age / LIFETIME, 0.0, 1.0)
-		return RISE * (1.0 - pow(1.0 - t, 2.0))
+		# Cubic ease-out: fast at the start, slow where the popup fades.
+		return RISE * (1.0 - pow(1.0 - t, 3.0))
 
 	## The popup's offset from the car's drawn position now.
 	func offset() -> Vector2:
@@ -199,6 +202,14 @@ func _on_trick(trick_id: String) -> void:
 ## the car for its whole life (task T-125); without it, it stays at `at`.
 ## A popup that would overlap one already showing is moved up until it doesn't.
 func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable()) -> PopupText:
+	var showing := popups()
+	while showing.size() >= MAX_POPUPS:
+		var oldest = showing[0]
+		for o in showing:
+			if o.age > oldest.age:
+				oldest = o
+		oldest.queue_free()
+		showing.erase(oldest)
 	var p := PopupText.new()
 	p.text = text
 	p.font_size = font_size

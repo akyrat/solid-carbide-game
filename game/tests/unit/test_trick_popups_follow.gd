@@ -89,20 +89,20 @@ func test_popups_shown_together_do_not_overlap() -> void:
 	# Under the screen-height limit (T-125, round 2) not all four fit above the
 	# car: the oldest make room. Whatever shows does not overlap.
 	assert_gte(shown.size(), 1)
-	assert_lte(shown.size(), 4)
+	assert_lte(shown.size(), 3, "never more than 3")
 	for i in shown.size():
 		for j in range(i + 1, shown.size()):
 			assert_false(_rect(shown[i]).intersects(_rect(shown[j])), "popups %d and %d overlap" % [i, j])
 
 
-func test_four_popups_stack_without_overlap_when_there_is_no_screen_limit() -> void:
-	# No camera, so no limit: the plain stacking from round 1 still holds.
+func test_three_popups_stack_without_overlap_when_there_is_no_screen_limit() -> void:
+	# No camera, so no limit: the plain stacking from round 1 still holds (three at most since round 3).
 	var tp: Node2D = Popups.new()
 	add_child_autofree(tp)
 	for t in ["LONG DRIFT!", "FULL 360!", "ALT DRIFT!", "FULL 360!"]:
 		tp.show_popup(t, Vector2.ZERO, 28)
 	var shown: Array = tp.popups()
-	assert_eq(shown.size(), 4)
+	assert_eq(shown.size(), 3, "the fourth made the oldest leave")
 	for i in shown.size():
 		for j in range(i + 1, shown.size()):
 			assert_false(_rect(shown[i]).intersects(_rect(shown[j])))
@@ -207,13 +207,73 @@ func test_oldest_popup_makes_room_when_the_stack_would_go_too_high() -> void:
 
 
 func test_popups_are_smaller_than_before() -> void:
-	# Round 1 drew 0.8 drawn px per popup pixel; now 75% of that, normal and small alike.
-	assert_almost_eq(Popups.PIXEL_SCALE, 0.6, 0.0001)
+	# Round 1 drew 0.8 drawn px per popup pixel; round 3 draws less, normal and small alike.
+	assert_lt(Popups.PIXEL_SCALE, 0.6)
 	var tp: Node2D = Popups.new()
 	add_child_autofree(tp)
 	var big = tp.show_popup("FULL 360!", Vector2.ZERO, Popups.SIZE_NORMAL)
 	var small = tp.show_popup("LONG DRIFT!", Vector2.ZERO, Popups.SIZE_SMALL)
 	for p in [big, small]:
 		var tex_size := Vector2(Popups.Art.texture(p.text, Popups.Art.style_for(p.font_size)).get_size())
-		assert_true(p.size().is_equal_approx(tex_size * 0.6), "%s drawn at 0.6" % p.text)
-		assert_almost_eq(p.size().x / (tex_size.x * 0.8), 0.75, 0.0001)
+		assert_true(p.size().is_equal_approx(tex_size * Popups.PIXEL_SCALE), "%s drawn at the pixel scale" % p.text)
+
+
+# --- Round 3 (board, 2026-10-14): three at most, eased rise -------------------
+
+func test_three_of_the_biggest_popups_fit_at_the_default_zoom_and_window() -> void:
+	var v := _view(Vector2i(1152, 648), 1.40625)
+	var tp: Node2D = v[2]
+	# The run's default zoom 14.4 in a 1152x648 window is a camera zoom of 1.40625 (limit 115.2 drawn px).
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var texts := ["FULL 360! +0.25", "ALT DRIFT! +0.5", "FULL 360! +0.25"]
+	var ps := []
+	for t in texts:
+		ps.append(tp.show_popup(t, Vector2.ZERO, 28, func() -> Vector2: return Vector2.ZERO))
+	assert_eq(tp.popups().size(), 3, "all three show at once")
+	for p in ps:
+		assert_false(p.is_queued_for_deletion(), "none had to make room")
+	# Also with the long-drift popup and a 360 and an alt drift (the usual mix).
+	for p in ps:
+		p.queue_free()
+	await get_tree().process_frame
+	for t in ["LONG DRIFT! +0.05", "FULL 360! +0.25", "ALT DRIFT! +0.5"]:
+		tp.show_popup(t, Vector2.ZERO, 16 if t.begins_with("LONG") else 28, func() -> Vector2: return Vector2.ZERO)
+	assert_eq(tp.popups().size(), 3)
+
+
+func test_never_more_than_three_popups() -> void:
+	var tp: Node2D = Popups.new()
+	add_child_autofree(tp)
+	for i in 10:
+		tp.show_popup("FULL 360!", Vector2.ZERO, 28)
+		assert_lte(tp.popups().size(), 3)
+	var first = tp.show_popup("FIRST", Vector2.ZERO, 28)
+	tp.show_popup("B", Vector2.ZERO, 28)
+	tp.show_popup("C", Vector2.ZERO, 28)
+	var d = tp.show_popup("D", Vector2.ZERO, 28)
+	assert_true(first.is_queued_for_deletion(), "the oldest makes room for a fourth")
+	assert_false(d.is_queued_for_deletion())
+
+
+func test_rise_eases_out() -> void:
+	var tp: Node2D = Popups.new()
+	add_child_autofree(tp)
+	var pop = tp.show_popup("FULL 360!", Vector2.ZERO, 28)
+	var prev := 0.0
+	var step := Popups.LIFETIME / 20.0
+	var first_half := 0.0
+	var last_step := INF
+	for i in 20:
+		pop.age = step * (i + 1)
+		var r: float = pop.rise()
+		var d := r - prev
+		assert_lte(d, last_step + 0.0001, "each step rises no more than the one before (step %d)" % i)
+		last_step = d
+		prev = r
+		if i == 9:
+			first_half = r
+	assert_almost_eq(prev, Popups.RISE, 0.0001, "the whole rise is made over the lifetime")
+	assert_gt(first_half, Popups.RISE - first_half, "more distance in the first half of the life than the second")
+	pop.age = 0.0
+	assert_eq(pop.rise(), 0.0)
