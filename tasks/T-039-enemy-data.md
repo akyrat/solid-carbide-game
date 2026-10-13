@@ -1,7 +1,7 @@
 ---
 id: T-039
 title: Enemy numbers: minions, spawning, coins and the kaiju
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 epic: enemies
@@ -13,7 +13,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/weapons.md, tasks/T-038-run-and-likes-data.md, tasks/T-040-weapon-data.md, game/README.md]
 files_expected_to_change: [JSON data under game/data/, tests, docs/enemies.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -114,3 +114,4 @@ So an average run wins with about 10 s to spare out of the 60, a strong or upgra
   - `minion.move_speed` 6 (slower than the car, so a moving car always outruns minions): the docs give no minion speed; the agent flags it.
   - The kaiju drops no coins (result notes, Coins): Game loop architecture says "enemies drop coins" without an exception.
   - `meteor_attack.windup_seconds` 1.0 and `impact_radius_units` 1.5 put numbers on "a short animation" and "lands on the player"; small, but new numbers the Enemy Behavior task will rely on.
+- 2026-10-13, in-qa → done: QA round 1: all five criteria pass
