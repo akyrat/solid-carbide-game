@@ -1,7 +1,7 @@
 ---
 id: T-119
 title: Data: the kaiju drops a few coins when defeated
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 epic: enemies
