@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -62,3 +62,4 @@ The board's review: playtest the run with both options, tune the dynamic camera'
   - (4) docs/hud-and-menus.md, Content: new "Pause screen" part (title, hint, zoom slider, the two camera checkboxes, the tuning buttons with the stored values, their placeholder look and keyboard use); the level-up screen is still "to be written". Summary, Decisions and Open questions unchanged. game/README.md, "Pause screen": the new look and the run fixtures.
   - Tests: 3 new in `game/tests/unit/test_pause_camera_controls.gd` (checkbox icons fully opaque with a light frame and dark fill, checked has a light mark; both buttons have a light, opaque frame in normal, hover, pressed and focus and an opaque fill; strip alpha at least 0.85). Full GUT suite 438/438 pass (43 scripts); game/tools Python 141 OK; tools Python 121 OK. Godot's line-ending-only .import changes reverted.
   - Documents affected: docs/hud-and-menus.md, game/README.md.
+- 2026-10-14, in-progress → in-qa: round 2: visible checkboxes and buttons on a nearly opaque strip, run screenshots on gravel and asphalt, HUD and menus Content written
