@@ -119,3 +119,40 @@ The board judged the first sample's shape weak (a tall smooth egg on a stone dis
 - Output: `art-archive/T-065/boulder_sample2_raw.png` (+ record), cleaned to `boulder_sample2.png`. One call only; not regenerated whatever comes out.
 
 **Rejected request (no image, not charged):** the first submission at 20:54 UTC was refused by PixelLab's input check, HTTP 500 `style_image must be size (128, 160), not torch.Size([160, 160])`: bitforge needs the style image the same size as the canvas. No image came back, `usage` null (logged in `game/art/pixellab-generation-log.jsonl` as `result: error`), balance still 4955 right after. Fix (free): the first sample cropped to 160 x 128 by removing only empty rows (rows 0 to 11 and 140 to 159 are fully transparent; no pixels lost): `art-archive/T-065/boulder_sample2_style_input.png`. The same request is then sent once with that style image; everything else unchanged. This is still the board's one generation, since the refused request produced nothing and cost nothing.
+
+### The call made
+
+| # | Endpoint | Prompt and settings | Cost (`usage`) | Output |
+| --- | --- | --- | --- | --- |
+| - | `POST /create-image-bitforge` (20:54 UTC) | As planned, style image 160 x 160 | refused (HTTP 500 input check), `usage` null, 0 generations | none |
+| 2 | `POST /create-image-bitforge` (direct, job id `null`) | Exactly the prompt, negative description and settings planned above, style image `boulder_sample2_style_input.png` (record: `art-archive/T-065/boulder_sample2_raw.json`; log: `game/art/pixellab-generation-log.jsonl`) | 1 generation | `art-archive/T-065/boulder_sample2_raw.png`, 160 x 128 RGBA |
+
+- **Balance:** before 4955 of 5000; after the refused request 4955; right after the call 4955 (lag); about a minute later **4954**. USD credits $0.00 throughout. Cost of this round: **1 generation**. Task total so far: **2 generations** (4956 to 4954). Nothing regenerated.
+- **Resources consulted:** `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/level-design.md`, this task (the board's feedback on the first sample), the first sample itself, PixelLab's OpenAPI schema for `/create-image-bitforge` (`style_image`, `style_strength`, `negative_description`, 200 x 200 maximum).
+
+### Free cleanup
+
+- Raw: transparent background, 0 semi-transparent pixels, **37 colours**, plus two thin 1-pixel dark lines running out left and right from the rock (like a ground line) and five small loose bits (floating magenta specks, grey pebbles) not touching the rock, which widened the sprite to the canvas edge (bounding box 0,10 to 157,115).
+- A one-off cleanup peeled the thin lines away (41 pixels) and removed the five detached bits (157 pixels), then `reduce_palette.py reduce` cut the palette to **30**: `art-archive/T-065/boulder_sample2.png` (+ `.json`, which describes each step). No new pixels drawn, no new colours. The raw file is kept for comparison.
+- Sprite check, `python game/tools/check_sprite_rules.py art-archive/T-065/boulder_sample2.png --size 160`: PASS transparent corners, PASS 0 semi-transparent, PASS 30 colours, 8185 opaque pixels, bounding box 22,10 to 145,105 (124 x 96 px). The frame-size line reports FAIL only because the tool checks square frames and this canvas is 160 x 128 as planned.
+
+### Previews (for the board)
+
+- `art-archive/T-065/boulder_sample2_preview.png`: the cleaned second sample, 4x nearest-neighbour, dark and light side by side.
+- `art-archive/T-065/boulder_sample2_raw_preview.png`: the raw second sample the same way.
+- `art-archive/T-065/boulder_samples_compare.png`: first sample (left) and second (right), 4x, dark row on top, light row below, bottoms lined up.
+
+### Honest judgement (the board decides)
+
+- **Fixed:** no disc, pedestal or plinth; the rock stands directly on the ground. Same dark navy-purple rock and magenta crack hue, clean hard pixels, dark selective outline.
+- **Problem 1, the shape:** it came out as a **boxy block**, like a loaf or a stone crate with rounded corners, not a jagged crashed meteor. It is somewhat lower than the egg (about 124 x 96 px against the egg's rock at about 126 x 100 on a disc), but still far from "low and wide": the box's vertical faces take most of its height, so it could still hide the car behind it.
+- **Problem 2, the cracks are worse, not better:** only one branching crack on one face, flat magenta with no white-hot core and no stepped glow. The first sample's glowing cracks, which the board liked, did not carry over; the style image carried the rock colours but not the glow. The surface is mostly grey speckle texture.
+- **Problem 3, footprint:** its ground outline is a skewed rectangle rather than a roughly round 3-unit footprint, so it would match the round collision circle less well than the first sample's disc did.
+- Overall I think it is **weaker than the first sample**: it fixed the base but lost the glow, and the shape is a block rather than a rock.
+- Not fixable for free without redrawing. Cheapest options for the board: (a) keep the first sample and accept the egg and its disc; (b) a hand edit of the first sample by the board (for example removing the disc), which costs nothing; (c) another paid call only on the board's explicit go, for example pixflux (which drew the better glow) with this round's no-base wording, instead of bitforge with a style image.
+
+### Files (this round)
+
+- Created: `art-archive/T-065/boulder_sample2_style_input.png`, `boulder_sample2_raw.png` + `.json`, `boulder_sample2.png` + `.json`, `boulder_sample2_preview.png`, `boulder_sample2_raw_preview.png`, `boulder_samples_compare.png`
+- Changed: `game/art/pixellab-generation-log.jsonl` (2 entries: the refused request and the call), `art-archive/README.md` (T-065 rows), this task file
+- No other variants made, nothing swapped into the game. Status stays `in-progress`. No code changed this round. Documents affected: none beyond the earlier `game/README.md` note.
