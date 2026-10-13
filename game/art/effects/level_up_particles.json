@@ -1,0 +1,89 @@
+{
+ "file": "level_up_particles.png",
+ "what": "The level-up effect's particle sprites (task T-074): one row of 6 frames, 11 x 11 pixels each, one particle shape per frame. The effect scene gives each particle one random frame.",
+ "frames": [
+  "cyan four-point star",
+  "pink four-point star",
+  "pink diamond",
+  "cyan diamond",
+  "violet pixel cross",
+  "small cyan spark"
+ ],
+ "frame_size": [
+  11,
+  11
+ ],
+ "made_by": "game/tools/build_level_up_particles.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
+ "palette": {
+  "W": [
+   255,
+   255,
+   255
+  ],
+  "c": [
+   190,
+   255,
+   255
+  ],
+  "C": [
+   0,
+   229,
+   255
+  ],
+  "b": [
+   0,
+   150,
+   214
+  ],
+  "d": [
+   20,
+   72,
+   140
+  ],
+  "p": [
+   255,
+   200,
+   240
+  ],
+  "P": [
+   255,
+   64,
+   200
+  ],
+  "m": [
+   170,
+   36,
+   168
+  ],
+  "n": [
+   96,
+   20,
+   104
+  ],
+  "v": [
+   215,
+   180,
+   255
+  ],
+  "V": [
+   160,
+   90,
+   255
+  ],
+  "u": [
+   100,
+   50,
+   190
+  ],
+  "x": [
+   52,
+   28,
+   112
+  ]
+ },
+ "colors": 13,
+ "rules": "Visual style, Decisions: night neon palette, glow drawn into the pixels (bright core, stepped darker halo), no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no Redgull red. Check: python game/tools/build_level_up_particles.py check",
+ "scale": "drawn at the car art's density (32 art pixels per unit): the scene draws the particles at scale 0.5, as the car (16 world pixels per unit)",
+ "used_by": "game/scenes/run/level_up_burst.tscn",
+ "status": "proposal for the board's review (T-074)"
+}

@@ -115,23 +115,28 @@ func test_pixel_rules_nearest_no_alpha_fade() -> void:
 			assert_true(a == 0.0 or a == 1.0, "no semi-transparent pixels")
 
 
-func test_placeholder_is_a_small_light_square_not_redgull_red() -> void:
+## T-112 checked its placeholder (a light square of one colour) here; T-074
+## swapped in the final particle sheet, so this checks every opaque pixel of
+## the sheet against the same rule: far from Redgull red, and not any red.
+func test_particle_art_is_not_redgull_red() -> void:
 	var burst: CPUParticles2D = BurstScene.instantiate()
 	autofree(burst)
 	var img := burst.texture.get_image()
-	assert_between(img.get_width(), 2, 4, "2 to 4 pixels")
-	assert_eq(img.get_width(), img.get_height(), "a square")
-	var first := img.get_pixel(0, 0)
+	var red: Color = HudScript.HEART_COLOR
+	var opaque := 0
+	var reds := 0
 	for y in img.get_height():
 		for x in img.get_width():
 			var c := img.get_pixel(x, y) * burst.color
-			assert_true(c.is_equal_approx(first * burst.color), "one colour")
-			assert_eq(c.a, 1.0)
-			assert_gt(c.get_luminance(), 0.6, "a light colour")
-			var red: Color = HudScript.HEART_COLOR
+			if c.a == 0.0:
+				continue
+			opaque += 1
 			var dist := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length()
-			assert_gt(dist, 0.5, "far from Redgull red")
-			assert_false(c.r > 0.5 and c.g < 0.4 and c.b < 0.4, "not a red")
+			if dist <= 0.5 or (c.r > 0.5 and c.g < 0.4 and c.b < 0.4):
+				reds += 1
+	assert_gt(opaque, 0, "the sheet has particles")
+	assert_eq(reds, 0, "far from Redgull red, and not any red")
+	assert_eq(burst.color, Color(1, 1, 1, 1), "white, so the sprites show their own colours")
 
 
 func test_burst_in_a_run_from_the_main_menu() -> void:

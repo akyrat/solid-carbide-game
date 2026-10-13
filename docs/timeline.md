@@ -700,3 +700,8 @@ Entry format:
 - Decision or change: on every level-up (T-037's "level up" signal) the car gives off one burst of 32 plain 4 by 4 pixel squares in pale cyan, which move with the car, shrink rather than fade, last 0.7 seconds and keep playing while the run is paused. Several level-ups at once give one burst. The look and tuning live in `game/scenes/run/level_up_burst.tscn`, so T-074 swaps in the final particles there. Passed QA round 1; no playtest of its own (the board playtests T-074). T-074 is unblocked.
 - Documents touched: `docs/game-loop-architecture.md`, `game/README.md`
 - Tasks: T-112 (done), T-074 (open)
+
+## 2026-10-13: T-074 done: the level-up particles are in
+- Decision or change: the board playtested T-074 and approved it ("LGTM"). On a level-up the car now gives off a burst of 40 script-drawn neon particles: cyan and pink stars, pink and cyan diamonds, a violet pixel cross and a small cyan spark, each with a white-hot core and darker halo pixels, no red, no semi-transparent pixels. They shrink to half size and then pop out, with no fade. No PixelLab calls. The violet cross, flagged as the weakest shape, is kept as is. Made by `game/tools/build_level_up_particles.py` (with a check command and tests). Passed QA round 1. Marking T-074 done made T-100 (challenge completed effect, after the MVP) open.
+- Documents touched: `docs/visual-style.md`, `game/README.md`
+- Tasks: T-074 (done), T-100 (open, after the MVP)
