@@ -42,19 +42,57 @@ const START_OFFSET := Vector2(0, -50)
 ## PopupText scale at birth, growing to 1 for a quick "pop".
 const POP_FROM := 0.5
 const POP_TIME := 0.12
+## Space kept between popups shown close together, and the step the search for
+## free space moves up by (drawn pixels).
+const STACK_GAP := 4.0
+const STACK_STEP := 4.0
 
 
-## One popup: draws itself and removes itself when its time is up.
+## One popup: draws itself and removes itself when its time is up. It is placed
+## relative to the car's drawn position for its whole life (task T-125): every
+## physics step `follow` is asked where the car is drawn, and the popup sits
+## START_OFFSET (plus its stack offset) above that, rising RISE relative to it.
+## The position is set in the physics step, like the car sprite and the
+## camera, so physics interpolation smooths it the same way and it never shakes.
 class PopupText extends Node2D:
 	var text := ""
 	var font_size := SIZE_NORMAL
 	var age := 0.0
-	var start := Vector2.ZERO
+	## Where the car is drawn when the popup was born, and a Callable returning
+	## where it is drawn now (empty: the popup stays at `anchor`).
+	var anchor := Vector2.ZERO
+	var follow := Callable()
+	## Extra offset (zero or negative, upwards) so popups born together don't overlap.
+	var stack := 0.0
 
-	func advance(dt: float) -> void:
+	func rise() -> float:
+		var t := clampf(age / LIFETIME, 0.0, 1.0)
+		return RISE * (1.0 - pow(1.0 - t, 2.0))
+
+	## The popup's offset from the car's drawn position now.
+	func offset() -> Vector2:
+		return START_OFFSET + Vector2(0, stack - rise())
+
+	func size() -> Vector2:
+		return Vector2(Art.texture(text, Art.style_for(font_size)).get_size()) * PIXEL_SCALE
+
+	## The car's drawn position now (the last known one if it cannot be asked).
+	func anchor_now() -> Vector2:
+		if follow.is_valid():
+			anchor = follow.call()
+		return anchor
+
+	## Puts the popup at the car's drawn position plus its offset.
+	func place() -> void:
+		position = anchor_now() + offset()
+
+	## `with_position` is false in the game's frames: the position is set in
+	## the physics step instead (see place()).
+	func advance(dt: float, with_position := true) -> void:
 		age += dt
 		var t := clampf(age / LIFETIME, 0.0, 1.0)
-		position = start + Vector2(0, -RISE * (1.0 - pow(1.0 - t, 2.0)))
+		if with_position:
+			place()
 		var s := lerpf(POP_FROM, 1.0, clampf(age / POP_TIME, 0.0, 1.0))
 		scale = Vector2(s, s)
 		modulate.a = 1.0 if t < 0.5 else 1.0 - (t - 0.5) * 2.0
@@ -62,7 +100,10 @@ class PopupText extends Node2D:
 			queue_free()
 
 	func _process(dt: float) -> void:
-		advance(dt)
+		advance(dt, false)
+
+	func _physics_process(_dt: float) -> void:
+		place()
 
 	func _ready() -> void:
 		# Hard pixel edges, never smoothed (Visual style).
@@ -128,29 +169,54 @@ static func trick_text(trick_id: String, added: float) -> String:
 func _on_combo_trick(trick_id: String, added: float, _multiplier: float) -> void:
 	if not TEXTS.has(trick_id):
 		return
-	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id])
+	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id], _combo_car_position)
 
 
 func _on_score(amount: float, _challenge_id: String) -> void:
-	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL)
+	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL, _score_car_position)
 
 
 func _on_trick(trick_id: String) -> void:
 	if _from_combo or not TEXTS.has(trick_id):
 		return
-	show_popup(TEXTS[trick_id], _car_position.call(), SIZES[trick_id])
+	show_popup(TEXTS[trick_id], _car_position.call(), SIZES[trick_id], _car_position)
 
 
-## Pops `text` out at `at` (drawn position of the car). Any text works.
-func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL) -> PopupText:
+## Pops `text` out above `at` (drawn position of the car). Any text works.
+## With `follow` (a Callable returning where the car is drawn) the popup follows
+## the car for its whole life (task T-125); without it, it stays at `at`.
+## A popup that would overlap one already showing is moved up until it doesn't.
+func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable()) -> PopupText:
 	var p := PopupText.new()
 	p.text = text
 	p.font_size = font_size
-	p.start = at + START_OFFSET
+	p.anchor = at
+	p.follow = follow
+	p.stack = _free_stack(p)
 	p.z_index = 100
 	add_child(p)
 	p.advance(0.0)
+	p.reset_physics_interpolation()
 	return p
+
+
+## The smallest upward offset (zero or negative) at which `p`, born now, does
+## not overlap any popup showing.
+func _free_stack(p: PopupText) -> float:
+	var others := popups()
+	var stack := 0.0
+	for _i in 200:
+		var rect := Rect2(p.anchor + START_OFFSET + Vector2(0, stack) - p.size() / 2.0, p.size())
+		var clear := true
+		for o in others:
+			var orect := Rect2(o.anchor_now() + o.offset() - o.size() / 2.0, o.size()).grow(STACK_GAP / 2.0)
+			if rect.grow(STACK_GAP / 2.0).intersects(orect):
+				clear = false
+				break
+		if clear:
+			return stack
+		stack -= STACK_STEP
+	return stack
 
 
 func popups() -> Array:
