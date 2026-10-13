@@ -1,7 +1,7 @@
 ---
 id: T-123
 title: Camera options: smoothing and the dynamic camera (zoom follows speed)
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 epic: driving
