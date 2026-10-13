@@ -86,3 +86,15 @@ The board's review: judge the look. One round only, so problems are reported rat
 - The game uses 32 art px per unit, Visual style says "about 40". This plan keeps 32 so the buildings match the car and ground already in the game.
 
 Nothing is generated until the board gives the go for the sample.
+
+### Sample round, planned call (2026-10-13, written before calling)
+
+The board gave the go for the sample only: exactly one PixelLab call for one tower, plus the free whole-block mock-up. Nothing goes into the game in this round.
+
+- **Balance before:** 4954 of 5000 generations (subscription), 0.00 USD credits.
+- **Call:** `POST /create-image-pixflux` (direct) through `game/tools/pixellab_client.py` (HTTP timeout 600 s), output `art-archive/T-064/raw/tower_01.png` with its record JSON. Request body: `art-archive/T-064/tower_01_request.json` (made by `python game/tools/build_buildings.py request`).
+- **Prompt:** "a single narrow Tokyo-style cyberpunk skyscraper tower at night, isometric, square footprint, dark navy and purple concrete walls, rows of small lit windows, tall vertical neon sign boards on the corners with abstract glowing shapes and stripes, no letters, pink and cyan neon glow drawn in pixels, rooftop air conditioning units and an antenna, retro pixel art"
+- **Negative prompt:** "text, letters, words, kanji, numbers, logo, red, ground, street, road, car, people, sky, background" (the API marks this field deprecated; sent anyway, it may be ignored).
+- **Settings:** `image_size` 384 x 400, `text_guidance_scale` 8, `outline` selective outline, `shading` detailed shading, `detail` highly detailed, `view` high top-down, `direction` south-east, `isometric` true, `no_background` true (PixelLab gives a blank, not transparent, background above 200 x 200; the clean script removes it), `seed` 64064.
+- **Palette image (`color_image`):** `art-archive/T-064/palette.png`, 29 colours made by `python game/tools/build_buildings.py palette` from approved art only: the 16 navy, purple and grey night shades of `game/art/ground/ground_atlas.png` and the 13 pink, cyan and violet neon colours of `game/art/effects/level_up_particles.png`. Every colour is more than 0.5 from Redgull red.
+- **Expected cost:** about 1 generation (the cost at 384 x 400 is not published). If it costs more than 2, I stop and report before anything else.
