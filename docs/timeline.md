@@ -860,3 +860,8 @@ Entry format:
 - Decision or change: before playtesting T-125's second round, the board decided the popups should be small enough that up to three stack at once under the height limit (never more; the oldest makes room), and that their rise should ease out: fast at first, slowing towards the end as they fade. T-125 is reworked; its status stays in QA meanwhile, since the status script won't move it out while its round-1 marks still pass.
 - Documents touched: none yet (HUD and menus, Content, with the rework)
 - Tasks: T-125
+
+## 2026-10-14: Trick popups become rounded rectangles
+- Decision or change: the board wants the comic popups to be white rounded rectangles instead of jagged bursts, keeping the black border and black lettering. Added to T-125's current rework.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-125

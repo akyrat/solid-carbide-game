@@ -604,6 +604,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The car's health bar stands upright at the top left, filling from the bottom up, with its label above it. The likes bar is horizontal, centred at the bottom of the screen, with the heart, "Likes" and the level in one row above it and the combo counter above that. Labels line up with the bar they belong to.
 - The combo counter is hidden when there is no combo (multiplier x1.0) and shows as soon as a trick raises it.
 - The trick popups look like real comic book popups: a white burst bubble with a black border and black lettering in a heavy, slanted comic font (Bangers), on one straight baseline.
+- The trick popups are white rounded rectangles (not jagged bursts), with the black border and black lettering.
 - Trick popups stay with the car: each one follows the car for its whole life (popping above it, rising and fading relative to it), so it stays readable at drift speed.
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider, labelled "Camera zoom level", which zooms the view behind the screen live while the game stays paused (Drifting, Decisions). The screen is a compact dark strip, only as tall as its content, placed just below the HUD timer so the two never overlap and as much of the map as possible stays visible (board, 2026-10-11). A full pause menu, with more settings, comes in the final release.
@@ -651,4 +652,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `01de486b212473a10003d274f0a90317dc32d5dafe71232d736a19fcc1541531` |
 | `extended-narrative.md` | `b57fa97780483828e67b4b5670b12e345e9d28f9aa1d93c70cd8a68e3146991b` |
-| `hud-and-menus.md` | `e9078be480cd5eb555dd49173a31fe12fb122a6ff157cf35b6269e06cd0cc8dd` |
+| `hud-and-menus.md` | `2508d473a365fb80f9623c944bc107fb5a230b6c1c1b81745fd9096c290806b6` |
