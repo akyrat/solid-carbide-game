@@ -1,7 +1,7 @@
 ---
 id: T-118
 title: Art: the drift marks' tyre texture, drawn by script
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/README.md, tasks/T-117-drift-marks.md, tasks/T-074-challenge-and-level-up-effects-art.md]
 files_expected_to_change: [a drift mark drawing script and its test, the mark sprite(s) under game/art/ and their record, T-117's drift marks scene, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -86,3 +86,4 @@ Retake: `bash game/tools/screenshot.sh res://tests/fixtures/drift_marks_demo_asp
 - **Criterion 3, screenshots: pass.** QA retook both screenshots from the fixtures and they match the agent's. Asphalt: two dark marks behind the rear tyres with the chevron tread clearly visible, no seams or gaps. Gravel: the marks stand out with ragged edges, no seams or gaps, but the tread mostly blurs into a dark line, as the agent's notes say. That is for the board to judge in the playtest.
 - **Criterion 4, T-117's tests: pass.** `-gselect=test_drift_marks`: 22 of 22 (T-117's 18 and T-118's 4). The loosened test still checks nearest filtering (the root and every piece), that antialiasing is off, no semi-transparent pixels (alpha exactly 0 or 1), and darkness and no red on every opaque pixel. It only drops "every pixel opaque", which goes against this task's transparent-background rule. It does not check that the texture has *some* opaque pixels, but the check script and `test_drift_marks_art.gd` (dark rubber, transparency only in the shoulder rows) cover that.
 - **Criterion 5, full suites: pass.** GUT 383 of 383 (`TESTS PASSED`, 39 scripts). Python `game/tools` 141 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes were left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all five criteria pass
