@@ -1,7 +1,7 @@
 ---
 id: T-034
 title: Buildings turn see-through when the car is behind them
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 epic: level-challenges
@@ -13,7 +13,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, tasks/T-020-see-through-buildings-research.md, tasks/T-019-build-mvp-map.md, game/README.md]
 files_expected_to_change: [the map's building code or scene, their tests, docs/level-design.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -89,3 +89,4 @@ For the board (not fails):
 - Enemies aren't drawn in the run yet. When they are, they will be at z 0 under every building unless they join the depth order. The fade is car-only by decision.
 
 Board review files: [docs/level-design/see-through-behind.png, docs/level-design/see-through-open.png, game/scenes/run/run.tscn]
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass
