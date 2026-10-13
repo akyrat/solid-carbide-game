@@ -43,3 +43,29 @@ func test_missing_value_gives_clear_error() -> void:
 	assert_false(r.ok)
 	assert_string_contains(r.error, "car.armor")
 	assert_false(GameData.get_value(data, "levels.99.xp_needed").ok)
+
+
+func test_likes_drain_loads_with_sensible_values() -> void:
+	var rd := RunData.new()
+	assert_true(rd.is_ok())
+	assert_true(rd.likes_drain_enabled(), "the drain is on by default")
+	assert_gt(rd.likes_drain_bar_share_per_second(), 0.0)
+	assert_lt(rd.likes_drain_bar_share_per_second(), 1.0, "less than a whole bar per second")
+	assert_eq(rd.likes_drain_extra_wait_seconds(), 0.0, "the board's rule: starts when the combo has drained")
+
+
+func test_likes_drain_is_slow_next_to_drifting() -> void:
+	var rd := RunData.new()
+	# At level 1 the drain is well below what one drift second gives.
+	assert_lt(rd.likes_drain_xp_per_second(1), rd.drift_xp_per_second() * 0.5)
+	# A full bar takes at least 30 seconds to empty, at every level.
+	assert_gte(1.0 / rd.likes_drain_bar_share_per_second(), 30.0)
+
+
+func test_likes_drain_scales_with_the_level_bar() -> void:
+	var rd := RunData.new()
+	var share := rd.likes_drain_bar_share_per_second()
+	for l in range(1, rd.max_level()):
+		assert_almost_eq(rd.likes_drain_xp_per_second(l), share * rd.xp_needed(l), 0.0001)
+	assert_eq(rd.likes_drain_xp_per_second(rd.max_level()), 0.0, "no bar at max level")
+	assert_almost_eq(rd.likes_drain_xp_per_second(1), 2.0, 0.0001)
