@@ -1,7 +1,7 @@
 ---
 id: T-116
 title: HUD: hide the combo counter when there is no combo
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, tasks/T-083-hud-combo-and-trick-popups.md, tasks/T-113-hud-vertical-health-and-likes-bars.md, game/README.md]
 files_expected_to_change: [game/scripts/hud/hud.gd, the HUD's tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
