@@ -875,3 +875,8 @@ Entry format:
 - Decision or change: recorded late (QA found the gap): on 2026-10-13 the board gave the go for T-064's one sample tower ("go and generate the sample building"), 1 generation. The full set of 7 more followed the board's go on 2026-10-14. Balance after all 8 calls: 4946 of 5000 (a later free query; the result notes said 4947 because of the API's lag).
 - Documents touched: none
 - Tasks: T-064
+
+## 2026-10-14: Half speed kept; the city redesigned: skyscraper bases, short buildings, pavements, alert banners
+- Decision or change: the board keeps the car's top forward speed halved (16.5 units a second, from its quick tuning on T-124). It redesigned the buildings: downtown Tokyo under attack from the kaiju (a Godzilla-like monster, not called Godzilla, name to come); each block split into 2 by 2 skyscrapers drawn as the bases of really tall towers so the car is realistic in size, 6 different skyscrapers; shorter buildings whose roofs show; a pavement drawn around every building asset; a few alert banners about the kaiju on buildings or as pavement signs, with silly minimalistic pixel paintings of its head or body. The Narrative Theme Agent is consulted first so all generated art stays consistent (T-128, started). T-064 is rewritten for the new design and waits in To do for the board to start it; its first round's art stays archived on its branch. New: T-129 (short buildings) and T-130 (alert banners), both after T-128.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-064 (redesigned, To do), T-128 (new, in progress), T-129 (new), T-130 (new)
