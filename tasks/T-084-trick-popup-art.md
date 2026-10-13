@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -166,3 +166,4 @@ Every criterion checked again independently after the board's rework request.
 
 Godot's line-ending-only `.import` changes from the test runs were left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 2: all criteria pass
+- 2026-10-14, needs-playtest → done: LGTM (board playtest of T-125 with T-084's look, 2026-10-14)
