@@ -745,3 +745,8 @@ Entry format:
 - Decision or change: the board playtested the drift marks and approved them ("LGTM"). While the car drifts, each rear tyre leaves a mark under it, with a script-drawn tyre texture (an 8 by 8 tile, three dark rubber colours, a chevron tread, ragged edges; no PixelLab). Each mark stays 6 seconds, fades out over 1 second as a whole and is removed, with a cap of 800 pieces. The marks are drawn on the ground, under the buildings, boulders, car and HUD, in the run and the drift prototype. All tests pass on master after both merges (383 GUT, 141 and 115 Python).
 - Documents touched: `game/README.md`
 - Tasks: T-117 (done), T-118 (done)
+
+## 2026-10-13: Next wave: see-through buildings, enemy numbers, a boulder sample
+- Decision or change: the board agreed the next wave: T-034 (buildings turn see-through when the car is behind them) and T-039 (enemy numbers, data only) start now, and T-065 (crashed meteor boulders) gets the PixelLab go for one sample boulder, which the board reviews before the rest are made. Old test logs left in the worktrees folder were deleted on the board's go.
+- Documents touched: none
+- Tasks: T-034, T-039, T-065 (in progress)

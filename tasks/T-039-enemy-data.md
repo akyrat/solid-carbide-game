@@ -1,7 +1,7 @@
 ---
 id: T-039
 title: Enemy numbers: minions, spawning, coins and the kaiju
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 epic: enemies

@@ -1,7 +1,7 @@
 ---
 id: T-065
 title: Art: crashed meteor boulders
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -32,6 +32,8 @@ A task is not done until every document listed in documents_affected has been up
 The boulders that make up the obstacle patterns, as Visual style, Decisions describes them: dark rock with glowing cracks, 3 units across (Level design, Decisions). Make a few variants and swap them in for T-019's placeholders. The kaiju's landed meteors use the same boulders (T-035).
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
+
+**Sample first (board's go for one sample, 2026-10-13):** generate **one** boulder (one variant, one PixelLab call or the fewest calls one sprite needs) and stop. Before calling, write the planned call(s), settings and expected cost in the result notes, and the balance. After the sample, report back with the sprite (enlarged, on dark and light backgrounds) and wait: the Project Lead shows it to the board. Only after the board approves the sample, and gives the go for the rest, do you make the remaining variants from it and swap them in. Free script fixes (cleanup, palette, outline) come before any extra paid call.
 
 Use the existing client, `game/tools/pixellab_client.py`. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. The board judges the result.
 
