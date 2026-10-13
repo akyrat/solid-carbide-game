@@ -1,5 +1,5 @@
 {
-  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health and damage in the same points as the car's health (run.json) and the weapons' damage (weapons.json). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes.",
+  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health and damage in the same points as the car's health (run.json) and the weapons' damage (weapons.json). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
   "minion": {
     "health": 4,
     "move_speed": 6,
@@ -25,6 +25,11 @@
     "contact_damage": 20,
     "contact_damage_interval": 1.0,
     "knockback": 16
+  },
+  "kaiju_coins": {
+    "_comment": "Coins the kaiju drops when defeated (Enemies, Decisions, 2026-10-13): always (drop_chance 1), coins_per_drop coins. Its death ends the run at once, so they are added to the run's coins as the run ends, without being picked up.",
+    "drop_chance": 1.0,
+    "coins_per_drop": 10
   },
   "meteor_attack": {
     "_comment": "Attacks start first_attack_after_seconds after the kaiju appears, then every seconds_between_attacks. Each attack: windup_seconds of the kaiju's short animation, then meteors_per_attack warning circles at once, each landing warning_seconds later within land_within_units_of_car of the car. A meteor hits the car when the car's centre is within impact_radius_units of where it lands (the boulder's radius: boulders are 3 units across). warning_seconds is decided (Enemies, Decisions), not a balancing number.",

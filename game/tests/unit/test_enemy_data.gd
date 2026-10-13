@@ -1,6 +1,7 @@
 extends GutTest
 ## Enemy data (task T-039): loads through the loader, minion numbers grow but never toughen,
-## and the kaiju's time to kill with the MVP weapons matches the figures in T-039's result notes.
+## the kaiju's time to kill with the MVP weapons matches the figures in T-039's result notes,
+## and the kaiju always drops a few coins (T-119).
 
 # Assumptions behind the kaiju figures (T-039, Result notes): every gun bullet hits the kaiju
 # (no minion is closer than it), the flame is on the kaiju this share of the fight, and the
@@ -31,10 +32,11 @@ func test_every_section_has_its_numbers() -> void:
 	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["minions_at_start", "minions_at_boss_time",
 		"growth_until_seconds", "spawn_interval_seconds", "spawn_margin_units"]))
 	assert_eq_deep(_sorted(e.coins().keys()), _sorted(["drop_chance", "coins_per_drop"]))
+	assert_eq_deep(_sorted(e.kaiju_coins().keys()), _sorted(["drop_chance", "coins_per_drop"]))
 	assert_eq_deep(_sorted(e.meteor_attack().keys()), _sorted(["first_attack_after_seconds",
 		"seconds_between_attacks", "windup_seconds", "meteors_per_attack", "warning_seconds",
 		"land_within_units_of_car", "impact_radius_units", "impact_damage", "knockback"]))
-	for section in [e.minion(), e.kaiju(), e.spawning(), e.coins(), e.meteor_attack()]:
+	for section in [e.minion(), e.kaiju(), e.spawning(), e.coins(), e.kaiju_coins(), e.meteor_attack()]:
 		for k in section:
 			assert_gt(section[k], 0.0, "%s is positive" % k)
 	assert_true(e.coins().drop_chance <= 1.0)
@@ -83,6 +85,21 @@ func test_combo_raises_the_count() -> void:
 
 func test_expected_coins_per_kill() -> void:
 	assert_almost_eq(EnemyData.new().expected_coins_per_kill(), 1.2, 0.0001)
+
+
+func test_kaiju_always_drops_a_few_coins() -> void:
+	# The board's decision (Enemies, Decisions, 2026-10-13): always, a few coins (T-119).
+	var e := EnemyData.new()
+	var k := e.kaiju_coins()
+	assert_eq(k.drop_chance, 1.0, "the kaiju always drops coins")
+	assert_eq(k.coins_per_drop, 10.0)
+	assert_eq(e.kaiju_coins_on_defeat(), 10)
+	assert_gt(e.kaiju_coins_on_defeat(), 0)
+	# "A few": a handful of minion drops, and a small part of an average run's ~250 coins.
+	var minion_drop: float = e.coins().coins_per_drop
+	assert_true(e.kaiju_coins_on_defeat() >= 2 * minion_drop, "more than a single minion drop")
+	assert_true(e.kaiju_coins_on_defeat() <= 10 * minion_drop, "no more than a handful of minion drops")
+	assert_lt(float(e.kaiju_coins_on_defeat()), 250.0 * 0.1, "under a tenth of an average run")
 
 
 func test_meteor_attacks_in_the_kaiju_minute() -> void:

@@ -1,7 +1,7 @@
 class_name EnemyData
 extends RefCounted
 ## The enemy numbers from res://data/enemies.json: the minion, minion spawning, coin drops,
-## the kaiju and its meteor attack. Enemy stats never change over a run; only the number
+## the kaiju, its coins when defeated and its meteor attack. Enemy stats never change over a run; only the number
 ## of minions the spawner keeps around grows (minions_wanted).
 
 var _data: Dictionary = {}
@@ -51,6 +51,18 @@ func coins() -> Dictionary:
 ## health, move_speed, contact_damage, contact_damage_interval, knockback.
 func kaiju() -> Dictionary:
 	return _section("kaiju")
+
+
+## The kaiju's coins when defeated (T-119): drop_chance (1, always), coins_per_drop.
+func kaiju_coins() -> Dictionary:
+	return _section("kaiju_coins")
+
+
+## Coins the defeated kaiju adds to the run's coins: coins_per_drop when its drop chance is 1
+## (the board's decision: always). Below 1 it is the average, rounded to the nearest coin.
+func kaiju_coins_on_defeat() -> int:
+	var c := kaiju_coins()
+	return roundi(c["drop_chance"] * c["coins_per_drop"])
 
 
 ## first_attack_after_seconds, seconds_between_attacks, windup_seconds, meteors_per_attack,

@@ -44,4 +44,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Data Agent, 2026-10-13. Branch `task/T-119-kaiju-coins-data`, folder `C:\solid-carbide-worktrees\T-119`.
+
+**What changed**
+- `game/data/enemies.json`: new section `kaiju_coins` with `drop_chance` 1.0 (always) and `coins_per_drop` 10, with its own `_comment` (the board's decision, and that the coins are added as the run ends, without a pickup). The top `_comment` now lists the kaiju's coins and points here for the reason. The `coins` section (minions) is unchanged.
+- `game/scripts/data/enemy_data.gd`: `kaiju_coins()` (the section as floats, like the other sections) and `kaiju_coins_on_defeat() -> int` (whole coins the defeated kaiju adds: drop chance times coins per drop, rounded; 10 with the current data).
+- `game/tests/unit/test_enemy_data.gd`: `kaiju_coins()` added to the key and positive-value checks, and a new `test_kaiju_always_drops_a_few_coins`: drop chance is 1, the count is 10 and above 0, at least two minion drops, at most ten minion drops, and under a tenth of an average run's 250 coins.
+- `game/README.md`, Enemies (T-039) entry: documents `kaiju_coins`, `kaiju_coins()` and `kaiju_coins_on_defeat()`.
+
+Neither the JSON comment nor game/README.md said in words that the kaiju drops no coins; the "drops none" reasoning was only in T-039's result notes (Coins), which stay as history. The data simply had no kaiju drop; it has one now.
+
+**The number: 10 coins**
+- "A few", in the board's words, sized as a handful of minion drops: a minion drop is 2 coins, so 10 coins is 5 minion drops.
+- Against the economy: the garage prices assume about 250 coins per average run (T-039: about 250 to 300 kills at 1.2 coins per kill). 10 coins is 4% of that, so it does not shift the garage's pacing; the cheapest garage level costs 40 (acceleration level 1), so it is a quarter of one cheap level.
+- It only comes in a won run (the kaiju's death ends the run), so it reads as a small reward for winning on top of the run's coins, not a second income source. Bigger (say 25 to 50, 10 to 20% of a run) would start to make winning matter for the economy, which is a balance choice for the board, not "a few".
+- Proposed number; the board judges it in playtests. It is one value in enemies.json (`kaiju_coins.coins_per_drop`) to change.
+
+**For the Enemy Behavior / Game Loop work that uses it:** when the kaiju dies, add `EnemyData.new().kaiju_coins_on_defeat()` to the run's coins (`add_coins`) before `kaiju_killed()` ends the run, since `add_coins` is ignored once the run is over (Enemies, Decisions: added as the run ends, without being picked up). Nothing in the game calls it yet; this task is data only.
+
+**Tests** (run in the task folder): full GUT suite 393/393 passing (40 scripts, `bash game/tools/run_tests.sh`, TESTS PASSED); Python tool tests `game/tools` 141 passed, `tools` 115 passed. Godot's line-ending-only `.import` changes from the test run were left out of the commit (project.godot was not touched).
+
+**Documents affected:** game/README.md (updated). No game area doc changed: Enemies, Decisions already records the board's decision.
