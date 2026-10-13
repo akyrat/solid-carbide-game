@@ -279,7 +279,11 @@ func test_placeholder_is_nearest_opaque_dark_and_not_redgull_red() -> void:
 	for y in img.get_height():
 		for x in img.get_width():
 			var c: Color = img.get_pixel(x, y) * m.mark_color
-			assert_eq(c.a, 1.0, "no semi-transparent pixels")
+			# T-118: the final texture has a transparent background (the shoulders'
+			# gaps), so a pixel is fully clear or fully opaque, never in between.
+			assert_true(c.a == 0.0 or c.a == 1.0, "no semi-transparent pixels")
+			if c.a == 0.0:
+				continue
 			assert_lt(c.get_luminance(), 0.2, "dark")
 			var d := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length()
 			assert_gt(d, 0.5, "far from Redgull red")
