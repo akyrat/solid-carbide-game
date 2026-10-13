@@ -39,12 +39,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show: with the combo above "no combo", XP does not drain; once the combo is back to "no combo", XP goes down at T-114's speed; a trick stops the drain (QA: pass / fail)
-- [ ] GUT tests show XP never goes below 0 within the current level and the level never goes down, including when the drain runs for a long time (QA: pass / fail)
-- [ ] GUT tests show no drain while the run is paused or after it has ended, and that the HUD's XP signal fires as XP drains (QA: pass / fail)
-- [ ] Two screenshots a few seconds apart in a run show the likes bar emptying with no tricks, and stopping at empty with the level unchanged (QA: pass / fail)
-- [ ] Game loop architecture and game/README.md describe the drain (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] GUT tests show: with the combo above "no combo", XP does not drain; once the combo is back to "no combo", XP goes down at T-114's speed; a trick stops the drain (QA: pass)
+- [x] GUT tests show XP never goes below 0 within the current level and the level never goes down, including when the drain runs for a long time (QA: pass)
+- [x] GUT tests show no drain while the run is paused or after it has ended, and that the HUD's XP signal fires as XP drains (QA: pass)
+- [x] Two screenshots a few seconds apart in a run show the likes bar emptying with no tricks, and stopping at empty with the level unchanged (QA: pass)
+- [x] Game loop architecture and game/README.md describe the drain (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest a run and judge how the drain feels (speed, when it starts).
 
@@ -74,3 +74,11 @@ Screenshots (git-ignored, in the task folder), from the new fixture `res://tests
 - `screenshots/T-115-likes-drain-2-empty.png` (3500 frames, about 14.6 s in, clock 7:46): the bar empty (0 of 125, since about 10 s in), still Hype Lv 2.
 
 Documents affected: `docs/game-loop-architecture.md` (Content, "Likes and levels": the likes drain bullet), `game/README.md` (The run: the likes drain paragraph and table, `xp_changed`, the tests line).
+
+**QA/Integration Agent, round 1, 2026-10-13.** All six criteria pass.
+1. Pass. `_drain_likes()` resets `likes_drain_idle` and returns while `has_no_combo()` is false; `test_no_drain_while_the_combo_is_above_no_combo` (XP unchanged through the combo's wait and most of its drain), `test_drain_starts_once_the_combo_is_gone`, `test_drain_speed_is_t114s_speed_at_level_1` / `_follows_the_level` / `_does_not_depend_on_frame_size` (rate read from `RunData.likes_drain_xp_per_second`) and `test_a_trick_stops_the_drain` show it.
+2. Pass. XP is clamped with `maxf(..., 0.0)` and `level` is never written by the drain; `test_xp_never_goes_below_zero_and_the_level_stays` and `test_a_long_drain_never_goes_below_the_level` (400 s at level 6, every `xp_changed` at or above 0 and at level 6, no `level_up`).
+3. Pass. `test_no_drain_while_the_tree_is_paused` (real frames), `test_no_drain_while_a_weapon_choice_waits`, `test_no_drain_after_the_run_ends`, `test_no_drain_after_the_clock_runs_out`; `test_the_drain_sends_xp_changed_as_it_drains` (falling values, the level's bar, stops once empty) and `test_the_hud_likes_bar_empties_in_a_run` (real run scene, HUD bar follows XP).
+4. Pass. `screenshots/T-115-likes-drain-1-emptying.png` (7:58, bar about 15%, Hype Lv 2, Combo x1.0) and `-2-empty.png` (7:46, bar empty, still Hype Lv 2).
+5. Pass. Game loop architecture, Content, "Likes and levels" has the "Likes drain" bullet; game/README.md has the drain paragraph, its table, the `xp_changed` row and the tests line. The worktree's Decisions section is identical to master's.
+6. Pass. Run by QA in the task folder: GUT 345/345 (35 scripts, `TESTS PASSED`, exit 0; `test_run_likes_drain.gd` 19/19), `game/tools` Python 125 OK, `tools` Python 115 OK. No `.import` changes left in the working tree.
