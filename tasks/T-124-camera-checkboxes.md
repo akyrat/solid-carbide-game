@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-123-camera-options.md, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd (and its scene), its tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,3 +53,4 @@ The board's review: playtest the run with both options, tune the dynamic camera'
 - 2026-10-13, UI Agent: built on T-123's branch. Pause screen has the "Camera smoothing" and "Dynamic camera" checkboxes under the slider (start from the saved settings, apply and save at once through `target.camera_follow`), and, only while the dynamic camera is on, "Set min zoom" and "Set max zoom" with the stored values as numbers. Same compact strip, still starting at y 92 below the HUD timer; mouse and keyboard (Tab/Space) work. Tests: `game/tests/unit/test_pause_camera_controls.gd` (7 tests). Full GUT suite 435/435 pass; game/tools Python 141 OK; tools Python 121 OK. Screenshot (dynamic camera on): `C:\solid-carbide-worktrees\T-124\screenshots\T-124-pause-dynamic.png` (git-ignored), made with `pause_screen_demo_dynamic.tscn`. Docs: HUD and menus Content line (board's wording, already on this branch) and game/README.md updated. Note: the screenshot is of the drift prototype; the run uses the same screen at the same position.
 - 2026-10-13, in-progress → in-qa: ready for QA
 - 2026-10-14, QA/Integration, round 1: criteria 1, 2 and 5 pass; 3 and 4 fail. (3) In a run the unchecked "Camera smoothing" box and the two tuning buttons have no visible box or frame on the translucent strip over the asphalt (QA screenshot `C:\solid-carbide-worktrees\T-124\screenshots\qa-T-124-run-pause-dynamic.png`, made with a temporary fixture, deleted, using its own settings file). (4) docs/hud-and-menus.md Content has no pause-screen description yet. Only T-124's own diff from `task/T-123-camera-options` was judged.
+- 2026-10-14, in-qa → in-progress: QA round 1 failed criteria 3 (unchecked box and buttons not visible in a run) and 4 (HUD and menus Content); back to the Project Lead
