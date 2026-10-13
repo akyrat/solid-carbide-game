@@ -70,10 +70,12 @@ func test_each_trick_popup_shows_the_amount_added() -> void:
 	}
 	for id in expect:
 		r.state.combo = 1.0
-		var before: int = r.trick_popups.popups().size()
 		r.car.trick.emit(id)
 		var shown: Array = r.trick_popups.popups()
-		assert_eq(shown.size(), before + 1, "%s: one popup, not two" % id)
+		# Since T-125 round 2 an older popup may make room under the screen-height
+		# limit, so count the popups with this trick's text, not all of them.
+		var same: Array = shown.filter(func(p) -> bool: return p.text == expect[id])
+		assert_eq(same.size(), 1, "%s: one popup, not two" % id)
 		assert_eq(shown.back().text, expect[id])
 
 

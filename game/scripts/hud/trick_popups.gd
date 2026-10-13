@@ -33,7 +33,8 @@ const SIZES := {
 	"alternate_drift": SIZE_NORMAL,
 }
 ## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
-const PIXEL_SCALE := 0.8
+## Task T-125 round 2: 75% of the old 0.8, for the normal and the small size alike.
+const PIXEL_SCALE := 0.6
 ## Seconds a popup lasts, and how far it rises (drawn pixels).
 const LIFETIME := 1.0
 const RISE := 40.0
@@ -46,6 +47,10 @@ const POP_TIME := 0.12
 ## free space moves up by (drawn pixels).
 const STACK_GAP := 4.0
 const STACK_STEP := 4.0
+## How far up the screen a popup may reach, as a share of the screen height
+## measured from the car (the camera keeps the car at the screen's centre, so
+## 0.25 is half way from the car to the top edge). Task T-125, round 2.
+const MAX_REACH := 0.25
 
 
 ## One popup: draws itself and removes itself when its time is up. It is placed
@@ -85,6 +90,13 @@ class PopupText extends Node2D:
 	## Puts the popup at the car's drawn position plus its offset.
 	func place() -> void:
 		position = anchor_now() + offset()
+		# Fallback when even an unstacked popup would reach too high (a very
+		# close zoom): sit lower, never above the limit.
+		var parent := get_parent()
+		if parent != null and parent.has_method("top_limit"):
+			var limit: float = parent.top_limit()
+			if limit < 0.0:
+				position.y = maxf(position.y, anchor.y + limit + size().y / 2.0)
 
 	## `with_position` is false in the game's frames: the position is set in
 	## the physics step instead (see place()).
@@ -205,7 +217,25 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 func _free_stack(p: PopupText) -> float:
 	var others := popups()
 	var stack := 0.0
+	# The lowest (most upward) stack at which the popup still ends, after its
+	# whole rise, at or below top_limit(). When the stack would go higher, the
+	# oldest popup makes room (it is removed) until the newcomer fits.
+	var limit := top_limit()
+	var min_stack := -INF
+	if limit < 0.0:
+		min_stack = minf(0.0, limit - START_OFFSET.y + RISE + p.size().y / 2.0)
 	for _i in 200:
+		if stack < min_stack:
+			if others.is_empty():
+				return min_stack
+			var oldest = others[0]
+			for o in others:
+				if o.age > oldest.age:
+					oldest = o
+			oldest.queue_free()
+			others.erase(oldest)
+			stack = 0.0
+			continue
 		var rect := Rect2(p.anchor + START_OFFSET + Vector2(0, stack) - p.size() / 2.0, p.size())
 		var clear := true
 		for o in others:
@@ -217,6 +247,20 @@ func _free_stack(p: PopupText) -> float:
 			return stack
 		stack -= STACK_STEP
 	return stack
+
+
+## The highest a popup's top edge may be, as an offset from the car's drawn
+## position (negative, in drawn pixels): MAX_REACH of the screen height, in
+## screen space, so it holds at any window size and camera zoom. Zero when
+## there is no camera to keep the car at the screen's centre.
+func top_limit() -> float:
+	if not is_inside_tree() or get_viewport() == null or get_viewport().get_camera_2d() == null:
+		return 0.0
+	# Screen pixels per drawn pixel: the camera's zoom times the world view's own scale.
+	var per_drawn_px := get_viewport().get_camera_2d().zoom.y * get_global_transform().y.length()
+	if per_drawn_px <= 0.0:
+		return 0.0
+	return -get_viewport().get_visible_rect().size.y * MAX_REACH / per_drawn_px
 
 
 func popups() -> Array:

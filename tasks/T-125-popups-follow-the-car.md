@@ -76,3 +76,16 @@ Following the car works, but the stacked popups climb too high and overlap the H
 - popups to go **at most half way from the car to the top of the screen** (the car sits at the screen's centre, so the highest popup's top edge stays at or below a quarter of the screen height from the top, at any window size and camera zoom); when the stack would go higher, keep it within that limit (for example tighter stacking, or the oldest popup making room);
 - popups **a bit smaller** than now (propose the scale, for example about 75 to 80%, for both the normal and the extended-drift size).
 
+
+
+### Round 2 (UI Agent, 2026-10-14)
+
+Done, branch `task/T-125-popups-follow-the-car`, folder `C:\solid-carbide-worktrees\T-125`.
+
+- **Smaller:** `PIXEL_SCALE` 0.8 to 0.6 (75%), for the normal and the extended-drift size alike (a 360 is now about 39 drawn px tall, a long drift about 27). Chosen at the low end of 75 to 80% because the cap leaves little room.
+- **Limit:** `TrickPopups.top_limit()` = a quarter of the viewport height (`MAX_REACH` 0.25) in screen space, divided by the camera zoom times the view's scale, so it holds at any window size and zoom (the car is at the screen's centre, so a quarter is half way to the top). No camera, no limit. A popup is checked at the end of its whole rise (the highest it gets).
+- **Policy chosen (the two the board offered):** the oldest popup makes room: when a new popup would stack above the limit, the oldest popup showing is removed, repeated until the newcomer fits (tighter stacking was already at 4 px gap and cannot gain enough). If even an unstacked popup would end above the limit (a very close zoom), `place()` keeps it lower at the limit.
+- **Honest consequence for the board:** at the default zoom (limit about 115 drawn px above the car, popup starts 50 above and rises 40) only about one popup fits at a time. A 360 and a long drift on the same step: the second one wins and the 360 is removed. A long drift every second alone looks as before. Cheapest next steps if this loses too much: start popups lower than 50 px, or let the stack shrink the rise instead of removing popups. Needs the board's call.
+- Tests: `tests/unit/test_trick_popups_follow.gd` gains the top edge never above a quarter of the screen height with 20 popups, at 1152x648 and 640x900, zoom 1 and 2 (SubViewport with a Camera2D), no overlap under the limit, oldest makes room, plain stacking without a camera, and the smaller scale. Two older tests were adjusted because popups can now make room (`test_hud_combo.gd` counts popups with the trick's text; the run overlap tests accept 1 to 4 popups). Full GUT suite: 434 passed. Python: game/tools and tools tests run below.
+- Screenshots (fast drift, a 360 at frame 10 then a LONG DRIFT every 12 frames; fixture changed): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_r2_a.png` (frame 20) and `popups_follow_r2_b.png` (frame 40). One small popup above the car, well below the timer; only one shows because of the policy above.
+- Docs: `docs/hud-and-menus.md` Content "Trick popups" and `game/README.md` "Trick popups".
