@@ -1,7 +1,7 @@
 ---
 id: T-123
 title: Camera options: smoothing and the dynamic camera (zoom follows speed)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 epic: driving
@@ -13,7 +13,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, game/README.md, game/scripts/ui/game_settings.gd, game/scripts/ui/pause_screen.gd, game/scripts/run/run.gd, game/scripts/driving/drift_prototype.gd]
 files_expected_to_change: [game/scripts/ui/game_settings.gd, the run's and the drift prototype's camera code (or a new camera script), their tests, game/README.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -89,3 +89,4 @@ Driving & Drift Agent, 2026-10-13. Branch `task/T-123-camera-options`, folder `C
 6. Pass. Run by QA in the task folder: full GUT suite 42 scripts, 428 tests, 428 passing, `TESTS PASSED` (exit 0), including test_camera_options, test_drift_prototype, the run tests and test_pause_screen. Python: `game/tools` 141 tests OK, `tools` 121 tests OK. Godot's `.import` changes from the run are line-ending only (no diff with `--ignore-cr-at-eol`) and were left uncommitted.
 
 For the board (not fails): the dynamic camera uses the car's speed in any direction, not only forward, so a fast slide or reverse also zooms out (the agent says why above; forward-only is a small change if the board wants it). Nothing stops the min being set above the max; then the camera zooms in with speed.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass.
