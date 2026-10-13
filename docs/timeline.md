@@ -795,3 +795,8 @@ Entry format:
 - Decision or change: `likes_drain.bar_share_per_second` in `game/data/run.json` is now 0.08, the board's value: a full bar empties in 12.5 s, 8 likes a second at level 1. Tests pin the new speed; T-115's drain tests are unchanged and pass. Passed QA round 1; a number the board set itself, so merged after QA as agreed, and the board feels it in its next playtest.
 - Documents touched: `game/README.md`, `docs/game-loop-architecture.md` (wording, earlier the same day)
 - Tasks: T-120 (done)
+
+## 2026-10-13: T-122 done: agents run on their task's model, enforced
+- Decision or change: the board found agents had been started on Opus although their task files said Sonnet (an agent started without a model runs on the Project Lead's model). On the board's request, the hooks now enforce `tasks/README.md`, "Models": an agent whose prompt names a task starts only when the Agent call passes that task's model; the QA/Integration Agent needs sonnet, or opus when the task has a board's review line. The agents already running were left to finish on Opus, on the board's say-so. Passed QA round 1; tooling, so merged.
+- Documents touched: `tasks/README.md`
+- Tasks: T-122 (done)

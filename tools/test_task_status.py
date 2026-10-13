@@ -250,6 +250,61 @@ class Hook(Base):
         self.assertEqual(self.decision("Bash", {"command": "python tools/task_status.py T-001 blocked"}), "allow")
 
 
+class AgentModel(Base):
+    def decision(self, tool_input):
+        import contextlib, io
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_agent(tool_input)
+        return json.loads(buf.getvalue())["hookSpecificOutput"]["permissionDecision"] if buf.getvalue() else "allow"
+
+    def agent(self, prompt, agent="ui", model=None):
+        call = {"subagent_type": agent, "prompt": prompt, "description": "x"}
+        if model:
+            call["model"] = model
+        return self.decision(call)
+
+    def test_a_sonnet_task_needs_sonnet(self):
+        self.put("T-001")
+        self.assertEqual(self.agent("Work on task T-001"), "deny")
+        self.assertEqual(self.agent("Work on task T-001", model="opus"), "deny")
+        self.assertEqual(self.agent("Work on task T-001", model="sonnet"), "allow")
+
+    def test_an_opus_task_needs_opus(self):
+        path = self.put("T-002")
+        path.write_bytes(path.read_bytes().replace(b"model: sonnet", b"model: opus"))
+        self.assertEqual(self.agent("Continue task T-002", model="sonnet"), "deny")
+        self.assertEqual(self.agent("Continue task T-002", model="opus"), "allow")
+
+    def test_qa_runs_on_sonnet_or_opus_before_a_playtest(self):
+        self.put("T-003")
+        self.put("T-004", review="play it")
+        self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="sonnet"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="opus"), "deny")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="opus"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration"), "deny")
+
+    def test_the_first_task_id_counts(self):
+        self.put("T-005")
+        self.assertEqual(self.agent("Work on task T-005; T-117 already has the marks", model="sonnet"), "allow")
+
+    def test_no_task_unknown_task_or_fork_is_not_checked(self):
+        self.assertEqual(self.agent("Find where the HUD is built"), "allow")
+        self.assertEqual(self.agent("Work on task T-999"), "allow")
+        self.put("T-006")
+        self.assertEqual(self.agent("Work on task T-006", agent="fork"), "allow")
+
+    def test_the_refusal_names_the_task_and_the_model(self):
+        import contextlib, io
+        self.put("T-007")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_agent({"subagent_type": "ui", "prompt": "Work on task T-007"})
+        reason = json.loads(buf.getvalue())["hookSpecificOutput"]["permissionDecisionReason"]
+        self.assertIn("T-007", reason)
+        self.assertIn("sonnet", reason)
+
+
 class LocalBoard(Base):
     """The server on a free port, reading a temporary tasks/ folder."""
 
