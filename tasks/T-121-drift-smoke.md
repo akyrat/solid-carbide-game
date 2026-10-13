@@ -1,7 +1,7 @@
 ---
 id: T-121
 title: Drift smoke: the rear tyres puff smoke while drifting (placeholder)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 epic: driving
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, game/README.md, tasks/T-117-drift-marks.md, tasks/T-112-level-up-particles-placeholder.md]
 files_expected_to_change: [a new drift smoke scene and script, the run scene and the drift prototype scene, their tests, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
