@@ -37,11 +37,11 @@ Swap it into T-117's drift marks scene without changing when or how the marks ar
 
 ## Acceptance criteria
 
-- [ ] A check script shows the new sprite(s) have a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass / fail)
-- [ ] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass / fail)
-- [ ] Screenshots of the car drifting on asphalt and on gravel show the marks with the new texture, tiling without visible seams (QA: pass / fail)
-- [ ] T-117's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows the new sprite(s) have a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass)
+- [x] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass)
+- [x] Screenshots of the car drifting on asphalt and on gravel show the marks with the new texture, tiling without visible seams (QA: pass)
+- [x] T-117's tests still pass (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest drifting in a run and judge the marks (together with T-117).
 Board review files: screenshots/T-118-drift-marks-asphalt-zoom.png, screenshots/T-118-drift-marks-gravel-zoom.png, art-archive/T-118/drift_mark_preview.png, art-archive/T-118/drift_mark_alt_open_grooves_preview.png
@@ -79,3 +79,10 @@ Retake: `bash game/tools/screenshot.sh res://tests/fixtures/drift_marks_demo_asp
 **Archived** (`art-archive/T-118/`, rows added to `art-archive/README.md`): `drift_mark_preview.png` (the tile repeated over both grounds, 8x), and the unused alternative with transparent grooves, `drift_mark_alt_open_grooves.png` with its preview. The T-117 placeholder lived only inside the scene file, so there was no file to archive.
 
 **Documents updated:** `game/README.md` ("Drift marks": the look, the build and check commands, the new screenshots and tests; the tools row), `art-archive/README.md`, and my working copy `agent-notes/asset-generation.md`.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13, judging only the diff from `task/T-117-drift-marks`):
+- **Criterion 1, check script: pass.** `python game/tools/build_drift_mark.py check` exits 0 with every rule passing (transparent corners, 0 semi-transparent, 3 colours, no red, inside rows opaque, darker than both grounds). The rules are real: QA fed it four broken copies of the tile and each failed the right rule (a Redgull red pixel, a half-transparent pixel, an opaque corner, 60 colours). Transparent background, semi-transparency and colour count come from the shared `check_sprite_rules.check_rows`; red is checked against the HUD heart colour plus any saturated red hue.
+- **Criterion 2, script, test, no PixelLab: pass.** `build` run again left the PNG, the record and the three archive images byte-identical (`git status` clean). Tests: `game/tools/test_build_drift_mark.py` and `game/tests/unit/test_drift_marks_art.gd`. The script imports only the standard library and local helpers (no network code); the diff adds no PixelLab record or call.
+- **Criterion 3, screenshots: pass.** QA retook both screenshots from the fixtures and they match the agent's. Asphalt: two dark marks behind the rear tyres with the chevron tread clearly visible, no seams or gaps. Gravel: the marks stand out with ragged edges, no seams or gaps, but the tread mostly blurs into a dark line, as the agent's notes say. That is for the board to judge in the playtest.
+- **Criterion 4, T-117's tests: pass.** `-gselect=test_drift_marks`: 22 of 22 (T-117's 18 and T-118's 4). The loosened test still checks nearest filtering (the root and every piece), that antialiasing is off, no semi-transparent pixels (alpha exactly 0 or 1), and darkness and no red on every opaque pixel. It only drops "every pixel opaque", which goes against this task's transparent-background rule. It does not check that the texture has *some* opaque pixels, but the check script and `test_drift_marks_art.gd` (dark rubber, transparency only in the shoulder rows) cover that.
+- **Criterion 5, full suites: pass.** GUT 383 of 383 (`TESTS PASSED`, 39 scripts). Python `game/tools` 141 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes were left uncommitted.
