@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, tasks/T-091-trick-popups.md, tasks/T-084-trick-popup-art.md, game/scripts/hud/trick_popups.gd]
 files_expected_to_change: [game/scripts/hud/trick_popups.gd, its tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -129,4 +129,4 @@ The board's requests, checked separately:
 For the board's playtest (not a failure): at the default zoom the popups are now drawn at about 0.7 screen pixels per popup pixel, so nearest filtering drops pixel rows and columns. The small LONG DRIFT! lettering is hard to read in the screenshots (enlarged it reads like "SONG DRIFT"), and the rounded corners are barely visible. The 360 popup reads. At closer zooms everything reads cleanly. The board should judge readability in the playtest.
 
 Godot's line-ending-only `.import` changes were left uncommitted.
-
+- 2026-10-14, in-qa → needs-playtest: QA round 2: all criteria pass
