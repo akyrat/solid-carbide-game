@@ -20,6 +20,16 @@ const TEXT_SMOOTHING := "Camera smoothing"
 const TEXT_DYNAMIC := "Dynamic camera"
 const TEXT_SET_MIN := "Set min zoom"
 const TEXT_SET_MAX := "Set max zoom"
+## The strip's background. Nearly opaque, so the controls read over any ground,
+## the run's bright asphalt included (T-124, QA round 1).
+const STRIP_COLOR := Color(0, 0, 0, 0.85)
+## Placeholder look for the checkboxes and buttons (T-124): a light frame on a
+## dark fill, so they show on the strip whatever the ground behind it.
+const CONTROL_FRAME := Color(0.85, 0.85, 0.85)
+const CONTROL_FILL := Color(0.16, 0.16, 0.16)
+const CONTROL_FILL_HOVER := Color(0.28, 0.28, 0.28)
+const CONTROL_FILL_PRESSED := Color(0.08, 0.08, 0.08)
+const CHECK_ICON_SIZE := 16
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -59,7 +69,7 @@ func setup(t: Node) -> void:
 	strip.offset_top = STRIP_TOP
 	strip.offset_bottom = STRIP_TOP  # grows down to fit its content only
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0, 0, 0, 0.7)
+	style.bg_color = STRIP_COLOR
 	style.content_margin_top = 8.0
 	style.content_margin_bottom = 10.0
 	strip.add_theme_stylebox_override("panel", style)
@@ -145,7 +155,39 @@ func _make_check(node_name: String, text: String) -> CheckBox:
 	c.name = node_name
 	c.text = text
 	c.add_theme_font_size_override("font_size", 16)
+	c.add_theme_icon_override("unchecked", check_icon(false))
+	c.add_theme_icon_override("checked", check_icon(true))
+	c.add_theme_icon_override("unchecked_disabled", check_icon(false))
+	c.add_theme_icon_override("checked_disabled", check_icon(true))
 	return c
+
+
+## A placeholder checkbox icon: a light square frame on a dark fill, with a
+## light square inside when checked.
+static func check_icon(checked: bool) -> ImageTexture:
+	var n := CHECK_ICON_SIZE
+	var img := Image.create(n, n, false, Image.FORMAT_RGBA8)
+	img.fill(CONTROL_FILL)
+	for i in n:
+		for j in [0, 1, n - 2, n - 1]:
+			img.set_pixel(i, j, CONTROL_FRAME)
+			img.set_pixel(j, i, CONTROL_FRAME)
+	if checked:
+		img.fill_rect(Rect2i(4, 4, n - 8, n - 8), CONTROL_FRAME)
+	return ImageTexture.create_from_image(img)
+
+
+## A placeholder button frame: a light border round a dark fill.
+static func button_style(fill: Color, border: int = 2) -> StyleBoxFlat:
+	var st := StyleBoxFlat.new()
+	st.bg_color = fill
+	st.border_color = CONTROL_FRAME
+	st.set_border_width_all(border)
+	st.content_margin_left = 10.0
+	st.content_margin_right = 10.0
+	st.content_margin_top = 2.0
+	st.content_margin_bottom = 2.0
+	return st
 
 
 func _make_button(node_name: String, text: String) -> Button:
@@ -153,6 +195,14 @@ func _make_button(node_name: String, text: String) -> Button:
 	b.name = node_name
 	b.text = text
 	b.add_theme_font_size_override("font_size", 16)
+	b.add_theme_stylebox_override("normal", button_style(CONTROL_FILL))
+	b.add_theme_stylebox_override("hover", button_style(CONTROL_FILL_HOVER))
+	b.add_theme_stylebox_override("pressed", button_style(CONTROL_FILL_PRESSED))
+	b.add_theme_stylebox_override("hover_pressed", button_style(CONTROL_FILL_PRESSED))
+	var focus := button_style(Color(0, 0, 0, 0), 3)
+	focus.draw_center = false
+	focus.border_color = Color(1, 1, 1)
+	b.add_theme_stylebox_override("focus", focus)
 	return b
 
 

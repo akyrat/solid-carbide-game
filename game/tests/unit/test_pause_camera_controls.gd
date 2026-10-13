@@ -103,3 +103,53 @@ func test_strip_stays_below_the_hud_timer() -> void:
 	await wait_frames(3)
 	assert_gte(ps.strip.get_global_rect().position.y, ps.STRIP_TOP - 0.5)
 	assert_lt(ps.strip.get_global_rect().end.y, 300.0, "compact: stays in the top of the screen")
+
+
+## QA round 1: over the run's bright asphalt the unchecked box and the buttons
+## did not show. They now have their own visible look on a nearly opaque strip.
+func _opaque_pixels(tex: Texture2D) -> int:
+	var img := tex.get_image()
+	var n := 0
+	for x in img.get_width():
+		for y in img.get_height():
+			if img.get_pixel(x, y).a > 0.9:
+				n += 1
+	return n
+
+
+func test_checkbox_icons_are_visible_checked_and_unchecked() -> void:
+	var ps = _scene().pause_screen
+	for c in [ps.smoothing_check, ps.dynamic_check]:
+		var off: Texture2D = c.get_theme_icon("unchecked")
+		var on: Texture2D = c.get_theme_icon("checked")
+		assert_not_null(off)
+		assert_not_null(on)
+		var area: int = off.get_width() * off.get_height()
+		assert_eq(_opaque_pixels(off), area, "unchecked box is fully opaque")
+		assert_eq(_opaque_pixels(on), area, "checked box is fully opaque")
+		# The frame is light, the fill dark: the box stands out on the strip.
+		var img: Image = off.get_image()
+		assert_gt(img.get_pixel(0, 0).get_luminance(), 0.6, "light frame")
+		assert_lt(img.get_pixel(off.get_width() / 2, off.get_height() / 2).get_luminance(), 0.3, "dark fill")
+		# Checked differs from unchecked in the middle.
+		var mid := Vector2i(on.get_width() / 2, on.get_height() / 2)
+		assert_gt(on.get_image().get_pixelv(mid).get_luminance(), 0.6, "checked has a light mark")
+
+
+func test_buttons_have_a_visible_frame_in_every_state() -> void:
+	var ps = _scene().pause_screen
+	for b in [ps.set_min_button, ps.set_max_button]:
+		for state in ["normal", "hover", "pressed", "focus"]:
+			var st = b.get_theme_stylebox(state)
+			assert_true(st is StyleBoxFlat, "%s has its own %s style" % [b.name, state])
+			assert_gt(st.border_width_left, 0, "%s %s has a frame" % [b.name, state])
+			assert_gt(st.border_color.a, 0.9)
+			assert_gt(st.border_color.get_luminance(), 0.6)
+		var normal: StyleBoxFlat = b.get_theme_stylebox("normal")
+		assert_gt(normal.bg_color.a, 0.9, "the button has an opaque fill")
+
+
+func test_strip_is_nearly_opaque() -> void:
+	var ps = _scene().pause_screen
+	var st: StyleBoxFlat = ps.strip.get_theme_stylebox("panel")
+	assert_gte(st.bg_color.a, 0.85)
