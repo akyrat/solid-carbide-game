@@ -1,6 +1,6 @@
 extends GutTest
-## Task T-084: the baked comic look (white burst, black border, black letters) of the trick popups. Hard pixels only (no
-## semi-transparent ones), no Redgull red, a burst that fits each text, the
+## Task T-084: the baked comic look (white rounded rectangle, black border, black letters) of the trick popups. Hard pixels only (no
+## semi-transparent ones), no Redgull red, a rounded rectangle that fits each text, the
 ## same texture for the same text.
 
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
@@ -73,7 +73,7 @@ func test_few_colours() -> void:
 		assert_lt(seen.size(), 30, "%s: under 30 colours" % c[0])
 
 
-func test_burst_fits_the_text() -> void:
+func test_bubble_fits_the_text() -> void:
 	for c in CASES:
 		var img: Image = Art.bake(c[0], c[1])
 		var box: Rect2i = Art.text_box(c[0], c[1])
@@ -81,13 +81,13 @@ func test_burst_fits_the_text() -> void:
 		assert_gt(box.position.y, 4, "%s: room above the text" % c[0])
 		assert_gt(img.get_width() - box.end.x, 4, "%s: room right of the text" % c[0])
 		assert_gt(img.get_height() - box.end.y, 4, "%s: room below the text" % c[0])
-		# The four corners just outside the text box are burst, not transparent.
+		# The four corners just outside the text box are bubble, not transparent.
 		for corner in [Vector2i(box.position.x - 1, box.position.y - 1), Vector2i(box.end.x, box.position.y - 1),
 				Vector2i(box.position.x - 1, box.end.y), Vector2i(box.end.x, box.end.y)]:
-			assert_gt(img.get_pixelv(corner).a, 0.0, "%s: burst covers the text box corners" % c[0])
+			assert_gt(img.get_pixelv(corner).a, 0.0, "%s: bubble covers the text box corners" % c[0])
 
 
-func test_longer_text_gets_a_wider_burst() -> void:
+func test_longer_text_gets_a_wider_bubble() -> void:
 	assert_gt(Art.bake("Trending! +120 Likes", "normal").get_width(), Art.bake("FULL 360! +0.25", "normal").get_width())
 	assert_lt(Art.bake("LONG DRIFT! +0.05", "small").get_height(), Art.bake("FULL 360! +0.25", "normal").get_height())
 
@@ -98,7 +98,7 @@ func test_same_text_gives_the_same_texture_and_image() -> void:
 	assert_eq(Art.bake("ALT DRIFT! +0.5", "normal").get_data(), Art.bake("ALT DRIFT! +0.5", "normal").get_data(), "deterministic")
 
 
-func test_white_burst_black_border_black_letters() -> void:
+func test_white_bubble_black_border_black_letters() -> void:
 	# Only three colours: white, black and nothing. Names and amounts alike are black.
 	for c in CASES:
 		var img: Image = Art.bake(c[0], c[1])
@@ -180,3 +180,28 @@ func test_popup_uses_the_baked_texture_with_nearest_filtering() -> void:
 func test_empty_text_does_not_break() -> void:
 	var img: Image = Art.bake("", "normal")
 	assert_gt(img.get_width(), 0)
+
+
+func test_corners_are_rounded_in_stepped_pixels() -> void:
+	for c in CASES:
+		var img: Image = Art.bake(c[0], c[1])
+		var w := img.get_width()
+		var h := img.get_height()
+		# The very corner of the shape is cut off; the middle of each edge is not.
+		assert_eq(img.get_pixel(1, 1).a, 0.0, "%s: corner pixel cut" % c[0])
+		assert_eq(img.get_pixel(w - 2, h - 2).a, 0.0, "%s: corner pixel cut" % c[0])
+		assert_eq(img.get_pixel(w / 2, 1), Color.BLACK, "%s: straight black top edge" % c[0])
+		assert_eq(img.get_pixel(1, h / 2), Color.BLACK, "%s: straight black left edge" % c[0])
+		# Stepped: the first opaque pixel on each of the top rows moves in by whole pixels, never back.
+		var prev := w
+		for y in range(1, 1 + Art.CORNER):
+			var first := -1
+			for x in w:
+				if img.get_pixel(x, y).a > 0.0:
+					first = x
+					break
+			assert_lte(first, prev, "%s: the outline widens going down the corner" % c[0])
+			prev = first
+		# Padding around the lettering is small.
+		var box: Rect2i = Art.text_box(c[0], c[1])
+		assert_lt(box.position.x, 12, "%s: small padding" % c[0])
