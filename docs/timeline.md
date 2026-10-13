@@ -885,3 +885,8 @@ Entry format:
 - Decision or change: the board playtested the popups and approved them ("LGTM"). Trick and challenge popups are white rounded rectangles with a black border and black Bangers lettering (Bangers 2.100, SIL OFL 1.1, script-drawn, no PixelLab), on one straight baseline. Each follows the car for its whole life, rising with an ease-out (fast, then slowing) as it fades; at most three stack at once, the oldest making room, and the stack never reaches above a quarter of the screen from the top. QA noted the smallest lettering loses pixel rows at the default zoom; the board accepted it as is. Both passed QA in two rounds.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
 - Tasks: T-084 (done), T-125 (done)
+
+## 2026-10-14: T-128 done: the city under attack, in the story
+- Decision or change: Extended narrative, Content now describes downtown Tokyo at night in the middle of the kaiju's attack (the kaiju unnamed) and why the city put up alert banners. The Narrative Theme Agent's proposals wait for the board: picture-only banners (or with words such as "ALERT", "KAIJU ALERT", "STAY INSIDE"), larger banners on buildings and small standing signs on the pavement, light to medium damage, a lighter cooler grey pavement with a raised kerb, and no civilians shown for now; plus one art brief for T-064, T-129 and T-130 (in T-128's result notes). Docs only, passed QA round 1. T-129 is now open.
+- Documents touched: `docs/extended-narrative.md`
+- Tasks: T-128 (done), T-129 (open)
