@@ -10,7 +10,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 
 | Folder | What goes in it |
 | --- | --- |
-| `scenes/` | Scenes (`.tscn`). `game/game.tscn` is the main scene (the screen flow); `drift_prototype/` is the drift prototype; `level/` is the MVP map; `run/` is the run |
+| `scenes/` | Scenes (`.tscn`). `game/game.tscn` is the main scene (the screen flow); `drift_prototype/` is the drift prototype; `driving/` the drift marks; `level/` is the MVP map; `run/` is the run |
 | `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state |
 | `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
@@ -276,6 +276,7 @@ There is no jump, no arrow-key steering and no gamepad.
 - `drift_prototype.gd`: builds the scene. The physics world is never drawn; the `View` node draws the ground grid and the car sprite either flat or through the 2:1 isometric projection screen = (x - y, (x + y) / 2), and places the camera exactly on the drawn car (no rotation, no smoothing). Switching views changes only the drawing.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
 - `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
+- `drift_marks.gd`: the drift marks (task T-117, see "Drift marks"), drawn over the ground and under the test room and the car, in the current view.
 - `test_room.gd`: the test room's walls and boulder (static bodies on layer 1, under `PhysicsWorld`) and their drawing.
 
 **Pixel scale:** 16 pixels per unit in the flat world, the same as the placeholder car sheets, so the flat placeholder sheet is drawn at scale 1 and the final isometric sheet (32 px per unit) at scale 0.5. The camera zoom is Unity's orthographic size (half the visible height in units); Godot's zoom is set to window height / (2 x size x 16), so 14.4 shows 28.8 units from top to bottom in both views.
@@ -361,6 +362,23 @@ The limits are tuning values in `scripts/driving/car_tuning.gd` (`TRICK_SETTINGS
 | Keep steering: A or D must stay held on the same side during the switch | `alternate_keep_steering` | on | on / off toggle |
 
 The extended drift's second and the 360's full turn are Decisions, so they are constants, not sliders.
+
+## Drift marks
+
+Task T-117 (Visual style, Decisions, "Drift marks"). While the car drifts, its two rear tyres leave marks on the ground. The scene is `scenes/driving/drift_marks.tscn` (script `scripts/driving/drift_marks.gd`); the run (`run.drift_marks`) and the drift prototype (`drift_prototype.drift_marks`) each add one and call `bind(car)`.
+
+- **When:** only while the car's own drift state is on (`car.model.is_drifting`, the same one that gives likes for drifting: W, or S, held with A or D). Never while driving straight or standing still. Each drift starts a new mark per rear tyre (`marks_started` counts them), so separate drifts leave separate marks.
+- **Where:** after every car physics step, at each rear tyre's real place on the ground, from the car's position, heading and size (Drifting, Decisions: 1 unit wide, 3 long): `rear_axle_units` behind the centre and `half_track_units` to each side (`rear_tyres(position, rotation)` returns `[left, right]` in units). A point is added once a tyre has moved `min_segment_units`. Points are in flat world pixels, so the node sits under the view's projection: in the run, inside the map's drawing (`map.view_root`), right after the ground tiles and before the buildings, arrows and boulders; the car (the run's `View`) and the HUD are drawn after the map. In the drift prototype it is right after the ground grid, before the test room and the car sprite, with the view's transform (flat or isometric). Marks stay where they were laid.
+- **How long:** a mark is a chain of `Line2D` pieces. A piece closes after `piece_segments` segments, or when the drift ends; the next piece starts at its last point, so the mark stays joined. Each closed piece stays fully visible for `lifetime` seconds, then fades as a whole (the node's `modulate` alpha, never per pixel: Visual style, Decisions, "See-through rule") over `fade_time` seconds and is removed. Time runs in `_process` with the default (pausable) process mode, so marks do not fade while the game is paused. A new run builds a new map, which brings new, empty marks.
+- **Cap:** at most `max_segments` segments, both tyres together; past it the oldest closed pieces go first (or, if only pieces still being laid are left, their oldest points). `segment_count()` is the count now.
+- **Numbers (proposals for the board's playtest):** lifetime 6 s, fade 1 s, width 0.25 units (4 flat world pixels, about one tyre), cap 800 segments, pieces of 16 segments, a point every 0.1 units or more, rear axle 0.9 units behind the centre, tyres 0.375 units to each side. At drift speed a point is laid on every physics step (50 per second per tyre), so a continuous drift keeps about 7 s x 100 = 700 segments alive: the cap is a safety net above that.
+- **Placeholder look:** a plain dark line, the scene's `mark_texture`, a 4 x 4 opaque `ImageTexture` of one colour (18, 15, 23), stored in the scene (no file under `art/`). Nearest-neighbour filtering, no anti-aliasing, not Redgull red.
+
+**To swap the art and retune (T-118):** change only `scenes/driving/drift_marks.tscn`: `mark_texture` (the mark's texture, opaque pixels only: the whole piece fades), `texture_mode` (1 = tile along the line, 2 = stretch), `mark_color` (a tint, keep it white for the texture's own colours, alpha 1), `width_units`, `lifetime`, `fade_time`, and if needed `max_segments`, `piece_segments`, `min_segment_units`, `rear_axle_units` and `half_track_units`. With `texture_mode` tile, one texture tile is as long as the texture's width scaled by `width_units x 16 / texture height`. Keep the root's `texture_filter` Nearest. When and where marks are laid is in the script and does not change.
+
+**Screenshots** of a run started from the main menu, the car drifting (two marks behind the rear tyres) and driving straight (none laid): `bash game/tools/screenshot.sh res://tests/fixtures/drift_marks_demo_drift.tscn screenshots/drift_marks_drifting.png 150` and `bash game/tools/screenshot.sh res://tests/fixtures/drift_marks_demo_straight.tscn screenshots/drift_marks_straight.png 90`.
+
+**Tests:** `tests/unit/test_drift_marks.gd`, part of the GUT suite: marks while drifting and none while driving straight or standing still, one per rear tyre on the tyre's place, a new mark per drift, the lifetime, the fade as a whole and the removal, the cap during a 30-second drift, pieces staying joined, no aging while paused, the drawing order in the run and the prototype (and the view switch), the placeholder (nearest, opaque, dark, not Redgull red), the settings in the scene, a new run, and a run started from the main menu.
 
 ## Trick popups
 
@@ -491,7 +509,7 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 
 **The scene** (`scripts/run/run.gd`, root node `Run`):
 
-- Children: `Map` (the MVP map scene, drawn in the isometric view), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the car's sprite and the `Camera`) and `RunState` (the state, below).
+- Children: `Map` (the MVP map scene, drawn in the isometric view, with the drift marks inside its drawing, see "Drift marks"), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the car's sprite and the `Camera`) and `RunState` (the state, below).
 - The car starts at the centre of the map (0, 0 units, in the gravel square), nose along -y, as in the drift prototype. The camera sits exactly on the drawn car, zoom 14.4, as in the drift prototype. The map checks its challenges against the car (`map.car`).
 - `run.start_run()` starts a fresh run: it replaces the map (meteor boulders gone; every challenge open again when challenges are on) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
 

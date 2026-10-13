@@ -11,6 +11,9 @@ extends Node2D
 ## A test room (task T-033: a few walls and a boulder, test_room.gd) lets the
 ## board try the car's bounce. Its static bodies are in PhysicsWorld; the View
 ## draws them.
+##
+## Drift marks (task T-117) are drawn on the ground, under the test room and
+## the car, in the current view.
 
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
@@ -20,6 +23,7 @@ const TestRoomScript := preload("res://scripts/driving/test_room.gd")
 const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
+const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 
 const ACTION_TOGGLE_PANEL := "toggle_tuning_panel"
 const ACTION_TOGGLE_VIEW := "toggle_view"
@@ -38,6 +42,7 @@ var physics_world: Node2D
 var car: CharacterBody2D
 var view_root: Node2D
 var ground: Node2D
+var drift_marks: Node2D
 var test_room: Node2D
 var car_sprite: Sprite2D
 var trick_popups: Node2D
@@ -63,6 +68,10 @@ func _ready() -> void:
 	ground.name = "Ground"
 	ground.px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(ground)
+	drift_marks = DriftMarksScene.instantiate()
+	drift_marks.name = "DriftMarks"
+	view_root.add_child(drift_marks)
+	drift_marks.bind(car)
 	test_room = TestRoomScript.new()
 	test_room.name = "TestRoom"
 	view_root.add_child(test_room)
@@ -132,6 +141,7 @@ func view_transform() -> Transform2D:
 func set_view(v: String) -> void:
 	view = v
 	ground.transform = view_transform()
+	drift_marks.transform = view_transform()
 	test_room.transform = view_transform()
 	car_sprite.use_sheet(v)
 	sync_view()
