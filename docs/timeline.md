@@ -750,3 +750,28 @@ Entry format:
 - Decision or change: the board agreed the next wave: T-034 (buildings turn see-through when the car is behind them) and T-039 (enemy numbers, data only) start now, and T-065 (crashed meteor boulders) gets the PixelLab go for one sample boulder, which the board reviews before the rest are made. Old test logs left in the worktrees folder were deleted on the board's go.
 - Documents touched: none
 - Tasks: T-034, T-039, T-065 (in progress)
+
+## 2026-10-13: T-039 done: enemy numbers
+- Decision or change: `game/data/enemies.json` (read through `enemy_data.gd`) holds the proposed enemy numbers: minion health 4, speed 6, contact damage 5 every 0.5 s; 12 minions at the start rising to 20 at 7:00; 60% drop chance of 2 coins; kaiju health 500 (about 48.5 s to kill for an average level-8 run); 3 meteors every 8 s. Passed QA round 1; data only, so merged. Flagged for the board: the kaiju drops no coins (Game loop architecture says enemies drop coins), meteors aim within 10 units of the car, minions are replaced as they die, and the count holds during the kaiju's minute. T-044 (minions) is unblocked.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-039 (done), T-044 (open)
+
+## 2026-10-13: The kaiju drops a few coins; one more boulder call
+- Decision or change: the board decided the kaiju always drops a few coins when defeated (T-039 had proposed none). Its death ends the run at once, so the Project Lead settled that its coins are added to the run's coins as the run ends, without being picked up. T-119 (Game Data) adds the number; T-045 (the kaiju) depends on it and adds the coins before the run ends. The board also gave the go for one more PixelLab call on T-065, to fix the sample boulder's shape (a tall egg on a pedestal): a low, wide, jagged rock lying on the ground with no base.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-119 (new), T-045 (depends on T-119), T-065 (one more call)
+
+## 2026-10-13: T-119 done: the kaiju drops 10 coins
+- Decision or change: `game/data/enemies.json` gives the kaiju a 100% drop of 10 coins (five minion drops, about 4% of a run's roughly 250 coins), read through `EnemyData.kaiju_coins_on_defeat()`. The kaiju task (T-045) adds them to the run's coins before the run ends. Passed QA round 1; data only, so merged. The board can raise it if winning should matter more for the coin economy.
+- Documents touched: `game/README.md`
+- Tasks: T-119 (done)
+
+## 2026-10-13: T-034 done: buildings turn see-through when the car is behind them
+- Decision or change: the board playtested T-034 and approved it ("see-through buildings work amazing"). The placeholder buildings now rise 15 units in the isometric view (a placeholder height; the final art, T-064, can set its own) and are drawn in depth order with the car. A building covering the car fades to 15% over 0.15 s and fades back when the car comes out; only the car triggers it. The drift marks stay between the ground and the buildings. Passed QA round 1. T-064 (the building art) is now open; minions (T-044) need a place in the same depth order.
+- Documents touched: `docs/level-design.md`, `game/README.md`
+- Tasks: T-034 (done), T-064 (open)
+
+## 2026-10-13: Boulder art: two approved samples
+- Decision or change: the board reviewed the boulder samples and approved two as the boulder variants: the first PixelLab sample with its stone disc removed by a free script, and the second, lower, boxy PixelLab sample. 2 generations were used in all (balance 4954 of 5000). T-065 now puts both into the game (no more PixelLab calls), sized to the 3-unit collision circle, for the board's playtest. The T-034 folder was deleted once Godot was closed.
+- Documents touched: none
+- Tasks: T-065 (in progress)

@@ -39,9 +39,20 @@ extends Node2D
 ## they land. add_meteor_boulder() places one during a run (same size, look and
 ## collision as the map's boulders); can_place_meteor_boulder() is its
 ## placement check. A new run builds a new map, so they go with the old one.
+##
+## See-through buildings (task T-034; Visual style, Decisions): in the
+## isometric view each building is its own node (map_building.gd) that rises
+## BUILDING_HEIGHT_UNITS and is drawn in depth order with the car. While a
+## building covers the car on screen (the car is behind it and the car's drawn
+## shape overlaps it), that building alone fades as a whole to
+## SEE_THROUGH_ALPHA over SEE_THROUGH_FADE_TIME seconds, and fades back when
+## the car comes out. With `car` set the map does this every frame; otherwise
+## call update_see_through(). car_z_index() says where the car goes in the
+## depth order (the run puts its car drawing there).
 
 const ChallengeTracker := preload("res://scripts/level/challenge_tracker.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
+const MapBuilding := preload("res://scripts/level/map_building.gd")
 
 const LAYOUT_PATH := "res://data/level/mvp_map.json"
 ## The ground tiles' layout (T-103): the atlas tile on every 2 x 2 unit cell.
@@ -60,6 +71,23 @@ const PLACEMENT_STEP := 0.1
 const CHALLENGES_ENABLED := false
 ## Fallback boulder size (units across) if the layout data has no boulder.
 const DEFAULT_BOULDER_DIAMETER := 3.0
+## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
+## building is while it covers the car (0.15 = 15%), and how long the fade
+## takes, in seconds (both ways).
+const SEE_THROUGH_ALPHA := 0.15
+const SEE_THROUGH_FADE_TIME := 0.15
+## How tall the placeholder buildings are drawn in the isometric view, in
+## units (a placeholder until the building art, task T-064).
+const BUILDING_HEIGHT_UNITS := 15.0
+## The drawn car (Drifting, Decisions: 1 unit wide, 3 long), and how high its
+## drawing reaches above the ground, in units, for the cover test.
+const CAR_LENGTH_UNITS := 3.0
+const CAR_WIDTH_UNITS := 1.0
+const CAR_HEIGHT_UNITS := 1.0
+## z_index of the first building in depth order; each next one is 2 higher,
+## leaving room for the car between any two. The ground, drift marks, arrows
+## and boulders stay at 0, under every building.
+const BUILDING_Z_BASE := 2
 
 ## Fired once when a preset challenge is completed (XP and the HUD hook in here later).
 signal challenge_completed(challenge_id: String)
@@ -104,7 +132,10 @@ var arrows: Dictionary = {}
 var boulders_draw: Node2D
 var ground_draw: Node2D
 var ground_tiles: Node2D
+## The container of the building nodes (named "Buildings"); it also draws the map's outline.
 var buildings_draw: Node2D
+## The building nodes (map_building.gd), in the layout data's order.
+var buildings: Array = []
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -163,6 +194,7 @@ func _build() -> void:
 	buildings_draw.name = "Buildings"
 	buildings_draw.map = self
 	view_root.add_child(buildings_draw)
+	_build_buildings()
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -176,6 +208,32 @@ func _build() -> void:
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
+
+
+func _build_buildings() -> void:
+	var i := 0
+	for d in layout.buildings:
+		var b = MapBuilding.new()
+		b.name = "Building%02d" % (i + 1)
+		b.footprint = rect_of(d)
+		b.height_units = BUILDING_HEIGHT_UNITS
+		b.see_through_alpha = SEE_THROUGH_ALPHA
+		b.fade_time = SEE_THROUGH_FADE_TIME
+		b.top_color = building_color
+		b.left_color = building_color.darkened(0.35)
+		b.right_color = building_color.darkened(0.2)
+		b.edge_color = building_edge_color
+		buildings_draw.add_child(b)
+		buildings.append(b)
+		i += 1
+	# Draw order: by the front corner (x + y), nearest to the viewer on top.
+	var order := buildings.duplicate()
+	order.sort_custom(func(p, q):
+		if p.depth_key() != q.depth_key():
+			return p.depth_key() < q.depth_key()
+		return p.footprint.position.x < q.footprint.position.x)
+	for k in order.size():
+		order[k].z_index = BUILDING_Z_BASE + 2 * k
 
 
 func _build_walls() -> void:
@@ -530,6 +588,70 @@ func _physics_process(_delta: float) -> void:
 		update_car(car.position / PX_PER_UNIT, car.rotation)
 
 
+func _process(delta: float) -> void:
+	if car != null:
+		update_see_through(car.position / PX_PER_UNIT, car.rotation, delta)
+
+
+# ---- See-through buildings (task T-034) -----------------------------------------------------
+
+## The drawn car's shape on screen, in the map's screen pixels (isometric
+## view): its 1 by 3 unit rectangle on the ground at `centre` (units) and
+## `rotation` (radians, nose along +x at 0), together with the same rectangle
+## raised CAR_HEIGHT_UNITS, as one convex outline.
+func car_screen_shape(centre: Vector2, rotation: float) -> PackedVector2Array:
+	var half := Vector2(CAR_LENGTH_UNITS, CAR_WIDTH_UNITS) / 2.0
+	var up := Vector2(0.0, -CAR_HEIGHT_UNITS * PX_PER_UNIT)
+	var pts := PackedVector2Array()
+	for s in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
+		var corner: Vector2 = centre + (half * s).rotated(rotation)
+		var p := ISO_TRANSFORM * (corner * PX_PER_UNIT)
+		pts.append(p)
+		pts.append(p + up)
+	return Geometry2D.convex_hull(pts)
+
+
+## Fades the buildings covering the car (centre in units, rotation in
+## radians) and fades the others back, by `delta` seconds. In the flat view no
+## building covers anything, so every building is solid.
+func update_see_through(car_centre_units: Vector2, car_rotation: float, delta: float) -> void:
+	if view != "iso":
+		for b in buildings:
+			b.reset_fade()
+		return
+	var shape := car_screen_shape(car_centre_units, car_rotation)
+	for b in buildings:
+		b.update_fade(car_centre_units, shape, delta)
+
+
+## The buildings that covered the car at the last update_see_through().
+func covering_buildings() -> Array:
+	var out := []
+	for b in buildings:
+		if b.covering:
+			out.append(b)
+	return out
+
+
+## The z_index for the car's drawing so it is drawn under every building that
+## covers it and over every other building: just under the lowest covering
+## building, or over all of them when none covers it.
+func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
+	var z := top_z_index()
+	if view != "iso":
+		return z
+	var shape := car_screen_shape(car_centre_units, car_rotation)
+	for b in buildings:
+		if b.covers(car_centre_units, shape):
+			z = mini(z, b.z_index - 1)
+	return z
+
+
+## A z_index over every building (the car's when nothing covers it).
+func top_z_index() -> int:
+	return BUILDING_Z_BASE + 2 * buildings.size()
+
+
 ## Switches the drawing between "flat" and "iso". Never touches the physics.
 func set_view(v: String) -> void:
 	view = v
@@ -539,6 +661,10 @@ func set_view(v: String) -> void:
 		# The tiles are drawn in screen pixels: undo the view's projection.
 		ground_tiles.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 		ground_draw.queue_redraw()
+	for b in buildings:
+		b.set_view(v)
+		if v != "iso":
+			b.reset_fade()
 
 
 ## True when the isometric view draws the ground art (T-103) instead of the
@@ -610,17 +736,14 @@ class _GroundTiles extends Node2D:
 				draw_texture_rect_region(atlas, Rect2(top - Vector2(size.x / 2.0, 0.0), size), src)
 
 
-## Draws the buildings (flat placeholder colours) over the ground.
+## Holds the building nodes (map_building.gd, flat placeholder colours) and
+## draws the map's outline on the ground.
 class _BuildingsDraw extends Node2D:
 	var map
 
 	func _draw() -> void:
 		var u: float = map.PX_PER_UNIT
 		var m: Rect2 = map.rect_of(map.layout.map.rect)
-		for b in map.layout.buildings:
-			var r: Rect2 = map.rect_of(b)
-			draw_rect(Rect2(r.position * u, r.size * u), map.building_color)
-			draw_rect(Rect2(r.position * u, r.size * u), map.building_edge_color, false, 2.0)
 		draw_rect(Rect2(m.position * u, m.size * u), map.building_edge_color, false, 3.0)
 
 

@@ -1,0 +1,46 @@
+{
+  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health and damage in the same points as the car's health (run.json) and the weapons' damage (weapons.json). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
+  "minion": {
+    "health": 4,
+    "move_speed": 6,
+    "contact_damage": 5,
+    "contact_damage_interval": 0.5,
+    "knockback": 8
+  },
+  "spawning": {
+    "_comment": "minions_wanted: how many minions the spawner keeps around. It grows in a straight line from minions_at_start (run second 0) to minions_at_boss_time (run second growth_until_seconds, the kaiju's arrival) and then stays there. When fewer are around, one spawns every spawn_interval_seconds, spawn_margin_units beyond the edge of the visible screen. The combo's spawn multiplier (combo.json, spawning) multiplies minions_wanted.",
+    "minions_at_start": 12,
+    "minions_at_boss_time": 20,
+    "growth_until_seconds": 420,
+    "spawn_interval_seconds": 0.5,
+    "spawn_margin_units": 3
+  },
+  "coins": {
+    "drop_chance": 0.6,
+    "coins_per_drop": 2
+  },
+  "kaiju": {
+    "health": 500,
+    "move_speed": 3,
+    "contact_damage": 20,
+    "contact_damage_interval": 1.0,
+    "knockback": 16
+  },
+  "kaiju_coins": {
+    "_comment": "Coins the kaiju drops when defeated (Enemies, Decisions, 2026-10-13): always (drop_chance 1), coins_per_drop coins. Its death ends the run at once, so they are added to the run's coins as the run ends, without being picked up.",
+    "drop_chance": 1.0,
+    "coins_per_drop": 10
+  },
+  "meteor_attack": {
+    "_comment": "Attacks start first_attack_after_seconds after the kaiju appears, then every seconds_between_attacks. Each attack: windup_seconds of the kaiju's short animation, then meteors_per_attack warning circles at once, each landing warning_seconds later within land_within_units_of_car of the car. A meteor hits the car when the car's centre is within impact_radius_units of where it lands (the boulder's radius: boulders are 3 units across). warning_seconds is decided (Enemies, Decisions), not a balancing number.",
+    "first_attack_after_seconds": 5,
+    "seconds_between_attacks": 8,
+    "windup_seconds": 1.0,
+    "meteors_per_attack": 3,
+    "warning_seconds": 2.0,
+    "land_within_units_of_car": 10,
+    "impact_radius_units": 1.5,
+    "impact_damage": 15,
+    "knockback": 20
+  }
+}

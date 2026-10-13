@@ -1,7 +1,7 @@
 ---
 id: T-044
 title: Minions: spawn, chase the car, contact damage, die and drop coins
-status: blocked
+status: open
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -40,6 +40,8 @@ Build the MVP minion as Enemies, Decisions describes it, with T-039's numbers:
 Minions and coins are placeholders for now (simple shapes in the palette; minions light green). The final minion and coin art come from separate art tasks.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
+
+**Draw order (from T-034's QA, 2026-10-13):** once T-034 (see-through buildings) is merged, buildings get a depth order and the car is drawn just under the buildings covering it. Minions must get a place in that order too (see `map.car_z_index()` and game/README.md, "See-through buildings"), or they will be drawn under every building even when in front of one. The fade itself stays car-only.
 
 ## Acceptance criteria
 
