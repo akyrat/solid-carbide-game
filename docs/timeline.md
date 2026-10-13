@@ -705,3 +705,8 @@ Entry format:
 - Decision or change: the board playtested T-074 and approved it ("LGTM"). On a level-up the car now gives off a burst of 40 script-drawn neon particles: cyan and pink stars, pink and cyan diamonds, a violet pixel cross and a small cyan spark, each with a white-hot core and darker halo pixels, no red, no semi-transparent pixels. They shrink to half size and then pop out, with no fade. No PixelLab calls. The violet cross, flagged as the weakest shape, is kept as is. Made by `game/tools/build_level_up_particles.py` (with a check command and tests). Passed QA round 1. Marking T-074 done made T-100 (challenge completed effect, after the MVP) open.
 - Documents touched: `docs/visual-style.md`, `game/README.md`
 - Tasks: T-074 (done), T-100 (open, after the MVP)
+
+## 2026-10-13: Health and likes bars stand upright at the top left
+- Decision or change: the board wants the car's health bar and the likes bar vertical, at the top left of the screen. Open details settled by the Project Lead, as the board asked: both bars fill from the bottom up, side by side (health on the far left, likes to its right), each with its already-approved label under it (no new text), the combo counter stays next to the likes bar, the look stays a placeholder, and the UI Agent proposes the sizes. T-113 (UI) builds it; the board playtests it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-113 (new)
