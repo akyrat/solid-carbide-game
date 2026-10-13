@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -77,3 +77,18 @@ Documents affected, all updated: `game/README.md` ("Drift smoke", the tools list
 
 Each puff lasts too long: drifting in a full circle, the smoke trail covers about half the circle. The board wants it to cover about **20 degrees** of the circle. The trail's length follows the puffs' lifetime, so cut `lifetime` in `drift_smoke.tscn` to about a ninth (from 0.7 s to roughly 0.08 s, with its randomness), measured in a real full-circle drift, and adjust the size curve and spawn rate only as needed so the short trail still reads as smoke. Report the measured arc. Nothing else changes.
 
+
+## Round 2
+
+No PixelLab calls (nothing spent). Only `scenes/driving/drift_smoke.tscn` changed (and tests, README, screenshots); `drift_smoke.gd` is untouched.
+
+**Measured, not guessed.** Test `test_the_smoke_trail_spans_about_twenty_degrees_in_a_full_circle_drift` (`tests/unit/test_drift_smoke.gd`) drives the run car with W + D for 5 s, then 300 more physics steps; per step it takes the live puffs of the left rear tyre, oldest to newest, and measures the angle they span seen from the circle's centre (fitted from three points of the car's path), averaged over the steps. Old values (0.7 s, 30 per second): **138 degrees** (matches the board's "about half"). Cutting only the lifetime to 0.08 s gave just 7 degrees (with 30 per second, a trail of about 4 physics steps has too few puffs, so the span between oldest and newest is shorter than the life), and 9.6 degrees at 50 per second. Lifetime 0.10 gave 13.8, 0.13 gave **20.2** (20.0 to 20.2 over repeated runs), 0.15 gave 24.3.
+
+**Changed:** `lifetime` 0.7 to **0.13 s** (randomness stays 0.25, so +-25% as before; about a fifth, not a ninth, because the measured arc, not the ratio, was the target: 0.08 s measures about 10 degrees); `puffs_per_second` 30 to **50** (one puff per tyre per physics step, so the short trail is a connected chain, not 2 or 3 stray puffs). Size curve unchanged (the puff still grows 0.5 to 1.3 then shrinks within its 0.13 s; the screenshots show a chain of overlapping puffs that reads as a short smoke trail). `max_puffs` stays 64 (a steady drift now holds about 13).
+
+**Note on the measure:** it counts puff centres, so the visible trail is a little longer (a full-grown puff is about one car width wide).
+
+**Tests:** new arc test (20 degrees +- 5); the "a long drift never over the cap" test now asserts a steady drift holds more than `puffs_per_second x lifetime` puffs (it used "more than half the cap", which was about the old life); other T-121 tests read `lifetime` from the scene and pass. Full GUT 427 / 427 passed; `game/tools` 155 OK; `tools` 115 OK. Screenshots retaken: `screenshots/drift_smoke_asphalt.png`, `drift_smoke_gravel.png` and their `_crop.png` (3x). Line-ending-only `.import` and `project.godot` changes reverted.
+
+Documents affected: `game/README.md` ("Drift smoke": numbers, tests).
+- 2026-10-13, in-progress → in-qa: Round 2: shorter smoke, trail measured at 20 degrees
