@@ -56,6 +56,14 @@ class TaskboardSyncTests(unittest.TestCase):
         self.assertEqual(doc["depends_on"], ["T-012", "T-029"])
         self.assertEqual(doc["file"], "tasks/T-900-test.md")
         self.assertEqual(doc["file_status"], "blocked")
+        self.assertEqual(doc["lead"], "")   # no lead line: no owner
+
+    def test_ticket_reads_the_lead(self):
+        path = self.tasks / "T-900-test.md"
+        path.write_text(TASK.replace("to: ui\n", "to: ui\nlead: Tools\n"), encoding="utf-8")
+        self.assertEqual(tb.ticket(path)["lead"], "Tools")
+        path.write_text(TASK.replace("to: ui\n", "to: ui\nlead:\n"), encoding="utf-8")
+        self.assertEqual(tb.ticket(path)["lead"], "")
 
     def test_ticket_reads_the_review_and_result_notes(self):
         body = ("Body.\n\nThe board's review: drive it and judge the feel.\n"
