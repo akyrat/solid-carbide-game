@@ -715,3 +715,8 @@ Entry format:
 - Decision or change: the board playtested T-113 (both bars upright at the top left) and rejected it: the text placing was poor. It wants to try the likes bar horizontal, centred at the bottom of the screen, with the heart, "Likes" and the level in one row above it and the combo counter above that; the health bar stays upright at the top left with "Car Health" above it. T-113 is reworked on its branch (not merged) and runs on opus. The board also set a rule: nothing user-facing merges before it has played it, placeholders included. Thirteen open or blocked tickets that change what the player sees or reads got a `The board's review:` line. For later, not scheduled: when the player isn't doing tricks, the likes bar slowly drains, but never below the start of the current level.
 - Documents touched: `docs/hud-and-menus.md`, `docs/working-with-the-board.md`, `docs/game-loop-architecture.md`
 - Tasks: T-113 (back to in progress), T-008, T-016, T-017, T-041, T-042, T-044, T-045, T-046, T-050, T-052, T-058, T-067, T-098 (review line added)
+
+## 2026-10-13: Likes drain in the MVP, starting when the combo has drained
+- Decision or change: the board put the likes drain in the MVP and decided it starts once the combo has fully drained; any trick stops it, and it never takes the bar below the start of the current level. T-114 (Game Data) proposes the speed; T-115 (Game Loop) builds it and goes to the board's playtest.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-114 (new), T-115 (new, depends on T-114)

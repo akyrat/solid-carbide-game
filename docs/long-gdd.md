@@ -32,7 +32,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The higher the combo, the more enemies spawn (how: Enemies, Decisions). The board will judge in playtests whether to keep this.
 - A drift that lasts longer than 1 second gives XP for every second it lasts, the first second included (a 3-second drift gives 3 seconds' worth).
 - Each second of drifting gives a fixed amount of XP: 10% of the XP bar at level 1. The amount does not grow with the bar, so at higher levels it is a smaller share of the bar and drifting gives only a little XP.
-- **Likes drain** (later; not scheduled yet): when the player isn't doing tricks, the likes bar slowly empties, but never below the start of the current level, so the player never loses a level. When the drain starts, how fast it goes and how it relates to the combo's own drain are open questions.
+- **Likes drain:** when the player isn't doing tricks, the likes bar slowly empties, but never below the start of the current level, so the player never loses a level. It starts once the combo has fully drained, and any trick stops it. The Game Data Agent proposes the speed; the board judges it in playtests. Part of the MVP.
 - "Drifting", for XP, uses the Unity prototype's definition: any moment W or S is held together with A or D (Unity prototype report, section 3).
 - After the MVP, if challenges come back (2026-10-11): at level 1, completing one challenge fills the XP bar: the player reaches level 2 and gets the weapon choice.
 - How much XP challenges and drifting give at each level, and how much XP each level needs, is worked out by the Game Data Agent as sensible XP scaling, within the decisions here.
@@ -613,7 +613,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `592c812b19beff562565eb00ee886114bd9527ae0d4857f57f6d3bb796938149` |
+| `game-loop-architecture.md` | `587f42e669597702dd7f512a60d9bb783a9aa7d9bafab45f0fe60e9282e99b82` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
 | `level-design.md` | `cf856b4cb3078588e8bd3de7a16c6c2dbd05de2a90335f3c33b153a65675f3f3` |
 | `enemies.md` | `426f70392214aaf25e4a3293e1a84e5ff99e18d9e814a3f2fbbb0987d7bf5b44` |
