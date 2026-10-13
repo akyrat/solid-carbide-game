@@ -45,4 +45,40 @@ The board asks for the Narrative Theme Agent to be consulted so the look stays c
 
 ## Result notes
 
-Written by the agent when it finishes.
+Extended narrative, Content, is written (the first map under attack, and the alert banners; Summary, Decisions and Open questions untouched). Everything below is a PROPOSAL for the board unless it already appears in Visual style or Extended narrative, Decisions (2026-10-14).
+
+### 1. The banners' form (for the board to approve)
+
+Recommended: **picture-only, no words.** Each banner is a silly, minimalistic pixel painting of the kaiju (head only, or a simple Godzilla-like body in side view: round back, spikes along the back, tail), in cyan or pink on a dark panel, with a plain warning shape (a triangle or a thick border) and, if wanted, Japanese-like marks that are not real words. Reason: no wording needs approval, no real-word or brand risk, and no kaiju name is needed before the board names it.
+
+Optional, only if the board wants words: one short line in English, in the game's tone, no kaiju name, no brands:
+- "ALERT" (any banner)
+- "KAIJU ALERT" (building banner; "kaiju" is the common word, not the name)
+- "STAY INSIDE" (pavement sign)
+Words on art need the board's approval before any art is made.
+
+Which goes where (proposal): **on buildings** the larger banners (hung across a wall or from a roof edge, the head painting); **on the pavement** the small standing signs (a board on a post, the full-body painting, or head again). Few in total, so each is noticed; how many and where is for the board.
+
+### 2. One art brief for T-064, T-129 and T-130
+
+1. **Scene:** downtown Tokyo at night, in the middle of the kaiju's attack. Look from the 3/4 isometric view, pixel style and scale as in Visual style, Decisions (40 px per unit, selective dark outline, about 30 colours per sprite, no semi-transparent pixels).
+2. **Palette and lighting:** dark navy and purple night base; pink and cyan neon accents drawn into the sprites as bright pixels with small stepped halos; no engine bloom. Lit windows in warm and cool tones, mostly dim.
+3. **Signs:** vertical neon signs with Japanese-like marks that are not real words; no real brands, logos or badges.
+4. **Skyscrapers (T-064):** bases of very tall towers, tops out of view, 2 by 2 per 30 by 30 block, 6 different ones; car-realistic size beside them.
+5. **Shorter buildings (T-129):** roofs visible; same palette, signs and damage level as the skyscrapers.
+6. **Pavement:** every building asset has a pavement drawn around it inside its block: a slightly lighter, cooler grey than the asphalt, a raised kerb edge on the road side, light cracks. Same night lighting; neon spill allowed on it.
+7. **Damage level (proposal, board to confirm):** light to medium, readable but not a ruin. Cracks in walls and pavement, a few broken or dark windows, a little rubble. No big fires, no collapsed buildings, no gore, so the cracked streets already in Visual style stay the reference. Anything heavier is a question for the board (see below).
+8. **Banners (T-130):** as in section 1: silly, minimal, readable at the game's scale, few of them.
+9. **Stays out:** Redgull's red and branding and its seagull logo (the city has nothing to do with Redgull; red appears only on Redgull's own things), real brands and logos, any real words, the name Godzilla and exact copies of the film monster, and any kaiju name (unnamed until the board names it).
+
+### 3. Visual style text for the Project Lead
+
+Visual style, Decisions, already carries the 2026-10-14 redesign entry. Proposed additions only after the board approves the points above: (a) a "City brief" decision listing items 2, 3, 6, 7 and 9 in the board-approved form; (b) the banner form chosen (picture-only, or the exact words) and the buildings/pavement split. Proposed wording once approved: "The city's alert banners are [picture-only paintings of the kaiju's head or body / with the words ...]. The larger ones hang on buildings, the small standing ones are on the pavement. Pavements are a lighter, cooler grey than the asphalt with a raised kerb and light cracks. The attack's damage is light to medium: cracks, a few broken windows, a little rubble." Note: the task names a Visual style section "Building layout and signs" and one called "Redgull's look"; only "Redgull's look" exists as a Decisions entry, and building layout and signs are in the "Buildings" and "Buildings, redesigned" entries.
+
+### 4. Questions for the board
+
+1. Banners: picture-only (recommended) or with words, and if words, which?
+2. How many banners, and should they be on buildings, on the pavement or both (proposed: both, large on buildings, small on the pavement)?
+3. Damage level: light to medium (proposed), or heavier (fires, collapsed buildings)?
+4. Pavement: the look proposed above (lighter cool grey, raised kerb, light cracks), or something else?
+5. Should the story say anything about the people who put up the banners (for example civilians visible, or only their signs)? Proposed: only the signs for now; civilians stay in Extended narrative, Open questions.
