@@ -90,6 +90,7 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 - Every completed challenge, preset or the kaiju's meteor challenges, gives the current level's challenge XP, and the run sends a "score" signal with it for the challenge popup.
 - The run follows the car's drift state step by step: once an unbroken drift reaches 1 second it gives the drift XP for that second, then for each further full second.
 - When XP reaches the level's threshold the level goes up (leftover XP carries over, so one gain can give several level-ups), and the run sends "level up" with the new level. At the top level the bar stops.
+- On every level-up the run plays the level-up effect: a burst of pixel particles from the car, following it while it plays (task T-112; the look: Visual style, Decisions, "Level-up effect"). Several level-ups in the same moment show as one burst, and the burst keeps playing while the run is paused for the weapon choice.
 - The HUD reads the XP, the level's threshold and the level, with a signal whenever they change.
 - A level-up can pause the run (clock and car) until the weapon choice is made, one choice after another when several level-ups come at once. This pause is a switch, off until the level-up screen exists (task T-052): for now a level-up just raises the level and the run carries on.
 - A new run starts back at level 1 with no XP.
@@ -610,7 +611,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `9cb6f215e7558a30cdb7b46a327e56513831a85b2c4352c4d418a98c702b7784` |
+| `game-loop-architecture.md` | `c9110ae64033355e520b3d78100fee06403a3e43426cf6d1d9d8b51e731ff2d2` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
 | `level-design.md` | `cf856b4cb3078588e8bd3de7a16c6c2dbd05de2a90335f3c33b153a65675f3f3` |
 | `enemies.md` | `426f70392214aaf25e4a3293e1a84e5ff99e18d9e814a3f2fbbb0987d7bf5b44` |

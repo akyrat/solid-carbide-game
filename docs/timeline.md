@@ -695,3 +695,8 @@ Entry format:
 - Decision or change: the board dragged T-074 (the level-up effect art) into Planning. No placeholder effect existed to swap art into, so on the board's go a Game Loop task (T-112) builds the effect first: on a level-up the car gives off a burst of particles, with plain placeholder squares. The board wants the car to give off pixel-art particles and judged that this needs no PixelLab: T-074 now draws the particle sprites with a script and swaps them into T-112's effect. T-112 gets no playtest of its own; the board playtests once T-074's particles are in.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-112 (new), T-074 (rewritten, depends on T-112)
+
+## 2026-10-13: T-112 done: the car gives off a burst of particles on a level-up
+- Decision or change: on every level-up (T-037's "level up" signal) the car gives off one burst of 32 plain 4 by 4 pixel squares in pale cyan, which move with the car, shrink rather than fade, last 0.7 seconds and keep playing while the run is paused. Several level-ups at once give one burst. The look and tuning live in `game/scenes/run/level_up_burst.tscn`, so T-074 swaps in the final particles there. Passed QA round 1; no playtest of its own (the board playtests T-074). T-074 is unblocked.
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`
+- Tasks: T-112 (done), T-074 (open)

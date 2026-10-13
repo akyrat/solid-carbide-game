@@ -11,7 +11,8 @@ extends Node2D
 ##
 ## The run scene connects the map's challenge signals and the car's drift
 ## state to the state's likes (XP) and levels (task T-037), and the car's
-## tricks and collisions to the combo (task T-081).
+## tricks and collisions to the combo (task T-081), and plays the level-up
+## effect on the car at every level-up (task T-112).
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
@@ -23,6 +24,8 @@ const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const HudScene := preload("res://scenes/hud/hud.tscn")
 const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
+## The level-up effect (task T-112); its look and tuning live in the scene.
+const LevelUpBurstScene := preload("res://scenes/run/level_up_burst.tscn")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -49,6 +52,8 @@ var view_root: Node2D
 var car_sprite: Sprite2D
 var camera: Camera2D
 var trick_popups: Node2D
+## The level-up effect on the car (task T-112), drawn over the car and kept on it.
+var level_up_burst: CPUParticles2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -78,6 +83,10 @@ func _ready() -> void:
 	view_root.add_child(car_sprite)
 	car_sprite.use_sheet(VIEW)
 
+	level_up_burst = LevelUpBurstScene.instantiate()
+	level_up_burst.name = "LevelUpBurst"
+	view_root.add_child(level_up_burst)
+
 	trick_popups = TrickPopupsScript.new()
 	trick_popups.name = "TrickPopups"
 	view_root.add_child(trick_popups)
@@ -94,6 +103,7 @@ func _ready() -> void:
 	state.name = "RunState"
 	state.add_to_group("run_state")
 	add_child(state)
+	state.level_up.connect(_on_level_up)
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -163,12 +173,20 @@ func _on_car_stepped() -> void:
 	state.drift_step(car.model.is_drifting, car.model.dt)
 
 
+## The player levelled up: the car gives off the level-up burst (T-112).
+func _on_level_up(_new_level: int) -> void:
+	level_up_burst.position = car_sprite.position
+	level_up_burst.play()
+
+
 ## Places the drawn car and the camera on the car's current position.
 func sync_view() -> void:
 	var drawn := ISO_TRANSFORM * car.position
 	car_sprite.position = drawn
 	car_sprite.set_heading(car.rotation)
 	camera.position = drawn
+	if level_up_burst != null:
+		level_up_burst.position = drawn
 
 
 ## Sets the camera zoom (Unity's orthographic size), as the pause screen's slider does.
