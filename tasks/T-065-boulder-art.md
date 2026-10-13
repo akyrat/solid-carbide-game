@@ -156,3 +156,34 @@ The board judged the first sample's shape weak (a tall smooth egg on a stone dis
 - Created: `art-archive/T-065/boulder_sample2_style_input.png`, `boulder_sample2_raw.png` + `.json`, `boulder_sample2.png` + `.json`, `boulder_sample2_preview.png`, `boulder_sample2_raw_preview.png`, `boulder_samples_compare.png`
 - Changed: `game/art/pixellab-generation-log.jsonl` (2 entries: the refused request and the call), `art-archive/README.md` (T-065 rows), this task file
 - No other variants made, nothing swapped into the game. Status stays `in-progress`. No code changed this round. Documents affected: none beyond the earlier `game/README.md` note.
+
+**Asset Generation Agent, 2026-10-13: free fix of the first sample (no PixelLab call)**
+
+The board prefers the first sample and rejected the second. It asked for a free script fix only: remove the first sample's stone disc, pebbles and magenta edge, keep only the rock, and give its bottom a clean dark outline. No PixelLab call was made (balance unchanged at 4954 of 5000; task total still 2 generations). No other variants, nothing swapped into the game.
+
+### How it was made
+
+- Tool: `python game/tools/remove_boulder_base.py build` (new; tests `game/tools/test_remove_boulder_base.py`; `check` confirms the committed sprite matches a fresh build).
+- Rows 0 to 80 (above the disc) are kept byte-identical. From row 81 down, the rock's lower edge is traced along its own dark outline (colour 3,3,2) with rays guided by a rounded curve; points that land on disc tile lines or cracks fall back to their neighbours, and the lower right edge (rows 87 to 99), where the disc behind hides the outline, follows the rock's own dark rim pixels read off the sample. Everything outside the traced edge (the disc, its pebbles, the magenta rim) becomes fully transparent: 3020 pixels.
+- New bottom edge: every rock pixel below row 81 that touches the outside is set to the sprite's own outline colour (3,3,2): 64 pixels; 2 single-pixel spurs removed. Where the bottom crack used to run on into the disc, the edge is closed with a short curve in that same outline colour.
+- Colours: 30 before, 30 after, 0 new. Canvas **kept at 160 x 160**, with the rock where it was (bounding box 32,16 to 130,119, 99 x 104 px), so it lines up with the first sample. Record: `art-archive/T-065/boulder_sample_nobase.json`.
+- Sprite check, `python game/tools/check_sprite_rules.py art-archive/T-065/boulder_sample_nobase.png --size 160`: all PASS (160 x 160, transparent corners, 0 semi-transparent, 30 colours, 7693 opaque pixels).
+- Python tool tests: 156 OK.
+
+### Previews (for the board)
+
+- `art-archive/T-065/boulder_sample_nobase_preview.png`: the cleaned rock, 4x nearest-neighbour, dark and light side by side.
+- `art-archive/T-065/boulder_sample_nobase_compare.png`: original first sample (left) and cleaned (right), 4x, dark row on top, light row below.
+- `art-archive/T-065/boulder_sample_nobase_car_scale.png`: the cleaned rock next to the final car (frame 4 of `game/art/car/car_iso.png`) at the car's game scale (32 art px per unit), both 3x. The rock's width is fitted to the 3-unit collision circle in the isometric view (3 x 32 x sqrt 2, about 136 car px; the rock is drawn at 1.37x its own pixels, so its enlarged pixels are slightly uneven in this picture only). The thin cyan ellipse is the 3-unit footprint. This draw scale is my proposal; it is set for real at the swap-in.
+
+### Honest judgement (the board decides)
+
+- **Good:** the disc, pebbles and magenta rim are fully gone; the bottom reads as a clean rounded dark edge matching the rest of the outline; the glowing cracks, colours and shading are untouched. It reads as one solid glowing rock on both backgrounds, and without the disc it no longer looks like a plinth.
+- **Still there:** it is the same tall egg shape. At game scale, with its width matched to the 3-unit circle, the rock stands about as tall as it is wide (about 143 car px), roughly twice the car's on-screen height, so it would hide a car driving behind it. If that is too tall, a free option is to draw it smaller than the collision circle, or, at a cost, a new shape.
+- **Small flaws:** the first sample already had 57 fully transparent pixels inside the rock (mostly in the crack glow; PixelLab's background removal), which show as dark or light specks against the ground. Left as they were, since the board asked for everything else to stay identical; filling them with their neighbours' colours would be a free fix if the board wants it. There is also a tiny chip in the lower left edge (around x 35, y 96) where the original outline steps in.
+
+### Files (this round)
+
+- Created: `game/tools/remove_boulder_base.py`, `game/tools/test_remove_boulder_base.py`, `art-archive/T-065/boulder_sample_nobase.png` + `.json`, `boulder_sample_nobase_preview.png`, `boulder_sample_nobase_compare.png`, `boulder_sample_nobase_car_scale.png`
+- Changed: `art-archive/README.md` (T-065 rows), `game/README.md` (tool note), this task file
+- Status stays `in-progress`. Documents affected: `game/README.md` (tool note). Visual style unchanged.
