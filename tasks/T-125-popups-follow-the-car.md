@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, tasks/T-091-trick-popups.md, tasks/T-084-trick-popup-art.md, game/scripts/hud/trick_popups.gd]
 files_expected_to_change: [game/scripts/hud/trick_popups.gd, its tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,7 @@ QA round 1 (QA/Integration Agent, 2026-10-13), judged on the diff from `task/T-0
 
 - Offset from the drawn car: pass. `test_popup_keeps_its_offset_from_a_moving_car_for_its_whole_life` moves the car every 0.05 s up to 0.95 s and checks the popup sits at car + START_OFFSET - rise, centred on x; `test_physics_step_places_the_popup...` covers placement in `_physics_process`. In the code the position is set only in `_physics_process` (`place()`), and run (`bind`, `bind_score`, `bind_combo`) and prototype (`bind`) all pass `car_sprite.position`, the drawn position. Run, challenge ("Trending") and prototype popups each have a follow test.
 - No overlap: pass. Four popups on one step and seven born 0.1 s apart are checked pairwise for rectangle overlap. The stagger test checks only at the end, but newer popups rise faster than older ones (ease-out curve), so a popup stacked above an older one moves away from it.
-- Screenshots: pass. In `screenshots/popups_follow_14.png` and `popups_follow_24.png` (10 frames apart) the ground and the drift marks have moved, and both popups are still above the car, stacked, not overlapping. Note: the fixture is about 0.25 to 0.4 s into full throttle, so the speed is not top speed. The gap between the two stacked popups looks larger than 4 px (about 30 px); worth a look in the playtest.
+- Screenshots: pass. In `screenshots/popups_follow_14.png` and `popups_follow_24.png` (10 frames apart) the ground and the drift marks have moved, and both popups are still above the car, stacked, not overlapping. Note: the fixture is about 0.25 to 0.4 s into full throttle, so the speed is not top speed. The gap between the two stacked popups looks larger than 4 px (roughly 40 px on screen); worth a look in the playtest.
 - Docs: pass. HUD and menus, Content "Trick popups" describes following and stacking; the Decisions line matches master's word for word; game/README.md "Trick popups" has the T-125 entry.
 - Tests: pass. Full GUT suite 429/429 (43 scripts; 2 warnings, both not from T-125: an inner-class notice and a float/int compare in T-084's art test). The T-091, T-083, T-092 and T-084 test files are not changed on this branch and pass. Python: game/tools 152 OK, tools 115 OK.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all criteria pass
