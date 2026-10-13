@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -130,3 +130,4 @@ For the board's playtest (not a failure): at the default zoom the popups are now
 
 Godot's line-ending-only `.import` changes were left uncommitted.
 - 2026-10-14, in-qa → needs-playtest: QA round 2: all criteria pass
+- 2026-10-14, needs-playtest → done: LGTM (board playtest of T-125 with T-084's look, 2026-10-14)
