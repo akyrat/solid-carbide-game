@@ -12,7 +12,9 @@ extends Node2D
 ## The run scene connects the map's challenge signals and the car's drift
 ## state to the state's likes (XP) and levels (task T-037), and the car's
 ## tricks and collisions to the combo (task T-081), and plays the level-up
-## effect on the car at every level-up (task T-112).
+## effect on the car at every level-up (task T-112). While the car drifts,
+## its rear tyres leave drift marks (task T-117) on the map's ground, under
+## the buildings and the car.
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
@@ -26,6 +28,8 @@ const HudScene := preload("res://scenes/hud/hud.tscn")
 const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
 ## The level-up effect (task T-112); its look and tuning live in the scene.
 const LevelUpBurstScene := preload("res://scenes/run/level_up_burst.tscn")
+## The drift marks (task T-117); their look and tuning live in the scene.
+const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -54,6 +58,9 @@ var camera: Camera2D
 var trick_popups: Node2D
 ## The level-up effect on the car (task T-112), drawn over the car and kept on it.
 var level_up_burst: CPUParticles2D
+## The drift marks (task T-117), inside the map's drawing: over the ground,
+## under the buildings, boulders and the car. A new run's map brings new ones.
+var drift_marks: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -140,6 +147,12 @@ func _build_world() -> void:
 	add_child(map)
 	move_child(map, 0)  # drawn under the car
 	map.set_view(VIEW)
+	# Drift marks go on the ground: right after the ground tiles in the map's
+	# drawing, so the buildings, boulders and the car (View) are drawn over them.
+	drift_marks = DriftMarksScene.instantiate()
+	drift_marks.name = "DriftMarks"
+	map.view_root.add_child(drift_marks)
+	map.view_root.move_child(drift_marks, map.ground_tiles.get_index() + 1)
 
 	car = CarScript.new()
 	car.name = "Car"
@@ -149,6 +162,7 @@ func _build_world() -> void:
 	physics_world.add_child(car)
 	car.stepped.connect(sync_view)
 	car.stepped.connect(_on_car_stepped)
+	drift_marks.bind(car)
 	# Likes (XP): every completed challenge, preset or meteor (T-037).
 	map.challenge_completed.connect(state.challenge_completed)
 	map.meteor_challenge_completed.connect(state.challenge_completed)
