@@ -1,7 +1,7 @@
 ---
 id: T-112
 title: Level-up particles from the car (placeholder squares)
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/game-loop-architecture.md, tasks/T-037-likes-and-levels.md, tasks/T-074-challenge-and-level-up-effects-art.md, game/README.md]
 files_expected_to_change: [the run's scripts and scenes, a new level-up effect scene, their tests, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -75,4 +75,4 @@ QA round 1, QA/Integration Agent, 2026-10-13, in `C:\solid-carbide-worktrees\T-1
 3. **Screenshot: pass.** `screenshots/T-112-level-up-burst.png` and `-zoom.png` show square pale-cyan particles all around the car, HUD at Hype Lv 2, in the run scene with the HUD. QA retook it with the documented command (`game/tools/screenshot.sh res://tests/fixtures/level_up_burst_demo.tscn ...`) and got the same picture (retake deleted afterwards).
 4. **Documents: pass.** `game/README.md`, "The run", "The level-up effect", says it is triggered by the run state's `level_up` signal, names `scenes/run/level_up_burst.tscn` and lists the settings T-074 changes and the ones to keep. `docs/game-loop-architecture.md`, "Likes and levels", has the line that the run plays the level-up effect on every level-up.
 5. **Tests: pass.** `bash game/tools/run_tests.sh`: 318 of 318, 33 scripts, `TESTS PASSED`, exit 0 (includes T-037's `test_run_likes.gd` and the 11 tests of `test_level_up_burst.gd`; the one warning is GUT ignoring an inner class, not a failure). `python -m unittest discover -s game/tools -p "test_*.py"`: 111 tests OK. `python -m unittest discover -s tools -p "test_*.py"`: 115 tests OK.
-
+- 2026-10-13, in-qa → done: QA round 1: all five criteria pass
