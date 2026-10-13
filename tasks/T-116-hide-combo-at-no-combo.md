@@ -1,7 +1,7 @@
 ---
 id: T-116
 title: HUD: hide the combo counter when there is no combo
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
