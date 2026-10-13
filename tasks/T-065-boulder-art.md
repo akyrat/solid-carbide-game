@@ -1,7 +1,7 @@
 ---
 id: T-065
 title: Art: crashed meteor boulders
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -251,3 +251,4 @@ Before starting, current `master` was merged into the branch (`git merge master`
 5. **Tests: pass.** Full GUT suite, `bash game/tools/run_tests.sh`: 418 of 418 pass, 42 scripts, `TESTS PASSED`, exit 0 (the one warning, "Ignoring Inner Class TestRoom", was there before). Python: `game/tools` 166 OK, `tools` 115 OK.
 
 Also checked: the branch merges into current `master` (with T-120) without conflicts (`git merge-tree`). Godot's line-ending-only `.import` changes in the worktree were left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all five criteria pass (sprites, record, screenshot, collision circles, GUT 418/418, Python 166 + 115 OK).
