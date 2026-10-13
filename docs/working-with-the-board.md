@@ -37,7 +37,9 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## Several Project Leads at once
 - Only one instance merges into `master` at a time. Before choosing a new ticket number, check `tasks/` and `git log` on `master`. Pull `master` before editing docs or the timeline.
 - All instances share one task board server. If the board says its port is taken, tell the board.
-- Each instance acts only on the board's moves for tickets it planned or started, and leaves the rest to the instance that owns them (board, 2026-10-14). The board's moves reach every instance; this keeps two instances from acting on the same move. A move on a ticket no instance owns yet goes to whichever instance the board is talking to.
+- Each instance acts only on the board's moves for tickets it planned or started, and leaves the rest to the instance that owns them (board, 2026-10-14). The board's moves reach every instance; this keeps two instances from acting on the same move.
+- Each instance has a short name the board gives it when it opens the session, for example "Camera" or "Tools" (board, 2026-10-14). If the board hasn't named it, ask. The session start message gives the session id; register the name with `python tools/board_inbox.py name <session id> <Name>` (the same command renames it). A name another live session holds is refused; after `/clear`, which starts a new session id, add `--take-over` to keep the old name.
+- Claim each ticket you plan or start: `python tools/task_status.py T-012 --lead <Name>` (`tasks/README.md`, "Owners"). The hooks and the watcher then hand you only the moves on your own tickets and on tickets nobody owns. For an unowned one, claim it first and act only if the claim succeeds: another instance may have claimed it first. Take over another instance's ticket (`--take-over`) only when the board says so.
 
 ## Course work
 - `course-material/`: one folder per assignment, kept apart from the game. Short, in the board's voice, linking to real files rather than copying them.
@@ -46,7 +48,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - It runs on this computer at http://localhost:8765 and starts with each session (`docs/README.md`, "The task board").
 - The board moves tasks by dragging cards. Its moves reach you through hooks: with its next message, when an agent comes back, and before you finish a turn.
 - Act on them as on any request from the board (for a task moved to Planning, read it and bring its open questions to the board; start the agent for a task moved to In progress, run QA for one moved to QA, merge one marked Done after a playtest), and report back what you did.
-- So a drag gets a reply without the board typing anything (board, 2026-10-13): at the start of every session, start a Monitor (30 minutes, re-armed each time it expires) that prints each new line of `.board/board-inbox.jsonl`, polling once a second. When it fires, act on the move, then mark it heard so the hooks don't hand it over again: `python -c "import sys; sys.path.insert(0, '.claude/hooks'); import board_gate as g; g.take_inbox()"`.
+- So a drag gets a reply without the board typing anything (board, 2026-10-13): at the start of every session, start a Monitor (30 minutes, re-armed each time it expires) running `python tools/board_inbox.py watch <session id>`. It prints one line for each new move that concerns this session, checking once a second, and shares its read position with the hooks, so a move it prints is never handed over again. When it fires, act on the move.
 - The old claude.ai task board page is retired.
 
 ## Environment

@@ -19,6 +19,7 @@ qa_rounds: 0
 
 <!--
 status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
 epic and milestone: one of the ids listed in tasks/README.md.
 user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
 model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").

@@ -16,7 +16,7 @@ The board follows these tasks on its local task board (`docs/README.md`, "The ta
 
 ## Changing a task's status
 
-A task changes status only through the status script, never by editing its `status` or `qa_rounds` line (hooks refuse that edit):
+A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit):
 
 ```
 python C:/solid-carbide-game/tools/task_status.py T-012             # where it is, and the moves allowed now
@@ -35,6 +35,23 @@ Always use the main repo's copy of the script, also from a task's branch folder:
 - Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`.
 
 Each move shows on the task board within a couple of seconds. The board moves tasks there too, through this same script, so its moves follow these rules (`docs/README.md`, "The task board").
+
+## Owners
+
+The board runs several Project Lead sessions at once, each with a short name the board gives it, for example "Camera" or "Tools" (`docs/working-with-the-board.md`, "Several Project Leads at once"). The `lead` line in a task's header names the session that owns the task. It is empty until a session claims the task, and like `status` it changes only through the status script (hooks refuse a hand edit):
+
+```
+python C:/solid-carbide-game/tools/task_status.py T-012 --lead Tools                  # claim it
+python C:/solid-carbide-game/tools/task_status.py T-012 in-progress --lead Tools      # claim it and move it
+python C:/solid-carbide-game/tools/task_status.py T-012 --lead Tools --take-over      # take it from another session
+```
+
+- A claim sets an empty `lead`. Claiming a task the session already owns changes nothing.
+- A task another session owns is refused, unless `--take-over` is given (only when the board wants it moved to this session).
+- With a status in the same call, the claim is checked first: if either the claim or the move is refused, nothing changes.
+- A new task starts with an empty `lead`. A task file without a `lead` line counts as unowned; the script adds the line when it sets it.
+
+The task board shows each owner on its cards and in the Builds tab, and hands the board's drags on a task only to its owner (`docs/README.md`, "The task board").
 
 ## Git branches
 
