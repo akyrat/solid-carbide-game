@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -68,3 +68,11 @@ QA round 1 (QA/Integration Agent, 2026-10-13), judged on the diff from `task/T-0
 - Docs: pass. HUD and menus, Content "Trick popups" describes following and stacking; the Decisions line matches master's word for word; game/README.md "Trick popups" has the T-125 entry.
 - Tests: pass. Full GUT suite 429/429 (43 scripts; 2 warnings, both not from T-125: an inner-class notice and a float/int compare in T-084's art test). The T-091, T-083, T-092 and T-084 test files are not changed on this branch and pass. Python: game/tools 152 OK, tools 115 OK.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all criteria pass
+- 2026-10-14, needs-playtest → in-progress: board playtest: popups stack too high (over the timer); cap at half the distance to the top of the screen, and make them a bit smaller
+
+### The board's playtest, 2026-10-14 (round 1): lower and smaller
+
+Following the car works, but the stacked popups climb too high and overlap the HUD timer. The board wants:
+- popups to go **at most half way from the car to the top of the screen** (the car sits at the screen's centre, so the highest popup's top edge stays at or below a quarter of the screen height from the top, at any window size and camera zoom); when the stack would go higher, keep it within that limit (for example tighter stacking, or the oldest popup making room);
+- popups **a bit smaller** than now (propose the scale, for example about 75 to 80%, for both the normal and the extended-drift size).
+
