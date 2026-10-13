@@ -1,7 +1,7 @@
 ---
 id: T-114
 title: Data: how fast the likes bar drains
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/data/run.json, game/data/combo.json, tasks/T-038-run-and-likes-data.md, tasks/T-080-combo-data.md, game/README.md]
 files_expected_to_change: [game/data/run.json, game/scripts/data/run_data.gd, its tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
