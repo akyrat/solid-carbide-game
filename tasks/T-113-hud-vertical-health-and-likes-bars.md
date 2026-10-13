@@ -1,7 +1,7 @@
 ---
 id: T-113
 title: HUD: health and likes bars stand upright at the top left
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: ui
