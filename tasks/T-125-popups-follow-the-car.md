@@ -41,11 +41,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass / fail)
-- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass / fail)
-- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass / fail)
-- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass / fail)
-- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] GUT tests show a popup keeps the same offset from the car's drawn position while the car moves (apart from its own rise), for its whole life (QA: pass)
+- [ ] GUT tests show two or more popups shown close together don't overlap each other (QA: pass)
+- [ ] Two screenshots during a fast drift, a fraction of a second apart, show the popup still above the car (QA: pass)
+- [ ] HUD and menus, Content, and game/README.md say the popups follow the car (QA: pass)
+- [ ] T-091, T-083, T-092 and T-084's tests, the full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest tricks at speed (together with T-084's look) and judge whether the popups are readable.
 
@@ -59,3 +59,11 @@ Built (UI Agent), branch `task/T-125-popups-follow-the-car` (from T-084's branch
 - Screenshots (fast drift, car driven with scripted full throttle and steering, a 360 and a long drift at frame 10): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_14.png` and `popups_follow_24.png` (fixture `tests/fixtures/popups_follow_demo.tscn`). The popups sit above the car in both, stacked and not overlapping. The camera is centred on the car, so the car stays in the middle in both; the ground scrolls.
 - Docs: HUD and menus, Decisions (line taken word for word from master) and Content, "Trick popups"; game/README.md, "Trick popups". Godot's .import noise reverted. When T-084 merges first, the Decisions line sits next to its comic-look line and may need a trivial conflict resolution.
 - 2026-10-13, in-progress → in-qa: ready for QA
+
+QA round 1 (QA/Integration Agent, 2026-10-13), judged on the diff from `task/T-084-trick-popup-art`: all five criteria pass.
+
+- Offset from the drawn car: pass. `test_popup_keeps_its_offset_from_a_moving_car_for_its_whole_life` moves the car every 0.05 s up to 0.95 s and checks the popup sits at car + START_OFFSET - rise, centred on x; `test_physics_step_places_the_popup...` covers placement in `_physics_process`. In the code the position is set only in `_physics_process` (`place()`), and run (`bind`, `bind_score`, `bind_combo`) and prototype (`bind`) all pass `car_sprite.position`, the drawn position. Run, challenge ("Trending") and prototype popups each have a follow test.
+- No overlap: pass. Four popups on one step and seven born 0.1 s apart are checked pairwise for rectangle overlap. The stagger test checks only at the end, but newer popups rise faster than older ones (ease-out curve), so a popup stacked above an older one moves away from it.
+- Screenshots: pass. In `screenshots/popups_follow_14.png` and `popups_follow_24.png` (10 frames apart) the ground and the drift marks have moved, and both popups are still above the car, stacked, not overlapping. Note: the fixture is about 0.25 to 0.4 s into full throttle, so the speed is not top speed. The gap between the two stacked popups looks larger than 4 px (about 30 px); worth a look in the playtest.
+- Docs: pass. HUD and menus, Content "Trick popups" describes following and stacking; the Decisions line matches master's word for word; game/README.md "Trick popups" has the T-125 entry.
+- Tests: pass. Full GUT suite 429/429 (43 scripts; 2 warnings, both not from T-125: an inner-class notice and a float/int compare in T-084's art test). The T-091, T-083, T-092 and T-084 test files are not changed on this branch and pass. Python: game/tools 152 OK, tools 115 OK.
