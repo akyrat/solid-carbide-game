@@ -1,7 +1,7 @@
 ---
 id: T-113
 title: HUD: health and likes bars stand upright at the top left
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: ui
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, tasks/T-049-hud-run-values.md, tasks/T-083-hud-combo-and-trick-popups.md, game/README.md]
 files_expected_to_change: [game/scenes/hud/hud.tscn, game/scripts/hud/hud.gd, the HUD's tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
