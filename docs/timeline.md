@@ -760,3 +760,8 @@ Entry format:
 - Decision or change: the board decided the kaiju always drops a few coins when defeated (T-039 had proposed none). Its death ends the run at once, so the Project Lead settled that its coins are added to the run's coins as the run ends, without being picked up. T-119 (Game Data) adds the number; T-045 (the kaiju) depends on it and adds the coins before the run ends. The board also gave the go for one more PixelLab call on T-065, to fix the sample boulder's shape (a tall egg on a pedestal): a low, wide, jagged rock lying on the ground with no base.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-119 (new), T-045 (depends on T-119), T-065 (one more call)
+
+## 2026-10-13: T-119 done: the kaiju drops 10 coins
+- Decision or change: `game/data/enemies.json` gives the kaiju a 100% drop of 10 coins (five minion drops, about 4% of a run's roughly 250 coins), read through `EnemyData.kaiju_coins_on_defeat()`. The kaiju task (T-045) adds them to the run's coins before the run ends. Passed QA round 1; data only, so merged. The board can raise it if winning should matter more for the coin economy.
+- Documents touched: `game/README.md`
+- Tasks: T-119 (done)
