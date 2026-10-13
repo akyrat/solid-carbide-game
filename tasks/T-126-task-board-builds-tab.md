@@ -1,7 +1,7 @@
 ---
 id: T-126
 title: A Builds tab on the task board that opens each worktree's game in Godot
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 epic: tooling
