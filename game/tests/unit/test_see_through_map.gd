@@ -157,7 +157,11 @@ func test_flat_view_never_fades() -> void:
 
 
 func test_iso_buildings_rise_and_flat_ones_do_not() -> void:
-	var map := make_map()
+	# The placeholder boxes' own outline; the final art (T-064) has its own tests (test_building_art.gd).
+	var map: Node2D = MapScene.instantiate()
+	map.building_art_enabled = false
+	add_child_autofree(map)
+	map.set_view("iso")
 	var block := building_at(map, BLOCK)
 	var s: PackedVector2Array = block.silhouette()
 	assert_eq(s.size(), 6)

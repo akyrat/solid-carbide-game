@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -137,3 +137,23 @@ The board approved the sample (narrow towers, dense layout of about 49 per block
   7. pointed spire roof with a blinking light, dark violet concrete walls, tall windows in pairs, vertical neon sign boards on both corners with abstract glowing stripes, no letters
   8. boxy roof with ventilation pipes and a satellite dish, dark navy walls with balconies, irregular scattered lit windows, a glowing vertical neon sign board on the left corner with abstract shapes, no letters
 - **Expected cost:** 1 generation per call (the sample cost 1 at this size), 7 in all. If any call costs more than 2 generations I stop and report.
+
+### Full set, result (2026-10-14)
+
+**Calls made: 7** (`/create-image-pixflux`, base towers 2 to 8, requests exactly as planned above, first try, no resend, none regenerated). **Cost: 1 generation each, 7 in all.** Balance before 4953, after 4947 of 5000 (0.00 USD credits). Together with the sample round: 8 calls, 8 generations. Records: `art-archive/T-064/raw/tower_02.json` ... `tower_08.json` and `game/art/pixellab-generation-log.jsonl`.
+
+**What was done (free steps):**
+
+- Cleaned each tower (`game/tools/build_buildings.py`: background flood fill, forced 29-colour palette, specks and stray marks dropped by the new `keep_main`; PixelLab had drawn 6 tiny stray letters beside tower 7, now removed). All 8 pass the check (transparent corners, 0 semi-transparent pixels, 25 to 29 colours, closest to Redgull red 0.535 or more, above the 0.5 limit): `art-archive/T-064/clean/`.
+- Made the script versions with `game/tools/build_building_atlas.py` (tests `game/tools/test_build_building_atlas.py`): mirrored or not, pink-led or cyan-led neon, and for the six towers with a plain wall (1, 2, 4, 5, 6, 8) also +3 units taller by repeating a band of whole floors, picked where the wall repeats best and holds the fewest neon pixels. +6 units was dropped by the 15.5-unit cap. 56 versions in one atlas, `game/art/buildings/buildings_atlas.png` (2048 x 2432) with `buildings.json`; every version passes the sprite checks, the atlas has 0 semi-transparent pixels.
+- Swapped them into the game: each block's building node has a `Towers` child with 49 sprites (7 x 7, pitch 4.5 units, scale 0.5, nearest filter), picked by a stable hash (neighbouring towers are always different base towers; no two blocks are the same). `draw_placeholder` false in the isometric view, `height_units` = tallest tower, `custom_silhouette` = outline of the block's towers. Layout data, collisions, depth order and fade untouched. Details: `game/README.md`, "See-through buildings".
+
+**Tests:** full GUT suite 446 of 446 pass (including the new `test_building_art.gd`, 9 tests, and T-019's, T-034's and T-065's); Python tool tests: `game/tools` 196 pass, `tools` 121 pass. One existing T-034 test checks the placeholder box's own outline, so it now builds its map with `building_art_enabled = false` (new map flag); nothing else in the older tests changed.
+
+**Screenshots** (`art-archive/T-064/screenshots/`, taken in a run from the main menu): `t064_open.png` (a block next to the car, opaque), `t064_behind.png` (the car behind the block: the whole block faded, the car and boulders visible through it), `t064_junction.png` (the road between two blocks) and `t064_overview.png` (the whole map, all 12 blocks). Also `art-archive/T-064/clean/all_towers.png` and `heights_strip.png`.
+
+**Honest judgement (the board decides):**
+
+- The 8 towers do look different (roof shapes, sign placement, window patterns) and the blocks read as a dense, neon Tokyo district at the game's density. In the screenshots the signs are the strongest look; they show kanji- and katakana-like marks, which the board accepted.
+- Weak points: (1) the 8 base towers repeat 49 times per block, so with 56 versions the repetition shows when you look for it; the mirror and neon swap help, but not a lot. (2) Stretched towers repeat floors, and tall sign panels on towers 1, 2 and 6 repeat their glyphs (I could only reduce this by choosing the least neon band, not remove it). (3) Towers 2 and 7 come with a flat base plate that sticks out under the neighbours' bases. (4) The block's fade outline is the convex hull of all towers, so it can start fading slightly early at the sides. (5) The cyan neon glow of some towers is a flat coloured bar on the ground at the base, which looks slightly odd in the alleys. (6) The atlas is 2048 x 2432, larger than needed (not tightly packed).
+- Not done: dropping repeated sign panels on stretched floors (only minimised); more than 8 base towers (the board gave 8).

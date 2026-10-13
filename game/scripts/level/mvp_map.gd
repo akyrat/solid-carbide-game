@@ -87,6 +87,9 @@ const CHALLENGES_ENABLED := false
 const DEFAULT_BOULDER_DIAMETER := 3.0
 ## The boulder sprites (T-065): variants, their opaque boxes and outlines.
 const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
+## The building atlas and its list (task T-064); without it the placeholder boxes stay.
+const BUILDING_ART_PATH := "res://art/buildings/buildings.json"
+const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 ## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
 ## building is while it covers the car (0.15 = 15%), and how long the fade
 ## takes, in seconds (both ways).
@@ -140,6 +143,11 @@ var ground_layout: Dictionary = {}
 var boulder_art: Dictionary = {}
 ## The boulder variants' textures, in boulder_art's order.
 var boulder_textures: Array[Texture2D] = []
+## The building atlas list (T-064, {} if missing) and its texture.
+var building_art: Dictionary = {}
+## Set false before the map enters the tree to keep the placeholder boxes (tests of the boxes).
+var building_art_enabled := true
+var building_atlas: Texture2D = null
 ## "flat" or "iso".
 var view := "flat"
 
@@ -202,6 +210,10 @@ func _ready() -> void:
 	if boulder_art.is_empty():
 		boulder_art = load_layout(BOULDER_ART_PATH)
 	_load_boulder_textures()
+	if building_art_enabled and building_art.is_empty():
+		building_art = load_layout(BUILDING_ART_PATH)
+	if not building_art.is_empty():
+		building_atlas = load(str(building_art.texture)) as Texture2D
 	_build()
 
 
@@ -262,6 +274,14 @@ func _build_buildings() -> void:
 		b.edge_color = building_edge_color
 		buildings_draw.add_child(b)
 		buildings.append(b)
+		if building_atlas != null:
+			var towers = BuildingTowers.new()
+			towers.name = "Towers"
+			towers.setup(building_art, building_atlas, b.footprint)
+			b.add_child(towers)
+			b.towers = towers
+			b.height_units = towers.tallest_units
+			b.custom_silhouette = towers.outline
 		i += 1
 	# Draw order: by the front corner (x + y), nearest to the viewer on top.
 	var order := buildings.duplicate()
@@ -817,8 +837,19 @@ func set_view(v: String) -> void:
 		ground_draw.queue_redraw()
 	for b in buildings:
 		b.set_view(v)
+		if b.towers != null:
+			# The tower art is in screen pixels: undo the view's projection; the flat view keeps the placeholder.
+			b.towers.visible = uses_building_art()
+			b.towers.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+			b.draw_placeholder = not uses_building_art()
+			b.queue_redraw()
 		if v != "iso":
 			b.reset_fade()
+
+
+## True when the isometric view draws the building art (T-064) instead of the placeholder boxes.
+func uses_building_art() -> bool:
+	return view == "iso" and building_atlas != null
 
 
 ## True when the isometric view draws the ground art (T-103) instead of the

@@ -248,6 +248,40 @@ def drop_specks(img, min_size=4):
     return img
 
 
+def keep_main(img, min_fraction=0.01):
+    """Keeps the largest 8-connected opaque island and every island of at least
+    `min_fraction` of its size; drops the rest (PixelLab sometimes draws tiny
+    stray letters or marks beside a tower)."""
+    w, h = img.size
+    px = img.load()
+    seen = bytearray(w * h)
+    comps = []
+    for y0 in range(h):
+        for x0 in range(w):
+            if seen[y0 * w + x0] or px[x0, y0][3] == 0:
+                continue
+            comp, q = [], deque([(x0, y0)])
+            seen[y0 * w + x0] = 1
+            while q:
+                x, y = q.popleft()
+                comp.append((x, y))
+                for dx in (-1, 0, 1):
+                    for dy in (-1, 0, 1):
+                        nx, ny = x + dx, y + dy
+                        if 0 <= nx < w and 0 <= ny < h and not seen[ny * w + nx] and px[nx, ny][3]:
+                            seen[ny * w + nx] = 1
+                            q.append((nx, ny))
+            comps.append(comp)
+    if not comps:
+        return img
+    biggest = max(len(c) for c in comps)
+    for c in comps:
+        if len(c) < biggest * min_fraction:
+            for p in c:
+                px[p] = (0, 0, 0, 0)
+    return img
+
+
 def crop_to_content(img, pad=1):
     box = img.getbbox()
     if box is None:
@@ -262,6 +296,7 @@ def clean(raw, pal, tolerance=24):
     img = remove_background(Image.open(raw) if not isinstance(raw, Image.Image) else raw, tolerance)
     img = map_to_palette(img, pal)
     img = drop_specks(img)
+    img = keep_main(img)
     return crop_to_content(img)
 
 
