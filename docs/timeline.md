@@ -765,3 +765,8 @@ Entry format:
 - Decision or change: `game/data/enemies.json` gives the kaiju a 100% drop of 10 coins (five minion drops, about 4% of a run's roughly 250 coins), read through `EnemyData.kaiju_coins_on_defeat()`. The kaiju task (T-045) adds them to the run's coins before the run ends. Passed QA round 1; data only, so merged. The board can raise it if winning should matter more for the coin economy.
 - Documents touched: `game/README.md`
 - Tasks: T-119 (done)
+
+## 2026-10-13: T-034 done: buildings turn see-through when the car is behind them
+- Decision or change: the board playtested T-034 and approved it ("see-through buildings work amazing"). The placeholder buildings now rise 15 units in the isometric view (a placeholder height; the final art, T-064, can set its own) and are drawn in depth order with the car. A building covering the car fades to 15% over 0.15 s and fades back when the car comes out; only the car triggers it. The drift marks stay between the ground and the buildings. Passed QA round 1. T-064 (the building art) is now open; minions (T-044) need a place in the same depth order.
+- Documents touched: `docs/level-design.md`, `game/README.md`
+- Tasks: T-034 (done), T-064 (open)
