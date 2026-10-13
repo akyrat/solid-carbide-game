@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
