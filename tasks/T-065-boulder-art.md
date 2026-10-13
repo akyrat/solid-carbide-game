@@ -1,7 +1,7 @@
 ---
 id: T-065
 title: Art: crashed meteor boulders
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -252,3 +252,4 @@ Before starting, current `master` was merged into the branch (`git merge master`
 
 Also checked: the branch merges into current `master` (with T-120) without conflicts (`git merge-tree`). Godot's line-ending-only `.import` changes in the worktree were left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all five criteria pass (sprites, record, screenshot, collision circles, GUT 418/418, Python 166 + 115 OK).
+- 2026-10-13, needs-playtest → done: LGTM (board playtest, 2026-10-13)
