@@ -14,6 +14,12 @@ const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
 const TEXT_ZOOM_LABEL := "Camera zoom level"
+## The camera checkboxes use the board's own names (T-124). The two tuning
+## buttons are a temporary tool for the board, not game text.
+const TEXT_SMOOTHING := "Camera smoothing"
+const TEXT_DYNAMIC := "Dynamic camera"
+const TEXT_SET_MIN := "Set min zoom"
+const TEXT_SET_MAX := "Set max zoom"
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -22,6 +28,14 @@ var title_label: Label
 var hint_label: Label
 var zoom_label: Label
 var _value_label: Label
+var smoothing_check: CheckBox
+var dynamic_check: CheckBox
+## The temporary tuning row: shown only while the dynamic camera is on.
+var tuning_row: HBoxContainer
+var set_min_button: Button
+var set_max_button: Button
+var min_label: Label
+var max_label: Label
 var _root: Control
 var strip: PanelContainer
 var _saved_cam: Array = []
@@ -88,7 +102,98 @@ func setup(t: Node) -> void:
 	_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(_value_label)
 	_update_value_label()
+	_build_camera_controls(box)
 	visible = false
+
+
+func _cam():
+	return target.get("camera_follow") if target != null else null
+
+
+func _build_camera_controls(box: VBoxContainer) -> void:
+	var checks := HBoxContainer.new()
+	checks.add_theme_constant_override("separation", 24)
+	box.add_child(checks)
+	smoothing_check = _make_check("SmoothingCheck", TEXT_SMOOTHING)
+	smoothing_check.toggled.connect(_on_smoothing_toggled)
+	checks.add_child(smoothing_check)
+	dynamic_check = _make_check("DynamicCheck", TEXT_DYNAMIC)
+	dynamic_check.toggled.connect(_on_dynamic_toggled)
+	checks.add_child(dynamic_check)
+	tuning_row = HBoxContainer.new()
+	tuning_row.name = "TuningRow"
+	tuning_row.add_theme_constant_override("separation", 8)
+	box.add_child(tuning_row)
+	set_min_button = _make_button("SetMinButton", TEXT_SET_MIN)
+	set_min_button.pressed.connect(_on_set_min)
+	tuning_row.add_child(set_min_button)
+	min_label = _make_value_label("MinValue")
+	tuning_row.add_child(min_label)
+	set_max_button = _make_button("SetMaxButton", TEXT_SET_MAX)
+	set_max_button.pressed.connect(_on_set_max)
+	tuning_row.add_child(set_max_button)
+	max_label = _make_value_label("MaxValue")
+	tuning_row.add_child(max_label)
+	refresh_camera_controls()
+	var cam = _cam()
+	if cam != null:
+		cam.changed.connect(refresh_camera_controls)  # also when the saved options load
+
+
+func _make_check(node_name: String, text: String) -> CheckBox:
+	var c := CheckBox.new()
+	c.name = node_name
+	c.text = text
+	c.add_theme_font_size_override("font_size", 16)
+	return c
+
+
+func _make_button(node_name: String, text: String) -> Button:
+	var b := Button.new()
+	b.name = node_name
+	b.text = text
+	b.add_theme_font_size_override("font_size", 16)
+	return b
+
+
+func _make_value_label(node_name: String) -> Label:
+	var l := Label.new()
+	l.name = node_name
+	l.custom_minimum_size.x = 50.0
+	l.add_theme_font_size_override("font_size", 16)
+	return l
+
+
+## Reads the saved options into the checkboxes and the stored min and max into
+## the numbers, without applying anything.
+func refresh_camera_controls() -> void:
+	var cam = _cam()
+	if cam == null:
+		return
+	smoothing_check.set_pressed_no_signal(cam.is_smoothing())
+	dynamic_check.set_pressed_no_signal(cam.is_dynamic())
+	tuning_row.visible = cam.is_dynamic()
+	min_label.text = "%.1f" % cam.get_dynamic_min()
+	max_label.text = "%.1f" % cam.get_dynamic_max()
+
+
+func _on_smoothing_toggled(on: bool) -> void:
+	_cam().set_smoothing(on)
+
+
+func _on_dynamic_toggled(on: bool) -> void:
+	_cam().set_dynamic(on)
+	refresh_camera_controls()
+
+
+func _on_set_min() -> void:
+	_cam().set_dynamic_min_from_current()
+	refresh_camera_controls()
+
+
+func _on_set_max() -> void:
+	_cam().set_dynamic_max_from_current()
+	refresh_camera_controls()
 
 
 func _input(event: InputEvent) -> void:
@@ -111,6 +216,7 @@ func toggle() -> void:
 func pause() -> void:
 	zoom_slider.set_value_no_signal(target.zoom)
 	_update_value_label()
+	refresh_camera_controls()
 	get_tree().paused = true
 	visible = true
 	_camera_follows_while_paused(true)

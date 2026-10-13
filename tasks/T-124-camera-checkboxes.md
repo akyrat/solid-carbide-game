@@ -1,7 +1,7 @@
 ---
 id: T-124
 title: Pause screen: checkboxes for camera smoothing and the dynamic camera, and min/max buttons
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -49,3 +49,5 @@ The board's review: playtest the run with both options, tune the dynamic camera'
 ## Result notes
 
 - 2026-10-13, open → blocked: starts once T-123 is in QA; builds on T-123's branch
+- 2026-10-13, blocked → open: T-123 is in QA; T-124 builds on its branch
+- 2026-10-13, UI Agent: built on T-123's branch. Pause screen has the "Camera smoothing" and "Dynamic camera" checkboxes under the slider (start from the saved settings, apply and save at once through `target.camera_follow`), and, only while the dynamic camera is on, "Set min zoom" and "Set max zoom" with the stored values as numbers. Same compact strip, still starting at y 92 below the HUD timer; mouse and keyboard (Tab/Space) work. Tests: `game/tests/unit/test_pause_camera_controls.gd` (7 tests). Full GUT suite 435/435 pass; game/tools Python 141 OK; tools Python 121 OK. Screenshot (dynamic camera on): `C:\solid-carbide-worktrees\T-124\screenshots\T-124-pause-dynamic.png` (git-ignored), made with `pause_screen_demo_dynamic.tscn`. Docs: HUD and menus Content line (board's wording, already on this branch) and game/README.md updated. Note: the screenshot is of the drift prototype; the run uses the same screen at the same position.
