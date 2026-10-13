@@ -1,7 +1,7 @@
 ---
 id: T-125
 title: Trick popups follow the car while they are on screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
@@ -89,3 +89,4 @@ Done, branch `task/T-125-popups-follow-the-car`, folder `C:\solid-carbide-worktr
 - Tests: `tests/unit/test_trick_popups_follow.gd` gains the top edge never above a quarter of the screen height with 20 popups, at 1152x648 and 640x900, zoom 1 and 2 (SubViewport with a Camera2D), no overlap under the limit, oldest makes room, plain stacking without a camera, and the smaller scale. Two older tests were adjusted because popups can now make room (`test_hud_combo.gd` counts popups with the trick's text; the run overlap tests accept 1 to 4 popups). Full GUT suite: 434 passed. Python: game/tools and tools tests run below.
 - Screenshots (fast drift, a 360 at frame 10 then a LONG DRIFT every 12 frames; fixture changed): `C:\solid-carbide-worktrees\T-125\screenshots\popups_follow_r2_a.png` (frame 20) and `popups_follow_r2_b.png` (frame 40). One small popup above the car, well below the timer; only one shows because of the policy above.
 - Docs: `docs/hud-and-menus.md` Content "Trick popups" and `game/README.md` "Trick popups".
+- 2026-10-14, in-progress → in-qa: Round 2: smaller and capped at half way to the top
