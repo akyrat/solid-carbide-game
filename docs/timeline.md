@@ -780,3 +780,8 @@ Entry format:
 - Decision or change: the board asked to start the Tokyo-style buildings for the city blocks (T-064) and the pixel-art comic-book look of the trick popups (T-084). Both start with a plan only, no PixelLab calls: a block is 30 by 30 units (about 1200 pixels across at 40 pixels per unit), far bigger than one PixelLab image, so the Asset Generation Agent first proposes how to fill a block, the variants and the cost; for the popups it proposes script-drawn bursts versus generated ones, and a licensed pixel font. The board then gives the go for one sample of each.
 - Documents touched: none
 - Tasks: T-064, T-084 (in progress, planning first)
+
+## 2026-10-13: The likes drain four times faster
+- Decision or change: the board wants the likes drain quadrupled: 8% of the current level's bar a second instead of 2% (a full bar empties in 12.5 s; 8 likes a second at level 1). Only the number changes. T-120 (Game Data) changes it and its tests; data only, so it merges after QA, and the board feels it in the next playtest.
+- Documents touched: none
+- Tasks: T-120 (new)
