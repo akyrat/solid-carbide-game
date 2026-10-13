@@ -690,3 +690,8 @@ Entry format:
 - Decision or change: the board marked T-026 done on the task board after reviewing it. The root README now opens with the final car (the first approved sprite, front to the bottom-left, shadow kept) at the top right, scaled exactly 2 times to 256 by 256 (`docs/readme/car.png`, record in `docs/readme/car.md`, made by `tools/make_readme_car.py` with a test). No PixelLab calls. The review screenshot stays out of the repo, in the git-ignored `screenshots/`.
 - Documents touched: `README.md`
 - Tasks: T-026 (done)
+
+## 2026-10-13: Level-up effect: pixel particles from the car, drawn without PixelLab
+- Decision or change: the board dragged T-074 (the level-up effect art) into Planning. No placeholder effect existed to swap art into, so on the board's go a Game Loop task (T-112) builds the effect first: on a level-up the car gives off a burst of particles, with plain placeholder squares. The board wants the car to give off pixel-art particles and judged that this needs no PixelLab: T-074 now draws the particle sprites with a script and swaps them into T-112's effect. T-112 gets no playtest of its own; the board playtests once T-074's particles are in.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-112 (new), T-074 (rewritten, depends on T-112)

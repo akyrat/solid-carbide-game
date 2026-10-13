@@ -1,17 +1,17 @@
 ---
 id: T-074
 title: Art: the level-up effect
-status: open
+status: blocked
 from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-037]
+depends_on: [T-112]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/game-loop-architecture.md, tasks/T-037-likes-and-levels.md]
-files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, docs/game-loop-architecture.md, tasks/T-112-level-up-particles-placeholder.md]
+files_expected_to_change: [a particle-drawing script and its test, particle sprites under game/art/ and their record, T-112's effect scene, game/README.md]
 model: sonnet
 qa_rounds: 0
 ---
@@ -27,26 +27,26 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-The level-up effect from Visual style, Decisions: it plays when the player levels up (on T-037's "level up" signal, before the level-up screen). The challenge completed effect moved to T-100, after the MVP (2026-10-11).
+The level-up effect (Visual style, Decisions, "Level-up effect"): when the player levels up, the car gives off a burst of pixel-art particles. T-112 builds the working effect with plain placeholder squares; this task draws the final particle art and swaps it in. The challenge completed effect moved to T-100, after the MVP (2026-10-11).
 
-Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
+**No PixelLab** (board, 2026-10-13): the particles are small enough to draw with a script. Write a script that draws the particle sprites (for example sparks, stars, small diamonds or pixel crosses, a few pixels across, with a frame or two of twinkle if it helps), within Visual style, Decisions: the night neon palette, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, about 30 colours or fewer. Not Redgull red (red belongs to Redgull only). The shapes, colours, count, sizes, speed, spread and lifetime are your proposal, written in the result notes for the board to judge (Visual style, Decisions).
 
-Use the existing client, `game/tools/pixellab_client.py`. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. The board judges the result.
+Swap the art into T-112's effect scene and retune its settings there (`tasks/README.md`, "Art replaces placeholders"), without changing when or how the effect plays. Particles do not fade by alpha: they pop out or shrink.
 
-This art task swaps its art in for the placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
+Keep the script and its output: game-ready sprites under `game/art/`, with a short record of how they were made; anything not used goes in `art-archive/T-074/`.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot shows the effect at a level-up (QA: pass / fail)
-- [ ] T-037's tests still pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer, and none uses Redgull red (QA: pass / fail)
+- [ ] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass / fail)
+- [ ] A screenshot shows the effect around the car at a level-up (QA: pass / fail)
+- [ ] T-112's tests still pass, and the particles still have no alpha fade and use nearest-neighbour filtering (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+The board's review: playtest the level-up effect in the run and judge the look.
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-13, planning → blocked: waits for T-112 (placeholder particles)
