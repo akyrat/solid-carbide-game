@@ -730,3 +730,8 @@ Entry format:
 - Decision or change: the board wants the combo counter hidden at x1.0 (no combo); it shows as soon as a trick raises the multiplier. T-116 (UI) builds it on top of T-113's branch, so the board playtests the new HUD layout and this change together; T-113 merges first. T-115 (the likes drain) started.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-116 (new), T-115 (in progress)
+
+## 2026-10-13: T-113, T-116 and T-115 done: the new HUD layout, the hidden combo counter and the likes drain
+- Decision or change: the board playtested all three and approved them ("all LGTM"). The health bar stands upright at the top left with "Car Health" above it; the likes bar runs horizontally along the bottom centre, with the heart, "Likes" and "Hype Lv" in one row above it (T-113, after its first layout was rejected). The combo counter sits above that row and is hidden at no combo (T-116). Once the combo has drained, the likes bar empties at 2% of the bar a second, never below the start of the level; a trick stops it, and it does not run while paused, while a weapon choice waits, after the run, or at the top level (T-115). Open points the board left as they are: the pause strip's band over the health bar, the HUD text size at 1920x1080, and the likes bar moving in whole likes. All tests pass on master after the three merges (361 GUT, 125 and 115 Python).
+- Documents touched: `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`, `game/README.md`
+- Tasks: T-113 (done), T-116 (done), T-115 (done)

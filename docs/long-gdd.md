@@ -94,6 +94,7 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 - On every level-up the run plays the level-up effect: a burst of pixel particles from the car, following it while it plays (task T-112; the look: Visual style, Decisions, "Level-up effect"). Several level-ups in the same moment show as one burst, and the burst keeps playing while the run is paused for the weapon choice.
 - The HUD reads the XP, the level's threshold and the level, with a signal whenever they change.
 - A level-up can pause the run (clock and car) until the weapon choice is made, one choice after another when several level-ups come at once. This pause is a switch, off until the level-up screen exists (task T-052): for now a level-up just raises the level and the run carries on.
+- **Likes drain** (task T-115; the speed: [game/data/run.json](../game/data/run.json), `likes_drain`, task T-114): once the combo has fully drained back to "no combo", the XP in the current level slowly goes down, stopping at the start of the level, so the level never goes down. Any trick raises the combo and stops it; it starts again once the combo has drained again. It stops while the run is paused (pause screen, level-up screen) and after the run ends. At the top level there is nothing to drain. The HUD's likes bar follows it, so the bar visibly empties.
 - A new run starts back at level 1 with no XP.
 
 #### The combo
@@ -591,11 +592,12 @@ A plain screen (task T-054) with a dark navy background. The title "SOLID CARBID
 
 The first piece of the HUD (task T-090) is the run timer. It shows the time left in minutes and seconds (M:SS), counting down from 8:00 to 0:00, in big cyan digits with a dark outline at the top centre of the screen. It only shows what the run reports (the run owns the time) and stops moving while the game is paused. It needs no text. It is shown in every run, whether the run scene is opened on its own or started from the main menu. The rest of the HUD (task T-049, a first layout the board adjusts in playtest) is in the same scene, `game/scenes/hud/hud.tscn`, which the run scene places on screen; how to open it is in `game/README.md`, "The run". It only shows what the run reports, and the texts are from T-048:
 
-- **Top left:** the label "Car Health" with the car's health bar under it (green fill). Under that, the likes row: a small heart, the word "Likes", and "Hype Lv {level}" at the right end of the row (for example "Hype Lv 2"). Under the row is the likes bar (purple fill), which fills toward the next level and starts again after a level-up; at the top level it stays full. The heart is a placeholder shape in Redgull red until its art task (T-086); no other part of the HUD is red. To the right of the likes row is the combo counter (task T-083): "Combo x{multiplier}" (text approved in T-082) in bold pink with a dark outline, for example "Combo x2.5" or "Combo x1.0" when there is no combo. It follows the run's combo multiplier, including its drain, and is not red. The look is a placeholder; T-084 makes the final one.
+- **Top left:** since task T-113, the label "Car Health" with the car's health bar directly under it, both starting at the same left edge. The bar stands upright, 24 pixels wide and 160 tall, filling from the bottom up (green fill).
+- **Bottom centre:** since task T-113, the likes bar lies across the bottom of the screen: half the screen wide, 16 pixels tall, centred, 16 pixels above the bottom edge, filling from left to right (purple fill). It fills toward the next level and starts again after a level-up; at the top level it stays full. Directly above it is one row of text, the same width as the bar: a small heart and the word "Likes" at its left end, and "Hype Lv {level}" (for example "Hype Lv 2") ending at its right end, both on the same line and in the same size. The heart is a placeholder shape in Redgull red until its art task (T-086); no other part of the HUD is red. Centred above that row is the combo counter (task T-083): "Combo x{multiplier}" (text approved in T-082) in bold pink with a dark outline, for example "Combo x2.5". It follows the run's combo multiplier, including its drain, and is not red. Since task T-116 it is hidden when there is no combo (the multiplier at its starting value, x1.0): a run starts with it hidden, it appears as soon as a trick raises the multiplier, and it disappears again once the combo has drained back to x1.0. Hiding it moves nothing else: the likes row and bar stay where they are, and the counter always appears in the same place. The look is a placeholder; T-084 makes the final one.
 - **Top right:** "Coins" followed by the number collected this run, in yellow.
 - **Top centre:** the timer, as above.
 
-The arrow to the nearest challenge and the kaiju's health bar are T-050. The HUD stays clear of the trick popups (near the car) and the pause strip (below the timer).
+The arrow to the nearest challenge and the kaiju's health bar are T-050. The HUD stays clear of the trick popups (near the car) and the pause strip (below the timer); while paused, the strip's dark band runs across the whole width over the lower part of the health bar.
 
 #### Trick popups
 
@@ -614,7 +616,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `587f42e669597702dd7f512a60d9bb783a9aa7d9bafab45f0fe60e9282e99b82` |
+| `game-loop-architecture.md` | `77e54c9154e926d46ea1ecca7e1b899e8e2fc21472ade8af0b7fd1a7cbd70de7` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
 | `level-design.md` | `cf856b4cb3078588e8bd3de7a16c6c2dbd05de2a90335f3c33b153a65675f3f3` |
 | `enemies.md` | `426f70392214aaf25e4a3293e1a84e5ff99e18d9e814a3f2fbbb0987d7bf5b44` |
@@ -622,4 +624,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `315af5c33daba4b13ab7a27831f36986d22af7c9e819c68bc2da2366b5dcedf7` |
 | `extended-narrative.md` | `b57fa97780483828e67b4b5670b12e345e9d28f9aa1d93c70cd8a68e3146991b` |
-| `hud-and-menus.md` | `9fee2765ae06942459bd320ad1e31f6a9ca34cd80267a868a4d23817cd54820c` |
+| `hud-and-menus.md` | `fe2d31b3446d1a242a7b7159dae9907348117fd8e5e9785680d982760726e611` |
