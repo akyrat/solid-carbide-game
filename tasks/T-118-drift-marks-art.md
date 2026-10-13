@@ -1,14 +1,14 @@
 ---
 id: T-118
 title: Art: the drift marks' tyre texture, drawn by script
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-117]
+depends_on: []
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/README.md, tasks/T-117-drift-marks.md, tasks/T-074-challenge-and-level-up-effects-art.md]
 files_expected_to_change: [a drift mark drawing script and its test, the mark sprite(s) under game/art/ and their record, T-117's drift marks scene, game/README.md]
@@ -48,3 +48,4 @@ The board's review: playtest drifting in a run and judge the marks (together wit
 ## Result notes
 
 - 2026-10-13, open → blocked: waits for T-117
+- 2026-10-13, blocked → open: builds on T-117's branch instead of waiting for its merge (as T-116 did on T-113)
