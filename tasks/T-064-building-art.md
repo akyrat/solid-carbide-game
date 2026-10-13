@@ -1,14 +1,14 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: needs-playtest
+status: open
 from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-019, T-034]
+depends_on: [T-128]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md, tasks/T-034-buildings-see-through.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
@@ -27,28 +27,33 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-019 (the map) and T-034 (the see-through fade) are done.**
+**Redesigned by the board, 2026-10-14** (Visual style, Decisions, "Buildings"). The first round (dense narrow towers, 8 generations, on this task's branch `task/T-064-building-art`) was not taken: its art stays in `art-archive/T-064/` on that branch, never deleted. The board starts this task itself (it waits in To do).
 
-The city's buildings, as Visual style, Decisions describes them: Tokyo-style towers with vertical signs and lit windows, night neon in pink and cyan. They carry none of Redgull's colours or branding. Signs carry no readable words (words would need a text task first). Make enough variants that the blocks don't look repeated, and swap them in for T-019's placeholder buildings. They must keep fading with T-034's see-through behaviour.
+The new design:
+1. **The bases of really tall skyscrapers:** drawn as if the isometric camera sees the bottom floors of towers so tall their tops are out of view, so the car is realistic in size next to them.
+2. **Each block split into 2 by 2 skyscrapers** (four per 30 by 30 block, each about 15 by 15 units on the ground).
+3. **6 different skyscrapers**, the same type as before (Tokyo-style towers, lit windows, vertical neon signs with Japanese-like marks that are not real words), in downtown Tokyo **under attack from the kaiju** (T-128's brief).
+4. **A pavement drawn around each building asset**, inside the block (the roads stay as they are).
+5. Some slots may hold T-129's shorter buildings instead; leave room for that (a slot system).
+6. Keep T-034's see-through fade (each building fades when it covers the car) and the depth order with the car, boulders, drift marks and smoke; collisions and the map layout unchanged.
 
-Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
+**The size problem to solve in the plan:** a 15 by 15 unit skyscraper base is about 960 by 480 pixels in the isometric view at the game's density, far bigger than one PixelLab image (400 px per side). Propose how (for example building each base from several generated pieces, facade tiles or isometric tiles, or a different approach), with the calls and cost, for the board before any call.
 
-Use the existing client, `game/tools/pixellab_client.py`. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. The board judges the result.
+Follow Visual style, Decisions: pixel art for the isometric view at the game's pixel density (the car and ground are drawn at 32 art pixels per unit, scale 0.5), a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, the night neon palette, no Redgull red. Real-world things are inspiration only: no real logos, no copies of existing characters (the kaiju is "in the style of Godzilla", never Godzilla). Read T-128's narrative guidance first and keep the look consistent with every approved asset (car, ground, boulders, drift marks and smoke).
 
-This art task swaps its art in for the placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
+PixelLab: never call it without the board's go for this task. Plan first (calls, sizes, cost) in the result notes and bring it to the board; then one sample for the board's review; then the full set from the approved sample. Use `game/tools/pixellab_client.py` with a 600 s timeout, record every call with its prompt, settings and cost and the balance before and after, and do not regenerate weak results: report them. Free script fixes come before paid calls. Never delete generated art: unused versions go to `art-archive/<task>/`.
 
-Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
+This waits for T-128 (the narrative brief).
 
 ## Acceptance criteria
 
-- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
-- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
-- [x] A screenshot of the map shows the final buildings on every block (QA: pass)
-- [x] T-034's tests still pass, and a screenshot with the car behind a building shows the final building faded (QA: pass)
-- [x] No building shows Redgull's red, logo or name (QA: pass)
-- [x] The full GUT suite and all Python tool tests pass (QA: pass)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass / fail)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; every call had the board's go (QA: pass / fail)
+- [ ] Screenshots in a run show blocks of 2 by 2 skyscraper bases with pavements, the car realistic in size next to them, 6 different skyscrapers in use, and the see-through fade working (QA: pass / fail)
+- [ ] Collisions and the map layout are unchanged; T-019, T-034 and T-065's tests pass (QA: pass / fail)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+The board's review: playtest the city and judge the skyscrapers.
 
 ## Result notes
 
@@ -171,3 +176,11 @@ The board approved the sample (narrow towers, dense layout of about 49 per block
 
 Also checked: the branch merges into current `master` without conflicts (`git merge-tree`, 11 commits behind). Godot's line-ending-only `.import` changes in the worktree were left uncommitted.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all six criteria pass (sprites, record (balance now 4946 = 4953 - 7), every block, faded block + T-034 15/15, no Redgull red/logo/name, GUT 446/446, Python 196 + 121 OK).
+- 2026-10-14, needs-playtest → in-progress: board redesigned the buildings (2026-10-14)
+- 2026-10-14, in-progress → planning: redesign written
+- 2026-10-14, planning → open: waits in To do for the board to start it
+
+### The board's redesign, 2026-10-14
+
+After the dense narrow towers were ready to playtest, the board redesigned the buildings (see the Description). The first round's work stays on `task/T-064-building-art` and in `art-archive/T-064/` there; the next round decides whether to start a fresh branch from master or reuse that one, and keeps the archive either way.
+
