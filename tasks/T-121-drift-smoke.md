@@ -40,12 +40,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show smoke is emitted from both rear tyres while the car drifts and not while it drives straight or stands still (QA: pass / fail)
-- [ ] GUT tests show puffs stay where they were left in the world, end within their lifetime, and never exceed the cap during a long drift (QA: pass / fail)
-- [ ] A GUT test or a check on the scene shows the depth order (above ground, marks and boulders; below the HUD; covered by a building that covers the car), nearest filtering, no semi-transparent pixels in the placeholder and no Redgull red (QA: pass / fail)
-- [ ] A screenshot of the car drifting in a run shows smoke behind the rear tyres, and one of driving straight shows none (QA: pass / fail)
-- [ ] game/README.md says how the smoke works and which scene and settings T-073 changes (QA: pass / fail)
-- [ ] The drift, drift marks and car tests, the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] GUT tests show smoke is emitted from both rear tyres while the car drifts and not while it drives straight or stands still (QA: pass)
+- [x] GUT tests show puffs stay where they were left in the world, end within their lifetime, and never exceed the cap during a long drift (QA: pass)
+- [x] A GUT test or a check on the scene shows the depth order (above ground, marks and boulders; below the HUD; covered by a building that covers the car), nearest filtering, no semi-transparent pixels in the placeholder and no Redgull red (QA: pass)
+- [x] A screenshot of the car drifting in a run shows smoke behind the rear tyres, and one of driving straight shows none (QA: pass)
+- [x] game/README.md says how the smoke works and which scene and settings T-073 changes (QA: pass)
+- [x] The drift, drift marks and car tests, the full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest drifting in a run (from T-073's folder, together with the final smoke) and judge the smoke.
 
@@ -75,3 +75,16 @@ Written by the Driving & Drift Agent, 2026-10-13, on `task/T-121-drift-smoke` in
 Retake: `bash game/tools/screenshot.sh res://tests/fixtures/drift_smoke_demo_drift.tscn screenshots/T-121-drift-smoke-drifting.png 150` and `... res://tests/fixtures/drift_smoke_demo_straight.tscn screenshots/T-121-drift-smoke-straight.png 90` (fixture `game/tests/fixtures/drift_smoke_demo.gd`).
 
 **Documents updated:** `game/README.md` (folder layout; the drift prototype's file list; the run scene's children; a new section, "Drift smoke": when, where, life, cap, depth order, proposed numbers, placeholder, what T-073 changes in the scene, screenshots, tests).
+
+### QA round 1 (QA/Integration Agent, 2026-10-13)
+
+Checked in `C:\solid-carbide-worktrees\T-121` on `task/T-121-drift-smoke` (commit 312b51a). Read `game/scripts/driving/drift_smoke.gd`, `game/scenes/driving/drift_smoke.tscn`, `game/tests/unit/test_drift_smoke.gd`, `game/README.md` and the screenshots.
+
+1. **Pass.** `test_smoke_comes_off_both_rear_tyres_while_the_car_drifts` drives a run car with W + D, checks puffs from tyre 0 and tyre 1, and checks the newest puffs sit within the jitter of the drift marks' `rear_tyres()` places. `test_no_smoke_while_driving_straight` (car moving, `puffs_made` 0), `test_no_smoke_while_standing_still` (also steering on the spot) and `test_smoke_stops_when_the_drift_stops` cover the no-smoke cases; `test_the_prototype_makes_smoke_while_drifting` covers the prototype. The script only emits when `car.model.is_drifting` is on.
+2. **Pass.** `test_puffs_stay_where_they_were_left_in_the_world` keeps each puff's world spot unchanged while the car drives more than 5 units away, and its drawn spot within its own small drift. `test_puffs_grow_then_shrink_and_pop_out_within_their_lifetime` and `test_every_puff_ends_within_its_lifetime` check the life (every puff gone after lifetime x 1.25). `test_a_long_drift_never_goes_over_the_cap` asserts the cap (64) on every step of a 30-second drift, then reaches and holds the cap with time stopped.
+3. **Pass.** Depth: `test_in_the_run_smoke_is_drawn_with_the_car_over_the_map_and_under_the_hud` (child of `View` before the car sprite, identity transform, `View.z_index` > 0 over the map's z-0 ground, marks and boulders, HUD a CanvasLayer); `test_a_building_that_covers_the_car_also_covers_the_smoke` (T-034's block: car and smoke under it when behind, over it in the open); `test_in_the_prototype_smoke_is_over_the_room_and_under_the_car`. Look: `test_placeholder_is_nearest_opaque_light_grey_violet_and_not_redgull_red` checks Nearest filtering, every pixel alpha 0 or 1, no material, no fading tint, light grey-violet, far from `Hud.HEART_COLOR` and not any red. QA also read the scene: root `texture_filter = 1` (Nearest), a 16 x 16 `ImageTexture` with only (196, 188, 214, 255) and (0, 0, 0, 0) pixels, `puff_color` white alpha 1.
+4. **Pass.** `screenshots/T-121-drift-smoke-drifting-zoom.png` shows the car drifting on the gravel with round light grey-violet puffs trailing behind the rear tyres along the drift marks, small near the tyres and larger behind, drawn under the car. `T-121-drift-smoke-straight-zoom.png` shows the car driving straight with no smoke. Both from a run started from the main menu (not retaken by QA).
+5. **Pass.** `game/README.md`, "Drift smoke", says when, where, life, cap, depth order (with the known limit), placeholder and proposed numbers, and lists the scene (`scenes/driving/drift_smoke.tscn`) and the exact settings T-073 changes, with what to keep (Nearest, opaque-or-clear pixels, alpha 1). The folder layout, prototype file list and run children also mention it.
+6. **Pass.** Run by QA: full GUT suite 426 of 426 pass (`TESTS PASSED`, 42 scripts, 53339 asserts, exit 0; includes `test_drift_smoke.gd`, `test_drift_marks.gd`, `test_drift_marks_art.gd`, `test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`). The one GUT warning is the old "Ignoring Inner Class TestRoom". Python: `game/tools` 141 tests OK, `tools` 115 tests OK. Godot's line-ending-only `.import` changes left uncommitted.
+
+**For the board (not a fail):** puffs left far behind the car take the car's current depth against buildings, so for their short life (about 0.7 s) they can show over or under a building they are not next to. No criterion requires otherwise. The agent proposes no fade at all (puffs pop out); that is for the board's playtest.
