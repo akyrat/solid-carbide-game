@@ -755,3 +755,8 @@ Entry format:
 - Decision or change: `game/data/enemies.json` (read through `enemy_data.gd`) holds the proposed enemy numbers: minion health 4, speed 6, contact damage 5 every 0.5 s; 12 minions at the start rising to 20 at 7:00; 60% drop chance of 2 coins; kaiju health 500 (about 48.5 s to kill for an average level-8 run); 3 meteors every 8 s. Passed QA round 1; data only, so merged. Flagged for the board: the kaiju drops no coins (Game loop architecture says enemies drop coins), meteors aim within 10 units of the car, minions are replaced as they die, and the count holds during the kaiju's minute. T-044 (minions) is unblocked.
 - Documents touched: `docs/enemies.md`, `game/README.md`
 - Tasks: T-039 (done), T-044 (open)
+
+## 2026-10-13: The kaiju drops a few coins; one more boulder call
+- Decision or change: the board decided the kaiju always drops a few coins when defeated (T-039 had proposed none). Its death ends the run at once, so the Project Lead settled that its coins are added to the run's coins as the run ends, without being picked up. T-119 (Game Data) adds the number; T-045 (the kaiju) depends on it and adds the coins before the run ends. The board also gave the go for one more PixelLab call on T-065, to fix the sample boulder's shape (a tall egg on a pedestal): a low, wide, jagged rock lying on the ground with no base.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-119 (new), T-045 (depends on T-119), T-065 (one more call)

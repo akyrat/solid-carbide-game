@@ -8,7 +8,7 @@ epic: enemies
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-036, T-039, T-044]
+depends_on: [T-036, T-039, T-044, T-119]
 documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-039-enemy-data.md, tasks/T-044-minions.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
@@ -39,6 +39,8 @@ Build the kaiju as Enemies, Decisions describes it, with T-039's numbers:
 Its meteor attack is T-046. The kaiju itself is a placeholder for now: a large shape several times the car's size. The final kaiju art comes from a separate art task.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
+
+**Kaiju coins (board, 2026-10-13):** when the kaiju is defeated it always drops a few coins (Enemies, Decisions; the number from T-119 in `enemies.json`). Its death ends the run straight away, so add its coins to the run's coins before the "run ended" signal, so they count in the coins saved.
 
 ## Acceptance criteria
 

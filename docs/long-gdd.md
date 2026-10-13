@@ -413,6 +413,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - The MVP minion walks on four legs towards the player (how it looks: Visual style, Decisions). Its health, contact damage and knockback are balancing numbers for the Game Data Agent; it does not copy a Unity prototype enemy.
 - The Game Data Agent proposes the kaiju's health, together with the player's weapon damage; the board judges it in playtests.
 - The Game Data Agent, with the Enemy Behavior Agent, works out the balancing numbers: how enemy numbers grow over the 7 minutes (within "slightly"), the coin drop chance and amounts, and how often the kaiju drops meteors and how many. The board judges them in playtests.
+- When the kaiju is defeated it always drops a few coins (100% chance). Its death ends the run straight away, so its coins are added to the run's coins as the run ends, without being picked up.
 - Where and how minions spawn, and how often their contact damage applies, are proposed by the Enemy Behavior Agent with the Game Data Agent; the board judges them in playtests.
 - Killing the kaiju ends the run at once, as a win.
 - The higher the player's combo (Game loop architecture, Decisions), the more minions spawn, on top of the slow growth over the run. It can be switched off, so the board can judge in playtests whether to keep it; the Game Data Agent proposes how strongly the combo raises spawning.
@@ -624,7 +625,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `77e54c9154e926d46ea1ecca7e1b899e8e2fc21472ade8af0b7fd1a7cbd70de7` |
 | `drifting.md` | `7d4d657df3d6333ed0ffa155d56076b81516e3310fcd7c4cb797adf35cc32729` |
 | `level-design.md` | `cf856b4cb3078588e8bd3de7a16c6c2dbd05de2a90335f3c33b153a65675f3f3` |
-| `enemies.md` | `b28c8c159d69cd774e279c3b05fbd0af44cc9d5d99d8c00a6a0d488d0eb32396` |
+| `enemies.md` | `36b632b8298255bf7da22ce95470c468cf32f8722fa3ff0717d50531fcd7902c` |
 | `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `12bd36bc92a8a950ad428c36b9fa89e8423f680d8b7e92f5607f25550f55629e` |
