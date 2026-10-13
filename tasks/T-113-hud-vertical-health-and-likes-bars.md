@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A GUT test shows the health bar and the likes bar are vertical (fill from the bottom up), both in the top-left area of the screen, the health bar to the left of the likes bar, and none of the HUD elements' rectangles overlap (bars, labels, heart, combo counter, timer, coins) (QA: pass / fail)
-- [ ] The existing HUD tests still pass: the bars follow the run's health, likes and level, the likes bar starts again after a level-up and stays full at the top level, and the combo counter follows the multiplier (QA: pass / fail)
-- [ ] A screenshot of a run started from the main menu shows the two upright bars at the top left with their labels, the combo counter, the timer and the coins (QA: pass / fail)
-- [ ] HUD and menus, Content, "The HUD", and game/README.md describe the new layout (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A GUT test shows the health bar and the likes bar are vertical (fill from the bottom up), both in the top-left area of the screen, the health bar to the left of the likes bar, and none of the HUD elements' rectangles overlap (bars, labels, heart, combo counter, timer, coins) (QA: pass)
+- [x] The existing HUD tests still pass: the bars follow the run's health, likes and level, the likes bar starts again after a level-up and stays full at the top level, and the combo counter follows the multiplier (QA: pass)
+- [x] A screenshot of a run started from the main menu shows the two upright bars at the top left with their labels, the combo counter, the timer and the coins (QA: pass)
+- [x] HUD and menus, Content, "The HUD", and game/README.md describe the new layout (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the run and judge the new layout.
 
@@ -60,3 +60,11 @@ UI Agent, built on branch task/T-113-hud-vertical-bars (worktree C:\solid-carbid
 - **Results:** full GUT suite 330/330, TESTS PASSED. Python: `game/tools` 125 OK, `tools` 115 OK.
 - **Screenshot:** `screenshots/T-113-hud.png` in the worktree (a run started from the main menu: 30% damage, Hype Lv 2, 37 coins, Combo x1.75), from `bash game/tools/screenshot.sh res://tests/fixtures/hud_from_menu_demo.tscn screenshots/T-113-hud.png 30`. The fixture now also adds a combo.
 - **Docs:** `docs/hud-and-menus.md` (Content, "The HUD" only), `game/README.md` ("The HUD" paragraph under "The run").
+
+QA/Integration, round 1 (2026-10-13), in the worktree on branch task/T-113-hud-vertical-bars:
+
+- **GUT layout test: pass.** `game/tests/unit/hud/test_hud_layout.gd` (7/7) asserts `FILL_BOTTOM_TO_TOP` and height > 4x width for both bars, equal sizes; health bar's right edge left of the likes bar's left edge with a gap under 20 px, tops level, both in the left quarter and top half, health bar at the left margin; pairwise no-overlap (with a non-zero-size check) among both bars, "Car Health", heart, "Likes", "Hype Lv", combo, timer and coins at 1152x648, 1280x720, 1920x1080 and 1024x576 with long texts (Hype Lv 99, Combo x5.75, 99999 coins); also clear of the screen's middle and the pause strip's content. The SubViewport is a fair test: the HUD's CanvasLayer resolves its anchors (timer top centre, coins top right) against the SubViewport's size, the project sets no stretch mode, so this is the same layout the real window gets, and it lets several window sizes be checked.
+- **Existing HUD tests: pass.** `test_hud_values.gd` is unchanged and passes 7/7 (health, likes and level follow the run, the likes bar's value and max follow the new level after a level-up, `test_max_level_keeps_the_bar_full`). `test_hud_combo.gd` passes 7/7; its only change is the placement test, which still checks right of the likes element and clear of the timer, coins and health bar, and now also checks near the bar's top and clear of the likes bar and all three labels: nothing it covered was dropped.
+- **Screenshot: pass.** Retook it with the fixture (`hud_from_menu_demo.tscn`, a run started from the main menu, 1152x648); identical layout to `screenshots/T-113-hud.png`: two upright bars at the top left (green about 70%, purple partly filled), "Car Health", heart + "Likes", "Hype Lv 2" stacked under them, "Combo x1.75" right of the likes bar at its top, timer 8:00 top centre, "Coins 37" top right, no overlaps. QA copy deleted.
+- **Docs: pass.** `docs/hud-and-menus.md`, Content, "The HUD", "Top left" bullet describes the upright bars (sizes, gap, bottom-up fill), the stacked labels and the combo position, plus the pause band note; `game/README.md` "The HUD" paragraph describes the T-113 layout and the new test.
+- **Full suites: pass.** GUT 330/330, TESTS PASSED (one GUT warning about an inner class, existing). Python `game/tools` 125 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
