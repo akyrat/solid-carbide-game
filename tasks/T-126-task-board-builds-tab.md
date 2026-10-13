@@ -1,7 +1,7 @@
 ---
 id: T-126
 title: A Builds tab on the task board that opens each worktree's game in Godot
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 epic: tooling
@@ -59,4 +59,12 @@ Godot's path comes only from `GODOT_BIN` in `.env` (as in `game/README.md`). Not
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the Project Lead's helper agent (2026-10-14).
+
+- `tools/taskboard/server.py`: `worktrees()` and `builds()` build the list (first `git worktree list` entry is `master`; other entries are identified by their folder name; ticket from `task/T-NNN-` branch, task file looked up in the worktree then in master's `tasks/`). `GET /api/builds`; `POST /api/launch` (same localhost + `X-Board: 1` check as `/api/move`) calls `launch()`: 400 bad mode, 404 id not in the list, 409 no `game/project.godot`, 500 for missing/nonexistent `GODOT_BIN` with a message. `godot_bin()` reads only the `GODOT_BIN` line of `.env` in the served folder. `start_detached()` uses `CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP` on Windows (`tb.no_window()` from T-110) and `start_new_session` elsewhere, with stdio to DEVNULL.
+- `tools/taskboard/taskboard.html`: Builds tab (entries with Play and Open in editor, disabled without project; error shown as a banner and toast); polled with the tickets every 2 s (re-rendered only when the data changes). A ticket's detail view has "Play this build" and a "Show in Builds" link (closes the dialog, switches tab, highlights and scrolls to the entry) when the ticket has a worktree. Chosen the detail view rather than the card, because cards are drag targets.
+- `tools/test_taskboard_server.py` (new, 9 tests): list entries, `.env` reading, exact launcher arguments for play and editor, refusals (no `X-Board`, non-local Host, unknown id incl. a path, bad mode, no project, missing mode) start nothing, missing and nonexistent `GODOT_BIN`, detached flags on nt and posix. Process start is always stubbed.
+- Docs: `docs/README.md` (The task board), `docs/working-with-the-board.md` (Showing work).
+- Checks: ran this branch's server on port 8791 (not the live one); `/api/builds` listed master and the 7 task worktrees correctly. One real `POST /api/launch` for `master` / `play` started `Godot_v4.6.2-stable_win64.exe --path C:\solid-carbide-game\game` with no console window; that process (and only it) was then closed, and the 8791 server stopped.
+- Tests: `tools` 130 OK; `game/tools` 166 OK; Godot `run_tests.sh` TESTS PASSED; `node --check` on the page's script OK. Godot `.import` line-ending noise reverted, not committed.
+- QA note: the entry id for a non-master worktree is its folder name (for example `T-125`), not a path.
