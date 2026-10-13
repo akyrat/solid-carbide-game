@@ -1,7 +1,7 @@
 ---
 id: T-074
 title: Art: the level-up effect
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
