@@ -1,7 +1,7 @@
 ---
 id: T-117
 title: Drift marks: the rear tyres leave marks on the ground while drifting (placeholder)
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 epic: driving
@@ -84,3 +84,4 @@ QA/Integration Agent, 2026-10-13, in `C:\solid-carbide-worktrees\T-117` on `task
 5. **Pass.** `game/README.md`, "Drift marks", covers when, where, how long, the cap, the proposed numbers and the placeholder, and says T-118 changes only `scenes/driving/drift_marks.tscn` and lists the settings (`mark_texture`, `texture_mode`, `mark_color`, `width_units`, `lifetime`, `fade_time`, and if needed the cap and geometry values), keeping the root's filter Nearest. The run and prototype sections were updated too.
 6. **Pass.** Run by QA: full GUT suite 379 of 379 tests pass (49253 asserts, `TESTS PASSED`, exit 0), with `test_drift_marks.gd` 18 of 18 and the drift model, prototype, car collision, tricks and run tests in that run. Python: `game/tools` 125 tests OK, `tools` 115 tests OK. No `.import` changes left in the folder.
 - 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass (QA/Integration Agent).
+- 2026-10-13, needs-playtest → done: LGTM (board playtest, 2026-10-13)
