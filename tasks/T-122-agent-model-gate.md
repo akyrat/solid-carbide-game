@@ -46,4 +46,11 @@ Add a PreToolUse check for the Agent tool to `.claude/hooks/board_gate.py` (wire
 
 ## Result notes
 
-Written by the agent when it finishes.
+Project Lead, 2026-10-13, on `task/T-122-agent-model-gate` in `C:\solid-carbide-worktrees\T-122`.
+
+- `.claude/hooks/board_gate.py`: new `pre_agent()` for PreToolUse on the Agent tool. It takes the first `T-<number>` in the prompt; if a task file with that id exists, the call must pass the model that task needs: the file's `model` line, or for the QA/Integration Agent sonnet, or opus when the task has a `The board's review:` line. Missing or different: refused, naming the task, the model needed and why, and how to fix it. Forks, prompts with no task id and unknown ids are not checked.
+- `.claude/settings.json`: the PreToolUse matcher now includes `Agent`.
+- `tools/test_task_status.py`: new `AgentModel` tests (6): sonnet task needs sonnet (refused with none or opus), opus task needs opus, QA on sonnet or opus before a playtest, the first task id counts, no id / unknown id / fork not checked, the refusal names the task and the model.
+- `tasks/README.md`, "Models": says the hooks enforce it.
+- Tests: `tools` 121 OK (41 in `test_task_status.py`). No game files changed.
+- The hook takes effect for the next Agent call after this is merged (the settings file is read by Claude Code).
