@@ -52,4 +52,37 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Plan (2026-10-13, planning round: no PixelLab call made, no game file changed)
+
+**The size problem in numbers.** The game's art density is 32 art pixels per unit, drawn at scale 0.5 (the car sheet and the ground atlas both use it; Visual style says "about 40"). With the map's iso projection (`ISO_TRANSFORM`: 1 unit along x or y = 32 x 16 art px, 1 unit up = 32 art px), one 30 x 30 block is a 1920 x 960 px diamond, and the 15-unit placeholder box is 1920 x 1440 px. PixelLab's limits (OpenAPI spec, read 2026-10-13): `/create-image-pixflux` at most 400 px per side (area 400 x 400), transparent background only up to a 200 x 200 area (a blank background above that); `/map-objects` 32 to 400 px per side; `/create-image-pixen` area 512 x 512; `/generate-image-v2` up to 512 x 512 (Pro, cost not published). So one image covers at most about a 6 x 6 unit footprint at the game's density: footprint width + depth <= 12.5 units for a 400 px wide image.
+
+**Options looked at**
+
+1. *One image per block, scaled up* (about 5x): breaks "drawn at its final size, never scaled up"; the buildings would be blurry blocks of 5 x 5 px next to the car. Rejected.
+2. *Half density (16 px per unit, drawn at scale 1)*: still 960 px wide per block, too big for one image, and twice as chunky as the car and the ground. Rejected.
+3. *Flat front-on facade panels, sheared onto the two visible walls and tiled by a script*: keeps the density and fits any size in 3 or 4 calls, but PixelLab never sees the building in 3D: corners, roofs and vertical signs would be script-drawn and the result looks procedural; seamless tiling of PixelLab facades is not guaranteed. Second choice.
+4. **Recommended: several small towers per block, each one PixelLab image at the game's density, assembled by a script.**
+
+**Recommended plan**
+
+- **How a block is filled:** a 4 x 4 grid of towers, each on a **6 x 6 unit** footprint, with 2-unit dark alleys between them (4 x 6 + 3 x 2 = 30), so 16 towers per block and 192 on the map. Each tower is one isometric image at 32 art px per unit, drawn at scale 0.5 like the car and the ground: the 40 (in practice 32) px per unit rule holds exactly; nothing is scaled. The alleys show the dark night colour under the blocks (no ground tiles there, T-103) and absorb PixelLab's imprecise footprints.
+- **Generation size:** 384 x 400 px per tower (a 6 x 6 footprint is 384 px wide; the image holds a tower about 6.5 units tall).
+- **Height:** a free script makes towers taller by repeating a band of whole floors from the middle of the walls (an isometric tower's walls look the same when moved straight up, so a band of rows can be repeated without new pixels). Proposed heights: **9, 12 or 15 units**, never over 15, so no tower hides more of the road than the placeholder boxes the board has already played with. The fade is unchanged: each block stays one building node, its towers are child sprites (drawn back to front, `texture_filter` nearest, inverse iso transform like the ground tiles), they fade together through the node's `modulate`, `draw_placeholder = false`, and `height_units` = the block's tallest tower. The fade may start slightly early when the car is behind a low tower next to a tall one; `custom_silhouette` (the outline of the block's towers) can tighten that if the board wants. No change to the map's layout data or collisions.
+- **How many distinct sprites:** **8 base towers** from PixelLab. Free script variations multiply them: mirroring (x2), a neon swap of the sign and window colours, pink-led or cyan-led (x2; a colour mapping, no new pixels, never towards red), and 3 heights (x3): 96 versions for 192 places. A fixed hash picks them so no two neighbouring towers and no two blocks are the same.
+- **Endpoint and settings:** `/create-image-pixflux` (direct; the client already supports it; 1 generation per call at 128 x 128 in T-003, T-014). `image_size` 384 x 400, `isometric: true`, `view: high top-down`, `direction: south-east` (both visible walls toward the viewer, as the placeholder), `outline: selective outline`, `shading: detailed shading`, `detail: highly detailed`, `no_background: true`, `text_guidance_scale` 8, `color_image`: a forced palette of up to 30 colours made by script from approved art only (the ground atlas's navy and purple, the level-up particles' pink, cyan and violet; no Redgull red), `negative_description`: text, letters, words, logo, red, ground, street, car. Prompt along the lines of "narrow Tokyo-style cyberpunk tower at night, lit windows, vertical neon signs with abstract glyph shapes, dark navy and purple walls, pink and cyan neon glow drawn in pixels", varied per base tower only in things the docs allow (sign placement, window pattern, roof equipment). The 7 later calls also use the approved sample's palette as `color_image`.
+- **Scripts (free, tested):** a build script that removes the blank background above 200 x 200 (flood fill of the exact border colour from the edges), maps every pixel to the forced palette (<= 30 colours), measures each tower's footprint and wall band, stretches heights, makes the mirrored and colour-swapped versions, lays out all 12 blocks and checks the sprite rules and the not-Redgull-red rule (more than 0.5 from `Hud.HEART_COLOR`, as T-074).
+- **Calls and generations:**
+  - Sample: **1 call**, one base tower, expected **1 generation** (cost at 384 x 400 is not published; the sample's record shows it). From it the script makes, for free, a mock-up of one whole block (16 towers, heights, mirror, colour swap) for the board's review.
+  - Full set after the board approves the sample: **7 more calls**, expected **7 generations**. Total **8 calls, about 8 generations**. Balance recorded before and after each step. If the sample costs more than 2 generations, I stop and report before the full set.
+
+**Risks**
+
+- PixelLab's isometric flag only weakly guides the angle: T-101 found its diagonals flatter than the game's 2:1, and the footprint may not be exactly 6 x 6. The script places each tower by its measured base; the alleys hide small errors, but some towers may look slightly off-angle.
+- Background removal above 200 x 200: if PixelLab's blank background matches the outline colour, the flood fill can eat outline pixels; the check and a preview show it.
+- Repeating a floor band works only if the wall is regular; a sign that changes along the band repeats visibly (it just reads as a longer sign). If a tower has no clean band, it keeps its generated height.
+- Readable words: PixelLab likes to draw letters or kanji-like marks on signs. The prompt and negative prompt ask for abstract shapes, but only the board can judge this; no regeneration in this round.
+- Mirroring flips the light side of a tower. If the board dislikes it, drop mirroring (48 versions instead of 96).
+- 16 small towers per block reads as dense and grid-like; the alternative (option 3) gives one large building per block but a more procedural look.
+- The game uses 32 art px per unit, Visual style says "about 40". This plan keeps 32 so the buildings match the car and ground already in the game.
+
+Nothing is generated until the board gives the go for the sample.
