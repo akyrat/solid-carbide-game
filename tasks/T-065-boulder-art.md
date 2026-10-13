@@ -43,11 +43,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot shows the final boulders in the obstacle patterns (QA: pass / fail)
-- [ ] The drawn boulders match their 3-unit collision circles: T-019's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [x] A screenshot shows the final boulders in the obstacle patterns (QA: pass)
+- [x] The drawn boulders match their 3-unit collision circles: T-019's tests still pass (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
@@ -241,3 +241,13 @@ Before starting, current `master` was merged into the branch (`git merge master`
 - Changed: `game/scripts/level/mvp_map.gd` (boulder sprites, z step 3, the car under covering boulders), `game/scripts/level/map_building.gd` (`iso_silhouette()`), `game/README.md` (new section "The boulders (T-065)", the draw order, the tool note), `art-archive/README.md`, this task file
 - Documents affected: `game/README.md`. Visual style unchanged (the variants and sizes are proposals in these notes for the board to judge).
 - 2026-10-13, in-progress → in-qa: Both approved variants (plus free mirrored copies) game-ready and swapped in; no PixelLab call (4954 of 5000, task total 2). Sprite check PASS on all four; GUT 418/418; Python 166 + 115 OK.
+
+**QA/Integration Agent, 2026-10-13: QA round 1, all criteria pass**
+
+1. **Sprites: pass.** `python game/tools/check_sprite_rules.py game/art/boulders/<file>.png --size 160` on all four (`boulder_a`, `boulder_a_mirror`, `boulder_b`, `boulder_b_mirror`): all PASS (160 x 160, transparent corners, 0 semi-transparent, 30 colours). A separate check of every pixel (not only the corners): alpha only 0 or 255, every edge pixel transparent, 30 opaque colours each. `build_boulder_art.py check` and `remove_boulder_base.py check`: the committed files match a fresh build.
+2. **Record: pass.** `game/art/pixellab-generation-log.jsonl` has three T-065 entries: the pixflux sample (20:01 UTC, 1 generation), the refused bitforge request (20:54, HTTP 500 input check, `usage` null) and the bitforge call (20:55, 1 generation), each with its prompt. The raw records (`art-archive/T-065/boulder_sample_raw.json`, `boulder_sample2_raw.json`) hold the full request settings (size, isometric, view, outline, shading, detail, guidance, style strength, negative description) and `usage`; the game-ready records name their source, the call and every cleanup script. The result notes give the plan, cost and balance before and after each call (4956 -> 4955 -> 4954 of 5000, $0.00). Exactly two paid calls, matching the board's go for one sample (timeline on `master`, 2026-10-13, "T-065 ... gets the PixelLab go for one sample boulder") and its go for exactly one more call (same day, "the board also gave the go for one more PixelLab call on T-065"); the later rounds (disc removal, swap-in) made no call. Nothing was regenerated beyond what the board allowed.
+3. **Screenshot: pass.** `C:\solid-carbide-worktrees\T-065\screenshots\T-065_boulders_behind.png` and `_front.png` show a run's isometric view with the final sprites in the obstacle patterns (both variant a, the tall glowing rock, and variant b, the boxy one), the car behind and in front of a boulder, and a boulder behind a building drawn under it; the 3x crops show the depth order up close. Looks: variant b's single thin crack and grey speckle read noisy at its 0.55 scale, and a and b look like two different rocks, as the agent's notes say; that is for the board to judge, not a fail.
+4. **Collision circles: pass.** On the branch (diff against the merge base with `master`), no layout data, scene or existing test changed; in `mvp_map.gd` the only removed lines are the old z-step comment and the two `2 *` z expressions (now `BUILDING_Z_STEP`, 3). Bodies, radii and placement code untouched. `test_boulder_art.gd` checks each sprite's opaque width equals the circle's on-screen width (3 x 16 x sqrt 2), centred, standing on the circle's front edge, and collision radius 1.5 units. T-019's tests (`test_mvp_map.gd`, `test_mvp_map_no_challenges.gd`, `test_mvp_map_ground.gd`) and `test_car_collisions.gd` pass unchanged. The z-step change: T-034's `test_see_through_map.gd` and T-117's `test_drift_marks.gd` pass unchanged; with 12 buildings the top z is 38, well inside Godot's range, and the only fixed z elsewhere (trick popups, 100) is relative to the car's view, so it is not affected.
+5. **Tests: pass.** Full GUT suite, `bash game/tools/run_tests.sh`: 418 of 418 pass, 42 scripts, `TESTS PASSED`, exit 0 (the one warning, "Ignoring Inner Class TestRoom", was there before). Python: `game/tools` 166 OK, `tools` 115 OK.
+
+Also checked: the branch merges into current `master` (with T-120) without conflicts (`git merge-tree`). Godot's line-ending-only `.import` changes in the worktree were left uncommitted.
