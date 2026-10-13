@@ -545,13 +545,23 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 
 | Signal | Fires |
 | --- | --- |
-| `xp_changed(xp: float, xp_needed: float, level: int)` | When XP or the level changes, and on start. For the HUD's likes bar (T-049) |
+| `xp_changed(xp: float, xp_needed: float, level: int)` | When XP or the level changes (gains, level-ups, every frame the likes drain takes XP away), and on start. For the HUD's likes bar (T-049) |
 | `score(amount: float, challenge_id: String)` | When a challenge is completed, with the XP (likes) it gave. For the challenge popup (T-092) |
 | `level_up(new_level: int)` | Once per level reached, switch on or off |
 | `level_up_choice_started(new_level: int)` | Switch on: the run is now paused for that level's choice (T-052 opens its screen here) |
 | `level_up_choice_made(new_level: int)` | Switch on: `choice_made()` closed that level's choice |
 
 A new run (`start_run()`) resets XP to 0 and the level to 1, forgets the drift in progress and any waiting choice (unpausing if it was waiting). Nothing is added after the run ends.
+
+**The likes drain** (task T-115; the rule is Game loop architecture, Decisions, "Likes drain", the numbers are `likes_drain` in `data/run.json` through `RunData`, task T-114). Once the combo is back at "no combo" (`combo` at `start_multiplier`, after the combo's own wait and drain), and after `likes_drain_extra_wait_seconds` (0 for now), `xp` goes down by `RunData.likes_drain_xp_per_second(level)` per second, stopping at 0: the level never goes down. Any trick raises the combo, which stops the drain until the combo has drained again. It runs inside `advance()` (`_drain_likes()`), so it stops while the tree is paused (pause screen, level-up screen) and after the run ends; it also skips while a weapon choice is waiting. At the top level there is nothing to drain: XP stays at 0 there and the HUD shows the bar full. Each frame it takes XP away it sends `xp_changed`, so the HUD's likes bar empties (the bar rounds to whole likes, its step being 1, so it moves one like at a time).
+
+| Function or value | Is |
+| --- | --- |
+| `has_no_combo()` | True when the combo is at "no combo" |
+| `is_likes_draining()` | True while the drain is taking XP away now (no combo, the extra wait passed, XP above 0, not the top level, no choice waiting, the run going) |
+| `likes_drain_idle` | Seconds the combo has been at "no combo"; a trick or a new run sets it to 0 |
+
+A screenshot fixture, `tests/fixtures/likes_drain_demo.tscn`, starts a run from the main menu with level 2 and a fifth of its bar, then does nothing, printing the time, XP and level every half second: `bash game/tools/screenshot.sh res://tests/fixtures/likes_drain_demo.tscn screenshots/likes_drain_1.png 600` (the bar emptying) and `... screenshots/likes_drain_2.png 3500` (empty, still level 2). The frame counts depend on the screen's refresh rate; the printed lines say how far in each shot is.
 
 **The level-up effect** (task T-112; Visual style, Decisions, "Level-up effect"): at every level-up the car gives off one burst of pixel particles. The run scene connects the state's `level_up` signal to its burst, `run.level_up_burst`, a `CPUParticles2D` from `scenes/run/level_up_burst.tscn` (script `scripts/run/level_up_burst.gd`: `play()` starts the burst, `is_playing()`). It sits under `View`, drawn over the car, and `sync_view()` keeps it on the drawn car; `local_coords` is on, so the particles move with the car while they play. Several level-ups in the same moment (one gain giving two levels) restart the same burst, so they show as one burst. Its `process_mode` is Always, so it keeps playing while the run is paused for the level-up screen (T-052).
 
@@ -583,4 +593,4 @@ The drain runs with the clock (`advance()`), so it stops while the run is paused
 
 **Pause:** the clock runs in `_process` with the default (pausable) process mode, so setting `get_tree().paused = true` stops it. Anything that pauses the run (the pause screen, the level-up choice) does it that way. The run's length (8 minutes) and the boss's arrival (7 minutes in) are constants in `run_state.gd`, `RUN_SECONDS` and `BOSS_TIME_LEFT`, because they are Decisions, not balancing numbers.
 
-**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu), part of the GUT suite.
+**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu) and `tests/unit/run/test_run_likes_drain.gd` (T-115: no drain with a combo, the drain at T-114's speed once it is gone, a trick stopping it, never below the level's start even over a long drain, no drain while paused, while a choice waits, after the run ends or at the top level, the extra wait, the switch, `xp_changed` firing and the HUD's likes bar emptying in a run), part of the GUT suite.

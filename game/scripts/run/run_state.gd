@@ -6,7 +6,10 @@ extends Node
 ## challenges and from drifting, with level-ups and the level-up pause switch.
 ## Task T-081 adds the combo: tricks raise a multiplier on all XP gained,
 ## collisions (and damage to the car) cut it, and it drains when no trick
-## follows in time (numbers: res://data/combo.json, ComboData). Other agents'
+## follows in time (numbers: res://data/combo.json, ComboData). Task T-115
+## adds the likes drain: once the combo is back at "no combo", the XP in the
+## current level slowly goes down, never below 0, so the level never goes
+## down (numbers: res://data/run.json's likes_drain, RunData). Other agents'
 ## work plugs in through the signals and public
 ## functions below; game/README.md, "The run", lists them.
 ##
@@ -102,6 +105,9 @@ var combo := 1.0
 ## Seconds since the last trick (or since the run started). The combo drains
 ## once this passes combo.json's drain_wait_seconds.
 var combo_idle := 0.0
+## Seconds the combo has been back at "no combo" (T-115). The likes drain runs
+## once this passes run.json's likes_drain extra_wait_seconds; a trick resets it.
+var likes_drain_idle := 0.0
 
 var _run_data: RunData
 var _combo_data: ComboData
@@ -130,6 +136,7 @@ func start_run() -> void:
 	drift_seconds_paid = 0
 	combo = _combo_data.start_multiplier()
 	combo_idle = 0.0
+	likes_drain_idle = 0.0
 	var was_waiting := not pending_choices.is_empty()
 	pending_choices.clear()
 	if was_waiting:
@@ -158,6 +165,7 @@ func advance(seconds: float) -> void:
 	if shown_seconds() != shown_before:
 		time_left_changed.emit(time_left)
 	_drain_combo(seconds)
+	_drain_likes(seconds)
 	if not boss_time_sent and time_left <= BOSS_TIME_LEFT + EPSILON:
 		boss_time_sent = true
 		boss_time.emit()
@@ -272,6 +280,7 @@ func add_trick(trick_id: String) -> void:
 	var before := combo
 	combo = _combo_data.after_trick(combo, trick_id)
 	combo_idle = 0.0
+	likes_drain_idle = 0.0
 	combo_trick.emit(trick_id, combo - before, combo)
 	if combo != before:
 		combo_changed.emit(combo)
@@ -301,6 +310,49 @@ func _drain_combo(seconds: float) -> void:
 	if draining > 0.0:
 		_set_combo(maxf(combo - draining * _combo_data.drain_per_second(),
 				_combo_data.start_multiplier()))
+
+
+## True when the combo is at "no combo" (combo.json's start_multiplier).
+func has_no_combo() -> bool:
+	return combo <= _combo_data.start_multiplier() + EPSILON
+
+
+## True while the likes drain is taking XP away: the combo is at "no combo",
+## the extra wait has passed, there is XP in the current level to lose, and
+## no weapon choice is waiting. Not at the top level (its bar is always empty).
+func is_likes_draining() -> bool:
+	if not running or not has_no_combo() or is_waiting_for_choice() or is_max_level():
+		return false
+	if xp <= 0.0 or _run_data.likes_drain_xp_per_second(level) <= 0.0:
+		return false
+	return likes_drain_idle >= _run_data.likes_drain_extra_wait_seconds() - EPSILON
+
+
+## The likes drain (T-115; Game loop architecture, Decisions, "Likes drain"):
+## while the combo is at "no combo", after run.json's extra wait, XP in the
+## current level goes down at RunData.likes_drain_xp_per_second(level),
+## stopping at 0: the level never goes down. A trick raises the combo, which
+## stops it. advance() runs only while the run is going and the tree is not
+## paused, so there is no drain while paused or after the run ends; it also
+## skips while a level-up's weapon choice is waiting. Sends xp_changed for
+## the HUD's likes bar whenever XP goes down.
+func _drain_likes(seconds: float) -> void:
+	if not has_no_combo():
+		likes_drain_idle = 0.0
+		return
+	var before_idle := likes_drain_idle
+	likes_drain_idle += seconds
+	if not running or is_waiting_for_choice() or is_max_level() or xp <= 0.0:
+		return
+	var wait := _run_data.likes_drain_extra_wait_seconds()
+	var draining := maxf(likes_drain_idle - wait, 0.0) - maxf(before_idle - wait, 0.0)
+	var rate := _run_data.likes_drain_xp_per_second(level)
+	if draining <= 0.0 or rate <= 0.0:
+		return
+	xp = maxf(xp - draining * rate, 0.0)
+	if xp < EPSILON:
+		xp = 0.0
+	xp_changed.emit(xp, xp_needed(), level)
 
 
 func _set_combo(value: float) -> void:
