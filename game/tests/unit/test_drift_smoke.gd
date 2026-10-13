@@ -193,6 +193,58 @@ func test_every_puff_ends_within_its_lifetime() -> void:
 	assert_eq(smoke.puff_count(), 0, "all gone once the longest life has passed")
 
 
+## T-073 round 2 (the board's playtest): in a steady full-circle drift the live
+## smoke trail spans about 20 degrees of the circle, not half of it.
+const TRAIL_ARC_DEGREES := 20.0
+const TRAIL_ARC_TOLERANCE := 5.0
+
+
+## The average angle (degrees) of the circle that the live puffs of one tyre
+## span, from the oldest to the newest, seen from the circle's centre, over
+## `samples` physics steps. The centre is fitted from three points of the car's
+## own path (about one circle).
+func _trail_arc_degrees(run: Node2D, smoke: Node2D, samples: int) -> float:
+	var car: CharacterBody2D = run.car
+	var path: Array = []
+	var puff_sets: Array = []
+	for i in samples:
+		car.physics_step()
+		smoke.advance(car.model.dt)
+		path.append(car.model.get_position())
+		var ws: Array = []
+		for p in smoke.puffs():
+			if p.tyre == 0:
+				ws.append(Vector2(p.world) / car.PX_PER_UNIT)
+		puff_sets.append(ws)  # oldest first
+	var a: Vector2 = path[0]
+	var b: Vector2 = path[path.size() / 2]
+	var c: Vector2 = path[path.size() - 1]
+	var d := 2.0 * (a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y))
+	var centre := Vector2(
+		(a.length_squared() * (b.y - c.y) + b.length_squared() * (c.y - a.y) + c.length_squared() * (a.y - b.y)) / d,
+		(a.length_squared() * (c.x - b.x) + b.length_squared() * (a.x - c.x) + c.length_squared() * (b.x - a.x)) / d)
+	var total := 0.0
+	var counted := 0
+	for ws in puff_sets:
+		if ws.size() < 2:
+			continue
+		var first: float = (ws[0] - centre).angle()
+		var last: float = (ws[ws.size() - 1] - centre).angle()
+		total += absf(rad_to_deg(wrapf(last - first, -PI, PI)))
+		counted += 1
+	return total / maxf(1.0, counted)
+
+
+func test_the_smoke_trail_spans_about_twenty_degrees_in_a_full_circle_drift() -> void:
+	var run := _run()
+	var smoke: Node2D = run.drift_smoke
+	_drive(run.car, W_AND_D, 250, smoke)  # into the steady drift
+	var arc := _trail_arc_degrees(run, smoke, 300)
+	gut.p("measured trail arc: %.1f degrees (lifetime %.3f s)" % [arc, smoke.lifetime])
+	assert_almost_eq(arc, TRAIL_ARC_DEGREES, TRAIL_ARC_TOLERANCE, "the trail covers about 20 degrees of the circle")
+	assert_lt(smoke.lifetime, 0.2, "a short life, so a short trail")
+
+
 func test_a_long_drift_never_goes_over_the_cap() -> void:
 	var run := _run()
 	var smoke: Node2D = run.drift_smoke
@@ -208,7 +260,8 @@ func test_a_long_drift_never_goes_over_the_cap() -> void:
 		assert_true(smoke.puff_count() <= cap, "step %d: %d puffs over the cap %d" % [i, smoke.puff_count(), cap])
 		if smoke.puff_count() > cap:
 			break
-	assert_gt(most, cap / 2, "a steady drift keeps a good amount of smoke")
+	# A steady drift holds about 2 tyres x rate x life puffs (T-073: a short life, so well under the cap).
+	assert_gt(most, int(smoke.puffs_per_second * smoke.lifetime), "a steady drift keeps a good amount of smoke")
 	# With time standing still nothing pops, so only the cap holds the count.
 	for i in 200:
 		run.car.physics_step()
@@ -310,7 +363,7 @@ func test_the_prototype_makes_smoke_while_drifting() -> void:
 	assert_eq(_tyres_seen(proto.drift_smoke), [0, 1])
 
 
-func test_placeholder_is_nearest_opaque_light_grey_violet_and_not_redgull_red() -> void:
+func test_puff_art_is_nearest_opaque_cool_grey_violet_and_not_redgull_red() -> void:
 	var s := _smoke()
 	assert_eq(s.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "nearest filtering")
 	assert_eq(s.puff_color.a, 1.0, "no fading tint")
@@ -328,8 +381,8 @@ func test_placeholder_is_nearest_opaque_light_grey_violet_and_not_redgull_red() 
 			if c.a == 0.0:
 				continue
 			opaque += 1
-			assert_gt(c.get_luminance(), 0.6, "light")
-			assert_true(c.b > c.r and c.b > c.g, "violet-tinted grey")
+			assert_gt(c.get_luminance(), 0.2, "light enough to read on the dark ground")
+			assert_true(c.b > c.r and c.b > c.g, "violet-tinted grey (T-073 art)")
 			assert_lt(maxf(c.r, maxf(c.g, c.b)) - minf(c.r, minf(c.g, c.b)), 0.2, "greyish")
 			var d := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length()
 			assert_gt(d, 0.5, "far from Redgull red")
