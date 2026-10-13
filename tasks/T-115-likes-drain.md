@@ -1,7 +1,7 @@
 ---
 id: T-115
 title: The likes bar drains when the combo has drained
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 epic: game-loop
