@@ -37,11 +37,11 @@ The board's decision (HUD and menus, Decisions, 2026-10-13): when the combo mult
 
 ## Acceptance criteria
 
-- [ ] GUT tests show the combo counter is hidden at the start of a run and whenever the multiplier is at "no combo", shown with the right text after a trick, and hidden again once the combo has drained back (QA: pass / fail)
-- [ ] GUT tests show the other HUD elements keep their positions whether the counter is shown or hidden, and T-113's layout tests still pass (QA: pass / fail)
-- [ ] Two screenshots of a run started from the main menu show the counter hidden with no combo and shown with a combo (QA: pass / fail)
-- [ ] HUD and menus, Content, "The HUD", and game/README.md say the counter is hidden at no combo (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] GUT tests show the combo counter is hidden at the start of a run and whenever the multiplier is at "no combo", shown with the right text after a trick, and hidden again once the combo has drained back (QA: pass)
+- [x] GUT tests show the other HUD elements keep their positions whether the counter is shown or hidden, and T-113's layout tests still pass (QA: pass)
+- [x] Two screenshots of a run started from the main menu show the counter hidden with no combo and shown with a combo (QA: pass)
+- [x] HUD and menus, Content, "The HUD", and game/README.md say the counter is hidden at no combo (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest a run (together with T-113's layout) and judge the counter appearing and disappearing.
 
@@ -59,3 +59,10 @@ UI Agent, 2026-10-13. Branch `task/T-116-hide-combo-at-no-combo`, made from `tas
 **Tests:** full GUT suite 339/339 passing (`bash game/tools/run_tests.sh`), including T-113's layout tests and the existing combo tests; Python tool tests: `game/tools` 125 passed, `tools` 115 passed.
 
 **Documents affected (updated):** `docs/hud-and-menus.md` (Content, "The HUD": the counter is hidden at no combo; Decisions: master's line "The combo counter is hidden when there is no combo ..." taken word for word for a clean merge) and `game/README.md` (the HUD section: `show_combo`, the new test file and the no-combo screenshot fixture). Godot's line-ending-only `.import` changes were not committed.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13), judging only T-116's diff from `task/T-113-hud-vertical-bars`:
+1. Pass. `test_hud_combo_hidden.gd` reads "no combo" from `ComboData.start_multiplier()` (and `show_combo` reads it from combo data, not a hard-coded 1.0), checks hidden at run start, shown with "Combo x1.5", "x1.55" and "x1.05" after tricks, still shown mid-drain ("x1.25"), hidden once `state.combo` equals the start value, shown again by the next trick, and hidden after `start_run()`.
+2. Pass. `test_hiding_moves_nothing_else` compares the global rects of the health bar, "Car Health", likes bar, likes row, heart, "Likes", "Hype Lv", timer and coins with the counter hidden, shown and hidden again; `test_hud_layout.gd` (T-113) passes.
+3. Pass. `screenshots/t116_no_combo.png` (from the main menu, no counter above the likes row) and `screenshots/t116_combo.png` ("Combo x1.75" above the row); the likes row and bar are in the same place in both.
+4. Pass. HUD and menus, Content, "The HUD" and `game/README.md` say the counter is hidden at no combo; the Decisions section is identical to master's.
+5. Pass. GUT 339/339 (36 scripts), `game/tools` 125 passed, `tools` 115 passed, run by QA.
