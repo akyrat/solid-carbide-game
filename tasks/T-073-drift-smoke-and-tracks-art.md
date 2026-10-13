@@ -1,7 +1,7 @@
 ---
 id: T-073
 title: Art: drift smoke
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, game/README.md, tasks/T-121-drift-smoke.md, tasks/T-118-drift-marks-art.md, tasks/T-074-challenge-and-level-up-effects-art.md]
 files_expected_to_change: [a smoke drawing script and its test, smoke sprites under game/art/ and their record, T-121's smoke scene, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -101,3 +101,4 @@ Documents affected: `game/README.md` ("Drift smoke": numbers, tests).
 3. Screenshots: pass. The agent's `screenshots/drift_smoke_asphalt*.png` and `drift_smoke_gravel*.png` (I looked at the gravel crop too) show a short chain of puffs right behind the rear tyres, over the marks, no longer than about a car length and a half. Retook both from the committed scene (`screenshots/qa/qa2_smoke_asphalt.png`, `qa2_smoke_gravel.png`, 150 frames, with 3x `_crop` versions): same result. Reads clearly on the asphalt, a little less on the gravel, still visible. The "row of identical gems" look from round 1 remains; that is for the board's playtest.
 4. T-121's tests: pass. `test_drift_smoke.gd` 19 / 19 (18 of T-121's, adapted, plus the arc test).
 5. Full suites: pass. GUT 427 / 427 (1 known warning); `game/tools` 155 OK; `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 2: all criteria pass; trail about 20 to 25 degrees
