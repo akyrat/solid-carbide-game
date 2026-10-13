@@ -157,6 +157,8 @@ python game/tools/pixellab_client.py generate --endpoint create-image-pixflux \
 - Every generation call, successful or not, is also appended to `game/art/pixellab-generation-log.jsonl`.
 - Exit codes: 0 = saved (or balance shown); 1 = token missing, bad parameters, request failed, job failed or polling timed out; 2 = bad command-line arguments.
 
+**Palette and previews (free, no PixelLab call):** `python game/tools/reduce_palette.py reduce IN.png OUT.png [--max-colors 30]` merges a sprite's least-used colours into the nearest remaining ones until at most 30 are left (no new colours, alpha unchanged); `python game/tools/reduce_palette.py preview IN.png OUT.png [--scale 4]` enlarges it (nearest-neighbour) on a dark and a light background side by side. Tests: `game/tools/test_reduce_palette.py`.
+
 Its Python tests (`game/tools/test_pixellab_client.py`) run with the Python tool tests command above and never call PixelLab. `game/tests/unit/test_pixellab_assets.gd`, part of the GUT suite, checks that every generated PNG under `art/` loads in Godot with the size its record gives.
 
 ## The first final car sprite (T-014)

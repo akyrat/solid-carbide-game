@@ -65,3 +65,40 @@ The board's go covers one sample boulder only. Plan: **one** PixelLab call, `POS
 - **Settings:** `image_size` 160 x 160, `isometric: true`, `no_background: true`, `view: "high top-down"`, `outline: "selective outline"`, `shading: "detailed shading"`, `detail: "highly detailed"`, `text_guidance_scale: 8` (as the approved car, minus `direction`, which a round rock does not need). HTTP read timeout 600 s (the client's).
 - **Expected cost:** 1 generation (the 128 x 128 car cost 1; the larger canvas could cost a little more).
 - **Balance before:** 4956 of 5000 subscription generations (Tier 2: Pixel Artisan), USD credits $0.00.
+
+### The call made
+
+| # | Endpoint | Prompt and settings | Cost (`usage`) | Output |
+| --- | --- | --- | --- | --- |
+| 1 | `POST /create-image-pixflux` (direct, job id `null`) | Exactly the prompt and settings planned above (record: `art-archive/T-065/boulder_sample_raw.json`; log: `game/art/pixellab-generation-log.jsonl`) | 1 generation | `art-archive/T-065/boulder_sample_raw.png`, 160 x 160 RGBA |
+
+- **Balance:** before 4956 of 5000 generations; right after the call 4956 (PixelLab's balance lags); a minute later **4955**. USD credits $0.00 throughout. Total cost: **1 generation**. One round only; nothing regenerated.
+- **Resources consulted:** `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/level-design.md`, this task, `tasks/T-019-build-mvp-map.md`, the approved car's record and sheet layout (`game/art/car/car_sw_front.json`, `car_iso.json`), plus `tasks/README.md`, `tasks/T-003...`, `tasks/T-014...` and `game/README.md`.
+
+### Free script cleanup
+
+- Raw sprite: transparent background, 0 semi-transparent pixels, but **48 colours**. `python game/tools/reduce_palette.py reduce` (new, tested: `game/tools/test_reduce_palette.py`) merged the least-used colours into their nearest neighbours down to **30**, no new colours, shape and alpha unchanged: `art-archive/T-065/boulder_sample.png` (+ `.json`). Side by side the two look the same.
+- Sprite check: `python game/tools/check_sprite_rules.py art-archive/T-065/boulder_sample.png --size 160`: all PASS (160 x 160, transparent corners, 0 semi-transparent, 30 colours, 10713 opaque pixels, bounding box 17,16 to 142,137). The raw file fails only the colour line (48).
+- No outline or stray-pixel fix was needed.
+
+### Previews (for the board)
+
+- `art-archive/T-065/boulder_sample_preview.png`: the cleaned sample, 4x nearest-neighbour, dark and light background side by side.
+- `art-archive/T-065/boulder_sample_raw_preview.png`: the raw generation the same way.
+
+### Honest judgement (the board decides)
+
+- **Good:** right palette (dark navy-purple rock, neon magenta-pink cracks with white-hot cores and stepped glow, nothing near Redgull red), clean hard pixels, a dark selective outline on the rock, detailed shading. It reads clearly on both backgrounds.
+- **Problem 1, the shape:** it came out as a tall, smooth **egg** rather than a crashed, jagged meteor boulder. It is about as tall as it is wide (the rock alone is about 95 px tall), so in the game it would stand high above the car and could hide it more than a low rock.
+- **Problem 2, the base:** PixelLab added a flat stone **disc with pebbles** under the rock, like a pedestal or a crater rim, with a thin magenta edge instead of the dark outline. On the asphalt it would look like a round plinth. The disc is about 126 x 52 px, which happens to be close to the 3-unit collision circle at about 42 px per unit, so it does show the footprint; whether that is wanted is the board's call.
+- **Problem 3, the cracks:** a few big branching cracks with a lot of plain rock between them; fine, but more like a cracked egg than a rock split open by heat.
+- Not fixable for free without inventing new pixels: removing the disc or flattening the rock would mean redrawing. Cheapest next steps if the board wants changes: (a) accept as is; (b) the board's go for one more pixflux call with a prompt asking for a low, wide, jagged rock with no base (for example "low wide jagged irregular rock lying directly on the ground, no base, no platform"), possibly at 160 x 128; or (c) use this sprite as the style reference (`create-image-bitforge` style image) for that new call so the colours and cracks carry over.
+- **Size proposal:** keep the 160 x 160 frame; when swapped in, draw it at the scale where the disc (or the rock's footprint) matches the 3-unit circle, about 42 art px per unit, like the car's sheet was fitted to 32.
+
+### Files
+
+- Created: `art-archive/T-065/boulder_sample_raw.png` + `.json` (PixelLab record), `boulder_sample.png` + `.json`, `boulder_sample_preview.png`, `boulder_sample_raw_preview.png`
+- Created: `game/tools/reduce_palette.py`, `game/tools/test_reduce_palette.py` (Python tool tests: 146 OK)
+- Changed: `game/art/pixellab-generation-log.jsonl` (1 entry), `art-archive/README.md` (T-065 rows), `game/README.md` (the palette tool, in "Generating art with PixelLab"), this task file
+- Not done yet (waiting for the board): the other variants, the swap into the game, the screenshot. Status left `in-progress`.
+- Documents affected so far: `game/README.md` (tool note). Visual style unchanged.

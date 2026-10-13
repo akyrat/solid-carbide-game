@@ -1,0 +1,45 @@
+{
+  "file": "boulder_sample_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a large crashed meteor boulder, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked all over with bright glowing neon magenta-pink cracks with white-hot cores and small stepped glow around them, sitting on the ground, roughly round footprint, seen from above in isometric 3/4 view, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges",
+    "image_size": {
+      "width": 160,
+      "height": 160
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a large crashed meteor boulder, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked all over with bright glowing neon magenta-pink cracks with white-hot cores and small stepped glow around them, sitting on the ground, roughly round footprint, seen from above in isometric 3/4 view, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-13T20:01:58+00:00",
+  "image": {
+    "width": 160,
+    "height": 160,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "docs/level-design.md",
+    "tasks/T-065-boulder-art.md",
+    "tasks/T-019-build-mvp-map.md",
+    "game/art/car/car_sw_front.json",
+    "game/art/car/car_iso.json"
+  ],
+  "task": "T-065",
+  "job_status": null,
+  "notes": "T-065 sample: one boulder, one round only",
+  "generator": "game/tools/pixellab_client.py"
+}
