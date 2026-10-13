@@ -1,0 +1,51 @@
+{
+ "file": "drift_mark.png",
+ "task": "T-118",
+ "what": "The drift marks' tyre texture: one tile, 8 texels along the mark by 8 across, one period of a chevron tread between two ragged shoulders. Drawn along each drift mark (Line2D, tile mode), repeated along its length.",
+ "tread": [
+  ".EE..EE.",
+  "KKKKGGKK",
+  "KKKGGKKK",
+  "KKGGKKKK",
+  "KKGGKKKK",
+  "KKKGGKKK",
+  "KKKKGGKK",
+  ".EE..EE."
+ ],
+ "palette": {
+  "K": [
+   12,
+   10,
+   20
+  ],
+  "G": [
+   46,
+   43,
+   64
+  ],
+  "E": [
+   27,
+   24,
+   40
+  ]
+ },
+ "colors": 3,
+ "made_by": "game/tools/build_drift_mark.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
+ "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background (the shoulder rows' gaps), about 30 colours or fewer, no Redgull red; every colour darker than the asphalt and the gravel; rows inside the mark opaque so it tiles without a gap. Check: python game/tools/build_drift_mark.py check",
+ "scale": "width_units 0.25 in the scene: the 8 texels across are 4 flat world pixels, 32 texels per unit, the car and ground art's density; one tile is 0.25 units long",
+ "grounds": {
+  "asphalt": [
+   48,
+   46,
+   62
+  ],
+  "gravel": [
+   99,
+   86,
+   107
+  ]
+ },
+ "used_by": "game/scenes/driving/drift_marks.tscn (mark_texture)",
+ "archive": "art-archive/T-118/: previews over asphalt and gravel, and the alternative with transparent grooves (not used)",
+ "status": "proposal for the board's review (T-118)"
+}

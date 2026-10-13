@@ -5,6 +5,9 @@ extends Node
 ## mode "straight": W only, so nothing is laid. Take it with about 150 frames.
 
 @export var mode := "drift"
+## Where the car starts, in units (T-118: (54, 0) is on the asphalt road east
+## of the centre; the default, the run's own start, is on the gravel).
+@export var start_units := Vector2.ZERO
 ## Physics steps of W alone before the drift starts.
 const STRAIGHT_STEPS := 15
 
@@ -15,6 +18,9 @@ func _ready() -> void:
 	game.menu.start_button.pressed.emit()
 	var car: CharacterBody2D = game.run.car
 	car.use_keyboard = false
+	if start_units != Vector2.ZERO:
+		car.model.set_position(start_units)
+		car.position = start_units * car.PX_PER_UNIT
 	car.scripted_input = [true, false, 0.0]
 	if mode != "drift":
 		return
