@@ -1,7 +1,7 @@
 ---
 id: T-084
 title: Art: the comic-style look of the trick popups
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -147,3 +147,21 @@ Reworked after the board's playtest. 0 PixelLab calls, 0 cost.
 **Screenshots** (`art-archive/T-084/`, replacing the round 1 images, which stay in git history): `T-084_trick_popups_demo.png` (all four popups), `T-084_combo_demo.png` (combo path), `T-084_challenge_popup_demo.png` (taken at frame 30, popup on screen: "TRENDING! +100 LIKES").
 
 **Documents updated:** `docs/hud-and-menus.md` (Content, "Trick popups"), `game/README.md` (Trick popups). Godot's line-ending-only .import and project.godot changes reverted.
+- 2026-10-13, in-progress → in-qa: Round 2 done: white/black comic popups
+
+### QA round 2 (2026-10-13, QA/Integration Agent): all criteria pass
+
+Every criterion checked again independently after the board's rework request.
+
+1. **Screenshot of each trick's popup: pass.** `art-archive/T-084/T-084_trick_popups_demo.png` shows all four popups in the new look (LONG DRIFT! +0.05 small, FULL 360! +0.25, ALT DRIFT! +0.5, TRENDING! +120 LIKES), `T-084_combo_demo.png` the three tricks through the real combo path, and `T-084_challenge_popup_demo.png` now really shows the challenge popup ("TRENDING! +100 LIKES" above the car; the round 1 note about the missing popup is fixed). All three are on the gravel. QA took one more itself on the dark asphalt road (temporary fixture, car placed at (54, 0) as in `drift_marks_demo_asphalt`, not committed): `art-archive/T-084/T-084_qa_asphalt_popups.png`. All four popups read clearly there: the white burst stands out strongly against the dark road, more than on the gravel.
+2. **Font source and licence, commercial use: pass.** Unchanged since round 1: `game/fonts/bangers/bangers.json` (Bangers Regular 2.100, Vernon Adams, google/fonts commit `66928797...`, URLs, hashes), `game/README.md` ("Trick popups", Font), `game/fonts/bangers/OFL.txt` next to the font (OFL 1.1, allows use and bundling in a commercial game).
+3. **PixelLab calls recorded: pass (none made).** No commit or changed file on the branch calls PixelLab; the files that mention it only say no call was made. 0 calls, 0 cost.
+4. **T-091's tests still pass: pass.** Round 2 changed only `test_trick_popup_art.gd`: the pink/cyan test is replaced by white/black, black-names-and-amounts and baseline tests, and the stray `pass` is gone. No T-091, T-083 or T-092 test was touched (`git diff master...HEAD -- game/tests` changes no existing test file other than the demo fixture). `test_trick_popups.gd` 6/6, `test_challenge_popup.gd` 2/2 and the combo tests pass in the full run.
+5. **Full GUT suite and all Python tool tests: pass.** Run by QA: GUT (`bash game/tools/run_tests.sh`) 420 of 420, 42 scripts, TESTS PASSED, exit 0 (two warnings: the existing TestRoom inner class and a Float/Int comparison notice, neither a failure). `game/tools`: 152 tests OK. `tools`: 115 tests OK.
+
+**Against the board's request (white bubble, black border, black letters, one straight baseline): met.**
+- Code: `trick_popup_art.gd`'s palette is only transparent, black (letters and border) and white (fill); no outline, shadow or shade rows. Tests check every baked pixel is exactly black or white.
+- Baseline: QA baked the five popups itself (headless, `TrickPopupArt.bake`) and enlarged them 8x with nearest neighbour: `art-archive/T-084/T-084_qa_popups_enlarged_8x.png`. Letters sit on one straight line in every popup; measured per run of glyphs the bottom row is the same, apart from the "!" dot and the rounded 0/5 that sit 1 pixel lower (normal overshoot) and the "+" that sits higher by design. No letter bobs.
+- For the board (not a fail): at the small size the "1" of "+100" reads a bit like a "T" and the "L" of "LONG" like an "I" (Bangers without smoothing at 20 px). Judge it in the playtest.
+
+Godot's line-ending-only `.import` changes from the test runs were left uncommitted.
