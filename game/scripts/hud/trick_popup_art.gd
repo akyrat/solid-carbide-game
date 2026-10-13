@@ -4,54 +4,37 @@ extends RefCounted
 ## per text and size, a jagged comic burst sized to fit the lettering, the text
 ## in Bangers (res://fonts/bangers/, SIL OFL 1.1) with smoothing off.
 ##
-## Look (Visual style: night neon palette, hard edges, no semi-transparent
-## pixels, no Redgull red): the trick name in hot pink, the amount ("+0.25") in
-## cyan, a near-black outline and a purple drop shadow, on a dark navy burst
-## with a stepped cyan edge. One popup pixel is shown as 2 art pixels
-## (TrickPopups.PIXEL_SCALE). Baked once per text and size and cached.
-## game/tools/build_trick_popup.py made the first sample of this look.
+## Look (the board's playtest, 2026-10-13): a real comic popup. A white jagged
+## burst with a black border, every letter black (trick name and amount alike) in
+## Bangers on one straight baseline, hard pixel edges, no semi-transparent
+## pixels, no Redgull red. Black on white reads on the dark asphalt and on the
+## dusty gravel alike, since the black border separates the burst from both.
+## One popup pixel is shown as 2 art pixels (TrickPopups.PIXEL_SCALE). Baked
+## once per text and size and cached.
 
 const FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 
 ## Palette entries; index 0 is transparent.
 const NONE := 0
-const TEXT_SHADOW := 1
-const TEXT_OUTLINE := 2
-const NAME_TOP := 3
-const NAME := 4
-const NAME_BOTTOM := 5
-const AMOUNT_TOP := 6
-const AMOUNT := 7
-const AMOUNT_BOTTOM := 8
-const BURST_FILL := 9
-const BURST_EDGE_DARK := 10
-const BURST_EDGE := 11
-const BURST_OUTLINE := 12
+const TEXT := 1
+const BURST_FILL := 2
+const BURST_BORDER := 3
 const PALETTE := [
 	Color(0, 0, 0, 0),
-	Color8(58, 18, 92),     # text shadow
-	Color8(3, 2, 8),        # text outline: near black, apart from the navy burst
-	Color8(255, 236, 250),  # name top
-	Color8(255, 64, 200),   # name
-	Color8(150, 30, 170),   # name bottom
-	Color8(210, 255, 255),  # amount top
-	Color8(0, 229, 255),    # amount
-	Color8(0, 140, 200),    # amount bottom
-	Color8(20, 16, 52),     # burst fill
-	Color8(0, 120, 190),    # burst edge, inner
-	Color8(0, 229, 255),    # burst edge, outer
-	Color8(6, 4, 14),       # burst outline
+	Color8(0, 0, 0),        # letters
+	Color8(255, 255, 255),  # burst fill
+	Color8(0, 0, 0),        # burst border
 ]
 
 ## Per size: font pixel size, text outline and shadow thickness, spike length
-## range, spike spacing along the edge, how flat the burst is, and whether the
-## letters get a highlight and shade row (not at the small size: too ragged).
+## range, spike spacing along the edge and how flat the burst is. No text
+## outline or shadow: black letters on white need none.
 const STYLES := {
-	"normal": {"font_px": 32, "outline": 2, "shadow": 2, "spike_min": 8.0, "spike_max": 13.0, "spacing": 24.0, "flat": 1.0, "shade": true},
-	"small": {"font_px": 20, "outline": 1, "shadow": 1, "spike_min": 5.0, "spike_max": 8.0, "spacing": 22.0, "flat": 0.8, "shade": false},
+	"normal": {"font_px": 32, "outline": 0, "shadow": 0, "spike_min": 8.0, "spike_max": 13.0, "spacing": 24.0, "flat": 1.0},
+	"small": {"font_px": 20, "outline": 0, "shadow": 0, "spike_min": 5.0, "spike_max": 8.0, "spacing": 22.0, "flat": 0.8},
 }
 const SUPERELLIPSE_N := 4.0  # how boxy the burst's base shape is (2 = oval)
-const EDGE := 3              # burst outline + bright edge + dark edge, in pixels
+const EDGE := 3              # room the burst border needs around the text, in pixels
 const BASE_SAMPLES := 720    # points on the base curve before the spikes go on
 ## Spikes pointing sideways (left and right tips) are this much shorter.
 const SIDE_SPIKE := 0.5
@@ -99,18 +82,13 @@ static func bake(text: String, style: String) -> Image:
 	var fill := _fill_polygon(poly, w, h)
 	var outer := _dilate_cross(fill, w, h)
 	var e1 := _erode_cross(fill, w, h)
-	var e2 := _erode_cross(e1, w, h)
 	var idx := PackedByteArray()
 	idx.resize(w * h)
 	for i in w * h:
-		if e2[i] != 0:
+		if e1[i] != 0:
 			idx[i] = BURST_FILL
-		elif e1[i] != 0:
-			idx[i] = BURST_EDGE_DARK
-		elif fill[i] != 0:
-			idx[i] = BURST_EDGE
-		elif outer[i] != 0:
-			idx[i] = BURST_OUTLINE
+		elif outer[i] != 0 or fill[i] != 0:
+			idx[i] = BURST_BORDER  # the border is 2 popup pixels wide
 	var ox := (w - tw) / 2
 	var oy := (h - th) / 2
 	var li: PackedByteArray = letters.idx
@@ -162,8 +140,6 @@ static func _letter(text: String, style: String) -> Dictionary:
 	var ts := TextServerManager.get_primary_interface()
 	var rid: RID = font.get_rids()[0]
 	var size := Vector2i(px, 0)
-	var parts := split_text(text)
-	var name_len: int = (parts[0] as String).length()
 	# Pass 1: glyph indices and rendering.
 	var glyphs: Array[int] = []
 	for i in text.length():
@@ -183,8 +159,6 @@ static func _letter(text: String, style: String) -> Dictionary:
 	var h := ascent + descent + 2 * pad
 	var full := PackedByteArray()
 	full.resize(w * h)
-	var name_m := PackedByteArray()
-	name_m.resize(w * h)
 	var pen := 0.0
 	for i in glyphs.size():
 		var g := glyphs[i]
@@ -209,49 +183,13 @@ static func _letter(text: String, style: String) -> Dictionary:
 					if tdata[((int(uv.position.y) + j) * tw + int(uv.position.x) + k) * bpp + bpp - 1] > 127:
 						var o := (gy + j) * w + gx + k
 						full[o] = 1
-						if i < name_len:
-							name_m[o] = 1
 		pen += ts.font_get_glyph_advance(rid, px, g).x
-	var outline := _dilate_square(full, w, h, st.outline)
-	var s: int = st.shadow
 	var idx := PackedByteArray()
 	idx.resize(w * h)
-	for y in range(s, h):
-		for x in range(s, w):
-			if outline[(y - s) * w + x - s] != 0:
-				idx[y * w + x] = TEXT_SHADOW
 	for i in w * h:
-		if outline[i] != 0:
-			idx[i] = TEXT_OUTLINE
-	var shade: bool = st.shade
-	for y in h:
-		for x in w:
-			var o := y * w + x
-			if full[o] == 0:
-				continue
-			var base := NAME if name_m[o] != 0 else AMOUNT
-			var c := base
-			if shade:
-				if _exposed_run(full, w, h, x, y, -1):
-					c = base - 1
-				elif _exposed_run(full, w, h, x, y, 1):
-					c = base + 1
-			idx[o] = c
+		if full[i] != 0:
+			idx[i] = TEXT
 	return _crop(idx, w, h)
-
-
-## True when pixel (x, y) is on the top (dy -1) or bottom (dy 1) edge of the
-## letters in a run of at least 3 pixels: stair-step slants and thin strokes
-## do not get specks of highlight.
-static func _exposed_run(m: PackedByteArray, w: int, h: int, x: int, y: int, dy: int) -> bool:
-	for dx in [-1, 0, 1]:
-		var xx: int = x + dx
-		if xx < 0 or xx >= w or m[y * w + xx] == 0:
-			return false
-		var yy: int = y + dy
-		if yy >= 0 and yy < h and m[yy * w + xx] != 0:
-			return false
-	return true
 
 
 static func _crop(idx: PackedByteArray, w: int, h: int) -> Dictionary:

@@ -135,3 +135,15 @@ Not approved yet. The board wants the popups to look like real comic book popups
 - a font like the board's reference ("ACTION!": heavy, condensed, slanted comic capitals; a watermarked stock image, used only as a reference, nothing copied from it). Bangers is that style, so it stays. The reference's letters bob up and down; ours stay on one straight baseline.
 
 Keep everything else: the jagged burst fitted to each text, the small extended-drift size, the timing, the code API, the tests' rules (no semi-transparent pixels, no Redgull red). Update the tests that pinned pink names and cyan amounts.
+
+## Round 2 (2026-10-13; no PixelLab calls)
+
+Reworked after the board's playtest. 0 PixelLab calls, 0 cost.
+
+**What changed:** `game/scripts/hud/trick_popup_art.gd` now bakes a white jagged burst with a 2 pixel black border and all letters black (names and amounts alike) in Bangers on one straight baseline. No text outline, shadow, highlight or shade rows any more (black on white needs none), so the palette is only black and white. Kept: burst fitted to each text, small extended-drift size, timing/rise/fade, code API (`texture`, `bake`, `text_box`, `style_for`), no semi-transparent pixels, no Redgull red, nearest filtering, caching. Contrast: the black border separates the white burst from both the dark asphalt and the dusty gravel (the screenshots show the gravel ground).
+
+**Tests:** `game/tests/unit/test_trick_popup_art.gd`: the pink/cyan test replaced by three: only white and black with a black border, name and amount both black, letters on one baseline. Full GUT suite: 420 of 420 pass (T-091, T-083 and T-092 tests included). Python tool tests run again, see below.
+
+**Screenshots** (`art-archive/T-084/`, replacing the round 1 images, which stay in git history): `T-084_trick_popups_demo.png` (all four popups), `T-084_combo_demo.png` (combo path), `T-084_challenge_popup_demo.png` (taken at frame 30, popup on screen: "TRENDING! +100 LIKES").
+
+**Documents updated:** `docs/hud-and-menus.md` (Content, "Trick popups"), `game/README.md` (Trick popups). Godot's line-ending-only .import and project.godot changes reverted.

@@ -1,5 +1,5 @@
 extends GutTest
-## Task T-084: the baked comic look of the trick popups. Hard pixels only (no
+## Task T-084: the baked comic look (white burst, black border, black letters) of the trick popups. Hard pixels only (no
 ## semi-transparent ones), no Redgull red, a burst that fits each text, the
 ## same texture for the same text.
 
@@ -61,9 +61,6 @@ func test_no_colour_near_redgull_red() -> void:
 					assert_gt(Vector3(p.r, p.g, p.b).distance_to(heart_v), 0.5, "%s: pixel colour clear of the heart red" % c[0])
 
 
-	pass
-
-
 func test_few_colours() -> void:
 	for c in CASES:
 		var img: Image = Art.bake(c[0], c[1])
@@ -101,22 +98,73 @@ func test_same_text_gives_the_same_texture_and_image() -> void:
 	assert_eq(Art.bake("ALT DRIFT! +0.5", "normal").get_data(), Art.bake("ALT DRIFT! +0.5", "normal").get_data(), "deterministic")
 
 
-func test_name_is_pink_and_amount_is_cyan() -> void:
+func test_white_burst_black_border_black_letters() -> void:
+	# Only three colours: white, black and nothing. Names and amounts alike are black.
+	for c in CASES:
+		var img: Image = Art.bake(c[0], c[1])
+		var white := 0
+		var black := 0
+		var other := 0
+		for y in img.get_height():
+			for x in img.get_width():
+				var p := img.get_pixel(x, y)
+				if p.a == 0.0:
+					continue
+				if p == Color.WHITE:
+					white += 1
+				elif p == Color.BLACK:
+					black += 1
+				else:
+					other += 1
+		assert_eq(other, 0, "%s: only white and black" % c[0])
+		assert_gt(white, black / 3, "%s: the bubble is mostly white" % c[0])
+		assert_gt(black, 100, "%s: black letters and border" % c[0])
+		# The outermost opaque pixel of the middle row is the black border.
+		var row := img.get_height() / 2
+		var first := -1
+		for x in img.get_width():
+			if img.get_pixel(x, row).a > 0.0:
+				first = x
+				break
+		assert_eq(img.get_pixel(first, row), Color.BLACK, "%s: black border" % c[0])
+
+
+func test_name_and_amount_letters_are_both_black() -> void:
 	var img: Image = Art.bake("FULL 360! +0.25", "normal")
 	var box: Rect2i = Art.text_box("FULL 360! +0.25", "normal")
-	var pink: Color = Art.PALETTE[Art.NAME]
-	var cyan: Color = Art.PALETTE[Art.AMOUNT]
-	var left_pink := 0
-	var right_cyan := 0
+	var left_black := 0
+	var right_black := 0
 	for y in box.size.y:
 		for x in box.size.x:
 			var p := img.get_pixel(box.position.x + x, box.position.y + y)
-			if p == pink and x < box.size.x / 2:
-				left_pink += 1
-			if p == cyan and x > box.size.x * 0.7:
-				right_cyan += 1
-	assert_gt(left_pink, 50, "the name is pink")
-	assert_gt(right_cyan, 20, "the amount is cyan")
+			if p == Color.BLACK and x < box.size.x / 2:
+				left_black += 1
+			if p == Color.BLACK and x > box.size.x * 0.7:
+				right_black += 1
+	assert_gt(left_black, 50, "the name is black")
+	assert_gt(right_black, 20, "the amount is black")
+
+
+func test_letters_sit_on_one_baseline() -> void:
+	# Every glyph of "ALT DRIFT!" that has no descender ends on the same row.
+	var img: Image = Art.bake("ALT DRIFT! +0.5", "normal")
+	var box: Rect2i = Art.text_box("ALT DRIFT! +0.5", "normal")
+	var bottoms := {}
+	for x in range(box.position.x, box.end.x):
+		var last := -1
+		for y in range(box.position.y, box.end.y):
+			if img.get_pixel(x, y) == Color.BLACK:
+				last = y
+		if last >= 0:
+			bottoms[last] = bottoms.get(last, 0) + 1
+	# The densest 3-row band (rounded glyph bottoms overshoot by a pixel) holds most columns.
+	var best := 0
+	for k in bottoms:
+		var n := 0
+		for d in [-1, 0, 1]:
+			n += bottoms.get(k + d, 0)
+		best = maxi(best, n)
+	assert_gt(best, box.size.x * 0.5, "most columns of letters end on the same baseline")
 
 
 func test_popup_uses_the_baked_texture_with_nearest_filtering() -> void:
