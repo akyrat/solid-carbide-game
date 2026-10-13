@@ -37,11 +37,11 @@ Swap the sprites into T-121's smoke scene without changing when or how smoke is 
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass / fail)
-- [ ] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass / fail)
-- [ ] Screenshots of the car drifting on asphalt and on gravel show the new smoke behind the rear tyres (QA: pass / fail)
-- [ ] T-121's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass)
+- [x] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass)
+- [x] Screenshots of the car drifting on asphalt and on gravel show the new smoke behind the rear tyres (QA: pass)
+- [x] T-121's tests still pass (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest drifting in a run and judge the smoke (together with T-121).
 
@@ -62,4 +62,12 @@ No PixelLab calls (planned cost: none, nothing spent). Branch `task/T-073-drift-
 **Honest judgement:** it reads on both grounds: the body is clearly lighter than asphalt and gravel, and the trail behind the rear tyres is easy to see. But it does not look much like smoke yet. Every puff is the same stamp in the same orientation, so the trail looks like a row of pale hexagonal gems, and the checkerboard rim shows up as a busy edge at the small sizes. The dithered highlight is a little blocky. The cheapest next steps, if the board agrees: 2 or 3 puff variants and a random rotation or flip per puff (a small change to T-121's script, which this task may not make), and fewer, bigger puffs with a longer life. The look is a proposal for the playtest together with T-121.
 
 Documents affected, all updated: `game/README.md` ("Drift smoke", the tools list). `docs/visual-style.md` already carries the decision; nothing there changed.
+**QA round 1 (qa-integration, 2026-10-13): all five criteria pass.** Judged only the diff from `task/T-121-drift-smoke`.
+
+1. Check script: pass. `python game/tools/build_drift_smoke.py check` exits 0, all 8 rules pass (5 colours, 0 semi-transparent, corners clear, no red, body +85 luma over asphalt, +43 over gravel). Fed it broken copies of the sprite: an opaque corner, one alpha-128 pixel, a Redgull-red pixel and 40 colours each make it fail the matching rule. Note: "transparent background" itself only looks at the four corners (the shared `check_sprite_rules`), but a filled background is still caught by the 35 to 80 % coverage rule, so the gap is covered.
+2. Script, test, no PixelLab: pass. `build` rewrites the PNG, its record and the archive preview byte for byte (same SHA-256, git tree clean). `test_build_drift_smoke.py`: 14 tests, OK. The script and test import no network code; the diff touches nothing PixelLab (`pixellab-generation-log.jsonl` unchanged).
+3. Screenshots: pass. The agent's `drift_smoke_asphalt*.png` and `drift_smoke_gravel*.png` show the new five-tone puffs with the violet rim trailing both rear tyres, over the marks. Retook both myself from the committed scene (`screenshots/qa/qa_smoke_asphalt.png`, `qa_smoke_gravel.png`, 150 frames): same result. Reads clearly on both grounds, less strongly on the gravel. I agree with the agent's own judgement that the puffs look like a row of identical gems rather than smoke; that is for the board's playtest.
+4. T-121's tests: pass. All 18 tests in `test_drift_smoke.gd` pass. The renamed puff-art test still asserts Nearest filtering, no material, alpha 0 or 1 for every pixel, the Redgull-red distance and the "not any red" rule, blue strongest and greyish; only the minimum lightness dropped from 0.6 to 0.2 (the rim is luminance about 0.28). It still guards what it should; the 0.2 floor alone is weak, but readability on the grounds is covered by the Python check's luma-gap rule.
+5. Full suites: pass. GUT 426 / 426 (1 known warning: inner class TestRoom); `game/tools` 155 OK; `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
+
 - 2026-10-13, in-progress → in-qa: Smoke puff art drawn by script and swapped in; tests pass
