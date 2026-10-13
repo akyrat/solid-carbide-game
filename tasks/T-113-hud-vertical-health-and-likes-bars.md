@@ -1,7 +1,7 @@
 ---
 id: T-113
 title: HUD: health bar upright at the top left, likes bar along the bottom
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: ui
@@ -105,3 +105,4 @@ QA/Integration, round 2 (2026-10-13), in the worktree on branch task/T-113-hud-v
 - **Docs: pass.** `docs/hud-and-menus.md`, Content, "The HUD": "Top left" and new "Bottom centre" bullets describe the new layout, plus the pause band note; the Decisions section is identical to master's. `game/README.md`, "The HUD" paragraph, describes the T-113 layout and `test_hud_layout.gd`.
 - **Full suites: pass.** GUT 330/330, TESTS PASSED (the one existing inner-class warning). Python `game/tools` 125 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes left uncommitted.
 - 2026-10-13, in-qa → needs-playtest: QA round 2: all six criteria pass
+- 2026-10-13, needs-playtest → done: LGTM (board playtest, 2026-10-13)
