@@ -64,6 +64,8 @@ header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: 
 .filters button { background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; color: var(--muted); cursor: pointer; font: 600 12px/1 var(--display); letter-spacing: .03em; }
 .filters button .n { font-family: var(--mono); color: var(--faint); margin-left: 5px; }
 .filters button[aria-pressed="true"] { background: color-mix(in srgb, var(--c, var(--cyan)) 22%, var(--panel-2)); border-color: var(--c, var(--cyan)); color: var(--ink); }
+.filters.owners { margin-top: 8px; }
+.chip.owner { background: transparent; border: 1px solid color-mix(in srgb, var(--cyan) 55%, var(--line)); color: var(--cyan); text-transform: none; letter-spacing: .02em; }
 .reset-cols { background: none; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; color: var(--muted); cursor: pointer; font: inherit; font-size: 12px; }
 .reset-cols:hover { color: var(--ink); border-color: var(--muted); }
 .reset-cols[hidden] { display: none; }
@@ -291,6 +293,7 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   <div class="loadrow" id="loadrow"></div>
   <section id="view-board" role="tabpanel" aria-labelledby="tab-board">
     <div class="filters" id="filters" role="group" aria-label="Filter the board"></div>
+    <div class="filters owners" id="owner-filters" role="group" aria-label="Filter the board by owner"></div>
     <div class="board" id="board"></div>
   </section>
   <section id="view-inbox" role="tabpanel" aria-labelledby="tab-inbox" hidden>
@@ -419,6 +422,29 @@ function renderFilters() {
   $("filters").innerHTML = '<span class="label">Show</span>'
     + `<button data-filter="" aria-pressed="${!picked.length}">All<span class="n">${list.length}</span></button>`
     + FILTERS.map((f) => `<button data-filter="${f.key}" style="--c:${f.color}" aria-pressed="${picked.includes(f.key)}">${f.name}<span class="n">${list.filter(f.test).length}</span></button>`).join("");
+  renderOwnerFilters();
+}
+// Filtering by owner (the ticket's lead: the Project Lead session that owns it). Works like the filters
+// above: several at once, a card shows when it matches any. Together with them, a card must match both rows.
+const UNOWNED = "(unowned)";   // names can't contain brackets, so this never clashes with a session's name
+let ownerPicked = [];
+function loadOwnerFilters() {
+  let stored = null;
+  try { stored = JSON.parse(localStorage.getItem("tbp-owners") || "null"); } catch {}
+  ownerPicked = Array.isArray(stored) ? stored.filter((k) => typeof k === "string" && k) : [];
+}
+function saveOwnerFilters() { try { localStorage.setItem("tbp-owners", JSON.stringify(ownerPicked)); } catch {} }
+const ownerKey = (t) => t.lead || UNOWNED;
+const passesOwner = (t) => !ownerPicked.length || ownerPicked.includes(ownerKey(t));
+function renderOwnerFilters() {
+  const list = visible();
+  // One button per owner on any ticket, plus any picked owner no ticket has any more, so it can be unpicked.
+  const owners = [...new Set([...tickets.map((t) => t.lead).filter(Boolean), ...ownerPicked.filter((k) => k !== UNOWNED)])]
+    .sort((a, b) => a.localeCompare(b));
+  const button = (key, name) => `<button data-owner="${esc(key)}" aria-pressed="${ownerPicked.includes(key)}">${esc(name)}<span class="n">${list.filter((t) => ownerKey(t) === key).length}</span></button>`;
+  $("owner-filters").innerHTML = '<span class="label">Owner</span>'
+    + `<button data-owner="" aria-pressed="${!ownerPicked.length}">Anyone<span class="n">${list.length}</span></button>`
+    + owners.map((o) => button(o, o)).join("") + button(UNOWNED, "Unowned");
 }
 const orderedLanes = () => colOrder.map((k) => LANES.find((l) => l.key === k));
 const areaOf = (t) => AREAS.find((a) => a.epics.includes(t.epic));
@@ -495,7 +521,7 @@ function badges(t) {
 }
 
 function renderBoard() {
-  const list = visible().filter(passesFilter);
+  const list = visible().filter(passesFilter).filter(passesOwner);
   $("reset-cols").hidden = colOrder.join() === DEFAULT_ORDER.join();
   renderFilters();
   $("board").innerHTML = orderedLanes().map((lane) => {
@@ -506,7 +532,7 @@ function renderBoard() {
     const cards = items.map((t) => `
       <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}${mine(t) ? " is-mine" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}${mine(t) ? ", your ticket" : ""}">
         ${mine(t) ? '<div class="mine-label">Your ticket</div>' : ""}
-        <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
+        <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
       </article>`).join("");
     return `<section class="lane" data-lane="${lane.key}" style="--c:${lane.color}">
@@ -712,7 +738,8 @@ function renderBuilds() {
   el.innerHTML = (buildMsg ? `<div class="notice" role="alert">${esc(buildMsg)}</div>` : "") + builds.map((b) => {
     const dis = b.has_project ? "" : " disabled";
     const what = b.ticket_id ? `${esc(b.ticket_id)} ${esc(b.ticket_title)}` : esc(b.id === "master" ? "master" : b.branch);
-    const status = b.ticket_status ? ` · ${esc(STATUS_TEXT[b.ticket_status] || b.ticket_status)}` : "";
+    const status = (b.ticket_status ? ` · ${esc(STATUS_TEXT[b.ticket_status] || b.ticket_status)}` : "")
+      + (b.lead ? ` <span class="chip owner" title="Owned by the Project Lead session ${esc(b.lead)}">${esc(b.lead)}</span>` : "");
     return `<article class="build${highlightBuild === b.id ? " hl" : ""}" data-build="${esc(b.id)}">
       <div><div class="what">${what}${status}</div>
       <div class="meta">${esc(b.branch)} · ${esc(b.folder)}${b.has_project ? "" : " · no game/project.godot"}</div></div>
@@ -1014,6 +1041,14 @@ $("filters").addEventListener("click", (e) => {
   saveFilters();
   renderBoard();
 });
+$("owner-filters").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-owner]");
+  if (!b) return;
+  const key = b.dataset.owner;
+  ownerPicked = !key ? [] : ownerPicked.includes(key) ? ownerPicked.filter((k) => k !== key) : [...ownerPicked, key];
+  saveOwnerFilters();
+  renderBoard();
+});
 
 document.addEventListener("keydown", (e) => {
   const card = e.target.closest?.(".card");
@@ -1069,6 +1104,7 @@ $("detail-cancel").addEventListener("click", async () => {
 });
 loadColOrder();
 loadFilters();
+loadOwnerFilters();
 try {
   const v = localStorage.getItem("tbp-view");
   if (VIEWS.includes(v)) showView(v);
