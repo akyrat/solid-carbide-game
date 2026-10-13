@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md, tasks/T-034-buildings-see-through.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -170,3 +170,4 @@ The board approved the sample (narrow towers, dense layout of about 49 per block
 **Collisions, layout and depth order (asked by the Project Lead):** a QA script built the map twice in the iso view, art off and art on: the 12 buildings' footprints and z values are identical, and all 112 collision shapes (positions, types, sizes) are identical. No layout data, scene or collision code changed in the diff. The depth scheme (building z from its front corner, Towers as a child inside the block's z, car and boulders one under a covering building, ground, drift marks and smoke at z 0) is untouched. Expected consequence of `custom_silhouette` now being the towers' outline instead of the 15-unit box: 27 of 96 boulders, and the car at 339 of 6724 sampled places and headings, no longer count as covered by a block and get the top z instead of one under it. Since the outline contains every tower pixel (item 1), those boulders and car spots no longer overlap any tower on screen, so nothing is drawn wrongly; it just follows the art, as T-034's notes asked.
 
 Also checked: the branch merges into current `master` without conflicts (`git merge-tree`, 11 commits behind). Godot's line-ending-only `.import` changes in the worktree were left uncommitted.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all six criteria pass (sprites, record (balance now 4946 = 4953 - 7), every block, faded block + T-034 15/15, no Redgull red/logo/name, GUT 446/446, Python 196 + 121 OK).
