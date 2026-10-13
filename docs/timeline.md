@@ -770,3 +770,8 @@ Entry format:
 - Decision or change: the board playtested T-034 and approved it ("see-through buildings work amazing"). The placeholder buildings now rise 15 units in the isometric view (a placeholder height; the final art, T-064, can set its own) and are drawn in depth order with the car. A building covering the car fades to 15% over 0.15 s and fades back when the car comes out; only the car triggers it. The drift marks stay between the ground and the buildings. Passed QA round 1. T-064 (the building art) is now open; minions (T-044) need a place in the same depth order.
 - Documents touched: `docs/level-design.md`, `game/README.md`
 - Tasks: T-034 (done), T-064 (open)
+
+## 2026-10-13: Boulder art: two approved samples
+- Decision or change: the board reviewed the boulder samples and approved two as the boulder variants: the first PixelLab sample with its stone disc removed by a free script, and the second, lower, boxy PixelLab sample. 2 generations were used in all (balance 4954 of 5000). T-065 now puts both into the game (no more PixelLab calls), sized to the 3-unit collision circle, for the board's playtest. The T-034 folder was deleted once Godot was closed.
+- Documents touched: none
+- Tasks: T-065 (in progress)
