@@ -38,10 +38,10 @@ The board asks for the Narrative Theme Agent to be consulted so the look stays c
 
 ## Acceptance criteria
 
-- [ ] Extended narrative, Content, describes the city under attack, the kaiju unnamed, and the alert banners' purpose, without changing Summary, Decisions or Open questions (QA round 1: PASS)
-- [ ] The result notes propose the banners' form (picture-only or with words; the exact words if any) for the board, and say which go on buildings and which on the pavement (QA round 1: PASS)
-- [ ] The result notes give the one art brief for T-064, T-129 and T-130 (palette and lighting, signs, damage level, pavement, what stays out), consistent with Visual style, Decisions (QA round 1: PASS)
-- [ ] Nothing new is invented beyond the board's direction; anything that would be new is written as a question for the board (QA round 1: PASS)
+- [x] Extended narrative, Content, describes the city under attack, the kaiju unnamed, and the alert banners' purpose, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The result notes propose the banners' form (picture-only or with words; the exact words if any) for the board, and say which go on buildings and which on the pavement (QA: pass)
+- [x] The result notes give the one art brief for T-064, T-129 and T-130 (palette and lighting, signs, damage level, pavement, what stays out), consistent with Visual style, Decisions (QA: pass)
+- [x] Nothing new is invented beyond the board's direction; anything that would be new is written as a question for the board (QA: pass)
 
 ## Result notes
 
