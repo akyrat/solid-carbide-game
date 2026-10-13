@@ -1,7 +1,7 @@
 ---
 id: T-122
 title: The hooks refuse to start an agent on a task with the wrong model
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 epic: tooling
