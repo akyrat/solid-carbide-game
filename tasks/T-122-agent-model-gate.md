@@ -1,7 +1,7 @@
 ---
 id: T-122
 title: The hooks refuse to start an agent on a task with the wrong model
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 epic: tooling
@@ -13,7 +13,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, .claude/settings.json, tools/test_task_status.py]
 files_expected_to_change: [.claude/hooks/board_gate.py, .claude/settings.json, tools/test_task_status.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,3 +61,4 @@ QA round 1 (QA/Integration Agent, 2026-10-13): all 4 criteria PASS.
 - Criterion 2 PASS: .claude/settings.json is valid JSON and the PreToolUse matcher includes Agent. The refusal message names the task (T-015), the model needed (sonnet) and why, and how to relaunch.
 - Criterion 3 PASS: tasks/README.md Models says the hooks enforce it.
 - Criterion 4 PASS: tools 121 tests OK; game/tools 141 tests OK (python -m unittest discover -p test_*.py).
+- 2026-10-13, in-qa → done: QA round 1 passed
