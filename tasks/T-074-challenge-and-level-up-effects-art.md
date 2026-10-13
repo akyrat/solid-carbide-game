@@ -1,7 +1,7 @@
 ---
 id: T-074
 title: Art: the level-up effect
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, docs/game-loop-architecture.md, tasks/T-112-level-up-particles-placeholder.md]
 files_expected_to_change: [a particle-drawing script and its test, particle sprites under game/art/ and their record, T-112's effect scene, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer, and none uses Redgull red (QA: pass / fail)
-- [ ] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass / fail)
-- [ ] A screenshot shows the effect around the car at a level-up (QA: pass / fail)
-- [ ] T-112's tests still pass, and the particles still have no alpha fade and use nearest-neighbour filtering (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer, and none uses Redgull red (QA: pass)
+- [x] The sprites are made by a committed script, with a test, and no PixelLab calls were made (QA: pass)
+- [x] A screenshot shows the effect around the car at a level-up (QA: pass)
+- [x] T-112's tests still pass, and the particles still have no alpha fade and use nearest-neighbour filtering (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the level-up effect in the run and judge the look.
 
@@ -78,3 +78,14 @@ Written by the Asset Generation Agent, 2026-10-13, on `task/T-074-level-up-parti
 **Documents updated:** `game/README.md` ("The run", "The level-up effect": the particle art, how it is built and checked, how the scene reads it, the tuning, the tests). No game area doc changed: the shapes and tuning are a proposal; if the board approves them, the Project Lead can record them in Visual style, Decisions. Also `agent-notes/asset-generation.md` (working notes).
 
 **Branch housekeeping:** the Project Lead's status change to in-progress was uncommitted on `master`; it was committed on this branch (first commit) and `master`'s working copy put back, so the task file now lives only on the branch.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13, on `task/T-074-level-up-particles-art` in `C:\solid-carbide-worktrees\T-074`): every criterion passes.
+
+1. **Check script: pass.** `python game/tools/build_level_up_particles.py check` prints `ALL RULES PASS`, exit 0. Read the code: per frame it checks transparent corners, no alpha strictly between 0 and 255, and at most 30 opaque colours (4 to 5 each); for the whole sheet 13 colours, no semi-transparent pixels, and no colour within 128 (0.5) RGB distance of Redgull red (219, 26, 41, the HUD heart) nor any saturated red hue. Independently, the PNG (66 x 11) has only alpha 0 and 255. Its tests show the check really fails a sheet with a Redgull-red pixel, a semi-transparent pixel and an opaque corner. Note: the background check looks at each frame's corners, not every edge pixel; enough for these centred shapes.
+2. **Committed script, test, no PixelLab: pass.** Rebuilt PNG and JSON into a scratch folder with the committed script: both byte-identical to the committed files. Test `game/tools/test_build_level_up_particles.py` (14 tests) passes and also fails if the committed files go stale. No PixelLab: the script imports only local modules (`check_sprite_rules`, `remove_car_shadow`), no network; the branch diff has no PixelLab client call, no PixelLab record (no `endpoint`), no `art-archive/` files; every "PixelLab" mention in the diff says it was not used.
+3. **Screenshot: pass.** `screenshots/T-074-level-up-burst.png` shows a run (HUD at Hype Lv 2) with the burst around the car; the 4x zoom shows the cyan and pink stars and diamonds and the violet crosses spread around the car, crisp, no blur. `T-074-particle-sheet-x12.png` shows the six sprites on dark and light, hard edges, no red. Looks match the result notes, including the violet cross being the weakest shape.
+4. **T-112's tests, nearest filtering, no alpha fade: pass.** `-gselect=test_level_up`: 2 scripts, 16 of 16 pass. The scene keeps `texture_filter = 1` (Nearest), `color` and the colour ramp white at alpha 1, and the shrink curve steps 1 -> 0.5 -> 0 (scale, not alpha). `test_pixel_rules_nearest_no_alpha_fade` is unchanged. The replaced placeholder test: the old one checked a 2-4 px single-colour light square, opaque, far from Redgull red and not a red. The size, single-colour and lightness parts described the placeholder only and cannot apply to the final art; the rule that matters (distance from `Hud.HEART_COLOR` > 0.5 and not a red) is kept, now over every opaque pixel of the sheet, plus `color` staying white; opacity is covered by the unchanged pixel-rules test. Judged as still covering the same rule.
+5. **Full GUT suite and Python tool tests: pass.** `bash game/tools/run_tests.sh`: 34 scripts, 323 of 323, `TESTS PASSED`, exit 0 (1 warning, the existing `TestRoom` inner class notice). `game/tools`: 125 tests OK. `tools`: 115 tests OK.
+
+The worktree's line-ending-only `.import` changes from Godot were left uncommitted.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all five criteria pass
