@@ -1,7 +1,7 @@
 ---
 id: T-115
 title: The likes bar drains when the combo has drained
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 epic: game-loop
@@ -13,7 +13,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, tasks/T-037-likes-and-levels.md, tasks/T-081-combo.md, tasks/T-114-likes-drain-data.md, game/README.md]
 files_expected_to_change: [the run's scripts, their tests, game/README.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
