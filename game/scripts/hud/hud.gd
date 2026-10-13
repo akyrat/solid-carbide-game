@@ -3,7 +3,8 @@ extends CanvasLayer
 ## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
 ## the car's health bar upright at the top left under "Car Health", the coins
 ## at the top right, and the likes bar lying across the bottom centre with the
-## likes row (heart, "Likes", "Hype Lv") and the combo counter above it. The HUD only shows values: the run
+## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
+## (hidden at no combo, T-116). The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
 ## `coins_changed`). The texts are from T-048.
 
@@ -49,7 +50,8 @@ var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
 var heart: Control
-## The combo counter (T-083), centred above the likes row.
+## The combo counter (T-083), centred above the likes row. Hidden at no
+## combo (T-116): see show_combo().
 var combo_label: Label
 ## The top-left area: "Car Health" and the health bar (T-113).
 var left_column: Control
@@ -58,10 +60,13 @@ var bottom_area: Control
 ## The heart and "Likes", at the left end of the row above the likes bar.
 var likes_row: HBoxContainer
 var _state: RunState
+## The combo's numbers (combo.json): its start value is "no combo" (T-116).
+var _combo_data: ComboData
 
 
 func _ready() -> void:
 	layer = 10
+	_combo_data = ComboData.new()
 	_build_timer()
 	_build_left()
 	_build_bottom()
@@ -136,6 +141,8 @@ func _build_bottom() -> void:
 	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
 	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
 	combo_label.add_theme_constant_override("outline_size", 10)
+	# A run starts with no combo: hidden until a trick raises it (T-116).
+	combo_label.visible = false
 	bottom_area.add_child(combo_label)
 	_layout_bottom()
 	for c: Control in [bottom_area, likes_row, level_label, combo_label]:
@@ -275,3 +282,13 @@ func _on_coins_changed(coins: int) -> void:
 
 func _on_combo_changed(multiplier: float) -> void:
 	combo_label.text = combo_text(multiplier)
+	combo_label.visible = show_combo(multiplier)
+
+
+## Whether the combo counter shows at this multiplier (T-116): only above "no
+## combo", combo.json's start_multiplier. Compared at the two decimals the
+## counter shows, so a combo that would read "x1.0" stays hidden. Hiding it
+## moves nothing else: every HUD element has its own fixed place.
+func show_combo(multiplier: float) -> bool:
+	var no_combo := _combo_data.start_multiplier() if _combo_data != null else 1.0
+	return snappedf(multiplier, 0.01) > snappedf(no_combo, 0.01)
