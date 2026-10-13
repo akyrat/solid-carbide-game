@@ -1,6 +1,6 @@
 ---
 id: T-073
-title: Art: drift smoke and tyre tracks
+title: Art: drift smoke
 status: open
 from: project-lead
 to: asset-generation
@@ -26,6 +26,8 @@ A task is not done until every document listed in documents_affected has been up
 -->
 
 ## Description
+
+**Tyre tracks moved to T-117 and T-118 (board, 2026-10-13): this task is now the drift smoke only.** Before it starts, the Project Lead splits off a functional smoke task with a placeholder, as for the tracks, and checks with the board whether the smoke can be drawn by script instead of PixelLab.
 
 **Blocked until T-029 (the car's new defaults) is done.**
 
