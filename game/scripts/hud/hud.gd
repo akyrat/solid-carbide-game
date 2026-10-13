@@ -1,8 +1,9 @@
 class_name Hud
 extends CanvasLayer
-## The run's HUD (tasks T-090 and T-049): the timer at the top centre, the
-## car's health bar, the likes bar with the heart and the level at the top
-## left, and the coins at the top right. The HUD only shows values: the run
+## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
+## the car's health bar upright at the top left under "Car Health", the coins
+## at the top right, and the likes bar lying across the bottom centre with the
+## likes row (heart, "Likes", "Hype Lv") and the combo counter above it. The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
 ## `coins_changed`). The texts are from T-048.
 
@@ -12,7 +13,13 @@ const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 const MARGIN := 16
-const BAR_SIZE := Vector2(240, 22)
+## The health bar (T-113): upright, filling from the bottom up.
+const HEALTH_BAR_SIZE := Vector2(24, 160)
+## The likes bar (T-113): horizontal, this share of the screen's width.
+const LIKES_BAR_WIDTH := 0.5
+const LIKES_BAR_HEIGHT := 16.0
+## Space between a bar and the text line next to it.
+const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const LIKES_COLOR := Color(0.7, 0.45, 1.0)
 const COINS_COLOR := Color(1.0, 0.82, 0.25)
@@ -30,7 +37,8 @@ const TEXT_COMBO := "Combo x{multiplier}"
 ## Combo counter placeholder look (not red: only the heart is). T-084 is the final art.
 const COMBO_FONT_SIZE := 30
 const COMBO_COLOR := Color(1.0, 0.25, 0.75)
-const COMBO_GAP := 20
+## Space between the combo counter and the likes row under it.
+const COMBO_GAP := 4
 
 var timer_label: Label
 var health_label: Label
@@ -41,10 +49,13 @@ var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
 var heart: Control
-## The combo counter (T-083), to the right of the likes row.
+## The combo counter (T-083), centred above the likes row.
 var combo_label: Label
-## The left column; the combo counter (T-083) goes next to the likes bar.
-var left_column: VBoxContainer
+## The top-left area: "Car Health" and the health bar (T-113).
+var left_column: Control
+## A full-screen area holding the likes bar, its row and the combo counter.
+var bottom_area: Control
+## The heart and "Likes", at the left end of the row above the likes bar.
 var likes_row: HBoxContainer
 var _state: RunState
 
@@ -53,8 +64,8 @@ func _ready() -> void:
 	layer = 10
 	_build_timer()
 	_build_left()
+	_build_bottom()
 	_build_coins()
-	_build_combo()
 
 
 func _build_timer() -> void:
@@ -73,25 +84,45 @@ func _build_timer() -> void:
 
 
 func _build_left() -> void:
-	left_column = VBoxContainer.new()
+	left_column = Control.new()
 	left_column.name = "Left"
-	left_column.add_theme_constant_override("separation", 6)
 	left_column.position = Vector2(MARGIN, MARGIN)
+	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(left_column)
-
 	health_label = _make_label("HealthLabel", TEXT_HEALTH)
 	left_column.add_child(health_label)
-	health_bar = _make_bar("HealthBar", HEALTH_COLOR)
+	health_bar = _make_bar("HealthBar", HEALTH_COLOR, ProgressBar.FILL_BOTTOM_TO_TOP)
 	left_column.add_child(health_bar)
+	_layout_left()
+	health_label.resized.connect(_layout_left)
 
+
+## "Car Health" on one line, then the upright health bar directly under it,
+## both starting at the same left edge.
+func _layout_left() -> void:
+	health_label.size = health_label.get_combined_minimum_size()
+	health_label.position = Vector2.ZERO
+	health_bar.size = HEALTH_BAR_SIZE
+	health_bar.position = Vector2(0.0, health_label.size.y + LABEL_GAP)
+
+
+func _build_bottom() -> void:
+	bottom_area = Control.new()
+	bottom_area.name = "Bottom"
+	bottom_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bottom_area.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(bottom_area)
+	likes_bar = _make_bar("LikesBar", LIKES_COLOR, ProgressBar.FILL_BEGIN_TO_END)
+	bottom_area.add_child(likes_bar)
 	likes_row = HBoxContainer.new()
 	likes_row.name = "LikesRow"
-	likes_row.add_theme_constant_override("separation", 8)
-	likes_row.custom_minimum_size.x = BAR_SIZE.x
-	left_column.add_child(likes_row)
+	likes_row.alignment = BoxContainer.ALIGNMENT_BEGIN
+	likes_row.add_theme_constant_override("separation", 6)
+	bottom_area.add_child(likes_row)
 	heart = Control.new()
 	heart.name = "Heart"
 	heart.custom_minimum_size = Vector2(HEART_SIZE, HEART_SIZE)
+	heart.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	var shape := Polygon2D.new()
 	shape.polygon = _heart_points(HEART_SIZE)
 	shape.color = HEART_COLOR
@@ -100,11 +131,38 @@ func _build_left() -> void:
 	likes_label = _make_label("LikesLabel", TEXT_LIKES)
 	likes_row.add_child(likes_label)
 	level_label = _make_label("LevelLabel", TEXT_LEVEL.format({"level": 1}))
-	level_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	likes_row.add_child(level_label)
-	likes_bar = _make_bar("LikesBar", LIKES_COLOR)
-	left_column.add_child(likes_bar)
+	bottom_area.add_child(level_label)
+	combo_label = _make_label("ComboLabel", combo_text(1.0))
+	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
+	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
+	combo_label.add_theme_constant_override("outline_size", 10)
+	bottom_area.add_child(combo_label)
+	_layout_bottom()
+	for c: Control in [bottom_area, likes_row, level_label, combo_label]:
+		c.resized.connect(_layout_bottom)
+
+
+## The likes bar centred at the bottom, half the screen wide; the likes row
+## directly above it (heart and "Likes" from its left edge, "Hype Lv" ending
+## at its right edge, both labels on the same line); the combo counter
+## centred above the row.
+func _layout_bottom() -> void:
+	var view := bottom_area.size
+	var bar_w := roundf(view.x * LIKES_BAR_WIDTH)
+	likes_bar.size = Vector2(bar_w, LIKES_BAR_HEIGHT)
+	likes_bar.position = Vector2(
+		roundf((view.x - bar_w) / 2.0), view.y - MARGIN - LIKES_BAR_HEIGHT)
+	var row_h := maxf(likes_row.get_combined_minimum_size().y,
+		level_label.get_combined_minimum_size().y)
+	var row_y := likes_bar.position.y - LABEL_GAP - row_h
+	likes_row.size = Vector2(likes_row.get_combined_minimum_size().x, row_h)
+	likes_row.position = Vector2(likes_bar.position.x, row_y)
+	level_label.size = Vector2(level_label.get_combined_minimum_size().x, row_h)
+	level_label.position = Vector2(likes_bar.position.x + bar_w - level_label.size.x, row_y)
+	combo_label.size = combo_label.get_combined_minimum_size()
+	combo_label.position = Vector2(
+		roundf(likes_bar.position.x + (bar_w - combo_label.size.x) / 2.0),
+		row_y - COMBO_GAP - combo_label.size.y)
 
 
 func _build_coins() -> void:
@@ -124,25 +182,6 @@ func _build_coins() -> void:
 	box.add_child(coins_value_label)
 
 
-func _build_combo() -> void:
-	combo_label = _make_label("ComboLabel", combo_text(1.0))
-	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
-	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
-	combo_label.add_theme_constant_override("outline_size", 10)
-	add_child(combo_label)
-	_place_combo()
-	likes_row.resized.connect(_place_combo)
-	combo_label.resized.connect(_place_combo)
-
-
-## Puts the counter right of the likes row, centred on the row's height.
-func _place_combo() -> void:
-	var row_rect := likes_row.get_global_rect()
-	combo_label.position = Vector2(
-		row_rect.end.x + COMBO_GAP,
-		row_rect.position.y + (row_rect.size.y - combo_label.size.y) / 2.0)
-
-
 ## "Combo x2.5": the multiplier without trailing zeros.
 static func combo_text(multiplier: float) -> String:
 	return TEXT_COMBO.format({"multiplier": String.num(multiplier, 2)})
@@ -159,10 +198,10 @@ func _make_label(label_name: String, text: String) -> Label:
 	return l
 
 
-func _make_bar(bar_name: String, fill: Color) -> ProgressBar:
+func _make_bar(bar_name: String, fill: Color, fill_mode: int) -> ProgressBar:
 	var b := ProgressBar.new()
 	b.name = bar_name
-	b.custom_minimum_size = BAR_SIZE
+	b.fill_mode = fill_mode
 	b.show_percentage = false
 	b.min_value = 0.0
 	b.max_value = 1.0
