@@ -725,3 +725,8 @@ Entry format:
 - Decision or change: `game/data/run.json` has a `likes_drain` block, read through `run_data.gd`: on, 2% of the current level's bar per second (a full bar empties in 50 seconds; 2 likes a second at level 1, against 10 for a second of drifting), no extra wait after the combo has drained. A share of the bar rather than a flat amount, so it feels equally slow at every level. Proposed numbers; the board judges them in T-115's playtest (at level 11 the drain is 18.6 likes a second; halving the share is a one-number change). Passed QA round 1; data only, so merged straight away. T-115 is unblocked.
 - Documents touched: `game/README.md`
 - Tasks: T-114 (done), T-115 (open)
+
+## 2026-10-13: The combo counter hides when there is no combo
+- Decision or change: the board wants the combo counter hidden at x1.0 (no combo); it shows as soon as a trick raises the multiplier. T-116 (UI) builds it on top of T-113's branch, so the board playtests the new HUD layout and this change together; T-113 merges first. T-115 (the likes drain) started.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-116 (new), T-115 (in progress)

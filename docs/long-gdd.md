@@ -577,6 +577,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - After the MVP, if challenges come back (2026-10-11): when the player completes a challenge, the likes it gave pop out from the car the same way, not on the HUD (the score flash in Game loop architecture, Decisions).
 - The UI Agent proposes a first layout for where each HUD element goes on screen, and the board adjusts it in playtest.
 - The car's health bar stands upright at the top left, filling from the bottom up, with its label above it. The likes bar is horizontal, centred at the bottom of the screen, with the heart, "Likes" and the level in one row above it and the combo counter above that. Labels line up with the bar they belong to.
+- The combo counter is hidden when there is no combo (multiplier x1.0) and shows as soon as a trick raises it.
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider, labelled "Camera zoom level", which zooms the view behind the screen live while the game stays paused (Drifting, Decisions). The screen is a compact dark strip, only as tall as its content, placed just below the HUD timer so the two never overlap and as much of the map as possible stays visible (board, 2026-10-11). A full pause menu, with more settings, comes in the final release.
 
@@ -621,4 +622,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `315af5c33daba4b13ab7a27831f36986d22af7c9e819c68bc2da2366b5dcedf7` |
 | `extended-narrative.md` | `b57fa97780483828e67b4b5670b12e345e9d28f9aa1d93c70cd8a68e3146991b` |
-| `hud-and-menus.md` | `b798ce438cb8aa0b20a5ba33b528de1fdad16e95c3f558237e14cf3025d8d865` |
+| `hud-and-menus.md` | `9fee2765ae06942459bd320ad1e31f6a9ca34cd80267a868a4d23817cd54820c` |
