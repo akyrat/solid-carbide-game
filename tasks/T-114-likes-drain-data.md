@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `game/data/run.json` has the drain numbers, and `run_data.gd` returns them; a GUT test checks they load and have sensible values (on by default, speed above 0) (QA: pass / fail)
-- [ ] The result notes and the JSON `_comment` give the proposed speed and why it is "slow" compared with the drift XP (QA: pass / fail)
-- [ ] game/README.md lists the new numbers where the run numbers are described (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] `game/data/run.json` has the drain numbers, and `run_data.gd` returns them; a GUT test checks they load and have sensible values (on by default, speed above 0) (QA: pass)
+- [x] The result notes and the JSON `_comment` give the proposed speed and why it is "slow" compared with the drift XP (QA: pass)
+- [x] game/README.md lists the new numbers where the run numbers are described (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -61,3 +61,10 @@ Proposed speed and why:
 Tests (run in the task folder): full GUT suite 326/326 passing (34 scripts); `game/tools` Python tests 125 OK; `tools` Python tests 115 OK. Godot's line-ending-only `.import` changes were reverted, not committed.
 
 Documents affected: `game/README.md` (updated).
+
+**QA/Integration Agent, round 1, 2026-10-13.** Checked in `C:\solid-carbide-worktrees\T-114` on `task/T-114-likes-drain-data`.
+- Criterion 1, pass: `run.json` has a `likes_drain` block (`enabled: true`, `bar_share_per_second: 0.02`, `extra_wait_seconds: 0.0`). `RunData` reads each one with `likes_drain_enabled()`, `likes_drain_bar_share_per_second()` and `likes_drain_extra_wait_seconds()`, plus `likes_drain_xp_per_second(level)`. In `test_run_data.gd`, `test_likes_drain_loads_with_sensible_values` checks that the file loads, the drain is on, the share is above 0 and below 1, and the wait is 0. Two more tests check that the drain is slow next to drifting and that it scales with each level's bar: 2 XP/s at level 1, and 0 at max level 12, where `xp_needed` is 0.
+- Criterion 2, pass: the result notes and the `_comment` both propose a share of the bar per second, not a flat amount. At 0.02 a full bar takes 50 s to empty. At level 1 that is 2 XP/s, a fifth of a drift second's 10 XP. They also say why a flat amount would be wrong across the 100 to 931 XP bars. The result notes also flag that late in the run the drain per second can be larger than what a drift second gives, which is worth watching in the playtest.
+- Criterion 3, pass: the "Typed readers" line in `game/README.md` lists all four new readers next to the run numbers, with the proposed value.
+- Criterion 4, pass: the full GUT suite passed with 326 of 326 tests in 34 scripts (`TESTS PASSED`, exit code 0), including the 3 new tests. The `game/tools` Python tests ran 125, all OK. The `tools` Python tests ran 115, all OK. The `.import` files Godot touched differ only in line endings and were left uncommitted.
+
