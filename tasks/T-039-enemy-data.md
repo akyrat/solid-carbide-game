@@ -43,11 +43,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The data is valid JSON under `game/data/`, and a test loads it through T-038's loader (QA: pass / fail)
-- [ ] A test shows the minion count at the end of the 7 minutes is higher than at the start, and minion health and damage do not change over time (QA: pass / fail)
-- [ ] The result notes say how long the MVP weapons take to bring the kaiju's health to 0 (from T-040's data, with the assumptions), and a test checks that figure against the data (QA: pass / fail)
-- [ ] The result notes explain every number, and `docs/enemies.md` points to the data in References, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] The data is valid JSON under `game/data/`, and a test loads it through T-038's loader (QA: pass)
+- [x] A test shows the minion count at the end of the 7 minutes is higher than at the start, and minion health and damage do not change over time (QA: pass)
+- [x] The result notes say how long the MVP weapons take to bring the kaiju's health to 0 (from T-040's data, with the assumptions), and a test checks that figure against the data (QA: pass)
+- [x] The result notes explain every number, and `docs/enemies.md` points to the data in References, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -101,3 +101,16 @@ All numbers are proposals for the board's playtests. Scale used throughout: car 
 So an average run wins with about 10 s to spare out of the 60, a strong or upgraded one comfortably, and a run with no level-ups cannot win. Two things make the real figure longer: the gun shoots the closest enemy, so minions nearer than the kaiju take shots away from it, and the flame share depends on how the player drives. If the board finds the kaiju too tough in playtests, lowering `health` is the one-number change (400 gives 38.8 s for the average run).
 
 **Tests:** `test_enemy_data.gd` 9 of 9 pass. Full GUT suite: 392 of 392 pass (40 scripts, `TESTS PASSED`). Python tool tests: `game/tools` 141 OK, `tools` 115 OK.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13):
+- **Criterion 1, valid JSON loaded through the loader: pass.** `game/data/enemies.json` parses with Python's `json`. `test_loads_through_loader` loads it with `GameData.load_file("enemies")` (T-038's loader) and through `EnemyData`, which wraps the same loader; `test_missing_file_gives_clear_error` covers a missing file.
+- **Criterion 2, minion count grows, stats do not: pass.** `test_minion_count_grows_over_the_7_minutes` checks 12 at 0 s and 20 at 420 s, higher at the end, never lower every 10 s along the way, held at 480 s, and under double. `test_minion_stats_do_not_change_over_time` checks the minion's numbers (health 4, contact damage 5) are the same before and after asking for the count at 7:00, and that neither the minion nor the kaiju has a growth or scaling key. The data has no time input to the stats at all, so this is as much as data can show; whether the spawner code keeps them fixed belongs to the Enemy Behavior task.
+- **Criterion 3, kaiju time to kill: pass.** The result notes give 48.5 s for an average run (level 8: gun tier 4, flame tier 4) and five other builds, with the assumptions (every bullet hits, flame on the kaiju 30% of the fight, garage bonus on all damage). `test_kaiju_time_to_kill_matches_result_notes` computes each figure from weapons.json (through `WeaponData`), garage.json and enemies.json and compares it to the table within 0.05 s. QA recomputed all six by hand from the JSON (for example gun tier 4: 3 bullets x 2 / (1.2 / 1.44 + 0.06) = 6.72; flame tier 4: 2.4 / 0.2 x 0.3 = 3.6; 500 / 10.32 = 48.5 s) and they match.
+- **Criterion 4, every number explained, docs only gained References: pass.** All 26 numbers in enemies.json (minion 5, spawning 5, coins 2, kaiju 5, meteor attack 9) have a reason in the result notes. `git diff master -- docs/enemies.md` changes only the References section ("(None yet.)" replaced by one pointer); Summary, Decisions and Open questions are byte-identical to master.
+- **Criterion 5, full suites: pass.** GUT 392 of 392 (`TESTS PASSED`, 40 scripts; `test_enemy_data.gd` 9 of 9). Python `game/tools` 141 OK, `tools` 115 OK. Godot's line-ending-only `.import` changes were left uncommitted.
+- **Flagged for the board, not failed (numbers that add a rule the docs don't state):**
+  - `meteor_attack.land_within_units_of_car` 10: meteors aim near the car. Enemies, Decisions says meteors "rain down" and one may land on the player, but not that they target the car.
+  - `spawning.spawn_interval_seconds` and the "keep N around and refill" model: the docs say enemies come in from the screen edges in growing numbers, not that kills are refilled to a target count. Holding the count during the kaiju's minute is also a new choice (the agent flags it).
+  - `minion.move_speed` 6 (slower than the car, so a moving car always outruns minions): the docs give no minion speed; the agent flags it.
+  - The kaiju drops no coins (result notes, Coins): Game loop architecture says "enemies drop coins" without an exception.
+  - `meteor_attack.windup_seconds` 1.0 and `impact_radius_units` 1.5 put numbers on "a short animation" and "lands on the player"; small, but new numbers the Enemy Behavior task will rely on.
