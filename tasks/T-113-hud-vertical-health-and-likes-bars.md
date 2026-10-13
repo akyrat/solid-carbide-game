@@ -1,7 +1,7 @@
 ---
 id: T-113
 title: HUD: health bar upright at the top left, likes bar along the bottom
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: ui
@@ -94,3 +94,4 @@ UI Agent, same branch and worktree.
 - **Pause strip:** its dark band (full width from y 92) still runs over the lower part of the health bar while paused; its text and slider are clear. The likes area at the bottom is untouched by it.
 - **Docs:** `docs/hud-and-menus.md`. In Content, "The HUD", the "Top left" bullet is rewritten, a new "Bottom centre" bullet is added, and the pause band note is updated. The Decisions line is brought in line with master's 2026-10-13 decision so the merge is clean. `game/README.md`: "The HUD" paragraph under "The run". The fixture's comment is updated too.
 - 2026-10-13, needs-playtest → in-progress: board playtest: text placing horrible; likes bar to the bottom
+- 2026-10-13, in-progress → in-qa: round 2: likes bar horizontal at the bottom centre, health bar under Car Health; GUT 330/330, Python 125 + 115 OK
