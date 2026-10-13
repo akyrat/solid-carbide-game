@@ -117,3 +117,5 @@ The board judged the first sample's shape weak (a tall smooth egg on a stone dis
 - **Expected cost:** about 1 generation.
 - **Balance before:** 4955 of 5000 subscription generations, USD credits $0.00.
 - Output: `art-archive/T-065/boulder_sample2_raw.png` (+ record), cleaned to `boulder_sample2.png`. One call only; not regenerated whatever comes out.
+
+**Rejected request (no image, not charged):** the first submission at 20:54 UTC was refused by PixelLab's input check, HTTP 500 `style_image must be size (128, 160), not torch.Size([160, 160])`: bitforge needs the style image the same size as the canvas. No image came back, `usage` null (logged in `game/art/pixellab-generation-log.jsonl` as `result: error`), balance still 4955 right after. Fix (free): the first sample cropped to 160 x 128 by removing only empty rows (rows 0 to 11 and 140 to 159 are fully transparent; no pixels lost): `art-archive/T-065/boulder_sample2_style_input.png`. The same request is then sent once with that style image; everything else unchanged. This is still the board's one generation, since the refused request produced nothing and cost nothing.
