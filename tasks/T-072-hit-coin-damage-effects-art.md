@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-044-minions.md, tasks/T-036-run-scene-and-state.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,11 +42,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot sequence shows a minion being hit, dying and dropping a coin, and the car taking damage (QA: pass / fail)
-- [ ] T-044's and T-036's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [ ] A screenshot sequence shows a minion being hit, dying and dropping a coin, and the car taking damage (QA: pass)
+- [ ] T-044's and T-036's tests still pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
@@ -95,3 +95,17 @@ Status stays in-progress; nothing swapped into the game.
 - Checks: `python game/tools/build_hit_coin_damage_effects.py check` passes every frame (size, transparent corners, 0 semi-transparent pixels, colours under 30, no Redgull red). GUT: 583 of 583 pass; Python tool tests: 246 OK (1 skipped, pre-existing).
 - Review images (enlarged, dark and light): `art-archive/T-072/coin_dark_light_x16.png`, `enemy_hit_dark_light_x10.png`, `enemy_death_dark_light_x6.png`, `car_damage_dark_light_x4.png`. Screenshot sequence (hit, death and coin drop, car damage): `art-archive/T-072/screenshot_sequence_hit_death_coin_damage.png`, frames in `art-archive/T-072/screenshots/`.
 - Things to judge: the hit is small (16 px at scale 1, about one unit across) and quick; the death puff is the biggest effect; the car damage flash is big and cyan, covering the car's roof for about 0.1 s.
+
+### QA round 1 (qa-integration, 2026-10-14): all criteria pass
+
+1. **Check script: pass.** `python game/tools/build_hit_coin_damage_effects.py check` exits 0, `ALL RULES PASS`: coin (10x12, 5 colours), enemy_hit (4 frames, 2-5 colours), enemy_death (6 frames, 1-9 colours), car_damage (4 frames, 2-6 colours). Every frame: right size, transparent corners, 0 semi-transparent pixels, some opaque pixels, no Redgull red (the shared `is_redgull_red` from `build_level_up_particles.py`).
+2. **PixelLab record, one round: pass.** Exactly one call for T-072 in `game/art/pixellab-generation-log.jsonl` (`/create-image-pixflux`, coin_sample, 1 generation). The result notes give the prompt, negative prompt, settings (32x32, no background, selective outline, detailed shading, seed 7207, high top-down, isometric, south; request in `art-archive/T-072/coin_request.json`), cost 1 generation, balance 4919 before and 4918 after. The hit, death, car damage and the final coin are script art (board-approved); no regeneration.
+3. **Screenshot sequence: pass.** `art-archive/T-072/screenshot_sequence_hit_death_coin_damage.png` (16 frames from `screenshots/`) shows in the real game the minion beside the car, the hit flash on it (4 frames), the death puff breaking up with two coins dropping, the coins on the ground, then the cyan car damage flash and sparks over the car. Review images (dark and light) also looked at; no red seen in any of them.
+4. **T-044's and T-036's tests: pass.** `test_minions.gd` and `test_run_state.gd` pass in the full run. The diff against master only adds tests (four T-072 tests at the end of `test_minions.gd`); no test line removed or changed, so nothing weakened.
+5. **Full GUT suite and Python tool tests: pass.** GUT 583 of 583 (exit 0). Python: `game/tools` 246 OK (1 skipped, pre-existing), `tools` 130 OK. Note: my first two GUT runs failed 1 and 4 tests in camera/zoom settings, the car sheet byte check and pause camera controls, while another worktree (T-042, T-045) ran GUT at the same time; these tests share `user://` files across worktrees. Each passes alone, and the full suite passed 583/583 when no other GUT run was active. Not caused by T-072.
+
+Extra checks asked for:
+- **No Redgull red:** check script and review images, pass.
+- **Hooks change no behaviour:** `Minion.hurt` is emitted only in the `else` branch of `take_damage` (alive after a hit); `RunState.car_damaged` is emitted after `health_changed` in `damage_car`, with the health and loss logic untouched. No file in `game/data/` or `game/scenes/` changed, and no damage, drop chance or coin number changed in the scripts. `coin_sprite.gd` only swaps the ellipse drawing for the texture (same bob and shadow).
+- **Effects free themselves and pause:** `effect_flipbook.gd` advances in `_process` and calls `queue_free()` after its last frame (tested in `test_effect_frees_itself_after_its_last_frame`); it keeps the default inherited process mode under the run's pausable tree (no `PROCESS_MODE_ALWAYS` on its parents), so it pauses with the game.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all five criteria pass (qa-integration).
