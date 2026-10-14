@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: planning
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -87,3 +87,4 @@ Assumes T-064's redesign: 2 by 2 slots per 30 by 30 block, each slot 15 by 15 un
 
 **Recommended:** the piece-based approach above, sample first (5 generations), then the full set (9 more), 14 in all, with nothing called until the board gives the go.
 - 2026-10-14, in-progress → planning: board: hold until the skyscraper sample (T-064) is approved; it reuses its wall method
+- 2026-10-14, planning → in-progress: board: go for the sample (5 generations), palette B, built on T-064's branch

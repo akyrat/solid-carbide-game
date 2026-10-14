@@ -930,3 +930,8 @@ Entry format:
 - Decision or change: the board played the two separate city builds and chose palette B, steel and glass: cool blue-grey walls, pale white and pale blue lit windows, small amber accents. Every city asset uses it (Visual style, "City colours"). The palette A build is removed; its recoloured art stays in T-064's branch history and goes to the archive with the full set.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-064, T-129
+
+## 2026-10-15: Go for the full skyscraper set and the shorter buildings' sample
+- Decision or change: the board gave the go for T-064's full set (5 more skyscrapers, about 15 generations, in palette B, with a free wall retune, signs that don't read as real Japanese, only the covering tower fading) and for T-129's sample (5 generations, palette B), each step coming back to the board.
+- Documents touched: none
+- Tasks: T-064, T-129
