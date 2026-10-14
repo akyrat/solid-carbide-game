@@ -59,4 +59,37 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Enemy Behavior Agent (2026-10-14).
+
+**Built** (branch `task/T-044-minions`, folder `C:\solid-carbide-worktrees\T-044`):
+- `game/scripts/enemies/minion_spawner.gd`: the run's minions (`run.minions`). Spawning from `EnemyData.minions_wanted(run seconds, spawn_multiplier)`, one every `spawn_interval_seconds` while fewer are around, `spawn_margin_units` beyond the visible screen's edge, on the map and clear of buildings and boulders. Moves, contact damage, coin drops, clearing on a new run (`run.world_rebuilt`), and the draw order, all in `step(dt)` once per physics step (pausable).
+- `game/scripts/enemies/minion.gd`: one minion (`CharacterBody2D`, layer 3, mask 1): walks at the car, slides along and walks round obstacles, contact damage through `RunState.damage_car()` with knockback through `car.apply_knockback()`, and the public `take_damage(amount)` for the weapons; dies at 0 health (`died` signal).
+- `game/scripts/enemies/coin.gd`: a coin (`Area2D`, layer 4, mask 2); driving over it calls `RunState.add_coins(1)` and removes it.
+- `game/scripts/enemies/minion_sprite.gd`, `coin_sprite.gd`: placeholders drawn in code (a light green four-legged lizard, gold coins; no Redgull red).
+- `game/scripts/enemies/enemy_depth.gd`: minions' and coins' place in the buildings' depth order, the map's rule for the car (`map.car_z_index()`); the fade stays car-only.
+- `game/scripts/run/run.gd`: adds the spawner (`minions`, child `Minions`) and binds it. Nothing else changed there.
+- Combo hook for T-085: `run.minions.spawn_multiplier` (1.0 now) multiplies `minions_wanted`. T-085 sets it from `RunState.combo_spawn_multiplier()`.
+- No numbers in `game/data/enemies.json` changed. No debug or cheat input.
+
+**How to see it:** open `C:\solid-carbide-worktrees\T-044\game\project.godot`, press F5, then Start. Minions come in from the screen's edges within a second and chase the car.
+
+**Screenshots** (taken from a run started from the main menu): `C:\solid-carbide-worktrees\T-044\art-archive\T-044\screenshots\minions.png` (12 placeholder minions and two coins around the car) and `C:\solid-carbide-worktrees\T-044\art-archive\T-044\screenshots\minions_draw_order.png` (the car beside a block of skyscrapers and two boulders, with minions in front of and behind them). To retake them: `bash game/tools/screenshot.sh res://tests/fixtures/minions_demo.tscn screenshots/minions.png 20` and the same with `minions_draw_order_demo.tscn`.
+
+**Tests:** `game/tests/unit/enemies/test_minions.gd`, 19 tests, all pass. They cover every criterion: the count at 0:00 (12), halfway and at 7:00 (20) with the run's clock moved on; walking straight at the car at the data's speed (and round a building); contact damage of 5 per hit every 0.5 s (4 hits in 2 s) with knockback of 8 away from the minion each hit; death at 0 health; coins dropping in 364 of 600 deaths (60.7%, seed 44; data: 60%), 2 each; driving over a coin adding 1 to the run's coins and removing the coin and its drawing; no movement or spawning while paused; a new run clearing all minions and coins. Full GUT suite: 573 of 573 pass (53 scripts, `TESTS PASSED`). Python tool tests: `game/tools` 235 OK (1 skipped), `tools` 130 OK.
+
+**Documents affected:** `docs/enemies.md` (Content only: "The minion (built in task T-044)"; Summary, Decisions and Open questions unchanged), `game/README.md` (new "Minions" section with the damage function for T-041 and T-042, plus one line each in "Folder layout" and "Collision layers").
+
+**Choices I made where the docs leave it open** (Enemies, Decisions: spawning and contact damage are proposed by this agent, and the board judges them in playtests):
+- Minions do not walk through buildings, walls or boulders. They slide along them and walk round one that blocks their way.
+- A minion the car has left a whole screen behind is removed without coins, and a new one comes in at the screen's edge, so the swarm stays around the car (the car is faster than the minions).
+- Contact damage is per minion: each touching minion hits every 0.5 s, the first hit as soon as it touches.
+- A drop is 2 separate 1-coin pickups, spread round the spot where the minion died. Coins stay until collected or a new run.
+- Some numbers are in code because they are placeholder sizes and rules, not balancing numbers: the minion's and the coin's radius (0.5 units each) and the separation between minions (1.2 units). If the board wants to tune them, the Game Data Agent can move them into `enemies.json`.
+
+**For the board's playtest:**
+- **Spawning and chase:** whether 12 to 20 minions feel right, and whether they arrive fast enough at the start (they fill up over the first 6 s).
+- **Contact damage and knockback:** stop the car and let them reach it. Health drops 5 per hit, and each hit cuts the combo.
+- **Pause:** Escape freezes the minions.
+- **Draw order:** drive past the skyscrapers. Minions behind a skyscraper are hidden by it, and those in front are drawn over it. Since the fade is car-only, a minion behind an opaque skyscraper is not visible at all. Also: where the car and a minion share a depth level, the car is always drawn over the minion, even when the minion stands just in front of it.
+- **Placeholder size:** the minion is drawn about 1 unit (the car's width) across.
+- Killing minions and coins can't be played yet (no weapons, no debug key); the tests cover them.

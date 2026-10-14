@@ -201,6 +201,7 @@ func test_coins_drop_at_about_the_data_chance() -> void:
 	var drops: int = tally.drops
 	var coins_dropped: int = tally.coins
 	var share := float(drops) / kills
+	gut.p("drops %d of %d kills (%.3f), %d coins" % [drops, kills, share, coins_dropped])
 	assert_almost_eq(share, c["drop_chance"], 0.06, "drop chance about the data's")
 	assert_eq(coins_dropped, drops * int(c["coins_per_drop"]), "coins_per_drop each")
 	assert_eq(spawner.coins.size(), coins_dropped, "a coin on the ground for each")
