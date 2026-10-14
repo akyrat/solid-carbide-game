@@ -57,3 +57,8 @@ While testing, never stop or restart the live task board server on port 8765, an
 
 ## Result notes
 
+Built (helper agent):
+- `tools/taskboard/taskboard.html`: new `<dialog id="movenote">` (ticket id, title, "From X to Y", multi-line optional note, Cancel and Move buttons). The drop handler in `endDrag` now calls `askMoveNote(id, laneKey)` instead of `moveTicket`; a drop on the card's own column returns without opening anything. Move button and Enter (not Shift+Enter) call `confirmMove()`, which calls `moveTicket(id, laneKey, note.trim())`. Esc (native dialog) and Cancel close it with no request. `moveTicket` now also stores `lastMoveError`; on a refused move `confirmMove` keeps the dialog open with the typed note and shows the server's message in the dialog (the toast still shows too). Detail-view moves are unchanged.
+- Docs: one sentence each in `docs/README.md` and `docs/working-with-the-board.md` ("The task board").
+- No server, inbox or watcher changes. The `/api/move` note path was not re-run by hand on a test server; it is untouched and covered by the existing tools tests.
+- Checks: `node --check` on the page script passes; `python -m unittest discover -s tools -p "test_*.py"` ran 171 tests, OK. Not exercised in a real browser (no drag run).
