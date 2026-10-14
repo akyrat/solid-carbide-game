@@ -950,3 +950,8 @@ Entry format:
 - Decision or change: the board approved T-129's sample short building ("lgtm"), keeping its roof as it is, and asked for its shop signs to be redrawn by script as abstract shapes with no letters (like the skyscrapers'), then for the other 3 designs (about 9 generations, palette B), before it playtests again and merges. QA's small leftovers from T-064 are tidied in the same work.
 - Documents touched: none
 - Tasks: T-129
+
+## 2026-10-15: T-129 done: shorter buildings with visible roofs
+- Decision or change: the board playtested the shorter buildings and approved them ("LGTM"). About one slot per block holds a low building (about 4.3 units) with a flat roof carrying water tanks, air conditioners, signs, antennas and a little rubble, in palette B, with the script pavement. 4 designs, each with a mirrored look; shop signs drawn by script as abstract marks with no letters. Each short building fades on its own when it covers the car, with an outline that follows its roof (QA round 1 caught it fading when the car was only behind it; fixed). PixelLab: 14 generations (5 sample, 9 full set); balance 4919 of 5000. Left for later if the board wants: design B's darker right wall reads almost blank, B and C look alike from a distance, and neighbouring blocks can repeat a design.
+- Documents touched: `game/README.md`
+- Tasks: T-129 (done)

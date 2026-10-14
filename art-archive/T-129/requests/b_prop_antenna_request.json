@@ -1,0 +1,21 @@
+{
+ "negative_description": "text, letters, words, logo, red, perspective, gradient, blur, sky, ground, street, car, people, fire, base plate, platform, pedestal, shadow, building, wall",
+ "text_guidance_scale": 8,
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "color_image": {
+  "type": "base64",
+  "base64": "iVBORw0KGgoAAAANSUhEUgAAAHQAAAAECAYAAABfuBvmAAAApUlEQVR4nGOUEFf5z4AEODg4kbkMnGh8dnYOVHlOdhT+76faKHwB+YcofJmb4ij8l8ZvUfinGc1R+DZ/L6HwWfmZUPhsv5hR+Ex8v9Dk+VD4zKjeYeBkRPXP10veKPw5KRIo/Ibbq1H4WpvVUfgP0p+j8MuiClD4C0pR7Y9/dhKFf6ME1f8aIh9R+PvN+VH4jqjGMaCGzigY8mA0QocZGI1QhuEFAC/7HwRYO3pZAAAAAElFTkSuQmCC"
+ },
+ "seed": 129018,
+ "description": "a rooftop radio antenna mast with crossbars and a small blinking light on a low square base box, thin and tall, no platform, pixel art",
+ "image_size": {
+  "width": 96,
+  "height": 96
+ },
+ "view": "high top-down",
+ "isometric": true,
+ "direction": "south",
+ "no_background": true,
+ "outline": "selective outline"
+}

@@ -35,5 +35,20 @@
  "margin_units": 1.5,
  "height_units": 30,
  "towers": 6,
- "variants_per_tower": 2
+ "variants_per_tower": 2,
+ "short": {
+  "about": "T-129 short buildings: 4 designs x 2 looks (the second look is mirrored with the pale-blue accent), palette B, 768 x 518 or 522 art px, anchored at the bottom centre like the skyscrapers; roofs show.",
+  "bodies": [
+   "res://art/buildings/short_body_0.png",
+   "res://art/buildings/short_body_1.png",
+   "res://art/buildings/short_body_2.png",
+   "res://art/buildings/short_body_3.png",
+   "res://art/buildings/short_body_4.png",
+   "res://art/buildings/short_body_5.png",
+   "res://art/buildings/short_body_6.png",
+   "res://art/buildings/short_body_7.png"
+  ],
+  "designs": 4,
+  "height_units": 4.3
+ }
 }

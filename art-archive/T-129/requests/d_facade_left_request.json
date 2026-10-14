@@ -1,0 +1,21 @@
+{
+ "negative_description": "text, letters, words, logo, red, perspective, gradient, blur, sky, ground, street, car, people, fire",
+ "text_guidance_scale": 8,
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "color_image": {
+  "type": "base64",
+  "base64": "iVBORw0KGgoAAAANSUhEUgAAAHQAAAAECAYAAABfuBvmAAAApUlEQVR4nGOUEFf5z4AEODg4kbkMnGh8dnYOVHlOdhT+76faKHwB+YcofJmb4ij8l8ZvUfinGc1R+DZ/L6HwWfmZUPhsv5hR+Ex8v9Dk+VD4zKjeYeBkRPXP10veKPw5KRIo/Ibbq1H4WpvVUfgP0p+j8MuiClD4C0pR7Y9/dhKFf6ME1f8aIh9R+PvN+VH4jqjGMaCGzigY8mA0QocZGI1QhuEFAC/7HwRYO3pZAAAAAElFTkSuQmCC"
+ },
+ "seed": 129015,
+ "description": "flat front view of the left wall of a five-floor old Tokyo-style concrete shop house with roller shutters, awnings and a few boarded windows at night, dark navy concrete, rows of mostly dim windows, a few broken, light cracks, a dim neon glow on the ground floor, glow drawn in pixels, no signs, no letters, filling the whole image, no sky, no ground, retro pixel art",
+ "image_size": {
+  "width": 384,
+  "height": 160
+ },
+ "view": "side",
+ "isometric": false,
+ "direction": "south",
+ "no_background": false,
+ "outline": "lineless"
+}

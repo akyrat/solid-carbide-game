@@ -294,12 +294,7 @@ func _build_buildings() -> void:
 			b.custom_silhouette = towers.outline
 		i += 1
 	# Draw order: by the front corner (x + y), nearest to the viewer on top.
-	var order := buildings.duplicate()
-	order.sort_custom(func(p, q):
-		if p.depth_key() != q.depth_key():
-			return p.depth_key() < q.depth_key()
-		return p.footprint.position.x < q.footprint.position.x)
-	order = fade_items().duplicate()
+	var order := fade_items().duplicate()
 	order.sort_custom(func(p, q):
 		if p.depth_key() != q.depth_key():
 			return p.depth_key() < q.depth_key()
