@@ -315,8 +315,8 @@ func test_placeholder_is_large_and_not_redgull_red() -> void:
 	for c in colors:
 		var reddish: bool = c.r > 0.6 and c.g < 0.35 and c.b < 0.35
 		assert_false(reddish, "no red: %s" % c)
-	assert_gte(KaijuScript.RADIUS_UNITS * 2.0, 3.0 * 1.0, "several times the car's 1-unit width across")
-	assert_gte(KaijuScript.HEIGHT_UNITS, 3.0 * 3.0, "several times the car's 3-unit length tall")
+	assert_gte(KaijuScript.RADIUS_UNITS * 2.0, 4.0 * 1.0, "four times the car's 1-unit width across")
+	assert_gte(KaijuScript.HEIGHT_UNITS, 2.0 * 3.0, "over twice the car's 3-unit length tall")
 	assert_eq(KaijuSpriteScript.RADIUS_UNITS, KaijuScript.RADIUS_UNITS, "drawing and body the same size")
 	assert_eq(KaijuSpriteScript.HEIGHT_UNITS, KaijuScript.HEIGHT_UNITS)
 

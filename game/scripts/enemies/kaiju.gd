@@ -24,12 +24,12 @@ const LAYER_OBSTACLES := 1 << 0
 const LAYER_ENEMIES := 1 << 2
 
 ## The placeholder's body radius on the ground, in units (the collision circle
-## and the reach for touching the car): 5 units across, the car being 1 wide
+## and the reach for touching the car): 4 units across, the car being 1 wide
 ## and 3 long. A size of the placeholder, not a balancing number.
-const RADIUS_UNITS := 2.5
+const RADIUS_UNITS := 2.0
 ## How tall the drawn kaiju is, in units (for the depth order and spawning
 ## fully off-screen).
-const HEIGHT_UNITS := 10.0
+const HEIGHT_UNITS := 7.0
 
 ## Emitted on every change of health (damage), with the new values. For the HUD.
 signal health_changed(health: float, max_health: float)

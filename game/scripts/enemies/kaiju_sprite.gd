@@ -1,8 +1,8 @@
 extends Node2D
 ## The kaiju's placeholder drawing (task T-045), in the isometric view's
 ## screen pixels (16 per unit, like the map): a large, Godzilla-style shape
-## seen from the side, standing on its ground circle (5 units across) and
-## about 10 units tall, several times the car's size (Visual style, Decisions,
+## seen from the side, standing on its ground circle (4 units across) and
+## 7 units tall, several times the car's size (Visual style, Decisions,
 ## "The kaiju"). It faces left or right, the way it walks on screen, and
 ## stomps as it walks. Dark slate green with a lighter belly, pale cyan back
 ## plates and yellow eyes; no Redgull red. The final kaiju art comes from a
@@ -16,9 +16,11 @@ const EYE_COLOR := Color(1.0, 0.88, 0.30)
 const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)
 
 ## Body radius and height in units (kaiju.gd's RADIUS_UNITS and HEIGHT_UNITS).
-const RADIUS_UNITS := 2.5
-const HEIGHT_UNITS := 10.0
+const RADIUS_UNITS := 2.0
+const HEIGHT_UNITS := 7.0
 const PX := 16.0
+## The figure below is drawn for a height of DESIGN_HEIGHT_PX and scaled to HEIGHT_UNITS.
+const DESIGN_HEIGHT_PX := 160.0
 
 ## 1 = facing right on screen, -1 = facing left. Set by face().
 var facing_x := -1.0
@@ -75,6 +77,8 @@ func _blob(cx: float, cy: float, rx: float, ry: float, color: Color, outline: bo
 func _draw() -> void:
 	var gr := RADIUS_UNITS * PX * sqrt(2.0)
 	_ground_shadow(gr)
+	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sc, sc))
 	var stomp := sin(_walk * TAU)
 	var lift_a := maxf(stomp, 0.0) * 6.0
 	var lift_b := maxf(-stomp, 0.0) * 6.0
