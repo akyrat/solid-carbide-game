@@ -1,7 +1,7 @@
 ---
 id: T-131
 title: Combo heats up at x2, x3 and x4, with comic-style combo and Hype Lv text and a burning likes bar
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -86,3 +86,4 @@ UI Agent, 2026-10-14. Branch `task/T-131-combo-heat-levels`, folder `C:\solid-ca
 - Extra QA screenshots of step 3 at 1024x576, 1280x720 and 1920x1080 (Godot `--resolution`, same fixture): `C:\solid-carbide-worktrees\T-131\screenshots\qa_step3_sizes.png` (bottom HUD of all three) and `qa_step3_<size>.png`. Layout holds at every size; at 1024x576 the flame tips come close to the counter's outline but do not touch it.
 - For the board's playtest (not failures): the pulse and flicker can only be judged in motion; "HYPE LV 1" in Bangers at 20 px reads a little like "7" (the UI Agent noted this too); at 1920x1080 the bottom HUD is small relative to the screen (the HUD does not scale, as before this task).
 - Godot's line-ending-only `.import` changes in the working tree were left uncommitted.
+- 2026-10-14, needs-playtest → done: board playtest: looks good
