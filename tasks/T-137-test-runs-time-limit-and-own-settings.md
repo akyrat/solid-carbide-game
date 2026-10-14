@@ -1,7 +1,7 @@
 ---
 id: T-137
 title: Test runs end themselves when hung, and parallel runs don't share settings files
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Enemies
