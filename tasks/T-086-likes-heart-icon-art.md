@@ -1,7 +1,7 @@
 ---
 id: T-086
 title: Art: the heart icon on the likes bar
-status: planning
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -47,4 +47,12 @@ Board review files: the HUD screenshots listed in the result notes
 
 ## Result notes
 
-Written by the agent when it finishes.
+Made by the Asset Generation Agent, 2026-10-14. **No PixelLab call was made (0 generations).**
+
+- **Art:** `game/art/hud/likes_heart.png` (11 x 10 px) and its record `game/art/hud/likes_heart.json`. A hand-placed 9 x 8 pixel grid, flat Redgull red (219, 26, 41 = `Hud.HEART_COLOR`) with a 1 px dark outline all round (8, 8, 15 = `Hud.OUTLINE_COLOR`, the text's outline colour). Two colours, transparent background, no semi-transparent pixels. The HUD shows it at 2x (22 x 20 on screen, nearest), about the height of "LIKES" with its outline, level with it.
+- **Script:** `python game/tools/build_heart_icon.py build` rebuilds it (byte-identical every run); `check` verifies the committed PNG. Tests: `game/tools/test_build_heart_icon.py` (Python) and `game/tests/unit/hud/test_hud_heart_art.gd` (GUT: art rules, colours, the HUD uses the art at 2x, nearest, about text height).
+- **HUD:** `game/scripts/hud/hud.gd`: `heart` is now a `TextureRect` with the art (the `Polygon2D` placeholder and `_heart_points` are gone; `HEART_SIZE` replaced by `HEART_SCALE`). Layout code untouched. `test_hud_values.gd`'s placeholder-shape check now checks the art.
+- **Tests:** full GUT suite 557/557 pass (T-049, T-113, T-116 and T-131 HUD tests included); Python tool tests pass.
+- **Screenshots** (in `art-archive/T-086/screenshots/`; also in `screenshots/`, which is gitignored): `T-086_hud.png` (HUD in a run, from `hud_from_menu_demo.tscn`), `T-086_hud_combo_step3.png` (combo step 3, likes bar on fire, `combo_heat_step3.tscn`), and x4 crops of each (`..._crop_x4.png`). Enlarged heart on dark and light: `art-archive/T-086/heart_dark_light_x16.png`. Commands: `bash game/tools/screenshot.sh res://tests/fixtures/hud_from_menu_demo.tscn screenshots/T-086_hud.png 30` and the same with `combo_heat_step3.tscn`.
+- **Looks like:** the heart sits level with "LIKES", a touch taller than the letters, outline matching the text's. At step 3 the flames start right of the heart's column under the row (the flames' low spans cover the whole row), the heart stays clear and readable. Weak spots, for the board to judge: it is slightly taller than the letters; the 1 art px (2 screen px) outline is a little thinner than the text's 3 px outline.
+- Documents affected: `game/README.md` (HUD section).

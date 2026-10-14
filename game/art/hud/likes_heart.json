@@ -1,0 +1,28 @@
+{
+ "task": "T-086",
+ "what": "The HUD likes heart: flat Redgull red, thick dark outline like the LIKES text's, a little chunky.",
+ "made_by": "game/tools/build_heart_icon.py (a hand-placed pixel grid; no PixelLab call, 0 generations, board 2026-10-14). Byte-identical every run.",
+ "size": [
+  11,
+  10
+ ],
+ "shown_at_scale": 2,
+ "palette": {
+  "red": [
+   219,
+   26,
+   41
+  ],
+  "outline": [
+   8,
+   8,
+   15
+  ]
+ },
+ "references": [
+  "docs/visual-style.md (technical rules, Redgull red)",
+  "docs/hud-and-menus.md",
+  "game/scripts/hud/hud.gd (HEART_COLOR, OUTLINE_COLOR)"
+ ],
+ "prompt": null
+}
