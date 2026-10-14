@@ -43,19 +43,19 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 **Kaiju coins (board, 2026-10-13):** when the kaiju is defeated it always drops a few coins (Enemies, Decisions; the number from T-119 in `enemies.json`). Its death ends the run straight away, so add its coins to the run's coins before the "run ended" signal, so they count in the coins saved.
 
-**Dev timer setting (board, 2026-10-14):** add a setting where the board sets the run timer's minutes and seconds (the time on the clock when a run starts), so it can fast-forward to the boss. It goes with the other playtest settings in `game/data/playtest.json`. Settings like these will go under an internal dev flag that players never see (HUD and menus, Decisions); no player-facing UI. Replace the `kaiju_early_arrival` switch with it, so there's one way to reach the boss early: the kaiju keeps arriving on the run's normal boss-time signal. Default it in this branch to 1:30 on the clock (30 s before the boss), and say in the result notes how to set it back to the normal 8:00.
+~~**Dev timer setting (board, 2026-10-14):** add a setting where the board sets the run timer's minutes and seconds (the time on the clock when a run starts), so it can fast-forward to the boss. It goes with the other playtest settings in `game/data/playtest.json`. Settings like these will go under an internal dev flag that players never see (HUD and menus, Decisions); no player-facing UI. Replace the `kaiju_early_arrival` switch with it, so there's one way to reach the boss early: the kaiju keeps arriving on the run's normal boss-time signal. Default it in this branch to 1:30 on the clock (30 s before the boss), and say in the result notes how to set it back to the normal 8:00.~~ **Superseded (board, 2026-10-14):** no timer setting; runs always start at 8:00. For the board's playtest the kaiju arrives 30 s into the run (the `kaiju_early_arrival` switch in `game/data/playtest.json`, beside T-042's `flamethrower_at_start`); it is set back to 7 minutes right before merging. Merge master first, so the gun and the flamethrower can kill the kaiju in the playtest build; the flamethrower counts any overlap with the kaiju's body as a hit (`hit_radius_units()`).
 
 ## Acceptance criteria
 
-- [x] A test fires the "boss time" signal and shows the kaiju appears and moves towards the car (QA: pass)
-- [x] A test shows weapon damage lowers the kaiju's health as soon as it has appeared, and the health signal fires (QA: pass)
-- [x] A test damages the kaiju to 0 and shows the run's kaiju-killed function is called once (QA: pass)
-- [x] A test shows contact with the car damages it and knocks it back (QA: pass)
-- [x] A screenshot shows the placeholder kaiju (QA: pass)
-- [x] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass)
-- [x] The full GUT suite and all Python tool tests pass (QA: pass)
-- [x] A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time (QA: pass)
-- [ ] `game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player (QA: fail)
+- [ ] A test fires the "boss time" signal and shows the kaiju appears and moves towards the car (QA: pass / fail)
+- [ ] A test shows weapon damage lowers the kaiju's health as soon as it has appeared, and the health signal fires (QA: pass / fail)
+- [ ] A test damages the kaiju to 0 and shows the run's kaiju-killed function is called once (QA: pass / fail)
+- [ ] A test shows contact with the car damages it and knocks it back (QA: pass / fail)
+- [ ] A screenshot shows the placeholder kaiju (QA: pass / fail)
+- [ ] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- Superseded (board, 2026-10-14, no timer setting): ~~A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time~~ (round 2 QA: pass)
+- Superseded (board, 2026-10-14, no timer setting): ~~`game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player~~ (round 2 QA: fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -69,7 +69,7 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - `kaiju_sprite.gd`: the placeholder, a dark slate green Godzilla-style figure drawn in code (lighter belly, pale cyan back plates, yellow eyes; no Redgull red), 4 units across on the ground and 7 units tall, facing the way it walks, stomping. It draws into the minions' Y-sorted `Enemies` node and joins the buildings' depth order through `enemy_depth.gd`.
 - `game/scripts/run/run.gd`: 9 added lines only (preload, `kaiju_boss` var, create and bind it after the minions). No minion file and no `run_state.gd` changed. No balancing number changed.
 
-**Playtest switch** (replaced in round 2 by the dev timer, below; kept here as the record of round 1) (not a key, not player-facing): `game/data/playtest.json`, `"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }`. On this branch it is **on**: the kaiju arrives 30 s into the run. **To switch it back, set `"enabled": false`** (the kaiju then arrives at the boss time, 7 minutes in). Only the kaiju's arrival moves; the clock, the minions' growth and the `boss_time` signal are unchanged, and a later `boss_time` brings no second kaiju. It must be off before the MVP ships.
+**Playtest switch** (replaced in round 2 by the dev timer, then brought back in round 3, below) (not a key, not player-facing): `game/data/playtest.json`, `"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }`. On this branch it is **on**: the kaiju arrives 30 s into the run. **To switch it back, set `"enabled": false`** (the kaiju then arrives at the boss time, 7 minutes in). Only the kaiju's arrival moves; the clock, the minions' growth and the `boss_time` signal are unchanged, and a later `boss_time` brings no second kaiju. It must be off before the MVP ships.
 
 **Tests:** `game/tests/unit/enemies/test_kaiju.gd`, 19 tests: boss time bringing it just off-screen and walking towards the car (criterion 1); weapon damage through `take_damage()` lowering its health right after it appears, with both health signals, and a physics query on mask 4 finding its body (criterion 2); damage to 0 calling `kaiju_killed()` exactly once, with its coins added before the run ends (criterion 3, two tests: one on the real run state, one with a counting stand-in); contact damage at the data's rate and knockback away from it, the car moving away (criterion 4); plus walking round a building, no damage without touching, pause, after the run ends, a new run, collision layers, draw order, size and no red, the playtest switch and its file.
 - Full GUT suite (`bash game/tools/run_tests.sh`): **598/598 passed**, TESTS PASSED (with the switch on).
@@ -95,7 +95,7 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Tests, run by QA in this folder: GUT 598/598 passed with the playtest switch on, and 598/598 with it off (then restored to on); Python `game/tools` 241 OK (1 skipped), `tools` 130 OK. Pass.
 - Other checks: `game/data/enemies.json` and every other balancing file unchanged against master (only `game/data/playtest.json` is new); the kaiju's stats are read from `enemies.json`, none hard-coded. No input handling or debug key and no player-facing text in the kaiju scripts or the `run.gd` change. The playtest switch is documented in `game/README.md` ("Game data" and "The kaiju"), and `test_playtest_switch_reads_the_settings_file` reads the expected value from the file, so no test depends on it being on. No stray screenshot copy tracked outside `art-archive/` (`screenshots/` is git-ignored); Godot `.import` line-ending noise left uncommitted.
 
-**Enemy Behavior Agent, 2026-10-14, round 2 (the board's additions: dev timer, kaiju hit radius).**
+**Enemy Behavior Agent, 2026-10-14, round 2 (the board's additions: dev timer, kaiju hit radius).** *Superseded in round 3 (board, 2026-10-14): the dev timer is dropped; the kaiju hit radius stays.*
 
 **Dev timer setting** (replaces `kaiju_early_arrival`, which is gone): `game/data/playtest.json`, key `"run_timer_start": { "enabled": true, "minutes": 1, "seconds": 30 }`. The file is a dictionary of independent keys, so T-042's `flamethrower_at_start` can sit beside it; a test reads a file with both. With `enabled` true, every run starts with that time on the clock: from the main menu, a new run, or `run.tscn` on its own. It is a dev setting only, with no UI and no player-facing text. **This branch defaults to 1:30, 30 s before the boss. To set it back to normal 8:00 runs, set `"enabled": false`.** 0:00, a missing file or key, or anything over 8:00 also gives 8:00. The kaiju now arrives only on the run's normal `boss_time` signal, at 1:00 left.
 - How it is built: `game/scripts/run/dev_settings.gd` reads the setting (`run_start_time_left()`). `run.gd` passes it to `RunState.start_time_left` before each `start_run()`. In `run_state.gd`, `start_run()` uses `start_time_left` (default 8:00) in place of the fixed 8:00. That is the only change there.
@@ -128,7 +128,7 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 **For the board's playtest:** press Start; the clock shows 1:30, and the kaiju walks in from a screen edge when it reaches 1:00. The minions start at about 19 rather than 12.
 
-Board review files: screenshots/kaiju.png, screenshots/kaiju_dev_timer.png, art-archive/T-045/screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju_dev_timer.png, game/data/playtest.json
+Board review files: screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju.png, game/data/playtest.json
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass.
 - 2026-10-14, needs-playtest → in-progress: Board (2026-10-14): add a dev setting for the timer's minutes and seconds, to fast-forward to the boss
 
@@ -157,3 +157,53 @@ Board review files: screenshots/kaiju.png, screenshots/kaiju_dev_timer.png, art-
   - Godot `.import` line-ending noise and the git-ignored `screenshots/` left uncommitted.
 - 2026-10-14, in-qa → flagged-for-review: QA round 2: 8 of 9 criteria pass; criterion 9 fails (game/README.md has the kaiju section twice, a copied Minions block, and still documents the removed kaiju_early_arrival switch). Docs-only fix.
 - 2026-10-14, flagged-for-review → in-progress: Board (2026-10-14): drop the dev timer setting; for the playtest the kaiju arrives at 30 s; after the board's playtest approval, set back to 7 minutes right before merging
+
+**Enemy Behavior Agent, 2026-10-14, round 3 (the board's change: no dev timer; the kaiju at 30 s; master merged).**
+
+**Master merged in** (commit 71f911c), bringing T-041's starting gun and T-042's flamethrower. The conflicts were in `run.gd` (the kaiju and the weapon rack are both kept), `game/data/playtest.json`, `game/README.md` and this task's header.
+
+**Dev timer dropped:**
+- `run_timer_start`, `RunState.start_time_left` and `game/scripts/run/dev_settings.gd` are gone.
+- The GUT pre-run hook (`game/tests/pre_run_hook.gd` and its `.gutconfig.json` entry) is gone too.
+- `game/scripts/run/run_state.gd` and `game/.gutconfig.json` are back to master's, so runs always start at 8:00.
+- The round 2 notes above are superseded.
+
+**Kaiju at 30 s for the playtest** (round 1's switch, brought back): `game/data/playtest.json` now holds both keys:
+- `"flamethrower_at_start": true` (T-042's, kept as on master).
+- `"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }`.
+
+The kaiju arrives 30 s into the run instead of at 7:00. **Right before merging, set `"enabled": false` in `kaiju_early_arrival`**, and the kaiju then arrives at the boss time (7 minutes in). Only the kaiju's arrival moves. A later boss time brings no second kaiju, and a new run brings it again at 30 s.
+
+**Tests stay independent of the file without the hook.** I followed T-042's pattern: `kaiju_boss.gd` has a static `playtest_override` (-1 = off, seconds = on, -2 = read the file). `test_kaiju.gd` sets it to off, and also sets the flamethrower's own override to off, before making each run. The flamethrower's switch already works this way on master, so the hook wasn't needed for either key and I did not route the flamethrower through anything new.
+
+**The weapons hit the kaiju** (checked with master's real weapons, not stand-ins):
+- `test_starting_gun_hits_the_kaiju`: the rack's gun fires at the kaiju 5 units from the car and lowers its health in whole bullets of the gun's damage.
+- `test_flames_burn_the_kaiju_on_any_overlap_with_its_body`: the kaiju's centre is 1.5 units past the flames' far edge, so only its body (radius 2, from `hit_radius_units()`) reaches into them. The flamethrower counts it inside and burns it.
+- `test_killing_the_kaiju_with_the_gun_wins_the_run`: the gun kills a kaiju at 1 health, the run ends as a win, and the run's coins include the kaiju's 10.
+
+Other new tests:
+- `test_playtest_switch_brings_the_arrival_forward`: it arrives at 30 s, not before, once, and again in a new run.
+- `test_playtest_switch_reads_its_key_beside_other_keys`: on, off, missing key, missing file, and the override.
+- `test_committed_playtest_file_keeps_both_switches`.
+
+`test_kaiju.gd` now has 24 tests.
+
+**game/README.md fixed:** it has one "The kaiju" section, appended after master's sections, with no copied Minions text. It documents the 30 s switch and how to switch it back, `hit_radius_units()` and how the gun and the flamethrower use it, and the tests. It also has pointers in the folder table, the Minions damage paragraph, the Weapons "Targets" line and a "Playtest switches" bullet in "Game data".
+
+**docs/enemies.md** (Content only): the dev timer bullet is replaced by the 30 s playtest switch bullet. The flamethrower overlap rule and the board's confirmation that the kaiju walks round buildings stay. Summary, Decisions and Open questions are untouched.
+
+**Acceptance criteria:**
+- The two dev timer criteria are marked superseded (not deleted).
+- I reset criteria 1-7 to unchecked so QA rechecks them after the merge.
+- There is no criterion yet for the README fix or for the weapons hitting the kaiju; the tests above cover the weapons.
+
+**Test results:**
+- Full GUT suite: **650/650 passed** with both switches on (kaiju at 30 s, flamethrower at start). It also passed **650/650** with the kaiju switch off; the file was then restored to on.
+- Python: `game/tools` **241 OK** (1 skipped), `tools` **171 OK**.
+
+**Screenshot:** `screenshots/kaiju.png`, retaken after the merge; it is unchanged (copy at `art-archive/T-045/screenshots/kaiju.png`). `kaiju_dev_timer.png` is from round 2 and is only kept as a record.
+
+**For the board's playtest:** press Start. The kaiju walks in from a screen edge at 0:30 into the run (7:30 on the clock).
+- The starting gun fires at it when it is in range, and the flamethrower burns it while you drift with it behind the car; any overlap with its body counts.
+- It hits the car on contact with a strong knockback.
+- At 500 health it takes a while to kill. Killing it wins the run, with its 10 coins.
