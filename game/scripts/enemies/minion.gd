@@ -31,6 +31,8 @@ const SEPARATION_UNITS := 1.2
 ## Emitted once, when health reaches 0. `minion` is this node (freed at the
 ## end of the frame), `position_units` where it died (flat world, units).
 signal died(minion: Node, position_units: Vector2)
+## Emitted when a hit leaves it alive (T-072's hit effect plays at it).
+signal hurt(minion: Node, position_units: Vector2)
 
 var max_health := 1.0
 var health := 1.0
@@ -100,6 +102,8 @@ func take_damage(amount: float) -> void:
 	health = maxf(health - amount, 0.0)
 	if health <= 0.0:
 		_die()
+	else:
+		hurt.emit(self, position_units())
 
 
 func is_dead() -> bool:

@@ -4,6 +4,7 @@ title: Art: enemy hits and deaths, coins, and car damage
 status: in-progress
 from: project-lead
 to: asset-generation
+lead: Enemies
 epic: art
 milestone: mvp
 user_facing_text: no
@@ -84,3 +85,13 @@ Why script: these are short, abstract shapes with a few colours, and a script ke
 - Free fixes before any more paid calls: delete the grey fragments, add a dark outline pass, and downscale or redraw by script.
 
 Status stays in-progress; nothing swapped into the game.
+
+### Final round (board agreed: no more PixelLab calls)
+
+- Total PixelLab use for T-072: the one coin sample call above (1 generation; balance 4919 to 4918). No other call.
+- Coin: the sample was fixed by redrawing, not downscaling (a tilted 16x21 coin shrunk to 8x10 turned to mush). `game/art/effects/coin.png`, 10x12, an 8x10 hand-drawn fill in the sample's gold palette plus a dark outline, no grey strays. The old sample stays in `art-archive/T-072/sample/`. Note: art at the game's 32 px per unit is drawn at 0.5, so the sample's 16x21 was in fact close to the placeholder's on-screen size. The 10x12 coin is drawn at scale 1, like the placeholder, so its pixels look chunkier than the world's. If the board wants it consistent, redraw it at about 16x20 and draw it at 0.5.
+- Hit (4 frames, 16x16), death (6 frames, 32x32, the minion's light green puff with a white core), car damage (4 frames, 48x48, white/cyan flash, cyan and pink sparks, yellow debris): scripted by `game/tools/build_hit_coin_damage_effects.py`. No red at all (the amber and brown of the coin were nudged until the Redgull-red check passed).
+- Hooks (small changes): `Minion.hurt` signal (emitted when a hit leaves it alive); `MinionSpawner` plays the hit and death effects (`play_effect`); `RunState.car_damaged` signal, and `run.gd` plays the car damage effect in the view over the car; `coin_sprite.gd` draws the art. New `scripts/enemies/effect_flipbook.gd`. Behaviour unchanged: effects are visual only and pause with the tree.
+- Checks: `python game/tools/build_hit_coin_damage_effects.py check` passes every frame (size, transparent corners, 0 semi-transparent pixels, colours under 30, no Redgull red). GUT: 583 of 583 pass; Python tool tests: 246 OK (1 skipped, pre-existing).
+- Review images (enlarged, dark and light): `art-archive/T-072/coin_dark_light_x16.png`, `enemy_hit_dark_light_x10.png`, `enemy_death_dark_light_x6.png`, `car_damage_dark_light_x4.png`. Screenshot sequence (hit, death and coin drop, car damage): `art-archive/T-072/screenshot_sequence_hit_death_coin_damage.png`, frames in `art-archive/T-072/screenshots/`.
+- Things to judge: the hit is small (16 px at scale 1, about one unit across) and quick; the death puff is the biggest effect; the car damage flash is big and cyan, covering the car's roof for about 0.1 s.

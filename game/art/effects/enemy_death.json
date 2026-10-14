@@ -1,0 +1,15 @@
+{
+ "task": "T-072",
+ "what": "The minion's light green puff with a white core, breaking into pieces and specks, with cyan and pink sparks. 6 frames.",
+ "made_by": "game/tools/build_hit_coin_damage_effects.py (drawn by script, no PixelLab call; board 2026-10-14). Byte-identical every run.",
+ "frames": 6,
+ "frame_size": [
+  32,
+  32
+ ],
+ "prompt": null,
+ "references": [
+  "docs/visual-style.md (technical rules, palette, glow, Effects)",
+  "game/scripts/enemies/coin_sprite.gd (placeholder)"
+ ]
+}

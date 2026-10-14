@@ -140,6 +140,7 @@ func _ready() -> void:
 	state.add_to_group("run_state")
 	add_child(state)
 	state.level_up.connect(_on_level_up)
+	state.car_damaged.connect(_on_car_damaged)
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -159,6 +160,13 @@ func _ready() -> void:
 	add_child(minions)
 	minions.bind(self)
 	start_run()
+
+
+## T-072: the car damage effect, over the car, in the car's own view layer.
+func _on_car_damaged(_amount: float) -> void:
+	var e: Sprite2D = preload("res://scripts/enemies/effect_flipbook.gd").make("car_damage", 4, 14.0)
+	view_root.add_child(e)
+	e.position = car_sprite.position + Vector2(0, -8)
 
 
 ## Starts a fresh run: a new map (every challenge open again, when challenges

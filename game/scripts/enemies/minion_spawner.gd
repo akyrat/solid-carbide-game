@@ -34,6 +34,7 @@ const MinionSpriteScript := preload("res://scripts/enemies/minion_sprite.gd")
 const CoinScript := preload("res://scripts/enemies/coin.gd")
 const CoinSpriteScript := preload("res://scripts/enemies/coin_sprite.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
+const FlipbookScript := preload("res://scripts/enemies/effect_flipbook.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -215,6 +216,7 @@ func spawn_minion_at(units: Vector2) -> Node:
 	draw_root.add_child(s, true)
 	m.sprite = s
 	m.died.connect(_on_minion_died)
+	m.hurt.connect(_on_minion_hurt)
 	minions.append(m)
 	_place_sprite(m)
 	s.reset_physics_interpolation()
@@ -248,8 +250,23 @@ func roll_coin_drop() -> int:
 	return 0
 
 
+## T-072: plays a hit or death effect at `units` (flat world), in the minions' depth order.
+func play_effect(sheet: String, frames: int, units: Vector2, fps: float, lift := 6.0) -> Node:
+	var e: Sprite2D = FlipbookScript.make(sheet, frames, fps)
+	draw_root.add_child(e)
+	e.position = ISO_TRANSFORM * (units * PX_PER_UNIT) + Vector2(0, -lift)
+	e.z_index = depth.z_index_for(units, MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS) + 1
+	e.reset_physics_interpolation()
+	return e
+
+
+func _on_minion_hurt(_m: Node, at_units: Vector2) -> void:
+	play_effect("enemy_hit", 4, at_units, 16.0)
+
+
 func _on_minion_died(m: Node, at_units: Vector2) -> void:
 	minions.erase(m)
+	play_effect("enemy_death", 6, at_units, 12.0, 8.0)
 	var n := roll_coin_drop()
 	for k in n:
 		var offset := Vector2.ZERO

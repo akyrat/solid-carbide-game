@@ -338,3 +338,45 @@ func test_placeholders_avoid_redgull_red() -> void:
 		assert_false(reddish, "no red: %s" % c)
 	var body: Color = sprite_script.BODY_COLOR
 	assert_true(body.g > body.r and body.g > body.b, "the minion is green")
+
+
+# ---- T-072: the hit, death, coin and car damage art ----
+
+func _effects_in(sp: Node) -> Array:
+	return sp.draw_root.get_children().filter(func(c): return c is Sprite2D)
+
+
+func test_a_hit_that_leaves_it_alive_plays_the_hit_effect() -> void:
+	spawner.enabled = false
+	var m: Node = spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4, 0))
+	var before := _effects_in(spawner).size()
+	m.take_damage(1.0)
+	var fx := _effects_in(spawner)
+	assert_eq(fx.size(), before + 1, "one hit effect")
+	assert_eq(fx[fx.size() - 1].hframes, 4)
+
+
+func test_death_plays_the_death_effect_and_still_drops_coins() -> void:
+	spawner.enabled = false
+	spawner._coins["drop_chance"] = 1.0
+	var m: Node = spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4, 0))
+	m.take_damage(1000.0)
+	var six := _effects_in(spawner).filter(func(c): return c.hframes == 6)
+	assert_eq(six.size(), 1, "one death effect")
+	assert_gt(spawner.coins.size(), 0, "coins still drop")
+
+
+func test_car_damage_plays_the_car_damage_effect_in_the_view() -> void:
+	var before: int = run.view_root.get_children().filter(func(c): return c is Sprite2D and c.hframes == 4).size()
+	run.state.damage_car(5.0)
+	var after: int = run.view_root.get_children().filter(func(c): return c is Sprite2D and c.hframes == 4).size()
+	assert_eq(after, before + 1)
+
+
+func test_effect_frees_itself_after_its_last_frame() -> void:
+	var fx: Sprite2D = preload("res://scripts/enemies/effect_flipbook.gd").make("enemy_hit", 4, 10.0)
+	add_child(fx)
+	fx._process(0.15)
+	assert_eq(fx.frame, 1)
+	fx._process(0.3)
+	assert_true(fx.is_queued_for_deletion())
