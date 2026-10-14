@@ -1,7 +1,7 @@
 ---
 id: T-046
 title: The kaiju's meteor attack: warning circles, impacts and new boulders
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Enemies
