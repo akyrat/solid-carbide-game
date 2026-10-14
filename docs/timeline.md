@@ -910,3 +910,8 @@ Entry format:
 - Decision or change: the board approved the three plans. T-064 (skyscrapers): free flat PixelLab pieces (facade band, shopfront strip, vertical sign) slanted onto the walls by script at 32 px per unit, about 12-floor walls that dissolve at the top, script-drawn pavement; go for the 3-call sample (about 3 generations) after a free mock-up at the real zoom; only the tower covering the car fades, not its whole block (a small code change). T-130 (banners): drawn by script for free, 6 on the map, the drawings start now and placement waits for T-064. T-129 (shorter buildings, 14 generations planned) is held in Planning until the skyscraper sample is approved, since it reuses the same wall method.
 - Documents touched: none yet (T-064 and T-130 update their docs with their work)
 - Tasks: T-064, T-129 (planning), T-130
+
+## 2026-10-15: Alert banners become road-style warning signs
+- Decision or change: looking at T-130's first drawings (cheerful cyan and pink cartoon kaiju), the board wants no detail at all: only the kaiju's black silhouette (head or body shape), on a plain white inside with a red outline, like road warning or prohibition signs, and no neon colours. This is an exception to "red only for Redgull": the alert signs use a traffic-sign red outline. Visual style's City brief and Redgull's look are updated.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-130
