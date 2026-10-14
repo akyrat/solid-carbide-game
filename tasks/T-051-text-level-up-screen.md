@@ -1,7 +1,7 @@
 ---
 id: T-051
 title: Text: the level-up (gift pack) screen
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Weapons
@@ -102,3 +102,4 @@ All four criteria pass. Text only; no code changed, so no tests to run.
   - Flame tiers 2, 4, 6 "flame area grows 20% / another 20% / 30%": the multiplier scales the rectangle's width and depth, which is what docs/weapons.md calls "the area bigger (x1.2, x1.2, x1.3)". Read literally as surface, it grows more (x1.44 and x1.69). Passed because it matches the documents' own wording; if the board wants it exact, "The flames grow 20% bigger" would be.
 - **Lengths: pass.** Counted every text with a script: all within limits (titles max 19/30, descriptions max 78/90, levelup.take 7/15) and every length column is correct.
 - **No "XP" or "experience": pass.** Case-insensitive search of every text, no hits.
+- 2026-10-15, needs-playtest → done: text lgtm
