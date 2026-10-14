@@ -711,7 +711,8 @@ Task T-044 (Enemy Behavior Agent): the MVP minion as Enemies, Decisions describe
 
 - `minion_spawner.gd`: the run's minions. The run scene adds it as `run.minions` (child `Minions`) and calls `bind(run)`. It moves everything in `step(dt)`, once per physics step from `_physics_process` (pausable, so the pause screen and the level-up pause stop the minions and their damage), and does nothing once the run is over. On `run.world_rebuilt` (a new run) it removes every minion and coin and follows the new car and map. `enabled = false` stops it (tests).
 - `minion.gd`: one minion, a `CharacterBody2D` in the run's `PhysicsWorld` (flat world pixels, 16 per unit, like the car) on layer 3 (`enemies`) with mask 1 (obstacles): a circle of `RADIUS_UNITS` (0.5). It slides along walls, buildings and boulders and walks round one it meets head-on (`detour_side`, picked at random per minion); it never pushes or blocks the car. In the groups `enemies` and `minions`.
-- `minion_sprite.gd`, `coin_sprite.gd`: the placeholder drawings, in the isometric view.
+- `minion_sprite.gd`: the minion's final art (T-068): 8-frame walk sheets in `art/minion/` (`minion_s/se/e/ne/n.png`, 8 frames of 48 x 48 side by side; the other three directions mirror se, e and ne), drawn at scale 0.5 (16 screen pixels per unit), the direction chosen from the way it walks, 10 frames a second, each minion at a random phase. It stops with the game's pause. Falls back to the old placeholder shape if a sheet is missing. Sheets are built by `tools/build_minion_sheets.py` from `art-archive/T-068/`; `tools/fix_minion_frames.py` holds the free pixel fixes.
+- `coin_sprite.gd`: the placeholder coin drawing, in the isometric view.
 - `coin.gd`: a coin, an `Area2D` on layer 4 (`pickups`) with mask 2 (the car).
 - `enemy_depth.gd`: the minions' and coins' place in the buildings' depth order.
 

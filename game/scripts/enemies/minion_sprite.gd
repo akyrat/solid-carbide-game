@@ -1,10 +1,12 @@
 extends Node2D
-## The minion's placeholder drawing (task T-044), in the isometric view's
-## screen pixels: a light green four-legged lizard shape seen from above at
-## the map's scale (16 pixels per unit), facing the way it walks. The final
-## minion art comes from a separate art task and replaces this node's drawing.
-## Colours follow Visual style (the minion is light green, not too bright);
-## no Redgull red.
+## The minion's drawing (task T-044 placeholder, task T-068 final art), in the
+## isometric view's screen pixels: the light green four-legged lizard walking,
+## facing the way it walks. The art is 48 x 48 pixel frames, 8 walk frames per
+## direction, drawn at the map's scale (32 art pixels per unit shown at 0.5, so
+## 16 screen pixels per unit). Five directions are drawn (south, south-east,
+## east, north-east, north); south-west, west and north-west are the south-east,
+## east and north-east sheets mirrored. If a sheet is missing, the T-044
+## placeholder shape is drawn instead. No Redgull red.
 
 const BODY_COLOR := Color(0.55, 0.80, 0.45)
 const BELLY_COLOR := Color(0.70, 0.90, 0.55)
@@ -13,18 +15,35 @@ const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
 const EYE_COLOR := Color(0.40, 0.95, 0.95)
 const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)
 
+const FRAME_SIZE := 48
+const FRAME_COUNT := 8
+## Walk frames per second.
+const WALK_FPS := 10.0
+const ART_SCALE := 0.5
+## The art's centre sits this many screen pixels above the minion's ground point.
+const LIFT := 5.0
+## Sheet per compass index (0 = east, then clockwise on screen: 1 south-east,
+## 2 south, 3 south-west, 4 west, 5 north-west, 6 north, 7 north-east), as
+## [sheet name, mirrored].
+const SHEETS := [["e", false], ["se", false], ["s", false], ["se", true],
+	["e", true], ["ne", true], ["n", false], ["ne", false]]
+const SHEET_DIR := "res://art/minion/minion_%s.png"
+
+static var _textures := {}
+
 ## Screen direction it faces (normalized); set by the spawner from heading.
 var facing := Vector2.RIGHT
-## Walk cycle, 0..1, for the legs.
+## Walk cycle, 0..1, for the legs (and the frame).
 var _walk := 0.0
 
 
 func _ready() -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_walk = randf()  # so a crowd does not step in unison
 
 
 func _process(delta: float) -> void:
-	_walk = fmod(_walk + delta * 4.0, 1.0)
+	_walk = fmod(_walk + delta * (WALK_FPS / FRAME_COUNT), 1.0)
 	queue_redraw()
 
 
@@ -36,7 +55,41 @@ func face(flat_dir: Vector2) -> void:
 		facing = d.normalized()
 
 
+## Index into SHEETS for a screen direction.
+static func compass_index(dir: Vector2) -> int:
+	return posmod(roundi(dir.angle() / (PI / 4.0)), 8)
+
+
+## Walk frame (0 to FRAME_COUNT - 1) for a walk phase of 0 to 1.
+static func frame_for(walk: float) -> int:
+	return clampi(int(walk * FRAME_COUNT), 0, FRAME_COUNT - 1)
+
+
+static func _sheet(name: String) -> Texture2D:
+	if not _textures.has(name):
+		var path := SHEET_DIR % name
+		_textures[name] = load(path) if ResourceLoader.exists(path) else null
+	return _textures[name]
+
+
 func _draw() -> void:
+	var entry: Array = SHEETS[compass_index(facing)]
+	var tex := _sheet(entry[0])
+	if tex != null:
+		_draw_art(tex, entry[1])
+		return
+	_draw_placeholder()
+
+
+func _draw_art(tex: Texture2D, mirrored: bool) -> void:
+	_ellipse(Vector2.ZERO, 8.0, 3.5, SHADOW_COLOR)
+	var src := Rect2(frame_for(_walk) * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+	var size := FRAME_SIZE * ART_SCALE
+	var w := -size if mirrored else size
+	draw_texture_rect_region(tex, Rect2(Vector2(-w / 2.0, -size / 2.0 - LIFT), Vector2(w, size)), src)
+
+
+func _draw_placeholder() -> void:
 	var f := facing
 	var side := f.orthogonal()
 	var lift := Vector2(0, -5)
