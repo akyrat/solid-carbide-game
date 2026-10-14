@@ -1,0 +1,122 @@
+{
+  "file": "minion_rot8_4.png",
+  "endpoint": "/generate-8-rotations-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD8UlEQVR4nO2X329aZRiAH6gL64R52kEqC0OdZctm96Nl3rhsiSlMr+i2xCxKTEx2t5s1Md7tH/Af8GI304tdNFnWZDEmc3hhQS/aSutiXBBmpjstNaWMFlZs+uPz4uwcIEg5wIFxcZ6EhHC+c3je73vf9/sOmJiYmJjUIBiWRL0x1k6INEMwLAnPSKHuuK4NQC9dHYAct79sheYIhiVxNmSvm/8Ar7RbplHGxm0Ciqzn9+ga31UppM565s89/HSvYNFzT9cEEAxL4tSlIrbXthu6rysCCIYl8e7HawAszO3VPfvwkmtA3ahU+V8nexuSB2hosFGo4r5AXvstGXHw4HauYZ+2BVDvGKDOejphRY7bm5KHNgWgyvcNFjh3aYe0DLllC5KrFFNqRim/Z6nm5cHgGhgbt4n+Q9uMjK7hcx4kmVnTrh0bVuQfzVnIPFF8lYJtXh4MXIGxcZt4J7CJ21N97dFc6W+SEQd9g4WGu00tDGmjwbAkAp8p8oGhEIGhEFApruIZKfD41gFD5MGAFLp2q0ccG1ZSRRWP/HYPAMklqoLo7dd1xNGN7gDUwiwvOOW3Uiv8a2kWqJz5zBMLr+43XlyloRUIfbEGlNqjL5DXihNgan7xxbdSoVbcH3QzMbHUnGkNdAUQDEtCkVekJZcgnbBSzFpIywK3B9KyMlZtj+XIcTu+QJ5kZhGwYrFvGRZA3SJWUycwFCIto/Vy99Ed3Ed3SCesxH+wkk4oH+eblaly2hJiPa8I+5wHAThxdRW95/2WAwAlddTC/PTDEOdPKyKpGWvVW1MxW0qdZyk7jsJbbKRsJCMOLX3++HGvEe6Ajn0gGJbE519WSt64UEQ4N3n7/XVN1DNS4MqV15mYWEKO2xkUowBMx2JVzzx5faWl40M5u65AufzU/CJT84vcuFDEcfMOD48c0eTLeV7afJmOxfjl738sAP3nNvBczgGQfdqjpVVbAwBeFJ5CasaK4+Ydvjt7pmLMoBgl+7QHQKuBh4X7mjxANmpDvivhuZxj4Xu7YRvZrg8p7z4A0UkrC3NK/joPbwIg35W06x98tUw6YaW3X/zv2d7vHRAW+xazv68YdoSp20YjX5derteXe3EeLlaIq7Ps9w6I+9dcnLy+UvNZ5StiFLsG8OB2zuI/v1/0H1IybZ+rWCVeLuf3DghQOtG/uc68reqaEVUMas/imeMHxImrqwCGdRg96NqJd1v6jy6+J4qZLfaNxrVClp4fB342xrAOLc2SWuTRSSVdNlZ72J49xbex6Y69a7eUqNmojW8+6QPQulOnaWmm/N4B4fa+wVL2MX3D22SjtrZ0mo5QXugmJiYmJiad4j+Sr41gxYGL7wAAAABJRU5ErkJggg==",
+      "format": "png"
+    },
+    "description": "a light green scaled lizard walking on four legs, long tail, small head with a glowing cyan eye, lighter green belly, isometric pixel art game sprite, same camera and same size in every direction",
+    "no_background": true,
+    "seed": 68002
+  },
+  "prompt": "a light green scaled lizard walking on four legs, long tail, small head with a glowing cyan eye, lighter green belly, isometric pixel art game sprite, same camera and same size in every direction",
+  "job_id": "98302aec-7419-4470-b446-9489602d6510",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T22:22:56+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "art-archive/T-068/raw/minion_se_sample.png",
+    "docs/visual-style.md",
+    "https://api.pixellab.ai/v2/openapi.json"
+  ],
+  "task": "T-068",
+  "job_status": "completed",
+  "notes": "T-068 round 2 call A: 8 rotations of the approved sample",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 4,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "minion_rot8_0.png",
+    "minion_rot8_1.png",
+    "minion_rot8_2.png",
+    "minion_rot8_3.png",
+    "minion_rot8_4.png",
+    "minion_rot8_5.png",
+    "minion_rot8_6.png",
+    "minion_rot8_7.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "98302aec-7419-4470-b446-9489602d6510",
+    "status": "completed",
+    "created_at": "2026-10-14T22:21:04.399185+00:00",
+    "last_response": {
+      "seed": 68002,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.025831263820330304
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1460 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1400 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1552 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1416 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1412 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1464 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1436 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1332 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "3e4bd9ee-fb5d-407f-b1f8-4f47bfbe1b2d",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-14T22:21:23.818077+00:00"
+    }
+  }
+}

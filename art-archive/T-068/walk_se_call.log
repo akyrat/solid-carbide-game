@@ -1,0 +1,94 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49 submitted, polling every 5 s
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (1 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (7 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (12 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (30 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (36 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (42 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (48 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (56 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (61 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (66 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (72 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (78 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (83 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (88 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (94 s)
+  job 1b81c2a2-541e-414f-91e9-89d48e2d1d49: processing (101 s)
+  saved 9 images in art-archive\T-068\walk_se: minion_walk_se_0.png, minion_walk_se_1.png, minion_walk_se_2.png, minion_walk_se_3.png, minion_walk_se_4.png, minion_walk_se_5.png, minion_walk_se_6.png, minion_walk_se_7.png, minion_walk_se_8.png; usage {"type": "generations", "generations": 1.0}
+{
+  "file": [
+    "minion_walk_se_0.png",
+    "minion_walk_se_1.png",
+    "minion_walk_se_2.png",
+    "minion_walk_se_3.png",
+    "minion_walk_se_4.png",
+    "minion_walk_se_5.png",
+    "minion_walk_se_6.png",
+    "minion_walk_se_7.png",
+    "minion_walk_se_8.png"
+  ],
+  "job_id": "1b81c2a2-541e-414f-91e9-89d48e2d1d49",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "image": [
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
+EXIT 0
