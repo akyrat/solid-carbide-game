@@ -1065,3 +1065,8 @@ Entry format:
 - Decision or change: the board asked for the merge. Flames come out behind the car while it drifts (0.85 units/s or more, 0.2 s linger, half size growing to full over 1 s), hitting enemies inside for 2 at once and 2 every 0.2 s through `take_damage`; all 8 tiers apply from code. Before merging it was fitted into T-041's weapon plumbing (it extends `weapon.gd`, is in `WEAPON_SCRIPTS`, not owned at the start of a run) and gained the board's rule: an enemy reporting `hit_radius_units()` (the kaiju) burns on any overlap, minions on their centre. Drift smoke still shows with it. Playtest switch `flamethrower_at_start` in `game/data/playtest.json`, on as merged. QA round 2: all 7 pass. Now open: T-043, T-071.
 - Documents touched: `docs/weapons.md`, `game/README.md`
 - Tasks: T-042 (done)
+
+## 2026-10-14: The kaiju's dev timer dropped; the kaiju at 30 s for the playtest
+- Decision or change: the board dropped the dev timer setting it asked for earlier. For T-045's playtest the kaiju arrives 30 s into the run; once the board has seen it spawn, take damage, damage the car and win the run when killed, it approves the merge, and the arrival is set back to 7 minutes right before merging. T-045 merges master first, so the gun and flamethrower can kill it. T-045's QA round 2 had failed only on a duplicated section in `game/README.md`, fixed in this round.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-045
