@@ -1030,3 +1030,8 @@ Entry format:
 - Decision or change: the board asked to start every ticket T-044 unblocked, each on its own agent: T-041 (starting gun), T-042 (flamethrower), T-045 (kaiju), T-085 (combo raises spawning), T-068 (minion art) and T-072 (hit, death, coin and car damage effects). The art tasks generate one sample each for the board's review before the full set (the board's go for the samples). T-042 and T-045 get a documented playtest setting (the flamethrower from the start of a run; an early kaiju), since there is no level-up offer yet and the kaiju comes at 7:00. T-085 got a board's review line: more minions with a combo is something the player meets.
 - Documents touched: none
 - Tasks: T-041, T-042, T-045, T-068, T-072, T-085
+
+## 2026-10-14: T-041 done: the starting gun
+- Decision or change: the board playtested it and marked it done, then asked for the merge. The car starts every run with the gun: it fires only with an enemy in range, every 1.26 s at tier 1, closest enemy first (the Unity rule), bullets dealing 2 damage through `take_damage`; all 8 tiers can be applied from code (offering them is T-043). Placeholder bullets: a cyan dot with a white core. It also adds the shared weapon plumbing (`run.weapons`, `weapon.gd`): every weapon extends `weapon.gd` and is listed in `WEAPON_SCRIPTS`; targets are any node in the "enemies" group with `take_damage()`, so the kaiju is shot too. QA round 1: all 7 pass. Left for playtests: bullet size and the wait before the first shot.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-041 (done)
