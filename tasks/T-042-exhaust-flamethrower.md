@@ -1,7 +1,7 @@
 ---
 id: T-042
 title: The exhaust flamethrower: fires only while drifting
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Enemies
@@ -144,3 +144,4 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
 - 7, tests, run by QA in this folder: GUT with `flamethrower_at_start` true: 626 of 626 pass (57 scripts, TESTS PASSED, exit 0). With it false: the first run had 1 failure, `test_camera_options.gd` `test_a_run_from_the_main_menu_uses_the_saved_options` (camera size 14.4 instead of 9.0); that test writes a shared `user://` settings file (`AppData/Roaming/Godot/app_userdata/Solid Carbide/test_settings_t123.cfg`) that other folders' test runs, running at the same moment (three other Godot processes were up), also write. It does not touch the flamethrower. Rerun alone 3 times with the switch off: 20 of 20 each time; the full suite rerun with the switch off: 626 of 626 pass, exit 0. Switch restored to true (file identical to the branch). Python: `game/tools` 241 OK (1 skipped); `tools` 171 OK. Pass.
 - Note for the Project Lead (not a failure of this task): `test_camera_options.gd` can fail when several worktrees run GUT at once, because all of them share one `user://` folder. Worth a small task if it keeps showing up.
 - 2026-10-14, in-qa → needs-playtest: QA round 2 (after the fit into T-041's weapon rack): all 7 criteria pass
+- 2026-10-14, needs-playtest → done: board asked to merge it (2026-10-14); QA round 2 after fitting into T-041's plumbing
