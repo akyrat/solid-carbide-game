@@ -1,7 +1,7 @@
 ---
 id: T-051
 title: Text: the level-up (gift pack) screen
-status: blocked
+status: open
 from: project-lead
 to: narrative-theme
 lead:
