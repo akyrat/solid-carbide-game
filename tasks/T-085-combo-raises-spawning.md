@@ -1,7 +1,7 @@
 ---
 id: T-085
 title: The combo raises minion spawning (can be switched off)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -13,7 +13,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, tasks/T-044-minions.md, tasks/T-081-combo.md, tasks/T-080-combo-data.md, game/README.md]
 files_expected_to_change: [the enemy code, tests, docs/enemies.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,10 +35,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test with a high combo shows more minions spawn than with no combo, by the data's amount (QA: pass / fail)
-- [ ] A test with the switch off shows the combo makes no difference to spawning (QA: pass / fail)
-- [ ] `game/README.md` says how to switch it, and `docs/enemies.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test with a high combo shows more minions spawn than with no combo, by the data's amount (QA: pass)
+- [x] A test with the switch off shows the combo makes no difference to spawning (QA: pass)
+- [x] `game/README.md` says how to switch it, and `docs/enemies.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it; more minions with a combo is something the player meets).
 
@@ -59,3 +59,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Criterion 3 (docs): PASS. `game/README.md` says how to flip it; `docs/enemies.md` diff is one added line in Content only (no Summary, Decisions or Open questions change; no data numbers changed; `data/*.json` untouched). No debug input or player-facing text in the diff. Note: the old Content line "has a hook in place but is not wired yet" (Spawning bullet) is now stale, a minor doc point for the Project Lead, not a criterion failure.
 - Criterion 4 (all tests): PASS. Full GUT suite: 582 passing, all tests passed. All Python tests in game/tools and tools passed.
 - T-044 test check: the only T-044 test removed is `test_combo_hook_multiplies_minions_wanted` (asserted multiplier stays 1.0 and a manual 1.5); replaced by the four new tests above. Nothing else removed or weakened.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all criteria pass
