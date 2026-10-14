@@ -1,7 +1,7 @@
 ---
 id: T-109
 title: Board decides: should task_status.py commit each status change itself?
-status: open
+status: done
 from: project-lead
 to: board
 epic: tooling
@@ -12,7 +12,7 @@ depends_on: []
 documents_affected: [tasks/README.md, docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/task_status.py]
 files_expected_to_change: []
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,9 +42,9 @@ Today `tools/task_status.py` only changes the task file. On an open task branch,
 
 ## Acceptance criteria
 
-- [ ] The board's choice is written in `tasks/README.md`, "Changing a task's status", and in this ticket's result notes (QA: pass / fail)
-- [ ] If the choice needs code, a separate task is written for it (QA: pass / fail)
+- [x] The board's choice is written in `tasks/README.md`, "Changing a task's status", and in this ticket's result notes (QA: pass) Checked by the Project Lead; docs only.
+- [x] If the choice needs code, a separate task is written for it (QA: pass) Option B needs no code.
 
 ## Result notes
 
-Written when the work is done.
+The board chose option B (2026-10-14): keep it as it is. `task_status.py` changes only the task file and never commits; the change goes into the next commit on its branch, or the Project Lead's next commit on `master`. Written in `tasks/README.md`, "Changing a task's status". No code needed, so no follow-up task.

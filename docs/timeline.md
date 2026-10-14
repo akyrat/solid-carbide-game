@@ -990,3 +990,8 @@ Entry format:
 - Decision or change: the three old claude.ai task board pages (task board, prototype, test board) turned out to be owned by the account the Project Lead's session uses, so on the board's go the Project Lead deleted them instead of the board. The links stay in this timeline and T-032 as history. The local task board (http://localhost:8765) is the only board.
 - Documents touched: none
 - Tasks: T-107 (done)
+
+## 2026-10-14: T-109 done: status changes are not committed automatically
+- Decision or change: the board chose to keep it as it is: `task_status.py` changes only the task file and never commits. The change goes into the next commit on the task's branch, or the Project Lead's next commit on `master`.
+- Documents touched: `tasks/README.md`
+- Tasks: T-109 (done)

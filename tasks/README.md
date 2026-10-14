@@ -36,6 +36,8 @@ Always use the main repo's copy of the script, also from a task's branch folder:
 
 Each move shows on the task board within a couple of seconds. The board moves tasks there too, through this same script, so its moves follow these rules (`docs/README.md`, "The task board").
 
+The script changes only the task file and never commits (board, 2026-10-14, T-109). On a task's branch the change goes into the next commit there (the agent's, QA's or the Project Lead's); on `master` it goes into the Project Lead's next commit.
+
 ## Git branches
 
 Work that changes the game, its tools or its assets is done on its own branch, so unfinished work never sits uncommitted on `master`.
