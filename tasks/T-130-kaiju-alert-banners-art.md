@@ -1,7 +1,7 @@
 ---
 id: T-130
 title: Art: a few alert banners about the kaiju, on buildings and on the pavement
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's drawing of banners, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -129,4 +129,4 @@ Colourways: cyan and pink, made by a free palette swap (never towards red). The 
 - `kaiju_signs.gd` does not refuse a short-building slot by itself. Only `test_banners_hang_on_skyscrapers_not_short_buildings` guards it, so if the board edits the JSON onto a short slot, that test catches it.
 - Already true before this task (since T-064): trick popups are drawn at z 100 in the world view, and the nearer slots (z up to 146) are above that, so near buildings can cover a popup. That now includes the sign at z 144. This is not in T-130's scope, and it is for the Project Lead to decide.
 - Godot's line-ending-only `.import` changes were left uncommitted.
-
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 5 pass
