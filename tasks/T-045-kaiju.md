@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -238,3 +238,4 @@ Other new tests:
 - 2026-10-15, in-qa → needs-playtest: QA round 3 (extra round, ordered by the board): all 9 applicable criteria pass; the 2 dev timer criteria are superseded.
 
 **Enemy Behavior Agent, 2026-10-15:** the board played the kaiju build and approved the merge ("good"); as it asked, right before merging `kaiju_early_arrival.enabled` in `game/data/playtest.json` is set back to `false`, so the kaiju arrives at the boss time (7 minutes in) again (`flamethrower_at_start` unchanged, on). Full GUT suite 650/650 passed; Python `game/tools` 241 OK (1 skipped), `tools` 171 OK.
+- 2026-10-15, needs-playtest → done: board playtest: good; kaiju set back to 7 minutes before merging
