@@ -1,7 +1,7 @@
 ---
 id: T-131
 title: Combo heats up at x2, x3 and x4, with comic-style combo and Hype Lv text and a burning likes bar
-status: open
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -62,4 +62,20 @@ Board review files: screenshots made by the step fixture (listed in the result n
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, 2026-10-14. Branch `task/T-131-combo-heat-levels`, folder `C:\solid-carbide-worktrees\T-131`. No PixelLab calls (everything is drawn in code), no sound, trick popups untouched.
+
+**What was built**
+- `game/scripts/hud/combo_heat.gd` (`ComboHeat`, new): picks the heat step from the multiplier at two decimals (`step_for()`; thresholds in one place, `ComboHeat.THRESHOLDS = [2.0, 3.0, 4.0]`, fire from `FIRE_STEP = 3`) and restyles the combo counter per step (`STEPS`): base pink 30 px (today's look, now in Bangers); step 1 yellow 36 px, light pulse; step 2 orange 42 px, yellow glow ring round the dark outline, stronger and faster pulse; step 3 white-hot 50 px, glow ring flickering between oranges and yellows, strongest pulse, likes bar on fire. The pulse is a quick pop on each beat in 1/12 s pixel-art frames, scaled from the counter's bottom centre so it never grows into the row and stays centred.
+- `game/scripts/hud/likes_fire.gd` (`LikesFire`, new): pixel flames drawn in code (2 px squares, white-hot base, yellow, orange-yellow, orange tips, a few sparks) along the top of the likes bar, flickering in the same frames. Tallest (26 px) over the filled part and in the gap between the texts, 8 px under "Likes" and "Hype Lv" (drawn under them), 4 px over the empty part, and only 4 px into the bar's top, so the fill stays readable; never reaches the counter.
+- `game/scripts/hud/hud.gd`: `Hud.comic_font()` (Bangers, smoothing off) on the counter, "Likes" and "Hype Lv" (words unchanged; Bangers shows capitals); the heat and fire nodes; `combo_step()` and `fire_on()`. Both effect nodes are pausable, so they stand still while paused. Layout unchanged (T-113, T-116).
+- Tests: `game/tests/unit/hud/test_hud_combo_heat.gd` (13 tests, one or more per criterion: step at 1.99/2.00/2.99/3.00/3.99/4.00/6.00, font size and width growing per step, fire only from x4.00, the drain walking down 6.0 -> 4.25 -> 3.75 -> 3.25 -> 2.75 -> 2.25 -> 1.75 -> 1.0 with step and fire checked at each and hidden at x1.0, a collision putting the fire out, Bangers with antialiasing off and the T-048/T-082 words, no colour within 0.5 of the heart red (the trick popup art test's rule) or a red hue in any counter, glow or flame colour over 30 animation frames, step-3 layout inside the screen with no overlaps at the four window sizes over a whole pulse, the flames clear of the counter and only 4 px into the bar, paused effects not moving, a run from the main menu). `game/tools/test_combo_heat_strip.py` for the strip tool.
+
+**Step fixture:** from the task folder, `bash game/tools/combo_heat_shots.sh screenshots` (four runs from the main menu at x1.5, x2.0, x3.0 and x4.5; fixtures `game/tests/fixtures/combo_heat_{base,step1,step2,step3}.tscn`, script `combo_heat_demo.gd`). Screenshots (git-ignored):
+- `C:\solid-carbide-worktrees\T-131\screenshots\combo_heat_steps.png` (the bottom of the four screens stacked, 2x: the side-by-side view)
+- `C:\solid-carbide-worktrees\T-131\screenshots\combo_heat_base.png`, `combo_heat_step1.png`, `combo_heat_step2.png`, `combo_heat_step3.png` (full screens)
+
+**My own look at the screenshots:** the four steps read as a clear escalation (pink -> bigger yellow -> bigger orange with a glow ring -> biggest white-hot with flames under it). Things the board may want to judge in play: the flames are a first pass (tongues of flame over the filled part, a low burning line over the empty part, and a white-hot strip over the bar's top 4 px); Bangers at the 20 px row size is small and its "1" looks a little like a "7" ("HYPE LV 1"); the pulse and flicker only show in motion, so play it. With the new font, "Likes" now sits at the top of its row like "Hype Lv" (both share a baseline, as T-113 requires).
+
+**Tests:** full GUT suite 536/536 (50 scripts, `bash game/tools/run_tests.sh`); `game/tools` pytest 235 passed, 1 skipped; `tools` pytest 130 passed. Godot's line-ending-only `.import` changes were not committed.
+
+**Documents affected (updated):** `docs/hud-and-menus.md` (Content, "The HUD": the comic font and the combo heat steps, thresholds, fire and fixture) and `game/README.md` (the HUD section: `ComboHeat`, `LikesFire`, `comic_font()`, the tests and the step fixture).
