@@ -1075,3 +1075,13 @@ Entry format:
 - Decision or change: the board took the Project Lead's recommendations. A common rule for every agent in `CLAUDE.md`: when an action is refused, an agent never gets around it with another tool; it stops and tells the Project Lead, who brings it to the board (after an agent used `taskkill` when stopping its own hung Godot test run was refused). New tooling ticket T-137: the test runners stop hung runs after a time limit, and tests that write `user://` files get per-run files so parallel runs from different folders don't fail at random. The `flamethrower_at_start` playtest switch stays on in master until T-043 offers the flamethrower at a level-up. The board played the T-045 kaiju build ("good"): it merges once QA passes, with the kaiju set back to 7 minutes first.
 - Documents touched: `CLAUDE.md`
 - Tasks: T-137, T-045
+
+## 2026-10-15: T-045 done: the kaiju
+- Decision or change: the board played the kaiju build ("good") and approved the merge. On the boss-time signal (7:00 into the run) a placeholder kaiju (4 units wide, 7 tall, dark slate green, drawn in code) appears just off-screen and walks round buildings at the car at 3 units/s; contact does 20 damage once a second with a 16 units/s knockback; weapons damage it at any time through `take_damage`, and it reports `hit_radius_units()` 2.0 so the flames burn it on any overlap; at 0 health its 10 coins are added and the run ends as a win. Playtest switch `kaiju_early_arrival` (30 s) in `game/data/playtest.json`, set to off right before merging as the board asked; the earlier dev timer setting was dropped. QA: round 1 passed, round 2 failed on a duplicated README section, round 3 (after the board's change) passed. Now open: T-046, T-050, T-069.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-045 (done)
+
+## 2026-10-15: T-068 done: the animated minion
+- Decision or change: the board approved it ("it's good") and asked for the merge. The board's sample lizard walks on all fours in 8 directions (S, SE, E, NE, N drawn; SW, W, NW mirrored) with 8 walk frames each at 10 per second, each minion starting at a random point in the cycle, drawn at scale 0.5 (about 1 unit long), facing the way it walks. 8 frames instead of 7 because PixelLab's animation endpoint only takes even counts (board, 2026-10-14). The board's tweak: no shadow under the minions (the coin keeps its own). Cost: 9 generations in all (4919 to 4909), including one duplicate call charged by mistake after a shell timeout shorter than the 600 s rule. QA round 1: all 5 pass. Now open: T-134.
+- Documents touched: `game/README.md`
+- Tasks: T-068 (done)

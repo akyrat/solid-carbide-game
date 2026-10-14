@@ -1,0 +1,130 @@
+{
+  "file": "minion_walk_low_0.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD7UlEQVR4nO2YTW8bVRRAzxhHdmwncowNdTFQkroRqUSdtBULFLLA2UQoUldRu+u2C1i0qH8AIQFizQZUEBKom1TKAlHFESQGRFVIJioFUvNRVXZMZcd1M449Vtw8FlNPxvFHHTdlFGnOyjO+fu+e9+67Hls6/sKz7GdsZifwuFgCZmMJmI0lYDaWgNlYAmZjCZiNJWA2+17AbrzwjZYFQC7ukP7vRKpzV2k3B/vOG+GowrW4Y6/yagtnZENMvlMk7D8IwOXL/wLoQq1kagRycYdUGikI32hZdLILzsiGPqmrp25taqiO74xsiCNjKmH/QV48cIIvvpnhjQkX/ikPAFklz+fv0jSfulmSix7CUYUEzT/UKvljp0oAeAOaSzBUH7s4ZwN9he0EB7dYkFeBGd58dZhfUkt8fBH8/ZscjW4CvU3nrRMoKhVSy3ZOnl7nOr01Es7IhlBlt35d3Snjyht5PaKtqpHYrzNMTR1gYXCVfEaqi/87u8Jnb3lQzn0AX17gZqxp7o0FVNktJWUE5PWdKCoVXD12QiMqyR67nmz1/XC0hDcgCIbg96XtpBLZVRLZmbpJs0qeoQEXDMCPP2k7Fgxp8fErNnrfm+X7107QG/uECW5QVCpA43PZrFCl5LRXFDNl+g4XCB8SJGI9BAe36PYpXLvkxund0sskEeshHFXIZ7YHyGck8hl4eVjoUtX4NEWGBlzcKxfxBiC9YiOfEXgDgnt/emAcJn74mefv3IGhFssPSG38LyQkT4W+4QeERgp0+wSpZTtHo5ukV2wEB7dIr9jo9tVW0fKVbo6Mqfr9Uk6qiy3lJLp9guzt2lKa/+0lAMaG/iG15MRYtp0I6CLVF77RctOgcFQBtJWf+bCXvsOFhnHuh+cyuah1G2Nc+f5T2nvTXoCWjaR1r6tFHygXdzQ8tL7RMtnbEv5DgnQSzr/v4aOLNJUw0n/3DPfXNwC4Ln+HKNgfmTzsTsBIw4FzcYfQDpyq1/tOUktOjp0qMTkeZEFe5dZ8BVV2M8tVY1ptt+9OBZohqbJblPs3CYa2yCp5igocv3uG5zwBUoUMKaaZHA+SyK5yM9aFKruhjZVuxp4K+EbLIjSilcvinI0bnzoQBTuz8vbqOiNaG00n26vxR7GnAlr5wK15J6rsRvJUYEeCquwWc1+vYXgQFqCdn04eX3bThdpBDJxd0y+61Gf446sHUCshAF55e03vQCdPr3P1XGBnXFvstQAYJP669LQ+z84YAD3uWxdStqvtzmPkSQjA9ndGq2R0iYeiHZ2FJyWwG9qRbcpet9FOeKwutO9/E1sCZmMJmI0lYDaWgNlYAmaz7wX+A9KvfSRpTONlAAAAAElFTkSuQmCC",
+      "format": "png"
+    },
+    "action": "a low four-legged lizard stride: belly close to the ground, body held horizontal and level, all four legs clearly stepping in a diagonal gait (front-left leg moves with back-right leg, then front-right with back-left), each leg visibly lifting off the ground, swinging forward and planting down again, tail trailing low and swaying slightly, head forward, not rearing, not gliding",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 68004
+  },
+  "prompt": "",
+  "job_id": "616558a6-4fb6-4c48-80e0-a9306504b8cc",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T22:33:48+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "art-archive/T-068/rotations/minion_rot8_3.png",
+    "art-archive/T-068/walk_side_run1/minion_walk_0.png",
+    "https://api.pixellab.ai/v2/openapi.json"
+  ],
+  "task": "T-068",
+  "job_status": "completed",
+  "notes": "T-068 round 3: low four-legged stride walk from rotation 3, 8 frames requested",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 0,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "minion_walk_low_0.png",
+    "minion_walk_low_1.png",
+    "minion_walk_low_2.png",
+    "minion_walk_low_3.png",
+    "minion_walk_low_4.png",
+    "minion_walk_low_5.png",
+    "minion_walk_low_6.png",
+    "minion_walk_low_7.png",
+    "minion_walk_low_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "616558a6-4fb6-4c48-80e0-a9306504b8cc",
+    "status": "completed",
+    "created_at": "2026-10-14T22:31:10.438179+00:00",
+    "last_response": {
+      "seed": 68004,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.03095701763365004
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1412 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1368 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1304 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1296 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1332 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1336 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1308 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1324 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1380 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "afa22e7a-ad8c-456d-b99e-c914ba2ced9b",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-14T22:31:42.698157+00:00",
+      "estimated_wait_seconds": 0
+    }
+  }
+}

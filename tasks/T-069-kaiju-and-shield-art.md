@@ -1,7 +1,7 @@
 ---
 id: T-069
 title: Art: the kaiju
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead:

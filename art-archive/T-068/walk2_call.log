@@ -1,0 +1,103 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc submitted, polling every 5 s
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (1 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (7 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (18 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (23 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (29 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (35 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (40 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (51 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (58 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (64 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (69 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (75 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (80 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (87 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (93 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (100 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (105 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (111 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (116 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (122 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (127 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (133 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (138 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (143 s)
+  job 616558a6-4fb6-4c48-80e0-a9306504b8cc: processing (151 s)
+  saved 9 images in art-archive\T-068\walk_low_stride: minion_walk_low_0.png, minion_walk_low_1.png, minion_walk_low_2.png, minion_walk_low_3.png, minion_walk_low_4.png, minion_walk_low_5.png, minion_walk_low_6.png, minion_walk_low_7.png, minion_walk_low_8.png; usage {"type": "generations", "generations": 1.0}
+{
+  "file": [
+    "minion_walk_low_0.png",
+    "minion_walk_low_1.png",
+    "minion_walk_low_2.png",
+    "minion_walk_low_3.png",
+    "minion_walk_low_4.png",
+    "minion_walk_low_5.png",
+    "minion_walk_low_6.png",
+    "minion_walk_low_7.png",
+    "minion_walk_low_8.png"
+  ],
+  "job_id": "616558a6-4fb6-4c48-80e0-a9306504b8cc",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "image": [
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
+EXIT 0

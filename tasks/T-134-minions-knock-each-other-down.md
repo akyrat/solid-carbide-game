@@ -1,7 +1,7 @@
 ---
 id: T-134
 title: Minions that bump into each other fall down, get up and carry on
-status: blocked
+status: open
 from: project-lead
 to: enemy-behavior
 lead: Enemies
