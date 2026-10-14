@@ -37,6 +37,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 
 ## Several Project Leads at once
 - Only one instance merges into `master` at a time. Before choosing a new ticket number, check `tasks/` and `git log` on `master`. Pull `master` before editing docs or the timeline.
+- All instances share the main checkout, so before every commit on `master`, check that no merge is in progress (`git rev-parse -q --verify MERGE_HEAD` prints nothing). If one is, don't commit: it is another instance's merge. Stage only the files you changed yourself (never `git add -A`), and chain git commands with `&&` so a git error stops the command. (board, 2026-10-14, after a commit swept up another instance's half-finished T-044 merge)
 - All instances share one task board server. If the board says its port is taken, tell the board.
 - Each instance acts only on the board's moves for tickets it planned or started, and leaves the rest to the instance that owns them (board, 2026-10-14). The board's moves reach every instance; this keeps two instances from acting on the same move. A move on a ticket no instance owns yet goes to whichever instance the board is talking to.
 
