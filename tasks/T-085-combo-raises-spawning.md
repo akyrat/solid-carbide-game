@@ -1,9 +1,10 @@
 ---
 id: T-085
 title: The combo raises minion spawning (can be switched off)
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
+lead: Enemies
 epic: enemies
 milestone: mvp
 user_facing_text: no
@@ -60,3 +61,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Criterion 4 (all tests): PASS. Full GUT suite: 582 passing, all tests passed. All Python tests in game/tools and tools passed.
 - T-044 test check: the only T-044 test removed is `test_combo_hook_multiplies_minions_wanted` (asserted multiplier stays 1.0 and a manual 1.5); replaced by the four new tests above. Nothing else removed or weakened.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all criteria pass
+- 2026-10-14, needs-playtest → done: board playtest: combo works fine
