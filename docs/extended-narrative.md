@@ -26,6 +26,7 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 - **Redgull funds the car's upgrades** between runs, all in service of the sponsorship. (2026-10-08, from the Final GDD)
 - Weapon names, the level-up wording, descriptions and other user-facing text are written by the Narrative Theme Agent, using this document to get the tone; the board doesn't define them. That agent also chooses how likes are shown (the word, a heart icon, or both). (2026-10-08)
 - The first map is downtown Tokyo under attack from the kaiju, the final boss: a giant monster in the style of Godzilla that is not called Godzilla. Its name is still to come from the board; until then it is "the kaiju". The city has put up a few alert banners about it. (board, 2026-10-14)
+- The city's people are not shown for now: only the signs they put up (the alert banners, picture-only). (board, 2026-10-15)
 
 ## Content
 
