@@ -920,3 +920,8 @@ Entry format:
 - Decision or change: the board played T-064's round-2 sample in the game (every block 2 by 2 of the one sample skyscraper with free variations, script pavement, the whole block fading for now) and approved it ("LGTM"); the full set waits for the board's go on its cost. The board also approved T-130's warning signs as drawn: the kaiju's head in a red warning triangle and its body in a red prohibition circle, black silhouettes on white, as building banners and pavement signs; placing them waits for T-064's full set.
 - Documents touched: none
 - Tasks: T-064, T-130
+
+## 2026-10-15: City colours: apart from the alien boulders, less neon
+- Decision or change: after playing the skyscraper sample, the board found it used nearly the same colours as the boulders. Its direction: the boulders are alien and must stand apart, so the city must not share their navy, purple and magenta glow; the city is less neon (concrete, glass, lit windows, small muted signs). Three script recolours were tried in the game (F7); the board asked for A (concrete and sodium light) and B (steel and glass) as two separate builds to judge, and will pick one. Recorded in Visual style as "City colours"; the City brief now points to it instead of the night neon pink and cyan.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064, T-129
