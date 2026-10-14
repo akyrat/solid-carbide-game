@@ -103,3 +103,7 @@ Colourways: cyan and pink, made by a free palette swap (never towards red). The 
 - Too many or too few banners: the count is data, not code.
 
 **Steps after the board's go:** (1) sample: one building banner (head, cyan) and one pavement sign (body, pink) built by script, previews and a screenshot on a T-064 block (free); (2) the board judges; (3) the other 6 sprites, the 6 placements, tests, README section "Alert banners". No PixelLab call at any step unless the board chooses the optional fallback.
+
+### Quick tuning
+
+- 2026-10-14 (board, word for word: "remove any details ... only the shape of the kaiju ... warning or forbidden signs for driving: red outline, simple white and black inside"): redrew as road signs by script, 0 PixelLab calls: head in a warning triangle (danger ahead; compact shape fits), body in a prohibition circle (wide round sign fits the long body and tail); thick traffic-sign red outline (204,18,28, the only red allowed, these signs only), white inside, solid black silhouette, no neon; 5 colours; 6 sprites (per design: building banner front-on, sheared, and pavement sign) in `game/art/banners/`; neon first version kept in `art-archive/T-130/first-version/`; previews `art-archive/T-130/signs_*.png`.

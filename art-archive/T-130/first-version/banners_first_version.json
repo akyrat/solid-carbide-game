@@ -1,0 +1,348 @@
+{
+ "task": "T-130",
+ "what": "Kaiju alert banners: 4 designs (head, body; building banner and pavement sign) in cyan and violet-leaning pink; building banners front-on and sheared onto a wall (2:1). Picture-only: no letters.",
+ "made_by": "game/tools/build_kaiju_banners.py (a script; no PixelLab call, board 2026-10-14). Byte-identical every run.",
+ "scale_note": "32 art px per unit; drawn in the game at scale 0.5 like the car and the ground, texture_filter nearest",
+ "palette": {
+  "shared": {
+   "N1": [
+    12,
+    14,
+    34
+   ],
+   "N2": [
+    22,
+    24,
+    56
+   ],
+   "O": [
+    5,
+    7,
+    20
+   ],
+   "P": [
+    64,
+    70,
+    100
+   ],
+   "Q": [
+    100,
+    108,
+    146
+   ]
+  },
+  "cyan": {
+   "AL": [
+    110,
+    240,
+    250
+   ],
+   "AM": [
+    40,
+    190,
+    220
+   ],
+   "AD": [
+    24,
+    110,
+    160
+   ],
+   "HI": [
+    214,
+    252,
+    255
+   ],
+   "G": [
+    18,
+    64,
+    100
+   ]
+  },
+  "pink": {
+   "AL": [
+    248,
+    140,
+    236
+   ],
+   "AM": [
+    210,
+    84,
+    214
+   ],
+   "AD": [
+    128,
+    50,
+    172
+   ],
+   "HI": [
+    255,
+    226,
+    250
+   ],
+   "G": [
+    62,
+    26,
+    92
+   ]
+  }
+ },
+ "rules": "Visual style, Decisions and City brief: no anti-aliasing, no semi-transparent pixels, transparent background, 30 colours or fewer, no Redgull red (every colour 0.5 or more from Hud.HEART_COLOR), no letters (checked by eye in the previews)",
+ "check": "python game/tools/build_kaiju_banners.py check",
+ "archive": "art-archive/T-130/: previews on dark and light backgrounds, and next to the car",
+ "pixellab_calls": 0,
+ "status": "candidates for the board's review (T-130); not placed in the game yet (waits for T-064's skyscrapers)",
+ "files": [
+  {
+   "file": "kaiju_head_building_cyan_front.png",
+   "size": [
+    96,
+    128
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "head",
+   "colour": "cyan",
+   "form": "front-on",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel"
+  },
+  {
+   "file": "kaiju_head_building_cyan_wall.png",
+   "size": [
+    96,
+    175
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "head",
+   "colour": "cyan",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel (the column the slope starts from)"
+  },
+  {
+   "file": "kaiju_head_sign_cyan.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 10,
+   "kind": "pavement",
+   "design": "head",
+   "colour": "cyan",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  },
+  {
+   "file": "kaiju_head_building_pink_front.png",
+   "size": [
+    96,
+    128
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "head",
+   "colour": "pink",
+   "form": "front-on",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel"
+  },
+  {
+   "file": "kaiju_head_building_pink_wall.png",
+   "size": [
+    96,
+    175
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "head",
+   "colour": "pink",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel (the column the slope starts from)"
+  },
+  {
+   "file": "kaiju_head_sign_pink.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 10,
+   "kind": "pavement",
+   "design": "head",
+   "colour": "pink",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  },
+  {
+   "file": "kaiju_body_building_cyan_front.png",
+   "size": [
+    96,
+    128
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "body",
+   "colour": "cyan",
+   "form": "front-on",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel"
+  },
+  {
+   "file": "kaiju_body_building_cyan_wall.png",
+   "size": [
+    96,
+    175
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "body",
+   "colour": "cyan",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel (the column the slope starts from)"
+  },
+  {
+   "file": "kaiju_body_sign_cyan.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 10,
+   "kind": "pavement",
+   "design": "body",
+   "colour": "cyan",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  },
+  {
+   "file": "kaiju_body_building_pink_front.png",
+   "size": [
+    96,
+    128
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "body",
+   "colour": "pink",
+   "form": "front-on",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel"
+  },
+  {
+   "file": "kaiju_body_building_pink_wall.png",
+   "size": [
+    96,
+    175
+   ],
+   "colours": 8,
+   "kind": "building",
+   "design": "body",
+   "colour": "pink",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
+   "units": [
+    3,
+    4
+   ],
+   "anchor_px": [
+    0,
+    127
+   ],
+   "anchor_note": "bottom-left corner of the panel (the column the slope starts from)"
+  },
+  {
+   "file": "kaiju_body_sign_pink.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 10,
+   "kind": "pavement",
+   "design": "body",
+   "colour": "pink",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  }
+ ]
+}

@@ -1,29 +1,29 @@
 #!/usr/bin/env python3
-"""Draws the kaiju alert banners (task T-130; no PixelLab call).
+"""Draws the kaiju alert signs (task T-130; no PixelLab call).
 
-The board approved drawing them by script (Visual style, Decisions, "City brief"):
-picture-only alert banners, a silly minimal pixel painting of the kaiju's head or its
-Godzilla-like body (round back, back spikes, tail; never a copy of the film monster),
-cyan or violet-leaning pink on a dark panel with a plain warning border (diagonal
-hazard stripes), no letters, no Redgull red. 32 art pixels per unit (drawn at game
-scale 0.5, like the car and the ground), no anti-aliasing, no semi-transparent pixels,
-a transparent background, 30 colours or fewer, glow drawn into the pixels as stepped
-halo rings.
+Quick tuning from the board (2026-10-14): road-sign style, not neon. Each sign is a
+real-looking warning triangle or prohibition circle: a thick traffic-sign red outline, a
+plain white inside and only the kaiju's solid black silhouette (no eye, teeth, shading,
+glow, stripes or lettering). Picture-only, no letters. 32 art pixels per unit (drawn at
+game scale 0.5, like the car and the ground), no anti-aliasing, no semi-transparent pixels,
+a transparent background.
 
-Four designs, two colourways each:
-  head / building banner   96 x 128 front-on, and 96 x 175 sheared onto a wall
-  body / building banner   same
-  head / pavement sign     48 x 96 (board 48 x 64 on a post), upright
-  body / pavement sign     same
-The sheared sprite slopes down to the right, 1 art px per 2 across (the 2:1 wall
-slope); the other wall is the same sprite flipped in the game.
+Two designs, in the two classic sign shapes:
+  head  -> warning triangle (apex up): "danger ahead", and the compact head fits it
+  body  -> prohibition circle: the long body with its tail needs the wider round sign
+Each as a building banner (front-on, and sheared onto a wall at 2:1, 1 art px per 2 across,
+sloping down to the right; flip it in the game for the other wall) and as a pavement sign
+on a post. The sign red is the only red outside Redgull's look allowed in the art
+(Visual style, Decisions): it is used on these signs and nowhere else. Colours: that red,
+white, black, and the post's two greys: 5 in all.
 
 Commands (run from the repo root):
   python game/tools/build_kaiju_banners.py build     # PNGs + record in game/art/banners/, previews in art-archive/T-130/
   python game/tools/build_kaiju_banners.py check     # checks the committed PNGs (exit 1 on a fail)
   python game/tools/build_kaiju_banners.py preview   # only the previews
 
-Running build twice gives byte-identical files.
+Running build twice gives byte-identical files. The first (neon) version is archived in
+art-archive/T-130/first-version/.
 """
 from __future__ import annotations
 
@@ -40,50 +40,38 @@ from remove_car_shadow import write_png  # noqa: E402
 GAME = Path(__file__).resolve().parent.parent
 REPO = GAME.parent
 OUT_DIR = GAME / "art" / "banners"
-OUT_JSON = OUT_DIR / "banners.json"
 ARCHIVE = REPO / "art-archive" / "T-130"
 CAR_SHEET = GAME / "art" / "car" / "car_iso.png"
 
 MAX_COLORS = 30
-HEART_COLOR = (0.86, 0.1, 0.16)  # Hud.HEART_COLOR; nothing may be within 0.5 of it
 
-BUILDING_SIZE = (96, 128)  # 3 x 4 units, front-on
-SIGN_SIZE = (48, 96)       # 1.5 x 3 units: a 48 x 64 board on a post
-SIGN_BOARD_H = 64
+SIGN_RED = (204, 18, 28)  # traffic-sign red: the one red allowed, on these signs only
+WHITE = (250, 250, 250)
+BLACK = (10, 10, 14)
+POST = (64, 70, 100)
+POST_LIT = (100, 108, 146)
+COLOURS = {"R": SIGN_RED, "W": WHITE, "K": BLACK, "P": POST, "Q": POST_LIT}
+ALLOWED = set(COLOURS.values())
 
-# Shared colours (night navy panel, dark outline, post).
-SHARED = {
-    "N1": (12, 14, 34),   # panel
-    "N2": (22, 24, 56),   # panel, lighter (dither and the hazard stripes' dark)
-    "O": (5, 7, 20),      # outline
-    "P": (64, 70, 100),   # post
-    "Q": (100, 108, 146),  # post, lit side
-}
-# The two colourways (A_L light, A_M mid, A_D dark, HI hot core, G halo).
-COLOURWAYS = {
-    "cyan": {"AL": (110, 240, 250), "AM": (40, 190, 220), "AD": (24, 110, 160), "HI": (214, 252, 255), "G": (18, 64, 100)},
-    "pink": {"AL": (248, 140, 236), "AM": (210, 84, 214), "AD": (128, 50, 172), "HI": (255, 226, 250), "G": (62, 26, 92)},
-}
+SHAPES = {"head": "triangle", "body": "circle"}
+BUILDING_SIZE = {"triangle": (96, 84), "circle": (96, 96)}  # 3 units wide
+SIGN_SIZE = (48, 96)  # a 48 wide board on a post
+SIGN_BOARD_H = {"triangle": 42, "circle": 48}
+RED_BAND = {"building": {"triangle": 7, "circle": 9}, "pavement": {"triangle": 4, "circle": 5}}
 
-# Pictures: polygons in the picture's box, x and y from 0 to 1, facing right.
-HEAD_BODY = [
-    (0.10, 1.00), (0.12, 0.84), (0.16, 0.74), (0.25, 0.50), (0.38, 0.30),
-    (0.45, 0.16), (0.62, 0.14), (0.78, 0.22), (0.92, 0.36), (1.00, 0.46),
-    (1.00, 0.58), (0.96, 0.66), (0.90, 0.76), (0.80, 0.84), (0.66, 0.88),
-    (0.52, 0.92), (0.44, 1.00),
+# The kaiju's shapes: polygons in a box, x and y from 0 to 1, facing right. Solid black, no details.
+HEAD_BODY = [  # a neck rising from the bottom, the head in profile with an open mouth
+    (0.18, 1.00), (0.22, 0.70), (0.28, 0.45), (0.30, 0.28), (0.42, 0.18), (0.60, 0.16),
+    (0.80, 0.26), (1.00, 0.36), (1.00, 0.46), (0.64, 0.52), (0.92, 0.58), (0.90, 0.66),
+    (0.66, 0.70), (0.52, 0.74), (0.50, 1.00),
 ]
-# Back spikes of the head: triangles (base a, base b, tip).
 HEAD_SPIKES = [
-    [(0.07, 0.96), (0.15, 0.66), (0.00, 0.72)],
-    [(0.13, 0.66), (0.24, 0.40), (0.06, 0.40)],
-    [(0.22, 0.42), (0.37, 0.20), (0.20, 0.14)],
-    [(0.36, 0.26), (0.50, 0.08), (0.40, 0.00)],
+    [(0.19, 0.92), (0.23, 0.72), (0.05, 0.80)],
+    [(0.23, 0.72), (0.28, 0.48), (0.07, 0.54)],
+    [(0.28, 0.48), (0.31, 0.28), (0.09, 0.28)],
+    [(0.31, 0.30), (0.44, 0.17), (0.26, 0.06)],
 ]
-HEAD_EYE = (0.64, 0.33)
-HEAD_NOSTRIL = (0.93, 0.47)
-HEAD_MOUTH = [(0.98, 0.64), (0.78, 0.68), (0.56, 0.70)]
-HEAD_TEETH_Y = (0.64, 0.74)  # teeth hang below the mouth line between x 0.60 and 0.96
-
+HEAD_CUT = []
 BODY_POLY = [
     (0.00, 0.62), (0.08, 0.68), (0.20, 0.64),  # tail tip, tail top
     (0.34, 0.42), (0.50, 0.30), (0.66, 0.28),  # round back
@@ -101,9 +89,6 @@ BODY_SPIKES = [
     [(0.54, 0.29), (0.66, 0.28), (0.62, 0.12)],
     [(0.64, 0.26), (0.72, 0.20), (0.70, 0.06)],
 ]
-BODY_EYE = (0.88, 0.22)
-BODY_MOUTH = [(0.99, 0.30), (0.90, 0.31)]
-BODY_NOSTRIL = (0.96, 0.20)
 
 T = (0, 0, 0, 0)
 
@@ -134,218 +119,80 @@ def poly_mask(polys, w, h):
     return out
 
 
-def line_pixels(p0, p1):
-    """Bresenham."""
-    (x0, y0), (x1, y1) = p0, p1
-    dx, dy = abs(x1 - x0), -abs(y1 - y0)
-    sx, sy = (1 if x0 < x1 else -1), (1 if y0 < y1 else -1)
-    err = dx + dy
-    out = []
-    while True:
-        out.append((x0, y0))
-        if (x0, y0) == (x1, y1):
-            return out
-        e2 = 2 * err
-        if e2 >= dy:
-            err += dy
-            x0 += sx
-        if e2 <= dx:
-            err += dx
-            y0 += sy
+# ---------------------------------------------------------------------- signs
 
-
-def blob(cx, cy, r):
-    return {(x, y) for x in range(int(cx - r) - 1, int(cx + r) + 2) for y in range(int(cy - r) - 1, int(cy + r) + 2)
-            if (x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2 <= r * r}
-
-
-def neighbours8(p):
-    x, y = p
-    return [(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1) if dx or dy]
-
-
-def ring_distance(mask, limit, w, h):
-    """Distance (chessboard, 1..limit) of every outside pixel within the box to the mask."""
-    dist = {}
-    frontier = set(mask)
-    for d in range(1, limit + 1):
-        nxt = set()
-        for p in frontier:
-            for q in neighbours8(p):
-                if q not in mask and q not in dist and 0 <= q[0] < w and 0 <= q[1] < h:
-                    dist[q] = d
-                    nxt.add(q)
-        frontier = nxt
-    return dist
-
-
-# ------------------------------------------------------------------- pictures
-
-def paint_picture(design, w, h):
-    """A w x h dict {(x, y): letter} of the kaiju picture: letters AL AM AD HI O G (G halo, O outline)."""
-    if design == "head":
-        body = poly_mask([HEAD_BODY], w, h)
-        spikes = poly_mask(HEAD_SPIKES, w, h)
-        eye = blob(HEAD_EYE[0] * w, HEAD_EYE[1] * h, max(1.5, 0.07 * min(w, h)))
-        nostril = blob(HEAD_NOSTRIL[0] * w, HEAD_NOSTRIL[1] * h, max(0.9, 0.025 * w))
-        mouth = set()
-        for a, b in zip(HEAD_MOUTH, HEAD_MOUTH[1:]):
-            mouth |= set(line_pixels((int(a[0] * w), int(a[1] * h)), (int(b[0] * w), int(b[1] * h))))
-        teeth = set()
-        step = max(3, round(0.09 * w))
-        for tx in range(int(0.62 * w), int(0.96 * w), step):
-            my = [p[1] for p in mouth if p[0] == tx]
-            if my:
-                teeth |= {(tx, my[0] + 1), (tx + (1 if step > 3 else 0), my[0] + 1)} | ({(tx, my[0] + 2)} if h >= 40 else set())
-        dark_inside = mouth | nostril
-    else:
-        body = poly_mask([BODY_POLY, BODY_ARM], w, h)
-        spikes = poly_mask(BODY_SPIKES, w, h)
-        eye = blob(BODY_EYE[0] * w, BODY_EYE[1] * h, max(1.5, 0.055 * min(w, h)))
-        nostril = blob(BODY_NOSTRIL[0] * w, BODY_NOSTRIL[1] * h, max(0.9, 0.02 * w))
-        mouth = set()
-        for a, b in zip(BODY_MOUTH, BODY_MOUTH[1:]):
-            mouth |= set(line_pixels((int(a[0] * w), int(a[1] * h)), (int(b[0] * w), int(b[1] * h))))
-        teeth = set()
-        dark_inside = mouth | nostril
-    silhouette = body | spikes
-    band = max(1, round(h * 0.035))
+def sign_cells(shape, w, h, band):
+    """A w x h sign board (triangle or circle) as {(x, y): letter}: red outline, white inside."""
     out = {}
-    for p in silhouette:
-        x, y = p
-        if (x, y - band) not in silhouette or (x - 1, y - band) not in silhouette and (x + 1, y - band) not in silhouette:
-            letter = "AL"
-        elif (x, y + band + 1) not in silhouette:
-            letter = "AD"
-        else:
-            letter = "AM"
-        if p in spikes and p not in body:
-            letter = "AL" if (x, y - 1) in silhouette else "HI"
-        out[p] = letter
-    for p in teeth:
-        if p in silhouette:
-            out[p] = "HI"
-    for p in dark_inside:
-        if p in silhouette:
-            out[p] = "O"
-    for p in eye:
-        if p in silhouette:
-            out[p] = "HI"
-    if eye:
-        ex = sum(p[0] for p in eye) / len(eye)
-        ey = sum(p[1] for p in eye) / len(eye)
-        pup = [p for p in eye if p[0] >= ex and p[1] >= ey]
-        small = len(eye) <= 6
-        for p in (pup[:1] if small else pup[: max(1, len(pup) // 2)]):
-            out[p] = "O"
-    # outline and stepped halo around the silhouette
-    dist = ring_distance(silhouette, 3, w, h)
-    for p, d in dist.items():
-        if d == 1:
-            out[p] = "O"
-        elif d == 2:
-            out[p] = "G"
-        elif d == 3 and (p[0] + p[1]) % 2 == 0:
-            out[p] = "G"
-    return out
-
-
-def zigzag(w, h):
-    """A seismic / alert pulse line across a w x h box: {(x, y): letter}."""
-    n = 6
-    pts = []
-    for i in range(n * 2 + 1):
-        x = round(i * (w - 1) / (n * 2))
-        y = h // 2 if i % 2 == 0 else (1 if i % 4 == 1 else h - 2)
-        if i in (0, n * 2):
-            y = h // 2
-        pts.append((x, y))
-    out = {}
-    for a, b in zip(pts, pts[1:]):
-        for (x, y) in line_pixels(a, b):
-            out[(x, y)] = "AM"
-            out[(x, y + 1)] = "AD" if (x, y + 1) not in out else out[(x, y + 1)]
-    for a, b in zip(pts, pts[1:]):
-        for p in line_pixels(a, b):
-            out[p] = "HI"
-    return {p: v for p, v in out.items() if 0 <= p[0] < w and 0 <= p[1] < h}
-
-
-# ---------------------------------------------------------------------- panel
-
-def panel(w, h, stripe, pic, strip=None):
-    """The banner board: a dict {(x, y): letter} for a w x h board.
-
-    stripe: hazard border thickness; pic: (dict, x, y) picture to place; strip: (dict, x, y).
-    """
-    out = {}
-    cut = {(0, 0), (1, 0), (0, 1), (w - 1, 0), (w - 2, 0), (w - 1, 1), (0, h - 1), (1, h - 1), (0, h - 2),
-           (w - 1, h - 1), (w - 2, h - 1), (w - 1, h - 2)}
+    if shape == "circle":
+        r = w / 2.0
+        for y in range(h):
+            for x in range(w):
+                d = ((x + 0.5 - r) ** 2 + (y + 0.5 - r) ** 2) ** 0.5
+                if d <= r:
+                    out[(x, y)] = "R" if d > r - band else "W"
+        return out
+    outer = [(0.5 * w, 0.0), (2.0, float(h)), (w - 2.0, float(h))]  # base corners inset so the sprite corners stay transparent
+    cx, cy = 0.5 * w, 2.0 * h / 3.0  # the incentre of an equilateral triangle
+    k = 1.0 - band / (h / 3.0)
+    inner = [(cx + (x - cx) * k, cy + (y - cy) * k) for x, y in outer]
     for y in range(h):
         for x in range(w):
-            if (x, y) in cut:
-                continue
-            ring = min(x, y, w - 1 - x, h - 1 - y)
-            if ring == 0 or ring == stripe + 1:
-                letter = "O"
-            elif ring <= stripe:
-                letter = "AM" if ((x + y) // max(2, stripe)) % 2 == 0 else "N2"
-            elif ring == stripe + 2:
-                letter = "AD"
-            elif ring == stripe + 3 and (x + y) % 2 == 0:
-                letter = "N2"
-            else:
-                letter = "N1"
-            out[(x, y)] = letter
-    for layer in (pic, strip):
-        if layer:
-            cells, ox, oy = layer
-            for (x, y), v in cells.items():
-                if (x + ox, y + oy) in out:
-                    out[(x + ox, y + oy)] = v
+            if _inside(outer, x + 0.5, y + 0.5):
+                out[(x, y)] = "W" if _inside(inner, x + 0.5, y + 0.5) else "R"
     return out
 
 
-def building_front(design):
-    w, h = BUILDING_SIZE
-    pw, ph = 76, 68
-    pic = paint_picture(design, pw, ph)
-    strip = zigzag(76, 14)
-    return panel(w, h, 5, (pic, (w - pw) // 2, 12), (strip, (w - 76) // 2, 96))
+def silhouette(design, box_w, box_h):
+    """The kaiju's solid shape (a set of (x, y)) filling a box_w x box_h box, facing right."""
+    if design == "head":
+        return poly_mask([HEAD_BODY] + HEAD_SPIKES, box_w, box_h) - poly_mask(HEAD_CUT, box_w, box_h)
+    return poly_mask([BODY_POLY, BODY_ARM] + BODY_SPIKES, box_w, box_h)
 
 
-def sign_cells(design):
-    w, h = SIGN_SIZE
-    bw, bh = w, SIGN_BOARD_H
-    pw, ph = 36, 32
-    pic = paint_picture(design, pw, ph)
-    strip = zigzag(36, 9)
-    out = panel(bw, bh, 3, (pic, (bw - pw) // 2, 7), (strip, (bw - 36) // 2, 46))
-    cx = w // 2
-    for y in range(bh, 90):  # post, 4 wide, lit on its left
-        for k, letter in enumerate(("O", "Q", "P", "O")):
-            out[(cx - 2 + k, y)] = letter
+# where the silhouette sits in the board: (box width, box height, centre x fraction, centre y fraction)
+PICTURE = {
+    ("head", "building"): (36, 33, 0.5, 0.64),
+    ("head", "pavement"): (16, 14, 0.46, 0.68),
+    ("body", "building"): (54, 34, 0.5, 0.50),
+    ("body", "pavement"): (27, 17, 0.5, 0.50),
+}
+
+
+def board(design, kind):
+    shape = SHAPES[design]
+    if kind == "building":
+        w, h = BUILDING_SIZE[shape]
+    else:
+        w, h = SIGN_SIZE[0], SIGN_BOARD_H[shape]
+    cells = sign_cells(shape, w, h, RED_BAND[kind][shape])
+    bw, bh, fx, fy = PICTURE[(design, kind)]
+    ox, oy = round(fx * w - bw / 2), round(fy * h - bh / 2)
+    for (x, y) in silhouette(design, bw, bh):
+        cells[(x + ox, y + oy)] = "K"
+    return cells, w, h
+
+
+def sign_on_post(design):
+    cells, w, h = board(design, "pavement")
+    cx = SIGN_SIZE[0] // 2
+    for y in range(h, 90):  # post, 4 wide, lit on its left
+        for k, letter in enumerate(("K", "Q", "P", "K")):
+            cells[(cx - 2 + k, y)] = letter
     for y, half in ((90, 7), (91, 8), (92, 8), (93, 8), (94, 7)):  # base
         for x in range(cx - half, cx + half):
             edge = x in (cx - half, cx + half - 1) or y in (90, 94)
-            out[(x, y)] = "O" if edge else ("Q" if x < cx - 2 else "P")
-    return out
+            cells[(x, y)] = "K" if edge else ("Q" if x < cx - 2 else "P")
+    return cells
 
 
 # ------------------------------------------------------------------- to pixels
 
-def colour_table(colourway):
-    table = dict(SHARED)
-    table.update(COLOURWAYS[colourway])
-    return table
-
-
-def to_rows(cells, w, h, colourway):
-    table = colour_table(colourway)
+def to_rows(cells, w, h):
     rows = [[T] * w for _ in range(h)]
     for (x, y), letter in cells.items():
         if 0 <= x < w and 0 <= y < h:
-            rows[y][x] = table[letter] + (255,)
+            rows[y][x] = COLOURS[letter] + (255,)
     return rows
 
 
@@ -364,22 +211,19 @@ def shear(rows, per=2):
 def sprites():
     """Every sprite: {file name: (rows, info)} in a stable order."""
     out = {}
-    for design in ("head", "body"):
-        front_cells = building_front(design)
-        sign = sign_cells(design)
-        for colour in COLOURWAYS:
-            bw, bh = BUILDING_SIZE
-            front = to_rows(front_cells, bw, bh, colour)
-            base = "kaiju_%s_building_%s" % (design, colour)
-            out[base + "_front.png"] = (front, {"kind": "building", "design": design, "colour": colour, "form": "front-on",
-                                                "units": [3, 4], "anchor_px": [0, bh - 1], "anchor_note": "bottom-left corner of the panel"})
-            wall = shear(front)
-            out[base + "_wall.png"] = (wall, {"kind": "building", "design": design, "colour": colour, "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
-                                               "units": [3, 4], "anchor_px": [0, bh - 1], "anchor_note": "bottom-left corner of the panel (the column the slope starts from)"})
-            sw, sh = SIGN_SIZE
-            out["kaiju_%s_sign_%s.png" % (design, colour)] = (to_rows(sign, sw, sh, colour), {
-                "kind": "pavement", "design": design, "colour": colour, "form": "upright board on a post", "units": [1.5, 3],
-                "anchor_px": [sw // 2, sh - 1], "anchor_note": "bottom centre of the base, where the sign touches the pavement"})
+    for design, shape in SHAPES.items():
+        cells, w, h = board(design, "building")
+        front = to_rows(cells, w, h)
+        base = "kaiju_%s_%s_building" % (design, shape)
+        info = {"kind": "building", "design": design, "shape": shape, "units": [3, round(h / 32, 2)],
+                "anchor_px": [0, h - 1], "anchor_note": "bottom-left corner of the sign"}
+        out[base + "_front.png"] = (front, dict(info, form="front-on"))
+        out[base + "_wall.png"] = (shear(front), dict(info, form="sheared onto a wall, sloping down to the right (flip horizontally for the other wall)",
+                                                      anchor_note="bottom-left corner of the sign (the column the slope starts from)"))
+        sw, sh = SIGN_SIZE
+        out["kaiju_%s_%s_sign.png" % (design, shape)] = (to_rows(sign_on_post(design), sw, sh), {
+            "kind": "pavement", "design": design, "shape": shape, "form": "upright board on a post", "units": [1.5, 3],
+            "anchor_px": [sw // 2, sh - 1], "anchor_note": "bottom centre of the base, where the sign touches the pavement"})
     return out
 
 
@@ -392,21 +236,22 @@ def check_rows(rows, max_colors=MAX_COLORS):
     out = [r for r in results if not r[0].startswith("frame size")]
     px = [p for r in rows for p in r]
     colors = {p[:3] for p in px if p[3] == 255}
-    reds = sorted(c for c in colors if marks.is_redgull_red(c))
-    out.append(("no Redgull red (nor any red)", not reds, "reds: %s" % reds if reds else "none"))
-    heart = [c for c in colors if sum((a / 255 - b) ** 2 for a, b in zip(c, HEART_COLOR)) ** 0.5 < 0.5]
-    out.append(("every colour 0.5 or more from Hud.HEART_COLOR", not heart, "too close: %s" % heart if heart else "none"))
+    stray = sorted(colors - ALLOWED)
+    out.append(("only the sign red, white, black and the post greys", not stray, "others: %s" % stray if stray else "none"))
+    reds = sorted(c for c in colors if marks.is_redgull_red(c) and c != SIGN_RED)
+    out.append(("no red but the one sign red", not reds, "other reds: %s" % reds if reds else "none"))
+    out.append(("has the sign red outline", SIGN_RED in colors, "present" if SIGN_RED in colors else "missing"))
+    out.append(("at most 5 colours", len(colors) <= 5, "%d colours" % len(colors)))
     opaque = sum(1 for p in px if p[3] == 255)
-    out.append(("a real banner: at least 25% of the pixels are drawn", opaque >= 0.25 * w * h, "%d of %d" % (opaque, w * h)))
+    out.append(("a real sign: at least 25% of the pixels are drawn", opaque >= 0.25 * w * h, "%d of %d" % (opaque, w * h)))
     return out
 
 
 def expected_size(name):
-    if "_sign_" in name:
+    if name.endswith("_sign.png"):
         return SIGN_SIZE
-    if name.endswith("_wall.png"):
-        return (BUILDING_SIZE[0], BUILDING_SIZE[1] + (BUILDING_SIZE[0] - 1) // 2)
-    return BUILDING_SIZE
+    w, h = BUILDING_SIZE["triangle" if "_triangle_" in name else "circle"]
+    return (w, h + (w - 1) // 2) if name.endswith("_wall.png") else (w, h)
 
 
 def check_file(path):
@@ -421,8 +266,7 @@ def check_file(path):
 def check_dir(directory=OUT_DIR):
     ok_all = True
     lines = []
-    names = sorted(sprites())
-    for name in names:
+    for name in sorted(sprites()):
         path = Path(directory) / name
         if not path.exists():
             lines.append("FAIL  %s: missing" % name)
@@ -451,7 +295,7 @@ def enlarge(rows, k):
 
 
 def compose(items, bg, width, height, gap=8):
-    """Place sprites (rows) left to right, bottom aligned, on a bg canvas. items: list of rows."""
+    """Place sprites (rows) left to right, bottom aligned, on a bg canvas."""
     canvas = [[bg] * width for _ in range(height)]
     x0 = gap
     for rows in items:
@@ -484,17 +328,16 @@ def car_frame():
 def previews(all_sprites=None, archive=ARCHIVE):
     s = all_sprites or sprites()
     archive.mkdir(parents=True, exist_ok=True)
-    designs = [s["kaiju_%s_building_%s_front.png" % (d, c)][0] for c in COLOURWAYS for d in ("head", "body")]
-    designs += [s["kaiju_%s_sign_%s.png" % (d, c)][0] for c in COLOURWAYS for d in ("head", "body")]
-    write_png(archive / "banners_designs_dark_light_x3.png", side_by_side(designs, 3, gap=6))
-    walls = [s["kaiju_%s_building_%s_wall.png" % (d, c)][0] for c in COLOURWAYS for d in ("head", "body")]
-    write_png(archive / "banners_on_wall_dark_light_x4.png", side_by_side(walls, 4, gap=6))
-    car = car_frame()
-    scene = [s["kaiju_head_building_cyan_wall.png"][0], car, s["kaiju_head_sign_cyan.png"][0], s["kaiju_body_sign_pink.png"][0],
-             s["kaiju_body_building_pink_wall.png"][0]]
-    # The car is 96 art px long, the banner 96 px wide: the game draws both at scale 0.5,
+    n = {d: "kaiju_%s_%s_" % (d, sh) for d, sh in SHAPES.items()}
+    designs = [s[n[d] + "building_front.png"][0] for d in SHAPES] + [s[n[d] + "sign.png"][0] for d in SHAPES]
+    write_png(archive / "signs_designs_dark_light_x4.png", side_by_side(designs, 4, gap=6))
+    walls = [s[n[d] + "building_wall.png"][0] for d in SHAPES]
+    write_png(archive / "signs_on_wall_dark_light_x4.png", side_by_side(walls, 4, gap=6))
+    # The car is 96 art px long, a banner 96 px wide: the game draws both at scale 0.5,
     # so relative sizes here are exactly those on screen.
-    write_png(archive / "banners_next_to_car_dark_light_x3.png", side_by_side(scene, 3, bgs=(ASPHALT_BG, LIGHT_BG)))
+    scene = [s[n["head"] + "building_wall.png"][0], car_frame(), s[n["head"] + "sign.png"][0], s[n["body"] + "sign.png"][0],
+             s[n["body"] + "building_wall.png"][0]]
+    write_png(archive / "signs_next_to_car_dark_light_x3.png", side_by_side(scene, 3, bgs=(ASPHALT_BG, LIGHT_BG)))
     return archive
 
 
@@ -507,13 +350,14 @@ def record(all_sprites):
         files.append(dict(file=name, size=[len(rows[0]), len(rows)], colours=len(colors), **info))
     return {
         "task": "T-130",
-        "what": "Kaiju alert banners: 4 designs (head, body; building banner and pavement sign) in cyan and violet-leaning pink; building banners front-on and sheared onto a wall (2:1). Picture-only: no letters.",
+        "what": "Kaiju alert signs in road-sign style (board's quick tuning, 2026-10-14): head in a warning triangle, body in a prohibition circle; thick traffic-sign red outline, plain white inside, solid black kaiju silhouette only. Building banners front-on and sheared onto a wall (2:1), and pavement signs on a post. No letters.",
         "made_by": "game/tools/build_kaiju_banners.py (a script; no PixelLab call, board 2026-10-14). Byte-identical every run.",
         "scale_note": "32 art px per unit; drawn in the game at scale 0.5 like the car and the ground, texture_filter nearest",
-        "palette": {"shared": {k: list(v) for k, v in SHARED.items()}, **{k: {a: list(b) for a, b in v.items()} for k, v in COLOURWAYS.items()}},
-        "rules": "Visual style, Decisions and City brief: no anti-aliasing, no semi-transparent pixels, transparent background, 30 colours or fewer, no Redgull red (every colour 0.5 or more from Hud.HEART_COLOR), no letters (checked by eye in the previews)",
+        "palette": {k: list(v) for k, v in COLOURS.items()},
+        "red_note": "SIGN_RED is the only red outside Redgull's look allowed in the art (Visual style, Decisions), only on these signs",
+        "rules": "no anti-aliasing, no semi-transparent pixels, transparent background, only the sign red, white, black and the post greys, no letters",
         "check": "python game/tools/build_kaiju_banners.py check",
-        "archive": "art-archive/T-130/: previews on dark and light backgrounds, and next to the car",
+        "archive": "art-archive/T-130/: previews; first-version/ holds the first (neon) drawings",
         "pixellab_calls": 0,
         "status": "candidates for the board's review (T-130); not placed in the game yet (waits for T-064's skyscrapers)",
         "files": files,
@@ -539,7 +383,7 @@ def main(argv=None):
         print("wrote previews in", previews())
         return 0
     if a.command == "build":
-        print("wrote the banners in", build(), "and the previews in", ARCHIVE)
+        print("wrote the signs in", build(), "and the previews in", ARCHIVE)
     ok, lines = check_dir()
     for line in lines:
         print(line)

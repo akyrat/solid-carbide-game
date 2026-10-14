@@ -1,4 +1,4 @@
-"""Tests for build_kaiju_banners.py (task T-130). Run with the Python tool tests."""
+"""Tests for build_kaiju_banners.py (task T-130, road-sign version). Run with the Python tool tests."""
 import json
 import sys
 import tempfile
@@ -7,7 +7,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_kaiju_banners as b  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+
+
+def colours(rows):
+    return {p[:3] for r in rows for p in r if p[3]}
 
 
 class SpriteTest(unittest.TestCase):
@@ -15,11 +18,12 @@ class SpriteTest(unittest.TestCase):
     def setUpClass(cls):
         cls.sprites = b.sprites()
 
-    def test_twelve_sprites_four_designs_two_colours(self):
-        self.assertEqual(len(self.sprites), 12)
+    def test_six_sprites_two_designs_three_forms(self):
+        self.assertEqual(len(self.sprites), 6)
         infos = [i for _, i in self.sprites.values()]
-        self.assertEqual({(i["design"], i["kind"]) for i in infos}, {(d, k) for d in ("head", "body") for k in ("building", "pavement")})
-        self.assertEqual({i["colour"] for i in infos}, {"cyan", "pink"})
+        self.assertEqual({(i["design"], i["shape"]) for i in infos}, {("head", "triangle"), ("body", "circle")})
+        self.assertEqual({i["kind"] for i in infos}, {"building", "pavement"})
+        self.assertEqual(len([i for i in infos if i["form"].startswith("sheared")]), 2)
 
     def test_every_rule_passes_for_every_sprite(self):
         for name, (rows, _) in self.sprites.items():
@@ -32,28 +36,35 @@ class SpriteTest(unittest.TestCase):
     def test_only_opaque_or_transparent_and_transparent_corners(self):
         for name, (rows, _) in self.sprites.items():
             self.assertTrue({p[3] for r in rows for p in r} <= {0, 255}, name)
-            self.assertEqual(rows[0][0][3], 0, name)
-            self.assertEqual(rows[-1][0][3], 0, name)
+            for y, x in ((0, 0), (0, len(rows[0]) - 1)):
+                self.assertEqual(rows[y][x][3], 0, name)
 
-    def test_colours_few_and_far_from_redgull_red(self):
+    def test_only_five_allowed_colours_and_the_sign_red_is_the_only_red(self):
         for name, (rows, _) in self.sprites.items():
-            colors = {p[:3] for r in rows for p in r if p[3]}
-            self.assertLessEqual(len(colors), 30, name)
-            for c in colors:
+            cs = colours(rows)
+            self.assertTrue(cs <= b.ALLOWED, name)
+            self.assertIn(b.SIGN_RED, cs, name)
+            for c in cs - {b.SIGN_RED}:
                 self.assertFalse(b.marks.is_redgull_red(c), (name, c))
-                dist = sum((x / 255 - y) ** 2 for x, y in zip(c, b.HEART_COLOR)) ** 0.5
-                self.assertGreaterEqual(dist, 0.5, (name, c))
 
-    def test_colourways_differ_and_do_not_mix(self):
-        cyan = {p[:3] for r in self.sprites["kaiju_head_building_cyan_front.png"][0] for p in r if p[3]}
-        pink = {p[:3] for r in self.sprites["kaiju_head_building_pink_front.png"][0] for p in r if p[3]}
-        self.assertTrue(set(b.COLOURWAYS["cyan"].values()) & cyan)
-        self.assertFalse(set(b.COLOURWAYS["pink"].values()) & cyan)
-        self.assertFalse(set(b.COLOURWAYS["cyan"].values()) & pink)
+    def test_building_signs_are_only_red_white_and_black(self):
+        for name, (rows, info) in self.sprites.items():
+            if info["kind"] == "building":
+                self.assertEqual(colours(rows), {b.SIGN_RED, b.WHITE, b.BLACK}, name)
+
+    def test_silhouette_is_black_inside_white_and_never_touches_the_red(self):
+        for design in b.SHAPES:
+            for kind in ("building", "pavement"):
+                cells, w, h = b.board(design, kind)
+                black = {p for p, v in cells.items() if v == "K"}
+                self.assertTrue(black)
+                for x, y in black:
+                    for dx in (-1, 0, 1):
+                        for dy in (-1, 0, 1):
+                            self.assertNotEqual(cells.get((x + dx, y + dy)), "R", (design, kind, x, y))
 
     def test_designs_differ(self):
-        self.assertNotEqual(self.sprites["kaiju_head_sign_cyan.png"][0], self.sprites["kaiju_body_sign_cyan.png"][0])
-        self.assertNotEqual(self.sprites["kaiju_head_building_cyan_front.png"][0], self.sprites["kaiju_body_building_cyan_front.png"][0])
+        self.assertNotEqual(self.sprites["kaiju_head_triangle_sign.png"][0], self.sprites["kaiju_body_circle_sign.png"][0])
 
 
 class ShearTest(unittest.TestCase):
@@ -66,10 +77,9 @@ class ShearTest(unittest.TestCase):
             self.assertEqual(ys, list(range(x // 2, x // 2 + 4)))
 
     def test_shear_keeps_the_pixels(self):
-        rows = b.sprites()["kaiju_body_building_pink_front.png"][0]
-        wall = b.shear(rows)
+        s = b.sprites()
         count = lambda r: sum(1 for row in r for p in row if p[3])
-        self.assertEqual(count(rows), count(wall))
+        self.assertEqual(count(s["kaiju_body_circle_building_front.png"][0]), count(s["kaiju_body_circle_building_wall.png"][0]))
 
 
 class BuildTest(unittest.TestCase):
@@ -83,17 +93,18 @@ class BuildTest(unittest.TestCase):
             self.assertTrue(ok, lines)
             rec = json.loads((Path(t1) / "banners.json").read_text(encoding="utf-8"))
             self.assertEqual(rec["pixellab_calls"], 0)
-            self.assertEqual(len(rec["files"]), 12)
+            self.assertEqual(len(rec["files"]), 6)
 
     def test_check_fails_on_a_semi_transparent_pixel(self):
-        rows = [r[:] for r in b.sprites()["kaiju_head_sign_cyan.png"][0]]
-        rows[10][10] = (10, 10, 10, 128)
+        rows = [r[:] for r in b.sprites()["kaiju_head_triangle_sign.png"][0]]
+        rows[40][24] = (10, 10, 10, 128)
         self.assertTrue([r for r in b.check_rows(rows) if not r[1]])
 
-    def test_check_fails_on_redgull_red(self):
-        rows = [r[:] for r in b.sprites()["kaiju_head_sign_cyan.png"][0]]
-        rows[10][10] = (219, 26, 41, 255)
-        self.assertTrue([r for r in b.check_rows(rows) if not r[1]])
+    def test_check_fails_on_redgull_red_and_on_a_neon_colour(self):
+        for bad in ((219, 26, 41, 255), (40, 190, 220, 255)):
+            rows = [r[:] for r in b.sprites()["kaiju_head_triangle_sign.png"][0]]
+            rows[40][24] = bad
+            self.assertTrue([r for r in b.check_rows(rows) if not r[1]], bad)
 
     def test_previews_are_written(self):
         with tempfile.TemporaryDirectory() as t:
