@@ -4,6 +4,7 @@ title: Camera options: smoothing and the dynamic camera (zoom follows speed)
 status: done
 from: project-lead
 to: driving-drift
+lead:
 epic: driving
 milestone: mvp
 user_facing_text: no

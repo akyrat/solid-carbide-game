@@ -4,6 +4,7 @@ title: Data: the kaiju drops a few coins when defeated
 status: done
 from: project-lead
 to: game-data
+lead:
 epic: enemies
 milestone: mvp
 user_facing_text: no

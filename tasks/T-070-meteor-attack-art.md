@@ -4,6 +4,7 @@ title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
 status: blocked
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

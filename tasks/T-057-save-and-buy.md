@@ -4,6 +4,7 @@ title: Saving coins and upgrade levels, and buying an upgrade
 status: open
 from: project-lead
 to: game-data
+lead:
 epic: garage
 milestone: mvp
 user_facing_text: no

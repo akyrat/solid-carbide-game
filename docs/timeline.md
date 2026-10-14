@@ -1035,3 +1035,28 @@ Entry format:
 - Decision or change: the board playtested it and marked it done, then asked for the merge. The car starts every run with the gun: it fires only with an enemy in range, every 1.26 s at tier 1, closest enemy first (the Unity rule), bullets dealing 2 damage through `take_damage`; all 8 tiers can be applied from code (offering them is T-043). Placeholder bullets: a cyan dot with a white core. It also adds the shared weapon plumbing (`run.weapons`, `weapon.gd`): every weapon extends `weapon.gd` and is listed in `WEAPON_SCRIPTS`; targets are any node in the "enemies" group with `take_damage()`, so the kaiju is shot too. QA round 1: all 7 pass. Left for playtests: bullet size and the wait before the first shot.
 - Documents touched: `docs/weapons.md`, `game/README.md`
 - Tasks: T-041 (done)
+
+## 2026-10-14: T-127 done: named Project Lead sessions and ticket owners
+- Decision or change: the board asked this instance to merge T-127, which another instance had built, QA'd (round 1, all 8 pass) and marked done on its branch but not merged. Each Project Lead session now gets a short name from the board (`python tools/board_inbox.py name <session id> <Name>`); tickets get a `lead:` header line naming their owner, set only through `task_status.py --lead`; the inbox is append-only with a read position per session, so every session sees the board's drags on its own and unowned tickets and never another's; `board_inbox.py watch` replaces the old tail-and-`take_inbox()` monitor; the task board shows an owner label on cards and in the Builds tab, with an owner filter. One merge conflict in `tasks/README.md` (both sides added text; both kept). T-128 to T-133, created on master after T-127 branched, have no `lead:` line yet; they count as unowned and the script adds the line when a session claims them. Next: the board's message-on-move idea builds on this.
+- Documents touched: `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-127 (done)
+
+## 2026-10-14: Minion animation, polish animations, dev settings, the dev timer
+- Decision or change: the board kept the T-068 sample lizard as the base and wants it animated walking on all fours in 8 directions (5 drawn, 3 mirrored) with 7 walk frames each (about 37 generations in all); next step with its go: the 8 rotations and a 7-frame walk in one direction for review (about 9). Polish for the MVP, once it is playable end to end: a minion damage animation, and minions that bump into each other fall down, get up and carry on (new tickets T-134, behaviour with a placeholder, and T-135, its art). Settings exposed for playtests and development go under an internal dev flag players never see. T-045 sent back to add a dev timer setting (the run clock's minutes and seconds at the start) to fast-forward to the boss, replacing its early-kaiju switch. This Project Lead session is named Enemies.
+- Documents touched: `docs/enemies.md`, `docs/visual-style.md`, `docs/hud-and-menus.md`
+- Tasks: T-068, T-134, T-135, T-045
+
+## 2026-10-14: The board's answers on the coin, combo switch, flames, kaiju and gun
+- Decision or change: T-072's coin sample is fixed by free scripts (outline, smaller, stray pixels removed) and the hit, death and car damage effects are drawn by script, with no more PixelLab calls. T-085's code-level on/off switch is enough for now. The flamethrower keeps the drift smoke showing. The flames hit the kaiju on any overlap with its body (minions keep the centre rule); folded into T-042's fit, with the kaiju's body size from T-045. The kaiju walks round buildings, as built. The gun's bullet size and first-shot wait are fine as built.
+- Documents touched: `docs/weapons.md`, `docs/enemies.md`
+- Tasks: T-072, T-085, T-042, T-045
+
+## 2026-10-14: T-085 done: the combo raises minion spawning
+- Decision or change: the board playtested it ("works fine") and asked for the merge. The minion count follows the combo live, through `ComboData.spawn_multiplier` (up to about 1.75 times at the top combo), on top of the slow growth over the run; a minion's hit cuts the combo, so the extra minions push it back down. Switch: `combo_raises_spawning` in `minion_spawner.gd`, on by default (the board: a code-level switch is enough for now). QA round 1: all 4 pass.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-085 (done)
+
+## 2026-10-14: T-136 done: a note with every drag on the task board
+- Decision or change: the board wants to give feedback from the task board without going to a Claude terminal. Dropping a card on another column now opens a small box for an optional note (Enter moves, Shift+Enter adds a line, Esc cancels and the card stays); the note travels with the move to the ticket's owner session (the watcher prints it as `(note: ...)`) and is added to the ticket's result notes. A refused move keeps the box open with the note and the reason. The note path from the server to the watcher already existed (the detail view's "Note for the move"); only the drag skipped it. Tooling, merged after QA: round 1, all 5 pass. This instance is named "Tools" (T-127).
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-136 (done)

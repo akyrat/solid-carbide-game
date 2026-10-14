@@ -4,6 +4,7 @@ title: The car in 32 directions, built from the approved 16 (PixelLab)
 status: open
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: final-release
 user_facing_text: no

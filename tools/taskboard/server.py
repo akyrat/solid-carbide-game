@@ -10,8 +10,9 @@ so it is normally already running. BOARD_PORT changes the port.
 The task files are the board's only data: every refresh reads tasks/ and the open task
 branches (taskboard_sync.tickets_now), so the board can't fall behind. A drag runs
 task_status.move() with by="board", so the workflow rules apply to the board too; a refused
-move is shown on the page with its reason. Each move the board makes is also written to
-.board/board-inbox.jsonl, which the hooks hand to the Project Lead.
+move is shown on the page with its reason. Each move the board makes is also appended to
+.board/board-inbox.jsonl, which is never emptied: each Project Lead session reads it with its own
+cursor (tools/board_inbox.py), through the hooks and its watcher.
 
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
@@ -135,6 +136,7 @@ def builds(root=None):
             "ticket_id": task_id,
             "ticket_title": t["title"] if t else "",
             "ticket_status": t["status"] if t else "",
+            "lead": t["lead"] if t else "",
             "has_project": project.is_file(),
         })
     return entries

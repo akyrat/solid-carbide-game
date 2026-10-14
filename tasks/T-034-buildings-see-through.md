@@ -4,6 +4,7 @@ title: Buildings turn see-through when the car is behind them
 status: done
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: mvp
 user_facing_text: no

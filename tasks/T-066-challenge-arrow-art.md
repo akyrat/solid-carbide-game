@@ -4,6 +4,7 @@ title: Art: the challenge arrows, blue and green
 status: open
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: final-release
 user_facing_text: no

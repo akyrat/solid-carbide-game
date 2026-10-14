@@ -4,6 +4,7 @@ title: Garage upgrade: acceleration applied to the car at the start of a run
 status: blocked
 from: project-lead
 to: driving-drift
+lead:
 epic: garage
 milestone: mvp
 user_facing_text: no

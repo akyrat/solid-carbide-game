@@ -4,6 +4,7 @@ title: The kaiju: arrives at the boss time, can be damaged at any time, its deat
 status: open
 from: project-lead
 to: enemy-behavior
+lead:
 epic: enemies
 milestone: mvp
 user_facing_text: no

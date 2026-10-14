@@ -4,6 +4,7 @@ title: A Builds tab on the task board that opens each worktree's game in Godot
 status: done
 from: project-lead
 to: project-lead
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no
