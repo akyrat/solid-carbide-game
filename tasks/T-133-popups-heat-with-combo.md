@@ -1,7 +1,7 @@
 ---
 id: T-133
 title: Trick popups heat up with the combo at x2, x3 and x4
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-131-combo-heat-levels.md, tasks/T-084-trick-popup-art.md, tasks/T-125-popups-follow-the-car.md, game/scripts/hud/trick_popups.gd, game/scripts/hud/trick_popup_art.gd]
 files_expected_to_change: [game/scripts/hud/trick_popups.gd, game/scripts/hud/trick_popup_art.gd, their tests, a screenshot fixture, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
