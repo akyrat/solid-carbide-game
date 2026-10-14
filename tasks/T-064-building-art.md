@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -183,4 +183,4 @@ Also checked: the branch merges into current `master` without conflicts (`git me
 ### The board's redesign, 2026-10-14
 
 After the dense narrow towers were ready to playtest, the board redesigned the buildings (see the Description). The first round's work stays on `task/T-064-building-art` and in `art-archive/T-064/` there; the next round decides whether to start a fresh branch from master or reuse that one, and keeps the archive either way.
-
+- 2026-10-14, open → in-progress: board started it (2026-10-15): plan first
