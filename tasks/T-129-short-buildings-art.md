@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: planning
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -87,3 +87,16 @@ Assumes T-064's redesign: 2 by 2 slots per 30 by 30 block, each slot 15 by 15 un
 
 **Recommended:** the piece-based approach above, sample first (5 generations), then the full set (9 more), 14 in all, with nothing called until the board gives the go.
 - 2026-10-14, in-progress → planning: board: hold until the skyscraper sample (T-064) is approved; it reuses its wall method
+- 2026-10-14, planning → in-progress: board: go for the sample (5 generations), palette B, built on T-064's branch
+
+### Sample calls (2026-10-14, board's go for the sample only: variant A, 5 calls)
+
+Changes from the plan, from the T-064 branch: built on `task/T-064-building-art` (2 by 2 slots, `build_skyscrapers.py`, pavement script); palette B (steel and glass) via `city_palettes.py`'s recolour, so the raw pieces are generated with the T-064 29-colour palette image and mapped to B afterwards, as the skyscrapers are; the body uses T-064's footprint (12 by 12 units in the 15 by 15 slot, 1.5 units of pavement ring) instead of the plan's 11, so a facade is 384 px wide (still under PixelLab's 400 limit). Balance before: 4943 of 5000 generations, 0.00 USD credits.
+
+Planned calls (all `POST /create-image-pixflux`, 600 s timeout, one try each; bodies in `art-archive/T-129/requests/`; expected 1 generation each, 5 in all; stop if one costs more than 2 or the sample passes 8):
+1. a_facade_left, 384x160, seed 129001, outline lineless, view side, direction south, opaque: "flat front view of the left wall of a five-floor Tokyo-style shop and office building at night, dark navy concrete, rows of mostly dim windows, a few broken, light cracks, a pink and cyan neon shop sign on the ground floor with abstract marks and no letters, glow drawn in pixels, filling the whole image, no sky, no ground, retro pixel art"
+2. a_facade_right, same prompt with "right wall", seed 129002.
+3. a_prop_tank, 96x96, seed 129003, no_background, selective outline, high top-down isometric: "a rooftop water tank on short legs seen from above, rusty dark navy cylinder with a conical lid, pipes, low and wide, lying directly on the roof, pixel art"
+4. a_prop_ac, 96x96, seed 129004: "a group of three rooftop air-conditioning units with fans, grey-blue boxes with pipes and vents, low and wide, lying directly on the roof, pixel art"
+5. a_prop_rubble, 96x96, seed 129005: "a low heap of rubble and broken concrete slabs with bent rebar, low and wide, lying directly on the ground, pixel art"
+Common: text_guidance_scale 8, detailed shading, highly detailed, `color_image` = `art-archive/T-064/palette.png`, negative "text, letters, words, logo, red, perspective, gradient, blur, sky, ground, street, car, people, fire" (props add "base plate, platform, pedestal, shadow, building, wall").
