@@ -1,7 +1,7 @@
 ---
 id: T-131
 title: Combo heats up at x2, x3 and x4, with comic-style combo and Hype Lv text and a burning likes bar
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, game/README.md, game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, game/scripts/hud/trick_popup_art.gd, game/data/combo.json, tasks/T-116-hide-combo-at-no-combo.md]
 files_expected_to_change: [game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, new HUD effect script(s) under game/scripts/hud/, tests under game/tests/unit/hud/, a screenshot fixture under game/tests/fixtures/, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -49,16 +49,16 @@ Board review files: screenshots made by the step fixture (listed in the result n
 
 ## Acceptance criteria
 
-- [x] The combo counter shows four distinct looks, chosen from the multiplier as shown at two decimals: base (above x1.0 and below x2.00), step 1 (x2.00 to below x3.00), step 2 (x3.00 to below x4.00), step 3 (x4.00 and up). A GUT test sets the multiplier to values on each side of each threshold (for example 1.99, 2.00, 2.99, 3.00, 3.99, 4.00, 6.00) and checks the step the HUD reports. (QA: pass: test_step_from_the_multiplier_at_two_decimals checks 1.99/2.00/2.99/3.00/3.99/4.00/6.00 on the HUD, plus 1.994/1.996 rounding)
-- [x] Each step is visibly bigger or more intense than the one before: a test checks the counter's size (font size or scale) grows from base to step 1 to step 2 to step 3, and the step fixture's screenshots show four different looks. (QA: pass: test_each_step_is_bigger_than_the_one_before, font 30/36/42/50 and on-screen width growing; the four screenshots show four different looks: pink, bigger yellow, bigger orange with glow ring, biggest white-hot)
-- [x] The likes bar's fire shows only at step 3: a test checks the fire is off below x4.00 and on at x4.00 and x6.00, and the step 3 screenshot shows flames along the likes bar. (QA: pass: test_fire_only_at_the_top_step; step 3 screenshot shows flames along the bar, none at base/step 1/step 2)
-- [x] When the combo drops (drain, collision cut, back to x1.0) the look follows it down: a test raises the combo to x4+, lowers it through each step, and checks the step and the fire at each point; at x1.0 the counter is hidden as before (T-116). (QA: pass: test_the_look_follows_the_combo_down walks 6.0 to 1.0 checking step, fire and the counter hidden at x1.0; test_a_collision_cuts_the_heat)
-- [x] The combo counter, "Likes" and "Hype Lv {level}" use the Bangers font with smoothing off, and their words are unchanged apart from capitals (checked against T-048 and T-082 text in a test). (QA: pass: test_comic_font_with_the_words_unchanged, Bangers with antialiasing none on all three labels, T-048/T-082 words unchanged)
-- [x] No part of the effects uses Redgull red: a test samples the fire's and the counter's colours (or the colours in the code that draws them) and finds none within the Redgull red range the existing art tests use (for example `test_trick_popup_art.gd`). (QA: pass: test_no_redgull_red over 30 animation frames; my own pixel scan of the four screenshots' bottom HUD found 0 red pixels outside the heart)
-- [x] The layout still holds: the existing `test_hud_layout.gd` and `test_hud_combo_hidden.gd` pass unchanged, and at step 3 the counter and the "Likes / Hype Lv" row stay inside the screen and do not overlap each other at 1152x648, 1280x720, 1920x1080 and 1024x576. (QA: pass: test_hud_layout.gd and test_hud_combo_hidden.gd unchanged on the branch and passing; test_layout_holds_at_the_top_step at the four sizes; my step 3 screenshots at 1024x576, 1152x648, 1280x720 and 1920x1080 show no overlap and everything on screen)
-- [x] The effects stop moving while the game is paused (a test advances time while paused and checks the animation state does not change). (QA: pass: test_effects_stand_still_while_paused)
-- [x] It works in a run started from the main menu, and the whole GUT suite passes. (QA: pass: test_in_a_run_started_from_the_main_menu; the fixture runs start from the main menu; full GUT suite 536/536)
-- [x] `docs/hud-and-menus.md` (Content, "The HUD") and `game/README.md` (the HUD section) describe the steps, the thresholds, the fire and the fixture. (QA: pass: both describe the steps, thresholds, fire and fixture)
+- [x] The combo counter shows four distinct looks, chosen from the multiplier as shown at two decimals: base (above x1.0 and below x2.00), step 1 (x2.00 to below x3.00), step 2 (x3.00 to below x4.00), step 3 (x4.00 and up). A GUT test sets the multiplier to values on each side of each threshold (for example 1.99, 2.00, 2.99, 3.00, 3.99, 4.00, 6.00) and checks the step the HUD reports. (QA: pass) test_step_from_the_multiplier_at_two_decimals checks 1.99/2.00/2.99/3.00/3.99/4.00/6.00 on the HUD, plus 1.994/1.996 rounding
+- [x] Each step is visibly bigger or more intense than the one before: a test checks the counter's size (font size or scale) grows from base to step 1 to step 2 to step 3, and the step fixture's screenshots show four different looks. (QA: pass) test_each_step_is_bigger_than_the_one_before, font 30/36/42/50 and on-screen width growing; the four screenshots show four different looks: pink, bigger yellow, bigger orange with glow ring, biggest white-hot
+- [x] The likes bar's fire shows only at step 3: a test checks the fire is off below x4.00 and on at x4.00 and x6.00, and the step 3 screenshot shows flames along the likes bar. (QA: pass) test_fire_only_at_the_top_step; step 3 screenshot shows flames along the bar, none at base/step 1/step 2
+- [x] When the combo drops (drain, collision cut, back to x1.0) the look follows it down: a test raises the combo to x4+, lowers it through each step, and checks the step and the fire at each point; at x1.0 the counter is hidden as before (T-116). (QA: pass) test_the_look_follows_the_combo_down walks 6.0 to 1.0 checking step, fire and the counter hidden at x1.0; test_a_collision_cuts_the_heat
+- [x] The combo counter, "Likes" and "Hype Lv {level}" use the Bangers font with smoothing off, and their words are unchanged apart from capitals (checked against T-048 and T-082 text in a test). (QA: pass) test_comic_font_with_the_words_unchanged, Bangers with antialiasing none on all three labels, T-048/T-082 words unchanged
+- [x] No part of the effects uses Redgull red: a test samples the fire's and the counter's colours (or the colours in the code that draws them) and finds none within the Redgull red range the existing art tests use (for example `test_trick_popup_art.gd`). (QA: pass) test_no_redgull_red over 30 animation frames; my own pixel scan of the four screenshots' bottom HUD found 0 red pixels outside the heart
+- [x] The layout still holds: the existing `test_hud_layout.gd` and `test_hud_combo_hidden.gd` pass unchanged, and at step 3 the counter and the "Likes / Hype Lv" row stay inside the screen and do not overlap each other at 1152x648, 1280x720, 1920x1080 and 1024x576. (QA: pass) test_hud_layout.gd and test_hud_combo_hidden.gd unchanged on the branch and passing; test_layout_holds_at_the_top_step at the four sizes; my step 3 screenshots at 1024x576, 1152x648, 1280x720 and 1920x1080 show no overlap and everything on screen
+- [x] The effects stop moving while the game is paused (a test advances time while paused and checks the animation state does not change). (QA: pass) test_effects_stand_still_while_paused
+- [x] It works in a run started from the main menu, and the whole GUT suite passes. (QA: pass) test_in_a_run_started_from_the_main_menu; the fixture runs start from the main menu; full GUT suite 536/536
+- [x] `docs/hud-and-menus.md` (Content, "The HUD") and `game/README.md` (the HUD section) describe the steps, the thresholds, the fire and the fixture. (QA: pass) both describe the steps, thresholds, fire and fixture
 
 ## Result notes
 
