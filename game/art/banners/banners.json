@@ -1,0 +1,167 @@
+{
+ "task": "T-130",
+ "what": "Kaiju alert signs in road-sign style (board's quick tuning, 2026-10-14): head in a warning triangle, body in a prohibition circle; thick traffic-sign red outline, plain white inside, solid black kaiju silhouette only. Building banners front-on and sheared onto a wall (2:1), and pavement signs on a post. No letters.",
+ "made_by": "game/tools/build_kaiju_banners.py (a script; no PixelLab call, board 2026-10-14). Byte-identical every run.",
+ "scale_note": "32 art px per unit; drawn in the game at scale 0.5 like the car and the ground, texture_filter nearest",
+ "palette": {
+  "R": [
+   204,
+   18,
+   28
+  ],
+  "W": [
+   250,
+   250,
+   250
+  ],
+  "K": [
+   10,
+   10,
+   14
+  ],
+  "P": [
+   64,
+   70,
+   100
+  ],
+  "Q": [
+   100,
+   108,
+   146
+  ]
+ },
+ "red_note": "SIGN_RED is the only red outside Redgull's look allowed in the art (Visual style, Decisions), only on these signs",
+ "rules": "no anti-aliasing, no semi-transparent pixels, transparent background, only the sign red, white, black and the post greys, no letters",
+ "check": "python game/tools/build_kaiju_banners.py check",
+ "archive": "art-archive/T-130/: previews; first-version/ holds the first (neon) drawings",
+ "pixellab_calls": 0,
+ "status": "candidates for the board's review (T-130); not placed in the game yet (waits for T-064's skyscrapers)",
+ "files": [
+  {
+   "file": "kaiju_head_triangle_building_front.png",
+   "size": [
+    96,
+    84
+   ],
+   "colours": 3,
+   "kind": "building",
+   "design": "head",
+   "shape": "triangle",
+   "units": [
+    3,
+    2.62
+   ],
+   "anchor_px": [
+    0,
+    83
+   ],
+   "anchor_note": "bottom-left corner of the sign",
+   "form": "front-on"
+  },
+  {
+   "file": "kaiju_head_triangle_building_wall.png",
+   "size": [
+    96,
+    131
+   ],
+   "colours": 3,
+   "kind": "building",
+   "design": "head",
+   "shape": "triangle",
+   "units": [
+    3,
+    2.62
+   ],
+   "anchor_px": [
+    0,
+    83
+   ],
+   "anchor_note": "bottom-left corner of the sign (the column the slope starts from)",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)"
+  },
+  {
+   "file": "kaiju_head_triangle_sign.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 5,
+   "kind": "pavement",
+   "design": "head",
+   "shape": "triangle",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  },
+  {
+   "file": "kaiju_body_circle_building_front.png",
+   "size": [
+    96,
+    96
+   ],
+   "colours": 3,
+   "kind": "building",
+   "design": "body",
+   "shape": "circle",
+   "units": [
+    3,
+    3.0
+   ],
+   "anchor_px": [
+    0,
+    95
+   ],
+   "anchor_note": "bottom-left corner of the sign",
+   "form": "front-on"
+  },
+  {
+   "file": "kaiju_body_circle_building_wall.png",
+   "size": [
+    96,
+    143
+   ],
+   "colours": 3,
+   "kind": "building",
+   "design": "body",
+   "shape": "circle",
+   "units": [
+    3,
+    3.0
+   ],
+   "anchor_px": [
+    0,
+    95
+   ],
+   "anchor_note": "bottom-left corner of the sign (the column the slope starts from)",
+   "form": "sheared onto a wall, sloping down to the right (flip horizontally for the other wall)"
+  },
+  {
+   "file": "kaiju_body_circle_sign.png",
+   "size": [
+    48,
+    96
+   ],
+   "colours": 5,
+   "kind": "pavement",
+   "design": "body",
+   "shape": "circle",
+   "form": "upright board on a post",
+   "units": [
+    1.5,
+    3
+   ],
+   "anchor_px": [
+    24,
+    95
+   ],
+   "anchor_note": "bottom centre of the base, where the sign touches the pavement"
+  }
+ ]
+}

@@ -12,6 +12,8 @@ extends Node
 @export var car_at := Vector2(27, 60)
 ## The camera size (orthographic, half the visible height in units).
 @export var zoom := 20.0
+## Moves the picture (screen pixels, camera offset), to show a wall above the car (T-130).
+@export var camera_offset := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -29,6 +31,7 @@ func _ready() -> void:
 	run.sync_view()
 	run.car_sprite.reset_physics_interpolation()
 	run.camera.reset_physics_interpolation()
+	run.camera.offset = camera_offset
 	await get_tree().create_timer(0.5).timeout
 	var faded := []
 	for b in run.map.covering_buildings():

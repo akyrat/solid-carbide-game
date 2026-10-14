@@ -955,3 +955,8 @@ Entry format:
 - Decision or change: the board playtested the shorter buildings and approved them ("LGTM"). About one slot per block holds a low building (about 4.3 units) with a flat roof carrying water tanks, air conditioners, signs, antennas and a little rubble, in palette B, with the script pavement. 4 designs, each with a mirrored look; shop signs drawn by script as abstract marks with no letters. Each short building fades on its own when it covers the car, with an outline that follows its roof (QA round 1 caught it fading when the car was only behind it; fixed). PixelLab: 14 generations (5 sample, 9 full set); balance 4919 of 5000. Left for later if the board wants: design B's darker right wall reads almost blank, B and C look alike from a distance, and neighbouring blocks can repeat a design.
 - Documents touched: `game/README.md`
 - Tasks: T-129 (done)
+
+## 2026-10-15: T-130 done: the kaiju warning signs; the city redesign complete
+- Decision or change: the board playtested the alert signs and approved them ("LGTM"). Six road-style warning signs, drawn by script (no PixelLab): the kaiju's head in a red warning triangle and its body in a red prohibition circle, black silhouettes on white, using the board's traffic-sign red exception. Four hang on skyscraper walls about 3 units up and fade with their tower; two stand on block-corner pavements and never fade; none on roads, no collisions. With T-064 and T-129 this completes the board's 2026-10-14 city redesign. QA noted an older issue from T-064's depth order: near skyscrapers (z up to 146) can be drawn over the trick popups (z 100); the Project Lead proposed a small UI ticket to the board.
+- Documents touched: `game/README.md`
+- Tasks: T-130 (done)

@@ -1,7 +1,7 @@
 ---
 id: T-130
 title: Art: a few alert banners about the kaiju, on buildings and on the pavement
-status: in-progress
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's drawing of banners, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; every call had the board's go (QA: pass / fail)
-- [ ] Screenshots in a run show the banners on buildings and on the pavement, only a few on the map, none on the roads; any words are exactly T-128's approved text (QA: pass / fail)
-- [ ] The banners have no collisions, sit in the right depth order and fade with their building; T-034 and T-064's tests pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; every call had the board's go (QA: pass)
+- [ ] Screenshots in a run show the banners on buildings and on the pavement, only a few on the map, none on the roads; any words are exactly T-128's approved text (QA: pass)
+- [ ] The banners have no collisions, sit in the right depth order and fade with their building; T-034 and T-064's tests pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the city and judge the banners.
 
@@ -103,3 +103,31 @@ Colourways: cyan and pink, made by a free palette swap (never towards red). The 
 - Too many or too few banners: the count is data, not code.
 
 **Steps after the board's go:** (1) sample: one building banner (head, cyan) and one pavement sign (body, pink) built by script, previews and a screenshot on a T-064 block (free); (2) the board judges; (3) the other 6 sprites, the 6 placements, tests, README section "Alert banners". No PixelLab call at any step unless the board chooses the optional fallback.
+
+### Quick tuning
+
+- 2026-10-14 (board, word for word: "remove any details ... only the shape of the kaiju ... warning or forbidden signs for driving: red outline, simple white and black inside"): redrew as road signs by script, 0 PixelLab calls: head in a warning triangle (danger ahead; compact shape fits), body in a prohibition circle (wide round sign fits the long body and tail); thick traffic-sign red outline (204,18,28, the only red allowed, these signs only), white inside, solid black silhouette, no neon; 5 colours; 6 sprites (per design: building banner front-on, sheared, and pavement sign) in `game/art/banners/`; neon first version kept in `art-archive/T-130/first-version/`; previews `art-archive/T-130/signs_*.png`.
+
+### Placement (2026-10-14, after merging master with T-064 and T-129)
+
+- Placed 6 signs from `game/data/level/kaiju_signs.json` by `scripts/level/kaiju_signs.gd`: banners on skyscraper slots (block (0,0) slot (0,1) south; (3,1) slot (1,1) east; (2,0) slot (1,0) east; (1,3) slot (0,1) south), children of the slot art so they fade with it; signs at the corner of blocks (0,2) and (3,3), 0.75 units from the kerb (not 1.5: the pavement is 1.5 wide), z = front slot + 1, no fade. No collisions. Tests: `tests/unit/test_kaiju_signs.gd` (12); full GUT 523 pass; Python tool tests 235 pass. Screenshots in `art-archive/T-130/screenshots/`. 0 PixelLab calls, no spend.
+
+### QA round 1 (2026-10-14, QA/Integration): all 5 pass
+
+1. **Check script and sprite rules: pass.** `python game/tools/build_kaiju_banners.py check`: ALL RULES PASS (6 sprites). Independent pixel check of all 6 PNGs in `game/art/banners/`: RGBA, alpha only 0 or 255, transparent corners, 3 colours (building banners) or 5 (pavement signs). The only red is the sign red (204, 18, 28); it is 0.08 from the HUD heart red, so it relies on the board's exception in Visual style ("Exception to red-for-Redgull only": the kaiju alert signs only). A scan of every PNG under `game/art/` finds that red only in the 6 sign sprites. No letters, digits or glyphs (checked by eye in `signs_designs_dark_light_x4.png` and `signs_on_wall_dark_light_x4.png`). Rebuilding with `build` gives byte-identical files (git status clean).
+2. **PixelLab calls: pass.** No call made: `banners.json` says `pixellab_calls: 0` and "no PixelLab call", the build script does not import the PixelLab client, and no raw downloads are on the branch. The criterion is met because there was nothing to record or approve.
+3. **Screenshots: pass.** `art-archive/T-130/screenshots/`: `banner_beside` (circle banner on a skyscraper's +x wall, sheared to the wall's slope), `banner_south` (triangle on a +y wall), `sign_beside` (pavement sign on its post at a block corner, on the pavement, not the road), `banner_behind` (car behind the skyscraper, banner faded with it). Not shown in those: the whole map. QA took `qa_overview.png` (`mvp_map_overview_iso.tscn`): about 6 small signs over 12 blocks, all on blocks, none on a road. The data list has 6 entries (4 banners, 2 signs). There are no words, so T-128's text does not apply.
+4. **No collisions, depth, fade, older tests: pass.** Collision comparison with master: a script loads `mvp_map.tscn` in both folders and lists every collision object and shape with its position, size and layers. Both have 173 entries with the same hash. The banners are `Sprite2D` children of their slot's `Art` node (slot z 5, 107, 53, 92), all on skyscrapers (the test checks height >= 20). The pavement signs are in `Buildings/AlertSigns` at z 57 and 144, each one above its block's front slot (56, 143), under every nearer slot, and under the car's top z (146). Fade: `test_banner_fades_with_its_slot_and_pavement_signs_do_not` passes, and `banner_behind.png` shows it. T-034 (`test_see_through_map.gd`), T-064 and T-129 (`test_building_art.gd`, `test_boulder_art.gd`, `tools/test_build_skyscrapers.py`, `test_build_buildings.py`, `test_build_short_buildings.py`) all pass.
+5. **Full suites: pass.** GUT: 523 of 523 tests in 49 scripts. `game/tools`: 234 passed, 1 skipped (`test_build_building_atlas.py`, "atlas not built", skipped on master too). `tools`: 130 passed.
+
+**Deviations judged:**
+- Inset 0.75 instead of 1.5: correct. The pavement strip is 1.5 units wide (block edge 30, front slot ends at 28.5), so 1.5 would put the post on the building line, and 0.75 puts it in the middle of the pavement. The test checks that the post is on the strip and not on the road.
+- Pavement sign z set to the front slot's z + 1: sound. It draws over the wall behind the sign and under every nearer slot and the car (all three are tested). The level it shares is the one used for boulders and the car in front of that slot, and neither can be on the pavement corner.
+- The z bound in the test is `< map.top_z_index()`, not `< 100`: not weaker. Since T-064 the 48 slots reach z 146, so the plan's "below 100" no longer matched the scheme, and the car's top z is the bound that matters. No existing test was changed. The only edit outside the new files is an `@export camera_offset` (default zero) in the screenshot fixture `see_through_map_demo.gd`, which changes nothing in the tests.
+
+**Observations (not failures):**
+- `kaiju_signs.gd` does not refuse a short-building slot by itself. Only `test_banners_hang_on_skyscrapers_not_short_buildings` guards it, so if the board edits the JSON onto a short slot, that test catches it.
+- Already true before this task (since T-064): trick popups are drawn at z 100 in the world view, and the nearer slots (z up to 146) are above that, so near buildings can cover a popup. That now includes the sign at z 144. This is not in T-130's scope, and it is for the Project Lead to decide.
+- Godot's line-ending-only `.import` changes were left uncommitted.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 5 pass
+- 2026-10-14, needs-playtest → done: LGTM (board playtest, 2026-10-15)
