@@ -122,3 +122,4 @@ Written by the Asset Generation Agent (2026-10-14). Round 1: SAMPLE ONLY; the bo
 - **Tests:** full GUT suite 584 of 584 passing (before the one-constant LIFT tweak 3 to 5); all Python tool tests 246 OK (1 skipped).
 - **Screenshot:** art-archive/T-068/screenshot_minions.png (minions around the car, facing the way they walk). Review images: review_all8_directions_dark/light .gif and .png (all 8 directions animated), and earlier ones.
 - **Honest notes:** the walk is a lively trot with short legs; the S view's body turns a little. N view's head turns slightly. Mirrors make the SW/W/NW lizards face the same way light falls reversed; judged in a playtest.
+- **Tests after the LIFT tweak:** one run showed 583 of 584 (one failure I could not reproduce); two reruns gave 584 of 584 passing. I did not identify which test flaked.
