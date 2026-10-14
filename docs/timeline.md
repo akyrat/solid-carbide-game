@@ -1095,3 +1095,8 @@ Entry format:
 - Decision or change: tooling the player never meets, merged straight after QA. `run_tests.sh` and `run_tests.ps1` stop a run after 300 s (`GUT_TIME_LIMIT` changes it), killing only the Godot process they started, with a message naming the limit (`game/tools/check_time_limit.sh` shows it). Every test that wrote under `user://` (12, plus T-045's kaiju test) now uses `RunPaths.file(...)`, a per-run folder `user://test_runs/<pid>/` deleted after the run, so parallel runs from different folders no longer fail at random. QA round 1: all 5 pass; two full runs at once passed three times in a row.
 - Documents touched: `game/README.md`
 - Tasks: T-137 (done)
+
+## 2026-10-15: T-051 done: the level-up screen text
+- Decision or change: the board read the text ("text lgtm"). Heading "Redgull Sent a Gift Pack!", button "Take it", a card for getting the flamethrower and one per upgrade tier of each weapon (gun tiers 2 to 8, flamethrower tiers 2 to 8), and names for the two weapons: the gun is "Sponsor Special", the flamethrower "Hot Take Exhaust". The table is in T-051's result notes. QA round 1: all 4 pass; QA noted the gun's "20% faster" is 18 to 19% in practice and the flame's "area grows 20%" means 20% wider and deeper; the board kept the text as written. Now open: T-052, the screen.
+- Documents touched: none (the text lives in T-051's result notes)
+- Tasks: T-051 (done), T-052
