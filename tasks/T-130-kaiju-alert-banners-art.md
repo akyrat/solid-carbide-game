@@ -1,7 +1,7 @@
 ---
 id: T-130
 title: Art: a few alert banners about the kaiju, on buildings and on the pavement
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
