@@ -12,8 +12,12 @@ Usage (always this repo's copy, also from a task's branch folder, so open task b
   python C:/solid-carbide-game/tools/task_status.py T-012 in-qa [--note "text"]
       Moves the task. The note is added to its result notes with the date and the move.
 
+  python C:/solid-carbide-game/tools/task_status.py T-012 [in-progress] --lead Tools [--take-over]
+      Sets the task's owner (its lead: line) to a Project Lead session's name, with or without a
+      move in the same call. A task another session owns is refused unless --take-over is given.
+
 A task whose branch is open is changed in its branch folder (tasks/README.md, "Git branches").
-Exit codes: 0 moved (or shown), 1 move refused (the reason is printed), 2 usage error.
+Exit codes: 0 moved, claimed (or shown), 1 move or claim refused (the reason is printed), 2 usage error.
 """
 
 import json
@@ -150,10 +154,17 @@ def allowed(fields, text, folders):
 
 
 def set_field(text, key, value):
+    """The text with one header line set to `key: value` (just `key:` when the value is empty).
+    A missing line is added after the `to:` line, or at the end of the header."""
     newline = "\r\n" if "\r\n" in text else "\n"
     norm = text.replace("\r\n", "\n")
     match = tb.HEADER_RE.match(norm)
-    head = re.sub(rf"^{key}: .*$", f"{key}: {value}", match.group(1), count=1, flags=re.M)
+    line = f"{key}: {value}" if value else f"{key}:"
+    head, found = re.subn(rf"^{key}:.*$", lambda _: line, match.group(1), count=1, flags=re.M)
+    if not found:
+        head, after_to = re.subn(r"^(to:.*)$", lambda m: m.group(1) + "\n" + line, head, count=1, flags=re.M)
+        if not after_to:
+            head += "\n" + line
     return f"---\n{head}\n---\n{norm[match.end():]}".replace("\n", newline)
 
 
@@ -234,36 +245,83 @@ def move(task_id, new, note=None, folders=None, by="agent"):
     return out
 
 
+def claim_check(task_id, fields, name, take_over):
+    """Raises Refused when `name` may not become the task's lead; returns the current lead."""
+    if not isinstance(name, str) or not tb.NAME_RE.fullmatch(name):
+        raise Refused(f"Not a session name: {name!r}. A name is one short word: letters, digits, - or _.")
+    old = fields.get("lead", "") or ""
+    if old and old.casefold() != name.casefold() and not take_over:
+        raise Refused(f"{task_id} belongs to {old}. Leave it to that session, or add --take-over "
+                      "if the board wants this session to take it over.")
+    return old
+
+
+def claim(task_id, name, take_over=False, folders=None):
+    """Set a task's lead (the session that owns it); returns the lines to print. Raises Refused."""
+    folders = tb.task_folders() if folders is None else folders
+    with tb.file_lock(tb.STATE_DIR / "claims.lock"):
+        path, _ = find(task_id, folders)
+        text = path.read_bytes().decode("utf-8")
+        old = claim_check(task_id, tb.parse_header(text) or {}, name, take_over)
+        if old == name:
+            return [f"{task_id} already belongs to {name} ({path})"]
+        write(path, set_field(text, "lead", name))
+        log({"id": task_id, "lead": name, "from_lead": old, "file": str(path)})
+    return [f"{task_id}: lead {old or '(none)'} → {name} ({path})"]
+
+
 def show(task_id, folders=None):
     folders = tb.task_folders() if folders is None else folders
     path, folder = find(task_id, folders)
     text = path.read_text(encoding="utf-8")
     fields = tb.parse_header(text)
     ok, no = allowed(fields, text, folders)
-    lines = [f"{task_id}: {fields.get('status')} ({path})"]
+    lead = f", lead {fields['lead']}" if fields.get("lead") else ""
+    lines = [f"{task_id}: {fields.get('status')}{lead} ({path})"]
     lines += [f"  can move to {s}" + (f": {why}" if why else "") for s, why in ok.items()]
     lines += [f"  can't move to {s}: {why}" for s, why in no.items()]
     return lines
 
 
+def take_option(argv, flag):
+    """(value, argv without the flag and its value); value None if absent, False if it has none."""
+    if flag not in argv:
+        return None, argv
+    i = argv.index(flag)
+    if i + 1 >= len(argv):
+        return False, argv
+    return argv[i + 1], argv[:i] + argv[i + 2:]
+
+
 def main(argv=None):
     tb.utf8_output()
-    argv = sys.argv[1:] if argv is None else argv
-    note = None
-    if "--note" in argv:
-        i = argv.index("--note")
-        if i + 1 >= len(argv):
-            print("--note needs a text.", file=sys.stderr)
+    argv = list(sys.argv[1:] if argv is None else argv)
+    take_over = "--take-over" in argv
+    argv = [a for a in argv if a != "--take-over"]
+    note, argv = take_option(argv, "--note")
+    lead, argv = take_option(argv, "--lead")
+    for flag, value in (("--note", note), ("--lead", lead)):
+        if value is False:
+            print(f"{flag} needs a {'text' if flag == '--note' else 'session name'}.", file=sys.stderr)
             return 2
-        note = argv[i + 1]
-        argv = argv[:i] + argv[i + 2:]
-    if len(argv) not in (1, 2) or not re.fullmatch(r"T-\d+", argv[0]):
+    if len(argv) not in (1, 2) or not re.fullmatch(r"T-\d+", argv[0]) or (take_over and lead is None):
         print(__doc__, file=sys.stderr)
         return 2
     try:
-        lines = show(argv[0]) if len(argv) == 1 else move(argv[0], argv[1], note)
+        if lead is None:
+            lines = show(argv[0]) if len(argv) == 1 else move(argv[0], argv[1], note)
+        elif len(argv) == 1:
+            lines = claim(argv[0], lead, take_over)
+        else:
+            folders = tb.task_folders()
+            claim_check(argv[0], header(find(argv[0], folders)[0]), lead, take_over)   # refuse before moving
+            lines = move(argv[0], argv[1], note, folders=folders)
+            lines += claim(argv[0], lead, take_over, folders=folders)
     except Refused as e:
         print(f"Refused. {e}", file=sys.stderr)
+        return 1
+    except TimeoutError as e:
+        print(f"Refused. Try again: {e}.", file=sys.stderr)
         return 1
     print("\n".join(lines))
     return 0

@@ -4,6 +4,7 @@ title: Board reworks the short GDD's design pillars
 status: open
 from: project-lead
 to: board
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

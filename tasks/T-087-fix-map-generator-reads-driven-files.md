@@ -4,6 +4,7 @@ title: Fix: the map generator reads the drivability check's output as sketches
 status: done
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: mvp
 user_facing_text: no

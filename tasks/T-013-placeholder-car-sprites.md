@@ -4,6 +4,7 @@ title: Simple placeholder car sprites in 16 directions, drawn by a script (no Pi
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

@@ -4,6 +4,7 @@ title: The garage screen: plain list of upgrades with buy buttons
 status: blocked
 from: project-lead
 to: ui
+lead:
 epic: garage
 milestone: mvp
 user_facing_text: yes

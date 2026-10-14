@@ -15,8 +15,9 @@ extends Node
 ## fewer are around, one spawns every spawn_interval_seconds, at a random
 ## point spawn_margin_units beyond the edge of the visible screen, on the map
 ## and clear of buildings and boulders. `spawn_multiplier` is the hook for the
-## combo's extra spawning (T-085 sets it from RunState.combo_spawn_multiplier());
-## it stays 1.0 until then.
+## combo's extra spawning (T-085): minions_wanted_now() sets it from
+## RunState.combo_spawn_multiplier() each time, or to 1.0 when
+## `combo_raises_spawning` is false (the board's playtest switch).
 ##
 ## Minions that fall a whole screen behind the visible screen (the car has
 ## driven away from them) are removed without dropping coins, and the spawner
@@ -52,8 +53,13 @@ signal minion_killed(minion: Node, coins: int)
 
 ## False stops spawning and moving (the run scene's switch, for tests).
 var enabled := true
-## The combo's extra spawning (T-085 wires it): multiplies minions_wanted.
+## The combo's extra spawning: multiplies minions_wanted. Set by
+## minions_wanted_now() (T-085); 1.0 with no combo or with the switch off.
 var spawn_multiplier := 1.0
+## The on/off switch for the combo's extra spawning (T-085; Enemies, Decisions).
+## On by default. Set false in code (here, or run.minions.combo_raises_spawning
+## from a test or a playtest scene) to judge the game without it.
+var combo_raises_spawning := true
 ## Random numbers for spawn points and coin drops. Seed it for tests.
 var rng := RandomNumberGenerator.new()
 var data: EnemyData
@@ -136,8 +142,9 @@ func _physics_process(delta: float) -> void:
 
 
 ## How many minions are wanted now: EnemyData.minions_wanted() at the run's
-## time, times spawn_multiplier.
+## time, times the combo's spawn multiplier (1.0 when the switch is off).
 func minions_wanted_now() -> int:
+	spawn_multiplier = state.combo_spawn_multiplier() if combo_raises_spawning and state != null else 1.0
 	var t: float = state.time_elapsed() if state != null else 0.0
 	return data.minions_wanted(t, spawn_multiplier)
 

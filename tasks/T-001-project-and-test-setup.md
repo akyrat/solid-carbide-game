@@ -4,6 +4,7 @@ title: Set up the Godot project, headless runner and test suite
 status: done
 from: project-lead
 to: qa-integration
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

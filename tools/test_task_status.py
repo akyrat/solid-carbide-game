@@ -20,6 +20,7 @@ sys.path.insert(0, str(TOOLS))
 
 import taskboard_sync as tb  # noqa: E402
 import task_status as ts  # noqa: E402
+import board_inbox as bi  # noqa: E402
 
 sys.path.insert(0, str(TOOLS / "taskboard"))
 import server  # noqa: E402
@@ -30,15 +31,16 @@ _spec.loader.exec_module(gate)
 
 
 def task(tid, status="open", depends_on="", qa_rounds=0, criteria=("- [ ] It works (QA: pass / fail)",),
-         notes="Written by the agent when it finishes.", review=None):
+         notes="Written by the agent when it finishes.", review=None, lead=None):
     review_line = f"\nThe board's review: {review}\n" if review else ""
+    lead_line = "" if lead is None else ("lead:\n" if not lead else f"lead: {lead}\n")
     return f"""---
 id: {tid}
 title: Task {tid}
 status: {status}
 from: project-lead
 to: ui
-epic: hud-menus
+{lead_line}epic: hud-menus
 milestone: mvp
 depends_on: [{depends_on}]
 model: sonnet
@@ -86,6 +88,9 @@ class Base(unittest.TestCase):
 
     def status(self, tid):
         return tb.parse_header((self.tasks / f"{tid}-test.md").read_text(encoding="utf-8"))["status"]
+
+    def lead(self, tid):
+        return tb.parse_header((self.tasks / f"{tid}-test.md").read_text(encoding="utf-8")).get("lead")
 
     def move(self, tid, new, note=None):
         return ts.move(tid, new, note, folders={})
@@ -211,6 +216,83 @@ class StatusRules(Base):
         self.assertEqual((entry["id"], entry["from"], entry["to"]), ("T-001", "open", "blocked"))
 
 
+class Lead(Base):
+    """python tools/task_status.py T-NNN [status] --lead <Name> [--take-over]"""
+
+    def main(self, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = ts.main(list(argv))
+        return code, out.getvalue() + err.getvalue()
+
+    def test_sets_an_empty_owner(self):
+        self.put("T-001", lead="")
+        code, text = self.main("T-001", "--lead", "Tools")
+        self.assertEqual(code, 0, text)
+        self.assertEqual((self.lead("T-001"), self.status("T-001")), ("Tools", "open"))
+        entry = json.loads(ts.LOG.read_text(encoding="utf-8").splitlines()[-1])
+        self.assertEqual((entry["id"], entry["lead"], entry["from_lead"]), ("T-001", "Tools", ""))
+
+    def test_adds_the_line_when_a_task_file_has_none(self):
+        path = self.put("T-001")
+        self.assertIsNone(self.lead("T-001"))
+        self.assertEqual(self.main("T-001", "--lead", "Tools")[0], 0)
+        self.assertEqual(self.lead("T-001"), "Tools")
+        self.assertIn("to: ui\nlead: Tools\nepic:", path.read_text(encoding="utf-8"))
+
+    def test_with_a_status_move_in_the_same_call(self):
+        self.put("T-001", lead="")
+        code, text = self.main("T-001", "in-progress", "--lead", "Tools")
+        self.assertEqual(code, 0, text)
+        self.assertEqual((self.lead("T-001"), self.status("T-001")), ("Tools", "in-progress"))
+
+    def test_refuses_a_different_owner_without_take_over(self):
+        self.put("T-001", lead="Camera")
+        code, text = self.main("T-001", "--lead", "Tools")
+        self.assertEqual(code, 1)
+        self.assertIn("belongs to Camera", text)
+        self.assertIn("--take-over", text)
+        self.assertEqual(self.lead("T-001"), "Camera")
+
+    def test_a_refused_claim_does_not_move_the_task(self):
+        self.put("T-001", lead="Camera")
+        self.assertEqual(self.main("T-001", "in-progress", "--lead", "Tools")[0], 1)
+        self.assertEqual((self.lead("T-001"), self.status("T-001")), ("Camera", "open"))
+
+    def test_a_refused_move_does_not_claim(self):
+        self.put("T-001", lead="")
+        self.assertEqual(self.main("T-001", "done", "--lead", "Tools")[0], 1)
+        self.assertEqual((self.lead("T-001"), self.status("T-001")), ("", "open"))
+
+    def test_take_over_accepts_a_different_owner(self):
+        self.put("T-001", lead="Camera")
+        code, text = self.main("T-001", "--lead", "Tools", "--take-over")
+        self.assertEqual(code, 0, text)
+        self.assertIn("Camera → Tools", text)
+        self.assertEqual(self.lead("T-001"), "Tools")
+
+    def test_claiming_again_is_fine(self):
+        self.put("T-001", lead="Tools")
+        code, text = self.main("T-001", "--lead", "Tools")
+        self.assertEqual(code, 0)
+        self.assertIn("already belongs to Tools", text)
+
+    def test_refuses_a_bad_name_and_usage_errors(self):
+        self.put("T-001", lead="")
+        self.assertEqual(self.main("T-001", "--lead", "two words")[0], 1)
+        self.assertEqual(self.main("T-001", "--lead")[0], 2)
+        self.assertEqual(self.main("T-001", "--take-over")[0], 2)
+        self.assertEqual(self.lead("T-001"), "")
+
+    def test_keeps_crlf_line_endings(self):
+        path = self.put("T-001", lead="")
+        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+        self.main("T-001", "--lead", "Tools")
+        self.assertNotIn(b"\r\r", path.read_bytes())
+        self.assertEqual(path.read_bytes().count(b"\n"), path.read_bytes().count(b"\r\n"))
+        self.assertIn(b"lead: Tools\r\n", path.read_bytes())
+
+
 class Hook(Base):
     def setUp(self):
         super().setUp()
@@ -243,6 +325,32 @@ class Hook(Base):
         new = str(self.tasks / "T-009-new.md")
         self.assertEqual(self.decision("Write", {"file_path": new, "content": task("T-009", status="blocked")}), "allow")
         self.assertEqual(self.decision("Write", {"file_path": new, "content": task("T-009", status="done")}), "deny")
+
+    def test_refuses_a_direct_lead_edit(self):
+        self.put("T-001", lead="")
+        edit = {"file_path": str(self.path), "old_string": "lead:\n", "new_string": "lead: Tools\n"}
+        self.assertEqual(self.decision("Edit", edit), "deny")
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_edit("Edit", edit)
+        self.assertIn("task_status.py T-001 --lead Tools", buf.getvalue())
+        ts.claim("T-001", "Tools", folders={})
+        edit = {"file_path": str(self.path), "old_string": "lead: Tools\n", "new_string": "lead:\n"}
+        self.assertEqual(self.decision("Edit", edit), "deny")
+
+    def test_adding_an_empty_lead_line_is_allowed(self):
+        edit = {"file_path": str(self.path), "old_string": "to: ui\n", "new_string": "to: ui\nlead:\n"}
+        self.assertEqual(self.decision("Edit", edit), "allow")
+
+    def test_a_new_task_starts_without_a_lead(self):
+        new = str(self.tasks / "T-009-new.md")
+        self.assertEqual(self.decision("Write", {"file_path": new, "content": task("T-009", lead="")}), "allow")
+        self.assertEqual(self.decision("Write", {"file_path": new, "content": task("T-009", lead="Tools")}), "deny")
+
+    def test_refuses_sed_on_a_lead_line(self):
+        cmd = {"command": "sed -i 's/lead:/lead: Tools/' tasks/T-001-test.md"}
+        self.assertEqual(self.decision("Bash", cmd), "deny")
+        self.assertEqual(self.decision("Bash", {"command": "python tools/task_status.py T-001 --lead Tools"}), "allow")
 
     def test_refuses_sed_on_a_status_line(self):
         cmd = {"command": "sed -i 's/status: open/status: done/' tasks/T-001-test.md"}
@@ -346,20 +454,28 @@ class LocalBoard(Base):
         self.assertNotEqual(self.call("/api/version")[1]["version"], before)
 
     def test_a_drag_moves_the_task_file_and_tells_the_project_lead(self):
+        bi.take("s1")   # the session's cursor starts at the end of the inbox
         code, body = self.move("T-001", "in-qa")
         self.assertEqual((code, body["ok"]), (200, True))
         self.assertEqual(self.status("T-001"), "in-qa")
         self.assertEqual(json.loads(ts.LOG.read_text(encoding="utf-8").splitlines()[-1])["by"], "board")
-        moves = gate.take_inbox()
-        self.assertEqual([(m["id"], m["from"], m["to"]) for m in moves], [("T-001", "in-progress", "in-qa")])
-        self.assertEqual(gate.take_inbox(), [])   # heard once
+        _, moves = bi.take("s1")
+        self.assertEqual([(m["id"], m["from"], m["to"]) for m, _ in moves], [("T-001", "in-progress", "in-qa")])
+        self.assertEqual(bi.take("s1")[1], [])   # heard once
+        self.assertEqual(len(bi.inbox_path().read_text(encoding="utf-8").splitlines()), 1)   # never emptied
 
     def test_a_drag_that_breaks_a_rule_is_refused_with_the_reason(self):
+        bi.take("s1")
         code, body = self.move("T-002", "in-progress")
         self.assertEqual(code, 409)
         self.assertIn("T-001 (in-progress)", body["error"])
         self.assertEqual(self.status("T-002"), "blocked")
-        self.assertEqual(gate.take_inbox(), [])
+        self.assertEqual(bi.take("s1")[1], [])
+
+    def test_tickets_and_builds_carry_the_lead(self):
+        ts.claim("T-001", "Tools", folders={})
+        leads = {t["id"]: t["lead"] for t in self.call("/api/tickets")[1]["tickets"]}
+        self.assertEqual(leads, {"T-001": "Tools", "T-002": ""})
 
     def test_cancelling_from_the_board_asks_for_a_note(self):
         self.assertIn("a note", self.move("T-002", "cancelled")[1]["error"])
@@ -387,6 +503,9 @@ class Handover(Base):
         tb.STATE_DIR.mkdir()
         (tb.STATE_DIR / "board-inbox.jsonl").write_text(json.dumps(
             {"id": "T-001", "from": "open", "to": "in-progress", "note": "", "at": "now"}) + "\n", encoding="utf-8")
+        bi.save("s1", {"cursor": 0, "name": "Tools"})
+        self.put("T-001", status="in-progress", lead="Tools")
+        self.data = {"session_id": "s1"}
 
     def run_hook(self, fn, *args):
         buf = io.StringIO()
@@ -395,14 +514,14 @@ class Handover(Base):
         return json.loads(buf.getvalue()) if buf.getvalue() else None
 
     def test_next_prompt_carries_the_moves(self):
-        out = self.run_hook(gate.hand_over, "UserPromptSubmit")
+        out = self.run_hook(gate.hand_over, "UserPromptSubmit", self.data)
         self.assertIn("T-001 open → in-progress", out["hookSpecificOutput"]["additionalContext"])
-        self.assertIsNone(self.run_hook(gate.hand_over, "UserPromptSubmit"))
+        self.assertIsNone(self.run_hook(gate.hand_over, "UserPromptSubmit", self.data))
 
     def test_stop_gives_one_more_turn_for_new_moves(self):
-        out = self.run_hook(gate.stop, {"stop_hook_active": False})
+        out = self.run_hook(gate.stop, {"stop_hook_active": False, **self.data})
         self.assertEqual(out["decision"], "block")
-        self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": False}))
+        self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": False, **self.data}))
 
     def test_a_move_to_planning_asks_for_the_open_questions(self):
         text = gate.describe_moves([{"id": "T-002", "from": "open", "to": "planning"}])
@@ -410,7 +529,12 @@ class Handover(Base):
         self.assertIn("planning, read the ticket and bring its open questions to the board", text)
 
     def test_stop_never_loops(self):
-        self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": True}))
+        self.assertIsNone(self.run_hook(gate.stop, {"stop_hook_active": True, **self.data}))
+
+    def test_the_message_for_an_owned_move_reads_as_before(self):
+        out = self.run_hook(gate.hand_over, "PostToolUse", self.data)
+        self.assertEqual(out["hookSpecificOutput"]["additionalContext"],
+                         gate.describe_moves([{"id": "T-001", "from": "open", "to": "in-progress", "note": ""}]))
 
 
 if __name__ == "__main__":

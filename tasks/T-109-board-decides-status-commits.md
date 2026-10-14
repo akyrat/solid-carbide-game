@@ -4,6 +4,7 @@ title: Board decides: should task_status.py commit each status change itself?
 status: done
 from: project-lead
 to: board
+lead:
 epic: tooling
 milestone: mvp
 user_facing_text: no

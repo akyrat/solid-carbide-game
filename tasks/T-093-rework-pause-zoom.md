@@ -4,6 +4,7 @@ title: Rework (T-015): zoom label, and see the zoom change while moving the slid
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

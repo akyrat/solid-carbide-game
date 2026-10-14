@@ -4,6 +4,7 @@ title: Art: the kaiju's green shield
 status: blocked
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: final-release
 user_facing_text: no

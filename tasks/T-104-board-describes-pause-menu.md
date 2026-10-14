@@ -4,6 +4,7 @@ title: Board describes the full pause menu: what it contains and how it looks
 status: open
 from: project-lead
 to: board
+lead:
 epic: hud-menus
 milestone: final-release
 user_facing_text: no

@@ -4,6 +4,7 @@ title: Garage numbers: 3 upgrades, about 10 levels each, prices and effects
 status: done
 from: project-lead
 to: game-data
+lead:
 epic: garage
 milestone: mvp
 user_facing_text: no

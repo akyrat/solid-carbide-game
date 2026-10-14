@@ -4,6 +4,7 @@ title: Art: the drift marks' tyre texture, drawn by script
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

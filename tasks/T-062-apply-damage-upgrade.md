@@ -4,6 +4,7 @@ title: Garage upgrade: damage bonus applied to the weapons
 status: blocked
 from: project-lead
 to: weapon-behavior
+lead:
 epic: garage
 milestone: mvp
 user_facing_text: no

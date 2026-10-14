@@ -4,6 +4,7 @@ title: The run: scene, 8-minute clock, car health, coins, win and loss
 status: done
 from: project-lead
 to: game-loop
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

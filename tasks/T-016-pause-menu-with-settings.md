@@ -4,6 +4,7 @@ title: Full pause menu with settings
 status: blocked
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: final-release
 user_facing_text: yes

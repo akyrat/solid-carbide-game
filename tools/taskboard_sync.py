@@ -10,10 +10,12 @@ commands that kept it filled, are gone (2026-10-12).
 A library, not a command: import it from tools/ (see tools/taskboard/server.py).
 """
 
+import contextlib
 import os
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -29,6 +31,7 @@ REVIEW_FILES_RE = re.compile(r"^Board review files:\s*(.+)$", re.M)
 NOTES_RE = re.compile(r"^## Result notes[ \t]*\n(.*)\Z", re.S | re.M)
 NOTES_PLACEHOLDER = "Written by the agent when it finishes."
 NOTES_MAX = 20000
+NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,29}")   # a Project Lead session's name, also a ticket's lead
 
 
 def parse_list(value):
@@ -77,6 +80,7 @@ def ticket(path, folder=""):
         "title": fields.get("title", ""),
         "status": fields.get("status", "open"),
         "to": fields.get("to", ""),
+        "lead": fields.get("lead", ""),
         "epic": fields.get("epic", ""),
         "milestone": fields.get("milestone", ""),
         "depends_on": fields.get("depends_on", []),
@@ -131,6 +135,37 @@ def tickets_now(tasks_dir=None, folders=None):
         if t:
             tickets.append(t)
     return tickets
+
+
+@contextlib.contextmanager
+def file_lock(path, timeout=5.0, stale=30.0):
+    """Hold a lock file while a short read-and-write runs, so two processes (hooks, the watcher,
+    the status script) never interleave. A lock older than `stale` seconds is left over from a
+    crash and is taken over. Raises TimeoutError if the lock stays held for `timeout` seconds."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            os.close(os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            break
+        except (FileExistsError, PermissionError):
+            try:
+                if time.time() - path.stat().st_mtime > stale:
+                    path.unlink()
+                    continue
+            except OSError:
+                continue
+            if time.monotonic() > deadline:
+                raise TimeoutError(f"{path} is locked")
+            time.sleep(0.02)
+    try:
+        yield
+    finally:
+        try:
+            path.unlink()
+        except OSError:
+            pass
 
 
 def utf8_output():
