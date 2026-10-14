@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's building drawing, tests, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass, rounds 1 and 2)
-- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; every call had the board's go (QA: pass, rounds 1 and 2)
-- [x] Screenshots in a run show short buildings with visible roofs and their pavements among the skyscrapers, and the see-through fade still working on them (QA: pass, round 2: the fade now matches the drawn art exactly; round 1 failed it: a short building also faded when the car was on the road behind it but not hidden by it)
-- [x] Collisions and the map layout are unchanged, and T-019, T-034 and T-064's tests pass (QA: pass, rounds 1 and 2)
-- [x] The full GUT suite and all Python tool tests pass (QA: pass, rounds 1 and 2)
+- [x] A check script shows every new sprite has a transparent background, no semi-transparent pixels, about 30 colours or fewer, and no Redgull red (QA: pass)
+- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; every call had the board's go (QA: pass)
+- [x] Screenshots in a run show short buildings with visible roofs and their pavements among the skyscrapers, and the see-through fade still working on them (QA: pass) (round 2; see QA round 2, item 3)
+- [x] Collisions and the map layout are unchanged, and T-019, T-034 and T-064's tests pass (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest the city and judge the short buildings.
 
@@ -167,3 +167,4 @@ What changed since round 1 (`git diff e96263b..7fb48be`): only `building_towers.
 5. **Tests: pass.** Full GUT suite by QA (`bash game/tools/run_tests.sh`, Godot 4.6.2): 511 of 511 pass, 48 scripts, `TESTS PASSED`. Python: `game/tools` 221 OK (1 skipped, as before), `tools` 130 OK.
 
 Not fails, still for the board's playtest: design B's second wall reads as a nearly blank panel (the agent explains why: the darker right-wall step merges B's dark window shades; a free script fix is possible if the board wants it); B and C look alike from a distance; "never two of the same design touching" is kept within a block only. Godot's line-ending-only `.import` changes were left uncommitted.
+- 2026-10-14, in-qa → needs-playtest: QA round 2: all 5 criteria pass; the short buildings' fade now matches the drawn art (691 of 2988 samples fade, 0 false, 0 missed); GUT 511/511, Python 221 + 130 OK
