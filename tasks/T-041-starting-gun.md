@@ -1,7 +1,7 @@
 ---
 id: T-041
 title: The starting gun: aims itself and fires at enemies in range
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 epic: weapons
@@ -13,7 +13,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/weapons/unity-weapons-report.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-044-minions.md, game/README.md]
 files_expected_to_change: [the weapon code and scenes, tests, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,13 +42,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test with no enemy in range shows the gun never fires, and with an enemy in range it fires at the interval in T-040's data (QA: pass / fail)
-- [ ] A test shows bullets go for the target the report's targeting rule picks (the rule is named in the result notes) and damage it by the data's amount (QA: pass / fail)
-- [ ] A test applies each upgrade tier and shows the changed values take effect (QA: pass / fail)
-- [ ] A test shows a new run starts with the base gun and no upgrades (QA: pass / fail)
-- [ ] A screenshot shows the car firing placeholder bullets at a minion (QA: pass / fail)
-- [ ] `docs/weapons.md` describes the built gun in Content, and `game/README.md` says how weapons plug into the run, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test with no enemy in range shows the gun never fires, and with an enemy in range it fires at the interval in T-040's data (QA: pass)
+- [x] A test shows bullets go for the target the report's targeting rule picks (the rule is named in the result notes) and damage it by the data's amount (QA: pass)
+- [x] A test applies each upgrade tier and shows the changed values take effect (QA: pass)
+- [x] A test shows a new run starts with the base gun and no upgrades (QA: pass)
+- [x] A screenshot shows the car firing placeholder bullets at a minion (QA: pass)
+- [x] `docs/weapons.md` describes the built gun in Content, and `game/README.md` says how weapons plug into the run, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -100,3 +100,22 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Upgrades can't be picked in a run yet (T-043/T-052), so the tiers are checked by the tests only.
 
 **Documents affected:** `docs/weapons.md`: Content only (new "The starting gun (built in task T-041)"; Summary, Decisions and Open questions unchanged). `game/README.md`: a new "Weapons" section, with one line each in "Folder layout" and "Collision layers".
+
+**QA/Integration Agent, 2026-10-14 (round 1): all 7 criteria pass.** Checked in `C:\solid-carbide-worktrees\T-041`.
+
+1. **Pass.** `test_never_fires_without_an_enemy_in_range` (a minion 0.5 units past the range: no shots), `test_fires_at_the_data_interval_with_an_enemy_in_range` (1.26 s, from `WeaponData.gun_at(1)`) and `test_checks_only_once_per_interval` all pass.
+2. **Pass.** The rule is named in the result notes (closest first, the report's section 2). `test_bullet_goes_for_the_closest_enemy_and_damages_it_by_the_data_amount` (the closest of three is hit for the data's damage, the others untouched), `test_volley_goes_round_the_enemies_closest_first` and `test_bullets_kill_a_minion_through_take_damage` pass.
+3. **Pass.** `test_every_tier_applies_the_data_values` compares tiers 1 to 8 with `WeaponData.gun_at()`; the bullet count (tiers 2 and 6), interval (3, 4, 7), range (5) and pierce (8) tests show each change taking effect in play.
+4. **Pass.** `test_new_run_starts_with_the_base_gun` and `test_new_run_from_the_main_menu_starts_with_the_base_gun` (tier 8, then a new run: tier 1 with base stats, no projectiles).
+5. **Pass.** `art-archive/T-041/screenshots/starting_gun.png` and `starting_gun_tier2.png` show the car with small cyan bullets heading for the green placeholder minions. The bullets are cyan and white with no Redgull red; the only red is the board-approved HUD heart.
+6. **Pass.** `git diff master...HEAD -- docs/weapons.md`: one new subsection, "The starting gun (built in task T-041)", inside `## Content`; Summary, Decisions and Open questions are unchanged. `game/README.md` has a new "Weapons" section ("How weapons plug into the run", targets, adding a weapon) plus one line each in "Folder layout" and "Collision layers".
+7. **Pass.** Full GUT suite (`bash game/tools/run_tests.sh`): 56 scripts, 600/600 passing, `TESTS PASSED`. Python: `game/tools`, 241 ran, OK (1 skipped); `tools`, 130 ran, OK.
+
+**Other checks:**
+- **Real run:** a temporary GUT test (deleted afterwards, not committed) started a run from the main menu with the minion spawner left on, the car standing still, at 4x time scale. Over about 37 s of game time the real spawner made 14 minions, the gun fired 9 times, and 3 minions died. Every target was in the `enemies` group and in the spawner's own list, and every bullet hit landed on a `scripts/enemies/minion.gd` node, so the gun hits real minions and not only test stand-ins.
+- **Data:** no data or JSON file differs from master.
+- **Debug keys and text:** `scripts/weapons/` and the fixture have no input handling, no debug or cheat key, and no player-facing text (`user_facing_text: no` holds).
+- **Code outside the weapons folder:** `run.gd` has 9 added lines (preload, the `weapons` var, and creating and binding the rack); nothing else changed.
+
+Goes to `needs-playtest` for the board's review.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 acceptance criteria pass; waiting for the board's playtest.
