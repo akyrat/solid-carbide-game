@@ -631,6 +631,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The car's health bar stands upright at the top left, filling from the bottom up, with its label above it. The likes bar is horizontal, centred at the bottom of the screen, with the heart, "Likes" and the level in one row above it and the combo counter above that. Labels line up with the bar they belong to.
 - The combo counter is hidden when there is no combo (multiplier x1.0) and shows as soon as a trick raises it.
 - The combo heats up in three steps as it climbs: the counter changes look at x2, changes more at x3, and from x4 up (the top step, even though the combo goes on to its cap) it is fully maxed out, with the likes bar looking like it is on fire. When the combo drops, the look drops with it. The combo counter and the "Hype Lv" text take the game's comic look (the Bangers font of the trick popups, hard pixel edges). The fire is drawn in code first (no PixelLab), in oranges and yellows, never Redgull red; generated art only if the board finds it weak in playtest. No sound for now.
+- The trick popups heat up with the combo in the same steps: unchanged black and white below x2, a hot orange or yellow accent at x2, a stronger one at x3, and a flaming edge from x4. The letters stay readable on white. Popups are always drawn above the buildings, so a building never hides one.
 - The trick popups look like real comic book popups: a white burst bubble with a black border and black lettering in a heavy, slanted comic font (Bangers), on one straight baseline.
 - The trick popups are white rounded rectangles (not jagged bursts), with the black border and black lettering.
 - Trick popups stay with the car: each one follows the car for its whole life (popping above it, rising and fading relative to it), so it stays readable at drift speed.
@@ -692,4 +693,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `ef88f99b476db9d9a38dd0c614beffcc70220357b384ac7404aaf28fc4150969` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
-| `hud-and-menus.md` | `7ff1ceaf6f565027527412b1552320e3e4744ca41cac5118862598b6ebd1840d` |
+| `hud-and-menus.md` | `b8f116f733a26c7c65bc044860fe130f37922de7ba18440943f5eee27e677f56` |

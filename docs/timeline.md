@@ -965,3 +965,8 @@ Entry format:
 - Decision or change: the board asked for the combo to feel like it heats up: the counter changes at x2, more at x3, and from x4 (the top step; the combo still goes to its x6 cap) it is maxed out with the likes bar on fire. The combo and "Hype Lv" text take the game's comic look (Bangers). Fire drawn in code first, no PixelLab, oranges and yellows, never Redgull red. No sound for now. Task T-131 to the UI Agent. The board also asked for something on the trick popups; what, is still open.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-131
+
+## 2026-10-14: Trick popups heat up with the combo and stay above the buildings
+- Decision or change: the board chose both proposals for the trick popups: they heat up with the combo in T-131's steps (black and white below x2, orange or yellow accents at x2 and x3, a flaming edge from x4), and they are always drawn above the buildings (QA found in T-130 that near skyscrapers, z up to 146, covered popups at z 100). T-132 (above the buildings) starts now; T-133 (heat steps) waits for T-131 and T-132.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-132, T-133
