@@ -1,7 +1,7 @@
 ---
 id: T-133
 title: Trick popups heat up with the combo at x2, x3 and x4
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
