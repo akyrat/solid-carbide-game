@@ -1,7 +1,7 @@
 ---
 id: T-136
 title: Ask for an optional note when a card is dragged to another column on the task board
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tools
@@ -14,7 +14,7 @@ documents_affected: [docs/README.md, docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/working-with-the-board.md, tools/taskboard/taskboard.html, tools/taskboard/server.py, tools/board_inbox.py, tools/task_status.py]
 files_expected_to_change: [tools/taskboard/taskboard.html, docs/README.md, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,3 +62,4 @@ Built (helper agent):
 - Docs: one sentence each in `docs/README.md` and `docs/working-with-the-board.md` ("The task board").
 - No server, inbox or watcher changes. The `/api/move` note path was not re-run by hand on a test server; it is untouched and covered by the existing tools tests.
 - Checks: `node --check` on the page script passes; `python -m unittest discover -s tools -p "test_*.py"` ran 171 tests, OK. Not exercised in a real browser (no drag run).
+- 2026-10-14, in-qa → done: QA round 1: all 5 pass; tooling, merged after QA
