@@ -1,7 +1,7 @@
 ---
 id: T-132
 title: Trick popups are always drawn above the buildings
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
