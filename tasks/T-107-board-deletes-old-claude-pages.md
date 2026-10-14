@@ -1,7 +1,7 @@
 ---
 id: T-107
 title: Board deletes the three old claude.ai task board pages
-status: open
+status: done
 from: project-lead
 to: board
 epic: tooling
@@ -12,7 +12,7 @@ depends_on: []
 documents_affected: []
 files_to_read_first: [docs/README.md]
 files_expected_to_change: []
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -38,8 +38,8 @@ The links stay in `docs/timeline.md` and T-032 as history.
 
 ## Acceptance criteria
 
-- [ ] None of the three links opens any more (QA: pass / fail)
+- [x] None of the three links opens any more (QA: pass) Checked by the Project Lead: the Artifact service confirmed each deletion ("its link no longer works for anyone"); no game code, so no QA agent run.
 
 ## Result notes
 
-Written when the work is done.
+Done by the Project Lead on the board's go (2026-10-14): the three pages turned out to be owned by the account this session uses, so the Project Lead could reach them after all. Each was read first (titles: Solid Carbide Task Board, Solid Carbide Board Prototype, Solid Carbide Test Board, all owned and private) and then deleted with the Artifact tool, which confirmed for each that the link no longer works for anyone. The links stay in docs/timeline.md and T-032 as history.

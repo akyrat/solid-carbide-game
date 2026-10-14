@@ -985,3 +985,8 @@ Entry format:
 - Decision or change: the board closed T-031 (its own visualisation tools, HTML): it is ongoing infrastructure work, not a one-off job, so it doesn't need a ticket. Status cancelled, the file kept.
 - Documents touched: none
 - Tasks: T-031 (cancelled)
+
+## 2026-10-14: T-107 done: the old claude.ai task board pages deleted
+- Decision or change: the three old claude.ai task board pages (task board, prototype, test board) turned out to be owned by the account the Project Lead's session uses, so on the board's go the Project Lead deleted them instead of the board. The links stay in this timeline and T-032 as history. The local task board (http://localhost:8765) is the only board.
+- Documents touched: none
+- Tasks: T-107 (done)
