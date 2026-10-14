@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
