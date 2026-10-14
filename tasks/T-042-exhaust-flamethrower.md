@@ -1,7 +1,7 @@
 ---
 id: T-042
 title: The exhaust flamethrower: fires only while drifting
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/weapons/unity-weapons-report.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, tasks/T-036-run-scene-and-state.md, tasks/T-044-minions.md, tasks/T-041-starting-gun.md, game/README.md]
 files_expected_to_change: [the weapon code and scenes, tests, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -124,3 +124,23 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
   - Python tool tests: `game/tools` 241 OK (1 skipped); `tools` 171 OK.
 - **Screenshot:** retaken after the fit with the same fixture, which now gives the flamethrower through `run.weapons`. It looks the same: `art-archive/T-042/screenshots/flamethrower.png`.
 - **Docs:** `docs/weapons.md`, Content, "The exhaust flamethrower (built in task T-042)", now under T-041's "The starting gun" section. Summary, Decisions and Open questions were not changed by me. `game/README.md`, "Weapons", "The exhaust flamethrower".
+
+**QA (QA/Integration Agent, 2026-10-14, round 2, after the fit into T-041's weapon rack): all 7 criteria pass.**
+- Fit checks (asked by the Project Lead):
+  - `game/scripts/run/run.gd` is identical to master's (`git diff master` empty). Master (11dddee) is fully merged into the branch.
+  - The flamethrower extends `weapon.gd` (`weapon_id` `flamethrower`, `starts_owned` false) and is listed in `weapons.gd`'s `WEAPON_SCRIPTS`; `run.weapons.flamethrower` is a getter. `weapons.gd` gains only the preload, the list entry, the getter and the playtest-switch call in `reset_for_run()`. A new run resets it to tier 0 through the base `reset_for_run()`; `test_a_new_run_starts_without_the_flamethrower` checks it (switch off: only the gun owned, flame off, normal turn speed, drifting burns nothing).
+  - The gun: `test_starting_gun.gd` differs from master only by the 4 added lines (a preload, a comment, `playtest_override = 0` in `before_each`, `-1` in `after_each`); no test or assertion removed or changed. All 21 gun tests pass with the switch on and off.
+  - Behaviour, numbers and look unchanged from round 1: `game/data/weapons.json` identical to master and to round 1; `exhaust_flame.tscn` identical to round 1. The code diff since round 1 only replaces the attach/detach path with the rack's (stepping, targets through `rack.living_enemies()` / `is_target()`, reset) and adds `overlaps_circle()` for enemies with `hit_radius_units()`; the on/off gate, linger, ramp, area, damage, tick, flash, tiers and drawing code are the same. The retaken `art-archive/T-042/screenshots/flamethrower.png` matches round 1's (same orange-yellow placeholder squares at the rear of the drifting car, smoke still showing; only the particle scatter and a minion differ).
+  - Overlap rule test: `test_big_enemy_is_burnt_when_its_body_overlaps_the_flames` (radius-3 stand-in, centre 2 units past the far edge: entering hit then a tick; a sizeless enemy at nearly the same spot: none; a big one 1 unit short: none). Passes.
+  - Orphans: no `ExhaustFlamethrower` or `ExhaustFlame` node in either GUT report (switch on and off). The remaining Car/Map orphans are in other test files (the run, timer, level-up, challenge, popup tests and the gun's two new-run tests) and come from master's tests, not from this branch.
+  - `docs/weapons.md` against master: one hunk, the new subsection inside Content (between "The starting gun" and "## Open questions"); Summary, Decisions and Open questions unchanged.
+  - No conflict markers anywhere in the tree (`git grep` for `<<<<<<<`, `=======`, `>>>>>>>` lines: none); `git diff --check master HEAD` clean.
+- 1, flames only while drifting: `test_flames_on_only_while_drifting_and_off_after_the_linger`, now driving the car and `rack.step()`, plus standing still and below the minimum speed; `test_it_is_one_of_the_racks_weapons` shows the rack steps it only while owned. Pass.
+- 2, damage inside, none outside: `test_enemy_inside_takes_the_datas_damage_and_one_outside_does_not` and `test_flame_kills_a_real_minion`, plus the overlap test above. Pass.
+- 3, upgrade tiers: `test_each_tier_sets_the_datas_values` and the per-effect tier tests (2/4/6, 3, 5, 7, 8). Pass.
+- 4, new run without it: `test_a_new_run_starts_without_the_flamethrower`; `test_playtest_switch_gives_it_at_the_start_of_every_run` (on: tier 1 again; off: tier 0). Pass.
+- 5, screenshot: the retaken `art-archive/T-042/screenshots/flamethrower.png` shows the placeholder flames behind the drifting car, the same look as round 1, no Redgull red. Pass.
+- 6, docs: as above, Content only. Pass.
+- 7, tests, run by QA in this folder: GUT with `flamethrower_at_start` true: 626 of 626 pass (57 scripts, TESTS PASSED, exit 0). With it false: the first run had 1 failure, `test_camera_options.gd` `test_a_run_from_the_main_menu_uses_the_saved_options` (camera size 14.4 instead of 9.0); that test writes a shared `user://` settings file (`AppData/Roaming/Godot/app_userdata/Solid Carbide/test_settings_t123.cfg`) that other folders' test runs, running at the same moment (three other Godot processes were up), also write. It does not touch the flamethrower. Rerun alone 3 times with the switch off: 20 of 20 each time; the full suite rerun with the switch off: 626 of 626 pass, exit 0. Switch restored to true (file identical to the branch). Python: `game/tools` 241 OK (1 skipped); `tools` 171 OK. Pass.
+- Note for the Project Lead (not a failure of this task): `test_camera_options.gd` can fail when several worktrees run GUT at once, because all of them share one `user://` folder. Worth a small task if it keeps showing up.
+- 2026-10-14, in-qa → needs-playtest: QA round 2 (after the fit into T-041's weapon rack): all 7 criteria pass
