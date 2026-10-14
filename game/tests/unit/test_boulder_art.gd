@@ -18,6 +18,9 @@ const NOSE_UP := -PI / 2.0
 
 func make_map(view := "iso") -> Node2D:
 	var map: Node2D = MapScene.instantiate()
+	# These tests pin the block-level mechanism (fade, depth order) on the placeholder blocks; the skyscraper
+	# art with its per-slot fade has its own tests (test_building_art.gd, T-064).
+	map.building_art_enabled = false
 	add_child_autofree(map)
 	map.set_view(view)
 	return map

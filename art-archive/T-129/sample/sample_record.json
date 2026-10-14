@@ -1,0 +1,53 @@
+{
+ "body": {
+  "semi_transparent": 0,
+  "colors": 27,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "size": [
+  768,
+  518
+ ],
+ "height_px": 134,
+ "height_units": 4.19,
+ "pieces": {
+  "facade_left": {
+   "semi_transparent": 0,
+   "colors": 22,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": false
+  },
+  "facade_right": {
+   "semi_transparent": 0,
+   "colors": 26,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": false
+  },
+  "tank": {
+   "semi_transparent": 0,
+   "colors": 19,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": true
+  },
+  "ac": {
+   "semi_transparent": 0,
+   "colors": 17,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": true
+  },
+  "rubble": {
+   "semi_transparent": 0,
+   "colors": 17,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": true
+  }
+ },
+ "screen_px_per_art_px": 0.8728
+}

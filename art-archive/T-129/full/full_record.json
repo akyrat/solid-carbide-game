@@ -1,0 +1,106 @@
+{
+ "short_0": {
+  "design": "a",
+  "look": 0,
+  "size": [
+   768,
+   518
+  ],
+  "semi_transparent": 0,
+  "colors": 27,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_1": {
+  "design": "a",
+  "look": 1,
+  "size": [
+   768,
+   518
+  ],
+  "semi_transparent": 0,
+  "colors": 23,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_2": {
+  "design": "b",
+  "look": 0,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 25,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_3": {
+  "design": "b",
+  "look": 1,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 20,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_4": {
+  "design": "c",
+  "look": 0,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 25,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_5": {
+  "design": "c",
+  "look": 1,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 21,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_6": {
+  "design": "d",
+  "look": 0,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 24,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "short_7": {
+  "design": "d",
+  "look": 1,
+  "size": [
+   768,
+   522
+  ],
+  "semi_transparent": 0,
+  "colors": 22,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ }
+}

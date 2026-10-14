@@ -1,0 +1,51 @@
+{
+ "pieces": {
+  "facade": {
+   "semi_transparent": 0,
+   "colors": 18,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": false
+  },
+  "shopfront": {
+   "semi_transparent": 0,
+   "colors": 23,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": false
+  },
+  "sign": {
+   "semi_transparent": 0,
+   "colors": 7,
+   "colors_ok": true,
+   "red_ok": true,
+   "has_transparent": true
+  }
+ },
+ "facade_seams": {
+  "plain_wrap_x": 76.22608695652174,
+  "plain_wrap_y": 26.943181818181817,
+  "mirror": 0.0
+ },
+ "shop_seams": {
+  "plain_wrap_x": 49.666666666666664,
+  "plain_wrap_y": 76.31617647058823,
+  "mirror": 0.0
+ },
+ "body": {
+  "semi_transparent": 0,
+  "colors": 27,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "pavement": {
+  "semi_transparent": 0,
+  "colors": 5,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "game_scale_screen_px_per_art_px_at_11.6": 0.8728,
+ "bodies_distinct": 4
+}

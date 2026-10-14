@@ -910,3 +910,48 @@ Entry format:
 - Decision or change: the board approved the three plans. T-064 (skyscrapers): free flat PixelLab pieces (facade band, shopfront strip, vertical sign) slanted onto the walls by script at 32 px per unit, about 12-floor walls that dissolve at the top, script-drawn pavement; go for the 3-call sample (about 3 generations) after a free mock-up at the real zoom; only the tower covering the car fades, not its whole block (a small code change). T-130 (banners): drawn by script for free, 6 on the map, the drawings start now and placement waits for T-064. T-129 (shorter buildings, 14 generations planned) is held in Planning until the skyscraper sample is approved, since it reuses the same wall method.
 - Documents touched: none yet (T-064 and T-130 update their docs with their work)
 - Tasks: T-064, T-129 (planning), T-130
+
+## 2026-10-15: Alert banners become road-style warning signs
+- Decision or change: looking at T-130's first drawings (cheerful cyan and pink cartoon kaiju), the board wants no detail at all: only the kaiju's black silhouette (head or body shape), on a plain white inside with a red outline, like road warning or prohibition signs, and no neon colours. This is an exception to "red only for Redgull": the alert signs use a traffic-sign red outline. Visual style's City brief and Redgull's look are updated.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-130
+
+## 2026-10-15: Skyscraper sample and warning signs approved
+- Decision or change: the board played T-064's round-2 sample in the game (every block 2 by 2 of the one sample skyscraper with free variations, script pavement, the whole block fading for now) and approved it ("LGTM"); the full set waits for the board's go on its cost. The board also approved T-130's warning signs as drawn: the kaiju's head in a red warning triangle and its body in a red prohibition circle, black silhouettes on white, as building banners and pavement signs; placing them waits for T-064's full set.
+- Documents touched: none
+- Tasks: T-064, T-130
+
+## 2026-10-15: City colours: apart from the alien boulders, less neon
+- Decision or change: after playing the skyscraper sample, the board found it used nearly the same colours as the boulders. Its direction: the boulders are alien and must stand apart, so the city must not share their navy, purple and magenta glow; the city is less neon (concrete, glass, lit windows, small muted signs). Three script recolours were tried in the game (F7); the board asked for A (concrete and sodium light) and B (steel and glass) as two separate builds to judge, and will pick one. Recorded in Visual style as "City colours"; the City brief now points to it instead of the night neon pink and cyan.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064, T-129
+
+## 2026-10-15: City palette B, steel and glass
+- Decision or change: the board played the two separate city builds and chose palette B, steel and glass: cool blue-grey walls, pale white and pale blue lit windows, small amber accents. Every city asset uses it (Visual style, "City colours"). The palette A build is removed; its recoloured art stays in T-064's branch history and goes to the archive with the full set.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064, T-129
+
+## 2026-10-15: Go for the full skyscraper set and the shorter buildings' sample
+- Decision or change: the board gave the go for T-064's full set (5 more skyscrapers, about 15 generations, in palette B, with a free wall retune, signs that don't read as real Japanese, only the covering tower fading) and for T-129's sample (5 generations, palette B), each step coming back to the board.
+- Documents touched: none
+- Tasks: T-064, T-129
+
+## 2026-10-15: PixelLab spend for the city so far
+- Decision or change: T-064's full set (10 calls) and T-129's sample (5 calls) ran at the same time on the same account: balance 4943 before, 4928 after, 15 generations for 15 calls, 1 each. Each agent alone saw an unexplained gap; together they add up. T-064 drew its signs by script (abstract shapes, no glyphs), saving its 5 sign calls. City art spend so far: T-064 round 1 8, round 2 13 (3 sample + 10 full set), T-129 5.
+- Documents touched: none
+- Tasks: T-064, T-129
+
+## 2026-10-15: T-064 done: the skyscrapers
+- Decision or change: the board playtested the full skyscraper set and approved it ("looks great"). Every 30 by 30 block is 2 by 2 bases of very tall steel-and-glass towers in palette B (6 designs, each built from flat PixelLab facade and shopfront pieces slanted onto the walls by script at 32 px per unit, with a wall retune and script-drawn abstract signs with no letters), dissolving at the top, with a script-drawn pavement around each that never fades. Only the skyscraper covering the car fades. Collisions and the map layout are unchanged. PixelLab: round 1 (dense narrow towers, archived) 8 generations, round 2 13 (3 sample, 10 full set). QA's small leftovers (four unused palette-B sample images in game/art/buildings, a dead sort in mvp_map.gd, no test yet that a boulder behind a skyscraper is drawn under it) go to T-129, which builds on this work.
+- Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
+- Tasks: T-064 (done)
+
+## 2026-10-15: Shorter buildings: sample approved, script signs, full set
+- Decision or change: the board approved T-129's sample short building ("lgtm"), keeping its roof as it is, and asked for its shop signs to be redrawn by script as abstract shapes with no letters (like the skyscrapers'), then for the other 3 designs (about 9 generations, palette B), before it playtests again and merges. QA's small leftovers from T-064 are tidied in the same work.
+- Documents touched: none
+- Tasks: T-129
+
+## 2026-10-15: T-129 done: shorter buildings with visible roofs
+- Decision or change: the board playtested the shorter buildings and approved them ("LGTM"). About one slot per block holds a low building (about 4.3 units) with a flat roof carrying water tanks, air conditioners, signs, antennas and a little rubble, in palette B, with the script pavement. 4 designs, each with a mirrored look; shop signs drawn by script as abstract marks with no letters. Each short building fades on its own when it covers the car, with an outline that follows its roof (QA round 1 caught it fading when the car was only behind it; fixed). PixelLab: 14 generations (5 sample, 9 full set); balance 4919 of 5000. Left for later if the board wants: design B's darker right wall reads almost blank, B and C look alike from a distance, and neighbouring blocks can repeat a design.
+- Documents touched: `game/README.md`
+- Tasks: T-129 (done)

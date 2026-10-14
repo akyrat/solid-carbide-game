@@ -1,0 +1,54 @@
+{
+ "about": "T-064 full set, palette B (steel and glass): 6 skyscrapers x 2 variants = 12 bodies (768 x 960 art px, anchored at the bottom centre = the footprint front corner; body index = (tower - 1) * 2 + variant) and 4 script-drawn slot pavements (index = si + 2 * sj). Made by game/tools/build_city.py from PixelLab pieces; signs drawn by script.",
+ "texture": "res://art/buildings/skyscraper_1_0.png",
+ "art_px_per_unit": 32,
+ "bodies": [
+  "res://art/buildings/skyscraper_1_0.png",
+  "res://art/buildings/skyscraper_1_1.png",
+  "res://art/buildings/skyscraper_2_0.png",
+  "res://art/buildings/skyscraper_2_1.png",
+  "res://art/buildings/skyscraper_3_0.png",
+  "res://art/buildings/skyscraper_3_1.png",
+  "res://art/buildings/skyscraper_4_0.png",
+  "res://art/buildings/skyscraper_4_1.png",
+  "res://art/buildings/skyscraper_5_0.png",
+  "res://art/buildings/skyscraper_5_1.png",
+  "res://art/buildings/skyscraper_6_0.png",
+  "res://art/buildings/skyscraper_6_1.png"
+ ],
+ "pavements": [
+  "res://art/buildings/cityB_pavement_00.png",
+  "res://art/buildings/cityB_pavement_10.png",
+  "res://art/buildings/cityB_pavement_01.png",
+  "res://art/buildings/cityB_pavement_11.png"
+ ],
+ "body_size": [
+  768,
+  960
+ ],
+ "pavement_size": [
+  960,
+  486
+ ],
+ "slot_units": 15,
+ "foot_units": 12,
+ "margin_units": 1.5,
+ "height_units": 30,
+ "towers": 6,
+ "variants_per_tower": 2,
+ "short": {
+  "about": "T-129 short buildings: 4 designs x 2 looks (the second look is mirrored with the pale-blue accent), palette B, 768 x 518 or 522 art px, anchored at the bottom centre like the skyscrapers; roofs show.",
+  "bodies": [
+   "res://art/buildings/short_body_0.png",
+   "res://art/buildings/short_body_1.png",
+   "res://art/buildings/short_body_2.png",
+   "res://art/buildings/short_body_3.png",
+   "res://art/buildings/short_body_4.png",
+   "res://art/buildings/short_body_5.png",
+   "res://art/buildings/short_body_6.png",
+   "res://art/buildings/short_body_7.png"
+  ],
+  "designs": 4,
+  "height_units": 4.3
+ }
+}

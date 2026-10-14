@@ -1,0 +1,47 @@
+{
+  "file": "sky06_shopfront.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "negative_description": "text, letters, words, logo, red, ground, street, car, people, sky, fire",
+    "text_guidance_scale": 8,
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "side",
+    "isometric": false,
+    "color_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAHAAAAAECAYAAABWU7ucAAAAnUlEQVR4nGMUkVL5z4AEWFnZkLkMHFzcaHweFP5fRlYUPhc7Gp8HVb0C71UU/lsmaxT+RzZJFL4Qyy8UPjsjGp+DA9U+blT7GBkZUfgsLCwofEfZ1Sj8Iy+iUNWzovqHnZ0dhf+SSQyFrynwB4VfJtaDwp/7rwOFn6x2AoW//1cICl9CSgqFL8WH6h4mFN4oGHJgNAKHOBiNQIahDQBR9RTumRK42QAAAABJRU5ErkJggg=="
+    },
+    "direction": "south",
+    "no_background": false,
+    "outline": "lineless",
+    "seed": 64113,
+    "image_size": {
+      "width": 256,
+      "height": 128
+    },
+    "description": "pixel art, flat front view of the ground floor wall of one steel and glass skyscraper at night, lobby entrance and shop windows with small awnings, cool blue-grey walls, pale white and pale blue light, small amber lights, fills the whole image edge to edge, no street, no sky, no neighbouring buildings, no letters"
+  },
+  "prompt": "pixel art, flat front view of the ground floor wall of one steel and glass skyscraper at night, lobby entrance and shop windows with small awnings, cool blue-grey walls, pale white and pale blue light, small amber lights, fills the whole image edge to edge, no street, no sky, no neighbouring buildings, no letters",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T13:11:22+00:00",
+  "image": {
+    "width": 256,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "tasks/T-064-building-art.md"
+  ],
+  "task": "T-064",
+  "job_status": null,
+  "notes": "full set, palette B, tower 6 shopfront",
+  "generator": "game/tools/pixellab_client.py"
+}
