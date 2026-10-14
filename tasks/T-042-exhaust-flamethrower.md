@@ -1,7 +1,7 @@
 ---
 id: T-042
 title: The exhaust flamethrower: fires only while drifting
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 epic: weapons
