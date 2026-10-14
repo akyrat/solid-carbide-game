@@ -1,7 +1,7 @@
 ---
 id: T-085
 title: The combo raises minion spawning (can be switched off)
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -44,4 +44,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Built:** `game/scripts/enemies/minion_spawner.gd`: `minions_wanted_now()` sets `spawn_multiplier` from `RunState.combo_spawn_multiplier()` (`ComboData.spawn_multiplier(combo)`) on every call, so the count follows the combo live; no data numbers changed.
+
+**The switch:** `run.minions.combo_raises_spawning` (default `true`). False keeps the multiplier at 1.0. To flip it for a playtest, change the default on that line in `minion_spawner.gd`. Documented in `game/README.md` (Minions) and `docs/enemies.md` (Content, "The combo raises spawning"); Summary, Decisions and Open questions untouched.
+
+**Tests:** `game/tests/unit/enemies/test_minions.gd`: no combo = no extra; max combo wants `minions_wanted(t, mult)` (more than base) and that many really spawn; switch off = combo changes nothing; on by default. The old hook test (which asserted the T-044 placeholder state) was replaced. Full GUT suite: TESTS PASSED. All Python tests (game/tools and tools, 33 files): passed.
+
+**For the playtest:** build up a combo (drifting tricks) and watch the crowd grow towards about 1.75x (max in `data/combo.json`); note that a minion's contact hit cuts the combo, so the extra minions also push it back down. Compare with the switch off.
