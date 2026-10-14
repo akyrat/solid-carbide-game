@@ -41,6 +41,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
+## The exhaust flamethrower (task T-042), self-contained; see exhaust_flamethrower.gd.
+const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -166,8 +168,10 @@ func _ready() -> void:
 ## at the start, and the state reset (full health, 8:00, 0 coins).
 func start_run() -> void:
 	_build_world()
-	world_rebuilt.emit()
+	world_rebuilt.emit()  # a flamethrower from the last run detaches itself here
 	state.start_run()
+	# Playtest switch (T-042): data/playtest.json "flamethrower_at_start".
+	ExhaustFlamethrowerScript.give_if_playtest_switch(self)
 
 
 func _build_world() -> void:
