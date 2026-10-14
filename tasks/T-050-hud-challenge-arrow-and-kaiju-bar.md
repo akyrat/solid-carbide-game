@@ -1,7 +1,7 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: planning
+status: in-progress
 from: project-lead
 to: ui
 lead: Enemies
