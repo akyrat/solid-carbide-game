@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: in-qa
+status: flagged-for-review
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-039-enemy-data.md, tasks/T-044-minions.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -54,8 +54,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [x] A screenshot shows the placeholder kaiju (QA: pass)
 - [x] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass)
 - [x] The full GUT suite and all Python tool tests pass (QA: pass)
-- [ ] A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time (QA: pass / fail)
-- [ ] `game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player (QA: pass / fail)
+- [x] A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time (QA: pass)
+- [ ] `game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player (QA: fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -131,3 +131,28 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 Board review files: screenshots/kaiju.png, screenshots/kaiju_dev_timer.png, art-archive/T-045/screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju_dev_timer.png, game/data/playtest.json
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass.
 - 2026-10-14, needs-playtest → in-progress: Board (2026-10-14): add a dev setting for the timer's minutes and seconds, to fast-forward to the boss
+
+**QA (QA/Integration Agent, 2026-10-14, round 2): 8 of 9 criteria pass; criterion 9 (`game/README.md`) fails.**
+- Boss time (1): `test_boss_time_makes_the_kaiju_appear_off_screen_and_walk_towards_the_car` still passes. Pass.
+- Damage and health signal (2): `test_weapon_damage_lowers_health_as_soon_as_it_appears_and_sends_health` still passes. Pass.
+- Death (3): both kaiju-killed tests pass; `_on_kaiju_died()` still adds the coins before `kaiju_killed()`. Pass.
+- Contact (4): the contact tests pass. Pass.
+- Screenshot (5): `art-archive/T-045/screenshots/kaiju.png` unchanged since round 1; the new `kaiju_dev_timer.png` shows the same placeholder kaiju with 1:30 on the HUD clock. Pass.
+- `docs/enemies.md` (6): the diff against master only adds "### The kaiju (built in task T-045)" in Content (now with the dev timer bullet, the flamethrower overlap rule and the board's walking-round-buildings confirmation). Summary, Decisions, Open questions and References are unchanged. Pass.
+- Full GUT suite and Python tool tests (7): GUT **601/601** with the dev timer on (1:30) and **601/601** with it off (`enabled: false`), then restored to on (the file is unchanged against the branch). 56 scripts and 601 tests ran, which matches the 56 `test_*.gd` files and 601 `func test_` in `game/tests`, so nothing was skipped. The first run with it on had 1 failure, in `test_camera_options.gd::test_a_run_from_the_main_menu_uses_the_saved_options` (zoom 11 instead of 9). It passed on the rerun and in the run with the setting off. That test writes the shared `user://test_settings_t123.cfg`, and `user://` is shared by every worktree of the project, so other agents running tests in their folders at the same time can overwrite it. It is not related to T-045 (no camera or settings file changed). Python: `game/tools` 241 OK (1 skipped), `tools` 130 OK. Pass.
+- Dev timer test (8): `test_dev_timer_starts_a_run_from_the_main_menu_with_that_time_and_the_kaiju_at_boss_time` (1:05 from the main menu: clock and HUD 1:05, elapsed 415, minions wanted = `minions_wanted(415)`, no boss or kaiju at 1:00.1, both at 1:00, a second run at 1:05 again), plus the off/missing/invalid test, the under-1:00 test and the committed-file test. QA also ran a temporary GUT script (deleted afterwards, not committed) on the **committed** `playtest.json` in real time from the main menu. The clock and HUD showed **1:30**, `time_elapsed()` was 390, and the spawner wanted **19** (= `minions_wanted(390)`; 12 at a normal start). After 12 s (1:18) there were 20 live minions and no kaiju, and a normal 8:00 run advanced to the same clock (1:18) wants the same 20. At **1:00** `boss_time` had fired and the kaiju was there. Pass.
+- `game/README.md` (9): **Fail.** The new "Dev timer: fast-forward to the boss" paragraph is correct (how to set it, how to set it back to 8:00, a dev settings file with no UI, and the "Dev settings" bullet in "Game data"). But the round 2 edit left the file broken:
+  - `## The kaiju` now appears **twice** (lines 743 and 791).
+  - Between the two, lines 757-789 are a copy of the Minions section, from its "How it is built" to its "Tests".
+  - The second `## The kaiju` (line 791 on) still has the old "**Playtest switch: early arrival.**" paragraph (lines 797-803). It tells the reader to set `"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }` and names `read_early_arrival_seconds()` in `kaiju_boss.gd`, but both were removed in this round. The kaiju's real "How it is built", "Damaging the kaiju" and "Health, for the HUD" text is only in this second copy.
+  - So the README gives two different ways to reach the boss early, and one of them no longer exists.
+  - Fix (docs only): delete lines 757-790 (the duplicated Minions text and the first section's end) or merge the two kaiju sections into one, and remove the "Playtest switch: early arrival" paragraph and its code block.
+- Other checks (all fine):
+  - Pre-run hook: `game/tests/pre_run_hook.gd` only sets `DevSettings.enabled = false`. `.gutconfig.json` only adds `pre_run_script`; dirs, prefix and suffix are unchanged. No test is skipped or hidden.
+  - `run_state.gd`: the only changes are the new `start_time_left` var (default `RUN_SECONDS`) and `time_left = clampf(start_time_left, 0.001, RUN_SECONDS)` in `start_run()`. `run.gd` sets it from `DevSettings.run_start_time_left()` before `state.start_run()`.
+  - No player-facing UI or text for the setting: no scene, HUD or menu file changed, and only `run.gd` and `run_state.gd` refer to the dev settings.
+  - Data: `game/data/playtest.json` is the only file in `game/data` that differs from master, so no balancing number changed.
+  - Early-arrival code: none left in the code (`kaiju_boss.gd` has no early-arrival code); the only mentions are the stale README text above and the test asserting the key is gone.
+  - `kaiju.gd` `hit_radius_units()` returns `RADIUS_UNITS` (2.0), the name master's `weapons.gd` reads.
+  - Godot `.import` line-ending noise and the git-ignored `screenshots/` left uncommitted.
+- 2026-10-14, in-qa → flagged-for-review: QA round 2: 8 of 9 criteria pass; criterion 9 fails (game/README.md has the kaiju section twice, a copied Minions block, and still documents the removed kaiju_early_arrival switch). Docs-only fix.
