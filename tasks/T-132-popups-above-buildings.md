@@ -1,7 +1,7 @@
 ---
 id: T-132
 title: Trick popups are always drawn above the buildings
-status: open
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -45,4 +45,8 @@ Board review files: the screenshot listed in the result notes
 
 ## Result notes
 
-Written by the agent when it finishes.
+- Change: in `game/scripts/hud/trick_popups.gd`, `show_popup` now sets `z_as_relative = false` and `z_index = POPUP_Z` (`RenderingServer.CANVAS_ITEM_Z_MAX`, 4096) instead of a relative 100. Cause: the popups are under `run.view_root`, whose z is the car's depth (under any covering building), so 100 + e.g. 109 could fall below slots at up to 146.
+- Why this approach: an absolute z at the engine's maximum does not read any of the map's numbers, so it cannot break when `map.top_z_index()` grows (it would need 4000+ building slots). Basing it on `map.top_z_index()` would have tied the popups to the map and the absolute flag anyway. HUD and screens are CanvasLayers (10, 20) and still draw over the world.
+- Tests: `game/tests/unit/test_popups_above_buildings.gd` (6 tests: above `top_z_index()`, every slot, sign, boulder and the car; car under a building; still above after raising every slot and the view by 2000; challenge popup; HUD/screen layers over the world and popups in the world canvas; drift prototype). Whole GUT suite: 529/529 pass (`bash game/tools/run_tests.sh`).
+- Screenshot: `screenshots/T-132_popups_over_building.png` (not tracked by git; in this folder), command `bash game/tools/screenshot.sh res://tests/fixtures/popup_over_building_demo.tscn screenshots/T-132_popups_over_building.png 24` (fixture `game/tests/fixtures/popup_over_building_demo.gd`: car among the skyscrapers, drawn under them at z 109 of 146, popup over the building). Looked at it: the popup is drawn over the building. Only one popup shows because the second one's stack would exceed the quarter-screen limit and the oldest leaves (T-125 behaviour, unchanged).
+- Documents updated: `game/README.md` ("Trick popups"), `docs/hud-and-menus.md` (Content, "Trick popups"). No `.import` noise committed.

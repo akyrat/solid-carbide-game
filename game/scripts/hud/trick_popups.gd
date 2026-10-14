@@ -53,6 +53,9 @@ const STACK_STEP := 4.0
 ## measured from the car (the camera keeps the car at the screen's centre, so
 ## 0.25 is half way from the car to the top edge). Task T-125, round 2.
 const MAX_REACH := 0.25
+## A popup's absolute z (task T-132): the top of Godot's canvas item range, over
+## the map's (map.top_z_index() grows with the buildings; it is a few hundred).
+const POPUP_Z := RenderingServer.CANVAS_ITEM_Z_MAX
 
 
 ## One popup: draws itself and removes itself when its time is up. It is placed
@@ -216,7 +219,12 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 	p.anchor = at
 	p.follow = follow
 	p.stack = _free_stack(p)
-	p.z_index = 100
+	# Above everything in the world view (task T-132): an absolute z at the
+	# top of Godot's range, not relative to the view (whose z is the car's
+	# depth, under any building covering it), so no building, sign, boulder
+	# or the car ever hides a popup, whatever the map's own z grows to.
+	p.z_as_relative = false
+	p.z_index = POPUP_Z
 	add_child(p)
 	p.advance(0.0)
 	p.reset_physics_interpolation()
