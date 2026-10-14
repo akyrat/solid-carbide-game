@@ -925,3 +925,8 @@ Entry format:
 - Decision or change: after playing the skyscraper sample, the board found it used nearly the same colours as the boulders. Its direction: the boulders are alien and must stand apart, so the city must not share their navy, purple and magenta glow; the city is less neon (concrete, glass, lit windows, small muted signs). Three script recolours were tried in the game (F7); the board asked for A (concrete and sodium light) and B (steel and glass) as two separate builds to judge, and will pick one. Recorded in Visual style as "City colours"; the City brief now points to it instead of the night neon pink and cyan.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-064, T-129
+
+## 2026-10-15: City palette B, steel and glass
+- Decision or change: the board played the two separate city builds and chose palette B, steel and glass: cool blue-grey walls, pale white and pale blue lit windows, small amber accents. Every city asset uses it (Visual style, "City colours"). The palette A build is removed; its recoloured art stays in T-064's branch history and goes to the archive with the full set.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064, T-129
