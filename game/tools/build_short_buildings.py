@@ -67,6 +67,51 @@ def clean_prop(arr, pal, polygon=None, drop=None):
     return a[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
 
 
+def shop_sign(w, h, seed, pal):
+    """A horizontal shop sign drawn by script from abstract strokes only (bars, blocks, rings, stairs, dots): no
+    glyph of any alphabet. Drawn in the sheared walls' source palette (neon pink = the accent, which palette B
+    turns into amber); a dark panel, a 2 px frame, cells of marks. Same idea as build_skyscrapers.script_sign."""
+    rng = np.random.default_rng(seed)
+    img = np.zeros((h, w, 4), dtype=np.uint8)
+    dark, frame = bs.nearest_in(pal, (24, 23, 36)), bs.nearest_in(pal, (255, 64, 200))
+    ink = [bs.nearest_in(pal, c) for c in ((255, 200, 240), (255, 255, 255), (255, 64, 200))]
+    img[..., :3] = dark
+    img[..., 3] = 255
+    img[:2, :, :3] = frame
+    img[-2:, :, :3] = frame
+    img[:, :2, :3] = frame
+    img[:, -2:, :3] = frame
+    cells = max(3, w // 15)
+    cw = (w - 8) // cells
+    for c in range(cells):
+        x0 = 4 + c * cw
+        col = ink[int(rng.integers(len(ink)))]
+        kind = int(rng.integers(5))
+        y0, y1 = 9, h - 9
+        if kind == 0:    # two bars
+            img[y0:y0 + 4, x0 + 2:x0 + cw - 2, :3] = col
+            img[y1 - 4:y1, x0 + 2:x0 + cw - 2 - int(rng.integers(0, 4)), :3] = col
+        elif kind == 1:  # block
+            img[y0 + 3:y1 - 3, x0 + 2:x0 + cw - 2, :3] = col
+        elif kind == 2:  # ring
+            img[y0:y1, x0 + 2:x0 + cw - 2, :3] = col
+            img[y0 + 3:y1 - 3, x0 + 5:x0 + cw - 5, :3] = dark
+        elif kind == 3:  # stairs
+            for i in range(3):
+                img[y1 - 5 - i * 6:y1 - i * 6, x0 + 2 + i * 3:x0 + cw - 2, :3] = col
+        else:            # dots
+            for i in range(2):
+                img[y0 + 2 + i * 9:y0 + 7 + i * 9, x0 + 3:x0 + cw - 3, :3] = col
+    return img
+
+
+def paint_sign(facade, box, seed, pal):
+    """Paints a scripted sign over the PixelLab sign text; box = (x0, y0, x1, y1) in the facade's px."""
+    x0, y0, x1, y1 = box
+    facade[y0:y1, x0:x1] = shop_sign(x1 - x0, y1 - y0, seed, pal)
+    return facade
+
+
 def draw_roof(body, pal, seed=1, cracks=40):
     """Tar roof diamond with a parapet lip, panel seams and cracks, in palette colours."""
     rng = np.random.default_rng(seed)

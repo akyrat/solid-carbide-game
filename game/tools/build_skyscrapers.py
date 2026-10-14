@@ -192,12 +192,12 @@ def recolor_pink_cyan(arr):
 
 
 def build_body(facade, shop, sign, pal, flip=False, sign_swap=False, sign_side="left", sign_up=5.0,
-               facade_off=(0, 0), rubble=0, seed=0):
+               facade_seed=0, rubble=0, seed=0):
     """One skyscraper body, 768 x 960 RGBA. facade, shop and sign are (h, w, 4) uint8 arrays."""
     shop_h = SHOP_UNITS * UNIT_UP
     body = np.zeros((BODY_H, BODY_W, 4), dtype=np.uint8)
     for k in range(2):
-        f = mirror_tile(facade, WALL_W, BODY_H, (facade_off[0] + 37 * k, facade_off[1] + 91 * k)).copy()
+        f = band_wall(facade, WALL_W, BODY_H, facade_seed * 2 + k).copy()
         f[BODY_H - shop_h:] = mirror_tile(shop, WALL_W, shop_h, (61 * k, 0))
         if k == 1:
             f[..., :3] = darker(f[..., :3], pal)
@@ -205,7 +205,7 @@ def build_body(facade, shop, sign, pal, flip=False, sign_swap=False, sign_side="
             x = i + k * WALL_W
             b = base_y(x)
             body[:b, x] = f[BODY_H - b:, i]  # bottom-aligned on the sloped base, top at the canvas top
-    sg = recolor_pink_cyan(sign) if sign_swap else sign
+    sg = sign
     place_sign(body, sg, pal, sign_side, sign_up)
     if rubble:  # a little rubble at the foot, from the palette's greys
         rng = np.random.default_rng(seed)
@@ -221,6 +221,84 @@ def build_body(facade, shop, sign, pal, flip=False, sign_swap=False, sign_side="
     if flip:
         body = body[:, ::-1].copy()
     return body
+
+
+# ------------------------------------------------- wall bands, script signs ----
+
+FLOOR_PX = FLOOR_UNITS * UNIT_UP  # 64
+
+
+def band_wall(facade, w, h, seed):
+    """A flat wall of w x h built from floor-high bands (64 px, counted from the bottom, so the band joins
+    fall on the floor lines). Each band takes a different slice of the facade piece (rows picked with a bias
+    towards rows that hold lit windows, so the wall has more lit windows), mirror-tiled sideways from a
+    random start and randomly flipped: no obvious mirror pattern, and the joins hide under the floor lines."""
+    rng = np.random.default_rng(seed)
+    if facade.shape[0] < FLOOR_PX:
+        facade = mirror_tile(facade, facade.shape[1], FLOOR_PX)
+    fh, fw = facade.shape[:2]
+    lit = (facade[..., :3].astype(int).sum(axis=-1) > 460) & (facade[..., 3] == 255)
+    per_row = lit.sum(axis=1)
+    starts = np.arange(0, fh - FLOOR_PX + 1)
+    score = np.array([per_row[s:s + FLOOR_PX].sum() for s in starts], dtype=float)
+    weight = 1.0 + score
+    weight /= weight.sum()
+    out = np.zeros((h, w, 4), dtype=np.uint8)
+    nb = h // FLOOR_PX
+    for k in range(nb):  # k = 0 is the bottom band
+        s = int(rng.choice(starts, p=weight))
+        band = facade[s:s + FLOOR_PX]
+        band = mirror_tile(band, w, FLOOR_PX, (int(rng.integers(0, 2 * fw)), 0))
+        if rng.random() < 0.5:
+            band = band[:, ::-1]
+        out[h - (k + 1) * FLOOR_PX:h - k * FLOOR_PX] = band
+    return out
+
+
+def lift_dark(rgb, pal, gain=1.28, add=6, below=0.4):
+    """More contrast for the wall: dark colours get a lift, then snap to the palette."""
+    a = rgb.astype(float)
+    lum = a.sum(axis=-1, keepdims=True) / 765.0
+    a = np.where(lum < below, a * gain + add, a)
+    return snap(np.clip(a, 0, 255).astype(np.uint8), pal)
+
+
+def script_sign(seed, pal, accent=(255, 178, 60), pale=(240, 248, 255), w=64, h=192):
+    """A vertical neon sign drawn by script from abstract strokes only (bars, blocks, rings, dots): no glyph
+    of any alphabet. A dark panel, a 2 px frame in the accent colour, 6 cells of abstract marks."""
+    rng = np.random.default_rng(seed)
+    img = np.zeros((h, w, 4), dtype=np.uint8)
+    dark = nearest_in(pal, (20, 26, 36))
+    frame = nearest_in(pal, accent)
+    ink = [nearest_in(pal, pale), nearest_in(pal, (170, 210, 240)), frame]
+    img[:, :, :3] = dark
+    img[:, :, 3] = 255
+    img[:2, :, :3] = frame
+    img[-2:, :, :3] = frame
+    img[:, :2, :3] = frame
+    img[:, -2:, :3] = frame
+    cells = 6
+    ch = (h - 8) // cells
+    for c in range(cells):
+        y0 = 4 + c * ch
+        col = ink[int(rng.integers(len(ink)))]
+        kind = int(rng.integers(5))
+        cx0, cx1 = 10, w - 10
+        if kind == 0:    # two bars
+            img[y0 + 5:y0 + 9, cx0:cx1, :3] = col
+            img[y0 + 15:y0 + 19, cx0:cx1 - int(rng.integers(0, 14)), :3] = col
+        elif kind == 1:  # block
+            img[y0 + 6:y0 + ch - 8, cx0 + 6:cx1 - 6, :3] = col
+        elif kind == 2:  # ring
+            img[y0 + 5:y0 + ch - 6, cx0 + 4:cx1 - 4, :3] = col
+            img[y0 + 9:y0 + ch - 10, cx0 + 8:cx1 - 8, :3] = dark
+        elif kind == 3:  # stairs
+            for i in range(4):
+                img[y0 + 5 + i * 5:y0 + 9 + i * 5, cx0 + i * 7:cx0 + i * 7 + 10, :3] = col
+        else:            # dots
+            for i in range(3):
+                img[y0 + 8:y0 + 15, cx0 + 3 + i * 14:cx0 + 10 + i * 14, :3] = col
+    return img
 
 
 # ------------------------------------------------------------ pavement ----

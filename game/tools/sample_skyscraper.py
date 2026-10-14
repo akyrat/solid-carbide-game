@@ -30,10 +30,10 @@ WALL_BASE = {(24, 23, 36): (32, 31, 45)}
 
 # One skyscraper, four free variations for the four slots (flip, neon colour, sign wall and height, facade start, rubble).
 SLOT_VARIANTS = {
-    (0, 0): dict(flip=False, sign_swap=False, sign_side="left", sign_up=5.0, facade_off=(0, 0), rubble=0),
-    (1, 0): dict(flip=True, sign_swap=True, sign_side="right", sign_up=9.0, facade_off=(60, 40), rubble=6),
-    (0, 1): dict(flip=False, sign_swap=True, sign_side="right", sign_up=3.0, facade_off=(120, 100), rubble=10),
-    (1, 1): dict(flip=True, sign_swap=False, sign_side="left", sign_up=11.0, facade_off=(30, 150), rubble=4),
+    (0, 0): dict(flip=False, sign_swap=False, sign_side="left", sign_up=5.0, facade_seed=0, rubble=0),
+    (1, 0): dict(flip=True, sign_swap=True, sign_side="right", sign_up=9.0, facade_seed=1, rubble=6),
+    (0, 1): dict(flip=False, sign_swap=True, sign_side="right", sign_up=3.0, facade_seed=2, rubble=10),
+    (1, 1): dict(flip=True, sign_swap=False, sign_side="left", sign_up=11.0, facade_seed=3, rubble=4),
 }
 
 BG = (14, 12, 24)

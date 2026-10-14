@@ -43,9 +43,29 @@ class T(unittest.TestCase):
         f = pal[rng.integers(0, len(pal), (40, 40))].astype(np.uint8)
         f = np.concatenate([f, np.full((40, 40, 1), 255, np.uint8)], axis=-1)
         sign = f[:20, :8].copy()
-        body = bs.build_body(f, f[:30], sign, pal)
+        body = bs.build_body(f, f[:30], sign, pal, facade_seed=1)
         self.assertEqual(body.shape, (bs.BODY_H, bs.BODY_W, 4))
         r = bs.sprite_rules(body)
+        self.assertEqual(r["semi_transparent"], 0)
+        self.assertTrue(r["colors_ok"] and r["red_ok"])
+
+    def test_band_wall_joins_on_floor_lines_and_is_not_a_mirror(self):
+        pal = bs.load_palette()
+        rng = np.random.default_rng(2)
+        f = pal[rng.integers(0, len(pal), (256, 256))].astype(np.uint8)
+        f = np.concatenate([f, np.full((256, 256, 1), 255, np.uint8)], axis=-1)
+        w = bs.band_wall(f, 384, 960, seed=5)
+        self.assertEqual(w.shape, (960, 384, 4))
+        self.assertTrue((w[..., 3] == 255).all())
+        w2 = bs.band_wall(f, 384, 960, seed=5)
+        self.assertTrue((w == w2).all(), "deterministic")
+        self.assertFalse((w[:64] == w[64:128]).all(), "bands differ")
+
+    def test_script_sign_has_no_semi_transparent_pixels_and_uses_palette_colours(self):
+        pal = bs.load_palette()
+        s = bs.script_sign(3, pal)
+        self.assertEqual(s.shape, (192, 64, 4))
+        r = bs.sprite_rules(s)
         self.assertEqual(r["semi_transparent"], 0)
         self.assertTrue(r["colors_ok"] and r["red_ok"])
 

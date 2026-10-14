@@ -26,6 +26,9 @@ const NOTHING := [false, false, 0.0]
 
 func make_map(view := "iso") -> Node2D:
 	var map: Node2D = MapScene.instantiate()
+	# These tests pin the block-level mechanism (fade, depth order) on the placeholder blocks; the skyscraper
+	# art with its per-slot fade has its own tests (test_building_art.gd, T-064).
+	map.building_art_enabled = false
 	add_child_autofree(map)
 	map.set_view(view)
 	return map
@@ -185,6 +188,15 @@ func test_map_with_car_fades_on_its_own_each_frame() -> void:
 	assert_almost_eq(building_at(map, BLOCK).alpha(), 0.15, 0.001)
 
 
+## The skyscraper slot that covers the car at `at` (units), or null.
+func _covering_slot(map: Node2D, at: Vector2) -> Node2D:
+	var shape: PackedVector2Array = map.car_screen_shape(at, NOSE_UP)
+	for b in map.fade_items():
+		if b.covers(at, shape):
+			return b
+	return null
+
+
 func _place_run_car(run: Node2D, at: Vector2) -> void:
 	var car: CharacterBody2D = run.car
 	car.use_keyboard = false
@@ -201,12 +213,18 @@ func test_in_a_run_from_the_main_menu_the_building_fades_and_comes_back() -> voi
 	game.menu.start_button.pressed.emit()
 	await wait_process_frames(2)
 	var run: Node2D = game.run
-	var block := building_at(run.map, BLOCK)
+	var block := _covering_slot(run.map, BEHIND)
+	assert_not_null(block, "a skyscraper slot covers the car behind the block")
 	_place_run_car(run, BEHIND)
 	await wait_seconds(0.4)
 	assert_almost_eq(block.alpha(), 0.15, 0.001, "faded while the car is behind it")
 	assert_lt(run.view_root.z_index, block.z_index, "the car is drawn under it")
-	assert_eq(building_at(run.map, FAR_BLOCK).alpha(), 1.0)
+	var far_slots := 0
+	for b in run.map.fade_items():
+		if b != block and FAR_BLOCK.encloses(b.footprint):
+			assert_eq(b.alpha(), 1.0)
+			far_slots += 1
+	assert_gt(far_slots, 0)
 	_place_run_car(run, OPEN)
 	await wait_seconds(0.4)
 	assert_eq(block.alpha(), 1.0, "solid again once the car is in the open")
@@ -219,7 +237,7 @@ func test_drift_marks_stay_on_the_ground_under_the_buildings() -> void:
 	var marks: Node2D = run.drift_marks
 	assert_eq(marks.z_index, 0)
 	assert_lt(marks.get_index(), run.map.buildings_draw.get_index())
-	for b in run.map.buildings:
+	for b in run.map.fade_items():
 		assert_gt(b.z_index, marks.z_index, "every building is drawn over the marks")
 	assert_gt(run.view_root.z_index, marks.z_index, "the car is drawn over the marks")
 

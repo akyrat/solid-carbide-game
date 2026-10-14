@@ -1,0 +1,114 @@
+{
+ "skyscraper_1_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_1_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_2_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_2_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_3_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_3_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_4_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_4_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_5_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_5_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_6_0.png": {
+  "semi_transparent": 0,
+  "colors": 28,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "skyscraper_6_1.png": {
+  "semi_transparent": 0,
+  "colors": 29,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "cityB_pavement_00.png": {
+  "semi_transparent": 0,
+  "colors": 4,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "cityB_pavement_10.png": {
+  "semi_transparent": 0,
+  "colors": 5,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "cityB_pavement_01.png": {
+  "semi_transparent": 0,
+  "colors": 5,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ },
+ "cityB_pavement_11.png": {
+  "semi_transparent": 0,
+  "colors": 5,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true
+ }
+}

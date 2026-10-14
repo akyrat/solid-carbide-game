@@ -29,6 +29,8 @@ LILAC = (215, 180, 255)
 # Prop places on the 12 x 12 roof (units from the back corner).
 PLACES = {"tank": (3.5, 4.0), "ac": (8.0, 3.5), "rubble": (5.5, 8.5),
           "ac2": (3.0, 8.5), "rubble2": (9.5, 8.0), "tank2": (9.0, 9.5)}
+SIGN_BOX_LEFT = (147, 86, 236, 130)
+SIGN_BOX_RIGHT = (139, 91, 224, 129)
 BG, ROAD = (14, 12, 24), (26, 25, 38)
 
 
@@ -69,6 +71,9 @@ def main(argv=None):
     pal = bs.load_palette()
     fl = sb.clean_facade(load(a.raw, "a_facade_left"), pal)
     fr = sb.clean_facade(load(a.raw, "a_facade_right"), pal)
+    # the PixelLab sign text is painted over by scripted abstract signs (no glyphs); boxes found from the pink pixels
+    sb.paint_sign(fl, SIGN_BOX_LEFT, 129, pal)
+    sb.paint_sign(fr, SIGN_BOX_RIGHT, 130, pal)
     tank = sb.clean_prop(load(a.raw, "a_prop_tank"), pal)
     ac = sb.clean_prop(load(a.raw, "a_prop_ac"), pal, polygon=KEEP_AC)
     rub = sb.clean_prop(load(a.raw, "a_prop_rubble"), pal, polygon=KEEP_RUBBLE, drop=LILAC)
@@ -90,7 +95,7 @@ def main(argv=None):
         bs.to_img(body).save(Path(a.game_dir) / "short_body_0.png")
     b = Path(a.b_art)
     pavs = {(si, sj): np.array(Image.open(b / f"cityB_pavement_{si}{sj}.png").convert("RGBA")) for si, sj in ((0, 0), (1, 0), (0, 1), (1, 1))}
-    sky = [np.array(Image.open(b / f"cityB_body_{i}.png").convert("RGBA")) for i in range(4)]
+    sky = [np.array(Image.open(b / f"skyscraper_{i + 1}_0.png").convert("RGBA")) for i in range(4)]
     # the board's sample block: short in the front slot, skyscrapers behind (the car on the road in front)
     canvas, car_at = block_canvas({(0, 0): sky[0], (1, 0): sky[1], (0, 1): sky[2], (1, 1): body}, pavs)
     canvas.save(out / "block_short_in_front_slot.png")

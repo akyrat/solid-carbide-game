@@ -15,7 +15,7 @@
  "pieces": {
   "facade_left": {
    "semi_transparent": 0,
-   "colors": 25,
+   "colors": 22,
    "colors_ok": true,
    "red_ok": true,
    "has_transparent": false
