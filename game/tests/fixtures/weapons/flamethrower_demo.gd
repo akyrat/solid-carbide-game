@@ -4,9 +4,6 @@ extends Node
 ## placeholder flames behind the car, minions coming in.
 ## bash game/tools/screenshot.sh res://tests/fixtures/weapons/flamethrower_demo.tscn screenshots/flamethrower.png 90
 
-const Flame := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
-
-
 func _ready() -> void:
 	var game: Node = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
@@ -14,7 +11,9 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var run: Node2D = game.run
 	run.minions.rng.seed = 42
-	var flame = Flame.attach_to_run(run)  # whatever the playtest switch says
+	var flame = run.weapons.flamethrower
+	if not flame.is_owned():  # whatever the playtest switch says
+		run.weapons.upgrade("flamethrower")
 	run.car.use_keyboard = false
 	run.car.scripted_input = [true, false, 1.0]
 	flame.enemy_hit.connect(func(e: Node, amount: float) -> void:

@@ -491,6 +491,19 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 - The prototype's level-up offers 3 choices drawn at random from power-ups, new weapons and the next tiers of owned weapons. A weapon at tier 8 is no longer offered, and when nothing is left the only choice is 4 coins.
 - The report lists every value with its source, the differences from Solid Carbide's level-up flow, notes on porting to Godot, and open questions for the board: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
 
+#### The starting gun (built in task T-041)
+
+What the built gun does in the game. It follows Decisions and the Unity prototype weapons report; the numbers are T-040's ([../game/data/weapons.json](../game/data/weapons.json)). How the code is put together: `game/README.md`, "Weapons".
+
+- Every run starts with the gun at tier 1 and no other weapon; a new run puts it back to tier 1 and removes any bullets in flight. Nothing is drawn on the car, only the bullets.
+- Every 1.26 seconds (at tier 1) the gun looks for living enemies whose centre is within 12 units of the car's centre. With none, it does nothing until the next check; with some, it fires a volley. It checks only at those moments, so an enemy that comes into range just after a check is shot at the next one.
+- **Targeting rule:** the prototype's, closest first. Bullet 1 of a volley goes to the closest enemy in range, bullet 2 to the second closest, and so on, going round them again from the closest when there are more bullets than enemies. Bullets in a volley leave 0.05 seconds apart. Each leaves the car's centre aimed at its target's centre at that moment, with no leading, and flies straight on.
+- Bullets fly at 15 units per second and hit an enemy whose body comes within 1 unit of the bullet's centre, dealing 2 damage through the enemy's damage function. A bullet is gone after its hit (after its second hit at tier 8), or once it has flown as far as the gun's range without hitting anything. Bullets never push enemies and pass through walls and boulders.
+- The gun targets every damageable enemy, not only minions, so the kaiju will be shot as soon as it exists.
+- The upgrade tiers (2 to 8) can be applied from code and change the gun as T-040's data says: 3 bullets a volley at tier 2 and 5 at tier 6, a shorter interval at tiers 3, 4 and 7 (1.06, 0.893 and 0.754 seconds), an 18-unit range at tier 5, and bullets passing through their first enemy at tier 8. Offering them at a level-up is a separate task (T-043).
+- The gun stops while the run is paused and once the run has ended.
+- The bullets are placeholders for now: a small cyan dot with a white core and a dark outline, drawn about half a unit above the ground. The final bullet art comes from a separate art task.
+
 ### References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
@@ -706,7 +719,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `4977806ff786a0df7fb2662d0578db320aee307ea56087813d6c195a8cc0d697` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `dfc5e2be5e5fdcda06f31a65efb26a521109a9afba93754ffab65e4b5c797418` |
-| `weapons.md` | `046697cd73f9af49e5c5e728a462a635ee51b5e44f3d71143fe06f2c7de51d33` |
+| `weapons.md` | `fd498cecf710900b468cc87a32538bde9e329f28f31d2ee357f7f3da5c6dfd5c` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `ef88f99b476db9d9a38dd0c614beffcc70220357b384ac7404aaf28fc4150969` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |

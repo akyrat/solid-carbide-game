@@ -41,8 +41,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
-## The exhaust flamethrower (task T-042), self-contained; see exhaust_flamethrower.gd.
-const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
+## The car's weapons (task T-041): the weapon rack, see weapons.gd.
+const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -95,6 +95,9 @@ var challenges_enabled: bool = MapScript.CHALLENGES_ENABLED
 ## are in PhysicsWorld, their drawings in the "Enemies" node just before View.
 ## A new run clears them. Set `minions.enabled = false` to stop them (tests).
 var minions: Node
+## The car's weapons (task T-041, weapons.gd): child "Weapons". A new run
+## starts with the starting gun at tier 1 and nothing else.
+var weapons: Node
 
 
 func _ready() -> void:
@@ -160,6 +163,10 @@ func _ready() -> void:
 	minions.name = "Minions"
 	add_child(minions)
 	minions.bind(self)
+	weapons = WeaponsScript.new()
+	weapons.name = "Weapons"
+	add_child(weapons)
+	weapons.bind(self)
 	start_run()
 
 
@@ -168,10 +175,8 @@ func _ready() -> void:
 ## at the start, and the state reset (full health, 8:00, 0 coins).
 func start_run() -> void:
 	_build_world()
-	world_rebuilt.emit()  # a flamethrower from the last run detaches itself here
+	world_rebuilt.emit()
 	state.start_run()
-	# Playtest switch (T-042): data/playtest.json "flamethrower_at_start".
-	ExhaustFlamethrowerScript.give_if_playtest_switch(self)
 
 
 func _build_world() -> void:
