@@ -1,7 +1,7 @@
 ---
 id: T-068
 title: Art: the minion (light green lizard), walking
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-044-minions.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -138,3 +138,4 @@ Checked in C:\solid-carbide-worktrees\T-068 at 822cd7d, against the merge base w
 - **T-044's tests: pass.** test_minions.gd's only change is dropping `SHADOW_COLOR` from the red-colour list (expected, the constant is gone); no other T-044 test changed. Only `minion_sprite.gd` changed among the enemy scripts; nothing under game/data or game/scenes changed against the merge base (master's own later playtest.json change is not this branch's).
 - **Full suites: pass.** GUT (bash game/tools/run_tests.sh), run twice: 584 of 584 both times; the earlier 583/584 did not recur. Python: game/tools 246 OK (1 skipped), tools 130 OK.
 - **Also checked:** no Redgull red (no reddish pixels in the five sheets; the placeholder colours pass the existing test); no shadow code left in minion_sprite.gd; game/README.md updated.
+- 2026-10-15, in-qa → needs-playtest: QA round 1: all five criteria pass.
