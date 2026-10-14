@@ -1,7 +1,7 @@
 ---
 id: T-085
 title: The combo raises minion spawning (can be switched off)
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -39,6 +39,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A test with the switch off shows the combo makes no difference to spawning (QA: pass / fail)
 - [ ] `game/README.md` says how to switch it, and `docs/enemies.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it; more minions with a combo is something the player meets).
 
 ## Result notes
 
