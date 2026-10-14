@@ -55,7 +55,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] `game/README.md` documents the enemies' damage function for the weapon tasks, and `docs/enemies.md` describes the built minion in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it). There are no weapons yet, so this playtest covers spawning, chasing, contact damage, knockback, pause and draw order. Killing minions and coins are checked by the tests only, and the board judges them in a playtest once the starting gun (T-041) is in. No debug kill key (board, 2026-10-14).
 
 ## Result notes
 
