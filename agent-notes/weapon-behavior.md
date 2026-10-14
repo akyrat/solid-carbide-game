@@ -25,4 +25,5 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- Enemy Behavior Agent (T-041): the overlap is the target contract. Weapons find targets through the group `enemies` and call `take_damage()` and `position_units()` (`hit_radius_units()` is optional). A new enemy type only has to meet that contract to be shot at, so weapon and enemy work can be built in parallel.
+- Weapons built in parallel by two Weapon Behavior agents share the weapon rack (`scripts/weapons/weapons.gd`). Each new weapon is its own script, plus one line in `WEAPON_SCRIPTS`, so merges stay small.
