@@ -851,52 +851,6 @@ func set_view(v: String) -> void:
 			b.reset_fade()
 
 
-## Temporary (T-064 quick tuning): F7 cycles the city palettes A, B, C live and shows the letter.
-func _unhandled_key_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
-		cycle_city_palette()
-
-
-var _palette_label_until := 0
-
-
-func cycle_city_palette() -> String:
-	var letters: Array = []
-	for b in buildings:
-		if b.towers != null:
-			letters = b.towers.palette_letters()
-			break
-	if letters.is_empty():
-		return ""
-	var next: String = letters[(letters.find(BuildingTowers.current_palette) + 1) % letters.size()]
-	BuildingTowers.current_palette = next
-	for b in buildings:
-		if b.towers != null:
-			b.towers.set_palette(next)
-	_show_palette_label(next)
-	return next
-
-
-func _show_palette_label(letter: String) -> void:
-	var layer := get_node_or_null("PaletteLabel") as CanvasLayer
-	if layer == null:
-		layer = CanvasLayer.new()
-		layer.name = "PaletteLabel"
-		layer.layer = 90
-		var label := Label.new()
-		label.name = "Label"
-		label.position = Vector2(12, 600)
-		label.add_theme_font_size_override("font_size", 20)
-		layer.add_child(label)
-		add_child(layer)
-	(layer.get_node("Label") as Label).text = "City palette %s  (F7 switches)" % letter
-	layer.visible = true
-	_palette_label_until = Time.get_ticks_msec() + 3000
-	get_tree().create_timer(3.1).timeout.connect(func():
-		if is_instance_valid(layer) and Time.get_ticks_msec() >= _palette_label_until:
-			layer.visible = false)
-
-
 ## True when the isometric view draws the building art (T-064) instead of the placeholder boxes.
 func uses_building_art() -> bool:
 	return view == "iso" and building_atlas != null

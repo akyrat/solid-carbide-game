@@ -97,15 +97,9 @@ func test_bodies_have_no_semi_transparent_pixels() -> void:
 		assert_eq(bad, 0)
 
 
-func test_f7_cycles_three_city_palettes_and_swaps_textures() -> void:
-	BuildingTowers.current_palette = "A"
+func test_only_one_city_palette_is_in_use() -> void:
 	var map := make_map()
 	var t: Node2D = block_of(map).towers
-	assert_eq(t.palette_letters(), ["A", "B", "C"])
-	var first: Texture2D = t.get_child(0).texture
-	assert_eq(map.cycle_city_palette(), "B")
-	assert_ne(t.get_child(0).texture, first)
-	assert_eq(map.cycle_city_palette(), "C")
-	assert_eq(map.cycle_city_palette(), "A")
-	assert_eq(t.get_child(0).texture, first)
-	assert_not_null(map.get_node("PaletteLabel"))
+	assert_eq(t.palette_letters(), ["B"])
+	assert_eq(BuildingTowers.current_palette, "B")
+	assert_null(map.get_node_or_null("PaletteLabel"), "no F7 switch or label in a single-palette build")

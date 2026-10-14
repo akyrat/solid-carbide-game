@@ -24,7 +24,7 @@ var pavement_root: Node2D
 
 var _art: Dictionary = {}
 ## The city palette in use ("A", "B", "C"; task T-064 quick tuning: F7 cycles them live). Shared by every block.
-static var current_palette := "A"
+static var current_palette := "B"
 ## palette letter -> {bodies: [Texture2D], pavements: [Texture2D]}.
 var _palette_textures: Dictionary = {}
 var _body_sprites: Array = []
