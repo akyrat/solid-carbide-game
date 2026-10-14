@@ -960,3 +960,8 @@ Entry format:
 - Decision or change: the board playtested the alert signs and approved them ("LGTM"). Six road-style warning signs, drawn by script (no PixelLab): the kaiju's head in a red warning triangle and its body in a red prohibition circle, black silhouettes on white, using the board's traffic-sign red exception. Four hang on skyscraper walls about 3 units up and fade with their tower; two stand on block-corner pavements and never fade; none on roads, no collisions. With T-064 and T-129 this completes the board's 2026-10-14 city redesign. QA noted an older issue from T-064's depth order: near skyscrapers (z up to 146) can be drawn over the trick popups (z 100); the Project Lead proposed a small UI ticket to the board.
 - Documents touched: `game/README.md`
 - Tasks: T-130 (done)
+
+## 2026-10-14: The combo heats up at x2, x3 and x4
+- Decision or change: the board asked for the combo to feel like it heats up: the counter changes at x2, more at x3, and from x4 (the top step; the combo still goes to its x6 cap) it is maxed out with the likes bar on fire. The combo and "Hype Lv" text take the game's comic look (Bangers). Fire drawn in code first, no PixelLab, oranges and yellows, never Redgull red. No sound for now. Task T-131 to the UI Agent. The board also asked for something on the trick popups; what, is still open.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-131
