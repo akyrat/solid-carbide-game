@@ -11,7 +11,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 | Folder | What goes in it |
 | --- | --- |
 | `scenes/` | Scenes (`.tscn`). `game/game.tscn` is the main scene (the screen flow); `drift_prototype/` is the drift prototype; `driving/` the drift marks and drift smoke; `level/` is the MVP map; `run/` is the run |
-| `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state |
+| `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state; `enemies/` the minions and their coins (see "Minions") |
 | `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
@@ -313,7 +313,7 @@ Every task that adds physics bodies uses these layers. They are named in `projec
 | --- | --- | --- | --- | --- |
 | 1 | 1 | `obstacles` | Walls, buildings, the map's edge and boulders: everything the car bounces off. The MVP map's `Walls` and `Boulders_*` bodies, and the drift prototype's test room | `StaticBody2D` on layer 1, mask none |
 | 2 | 2 | `car` | The player's car (`car.gd`) | Layer 2, mask 1: it collides only with obstacles |
-| 3 | 4 | `enemies` | Minions, the kaiju, meteors | Layer 3. Their mask must not include layer 2, so they and the car never push each other. To touch or damage the car, use an `Area2D` whose mask includes layer 2 |
+| 3 | 4 | `enemies` | Minions, the kaiju, meteors | Layer 3. Their mask must not include layer 2, so they and the car never push each other. To touch or damage the car, use an `Area2D` whose mask includes layer 2 (the minions measure their overlap with the car's body themselves instead, see "Minions") |
 | 4 | 8 | `pickups` | Coins and other pickups | `Area2D` on layer 4 with mask 2, to notice the car driving over it |
 
 Walls and boulders share layer 1 because the MVP map builds them that way and the car treats them the same. To tell them apart (for example in the combo), use the body `hit_obstacle` reports: on the MVP map, `map.walls` is the buildings and the edge, `map.boulder_bodies` the pattern copies' boulders and `map.meteor_boulder_bodies` the boulders meteors left. Weapons and their projectiles have no layer yet; the weapon tasks add one (the next free number) to this table.
@@ -700,3 +700,41 @@ The drain runs with the clock (`advance()`), so it stops while the run is paused
 **Pause:** the clock runs in `_process` with the default (pausable) process mode, so setting `get_tree().paused = true` stops it. Anything that pauses the run (the pause screen, the level-up choice) does it that way. The run's length (8 minutes) and the boss's arrival (7 minutes in) are constants in `run_state.gd`, `RUN_SECONDS` and `BOSS_TIME_LEFT`, because they are Decisions, not balancing numbers.
 
 **Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu) and `tests/unit/run/test_run_likes_drain.gd` (T-115: no drain with a combo, the drain at T-114's speed once it is gone, a trick stopping it, never below the level's start even over a long drain, no drain while paused, while a choice waits, after the run ends or at the top level, the extra wait, the switch, `xp_changed` firing and the HUD's likes bar emptying in a run), part of the GUT suite.
+
+## Minions
+
+Task T-044 (Enemy Behavior Agent): the MVP minion as Enemies, Decisions describes it, with T-039's numbers (`data/enemies.json` through `EnemyData`, "Game data" above). What it does: `docs/enemies.md`, Content, "The minion". Placeholders for now (a light green four-legged lizard drawn in code, gold coins); the final art comes from separate art tasks.
+
+**See it:** start the game (F5) and press Start, or open `scenes/run/run.tscn` and press F6. Minions start coming in from the screen's edges at once and walk towards the car. Screenshots, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/minions_demo.tscn screenshots/minions.png 20` (minions and two coins around the car in the gravel square) and `bash game/tools/screenshot.sh res://tests/fixtures/minions_draw_order_demo.tscn screenshots/minions_draw_order.png 20` (the car on the road beside a block of skyscrapers and two boulders, minions in front of and behind them). Both start the run from the main menu (fixture script `tests/fixtures/minions_demo.gd`). Copies are in `art-archive/T-044/screenshots/`.
+
+**How it is built** (`scripts/enemies/`):
+
+- `minion_spawner.gd`: the run's minions. The run scene adds it as `run.minions` (child `Minions`) and calls `bind(run)`. It moves everything in `step(dt)`, once per physics step from `_physics_process` (pausable, so the pause screen and the level-up pause stop the minions and their damage), and does nothing once the run is over. On `run.world_rebuilt` (a new run) it removes every minion and coin and follows the new car and map. `enabled = false` stops it (tests).
+- `minion.gd`: one minion, a `CharacterBody2D` in the run's `PhysicsWorld` (flat world pixels, 16 per unit, like the car) on layer 3 (`enemies`) with mask 1 (obstacles): a circle of `RADIUS_UNITS` (0.5). It slides along walls, buildings and boulders and walks round one it meets head-on (`detour_side`, picked at random per minion); it never pushes or blocks the car. In the groups `enemies` and `minions`.
+- `minion_sprite.gd`, `coin_sprite.gd`: the placeholder drawings, in the isometric view.
+- `coin.gd`: a coin, an `Area2D` on layer 4 (`pickups`) with mask 2 (the car).
+- `enemy_depth.gd`: the minions' and coins' place in the buildings' depth order.
+
+**Spawning:** the spawner keeps `minions_wanted_now()` minions around, which is `EnemyData.minions_wanted(state.time_elapsed(), spawn_multiplier)` (12 at the start growing to 20 at 7:00, then held). While fewer are around, one spawns every `spawn_interval_seconds` (0.5 s; the first at once), at a random point on the ring `spawn_margin_units` (3) beyond the edge of the visible screen (the camera's view, so it follows the zoom), inside the map and clear of buildings and boulders (`is_free_spot()`; 12 tries, else it waits for the next interval). A minion a whole screen beyond the visible screen (the car drove away from it) is removed without coins and the spawner refills at the edge, so the minions stay around the car.
+
+**Combo hook (for T-085):** `run.minions.spawn_multiplier` multiplies the count. It stays 1.0 until T-085 sets it from `RunState.combo_spawn_multiplier()` (for example on `combo_changed`).
+
+**Movement:** straight towards the car's centre at `move_speed` (6 units/s), plus a small push away from other minions closer than 1.2 units (`Minion.SEPARATION_UNITS`), so a crowd spreads round the car.
+
+**Contact damage:** a minion touches the car when its circle overlaps the car's 1 x 1 unit body (`touches_car()`). While touching, it hits once every `contact_damage_interval` (0.5 s), the first hit as soon as it touches: `RunState.damage_car(contact_damage)` (5; this also cuts the combo) and `car.apply_knockback(away from the minion, knockback)` (8 units/s). Each minion keeps its own interval, so two minions touching hit twice as often.
+
+**Damaging a minion (for the weapon tasks, T-041 and T-042):**
+
+```
+func take_damage(amount: float) -> void
+```
+
+Call it on a minion node. `amount` is in the same points as `health` (4, `data/enemies.json`). Zero or negative amounts, and calls on a dead minion, are ignored. At 0 health the minion dies: its `died(minion, position_units)` signal fires once, it leaves the groups `enemies` and `minions` at once, its drawing goes, and the node is freed at the end of the frame (so calling it from an `Area2D` callback is safe). To find targets: `get_tree().get_nodes_in_group("enemies")` (minions now, the kaiju later) or `run.minions.minions` (the live minions). Each has `position_units()` (flat world, units; `position` is in flat world pixels), `health`, `max_health` and `is_dead()`. Bodies are on layer 3, so a projectile's `Area2D` finds them with a mask of 4. Check `is_dead()` before damaging one found earlier in the same frame.
+
+**Coins:** when a minion dies, `drop_chance` (0.6) decides whether it drops coins; if so, `coins_per_drop` (2) coins of 1 each land around where it died (`roll_coin_drop()`, using the spawner's `rng`; seed it for tests). Driving over a coin (the car's body entering its circle of 0.5 units) collects it: `RunState.add_coins(1)`, and the coin and its drawing are gone. Coins stay until collected or until a new run. `run.minions.coins` lists them; `spawn_coin_at(units, value)` adds one. The spawner's `minion_killed(minion, coins)` signal fires per death with the number of coins dropped.
+
+**Draw order:** each minion's and coin's drawing is in `run.minions.draw_root` (the node `Enemies`, just before the car's `View` in the run, Y-sorted). Every physics step each drawing is placed on its body in the isometric view and given a `z_index` by the map's rule for the car (`map.car_z_index()`, "See-through buildings" above): one under the lowest building slot or boulder sprite that covers it (it stands behind it and their outlines overlap on screen), otherwise `map.top_z_index()`, over every building. Nothing fades for a minion: the fade stays car-only, so a minion behind an opaque skyscraper is hidden by it, and one behind a building faded for the car shows through it. Where the car and a minion get the same z, the car is drawn over the minion.
+
+**Not in the data:** the minion's and coin's sizes (0.5 unit radius each), the separation distance (1.2 units) and the rule that removes minions a whole screen behind are in the code (`minion.gd`, `coin.gd`, `minion_spawner.gd`): sizes and rules of the placeholder, not balancing numbers.
+
+**Tests:** `tests/unit/enemies/test_minions.gd`, part of the GUT suite: more minions at the end of the 7 minutes than at the start (the run's clock moved on, the count matching `minions_wanted`), one spawn per interval off the screen and clear of obstacles, the combo hook, a minion walking straight at the car at the data's speed and round a building, contact damage at the data's rate with knockback away from the minion, no damage without touching, death at 0 health (once), coins dropping at about the data's chance over 600 deaths, driving over a coin collecting it, minions standing still while paused, a new run clearing everything, nothing moving after the run ends, minions far behind being removed, the collision layers, the draw order under a covering building and over the rest, and no Redgull red in the placeholders.
