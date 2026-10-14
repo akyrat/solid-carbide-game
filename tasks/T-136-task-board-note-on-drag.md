@@ -1,7 +1,7 @@
 ---
 id: T-136
 title: Ask for an optional note when a card is dragged to another column on the task board
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tools
