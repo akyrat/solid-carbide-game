@@ -1110,3 +1110,8 @@ Entry format:
 - Decision or change: the board chose the comic look for the level-up screen's cards (white rounded cards, black borders, Bangers font, over the dimmed run), replacing "plain cards", and keyboard plus mouse to pick (A/D or arrows move, Enter or Space takes, or click the card's button). Upgrade cards show the next tier's text from T-051. The `flamethrower_at_start` playtest switch goes off in T-052's branch, so the board's first level-up offers the flamethrower. T-052 goes to the UI Agent; it waits for the board's playtest before merging.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-052
+
+## 2026-10-15: The kaiju's health bar above the kaiju; level-up animations and red-gold level-up art; the meteor attack started
+- Decision or change: T-050 (planned from the task board): the kaiju's health bar sits above the kaiju and follows it, about as wide as the kaiju (following its width), neon purple on white with a black outline and thin black dividers every 10%, in a subtle comic style like the combo popups, no label, always drawn above buildings; it replaces the HUD-corner bar. New tickets: T-139 (the likes bar animates on a level-up), T-140 (art for the level-up screen, red and gold, Redgull-themed; sample first, PixelLab only with the board's go) and T-141 (the level-up screen animates in with that art; waits for T-140, as the board asked). T-046 (the kaiju's meteor attack) started on the board's go.
+- Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-050, T-139, T-140, T-141, T-046
