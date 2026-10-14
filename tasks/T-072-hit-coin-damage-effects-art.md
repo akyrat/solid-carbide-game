@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-044-minions.md, tasks/T-036-run-scene-and-state.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -44,12 +44,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 Round 1's criteria (all passed on 2026-10-14) are superseded by the board's changes of 2026-10-15: the hit, death and car damage effects removed; enemies get only a brief slight red tint when damaged; the car shakes briefly when damaged. They are kept below, struck through, for the record.
 
-- [ ] A check script shows the coin sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists the one PixelLab call (the coin sample) with its prompt, settings and cost, and the balance before and after; the removed effects' art is kept in art-archive, not deleted (QA: pass / fail)
-- [ ] A test shows a damaged minion and the kaiju get a brief red tint that returns to normal, and the tint is not Redgull red (QA: pass / fail)
-- [ ] A test shows the car's sprite shakes briefly when the car takes damage, with no change to its physics, position or the camera, and it stands still while paused (QA: pass / fail)
-- [ ] No hit, death or car damage effect from round 1 is left in the game; a screenshot shows a tinted minion next to normal ones (QA: pass / fail)
-- [ ] T-044's, T-045's and T-036's tests still pass, and the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows the coin sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [x] The record lists the one PixelLab call (the coin sample) with its prompt, settings and cost, and the balance before and after; the removed effects' art is kept in art-archive, not deleted (QA: pass)
+- [x] A test shows a damaged minion and the kaiju get a brief red tint that returns to normal, and the tint is not Redgull red (QA: pass)
+- [x] A test shows the car's sprite shakes briefly when the car takes damage, with no change to its physics, position or the camera, and it stands still while paused (QA: pass)
+- [x] No hit, death or car damage effect from round 1 is left in the game; a screenshot shows a tinted minion next to normal ones (QA: pass)
+- [x] T-044's, T-045's and T-036's tests still pass, and the full GUT suite and all Python tool tests pass (QA: pass)
 
 Round 1 (superseded):
 
@@ -140,3 +140,18 @@ The board's words: "regarding the effects, uh, I want you to remove the effects 
 - Kaiju: `kaiju.gd` now does `HitTint.attach(self)` in `_ready()` and `hit_tint.flash()` in `take_damage()` while alive. Test: `test_a_damaged_kaiju_is_tinted_briefly_then_back_to_normal` in `tests/unit/enemies/test_kaiju.gd`; the minion's is in `test_minions.gd`.
 - Screenshot: `art-archive/T-072/screenshots/hit_tint_before_hit_after.png`: in a run, one minion tinted next to three normal ones (before, just hit, 1 s later). Fixture `tests/fixtures/effects_demo.tscn`.
 - Tests: GUT 661 of 661 pass; Python tool tests 251 OK (1 skipped). A cleanup `rm` of the old screenshots was refused by the safety check; it was not needed (the new shots overwrite the same names) and nothing was deleted.
+
+### QA round 2 (qa-integration, 2026-10-15): all six current criteria pass
+
+1. **Coin check script: pass.** `python game/tools/build_hit_coin_damage_effects.py check` exits 0, `ALL RULES PASS`: coin 10x12, transparent corners, 0 semi-transparent pixels, 5 colours, 109 opaque pixels, no Redgull red. (It also still checks the archived sheets in `art-archive/T-072/unused_effects/`; all pass.)
+2. **PixelLab record and archive: pass.** `game/art/pixellab-generation-log.jsonl` has exactly one T-072 entry (`/create-image-pixflux`, `coin_sample`); the result notes give its prompt, negative prompt, settings, cost (1 generation) and balance 4919 before, 4918 after. The removed hit, death and car damage sheets are in `art-archive/T-072/unused_effects/` (png + json each), their review images and the first-version screenshots in `art-archive/T-072/`; nothing deleted. Nothing in `game/` loads them: no `.gd`, `.tscn`, `.tres` or `.json` refers to `enemy_hit`/`enemy_death`/`car_damage` art, `effect_flipbook`, `play_effect` or a `hurt` signal (the only `enemy_hit` match is the flamethrower's own unrelated signal), and `game/art/effects/` holds only coin, drift and level-up art.
+3. **Hit tint test, not Redgull red: pass.** `test_a_damaged_minion_is_tinted_briefly_then_back_to_normal` (`test_minions.gd`) and `test_a_damaged_kaiju_is_tinted_briefly_then_back_to_normal` (`test_kaiju.gd`): tinted at once, still tinted halfway through 0.12 s, white again after. `test_the_kill_hit_does_not_tint_and_the_tint_is_not_redgull_red`: `TINT` `Color(1, 0.62, 0.62)` is more than 0.5 from Redgull (0.86, 0.1, 0.16) and under 40% saturated. **Flamethrower:** `exhaust_flamethrower.gd` calls `take_damage` (red tint) then `_start_burn` (orange `modulate`); `HitTint` restores white only if the sprite still shows its own tint, and never starts on a sprite already tinted, so the orange is never replaced or cut short, and the burn's own end sets white as before. `test_hit_tint_leaves_another_tint_alone` covers both orders.
+4. **Car shake: pass.** `test_car_damage_shakes_only_the_drawn_car_then_settles`: `damage_car` starts the shake, the sprite's `offset` moves while its `position` and the car body's position stay, and it settles back to the base offset. Code read: `car_sprite.gd` changes only `offset` (`_base_offset` + shake); `run.gd` only calls `car_sprite.shake()` from `RunState.car_damaged`; the camera and popups read `car_sprite.position`, never `offset`; `run_state.gd` only adds the signal emit after `health_changed`, with health and loss logic untouched. **Gap:** the agent's test does not check pause or the camera. I checked both with a temporary GUT test (not committed, removed after): with the tree paused, `car_sprite.can_process()` and the minion's `hit_tint.can_process()` are false (both inherit the run's pausable mode; no `PROCESS_MODE_ALWAYS` above them), and the camera's and car body's global positions are unchanged during a shake. 2 of 2 passed. Suggest adding a pause assertion to the shake test in a later change.
+5. **Round 1 effects gone, screenshot: pass.** See 2 for no leftover effects or hooks (the spawner and `minion.gd` have no T-072 change beyond the tint). `art-archive/T-072/screenshots/hit_tint_before_hit_after.png`: in the real run, three panels; the middle one shows one minion turned olive/brown next to normal green ones, and before and 1 s after all are green. The tint reads as olive on the green minion rather than red (a multiply); the board judges whether that is red enough.
+6. **Earlier tests, full GUT, Python: pass.** Full GUT suite: 661 of 661 pass (includes `test_minions.gd` for T-044, `test_kaiju.gd` for T-045, `test_run_state.gd` for T-036); no camera or settings test failed this time. Python: `game/tools` 251 OK (1 skipped, pre-existing), `tools` 171 OK. The diff against master only adds test functions; none removed or weakened.
+
+Extra checks:
+- **No data numbers changed:** `git diff master HEAD -- game/data` is empty; no `game/scenes` change either.
+- **Merge from master:** no conflict markers in the tree (`git grep` for `<<<<<<<`, `=======`, `>>>>>>>` lines: none; `git diff --check master HEAD` clean). The generation log keeps all 65 of master's lines and adds the one T-072 line (66).
+- **Process note:** a first temporary pause test used `await` with the tree paused, which also paused GUT's own wait; that headless Godot run in this folder (started by QA) hung, and stopping it was refused by the permission check, so it may still be running. It does not touch the repo; it holds no files other runs need beyond GUT's `user://` settings.
+- 2026-10-15, in-qa → needs-playtest: QA round 2: all six current criteria pass (qa-integration)
