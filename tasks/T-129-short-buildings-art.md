@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's building drawing, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -143,3 +143,4 @@ Free assembly: `game/tools/build_short_set.py` makes 8 bodies (4 designs x 2 loo
 5. **Tests: pass.** Full GUT suite by QA (`bash game/tools/run_tests.sh`, Godot 4.6.2): 508 of 508 pass, 48 scripts, `TESTS PASSED` (the two warnings and one deprecation are old, not from this task). Python: `game/tools` 221 OK (1 skipped, the archived round-1 atlas, as before), `tools` 130 OK.
 
 Observations for the Project Lead and the board's playtest (not fails): design B's second wall (`short_body_2`, `short_body_3`) reads as a nearly blank panelled wall with one shopfront, plainer than the others (the result notes say B uses `b_facade_left` on both walls, mirrored; in the bodies the right wall does not look like the left one); designs B and C share a wall and look alike from a distance, as the notes say; "never two of the same design touching" is only kept within a block, not across neighbouring blocks (noted by the agent). `game/README.md` is updated. Godot's line-ending-only `.import` changes were left uncommitted.
+- 2026-10-14, in-qa → in-progress: QA round 1: 4 of 5 pass; criterion 3 fails: a short building's fade outline is the skyscrapers' full-width top, so it also fades when the car is on the road behind it but not hidden (615 extra of 2988 samples); fix: a 6-point outline that follows the roof
