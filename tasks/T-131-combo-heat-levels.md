@@ -1,7 +1,7 @@
 ---
 id: T-131
 title: Combo heats up at x2, x3 and x4, with comic-style combo and Hype Lv text and a burning likes bar
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 epic: hud-menus
