@@ -96,6 +96,14 @@ func set_position_units(p: Vector2) -> void:
 	position = p * PX_PER_UNIT
 
 
+## The kaiju's body on the ground, as a radius in units (its collision
+## circle). Weapons read it for their hits: the flamethrower counts any
+## overlap with this circle as a hit (board, 2026-10-14; minions keep the
+## centre rule).
+func hit_radius_units() -> float:
+	return RADIUS_UNITS
+
+
 ## Damages the kaiju by `amount` (weapons call this, as on a minion). It can be
 ## damaged at any time. `health_changed` fires; at 0 health it dies: `died`
 ## fires once and the node is freed at the end of the frame. Ignored when

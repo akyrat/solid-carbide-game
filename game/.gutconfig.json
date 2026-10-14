@@ -2,6 +2,7 @@
   "dirs": ["res://tests/"],
   "include_subdirs": true,
   "prefix": "test_",
+  "pre_run_script": "res://tests/pre_run_hook.gd",
   "suffix": ".gd",
   "should_exit": true,
   "should_exit_on_success": true,

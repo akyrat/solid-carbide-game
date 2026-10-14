@@ -17,9 +17,9 @@ extends Node
 ## kaiju (null before it appears and after it dies); the signals below relay
 ## its arrival, health and death.
 ##
-## Playtest switch: res://data/playtest.json, "kaiju_early_arrival" (task
-## T-045). When it is enabled, the kaiju arrives `after_seconds` into the run
-## instead of at the boss time. `early_arrival_seconds` holds it (-1 = off).
+## To reach the kaiju early in a playtest, the run timer dev setting
+## (scripts/run/dev_settings.gd) starts the run with less time on the clock;
+## the kaiju still arrives on the run's boss_time signal.
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
@@ -42,9 +42,6 @@ signal kaiju_defeated(coins: int)
 
 ## False stops it appearing and moving (tests).
 var enabled := true
-## Playtest switch (data/playtest.json): seconds into the run when the kaiju
-## arrives early; -1 = off (it arrives at the boss time).
-var early_arrival_seconds := -1.0
 ## Random numbers for the arrival point. Seed it for tests.
 var rng := RandomNumberGenerator.new()
 var data: EnemyData
@@ -64,8 +61,8 @@ var visible_rect_override := Rect2()
 
 ## The live kaiju, or null.
 var kaiju: Node = null
-## True once the kaiju has been asked to appear this run (boss time, or the
-## playtest switch), so it appears once per run.
+## True once boss time has asked the kaiju to appear and it has not found a
+## free spot yet (it tries again each step).
 var arrival_due := false
 var depth = EnemyDepthScript.new()
 
@@ -78,20 +75,6 @@ func _init() -> void:
 	data = EnemyData.new()
 	_stats = data.kaiju()
 	rng.randomize()
-	early_arrival_seconds = read_early_arrival_seconds()
-
-
-## The playtest switch from res://data/playtest.json: `after_seconds` when
-## "kaiju_early_arrival" is enabled, otherwise -1 (off). A missing file or
-## value also means off.
-static func read_early_arrival_seconds(file: String = "playtest") -> float:
-	var r := GameData.load_file(file)
-	if not r.ok:
-		return -1.0
-	var setting = r.data.get("kaiju_early_arrival", {})
-	if typeof(setting) != TYPE_DICTIONARY or not bool(setting.get("enabled", false)):
-		return -1.0
-	return maxf(float(setting.get("after_seconds", -1.0)), -1.0)
 
 
 ## Binds the boss to a run scene (run.gd): its state, car, map, camera and
@@ -163,19 +146,16 @@ func _live() -> bool:
 	return kaiju != null and is_instance_valid(kaiju) and not kaiju.is_dead()
 
 
-## One physics step of `dt` seconds: the arrival (boss time, or the playtest
-## switch), walking towards the car, contact damage, the drawing. Nothing
-## happens once the run is over.
+## One physics step of `dt` seconds: the arrival (when boss time is waiting
+## for a free spot), walking towards the car, contact damage, the drawing.
+## Nothing happens once the run is over.
 func step(dt: float) -> void:
 	if not enabled or car == null or not is_instance_valid(car):
 		return
 	if state != null and not state.is_running():
 		return
-	if not _appeared_this_run:
-		if early_arrival_seconds >= 0.0 and state != null and state.time_elapsed() >= early_arrival_seconds:
-			arrival_due = true
-		if arrival_due:
-			try_appear()
+	if not _appeared_this_run and arrival_due:
+		try_appear()
 	if not _live():
 		return
 	kaiju.walk(dt, car.position / PX_PER_UNIT)

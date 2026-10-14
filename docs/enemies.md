@@ -50,13 +50,13 @@ What the game does now, with the numbers in `game/data/enemies.json` (see Refere
 
 - **Look:** a placeholder for now: a large dark slate green Godzilla-style shape drawn in code, seen from the side, with a lighter belly, pale cyan back plates and yellow eyes, facing left or right the way it walks and stomping as it walks. It stands on a ground circle 4 units across (four times the car's width) and is 7 units tall (over twice the car's length). The final kaiju art comes from a separate art task.
 - **Arrival:** when the run reaches the boss time (7 minutes in, 1:00 left), the kaiju appears at a random point just beyond the edge of the visible screen, its whole drawing out of view, on the map and clear of buildings and boulders. One kaiju per run.
-- **Movement:** it walks straight towards the car at 3 units a second, half a minion's speed. Like the minions, it does not walk through buildings, walls or boulders: it slides along them and walks round one that is in the way. It never blocks or pushes the car.
+- **Movement:** it walks straight towards the car at 3 units a second, half a minion's speed. Like the minions, it does not walk through buildings, walls or boulders: it slides along them and walks round one that is in the way (confirmed by the board, 2026-10-14). It never blocks or pushes the car.
 - **Contact damage:** while it touches the car's body, it hits the car once a second, the first hit as soon as it touches: 20 health off the car (which also cuts the combo) and a knockback of 16 units a second away from the kaiju.
-- **Health and damage:** 500 health. Weapons damage it at any time, as soon as it has appeared, the same way they damage minions; there is no shield and no vulnerability window. Its health, and each change to it, can be read for the HUD (no HUD shows it yet).
+- **Health and damage:** 500 health. Weapons damage it at any time, as soon as it has appeared, the same way they damage minions; there is no shield and no vulnerability window. Any overlap with its body on the ground (the 4-unit circle) counts as a flamethrower hit (board, 2026-10-14; minions keep the centre rule). Its health, and each change to it, can be read for the HUD (no HUD shows it yet).
 - **Death:** at 0 health it dies and disappears. Its 10 coins are added to the run's coins at once, without a pickup, and then the run ends as a win, so the coins count in the coins saved.
 - **Pause and new runs:** the kaiju stands still while the game is paused, and is gone when a new run starts; it arrives again at the new run's boss time.
 - **Draw order:** like the minions, in the buildings' depth order: behind a building that covers it, in front of the rest.
-- **Playtest switch:** until the board switches it off, the kaiju arrives 30 seconds into the run instead of at 7 minutes, so it can be seen without weapons (`game/data/playtest.json`; how to switch it: `game/README.md`, "The kaiju"). Nothing else in the run moves.
+- **Dev timer:** until the board switches it off, every run starts with 1:30 on the clock, fast-forwarded to 30 seconds before the kaiju, which arrives at 1:00 left as usual (`game/data/playtest.json`, a dev setting players never see; how to set it, and what it does to minion numbers: `game/README.md`, "The kaiju").
 
 ## Open questions
 

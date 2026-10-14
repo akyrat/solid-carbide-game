@@ -9,6 +9,9 @@ const RunScene := preload("res://scenes/run/run.tscn")
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
+const GameScene := preload("res://scenes/game/game.tscn")
+const DevSettings := preload("res://scripts/run/dev_settings.gd")
+const TEST_PLAYTEST := "user://test_playtest_t045.json"
 const DT := 0.02  # one physics step (50 per second)
 
 var run: Node2D
@@ -21,7 +24,6 @@ func before_each() -> void:
 	add_child_autofree(run)
 	boss = run.kaiju_boss
 	boss.rng.seed = 45
-	boss.early_arrival_seconds = -1.0  # the playtest switch off: boss time only
 	run.minions.enabled = false  # the kaiju on its own
 	run.car.use_keyboard = false
 	data = EnemyData.new()
@@ -29,6 +31,18 @@ func before_each() -> void:
 
 func after_each() -> void:
 	get_tree().paused = false
+	DevSettings.enabled = false  # as the suite's pre-run hook leaves it
+	DevSettings.file = DevSettings.FILE
+	DirAccess.remove_absolute(TEST_PLAYTEST)
+
+
+## Writes a dev settings file for the test and points the dev settings at it.
+func _use_playtest(d: Dictionary) -> void:
+	var f := FileAccess.open(TEST_PLAYTEST, FileAccess.WRITE)
+	f.store_string(JSON.stringify(d))
+	f.close()
+	DevSettings.enabled = true
+	DevSettings.file = TEST_PLAYTEST
 
 
 func _car_units() -> Vector2:
@@ -321,26 +335,93 @@ func test_placeholder_is_large_and_not_redgull_red() -> void:
 	assert_eq(KaijuSpriteScript.HEIGHT_UNITS, KaijuScript.HEIGHT_UNITS)
 
 
-func test_playtest_switch_brings_the_arrival_forward() -> void:
-	boss.early_arrival_seconds = 30.0
-	run.state.advance(29.0)
-	boss.step(DT)
-	assert_null(boss.kaiju, "not before the playtest time")
-	run.state.advance(1.5)
-	boss.step(DT)
-	assert_not_null(boss.kaiju, "arrives at the playtest time")
-	var k: Node = boss.kaiju
-	_to_boss_time()
-	assert_eq(boss.kaiju, k, "boss time later brings no second kaiju")
+func test_hit_radius_matches_its_body_on_the_ground() -> void:
+	var k: Node = boss.appear_at(_free_spot_near(10.0))
+	assert_true(k.has_method("hit_radius_units"), "weapons read hit_radius_units()")
+	var shape: CircleShape2D = k.get_node("Body").shape
+	assert_almost_eq(k.hit_radius_units(), shape.radius / 16.0, 0.0001, "the collision circle's radius, in units")
+	assert_eq(k.hit_radius_units(), KaijuScript.RADIUS_UNITS)
+	assert_eq(k.hit_radius_units(), KaijuSpriteScript.RADIUS_UNITS, "the drawn ground circle's size")
 
 
-func test_playtest_switch_reads_the_settings_file() -> void:
+func test_dev_timer_starts_a_run_from_the_main_menu_with_that_time_and_the_kaiju_at_boss_time() -> void:
+	_use_playtest({"flamethrower_at_start": true,
+		"run_timer_start": {"enabled": true, "minutes": 1, "seconds": 5}})
+	var game: Node = GameScene.instantiate()
+	game.quit_game = func(): pass
+	add_child_autofree(game)
+	game.menu.start_button.pressed.emit()
+	var r: Node2D = game.run
+	var st: RunState = r.state
+	r.minions.enabled = false
+	r.car.use_keyboard = false
+	assert_eq(st.time_left_text(), "1:05", "the run starts with the set time on the clock")
+	assert_eq(r.hud.timer_label.text, "1:05", "and the HUD shows it")
+	assert_almost_eq(st.time_elapsed(), 415.0, 0.001, "fast-forwarded: 6:55 into the run")
+	assert_eq(r.minions.minions_wanted_now(), data.minions_wanted(415.0), "minion numbers of that moment")
+	var heard := []
+	st.boss_time.connect(func() -> void: heard.append(true))
+	st.advance(4.9)
+	assert_eq(heard.size(), 0, "no boss time before 1:00")
+	assert_null(r.kaiju_boss.kaiju, "no kaiju before 1:00")
+	st.advance(0.2)
+	assert_eq(heard.size(), 1, "boss time at 1:00 left")
+	assert_not_null(r.kaiju_boss.kaiju, "the kaiju arrives on boss time")
+	# A second run from the menu starts at the set time again.
+	r.start_run()
+	assert_eq(st.time_left_text(), "1:05")
+	assert_null(r.kaiju_boss.kaiju)
+
+
+func test_dev_timer_off_missing_or_invalid_gives_8_00() -> void:
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "the suite runs with dev settings off")
+	_use_playtest({"run_timer_start": {"enabled": true, "minutes": 2, "seconds": 30}})
+	assert_eq(DevSettings.run_start_time_left(), 150.0, "on: minutes and seconds")
+	DevSettings.enabled = false
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "dev settings off: 8:00")
+	DevSettings.enabled = true
+	_use_playtest({"run_timer_start": {"enabled": false, "minutes": 1, "seconds": 30}})
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "enabled false: 8:00")
+	_use_playtest({"other_setting": 1})
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "no run_timer_start: 8:00")
+	_use_playtest({"run_timer_start": {"enabled": true, "minutes": 0, "seconds": 0}})
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "0:00 is not a run: 8:00")
+	_use_playtest({"run_timer_start": {"enabled": true, "minutes": 12, "seconds": 0}})
+	assert_eq(DevSettings.run_start_time_left(), 480.0, "never over 8:00")
+	assert_eq(DevSettings.run_start_time_left("no_such_file"), 480.0, "missing file: 8:00")
+
+
+func test_a_run_started_with_less_time_stays_consistent() -> void:
+	var st := RunState.new()
+	add_child_autofree(st)
+	st.start_time_left = 90.0
+	st.start_run()
+	assert_eq(st.time_left_text(), "1:30")
+	assert_almost_eq(st.time_elapsed(), 390.0, 0.001)
+	var heard := []
+	st.boss_time.connect(func() -> void: heard.append(true))
+	st.advance(29.0)
+	assert_eq(heard.size(), 0)
+	st.advance(1.5)
+	assert_eq(heard.size(), 1, "boss time once, at 1:00 left")
+	st.advance(60.0)
+	assert_eq(st.result, "loss", "the clock still ends the run at 0:00")
+	st.start_run()
+	assert_eq(st.time_left_text(), "1:30", "a new run starts at the same time")
+	assert_true(st.is_running())
+	# Under a minute: boss time on the first tick.
+	st.start_time_left = 45.0
+	st.start_run()
+	st.advance(0.01)
+	assert_eq(heard.size(), 2, "boss time at once when the run starts under 1:00 left")
+
+
+func test_committed_playtest_file_has_the_dev_timer() -> void:
 	var r := GameData.load_file("playtest")
 	assert_true(r.ok, "data/playtest.json loads: %s" % r.get("error", ""))
-	var s: Dictionary = r.data["kaiju_early_arrival"]
-	var expected: float = float(s["after_seconds"]) if bool(s["enabled"]) else -1.0
-	assert_eq(KaijuBossScript.read_early_arrival_seconds(), expected, "on: after_seconds; off: -1")
-	assert_eq(KaijuBossScript.read_early_arrival_seconds("no_such_file"), -1.0, "missing file: off")
+	var s: Dictionary = r.data["run_timer_start"]
+	assert_true(s.has("enabled") and s.has("minutes") and s.has("seconds"))
+	assert_false(r.data.has("kaiju_early_arrival"), "the old early-arrival switch is gone")
 
 
 class KaijuKilledCounter:

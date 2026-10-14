@@ -1,7 +1,8 @@
 {
-  "_comment": "Playtest settings (task T-045). Not game balance and never shown to the player: switches that make something easier to see in a playtest. kaiju_early_arrival: when enabled is true, the kaiju arrives after_seconds into the run instead of at the boss time (7 minutes in, run_state.gd); when false, it arrives at the boss time as Enemies and Game loop architecture decide. Only the kaiju's arrival moves: the clock, the minions' growth and the boss time signal stay as they are. Before the MVP ships, enabled must be false.",
-  "kaiju_early_arrival": {
+  "_comment": "Dev settings for playtests: each key is an independent setting, read by its own task's code. Not game balance, never shown to the player (no UI, no text; HUD and menus, Decisions). The GUT suite switches them all off (tests/pre_run_hook.gd). run_timer_start (task T-045): with enabled true, every run starts with minutes:seconds on the clock instead of 8:00, fast-forwarded as if the missing time had passed (the boss still comes at 1:00 left, minion numbers are those of that moment in a normal run); set enabled to false for a normal 8:00 run. Must be off before the MVP ships.",
+  "run_timer_start": {
     "enabled": true,
-    "after_seconds": 30
+    "minutes": 1,
+    "seconds": 30
   }
 }
