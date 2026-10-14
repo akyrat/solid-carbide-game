@@ -1050,3 +1050,8 @@ Entry format:
 - Decision or change: T-072's coin sample is fixed by free scripts (outline, smaller, stray pixels removed) and the hit, death and car damage effects are drawn by script, with no more PixelLab calls. T-085's code-level on/off switch is enough for now. The flamethrower keeps the drift smoke showing. The flames hit the kaiju on any overlap with its body (minions keep the centre rule); folded into T-042's fit, with the kaiju's body size from T-045. The kaiju walks round buildings, as built. The gun's bullet size and first-shot wait are fine as built.
 - Documents touched: `docs/weapons.md`, `docs/enemies.md`
 - Tasks: T-072, T-085, T-042, T-045
+
+## 2026-10-14: T-085 done: the combo raises minion spawning
+- Decision or change: the board playtested it ("works fine") and asked for the merge. The minion count follows the combo live, through `ComboData.spawn_multiplier` (up to about 1.75 times at the top combo), on top of the slow growth over the run; a minion's hit cuts the combo, so the extra minions push it back down. Switch: `combo_raises_spawning` in `minion_spawner.gd`, on by default (the board: a code-level switch is enough for now). QA round 1: all 4 pass.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-085 (done)
