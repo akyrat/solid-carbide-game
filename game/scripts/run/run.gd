@@ -18,7 +18,8 @@ extends Node2D
 ## the buildings and the car, and puffs of drift smoke (task T-121) come off
 ## them, drawn with the car. Buildings that cover the car fade (task T-034,
 ## in the map); sync_view() puts the car's drawing into the buildings' depth
-## order through View's z_index.
+## order through View's z_index. The minions (task T-044) spawn at the
+## screen's edges and chase the car; see minion_spawner.gd.
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
@@ -38,6 +39,8 @@ const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 ## The drift smoke (task T-121); its look and tuning live in the scene.
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
+## The minions (task T-044): spawning, chasing, contact damage, coins.
+const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -86,6 +89,10 @@ var camera_follow = CameraFollowScript.new()
 ## Decisions, 2026-10-11); the default follows the map's CHALLENGES_ENABLED.
 ## Read by start_run() each time it builds a new map.
 var challenges_enabled: bool = MapScript.CHALLENGES_ENABLED
+## The minions (task T-044, minion_spawner.gd): child "Minions". Their bodies
+## are in PhysicsWorld, their drawings in the "Enemies" node just before View.
+## A new run clears them. Set `minions.enabled = false` to stop them (tests).
+var minions: Node
 
 
 func _ready() -> void:
@@ -146,6 +153,11 @@ func _ready() -> void:
 	camera_follow.changed.connect(_apply_zoom)
 	get_viewport().size_changed.connect(_apply_zoom)
 	_apply_zoom()
+
+	minions = MinionSpawnerScript.new()
+	minions.name = "Minions"
+	add_child(minions)
+	minions.bind(self)
 	start_run()
 
 

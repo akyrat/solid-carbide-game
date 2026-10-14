@@ -25,4 +25,6 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- T-044 (minions): the run scene (Game Loop's `run.gd`) is where enemies plug in; keep the change there to adding and binding one node. Enemy drawings must join the Level/Challenge Design Agent's depth order (`map.car_z_index()` rule, reused through `enemy_depth.gd`), so draw-order changes on the map side affect enemies too.
+- The Weapon Behavior Agent depends on `take_damage()`, the `enemies` group and layer 3; document any change to them in `game/README.md`, "Minions".
+- The Game Loop Agent's combo feeds spawning through `spawn_multiplier` (T-085).
