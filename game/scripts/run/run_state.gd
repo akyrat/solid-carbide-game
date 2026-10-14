@@ -46,6 +46,8 @@ signal run_ended(result: String, coins: int)
 ## The time left changed to a different whole second (what a clock shows).
 ## `seconds_left` is the exact time left; time_left_text() formats it.
 signal time_left_changed(seconds_left: float)
+## The car took damage (T-072: the car sprite shakes).
+signal car_damaged(amount: float)
 ## The car's health changed (damage, or a new run).
 signal health_changed(health: float, max_health: float)
 ## The coins collected this run changed.
@@ -202,6 +204,7 @@ func damage_car(amount: float) -> void:
 	collision()
 	health = maxf(health - amount, 0.0)
 	health_changed.emit(health, max_health)
+	car_damaged.emit(amount)
 	if health <= 0.0:
 		_end(RESULT_LOSS)
 

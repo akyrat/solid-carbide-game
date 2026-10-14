@@ -1100,3 +1100,8 @@ Entry format:
 - Decision or change: the board read the text ("text lgtm"). Heading "Redgull Sent a Gift Pack!", button "Take it", a card for getting the flamethrower and one per upgrade tier of each weapon (gun tiers 2 to 8, flamethrower tiers 2 to 8), and names for the two weapons: the gun is "Sponsor Special", the flamethrower "Hot Take Exhaust". The table is in T-051's result notes. QA round 1: all 4 pass; QA noted the gun's "20% faster" is 18 to 19% in practice and the flame's "area grows 20%" means 20% wider and deeper; the board kept the text as written. Now open: T-052, the screen.
 - Documents touched: none (the text lives in T-051's result notes)
 - Tasks: T-051 (done), T-052
+
+## 2026-10-15: T-072 done: enemy hit tint, car shake, the coin
+- Decision or change: the board playtested it ("lgtm") and marked it done. The board removed round 1's hit, death and car damage effects (their art kept in `art-archive/T-072/unused_effects/`). What's left: an enemy that takes damage (minions and the kaiju) gets a brief, slight red tint (`Color(1, 0.62, 0.62)` for 0.12 s, not Redgull red; the flamethrower's orange flash takes over cleanly); the car's sprite shakes for 0.2 s (about 3 pixels) when the car takes damage, moving only the drawing, not physics or the camera; and the coin is a script-fixed 10x12 gold coin from the one PixelLab sample (1 generation). QA: round 1 passed the first version; round 2, on criteria rewritten for the board's changes, passed all 6.
+- Documents touched: `game/README.md`
+- Tasks: T-072 (done)

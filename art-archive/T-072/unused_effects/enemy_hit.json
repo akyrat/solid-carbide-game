@@ -1,0 +1,15 @@
+{
+ "task": "T-072",
+ "what": "White-hot flash, then cyan and pink sparks flying out, then specks. 4 frames.",
+ "made_by": "game/tools/build_hit_coin_damage_effects.py (drawn by script, no PixelLab call; board 2026-10-14). Byte-identical every run.",
+ "frames": 4,
+ "frame_size": [
+  16,
+  16
+ ],
+ "prompt": null,
+ "references": [
+  "docs/visual-style.md (technical rules, palette, glow, Effects)",
+  "game/scripts/enemies/coin_sprite.gd (placeholder)"
+ ]
+}

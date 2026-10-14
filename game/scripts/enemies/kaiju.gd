@@ -45,6 +45,8 @@ var contact_damage_interval := 1.0
 var knockback := 0.0
 ## The isometric drawing, owned by this kaiju (freed with it).
 var sprite: Node2D = null
+## The brief red tint when hit (hit_tint.gd, T-072).
+var hit_tint: Node = null
 ## Seconds until it can damage the car again.
 var contact_cooldown := 0.0
 ## Which way it walks round an obstacle it meets head-on: 1 or -1.
@@ -79,6 +81,7 @@ func _ready() -> void:
 	col.name = "Body"
 	col.shape = shape
 	add_child(col)
+	hit_tint = preload("res://scripts/enemies/hit_tint.gd").attach(self)
 
 
 func _exit_tree() -> void:
@@ -115,6 +118,8 @@ func take_damage(amount: float) -> void:
 	health_changed.emit(health, max_health)
 	if health <= 0.0:
 		_die()
+	elif hit_tint != null:
+		hit_tint.flash()  # T-072: a brief red tint
 
 
 func is_dead() -> bool:

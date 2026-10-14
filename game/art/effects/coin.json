@@ -1,0 +1,15 @@
+{
+ "task": "T-072",
+ "what": "Hand-drawn 8 x 10 fill plus a dark outline, in the PixelLab sample's gold palette. The sample (art-archive/T-072/sample/coin_sample.png) was too big, tilted, unoutlined and had grey stray pixels.",
+ "made_by": "game/tools/build_hit_coin_damage_effects.py (drawn by script, no PixelLab call; board 2026-10-14). Byte-identical every run.",
+ "frames": 1,
+ "frame_size": [
+  10,
+  12
+ ],
+ "prompt": null,
+ "references": [
+  "docs/visual-style.md (technical rules, palette, glow, Effects)",
+  "game/scripts/enemies/coin_sprite.gd (placeholder)"
+ ]
+}

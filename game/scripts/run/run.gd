@@ -150,6 +150,7 @@ func _ready() -> void:
 	state.add_to_group("run_state")
 	add_child(state)
 	state.level_up.connect(_on_level_up)
+	state.car_damaged.connect(_on_car_damaged)
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -243,6 +244,11 @@ func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2
 ## Feeds the car's drift state to the run's likes after each physics step.
 func _on_car_stepped() -> void:
 	state.drift_step(car.model.is_drifting, car.model.dt)
+
+
+## T-072: the car took damage: the drawn car shakes briefly (its drawing only).
+func _on_car_damaged(_amount: float) -> void:
+	car_sprite.shake()
 
 
 ## The player levelled up: the car gives off the level-up burst (T-112).

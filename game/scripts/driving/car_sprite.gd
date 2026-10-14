@@ -19,6 +19,14 @@ var sheet := ""
 ## World pixels per unit of the drawing (the flat world's scale).
 var world_px_per_unit := 16.0
 
+## The damage shake (T-072; board: "a short shake or wobble of the car"): it only moves
+## the drawing, through `offset`, never the node's position, the car's physics or the camera.
+const SHAKE_SECONDS := 0.2
+const SHAKE_PIXELS := 3.0  ## screen pixels at the start; it dies down to 0
+const SHAKE_HZ := 20.0
+var _base_offset := Vector2.ZERO
+var _shake_left := 0.0
+
 
 func _init() -> void:
 	centered = true
@@ -43,9 +51,29 @@ func use_sheet(view: String) -> void:
 	var frame_size := Vector2(float(layout.frame_width), float(layout.frame_height))
 	var center := Vector2(float(layout.center_px.x), float(layout.center_px.y))
 	# Put the car's centre pixel on the node's origin.
-	offset = frame_size / 2.0 - center
+	_base_offset = frame_size / 2.0 - center
+	offset = _base_offset
 	var s := world_px_per_unit / float(layout.get("px_per_unit", world_px_per_unit))
 	scale = Vector2(s, s)
+
+
+## Starts the damage shake (restarts it if one is running). Runs in _process, so pausing stops it.
+func shake() -> void:
+	_shake_left = SHAKE_SECONDS
+
+
+func is_shaking() -> bool:
+	return _shake_left > 0.0
+
+
+func _process(delta: float) -> void:
+	if _shake_left <= 0.0:
+		return
+	_shake_left = maxf(_shake_left - delta, 0.0)
+	var k := _shake_left / SHAKE_SECONDS
+	var t := SHAKE_SECONDS - _shake_left
+	var px := Vector2(sin(t * TAU * SHAKE_HZ), cos(t * TAU * SHAKE_HZ * 0.5) * 0.5) * SHAKE_PIXELS * k
+	offset = _base_offset + (px / scale.x if scale.x != 0.0 else px)
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).

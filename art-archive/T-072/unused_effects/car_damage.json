@@ -1,0 +1,15 @@
+{
+ "task": "T-072",
+ "what": "White and cyan flash, cyan and pink spark rays with yellow debris, then specks. No red. 4 frames.",
+ "made_by": "game/tools/build_hit_coin_damage_effects.py (drawn by script, no PixelLab call; board 2026-10-14). Byte-identical every run.",
+ "frames": 4,
+ "frame_size": [
+  48,
+  48
+ ],
+ "prompt": null,
+ "references": [
+  "docs/visual-style.md (technical rules, palette, glow, Effects)",
+  "game/scripts/enemies/coin_sprite.gd (placeholder)"
+ ]
+}
