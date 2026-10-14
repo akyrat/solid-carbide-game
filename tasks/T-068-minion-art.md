@@ -44,11 +44,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot of a run shows the final minions walking towards the car, facing the way they move (QA: pass / fail)
-- [ ] T-044's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
+- [ ] A screenshot of a run shows the final minions walking towards the car, facing the way they move (QA: pass)
+- [ ] T-044's tests still pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
@@ -127,3 +127,14 @@ Written by the Asset Generation Agent (2026-10-14). Round 1: SAMPLE ONLY; the bo
 ### Board tweak (2026-10-15)
 
 Board, word for word: "remove the shadows from the minions please". Changed: `minion_sprite.gd` no longer draws a shadow (removed from the art drawing and from the placeholder fallback, and its `SHADOW_COLOR` constant); the red-check test in `test_minions.gd` no longer lists it; `game/README.md` says there is no shadow. The coin's shadow is untouched. The review GIFs and PNGs only show the sprite sheets, so they never had a shadow; the in-game screenshot art-archive/T-068/screenshot_minions.png was retaken. GUT 584 of 584 passing, Python tool tests 246 OK (1 skipped). Status left in-qa.
+
+### QA round 1 (QA/Integration Agent, 2026-10-15)
+
+Checked in C:\solid-carbide-worktrees\T-068 at 822cd7d, against the merge base with master.
+
+- **Check script: pass.** `game/tools/check_sprite_rules.py --size 48` on every generated and fixed frame in art-archive/T-068 (raw, rotations, walk_side_run1/run2, walk_low_stride, walk_s/se/ne/n and their _fixed copies, walk_e_fixed): 113 of 113 pass. The five game sheets `game/art/minion/minion_{s,se,e,ne,n}.png` with `--frames 8`: all frames pass (transparent, 0 semi-transparent pixels, 17 to 26 colours). Each sheet is pixel-identical to `build_minion_sheets.build_sheet` run on its source frames.
+- **PixelLab record: pass.** 9 calls in game/art/pixellab-generation-log.jsonl for T-068, 9 generations, each with its params file (prompt or `action` text and settings), cost and job id, and balance before and after in these notes (4919 at the start, 4909 at the end). Rounds match the board's go written here: sample (1), round 2 rotations + walk (board go, about 9), round 3 one more walk (board go), round 4 four directions (board chose the low-stride walk, option 1). The duplicate walk call (job 9af40744) is recorded honestly as a charged mistake; not counted as a fail. Minor: the walk calls log `prompt: null` (the text is in the `action` field of each *_req.json), and the run-1 records still say out_dir "walk_side".
+- **Screenshot: pass.** art-archive/T-068/screenshot_minions.png shows the lizards around the car, heads towards it, with no shadow under them; the coins keep theirs. Review GIFs (review_all8_directions_dark/light.gif, 8 frames at 100 ms) show all 8 directions walking. Code: direction from the walk heading (`face` -> `compass_index`), SW/W/NW draw the SE/E/NE sheets with a negative width (exact mirrors), and the sprite has no process_mode of its own and sits under the run (only level_up_burst is set to Always), so it stops with the pause.
+- **T-044's tests: pass.** test_minions.gd's only change is dropping `SHADOW_COLOR` from the red-colour list (expected, the constant is gone); no other T-044 test changed. Only `minion_sprite.gd` changed among the enemy scripts; nothing under game/data or game/scenes changed against the merge base (master's own later playtest.json change is not this branch's).
+- **Full suites: pass.** GUT (bash game/tools/run_tests.sh), run twice: 584 of 584 both times; the earlier 583/584 did not recur. Python: game/tools 246 OK (1 skipped), tools 130 OK.
+- **Also checked:** no Redgull red (no reddish pixels in the five sheets; the placeholder colours pass the existing test); no shadow code left in minion_sprite.gd; game/README.md updated.
