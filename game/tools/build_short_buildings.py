@@ -159,12 +159,12 @@ def prop_anchor(sprite):
     return (int((xs.min() + xs.max()) // 2), int(ys.max()) - 6)
 
 
-def build_body(facade_l, facade_r, pal, props, flip=False, seed=1):
+def build_body(facade_l, facade_r, pal, props, flip=False, seed=1, cracks=40):
     """One short building body, 768 x (facade rows + 384). props = [(sprite, (u, v))] standing on the roof."""
     h_px = facade_l.shape[0]
     assert facade_r.shape[0] == h_px and facade_l.shape[1] == facade_r.shape[1] == WALL_W
     body = np.zeros((body_height(h_px), BODY_W, 4), dtype=np.uint8)
-    draw_roof(body, pal, seed)
+    draw_roof(body, pal, seed, cracks)
     right_flat = facade_r.copy()
     right_flat[..., :3] = bs.darker(right_flat[..., :3], pal)
     dark = bs.nearest_in(pal, (24, 23, 36))

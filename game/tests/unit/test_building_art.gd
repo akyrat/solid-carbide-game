@@ -88,7 +88,7 @@ func test_footprint_height_and_silhouette_come_from_the_art() -> void:
 	assert_eq(b.footprint, BLOCK)
 	for s in slots_of(map, b):
 		assert_eq(s.footprint.size, Vector2(12, 12))
-		assert_true(s.height_units in [4.2, 30.0], "a short building or a skyscraper")
+		assert_true(s.height_units in [4.3, 30.0], "a short building or a skyscraper")
 		assert_false(s.custom_silhouette.is_empty())
 
 
@@ -158,3 +158,38 @@ func test_boulder_behind_a_skyscraper_is_drawn_under_it_with_the_art_on() -> voi
 		if front == null or s.depth_key() > front.depth_key():
 			front = s
 	assert_lt(sprite.z_index, front.z_index, "under the block's front slot")
+
+
+func test_short_buildings_follow_the_slot_rule_and_the_plan_is_stable() -> void:
+	# T-129: never the back slot; the front slot and/or one side slot; a fixed hash; two in a block are different designs.
+	var total := 0
+	var designs := {}
+	for bx in 10:
+		for by in 10:
+			var shorts: Array = BuildingTowers.short_slots(bx * 30, by * 30)
+			assert_false(Vector2i(0, 0) in shorts)
+			assert_lte(shorts.size(), 2)
+			total += shorts.size()
+			assert_eq(shorts, BuildingTowers.short_slots(bx * 30, by * 30))
+			var seen := []
+			for e in BuildingTowers.make_plan(bx * 30, by * 30):
+				if e.short:
+					assert_false((e.short_body / 2) in seen, "two shorts in a block are different designs")
+					seen.append(e.short_body / 2)
+					designs[e.short_body / 2] = true
+	assert_gt(total, 60, "about 0.9 per block")
+	assert_lt(total, 120)
+	assert_eq(designs.size(), 4, "all four designs are used")
+
+
+func test_short_buildings_are_drawn_low_and_fade_on_their_own() -> void:
+	var map := make_map()
+	var found := 0
+	for s in map.slots:
+		if s.height_units < 10.0:
+			found += 1
+			assert_lt(s.custom_silhouette[1].y - s.custom_silhouette[0].y, 1.0, "hull top edge is level")
+			var tex: Texture2D = s.towers.get_child(0).texture
+			assert_lt(tex.get_height(), 600, "short: the roof shows")
+			assert_eq(tex.get_width(), 768)
+	assert_gt(found, 0, "at least one short building on the map")

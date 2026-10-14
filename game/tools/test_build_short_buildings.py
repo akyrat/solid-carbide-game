@@ -59,5 +59,26 @@ class T(unittest.TestCase):
         self.assertNotIn((52, 28, 112), cols)
 
 
+class SetTest(unittest.TestCase):
+    def test_full_set_is_eight_bodies_that_pass_the_rules(self):
+        import tempfile
+        from pathlib import Path
+        import build_short_set as ss
+        raw = Path(__file__).resolve().parents[2] / "art-archive" / "T-129" / "raw"
+        if not raw.exists():
+            self.skipTest("raw art not present")
+        bodies, rec = ss.build_all(raw, tempfile.mkdtemp())
+        self.assertEqual(len(bodies), 8)
+        for v in rec.values():
+            self.assertEqual(v["semi_transparent"], 0)
+            self.assertTrue(v["colors_ok"] and v["red_ok"])
+        self.assertEqual(len({b.tobytes() for b in bodies}), 8)
+
+    def test_scripted_sign_has_only_palette_colours_and_no_transparency(self):
+        pal = bs.load_palette()
+        s = sb.shop_sign(80, 30, 1, pal)
+        self.assertTrue((s[..., 3] == 255).all())
+
+
 if __name__ == "__main__":
     unittest.main()

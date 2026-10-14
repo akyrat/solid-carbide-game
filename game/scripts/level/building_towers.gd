@@ -21,6 +21,8 @@ const PX_PER_UNIT := 16.0
 const SPRITE_SCALE := 0.5
 const TOWERS := 6
 const VARIANTS := 2
+## Short building bodies (task T-129): 4 designs x 2 looks.
+const SHORT_BODIES := 8
 
 ## One placed skyscraper: {si, sj, tower (0..5), variant (0..1), body (index), position (screen px)}.
 var plan: Array = []
@@ -51,13 +53,19 @@ static func make_plan(block_x: int, block_y: int) -> Array:
 	var h := hash_of(block_x, block_y)
 	var base := (h + posmod(floori(block_x / 30.0), 6) * 2 + posmod(floori(block_y / 30.0), 6) * 3) % TOWERS
 	var short := short_slots(block_x, block_y)
+	var short_base := (hash_of(block_x + 31, block_y + 17) >> 5) % SHORT_BODIES
+	var short_count := 0
 	var out: Array = []
 	for sj in 2:
 		for si in 2:
 			var tower := (base + si + 3 * sj) % TOWERS
 			var variant := (h >> (4 + si + 2 * sj)) & 1
+			var is_short := Vector2i(si, sj) in short
+			# Two short buildings in a block are 3 apart in the list of 8 (4 designs x 2 looks): never the same design.
 			out.append({"si": si, "sj": sj, "tower": tower, "variant": variant, "body": tower * VARIANTS + variant,
-				"short": Vector2i(si, sj) in short})
+				"short": is_short, "short_body": (short_base + 3 * short_count) % SHORT_BODIES})
+			if is_short:
+				short_count += 1
 	return out
 
 
@@ -92,9 +100,10 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 	var pavs: Array = []
 	for p in art.pavements:
 		pavs.append(load_texture(str(p)))
-	var short_tex: Texture2D = null
+	var short_texs: Array = []
 	if art.has("short"):
-		short_tex = load_texture(str(art.short.body))
+		for p in art.short.bodies:
+			short_texs.append(load_texture(str(p)))
 	plan = make_plan(roundi(footprint_units.position.x), roundi(footprint_units.position.y))
 	plan.sort_custom(func(p, q):
 		var a: int = p.si + p.sj
@@ -116,7 +125,8 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		pv.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
 		pavement_root.add_child(pv)
 		var foot_rect := Rect2(origin + Vector2(margin, margin), Vector2(foot, foot))
-		var is_short: bool = e.short and short_tex != null
+		var is_short: bool = e.short and not short_texs.is_empty()
+		var short_tex: Texture2D = short_texs[e.short_body] if is_short else null
 		var sz := Vector2(short_tex.get_width(), short_tex.get_height()) if is_short else bsize
 		var pos := ISO_TRANSFORM * (foot_rect.end * PX_PER_UNIT) - Vector2(sz.x * 0.5, sz.y) * SPRITE_SCALE
 		var hull := PackedVector2Array()
