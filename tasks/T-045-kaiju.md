@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -13,7 +13,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-039-enemy-data.md, tasks/T-044-minions.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,13 +44,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test fires the "boss time" signal and shows the kaiju appears and moves towards the car (QA: pass / fail)
-- [ ] A test shows weapon damage lowers the kaiju's health as soon as it has appeared, and the health signal fires (QA: pass / fail)
-- [ ] A test damages the kaiju to 0 and shows the run's kaiju-killed function is called once (QA: pass / fail)
-- [ ] A test shows contact with the car damages it and knocks it back (QA: pass / fail)
-- [ ] A screenshot shows the placeholder kaiju (QA: pass / fail)
-- [ ] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test fires the "boss time" signal and shows the kaiju appears and moves towards the car (QA: pass)
+- [x] A test shows weapon damage lowers the kaiju's health as soon as it has appeared, and the health signal fires (QA: pass)
+- [x] A test damages the kaiju to 0 and shows the run's kaiju-killed function is called once (QA: pass)
+- [x] A test shows contact with the car damages it and knocks it back (QA: pass)
+- [x] A screenshot shows the placeholder kaiju (QA: pass)
+- [x] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -80,4 +80,15 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Should the kaiju walk round buildings (as built, like the minions) or straight through them, being a giant? Not decided in the docs; I kept the minions' rule.
 - Its placeholder size (4 units across, 7 tall) is mine; the final art task will settle it.
 
+**QA (QA/Integration Agent, 2026-10-14, round 1): all 7 criteria pass.**
+- Boss time: `test_boss_time_makes_the_kaiju_appear_off_screen_and_walk_towards_the_car` (plus `test_kaiju_walks_straight_at_the_car_in_the_open`, `test_kaiju_walks_round_a_building`). Pass.
+- Damage and health signal: `test_weapon_damage_lowers_health_as_soon_as_it_appears_and_sends_health` (and `test_projectile_area_on_the_enemies_mask_finds_the_kaiju`). Pass.
+- Death: `test_killing_the_kaiju_adds_its_coins_and_calls_kaiju_killed_once` (run ends once as "win", `run_ended` coins = earlier coins + 10) and `test_kaiju_killed_called_exactly_once_on_the_state` (counting stand-in, coins added before the call). Code check: `kaiju_boss.gd` `_on_kaiju_died()` calls `state.add_coins(n)` before `state.kaiju_killed()`, so the kaiju's coins are in `run_ended`. Pass.
+- Contact: `test_contact_damages_the_car_and_knocks_it_back`, `test_contact_through_the_boss_step`, `test_no_damage_without_touching`. Pass.
+- Screenshot `art-archive/T-045/screenshots/kaiju.png`: the placeholder kaiju (upright, tail-dragging dark slate green reptile, lighter belly, pale cyan back plates, yellow eye, ground shadow) next to the car and four minions; no Redgull red on it (the only red is the HUD likes heart, board-approved). Likeness: it reads as a generic large upright reptile monster drawn in flat code shapes (blocky beak-like snout, plain rectangular legs, no detailed face or skin), in the "Godzilla-style, not Godzilla" sense Visual style asks for; it is not an exact copy. Note for the board: the upright pose plus jagged pale cyan back plates is the most Godzilla-like part of the silhouette; whether that is too close is the board's call in the playtest. Pass.
+- `docs/enemies.md`: the diff against master only adds "### The kaiju (built in task T-045)" in Content; Summary, Decisions and Open questions unchanged. Pass.
+- Tests, run by QA in this folder: GUT 598/598 passed with the playtest switch on, and 598/598 with it off (then restored to on); Python `game/tools` 241 OK (1 skipped), `tools` 130 OK. Pass.
+- Other checks: `game/data/enemies.json` and every other balancing file unchanged against master (only `game/data/playtest.json` is new); the kaiju's stats are read from `enemies.json`, none hard-coded. No input handling or debug key and no player-facing text in the kaiju scripts or the `run.gd` change. The playtest switch is documented in `game/README.md` ("Game data" and "The kaiju"), and `test_playtest_switch_reads_the_settings_file` reads the expected value from the file, so no test depends on it being on. No stray screenshot copy tracked outside `art-archive/` (`screenshots/` is git-ignored); Godot `.import` line-ending noise left uncommitted.
+
 Board review files: screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju.png, game/data/playtest.json
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass.
