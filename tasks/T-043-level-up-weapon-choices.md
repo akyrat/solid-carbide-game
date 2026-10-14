@@ -4,7 +4,7 @@ title: Level-up offers: the 2 choices, and applying the one taken
 status: open
 from: project-lead
 to: weapon-behavior
-lead:
+lead: Weapons
 epic: weapons
 milestone: mvp
 user_facing_text: no
