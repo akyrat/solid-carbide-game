@@ -62,7 +62,7 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - `game/scenes/weapons/flamethrower/exhaust_flame.tscn`: the placeholder flame, a `CPUParticles2D` with the Unity prefab's tuning, stepped orange-yellow colours (no fade, no Redgull red), drawn just under the car in the run's `View`, from 0.42 units behind the car's centre, scaled with the area.
 - Targets: every node in the group `enemies` with `take_damage()` and not `is_dead()`, so the kaiju (T-045) is found as soon as it joins that group. Not `run.minions` alone. No physics bodies, so no collision layer was added.
 
-**How it attaches (for fitting into T-041's plumbing).** It touches `run.gd` in three lines only: a preload (`ExhaustFlamethrowerScript`) and, in `start_run()` after `state.start_run()`, `ExhaustFlamethrowerScript.give_if_playtest_switch(self)`. Nothing in the car was changed. The API:
+**How it attaches (for fitting into T-041's plumbing).** (Superseded by "Fit into T-041's weapon rack" below.) It touches `run.gd` in three lines only: a preload (`ExhaustFlamethrowerScript`) and, in `start_run()` after `state.start_run()`, `ExhaustFlamethrowerScript.give_if_playtest_switch(self)`. Nothing in the car was changed. The API:
 - `ExhaustFlamethrower.attach_to_run(run)`: adds a node named `ExhaustFlamethrower` under the run at tier 1 (or returns the existing one), binds it to `run.car` (it steps on the car's `stepped` signal, so it stops while paused), puts its drawing under `run.view_root` just before `run.car_sprite`, and listens to `run.world_rebuilt`.
 - `ExhaustFlamethrower.find_on(run)`, `ExhaustFlamethrower.detach_from(run)` / `flame.detach()`, `flame.set_tier(t)`, `flame.upgrade()` (false at tier 8), `flame.is_max_tier()`, signal `enemy_hit(enemy, amount)`.
 - A new run (`run.world_rebuilt`) detaches it, so every run starts without it (and the new car has its normal turn speed).
@@ -97,3 +97,30 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
 - Note for the Project Lead (not a failure): GUT lists `ExhaustFlamethrower` nodes and `ExhaustFlame` drawings among its orphan reports: in the flamethrower's own test file whatever the switch says, and with the switch on also in the other run tests (state, timer, level-up, second run), next to the map and car orphans those tests already report. Tests still pass; worth tidying when the weapon plumbing (T-041/T-043) takes over attaching.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass
 - 2026-10-14, needs-playtest → in-progress: Board asked to merge it (2026-10-14); first fitted into T-041's weapon plumbing, now on master
+
+**Fit into T-041's weapon rack (Weapon Behavior Agent, 2026-10-14, after the board asked to merge).**
+- **Merged master** (T-041's weapon rack) into the branch and resolved the conflicts in `run.gd`, `game/README.md`, `docs/weapons.md` and my agent notes. A second merge of master brought in the board's new Decisions line on the smoke and the kaiju, unchanged. The task file kept the branch's version, including a `lead: Enemies` header line that was set on the task board and that I did not write.
+- **How it plugs in now:**
+  - `game/scripts/weapons/flamethrower/exhaust_flamethrower.gd` extends `weapon.gd`, with `weapon_id` `flamethrower` and `starts_owned` false. It is listed in `weapons.gd`'s `WEAPON_SCRIPTS`, and `run.weapons.flamethrower` is a getter next to `run.weapons.gun`.
+  - The rack owns it, steps it while it is owned, and resets it at every new run to tier 0 (not owned).
+  - `run.weapons.upgrade("flamethrower")` gives it and applies each tier. This is the call T-043 will use.
+  - `run.gd` is now identical to master's: my preload, `give_if_playtest_switch` and the separate attach, find and detach path are gone.
+  - The drawing (`ExhaustFlame`, the same scene) is made the first time the flamethrower is owned and stays in the run's View. It emits only while the flame is on.
+- **Playtest switch:** still `game/data/playtest.json`, `flamethrower_at_start`, on in this branch. The file is a dictionary of independent keys. It is applied through the rack:
+  - **Where it is read:** `playtest_switch_on()` in `exhaust_flamethrower.gd`, called once per run from `weapons.gd` `reset_for_run()`, which then calls `upgrade("flamethrower")`.
+  - **When T-045 merges:** whichever branch merges second routes this one read through T-045's `game/scripts/run/dev_settings.gd`, and lets its GUT pre-run hook switch the key off. `playtest_override` stays for my own tests. I did not edit `.gutconfig.json`.
+  - `test_starting_gun.gd` sets `playtest_override = 0` (two lines), so the gun's "only the gun at the start" tests check the game's rule.
+- **Orphans:** the `ExhaustFlamethrower` and `ExhaustFlame` orphans are gone: both nodes now live for the whole run scene and are freed with it. The two tests that call `run.start_run()` wait one frame afterwards, so the old map and car are freed and show no orphans either. The flamethrower test file now reports no orphans.
+- **Board answers (2026-10-14):**
+  - The drift smoke stays on with the flames. Nothing was changed for this.
+  - The kaiju and the flames:
+    - **Rule:** an enemy that reports its body size with `hit_radius_units()` (the kaiju, T-045) is inside when its body, a circle of that radius, overlaps the flame's rectangle at all (`overlaps_circle()`). Any other enemy, including the minions, is inside only when its centre is.
+    - **Test:** `test_big_enemy_is_burnt_when_its_body_overlaps_the_flames`. A stand-in enemy (`game/tests/fixtures/weapons/fake_big_enemy.gd`, radius 3) has its centre 2 units past the flame's far edge and is burnt: the entering hit, then the ticks. An enemy without a size at nearly the same spot is not burnt, and a big one whose body stops 1 unit short of the flames is not burnt.
+  - Both answers are described in `docs/weapons.md` Content and in `game/README.md`.
+- **Unchanged:** behaviour, numbers and placeholder look are exactly as the board played them. The only change is the new overlap rule for enemies that report a size, which no current enemy does.
+- **Tests:**
+  - `test_exhaust_flamethrower.gd`: 23 tests, rewritten for the rack (driving steps the car, then `rack.step()`), with new tests for the rack (`test_it_is_one_of_the_racks_weapons`) and the big enemy. The gun is set to tier 0 in these tests so its bullets do not hit the test enemies.
+  - Full GUT suite: 626 of 626 pass (57 scripts, TESTS PASSED, exit 0).
+  - Python tool tests: `game/tools` 241 OK (1 skipped); `tools` 171 OK.
+- **Screenshot:** retaken after the fit with the same fixture, which now gives the flamethrower through `run.weapons`. It looks the same: `art-archive/T-042/screenshots/flamethrower.png`.
+- **Docs:** `docs/weapons.md`, Content, "The exhaust flamethrower (built in task T-042)", now under T-041's "The starting gun" section. Summary, Decisions and Open questions were not changed by me. `game/README.md`, "Weapons", "The exhaust flamethrower".
