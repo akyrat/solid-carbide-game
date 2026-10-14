@@ -436,6 +436,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Killing the kaiju ends the run at once, as a win.
 - The higher the player's combo (Game loop architecture, Decisions), the more minions spawn, on top of the slow growth over the run. It can be switched off, so the board can judge in playtests whether to keep it; the Game Data Agent proposes how strongly the combo raises spawning.
 - Polish for the MVP, once the MVP is playable end to end: minions get a damage animation when hit, and when two minions bump into each other they fall down, get up again and carry on running at the car. How long they stay down is proposed by the Enemy Behavior Agent; the board judges it in playtests.
+- The kaiju walks round buildings and boulders, like the minions, rather than through them.
 
 ### Content
 
@@ -477,6 +478,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 - Where the Unity prototype's weapons behave in unexpected ways (Unity weapons report, section 7), the MVP copies them, with three fixes:
   - **Copied:** the flame uses the gun's damage (2), not its own (1); the bullet's hit circle stays 2 units across, larger than it is drawn; the gun looks for a target only once per firing interval; the weapons never push enemies back; the flame's steering tier makes the car steer 20% faster, compounding; the flame's tier 5 only makes the burn flash last longer; reversing while steering counts as drifting, so the flame comes on.
   - **Fixed:** damage is not rounded to whole numbers, so the flame's "hotter flame" tier always adds damage; the flame's area is the same size whichever way the car faces; a bullet that misses is removed once it has flown past the gun's range.
+- The exhaust flamethrower does not switch off the drift smoke (unlike the Unity prototype): smoke and flames both show. A minion is in the flames when its centre is; the kaiju is when any part of its body overlaps them. The starting gun's bullet size and its wait before the first shot stay as built (the Unity values).
 
 ### Content
 
@@ -721,8 +723,8 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
 | `drifting.md` | `4977806ff786a0df7fb2662d0578db320aee307ea56087813d6c195a8cc0d697` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
-| `enemies.md` | `e77b9c8129477301c6075799cd23507cadebe3cff143ddc85469c267eda7e901` |
-| `weapons.md` | `fd498cecf710900b468cc87a32538bde9e329f28f31d2ee357f7f3da5c6dfd5c` |
+| `enemies.md` | `6ee8a1a1541197cfe6ee1e970cf13f2f578ce45cb151c3d81fdc0abbd304f642` |
+| `weapons.md` | `2193eb161c140e37c892cb47eaaf49b8f31a6241275943588749921032535ea9` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `d3846891e82b4ea573307944aaed6cf6026cc72bf9d772e28e61218b42b88eef` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |

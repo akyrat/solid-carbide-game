@@ -29,6 +29,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Killing the kaiju ends the run at once, as a win. (2026-10-09)
 - The higher the player's combo (Game loop architecture, Decisions), the more minions spawn, on top of the slow growth over the run. It can be switched off, so the board can judge in playtests whether to keep it; the Game Data Agent proposes how strongly the combo raises spawning. (2026-10-10)
 - Polish for the MVP, once the MVP is playable end to end: minions get a damage animation when hit, and when two minions bump into each other they fall down, get up again and carry on running at the car. How long they stay down is proposed by the Enemy Behavior Agent; the board judges it in playtests. (board, 2026-10-14)
+- The kaiju walks round buildings and boulders, like the minions, rather than through them. (board, 2026-10-14)
 
 ## Content
 

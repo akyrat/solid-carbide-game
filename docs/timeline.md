@@ -1045,3 +1045,8 @@ Entry format:
 - Decision or change: the board kept the T-068 sample lizard as the base and wants it animated walking on all fours in 8 directions (5 drawn, 3 mirrored) with 7 walk frames each (about 37 generations in all); next step with its go: the 8 rotations and a 7-frame walk in one direction for review (about 9). Polish for the MVP, once it is playable end to end: a minion damage animation, and minions that bump into each other fall down, get up and carry on (new tickets T-134, behaviour with a placeholder, and T-135, its art). Settings exposed for playtests and development go under an internal dev flag players never see. T-045 sent back to add a dev timer setting (the run clock's minutes and seconds at the start) to fast-forward to the boss, replacing its early-kaiju switch. This Project Lead session is named Enemies.
 - Documents touched: `docs/enemies.md`, `docs/visual-style.md`, `docs/hud-and-menus.md`
 - Tasks: T-068, T-134, T-135, T-045
+
+## 2026-10-14: The board's answers on the coin, combo switch, flames, kaiju and gun
+- Decision or change: T-072's coin sample is fixed by free scripts (outline, smaller, stray pixels removed) and the hit, death and car damage effects are drawn by script, with no more PixelLab calls. T-085's code-level on/off switch is enough for now. The flamethrower keeps the drift smoke showing. The flames hit the kaiju on any overlap with its body (minions keep the centre rule); folded into T-042's fit, with the kaiju's body size from T-045. The kaiju walks round buildings, as built. The gun's bullet size and first-shot wait are fine as built.
+- Documents touched: `docs/weapons.md`, `docs/enemies.md`
+- Tasks: T-072, T-085, T-042, T-045
