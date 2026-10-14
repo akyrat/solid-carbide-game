@@ -14,7 +14,8 @@ extends Node2D
 ## draws them.
 ##
 ## Drift marks (task T-117) are drawn on the ground, under the test room and
-## the car, in the current view.
+## the car, in the current view. Drift smoke (task T-121) is drawn over the
+## test room and under the car.
 
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
@@ -26,6 +27,7 @@ const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
+const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 
 const ACTION_TOGGLE_PANEL := "toggle_tuning_panel"
 const ACTION_TOGGLE_VIEW := "toggle_view"
@@ -46,6 +48,7 @@ var view_root: Node2D
 var ground: Node2D
 var drift_marks: Node2D
 var test_room: Node2D
+var drift_smoke: Node2D
 var car_sprite: Sprite2D
 var trick_popups: Node2D
 var camera: Camera2D
@@ -82,6 +85,10 @@ func _ready() -> void:
 	test_room.name = "TestRoom"
 	view_root.add_child(test_room)
 	test_room.build_bodies(physics_world)
+	drift_smoke = DriftSmokeScene.instantiate()
+	drift_smoke.name = "DriftSmoke"
+	view_root.add_child(drift_smoke)
+	drift_smoke.bind(car, drift_marks)
 	car_sprite = CarSpriteScript.new()
 	car_sprite.name = "CarSprite"
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
@@ -151,6 +158,7 @@ func set_view(v: String) -> void:
 	ground.transform = view_transform()
 	drift_marks.transform = view_transform()
 	test_room.transform = view_transform()
+	drift_smoke.view_transform = view_transform()
 	car_sprite.use_sheet(v)
 	sync_view()
 	car_sprite.reset_physics_interpolation()

@@ -11,7 +11,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 
 ## Showing work
 - Send images with SendUserFile: enlarged (nearest-neighbour), on a dark and a light background, side by side for comparisons. Always say where the real files are (full Windows paths).
-- Work that needs the board's review is played from the task's own folder before merging: tell the board to open `C:\solid-carbide-worktrees\<id>\game\project.godot`.
+- Work that needs the board's review is played from the task's own folder before merging: tell the board to open `C:\solid-carbide-worktrees\<id>\game\project.godot`, or to press Play on the ticket's entry in the Builds tab of the task board (http://localhost:8765), which starts the same game; Open in editor opens the project in Godot.
 - The board can open files itself; when it asks where the files are, give paths, not more images.
 
 ## Art and money
@@ -26,6 +26,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - Small playable steps, each ending in a playtest (`tasks/README.md`, "Building in playable steps"). The board reorders steps freely; update that list when it does.
 - Feel and balance are judged in playtests, not ticket by ticket.
 - Nothing user-facing merges before the board has played it (board, 2026-10-13). Every task that changes what the player sees, reads or hears gets a `The board's review:` line, placeholders included, so it waits in `needs-playtest`. Only work the player never meets (data, tooling, tests, docs) merges straight after QA.
+- Quick tuning with an agent (board, 2026-10-14): when the board wants to work directly with an agent, on any task it names, it does so in the Project Lead's session. The Project Lead resumes the agent that did the work, with its memory of it, and passes the board's tweaks on word for word, in the task's own folder so the board plays each change straight away. No QA between tweaks; each tweak is still written in the ticket's result notes; one QA round runs at the end, before merging.
 - The board often scopes down ("only one for now", "post MVP", "much later"). Record it in the docs, split the ticket, move the rest to a later milestone, and delete nothing.
 
 ## Merging (Project Lead)
@@ -37,6 +38,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## Several Project Leads at once
 - Only one instance merges into `master` at a time. Before choosing a new ticket number, check `tasks/` and `git log` on `master`. Pull `master` before editing docs or the timeline.
 - All instances share one task board server. If the board says its port is taken, tell the board.
+- Each instance acts only on the board's moves for tickets it planned or started, and leaves the rest to the instance that owns them (board, 2026-10-14). The board's moves reach every instance; this keeps two instances from acting on the same move. A move on a ticket no instance owns yet goes to whichever instance the board is talking to.
 
 ## Course work
 - `course-material/`: one folder per assignment, kept apart from the game. Short, in the board's voice, linking to real files rather than copying them.

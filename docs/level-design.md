@@ -207,7 +207,7 @@ The designs are stored unplaced (units from the pattern's centre, angle 0) in th
 
 ## Open questions
 
-- (After MVP) Pavements along the building blocks (board, 2026-10-12): how wide, whether they take room from the blocks or the roads, and whether the car can drive on them.
+- (After MVP) Pavements along the building blocks (board, 2026-10-12): how wide, whether they take room from the blocks or the roads, and whether the car can drive on them. Partly answered (board, 2026-10-14): in the MVP every building asset has a pavement drawn around it, inside its block, so it takes no room from the roads and the car cannot drive on it (Visual style, Decisions).
 - (After MVP) The board plans to draw future maps by hand, and may explore generating a new map for every run.
 
 ## References

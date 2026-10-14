@@ -1,0 +1,30 @@
+{
+  "file": "boulder_a_mirror.png",
+  "variant": "a_mirror",
+  "source": "art-archive/T-065/boulder_sample_nobase.png",
+  "mirrored": true,
+  "made_by": "python game/tools/build_boulder_art.py build",
+  "history": [
+    "PixelLab POST /create-image-pixflux, 1 generation (record: art-archive/T-065/boulder_sample_raw.json; log: game/art/pixellab-generation-log.jsonl)",
+    "palette 48 -> 30 colours by python game/tools/reduce_palette.py reduce (art-archive/T-065/boulder_sample.json)",
+    "stone disc, pebbles and magenta rim removed, dark outline along the new bottom edge, by python game/tools/remove_boulder_base.py build (art-archive/T-065/boulder_sample_nobase.json)",
+    "copied unchanged by python game/tools/build_boulder_art.py build",
+    "mirrored left to right (an extra variant; the same pixels) by python game/tools/build_boulder_art.py build"
+  ],
+  "image": {
+    "width": 160,
+    "height": 160
+  },
+  "bbox": {
+    "x0": 29,
+    "y0": 16,
+    "x1": 128,
+    "y1": 120,
+    "width": 99,
+    "height": 104
+  },
+  "colours": 30,
+  "pixellab_calls_for_this_file": 0,
+  "task": "T-065",
+  "status": "game-ready (the board approved both samples as boulder variants, 2026-10-13)"
+}

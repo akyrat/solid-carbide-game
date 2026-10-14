@@ -1,0 +1,114 @@
+{
+ "what": "Free sample of the trick popups' comic look (task T-084), for the board's review. Not used in the game yet.",
+ "made_by": "game/tools/build_trick_popup.py sample (a script; no PixelLab call). Byte-identical every run.",
+ "font": "Bangers Regular 2.100 (game/fonts/bangers/, SIL OFL 1.1), rendered without anti-aliasing",
+ "preview": "trick_popup_sample.png: the popups enlarged 4x (nearest neighbour), on a dark and a light background side by side",
+ "popups": [
+  {
+   "text": "FULL 360! +0.25",
+   "size": "normal",
+   "font_px": 35,
+   "popup_px": [
+    271,
+    83
+   ],
+   "text_box": [
+    36,
+    25,
+    198,
+    33
+   ],
+   "file": "trick_popup_normal.png"
+  },
+  {
+   "text": "LONG DRIFT! +0.05",
+   "size": "small",
+   "font_px": 20,
+   "popup_px": [
+    181,
+    49
+   ],
+   "text_box": [
+    27,
+    15,
+    126,
+    18
+   ],
+   "file": "trick_popup_small.png"
+  }
+ ],
+ "palette": {
+  "burst_outline": [
+   6,
+   4,
+   14
+  ],
+  "burst_edge": [
+   0,
+   229,
+   255
+  ],
+  "burst_edge_dark": [
+   0,
+   120,
+   190
+  ],
+  "burst_fill": [
+   20,
+   16,
+   52
+  ],
+  "text_outline": [
+   14,
+   18,
+   58
+  ],
+  "text_shadow": [
+   58,
+   18,
+   92
+  ],
+  "name_top": [
+   255,
+   236,
+   250
+  ],
+  "name": [
+   255,
+   64,
+   200
+  ],
+  "name_bottom": [
+   150,
+   30,
+   170
+  ],
+  "amount_top": [
+   210,
+   255,
+   255
+  ],
+  "amount": [
+   0,
+   229,
+   255
+  ],
+  "amount_bottom": [
+   0,
+   140,
+   200
+  ]
+ },
+ "preview_backgrounds": {
+  "dark": [
+   12,
+   10,
+   30
+  ],
+  "light": [
+   226,
+   228,
+   236
+  ]
+ }
+}

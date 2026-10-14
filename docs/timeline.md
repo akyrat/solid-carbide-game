@@ -815,3 +815,73 @@ Entry format:
 - Decision or change: the board wants to try two camera options, each a checkbox on the pause screen, off by default and saved: camera smoothing, and the "dynamic camera", whose zoom follows the car's speed from a min (very low speed) to a max (top forward speed), easing there with a short delay. The board tunes the min and max in playtests with two temporary pause-screen buttons that store the zoom slider's current value; the values are written where the Project Lead can copy them into the defaults. The checkbox names are the board's own words ("Camera smoothing", "Dynamic camera"), and the tuning buttons ("Set min zoom", "Set max zoom") are a temporary tool for the board, removed once the values are settled, so no separate text task. T-123 (Driving & Drift) builds the camera behaviour; T-124 (UI) adds the controls on top of T-123's branch; the board playtests both together.
 - Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
 - Tasks: T-123 (new), T-124 (new)
+
+## 2026-10-13: T-065 done: the boulder art is in
+- Decision or change: the board playtested the boulders and approved them ("LGTM"). The map's boulders (obstacle patterns, the kaiju's meteor boulders) now use the two approved PixelLab samples (the first with its stone disc removed by a free script, and the lower boxy one), plus a free mirrored copy of each, picked per boulder by a stable hash and sized to the 3-unit collision circle. Buildings and the car draw in the right order around them; collisions are unchanged. 2 generations used in all (balance 4954 of 5000 after T-065; T-064's sample took it to 4953). Passed QA round 1.
+- Documents touched: `game/README.md`
+- Tasks: T-065 (done)
+
+## 2026-10-13: Trick popups follow the car
+- Decision or change: playtesting the comic popups, the board found they stay where they appeared while the car drives on, so they are hard to read. Each popup now follows the car for its whole life. T-084 had used both QA rounds, so this is a follow-up, T-125 (UI), built on T-084's branch so the board playtests both together.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-125 (new)
+
+## 2026-10-13: A Builds tab on the task board
+- Decision or change: the board wants to jump from a ticket to that ticket's version of the game. It chose a launcher over an embedded web build (a browser page can't hold a native Godot window, and a web export would need the Compatibility renderer instead of Forward+). A new Builds tab lists `master` and every worktree, each with "Play" and "Open in editor" buttons that start Godot on that folder; ticket cards with a worktree get a Play button too. Embedding the game in the page stays a possible later step.
+- Documents touched: none yet (T-126 updates `docs/README.md` and `docs/working-with-the-board.md`)
+- Tasks: T-126 (new)
+
+## 2026-10-14: T-121 and T-073 done: drift smoke
+- Decision or change: the board playtested the drift smoke and approved it ("LGTM"). While the car drifts, puffs come off both rear tyres: a script-drawn cool grey-violet cloud puff (no PixelLab), each living 0.13 s, 50 a second, capped at 64, so in a full-circle drift the trail covers about 20 degrees (the board's request after the first version covered about half the circle). Puffs stay where they were left, grow then pop out, and sit in the car's depth order. Both passed QA (T-073 in two rounds).
+- Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
+- Tasks: T-121 (done), T-073 (done)
+
+## 2026-10-14: Several Project Leads: each acts on its own tickets
+- Decision or change: with two Project Lead sessions running, the board's drags on the task board reach both. Each session now acts only on moves for tickets it planned or started; a move on a ticket nobody owns yet goes to the session the board is talking to.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
+
+## 2026-10-14: Buildings: dense narrow towers, kanji-like signs kept; popups lower and smaller
+- Decision or change: on T-064's sample tower, the board took the Project Lead's recommendations: blocks are packed densely with narrow towers (about 49 per block) instead of 16 wider ones, the remaining 7 base towers are generated the same narrow way (about 7 generations), and the signs' kanji-like marks are kept as long as they are not real words. Also, playtesting T-125, the board wants the stacked trick popups to go at most half way from the car to the top of the screen (they reached the timer) and to be a bit smaller; T-125 goes back to the UI Agent.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-064 (full set), T-125 (back to in progress)
+
+## 2026-10-14: T-126 done: the Builds tab on the task board
+- Decision or change: the task board has a Builds tab listing `master` and every worktree, each with "Play" (runs that version of the game) and "Open in editor" (opens it in Godot). A ticket's detail view has "Play this build" and a link to its Builds entry; they sit in the detail view rather than on the card because cards are dragged. The server only launches folders from its own worktree list, using `GODOT_BIN` from `.env`. Tooling, so merged straight after QA (passed round 1).
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-126 (done)
+
+## 2026-10-14: Named Project Lead sessions and ticket owners
+- Decision or change: the board's drags reach only the first session whose hooks read the shared inbox, so the "each session acts on its own tickets" rule can't work yet. The board chose to name each session itself (for example "Camera", "Tools"; a session without a name asks). T-127 adds a `lead:` owner on each ticket, gives every session its own read position in the inbox so all sessions see every drag and act only on their own or unowned tickets (claiming an unowned one first), and shows the owner on each card with a filter by owner, so the board sees every session's tickets in one view.
+- Documents touched: none yet (T-127 updates `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `docs/working-with-the-board.md`)
+- Tasks: T-127 (new)
+
+## 2026-10-14: Trick popups: three at most, eased rise
+- Decision or change: before playtesting T-125's second round, the board decided the popups should be small enough that up to three stack at once under the height limit (never more; the oldest makes room), and that their rise should ease out: fast at first, slowing towards the end as they fade. T-125 is reworked; its status stays in QA meanwhile, since the status script won't move it out while its round-1 marks still pass.
+- Documents touched: none yet (HUD and menus, Content, with the rework)
+- Tasks: T-125
+
+## 2026-10-14: Trick popups become rounded rectangles
+- Decision or change: the board wants the comic popups to be white rounded rectangles instead of jagged bursts, keeping the black border and black lettering. Added to T-125's current rework.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-125
+
+## 2026-10-14: Quick tuning with an agent, through the Project Lead
+- Decision or change: the board can work directly with any agent, on whatever it wants to tune, in the Project Lead's session: the Project Lead resumes the agent that did the work and passes the board's tweaks on word for word, in the task's folder, with no QA between tweaks and one QA round before merging. Every tweak is still recorded in the ticket.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
+
+## 2026-10-14: Record: the board's go for T-064's sample tower
+- Decision or change: recorded late (QA found the gap): on 2026-10-13 the board gave the go for T-064's one sample tower ("go and generate the sample building"), 1 generation. The full set of 7 more followed the board's go on 2026-10-14. Balance after all 8 calls: 4946 of 5000 (a later free query; the result notes said 4947 because of the API's lag).
+- Documents touched: none
+- Tasks: T-064
+
+## 2026-10-14: Half speed kept; the city redesigned: skyscraper bases, short buildings, pavements, alert banners
+- Decision or change: the board keeps the car's top forward speed halved (16.5 units a second, from its quick tuning on T-124). It redesigned the buildings: downtown Tokyo under attack from the kaiju (a Godzilla-like monster, not called Godzilla, name to come); each block split into 2 by 2 skyscrapers drawn as the bases of really tall towers so the car is realistic in size, 6 different skyscrapers; shorter buildings whose roofs show; a pavement drawn around every building asset; a few alert banners about the kaiju on buildings or as pavement signs, with silly minimalistic pixel paintings of its head or body. The Narrative Theme Agent is consulted first so all generated art stays consistent (T-128, started). T-064 is rewritten for the new design and waits in To do for the board to start it; its first round's art stays archived on its branch. New: T-129 (short buildings) and T-130 (alert banners), both after T-128.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-064 (redesigned, To do), T-128 (new, in progress), T-129 (new), T-130 (new)
+
+## 2026-10-14: T-084 and T-125 done: the trick popups
+- Decision or change: the board playtested the popups and approved them ("LGTM"). Trick and challenge popups are white rounded rectangles with a black border and black Bangers lettering (Bangers 2.100, SIL OFL 1.1, script-drawn, no PixelLab), on one straight baseline. Each follows the car for its whole life, rising with an ease-out (fast, then slowing) as it fades; at most three stack at once, the oldest making room, and the stack never reaches above a quarter of the screen from the top. QA noted the smallest lettering loses pixel rows at the default zoom; the board accepted it as is. Both passed QA in two rounds.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-084 (done), T-125 (done)

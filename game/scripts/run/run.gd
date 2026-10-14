@@ -15,7 +15,8 @@ extends Node2D
 ## tricks and collisions to the combo (task T-081), and plays the level-up
 ## effect on the car at every level-up (task T-112). While the car drifts,
 ## its rear tyres leave drift marks (task T-117) on the map's ground, under
-## the buildings and the car. Buildings that cover the car fade (task T-034,
+## the buildings and the car, and puffs of drift smoke (task T-121) come off
+## them, drawn with the car. Buildings that cover the car fade (task T-034,
 ## in the map); sync_view() puts the car's drawing into the buildings' depth
 ## order through View's z_index.
 ##
@@ -35,6 +36,8 @@ const LevelUpBurstScene := preload("res://scenes/run/level_up_burst.tscn")
 const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 ## The camera options (task T-123): smoothing and the dynamic camera.
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
+## The drift smoke (task T-121); its look and tuning live in the scene.
+const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -66,6 +69,10 @@ var level_up_burst: CPUParticles2D
 ## The drift marks (task T-117), inside the map's drawing: over the ground,
 ## under the buildings, boulders and the car. A new run's map brings new ones.
 var drift_marks: Node2D
+## The drift smoke (task T-121), in the car's drawing (View), under the car
+## sprite: over the map (ground, marks, boulders), in the car's place in the
+## buildings' depth order, under the HUD. Kept across runs, emptied by each new run.
+var drift_smoke: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -98,6 +105,12 @@ func _ready() -> void:
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(car_sprite)
 	car_sprite.use_sheet(VIEW)
+
+	drift_smoke = DriftSmokeScene.instantiate()
+	drift_smoke.name = "DriftSmoke"
+	drift_smoke.view_transform = ISO_TRANSFORM
+	view_root.add_child(drift_smoke)
+	view_root.move_child(drift_smoke, car_sprite.get_index())  # under the car
 
 	level_up_burst = LevelUpBurstScene.instantiate()
 	level_up_burst.name = "LevelUpBurst"
@@ -175,6 +188,9 @@ func _build_world() -> void:
 	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
+	# Drift smoke (T-121): from the same rear tyre places as the marks.
+	drift_smoke.clear()
+	drift_smoke.bind(car, drift_marks)
 	# Likes (XP): every completed challenge, preset or meteor (T-037).
 	map.challenge_completed.connect(state.challenge_completed)
 	map.meteor_challenge_completed.connect(state.challenge_completed)
