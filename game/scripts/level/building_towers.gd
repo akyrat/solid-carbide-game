@@ -82,6 +82,18 @@ static func short_slots(block_x: int, block_y: int) -> Array:
 	return out
 
 
+## The fade outline of a short building's sprite (w x h art px, task T-129), in sprite pixels: six points
+## following the roof diamond on top and the two walls' bottom edges. The roof's back edges fall 2:1 from the
+## centre, so the side corners sit w / 4 below the top. One pixel of margin on every point takes in the pixel
+## steps of the 2:1 edges, so every opaque pixel lies inside. Unlike the skyscrapers' outline (a full-width
+## top), it leaves out the empty triangles above the roof's back edges, so a car on the road behind the roof
+## does not fade the building (T-034: only the building covering the car fades).
+static func short_outline(w: float, h: float) -> Array:
+	var drop := w * 0.25
+	return [Vector2(w * 0.5, -1.0), Vector2(w, drop - 1.0), Vector2(w, h - drop + 1.0),
+		Vector2(w * 0.5, h + 1.0), Vector2(0.0, h - drop + 1.0), Vector2(0.0, drop - 1.0)]
+
+
 static func load_texture(path: String) -> Texture2D:
 	var t := load(path) as Texture2D
 	if t != null:
@@ -132,7 +144,9 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		var hull := PackedVector2Array()
 		var w := sz.x
 		var h := sz.y
-		for q in [Vector2(0, 0), Vector2(w, 0), Vector2(w, h - 192.0), Vector2(w * 0.5, h), Vector2(0, h - 192.0)]:
+		# A short building's outline follows its roof (short_outline); a skyscraper keeps its 5-point outline.
+		var shape: Array = short_outline(w, h) if is_short else [Vector2(0, 0), Vector2(w, 0), Vector2(w, h - 192.0), Vector2(w * 0.5, h), Vector2(0, h - 192.0)]
+		for q in shape:
 			hull.append(pos + q * SPRITE_SCALE)
 			points.append(pos + q * SPRITE_SCALE)
 		# The slot's own fade node: footprint, silhouette and a child sprite.
