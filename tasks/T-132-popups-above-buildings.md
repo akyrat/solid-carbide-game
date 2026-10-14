@@ -1,7 +1,7 @@
 ---
 id: T-132
 title: Trick popups are always drawn above the buildings
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 epic: hud-menus
@@ -13,7 +13,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/hud/trick_popups.gd, tasks/T-130-kaiju-alert-banners-art.md, tasks/T-125-popups-follow-the-car.md]
 files_expected_to_change: [game/scripts/hud/trick_popups.gd, its tests, game/README.md, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,4 +62,4 @@ Board review files: the screenshot listed in the result notes
 - Narrow change: `git diff master...HEAD` touches only `trick_popups.gd` (new `POPUP_Z` constant; `show_popup` sets `z_as_relative = false` and `z_index = POPUP_Z` instead of `z_index = 100`), the new test and fixture, `game/README.md`, `docs/hud-and-menus.md` and this file. Look, size, stacking, follow and the quarter-screen limit are untouched.
 - Anything in the world that relied on being over the popups: none found. Every other world item (ground, buildings, kaiju signs, challenge and meteor arrows, boulders, drift marks, drift smoke, level-up burst, car sprite) is at a relative z of 0 or the map's depth scheme (at most `top_z_index()`, 146; signs at front + 1); the scenes set no z. Before this change the popups were already 100 above the view (and the level-up burst and drift smoke, which share the view's z), so the only things that changed order are buildings and signs that used to cover a popup, which is the fix. No world item uses a z near 4096. Note for later: anything added to the world later that should cover a popup would need to be a CanvasLayer.
 - Godot's line-ending-only `.import` noise from the runs was reverted; nothing else left in the working tree.
-
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 6 criteria pass
