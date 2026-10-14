@@ -935,3 +935,8 @@ Entry format:
 - Decision or change: the board gave the go for T-064's full set (5 more skyscrapers, about 15 generations, in palette B, with a free wall retune, signs that don't read as real Japanese, only the covering tower fading) and for T-129's sample (5 generations, palette B), each step coming back to the board.
 - Documents touched: none
 - Tasks: T-064, T-129
+
+## 2026-10-15: PixelLab spend for the city so far
+- Decision or change: T-064's full set (10 calls) and T-129's sample (5 calls) ran at the same time on the same account: balance 4943 before, 4928 after, 15 generations for 15 calls, 1 each. Each agent alone saw an unexplained gap; together they add up. T-064 drew its signs by script (abstract shapes, no glyphs), saving its 5 sign calls. City art spend so far: T-064 round 1 8, round 2 13 (3 sample + 10 full set), T-129 5.
+- Documents touched: none
+- Tasks: T-064, T-129
