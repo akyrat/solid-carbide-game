@@ -1,7 +1,7 @@
 ---
 id: T-042
 title: The exhaust flamethrower: fires only while drifting
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 epic: weapons
@@ -13,7 +13,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/weapons/unity-weapons-report.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, tasks/T-036-run-scene-and-state.md, tasks/T-044-minions.md, tasks/T-041-starting-gun.md, game/README.md]
 files_expected_to_change: [the weapon code and scenes, tests, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -94,3 +94,4 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
 - 6, docs: `docs/weapons.md` gains only the subsection "The exhaust flamethrower (built)" inside Content; Summary, Decisions and Open questions untouched. `game/data/weapons.json` is identical to master (no balancing number changed; the only data change is the new `playtest.json`). No debug key, no input handling and no player-facing text in the new code or scenes. The playtest switch is documented in `game/README.md` ("Playtest switch") and in the file's own `_comment`. Pass.
 - 7, tests, run by QA in this folder: GUT 601 of 601 pass (56 scripts, `TESTS PASSED`, exit 0); `game/tools` Python 241 OK (1 skipped); `tools` Python 130 OK. QA also ran the full GUT suite with `flamethrower_at_start` set to false (then restored to true): 601 of 601 pass, so the tests do not depend on the switch's value. Pass.
 - Note for the Project Lead (not a failure): GUT lists `ExhaustFlamethrower` nodes and `ExhaustFlame` drawings among its orphan reports: in the flamethrower's own test file whatever the switch says, and with the switch on also in the other run tests (state, timer, level-up, second run), next to the map and car orphans those tests already report. Tests still pass; worth tidying when the weapon plumbing (T-041/T-043) takes over attaching.
+- 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass
