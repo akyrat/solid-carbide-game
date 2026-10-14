@@ -915,3 +915,8 @@ Entry format:
 - Decision or change: looking at T-130's first drawings (cheerful cyan and pink cartoon kaiju), the board wants no detail at all: only the kaiju's black silhouette (head or body shape), on a plain white inside with a red outline, like road warning or prohibition signs, and no neon colours. This is an exception to "red only for Redgull": the alert signs use a traffic-sign red outline. Visual style's City brief and Redgull's look are updated.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-130
+
+## 2026-10-15: Skyscraper sample and warning signs approved
+- Decision or change: the board played T-064's round-2 sample in the game (every block 2 by 2 of the one sample skyscraper with free variations, script pavement, the whole block fading for now) and approved it ("LGTM"); the full set waits for the board's go on its cost. The board also approved T-130's warning signs as drawn: the kaiju's head in a red warning triangle and its body in a red prohibition circle, black silhouettes on white, as building banners and pavement signs; placing them waits for T-064's full set.
+- Documents touched: none
+- Tasks: T-064, T-130
