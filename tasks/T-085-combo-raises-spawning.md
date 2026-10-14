@@ -1,7 +1,7 @@
 ---
 id: T-085
 title: The combo raises minion spawning (can be switched off)
-status: blocked
+status: open
 from: project-lead
 to: enemy-behavior
 epic: enemies

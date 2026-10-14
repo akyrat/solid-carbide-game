@@ -1,7 +1,7 @@
 ---
 id: T-068
 title: Art: the minion (light green lizard), walking
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

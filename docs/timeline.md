@@ -1015,3 +1015,8 @@ Entry format:
 - Decision or change: the board chose to leave the model hook as it is. It reads a task's model from the task file on master, so a model change made on a task's branch (for example to opus after a failed QA round) does not reach the hook; no tooling ticket.
 - Documents touched: none
 - Tasks: none
+
+## 2026-10-14: T-044 done: minions
+- Decision or change: the board playtested and approved it ("lgtm"). Placeholder light green minions keep 12 to 20 around the car (growing over the 7 minutes, `enemies.json` unchanged), spawning 3 units off screen, walking at the car round buildings and boulders, never blocking it; touching the car deals 5 damage every 0.5 s with a knockback; pausing freezes them and a new run clears them; they take the car's place in the buildings' draw order. `take_damage(amount)` is documented for the weapons; on death a minion drops 2 coins 60% of the time, and driving over a coin collects it. With no weapons yet, the board's playtest covered spawning, chasing, damage, knockback, pause and draw order; killing and coins are judged once the starting gun (T-041) is in, with no debug kill key (board). Proposals the board accepted as built: minions walk round obstacles, ones left a screen behind are replaced at the screen's edge, minions behind an opaque building are hidden, and sizes stay in code. QA round 1: all 9 pass. The combo's extra spawning has a hook (`run.minions.spawn_multiplier`), wired by T-085. Merged in 676439e (another Project Lead instance's timeline commit took in the staged merge); this entry, the GDD regeneration and the unblocked tasks follow in the next commit. Now open: T-041, T-042, T-045, T-068, T-072, T-085.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-044 (done)

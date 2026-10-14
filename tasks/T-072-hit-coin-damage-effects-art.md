@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 epic: art

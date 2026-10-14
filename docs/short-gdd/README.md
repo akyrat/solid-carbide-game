@@ -1,6 +1,6 @@
 # Short GDD
 
-Last updated from long GDD: 63b6db2cc002a93c42645f9e5509b142e06b077a5a1af608a0b5adfb35f5fddd
+Last updated from long GDD: 409376107c187c0b8401aaa7196f8fdd4493708eee11c09f959ffa357f521510
 (The line above is read by `python tools/generate_long_gdd.py --check`. It holds the SHA-256 fingerprint of the long GDD the short GDD was last updated from. Update it whenever the short GDD is brought up to date with the long GDD.)
 
 The short GDD is the pitch version of the game design, readable in one sitting: `short-gdd.md`, with a PDF for sharing, `short-gdd.pdf`, exported by `python tools/export_short_gdd_pdf.py`. It condenses the long GDD (`../long-gdd.md`). Changes flow down only: it is never the place to make a content change first.

@@ -1,7 +1,7 @@
 ---
 id: T-041
 title: The starting gun: aims itself and fires at enemies in range
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 epic: weapons
