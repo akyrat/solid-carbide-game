@@ -995,3 +995,8 @@ Entry format:
 - Decision or change: the board chose to keep it as it is: `task_status.py` changes only the task file and never commits. The change goes into the next commit on the task's branch, or the Project Lead's next commit on `master`.
 - Documents touched: `tasks/README.md`
 - Tasks: T-109 (done)
+
+## 2026-10-14: T-133 done: trick popups heat up with the combo
+- Decision or change: the board playtested and approved it ("lgtm"). Trick and challenge popups take T-131's heat step (one shared source, `ComboHeat`): unchanged black and white below x2, a yellow ring at x2, a wider orange ring with an orange amount at x3, and that plus a flickering flame edge in the likes-bar fire's style from x4. Fill stays white, names black, no Redgull red, drawn in code. Stacking, limits and T-132's depth unchanged; the drift prototype keeps plain popups. QA round 1: all 7 pass. Noted for later if the board wants: the small extended-drift popup's orange "+0.05" at x3+ is muddy at game scale (cheap fix: keep it black); x4 flames can overlap the bottom of a popup stacked above.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-133 (done)
