@@ -11,7 +11,7 @@ The engine is Godot 4.6.2. The scripts below find it through `GODOT_BIN` in `.en
 | Folder | What goes in it |
 | --- | --- |
 | `scenes/` | Scenes (`.tscn`). `game/game.tscn` is the main scene (the screen flow); `drift_prototype/` is the drift prototype; `driving/` the drift marks and drift smoke; `level/` is the MVP map; `run/` is the run |
-| `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state; `enemies/` the minions and their coins (see "Minions") |
+| `scripts/` | Game GDScript (`.gd`). `game/` holds the screen flow; `driving/` holds the car's movement, the drift prototype and its tuning panel; `level/` the map and its challenges; `run/` the run and its state; `enemies/` the minions and their coins (see "Minions") and the kaiju (see "The kaiju") |
 | `data/` | Game data as JSON (see "Game data"). `level/mvp_map.json` is the MVP map's layout |
 | `art/` | Sprites, tilesets and other images |
 | `audio/` | Sound effects and music |
@@ -474,6 +474,7 @@ Written by the Game Data Agent (task T-038); the enemy, weapon and garage data t
 - **Garage:** `garage.json` holds the 3 upgrades (`acceleration`, `car_health`, `damage_bonus`), 10 levels each, with a `price` and a `value` per level and a `base_value` for level 0. `scripts/data/garage_data.gd` (`GarageData`) gives `max_level()`, `price(upgrade, level)` and `value(upgrade, level)`. Tests: `tests/unit/test_garage_data.gd`.
 - **Weapons (T-040):** `data/weapons.json` holds the starting gun and the exhaust flamethrower: base values and, for each, the 7 upgrade tiers (tiers 2 to 8) as `effect` plus `value`. `scripts/data/weapon_data.gd` (`WeaponData`) adds the tiers up: `gun_at(tier)` and `flame_at(tier)` return the weapon's values at that tier (tier 1 = just got it), and `tiers(weapon)` the raw list. Tests: `tests/unit/test_weapon_data.gd`, which compares everything with the Unity weapons report.
 - **Enemies (T-039):** `data/enemies.json` holds the minion (`health`, `move_speed`, `contact_damage`, `contact_damage_interval`, `knockback`), `spawning` (how many minions are kept around: `minions_at_start`, growing in a straight line to `minions_at_boss_time` at `growth_until_seconds` = the kaiju's arrival, then held; one spawns every `spawn_interval_seconds` while fewer are around, `spawn_margin_units` beyond the visible screen's edge), `coins` (`drop_chance`, `coins_per_drop`), the `kaiju` (same keys as the minion), `kaiju_coins` (T-119: the coins the kaiju drops when defeated, `drop_chance` 1 = always and `coins_per_drop`; its death ends the run, so they are added to the run's coins as it ends, without a pickup) and its `meteor_attack` (`first_attack_after_seconds`, `seconds_between_attacks`, `windup_seconds`, `meteors_per_attack`, `warning_seconds` (decided, 2 s), `land_within_units_of_car`, `impact_radius_units`, `impact_damage`, `knockback`). Units as everywhere: 1 unit = the car's width, speeds and knockback in units per second, damage in the car's health points. `scripts/data/enemy_data.gd` (`EnemyData`) gives each section as a Dictionary of floats (`minion()`, `spawning()`, `coins()`, `kaiju()`, `meteor_attack()`), `kaiju_coins()`, `minions_wanted(run_seconds, spawn_multiplier = 1.0)` (pass `ComboData.spawn_multiplier(combo)` for the combo's extra spawning), `expected_coins_per_kill()`, `kaiju_coins_on_defeat()` (whole coins the defeated kaiju adds) and `meteor_attack_times(fight_seconds)`. Enemy stats never change over a run; only `minions_wanted` grows. Tests: `tests/unit/test_enemy_data.gd`, including the kaiju's time to kill with the MVP weapons and its coins when defeated.
+- **Playtest settings (T-045):** `data/playtest.json` holds switches for playtests only, not balancing numbers and never shown to the player: `kaiju_early_arrival` (see "The kaiju").
 - **Tests:** `tests/unit/test_run_data.gd`, `tests/unit/test_combo_data.gd`, `tests/unit/test_garage_data.gd`, `tests/unit/test_weapon_data.gd`, `tests/unit/test_enemy_data.gd`. New data files get a test that loads them through the loader.
 
 ## Challenge drivability check
@@ -729,7 +730,7 @@ Task T-044 (Enemy Behavior Agent): the MVP minion as Enemies, Decisions describe
 func take_damage(amount: float) -> void
 ```
 
-Call it on a minion node. `amount` is in the same points as `health` (4, `data/enemies.json`). Zero or negative amounts, and calls on a dead minion, are ignored. At 0 health the minion dies: its `died(minion, position_units)` signal fires once, it leaves the groups `enemies` and `minions` at once, its drawing goes, and the node is freed at the end of the frame (so calling it from an `Area2D` callback is safe). To find targets: `get_tree().get_nodes_in_group("enemies")` (minions now, the kaiju later) or `run.minions.minions` (the live minions). Each has `position_units()` (flat world, units; `position` is in flat world pixels), `health`, `max_health` and `is_dead()`. Bodies are on layer 3, so a projectile's `Area2D` finds them with a mask of 4. Check `is_dead()` before damaging one found earlier in the same frame.
+Call it on a minion node. `amount` is in the same points as `health` (4, `data/enemies.json`). Zero or negative amounts, and calls on a dead minion, are ignored. At 0 health the minion dies: its `died(minion, position_units)` signal fires once, it leaves the groups `enemies` and `minions` at once, its drawing goes, and the node is freed at the end of the frame (so calling it from an `Area2D` callback is safe). To find targets: `get_tree().get_nodes_in_group("enemies")` (the minions and, once it has appeared, the kaiju: see "The kaiju") or `run.minions.minions` (the live minions). Each has `position_units()` (flat world, units; `position` is in flat world pixels), `health`, `max_health` and `is_dead()`. Bodies are on layer 3, so a projectile's `Area2D` finds them with a mask of 4. Check `is_dead()` before damaging one found earlier in the same frame.
 
 **Coins:** when a minion dies, `drop_chance` (0.6) decides whether it drops coins; if so, `coins_per_drop` (2) coins of 1 each land around where it died (`roll_coin_drop()`, using the spawner's `rng`; seed it for tests). Driving over a coin (the car's body entering its circle of 0.5 units) collects it: `RunState.add_coins(1)`, and the coin and its drawing are gone. Coins stay until collected or until a new run. `run.minions.coins` lists them; `spawn_coin_at(units, value)` adds one. The spawner's `minion_killed(minion, coins)` signal fires per death with the number of coins dropped.
 
@@ -738,3 +739,50 @@ Call it on a minion node. `amount` is in the same points as `health` (4, `data/e
 **Not in the data:** the minion's and coin's sizes (0.5 unit radius each), the separation distance (1.2 units) and the rule that removes minions a whole screen behind are in the code (`minion.gd`, `coin.gd`, `minion_spawner.gd`): sizes and rules of the placeholder, not balancing numbers.
 
 **Tests:** `tests/unit/enemies/test_minions.gd`, part of the GUT suite: more minions at the end of the 7 minutes than at the start (the run's clock moved on, the count matching `minions_wanted`), one spawn per interval off the screen and clear of obstacles, the combo hook, a minion walking straight at the car at the data's speed and round a building, contact damage at the data's rate with knockback away from the minion, no damage without touching, death at 0 health (once), coins dropping at about the data's chance over 600 deaths, driving over a coin collecting it, minions standing still while paused, a new run clearing everything, nothing moving after the run ends, minions far behind being removed, the collision layers, the draw order under a covering building and over the rest, and no Redgull red in the placeholders.
+
+## The kaiju
+
+Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions describes it, with T-039's numbers (`kaiju` and, T-119, `kaiju_coins` in `data/enemies.json` through `EnemyData`). What it does: `docs/enemies.md`, Content, "The kaiju". A placeholder for now (a large dark slate green Godzilla-style shape drawn in code); the final art comes from a separate art task. Its meteor attack is task T-046.
+
+**See it:** start the game (F5) and press Start, or open `scenes/run/run.tscn` and press F6. With the playtest switch on (below) the kaiju walks in from a screen edge 30 seconds into the run. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_demo.tscn screenshots/kaiju.png 20` (the kaiju beside the car in the gravel square, with a few minions, in a run started from the main menu; fixture script `tests/fixtures/kaiju_demo.gd`). A copy is in `art-archive/T-045/screenshots/`.
+
+**Playtest switch: early arrival.** There are no weapons yet and the boss time is 7 minutes in, so `data/playtest.json` can bring the kaiju's arrival forward:
+
+```
+"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }
+```
+
+With `enabled` true, the kaiju arrives `after_seconds` into the run; set `enabled` to `false` to switch it back, and the kaiju arrives at the boss time again. Only the kaiju's arrival moves: the clock, the minions' growth and the `boss_time` signal stay as they are (a later `boss_time` does not bring a second kaiju). `read_early_arrival_seconds()` in `kaiju_boss.gd` reads it into `run.kaiju_boss.early_arrival_seconds` (-1 = off; a missing file or value is off too). The switch must be off before the MVP ships.
+
+**How it is built** (`scripts/enemies/`):
+
+- `kaiju_boss.gd`: the run's kaiju. The run scene adds it as `run.kaiju_boss` (child `Kaiju`) and calls `bind(run)`. On the state's `boss_time` it makes the kaiju appear (`try_appear()`; once per run). It moves everything in `step(dt)`, once per physics step from `_physics_process` (pausable, so the pause screen and the level-up pause stop the kaiju and its damage), and does nothing once the run is over. On `run.world_rebuilt` (a new run) it removes the kaiju; it arrives again at that run's boss time. `enabled = false` stops it (tests).
+- `kaiju.gd`: the kaiju, a `CharacterBody2D` in the run's `PhysicsWorld` (flat world pixels, 16 per unit) on layer 3 (`enemies`) with mask 1 (obstacles): a circle of `RADIUS_UNITS` (2.0, so 4 units across). It slides along walls, buildings and boulders and walks round one it meets head-on, as a minion does; it never pushes or blocks the car. In the groups `enemies` and `kaiju` (not `minions`).
+- `kaiju_sprite.gd`: the placeholder drawing in the isometric view, `HEIGHT_UNITS` (7) tall, facing left or right the way it walks.
+
+**Arrival:** at a random point on `arrival_ring()`, the visible screen (the camera's view) grown so that the whole drawing, its ground circle and its height, is `OFFSCREEN_MARGIN_UNITS` (1) beyond the screen's edge, inside the map and clear of buildings and boulders (`is_free_spot()`; 24 tries a step, else it tries again on the next step). `appear_at(units)` puts it at a given place (tests, fixtures).
+
+**Movement:** straight towards the car's centre at `move_speed` (3 units/s).
+
+**Contact damage:** as a minion's: it touches the car when its circle overlaps the car's 1 x 1 unit body (`touches_car()`); while touching, it hits once every `contact_damage_interval` (1 s), the first hit at once: `RunState.damage_car(contact_damage)` (20; this also cuts the combo) and `car.apply_knockback(away from the kaiju, knockback)` (16 units/s).
+
+**Damaging the kaiju (for the weapon tasks, T-041 and T-042):** exactly as a minion, so a weapon that finds minions finds the kaiju too: `take_damage(amount: float)` on the kaiju node, the same points as `health` (500). It can be damaged at any time, as soon as it has appeared (no shield, no vulnerability windows). Zero or negative amounts, and calls on a dead kaiju, are ignored. It is in the `enemies` group and its body on layer 3, so `get_tree().get_nodes_in_group("enemies")` and a projectile's `Area2D` with a mask of 4 find it; it has `position_units()`, `health`, `max_health` and `is_dead()` like a minion. It is much bigger than a minion: its body's radius is `RADIUS_UNITS` (2.0 units) against the minion's 0.5. Check `is_dead()` before damaging one found earlier in the same frame.
+
+**Health, for the HUD:** `run.kaiju_boss.kaiju` is the live kaiju (null before it appears and after it dies). The boss relays everything a HUD needs, so it can connect once:
+
+| Signal or function | Is |
+| --- | --- |
+| `kaiju_appeared(kaiju: Node)` | The kaiju appeared (just off-screen) |
+| `kaiju_health_changed(health: float, max_health: float)` | Once when it appears (full health), then on every hit |
+| `kaiju_defeated(coins: int)` | It died, with the coins it added |
+| `kaiju_health()`, `kaiju_max_health()`, `has_appeared()` | Its health now (0 when there is none), its full health, and whether it has appeared this run |
+
+The kaiju node itself sends `health_changed(health, max_health)` on every hit and `died(kaiju, position_units)` once.
+
+**Death:** at 0 health the kaiju dies once: `died` fires, it leaves the groups `enemies` and `kaiju` at once, its drawing goes, and the node is freed at the end of the frame. The boss then adds its coins, `EnemyData.kaiju_coins_on_defeat()` (10), through `RunState.add_coins()`, **before** calling `RunState.kaiju_killed()`, which ends the run as a win; so `run_ended("win", coins)` carries the kaiju's coins and they are saved with the run.
+
+**Draw order:** the kaiju's drawing is in the minions' draw node (`run.minions.draw_root`, the Y-sorted `Enemies` node just before the car's `View`), placed every physics step on its body in the isometric view with a `z_index` from `enemy_depth.gd` (the map's rule for the car, as for the minions, with the kaiju's size).
+
+**Not in the data:** the kaiju's size (4 units across, 7 tall) and the off-screen margin are in the code: sizes and rules of the placeholder, not balancing numbers.
+
+**Tests:** `tests/unit/enemies/test_kaiju.gd`, part of the GUT suite: no kaiju before boss time; boss time bringing it just off-screen, clear of obstacles, walking towards the car at the data's speed, once per run; walking round a building; weapon damage through `take_damage()` lowering its health as soon as it appears, with both health signals; a projectile-style physics query on the enemies mask finding it; damage to 0 adding its coins before the run ends as a win, `kaiju_killed()` called once; contact damage at the data's rate and knockback away from it; no damage without touching; standing still while paused and after the run ends; a new run removing it and boss time bringing it back; the collision layers; the draw order; the placeholder's size and no Redgull red; the playtest switch and its settings file.
