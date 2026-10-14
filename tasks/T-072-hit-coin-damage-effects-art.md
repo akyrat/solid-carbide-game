@@ -42,13 +42,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)
-- [ ] A screenshot sequence shows a minion being hit, dying and dropping a coin, and the car taking damage (QA: pass)
-- [ ] T-044's and T-036's tests still pass (QA: pass)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
+Round 1's criteria (all passed on 2026-10-14) are superseded by the board's changes of 2026-10-15: the hit, death and car damage effects removed; enemies get only a brief slight red tint when damaged; the car shakes briefly when damaged. They are kept below, struck through, for the record.
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+- [ ] A check script shows the coin sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
+- [ ] The record lists the one PixelLab call (the coin sample) with its prompt, settings and cost, and the balance before and after; the removed effects' art is kept in art-archive, not deleted (QA: pass / fail)
+- [ ] A test shows a damaged minion and the kaiju get a brief red tint that returns to normal, and the tint is not Redgull red (QA: pass / fail)
+- [ ] A test shows the car's sprite shakes briefly when the car takes damage, with no change to its physics, position or the camera, and it stands still while paused (QA: pass / fail)
+- [ ] No hit, death or car damage effect from round 1 is left in the game; a screenshot shows a tinted minion next to normal ones (QA: pass / fail)
+- [ ] T-044's, T-045's and T-036's tests still pass, and the full GUT suite and all Python tool tests pass (QA: pass / fail)
+
+Round 1 (superseded):
+
+~~A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)~~
+~~The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass)~~
+~~A screenshot sequence shows a minion being hit, dying and dropping a coin, and the car taking damage (QA: pass)~~
+~~T-044's and T-036's tests still pass (QA: pass)~~
+~~The full GUT suite and all Python tool tests pass (QA: pass)~~
+
+The board's review: judge the look and play it. One round only, so problems are reported rather than regenerated.
 
 ## Result notes
 
