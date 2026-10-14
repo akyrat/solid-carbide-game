@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Enemies
