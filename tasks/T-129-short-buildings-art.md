@@ -114,3 +114,14 @@ In the game (on this branch only): `BuildingTowers.short_slots()` picks the slot
 ### Quick tuning (board, 2026-10-14)
 
 Board: "lgtm for 129 ... redraw the writing". Merged master (T-064 final skyscrapers, per-slot fade, script signs); a short building is its own slot fade node (height 4.2 units); its two shop signs are now redrawn by script as abstract shapes (no glyphs) in palette B's amber; QA leftovers from T-064 tidied (four unused cityB_body files moved to art-archive/T-064/round2/palettes/, dead first sort removed in mvp_map.gd, test for a boulder behind a skyscraper). No PixelLab calls. GUT 506 of 506, Python 219 OK.
+
+### Full set: planned calls (2026-10-14, board's go: "yes I want the different designs", about 9 calls)
+
+Balance before: 4928 of 5000 generations (0.00 USD credits). All `POST /create-image-pixflux`, 600 s timeout, one try each, bodies in `art-archive/T-129/requests/`; expected 1 generation each, 9 in all (stop if one costs more than 2 or the total passes 12). Same common settings as the sample (text_guidance_scale 8, detailed shading, highly detailed, `color_image` = `art-archive/T-064/palette.png`, negative description as the sample). Signs on every design are drawn by script (abstract, no glyphs), so the prompts ask for no signs and no letters. Facades 384 wide, view side, direction south, opaque, lineless:
+- b_facade_left / b_facade_right, 384x160, seeds 129011/129012: "flat front view of the {left|right} wall of a six-floor Tokyo-style office building with a ribbon of narrow windows and small balconies at night, dark navy concrete, rows of mostly dim windows, a few broken, light cracks, a dim neon glow on the ground floor, glow drawn in pixels, no signs, no letters, filling the whole image, no sky, no ground, retro pixel art"
+- c_facade_left / c_facade_right, 384x192, seeds 129013/129014: same with "a six-floor Tokyo-style apartment block with balconies, air-conditioner boxes and drainpipes"
+- d_facade_left / d_facade_right, 384x160, seeds 129015/129016: same with "a five-floor old Tokyo-style concrete shop house with roller shutters, awnings and a few boarded windows"
+- b_prop_signboard, 96x96, seed 129017, no_background, selective outline, high top-down isometric: "a blank dark rooftop billboard frame on steel legs with glowing neon strip lights along its edge, no letters, low and wide, lying directly on the roof, pixel art"
+- b_prop_antenna, seed 129018: "a rooftop radio antenna mast with crossbars and a small blinking light on a low square base box, thin and tall, no platform, pixel art"
+- c_prop_dish, seed 129019: "a rooftop ventilation unit with pipes and a satellite dish, grey-blue metal, low and wide, lying directly on the roof, pixel art"
+Roof loads: A tank + air-conditioning (sample); B sign board + antenna; C vents with dish + rubble; D tank + antenna + rubble, with mirroring and accent swaps for variety. Expected cost: 9 generations.
