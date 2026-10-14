@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
@@ -154,3 +154,4 @@ Tests (`game/tests/unit/test_building_art.gd`, 3 new, 1 changed): `test_short_ou
 Results: GUT 511 of 511 pass (48 scripts, `TESTS PASSED`; the two warnings and one deprecation are the old ones); Python `game/tools` 221 OK (1 skipped, as before), `tools` 130 OK. Godot's line-ending-only `.import` changes were not committed.
 
 QA's observation on design B's second wall (no new art): what is true is both. The build script really uses `b_facade_left` on both walls, the right one mirrored (`DESIGNS` in `game/tools/build_short_set.py`): the same columns, floors and shopfront are there. But the right wall is drawn one palette step darker (as every design's right wall, `build_body`), and B's facade is dark-on-dark navy, so the darker step merges almost all of its window shades into one colour: on `short_body_2` the right wall's lower 150 rows are 87% one colour against 42% on the left wall (13 colours against 21). So it reads as a nearly blank panel with one shopfront, as QA saw. C and D's darker walls lose less (71%). A free script fix is possible if the board wants it (a lighter darkening step, or none, for B's right wall), but it changes the art, so it is not done here.
+- 2026-10-14, in-progress → in-qa: QA round 1 fix: short buildings' fade outline follows the roof (6 points); 3 new tests; GUT 511/511, Python 221 + 130 OK
