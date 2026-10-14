@@ -173,6 +173,9 @@ var ground_tiles: Node2D
 var buildings_draw: Node2D
 ## The building nodes (map_building.gd), in the layout data's order.
 var buildings: Array = []
+## The skyscrapers' own fade nodes (T-064, per-slot fade): four per block when the building art is
+## loaded, in depth order. Empty without the art; then the blocks (`buildings`) fade as wholes.
+var slots: Array = []
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -282,11 +285,21 @@ func _build_buildings() -> void:
 			b.towers = towers
 			buildings_draw.add_child(towers.pavement_root)
 			buildings_draw.move_child(towers.pavement_root, 0)
+			for node in towers.slot_nodes:
+				node.see_through_alpha = SEE_THROUGH_ALPHA
+				node.fade_time = SEE_THROUGH_FADE_TIME
+				buildings_draw.add_child(node)
+				slots.append(node)
 			b.height_units = towers.tallest_units
 			b.custom_silhouette = towers.outline
 		i += 1
 	# Draw order: by the front corner (x + y), nearest to the viewer on top.
 	var order := buildings.duplicate()
+	order.sort_custom(func(p, q):
+		if p.depth_key() != q.depth_key():
+			return p.depth_key() < q.depth_key()
+		return p.footprint.position.x < q.footprint.position.x)
+	order = fade_items().duplicate()
 	order.sort_custom(func(p, q):
 		if p.depth_key() != q.depth_key():
 			return p.depth_key() < q.depth_key()
@@ -672,23 +685,28 @@ func car_screen_shape(centre: Vector2, rotation: float) -> PackedVector2Array:
 	return Geometry2D.convex_hull(pts)
 
 
+## What fades and sorts with the car: the skyscraper slots when the art is loaded, else the blocks.
+func fade_items() -> Array:
+	return slots if not slots.is_empty() else buildings
+
+
 ## Fades the buildings covering the car (centre in units, rotation in
 ## radians) and fades the others back, by `delta` seconds. In the flat view no
 ## building covers anything, so every building is solid.
 func update_see_through(car_centre_units: Vector2, car_rotation: float, delta: float) -> void:
 	if view != "iso":
-		for b in buildings:
+		for b in fade_items():
 			b.reset_fade()
 		return
 	var shape := car_screen_shape(car_centre_units, car_rotation)
-	for b in buildings:
+	for b in fade_items():
 		b.update_fade(car_centre_units, shape, delta)
 
 
 ## The buildings that covered the car at the last update_see_through().
 func covering_buildings() -> Array:
 	var out := []
-	for b in buildings:
+	for b in fade_items():
 		if b.covering:
 			out.append(b)
 	return out
@@ -702,7 +720,7 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 	if view != "iso":
 		return z
 	var shape := car_screen_shape(car_centre_units, car_rotation)
-	for b in buildings:
+	for b in fade_items():
 		if b.covers(car_centre_units, shape):
 			z = mini(z, b.z_index - 1)
 	# Boulders (T-065): under every boulder sprite that covers the car.
@@ -715,7 +733,7 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 
 ## A z_index over every building (the car's when nothing covers it).
 func top_z_index() -> int:
-	return BUILDING_Z_BASE + BUILDING_Z_STEP * buildings.size()
+	return BUILDING_Z_BASE + BUILDING_Z_STEP * fade_items().size()
 
 
 # ---- Boulder art (task T-065) ---------------------------------------------------------------
@@ -807,7 +825,7 @@ func _sync_boulder_sprites() -> void:
 ## boulder (later in the tree) is drawn over it.
 func _boulder_z(centre_units: Vector2, outline: PackedVector2Array) -> int:
 	var z := top_z_index()
-	for b in buildings:
+	for b in fade_items():
 		if b.is_behind(centre_units) and not Geometry2D.intersect_polygons(b.iso_silhouette(), outline).is_empty():
 			z = mini(z, b.z_index - 1)
 	return z
@@ -840,15 +858,20 @@ func set_view(v: String) -> void:
 	for b in buildings:
 		b.set_view(v)
 		if b.towers != null:
-			# The tower art is in screen pixels: undo the view's projection; the flat view keeps the placeholder.
-			b.towers.visible = uses_building_art()
-			b.towers.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+			# The pavement is in screen pixels: undo the view's projection; the flat view keeps the placeholder.
 			b.towers.pavement_root.visible = uses_building_art()
-			b.towers.pavement_root.transform = b.towers.transform
+			b.towers.pavement_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 			b.draw_placeholder = not uses_building_art()
 			b.queue_redraw()
 		if v != "iso":
 			b.reset_fade()
+	for node in slots:
+		node.set_view(v)
+		# The skyscraper art is in screen pixels too.
+		node.towers.visible = uses_building_art()
+		node.towers.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+		if v != "iso":
+			node.reset_fade()
 
 
 ## True when the isometric view draws the building art (T-064) instead of the placeholder boxes.

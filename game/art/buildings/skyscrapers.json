@@ -1,12 +1,20 @@
 {
- "about": "T-064 round 2 sample in the game (quick tuning, board 2026-10-14): 4 variations of the one sample skyscraper (768 x 960 art px, anchored at the bottom centre = the footprint's front corner) and 4 script-drawn slot pavements (index = slot si,sj; top corner at the slot's north corner). Not final.",
- "texture": "res://art/buildings/cityB_body_0.png",
+ "about": "T-064 full set, palette B (steel and glass): 6 skyscrapers x 2 variants = 12 bodies (768 x 960 art px, anchored at the bottom centre = the footprint front corner; body index = (tower - 1) * 2 + variant) and 4 script-drawn slot pavements (index = si + 2 * sj). Made by game/tools/build_city.py from PixelLab pieces; signs drawn by script.",
+ "texture": "res://art/buildings/skyscraper_1_0.png",
  "art_px_per_unit": 32,
  "bodies": [
-  "res://art/buildings/cityB_body_0.png",
-  "res://art/buildings/cityB_body_1.png",
-  "res://art/buildings/cityB_body_2.png",
-  "res://art/buildings/cityB_body_3.png"
+  "res://art/buildings/skyscraper_1_0.png",
+  "res://art/buildings/skyscraper_1_1.png",
+  "res://art/buildings/skyscraper_2_0.png",
+  "res://art/buildings/skyscraper_2_1.png",
+  "res://art/buildings/skyscraper_3_0.png",
+  "res://art/buildings/skyscraper_3_1.png",
+  "res://art/buildings/skyscraper_4_0.png",
+  "res://art/buildings/skyscraper_4_1.png",
+  "res://art/buildings/skyscraper_5_0.png",
+  "res://art/buildings/skyscraper_5_1.png",
+  "res://art/buildings/skyscraper_6_0.png",
+  "res://art/buildings/skyscraper_6_1.png"
  ],
  "pavements": [
   "res://art/buildings/cityB_pavement_00.png",
@@ -26,20 +34,6 @@
  "foot_units": 12,
  "margin_units": 1.5,
  "height_units": 30,
- "palettes": {
-  "B": {
-   "bodies": [
-    "res://art/buildings/cityB_body_0.png",
-    "res://art/buildings/cityB_body_1.png",
-    "res://art/buildings/cityB_body_2.png",
-    "res://art/buildings/cityB_body_3.png"
-   ],
-   "pavements": [
-    "res://art/buildings/cityB_pavement_00.png",
-    "res://art/buildings/cityB_pavement_10.png",
-    "res://art/buildings/cityB_pavement_01.png",
-    "res://art/buildings/cityB_pavement_11.png"
-   ]
-  }
- }
+ "towers": 6,
+ "variants_per_tower": 2
 }

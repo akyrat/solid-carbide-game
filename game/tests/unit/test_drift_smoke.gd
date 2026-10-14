@@ -314,10 +314,11 @@ func test_a_building_that_covers_the_car_also_covers_the_smoke() -> void:
 	var run := _run()
 	var map: Node2D = run.map
 	var block: Node2D = null
-	for b in map.buildings:
-		if b.footprint == BLOCK:
+	var shape: PackedVector2Array = map.car_screen_shape(BEHIND, -PI / 2.0)
+	for b in map.fade_items():
+		if b.covers(BEHIND, shape):
 			block = b
-	assert_not_null(block)
+	assert_not_null(block, "a building covers the car behind the block")
 	run.car.use_keyboard = false
 	run.car.scripted_input = NOTHING
 	run.car.model.x = BEHIND.x
