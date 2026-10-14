@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 epic: art
