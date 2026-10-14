@@ -1,7 +1,7 @@
 ---
 id: T-044
 title: Minions: spawn, chase the car, contact damage, die and drop coins
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 epic: enemies
