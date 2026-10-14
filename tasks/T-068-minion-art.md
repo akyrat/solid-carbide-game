@@ -4,6 +4,7 @@ title: Art: the minion (light green lizard), walking
 status: in-progress
 from: project-lead
 to: asset-generation
+lead: Enemies
 epic: art
 milestone: mvp
 user_facing_text: no
@@ -73,3 +74,18 @@ Written by the Asset Generation Agent (2026-10-14). Round 1: SAMPLE ONLY; the bo
 - File: art-archive/T-068/raw/minion_se_sample.png (48x48). Check script (game/tools/check_sprite_rules.py --size 48): all pass, 21 colours, 0 semi-transparent pixels, transparent corners. No fix needed.
 - Review images: art-archive/T-068/sample_review_dark.png, sample_review_light.png, sample_review_dark_light_vs_placeholder.png (8x nearest; the placeholder is cropped from T-044's screenshot, so at the screenshot's scale).
 - Problems seen (reported, not regenerated): the green is a saturated yellow-lime, brighter than "light green, not too bright"; it looks like it is rearing on two legs and a front arm, so the four-legged walk does not read; there is no dark selective outline; it faces west-south-west more than south-east. Cheapest next step: a free palette shift towards a softer green, or one more sample with a rewritten prompt, on the board's say-so.
+
+### Round 2 (board go, about 9 generations): plan before calling
+
+- Call A: /generate-8-rotations-v3 from the approved sample (params art-archive/T-068/rot_req.json, seed 68002). About 2 generations (the car's call cost 2).
+- Call B: /animate-with-text-v3 (the endpoint made for consistent frames from one reference frame, with colour de-flicker), first_frame = the chosen direction's rotation, action "walking forward on all four legs", frame_count 8. The endpoint only takes even counts of 4 to 16, so 7 is impossible: I ask for 8 and deliver 7 of them (the board can ask for the eighth) or all 8, said in the results. Cost unknown, estimated up to 7 generations. The client got this endpoint added (a table row, game/tools/pixellab_client.py).
+- No regeneration. Free script fixes only.
+
+### Round 2: results (2026-10-14)
+
+- **Call A, /generate-8-rotations-v3** (art-archive/T-068/rot_req.json, seed 68002; prompt "a light green scaled lizard walking on four legs, long tail, small head with a glowing cyan eye, lighter green belly, isometric pixel art game sprite, same camera and same size in every direction", no_background). Cost 1 generation (the record says so). Balance before 4917, after 4916 (other agents share the account, so the balance can move for other reasons). Files: art-archive/T-068/rotations/minion_rot8_0..7.png. The call gives the 8 images unlabelled; from the pictures, 0 is the sample's pose, 3 is the side view facing screen-right and 7 the side view facing left. I did not rely on the order beyond that.
+- **Call B, /animate-with-text-v3**, first frame rotations/minion_rot8_3.png (the side view: all four legs and the tail show best), action "walking forward on all four legs, a steady lizard walk cycle, legs alternating diagonally, body low, tail swaying", frame_count 8, seed 68003, no_background (art-archive/T-068/walk_req.json). The endpoint only takes even counts (4 to 16), and returned **9 frames** (the first frame plus 8), not 8: art-archive/T-068/walk_side/minion_walk_0..8.png. Cost 1 generation (record). Balance before 4916, after 4915. Review shows frames 0 to 6 as the 7-frame cycle; 7 and 8 are kept.
+- **Run problem:** the first launch of call B ran into the shell's 2-minute limit, looked as if it had died (no log line, balance unchanged), so I launched it once more; the first one then turned out to have finished too. The log holds one entry for it and the balance fell by one only, so I believe only one call was charged, but a second submission cannot be fully ruled out. Check the PixelLab usage if it matters.
+- **Check script (48x48):** all 8 rotations and all 9 walk frames pass: transparent background, no semi-transparent pixels, 17 to 25 colours. No fixes needed.
+- **Review images** (6x or 8x nearest, dark and light, in art-archive/T-068/): review_rotations_row_*.png, review_walk7_row_*.png, review_walk_all9_row_*.png, review_walk7_dark.gif, review_walk7_light.gif (7 frames, 8 per second).
+- **Problems:** the half-reared sample pose carries over: in the side view the legs read as short stubs with the front pair tucked, and the walk shows little leg motion (mostly body and tail sway), so it reads as a trot or glide more than a four-legged stride. The 7-frame request cannot be met exactly; the endpoint gave 9 and 7 of them are used for review. Rotation 4 and 5 (back views) are the weakest, with a thin body. Not regenerated.

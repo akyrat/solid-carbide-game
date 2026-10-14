@@ -67,6 +67,10 @@ ENDPOINTS: dict[str, dict[str, Any]] = {
     "/generate-8-rotations-v3": {
         "mode": "async", "multi_image": True, "poll_timeout": 1200.0, "needs_description": False,
     },
+    # T-068: an animation from one reference frame; the frames come back in last_response.images.
+    "/animate-with-text-v3": {
+        "mode": "async", "multi_image": True, "poll_timeout": 1200.0, "needs_description": False,
+    },
     # T-063: several tile variations; the POST returns the tile set's id, the job's
     # result is fetched from GET /tiles-pro/{tile_id} as a `tiles` list (each saved with its own record).
     "/create-tiles-pro": {
