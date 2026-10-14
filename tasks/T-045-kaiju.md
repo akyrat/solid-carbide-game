@@ -56,6 +56,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 - Superseded (board, 2026-10-14, no timer setting): ~~A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time~~ (round 2 QA: pass)
 - Superseded (board, 2026-10-14, no timer setting): ~~`game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player~~ (round 2 QA: fail)
+- [ ] (added 2026-10-14, after the board's change) `game/README.md` has exactly one kaiju section, with no copied Minions text, describing the 30 s playtest switch and how to turn it off (QA: pass / fail)
+- [ ] (added 2026-10-14) With master's gun and flamethrower, a test or a run shows both weapons damage the kaiju (the flames on any overlap with its body) and killing it wins the run (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
