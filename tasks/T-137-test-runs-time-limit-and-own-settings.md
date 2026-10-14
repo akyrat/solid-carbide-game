@@ -78,3 +78,5 @@ Results: full GUT suite 626/626 pass (57 scripts); Python tests `game/tools` 241
 - Criterion 5 pass: full GUT 626/626 (in the parallel runs); Python tests game/tools 241 OK (1 skipped), tools 171 OK.
 - No game behaviour or data changed: the diff against the merge base (aefa6b5) touches only tests, tests/helpers, .gutconfig.json, game/tools runners and fixture, game/README.md and this task file.
 - 2026-10-15, in-qa → done: QA round 1: all criteria pass; note test_kaiju.gd on master still writes user:// outside RunPaths
+
+After merging master (T-041, T-042, T-045, T-068, T-085): enemies/test_kaiju.gd (test_playtest_t045.json) now uses RunPaths.file too; no other user:// use under game/tests outside RunPaths. Full GUT 665/665 pass, Python tests game/tools 246 OK (1 skipped), tools 171 OK.
