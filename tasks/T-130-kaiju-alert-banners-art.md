@@ -1,7 +1,7 @@
 ---
 id: T-130
 title: Art: a few alert banners about the kaiju, on buildings and on the pavement
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -130,3 +130,4 @@ Colourways: cyan and pink, made by a free palette swap (never towards red). The 
 - Already true before this task (since T-064): trick popups are drawn at z 100 in the world view, and the nearer slots (z up to 146) are above that, so near buildings can cover a popup. That now includes the sign at z 144. This is not in T-130's scope, and it is for the Project Lead to decide.
 - Godot's line-ending-only `.import` changes were left uncommitted.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 5 pass
+- 2026-10-14, needs-playtest → done: LGTM (board playtest, 2026-10-15)
