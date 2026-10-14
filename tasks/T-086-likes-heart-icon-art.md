@@ -1,7 +1,7 @@
 ---
 id: T-086
 title: Art: the heart icon on the likes bar
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -90,3 +90,4 @@ QA/Integration Agent, round 2, 2026-10-14. Result: **pass** (all six criteria).
 - **Tests:** full GUT suite 560/560 pass (`bash game/tools/run_tests.sh`), the HUD tests (54, incl. T-049's, T-113's, T-116's and T-131's) included; Python tool tests `game/tools` and `tools` 371 passed, 1 skipped.
 - **game/README.md:** the HUD section says where the heart art is, how it is built, the heart box and the pinning test.
 - Godot's line-ending-only `.import` noise from the runs was not committed.
+- 2026-10-14, needs-playtest → done: board playtest: LGTM
