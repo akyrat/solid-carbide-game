@@ -463,3 +463,16 @@ class KaijuKilledCounter:
 		killed_calls += 1
 		if killed_calls == 1:
 			coins_before_killed = coins
+
+
+func test_a_damaged_kaiju_is_tinted_briefly_then_back_to_normal() -> void:
+	_to_boss_time()
+	var k: Node = boss.kaiju
+	assert_not_null(k.sprite)
+	assert_eq(k.sprite.modulate, Color.WHITE)
+	k.take_damage(1.0)
+	assert_eq(k.sprite.modulate, HitTint.TINT, "tinted at once")
+	k.hit_tint._process(HitTint.DURATION * 0.5)
+	assert_eq(k.sprite.modulate, HitTint.TINT, "still tinted halfway")
+	k.hit_tint._process(HitTint.DURATION)
+	assert_eq(k.sprite.modulate, Color.WHITE, "back to normal")

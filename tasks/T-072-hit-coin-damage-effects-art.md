@@ -133,3 +133,10 @@ The board's words: "regarding the effects, uh, I want you to remove the effects 
 - Car shake (proposal): when `RunState.damage_car` runs it emits `car_damaged`; `run.gd` calls `car_sprite.shake()`. 0.2 s, about 3 screen pixels at the start, 20 Hz, dying down. It only changes the sprite's `offset` (not its position, the car's physics, collisions, popups or the camera) and pauses with the game. Constants in `car_sprite.gd` (`SHAKE_SECONDS`, `SHAKE_PIXELS`, `SHAKE_HZ`) if the board wants it bigger or longer.
 - Master was merged into this branch first (gun, flamethrower, combo spawning). A merge conflict on the task file's `lead:` line was resolved keeping `lead: Enemies`.
 - Tests: GUT 631 of 631 pass (new: tint then back to normal, no clash with another tint, no tint on the kill hit and not Redgull red, coin art has no red, car shake moves only the drawing and settles); Python tool tests 246 OK (1 skipped, as before).
+
+### Round 4: kaiju and the animated minion (merged master again)
+
+- Merged master (kaiju T-045, animated minion T-068): the only conflict was the append-only PixelLab log (kept both sides). T-068's `minion_sprite.gd` needed no change: the tint is a `modulate` on the sprite node, which tints everything it draws.
+- Kaiju: `kaiju.gd` now does `HitTint.attach(self)` in `_ready()` and `hit_tint.flash()` in `take_damage()` while alive. Test: `test_a_damaged_kaiju_is_tinted_briefly_then_back_to_normal` in `tests/unit/enemies/test_kaiju.gd`; the minion's is in `test_minions.gd`.
+- Screenshot: `art-archive/T-072/screenshots/hit_tint_before_hit_after.png`: in a run, one minion tinted next to three normal ones (before, just hit, 1 s later). Fixture `tests/fixtures/effects_demo.tscn`.
+- Tests: GUT 661 of 661 pass; Python tool tests 251 OK (1 skipped). A cleanup `rm` of the old screenshots was refused by the safety check; it was not needed (the new shots overwrite the same names) and nothing was deleted.
