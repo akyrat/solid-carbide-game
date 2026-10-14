@@ -1,7 +1,7 @@
 ---
 id: T-133
 title: Trick popups heat up with the combo at x2, x3 and x4
-status: open
+status: in-progress
 from: project-lead
 to: ui
 epic: hud-menus
@@ -53,4 +53,28 @@ Board review files: the step screenshots listed in the result notes
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, 2026-10-14.
+
+**What I built.** The popups take the combo's heat step from T-131's `ComboHeat.step_for` (the only thresholds remain `ComboHeat.THRESHOLDS`; `TrickPopups.heat_for(m)` just calls it). A trick popup gets the step of the `combo_trick` signal's multiplier, which is the combo after the trick. The challenge popup gets the step of the run state's `combo` at the moment it shows. The car's own `trick` signal, used in the drift prototype, always gives step 0. `TrickPopupArt.bake/texture(text, style, heat := 0, frame := 0)` draws each step:
+- **Below x2 (step 0):** byte for byte the old popup. I checked this against master's `trick_popup_art.gd` for five texts, all identical, and the T-084 art tests are unchanged and pass.
+- **x2 (step 1):** the black border becomes a 1 px black outline round a 3 px yellow ring. The HUD counter is yellow at this step.
+- **x3 (step 2):** a 1 px black outline, a 3 px orange ring and a 2 px yellow inner ring. The "+amount" turns orange with a 1 px black outline (4-neighbour, so small digits keep their holes).
+- **x4 up (step 3):** step 2's look plus a flaming edge. These are pixel flames in LikesFire's colours and style: white-hot, yellow, orange-yellow and orange tips, swaying tongues and the odd spark. They are tall over the top edge and short at the sides and below. They come in 3 px blocks (about 2 screen px, like `LikesFire.PIXEL`), baked in 6 frames that flip every `ComboHeat.FLICKER_FRAME`.
+
+At every step the fill stays white and the names black. Every colour comes from LikesFire's palette, and none is near the heart red. Every pixel is either opaque or fully transparent. The hotter images grow outward, but `PopupText.size()` still uses the plain popup's size, so stacking, the quarter-screen limit, three-at-most and following the car are unchanged. The T-132 absolute z is kept. Drawn in code: no PixelLab, no sound.
+
+**Files.** `game/scripts/hud/trick_popups.gd`, `game/scripts/hud/trick_popup_art.gd`, new `game/tests/unit/test_trick_popups_heat.gd` (12 tests), fixture `game/tests/fixtures/popups_heat_demo.gd/.tscn`, tools `game/tools/popup_heat_shots.sh` and `game/tools/popup_heat_sheet.gd`. Docs: `docs/hud-and-menus.md` (Content, "Trick popups") and `game/README.md` ("Trick popups", new "Heat steps" bullet).
+
+**Tests.** The whole GUT suite passes: 554/554 (`bash game/tools/run_tests.sh`). That includes the T-084, T-125 (`test_trick_popups_follow.gd`) and T-132 (`test_popups_above_buildings.gd`) popup tests.
+
+**Fixture and screenshots.** From the worktree root: `bash game/tools/popup_heat_shots.sh screenshots`. It writes these to `C:\solid-carbide-worktrees\T-133\screenshots\`:
+- `T-133_popups_heat.png`: a run with one row per step, top to bottom plain, x2, x3, x4. Each row has a normal, a small and a challenge popup. `T-133_popups_heat_zoom.png` is the same enlarged 2x.
+- `T-133_popups_heat_sheet.png` and `T-133_popups_heat_sheet_f3.png`: the baked popups alone on a dark and a light background, enlarged 3x, with flame frames 0 and 3. Columns are steps 0 to 3.
+- `T-133_combo_heat_base.png`, `_step1.png`, `_step2.png`, `_step3.png`: T-131's combo fixtures, a real run from the menu chaining tricks. The real popup at the car matches the HUD counter's step (x1.5, x2.0, x3.0, x4.5).
+
+The fixture alone: `bash game/tools/screenshot.sh res://tests/fixtures/popups_heat_demo.tscn screenshots/T-133_popups_heat.png 10`.
+
+**What may look weak.**
+1. At game scale (one popup pixel is about 0.7 screen px) the small extended-drift popup's orange "+0.05" at steps 2 and 3 is the hardest part to read. It reads, but it is busier than the black version. The cheapest fix if the board dislikes it is to keep the small popup's amount black and let the ring carry the step.
+2. Step 1's yellow ring is the quietest step on light gravel. I widened it from 2 to 3 px after my first screenshots.
+3. The flames extend about 10 drawn px above the popup, so with three popups stacked a hot popup's flames can overlap the bottom of the one above it. Stacking uses the plain size on purpose, so nothing else moves.

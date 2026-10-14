@@ -8,6 +8,13 @@ extends Node2D
 ## around the text lettered in Bangers, one pixel image per text and size. The
 ## node is a child of the world view, so it draws in the same (isometric)
 ## drawn space as the car sprite.
+##
+## Heat (task T-133): in a run each popup takes the combo's heat step
+## (ComboHeat.step_for, T-131's thresholds, one shared source) for the
+## multiplier the trick brought the combo to, and the challenge popup the
+## combo's multiplier when it shows. The art bakes the step's look
+## (TrickPopupArt); below x2 it is the plain black and white popup. The drift
+## prototype has no combo and shows step 0.
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
@@ -74,6 +81,14 @@ class PopupText extends Node2D:
 	var follow := Callable()
 	## Extra offset (zero or negative, upwards) so popups born together don't overlap.
 	var stack := 0.0
+	## The combo heat step (0 to 3, task T-133) the popup is baked at.
+	var heat := 0
+	## The flame frame last drawn (the flaming step flickers through Art.FLAME_FRAMES).
+	var frame := 0
+
+	## The baked texture for this moment.
+	func texture() -> ImageTexture:
+		return Art.texture(text, Art.style_for(font_size), heat, frame)
 
 	func rise() -> float:
 		var t := clampf(age / LIFETIME, 0.0, 1.0)
@@ -84,6 +99,9 @@ class PopupText extends Node2D:
 	func offset() -> Vector2:
 		return START_OFFSET + Vector2(0, stack - rise())
 
+	## The popup's size for stacking and the height limit: the plain (step 0)
+	## bubble's at every heat step, so stacking is as before (task T-133); the
+	## hotter rings and flames reach a little past it.
 	func size() -> Vector2:
 		return Vector2(Art.texture(text, Art.style_for(font_size)).get_size()) * PIXEL_SCALE
 
@@ -114,6 +132,11 @@ class PopupText extends Node2D:
 		var s := lerpf(POP_FROM, 1.0, clampf(age / POP_TIME, 0.0, 1.0))
 		scale = Vector2(s, s)
 		modulate.a = 1.0 if t < 0.5 else 1.0 - (t - 0.5) * 2.0
+		if heat >= Art.FLAME_STEP:
+			var f := int(floorf(age / ComboHeat.FLICKER_FRAME))
+			if f != frame:
+				frame = f
+				queue_redraw()
 		if age >= LIFETIME:
 			queue_free()
 
@@ -130,7 +153,7 @@ class PopupText extends Node2D:
 	func _draw() -> void:
 		if text == "":
 			return
-		var tex := Art.texture(text, Art.style_for(font_size))
+		var tex := texture()
 		var size := Vector2(tex.get_size()) * PIXEL_SCALE
 		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
 
@@ -145,6 +168,14 @@ var _combo_car_position: Callable
 ## True once bind_combo() is used: the run state's combo_trick then shows the
 ## trick popups (with the amount added), not the car's trick signal.
 var _from_combo := false
+## The run state whose combo multiplier heats the challenge popup (set by bind_score()).
+var _score_state: Node = null
+
+
+## The popup heat step for a combo multiplier: the HUD counter's step
+## (ComboHeat.step_for, task T-131), so both use the same thresholds.
+static func heat_for(multiplier: float) -> int:
+	return ComboHeat.step_for(multiplier)
 
 
 ## Shows the popups for a car's `trick` signal. `car_position` is a Callable
@@ -161,6 +192,7 @@ func bind(car: Node, car_position: Callable) -> void:
 ## `car_position` returns where the car is drawn.
 func bind_score(run_state: Node, car_position: Callable) -> void:
 	_score_car_position = car_position
+	_score_state = run_state
 	if not run_state.score.is_connected(_on_score):
 		run_state.score.connect(_on_score)
 
@@ -184,14 +216,17 @@ static func trick_text(trick_id: String, added: float) -> String:
 	return text
 
 
-func _on_combo_trick(trick_id: String, added: float, _multiplier: float) -> void:
+func _on_combo_trick(trick_id: String, added: float, multiplier: float) -> void:
 	if not TEXTS.has(trick_id):
 		return
-	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id], _combo_car_position)
+	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id], _combo_car_position, heat_for(multiplier))
 
 
 func _on_score(amount: float, _challenge_id: String) -> void:
-	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL, _score_car_position)
+	var heat := 0
+	if _score_state != null and is_instance_valid(_score_state) and "combo" in _score_state:
+		heat = heat_for(_score_state.combo)
+	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL, _score_car_position, heat)
 
 
 func _on_trick(trick_id: String) -> void:
@@ -204,7 +239,8 @@ func _on_trick(trick_id: String) -> void:
 ## With `follow` (a Callable returning where the car is drawn) the popup follows
 ## the car for its whole life (task T-125); without it, it stays at `at`.
 ## A popup that would overlap one already showing is moved up until it doesn't.
-func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable()) -> PopupText:
+## `heat` is the combo heat step (0 to 3, heat_for()) it is drawn at (task T-133).
+func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable(), heat := 0) -> PopupText:
 	var showing := popups()
 	while showing.size() >= MAX_POPUPS:
 		var oldest = showing[0]
@@ -216,6 +252,7 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 	var p := PopupText.new()
 	p.text = text
 	p.font_size = font_size
+	p.heat = clampi(heat, 0, Art.HEAT_STEPS - 1)
 	p.anchor = at
 	p.follow = follow
 	p.stack = _free_stack(p)
