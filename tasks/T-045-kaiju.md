@@ -1,9 +1,10 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: enemy-behavior
+lead: Enemies
 epic: enemies
 milestone: mvp
 user_facing_text: no
@@ -42,6 +43,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 **Kaiju coins (board, 2026-10-13):** when the kaiju is defeated it always drops a few coins (Enemies, Decisions; the number from T-119 in `enemies.json`). Its death ends the run straight away, so add its coins to the run's coins before the "run ended" signal, so they count in the coins saved.
 
+**Dev timer setting (board, 2026-10-14):** add a setting where the board sets the run timer's minutes and seconds (the time on the clock when a run starts), so it can fast-forward to the boss. It goes with the other playtest settings in `game/data/playtest.json`. Settings like these will go under an internal dev flag that players never see (HUD and menus, Decisions); no player-facing UI. Replace the `kaiju_early_arrival` switch with it, so there's one way to reach the boss early: the kaiju keeps arriving on the run's normal boss-time signal. Default it in this branch to 1:30 on the clock (30 s before the boss), and say in the result notes how to set it back to the normal 8:00.
+
 ## Acceptance criteria
 
 - [x] A test fires the "boss time" signal and shows the kaiju appears and moves towards the car (QA: pass)
@@ -51,6 +54,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [x] A screenshot shows the placeholder kaiju (QA: pass)
 - [x] `docs/enemies.md` describes the built kaiju in Content, without changing Summary, Decisions or Open questions (QA: pass)
 - [x] The full GUT suite and all Python tool tests pass (QA: pass)
+- [ ] A test sets the dev timer setting (minutes and seconds) and shows a run started from the main menu starts with that time on the clock, and the kaiju arrives when the clock reaches the boss time (QA: pass / fail)
+- [ ] `game/README.md` says how to set the dev timer setting; it is in the dev settings file, not visible to the player (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -92,3 +97,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 Board review files: screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju.png, game/data/playtest.json
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass.
+- 2026-10-14, needs-playtest → in-progress: Board (2026-10-14): add a dev setting for the timer's minutes and seconds, to fast-forward to the boss
