@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
@@ -50,3 +50,4 @@ The board's review: playtest the city and judge the short buildings.
 ## Result notes
 
 - 2026-10-14, open → blocked: waits for T-128 and T-064's layout
+- 2026-10-14, open → in-progress: board started it (2026-10-15): plan first

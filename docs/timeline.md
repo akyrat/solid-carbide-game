@@ -900,3 +900,8 @@ Entry format:
 - Decision or change: the board took the Narrative Theme Agent's recommendations (T-128): picture-only alert banners (silly minimal paintings of the kaiju's head or Godzilla-like body), the larger ones on buildings and small standing signs on the pavement, only a few on the map; light to medium damage (cracks, a few broken windows, a little rubble; no big fires or collapsed buildings); pavements a lighter, cooler grey with a raised kerb and light cracks; no civilians shown, only their signs. Written as the City brief in Visual style. Visual style's scale is corrected from "about 40" to the 32 art pixels per unit the game uses. The board keeps its current game settings (the dynamic camera on, zoom 11.6), so no reset and no ticket for the screenshot setup that saved them.
 - Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`
 - Tasks: T-064, T-129, T-130 (follow the City brief)
+
+## 2026-10-15: The board starts the city art: T-064, T-129, T-130
+- Decision or change: the board started the skyscrapers (T-064), the shorter buildings (T-129) and the alert banners (T-130). Each begins with a plan and its PixelLab cost for the board's go, no calls yet. T-130 no longer lists T-064 as a dependency (it will be built on T-064's branch instead), so it could start its plan.
+- Documents touched: none
+- Tasks: T-064, T-129, T-130 (in progress, planning first)

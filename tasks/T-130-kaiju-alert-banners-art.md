@@ -1,14 +1,14 @@
 ---
 id: T-130
 title: Art: a few alert banners about the kaiju, on buildings and on the pavement
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-128, T-064]
+depends_on: [T-128]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's drawing of banners, tests, game/README.md]
@@ -50,3 +50,5 @@ The board's review: playtest the city and judge the banners.
 ## Result notes
 
 - 2026-10-14, open → blocked: waits for T-128 and T-064
+- 2026-10-14, blocked → open: depends only on T-128 now; built on T-064's branch later
+- 2026-10-14, open → in-progress: board started it (2026-10-15): plan first
