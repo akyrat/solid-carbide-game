@@ -4,6 +4,7 @@ title: HUD: likes bar and level, health, coins
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

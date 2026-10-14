@@ -4,6 +4,7 @@ title: QA: a full run from the main menu, before the MVP playtest
 status: blocked
 from: project-lead
 to: qa-integration
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

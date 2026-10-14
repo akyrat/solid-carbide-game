@@ -43,8 +43,8 @@ const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 ## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
-## Dev settings for playtests (task T-045): the run timer's start.
-const DevSettingsScript := preload("res://scripts/run/dev_settings.gd")
+## The car's weapons (task T-041): the weapon rack, see weapons.gd.
+const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -100,6 +100,9 @@ var minions: Node
 ## The kaiju (task T-045, kaiju_boss.gd): child "Kaiju". `kaiju_boss.kaiju` is
 ## the live kaiju (null before boss time). A new run removes it.
 var kaiju_boss: Node
+## The car's weapons (task T-041, weapons.gd): child "Weapons". A new run
+## starts with the starting gun at tier 1 and nothing else.
+var weapons: Node
 
 
 func _ready() -> void:
@@ -169,6 +172,10 @@ func _ready() -> void:
 	kaiju_boss.name = "Kaiju"
 	add_child(kaiju_boss)
 	kaiju_boss.bind(self)
+	weapons = WeaponsScript.new()
+	weapons.name = "Weapons"
+	add_child(weapons)
+	weapons.bind(self)
 	start_run()
 
 
@@ -178,7 +185,6 @@ func _ready() -> void:
 func start_run() -> void:
 	_build_world()
 	world_rebuilt.emit()
-	state.start_time_left = DevSettingsScript.run_start_time_left()
 	state.start_run()
 
 

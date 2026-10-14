@@ -4,6 +4,7 @@ title: HUD: hide the combo counter when there is no combo
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: no

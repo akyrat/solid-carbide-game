@@ -4,6 +4,7 @@ title: Trick popups: the trick's name pops out from the car
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

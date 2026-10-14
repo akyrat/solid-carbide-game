@@ -4,6 +4,7 @@ title: Weapon numbers: the gun, the flamethrower and their upgrade tiers
 status: done
 from: project-lead
 to: game-data
+lead:
 epic: weapons
 milestone: mvp
 user_facing_text: no

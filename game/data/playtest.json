@@ -1,8 +1,8 @@
 {
-  "_comment": "Dev settings for playtests: each key is an independent setting, read by its own task's code. Not game balance, never shown to the player (no UI, no text; HUD and menus, Decisions). The GUT suite switches them all off (tests/pre_run_hook.gd). run_timer_start (task T-045): with enabled true, every run starts with minutes:seconds on the clock instead of 8:00, fast-forwarded as if the missing time had passed (the boss still comes at 1:00 left, minion numbers are those of that moment in a normal run); set enabled to false for a normal 8:00 run. Must be off before the MVP ships.",
-  "run_timer_start": {
+  "_comment": "Playtest switches: not game data and not player-facing. They let the board try work that the normal run cannot reach yet. Each key is independent and read by its own task's code. flamethrower_at_start (task T-042): true gives the car the exhaust flamethrower at the start of every run, because there is no level-up offer yet (T-043); false (the game's rule) starts every run without it. Read by scripts/weapons/flamethrower/exhaust_flamethrower.gd. kaiju_early_arrival (task T-045): when enabled is true, the kaiju arrives after_seconds into the run instead of at the boss time (7 minutes in); false (the game's rule) brings it at the boss time. Only the kaiju's arrival moves: the clock, the minions' growth and the boss time signal stay as they are. Read by scripts/enemies/kaiju_boss.gd. Set back to false right before T-045 merges.",
+  "flamethrower_at_start": true,
+  "kaiju_early_arrival": {
     "enabled": true,
-    "minutes": 1,
-    "seconds": 30
+    "after_seconds": 30
   }
 }

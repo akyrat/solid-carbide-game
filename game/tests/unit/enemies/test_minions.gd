@@ -90,10 +90,38 @@ func test_spawns_one_per_interval_beyond_the_screen_edge() -> void:
 		assert_true(spawner.is_free_spot(p), "not on a building or boulder")
 
 
-func test_combo_hook_multiplies_minions_wanted() -> void:
-	assert_eq(spawner.spawn_multiplier, 1.0, "no extra spawning until T-085 wires the combo")
-	spawner.spawn_multiplier = 1.5
-	assert_eq(spawner.minions_wanted_now(), data.minions_wanted(run.state.time_elapsed(), 1.5))
+func test_no_combo_means_no_extra_spawning() -> void:
+	assert_eq(spawner.minions_wanted_now(), data.minions_wanted(run.state.time_elapsed()))
+	assert_eq(spawner.spawn_multiplier, 1.0)
+
+
+func test_a_high_combo_wants_more_minions_by_the_data_amount() -> void:
+	var combo := ComboData.new()
+	var base: int = spawner.minions_wanted_now()
+	run.state.combo = combo.max_multiplier()
+	var mult := combo.spawn_multiplier(run.state.combo)
+	assert_gt(mult, 1.0)
+	var wanted: int = spawner.minions_wanted_now()
+	assert_eq(spawner.spawn_multiplier, mult)
+	assert_eq(wanted, data.minions_wanted(run.state.time_elapsed(), mult))
+	assert_gt(wanted, base, "more minions with a high combo")
+	for i in 1000:  # contact hits and idling cut the combo, so hold it high
+		run.state.combo = combo.max_multiplier()
+		spawner.step(DT)
+		run.state.health = run.state.max_health
+	assert_eq(spawner.minions.size(), wanted, "they really spawn")
+
+
+func test_with_the_switch_off_the_combo_changes_nothing() -> void:
+	spawner.combo_raises_spawning = false
+	var base: int = spawner.minions_wanted_now()
+	run.state.combo = ComboData.new().max_multiplier()
+	assert_eq(spawner.minions_wanted_now(), base)
+	assert_eq(spawner.spawn_multiplier, 1.0)
+
+
+func test_the_switch_is_on_by_default() -> void:
+	assert_true(spawner.combo_raises_spawning)
 
 
 func test_minion_moves_towards_the_car() -> void:

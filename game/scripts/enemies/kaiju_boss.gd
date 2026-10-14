@@ -17,9 +17,11 @@ extends Node
 ## kaiju (null before it appears and after it dies); the signals below relay
 ## its arrival, health and death.
 ##
-## To reach the kaiju early in a playtest, the run timer dev setting
-## (scripts/run/dev_settings.gd) starts the run with less time on the clock;
-## the kaiju still arrives on the run's boss_time signal.
+## Playtest switch: res://data/playtest.json, "kaiju_early_arrival" (task
+## T-045; one key of several). When it is enabled, the kaiju arrives
+## `after_seconds` into the run instead of at the boss time.
+## `early_arrival_seconds` holds it (-1 = off); `playtest_override` lets tests
+## ignore the file.
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
@@ -32,6 +34,13 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 const OFFSCREEN_MARGIN_UNITS := 1.0
 ## Spawn point tries per physics step before trying again on the next one.
 const SPAWN_TRIES := 24
+## The playtest switch file (res://data/playtest.json) and this task's key.
+const PLAYTEST_FILE := "playtest"
+const PLAYTEST_KEY := "kaiju_early_arrival"
+
+## Tests set this to override data/playtest.json: -1 = off (the boss time
+## only), 0 or more = arrive that many seconds into the run. -2 reads the file.
+static var playtest_override := -2.0
 
 ## The kaiju appeared (just off-screen).
 signal kaiju_appeared(kaiju: Node)
@@ -42,6 +51,9 @@ signal kaiju_defeated(coins: int)
 
 ## False stops it appearing and moving (tests).
 var enabled := true
+## Playtest switch (data/playtest.json): seconds into the run when the kaiju
+## arrives early; -1 = off (it arrives at the boss time).
+var early_arrival_seconds := -1.0
 ## Random numbers for the arrival point. Seed it for tests.
 var rng := RandomNumberGenerator.new()
 var data: EnemyData
@@ -61,8 +73,8 @@ var visible_rect_override := Rect2()
 
 ## The live kaiju, or null.
 var kaiju: Node = null
-## True once boss time has asked the kaiju to appear and it has not found a
-## free spot yet (it tries again each step).
+## True once the kaiju has been asked to appear this run (boss time, or the
+## playtest switch) and has not found a free spot yet (it tries again each step).
 var arrival_due := false
 var depth = EnemyDepthScript.new()
 
@@ -75,6 +87,22 @@ func _init() -> void:
 	data = EnemyData.new()
 	_stats = data.kaiju()
 	rng.randomize()
+	early_arrival_seconds = read_early_arrival_seconds()
+
+
+## The playtest switch: `after_seconds` from data/playtest.json's
+## "kaiju_early_arrival" when it is enabled, otherwise -1 (off). A missing
+## file or value also means off. playtest_override, when not -2, wins.
+static func read_early_arrival_seconds(file: String = PLAYTEST_FILE) -> float:
+	if playtest_override > -2.0:
+		return maxf(playtest_override, -1.0)
+	var r := GameData.load_file(file)
+	if not r.ok or typeof(r.data) != TYPE_DICTIONARY:
+		return -1.0
+	var setting = r.data.get(PLAYTEST_KEY, {})
+	if typeof(setting) != TYPE_DICTIONARY or not bool(setting.get("enabled", false)):
+		return -1.0
+	return maxf(float(setting.get("after_seconds", -1.0)), -1.0)
 
 
 ## Binds the boss to a run scene (run.gd): its state, car, map, camera and
@@ -146,16 +174,19 @@ func _live() -> bool:
 	return kaiju != null and is_instance_valid(kaiju) and not kaiju.is_dead()
 
 
-## One physics step of `dt` seconds: the arrival (when boss time is waiting
-## for a free spot), walking towards the car, contact damage, the drawing.
+## One physics step of `dt` seconds: the arrival (boss time, or the playtest
+## switch), walking towards the car, contact damage, the drawing.
 ## Nothing happens once the run is over.
 func step(dt: float) -> void:
 	if not enabled or car == null or not is_instance_valid(car):
 		return
 	if state != null and not state.is_running():
 		return
-	if not _appeared_this_run and arrival_due:
-		try_appear()
+	if not _appeared_this_run:
+		if early_arrival_seconds >= 0.0 and state != null and state.time_elapsed() >= early_arrival_seconds:
+			arrival_due = true
+		if arrival_due:
+			try_appear()
 	if not _live():
 		return
 	kaiju.walk(dt, car.position / PX_PER_UNIT)

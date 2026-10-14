@@ -4,6 +4,7 @@ title: Rework (T-093): a compact pause strip
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: no

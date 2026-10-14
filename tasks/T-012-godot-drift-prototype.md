@@ -4,6 +4,7 @@ title: Godot drift prototype: copy the Unity car, with tuning sliders and a flat
 status: done
 from: project-lead
 to: driving-drift
+lead:
 epic: driving
 milestone: mvp
 user_facing_text: no

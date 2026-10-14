@@ -4,6 +4,7 @@ title: Rework (T-094): the MVP map with everything three times bigger (240 by 24
 status: done
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: mvp
 user_facing_text: no

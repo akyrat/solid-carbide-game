@@ -4,6 +4,7 @@ title: Likes (XP) and levels: from challenges and drifts, level-up pauses the ru
 status: done
 from: project-lead
 to: game-loop
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

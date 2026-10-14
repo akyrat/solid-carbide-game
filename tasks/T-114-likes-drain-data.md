@@ -4,6 +4,7 @@ title: Data: how fast the likes bar drains
 status: done
 from: project-lead
 to: game-data
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

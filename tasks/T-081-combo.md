@@ -4,6 +4,7 @@ title: The combo: tricks raise a multiplier on likes; collisions cut it; it drai
 status: done
 from: project-lead
 to: game-loop
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

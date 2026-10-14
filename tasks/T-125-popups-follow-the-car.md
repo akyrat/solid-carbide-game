@@ -4,6 +4,7 @@ title: Trick popups follow the car while they are on screen
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: no

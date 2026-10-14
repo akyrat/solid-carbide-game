@@ -75,12 +75,6 @@ signal combo_changed(multiplier: float)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
-## The time on the clock when a run starts (task T-045): RUN_SECONDS, unless
-## the run timer dev setting (scripts/run/dev_settings.gd) fast-forwards it.
-## time_elapsed() still counts from RUN_SECONDS, so a run started at 1:30 is
-## 6:30 in: the boss time still comes at 1:00 left, and everything that reads
-## the run's time (minion growth) is where it would be at 1:30 left.
-var start_time_left := RUN_SECONDS
 var health := 0.0
 var max_health := 0.0
 ## Coins collected this run.
@@ -132,7 +126,7 @@ func start_run() -> void:
 		_combo_data = ComboData.new()
 	max_health = _run_data.starting_health()
 	health = max_health
-	time_left = clampf(start_time_left, 0.001, RUN_SECONDS)
+	time_left = RUN_SECONDS
 	coins = 0
 	result = ""
 	boss_time_sent = false

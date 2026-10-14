@@ -4,6 +4,7 @@ title: Art: the full ground set for the MVP map, put into the map (PixelLab)
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

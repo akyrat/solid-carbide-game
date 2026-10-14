@@ -4,6 +4,7 @@ title: Tricks: detect extended drifts, 360s and alternate drifts
 status: done
 from: project-lead
 to: driving-drift
+lead:
 epic: driving
 milestone: mvp
 user_facing_text: no
