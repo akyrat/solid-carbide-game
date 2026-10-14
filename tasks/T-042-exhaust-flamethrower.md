@@ -42,13 +42,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test shows the flames are active only while the car is drifting, and stop when it stops drifting (QA: pass / fail)
-- [ ] A test shows an enemy inside the flames takes damage as the data describes, and one outside does not (QA: pass / fail)
-- [ ] A test applies each upgrade tier and shows the changed values take effect (QA: pass / fail)
-- [ ] A test shows a new run starts without the flamethrower (QA: pass / fail)
-- [ ] A screenshot shows placeholder flames behind the drifting car (QA: pass / fail)
-- [ ] `docs/weapons.md` describes the built flamethrower in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test shows the flames are active only while the car is drifting, and stop when it stops drifting (QA: pass)
+- [x] A test shows an enemy inside the flames takes damage as the data describes, and one outside does not (QA: pass)
+- [x] A test applies each upgrade tier and shows the changed values take effect (QA: pass)
+- [x] A test shows a new run starts without the flamethrower (QA: pass)
+- [x] A screenshot shows placeholder flames behind the drifting car (QA: pass)
+- [x] `docs/weapons.md` describes the built flamethrower in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -84,3 +84,13 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
 **For the board's playtest.** Open `C:\solid-carbide-worktrees\T-042\game\project.godot`, press Start, and drift. Look at: when the flames come on and off (a quick tap of A while holding W lights them for the linger); the flame's reach and the half-size start of each drift; minions dying in it (2 hits kill a minion: about 0.2 s inside); the orange flash; the placeholder's look and density (Unity's 18 particles). Open questions for the board:
 1. Unity switches the drift smoke off for the rest of the run once the flamethrower is picked up, so the two do not stack. Weapons, Decisions does not say, so I did not copy it: smoke and flames both show. Copy it?
 2. An enemy is inside the flame only when its centre is (Unity's rule). That fits the minions; for the much bigger kaiju (T-045) it means only the flame reaching its centre burns it. Keep the centre rule for the kaiju too, or count any overlap with its body?
+
+**QA (QA/Integration Agent, 2026-10-14, round 1): all 7 criteria pass.**
+- 1, flames only while drifting: `test_flames_on_only_while_drifting_and_off_after_the_linger` drives the real car (straight: off; W+A: on from the first step; the 0.2 s linger; then off and staying off; drawing emits only while on), plus standing still and below the minimum speed. Pass.
+- 2, damage inside, none outside: `test_enemy_inside_takes_the_datas_damage_and_one_outside_does_not` (2 on entering, 6 hits in 1 s, each the data's 2; in front, beside and past the far edge: none) and `test_flame_kills_a_real_minion`. QA also checked a real run started from the main menu (main scene, Start pressed, playtest switch read from the file, minions spawned by the run's own spawner, 25 s of scripted W+A drift, a scratch scene not committed): the flamethrower was attached after Start, 9 flame hits all landed on real minions from the `enemies` group and each lowered their health, 1 minion died from the flame, no other targets hit. Pass.
+- 3, upgrade tiers: `test_each_tier_sets_the_datas_values` (tiers 1 to 8 equal `WeaponData.flame_at`, `upgrade()` false at 8) plus one test per effect (size at 2/4/6, damage 2.4 at 3, longer flash at 5, turn speed x1.2 at 7, always on at 8). Pass.
+- 4, new run without it: `test_a_new_run_starts_without_the_flamethrower` (switch off: none found, drawing gone, normal turn speed, drifting burns nothing). Pass.
+- 5, screenshot: `art-archive/T-042/screenshots/flamethrower.png` and `flamethrower_later.png` show orange-yellow placeholder squares at the rear of the drifting car, in a run with the HUD; no Redgull red (the scene's colour ramp is cream, yellow, orange, brown-orange; `test_placeholder_colours_are_not_redgull_red` checks it too). Pass.
+- 6, docs: `docs/weapons.md` gains only the subsection "The exhaust flamethrower (built)" inside Content; Summary, Decisions and Open questions untouched. `game/data/weapons.json` is identical to master (no balancing number changed; the only data change is the new `playtest.json`). No debug key, no input handling and no player-facing text in the new code or scenes. The playtest switch is documented in `game/README.md` ("Playtest switch") and in the file's own `_comment`. Pass.
+- 7, tests, run by QA in this folder: GUT 601 of 601 pass (56 scripts, `TESTS PASSED`, exit 0); `game/tools` Python 241 OK (1 skipped); `tools` Python 130 OK. QA also ran the full GUT suite with `flamethrower_at_start` set to false (then restored to true): 601 of 601 pass, so the tests do not depend on the switch's value. Pass.
+- Note for the Project Lead (not a failure): GUT lists `ExhaustFlamethrower` nodes and `ExhaustFlame` drawings among its orphan reports: in the flamethrower's own test file whatever the switch says, and with the switch on also in the other run tests (state, timer, level-up, second run), next to the map and car orphans those tests already report. Tests still pass; worth tidying when the weapon plumbing (T-041/T-043) takes over attaching.
