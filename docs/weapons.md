@@ -41,6 +41,17 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 - The prototype's level-up offers 3 choices drawn at random from power-ups, new weapons and the next tiers of owned weapons. A weapon at tier 8 is no longer offered, and when nothing is left the only choice is 4 coins.
 - The report lists every value with its source, the differences from Solid Carbide's level-up flow, notes on porting to Godot, and open questions for the board: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
 
+### The exhaust flamethrower (built)
+
+Built in task T-042. It follows Decisions (the prototype's Flame Exhaust with the board's fixes) and takes every number from `game/data/weapons.json`. How it is built and attached: [../game/README.md](../game/README.md), "The exhaust flamethrower".
+
+- **On and off:** on while the car is drifting (W, or S, held with A or D: the car's own drift state) at 0.85 units per second or more, and for 0.2 seconds after the drift ends. Driving straight, steering while standing still, or drifting slower than that never lights it. From tier 8 it is always on.
+- **Area:** a rectangle behind the car, lined up with it, starting 0.175 units behind the car's centre. At full size it is 2.625 units wide and 3.25 deep, the same whichever way the car faces. Each drift starts it at half size; it grows to full size over 1 second of drifting (always full size at tier 8). An enemy is inside when its centre is.
+- **Damage:** an enemy entering the flame takes 2 at once and flashes orange for 0.38 seconds; every 0.2 seconds while the flame is on, every enemy inside takes 2 more. No limit on how many it hits, no push. It burns every enemy (the minions, and the kaiju once it is in the game), through their damage function.
+- **Tiers:** tiers 2, 4 and 6 make the area bigger (x1.2, x1.2, x1.3); tier 3 multiplies the damage by 1.2 (2.4 per hit, not rounded); tier 5 makes the flash 0.5 seconds longer; tier 7 makes the car turn 20% faster; tier 8 keeps it always on at full size.
+- **Each run:** a run starts without it; it is meant to be gained at a level-up (not built yet). Until then a playtest switch (`game/data/playtest.json`, `flamethrower_at_start`) gives it to the car at the start of every run.
+- **Look:** placeholder flames (orange and yellow squares) out of the exhaust, drawn just under the car, sized with the area. The final flame art replaces them.
+
 ## Open questions
 
 - (After MVP) Upgrading how often the starting gun fires.

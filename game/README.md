@@ -738,3 +738,33 @@ Call it on a minion node. `amount` is in the same points as `health` (4, `data/e
 **Not in the data:** the minion's and coin's sizes (0.5 unit radius each), the separation distance (1.2 units) and the rule that removes minions a whole screen behind are in the code (`minion.gd`, `coin.gd`, `minion_spawner.gd`): sizes and rules of the placeholder, not balancing numbers.
 
 **Tests:** `tests/unit/enemies/test_minions.gd`, part of the GUT suite: more minions at the end of the 7 minutes than at the start (the run's clock moved on, the count matching `minions_wanted`), one spawn per interval off the screen and clear of obstacles, the combo hook, a minion walking straight at the car at the data's speed and round a building, contact damage at the data's rate with knockback away from the minion, no damage without touching, death at 0 health (once), coins dropping at about the data's chance over 600 deaths, driving over a coin collecting it, minions standing still while paused, a new run clearing everything, nothing moving after the run ends, minions far behind being removed, the collision layers, the draw order under a covering building and over the rest, and no Redgull red in the placeholders.
+
+## The exhaust flamethrower
+
+Task T-042 (Weapon Behavior Agent): the exhaust flamethrower as Weapons, Decisions describes it, copying the Unity prototype's Flame Exhaust (Unity weapons report, section 3) with the board's fixes, and T-040's numbers (`data/weapons.json` through `WeaponData.flame_at(tier)`). What it does: `docs/weapons.md`, Content, "The exhaust flamethrower (built)". The flames are placeholders (orange and yellow squares); the final flame art comes from a separate art task.
+
+**See it:** with the playtest switch on (below), start the game (F5), press Start and drift (W or S held with A or D). Screenshot, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/weapons/flamethrower_demo.tscn screenshots/flamethrower.png 90` (a run from the main menu, the car drifting in a circle with the flames behind it). Copies in `art-archive/T-042/screenshots/`.
+
+**Playtest switch:** `game/data/playtest.json`, `"flamethrower_at_start"`. `true` gives the car the flamethrower (tier 1) at the start of every run, so the board can play it before the level-up offer (T-043) exists; `false` is the game's rule (every run starts without it). Not player-facing. Tests override it with `ExhaustFlamethrower.playtest_override` (0 off, 1 on, -1 read the file).
+
+**How it is built** (`scripts/weapons/flamethrower/exhaust_flamethrower.gd`, class `ExhaustFlamethrower`; drawing `scenes/weapons/flamethrower/exhaust_flame.tscn`): one self-contained node, a child of the run named `ExhaustFlamethrower`, plus its drawing in the run's `View`. It uses no other weapon's code and adds no physics bodies, so it needs no collision layer.
+
+| Function | Does |
+| --- | --- |
+| `ExhaustFlamethrower.attach_to_run(run)` | Gives the run's car the flamethrower at tier 1 (returns the one it has if it has one): adds the node to the run, binds it to `run.car` (it steps on the car's `stepped` signal, after each car physics step, so it stops while paused), puts its drawing in `run.view_root` just under the car sprite, and listens to `run.world_rebuilt` |
+| `ExhaustFlamethrower.find_on(run)` | The run's flamethrower, or null |
+| `ExhaustFlamethrower.detach_from(run)`, `flame.detach()` | Takes it away: the node and its drawing go, burn flashes end |
+| `ExhaustFlamethrower.give_if_playtest_switch(run)` | Attaches it when the playtest switch is on. `run.gd`'s `start_run()` calls it once per run, after `state.start_run()`: the only change to `run.gd` (two lines and a preload) |
+| `flame.set_tier(t)`, `flame.upgrade()` | Applies the data's tier (1 to 8) / the next one (false at the last tier). Tier 7's steering multiplies the car's `tuning.turn_speed` (once; undone if set back below 7) |
+
+A new run (`run.world_rebuilt`) detaches it, so every run starts without it; the new car has its normal turn speed. Values: `tier`, `stats` (`WeaponData.flame_at(tier)`), `active` (on this step), `size_fraction()` (the drift ramp, 0.5 to 1), `area()` (the damage rectangle now), `hits`, `is_burning(enemy)`. Signal `enemy_hit(enemy, amount)` per hit (for hit effects and sounds).
+
+**Targets:** every node in the group `enemies` with `take_damage()` that is not `is_dead()` (the minions now, and the kaiju once it is in that group), not `run.minions` alone. An enemy is inside when its centre (`position_units()`, else `position` / 16) is inside the rectangle. Hits call `take_damage(amount)`.
+
+**Burn flash:** an entering enemy's `sprite` (if it has one) gets `modulate` = the data's `burn_flash_tint` for `burn_flash_seconds`, then white again. Looks only.
+
+**The drawing:** a `CPUParticles2D` (`exhaust_flame.tscn`) at 0.42 units behind the car's centre (`EXHAUST_OFFSET_UNITS`), pointed backwards in the isometric view, scaled by the size multiplier times the ramp, emitting while the flame is on. Its tuning is the Unity prefab's (18 particles, 0.45 s, an 18 degree cone, 2.2 to 5.2 units/s, 0.29 to 0.36 units), stepped orange-yellow colours with no fading, no Redgull red. The art task swaps the scene's texture and tuning; the code does not change.
+
+**Tests:** `tests/unit/weapons/test_exhaust_flamethrower.gd` (part of the GUT suite, test enemy `tests/fixtures/weapons/fake_enemy.gd`): on only while drifting and off after the linger, the minimum speed, the data's damage on entering and per tick inside and none outside, the ramp, the same size in every direction, killing a real minion, the burn flash, nothing while paused, every tier's values and effects (size, damage, flash, steering, always on), a new run without it, the playtest switch, the drawing's place and colours.
+
+**Fitting into the shared weapon plumbing (T-041):** the flamethrower needs only a run with `car`, `view_root`, `car_sprite` and `world_rebuilt`. A weapon list or level-up code can call `attach_to_run(run)` when the player picks it, `find_on(run).upgrade()` for its tiers, and drop the `give_if_playtest_switch` line from `run.gd` once T-043 offers it.
