@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-124: the pause screen's camera checkboxes and the min/max buttons.
 
 const SCENE := preload("res://scenes/drift_prototype/drift_prototype.tscn")
-const TEST_PATH := "user://test_settings_t124.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t124.cfg")
 
 
 func before_each() -> void:

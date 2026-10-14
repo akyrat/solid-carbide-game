@@ -9,7 +9,7 @@ const GameScene := preload("res://scenes/game/game.tscn")
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MvpMap := preload("res://scripts/level/mvp_map.gd")
 const ChallengeArrow := preload("res://scripts/level/challenge_arrow.gd")
-const TEST_PATH := "user://test_settings_t097.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t097.cfg")
 const U := 16.0
 
 var game: Node

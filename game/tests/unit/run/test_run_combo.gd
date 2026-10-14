@@ -6,7 +6,7 @@ extends GutTest
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const RunScene := preload("res://scenes/run/run.tscn")
 const GameScene := preload("res://scenes/game/game.tscn")
-const TEST_PATH := "user://test_settings_t081.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t081.cfg")
 
 var data := RunData.new()
 var combo_data := ComboData.new()

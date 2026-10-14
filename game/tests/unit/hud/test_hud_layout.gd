@@ -10,7 +10,7 @@ extends GutTest
 const RUN := preload("res://scenes/run/run.tscn")
 const GAME := preload("res://scenes/game/game.tscn")
 const HUD_SCENE := preload("res://scenes/hud/hud.tscn")
-const TEST_SETTINGS := "user://test_settings_t113.cfg"
+var TEST_SETTINGS := RunPaths.file("test_settings_t113.cfg")
 const SIZES: Array[Vector2i] = [
 	Vector2i(1152, 648), Vector2i(1280, 720), Vector2i(1920, 1080), Vector2i(1024, 576)]
 ## How far a label may sit from its bar: "directly above" means within this.

@@ -287,7 +287,7 @@ func test_movement_is_the_same_with_and_without_trick_detection() -> void:
 # --- The tuning panel ------------------------------------------------------------------
 
 func _prototype() -> Node2D:
-	GameSettings.path = "user://test_no_such_settings.cfg"
+	GameSettings.path = RunPaths.file("test_no_such_settings.cfg")
 	var p: Node2D = PrototypeScene.instantiate()
 	add_child_autofree(p)
 	p.car.set_physics_process(false)
