@@ -1,7 +1,7 @@
 ---
 id: T-031
 title: The board's own visualisation tools (HTML)
-status: open
+status: cancelled
 from: project-lead
 to: board
 epic: tooling
@@ -43,3 +43,4 @@ When a tool exists, the Project Lead lists it in `docs/README.md` (what it shows
 ## Result notes
 
 Written when the board has built a tool.
+- 2026-10-14, open → cancelled: Closed by the board (2026-10-14): the board's visualisation tools are ongoing infrastructure work, not a one-off job, so they don't need a ticket.

@@ -980,3 +980,8 @@ Entry format:
 - Decision or change: the board playtested and approved it ("look good"). The combo counter has four looks by the multiplier: pink below x2, bigger yellow with a light pulse from x2, bigger orange with a glow and a stronger pulse from x3, and biggest white-hot with a flickering glow from x4 to the cap, where pixel flames drawn in code burn along the likes bar (oranges and yellows, no Redgull red, no PixelLab). The look follows the combo down. The combo counter, "Likes" and "Hype Lv" use the Bangers comic font. QA round 1: all 10 pass. Noted for later if the board wants: "HYPE LV 1" in Bangers at its small size reads a bit like "7"; the flames over the empty part of the bar are a low line. T-133 (popups heat up the same way) is now open.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
 - Tasks: T-131 (done), T-133
+
+## 2026-10-14: T-031 closed
+- Decision or change: the board closed T-031 (its own visualisation tools, HTML): it is ongoing infrastructure work, not a one-off job, so it doesn't need a ticket. Status cancelled, the file kept.
+- Documents touched: none
+- Tasks: T-031 (cancelled)
