@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -168,3 +168,4 @@ What changed since round 1 (`git diff e96263b..7fb48be`): only `building_towers.
 
 Not fails, still for the board's playtest: design B's second wall reads as a nearly blank panel (the agent explains why: the darker right-wall step merges B's dark window shades; a free script fix is possible if the board wants it); B and C look alike from a distance; "never two of the same design touching" is kept within a block only. Godot's line-ending-only `.import` changes were left uncommitted.
 - 2026-10-14, in-qa → needs-playtest: QA round 2: all 5 criteria pass; the short buildings' fade now matches the drawn art (691 of 2988 samples fade, 0 false, 0 missed); GUT 511/511, Python 221 + 130 OK
+- 2026-10-14, needs-playtest → done: LGTM (board playtest, 2026-10-15)
