@@ -945,3 +945,8 @@ Entry format:
 - Decision or change: the board playtested the full skyscraper set and approved it ("looks great"). Every 30 by 30 block is 2 by 2 bases of very tall steel-and-glass towers in palette B (6 designs, each built from flat PixelLab facade and shopfront pieces slanted onto the walls by script at 32 px per unit, with a wall retune and script-drawn abstract signs with no letters), dissolving at the top, with a script-drawn pavement around each that never fades. Only the skyscraper covering the car fades. Collisions and the map layout are unchanged. PixelLab: round 1 (dense narrow towers, archived) 8 generations, round 2 13 (3 sample, 10 full set). QA's small leftovers (four unused palette-B sample images in game/art/buildings, a dead sort in mvp_map.gd, no test yet that a boulder behind a skyscraper is drawn under it) go to T-129, which builds on this work.
 - Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
 - Tasks: T-064 (done)
+
+## 2026-10-15: Shorter buildings: sample approved, script signs, full set
+- Decision or change: the board approved T-129's sample short building ("lgtm"), keeping its roof as it is, and asked for its shop signs to be redrawn by script as abstract shapes with no letters (like the skyscrapers'), then for the other 3 designs (about 9 generations, palette B), before it playtests again and merges. QA's small leftovers from T-064 are tidied in the same work.
+- Documents touched: none
+- Tasks: T-129
