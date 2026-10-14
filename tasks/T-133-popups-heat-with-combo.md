@@ -43,13 +43,13 @@ Board review files: the step screenshots listed in the result notes
 
 ## Acceptance criteria
 
-- [ ] The popup's step comes from the multiplier after the trick, with the same thresholds as T-131 (one shared source; a test checks both use it): a GUT test shows tricks at x1.5, x2.0, x3.0 and x4.5 and checks each popup's step. (QA: pass / fail)
-- [ ] Below x2 the popup is exactly as before (only black, white and transparent pixels; T-084's art tests still pass). (QA: pass / fail)
-- [ ] Steps 1, 2 and 3 each add a visible accent and differ from each other: a test checks each step's baked image differs from the others and contains orange or yellow pixels, and the fixture's screenshots show four different looks. (QA: pass / fail)
-- [ ] No Redgull red and no semi-transparent pixels in any step (test). (QA: pass / fail)
-- [ ] The popup's fill stays white at every step, and the trick names stay black (test samples the colours). (QA: pass / fail)
-- [ ] T-125's and T-132's popup tests and the whole GUT suite pass; the drift prototype shows plain popups. (QA: pass / fail)
-- [ ] `game/README.md` ("Trick popups") and `docs/hud-and-menus.md` (Content, "Trick popups") describe the steps. (QA: pass / fail)
+- [x] The popup's step comes from the multiplier after the trick, with the same thresholds as T-131 (one shared source; a test checks both use it): a GUT test shows tricks at x1.5, x2.0, x3.0 and x4.5 and checks each popup's step. (QA: pass)
+- [x] Below x2 the popup is exactly as before (only black, white and transparent pixels; T-084's art tests still pass). (QA: pass)
+- [x] Steps 1, 2 and 3 each add a visible accent and differ from each other: a test checks each step's baked image differs from the others and contains orange or yellow pixels, and the fixture's screenshots show four different looks. (QA: pass)
+- [x] No Redgull red and no semi-transparent pixels in any step (test). (QA: pass)
+- [x] The popup's fill stays white at every step, and the trick names stay black (test samples the colours). (QA: pass)
+- [x] T-125's and T-132's popup tests and the whole GUT suite pass; the drift prototype shows plain popups. (QA: pass)
+- [x] `game/README.md` ("Trick popups") and `docs/hud-and-menus.md` (Content, "Trick popups") describe the steps. (QA: pass)
 
 ## Result notes
 
@@ -78,3 +78,14 @@ The fixture alone: `bash game/tools/screenshot.sh res://tests/fixtures/popups_he
 1. At game scale (one popup pixel is about 0.7 screen px) the small extended-drift popup's orange "+0.05" at steps 2 and 3 is the hardest part to read. It reads, but it is busier than the black version. The cheapest fix if the board dislikes it is to keep the small popup's amount black and let the ring carry the step.
 2. Step 1's yellow ring is the quietest step on light gravel. I widened it from 2 to 3 px after my first screenshots.
 3. The flames extend about 10 drawn px above the popup, so with three popups stacked a hot popup's flames can overlap the bottom of the one above it. Stacking uses the plain size on purpose, so nothing else moves.
+
+**QA (QA/Integration Agent, 2026-10-14, round 1): all 7 criteria pass.**
+- Whole GUT suite: 554/554 passing (`bash game/tools/run_tests.sh`), including `test_trick_popups_heat.gd` (12), T-084's `test_trick_popup_art.gd`, T-125's `test_trick_popups_follow.gd` and T-132's `test_popups_above_buildings.gd`; none of the older popup test files changed on this branch. Python tool tests: 130 passed (`python -m pytest tools`).
+- Criterion 1: `TrickPopups.heat_for` only calls `ComboHeat.step_for` (thresholds stay in `ComboHeat.THRESHOLDS`); the test emits `combo_trick` at x1.5, x2.0, x3.0, x4.5 in a real run and gets steps 0, 1, 2, 3, and checks the source uses `ComboHeat.step_for`.
+- Criterion 2: independent check beyond the agent's tests: I baked 7 texts x 2 sizes with master's `trick_popup_art.gd` and with this branch's at heat 0; all 14 images byte-identical (temporary script, removed).
+- Criteria 3-5: covered by the new tests (each step differs, more warm pixels per step; every step and flame frame has only alpha 0 or 1, nothing within 0.5 of the heart red, transparent rim; white fill and black name pixels sampled at every step). Remade the screenshots (`bash game/tools/popup_heat_shots.sh screenshots`) and looked at them: plain popup unchanged below x2; four clearly different looks (yellow ring, orange+yellow ring with orange amount, plus flames); fill white and names black at every step; no red; hard edges. `T-133_combo_heat_step1/3.png` show the popup's step matching the HUD counter (yellow COMBO X2.0 with the yellow-ring popup; burning COMBO X4.5 with the flaming popup).
+- Criterion 6: drift prototype test passes (car `trick` signal always step 0); stacking/limit/three-at-most use the plain size and their tests pass; z unchanged (T-132 tests pass).
+- Criterion 7: `game/README.md` "Heat steps" bullet and `docs/hud-and-menus.md` Trick popups paragraph describe all steps.
+- Observation for the board (not a fail): at game scale the small extended-drift popup's orange "+0.05" at steps 2 and 3 is readable but muddy: the "+" and the digits' holes nearly close up and the orange with its black outline reads as a blob next to the crisp black name. Worth judging in the playtest; the agent's suggested cheap fix (keep the small popup's amount black, let the ring carry the step) would solve it. Also confirmed the agent's note that step-3 flames on a stacked popup can overlap the bottom of the popup above.
+- Godot's line-ending-only `.import` changes from the test runs were not committed.
+
