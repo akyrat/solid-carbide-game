@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 epic: art
@@ -13,7 +13,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/level-design.md, tasks/T-019-build-mvp-map.md, tasks/T-034-buildings-see-through.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -285,3 +285,4 @@ The board chose palette B (steel and glass) and gave the go for the full set. **
 5. **Tests: pass.** Full GUT suite by QA (`bash game/tools/run_tests.sh`, Godot 4.6.2): 505 of 505 pass, 48 scripts, `TESTS PASSED` (the two warnings, "Ignoring Inner Class TestRoom" and a Float/Int comparison in `test_trick_popup_art.gd`, are not from this task). Python: `game/tools` 214 OK (1 skipped: `test_real_atlas_passes_the_sprite_rules`, the round-1 atlas is archived, as expected), `tools` 130 OK.
 
 Also checked: palette A and C bodies and pavements and the sample `sky_*` art were moved (git renames, 100% identical) to `art-archive/T-064/round2/palettes/`; the round-1 atlas and `buildings.json` are in `art-archive/T-064/round1-game-art/` (atlas byte-identical, json identical apart from line endings); the round-1 raw, clean and screenshot files in `art-archive/T-064/` are untouched; no art deleted in the branch's history. `game/README.md` ("See-through buildings") is updated. Code observation (not a fail): in `mvp_map.gd` `_build_buildings()` the first sort of `order` is dead (overwritten by `order = fade_items().duplicate()`), and with the art loaded the block nodes keep z_index 0, which only matters in the flat view (placeholder boxes drawn at z 0 instead of over the ground and drift marks by z). The branch merges into current `master` without conflicts (`git merge-tree`, 6 commits behind). Godot's line-ending-only `.import` changes were left uncommitted.
+- 2026-10-14, in-qa → needs-playtest: QA round 2 (redesign): all five criteria pass (sprites, record + go (round 2 = 13 generations, the other 5 of the drop were T-129's), screenshots + per-slot fade, collisions identical to master, GUT 505/505, Python 214 + 130 OK)
