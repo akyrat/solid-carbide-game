@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -155,3 +155,4 @@ Extra checks:
 - **Merge from master:** no conflict markers in the tree (`git grep` for `<<<<<<<`, `=======`, `>>>>>>>` lines: none; `git diff --check master HEAD` clean). The generation log keeps all 65 of master's lines and adds the one T-072 line (66).
 - **Process note:** a first temporary pause test used `await` with the tree paused, which also paused GUT's own wait; that headless Godot run in this folder (started by QA) hung, and stopping it was refused by the permission check, so it may still be running. It does not touch the repo; it holds no files other runs need beyond GUT's `user://` settings.
 - 2026-10-15, in-qa → needs-playtest: QA round 2: all six current criteria pass (qa-integration)
+- 2026-10-15, needs-playtest → done: lgtm
