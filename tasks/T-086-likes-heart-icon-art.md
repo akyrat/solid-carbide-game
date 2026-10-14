@@ -12,7 +12,7 @@ depends_on: [T-049]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, tasks/T-048-text-hud.md, tasks/T-049-hud-run-values.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the HUD scene, game/README.md]
-model: sonnet
+model: opus
 qa_rounds: 1
 ---
 
