@@ -12,7 +12,7 @@ depends_on: [T-128]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, game/README.md, tasks/T-128-narrative-tokyo-under-attack.md, tasks/T-064-building-art.md]
 files_expected_to_change: [art under game/art/ and its records, the map's building drawing, tests, game/README.md]
-model: sonnet
+model: opus
 qa_rounds: 1
 ---
 
