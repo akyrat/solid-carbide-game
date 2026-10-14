@@ -35,7 +35,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A screenshot of the HUD in a run shows the final heart next to "LIKES", level with it, about the same height, with a dark outline like the text's; also one at combo step 3 (likes bar on fire) so the heart reads next to the flames (QA: fail: the heart itself is right (level with "LIKES", about its height, dark outline, readable beside the step-3 flames), but the description's "nothing else moves" is broken: "LIKES", "HYPE LV" and the combo counter all sit 4 px lower than on master, because the shorter heart (20 px, was 26) shrinks the row height `_layout_bottom()` takes from the row's minimum size)
+- [ ] A screenshot of the HUD in a run shows the final heart next to "LIKES", level with it, about the same height, with a dark outline like the text's; also one at combo step 3 (likes bar on fire) so the heart reads next to the flames (QA: pass)
 - [ ] A check script or GUT test shows the icon has a transparent background, no semi-transparent pixels, few colours, and uses the HUD's Redgull red (QA: pass)
 - [ ] No PixelLab call was made: the result notes say so and the art is made by a committed script that can rebuild it (QA: pass)
 - [ ] T-049's, T-113's and T-131's HUD tests (layout, combo hidden, combo heat) still pass (QA: pass)
@@ -78,3 +78,15 @@ Fix by the Asset Generation Agent, 2026-10-14. **Still no PixelLab call (0 gener
 - **Screenshots remade** (`art-archive/T-086/screenshots/`, crops x4 too; `screenshots/` is gitignored) and compared with master's of the same two fixtures: the row's text region and the combo counter region are pixel-identical to master. The heart's red is at y 587-602 (letters 587-601), x 290-307.
 - **Tests:** full GUT suite 560/560; Python tool tests `game/tools` and `tools` 371 passed, 1 skipped.
 - Documents affected: `game/README.md` (HUD section, the heart box).
+
+## QA notes, round 2
+
+QA/Integration Agent, round 2, 2026-10-14. Result: **pass** (all six criteria).
+
+- **Layout against master (criterion 1):** shot `hud_from_menu_demo.tscn` and `combo_heat_step3.tscn` on master (f6ff2eb, a temporary detached worktree, removed afterwards) and on this branch at 1152x648. Each fixture is deterministic (two shots of the same code are pixel-identical). Branch vs master: the "LIKES" area, "HYPE LV", the combo counter region, the likes bar and the top HUD band are pixel-identical, at the base look and at step 3; the only HUD difference is the heart (red at x 290-307, y 587-602; "LIKES" letters y 587-601, so level and about the same height, dark outline like the text's, clear of the step-3 flames). Outside the HUD the level-up sparkle particles (base) and a few flame-tip pixels of the trick popup above the car (step 3) differ, both deterministic per build: the effects' animation/random phase, not layout; noted for the board's playtest, not a criterion.
+- **Pinning test:** the pinned values match master: a copy of `test_hud_positions_t086.gd` without the heart-box test (which uses `Hud.HEART_BOX`, absent on master) passes 2/2 on master. Against round 1's `hud.gd` (a369319, swapped in temporarily, then restored, no diff left): the real file fails to parse (`HEART_BOX` missing), and the same copy without the heart-box test fails 2/2 with every position 4 px low (row y 588 not 584, height 22 not 26; combo x1.5 to x4.5 y 551/545/538/529 not 547/541/534/525), so it catches the round-1 shift. On the branch it passes.
+- **Art:** `python game/tools/build_heart_icon.py build` is byte-identical (PNG SHA-256 7e42654c..., record unchanged); `check` passes every line (2 colours, (219, 26, 41) and (8, 8, 15), 0 semi-transparent pixels, transparent background).
+- **No PixelLab:** round 2 adds no network or `.env` use; 0 generations.
+- **Tests:** full GUT suite 560/560 pass (`bash game/tools/run_tests.sh`), the HUD tests (54, incl. T-049's, T-113's, T-116's and T-131's) included; Python tool tests `game/tools` and `tools` 371 passed, 1 skipped.
+- **game/README.md:** the HUD section says where the heart art is, how it is built, the heart box and the pinning test.
+- Godot's line-ending-only `.import` noise from the runs was not committed.
