@@ -4,6 +4,7 @@ title: The likes bar drains when the combo has drained
 status: done
 from: project-lead
 to: game-loop
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

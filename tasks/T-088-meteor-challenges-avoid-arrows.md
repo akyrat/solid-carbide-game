@@ -4,6 +4,7 @@ title: Meteor challenges never land on another challenge's arrow
 status: open
 from: project-lead
 to: level-challenge
+lead:
 epic: level-challenges
 milestone: final-release
 user_facing_text: no

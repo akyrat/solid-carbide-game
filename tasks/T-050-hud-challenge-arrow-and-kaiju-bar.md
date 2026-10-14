@@ -4,6 +4,7 @@ title: HUD: the kaiju's health bar
 status: blocked
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

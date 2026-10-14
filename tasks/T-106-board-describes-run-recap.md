@@ -4,6 +4,7 @@ title: Board lists the run recap screen's stats and describes its look
 status: open
 from: project-lead
 to: board
+lead:
 epic: game-loop
 milestone: final-release
 user_facing_text: no

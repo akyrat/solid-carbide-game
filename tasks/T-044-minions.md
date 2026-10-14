@@ -4,6 +4,7 @@ title: Minions: spawn, chase the car, contact damage, die and drop coins
 status: done
 from: project-lead
 to: enemy-behavior
+lead:
 epic: enemies
 milestone: mvp
 user_facing_text: no

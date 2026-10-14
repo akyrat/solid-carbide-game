@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "taskboard"))
 import server  # noqa: E402
 
 REAL_GODOT_BIN = server.godot_bin
-TASK = "---\nid: T-901\ntitle: A build\nstatus: needs-playtest\n---\n\nBody\n"
+TASK = "---\nid: T-901\ntitle: A build\nstatus: needs-playtest\nlead: Tools\n---\n\nBody\n"
 
 
 class Fixture(unittest.TestCase):
@@ -54,6 +54,7 @@ class BuildsTests(Fixture):
         self.assertEqual((e["folder"], e["branch"], e["ticket_id"], e["ticket_title"], e["ticket_status"], e["has_project"]),
                          (str(self.wt), "task/T-901-a-build", "T-901", "A build", "needs-playtest", True))
         self.assertEqual(entries[0]["ticket_id"], "")
+        self.assertEqual((e["lead"], entries[0]["lead"]), ("Tools", ""))
         self.assertFalse(entries[2]["has_project"])
         self.assertEqual(entries[2]["ticket_title"], "")
 

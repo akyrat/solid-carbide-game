@@ -4,6 +4,7 @@ title: Art: the first ground tile, a stretch of asphalt road (PixelLab)
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

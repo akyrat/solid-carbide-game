@@ -4,6 +4,7 @@ title: The main menu: title, Start, Garage, Exit
 status: done
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

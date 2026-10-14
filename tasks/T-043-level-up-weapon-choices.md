@@ -4,6 +4,7 @@ title: Level-up offers: the 2 choices, and applying the one taken
 status: blocked
 from: project-lead
 to: weapon-behavior
+lead:
 epic: weapons
 milestone: mvp
 user_facing_text: no

@@ -4,6 +4,7 @@ title: The level-up (gift pack) screen: 2 cards, take one
 status: blocked
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes

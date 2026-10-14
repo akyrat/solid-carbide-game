@@ -4,6 +4,7 @@ title: The run's numbers: likes (XP) per challenge, drift and level, and the car
 status: done
 from: project-lead
 to: game-data
+lead:
 epic: game-loop
 milestone: mvp
 user_facing_text: no

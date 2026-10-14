@@ -4,6 +4,7 @@ title: HUD: the arrow to the nearest challenge
 status: blocked
 from: project-lead
 to: ui
+lead:
 epic: hud-menus
 milestone: final-release
 user_facing_text: no

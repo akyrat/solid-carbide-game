@@ -4,6 +4,7 @@ title: PixelLab test run: generate 1 isometric tile and 1 still car image
 status: done
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no

@@ -4,6 +4,7 @@ title: Art: the Redgull logo, a sketched seagull with red eyes
 status: open
 from: project-lead
 to: asset-generation
+lead:
 epic: art
 milestone: mvp
 user_facing_text: no
