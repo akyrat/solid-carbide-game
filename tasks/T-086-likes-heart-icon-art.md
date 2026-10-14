@@ -35,12 +35,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A screenshot of the HUD in a run shows the final heart next to "LIKES", level with it, about the same height, with a dark outline like the text's; also one at combo step 3 (likes bar on fire) so the heart reads next to the flames (QA: pass / fail)
-- [ ] A check script or GUT test shows the icon has a transparent background, no semi-transparent pixels, few colours, and uses the HUD's Redgull red (QA: pass / fail)
-- [ ] No PixelLab call was made: the result notes say so and the art is made by a committed script that can rebuild it (QA: pass / fail)
-- [ ] T-049's, T-113's and T-131's HUD tests (layout, combo hidden, combo heat) still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
-- [ ] `game/README.md` (the HUD section) says where the heart art is and how it is made (QA: pass / fail)
+- [ ] A screenshot of the HUD in a run shows the final heart next to "LIKES", level with it, about the same height, with a dark outline like the text's; also one at combo step 3 (likes bar on fire) so the heart reads next to the flames (QA: fail: the heart itself is right (level with "LIKES", about its height, dark outline, readable beside the step-3 flames), but the description's "nothing else moves" is broken: "LIKES", "HYPE LV" and the combo counter all sit 4 px lower than on master, because the shorter heart (20 px, was 26) shrinks the row height `_layout_bottom()` takes from the row's minimum size)
+- [ ] A check script or GUT test shows the icon has a transparent background, no semi-transparent pixels, few colours, and uses the HUD's Redgull red (QA: pass)
+- [ ] No PixelLab call was made: the result notes say so and the art is made by a committed script that can rebuild it (QA: pass)
+- [ ] T-049's, T-113's and T-131's HUD tests (layout, combo hidden, combo heat) still pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
+- [ ] `game/README.md` (the HUD section) says where the heart art is and how it is made (QA: pass)
 
 The board's review: play a run in this task's folder and judge the heart's look next to "LIKES".
 Board review files: the HUD screenshots listed in the result notes
@@ -56,3 +56,14 @@ Made by the Asset Generation Agent, 2026-10-14. **No PixelLab call was made (0 g
 - **Screenshots** (in `art-archive/T-086/screenshots/`; also in `screenshots/`, which is gitignored): `T-086_hud.png` (HUD in a run, from `hud_from_menu_demo.tscn`), `T-086_hud_combo_step3.png` (combo step 3, likes bar on fire, `combo_heat_step3.tscn`), and x4 crops of each (`..._crop_x4.png`). Enlarged heart on dark and light: `art-archive/T-086/heart_dark_light_x16.png`. Commands: `bash game/tools/screenshot.sh res://tests/fixtures/hud_from_menu_demo.tscn screenshots/T-086_hud.png 30` and the same with `combo_heat_step3.tscn`.
 - **Looks like:** the heart sits level with "LIKES", a touch taller than the letters, outline matching the text's. At step 3 the flames start right of the heart's column under the row (the flames' low spans cover the whole row), the heart stays clear and readable. Weak spots, for the board to judge: it is slightly taller than the letters; the 1 art px (2 screen px) outline is a little thinner than the text's 3 px outline.
 - Documents affected: `game/README.md` (HUD section).
+
+## QA notes
+
+QA/Integration Agent, round 1, 2026-10-14. Result: **fail** (one criterion).
+
+- **Rebuild:** `python game/tools/build_heart_icon.py build` gives a byte-identical `likes_heart.png` (same SHA-256 before and after, record unchanged); `check` passes every line (11 x 10, transparent corners, 0 semi-transparent pixels, 2 colours, only (219, 26, 41) and (8, 8, 15)).
+- **No PixelLab:** the script has no network or `.env` use; the only "PixelLab" mentions in the diff say no call was made; `"prompt": null` in the record. 0 generations.
+- **Tests:** full GUT suite 557/557 pass (`bash game/tools/run_tests.sh`); Python tool tests `game/tools` and `tools` 371 passed, 1 skipped.
+- **Screenshots** remade from this folder (`screenshots/qa_T-086_hud.png`, `screenshots/qa_T-086_step3.png`, gitignored) and the same two fixtures shot on master (3541c53) for comparison. The heart looks right: red pixels at x 290-307, y 591-606, "LIKES" letters y 591-605, so level and about the same height; dark outline matches the text's; at step 3 it stays clear and readable next to the flames.
+- **The fail, layout moved:** compared with master, at 1152x648: "LIKES" top 587 -> 591, "HYPE LV" 587 -> 591, the combo counter at step 3 (y 519-575 -> 523-579): all 4 px lower; the likes bar did not move. ("LIKES" also moves 4 px left, which follows from the narrower heart.) Cause: `_layout_bottom()` sets `row_h` from `likes_row.get_combined_minimum_size().y`, which was the placeholder's 26 px and is now the art's 20 px, so the row (bottom-anchored on the bar) gets shorter and everything centred in it or placed above it drops. The layout tests do not catch it because they check relations (no overlap, shared baseline), not absolute positions. Suggested fix, for the Project Lead to decide: keep the heart's control 26 px tall (art centred inside, still 2x, nearest) or give the row a 26 px minimum height, so the row and everything above it stays where T-113/T-131 put it; a GUT test that the row's height/top and the combo counter's position equal the pre-T-086 values would hold it.
+- Godot's line-ending-only `.import` noise from the test and screenshot runs was not committed.
