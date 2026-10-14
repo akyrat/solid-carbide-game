@@ -1105,3 +1105,8 @@ Entry format:
 - Decision or change: the board playtested it ("lgtm") and marked it done. The board removed round 1's hit, death and car damage effects (their art kept in `art-archive/T-072/unused_effects/`). What's left: an enemy that takes damage (minions and the kaiju) gets a brief, slight red tint (`Color(1, 0.62, 0.62)` for 0.12 s, not Redgull red; the flamethrower's orange flash takes over cleanly); the car's sprite shakes for 0.2 s (about 3 pixels) when the car takes damage, moving only the drawing, not physics or the camera; and the coin is a script-fixed 10x12 gold coin from the one PixelLab sample (1 generation). QA: round 1 passed the first version; round 2, on criteria rewritten for the board's changes, passed all 6.
 - Documents touched: `game/README.md`
 - Tasks: T-072 (done)
+
+## 2026-10-15: The level-up screen's look and controls; T-052 planned
+- Decision or change: the board chose the comic look for the level-up screen's cards (white rounded cards, black borders, Bangers font, over the dimmed run), replacing "plain cards", and keyboard plus mouse to pick (A/D or arrows move, Enter or Space takes, or click the card's button). Upgrade cards show the next tier's text from T-051. The `flamethrower_at_start` playtest switch goes off in T-052's branch, so the board's first level-up offers the flamethrower. T-052 goes to the UI Agent; it waits for the board's playtest before merging.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-052

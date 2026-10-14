@@ -692,7 +692,8 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 ### Decisions
 
 - During a run, the HUD shows: the car's HP as a bar; the run timer, counting down from 8:00; the XP bar, shown to the player as a likes bar (Extended narrative, Decisions), and the current level; the coins collected this run; and the kaiju's health once it appears.
-- When the player levels up, the game pauses and the level-up screen shows the options (what is offered: Weapons, Decisions). Each option has a title and a description. In the MVP it is kept simple: plain cards, each with a button to take it.
+- When the player levels up, the game pauses and the level-up screen shows the options (what is offered: Weapons, Decisions). Each option has a title and a description. In the MVP it is kept simple: cards, each with a button to take it.
+- The level-up screen's cards take the game's comic look, like the trick popups and the combo counter: white rounded cards with black borders and the Bangers font, over the dimmed, paused run. The player picks a card with the keyboard (A/D or the arrow keys move between the cards, Enter or Space takes the highlighted one) or by clicking its button.
 - The HUD shows the current combo multiplier as a counter next to the likes bar. When the player completes a trick, a short comic-style text pops out from the car with the trick's name and what it added to the multiplier (combo: Game loop architecture, Decisions). Extended-drift popups are smaller than the others, since they come every second.
 - After the MVP, if challenges come back (2026-10-11): when the player completes a challenge, the likes it gave pop out from the car the same way, not on the HUD (the score flash in Game loop architecture, Decisions).
 - The UI Agent proposes a first layout for where each HUD element goes on screen, and the board adjusts it in playtest.
@@ -764,4 +765,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `d3846891e82b4ea573307944aaed6cf6026cc72bf9d772e28e61218b42b88eef` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
-| `hud-and-menus.md` | `1453c0dea6112f28d1b0a99877181c21b55cf9bf8b8250918b66203f38569a31` |
+| `hud-and-menus.md` | `c933d4666240a32835cefed15a173c330aff1439d8f0fc819351b4dd0aee8be0` |
