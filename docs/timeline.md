@@ -1025,3 +1025,8 @@ Entry format:
 - Decision or change: after the Project Lead's timeline commit swept up the other instance's half-finished T-044 merge (676439e; the other instance finished T-044 in 41f14f6), the board made it a rule: all instances share the main checkout, so before every commit on master an instance checks that no merge is in progress and doesn't commit if one is, stages only its own files (never `git add -A`), and chains git commands with `&&` so an error stops the command.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: none
+
+## 2026-10-14: Weapons, kaiju, combo spawning and enemy art started in parallel
+- Decision or change: the board asked to start every ticket T-044 unblocked, each on its own agent: T-041 (starting gun), T-042 (flamethrower), T-045 (kaiju), T-085 (combo raises spawning), T-068 (minion art) and T-072 (hit, death, coin and car damage effects). The art tasks generate one sample each for the board's review before the full set (the board's go for the samples). T-042 and T-045 get a documented playtest setting (the flamethrower from the start of a run; an early kaiju), since there is no level-up offer yet and the kaiju comes at 7:00. T-085 got a board's review line: more minions with a combo is something the player meets.
+- Documents touched: none
+- Tasks: T-041, T-042, T-045, T-068, T-072, T-085
