@@ -1,7 +1,7 @@
 ---
 id: T-137
 title: Test runs end themselves when hung, and parallel runs don't share settings files
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, game/tools/run_tests.sh, game/tools/run_tests.ps1, tasks/T-001-project-and-test-setup.md]
 files_expected_to_change: [game/tools/run_tests.sh, game/tools/run_tests.ps1, the tests that write user:// files, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -38,11 +38,11 @@ Change no game behaviour and no game data. Work on your own branch and folder, a
 
 ## Acceptance criteria
 
-- [ ] A test (or a script run QA can repeat) starts a GUT run with a deliberately hanging test and shows the runner stops it after the time limit and exits with a failure naming the limit, leaving no Godot process behind (QA: pass / fail)
-- [ ] A list in the result notes names every test that writes under user://, and each now uses a per-run file or folder (QA: pass / fail)
-- [ ] Two full GUT runs started at the same time from two different folders both pass, three times in a row (QA: pass / fail)
-- [ ] `game/README.md` documents the time limit and the per-run test files (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test (or a script run QA can repeat) starts a GUT run with a deliberately hanging test and shows the runner stops it after the time limit and exits with a failure naming the limit, leaving no Godot process behind (QA: pass)
+- [ ] A list in the result notes names every test that writes under user://, and each now uses a per-run file or folder (QA: pass)
+- [ ] Two full GUT runs started at the same time from two different folders both pass, three times in a row (QA: pass)
+- [ ] `game/README.md` documents the time limit and the per-run test files (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 ## Result notes
 
@@ -68,3 +68,13 @@ No other file under tests/ mentions user://. Tests restore `GameSettings.path` t
 Parallel check: two full GUT runs at the same time, one from this folder and one from a temporary copy (game, docs, art-archive, .env) outside the repo, three rounds in a row: all six runs exit 0 (626 tests, 104 to 109 s each). A first attempt failed only because my copy lacked docs/; fixed by copying docs/. The copy is deleted.
 
 Results: full GUT suite 626/626 pass (57 scripts); Python tests `game/tools` 241 OK (1 skipped), `tools` 171 OK. game/README.md has two new sections ("Time limit (T-137)", "Per-run test files (T-137)"). No game behaviour or data changed. Godot's line-ending-only .import changes left uncommitted.
+
+### QA round 1 (QA/Integration, 2026-10-15, independent check)
+
+- Criterion 1 pass: `bash game/tools/check_time_limit.sh` run by me: exit 124, message "went past 10 seconds", TIME LIMIT CHECK PASSED, no Godot process of the fixture left.
+- Criterion 2 pass: grep of `user://` over game/tests on this branch finds only `tests/helpers/run_paths.gd`; all 12 tests/fixture in the list use `RunPaths.file(...)`; `user://test_runs` is empty after the runs. Gap, not part of this branch: master gained `game/tests/unit/enemies/test_kaiju.gd` (T-045) which writes `user://test_playtest_t045.json` outside RunPaths. It is the only master test that does. test_level_up_particles_art.gd and test_pixellab_assets.gd only read res:// files. The Project Lead should have it moved onto `RunPaths.file(...)` at merge (or in a small follow-up).
+- Criterion 3 pass: three rounds of two simultaneous full runs (this folder and a temporary copy outside the repo): all six exit 0, 57 scripts, 626/626 each. Copy deleted.
+- Criterion 4 pass: game/README.md has the 'Time limit (T-137)' and 'Per-run test files (T-137)' sections (300 s, GUT_TIME_LIMIT, RunPaths, post-run cleanup).
+- Criterion 5 pass: full GUT 626/626 (in the parallel runs); Python tests game/tools 241 OK (1 skipped), tools 171 OK.
+- No game behaviour or data changed: the diff against the merge base (aefa6b5) touches only tests, tests/helpers, .gutconfig.json, game/tools runners and fixture, game/README.md and this task file.
+- 2026-10-15, in-qa → done: QA round 1: all criteria pass; note test_kaiju.gd on master still writes user:// outside RunPaths
