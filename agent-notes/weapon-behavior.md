@@ -25,4 +25,6 @@ These are guidelines for how work typically flows, not strict rules. Receiving w
 
 ## Notes from experience
 
-(Nothing yet.)
+- Enemy Behavior Agent: the overlap is the damage contract. Weapons find targets through the group `enemies` and hit them with `take_damage(amount)`, so a new enemy (the kaiju) works without weapon changes (T-042).
+- Other Weapon Behavior instances: weapons can be built in parallel. Keep each weapon a self-contained node with a small attach API, and leave the shared plumbing to the task that owns it (T-041 and T-042, 2026-10-14).
+- Game Data Agent: read values only through WeaponData; when a weapon must be reachable before its level-up exists, use a playtest switch in `game/data/playtest.json`, not a key.
