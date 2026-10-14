@@ -107,3 +107,7 @@ Colourways: cyan and pink, made by a free palette swap (never towards red). The 
 ### Quick tuning
 
 - 2026-10-14 (board, word for word: "remove any details ... only the shape of the kaiju ... warning or forbidden signs for driving: red outline, simple white and black inside"): redrew as road signs by script, 0 PixelLab calls: head in a warning triangle (danger ahead; compact shape fits), body in a prohibition circle (wide round sign fits the long body and tail); thick traffic-sign red outline (204,18,28, the only red allowed, these signs only), white inside, solid black silhouette, no neon; 5 colours; 6 sprites (per design: building banner front-on, sheared, and pavement sign) in `game/art/banners/`; neon first version kept in `art-archive/T-130/first-version/`; previews `art-archive/T-130/signs_*.png`.
+
+### Placement (2026-10-14, after merging master with T-064 and T-129)
+
+- Placed 6 signs from `game/data/level/kaiju_signs.json` by `scripts/level/kaiju_signs.gd`: banners on skyscraper slots (block (0,0) slot (0,1) south; (3,1) slot (1,1) east; (2,0) slot (1,0) east; (1,3) slot (0,1) south), children of the slot art so they fade with it; signs at the corner of blocks (0,2) and (3,3), 0.75 units from the kerb (not 1.5: the pavement is 1.5 wide), z = front slot + 1, no fade. No collisions. Tests: `tests/unit/test_kaiju_signs.gd` (12); full GUT 523 pass; Python tool tests 235 pass. Screenshots in `art-archive/T-130/screenshots/`. 0 PixelLab calls, no spend.

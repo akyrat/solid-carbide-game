@@ -90,6 +90,7 @@ const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 ## The building atlas and its list (task T-064); without it the placeholder boxes stay.
 const BUILDING_ART_PATH := "res://art/buildings/skyscrapers.json"
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
+const KaijuSigns := preload("res://scripts/level/kaiju_signs.gd")
 ## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
 ## building is while it covers the car (0.15 = 15%), and how long the fade
 ## takes, in seconds (both ways).
@@ -176,6 +177,9 @@ var buildings: Array = []
 ## The skyscrapers' own fade nodes (T-064, per-slot fade): four per block when the building art is
 ## loaded, in depth order. Empty without the art; then the blocks (`buildings`) fade as wholes.
 var slots: Array = []
+## The kaiju alert signs (T-130): every sprite, and the root of the pavement ones (kaiju_signs.gd).
+var alert_signs: Array = []
+var alert_signs_root: Node2D
 ## Meteor challenges: id -> {id, design, centre, angle, boulders,
 ## corridor_width, centre_line}, everything placed, in units.
 var meteor_challenges: Dictionary = {}
@@ -242,6 +246,7 @@ func _build() -> void:
 	buildings_draw.map = self
 	view_root.add_child(buildings_draw)
 	_build_buildings()
+	alert_signs = KaijuSigns.build(self)
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -860,6 +865,9 @@ func set_view(v: String) -> void:
 			b.queue_redraw()
 		if v != "iso":
 			b.reset_fade()
+	if alert_signs_root != null:
+		alert_signs_root.visible = uses_building_art()
+		alert_signs_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 	for node in slots:
 		node.set_view(v)
 		# The skyscraper art is in screen pixels too.

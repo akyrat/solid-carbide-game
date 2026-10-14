@@ -1,0 +1,11 @@
+{
+  "note": "Kaiju alert signs (task T-130). Move, add or remove entries freely; no code change. block is [column, row] in the 4 x 4 grid from the north-west (the gravel centre has none). kind banner hangs on a skyscraper's visible wall of slot [si, sj] in its block (wall y = the +y face, wall x = the +x face; along = units from the wall's left end on screen, 0 to 9; bottom_units = height of its bottom above the ground). kind sign stands on the pavement at the block's +x/+y corner, inset units in from the kerb. design: head (red triangle) or body (red circle).",
+  "signs": [
+    {"id": "banner_nw_south", "kind": "banner", "block": [0, 0], "slot": [0, 1], "wall": "y", "along": 4.5, "bottom_units": 3.0, "design": "head"},
+    {"id": "banner_ne_east", "kind": "banner", "block": [3, 1], "slot": [1, 1], "wall": "x", "along": 4.5, "bottom_units": 3.0, "design": "body"},
+    {"id": "banner_top_east", "kind": "banner", "block": [2, 0], "slot": [1, 0], "wall": "x", "along": 4.5, "bottom_units": 3.0, "design": "body"},
+    {"id": "banner_south_south", "kind": "banner", "block": [1, 3], "slot": [0, 1], "wall": "y", "along": 4.5, "bottom_units": 3.0, "design": "head"},
+    {"id": "sign_west_crossing", "kind": "sign", "block": [0, 2], "inset": 0.75, "design": "body"},
+    {"id": "sign_south_east_corner", "kind": "sign", "block": [3, 3], "inset": 0.75, "design": "head"}
+  ]
+}
