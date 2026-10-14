@@ -1,0 +1,14 @@
+{
+ "description": "a light green scaled lizard walking on four legs, mid-stride, long tail, small head with a glowing cyan eye, lighter green belly, darker green back scales, not too bright green, creature game sprite, pixel art",
+ "negative_description": "text, letters, logo, red, orange, perspective, gradient, blur, ground, shadow, background, two heads, human, standing upright, wings, fire",
+ "image_size": {"width": 48, "height": 48},
+ "view": "high top-down",
+ "isometric": true,
+ "direction": "south-east",
+ "no_background": true,
+ "outline": "selective outline",
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "text_guidance_scale": 8,
+ "seed": 68001
+}

@@ -51,4 +51,23 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Asset Generation Agent (2026-10-14). Round 1: SAMPLE ONLY; the board reviews it before the full set.
+
+### Proposal (for the board to judge)
+
+- **Size:** 48 by 48 pixel frames. At 32 art pixels per unit and scale 0.5 the minion is about 1 unit (the car's width) across, so the body is about 30 to 36 art pixels long and fits in 48.
+- **Directions:** 8 directions (the 4 screen axes and 4 diagonals) built from **5 drawn** ones: south, south-east, east, north-east, north. The other three (south-west, west, north-west) are mirrors, made by flipping in the game or a free script. A lizard is symmetric, so mirroring is safe.
+- **Walk frames:** 4 per direction (two leg-pair swings and two mid-stance frames), looped at about 8 frames per second. 5 x 4 = 20 drawn frames, 32 with mirrors.
+- **Method:** the board approves the sample (south-east, one frame). Then one call to /generate-8-rotations-v3 from it gives the other directions of the standing pose; then walk frames per direction by /create-image-pixflux with the approved frame as `color_image`/init image (one call per frame). Check script on each, and free palette reduction if over 30 colours.
+- **Planned full set calls and cost (estimate, 1 generation each unless noted):** 1 rotations call (about 2 generations, as the car's was) + 19 pixflux frames (19 generations) = about 21 generations, of the plan's 5000 (usd credits stay 0). Walk-frame consistency may need more; the board decides then.
+
+### Sample: planned call and cost
+
+- 1 call, /create-image-pixflux, 48x48, south-east, view "high top-down" with isometric true, outline "selective outline", shading "detailed shading", detail "highly detailed", no_background, seed 68001. Params file: art-archive/T-068/sample_req.json. Planned cost: 1 generation.
+
+### Sample: result
+
+- Call: /create-image-pixflux, params art-archive/T-068/sample_req.json (prompt and settings inside; record art-archive/T-068/raw/minion_se_sample.json; logged in game/art/pixellab-generation-log.jsonl). Cost 1 generation. Balance before 4919 of 5000, after 4918. One call only.
+- File: art-archive/T-068/raw/minion_se_sample.png (48x48). Check script (game/tools/check_sprite_rules.py --size 48): all pass, 21 colours, 0 semi-transparent pixels, transparent corners. No fix needed.
+- Review images: art-archive/T-068/sample_review_dark.png, sample_review_light.png, sample_review_dark_light_vs_placeholder.png (8x nearest; the placeholder is cropped from T-044's screenshot, so at the screenshot's scale).
+- Problems seen (reported, not regenerated): the green is a saturated yellow-lime, brighter than "light green, not too bright"; it looks like it is rearing on two legs and a front arm, so the four-legged walk does not read; there is no dark selective outline; it faces west-south-west more than south-east. Cheapest next step: a free palette shift towards a softer green, or one more sample with a rewritten prompt, on the board's say-so.
