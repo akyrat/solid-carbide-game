@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Enemies
