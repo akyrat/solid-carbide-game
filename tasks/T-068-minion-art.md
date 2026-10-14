@@ -1,7 +1,7 @@
 ---
 id: T-068
 title: Art: the minion (light green lizard), walking
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -139,3 +139,4 @@ Checked in C:\solid-carbide-worktrees\T-068 at 822cd7d, against the merge base w
 - **Full suites: pass.** GUT (bash game/tools/run_tests.sh), run twice: 584 of 584 both times; the earlier 583/584 did not recur. Python: game/tools 246 OK (1 skipped), tools 130 OK.
 - **Also checked:** no Redgull red (no reddish pixels in the five sheets; the placeholder colours pass the existing test); no shadow code left in minion_sprite.gd; game/README.md updated.
 - 2026-10-15, in-qa → needs-playtest: QA round 1: all five criteria pass.
+- 2026-10-15, needs-playtest → done: board playtest: good, merge it
