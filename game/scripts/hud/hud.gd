@@ -6,7 +6,10 @@ extends CanvasLayer
 ## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
 ## (hidden at no combo, T-116). The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
-## `coins_changed`). The texts are from T-048.
+## `coins_changed`). The texts are from T-048. Since T-131 the combo counter,
+## "Likes" and "Hype Lv" are in the comic font (Bangers, hard pixel edges),
+## and the counter heats up in steps as the combo climbs (ComboHeat), with
+## the likes bar on fire at the top step (LikesFire).
 
 const TIMER_FONT_SIZE := 56
 const TIMER_COLOR := Color(0.3, 0.9, 1.0)
@@ -35,9 +38,13 @@ const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
 # Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".
 const TEXT_COMBO := "Combo x{multiplier}"
-## Combo counter placeholder look (not red: only the heart is). T-084 is the final art.
+## Combo counter base look (not red: only the heart is); the hotter steps are
+## in ComboHeat.STEPS (T-131).
 const COMBO_FONT_SIZE := 30
 const COMBO_COLOR := Color(1.0, 0.25, 0.75)
+## The comic font of the trick popups (T-084), used since T-131 by the combo
+## counter, "Likes" and "Hype Lv". It has capitals only.
+const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 ## Space between the combo counter and the likes row under it.
 const COMBO_GAP := 4
 
@@ -59,7 +66,12 @@ var left_column: Control
 var bottom_area: Control
 ## The heart and "Likes", at the left end of the row above the likes bar.
 var likes_row: HBoxContainer
+## The combo's heat steps (T-131): restyles combo_label, lights likes_fire.
+var combo_heat: ComboHeat
+## The flames along the likes bar at the top heat step (T-131).
+var likes_fire: LikesFire
 var _state: RunState
+static var _comic_font: FontFile = null
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
 var _combo_data: ComboData
 
@@ -119,6 +131,10 @@ func _build_bottom() -> void:
 	add_child(bottom_area)
 	likes_bar = _make_bar("LikesBar", LIKES_COLOR, ProgressBar.FILL_BEGIN_TO_END)
 	bottom_area.add_child(likes_bar)
+	# Over the bar, under the texts, so the texts stay on top of the flames.
+	likes_fire = LikesFire.new()
+	bottom_area.add_child(likes_fire)
+	likes_bar.value_changed.connect(func(_v: float) -> void: _update_fire_fill())
 	likes_row = HBoxContainer.new()
 	likes_row.name = "LikesRow"
 	likes_row.alignment = BoxContainer.ALIGNMENT_BEGIN
@@ -134,16 +150,25 @@ func _build_bottom() -> void:
 	heart.add_child(shape)
 	likes_row.add_child(heart)
 	likes_label = _make_label("LikesLabel", TEXT_LIKES)
+	likes_label.add_theme_font_override("font", comic_font())
+	# The row's full height, like "Hype Lv", so both share a baseline.
+	likes_label.size_flags_vertical = Control.SIZE_FILL
 	likes_row.add_child(likes_label)
 	level_label = _make_label("LevelLabel", TEXT_LEVEL.format({"level": 1}))
+	level_label.add_theme_font_override("font", comic_font())
 	bottom_area.add_child(level_label)
 	combo_label = _make_label("ComboLabel", combo_text(1.0))
+	combo_label.add_theme_font_override("font", comic_font())
 	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
 	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
 	combo_label.add_theme_constant_override("outline_size", 10)
+	combo_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	# A run starts with no combo: hidden until a trick raises it (T-116).
 	combo_label.visible = false
 	bottom_area.add_child(combo_label)
+	combo_heat = ComboHeat.new()
+	add_child(combo_heat)
+	combo_heat.setup(combo_label, likes_fire)
 	_layout_bottom()
 	for c: Control in [bottom_area, likes_row, level_label, combo_label]:
 		c.resized.connect(_layout_bottom)
@@ -170,6 +195,21 @@ func _layout_bottom() -> void:
 	combo_label.position = Vector2(
 		roundf(likes_bar.position.x + (bar_w - combo_label.size.x) / 2.0),
 		row_y - COMBO_GAP - combo_label.size.y)
+	# The heat's pulse grows the counter from its bottom centre: up and to
+	# both sides, never down into the row, and it stays centred (T-131).
+	combo_label.pivot_offset = Vector2(combo_label.size.x / 2.0, combo_label.size.y)
+	likes_fire.place(likes_bar.get_rect())
+	var spans: Array[Vector2] = []
+	for l: Control in [likes_row, level_label]:
+		spans.append(Vector2(l.position.x - likes_bar.position.x,
+			l.position.x + l.size.x - likes_bar.position.x))
+	likes_fire.low_spans = spans
+	_update_fire_fill()
+
+
+func _update_fire_fill() -> void:
+	var span := likes_bar.max_value - likes_bar.min_value
+	likes_fire.fill_ratio = (likes_bar.value - likes_bar.min_value) / span if span > 0.0 else 0.0
 
 
 func _build_coins() -> void:
@@ -187,6 +227,17 @@ func _build_coins() -> void:
 	coins_value_label = _make_label("CoinsValue", "0")
 	coins_value_label.add_theme_color_override("font_color", COINS_COLOR)
 	box.add_child(coins_value_label)
+
+
+## The comic font (Bangers) with smoothing off: hard pixel edges (T-131).
+static func comic_font() -> FontFile:
+	if _comic_font == null:
+		_comic_font = (load(COMIC_FONT_PATH) as FontFile).duplicate()
+		_comic_font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
+		_comic_font.hinting = TextServer.HINTING_NONE
+		_comic_font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
+		_comic_font.generate_mipmaps = false
+	return _comic_font
 
 
 ## "Combo x2.5": the multiplier without trailing zeros.
@@ -283,6 +334,17 @@ func _on_coins_changed(coins: int) -> void:
 func _on_combo_changed(multiplier: float) -> void:
 	combo_label.text = combo_text(multiplier)
 	combo_label.visible = show_combo(multiplier)
+	combo_heat.set_multiplier(multiplier)
+
+
+## The combo's heat step now (0 base, 1 from x2, 2 from x3, 3 from x4; T-131).
+func combo_step() -> int:
+	return combo_heat.step
+
+
+## Whether the likes bar is on fire now (the top heat step, T-131).
+func fire_on() -> bool:
+	return likes_fire.burning and likes_fire.visible
 
 
 ## Whether the combo counter shows at this multiplier (T-116): only above "no

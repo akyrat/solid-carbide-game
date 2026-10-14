@@ -975,3 +975,8 @@ Entry format:
 - Decision or change: the board playtested and approved it ("look good"). Popups (trick and challenge) are now drawn at an absolute depth at the top of Godot's range, so no building, sign, boulder or the car can cover them, however tall the map's depth scheme grows. The HUD and screens still draw over them. QA round 1: all 6 pass.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
 - Tasks: T-132 (done)
+
+## 2026-10-14: T-131 done: the combo heats up
+- Decision or change: the board playtested and approved it ("look good"). The combo counter has four looks by the multiplier: pink below x2, bigger yellow with a light pulse from x2, bigger orange with a glow and a stronger pulse from x3, and biggest white-hot with a flickering glow from x4 to the cap, where pixel flames drawn in code burn along the likes bar (oranges and yellows, no Redgull red, no PixelLab). The look follows the combo down. The combo counter, "Likes" and "Hype Lv" use the Bangers comic font. QA round 1: all 10 pass. Noted for later if the board wants: "HYPE LV 1" in Bangers at its small size reads a bit like "7"; the flames over the empty part of the bar are a low line. T-133 (popups heat up the same way) is now open.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-131 (done), T-133
