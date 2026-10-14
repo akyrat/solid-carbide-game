@@ -23,6 +23,12 @@ var outline := PackedVector2Array()
 var pavement_root: Node2D
 
 var _art: Dictionary = {}
+## The city palette in use ("A", "B", "C"; task T-064 quick tuning: F7 cycles them live). Shared by every block.
+static var current_palette := "A"
+## palette letter -> {bodies: [Texture2D], pavements: [Texture2D]}.
+var _palette_textures: Dictionary = {}
+var _body_sprites: Array = []
+var _pavement_sprites: Array = []
 
 
 static func hash_of(block_x: int, block_y: int) -> int:
@@ -60,12 +66,18 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 	var foot := float(art.foot_units)
 	var margin := float(art.margin_units)
 	var bsize := Vector2(float(art.body_size[0]), float(art.body_size[1]))
-	var bodies: Array = []
-	for p in art.bodies:
-		bodies.append(load_texture(str(p)))
-	var pavs: Array = []
-	for p in art.pavements:
-		pavs.append(load_texture(str(p)))
+	var palettes: Dictionary = art.get("palettes", {"A": {"bodies": art.bodies, "pavements": art.pavements}})
+	for letter in palettes:
+		var entry := {"bodies": [], "pavements": []}
+		for p in palettes[letter].bodies:
+			entry.bodies.append(load_texture(str(p)))
+		for p in palettes[letter].pavements:
+			entry.pavements.append(load_texture(str(p)))
+		_palette_textures[letter] = entry
+	if not _palette_textures.has(current_palette):
+		current_palette = _palette_textures.keys()[0]
+	var bodies: Array = _palette_textures[current_palette].bodies
+	var pavs: Array = _palette_textures[current_palette].pavements
 	plan = make_plan(roundi(footprint_units.position.x), roundi(footprint_units.position.y))
 	plan.sort_custom(func(p, q):
 		var a: int = p.si + p.sj
@@ -87,6 +99,7 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		pv.position = ISO_TRANSFORM * (origin * PX_PER_UNIT) - Vector2(pw * 0.5, 0.0) * SPRITE_SCALE
 		pv.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
 		pavement_root.add_child(pv)
+		_pavement_sprites.append([pv, e.si + 2 * e.sj])
 		var corner := origin + Vector2(margin + foot, margin + foot)
 		var pos := ISO_TRANSFORM * (corner * PX_PER_UNIT) - Vector2(bsize.x * 0.5, bsize.y) * SPRITE_SCALE
 		var sp := Sprite2D.new()
@@ -96,6 +109,7 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		sp.position = pos
 		sp.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
 		add_child(sp)
+		_body_sprites.append([sp, e.body])
 		e["position"] = pos
 		var w := bsize.x
 		var h := bsize.y
@@ -105,3 +119,21 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 	outline = Geometry2D.convex_hull(points)
 	if not outline.is_empty() and outline[0] == outline[outline.size() - 1]:
 		outline.remove_at(outline.size() - 1)
+
+
+## Letters of the palettes this art has, in order.
+func palette_letters() -> Array:
+	var l: Array = _palette_textures.keys()
+	l.sort()
+	return l
+
+
+## Puts the sprites of palette `letter` on screen (the shapes are the same in every palette).
+func set_palette(letter: String) -> void:
+	if not _palette_textures.has(letter):
+		return
+	var t: Dictionary = _palette_textures[letter]
+	for e in _body_sprites:
+		e[0].texture = t.bodies[e[1]]
+	for e in _pavement_sprites:
+		e[0].texture = t.pavements[e[1]]

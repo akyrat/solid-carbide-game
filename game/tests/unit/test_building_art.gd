@@ -95,3 +95,17 @@ func test_bodies_have_no_semi_transparent_pixels() -> void:
 				if a > 0.0 and a < 1.0:
 					bad += 1
 		assert_eq(bad, 0)
+
+
+func test_f7_cycles_three_city_palettes_and_swaps_textures() -> void:
+	BuildingTowers.current_palette = "A"
+	var map := make_map()
+	var t: Node2D = block_of(map).towers
+	assert_eq(t.palette_letters(), ["A", "B", "C"])
+	var first: Texture2D = t.get_child(0).texture
+	assert_eq(map.cycle_city_palette(), "B")
+	assert_ne(t.get_child(0).texture, first)
+	assert_eq(map.cycle_city_palette(), "C")
+	assert_eq(map.cycle_city_palette(), "A")
+	assert_eq(t.get_child(0).texture, first)
+	assert_not_null(map.get_node("PaletteLabel"))
