@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dujetxbrwoppq"
-path="res://.godot/imported/buildings_atlas.png-a3fb770b44d4687d6e1b6d86c68b60e0.ctex"
+uid="uid://0f5vr67ed5m7"
+path="res://.godot/imported/sky_body_3.png-bb962232737b3d5ca1e08c338c75b167.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/buildings/buildings_atlas.png"
-dest_files=["res://.godot/imported/buildings_atlas.png-a3fb770b44d4687d6e1b6d86c68b60e0.ctex"]
+source_file="res://art/buildings/sky_body_3.png"
+dest_files=["res://.godot/imported/sky_body_3.png-bb962232737b3d5ca1e08c338c75b167.ctex"]
 
 [params]
 

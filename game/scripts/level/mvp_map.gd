@@ -88,7 +88,7 @@ const DEFAULT_BOULDER_DIAMETER := 3.0
 ## The boulder sprites (T-065): variants, their opaque boxes and outlines.
 const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 ## The building atlas and its list (task T-064); without it the placeholder boxes stay.
-const BUILDING_ART_PATH := "res://art/buildings/buildings.json"
+const BUILDING_ART_PATH := "res://art/buildings/skyscrapers.json"
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 ## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
 ## building is while it covers the car (0.15 = 15%), and how long the fade
@@ -213,7 +213,7 @@ func _ready() -> void:
 	if building_art_enabled and building_art.is_empty():
 		building_art = load_layout(BUILDING_ART_PATH)
 	if not building_art.is_empty():
-		building_atlas = load(str(building_art.texture)) as Texture2D
+		building_atlas = BuildingTowers.load_texture(str(building_art.texture))
 	_build()
 
 
@@ -280,6 +280,8 @@ func _build_buildings() -> void:
 			towers.setup(building_art, building_atlas, b.footprint)
 			b.add_child(towers)
 			b.towers = towers
+			buildings_draw.add_child(towers.pavement_root)
+			buildings_draw.move_child(towers.pavement_root, 0)
 			b.height_units = towers.tallest_units
 			b.custom_silhouette = towers.outline
 		i += 1
@@ -841,6 +843,8 @@ func set_view(v: String) -> void:
 			# The tower art is in screen pixels: undo the view's projection; the flat view keeps the placeholder.
 			b.towers.visible = uses_building_art()
 			b.towers.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+			b.towers.pavement_root.visible = uses_building_art()
+			b.towers.pavement_root.transform = b.towers.transform
 			b.draw_placeholder = not uses_building_art()
 			b.queue_redraw()
 		if v != "iso":

@@ -1,8 +1,7 @@
 extends GutTest
-## Task T-064: each city block is drawn with a dense 7 x 7 grid of narrow
-## towers from the building atlas in the isometric view, the placeholder box
-## stays in the flat view, the plan is a fixed hash (neighbouring towers differ,
-## blocks differ), and the whole block still fades as one.
+## Task T-064: each city block is drawn with a 2 x 2 grid of skyscrapers
+## (round-2 sample, quick tuning) in the isometric view, the placeholder box
+## stays in the flat view, the plan is a fixed hash (the four slots differ), and the whole block still fades as one.
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
@@ -25,14 +24,16 @@ func block_of(map: Node2D) -> Node2D:
 	return null
 
 
-func test_every_block_has_49_towers_and_no_placeholder_in_iso() -> void:
+func test_every_block_has_4_skyscrapers_and_4_pavements() -> void:
 	var map := make_map()
 	assert_true(map.uses_building_art())
 	for b in map.buildings:
 		assert_not_null(b.towers)
-		assert_eq(b.towers.get_child_count(), 49)
+		assert_eq(b.towers.get_child_count(), 4)
+		assert_eq(b.towers.pavement_root.get_child_count(), 4)
 		assert_false(b.draw_placeholder)
 		assert_true(b.towers.visible)
+		assert_eq(b.towers.pavement_root.get_parent(), map.buildings_draw, "pavement is not under the faded block")
 
 
 func test_flat_view_keeps_the_placeholder() -> void:
@@ -40,6 +41,7 @@ func test_flat_view_keeps_the_placeholder() -> void:
 	for b in map.buildings:
 		assert_true(b.draw_placeholder)
 		assert_false(b.towers.visible)
+		assert_false(b.towers.pavement_root.visible)
 
 
 func test_sprites_use_nearest_filter_and_the_art_scale() -> void:
@@ -48,47 +50,25 @@ func test_sprites_use_nearest_filter_and_the_art_scale() -> void:
 	assert_eq(t.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	for s in t.get_children():
 		assert_eq(s.scale, Vector2(0.5, 0.5))
-		assert_true(s.region_enabled)
+	for s in t.pavement_root.get_children():
+		assert_eq(s.scale, Vector2(0.5, 0.5))
 
 
-func test_neighbouring_towers_are_different_base_towers() -> void:
+func test_the_four_slots_of_a_block_differ_and_the_plan_is_stable() -> void:
 	var map := make_map()
 	for b in map.buildings:
-		var grid := {}
+		var seen := {}
 		for e in b.towers.plan:
-			grid[Vector2i(e.gx, e.gy)] = e.tower
-		for k in grid:
-			for d in [Vector2i(1, 0), Vector2i(0, 1)]:
-				if grid.has(k + d):
-					assert_ne(grid[k], grid[k + d], "neighbours at %s" % k)
+			seen[e.body] = true
+		assert_eq(seen.size(), 4)
+	assert_eq(BuildingTowers.make_plan(12, 66), BuildingTowers.make_plan(12, 66))
 
 
-func test_all_eight_base_towers_are_used_and_blocks_differ() -> void:
-	var map := make_map()
-	var seen := {}
-	var signatures := {}
-	for b in map.buildings:
-		var sig := ""
-		for e in b.towers.plan:
-			seen[e.tower] = true
-			sig += e.variant + ","
-		signatures[sig] = true
-	assert_eq(seen.size(), 8)
-	assert_eq(signatures.size(), map.buildings.size(), "no two blocks are the same")
-
-
-func test_the_plan_is_stable() -> void:
-	var map := make_map()
-	var a := BuildingTowers.make_plan(map.building_art, 12, 66)
-	var b := BuildingTowers.make_plan(map.building_art, 12, 66)
-	assert_eq(a, b)
-
-
-func test_footprint_height_and_silhouette_come_from_the_towers() -> void:
+func test_footprint_height_and_silhouette_come_from_the_art() -> void:
 	var map := make_map()
 	var b := block_of(map)
 	assert_eq(b.footprint, BLOCK)
-	assert_true(b.height_units > 9.0 and b.height_units <= 15.5)
+	assert_eq(b.height_units, 30.0)
 	assert_false(b.custom_silhouette.is_empty())
 
 
@@ -99,16 +79,19 @@ func test_the_whole_block_fades_with_the_car_behind_it() -> void:
 	assert_true(b in map.covering_buildings())
 	assert_almost_eq(b.alpha(), 0.15, 0.001)
 	for s in b.towers.get_children():
-		assert_eq(s.modulate.a, 1.0, "the towers themselves are untouched; the block's modulate fades them")
+		assert_eq(s.modulate.a, 1.0, "the sprites themselves are untouched; the block's modulate fades them")
+	for s in b.towers.pavement_root.get_children():
+		assert_eq(s.modulate.a, 1.0)
 
 
-func test_atlas_has_no_semi_transparent_pixels() -> void:
+func test_bodies_have_no_semi_transparent_pixels() -> void:
 	var map := make_map()
-	var img: Image = map.building_atlas.get_image()
-	var bad := 0
-	for y in img.get_height():
-		for x in img.get_width():
-			var a := img.get_pixel(x, y).a
-			if a > 0.0 and a < 1.0:
-				bad += 1
-	assert_eq(bad, 0)
+	for p in map.building_art.bodies:
+		var img: Image = BuildingTowers.load_texture(str(p)).get_image()
+		var bad := 0
+		for y in img.get_height():
+			for x in img.get_width():
+				var a := img.get_pixel(x, y).a
+				if a > 0.0 and a < 1.0:
+					bad += 1
+		assert_eq(bad, 0)

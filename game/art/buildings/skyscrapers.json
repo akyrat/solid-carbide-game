@@ -1,0 +1,29 @@
+{
+ "about": "T-064 round 2 sample in the game (quick tuning, board 2026-10-14): 4 variations of the one sample skyscraper (768 x 960 art px, anchored at the bottom centre = the footprint's front corner) and 4 script-drawn slot pavements (index = slot si,sj; top corner at the slot's north corner). Not final.",
+ "texture": "res://art/buildings/sky_body_0.png",
+ "art_px_per_unit": 32,
+ "bodies": [
+  "res://art/buildings/sky_body_0.png",
+  "res://art/buildings/sky_body_1.png",
+  "res://art/buildings/sky_body_2.png",
+  "res://art/buildings/sky_body_3.png"
+ ],
+ "pavements": [
+  "res://art/buildings/sky_pavement_00.png",
+  "res://art/buildings/sky_pavement_10.png",
+  "res://art/buildings/sky_pavement_01.png",
+  "res://art/buildings/sky_pavement_11.png"
+ ],
+ "body_size": [
+  768,
+  960
+ ],
+ "pavement_size": [
+  960,
+  486
+ ],
+ "slot_units": 15,
+ "foot_units": 12,
+ "margin_units": 1.5,
+ "height_units": 30
+}
