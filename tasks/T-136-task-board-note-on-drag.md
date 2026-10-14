@@ -1,7 +1,7 @@
 ---
 id: T-136
 title: Ask for an optional note when a card is dragged to another column on the task board
-status: open
+status: done
 from: project-lead
 to: project-lead
 lead: Tools
@@ -14,7 +14,7 @@ documents_affected: [docs/README.md, docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/working-with-the-board.md, tools/taskboard/taskboard.html, tools/taskboard/server.py, tools/board_inbox.py, tools/task_status.py]
 files_expected_to_change: [tools/taskboard/taskboard.html, docs/README.md, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -49,11 +49,17 @@ While testing, never stop or restart the live task board server on port 8765, an
 
 ## Acceptance criteria
 
-- [ ] The page's drop handler no longer calls `moveTicket` directly; it opens the note dialog, and the dialog's Move action (button and Enter without Shift) calls `moveTicket(id, laneKey, note)` with the trimmed note. Esc and Cancel close it without any request. A drop on the card's own column opens nothing. QA checks the page's code. (QA: pass / fail)
-- [ ] With a server from this branch on another port and a temporary state folder, QA posts a move to `/api/move` exactly as the page builds it (`{"id", "status", "note"}` with `X-Board: 1`) and confirms the inbox line carries the note, and `python tools/board_inbox.py watch <test session>` against that state folder prints it as `(note: ...)`. (QA: pass / fail)
-- [ ] On a refused move, the page's code keeps the dialog open with the typed text and shows the server's error. QA checks the page's code. (QA: pass / fail)
-- [ ] The page's script passes `node --check`, and the existing tools tests pass: `python -m unittest discover -s tools -p "test_*.py"`. (QA: pass / fail)
-- [ ] `docs/README.md` ("The task board") and `docs/working-with-the-board.md` ("The task board") say that a drag asks for an optional note, which reaches the ticket's owner session with the move and is added to the ticket's result notes. (QA: pass / fail)
+- [x] The page's drop handler no longer calls `moveTicket` directly; it opens the note dialog, and the dialog's Move action (button and Enter without Shift) calls `moveTicket(id, laneKey, note)` with the trimmed note. Esc and Cancel close it without any request. A drop on the card's own column opens nothing. QA checks the page's code. (QA: pass) Code review of taskboard.html: endDrag now calls askMoveNote(id, laneKey), no direct moveTicket; askMoveNote returns early when the ticket's lane equals the target (own column opens nothing). Move button click and Enter without Shift (keydown on the textarea, preventDefault, isComposing guarded; Shift+Enter falls through to a newline) call confirmMove, which calls moveTicket(id, laneKey, $("move-note").value.trim()). Cancel calls dialog.close(); Esc is the native dialog cancel, which only closes (no handler calls moveTicket) and the close listener clears pendingMove; no request on either path. Untested in a real browser (static review only).
+- [x] With a server from this branch on another port and a temporary state folder, QA posts a move to `/api/move` exactly as the page builds it (`{"id", "status", "note"}` with `X-Board: 1`) and confirms the inbox line carries the note, and `python tools/board_inbox.py watch <test session>` against that state folder prints it as `(note: ...)`. (QA: pass) Ran this branch's server on port 8798 with a temporary tasks and .board folder (monkeypatched tb.TASKS_DIR/STATE_DIR as tools/test_board_inbox.py does; live board and C:\solid-carbide-game\.board untouched). POST /api/move {id, status, note} with X-Board: 1 returned 200; the inbox line was {"id":"T-900","from":"open","to":"in-progress","note":"QA note here",...}; `board_inbox.py watch` for a session named for the owner printed `T-900 open -> in-progress (note: QA note here)`. Test server stopped; worktree clean.
+- [x] On a refused move, the page's code keeps the dialog open with the typed text and shows the server's error. QA checks the page's code. (QA: pass) Code review: moveTicket now stores lastMoveError (server message, "Refused. " prefix stripped) and returns false on a non-ok response; confirmMove on false leaves pendingMove and the dialog open (close() only on ok), keeps the textarea value, shows lastMoveError in the #move-error alert paragraph and refocuses the note; the Move button is re-enabled. Server refusal confirmed live: POST cancelled with empty note returned 409 {"error": "Cancelling needs a note: ..."}, and the same text reaches the page via body.error. Minor, non-blocking: a refused move also re-renders the optimistic card status back, which is fine, and the toast is hidden behind the modal but the in-dialog message covers it.
+- [x] The page's script passes `node --check`, and the existing tools tests pass: `python -m unittest discover -s tools -p "test_*.py"`. (QA: pass) The page's last inline script extracted and `node --check` passes. `python -m unittest discover -s tools -p "test_*.py"` in the worktree: Ran 171 tests, OK.
+- [x] `docs/README.md` ("The task board") and `docs/working-with-the-board.md` ("The task board") say that a drag asks for an optional note, which reaches the ticket's owner session with the move and is added to the ticket's result notes. (QA: pass) docs/README.md ("The task board") says every drop opens a box for an optional note, which travels with the move to the ticket's owner session and is added to the result notes, and what happens on refusal; docs/working-with-the-board.md ("The task board") adds the matching line (note reaches the owning session as `(note: ...)`, added to result notes).
 
 ## Result notes
 
+Built (helper agent):
+- `tools/taskboard/taskboard.html`: new `<dialog id="movenote">` (ticket id, title, "From X to Y", multi-line optional note, Cancel and Move buttons). The drop handler in `endDrag` now calls `askMoveNote(id, laneKey)` instead of `moveTicket`; a drop on the card's own column returns without opening anything. Move button and Enter (not Shift+Enter) call `confirmMove()`, which calls `moveTicket(id, laneKey, note.trim())`. Esc (native dialog) and Cancel close it with no request. `moveTicket` now also stores `lastMoveError`; on a refused move `confirmMove` keeps the dialog open with the typed note and shows the server's message in the dialog (the toast still shows too). Detail-view moves are unchanged.
+- Docs: one sentence each in `docs/README.md` and `docs/working-with-the-board.md` ("The task board").
+- No server, inbox or watcher changes. The `/api/move` note path was not re-run by hand on a test server; it is untouched and covered by the existing tools tests.
+- Checks: `node --check` on the page script passes; `python -m unittest discover -s tools -p "test_*.py"` ran 171 tests, OK. Not exercised in a real browser (no drag run).
+- 2026-10-14, in-qa → done: QA round 1: all 5 pass; tooling, merged after QA

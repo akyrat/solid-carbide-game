@@ -334,6 +334,18 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   <div class="dialog-actions"><button class="close" id="detail-close">Close</button></div>
 </dialog>
 
+<dialog id="movenote" aria-labelledby="move-title" style="width:min(480px, calc(100% - 32px))">
+  <div class="row"><span class="id" id="move-id"></span></div>
+  <h2 id="move-title"></h2>
+  <p class="note" id="move-route"></p>
+  <div class="notefield" style="margin-top:10px">
+    <label for="move-note">Note (optional)</label>
+    <textarea id="move-note" rows="3" placeholder="Goes to the ticket's owner with the move. Enter moves, Shift+Enter adds a line."></textarea>
+  </div>
+  <p class="note" id="move-error" role="alert" style="color:var(--warn)" hidden></p>
+  <div class="dialog-actions" style="gap:8px"><button class="close" id="move-cancel" style="margin-left:0">Cancel</button><button class="close" id="move-go" style="margin-left:0">Move</button></div>
+</dialog>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <script>
@@ -899,7 +911,9 @@ function toast(msg, ms = 2600) {
 }
 
 // A move goes to the local server, which runs the status script: the task file changes, or the move is refused with a reason.
+let lastMoveError = "";
 async function moveTicket(id, laneKey, note = "", statusOverride = null) {
+  lastMoveError = "";
   const t = tickets.find((x) => x.id === id);
   const lane = LANES.find((l) => l.key === laneKey);
   if (!t || (!statusOverride && (!lane || laneOf(t.status).key === laneKey))) return false;
@@ -918,7 +932,8 @@ async function moveTicket(id, laneKey, note = "", statusOverride = null) {
     return true;
   } catch (e) {
     t.status = before; render();
-    toast(String(e.message || e).replace(/^Refused\. /, ""), 7000);
+    lastMoveError = String(e.message || e).replace(/^Refused\. /, "");
+    toast(lastMoveError, 7000);
     return false;
   }
 }
@@ -974,8 +989,41 @@ function endDrag(e, cancelled) {
   d.ghost.remove();
   d.card.classList.remove("dragging");
   const lane = !cancelled && laneAt(e.clientX, e.clientY);
-  if (lane) moveTicket(d.id, lane.dataset.lane);
+  if (lane) askMoveNote(d.id, lane.dataset.lane);
 }
+
+// A drop on another column asks for an optional note first; the move happens only on Move / Enter.
+let pendingMove = null;
+function askMoveNote(id, laneKey) {
+  const t = tickets.find((x) => x.id === id);
+  const to = LANES.find((l) => l.key === laneKey);
+  if (!t || !to || laneOf(t.status).key === laneKey) return;
+  pendingMove = { id, laneKey };
+  $("move-id").textContent = id;
+  $("move-title").textContent = t.title || "";
+  $("move-route").textContent = `From ${laneOf(t.status).name} to ${to.name}`;
+  $("move-note").value = "";
+  $("move-error").hidden = true; $("move-error").textContent = "";
+  $("movenote").showModal();
+  $("move-note").focus();
+}
+async function confirmMove() {
+  if (!pendingMove || $("move-go").disabled) return;
+  const { id, laneKey } = pendingMove;
+  $("move-go").disabled = true;
+  const ok = await moveTicket(id, laneKey, $("move-note").value.trim());
+  $("move-go").disabled = false;
+  if (ok) { pendingMove = null; $("movenote").close(); return; }
+  $("move-error").textContent = lastMoveError || "The move did not happen.";
+  $("move-error").hidden = false;
+  $("move-note").focus();
+}
+$("move-go").addEventListener("click", confirmMove);
+$("move-cancel").addEventListener("click", () => $("movenote").close());
+$("movenote").addEventListener("close", () => { pendingMove = null; });
+$("move-note").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); confirmMove(); }
+});
 document.addEventListener("pointerup", (e) => endDrag(e, false));
 document.addEventListener("pointercancel", (e) => endDrag(e, true));
 document.addEventListener("touchmove", (e) => { if (drag?.started) e.preventDefault(); }, { passive: false });

@@ -1055,3 +1055,8 @@ Entry format:
 - Decision or change: the board playtested it ("works fine") and asked for the merge. The minion count follows the combo live, through `ComboData.spawn_multiplier` (up to about 1.75 times at the top combo), on top of the slow growth over the run; a minion's hit cuts the combo, so the extra minions push it back down. Switch: `combo_raises_spawning` in `minion_spawner.gd`, on by default (the board: a code-level switch is enough for now). QA round 1: all 4 pass.
 - Documents touched: `docs/enemies.md`, `game/README.md`
 - Tasks: T-085 (done)
+
+## 2026-10-14: T-136 done: a note with every drag on the task board
+- Decision or change: the board wants to give feedback from the task board without going to a Claude terminal. Dropping a card on another column now opens a small box for an optional note (Enter moves, Shift+Enter adds a line, Esc cancels and the card stays); the note travels with the move to the ticket's owner session (the watcher prints it as `(note: ...)`) and is added to the ticket's result notes. A refused move keeps the box open with the note and the reason. The note path from the server to the watcher already existed (the detail view's "Note for the move"); only the drag skipped it. Tooling, merged after QA: round 1, all 5 pass. This instance is named "Tools" (T-127).
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-136 (done)
