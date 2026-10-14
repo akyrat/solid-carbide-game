@@ -8,7 +8,7 @@ const CarModelScript := preload("res://scripts/driving/car_model.gd")
 const PrototypeScene := preload("res://scenes/drift_prototype/drift_prototype.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
 const GameScene := preload("res://scenes/game/game.tscn")
-const TEST_PATH := "user://test_settings_t123.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t123.cfg")
 const DT := 0.02
 
 

@@ -7,7 +7,7 @@ extends Node
 ##   bash game/tools/screenshot.sh res://tests/fixtures/pause_run_dynamic_asphalt.tscn screenshots/t124_asphalt.png 60
 
 ## A test settings file, removed before and after use.
-const TEST_SETTINGS := "user://screenshot_settings_t124.cfg"
+var TEST_SETTINGS := RunPaths.file("screenshot_settings_t124.cfg")
 const DYN_MIN := 10.0
 const DYN_MAX := 17.5
 

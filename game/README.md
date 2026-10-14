@@ -42,6 +42,14 @@ This imports the project, then runs every test under `game/tests/` headless (no 
 
 To run only some tests, add GUT options after the command. For example, `-gselect=test_sample` runs only test scripts whose name contains `test_sample`, and `-gunit_test_name=drift` runs only tests whose name contains `drift`.
 
+### Time limit (T-137)
+
+A run that goes past **300 seconds** is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 300 seconds and was stopped` and exits with code **124**. A normal full run takes about 90 to 110 seconds (two at once, a little more), so 300 is comfortably above it. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=600 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.
+
+### Per-run test files (T-137)
+
+Godot's user folder (`AppData/Roaming/Godot/app_userdata/Solid Carbide/`) is shared by every task folder, so tests never write fixed names there. A test that needs a file under `user://` gets its path from `RunPaths.file("name")` (`tests/helpers/run_paths.gd`), which puts it in `user://test_runs/<process id>/`. Two runs at once have different process ids, so they never touch each other's files. The folder is removed when the run ends (`tests/helpers/post_run.gd`, set as `post_run_script` in `.gutconfig.json`); a run that is stopped by the time limit may leave its folder behind, and it is safe to delete. New tests that write under `user://` must use `RunPaths`.
+
 ### Python tool tests
 
 Some tools in `game/tools/` are Python scripts (standard library only, Python 3.9+). Their tests are `game/tools/test_*.py` and run with Python's own test runner, not GUT:

@@ -4,7 +4,7 @@ extends GutTest
 
 const Generator := preload("res://tools/car_sheet_generator.gd")
 const SHEET_DIR := "res://art/placeholders/car"
-const TMP_DIR := "user://test_car_sheets"
+var TMP_DIR := RunPaths.file("test_car_sheets")
 
 
 func _sheet_path(view: String) -> String:

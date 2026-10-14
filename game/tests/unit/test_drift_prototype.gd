@@ -41,7 +41,7 @@ const SECTION_8_RANGES := {
 
 func before_each() -> void:
 	# No saved settings file, so the zoom starts at its default.
-	GameSettings.path = "user://test_no_such_settings.cfg"
+	GameSettings.path = RunPaths.file("test_no_such_settings.cfg")
 
 
 func after_each() -> void:

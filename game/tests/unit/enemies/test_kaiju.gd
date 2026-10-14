@@ -10,7 +10,7 @@ const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
 const FlameScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
-const TEST_PLAYTEST := "user://test_playtest_t045.json"
+var TEST_PLAYTEST := RunPaths.file("test_playtest_t045.json")
 const DT := 0.02  # one physics step (50 per second)
 
 var run: Node2D

@@ -5,7 +5,7 @@ extends GutTest
 ## the menu.
 
 const GameScene := preload("res://scenes/game/game.tscn")
-const TEST_PATH := "user://test_settings_t055.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t055.cfg")
 
 var game: Node
 var quit_calls := 0

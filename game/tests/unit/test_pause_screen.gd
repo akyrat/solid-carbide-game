@@ -3,7 +3,7 @@ extends GutTest
 ## slider, and the saved zoom setting.
 
 const SCENE := preload("res://scenes/drift_prototype/drift_prototype.tscn")
-const TEST_PATH := "user://test_settings_t015.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t015.cfg")
 
 
 func before_each() -> void:

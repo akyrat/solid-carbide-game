@@ -12,7 +12,7 @@ const PrototypeScene := preload("res://scenes/drift_prototype/drift_prototype.ts
 const GameScene := preload("res://scenes/game/game.tscn")
 const HudScript := preload("res://scripts/hud/hud.gd")
 const MvpMap := preload("res://scripts/level/mvp_map.gd")
-const TEST_PATH := "user://test_settings_t121.cfg"
+var TEST_PATH := RunPaths.file("test_settings_t121.cfg")
 
 const W_ONLY := [true, false, 0.0]
 const W_AND_D := [true, false, -1.0]
