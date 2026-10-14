@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -156,3 +156,4 @@ Board review files: screenshots/kaiju.png, screenshots/kaiju_dev_timer.png, art-
   - `kaiju.gd` `hit_radius_units()` returns `RADIUS_UNITS` (2.0), the name master's `weapons.gd` reads.
   - Godot `.import` line-ending noise and the git-ignored `screenshots/` left uncommitted.
 - 2026-10-14, in-qa → flagged-for-review: QA round 2: 8 of 9 criteria pass; criterion 9 fails (game/README.md has the kaiju section twice, a copied Minions block, and still documents the removed kaiju_early_arrival switch). Docs-only fix.
+- 2026-10-14, flagged-for-review → in-progress: Board (2026-10-14): drop the dev timer setting; for the playtest the kaiju arrives at 30 s; after the board's playtest approval, set back to 7 minutes right before merging
