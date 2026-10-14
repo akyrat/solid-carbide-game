@@ -27,9 +27,15 @@ const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const LIKES_COLOR := Color(0.7, 0.45, 1.0)
 const COINS_COLOR := Color(1.0, 0.82, 0.25)
-## Redgull red: used only by the heart (a placeholder shape until T-086).
+## Redgull red: used only by the heart (its art, T-086, is drawn in this red).
 const HEART_COLOR := Color(0.86, 0.1, 0.16)
-const HEART_SIZE := 26.0
+## The heart's art (T-086, drawn by tools/build_heart_icon.py): 11 x 10 art
+## pixels shown at 2x, about the height of "Likes" with its outline.
+const HEART_PATH := "res://art/hud/likes_heart.png"
+const HEART_SCALE := 2
+## The heart's box in the row keeps the placeholder's 26 px square (T-049), the
+## art centred in it, so nothing else on the HUD moves (T-086).
+const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
 const TEXT_HEALTH := "Car Health"
@@ -56,7 +62,9 @@ var likes_bar: ProgressBar
 var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
-var heart: Control
+var heart: TextureRect
+## The heart's fixed-size box in the likes row; holds `heart`.
+var heart_box: Control
 ## The combo counter (T-083), centred above the likes row. Hidden at no
 ## combo (T-116): see show_combo().
 var combo_label: Label
@@ -140,15 +148,18 @@ func _build_bottom() -> void:
 	likes_row.alignment = BoxContainer.ALIGNMENT_BEGIN
 	likes_row.add_theme_constant_override("separation", 6)
 	bottom_area.add_child(likes_row)
-	heart = Control.new()
-	heart.name = "Heart"
-	heart.custom_minimum_size = Vector2(HEART_SIZE, HEART_SIZE)
-	heart.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var shape := Polygon2D.new()
-	shape.polygon = _heart_points(HEART_SIZE)
-	shape.color = HEART_COLOR
-	heart.add_child(shape)
-	likes_row.add_child(heart)
+	heart = _make_heart()
+	heart_box = Control.new()
+	heart_box.name = "HeartBox"
+	heart_box.custom_minimum_size = Vector2(HEART_BOX, HEART_BOX)
+	heart_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	heart_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	heart_box.add_child(heart)
+	# At the box's left edge (the bar's left end), 2 px above centre so it sits
+	# level with the letters of "Likes" (they sit above the row's middle).
+	heart.position = Vector2(0.0, floorf((HEART_BOX - heart.custom_minimum_size.y) / 2.0) - 2.0)
+	heart.size = heart.custom_minimum_size
+	likes_row.add_child(heart_box)
 	likes_label = _make_label("LikesLabel", TEXT_LIKES)
 	likes_label.add_theme_font_override("font", comic_font())
 	# The row's full height, like "Hype Lv", so both share a baseline.
@@ -275,15 +286,18 @@ func _make_bar(bar_name: String, fill: Color, fill_mode: int) -> ProgressBar:
 	return b
 
 
-static func _heart_points(size: float) -> PackedVector2Array:
-	var pts := PackedVector2Array()
-	var steps := 40
-	for i in steps:
-		var t := TAU * i / steps
-		var x := 16.0 * pow(sin(t), 3)
-		var y := -(13.0 * cos(t) - 5.0 * cos(2.0 * t) - 2.0 * cos(3.0 * t) - cos(4.0 * t))
-		pts.append(Vector2(x, y) * (size / 34.0) + Vector2(size / 2.0, size / 2.0 + 1.0))
-	return pts
+## The heart icon (T-086): the art at HEART_SCALE, hard pixel edges.
+static func _make_heart() -> TextureRect:
+	var tex: Texture2D = load(HEART_PATH)
+	var h := TextureRect.new()
+	h.name = "Heart"
+	h.texture = tex
+	h.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	h.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	h.stretch_mode = TextureRect.STRETCH_SCALE
+	h.custom_minimum_size = tex.get_size() * HEART_SCALE
+	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return h
 
 
 ## Shows the given run state's values, and follows them from now on.

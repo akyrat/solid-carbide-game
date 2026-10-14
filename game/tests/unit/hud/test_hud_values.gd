@@ -82,8 +82,8 @@ func test_labels_are_exactly_the_approved_text() -> void:
 
 func test_heart_is_the_only_red_part() -> void:
 	var r := _run()
-	var shape: Polygon2D = r.hud.heart.get_child(0)
-	assert_eq(shape.color, Hud.HEART_COLOR)
+	assert_eq(r.hud.heart.get_child_count(), 0, "the heart is its art, no drawn shape")
+	assert_eq(r.hud.heart.texture.resource_path, Hud.HEART_PATH)
 	for c: Color in [Hud.HEALTH_COLOR, Hud.LIKES_COLOR, Hud.COINS_COLOR, Hud.TIMER_COLOR]:
 		var red: bool = c.h < 0.04 or c.h > 0.96
 		assert_false(red, "not red: %s" % c)

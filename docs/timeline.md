@@ -1005,3 +1005,8 @@ Entry format:
 - Decision or change: the board moved T-086 (the heart icon on the likes bar) to Planning and chose the Project Lead's recommendations: drawn by script (no PixelLab, 0 generations) and matching the HUD's new comic look (thick dark outline like the "LIKES" text, sized to it). T-086 started with the Asset Generation Agent.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-086
+
+## 2026-10-14: T-086 done: the likes heart
+- Decision or change: the board playtested and approved it ("lgtm"). The heart next to "LIKES" is an 11x10 pixel heart drawn by script (no PixelLab, 0 generations) in flat Redgull red with a dark outline, shown at 2x, level with "LIKES". QA round 1 failed it: the shorter art moved "LIKES", "HYPE LV" and the combo counter 4 px down; round 2 kept the old row height (a 26 px heart box) and pinned the HUD positions in a test. QA round 2: all 6 pass. The rule that a task failing QA once moves to opus could not be applied: the model hook reads the task file on master, not on the task's branch, so the fix ran on sonnet.
+- Documents touched: `game/README.md`
+- Tasks: T-086 (done)
