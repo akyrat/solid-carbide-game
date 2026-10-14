@@ -1,0 +1,21 @@
+{
+  "description": "a single narrow Tokyo-style cyberpunk skyscraper tower at night, isometric, square footprint, stepped setback roof with a tall radio mast, dark purple concrete walls, wide horizontal bands of lit windows, vertical neon sign boards stacked on the right corner with abstract glowing shapes, no letters, pink and cyan neon glow drawn in pixels, retro pixel art",
+  "negative_description": "text, letters, words, kanji, numbers, logo, red, ground, street, road, car, people, sky, background",
+  "image_size": {
+    "width": 384,
+    "height": 400
+  },
+  "text_guidance_scale": 8,
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "view": "high top-down",
+  "direction": "south-east",
+  "isometric": true,
+  "no_background": true,
+  "color_image": {
+    "type": "base64",
+    "base64": "iVBORw0KGgoAAAANSUhEUgAAAHQAAAAECAYAAABfuBvmAAAApUlEQVR4nGOUEFf5z4AEODg4kbkMnGh8dnYOVHlOdhT+76faKHwB+YcofJmb4ij8l8ZvUfinGc1R+DZ/L6HwWfmZUPhsv5hR+Ex8v9Dk+VD4zKjeYeBkRPXP10veKPw5KRIo/Ibbq1H4WpvVUfgP0p+j8MuiClD4C0pR7Y9/dhKFf6ME1f8aIh9R+PvN+VH4jqjGMaCGzigY8mA0QocZGI1QhuEFAC/7HwRYO3pZAAAAAElFTkSuQmCC"
+  },
+  "seed": 64067
+}

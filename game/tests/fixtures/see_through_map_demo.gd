@@ -10,6 +10,8 @@ extends Node
 
 ## Where the car is put, in units from the map's centre (nose up, -y).
 @export var car_at := Vector2(27, 60)
+## The camera size (orthographic, half the visible height in units).
+@export var zoom := 20.0
 
 
 func _ready() -> void:
@@ -18,7 +20,7 @@ func _ready() -> void:
 	game.menu.start_button.pressed.emit()
 	await get_tree().process_frame
 	var run: Node2D = game.run
-	run.set_zoom(20.0)
+	run.set_zoom(zoom)
 	run.car.use_keyboard = false
 	run.car.scripted_input = [false, false, 0.0]
 	run.car.model.x = car_at.x

@@ -34,6 +34,8 @@ var view := "flat"
 ## Whether the node draws its placeholder box. The final art (a child Sprite2D,
 ## task T-064) sets it false; the cover test and the fade work the same.
 var draw_placeholder := true
+## The tower art of the block (building_towers.gd, task T-064), or null.
+var towers: Node2D = null
 
 var top_color := Color(0.22, 0.15, 0.38)
 var left_color := Color(0.15, 0.10, 0.27)

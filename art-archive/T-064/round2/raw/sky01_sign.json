@@ -1,0 +1,47 @@
+{
+  "file": "sky01_sign.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "negative_description": "text, letters, words, logo, red, ground, street, car, people, sky, fire",
+    "text_guidance_scale": 8,
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "side",
+    "isometric": false,
+    "color_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAHQAAAAECAYAAABfuBvmAAAApUlEQVR4nGOUEFf5z4AEODg4kbkMnGh8dnYOVHlOdhT+76faKHwB+YcofJmb4ij8l8ZvUfinGc1R+DZ/L6HwWfmZUPhsv5hR+Ex8v9Dk+VD4zKjeYeBkRPXP10veKPw5KRIo/Ibbq1H4WpvVUfgP0p+j8MuiClD4C0pR7Y9/dhKFf6ME1f8aIh9R+PvN+VH4jqjGMaCGzigY8mA0QocZGI1QhuEFAC/7HwRYO3pZAAAAAElFTkSuQmCC"
+    },
+    "seed": 64067,
+    "description": "tall vertical Japanese-style neon sign board, glowing pink abstract glyph shapes and stripes on a dark panel, pixel glow, no letters, no words",
+    "image_size": {
+      "width": 64,
+      "height": 192
+    },
+    "direction": "south",
+    "no_background": true,
+    "outline": "selective outline"
+  },
+  "prompt": "tall vertical Japanese-style neon sign board, glowing pink abstract glyph shapes and stripes on a dark panel, pixel glow, no letters, no words",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T12:32:26+00:00",
+  "image": {
+    "width": 64,
+    "height": 192,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "tasks/T-064-building-art.md"
+  ],
+  "task": "T-064",
+  "job_status": null,
+  "notes": "round 2 sample, call 3 of 3: vertical sign",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -1,0 +1,294 @@
+{
+  "task": "T-064",
+  "generator": "game/tools/build_buildings.py build (free, no PixelLab call)",
+  "source": "art-archive/T-064/raw/tower_01.png",
+  "palette": "art-archive/T-064/palette.png",
+  "geometry": {
+    "footprint_units": 2.0,
+    "wall_top": 40,
+    "wall_bottom": 316,
+    "wall_units": 8.62,
+    "band": [
+      178,
+      198
+    ],
+    "floor_period_px": 20
+  },
+  "clean_tower_check": {
+    "size": [
+      131,
+      350
+    ],
+    "transparent_corners": true,
+    "semi_transparent_pixels": 0,
+    "colors": 29,
+    "opaque_pixels": 39704,
+    "closest_to_redgull_red": 0.535,
+    "pass": true
+  },
+  "variants": [
+    {
+      "mirror": false,
+      "swap": false,
+      "height": 9,
+      "check": {
+        "size": [
+          131,
+          362
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 41252,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": false,
+      "height": 9,
+      "check": {
+        "size": [
+          131,
+          362
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 41252,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": false,
+      "swap": true,
+      "height": 9,
+      "check": {
+        "size": [
+          131,
+          362
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 41252,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": true,
+      "height": 9,
+      "check": {
+        "size": [
+          131,
+          362
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 41252,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": false,
+      "swap": false,
+      "height": 12,
+      "check": {
+        "size": [
+          131,
+          458
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 53636,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": false,
+      "height": 12,
+      "check": {
+        "size": [
+          131,
+          458
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 53636,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": false,
+      "swap": true,
+      "height": 12,
+      "check": {
+        "size": [
+          131,
+          458
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 53636,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": true,
+      "height": 12,
+      "check": {
+        "size": [
+          131,
+          458
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 53636,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": false,
+      "swap": false,
+      "height": 15,
+      "check": {
+        "size": [
+          131,
+          554
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 66020,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": false,
+      "height": 15,
+      "check": {
+        "size": [
+          131,
+          554
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 29,
+        "opaque_pixels": 66020,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": false,
+      "swap": true,
+      "height": 15,
+      "check": {
+        "size": [
+          131,
+          554
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 66020,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    },
+    {
+      "mirror": true,
+      "swap": true,
+      "height": 15,
+      "check": {
+        "size": [
+          131,
+          554
+        ],
+        "transparent_corners": true,
+        "semi_transparent_pixels": 0,
+        "colors": 27,
+        "opaque_pixels": 66020,
+        "closest_to_redgull_red": 0.535,
+        "pass": true
+      }
+    }
+  ],
+  "neon_swap_map": {
+    "96,20,104": [
+      20,
+      72,
+      140
+    ],
+    "100,50,190": [
+      0,
+      150,
+      214
+    ],
+    "170,36,168": [
+      0,
+      150,
+      214
+    ],
+    "160,90,255": [
+      0,
+      229,
+      255
+    ],
+    "255,64,200": [
+      0,
+      229,
+      255
+    ],
+    "20,72,140": [
+      96,
+      20,
+      104
+    ],
+    "0,150,214": [
+      170,
+      36,
+      168
+    ],
+    "0,229,255": [
+      160,
+      90,
+      255
+    ],
+    "190,255,255": [
+      255,
+      64,
+      200
+    ]
+  },
+  "mockups": {
+    "plan": {
+      "n": 4,
+      "cell": 6,
+      "pitch": 8
+    },
+    "dense": {
+      "n": 7,
+      "cell": 3,
+      "pitch": 4.5
+    }
+  }
+}

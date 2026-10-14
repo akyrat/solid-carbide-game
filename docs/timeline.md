@@ -940,3 +940,8 @@ Entry format:
 - Decision or change: T-064's full set (10 calls) and T-129's sample (5 calls) ran at the same time on the same account: balance 4943 before, 4928 after, 15 generations for 15 calls, 1 each. Each agent alone saw an unexplained gap; together they add up. T-064 drew its signs by script (abstract shapes, no glyphs), saving its 5 sign calls. City art spend so far: T-064 round 1 8, round 2 13 (3 sample + 10 full set), T-129 5.
 - Documents touched: none
 - Tasks: T-064, T-129
+
+## 2026-10-15: T-064 done: the skyscrapers
+- Decision or change: the board playtested the full skyscraper set and approved it ("looks great"). Every 30 by 30 block is 2 by 2 bases of very tall steel-and-glass towers in palette B (6 designs, each built from flat PixelLab facade and shopfront pieces slanted onto the walls by script at 32 px per unit, with a wall retune and script-drawn abstract signs with no letters), dissolving at the top, with a script-drawn pavement around each that never fades. Only the skyscraper covering the car fades. Collisions and the map layout are unchanged. PixelLab: round 1 (dense narrow towers, archived) 8 generations, round 2 13 (3 sample, 10 full set). QA's small leftovers (four unused palette-B sample images in game/art/buildings, a dead sort in mvp_map.gd, no test yet that a boulder behind a skyscraper is drawn under it) go to T-129, which builds on this work.
+- Documents touched: `game/README.md`, `docs/visual-style.md` (earlier)
+- Tasks: T-064 (done)
