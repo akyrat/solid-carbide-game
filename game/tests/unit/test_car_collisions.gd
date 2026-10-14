@@ -123,6 +123,7 @@ func test_car_bounces_off_a_boulder_3_units_across() -> void:
 func test_bounce_at_top_speed_is_still_small() -> void:
 	_wall(Rect2(-10, -70, 20, 2))
 	var car = _car()
+	car.tuning.top_speed_multiplier = 3.0  # pinned at the pre-experiment top speed, 33
 	await _settle()
 	var impact := _drive_until_hit(car, 400)
 	assert_gt(impact, 30.0, "hit near top speed (33)")
@@ -133,6 +134,7 @@ func test_glancing_hit_keeps_the_speed_along_the_wall() -> void:
 	# A wall to the car's left; the car drives up and to the left into it.
 	_wall(Rect2(-12, -40, 2, 80))
 	var car = _car()
+	car.tuning.top_speed_multiplier = 3.0  # pinned at the pre-experiment top speed, 33
 	car.model.rotation = deg_to_rad(-120.0)  # nose up and to the left
 	car.rotation = car.model.rotation
 	await _settle()
@@ -147,6 +149,7 @@ func test_glancing_hit_keeps_the_speed_along_the_wall() -> void:
 func test_driving_away_after_a_hit_works_as_before() -> void:
 	_wall(Rect2(-10, -12, 20, 2))
 	var car = _car()
+	car.tuning.top_speed_multiplier = 3.0  # pinned at the pre-experiment top speed, 33
 	await _settle()
 	_drive_until_hit(car, 200)
 	# Reverse away: S snaps to reverse cruise speed and climbs as on open ground.

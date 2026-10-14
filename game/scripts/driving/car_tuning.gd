@@ -16,7 +16,7 @@ var forward_speed := 11.0
 ## Body rotation rate before the sensitivity multiplier (degrees/s).
 var turn_speed := 202.0
 ## Top speed = forward_speed * top_speed_multiplier.
-var top_speed_multiplier := 3.0
+var top_speed_multiplier := 1.5
 ## Sets the ramp rate top / time, used for speeding up, braking and reverse (s).
 var time_to_top_speed := 2.3
 ## Coasting loses top speed * this per second.
@@ -77,7 +77,7 @@ const SETTINGS := [
 		"min": 4.0, "max": 25.0, "step": 0.1},
 	{"key": "top_speed_multiplier", "name": "Top speed multiplier", "unit": "x cruise",
 		"label": "Top speed as a multiple of cruise speed",
-		"tip": "Top speed = cruise speed x this. Game default: 11 x 3.0 = 33 units/s (Unity: 11 x 2.5 = 27.5).",
+		"tip": "Top speed = cruise speed x this. Game default: 11 x 1.5 = 16.5 units/s (board experiment 2026-10-14; was 3.0 = 33) (Unity: 11 x 2.5 = 27.5).",
 		"min": 1.0, "max": 4.0, "step": 0.05},
 	{"key": "time_to_top_speed", "name": "Time to top speed", "unit": "s",
 		"label": "Bigger = slower climb from cruise to top, and slower braking",

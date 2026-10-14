@@ -5,6 +5,9 @@ extends Node
 ## When above 0, the slider is set to this value right after pausing (T-093).
 @export var slider_value := 0.0
 
+## When true, the dynamic camera is switched on before pausing (T-124).
+@export var dynamic_camera := false
+
 var prototype: Node2D
 var _steps := 0
 
@@ -20,6 +23,8 @@ func _ready() -> void:
 func _on_stepped() -> void:
 	_steps += 1
 	if _steps == 30:
+		if dynamic_camera:
+			prototype.camera_follow.set_dynamic(true)
 		prototype.pause_screen.pause()
 		if slider_value > 0.0:
 			prototype.pause_screen.zoom_slider.value = slider_value

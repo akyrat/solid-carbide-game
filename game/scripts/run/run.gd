@@ -6,8 +6,9 @@ extends Node2D
 ## Physics runs in the flat top-down world (the map's Physics node and the
 ## car, under PhysicsWorld; neither is drawn). The map draws itself, and the
 ## View node draws the car on top of it, in the isometric view the drift
-## prototype starts in. The camera sits exactly on the drawn car (no rotation,
-## no smoothing).
+## prototype starts in. By default the camera sits exactly on the drawn car
+## (no rotation, no smoothing); the camera options (task T-123, `camera_follow`)
+## can add smoothing and the dynamic camera.
 ##
 ## The run scene connects the map's challenge signals and the car's drift
 ## state to the state's likes (XP) and levels (task T-037), and the car's
@@ -33,6 +34,8 @@ const TrickPopupsScript := preload("res://scripts/hud/trick_popups.gd")
 const LevelUpBurstScene := preload("res://scenes/run/level_up_burst.tscn")
 ## The drift marks (task T-117); their look and tuning live in the scene.
 const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
+## The camera options (task T-123): smoothing and the dynamic camera.
+const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 ## The drift smoke (task T-121); its look and tuning live in the scene.
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 
@@ -75,6 +78,10 @@ var drift_smoke: Node2D
 var zoom := ZOOM
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
+## The camera options (task T-123): where the camera is and its size. Off by
+## default; game_flow.gd reads the saved ones through load_camera_options().
+## The pause screen's controls (task T-124) call its API directly.
+var camera_follow = CameraFollowScript.new()
 ## Whether the run's map has challenges. Off in the MVP (Level design,
 ## Decisions, 2026-10-11); the default follows the map's CHALLENGES_ENABLED.
 ## Read by start_run() each time it builds a new map.
@@ -134,6 +141,9 @@ func _ready() -> void:
 	add_child(hud)
 	hud.bind(state)
 
+	camera_follow.base_size = zoom
+	camera_follow.size = zoom
+	camera_follow.changed.connect(_apply_zoom)
 	get_viewport().size_changed.connect(_apply_zoom)
 	_apply_zoom()
 	start_run()
@@ -175,7 +185,7 @@ func _build_world() -> void:
 	car.model.y = START_POSITION_UNITS.y
 	car.model.rotation = START_ROTATION
 	physics_world.add_child(car)
-	car.stepped.connect(sync_view)
+	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
 	# Drift smoke (T-121): from the same rear tyre places as the marks.
@@ -190,7 +200,7 @@ func _build_world() -> void:
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	map.car = car
-	sync_view()
+	sync_view(true)
 	car_sprite.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
 
@@ -211,12 +221,26 @@ func _on_level_up(_new_level: int) -> void:
 	level_up_burst.play()
 
 
-## Places the drawn car and the camera on the car's current position.
-func sync_view() -> void:
+## After each physics step: the drawn car, and the camera one step on.
+func _on_car_moved() -> void:
+	sync_view(false)
+
+
+## Places the drawn car on the car's current position, and the camera: straight
+## on it when snap_camera is true (or both camera options are off), otherwise
+## one physics step of the camera options toward it.
+func sync_view(snap_camera: bool = true) -> void:
 	var drawn := ISO_TRANSFORM * car.position
 	car_sprite.position = drawn
 	car_sprite.set_heading(car.rotation)
-	camera.position = drawn
+	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
+	if snap_camera:
+		camera_follow.snap(drawn, frac)
+	else:
+		camera_follow.step(drawn, frac, car.model.dt)
+	camera.position = camera_follow.position
+	if snap_camera or camera_follow.dynamic:
+		_apply_zoom()
 	# See-through buildings (T-034): the car's drawing (with its effects and
 	# popups) goes under the buildings that cover it and over the rest.
 	view_root.z_index = map.car_z_index(car.position / CarScript.PX_PER_UNIT, car.rotation)
@@ -227,11 +251,17 @@ func sync_view() -> void:
 ## Sets the camera zoom (Unity's orthographic size), as the pause screen's slider does.
 func set_zoom(orthographic_size: float) -> void:
 	zoom = orthographic_size
-	_apply_zoom()
+	camera_follow.set_base_size(orthographic_size)  # applies the zoom
+
+
+## Reads the saved camera options (task T-123) and applies them at once.
+func load_camera_options() -> void:
+	camera_follow.load_saved(CameraFollowScript.speed_fraction_of(car.model) if car != null else 0.0)
 
 
 ## Godot's zoom is a magnification: visible height in pixels / (2 * size * px per unit).
+## The size is the slider's zoom, or the dynamic camera's when it is on.
 func _apply_zoom() -> void:
 	var height := get_viewport().get_visible_rect().size.y
-	var z := height / (2.0 * zoom * CarScript.PX_PER_UNIT)
+	var z: float = height / (2.0 * camera_follow.size * CarScript.PX_PER_UNIT)
 	camera.zoom = Vector2(z, z)

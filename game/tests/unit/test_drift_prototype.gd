@@ -92,10 +92,10 @@ func test_input_map_binds_wasd_and_tab() -> void:
 func test_defaults_equal_unity_values_except_top_speed() -> void:
 	var t = CarTuning.new()
 	for key in UNITY_VALUES:
-		var expected: float = 3.0 if key == "top_speed_multiplier" else UNITY_VALUES[key]
+		var expected: float = 1.5 if key == "top_speed_multiplier" else UNITY_VALUES[key]
 		assert_almost_eq(float(t.get(key)), expected, 1e-12, key)
 	assert_almost_eq(t.forward_speed, 11.0, 1e-12)
-	assert_almost_eq(t.top_speed(), 33.0, 1e-12)
+	assert_almost_eq(t.top_speed(), 16.5, 1e-12)
 	assert_almost_eq(t.turn_rate(), 191.9, 1e-9)
 	for key in UNITY_VALUES:
 		assert_almost_eq(float(CarTuning.unity_values()[key]), UNITY_VALUES[key], 1e-12, "unity_values %s" % key)
@@ -157,7 +157,7 @@ func test_changing_a_slider_changes_the_movement() -> void:
 
 
 func _game_value(key: String) -> float:
-	return 3.0 if key == "top_speed_multiplier" else UNITY_VALUES[key]
+	return 1.5 if key == "top_speed_multiplier" else UNITY_VALUES[key]
 
 
 func test_reset_restores_every_game_value() -> void:
@@ -171,7 +171,7 @@ func test_reset_restores_every_game_value() -> void:
 	for key in UNITY_VALUES:
 		assert_almost_eq(float(p.car.tuning.get(key)), _game_value(key), 1e-12, "%s reset" % key)
 		assert_almost_eq(p.panel.sliders[key].value, _game_value(key), 1e-6, "%s slider reset" % key)
-	assert_almost_eq(p.car.tuning.top_speed_multiplier, 3.0, 1e-12)
+	assert_almost_eq(p.car.tuning.top_speed_multiplier, 1.5, 1e-12)
 	assert_almost_eq(p.zoom, 14.4, 1e-12)
 	assert_almost_eq(p.panel.sliders["camera_zoom"].value, 14.4, 1e-6)
 	assert_true(p.physics_interpolation, "interpolation back on")
