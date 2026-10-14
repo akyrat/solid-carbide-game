@@ -1,7 +1,7 @@
 ---
 id: T-137
 title: Test runs end themselves when hung, and parallel runs don't share settings files
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Enemies
@@ -46,4 +46,25 @@ Change no game behaviour and no game data. Work on your own branch and folder, a
 
 ## Result notes
 
-Written by the agent when it finishes.
+Time limit: **300 seconds** (a full run takes about 105 s, also with two at once). `game/tools/run_tests.sh` uses `timeout -k 5`; `run_tests.ps1` starts Godot with Start-Process and, past the limit, kills only that process tree (`taskkill /PID <its pid> /T /F`). Past the limit the runner prints `TIME LIMIT: the test run went past 300 seconds and was stopped ...` and exits 124. `GUT_TIME_LIMIT` (seconds) overrides it. Both runners applied to the import step too.
+
+Repeatable check: `bash game/tools/check_time_limit.sh [seconds]` (default 10) runs GUT on `game/tools/hang_fixture/test_hang.gd` (an endless loop, outside `tests/`, so the normal suite never runs it). It checks exit 124, the message naming the limit, and that no Godot process with `hang_fixture` on its command line is left. Result: TIME LIMIT CHECK PASSED. The PowerShell runner was checked by hand the same way (limit 10 s, exit 124, message printed).
+
+Tests that wrote under user:// (all now use `RunPaths.file(...)` from `tests/helpers/run_paths.gd`, which gives `user://test_runs/<process id>/<name>`; the folder is removed after the run by `tests/helpers/post_run.gd`, set as `post_run_script` in `.gutconfig.json`):
+- test_camera_options.gd (test_settings_t123.cfg)
+- test_pause_camera_controls.gd (test_settings_t124.cfg)
+- test_pause_screen.gd (test_settings_t015.cfg)
+- game/test_screen_flow.gd (test_settings_t055.cfg)
+- hud/test_hud_layout.gd (test_settings_t113.cfg)
+- run/test_run_combo.gd (test_settings_t081.cfg)
+- test_drift_marks.gd (test_settings_t117.cfg)
+- test_drift_smoke.gd (test_settings_t121.cfg)
+- test_mvp_map_no_challenges.gd (test_settings_t097.cfg)
+- test_car_sheets.gd (folder test_car_sheets, PNG files)
+- test_drift_prototype.gd and test_tricks.gd (pointed GameSettings at a non-existent file; now per-run too)
+- fixtures/pause_run_dynamic_demo.gd (screenshot demo, not in the suite; per-run too)
+No other file under tests/ mentions user://. Tests restore `GameSettings.path` to `settings.cfg` as before and never write it. After runs, `user://test_runs/` is empty.
+
+Parallel check: two full GUT runs at the same time, one from this folder and one from a temporary copy (game, docs, art-archive, .env) outside the repo, three rounds in a row: all six runs exit 0 (626 tests, 104 to 109 s each). A first attempt failed only because my copy lacked docs/; fixed by copying docs/. The copy is deleted.
+
+Results: full GUT suite 626/626 pass (57 scripts); Python tests `game/tools` 241 OK (1 skipped), `tools` 171 OK. game/README.md has two new sections ("Time limit (T-137)", "Per-run test files (T-137)"). No game behaviour or data changed. Godot's line-ending-only .import changes left uncommitted.
