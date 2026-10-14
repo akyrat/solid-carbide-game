@@ -51,3 +51,11 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 **Tests:** `game/tests/unit/enemies/test_minions.gd`: no combo = no extra; max combo wants `minions_wanted(t, mult)` (more than base) and that many really spawn; switch off = combo changes nothing; on by default. The old hook test (which asserted the T-044 placeholder state) was replaced. Full GUT suite: TESTS PASSED. All Python tests (game/tools and tools, 33 files): passed.
 
 **For the playtest:** build up a combo (drifting tricks) and watch the crowd grow towards about 1.75x (max in `data/combo.json`); note that a minion's contact hit cuts the combo, so the extra minions also push it back down. Compare with the switch off.
+
+## QA round 1 (QA/Integration Agent)
+
+- Criterion 1 (high combo spawns more, by the data's amount): PASS. `test_a_high_combo_wants_more_minions_by_the_data_amount` checks wanted == `minions_wanted(t, ComboData.spawn_multiplier(max))`, greater than base, and that many really spawn.
+- Criterion 2 (switch off, no difference): PASS. `test_with_the_switch_off_the_combo_changes_nothing`; also `test_no_combo_means_no_extra_spawning` and `test_the_switch_is_on_by_default`.
+- Criterion 3 (docs): PASS. `game/README.md` says how to flip it; `docs/enemies.md` diff is one added line in Content only (no Summary, Decisions or Open questions change; no data numbers changed; `data/*.json` untouched). No debug input or player-facing text in the diff. Note: the old Content line "has a hook in place but is not wired yet" (Spawning bullet) is now stale, a minor doc point for the Project Lead, not a criterion failure.
+- Criterion 4 (all tests): PASS. Full GUT suite: 582 passing, all tests passed. All Python tests in game/tools and tools passed.
+- T-044 test check: the only T-044 test removed is `test_combo_hook_multiplies_minions_wanted` (asserted multiplier stays 1.0 and a manual 1.5); replaced by the four new tests above. Nothing else removed or weakened.
