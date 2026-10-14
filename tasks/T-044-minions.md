@@ -1,7 +1,7 @@
 ---
 id: T-044
 title: Minions: spawn, chase the car, contact damage, die and drop coins
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -105,3 +105,4 @@ Written by the Enemy Behavior Agent (2026-10-14).
 - Docs: `git diff master -- docs/enemies.md` touches only the Content section (Summary, Decisions, Open questions unchanged); `game/README.md` has a new "Minions" section documenting `take_damage(amount: float)` for T-041 and T-042. Pass.
 - Tests, run by QA in this folder: GUT 573 of 573 pass (53 scripts, `TESTS PASSED`, exit 0); `game/tools` Python 235 OK (1 skipped); `tools` Python 130 OK. Pass.
 - Also checked: `game/data/enemies.json` is unchanged from `master`; no input handling (no `Input.`, `_input`, `_unhandled_input`, key or action checks) in the new enemy scripts, the fixture or the `run.gd` change, so no debug or cheat input. Godot's line-ending-only `.import` changes from the test run were left uncommitted.
+- 2026-10-14, needs-playtest → done: board playtest: LGTM
