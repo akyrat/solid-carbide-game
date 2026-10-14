@@ -1,7 +1,7 @@
 ---
 id: T-043
 title: Level-up offers: the 2 choices, and applying the one taken
-status: open
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Weapons
@@ -50,4 +50,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built the level-up offers (Weapon Behavior Agent).
+
+- Code: `game/scripts/weapons/level_up_offers.gd`, created by the rack (`weapons.gd` `bind()`) as `run.weapons.offers`. It listens to `RunState.level_up_choice_started`, works out the offers (`compute_offers()`), stores them in `current_offers` and emits `offers_ready(level, offers)`. `choose(id) -> bool` applies the choice through `rack.upgrade()`, emits `offer_taken(id)` and calls `state.choice_made()`. `run.gd` and `run_state.gd` unchanged.
+- Choice ids: `upgrade_gun`, `get_flamethrower`, `upgrade_flamethrower`. Order: the gun's first.
+- Playtest switch: `flamethrower_at_start` still works. A run that starts with the flamethrower owned offers `upgrade_gun` and `upgrade_flamethrower` from the first level-up (tested). I only reworded the switch's comment in `weapons.gd`.
+- Docs did not cover (simplest choice taken): (1) only one weapon left to offer: that one choice alone is offered; (2) nothing to offer: the choice is skipped by calling `state.choice_made()` at once, no `offers_ready`, so the screen never opens; (3) several levels at once: choices come one after another (T-037's queue); (4) an id not on offer is refused (false, nothing changes).
+- Offers only happen when `state.pause_on_level_up` is on (T-037/T-052); with it off, levels still rise with no choice.
+- Docs: `docs/weapons.md` Content gets "The level-up offers" and two stale "not built yet" lines are updated (Summary, Decisions, Open questions untouched); `game/README.md` gets "The level-up offers" for the UI Agent.
+- Tests: `game/tests/unit/weapons/test_level_up_offers.gd` (10 tests). Full GUT suite: 636 tests, all pass. Python tool tests: exit 0.

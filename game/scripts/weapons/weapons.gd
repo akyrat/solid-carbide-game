@@ -20,6 +20,7 @@ extends Node
 
 const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
 const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
+const LevelUpOffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
@@ -45,6 +46,8 @@ var weapons: Dictionary = {}
 ## Projectiles in flight: nodes with step(dt) and is_done(); removed when done.
 var projectiles: Array = []
 var depth = EnemyDepthScript.new()
+## The level-up's weapon choices (level_up_offers.gd), made in bind().
+var offers: Node = null
 
 
 func _init() -> void:
@@ -76,6 +79,10 @@ func bind(the_run: Node) -> void:
 	run.add_child(draw_root)
 	run.move_child(draw_root, run.view_root.get_index())
 	run.world_rebuilt.connect(_on_world_rebuilt)
+	offers = LevelUpOffersScript.new()
+	offers.name = "LevelUpOffers"
+	add_child(offers)
+	offers.bind(self)
 	if run.car != null:
 		_on_world_rebuilt()
 
@@ -92,7 +99,7 @@ func reset_for_run() -> void:
 	for w in weapons.values():
 		w.reset_for_run()
 	# Playtest switch (T-042, data/playtest.json "flamethrower_at_start"): gives
-	# the flamethrower with the level-up's own call until T-043 offers it.
+	# the flamethrower with the level-up's own call (the level-up then offers the flamethrower's upgrades).
 	if ExhaustFlamethrowerScript.playtest_switch_on():
 		upgrade("flamethrower")
 
