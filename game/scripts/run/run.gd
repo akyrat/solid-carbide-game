@@ -171,13 +171,6 @@ func _ready() -> void:
 	start_run()
 
 
-## T-072: the car damage effect, over the car, in the car's own view layer.
-func _on_car_damaged(_amount: float) -> void:
-	var e: Sprite2D = preload("res://scripts/enemies/effect_flipbook.gd").make("car_damage", 4, 14.0)
-	view_root.add_child(e)
-	e.position = car_sprite.position + Vector2(0, -8)
-
-
 ## Starts a fresh run: a new map (every challenge open again, when challenges
 ## are on; meteor boulders from the last run gone), the car back
 ## at the start, and the state reset (full health, 8:00, 0 coins).
@@ -242,6 +235,11 @@ func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2
 ## Feeds the car's drift state to the run's likes after each physics step.
 func _on_car_stepped() -> void:
 	state.drift_step(car.model.is_drifting, car.model.dt)
+
+
+## T-072: the car took damage: the drawn car shakes briefly (its drawing only).
+func _on_car_damaged(_amount: float) -> void:
+	car_sprite.shake()
 
 
 ## The player levelled up: the car gives off the level-up burst (T-112).

@@ -37,6 +37,10 @@ GAME = Path(__file__).resolve().parent.parent
 REPO = GAME.parent
 OUT_DIR = GAME / "art" / "effects"
 ARCHIVE = REPO / "art-archive" / "T-072"
+# The board dropped the hit, death and car damage effects after playing them (2026-10-15): only
+# the coin goes to the game; the other sheets are kept, not deleted, in the archive.
+UNUSED = ARCHIVE / "unused_effects"
+GAME_SHEETS = ("coin",)
 CLEAR = (0, 0, 0, 0)
 OUTLINE = (13, 18, 31)
 
@@ -290,6 +294,8 @@ def previews(all_sheets, archive=ARCHIVE):
 
 def build(out_dir=OUT_DIR, archive=ARCHIVE):
     out_dir.mkdir(parents=True, exist_ok=True)
+    unused = archive / "unused_effects"
+    unused.mkdir(parents=True, exist_ok=True)
     all_sheets = sheets()
     notes = {
         "coin": "Hand-drawn 8 x 10 fill plus a dark outline, in the PixelLab sample's gold palette. The sample (art-archive/T-072/sample/coin_sample.png) was too big, tilted, unoutlined and had grey stray pixels.",
@@ -298,7 +304,8 @@ def build(out_dir=OUT_DIR, archive=ARCHIVE):
         "car_damage": "White and cyan flash, cyan and pink spark rays with yellow debris, then specks. No red. 4 frames.",
     }
     for name, rows in all_sheets.items():
-        write_png(out_dir / f"{name}.png", rows)
+        dest = out_dir if name in GAME_SHEETS else unused
+        write_png(dest / f"{name}.png", rows)
         frames, (fw, fh) = SETS[name]
         rec = {
             "task": "T-072", "what": notes[name],
@@ -306,15 +313,16 @@ def build(out_dir=OUT_DIR, archive=ARCHIVE):
             "frames": frames, "frame_size": [fw, fh], "prompt": None,
             "references": ["docs/visual-style.md (technical rules, palette, glow, Effects)", "game/scripts/enemies/coin_sprite.gd (placeholder)"],
         }
-        (out_dir / f"{name}.json").write_text(json.dumps(rec, indent=1) + "\n", encoding="utf-8")
+        (dest / f"{name}.json").write_text(json.dumps(rec, indent=1) + "\n", encoding="utf-8")
     previews(all_sheets, archive)
     return out_dir
 
 
-def check(out_dir=OUT_DIR):
+def check(out_dir=OUT_DIR, archive=ARCHIVE):
     res = []
     for name in SETS:
-        _, _, rows = rules.decode_png((Path(out_dir) / f"{name}.png").read_bytes())
+        src = Path(out_dir) if name in GAME_SHEETS else Path(archive) / "unused_effects"
+        _, _, rows = rules.decode_png((src / f"{name}.png").read_bytes())
         res += check_sheet_rows(name, rows)
     return res
 

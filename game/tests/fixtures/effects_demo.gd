@@ -1,13 +1,9 @@
 extends Node
-## Screenshot-sequence fixture (task T-072): a minion beside the car is hit, dies and drops coins,
-## then the car takes damage. Saves PNGs of the whole window at set frames into the folder in the
+## Screenshot fixture (task T-072): a minion beside the car takes a hit (a brief red tint, then normal). Saves PNGs of the whole window at set frames into the folder in the
 ## environment variable EFFECTS_OUT, then quits. Needs a real window (not --headless):
 ##   EFFECTS_OUT=C:/some/folder godot --path game res://tests/fixtures/effects_demo.tscn
 
-const SHOTS := {9: "00_before", 13: "01_hit_a", 17: "02_hit_b", 21: "03_hit_c", 25: "04_hit_d",
-	41: "10_death_a", 47: "11_death_b", 53: "12_death_c", 59: "13_death_d", 66: "14_death_e",
-	73: "15_death_f", 100: "20_coins", 121: "30_damage_a", 125: "31_damage_b", 129: "32_damage_c",
-	133: "33_damage_d"}
+const SHOTS := {9: "00_before", 13: "01_hit_tinted", 21: "02_after_tint"}
 
 var _n := 0
 var _run: Node2D
@@ -38,13 +34,9 @@ func _process(_delta: float) -> void:
 		_run.minions.update_drawing()
 	if _n == 12:
 		_minion.take_damage(1.0)
-	if _n == 40:
-		_minion.take_damage(100.0)
-	if _n == 120:
-		_run.state.damage_car(5.0)
 	if SHOTS.has(_n) and _out != "":
 		_save.call_deferred(SHOTS[_n])
-	if _n >= 140:
+	if _n >= 30:
 		get_tree().quit()
 
 

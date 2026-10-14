@@ -31,8 +31,6 @@ const SEPARATION_UNITS := 1.2
 ## Emitted once, when health reaches 0. `minion` is this node (freed at the
 ## end of the frame), `position_units` where it died (flat world, units).
 signal died(minion: Node, position_units: Vector2)
-## Emitted when a hit leaves it alive (T-072's hit effect plays at it).
-signal hurt(minion: Node, position_units: Vector2)
 
 var max_health := 1.0
 var health := 1.0
@@ -42,6 +40,8 @@ var contact_damage_interval := 1.0
 var knockback := 0.0
 ## The isometric drawing, owned by this minion (freed with it).
 var sprite: Node2D = null
+## The brief red tint when hit (hit_tint.gd, T-072).
+var hit_tint: Node = null
 ## Seconds until this minion can damage the car again.
 var contact_cooldown := 0.0
 ## Which way it walks round an obstacle it meets head-on: 1 or -1.
@@ -76,6 +76,7 @@ func _ready() -> void:
 	col.name = "Body"
 	col.shape = shape
 	add_child(col)
+	hit_tint = preload("res://scripts/enemies/hit_tint.gd").attach(self)
 
 
 func _exit_tree() -> void:
@@ -102,8 +103,8 @@ func take_damage(amount: float) -> void:
 	health = maxf(health - amount, 0.0)
 	if health <= 0.0:
 		_die()
-	else:
-		hurt.emit(self, position_units())
+	elif hit_tint != null:
+		hit_tint.flash()  # T-072: a brief red tint
 
 
 func is_dead() -> bool:

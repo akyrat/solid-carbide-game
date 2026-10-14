@@ -39,9 +39,11 @@ class EffectsArtTest(unittest.TestCase):
             a1, a2 = Path(t1), Path(t2)
             b.build(a1 / "o", a1 / "a")
             b.build(a2 / "o", a2 / "a")
+            self.assertEqual([p.name for p in (a1 / "o").glob("*.png")], ["coin.png"])
             for name in b.SETS:
-                self.assertEqual((a1 / "o" / f"{name}.png").read_bytes(), (a2 / "o" / f"{name}.png").read_bytes())
-            self.assertTrue(all(r[1] for r in b.check(a1 / "o")))
+                d = "o" if name in b.GAME_SHEETS else "a/unused_effects"
+                self.assertEqual((a1 / d / f"{name}.png").read_bytes(), (a2 / d / f"{name}.png").read_bytes())
+            self.assertTrue(all(r[1] for r in b.check(a1 / "o", a1 / "a")))
 
 
 if __name__ == "__main__":

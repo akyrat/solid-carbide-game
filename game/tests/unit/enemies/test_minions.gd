@@ -368,43 +368,71 @@ func test_placeholders_avoid_redgull_red() -> void:
 	assert_true(body.g > body.r and body.g > body.b, "the minion is green")
 
 
-# ---- T-072: the hit, death, coin and car damage art ----
 
-func _effects_in(sp: Node) -> Array:
-	return sp.draw_root.get_children().filter(func(c): return c is Sprite2D)
+# ---- T-072: the coin art and the brief red tint ----
 
-
-func test_a_hit_that_leaves_it_alive_plays_the_hit_effect() -> void:
+func _live_minion() -> Node:
 	spawner.enabled = false
-	var m: Node = spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4, 0))
-	var before := _effects_in(spawner).size()
+	return spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4, 0))
+
+
+func test_a_damaged_minion_is_tinted_briefly_then_back_to_normal() -> void:
+	var m := _live_minion()
+	assert_eq(m.sprite.modulate, Color.WHITE)
 	m.take_damage(1.0)
-	var fx := _effects_in(spawner)
-	assert_eq(fx.size(), before + 1, "one hit effect")
-	assert_eq(fx[fx.size() - 1].hframes, 4)
+	assert_eq(m.sprite.modulate, HitTint.TINT, "tinted at once")
+	m.hit_tint._process(HitTint.DURATION * 0.5)
+	assert_eq(m.sprite.modulate, HitTint.TINT, "still tinted halfway")
+	m.hit_tint._process(HitTint.DURATION)
+	assert_eq(m.sprite.modulate, Color.WHITE, "back to normal")
+	assert_false(m.hit_tint.is_active())
 
 
-func test_death_plays_the_death_effect_and_still_drops_coins() -> void:
-	spawner.enabled = false
-	spawner._coins["drop_chance"] = 1.0
-	var m: Node = spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4, 0))
+func test_hit_tint_leaves_another_tint_alone() -> void:
+	var m := _live_minion()
+	var orange := Color(1, 0.62, 0.38, 1)
+	m.sprite.modulate = orange
+	m.take_damage(1.0)
+	assert_eq(m.sprite.modulate, orange, "the flamethrower's orange is not replaced")
+	# red first, then orange (the flamethrower's order): the red ending must not clear the orange
+	m.sprite.modulate = Color.WHITE
+	m.take_damage(1.0)
+	m.sprite.modulate = orange
+	m.hit_tint._process(1.0)
+	assert_eq(m.sprite.modulate, orange)
+
+
+func test_the_kill_hit_does_not_tint_and_the_tint_is_not_redgull_red() -> void:
+	var m := _live_minion()
 	m.take_damage(1000.0)
-	var six := _effects_in(spawner).filter(func(c): return c.hframes == 6)
-	assert_eq(six.size(), 1, "one death effect")
-	assert_gt(spawner.coins.size(), 0, "coins still drop")
+	assert_false(m.hit_tint.is_active())
+	var t: Color = HitTint.TINT
+	var redgull := Color(0.86, 0.1, 0.16)
+	var sat := (t.get_luminance() * 0.0) + (maxf(t.r, maxf(t.g, t.b)) - minf(t.r, minf(t.g, t.b))) / maxf(t.r, 0.001)
+	assert_gt(Vector3(t.r, t.g, t.b).distance_to(Vector3(redgull.r, redgull.g, redgull.b)), 0.5, "far from Redgull red")
+	assert_lt(sat, 0.4, "a slight hue, not a saturated red")
 
 
-func test_car_damage_plays_the_car_damage_effect_in_the_view() -> void:
-	var before: int = run.view_root.get_children().filter(func(c): return c is Sprite2D and c.hframes == 4).size()
+func test_coin_art_has_no_redgull_red() -> void:
+	var img: Image = preload("res://art/effects/coin.png").get_image()
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			if c.a > 0.0:
+				assert_false(c.r > 0.6 and c.g < 0.35 and c.b < 0.35)
+
+
+func test_car_damage_shakes_only_the_drawn_car_then_settles() -> void:
+	var cs: Sprite2D = run.car_sprite
+	var base: Vector2 = cs.offset
+	var pos: Vector2 = cs.position
+	var car_pos: Vector2 = run.car.position
 	run.state.damage_car(5.0)
-	var after: int = run.view_root.get_children().filter(func(c): return c is Sprite2D and c.hframes == 4).size()
-	assert_eq(after, before + 1)
-
-
-func test_effect_frees_itself_after_its_last_frame() -> void:
-	var fx: Sprite2D = preload("res://scripts/enemies/effect_flipbook.gd").make("enemy_hit", 4, 10.0)
-	add_child(fx)
-	fx._process(0.15)
-	assert_eq(fx.frame, 1)
-	fx._process(0.3)
-	assert_true(fx.is_queued_for_deletion())
+	assert_true(cs.is_shaking())
+	cs._process(0.03)
+	assert_ne(cs.offset, base, "the drawing moved")
+	assert_eq(cs.position, pos, "the node's position is untouched")
+	assert_eq(run.car.position, car_pos, "the car itself is untouched")
+	cs._process(0.5)
+	assert_false(cs.is_shaking())
+	assert_eq(cs.offset, base, "settled back")
