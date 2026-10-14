@@ -1,7 +1,7 @@
 ---
 id: T-045
 title: The kaiju: arrives at the boss time, can be damaged at any time, its death wins the run
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -56,4 +56,28 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Enemy Behavior Agent, 2026-10-14.**
+
+**What I built** (all in `game/scripts/enemies/`, details in `game/README.md`, "The kaiju"):
+- `kaiju.gd`: the kaiju body, built like a minion so the weapons treat both the same: a `CharacterBody2D` on layer 3 (`enemies`), mask 1 (obstacles), in the groups `enemies` and `kaiju`, with the same `take_damage(amount)`, `position_units()`, `health`, `max_health` and `is_dead()`. It walks straight at the car at the data's 3 units/s and slides along/round buildings and boulders (the minion's rule); contact damage 20 once a second with a 16 units/s knockback away from it (the minion's contact code); a `health_changed` signal on every hit; `died` once at 0.
+- `kaiju_boss.gd` (`run.kaiju_boss`, child `Kaiju` of the run): makes the kaiju appear on the run's `boss_time`, once per run, at a random point just off-screen (its whole drawing out of view), on the map and clear of buildings and boulders; steps it once per physics step (pausable; nothing after the run ends); removes it on a new run. On death it adds the kaiju's 10 coins (`EnemyData.kaiju_coins_on_defeat()`) through `RunState.add_coins()` and **then** calls `RunState.kaiju_killed()`, so `run_ended("win", coins)` includes them. For the HUD it relays `kaiju_appeared`, `kaiju_health_changed(health, max_health)` (once on arrival, then each hit) and `kaiju_defeated(coins)`, plus `kaiju_health()` / `kaiju_max_health()`.
+- `kaiju_sprite.gd`: the placeholder, a dark slate green Godzilla-style figure drawn in code (lighter belly, pale cyan back plates, yellow eyes; no Redgull red), 4 units across on the ground and 7 units tall, facing the way it walks, stomping. It draws into the minions' Y-sorted `Enemies` node and joins the buildings' depth order through `enemy_depth.gd`.
+- `game/scripts/run/run.gd`: 9 added lines only (preload, `kaiju_boss` var, create and bind it after the minions). No minion file and no `run_state.gd` changed. No balancing number changed.
+
+**Playtest switch** (not a key, not player-facing): `game/data/playtest.json`, `"kaiju_early_arrival": { "enabled": true, "after_seconds": 30 }`. On this branch it is **on**: the kaiju arrives 30 s into the run. **To switch it back, set `"enabled": false`** (the kaiju then arrives at the boss time, 7 minutes in). Only the kaiju's arrival moves; the clock, the minions' growth and the `boss_time` signal are unchanged, and a later `boss_time` brings no second kaiju. It must be off before the MVP ships.
+
+**Tests:** `game/tests/unit/enemies/test_kaiju.gd`, 19 tests: boss time bringing it just off-screen and walking towards the car (criterion 1); weapon damage through `take_damage()` lowering its health right after it appears, with both health signals, and a physics query on mask 4 finding its body (criterion 2); damage to 0 calling `kaiju_killed()` exactly once, with its coins added before the run ends (criterion 3, two tests: one on the real run state, one with a counting stand-in); contact damage at the data's rate and knockback away from it, the car moving away (criterion 4); plus walking round a building, no damage without touching, pause, after the run ends, a new run, collision layers, draw order, size and no red, the playtest switch and its file.
+- Full GUT suite (`bash game/tools/run_tests.sh`): **598/598 passed**, TESTS PASSED (with the switch on).
+- Python tool tests: `game/tools` **241 OK** (1 skipped); `tools` **130 OK**.
+
+**Screenshot:** `screenshots/kaiju.png` (git-ignored; copy committed at `art-archive/T-045/screenshots/kaiju.png`), from `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_demo.tscn screenshots/kaiju.png 20`: the placeholder kaiju beside the car in the gravel square, with four minions for scale, in a run started from the main menu.
+
+**Docs:** `docs/enemies.md` (Content: new "The kaiju (built in task T-045)"; Summary, Decisions and Open questions untouched), `game/README.md` (new "The kaiju" section; small pointers in the folder table, Game data and Minions' damage section).
+
+**For the board's playtest:** press Start and wait 30 s; the kaiju walks in from a screen edge at half a minion's speed. Look at: its size on screen (4 x 7 units, about 4 car widths across; I made it smaller than my first try, which hid its head off the top of the screen when it reached the car); its look as a placeholder; how it chases you through the streets (it walks round buildings like the minions, it does not walk through them); and the contact hit (20 health and a strong knockback). There are no weapons yet, so it cannot be killed in play; that is covered by the tests.
+
+**Open questions for the board:**
+- Should the kaiju walk round buildings (as built, like the minions) or straight through them, being a giant? Not decided in the docs; I kept the minions' rule.
+- Its placeholder size (4 units across, 7 tall) is mine; the final art task will settle it.
+
+Board review files: screenshots/kaiju.png, art-archive/T-045/screenshots/kaiju.png, game/data/playtest.json
