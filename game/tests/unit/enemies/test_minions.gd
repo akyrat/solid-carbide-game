@@ -330,7 +330,7 @@ func test_placeholders_avoid_redgull_red() -> void:
 	var sprite_script := preload("res://scripts/enemies/minion_sprite.gd")
 	var coin_script := preload("res://scripts/enemies/coin_sprite.gd")
 	var colors := [sprite_script.BODY_COLOR, sprite_script.BELLY_COLOR, sprite_script.LEG_COLOR,
-		sprite_script.OUTLINE_COLOR, sprite_script.EYE_COLOR, sprite_script.SHADOW_COLOR,
+		sprite_script.OUTLINE_COLOR, sprite_script.EYE_COLOR,
 		coin_script.FACE_COLOR, coin_script.EDGE_COLOR, coin_script.SHINE_COLOR,
 		coin_script.OUTLINE_COLOR, coin_script.SHADOW_COLOR]
 	for c in colors:

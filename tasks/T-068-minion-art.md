@@ -123,3 +123,7 @@ Written by the Asset Generation Agent (2026-10-14). Round 1: SAMPLE ONLY; the bo
 - **Screenshot:** art-archive/T-068/screenshot_minions.png (minions around the car, facing the way they walk). Review images: review_all8_directions_dark/light .gif and .png (all 8 directions animated), and earlier ones.
 - **Honest notes:** the walk is a lively trot with short legs; the S view's body turns a little. N view's head turns slightly. Mirrors make the SW/W/NW lizards face the same way light falls reversed; judged in a playtest.
 - **Tests after the LIFT tweak:** one run showed 583 of 584 (one failure I could not reproduce); two reruns gave 584 of 584 passing. I did not identify which test flaked.
+
+### Board tweak (2026-10-15)
+
+Board, word for word: "remove the shadows from the minions please". Changed: `minion_sprite.gd` no longer draws a shadow (removed from the art drawing and from the placeholder fallback, and its `SHADOW_COLOR` constant); the red-check test in `test_minions.gd` no longer lists it; `game/README.md` says there is no shadow. The coin's shadow is untouched. The review GIFs and PNGs only show the sprite sheets, so they never had a shadow; the in-game screenshot art-archive/T-068/screenshot_minions.png was retaken. GUT 584 of 584 passing, Python tool tests 246 OK (1 skipped). Status left in-qa.

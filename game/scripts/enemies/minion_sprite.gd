@@ -6,14 +6,13 @@ extends Node2D
 ## 16 screen pixels per unit). Five directions are drawn (south, south-east,
 ## east, north-east, north); south-west, west and north-west are the south-east,
 ## east and north-east sheets mirrored. If a sheet is missing, the T-044
-## placeholder shape is drawn instead. No Redgull red.
+## placeholder shape is drawn instead. No shadow under it (board, 2026-10-15). No Redgull red.
 
 const BODY_COLOR := Color(0.55, 0.80, 0.45)
 const BELLY_COLOR := Color(0.70, 0.90, 0.55)
 const LEG_COLOR := Color(0.30, 0.52, 0.28)
 const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
 const EYE_COLOR := Color(0.40, 0.95, 0.95)
-const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)
 
 const FRAME_SIZE := 48
 const FRAME_COUNT := 8
@@ -82,7 +81,6 @@ func _draw() -> void:
 
 
 func _draw_art(tex: Texture2D, mirrored: bool) -> void:
-	_ellipse(Vector2.ZERO, 8.0, 3.5, SHADOW_COLOR)
 	var src := Rect2(frame_for(_walk) * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
 	var size := FRAME_SIZE * ART_SCALE
 	var w := -size if mirrored else size
@@ -93,8 +91,6 @@ func _draw_placeholder() -> void:
 	var f := facing
 	var side := f.orthogonal()
 	var lift := Vector2(0, -5)
-	# Shadow on the ground.
-	_ellipse(Vector2.ZERO, 9.0, 4.0, SHADOW_COLOR)
 	# Legs: four short stubs, front pair and back pair swinging opposite.
 	var swing := 2.0 if _walk < 0.5 else -2.0
 	for k in [[1.0, 1.0], [1.0, -1.0], [-1.0, 1.0], [-1.0, -1.0]]:
