@@ -29,6 +29,8 @@ A task is not done until every document listed in documents_affected has been up
 
 **Blocked until T-044 (the minions, with placeholders) is done.**
 
+**The board's review of the sample (board, 2026-10-14):** the board likes the sample lizard (`art-archive/T-068/raw/minion_se_sample.png`): keep it, colours and all, as the base for everything. It wants it walking on all fours, animated, in 8 directions (5 drawn, 3 mirrored), with **7 walk frames** per direction instead of 4. Next step, with the board's go: the 8 rotations from the sample plus the 7-frame walk in one direction, for the board's review (about 9 generations). Only after the board approves that: the walk in the other 4 drawn directions (about 28 more), then into the game for a playtest. The sample-round "one round only" rule is replaced by these steps; report problems rather than regenerating, unless the board says so.
+
 The MVP minion, as Visual style, Decisions describes it: a light green (not too bright) scaled lizard walking on four legs towards the player. Propose how many directions and walk frames it needs. Swap it in for T-044's placeholder, facing the way it walks.
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
