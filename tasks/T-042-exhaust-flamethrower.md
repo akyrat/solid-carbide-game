@@ -4,6 +4,7 @@ title: The exhaust flamethrower: fires only while drifting
 status: in-progress
 from: project-lead
 to: weapon-behavior
+lead: Enemies
 epic: weapons
 milestone: mvp
 user_facing_text: no
