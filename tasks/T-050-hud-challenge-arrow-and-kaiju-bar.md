@@ -1,7 +1,7 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead:
