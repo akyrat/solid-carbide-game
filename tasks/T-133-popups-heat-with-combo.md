@@ -1,7 +1,7 @@
 ---
 id: T-133
 title: Trick popups heat up with the combo at x2, x3 and x4
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 epic: hud-menus
@@ -88,4 +88,4 @@ The fixture alone: `bash game/tools/screenshot.sh res://tests/fixtures/popups_he
 - Criterion 7: `game/README.md` "Heat steps" bullet and `docs/hud-and-menus.md` Trick popups paragraph describe all steps.
 - Observation for the board (not a fail): at game scale the small extended-drift popup's orange "+0.05" at steps 2 and 3 is readable but muddy: the "+" and the digits' holes nearly close up and the orange with its black outline reads as a blob next to the crisp black name. Worth judging in the playtest; the agent's suggested cheap fix (keep the small popup's amount black, let the ring carry the step) would solve it. Also confirmed the agent's note that step-3 flames on a stacked popup can overlap the bottom of the popup above.
 - Godot's line-ending-only `.import` changes from the test runs were not committed.
-
+- 2026-10-14, needs-playtest → done: board playtest: LGTM
