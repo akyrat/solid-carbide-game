@@ -1070,3 +1070,8 @@ Entry format:
 - Decision or change: the board dropped the dev timer setting it asked for earlier. For T-045's playtest the kaiju arrives 30 s into the run; once the board has seen it spawn, take damage, damage the car and win the run when killed, it approves the merge, and the arrival is set back to 7 minutes right before merging. T-045 merges master first, so the gun and flamethrower can kill it. T-045's QA round 2 had failed only on a duplicated section in `game/README.md`, fixed in this round.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-045
+
+## 2026-10-15: No routing around refused actions; test-run time limit and per-run settings files; the flamethrower switch stays on
+- Decision or change: the board took the Project Lead's recommendations. A common rule for every agent in `CLAUDE.md`: when an action is refused, an agent never gets around it with another tool; it stops and tells the Project Lead, who brings it to the board (after an agent used `taskkill` when stopping its own hung Godot test run was refused). New tooling ticket T-137: the test runners stop hung runs after a time limit, and tests that write `user://` files get per-run files so parallel runs from different folders don't fail at random. The `flamethrower_at_start` playtest switch stays on in master until T-043 offers the flamethrower at a level-up. The board played the T-045 kaiju build ("good"): it merges once QA passes, with the kaiju set back to 7 minutes first.
+- Documents touched: `CLAUDE.md`
+- Tasks: T-137, T-045

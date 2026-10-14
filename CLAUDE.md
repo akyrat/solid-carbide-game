@@ -91,6 +91,7 @@ Nothing about the game gets changed outside a task file, except documentation an
 - Game decisions live in the documents, and the documents are the source of truth. Agent specifications describe roles and responsibilities only, never game details.
 - Ideas for the game always come from the board, never from the agents. Agents build and document the board's ideas and do not invent game content.
 - Every agent that writes code also writes tests for that code, and runs them before handing a task over.
+- When an action is refused (by the permission system or a hook), an agent never gets around it with another tool or command. It stops and tells the Project Lead what it wanted to do and why; the Project Lead brings it to the board. (board, 2026-10-15)
 - Any agent can send the Project Lead a request about how the team works (for example, creating a new agent), saying what it wants and why. The Project Lead brings it to the board, and the board decides.
 - The "gets work from", "hands work to" and "collaborates with" relationships are guidelines for how agents are typically expected to work, not strict rules. Receiving work from an agent doesn't prevent sending work to it, and the other way around.
 - Each agent keeps these relationships as originally written and also keeps its own working copy, which it updates from experience so it reflects how it actually works. Over time the working copy may move away from hand-offs toward naming the areas where agents overlap and how they interact.
