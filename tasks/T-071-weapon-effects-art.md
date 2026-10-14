@@ -1,7 +1,7 @@
 ---
 id: T-071
 title: Art: gun bullets, exhaust flames and burning
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead:

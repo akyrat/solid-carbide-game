@@ -19,10 +19,11 @@ extends Node
 ## depth order with the minions' rule (enemy_depth.gd).
 
 const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
+const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
-const WEAPON_SCRIPTS := [StartingGunScript]
+const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript]
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -59,6 +60,10 @@ func _init() -> void:
 var gun: Node:
 	get:
 		return weapons.get("gun")
+## The exhaust flamethrower (flamethrower/exhaust_flamethrower.gd).
+var flamethrower: Node:
+	get:
+		return weapons.get("flamethrower")
 
 
 ## Binds the rack to a run scene (run.gd): its state and car, and a draw root
@@ -86,6 +91,10 @@ func reset_for_run() -> void:
 	clear_projectiles()
 	for w in weapons.values():
 		w.reset_for_run()
+	# Playtest switch (T-042, data/playtest.json "flamethrower_at_start"): gives
+	# the flamethrower with the level-up's own call until T-043 offers it.
+	if ExhaustFlamethrowerScript.playtest_switch_on():
+		upgrade("flamethrower")
 
 
 func clear_projectiles() -> void:

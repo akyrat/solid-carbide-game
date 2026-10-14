@@ -1,0 +1,4 @@
+{
+  "_comment": "Playtest switches: not game data and not player-facing. They let the board try work that the normal run cannot reach yet. flamethrower_at_start (task T-042): true gives the car the exhaust flamethrower at the start of every run, because there is no level-up offer yet (T-043); false (the game's rule) starts every run without it. Read by scripts/weapons/flamethrower/exhaust_flamethrower.gd.",
+  "flamethrower_at_start": true
+}

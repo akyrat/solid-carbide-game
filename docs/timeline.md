@@ -1060,3 +1060,8 @@ Entry format:
 - Decision or change: the board wants to give feedback from the task board without going to a Claude terminal. Dropping a card on another column now opens a small box for an optional note (Enter moves, Shift+Enter adds a line, Esc cancels and the card stays); the note travels with the move to the ticket's owner session (the watcher prints it as `(note: ...)`) and is added to the ticket's result notes. A refused move keeps the box open with the note and the reason. The note path from the server to the watcher already existed (the detail view's "Note for the move"); only the drag skipped it. Tooling, merged after QA: round 1, all 5 pass. This instance is named "Tools" (T-127).
 - Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
 - Tasks: T-136 (done)
+
+## 2026-10-14: T-042 done: the exhaust flamethrower
+- Decision or change: the board asked for the merge. Flames come out behind the car while it drifts (0.85 units/s or more, 0.2 s linger, half size growing to full over 1 s), hitting enemies inside for 2 at once and 2 every 0.2 s through `take_damage`; all 8 tiers apply from code. Before merging it was fitted into T-041's weapon plumbing (it extends `weapon.gd`, is in `WEAPON_SCRIPTS`, not owned at the start of a run) and gained the board's rule: an enemy reporting `hit_radius_units()` (the kaiju) burns on any overlap, minions on their centre. Drift smoke still shows with it. Playtest switch `flamethrower_at_start` in `game/data/playtest.json`, on as merged. QA round 2: all 7 pass. Now open: T-043, T-071.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-042 (done)

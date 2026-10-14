@@ -508,6 +508,18 @@ What the built gun does in the game. It follows Decisions and the Unity prototyp
 - The gun stops while the run is paused and once the run has ended.
 - The bullets are placeholders for now: a small cyan dot with a white core and a dark outline, drawn about half a unit above the ground. The final bullet art comes from a separate art task.
 
+#### The exhaust flamethrower (built in task T-042)
+
+What the built flamethrower does in the game. It follows Decisions (the prototype's Flame Exhaust with the board's fixes) and takes every number from [../game/data/weapons.json](../game/data/weapons.json). How the code is put together: `game/README.md`, "Weapons", "The exhaust flamethrower".
+
+- **Owning it:** a run starts without it. It is one of the car's weapons next to the gun, meant to be gained at a level-up (not built yet, T-043), which also applies its upgrade tiers. Until then a playtest switch (`game/data/playtest.json`, `flamethrower_at_start`) gives it to the car at the start of every run.
+- **On and off:** on while the car is drifting (W, or S, held with A or D: the car's own drift state) at 0.85 units per second or more, and for 0.2 seconds after the drift ends. Driving straight, steering while standing still, or drifting slower than that never lights it. From tier 8 it is always on. It stops while the run is paused.
+- **Area:** a rectangle behind the car, lined up with it, starting 0.175 units behind the car's centre. At full size it is 2.625 units wide and 3.25 deep, the same whichever way the car faces. Each drift starts it at half size; it grows to full size over 1 second of drifting (always full size at tier 8).
+- **Who is inside:** a minion is inside when its centre is. An enemy that reports its body size, such as the kaiju, is inside when any part of its body overlaps the area (board, 2026-10-14).
+- **Damage:** an enemy entering the flame takes 2 at once and flashes orange for 0.38 seconds; every 0.2 seconds while the flame is on, every enemy inside takes 2 more. No limit on how many it hits, no push. It burns every enemy, through their damage function.
+- **Tiers:** tiers 2, 4 and 6 make the area bigger (x1.2, x1.2, x1.3); tier 3 multiplies the damage by 1.2 (2.4 per hit, not rounded); tier 5 makes the flash 0.5 seconds longer; tier 7 makes the car turn 20% faster; tier 8 keeps it always on at full size.
+- **Look:** placeholder flames (orange and yellow squares) out of the exhaust, drawn just under the car, sized with the area. The drift smoke still shows with the flames (board, 2026-10-14). The final flame art replaces the placeholder.
+
 ### References
 
 - Unity prototype weapons report: [weapons/unity-weapons-report.md](weapons/unity-weapons-report.md).
@@ -725,7 +737,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `4977806ff786a0df7fb2662d0578db320aee307ea56087813d6c195a8cc0d697` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `c4779acf38c63bd9a936b154a0f1a05b230fe8049517789c863aa6e7b03f1263` |
-| `weapons.md` | `2193eb161c140e37c892cb47eaaf49b8f31a6241275943588749921032535ea9` |
+| `weapons.md` | `96e6852677cc4e2ad64e44d7a24e96ec37eb31e5d53667a11c27afddc5a03c25` |
 | `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
 | `visual-style.md` | `d3846891e82b4ea573307944aaed6cf6026cc72bf9d772e28e61218b42b88eef` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |

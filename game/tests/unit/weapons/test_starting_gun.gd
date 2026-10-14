@@ -5,6 +5,8 @@ extends GutTest
 ## a new run starts with the base gun; the weapon rack's plumbing.
 
 const RunScene := preload("res://scenes/run/run.tscn")
+## T-042's playtest switch would give the flamethrower too; these tests run the game's rule.
+const FlameScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const DT := 0.02  # one physics step (50 per second)
 const STEP_TOLERANCE := DT + 0.000001
 
@@ -19,6 +21,7 @@ var clock := 0.0
 
 
 func before_each() -> void:
+	FlameScript.playtest_override = 0
 	run = RunScene.instantiate()
 	add_child_autofree(run)
 	spawner = run.minions
@@ -32,6 +35,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	FlameScript.playtest_override = -1
 	get_tree().paused = false
 
 
