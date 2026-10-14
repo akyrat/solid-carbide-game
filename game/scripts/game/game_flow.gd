@@ -52,6 +52,7 @@ func start_run() -> void:
 	run.name = "Run"
 	add_child(run)  # the run starts itself in _ready()
 	run.set_zoom(GameSettingsScript.load_zoom())
+	run.load_camera_options()  # smoothing and the dynamic camera (T-123)
 	pause_screen = PauseScreenScript.new()
 	pause_screen.name = "PauseScreenLayer"
 	run.add_child(pause_screen)

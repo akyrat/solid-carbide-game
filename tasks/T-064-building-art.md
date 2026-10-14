@@ -230,3 +230,7 @@ Read: this task, Visual style (Scale 32 px per unit at scale 0.5, "Buildings, re
 9. Cost: PixelLab prices for these sizes are not published; 18 generations is an estimate, and I stop at the thresholds above.
 
 Nothing is generated until the board gives the go for the sample (3 calls).
+### The board's redesign, 2026-10-14
+
+After the dense narrow towers were ready to playtest, the board redesigned the buildings (see the Description). The first round's work stays on `task/T-064-building-art` and in `art-archive/T-064/` there; the next round decides whether to start a fresh branch from master or reuse that one, and keeps the archive either way.
+

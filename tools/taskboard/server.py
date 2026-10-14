@@ -21,6 +21,8 @@ import argparse
 import hashlib
 import json
 import os
+import re
+import subprocess
 import sys
 import threading
 import urllib.request
@@ -37,6 +39,7 @@ APP = "solid-carbide-board"
 PAGE = HERE / "taskboard.html"
 DEFAULT_PORT = 8765
 MOVE_LOCK = threading.Lock()
+TASK_BRANCH_RE = re.compile(r"task/(T-\d+)-")
 
 
 def port():
@@ -72,6 +75,105 @@ def version(folders=None):
 def tickets_payload():
     folders = tb.task_folders()
     return {"version": version(folders), "generated_at": now(), "tickets": tb.tickets_now(folders=folders)}
+
+
+def godot_bin(root=None):
+    """GODOT_BIN from .env in the folder served. Nothing else is read from .env."""
+    env = (tb.ROOT if root is None else Path(root)) / ".env"
+    try:
+        lines = env.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return ""
+    for line in lines:
+        key, sep, value = line.strip().partition("=")
+        if sep and key.strip() == "GODOT_BIN":
+            return value.strip().strip("\"'")
+    return ""
+
+
+def worktrees(root=None):
+    """[(folder, branch)] from `git worktree list`; the first is the main repo."""
+    root = tb.ROOT if root is None else Path(root)
+    try:
+        out = subprocess.run(["git", "-C", str(root), "worktree", "list", "--porcelain"],
+                             capture_output=True, text=True, check=True, creationflags=tb.no_window()).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return [(root, "master")]
+    found, path, branch = [], None, ""
+    for line in out.splitlines() + [""]:
+        if line.startswith("worktree "):
+            path, branch = Path(line[len("worktree "):]), ""
+        elif line.startswith("branch "):
+            branch = line[len("branch "):].replace("refs/heads/", "", 1)
+        elif line == "" and path is not None:
+            found.append((path, branch or "(detached)"))
+            path = None
+    return found or [(root, "master")]
+
+
+def builds(root=None):
+    """One entry per worktree for the Builds tab. The first entry is master."""
+    root = tb.ROOT if root is None else Path(root)
+    entries = []
+    for i, (folder, branch) in enumerate(worktrees(root)):
+        match = TASK_BRANCH_RE.match(branch)
+        task_id = match.group(1) if match else ""
+        t = None
+        if task_id:
+            for base in (folder / "tasks", root / "tasks"):
+                for f in sorted(base.glob(f"{task_id}-*.md")):
+                    t = tb.ticket(f)
+                    if t:
+                        break
+                if t:
+                    break
+        project = folder / "game" / "project.godot"
+        entries.append({
+            "id": "master" if i == 0 else folder.name,
+            "folder": str(folder),
+            "branch": branch,
+            "ticket_id": task_id,
+            "ticket_title": t["title"] if t else "",
+            "ticket_status": t["status"] if t else "",
+            "has_project": project.is_file(),
+        })
+    return entries
+
+
+def launcher_args(gbin, folder, mode):
+    game = str(Path(folder) / "game")
+    return [gbin, "--path", game] if mode == "play" else [gbin, "--editor", "--path", game]
+
+
+def start_detached(args):
+    """Start Godot on its own: no console window on Windows (T-110), not tied to the server."""
+    kw = {"stdin": subprocess.DEVNULL, "stdout": subprocess.DEVNULL, "stderr": subprocess.DEVNULL}
+    if os.name == "nt":
+        kw["creationflags"] = tb.no_window() | 0x00000200   # CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP
+    else:
+        kw["start_new_session"] = True
+    subprocess.Popen(args, **kw)
+
+
+def launch(entry_id, mode, root=None):
+    """Start Godot for one entry of the worktree list. Returns (http status, body)."""
+    if mode not in ("play", "editor"):
+        return 400, {"error": "Mode must be play or editor."}
+    entry = next((e for e in builds(root) if e["id"] == entry_id), None)
+    if entry is None:
+        return 404, {"error": "That build is not in the worktree list."}
+    if not entry["has_project"]:
+        return 409, {"error": "That folder has no game/project.godot."}
+    gbin = godot_bin(root)
+    if not gbin:
+        return 500, {"error": "GODOT_BIN is not set in .env. See .env.example."}
+    if not Path(gbin).is_file():
+        return 500, {"error": f"GODOT_BIN points to a file that does not exist: {gbin}"}
+    try:
+        start_detached(launcher_args(gbin, entry["folder"], mode))
+    except OSError as e:
+        return 500, {"error": f"Godot could not be started: {e}"}
+    return 200, {"ok": True}
 
 
 def board_move(task_id, status, note=None):
@@ -123,6 +225,8 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, {"app": APP, "root": str(tb.ROOT), "pid": os.getpid()})
         if path == "/api/version":
             return self.send(200, {"version": version()})
+        if path == "/api/builds":
+            return self.send(200, {"builds": builds()})
         if path == "/api/tickets":
             return self.send(200, tickets_payload())
         return self.send(404, {"error": "Not found."})
@@ -141,6 +245,12 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(task_id, str) or not isinstance(status, str):
                 return self.send(400, {"error": "A move needs an id and a status."})
             code, out = board_move(task_id, status, body.get("note"))
+            return self.send(code, out)
+        if path == "/api/launch":
+            entry_id, mode = body.get("id"), body.get("mode")
+            if not isinstance(entry_id, str) or not isinstance(mode, str):
+                return self.send(400, {"error": "A launch needs an id and a mode."})
+            code, out = launch(entry_id, mode)
             return self.send(code, out)
         if path == "/api/stop":
             self.send(200, {"ok": True})

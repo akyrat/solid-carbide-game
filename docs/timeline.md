@@ -845,3 +845,68 @@ Entry format:
 - Decision or change: on T-064's sample tower, the board took the Project Lead's recommendations: blocks are packed densely with narrow towers (about 49 per block) instead of 16 wider ones, the remaining 7 base towers are generated the same narrow way (about 7 generations), and the signs' kanji-like marks are kept as long as they are not real words. Also, playtesting T-125, the board wants the stacked trick popups to go at most half way from the car to the top of the screen (they reached the timer) and to be a bit smaller; T-125 goes back to the UI Agent.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-064 (full set), T-125 (back to in progress)
+
+## 2026-10-14: T-126 done: the Builds tab on the task board
+- Decision or change: the task board has a Builds tab listing `master` and every worktree, each with "Play" (runs that version of the game) and "Open in editor" (opens it in Godot). A ticket's detail view has "Play this build" and a link to its Builds entry; they sit in the detail view rather than on the card because cards are dragged. The server only launches folders from its own worktree list, using `GODOT_BIN` from `.env`. Tooling, so merged straight after QA (passed round 1).
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`
+- Tasks: T-126 (done)
+
+## 2026-10-14: Named Project Lead sessions and ticket owners
+- Decision or change: the board's drags reach only the first session whose hooks read the shared inbox, so the "each session acts on its own tickets" rule can't work yet. The board chose to name each session itself (for example "Camera", "Tools"; a session without a name asks). T-127 adds a `lead:` owner on each ticket, gives every session its own read position in the inbox so all sessions see every drag and act only on their own or unowned tickets (claiming an unowned one first), and shows the owner on each card with a filter by owner, so the board sees every session's tickets in one view.
+- Documents touched: none yet (T-127 updates `tasks/README.md`, `tasks/_TEMPLATE.md`, `docs/README.md`, `docs/working-with-the-board.md`)
+- Tasks: T-127 (new)
+
+## 2026-10-14: Trick popups: three at most, eased rise
+- Decision or change: before playtesting T-125's second round, the board decided the popups should be small enough that up to three stack at once under the height limit (never more; the oldest makes room), and that their rise should ease out: fast at first, slowing towards the end as they fade. T-125 is reworked; its status stays in QA meanwhile, since the status script won't move it out while its round-1 marks still pass.
+- Documents touched: none yet (HUD and menus, Content, with the rework)
+- Tasks: T-125
+
+## 2026-10-14: Trick popups become rounded rectangles
+- Decision or change: the board wants the comic popups to be white rounded rectangles instead of jagged bursts, keeping the black border and black lettering. Added to T-125's current rework.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-125
+
+## 2026-10-14: Quick tuning with an agent, through the Project Lead
+- Decision or change: the board can work directly with any agent, on whatever it wants to tune, in the Project Lead's session: the Project Lead resumes the agent that did the work and passes the board's tweaks on word for word, in the task's folder, with no QA between tweaks and one QA round before merging. Every tweak is still recorded in the ticket.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: none
+
+## 2026-10-14: Record: the board's go for T-064's sample tower
+- Decision or change: recorded late (QA found the gap): on 2026-10-13 the board gave the go for T-064's one sample tower ("go and generate the sample building"), 1 generation. The full set of 7 more followed the board's go on 2026-10-14. Balance after all 8 calls: 4946 of 5000 (a later free query; the result notes said 4947 because of the API's lag).
+- Documents touched: none
+- Tasks: T-064
+
+## 2026-10-14: Half speed kept; the city redesigned: skyscraper bases, short buildings, pavements, alert banners
+- Decision or change: the board keeps the car's top forward speed halved (16.5 units a second, from its quick tuning on T-124). It redesigned the buildings: downtown Tokyo under attack from the kaiju (a Godzilla-like monster, not called Godzilla, name to come); each block split into 2 by 2 skyscrapers drawn as the bases of really tall towers so the car is realistic in size, 6 different skyscrapers; shorter buildings whose roofs show; a pavement drawn around every building asset; a few alert banners about the kaiju on buildings or as pavement signs, with silly minimalistic pixel paintings of its head or body. The Narrative Theme Agent is consulted first so all generated art stays consistent (T-128, started). T-064 is rewritten for the new design and waits in To do for the board to start it; its first round's art stays archived on its branch. New: T-129 (short buildings) and T-130 (alert banners), both after T-128.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-064 (redesigned, To do), T-128 (new, in progress), T-129 (new), T-130 (new)
+
+## 2026-10-14: T-084 and T-125 done: the trick popups
+- Decision or change: the board playtested the popups and approved them ("LGTM"). Trick and challenge popups are white rounded rectangles with a black border and black Bangers lettering (Bangers 2.100, SIL OFL 1.1, script-drawn, no PixelLab), on one straight baseline. Each follows the car for its whole life, rising with an ease-out (fast, then slowing) as it fades; at most three stack at once, the oldest making room, and the stack never reaches above a quarter of the screen from the top. QA noted the smallest lettering loses pixel rows at the default zoom; the board accepted it as is. Both passed QA in two rounds.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-084 (done), T-125 (done)
+
+## 2026-10-14: T-128 done: the city under attack, in the story
+- Decision or change: Extended narrative, Content now describes downtown Tokyo at night in the middle of the kaiju's attack (the kaiju unnamed) and why the city put up alert banners. The Narrative Theme Agent's proposals wait for the board: picture-only banners (or with words such as "ALERT", "KAIJU ALERT", "STAY INSIDE"), larger banners on buildings and small standing signs on the pavement, light to medium damage, a lighter cooler grey pavement with a raised kerb, and no civilians shown for now; plus one art brief for T-064, T-129 and T-130 (in T-128's result notes). Docs only, passed QA round 1. T-129 is now open.
+- Documents touched: `docs/extended-narrative.md`
+- Tasks: T-128 (done), T-129 (open)
+
+## 2026-10-14: T-123 and T-124 done: camera options, and half speed
+- Decision or change: the board approved the camera options on the task board. The pause screen has two checkboxes, "Camera smoothing" (the camera trails the car a little) and "Dynamic camera" (the zoom follows the car's speed between a min and a max, easing there), both off by default and saved, plus temporary "Set min zoom" and "Set max zoom" buttons for the board to tune the dynamic camera (defaults 11 and 17). The car's top forward speed is halved (16.5 units a second), the board's quick-tuning experiment it kept. The branches had fallen behind master; a Driving & Drift Agent merged master into T-124 and resolved conflicts in the run and prototype scripts and game/README.md, keeping the drift smoke, drift marks, popups and the buildings' depth order (two agents before it were cut off). T-123 passed QA in one round, T-124 in two.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-123 (done), T-124 (done)
+
+## 2026-10-15: The city brief settled; scale corrected to 32
+- Decision or change: the board took the Narrative Theme Agent's recommendations (T-128): picture-only alert banners (silly minimal paintings of the kaiju's head or Godzilla-like body), the larger ones on buildings and small standing signs on the pavement, only a few on the map; light to medium damage (cracks, a few broken windows, a little rubble; no big fires or collapsed buildings); pavements a lighter, cooler grey with a raised kerb and light cracks; no civilians shown, only their signs. Written as the City brief in Visual style. Visual style's scale is corrected from "about 40" to the 32 art pixels per unit the game uses. The board keeps its current game settings (the dynamic camera on, zoom 11.6), so no reset and no ticket for the screenshot setup that saved them.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`
+- Tasks: T-064, T-129, T-130 (follow the City brief)
+
+## 2026-10-15: The board starts the city art: T-064, T-129, T-130
+- Decision or change: the board started the skyscrapers (T-064), the shorter buildings (T-129) and the alert banners (T-130). Each begins with a plan and its PixelLab cost for the board's go, no calls yet. T-130 no longer lists T-064 as a dependency (it will be built on T-064's branch instead), so it could start its plan.
+- Documents touched: none
+- Tasks: T-064, T-129, T-130 (in progress, planning first)
+
+## 2026-10-15: City art plans approved
+- Decision or change: the board approved the three plans. T-064 (skyscrapers): free flat PixelLab pieces (facade band, shopfront strip, vertical sign) slanted onto the walls by script at 32 px per unit, about 12-floor walls that dissolve at the top, script-drawn pavement; go for the 3-call sample (about 3 generations) after a free mock-up at the real zoom; only the tower covering the car fades, not its whole block (a small code change). T-130 (banners): drawn by script for free, 6 on the map, the drawings start now and placement waits for T-064. T-129 (shorter buildings, 14 generations planned) is held in Planning until the skyscraper sample is approved, since it reuses the same wall method.
+- Documents touched: none yet (T-064 and T-130 update their docs with their work)
+- Tasks: T-064, T-129 (planning), T-130

@@ -236,12 +236,12 @@ func test_w_reaches_top_speed_at_every_heading() -> void:
 		assert_almost_eq(r.forward_speed(), -TOP, 1e-6, "reverse, heading %d" % k)
 
 
-func test_default_tuning_holding_w_reaches_top_speed_33() -> void:
+func test_default_tuning_holding_w_reaches_top_speed_16_5() -> void:
 	var m = CarModel.new()
 	m.dt = DT
-	assert_almost_eq(m.tuning.top_speed(), 33.0, 1e-9)
+	assert_almost_eq(m.tuning.top_speed(), 16.5, 1e-9)
 	m.step(true, false, 0.0)
 	assert_almost_eq(m.forward_speed(), 11.0, 1e-9, "jump to cruise stays 11")
 	for i in 300:
 		m.step(true, false, 0.0)
-	assert_almost_eq(m.forward_speed(), 33.0, 33.0 / 2.3 * DT, "top speed 3.0 x 11 within one step")
+	assert_almost_eq(m.forward_speed(), 16.5, 16.5 / 2.3 * DT, "top speed 1.5 x 11 (board experiment 2026-10-14) within one step")
