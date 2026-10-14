@@ -1,7 +1,7 @@
 ---
 id: T-044
 title: Minions: spawn, chase the car, contact damage, die and drop coins
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 epic: enemies
@@ -13,7 +13,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-036-run-scene-and-state.md, tasks/T-039-enemy-data.md, tasks/T-033-car-collisions-and-knockback.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,15 +45,15 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test simulates the run's clock and shows there are more minions at the end of the 7 minutes than at the start, as the data says (QA: pass / fail)
-- [ ] A test shows a minion moves towards the car (QA: pass / fail)
-- [ ] A test keeps a minion touching the car and shows the car's health drops at the data's rate and the car is knocked back (QA: pass / fail)
-- [ ] A test damages a minion to 0 and shows it dies; over many deaths, coins drop at about the data's chance (QA: pass / fail)
-- [ ] A test drives the car over a coin and shows the run's coin total goes up and the coin disappears (QA: pass / fail)
-- [ ] A test shows minions don't move while the run is paused, and are cleared when a new run starts (QA: pass / fail)
-- [ ] A screenshot of the run shows placeholder minions around the car (QA: pass / fail)
-- [ ] `game/README.md` documents the enemies' damage function for the weapon tasks, and `docs/enemies.md` describes the built minion in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test simulates the run's clock and shows there are more minions at the end of the 7 minutes than at the start, as the data says (QA: pass)
+- [x] A test shows a minion moves towards the car (QA: pass)
+- [x] A test keeps a minion touching the car and shows the car's health drops at the data's rate and the car is knocked back (QA: pass)
+- [x] A test damages a minion to 0 and shows it dies; over many deaths, coins drop at about the data's chance (QA: pass)
+- [x] A test drives the car over a coin and shows the run's coin total goes up and the coin disappears (QA: pass)
+- [x] A test shows minions don't move while the run is paused, and are cleared when a new run starts (QA: pass)
+- [x] A screenshot of the run shows placeholder minions around the car (QA: pass)
+- [x] `game/README.md` documents the enemies' damage function for the weapon tasks, and `docs/enemies.md` describes the built minion in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it). There are no weapons yet, so this playtest covers spawning, chasing, contact damage, knockback, pause and draw order. Killing minions and coins are checked by the tests only, and the board judges them in a playtest once the starting gun (T-041) is in. No debug kill key (board, 2026-10-14).
 
@@ -93,3 +93,15 @@ Written by the Enemy Behavior Agent (2026-10-14).
 - **Draw order:** drive past the skyscrapers. Minions behind a skyscraper are hidden by it, and those in front are drawn over it. Since the fade is car-only, a minion behind an opaque skyscraper is not visible at all. Also: where the car and a minion share a depth level, the car is always drawn over the minion, even when the minion stands just in front of it.
 - **Placeholder size:** the minion is drawn about 1 unit (the car's width) across.
 - Killing minions and coins can't be played yet (no weapons, no debug key); the tests cover them.
+
+**QA (QA/Integration Agent, 2026-10-14, round 1): all 9 criteria pass.**
+- Clock test: `test_more_minions_at_the_end_of_the_7_minutes_than_at_the_start` (12 at 0:00, 20 at 7:00, matching `minions_wanted`). Pass.
+- Movement: `test_minion_moves_towards_the_car` (and round a building). Pass.
+- Contact damage and knockback: `test_touching_minion_damages_the_car_at_the_data_rate_and_knocks_it_back` (5 per 0.5 s, knockback away from the minion). Pass.
+- Death and coin chance: `test_minion_dies_at_zero_health`, `test_coins_drop_at_about_the_data_chance` (600 deaths, about 60%). Pass.
+- Coin pickup: `test_driving_over_a_coin_collects_it` (coins up, coin gone). Pass.
+- Pause and new run: `test_minions_stand_still_while_paused`, `test_new_run_clears_minions_and_coins`. Pass.
+- Screenshots: `art-archive/T-044/screenshots/minions.png` shows 12 light green placeholder lizards and two gold coins around the car; `minions_draw_order.png` shows minions around the car beside boulders and skyscrapers. The only red on screen is the board-approved HUD heart; the placeholders have no Redgull red (also `test_placeholders_avoid_redgull_red`). Pass.
+- Docs: `git diff master -- docs/enemies.md` touches only the Content section (Summary, Decisions, Open questions unchanged); `game/README.md` has a new "Minions" section documenting `take_damage(amount: float)` for T-041 and T-042. Pass.
+- Tests, run by QA in this folder: GUT 573 of 573 pass (53 scripts, `TESTS PASSED`, exit 0); `game/tools` Python 235 OK (1 skipped); `tools` Python 130 OK. Pass.
+- Also checked: `game/data/enemies.json` is unchanged from `master`; no input handling (no `Input.`, `_input`, `_unhandled_input`, key or action checks) in the new enemy scripts, the fixture or the `run.gd` change, so no debug or cheat input. Godot's line-ending-only `.import` changes from the test run were left uncommitted.
