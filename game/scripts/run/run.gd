@@ -41,6 +41,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
+## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
+const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -93,6 +95,9 @@ var challenges_enabled: bool = MapScript.CHALLENGES_ENABLED
 ## are in PhysicsWorld, their drawings in the "Enemies" node just before View.
 ## A new run clears them. Set `minions.enabled = false` to stop them (tests).
 var minions: Node
+## The kaiju (task T-045, kaiju_boss.gd): child "Kaiju". `kaiju_boss.kaiju` is
+## the live kaiju (null before boss time). A new run removes it.
+var kaiju_boss: Node
 
 
 func _ready() -> void:
@@ -158,6 +163,10 @@ func _ready() -> void:
 	minions.name = "Minions"
 	add_child(minions)
 	minions.bind(self)
+	kaiju_boss = KaijuBossScript.new()
+	kaiju_boss.name = "Kaiju"
+	add_child(kaiju_boss)
+	kaiju_boss.bind(self)
 	start_run()
 
 

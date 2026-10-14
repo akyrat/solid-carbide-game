@@ -1,0 +1,7 @@
+{
+  "_comment": "Playtest settings (task T-045). Not game balance and never shown to the player: switches that make something easier to see in a playtest. kaiju_early_arrival: when enabled is true, the kaiju arrives after_seconds into the run instead of at the boss time (7 minutes in, run_state.gd); when false, it arrives at the boss time as Enemies and Game loop architecture decide. Only the kaiju's arrival moves: the clock, the minions' growth and the boss time signal stay as they are. Before the MVP ships, enabled must be false.",
+  "kaiju_early_arrival": {
+    "enabled": true,
+    "after_seconds": 30
+  }
+}
