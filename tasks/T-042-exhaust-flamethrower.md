@@ -1,7 +1,7 @@
 ---
 id: T-042
 title: The exhaust flamethrower: fires only while drifting
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: weapon-behavior
 epic: weapons
@@ -95,3 +95,4 @@ Results: full GUT suite (`bash game/tools/run_tests.sh`) 601/601 passed, TESTS P
 - 7, tests, run by QA in this folder: GUT 601 of 601 pass (56 scripts, `TESTS PASSED`, exit 0); `game/tools` Python 241 OK (1 skipped); `tools` Python 130 OK. QA also ran the full GUT suite with `flamethrower_at_start` set to false (then restored to true): 601 of 601 pass, so the tests do not depend on the switch's value. Pass.
 - Note for the Project Lead (not a failure): GUT lists `ExhaustFlamethrower` nodes and `ExhaustFlame` drawings among its orphan reports: in the flamethrower's own test file whatever the switch says, and with the switch on also in the other run tests (state, timer, level-up, second run), next to the map and car orphans those tests already report. Tests still pass; worth tidying when the weapon plumbing (T-041/T-043) takes over attaching.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all 7 criteria pass
+- 2026-10-14, needs-playtest → in-progress: Board asked to merge it (2026-10-14); first fitted into T-041's weapon plumbing, now on master
