@@ -33,6 +33,9 @@ const HEART_COLOR := Color(0.86, 0.1, 0.16)
 ## pixels shown at 2x, about the height of "Likes" with its outline.
 const HEART_PATH := "res://art/hud/likes_heart.png"
 const HEART_SCALE := 2
+## The heart's box in the row keeps the placeholder's 26 px square (T-049), the
+## art centred in it, so nothing else on the HUD moves (T-086).
+const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
 const TEXT_HEALTH := "Car Health"
@@ -60,6 +63,8 @@ var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
 var heart: TextureRect
+## The heart's fixed-size box in the likes row; holds `heart`.
+var heart_box: Control
 ## The combo counter (T-083), centred above the likes row. Hidden at no
 ## combo (T-116): see show_combo().
 var combo_label: Label
@@ -144,7 +149,17 @@ func _build_bottom() -> void:
 	likes_row.add_theme_constant_override("separation", 6)
 	bottom_area.add_child(likes_row)
 	heart = _make_heart()
-	likes_row.add_child(heart)
+	heart_box = Control.new()
+	heart_box.name = "HeartBox"
+	heart_box.custom_minimum_size = Vector2(HEART_BOX, HEART_BOX)
+	heart_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	heart_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	heart_box.add_child(heart)
+	# At the box's left edge (the bar's left end), 2 px above centre so it sits
+	# level with the letters of "Likes" (they sit above the row's middle).
+	heart.position = Vector2(0.0, floorf((HEART_BOX - heart.custom_minimum_size.y) / 2.0) - 2.0)
+	heart.size = heart.custom_minimum_size
+	likes_row.add_child(heart_box)
 	likes_label = _make_label("LikesLabel", TEXT_LIKES)
 	likes_label.add_theme_font_override("font", comic_font())
 	# The row's full height, like "Hype Lv", so both share a baseline.
@@ -281,7 +296,6 @@ static func _make_heart() -> TextureRect:
 	h.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	h.stretch_mode = TextureRect.STRETCH_SCALE
 	h.custom_minimum_size = tex.get_size() * HEART_SCALE
-	h.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return h
 
