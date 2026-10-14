@@ -890,3 +890,8 @@ Entry format:
 - Decision or change: Extended narrative, Content now describes downtown Tokyo at night in the middle of the kaiju's attack (the kaiju unnamed) and why the city put up alert banners. The Narrative Theme Agent's proposals wait for the board: picture-only banners (or with words such as "ALERT", "KAIJU ALERT", "STAY INSIDE"), larger banners on buildings and small standing signs on the pavement, light to medium damage, a lighter cooler grey pavement with a raised kerb, and no civilians shown for now; plus one art brief for T-064, T-129 and T-130 (in T-128's result notes). Docs only, passed QA round 1. T-129 is now open.
 - Documents touched: `docs/extended-narrative.md`
 - Tasks: T-128 (done), T-129 (open)
+
+## 2026-10-14: T-123 and T-124 done: camera options, and half speed
+- Decision or change: the board approved the camera options on the task board. The pause screen has two checkboxes, "Camera smoothing" (the camera trails the car a little) and "Dynamic camera" (the zoom follows the car's speed between a min and a max, easing there), both off by default and saved, plus temporary "Set min zoom" and "Set max zoom" buttons for the board to tune the dynamic camera (defaults 11 and 17). The car's top forward speed is halved (16.5 units a second), the board's quick-tuning experiment it kept. The branches had fallen behind master; a Driving & Drift Agent merged master into T-124 and resolved conflicts in the run and prototype scripts and game/README.md, keeping the drift smoke, drift marks, popups and the buildings' depth order (two agents before it were cut off). T-123 passed QA in one round, T-124 in two.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-123 (done), T-124 (done)
