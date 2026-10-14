@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: planning
+status: in-qa
 from: project-lead
 to: ui
 lead: Weapons
@@ -56,4 +56,13 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the UI Agent (2026-10-15).
+
+**How the board plays it:** open `C:\solid-carbide-worktrees\T-052\game\project.godot`, press Start, and drift. The first level-up comes at 100 likes, about 10 seconds of drifting at combo x1 (`drift_xp_per_second` 10; faster with a combo or a trick). The run pauses and the screen shows: left card the gun's tier 2 ("Bonus Bullets"), right card "Hot Take Exhaust" (the flamethrower). A/D or arrows move the yellow ring, Enter or Space takes the highlighted card, or click "Take it". After the flamethrower the next level-up offers both upgrades. Escape does nothing while the cards are open.
+
+**Built:** `scripts/ui/level_up_screen.gd` (the screen, a child of the run, `run.level_up_screen`), `scripts/ui/level_up_texts.gd` (T-051's 32 rows, generated from its table), `run.gd` turns `state.pause_on_level_up` on and adds the screen, `pause_screen.gd` ignores Escape while `state.is_waiting_for_choice()`. `data/playtest.json` `flamethrower_at_start` is now false (comment updated). Docs: `docs/hud-and-menus.md` Content, "Level-up screen" (Summary, Decisions and Open questions untouched); `game/README.md`, "Level-up screen".
+
+**Tests:** `tests/unit/test_level_up_screen.gd`, 19 tests, one per criterion and more (including a real mouse click). Full GUT suite 690 of 690 pass; `python -m pytest tools` 171 pass; `python -m pytest game/tools` 251 pass, 1 skipped. Screenshot: `art-archive/T-052/screenshots/level_up_screen.png` (made with `tests/fixtures/level_up_screen_demo.tscn`).
+
+**Simple choices where the docs say nothing (please check):** layer 15 (over the HUD, under the pause screen); dim of 60% black; cards 360x300 with the banner "Redgull Sent a Gift Pack!" in a white rounded box above them; the "Take it" button is white with a yellow hover; the mouse hovering a card does not move the highlight; the highlight stops at the first and last card (no wrap); Tab/other keys do nothing. Any key held at open is ignored until released, and key-repeat is ignored. The cards' corners use a hard-edged (not smoothed) rounded box, not the popups' baked pixel art; if the board wants the exact stepped corners, that is a small follow-up.
+
