@@ -1,7 +1,7 @@
 ---
 id: T-064
 title: Art: Tokyo-style buildings for the city blocks
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 epic: art
@@ -286,3 +286,4 @@ The board chose palette B (steel and glass) and gave the go for the full set. **
 
 Also checked: palette A and C bodies and pavements and the sample `sky_*` art were moved (git renames, 100% identical) to `art-archive/T-064/round2/palettes/`; the round-1 atlas and `buildings.json` are in `art-archive/T-064/round1-game-art/` (atlas byte-identical, json identical apart from line endings); the round-1 raw, clean and screenshot files in `art-archive/T-064/` are untouched; no art deleted in the branch's history. `game/README.md` ("See-through buildings") is updated. Code observation (not a fail): in `mvp_map.gd` `_build_buildings()` the first sort of `order` is dead (overwritten by `order = fade_items().duplicate()`), and with the art loaded the block nodes keep z_index 0, which only matters in the flat view (placeholder boxes drawn at z 0 instead of over the ground and drift marks by z). The branch merges into current `master` without conflicts (`git merge-tree`, 6 commits behind). Godot's line-ending-only `.import` changes were left uncommitted.
 - 2026-10-14, in-qa → needs-playtest: QA round 2 (redesign): all five criteria pass (sprites, record + go (round 2 = 13 generations, the other 5 of the drop were T-129's), screenshots + per-slot fade, collisions identical to master, GUT 505/505, Python 214 + 130 OK)
+- 2026-10-14, needs-playtest → done: board playtest: looks great (2026-10-15)
