@@ -43,10 +43,24 @@ static func hash_of(block_x: int, block_y: int) -> int:
 ## Body index per slot: the four slots of a block always differ (a rotation of 0..3).
 static func make_plan(block_x: int, block_y: int) -> Array:
 	var shift := hash_of(block_x, block_y) % 4
+	var short := short_slots(block_x, block_y)
 	var out: Array = []
 	for sj in 2:
 		for si in 2:
-			out.append({"si": si, "sj": sj, "body": (si + 2 * sj + shift) % 4})
+			out.append({"si": si, "sj": sj, "body": (si + 2 * sj + shift) % 4, "short": Vector2i(si, sj) in short})
+	return out
+
+
+## Which slots hold a short building (task T-129): the front slot (1,1) half the time, and one of the
+## side slots (1,0) or (0,1) 40% of the time; the back slot (0,0) never (a tall tower in front would hide a
+## roof behind it). About 0.9 short buildings per block, from a fixed hash of the block's position.
+static func short_slots(block_x: int, block_y: int) -> Array:
+	var h := hash_of(block_x + 7919, block_y + 104729)
+	var out: Array = []
+	if h % 100 < 50:
+		out.append(Vector2i(1, 1))
+	if (h >> 8) % 100 < 40:
+		out.append(Vector2i(1, 0) if (h >> 16) % 2 == 0 else Vector2i(0, 1))
 	return out
 
 
@@ -73,11 +87,14 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 			entry.bodies.append(load_texture(str(p)))
 		for p in palettes[letter].pavements:
 			entry.pavements.append(load_texture(str(p)))
+		if palettes[letter].has("short"):
+			entry["short"] = load_texture(str(palettes[letter].short))
 		_palette_textures[letter] = entry
 	if not _palette_textures.has(current_palette):
 		current_palette = _palette_textures.keys()[0]
 	var bodies: Array = _palette_textures[current_palette].bodies
 	var pavs: Array = _palette_textures[current_palette].pavements
+	var short_tex: Texture2D = _palette_textures[current_palette].get("short")
 	plan = make_plan(roundi(footprint_units.position.x), roundi(footprint_units.position.y))
 	plan.sort_custom(func(p, q):
 		var a: int = p.si + p.sj
@@ -102,17 +119,20 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		_pavement_sprites.append([pv, e.si + 2 * e.sj])
 		var corner := origin + Vector2(margin + foot, margin + foot)
 		var pos := ISO_TRANSFORM * (corner * PX_PER_UNIT) - Vector2(bsize.x * 0.5, bsize.y) * SPRITE_SCALE
+		var is_short: bool = e.short and short_tex != null
 		var sp := Sprite2D.new()
-		sp.name = "Skyscraper_%d_%d" % [e.si, e.sj]
-		sp.texture = bodies[e.body]
+		sp.name = ("Short_%d_%d" if is_short else "Skyscraper_%d_%d") % [e.si, e.sj]
+		sp.texture = short_tex if is_short else bodies[e.body]
 		sp.centered = false
-		sp.position = pos
+		var sz := Vector2(sp.texture.get_width(), sp.texture.get_height())
+		sp.position = ISO_TRANSFORM * (corner * PX_PER_UNIT) - Vector2(sz.x * 0.5, sz.y) * SPRITE_SCALE
+		pos = sp.position
 		sp.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
 		add_child(sp)
-		_body_sprites.append([sp, e.body])
+		_body_sprites.append([sp, -1 if is_short else e.body])
 		e["position"] = pos
-		var w := bsize.x
-		var h := bsize.y
+		var w := sz.x
+		var h := sz.y
 		for q in [Vector2(0, 0), Vector2(w, 0), Vector2(w, h - 192.0), Vector2(w * 0.5, h), Vector2(0, h - 192.0)]:
 			points.append(pos + q * SPRITE_SCALE)
 	tallest_units = float(art.height_units)
@@ -134,6 +154,9 @@ func set_palette(letter: String) -> void:
 		return
 	var t: Dictionary = _palette_textures[letter]
 	for e in _body_sprites:
-		e[0].texture = t.bodies[e[1]]
+		if e[1] < 0:
+			e[0].texture = t.get("short", e[0].texture)
+		else:
+			e[0].texture = t.bodies[e[1]]
 	for e in _pavement_sprites:
 		e[0].texture = t.pavements[e[1]]

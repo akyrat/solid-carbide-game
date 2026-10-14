@@ -103,3 +103,32 @@ func test_only_one_city_palette_is_in_use() -> void:
 	assert_eq(t.palette_letters(), ["B"])
 	assert_eq(BuildingTowers.current_palette, "B")
 	assert_null(map.get_node_or_null("PaletteLabel"), "no F7 switch or label in a single-palette build")
+
+
+func test_short_buildings_follow_the_slot_rule_and_the_plan_is_stable() -> void:
+	# T-129: never the back slot; the front slot or one side slot; a fixed hash.
+	var total := 0
+	for bx in 10:
+		for by in 10:
+			var shorts: Array = BuildingTowers.short_slots(bx * 30, by * 30)
+			assert_false(Vector2i(0, 0) in shorts)
+			assert_lte(shorts.size(), 2)
+			total += shorts.size()
+			assert_eq(shorts, BuildingTowers.short_slots(bx * 30, by * 30))
+	assert_gt(total, 60, "about 0.9 per block")
+	assert_lt(total, 120)
+
+
+func test_a_short_building_is_drawn_and_its_block_still_has_4_slots() -> void:
+	var map := make_map()
+	var found := 0
+	for b in map.buildings:
+		assert_eq(b.towers.get_child_count(), 4)
+		for e in b.towers.plan:
+			if e.short:
+				found += 1
+		for s in b.towers.get_children():
+			if s.name.begins_with("Short_"):
+				assert_eq(s.texture.get_width(), 768)
+				assert_lt(s.texture.get_height(), 600, "short: the roof shows")
+	assert_gt(found, 0, "at least one short building on the map")

@@ -39,7 +39,17 @@
     "res://art/buildings/cityB_pavement_10.png",
     "res://art/buildings/cityB_pavement_01.png",
     "res://art/buildings/cityB_pavement_11.png"
-   ]
+   ],
+   "short": "res://art/buildings/short_body_0.png"
   }
+ },
+ "short": {
+  "about": "T-129 sample short building, variant A: palette B body, 768 x 518 art px, anchored at its bottom centre like the skyscrapers; roof visible.",
+  "body": "res://art/buildings/short_body_0.png",
+  "size": [
+   768,
+   518
+  ],
+  "height_units": 4.2
  }
 }

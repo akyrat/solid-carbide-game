@@ -1,0 +1,47 @@
+{
+  "file": "a_prop_ac.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "negative_description": "text, letters, words, logo, red, perspective, gradient, blur, sky, ground, street, car, people, fire, base plate, platform, pedestal, shadow, building, wall",
+    "text_guidance_scale": 8,
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "color_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAHQAAAAECAYAAABfuBvmAAAApUlEQVR4nGOUEFf5z4AEODg4kbkMnGh8dnYOVHlOdhT+76faKHwB+YcofJmb4ij8l8ZvUfinGc1R+DZ/L6HwWfmZUPhsv5hR+Ex8v9Dk+VD4zKjeYeBkRPXP10veKPw5KRIo/Ibbq1H4WpvVUfgP0p+j8MuiClD4C0pR7Y9/dhKFf6ME1f8aIh9R+PvN+VH4jqjGMaCGzigY8mA0QocZGI1QhuEFAC/7HwRYO3pZAAAAAElFTkSuQmCC"
+    },
+    "seed": 129004,
+    "description": "a group of three rooftop air-conditioning units with fans, grey-blue boxes with pipes and vents, low and wide, lying directly on the roof, pixel art",
+    "image_size": {
+      "width": 96,
+      "height": 96
+    },
+    "view": "high top-down",
+    "isometric": true,
+    "direction": "south",
+    "no_background": true,
+    "outline": "selective outline"
+  },
+  "prompt": "a group of three rooftop air-conditioning units with fans, grey-blue boxes with pipes and vents, low and wide, lying directly on the roof, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T13:09:07+00:00",
+  "image": {
+    "width": 96,
+    "height": 96,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-064/palette.png"
+  ],
+  "task": "T-129",
+  "job_status": null,
+  "notes": "T-129 sample variant A",
+  "generator": "game/tools/pixellab_client.py"
+}
