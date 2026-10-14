@@ -255,3 +255,30 @@ func test_look_is_comic_white_cards_black_text() -> void:
 		var f: FontFile = c.title.get_theme_font("font")
 		assert_true(f.get_font_name().to_lower().contains("bangers"), f.get_font_name())
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE)
+
+
+func test_later_level_ups_show_laid_out_cards_without_a_resize() -> void:
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(1152, 648)
+	await wait_process_frames(2)
+	var vp := Rect2(Vector2.ZERO, Vector2(win.size))
+	for n in 3:
+		_level_up()
+		await wait_process_frames(2)
+		assert_true(screen.is_open(), "level-up %d: open" % (n + 1))
+		for c in screen.cards:
+			var r: Rect2 = c.panel.get_global_rect()
+			assert_true(c.panel.is_visible_in_tree(), "level-up %d: visible" % (n + 1))
+			assert_gte(r.size.x, screen.CARD_SIZE.x - 1.0, "level-up %d: real width" % (n + 1))
+			assert_gte(r.size.y, screen.CARD_SIZE.y - 1.0, "level-up %d: real height" % (n + 1))
+			assert_true(vp.encloses(r), "level-up %d: card %s inside the window: %s" % [n + 1, c.id, r])
+			assert_gt(c.button.get_global_rect().size.x, 100.0, "button laid out")
+		var a: Rect2 = screen.cards[0].panel.get_global_rect()
+		var b: Rect2 = screen.cards[1].panel.get_global_rect() if screen.cards.size() > 1 else a
+		if screen.cards.size() > 1:
+			assert_gt(b.position.x, a.end.x - 1.0, "cards side by side, not stacked")
+		screen.take_highlighted()
+		await wait_process_frames(2)
+		assert_false(screen.visible)
+	win.size = old_size

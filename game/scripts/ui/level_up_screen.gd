@@ -27,6 +27,8 @@ const PAPER := Color(1, 1, 1)
 const RING := Color8(255, 224, 77)
 const PRESSED := Color8(255, 190, 40)
 const CARD_SIZE := Vector2(360, 300)
+## Width the wrapping texts get inside a card (card width less margins and the thickest border).
+const TEXT_WIDTH := 360.0 - 2.0 * 18.0 - 2.0 * 8.0
 const CARD_GAP := 40
 const BORDER := 4
 const BORDER_HIGHLIGHT := 8
@@ -193,11 +195,13 @@ func _add_card(id: String) -> void:
 	title.name = "Title"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.custom_minimum_size.x = TEXT_WIDTH
 	v.add_child(title)
 	var desc := _label(text.desc, CARD_DESC_SIZE)
 	desc.name = "Description"
 	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc.custom_minimum_size.x = TEXT_WIDTH
 	desc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	v.add_child(desc)
 	var button := Button.new()

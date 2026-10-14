@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: ui
 lead: Weapons
@@ -79,3 +79,10 @@ Written by the UI Agent (2026-10-15).
 - **All tests: pass.** Full GUT suite 690/690 (61 scripts), `python -m pytest tools` 171 passed, `python -m pytest game/tools` 251 passed, 1 skipped.
 - Board's choices checked as well: comic look (white StyleBoxFlat without anti-aliasing, black Bangers text with antialiasing off, 60% black dim, yellow `RING` highlight with a thicker border), keyboard and mouse input, next-tier text, playtest switch off. No Godot process left running from QA (the test runner stops its own).
 - 2026-10-15, in-qa → needs-playtest: QA round 1: all nine criteria pass (qa-integration)
+- 2026-10-15, needs-playtest → in-progress: when I level up the second and third time, I had to resize my windfow for it to refresh so i can see the level up options.
+
+### Board's playtest, round 1 (2026-10-15): fix by the UI Agent
+
+The board's note, word for word: "when I level up the second and third time, I had to resize my windfow for it to refresh so i can see the level up options."
+
+**Cause:** the card title and description labels wrap their text but had no width of their own. When the cards were rebuilt for a later level-up, the wrapping labels were measured with no width (one word per line), so the box became far too tall and was centred with the cards pushed below the bottom of the window (a test showed them at y 1336 in a 648 pixel window) until a resize made the containers measure again. The first level-up worked because the first layout happened with the screen already set up. **Fix:** `level_up_screen.gd` gives each wrapping label a fixed width (`TEXT_WIDTH`, the card's width less margins and border), so the size is right from the first layout. **Check:** new test `test_later_level_ups_show_laid_out_cards_without_a_resize` (a 1152x648 window, three level-ups in a row, each time the cards are visible, at least 360x300, side by side and inside the window; it fails without the fix: 19 of 20 pass, and passes with it). Real windowed run: `tests/fixtures/level_up_screen_third_demo.tscn` plays Start, takes two cards and levels up a third time in the real renderer; screenshot `art-archive/T-052/screenshots/level_up_screen_third.png` shows the third level-up laid out and centred without any resize.
