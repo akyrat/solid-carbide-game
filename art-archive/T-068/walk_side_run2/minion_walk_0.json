@@ -1,0 +1,128 @@
+{
+  "file": "minion_walk_0.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD7UlEQVR4nO2YTW8bVRRAzxhHdmwncowNdTFQkroRqUSdtBULFLLA2UQoUldRu+u2C1i0qH8AIQFizQZUEBKom1TKAlHFESQGRFVIJioFUvNRVXZMZcd1M449Vtw8FlNPxvFHHTdlFGnOyjO+fu+e9+67Hls6/sKz7GdsZifwuFgCZmMJmI0lYDaWgNlYAmZjCZiNJWA2+17AbrzwjZYFQC7ukP7vRKpzV2k3B/vOG+GowrW4Y6/yagtnZENMvlMk7D8IwOXL/wLoQq1kagRycYdUGikI32hZdLILzsiGPqmrp25taqiO74xsiCNjKmH/QV48cIIvvpnhjQkX/ikPAFklz+fv0jSfulmSix7CUYUEzT/UKvljp0oAeAOaSzBUH7s4ZwN9he0EB7dYkFeBGd58dZhfUkt8fBH8/ZscjW4CvU3nrRMoKhVSy3ZOnl7nOr01Es7IhlBlt35d3Snjyht5PaKtqpHYrzNMTR1gYXCVfEaqi/87u8Jnb3lQzn0AX17gZqxp7o0FVNktJWUE5PWdKCoVXD12QiMqyR67nmz1/XC0hDcgCIbg96XtpBLZVRLZmbpJs0qeoQEXDMCPP2k7Fgxp8fErNnrfm+X7107QG/uECW5QVCpA43PZrFCl5LRXFDNl+g4XCB8SJGI9BAe36PYpXLvkxund0sskEeshHFXIZ7YHyGck8hl4eVjoUtX4NEWGBlzcKxfxBiC9YiOfEXgDgnt/emAcJn74mefv3IGhFssPSG38LyQkT4W+4QeERgp0+wSpZTtHo5ukV2wEB7dIr9jo9tVW0fKVbo6Mqfr9Uk6qiy3lJLp9guzt2lKa/+0lAMaG/iG15MRYtp0I6CLVF77RctOgcFQBtJWf+bCXvsOFhnHuh+cyuah1G2Nc+f5T2nvTXoCWjaR1r6tFHygXdzQ8tL7RMtnbEv5DgnQSzr/v4aOLNJUw0n/3DPfXNwC4Ln+HKNgfmTzsTsBIw4FzcYfQDpyq1/tOUktOjp0qMTkeZEFe5dZ8BVV2M8tVY1ptt+9OBZohqbJblPs3CYa2yCp5igocv3uG5zwBUoUMKaaZHA+SyK5yM9aFKruhjZVuxp4K+EbLIjSilcvinI0bnzoQBTuz8vbqOiNaG00n26vxR7GnAlr5wK15J6rsRvJUYEeCquwWc1+vYXgQFqCdn04eX3bThdpBDJxd0y+61Gf446sHUCshAF55e03vQCdPr3P1XGBnXFvstQAYJP669LQ+z84YAD3uWxdStqvtzmPkSQjA9ndGq2R0iYeiHZ2FJyWwG9qRbcpet9FOeKwutO9/E1sCZmMJmI0lYDaWgNlYAmaz7wX+A9KvfSRpTONlAAAAAElFTkSuQmCC",
+      "format": "png"
+    },
+    "action": "walking forward on all four legs, a steady lizard walk cycle, legs alternating diagonally, body low, tail swaying",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 68003
+  },
+  "prompt": "",
+  "job_id": "9af40744-ff4e-4dc7-ab43-bbdfd5dadae5",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-14T22:27:39+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "art-archive/T-068/rotations/minion_rot8_3.png",
+    "https://api.pixellab.ai/v2/openapi.json"
+  ],
+  "task": "T-068",
+  "job_status": "completed",
+  "notes": "T-068 round 2 call B: 8-frame walk from rotation 3 (side view, faces screen-right)",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 0,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "minion_walk_0.png",
+    "minion_walk_1.png",
+    "minion_walk_2.png",
+    "minion_walk_3.png",
+    "minion_walk_4.png",
+    "minion_walk_5.png",
+    "minion_walk_6.png",
+    "minion_walk_7.png",
+    "minion_walk_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "9af40744-ff4e-4dc7-ab43-bbdfd5dadae5",
+    "status": "completed",
+    "created_at": "2026-10-14T22:25:31.722497+00:00",
+    "last_response": {
+      "seed": 68003,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.029724454700946805
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1400 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1404 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1380 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1388 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1456 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1480 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1368 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1372 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1384 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 1.0,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "e761d42f-3c6c-4938-86c9-3d73c8396873",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-14T22:25:50.213081+00:00"
+    }
+  }
+}
