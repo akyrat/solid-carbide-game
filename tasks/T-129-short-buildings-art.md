@@ -1,7 +1,7 @@
 ---
 id: T-129
 title: Art: shorter buildings whose roofs show
-status: in-progress
+status: planning
 from: project-lead
 to: asset-generation
 epic: art
@@ -86,3 +86,4 @@ Assumes T-064's redesign: 2 by 2 slots per 30 by 30 block, each slot 15 by 15 un
 - Pixel density: facades drawn at 32 px per unit must read as the same pixel size as the skyscrapers and the car. I will compare against an approved T-064 sprite before the sample is judged.
 
 **Recommended:** the piece-based approach above, sample first (5 generations), then the full set (9 more), 14 in all, with nothing called until the board gives the go.
+- 2026-10-14, in-progress → planning: board: hold until the skyscraper sample (T-064) is approved; it reuses its wall method

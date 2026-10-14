@@ -905,3 +905,8 @@ Entry format:
 - Decision or change: the board started the skyscrapers (T-064), the shorter buildings (T-129) and the alert banners (T-130). Each begins with a plan and its PixelLab cost for the board's go, no calls yet. T-130 no longer lists T-064 as a dependency (it will be built on T-064's branch instead), so it could start its plan.
 - Documents touched: none
 - Tasks: T-064, T-129, T-130 (in progress, planning first)
+
+## 2026-10-15: City art plans approved
+- Decision or change: the board approved the three plans. T-064 (skyscrapers): free flat PixelLab pieces (facade band, shopfront strip, vertical sign) slanted onto the walls by script at 32 px per unit, about 12-floor walls that dissolve at the top, script-drawn pavement; go for the 3-call sample (about 3 generations) after a free mock-up at the real zoom; only the tower covering the car fades, not its whole block (a small code change). T-130 (banners): drawn by script for free, 6 on the map, the drawings start now and placement waits for T-064. T-129 (shorter buildings, 14 generations planned) is held in Planning until the skyscraper sample is approved, since it reuses the same wall method.
+- Documents touched: none yet (T-064 and T-130 update their docs with their work)
+- Tasks: T-064, T-129 (planning), T-130
