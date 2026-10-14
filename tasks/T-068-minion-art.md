@@ -1,7 +1,7 @@
 ---
 id: T-068
 title: Art: the minion (light green lizard), walking
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Enemies
