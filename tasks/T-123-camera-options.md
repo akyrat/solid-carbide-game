@@ -1,7 +1,7 @@
 ---
 id: T-123
 title: Camera options: smoothing and the dynamic camera (zoom follows speed)
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 epic: driving
@@ -13,7 +13,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, game/README.md, game/scripts/ui/game_settings.gd, game/scripts/ui/pause_screen.gd, game/scripts/run/run.gd, game/scripts/driving/drift_prototype.gd]
 files_expected_to_change: [game/scripts/ui/game_settings.gd, the run's and the drift prototype's camera code (or a new camera script), their tests, game/README.md, docs/drifting.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GUT tests show that with both options off the camera sits exactly on the car with the slider's zoom, as before (QA: pass / fail)
-- [ ] GUT tests show smoothing on makes the camera lag behind a moving car and catch up when it stops (QA: pass / fail)
-- [ ] GUT tests show the dynamic camera's target zoom is the min at standstill and the max at top forward speed, in between at half speed, and that the actual zoom eases toward the target rather than jumping (QA: pass / fail)
-- [ ] GUT tests show both checkbox states, the min and the max are saved and loaded with the settings, and setting the min or max from the current zoom works (QA: pass / fail)
-- [ ] docs/drifting.md (Content) and game/README.md describe both options, the defaults and the API (QA: pass / fail)
-- [ ] The drift prototype, run and settings tests, the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] GUT tests show that with both options off the camera sits exactly on the car with the slider's zoom, as before (QA: pass)
+- [x] GUT tests show smoothing on makes the camera lag behind a moving car and catch up when it stops (QA: pass)
+- [x] GUT tests show the dynamic camera's target zoom is the min at standstill and the max at top forward speed, in between at half speed, and that the actual zoom eases toward the target rather than jumping (QA: pass)
+- [x] GUT tests show both checkbox states, the min and the max are saved and loaded with the settings, and setting the min or max from the current zoom works (QA: pass)
+- [x] docs/drifting.md (Content) and game/README.md describe both options, the defaults and the API (QA: pass)
+- [x] The drift prototype, run and settings tests, the full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest both options from T-124's folder, tune the dynamic camera's min and max with T-124's buttons, and judge the feel.
 
@@ -78,3 +78,16 @@ Driving & Drift Agent, 2026-10-13. Branch `task/T-123-camera-options`, folder `C
 **Tests:** `game/tests/unit/test_camera_options.gd` (20 tests): both off = exactly on the car with the slider zoom (model, drift prototype, run, run from the main menu); smoothing lags behind a moving car (about speed / 8) and catches up when it stops (model, prototype, run, and off again snaps back); dynamic target is min at standstill, max at top speed, halfway at half speed, eases without jumps step by step and settles (model, prototype, run); turning it off goes back to the slider zoom; the slider still zooms with it off; all four settings saved and loaded (also by a new scene and a run from the main menu), saving keeps the other settings, bad values fall back or clamp, set min/max from the current zoom, and the readable report and file. Full GUT suite: 428 passing, 0 failing, TESTS PASSED. Python tool tests: `game/tools` 141 OK, `tools` 121 OK. Godot's line-ending-only `.import` changes were reverted, not committed; `project.godot` was not changed.
 
 **Documents affected:** `docs/drifting.md` (Content, Godot drift prototype, "Camera options (task T-123)"), `game/README.md` ("Camera options" with the API, plus pointers in "Pause screen" and "The run"). Both updated.
+
+**QA round 1** (QA/Integration Agent, 2026-10-13). All six criteria pass.
+
+1. Pass. `test_model_with_both_off_sits_on_the_car_with_the_slider_zoom`, `test_prototype_with_both_off_...`, `test_run_with_both_off_...` and `test_a_run_from_the_main_menu_with_both_off_is_as_before` check camera position == drawn car exactly and camera zoom == the slider's zoom; Godot's position smoothing stays off. `test_drift_prototype.gd` is unchanged on the branch (no diff against master) and its camera tests (`test_camera_stays_on_the_car_and_never_rotates`, the zoom test) pass. In code, `step()` with both off sets position = target and size = base_size.
+2. Pass. `test_model_smoothing_lags_behind_a_moving_car_and_catches_up_when_it_stops` (behind every step, lag about v / 8, within half a pixel 1.5 s after stopping), `test_prototype_smoothing_lags_and_catches_up` (more than 8 px behind, under 1 px after stopping), `test_run_smoothing_lags_behind_the_car` (and back exactly on the car when turned off).
+3. Pass. `test_target_zoom_is_min_at_standstill_max_at_top_speed_and_between_at_half` (10 / 18 / 14 at 0 / 1 / 0.5, clamped above 1), `test_speed_fraction_is_the_share_of_the_top_forward_speed`, `test_actual_zoom_eases_toward_the_target_without_jumping` (rises every step by under 0.5, still easing after 1 s, over 90% of the way, settles), plus the prototype and run tests that the camera's real zoom follows.
+4. Pass. `test_options_min_and_max_are_saved_and_loaded` (both checkboxes on and off, min and max set from the slider's zoom and returned, read back by a new scene, the zoom untouched), `test_saving_keeps_the_other_settings`, `test_bad_or_out_of_range_values_fall_back_or_clamp`, `test_the_saved_min_and_max_are_readable`, `test_a_run_from_the_main_menu_uses_the_saved_options`. All use a test settings file, never the real one.
+5. Pass. docs/drifting.md, Content, "Camera options (task T-123)": both options, both rates, the speed rule, defaults 11 and 17, off by default. game/README.md, "Camera options": files, saved keys and defaults, where to read the board's min and max, and the API table for T-124; pointers in "Pause screen" and "The run".
+6. Pass. Run by QA in the task folder: full GUT suite 42 scripts, 428 tests, 428 passing, `TESTS PASSED` (exit 0), including test_camera_options, test_drift_prototype, the run tests and test_pause_screen. Python: `game/tools` 141 tests OK, `tools` 121 tests OK. Godot's `.import` changes from the run are line-ending only (no diff with `--ignore-cr-at-eol`) and were left uncommitted.
+
+For the board (not fails): the dynamic camera uses the car's speed in any direction, not only forward, so a fast slide or reverse also zooms out (the agent says why above; forward-only is a small change if the board wants it). Nothing stops the min being set above the max; then the camera zooms in with speed.
+- 2026-10-13, in-qa → needs-playtest: QA round 1: all six criteria pass.
+- 2026-10-14, needs-playtest → done: approved with T-124 (board, task board, 2026-10-14)
