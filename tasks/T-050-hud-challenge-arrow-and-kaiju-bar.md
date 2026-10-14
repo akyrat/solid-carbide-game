@@ -1,10 +1,10 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: open
+status: planning
 from: project-lead
 to: ui
-lead:
+lead: Enemies
 epic: hud-menus
 milestone: mvp
 user_facing_text: yes
@@ -32,6 +32,8 @@ A task is not done until every document listed in documents_affected has been up
 
 Add the kaiju's health bar to the HUD (HUD and menus, Decisions): shown only once the kaiju appears (T-045's health value and signal), with T-048's label. It hides when the kaiju dies. The arrow to the nearest challenge moved to T-098, after the MVP (2026-10-11).
 
+**The board's design (task board note, 2026-10-15), word for word:** "hp bar on top of the kaiju, about as wide as the boss character itself. mkae the health bar subtly match the comic style combo popups in style, with thin divisors at each 10% hp. make the health bar neon purple with a white background and black borderlines (for the thin dividers as well)". So the bar sits above the kaiju in the world and follows it, instead of sitting in the HUD's corner: as wide as the kaiju, neon purple fill on a white background, black outline, thin black dividers at every 10% of its health, in a subtle version of the combo popups' comic style (T-131, T-133). Open questions for the board are in the Project Lead's conversation; the answers are added here before work starts.
+
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 ## Acceptance criteria
@@ -45,4 +47,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-15, open → planning: hp bar on top of the kaiju, about as wide as the boss character itself. mkae the health bar subtly match the comic style combo popups in style, with thin divisors at each 10% hp. make the health bar neon purple with a white background and black borderlines (for the thin dividers as well)
