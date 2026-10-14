@@ -970,3 +970,8 @@ Entry format:
 - Decision or change: the board chose both proposals for the trick popups: they heat up with the combo in T-131's steps (black and white below x2, orange or yellow accents at x2 and x3, a flaming edge from x4), and they are always drawn above the buildings (QA found in T-130 that near skyscrapers, z up to 146, covered popups at z 100). T-132 (above the buildings) starts now; T-133 (heat steps) waits for T-131 and T-132.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-132, T-133
+
+## 2026-10-14: T-132 done: trick popups always above the buildings
+- Decision or change: the board playtested and approved it ("look good"). Popups (trick and challenge) are now drawn at an absolute depth at the top of Godot's range, so no building, sign, boulder or the car can cover them, however tall the map's depth scheme grows. The HUD and screens still draw over them. QA round 1: all 6 pass.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-132 (done)
