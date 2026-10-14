@@ -1,7 +1,7 @@
 ---
 id: T-072
 title: Art: enemy hits and deaths, coins, and car damage
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Enemies
@@ -109,3 +109,4 @@ Extra checks asked for:
 - **Hooks change no behaviour:** `Minion.hurt` is emitted only in the `else` branch of `take_damage` (alive after a hit); `RunState.car_damaged` is emitted after `health_changed` in `damage_car`, with the health and loss logic untouched. No file in `game/data/` or `game/scenes/` changed, and no damage, drop chance or coin number changed in the scripts. `coin_sprite.gd` only swaps the ellipse drawing for the texture (same bob and shadow).
 - **Effects free themselves and pause:** `effect_flipbook.gd` advances in `_process` and calls `queue_free()` after its last frame (tested in `test_effect_frees_itself_after_its_last_frame`); it keeps the default inherited process mode under the run's pausable tree (no `PROCESS_MODE_ALWAYS` on its parents), so it pauses with the game.
 - 2026-10-14, in-qa → needs-playtest: QA round 1: all five criteria pass (qa-integration).
+- 2026-10-15, needs-playtest → in-progress: Board (2026-10-15): remove the effects; enemies only get a slight brief red hue when damaged; car animation to be clarified
