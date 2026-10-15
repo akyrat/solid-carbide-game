@@ -42,6 +42,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] `game/README.md` says how upgrades reach the car (QA: pass)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
+## Updates
+
+### 2026-10-15, Done
+
+The garage acceleration upgrade now sets the car's time to top speed at the start of a run (2.3 s at level 0, 0.1 s less per level); the drift prototype is unaffected. Because W snaps the car to cruise speed first, the upgrade only shortens the climb above cruise, so it may feel small: worth judging in the playtest. Merged after QA (round 1, all 5 pass) since nothing changes until the garage screen merges.
+
 ## Result notes
 
 Done. `CarTuning.apply_acceleration_upgrade(progress)` sets `time_to_top_speed = progress.current_value("acceleration")`; `GameFlow.start_run()` calls it with one line right after the run is built (the drift prototype never calls it). Tests: `game/tests/unit/game/test_acceleration_upgrade.gd` (level 0 = 2.3 s unchanged; levels 1, 5, 10 use the data's value and the measured climb to top speed is shorter and scales with it; the prototype keeps 2.3 s even with level 10 saved). Full GUT suite passes, game/tools Python tests (257) and tools Python tests (180) pass. Docs updated: game/README.md, docs/drifting.md. Note: W snaps to cruise first, so the real time from standstill to top is a share of the "time to top speed" value, not the value itself.
