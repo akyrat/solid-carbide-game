@@ -56,7 +56,7 @@ const WINDUP_COLOR := Color(1.0, 0.92, 0.55)
 ## height it falls from (screen pixels) and how long the dust lasts. Rules of
 ## the placeholder drawing.
 const FALL_SECONDS := 0.5
-const FALL_HEIGHT_PX := 420.0
+const FALL_HEIGHT_PX := 220.0
 const DUST_SECONDS := 0.5
 
 ## An attack's windup began (the kaiju's short animation).
@@ -135,6 +135,9 @@ func _on_world_rebuilt() -> void:
 	ground_draw.name = "MeteorWarnings"
 	ground_draw.owner_attack = self
 	map.view_root.add_child(ground_draw)
+	# The map's View applies the isometric transform; the circles are drawn in
+	# the view's screen pixels, as the map's ground tiles and boulder sprites are.
+	ground_draw.transform = map.view_root.transform.affine_inverse()
 	var after: Node = map.view_root.get_node_or_null("DriftMarks")
 	if after == null:
 		after = map.ground_tiles
@@ -389,9 +392,9 @@ class _SkyDraw extends Node2D:
 				continue
 			var p: float = 1.0 - w.time_left / FALL_SECONDS  # 0 at the top, 1 landed
 			var ground: Vector2 = ISO_TRANSFORM * (w.units * PX_PER_UNIT)
-			var at := ground - Vector2(-40.0, FALL_HEIGHT_PX) * (1.0 - p)
-			var back := Vector2(-40.0, FALL_HEIGHT_PX).normalized()
-			draw_line(at, at - back * 60.0, METEOR_GLOW, 6.0)
+			var at := ground - Vector2(-20.0, FALL_HEIGHT_PX) * (1.0 - p)
+			var back := Vector2(-20.0, FALL_HEIGHT_PX).normalized()
+			draw_line(at, at - back * 30.0, METEOR_GLOW, 6.0)
 			draw_circle(at, 13.0, METEOR_OUTLINE)
 			draw_circle(at, 11.0, METEOR_COLOR)
 			draw_circle(at + Vector2(3, -3), 4.0, METEOR_GLOW)

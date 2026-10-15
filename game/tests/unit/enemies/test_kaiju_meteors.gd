@@ -95,7 +95,7 @@ func test_attacks_follow_the_data_schedule() -> void:
 	_kaiju_near()
 	var starts := []
 	met.attack_started.connect(func() -> void: starts.append(met.fight_time))
-	var fight := m["first_attack_after_seconds"] + 3.0 * m["seconds_between_attacks"] - 0.5
+	var fight: float = m["first_attack_after_seconds"] + 3.0 * m["seconds_between_attacks"] - 0.5
 	_steps(fight)
 	var expected: Array = data.meteor_attack_times(fight)
 	assert_eq(starts.size(), expected.size(), "as many attacks as the data's times")
@@ -165,9 +165,11 @@ func test_each_landed_meteor_leaves_a_boulder_through_the_maps_function() -> voi
 	met.boulder_placed.connect(func(u: Vector2, body: Node) -> void: placed.append([u, body]))
 	met.start_attack()
 	_steps(m["windup_seconds"] + m["warning_seconds"] + 0.1)
-	var n := int(m["meteors_per_attack"])
-	assert_eq(placed.size(), n, "one boulder per meteor")
-	assert_eq(run.map.meteor_boulders.size(), before + n, "added through map.add_meteor_boulder")
+	var n: int = int(m["meteors_per_attack"])
+	# A meteor that landed on the car keeps its boulder until the car is off the spot.
+	assert_eq(placed.size() + met.pending_boulders.size(), n, "one boulder per meteor")
+	assert_gt(placed.size(), 0)
+	assert_eq(run.map.meteor_boulders.size(), before + placed.size(), "added through map.add_meteor_boulder")
 	for pb in placed:
 		var u: Vector2 = pb[0]
 		assert_true(pb[1] in run.map.meteor_boulder_bodies, "the map's meteor boulder body")
