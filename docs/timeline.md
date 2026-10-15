@@ -1130,3 +1130,8 @@ Entry format:
 - Decision or change: `python tools/task_status.py <id> [<status>] --reply "<text>"` posts the Project Lead's reply to the board on the ticket, in a new `## Updates` section just before Result notes (date, lane change, full text). The task board's ticket view shows the newest as "Latest from the Project Lead" at the top, older ones collapsed; a card glows with a "New" chip when its status changed or a reply was posted since the board last opened it, and the "Changed" list follows the same rule. Rule for the Project Lead: at every lane change of a ticket it owns, it posts the same reply it gives in the terminal (board, 2026-10-15). The live task board server must be restarted to show the page changes. Tooling, merged after QA: round 1, all 7 pass.
 - Documents touched: `docs/README.md`, `docs/working-with-the-board.md`, `tasks/README.md`, `tasks/_TEMPLATE.md`
 - Tasks: T-138 (done)
+
+## 2026-10-15: T-004 done: the Freesound downloader keeps only CC0 and CC BY
+- Decision or change: the downloader searches with a license filter for "Creative Commons 0" and "Attribution" only (Freesound's names, checked against its API docs by QA) and skips, with a printed reason, any other license before writing a file; the allowed list is one line in `game/tools/freesound.py`. The quoted multi-word OR filter isn't shown word for word in Freesound's docs, so the first live search (T-076) should confirm it returns results. Tooling, merged after QA: round 1, all 7 pass. Now open: T-076.
+- Documents touched: `game/README.md`
+- Tasks: T-004 (done), T-076
