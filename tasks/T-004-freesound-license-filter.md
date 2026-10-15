@@ -4,7 +4,7 @@ title: Freesound downloader: accept only CC0 and CC BY sounds
 status: open
 from: project-lead
 to: sfx
-lead:
+lead: Weapons
 epic: sound
 milestone: mvp
 user_facing_text: no
