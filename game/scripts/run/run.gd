@@ -63,6 +63,8 @@ const VIEW := "iso"
 signal world_rebuilt
 
 var state: RunState
+## The player's saved upgrades (T-061). GameFlow sets it before adding the run; passed on to the state.
+var progress: PlayerProgress = null
 var hud: Hud
 var map: Node2D
 var physics_world: Node2D
@@ -147,6 +149,7 @@ func _ready() -> void:
 
 	state = RunStateScript.new()
 	state.name = "RunState"
+	state.progress = progress
 	state.add_to_group("run_state")
 	add_child(state)
 	state.level_up.connect(_on_level_up)

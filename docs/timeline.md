@@ -1150,3 +1150,8 @@ Entry format:
 - Decision or change: at the start of a run the car's time to top speed comes from the garage's acceleration upgrade (`progress.current_value("acceleration")`, 2.3 s at level 0 down to 1.3 s at level 10); the drift prototype keeps its own tuning. W snaps the car to cruise speed first, so the upgrade only shortens the climb from cruise to top speed: the board should judge in playtest whether it is felt. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 5 pass.
 - Documents touched: `docs/drifting.md`, `game/README.md`
 - Tasks: T-060 (done)
+
+## 2026-10-15: T-061 done: the garage health upgrade reaches the car
+- Decision or change: at the start of a run the car's starting and maximum health come from the garage's car health upgrade (`progress.current_value("car_health")`, 100 at level 0, +10 per level), and the HUD's health bar follows it; a run with no saved progress attached (tests, fixtures) keeps run.json's health. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 4 pass. With T-060 and T-062 this completes the three garage upgrades.
+- Documents touched: `game/README.md`
+- Tasks: T-061 (done)

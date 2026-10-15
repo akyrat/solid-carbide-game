@@ -54,6 +54,7 @@ func start_run() -> void:
 	_clear_screens()
 	run = RunScene.instantiate()
 	run.name = "Run"
+	run.progress = progress  # the car health upgrade applies at the run's start (T-061)
 	add_child(run)  # the run starts itself in _ready()
 	run.car.tuning.apply_acceleration_upgrade(progress)  # garage upgrade (T-060)
 	run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
