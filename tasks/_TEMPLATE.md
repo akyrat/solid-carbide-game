@@ -38,6 +38,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] Criterion 1 (QA: pass / fail)
 - [ ] Criterion 2 (QA: pass / fail)
 
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
 ## Result notes
 
 Written by the agent when it finishes.

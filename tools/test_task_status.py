@@ -216,6 +216,81 @@ class StatusRules(Base):
         self.assertEqual((entry["id"], entry["from"], entry["to"]), ("T-001", "open", "blocked"))
 
 
+class Replies(Base):
+    """python tools/task_status.py T-NNN [status] --reply "text": the Project Lead's reply on the ticket"""
+
+    TEXT = "First paragraph, with **Markdown**.\n\nSecond paragraph.\n\n- a list item"
+
+    def main(self, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = ts.main(list(argv))
+        return code, out.getvalue() + err.getvalue()
+
+    def read(self, tid):
+        return (self.tasks / f"{tid}-test.md").read_text(encoding="utf-8")
+
+    def test_a_move_with_a_reply_adds_an_update_before_the_result_notes(self):
+        self.put("T-001", status="in-progress", notes="The agent did it.")
+        code, text = self.main("T-001", "in-qa", "--reply", self.TEXT)
+        self.assertEqual(code, 0, text)
+        body = self.read("T-001")
+        self.assertEqual(self.status("T-001"), "in-qa")
+        self.assertIn(f"### {ts.date.today().isoformat()}, In progress → In QA\n\n{self.TEXT}\n", body)
+        self.assertLess(body.index("## Updates"), body.index("## Result notes"))
+        updates = tb.parse_updates(body)
+        self.assertEqual(len(updates), 1)
+        self.assertEqual((updates[0]["change"], updates[0]["text"]), ("In progress → In QA", self.TEXT))
+
+    def test_a_reply_without_a_move_uses_the_current_lane_and_keeps_the_status(self):
+        self.put("T-001", status="in-progress")
+        code, text = self.main("T-001", "--reply", "Moved by the board.")
+        self.assertEqual(code, 0, text)
+        self.assertEqual(self.status("T-001"), "in-progress")
+        self.assertEqual(tb.parse_updates(self.read("T-001"))[0]["change"], "In progress")
+
+    def test_an_older_file_without_updates_gets_the_section_and_keeps_its_notes(self):
+        self.put("T-001", status="in-progress", notes="Notes line one.\n\nNotes line two.")
+        before = tb.review_parts(self.read("T-001"))[2]
+        self.assertNotIn("## Updates", self.read("T-001"))
+        self.main("T-001", "--reply", "Hello")
+        body = self.read("T-001")
+        self.assertEqual(body.count("## Updates"), 1)
+        self.assertEqual(tb.review_parts(body)[2], before)
+        self.assertEqual(body.count("## Result notes"), 1)
+
+    def test_replies_are_appended_newest_last(self):
+        self.put("T-001", status="open")
+        self.main("T-001", "planning", "--reply", "one")
+        self.main("T-001", "--reply", "two")
+        self.main("T-001", "in-progress", "--reply", "three")
+        body = self.read("T-001")
+        self.assertEqual(body.count("## Updates"), 1)
+        self.assertEqual([u["text"] for u in tb.parse_updates(body)], ["one", "two", "three"])
+        self.assertEqual([u["change"] for u in tb.parse_updates(body)],
+                         ["Open → Planning", "Planning", "Planning → In progress"])
+        self.assertLess(body.index("## Updates"), body.index("## Result notes"))
+
+    def test_a_refused_move_posts_no_reply(self):
+        self.put("T-001", status="open")
+        code, _ = self.main("T-001", "done", "--reply", "nope")
+        self.assertEqual(code, 1)
+        self.assertNotIn("## Updates", self.read("T-001"))
+
+    def test_an_empty_reply_is_refused(self):
+        self.put("T-001")
+        self.assertEqual(self.main("T-001", "--reply", "  ")[0], 1)
+        self.assertEqual(self.main("T-001", "--reply")[0], 2)
+
+    def test_crlf_files_stay_crlf(self):
+        path = self.put("T-001", status="in-progress")
+        path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+        self.main("T-001", "--reply", "a\n\nb")
+        data = path.read_bytes()
+        self.assertEqual(data.count(b"\n"), data.count(b"\r\n"))
+        self.assertEqual(tb.parse_updates(data.decode("utf-8"))[0]["text"], "a\n\nb")
+
+
 class Lead(Base):
     """python tools/task_status.py T-NNN [status] --lead <Name> [--take-over]"""
 
@@ -384,12 +459,14 @@ class AgentModel(Base):
         self.assertEqual(self.agent("Continue task T-002", model="sonnet"), "deny")
         self.assertEqual(self.agent("Continue task T-002", model="opus"), "allow")
 
-    def test_qa_runs_on_sonnet_or_opus_before_a_playtest(self):
+    def test_qa_always_runs_on_sonnet(self):
+        # Board, 2026-10-15: QA runs on sonnet even before a playtest, to cut its token use.
         self.put("T-003")
         self.put("T-004", review="play it")
         self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="sonnet"), "allow")
         self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="opus"), "deny")
-        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="opus"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="sonnet"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="opus"), "deny")
         self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration"), "deny")
 
     def test_the_first_task_id_counts(self):

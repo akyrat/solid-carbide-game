@@ -23,6 +23,8 @@ Usage, from the repo root (Python 3.9+, standard library only):
 Exit codes: 0 ok; 1 bad usage or request error; 2 missing credentials;
 3 login needed (no stored tokens, or the refresh token was rejected).
 
+Only sounds licensed as listed in ALLOWED_LICENSES (CC0 and CC BY) are ever saved.
+
 Never prints or writes the credential values anywhere except the token file.
 """
 
@@ -41,6 +43,11 @@ API_ROOT = "https://freesound.org/apiv2"
 AUTHORIZE_URL = API_ROOT + "/oauth2/authorize/"
 TOKEN_URL = API_ROOT + "/oauth2/access_token/"
 SEARCH_URL = API_ROOT + "/search/text/"
+
+# The ONLY place the allowed licenses are defined (board decision: "Sound licenses" in
+# docs/unfiled-game-details.md). These are Freesound's own license names, used both in the
+# search filter and in the check before saving. Anything not listed here is refused.
+ALLOWED_LICENSES = ("Creative Commons 0", "Attribution")
 
 # Godot 4 imports these audio formats. Other originals (flac, aiff, m4a) would not import.
 GODOT_AUDIO_TYPES = ("wav", "ogg", "mp3")
@@ -163,6 +170,31 @@ def license_from_api(value):
     return known.get(value.lower(), (value, ""))
 
 
+_FREESOUND_LICENSE_NAMES = [
+    (r"publicdomain/zero/", "Creative Commons 0"),
+    (r"licenses/by-nc-nd/", "Attribution NonCommercial NoDerivs"),
+    (r"licenses/by-nc/", "Attribution NonCommercial"),
+    (r"licenses/by/", "Attribution"),
+    (r"licenses/sampling\+/", "Sampling+"),
+]
+
+
+def freesound_license_name(value):
+    """Freesound's name for a license value (a CC URL or a plain name). Unknown values pass through."""
+    value = (value or "").strip()
+    if value.startswith("http"):
+        for pattern, name in _FREESOUND_LICENSE_NAMES:
+            if re.search(pattern, value):
+                return name
+    return value
+
+
+def is_license_allowed(value):
+    """True only for a license listed in ALLOWED_LICENSES. Unrecognised or empty means False."""
+    name = freesound_license_name(value).lower()
+    return any(name == allowed.lower() for allowed in ALLOWED_LICENSES)
+
+
 def slugify(text, max_len=40):
     slug = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
     slug = slug[:max_len].strip("-")
@@ -240,13 +272,20 @@ def existing_ids(out_dir):
     return ids
 
 
-def pick_sounds(results, count, skip_ids=()):
-    """First `count` results in a Godot-importable format, skipping ids already present."""
+def pick_sounds(results, count, skip_ids=(), report=print):
+    """First `count` results with an allowed license in a Godot-importable format,
+    skipping ids already present. A sound with a disallowed license is reported and skipped."""
     picked = []
     for s in results:
         if len(picked) >= count:
             break
         if s.get("id") in skip_ids:
+            continue
+        if not is_license_allowed(s.get("license", "")):
+            report("skipped {} ({}) by {}: license '{}' is not allowed (allowed: {})".format(
+                s.get("id"), s.get("name", ""), s.get("username", ""),
+                license_from_api(s.get("license", ""))[0] or "unknown",
+                ", ".join(ALLOWED_LICENSES)))
             continue
         if str(s.get("type", "")).lower() not in GODOT_AUDIO_TYPES:
             continue
@@ -255,7 +294,8 @@ def pick_sounds(results, count, skip_ids=()):
 
 
 def search_filter(max_filesize):
-    parts = ["type:(" + " OR ".join(GODOT_AUDIO_TYPES) + ")"]
+    parts = ["type:(" + " OR ".join(GODOT_AUDIO_TYPES) + ")",
+             "license:(" + " OR ".join('"{}"'.format(n) for n in ALLOWED_LICENSES) + ")"]
     if max_filesize:
         parts.append("filesize:[* TO {}]".format(int(max_filesize)))
     return " ".join(parts)

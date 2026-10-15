@@ -116,7 +116,7 @@ The code expires within minutes, so run `login` as soon as it arrives. The token
 python game/tools/freesound.py download --query "car engine idle" --count 3 --out game/audio/sfx/<folder>
 ```
 
-- Only Godot-importable formats (wav, ogg, mp3) are picked, and originals over 5 MB are skipped (`--max-bytes`, 0 = no limit). It does not filter by license.
+- Only Godot-importable formats (wav, ogg, mp3) are picked, and originals over 5 MB are skipped (`--max-bytes`, 0 = no limit). The downloader accepts only CC0 and CC BY sounds: the search is filtered, and each result is checked again before saving, so a disallowed sound is skipped (one line is printed) and never written. The rule is in [`docs/unfiled-game-details.md`](../docs/unfiled-game-details.md) ("Sound licenses"); the allowed list is `ALLOWED_LICENSES` in the script.
 - `--count` is how many sounds the folder should hold in total. Sounds already there (found by the Freesound id in their JSON) count towards it and are never downloaded twice, so re-running the same command downloads nothing, though it still checks (and if needed renews) the login.
 - Each sound is saved as `<id>_<name>.<ext>` with `<id>_<name>.json` next to it. The JSON holds `freesound_id`, `name`, `username`, `freesound_url`, `license_name`, `license_url`, `search_query`, `download_date`, plus `file`, `original_type`, `duration_s` and `filesize_bytes`.
 - Exit codes: 0 = done; 1 = request failed or fewer sounds found than asked; 2 = credentials missing from `.env`; 3 = login needed (run `auth-url` and `login` again).
