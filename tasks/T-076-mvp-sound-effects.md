@@ -1,7 +1,7 @@
 ---
 id: T-076
 title: Find the MVP's sound effects
-status: blocked
+status: open
 from: project-lead
 to: sfx
 lead:
