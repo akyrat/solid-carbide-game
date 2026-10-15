@@ -54,6 +54,13 @@ signal hit_obstacle(collider: Object, shape_index: int, normal: Vector2, impact_
 ## Emitted when W makes the car jump up to cruise speed (for the boost effect,
 ## task T-008). See CarModel.cruise_jump for the arguments.
 signal cruise_jump(from_speed: float, w_just_pressed: bool)
+## Emitted once per press of W that snaps the car up to cruise speed (task
+## T-008): the "boost". Not while W stays held (so not on the jumps back to
+## cruise during a held drift), and not when W is pressed at or above cruise
+## speed. from_speed is the forward speed just before the jump, in units/s
+## (negative when reversing). The boost effect, and later the art, the sound
+## and the UI, hook into this. It changes no driving.
+signal boost(from_speed: float)
 ## Emitted once per trick the car does (task T-079), with the trick's id:
 ## "extended_drift", "three_sixty" or "alternate_drift" (TrickDetector.TRICK_IDS).
 ## For the combo (task T-081) and the trick popups. See trick_detector.gd.
@@ -96,7 +103,9 @@ func _ready() -> void:
 	add_child(collision)
 	model.dt = 1.0 / float(Engine.physics_ticks_per_second)
 	model.cruise_jump.connect(func(from_speed: float, just: bool) -> void:
-		cruise_jump.emit(from_speed, just))
+		cruise_jump.emit(from_speed, just)
+		if just:
+			boost.emit(from_speed))
 	_sync_from_model()
 
 

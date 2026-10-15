@@ -1,7 +1,7 @@
 ---
 id: T-008
 title: Short "boost" effect when W snaps the car to cruise speed
-status: open
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Weapons
@@ -46,4 +46,12 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done on `task/T-008-cruise-boost-effect`.
+
+- New signal `Car.boost(from_speed)`: `cruise_jump` filtered to `w_just_pressed` (`car.gd`). The driving model is untouched.
+- Placeholder effect `game/scripts/driving/boost_effect.gd`: five opaque light blue-grey streaks behind the car, 0.35 s, shrinking, no red. Added to the run (`run.boost_effect`, under the car) and bound to the car on each new run. Not added to the drift prototype scene.
+- Tests `game/tests/unit/test_boost.gd` (8): fires once from standstill; once when pressed below cruise; not while held in a drift (cruise_jump fires >3 times, boost 0); not at or above cruise; again on a new press; speeds and rotation identical with and without the effect; effect plays and ends; the run binds it.
+- Full GUT suite: 679 pass. Python tests in `tools/` (171) and `game/tools/` (251) pass.
+- Screenshot (git-ignored): `C:\solid-carbide-worktrees\T-008\screenshots\T-008-boost-6.png`, from `bash game/tools/screenshot.sh res://tests/fixtures/boost_effect_demo.tscn screenshots/T-008-boost-6.png 6`. Streaks are visible behind the car; quality is rough (placeholder), look and size are for the board to judge.
+
+**Documents updated:** `game/README.md` (new "Boost effect" section, file list).
