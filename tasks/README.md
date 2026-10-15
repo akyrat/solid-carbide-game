@@ -22,6 +22,8 @@ A task changes status only through the status script, never by editing its `stat
 python C:/solid-carbide-game/tools/task_status.py T-012             # where it is, and the moves allowed now
 python C:/solid-carbide-game/tools/task_status.py T-012 in-qa        # move it
 python C:/solid-carbide-game/tools/task_status.py T-012 cancelled --note "Why, and when"
+python C:/solid-carbide-game/tools/task_status.py T-012 in-qa --reply "Short reply to the board"
+python C:/solid-carbide-game/tools/task_status.py T-012 --reply "Reply for a move an agent or the board made"
 ```
 
 Always use the main repo's copy of the script, also from a task's branch folder: it finds open task branches and changes the task file where it lives. It checks the workflow, so a task can't skip a phase:
@@ -33,6 +35,8 @@ Always use the main repo's copy of the script, also from a task's branch folder:
 - Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
 - `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.
 - Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`.
+
+`--reply "<text>"` posts the Project Lead's reply to the board on the ticket (board, 2026-10-15, T-138): the same short text (2 to 3 paragraphs at most, Markdown allowed) it gives in the terminal. With a move it is recorded with that move; on its own it is recorded against the ticket's current lane, for a move an agent or the board's drag made. It is stored as a dated entry (`### <date>, <lane change>`, newest last) in the task file's `## Updates` section, which sits just before `## Result notes` and is added there when a task file has none. A refused move posts no reply. The task board shows it on the ticket and highlights the card (`docs/README.md`, "The task board").
 
 Each move shows on the task board within a couple of seconds. The board moves tasks there too, through this same script, so its moves follow these rules (`docs/README.md`, "The task board").
 

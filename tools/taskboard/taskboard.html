@@ -142,7 +142,19 @@ header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: 
 .counts b { display: block; font: 700 18px/1 var(--display); color: var(--c); }
 .counts small { font-size: 10.5px; color: var(--muted); }
 
+/* Highlight: changed since the board last opened the ticket */
+.card.is-new { border-color: var(--cyan); box-shadow: 0 0 0 1px var(--cyan), 0 0 14px rgba(62, 230, 255, .55); }
+.card.is-new:hover { border-color: var(--cyan); }
+.chip.new { background: var(--cyan); color: #06112a; }
+
 /* Ticket detail */
+.lead-box { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 8px; }
+.lead-box h3 { margin: 0; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--cyan); }
+.upd-meta { font: 500 12px/1.3 var(--mono); color: var(--muted); }
+.upd-meta b { color: var(--ink); font-weight: 600; }
+.lead-box details.earlier { border-top: 1px solid var(--line); padding-top: 8px; }
+.lead-box details.earlier summary { cursor: pointer; color: var(--muted); font: 600 12px/1.4 var(--display); letter-spacing: .1em; text-transform: uppercase; }
+.lead-box .upd { padding: 8px 0 0; }
 dialog { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; width: min(720px, calc(100% - 32px)); max-height: calc(100% - 48px); overflow-y: auto; }
 .review { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--c, var(--qa)); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 10px; }
 .review h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
@@ -320,6 +332,7 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="row"><span class="id" id="detail-id"></span></div>
   <h2 id="detail-title"></h2>
+  <section class="lead-box" id="detail-updates" aria-label="Latest from the Project Lead" hidden></section>
   <section class="review" id="detail-review" aria-label="Your review"></section>
   <section class="detail-build" id="detail-build" aria-label="Build" hidden></section>
   <section class="deps" id="detail-deps" aria-label="Dependencies"></section>
@@ -503,18 +516,27 @@ const statusColor = (s) => s === "blocked" ? "#b7bcf0" : laneOf(s).color;
 
 // "Changed" folder: statuses you have seen, kept in this browser only.
 let seen = {};
+// What the board has seen of a ticket: its status and how many Project Lead updates it had.
+const updCount = (t) => (t.updates || []).length;
+const sigOf = (t) => `${t.status}|${updCount(t)}`;
 function loadSeen() {
   let stored = null;
   try { stored = JSON.parse(localStorage.getItem("tbp-seen") || "null"); } catch {}
   if (stored && typeof stored === "object") { seen = stored; return; }
   // First visit: everything counts as seen except what needs you.
   seen = {};
-  tickets.forEach((t) => { if (!needsYou(t)) seen[t.id] = t.status; });
+  tickets.forEach((t) => { if (!needsYou(t)) seen[t.id] = sigOf(t); });
   saveSeen();
 }
 function saveSeen() { try { localStorage.setItem("tbp-seen", JSON.stringify(seen)); } catch {} }
-const isUnread = (t) => seen[t.id] !== t.status;
-function markSeen(t) { if (seen[t.id] !== t.status) { seen[t.id] = t.status; saveSeen(); return true; } return false; }
+// Unread: its status changed, or a Project Lead update was posted, since it was last opened.
+// (A value saved by an older page is just a status: compare that alone.)
+function isUnread(t) {
+  const s = seen[t.id];
+  if (s === undefined) return true;
+  return String(s).includes("|") ? s !== sigOf(t) : s !== t.status;
+}
+function markSeen(t) { if (isUnread(t)) { seen[t.id] = sigOf(t); saveSeen(); return true; } return false; }
 
 function badges(t) {
   const out = [];
@@ -542,9 +564,9 @@ function renderBoard() {
     const items = list.filter((t) => laneOf(t.status).key === lane.key)
       .sort((a, b) => (mine(b) - mine(a)) || (idNum(a.id) - idNum(b.id)));
     const cards = items.map((t) => `
-      <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}${mine(t) ? " is-mine" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}${mine(t) ? ", your ticket" : ""}">
+      <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}${mine(t) ? " is-mine" : ""}${isUnread(t) ? " is-new" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}${mine(t) ? ", your ticket" : ""}${isUnread(t) ? ", changed since you last opened it" : ""}">
         ${mine(t) ? '<div class="mine-label">Your ticket</div>' : ""}
-        <div class="row"><span class="id">${esc(t.id)}</span>${badges(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
+        <div class="row"><span class="id">${esc(t.id)}</span>${isUnread(t) ? '<span class="chip new" title="Changed since you last opened it">New</span>' : ""}${badges(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
       </article>`).join("");
     return `<section class="lane" data-lane="${lane.key}" style="--c:${lane.color}">
@@ -633,7 +655,7 @@ const FOLDERS = [
   { key: "waiting", name: "Waiting", color: "#b7bcf0", test: (t) => (readiness(t) === "waits" || readiness(t) === "check") && !needsYou(t),
     blurb: "Waiting on other tickets. “Can start?” means the file says blocked, but everything it depends on is finished." },
   { key: "changed", name: "Changed", color: "var(--cyan)", test: isUnread,
-    blurb: "Status changed since you last opened the ticket. Remembered in this browser only." },
+    blurb: "Status changed, or the Project Lead posted an update, since you last opened the ticket. Remembered in this browser only." },
   { key: "all", name: "All open", color: "var(--muted)", test: (t) => !closed(t.status),
     blurb: "Every ticket that isn't done or cancelled." },
 ];
@@ -826,10 +848,11 @@ function openDetail(id) {
     ["File", `<span class="file">${esc(t.file)}</span>`],
   ];
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
+  renderUpdates(t);
   renderReview(t);
   renderDetailBuild(t);
   renderDeps(t);
-  if (markSeen(t)) { renderOverview(); renderInbox(); }
+  if (markSeen(t)) { renderBoard(); renderOverview(); renderInbox(); }
   $("detail-fields").innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${k === "File" ? v : esc(v)}</dd>`).join("");
   const cur = laneOf(t.status).key;
   $("detail-move").innerHTML = LANES.map((l) => `<button data-lane="${l.key}" style="--c:${l.color}" ${l.key === cur ? "disabled" : ""}>${l.name}</button>`).join("");
@@ -852,6 +875,17 @@ function renderNotes(md) {
     if (window.marked && window.DOMPurify) return window.DOMPurify.sanitize(window.marked.parse(md));
   } catch {}
   return `<pre>${esc(md)}</pre>`;
+}
+// "Latest from the Project Lead": the newest update, and the older ones folded away, newest first.
+function renderUpdates(t) {
+  const el = $("detail-updates");
+  const list = t.updates || [];
+  el.hidden = !list.length;
+  if (!list.length) { el.innerHTML = ""; return; }
+  const one = (u) => `<div class="upd-meta"><b>${esc(u.date)}</b> · ${esc(u.change)}</div><div class="notes-body">${renderNotes(u.text)}</div>`;
+  const older = list.slice(0, -1).reverse();
+  el.innerHTML = `<h3>Latest from the Project Lead</h3>${one(list[list.length - 1])}
+    ${older.length ? `<details class="earlier"><summary>Earlier updates (${older.length})</summary>${older.map((u) => `<div class="upd">${one(u)}</div>`).join("")}</details>` : ""}`;
 }
 function renderReview(t) {
   const st = reviewState(t);
@@ -1127,7 +1161,7 @@ $("folders").addEventListener("click", (e) => { const b = e.target.closest("butt
 $("inbox-head").addEventListener("click", (e) => {
   const b = e.target.closest("button[data-act]"); if (!b) return;
   if (b.dataset.act === "clear-agent") agentFilter = null;
-  if (b.dataset.act === "seen-all") { folderItems("changed").forEach((t) => { seen[t.id] = t.status; }); saveSeen(); renderOverview(); }
+  if (b.dataset.act === "seen-all") { folderItems("changed").forEach((t) => { seen[t.id] = sigOf(t); }); saveSeen(); renderBoard(); renderOverview(); }
   renderInbox();
 });
 $("rows").addEventListener("click", (e) => { const b = e.target.closest(".irow"); if (b) openDetail(b.dataset.id); });
