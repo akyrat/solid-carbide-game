@@ -26,6 +26,7 @@ extends Node
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
+const KaijuMeteorsScript := preload("res://scripts/enemies/kaiju_meteors.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -77,6 +78,8 @@ var kaiju: Node = null
 ## playtest switch) and has not found a free spot yet (it tries again each step).
 var arrival_due := false
 var depth = EnemyDepthScript.new()
+## The kaiju's meteor attack (task T-046, kaiju_meteors.gd): child "Meteors".
+var meteors: Node = null
 
 var _stats: Dictionary
 var _appeared_this_run := false
@@ -125,6 +128,10 @@ func bind(run: Node) -> void:
 		run.move_child(draw_root, run.view_root.get_index())
 	run.world_rebuilt.connect(_on_world_rebuilt)
 	state.boss_time.connect(_on_boss_time)
+	meteors = KaijuMeteorsScript.new()
+	meteors.name = "Meteors"
+	add_child(meteors)
+	meteors.bind(run, self)
 	if run.car != null:
 		_on_world_rebuilt()
 
