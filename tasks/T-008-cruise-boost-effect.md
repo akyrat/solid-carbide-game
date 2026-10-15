@@ -4,7 +4,7 @@ title: Short "boost" effect when W snaps the car to cruise speed
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Weapons
 epic: driving
 milestone: final-release
 user_facing_text: no
