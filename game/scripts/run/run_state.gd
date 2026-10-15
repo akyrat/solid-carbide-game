@@ -111,6 +111,10 @@ var combo_idle := 0.0
 ## once this passes run.json's likes_drain extra_wait_seconds; a trick resets it.
 var likes_drain_idle := 0.0
 
+## The player's saved upgrades (T-061), or null (a run on its own): the car's
+## starting and maximum health use the car health upgrade's current level.
+var progress: PlayerProgress = null
+
 var _run_data: RunData
 var _combo_data: ComboData
 
@@ -127,6 +131,8 @@ func start_run() -> void:
 	if _combo_data == null:
 		_combo_data = ComboData.new()
 	max_health = _run_data.starting_health()
+	if progress != null:
+		max_health = progress.current_value("car_health")
 	health = max_health
 	time_left = RUN_SECONDS
 	coins = 0

@@ -54,6 +54,7 @@ func start_run() -> void:
 	_clear_screens()
 	run = RunScene.instantiate()
 	run.name = "Run"
+	run.progress = progress  # the car health upgrade applies at the run's start (T-061)
 	add_child(run)  # the run starts itself in _ready()
 	run.set_zoom(GameSettingsScript.load_zoom())
 	run.load_camera_options()  # smoothing and the dynamic camera (T-123)

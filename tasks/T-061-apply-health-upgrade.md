@@ -1,7 +1,7 @@
 ---
 id: T-061
 title: Garage upgrade: car health applied at the start of a run
-status: open
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Weapons
@@ -43,4 +43,4 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+The car health upgrade now sets the run's starting and maximum health. `RunState.progress` (new, null = run.json's base) is read in `start_run()` as `progress.current_value("car_health")`; `run.gd` has `progress` and passes it to the state; `GameFlow.start_run()` sets `run.progress = progress` before adding the run. Small and local: 3 scripts, a few lines each. Tests: `tests/unit/run/test_run_health_upgrade.gd` (level 0, no progress, every level against the data, a run through GameFlow at level 3 with the HUD bar maximum matching, a new run after buying). `game/README.md` mentions it under The run. Full GUT suite: 685 passing; Python tool tests: 257 OK.
