@@ -1,10 +1,10 @@
 ---
 id: T-142
 title: Meteor boulders fade away 10 seconds after landing
-status: blocked
+status: open
 from: project-lead
 to: enemy-behavior
-lead:
+lead: Playtest
 epic: enemies
 milestone: mvp
 user_facing_text: no
