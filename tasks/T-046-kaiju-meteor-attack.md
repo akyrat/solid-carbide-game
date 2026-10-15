@@ -1,7 +1,7 @@
 ---
 id: T-046
 title: The kaiju's meteor attack: warning circles, impacts and new boulders
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -55,4 +55,20 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+**What was built** (Enemy Behavior Agent, 2026-10-15). The attack lives in its own script, `game/scripts/enemies/kaiju_meteors.gd` (`run.kaiju_boss.meteors`). The only change to existing enemy code is 7 lines in `kaiju_boss.gd`'s `bind()`, which create and bind it. `kaiju.gd` and `run.gd` are unchanged, so T-050's hook on the kaiju should not conflict.
+- Schedule from `meteor_attack` (no numbers changed): first attack 5 s after the kaiju appears, then every 8 s. Each attack has a 1 s windup (placeholder: pale yellow rings pulsing above the kaiju's head), then 3 warning circles at once, within 10 units of the car, only at spots `map.can_place_meteor_boulder()` accepts. They also avoid other meteors still to land and the kaiju's body. Each meteor lands 2 s later where its circle showed.
+- On landing, if the car's centre is within 1.5 units: `RunState.damage_car(15)` and `car.apply_knockback(away, 20)`. A placeholder grey dust burst shows, and a plain boulder is placed through `map.add_meteor_boulder()`, with no challenge or arrow.
+- A rule added in the code, so nothing gets trapped inside a boulder: if the car or the kaiju is on the spot as the meteor lands, the boulder appears on the first step the spot is clear. On a hit, the car is knocked off within a fraction of a second.
+- Pausing stops everything (physics and process steps). Nothing happens after the run ends, and a new run clears it all.
+- **Warning colour:** hazard amber `Color(1.0, 0.62, 0.12)`, a translucent amber disc with a thick pulsing amber edge and an inner ring that closes in as the meteor nears. Far from Redgull red `Color(0.86, 0.1, 0.16)` (distance > 0.5, checked by a test). The meteor placeholder is a dark purple rock with a magenta glow (the boulders' alien palette), and the dust is warm grey.
+- The warning circles are drawn on the ground in the map's `View` (right after the drift marks: under buildings, boulders, enemies and the car). The falling meteor, dust and windup are drawn over everything.
+
+**Playtest switch:** `game/data/playtest.json` `kaiju_early_arrival.enabled` is **true** in this branch (kaiju at 30 s, so the first attack comes at 35 s). **It must go back to `false` right before merging.** The tests set the switch off and do not depend on it.
+
+**Tests:** new `game/tests/unit/enemies/test_kaiju_meteors.gd` (17 tests, one per criterion and more). The full GUT suite passed (688/688, `bash game/tools/run_tests.sh`). Python tests: `game/tools` 251 OK (1 skipped), `tools` 171 OK.
+
+**Screenshot:** `C:\solid-carbide-worktrees\T-046\screenshots\T-046_meteors.png` (git-ignored), with a committed copy at `art-archive/T-046/screenshots/T-046_meteors.png`. It shows the kaiju, three amber warning circles, one meteor falling and two boulders just left by meteors with their dust. Fixture: `game/tests/fixtures/kaiju_meteors_demo.tscn`.
+
+**Documents updated:** `docs/enemies.md` (Content: a new "The kaiju's meteor attack (built in task T-046)", plus one pointer line in "The kaiju"; Summary, Decisions and Open questions unchanged) and `game/README.md` ("The kaiju", "The meteor attack (T-046)").
+
+**For the board to look at in the playtest:** whether the attack rhythm and the 3 meteors feel right, whether a 15-damage hit with a 20 knockback feels fair, and how readable the amber circles are (the placeholder is amber rather than red, see above). Also whether the boulders the kaiju leaves clutter the roads too fast over a full minute (about 21 boulders in the 60 s fight, fewer if spots are refused). The numbers are T-039's and were not changed.
