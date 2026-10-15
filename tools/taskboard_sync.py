@@ -29,6 +29,8 @@ LIST_FIELDS = {"depends_on", "documents_affected", "files_to_read_first", "files
 REVIEW_RE = re.compile(r"^The board's review:\s*(.+)$", re.M)
 REVIEW_FILES_RE = re.compile(r"^Board review files:\s*(.+)$", re.M)
 NOTES_RE = re.compile(r"^## Result notes[ \t]*\n(.*)\Z", re.S | re.M)
+UPDATES_RE = re.compile(r"^## Updates[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
+UPDATE_HEAD_RE = re.compile(r"^### (\d{4}-\d{2}-\d{2}), (.+?)[ \t]*$", re.M)
 NOTES_PLACEHOLDER = "Written by the agent when it finishes."
 NOTES_MAX = 20000
 NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,29}")   # a Project Lead session's name, also a ticket's lead
@@ -68,6 +70,21 @@ def review_parts(text):
             notes_text)
 
 
+def parse_updates(text):
+    """The Project Lead's replies from a task file's `## Updates` section, oldest first (file order):
+    [{"date", "change", "text"}]. Each entry starts with a `### <date>, <lane change>` line."""
+    section = UPDATES_RE.search(text.replace("\r\n", "\n"))
+    if not section:
+        return []
+    body = section.group(1)
+    heads = list(UPDATE_HEAD_RE.finditer(body))
+    out = []
+    for i, h in enumerate(heads):
+        end = heads[i + 1].start() if i + 1 < len(heads) else len(body)
+        out.append({"date": h.group(1), "change": h.group(2), "text": body[h.end():end].strip()})
+    return out
+
+
 def ticket(path, folder=""):
     """The document the page shows for one task file. `folder` is the task's branch folder, if open."""
     text = path.read_text(encoding="utf-8")
@@ -91,6 +108,7 @@ def ticket(path, folder=""):
         "review": review,
         "review_files": review_files,
         "result_notes": notes,
+        "updates": parse_updates(text),
         "folder": folder,
     }
 

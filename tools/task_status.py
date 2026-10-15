@@ -16,6 +16,12 @@ Usage (always this repo's copy, also from a task's branch folder, so open task b
       Sets the task's owner (its lead: line) to a Project Lead session's name, with or without a
       move in the same call. A task another session owns is refused unless --take-over is given.
 
+  python C:/solid-carbide-game/tools/task_status.py T-012 in-qa --reply "text"
+  python C:/solid-carbide-game/tools/task_status.py T-012 --reply "text"
+      --reply posts the Project Lead's reply to the board on the ticket (an entry in its "## Updates"
+      section, shown on the task board): with a move, it is recorded with the move; alone, against the
+      ticket's current lane (for a move an agent or the board's drag made).
+
 A task whose branch is open is changed in its branch folder (tasks/README.md, "Git branches").
 Exit codes: 0 moved, claimed (or shown), 1 move or claim refused (the reason is printed), 2 usage error.
 """
@@ -39,6 +45,11 @@ NOTE_REQUIRED = {
     "cancelled": "say why the task is no longer wanted (tasks are never deleted)",
     "flagged-for-review": None,
 }
+
+
+STATUS_LABEL = {"open": "Open", "planning": "Planning", "in-progress": "In progress", "in-qa": "In QA",
+                "needs-playtest": "Needs playtest", "blocked": "Blocked", "flagged-for-review": "Flagged for review",
+                "done": "Done", "cancelled": "Cancelled"}
 
 
 class Refused(Exception):
@@ -178,6 +189,27 @@ def add_note(text, line):
     return (norm + "\n" + line + "\n").replace("\n", newline)
 
 
+def add_update(text, change, reply):
+    """The text with a reply added as the newest entry of `## Updates`, which sits just before
+    `## Result notes` (the section is created there, or at the end if there are no result notes)."""
+    newline = "\r\n" if "\r\n" in text else "\n"
+    norm = text.replace("\r\n", "\n")
+    entry = f"### {date.today().isoformat()}, {change}\n\n{reply.strip()}\n"
+    section = tb.UPDATES_RE.search(norm)
+    if section:
+        head = norm[:section.end(1)].rstrip("\n")
+        tail = norm[section.end(1):]
+        norm = head + "\n\n" + entry + ("\n" + tail if tail else "")
+    else:
+        notes = re.search(r"^## Result notes[ \t]*$", norm, re.M)
+        block = f"## Updates\n\n{entry}\n"
+        if notes:
+            norm = norm[:notes.start()] + block + norm[notes.start():]
+        else:
+            norm = norm.rstrip("\n") + "\n\n" + block.rstrip("\n") + "\n"
+    return norm.replace("\n", newline)
+
+
 def write(path, text):
     path.write_bytes(text.encode("utf-8"))
 
@@ -205,7 +237,7 @@ def unblock_dependents(done_id, folders):
     return opened
 
 
-def move(task_id, new, note=None, folders=None, by="agent"):
+def move(task_id, new, note=None, folders=None, by="agent", reply=None):
     """Move a task; returns the lines to print. Raises Refused with the reason.
 
     `by` is "agent" for the script's command line and "board" for a drag on the local task board."""
@@ -235,6 +267,8 @@ def move(task_id, new, note=None, folders=None, by="agent"):
     text = set_field(text, "status", new)
     if note:
         text = add_note(text, f"- {date.today().isoformat()}, {old} → {new}: {note}")
+    if reply:
+        text = add_update(text, f"{STATUS_LABEL.get(old, old)} → {STATUS_LABEL.get(new, new)}", reply)
     write(path, text)
     log({"id": task_id, "from": old, "to": new, "file": str(path), "note": note or "", "by": by})
     out.insert(0, f"{task_id}: {old} → {new} ({path})")
@@ -243,6 +277,19 @@ def move(task_id, new, note=None, folders=None, by="agent"):
         if opened:
             out.append(f"Now open (everything they depend on is done): {', '.join(opened)}")
     return out
+
+
+def post_reply(task_id, reply, folders=None):
+    """Post a reply against the ticket's current lane, without a move; returns the lines to print."""
+    folders = tb.task_folders() if folders is None else folders
+    if not reply or not reply.strip():
+        raise Refused("--reply needs a text.")
+    path, _ = find(task_id, folders)
+    text = path.read_bytes().decode("utf-8")
+    status = (tb.parse_header(text) or {}).get("status", "open")
+    write(path, add_update(text, STATUS_LABEL.get(status, status), reply))
+    log({"id": task_id, "reply": STATUS_LABEL.get(status, status), "file": str(path)})
+    return [f"{task_id}: reply posted ({STATUS_LABEL.get(status, status)}) ({path})"]
 
 
 def claim_check(task_id, fields, name, take_over):
@@ -300,23 +347,27 @@ def main(argv=None):
     argv = [a for a in argv if a != "--take-over"]
     note, argv = take_option(argv, "--note")
     lead, argv = take_option(argv, "--lead")
-    for flag, value in (("--note", note), ("--lead", lead)):
+    reply, argv = take_option(argv, "--reply")
+    for flag, value in (("--note", note), ("--lead", lead), ("--reply", reply)):
         if value is False:
-            print(f"{flag} needs a {'text' if flag == '--note' else 'session name'}.", file=sys.stderr)
+            print(f"{flag} needs a {'session name' if flag == '--lead' else 'text'}.", file=sys.stderr)
             return 2
     if len(argv) not in (1, 2) or not re.fullmatch(r"T-\d+", argv[0]) or (take_over and lead is None):
         print(__doc__, file=sys.stderr)
         return 2
     try:
-        if lead is None:
-            lines = show(argv[0]) if len(argv) == 1 else move(argv[0], argv[1], note)
-        elif len(argv) == 1:
-            lines = claim(argv[0], lead, take_over)
-        else:
-            folders = tb.task_folders()
-            claim_check(argv[0], header(find(argv[0], folders)[0]), lead, take_over)   # refuse before moving
-            lines = move(argv[0], argv[1], note, folders=folders)
+        folders = tb.task_folders()
+        if lead is not None:
+            claim_check(argv[0], header(find(argv[0], folders)[0]), lead, take_over)   # refuse before changing anything
+        lines = []
+        if len(argv) == 2:
+            lines += move(argv[0], argv[1], note, folders=folders, reply=reply)
+        elif reply is not None:
+            lines += post_reply(argv[0], reply, folders)
+        if lead is not None:
             lines += claim(argv[0], lead, take_over, folders=folders)
+        if not lines:
+            lines = show(argv[0], folders)
     except Refused as e:
         print(f"Refused. {e}", file=sys.stderr)
         return 1
