@@ -1,7 +1,7 @@
 ---
 id: T-004
 title: Freesound downloader: accept only CC0 and CC BY sounds
-status: open
+status: in-qa
 from: project-lead
 to: sfx
 lead: Weapons
@@ -47,4 +47,10 @@ Do not download any new sounds for this task, and do not change the test-run sou
 
 ## Result notes
 
-Written by the agent when it finishes.
+- Search filter: `search_filter` now adds `license:("Creative Commons 0" OR "Attribution")` (Freesound's own license names; not checked against the live docs or API, since no test or download may call Freesound).
+- Second check: `pick_sounds` skips any result whose license is not in `ALLOWED_LICENSES` (CC BY-NC, Sampling+, unknown, empty), before any download or metadata write, and prints one `skipped <id> (<name>) by <user>: license '<x>' is not allowed` line.
+- One place: `ALLOWED_LICENSES` in `game/tools/freesound.py`.
+- Tests (faked responses only) in `game/tools/test_freesound.py`: filter in built request, CC0/BY/BY-NC/Sampling+/unknown/empty mix saves only CC0 and CC BY, skipped sounds leave an empty folder, single definition, skip line. An existing pick test got a license on its fake results.
+- `game/README.md` updated and points to `docs/unfiled-game-details.md`.
+- Ran: game/tools unittest (257, OK), tools unittest OK, GUT 671/671 passing. Reverted Godot `.import` line-ending noise; nothing under `game/audio/` changed.
+- Documents affected: game/README.md (updated).

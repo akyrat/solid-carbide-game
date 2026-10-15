@@ -204,18 +204,101 @@ class MetadataTests(unittest.TestCase):
 class PickTests(unittest.TestCase):
     def test_pick_skips_unimportable_types_and_existing_ids(self):
         results = [
-            {"id": 1, "type": "flac"},
-            {"id": 2, "type": "wav"},
-            {"id": 3, "type": "mp3"},
-            {"id": 4, "type": "aiff"},
-            {"id": 5, "type": "ogg"},
-            {"id": 6, "type": "wav"},
+            {"id": 1, "type": "flac", "license": BY},
+            {"id": 2, "type": "wav", "license": BY},
+            {"id": 3, "type": "mp3", "license": BY},
+            {"id": 4, "type": "aiff", "license": BY},
+            {"id": 5, "type": "ogg", "license": BY},
+            {"id": 6, "type": "wav", "license": BY},
         ]
         self.assertEqual([s["id"] for s in fs.pick_sounds(results, 3, skip_ids={3})], [2, 5, 6])
 
     def test_search_filter(self):
-        self.assertEqual(fs.search_filter(5000), "type:(wav OR ogg OR mp3) filesize:[* TO 5000]")
-        self.assertEqual(fs.search_filter(0), "type:(wav OR ogg OR mp3)")
+        lic = 'license:("Creative Commons 0" OR "Attribution")'
+        self.assertEqual(fs.search_filter(5000), "type:(wav OR ogg OR mp3) " + lic + " filesize:[* TO 5000]")
+        self.assertEqual(fs.search_filter(0), "type:(wav OR ogg OR mp3) " + lic)
+
+
+CC0 = "http://creativecommons.org/publicdomain/zero/1.0/"
+BY = "http://creativecommons.org/licenses/by/4.0/"
+BY_NC = "http://creativecommons.org/licenses/by-nc/4.0/"
+SAMPLING = "http://creativecommons.org/licenses/sampling+/1.0/"
+UNKNOWN = "http://example.com/some-other-license/"
+
+
+def fake_sound(sid, license_value):
+    return {"id": sid, "name": "Sound {}.wav".format(sid), "username": "u",
+            "url": "https://freesound.org/people/u/sounds/{}/".format(sid),
+            "license": license_value, "type": "wav", "filesize": 10, "duration": 1.0}
+
+
+class LicenseFilterTests(unittest.TestCase):
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.requests = []
+        self.downloaded = []
+
+    def tearDown(self):
+        shutil.rmtree(self.dir)
+
+    def run_download(self, results, count=10):
+        import argparse
+        from unittest import mock
+
+        def fake_http_json(method, url, data=None, headers=None):
+            self.requests.append(url)
+            return {"results": results}
+
+        def fake_download(sound_id, token, dest):
+            self.downloaded.append(sound_id)
+            with open(dest, "wb") as f:
+                f.write(b"RIFF")
+
+        args = argparse.Namespace(query="q", count=count, out=self.dir, max_bytes=0)
+        with mock.patch.object(fs, "get_access_token", return_value="T"), \
+                mock.patch.object(fs, "http_json", fake_http_json), \
+                mock.patch.object(fs, "download_original", fake_download):
+            import io
+            from contextlib import redirect_stdout
+            with redirect_stdout(io.StringIO()):
+                return fs.cmd_download(args, "cid", "sec")
+
+    def test_search_request_filters_to_cc0_and_cc_by(self):
+        self.run_download([])
+        query = urllib.parse.parse_qs(urllib.parse.urlparse(self.requests[0]).query)
+        self.assertIn('license:("Creative Commons 0" OR "Attribution")', query["filter"][0])
+
+    def test_allowed_licenses_are_defined_once(self):
+        self.assertEqual(fs.ALLOWED_LICENSES, ("Creative Commons 0", "Attribution"))
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "freesound.py")
+        with open(path, encoding="utf-8") as f:
+            self.assertEqual(f.read().count("ALLOWED_LICENSES = "), 1)
+
+    def test_only_cc0_and_cc_by_are_saved(self):
+        results = [fake_sound(1, CC0), fake_sound(2, BY), fake_sound(3, BY_NC),
+                   fake_sound(4, SAMPLING), fake_sound(5, UNKNOWN), fake_sound(6, "")]
+        self.run_download(results)
+        self.assertEqual(self.downloaded, [1, 2])
+        self.assertEqual(fs.existing_ids(self.dir), {1, 2})
+
+    def test_skipped_sound_leaves_no_file_and_no_json(self):
+        self.run_download([fake_sound(3, BY_NC), fake_sound(4, SAMPLING), fake_sound(5, UNKNOWN)])
+        self.assertEqual(os.listdir(self.dir), [])
+        self.assertEqual(self.downloaded, [])
+
+    def test_skip_prints_one_line_with_sound_and_reason(self):
+        lines = []
+        fs.pick_sounds([fake_sound(3, BY_NC)], 1, report=lines.append)
+        self.assertEqual(len(lines), 1)
+        self.assertIn("3", lines[0])
+        self.assertIn("CC BY-NC 4.0", lines[0])
+
+    def test_plain_license_names(self):
+        self.assertTrue(fs.is_license_allowed("Creative Commons 0"))
+        self.assertTrue(fs.is_license_allowed("Attribution"))
+        self.assertFalse(fs.is_license_allowed("Attribution NonCommercial"))
+        self.assertFalse(fs.is_license_allowed("Sampling+"))
+        self.assertFalse(fs.is_license_allowed(None))
 
 
 if __name__ == "__main__":
