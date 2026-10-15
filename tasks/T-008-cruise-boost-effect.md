@@ -1,7 +1,7 @@
 ---
 id: T-008
 title: Short "boost" effect when W snaps the car to cruise speed
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Weapons
@@ -13,7 +13,7 @@ depends_on: [T-012]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/drifting/unity-prototype-report.md, docs/extended-narrative.md, docs/visual-style.md]
 files_expected_to_change: [the car's code and scene, and their tests]
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -35,12 +35,12 @@ When the player presses W and the car jumps instantly to cruise speed (Drifting,
 
 ## Acceptance criteria
 
-- [ ] A test shows the boost signal fires once when W is pressed from standstill, and once when W is pressed while moving slower than cruise speed (QA: pass / fail)
-- [ ] A test shows it does not fire while W stays held, including during a held drift where the car drops below cruise and jumps back every step (QA: pass / fail)
-- [ ] A test shows it does not fire when W is pressed while already at or above cruise speed (QA: pass / fail)
-- [ ] The car's speed values are identical with and without the effect, shown by a test (QA: pass / fail)
-- [ ] A screenshot taken just after pressing W shows the placeholder effect (QA: pass / fail)
-- [ ] The full test suite passes (QA: pass / fail)
+- [ ] A test shows the boost signal fires once when W is pressed from standstill, and once when W is pressed while moving slower than cruise speed (QA: pass)
+- [ ] A test shows it does not fire while W stays held, including during a held drift where the car drops below cruise and jumps back every step (QA: pass)
+- [ ] A test shows it does not fire when W is pressed while already at or above cruise speed (QA: pass)
+- [ ] The car's speed values are identical with and without the effect, shown by a test (QA: pass)
+- [ ] A screenshot taken just after pressing W shows the placeholder effect (QA: pass)
+- [ ] The full test suite passes (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -55,3 +55,6 @@ Done on `task/T-008-cruise-boost-effect`.
 - Screenshot (git-ignored): `C:\solid-carbide-worktrees\T-008\screenshots\T-008-boost-6.png`, from `bash game/tools/screenshot.sh res://tests/fixtures/boost_effect_demo.tscn screenshots/T-008-boost-6.png 6`. Streaks are visible behind the car; quality is rough (placeholder), look and size are for the board to judge.
 
 **Documents updated:** `game/README.md` (new "Boost effect" section, file list).
+
+**QA round 1 (2026-10-15):** all 6 criteria pass. test_boost.gd covers once-from-standstill, once-below-cruise, none while held in drift (cruise_jump fires >3, boost 0), none at/above cruise, identical velocity and rotation with and without the effect. Screenshot shows light streaks behind the car. Full GUT: 679/679 pass. Signal is `cruise_jump` filtered by `w_just_pressed`; car.gd change is signal-only.
+- 2026-10-15, in-qa → needs-playtest: QA passed
