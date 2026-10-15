@@ -36,10 +36,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test presses Garage and shows the garage screen opens (QA: pass / fail)
-- [ ] A test presses the garage's back button and shows the main menu again (QA: pass / fail)
-- [ ] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test presses Garage and shows the garage screen opens (QA: pass / fail)
+- [x] A test presses the garage's back button and shows the main menu again (QA: pass / fail)
+- [x] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it, with T-058's garage screen, before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -57,3 +57,10 @@ Wired the main menu's Garage button to the garage screen, and the garage's back 
 
 How the board plays it: open `C:\solid-carbide-worktrees\T-089\game\project.godot` (or Play on T-089 in the Builds tab). Press Garage on the main menu to see T-058's garage screen, buy upgrades, press Back to return to the menu, then Start a run.
 - 2026-10-15, in-progress → in-qa: Garage button wired to the garage screen, back returns to menu; tests added and passing (3 known kaiju bar failures)
+
+### QA round 1 (QA/Integration Agent, 2026-10-15)
+
+- Garage press opens garage screen: PASS (test_garage_opens_the_garage_screen)
+- Back returns to main menu: PASS (test_garage_back_returns_to_the_main_menu, Start still works)
+- Docs: PASS (diff vs master is one bullet in Content; Summary, Decisions, Open questions untouched)
+- Tests: PASS (GUT 745/745, pytest tools 180, game/tools 257 + 1 skipped). Launch with --quit-after 300: no script errors.
