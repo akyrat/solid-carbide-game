@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, tasks/T-043-level-up-weapon-choices.md, tasks/T-051-text-level-up-screen.md, game/README.md]
 files_expected_to_change: [the level-up screen scene and script, tests, game/data/playtest.json, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -59,6 +59,14 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 ### 2026-10-15, Needs playtest
 
 The level-up screen passed its final QA round (round 2) with the resize fix: on every level-up the run pauses and two comic cards show with the approved T-051 text; A/D or arrows move the highlight, Enter/Space or a click takes a card, Escape does nothing while it is open, and the first level-up offers the flamethrower. It waits for the board's playtest in the unified build (C:\solid-carbide-worktrees\playtest), then merges.
+
+### 2026-10-15, In QA → Needs playtest
+
+The freeze was a stale Godot cache in this folder, not the level-up screen. Rebuilt it and the game starts now. Back to playtest; it is also in the unified build at C:\solid-carbide-worktrees\playtest.
+
+### 2026-10-15, Needs playtest → Done
+
+You played it in the unified build and it's all good. Merging into master.
 
 ## Result notes
 
@@ -107,3 +115,7 @@ Every criterion re-checked on `ca68a94`; since round 1 only `level_up_screen.gd`
 - **Docs: pass.** `docs/hud-and-menus.md` diff unchanged (one hunk, Content only); `game/README.md` section present.
 - **All tests: pass.** Full GUT suite 691/691 (61 scripts); `python -m pytest tools` 171 passed; `python -m pytest game/tools` 251 passed, 1 skipped.
 - **The fix: verified.** `test_later_level_ups_show_laid_out_cards_without_a_resize` passes. With the two `custom_minimum_size.x = TEXT_WIDTH` lines temporarily removed, it fails exactly on the board's bug (level-ups 2 and 3: cards at y 1336 in a 648 window; level-up 1 fine); with them restored, the file passes 20/20. File restored, nothing left modified. No Godot process left from QA (the runner stops its own; the four running Godot processes were not started by QA and were left alone).
+- 2026-10-15, needs-playtest → in-progress: when I launch the game, it freezes on a beige coloured screen and I can't do anything
+- 2026-10-15, in-progress → in-qa: Not a code bug: Godot's local class cache in the T-052 folder was stale after master was merged in (PlayerProgress not found, game_flow.gd failed to load, blank window). Rebuilt the cache with a headless import; no file in the branch changed, so QA round 2 still stands.
+- 2026-10-15, in-qa → needs-playtest: No code changed since QA round 2; the build now starts without errors.
+- 2026-10-15, needs-playtest → done: Board's playtest in the weapons-garage build (2026-10-15): level-up screen is fixed, all good.
