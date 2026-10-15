@@ -1,7 +1,7 @@
 ---
 id: T-058
 title: The garage screen: plain list of upgrades with buy buttons
-status: blocked
+status: in-qa
 from: project-lead
 to: ui
 lead: Weapons
@@ -47,4 +47,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the UI Agent.
+
+- Built `game/scenes/menu/garage_screen.tscn` + `game/scripts/menu/garage_screen.gd` (`GarageScreen`): heading, coins, one row per upgrade (name, description, level, price, buy button or status message), back button (`back_pressed` signal only). All text is T-059's approved text. Buying calls `PlayerProgress.buy`; the screen redraws from `progress.info()` and on `changed`. `progress` is set by the caller (`GameFlow.progress`), or read from the save file when standalone. Not wired to the main menu (T-089).
+- Unaffordable: buy disabled, row says "Not enough coins". Maxed: price gone, buy hidden (kept in layout), row says "Fully Funded".
+- Screenshot: `C:\solid-carbide-worktrees\T-058\screenshots\T-058_garage.png` (fixture `tests/fixtures/garage_screen_demo.tscn`: 120 coins, damage bonus maxed).
+- Tests: `tests/unit/test_garage_screen.gd` (7 tests, RunPaths file). Full GUT suite 687/687 pass; `game/tools` Python tests (257) and `tools` Python tests (180) pass.
+- Documents updated: `docs/garage-design.md` (Content only), `game/README.md` ("Garage screen").
