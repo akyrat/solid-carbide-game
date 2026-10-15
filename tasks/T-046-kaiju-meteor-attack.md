@@ -14,7 +14,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, tasks/T-045-kaiju.md, tasks/T-097-mvp-map-without-challenges.md, tasks/T-039-enemy-data.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -72,3 +72,15 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 **Documents updated:** `docs/enemies.md` (Content: a new "The kaiju's meteor attack (built in task T-046)", plus one pointer line in "The kaiju"; Summary, Decisions and Open questions unchanged) and `game/README.md` ("The kaiju", "The meteor attack (T-046)").
 
 **For the board to look at in the playtest:** whether the attack rhythm and the 3 meteors feel right, whether a 15-damage hit with a 20 knockback feels fair, and how readable the amber circles are (the placeholder is amber rather than red, see above). Also whether the boulders the kaiju leaves clutter the roads too fast over a full minute (about 21 boulders in the 60 s fight, fewer if spots are refused). The numbers are T-039's and were not changed.
+
+## QA result (round 1, QA/Integration Agent, 2026-10-15)
+
+- Warning circles 2 s, meteors land where shown: PASS (test_warnings_show_for_two_seconds_then_meteors_land_where_they_showed)
+- Hit damages and knocks back, elsewhere doesn't: PASS (tests at lines 133-153)
+- Boulder via T-097 function, only where placement check accepts, car bounces: PASS
+- Pause stops meteors and warnings: PASS
+- Screenshot: PASS (amber circles, a falling meteor, two left boulders)
+- docs/enemies.md Content only (Summary, Decisions, Open questions untouched): PASS
+- Full GUT 688/688, game/tools 251 OK (1 skipped), tools 171 OK: PASS
+- Risks: warning colour is amber (1.0, 0.62, 0.12), not Redgull red, and a test checks it: PASS. game/data/enemies.json has no diff against master: PASS.
+- Note for merge: playtest.json kaiju_early_arrival.enabled is true in this branch; must be set to false before merging.
