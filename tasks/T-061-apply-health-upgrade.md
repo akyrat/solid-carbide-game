@@ -1,10 +1,10 @@
 ---
 id: T-061
 title: Garage upgrade: car health applied at the start of a run
-status: blocked
+status: open
 from: project-lead
 to: game-loop
-lead:
+lead: Weapons
 epic: garage
 milestone: mvp
 user_facing_text: no
