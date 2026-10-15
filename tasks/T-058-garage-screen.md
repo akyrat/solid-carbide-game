@@ -45,6 +45,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest
+
+The garage screen is built: 'Redgull Pit Stop', the coins, one row per upgrade (name, description, level, price, Buy) and Back, all in T-059's approved text. Buying spends coins and raises the level; unaffordable rows say 'Not enough coins', maxed ones 'Fully Funded'. It's the plain MVP list, not yet styled. QA round 1: all 6 pass. Waiting for the board's playtest in the unified build; the main menu's Garage button (T-089) can only start once this is done.
+
 ## Result notes
 
 Written by the UI Agent.
