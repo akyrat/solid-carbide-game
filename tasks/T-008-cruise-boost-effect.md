@@ -4,7 +4,7 @@ title: Short "boost" effect when W snaps the car to cruise speed
 status: needs-playtest
 from: project-lead
 to: driving-drift
-lead: Weapons
+lead: Playtest
 epic: driving
 milestone: final-release
 user_facing_text: no
@@ -49,6 +49,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 ### 2026-10-15, Needs playtest
 
 A placeholder boost effect is in: when a fresh W press snaps the car up to cruise speed, five light blue-grey streaks flash behind the car for 0.35 s (not during a held drift, not while W stays held; driving unchanged). The look is rough on purpose; the T-009 art replaces it. QA round 1: all 6 pass. It waits for the board's playtest in the unified build (C:\solid-carbide-worktrees\playtest).
+
+### 2026-10-15, Needs playtest
+
+Kept unmerged (board, 2026-10-15): the board found the streaks too much and wants a few discreet motion lines. T-008 stays in needs-playtest until T-009's art replaces the placeholder in this branch; then the board playtests both and they merge together.
 
 ## Result notes
 
