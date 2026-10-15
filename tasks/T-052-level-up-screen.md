@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Weapons
