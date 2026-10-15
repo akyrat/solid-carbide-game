@@ -42,8 +42,9 @@ const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 ## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
-const KaijuHealthBarScript := preload("res://scripts/hud/kaiju_health_bar.gd")
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
+## The kaiju's health bar above it (task T-050).
+const KaijuHealthBarScript := preload("res://scripts/hud/kaiju_health_bar.gd")
 ## The car's weapons (task T-041): the weapon rack, see weapons.gd.
 const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 
