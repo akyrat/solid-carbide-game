@@ -4,7 +4,7 @@ title: Garage upgrade: damage bonus applied to the weapons
 status: open
 from: project-lead
 to: weapon-behavior
-lead:
+lead: Weapons
 epic: garage
 milestone: mvp
 user_facing_text: no
