@@ -122,9 +122,9 @@ When a task needs the board to look at, read, listen to or play something, its t
 Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:
 
 - **sonnet:** clearly scoped work: art, sound, data files, simple screens, reports, and QA checks.
-- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA once. QA of a task the board is about to playtest also runs on opus.
+- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA once. QA always runs on sonnet, whatever the task's model (board, 2026-10-15, to cut QA's token use; it was opus for tasks the board was about to playtest).
 
-The hooks enforce it (board, 2026-10-13; `.claude/hooks/board_gate.py`): an agent whose prompt names a task (its first `T-` id) starts only when the Agent call passes that task's model. The QA/Integration Agent needs sonnet, or opus when the task has a `The board's review:` line. To run a task on another model, change its `model` line first.
+The hooks enforce it (board, 2026-10-13; `.claude/hooks/board_gate.py`): an agent whose prompt names a task (its first `T-` id) starts only when the Agent call passes that task's model. The QA/Integration Agent always needs sonnet. To run a task on another model, change its `model` line first.
 
 ## User-facing text and visuals
 

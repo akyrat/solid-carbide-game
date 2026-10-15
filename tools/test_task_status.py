@@ -459,12 +459,14 @@ class AgentModel(Base):
         self.assertEqual(self.agent("Continue task T-002", model="sonnet"), "deny")
         self.assertEqual(self.agent("Continue task T-002", model="opus"), "allow")
 
-    def test_qa_runs_on_sonnet_or_opus_before_a_playtest(self):
+    def test_qa_always_runs_on_sonnet(self):
+        # Board, 2026-10-15: QA runs on sonnet even before a playtest, to cut its token use.
         self.put("T-003")
         self.put("T-004", review="play it")
         self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="sonnet"), "allow")
         self.assertEqual(self.agent("QA round 1 for task T-003", agent="qa-integration", model="opus"), "deny")
-        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="opus"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="sonnet"), "allow")
+        self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration", model="opus"), "deny")
         self.assertEqual(self.agent("QA round 1 for task T-004", agent="qa-integration"), "deny")
 
     def test_the_first_task_id_counts(self):

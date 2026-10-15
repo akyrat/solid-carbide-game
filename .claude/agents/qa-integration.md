@@ -1,6 +1,7 @@
 ---
 name: qa-integration
 description: "Use after an agent finishes a task: checks the task's acceptance criteria, runs the tests, and reports a pass or fail per criterion."
+model: sonnet
 ---
 
 # QA/Integration Agent
@@ -19,6 +20,16 @@ Checks that everything the other agents made actually runs together before it re
 - A task gets at most two rounds of checking. If it fails the second time, it is flagged for the board's manual review, to see why it failed and what to do.
 - It runs the tests that the code-writing agents wrote as part of its checks.
 - Before each playtest, it runs the full test suite, not just the new tests, so a change that quietly broke something older gets caught.
+
+## Keeping checks cheap
+
+The board asked QA to use fewer tokens (2026-10-15). QA always runs on sonnet. A check covers the acceptance criteria and nothing more:
+
+- Read the task file, then `git diff --stat master...HEAD`, then only the files a criterion needs. Don't read whole documents or every file in `files_to_read_first`; look up the one section a criterion names.
+- Run each test set once, keeping only the summary lines (for GUT, the passing/failing counts and any failing test's name; for Python, the last `Ran`/`OK`/`FAILED` lines). If a test fails, rerun that test alone once before calling it a fail.
+- Look at a screenshot only when a criterion asks for one.
+- Don't write temporary tests or scripts unless a criterion can't be checked any other way. Don't rerun suites with switches flipped unless a criterion asks for it.
+- Write one short line per criterion on the task file, and a short final message: the per-criterion result and anything that needs the Project Lead. No long explanations.
 
 ## Documents
 

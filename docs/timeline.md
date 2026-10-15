@@ -1115,3 +1115,13 @@ Entry format:
 - Decision or change: T-050 (planned from the task board): the kaiju's health bar sits above the kaiju and follows it, about as wide as the kaiju (following its width), neon purple on white with a black outline and thin black dividers every 10%, in a subtle comic style like the combo popups, no label, always drawn above buildings; it replaces the HUD-corner bar. New tickets: T-139 (the likes bar animates on a level-up), T-140 (art for the level-up screen, red and gold, Redgull-themed; sample first, PixelLab only with the board's go) and T-141 (the level-up screen animates in with that art; waits for T-140, as the board asked). T-046 (the kaiju's meteor attack) started on the board's go.
 - Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
 - Tasks: T-050, T-139, T-140, T-141, T-046
+
+## 2026-10-15: Cheaper QA
+- Decision or change: the board's usage tab showed every session subagent-heavy and the QA/Integration Agent as the largest share (15%). On the board's request: QA always runs on sonnet (it was opus for tasks with a board's review line; the hook in `.claude/hooks/board_gate.py` and the `tasks/README.md` rule changed with it), its definition gets a "Keeping checks cheap" section (read the diff and only what a criterion needs, run each test set once with summary output only, no temporary tests or extra switch runs unless a criterion asks, one short line per criterion), and the Project Lead keeps its QA prompts short, since it reruns every test set at merge anyway.
+- Documents touched: `tasks/README.md`, `.claude/agents/qa-integration.md`, `agent-notes/project-lead.md`
+- Tasks: none
+
+## 2026-10-15: T-059 done: the garage screen text
+- Decision or change: the garage screen's text, in the voice the board approved for the level-up cards: heading "Redgull Pit Stop"; upgrades "Sponsored Throttle" (top speed 0.1 s sooner per level), "Reinforced Chassis" (+10 car health per level), "Brand Impact" (+5% weapon damage per level); "Level {n}", "Price: {n}", "Coins: {n}", "Buy", "Fully Funded" at the last level, "Not enough coins", "Back". The table is in T-059's result notes. QA round 1: all 3 pass. The board first asked for merges without its playtest, then changed its mind (board, 2026-10-15: one unified build to playtest at the end instead). This merge was already open by then, and another Project Lead instance's commit (31764bb, "Cheaper QA") was made while it was open and completed it, so T-059 is in master without the board's read. It is text in the ticket only (no change the player sees until the garage screen, T-058, which goes into the unified build); the board can still change any line.
+- Documents touched: none (the text lives in T-059's result notes)
+- Tasks: T-059 (done), T-058
