@@ -1,7 +1,7 @@
 ---
 id: T-058
 title: The garage screen: plain list of upgrades with buy buttons
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-057-save-and-buy.md, tasks/T-059-text-garage.md, game/README.md]
 files_expected_to_change: [the garage screen scene and script, tests, docs/garage-design.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,12 +36,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A screenshot shows the three upgrades with level, price and buy button, the coins, and the back button (QA: pass / fail)
-- [ ] A test buys an upgrade and shows the level, price and coins on screen update (QA: pass / fail)
-- [ ] A test shows a maxed upgrade and an unaffordable one show T-059's messages and can't be bought (QA: pass / fail)
-- [ ] A test shows every label is exactly T-059's text (QA: pass / fail)
-- [ ] `docs/garage-design.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A screenshot shows the three upgrades with level, price and buy button, the coins, and the back button (QA: pass)
+- [x] A test buys an upgrade and shows the level, price and coins on screen update (QA: pass)
+- [x] A test shows a maxed upgrade and an unaffordable one show T-059's messages and can't be bought (QA: pass)
+- [x] A test shows every label is exactly T-059's text (QA: pass)
+- [x] `docs/garage-design.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -63,3 +63,4 @@ Written by the UI Agent.
 - docs/garage-design.md: only a new Content subsection added. Pass.
 - GUT 687/687; game/tools Python 257 OK; tools Python 180 OK. Pass.
 - Tests use RunPaths.file (user://test_runs/<pid>/), screen gets progress injected; real progress.json not touched.
+- 2026-10-15, in-qa → needs-playtest: QA passed
