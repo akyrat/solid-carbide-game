@@ -23,6 +23,9 @@ signal run_shown
 var menu: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
+## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
+## into it when the run ends, win or loss.
+var progress: PlayerProgress
 ## The run's pause screen, while a run is on screen.
 var pause_screen: CanvasLayer
 ## What Exit does. Tests replace it so the test run is not closed.
@@ -30,6 +33,7 @@ var quit_game: Callable = func(): get_tree().quit()
 
 
 func _ready() -> void:
+	progress = PlayerProgress.new()
 	show_menu()
 
 
@@ -57,6 +61,7 @@ func start_run() -> void:
 	pause_screen.name = "PauseScreenLayer"
 	run.add_child(pause_screen)
 	pause_screen.setup(run)
+	progress.connect_run(run.state)  # banks the coins before the screen swaps
 	run.state.run_ended.connect(_on_run_ended)
 	run_shown.emit()
 

@@ -1,7 +1,7 @@
 ---
 id: T-057
 title: Saving coins and upgrade levels, and buying an upgrade
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 lead: Weapons
@@ -50,4 +50,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Data Agent.
+
+**Produced:** `game/scripts/data/player_progress.gd` (`PlayerProgress`): save/load in `user://progress.json`, `buy(id)`, `can_buy(id)`, `bank_run(result, coins)`, `connect_run(state)`, and readers (`get_coins`, `level`, `next_price`, `current_value`, `next_value`, `info`). `GameFlow` creates `progress` and connects it to each run's `run_ended` before the screen swap. Tests: `tests/unit/test_player_progress.gd` (9 tests, files via `RunPaths`); `test_screen_flow.gd` now points the save at a per-run file. Docs: `game/README.md` (functions for T-058 and T-060 to T-062) and `docs/garage-design.md` Content ("Saving").
+
+**Simplest-choice notes:** a broken save file counts as a new player; saved levels are clamped to 0..max; negative run coins are ignored; the file is plain JSON (`{"coins", "levels"}`). Not an autoload: `GameFlow.progress` is the shared instance, and the garage screen should get it from there.
+
+**Checks:** full GUT suite passes (680 tests); Python tests pass in `game/tools` (251, 1 skipped) and `tools` (171).
