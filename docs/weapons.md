@@ -30,6 +30,10 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ## Content
 
+### Garage damage bonus
+
+The garage's damage bonus upgrade (Garage design) is applied at the start of every run: its percentage multiplies the damage of the gun and the flamethrower, on top of each weapon's own tier (the two multiply). Level 0 changes nothing. Built in T-062.
+
 ### Unity prototype weapons
 
 Facts from the Unity prototype weapons report (sections 1 to 5). No new decisions.

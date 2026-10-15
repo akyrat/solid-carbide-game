@@ -492,6 +492,7 @@ Written by the Game Data Agent (task T-038); the enemy, weapon and garage data t
   - `buy(id) -> Dictionary` `{"ok": bool, "reason": String}`: if it can be bought it spends the price, raises the level and saves; a refusal changes nothing.
   - `bank_run(result, coins)` adds a run's coins and saves; `connect_run(run_state)` connects it to `run_ended`. `changed` is emitted after buying or banking. `save()` and `load_from_disk()` are there for completeness.
   - Tests: `tests/unit/test_player_progress.gd`.
+  - **Damage bonus (T-062):** `GameFlow.start_run()` calls `run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))` right after the run is added. The rack keeps `damage_bonus_percent`; `damage_multiplier()` is `1 + percent / 100`. Each weapon's `apply_tier()` multiplies that tier's damage with `boosted_damage()` (weapon.gd), so the gun's bullets and the flame's ticks get the same factor, it stacks multiplicatively with the tier's own damage (the flame's hotter-flame tier), and it survives a new run's weapon reset. Level 0 is 0 percent: unchanged. Tests: `tests/unit/weapons/test_damage_bonus.gd`.
 - **Tests:** `tests/unit/test_run_data.gd`, `tests/unit/test_combo_data.gd`, `tests/unit/test_garage_data.gd`, `tests/unit/test_weapon_data.gd`, `tests/unit/test_enemy_data.gd`. New data files get a test that loads them through the loader.
 
 ## Challenge drivability check

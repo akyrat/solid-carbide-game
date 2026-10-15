@@ -55,6 +55,7 @@ func start_run() -> void:
 	run = RunScene.instantiate()
 	run.name = "Run"
 	add_child(run)  # the run starts itself in _ready()
+	run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
 	run.set_zoom(GameSettingsScript.load_zoom())
 	run.load_camera_options()  # smoothing and the dynamic camera (T-123)
 	pause_screen = PauseScreenScript.new()

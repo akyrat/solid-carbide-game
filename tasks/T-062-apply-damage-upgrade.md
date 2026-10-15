@@ -1,7 +1,7 @@
 ---
 id: T-062
 title: Garage upgrade: damage bonus applied to the weapons
-status: open
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Weapons
@@ -43,4 +43,4 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+The run start (GameFlow.start_run) reads PlayerProgress.current_value("damage_bonus") and gives it to the weapon rack (set_damage_bonus). Both weapons multiply each tier's damage by 1 + percent/100 in apply_tier (boosted_damage in weapon.gd). Stacking: multiplicative with the weapon's own tier damage; the bonus is kept across weapon resets and re-applied to owned weapons when set. The flame's damage comes from the data's flamethrower value (2, equal to the gun's), boosted by the same factor. Tests: tests/unit/weapons/test_damage_bonus.gd (level 0 unchanged, higher level both weapons, stacking with tiers and a new run). Full GUT 683/683 pass, both Python sets OK. Docs: game/README.md, docs/weapons.md (Content only).
