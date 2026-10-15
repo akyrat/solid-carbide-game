@@ -1155,3 +1155,8 @@ Entry format:
 - Decision or change: at the start of a run the car's starting and maximum health come from the garage's car health upgrade (`progress.current_value("car_health")`, 100 at level 0, +10 per level), and the HUD's health bar follows it; a run with no saved progress attached (tests, fixtures) keeps run.json's health. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 4 pass. With T-060 and T-062 this completes the three garage upgrades.
 - Documents touched: `game/README.md`
 - Tasks: T-061 (done)
+
+## 2026-10-15: The cruise boost's look: discreet motion lines
+- Decision or change: the board played T-008's placeholder boost (five streaks behind the car) in the weapons-garage playtest build and found it too much. The boost should be discreet: a few motion lines that show briefly. The art comes later, in T-009 (final release), which now has the description and waits only for T-008.
+- Documents touched: `docs/visual-style.md`, `docs/drifting.md`
+- Tasks: T-105 (done), T-009 (description added), T-008
