@@ -1,7 +1,7 @@
 ---
 id: T-004
 title: Freesound downloader: accept only CC0 and CC BY sounds
-status: in-qa
+status: done
 from: project-lead
 to: sfx
 lead: Weapons
@@ -13,7 +13,7 @@ depends_on: [T-002]
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, game/README.md, game/tools/freesound.py, game/tools/test_freesound.py, tasks/T-002-freesound-test-download.md]
 files_expected_to_change: [game/tools/freesound.py, game/tools/test_freesound.py, game/README.md]
-qa_rounds: 0
+qa_rounds: 2
 ---
 
 <!--
@@ -37,13 +37,13 @@ Do not download any new sounds for this task, and do not change the test-run sou
 
 ## Acceptance criteria
 
-- [ ] The search request the downloader builds includes a license filter for CC0 and CC BY only, shown by a test that checks the built request (QA: pass / fail)
-- [ ] A test feeds the downloader faked search results containing CC0, CC BY, CC BY-NC, Sampling+ and an unrecognised license, and only the CC0 and CC BY sounds are saved (QA: pass / fail)
-- [ ] A test confirms that a skipped sound leaves no audio file and no metadata JSON behind (QA: pass / fail)
-- [ ] The allowed licenses are defined in exactly one place in `freesound.py` (QA: pass / fail)
-- [ ] All Python tool tests pass with `python -m unittest discover -s game/tools -p "test_*.py"`, and the GUT suite still passes with `bash game/tools/run_tests.sh` (QA: pass / fail)
-- [ ] `game/README.md` says the downloader accepts only CC0 and CC BY and links to `docs/unfiled-game-details.md` for the rule (QA: pass / fail)
-- [ ] No files under `game/audio/` changed in this task (QA: pass / fail)
+- [ ] The search request the downloader builds includes a license filter for CC0 and CC BY only, shown by a test that checks the built request (QA: PASS)
+- [ ] A test feeds the downloader faked search results containing CC0, CC BY, CC BY-NC, Sampling+ and an unrecognised license, and only the CC0 and CC BY sounds are saved (QA: PASS)
+- [ ] A test confirms that a skipped sound leaves no audio file and no metadata JSON behind (QA: PASS)
+- [ ] The allowed licenses are defined in exactly one place in `freesound.py` (QA: PASS)
+- [ ] All Python tool tests pass with `python -m unittest discover -s game/tools -p "test_*.py"`, and the GUT suite still passes with `bash game/tools/run_tests.sh` (QA: PASS)
+- [ ] `game/README.md` says the downloader accepts only CC0 and CC BY and links to `docs/unfiled-game-details.md` for the rule (QA: PASS)
+- [ ] No files under `game/audio/` changed in this task (QA: PASS)
 
 ## Result notes
 
@@ -54,3 +54,9 @@ Do not download any new sounds for this task, and do not change the test-run sou
 - `game/README.md` updated and points to `docs/unfiled-game-details.md`.
 - Ran: game/tools unittest (257, OK), tools unittest OK, GUT 671/671 passing. Reverted Godot `.import` line-ending noise; nothing under `game/audio/` changed.
 - Documents affected: game/README.md (updated).
+
+## QA round 1
+
+All 7 criteria PASS. Python tests 257 OK (1 skipped), GUT passed, nothing under game/audio/ changed, ALLOWED_LICENSES defined once.
+Freesound docs check (API v2 resources page): license values are exactly `Attribution`, `Attribution NonCommercial`, `Creative Commons 0`; multi-word filter values need double quotes. So the two allowed names MATCH. Only caveat: the docs show OR only for single-word values (`type:(wav OR aiff)`); `license:("Creative Commons 0" OR "Attribution")` is not documented verbatim, so the first live search should confirm it (not tested, no live calls allowed).
+- 2026-10-15, in-qa → done: QA pass
