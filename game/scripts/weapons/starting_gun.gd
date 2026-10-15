@@ -51,6 +51,7 @@ func _init() -> void:
 
 func apply_tier() -> void:
 	stats = data.gun_at(maxi(tier, 1))
+	stats["damage"] = boosted_damage(float(stats["damage"]))
 	# The placeholder's drawn size; WeaponData.gun_at() leaves it out.
 	if _drawn_size < 0.0:
 		var raw = GameData.unwrap(GameData.load_file("weapons"))

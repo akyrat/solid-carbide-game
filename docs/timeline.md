@@ -1140,3 +1140,38 @@ Entry format:
 - Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
 - Documents touched: `docs/garage-design.md`, `game/README.md`
 - Tasks: T-057 (done), T-058, T-060, T-061, T-062
+
+## 2026-10-15: T-062 done: the garage damage bonus reaches both weapons
+- Decision or change: at the start of a run, `GameFlow` gives the weapon rack the damage bonus bought in the garage (`progress.current_value("damage_bonus")`); the gun's and the flamethrower's damage are multiplied by 1 + bonus/100 on top of their own tiers, the same factor for both. At level 0 nothing changes, and no level can be bought until the garage screen (T-058) is merged, so nothing the player meets changes yet: merged after QA, round 1, all 4 pass.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-062 (done)
+
+## 2026-10-15: T-060 done: the garage acceleration upgrade reaches the car
+- Decision or change: at the start of a run the car's time to top speed comes from the garage's acceleration upgrade (`progress.current_value("acceleration")`, 2.3 s at level 0 down to 1.3 s at level 10); the drift prototype keeps its own tuning. W snaps the car to cruise speed first, so the upgrade only shortens the climb from cruise to top speed: the board should judge in playtest whether it is felt. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 5 pass.
+- Documents touched: `docs/drifting.md`, `game/README.md`
+- Tasks: T-060 (done)
+
+## 2026-10-15: T-061 done: the garage health upgrade reaches the car
+- Decision or change: at the start of a run the car's starting and maximum health come from the garage's car health upgrade (`progress.current_value("car_health")`, 100 at level 0, +10 per level), and the HUD's health bar follows it; a run with no saved progress attached (tests, fixtures) keeps run.json's health. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 4 pass. With T-060 and T-062 this completes the three garage upgrades.
+- Documents touched: `game/README.md`
+- Tasks: T-061 (done)
+
+## 2026-10-15: The cruise boost's look: discreet motion lines
+- Decision or change: the board played T-008's placeholder boost (five streaks behind the car) in the weapons-garage playtest build and found it too much. The boost should be discreet: a few motion lines that show briefly. The art comes later, in T-009 (final release), which now has the description and waits only for T-008.
+- Documents touched: `docs/visual-style.md`, `docs/drifting.md`
+- Tasks: T-105 (done), T-009 (description added), T-008
+
+## 2026-10-15: T-052 done: the level-up screen
+- Decision or change: the level-up (gift pack) screen merged after the board's playtest in the weapons-garage unified build ("level up screen is fixed all good"). The board's earlier freeze on a beige screen in T-052's own folder was not the screen: Godot's local class cache there was stale after master was merged in, so the game script failed to load. The Project Lead rebuilt the cache (a headless import); no file changed. The status script counted that pass back through QA as a third round, though no check ran.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-052 (done), T-140 (now open)
+
+## 2026-10-15: T-050 done: the kaiju's health bar
+- Decision or change: the board played the kaiju build ("it works well!") and the kaiju's HUD health bar merged. After the merge, 3 of its tests fail on master (the bar's position and width tests, and hiding in a new run); they passed on the branch, so the UI Agent is finding the cause and fixing it on T-050's branch, to be merged again.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-050 (done; fix after merge in progress), T-098 (now open)
+
+## 2026-10-15: Meteor boulders fade away after 10 seconds
+- Decision or change: the board liked the meteor attack in the kaiju build (damage and a big knockback when a meteor lands on the car; likes the falling rocks). One change, in its own ticket: a boulder left by a meteor stays 10 seconds, then fades away and is gone. T-046 itself is being made ready to merge (its playtest switches set back off, master merged in).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-046, T-142 (new, blocked on T-046)

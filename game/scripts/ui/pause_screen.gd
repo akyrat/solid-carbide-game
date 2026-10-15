@@ -256,7 +256,16 @@ func is_paused() -> bool:
 	return get_tree().paused
 
 
+## True while the level-up screen's choice is open (T-052): the pause is the
+## level-up pause, and Escape must not end it.
+func _choice_open() -> bool:
+	var st = target.get("state") if target != null else null
+	return st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice()
+
+
 func toggle() -> void:
+	if _choice_open():
+		return
 	if get_tree().paused:
 		resume()
 	else:
