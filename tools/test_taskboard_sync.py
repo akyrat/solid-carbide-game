@@ -75,6 +75,21 @@ class TaskboardSyncTests(unittest.TestCase):
         self.assertEqual(doc["result_notes"], "It works.")
         self.assertEqual(doc["qa_rounds"], 0)
 
+    def test_ticket_returns_updates_in_order_apart_from_the_result_notes(self):
+        text = TASK + (
+            "\n## Updates\n\n### 2026-10-14, Open → In progress\n\nFirst.\n\nStill first.\n\n"
+            "### 2026-10-15, In progress → In QA\n\nSecond.\n\n"
+            "## Result notes\n\nThe agent's notes.\n")
+        (self.tasks / "T-900-test.md").write_text(text, encoding="utf-8")
+        t = tb.ticket(self.tasks / "T-900-test.md")
+        self.assertEqual([(u["date"], u["change"], u["text"]) for u in t["updates"]], [
+            ("2026-10-14", "Open → In progress", "First.\n\nStill first."),
+            ("2026-10-15", "In progress → In QA", "Second.")])
+        self.assertEqual(t["result_notes"], "The agent's notes.")
+
+    def test_ticket_without_updates_has_an_empty_list(self):
+        self.assertEqual(tb.ticket(self.tasks / "T-900-test.md")["updates"], [])
+
     def test_tickets_now_prefers_the_task_branch_folder(self):
         folder = Path(self.tmp.name) / "worktrees" / "T-900"
         (folder / "tasks").mkdir(parents=True)

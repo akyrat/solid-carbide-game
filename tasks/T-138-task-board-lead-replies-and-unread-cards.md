@@ -1,7 +1,7 @@
 ---
 id: T-138
 title: Project Lead replies on the ticket at each lane change, and highlight cards the board hasn't opened since they changed
-status: open
+status: done
 from: project-lead
 to: project-lead
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/README.md, docs/working-with-the-board.md, tasks/READM
 files_to_read_first: [tasks/README.md, docs/README.md, docs/working-with-the-board.md, tools/task_status.py, tools/taskboard_sync.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tasks/T-136-task-board-note-on-drag.md]
 files_expected_to_change: [tools/task_status.py, tools/test_task_status.py, tools/taskboard_sync.py, tools/test_taskboard_sync.py, tools/taskboard/taskboard.html, tasks/_TEMPLATE.md, tasks/README.md, docs/README.md, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,14 +52,30 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test moves a task with `--reply` and shows the task file gets a `## Updates` entry with the date, the lane change and the full multi-paragraph text, placed before `## Result notes` (QA: pass / fail)
-- [ ] A test posts `--reply` without a status change and shows an entry against the current lane, with the status unchanged; and that `## Updates` is added to an older task file that lacks it, without changing its Result notes (QA: pass / fail)
-- [ ] A test shows `taskboard_sync.py` returns a ticket's updates in order and that the result notes it returns do not include the updates (QA: pass / fail)
-- [ ] On a test server (another port, temporary state folder), a screenshot shows a ticket's detail view with the "Latest from the Project Lead" box above the description and a collapsed "Earlier updates" list (QA: pass / fail)
-- [ ] On the test server, a screenshot shows a highlighted card after its status changes, and another shows the highlight gone after the ticket's detail view is opened; posting a reply alone highlights the card again (QA: pass / fail)
-- [ ] `tasks/README.md`, `docs/README.md`, `docs/working-with-the-board.md` and `tasks/_TEMPLATE.md` are updated as the Description says (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] A test moves a task with `--reply` and shows the task file gets a `## Updates` entry with the date, the lane change and the full multi-paragraph text, placed before `## Result notes` (QA: pass)
+- [ ] A test posts `--reply` without a status change and shows an entry against the current lane, with the status unchanged; and that `## Updates` is added to an older task file that lacks it, without changing its Result notes (QA: pass)
+- [ ] A test shows `taskboard_sync.py` returns a ticket's updates in order and that the result notes it returns do not include the updates (QA: pass)
+- [ ] On a test server (another port, temporary state folder), a screenshot shows a ticket's detail view with the "Latest from the Project Lead" box above the description and a collapsed "Earlier updates" list (QA: pass)
+- [ ] On the test server, a screenshot shows a highlighted card after its status changes, and another shows the highlight gone after the ticket's detail view is opened; posting a reply alone highlights the card again (QA: pass)
+- [ ] `tasks/README.md`, `docs/README.md`, `docs/working-with-the-board.md` and `tasks/_TEMPLATE.md` are updated as the Description says (QA: pass)
+- [ ] All Python tool tests pass (QA: pass)
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Tools helper agent, in this folder and branch only.
+
+**What changed**
+- `tools/task_status.py`: new `--reply "<text>"`. With a move it adds an entry to the task file's `## Updates` section with that move (`### <date>, In progress → In QA`, then the full text, which may be several paragraphs). Alone it adds an entry against the current lane and leaves the status as it is. The section sits just before `## Result notes` and is created there when missing (or at the end of the file when there are no result notes); entries are newest last. A refused move posts no reply; an empty reply is refused. CRLF files stay CRLF. The command line was restructured a little so `--reply` and `--lead` combine with or without a move.
+- `tools/taskboard_sync.py`: `parse_updates()` and an `updates` list on every ticket (oldest first, as in the file). The result notes it returns stop being affected by the section because Updates sits before them.
+- `tools/taskboard/taskboard.html`: a "Latest from the Project Lead" box at the top of the ticket detail (date, lane change, text rendered like the result notes) with a collapsed "Earlier updates (n)" list, newest first; no box when there are no updates. Cards with a changed status or a new update get a glowing cyan outline and a "New" chip. What the board saw is now remembered as status plus update count; values an older page saved (just a status) still work and only compare the status. The same rule drives the Inbox "Changed" list. Opening the detail view (and "Mark all as seen") now also redraws the board lane cards, which it did not before.
+- `tasks/_TEMPLATE.md` has the empty `## Updates` section. Docs: `tasks/README.md` ("Changing a task's status"), `docs/README.md` ("The task board") and `docs/working-with-the-board.md` (the reply rule) updated as the Description says.
+
+**Tests** (all pass): `python -m unittest discover -s tools -p "test_*.py"` 180 tests OK (new: 7 in `test_task_status.py` class `Replies`, 2 in `test_taskboard_sync.py`); `python -m unittest discover -s game/tools -p "test_*.py"` 251 tests OK (1 skipped, as before).
+
+**Screenshots** (real headless Chrome, driven over its DevTools port, against a throwaway copy of `tools/` with three demo tickets, its own state folder, on port 8791; the live board on 8765 and the live `.board/` were not touched). In `docs/screenshots/T-138/`:
+- `3-detail-latest-and-earlier-updates.png`: detail view with the Latest box above the review section and "Earlier updates (2)" collapsed.
+- `3a-detail-one-update.png`: a ticket with a single update (no earlier list).
+- `1-baseline-no-highlight.png`, `2-card-highlighted-after-status-change.png` (T-902 glowing with "New" after in-progress → in-qa), `4-highlight-cleared-after-opening.png` (gone after opening its detail), `5-card-highlighted-after-reply-alone.png` (highlighted again after `--reply` with no status change). The page's own card state was also printed at each step and matched the pictures.
+
+**After the merge:** the live task board server must be restarted for this to show, because the page and `taskboard_sync.py` are served by the running process (`python tools/taskboard/server.py --stop`, then start it again; a browser refresh then picks up the page). `task_status.py --reply` works at once, but the board shows nothing until then. First visit after the update: nothing is falsely highlighted, since older saved values compare on status only.
+- 2026-10-15, in-qa → done: QA round 1: all 7 criteria pass. 180 + 251 tests OK; screenshots checked; Updates stays before Result notes (tested incl. older file, CRLF). Live board server needs a restart after merge.
