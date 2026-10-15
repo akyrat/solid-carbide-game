@@ -7,13 +7,17 @@ extends GutTest
 const GameScene := preload("res://scenes/game/game.tscn")
 var TEST_PATH := RunPaths.file("test_settings_t055.cfg")
 
+var PROGRESS_PATH := RunPaths.file("test_progress_t055.json")
+
 var game: Node
 var quit_calls := 0
 
 
 func before_each() -> void:
 	GameSettings.path = TEST_PATH
+	PlayerProgress.path = PROGRESS_PATH
 	DirAccess.remove_absolute(TEST_PATH)
+	DirAccess.remove_absolute(PROGRESS_PATH)
 	quit_calls = 0
 	game = GameScene.instantiate()
 	game.quit_game = func(): quit_calls += 1
@@ -25,6 +29,8 @@ func after_each() -> void:
 	await wait_process_frames(1)  # let screens freed with queue_free() go
 	DirAccess.remove_absolute(TEST_PATH)
 	GameSettings.path = GameSettings.DEFAULT_PATH
+	DirAccess.remove_absolute(PROGRESS_PATH)
+	PlayerProgress.path = PlayerProgress.DEFAULT_PATH
 
 
 func _press(button: Button) -> void:

@@ -1,10 +1,10 @@
 ---
 id: T-057
 title: Saving coins and upgrade levels, and buying an upgrade
-status: open
+status: done
 from: project-lead
 to: game-data
-lead:
+lead: Weapons
 epic: garage
 milestone: mvp
 user_facing_text: no
@@ -14,7 +14,7 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, tasks/T-036-run-scene-and-state.md, tasks/T-056-garage-data.md, game/README.md]
 files_expected_to_change: [the save code, tests, docs/garage-design.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,14 +40,27 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test with no save file shows 0 coins and every upgrade at level 0 (QA: pass / fail)
-- [ ] A test ends a run (simulated signal) with some coins and shows they are added to the total and saved (QA: pass / fail)
-- [ ] A test buys an upgrade with enough coins and shows coins go down by the price, the level goes up, and both are saved (QA: pass / fail)
-- [ ] A test shows buying is refused with too few coins, and at the last level, and nothing changes (QA: pass / fail)
-- [ ] A test saves, reloads from disk, and shows the same coins and levels (QA: pass / fail)
-- [ ] `game/README.md` documents the functions for the UI and the run, and `docs/garage-design.md` describes saving in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test with no save file shows 0 coins and every upgrade at level 0 (QA: pass)
+- [x] A test ends a run (simulated signal) with some coins and shows they are added to the total and saved (QA: pass)
+- [x] A test buys an upgrade with enough coins and shows coins go down by the price, the level goes up, and both are saved (QA: pass)
+- [x] A test shows buying is refused with too few coins, and at the last level, and nothing changes (QA: pass)
+- [x] A test saves, reloads from disk, and shows the same coins and levels (QA: pass)
+- [x] `game/README.md` documents the functions for the UI and the run, and `docs/garage-design.md` describes saving in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
+
+## Updates
+
+### 2026-10-15, Done
+
+Saving and buying are in: coins from every run (win or loss) are added to a saved total, and the garage can buy upgrade levels, refusing when the player can't afford one or it's maxed. Nothing is visible yet; the garage screen (T-058) and the three upgrades at run start (T-060 to T-062) build on it and go into the unified playtest build.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Game Data Agent.
+
+**Produced:** `game/scripts/data/player_progress.gd` (`PlayerProgress`): save/load in `user://progress.json`, `buy(id)`, `can_buy(id)`, `bank_run(result, coins)`, `connect_run(state)`, and readers (`get_coins`, `level`, `next_price`, `current_value`, `next_value`, `info`). `GameFlow` creates `progress` and connects it to each run's `run_ended` before the screen swap. Tests: `tests/unit/test_player_progress.gd` (9 tests, files via `RunPaths`); `test_screen_flow.gd` now points the save at a per-run file. Docs: `game/README.md` (functions for T-058 and T-060 to T-062) and `docs/garage-design.md` Content ("Saving").
+
+**Simplest-choice notes:** a broken save file counts as a new player; saved levels are clamped to 0..max; negative run coins are ignored; the file is plain JSON (`{"coins", "levels"}`). Not an autoload: `GameFlow.progress` is the shared instance, and the garage screen should get it from there.
+
+**Checks:** full GUT suite passes (680 tests); Python tests pass in `game/tools` (251, 1 skipped) and `tools` (171).
+- 2026-10-15, in-qa → done: QA round 1: all 7 criteria pass. Tests use per-run files via RunPaths (test_screen_flow redirects PlayerProgress.path); no real progress.json written. Banking on run_ended covers win and loss. GUT 680/680, game/tools 251 OK, tools 171 OK.

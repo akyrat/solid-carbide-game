@@ -4,7 +4,7 @@ title: The kaiju's meteor attack: warning circles, impacts and new boulders
 status: open
 from: project-lead
 to: enemy-behavior
-lead:
+lead: Enemies
 epic: enemies
 milestone: mvp
 user_facing_text: no

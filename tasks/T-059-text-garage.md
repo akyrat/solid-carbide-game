@@ -1,10 +1,10 @@
 ---
 id: T-059
 title: Text: the garage screen
-status: open
+status: done
 from: project-lead
 to: narrative-theme
-lead:
+lead: Weapons
 epic: narrative
 milestone: mvp
 user_facing_text: yes
@@ -14,7 +14,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, .claude/agents/narrative-theme.md, docs/garage-design.md, tasks/T-056-garage-data.md, tasks/T-058-garage-screen.md]
 files_expected_to_change: [tasks/T-059-text-garage.md (result notes only)]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,12 +40,36 @@ Write the final text in this task's result notes, as a table: key, where it appe
 
 ## Acceptance criteria
 
-- [ ] The result notes have garage.title, a name and description for each of the 3 upgrades, and garage.level, garage.price, garage.coins, garage.buy, garage.maxed, garage.too_poor and garage.back (QA: pass / fail)
-- [ ] Every text in the table fits the length limit given for it (QA: pass / fail)
-- [ ] No text contains "XP" or "experience" (QA: pass / fail)
+- [ ] The result notes have garage.title, a name and description for each of the 3 upgrades, and garage.level, garage.price, garage.coins, garage.buy, garage.maxed, garage.too_poor and garage.back (QA: pass)
+- [ ] Every text in the table fits the length limit given for it (QA: pass)
+- [ ] No text contains "XP" or "experience" (QA: pass)
 
 The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the narrative-theme agent. All lengths within limits; no XP or experience. Matches game/data/garage.json: 10 levels each; acceleration time to top speed 2.3 s down 0.1 s per level; car health 100 up 10 per level; damage bonus +5% per level. {n} is where the number goes (lengths count the placeholder as written).
+
+| Key | Where it appears | Text | Length |
+|---|---|---|---|
+| garage.title | Heading of the garage screen | Redgull Pit Stop | 16/30 |
+| garage.acceleration.name | Upgrade name | Sponsored Throttle | 18/25 |
+| garage.acceleration.desc | Upgrade description | Top speed 0.1 s sooner per level. More drifting, more content. | 62/80 |
+| garage.car_health.name | Upgrade name | Reinforced Chassis | 18/25 |
+| garage.car_health.desc | Upgrade description | +10 car health per level. Redgull says you'll be fine. | 54/80 |
+| garage.damage_bonus.name | Upgrade name | Brand Impact | 12/25 |
+| garage.damage_bonus.desc | Upgrade description | +5% weapon damage per level. Redgull calls it synergy. | 54/80 |
+| garage.level | Each upgrade row; {n} is the current level | Level {n} | 9/25 |
+| garage.price | Each upgrade row; {n} is the price of the next level | Price: {n} | 10/25 |
+| garage.coins | Player's coins; {n} is the coin total | Coins: {n} | 10/25 |
+| garage.buy | Buy button on each upgrade | Buy | 3/25 |
+| garage.maxed | Shown instead of the price/buy at the last level | Fully Funded | 12/25 |
+| garage.too_poor | Shown when the player can't afford the next level | Not enough coins | 16/25 |
+| garage.back | Button back to the main menu | Back | 4/25 |
+
+**QA (round 1, 2026-10-15): all pass.**
+- All 14 keys present: garage.title, name and description for acceleration, car_health and damage_bonus, and garage.level, .price, .coins, .buy, .maxed, .too_poor, .back.
+- Lengths recounted by script ({n} counted as written): every stated length matches the real one and fits its limit (title 30, names 25, descriptions 80, the rest 25). Longest: garage.acceleration.desc, 62/80.
+- No text contains "XP" or "experience" (case-insensitive).
+- Checked against game/data/garage.json and docs/garage-design.md: acceleration lowers time_to_top_speed by 0.1 s per level (2.3 to 1.3), car health +10 per level (100 to 200), damage bonus +5% to every weapon's damage per level (0 to 50); 10 levels each, so "Fully Funded" at the last level fits. garage.level/.price/.coins/.buy/.back match the plain-list screen in Garage design. The jokes ("more content", "Redgull says you'll be fine", "synergy") are flavour, not mechanics claims. Voice is left to the board's review.
+- 2026-10-15, needs-playtest → done: merged without the board's read, as the board asked for this session

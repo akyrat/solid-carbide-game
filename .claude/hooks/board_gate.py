@@ -126,7 +126,7 @@ def task_file(tid):
 def model_needed(agent, text):
     """The model an agent must run on for a task, from the task file's text."""
     if agent == QA_AGENT:
-        return "opus" if re.search(r"^The board's review:", text, re.M) else "sonnet"
+        return "sonnet"  # QA always runs on sonnet (board, 2026-10-15: cut QA's token use)
     return (tb.parse_header(text) or {}).get("model")
 
 
@@ -141,7 +141,7 @@ def pre_agent(tool_input):
     needed = model_needed(agent, file.read_bytes().decode("utf-8"))
     if not needed or tool_input.get("model") == needed:
         return 0
-    why = ("QA of a task with a board's review line runs on opus, other QA on sonnet"
+    why = ("QA always runs on sonnet"
            if agent == QA_AGENT else f"{file.name} says model: {needed}")
     given = tool_input.get("model") or "none (it would run on the Project Lead's model)"
     return deny(f"This agent works on {match.group(0)} and must run on {needed} ({why}); the call passes "
