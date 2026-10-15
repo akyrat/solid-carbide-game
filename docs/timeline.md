@@ -1140,3 +1140,8 @@ Entry format:
 - Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
 - Documents touched: `docs/garage-design.md`, `game/README.md`
 - Tasks: T-057 (done), T-058, T-060, T-061, T-062
+
+## 2026-10-15: T-062 done: the garage damage bonus reaches both weapons
+- Decision or change: at the start of a run, `GameFlow` gives the weapon rack the damage bonus bought in the garage (`progress.current_value("damage_bonus")`); the gun's and the flamethrower's damage are multiplied by 1 + bonus/100 on top of their own tiers, the same factor for both. At level 0 nothing changes, and no level can be bought until the garage screen (T-058) is merged, so nothing the player meets changes yet: merged after QA, round 1, all 4 pass.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-062 (done)
