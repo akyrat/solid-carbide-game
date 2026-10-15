@@ -4,7 +4,7 @@ title: The garage screen: plain list of upgrades with buy buttons
 status: needs-playtest
 from: project-lead
 to: ui
-lead: Weapons
+lead: Playtest
 epic: garage
 milestone: mvp
 user_facing_text: yes
