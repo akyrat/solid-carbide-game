@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, tasks/T-043-level-up-weapon-choices.md, tasks/T-051-text-level-up-screen.md, game/README.md]
 files_expected_to_change: [the level-up screen scene and script, tests, game/data/playtest.json, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -86,3 +86,18 @@ Written by the UI Agent (2026-10-15).
 The board's note, word for word: "when I level up the second and third time, I had to resize my windfow for it to refresh so i can see the level up options."
 
 **Cause:** the card title and description labels wrap their text but had no width of their own. When the cards were rebuilt for a later level-up, the wrapping labels were measured with no width (one word per line), so the box became far too tall and was centred with the cards pushed below the bottom of the window (a test showed them at y 1336 in a 648 pixel window) until a resize made the containers measure again. The first level-up worked because the first layout happened with the screen already set up. **Fix:** `level_up_screen.gd` gives each wrapping label a fixed width (`TEXT_WIDTH`, the card's width less margins and border), so the size is right from the first layout. **Check:** new test `test_later_level_ups_show_laid_out_cards_without_a_resize` (a 1152x648 window, three level-ups in a row, each time the cards are visible, at least 360x300, side by side and inside the window; it fails without the fix: 19 of 20 pass, and passes with it). Real windowed run: `tests/fixtures/level_up_screen_third_demo.tscn` plays Start, takes two cards and levels up a third time in the real renderer; screenshot `art-archive/T-052/screenshots/level_up_screen_third.png` shows the third level-up laid out and centred without any resize.
+
+### QA round 2 (QA/Integration Agent, 2026-10-15): all nine criteria pass, and the board's resize bug is fixed
+
+Every criterion re-checked on `ca68a94`; since round 1 only `level_up_screen.gd` (two lines: wrapping labels get `TEXT_WIDTH`), the new test, the third-level-up fixture and screenshot changed.
+
+- **Opens with 2 cards, T-051 text: pass.** Test still passes; `level_up_texts.gd` unchanged since round 1's character-for-character check.
+- **Button takes it, screen closes: pass.** Button and real-mouse-click tests pass.
+- **Screenshot: pass.** Both screenshots looked at. `level_up_screen_third.png` (third level-up, Hype Lv 4, real renderer, no resize): banner and both cards ("Quicker Trigger II" = `upgrade_gun.tier4`, since the fixture took the gun twice; "Hot Take Exhaust") centred inside the 1152x648 window over the dimmed run, yellow ring on the first card, no Redgull red besides the HUD heart.
+- **Next-tier text: pass.** Test passes; the third screenshot shows the same rule in the real game (gun at tier 3 offers tier 4's text).
+- **Keys: pass.** Tests pass.
+- **Escape: pass.** Tests pass.
+- **Playtest switch: pass.** `flamethrower_at_start` still false; the first-level-up test passes.
+- **Docs: pass.** `docs/hud-and-menus.md` diff unchanged (one hunk, Content only); `game/README.md` section present.
+- **All tests: pass.** Full GUT suite 691/691 (61 scripts); `python -m pytest tools` 171 passed; `python -m pytest game/tools` 251 passed, 1 skipped.
+- **The fix: verified.** `test_later_level_ups_show_laid_out_cards_without_a_resize` passes. With the two `custom_minimum_size.x = TEXT_WIDTH` lines temporarily removed, it fails exactly on the board's bug (level-ups 2 and 3: cards at y 1336 in a 648 window; level-up 1 fine); with them restored, the file passes 20/20. File restored, nothing left modified. No Godot process left from QA (the runner stops its own; the four running Godot processes were not started by QA and were left alone).
