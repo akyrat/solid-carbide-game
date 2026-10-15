@@ -54,6 +54,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest
+
+The level-up screen passed its final QA round (round 2) with the resize fix: on every level-up the run pauses and two comic cards show with the approved T-051 text; A/D or arrows move the highlight, Enter/Space or a click takes a card, Escape does nothing while it is open, and the first level-up offers the flamethrower. It waits for the board's playtest in the unified build (C:\solid-carbide-worktrees\playtest), then merges.
+
 ## Result notes
 
 Written by the UI Agent (2026-10-15).
