@@ -1,7 +1,7 @@
 ---
 id: T-140
 title: "Art: the level-up screen, red and gold, Redgull-themed"
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Enemies

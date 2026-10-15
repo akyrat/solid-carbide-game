@@ -45,6 +45,8 @@ const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 ## The car's weapons (task T-041): the weapon rack, see weapons.gd.
 const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
+## The level-up screen (task T-052): shows the weapon choices when the run pauses for a level-up.
+const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -105,6 +107,8 @@ var kaiju_boss: Node
 ## The car's weapons (task T-041, weapons.gd): child "Weapons". A new run
 ## starts with the starting gun at tier 1 and nothing else.
 var weapons: Node
+## The level-up screen (task T-052, level_up_screen.gd): child "LevelUpScreen".
+var level_up_screen: CanvasLayer
 
 
 func _ready() -> void:
@@ -180,6 +184,12 @@ func _ready() -> void:
 	weapons.name = "Weapons"
 	add_child(weapons)
 	weapons.bind(self)
+	# A level-up pauses the run for the weapon choice shown by the level-up screen (T-052).
+	state.pause_on_level_up = true
+	level_up_screen = LevelUpScreenScript.new()
+	level_up_screen.name = "LevelUpScreen"
+	add_child(level_up_screen)
+	level_up_screen.setup(weapons)
 	start_run()
 
 

@@ -1160,3 +1160,8 @@ Entry format:
 - Decision or change: the board played T-008's placeholder boost (five streaks behind the car) in the weapons-garage playtest build and found it too much. The boost should be discreet: a few motion lines that show briefly. The art comes later, in T-009 (final release), which now has the description and waits only for T-008.
 - Documents touched: `docs/visual-style.md`, `docs/drifting.md`
 - Tasks: T-105 (done), T-009 (description added), T-008
+
+## 2026-10-15: T-052 done: the level-up screen
+- Decision or change: the level-up (gift pack) screen merged after the board's playtest in the weapons-garage unified build ("level up screen is fixed all good"). The board's earlier freeze on a beige screen in T-052's own folder was not the screen: Godot's local class cache there was stale after master was merged in, so the game script failed to load. The Project Lead rebuilt the cache (a headless import); no file changed. The status script counted that pass back through QA as a third round, though no check ran.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-052 (done), T-140 (now open)

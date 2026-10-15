@@ -819,6 +819,18 @@ Task T-043 (Weapon Behavior Agent): which weapon choices a level-up gives and ap
 
 **Tests:** `tests/unit/weapons/test_level_up_offers.gd`: the first offer, the offer after taking the flamethrower, each choice applied and the run resumed, refused ids, last-tier weapons not offered, skipping with nothing to offer, the playtest start, two level-ups at once, a new run.
 
+### Level-up screen
+
+Task T-052 (UI Agent). What the player sees and does: `docs/hud-and-menus.md`, "Level-up screen". `scripts/ui/level_up_screen.gd` (`LevelUpScreen`, a CanvasLayer at layer 15: over the HUD, under the pause screen) is a child of the run (`run.level_up_screen`, node `LevelUpScreen`), set up with the weapon rack. `run.gd` turns the level-up pause on (`state.pause_on_level_up = true`), so a level-up pauses the tree; the screen listens to `run.weapons.offers.offers_ready`, shows a card per id and calls `offers.choose(id)` for the one taken; it closes on `offer_taken` and on a new run. It keeps processing while the tree is paused.
+
+- `cards`: one `{id, panel, title, desc, button}` per offered id; `highlight` is the highlighted index. `card_text(id)` gives `{title, desc}`: the upgrade ids use the weapon's tier now + 1 (`upgrade_gun.tier4.*` for a gun at tier 3). `take(id)`, `take_highlighted()`, `move_highlight(step)`, `show_offers(ids)`, `close()`, `is_open()`.
+- Text: `scripts/ui/level_up_texts.gd` (`LevelUpTexts.TEXTS`), T-051's table keyed as there (`levelup.title`, `levelup.take`, `get_flamethrower.title/.desc`, `<id>.tier<N>.title/.desc`; 32 rows, the two `weapon.*.name` rows are not used here). Generated from the table, not retyped.
+- Input: `_input` takes only fresh key presses (`not echo`); keys down when the screen opens are remembered (`key_down` callable, `Input.is_physical_key_pressed` by default) and ignored until released. A/D or Left/Right, Enter/KP Enter/Space.
+- Look: Bangers via `Hud.comic_font()` (smoothing off), `StyleBoxFlat` with `anti_aliasing = false`, white cards with black borders, the highlighted card a thick `RING` (the combo's yellow) border with a black outline (shadow).
+- Escape: `pause_screen.gd` ignores Escape (`toggle()`) while `target.state.is_waiting_for_choice()`, so the level-up pause is never resumed or covered by the pause screen.
+- Playtest switch: `data/playtest.json` `flamethrower_at_start` is `false` since this task, so a run starts with the gun only and the first level-up (100 likes, about 10 seconds of drifting at combo x1) offers "get the flamethrower" and the gun's tier 2.
+- **Tests:** `tests/unit/test_level_up_screen.gd` (open with 2 cards and T-051's text, next-tier text for gun and flamethrower, button and real mouse click, A/D and arrow keys, Enter and Space, key held at open and key-repeat, the highlight's ring, Escape, two waiting level-ups, a normal run's first offers, a new run, the comic look). Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/level_up_screen_demo.tscn screenshots/level_up_screen.png 40`; the saved one is `art-archive/T-052/screenshots/level_up_screen.png`.
+
 ## The kaiju
 
 Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions describes it, with T-039's numbers (`kaiju` and, T-119, `kaiju_coins` in `data/enemies.json` through `EnemyData`). What it does: `docs/enemies.md`, Content, "The kaiju". A placeholder for now (a large dark slate green Godzilla-style shape drawn in code); the final art comes from a separate art task. Its meteor attack is task T-046.

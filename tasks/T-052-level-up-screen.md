@@ -1,7 +1,7 @@
 ---
 id: T-052
 title: The level-up (gift pack) screen: 2 cards, take one
-status: planning
+status: done
 from: project-lead
 to: ui
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, tasks/T-043-level-up-weapon-choices.md, tasks/T-051-text-level-up-screen.md, game/README.md]
 files_expected_to_change: [the level-up screen scene and script, tests, game/data/playtest.json, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 3
 ---
 
 <!--
@@ -42,18 +42,80 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test fires a level-up and shows the screen opens with 2 cards whose titles and descriptions are T-051's text for T-043's offered choice ids (QA: pass / fail)
-- [ ] A test presses a card's button and shows T-043's function is called with that choice id and the screen closes (QA: pass / fail)
-- [ ] A screenshot shows the level-up screen over the paused run (QA: pass / fail)
-- [ ] A test shows an upgrade card shows the T-051 text for the next tier of that weapon (for example the gun at tier 3 offers `upgrade_gun.tier4`'s text) (QA: pass / fail)
-- [ ] A test shows A/D and the arrow keys move the highlight, Enter and Space take the highlighted card, and a key already held when the screen opens takes nothing (QA: pass / fail)
-- [ ] A test shows Escape does not resume the run or close the screen while the choice is open (QA: pass / fail)
-- [ ] `game/data/playtest.json` has `flamethrower_at_start` false, and a test shows a normal run's first level-up offers `get_flamethrower` and `upgrade_gun` (QA: pass / fail)
-- [ ] `docs/hud-and-menus.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test fires a level-up and shows the screen opens with 2 cards whose titles and descriptions are T-051's text for T-043's offered choice ids (QA: pass)
+- [x] A test presses a card's button and shows T-043's function is called with that choice id and the screen closes (QA: pass)
+- [x] A screenshot shows the level-up screen over the paused run (QA: pass)
+- [x] A test shows an upgrade card shows the T-051 text for the next tier of that weapon (for example the gun at tier 3 offers `upgrade_gun.tier4`'s text) (QA: pass)
+- [x] A test shows A/D and the arrow keys move the highlight, Enter and Space take the highlighted card, and a key already held when the screen opens takes nothing (QA: pass)
+- [x] A test shows Escape does not resume the run or close the screen while the choice is open (QA: pass)
+- [x] `game/data/playtest.json` has `flamethrower_at_start` false, and a test shows a normal run's first level-up offers `get_flamethrower` and `upgrade_gun` (QA: pass)
+- [x] `docs/hud-and-menus.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest
+
+The level-up screen passed its final QA round (round 2) with the resize fix: on every level-up the run pauses and two comic cards show with the approved T-051 text; A/D or arrows move the highlight, Enter/Space or a click takes a card, Escape does nothing while it is open, and the first level-up offers the flamethrower. It waits for the board's playtest in the unified build (C:\solid-carbide-worktrees\playtest), then merges.
+
+### 2026-10-15, In QA → Needs playtest
+
+The freeze was a stale Godot cache in this folder, not the level-up screen. Rebuilt it and the game starts now. Back to playtest; it is also in the unified build at C:\solid-carbide-worktrees\playtest.
+
+### 2026-10-15, Needs playtest → Done
+
+You played it in the unified build and it's all good. Merging into master.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the UI Agent (2026-10-15).
+
+**How the board plays it:** open `C:\solid-carbide-worktrees\T-052\game\project.godot`, press Start, and drift. The first level-up comes at 100 likes, about 10 seconds of drifting at combo x1 (`drift_xp_per_second` 10; faster with a combo or a trick). The run pauses and the screen shows: left card the gun's tier 2 ("Bonus Bullets"), right card "Hot Take Exhaust" (the flamethrower). A/D or arrows move the yellow ring, Enter or Space takes the highlighted card, or click "Take it". After the flamethrower the next level-up offers both upgrades. Escape does nothing while the cards are open.
+
+**Built:** `scripts/ui/level_up_screen.gd` (the screen, a child of the run, `run.level_up_screen`), `scripts/ui/level_up_texts.gd` (T-051's 32 rows, generated from its table), `run.gd` turns `state.pause_on_level_up` on and adds the screen, `pause_screen.gd` ignores Escape while `state.is_waiting_for_choice()`. `data/playtest.json` `flamethrower_at_start` is now false (comment updated). Docs: `docs/hud-and-menus.md` Content, "Level-up screen" (Summary, Decisions and Open questions untouched); `game/README.md`, "Level-up screen".
+
+**Tests:** `tests/unit/test_level_up_screen.gd`, 19 tests, one per criterion and more (including a real mouse click). Full GUT suite 690 of 690 pass; `python -m pytest tools` 171 pass; `python -m pytest game/tools` 251 pass, 1 skipped. Screenshot: `art-archive/T-052/screenshots/level_up_screen.png` (made with `tests/fixtures/level_up_screen_demo.tscn`).
+
+**Simple choices where the docs say nothing (please check):** layer 15 (over the HUD, under the pause screen); dim of 60% black; cards 360x300 with the banner "Redgull Sent a Gift Pack!" in a white rounded box above them; the "Take it" button is white with a yellow hover; the mouse hovering a card does not move the highlight; the highlight stops at the first and last card (no wrap); Tab/other keys do nothing. Any key held at open is ignored until released, and key-repeat is ignored. The cards' corners use a hard-edged (not smoothed) rounded box, not the popups' baked pixel art; if the board wants the exact stepped corners, that is a small follow-up.
+
+### QA round 1 (QA/Integration Agent, 2026-10-15): all nine criteria pass
+
+- **Opens with 2 cards, T-051 text: pass.** `test_level_up_opens_two_cards_with_the_approved_text` fires a level-up, checks 2 cards whose ids equal `offers.current_offers` and whose title/description are T-051's keys. Separately, a script compared all 32 card rows in `game/scripts/ui/level_up_texts.gd` with T-051's result notes table character for character: no mismatch, no extra keys; the two `weapon.*.name` rows are rightly left out.
+- **Button takes it, screen closes: pass.** `test_pressing_a_cards_button_takes_it_and_closes` (T-043's `offer_taken` fires with the id, the flamethrower is applied, screen hidden, run resumed); `test_real_mouse_click_on_the_button_takes_the_card` does it with a real pushed mouse click.
+- **Screenshot: pass.** Looked at `art-archive/T-052/screenshots/level_up_screen.png`: the dimmed run (car, HUD, timer) behind a white rounded banner "Redgull Sent a Gift Pack!" and two white black-bordered cards in Bangers (Bonus Bullets / Hot Take Exhaust), each with "Take it"; the first card has the yellow ring. No Redgull red on the screen (the only red is the board-approved HUD heart).
+- **Next-tier text: pass.** Gun at tier 3 shows `upgrade_gun.tier4`; flamethrower at tier 4 shows `upgrade_flamethrower.tier5`. The code builds the key from the weapon's tier + 1.
+- **Keys: pass.** A/D and both arrows move the highlight (first card starts highlighted, stops at the ends), Enter and Space take the highlighted card, key-repeat echoes do nothing, and a key held at open does nothing until released (the test injects the held-key check; the real one is `Input.is_physical_key_pressed`).
+- **Escape: pass.** The pause action and `pause.toggle()` leave the run paused, the screen open, no pause screen on top; a normal run still pauses and resumes.
+- **Playtest switch: pass.** `game/data/playtest.json` has `flamethrower_at_start` false with an updated comment; `test_normal_run_first_level_up_offers_flamethrower_and_gun_upgrade` reads the real file and gets `upgrade_gun` and `get_flamethrower`. Tests that need the flamethrower set their own `playtest_override`.
+- **Docs: pass.** The diff of `docs/hud-and-menus.md` touches only Content (replaces "(The level-up screen: to be written.)" with a "Level-up screen" section); Summary, Decisions and Open questions unchanged. `game/README.md` has a "Level-up screen" section.
+- **All tests: pass.** Full GUT suite 690/690 (61 scripts), `python -m pytest tools` 171 passed, `python -m pytest game/tools` 251 passed, 1 skipped.
+- Board's choices checked as well: comic look (white StyleBoxFlat without anti-aliasing, black Bangers text with antialiasing off, 60% black dim, yellow `RING` highlight with a thicker border), keyboard and mouse input, next-tier text, playtest switch off. No Godot process left running from QA (the test runner stops its own).
+- 2026-10-15, in-qa → needs-playtest: QA round 1: all nine criteria pass (qa-integration)
+- 2026-10-15, needs-playtest → in-progress: when I level up the second and third time, I had to resize my windfow for it to refresh so i can see the level up options.
+
+### Board's playtest, round 1 (2026-10-15): fix by the UI Agent
+
+The board's note, word for word: "when I level up the second and third time, I had to resize my windfow for it to refresh so i can see the level up options."
+
+**Cause:** the card title and description labels wrap their text but had no width of their own. When the cards were rebuilt for a later level-up, the wrapping labels were measured with no width (one word per line), so the box became far too tall and was centred with the cards pushed below the bottom of the window (a test showed them at y 1336 in a 648 pixel window) until a resize made the containers measure again. The first level-up worked because the first layout happened with the screen already set up. **Fix:** `level_up_screen.gd` gives each wrapping label a fixed width (`TEXT_WIDTH`, the card's width less margins and border), so the size is right from the first layout. **Check:** new test `test_later_level_ups_show_laid_out_cards_without_a_resize` (a 1152x648 window, three level-ups in a row, each time the cards are visible, at least 360x300, side by side and inside the window; it fails without the fix: 19 of 20 pass, and passes with it). Real windowed run: `tests/fixtures/level_up_screen_third_demo.tscn` plays Start, takes two cards and levels up a third time in the real renderer; screenshot `art-archive/T-052/screenshots/level_up_screen_third.png` shows the third level-up laid out and centred without any resize.
+
+### QA round 2 (QA/Integration Agent, 2026-10-15): all nine criteria pass, and the board's resize bug is fixed
+
+Every criterion re-checked on `ca68a94`; since round 1 only `level_up_screen.gd` (two lines: wrapping labels get `TEXT_WIDTH`), the new test, the third-level-up fixture and screenshot changed.
+
+- **Opens with 2 cards, T-051 text: pass.** Test still passes; `level_up_texts.gd` unchanged since round 1's character-for-character check.
+- **Button takes it, screen closes: pass.** Button and real-mouse-click tests pass.
+- **Screenshot: pass.** Both screenshots looked at. `level_up_screen_third.png` (third level-up, Hype Lv 4, real renderer, no resize): banner and both cards ("Quicker Trigger II" = `upgrade_gun.tier4`, since the fixture took the gun twice; "Hot Take Exhaust") centred inside the 1152x648 window over the dimmed run, yellow ring on the first card, no Redgull red besides the HUD heart.
+- **Next-tier text: pass.** Test passes; the third screenshot shows the same rule in the real game (gun at tier 3 offers tier 4's text).
+- **Keys: pass.** Tests pass.
+- **Escape: pass.** Tests pass.
+- **Playtest switch: pass.** `flamethrower_at_start` still false; the first-level-up test passes.
+- **Docs: pass.** `docs/hud-and-menus.md` diff unchanged (one hunk, Content only); `game/README.md` section present.
+- **All tests: pass.** Full GUT suite 691/691 (61 scripts); `python -m pytest tools` 171 passed; `python -m pytest game/tools` 251 passed, 1 skipped.
+- **The fix: verified.** `test_later_level_ups_show_laid_out_cards_without_a_resize` passes. With the two `custom_minimum_size.x = TEXT_WIDTH` lines temporarily removed, it fails exactly on the board's bug (level-ups 2 and 3: cards at y 1336 in a 648 window; level-up 1 fine); with them restored, the file passes 20/20. File restored, nothing left modified. No Godot process left from QA (the runner stops its own; the four running Godot processes were not started by QA and were left alone).
+- 2026-10-15, needs-playtest → in-progress: when I launch the game, it freezes on a beige coloured screen and I can't do anything
+- 2026-10-15, in-progress → in-qa: Not a code bug: Godot's local class cache in the T-052 folder was stale after master was merged in (PlayerProgress not found, game_flow.gd failed to load, blank window). Rebuilt the cache with a headless import; no file in the branch changed, so QA round 2 still stands.
+- 2026-10-15, in-qa → needs-playtest: No code changed since QA round 2; the build now starts without errors.
+- 2026-10-15, needs-playtest → done: Board's playtest in the weapons-garage build (2026-10-15): level-up screen is fixed, all good.
