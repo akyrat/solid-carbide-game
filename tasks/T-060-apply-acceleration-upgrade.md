@@ -1,7 +1,7 @@
 ---
 id: T-060
 title: Garage upgrade: acceleration applied to the car at the start of a run
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead:
