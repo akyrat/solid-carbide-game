@@ -4,7 +4,7 @@ title: Garage upgrade: acceleration applied to the car at the start of a run
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Weapons
 epic: garage
 milestone: mvp
 user_facing_text: no
