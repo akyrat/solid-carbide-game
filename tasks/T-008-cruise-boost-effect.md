@@ -44,6 +44,12 @@ When the player presses W and the car jumps instantly to cruise speed (Drifting,
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest
+
+A placeholder boost effect is in: when a fresh W press snaps the car up to cruise speed, five light blue-grey streaks flash behind the car for 0.35 s (not during a held drift, not while W stays held; driving unchanged). The look is rough on purpose; the T-009 art replaces it. QA round 1: all 6 pass. It waits for the board's playtest in the unified build (C:\solid-carbide-worktrees\playtest).
+
 ## Result notes
 
 Done on `task/T-008-cruise-boost-effect`.
