@@ -1,7 +1,7 @@
 ---
 id: T-089
 title: Screen flow: wire the Garage button to the garage screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, tasks/T-055-screen-flow.md, tasks/T-058-garage-screen.md, game/README.md]
 files_expected_to_change: [the scene flow code, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,10 +36,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [x] A test presses Garage and shows the garage screen opens (QA: pass / fail)
-- [x] A test presses the garage's back button and shows the main menu again (QA: pass / fail)
-- [x] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [x] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test presses Garage and shows the garage screen opens (QA: pass)
+- [x] A test presses the garage's back button and shows the main menu again (QA: pass)
+- [x] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it, with T-058's garage screen, before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -64,3 +64,4 @@ How the board plays it: open `C:\solid-carbide-worktrees\T-089\game\project.godo
 - Back returns to main menu: PASS (test_garage_back_returns_to_the_main_menu, Start still works)
 - Docs: PASS (diff vs master is one bullet in Content; Summary, Decisions, Open questions untouched)
 - Tests: PASS (GUT 745/745, pytest tools 180, game/tools 257 + 1 skipped). Launch with --quit-after 300: no script errors.
+- 2026-10-15, in-qa → needs-playtest: QA round 1 passed: all 4 criteria, GUT 745/745
