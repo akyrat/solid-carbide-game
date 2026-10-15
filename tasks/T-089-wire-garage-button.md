@@ -4,7 +4,7 @@ title: Screen flow: wire the Garage button to the garage screen
 status: blocked
 from: project-lead
 to: game-loop
-lead:
+lead: Weapons
 epic: game-loop
 milestone: mvp
 user_facing_text: no

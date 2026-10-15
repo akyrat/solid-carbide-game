@@ -48,6 +48,9 @@ var projectiles: Array = []
 var depth = EnemyDepthScript.new()
 ## The level-up's weapon choices (level_up_offers.gd), made in bind().
 var offers: Node = null
+## The garage's damage bonus in percent (T-062), set at the start of a run with
+## set_damage_bonus(); it stays across weapon resets. 0 = no bonus.
+var damage_bonus_percent := 0.0
 
 
 func _init() -> void:
@@ -102,6 +105,20 @@ func reset_for_run() -> void:
 	# the flamethrower with the level-up's own call (the level-up then offers the flamethrower's upgrades).
 	if ExhaustFlamethrowerScript.playtest_switch_on():
 		upgrade("flamethrower")
+
+
+## The factor every weapon's damage is multiplied by: 1 + bonus / 100.
+func damage_multiplier() -> float:
+	return 1.0 + damage_bonus_percent / 100.0
+
+
+## Sets the garage's damage bonus (percent) and re-applies the tiers of the
+## owned weapons, so both weapons get it at once.
+func set_damage_bonus(percent: float) -> void:
+	damage_bonus_percent = percent
+	for w in weapons.values():
+		if w.is_owned():
+			w.apply_tier()
 
 
 func clear_projectiles() -> void:
