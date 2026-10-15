@@ -1,7 +1,7 @@
 ---
 id: T-059
 title: Text: the garage screen
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Weapons
@@ -72,3 +72,4 @@ Written by the narrative-theme agent. All lengths within limits; no XP or experi
 - Lengths recounted by script ({n} counted as written): every stated length matches the real one and fits its limit (title 30, names 25, descriptions 80, the rest 25). Longest: garage.acceleration.desc, 62/80.
 - No text contains "XP" or "experience" (case-insensitive).
 - Checked against game/data/garage.json and docs/garage-design.md: acceleration lowers time_to_top_speed by 0.1 s per level (2.3 to 1.3), car health +10 per level (100 to 200), damage bonus +5% to every weapon's damage per level (0 to 50); 10 levels each, so "Fully Funded" at the last level fits. garage.level/.price/.coins/.buy/.back match the plain-list screen in Garage design. The jokes ("more content", "Redgull says you'll be fine", "synergy") are flavour, not mechanics claims. Voice is left to the board's review.
+- 2026-10-15, needs-playtest → done: merged without the board's read, as the board asked for this session
