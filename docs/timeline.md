@@ -1180,3 +1180,8 @@ Entry format:
 - Decision or change: merged after the board's playtest in the kaiju build ("it works well!": damage and a big knockback when a meteor lands on the car, likes the falling rocks). Before merging, the Enemy Behavior Agent caught the branch up with master and set its playtest switches back to the game's rules (`kaiju_early_arrival` and `flamethrower_at_start` both off). Tests: 734 of 737 GUT tests pass; the 3 failures are T-050's kaiju health bar tests, already failing on master and being fixed on T-050's branch. Python tool tests all pass.
 - Documents touched: `docs/enemies.md`, `game/README.md`
 - Tasks: T-046 (done), T-142 (now unblocked), T-070, T-078
+
+## 2026-10-15: T-050 fix after merge: master's tests pass again
+- Decision or change: the 3 kaiju health bar tests that failed after T-050's merge had an outdated setup, not a broken bar: since T-052 the run pauses on level-ups, and an earlier test in the suite leaves the game paused, so the bar never updated in those tests. The UI Agent made the test file unpause the game before and after each test; the bar's code is unchanged. Merged without QA (test-only change). Master: 737 of 737 GUT tests, all Python tool tests pass. Which earlier test leaks the pause is not traced.
+- Documents touched: none
+- Tasks: T-050
