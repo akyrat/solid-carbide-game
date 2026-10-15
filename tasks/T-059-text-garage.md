@@ -4,7 +4,7 @@ title: Text: the garage screen
 status: open
 from: project-lead
 to: narrative-theme
-lead:
+lead: Weapons
 epic: narrative
 milestone: mvp
 user_facing_text: yes
