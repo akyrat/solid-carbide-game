@@ -52,3 +52,7 @@ Started: the Game Loop Agent wires the Garage button on top of T-058's garage sc
 ## Result notes
 
 Written by the agent when it finishes.
+
+Wired the main menu's Garage button to the garage screen, and the garage's back button back to the main menu. `GameFlow.show_garage()` (game/scripts/game/game_flow.gd) replaces the menu with `scenes/menu/garage_screen.tscn`, gives it `GameFlow.progress`, and connects `back_pressed` to `show_menu`. `game.garage` is the new screen variable, cleared with the others. Tests: `tests/unit/game/test_screen_flow.gd` (Garage opens the screen with the game's progress; back returns to the menu and Start still works). Docs: Game loop architecture Content (Screen flow bullet only) and game/README.md. Full GUT: 728 tests, 725 pass; the 3 failures are the known test_kaiju_health_bar.gd ones (not touched). pytest tools 180 passed; game/tools 257 passed, 1 skipped. Launch with --quit-after 300: no script errors.
+
+How the board plays it: open `C:\solid-carbide-worktrees\T-089\game\project.godot` (or Play on T-089 in the Builds tab). Press Garage on the main menu to see T-058's garage screen, buy upgrades, press Back to return to the menu, then Start a run.

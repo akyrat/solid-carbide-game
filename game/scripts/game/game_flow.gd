@@ -3,13 +3,14 @@ extends Node
 ## The screen flow (task T-055): the game's main scene. It opens on the main
 ## menu; Start begins a fresh run; when the run ends, win or loss, it goes
 ## straight back to the main menu with no message; Exit closes the game.
-## Garage does nothing yet (task T-089 wires it to the garage screen).
+## Garage opens the garage screen (task T-089); its back button returns to the menu.
 ## Game loop architecture, Decisions and Content.
 ##
-## Only one screen exists at a time, as a child of this node: `menu` or `run`.
+## Only one screen exists at a time, as a child of this node: `menu`, `garage` or `run`.
 ## During a run the pause screen (Escape) is a child of the run.
 
 const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
+const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
@@ -21,6 +22,8 @@ signal run_shown
 
 ## The main menu while it is on screen, otherwise null.
 var menu: Control
+## The garage screen while it is on screen, otherwise null.
+var garage: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
 ## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
@@ -45,8 +48,18 @@ func show_menu() -> void:
 	add_child(menu)
 	menu.start_pressed.connect(start_run)
 	menu.exit_pressed.connect(_on_exit_pressed)
-	# garage_pressed is left unconnected until the garage screen exists (T-089).
+	menu.garage_pressed.connect(show_garage)
 	menu_shown.emit()
+
+
+## Replaces the main menu with the garage screen (T-089).
+func show_garage() -> void:
+	_clear_screens()
+	garage = GarageScene.instantiate()
+	garage.name = "Garage"
+	garage.progress = progress
+	add_child(garage)
+	garage.back_pressed.connect(show_menu)
 
 
 ## Replaces the main menu with a fresh run.
@@ -84,6 +97,10 @@ func _clear_screens() -> void:
 		remove_child(menu)
 		menu.queue_free()
 		menu = null
+	if garage != null:
+		remove_child(garage)
+		garage.queue_free()
+		garage = null
 	if run != null:
 		remove_child(run)
 		run.queue_free()
