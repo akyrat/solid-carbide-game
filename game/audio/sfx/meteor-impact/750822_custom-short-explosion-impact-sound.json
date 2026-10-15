@@ -1,0 +1,16 @@
+{
+  "schema": "solid-carbide/sfx-metadata/1",
+  "source": "freesound",
+  "freesound_id": 750822,
+  "name": "custom_short_explosion_impact_sound",
+  "username": "Artninja",
+  "freesound_url": "https://freesound.org/people/Artninja/sounds/750822/",
+  "license_name": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "search_query": "explosion impact",
+  "download_date": "2026-10-15",
+  "file": "750822_custom-short-explosion-impact-sound.wav",
+  "original_type": "wav",
+  "duration_s": 4.65481,
+  "filesize_bytes": 1643130
+}
