@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead:

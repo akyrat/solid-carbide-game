@@ -14,6 +14,7 @@ var bar: KaijuHealthBar
 
 
 func before_each() -> void:
+	get_tree().paused = false  # an earlier test (the run now pauses on level-ups) may leave the tree paused
 	KaijuBossScript.playtest_override = -1.0  # the game's rules, whatever playtest.json says
 	FlameScript.playtest_override = 0
 	run = RunScene.instantiate()
@@ -26,6 +27,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	get_tree().paused = false
 	KaijuBossScript.playtest_override = -2.0
 	FlameScript.playtest_override = -1
 

@@ -72,3 +72,5 @@ You played it in the kaiju build and it works well. Merging into master.
 - 2026-10-15, in-qa → needs-playtest: QA round 1: all five criteria pass (qa-integration)
 - 2026-10-15, ui: board waived the playtest; `kaiju_early_arrival` set back to off, run.gd comments tidied.
 - 2026-10-15, needs-playtest → done: Board's playtest in the kaiju unified build (2026-10-15): works well; takes damage and knocked back far by a meteor; likes the falling rocks animation.
+
+Fix after merge (2026-10-15): three kaiju-bar tests failed on master only in the full suite (they pass alone). Cause: the bar is fine; the tests' setup was outdated. Since T-052 the run pauses on level-ups, and an earlier test in the full run leaves `get_tree().paused` true, so the bar's `_physics_process` never ran. Fix: `test_kaiju_health_bar.gd` now sets `get_tree().paused = false` in `before_each` and `after_each`. The bar's code and look are unchanged. Results: GUT 720/720, `pytest tools` 180 passed, `pytest game/tools` 257 passed (1 skipped). The test that leaks the pause was not traced.

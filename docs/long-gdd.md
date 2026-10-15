@@ -459,7 +459,7 @@ What the game does now, with the numbers in `game/data/enemies.json` (see Refere
 
 #### The kaiju (built in task T-045)
 
-What the game does now, with the numbers in `game/data/enemies.json` (see References). How it is built, and how the weapons and the HUD reach it: `game/README.md`, "The kaiju". Its meteor attack is not built yet (task T-046).
+What the game does now, with the numbers in `game/data/enemies.json` (see References). How it is built, and how the weapons and the HUD reach it: `game/README.md`, "The kaiju". Its meteor attack: below.
 
 - **Look:** a placeholder for now: a large dark slate green Godzilla-style shape drawn in code, seen from the side, with a lighter belly, pale cyan back plates and yellow eyes, facing left or right the way it walks and stomping as it walks. It stands on a ground circle 4 units across (four times the car's width) and is 7 units tall (over twice the car's length). The final kaiju art comes from a separate art task.
 - **Arrival:** when the run reaches the boss time (7 minutes in, 1:00 left), the kaiju appears at a random point just beyond the edge of the visible screen, its whole drawing out of view, on the map and clear of buildings and boulders. One kaiju per run.
@@ -470,6 +470,19 @@ What the game does now, with the numbers in `game/data/enemies.json` (see Refere
 - **Pause and new runs:** the kaiju stands still while the game is paused, and is gone when a new run starts; it arrives again at the new run's boss time.
 - **Draw order:** like the minions, in the buildings' depth order: behind a building that covers it, in front of the rest.
 - **Playtest switch:** for the board's playtest of this task, the kaiju arrives 30 seconds into the run instead of at 7 minutes, so it can be seen, fought with the weapons and killed early; it is set back to 7 minutes right before the task merges (board, 2026-10-14). Nothing else in the run moves (`game/data/playtest.json`; how to switch it: `game/README.md`, "The kaiju").
+
+#### The kaiju's meteor attack (built in task T-046)
+
+What the game does now, with the numbers in `game/data/enemies.json`, `meteor_attack` (see References). How it is built: `game/README.md`, "The kaiju", "The meteor attack".
+
+- **When:** while the kaiju is on the map, its first attack starts 5 seconds after it appears, then one every 8 seconds.
+- **Windup:** each attack starts with a short placeholder animation of 1 second: pale yellow rings pulse above the kaiju's head.
+- **Warning:** then 3 warning circles appear on the ground at once, each where a meteor will land, and stay 2 seconds. Each lies within 10 units of the car (where the car was when they appeared), only where the map's placement check accepts a boulder (inside the map, off buildings and other boulders), not overlapping another meteor still to land, and not on the kaiju. A circle is the size of the boulder it will leave (3 units across). Placeholder look: a hazard amber disc with a thick, pulsing amber edge and an inner ring that closes in as the meteor gets near. Amber, not red, because only Redgull's things and the kaiju alert signs use red (Visual style, Decisions); the final look comes from a separate art task.
+- **Falling and impact:** in the last half second a placeholder meteor (a dark purple rock with a magenta glow and trail) falls onto the circle; when it lands, a placeholder burst of grey dust shows for half a second.
+- **Hitting the car:** a meteor that lands with the car's centre within 1.5 units (the boulder's radius) takes 15 health off the car (which also cuts the combo) and knocks it back at 20 units a second, away from where it landed. One landing anywhere else does nothing to the car.
+- **New boulders:** each landed meteor leaves a plain boulder where it landed, the same size, look and collision as the map's own, so the car bounces off it and enemies walk round it. No challenge or arrow comes with it. If the car or the kaiju is on the spot as the meteor lands, the boulder appears as soon as they have moved off it (the car is knocked away at once on a hit), so nothing is trapped inside a boulder.
+- **Pause and new runs:** the attack, the warning circles and the falling meteors stop while the game is paused, nothing lands once the run is over, and a new run clears them all.
+- **Playtest switch:** for the board's playtest of this task the kaiju arrives 30 seconds into the run (the T-045 switch, above), so its first attack comes 35 seconds in; it is set back to 7 minutes right before the task merges.
 
 ### References
 
@@ -779,7 +792,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
 | `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
-| `enemies.md` | `296b59c83a7c7dccaec2998ac7e95077f6d3b80fc009e7855bbb96d848dd5bd7` |
+| `enemies.md` | `f2afc21cb095c1be3af0c6719ff5f5d7519b4152cdc30368178370e120c89ffd` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
 | `garage-design.md` | `eaf5b4cb30737fe5e33e23f5f7e3b8b00b4f6d2fe109270aabd28b569dfdaafe` |
 | `visual-style.md` | `466427c7161ca32be217eb84d34f505dc190e6124373a1d181d1f6498b80f5e6` |
