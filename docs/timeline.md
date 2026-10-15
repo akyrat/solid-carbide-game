@@ -1135,3 +1135,8 @@ Entry format:
 - Decision or change: the downloader searches with a license filter for "Creative Commons 0" and "Attribution" only (Freesound's names, checked against its API docs by QA) and skips, with a printed reason, any other license before writing a file; the allowed list is one line in `game/tools/freesound.py`. The quoted multi-word OR filter isn't shown word for word in Freesound's docs, so the first live search (T-076) should confirm it returns results. Tooling, merged after QA: round 1, all 7 pass. Now open: T-076.
 - Documents touched: `game/README.md`
 - Tasks: T-004 (done), T-076
+
+## 2026-10-15: T-057 done: coins and garage upgrades are saved; buying works
+- Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
+- Documents touched: `docs/garage-design.md`, `game/README.md`
+- Tasks: T-057 (done), T-058, T-060, T-061, T-062

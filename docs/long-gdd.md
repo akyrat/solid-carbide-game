@@ -563,6 +563,12 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
 
+### Content
+
+#### Saving
+
+The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/README.md` ("Game data", "Saving and buying").
+
 ### References
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
@@ -765,7 +771,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `1df83b3610ed7d74123b2caf4087fa86c95ea9d599a6b9a16fbc345b527b1e30` |
 | `weapons.md` | `e3f0743c0a4dc633502a754a658c7927b2a35b692acbb8b3f1e13e77af3f2c11` |
-| `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
+| `garage-design.md` | `eaf5b4cb30737fe5e33e23f5f7e3b8b00b4f6d2fe109270aabd28b569dfdaafe` |
 | `visual-style.md` | `58c566d7ba1267893552fd25f695b55d44a85f75e62b1f524f1a6571b1b40fce` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
 | `hud-and-menus.md` | `5bbbf64cbcf9f55eda4f59d6290abe81ab2874fe03e709b72f605b242177abc9` |

@@ -1,7 +1,7 @@
 ---
 id: T-062
 title: Garage upgrade: damage bonus applied to the weapons
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 lead:
