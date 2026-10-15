@@ -1,7 +1,7 @@
 ---
 id: T-076
 title: Find the MVP's sound effects
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: sfx
 lead: Weapons
@@ -14,7 +14,7 @@ documents_affected: [docs/unfiled-game-details.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, tasks/T-002-freesound-test-download.md, tasks/T-004-freesound-license-filter.md, game/README.md]
 files_expected_to_change: [sound files under game/audio/ with their metadata, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,10 +36,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Every sound listed has at least one file under `game/audio/` with complete metadata (source page, author, licence) (QA: pass / fail)
-- [ ] A script shows every downloaded sound's licence is CC0 or CC BY (QA: pass / fail)
-- [ ] The result notes list the recommended file for each sound, and the credits CC BY needs (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] Every sound listed has at least one file under `game/audio/` with complete metadata (source page, author, licence) (QA: pass)
+- [x] A script shows every downloaded sound's licence is CC0 or CC BY (QA: pass)
+- [x] The result notes list the recommended file for each sound, and the credits CC BY needs (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: listen to the recommended sounds.
 
@@ -69,3 +69,4 @@ Notes for T-077: whether the engine/drift/flames files loop cleanly and the hit/
 **Credits needed if the recommended set ships:** only "Falling.wav" by Augdog (https://freesound.org/people/Augdog/sounds/210205/), CC BY 4.0. Other CC BY candidates (credit only if used): "Tires.wav" by oldestmillennial (538213, CC BY 3.0); "Fire Burst.wav" by SilverIllusionist (472688); "SFX_Impact_Bullet_Hit_Body_1" by PoundSoundUK (719198); "Sub Sonic Bullet Body Hit" by PotaterSalad (812178); "custom_short_explosion_impact_sound" by Artninja (750822); "Cartoon falling whistle" and "vers.2" by CGEffex (89538, 89537), all CC BY 4.0 unless noted.
 
 Tests: GUT 671 passed; all Python tool tests pass (game/tools test_freesound 29, test_check_sfx_licenses 4, tools/test_*.py). Documents updated: docs/unfiled-game-details.md, game/README.md.
+- 2026-10-15, in-qa → needs-playtest: QA round 1 pass. 24 new sounds with JSON metadata; check_sfx_licenses.py 28 sounds 0 problems; recommendations and CC BY credit (Falling.wav, Augdog) present; GUT 671/671, Python tests OK. No secrets: .secrets/ git-ignored, only .env.example tracked, no key strings in diff.
