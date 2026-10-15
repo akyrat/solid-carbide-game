@@ -1,7 +1,7 @@
 ---
 id: T-046
 title: The kaiju's meteor attack: warning circles, impacts and new boulders
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, tasks/T-045-kaiju.md, tasks/T-097-mvp-map-without-challenges.md, tasks/T-039-enemy-data.md, game/README.md]
 files_expected_to_change: [the enemy code and scenes, tests, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
