@@ -4,7 +4,7 @@ title: Find the MVP's sound effects
 status: needs-playtest
 from: project-lead
 to: sfx
-lead: Weapons
+lead: Playtest
 epic: sound
 milestone: mvp
 user_facing_text: no
@@ -48,6 +48,10 @@ The board's review: listen to the recommended sounds.
 ### 2026-10-15, Needs playtest
 
 Sound candidates are in: 2-3 per MVP sound (engine, drift, gun, flames, enemy hit, coin, meteor warning, meteor impact), 24 files, all CC0 or CC BY (checked by a script). Recommended set is in the result notes; only the meteor warning (Falling.wav by Augdog, CC BY 4.0) needs a credit. Nobody has listened yet: the agent picked by name, length and licence. QA round 1: all 4 pass. Waiting for the board to listen in the unified build; hooking them into the game is T-077.
+
+### 2026-10-15, Needs playtest
+
+The board will listen to the candidates and pick which to keep. Nothing plays in the game until T-077.
 
 ## Result notes
 
