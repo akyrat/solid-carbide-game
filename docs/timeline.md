@@ -1115,3 +1115,53 @@ Entry format:
 - Decision or change: T-050 (planned from the task board): the kaiju's health bar sits above the kaiju and follows it, about as wide as the kaiju (following its width), neon purple on white with a black outline and thin black dividers every 10%, in a subtle comic style like the combo popups, no label, always drawn above buildings; it replaces the HUD-corner bar. New tickets: T-139 (the likes bar animates on a level-up), T-140 (art for the level-up screen, red and gold, Redgull-themed; sample first, PixelLab only with the board's go) and T-141 (the level-up screen animates in with that art; waits for T-140, as the board asked). T-046 (the kaiju's meteor attack) started on the board's go.
 - Documents touched: `docs/hud-and-menus.md`, `docs/visual-style.md`
 - Tasks: T-050, T-139, T-140, T-141, T-046
+
+## 2026-10-15: Cheaper QA
+- Decision or change: the board's usage tab showed every session subagent-heavy and the QA/Integration Agent as the largest share (15%). On the board's request: QA always runs on sonnet (it was opus for tasks with a board's review line; the hook in `.claude/hooks/board_gate.py` and the `tasks/README.md` rule changed with it), its definition gets a "Keeping checks cheap" section (read the diff and only what a criterion needs, run each test set once with summary output only, no temporary tests or extra switch runs unless a criterion asks, one short line per criterion), and the Project Lead keeps its QA prompts short, since it reruns every test set at merge anyway.
+- Documents touched: `tasks/README.md`, `.claude/agents/qa-integration.md`, `agent-notes/project-lead.md`
+- Tasks: none
+
+## 2026-10-15: T-059 done: the garage screen text
+- Decision or change: the garage screen's text, in the voice the board approved for the level-up cards: heading "Redgull Pit Stop"; upgrades "Sponsored Throttle" (top speed 0.1 s sooner per level), "Reinforced Chassis" (+10 car health per level), "Brand Impact" (+5% weapon damage per level); "Level {n}", "Price: {n}", "Coins: {n}", "Buy", "Fully Funded" at the last level, "Not enough coins", "Back". The table is in T-059's result notes. QA round 1: all 3 pass. The board first asked for merges without its playtest, then changed its mind (board, 2026-10-15: one unified build to playtest at the end instead). This merge was already open by then, and another Project Lead instance's commit (31764bb, "Cheaper QA") was made while it was open and completed it, so T-059 is in master without the board's read. It is text in the ticket only (no change the player sees until the garage screen, T-058, which goes into the unified build); the board can still change any line.
+- Documents touched: none (the text lives in T-059's result notes)
+- Tasks: T-059 (done), T-058
+
+## 2026-10-15: T-138 done: Project Lead replies on tickets, highlighted cards
+- Decision or change: `python tools/task_status.py <id> [<status>] --reply "<text>"` posts the Project Lead's reply to the board on the ticket, in a new `## Updates` section just before Result notes (date, lane change, full text). The task board's ticket view shows the newest as "Latest from the Project Lead" at the top, older ones collapsed; a card glows with a "New" chip when its status changed or a reply was posted since the board last opened it, and the "Changed" list follows the same rule. Rule for the Project Lead: at every lane change of a ticket it owns, it posts the same reply it gives in the terminal (board, 2026-10-15). The live task board server must be restarted to show the page changes. Tooling, merged after QA: round 1, all 7 pass.
+- Documents touched: `docs/README.md`, `docs/working-with-the-board.md`, `tasks/README.md`, `tasks/_TEMPLATE.md`
+- Tasks: T-138 (done)
+
+## 2026-10-15: T-004 done: the Freesound downloader keeps only CC0 and CC BY
+- Decision or change: the downloader searches with a license filter for "Creative Commons 0" and "Attribution" only (Freesound's names, checked against its API docs by QA) and skips, with a printed reason, any other license before writing a file; the allowed list is one line in `game/tools/freesound.py`. The quoted multi-word OR filter isn't shown word for word in Freesound's docs, so the first live search (T-076) should confirm it returns results. Tooling, merged after QA: round 1, all 7 pass. Now open: T-076.
+- Documents touched: `game/README.md`
+- Tasks: T-004 (done), T-076
+
+## 2026-10-15: T-057 done: coins and garage upgrades are saved; buying works
+- Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
+- Documents touched: `docs/garage-design.md`, `game/README.md`
+- Tasks: T-057 (done), T-058, T-060, T-061, T-062
+
+## 2026-10-15: T-062 done: the garage damage bonus reaches both weapons
+- Decision or change: at the start of a run, `GameFlow` gives the weapon rack the damage bonus bought in the garage (`progress.current_value("damage_bonus")`); the gun's and the flamethrower's damage are multiplied by 1 + bonus/100 on top of their own tiers, the same factor for both. At level 0 nothing changes, and no level can be bought until the garage screen (T-058) is merged, so nothing the player meets changes yet: merged after QA, round 1, all 4 pass.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-062 (done)
+
+## 2026-10-15: T-060 done: the garage acceleration upgrade reaches the car
+- Decision or change: at the start of a run the car's time to top speed comes from the garage's acceleration upgrade (`progress.current_value("acceleration")`, 2.3 s at level 0 down to 1.3 s at level 10); the drift prototype keeps its own tuning. W snaps the car to cruise speed first, so the upgrade only shortens the climb from cruise to top speed: the board should judge in playtest whether it is felt. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 5 pass.
+- Documents touched: `docs/drifting.md`, `game/README.md`
+- Tasks: T-060 (done)
+
+## 2026-10-15: T-061 done: the garage health upgrade reaches the car
+- Decision or change: at the start of a run the car's starting and maximum health come from the garage's car health upgrade (`progress.current_value("car_health")`, 100 at level 0, +10 per level), and the HUD's health bar follows it; a run with no saved progress attached (tests, fixtures) keeps run.json's health. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 4 pass. With T-060 and T-062 this completes the three garage upgrades.
+- Documents touched: `game/README.md`
+- Tasks: T-061 (done)
+
+## 2026-10-15: The cruise boost's look: discreet motion lines
+- Decision or change: the board played T-008's placeholder boost (five streaks behind the car) in the weapons-garage playtest build and found it too much. The boost should be discreet: a few motion lines that show briefly. The art comes later, in T-009 (final release), which now has the description and waits only for T-008.
+- Documents touched: `docs/visual-style.md`, `docs/drifting.md`
+- Tasks: T-105 (done), T-009 (description added), T-008
+
+## 2026-10-15: T-052 done: the level-up screen
+- Decision or change: the level-up (gift pack) screen merged after the board's playtest in the weapons-garage unified build ("level up screen is fixed all good"). The board's earlier freeze on a beige screen in T-052's own folder was not the screen: Godot's local class cache there was stale after master was merged in, so the game script failed to load. The Project Lead rebuilt the cache (a headless import); no file changed. The status script counted that pass back through QA as a third round, though no check ran.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-052 (done), T-140 (now open)

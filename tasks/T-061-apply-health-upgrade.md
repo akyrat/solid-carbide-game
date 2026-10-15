@@ -1,10 +1,10 @@
 ---
 id: T-061
 title: Garage upgrade: car health applied at the start of a run
-status: blocked
+status: done
 from: project-lead
 to: game-loop
-lead:
+lead: Weapons
 epic: garage
 milestone: mvp
 user_facing_text: no
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, tasks/T-057-save-and-buy.md, tasks/T-036-run-scene-and-state.md, game/README.md]
 files_expected_to_change: [the run's code, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,11 +36,18 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test at level 0 shows the run starts with T-038's health (QA: pass / fail)
-- [ ] A test at a higher level shows the run starts with the data's health for that level, and the HUD's maximum matches (QA: pass / fail)
-- [ ] `game/README.md` mentions the health upgrade under "The run" (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test at level 0 shows the run starts with T-038's health (QA: PASS)
+- [ ] A test at a higher level shows the run starts with the data's health for that level, and the HUD's maximum matches (QA: PASS)
+- [ ] `game/README.md` mentions the health upgrade under "The run" (QA: PASS)
+- [ ] The full GUT suite and all Python tool tests pass (QA: PASS)
+
+## Updates
+
+### 2026-10-15, Done
+
+The garage health upgrade now sets the car's starting and maximum health at the start of a run (100 at level 0, +10 per level), with the HUD bar matching. Merged after QA (round 1, all 4 pass), since nothing changes until the garage screen merges. All three garage upgrades are now in.
 
 ## Result notes
 
-Written by the agent when it finishes.
+The car health upgrade now sets the run's starting and maximum health. `RunState.progress` (new, null = run.json's base) is read in `start_run()` as `progress.current_value("car_health")`; `run.gd` has `progress` and passes it to the state; `GameFlow.start_run()` sets `run.progress = progress` before adding the run. Small and local: 3 scripts, a few lines each. Tests: `tests/unit/run/test_run_health_upgrade.gd` (level 0, no progress, every level against the data, a run through GameFlow at level 3 with the HUD bar maximum matching, a new run after buying). `game/README.md` mentions it under The run. Full GUT suite: 685 passing; Python tool tests: 257 OK.
+- 2026-10-15, in-qa → done: QA passed: 685 GUT, 180 Python tests OK; no-progress keeps run.json health, HUD max matches (tested)

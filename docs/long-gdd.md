@@ -150,7 +150,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
   - **Alternate drift:** drift forwards, release W while still steering, switch to S and drift backwards, then back to W, so the car draws semicircles. Each switch between a forward and a backward drift while keeping the same steering direction counts as one high-value trick. The Driving & Drift Agent proposes the timing limits; the board tunes them.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on.
-- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release).
+- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). Its look: Visual style, Decisions.
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
 - The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions.
 - Two camera options to try, each a pause-screen checkbox, off by default and saved like the zoom (board, 2026-10-13): **camera smoothing** (the camera follows the car with a short smooth lag instead of sitting exactly on it), and the **dynamic camera** (the zoom follows the car's speed, from a min zoom at very low speed to a max zoom at the car's top forward speed, easing there with a short delay instead of jumping; while it is on it replaces the slider's fixed zoom). The board tunes the min and max in playtests with temporary pause-screen buttons. These are a change from the Unity prototype's camera, which stays the default.
@@ -204,6 +204,8 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md).
 - Godot drift prototype: [../game/README.md](../game/README.md), section "Drift prototype".
+
+- **Garage acceleration upgrade (T-060):** at the start of a run (not in the drift prototype) the car's time to top speed is the acceleration upgrade's value at the player's saved level (Garage design). Level 0 is the base 2.3 s, so the car is unchanged until the player buys it. How it is applied: `game/README.md`, "Saving and buying".
 
 
 ## 3. Level design
@@ -497,6 +499,10 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ### Content
 
+#### Garage damage bonus
+
+The garage's damage bonus upgrade (Garage design) is applied at the start of every run: its percentage multiplies the damage of the gun and the flamethrower, on top of each weapon's own tier (the two multiply). Level 0 changes nothing. Built in T-062.
+
 #### Unity prototype weapons
 
 Facts from the Unity prototype weapons report (sections 1 to 5). No new decisions.
@@ -563,6 +569,12 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
 
+### Content
+
+#### Saving
+
+The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/README.md` ("Game data", "Saving and buying").
+
 ### References
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
@@ -613,6 +625,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set.
 - The minion is animated: it walks on all fours in 8 directions (5 drawn, 3 mirrored) with 7 walk frames each, built from the sample lizard the board approved (task T-068). Polish once the MVP is playable: a damage animation, and a fall-down and get-up animation for when minions bump into each other (Enemies, Decisions).
 - The level-up screen's art is red and gold, themed on Redgull (the weapons it offers are Redgull gift packs, so Redgull's red fits here).
+- **The cruise boost** (the short effect when W makes the car jump to cruise speed, Drifting, Decisions) is discreet: a few motion lines that show briefly. The first placeholder, five streaks behind the car, was too much.
 
 ### Content
 
@@ -747,7 +760,9 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 
 The checkboxes and buttons work with the mouse and the keyboard (Tab to move, Space to switch or press). The strip's dark band runs over the lower part of the car's health bar while paused. How it is built is in `game/README.md`, "Pause screen".
 
-(The level-up screen: to be written.)
+#### Level-up screen
+
+Task T-052 (decisions: Decisions, 2026-10-15). When the player levels up the run pauses and this screen shows over it: a white rounded banner at the top with "Redgull Sent a Gift Pack!", and under it the 2 choices the weapons give (Weapons, Content, "The level-up offers") as plain cards side by side, each with a title, a description and a "Take it" button (all text approved in T-051). The run behind it is dimmed. An upgrade card shows the text of the tier it would give (the weapon's tier now plus 1); "get the flamethrower" has one text. With only one choice left, one card shows. The look is the comic look of the trick popups and the combo counter: white rounded cards with black borders, black Bangers text with hard pixel edges, no Redgull red. The highlighted card has a thicker border in the combo counter's yellow with a black outline round it; the first card starts highlighted. A/D or the left and right arrow keys move the highlight, Enter or Space takes the highlighted card, and clicking a card's "Take it" button takes that card. Only a fresh key press counts: a key held down from driving when the screen opens (or its key-repeat) does nothing until it is let go. Taking a card applies it and resumes the run; when several level-ups are waiting the next one's cards show straight after. Escape does not resume the run or open the pause screen while the choice is open. Hovering a card with the mouse does not move the highlight. How it is built is in `game/README.md`, "Level-up screen".
 
 ### References
 
@@ -761,11 +776,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
-| `drifting.md` | `4977806ff786a0df7fb2662d0578db320aee307ea56087813d6c195a8cc0d697` |
+| `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `1df83b3610ed7d74123b2caf4087fa86c95ea9d599a6b9a16fbc345b527b1e30` |
-| `weapons.md` | `e3f0743c0a4dc633502a754a658c7927b2a35b692acbb8b3f1e13e77af3f2c11` |
-| `garage-design.md` | `758e1a132f186a58533b9bc27810ea4567e4e38802a5e5cd256cedc8e52055b2` |
-| `visual-style.md` | `58c566d7ba1267893552fd25f695b55d44a85f75e62b1f524f1a6571b1b40fce` |
+| `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
+| `garage-design.md` | `eaf5b4cb30737fe5e33e23f5f7e3b8b00b4f6d2fe109270aabd28b569dfdaafe` |
+| `visual-style.md` | `466427c7161ca32be217eb84d34f505dc190e6124373a1d181d1f6498b80f5e6` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
-| `hud-and-menus.md` | `5bbbf64cbcf9f55eda4f59d6290abe81ab2874fe03e709b72f605b242177abc9` |
+| `hud-and-menus.md` | `a2e49490e6b3d5ab790dbf2aa564c6f1d721b9890cdcc723da0277c52d0273eb` |

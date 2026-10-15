@@ -1,8 +1,8 @@
 {
-  "_comment": "Playtest switches: not game data and not player-facing. They let the board try work that the normal run cannot reach yet. Each key is independent and read by its own task's code. flamethrower_at_start (task T-042): true gives the car the exhaust flamethrower at the start of every run, because there is no level-up offer yet (T-043); false (the game's rule) starts every run without it. Read by scripts/weapons/flamethrower/exhaust_flamethrower.gd. kaiju_early_arrival (task T-045): when enabled is true, the kaiju arrives after_seconds into the run instead of at the boss time (7 minutes in); false (the game's rule) brings it at the boss time. Only the kaiju's arrival moves: the clock, the minions' growth and the boss time signal stay as they are. Read by scripts/enemies/kaiju_boss.gd. Set back to false right before T-045 merges. On (true) in task T-046's branch for the board's playtest of the meteor attack; set back to false right before T-046 merges.",
-  "flamethrower_at_start": true,
+  "_comment": "Playtest switches: not game data and not player-facing. They let the board try work that the normal run cannot reach yet. Each key is independent and read by its own task's code. flamethrower_at_start (task T-042): true gives the car the exhaust flamethrower at the start of every run; false (the game's rule, set in T-052 now that the level-up screen offers it) starts every run without it, and the first level-up offers it. Read by scripts/weapons/flamethrower/exhaust_flamethrower.gd. kaiju_early_arrival (task T-045): when enabled is true, the kaiju arrives after_seconds into the run instead of at the boss time (7 minutes in); false (the game's rule) brings it at the boss time. Only the kaiju's arrival moves: the clock, the minions' growth and the boss time signal stay as they are. Read by scripts/enemies/kaiju_boss.gd. Set back to false right before T-045 merges.",
+  "flamethrower_at_start": false,
   "kaiju_early_arrival": {
-    "enabled": true,
+    "enabled": false,
     "after_seconds": 30
   }
 }

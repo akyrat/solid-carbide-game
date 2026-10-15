@@ -23,6 +23,9 @@ signal run_shown
 var menu: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
+## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
+## into it when the run ends, win or loss.
+var progress: PlayerProgress
 ## The run's pause screen, while a run is on screen.
 var pause_screen: CanvasLayer
 ## What Exit does. Tests replace it so the test run is not closed.
@@ -30,6 +33,7 @@ var quit_game: Callable = func(): get_tree().quit()
 
 
 func _ready() -> void:
+	progress = PlayerProgress.new()
 	show_menu()
 
 
@@ -50,13 +54,17 @@ func start_run() -> void:
 	_clear_screens()
 	run = RunScene.instantiate()
 	run.name = "Run"
+	run.progress = progress  # the car health upgrade applies at the run's start (T-061)
 	add_child(run)  # the run starts itself in _ready()
+	run.car.tuning.apply_acceleration_upgrade(progress)  # garage upgrade (T-060)
+	run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
 	run.set_zoom(GameSettingsScript.load_zoom())
 	run.load_camera_options()  # smoothing and the dynamic camera (T-123)
 	pause_screen = PauseScreenScript.new()
 	pause_screen.name = "PauseScreenLayer"
 	run.add_child(pause_screen)
 	pause_screen.setup(run)
+	progress.connect_run(run.state)  # banks the coins before the screen swaps
 	run.state.run_ended.connect(_on_run_ended)
 	run_shown.emit()
 

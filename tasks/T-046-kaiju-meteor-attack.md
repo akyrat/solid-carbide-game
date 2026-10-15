@@ -79,6 +79,8 @@ You played it in the kaiju build and it works well. Merging into master.
 
 **For the board to look at in the playtest:** whether the attack rhythm and the 3 meteors feel right, whether a 15-damage hit with a 20 knockback feels fair, and how readable the amber circles are (the placeholder is amber rather than red, see above). Also whether the boulders the kaiju leaves clutter the roads too fast over a full minute (about 21 boulders in the 60 s fight, fewer if spots are refused). The numbers are T-039's and were not changed.
 
+**Ready to merge (2026-10-15).** Merged `master` into the branch. Two conflicts: `game/data/playtest.json` (took master's side: `flamethrower_at_start` false with master's T-052 comment text, which has no T-046 sentence) and `game/README.md` (kept both: master's T-050 kaiju health bar paragraph, then this task's "The meteor attack (T-046)" section; its "See it" line now says to turn `kaiju_early_arrival` on, since it is off by default). Playtest switches set back to the game's rules: `flamethrower_at_start` false, `kaiju_early_arrival.enabled` false. No test needed an override (the meteor tests already set the switch off). Tests: GUT 734/737, the 3 failures are the known ones in `game/tests/unit/hud/test_kaiju_health_bar.gd` from T-050's merge (being fixed on T-050's branch, not touched here); `python -m pytest tools` 180 passed; `python -m pytest game/tools` 257 passed, 1 skipped. No `.import` noise to revert.
+
 ## QA result (round 1, QA/Integration Agent, 2026-10-15)
 
 - Warning circles 2 s, meteors land where shown: PASS (test_warnings_show_for_two_seconds_then_meteors_land_where_they_showed)

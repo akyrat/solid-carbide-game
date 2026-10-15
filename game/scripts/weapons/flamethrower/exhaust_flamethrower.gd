@@ -110,6 +110,7 @@ func _car() -> Node2D:
 
 func apply_tier() -> void:
 	stats = data.flame_at(maxi(tier, 1))
+	stats["damage"] = boosted_damage(float(stats["damage"]))
 	_apply_turn_speed()
 	if is_owned():
 		_ensure_drawing()
