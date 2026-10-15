@@ -1,7 +1,7 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Enemies
@@ -49,3 +49,9 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 ## Result notes
 
 - 2026-10-15, open → planning: hp bar on top of the kaiju, about as wide as the boss character itself. mkae the health bar subtly match the comic style combo popups in style, with thin divisors at each 10% hp. make the health bar neon purple with a white background and black borderlines (for the thin dividers as well)
+
+- 2026-10-15, ui: built. `game/scripts/hud/kaiju_health_bar.gd` (`KaijuHealthBar`, `run.kaiju_health_bar`, child of the world view): hidden until `kaiju_appeared`, follows `kaiju_health_changed`, hides on `kaiju_defeated` and in a new run. Sits above the kaiju sprite's head, as wide as it (width from the sprite's new static `drawn_width_px()`, 90 px for the placeholder; the final art must provide `drawn_width_px()` and `drawn_height_px()`). Neon purple on white, black 2 px outline with stepped corners, black dividers at every 10%, no text, absolute z at `CANVAS_ITEM_Z_MAX` like the trick popups. Change to kaiju files (for the T-046 agent): only the static `drawn_width_px()` added to `kaiju_sprite.gd`; `run.gd` creates the bar after the boss.
+- Tests: `tests/unit/hud/test_kaiju_health_bar.gd` (9 tests, independent of the playtest switch). Full GUT suite: 680 passed. Python tool tests (game/tools and tools): 422 passed, 1 skipped.
+- Screenshot: `C:\solid-carbide-worktrees\T-050\screenshots\kaiju_bar.png` (copy in `art-archive/T-050/screenshots/`), bar at 63% above the kaiju.
+- **For the board's playtest, `kaiju_early_arrival` in `game/data/playtest.json` is ON (30 s). It must go back to `"enabled": false` right before merging.**
+- Docs: `docs/hud-and-menus.md` (Content, the HUD), `game/README.md` ("The kaiju").
