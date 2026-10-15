@@ -43,13 +43,13 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test triggers an attack and shows warning circles appear for 2 seconds before the meteors land where they showed (QA: pass / fail)
-- [ ] A test shows a meteor landing on the car damages it and knocks it back, and one landing elsewhere doesn't (QA: pass / fail)
-- [ ] A test shows each landed meteor leaves a boulder through T-097's function, only at spots its placement check accepts, and the car bounces off it (QA: pass / fail)
-- [ ] A test shows meteors and warnings stop while the run is paused (QA: pass / fail)
-- [ ] A screenshot shows warning circles and boulders left by meteors (QA: pass / fail)
-- [ ] `docs/enemies.md` describes the built attack in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test triggers an attack and shows warning circles appear for 2 seconds before the meteors land where they showed (QA: pass)
+- [ ] A test shows a meteor landing on the car damages it and knocks it back, and one landing elsewhere doesn't (QA: pass)
+- [ ] A test shows each landed meteor leaves a boulder through T-097's function, only at spots its placement check accepts, and the car bounces off it (QA: pass)
+- [ ] A test shows meteors and warnings stop while the run is paused (QA: pass)
+- [ ] A screenshot shows warning circles and boulders left by meteors (QA: pass)
+- [ ] `docs/enemies.md` describes the built attack in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
