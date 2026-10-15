@@ -1,7 +1,7 @@
 ---
 id: T-060
 title: Garage upgrade: acceleration applied to the car at the start of a run
-status: open
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Weapons
@@ -44,4 +44,4 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. `CarTuning.apply_acceleration_upgrade(progress)` sets `time_to_top_speed = progress.current_value("acceleration")`; `GameFlow.start_run()` calls it with one line right after the run is built (the drift prototype never calls it). Tests: `game/tests/unit/game/test_acceleration_upgrade.gd` (level 0 = 2.3 s unchanged; levels 1, 5, 10 use the data's value and the measured climb to top speed is shorter and scales with it; the prototype keeps 2.3 s even with level 10 saved). Full GUT suite passes, game/tools Python tests (257) and tools Python tests (180) pass. Docs updated: game/README.md, docs/drifting.md. Note: W snaps to cruise first, so the real time from standstill to top is a share of the "time to top speed" value, not the value itself.

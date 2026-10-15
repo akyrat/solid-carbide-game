@@ -51,6 +51,14 @@ var alternate_min_drift_seconds := 0.3
 ## When true, A or D must stay held on the same side during the switch.
 var alternate_keep_steering := true
 
+## The acceleration garage upgrade (task T-060): sets the time to top speed to
+## the upgrade's value at the player's saved level (level 0 is the base, 2.3 s,
+## the same as the default). Only the run calls it; the drift prototype never
+## does, so it keeps its own tuning.
+func apply_acceleration_upgrade(progress: PlayerProgress) -> void:
+	time_to_top_speed = progress.current_value("acceleration")
+
+
 ## The Unity prototype's values, by setting key (report section 5).
 const UNITY := {
 	"forward_speed": 11.0,
