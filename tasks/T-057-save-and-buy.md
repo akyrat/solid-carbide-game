@@ -48,6 +48,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [x] `game/README.md` documents the functions for the UI and the run, and `docs/garage-design.md` describes saving in Content, without changing Summary, Decisions or Open questions (QA: pass)
 - [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
+## Updates
+
+### 2026-10-15, Done
+
+Saving and buying are in: coins from every run (win or loss) are added to a saved total, and the garage can buy upgrade levels, refusing when the player can't afford one or it's maxed. Nothing is visible yet; the garage screen (T-058) and the three upgrades at run start (T-060 to T-062) build on it and go into the unified playtest build.
+
 ## Result notes
 
 Written by the Game Data Agent.
