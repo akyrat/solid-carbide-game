@@ -1165,3 +1165,13 @@ Entry format:
 - Decision or change: the level-up (gift pack) screen merged after the board's playtest in the weapons-garage unified build ("level up screen is fixed all good"). The board's earlier freeze on a beige screen in T-052's own folder was not the screen: Godot's local class cache there was stale after master was merged in, so the game script failed to load. The Project Lead rebuilt the cache (a headless import); no file changed. The status script counted that pass back through QA as a third round, though no check ran.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
 - Tasks: T-052 (done), T-140 (now open)
+
+## 2026-10-15: T-050 done: the kaiju's health bar
+- Decision or change: the board played the kaiju build ("it works well!") and the kaiju's HUD health bar merged. After the merge, 3 of its tests fail on master (the bar's position and width tests, and hiding in a new run); they passed on the branch, so the UI Agent is finding the cause and fixing it on T-050's branch, to be merged again.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-050 (done; fix after merge in progress), T-098 (now open)
+
+## 2026-10-15: Meteor boulders fade away after 10 seconds
+- Decision or change: the board liked the meteor attack in the kaiju build (damage and a big knockback when a meteor lands on the car; likes the falling rocks). One change, in its own ticket: a boulder left by a meteor stays 10 seconds, then fades away and is gone. T-046 itself is being made ready to merge (its playtest switches set back off, master merged in).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-046, T-142 (new, blocked on T-046)

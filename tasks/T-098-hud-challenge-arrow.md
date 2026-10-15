@@ -1,7 +1,7 @@
 ---
 id: T-098
 title: HUD: the arrow to the nearest challenge
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead:
