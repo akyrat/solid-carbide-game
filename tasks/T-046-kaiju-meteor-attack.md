@@ -1,7 +1,7 @@
 ---
 id: T-046
 title: The kaiju's meteor attack: warning circles, impacts and new boulders
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Enemies
@@ -53,6 +53,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest → Done
+
+You played it in the kaiju build and it works well. Merging into master.
+
 ## Result notes
 
 **What was built** (Enemy Behavior Agent, 2026-10-15). The attack lives in its own script, `game/scripts/enemies/kaiju_meteors.gd` (`run.kaiju_boss.meteors`). The only change to existing enemy code is 7 lines in `kaiju_boss.gd`'s `bind()`, which create and bind it. `kaiju.gd` and `run.gd` are unchanged, so T-050's hook on the kaiju should not conflict.
@@ -84,3 +90,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 - Full GUT 688/688, game/tools 251 OK (1 skipped), tools 171 OK: PASS
 - Risks: warning colour is amber (1.0, 0.62, 0.12), not Redgull red, and a test checks it: PASS. game/data/enemies.json has no diff against master: PASS.
 - Note for merge: playtest.json kaiju_early_arrival.enabled is true in this branch; must be set to false before merging.
+- 2026-10-15, needs-playtest → done: Board's playtest in the kaiju unified build (2026-10-15): works well; takes damage and knocked back far by a meteor; likes the falling rocks animation.
