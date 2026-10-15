@@ -49,6 +49,10 @@ The board's review: playtest it, with T-058's garage screen, before it is merged
 
 Started: the Game Loop Agent wires the Garage button on top of T-058's garage screen, so you can playtest both together.
 
+### 2026-10-15, Needs playtest
+
+QA passed (4 of 4). Ready for your playtest with the garage screen: open C:\solid-carbide-worktrees\T-089\game\project.godot, press Garage, buy, Back, Start.
+
 ## Result notes
 
 Written by the agent when it finishes.
