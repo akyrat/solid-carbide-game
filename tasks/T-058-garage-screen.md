@@ -54,3 +54,12 @@ Written by the UI Agent.
 - Screenshot: `C:\solid-carbide-worktrees\T-058\screenshots\T-058_garage.png` (fixture `tests/fixtures/garage_screen_demo.tscn`: 120 coins, damage bonus maxed).
 - Tests: `tests/unit/test_garage_screen.gd` (7 tests, RunPaths file). Full GUT suite 687/687 pass; `game/tools` Python tests (257) and `tools` Python tests (180) pass.
 - Documents updated: `docs/garage-design.md` (Content only), `game/README.md` ("Garage screen").
+
+**QA (round 1, 2026-10-15): all pass.**
+- Screenshot: heading, coins, 3 rows with level/price/Buy (maxed row shows "Fully Funded"), Back button. Pass.
+- Buy test (test_buying_updates_level_price_and_coins): level, price, coins update. Pass.
+- Maxed/unaffordable tests: messages shown, buy disabled, no charge. Pass.
+- Labels: all constants and the test's expected strings match T-059's table character for character (14 keys). Pass.
+- docs/garage-design.md: only a new Content subsection added. Pass.
+- GUT 687/687; game/tools Python 257 OK; tools Python 180 OK. Pass.
+- Tests use RunPaths.file (user://test_runs/<pid>/), screen gets progress injected; real progress.json not touched.
