@@ -1,7 +1,7 @@
 ---
 id: T-059
 title: Text: the garage screen
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Weapons
@@ -48,4 +48,22 @@ The board's review: read the text and judge whether it has the right voice.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the narrative-theme agent. All lengths within limits; no XP or experience. Matches game/data/garage.json: 10 levels each; acceleration time to top speed 2.3 s down 0.1 s per level; car health 100 up 10 per level; damage bonus +5% per level. {n} is where the number goes (lengths count the placeholder as written).
+
+| Key | Where it appears | Text | Length |
+|---|---|---|---|
+| garage.title | Heading of the garage screen | Redgull Pit Stop | 16/30 |
+| garage.acceleration.name | Upgrade name | Sponsored Throttle | 18/25 |
+| garage.acceleration.desc | Upgrade description | Top speed 0.1 s sooner per level. More drifting, more content. | 62/80 |
+| garage.car_health.name | Upgrade name | Reinforced Chassis | 18/25 |
+| garage.car_health.desc | Upgrade description | +10 car health per level. Redgull says you'll be fine. | 54/80 |
+| garage.damage_bonus.name | Upgrade name | Brand Impact | 12/25 |
+| garage.damage_bonus.desc | Upgrade description | +5% weapon damage per level. Redgull calls it synergy. | 54/80 |
+| garage.level | Each upgrade row; {n} is the current level | Level {n} | 9/25 |
+| garage.price | Each upgrade row; {n} is the price of the next level | Price: {n} | 10/25 |
+| garage.coins | Player's coins; {n} is the coin total | Coins: {n} | 10/25 |
+| garage.buy | Buy button on each upgrade | Buy | 3/25 |
+| garage.maxed | Shown instead of the price/buy at the last level | Fully Funded | 12/25 |
+| garage.too_poor | Shown when the player can't afford the next level | Not enough coins | 16/25 |
+| garage.back | Button back to the main menu | Back | 4/25 |
+
