@@ -1,7 +1,7 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Enemies
@@ -46,6 +46,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest → Done
+
+You played it in the kaiju build and it works well. Merging into master.
+
 ## Result notes
 
 - 2026-10-15, open → planning: hp bar on top of the kaiju, about as wide as the boss character itself. mkae the health bar subtly match the comic style combo popups in style, with thin divisors at each 10% hp. make the health bar neon purple with a white background and black borderlines (for the thin dividers as well)
@@ -65,3 +71,4 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
   - Minor note (not a criterion): in `run.gd` the new `KaijuHealthBarScript` preload was inserted between the comment "The kaiju (task T-045)..." and `KaijuBossScript`, so that doc comment now sits on the bar's preload. Cosmetic only.
 - 2026-10-15, in-qa → needs-playtest: QA round 1: all five criteria pass (qa-integration)
 - 2026-10-15, ui: board waived the playtest; `kaiju_early_arrival` set back to off, run.gd comments tidied.
+- 2026-10-15, needs-playtest → done: Board's playtest in the kaiju unified build (2026-10-15): works well; takes damage and knocked back far by a meteor; likes the falling rocks animation.
