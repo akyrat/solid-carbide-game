@@ -1140,3 +1140,13 @@ Entry format:
 - Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
 - Documents touched: `docs/garage-design.md`, `game/README.md`
 - Tasks: T-057 (done), T-058, T-060, T-061, T-062
+
+## 2026-10-15: T-062 done: the garage damage bonus reaches both weapons
+- Decision or change: at the start of a run, `GameFlow` gives the weapon rack the damage bonus bought in the garage (`progress.current_value("damage_bonus")`); the gun's and the flamethrower's damage are multiplied by 1 + bonus/100 on top of their own tiers, the same factor for both. At level 0 nothing changes, and no level can be bought until the garage screen (T-058) is merged, so nothing the player meets changes yet: merged after QA, round 1, all 4 pass.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-062 (done)
+
+## 2026-10-15: T-060 done: the garage acceleration upgrade reaches the car
+- Decision or change: at the start of a run the car's time to top speed comes from the garage's acceleration upgrade (`progress.current_value("acceleration")`, 2.3 s at level 0 down to 1.3 s at level 10); the drift prototype keeps its own tuning. W snaps the car to cruise speed first, so the upgrade only shortens the climb from cruise to top speed: the board should judge in playtest whether it is felt. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 5 pass.
+- Documents touched: `docs/drifting.md`, `game/README.md`
+- Tasks: T-060 (done)

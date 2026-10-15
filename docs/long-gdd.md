@@ -205,6 +205,8 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md).
 - Godot drift prototype: [../game/README.md](../game/README.md), section "Drift prototype".
 
+- **Garage acceleration upgrade (T-060):** at the start of a run (not in the drift prototype) the car's time to top speed is the acceleration upgrade's value at the player's saved level (Garage design). Level 0 is the base 2.3 s, so the car is unchanged until the player buys it. How it is applied: `game/README.md`, "Saving and buying".
+
 
 ## 3. Level design
 
@@ -497,6 +499,10 @@ The car's weapons fire on their own, so the player only drives. The MVP has two:
 
 ### Content
 
+#### Garage damage bonus
+
+The garage's damage bonus upgrade (Garage design) is applied at the start of every run: its percentage multiplies the damage of the gun and the flamethrower, on top of each weapon's own tier (the two multiply). Level 0 changes nothing. Built in T-062.
+
 #### Unity prototype weapons
 
 Facts from the Unity prototype weapons report (sections 1 to 5). No new decisions.
@@ -767,10 +773,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
-| `drifting.md` | `4977806ff786a0df7fb2662d0578db320aee307ea56087813d6c195a8cc0d697` |
+| `drifting.md` | `91b10d08e6f399877293ea64f6da4b468493dc79e227275a633964978a75d81c` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `1df83b3610ed7d74123b2caf4087fa86c95ea9d599a6b9a16fbc345b527b1e30` |
-| `weapons.md` | `e3f0743c0a4dc633502a754a658c7927b2a35b692acbb8b3f1e13e77af3f2c11` |
+| `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
 | `garage-design.md` | `eaf5b4cb30737fe5e33e23f5f7e3b8b00b4f6d2fe109270aabd28b569dfdaafe` |
 | `visual-style.md` | `58c566d7ba1267893552fd25f695b55d44a85f75e62b1f524f1a6571b1b40fce` |
 | `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
