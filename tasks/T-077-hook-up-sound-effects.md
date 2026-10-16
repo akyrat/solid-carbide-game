@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: in-progress
+status: in-qa
 from: project-lead
 to: sfx
 lead: Playtest
@@ -62,4 +62,4 @@ Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds"
 **Tests:** `game/tests/unit/run/test_run_sounds.gd`, 17 tests: each moment plays its sound, drift and flame sounds stop when their moment ends, engine follows speed and stops when the run ends, volumes come from the data file, every file in sfx.json has a CC0/CC BY record, new run silences. Full GUT suite passes (the earlier baseline was 671, plus these 17), `python -m pytest tools` 180 passed, `python -m pytest game/tools` 261 passed 1 skipped. Launched the game once with `--quit-after 300`: no script errors.
 
 Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav" by Augdog).
-
+- 2026-10-16, in-progress → in-qa: Sounds hooked up in the run; volumes in game/data/sfx.json. Play from C:\solid-carbide-worktrees\T-077\game\project.godot
