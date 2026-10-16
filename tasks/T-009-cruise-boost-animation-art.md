@@ -1,7 +1,7 @@
 ---
 id: T-009
 title: Boost animation art for the jump to cruise speed
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Playtest
@@ -49,6 +49,14 @@ The board's review: play it in the game before it is merged; no separate sample 
 
 Started: the Asset Generation Agent makes animated motion lines with PixelLab (one round) and puts them straight into the game on top of T-008, for you to play in C:\solid-carbide-worktrees\T-009.
 
+### 2026-10-16, Needs playtest
+
+QA passed (6 of 6). Ready for you to play: C:\solid-carbide-worktrees\T-009\game\project.godot, press W from a standstill.
+
+### 2026-10-16, Needs playtest → Done
+
+You approved it. Merging.
+
 ## Result notes
 
 ### Planned PixelLab calls (written before calling, 2026-10-16)
@@ -87,3 +95,4 @@ Total estimate: **2 generations**. After that, free script work only: transparen
 
 All 6 criteria pass (marked above). Docs diff: visual-style.md Content only (+4 lines), game/README.md. GUT 791/791, pytest 182 and 271 (1 skipped), launch clean.
 - 2026-10-16, in-qa → needs-playtest: QA round 1: all 6 criteria pass; GUT 791/791, pytest 182+271
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): LGTM, merge it.
