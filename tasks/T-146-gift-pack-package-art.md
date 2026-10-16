@@ -45,10 +45,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass / fail)
-- [ ] The package sprite replaces T-144's placeholder, and T-144's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass)
+- [ ] The package sprite replaces T-144's placeholder, and T-144's tests still pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the sample, then the package in a run.
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-16, Blocked → In progress
 
 Started on the board's go for one sample; builds on T-144's branch for the one level-up build.
+
+### 2026-10-16, In QA
+
+Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 
 ## Result notes
 
