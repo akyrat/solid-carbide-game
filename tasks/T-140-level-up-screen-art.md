@@ -1,7 +1,7 @@
 ---
 id: T-140
 title: "Art: the level-up screen, red and gold, Redgull-themed"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -107,3 +107,4 @@ Built by script only, no further PixelLab call (total for this task: 1 generatio
 - The sunburst has none (a backdrop behind everything).
 
 **Checks:** `python game/tools/build_level_up_art.py check` passes for all 7 PNGs (no semi-transparent pixels, 30 colours or fewer, transparent corners). The raw box `art-archive/T-140/gift_pack_raw.png` is untouched (a test checks it). Mock-up of the full set over the 60% dimmed run: `art-archive/T-140/level_up_mockup_full_set.png` (made by `art-archive/T-140/make_mockup.py`; the sunburst is shown at about 55% strength and the card text is placeholder, both for T-141 to decide). Pieces that were a quick stand-in in the earlier rough mock-up are now the real ones.
+- 2026-10-16, in-progress → in-qa: Full level-up art set built by script (card frame, highlight, ribbon, button plates, sunburst, gift pack emblem; Redgull logo on the emblem and both ribbon ends). 1 PixelLab generation in total. Mock-up: art-archive/T-140/level_up_mockup_full_set.png. GUT 100%, pytest tools 182 and game/tools 269 pass.
