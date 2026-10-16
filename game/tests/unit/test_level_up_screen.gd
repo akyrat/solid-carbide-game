@@ -31,8 +31,17 @@ func after_each() -> void:
 	get_tree().paused = false
 
 
+## A level-up, then (T-144) the car picks up the gift pack's package, which opens the screen.
+## Most tests want the finished screen, so this plays the build-up (T-141) to its end.
 func _level_up() -> void:
+	_level_up_animating()
+	screen.skip_animation()
+
+
+## The same, but leaves the build-up running (T-141's tests).
+func _level_up_animating() -> void:
 	state.add_xp(state.xp_needed())
+	run.gift_drops.pick_up_all()
 
 
 func _key(code: int, pressed := true, echo := false) -> void:
@@ -43,14 +52,22 @@ func _key(code: int, pressed := true, echo := false) -> void:
 	screen._input(e)
 
 
+## Plays the screen's own clock in 1/60 s steps (the tree is paused, so test timers stand still).
+func _play(seconds: float) -> void:
+	var t := 0.0
+	while t < seconds:
+		screen.advance(1.0 / 60.0)
+		t += 1.0 / 60.0
+
+
 func _card(id: String) -> Dictionary:
 	return screen.cards.filter(func(c): return c.id == id)[0]
 
 
-func test_the_screen_is_in_the_run_and_the_level_up_pause_is_on() -> void:
+func test_the_screen_is_in_the_run_and_opens_through_the_gift_pack() -> void:
 	assert_not_null(screen)
-	assert_true(state.pause_on_level_up)
-	assert_false(screen.visible, "closed until a level-up")
+	assert_false(state.pause_on_level_up, "T-144: the level-up itself does not pause; the package does")
+	assert_false(screen.visible, "closed until a level-up's package is picked up")
 
 
 func test_level_up_opens_two_cards_with_the_approved_text() -> void:
@@ -140,17 +157,13 @@ func test_first_card_starts_highlighted_and_keys_move_it() -> void:
 	assert_eq(screen.highlight, 0)
 
 
-func test_highlighted_card_has_the_thicker_yellow_border() -> void:
+func test_highlighted_card_shows_the_gold_frame() -> void:
 	_level_up()
-	var a: StyleBoxFlat = screen.cards[0].panel.get_theme_stylebox("panel")
-	var b: StyleBoxFlat = screen.cards[1].panel.get_theme_stylebox("panel")
-	assert_gt(a.border_width_left, b.border_width_left)
-	assert_eq(a.border_color, screen.RING)
-	assert_eq(b.border_color, Color.BLACK)
+	assert_true(screen.cards[0].highlight_frame.visible)
+	assert_false(screen.cards[1].highlight_frame.visible)
 	_key(KEY_D)
-	a = screen.cards[0].panel.get_theme_stylebox("panel")
-	b = screen.cards[1].panel.get_theme_stylebox("panel")
-	assert_gt(b.border_width_left, a.border_width_left, "the ring moved")
+	assert_false(screen.cards[0].highlight_frame.visible)
+	assert_true(screen.cards[1].highlight_frame.visible, "the frame moved")
 
 
 func test_enter_takes_the_highlighted_card() -> void:
@@ -218,8 +231,10 @@ func test_escape_still_pauses_and_resumes_a_normal_run() -> void:
 
 func test_two_waiting_level_ups_show_one_screen_after_the_other() -> void:
 	state.add_xp(state.xp_needed() * 2.5)  # more than one level at once
+	run.gift_drops.pick_up_all()  # T-144: both packages picked up together
 	var waiting: int = state.pending_choices.size()
 	assert_gte(waiting, 2)
+	screen.skip_animation()
 	screen.take(screen.cards[0].id)
 	assert_true(screen.visible, "the next level-up's cards show")
 	assert_eq(state.pending_choices.size(), waiting - 1)
@@ -244,17 +259,88 @@ func test_a_new_run_closes_the_screen() -> void:
 	assert_false(get_tree().paused)
 
 
-func test_look_is_comic_white_cards_black_text() -> void:
+func test_look_is_t140s_art_with_black_text() -> void:
 	_level_up()
+	var frame: NinePatchRect = screen.cards[0].body.get_node("Frame")
+	assert_eq(frame.texture.resource_path, "res://art/level_up/card_frame.png")
+	assert_eq(frame.patch_margin_left, 10, "9-slice margin")
+	assert_eq(frame.size * frame.scale, screen.CARD_SIZE, "2 screen pixels per art pixel")
+	assert_eq(screen.cards[0].highlight_frame.texture.resource_path, "res://art/level_up/highlight_frame.png")
+	assert_eq(screen._ribbon.texture.resource_path, "res://art/level_up/header_ribbon.png")
+	assert_eq(screen._sun.texture.resource_path, "res://art/level_up/sunburst.png")
+	assert_eq(screen._emblem.texture.resource_path, "res://art/level_up/gift_pack_emblem.png")
+	var plate: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("normal")
+	var pressed: StyleBoxTexture = screen.cards[0].button.get_theme_stylebox("pressed")
+	assert_eq(plate.texture.resource_path, "res://art/level_up/button_plate.png")
+	assert_eq(pressed.texture.resource_path, "res://art/level_up/button_plate_pressed.png")
+	assert_eq(screen._root.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	for c in screen.cards:
-		var st: StyleBoxFlat = c.panel.get_theme_stylebox("panel")
-		assert_eq(st.bg_color, Color.WHITE)
-		assert_false(st.anti_aliasing, "hard edges")
 		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
 		assert_eq(c.desc.get_theme_color("font_color"), Color.BLACK)
 		var f: FontFile = c.title.get_theme_font("font")
 		assert_true(f.get_font_name().to_lower().contains("bangers"), f.get_font_name())
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE)
+
+
+func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
+	_level_up()
+	var l: Label = screen.title_label
+	assert_eq(l.position.x, 76.0 * 2.0)
+	assert_eq(l.position.x + l.size.x, 304.0 * 2.0)
+	var f: Font = l.get_theme_font("font")
+	var w := f.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x
+	assert_lt(w, l.size.x, "the whole title fits between the medallions")
+	assert_eq(l.text, "Redgull Sent a Gift Pack!", "T-051's text unchanged")
+
+
+func test_card_texts_wrap_at_word_boundaries_and_fit_the_card() -> void:
+	# Every word of every text is narrower than the text width, so word-smart
+	# wrapping never has to break inside a word ("M / ORE"), and the text fits the card.
+	var font: Font = screen.HudScript.comic_font()
+	for key in Texts.TEXTS:
+		if key.begins_with("weapon.") or key.begins_with("levelup."):
+			continue
+		var size: int = screen.CARD_TITLE_SIZE if key.ends_with(".title") else screen.CARD_DESC_SIZE
+		for word in String(Texts.TEXTS[key]).split(" "):
+			var w := font.get_string_size(word, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+			assert_lt(w, screen.TEXT_WIDTH, "%s: '%s' fits on a line" % [key, word])
+	var checked := 0
+	for key in Texts.TEXTS:
+		if not key.ends_with(".desc"):
+			continue
+		var id: String = key.trim_suffix(".desc")
+		var panel := Control.new()
+		add_child_autofree(panel)
+		var v := VBoxContainer.new()
+		panel.add_child(v)
+		var t := Label.new()
+		t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		t.custom_minimum_size.x = screen.TEXT_WIDTH
+		t.add_theme_font_override("font", font)
+		t.add_theme_font_size_override("font_size", screen.CARD_TITLE_SIZE)
+		t.text = Texts.TEXTS[id + ".title"]
+		v.add_child(t)
+		var d := Label.new()
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		d.custom_minimum_size.x = screen.TEXT_WIDTH
+		d.add_theme_font_override("font", font)
+		d.add_theme_font_size_override("font_size", screen.CARD_DESC_SIZE)
+		d.text = Texts.TEXTS[key]
+		v.add_child(d)
+		var inner: float = screen.CARD_SIZE.y - 2.0 * screen.CARD_MARGIN_Y - 44.0 - 20.0
+		assert_lte(v.get_combined_minimum_size().y, inner, "%s fits the card with its button" % key)
+		checked += 1
+	assert_gt(checked, 10)
+
+
+func test_wrapped_card_lines_split_between_words() -> void:
+	_level_up()
+	await wait_process_frames(2)
+	for c in screen.cards:
+		var label: Label = c.desc
+		assert_eq(label.autowrap_mode, TextServer.AUTOWRAP_WORD_SMART, "wraps at words")
+		assert_lte(label.get_minimum_size().x, screen.TEXT_WIDTH + 1.0, "never wider than the card's text area")
+		assert_gt(label.get_line_count(), 0)
 
 
 func test_later_level_ups_show_laid_out_cards_without_a_resize() -> void:
@@ -282,3 +368,154 @@ func test_later_level_ups_show_laid_out_cards_without_a_resize() -> void:
 		await wait_process_frames(2)
 		assert_false(screen.visible)
 	win.size = old_size
+
+
+# --- T-141: the build-up animation --------------------------------------------
+
+
+func test_the_screen_animates_in_within_its_length_and_ends_in_the_layout() -> void:
+	_level_up_animating()
+	assert_true(screen.is_animating())
+	assert_eq(screen.cards.size(), 2)
+	var length: float = screen.animation_length(2)
+	assert_lt(length, 1.0, "well under a second")
+	assert_almost_eq(length, 0.54, 0.001, "the proposed length for two cards")
+	assert_almost_eq(screen.animation_length(3), 0.64, 0.001)
+	# At the start only the dim and the sunburst show: no ribbon, no cards.
+	assert_false(screen._ribbon.visible)
+	assert_false(screen.cards[0].body.visible)
+	assert_lt(screen._sun.scale.x, screen.SUN_SCALE_FULL)
+	# It keeps running while the tree is paused (the screen's own clock).
+	assert_true(get_tree().paused)
+	_play(length + 0.3)
+	assert_false(screen.is_animating(), "done within its length")
+	assert_true(get_tree().paused, "the run is still paused for the choice")
+	assert_true(screen._ribbon.visible and screen._emblem.visible)
+	assert_eq(screen._ribbon.position, Vector2.ZERO)
+	assert_eq(screen._emblem.position, screen.EMBLEM_OFFSET)
+	assert_almost_eq(screen._dim.modulate.a, 1.0, 0.001)
+	assert_eq(screen._sun.scale, Vector2.ONE * screen.SUN_SCALE_FULL)
+	for c in screen.cards:
+		assert_true(c.body.visible)
+		assert_eq(c.body.position, Vector2.ZERO, "T-052's layout")
+		assert_eq(c.panel.size, screen.CARD_SIZE)
+
+
+func test_the_frames_are_stepped_and_ordered() -> void:
+	_level_up_animating()
+	var seen_ribbon: Array = []
+	var seen_cards: Array = [[], []]
+	var t := 0.0
+	var shown_at: Array = [-1.0, -1.0, -1.0]  # ribbon, card 0, card 1
+	while screen.is_animating():
+		screen.advance(0.01)
+		t += 0.01
+		if shown_at[0] < 0.0 and screen._ribbon.visible:
+			shown_at[0] = t
+		for i in 2:
+			if shown_at[i + 1] < 0.0 and screen.cards[i].body.visible:
+				shown_at[i + 1] = t
+		if not seen_ribbon.has(screen._ribbon.position.y):
+			seen_ribbon.append(screen._ribbon.position.y)
+	assert_gt(shown_at[0], 0.0)
+	assert_lt(shown_at[0], shown_at[1], "ribbon before the cards")
+	assert_lt(shown_at[1], shown_at[2], "cards one after the other, left first")
+	assert_lte(seen_ribbon.size(), screen.RIBBON_DROP.size(), "whole-pixel frames, no tweening")
+	for y in seen_ribbon:
+		assert_eq(y, floorf(y), "whole pixels")
+
+
+func test_the_sunburst_spins_in_steps() -> void:
+	_level_up()
+	var t0: float = screen._t
+	screen.advance(screen.SUN_SPIN_STEP * 3.0)
+	var steps := floorf(screen._t / screen.SUN_SPIN_STEP)
+	assert_almost_eq(screen._sun.rotation, deg_to_rad(steps * screen.SUN_SPIN_DEGREES), 0.0001, "a whole number of steps")
+	assert_gt(screen._t, t0)
+	assert_eq(screen._sun.modulate.a, screen.SUN_ALPHA)
+
+
+func test_keys_during_the_animation_take_nothing_and_move_nothing() -> void:
+	_level_up_animating()
+	_key(KEY_SPACE)
+	_key(KEY_ENTER)
+	_key(KEY_D)
+	screen.take_highlighted()
+	screen.take("get_flamethrower")
+	screen.move_highlight(1)
+	assert_true(screen.is_open())
+	assert_true(screen.is_animating())
+	assert_eq(screen.highlight, 0, "nothing moved")
+	assert_eq(run.weapons.gun.tier, 1)
+	assert_eq(run.weapons.flamethrower.tier, 0)
+	assert_true(state.is_waiting_for_choice())
+	assert_true(get_tree().paused)
+
+
+func test_buttons_ignore_the_mouse_during_the_animation() -> void:
+	_level_up_animating()
+	for c in screen.cards:
+		assert_eq(c.button.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	screen.skip_animation()
+	for c in screen.cards:
+		assert_eq(c.button.mouse_filter, Control.MOUSE_FILTER_STOP)
+
+
+func test_a_key_pressed_during_the_animation_does_not_take_a_card_when_it_ends() -> void:
+	_level_up_animating()
+	_key(KEY_SPACE)  # pressed while it animates, still held when it ends
+	screen.skip_animation()
+	_key(KEY_SPACE, true, true)  # its key-repeat
+	assert_true(screen.is_open(), "the held press took nothing")
+	_key(KEY_SPACE, false)
+	_key(KEY_D)
+	assert_eq(screen.highlight, 1, "fresh presses count once it ends")
+	_key(KEY_SPACE)
+	assert_false(screen.visible)
+	assert_eq(run.weapons.flamethrower.tier, 1)
+
+
+func test_keyboard_and_mouse_work_after_the_animation() -> void:
+	_level_up_animating()
+	_play(screen.animation_length(2) + 0.3)
+	assert_false(screen.is_animating())
+	_key(KEY_D)
+	assert_eq(screen.highlight, 1)
+	_key(KEY_ENTER)
+	assert_false(screen.visible)
+	assert_eq(run.weapons.flamethrower.tier, 1)
+	_level_up()
+	_card("upgrade_gun").button.pressed.emit()
+	assert_eq(run.weapons.gun.tier, 2, "the button works")
+
+
+func test_a_second_screen_animates_again() -> void:
+	state.add_xp(state.xp_needed() * 2.5)
+	run.gift_drops.pick_up_all()
+	screen.skip_animation()
+	screen.take(screen.cards[0].id)
+	assert_true(screen.is_open(), "the next level-up's cards")
+	assert_true(screen.is_animating(), "build up again")
+	assert_false(screen.cards[0].body.visible)
+
+
+func test_levelling_up_and_picking_up_in_one_frame_still_animates_cleanly() -> void:
+	# T-139's likes bar animation (another branch) may play at the same moment:
+	# this screen uses only its own nodes and clock, so the HUD below it cannot
+	# interfere, and it stays closed to input until its own build-up ends.
+	state.add_xp(state.xp_needed())
+	run.gift_drops.pick_up_all()
+	_play(0.05)
+	assert_true(screen.is_animating())
+	assert_true(screen.visible)
+	_play(screen.animation_length(2) + 0.3)
+	assert_false(screen.is_animating())
+	assert_true(screen.is_open())
+	assert_eq(screen.layer, screen.LAYER, "over the HUD")
+
+
+func test_closing_during_the_animation_stops_it() -> void:
+	_level_up_animating()
+	screen.close()
+	assert_false(screen.is_animating())
+	assert_false(screen.visible)

@@ -13,7 +13,9 @@ extends Node2D
 ## The run scene connects the map's challenge signals and the car's drift
 ## state to the state's likes (XP) and levels (task T-037), and the car's
 ## tricks and collisions to the combo (task T-081), and plays the level-up
-## effect on the car at every level-up (task T-112). While the car drifts,
+## effect on the car at every level-up (task T-112); since task T-144 each
+## level-up sends the gift pack's helicopter (gift_drops.gd), and driving over
+## its package opens the level-up screen. While the car drifts,
 ## its rear tyres leave drift marks (task T-117) on the map's ground, under
 ## the buildings and the car, and puffs of drift smoke (task T-121) come off
 ## them, drawn with the car. Buildings that cover the car fade (task T-034,
@@ -53,6 +55,8 @@ const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 ## The level-up screen (task T-052): shows the weapon choices when the run pauses for a level-up.
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
+## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
+const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -122,6 +126,9 @@ var weapons: Node
 var level_up_screen: CanvasLayer
 ## The sound effects (task T-077, run_sounds.gd): child "Sounds".
 var sounds: Node
+## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
+## just before View. Its off-screen arrows are the child "GiftArrows".
+var gift_drops: GiftDrops
 
 
 func _ready() -> void:
@@ -206,12 +213,20 @@ func _ready() -> void:
 	weapons.name = "Weapons"
 	add_child(weapons)
 	weapons.bind(self)
-	# A level-up pauses the run for the weapon choice shown by the level-up screen (T-052).
-	state.pause_on_level_up = true
+	# The level-up screen (T-052) opens when the car drives over the gift pack's
+	# package (T-144, gift_drops below), which pauses the run for the weapon
+	# choice; a level-up itself no longer pauses (the switch stays off).
+	state.pause_on_level_up = false
 	level_up_screen = LevelUpScreenScript.new()
 	level_up_screen.name = "LevelUpScreen"
 	add_child(level_up_screen)
 	level_up_screen.setup(weapons)
+	# The gift pack drop (T-144): a helicopter drops a package per level-up.
+	gift_drops = GiftDropsScript.new()
+	gift_drops.name = "GiftDrops"
+	add_child(gift_drops)
+	move_child(gift_drops, view_root.get_index())  # drawn with the world, under the car
+	gift_drops.bind(self)
 	# The sound effects (task T-077, run_sounds.gd; files and volumes in data/sfx.json).
 	sounds = RunSoundsScript.new()
 	add_child(sounds)

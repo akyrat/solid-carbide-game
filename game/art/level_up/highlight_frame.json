@@ -1,0 +1,11 @@
+{
+ "task": "T-140",
+ "what": "The highlighted card's frame: bright gold with a darker glow ring and black lines, hollow. The card sits 6 art pixels inside it (shown 2x). Replaces T-052's yellow ring.",
+ "logo": "none",
+ "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
+ "size": [
+  192,
+  162
+ ],
+ "prompt": null
+}

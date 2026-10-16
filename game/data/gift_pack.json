@@ -1,0 +1,19 @@
+{
+  "_comment": "The gift pack drop (Game loop architecture, Decisions, \"Gift pack drop\", task T-144): on each level-up a helicopter flies across the screen and drops a package that lands a short way ahead of the car, on open road; driving over it opens the level-up screen. Proposed numbers; the board judges them in playtests. Drawn pixels are the isometric view's pixels (the car is 3 units = 48 world pixels long; the helicopter art is 96 x 80 drawn pixels, the box about 40 x 43); units are the car's width, as everywhere.",
+  "helicopter": {
+    "_comment": "speed_px_per_second: how fast it flies across, in drawn pixels per second. drop_height_px: how far above the landing spot it flies (its centre), so the package, hanging under it, falls drop_height_px - hang_below_px. screen_margin_px: the helicopter never flies so high that its top comes closer than this to the screen's top edge, so it is always fully on screen (then the fall is shorter). offscreen_margin_px: how far beyond the screen's left and right edges it starts and ends, so it enters and leaves out of sight.",
+    "speed_px_per_second": 360,
+    "drop_height_px": 200,
+    "screen_margin_px": 12,
+    "offscreen_margin_px": 80
+  },
+  "package": {
+    "_comment": "hang_below_px: from the helicopter's centre down to the bottom of the carried package, clear of the helicopter's belly. fall_seconds: time from the drop to the landing, floating down under the parachute at a steady speed. min_fall_px: the shortest fall; when the screen leaves less room above the landing spot, the package starts this high anyway (behind the helicopter's body), so the parachute is always seen. land_ahead_units: how far ahead of the car (along the way it is moving, or its nose when standing still) the package lands. clearance_units: the open road needed around the landing spot (no building, boulder or map edge within it). pickup_radius_units: the car picks the package up when its centre comes this close to the package's.",
+    "hang_below_px": 80,
+    "fall_seconds": 1.4,
+    "min_fall_px": 60,
+    "land_ahead_units": 8,
+    "clearance_units": 1.0,
+    "pickup_radius_units": 2.0
+  }
+}
