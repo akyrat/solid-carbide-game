@@ -85,9 +85,11 @@ var coins := 0
 var xp := 0.0
 ## The level now, 1 at the start of a run.
 var level := 1
-## The level-up pause switch (T-052 turns it on). Off: a level-up just raises
-## the level and the run carries on. On: a level-up pauses the run (the scene
-## tree, so the clock and the car stop) until choice_made() is called.
+## The level-up pause switch. Off: a level-up just raises the level and the
+## run carries on; since T-144 the run scene keeps it off and the gift pack
+## (gift_drops.gd) calls open_choice() when the car drives over the package.
+## On (tests and tools): a level-up pauses the run (the scene tree, so the
+## clock and the car stop) at once until choice_made() is called.
 var pause_on_level_up := false
 ## Seconds the current unbroken drift has lasted (0 when not drifting).
 var drift_seconds := 0.0
@@ -397,9 +399,21 @@ func _gain_xp(amount: float) -> void:
 	for l in reached:
 		level_up.emit(l)
 		if pause_on_level_up:
-			pending_choices.append(l)
-			if pending_choices.size() == 1:
-				_start_choice()
+			open_choice(l)
+
+
+## Starts the weapon choice for `level_reached` (T-144: the gift pack calls it
+## when the car drives over a package; with pause_on_level_up on, every
+## level-up calls it at once). The run pauses and level_up_choice_started
+## fires, so the level-up screen opens; while a choice is already on show it
+## waits its turn and starts after choice_made(). Ignored when the run is not
+## going.
+func open_choice(level_reached: int) -> void:
+	if not running:
+		return
+	pending_choices.append(level_reached)
+	if pending_choices.size() == 1:
+		_start_choice()
 
 
 ## True while the run is paused waiting for a level-up's weapon choice.

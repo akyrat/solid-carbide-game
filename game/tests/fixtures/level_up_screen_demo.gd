@@ -12,3 +12,4 @@ func _ready() -> void:
 	await get_tree().process_frame
 	var state: RunState = game.run.state
 	state.add_xp(state.xp_needed())
+	game.run.gift_drops.pick_up_all()  # T-144: the screen opens when the package is picked up

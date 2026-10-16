@@ -1,0 +1,16 @@
+{
+  "_comment": "The gift pack drop (Game loop architecture, Decisions, \"Gift pack drop\", task T-144): on each level-up a helicopter flies across the screen and drops a package that lands a short way ahead of the car, on open road; driving over it opens the level-up screen. Proposed numbers; the board judges them in playtests. Drawn pixels are the isometric view's pixels (the car is 3 units = 48 world pixels long); units are the car's width, as everywhere.",
+  "helicopter": {
+    "_comment": "speed_px_per_second: how fast it flies across, in drawn pixels per second. drop_height_px: how far above the landing spot it flies, and so how far the package falls (less when the landing spot is near the top of the screen: the helicopter never flies above the screen's top edge). offscreen_margin_px: how far beyond the screen's left and right edges it starts and ends, so it enters and leaves out of sight.",
+    "speed_px_per_second": 520,
+    "drop_height_px": 90,
+    "offscreen_margin_px": 80
+  },
+  "package": {
+    "_comment": "fall_seconds: time from the drop to the landing. land_ahead_units: how far ahead of the car (along the way it is moving, or its nose when standing still) the package lands. clearance_units: the open road needed around the landing spot (no building, boulder or map edge within it). pickup_radius_units: the car picks the package up when its centre comes this close to the package's.",
+    "fall_seconds": 0.7,
+    "land_ahead_units": 8,
+    "clearance_units": 1.0,
+    "pickup_radius_units": 2.0
+  }
+}
