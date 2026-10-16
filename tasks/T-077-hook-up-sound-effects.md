@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: in-progress
+status: in-qa
 from: project-lead
 to: sfx
 lead: Playtest
@@ -65,6 +65,10 @@ SFX volume slider added (pause screen, beside the camera checkboxes, 0-100, star
 
 The slider was squeezed into the checkbox row and can't be dragged. Sent back: its own row, exactly like the zoom slider. When it's in, this ticket moves to QA for your review.
 
+### 2026-10-16, In progress → In QA
+
+Fixed: the SFX volume slider has its own row under the zoom slider, same width, number at the end, and drags. Ready for you to play in C:\solid-carbide-worktrees\T-077\game\project.godot.
+
 ## Result notes
 
 Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
@@ -93,3 +97,4 @@ Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav
 
 - Board: "add a settings slider for the SFX volume. default it to 0." (0 means silent by default; decision in docs/hud-and-menus.md.) Added the pause screen's "SFX volume" slider (0 to 100, default 0, (first on the checkbox row, see the next line)), saved in user://settings.cfg (`audio`/`sfx_volume`, GameSettings) and applied at once to a new "SFX" audio bus that every sound plays on, on top of data/sfx.json's volumes (100 = those volumes). The sounds are silent until the slider is turned up (Escape, then the slider). Tests: tests/unit/test_sfx_volume.gd (8). Docs: docs/hud-and-menus.md (pause screen Content), game/README.md. Full GUT 770 passed, pytest tools 180, game/tools 261 (1 skipped); game launches with no errors.
 - Board, after playing it: "it's horrible, it doesn't work... I was just expecting the slider in the same way that the zoom slider exists. And that's not what it is... I can't slide the slider, there's not enough room." Fixed: "SFX volume" now has its own row directly under the "Camera zoom level" row (above the checkboxes), laid out like it: label, a slider of the same width (both labels are `LABEL_WIDTH` 170 wide so the sliders line up) and the value as a number at the right end. The strip grows by that row, as the board decided (compact, only as tall as its content): the strip-height limits in `tests/unit/game/test_screen_flow.gd` went from 25% to 30% of the screen height and from 40% to 45% for the strip's bottom edge. New tests there: same width and own row, and a real mouse drag across the slider changes and saves the value. Screenshot of the pause screen with both sliders: C:\solid-carbide-worktrees\T-077\screenshots\T-077-pause-screen.png (looked at: both rows line up).
+- 2026-10-16, in-progress → in-qa: Ready for the board's review (no QA agent; board, 2026-10-16): the SFX volume slider now has its own row like the zoom slider and can be dragged.
