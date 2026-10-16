@@ -1,7 +1,7 @@
 ---
 id: T-141
 title: The level-up screen animates in, with its red and gold art
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Level-up
@@ -60,3 +60,4 @@ Started from T-140's art branch with T-144 merged in; part of the one level-up b
 **Screenshots:** `art-archive/T-141/screenshots/t_0.04.png`, `t_0.12.png`, `t_0.22.png`, `t_0.34.png`, `t_0.44.png`, `t_99.png` (finished). Fixture `tests/fixtures/level_up_anim_demo.tscn`. (A first batch with the same names was identical frames from a mistaken run; overwritten.)
 **Tests:** full GUT suite 820/820 pass; Python tool tests: game/tools 270 OK (1 skipped), tools/ 182 OK.
 **Docs:** docs/hud-and-menus.md (Content only), game/README.md.
+- 2026-10-16, in-progress → in-qa: Level-up screen wears T-140's art and builds up in 0.54 s (0.64 with 3 cards) in 0.04 s pixel frames; input guard until it ends; GUT 820/820, Python OK; screenshots in art-archive/T-141/screenshots/
