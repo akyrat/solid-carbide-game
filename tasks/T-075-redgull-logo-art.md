@@ -1,7 +1,7 @@
 ---
 id: T-075
 title: Art: the Redgull logo, a seagull's head in profile in one shade of dark red
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Art
@@ -14,7 +14,7 @@ documents_affected: [game/README.md, docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,10 +42,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows each logo file uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; the calls after the first sample stay within the board's allowance of 10 generations (QA: pass / fail)
-- [ ] The board's pick (2026-10-16: `art-archive/T-075/redgull_logo_raw_init128_s80.png`, flattened to its own main red, RGB 135,17,27) exists as `game/art/logo/redgull_logo_128.png`, `redgull_logo_64.png` and `redgull_logo_32.png`, each one colour, the smaller ones made by script from the 128; the other candidates are in `art-archive/T-075/`, not `game/art/`; Godot imports all three (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A check script shows each logo file uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass)
+- [x] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; the calls after the first sample stay within the board's allowance of 10 generations (QA: pass)
+- [x] The board's pick (2026-10-16: `art-archive/T-075/redgull_logo_raw_init128_s80.png`, flattened to its own main red, RGB 135,17,27) exists as `game/art/logo/redgull_logo_128.png`, `redgull_logo_64.png` and `redgull_logo_32.png`, each one colour, the smaller ones made by script from the 128; the other candidates are in `art-archive/T-075/`, not `game/art/`; Godot imports all three (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the sample's look (a seagull's head in profile, minimal, one dark red). Once approved, the other sizes follow from it.
 
@@ -146,3 +146,4 @@ Call made as planned (1 generation; total 6 of 10 spent). Balance read 4904 befo
 - [x] Call record and allowance: PASS. The generation log has 6 entries for T-075 (1 first sample + 5 after), each with prompt, endpoint and usage 1 generation; balance 4909 before, about 4903 after. Calls after the first sample: 5, within the allowance of 10. Wording slip: the notes say "6 of 10 generations used" where it is 5 of the 10 extra (6 in total); not a fail.
 - [x] Final files: PASS. `redgull_logo_128/64/32.png` exist in `game/art/logo/`, one colour 135,17,27, with `.import` files; the other candidates are in `art-archive/T-075/`, not `game/art/`; the headless import in the GUT run raised no errors.
 - [x] Tests: PASS. GUT 745/745 passing; `game/tools` 265 OK (1 skipped); `tools` 180 OK.
+- 2026-10-16, in-qa → needs-playtest: QA round 1: all four criteria pass
