@@ -1,7 +1,7 @@
 ---
 id: T-139
 title: The likes bar animates when the player levels up
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/game-loop-architecture.md, tasks/T-131-combo-heat-levels.md, tasks/T-113-hud-vertical-health-and-likes-bars.md, game/README.md]
 files_expected_to_change: [the HUD scene and scripts, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -57,6 +57,14 @@ Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-u
 
 Built: a 0.75 s white-hot flash on the likes bar with pixel sparks and a Hype Lv pop; plays paused or not. In QA now; you'll play it in the one level-up build.
 
+### 2026-10-16, Needs playtest
+
+QA passed all 5 criteria. Waits in Needs playtest for the one level-up build (with T-144 and the art). Note: qa_rounds reads 2 after one QA round (QA set it by hand, then the script added one).
+
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
+
 ## Result notes
 
 Built by the UI Agent. Proposal for the board to judge in playtest:
@@ -68,3 +76,5 @@ Built by the UI Agent. Proposal for the board to judge in playtest:
 - **Honest view:** the sparks are small and fairly sparse; the stripes in the last frames are a busy look. Cheapest tweaks if the board finds it weak: bigger or more sparks, a shorter or longer length (`FRAME_COUNT`).
 - Documents updated: docs/hud-and-menus.md (Content only), game/README.md.
 - 2026-10-16, in-progress → in-qa: Likes bar level-up animation (0.75 s flash, sparks, Hype Lv pop) built, tests and screenshots in place
+- 2026-10-16, in-qa → needs-playtest: QA pass: 5/5. GUT 787/787, Python 266+182 pass, docs Content-only, screenshots clear, no Redgull red (only the HUD heart).
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
