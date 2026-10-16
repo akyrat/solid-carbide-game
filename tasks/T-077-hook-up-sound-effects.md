@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: in-qa
+status: done
 from: project-lead
 to: sfx
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, tasks/T-076-mvp-sound-effects.md, tasks/T-036-run-scene-and-state.md, tasks/T-041-starting-gun.md, tasks/T-042-exhaust-flamethrower.md, tasks/T-044-minions.md, tasks/T-046-kaiju-meteor-attack.md, game/README.md]
 files_expected_to_change: [audio code and scenes, tests, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -69,6 +69,10 @@ The slider was squeezed into the checkbox row and can't be dragged. Sent back: i
 
 Fixed: the SFX volume slider has its own row under the zoom slider, same width, number at the end, and drags. Ready for you to play in C:\solid-carbide-worktrees\T-077\game\project.godot.
 
+### 2026-10-16, Needs playtest → Done
+
+You approved it; final QA passed. Merging.
+
 ## Result notes
 
 Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
@@ -108,3 +112,5 @@ Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav
 - Pause screen slider: "SFX volume" is on its own row (`SfxRow`) directly under the zoom row; both labels `LABEL_WIDTH` 170 so the sliders have the same width; range 0 to 100; default `DEFAULT_SFX_VOLUME` 0.0 when nothing is saved; value saved to `audio/sfx_volume` (pass).
 - docs/hud-and-menus.md vs master: one added line, in the pause screen Content only (pass).
 - Real settings file: no test writes it. `test_sfx_volume.gd` and `test_screen_flow.gd` set `GameSettings.path` to a `RunPaths.file(...)` test path; the real `settings.cfg` was byte-identical before and after the full suite (pass).
+- 2026-10-16, in-qa → needs-playtest: Final QA passed; the board already approved it (LGTM).
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): LGTM. The 60 the board saw was a value saved in its settings file, not the default (0); the Project Lead cleared it.
