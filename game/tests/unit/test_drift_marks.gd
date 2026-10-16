@@ -333,4 +333,4 @@ func test_marks_in_a_run_started_from_the_main_menu() -> void:
 	_drive(run.car, W_AND_D, 30)
 	assert_eq(run.drift_marks.marks().size(), 2)
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()

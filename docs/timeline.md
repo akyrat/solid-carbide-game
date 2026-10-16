@@ -1140,3 +1140,143 @@ Entry format:
 - Decision or change: `PlayerProgress` (`game/scripts/data/player_progress.gd`, made by `GameFlow` as `GameFlow.progress`) saves the coin total and each upgrade's level to `user://progress.json`; a missing or broken file is a new player. Every run's coins are banked when it ends, win or loss. `buy(id)` spends the price, raises the level and saves, or refuses with `NOT_ENOUGH_COINS` or `MAXED` and changes nothing; reading functions give each upgrade's level, next price and value for the garage screen and for applying upgrades at run start. Simple choices where the docs were silent: levels clamped to 0..max, negative run coins ignored. Nothing shows yet (the garage screen is T-058), so merged after QA: round 1, all 7 pass. Now open: T-060, T-061, T-062.
 - Documents touched: `docs/garage-design.md`, `game/README.md`
 - Tasks: T-057 (done), T-058, T-060, T-061, T-062
+
+## 2026-10-15: T-062 done: the garage damage bonus reaches both weapons
+- Decision or change: at the start of a run, `GameFlow` gives the weapon rack the damage bonus bought in the garage (`progress.current_value("damage_bonus")`); the gun's and the flamethrower's damage are multiplied by 1 + bonus/100 on top of their own tiers, the same factor for both. At level 0 nothing changes, and no level can be bought until the garage screen (T-058) is merged, so nothing the player meets changes yet: merged after QA, round 1, all 4 pass.
+- Documents touched: `docs/weapons.md`, `game/README.md`
+- Tasks: T-062 (done)
+
+## 2026-10-15: T-060 done: the garage acceleration upgrade reaches the car
+- Decision or change: at the start of a run the car's time to top speed comes from the garage's acceleration upgrade (`progress.current_value("acceleration")`, 2.3 s at level 0 down to 1.3 s at level 10); the drift prototype keeps its own tuning. W snaps the car to cruise speed first, so the upgrade only shortens the climb from cruise to top speed: the board should judge in playtest whether it is felt. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 5 pass.
+- Documents touched: `docs/drifting.md`, `game/README.md`
+- Tasks: T-060 (done)
+
+## 2026-10-15: T-061 done: the garage health upgrade reaches the car
+- Decision or change: at the start of a run the car's starting and maximum health come from the garage's car health upgrade (`progress.current_value("car_health")`, 100 at level 0, +10 per level), and the HUD's health bar follows it; a run with no saved progress attached (tests, fixtures) keeps run.json's health. Invisible until the garage screen (T-058) merges, so merged after QA: round 1, all 4 pass. With T-060 and T-062 this completes the three garage upgrades.
+- Documents touched: `game/README.md`
+- Tasks: T-061 (done)
+
+## 2026-10-15: The cruise boost's look: discreet motion lines
+- Decision or change: the board played T-008's placeholder boost (five streaks behind the car) in the weapons-garage playtest build and found it too much. The boost should be discreet: a few motion lines that show briefly. The art comes later, in T-009 (final release), which now has the description and waits only for T-008.
+- Documents touched: `docs/visual-style.md`, `docs/drifting.md`
+- Tasks: T-105 (done), T-009 (description added), T-008
+
+## 2026-10-15: T-052 done: the level-up screen
+- Decision or change: the level-up (gift pack) screen merged after the board's playtest in the weapons-garage unified build ("level up screen is fixed all good"). The board's earlier freeze on a beige screen in T-052's own folder was not the screen: Godot's local class cache there was stale after master was merged in, so the game script failed to load. The Project Lead rebuilt the cache (a headless import); no file changed. The status script counted that pass back through QA as a third round, though no check ran.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-052 (done), T-140 (now open)
+
+## 2026-10-15: T-050 done: the kaiju's health bar
+- Decision or change: the board played the kaiju build ("it works well!") and the kaiju's HUD health bar merged. After the merge, 3 of its tests fail on master (the bar's position and width tests, and hiding in a new run); they passed on the branch, so the UI Agent is finding the cause and fixing it on T-050's branch, to be merged again.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-050 (done; fix after merge in progress), T-098 (now open)
+
+## 2026-10-15: Meteor boulders fade away after 10 seconds
+- Decision or change: the board liked the meteor attack in the kaiju build (damage and a big knockback when a meteor lands on the car; likes the falling rocks). One change, in its own ticket: a boulder left by a meteor stays 10 seconds, then fades away and is gone. T-046 itself is being made ready to merge (its playtest switches set back off, master merged in).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-046, T-142 (new, blocked on T-046)
+
+## 2026-10-15: T-046 done: the kaiju's meteor attack
+- Decision or change: merged after the board's playtest in the kaiju build ("it works well!": damage and a big knockback when a meteor lands on the car, likes the falling rocks). Before merging, the Enemy Behavior Agent caught the branch up with master and set its playtest switches back to the game's rules (`kaiju_early_arrival` and `flamethrower_at_start` both off). Tests: 734 of 737 GUT tests pass; the 3 failures are T-050's kaiju health bar tests, already failing on master and being fixed on T-050's branch. Python tool tests all pass.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-046 (done), T-142 (now unblocked), T-070, T-078
+
+## 2026-10-15: T-050 fix after merge: master's tests pass again
+- Decision or change: the 3 kaiju health bar tests that failed after T-050's merge had an outdated setup, not a broken bar: since T-052 the run pauses on level-ups, and an earlier test in the suite leaves the game paused, so the bar never updated in those tests. The UI Agent made the test file unpause the game before and after each test; the bar's code is unchanged. Merged without QA (test-only change). Master: 737 of 737 GUT tests, all Python tool tests pass. Which earlier test leaks the pause is not traced.
+- Documents touched: none
+- Tasks: T-050
+
+## 2026-10-16: T-076 done: the MVP's sound effects are chosen
+- Decision or change: the board listened to T-076's candidates and approved them ("sfx looks good"): the SFX Agent's recommended file per sound (engine, drift, gun, flames, hit, coin, meteor warning, meteor impact) goes into the game in T-077, which the board will playtest. Only the meteor warning ("Falling.wav" by Augdog) is CC BY and needs a credit.
+- Documents touched: `docs/unfiled-game-details.md`, `game/README.md`
+- Tasks: T-076 (done), T-077 (now open, the board's review added)
+
+## 2026-10-16: T-058 done: the garage screen
+- Decision or change: the board played the garage (with T-089's Garage button, in T-089's folder): "garage works!". One change: the acceleration upgrade is named "Energy Throttle" instead of "Sponsored Throttle" (board, 2026-10-16). The UI Agent renamed it, QA passed once more, and T-059's text table is updated. Merged.
+- Documents touched: `docs/garage-design.md`, `game/README.md`
+- Tasks: T-058 (done), T-059 (text table updated), T-089
+
+## 2026-10-16: T-089 done: the main menu's Garage button opens the garage
+- Decision or change: Garage on the main menu opens the garage screen, and its Back button returns to the main menu; Start still works after a visit. Built on T-058's branch so the board could play both together (board, 2026-10-15); the board played them: "garage works!". Merged after T-058.
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`
+- Tasks: T-089 (done)
+
+## 2026-10-16: The status hook should let read-only commands through
+- Decision or change: the board asked for a tooling ticket: the hook that keeps task status lines changing only through the status script also refuses commands that only read a task file and mention `status:`. T-143 keeps blocking writes and lets reads through.
+- Documents touched: none yet (T-143 updates `tasks/README.md`)
+- Tasks: T-143 (new), T-142 (started), T-077 (in QA)
+
+## 2026-10-16: Redgull logo: a seagull's head in profile, one shade of dark red
+- Decision or change: the board redefined the logo: only the side profile of a seagull's head (the whole bird would look like any bird), as minimal as possible, in a single shade of dark red. Replaces the "sketched seagull with red eyes". The board asked for a PixelLab sample first, so T-075 starts with one logo for review.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`
+- Tasks: T-075 (started)
+
+## 2026-10-16: T-075 first logo sample rejected; allowance of 10 generations
+- Decision or change: the first PixelLab sample read as a bell or the letter R, not a gull's head. The board agreed and gave an allowance of up to 10 more generations, spent at the team's judgement, until there is a sample worth showing. This replaces the one-round rule for T-075 only.
+- Documents touched: none (recorded on T-075)
+- Tasks: T-075
+
+## 2026-10-16: An SFX volume slider, silent by default
+- Decision or change: from the board's playtest drag on T-077: "add a settings slider for the SFX volume. default it to 0." The pause screen gets an "SFX volume" slider, 0 to 100, starting at 0 (sound effects silent until the player turns them up; the board confirmed this reading), saved between sessions like the zoom. Built as a quick tweak on T-077 by the SFX Agent.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-077
+
+## 2026-10-16: T-142 done: meteor boulders fade away
+- Decision or change: a boulder left by a meteor stays 10 seconds, then fades over 2 seconds and is removed (no longer blocks the car); the map's own boulders stay. Both numbers are in `game/data/enemies.json`; the 2-second fade was the agent's proposal and the board kept it. The board playtested it: "LGTM". The early-kaiju playtest switch was set back off before merging.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-142 (done)
+
+## 2026-10-16: T-075 done: the Redgull logo
+- Decision or change: the board picked PixelLab's result made from a script-drawn gull silhouette (init strength 80): a gull's head in profile with a hooked beak and a slanted eye cut-out, flattened to one dark red (RGB 135,17,27), at 128, 64 and 32 pixels. The board: "the icons look good to me, merge them". 6 generations in total (the first sample plus 5 of the allowance of 10). Every other candidate is kept in `art-archive/T-075/`. Where the logo appears in the game is decided separately.
+- Documents touched: `docs/visual-style.md`, `game/README.md`
+- Tasks: T-075 (done)
+
+## 2026-10-16: The QA column can mean "ready for the board's review"
+- Decision or change: the board found T-077 left in In progress although its slider tweak was ready to play. Rule (board): a task in the QA column usually waits for the QA/Integration Agent, but when the board or the ticket says so (for example after a quick-tuning tweak) it waits there for the board's own review, with no QA agent. The board also found the SFX volume slider unusable (squeezed into the checkbox row, no room to drag); it goes back to the SFX Agent to match the zoom slider's row.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-077
+
+## 2026-10-16: Gift pack drop: Redgull's helicopter drops the gift pack
+- Decision or change: the board decided the level-up screen should no longer just appear. When the player levels up, a helicopter sent by Redgull flies over the screen and drops a package with Redgull's brand; driving over the package opens the level-up (gift pack) screen. Replaces the after-MVP "plane drops the gift pack" idea. Tickets created, not started: T-144 (the flow with placeholders, Game Loop Agent), T-145 (helicopter art) and T-146 (package art), both waiting for T-144. Open questions on T-144 go to the board before it starts.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/hud-and-menus.md`
+- Tasks: T-144, T-145, T-146 (new)
+
+## 2026-10-16: Meteors never land on a standing meteor boulder
+- Decision or change: the board saw meteors fall on boulders left by earlier meteors that hadn't faded yet, and decided they must not. The built placement check already refuses overlapping boulders, so T-147 first finds why it still happens, then fixes it. Ticket created, not started.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-147 (new)
+
+## 2026-10-16: T-077 done: the sound effects play in the game
+- Decision or change: the approved sounds play at their moments (engine following speed, drift, gun, flames, hits, coins, meteor warning and impact), volumes in `game/data/sfx.json`, credit for "Falling.wav" by Augdog (CC BY 4.0) in `game/README.md`. The board's tweaks: an "SFX volume" slider on the pause screen, 0 to 100, silent (0) by default, saved; first squeezed into the checkbox row and undraggable, then given its own row like the zoom slider. The 60 the board saw on opening was a value saved in its settings file, not the default; the Project Lead cleared it. Board: "LGTM". Final QA passed. One test fails on the board's computer only, because it reads the board's real saved garage upgrades: T-148 (new) fixes that.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-077 (done), T-148 (new)
+
+## 2026-10-16: T-143 done: the status hook lets read-only commands through
+- Decision or change: the hook still refuses any shell command that could write a task file's status or qa_rounds line, but now lets through commands it can prove only read (grep, sed -n, head, Select-String and so on); anything it can't prove is still refused. QA round 1: all 5 pass. While working, the agent hit the old false refusal on a README edit and then made the edit with the file editing tool; reported to the board. One GUT test still fails on the board's computer only (it reads the board's real save); T-148 fixes it.
+- Documents touched: `tasks/README.md`
+- Tasks: T-143 (done)
+
+## 2026-10-16: The new level-up is built and played as one build
+- Decision or change: the board started the new level-up (the gift pack drop, the likes bar animation, the level-up screen's red and gold art and its animation) and wants to playtest it all together in one build, not piece by piece. The session "Level-up" took over T-139 to T-141 (from Enemies) and T-144 to T-146 (from Art). The board's answers to T-144: the run keeps going until the screen opens; the package lands a short way ahead of the car on open road and stays until picked up; one package per level-up, each opening its own screen; an edge arrow points to an off-screen package. PixelLab go: one sample each for T-140, T-145 and T-146.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-139, T-140, T-141, T-144, T-145, T-146
+
+## 2026-10-16: T-148 done: tests never touch the player's real save
+- Decision or change: tests that went through the main menu read the board's real `progress.json` (one failed because the board had bought a damage upgrade), and 14 test files pointed later tests back at the real save files when cleaning up. Every test run now starts with empty test save files, and the run fails if any test is left pointing at the real save. QA round 1: all 4 pass with the board's real save in place, and the board's save files were byte-identical before and after. Master: 777 of 777 GUT tests pass again.
+- Documents touched: `game/README.md`
+- Tasks: T-148 (done)
+
+## 2026-10-16: Old playtest builds removed; an agent's edit after a refusal accepted
+- Decision or change: everything in the two unified playtest builds (`playtest/weapons-garage`, `playtest/kaiju-fight`) is now in master, so their folders are removed at the board's word; the branches are kept. Master is now the most complete build. The board also accepted the `tasks/README.md` edit the T-143 agent made with the file editing tool after the old hook falsely refused its shell command (the rule stays: an agent stops and reports a refusal instead of getting around it).
+- Documents touched: none
+- Tasks: T-143
+
+## 2026-10-16: The level-up art and animation build on each other's branches
+- Decision or change: so the new level-up can be played in one build, the board chose to chain the branches: T-145 and T-146 no longer wait for T-144 to be done but merge its branch for the swap-in; T-141 no longer waits for T-140 to be done but starts from its branch once its full set is approved. Each still passes QA; all go into one playtest build.
+- Documents touched: none (tickets only)
+- Tasks: T-141, T-145, T-146
+
+## 2026-10-16: The cruise boost's motion lines: animated, PixelLab, judged in the game
+- Decision or change: the board wants to see the motion lines in the game, not as samples ("There's no point for me checking the samples"), and wants them animated, made with PixelLab (one round, the board's go). T-009 is built on T-008's unmerged branch: the Asset Generation Agent generates the animation and swaps it in for T-008's placeholder, and the board plays it there. T-008 merges first, then T-009.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-009 (started), T-008

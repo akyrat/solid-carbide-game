@@ -50,6 +50,13 @@ static func drawn_height_px() -> float:
 	return HEIGHT_UNITS * PX
 
 
+## The drawing's width in screen pixels (its ground circle, as seen in the
+## isometric view). The HUD's health bar over the kaiju (T-050) is as wide as
+## this; the final art provides the same function.
+static func drawn_width_px() -> float:
+	return RADIUS_UNITS * PX * sqrt(2.0) * 2.0
+
+
 ## A point of the drawing: x forward (towards the facing), y up from the feet.
 func _p(x: float, y: float) -> Vector2:
 	return Vector2(x * facing_x, -y)

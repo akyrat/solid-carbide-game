@@ -1,7 +1,7 @@
 ---
 id: T-105
 title: Board describes what the cruise boost looks like
-status: open
+status: done
 from: project-lead
 to: board
 lead:
@@ -13,7 +13,7 @@ depends_on: []
 documents_affected: [docs/drifting.md, docs/visual-style.md]
 files_to_read_first: [docs/drifting.md, docs/visual-style.md, tasks/T-009-cruise-boost-animation-art.md]
 files_expected_to_change: [docs/drifting.md, docs/visual-style.md]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -33,8 +33,9 @@ T-009 (the cruise boost animation art, final release) waits for the board to des
 
 ## Acceptance criteria
 
-- [ ] The board's description is in `docs/visual-style.md`, Decisions, the open question in `docs/drifting.md` is resolved, and T-009's description has it
+- [x] The board's description is in `docs/visual-style.md`, Decisions, the open question in `docs/drifting.md` is resolved, and T-009's description has it (QA: pass)
 
 ## Result notes
 
 Written by the Project Lead when the board has decided.
+- 2026-10-15, in-qa → done: The board's description (2026-10-15): discreet, a few motion lines that show briefly. In docs/visual-style.md Decisions; the docs/drifting.md open question is resolved; T-009 has it. Checked by the Project Lead (docs only).

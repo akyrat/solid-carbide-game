@@ -4,12 +4,12 @@ title: The level-up screen animates in, with its red and gold art
 status: blocked
 from: project-lead
 to: ui
-lead: Enemies
+lead: Level-up
 epic: hud-menus
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-052, T-140]
+depends_on: [T-052]
 documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, tasks/T-052-level-up-screen.md, tasks/T-140-level-up-screen-art.md, tasks/T-139-likes-bar-level-up-animation.md, game/README.md]
 files_expected_to_change: [the level-up screen scene and scripts, tests, docs/hud-and-menus.md, game/README.md]
@@ -29,7 +29,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-052 (the level-up screen) and T-140 (its red and gold art) are done.** The board (2026-10-15) wants the screen's animation to use the new art, so it waits for it.
+**Builds on T-140's branch (board, 2026-10-16):** the board wants the screen's animation to use T-140's art (2026-10-15) and plays the whole new level-up in one build, so this task starts once T-140's full set is approved, from T-140's branch (`task/T-140-level-up-screen-art`), instead of waiting for T-140 to be done.
 
 The board: "animate the level up screen showing up". Swap T-140's approved art into T-052's level-up screen, and animate the screen appearing: for example the dim fading in, the cards popping or sliding in one after the other in pixel-art frames, the header dropping in. Propose the animation and its length in the result notes; the board judges it in its playtest. Keep it short (well under a second), in the game's comic look, with hard pixel edges. It runs while the run is paused. The player's input must work as T-052 set it (no card can be taken by accident while the screen animates in; say how). If T-139's likes bar animation plays at the same moment, make the two follow each other cleanly. No new player-facing text; T-051's text stays as it is.
 

@@ -37,7 +37,7 @@ flowchart LR
 - **Driving:** W drives forward, S brakes and reverses, A and D steer and drift. The car jumps straight to a cruising speed and builds a long, fast slide when turned, which carries more speed than driving straight.
 - **Obstacles:** crashed meteor boulders stand on the roads in set patterns, to drift around and bounce off.
 - **Tricks and the combo:** extended drifts, 360s and alternate drifts (switching between forward and backward drifts) are tricks. Each one raises a combo multiplier on every like earned, and pops its name out from the car in comic-style letters. Hitting anything cuts the combo, and it drains if the tricks stop. A higher combo also draws more monsters.
-- **Likes and gift packs:** drifts longer than a second earn likes every second, multiplied by the combo. Each time the likes bar fills, the game pauses for a gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
+- **Likes and gift packs:** drifts longer than a second earn likes every second, multiplied by the combo. Each time the likes bar fills, a Redgull helicopter flies over and drops a gift pack; driving over it pauses the game for the gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
 - **Weapons:** the car starts every run with a **gun** that aims and fires on its own at monsters in range. The second weapon is a **flamethrower out of the exhaust that fires only while drifting**. The weapons reset every run.
 - **Monsters:** light-green, four-legged lizards come in from the edges of the screen, a few more as the run goes on. They hurt the car on contact and drop coins.
 - **The kaiju:** at 7:00 a Godzilla-style kaiju arrives and walks slowly towards the car. Weapons can damage it at any time. It rains meteors (a red warning circle shows where they will land) that leave new boulders on the roads.
@@ -65,7 +65,7 @@ The map is one city: 240 by 240 units (one unit is a car's width), a 4 by 4 grid
 
 ## The look
 
-Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cyan neon, with vertical signs and lit windows over cracked asphalt. Redgull's logo is a sketched seagull with red eyes, slightly evil and unsettling, and the company's red shows up only on its own things, such as the weapons it sends; the city itself is not Redgull's. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
+Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cyan neon, with vertical signs and lit windows over cracked asphalt. Redgull's logo is a minimal side profile of a seagull's head in a single dark red, slightly evil and unsettling, and the company's red shows up only on its own things, such as the weapons it sends; the city itself is not Redgull's. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
 
 ## The MVP, and what comes after
 

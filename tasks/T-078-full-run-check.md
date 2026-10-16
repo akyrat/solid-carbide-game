@@ -1,7 +1,7 @@
 ---
 id: T-078
 title: QA: a full run from the main menu, before the MVP playtest
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead:

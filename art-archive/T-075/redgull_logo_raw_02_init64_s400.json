@@ -1,0 +1,42 @@
+{
+  "file": "redgull_logo_raw_02_init64_s400.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "logo, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "flat shading",
+    "detail": "low detail",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABHklEQVR4nO3YwY3DIBQE0PkjithDKnRBqXAP28VGHCJFUYyEDQYy86ScAg5//G3sAGZmZmZmZqYnWh/w/nP73/tu+/tt/ntnRe+iZw+CVxd/dE4vcWZyi0JGd0McndjjLI4II45MuqKFrwojVrh+e4ZBLFBADv35wYodsL0F0KqQFp0RNYPPLHxvsaPDiBm2vZatXRtE1AxufQ0+FztyS41Vn+BahUEIKJ04QsReCISQTyFwpReXHiEkfJnah66ExdR2YR5fCiFhci0uu1IICRN4XWCv+8xeCMQk8gJ732Q/HZ8Q8x4CMdjorZUQR4gjxBHiqPB/QAkhjspbYOYOgDhCHCGOEEeIo/IWmLkDIC6ptXyXALZJizMzMzNDwQMihIEyGmKfmwAAAABJRU5ErkJggg=="
+    },
+    "init_image_strength": 400
+  },
+  "prompt": "logo, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T12:04:00+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-075",
+  "job_status": null,
+  "notes": "round 2 call 1: init silhouette 64, strength 400",
+  "generator": "game/tools/pixellab_client.py"
+}

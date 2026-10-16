@@ -1,7 +1,7 @@
 ---
 id: T-050
 title: HUD: the kaiju's health bar
-status: planning
+status: done
 from: project-lead
 to: ui
 lead: Enemies
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-049-hud-run-values.md, tasks/T-045-kaiju.md, tasks/T-048-text-hud.md, game/README.md]
 files_expected_to_change: [the HUD scene and script, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -38,14 +38,39 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test shows the kaiju's health bar is hidden before the kaiju appears, shows its health after (following the health signal), and hides when it dies (QA: pass / fail)
-- [ ] A test shows the bar follows the kaiju, sits above it, is about as wide as the kaiju (it follows the kaiju's width), has a divider at every 10% of its health, and is drawn above buildings (QA: pass / fail)
-- [ ] A screenshot of a run shows the bar above the kaiju, partly emptied, in neon purple on white with black outline and dividers, and no Redgull red (QA: pass / fail)
-- [ ] `docs/hud-and-menus.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test shows the kaiju's health bar is hidden before the kaiju appears, shows its health after (following the health signal), and hides when it dies (QA: pass)
+- [x] A test shows the bar follows the kaiju, sits above it, is about as wide as the kaiju (it follows the kaiju's width), has a divider at every 10% of its health, and is drawn above buildings (QA: pass)
+- [x] A screenshot of a run shows the bar above the kaiju, partly emptied, in neon purple on white with black outline and dividers, and no Redgull red (QA: pass)
+- [x] `docs/hud-and-menus.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
+## Updates
+
+### 2026-10-15, Needs playtest → Done
+
+You played it in the kaiju build and it works well. Merging into master.
 
 ## Result notes
 
 - 2026-10-15, open → planning: hp bar on top of the kaiju, about as wide as the boss character itself. mkae the health bar subtly match the comic style combo popups in style, with thin divisors at each 10% hp. make the health bar neon purple with a white background and black borderlines (for the thin dividers as well)
+
+- 2026-10-15, ui: built. `game/scripts/hud/kaiju_health_bar.gd` (`KaijuHealthBar`, `run.kaiju_health_bar`, child of the world view): hidden until `kaiju_appeared`, follows `kaiju_health_changed`, hides on `kaiju_defeated` and in a new run. Sits above the kaiju sprite's head, as wide as it (width from the sprite's new static `drawn_width_px()`, 90 px for the placeholder; the final art must provide `drawn_width_px()` and `drawn_height_px()`). Neon purple on white, black 2 px outline with stepped corners, black dividers at every 10%, no text, absolute z at `CANVAS_ITEM_Z_MAX` like the trick popups. Change to kaiju files (for the T-046 agent): only the static `drawn_width_px()` added to `kaiju_sprite.gd`; `run.gd` creates the bar after the boss.
+- Tests: `tests/unit/hud/test_kaiju_health_bar.gd` (9 tests, independent of the playtest switch). Full GUT suite: 680 passed. Python tool tests (game/tools and tools): 422 passed, 1 skipped.
+- Screenshot: `C:\solid-carbide-worktrees\T-050\screenshots\kaiju_bar.png` (copy in `art-archive/T-050/screenshots/`), bar at 63% above the kaiju.
+- **For the board's playtest, `kaiju_early_arrival` in `game/data/playtest.json` is ON (30 s). It must go back to `"enabled": false` right before merging.**
+- Docs: `docs/hud-and-menus.md` (Content, the HUD), `game/README.md` ("The kaiju").
+- 2026-10-15, QA round 1 (qa-integration): all five criteria pass.
+  - Criterion 1, pass: `test_hidden_before_the_kaiju_appears`, `test_shows_health_after_appearing_and_follows_signal` (1.0, 0.75, 0.25 after hits), `test_hides_when_the_kaiju_dies`, plus `test_hides_in_a_new_run`.
+  - Criterion 2, pass: `test_follows_the_kaiju_above_it_and_as_wide` (x on the sprite, above the head, width = `drawn_width_px()`, moves with it), `test_width_follows_the_sprite` (a 200 px stub sprite gives a 200 px bar), `test_divider_at_every_ten_percent` (9 inner dividers at 10..90), `test_drawn_above_buildings` (absolute z `CANVAS_ITEM_Z_MAX`, above `map.top_z_index()`).
+  - Criterion 3, pass: `art-archive/T-050/screenshots/kaiju_bar.png` (run started from the main menu via `tests/fixtures/kaiju_bar_demo.tscn`): bar just above the kaiju's head, about as wide as its body, 63% full; pixels in the bar area are only black, neon purple (184, 46, 255), white and the ground; no red pixels (scripted check). 10 segments with black dividers, black stepped outline, no text.
+  - Criterion 4, pass: the only hunk in `docs/hud-and-menus.md` against master is line 54, inside Content (lines 38 to 74); Summary, Decisions and Open questions unchanged.
+  - Criterion 5, pass: full GUT suite 680/680 with the branch's `kaiju_early_arrival` on, and again 680/680 with it off (restored to the branch's `true` afterwards; tests pin `playtest_override`, so they do not depend on it). Python: `game/tools` 251 passed, 1 skipped; `tools` 171 passed.
+  - Extra checks: the only kaiju file changed is `kaiju_sprite.gd`, adding only the static `drawn_width_px()` (plus `run.gd` creating the bar). No numbers in `game/data` changed; the only data file changed is the playtest switch `game/data/playtest.json` (`kaiju_early_arrival.enabled` true), which must go back to false before merging. Board's design matches: neon purple fill, white back, black outline and dividers every 10%, no text, no Redgull red, above the kaiju and as wide as its drawing, above buildings.
+  - Minor note (not a criterion): in `run.gd` the new `KaijuHealthBarScript` preload was inserted between the comment "The kaiju (task T-045)..." and `KaijuBossScript`, so that doc comment now sits on the bar's preload. Cosmetic only.
+- 2026-10-15, in-qa → needs-playtest: QA round 1: all five criteria pass (qa-integration)
+- 2026-10-15, ui: board waived the playtest; `kaiju_early_arrival` set back to off, run.gd comments tidied.
+- 2026-10-15, needs-playtest → done: Board's playtest in the kaiju unified build (2026-10-15): works well; takes damage and knocked back far by a meteor; likes the falling rocks animation.
+
+Fix after merge (2026-10-15): three kaiju-bar tests failed on master only in the full suite (they pass alone). Cause: the bar is fine; the tests' setup was outdated. Since T-052 the run pauses on level-ups, and an earlier test in the full run leaves `get_tree().paused` true, so the bar's `_physics_process` never ran. Fix: `test_kaiju_health_bar.gd` now sets `get_tree().paused = false` in `before_each` and `after_each`. The bar's code and look are unchanged. Results: GUT 720/720, `pytest tools` 180 passed, `pytest game/tools` 257 passed (1 skipped). The test that leaks the pause was not traced.

@@ -7,7 +7,8 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
   register a name and start the watcher (tools/board_inbox.py).
 - PreToolUse Edit/Write/MultiEdit: refuses changes to a task file's status, qa_rounds or lead
   line. Moves and owners go through tools/task_status.py, which checks the workflow rules.
-- PreToolUse Bash/PowerShell: refuses shell commands that rewrite those lines.
+- PreToolUse Bash/PowerShell: refuses shell commands that could rewrite those lines; commands that only
+  read (grep, sed -n, head, Get-Content, ...) may mention them (T-143).
 - PreToolUse Agent: refuses to start an agent on a task unless it runs on the task's model
   (tasks/README.md, "Models").
 - UserPromptSubmit, PostToolUse Agent: hands the Project Lead the board's moves on the task
@@ -101,11 +102,83 @@ def pre_edit(tool, tool_input):
                 f"Run it with just the task id to see the allowed moves.")
 
 
+READ_ONLY_COMMANDS = {
+    "grep", "egrep", "fgrep", "rg", "sed", "head", "tail", "cat", "awk", "wc", "cut", "tr", "nl", "less", "more",
+    "echo", "cd", "ls", "type", "findstr", "git",
+    "select-string", "sls", "get-content", "gc", "select-object", "select", "where-object", "where",
+    "measure-object", "get-childitem", "write-output",
+}
+GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status"}
+SAFE_REDIRECT_RE = re.compile(r">&\d|>>?\s*(/dev/null|\$null|nul)\b", re.I)
+
+
+def shell_segments(cmd):
+    """(segments, unsafe): the command split at unquoted | ; & and newlines, and whether it has an unquoted
+    redirection into a file, a command substitution, a backtick or an open quote (anything that could write
+    or run something)."""
+    segments, cur, quote, unsafe, i = [], [], None, False, 0
+    while i < len(cmd):
+        c = cmd[i]
+        if quote:
+            if c == quote:
+                quote = None
+            elif quote == '"' and (c == "`" or cmd.startswith("$(", i)):
+                unsafe = True
+            cur.append(c)
+        elif c in "'\"":
+            quote = c
+            cur.append(c)
+        elif c == "`" or cmd.startswith("$(", i) or cmd.startswith("<(", i):
+            unsafe = True
+            cur.append(c)
+        elif c == ">":
+            m = SAFE_REDIRECT_RE.match(cmd, i)
+            if m:
+                i = m.end()
+                continue
+            unsafe = True
+            cur.append(c)
+        elif c in "|;&\n":
+            segments.append("".join(cur))
+            cur = []
+        else:
+            cur.append(c)
+        i += 1
+    segments.append("".join(cur))
+    return [x.strip() for x in segments if x.strip()], unsafe or quote is not None
+
+
+def read_only(cmd):
+    """True only when every part of the shell command is known to just read. When unsure, False (refuse):
+    a false refusal costs a retry, a missed write breaks the workflow rules (T-143)."""
+    segments, unsafe = shell_segments(cmd)
+    if unsafe or not segments:
+        return False
+    for seg in segments:
+        words = seg.split()
+        name = words[0].lower()
+        if name not in READ_ONLY_COMMANDS:
+            return False
+        if name == "git" and (len(words) < 2 or words[1] not in GIT_READ_ONLY or "--output" in seg):
+            return False
+        if name == "rg" and "--pre" in seg:
+            return False
+        if name == "awk" and re.search(r"system|[|>]|-i\b|inplace", seg):
+            return False
+        if name == "sed":
+            script = seg.split(None, 1)[1] if len(words) > 1 else ""
+            if re.search(r"(^|\s)-[A-Za-z]*i|--in-place|--file|(^|\s)-f\b", script):
+                return False
+            if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", script):
+                return False
+    return True
+
+
 def pre_shell(tool_input):
     cmd = tool_input.get("command") or ""
     if "task_status.py" in cmd or "taskboard_sync.py" in cmd:
         return 0
-    if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\b(status|qa_rounds)\s*:", cmd):
+    if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\b(status|qa_rounds)\s*:", cmd) and not read_only(cmd):
         return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.")
     if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\blead\s*:", cmd):
         return deny(f"A task's lead changes only through the status script: {STATUS_SCRIPT} <T-id> --lead <Name>.")

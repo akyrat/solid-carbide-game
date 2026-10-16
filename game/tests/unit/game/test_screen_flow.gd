@@ -1,7 +1,7 @@
 extends GutTest
 ## Task T-055: the screen flow. The game opens on the main menu, Start begins
-## a fresh run, a won or lost run goes back to the main menu, Garage does
-## nothing yet, Exit closes the game, and Escape pauses a run started from
+## a fresh run, a won or lost run goes back to the main menu, Garage opens
+## the garage screen and its back button returns to the menu, Exit closes the game, and Escape pauses a run started from
 ## the menu.
 
 const GameScene := preload("res://scenes/game/game.tscn")
@@ -28,9 +28,9 @@ func after_each() -> void:
 	get_tree().paused = false
 	await wait_process_frames(1)  # let screens freed with queue_free() go
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 	DirAccess.remove_absolute(PROGRESS_PATH)
-	PlayerProgress.path = PlayerProgress.DEFAULT_PATH
+	TestSave.restore_progress()
 
 
 func _press(button: Button) -> void:
@@ -113,16 +113,30 @@ func test_a_second_run_from_the_menu_is_fresh() -> void:
 	assert_eq(get_tree().get_nodes_in_group("run_state").size(), 1, "only one run state in the tree")
 
 
-func test_garage_does_nothing_yet() -> void:
+func test_garage_opens_the_garage_screen() -> void:
 	var menu = game.menu
 	_press(menu.garage_button)
 	await wait_process_frames(2)
-	assert_eq(game.menu, menu, "the same main menu")
-	assert_eq(_only_screen(), menu)
-	assert_true(menu.is_inside_tree())
-	assert_true(menu.visible)
+	assert_null(game.menu, "the main menu is gone")
+	assert_not_null(game.garage)
+	assert_true(game.garage is GarageScreen, "the garage screen is on show")
+	assert_eq(_only_screen(), game.garage)
+	assert_eq(game.garage.progress, game.progress, "it shows the game's saved progress")
 	assert_null(game.run)
 	assert_eq(quit_calls, 0)
+
+
+func test_garage_back_returns_to_the_main_menu() -> void:
+	_press(game.menu.garage_button)
+	await wait_process_frames(2)
+	_press(game.garage.back_button)
+	await wait_process_frames(2)
+	assert_null(game.garage, "the garage is gone")
+	assert_true(game.menu is MainMenu, "the main menu is back")
+	assert_eq(_only_screen(), game.menu)
+	_press(game.menu.start_button)
+	await wait_process_frames(1)
+	assert_not_null(game.run, "Start still works after the garage")
 
 
 func test_exit_closes_the_game() -> void:
@@ -237,9 +251,9 @@ func test_the_pause_strip_is_compact_and_below_the_timer() -> void:
 	var timer: Label = game.run.hud.timer_label
 	var screen_h := float(ProjectSettings.get_setting("display/window/size/viewport_height"))
 	assert_false(strip.get_global_rect().intersects(timer.get_global_rect()), "strip and timer are apart")
-	assert_lt(strip.size.y, screen_h * 0.25, "the strip is a thin band")
+	assert_lt(strip.size.y, screen_h * 0.30, "the strip is a thin band (room for the SFX volume row, T-077)")
 	assert_almost_eq(strip.size.y, strip.get_combined_minimum_size().y, 1.0, "only as tall as its content")
-	assert_lt(strip.get_global_rect().end.y, screen_h * 0.4, "most of the map stays visible")
+	assert_lt(strip.get_global_rect().end.y, screen_h * 0.45, "most of the map stays visible")
 
 
 func test_the_camera_settings_come_back_on_resume() -> void:
@@ -255,3 +269,51 @@ func test_the_camera_settings_come_back_on_resume() -> void:
 	assert_eq(cam.process_mode, mode)
 	assert_eq(cam.process_callback, callback)
 	assert_eq(cam.physics_interpolation_mode, interp)
+
+
+## T-077 (board's tweak, 2026-10-16): the "SFX volume" row is laid out like the zoom row.
+func test_the_sfx_slider_is_as_wide_as_the_zoom_slider_on_its_own_row() -> void:
+	_press(game.menu.start_button)
+	game.pause_screen.pause()
+	await wait_process_frames(3)
+	var ps = game.pause_screen
+	assert_almost_eq(ps.sfx_slider.size.x, ps.zoom_slider.size.x, 1.0, "same width")
+	assert_gt(ps.sfx_slider.size.x, 100.0, "room to drag")
+	assert_ne(ps.sfx_slider.get_parent(), ps.zoom_slider.get_parent(), "its own row")
+	assert_gt(ps.sfx_slider.get_global_rect().position.y, ps.zoom_slider.get_global_rect().end.y - 1.0, "directly under the zoom row")
+	assert_lt(ps.sfx_slider.get_global_rect().end.y, ps.smoothing_check.get_global_rect().position.y + 1.0, "above the checkboxes")
+	assert_eq(ps.sfx_slider.get_parent().get_child(0), ps.sfx_label, "label first")
+	assert_eq(ps.sfx_slider.get_parent().get_child(2), ps._sfx_value_label, "value number at the right end")
+
+
+func test_a_real_mouse_drag_changes_the_sfx_volume() -> void:
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(1152, 648)
+	_press(game.menu.start_button)
+	game.pause_screen.pause()
+	await wait_process_frames(3)
+	var s: HSlider = game.pause_screen.sfx_slider
+	assert_eq(s.value, 0.0)
+	var r := s.get_global_rect()
+	var y := r.get_center().y
+	var steps := [[r.position.x + 2.0, true], [r.position.x + r.size.x * 0.5, null], [r.end.x - 2.0, null], [r.end.x - 2.0, false]]
+	for st in steps:
+		var pos := Vector2(st[0], y)
+		if st[1] == null:
+			var m := InputEventMouseMotion.new()
+			m.position = pos
+			m.global_position = pos
+			m.button_mask = MOUSE_BUTTON_MASK_LEFT
+			get_viewport().push_input(m)
+		else:
+			var e := InputEventMouseButton.new()
+			e.button_index = MOUSE_BUTTON_LEFT
+			e.position = pos
+			e.global_position = pos
+			e.pressed = st[1]
+			get_viewport().push_input(e)
+		await wait_process_frames(1)
+	win.size = old_size
+	assert_gt(s.value, 90.0, "dragged to the right end")
+	assert_eq(GameSettings.load_sfx_volume(), s.value, "and saved")

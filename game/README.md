@@ -50,6 +50,10 @@ A run that goes past **300 seconds** is stopped by the runner itself (only the G
 
 Godot's user folder (`AppData/Roaming/Godot/app_userdata/Solid Carbide/`) is shared by every task folder, so tests never write fixed names there. A test that needs a file under `user://` gets its path from `RunPaths.file("name")` (`tests/helpers/run_paths.gd`), which puts it in `user://test_runs/<process id>/`. Two runs at once have different process ids, so they never touch each other's files. The folder is removed when the run ends (`tests/helpers/post_run.gd`, set as `post_run_script` in `.gutconfig.json`); a run that is stopped by the time limit may leave its folder behind, and it is safe to delete. New tests that write under `user://` must use `RunPaths`.
 
+### Tests never use the real save (T-148)
+
+`user://progress.json` and `user://settings.cfg` are the player's real save, and tests never read, write or depend on them. Before the first test, `tests/helpers/pre_run.gd` (`pre_run_script` in `.gutconfig.json`) points `PlayerProgress.path` and `GameSettings.path` at empty test files in the run's `RunPaths` folder (`tests/helpers/test_save.gd`, `TestSave`). A test that changes those paths puts them back with `TestSave.restore()` (or `restore_progress()` / `restore_settings()`), never with `DEFAULT_PATH`. If a run ends with either path still on the real save, `post_run.gd` logs an error and fails the run.
+
 ### Python tool tests
 
 Some tools in `game/tools/` are Python scripts (standard library only, Python 3.9+). Their tests are `game/tools/test_*.py` and run with Python's own test runner, not GUT:
@@ -120,6 +124,35 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 - `--count` is how many sounds the folder should hold in total. Sounds already there (found by the Freesound id in their JSON) count towards it and are never downloaded twice, so re-running the same command downloads nothing, though it still checks (and if needed renews) the login.
 - Each sound is saved as `<id>_<name>.<ext>` with `<id>_<name>.json` next to it. The JSON holds `freesound_id`, `name`, `username`, `freesound_url`, `license_name`, `license_url`, `search_query`, `download_date`, plus `file`, `original_type`, `duration_s` and `filesize_bytes`.
 - Exit codes: 0 = done; 1 = request failed or fewer sounds found than asked; 2 = credentials missing from `.env`; 3 = login needed (run `auth-url` and `login` again).
+
+**Checking licences.** `python game/tools/check_sfx_licenses.py [folder] [--credits]` (default `game/audio`) checks every sound has a metadata JSON with all required fields and a CC0 or CC BY licence; it exits 1 on any problem. `--credits` also prints the credit line each CC BY sound needs.
+
+**MVP sound candidates (T-076).** Folders under `game/audio/sfx/`: `engine`, `drift`, `gun`, `flames`, `hit`, `coin`, `meteor-warning`, `meteor-impact`, each with two or three candidates. The recommended file per sound is in the result notes of `tasks/T-076-mvp-sound-effects.md`. `_test-run/` holds the earlier T-002 test downloads.
+
+## Sound effects in the game (T-077)
+
+`scripts/run/run_sounds.gd` (child "Sounds" of the run scene) plays the approved sounds. **Files, per-sound volumes and limits are in `data/sfx.json`: tune the sound by ear there** (`volume_db` per sound, 0 = as the file is, more negative = quieter; the engine's pitch and volume range follow the car's speed; `min_interval` and `max_players` keep bursts from turning into noise). All sounds follow the pause (a level-up or the pause screen silences them) and stop when the run ends.
+
+| Sound | File (under `audio/sfx/`) | Plays |
+|---|---|---|
+| Engine | `engine/748027_sedan-engine-loop.ogg` | Looping all run long; higher pitch and louder with the car's speed |
+| Drift | `drift/271337_car-peels-off.wav` | Looping while the car drifts; stops when the drift stops |
+| Gun | `gun/854345_machine-gun-5-shot-burst.wav` | Once per volley of the starting gun |
+| Flames | `flames/831929_flamethrower.wav` | Looping while the exhaust flamethrower's flames are on (drifting, plus the linger); stops when they go out |
+| Hit | `hit/789388_bullet-impact-ground-subsonic-sfx.wav` | A bullet or the flames hurt an enemy |
+| Coin | `coin/347174_coin-pickup-sound-v-0.wav` | The coin count goes up (a coin picked up) |
+| Meteor warning | `meteor-warning/210205_falling.wav` | When the kaiju's warning circles appear; starts part way in so the whistle ends as the meteor lands |
+| Meteor impact | `meteor-impact/869460_experimental-explosion-19.wav` | Each time a meteor lands |
+
+**SFX volume (T-077, board 2026-10-16).** Every sound plays on the audio bus "SFX" (`GameSettings.ensure_sfx_bus()`), whose volume is the pause screen's "SFX volume" slider, 0 to 100, **default 0 = silent**. At 100 the sounds play at `data/sfx.json`'s volumes; in between the bus gain is the slider divided by 100. It is saved in `user://settings.cfg`, section `audio`, key `sfx_volume` (`GameSettings.load_sfx_volume` / `save_sfx_volume` / `apply_sfx_volume`) and applied when a run starts and on every change. **To hear anything in a playtest, turn the slider up (Escape).**
+
+Tests: `tests/unit/run/test_run_sounds.gd`, `tests/unit/test_sfx_volume.gd`.
+
+**Credits (CC BY).** Every sound in the game is CC0 except one:
+
+- "Falling.wav" by Augdog, https://freesound.org/people/Augdog/sounds/210205/, licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Used for the meteor warning.
+
+The other sounds are CC0 and need no credit. If a CC BY alternative from T-076 is swapped in, add its credit line here (`python game/tools/check_sfx_licenses.py game/audio --credits` prints it).
 
 ## Checking audio imports
 
@@ -255,16 +288,24 @@ The main menu (task T-054, UI Agent): `scenes/menu/main_menu.tscn` with its scri
 - **Signals:** `start_pressed`, `garage_pressed`, `exit_pressed`, one per button. The menu does nothing else when a button is pressed.
 - **Tests:** `tests/unit/test_main_menu.gd` (the texts and each signal), part of the GUT suite.
 
+## Garage screen
+
+Task T-058 (UI Agent). `scenes/menu/garage_screen.tscn` with `scripts/menu/garage_screen.gd` (`GarageScreen`). What it shows: `docs/garage-design.md`, Content. Reached from the main menu's Garage button (wired in T-089, `GameFlow.show_garage()`).
+
+- **Use it:** set `progress` (a `PlayerProgress`, normally `GameFlow.progress`) before adding it to the tree; if left null it reads the save file itself. It redraws on the progress object's `changed` signal. Signal: `back_pressed`. Standalone: open the scene in the editor and press F6.
+- **Screenshot** (a save with 120 coins and one upgrade at its last level), from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/garage_screen_demo.tscn screenshots/garage.png 20`.
+- **Tests:** `tests/unit/test_garage_screen.gd` (the approved text, buying, unaffordable, maxed, back signal).
+
 ## Screen flow
 
 Task T-055 (Game Loop Agent). `scenes/game/game.tscn` (script `scripts/game/game_flow.gd`, class `GameFlow`) is the project's main scene: pressing F5 in the editor, or `"$GODOT_BIN" --path game`, starts the game on the main menu. The flow is Game loop architecture, Content, "Screen flow".
 
 - **Start** removes the menu and starts a fresh run (`scenes/run/run.tscn`), with the pause screen (Escape) added to the run and the camera zoom read from the saved setting.
 - **When the run ends,** win or loss (`RunState.run_ended`), the run is removed and the main menu comes back straight away, with no message.
-- **Garage** does nothing yet (task T-089 wires it to the garage screen).
+- **Garage** (T-089) replaces the menu with the garage screen (`game.garage`, given `game.progress`); its back button (`back_pressed`) brings the main menu back.
 - **Exit** closes the game (`get_tree().quit()`, through `quit_game`, which tests replace).
-- Only one screen is on show at a time, as the only child of `Game`: `game.menu` or `game.run` (the other is null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
-- **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage, Exit, Escape during a run, and the zoom.
+- Only one screen is on show at a time, as the only child of `Game`: `game.menu`, `game.garage` or `game.run` (the others are null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
+- **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage and its back button, Exit, Escape during a run, and the zoom.
 
 ## Drift prototype
 
@@ -499,6 +540,8 @@ Written by the Game Data Agent (task T-038); the enemy, weapon and garage data t
   - `buy(id) -> Dictionary` `{"ok": bool, "reason": String}`: if it can be bought it spends the price, raises the level and saves; a refusal changes nothing.
   - `bank_run(result, coins)` adds a run's coins and saves; `connect_run(run_state)` connects it to `run_ended`. `changed` is emitted after buying or banking. `save()` and `load_from_disk()` are there for completeness.
   - Tests: `tests/unit/test_player_progress.gd`.
+- **Upgrades reach the car (T-060):** `GameFlow.start_run()` calls `run.car.tuning.apply_acceleration_upgrade(progress)` (`scripts/driving/car_tuning.gd`) right after the run is built, which sets the car's `time_to_top_speed` to `progress.current_value("acceleration")` (level 0 is the base, 2.3 s, the car's default, so the car drives exactly as before). Only runs started through `GameFlow` get it; the drift prototype never calls it and keeps its own tuning and sliders. Because W snaps to cruise speed first, the real climb to top speed is a fixed share of that time, so it scales with the data. Health and damage upgrades (T-061, T-062) are applied the same way at run start. Tests: `tests/unit/game/test_acceleration_upgrade.gd`.
+  - **Damage bonus (T-062):** `GameFlow.start_run()` calls `run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))` right after the run is added. The rack keeps `damage_bonus_percent`; `damage_multiplier()` is `1 + percent / 100`. Each weapon's `apply_tier()` multiplies that tier's damage with `boosted_damage()` (weapon.gd), so the gun's bullets and the flame's ticks get the same factor, it stacks multiplicatively with the tier's own damage (the flame's hotter-flame tier), and it survives a new run's weapon reset. Level 0 is 0 percent: unchanged. Tests: `tests/unit/weapons/test_damage_bonus.gd`.
 - **Tests:** `tests/unit/test_run_data.gd`, `tests/unit/test_combo_data.gd`, `tests/unit/test_garage_data.gd`, `tests/unit/test_weapon_data.gd`, `tests/unit/test_enemy_data.gd`. New data files get a test that loads them through the loader.
 
 ## Challenge drivability check
@@ -624,6 +667,7 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the MVP map and the drif
 
 - Children: `Map` (the MVP map scene, drawn in the isometric view, with the drift marks inside its drawing, see "Drift marks"), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the drift smoke, see "Drift smoke", then the car's sprite and the `Camera`) and `RunState` (the state, below).
 - The car starts at the centre of the map (0, 0 units, in the gravel square), nose along -y, as in the drift prototype. The camera sits exactly on the drawn car, zoom 14.4, as in the drift prototype, unless a camera option is on (see "Camera options"). The map checks its challenges against the car (`map.car`).
+- **The car health upgrade (T-061):** at the start of every run the car's starting and maximum health are the garage's car health upgrade at its current level, `PlayerProgress.current_value("car_health")` (level 0 is run.json's `starting_health`, 100). `GameFlow.start_run()` sets `run.progress = progress` before adding the run; `run.gd` hands it to `state.progress`, and `RunState.start_run()` uses it for `max_health` and `health`, so the HUD's health bar maximum follows. A run on its own (no `progress`, null) uses run.json's value. Test: `tests/unit/run/test_run_health_upgrade.gd`.
 - `run.start_run()` starts a fresh run: it replaces the map (meteor boulders gone; every challenge open again when challenges are on) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
 
 **The state** (`scripts/run/run_state.gd`, class `RunState`). Reach it with `run.state`, or from anywhere with `get_tree().get_first_node_in_group("run_state")`.
@@ -823,9 +867,21 @@ Task T-043 (Weapon Behavior Agent): which weapon choices a level-up gives and ap
 
 **Tests:** `tests/unit/weapons/test_level_up_offers.gd`: the first offer, the offer after taking the flamethrower, each choice applied and the run resumed, refused ids, last-tier weapons not offered, skipping with nothing to offer, the playtest start, two level-ups at once, a new run.
 
+### Level-up screen
+
+Task T-052 (UI Agent). What the player sees and does: `docs/hud-and-menus.md`, "Level-up screen". `scripts/ui/level_up_screen.gd` (`LevelUpScreen`, a CanvasLayer at layer 15: over the HUD, under the pause screen) is a child of the run (`run.level_up_screen`, node `LevelUpScreen`), set up with the weapon rack. `run.gd` turns the level-up pause on (`state.pause_on_level_up = true`), so a level-up pauses the tree; the screen listens to `run.weapons.offers.offers_ready`, shows a card per id and calls `offers.choose(id)` for the one taken; it closes on `offer_taken` and on a new run. It keeps processing while the tree is paused.
+
+- `cards`: one `{id, panel, title, desc, button}` per offered id; `highlight` is the highlighted index. `card_text(id)` gives `{title, desc}`: the upgrade ids use the weapon's tier now + 1 (`upgrade_gun.tier4.*` for a gun at tier 3). `take(id)`, `take_highlighted()`, `move_highlight(step)`, `show_offers(ids)`, `close()`, `is_open()`.
+- Text: `scripts/ui/level_up_texts.gd` (`LevelUpTexts.TEXTS`), T-051's table keyed as there (`levelup.title`, `levelup.take`, `get_flamethrower.title/.desc`, `<id>.tier<N>.title/.desc`; 32 rows, the two `weapon.*.name` rows are not used here). Generated from the table, not retyped.
+- Input: `_input` takes only fresh key presses (`not echo`); keys down when the screen opens are remembered (`key_down` callable, `Input.is_physical_key_pressed` by default) and ignored until released. A/D or Left/Right, Enter/KP Enter/Space.
+- Look: Bangers via `Hud.comic_font()` (smoothing off), `StyleBoxFlat` with `anti_aliasing = false`, white cards with black borders, the highlighted card a thick `RING` (the combo's yellow) border with a black outline (shadow).
+- Escape: `pause_screen.gd` ignores Escape (`toggle()`) while `target.state.is_waiting_for_choice()`, so the level-up pause is never resumed or covered by the pause screen.
+- Playtest switch: `data/playtest.json` `flamethrower_at_start` is `false` since this task, so a run starts with the gun only and the first level-up (100 likes, about 10 seconds of drifting at combo x1) offers "get the flamethrower" and the gun's tier 2.
+- **Tests:** `tests/unit/test_level_up_screen.gd` (open with 2 cards and T-051's text, next-tier text for gun and flamethrower, button and real mouse click, A/D and arrow keys, Enter and Space, key held at open and key-repeat, the highlight's ring, Escape, two waiting level-ups, a normal run's first offers, a new run, the comic look). Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/level_up_screen_demo.tscn screenshots/level_up_screen.png 40`; the saved one is `art-archive/T-052/screenshots/level_up_screen.png`.
+
 ## The kaiju
 
-Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions describes it, with T-039's numbers (`kaiju` and, T-119, `kaiju_coins` in `data/enemies.json` through `EnemyData`). What it does: `docs/enemies.md`, Content, "The kaiju". A placeholder for now (a large dark slate green Godzilla-style shape drawn in code); the final art comes from a separate art task. Its meteor attack is task T-046.
+Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions describes it, with T-039's numbers (`kaiju` and, T-119, `kaiju_coins` in `data/enemies.json` through `EnemyData`). What it does: `docs/enemies.md`, Content, "The kaiju". A placeholder for now (a large dark slate green Godzilla-style shape drawn in code); the final art comes from a separate art task. Its meteor attack (T-046): "The meteor attack" below.
 
 **See it:** start the game (F5) and press Start, or open `scenes/run/run.tscn` and press F6. With the playtest switch on (below) the kaiju walks in from a screen edge 30 seconds into the run; the starting gun (and the flamethrower, with T-042's `flamethrower_at_start` on) can kill it, which wins the run. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_demo.tscn screenshots/kaiju.png 20` (the kaiju beside the car in the gravel square, with a few minions, in a run started from the main menu; fixture script `tests/fixtures/kaiju_demo.gd`). A copy is in `art-archive/T-045/screenshots/`.
 
@@ -869,3 +925,27 @@ The kaiju node itself sends `health_changed(health, max_health)` on every hit an
 **Not in the data:** the kaiju's size (4 units across, 7 tall) and the off-screen margin are in the code: sizes and rules of the placeholder, not balancing numbers.
 
 **Tests:** `tests/unit/enemies/test_kaiju.gd`, part of the GUT suite: no kaiju before boss time; boss time bringing it just off-screen, clear of obstacles, walking towards the car at the data's speed, once per run; walking round a building; weapon damage through `take_damage()` lowering its health as soon as it appears, with both health signals; a projectile-style physics query on the enemies mask finding it; damage to 0 adding its coins before the run ends as a win, `kaiju_killed()` called once; contact damage at the data's rate and knockback away from it; no damage without touching; standing still while paused and after the run ends; a new run removing it and boss time bringing it back; the collision layers; the draw order; the placeholder's size and no Redgull red; `hit_radius_units()` matching its body; the starting gun hitting it, the flamethrower burning it when only its body overlaps the flames, and the gun killing it winning the run with its coins; the playtest switch (arrival at its time, once, again in a new run), reading its key beside other keys, and the committed file keeping both switches.
+
+**The kaiju's health bar (task T-050):** `scripts/hud/kaiju_health_bar.gd` (`KaijuHealthBar`), `run.kaiju_health_bar`, a child of the world view like the trick popups. `bind(boss)` follows `kaiju_appeared` (shows), `kaiju_health_changed` (`fraction`, 0 to 1) and `kaiju_defeated` (hides); each physics step (priority after the boss's) it sits `GAP` above the kaiju sprite's head and takes its width from the sprite's `drawn_width_px()` and `drawn_height_px()`, so the final kaiju art only has to provide those two functions (the placeholder's width is its ground circle, 90 px). It hides when there is no kaiju (a new run). Neon purple `FILL_COLOR` on white, black outline (`OUTLINE` 2 px, stepped corners), a black 1 px divider at each of `DIVISIONS` (10) tenths, `BAR_HEIGHT` 8 px, whole pixels, no text. Absolute depth `CANVAS_ITEM_Z_MAX`, so buildings never cover it. Change to the kaiju's files: only the static `drawn_width_px()` in `kaiju_sprite.gd`. Test: `tests/unit/hud/test_kaiju_health_bar.gd`. Screenshot (copy in `art-archive/T-050/screenshots/`): `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_bar_demo.tscn screenshots/kaiju_bar.png 20`.
+
+### The meteor attack (T-046)
+
+Task T-046 (Enemy Behavior Agent): the kaiju's one special move, with T-039's numbers (`meteor_attack` in `data/enemies.json`, through `EnemyData.meteor_attack()`; the schedule matches `EnemyData.meteor_attack_times()`). What it does: `docs/enemies.md`, Content, "The kaiju's meteor attack". The warning circle, the meteor, the dust and the windup are placeholders drawn in code; the final look comes from separate art tasks.
+
+**See it:** turn the playtest switch `kaiju_early_arrival` on in `data/playtest.json` (it is off, the game's rule), start the game and wait: the kaiju walks in 30 seconds into the run and its first attack comes 5 seconds later. Screenshot, from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/kaiju_meteors_demo.tscn screenshots/T-046_meteors.png 20` (the kaiju beside the car, three warning circles, one meteor falling, and two boulders just left by meteors with their dust, all held still; fixture script `tests/fixtures/kaiju_meteors_demo.gd`). A copy is in `art-archive/T-046/screenshots/`.
+
+**How it is built:** `scripts/enemies/kaiju_meteors.gd`, a child `Meteors` of the boss (`run.kaiju_boss.meteors`), made and bound in `kaiju_boss.gd`'s `bind()` (the only change to the boss; `kaiju.gd` is unchanged). It moves in `step(dt)`, once per physics step from `_physics_process`, and its drawings animate in `_process`, so pausing the tree stops it; it does nothing once the run is over, and `run.world_rebuilt` (a new run) clears it. `enabled = false` stops new attacks (tests, fixtures); `rng` picks the landing spots (seed it for tests).
+
+- **Clock:** `fight_time` counts the seconds the live kaiju has been on the map. The first attack starts at `first_attack_after_seconds`, then every `seconds_between_attacks`. `start_attack()` starts one now: `windup_seconds` of windup (`is_winding_up()`), then `drop_meteors()`.
+- **Warnings:** `drop_meteors()` adds `meteors_per_attack` warnings (`add_warning(units)`), each at `pick_spot()`: uniform within `land_within_units_of_car` of the car, and `is_good_spot()`: the map's `can_place_meteor_boulder()` (T-097), no overlap with a warning still showing or a boulder still waiting, and off the kaiju's body. `SPOT_TRIES` (40) tries per meteor; a meteor with no spot is left out. `warnings` lists `{units, time_left}`; each lands when `time_left` (from `warning_seconds`) reaches 0.
+- **Landing:** `land(units)`: if the car's centre is within `impact_radius_units`, `RunState.damage_car(impact_damage)` and `car.apply_knockback(away from the spot, knockback)`. Then the dust, and the boulder through the map's `add_meteor_boulder(units)` if `can_place_meteor_boulder(units)` still accepts it. While the car's 1 x 1 body or the kaiju's body overlaps the boulder's circle, the boulder waits in `pending_boulders` and is placed on the first step the spot is clear.
+- **Signals:** `attack_started()`, `warnings_shown(spots)`, `meteor_landed(units, hit_car)`, `boulder_placed(units, body)`.
+- **Drawing:** the warning circles are the node `MeteorWarnings` in the map's `View`, right after `DriftMarks` (on the ground: under buildings, boulders, enemies and the car), drawn in screen pixels like the ground tiles. The windup rings, the falling meteor and the dust are the node `MeteorSky`, a child of the run with a z_index over everything. Colours: `WARNING_COLOR` hazard amber `Color(1, 0.62, 0.12)` (not Redgull red; red outside Redgull is only for the kaiju alert signs), a dark purple meteor with a magenta glow, warm grey dust, pale yellow windup.
+
+**Not in the data:** the spot tries, the falling time (0.5 s) and height, the dust time (0.5 s), the rule that a spot avoids the kaiju and other meteors, and the rule that a boulder waits for the car or the kaiju to move off: rules of the code and the placeholder, not balancing numbers.
+
+**Boulders fade (T-142).** `kaiju_meteors.gd` keeps each boulder it placed in `standing_boulders` and ages it in `step()` (so it stops while paused). Up to `boulder_lifetime_seconds` (10) it is untouched; then `map.set_meteor_boulder_alpha(body, a)` lowers its sprite's transparency in a straight line over `boulder_fade_seconds`, and at the end `map.remove_meteor_boulder(body)` takes it off the map: the body leaves the physics world (the car no longer bounces off it), the sprite is freed, and its entries in `meteor_boulders`, `meteor_boulder_bodies` and `all_boulders()` go, so the spot is free for a new boulder. Both functions only accept bodies from `add_meteor_boulder`, never the map's own boulders. Both numbers are in `data/enemies.json`, `meteor_attack`. The flat view's placeholder circles are not faded, they vanish at the end.
+
+**Tests:** `tests/unit/enemies/test_kaiju_meteors.gd`, part of the GUT suite: the attack hooked into the boss and the map's drawing; no attack without the kaiju; attacks on the data's schedule; the windup, then the data's number of warning circles near the car where the placement check accepts, shown for 2 seconds, and the meteors landing where they showed; a meteor on the car damaging it and knocking it away, one elsewhere doing nothing; one boulder per meteor through `add_meteor_boulder()`, none on a spot the check refuses; the boulder waiting until the car is off the spot; the car bouncing off a meteor boulder; everything stopping while paused; nothing landing after the run ends; a new run clearing it; the placeholders not Redgull red; (T-142) a boulder fully visible and solid just before 10 seconds, fading and then removed from the scene and the physics world, the map's own boulders staying, and both numbers read from the data. The tests set the playtest switch off and do not depend on it.
+
+**Redgull logo (T-075):** the board's pick (2026-10-16) is PixelLab's `/create-image-pixflux` result at init strength 80 (`art-archive/T-075/redgull_logo_raw_init128_s80.png`, made from the script silhouette `game/tools/draw_gull_silhouette.py`, variant `v1`'s init image `silhouette_init_128.png`). `python game/tools/make_logo_sizes.py <raw.png> game/art/logo` flattens it to its own main red (RGB 135,17,27) as `game/art/logo/redgull_logo_128.png` and builds `redgull_logo_64.png` and `redgull_logo_32.png` from it (area-averaged alpha, hard threshold, eye cut-out kept at least 2x1 px). Only these three files stay in `game/art/logo/`; every other candidate is in `art-archive/T-075/`. `python game/tools/check_logo_one_colour.py <png>` checks one visible dark-red colour, a transparent background and no semi-transparent pixels. Tests: `game/tools/test_check_logo_one_colour.py`. Not used in a scene yet. 6 generations in total: the first sample plus 5 of the board's allowance of 10.

@@ -45,8 +45,14 @@ const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 ## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
+## The kaiju's health bar above it (task T-050).
+const KaijuHealthBarScript := preload("res://scripts/hud/kaiju_health_bar.gd")
 ## The car's weapons (task T-041): the weapon rack, see weapons.gd.
 const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
+## The sound effects (task T-077): the engine, drift, guns, hits, coins and meteors.
+const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
+## The level-up screen (task T-052): shows the weapon choices when the run pauses for a level-up.
+const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -65,6 +71,8 @@ const VIEW := "iso"
 signal world_rebuilt
 
 var state: RunState
+## The player's saved upgrades (T-061). GameFlow sets it before adding the run; passed on to the state.
+var progress: PlayerProgress = null
 var hud: Hud
 var map: Node2D
 var physics_world: Node2D
@@ -105,9 +113,15 @@ var minions: Node
 ## The kaiju (task T-045, kaiju_boss.gd): child "Kaiju". `kaiju_boss.kaiju` is
 ## the live kaiju (null before boss time). A new run removes it.
 var kaiju_boss: Node
+## The kaiju's health bar above it (task T-050, kaiju_health_bar.gd), in the world view.
+var kaiju_health_bar: Node2D
 ## The car's weapons (task T-041, weapons.gd): child "Weapons". A new run
 ## starts with the starting gun at tier 1 and nothing else.
 var weapons: Node
+## The level-up screen (task T-052, level_up_screen.gd): child "LevelUpScreen".
+var level_up_screen: CanvasLayer
+## The sound effects (task T-077, run_sounds.gd): child "Sounds".
+var sounds: Node
 
 
 func _ready() -> void:
@@ -158,6 +172,7 @@ func _ready() -> void:
 
 	state = RunStateScript.new()
 	state.name = "RunState"
+	state.progress = progress
 	state.add_to_group("run_state")
 	add_child(state)
 	state.level_up.connect(_on_level_up)
@@ -184,10 +199,23 @@ func _ready() -> void:
 	kaiju_boss.name = "Kaiju"
 	add_child(kaiju_boss)
 	kaiju_boss.bind(self)
+	kaiju_health_bar = KaijuHealthBarScript.new()
+	view_root.add_child(kaiju_health_bar)
+	kaiju_health_bar.bind(kaiju_boss)
 	weapons = WeaponsScript.new()
 	weapons.name = "Weapons"
 	add_child(weapons)
 	weapons.bind(self)
+	# A level-up pauses the run for the weapon choice shown by the level-up screen (T-052).
+	state.pause_on_level_up = true
+	level_up_screen = LevelUpScreenScript.new()
+	level_up_screen.name = "LevelUpScreen"
+	add_child(level_up_screen)
+	level_up_screen.setup(weapons)
+	# The sound effects (task T-077, run_sounds.gd; files and volumes in data/sfx.json).
+	sounds = RunSoundsScript.new()
+	add_child(sounds)
+	sounds.bind(self)
 	start_run()
 
 

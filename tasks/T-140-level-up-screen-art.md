@@ -1,10 +1,10 @@
 ---
 id: T-140
 title: "Art: the level-up screen, red and gold, Redgull-themed"
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
-lead: Enemies
+lead: Level-up
 epic: art
 milestone: mvp
 user_facing_text: no
@@ -36,6 +36,8 @@ The board (2026-10-15): the level-up screen gets "nice art", "more red gold colo
 Propose, in the result notes, which pieces the screen needs (for example a card frame or card back in red and gold, a header banner or ribbon, a backdrop or burst behind the cards, a highlight for the chosen card), how each fits T-052's layout and comic look, and whether each is drawn by script (free) or generated with PixelLab, with the planned calls and their cost.
 
 **Money:** no PixelLab call without the board's go for this task. Sample first: one piece, for the board's review, then the rest only with its go. Use `game/tools/pixellab_client.py` with a 600 s HTTP timeout, one call at a time, and record every call (prompt, settings, cost, balance before and after). Report problems rather than regenerating.
+
+**PixelLab go (board, 2026-10-16):** one sample, for the board's review. Write the planned calls and their cost in the result notes before calling. The full set only after the board approves the sample.
 
 Follow Visual style, Decisions (hard-edged pixel art, a selective dark outline, about 30 colours per sprite, no semi-transparent pixels, a transparent background where the piece needs one). Real-world things are inspiration only: no real logos or brands. Put the approved art into `game/art/`; swapping it into the screen and animating it is T-141.
 

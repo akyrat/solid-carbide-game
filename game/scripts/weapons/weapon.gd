@@ -73,3 +73,9 @@ func apply_tier() -> void:
 ## is owned and the run is going (and not while the tree is paused).
 func step(_dt: float) -> void:
 	pass
+
+
+## The garage's damage bonus (T-062) applied to a tier's damage: `base` times
+## the rack's damage multiplier (1.0 with no bonus).
+func boosted_damage(base: float) -> float:
+	return base * (rack.damage_multiplier() if rack != null else 1.0)

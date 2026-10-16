@@ -45,7 +45,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 
 
 func _scene() -> Node2D:

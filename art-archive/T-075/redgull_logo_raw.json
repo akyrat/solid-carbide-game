@@ -1,0 +1,39 @@
+{
+  "file": "redgull_logo_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "minimalist flat logo, solid silhouette of a seagull head in side profile facing right, long straight gull beak with a slight downward hook at the tip, flat sloping forehead, narrow angled slanted eye cut out as a hole giving a slightly evil menacing look, short neck stub, one single flat dark red colour only, no shading, no outline, no gradient, no text, plain transparent background, pixel art",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "flat shading",
+    "detail": "low detail",
+    "text_guidance_scale": 8
+  },
+  "prompt": "minimalist flat logo, solid silhouette of a seagull head in side profile facing right, long straight gull beak with a slight downward hook at the tip, flat sloping forehead, narrow angled slanted eye cut out as a hole giving a slightly evil menacing look, short neck stub, one single flat dark red colour only, no shading, no outline, no gradient, no text, plain transparent background, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T11:51:03+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "tasks/T-075-redgull-logo-art.md"
+  ],
+  "task": "T-075",
+  "job_status": null,
+  "notes": "Logo sample, one round",
+  "generator": "game/tools/pixellab_client.py"
+}

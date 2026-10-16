@@ -16,7 +16,7 @@ The board follows these tasks on its local task board (`docs/README.md`, "The ta
 
 ## Changing a task's status
 
-A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit):
+A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit). Shell commands that only read may mention those lines (`grep -n "^status:" tasks/T-012*.md`, `sed -n` without `-i`, `head`, `cat`, `Select-String`, `Get-Content`); a command that could write them (`sed -i`, `>` or `>>`, `tee`, `perl -i`, Python or PowerShell writes), or that the hook can't tell is read-only, is refused:
 
 ```
 python C:/solid-carbide-game/tools/task_status.py T-012             # where it is, and the moves allowed now

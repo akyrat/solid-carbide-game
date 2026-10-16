@@ -27,7 +27,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
   - **Alternate drift:** drift forwards, release W while still steering, switch to S and drift backwards, then back to W, so the car draws semicircles. Each switch between a forward and a backward drift while keeping the same steering direction counts as one high-value trick. The Driving & Drift Agent proposes the timing limits; the board tunes them.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on. (2026-10-03)
-- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). (2026-10-06; after the MVP, 2026-10-09)
+- When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). Its look: Visual style, Decisions. (2026-10-06; after the MVP, 2026-10-09)
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference. (2026-10-06)
 - The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions. (2026-10-08; replaces the 2026-10-07 decision that the zoom is fixed)
 - Two camera options to try, each a pause-screen checkbox, off by default and saved like the zoom (board, 2026-10-13): **camera smoothing** (the camera follows the car with a short smooth lag instead of sitting exactly on it), and the **dynamic camera** (the zoom follows the car's speed, from a min zoom at very low speed to a max zoom at the car's top forward speed, easing there with a short delay instead of jumping; while it is on it replaces the slider's fixed zoom). The board tunes the min and max in playtests with temporary pause-screen buttons. These are a change from the Unity prototype's camera, which stays the default.
@@ -79,7 +79,6 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 
 ## Open questions
 
-- (After MVP) What does the boost effect look like?
 - (After MVP) Should the Unity prototype's test jump on Space carry over? (Unity prototype report, section 9.)
 - (After MVP) Should the arrow keys also steer? The Unity prototype's README says they do, but its code doesn't read them.
 - (After MVP) Should gamepad support carry over (triggers as on/off, analog stick steering)?
@@ -90,3 +89,5 @@ The Godot copy of the Unity car (task T-012), for the board's playtest.
 
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md).
 - Godot drift prototype: [../game/README.md](../game/README.md), section "Drift prototype".
+
+- **Garage acceleration upgrade (T-060):** at the start of a run (not in the drift prototype) the car's time to top speed is the acceleration upgrade's value at the player's saved level (Garage design). Level 0 is the base 2.3 s, so the car is unchanged until the player buys it. How it is applied: `game/README.md`, "Saving and buying".
