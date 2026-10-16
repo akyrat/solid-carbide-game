@@ -32,6 +32,8 @@ const CONTROL_FILL := Color(0.16, 0.16, 0.16)
 const CONTROL_FILL_HOVER := Color(0.28, 0.28, 0.28)
 const CONTROL_FILL_PRESSED := Color(0.08, 0.08, 0.08)
 const CHECK_ICON_SIZE := 16
+## Width of the slider rows' labels, so the zoom and SFX sliders have the same width.
+const LABEL_WIDTH := 170.0
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -99,6 +101,7 @@ func setup(t: Node) -> void:
 	zoom_label = Label.new()
 	zoom_label.text = TEXT_ZOOM_LABEL
 	zoom_label.add_theme_font_size_override("font_size", 16)
+	zoom_label.custom_minimum_size.x = LABEL_WIDTH  # the SFX row uses the same, so the sliders line up
 	var row := HBoxContainer.new()
 	box.add_child(row)
 	row.add_child(zoom_label)
@@ -117,16 +120,21 @@ func setup(t: Node) -> void:
 	_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(_value_label)
 	_update_value_label()
+	_build_sfx_slider(box)
 	_build_camera_controls(box)
 	visible = false
 
 
 ## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
-## It shares the row of the camera checkboxes, so the strip stays a thin band (T-095).
-func _build_sfx_slider(row: HBoxContainer) -> void:
+## Its own row under the zoom row, laid out like it: label, slider, value number.
+func _build_sfx_slider(box: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "SfxRow"
+	box.add_child(row)
 	sfx_label = Label.new()
 	sfx_label.text = TEXT_SFX_LABEL
 	sfx_label.add_theme_font_size_override("font_size", 16)
+	sfx_label.custom_minimum_size.x = LABEL_WIDTH
 	row.add_child(sfx_label)
 	sfx_slider = HSlider.new()
 	sfx_slider.name = "SfxSlider"
@@ -166,7 +174,6 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	dynamic_check = _make_check("DynamicCheck", TEXT_DYNAMIC)
 	dynamic_check.toggled.connect(_on_dynamic_toggled)
 	checks.add_child(dynamic_check)
-	_build_sfx_slider(checks)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)
