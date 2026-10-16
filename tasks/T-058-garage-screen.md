@@ -1,10 +1,10 @@
 ---
 id: T-058
 title: The garage screen: plain list of upgrades with buy buttons
-status: blocked
+status: done
 from: project-lead
 to: ui
-lead: Weapons
+lead: Playtest
 epic: garage
 milestone: mvp
 user_facing_text: yes
@@ -14,7 +14,7 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-057-save-and-buy.md, tasks/T-059-text-garage.md, game/README.md]
 files_expected_to_change: [the garage screen scene and script, tests, docs/garage-design.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,15 +36,46 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A screenshot shows the three upgrades with level, price and buy button, the coins, and the back button (QA: pass / fail)
-- [ ] A test buys an upgrade and shows the level, price and coins on screen update (QA: pass / fail)
-- [ ] A test shows a maxed upgrade and an unaffordable one show T-059's messages and can't be bought (QA: pass / fail)
-- [ ] A test shows every label is exactly T-059's text (QA: pass / fail)
-- [ ] `docs/garage-design.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A screenshot shows the three upgrades with level, price and buy button, the coins, and the back button (QA: pass)
+- [x] A test buys an upgrade and shows the level, price and coins on screen update (QA: pass)
+- [x] A test shows a maxed upgrade and an unaffordable one show T-059's messages and can't be bought (QA: pass)
+- [x] A test shows every label is exactly T-059's text (QA: pass)
+- [x] `docs/garage-design.md` describes the screen in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-15, Needs playtest
+
+The garage screen is built: 'Redgull Pit Stop', the coins, one row per upgrade (name, description, level, price, Buy) and Back, all in T-059's approved text. Buying spends coins and raises the level; unaffordable rows say 'Not enough coins', maxed ones 'Fully Funded'. It's the plain MVP list, not yet styled. QA round 1: all 6 pass. Waiting for the board's playtest in the unified build; the main menu's Garage button (T-089) can only start once this is done.
+
+### 2026-10-16, Needs playtest → Done
+
+You played the garage and it works. Renamed to Energy Throttle, QA passed, merging.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the UI Agent.
+
+- Built `game/scenes/menu/garage_screen.tscn` + `game/scripts/menu/garage_screen.gd` (`GarageScreen`): heading, coins, one row per upgrade (name, description, level, price, buy button or status message), back button (`back_pressed` signal only). All text is T-059's approved text. Buying calls `PlayerProgress.buy`; the screen redraws from `progress.info()` and on `changed`. `progress` is set by the caller (`GameFlow.progress`), or read from the save file when standalone. Not wired to the main menu (T-089).
+- Unaffordable: buy disabled, row says "Not enough coins". Maxed: price gone, buy hidden (kept in layout), row says "Fully Funded".
+- Screenshot: `C:\solid-carbide-worktrees\T-058\screenshots\T-058_garage.png` (fixture `tests/fixtures/garage_screen_demo.tscn`: 120 coins, damage bonus maxed).
+- Tests: `tests/unit/test_garage_screen.gd` (7 tests, RunPaths file). Full GUT suite 687/687 pass; `game/tools` Python tests (257) and `tools` Python tests (180) pass.
+- Documents updated: `docs/garage-design.md` (Content only), `game/README.md` ("Garage screen").
+
+**QA (round 1, 2026-10-15): all pass.**
+- Screenshot: heading, coins, 3 rows with level/price/Buy (maxed row shows "Fully Funded"), Back button. Pass.
+- Buy test (test_buying_updates_level_price_and_coins): level, price, coins update. Pass.
+- Maxed/unaffordable tests: messages shown, buy disabled, no charge. Pass.
+- Labels: all constants and the test's expected strings match T-059's table character for character (14 keys). Pass.
+- docs/garage-design.md: only a new Content subsection added. Pass.
+- GUT 687/687; game/tools Python 257 OK; tools Python 180 OK. Pass.
+- Tests use RunPaths.file (user://test_runs/<pid>/), screen gets progress injected; real progress.json not touched.
+- 2026-10-15, in-qa → needs-playtest: QA passed
+- Board's tweak (2026-10-16): "change "sponsored throttle" to "energy throttle", that's my only comment". Changed the acceleration upgrade's name from "Sponsored Throttle" to "Energy Throttle" in `game/scripts/menu/garage_screen.gd` and `game/tests/unit/test_garage_screen.gd`. No other game code or docs used the text. GUT 687/687, `tools` Python 180, `game/tools` Python 257 (1 skipped) pass.
+
+### QA after the board's tweak (2026-10-16)
+Pass. The acceleration upgrade name is exactly "Energy Throttle" (garage_screen.gd, test_garage_screen.gd); no "Sponsored Throttle" remains in game code or docs on the branch (only task files). All other labels match the T-059 table. GUT 687/687, `tools` pytest 180 passed, `game/tools` pytest 257 passed (1 skipped).
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): garage works; only change, 'Sponsored Throttle' renamed to 'Energy Throttle' (done, QA passed).

@@ -1190,3 +1190,8 @@ Entry format:
 - Decision or change: the board listened to T-076's candidates and approved them ("sfx looks good"): the SFX Agent's recommended file per sound (engine, drift, gun, flames, hit, coin, meteor warning, meteor impact) goes into the game in T-077, which the board will playtest. Only the meteor warning ("Falling.wav" by Augdog) is CC BY and needs a credit.
 - Documents touched: `docs/unfiled-game-details.md`, `game/README.md`
 - Tasks: T-076 (done), T-077 (now open, the board's review added)
+
+## 2026-10-16: T-058 done: the garage screen
+- Decision or change: the board played the garage (with T-089's Garage button, in T-089's folder): "garage works!". One change: the acceleration upgrade is named "Energy Throttle" instead of "Sponsored Throttle" (board, 2026-10-16). The UI Agent renamed it, QA passed once more, and T-059's text table is updated. Merged.
+- Documents touched: `docs/garage-design.md`, `game/README.md`
+- Tasks: T-058 (done), T-059 (text table updated), T-089
