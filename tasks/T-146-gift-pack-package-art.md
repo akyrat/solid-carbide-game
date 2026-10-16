@@ -1,7 +1,7 @@
 ---
 id: T-146
 title: Art: the Redgull gift pack package
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, tasks/T-144-gift-pack-drop.md, tasks/T-075-redgull-logo-art.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the T-144 scenes that use the placeholder, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,14 @@ Started on the board's go for one sample; builds on T-144's branch for the one l
 
 Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 
+### 2026-10-16, Needs playtest
+
+QA passed every criterion. Waits in Needs playtest for the one level-up build.
+
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
+
 ## Result notes
 
 - 2026-10-16, open → blocked: Waits for T-144 (the placeholder drop flow).
@@ -80,3 +88,5 @@ Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 - 2026-10-16, board's decision: the dropped package uses T-140's red-and-gold gift box instead of the crate, so the drop matches the level-up screen. The crate sample stays in `art-archive/T-146/` (package_raw.png, never deleted). The board also said: "please make sure to include like the redgull, um, the logo where needed or appropriate."
 - 2026-10-16, swap-in (0 PixelLab calls): raw box from T-140's branch saved as `art-archive/T-146/gift_box_from_T-140_raw.png` (128x128, 17 colours). `game/tools/build_gift_package.py build` scales it to 40 px wide (box filter, hard alpha, 24-colour quantize) on a 64x64 canvas, stamps `redgull_logo_32.png` (scaled to 13 px, RGB 135,17,27) on a cream tag on the right face (the tag is small, so the gull reads as a head with a beak only at 1x; it is the logo's size limit), and draws the parachute variant (64x96). Output `game/art/gift_pack/package.png` (27 colours) and `package_falling.png` (30 colours), alpha 0/255 only. T-144's branch merged; `GiftPackage/Sprite` swapped; `refresh_look()` shows the parachute only while falling (look only, no behaviour change). T-144's test that checked the package placeholder for not-red now skips the package (final Redgull art may be red) and a new test covers the parachute swap. GUT: 808 passing; all Python tool tests pass (unittest discover in game/tools, 274). Screenshots in `art-archive/T-146/screenshots/` (drop_*.png; landed: drop_250/400; falling_sequence*.png). Known gap: in the demo fixture the drop height is clipped by the screen's top, so the fall is almost zero and the parachute never shows on screen; it is covered by the unit test and visible in `game/art/gift_pack/package_falling.png`. The helicopter's body is still T-144's placeholder (T-145).
 - 2026-10-16, in-progress → in-qa: Package art swapped in: T-140's gift box scaled to 40 px with Redgull logo tag, script parachute while falling; GUT 808 pass, Python tests pass, 0 extra PixelLab calls.
+- 2026-10-16, in-qa → needs-playtest: QA pass: sprite checks, PixelLab record vs board go, GUT and Python tests all pass
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
