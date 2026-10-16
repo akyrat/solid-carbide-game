@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: sfx
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/unfiled-game-details.md, tasks/T-076-mvp-sound-effects.md, tasks/T-036-run-scene-and-state.md, tasks/T-041-starting-gun.md, tasks/T-042-exhaust-flamethrower.md, tasks/T-044-minions.md, tasks/T-046-kaiju-meteor-attack.md, game/README.md]
 files_expected_to_change: [audio code and scenes, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,10 +36,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test fires each moment (signal or function) and shows its sound plays (QA: pass / fail)
-- [ ] A test shows the drift and flame sounds stop when drifting stops (QA: pass / fail)
-- [ ] `game/README.md` lists where each sound plays and credits every CC BY sound (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test fires each moment (signal or function) and shows its sound plays (QA: pass)
+- [ ] A test shows the drift and flame sounds stop when drifting stops (QA: pass)
+- [ ] `game/README.md` lists where each sound plays and credits every CC BY sound (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-16: "make a ticket to integrate it in the game, and I'll playtest it").
 
@@ -63,3 +63,11 @@ Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds"
 
 Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav" by Augdog).
 - 2026-10-16, in-progress → in-qa: Sounds hooked up in the run; volumes in game/data/sfx.json. Play from C:\solid-carbide-worktrees\T-077\game\project.godot
+
+### QA round 1 (QA/Integration Agent, 2026-10-16)
+
+- Criterion 1 (each moment plays its sound): pass. test_run_sounds.gd covers every moment.
+- Criterion 2 (drift and flame sounds stop): pass. Tests cover both.
+- Criterion 3 (README sound table and CC BY credit): pass. Credit for "Falling.wav" by Augdog at game/README.md line 147; volumes in game/data/sfx.json.
+- Criterion 4 (full suites): pass. GUT 754/754 passing (68 scripts); pytest tools 180 passed; pytest game/tools 261 passed, 1 skipped. Game launched with --quit-after 300: no script errors.
+- 2026-10-16, in-qa → needs-playtest: QA round 1 passed: all 4 criteria, GUT 754/754
