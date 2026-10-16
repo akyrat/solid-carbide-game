@@ -518,12 +518,15 @@ func _assert_not_red(tex: Texture2D, what: String) -> void:
 	assert_eq(reds, 0, what + ": no Redgull red, no red")
 
 
-func test_package_placeholder_is_not_redgull_red() -> void:
+func test_final_art_sprites_are_not_tinted() -> void:
 	var heli: GiftHelicopter = HeliScene.instantiate()
 	var pkg: GiftPackage = PackageScene.instantiate()
 	autofree(heli)
 	autofree(pkg)
-	_assert_not_red(pkg.sprite().texture, "package")
+	# T-145 and T-146: both are final Redgull art now, so red is allowed on them;
+	# the placeholders keep their no-red check (build_gift_placeholders.py).
+	_assert_not_red(load("res://art/gift_pack/helicopter_placeholder.png"), "helicopter placeholder")
+	_assert_not_red(load("res://art/gift_pack/package_placeholder.png"), "package placeholder")
 	assert_eq(heli.sprite().modulate, Color.WHITE)
 	assert_eq(pkg.sprite().modulate, Color.WHITE)
 
@@ -534,7 +537,7 @@ func test_one_named_sprite_each_for_the_art_swap() -> void:
 	autofree(heli)
 	autofree(pkg)
 	assert_eq(heli.sprite().texture.resource_path, "res://art/gift_pack/helicopter_sheet.png")
-	assert_eq(pkg.sprite().texture.resource_path, "res://art/gift_pack/package_placeholder.png")
+	assert_eq(pkg.sprite().texture.resource_path, "res://art/gift_pack/package.png")
 	assert_eq(heli.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	assert_eq(pkg.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	var sprites := 0
@@ -602,3 +605,17 @@ func test_helicopter_art_is_redgull_red_with_rotor_frames() -> void:
 	var before := s.frame
 	heli._process(0.1)
 	assert_ne(s.frame, before, "the rotor turns")
+
+
+func test_package_uses_the_parachute_look_only_while_falling() -> void:
+	var pkg: GiftPackage = PackageScene.instantiate()
+	add_child_autofree(pkg)
+	pkg.phase = GiftPackage.CARRIED
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART)
+	pkg.phase = GiftPackage.FALLING
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.FALLING_ART)
+	pkg.phase = GiftPackage.LANDED
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART)

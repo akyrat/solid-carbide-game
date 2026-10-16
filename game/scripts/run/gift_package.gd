@@ -7,9 +7,14 @@ extends Node2D
 ## drawing.
 ##
 ## The art: the child Sprite2D "Sprite" (res://scenes/run/gift_package.tscn).
-## T-146 swaps its texture (now res://art/gift_pack/package_placeholder.png)
+## T-146 swapped its texture (now res://art/gift_pack/package.png)
 ## and nothing else; the sprite's bottom stands on the node's origin, the
 ## landing spot.
+
+## T-146's art: the box on the ground (also while carried), and the box under a
+## parachute while it falls. Both stand on the node's origin (bottom row).
+const GROUND_ART := "res://art/gift_pack/package.png"
+const FALLING_ART := "res://art/gift_pack/package_falling.png"
 
 const CARRIED := "carried"
 const FALLING := "falling"
@@ -46,6 +51,19 @@ func height() -> float:
 	return drawn_ground.y - position.y
 
 
-## The sprite T-146 replaces.
+## Picks the sprite's look from the phase (looks only; movement is gift_drops.gd).
+func refresh_look() -> void:
+	var path := FALLING_ART if phase == FALLING else GROUND_ART
+	var s := sprite()
+	if s.texture == null or s.texture.resource_path != path:
+		s.texture = load(path)
+		s.offset = Vector2(0, -48) if phase == FALLING else Vector2(0, -32)
+
+
+func _process(_delta: float) -> void:
+	refresh_look()
+
+
+## The package's sprite (T-146's art).
 func sprite() -> Sprite2D:
 	return get_node("Sprite") as Sprite2D
