@@ -1,7 +1,7 @@
 ---
 id: T-140
 title: "Art: the level-up screen, red and gold, Redgull-themed"
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/weapons.md, tasks/T-052-level-up-screen.md, tasks/T-003-pixellab-test-generation.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, art-archive/T-140/, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,14 @@ Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-u
 ### 2026-10-16, In QA
 
 Full set drawn by script (card frame, highlight, ribbon with logo medallions, sunburst, button plates, gift box emblem with logo). In QA; T-141 starts from this branch now.
+
+### 2026-10-16, Needs playtest
+
+QA passed every criterion. Waits in Needs playtest for the one level-up build.
+
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
 
 ## Result notes
 
@@ -112,3 +120,5 @@ Built by script only, no further PixelLab call (total for this task: 1 generatio
 
 **Checks:** `python game/tools/build_level_up_art.py check` passes for all 7 PNGs (no semi-transparent pixels, 30 colours or fewer, transparent corners). The raw box `art-archive/T-140/gift_pack_raw.png` is untouched (a test checks it). Mock-up of the full set over the 60% dimmed run: `art-archive/T-140/level_up_mockup_full_set.png` (made by `art-archive/T-140/make_mockup.py`; the sunburst is shown at about 55% strength and the card text is placeholder, both for T-141 to decide). Pieces that were a quick stand-in in the earlier rough mock-up are now the real ones.
 - 2026-10-16, in-progress → in-qa: Full level-up art set built by script (card frame, highlight, ribbon, button plates, sunburst, gift pack emblem; Redgull logo on the emblem and both ribbon ends). 1 PixelLab generation in total. Mock-up: art-archive/T-140/level_up_mockup_full_set.png. GUT 100%, pytest tools 182 and game/tools 269 pass.
+- 2026-10-16, in-qa → needs-playtest: QA pass: sprite checks, PixelLab record vs board go, GUT and Python tests all pass
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
