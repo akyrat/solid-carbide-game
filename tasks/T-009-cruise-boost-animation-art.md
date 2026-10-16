@@ -1,7 +1,7 @@
 ---
 id: T-009
 title: Boost animation art for the jump to cruise speed
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Playtest
@@ -13,7 +13,7 @@ depends_on: []
 documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, tasks/T-008-cruise-boost-effect.md, docs/extended-narrative.md]
 files_expected_to_change: [the boost animation frames and their record files]
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -34,12 +34,12 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Acceptance criteria
 
-- [ ] The planned PixelLab calls and their cost are in the result notes, written before the calls, and only one round was generated (QA: pass / fail)
-- [ ] The animation frames are in `game/art/` with their record files, every other generation is in `art-archive/T-009/`, and Godot imports the frames without errors (QA: pass / fail)
-- [ ] A test shows a W press that jumps the car to cruise speed plays the new animation (not T-008's placeholder streaks) behind the car, and it ends by itself (QA: pass / fail)
-- [ ] T-008's boost tests still pass: no boost while W stays held in a drift, and the driving is unchanged (QA: pass / fail)
-- [ ] A screenshot (or a strip of frames from the game) shows the motion lines behind the car (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The planned PixelLab calls and their cost are in the result notes, written before the calls, and only one round was generated (QA: pass) Plan (a432794) predates the calls; 2 generations = the 2 planned calls, call 1 empty and not regenerated, script-drawn first frame for call 2 declared before call 2 (free). Matches one round.
+- [ ] The animation frames are in `game/art/` with their record files, every other generation is in `art-archive/T-009/`, and Godot imports the frames without errors (QA: pass) boost_lines.png + json in game/art/effects; all generations and records in art-archive/T-009/; launch with --quit-after 300 shows no errors.
+- [ ] A test shows a W press that jumps the car to cruise speed plays the new animation (not T-008's placeholder streaks) behind the car, and it ends by itself (QA: pass) test_boost_art.gd: W press plays frames 0-4 behind the car, uses the PixelLab sheet, ends by itself; GUT passes.
+- [ ] T-008's boost tests still pass: no boost while W stays held in a drift, and the driving is unchanged (QA: pass) test_boost.gd (8) unchanged and passing.
+- [ ] A screenshot (or a strip of frames from the game) shows the motion lines behind the car (QA: pass) boost_strip_x2.png shows three thin pale-cyan lines behind the rear bumper fading over the strip.
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass) GUT 791/791; pytest tools 182; pytest game/tools 271 pass, 1 skipped.
 
 The board's review: play it in the game before it is merged; no separate sample review (board, 2026-10-16).
 
@@ -82,3 +82,8 @@ Total estimate: **2 generations**. After that, free script work only: transparen
 
 **Documents updated:** `docs/visual-style.md` (Content: "Cruise boost motion lines"), `game/README.md` ("Boost effect" section and the file list).
 - 2026-10-16, in-progress → in-qa: PixelLab motion lines (2 generations, 5 frames x 16 directions, 80x80 cells) swapped in for T-008's streaks on Car.boost, behind and following the car; GUT 791/791, pytest 182 + 271 pass. Play: C:\solid-carbide-worktrees\T-009\game\project.godot, press W from standstill.
+
+### QA round 1 (QA/Integration Agent, 2026-10-16)
+
+All 6 criteria pass (marked above). Docs diff: visual-style.md Content only (+4 lines), game/README.md. GUT 791/791, pytest 182 and 271 (1 skipped), launch clean.
+- 2026-10-16, in-qa → needs-playtest: QA round 1: all 6 criteria pass; GUT 791/791, pytest 182+271
