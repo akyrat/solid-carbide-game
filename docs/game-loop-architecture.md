@@ -47,7 +47,9 @@ flowchart TD
     start([Run starts: 8:00 on the clock]) --> drive[Drive and drift]
     drive --> drift{Drift longer than 1 s?}
     drift -- yes --> dxp[XP per second, times the combo] --> lvl{XP bar full?}
-    lvl -- yes --> choice[Level up: weapon choice] --> drive
+    lvl -- yes --> heli[Level up: a helicopter drops the gift pack ahead of the car] --> drive
+    drive --> pack{Drive over a gift pack?}
+    pack -- yes --> choice[Level-up screen: weapon choice, run paused] --> drive
     lvl -- no --> drive
     drive --> enemies[Enemies swarm in; weapons fire automatically; enemies drop coins] --> drive
     drive --> boss{7:00 reached?}
@@ -84,9 +86,20 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 - When XP reaches the level's threshold the level goes up (leftover XP carries over, so one gain can give several level-ups), and the run sends "level up" with the new level. At the top level the bar stops.
 - On every level-up the run plays the level-up effect: a burst of pixel particles from the car, following it while it plays (task T-112; the look: Visual style, Decisions, "Level-up effect"). Several level-ups in the same moment show as one burst, and the burst keeps playing while the run is paused for the weapon choice.
 - The HUD reads the XP, the level's threshold and the level, with a signal whenever they change.
-- A level-up can pause the run (clock and car) until the weapon choice is made, one choice after another when several level-ups come at once. This pause is a switch, off until the level-up screen exists (task T-052): for now a level-up just raises the level and the run carries on.
+- A level-up does not pause the run by itself: it sends the gift pack (below, task T-144). The run pauses (clock and car) when the car drives over the gift pack's package and the level-up screen opens (task T-052), until the weapon choice is made, one choice after another when several packages are picked up at once.
 - **Likes drain** (task T-115; the speed: [game/data/run.json](../game/data/run.json), `likes_drain`, task T-114): once the combo has fully drained back to "no combo", the XP in the current level goes down, stopping at the start of the level, so the level never goes down. Any trick raises the combo and stops it; it starts again once the combo has drained again. It stops while the run is paused (pause screen, level-up screen) and after the run ends. At the top level there is nothing to drain. The HUD's likes bar follows it, so the bar visibly empties.
 - A new run starts back at level 1 with no XP.
+
+### The gift pack drop
+
+How the level-up screen is reached (task T-144; how to use it: [game/README.md](../game/README.md), section "The gift pack drop"; the numbers: [game/data/gift_pack.json](../game/data/gift_pack.json)):
+
+- On every level-up the run sends a helicopter. It flies across the screen from beyond one edge to beyond the other, carrying the package, and drops it over the landing spot; the package falls and lands. Built with placeholder art for now (the final art: tasks T-145 and T-146).
+- The landing spot is a short way ahead of the car, along the way it is moving, on open road: never in a building, a boulder or past the map's edge. If straight ahead is blocked, the nearest open spot around it is used.
+- The run keeps going the whole time (the clock, enemies, likes and the likes drain). The level-up moment itself (the "level up" signal, the level-up effect, the likes bar) is unchanged.
+- One package per level-up. Packages stay on the ground until picked up; a new run clears them.
+- Driving over a landed package removes it and opens the level-up screen for that level, with the same weapon choices as before; the run pauses until the choice is made. Two packages picked up together give two screens, one after the other.
+- While a landed package is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD.
 
 ### The combo
 
@@ -123,3 +136,4 @@ The drift prototype is not part of the flow; it stays as a tuning tool, opened o
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md), for the definition of drifting used for XP.
 - Run numbers (XP per challenge, XP per level, drift XP, car starting health): [game/data/run.json](../game/data/run.json), read through `game/scripts/data/run_data.gd`.
 - Combo numbers (what each trick adds, the cap, the collision cut, the drain, how the combo raises spawning): [game/data/combo.json](../game/data/combo.json), read through `game/scripts/data/combo_data.gd`.
+- Gift pack numbers (the helicopter's speed, height and margin; the package's fall time, landing distance, clearance and pickup radius): [game/data/gift_pack.json](../game/data/gift_pack.json), read through `game/scripts/data/gift_pack_data.gd`.

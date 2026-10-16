@@ -479,7 +479,17 @@ func boulder_diameter() -> float:
 ## not overlap a building or any boulder already on the map (the pattern
 ## copies', meteor challenges' or other meteor boulders'). Touching is allowed.
 func can_place_meteor_boulder(centre: Vector2) -> bool:
-	var r := boulder_diameter() / 2.0
+	return is_open_spot(centre, boulder_diameter() / 2.0)
+
+
+## True when a circle of `radius` units centred on `centre` (units from the
+## map's centre) lies wholly inside the map and does not overlap a building or
+## any boulder on the map (the pattern copies', meteor challenges' or meteor
+## boulders'): open ground the car can drive on. Touching is allowed. Used by
+## the meteor boulders' placement check and by the gift pack (T-144) to land
+## its package on open road.
+func is_open_spot(centre: Vector2, radius: float) -> bool:
+	var r := radius
 	var m := rect_of(layout.map.rect)
 	if centre.x - r < m.position.x or centre.x + r > m.end.x:
 		return false

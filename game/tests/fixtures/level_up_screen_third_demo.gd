@@ -13,9 +13,11 @@ func _ready() -> void:
 	var state: RunState = game.run.state
 	for i in 2:
 		state.add_xp(state.xp_needed())
+		game.run.gift_drops.pick_up_all()  # T-144: the package opens the screen
 		for f in 4:
 			await get_tree().process_frame
 		game.run.level_up_screen.take_highlighted()
 		for f in 4:
 			await get_tree().process_frame
 	state.add_xp(state.xp_needed())
+	game.run.gift_drops.pick_up_all()
