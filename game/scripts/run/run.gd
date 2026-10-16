@@ -39,6 +39,8 @@ const DriftMarksScene := preload("res://scenes/driving/drift_marks.tscn")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 ## The drift smoke (task T-121); its look and tuning live in the scene.
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
+## The placeholder boost effect (task T-008, boost_effect.gd).
+const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 ## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
@@ -88,6 +90,9 @@ var drift_marks: Node2D
 ## sprite: over the map (ground, marks, boulders), in the car's place in the
 ## buildings' depth order, under the HUD. Kept across runs, emptied by each new run.
 var drift_smoke: Node2D
+## The placeholder boost effect (task T-008): streaks behind the car when W
+## snaps it to cruise speed. Child "BoostEffect" of the View, under the car.
+var boost_effect: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -142,6 +147,12 @@ func _ready() -> void:
 	drift_smoke.view_transform = ISO_TRANSFORM
 	view_root.add_child(drift_smoke)
 	view_root.move_child(drift_smoke, car_sprite.get_index())  # under the car
+
+	boost_effect = BoostEffectScript.new()
+	boost_effect.name = "BoostEffect"
+	boost_effect.view_transform = ISO_TRANSFORM
+	view_root.add_child(boost_effect)
+	view_root.move_child(boost_effect, car_sprite.get_index())  # under the car
 
 	level_up_burst = LevelUpBurstScene.instantiate()
 	level_up_burst.name = "LevelUpBurst"
@@ -250,6 +261,9 @@ func _build_world() -> void:
 	# Drift smoke (T-121): from the same rear tyre places as the marks.
 	drift_smoke.clear()
 	drift_smoke.bind(car, drift_marks)
+	# Boost effect (T-008): when W snaps the car to cruise speed.
+	boost_effect.clear()
+	boost_effect.bind(car)
 	# Likes (XP): every completed challenge, preset or meteor (T-037).
 	map.challenge_completed.connect(state.challenge_completed)
 	map.meteor_challenge_completed.connect(state.challenge_completed)

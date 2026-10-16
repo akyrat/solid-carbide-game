@@ -343,6 +343,7 @@ There is no jump, no arrow-key steering and no gamepad.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
 - `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
 - `drift_marks.gd`: the drift marks (task T-117, see "Drift marks"), drawn over the ground and under the test room and the car, in the current view.
+- `boost_effect.gd`: the placeholder boost effect (task T-008, see "Boost effect"), used by the run.
 - `drift_smoke.gd`: the drift smoke (task T-121, see "Drift smoke"), drawn over the test room and under the car, in the current view.
 - `test_room.gd`: the test room's walls and boulder (static bodies on layer 1, under `PhysicsWorld`) and their drawing.
 
@@ -467,6 +468,12 @@ Task T-121 (Visual style, Decisions, "Drift smoke"). While the car drifts, puffs
 **Screenshots** of a run started from the main menu, the car drifting (smoke behind the rear tyres) and driving straight (none): `bash game/tools/screenshot.sh res://tests/fixtures/drift_smoke_demo_drift.tscn screenshots/drift_smoke_drifting.png 150` and `bash game/tools/screenshot.sh res://tests/fixtures/drift_smoke_demo_straight.tscn screenshots/drift_smoke_straight.png 90` (fixture `tests/fixtures/drift_smoke_demo.gd`). The car starts on the gravel; `drift_smoke_demo_asphalt.tscn` starts it on the asphalt road (`start_units` (54, 0)).
 
 **Tests:** `tests/unit/test_drift_smoke.gd`, part of the GUT suite: smoke from both rear tyres on the marks' tyre places while drifting, none while driving straight or standing still, none after the drift ends; puffs staying where they were left while the car drives away, growing then shrinking and popping out within their lifetime, every puff gone once the longest life has passed, a 30-second drift never over the cap (and reaching and holding it with time stopped); the trail in a steady full-circle drift (W + D) spanning about 20 degrees (+-5); no aging while paused; the depth order in the run (in the car's drawing under the car sprite, over the map, under the HUD, under a building covering the car and over it in the open) and in the prototype (and the view switch); the puff art (nearest, no semi-transparent pixels, cool grey-violet, not Redgull red, no fading tint); the settings in the scene; a new run; a run started from the main menu.
+
+## Boost effect
+
+Task T-008. When W is newly pressed and that press snaps the car up to cruise speed, `Car` emits `boost(from_speed)` (forward speed just before the jump, units/s). It is `cruise_jump` filtered to `w_just_pressed`, so it does not fire while W stays held (not on the jumps back to cruise during a held drift) nor when W is pressed at or above cruise speed. It changes no driving. The art (T-009), the SFX Agent and the UI hook into this signal.
+
+The placeholder effect is `scripts/driving/boost_effect.gd` (`run.boost_effect`, child "BoostEffect" of the run's View, under the car): five opaque light blue-grey streaks behind the car that shrink to nothing in 0.35 s and stay where they were made. No Redgull red. T-009 replaces its drawing, keeping `bind(car)`. Tests: `tests/unit/test_boost.gd`. Screenshot fixture: `tests/fixtures/boost_effect_demo.tscn` (about 6 frames).
 
 ## Trick popups
 
