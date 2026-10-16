@@ -1275,3 +1275,8 @@ Entry format:
 - Decision or change: so the new level-up can be played in one build, the board chose to chain the branches: T-145 and T-146 no longer wait for T-144 to be done but merge its branch for the swap-in; T-141 no longer waits for T-140 to be done but starts from its branch once its full set is approved. Each still passes QA; all go into one playtest build.
 - Documents touched: none (tickets only)
 - Tasks: T-141, T-145, T-146
+
+## 2026-10-16: The cruise boost's motion lines: animated, PixelLab, judged in the game
+- Decision or change: the board wants to see the motion lines in the game, not as samples ("There's no point for me checking the samples"), and wants them animated, made with PixelLab (one round, the board's go). T-009 is built on T-008's unmerged branch: the Asset Generation Agent generates the animation and swaps it in for T-008's placeholder, and the board plays it there. T-008 merges first, then T-009.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-009 (started), T-008
