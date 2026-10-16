@@ -31,8 +31,10 @@ func after_each() -> void:
 	get_tree().paused = false
 
 
+## A level-up, then (T-144) the car picks up the gift pack's package, which opens the screen.
 func _level_up() -> void:
 	state.add_xp(state.xp_needed())
+	run.gift_drops.pick_up_all()
 
 
 func _key(code: int, pressed := true, echo := false) -> void:
@@ -47,10 +49,10 @@ func _card(id: String) -> Dictionary:
 	return screen.cards.filter(func(c): return c.id == id)[0]
 
 
-func test_the_screen_is_in_the_run_and_the_level_up_pause_is_on() -> void:
+func test_the_screen_is_in_the_run_and_opens_through_the_gift_pack() -> void:
 	assert_not_null(screen)
-	assert_true(state.pause_on_level_up)
-	assert_false(screen.visible, "closed until a level-up")
+	assert_false(state.pause_on_level_up, "T-144: the level-up itself does not pause; the package does")
+	assert_false(screen.visible, "closed until a level-up's package is picked up")
 
 
 func test_level_up_opens_two_cards_with_the_approved_text() -> void:
@@ -218,6 +220,7 @@ func test_escape_still_pauses_and_resumes_a_normal_run() -> void:
 
 func test_two_waiting_level_ups_show_one_screen_after_the_other() -> void:
 	state.add_xp(state.xp_needed() * 2.5)  # more than one level at once
+	run.gift_drops.pick_up_all()  # T-144: both packages picked up together
 	var waiting: int = state.pending_choices.size()
 	assert_gte(waiting, 2)
 	screen.take(screen.cards[0].id)
