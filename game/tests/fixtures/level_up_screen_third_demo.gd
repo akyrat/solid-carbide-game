@@ -16,6 +16,7 @@ func _ready() -> void:
 		game.run.gift_drops.pick_up_all()  # T-144: the package opens the screen
 		for f in 4:
 			await get_tree().process_frame
+		game.run.level_up_screen.skip_animation()
 		game.run.level_up_screen.take_highlighted()
 		for f in 4:
 			await get_tree().process_frame

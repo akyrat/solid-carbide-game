@@ -1,7 +1,7 @@
 ---
 id: T-141
 title: The level-up screen animates in, with its red and gold art
-status: blocked
+status: in-qa
 from: project-lead
 to: ui
 lead: Level-up
@@ -37,14 +37,31 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test levels the player up and shows the screen animates in within its proposed length and ends in T-052's layout with T-140's art (QA: pass / fail)
-- [ ] A test shows input during the animation cannot take a card by accident, and the keyboard and mouse work as T-052 set them once it ends (QA: pass / fail)
-- [ ] A screenshot sequence of a run shows the animation's key frames and the finished screen (QA: pass / fail)
-- [ ] T-052's tests still pass, and `docs/hud-and-menus.md` describes the animation in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test levels the player up and shows the screen animates in within its proposed length and ends in T-052's layout with T-140's art (QA: pass)
+- [ ] A test shows input during the animation cannot take a card by accident, and the keyboard and mouse work as T-052 set them once it ends (QA: pass)
+- [ ] A screenshot sequence of a run shows the animation's key frames and the finished screen (QA: pass)
+- [ ] T-052's tests still pass, and `docs/hud-and-menus.md` describes the animation in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started from T-140's art branch with T-144 merged in; part of the one level-up build.
+
+### 2026-10-16, In QA
+
+Built: T-140's art in the screen, a 0.54 s build-up (dim, sunburst, ribbon drop, cards slide in), no card can be taken while it plays, text wraps at words. In QA.
+
 ## Result notes
 
-Written by the agent when it finishes.
+**Animation (proposal):** 0.54 s with two cards (0.64 with three), 0.04 s pixel frames: dim fades in (4 steps), sunburst grows with a small overshoot, ribbon then emblem drop in with a bounce, cards slide up one after the other (left first, 0.1 s apart). Sunburst at alpha 0.75, spinning 1.5 degrees every 0.1 s. Runs on the screen's own clock while the run is paused.
+**Input guard:** `is_animating()`: take, highlight move and the take/move keys do nothing, buttons ignore the mouse until the end; a key pressed during it and still held takes nothing until released.
+**Text wrap:** word-smart wrap, 300 px text width; a test checks no word is wider than a line.
+**Likes bar (T-139):** no dependency; the screen has its own nodes and clock, above the HUD.
+**Screenshots:** `art-archive/T-141/screenshots/t_0.04.png`, `t_0.12.png`, `t_0.22.png`, `t_0.34.png`, `t_0.44.png`, `t_99.png` (finished). Fixture `tests/fixtures/level_up_anim_demo.tscn`. (A first batch with the same names was identical frames from a mistaken run; overwritten.)
+**Tests:** full GUT suite 820/820 pass; Python tool tests: game/tools 270 OK (1 skipped), tools/ 182 OK.
+**Docs:** docs/hud-and-menus.md (Content only), game/README.md.
+- 2026-10-16, in-progress → in-qa: Level-up screen wears T-140's art and builds up in 0.54 s (0.64 with 3 cards) in 0.04 s pixel frames; input guard until it ends; GUT 820/820, Python OK; screenshots in art-archive/T-141/screenshots/
