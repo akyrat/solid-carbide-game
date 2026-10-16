@@ -106,7 +106,7 @@ One screen is on show at a time (task T-055; how to use it: [game/README.md](../
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
-- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Not wired yet: until the garage screen exists, the button does nothing (task T-089).
+- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.

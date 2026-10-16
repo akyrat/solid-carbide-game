@@ -116,7 +116,7 @@ One screen is on show at a time (task T-055; how to use it: [game/README.md](../
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
-- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Not wired yet: until the garage screen exists, the button does nothing (task T-089).
+- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
@@ -793,7 +793,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
+| `game-loop-architecture.md` | `c136129eae0ad46d71b1f5d4ffecebc367728f355ca394780ef9d633d463f4c4` |
 | `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `f2afc21cb095c1be3af0c6719ff5f5d7519b4152cdc30368178370e120c89ffd` |

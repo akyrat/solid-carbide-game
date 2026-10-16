@@ -1195,3 +1195,8 @@ Entry format:
 - Decision or change: the board played the garage (with T-089's Garage button, in T-089's folder): "garage works!". One change: the acceleration upgrade is named "Energy Throttle" instead of "Sponsored Throttle" (board, 2026-10-16). The UI Agent renamed it, QA passed once more, and T-059's text table is updated. Merged.
 - Documents touched: `docs/garage-design.md`, `game/README.md`
 - Tasks: T-058 (done), T-059 (text table updated), T-089
+
+## 2026-10-16: T-089 done: the main menu's Garage button opens the garage
+- Decision or change: Garage on the main menu opens the garage screen, and its Back button returns to the main menu; Start still works after a visit. Built on T-058's branch so the board could play both together (board, 2026-10-15); the board played them: "garage works!". Merged after T-058.
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`
+- Tasks: T-089 (done)
