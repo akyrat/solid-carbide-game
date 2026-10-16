@@ -1,7 +1,7 @@
 ---
 id: T-144
 title: Gift pack drop: a helicopter drops the gift pack, and driving over it opens the level-up screen (placeholders)
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Level-up
@@ -95,3 +95,4 @@ Tests: new `game/tests/unit/run/test_gift_drops.gd` (30 tests: level-up sends th
 Screenshot fixtures: `res://tests/fixtures/gift_drop_demo.tscn` (helicopter crossing, package landing) and `res://tests/fixtures/gift_drop_arrow_demo.tscn` (off-screen arrow).
 
 For the board: with nothing left to offer (both weapons at their last tier) a package still drops, and picking it up skips the choice at once (T-043's rule), so nothing visible happens. A landed package behind a building is covered by it (the building does not fade for packages).
+- 2026-10-16, in-progress → in-qa: Gift pack drop built with placeholders: each level-up sends a helicopter across the screen that drops a package ahead of the car on open road; driving over it opens the level-up screen (run pauses then); off-screen arrow; numbers in game/data/gift_pack.json; art swap via GiftHelicopter/Sprite and GiftPackage/Sprite; GUT 807/807, Python tool tests OK
