@@ -20,8 +20,13 @@ class T(unittest.TestCase):
         self.assertTrue(c.check(im))
 
     def test_sample(self):
-        p = ROOT / "game/art/logo/redgull_logo_64.png"
-        self.assertEqual(c.check(Image.open(p)), [])
+        for n in (128, 64, 32):
+            p = ROOT / f"game/art/logo/redgull_logo_{n}.png"
+            self.assertEqual(c.check(Image.open(p)), [], p.name)
+
+    def test_only_three_final_files(self):
+        names = sorted(p.name for p in (ROOT / "game/art/logo").glob("*.png"))
+        self.assertEqual(names, ["redgull_logo_128.png", "redgull_logo_32.png", "redgull_logo_64.png"])
 
 
 if __name__ == "__main__":

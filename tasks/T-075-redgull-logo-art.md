@@ -71,6 +71,10 @@ Round 3 is worth showing: gull head in profile, one dark red. 5 of the 10 allowe
 
 Board's extra call: silhouette_init_128 as init, strength 80. Still raptor-like. 6 of 10 generations used (balance ~4903).
 
+### 2026-10-16, In QA
+
+Board picked the s80 PixelLab result (raw, its own darker red 135,17,27). Agent is making the final 128/64/32 files; then QA and the board's review.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -128,3 +132,10 @@ Honest view: the script shape reads clearly as a bird's head in profile with a l
 ### Round 4 result
 
 Call made as planned (1 generation; total 6 of 10 spent). Balance read 4904 before and 4904 after (lagging; about 4903 true). Raw: `art-archive/T-075/redgull_logo_raw_init128_s80.png` (params `req_init128_s80.json`); flattened: `game/art/logo/redgull_logo_128_pl_init_s80.png`, check script PASS. Result: even at strength 80 PixelLab stayed close to the init silhouette (slightly rounder, cleaner curves, a bumpy eye hole); it still reads as a raptor/vulture, as the init does.
+
+### Final files (after the board's pick, no more PixelLab calls)
+
+- The board picked `art-archive/T-075/redgull_logo_raw_init128_s80.png`. Generations used in total: 1 (first sample) + 5 (rounds 2 to 4) = 6; 4 of the allowance left unused.
+- Final files, all one colour RGB 135,17,27 (the raw's own main red), made by `game/tools/make_logo_sizes.py`: `game/art/logo/redgull_logo_128.png` (the raw flattened), `redgull_logo_64.png` and `redgull_logo_32.png` (area-averaged alpha from the 128, hard threshold). Small-size cleanup: the script checks that the eye hole survives and widens a 1-px hole or reopens a closed one to 2x1 px; at 64 and 32 the hole survived, so nothing was changed (the 32 px eye is a two-pixel stepped diagonal, the beak tip is one pixel hooking down).
+- The previous `redgull_logo_128.png` (round 2) and `redgull_logo_64.png` (the first blob) are in `art-archive/T-075/` as `redgull_logo_128_round2_init200_flattened.png` and `redgull_logo_64_round1_blob_flattened.png`; all other candidate PNGs moved there too.
+- Check script PASS on all three; Godot imported them (headless import in the GUT run); GUT suite all passed; Python tests `game/tools` 265 OK (1 skipped), `tools` 180 OK.
