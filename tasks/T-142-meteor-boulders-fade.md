@@ -1,7 +1,7 @@
 ---
 id: T-142
 title: Meteor boulders fade away 10 seconds after landing
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Playtest
@@ -45,6 +45,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started: the Enemy Behavior Agent makes meteor boulders fade away after 10 seconds. You'll playtest it in C:\solid-carbide-worktrees\T-142.
 
 ## Result notes
 
