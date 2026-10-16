@@ -49,6 +49,10 @@ The board's review: playtest it before it is merged (board, 2026-10-16: "make a 
 
 Started: the SFX Agent puts the approved sounds into the game. You'll playtest it in C:\solid-carbide-worktrees\T-077.
 
+### 2026-10-16, Needs playtest
+
+QA passed (4 of 4). Ready for your playtest: open C:\solid-carbide-worktrees\T-077\game\project.godot. Volumes are in game\data\sfx.json.
+
 ## Result notes
 
 Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
