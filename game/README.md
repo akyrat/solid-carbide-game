@@ -872,6 +872,18 @@ Task T-052 (UI Agent). What the player sees and does: `docs/hud-and-menus.md`, "
 - Playtest switch: `data/playtest.json` `flamethrower_at_start` is `false` since this task, so a run starts with the gun only and the first level-up (100 likes, about 10 seconds of drifting at combo x1) offers "get the flamethrower" and the gun's tier 2.
 - **Tests:** `tests/unit/test_level_up_screen.gd` (open with 2 cards and T-051's text, next-tier text for gun and flamethrower, button and real mouse click, A/D and arrow keys, Enter and Space, key held at open and key-repeat, the highlight's ring, Escape, two waiting level-ups, a normal run's first offers, a new run, the comic look). Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/level_up_screen_demo.tscn screenshots/level_up_screen.png 40`; the saved one is `art-archive/T-052/screenshots/level_up_screen.png`.
 
+### Level-up screen art (T-140)
+
+Red and gold art for the level-up screen, in `game/art/level_up/` (one PNG and one record JSON each), built by `game/tools/build_level_up_art.py` (`build` writes and checks, `check` only checks; byte-identical every run; tests in `game/tools/test_build_level_up_art.py`). Everything is script-drawn except the gift box inside `gift_pack_emblem.png`, which is the one PixelLab sample (1 generation, raw file `art-archive/T-140/gift_pack_raw.png`, kept unchanged because T-146 reuses it as the dropped package). Shown at 2 screen pixels per art pixel unless noted. The art is not yet in the screen: swapping it in and animating it is T-141.
+
+- `card_frame.png` 180x150: the card, a 9-slice (margin 10) in gold and red with a cream fill; replaces the white card (360x300 on screen).
+- `highlight_frame.png` 192x162: hollow bright-gold frame for the highlighted card, which sits 6 art pixels inside it (so the frame reaches 12 screen pixels past the card); replaces the yellow ring.
+- `header_ribbon.png` 380x44: the banner, 760 screen pixels wide like the two cards and their gap. A Redgull gull medallion sits at each end; the game letters the title between art x 76 and 304.
+- `button_plate.png` and `button_plate_pressed.png` 72x22: the "Take it" plate, text added by the game.
+- `sunburst.png` 256x256: red and gold rays in a circle with a black rim, behind the cards (4x covers the window); opaque, so T-141 sets its strength and may spin it.
+- `gift_pack_emblem.png` 128x128: the gift box with the approved Redgull gull (`art/logo/`) on a cream disc on its front.
+- Rules: hard edges, a dark selective outline, 30 colours or fewer per piece, no semi-transparent pixels. Review images and the full-set mock-up: `art-archive/T-140/`.
+
 ## The kaiju
 
 Task T-045 (Enemy Behavior Agent): Crash City's final boss as Enemies, Decisions describes it, with T-039's numbers (`kaiju` and, T-119, `kaiju_coins` in `data/enemies.json` through `EnemyData`). What it does: `docs/enemies.md`, Content, "The kaiju". A placeholder for now (a large dark slate green Godzilla-style shape drawn in code); the final art comes from a separate art task. Its meteor attack (T-046): "The meteor attack" below.

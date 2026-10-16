@@ -91,3 +91,19 @@ Pieces 1 to 5 are flat graphic shapes, which a script draws crisply with the exa
 - **Output:** `art-archive/T-140/gift_pack_raw.png`. Sprite check (`check_sprite_rules.py`): 128x128, transparent background, 0 semi-transparent pixels, 16 colours: pass. Red box with gold ribbon, bow and sparkles in a 3/4 view; no text or logo. Not regenerated.
 - **Review images:** `gift_pack_review_dark_light_x4.png` (4x, dark and light), `level_up_mockup_rough.png` (1152x648, the sample plus quick script stand-ins for ribbon, cards, highlight, button and burst over a run dimmed 60%; the stand-ins are not final art). Made by `art-archive/T-140/make_review.py`.
 - Not done yet (awaiting the board): pieces 1 to 5 as final art, the logo on the box, and anything in `game/art/`. Status not moved.
+
+### Board's approval of the sample (2026-10-16)
+
+The board approved the gift box sample and the piece plan. Its words: "Yeah, looks good to me. Um, please make sure to include like the redgull, um, the logo where needed or appropriate."
+
+### Full set (Asset Generation Agent, 2026-10-16)
+
+Built by script only, no further PixelLab call (total for this task: 1 generation; balance before 4903, after 4902). Script `game/tools/build_level_up_art.py`, art in `game/art/level_up/` with a record JSON per PNG (`card_frame`, `highlight_frame`, `header_ribbon`, `button_plate`, `button_plate_pressed`, `sunburst`, `gift_pack_emblem`). Sizes and how each fits T-052's layout: `game/README.md`, "Level-up screen art (T-140)".
+
+**Where the Redgull logo is (the approved one-colour gull, `game/art/logo/redgull_logo_32.png`, in its own dark red):**
+- On the gift pack emblem, on a cream disc on the box's front face: the box is Redgull's package, and a dark-red gull would not read on the red paper without the disc.
+- On the header ribbon, on a cream medallion at each end: the banner says "Redgull Sent a Gift Pack!", so the sender's mark belongs there; it frames the title without touching the lettering.
+- Not on the card frame, the highlight frame or the button: the cards hold the weapon names and descriptions, and a logo there would crowd the text and repeat the ribbon and box. Easy to add later if the board wants it.
+- The sunburst has none (a backdrop behind everything).
+
+**Checks:** `python game/tools/build_level_up_art.py check` passes for all 7 PNGs (no semi-transparent pixels, 30 colours or fewer, transparent corners). The raw box `art-archive/T-140/gift_pack_raw.png` is untouched (a test checks it). Mock-up of the full set over the 60% dimmed run: `art-archive/T-140/level_up_mockup_full_set.png` (made by `art-archive/T-140/make_mockup.py`; the sunburst is shown at about 55% strength and the card text is placeholder, both for T-141 to decide). Pieces that were a quick stand-in in the earlier rough mock-up are now the real ones.

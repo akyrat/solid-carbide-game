@@ -1,0 +1,11 @@
+{
+ "task": "T-140",
+ "what": "Backdrop: 24 rays in dark red, red and dark gold inside a circle with a black rim. Sits behind the cards over the dimmed run; T-141 may spin and scale it (4x covers the 1152x648 window).",
+ "logo": "none",
+ "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
+ "size": [
+  256,
+  256
+ ],
+ "prompt": null
+}
