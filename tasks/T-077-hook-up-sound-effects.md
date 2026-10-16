@@ -57,6 +57,10 @@ QA passed (4 of 4). Ready for your playtest: open C:\solid-carbide-worktrees\T-0
 
 Adding an 'SFX volume' slider to the pause screen, 0 to 100, starting at 0 (silent), saved like the zoom. The SFX Agent is on it in this folder.
 
+### 2026-10-16, In progress
+
+SFX volume slider added (pause screen, beside the camera checkboxes, 0-100, starts at 0 = silent, saved). Play it again here; press Escape and turn the slider up to hear the sounds.
+
 ## Result notes
 
 Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
