@@ -35,7 +35,8 @@ func test_every_section_has_its_numbers() -> void:
 	assert_eq_deep(_sorted(e.kaiju_coins().keys()), _sorted(["drop_chance", "coins_per_drop"]))
 	assert_eq_deep(_sorted(e.meteor_attack().keys()), _sorted(["first_attack_after_seconds",
 		"seconds_between_attacks", "windup_seconds", "meteors_per_attack", "warning_seconds",
-		"land_within_units_of_car", "impact_radius_units", "impact_damage", "knockback"]))
+		"land_within_units_of_car", "impact_radius_units", "impact_damage", "knockback",
+		"boulder_lifetime_seconds", "boulder_fade_seconds"]))
 	for section in [e.minion(), e.kaiju(), e.spawning(), e.coins(), e.kaiju_coins(), e.meteor_attack()]:
 		for k in section:
 			assert_gt(section[k], 0.0, "%s is positive" % k)

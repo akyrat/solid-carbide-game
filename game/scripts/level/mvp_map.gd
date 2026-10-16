@@ -190,6 +190,8 @@ var meteor_boulder_bodies: Array[StaticBody2D] = []
 var _meteor_count := 0
 ## Meteor boulders (add_meteor_boulder): {x, y, diameter} in units, in order.
 var meteor_boulders: Array = []
+## How many meteor boulders were ever added (names the bodies, so a name is never reused).
+var _meteor_boulder_count := 0
 
 
 static func load_layout(path: String = LAYOUT_PATH) -> Dictionary:
@@ -502,9 +504,11 @@ func add_meteor_boulder(centre: Vector2) -> StaticBody2D:
 	var d := boulder_diameter()
 	var boulder := {"x": centre.x, "y": centre.y, "diameter": d}
 	meteor_boulders.append(boulder)
+	_meteor_boulder_count += 1
 	var body := StaticBody2D.new()
-	body.name = "Boulders_meteor_boulder_%d" % meteor_boulders.size()
-	body.set_meta("meteor_boulder", meteor_boulders.size())
+	body.name = "Boulders_meteor_boulder_%d" % _meteor_boulder_count
+	body.set_meta("meteor_boulder", _meteor_boulder_count)
+	body.set_meta("boulder_key", boulder_key(boulder))
 	physics_root.add_child(body)
 	var shape := CircleShape2D.new()
 	shape.radius = d / 2.0 * PX_PER_UNIT
@@ -517,6 +521,41 @@ func add_meteor_boulder(centre: Vector2) -> StaticBody2D:
 	boulders_draw.queue_redraw()
 	_sync_boulder_sprites()
 	return body
+
+
+## Sets how see-through a meteor boulder is drawn: `alpha` 1 is fully visible,
+## 0 invisible (T-142). Its collision is not changed. Only the boulder art (the
+## isometric view) fades; the flat view's placeholder circles do not.
+func set_meteor_boulder_alpha(body: Node, alpha: float) -> void:
+	if body == null or not is_instance_valid(body) or not body.has_meta("boulder_key"):
+		return
+	var sp = _boulder_sprite_by_key.get(body.get_meta("boulder_key"))
+	if sp != null and is_instance_valid(sp):
+		sp.modulate.a = clampf(alpha, 0.0, 1.0)
+
+
+## Takes a meteor boulder off the map (T-142): its body (so it no longer blocks
+## the car or anything else), its sprite and its entry in meteor_boulders and
+## all_boulders(), so the spot is free for a new boulder. Only meteor boulders
+## can be removed, never the map's own.
+func remove_meteor_boulder(body: Node) -> void:
+	if body == null or not is_instance_valid(body) or not body.has_meta("boulder_key"):
+		return
+	var key: String = body.get_meta("boulder_key")
+	for i in meteor_boulders.size():
+		if boulder_key(meteor_boulders[i]) == key:
+			meteor_boulders.remove_at(i)
+			break
+	meteor_boulder_bodies.erase(body)
+	var sp = _boulder_sprite_by_key.get(key)
+	if sp != null and is_instance_valid(sp):
+		boulder_sprites.erase(sp)
+		sp.get_parent().remove_child(sp)
+		sp.queue_free()
+	_boulder_sprite_by_key.erase(key)
+	body.get_parent().remove_child(body)
+	body.queue_free()
+	boulders_draw.queue_redraw()
 
 
 ## The placement check: true when the design fits at `centre` and `angle`

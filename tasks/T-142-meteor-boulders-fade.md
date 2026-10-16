@@ -54,4 +54,12 @@ Started: the Enemy Behavior Agent makes meteor boulders fade away after 10 secon
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully visible and solid, then fades out over 2 s (sprite transparency in a straight line, still solid while fading) and is removed: body out of the physics world, sprite freed, entries gone from `meteor_boulders` / `all_boulders()`, spot free again. The map's own boulders are never touched (`remove_meteor_boulder` / `set_meteor_boulder_alpha` accept only bodies from `add_meteor_boulder`). Ageing runs in `kaiju_meteors.gd` `step()`, so it pauses with the game.
+
+- Numbers: `boulder_lifetime_seconds` 10 (decided) and `boulder_fade_seconds` 2.0 (my proposal, tune freely) in `game/data/enemies.json`, `meteor_attack`.
+- Code: `game/scripts/enemies/kaiju_meteors.gd`, `game/scripts/level/mvp_map.gd`. Also fixed meteor boulder naming to use a counter so names are not reused after removal.
+- Tests: 5 new in `tests/unit/enemies/test_kaiju_meteors.gd` (fully visible and solid before 10 s; fades then removed from scene and physics; map's own boulders stay; numbers read from data, by changing them), `test_enemy_data.gd` key list updated. GUT 750/750 pass; pytest tools 180 passed; pytest game/tools 261 passed, 1 skipped. Game launched with `--quit-after 300`: no errors.
+- Docs: `docs/enemies.md` Content ("Boulders fade") and `game/README.md` ("Boulders fade" paragraph and tests line). Summary, Decisions, Open questions untouched.
+- Limitation: in the flat view the placeholder circles vanish at the end without fading; only the boulder art (isometric view) fades.
+
+**How the board plays it:** open `C:\solid-carbide-worktrees\T-142\game\project.godot` (or Play on the ticket in the Builds tab). The playtest switch `kaiju_early_arrival.enabled` in `game/data/playtest.json` is ON in this branch: the kaiju arrives 30 s in, first meteors at about 35 s. Watch a boulder: after 10 s it fades over 2 s, then the car drives through the spot. **`kaiju_early_arrival.enabled` must be set back to false right before merging.**
