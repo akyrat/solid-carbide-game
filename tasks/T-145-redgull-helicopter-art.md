@@ -1,7 +1,7 @@
 ---
 id: T-145
 title: Art: the Redgull helicopter that drops the gift pack
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -45,10 +45,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass / fail)
-- [ ] The helicopter sprite (and its frames, if animated) replaces T-144's placeholder, and T-144's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass)
+- [ ] The helicopter sprite (and its frames, if animated) replaces T-144's placeholder, and T-144's tests still pass (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the sample, then the helicopter in a run.
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-16, Blocked → In progress
 
 Started on the board's go for one sample; builds on T-144's branch for the one level-up build.
+
+### 2026-10-16, In QA
+
+Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 
 ## Result notes
 
@@ -94,3 +98,4 @@ Started on the board's go for one sample; builds on T-144's branch for the one l
 - **Checks:** sprite rules pass on all 4 frames (`build_helicopter.py check`); Python tool tests OK (274); full GUT suite 808/808 pass.
 - **Screenshot:** `art-archive/T-145/screenshots/helicopter_in_run.png` (the helicopter carrying the package, from `gift_drop_demo`). Review images of the build steps: `art-archive/T-145/build/`.
 - Note for T-146: the package hangs at `CARRY_OFFSET` (0, 14), now under a larger helicopter, so it overlaps the helicopter's belly a little; adjust only if the board dislikes it.
+- 2026-10-16, in-progress → in-qa: Board approved the sample; red helicopter with logo, 4 rotor frames, swapped into T-144's scene; GUT 808 and Python 274 pass
