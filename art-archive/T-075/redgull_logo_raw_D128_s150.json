@@ -1,0 +1,42 @@
+{
+  "file": "redgull_logo_raw_D128_s150.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "flat shading",
+    "detail": "low detail",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACK0lEQVR4nO3cQW7bMBRFUcnoIjroCrUgrjCD7qJFkUEcBw4k1KI++c4ZBwjNfyXKdpBlAQAAAAAAAAAAAAAARrUuA2k/f/3Z83Pb77ehXteV1lmG/owYvrfOOPRnxPDVmjL8e0L4sCYN/p4I3t2WwOFf9TsrujyAKwfRRHBtABUG0AqsITKAShvfCq0lIoCKG94KrmnKACpvdCu8tmkfAqtpYRF0DSBtc0fQLYCRht8GWuv/cgSER9Dt49BZNnSb7CPkLi9mluHPGIQAwqMYPoB/mz1CYFvRKE5f1NnDedzYEWKoFMTwAXy3mWIID6D3OkYMYooAjmzaSCH0iGGaAPZu2mgBnB3DlAHM8JDYK4jpA3jcrCrrqRJDTABJtgMx+DJoQkcuOgGER3BL+cQrUdsRgTtAeAQCCI+gSwCOgboRuAOEE0C4bgE4BmpyBwjX/ar00fA1X3g9uwP/OGE9dPJsqEe++BLAgPY+T+0JwRFw8UPtkf0Y8g9CRgpgK/JO5XGPzlxXfABbkaFfxdvAcNEBbOFX/5IeAAKIJ4BwsQE4/8MD4J0AwgkgXGQAzv/wAPgggHBxAbj9hwfAZwIIJ4BwUQE4/8MD4CsBhBNAuJgAnP/hARAcgKs/OADDDw7A8IMDMPzgAAw/OADDDw+A4ABc/cEBGH5wAIYfHIDhBwdg+MEBGH5wAIYfHgCvM8w/inTVhwVg4GEBGHhYAAYOAAAAAAAAAAAAsLzMX64w77OasCZVAAAAAElFTkSuQmCC"
+    },
+    "init_image_strength": 150
+  },
+  "prompt": "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T12:06:29+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-075",
+  "job_status": null,
+  "notes": "round 3: init D 128, strength 150",
+  "generator": "game/tools/pixellab_client.py"
+}

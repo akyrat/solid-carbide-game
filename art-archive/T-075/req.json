@@ -1,0 +1,9 @@
+{
+  "description": "minimalist flat logo, solid silhouette of a seagull head in side profile facing right, long straight gull beak with a slight downward hook at the tip, flat sloping forehead, narrow angled slanted eye cut out as a hole giving a slightly evil menacing look, short neck stub, one single flat dark red colour only, no shading, no outline, no gradient, no text, plain transparent background, pixel art",
+  "image_size": {"width": 64, "height": 64},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "flat shading",
+  "detail": "low detail",
+  "text_guidance_scale": 8
+}

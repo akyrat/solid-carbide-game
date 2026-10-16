@@ -1,0 +1,42 @@
+{
+  "file": "redgull_logo_raw_init128_s80.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "flat shading",
+    "detail": "low detail",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACNElEQVR4nO3cUU6rUBSGUWgchA+OkAExwvvgLLwxN+a2aiNCgX3Ov1Zi4oOmcPbXU8HqMAAAAAAAAAAAAAAAAAAALRmHBszPL29Lvm56/dPE+VQytj70e8SwzNjT0O8Rw31j78O/JoSvxoTBXxPBrcsQNPyzHrOy054NFQYx2Q3OCaDC8K9NwSGM6cNPj+HQk60+/MQYDjvB1oafEoMAwmM45ER6Gn5vQex+4L0Pv/UYTr0R1OPCz88vbx8fQwO62QE+B1BtAFORQD8bE+7ziyE8gKohVIghKoDKMUwnhbDbg561wGsWci4Uw9EhdBfA2oWcC0VwZAzdBvDbhZwLHe+RIUQEsGRB58LHu2cMkQF8t6BzI8f76BDiA2jd1hAEEB5DN78LYFj1pBNAeAQCCI/g0us97nTzwgjsAOEEEL4L7BqAl4H6EdgBwiN4OvZQqPbWNwEUsfbl8v37tkQggIPs+fPQlggE0MkPwGsjEMCDttIKVzxrzkEADQ/8EREIoPGBb41AAHcWrqWBb4nAjaDhdtjvn7c+/A9LzkMAnfspgl0D8Law+hHYAcIJIJwAwgkgXHwAUyeXfGvFB5BOAOEEEE4A4QQQTgDhogOYwi8Bh/QAEEA8AYQTQDgBhBNAuNgAXAKGB8A/AggngHACCCeAcAIId0n8qyCXgP/ZAcIJIJwAwgkgnADCCSBcXAAuAcMD4JYAwnX/b+Js+R0HYLidBmCwHQdguAAAAAAAAAAAw67+Atpn/QYvPfi3AAAAAElFTkSuQmCC"
+    },
+    "init_image_strength": 80
+  },
+  "prompt": "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T13:22:22+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-075",
+  "job_status": null,
+  "notes": "round 4: init silhouette_init_128, strength 80",
+  "generator": "game/tools/pixellab_client.py"
+}

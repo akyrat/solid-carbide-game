@@ -1225,3 +1225,13 @@ Entry format:
 - Decision or change: a boulder left by a meteor stays 10 seconds, then fades over 2 seconds and is removed (no longer blocks the car); the map's own boulders stay. Both numbers are in `game/data/enemies.json`; the 2-second fade was the agent's proposal and the board kept it. The board playtested it: "LGTM". The early-kaiju playtest switch was set back off before merging.
 - Documents touched: `docs/enemies.md`, `game/README.md`
 - Tasks: T-142 (done)
+
+## 2026-10-16: T-075 done: the Redgull logo
+- Decision or change: the board picked PixelLab's result made from a script-drawn gull silhouette (init strength 80): a gull's head in profile with a hooked beak and a slanted eye cut-out, flattened to one dark red (RGB 135,17,27), at 128, 64 and 32 pixels. The board: "the icons look good to me, merge them". 6 generations in total (the first sample plus 5 of the allowance of 10). Every other candidate is kept in `art-archive/T-075/`. Where the logo appears in the game is decided separately.
+- Documents touched: `docs/visual-style.md`, `game/README.md`
+- Tasks: T-075 (done)
+
+## 2026-10-16: The QA column can mean "ready for the board's review"
+- Decision or change: the board found T-077 left in In progress although its slider tweak was ready to play. Rule (board): a task in the QA column usually waits for the QA/Integration Agent, but when the board or the ticket says so (for example after a quick-tuning tweak) it waits there for the board's own review, with no QA agent. The board also found the SFX volume slider unusable (squeezed into the checkbox row, no room to drag); it goes back to the SFX Agent to match the zoom slider's row.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-077
