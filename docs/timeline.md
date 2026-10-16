@@ -1247,6 +1247,6 @@ Entry format:
 - Tasks: T-147 (new)
 
 ## 2026-10-16: T-077 done: the sound effects play in the game
-- Decision or change: the approved sounds play at their moments (engine following speed, drift, gun, flames, hits, coins, meteor warning and impact), volumes in `game/data/sfx.json`, credit for "Falling.wav" by Augdog (CC BY 4.0) in `game/README.md`. The board's tweaks: an "SFX volume" slider on the pause screen, 0 to 100, silent (0) by default, saved; first squeezed into the checkbox row and undraggable, then given its own row like the zoom slider. The 60 the board saw on opening was a value saved in its settings file, not the default; the Project Lead cleared it. Board: "LGTM". Final QA passed. One test fails on the board's computer only, because it reads the board's real saved garage upgrades: T-144 (new) fixes that.
+- Decision or change: the approved sounds play at their moments (engine following speed, drift, gun, flames, hits, coins, meteor warning and impact), volumes in `game/data/sfx.json`, credit for "Falling.wav" by Augdog (CC BY 4.0) in `game/README.md`. The board's tweaks: an "SFX volume" slider on the pause screen, 0 to 100, silent (0) by default, saved; first squeezed into the checkbox row and undraggable, then given its own row like the zoom slider. The 60 the board saw on opening was a value saved in its settings file, not the default; the Project Lead cleared it. Board: "LGTM". Final QA passed. One test fails on the board's computer only, because it reads the board's real saved garage upgrades: T-148 (new) fixes that.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
-- Tasks: T-077 (done), T-144 (new)
+- Tasks: T-077 (done), T-148 (new)
