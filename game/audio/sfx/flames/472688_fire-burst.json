@@ -1,0 +1,16 @@
+{
+  "schema": "solid-carbide/sfx-metadata/1",
+  "source": "freesound",
+  "freesound_id": 472688,
+  "name": "Fire Burst.wav",
+  "username": "SilverIllusionist",
+  "freesound_url": "https://freesound.org/people/SilverIllusionist/sounds/472688/",
+  "license_name": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "search_query": "flamethrower fire",
+  "download_date": "2026-10-15",
+  "file": "472688_fire-burst.wav",
+  "original_type": "wav",
+  "duration_s": 1.0,
+  "filesize_bytes": 176444
+}

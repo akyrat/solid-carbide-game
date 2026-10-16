@@ -1,10 +1,10 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: blocked
+status: open
 from: project-lead
 to: sfx
-lead:
+lead: Playtest
 epic: sound
 milestone: mvp
 user_facing_text: no
@@ -28,7 +28,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-076 (the sounds) and the things that make them are done:** the run (T-036), the gun (T-041), the flamethrower (T-042), the minions and coins (T-044) and the meteor attack (T-046).
+**Unblocked (2026-10-16):** T-076's sounds are approved by the board ("sfx looks good") and merged; the run, gun, flamethrower, minions and coins, and meteor attack are all in master. Use the recommended file per sound from T-076's result notes.
 
 Play T-076's recommended sounds at their moments: the engine while driving (following the car's speed if that's simple), a drift sound while drifting, the gun firing, the flames while they're on, enemy hits, coin pickups, the meteor warning and impact. Keep volumes balanced, and add a CC BY credits list to `game/README.md`.
 
@@ -40,6 +40,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A test shows the drift and flame sounds stop when drifting stops (QA: pass / fail)
 - [ ] `game/README.md` lists where each sound plays and credits every CC BY sound (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+
+The board's review: playtest it before it is merged (board, 2026-10-16: "make a ticket to integrate it in the game, and I'll playtest it").
 
 ## Result notes
 

@@ -1185,3 +1185,8 @@ Entry format:
 - Decision or change: the 3 kaiju health bar tests that failed after T-050's merge had an outdated setup, not a broken bar: since T-052 the run pauses on level-ups, and an earlier test in the suite leaves the game paused, so the bar never updated in those tests. The UI Agent made the test file unpause the game before and after each test; the bar's code is unchanged. Merged without QA (test-only change). Master: 737 of 737 GUT tests, all Python tool tests pass. Which earlier test leaks the pause is not traced.
 - Documents touched: none
 - Tasks: T-050
+
+## 2026-10-16: T-076 done: the MVP's sound effects are chosen
+- Decision or change: the board listened to T-076's candidates and approved them ("sfx looks good"): the SFX Agent's recommended file per sound (engine, drift, gun, flames, hit, coin, meteor warning, meteor impact) goes into the game in T-077, which the board will playtest. Only the meteor warning ("Falling.wav" by Augdog) is CC BY and needs a credit.
+- Documents touched: `docs/unfiled-game-details.md`, `game/README.md`
+- Tasks: T-076 (done), T-077 (now open, the board's review added)
