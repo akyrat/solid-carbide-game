@@ -1,7 +1,7 @@
 ---
 id: T-152
 title: "Trick prototype: the live arrow-key HUD and the trick confirmation animation"
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Tricks

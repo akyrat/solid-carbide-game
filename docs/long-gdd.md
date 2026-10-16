@@ -174,6 +174,8 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically.
 - The board playtested the Godot drift prototype in the isometric view and is very happy with it. The game uses the isometric view and the Unity values, with two changes: the top speed is **3.0 times** cruise speed (Unity: 2.5), and **physics interpolation is on**, for smoother motion between physics steps. The jump to cruise speed stays at 11.
 
+- **Arrow-key tricks, prototype** (board, 2026-10-16): a standalone trick prototype to playtest the idea of tricks done by chaining arrow keys while driving with W/A/S/D. One trick for now: Up, Right, Down, Left in a row makes the car do a **side flip to the right** (a full roll around its long axis) with the illusion of a small jump; the car's physics stays on the ground. A live HUD in the bottom-right corner shows the four arrow keys as they are pressed, and completing the sequence plays a comic-style confirmation animation. The roll is generated with PixelLab for one car direction first. Not part of the MVP; it tries out the far-future trick idea (Open questions). Tasks T-150 to T-153.
+
 ### Content
 
 #### Prototypes so far
@@ -818,7 +820,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `729b52bb765ddd149cbd8cd91c83ace371578e0c991282b5094dc48eb4378c93` |
-| `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
+| `drifting.md` | `997b7ca8f274f2b400c99e504e121b782a501de7f8fc6a85ccef4a214af2ee94` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `a4e223167564b38196fcf58905daa6cf53a210dc1d89a98e99b7eb5fcacb5d08` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |

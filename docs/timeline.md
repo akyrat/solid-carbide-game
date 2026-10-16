@@ -1305,3 +1305,8 @@ Entry format:
 - Decision or change: the board wants a quick playtest of tricks done with the arrow keys. One trick: Up, Right, Down, Left in a row makes the car side-flip to the right with a small fake jump; a live arrow-key HUD in the bottom-right corner; a comic-style confirmation when the sequence is completed; the roll art from PixelLab (board's go given), one car direction first. A standalone prototype, not MVP. Tickets: T-150 (text), T-151 (sequence detection, flip and hop with a placeholder roll), T-152 (input HUD and confirmation), T-153 (roll frames). One playtest build of all four.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-150, T-151, T-152, T-153 (new)
+
+## 2026-10-16: Trick prototype text is done
+- Decision or change: T-150 passed QA and is merged: the side flip shows as "SIDE FLIP!" and the arrow-key display is labelled "TRICK". T-152 (the arrow-key display and confirmation) is unblocked. The long GDD now includes the trick prototype decision (not in the short GDD: not MVP).
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-150 (done), T-152 (open)
