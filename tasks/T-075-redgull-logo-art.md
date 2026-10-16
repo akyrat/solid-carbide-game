@@ -79,6 +79,10 @@ Board picked the s80 PixelLab result (raw, its own darker red 135,17,27). Agent 
 
 QA passed all four criteria (round 1). Waiting in Needs playtest for the board's look check; files in C:\solid-carbide-worktrees\T-075\game\art\logo\.
 
+### 2026-10-16, Done
+
+Merged into master. Logo at game/art/logo/ (128, 64, 32). Where it appears in the game is still to be decided.
+
 ## Result notes
 
 Written by the agent when it finishes.
