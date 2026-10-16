@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: open
+status: in-progress
 from: project-lead
 to: sfx
 lead: Playtest
@@ -42,6 +42,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-16: "make a ticket to integrate it in the game, and I'll playtest it").
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started: the SFX Agent puts the approved sounds into the game. You'll playtest it in C:\solid-carbide-worktrees\T-077.
 
 ## Result notes
 
