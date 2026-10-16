@@ -1,7 +1,7 @@
 ---
 id: T-142
 title: Meteor boulders fade away 10 seconds after landing
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, tasks/T-046-kaiju-meteor-attack.md, game/README.md]
 files_expected_to_change: [the meteor boulder script, tests, game/data/enemies.json, docs/enemies.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,12 +37,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test lands a meteor and shows its boulder is still there, fully visible and blocking, just before 10 seconds (QA: pass / fail)
-- [ ] A test shows the boulder fades out after 10 seconds (its transparency goes down over the fade) and is then removed: it no longer blocks the car and is no longer in the scene (QA: pass / fail)
-- [ ] A test shows the map's own boulders are not removed (QA: pass / fail)
-- [ ] The 10 seconds and the fade length are read from `game/data/enemies.json` (QA: pass / fail)
-- [ ] `docs/enemies.md` Content and `game/README.md` describe the fade, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test lands a meteor and shows its boulder is still there, fully visible and blocking, just before 10 seconds (QA: pass)
+- [ ] A test shows the boulder fades out after 10 seconds (its transparency goes down over the fade) and is then removed: it no longer blocks the car and is no longer in the scene (QA: pass)
+- [ ] A test shows the map's own boulders are not removed (QA: pass)
+- [ ] The 10 seconds and the fade length are read from `game/data/enemies.json` (QA: pass)
+- [ ] `docs/enemies.md` Content and `game/README.md` describe the fade, without changing Summary, Decisions or Open questions (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -64,3 +64,13 @@ Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully v
 
 **How the board plays it:** open `C:\solid-carbide-worktrees\T-142\game\project.godot` (or Play on the ticket in the Builds tab). The playtest switch `kaiju_early_arrival.enabled` in `game/data/playtest.json` is ON in this branch: the kaiju arrives 30 s in, first meteors at about 35 s. Watch a boulder: after 10 s it fades over 2 s, then the car drives through the spot. **`kaiju_early_arrival.enabled` must be set back to false right before merging.**
 - 2026-10-16, in-progress → in-qa: Built; GUT 750/750, pytest 180 + 261. Playtest switch kaiju_early_arrival is ON in this branch and must go back off right before merging. Play: C:\solid-carbide-worktrees\T-142\game\project.godot
+
+### QA round 1 (QA/Integration Agent, 2026-10-16)
+- Visible and blocking before 10 s: pass (test in test_kaiju_meteors.gd)
+- Fades after 10 s then removed from scene and physics: pass
+- Map's own boulders not removed: pass
+- 10 s and fade length read from enemies.json: pass
+- Docs: pass (enemies.md Content line only; game/README.md updated; Summary/Decisions/Open questions untouched)
+- Tests: pass. GUT 750/750, pytest tools 180 passed, pytest game/tools 261 passed 1 skipped. Game launch --quit-after 300: no script errors.
+- Note: kaiju_early_arrival.enabled is on for the playtest and must be set false before merging.
+- 2026-10-16, in-qa → needs-playtest: QA round 1 all pass; GUT 750/750, pytest 180+261
