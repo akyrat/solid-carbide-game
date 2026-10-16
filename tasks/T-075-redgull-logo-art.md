@@ -139,3 +139,10 @@ Call made as planned (1 generation; total 6 of 10 spent). Balance read 4904 befo
 - Final files, all one colour RGB 135,17,27 (the raw's own main red), made by `game/tools/make_logo_sizes.py`: `game/art/logo/redgull_logo_128.png` (the raw flattened), `redgull_logo_64.png` and `redgull_logo_32.png` (area-averaged alpha from the 128, hard threshold). Small-size cleanup: the script checks that the eye hole survives and widens a 1-px hole or reopens a closed one to 2x1 px; at 64 and 32 the hole survived, so nothing was changed (the 32 px eye is a two-pixel stepped diagonal, the beak tip is one pixel hooking down).
 - The previous `redgull_logo_128.png` (round 2) and `redgull_logo_64.png` (the first blob) are in `art-archive/T-075/` as `redgull_logo_128_round2_init200_flattened.png` and `redgull_logo_64_round1_blob_flattened.png`; all other candidate PNGs moved there too.
 - Check script PASS on all three; Godot imported them (headless import in the GUT run); GUT suite all passed; Python tests `game/tools` 265 OK (1 skipped), `tools` 180 OK.
+
+### QA round 1 (2026-10-16)
+
+- [x] One colour, transparent, no semi-transparent: PASS. Check script PASS on 128, 64 and 32; all pixels are (135,17,27,255) or fully transparent.
+- [x] Call record and allowance: PASS. The generation log has 6 entries for T-075 (1 first sample + 5 after), each with prompt, endpoint and usage 1 generation; balance 4909 before, about 4903 after. Calls after the first sample: 5, within the allowance of 10. Wording slip: the notes say "6 of 10 generations used" where it is 5 of the 10 extra (6 in total); not a fail.
+- [x] Final files: PASS. `redgull_logo_128/64/32.png` exist in `game/art/logo/`, one colour 135,17,27, with `.import` files; the other candidates are in `art-archive/T-075/`, not `game/art/`; the headless import in the GUT run raised no errors.
+- [x] Tests: PASS. GUT 745/745 passing; `game/tools` 265 OK (1 skipped); `tools` 180 OK.
