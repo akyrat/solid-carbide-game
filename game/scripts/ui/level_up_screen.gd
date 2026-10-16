@@ -2,18 +2,23 @@ class_name LevelUpScreen
 extends CanvasLayer
 ## The level-up (gift pack) screen (task T-052; HUD and menus, Decisions,
 ## 2026-10-15). When the run starts a level-up's weapon choice, the run is paused
-## (RunState.pause_on_level_up) and T-043's offers emit `offers_ready`; this
-## shows the offered choices as comic cards over the dimmed run. Taking one
-## calls offers.choose(id), which applies it and resumes the run. It only shows
-## the cards and collects input: what a choice does is the weapon rack's.
+## and T-043's offers emit `offers_ready`; this shows the offered choices as
+## cards over the dimmed run. Taking one calls offers.choose(id), which applies
+## it and resumes the run. It only shows the cards and collects input: what a
+## choice does is the weapon rack's.
 ##
 ## Input: A/D or Left/Right move the highlight, Enter or Space takes the
 ## highlighted card, clicking a card's button takes that card. A key already down
 ## when the screen opens (or a key-repeat echo) takes nothing: it counts again
-## once it has been let go.
-## Look: the trick popups' comic look: white rounded cards with black borders,
-## black Bangers text with hard pixel edges, no Redgull red; the highlighted card
-## has a thick yellow ring (the combo counter's yellow) with a black outline.
+## once it has been let go. While the screen builds up (see below) nothing counts.
+## Look (T-141, with T-140's art): red and gold cards (9-slice), a bright gold
+## frame on the highlighted card, the red ribbon with the title, gold "Take it"
+## plates, a sunburst behind and the gift box emblem; black Bangers text with
+## hard pixel edges on the cream cards.
+## Animation (T-141): the screen builds up in under a second in stepped (pixel)
+## frames, running while the tree is paused: the dim fades in, the sunburst
+## grows, the ribbon and the emblem drop in, the cards slide up one after the
+## other. Nothing can be taken or moved while it runs (`is_animating()`).
 ## Texts: LevelUpTexts (approved in T-051).
 
 const Texts := preload("res://scripts/ui/level_up_texts.gd")
@@ -23,29 +28,56 @@ const HudScript := preload("res://scripts/hud/hud.gd")
 const LAYER := 15
 const DIM := Color(0, 0, 0, 0.6)
 const INK := Color(0, 0, 0)
-const PAPER := Color(1, 1, 1)
-const RING := Color8(255, 224, 77)
-const PRESSED := Color8(255, 190, 40)
+const HOVER_TINT := Color(1.15, 1.15, 1.15)
 const CARD_SIZE := Vector2(360, 300)
-## Width the wrapping texts get inside a card (card width less margins and the thickest border).
-const TEXT_WIDTH := 360.0 - 2.0 * 18.0 - 2.0 * 8.0
+## Margin between a card's edge and its text (the frame's border and studs are 20 px).
+const CARD_MARGIN_X := 30
+const CARD_MARGIN_Y := 26
+## Width the wrapping texts get inside a card.
+const TEXT_WIDTH := 360.0 - 2.0 * CARD_MARGIN_X
 const CARD_GAP := 40
-const BORDER := 4
-const BORDER_HIGHLIGHT := 8
-const OUTLINE_HIGHLIGHT := 4
-const CORNER := 14
 const TITLE_SIZE := 40
 const CARD_TITLE_SIZE := 36
 const CARD_DESC_SIZE := 24
 const BUTTON_SIZE := 30
+const BUTTON_PLATE_SIZE := Vector2(144, 44)
 const KEYS_LEFT := [KEY_A, KEY_LEFT]
 const KEYS_RIGHT := [KEY_D, KEY_RIGHT]
 const KEYS_TAKE := [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE]
 
+## T-140's art, shown at 2 screen pixels per art pixel unless noted.
+const ART := "res://art/level_up/"
+const ART_SCALE := 2
+const RIBBON_SIZE := Vector2(760, 88)
+## The title is lettered between art x 76 and 304 of the ribbon.
+const TITLE_X0 := 76 * ART_SCALE
+const TITLE_X1 := 304 * ART_SCALE
+## The highlight frame reaches this far past the card on each side (6 art pixels).
+const HIGHLIGHT_REACH := 12
+const EMBLEM_SIZE := Vector2(128, 128)
+const EMBLEM_OFFSET := Vector2(-110, -24)
+const SUN_SCALE_FULL := 4.0
+const SUN_ALPHA := 0.75
+## Spin: this many degrees every SUN_SPIN_STEP seconds (stepped, never smooth).
+const SUN_SPIN_DEGREES := 1.5
+const SUN_SPIN_STEP := 0.1
+
+## The build-up (T-141). One frame lasts FRAME seconds; every curve is one value
+## per frame, then rests on its last value.
+const FRAME := 0.04
+const DIM_STEPS := [0.25, 0.5, 0.75, 1.0]
+const SUN_STEPS := [0.3, 0.55, 0.8, 1.0, 1.08, 1.0]
+const RIBBON_DROP := [-140, -84, -34, 10, -6, 0]
+const RIBBON_DELAY := 0.05
+const EMBLEM_DELAY := 0.12
+const CARD_SLIDE := [90, 52, 20, -10, 4, 0]
+const CARD_DELAY := 0.2
+const CARD_STAGGER := 0.1
+
 ## The weapon rack (run.weapons), whose `offers` this screen shows.
 var rack: Node
 var offers: Node
-## The cards on show, left to right: {id, panel, title, desc, button}.
+## The cards on show, left to right: {id, panel, body, highlight_frame, title, desc, button}.
 var cards: Array = []
 ## Index of the highlighted card.
 var highlight := 0
@@ -54,8 +86,17 @@ var key_down: Callable = func(k: int) -> bool: return Input.is_physical_key_pres
 var title_label: Label
 var _root: Control
 var _row: HBoxContainer
+var _dim: ColorRect
+var _sun: TextureRect
+var _ribbon_holder: Control
+var _ribbon: TextureRect
+var _emblem: TextureRect
 ## Keys that were down when the screen opened and have not been let go since.
 var _blocked: Array = []
+## Seconds since the screen opened, and whether the build-up is still running.
+var _t := 0.0
+var _animating := false
+var _anim_length := 0.0
 
 
 func setup(the_rack: Node) -> void:
@@ -66,29 +107,54 @@ func setup(the_rack: Node) -> void:
 	_root = Control.new()
 	_root.name = "LevelUpScreen"
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_root)
-	var dim := ColorRect.new()
-	dim.color = DIM
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_root.add_child(dim)
+	_dim = ColorRect.new()
+	_dim.name = "Dim"
+	_dim.color = DIM
+	_dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.add_child(_dim)
+	_sun = TextureRect.new()
+	_sun.name = "Sunburst"
+	_sun.texture = load(ART + "sunburst.png")
+	_sun.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sun.custom_minimum_size = _sun.texture.get_size()
+	_sun.set_anchors_and_offsets_preset(Control.PRESET_CENTER, Control.PRESET_MODE_MINSIZE)
+	_sun.pivot_offset = _sun.texture.get_size() / 2.0
+	_sun.modulate = Color(1, 1, 1, SUN_ALPHA)
+	_root.add_child(_sun)
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(center)
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 28)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center.add_child(box)
-	var banner := PanelContainer.new()
-	banner.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	banner.add_theme_stylebox_override("panel", _style(BORDER, INK, CORNER))
-	box.add_child(banner)
+	_ribbon_holder = Control.new()
+	_ribbon_holder.name = "Banner"
+	_ribbon_holder.custom_minimum_size = RIBBON_SIZE
+	_ribbon_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	box.add_child(_ribbon_holder)
+	_ribbon = _art_rect("header_ribbon.png", "Ribbon", RIBBON_SIZE)
+	_ribbon_holder.add_child(_ribbon)
 	title_label = _label(Texts.TEXTS["levelup.title"], TITLE_SIZE)
 	title_label.name = "TitleLabel"
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	banner.add_child(title_label)
+	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title_label.position = Vector2(TITLE_X0, 0)
+	title_label.size = Vector2(TITLE_X1 - TITLE_X0, RIBBON_SIZE.y)
+	title_label.clip_text = true
+	title_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_ribbon.add_child(title_label)
+	_emblem = _art_rect("gift_pack_emblem.png", "Emblem", EMBLEM_SIZE)
+	_emblem.position = EMBLEM_OFFSET
+	_ribbon_holder.add_child(_emblem)
 	_row = HBoxContainer.new()
 	_row.name = "Cards"
 	_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_row.add_theme_constant_override("separation", CARD_GAP)
+	_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(_row)
 	offers.offers_ready.connect(_on_offers_ready)
 	offers.offer_taken.connect(_on_offer_taken)
@@ -107,7 +173,7 @@ func card_text(id: String) -> Dictionary:
 	return {"title": Texts.TEXTS.get(key + ".title", ""), "desc": Texts.TEXTS.get(key + ".desc", "")}
 
 
-## Shows the cards for these choice ids.
+## Shows the cards for these choice ids and starts the build-up.
 func show_offers(ids: Array) -> void:
 	_clear_cards()
 	for id in ids:
@@ -119,10 +185,12 @@ func show_offers(ids: Array) -> void:
 			_blocked.append(k)
 	_refresh()
 	visible = true
+	_start_animation()
 
 
 func close() -> void:
 	visible = false
+	_animating = false
 	_clear_cards()
 
 
@@ -130,8 +198,13 @@ func is_open() -> bool:
 	return visible and not cards.is_empty()
 
 
+## True while the screen builds up: no card can be taken or highlighted.
+func is_animating() -> bool:
+	return _animating
+
+
 func move_highlight(step: int) -> void:
-	if cards.is_empty():
+	if cards.is_empty() or _animating:
 		return
 	highlight = clampi(highlight + step, 0, cards.size() - 1)
 	_refresh()
@@ -142,10 +215,42 @@ func take_highlighted() -> void:
 		take(cards[highlight].id)
 
 
-## Takes the choice `id`: T-043 applies it and the run resumes.
+## Takes the choice `id`: T-043 applies it and the run resumes. Refused while
+## the screen is still building up.
 func take(id: String) -> void:
-	if is_open():
+	if is_open() and not _animating:
 		offers.choose(id)
+
+
+## How long the build-up lasts for this many cards, in seconds.
+func animation_length(card_count: int) -> float:
+	var cards_end := CARD_DELAY + CARD_STAGGER * maxf(card_count - 1, 0) + FRAME * CARD_SLIDE.size()
+	var ribbon_end := EMBLEM_DELAY + FRAME * RIBBON_DROP.size()
+	return maxf(cards_end, ribbon_end)
+
+
+## Plays the build-up to its end at once (tests, fixtures).
+func skip_animation() -> void:
+	if _animating:
+		advance(_anim_length + 1.0)
+
+
+## Moves the screen's clock on (the sunburst spin and the build-up). `_process`
+## calls it with real time (it runs while the tree is paused); tests call it by hand.
+func advance(delta: float) -> void:
+	if not visible:
+		return
+	_t += delta
+	_sun.rotation = deg_to_rad(floorf(_t / SUN_SPIN_STEP) * SUN_SPIN_DEGREES)
+	if _animating:
+		if _t >= _anim_length:
+			_finish_animation()
+		else:
+			_apply_frame(_t)
+
+
+func _process(delta: float) -> void:
+	advance(delta)
 
 
 func _input(event: InputEvent) -> void:
@@ -156,6 +261,12 @@ func _input(event: InputEvent) -> void:
 		_blocked.erase(k)
 		return
 	if event.echo or _blocked.has(k):
+		return
+	var is_ours: bool = KEYS_LEFT.has(k) or KEYS_RIGHT.has(k) or KEYS_TAKE.has(k)
+	if _animating:
+		# A press during the build-up is used up: nothing is taken or moved.
+		if is_ours:
+			get_viewport().set_input_as_handled()
 		return
 	if KEYS_LEFT.has(k):
 		move_highlight(-1)
@@ -176,6 +287,49 @@ func _on_offer_taken(_id: String) -> void:
 	close()
 
 
+func _start_animation() -> void:
+	_t = 0.0
+	_animating = true
+	_anim_length = animation_length(cards.size())
+	for c in cards:
+		c.button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_apply_frame(0.0)
+
+
+func _finish_animation() -> void:
+	_animating = false
+	_t = _anim_length
+	for c in cards:
+		c.button.mouse_filter = Control.MOUSE_FILTER_STOP
+	_apply_frame(_anim_length + 1.0)
+
+
+## The value of a one-per-frame curve `t` seconds in, for something that starts
+## at `delay`: the frame's value, the last one once it is over, null before it starts.
+static func _curve(curve: Array, t: float, delay: float) -> Variant:
+	if t < delay:
+		return null
+	var i := int((t - delay) / FRAME)
+	return curve[mini(i, curve.size() - 1)]
+
+
+func _apply_frame(t: float) -> void:
+	var d: Variant = _curve(DIM_STEPS, t, 0.0)
+	_dim.modulate.a = 0.0 if d == null else d
+	var s: Variant = _curve(SUN_STEPS, t, 0.0)
+	_sun.scale = Vector2.ONE * SUN_SCALE_FULL * (0.0 if s == null else s)
+	var r: Variant = _curve(RIBBON_DROP, t, RIBBON_DELAY)
+	_ribbon.visible = r != null
+	_ribbon.position = Vector2(0, 0 if r == null else r)
+	var e: Variant = _curve(RIBBON_DROP, t, EMBLEM_DELAY)
+	_emblem.visible = e != null
+	_emblem.position = EMBLEM_OFFSET + Vector2(0, 0 if e == null else e)
+	for i in cards.size():
+		var c: Variant = _curve(CARD_SLIDE, t, CARD_DELAY + CARD_STAGGER * i)
+		cards[i].body.visible = c != null
+		cards[i].body.position = Vector2(0, 0 if c == null else c)
+
+
 func _clear_cards() -> void:
 	for c in cards:
 		_row.remove_child(c.panel)
@@ -185,12 +339,42 @@ func _clear_cards() -> void:
 
 func _add_card(id: String) -> void:
 	var text := card_text(id)
-	var panel := PanelContainer.new()
+	var panel := Control.new()
 	panel.name = "Card_" + id
 	panel.custom_minimum_size = CARD_SIZE
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	# `body` is what slides in; the panel keeps its place in the row.
+	var body := Control.new()
+	body.name = "Body"
+	body.set_anchors_preset(Control.PRESET_FULL_RECT)
+	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(body)
+	var glow := _art_rect("highlight_frame.png", "HighlightFrame", Vector2(192, 162) * ART_SCALE)
+	glow.position = Vector2(-HIGHLIGHT_REACH, -HIGHLIGHT_REACH)
+	body.add_child(glow)
+	var frame := NinePatchRect.new()
+	frame.name = "Frame"
+	frame.texture = load(ART + "card_frame.png")
+	frame.patch_margin_left = 10
+	frame.patch_margin_top = 10
+	frame.patch_margin_right = 10
+	frame.patch_margin_bottom = 10
+	frame.size = CARD_SIZE / ART_SCALE
+	frame.scale = Vector2.ONE * ART_SCALE
+	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	body.add_child(frame)
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_theme_constant_override("margin_left", CARD_MARGIN_X)
+	margin.add_theme_constant_override("margin_right", CARD_MARGIN_X)
+	margin.add_theme_constant_override("margin_top", CARD_MARGIN_Y)
+	margin.add_theme_constant_override("margin_bottom", CARD_MARGIN_Y)
+	body.add_child(margin)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 10)
-	panel.add_child(v)
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_child(v)
 	var title := _label(text.title, CARD_TITLE_SIZE)
 	title.name = "Title"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -208,28 +392,45 @@ func _add_card(id: String) -> void:
 	button.name = "TakeButton"
 	button.text = Texts.TEXTS["levelup.take"]
 	button.focus_mode = Control.FOCUS_NONE
+	button.custom_minimum_size = BUTTON_PLATE_SIZE
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	button.add_theme_font_override("font", HudScript.comic_font())
 	button.add_theme_font_size_override("font_size", BUTTON_SIZE)
 	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color"]:
 		button.add_theme_color_override(c, INK)
-	button.add_theme_stylebox_override("normal", _style(BORDER, INK, 6, PAPER))
-	button.add_theme_stylebox_override("hover", _style(BORDER, INK, 6, RING))
-	button.add_theme_stylebox_override("pressed", _style(BORDER, INK, 6, PRESSED))
-	button.add_theme_stylebox_override("hover_pressed", _style(BORDER, INK, 6, PRESSED))
+	button.add_theme_stylebox_override("normal", _plate("button_plate.png"))
+	button.add_theme_stylebox_override("hover", _plate("button_plate.png", HOVER_TINT))
+	button.add_theme_stylebox_override("pressed", _plate("button_plate_pressed.png"))
+	button.add_theme_stylebox_override("hover_pressed", _plate("button_plate_pressed.png"))
 	button.pressed.connect(take.bind(id))
 	v.add_child(button)
 	_row.add_child(panel)
-	cards.append({"id": id, "panel": panel, "title": title, "desc": desc, "button": button})
+	cards.append({"id": id, "panel": panel, "body": body, "highlight_frame": glow, "title": title, "desc": desc, "button": button})
 
 
-## The highlighted card: a thick yellow ring with a black outline round it.
+## The highlighted card shows T-140's bright gold frame.
 func _refresh() -> void:
 	for i in cards.size():
-		var panel: PanelContainer = cards[i].panel
-		if i == highlight:
-			panel.add_theme_stylebox_override("panel", _style(BORDER_HIGHLIGHT, RING, CORNER, PAPER, OUTLINE_HIGHLIGHT))
-		else:
-			panel.add_theme_stylebox_override("panel", _style(BORDER, INK, CORNER, PAPER))
+		cards[i].highlight_frame.visible = i == highlight
+
+
+## A texture shown `size` big (screen pixels).
+func _art_rect(file: String, node_name: String, size: Vector2) -> TextureRect:
+	var r := TextureRect.new()
+	r.name = node_name
+	r.texture = load(ART + file)
+	r.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	r.stretch_mode = TextureRect.STRETCH_SCALE
+	r.size = size
+	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return r
+
+
+func _plate(file: String, tint := Color.WHITE) -> StyleBoxTexture:
+	var st := StyleBoxTexture.new()
+	st.texture = load(ART + file)
+	st.modulate_color = tint
+	return st
 
 
 func _label(text: String, size: int) -> Label:
@@ -239,23 +440,3 @@ func _label(text: String, size: int) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", INK)
 	return l
-
-
-## A hard-edged (not smoothed) rounded box. `outline` > 0 draws a black ring of
-## that width outside the border (as a shadow).
-static func _style(border: int, border_color: Color, corner: int, fill: Color = PAPER, outline := 0) -> StyleBoxFlat:
-	var st := StyleBoxFlat.new()
-	st.bg_color = fill
-	st.border_color = border_color
-	st.set_border_width_all(border)
-	st.set_corner_radius_all(corner)
-	st.anti_aliasing = false
-	st.content_margin_left = 18.0
-	st.content_margin_right = 18.0
-	st.content_margin_top = 14.0
-	st.content_margin_bottom = 14.0
-	if outline > 0:
-		st.shadow_color = INK
-		st.shadow_size = outline
-		st.shadow_offset = Vector2.ZERO
-	return st

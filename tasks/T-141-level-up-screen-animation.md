@@ -1,7 +1,7 @@
 ---
 id: T-141
 title: The level-up screen animates in, with its red and gold art
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Level-up
@@ -44,6 +44,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started from T-140's art branch with T-144 merged in; part of the one level-up build.
 
 ## Result notes
 
