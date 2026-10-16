@@ -1,0 +1,41 @@
+{
+  "file": "package_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric supply crate gift package, dark charcoal metal box with a dark red lid and a dark red band, a plain pale grey label panel on the front side, rounded edges, cargo handles, night lighting, pixel art, no text",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "direction": "south-east",
+    "text_guidance_scale": 8
+  },
+  "prompt": "isometric supply crate gift package, dark charcoal metal box with a dark red lid and a dark red band, a plain pale grey label panel on the front side, rounded edges, cargo handles, night lighting, pixel art, no text",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T15:12:57+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "tasks/T-075-redgull-logo-art.md",
+    "game/art/logo/redgull_logo_32.png"
+  ],
+  "task": "T-146",
+  "job_status": null,
+  "notes": "T-146 sample, one call",
+  "generator": "game/tools/pixellab_client.py"
+}
