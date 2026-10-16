@@ -1,7 +1,7 @@
 ---
 id: T-145
 title: Art: the Redgull helicopter that drops the gift pack
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, tasks/T-144-gift-pack-drop.md, tasks/T-075-redgull-logo-art.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the T-144 scenes that use the placeholder, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,14 @@ Started on the board's go for one sample; builds on T-144's branch for the one l
 
 Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 
+### 2026-10-16, Needs playtest
+
+QA passed every criterion. Waits in Needs playtest for the one level-up build.
+
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
+
 ## Result notes
 
 - 2026-10-16, open → blocked: Waits for T-144 (the placeholder drop flow).
@@ -99,3 +107,5 @@ Art swapped in for T-144's placeholder, with the Redgull logo. In QA.
 - **Screenshot:** `art-archive/T-145/screenshots/helicopter_in_run.png` (the helicopter carrying the package, from `gift_drop_demo`). Review images of the build steps: `art-archive/T-145/build/`.
 - Note for T-146: the package hangs at `CARRY_OFFSET` (0, 14), now under a larger helicopter, so it overlaps the helicopter's belly a little; adjust only if the board dislikes it.
 - 2026-10-16, in-progress → in-qa: Board approved the sample; red helicopter with logo, 4 rotor frames, swapped into T-144's scene; GUT 808 and Python 274 pass
+- 2026-10-16, in-qa → needs-playtest: QA pass: sprite checks, PixelLab record vs board go, GUT and Python tests all pass
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
