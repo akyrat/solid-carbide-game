@@ -1,7 +1,7 @@
 ---
 id: T-140
 title: "Art: the level-up screen, red and gold, Redgull-themed"
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -52,6 +52,35 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: judge the look, sample first.
 
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-up playtest build.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Asset Generation Agent, sample round (2026-10-16): proposal and plan (written before any PixelLab call)
+
+**Pieces the screen needs, how each fits T-052's layout, and how it is made.** T-052's layout: a white rounded banner (text at 40 px, "Redgull Sent a Gift Pack!") above two 360x300 cards side by side (40 px gap), cards with a 4 px black border and a "Take it" button, a yellow 8 px ring on the highlighted card, the run dimmed 60% behind. Pieces below keep that layout and the comic look (hard stepped corners, black outline), changing white and yellow to red and gold. Shown at 2 screen pixels per art pixel, like the popups.
+
+| # | Piece | Fits T-052 as | Made by |
+|---|---|---|---|
+| 1 | Card frame (9-slice): gold border, dark red inner trim, cream fill, stepped corners | Replaces the white rounded card (360x300) | Script (free) |
+| 2 | Header ribbon: red ribbon with gold edges and folded tails, text drawn on it by the game in Bangers | Replaces the white banner box above the cards | Script (free) |
+| 3 | Backdrop burst: red and gold sunburst rays, dithered-free hard rays, centred behind both cards, transparent | A layer between the dimmed run and the cards; T-141 spins and scales it | Script (free) |
+| 4 | Highlight: bright gold frame with stepped glow, a little larger than the card | Replaces the yellow ring on the chosen card | Script (free) |
+| 5 | "Take it" button plate: gold plate with red edge, normal and pressed | Replaces the white button | Script (free) |
+| 6 | Gift pack emblem: a Redgull gift box with a gold ribbon and bow, a few sparkles; the approved gull logo (`game/art/logo/`) is added on the box by script | Sits on the ribbon's left or centre top and above the cards, the one piece that is real illustration; T-141 can drop it in and bounce it | PixelLab, 1 call (the sample) |
+
+Pieces 1 to 5 are flat graphic shapes, which a script draws crisply with the exact palette and no cleanup (free fixes before paid generations). Only the gift box needs drawn volume and shading, so it is the one piece worth a PixelLab call, and it is the sample.
+
+**Sample: piece 6, the gift pack emblem.**
+- Endpoint `/create-image-pixflux`, one call, 128x128, `no_background` true, outline "single color black outline", shading "medium shading", detail "high detail", `text_guidance_scale` 8, view and direction left to the model except the description asks for a 3/4 isometric view (Visual style, View).
+- Description: "gift box package wrapped in red paper with a gold ribbon and a big gold bow, gold trim, small gold sparkles, 3/4 isometric view, retro pixel art, game icon". No logo or text is asked for (the gull is added by script from the approved logo; no real brands).
+- Cost: 1 generation (the plan's subscription count). Balance before: 4903 of 5000 generations, 0.00 USD credit. Expected after: 4902.
+- One round, no regeneration whatever the result.
+
+**Planned cost of the rest, if the board approves the sample:** pieces 1 to 5 are free script work, 0 generations. Piece 6, if the sample is accepted, is already paid. If the board wants PixelLab variants of the ribbon or burst instead of script ones, about 1 generation per attempt, to be asked first.
