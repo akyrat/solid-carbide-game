@@ -1,7 +1,7 @@
 ---
 id: T-075
 title: Art: the Redgull logo, a seagull's head in profile in one shade of dark red
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead:
@@ -47,6 +47,27 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: judge the sample's look (a seagull's head in profile, minimal, one dark red). Once approved, the other sizes follow from it.
 
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started: rescoped to your direction (seagull head in profile, one shade of dark red, minimal). One PixelLab sample first for your review.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Plan (before the call)
+
+- Balance before: 4909 of 5000 generations (Tier 2 plan; credits USD 0).
+- One call: `/create-image-pixflux`, 64x64, no_background, flat shading, low detail, `single color black outline` (the only outline option that gives a hard silhouette; the outline colour is then flattened away by script), text_guidance_scale 8, 600 s HTTP timeout. Cost: 1 generation. Params file: `art-archive/T-075/req.json`.
+- Canvas 64 px: the logo is a single big shape, 64 px is enough for the beak hook and the eye cut-out to read, and it scales down to 32 by script and up to 128 by integer scale. Pixflux returns one image per call.
+- Flatten by script afterwards (every visible pixel to one dark red, alpha thresholded), check script `game/tools/check_logo_one_colour.py`.
+
+### Result (sample round, 2026-10-16)
+
+- **Calls:** one, `/create-image-pixflux`, params in `art-archive/T-075/req.json`, prompt in the record `art-archive/T-075/redgull_logo_raw.json` and the generation log. 1 generation. Balance before 4909 of 5000, after 4908 (the first balance read right after the call still showed 4909, it lagged). No regeneration.
+- **Raw output:** `art-archive/T-075/redgull_logo_raw.png` (64x64, 3 visible colours: two near-identical reds and one dark brown-red streak).
+- **Flattened sample:** `game/art/logo/redgull_logo_64.png`, made by `game/tools/flatten_logo.py` (every visible pixel to one dark red, RGB 150,24,28; the eye hole is transparent in the raw output already).
+- **Check:** `python game/tools/check_logo_one_colour.py game/art/logo/redgull_logo_64.png` prints PASS (one visible colour, dark red, transparent background, no semi-transparent pixels). Tests: `game/tools/test_check_logo_one_colour.py`. GUT suite: all passed. Python tool tests: `game/tools` 264 OK (1 skipped), `tools` 180 OK.
+- **Honest note for the board's review:** the shape does not read as a seagull's head. PixelLab gave a rounded bell/blob with a square eye hole and a stepped notch on the right; there is no long beak with a hook and no sloping forehead, so it looks more like a bell or a letter R than a gull. The eye cut-out gives a little of the staring look. Not regenerated, per the one-round rule. Cheapest next step if the board wants it: a free hand-drawn or scripted pixel silhouette from the board's own description (no PixelLab), or one more paid call with a changed prompt on the board's say-so.
