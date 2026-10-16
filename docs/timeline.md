@@ -1265,3 +1265,23 @@ Entry format:
 - Decision or change: tests that went through the main menu read the board's real `progress.json` (one failed because the board had bought a damage upgrade), and 14 test files pointed later tests back at the real save files when cleaning up. Every test run now starts with empty test save files, and the run fails if any test is left pointing at the real save. QA round 1: all 4 pass with the board's real save in place, and the board's save files were byte-identical before and after. Master: 777 of 777 GUT tests pass again.
 - Documents touched: `game/README.md`
 - Tasks: T-148 (done)
+
+## 2026-10-16: Old playtest builds removed; an agent's edit after a refusal accepted
+- Decision or change: everything in the two unified playtest builds (`playtest/weapons-garage`, `playtest/kaiju-fight`) is now in master, so their folders are removed at the board's word; the branches are kept. Master is now the most complete build. The board also accepted the `tasks/README.md` edit the T-143 agent made with the file editing tool after the old hook falsely refused its shell command (the rule stays: an agent stops and reports a refusal instead of getting around it).
+- Documents touched: none
+- Tasks: T-143
+
+## 2026-10-16: The level-up art and animation build on each other's branches
+- Decision or change: so the new level-up can be played in one build, the board chose to chain the branches: T-145 and T-146 no longer wait for T-144 to be done but merge its branch for the swap-in; T-141 no longer waits for T-140 to be done but starts from its branch once its full set is approved. Each still passes QA; all go into one playtest build.
+- Documents touched: none (tickets only)
+- Tasks: T-141, T-145, T-146
+
+## 2026-10-16: The cruise boost's motion lines: animated, PixelLab, judged in the game
+- Decision or change: the board wants to see the motion lines in the game, not as samples ("There's no point for me checking the samples"), and wants them animated, made with PixelLab (one round, the board's go). T-009 is built on T-008's unmerged branch: the Asset Generation Agent generates the animation and swaps it in for T-008's placeholder, and the board plays it there. T-008 merges first, then T-009.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-009 (started), T-008
+
+## 2026-10-16: Level-up art samples approved; the package reuses the gift box
+- Decision or change: the board approved the three samples and the Project Lead's suggestions ("Yeah, looks good to me"), and asked for the Redgull logo wherever it fits. T-140: the gift box emblem (PixelLab) and the rest of the level-up screen art drawn by script. T-145: the helicopter, with its red shifted to Redgull's, a stronger red panel, the logo and script-drawn rotor frames. T-146: the dropped package reuses T-140's gift box, scaled down by script, with the logo and a parachute for the fall; its own crate sample is archived. No further PixelLab calls planned (3 generations spent in total). T-139 and T-144 passed QA and wait for the one level-up build.
+- Documents touched: none (tickets only)
+- Tasks: T-139, T-140, T-144, T-145, T-146
