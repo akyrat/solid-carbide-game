@@ -1250,3 +1250,8 @@ Entry format:
 - Decision or change: the approved sounds play at their moments (engine following speed, drift, gun, flames, hits, coins, meteor warning and impact), volumes in `game/data/sfx.json`, credit for "Falling.wav" by Augdog (CC BY 4.0) in `game/README.md`. The board's tweaks: an "SFX volume" slider on the pause screen, 0 to 100, silent (0) by default, saved; first squeezed into the checkbox row and undraggable, then given its own row like the zoom slider. The 60 the board saw on opening was a value saved in its settings file, not the default; the Project Lead cleared it. Board: "LGTM". Final QA passed. One test fails on the board's computer only, because it reads the board's real saved garage upgrades: T-148 (new) fixes that.
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`
 - Tasks: T-077 (done), T-148 (new)
+
+## 2026-10-16: T-143 done: the status hook lets read-only commands through
+- Decision or change: the hook still refuses any shell command that could write a task file's status or qa_rounds line, but now lets through commands it can prove only read (grep, sed -n, head, Select-String and so on); anything it can't prove is still refused. QA round 1: all 5 pass. While working, the agent hit the old false refusal on a README edit and then made the edit with the file editing tool; reported to the board. One GUT test still fails on the board's computer only (it reads the board's real save); T-148 fixes it.
+- Documents touched: `tasks/README.md`
+- Tasks: T-143 (done)
