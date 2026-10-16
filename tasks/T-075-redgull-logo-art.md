@@ -63,6 +63,10 @@ Sample made (1 generation, 4909 -> 4908). It reads poorly: a bell / letter-R blo
 
 Board's allowance: up to 10 more generations to reach a showable logo. Agent resumed; I'll check the candidates before showing the board.
 
+### 2026-10-16, In QA
+
+Round 3 is worth showing: gull head in profile, one dark red. 5 of the 10 allowed generations used (balance ~4904). Pick: redgull_logo_128_pl_s150.png. Waiting for the board's verdict before QA.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -112,3 +116,11 @@ Honest view: the script shape reads clearly as a bird's head in profile with a l
 - Call 5: `art-archive/T-075/redgull_logo_raw_D128_s100.png` (same, strength 100; params `req_D128_s100.json`). The eye became a round dot (loses the menacing slant) and the neck gets a notch. Worse.
 - Flattened picks in `game/art/logo/`: `redgull_logo_128_pl_s150.png` (best PixelLab), `redgull_logo_128_script_D.png` and `redgull_logo_64_script_D.png` (script only), plus `redgull_logo_128_pl_s100.png`. All pass the check script.
 - Honest view: variant D (script) and its s150 refinement read as a gull's head: domed round crown, long slim bill nearly straight along the top, small hook at the tip with a gonys bump beneath, slanted eye hole. The slant is mild, so "slightly evil" is subtle. The neck block is still somewhat large for a logo mark.
+
+### Round 4 plan (the board's request: 1 generation; total would be 6 of 10)
+
+- One call: `/create-image-pixflux` 128x128, init_image `art-archive/T-075/silhouette_init_128.png` (the round 2 raptor-like script silhouette, as the board asked), init strength 80 (lower than the 200 used for `redgull_logo_raw_03_init128_s200.png`, which came back almost identical), prompt "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body", no_background, `single color black outline`, flat shading, low detail, text_guidance_scale 8, 600 s timeout. Raw saved as `art-archive/T-075/redgull_logo_raw_init128_s80.png`. Cost 1 generation.
+
+### Round 4 result
+
+Call made as planned (1 generation; total 6 of 10 spent). Balance read 4904 before and 4904 after (lagging; about 4903 true). Raw: `art-archive/T-075/redgull_logo_raw_init128_s80.png` (params `req_init128_s80.json`); flattened: `game/art/logo/redgull_logo_128_pl_init_s80.png`, check script PASS. Result: even at strength 80 PixelLab stayed close to the init silhouette (slightly rounder, cleaner curves, a bumpy eye hole); it still reads as a raptor/vulture, as the init does.
