@@ -1,7 +1,7 @@
 ---
 id: T-144
 title: Gift pack drop: a helicopter drops the gift pack, and driving over it opens the level-up screen (placeholders)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/weapons.md, docs/visual-style.md, game/README.md, tasks/T-052-level-up-screen.md, tasks/T-043-level-up-weapon-choices.md, tasks/T-112-level-up-particles-placeholder.md]
 files_expected_to_change: [the run and level-up flow scripts and scenes, new helicopter and package scenes with placeholder art, their GUT tests, docs/game-loop-architecture.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -74,6 +74,10 @@ Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-u
 
 Built on placeholders: helicopter crosses, drops the package 8 units ahead on open road, run keeps going, driving over it opens the screen; one package per level-up, edge arrow when off screen. Tuning in game/data/gift_pack.json. In QA now.
 
+### 2026-10-16, Needs playtest
+
+QA passed all 6 criteria. Waits in Needs playtest for the one level-up build, once the art is swapped in.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -100,3 +104,16 @@ Screenshot fixtures: `res://tests/fixtures/gift_drop_demo.tscn` (helicopter cros
 
 For the board: with nothing left to offer (both weapons at their last tier) a package still drops, and picking it up skips the choice at once (T-043's rule), so nothing visible happens. A landed package behind a building is covered by it (the building does not fade for packages).
 - 2026-10-16, in-progress → in-qa: Gift pack drop built with placeholders: each level-up sends a helicopter across the screen that drops a package ahead of the car on open road; driving over it opens the level-up screen (run pauses then); off-screen arrow; numbers in game/data/gift_pack.json; art swap via GiftHelicopter/Sprite and GiftPackage/Sprite; GUT 807/807, Python tool tests OK
+- 2026-10-16, in-qa → needs-playtest: QA pass: GUT 807/807, game/tools 270 OK, tools 182 OK; five answers covered; placeholders not red; numbers from gift_pack.json; docs updated
+
+**Game Loop Agent, 2026-10-16, playtest build (C:\solid-carbide-worktrees\playtest-level-up, branch playtest/level-up).** At the coordinator's request:
+
+- Finished the T-146 merge there ("Playtest build: merge task/T-146-gift-pack-package-art", 885cd47): the README keeps T-145's helicopter text and T-146's package text, the PixelLab log keeps all four new lines (by time), and `test_gift_drops.gd` checks the real `helicopter_sheet.png` and `package.png` paths, keeps T-145's rotor test and T-146's parachute test, and checks the two placeholder PNGs for no red (the final art is Redgull art, so red is allowed on it).
+- Fixed the drop's layout for the final art (8a2e881), all in `game/scripts/run/gift_drops.gd` with the numbers in `game/data/gift_pack.json` (new keys read by `GiftPackData`: `screen_margin()`, `hang_below_px()`, `min_fall()`):
+  - The helicopter flies `drop_height_px` above the landing spot, but its frame's top (read from its sprite, so it follows the art) never comes closer than `helicopter.screen_margin_px` to the screen's top edge; this is worked out every frame while it carries the package, since the camera follows the car. It is fully on screen at the default zoom and at the board's saved zoom (about 2.4).
+  - The package hangs `package.hang_below_px` (80) under the helicopter's centre: the box's top is about 9 px below the skids (`CARRY_OFFSET` (0, 14) is gone).
+  - The fall now floats down at a steady speed for `package.fall_seconds` (1.4 s) under T-146's parachute, at least `package.min_fall_px` (60) when the screen has room, and never with the parachute's top above the screen's top edge.
+  - New numbers: `helicopter.speed_px_per_second` 360 (was 520), `helicopter.drop_height_px` 200 (was 90), `helicopter.screen_margin_px` 12 (new), `helicopter.offscreen_margin_px` 80, `package.hang_below_px` 80 (new), `package.fall_seconds` 1.4 (was 0.7), `package.min_fall_px` 60 (new); `land_ahead_units` 8, `clearance_units` 1.0 and `pickup_radius_units` 2.0 unchanged. The board's five answers are unchanged.
+- Known limit: at the board's saved zoom (about 2.4) the art (helicopter 80 drawn px tall, box 43, box plus parachute 94) fills over half the visible height, so when the car heads up the screen the landing spot is in the top third and there is no room above it: the helicopter stays fully on screen and the package hangs below it, but the package lands with little or no fall and its parachute is partly above the screen's edge. When the car heads sideways or down the screen, and at the default zoom in every direction, the whole drop shows (helicopter, hang, parachute fall, landing). Cheapest fixes, for the board to choose: draw the helicopter and package smaller, or play at a wider zoom.
+- Tests: a new test checks the layout at both zooms over 8 headings (helicopter top on screen, box below the belly, the fall at least `min_fall_px` when there is room, parachute on screen, parachute shown for `fall_seconds`, box look once landed); the data tests cover the new keys. Full GUT suite 819/819; `unittest discover` game/tools 278 OK (1 skipped), tools 182 OK.
+- Screenshots (playtest folder, `art-archive/T-144/screenshots/`): `sheet_saved_up.png`, `sheet_saved_down.png`, `sheet_default_up.png`, `sheet_default_down.png` (6 frames each: helicopter crossing, carried, parachute falling, landed) with the single frames `<variant>_<frame>.png`, and `arrow_saved.png` (edge arrow). New fixtures `gift_drop_down_demo.tscn`, `gift_drop_default_zoom_demo.tscn`, `gift_drop_default_zoom_down_demo.tscn`.
