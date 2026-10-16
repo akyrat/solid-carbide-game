@@ -1,7 +1,7 @@
 ---
 id: T-075
 title: Art: the Redgull logo, a seagull's head in profile in one shade of dark red
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Art
@@ -151,3 +151,4 @@ Call made as planned (1 generation; total 6 of 10 spent). Balance read 4904 befo
 - [x] Final files: PASS. `redgull_logo_128/64/32.png` exist in `game/art/logo/`, one colour 135,17,27, with `.import` files; the other candidates are in `art-archive/T-075/`, not `game/art/`; the headless import in the GUT run raised no errors.
 - [x] Tests: PASS. GUT 745/745 passing; `game/tools` 265 OK (1 skipped); `tools` 180 OK.
 - 2026-10-16, in-qa → needs-playtest: QA round 1: all four criteria pass
+- 2026-10-16, needs-playtest → done: The board's review: 'the icons look good to me, merge them'. Count correction: 6 generations in total (the first sample plus 5 of the board's allowance of 10); where the notes say '6 of 10', read 5 of the 10 extra.
