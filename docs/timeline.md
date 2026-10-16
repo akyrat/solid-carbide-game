@@ -1285,3 +1285,8 @@ Entry format:
 - Decision or change: the board approved the three samples and the Project Lead's suggestions ("Yeah, looks good to me"), and asked for the Redgull logo wherever it fits. T-140: the gift box emblem (PixelLab) and the rest of the level-up screen art drawn by script. T-145: the helicopter, with its red shifted to Redgull's, a stronger red panel, the logo and script-drawn rotor frames. T-146: the dropped package reuses T-140's gift box, scaled down by script, with the logo and a parachute for the fall; its own crate sample is archived. No further PixelLab calls planned (3 generations spent in total). T-139 and T-144 passed QA and wait for the one level-up build.
 - Documents touched: none (tickets only)
 - Tasks: T-139, T-140, T-144, T-145, T-146
+
+## 2026-10-16: T-008 and T-009 done: the cruise boost with animated motion lines
+- Decision or change: when W jumps the car to cruise speed, three thin pale-cyan motion lines appear at the rear bumper, follow the car and slide back and thin out over about a third of a second (5 frames at 14 fps, 16 directions). PixelLab: 2 generations as planned (the first came back empty and was not regenerated; a script drew the first frame for the second). The board played it in the game, no samples: "LGTM". T-008 (the boost signal and effect) merged first, then T-009 (the art). The QA agent set T-009's qa_rounds back to 1 by hand after the status script counted 2 (raised with the board).
+- Documents touched: `docs/visual-style.md`, `game/README.md`
+- Tasks: T-008 (done), T-009 (done)

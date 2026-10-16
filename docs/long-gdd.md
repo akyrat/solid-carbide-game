@@ -654,6 +654,10 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
+#### Cruise boost motion lines
+
+Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") with PixelLab: three thin pale-cyan and white lines that streak backwards and vanish in five frames (about a third of a second), right behind the car, following it. The first frame was drawn by a script after PixelLab's first call came back empty; PixelLab animated it. The game sheet (`game/art/effects/boost_lines.png`, with its record) holds the five frames turned by a script to 16 screen directions, so the lines always trail the car without the engine rotating pixel art. Every generation and its record is in `art-archive/T-009/`.
+
 ### References
 
 - **Car look, colour:** a dark-green 1967 Ford Mustang fastback (inspiration only; no real badges).
@@ -804,6 +808,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `a4e223167564b38196fcf58905daa6cf53a210dc1d89a98e99b7eb5fcacb5d08` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
-| `visual-style.md` | `4eb2aa74ee31ec668c19c41472641aa93d7c5f0b9b2d28ff7b019ad4b135249b` |
+| `visual-style.md` | `e40a08de0c7dce42dda2e6341e16bd3f1704512583e65c023d8677c64f44c194` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
 | `hud-and-menus.md` | `d5a92a43d6ace8a7f2a62c421c46173a7c78d150290c6e59e1ac0edc468fc909` |

@@ -1,0 +1,17 @@
+{
+ "description": "pixel art speed lines effect, three thin straight horizontal motion lines, anime whoosh streaks, pale cyan and white, tapered ends, side by side, empty transparent background, no object, no character",
+ "image_size": {
+  "width": 64,
+  "height": 64
+ },
+ "no_background": true,
+ "outline": "lineless",
+ "shading": "flat shading",
+ "detail": "low detail",
+ "text_guidance_scale": 8,
+ "seed": 9001,
+ "color_image": {
+  "type": "base64",
+  "base64": "iVBORw0KGgoAAAANSUhEUgAAABQAAAAECAYAAACOXx+WAAAALElEQVR4nGP88ef/fwYkcOHLX2Quw5EXX1D5F16g8B8cOIHCZ0LhUQEMfgMBVLQOP4oW7eEAAAAASUVORK5CYII="
+ }
+}

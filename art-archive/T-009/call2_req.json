@@ -1,0 +1,10 @@
+{
+ "first_frame": {
+  "type": "base64",
+  "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAvklEQVR4nO3YOwrCQBQF0DfYWlimtExh4QJchO7FRVm6nCzBXWihgvjBx5Bg1HPqIZCbwL1MBAAAAAAA8C9KXw9a77pj9uxq2eTONdPUueV0kjo3X2zi0O3LIAEMIRtqNtBtO3t43xIj1bTr9B+Vdf/1Af5e6bPfa6qppvdrNsCrPVBiRGrCrgn6dg+U+OHef8UeALgo8cFKy1TYu22Q2QHP7gGuSozcuyAzIT67B/iKAJqetoHeBwAAAACIsxOsTy0KG3MFMwAAAABJRU5ErkJggg=="
+ },
+ "action": "speed lines whoosh past: the thin horizontal motion lines streak quickly to the left, stretch thinner and vanish one by one, the last frame almost empty",
+ "frame_count": 8,
+ "seed": 9002,
+ "no_background": true
+}
