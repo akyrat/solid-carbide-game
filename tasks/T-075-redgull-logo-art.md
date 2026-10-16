@@ -59,6 +59,10 @@ Started: rescoped to your direction (seagull head in profile, one shade of dark 
 
 Sample made (1 generation, 4909 -> 4908). It reads poorly: a bell / letter-R blob with an eye hole, no gull beak or forehead. QA held until the board picks the next step: free scripted silhouette (recommended) or one more paid call.
 
+### 2026-10-16, In QA
+
+Board's allowance: up to 10 more generations to reach a showable logo. Agent resumed; I'll check the candidates before showing the board.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -78,3 +82,21 @@ Written by the agent when it finishes.
 - **Check:** `python game/tools/check_logo_one_colour.py game/art/logo/redgull_logo_64.png` prints PASS (one visible colour, dark red, transparent background, no semi-transparent pixels). Tests: `game/tools/test_check_logo_one_colour.py`. GUT suite: all passed. Python tool tests: `game/tools` 264 OK (1 skipped), `tools` 180 OK.
 - **Honest note for the board's review:** the shape does not read as a seagull's head. PixelLab gave a rounded bell/blob with a square eye hole and a stepped notch on the right; there is no long beak with a hook and no sloping forehead, so it looks more like a bell or a letter R than a gull. The eye cut-out gives a little of the staring look. Not regenerated, per the one-round rule. Cheapest next step if the board wants it: a free hand-drawn or scripted pixel silhouette from the board's own description (no PixelLab), or one more paid call with a changed prompt on the board's say-so.
 - 2026-10-16, in-progress → in-qa: One sample made; check script passes; honest note: it does not read as a gull's head (blob, no beak).
+
+### Round 2 plan (board's allowance: up to 10 more generations)
+
+- Free first: `game/tools/draw_gull_silhouette.py` draws a one-colour gull-head silhouette by script (long straight beak with a hook at the tip, flat forehead, angled eye cut-out): `art-archive/T-075/silhouette_init_64.png` and `silhouette_init_128.png`. No PixelLab.
+- Paid: `/create-image-pixflux` with `init_image` (the silhouette) so PixelLab refines a shape that already reads as a gull. Prompt: "logo, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body", no_background, flat shading, low detail, 600 s timeout. One variable changes per call; each call is listed below with its settings, cost and balance as it is made. Cost: 1 generation per call, cap 10.
+
+### Round 2 calls (2 of the 10 allowed; stopped early)
+
+Both: `/create-image-pixflux`, description "logo, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body", no_background, `single color black outline`, flat shading, low detail, text_guidance_scale 8, `init_image` = the script silhouette, 600 s timeout, 1 generation each. Balance: 4908 before call 1; 4907 after call 1 and still 4907 read after call 2 (the balance lags by one call; true figure about 4906).
+
+1. `art-archive/T-075/redgull_logo_raw_02_init64_s400.png`: 64x64, init `silhouette_init_64.png`, strength 400. Result: almost identical to the init image (PixelLab only copied it). Params `req_02.json`.
+2. `art-archive/T-075/redgull_logo_raw_03_init128_s200.png`: 128x128, init `silhouette_init_128.png`, strength 200 (one change from call 1: size and strength). Result: again the init shape, with smoother edges. Params `req_03.json`.
+
+Stopped after 2 calls: PixelLab at these strengths only reproduces the script shape, so more calls would only spend the allowance. The shape itself (the script silhouette) is what the board should judge; changing it is free.
+
+Candidates under `game/art/logo/` (all pass `check_logo_one_colour.py`): `redgull_logo_64_script.png` (script only, no PixelLab), `redgull_logo_64_init.png` (call 1 flattened), `redgull_logo_128.png` (call 2 flattened). The first one-round sample `redgull_logo_64.png` is the rejected blob. Script: `game/tools/draw_gull_silhouette.py`.
+
+Honest view: the script shape reads clearly as a bird's head in profile with a long, straight beak and a hooked tip, and the slanted eye hole gives the menacing look. It reads as a gull more than the first sample did, but the head and neck are heavy and boxy, so it can also pass for a raptor or a vulture; a gull wants a thinner beak, a rounder crown and a slimmer neck. Not yet a finished logo.
