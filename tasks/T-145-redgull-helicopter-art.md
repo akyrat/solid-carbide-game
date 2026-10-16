@@ -77,3 +77,11 @@ Started on the board's go for one sample; builds on T-144's branch for the one l
 2. Free script steps after it: cut the palette to 30 colours (`game/tools/reduce_palette.py`), make the dark and light review image. No more PixelLab calls this round; if the sample comes out wrong, I report it and do not regenerate.
 
 **Planned cost of the full set (after the board approves the sample):** 0 generations if the sample is approved as it is (mirror, 4 rotor frames and the logo stamp are scripts). If the board wants a second drawn heading: 1 generation (`/rotate`), or up to 2 for a pair of retries it asks for.
+
+### Sample result (2026-10-16)
+
+- **Call made:** one `/create-image-pixflux`, exactly as planned (`art-archive/T-145/helicopter_sample_request.json`; record `helicopter_sample_raw.json`; also in `game/art/pixellab-generation-log.jsonl`). Cost: **1 generation**. Balance before 4902, after **4901** of 5000 (the balance lagged a minute behind the call, as in earlier tasks). No regeneration.
+- **Files** (all in `art-archive/T-145/`): `helicopter_sample_raw.png` (raw, 192 x 160), `helicopter_sample.png` (palette cut to 30 colours by `game/tools/reduce_palette.py`, free), `helicopter_sample_review.png` (4x nearest-neighbour, dark and light background side by side).
+- **Check** (`check_sprite_rules.py`): transparent background, 0 semi-transparent pixels, 30 colours, the helicopter fills 150 x 123 pixels of the canvas.
+- **Problems to report, not fixed:** (1) the nose points to the south-west (down-left), not the south-east I asked for; I did not regenerate. For the sweep that way the sprite is used as it is and the mirror gives the other way, so this only changes which way is "drawn" and which is "mirrored". (2) The red is a crimson-pink, brighter than the logo's 135,17,27; a free script step can shift the red accents to the logo's red. (3) The red is thin stripes; there is no big flat side panel for the logo, only the door area, so the logo stamp would be small (the 32 px logo roughly fits the rear door). (4) The rotor is four long static blades; the 4-frame spin would be a script drawing.
+- Status not changed; the full set waits for the board's go.
