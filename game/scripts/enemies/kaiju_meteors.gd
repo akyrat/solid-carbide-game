@@ -7,6 +7,8 @@ extends Node
 ## a meteor lands on each. A meteor landing with the car's centre within
 ## impact_radius_units damages the car (RunState.damage_car(impact_damage)) and
 ## knocks it back away from the landing point (car.apply_knockback(knockback)).
+## A boulder stays boulder_lifetime_seconds after it lands, then fades over
+## boulder_fade_seconds and is removed (T-142).
 ## Each landed meteor leaves a plain boulder there through the map's
 ## add_meteor_boulder() (T-097), only at spots its can_place_meteor_boulder()
 ## accepts. Numbers: res://data/enemies.json's "meteor_attack"
@@ -89,6 +91,8 @@ var windup_left := -1.0
 var warnings: Array = []
 ## Landed meteors whose boulder waits for the car or the kaiju to move off: Vector2 (units).
 var pending_boulders: Array = []
+## Boulders on the map that will fade (T-142): {"body": Node, "age": seconds since it was placed}.
+var standing_boulders: Array = []
 ## Dust bursts being drawn: {units: Vector2, age: float}.
 var dust: Array = []
 
@@ -151,6 +155,7 @@ func clear() -> void:
 	windup_left = -1.0
 	warnings.clear()
 	pending_boulders.clear()
+	standing_boulders.clear()
 	dust.clear()
 	_was_live = false
 	_redraw()
@@ -200,6 +205,7 @@ func step(dt: float) -> void:
 		warnings.erase(w)
 		land(w.units)
 	_place_waiting_boulders()
+	_age_boulders(dt)
 	for d in dust:
 		d.age += dt
 	dust = dust.filter(func(d) -> bool: return d.age < DUST_SECONDS)
@@ -301,9 +307,28 @@ func _place_waiting_boulders() -> void:
 		placed.append(p)
 		if map.can_place_meteor_boulder(p):
 			var body: Node = map.add_meteor_boulder(p)
+			standing_boulders.append({"body": body, "age": 0.0})
 			boulder_placed.emit(p, body)
 	for p in placed:
 		pending_boulders.erase(p)
+
+
+## Ages every boulder a meteor left (T-142): it stays boulder_lifetime_seconds,
+## then fades out over boulder_fade_seconds (still drawn and still blocking) and
+## is removed from the map, so it no longer blocks anything.
+func _age_boulders(dt: float) -> void:
+	var life := stat("boulder_lifetime_seconds")
+	var fade := maxf(stat("boulder_fade_seconds"), 0.0001)
+	for b in standing_boulders.duplicate():
+		b.age += dt
+		var body: Node = b.body
+		if not is_instance_valid(body):
+			standing_boulders.erase(b)
+		elif b.age >= life + fade:
+			map.remove_meteor_boulder(body)
+			standing_boulders.erase(b)
+		elif b.age > life:
+			map.set_meteor_boulder_alpha(body, 1.0 - (b.age - life) / fade)
 
 
 ## True when a boulder at `units` would be on the car's 1 x 1 body or the kaiju's.

@@ -454,6 +454,7 @@ What the game does now, with the numbers in `game/data/enemies.json` (see Refere
 - **Contact damage:** while a minion touches the car's body, it hits the car once every half second, the first hit as soon as it touches: 5 health off the car (which also cuts the combo, Game loop architecture) and a knockback away from the minion. Several minions touching the car each hit it.
 - **Health and death:** 4 health. The weapons damage it; at 0 it dies and disappears.
 - **Coins:** a dying minion drops coins 60% of the time, 2 coins each time, around where it died: placeholder gold coins on the ground. Driving over a coin collects it and adds it to the run's coins. Coins stay on the ground until collected or the run ends.
+- **Boulders fade:** a boulder a meteor left stays 10 seconds after it lands, fully visible and solid. Then it fades out over 2 seconds (still drawn and still solid while it fades) and is gone: it no longer blocks the car or anything else, and its spot is free again. The 10 seconds and the 2-second fade are in `meteor_attack` (`boulder_lifetime_seconds`, `boulder_fade_seconds`; the fade's length is a proposed number). The map's own boulders never fade. The flat view's placeholder circles vanish at the end without fading (only the boulder art is see-through).
 - **Pause and new runs:** minions and coins stand still while the game is paused, and are all gone when a new run starts.
 - **Draw order:** minions and coins are drawn in the buildings' depth order like the car: behind a building that covers them, in front of the rest. Buildings fade only for the car, so a minion behind an opaque skyscraper is hidden by it.
 
@@ -797,7 +798,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `c136129eae0ad46d71b1f5d4ffecebc367728f355ca394780ef9d633d463f4c4` |
 | `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
-| `enemies.md` | `f2afc21cb095c1be3af0c6719ff5f5d7519b4152cdc30368178370e120c89ffd` |
+| `enemies.md` | `0301693769b225f4d7249e0b4616a7cef9d18c2490e41be9bf144bfa53d9d232` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `748fb7e9a929f81ba844967da2e85e9e5ef25c65116714bf0bb64a7f5443bfd6` |

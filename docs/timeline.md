@@ -1220,3 +1220,8 @@ Entry format:
 - Decision or change: from the board's playtest drag on T-077: "add a settings slider for the SFX volume. default it to 0." The pause screen gets an "SFX volume" slider, 0 to 100, starting at 0 (sound effects silent until the player turns them up; the board confirmed this reading), saved between sessions like the zoom. Built as a quick tweak on T-077 by the SFX Agent.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-077
+
+## 2026-10-16: T-142 done: meteor boulders fade away
+- Decision or change: a boulder left by a meteor stays 10 seconds, then fades over 2 seconds and is removed (no longer blocks the car); the map's own boulders stay. Both numbers are in `game/data/enemies.json`; the 2-second fade was the agent's proposal and the board kept it. The board playtested it: "LGTM". The early-kaiju playtest switch was set back off before merging.
+- Documents touched: `docs/enemies.md`, `game/README.md`
+- Tasks: T-142 (done)

@@ -303,3 +303,86 @@ func test_placeholders_are_not_redgull_red() -> void:
 		assert_false(reddish, "no red: %s" % c)
 		assert_gt(Vector3(c.r, c.g, c.b).distance_to(Vector3(redgull.r, redgull.g, redgull.b)), 0.5,
 			"far from Redgull red: %s" % c)
+
+
+# ---- Boulders fade away (task T-142) ---------------------------------------------------------
+
+## Lands one meteor on a good spot far from the car and returns its boulder body.
+func _landed_boulder() -> Node:
+	_kaiju_near()
+	met.enabled = false  # no scheduled attacks: only this one meteor
+	var spot := _good_spot(8.0)
+	var got := []
+	met.boulder_placed.connect(func(_u: Vector2, body: Node) -> void: got.append(body))
+	met.add_warning(spot)
+	_steps(m["warning_seconds"] + DT)
+	assert_eq(got.size(), 1, "the boulder is placed")
+	return got[0]
+
+
+func _sprite_of(body: Node) -> Node:
+	return run.map._boulder_sprite_by_key.get(body.get_meta("boulder_key"))
+
+
+func test_boulder_is_fully_visible_and_blocking_just_before_the_lifetime() -> void:
+	var body := _landed_boulder()
+	_steps(m["boulder_lifetime_seconds"] - 0.5)
+	assert_true(is_instance_valid(body) and body.is_inside_tree(), "still in the scene")
+	assert_true(body in run.map.meteor_boulder_bodies, "still a body on the map")
+	assert_eq(run.map.meteor_boulders.size(), 1)
+	var sp := _sprite_of(body)
+	if sp != null:
+		assert_almost_eq(sp.modulate.a, 1.0, 0.001, "fully visible")
+	assert_false(run.map.can_place_meteor_boulder(Vector2(body.get_child(0).position / 16.0)), "its spot still blocked")
+
+
+func test_boulder_fades_after_the_lifetime_then_is_removed() -> void:
+	var body := _landed_boulder()
+	var sp := _sprite_of(body)
+	_steps(m["boulder_lifetime_seconds"] + m["boulder_fade_seconds"] / 2.0)
+	assert_true(is_instance_valid(body) and body.is_inside_tree(), "still there while it fades")
+	if sp != null:
+		assert_lt(sp.modulate.a, 1.0, "going transparent")
+		assert_gt(sp.modulate.a, 0.0, "not yet gone")
+		var half: float = sp.modulate.a
+		_steps(m["boulder_fade_seconds"] / 4.0)
+		assert_lt(sp.modulate.a, half, "fainter over the fade")
+	var centre: Vector2 = body.get_child(0).position / 16.0
+	_steps(m["boulder_fade_seconds"])
+	assert_false(is_instance_valid(body) and body.is_inside_tree(), "no longer in the scene")
+	assert_false(body in run.map.meteor_boulder_bodies)
+	assert_eq(run.map.meteor_boulders.size(), 0)
+	assert_eq(met.standing_boulders.size(), 0)
+	assert_true(run.map.can_place_meteor_boulder(centre), "it blocks nothing now")
+
+
+func test_a_removed_boulder_has_left_the_physics_world() -> void:
+	var body := _landed_boulder()
+	assert_eq(body.get_parent(), run.map.physics_root, "in the physics world while it stands")
+	_steps(m["boulder_lifetime_seconds"] + m["boulder_fade_seconds"] + 0.1)
+	assert_null(body.get_parent(), "taken out of the physics world, so the car cannot hit it")
+
+
+func test_the_maps_own_boulders_are_not_removed() -> void:
+	var own: int = run.map.boulder_bodies.size()
+	var all_before: int = run.map.all_boulders().size()
+	var body := _landed_boulder()
+	_steps(m["boulder_lifetime_seconds"] + m["boulder_fade_seconds"] + 1.0)
+	assert_false(is_instance_valid(body) and body.is_inside_tree())
+	assert_eq(run.map.boulder_bodies.size(), own)
+	assert_eq(run.map.all_boulders().size(), all_before, "back to the map's own boulders")
+	for b in run.map.boulder_bodies:
+		assert_true(is_instance_valid(b) and b.is_inside_tree())
+
+
+func test_the_lifetime_and_fade_come_from_the_data() -> void:
+	assert_eq(float(m["boulder_lifetime_seconds"]), 10.0)
+	assert_gt(m["boulder_fade_seconds"], 0.0)
+	met._stats = met._stats.duplicate()
+	met._stats["boulder_lifetime_seconds"] = 3.0
+	met._stats["boulder_fade_seconds"] = 1.0
+	var body := _landed_boulder()
+	_steps(2.5)
+	assert_true(is_instance_valid(body) and body.is_inside_tree())
+	_steps(1.6)
+	assert_false(is_instance_valid(body) and body.is_inside_tree(), "gone at lifetime + fade from the data")
