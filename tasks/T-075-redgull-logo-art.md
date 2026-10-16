@@ -1,10 +1,10 @@
 ---
 id: T-075
 title: Art: the Redgull logo, a seagull's head in profile in one shade of dark red
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
-lead:
+lead: Art
 epic: art
 milestone: mvp
 user_facing_text: no
@@ -36,12 +36,14 @@ Because it is a flat one-colour logo, the sprite rules for outline, shading and 
 
 Use the existing client, `game/tools/pixellab_client.py`, with a 600 s HTTP timeout. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. Never delete generated art.
 
+**Allowance** (board, 2026-10-16, after the first sample read as a bell or the letter R): up to **10 more generations**, spent at the agent's judgement, to reach a sample worth showing the board. This replaces the one-round rule for this task only. The agent judges its own candidates and stops early once one is good; it never goes over 10.
+
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 ## Acceptance criteria
 
 - [ ] A check script shows the sample uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; the calls after the first sample stay within the board's allowance of 10 generations (QA: pass / fail)
 - [ ] The sample is saved under `game/art/` with its raw output in `art-archive/T-075/`, and Godot imports it (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
@@ -52,6 +54,10 @@ The board's review: judge the sample's look (a seagull's head in profile, minima
 ### 2026-10-16, Open → In progress
 
 Started: rescoped to your direction (seagull head in profile, one shade of dark red, minimal). One PixelLab sample first for your review.
+
+### 2026-10-16, In QA
+
+Sample made (1 generation, 4909 -> 4908). It reads poorly: a bell / letter-R blob with an eye hole, no gull beak or forehead. QA held until the board picks the next step: free scripted silhouette (recommended) or one more paid call.
 
 ## Result notes
 
@@ -71,3 +77,4 @@ Written by the agent when it finishes.
 - **Flattened sample:** `game/art/logo/redgull_logo_64.png`, made by `game/tools/flatten_logo.py` (every visible pixel to one dark red, RGB 150,24,28; the eye hole is transparent in the raw output already).
 - **Check:** `python game/tools/check_logo_one_colour.py game/art/logo/redgull_logo_64.png` prints PASS (one visible colour, dark red, transparent background, no semi-transparent pixels). Tests: `game/tools/test_check_logo_one_colour.py`. GUT suite: all passed. Python tool tests: `game/tools` 264 OK (1 skipped), `tools` 180 OK.
 - **Honest note for the board's review:** the shape does not read as a seagull's head. PixelLab gave a rounded bell/blob with a square eye hole and a stepped notch on the right; there is no long beak with a hook and no sloping forehead, so it looks more like a bell or a letter R than a gull. The eye cut-out gives a little of the staring look. Not regenerated, per the one-round rule. Cheapest next step if the board wants it: a free hand-drawn or scripted pixel silhouette from the board's own description (no PixelLab), or one more paid call with a changed prompt on the board's say-so.
+- 2026-10-16, in-progress → in-qa: One sample made; check script passes; honest note: it does not read as a gull's head (blob, no beak).
