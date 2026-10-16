@@ -53,12 +53,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A GUT test shows that a level-up no longer opens the level-up screen by itself, and instead starts the helicopter, which crosses the screen and drops a package that lands on the map (QA: pass / fail)
-- [ ] A GUT test shows that when the car overlaps the landed package, the package is removed and the level-up screen opens with the same offers as before (T-043), and the run pauses as it did (QA: pass / fail)
-- [ ] GUT tests cover the board's five answers above (QA: pass / fail)
-- [ ] The placeholder helicopter and package are not Redgull red, and the tuning numbers are read from a data file (a test checks both) (QA: pass / fail)
-- [ ] `game/README.md` says which node or texture each art task replaces, and `docs/game-loop-architecture.md` describes the built flow (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A GUT test shows that a level-up no longer opens the level-up screen by itself, and instead starts the helicopter, which crosses the screen and drops a package that lands on the map (QA: pass)
+- [ ] A GUT test shows that when the car overlaps the landed package, the package is removed and the level-up screen opens with the same offers as before (T-043), and the run pauses as it did (QA: pass)
+- [ ] GUT tests cover the board's five answers above (QA: pass)
+- [ ] The placeholder helicopter and package are not Redgull red, and the tuning numbers are read from a data file (a test checks both) (QA: pass)
+- [ ] `game/README.md` says which node or texture each art task replaces, and `docs/game-loop-architecture.md` describes the built flow (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: play a run, level up, watch the helicopter drop the package, and drive over it to open the level-up screen.
 
@@ -69,6 +69,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-16, Open → In progress
 
 Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-up playtest build.
+
+### 2026-10-16, In QA
+
+Built on placeholders: helicopter crosses, drops the package 8 units ahead on open road, run keeps going, driving over it opens the screen; one package per level-up, edge arrow when off screen. Tuning in game/data/gift_pack.json. In QA now.
 
 ## Result notes
 
