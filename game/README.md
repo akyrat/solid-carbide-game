@@ -282,16 +282,24 @@ The main menu (task T-054, UI Agent): `scenes/menu/main_menu.tscn` with its scri
 - **Signals:** `start_pressed`, `garage_pressed`, `exit_pressed`, one per button. The menu does nothing else when a button is pressed.
 - **Tests:** `tests/unit/test_main_menu.gd` (the texts and each signal), part of the GUT suite.
 
+## Garage screen
+
+Task T-058 (UI Agent). `scenes/menu/garage_screen.tscn` with `scripts/menu/garage_screen.gd` (`GarageScreen`). What it shows: `docs/garage-design.md`, Content. Reached from the main menu's Garage button (wired in T-089, `GameFlow.show_garage()`).
+
+- **Use it:** set `progress` (a `PlayerProgress`, normally `GameFlow.progress`) before adding it to the tree; if left null it reads the save file itself. It redraws on the progress object's `changed` signal. Signal: `back_pressed`. Standalone: open the scene in the editor and press F6.
+- **Screenshot** (a save with 120 coins and one upgrade at its last level), from the repo root: `bash game/tools/screenshot.sh res://tests/fixtures/garage_screen_demo.tscn screenshots/garage.png 20`.
+- **Tests:** `tests/unit/test_garage_screen.gd` (the approved text, buying, unaffordable, maxed, back signal).
+
 ## Screen flow
 
 Task T-055 (Game Loop Agent). `scenes/game/game.tscn` (script `scripts/game/game_flow.gd`, class `GameFlow`) is the project's main scene: pressing F5 in the editor, or `"$GODOT_BIN" --path game`, starts the game on the main menu. The flow is Game loop architecture, Content, "Screen flow".
 
 - **Start** removes the menu and starts a fresh run (`scenes/run/run.tscn`), with the pause screen (Escape) added to the run and the camera zoom read from the saved setting.
 - **When the run ends,** win or loss (`RunState.run_ended`), the run is removed and the main menu comes back straight away, with no message.
-- **Garage** does nothing yet (task T-089 wires it to the garage screen).
+- **Garage** (T-089) replaces the menu with the garage screen (`game.garage`, given `game.progress`); its back button (`back_pressed`) brings the main menu back.
 - **Exit** closes the game (`get_tree().quit()`, through `quit_game`, which tests replace).
-- Only one screen is on show at a time, as the only child of `Game`: `game.menu` or `game.run` (the other is null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
-- **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage, Exit, Escape during a run, and the zoom.
+- Only one screen is on show at a time, as the only child of `Game`: `game.menu`, `game.garage` or `game.run` (the others are null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
+- **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage and its back button, Exit, Escape during a run, and the zoom.
 
 ## Drift prototype
 

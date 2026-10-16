@@ -1,7 +1,7 @@
 ---
 id: T-089
 title: Screen flow: wire the Garage button to the garage screen
-status: in-progress
+status: done
 from: project-lead
 to: game-loop
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, tasks/T-055-screen-flow.md, tasks/T-058-garage-screen.md, game/README.md]
 files_expected_to_change: [the scene flow code, tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -36,10 +36,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test presses Garage and shows the garage screen opens (QA: pass / fail)
-- [ ] A test presses the garage's back button and shows the main menu again (QA: pass / fail)
-- [ ] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] A test presses Garage and shows the garage screen opens (QA: pass)
+- [x] A test presses the garage's back button and shows the main menu again (QA: pass)
+- [x] `docs/game-loop-architecture.md` describes it in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [x] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it, with T-058's garage screen, before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -49,6 +49,28 @@ The board's review: playtest it, with T-058's garage screen, before it is merged
 
 Started: the Game Loop Agent wires the Garage button on top of T-058's garage screen, so you can playtest both together.
 
+### 2026-10-15, Needs playtest
+
+QA passed (4 of 4). Ready for your playtest with the garage screen: open C:\solid-carbide-worktrees\T-089\game\project.godot, press Garage, buy, Back, Start.
+
+### 2026-10-16, Needs playtest → Done
+
+You played it with the garage: works. Merging.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Wired the main menu's Garage button to the garage screen, and the garage's back button back to the main menu. `GameFlow.show_garage()` (game/scripts/game/game_flow.gd) replaces the menu with `scenes/menu/garage_screen.tscn`, gives it `GameFlow.progress`, and connects `back_pressed` to `show_menu`. `game.garage` is the new screen variable, cleared with the others. Tests: `tests/unit/game/test_screen_flow.gd` (Garage opens the screen with the game's progress; back returns to the menu and Start still works). Docs: Game loop architecture Content (Screen flow bullet only) and game/README.md. Full GUT: 728 tests, 725 pass; the 3 failures are the known test_kaiju_health_bar.gd ones (not touched). pytest tools 180 passed; game/tools 257 passed, 1 skipped. Launch with --quit-after 300: no script errors.
+
+How the board plays it: open `C:\solid-carbide-worktrees\T-089\game\project.godot` (or Play on T-089 in the Builds tab). Press Garage on the main menu to see T-058's garage screen, buy upgrades, press Back to return to the menu, then Start a run.
+- 2026-10-15, in-progress → in-qa: Garage button wired to the garage screen, back returns to menu; tests added and passing (3 known kaiju bar failures)
+
+### QA round 1 (QA/Integration Agent, 2026-10-15)
+
+- Garage press opens garage screen: PASS (test_garage_opens_the_garage_screen)
+- Back returns to main menu: PASS (test_garage_back_returns_to_the_main_menu, Start still works)
+- Docs: PASS (diff vs master is one bullet in Content; Summary, Decisions, Open questions untouched)
+- Tests: PASS (GUT 745/745, pytest tools 180, game/tools 257 + 1 skipped). Launch with --quit-after 300: no script errors.
+- 2026-10-15, in-qa → needs-playtest: QA round 1 passed: all 4 criteria, GUT 745/745
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): garage works (played with T-058 in this folder).

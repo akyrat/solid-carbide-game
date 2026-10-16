@@ -1,7 +1,7 @@
 extends GutTest
 ## Task T-055: the screen flow. The game opens on the main menu, Start begins
-## a fresh run, a won or lost run goes back to the main menu, Garage does
-## nothing yet, Exit closes the game, and Escape pauses a run started from
+## a fresh run, a won or lost run goes back to the main menu, Garage opens
+## the garage screen and its back button returns to the menu, Exit closes the game, and Escape pauses a run started from
 ## the menu.
 
 const GameScene := preload("res://scenes/game/game.tscn")
@@ -113,16 +113,30 @@ func test_a_second_run_from_the_menu_is_fresh() -> void:
 	assert_eq(get_tree().get_nodes_in_group("run_state").size(), 1, "only one run state in the tree")
 
 
-func test_garage_does_nothing_yet() -> void:
+func test_garage_opens_the_garage_screen() -> void:
 	var menu = game.menu
 	_press(menu.garage_button)
 	await wait_process_frames(2)
-	assert_eq(game.menu, menu, "the same main menu")
-	assert_eq(_only_screen(), menu)
-	assert_true(menu.is_inside_tree())
-	assert_true(menu.visible)
+	assert_null(game.menu, "the main menu is gone")
+	assert_not_null(game.garage)
+	assert_true(game.garage is GarageScreen, "the garage screen is on show")
+	assert_eq(_only_screen(), game.garage)
+	assert_eq(game.garage.progress, game.progress, "it shows the game's saved progress")
 	assert_null(game.run)
 	assert_eq(quit_calls, 0)
+
+
+func test_garage_back_returns_to_the_main_menu() -> void:
+	_press(game.menu.garage_button)
+	await wait_process_frames(2)
+	_press(game.garage.back_button)
+	await wait_process_frames(2)
+	assert_null(game.garage, "the garage is gone")
+	assert_true(game.menu is MainMenu, "the main menu is back")
+	assert_eq(_only_screen(), game.menu)
+	_press(game.menu.start_button)
+	await wait_process_frames(1)
+	assert_not_null(game.run, "Start still works after the garage")
 
 
 func test_exit_closes_the_game() -> void:

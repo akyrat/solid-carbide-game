@@ -116,7 +116,7 @@ One screen is on show at a time (task T-055; how to use it: [game/README.md](../
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
-- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Not wired yet: until the garage screen exists, the button does nothing (task T-089).
+- **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
@@ -589,6 +589,10 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/README.md` ("Game data", "Saving and buying").
 
+#### The garage screen (MVP)
+
+A plain list (task T-058, `game/scenes/menu/garage_screen.tscn`, script `game/scripts/menu/garage_screen.gd`, `GarageScreen`). From the top: the heading, the player's coins, one row per upgrade, and a back button. Each row shows the upgrade's name and description, its current level, the price of the next level and a buy button. All text is the approved text from task T-059. Buying calls the save-and-buy object (`PlayerProgress`), and the whole screen redraws from it: the coins, the level and the price. When the player cannot afford the next level, the buy button is disabled and the row says "Not enough coins". At the last level the price and buy button go and the row says "Fully Funded". The back button only sends a signal; connecting it to the main menu, and the main menu's Garage button to this screen, is the screen flow's job.
+
 ### References
 
 - The upgrade prices and effects: `game/data/garage.json` (task T-056).
@@ -619,7 +623,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Buildings, redesigned** (board, 2026-10-14; replaces the dense narrow towers of earlier the same day): downtown Tokyo **under attack from the kaiju**. Each 30 by 30 block is split into **2 by 2 skyscrapers**, drawn as the bases of really tall towers whose tops are out of view, so the car is realistic in size next to them; **6 different skyscrapers**. **Shorter buildings** whose roofs show fill some of the slots. **Every building asset has a pavement drawn around it**, inside the block. **A few** alert banners about the kaiju hang on buildings or stand as signs on the pavement, with silly, minimalistic pixel paintings of its head or its Godzilla-like body. The signs may show Japanese-like marks that are not real words. All the city's art follows one brief from the Narrative Theme Agent (task T-128) so it stays consistent.
 - **City brief** (board, 2026-10-15, from the Narrative Theme Agent's brief in task T-128; every city asset follows it): night; the city's colours are set by the "City colours" decision below; vertical neon signs with Japanese-like marks that are not real words, and no real brands; **pavements** a lighter, cooler grey than the asphalt, with a raised kerb on the road side and light cracks; **damage from the attack light to medium**: cracks, a few broken or dark windows, a little rubble, and no big fires, collapsed buildings or gore; the **alert banners are picture-only**, with no words, and look like road warning or prohibition signs: a red outline, a plain white inside, and only the black silhouette of the kaiju (its head or its Godzilla-like body shape), with no other detail and no neon colours (board, 2026-10-15; replaces the first cyan and pink drawings); the larger ones hang on buildings, small standing signs are on the pavement, and only a few on the map; kept out: Redgull's red, branding and seagull logo, real brands, real words, the name Godzilla or an exact copy of the film monster, and any name for the kaiju.
 - **City colours** (board, 2026-10-15, after playing the first skyscraper sample in the game): the city must **not share the boulders' palette**. The boulders and the kaiju's meteors are alien, so their navy, purple and magenta glow must stand apart from the city, never match it. The city is **less neon**: real concrete, glass and lit windows, with only small, muted signs. The board judged two palettes in the game, A (concrete and sodium light: warm greys and beige, yellow-orange windows) and B, and chose **B, steel and glass**: **cool blue-grey walls, pale white and pale blue lit windows, and small amber accents** (signs, shop lights) (board, 2026-10-15). Every city asset (skyscrapers, shorter buildings, pavements) uses the chosen palette; the alert signs keep their own warning-sign colours.
-- **Redgull's look:** the company's logo is a simple, sketched seagull with red eyes, slightly evil and unsettling (why: Extended narrative, Decisions). Red is the company's theme colour, used only on things that belong to Redgull: its logo, its banners (after the MVP) and, in the MVP, the weapons, which arrive as Redgull gift packs. They don't have to be all red; red is included where it fits. It does not change the colour of the car, the enemies, the map or anything else.
+- **Redgull's look:** the company's logo is the side profile of a seagull's head only (not the whole bird, which would read as any bird), as minimal as a logo can be, in one single shade of dark red on a transparent background, slightly evil and unsettling (why: Extended narrative, Decisions). Being a flat one-colour logo, it does not follow the outline, shading and colour-count rules for sprites above. (board, 2026-10-16; replaces the first "sketched seagull with red eyes") Red is the company's theme colour, used only on things that belong to Redgull: its logo, its banners (after the MVP) and, in the MVP, the weapons, which arrive as Redgull gift packs. They don't have to be all red; red is included where it fits. It does not change the colour of the car, the enemies, the map or anything else.
 - **Exception to red-for-Redgull only:** the kaiju alert signs use a traffic-sign red outline, because they must read as real road warning signs (board, 2026-10-15). Nothing else outside Redgull uses red.
 - **Ground:** asphalt roads with **white** lane lines and **zebra crossings** at the junctions, with **light cracks** from the disaster; the centre is dusty gravel. No pavements in the MVP (after the MVP: Level design, Open questions).
 - **Boulders:** dark rock with glowing cracks.
@@ -678,7 +682,7 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 - Each level's final boss is a different type of monster. The kaiju is the first level's boss, in Crash City.
 - The player is **Stunt Driver**, a stunt driver sponsored by the energy-drink brand **Redgull**, sent into each disaster just to drift and show off.
 - **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Redgull is not evil, just completely out of touch and focused on profit. Playing is fun, but the player should sense that what they are doing is slightly unethical, and the game highlights this whenever it can.
-- Redgull's logo, a sketched seagull with red eyes, looks **slightly evil and unsettling** on purpose, which suits the company's role in the story (the logo's look and the company's red: Visual style, Decisions).
+- Redgull's logo, a seagull's head in Redgull red, looks **slightly evil and unsettling** on purpose, which suits the company's role in the story (the logo's look and the company's red: Visual style, Decisions).
 - Every run is **livestreamed** to Redgull's audience. Driving earns **likes**: in the MVP, drifting (challenges are left out of the MVP; Level design, Decisions).
 - **Likes are XP.** Players only ever see "likes", never "XP"; the board and the agents may say XP internally. Each level threshold is a likes threshold, and filling the likes bar earns a **gift pack**: the weapon reward on level-up.
 - **Redgull funds the car's upgrades** between runs, all in service of the sponsorship.
@@ -736,6 +740,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The main menu shows the title "SOLID CARBIDE" in big letters, with a discreet "(work in progress)" underneath.
 - Escape pauses the game. In the MVP the pause screen says "Paused", with a hint that Escape resumes, and has one setting: the camera zoom slider, labelled "Camera zoom level", which zooms the view behind the screen live while the game stays paused (Drifting, Decisions). The screen is a compact dark strip, only as tall as its content, placed just below the HUD timer so the two never overlap and as much of the map as possible stays visible (board, 2026-10-11). A full pause menu, with more settings, comes in the final release.
 - The pause screen also has two checkboxes under the zoom slider, "Camera smoothing" and "Dynamic camera" (the board's names; what they do: Drifting, Decisions), and, while the dynamic camera is on, two temporary tuning buttons, "Set min zoom" and "Set max zoom", with the stored values shown next to them. The buttons are removed once the board has settled the values.
+- The pause screen has an **"SFX volume"** slider (the board's name) for the sound effects' volume, from 0 to 100, starting at **0, so sound effects are silent until the player turns them up**. Like the zoom, the player's choice is saved between sessions. Music, when it comes, is separate.
 - Settings exposed for playtests and development (for example the flamethrower from the start, the kaiju's early arrival) go under an internal dev flag: players never see them.
 - The kaiju's health bar sits on top of the kaiju in the world and follows it, instead of in a corner of the HUD: about as wide as the kaiju (it follows the kaiju's width, so it still fits the final art), neon purple on a white background with a black outline and thin black dividers at every 10% of its health, in a subtle version of the combo popups' comic style. No label. It is always drawn above buildings, so it shows even when the kaiju is behind one.
 - Level-ups are animated: the likes bar plays a short animation when the player levels up, and the level-up screen animates in. The level-up screen gets art in red and gold, themed on Redgull, since the weapons it offers arrive as Redgull gift packs; its animation uses that art.
@@ -789,12 +794,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `3ca8d0a50ee185bcecd22c9c20f73f838a131db38b4634178ebeb175d2875f09` |
+| `game-loop-architecture.md` | `c136129eae0ad46d71b1f5d4ffecebc367728f355ca394780ef9d633d463f4c4` |
 | `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `f2afc21cb095c1be3af0c6719ff5f5d7519b4152cdc30368178370e120c89ffd` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
-| `garage-design.md` | `eaf5b4cb30737fe5e33e23f5f7e3b8b00b4f6d2fe109270aabd28b569dfdaafe` |
-| `visual-style.md` | `466427c7161ca32be217eb84d34f505dc190e6124373a1d181d1f6498b80f5e6` |
-| `extended-narrative.md` | `206052a68ee474effb517c37470ab7f51c96d27ecb4ee7a6f077012a833c592f` |
-| `hud-and-menus.md` | `3dc17278b2d67dbdaf1147f9a49df4c602319562c42be7edd4e01f51c3db1ea1` |
+| `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
+| `visual-style.md` | `748fb7e9a929f81ba844967da2e85e9e5ef25c65116714bf0bb64a7f5443bfd6` |
+| `extended-narrative.md` | `5c754d06eb805be03f760ebbc97265a69a66e010ef9b1978d5e7a9d130f856e5` |
+| `hud-and-menus.md` | `7abbe613cb0f6fd0d942910e5b9cc99187df4d1996864e65df3e9793e55f8088` |
