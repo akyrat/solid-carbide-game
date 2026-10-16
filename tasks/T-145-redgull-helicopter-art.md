@@ -9,7 +9,7 @@ epic: art
 milestone: mvp
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-144]
+depends_on: []
 documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, tasks/T-144-gift-pack-drop.md, tasks/T-075-redgull-logo-art.md, game/README.md]
 files_expected_to_change: [art files under game/art/ and their records, the T-144 scenes that use the placeholder, game/README.md]
@@ -38,6 +38,8 @@ Follow Visual style, Decisions: pixel art for the isometric view at about 40 pix
 **PixelLab go (board, 2026-10-16):** one sample, for the board's review. Write the planned calls and their cost in the result notes before calling. The full set only after the board approves the sample.
 
 This art task swaps its art in for T-144's placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
+
+**Builds on T-144's branch (board, 2026-10-16):** the board plays the whole new level-up in one build, so this task doesn't wait for T-144 to be done. It makes its sample first; for the swap-in it merges T-144's branch (`task/T-144-gift-pack-drop`) into its own once T-144 has passed QA, and replaces the placeholder there.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
