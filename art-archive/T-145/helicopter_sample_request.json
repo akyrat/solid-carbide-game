@@ -1,0 +1,14 @@
+{
+  "description": "a small night-time transport helicopter seen from above and from the side, flying, dark charcoal and deep maroon fuselage with a few red accent panels, a smooth flat area on the fuselage side, tinted dark cockpit glass with a faint cyan glint, main rotor with four blades spread out and a short tail rotor, landing skids, a cargo hook under the belly, small cyan and pink glow lights on the nose and tail, retro cyberpunk pixel art",
+  "negative_description": "text, letters, words, logo, real brand, ground, shadow, sky, background, people, smoke",
+  "image_size": {"width": 192, "height": 160},
+  "text_guidance_scale": 8,
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "view": "high top-down",
+  "direction": "south-east",
+  "isometric": true,
+  "no_background": true,
+  "seed": 145145
+}
