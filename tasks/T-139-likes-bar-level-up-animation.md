@@ -1,7 +1,7 @@
 ---
 id: T-139
 title: The likes bar animates when the player levels up
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/game-loop-architecture.md, tasks/T-131-combo-heat-levels.md, tasks/T-113-hud-vertical-health-and-likes-bars.md, game/README.md]
 files_expected_to_change: [the HUD scene and scripts, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test levels the player up in a run and shows the animation starts at the level-up, ends within its proposed length, and leaves the bar and texts as they were (the new level shown, the bar starting again) (QA: pass / fail)
-- [ ] A test shows the animation still plays when the level-up pauses the run, and that it doesn't play on other changes to the bar (likes going up, the drain) (QA: pass / fail)
-- [ ] A screenshot sequence of a run shows the animation's key frames, clear of the other HUD parts, with no Redgull red (QA: pass / fail)
-- [ ] `docs/hud-and-menus.md` describes it in Content, without changing Summary, Decisions or Open questions, and `game/README.md` says how it's built (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test levels the player up in a run and shows the animation starts at the level-up, ends within its proposed length, and leaves the bar and texts as they were (the new level shown, the bar starting again) (QA: pass)
+- [ ] A test shows the animation still plays when the level-up pauses the run, and that it doesn't play on other changes to the bar (likes going up, the drain) (QA: pass)
+- [ ] A screenshot sequence of a run shows the animation's key frames, clear of the other HUD parts, with no Redgull red (QA: pass)
+- [ ] `docs/hud-and-menus.md` describes it in Content, without changing Summary, Decisions or Open questions, and `game/README.md` says how it's built (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -52,6 +52,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 ### 2026-10-16, Open → In progress
 
 Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-up playtest build.
+
+### 2026-10-16, In QA
+
+Built: a 0.75 s white-hot flash on the likes bar with pixel sparks and a Hype Lv pop; plays paused or not. In QA now; you'll play it in the one level-up build.
 
 ## Result notes
 
@@ -63,3 +67,4 @@ Built by the UI Agent. Proposal for the board to judge in playtest:
 - **Screenshots (key frames before, 0, 1, 2, 4, 5, 6):** `C:\solid-carbide-worktrees\T-139\screenshots\level_up_flash_frames.png` (all stacked, 2x) and the single frames beside it; copies in `C:\solid-carbide-worktrees\T-139rt-archive\T-139\screenshots\`. Made by `bash game/tools/level_up_flash_shots.sh screenshots`.
 - **Honest view:** the sparks are small and fairly sparse; the stripes in the last frames are a busy look. Cheapest tweaks if the board finds it weak: bigger or more sparks, a shorter or longer length (`FRAME_COUNT`).
 - Documents updated: docs/hud-and-menus.md (Content only), game/README.md.
+- 2026-10-16, in-progress → in-qa: Likes bar level-up animation (0.75 s flash, sparks, Hype Lv pop) built, tests and screenshots in place
