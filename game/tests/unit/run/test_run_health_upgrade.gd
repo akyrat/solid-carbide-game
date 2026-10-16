@@ -16,7 +16,7 @@ func after_each() -> void:
 	get_tree().paused = false
 	await wait_process_frames(1)
 	DirAccess.remove_absolute(PATH)
-	PlayerProgress.path = PlayerProgress.DEFAULT_PATH
+	TestSave.restore_progress()
 
 
 func _progress_at(level: int) -> PlayerProgress:

@@ -25,7 +25,7 @@ func before_each() -> void:
 func after_each() -> void:
 	get_tree().paused = false
 	DirAccess.remove_absolute(TEST_SETTINGS)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 
 
 ## A viewport the size of the game window: headless, the root viewport is

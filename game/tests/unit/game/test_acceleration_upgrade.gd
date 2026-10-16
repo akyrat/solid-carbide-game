@@ -25,8 +25,8 @@ func after_each() -> void:
 	await wait_process_frames(1)
 	DirAccess.remove_absolute(SETTINGS_PATH)
 	DirAccess.remove_absolute(PROGRESS_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
-	PlayerProgress.path = PlayerProgress.DEFAULT_PATH
+	TestSave.restore_settings()
+	TestSave.restore_progress()
 
 
 ## Seconds the car's model takes to go from standstill to top speed holding W.

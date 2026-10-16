@@ -296,7 +296,7 @@ func _prototype() -> Node2D:
 
 
 func after_each() -> void:
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 
 
 func test_panel_has_trick_sliders_and_reset_restores_the_proposed_values() -> void:

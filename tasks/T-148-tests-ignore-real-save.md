@@ -48,4 +48,8 @@ Started (board said yes).
 
 ## Result notes
 
-Written by the agent when it finishes.
+Which tests touched the real save: none wrote it, but every test that started a run through GameFlow or the main menu (`test_starting_gun`, and any other that builds `GameFlow`) read the real `progress.json` because `PlayerProgress.path` defaulted to it; and 14 test files reset `GameSettings.path` / `PlayerProgress.path` to `DEFAULT_PATH` in their cleanup, so every later test fell back to the real files.
+
+Changes: new `tests/helpers/test_save.gd` (`TestSave`) and `tests/helpers/pre_run.gd` (set as `pre_run_script` in `.gutconfig.json`) point both paths at empty per-run test files before the first test; those 14 files now call `TestSave.restore_*()` instead of `DEFAULT_PATH`; `post_run.gd` fails the run if either path is still the real one. `game/README.md` documents it.
+
+Checked on the board's computer with its real save (a bought damage upgrade): GUT 777/777 pass, `python -m pytest tools` 180 passed, `python -m pytest game/tools` 265 passed, 1 skipped. SHA-256 of `progress.json` and `settings.cfg` identical before and after (backed up first; the suite never changed them, so no restore was needed).
