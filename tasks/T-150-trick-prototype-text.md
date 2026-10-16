@@ -1,7 +1,7 @@
 ---
 id: T-150
 title: "Text: the side flip trick's name and the input HUD label in the trick prototype"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -14,7 +14,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/drifting.md, docs/hud-and-menus.md, tasks/T-151-arrow-key-trick-prototype.md, tasks/T-152-trick-prototype-input-hud.md]
 files_expected_to_change: [tasks/T-150-trick-prototype-text.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 ## Description
