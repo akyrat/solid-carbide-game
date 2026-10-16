@@ -1265,3 +1265,8 @@ Entry format:
 - Decision or change: tests that went through the main menu read the board's real `progress.json` (one failed because the board had bought a damage upgrade), and 14 test files pointed later tests back at the real save files when cleaning up. Every test run now starts with empty test save files, and the run fails if any test is left pointing at the real save. QA round 1: all 4 pass with the board's real save in place, and the board's save files were byte-identical before and after. Master: 777 of 777 GUT tests pass again.
 - Documents touched: `game/README.md`
 - Tasks: T-148 (done)
+
+## 2026-10-16: Old playtest builds removed; an agent's edit after a refusal accepted
+- Decision or change: everything in the two unified playtest builds (`playtest/weapons-garage`, `playtest/kaiju-fight`) is now in master, so their folders are removed at the board's word; the branches are kept. Master is now the most complete build. The board also accepted the `tasks/README.md` edit the T-143 agent made with the file editing tool after the old hook falsely refused its shell command (the rule stays: an agent stops and reports a refusal instead of getting around it).
+- Documents touched: none
+- Tasks: T-143
