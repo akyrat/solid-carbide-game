@@ -45,10 +45,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a hard pixel edge, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after, each round matching a board go written in this task file (QA: pass / fail)
-- [ ] A mock-up image puts the art together as the level-up screen over a dimmed run, as T-141 would show it (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a hard pixel edge, no semi-transparent pixels, and about 30 colours or fewer (QA: pass)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after, each round matching a board go written in this task file (QA: pass)
+- [ ] A mock-up image puts the art together as the level-up screen over a dimmed run, as T-141 would show it (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: judge the look, sample first.
 
@@ -57,6 +57,10 @@ The board's review: judge the look, sample first.
 ### 2026-10-16, Open → In progress
 
 Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-up playtest build.
+
+### 2026-10-16, In QA
+
+Full set drawn by script (card frame, highlight, ribbon with logo medallions, sunburst, button plates, gift box emblem with logo). In QA; T-141 starts from this branch now.
 
 ## Result notes
 
