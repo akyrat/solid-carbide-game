@@ -1205,3 +1205,8 @@ Entry format:
 - Decision or change: the board asked for a tooling ticket: the hook that keeps task status lines changing only through the status script also refuses commands that only read a task file and mention `status:`. T-143 keeps blocking writes and lets reads through.
 - Documents touched: none yet (T-143 updates `tasks/README.md`)
 - Tasks: T-143 (new), T-142 (started), T-077 (in QA)
+
+## 2026-10-16: Redgull logo: a seagull's head in profile, one shade of dark red
+- Decision or change: the board redefined the logo: only the side profile of a seagull's head (the whole bird would look like any bird), as minimal as possible, in a single shade of dark red. Replaces the "sketched seagull with red eyes". The board asked for a PixelLab sample first, so T-075 starts with one logo for review.
+- Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`
+- Tasks: T-075 (started)
