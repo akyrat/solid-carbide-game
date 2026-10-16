@@ -1235,3 +1235,8 @@ Entry format:
 - Decision or change: the board found T-077 left in In progress although its slider tweak was ready to play. Rule (board): a task in the QA column usually waits for the QA/Integration Agent, but when the board or the ticket says so (for example after a quick-tuning tweak) it waits there for the board's own review, with no QA agent. The board also found the SFX volume slider unusable (squeezed into the checkbox row, no room to drag); it goes back to the SFX Agent to match the zoom slider's row.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-077
+
+## 2026-10-16: Gift pack drop: Redgull's helicopter drops the gift pack
+- Decision or change: the board decided the level-up screen should no longer just appear. When the player levels up, a helicopter sent by Redgull flies over the screen and drops a package with Redgull's brand; driving over the package opens the level-up (gift pack) screen. Replaces the after-MVP "plane drops the gift pack" idea. Tickets created, not started: T-144 (the flow with placeholders, Game Loop Agent), T-145 (helicopter art) and T-146 (package art), both waiting for T-144. Open questions on T-144 go to the board before it starts.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/hud-and-menus.md`
+- Tasks: T-144, T-145, T-146 (new)
