@@ -1270,3 +1270,8 @@ Entry format:
 - Decision or change: everything in the two unified playtest builds (`playtest/weapons-garage`, `playtest/kaiju-fight`) is now in master, so their folders are removed at the board's word; the branches are kept. Master is now the most complete build. The board also accepted the `tasks/README.md` edit the T-143 agent made with the file editing tool after the old hook falsely refused its shell command (the rule stays: an agent stops and reports a refusal instead of getting around it).
 - Documents touched: none
 - Tasks: T-143
+
+## 2026-10-16: The level-up art and animation build on each other's branches
+- Decision or change: so the new level-up can be played in one build, the board chose to chain the branches: T-145 and T-146 no longer wait for T-144 to be done but merge its branch for the swap-in; T-141 no longer waits for T-140 to be done but starts from its branch once its full set is approved. Each still passes QA; all go into one playtest build.
+- Documents touched: none (tickets only)
+- Tasks: T-141, T-145, T-146
