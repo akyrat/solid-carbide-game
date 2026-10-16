@@ -121,6 +121,10 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 - Each sound is saved as `<id>_<name>.<ext>` with `<id>_<name>.json` next to it. The JSON holds `freesound_id`, `name`, `username`, `freesound_url`, `license_name`, `license_url`, `search_query`, `download_date`, plus `file`, `original_type`, `duration_s` and `filesize_bytes`.
 - Exit codes: 0 = done; 1 = request failed or fewer sounds found than asked; 2 = credentials missing from `.env`; 3 = login needed (run `auth-url` and `login` again).
 
+**Checking licences.** `python game/tools/check_sfx_licenses.py [folder] [--credits]` (default `game/audio`) checks every sound has a metadata JSON with all required fields and a CC0 or CC BY licence; it exits 1 on any problem. `--credits` also prints the credit line each CC BY sound needs.
+
+**MVP sound candidates (T-076).** Folders under `game/audio/sfx/`: `engine`, `drift`, `gun`, `flames`, `hit`, `coin`, `meteor-warning`, `meteor-impact`, each with two or three candidates. The recommended file per sound is in the result notes of `tasks/T-076-mvp-sound-effects.md`. `_test-run/` holds the earlier T-002 test downloads.
+
 ## Checking audio imports
 
 Checks that every `.wav`, `.ogg` and `.mp3` under a folder was imported by Godot and loads as a non-empty AudioStream. Runs headless and imports the project first.

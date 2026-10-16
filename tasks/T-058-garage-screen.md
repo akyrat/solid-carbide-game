@@ -1,10 +1,10 @@
 ---
 id: T-058
 title: The garage screen: plain list of upgrades with buy buttons
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
-lead: Weapons
+lead: Playtest
 epic: garage
 milestone: mvp
 user_facing_text: yes
@@ -51,6 +51,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 The garage screen is built: 'Redgull Pit Stop', the coins, one row per upgrade (name, description, level, price, Buy) and Back, all in T-059's approved text. Buying spends coins and raises the level; unaffordable rows say 'Not enough coins', maxed ones 'Fully Funded'. It's the plain MVP list, not yet styled. QA round 1: all 6 pass. Waiting for the board's playtest in the unified build; the main menu's Garage button (T-089) can only start once this is done.
 
+### 2026-10-16, Needs playtest → Done
+
+You played the garage and it works. Renamed to Energy Throttle, QA passed, merging.
+
 ## Result notes
 
 Written by the UI Agent.
@@ -70,3 +74,8 @@ Written by the UI Agent.
 - GUT 687/687; game/tools Python 257 OK; tools Python 180 OK. Pass.
 - Tests use RunPaths.file (user://test_runs/<pid>/), screen gets progress injected; real progress.json not touched.
 - 2026-10-15, in-qa → needs-playtest: QA passed
+- Board's tweak (2026-10-16): "change "sponsored throttle" to "energy throttle", that's my only comment". Changed the acceleration upgrade's name from "Sponsored Throttle" to "Energy Throttle" in `game/scripts/menu/garage_screen.gd` and `game/tests/unit/test_garage_screen.gd`. No other game code or docs used the text. GUT 687/687, `tools` Python 180, `game/tools` Python 257 (1 skipped) pass.
+
+### QA after the board's tweak (2026-10-16)
+Pass. The acceleration upgrade name is exactly "Energy Throttle" (garage_screen.gd, test_garage_screen.gd); no "Sponsored Throttle" remains in game code or docs on the branch (only task files). All other labels match the T-059 table. GUT 687/687, `tools` pytest 180 passed, `game/tools` pytest 257 passed (1 skipped).
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): garage works; only change, 'Sponsored Throttle' renamed to 'Energy Throttle' (done, QA passed).

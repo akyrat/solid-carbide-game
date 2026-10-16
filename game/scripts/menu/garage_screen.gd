@@ -17,7 +17,7 @@ const MAXED_TEXT := "Fully Funded"
 const TOO_POOR_TEXT := "Not enough coins"
 const BACK_TEXT := "Back"
 const NAMES := {
-	"acceleration": "Sponsored Throttle",
+	"acceleration": "Energy Throttle",
 	"car_health": "Reinforced Chassis",
 	"damage_bonus": "Brand Impact",
 }

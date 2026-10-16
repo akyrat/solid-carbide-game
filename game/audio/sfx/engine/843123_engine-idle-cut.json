@@ -1,0 +1,16 @@
+{
+  "schema": "solid-carbide/sfx-metadata/1",
+  "source": "freesound",
+  "freesound_id": 843123,
+  "name": "Engine idle (cut)",
+  "username": "fnakez",
+  "freesound_url": "https://freesound.org/people/fnakez/sounds/843123/",
+  "license_name": "CC0 1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "search_query": "car engine loop",
+  "download_date": "2026-10-15",
+  "file": "843123_engine-idle-cut.ogg",
+  "original_type": "ogg",
+  "duration_s": 1.71429,
+  "filesize_bytes": 61317
+}

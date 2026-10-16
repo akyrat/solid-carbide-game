@@ -53,7 +53,7 @@ Written by the narrative-theme agent. All lengths within limits; no XP or experi
 | Key | Where it appears | Text | Length |
 |---|---|---|---|
 | garage.title | Heading of the garage screen | Redgull Pit Stop | 16/30 |
-| garage.acceleration.name | Upgrade name | Sponsored Throttle | 18/25 |
+| garage.acceleration.name | Upgrade name | Energy Throttle (was Sponsored Throttle; board, 2026-10-16) | 15/25 |
 | garage.acceleration.desc | Upgrade description | Top speed 0.1 s sooner per level. More drifting, more content. | 62/80 |
 | garage.car_health.name | Upgrade name | Reinforced Chassis | 18/25 |
 | garage.car_health.desc | Upgrade description | +10 car health per level. Redgull says you'll be fine. | 54/80 |
