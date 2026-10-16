@@ -1210,3 +1210,8 @@ Entry format:
 - Decision or change: the board redefined the logo: only the side profile of a seagull's head (the whole bird would look like any bird), as minimal as possible, in a single shade of dark red. Replaces the "sketched seagull with red eyes". The board asked for a PixelLab sample first, so T-075 starts with one logo for review.
 - Documents touched: `docs/visual-style.md`, `docs/extended-narrative.md`
 - Tasks: T-075 (started)
+
+## 2026-10-16: T-075 first logo sample rejected; allowance of 10 generations
+- Decision or change: the first PixelLab sample read as a bell or the letter R, not a gull's head. The board agreed and gave an allowance of up to 10 more generations, spent at the team's judgement, until there is a sample worth showing. This replaces the one-round rule for T-075 only.
+- Documents touched: none (recorded on T-075)
+- Tasks: T-075
