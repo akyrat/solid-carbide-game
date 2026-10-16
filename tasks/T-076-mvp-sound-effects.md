@@ -1,7 +1,7 @@
 ---
 id: T-076
 title: Find the MVP's sound effects
-status: needs-playtest
+status: done
 from: project-lead
 to: sfx
 lead: Playtest
@@ -53,6 +53,10 @@ Sound candidates are in: 2-3 per MVP sound (engine, drift, gun, flames, enemy hi
 
 The board will listen to the candidates and pick which to keep. Nothing plays in the game until T-077.
 
+### 2026-10-16, Needs playtest → Done
+
+You approved the sounds. Merging them; T-077 now puts them in the game for your playtest.
+
 ## Result notes
 
 Written by the SFX Agent. Candidates only: I cannot listen, so recommendations rest on duration, name and licence (CC0 preferred); the board's listening decides.
@@ -80,3 +84,4 @@ Notes for T-077: whether the engine/drift/flames files loop cleanly and the hit/
 
 Tests: GUT 671 passed; all Python tool tests pass (game/tools test_freesound 29, test_check_sfx_licenses 4, tools/test_*.py). Documents updated: docs/unfiled-game-details.md, game/README.md.
 - 2026-10-15, in-qa → needs-playtest: QA round 1 pass. 24 new sounds with JSON metadata; check_sfx_licenses.py 28 sounds 0 problems; recommendations and CC BY credit (Falling.wav, Augdog) present; GUT 671/671, Python tests OK. No secrets: .secrets/ git-ignored, only .env.example tracked, no key strings in diff.
+- 2026-10-16, needs-playtest → done: Board (2026-10-16): sfx looks good; the recommended file per sound goes into the game in T-077.
