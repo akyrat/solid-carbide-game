@@ -1,7 +1,7 @@
 ---
 id: T-008
 title: Short "boost" effect when W snaps the car to cruise speed
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Playtest
@@ -54,6 +54,10 @@ A placeholder boost effect is in: when a fresh W press snaps the car up to cruis
 
 Kept unmerged (board, 2026-10-15): the board found the streaks too much and wants a few discreet motion lines. T-008 stays in needs-playtest until T-009's art replaces the placeholder in this branch; then the board playtests both and they merge together.
 
+### 2026-10-16, Needs playtest → Done
+
+You approved the motion lines; merging T-008, then T-009.
+
 ## Result notes
 
 Done on `task/T-008-cruise-boost-effect`.
@@ -68,3 +72,4 @@ Done on `task/T-008-cruise-boost-effect`.
 
 **QA round 1 (2026-10-15):** all 6 criteria pass. test_boost.gd covers once-from-standstill, once-below-cruise, none while held in drift (cruise_jump fires >3, boost 0), none at/above cruise, identical velocity and rotation with and without the effect. Screenshot shows light streaks behind the car. Full GUT: 679/679 pass. Signal is `cruise_jump` filtered by `w_just_pressed`; car.gd change is signal-only.
 - 2026-10-15, in-qa → needs-playtest: QA passed
+- 2026-10-16, needs-playtest → done: Board (2026-10-16): LGTM, played with T-009's motion lines on top; merged before T-009.
