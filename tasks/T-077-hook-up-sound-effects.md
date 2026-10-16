@@ -1,7 +1,7 @@
 ---
 id: T-077
 title: Play the MVP's sound effects in the game
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: sfx
 lead: Playtest
@@ -53,6 +53,10 @@ Started: the SFX Agent puts the approved sounds into the game. You'll playtest i
 
 QA passed (4 of 4). Ready for your playtest: open C:\solid-carbide-worktrees\T-077\game\project.godot. Volumes are in game\data\sfx.json.
 
+### 2026-10-16, In progress
+
+Adding an 'SFX volume' slider to the pause screen, 0 to 100, starting at 0 (silent), saved like the zoom. The SFX Agent is on it in this folder.
+
 ## Result notes
 
 Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
@@ -75,3 +79,8 @@ Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav
 - Criterion 3 (README sound table and CC BY credit): pass. Credit for "Falling.wav" by Augdog at game/README.md line 147; volumes in game/data/sfx.json.
 - Criterion 4 (full suites): pass. GUT 754/754 passing (68 scripts); pytest tools 180 passed; pytest game/tools 261 passed, 1 skipped. Game launched with --quit-after 300: no script errors.
 - 2026-10-16, in-qa → needs-playtest: QA round 1 passed: all 4 criteria, GUT 754/754
+- 2026-10-16, needs-playtest → in-progress: add a settings slider for the SFX volume. default it to 0.
+
+### Board's tweak (2026-10-16)
+
+- Board: "add a settings slider for the SFX volume. default it to 0." (0 means silent by default; decision in docs/hud-and-menus.md.) Added the pause screen's "SFX volume" slider (0 to 100, default 0, on the row of the camera checkboxes so the strip stays a thin band), saved in user://settings.cfg (`audio`/`sfx_volume`, GameSettings) and applied at once to a new "SFX" audio bus that every sound plays on, on top of data/sfx.json's volumes (100 = those volumes). The sounds are silent until the slider is turned up (Escape, then the slider). Tests: tests/unit/test_sfx_volume.gd (8). Docs: docs/hud-and-menus.md (pause screen Content), game/README.md. Full GUT 770 passed, pytest tools 180, game/tools 261 (1 skipped); game launches with no errors.

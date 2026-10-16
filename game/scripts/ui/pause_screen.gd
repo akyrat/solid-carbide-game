@@ -14,6 +14,8 @@ const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
 const TEXT_ZOOM_LABEL := "Camera zoom level"
+## The sound effects volume slider (T-077; the board's name, board 2026-10-16).
+const TEXT_SFX_LABEL := "SFX volume"
 ## The camera checkboxes use the board's own names (T-124). The two tuning
 ## buttons are a temporary tool for the board, not game text.
 const TEXT_SMOOTHING := "Camera smoothing"
@@ -37,6 +39,9 @@ var zoom_slider: HSlider
 var title_label: Label
 var hint_label: Label
 var zoom_label: Label
+var sfx_slider: HSlider
+var sfx_label: Label
+var _sfx_value_label: Label
 var _value_label: Label
 var smoothing_check: CheckBox
 var dynamic_check: CheckBox
@@ -116,6 +121,37 @@ func setup(t: Node) -> void:
 	visible = false
 
 
+## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
+## It shares the row of the camera checkboxes, so the strip stays a thin band (T-095).
+func _build_sfx_slider(row: HBoxContainer) -> void:
+	sfx_label = Label.new()
+	sfx_label.text = TEXT_SFX_LABEL
+	sfx_label.add_theme_font_size_override("font_size", 16)
+	row.add_child(sfx_label)
+	sfx_slider = HSlider.new()
+	sfx_slider.name = "SfxSlider"
+	sfx_slider.min_value = 0.0
+	sfx_slider.max_value = 100.0
+	sfx_slider.step = 1.0
+	sfx_slider.value = GameSettingsScript.load_sfx_volume()
+	sfx_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sfx_slider.focus_mode = Control.FOCUS_NONE
+	sfx_slider.value_changed.connect(_on_sfx_changed)
+	row.add_child(sfx_slider)
+	_sfx_value_label = Label.new()
+	_sfx_value_label.custom_minimum_size.x = 50.0
+	_sfx_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(_sfx_value_label)
+	_sfx_value_label.text = "%d" % int(sfx_slider.value)
+	GameSettingsScript.apply_sfx_volume(sfx_slider.value)
+
+
+func _on_sfx_changed(v: float) -> void:
+	GameSettingsScript.save_sfx_volume(v)
+	GameSettingsScript.apply_sfx_volume(v)
+	_sfx_value_label.text = "%d" % int(v)
+
+
 func _cam():
 	return target.get("camera_follow") if target != null else null
 
@@ -130,6 +166,7 @@ func _build_camera_controls(box: VBoxContainer) -> void:
 	dynamic_check = _make_check("DynamicCheck", TEXT_DYNAMIC)
 	dynamic_check.toggled.connect(_on_dynamic_toggled)
 	checks.add_child(dynamic_check)
+	_build_sfx_slider(checks)
 	tuning_row = HBoxContainer.new()
 	tuning_row.name = "TuningRow"
 	tuning_row.add_theme_constant_override("separation", 8)

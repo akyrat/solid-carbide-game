@@ -127,7 +127,7 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 
 ## Sound effects in the game (T-077)
 
-`scripts/run/run_sounds.gd` (child "Sounds" of the run scene) plays the approved sounds. **Files, volumes and limits are in `data/sfx.json`: tune the sound by ear there** (`volume_db` per sound, 0 = as the file is, more negative = quieter; the engine's pitch and volume range follow the car's speed; `min_interval` and `max_players` keep bursts from turning into noise). All sounds follow the pause (a level-up or the pause screen silences them) and stop when the run ends.
+`scripts/run/run_sounds.gd` (child "Sounds" of the run scene) plays the approved sounds. **Files, per-sound volumes and limits are in `data/sfx.json`: tune the sound by ear there** (`volume_db` per sound, 0 = as the file is, more negative = quieter; the engine's pitch and volume range follow the car's speed; `min_interval` and `max_players` keep bursts from turning into noise). All sounds follow the pause (a level-up or the pause screen silences them) and stop when the run ends.
 
 | Sound | File (under `audio/sfx/`) | Plays |
 |---|---|---|
@@ -140,7 +140,9 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 | Meteor warning | `meteor-warning/210205_falling.wav` | When the kaiju's warning circles appear; starts part way in so the whistle ends as the meteor lands |
 | Meteor impact | `meteor-impact/869460_experimental-explosion-19.wav` | Each time a meteor lands |
 
-Tests: `tests/unit/run/test_run_sounds.gd`.
+**SFX volume (T-077, board 2026-10-16).** Every sound plays on the audio bus "SFX" (`GameSettings.ensure_sfx_bus()`), whose volume is the pause screen's "SFX volume" slider, 0 to 100, **default 0 = silent**. At 100 the sounds play at `data/sfx.json`'s volumes; in between the bus gain is the slider divided by 100. It is saved in `user://settings.cfg`, section `audio`, key `sfx_volume` (`GameSettings.load_sfx_volume` / `save_sfx_volume` / `apply_sfx_volume`) and applied when a run starts and on every change. **To hear anything in a playtest, turn the slider up (Escape).**
+
+Tests: `tests/unit/run/test_run_sounds.gd`, `tests/unit/test_sfx_volume.gd`.
 
 **Credits (CC BY).** Every sound in the game is CC0 except one:
 

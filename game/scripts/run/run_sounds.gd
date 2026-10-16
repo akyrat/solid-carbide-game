@@ -32,6 +32,10 @@ var _car: Node = null
 
 func _init() -> void:
 	name = "Sounds"
+	# Every sound plays on the SFX bus, whose volume is the pause screen's "SFX volume"
+	# slider (default 0 = silent, saved). It is applied here so the saved value counts
+	# from the start of a run.
+	GameSettings.apply_sfx_volume(GameSettings.load_sfx_volume())
 	var data = GameData.unwrap(GameData.load_file(SFX_FILE))
 	if data == null:
 		return
@@ -49,6 +53,7 @@ func _init() -> void:
 		for i in int(def.get("max_players", 1)):
 			var p := AudioStreamPlayer.new()
 			p.stream = stream
+			p.bus = GameSettings.SFX_BUS
 			p.volume_db = float(def["volume_db"])
 			p.name = "%s%d" % [String(id).capitalize().replace(" ", ""), i]
 			add_child(p)

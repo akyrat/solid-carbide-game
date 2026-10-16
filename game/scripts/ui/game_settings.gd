@@ -16,6 +16,11 @@ const DEFAULT_DYNAMIC_CAMERA := false
 const DEFAULT_DYNAMIC_ZOOM_MIN := 11.0
 const DEFAULT_DYNAMIC_ZOOM_MAX := 17.0
 
+## The sound effects' volume (task T-077), 0 to 100, in section "audio". 0 is silent,
+## and it is the default (board, 2026-10-16): sound effects are silent until turned up.
+const DEFAULT_SFX_VOLUME := 0.0
+const SFX_BUS := "SFX"
+
 ## Where the settings are read and written. Tests point this at a test file.
 static var path := DEFAULT_PATH
 
@@ -110,3 +115,41 @@ static func _save_value(key: String, v: Variant) -> bool:
 	cfg.load(path)
 	cfg.set_value("camera", key, v)
 	return cfg.save(path) == OK
+
+
+## The saved SFX volume, 0 to 100 (default 0).
+static func load_sfx_volume() -> float:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_SFX_VOLUME
+	var v = cfg.get_value("audio", "sfx_volume", DEFAULT_SFX_VOLUME)
+	if not (v is float or v is int):
+		return DEFAULT_SFX_VOLUME
+	return clampf(float(v), 0.0, 100.0)
+
+
+static func save_sfx_volume(v: float) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("audio", "sfx_volume", clampf(v, 0.0, 100.0))
+	return cfg.save(path) == OK
+
+
+## Makes sure the "SFX" audio bus exists (every sound effect plays on it) and returns its index.
+static func ensure_sfx_bus() -> int:
+	var i := AudioServer.get_bus_index(SFX_BUS)
+	if i < 0:
+		AudioServer.add_bus()
+		i = AudioServer.bus_count - 1
+		AudioServer.set_bus_name(i, SFX_BUS)
+		AudioServer.set_bus_send(i, "Master")
+	return i
+
+
+## Sets the SFX bus to `volume` (0 to 100): 0 is muted, 100 leaves the per-sound volumes
+## (data/sfx.json) as they are, in between it scales the loudness (a straight 0..1 gain).
+static func apply_sfx_volume(volume: float) -> void:
+	var i := ensure_sfx_bus()
+	var gain := clampf(volume, 0.0, 100.0) / 100.0
+	AudioServer.set_bus_mute(i, gain <= 0.0)
+	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(gain, 0.0001)))
