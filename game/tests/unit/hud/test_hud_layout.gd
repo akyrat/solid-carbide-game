@@ -142,6 +142,7 @@ func test_layout_in_a_run() -> void:
 	for i in 30:
 		r.state.add_trick("alternate_drift")
 	r.state.add_coins(999)
+	r.hud.level_up_flash.stop()  # the pop of "Hype Lv" is tested in T-139's own tests
 	await get_tree().process_frame
 	_assert_health(r.hud, "run")
 	_assert_likes(r.hud, "run")
@@ -173,6 +174,9 @@ func test_layout_follows_longer_texts() -> void:
 	r.state.add_xp(r.state.xp_needed() * 1.4)
 	for i in 30:
 		r.state.add_trick("alternate_drift")
+	# The level-up animation pops "Hype Lv" bigger for a moment (T-139,
+	# test_hud_level_up_flash.gd); this test is about the layout, so it ends.
+	r.hud.level_up_flash.stop()
 	await get_tree().process_frame
 	_assert_likes(r.hud, "after a level-up and a combo")
 
