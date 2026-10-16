@@ -876,7 +876,7 @@ Task T-052 (UI Agent). What the player sees and does: `docs/hud-and-menus.md`, "
 
 ### Level-up screen art (T-140)
 
-Red and gold art for the level-up screen, in `game/art/level_up/` (one PNG and one record JSON each), built by `game/tools/build_level_up_art.py` (`build` writes and checks, `check` only checks; byte-identical every run; tests in `game/tools/test_build_level_up_art.py`). Everything is script-drawn except the gift box inside `gift_pack_emblem.png`, which is the one PixelLab sample (1 generation, raw file `art-archive/T-140/gift_pack_raw.png`, kept unchanged because T-146 reuses it as the dropped package). Shown at 2 screen pixels per art pixel unless noted. The art is not yet in the screen: swapping it in and animating it is T-141.
+Red and gold art for the level-up screen, in `game/art/level_up/` (one PNG and one record JSON each), built by `game/tools/build_level_up_art.py` (`build` writes and checks, `check` only checks; byte-identical every run; tests in `game/tools/test_build_level_up_art.py`). Everything is script-drawn except the gift box inside `gift_pack_emblem.png`, which is the one PixelLab sample (1 generation, raw file `art-archive/T-140/gift_pack_raw.png`, kept unchanged because T-146 reuses it as the dropped package). Shown at 2 screen pixels per art pixel unless noted. T-141 swapped it into the level-up screen (below).
 
 - `card_frame.png` 180x150: the card, a 9-slice (margin 10) in gold and red with a cream fill; replaces the white card (360x300 on screen).
 - `highlight_frame.png` 192x162: hollow bright-gold frame for the highlighted card, which sits 6 art pixels inside it (so the frame reaches 12 screen pixels past the card); replaces the yellow ring.
@@ -885,6 +885,15 @@ Red and gold art for the level-up screen, in `game/art/level_up/` (one PNG and o
 - `sunburst.png` 256x256: red and gold rays in a circle with a black rim, behind the cards (4x covers the window); opaque, so T-141 sets its strength and may spin it.
 - `gift_pack_emblem.png` 128x128: the gift box with the approved Redgull gull (`art/logo/`) on a cream disc on its front.
 - Rules: hard edges, a dark selective outline, 30 colours or fewer per piece, no semi-transparent pixels. Review images and the full-set mock-up: `art-archive/T-140/`.
+
+### Level-up screen animation (T-141)
+
+Task T-141 (UI Agent). `scripts/ui/level_up_screen.gd` now builds the screen from T-140's art (2 screen pixels per art pixel): the cards are a `NinePatchRect` (`card_frame.png`, margin 10) inside a `Body` control that slides, the highlighted card shows its `HighlightFrame` (`highlight_frame.png`, 12 px past the card), "Take it" is a `Button` with `StyleBoxTexture` plates, the ribbon (`header_ribbon.png`, 760 x 88) holds the title label between x 152 and 608 and the emblem hangs at its left end, and `Sunburst` (`sunburst.png`, 4x, alpha 0.75, spun 1.5 degrees every 0.1 s) is behind the cards. T-051's text is unchanged. Card text wraps with `AUTOWRAP_WORD_SMART` inside a text width of 300 px, and a test checks every word of every text fits a line, so words never break mid-word.
+
+- **Animation:** one 0.04 s frame per step, every curve one value per frame (constants `DIM_STEPS`, `SUN_STEPS`, `RIBBON_DROP`, `CARD_SLIDE`, delays `RIBBON_DELAY` 0.05, `EMBLEM_DELAY` 0.12, `CARD_DELAY` 0.2, `CARD_STAGGER` 0.1). Length `animation_length(n)`: 0.54 s for two cards, 0.64 s for three. The screen's own `_process` runs it (the screen is `PROCESS_MODE_ALWAYS`, so it plays while the run is paused); tests call `advance(delta)` and `skip_animation()`.
+- **Input guard:** `is_animating()` is true until it ends. `take()` and `move_highlight()` do nothing then, `_input` uses up (and ignores) the take and move keys, and each card button ignores the mouse until the end. A key pressed during the build-up and still held at the end takes nothing until it is let go.
+- **Likes bar overlap:** the screen uses only its own nodes and clock, so T-139's likes bar animation (another branch) cannot interfere; the screen sits at layer 15, above the HUD.
+- **Tests:** `tests/unit/test_level_up_screen.gd` (T-052's tests now play the build-up to its end first; new ones for the art, the title's place, word-boundary wrapping, the length and finished layout, stepped and ordered frames, the spin, the input guard for keys, mouse and a held key, input after it ends, a second screen animating again, closing mid-way). Screenshots: `bash game/tools/screenshot.sh res://tests/fixtures/level_up_anim_demo.tscn out.png 12` shows the finished screen; for a moment in the build-up call Godot as `screenshot.gd` does and add `--at=<seconds>` after `--` (key frames saved in `art-archive/T-141/screenshots/`, `t_<seconds>.png`).
 
 ### The gift pack drop
 

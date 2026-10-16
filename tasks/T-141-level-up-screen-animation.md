@@ -53,4 +53,10 @@ Started from T-140's art branch with T-144 merged in; part of the one level-up b
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Animation (proposal):** 0.54 s with two cards (0.64 with three), 0.04 s pixel frames: dim fades in (4 steps), sunburst grows with a small overshoot, ribbon then emblem drop in with a bounce, cards slide up one after the other (left first, 0.1 s apart). Sunburst at alpha 0.75, spinning 1.5 degrees every 0.1 s. Runs on the screen's own clock while the run is paused.
+**Input guard:** `is_animating()`: take, highlight move and the take/move keys do nothing, buttons ignore the mouse until the end; a key pressed during it and still held takes nothing until released.
+**Text wrap:** word-smart wrap, 300 px text width; a test checks no word is wider than a line.
+**Likes bar (T-139):** no dependency; the screen has its own nodes and clock, above the HUD.
+**Screenshots:** `art-archive/T-141/screenshots/t_0.04.png`, `t_0.12.png`, `t_0.22.png`, `t_0.34.png`, `t_0.44.png`, `t_99.png` (finished). Fixture `tests/fixtures/level_up_anim_demo.tscn`. (A first batch with the same names was identical frames from a mistaken run; overwritten.)
+**Tests:** full GUT suite 820/820 pass; Python tool tests: game/tools 270 OK (1 skipped), tools/ 182 OK.
+**Docs:** docs/hud-and-menus.md (Content only), game/README.md.
