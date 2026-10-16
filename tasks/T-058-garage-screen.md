@@ -70,3 +70,4 @@ Written by the UI Agent.
 - GUT 687/687; game/tools Python 257 OK; tools Python 180 OK. Pass.
 - Tests use RunPaths.file (user://test_runs/<pid>/), screen gets progress injected; real progress.json not touched.
 - 2026-10-15, in-qa → needs-playtest: QA passed
+- Board's tweak (2026-10-16): "change "sponsored throttle" to "energy throttle", that's my only comment". Changed the acceleration upgrade's name from "Sponsored Throttle" to "Energy Throttle" in `game/scripts/menu/garage_screen.gd` and `game/tests/unit/test_garage_screen.gd`. No other game code or docs used the text. GUT 687/687, `tools` Python 180, `game/tools` Python 257 (1 skipped) pass.

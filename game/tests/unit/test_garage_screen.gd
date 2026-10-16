@@ -27,7 +27,7 @@ func test_every_label_is_the_approved_text() -> void:
 	assert_eq(screen.title_label.text, "Redgull Pit Stop")
 	assert_eq(screen.back_button.text, "Back")
 	assert_eq(screen.coins_label.text, "Coins: 10000")
-	var names := {"acceleration": "Sponsored Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact"}
+	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact"}
 	var descs := {
 		"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
 		"car_health": "+10 car health per level. Redgull says you'll be fine.",
