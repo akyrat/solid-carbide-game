@@ -1,7 +1,7 @@
 ---
 id: T-144
 title: Gift pack drop: a helicopter drops the gift pack, and driving over it opens the level-up screen (placeholders)
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Level-up
@@ -78,6 +78,10 @@ Built on placeholders: helicopter crosses, drops the package 8 units ahead on op
 
 QA passed all 6 criteria. Waits in Needs playtest for the one level-up build, once the art is swapped in.
 
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -117,3 +121,4 @@ For the board: with nothing left to offer (both weapons at their last tier) a pa
 - Known limit: at the board's saved zoom (about 2.4) the art (helicopter 80 drawn px tall, box 43, box plus parachute 94) fills over half the visible height, so when the car heads up the screen the landing spot is in the top third and there is no room above it: the helicopter stays fully on screen and the package hangs below it, but the package lands with little or no fall and its parachute is partly above the screen's edge. When the car heads sideways or down the screen, and at the default zoom in every direction, the whole drop shows (helicopter, hang, parachute fall, landing). Cheapest fixes, for the board to choose: draw the helicopter and package smaller, or play at a wider zoom.
 - Tests: a new test checks the layout at both zooms over 8 headings (helicopter top on screen, box below the belly, the fall at least `min_fall_px` when there is room, parachute on screen, parachute shown for `fall_seconds`, box look once landed); the data tests cover the new keys. Full GUT suite 819/819; `unittest discover` game/tools 278 OK (1 skipped), tools 182 OK.
 - Screenshots (playtest folder, `art-archive/T-144/screenshots/`): `sheet_saved_up.png`, `sheet_saved_down.png`, `sheet_default_up.png`, `sheet_default_down.png` (6 frames each: helicopter crossing, carried, parachute falling, landed) with the single frames `<variant>_<frame>.png`, and `arrow_saved.png` (edge arrow). New fixtures `gift_drop_down_demo.tscn`, `gift_drop_default_zoom_demo.tscn`, `gift_drop_default_zoom_down_demo.tscn`.
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
