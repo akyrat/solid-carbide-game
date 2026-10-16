@@ -1,7 +1,7 @@
 ---
 id: T-143
 title: The status hook stops blocking read-only commands that mention "status:"
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Playtest
@@ -40,6 +40,12 @@ Keep blocking commands that could write a task file's status or qa_rounds line (
 - [ ] The existing hook tests still pass, and the status script still works from the main checkout and from a task's folder (QA: pass / fail)
 - [ ] `tasks/README.md` says read-only commands may mention the status line (QA: pass / fail)
 - [ ] All Python tool tests pass (QA: pass / fail)
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started (board said yes).
 
 ## Result notes
 

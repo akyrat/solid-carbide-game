@@ -1,7 +1,7 @@
 ---
 id: T-148
 title: Tests never read the player's real saved progress
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Playtest
@@ -39,6 +39,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The real `user://progress.json` and `user://settings.cfg` are byte-identical before and after the full suite (QA: pass / fail)
 - [ ] `game/README.md` says tests use a test save path, never the real one (QA: pass / fail)
 - [ ] All Python tool tests pass (QA: pass / fail)
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started (board said yes).
 
 ## Result notes
 
