@@ -1,7 +1,7 @@
 ---
 id: T-149
 title: The status guard stops agents changing qa_rounds themselves
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/task_status.py, tasks/T-143-hook-allow-reading-task-headers.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, its tests, tasks/README.md if the rules' wording changes]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -90,3 +90,4 @@ Tests: `tools/test_guard.py` (new, 24 tests): one `test_gap_*` per gap above, fo
 
 Limits (not closed): an agent could still edit `tools/task_status.py`, `tools/guard_ledger.py` or the ledger file itself; a hook cannot see a commit made by a program (`python` running `git commit`). The ledger check needs the script (main copy) and the hook to share the main checkout's `.board`; a task folder run without git would use its own ledger.
 - 2026-10-16, in-progress → in-qa: Found 11 ways past the hooks (repeated lines, relative/odd paths, globs, cd tasks, script name in a comment, split qa_rounds, edits by script/mv then commit); closed them with hook fixes plus a ledger of script-written states checked by the script and on git commit. 24 new tests; all suites pass.
+- 2026-10-16, in-qa → done: QA: all 5 criteria pass; 206 + 278 python tests OK, GUT 846/846
