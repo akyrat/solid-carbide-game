@@ -84,3 +84,10 @@ Pieces 1 to 5 are flat graphic shapes, which a script draws crisply with the exa
 - One round, no regeneration whatever the result.
 
 **Planned cost of the rest, if the board approves the sample:** pieces 1 to 5 are free script work, 0 generations. Piece 6, if the sample is accepted, is already paid. If the board wants PixelLab variants of the ribbon or burst instead of script ones, about 1 generation per attempt, to be asked first.
+
+### Sample result (Asset Generation Agent, 2026-10-16)
+
+- **Call:** `/create-image-pixflux`, 1 paid call, params in `art-archive/T-140/req_gift_pack.json` (description, 128x128, no_background, single color black outline, medium shading, highly detailed, text_guidance_scale 8). An earlier attempt with `"high detail"` was rejected by validation (HTTP 422, not charged; the valid value is `highly detailed`); the file was corrected and the one real call made. Cost: 1 generation. Balance before: 4903 of 5000 generations (0.00 USD credit); after: 4902. Logged in `game/art/pixellab-generation-log.jsonl` and `art-archive/T-140/gift_pack_raw.json`.
+- **Output:** `art-archive/T-140/gift_pack_raw.png`. Sprite check (`check_sprite_rules.py`): 128x128, transparent background, 0 semi-transparent pixels, 16 colours: pass. Red box with gold ribbon, bow and sparkles in a 3/4 view; no text or logo. Not regenerated.
+- **Review images:** `gift_pack_review_dark_light_x4.png` (4x, dark and light), `level_up_mockup_rough.png` (1152x648, the sample plus quick script stand-ins for ribbon, cards, highlight, button and burst over a run dimmed 60%; the stand-ins are not final art). Made by `art-archive/T-140/make_review.py`.
+- Not done yet (awaiting the board): pieces 1 to 5 as final art, the logo on the box, and anything in `game/art/`. Status not moved.
