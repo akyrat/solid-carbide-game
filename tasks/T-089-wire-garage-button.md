@@ -1,7 +1,7 @@
 ---
 id: T-089
 title: Screen flow: wire the Garage button to the garage screen
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Playtest
@@ -53,6 +53,10 @@ Started: the Game Loop Agent wires the Garage button on top of T-058's garage sc
 
 QA passed (4 of 4). Ready for your playtest with the garage screen: open C:\solid-carbide-worktrees\T-089\game\project.godot, press Garage, buy, Back, Start.
 
+### 2026-10-16, Needs playtest → Done
+
+You played it with the garage: works. Merging.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -69,3 +73,4 @@ How the board plays it: open `C:\solid-carbide-worktrees\T-089\game\project.godo
 - Docs: PASS (diff vs master is one bullet in Content; Summary, Decisions, Open questions untouched)
 - Tests: PASS (GUT 745/745, pytest tools 180, game/tools 257 + 1 skipped). Launch with --quit-after 300: no script errors.
 - 2026-10-15, in-qa → needs-playtest: QA round 1 passed: all 4 criteria, GUT 745/745
+- 2026-10-16, needs-playtest → done: Board's playtest (2026-10-16): garage works (played with T-058 in this folder).
