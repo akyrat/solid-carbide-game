@@ -52,6 +52,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 
 Started: the Enemy Behavior Agent makes meteor boulders fade away after 10 seconds. You'll playtest it in C:\solid-carbide-worktrees\T-142.
 
+### 2026-10-16, Needs playtest
+
+QA passed (6 of 6). Ready for your playtest: open C:\solid-carbide-worktrees\T-142\game\project.godot. The kaiju arrives at 30 s; boulders fade after 10 s over 2 s (fade length in game\data\enemies.json).
+
 ## Result notes
 
 Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully visible and solid, then fades out over 2 s (sprite transparency in a straight line, still solid while fading) and is removed: body out of the physics world, sprite freed, entries gone from `meteor_boulders` / `all_boulders()`, spot free again. The map's own boulders are never touched (`remove_meteor_boulder` / `set_meteor_boulder_alpha` accept only bodies from `add_meteor_boulder`). Ageing runs in `kaiju_meteors.gd` `step()`, so it pauses with the game.
