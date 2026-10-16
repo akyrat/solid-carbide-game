@@ -432,6 +432,42 @@ class Hook(Base):
         self.assertEqual(self.decision("Bash", cmd), "deny")
         self.assertEqual(self.decision("Bash", {"command": "python tools/task_status.py T-001 blocked"}), "allow")
 
+    def test_read_only_commands_may_mention_the_status_line(self):
+        for command in [
+            'grep -n "^status:" tasks/T-001-x.md',
+            "sed -n '1,10p' tasks/T-001-x.md | grep \"status:\"",
+            "head -5 tasks/T-001-x.md | grep qa_rounds:",
+            "grep -n '^status:' tasks/T-052*.md 2>/dev/null",
+            "cat tasks/T-001-x.md | awk '/^status:/ {print $2}'",
+            "rg 'status: (open|done)' tasks/T-001-x.md",
+            'Select-String -Path tasks/T-001-x.md -Pattern "^status:"',
+            'Get-Content tasks/T-001-x.md | Select-String "qa_rounds:" | Select-Object -First 1',
+            'cd tasks && grep -h "^status:" T-001-x.md; tail -3 tasks/T-001-x.md',
+        ]:
+            with self.subTest(command=command):
+                self.assertEqual(self.decision("Bash", {"command": command}), "allow")
+
+    def test_commands_that_could_write_the_status_line_are_still_refused(self):
+        for command in [
+            "sed -i 's/status: open/status: done/' tasks/T-001-x.md",
+            "sed -n 's/status: open/status: done/w tasks/T-001-x.md' tasks/T-001-x.md",
+            'echo "status: done" >> tasks/T-001-x.md',
+            'grep -v "status:" tasks/T-001-x.md > tasks/T-001-y.md',
+            'cat tasks/T-001-x.md | tee tasks/T-001-x.md  # status:',
+            "perl -pi -e 's/status: open/status: done/' tasks/T-001-x.md",
+            "python -c \"import pathlib; p=pathlib.Path('tasks/T-001-x.md'); p.write_text('status: done')\"",
+            "awk '{sub(/status: open/, \"status: done\")} 1' tasks/T-001-x.md > t && mv t tasks/T-001-x.md",
+            'Set-Content tasks/T-001-x.md "status: done"',
+            '(Get-Content tasks/T-001-x.md) -replace "status: open","status: done" | Set-Content tasks/T-001-x.md',
+            'grep status: tasks/T-001-x.md && rm tasks/T-001-x.md',
+            'grep status: $(echo tasks/T-001-x.md)',
+            'grep "status:" tasks/T-001-x.md; python tools/other.py',
+            "grep 'status: tasks/T-001-x.md",
+            'cat tasks/T-001-x.md | grep lead: > tasks/T-001-x.md',
+        ]:
+            with self.subTest(command=command):
+                self.assertEqual(self.decision("Bash", {"command": command}), "deny")
+
 
 class AgentModel(Base):
     def decision(self, tool_input):
