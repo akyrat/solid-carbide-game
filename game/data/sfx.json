@@ -1,0 +1,13 @@
+{
+  "_comment": "The MVP's sound effects (task T-077). The place to tune the sound by ear: volume_db per sound (0 = the file as it is, -6 = about half as loud, more negative = quieter). Files are under res://audio/sfx/ (chosen in T-076, approved by the board). 'loop' sounds play over and over while their moment lasts (the engine while driving, the drift while drifting, the flames while they are on) and stop with it. 'max_players' is how many copies of a sound may play at once. 'min_interval' is the shortest time in seconds between two plays of the same sound, so a burst of hits does not become noise. Engine: pitch_min and pitch_max are the playback speed at standstill and at top speed; volume_db_min and volume_db_max are the volume at standstill and at top speed (the engine's own volume_db is not used). Meteor warning: 'end_aligned' starts the whistle part way in so it ends when the meteor lands (the warning lasts warning_seconds, data/enemies.json).",
+  "sounds": {
+    "engine": {"file": "engine/748027_sedan-engine-loop.ogg", "volume_db": -12.0, "loop": true, "max_players": 1, "pitch_min": 0.8, "pitch_max": 1.6, "volume_db_min": -18.0, "volume_db_max": -8.0},
+    "drift": {"file": "drift/271337_car-peels-off.wav", "volume_db": -8.0, "loop": true, "max_players": 1},
+    "gun": {"file": "gun/854345_machine-gun-5-shot-burst.wav", "volume_db": -10.0, "loop": false, "max_players": 4, "min_interval": 0.1},
+    "flames": {"file": "flames/831929_flamethrower.wav", "volume_db": -8.0, "loop": true, "max_players": 1},
+    "hit": {"file": "hit/789388_bullet-impact-ground-subsonic-sfx.wav", "volume_db": -8.0, "loop": false, "max_players": 6, "min_interval": 0.06},
+    "coin": {"file": "coin/347174_coin-pickup-sound-v-0.wav", "volume_db": -6.0, "loop": false, "max_players": 4, "min_interval": 0.03},
+    "meteor_warning": {"file": "meteor-warning/210205_falling.wav", "volume_db": -8.0, "loop": false, "max_players": 3, "end_aligned": true},
+    "meteor_impact": {"file": "meteor-impact/869460_experimental-explosion-19.wav", "volume_db": -4.0, "loop": false, "max_players": 4}
+  }
+}

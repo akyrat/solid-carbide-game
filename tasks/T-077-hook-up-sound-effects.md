@@ -51,4 +51,15 @@ Started: the SFX Agent puts the approved sounds into the game. You'll playtest i
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the SFX Agent. Built `game/scripts/run/run_sounds.gd` (child "Sounds" of the run scene, wired in `run.gd`) with all files, volumes and limits in `game/data/sfx.json`.
+
+**Where each sound plays:** engine loops all run long (pitch 0.8 to 1.6 and volume -18 to -8 dB follow the car's speed); drift loops while the car drifts; gun once per volley (the file is a 5-shot burst); flames loop while the flamethrower is owned and its flames are on (drifting plus the linger); hit on every bullet hit and every flame hit (rate-limited); coin when the coin count goes up; meteor warning when the warning circles appear (starts part way into the 5.4 s file so the whistle ends as the meteor lands); meteor impact at each landing. Sounds pause with the tree (level-up, pause screen) and stop when the run ends or a new run starts. Looping wavs restart on `finished` (the ogg engine loops natively), so a faint gap at the wav loop point is possible.
+
+**Tuning volumes:** `game/data/sfx.json`, `volume_db` per sound (engine uses `volume_db_min`/`volume_db_max` by speed). Starting values: engine -18..-8, drift -8, gun -10, flames -8, hit -8, coin -6, meteor warning -8, meteor impact -4. `min_interval` and `max_players` there stop bursts becoming noise. No code change needed to tune. To swap a candidate, change `file` (and add a CC BY credit in game/README.md if needed).
+
+**How the board plays it:** open `C:\solid-carbide-worktrees\T-077\game\project.godot` (or Play on the ticket in the Builds tab). Drive (engine), drift (tyre sound; with the flamethrower, flames; set `flamethrower_at_start` in data/playtest.json or level up to get it), let the gun kill minions (gun and hit), pick up coins, and use `kaiju_early_arrival` in data/playtest.json to hear the meteors. The gun plays per volley, hits are one sound for bullets and flames: say if you want them different.
+
+**Tests:** `game/tests/unit/run/test_run_sounds.gd`, 17 tests: each moment plays its sound, drift and flame sounds stop when their moment ends, engine follows speed and stops when the run ends, volumes come from the data file, every file in sfx.json has a CC0/CC BY record, new run silences. Full GUT suite passes (the earlier baseline was 671, plus these 17), `python -m pytest tools` 180 passed, `python -m pytest game/tools` 261 passed 1 skipped. Launched the game once with `--quit-after 300`: no script errors.
+
+Documents updated: game/README.md (sound table and CC BY credit for "Falling.wav" by Augdog).
+

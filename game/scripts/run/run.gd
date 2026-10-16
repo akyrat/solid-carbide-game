@@ -47,6 +47,8 @@ const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")
 const KaijuHealthBarScript := preload("res://scripts/hud/kaiju_health_bar.gd")
 ## The car's weapons (task T-041): the weapon rack, see weapons.gd.
 const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
+## The sound effects (task T-077): the engine, drift, guns, hits, coins and meteors.
+const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 ## The level-up screen (task T-052): shows the weapon choices when the run pauses for a level-up.
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 
@@ -113,6 +115,8 @@ var kaiju_health_bar: Node2D
 var weapons: Node
 ## The level-up screen (task T-052, level_up_screen.gd): child "LevelUpScreen".
 var level_up_screen: CanvasLayer
+## The sound effects (task T-077, run_sounds.gd): child "Sounds".
+var sounds: Node
 
 
 func _ready() -> void:
@@ -197,6 +201,10 @@ func _ready() -> void:
 	level_up_screen.name = "LevelUpScreen"
 	add_child(level_up_screen)
 	level_up_screen.setup(weapons)
+	# The sound effects (task T-077, run_sounds.gd; files and volumes in data/sfx.json).
+	sounds = RunSoundsScript.new()
+	add_child(sounds)
+	sounds.bind(self)
 	start_run()
 
 

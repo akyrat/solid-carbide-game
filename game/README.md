@@ -125,6 +125,29 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 
 **MVP sound candidates (T-076).** Folders under `game/audio/sfx/`: `engine`, `drift`, `gun`, `flames`, `hit`, `coin`, `meteor-warning`, `meteor-impact`, each with two or three candidates. The recommended file per sound is in the result notes of `tasks/T-076-mvp-sound-effects.md`. `_test-run/` holds the earlier T-002 test downloads.
 
+## Sound effects in the game (T-077)
+
+`scripts/run/run_sounds.gd` (child "Sounds" of the run scene) plays the approved sounds. **Files, volumes and limits are in `data/sfx.json`: tune the sound by ear there** (`volume_db` per sound, 0 = as the file is, more negative = quieter; the engine's pitch and volume range follow the car's speed; `min_interval` and `max_players` keep bursts from turning into noise). All sounds follow the pause (a level-up or the pause screen silences them) and stop when the run ends.
+
+| Sound | File (under `audio/sfx/`) | Plays |
+|---|---|---|
+| Engine | `engine/748027_sedan-engine-loop.ogg` | Looping all run long; higher pitch and louder with the car's speed |
+| Drift | `drift/271337_car-peels-off.wav` | Looping while the car drifts; stops when the drift stops |
+| Gun | `gun/854345_machine-gun-5-shot-burst.wav` | Once per volley of the starting gun |
+| Flames | `flames/831929_flamethrower.wav` | Looping while the exhaust flamethrower's flames are on (drifting, plus the linger); stops when they go out |
+| Hit | `hit/789388_bullet-impact-ground-subsonic-sfx.wav` | A bullet or the flames hurt an enemy |
+| Coin | `coin/347174_coin-pickup-sound-v-0.wav` | The coin count goes up (a coin picked up) |
+| Meteor warning | `meteor-warning/210205_falling.wav` | When the kaiju's warning circles appear; starts part way in so the whistle ends as the meteor lands |
+| Meteor impact | `meteor-impact/869460_experimental-explosion-19.wav` | Each time a meteor lands |
+
+Tests: `tests/unit/run/test_run_sounds.gd`.
+
+**Credits (CC BY).** Every sound in the game is CC0 except one:
+
+- "Falling.wav" by Augdog, https://freesound.org/people/Augdog/sounds/210205/, licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Used for the meteor warning.
+
+The other sounds are CC0 and need no credit. If a CC BY alternative from T-076 is swapped in, add its credit line here (`python game/tools/check_sfx_licenses.py game/audio --credits` prints it).
+
 ## Checking audio imports
 
 Checks that every `.wav`, `.ogg` and `.mp3` under a folder was imported by Godot and loads as a non-empty AudioStream. Runs headless and imports the project first.
