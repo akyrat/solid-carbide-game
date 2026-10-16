@@ -1215,3 +1215,8 @@ Entry format:
 - Decision or change: the first PixelLab sample read as a bell or the letter R, not a gull's head. The board agreed and gave an allowance of up to 10 more generations, spent at the team's judgement, until there is a sample worth showing. This replaces the one-round rule for T-075 only.
 - Documents touched: none (recorded on T-075)
 - Tasks: T-075
+
+## 2026-10-16: An SFX volume slider, silent by default
+- Decision or change: from the board's playtest drag on T-077: "add a settings slider for the SFX volume. default it to 0." The pause screen gets an "SFX volume" slider, 0 to 100, starting at 0 (sound effects silent until the player turns them up; the board confirmed this reading), saved between sessions like the zoom. Built as a quick tweak on T-077 by the SFX Agent.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-077
