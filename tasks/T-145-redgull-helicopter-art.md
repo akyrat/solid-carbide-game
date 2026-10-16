@@ -4,7 +4,7 @@ title: Art: the Redgull helicopter that drops the gift pack
 status: blocked
 from: project-lead
 to: asset-generation
-lead: Art
+lead: Level-up
 epic: art
 milestone: mvp
 user_facing_text: no
@@ -33,7 +33,9 @@ The helicopter Redgull sends to drop each gift pack (Game loop architecture, Dec
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. It belongs to Redgull, so Redgull's red is allowed where it fits (Visual style, Decisions, "Redgull's look"). No real brands. Details the docs leave open (directions, frame counts, size) are this agent's proposal, written in the result notes for the board to judge.
 
-**PixelLab:** the board has not given its go for this task yet; don't call PixelLab until the Project Lead passes it on. Sample first (`docs/working-with-the-board.md`, "Art and money"): one sample for the board's review, then the full set from the approved sample. Write the planned calls and cost in the result notes before calling. Use `game/tools/pixellab_client.py` with a 600 s HTTP timeout, and record every call with its prompt, settings and cost, and the balance before and after. Never delete generated art: raw output in `art-archive/T-145/`.
+**PixelLab:** the board gave its go for one sample (below). Sample first (`docs/working-with-the-board.md`, "Art and money"): one sample for the board's review, then the full set from the approved sample. Write the planned calls and cost in the result notes before calling. Use `game/tools/pixellab_client.py` with a 600 s HTTP timeout, and record every call with its prompt, settings and cost, and the balance before and after. Never delete generated art: raw output in `art-archive/T-145/`.
+
+**PixelLab go (board, 2026-10-16):** one sample, for the board's review. Write the planned calls and their cost in the result notes before calling. The full set only after the board approves the sample.
 
 This art task swaps its art in for T-144's placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
 

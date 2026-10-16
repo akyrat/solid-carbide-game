@@ -4,7 +4,7 @@ title: The level-up screen animates in, with its red and gold art
 status: blocked
 from: project-lead
 to: ui
-lead: Enemies
+lead: Level-up
 epic: hud-menus
 milestone: mvp
 user_facing_text: no

@@ -4,7 +4,7 @@ title: The likes bar animates when the player levels up
 status: open
 from: project-lead
 to: ui
-lead: Enemies
+lead: Level-up
 epic: hud-menus
 milestone: mvp
 user_facing_text: no

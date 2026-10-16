@@ -4,7 +4,7 @@ title: Gift pack drop: a helicopter drops the gift pack, and driving over it ope
 status: open
 from: project-lead
 to: game-loop
-lead: Art
+lead: Level-up
 epic: game-loop
 milestone: mvp
 user_facing_text: no
@@ -40,12 +40,14 @@ This task builds that flow with **placeholders**, so the board can play it befor
 
 Any number that tunes the flow (helicopter speed, drop height, fall time and so on) goes in the game's data files, not in code, so it can be tuned in playtests.
 
-**Open questions for the board** (answered before work starts; the Project Lead writes the answers here and in Game loop architecture):
-1. Does the run keep going (clock, enemies, likes) while the helicopter comes and the package waits on the ground, with the pause only when the screen opens?
-2. Where does the package land: near the car, ahead of it, or somewhere else on the map?
-3. Several level-ups before a pickup (or at once): one package each, or one package holding all the choices in turn?
-4. Does the package stay until picked up, or disappear after a while?
-5. If the package lands off screen, is there a pointer to it?
+**The board's answers** (2026-10-16; also in Game loop architecture, Decisions, "Gift pack drop"):
+1. The run keeps going (clock, enemies, likes, the drain) while the helicopter comes and the package waits on the ground. The run pauses only when the level-up screen opens, as it does now.
+2. The package lands a short way ahead of the car, on open road (not inside a building or a boulder).
+3. One package per level-up. Several level-ups before a pickup mean several packages; each one opens its own level-up screen when driven over.
+4. The package stays on the ground until it is picked up.
+5. When a landed package is off screen, an arrow at the screen edge points to it (placeholder look, not Redgull red; it sits clear of the other HUD parts).
+
+**One playtest build:** the board plays the whole new level-up (this task, T-139, T-140, T-141, T-145, T-146) together in one build, not piece by piece. The art tasks T-145 and T-146 branch from this task's branch to swap their art in.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
@@ -53,7 +55,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 - [ ] A GUT test shows that a level-up no longer opens the level-up screen by itself, and instead starts the helicopter, which crosses the screen and drops a package that lands on the map (QA: pass / fail)
 - [ ] A GUT test shows that when the car overlaps the landed package, the package is removed and the level-up screen opens with the same offers as before (T-043), and the run pauses as it did (QA: pass / fail)
-- [ ] GUT tests cover the board's answers to the open questions above (QA: pass / fail)
+- [ ] GUT tests cover the board's five answers above (QA: pass / fail)
 - [ ] The placeholder helicopter and package are not Redgull red, and the tuning numbers are read from a data file (a test checks both) (QA: pass / fail)
 - [ ] `game/README.md` says which node or texture each art task replaces, and `docs/game-loop-architecture.md` describes the built flow (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
