@@ -1,7 +1,7 @@
 ---
 id: T-141
 title: The level-up screen animates in, with its red and gold art
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, tasks/T-052-level-up-screen.md, tasks/T-140-level-up-screen-art.md, tasks/T-139-likes-bar-level-up-animation.md, game/README.md]
 files_expected_to_change: [the level-up screen scene and scripts, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,14 @@ Started from T-140's art branch with T-144 merged in; part of the one level-up b
 
 Built: T-140's art in the screen, a 0.54 s build-up (dim, sunburst, ribbon drop, cards slide in), no card can be taken while it plays, text wraps at words. In QA.
 
+### 2026-10-16, Needs playtest
+
+QA passed all 5 criteria. Waits in Needs playtest; goes into the one level-up build next.
+
+### 2026-10-16, Needs playtest → Done
+
+Board played the one level-up build: everything looks great. Done; merged into master.
+
 ## Result notes
 
 **Animation (proposal):** 0.54 s with two cards (0.64 with three), 0.04 s pixel frames: dim fades in (4 steps), sunburst grows with a small overshoot, ribbon then emblem drop in with a bounce, cards slide up one after the other (left first, 0.1 s apart). Sunburst at alpha 0.75, spinning 1.5 degrees every 0.1 s. Runs on the screen's own clock while the run is paused.
@@ -65,3 +73,5 @@ Built: T-140's art in the screen, a 0.54 s build-up (dim, sunburst, ribbon drop,
 **Tests:** full GUT suite 820/820 pass; Python tool tests: game/tools 270 OK (1 skipped), tools/ 182 OK.
 **Docs:** docs/hud-and-menus.md (Content only), game/README.md.
 - 2026-10-16, in-progress → in-qa: Level-up screen wears T-140's art and builds up in 0.54 s (0.64 with 3 cards) in 0.04 s pixel frames; input guard until it ends; GUT 820/820, Python OK; screenshots in art-archive/T-141/screenshots/
+- 2026-10-16, in-qa → needs-playtest: QA pass: all 5 criteria; GUT 820/820, Python 182 + 270 OK
+- 2026-10-16, needs-playtest → done: The board's playtest of the one level-up build (2026-10-16): "i played the level up playtest, and everything looks great"
