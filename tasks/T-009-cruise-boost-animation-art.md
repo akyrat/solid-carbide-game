@@ -59,3 +59,7 @@ One round, two calls, run one at a time with the client's 600 s HTTP timeout, ne
 - **Call 2, `/animate-with-text-v3`** (first frame = call 1's image, `frame_count` 8, `no_background`): the lines streak away to the left, thin out and vanish. The endpoint returns the first frame plus 8 (9 in all, as in T-068). Estimated cost: 1 generation (each T-068 call cost 1).
 
 Total estimate: **2 generations**. After that, free script work only: transparency and colour clean-up, a Redgull-red check, and turning the frames to the car's directions (nearest-neighbour, no new pixels), so the lines always trail behind the car.
+
+**Call 1 result (problem, reported, not regenerated):** the pixflux call came back as a fully transparent 64 x 64 image (every pixel alpha 0, one flat colour underneath): PixelLab drew a plain backdrop with no lines, and its background removal took all of it. Cost 1 generation (balance 4900 to 4899). Kept with its record in `art-archive/T-009/call1/`.
+
+**Change to call 2, before calling (no extra generation):** call 2's first frame is drawn by a script instead (free, `python game/tools/build_boost_lines.py first-frame`, `art-archive/T-009/first_frame_script.png`): three thin horizontal lines in the same 5-colour palette, bright at the right end (the car's side), tapering to the left, with a dark selective edge. Call 2 is otherwise as planned: `/animate-with-text-v3`, frame_count 8, no_background, estimated 1 generation. Total for the round stays at 2 generations.
