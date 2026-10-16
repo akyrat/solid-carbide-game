@@ -1,7 +1,7 @@
 ---
 id: T-142
 title: Meteor boulders fade away 10 seconds after landing
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Playtest
@@ -56,6 +56,10 @@ Started: the Enemy Behavior Agent makes meteor boulders fade away after 10 secon
 
 QA passed (6 of 6). Ready for your playtest: open C:\solid-carbide-worktrees\T-142\game\project.godot. The kaiju arrives at 30 s; boulders fade after 10 s over 2 s (fade length in game\data\enemies.json).
 
+### 2026-10-16, Done
+
+You approved it. The early kaiju switch goes back off, then I merge it.
+
 ## Result notes
 
 Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully visible and solid, then fades out over 2 s (sprite transparency in a straight line, still solid while fading) and is removed: body out of the physics world, sprite freed, entries gone from `meteor_boulders` / `all_boulders()`, spot free again. The map's own boulders are never touched (`remove_meteor_boulder` / `set_meteor_boulder_alpha` accept only bodies from `add_meteor_boulder`). Ageing runs in `kaiju_meteors.gd` `step()`, so it pauses with the game.
@@ -78,3 +82,5 @@ Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully v
 - Tests: pass. GUT 750/750, pytest tools 180 passed, pytest game/tools 261 passed 1 skipped. Game launch --quit-after 300: no script errors.
 - Note: kaiju_early_arrival.enabled is on for the playtest and must be set false before merging.
 - 2026-10-16, in-qa → needs-playtest: QA round 1 all pass; GUT 750/750, pytest 180+261
+- 2026-10-16, needs-playtest → done: LGTM
+- Ready to merge (2026-10-16): master merged in, `kaiju_early_arrival.enabled` back to false, full GUT suite and both pytest sets pass.
