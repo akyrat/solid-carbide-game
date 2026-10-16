@@ -4,7 +4,7 @@ title: Tests never read the player's real saved progress
 status: open
 from: project-lead
 to: game-loop
-lead:
+lead: Playtest
 epic: game-loop
 milestone: mvp
 user_facing_text: no
