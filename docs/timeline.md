@@ -1310,3 +1310,8 @@ Entry format:
 - Decision or change: T-150 passed QA and is merged: the side flip shows as "SIDE FLIP!" and the arrow-key display is labelled "TRICK". T-152 (the arrow-key display and confirmation) is unblocked. The long GDD now includes the trick prototype decision (not in the short GDD: not MVP).
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-150 (done), T-152 (open)
+
+## 2026-10-16: Trick prototype ready for the board's playtest
+- Decision or change: T-151 (arrow-key sequence and side flip with a fake hop), T-152 (arrow-key display labelled TRICK, SIDE FLIP! confirmation) and T-153 (PixelLab roll frames for the start direction, the code roll for the others; 2 generations) all passed QA and are combined in one playtest build, `playtest/tricks` (`C:\solid-carbide-worktrees\playtest-tricks`). GUT 874/874 on the combined build. Waiting for the board to play it.
+- Documents touched: none on master yet (`docs/drifting.md`, `docs/visual-style.md`, `game/README.md` on the task branches)
+- Tasks: T-151, T-152, T-153 (needs-playtest)
