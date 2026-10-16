@@ -1200,3 +1200,8 @@ Entry format:
 - Decision or change: Garage on the main menu opens the garage screen, and its Back button returns to the main menu; Start still works after a visit. Built on T-058's branch so the board could play both together (board, 2026-10-15); the board played them: "garage works!". Merged after T-058.
 - Documents touched: `docs/game-loop-architecture.md`, `game/README.md`
 - Tasks: T-089 (done)
+
+## 2026-10-16: The status hook should let read-only commands through
+- Decision or change: the board asked for a tooling ticket: the hook that keeps task status lines changing only through the status script also refuses commands that only read a task file and mention `status:`. T-143 keeps blocking writes and lets reads through.
+- Documents touched: none yet (T-143 updates `tasks/README.md`)
+- Tasks: T-143 (new), T-142 (started), T-077 (in QA)
