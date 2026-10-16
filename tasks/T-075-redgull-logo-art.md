@@ -100,3 +100,15 @@ Stopped after 2 calls: PixelLab at these strengths only reproduces the script sh
 Candidates under `game/art/logo/` (all pass `check_logo_one_colour.py`): `redgull_logo_64_script.png` (script only, no PixelLab), `redgull_logo_64_init.png` (call 1 flattened), `redgull_logo_128.png` (call 2 flattened). The first one-round sample `redgull_logo_64.png` is the rejected blob. Script: `game/tools/draw_gull_silhouette.py`.
 
 Honest view: the script shape reads clearly as a bird's head in profile with a long, straight beak and a hooked tip, and the slanted eye hole gives the menacing look. It reads as a gull more than the first sample did, but the head and neck are heavy and boxy, so it can also pass for a raptor or a vulture; a gull wants a thinner beak, a rounder crown and a slimmer neck. Not yet a finished logo.
+
+### Round 3 plan (3 more generations at most, total 6 of the allowed 10 after it; round 3 cost so far 0)
+
+- Free: the script silhouette was corrected toward a gull (domed crown, long slim bill, gonys bump under the bill, small slanted eye, tapering neck with a diagonal cut): variants A, B, C, D in `game/tools/draw_gull_silhouette.py`, files `art-archive/T-075/silhouette_<V>-64.png` and `-128.png`. Pick: D (stout bill, larger slanted eye, no gape line, which is noise at 64 px).
+- Paid, one change per call: (4) `/create-image-pixflux` 128x128 with D-128 as init_image, strength 150; (5) the same at strength 100. Prompt (both): "gull seabird logo mark, flat silhouette, single colour, side view, seagull head, hooked beak, minimalist icon, no body". Same settings as round 2. 1 generation each.
+
+### Round 3 result (2 calls; 5 generations spent in total across rounds 1 to 3, 5 of the 10 allowance left unused; balance 4909 at the start, 4905 on the last read, the final read lags so about 4904)
+
+- Call 4: `art-archive/T-075/redgull_logo_raw_D128_s150.png` (init D-128, strength 150; params `req_D128_s150.json`). Keeps the shape, tidies the curves and sharpens the hooked tip. Best PixelLab result.
+- Call 5: `art-archive/T-075/redgull_logo_raw_D128_s100.png` (same, strength 100; params `req_D128_s100.json`). The eye became a round dot (loses the menacing slant) and the neck gets a notch. Worse.
+- Flattened picks in `game/art/logo/`: `redgull_logo_128_pl_s150.png` (best PixelLab), `redgull_logo_128_script_D.png` and `redgull_logo_64_script_D.png` (script only), plus `redgull_logo_128_pl_s100.png`. All pass the check script.
+- Honest view: variant D (script) and its s150 refinement read as a gull's head: domed round crown, long slim bill nearly straight along the top, small hook at the tip with a gonys bump beneath, slanted eye hole. The slant is mild, so "slightly evil" is subtle. The neck block is still somewhat large for a logo mark.
