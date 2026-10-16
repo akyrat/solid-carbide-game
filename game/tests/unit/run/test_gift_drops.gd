@@ -94,6 +94,7 @@ func test_the_helicopter_crosses_the_screen_and_drops_a_package_that_lands() -> 
 	var landed: Array = []
 	drops.package_dropped.connect(func(p): dropped.append([p, p.height()]))
 	drops.package_landed.connect(func(p): landed.append(p))
+	_place_car(Vector2.ZERO, PI / 2.0)  # ahead is down the screen: room for the full drop height
 	_level_up()
 	var heli: GiftHelicopter = drops.helicopters[0]
 	var view := drops.visible_rect()
@@ -106,8 +107,8 @@ func test_the_helicopter_crosses_the_screen_and_drops_a_package_that_lands() -> 
 	assert_almost_eq(heli.position.x, heli.drop_x, heli.speed * STEP + 0.01, "over the landing spot")
 	assert_almost_eq(t_drop, (heli.drop_x - heli.from_x) / data.helicopter_speed(), STEP * 2.0,
 			"flies at gift_pack.json's speed")
-	assert_almost_eq(dropped[0][1], data.drop_height() - GiftDrops.CARRY_OFFSET.y, 0.01,
-			"falls from under the helicopter, drop_height_px above the ground")
+	assert_almost_eq(dropped[0][1], maxf(data.drop_height() - data.hang_below_px(), data.min_fall()), 0.01,
+			"falls from under the helicopter, which flies drop_height_px above the ground")
 	assert_almost_eq(pkg.drawn_ground.y - heli.position.y, data.drop_height(), 0.01)
 	var t_fall := _advance_until(func(): return not landed.is_empty())
 	assert_eq(landed, [pkg], "the package lands")
@@ -125,7 +126,7 @@ func test_the_carried_package_hangs_under_the_helicopter_then_falls_straight_dow
 	var heli: GiftHelicopter = drops.helicopters[0]
 	var pkg: GiftPackage = drops.packages[0]
 	drops.advance(STEP)
-	assert_eq(pkg.position, heli.position + GiftDrops.CARRY_OFFSET)
+	assert_eq(pkg.position, heli.position + drops.carry_offset())
 	_advance_until(func(): return pkg.is_falling())
 	var x := pkg.position.x
 	var h := pkg.height()
@@ -135,23 +136,66 @@ func test_the_carried_package_hangs_under_the_helicopter_then_falls_straight_dow
 	assert_gt(pkg.height(), 0.0, "not yet down")
 
 
-func test_the_helicopter_never_flies_above_the_top_of_the_screen() -> void:
-	_run_at(SIZES[0])
-	await wait_process_frames(2)
-	run.set_zoom(7.0)  # zoomed in: less sky above the landing spot than drop_height_px
-	await wait_process_frames(1)
-	_place_car(Vector2.ZERO, -PI / 2.0)  # ahead is up the screen
-	_level_up()
-	var heli: GiftHelicopter = drops.helicopters[0]
-	var pkg: GiftPackage = drops.packages[0]
-	var view := drops.visible_rect()
-	assert_true(view.has_point(pkg.drawn_ground), "the landing spot is on screen")
-	assert_lt(pkg.drawn_ground.y - data.drop_height(), view.position.y + GiftDrops.TOP_CLEARANCE, "drop_height_px would be above the screen")
-	assert_almost_eq(heli.position.y, view.position.y + GiftDrops.TOP_CLEARANCE, 0.01, "so it flies just under the top edge, on screen")
-	assert_lte(heli.position.y, pkg.drawn_ground.y)
-	assert_almost_eq(pkg.drop_height, maxf(pkg.drawn_ground.y - heli.position.y - GiftDrops.CARRY_OFFSET.y, 0.0), 0.01)
-	drops.land_all()
-	assert_true(pkg.is_landed())
+## The opaque part of a sprite's current frame, in its node's drawn pixels.
+func _art_rect(s: Sprite2D) -> Rect2:
+	var img := s.texture.get_image()
+	var fw := img.get_width() / s.hframes
+	var used := img.get_region(Rect2i(fw * s.frame, 0, fw, img.get_height())).get_used_rect()
+	var frame := s.get_rect()  # the whole frame, centred plus offset
+	return Rect2(s.position + (frame.position + Vector2(used.position)) * s.scale, Vector2(used.size) * s.scale)
+
+
+## T-144 layout fix with the final art (T-145, T-146): at the default zoom and
+## at the board's saved zoom (about 2.4), whichever way the car heads, the
+## helicopter is fully on screen with screen_margin_px to spare while it
+## carries the package, the package hangs clearly below its belly, and the
+## package falls under its parachute for fall_seconds, at least min_fall_px
+## when the screen has room for it, never with the parachute above the screen.
+func test_drop_layout_with_the_final_art_at_the_default_and_the_boards_zoom() -> void:
+	for zoom in [2.44, 0.0]:
+		_run_at(SIZES[0])
+		await wait_process_frames(2)
+		if zoom > 0.0:
+			run.set_zoom(648.0 / (2.0 * zoom * 16.0))  # Godot zoom 2.44, as the board's saved camera
+		await wait_process_frames(1)
+		for i in 8:
+			var heading := TAU * i / 8.0
+			_place_car(Vector2.ZERO, heading)
+			drops.send_helicopter(2)
+			var heli: GiftHelicopter = drops.helicopters.back()
+			var pkg: GiftPackage = drops.packages.back()
+			var where := "zoom %s heading %d" % [zoom, i]
+			var heli_art := _art_rect(heli.sprite())
+			var box := _art_rect(pkg.sprite())
+			assert_gt(box.position.y + drops.carry_offset().y, heli_art.end.y + 4.0,
+					where + ": the box hangs clearly below the belly")
+			var steps := 0
+			while not pkg.is_falling() and steps < 2000:
+				var view := drops.visible_rect()
+				if heli.position.x > view.position.x + heli_art.size.x and heli.position.x < view.end.x - heli_art.size.x:
+					assert_gte(heli.position.y + heli_art.position.y, view.position.y + data.screen_margin() - 0.01,
+							where + ": the helicopter's top is on screen")
+				drops.advance(STEP)
+				steps += 1
+			assert_true(pkg.is_falling(), where + ": dropped")
+			var view_now := drops.visible_rect()
+			var canopy_top := pkg.position.y - drops.art_height(pkg.sprite())
+			var room := pkg.drawn_ground.y - (view_now.position.y + data.screen_margin() + drops.art_height(pkg.sprite()))
+			if room >= data.min_fall():
+				assert_gte(pkg.drop_height, data.min_fall() - 0.01, where + ": a fall long enough to see")
+			if room >= 0.0:
+				assert_gte(canopy_top, view_now.position.y + data.screen_margin() - 0.01, where + ": the parachute's top on screen")
+			else:
+				assert_eq(pkg.drop_height, 0.0, where + ": no room above: lands in place, parachute still shown")
+			assert_eq(pkg.sprite().texture.resource_path, GiftPackage.FALLING_ART, where + ": under the parachute")
+			var t := 0.0
+			while pkg.is_falling() and t < 10.0:
+				drops.advance(STEP)
+				t += STEP
+			assert_almost_eq(t, data.fall_seconds(), STEP * 2.0, where + ": the parachute shows for fall_seconds")
+			assert_true(pkg.is_landed())
+			assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART, where + ": the box on the ground")
+			drops.clear()
 
 
 # ---- Driving over the package opens the level-up screen --------------------------------------
@@ -555,6 +599,9 @@ func test_tuning_numbers_come_from_the_data_file() -> void:
 	assert_eq(d.helicopter_speed(), float(r.data.helicopter.speed_px_per_second))
 	assert_eq(d.drop_height(), float(r.data.helicopter.drop_height_px))
 	assert_eq(d.offscreen_margin(), float(r.data.helicopter.offscreen_margin_px))
+	assert_eq(d.screen_margin(), float(r.data.helicopter.screen_margin_px))
+	assert_eq(d.hang_below_px(), float(r.data.package.hang_below_px))
+	assert_eq(d.min_fall(), float(r.data.package.min_fall_px))
 	assert_eq(d.fall_seconds(), float(r.data.package.fall_seconds))
 	assert_eq(d.land_ahead_units(), float(r.data.package.land_ahead_units))
 	assert_eq(d.clearance_units(), float(r.data.package.clearance_units))
@@ -567,8 +614,8 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	var path := RunPaths.file("gift_pack_t144.json")
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	f.store_string(JSON.stringify({
-		"helicopter": {"speed_px_per_second": 300, "drop_height_px": 77, "offscreen_margin_px": 33},
-		"package": {"fall_seconds": 1.25, "land_ahead_units": 9, "clearance_units": 0.5, "pickup_radius_units": 3}}))
+		"helicopter": {"speed_px_per_second": 300, "drop_height_px": 77, "screen_margin_px": 5, "offscreen_margin_px": 33},
+		"package": {"hang_below_px": 20, "fall_seconds": 1.25, "min_fall_px": 10, "land_ahead_units": 9, "clearance_units": 0.5, "pickup_radius_units": 3}}))
 	f.close()
 	drops.data = GiftPackData.new(path)
 	assert_true(drops.data.is_ok(), drops.data.error)
@@ -580,6 +627,9 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	assert_almost_eq(pkg.drawn_ground.y - heli.position.y, 77.0, 0.001)
 	assert_almost_eq(drops.visible_rect().position.x - heli.from_x, 33.0 + maxf(0.0, drops.visible_rect().get_center().x - pkg.drawn_ground.x), 0.01)
 	assert_eq(pkg.fall_seconds, 1.25)
+	assert_eq(pkg.position, heli.position + Vector2(0, 20), "hangs hang_below_px under it")
+	_advance_until(func(): return pkg.is_falling())
+	assert_almost_eq(pkg.drop_height, 57.0, 0.001, "drop_height_px - hang_below_px")
 	assert_almost_eq(pkg.ground_units().distance_to(Vector2.ZERO), 9.0, 0.001)
 	drops.land_all()
 	_place_car(pkg.ground_units() + Vector2(2.9, 0), 0.0)

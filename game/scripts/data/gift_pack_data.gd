@@ -38,6 +38,21 @@ func drop_height() -> float:
 	return _num("helicopter", "drop_height_px")
 
 
+## Drawn pixels kept between the helicopter's top and the screen's top edge.
+func screen_margin() -> float:
+	return _num("helicopter", "screen_margin_px")
+
+
+## Drawn pixels from the helicopter's centre down to the bottom of the package it carries.
+func hang_below_px() -> float:
+	return _num("package", "hang_below_px")
+
+
+## The shortest fall in drawn pixels, so the parachute is always seen.
+func min_fall() -> float:
+	return _num("package", "min_fall_px")
+
+
 ## Drawn pixels beyond the screen's edges where the helicopter starts and ends.
 func offscreen_margin() -> float:
 	return _num("helicopter", "offscreen_margin_px")

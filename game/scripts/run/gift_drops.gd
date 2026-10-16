@@ -35,11 +35,6 @@ const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Over everything in the world (buildings top out far below), under the HUD's layers.
 const SKY_Z := 4000
-## The helicopter flies at least this far below the screen's top edge (drawn
-## pixels, about its own height), so it is on screen while it crosses.
-const TOP_CLEARANCE := 24.0
-## Where a carried package hangs under the helicopter, in drawn pixels.
-const CARRY_OFFSET := Vector2(0, 14)
 ## Below this speed (world pixels per second) "ahead" is the car's nose, not its motion.
 const STILL_SPEED := 1.0
 ## The ways tried around "straight ahead" (degrees) and the share of the
@@ -126,22 +121,52 @@ func send_helicopter(level: int) -> GiftHelicopter:
 	var mid := view.get_center().x
 	heli.from_x = minf(pkg.drawn_ground.x, mid) - half
 	heli.to_x = maxf(pkg.drawn_ground.x, mid) + half
-	# It flies drop_height above the landing spot, but never above the
-	# screen's top edge (TOP_CLEARANCE), so it is always seen crossing.
-	var fly_y := maxf(pkg.drawn_ground.y - data.drop_height(), view.position.y + TOP_CLEARANCE)
-	fly_y = minf(fly_y, pkg.drawn_ground.y)
-	# The package falls from where it hangs under the helicopter.
-	pkg.drop_height = maxf(pkg.drawn_ground.y - fly_y - CARRY_OFFSET.y, 0.0)
-	heli.position = Vector2(heli.from_x, fly_y)
 	heli.z_index = SKY_Z + 1
 	heli.package = pkg
-	pkg.position = heli.position + CARRY_OFFSET
 	add_child(pkg)
 	add_child(heli)
+	heli.position = Vector2(heli.from_x, fly_y(heli, pkg))
+	pkg.position = heli.position + carry_offset()
 	helicopters.append(heli)
 	packages.append(pkg)
 	helicopter_sent.emit(heli)
 	return heli
+
+
+## Where the package hangs under the helicopter: hang_below_px under the
+## helicopter's centre (the package's bottom), clear of its belly.
+func carry_offset() -> Vector2:
+	return Vector2(0, data.hang_below_px())
+
+
+## How far the helicopter's frame reaches above its centre, in drawn pixels
+## (from its sprite, so it follows the art).
+func helicopter_top(heli: GiftHelicopter) -> float:
+	var s := heli.sprite()
+	if s == null or s.texture == null:
+		return 0.0
+	return -(s.get_rect().position.y * s.scale.y + s.position.y)
+
+
+## How far a sprite's drawing (its opaque pixels) reaches above its node's
+## origin, in drawn pixels; for the package's parachute look, the canopy's top.
+func art_height(s: Sprite2D) -> float:
+	if s == null or s.texture == null:
+		return 0.0
+	var img := s.texture.get_image()
+	var used := img.get_used_rect()
+	var top := s.get_rect().position.y + used.position.y
+	return -(top * s.scale.y + s.position.y)
+
+
+## The height the helicopter flies at (drawn y) while it carries `pkg`:
+## drop_height_px above the landing spot, but never so high that its frame
+## comes closer than screen_margin_px to the screen's top edge, so it is
+## always fully seen. Worked out again every frame while it carries the
+## package, because the camera follows the car.
+func fly_y(heli: GiftHelicopter, pkg: GiftPackage) -> float:
+	var top_line := visible_rect().position.y + data.screen_margin() + helicopter_top(heli)
+	return maxf(pkg.drawn_ground.y - data.drop_height(), top_line)
 
 
 ## The part of the world on screen now, in drawn pixels (the camera's view).
@@ -194,10 +219,11 @@ func advance(delta: float) -> void:
 		heli.position.x += heli.speed * delta
 		var pkg: GiftPackage = heli.package
 		if pkg != null:
+			heli.position.y = fly_y(heli, pkg)
 			if heli.position.x >= heli.drop_x:
 				_drop(heli)
 			else:
-				pkg.position = heli.position + CARRY_OFFSET
+				pkg.position = heli.position + carry_offset()
 		if heli.position.x >= heli.to_x:
 			helicopters.erase(heli)
 			heli.queue_free()
@@ -213,16 +239,28 @@ func _drop(heli: GiftHelicopter) -> void:
 	heli.dropped = true
 	pkg.phase = GiftPackage.FALLING
 	pkg.fall_t = 0.0
+	pkg.refresh_look()
+	# It falls from where it hangs, and at least min_fall_px, so the parachute
+	# is seen coming down (when the screen leaves little room above the
+	# landing spot it starts a little higher, behind the helicopter's body).
+	# But it never starts so high that the parachute's top is above the
+	# screen's top edge (less screen_margin_px): when the camera is zoomed in
+	# close and the landing spot is high on the screen, the fall is shorter,
+	# down to none, and the parachute stays in sight for fall_seconds anyway.
+	var hang_y := heli.position.y + carry_offset().y
+	var wanted := maxf(pkg.drawn_ground.y - hang_y, data.min_fall())
+	var room := pkg.drawn_ground.y - (visible_rect().position.y + data.screen_margin() + art_height(pkg.sprite()))
+	pkg.drop_height = clampf(wanted, 0.0, maxf(room, 0.0))
 	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height)
 	package_dropped.emit(pkg)
 
 
-## Falls with gravity's feel (height drops with the square of the time) and
-## lands after fall_seconds.
+## Floats down under its parachute at a steady speed and lands after
+## fall_seconds.
 func _fall(pkg: GiftPackage, delta: float) -> void:
 	pkg.fall_t += delta
 	var k := 1.0 if pkg.fall_seconds <= 0.0 else clampf(pkg.fall_t / pkg.fall_seconds, 0.0, 1.0)
-	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height * (1.0 - k * k))
+	pkg.position = pkg.drawn_ground + Vector2(0, -pkg.drop_height * (1.0 - k))
 	if k >= 1.0:
 		_land(pkg)
 
@@ -230,6 +268,7 @@ func _fall(pkg: GiftPackage, delta: float) -> void:
 func _land(pkg: GiftPackage) -> void:
 	pkg.phase = GiftPackage.LANDED
 	pkg.position = pkg.drawn_ground
+	pkg.refresh_look()
 	var map: Node = run.map
 	pkg.z_index = map.car_z_index(pkg.ground_units(), 0.0) if map != null and map.has_method("car_z_index") else 0
 	package_landed.emit(pkg)
