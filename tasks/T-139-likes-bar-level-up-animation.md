@@ -1,7 +1,7 @@
 ---
 id: T-139
 title: The likes bar animates when the player levels up
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Level-up
@@ -33,6 +33,8 @@ The board (2026-10-15): "add an animation to the level up bar when the player le
 
 What the animation looks like is your proposal, written in the result notes for the board to judge in its playtest. Keep it in the HUD's comic look (the combo counter's and the trick popups' style: hard pixel edges, pulses in pixel-art frames, T-131), drawn in code, never Redgull red. For example: the bar flashes white-hot as it fills to the end, "Hype Lv" pops with the new number, a few pixel sparks burst off the bar. It must play even though the level-up pauses the run (it runs while paused, or plays just before the pause), stay clear of the combo counter and the other HUD parts at the HUD's window sizes, and not hide the new level number for long. No new player-facing text.
 
+**Note (Project Lead, 2026-10-16):** T-144 (built at the same time) changes the level-up: the level-up screen no longer opens at once, a helicopter drops a package and the screen opens when the car drives over it; the run keeps going until then. The animation plays at the moment of the level-up (when the bar fills), not when the screen opens, so it must work whether the run is running or paused. The board plays T-139 and T-144 together in one build.
+
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 ## Acceptance criteria
@@ -44,6 +46,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
+## Updates
+
+### 2026-10-16, Open → In progress
+
+Started: agent launched in C:\solid-carbide-worktrees$t. Part of the one level-up playtest build.
 
 ## Result notes
 
