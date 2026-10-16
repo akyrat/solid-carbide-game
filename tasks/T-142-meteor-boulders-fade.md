@@ -1,7 +1,7 @@
 ---
 id: T-142
 title: Meteor boulders fade away 10 seconds after landing
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Playtest
@@ -63,3 +63,4 @@ Built (Enemy Behavior Agent). A meteor boulder stays 10 s after landing, fully v
 - Limitation: in the flat view the placeholder circles vanish at the end without fading; only the boulder art (isometric view) fades.
 
 **How the board plays it:** open `C:\solid-carbide-worktrees\T-142\game\project.godot` (or Play on the ticket in the Builds tab). The playtest switch `kaiju_early_arrival.enabled` in `game/data/playtest.json` is ON in this branch: the kaiju arrives 30 s in, first meteors at about 35 s. Watch a boulder: after 10 s it fades over 2 s, then the car drives through the spot. **`kaiju_early_arrival.enabled` must be set back to false right before merging.**
+- 2026-10-16, in-progress → in-qa: Built; GUT 750/750, pytest 180 + 261. Playtest switch kaiju_early_arrival is ON in this branch and must go back off right before merging. Play: C:\solid-carbide-worktrees\T-142\game\project.godot
