@@ -1,0 +1,72 @@
+{
+  "task": "T-145",
+  "generator": "game/tools/build_helicopter.py build (free, no PixelLab call)",
+  "source": "art-archive/T-145/helicopter_sample.png (the board-approved sample, 2026-10-16)",
+  "frames": 4,
+  "frame_size": [
+    192,
+    160
+  ],
+  "sheet": "helicopter_sheet.png: 4 frames side by side, the rotor turned a quarter of a blade gap per frame",
+  "faces": "right (down-right in the isometric view), the way it flies",
+  "logo_spots": [
+    {
+      "centre": [
+        78,
+        90
+      ],
+      "size": 18,
+      "shear": 0.5
+    },
+    {
+      "centre": [
+        35,
+        29
+      ],
+      "size": 12,
+      "shear": 0.0
+    }
+  ],
+  "frame_checks": [
+    {
+      "size": [
+        192,
+        160
+      ],
+      "transparent_corners": true,
+      "semi_transparent_pixels": 0,
+      "colours": 30,
+      "opaque_pixels": 6013
+    },
+    {
+      "size": [
+        192,
+        160
+      ],
+      "transparent_corners": true,
+      "semi_transparent_pixels": 0,
+      "colours": 30,
+      "opaque_pixels": 5868
+    },
+    {
+      "size": [
+        192,
+        160
+      ],
+      "transparent_corners": true,
+      "semi_transparent_pixels": 0,
+      "colours": 30,
+      "opaque_pixels": 5872
+    },
+    {
+      "size": [
+        192,
+        160
+      ],
+      "transparent_corners": true,
+      "semi_transparent_pixels": 0,
+      "colours": 30,
+      "opaque_pixels": 5971
+    }
+  ]
+}

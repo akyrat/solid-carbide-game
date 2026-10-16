@@ -518,12 +518,11 @@ func _assert_not_red(tex: Texture2D, what: String) -> void:
 	assert_eq(reds, 0, what + ": no Redgull red, no red")
 
 
-func test_placeholders_are_not_redgull_red() -> void:
+func test_package_placeholder_is_not_redgull_red() -> void:
 	var heli: GiftHelicopter = HeliScene.instantiate()
 	var pkg: GiftPackage = PackageScene.instantiate()
 	autofree(heli)
 	autofree(pkg)
-	_assert_not_red(heli.sprite().texture, "helicopter")
 	_assert_not_red(pkg.sprite().texture, "package")
 	assert_eq(heli.sprite().modulate, Color.WHITE)
 	assert_eq(pkg.sprite().modulate, Color.WHITE)
@@ -534,7 +533,7 @@ func test_one_named_sprite_each_for_the_art_swap() -> void:
 	var pkg: GiftPackage = PackageScene.instantiate()
 	autofree(heli)
 	autofree(pkg)
-	assert_eq(heli.sprite().texture.resource_path, "res://art/gift_pack/helicopter_placeholder.png")
+	assert_eq(heli.sprite().texture.resource_path, "res://art/gift_pack/helicopter_sheet.png")
 	assert_eq(pkg.sprite().texture.resource_path, "res://art/gift_pack/package_placeholder.png")
 	assert_eq(heli.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	assert_eq(pkg.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
@@ -584,3 +583,22 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	drops.check_pickups()
 	assert_true(run.level_up_screen.visible, "picked up within the file's radius")
 	DirAccess.remove_absolute(path)
+
+
+func test_helicopter_art_is_redgull_red_with_rotor_frames() -> void:
+	var heli: GiftHelicopter = HeliScene.instantiate()
+	autofree(heli)
+	var s := heli.sprite()
+	assert_eq(s.hframes, 4, "four rotor frames")
+	var img := s.texture.get_image()
+	assert_eq(img.get_width(), 192 * 4)
+	var logo_red := 0
+	for y in img.get_height():
+		for x in 192:
+			var c := img.get_pixel(x, y)
+			if c.a > 0 and absf(c.r8 - 135) + absf(c.g8 - 17) + absf(c.b8 - 27) < 3:
+				logo_red += 1
+	assert_gt(logo_red, 100, "the Redgull red and the logo are on the helicopter")
+	var before := s.frame
+	heli._process(0.1)
+	assert_ne(s.frame, before, "the rotor turns")
