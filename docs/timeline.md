@@ -1280,3 +1280,8 @@ Entry format:
 - Decision or change: the board wants to see the motion lines in the game, not as samples ("There's no point for me checking the samples"), and wants them animated, made with PixelLab (one round, the board's go). T-009 is built on T-008's unmerged branch: the Asset Generation Agent generates the animation and swaps it in for T-008's placeholder, and the board plays it there. T-008 merges first, then T-009.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-009 (started), T-008
+
+## 2026-10-16: Level-up art samples approved; the package reuses the gift box
+- Decision or change: the board approved the three samples and the Project Lead's suggestions ("Yeah, looks good to me"), and asked for the Redgull logo wherever it fits. T-140: the gift box emblem (PixelLab) and the rest of the level-up screen art drawn by script. T-145: the helicopter, with its red shifted to Redgull's, a stronger red panel, the logo and script-drawn rotor frames. T-146: the dropped package reuses T-140's gift box, scaled down by script, with the logo and a parachute for the fall; its own crate sample is archived. No further PixelLab calls planned (3 generations spent in total). T-139 and T-144 passed QA and wait for the one level-up build.
+- Documents touched: none (tickets only)
+- Tasks: T-139, T-140, T-144, T-145, T-146
