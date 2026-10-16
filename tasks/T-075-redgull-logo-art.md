@@ -42,9 +42,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows the sample uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass / fail)
+- [ ] A check script shows each logo file uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; the calls after the first sample stay within the board's allowance of 10 generations (QA: pass / fail)
-- [ ] The sample is saved under `game/art/` with its raw output in `art-archive/T-075/`, and Godot imports it (QA: pass / fail)
+- [ ] The board's pick (2026-10-16: `art-archive/T-075/redgull_logo_raw_init128_s80.png`, flattened to its own main red, RGB 135,17,27) exists as `game/art/logo/redgull_logo_128.png`, `redgull_logo_64.png` and `redgull_logo_32.png`, each one colour, the smaller ones made by script from the 128; the other candidates are in `art-archive/T-075/`, not `game/art/`; Godot imports all three (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: judge the sample's look (a seagull's head in profile, minimal, one dark red). Once approved, the other sizes follow from it.
@@ -66,6 +66,10 @@ Board's allowance: up to 10 more generations to reach a showable logo. Agent res
 ### 2026-10-16, In QA
 
 Round 3 is worth showing: gull head in profile, one dark red. 5 of the 10 allowed generations used (balance ~4904). Pick: redgull_logo_128_pl_s150.png. Waiting for the board's verdict before QA.
+
+### 2026-10-16, In QA
+
+Board's extra call: silhouette_init_128 as init, strength 80. Still raptor-like. 6 of 10 generations used (balance ~4903).
 
 ## Result notes
 
