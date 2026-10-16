@@ -524,7 +524,7 @@ func test_placeholders_are_not_redgull_red() -> void:
 	autofree(heli)
 	autofree(pkg)
 	_assert_not_red(heli.sprite().texture, "helicopter")
-	_assert_not_red(pkg.sprite().texture, "package")
+	# T-146: the package is final Redgull art now, red is allowed on it.
 	assert_eq(heli.sprite().modulate, Color.WHITE)
 	assert_eq(pkg.sprite().modulate, Color.WHITE)
 
@@ -535,7 +535,7 @@ func test_one_named_sprite_each_for_the_art_swap() -> void:
 	autofree(heli)
 	autofree(pkg)
 	assert_eq(heli.sprite().texture.resource_path, "res://art/gift_pack/helicopter_placeholder.png")
-	assert_eq(pkg.sprite().texture.resource_path, "res://art/gift_pack/package_placeholder.png")
+	assert_eq(pkg.sprite().texture.resource_path, "res://art/gift_pack/package.png")
 	assert_eq(heli.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	assert_eq(pkg.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	var sprites := 0
@@ -584,3 +584,17 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	drops.check_pickups()
 	assert_true(run.level_up_screen.visible, "picked up within the file's radius")
 	DirAccess.remove_absolute(path)
+
+
+func test_package_uses_the_parachute_look_only_while_falling() -> void:
+	var pkg: GiftPackage = PackageScene.instantiate()
+	add_child_autofree(pkg)
+	pkg.phase = GiftPackage.CARRIED
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART)
+	pkg.phase = GiftPackage.FALLING
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.FALLING_ART)
+	pkg.phase = GiftPackage.LANDED
+	pkg.refresh_look()
+	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART)
