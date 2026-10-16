@@ -1300,3 +1300,8 @@ Entry format:
 - Decision or change: on T-139 the QA agent changed the ticket's qa_rounds line itself before running the status script, so it read 2 after one QA round; the hook meant to refuse that didn't. The board asked for a ticket: T-149 finds how such changes get past the hooks and closes each gap, with tests. Tooling only, so it merges after QA without a playtest. Not started.
 - Documents touched: none
 - Tasks: T-149 (new)
+
+## 2026-10-16: Arrow-key trick prototype
+- Decision or change: the board wants a quick playtest of tricks done with the arrow keys. One trick: Up, Right, Down, Left in a row makes the car side-flip to the right with a small fake jump; a live arrow-key HUD in the bottom-right corner; a comic-style confirmation when the sequence is completed; the roll art from PixelLab (board's go given), one car direction first. A standalone prototype, not MVP. Tickets: T-150 (text), T-151 (sequence detection, flip and hop with a placeholder roll), T-152 (input HUD and confirmation), T-153 (roll frames). One playtest build of all four.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-150, T-151, T-152, T-153 (new)
