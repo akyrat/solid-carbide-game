@@ -1,6 +1,6 @@
 ---
 id: T-075
-title: Art: the Redgull logo, a sketched seagull with red eyes
+title: Art: the Redgull logo, a seagull's head in profile in one shade of dark red
 status: open
 from: project-lead
 to: asset-generation
@@ -10,7 +10,7 @@ milestone: mvp
 user_facing_text: no
 changes_visuals: yes
 depends_on: []
-documents_affected: [game/README.md]
+documents_affected: [game/README.md, docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/extended-narrative.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
@@ -28,24 +28,24 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-Redgull's logo, as Visual style, Decisions describes it: a simple, sketched seagull with red eyes, slightly evil and unsettling on purpose (Extended narrative, Decisions). It is a fictional brand: it must not look like any real brand's logo. Deliver it as an image with a transparent background, at a few sizes (for example 32, 64 and 128 pixels wide). Where it appears in the MVP is decided separately; this task only makes the logo, so there is no placeholder to swap.
+Redgull's logo, as Visual style, Decisions describes it (board, 2026-10-16): the **side profile of a seagull's head only**, not the whole bird (a full body would look like any bird), **as minimalistic as possible**, in **one single shade of dark red** on a transparent background. Slightly evil and unsettling on purpose (Extended narrative, Decisions). It is a fictional brand: it must not look like any real brand's logo. Where it appears in the MVP is decided separately; this task only makes the logo, so there is no placeholder to swap.
 
-Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
+Because it is a flat one-colour logo, the sprite rules for outline, shading and about 30 colours do not apply. Still: hard pixel edges, no anti-aliasing, no semi-transparent pixels, transparent background. If PixelLab returns more than one shade, a free script may flatten every visible pixel to the single dark red and clear the rest; keep the raw output in `art-archive/T-075/`.
 
-Use the existing client, `game/tools/pixellab_client.py`. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. The board judges the result.
+**Sample first** (board, 2026-10-16, `docs/working-with-the-board.md`, "Art and money"): this round makes **one** logo sample for the board to judge. The board has given the go for this PixelLab generation. Write the planned call(s) and their cost in the result notes before calling. Keep it to the smallest number of calls that gives one usable sample (one call, or one call returning a few options to choose from if the endpoint does that at the same cost). The other sizes (for example 32, 64 and 128 pixels wide) are made from the approved sample afterwards, by script where possible.
 
-This art task swaps its art in for the placeholder itself (`tasks/README.md`, "Art replaces placeholders"), without changing how the game behaves.
+Use the existing client, `game/tools/pixellab_client.py`, with a 600 s HTTP timeout. Record every call with its prompt, settings and cost, and the balance before and after. One round of generation only: don't regenerate; report problems instead. Never delete generated art.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes.
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
+- [ ] A check script shows the sample uses exactly one visible colour (a dark red), has a transparent background and no semi-transparent pixels (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] The logo exists at the sizes listed in the result notes, and Godot imports it (QA: pass / fail)
+- [ ] The sample is saved under `game/art/` with its raw output in `art-archive/T-075/`, and Godot imports it (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+The board's review: judge the sample's look (a seagull's head in profile, minimal, one dark red). Once approved, the other sizes follow from it.
 
 ## Result notes
 
