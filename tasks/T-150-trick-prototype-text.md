@@ -1,7 +1,7 @@
 ---
 id: T-150
 title: "Text: the side flip trick's name and the input HUD label in the trick prototype"
-status: open
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -35,4 +35,11 @@ Write the final text in the result notes, one line per item, with a one-line rea
 
 ## Updates
 
+### 2026-10-16, Open → In progress
+
+Started: the Narrative Theme Agent writes the side flip's name and the HUD label.
+
 ## Result notes
+
+1. Trick name: **SIDE FLIP!** (10 characters). Plain and readable, in the same shout style as FULL 360! and ALT DRIFT!, and it names exactly what the car does.
+2. Input HUD label: **TRICK** (5 characters). One short word that tells the player what the four arrow keys are for, in the same tone as the popups.
