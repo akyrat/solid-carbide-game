@@ -1,7 +1,7 @@
 ---
 id: T-145
 title: Art: the Redgull helicopter that drops the gift pack
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -56,6 +56,24 @@ The board's review: judge the sample, then the helicopter in a run.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-16, Blocked → In progress
+
+Started on the board's go for one sample; builds on T-144's branch for the one level-up build.
+
 ## Result notes
 
 - 2026-10-16, open → blocked: Waits for T-144 (the placeholder drop flow).
+
+### Proposal and sample plan (Asset Generation Agent, 2026-10-16, before any PixelLab call)
+
+**Proposal for the board to judge**
+- **Directions:** one drawn heading, the helicopter flying toward the south-east of the isometric view (down-right on screen), and its **mirror** for the opposite sweep (flying down-left). A helicopter that flies a straight line over the screen needs no more. A second drawn heading (about 1 generation with `/rotate`) only if T-144's flight path turns out not to be a straight line.
+- **How it is seen:** the same 3/4 isometric view as the car (top and one side), flying high above the road: it is drawn with no ground shadow in the sprite (T-144 may add a soft shadow on the ground itself if wanted). It is drawn at the world scale (32 art pixels per unit, scale 0.5) but is larger than the car: about 150 by 120 art pixels of helicopter on a 192 by 160 canvas (the car is about 96 long).
+- **Animation:** the body is drawn once by PixelLab. The **rotor spin is 4 frames made by a free script** (the blades turned a step each frame, plus a see-through-free blur drawn as dark pixels), not by PixelLab, so a rotor animation costs no generations. Playback speed is a data value for T-144's scene.
+- **Redgull look:** the approved logo (`game/art/logo/redgull_logo_32.png`, exact pixels, 135,17,27) is **stamped by script** on the fuselage side, so the logo stays the approved one (PixelLab would redraw it). The body is dark charcoal and maroon with red accent panels, within about 30 colours.
+
+**Planned PixelLab calls for this round (the sample)**
+1. One call, `/create-image-pixflux`, 192 x 160, `no_background`, `isometric`, `view: high top-down`, `direction: south-east`, selective outline, detailed shading, highly detailed, text guidance 8, seed 145145. Prompt and settings: `art-archive/T-145/helicopter_sample_request.json`. Cost: **1 generation** (as in T-064 and T-065 for similar canvases). Balance before: 4902 of 5000 generations.
+2. Free script steps after it: cut the palette to 30 colours (`game/tools/reduce_palette.py`), make the dark and light review image. No more PixelLab calls this round; if the sample comes out wrong, I report it and do not regenerate.
+
+**Planned cost of the full set (after the board approves the sample):** 0 generations if the sample is approved as it is (mirror, 4 rotor frames and the logo stamp are scripts). If the board wants a second drawn heading: 1 generation (`/rotate`), or up to 2 for a pair of retries it asks for.
