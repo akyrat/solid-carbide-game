@@ -34,6 +34,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import taskboard_sync as tb  # noqa: E402
+import guard_ledger as gl  # noqa: E402
 
 LOG = tb.STATE_DIR / "moves.log"
 CRITERIA_RE = re.compile(r"^## Acceptance criteria[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
@@ -214,6 +215,22 @@ def write(path, text):
     path.write_bytes(text.encode("utf-8"))
 
 
+def guard_check(task_id, path, text, folders):
+    """Refuses to work on a task file whose status, qa_rounds or lead lines were not written by this script
+    or committed in git: someone edited them by hand (guard_ledger.py, T-149)."""
+    gl.seed(list(tb.task_files()) + [f / "tasks" / p.name for f in folders.values() for p in tb.task_files()])
+    if not gl.ok(task_id, text, gl.head_text(path), gl.read()):
+        raise Refused(f"{path}: its status, qa_rounds or lead line was changed by hand, not by this script, so "
+                      "the script won't build on it. Undo the hand edit (git checkout -- <file>, or restore "
+                      "the line) and run the move again.")
+
+
+def write_guarded(task_id, path, text):
+    """write() for a change to the guarded lines: also records the new state in the ledger."""
+    write(path, text)
+    gl.bless(task_id, text)
+
+
 def log(entry):
     tb.STATE_DIR.mkdir(exist_ok=True)
     entry["at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -231,7 +248,12 @@ def unblock_dependents(done_id, folders):
         real, _ = find(fields["id"], folders)
         fields = header(real)
         if fields.get("status") == "blocked" and not unfinished_deps(fields, folders):
-            write(real, set_field(real.read_bytes().decode("utf-8"), "status", "open"))
+            current = real.read_bytes().decode("utf-8")
+            try:
+                guard_check(fields["id"], real, current, folders)
+            except Refused:
+                continue   # hand-edited: leave it blocked rather than build on it
+            write_guarded(fields["id"], real, set_field(current, "status", "open"))
             log({"id": fields["id"], "from": "blocked", "to": "open", "file": str(real), "note": f"{done_id} done"})
             opened.append(fields["id"])
     return opened
@@ -246,6 +268,7 @@ def move(task_id, new, note=None, folders=None, by="agent", reply=None):
         raise Refused(f"Unknown status {new!r}. Statuses: {', '.join(tb.STATUSES)}.")
     path, folder = find(task_id, folders)
     text = path.read_bytes().decode("utf-8")
+    guard_check(task_id, path, text, folders)
     fields = tb.parse_header(text)
     old = fields.get("status", "open")
     if new == old:
@@ -269,7 +292,7 @@ def move(task_id, new, note=None, folders=None, by="agent", reply=None):
         text = add_note(text, f"- {date.today().isoformat()}, {old} → {new}: {note}")
     if reply:
         text = add_update(text, f"{STATUS_LABEL.get(old, old)} → {STATUS_LABEL.get(new, new)}", reply)
-    write(path, text)
+    write_guarded(task_id, path, text)
     log({"id": task_id, "from": old, "to": new, "file": str(path), "note": note or "", "by": by})
     out.insert(0, f"{task_id}: {old} → {new} ({path})")
     if new == "done":
@@ -309,10 +332,11 @@ def claim(task_id, name, take_over=False, folders=None):
     with tb.file_lock(tb.STATE_DIR / "claims.lock"):
         path, _ = find(task_id, folders)
         text = path.read_bytes().decode("utf-8")
+        guard_check(task_id, path, text, folders)
         old = claim_check(task_id, tb.parse_header(text) or {}, name, take_over)
         if old == name:
             return [f"{task_id} already belongs to {name} ({path})"]
-        write(path, set_field(text, "lead", name))
+        write_guarded(task_id, path, set_field(text, "lead", name))
         log({"id": task_id, "lead": name, "from_lead": old, "file": str(path)})
     return [f"{task_id}: lead {old or '(none)'} → {name} ({path})"]
 

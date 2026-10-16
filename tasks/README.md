@@ -16,7 +16,9 @@ The board follows these tasks on its local task board (`docs/README.md`, "The ta
 
 ## Changing a task's status
 
-A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit). Shell commands that only read may mention those lines (`grep -n "^status:" tasks/T-012*.md`, `sed -n` without `-i`, `head`, `cat`, `Select-String`, `Get-Content`); a command that could write them (`sed -i`, `>` or `>>`, `tee`, `perl -i`, Python or PowerShell writes), or that the hook can't tell is read-only, is refused:
+A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit). The hooks recognise a task file by its path in any spelling (relative, other case, `..`) and by its header, and they look at every `status`, `qa_rounds` or `lead` line in the header, so a repeated line is caught too. Shell commands that only read may mention those lines (`grep -n "^status:" tasks/T-012*.md`, `sed -n` without `-i`, `head`, `cat`, `Select-String`, `Get-Content`); a command that could write them (`sed -i`, `>` or `>>`, `tee`, `perl -i`, Python or PowerShell writes), or that the hook can't tell is read-only, is refused:
+
+A command cannot be checked in every way a file can be written, so there is a second guard (T-149, `tools/guard_ledger.py`). The status script records in `.board/blessed-states.jsonl` (in the main checkout, shared by every task folder) each state of those three lines it writes, and refuses to move or claim a task whose lines are neither in that record nor what git has committed ("changed by hand"). The hook runs the same check on `git commit`, so a hand-edited line cannot be committed, whichever tool edited it. If a merge conflict in a task's header was resolved by hand, run the status script to set the line it should have; the commit is refused until then. The record is created by the first script run, which trusts the task files as they are.
 
 ```
 python C:/solid-carbide-game/tools/task_status.py T-012             # where it is, and the moves allowed now
