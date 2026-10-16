@@ -1,7 +1,7 @@
 ---
 id: T-009
 title: Boost animation art for the jump to cruise speed
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Playtest
@@ -81,3 +81,4 @@ Total estimate: **2 generations**. After that, free script work only: transparen
 **Tools:** `game/tools/build_boost_lines.py` (`first-frame`, `build 0,1,3,2,5`, `check`), free.
 
 **Documents updated:** `docs/visual-style.md` (Content: "Cruise boost motion lines"), `game/README.md` ("Boost effect" section and the file list).
+- 2026-10-16, in-progress → in-qa: PixelLab motion lines (2 generations, 5 frames x 16 directions, 80x80 cells) swapped in for T-008's streaks on Car.boost, behind and following the car; GUT 791/791, pytest 182 + 271 pass. Play: C:\solid-carbide-worktrees\T-009\game\project.godot, press W from standstill.
