@@ -78,6 +78,8 @@ var likes_row: HBoxContainer
 var combo_heat: ComboHeat
 ## The flames along the likes bar at the top heat step (T-131).
 var likes_fire: LikesFire
+## The likes bar's level-up animation (T-139).
+var level_up_flash: LevelUpFlash
 var _state: RunState
 static var _comic_font: FontFile = null
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
@@ -143,6 +145,8 @@ func _build_bottom() -> void:
 	likes_fire = LikesFire.new()
 	bottom_area.add_child(likes_fire)
 	likes_bar.value_changed.connect(func(_v: float) -> void: _update_fire_fill())
+	level_up_flash = LevelUpFlash.new()
+	bottom_area.add_child(level_up_flash)
 	likes_row = HBoxContainer.new()
 	likes_row.name = "LikesRow"
 	likes_row.alignment = BoxContainer.ALIGNMENT_BEGIN
@@ -177,6 +181,7 @@ func _build_bottom() -> void:
 	# A run starts with no combo: hidden until a trick raises it (T-116).
 	combo_label.visible = false
 	bottom_area.add_child(combo_label)
+	level_up_flash.setup(level_label)
 	combo_heat = ComboHeat.new()
 	add_child(combo_heat)
 	combo_heat.setup(combo_label, likes_fire)
@@ -210,6 +215,10 @@ func _layout_bottom() -> void:
 	# both sides, never down into the row, and it stays centred (T-131).
 	combo_label.pivot_offset = Vector2(combo_label.size.x / 2.0, combo_label.size.y)
 	likes_fire.place(likes_bar.get_rect())
+	level_up_flash.place(likes_bar.get_rect())
+	# "Hype Lv" pops from its bottom right corner: up and to the left, never
+	# down onto the bar or right past the bar's end (T-139).
+	level_label.pivot_offset = level_label.size
 	var spans: Array[Vector2] = []
 	for l: Control in [likes_row, level_label]:
 		spans.append(Vector2(l.position.x - likes_bar.position.x,
@@ -308,12 +317,15 @@ func bind(state: RunState) -> void:
 		_state.xp_changed.disconnect(_on_xp_changed)
 		_state.coins_changed.disconnect(_on_coins_changed)
 		_state.combo_changed.disconnect(_on_combo_changed)
+		_state.level_up.disconnect(_on_level_up)
 	_state = state
 	_state.time_left_changed.connect(_on_time_left_changed)
 	_state.health_changed.connect(_on_health_changed)
 	_state.xp_changed.connect(_on_xp_changed)
 	_state.coins_changed.connect(_on_coins_changed)
 	_state.combo_changed.connect(_on_combo_changed)
+	_state.level_up.connect(_on_level_up)
+	level_up_flash.stop()
 	timer_label.text = _state.time_left_text()
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
@@ -339,6 +351,12 @@ func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
 		likes_bar.max_value = 1.0
 		likes_bar.value = 1.0
 	level_label.text = TEXT_LEVEL.format({"level": level})
+
+
+## The player levelled up (T-139): the likes bar's animation plays now, at
+## the moment the bar fills, whatever the run does next.
+func _on_level_up(_new_level: int) -> void:
+	level_up_flash.start()
 
 
 func _on_coins_changed(coins: int) -> void:
