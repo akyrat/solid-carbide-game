@@ -1,7 +1,7 @@
 ---
 id: T-146
 title: Art: the Redgull gift pack package
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Level-up
@@ -56,6 +56,18 @@ The board's review: judge the sample, then the package in a run.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-16, Blocked → In progress
+
+Started on the board's go for one sample; builds on T-144's branch for the one level-up build.
+
 ## Result notes
 
 - 2026-10-16, open → blocked: Waits for T-144 (the placeholder drop flow).
+
+- 2026-10-16, sample round, PROPOSAL (asset-generation):
+  - Size: one 64 x 64 canvas, package about 40 px wide on it (about 1.25 units at 32 px per unit, half-scale in game, so it reads next to the 96 px car without hiding it). No frames.
+  - One generated sprite: the package lying on the ground, isometric 3/4 view. The falling look is free, made by script from it: the same sprite plus a script-drawn parachute (hard-pixel red and white canopy with lines, no semi-transparent pixels) as a second PNG, and a swaying tilt is left to the game. If the board wants no parachute, only the ground sprite is used and the helicopter drop stays as built in T-144.
+  - The Redgull logo (`game/art/logo/redgull_logo_32.png`, T-075) is stamped on the package's light label panel by script, not generated, so the brand is exact. Red on the package: band and lid in Redgull's dark red (135,17,27 family, with shading shades) over a dark charcoal-navy body.
+  - Consistency with T-145: same dark red family (RGB 135,17,27 for the base red), charcoal body, no extra neon.
+  - PLANNED CALL (1 only): `/create-image-pixflux`, 64 x 64, no_background true, outline "selective outline", shading "detailed shading", detail "high detail", view "high top-down", direction "south-east", text_guidance_scale 8. Prompt: "isometric supply crate gift package, dark charcoal metal box with a dark red lid and a dark red band, a plain pale grey label panel on the front side, rounded edges, cargo handles, night lighting, pixel art, no text". Cost: 1 generation (as T-075's pixflux calls were billed). Balance before: 4902 generations. Expected after: 4901.
+  - Planned cost of the rest (after approval): 0 PixelLab calls if the sample is approved (parachute variant, logo stamp, palette check and any small variants are scripts); at most 1 more call if the board asks for a different shape.
