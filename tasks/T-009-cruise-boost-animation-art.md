@@ -63,3 +63,21 @@ Total estimate: **2 generations**. After that, free script work only: transparen
 **Call 1 result (problem, reported, not regenerated):** the pixflux call came back as a fully transparent 64 x 64 image (every pixel alpha 0, one flat colour underneath): PixelLab drew a plain backdrop with no lines, and its background removal took all of it. Cost 1 generation (balance 4900 to 4899). Kept with its record in `art-archive/T-009/call1/`.
 
 **Change to call 2, before calling (no extra generation):** call 2's first frame is drawn by a script instead (free, `python game/tools/build_boost_lines.py first-frame`, `art-archive/T-009/first_frame_script.png`): three thin horizontal lines in the same 5-colour palette, bright at the right end (the car's side), tapering to the left, with a dark selective edge. Call 2 is otherwise as planned: `/animate-with-text-v3`, frame_count 8, no_background, estimated 1 generation. Total for the round stays at 2 generations.
+
+### Done (2026-10-16), on `task/T-009-cruise-boost-animation-art` (built on T-008's branch, master merged in)
+
+**PixelLab spend: 2 generations, as planned** (balance 4900 to 4898). Call 1 (pixflux) came back empty (above). Call 2, `/animate-with-text-v3` on the script-drawn first frame, 1 generation: 9 frames of 64 x 64 (`art-archive/T-009/call2/`, each with its record; request `call2_req.json`). No regeneration.
+
+**What came back, honestly:** frames 0 to 3 show the lines sliding back to the left and thinning, frame 5 short stubs, and frames 4, 6, 7 and 8 are empty. The motion is jumpy rather than smooth. I use frames **0, 1, 3, 2, 5** in that order (ordered by how far back the lines have gone, frame 2 being the dimmer one), 5 frames.
+
+**In the game:** `game/art/effects/boost_lines.png` (+ `boost_lines.json` record): the 5 frames turned by script (nearest-neighbour, no new colours) to 16 screen directions, 80 x 80 cells, 400 x 1280 sheet, 10 colours, no semi-transparent pixels, nearest Redgull-red distance 0.757. `boost_effect.gd` now draws this art instead of T-008's five streaks, on the same `Car.boost` signal through `bind(car)`, under the car sprite. Timing: 5 frames at 14 fps, about 0.36 s (T-008's 0.35 s kept). **One change from T-008:** each burst follows the car, with the lines' leading ends at the rear bumper (`behind_units` 0.8). With T-008's "stay where made", the car outran the lines at once and they floated a car length behind it.
+
+**Screenshot:** `art-archive/T-009/screenshots/boost_strip_x2.png` (game frames 4 to 22 after a W press from standstill, 2x) and the single shots `boost_f*.png` next to it. Three thin pale-cyan lines sit right behind the rear bumper and fade back over a third of a second, which is discreet. Weak points: the lines' angle is the nearest of 16 screen directions, so here they run about 10 degrees flatter than the car's body; and the animation steps rather than flows (PixelLab's frames).
+
+**How the board plays it:** open `C:\solid-carbide-worktrees\T-009\game\project.godot` (or Play on T-009 in the task board's Builds tab), start a run, and press W from standstill or after coasting below cruise speed.
+
+**Tests:** new `game/tests/unit/test_boost_art.gd` (6: the sheet imports and matches its record; no semi-transparent pixels or Redgull red; the effect uses the PixelLab sheet, not the streaks; a W press in the run plays frames 0 to 4 in order behind the car, under the car sprite, following it, and ends by itself with no new burst while W is held; rows follow the heading on screen; lifetime close to T-008's). T-008's `test_boost.gd` (8) unchanged and passing. `game/tools/test_build_boost_lines.py` (6: rules, records, the build reproduces the committed sheet exactly, rotation adds no colours, first frame matches the one sent). Full GUT suite **791/791** pass; `python -m pytest tools` 182 pass; `python -m pytest game/tools` 271 pass, 1 skipped. Launch with `--quit-after 300`: no script errors.
+
+**Tools:** `game/tools/build_boost_lines.py` (`first-frame`, `build 0,1,3,2,5`, `check`), free.
+
+**Documents updated:** `docs/visual-style.md` (Content: "Cruise boost motion lines"), `game/README.md` ("Boost effect" section and the file list).

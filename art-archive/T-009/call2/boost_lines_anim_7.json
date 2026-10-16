@@ -1,0 +1,130 @@
+{
+  "file": "boost_lines_anim_7.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAvklEQVR4nO3YOwrCQBQF0DfYWlimtExh4QJchO7FRVm6nCzBXWihgvjBx5Bg1HPqIZCbwL1MBAAAAAAA8C9KXw9a77pj9uxq2eTONdPUueV0kjo3X2zi0O3LIAEMIRtqNtBtO3t43xIj1bTr9B+Vdf/1Af5e6bPfa6qppvdrNsCrPVBiRGrCrgn6dg+U+OHef8UeALgo8cFKy1TYu22Q2QHP7gGuSozcuyAzIT67B/iKAJqetoHeBwAAAACIsxOsTy0KG3MFMwAAAABJRU5ErkJggg=="
+    },
+    "action": "speed lines whoosh past: the thin horizontal motion lines streak quickly to the left, stretch thinner and vanish one by one, the last frame almost empty",
+    "frame_count": 8,
+    "seed": 9002,
+    "no_background": true
+  },
+  "prompt": "",
+  "job_id": "d3a14111-81a8-41ab-9c2e-da9816a02362",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-16T15:18:44+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "tasks/T-008-cruise-boost-effect.md",
+    "art-archive/T-009/first_frame_script.png"
+  ],
+  "task": "T-009",
+  "job_status": "completed",
+  "notes": "Cruise boost motion lines animation (call 2 of 2), first frame drawn by script after call 1 came back empty",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 7,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "boost_lines_anim_0.png",
+    "boost_lines_anim_1.png",
+    "boost_lines_anim_2.png",
+    "boost_lines_anim_3.png",
+    "boost_lines_anim_4.png",
+    "boost_lines_anim_5.png",
+    "boost_lines_anim_6.png",
+    "boost_lines_anim_7.png",
+    "boost_lines_anim_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "d3a14111-81a8-41ab-9c2e-da9816a02362",
+    "status": "completed",
+    "created_at": "2026-10-16T15:16:17.901652+00:00",
+    "last_response": {
+      "seed": 9002,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.03225584047370487
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<536 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<604 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAA7klEQVR4nO3aQQqCUABFUX85ah5IwwbhElqGS2gpDhu059rAhyTDI/x3h4J6vYi8gWUYp65lDlpAkwBaQJMAWkCTAFpAkwBaQJMAWkCTAFpAkwBaQJMAWkCTAFpAkwBaQJMAWkDTfIC+dvA+P99LTr7ezt3ldFwt8ZoeZfVFfqQM47ToYTeAROjVjfdC89+ABNACmgTQAprsgJ3sABYgO0ALaBJAC2gSQAtoqjugxrdt8I9NIPZAqfwpqnfBphFqb0BTu6D5b0ACaAFNAmgBTQJoAU0CaAFNAmgBTQJoAU0CaAFNAmgBTQJoAU3zAT5OkBHMHpTgXAAAAABJRU5ErkJggg==",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAABIElEQVR4nO2WPQrCQBQG3/oDIraBIBZiISkscgBvYBNv4C28kkey8AZa2hnQIrHQQsi67Ij7TZM0yZsdQnguLypLmR4tQKMAtACNAtACNApAC9AoAC1AowC0AI0C0AI0CkAL0CgALUCjALQAjQLQAjQKQAvQuNO1vvs8eKmbaznph/Sx+WprZuaCvvQDrjocXwIslplNx98dKhs21/Otud9vdtEO1BWXF5XXF9B1ToQZXgzsh+VikPxPUAFoAZrkA3jvAU9moz/bA9ZlHnSA9oB2ToQZXmgPoAVoFIAWoEk+gPaA9z3ALOwuoD2gnRNhhhfaA2gBGgWgBWgUgBagUQBagEYBaAEaBaAFaBSAFqBRAFqARgFoARoFoAVokg/wAOf9JSBFidYEAAAAAElFTkSuQmCC",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmElEQVR4nO3QURUAEADAQKQQQRz904hxH3YJ9jb3ueNnSwdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA9dfQBEDk04J4AAAAASUVORK5CYII=",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAvElEQVR4nO3ZMQ1CURAFUR4qkIAcSqT8EkEIwQJOKEg+HgjhFDsjYDOZ6ia7TufLYTJHLaApgBbQFEALaAqgBTQF0AKaAmgBTQG0gKYAWkBTAC2gKYAW0BRAC2gKoAU06/Xe9+v9+fWBx21bP/T5O6vHyHAKoAU0BdACmvEB2gHtgOEUQAtoCqAFNOMDtAPaAcMpgBbQFEALaAqgBTQF0AKaAmgBTQG0gKYAWkBTAC2gKYAW0BRAC2jGB/gAoQAZandTA+MAAAAASUVORK5CYII=",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmElEQVR4nO3QURUAEADAQKQQQRz904hxH3YJ9jb3ueNnSwdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA9dfQBEDk04J4AAAAASUVORK5CYII=",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmElEQVR4nO3QURUAEADAQKQQQRz904hxH3YJ9jb3ueNnSwdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA9dfQBEDk04J4AAAAASUVORK5CYII=",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAmElEQVR4nO3QURUAEADAQKQQQRz904hxH3YJ9jb3ueNnSwdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA1QAdoDdABWgN0gNYAHaA9dfQBEDk04J4AAAAASUVORK5CYII=",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.9333333333333333,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "8bc958fc-eb7a-43e1-b134-1487a4b43f4c",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-16T15:16:41.97997+00:00",
+      "estimated_wait_seconds": 0
+    }
+  }
+}

@@ -59,6 +59,10 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
 
+### Cruise boost motion lines
+
+Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") with PixelLab: three thin pale-cyan and white lines that streak backwards and vanish in five frames (about a third of a second), right behind the car, following it. The first frame was drawn by a script after PixelLab's first call came back empty; PixelLab animated it. The game sheet (`game/art/effects/boost_lines.png`, with its record) holds the five frames turned by a script to 16 screen directions, so the lines always trail the car without the engine rotating pixel art. Every generation and its record is in `art-archive/T-009/`.
+
 ## Open questions
 
 - (After MVP) Does the car carry any Redgull livery or stickers? In the MVP it is kept simple: dark green with two white stripes.

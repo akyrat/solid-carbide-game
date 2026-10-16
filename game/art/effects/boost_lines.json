@@ -1,0 +1,40 @@
+{
+  "task": "T-009",
+  "generator": "game/tools/build_boost_lines.py build (free, no PixelLab call)",
+  "sources": [
+    "art-archive/T-009/call2/boost_lines_anim_0.png",
+    "art-archive/T-009/call2/boost_lines_anim_1.png",
+    "art-archive/T-009/call2/boost_lines_anim_3.png",
+    "art-archive/T-009/call2/boost_lines_anim_2.png",
+    "art-archive/T-009/call2/boost_lines_anim_5.png"
+  ],
+  "pixellab_records": [
+    "art-archive/T-009/call2/boost_lines_anim_0.json",
+    "art-archive/T-009/call2/boost_lines_anim_1.json",
+    "art-archive/T-009/call2/boost_lines_anim_3.json",
+    "art-archive/T-009/call2/boost_lines_anim_2.json",
+    "art-archive/T-009/call2/boost_lines_anim_5.json"
+  ],
+  "frame_size": 80,
+  "frames": 5,
+  "directions": 16,
+  "layout": "one row per screen direction, row 0 points right (lines trail to the left), each next row turned 360/directions degrees clockwise on screen; one column per frame",
+  "art_density": "drawn at scale 0.5 in the run (32 texels per unit, like the car)",
+  "check": {
+    "size": [
+      400,
+      1280
+    ],
+    "semi_transparent_pixels": 0,
+    "colors": 10,
+    "closest_to_redgull_red": 0.757,
+    "opaque_pixels_per_frame_row0": [
+      261,
+      312,
+      261,
+      180,
+      48
+    ],
+    "pass": true
+  }
+}

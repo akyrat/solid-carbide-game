@@ -343,7 +343,7 @@ There is no jump, no arrow-key steering and no gamepad.
 - `car_sprite.gd`: picks the sheet frame closest to the car's heading, reading the layout from the JSON next to each sheet (see "Placeholder car sprite sheets"), so the final art drops in without code changes.
 - `ground_grid.gd`, `tuning_panel.gd`: the ground and the panel.
 - `drift_marks.gd`: the drift marks (task T-117, see "Drift marks"), drawn over the ground and under the test room and the car, in the current view.
-- `boost_effect.gd`: the placeholder boost effect (task T-008, see "Boost effect"), used by the run.
+- `boost_effect.gd`: the boost effect (tasks T-008 and T-009, see "Boost effect"), used by the run.
 - `drift_smoke.gd`: the drift smoke (task T-121, see "Drift smoke"), drawn over the test room and under the car, in the current view.
 - `test_room.gd`: the test room's walls and boulder (static bodies on layer 1, under `PhysicsWorld`) and their drawing.
 
@@ -473,7 +473,9 @@ Task T-121 (Visual style, Decisions, "Drift smoke"). While the car drifts, puffs
 
 Task T-008. When W is newly pressed and that press snaps the car up to cruise speed, `Car` emits `boost(from_speed)` (forward speed just before the jump, units/s). It is `cruise_jump` filtered to `w_just_pressed`, so it does not fire while W stays held (not on the jumps back to cruise during a held drift) nor when W is pressed at or above cruise speed. It changes no driving. The art (T-009), the SFX Agent and the UI hook into this signal.
 
-The placeholder effect is `scripts/driving/boost_effect.gd` (`run.boost_effect`, child "BoostEffect" of the run's View, under the car): five opaque light blue-grey streaks behind the car that shrink to nothing in 0.35 s and stay where they were made. No Redgull red. T-009 replaces its drawing, keeping `bind(car)`. Tests: `tests/unit/test_boost.gd`. Screenshot fixture: `tests/fixtures/boost_effect_demo.tscn` (about 6 frames).
+The effect is `scripts/driving/boost_effect.gd` (`run.boost_effect`, child "BoostEffect" of the run's View, under the car). T-008's placeholder streaks are replaced by T-009's PixelLab motion lines: `art/effects/boost_lines.png` (5 frames x 16 screen directions, 80 x 80 cells, drawn at scale 0.5 like the car) and its record `boost_lines.json`. Row 0 points right on screen, each next row is turned 22.5 degrees clockwise; the effect picks the row closest to the car's heading as seen in the view (`direction_row`), so the engine never rotates the art. Each W boost plays the five frames once at 14 fps (about 0.36 s, T-008's timing) and ends; a burst made through `bind(car)` follows the car, its lines' leading ends `behind_units` (0.8) units behind the car's centre, so they sit at the rear bumper (T-008's streaks stayed where they were made, and the car outran them at once). No Redgull red.
+
+**Rebuilding the sheet (free):** `python game/tools/build_boost_lines.py build 0,1,3,2,5` turns the archived PixelLab frames (`art-archive/T-009/call2/`, the frames used in that order; frame 4 and 6 to 8 came back empty) into the sheet and record; `check` runs the rules (no semi-transparent pixels, at most 30 colours, farther than 0.5 from Redgull red); `first-frame` redraws the first frame sent to PixelLab. Tests: `tests/unit/test_boost.gd` (T-008), `tests/unit/test_boost_art.gd` (T-009), `tools/test_build_boost_lines.py`. Screenshot fixture: `tests/fixtures/boost_effect_demo.tscn` (4 to 16 frames).
 
 ## Trick popups
 
