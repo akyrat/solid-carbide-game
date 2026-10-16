@@ -28,9 +28,9 @@ func after_each() -> void:
 	get_tree().paused = false
 	await wait_process_frames(1)  # let screens freed with queue_free() go
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 	DirAccess.remove_absolute(PROGRESS_PATH)
-	PlayerProgress.path = PlayerProgress.DEFAULT_PATH
+	TestSave.restore_progress()
 
 
 func _press(button: Button) -> void:

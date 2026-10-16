@@ -50,6 +50,10 @@ A run that goes past **300 seconds** is stopped by the runner itself (only the G
 
 Godot's user folder (`AppData/Roaming/Godot/app_userdata/Solid Carbide/`) is shared by every task folder, so tests never write fixed names there. A test that needs a file under `user://` gets its path from `RunPaths.file("name")` (`tests/helpers/run_paths.gd`), which puts it in `user://test_runs/<process id>/`. Two runs at once have different process ids, so they never touch each other's files. The folder is removed when the run ends (`tests/helpers/post_run.gd`, set as `post_run_script` in `.gutconfig.json`); a run that is stopped by the time limit may leave its folder behind, and it is safe to delete. New tests that write under `user://` must use `RunPaths`.
 
+### Tests never use the real save (T-148)
+
+`user://progress.json` and `user://settings.cfg` are the player's real save, and tests never read, write or depend on them. Before the first test, `tests/helpers/pre_run.gd` (`pre_run_script` in `.gutconfig.json`) points `PlayerProgress.path` and `GameSettings.path` at empty test files in the run's `RunPaths` folder (`tests/helpers/test_save.gd`, `TestSave`). A test that changes those paths puts them back with `TestSave.restore()` (or `restore_progress()` / `restore_settings()`), never with `DEFAULT_PATH`. If a run ends with either path still on the real save, `post_run.gd` logs an error and fails the run.
+
 ### Python tool tests
 
 Some tools in `game/tools/` are Python scripts (standard library only, Python 3.9+). Their tests are `game/tools/test_*.py` and run with Python's own test runner, not GUT:

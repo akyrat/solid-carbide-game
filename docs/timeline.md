@@ -1255,3 +1255,13 @@ Entry format:
 - Decision or change: the hook still refuses any shell command that could write a task file's status or qa_rounds line, but now lets through commands it can prove only read (grep, sed -n, head, Select-String and so on); anything it can't prove is still refused. QA round 1: all 5 pass. While working, the agent hit the old false refusal on a README edit and then made the edit with the file editing tool; reported to the board. One GUT test still fails on the board's computer only (it reads the board's real save); T-148 fixes it.
 - Documents touched: `tasks/README.md`
 - Tasks: T-143 (done)
+
+## 2026-10-16: The new level-up is built and played as one build
+- Decision or change: the board started the new level-up (the gift pack drop, the likes bar animation, the level-up screen's red and gold art and its animation) and wants to playtest it all together in one build, not piece by piece. The session "Level-up" took over T-139 to T-141 (from Enemies) and T-144 to T-146 (from Art). The board's answers to T-144: the run keeps going until the screen opens; the package lands a short way ahead of the car on open road and stays until picked up; one package per level-up, each opening its own screen; an edge arrow points to an off-screen package. PixelLab go: one sample each for T-140, T-145 and T-146.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-139, T-140, T-141, T-144, T-145, T-146
+
+## 2026-10-16: T-148 done: tests never touch the player's real save
+- Decision or change: tests that went through the main menu read the board's real `progress.json` (one failed because the board had bought a damage upgrade), and 14 test files pointed later tests back at the real save files when cleaning up. Every test run now starts with empty test save files, and the run fails if any test is left pointing at the real save. QA round 1: all 4 pass with the board's real save in place, and the board's save files were byte-identical before and after. Master: 777 of 777 GUT tests pass again.
+- Documents touched: `game/README.md`
+- Tasks: T-148 (done)

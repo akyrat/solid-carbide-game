@@ -232,4 +232,4 @@ func test_the_combo_works_in_a_run_started_from_the_main_menu() -> void:
 	game.run.car.hit_obstacle.emit(autofree(StaticBody2D.new()), 0, Vector2.UP, 10.0)
 	assert_almost_eq(s.combo, combo_data.after_collision(before), 0.000001)
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()

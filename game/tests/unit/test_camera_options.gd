@@ -21,7 +21,7 @@ func after_each() -> void:
 	get_tree().paused = false
 	await wait_process_frames(1)
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 
 
 func _prototype() -> Node2D:

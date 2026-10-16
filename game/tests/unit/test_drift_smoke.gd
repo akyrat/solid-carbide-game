@@ -437,4 +437,4 @@ func test_smoke_in_a_run_started_from_the_main_menu() -> void:
 	_drive(run.car, W_AND_D, 30)
 	assert_eq(_tyres_seen(run.drift_smoke), [0, 1])
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()

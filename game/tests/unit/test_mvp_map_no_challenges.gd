@@ -27,7 +27,7 @@ func before_each() -> void:
 
 func after_each() -> void:
 	DirAccess.remove_absolute(TEST_PATH)
-	GameSettings.path = GameSettings.DEFAULT_PATH
+	TestSave.restore_settings()
 	get_tree().paused = false
 
 

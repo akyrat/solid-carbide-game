@@ -1,7 +1,7 @@
 ---
 id: T-148
 title: Tests never read the player's real saved progress
-status: in-progress
+status: done
 from: project-lead
 to: game-loop
 lead: Playtest
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, tasks/T-089-wire-garage-button.md, tasks/T-057-save-and-buy.md]
 files_expected_to_change: [the affected tests, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,10 +35,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] With a real `user://progress.json` holding bought upgrades (put one there for the check, and put the original back afterwards), the full GUT suite passes (QA: pass / fail)
-- [ ] The real `user://progress.json` and `user://settings.cfg` are byte-identical before and after the full suite (QA: pass / fail)
-- [ ] `game/README.md` says tests use a test save path, never the real one (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] With a real `user://progress.json` holding bought upgrades (put one there for the check, and put the original back afterwards), the full GUT suite passes (QA: pass)
+- [ ] The real `user://progress.json` and `user://settings.cfg` are byte-identical before and after the full suite (QA: pass)
+- [ ] `game/README.md` says tests use a test save path, never the real one (QA: pass)
+- [ ] All Python tool tests pass (QA: pass)
 
 ## Updates
 
@@ -48,4 +48,19 @@ Started (board said yes).
 
 ## Result notes
 
-Written by the agent when it finishes.
+Which tests touched the real save: none wrote it, but every test that started a run through GameFlow or the main menu (`test_starting_gun`, and any other that builds `GameFlow`) read the real `progress.json` because `PlayerProgress.path` defaulted to it; and 14 test files reset `GameSettings.path` / `PlayerProgress.path` to `DEFAULT_PATH` in their cleanup, so every later test fell back to the real files.
+
+Changes: new `tests/helpers/test_save.gd` (`TestSave`) and `tests/helpers/pre_run.gd` (set as `pre_run_script` in `.gutconfig.json`) point both paths at empty per-run test files before the first test; those 14 files now call `TestSave.restore_*()` instead of `DEFAULT_PATH`; `post_run.gd` fails the run if either path is still the real one. `game/README.md` documents it.
+
+Checked on the board's computer with its real save (a bought damage upgrade): GUT 777/777 pass, `python -m pytest tools` 180 passed, `python -m pytest game/tools` 265 passed, 1 skipped. SHA-256 of `progress.json` and `settings.cfg` identical before and after (backed up first; the suite never changed them, so no restore was needed).
+- 2026-10-16, in-progress → in-qa: Tests now point PlayerProgress/GameSettings at per-run test files before the first test; GUT 777/777 with the board's real save; pytest 180 + 265 pass; real save hashes unchanged.
+
+### QA round 1 (QA/Integration Agent, 2026-10-16)
+
+Merged master into the branch first (no conflicts).
+- Full GUT suite with the board's real save (bought upgrade) in place: 777/777 pass, 125317 asserts, exit 0 (QA: pass)
+- `progress.json` and `settings.cfg` byte-identical before and after (SHA-256 f2dedbdb...f715f and eed9a68d...37440); no restore needed (QA: pass)
+- `game/README.md` has "Tests never use the real save (T-148)" (QA: pass)
+- `python -m pytest tools` 182 passed; `python -m pytest game/tools` 265 passed, 1 skipped (QA: pass)
+- Guard: `.gutconfig.json` sets `pre_run_script` (pre_run.gd) and `post_run_script`; `post_run.gd` fails the run (exit code 1) if `TestSave.touches_real_save()` (wired).
+- 2026-10-16, in-qa → done: QA round 1 passed; GUT 777/777 with the real save, hashes unchanged
