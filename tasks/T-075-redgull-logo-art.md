@@ -75,6 +75,10 @@ Board's extra call: silhouette_init_128 as init, strength 80. Still raptor-like.
 
 Board picked the s80 PixelLab result (raw, its own darker red 135,17,27). Agent is making the final 128/64/32 files; then QA and the board's review.
 
+### 2026-10-16, Needs playtest
+
+QA passed all four criteria (round 1). Waiting in Needs playtest for the board's look check; files in C:\solid-carbide-worktrees\T-075\game\art\logo\.
+
 ## Result notes
 
 Written by the agent when it finishes.
