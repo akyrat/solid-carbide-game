@@ -37,11 +37,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test levels the player up and shows the screen animates in within its proposed length and ends in T-052's layout with T-140's art (QA: pass / fail)
-- [ ] A test shows input during the animation cannot take a card by accident, and the keyboard and mouse work as T-052 set them once it ends (QA: pass / fail)
-- [ ] A screenshot sequence of a run shows the animation's key frames and the finished screen (QA: pass / fail)
-- [ ] T-052's tests still pass, and `docs/hud-and-menus.md` describes the animation in Content, without changing Summary, Decisions or Open questions (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A test levels the player up and shows the screen animates in within its proposed length and ends in T-052's layout with T-140's art (QA: pass)
+- [ ] A test shows input during the animation cannot take a card by accident, and the keyboard and mouse work as T-052 set them once it ends (QA: pass)
+- [ ] A screenshot sequence of a run shows the animation's key frames and the finished screen (QA: pass)
+- [ ] T-052's tests still pass, and `docs/hud-and-menus.md` describes the animation in Content, without changing Summary, Decisions or Open questions (QA: pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
 
@@ -50,6 +50,10 @@ The board's review: playtest it before it is merged (board, 2026-10-13: nothing 
 ### 2026-10-16, Open → In progress
 
 Started from T-140's art branch with T-144 merged in; part of the one level-up build.
+
+### 2026-10-16, In QA
+
+Built: T-140's art in the screen, a 0.54 s build-up (dim, sunburst, ribbon drop, cards slide in), no card can be taken while it plays, text wraps at words. In QA.
 
 ## Result notes
 
