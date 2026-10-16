@@ -1240,3 +1240,13 @@ Entry format:
 - Decision or change: the board decided the level-up screen should no longer just appear. When the player levels up, a helicopter sent by Redgull flies over the screen and drops a package with Redgull's brand; driving over the package opens the level-up (gift pack) screen. Replaces the after-MVP "plane drops the gift pack" idea. Tickets created, not started: T-144 (the flow with placeholders, Game Loop Agent), T-145 (helicopter art) and T-146 (package art), both waiting for T-144. Open questions on T-144 go to the board before it starts.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/visual-style.md`, `docs/extended-narrative.md`, `docs/hud-and-menus.md`
 - Tasks: T-144, T-145, T-146 (new)
+
+## 2026-10-16: Meteors never land on a standing meteor boulder
+- Decision or change: the board saw meteors fall on boulders left by earlier meteors that hadn't faded yet, and decided they must not. The built placement check already refuses overlapping boulders, so T-147 first finds why it still happens, then fixes it. Ticket created, not started.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-147 (new)
+
+## 2026-10-16: T-077 done: the sound effects play in the game
+- Decision or change: the approved sounds play at their moments (engine following speed, drift, gun, flames, hits, coins, meteor warning and impact), volumes in `game/data/sfx.json`, credit for "Falling.wav" by Augdog (CC BY 4.0) in `game/README.md`. The board's tweaks: an "SFX volume" slider on the pause screen, 0 to 100, silent (0) by default, saved; first squeezed into the checkbox row and undraggable, then given its own row like the zoom slider. The 60 the board saw on opening was a value saved in its settings file, not the default; the Project Lead cleared it. Board: "LGTM". Final QA passed. One test fails on the board's computer only, because it reads the board's real saved garage upgrades: T-144 (new) fixes that.
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`
+- Tasks: T-077 (done), T-144 (new)

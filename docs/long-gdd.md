@@ -430,6 +430,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Before the meteors land, a danger warning area shows on the ground for 2 seconds. A meteor that lands on the player deals damage and knocks them back.
 - Landed meteors become boulders, plain obstacles like the map's own, where they land. No challenge or arrow comes with them, since challenges are left out of the MVP (Level design, Decisions).
 - A boulder left by a meteor stays for 10 seconds after it lands, then fades away and is gone.
+- A meteor never lands on a boulder left by an earlier meteor that is still there (standing or fading); once that boulder is gone, its spot is free again.
 - **The kaiju can be damaged at any time.** It has no shield and no vulnerability windows.
 - Over a run, the number of enemies grows slightly. Enemies do not get tougher.
 - The MVP minion walks on four legs towards the player (how it looks: Visual style, Decisions). Its health, contact damage and knockback are balancing numbers for the Game Data Agent; it does not copy a Unity prototype enemy.
@@ -776,6 +777,7 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 - **Title:** "Paused", in large white letters.
 - **Hint:** "Press Escape to get back to the stream." (texts from T-047).
 - **Zoom slider:** "Camera zoom level" (T-093), a slider from 6 to 20 (default 14.4) with its value as a number at the right end. Moving it zooms the view behind the strip at once while the game stays paused, and the value is saved.
+- **SFX volume slider** (T-077): "SFX volume" (the board's name), a slider from 0 to 100 with its value as a number at the right end, on its own row directly under the zoom slider, laid out exactly like it (label, slider of the same width, value at the right end). It starts at 0, which is silent, so sound effects are silent until the player turns it up. Moving it changes the volume of every sound effect at once (the sounds' own volumes are in `game/data/sfx.json`; at 100 they play at those volumes, at 0 nothing is heard), and the value is saved between sessions like the zoom.
 - **Camera checkboxes** (T-124): "Camera smoothing" and "Dynamic camera" side by side, the board's own names (what they do: Drifting, Content, "Camera options"). Each starts from the saved setting, applies at once when switched and is saved. Placeholder look: a light square frame on a dark fill, with a light square inside when checked, so both states show over any ground.
 - **Tuning buttons** (T-124), shown only while "Dynamic camera" is on: "Set min zoom" and "Set max zoom", each followed by the stored value as a number (for example 11.0 and 17.0, the proposed starting values). Pressing one stores the zoom slider's current value as the dynamic camera's zoom at a standstill (min) or at top forward speed (max), saves it, and updates the number. The board can move the slider, press a button and resume to try it. They are a temporary tuning tool for the board, plain labels rather than game text, and are removed once the board has settled the values. Placeholder look: a light frame round a dark fill.
 
@@ -799,9 +801,9 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `98376389f934a5e6d3310221db0dbc45d75312279a08898e58d46238670b12ed` |
 | `drifting.md` | `339e7218490626bb100fe1aff00b69dda4ef5d948b9c4e9b8ccb701dff40d918` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
-| `enemies.md` | `0301693769b225f4d7249e0b4616a7cef9d18c2490e41be9bf144bfa53d9d232` |
+| `enemies.md` | `a4e223167564b38196fcf58905daa6cf53a210dc1d89a98e99b7eb5fcacb5d08` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `3f026ba723c4d3ffa651a3dcd7a7215ed22f12a4a4d3facc166a4d4d5af90c24` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
-| `hud-and-menus.md` | `9d7fdf11446949fcd52bb1d47e47f2520ceca8dd451bcb6cd61dfb388dec826b` |
+| `hud-and-menus.md` | `d5a92a43d6ace8a7f2a62c421c46173a7c78d150290c6e59e1ac0edc468fc909` |

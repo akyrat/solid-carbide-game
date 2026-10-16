@@ -14,6 +14,8 @@ const ACTION_PAUSE := "pause"
 const TEXT_TITLE := "Paused"
 const TEXT_HINT := "Press Escape to get back to the stream."
 const TEXT_ZOOM_LABEL := "Camera zoom level"
+## The sound effects volume slider (T-077; the board's name, board 2026-10-16).
+const TEXT_SFX_LABEL := "SFX volume"
 ## The camera checkboxes use the board's own names (T-124). The two tuning
 ## buttons are a temporary tool for the board, not game text.
 const TEXT_SMOOTHING := "Camera smoothing"
@@ -30,6 +32,8 @@ const CONTROL_FILL := Color(0.16, 0.16, 0.16)
 const CONTROL_FILL_HOVER := Color(0.28, 0.28, 0.28)
 const CONTROL_FILL_PRESSED := Color(0.08, 0.08, 0.08)
 const CHECK_ICON_SIZE := 16
+## Width of the slider rows' labels, so the zoom and SFX sliders have the same width.
+const LABEL_WIDTH := 170.0
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -37,6 +41,9 @@ var zoom_slider: HSlider
 var title_label: Label
 var hint_label: Label
 var zoom_label: Label
+var sfx_slider: HSlider
+var sfx_label: Label
+var _sfx_value_label: Label
 var _value_label: Label
 var smoothing_check: CheckBox
 var dynamic_check: CheckBox
@@ -94,6 +101,7 @@ func setup(t: Node) -> void:
 	zoom_label = Label.new()
 	zoom_label.text = TEXT_ZOOM_LABEL
 	zoom_label.add_theme_font_size_override("font_size", 16)
+	zoom_label.custom_minimum_size.x = LABEL_WIDTH  # the SFX row uses the same, so the sliders line up
 	var row := HBoxContainer.new()
 	box.add_child(row)
 	row.add_child(zoom_label)
@@ -112,8 +120,44 @@ func setup(t: Node) -> void:
 	_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	row.add_child(_value_label)
 	_update_value_label()
+	_build_sfx_slider(box)
 	_build_camera_controls(box)
 	visible = false
+
+
+## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
+## Its own row under the zoom row, laid out like it: label, slider, value number.
+func _build_sfx_slider(box: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "SfxRow"
+	box.add_child(row)
+	sfx_label = Label.new()
+	sfx_label.text = TEXT_SFX_LABEL
+	sfx_label.add_theme_font_size_override("font_size", 16)
+	sfx_label.custom_minimum_size.x = LABEL_WIDTH
+	row.add_child(sfx_label)
+	sfx_slider = HSlider.new()
+	sfx_slider.name = "SfxSlider"
+	sfx_slider.min_value = 0.0
+	sfx_slider.max_value = 100.0
+	sfx_slider.step = 1.0
+	sfx_slider.value = GameSettingsScript.load_sfx_volume()
+	sfx_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sfx_slider.focus_mode = Control.FOCUS_NONE
+	sfx_slider.value_changed.connect(_on_sfx_changed)
+	row.add_child(sfx_slider)
+	_sfx_value_label = Label.new()
+	_sfx_value_label.custom_minimum_size.x = 50.0
+	_sfx_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(_sfx_value_label)
+	_sfx_value_label.text = "%d" % int(sfx_slider.value)
+	GameSettingsScript.apply_sfx_volume(sfx_slider.value)
+
+
+func _on_sfx_changed(v: float) -> void:
+	GameSettingsScript.save_sfx_volume(v)
+	GameSettingsScript.apply_sfx_volume(v)
+	_sfx_value_label.text = "%d" % int(v)
 
 
 func _cam():
