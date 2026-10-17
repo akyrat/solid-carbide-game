@@ -1330,3 +1330,8 @@ Entry format:
 - Decision or change: T-154 passed QA and is merged: LEFT FLIP!, NOSE POP!, CLEARED IT! (the jump-over bonus), and the right flip renamed RIGHT FLIP! so the two read as a pair (the board may keep SIDE FLIP!). T-156 is unblocked. The long GDD is regenerated with the round 2 decisions.
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-154 (done), T-156 (open)
+
+## 2026-10-17: Trick art: full PixelLab art, made with the rotation tools
+- Decision or change: the board asked whether PixelLab's rotation tools are available (they are: `/rotate` can change facing and tilt the camera, `/generate-8-rotations-v3` turns around the vertical axis, `/interpolation-v2` makes in-betweens; none rolls an object directly), then replaced the earlier "keep the code stand-in" decision: the tricks get full generated art. T-157 makes a sample in one direction (side roll, played reversed for the left flip, and the nose pop), capped at 15 generations; all 16 directions follow after the board approves it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-157 (new)
