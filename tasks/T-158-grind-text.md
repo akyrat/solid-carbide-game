@@ -29,7 +29,7 @@ Write it in the result notes with a one-line reason.
 
 ## Acceptance criteria
 
-- [ ] The result notes give the final text for item 1, in capitals, at most 12 characters. (QA: pass, "GRIND!" is 6 characters, capitals)
+- [x] The result notes give the final text for item 1, in capitals, at most 12 characters. (QA: pass, "GRIND!" is 6 characters, capitals)
 
 ## Updates
 
