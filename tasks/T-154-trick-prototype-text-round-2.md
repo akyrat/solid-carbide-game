@@ -29,7 +29,7 @@ Write the final text in the result notes, one line per item, with a one-line rea
 
 ## Acceptance criteria
 
-- [ ] The result notes give final text for items 1, 2 and 3, in capitals, within the character limits. (QA: pass / fail)
+- [ ] The result notes give final text for items 1, 2 and 3, in capitals, within the character limits. (QA: pass)
 
 ## Updates
 
