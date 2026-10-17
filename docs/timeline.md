@@ -1315,3 +1315,8 @@ Entry format:
 - Decision or change: T-151 (arrow-key sequence and side flip with a fake hop), T-152 (arrow-key display labelled TRICK, SIDE FLIP! confirmation) and T-153 (PixelLab roll frames for the start direction, the code roll for the others; 2 generations) all passed QA and are combined in one playtest build, `playtest/tricks` (`C:\solid-carbide-worktrees\playtest-tricks`). GUT 874/874 on the combined build. Waiting for the board to play it.
 - Documents touched: none on master yet (`docs/drifting.md`, `docs/visual-style.md`, `game/README.md` on the task branches)
 - Tasks: T-151, T-152, T-153 (needs-playtest)
+
+## 2026-10-17: Trick prototype round 2: jumping over obstacles, the left flip and the nose launch
+- Decision or change: the board played the trick prototype (after Play was made to start straight into it on the playtest branch) and asked for: flying over obstacles and walls during a trick's jump, with a jump-over bonus that counts as a trick; the left side flip (Up, Left, Down, Right); and the nose launch (Up, Down, Up, Up). The board found the side flip's roll flat, like flipping a 2D image; the art approach is an open question to the board. Tickets T-154 (text), T-155 (the jumps and the two tricks, on top of `playtest/tricks`), T-156 (the confirmation cards for them).
+- Documents touched: `docs/drifting.md`
+- Tasks: T-154, T-155, T-156 (new); T-151, T-152, T-153 (needs-playtest)

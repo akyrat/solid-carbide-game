@@ -38,6 +38,8 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 
 - **Arrow-key tricks, prototype** (board, 2026-10-16): a standalone trick prototype to playtest the idea of tricks done by chaining arrow keys while driving with W/A/S/D. One trick for now: Up, Right, Down, Left in a row makes the car do a **side flip to the right** (a full roll around its long axis) with the illusion of a small jump; the car's physics stays on the ground. A live HUD in the bottom-right corner shows the four arrow keys as they are pressed, and completing the sequence plays a comic-style confirmation animation. The roll is generated with PixelLab for one car direction first. Not part of the MVP; it tries out the far-future trick idea (Open questions). Tasks T-150 to T-153.
 
+- **Trick prototype, round 2** (board, 2026-10-17, after playing it): during any trick's jump the car flies over obstacles and walls, and clearing one earns a jump-over bonus that counts as a trick. Two more arrow tricks: **Up, Left, Down, Right**, the side flip to the left (the mirror of the right one), and **Up, Down, Up, Up**, the nose launch: the car leans onto its nose, then springs forward into the air with its nose flipping up as it flies, and lands, like a toy car pressed down at the back and let go. The board's verdict on the first roll art: fine for a prototype, but it looks flat, like flipping a 2D image ("Paper Mario"), with no depth or sense of physics. Tasks T-154 to T-156.
+
 ## Content
 
 ### Prototypes so far
