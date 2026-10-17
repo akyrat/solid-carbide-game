@@ -37,6 +37,10 @@ Write it in the result notes with a one-line reason.
 
 Started: the grind card's name.
 
+### 2026-10-17, Done
+
+QA passed, merged: GRIND!
+
 ## Result notes
 
 **Grind card: `GRIND!`** (6 characters). Same one-word-plus-bang shape as NOSE POP! and CLEARED IT!, plain stunt-show announcer voice, and it names exactly what the car just did (locks onto the wall and grinds with sparks).
