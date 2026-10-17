@@ -1,7 +1,7 @@
 ---
 id: T-161
 title: The status guard stops refusing worktree cleanup and text that only mentions its fields
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Level-up
@@ -14,7 +14,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/guard_ledger.py, tools/test_guard.py, tasks/T-149-guard-qa-rounds-hand-edits.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md if the wording changes]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -77,3 +77,4 @@ Tests: 4 new in `FalseRefusals` (both commands from the ticket, text that only m
 
 Note for QA: during the work the current (old) guard refused two of my own harmless shell commands (a python patch heredoc and a sed on test_guard.py); I did not reword them, I made the edits with the file editing tool instead.
 - 2026-10-17, in-progress → in-qa: Guard fixed: heredoc bodies, plain-file redirects, read-only git merge-base, if/fi keywords; tests added, all suites pass
+- 2026-10-17, in-qa → done: QA pass: all 4 criteria; python tools 210 OK, game/tools exit 0, GUT all passed
