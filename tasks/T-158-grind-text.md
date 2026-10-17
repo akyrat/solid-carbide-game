@@ -1,7 +1,7 @@
 ---
 id: T-158
 title: "Text: the grind's name in the trick prototype"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -33,4 +33,10 @@ Write it in the result notes with a one-line reason.
 
 ## Updates
 
+### 2026-10-17, Open → In progress
+
+Started: the grind card's name.
+
 ## Result notes
+
+**Grind card: `GRIND!`** (6 characters). Same one-word-plus-bang shape as NOSE POP! and CLEARED IT!, plain stunt-show announcer voice, and it names exactly what the car just did (locks onto the wall and grinds with sparks).
