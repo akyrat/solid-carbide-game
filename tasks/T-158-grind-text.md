@@ -1,7 +1,7 @@
 ---
 id: T-158
 title: "Text: the grind's name in the trick prototype"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Tricks
