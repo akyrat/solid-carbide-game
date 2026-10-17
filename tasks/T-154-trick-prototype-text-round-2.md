@@ -1,7 +1,7 @@
 ---
 id: T-154
 title: "Text: names for the left side flip, the nose launch, and the jump-over bonus"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -14,7 +14,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/drifting.md, tasks/T-150-trick-prototype-text.md, tasks/T-155-trick-prototype-jumps-and-new-tricks.md, tasks/T-156-trick-prototype-hud-new-tricks.md]
 files_expected_to_change: [tasks/T-154-trick-prototype-text-round-2.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 ## Description
