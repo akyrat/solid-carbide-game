@@ -1,7 +1,7 @@
 ---
 id: T-161
 title: The status guard stops refusing worktree cleanup and text that only mentions its fields
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Level-up
@@ -52,6 +52,23 @@ Don't change T-149's ledger rules. Work on your own branch and folder, as `tasks
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-17, Open → In progress
+
+Started: agent launched in its own folder.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Causes (reproduced by calling `pre_shell` in `tools/test_guard.py`, class `FalseRefusals`):
+1. Worktree cleanup: the branch name `task/T-149-guard-qa-rounds-hand-edits` holds "qa-rounds" and the path holds `T-149`, so the check looked for a ticket edit; `git merge-base` was not a known read-only git command, so that part counted as risky.
+2. Timeline text: a heredoc into `docs/timeline.md` counted as an unquoted redirection into a file (unsafe, the whole command suspect), and the apostrophes in the body opened quotes; the body's words ("qa_rounds", "tasks/README.md", "cd tasks") then matched.
+
+Changes in `.claude/hooks/board_gate.py` (`shell_segments` and helpers; T-149's ledger rules untouched):
+- Here-document bodies (`<<EOF`, `<<-`, quoted or not, also `"$(cat <<'EOF' ... EOF)"` as a commit message) are text and are skipped. An unquoted delimiter whose body has `$(` or a backtick, or a missing terminator, stays refused.
+- A redirection into a plain file is allowed when its name has no variable or glob and does not touch tasks (same test as `touches_tasks`), the shell is not in tasks/ and no `cd` into tasks appears in the command. Redirects into task files stay refused.
+- `git merge-base`, `rev-parse`, `rev-list`, `ls-files`, `cat-file`, `for-each-ref` count as read-only git.
+- `if/then/else/while/do` keywords are stripped from a segment and a lone `fi/done/esac` is dropped, so the merge routine's `if git merge --no-ff --no-commit <branch>; then ...` is judged by its commands. (Not in the ticket, but the doc's own merge step was refused without it.)
+- No change needed to `tasks/README.md`.
+
+Tests: 4 new in `FalseRefusals` (both commands from the ticket, text that only mentions the fields, the full "Merging" routine step by step, and a negative test that heredocs/redirects into task files, python heredocs, cd tasks, variables, globs, unterminated or expanding heredocs and `if` wrapping an edit are still refused). `python -m unittest discover -s tools`: 210 OK (all 28 in test_guard, including every T-149 gap test). `discover -s game/tools`: exit 0. `bash game/tools/run_tests.sh` (GODOT_BIN taken from the main repo's .env): all GUT tests passed.
+
+Note for QA: during the work the current (old) guard refused two of my own harmless shell commands (a python patch heredoc and a sed on test_guard.py); I did not reword them, I made the edits with the file editing tool instead.

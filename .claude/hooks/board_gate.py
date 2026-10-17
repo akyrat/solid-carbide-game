@@ -138,26 +138,90 @@ READ_ONLY_COMMANDS = {
     "select-string", "sls", "get-content", "gc", "select-object", "select", "where-object", "where",
     "measure-object", "get-childitem", "write-output",
 }
-GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status"}
+GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status", "merge-base", "rev-parse", "rev-list", "ls-files",
+                 "cat-file", "for-each-ref"}
 SAFE_REDIRECT_RE = re.compile(r">&\d|>>?\s*(/dev/null|\$null|nul)\b", re.I)
 
 
-def shell_segments(cmd):
+HEREDOC_RE = re.compile(r"<<(?P<dash>-?)[ \t]*(?P<q>['\"]?)(?P<word>[\w.-]+)(?P=q)")
+CD_TASKS_RE = re.compile(r"(^|[;&|\n])\s*(cd|pushd|set-location)\s+[^;&|\n]*\btasks\b", re.I)
+EXPANDS_RE = re.compile(r"`|\$\(")
+
+
+def heredoc_body(cmd, line_end, m):
+    """(body, end) of the here-document `m` whose body starts on the line after line_end (the index of a
+    newline): the text, and the index of the newline that ends its terminator line. None when it has no
+    terminator or, with an unquoted delimiter, when the body runs a command (shells expand it)."""
+    pos = line_end + 1
+    while pos <= len(cmd):
+        end = cmd.find("\n", pos)
+        line = (cmd[pos:] if end < 0 else cmd[pos:end]).rstrip("\r")
+        if (line.lstrip("\t") if m.group("dash") else line) == m.group("word"):
+            body = cmd[line_end + 1:pos]
+            if not m.group("q") and EXPANDS_RE.search(body):
+                return None
+            return body, (len(cmd) if end < 0 else end)
+        if end < 0:
+            return None
+        pos = end + 1
+    return None
+
+
+def redirect_target(cmd, i):
+    """The file name after the `>` or `>>` at i, and the index just past it."""
+    j = i + 1
+    if cmd.startswith(">", j):
+        j += 1
+    while j < len(cmd) and cmd[j] in " \t":
+        j += 1
+    if j < len(cmd) and cmd[j] in "'\"":
+        k = cmd.find(cmd[j], j + 1)
+        return (cmd[j + 1:k], k + 1) if k > 0 else ("", len(cmd))
+    k = j
+    while k < len(cmd) and cmd[k] not in " \t\r\n|;&<>":
+        k += 1
+    return cmd[j:k], k
+
+
+def safe_target(target, cwd, in_tasks):
+    """A redirection target that is plainly a file outside the tasks folder (T-161)."""
+    return bool(target) and not in_tasks and not re.search(r"[$`*?\[(]", target) and not touches_tasks(target, cwd)
+
+
+def shell_segments(cmd, cwd=None):
     """(segments, unsafe): the command split at unquoted | ; & and newlines, and whether it has an unquoted
-    redirection into a file, a command substitution, a backtick or an open quote (anything that could write
-    or run something)."""
+    redirection into a file that could be a task file, a command substitution, a backtick or an open quote
+    (anything that could write or run something). Here-document bodies are text, not commands, so they are
+    left out, and so are redirections into plain files outside the tasks folder (T-161)."""
     segments, cur, quote, unsafe, i = [], [], None, False, 0
-    while i < len(cmd):
+    pending = []   # here-documents whose body starts on the line after the current one
+    in_tasks = bool(CD_TASKS_RE.search(cmd))
+    while i < len(cmd) and not unsafe:
         c = cmd[i]
         if quote:
             if c == quote:
                 quote = None
+            elif quote == '"' and cmd.startswith("$(cat <<", i) and HEREDOC_RE.match(cmd, i + 6):
+                # "$(cat <<'EOF' ... EOF)": the usual way to hand a commit message over
+                m = HEREDOC_RE.match(cmd, i + 6)
+                nl = cmd.find("\n", m.end())
+                body = heredoc_body(cmd, nl, m) if nl > 0 and not cmd[m.end():nl].strip() else None
+                if body is None:
+                    unsafe = True
+                else:
+                    i = body[1]
+                    continue
             elif quote == '"' and (c == "`" or cmd.startswith("$(", i)):
                 unsafe = True
             cur.append(c)
         elif c in "'\"":
             quote = c
             cur.append(c)
+        elif cmd.startswith("<<", i) and not cmd.startswith("<<<", i) and HEREDOC_RE.match(cmd, i):
+            m = HEREDOC_RE.match(cmd, i)
+            pending.append(m)
+            i = m.end()
+            continue
         elif c == "`" or cmd.startswith("$(", i) or cmd.startswith("<(", i):
             unsafe = True
             cur.append(c)
@@ -166,8 +230,23 @@ def shell_segments(cmd):
             if m:
                 i = m.end()
                 continue
+            target, end = redirect_target(cmd, i)
+            if safe_target(target, cwd, in_tasks):
+                i = end
+                continue
             unsafe = True
             cur.append(c)
+        elif c == "\n" and pending:
+            for m in pending:
+                body = heredoc_body(cmd, i, m)
+                if body is None:
+                    unsafe = True
+                    break
+                i = body[1]
+            pending = []
+            segments.append("".join(cur))
+            cur = []
+            continue
         elif c in "|;&\n":
             segments.append("".join(cur))
             cur = []
@@ -175,7 +254,19 @@ def shell_segments(cmd):
             cur.append(c)
         i += 1
     segments.append("".join(cur))
-    return [x.strip() for x in segments if x.strip()], unsafe or quote is not None
+    return [x for x in map(drop_keyword, segments) if x], unsafe or quote is not None or bool(pending)
+
+
+SHELL_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "!"}
+
+
+def drop_keyword(seg):
+    """A segment without its leading shell keyword: `if git merge x` is the command `git merge x`; a lone
+    fi, done or esac is no command."""
+    seg = seg.strip()
+    while seg.split(None, 1) and seg.split(None, 1)[0] in SHELL_KEYWORDS:
+        seg = seg.split(None, 1)[1].strip() if len(seg.split(None, 1)) > 1 else ""
+    return "" if seg in ("fi", "done", "esac") else seg
 
 
 def read_only_segment(seg):
@@ -198,10 +289,10 @@ def read_only_segment(seg):
     return True
 
 
-def read_only(cmd):
+def read_only(cmd, cwd=None):
     """True only when every part of the shell command is known to just read. When unsure, False (refuse):
     a false refusal costs a retry, a missed write breaks the workflow rules (T-143)."""
-    segments, unsafe = shell_segments(cmd)
+    segments, unsafe = shell_segments(cmd, cwd)
     if unsafe or not segments:
         return False
     return all(read_only_segment(seg) for seg in segments)
@@ -243,9 +334,9 @@ def touches_tasks(cmd, cwd=None):
     return bool(TOUCHES_RE.search(cmd) or (cwd and re.search(r"[\\/]tasks[\\/]*$", str(cwd), re.I)))
 
 
-def risky_segments(cmd):
+def risky_segments(cmd, cwd=None):
     """The parts of a shell command that are neither reads, real calls of the status script, nor git writes."""
-    segments, unsafe = shell_segments(cmd)
+    segments, unsafe = shell_segments(cmd, cwd)
     if unsafe:
         return [cmd]   # a redirection into a file, a substitution or an open quote: judge the whole command
     return [s for s in segments if not (read_only_segment(s) or script_call(s) or git_writer(s))]
@@ -292,7 +383,7 @@ def pre_shell(tool_input, cwd=None):
         return 0
     if not GUARD_WORD_RE.search(cmd) and not INLINE_CODE_RE.search(cmd):
         return 0
-    risky = risky_segments(cmd)
+    risky = risky_segments(cmd, cwd)
     if not risky:
         return 0
     text = cmd   # a risky part anywhere makes the whole command suspect when it mentions the lines

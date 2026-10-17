@@ -124,6 +124,71 @@ class ShellGaps(Base):
                 self.assertEqual(self.cmd(c), "allow")
 
 
+class FalseRefusals(Base):
+    """T-161: the routine work of the Project Lead was refused although it edits no ticket line."""
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    TIMELINE = ("cat >> docs/timeline.md <<'EOF'\n### 2026-10-17 T-149\nThe board's guard: qa_rounds and status lines, "
+                "tasks/README.md, then cd tasks and lead words.\nEOF\n")
+
+    def test_worktree_cleanup_after_a_merge(self):
+        # the branch name holds "qa-rounds" and the path "T-149": the check read that as a ticket edit
+        branch = "task/T-149-guard-qa-rounds-hand-edits"
+        remove = f"git worktree remove --force C:/solid-carbide-worktrees/T-149 && git branch -d {branch}"
+        self.assertEqual(self.cmd(f"git merge-base --is-ancestor {branch} master && {remove}"), "allow")
+        self.assertEqual(self.cmd(f"git merge-base --is-ancestor {branch} master && {remove} && "
+                                  "python tools/task_status.py T-149"), "allow")
+
+    def test_text_that_only_mentions_the_fields(self):
+        self.assertEqual(self.cmd(self.TIMELINE + 'git add docs/timeline.md && git commit -m "T-149: qa_rounds, '
+                                  'status, tasks/README.md, cd tasks"'), "allow")
+        self.assertEqual(self.cmd(self.TIMELINE), "allow")
+        self.assertEqual(self.cmd('git commit -F - <<EOF\nT-1: status and lead in tasks/ it\'s fine\nEOF'), "allow")
+        self.assertEqual(self.cmd('git commit -m "$(cat <<\'EOF\'\nT-1: qa_rounds, status, tasks/T-1-x.md\n'
+                                  'EOF\n)"'), "allow")
+        self.assertEqual(self.cmd("echo 'qa_rounds: 1 in tasks/T-1-x.md' > docs/notes.md"), "allow")
+
+    def test_the_merge_routine(self):
+        """docs/working-with-the-board.md, "Merging": every step of it is allowed."""
+        branch = "task/T-149-guard-qa-rounds-hand-edits"
+        steps = [f"if git merge --no-ff --no-commit {branch}; then echo merged; fi",
+                 "git checkout -- game/art/boulders/boulder_a.png.import",
+                 f'python tools/task_status.py T-149 done --note "the board\'s review: qa_rounds ok"',
+                 "python tools/generate_long_gdd.py",
+                 "python tools/update_short_gdd_fingerprint.py",
+                 "python -m unittest discover -s tools",
+                 "python -m unittest discover -s game/tools",
+                 "bash game/tools/run_tests.sh",
+                 "git rev-parse -q --verify MERGE_HEAD",
+                 self.TIMELINE.replace("T-149", "T-149 merge"),
+                 "git add docs/timeline.md docs/long-gdd.md tasks/T-149-guard-qa-rounds-hand-edits.md "
+                 "&& git commit -m 'Merge task/T-149 (done)'",
+                 f"git merge-base --is-ancestor {branch} master && git worktree remove --force "
+                 f"C:/solid-carbide-worktrees/T-149 && git branch -d {branch}"]
+        for c in steps:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "allow")
+
+    def test_the_gaps_stay_closed(self):
+        for c in ["cat > tasks/T-1-x.md <<'EOF'\nstatus: done\nEOF",
+                  "cat >> tasks/T-1-x.md <<'EOF'\nqa_rounds: 1\nEOF",
+                  "cd tasks && cat > T-1-x.md <<'EOF'\nstatus: done\nEOF",
+                  "cd tasks && echo 'status: done' > notes.md",
+                  "echo 'status: done' > tasks/*.md",
+                  "ls tasks; echo 'status: done' > $f",
+                  "if true; then sed -i 's/status: open/status: done/' tasks/T-1-x.md; fi",
+                  "python - <<'EOF'\nopen('tasks/T-1-x.md','w').write('status: done')\nEOF",
+                  "cat <<EOF > docs/x.md\n$(sed -i 's/status: open/status: done/' tasks/T-1-x.md)\nEOF",
+                  "cat <<EOF\nstatus: done tasks/\nEOF\nsed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-1-x.md",
+                  "cat <<'EOF' > docs/x.md\nno terminator status tasks/"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+        self.assertEqual(self.cmd("echo status > notes.md", cwd="C:/w/T-1/tasks"), "deny")
+        self.assertEqual(self.cmd("git merge-base a b; sed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-1-x.md"), "deny")
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 
