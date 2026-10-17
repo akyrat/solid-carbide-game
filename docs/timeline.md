@@ -1345,3 +1345,8 @@ Entry format:
 - Decision or change: the board asked for the car to tilt slightly toward the held arrow key while on the ground, and for wall grinds: land near a wall's edge after a trick to lock into a grind across the wall (slightly diagonal), sliding along it and slowing, with sparks; Space (new jump key) or another trick exits, keeping the speed along the wall. The grind counts as a trick. Tickets T-158 (text), T-159 (tilt and grind, on top of `playtest/tricks`), T-160 (the grind's card). The roll art choice (T-157) is still open.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-158, T-159, T-160 (new)
+
+## 2026-10-17: The grind's card text is done
+- Decision or change: T-158 passed QA and is merged: the grind's card says GRIND!. T-160 is unblocked. The long GDD is regenerated with the round 3 decisions.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-158 (done), T-160 (open)

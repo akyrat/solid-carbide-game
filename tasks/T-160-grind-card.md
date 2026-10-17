@@ -1,7 +1,7 @@
 ---
 id: T-160
 title: "Trick prototype: the grind's card"
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Tricks

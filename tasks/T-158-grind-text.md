@@ -1,7 +1,7 @@
 ---
 id: T-158
 title: "Text: the grind's name in the trick prototype"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -14,7 +14,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/drifting.md, tasks/T-154-trick-prototype-text-round-2.md, tasks/T-159-trick-prototype-tilt-and-grind.md]
 files_expected_to_change: [tasks/T-158-grind-text.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 ## Description
@@ -29,8 +29,14 @@ Write it in the result notes with a one-line reason.
 
 ## Acceptance criteria
 
-- [ ] The result notes give the final text for item 1, in capitals, at most 12 characters. (QA: pass / fail)
+- [x] The result notes give the final text for item 1, in capitals, at most 12 characters. (QA: pass) "GRIND!" is 6 characters, capitals.
 
 ## Updates
 
+### 2026-10-17, Open → In progress
+
+Started: the grind card's name.
+
 ## Result notes
+
+**Grind card: `GRIND!`** (6 characters). Same one-word-plus-bang shape as NOSE POP! and CLEARED IT!, plain stunt-show announcer voice, and it names exactly what the car just did (locks onto the wall and grinds with sparks).
