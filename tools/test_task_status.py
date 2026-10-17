@@ -84,6 +84,7 @@ class Base(unittest.TestCase):
     def put(self, tid, **kw):
         path = self.tasks / f"{tid}-test.md"
         path.write_bytes(task(tid, **kw).encode("utf-8"))
+        ts.gl.ledger_path().unlink(missing_ok=True)   # a test's setup is trusted: the ledger is seeded afresh
         return path
 
     def status(self, tid):

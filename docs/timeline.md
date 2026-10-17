@@ -1350,3 +1350,8 @@ Entry format:
 - Decision or change: T-158 passed QA and is merged: the grind's card says GRIND!. T-160 is unblocked. The long GDD is regenerated with the round 3 decisions.
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-158 (done), T-160 (open)
+
+## 2026-10-17: T-149 done: the status guard closes the gaps found
+- Decision or change: the board chose to merge T-149 as built. It found eleven ways an agent could change a ticket's status or QA count without the status script (a repeated header line, other path spellings, wildcards, running commands from inside the tickets folder, the script's name in a comment, a split field name, inline code, an undecodable file, a hand edit then a commit) and closes them, with a test each. The status script now records every state it writes (`.board/blessed-states.jsonl`); commits and the script refuse a ticket whose guarded lines differ from that record. A ticket-header merge conflict fixed by hand must be finished through the status script. Still open: an agent editing the guard's own files. QA round 1 passed; all three test sets passed on the merge. Interim protection until the new studio's ticket system (`C:\game-studio`) replaces it. While committing this merge, the new guard refused a commit command whose text only mentioned the guarded field names (a false refusal); the board chose to reword and commit.
+- Documents touched: the tasks README
+- Tasks: T-149 (done)

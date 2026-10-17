@@ -36,8 +36,9 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tools" / "taskboard"))
 import taskboard_sync as tb  # noqa: E402
 import board_inbox as bi  # noqa: E402
+import guard_ledger as gl  # noqa: E402
 
-TASK_FILE_RE = re.compile(r"[\\/]tasks[\\/](T-\d+)[^\\/]*\.md$")
+TASK_FILE_RE = re.compile(r"(?:^|[\\/])tasks[\\/](T-\d+)[^\\/]*\.md[ .]*$", re.I)
 GUARDED = ("status", "qa_rounds", "lead")
 STATUS_SCRIPT = "python tools/task_status.py"
 SERVER = ROOT / "tools" / "taskboard" / "server.py"
@@ -73,29 +74,58 @@ def edited_text(tool, tool_input, current):
     return text
 
 
-def pre_edit(tool, tool_input):
+def resolve(path, cwd=None):
+    """The absolute, symlink-free path a tool call means, whatever its spelling (relative, other case on
+    Windows, trailing dots)."""
+    return os.path.realpath(os.path.abspath(os.path.join(cwd or os.getcwd(), path)))
+
+
+def task_path_match(path, cwd=None):
+    """The match of a path that names a task file (tasks/T-nnn-*.md) under any spelling, or None."""
+    for candidate in (path, os.path.abspath(os.path.join(cwd or os.getcwd(), path)), resolve(path, cwd)):
+        match = TASK_FILE_RE.search(candidate)
+        if match:
+            return match
+    return None
+
+
+def keys_changed(before, after):
+    """The guarded keys whose lines differ between two states (guard_ledger.state), repeated lines included."""
+    def values(st, key):
+        return [v for k, v in (st or ()) if k == key]
+    return [k for k in GUARDED if values(before, k) != values(after, k)]
+
+
+def new_task_ok(content):
+    d = dict(gl.state(content) or ())
+    return d.get("status") in (None, "open", "blocked") and d.get("qa_rounds") in (None, "0") and not d.get("lead")
+
+
+def pre_edit(tool, tool_input, cwd=None):
     path = tool_input.get("file_path") or ""
-    match = TASK_FILE_RE.search(path)
-    if not match:
+    match = task_path_match(path, cwd)
+    file = Path(resolve(path, cwd)) if path else Path("")
+    current = file.read_bytes().decode("utf-8", "replace") if path and file.is_file() else None
+    # a task file is also recognised by its header, whatever the path or the file's name
+    task = match.group(1) if match else (gl.task_id(current) if current else None)
+    if not task:
         return 0
-    file = Path(path)
-    if not file.exists():
-        fields = guarded_fields(tool_input.get("content", ""))
-        if fields["status"] in (None, "open", "blocked") and fields["qa_rounds"] in (None, "0") and not fields["lead"]:
+    if current is None:
+        content = tool_input.get("content", "")
+        if new_task_ok(content):
             return 0
         return deny("A new task starts as open (or blocked, when it depends on unfinished tasks) with qa_rounds: 0 "
                     f"and an empty lead: line; set its lead afterwards with {STATUS_SCRIPT} <T-id> --lead <Name>.")
-    current = file.read_bytes().decode("utf-8")
-    before, after = guarded_fields(current), guarded_fields(edited_text(tool, tool_input, current))
-    changed = [k for k in GUARDED if before[k] != after[k]]
+    after_state = gl.state(edited_text(tool, tool_input, current))
+    changed = keys_changed(gl.state(current), after_state)
     if not changed:
         return 0
-    task = match.group(1)
+    after = dict(after_state or ())
     args = []
     if "status" in changed or "qa_rounds" in changed:
-        args.append(after["status"] or "<status>")
+        args.append(after.get("status") or "<status>")
     if "lead" in changed:
-        args.append(f"--lead {after['lead'] or '<Name>'}")
+        args.append(f"--lead {after.get('lead') or '<Name>'}")
     return deny(f"A task's {' and '.join(changed)} line changes only through the status script, which checks "
                 f"the workflow rules. Run: {STATUS_SCRIPT} {task} {' '.join(args)} "
                 f"(from a task's branch folder, use the main repo's copy: python {ROOT / 'tools' / 'task_status.py'}). "
@@ -148,39 +178,127 @@ def shell_segments(cmd):
     return [x.strip() for x in segments if x.strip()], unsafe or quote is not None
 
 
+def read_only_segment(seg):
+    words = seg.split()
+    name = words[0].lower()
+    if name not in READ_ONLY_COMMANDS:
+        return False
+    if name == "git" and (len(words) < 2 or words[1] not in GIT_READ_ONLY or "--output" in seg):
+        return False
+    if name == "rg" and "--pre" in seg:
+        return False
+    if name == "awk" and re.search(r"system|[|>]|-i\b|inplace", seg):
+        return False
+    if name == "sed":
+        script = seg.split(None, 1)[1] if len(words) > 1 else ""
+        if re.search(r"(^|\s)-[A-Za-z]*i|--in-place|--file|(^|\s)-f\b", script):
+            return False
+        if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", script):
+            return False
+    return True
+
+
 def read_only(cmd):
     """True only when every part of the shell command is known to just read. When unsure, False (refuse):
     a false refusal costs a retry, a missed write breaks the workflow rules (T-143)."""
     segments, unsafe = shell_segments(cmd)
     if unsafe or not segments:
         return False
-    for seg in segments:
-        words = seg.split()
-        name = words[0].lower()
-        if name not in READ_ONLY_COMMANDS:
-            return False
-        if name == "git" and (len(words) < 2 or words[1] not in GIT_READ_ONLY or "--output" in seg):
-            return False
-        if name == "rg" and "--pre" in seg:
-            return False
-        if name == "awk" and re.search(r"system|[|>]|-i\b|inplace", seg):
-            return False
-        if name == "sed":
-            script = seg.split(None, 1)[1] if len(words) > 1 else ""
-            if re.search(r"(^|\s)-[A-Za-z]*i|--in-place|--file|(^|\s)-f\b", script):
-                return False
-            if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", script):
-                return False
-    return True
+    return all(read_only_segment(seg) for seg in segments)
 
 
-def pre_shell(tool_input):
-    cmd = tool_input.get("command") or ""
-    if "task_status.py" in cmd or "taskboard_sync.py" in cmd:
+PYTHON_NAMES = {"python", "python3", "py", "python.exe", "python3.exe", "py.exe"}
+STATUS_SCRIPTS = {"task_status.py", "taskboard_sync.py"}
+GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge", "rebase", "stash", "branch",
+               "worktree", "push", "pull", "fetch", "tag", "cherry-pick", "revert", "mv", "rm", "clean"}
+INLINE_CODE_RE = re.compile(
+    r"(^|\s)(python3?|py|perl|ruby|node|powershell|pwsh)(\.exe)?\s+(-\S*\s+)*-(c|e|command|encodedcommand)\b", re.I)
+TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|(?<![\w-])T-[\d*?\[]|[*?\[][^\s]*\.md\b|\*\*", re.I)
+GUARD_WORD_RE = re.compile(r"qa[\W_]*rounds|status|\blead\b", re.I)
+
+
+def script_call(seg):
+    """True for `python [-u] path/task_status.py args`: a real call of the status script, not a mention of it."""
+    words = [w for w in seg.split() if not re.fullmatch(r"\w+=\S*", w)]
+    if len(words) < 2 or words[0].lower() not in PYTHON_NAMES:
+        return False
+    rest = [w for w in words[1:] if not w.startswith("-")]
+    return bool(rest) and rest[0].strip("'\"").replace("\\", "/").rsplit("/", 1)[-1] in STATUS_SCRIPTS
+
+
+def git_writer(seg):
+    """A git subcommand that changes the repo (what it writes is committed state; commit_check covers commits)."""
+    words = seg.split()
+    if not words or words[0].lower() != "git":
+        return False
+    rest, i = words[1:], 0
+    while i < len(rest) and rest[i] in ("-C", "-c"):
+        i += 2
+    return i < len(rest) and rest[i] in GIT_WRITERS
+
+
+def touches_tasks(cmd, cwd=None):
+    """Whether a shell command names task files: the tasks folder, a T-nnn path or glob, a *.md glob, or it
+    runs inside the tasks folder."""
+    return bool(TOUCHES_RE.search(cmd) or (cwd and re.search(r"[\\/]tasks[\\/]*$", str(cwd), re.I)))
+
+
+def risky_segments(cmd):
+    """The parts of a shell command that are neither reads, real calls of the status script, nor git writes."""
+    segments, unsafe = shell_segments(cmd)
+    if unsafe:
+        return [cmd]   # a redirection into a file, a substitution or an open quote: judge the whole command
+    return [s for s in segments if not (read_only_segment(s) or script_call(s) or git_writer(s))]
+
+
+def commit_check(cmd, cwd=None):
+    """On `git commit`: refuses when a task file that would be committed has status, qa_rounds or lead lines the
+    status script did not write (guard_ledger.py). Covers every way of editing the file."""
+    if not re.search(r"\bgit\b[^;&|\n]*\bcommit\b", cmd):
         return 0
-    if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\b(status|qa_rounds)\s*:", cmd) and not read_only(cmd):
+    ledger = gl.read()
+    if ledger is None:
+        return 0
+    bases = {cwd or os.getcwd()}
+    for m in re.finditer(r"(?:\bcd|\bgit\s+-C|Set-Location)\s+(\"[^\"]+\"|'[^']+'|[^\s;&|]+)", cmd):
+        bases.add(os.path.join(cwd or os.getcwd(), m.group(1).strip("'\"")))
+    for base in bases:
+        top = gl.git(base, "rev-parse", "--show-toplevel")
+        if not top:
+            continue
+        top = Path(top.strip())
+        names = set()
+        for args in (("diff", "--name-only", "HEAD", "--", "tasks"), ("diff", "--cached", "--name-only", "--", "tasks"),
+                     ("ls-files", "--others", "--exclude-standard", "--", "tasks")):
+            names.update((gl.git(top, *args) or "").split("\n"))
+        for name in sorted(n for n in names if re.fullmatch(r"tasks/T-\d+[^/]*\.md", n)):
+            working = (top / name).read_bytes().decode("utf-8", "replace") if (top / name).is_file() else None
+            committed = gl.git(top, "show", f"HEAD:{name}")
+            for text in (working, gl.git(top, "show", f":{name}")):
+                tid = gl.task_id(text) if text else None
+                if tid and not gl.ok(tid, text, committed, ledger):
+                    return deny(f"{name}: its status, qa_rounds or lead line is not what the status script wrote, so "
+                                "it can't be committed. Undo the hand edit (git checkout HEAD -- <file>, or "
+                                f"restore the line), then change it with {STATUS_SCRIPT} <T-id> <status>.")
+    return 0
+
+
+def pre_shell(tool_input, cwd=None):
+    cmd = tool_input.get("command") or ""
+    refused = commit_check(cmd, cwd)
+    if refused:
+        return refused
+    if not touches_tasks(cmd, cwd):
+        return 0
+    if not GUARD_WORD_RE.search(cmd) and not INLINE_CODE_RE.search(cmd):
+        return 0
+    risky = risky_segments(cmd)
+    if not risky:
+        return 0
+    text = cmd   # a risky part anywhere makes the whole command suspect when it mentions the lines
+    if INLINE_CODE_RE.search(text) or re.search(r"qa[\W_]*rounds|status", text, re.I):
         return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.")
-    if re.search(r"tasks[\\/]+T-\d+", cmd) and re.search(r"\blead\s*:", cmd):
+    if re.search(r"\blead\b", text, re.I):
         return deny(f"A task's lead changes only through the status script: {STATUS_SCRIPT} <T-id> --lead <Name>.")
     return 0
 
@@ -338,9 +456,9 @@ def main():
         return session_start(data)
     if event == "PreToolUse":
         if tool in ("Edit", "Write", "MultiEdit"):
-            return pre_edit(tool, tool_input)
+            return pre_edit(tool, tool_input, data.get("cwd"))
         if tool in ("Bash", "PowerShell"):
-            return pre_shell(tool_input)
+            return pre_shell(tool_input, data.get("cwd"))
         if tool == "Agent":
             return pre_agent(tool_input)
     if event == "UserPromptSubmit":
