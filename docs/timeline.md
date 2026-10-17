@@ -1355,3 +1355,13 @@ Entry format:
 - Decision or change: the board chose to merge T-149 as built. It found eleven ways an agent could change a ticket's status or QA count without the status script (a repeated header line, other path spellings, wildcards, running commands from inside the tickets folder, the script's name in a comment, a split field name, inline code, an undecodable file, a hand edit then a commit) and closes them, with a test each. The status script now records every state it writes (`.board/blessed-states.jsonl`); commits and the script refuse a ticket whose guarded lines differ from that record. A ticket-header merge conflict fixed by hand must be finished through the status script. Still open: an agent editing the guard's own files. QA round 1 passed; all three test sets passed on the merge. Interim protection until the new studio's ticket system (`C:\game-studio`) replaces it. While committing this merge, the new guard refused a commit command whose text only mentioned the guarded field names (a false refusal); the board chose to reword and commit.
 - Documents touched: the tasks README
 - Tasks: T-149 (done)
+
+## 2026-10-17: Tilt feedback and wall grinds ready to play
+- Decision or change: T-159 (the car tilts toward the last held arrow key on the ground; wall grinds after a trick, at 70 degrees to the wall, slowing 4 units/s each second, with sparks; Space or a trick to leave, keeping the speed along the wall; a 30-unit low wall to try it on) and T-160 (the GRIND! card) passed QA and are in the playtest build `playtest/tricks`. Waiting for the board's playtest; the roll art choice (T-157) is still open.
+- Documents touched: none on master yet (`docs/drifting.md`, `game/README.md` on the task branches)
+- Tasks: T-159, T-160 (needs-playtest)
+
+## 2026-10-17: T-161 done: the status guard stops refusing the merge routine
+- Decision or change: after T-149 the guard refused worktree cleanup (the branch name held the guarded field name; `git merge-base` wasn't counted as read-only) and text that only named the guarded fields (a heredoc into the timeline). The board asked for a quick fix. Heredoc text, redirects into plain files, `if ... then` wrappers and more read-only git commands are now allowed; every step of the Project Lead's merge routine has a test; T-149's tests all still pass. QA round 1 passed; all three test sets passed on the merge. Residual risk QA reasoned about but did not test: a heredoc fed to `bash` or `sh` containing an edit of a ticket. While working, the builder hit two false refusals and made those edits with the file editing tool instead, which goes against the rule never to route around a refusal; reported to the board.
+- Documents touched: none
+- Tasks: T-161 (done)
