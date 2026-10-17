@@ -1320,3 +1320,8 @@ Entry format:
 - Decision or change: the board played the trick prototype (after Play was made to start straight into it on the playtest branch) and asked for: flying over obstacles and walls during a trick's jump, with a jump-over bonus that counts as a trick; the left side flip (Up, Left, Down, Right); and the nose launch (Up, Down, Up, Up). The board found the side flip's roll flat, like flipping a 2D image; the art approach is an open question to the board. Tickets T-154 (text), T-155 (the jumps and the two tricks, on top of `playtest/tricks`), T-156 (the confirmation cards for them).
 - Documents touched: `docs/drifting.md`
 - Tasks: T-154, T-155, T-156 (new); T-151, T-152, T-153 (needs-playtest)
+
+## 2026-10-17: Trick art stays the code stand-in for now
+- Decision or change: offered a 3D car rendered as pixels, more PixelLab generations, or the code stand-in for the tricks' art, the board chose to keep the code stand-in and judge how the tricks feel first. No new art tickets; T-153's frames stay in the playtest build.
+- Documents touched: `docs/drifting.md`
+- Tasks: none
