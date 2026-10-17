@@ -176,6 +176,8 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 
 - **Arrow-key tricks, prototype** (board, 2026-10-16): a standalone trick prototype to playtest the idea of tricks done by chaining arrow keys while driving with W/A/S/D. One trick for now: Up, Right, Down, Left in a row makes the car do a **side flip to the right** (a full roll around its long axis) with the illusion of a small jump; the car's physics stays on the ground. A live HUD in the bottom-right corner shows the four arrow keys as they are pressed, and completing the sequence plays a comic-style confirmation animation. The roll is generated with PixelLab for one car direction first. Not part of the MVP; it tries out the far-future trick idea (Open questions). Tasks T-150 to T-153.
 
+- **Trick prototype, round 2** (board, 2026-10-17, after playing it): during any trick's jump the car flies over obstacles and walls, and clearing one earns a jump-over bonus that counts as a trick. Two more arrow tricks: **Up, Left, Down, Right**, the side flip to the left (the mirror of the right one), and **Up, Down, Up, Up**, the nose launch: the car leans onto its nose, then springs forward into the air with its nose flipping up as it flies, and lands, like a toy car pressed down at the back and let go. The board's verdict on the first roll art: fine for a prototype, but it looks flat, like flipping a 2D image ("Paper Mario"), with no depth or sense of physics. Asked how to give the tricks real depth (a 3D car rendered as pixels, more PixelLab, or keep the code stand-in), the board chose to keep the code stand-in for now and judge the tricks' feel first; the art is decided later. Tasks T-154 to T-156.
+
 ### Content
 
 #### Prototypes so far
@@ -820,7 +822,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `729b52bb765ddd149cbd8cd91c83ace371578e0c991282b5094dc48eb4378c93` |
-| `drifting.md` | `997b7ca8f274f2b400c99e504e121b782a501de7f8fc6a85ccef4a214af2ee94` |
+| `drifting.md` | `2b80efb7324aa7abd323af6a9990d231013d6835aa71deea063a97b06465f8e4` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `a4e223167564b38196fcf58905daa6cf53a210dc1d89a98e99b7eb5fcacb5d08` |
 | `weapons.md` | `c66733f13842e1a952c5d629d26b1e7e8ed6bd40ef08eaa17c0c8ba0c3a3dc9a` |

@@ -1,7 +1,7 @@
 ---
 id: T-156
 title: "Trick prototype: confirmation cards for the new tricks and the jump-over bonus"
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Tricks

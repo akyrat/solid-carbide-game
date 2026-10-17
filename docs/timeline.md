@@ -1325,3 +1325,8 @@ Entry format:
 - Decision or change: offered a 3D car rendered as pixels, more PixelLab generations, or the code stand-in for the tricks' art, the board chose to keep the code stand-in and judge how the tricks feel first. No new art tickets; T-153's frames stay in the playtest build.
 - Documents touched: `docs/drifting.md`
 - Tasks: none
+
+## 2026-10-17: Trick prototype text, round 2, is done
+- Decision or change: T-154 passed QA and is merged: LEFT FLIP!, NOSE POP!, CLEARED IT! (the jump-over bonus), and the right flip renamed RIGHT FLIP! so the two read as a pair (the board may keep SIDE FLIP!). T-156 is unblocked. The long GDD is regenerated with the round 2 decisions.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-154 (done), T-156 (open)
