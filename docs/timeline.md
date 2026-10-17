@@ -1340,3 +1340,8 @@ Entry format:
 - Decision or change: T-155 (flying over obstacles with a CLEARED IT! bonus per obstacle, the left flip, the nose pop), T-156 (cards for RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!) and T-157 (15 PixelLab `/rotate` generations guided by a script-drawn 3D car; the nose pop has depth, the side roll is inconsistent) passed QA and are in the playtest build `playtest/tricks`. Waiting for the board's playtest and its choice for the roll art. PixelLab for tricks so far: 17 generations.
 - Documents touched: none on master yet (`docs/drifting.md`, `docs/visual-style.md`, `game/README.md` on the task branches)
 - Tasks: T-155, T-156, T-157 (needs-playtest)
+
+## 2026-10-17: Trick prototype round 3: tilt feedback and wall grinds
+- Decision or change: the board asked for the car to tilt slightly toward the held arrow key while on the ground, and for wall grinds: land near a wall's edge after a trick to lock into a grind across the wall (slightly diagonal), sliding along it and slowing, with sparks; Space (new jump key) or another trick exits, keeping the speed along the wall. The grind counts as a trick. Tickets T-158 (text), T-159 (tilt and grind, on top of `playtest/tricks`), T-160 (the grind's card). The roll art choice (T-157) is still open.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-158, T-159, T-160 (new)
