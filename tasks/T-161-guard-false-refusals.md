@@ -60,6 +60,10 @@ Started: agent launched in its own folder.
 
 Built: worktree cleanup, heredoc text and the documented merge steps are no longer refused; T-149's checks still pass. In QA.
 
+### 2026-10-17, Done
+
+QA passed all 4 criteria. Merged into master; worktree cleanup works again (T-149's and T-161's folders removed).
+
 ## Result notes
 
 Causes (reproduced by calling `pre_shell` in `tools/test_guard.py`, class `FalseRefusals`):
