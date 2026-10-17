@@ -1,7 +1,7 @@
 ---
 id: T-154
 title: "Text: names for the left side flip, the nose launch, and the jump-over bonus"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Tricks
@@ -33,4 +33,11 @@ Write the final text in the result notes, one line per item, with a one-line rea
 
 ## Updates
 
+### 2026-10-17, Open → In progress
+
+Started: names for the left flip, the nose launch and the jump-over bonus.
+
 ## Result notes
+1. Left side flip: **LEFT FLIP!** (10 characters). Keep **SIDE FLIP!** for the right side would not read as a pair, so rename the right one too: **RIGHT FLIP!** (11 characters) and **LEFT FLIP!** (10). Both plain, same shout style, and the pair is obvious at a glance. (If the board would rather not rename, the fallback is SIDE FLIP! for the right and LEFT FLIP! for the left.)
+2. Nose launch: **NOSE POP!** (9 characters). Short and toy-car playful: the nose dips, springs, and pops up.
+3. Jump-over bonus: **CLEARED IT!** (11 characters). A cocky shout that fits a stunt driver hopping a wall for the cameras, with no reference to what was jumped (it can be a wall or an obstacle).
