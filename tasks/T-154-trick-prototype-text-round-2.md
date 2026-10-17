@@ -1,7 +1,7 @@
 ---
 id: T-154
 title: "Text: names for the left side flip, the nose launch, and the jump-over bonus"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Tricks
