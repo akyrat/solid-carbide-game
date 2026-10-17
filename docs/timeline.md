@@ -1335,3 +1335,8 @@ Entry format:
 - Decision or change: the board asked whether PixelLab's rotation tools are available (they are: `/rotate` can change facing and tilt the camera, `/generate-8-rotations-v3` turns around the vertical axis, `/interpolation-v2` makes in-betweens; none rolls an object directly), then replaced the earlier "keep the code stand-in" decision: the tricks get full generated art. T-157 makes a sample in one direction (side roll, played reversed for the left flip, and the nose pop), capped at 15 generations; all 16 directions follow after the board approves it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-157 (new)
+
+## 2026-10-17: Trick prototype round 2 and the rotation art sample ready to play
+- Decision or change: T-155 (flying over obstacles with a CLEARED IT! bonus per obstacle, the left flip, the nose pop), T-156 (cards for RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!) and T-157 (15 PixelLab `/rotate` generations guided by a script-drawn 3D car; the nose pop has depth, the side roll is inconsistent) passed QA and are in the playtest build `playtest/tricks`. Waiting for the board's playtest and its choice for the roll art. PixelLab for tricks so far: 17 generations.
+- Documents touched: none on master yet (`docs/drifting.md`, `docs/visual-style.md`, `game/README.md` on the task branches)
+- Tasks: T-155, T-156, T-157 (needs-playtest)
