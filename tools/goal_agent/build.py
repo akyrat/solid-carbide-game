@@ -227,10 +227,11 @@ def check_refusals(answer, who):
 
 
 def ask_headless(b, step, prompt, schema, agent, model, folder):
+    """One headless session in `folder` (no --add-dir: with acceptEdits it could edit the main checkout, and
+    the runner, not the agent, moves the ticket)."""
     sid = register_session(b)
     return b.claude.ask(step, prompt, schema, model=model, agent=None if agent == "project-lead" else agent,
-                        session_id=sid, cwd=str(folder), permission_mode=PERMISSION_MODE, add_dir=str(b.root),
-                        timeout=AGENT_TIMEOUT)
+                        session_id=sid, cwd=str(folder), permission_mode=PERMISSION_MODE, timeout=AGENT_TIMEOUT)
 
 
 def art_left(b):

@@ -86,7 +86,8 @@ class HeadlessRuns(GoalRepo):
         step, prompt, options = next(c for c in b.claude.calls if c[0] == "agent")
         self.assertIsNone(options["agent"])
         self.assertEqual(options["cwd"], str(self.places.ticket_folder("T-001")))
-        self.assertEqual(options["add_dir"], str(self.root))
+        self.assertNotIn("add_dir", options, "no access to the main checkout")
+        self.assertTrue(options["session_id"])
         self.assertEqual(options["permission_mode"], build.PERMISSION_MODE)
         self.assertTrue(prompt.startswith("Work on task T-001"))
         for words in ("goal G-001", "commit only in that folder", "result notes", "tests",
@@ -138,6 +139,26 @@ class Merging(GoalRepo):
         self.assertPaused(goal, "merge", "conflicted")
         self.assertEqual(temp_repo.git(folder, "status", "--porcelain"), "", "the merge was aborted")
         self.assertEqual(self.steps(b), ["plan", "gaps", "agent", "qa"])
+
+
+class RealCommand(unittest.TestCase):
+    def test_the_headless_claude_command(self):
+        import json
+        from unittest import mock
+        from goal_agent.claude_call import RealClaude
+        out = {"is_error": False, "structured_output": {"summary": "s"}, "permission_denials": []}
+        done = mock.Mock(stdout=json.dumps(out), stderr="", returncode=0)
+        with mock.patch("subprocess.run", return_value=done) as run:
+            answer = RealClaude().ask("agent", "Work on task T-001", build.AGENT_SCHEMA, model="opus", agent="ui",
+                                      session_id="abc", cwd="C:/w/T-001", permission_mode="acceptEdits", timeout=5)
+        cmd, kw = run.call_args[0][0], run.call_args[1]
+        self.assertEqual(cmd[:3], ["claude", "-p", "Work on task T-001"])
+        for flag, value in (("--model", "opus"), ("--agent", "ui"), ("--session-id", "abc"),
+                            ("--permission-mode", "acceptEdits"), ("--output-format", "json")):
+            self.assertEqual(cmd[cmd.index(flag) + 1], value)
+        self.assertNotIn("--add-dir", cmd)
+        self.assertEqual((kw["cwd"], kw["timeout"]), ("C:/w/T-001", 5))
+        self.assertEqual(answer.data, {"summary": "s"})
 
 
 class Docstrings(unittest.TestCase):

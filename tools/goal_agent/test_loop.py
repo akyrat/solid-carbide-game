@@ -282,6 +282,23 @@ class Pauses(GoalRepo):
         self.assertFalse(self.places.ticket_folder("T-003").exists(), "nothing more started")
 
 
+class ReusedTickets(GoalRepo):
+    def test_a_reused_ticket_is_waited_on_not_built(self):
+        temp_repo.add_ticket(self.root, "T-001", status="open", title="Someone else's ticket")
+        temp_repo.git(self.root, "add", "-A")
+        temp_repo.git(self.root, "commit", "-q", "-m", "T-001")
+        f = {"plan": [plan(sub("S1"), sub("S2"))],
+             "gaps": [gaps(missing("S1", draft("D1", title="Ticket one")), named("S2", "in-flight", "Someone else's ticket")),
+                      gaps(named("S1", "covered", "Ticket one"), named("S2", "in-flight", "Someone else's ticket"))],
+             "agent": [agent()], "qa": [qa()]}
+        b = self.planned(f)
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "waiting", "T-001 (open, lead none, reused: this goal doesn't build it)")
+        self.assertEqual(self.steps(b), ["plan", "gaps", "agent", "qa", "gaps"], "only the goal's own ticket was built")
+        self.assertEqual(self.now()["T-001"]["lead"], "", "a reused ticket is not claimed")
+        self.assertFalse(self.places.ticket_folder("T-001").exists())
+
+
 class ArtCap(GoalRepo):
     def fixture(self):
         return {"plan": [plan(sub("S1"), sub("S2", needs=["S1"]))],
