@@ -1,7 +1,7 @@
 ---
 id: T-175
 title: Art: the neon underglow, the molotov and its fire area, and the windshield wiper in the world (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -84,3 +84,4 @@ The fire flickers by script (a mirrored second frame, free); no PixelLab animati
 - Documents affected, updated: `docs/visual-style.md`, `game/README.md`. Hand-edit: none.
 - Refusals: one `python -c` check was refused by a hook (task-status false positive), skipped; a `sed` was not pre-approved, done with the editor instead.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
