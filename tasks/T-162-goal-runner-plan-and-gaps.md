@@ -4,7 +4,7 @@ title: Goal runner, part 1: goal file, priority scoring and gap detection
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:

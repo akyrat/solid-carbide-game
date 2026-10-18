@@ -4,7 +4,7 @@ title: Goal runner, part 2: building the tickets and the iteration loop
 status: blocked
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
