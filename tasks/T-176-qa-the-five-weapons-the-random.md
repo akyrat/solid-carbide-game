@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-18, Blocked → In progress
 
 Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-176.
+
+### 2026-10-18, In progress → In QA
+
+Goal runner (G-002): the agent is done; QA is checking it.
 
 ## Result notes
 
