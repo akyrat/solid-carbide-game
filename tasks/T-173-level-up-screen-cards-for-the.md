@@ -1,7 +1,7 @@
 ---
 id: T-173
 title: Level-up screen: cards for the new weapons, and a weapon image on every card (placeholder images)
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-002
@@ -46,6 +46,10 @@ The board's review: Open the level-up screen screenshot and level up in a run fr
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-173.
 
 ## Result notes
 
