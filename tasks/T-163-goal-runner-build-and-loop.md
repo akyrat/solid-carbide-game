@@ -1,7 +1,7 @@
 ---
 id: T-163
 title: Goal runner, part 2: building the tickets and the iteration loop
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/working-with-the-board.md, course-mat
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, CLAUDE.md, tasks/T-162-goal-runner-plan-and-gaps.md, tools/goal_agent/, tools/task_status.py, tools/test_task_status.py, tools/board_inbox.py, game/tools/pixellab_client.py, course-material/goal-oriented-code-agent/README.md]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/goal_agent/run.py, tools/goal_agent/test_*.py, tools/goal_agent/fixtures/, tools/task_status.py, tools/test_task_status.py]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -81,6 +81,10 @@ Started: part 2 of the goal runner (building the tickets with the agents, the it
 ### 2026-10-18, In progress → In QA
 
 Built: building tickets with the agents, the iteration loop with its pause rules, resume, and the same-goal dependency rule in the status script. 34 new tests (293 tools tests pass). QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 7 criteria. Merged into master; it's tooling, so no playtest. The goal runner's four layers are all in.
 
 ## Result notes
 
