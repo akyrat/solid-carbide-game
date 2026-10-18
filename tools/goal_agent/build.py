@@ -295,7 +295,7 @@ def qa_prompt(b, ticket, folder, text):
 Its task file there is {ticket['file']}. It is part of goal {b.gid} (tasks/README.md, "Goal runs").
 Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
-Mark each one in the task file as `(QA: pass)` or `(QA: fail, <why>)`, and commit the task file in that folder.
+Mark each one in the task file as `(QA: pass)` or `(QA: fail: <reason>)`, and commit the task file in that folder.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
 check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you

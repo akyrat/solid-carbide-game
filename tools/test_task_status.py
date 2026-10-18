@@ -218,6 +218,26 @@ class StatusRules(Base):
         self.assertEqual((entry["id"], entry["from"], entry["to"]), ("T-001", "open", "blocked"))
 
 
+class QaMarks(unittest.TestCase):
+    def verdicts_of(self, *lines):
+        return ts.verdicts(task("T-001", criteria=tuple(f"- [ ] {l}" for l in lines)))
+
+    def test_a_pass_mark_may_carry_a_note(self):
+        passed, failed, unchecked = self.verdicts_of(
+            "A (QA: pass)", "B (QA: pass; a note)", "C (QA: pass: a note)", "D (QA: PASS, note)",
+            "E (QA: pass - note)", "F (QA: pass; full suite 850/850)")
+        self.assertEqual((len(passed), len(failed), len(unchecked)), (6, 0, 0))
+
+    def test_other_words_after_pass_stay_unmarked(self):
+        passed, failed, unchecked = self.verdicts_of(
+            "A (QA: pass / fail)", "B (QA: passed)", "C (QA: pass/fail)", "D no mark at all")
+        self.assertEqual((len(passed), len(failed), len(unchecked)), (0, 0, 4))
+
+    def test_a_fail_mark_still_wins_over_a_pass_note(self):
+        passed, failed, _ = self.verdicts_of("A (QA: pass; x) (QA: fail: y)")
+        self.assertEqual((len(passed), len(failed)), (0, 1))
+
+
 class GoalDependencies(Base):
     """T-163: during a goal, a dependency waiting in needs-playtest counts as met for the same goal's tickets."""
 
