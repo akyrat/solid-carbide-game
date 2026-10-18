@@ -47,17 +47,17 @@
     }
   ],
   "agent": [
-    {"summary": "Wrote the sample data file and its test.", "art_generations_used": 0, "refusals": [],
+    {"summary": "Wrote the sample data file and its test.", "art_generations_used": 0, "refusals": [], "blocked": false,
      "_files": {"game/data/sample.json": "{\"sample\": true}\n"}},
-    {"summary": "Built the sample screen.", "art_generations_used": 0, "refusals": [],
+    {"summary": "Built the sample screen.", "art_generations_used": 0, "refusals": [], "blocked": false,
      "_files": {"game/scenes/sample_screen.tscn": "[gd_scene format=3]\n"}},
-    {"summary": "Fixed the sample screen so its scene runs.", "art_generations_used": 0, "refusals": [],
+    {"summary": "Fixed the sample screen so its scene runs.", "art_generations_used": 0, "refusals": [], "blocked": false,
      "_files": {"game/scenes/sample_screen.tscn": "[gd_scene format=3]\n[node name=\"Sample\" type=\"Control\"]\n"}}
   ],
   "qa": [
-    {"summary": "Every criterion passes.", "refusals": [], "_marks": "pass"},
-    {"summary": "The scene doesn't run.", "refusals": [], "_marks": "fail"},
-    {"summary": "Every criterion passes now.", "refusals": [], "_marks": "pass"}
+    {"summary": "Every criterion passes.", "refusals": [], "blocked": false, "_marks": "pass"},
+    {"summary": "The scene doesn't run.", "refusals": [], "blocked": false, "_marks": "fail"},
+    {"summary": "Every criterion passes now.", "refusals": [], "blocked": false, "_marks": "pass"}
   ],
   "goal-check": [
     {"criteria": [
