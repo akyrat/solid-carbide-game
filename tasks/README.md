@@ -34,7 +34,7 @@ Always use the main repo's copy of the script, also from a task's branch folder:
 - `open`/`blocked`/`planning` → `in-progress` only when every task in `depends_on` is `done`, or is `needs-playtest` with the same non-empty `goal:` as this task (T-163; "Goal runs").
 - `planning` → `open` or `blocked`, and `in-progress` → `planning`, to go back.
 - `in-progress` → `in-qa` only once the agent has written its result notes.
-- Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
+- Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. A pass mark may carry a short note after `;`, `:`, `,` or ` -`, for example `(QA: pass; 850/850)` (T-179). The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
 - `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.
 - Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`. So does moving a goal's task to `needs-playtest`, for that goal's tasks.
 

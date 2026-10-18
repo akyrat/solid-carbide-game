@@ -39,7 +39,7 @@ import guard_ledger as gl  # noqa: E402
 LOG = tb.STATE_DIR / "moves.log"
 CRITERIA_RE = re.compile(r"^## Acceptance criteria[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
 CRITERION_RE = re.compile(r"^\s*- \[[ xX]\] .*$", re.M)
-QA_PASS_RE = re.compile(r"\(QA:\s*pass\)", re.I)
+QA_PASS_RE = re.compile(r"\(QA:\s*pass(?:\)|\s*[;:,]|\s-)", re.I)    # "(QA: pass)", or a note: "(QA: pass; 850/850)"
 QA_FAIL_RE = re.compile(r"\(QA:\s*fail\b", re.I)
 FINAL = {"done", "cancelled"}
 NOTE_REQUIRED = {
