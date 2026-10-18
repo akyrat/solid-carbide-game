@@ -37,11 +37,11 @@ Add one entry per weapon to `game/data/weapons.json` (ids `underglow`, `molotov`
 
 ## Acceptance criteria
 
-- [ ] `game/data/weapons.json` has entries `underglow`, `molotov` and `wiper`, each with base values and a `tiers` list of exactly 7 entries numbered 2 to 8, each with an `effect` and a `value`; the gun's and the flamethrower's entries are unchanged. (QA: pass / fail)
-- [ ] The wiper's entry has a knockback strength, and the file's comment no longer says that no weapon pushes enemies (it says only the wiper pushes, and only minions). (QA: pass / fail)
-- [ ] `weapon_data.gd` returns the new weapons' base values and tiers, and `game/tests/unit/test_weapon_data.gd` checks there are 5 weapons, each with tiers 1 to 8 (base plus 7 tiers); the game's test set passes. (QA: pass / fail)
-- [ ] The result notes hold the proposed numbers and tier effects for the three weapons with the reasoning for each. (QA: pass / fail)
-- [ ] `docs/weapons.md` Content lists the three weapons' numbers and tiers and says they are proposals for the board's playtest; `game/README.md` 'Game data' mentions the new entries. (QA: pass / fail)
+- [ ] `game/data/weapons.json` has entries `underglow`, `molotov` and `wiper`, each with base values and a `tiers` list of exactly 7 entries numbered 2 to 8, each with an `effect` and a `value`; the gun's and the flamethrower's entries are unchanged. (QA: pass; diff adds three entries with 7 tiers 2 to 8, gun and flame lines untouched)
+- [ ] The wiper's entry has a knockback strength, and the file's comment no longer says that no weapon pushes enemies (it says only the wiper pushes, and only minions). (QA: pass; knockback_distance 1.5, comment updated)
+- [ ] `weapon_data.gd` returns the new weapons' base values and tiers, and `game/tests/unit/test_weapon_data.gd` checks there are 5 weapons, each with tiers 1 to 8 (base plus 7 tiers); the game's test set passes. (QA: pass; full suite 850/850, test_weapon_data 13/13)
+- [ ] The result notes hold the proposed numbers and tier effects for the three weapons with the reasoning for each. (QA: pass)
+- [ ] `docs/weapons.md` Content lists the three weapons' numbers and tiers and says they are proposals for the board's playtest; `game/README.md` 'Game data' mentions the new entries. (QA: pass)
 
 ## Updates
 
