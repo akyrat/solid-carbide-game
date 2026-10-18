@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
@@ -55,6 +55,10 @@ Goal runner (G-002): the agent is done; QA is checking it.
 ### 2026-10-18, In QA → In progress
 
 Goal runner (G-002): failed QA once; back to the agent on opus.
+
+### 2026-10-18, In progress → In QA
+
+Goal runner (G-002): the agent is done; QA is checking it.
 
 ## Result notes
 
