@@ -4,7 +4,7 @@ title: Goal runner: planning and gap detection get only read tools
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
