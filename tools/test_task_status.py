@@ -31,9 +31,10 @@ _spec.loader.exec_module(gate)
 
 
 def task(tid, status="open", depends_on="", qa_rounds=0, criteria=("- [ ] It works (QA: pass / fail)",),
-         notes="Written by the agent when it finishes.", review=None, lead=None):
+         notes="Written by the agent when it finishes.", review=None, lead=None, goal=None):
     review_line = f"\nThe board's review: {review}\n" if review else ""
     lead_line = "" if lead is None else ("lead:\n" if not lead else f"lead: {lead}\n")
+    lead_line += "" if goal is None else (f"goal: {goal}\n" if goal else "goal:\n")
     return f"""---
 id: {tid}
 title: Task {tid}
@@ -215,6 +216,55 @@ class StatusRules(Base):
         self.move("T-001", "blocked")
         entry = json.loads(ts.LOG.read_text(encoding="utf-8").splitlines()[-1])
         self.assertEqual((entry["id"], entry["from"], entry["to"]), ("T-001", "open", "blocked"))
+
+
+class GoalDependencies(Base):
+    """T-163: during a goal, a dependency waiting in needs-playtest counts as met for the same goal's tickets."""
+
+    def test_a_needs_playtest_dependency_in_the_same_goal_lets_a_ticket_start(self):
+        self.put("T-001", status="needs-playtest", goal="G-001")
+        self.put("T-002", depends_on="T-001", goal="G-001")
+        self.move("T-002", "in-progress")
+        self.assertEqual(self.status("T-002"), "in-progress")
+        self.put("T-003", status="blocked", depends_on="T-001", goal="G-001")
+        self.move("T-003", "open")
+        self.assertEqual(self.status("T-003"), "open")
+
+    def test_a_different_or_empty_goal_still_needs_done(self):
+        self.put("T-001", status="needs-playtest", goal="G-001")
+        self.put("T-002", depends_on="T-001", goal="G-002")
+        self.assertIn("T-001 (needs-playtest)", self.refused("T-002", "in-progress"))
+        self.put("T-003", depends_on="T-001", goal="")
+        self.assertIn("T-001 (needs-playtest)", self.refused("T-003", "in-progress"))
+        self.put("T-004", depends_on="T-001")                 # no goal line at all
+        self.assertIn("T-001 (needs-playtest)", self.refused("T-004", "in-progress"))
+        self.put("T-005", status="needs-playtest", goal="")   # both empty: not a goal
+        self.put("T-006", depends_on="T-005", goal="")
+        self.assertIn("T-005 (needs-playtest)", self.refused("T-006", "in-progress"))
+
+    def test_other_statuses_in_the_same_goal_still_wait(self):
+        self.put("T-001", status="in-qa", goal="G-001")
+        self.put("T-002", depends_on="T-001", goal="G-001")
+        self.assertIn("T-001 (in-qa)", self.refused("T-002", "in-progress"))
+
+    def test_moving_to_needs_playtest_unblocks_the_same_goals_waiting_tickets(self):
+        self.put("T-001", status="in-qa", criteria=("- [x] A (QA: pass)",), review="play it", goal="G-001")
+        self.put("T-002", status="done")
+        self.put("T-003", status="blocked", depends_on="T-001, T-002", goal="G-001")   # waits on nothing now
+        self.put("T-004", status="blocked", depends_on="T-001, T-005", goal="G-001")   # T-005 still open
+        self.put("T-005", status="open", goal="G-001")
+        self.put("T-006", status="blocked", depends_on="T-001", goal="G-002")          # another goal
+        self.put("T-007", status="blocked", depends_on="T-001")                        # outside any goal
+        lines = self.move("T-001", "needs-playtest")
+        self.assertEqual([self.status(t) for t in ("T-003", "T-004", "T-006", "T-007")],
+                         ["open", "blocked", "blocked", "blocked"])
+        self.assertTrue(any("T-003" in l and "G-001" in l for l in lines), lines)
+
+    def test_needs_playtest_outside_a_goal_unblocks_nothing(self):
+        self.put("T-001", status="in-qa", criteria=("- [x] A (QA: pass)",), review="play it")
+        self.put("T-002", status="blocked", depends_on="T-001")
+        self.assertEqual(len(self.move("T-001", "needs-playtest")), 2)   # the move and qa_rounds only
+        self.assertEqual(self.status("T-002"), "blocked")
 
 
 class Replies(Base):

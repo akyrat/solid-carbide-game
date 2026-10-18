@@ -91,15 +91,23 @@ def has_result_notes(text):
     return bool(tb.review_parts(text)[2])
 
 
+def dep_met(fields, dep_fields):
+    """A dependency is met when it is done, or (tasks/README.md, "Goal runs") when it waits in
+    needs-playtest and both tickets belong to the same goal (the same non-empty `goal:` line)."""
+    status = dep_fields.get("status")
+    goal = fields.get("goal", "")
+    return status == "done" or (status == "needs-playtest" and bool(goal) and dep_fields.get("goal", "") == goal)
+
+
 def unfinished_deps(fields, folders):
     out = []
     for dep in fields.get("depends_on", []):
         try:
-            status = header(find(dep, folders)[0]).get("status")
+            dep_fields = header(find(dep, folders)[0])
         except Refused:
-            status = "missing"
-        if status != "done":
-            out.append(f"{dep} ({status})")
+            dep_fields = {"status": "missing"}
+        if not dep_met(fields, dep_fields):
+            out.append(f"{dep} ({dep_fields.get('status')})")
     return out
 
 
@@ -238,8 +246,9 @@ def log(entry):
         f.write(json.dumps(entry) + "\n")
 
 
-def unblock_dependents(done_id, folders):
-    """tasks/README.md: when a task is done, tasks now waiting on nothing move blocked -> open."""
+def unblock_dependents(done_id, folders, why="done"):
+    """tasks/README.md: when a task is done (or needs-playtest in a goal), tasks now waiting on nothing
+    move blocked -> open. unfinished_deps() decides, so a needs-playtest task opens only its own goal's."""
     opened = []
     for path in tb.task_files():
         fields = tb.parse_header(path.read_text(encoding="utf-8"))
@@ -254,7 +263,7 @@ def unblock_dependents(done_id, folders):
             except Refused:
                 continue   # hand-edited: leave it blocked rather than build on it
             write_guarded(fields["id"], real, set_field(current, "status", "open"))
-            log({"id": fields["id"], "from": "blocked", "to": "open", "file": str(real), "note": f"{done_id} done"})
+            log({"id": fields["id"], "from": "blocked", "to": "open", "file": str(real), "note": f"{done_id} {why}"})
             opened.append(fields["id"])
     return opened
 
@@ -299,6 +308,11 @@ def move(task_id, new, note=None, folders=None, by="agent", reply=None):
         opened = unblock_dependents(task_id, folders)
         if opened:
             out.append(f"Now open (everything they depend on is done): {', '.join(opened)}")
+    elif new == "needs-playtest" and fields.get("goal"):
+        opened = unblock_dependents(task_id, folders, "needs-playtest")
+        if opened:
+            out.append(f"Now open (everything they depend on is done, or waits in needs-playtest in goal "
+                       f"{fields['goal']}): {', '.join(opened)}")
     return out
 
 
