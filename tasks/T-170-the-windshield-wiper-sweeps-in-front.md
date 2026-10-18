@@ -37,11 +37,11 @@ The board's review: Play a run from the task folder with the wiper given and see
 
 ## Acceptance criteria
 
-- [ ] A new run has no wiper; after `rack.upgrade("wiper")` a test shows the wiper's angle sweeps back and forth across a semicircle in front of the car and the semicircle turns when the car turns. (QA: pass / fail)
-- [ ] A test shows a fake minion the wiper reaches takes the damage from weapons.json (times the garage damage multiplier) and is moved away from the car through the knockback call; a test shows the kaiju (or a fake big enemy) is damaged but not moved. (QA: pass / fail)
-- [ ] A test shows the gun's bullets and the flamethrower still never move an enemy. (QA: pass / fail)
-- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it; tests show it stops while paused and is removed on a new run. (QA: pass / fail)
-- [ ] A placeholder wiper drawn in code, in no shade of Redgull red, shows in front of the car; `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the wiper, and the game's test set passes. (QA: pass / fail)
+- [ ] A new run has no wiper; after `rack.upgrade("wiper")` a test shows the wiper's angle sweeps back and forth across a semicircle in front of the car and the semicircle turns when the car turns. (QA: pass)
+- [ ] A test shows a fake minion the wiper reaches takes the damage from weapons.json (times the garage damage multiplier) and is moved away from the car through the knockback call; a test shows the kaiju (or a fake big enemy) is damaged but not moved. (QA: pass)
+- [ ] A test shows the gun's bullets and the flamethrower still never move an enemy. (QA: pass)
+- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it; tests show it stops while paused and is removed on a new run. (QA: pass)
+- [ ] A placeholder wiper drawn in code, in no shade of Redgull red, shows in front of the car; `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the wiper, and the game's test set passes. (QA: pass)
 
 ## Updates
 
