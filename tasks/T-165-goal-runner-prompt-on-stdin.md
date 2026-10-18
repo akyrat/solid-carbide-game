@@ -4,7 +4,7 @@ title: Goal runner: send prompts on standard input, and tell the planner the goa
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
