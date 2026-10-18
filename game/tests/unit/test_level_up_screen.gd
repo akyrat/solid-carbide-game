@@ -90,7 +90,7 @@ func test_exact_text_for_known_cards() -> void:
 	assert_eq(Texts.TEXTS["get_flamethrower.title"], "Hot Take Exhaust")
 	assert_eq(Texts.TEXTS["upgrade_gun.tier4.desc"], "Fires 20% faster again. Engagement waits for no one.")
 	assert_eq(Texts.TEXTS["levelup.take"], "Take it")
-	assert_eq(Texts.TEXTS.size(), 32)
+	assert_eq(Texts.TEXTS.size(), 32 + 48, "T-051's 32 rows and T-171's 24 cards (T-173)")
 
 
 func test_upgrade_card_shows_the_next_tier_text() -> void:
@@ -527,3 +527,158 @@ func test_closing_during_the_animation_stops_it() -> void:
 	screen.close()
 	assert_false(screen.is_animating())
 	assert_false(screen.visible)
+
+
+# --- T-173: the new weapons' cards and the weapon image ------------------------
+
+
+## Every choice the offers can produce, as [weapon id, tier now, choice id]: "get_<w>"
+## at tier 0 (not the gun, which is always owned), "upgrade_<w>" at tiers 1 to 7.
+func _every_choice() -> Array:
+	var out := []
+	for w in offers.WEAPON_ORDER:
+		var weapon: Node = run.weapons.get_weapon(w)
+		var first := 1 if w == "gun" else 0
+		for tier in range(first, weapon.max_tier()):
+			out.append([w, tier, ("upgrade_" if tier > 0 else "get_") + w])
+	return out
+
+
+func _set_tier(w: String, tier: int) -> void:
+	run.weapons.get_weapon(w).set_tier(tier)
+
+
+func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
+	var choices := _every_choice()
+	assert_eq(choices.size(), 7 + 4 * 8, "gun tiers 1-7, the others 0-7")
+	var seen_ids := {}
+	for c in choices:
+		_set_tier(c[0], c[1])
+		assert_true(offers.available_offers().has(c[2]), "%s is offered at tier %d" % [c[2], c[1]])
+		var text: Dictionary = screen.card_text(c[2])
+		assert_ne(text.title, "", "%s at tier %d has a title" % [c[2], c[1]])
+		assert_ne(text.desc, "", "%s at tier %d has a description" % [c[2], c[1]])
+		seen_ids[c[2]] = true
+	assert_eq(seen_ids.size(), offers.ALL_IDS.size(), "every choice id walked")
+	for id in offers.ALL_IDS:
+		assert_true(seen_ids.has(id), id)
+
+
+func test_t171s_texts_word_for_word() -> void:
+	assert_eq(Texts.TEXTS["get_underglow.title"], "Neon Underglow")
+	assert_eq(Texts.TEXTS["upgrade_underglow.tier6.desc"], "Glow damage up another 50%, to 2.25. Peak aesthetic.")
+	assert_eq(Texts.TEXTS["get_molotov.desc"], "Throws a molotov every 3 seconds. Fire lasts 3 seconds. Very shareable.")
+	assert_eq(Texts.TEXTS["upgrade_molotov.tier8.title"], "Triple Drop")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier5.desc"], "Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju.")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier8.title"], "Faster Sweep II")
+	for w in ["underglow", "molotov", "wiper"]:
+		for suffix in [".title", ".desc"]:
+			assert_true(Texts.TEXTS.has("get_" + w + suffix))
+			for tier in range(2, 9):
+				assert_true(Texts.TEXTS.has("upgrade_%s.tier%d%s" % [w, tier, suffix]))
+
+
+func test_a_new_weapons_upgrade_card_shows_its_next_tier() -> void:
+	_set_tier("wiper", 4)
+	screen.show_offers(["upgrade_wiper"])
+	screen.skip_animation()
+	assert_eq(screen.cards[0].title.text, Texts.TEXTS["upgrade_wiper.tier5.title"])
+	assert_eq(screen.cards[0].desc.text, Texts.TEXTS["upgrade_wiper.tier5.desc"])
+	_set_tier("underglow", 0)
+	screen.show_offers(["get_underglow"])
+	assert_eq(screen.cards[0].title.text, "Neon Underglow")
+
+
+## Redgull red or anything that reads as a red (as game/tools/build_drift_mark.py's
+## is_redgull_red): within 128 of (219, 26, 41), or a saturated red hue.
+func _is_redgull_red(c: Color) -> bool:
+	var red := Color8(219, 26, 41)
+	var dist := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length() * 255.0
+	if dist < 128.0:
+		return true
+	var hue := c.h * 360.0
+	return minf(hue, 360.0 - hue) < 25.0 and c.s > 0.4 and c.v > 0.25
+
+
+func test_each_card_shows_its_weapons_image_a_different_one_per_weapon() -> void:
+	var images := {}
+	for w in offers.WEAPON_ORDER:
+		var id: String = "upgrade_gun" if w == "gun" else "get_" + w
+		screen.show_offers([id])
+		screen.skip_animation()
+		var image: TextureRect = screen.cards[0].image
+		assert_not_null(image, "%s: an image node" % id)
+		assert_eq(image.name, "WeaponImage")
+		assert_eq(image.texture, screen.weapon_image(w), "%s shows the %s image" % [id, w])
+		assert_eq(image.custom_minimum_size, screen.IMAGE_SIZE)
+		assert_true(image.is_visible_in_tree())
+		images[w] = image.texture.get_image().get_data()
+	for a in images:
+		for b in images:
+			if a < b:
+				assert_ne(images[a], images[b], "%s and %s look different" % [a, b])
+	# An upgrade card shows the same weapon's image.
+	_set_tier("molotov", 3)
+	screen.show_offers(["upgrade_molotov"])
+	assert_eq(screen.cards[0].image.texture, screen.weapon_image("molotov"))
+
+
+func test_placeholder_images_are_hard_edged_and_never_redgull_red() -> void:
+	for w in offers.WEAPON_ORDER:
+		var tex: Texture2D = screen.placeholder_image(w)
+		assert_not_null(tex, w)
+		var img: Image = tex.get_image()
+		assert_eq(img.get_size(), Vector2i(16, 16))
+		var opaque := 0
+		for y in img.get_height():
+			for x in img.get_width():
+				var c := img.get_pixel(x, y)
+				assert_true(c.a == 0.0 or c.a == 1.0, "%s (%d, %d): no semi-transparent pixels" % [w, x, y])
+				if c.a > 0.0:
+					opaque += 1
+					assert_false(_is_redgull_red(c), "%s (%d, %d): %s is not Redgull red" % [w, x, y, c])
+		assert_gt(opaque, 20, "%s: something is drawn" % w)
+		assert_eq(img.get_pixel(0, 15).a, 0.0, "%s: transparent background" % w)
+	for row in screen.PLACEHOLDER_GRIDS.values():
+		assert_eq(row.size(), 16)
+		for line in row:
+			assert_eq(String(line).length(), 16, line)
+	assert_null(screen.placeholder_image("nothing"))
+
+
+func test_every_card_lays_out_its_image_and_text_inside_the_card() -> void:
+	var win := get_window()
+	var old_size := win.size
+	win.size = Vector2i(1152, 648)
+	var vp := Rect2(Vector2.ZERO, Vector2(win.size))
+	for c in _every_choice():
+		_set_tier(c[0], c[1])
+		screen.show_offers([c[2]])
+		screen.skip_animation()
+		await wait_process_frames(2)
+		var card: Dictionary = screen.cards[0]
+		var label := "%s at tier %d" % [c[2], c[1]]
+		var frame: Rect2 = card.body.get_node("Frame").get_global_rect()
+		var inner := frame.grow(-20.0)  # inside the frame's border and studs
+		var img: Rect2 = card.image.get_global_rect()
+		var title: Rect2 = card.title.get_global_rect()
+		var desc: Rect2 = card.desc.get_global_rect()
+		var button: Rect2 = card.button.get_global_rect()
+		assert_eq(frame.size, screen.CARD_SIZE, label)
+		assert_true(vp.encloses(frame), "%s: the card is inside the window" % label)
+		for r in [img, title, desc, button]:
+			assert_true(inner.encloses(r), "%s: %s inside the card %s" % [label, r, inner])
+		assert_eq(img.size, screen.IMAGE_SIZE, label)
+		assert_gte(title.position.y, img.end.y, "%s: the title is under the image" % label)
+		assert_gte(desc.position.y, title.end.y, "%s: the description is under the title" % label)
+		var text_end: float = desc.position.y + card.desc.get_minimum_size().y
+		assert_lte(text_end, button.position.y, "%s: the description ends above the button" % label)
+		assert_eq(card.panel.size, screen.CARD_SIZE, "%s: the card did not grow" % label)
+	win.size = old_size
+
+
+func test_the_highlight_frame_still_reaches_12_px_past_the_taller_card() -> void:
+	_level_up()
+	var glow: NinePatchRect = screen.cards[0].highlight_frame
+	assert_eq(glow.position, Vector2(-12, -12))
+	assert_eq(glow.size * glow.scale, screen.CARD_SIZE + Vector2(24, 24))
