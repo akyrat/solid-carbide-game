@@ -129,6 +129,16 @@ What each milestone includes is decided in the game area docs (for example, how 
 
 When a task needs the board to look at, read, listen to or play something, its task file says so in one line starting `The board's review:`. **Every Asset Generation task gets the board's review** (board, 2026-10-10): the board stays in control of how the assets look and their style. Until an asset's art task is done, the game uses placeholders. A line starting `Board review files:` lists the files to open, relative to the task's folder. The task board shows both, with the agent's and QA's result notes, when the board clicks a ticket.
 
+## Screenshots
+
+Every task ends with screenshots of its work wherever anything can be shown (board, 2026-10-19), whether or not it has a `The board's review:` line:
+
+- **Something on screen** (a scene, an effect, a screen, art in the game): screenshots of it in the game, taken with the screenshot tool (`game/README.md`), enough to show the change (for motion, a few frames or a strip).
+- **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
+- **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
+
+They go in `art-archive/<task id>/screenshots/` and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say.
+
 ## Models
 
 Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:

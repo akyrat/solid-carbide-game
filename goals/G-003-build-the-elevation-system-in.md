@@ -1,10 +1,10 @@
 ---
 id: G-003
 title: Build the elevation system in a test scene, as written in docs/drif...
-status: planned
+status: building
 art_cap: 20
 art_used: 0
-iteration: 0
+iteration: 1
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-003
@@ -44,13 +44,13 @@ Build the elevation system in a test scene, as written in docs/drifting.md (Deci
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S1 | Ground-height data for the test scene: one platform, one ramp, drop-off edges | unblocks 6, value 5 | The car's height needs to know how high the ground is under it. Level design says the map's data format leaves room for heights and ramps from the start, for the board's later level editor. | missing | T-182 |
-| 2 | S2 | The car's real height: gravity, takeoff and landing | unblocks 5, value 5 | This is the heart of the goal (Drifting, Decisions, 'Elevation'): a height separate from the map position, with gravity, a takeoff speed and a landing. | missing | T-183 |
-| 3 | S4 | The illusion of height: lifted car drawing, shadow on the ground, placeholder platform and ramp | unblocks 3, value 5 | In this 2D game height is only seen through the drawing: the car lifts up the screen with its height while its shadow stays on the ground (Drifting, Decisions, 'Elevation'). The functional work starts with placeholders, not waiting for the art. | missing | T-185 |
-| 4 | S5 | PixelLab art for the ramp and the raised platform | unblocks 1, value 5 | The board asked for PixelLab art for both in this goal. | missing | T-186 |
-| 5 | S3 | How the platform's sides meet the car | unblocks 1, value 4 | Driving up the ramp and jumping off the edges only works if the platform's sides behave consistently with the car's height (driving into a drop-off edge from the ground, landing on the platform, falling off it). | missing | T-184 |
-| 6 | S7 | Document the build and keep the docs in sync | unblocks 0, value 4 | A task is not done until its affected docs are updated; the separate docs are the source of truth and the goal's criteria check them. | missing | T-188 |
-| 7 | S6 | Option: car drawn slightly bigger when high | unblocks 0, value 2 | Drifting, Decisions names drawing the car slightly bigger when high as an option for the board's playtest. | missing | T-187 |
+| 1 | S1 | Ground-height data for the test scene: one platform, one ramp, drop-off edges | unblocks 6, value 5 | The car's height needs to know how high the ground is under it. Level design says the map's data format leaves room for heights and ramps from the start, for the board's later level editor. | covered | T-182 |
+| 2 | S2 | The car's real height: gravity, takeoff and landing | unblocks 5, value 5 | This is the heart of the goal (Drifting, Decisions, 'Elevation'): a height separate from the map position, with gravity, a takeoff speed and a landing. | in-flight | T-183 |
+| 3 | S4 | The illusion of height: lifted car drawing, shadow on the ground, placeholder platform and ramp | unblocks 3, value 5 | In this 2D game height is only seen through the drawing: the car lifts up the screen with its height while its shadow stays on the ground (Drifting, Decisions, 'Elevation'). The functional work starts with placeholders, not waiting for the art. | in-flight | T-185 |
+| 4 | S5 | PixelLab art for the ramp and the raised platform | unblocks 1, value 5 | The board asked for PixelLab art for both in this goal. | in-flight | T-186 |
+| 5 | S3 | How the platform's sides meet the car | unblocks 1, value 4 | Driving up the ramp and jumping off the edges only works if the platform's sides behave consistently with the car's height (driving into a drop-off edge from the ground, landing on the platform, falling off it). | in-flight | T-184 |
+| 6 | S7 | Document the build and keep the docs in sync | unblocks 0, value 4 | A task is not done until its affected docs are updated; the separate docs are the source of truth and the goal's criteria check them. | in-flight | T-188 |
+| 7 | S6 | Option: car drawn slightly bigger when high | unblocks 0, value 2 | Drifting, Decisions names drawing the car slightly bigger when high as an option for the board's playtest. | in-flight | T-187 |
 
 ### S1: Ground-height data for the test scene: one platform, one ramp, drop-off edges
 
@@ -129,6 +129,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 0: started: planning.
 - 2026-10-19, iteration 0: priority scoring: 7 sub-goals ranked, 8 goal criteria, 12 open questions.
 - 2026-10-19, iteration 0: gap detection: 0 covered, 0 in flight, 7 missing; wrote 7 tickets.
+- 2026-10-19, iteration 0: building.
+- 2026-10-19, iteration 1: T-182 (S1, level-challenge, sonnet): passed (done, QA rounds 1), merged into playtest/G-003; art 0; agent: T-182 is built and committed on its branch. The data file `game/data/level/elevation_test.json` holds a list of platforms and a list of ramps, with one 16 by 16 platform at height 3 and an east-side ramp rising from 0 to 3. `game/scripts/level/ground_height.gd` has `height_at`, `is_ramp`, `ramp_at` and `edge_between`. 9 new GUT tests pass, and the full headless suite passes with no existing test changed. The new sections are in `game/README.md` and `docs/level-design.md`, with every number marked as a proposal. I left the Godot `.import` line-ending changes out of the commit. Refused, got past and not blocking: QA: {"tool_input": {"command": "$p='C:\\solid-carbide-worktrees\\T-182\\tasks\\T-182-elevation-test-scene-ground-height-data.md'\n$c=Get-Content $p -Raw -Encoding utf8\n$c=$c.Replace('(QA: pass / fail)','(QA: pass)')\n[IO.File]::WriteAllText($p,$c,(New-Object Text.UTF8Encoding $false))\ngit add tasks/T-182-elevation-test-scene-ground-height-data.md\ngit commit -m \"T-182: QA round 1 pass\" -m \"Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\""}, "tool_name": "PowerShell", "tool_use_id": "toolu_01YJi9hpegroDrjuWprJHYDT"} / QA: A PowerShell edit using New-Object Text.UTF8Encoding was refused by the constrained-language mode. It wasn't essential, so I made the same edit with the Edit tool instead.. Rescan: S1 covered, S2 in-flight, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight.
 
 ## Pauses
 

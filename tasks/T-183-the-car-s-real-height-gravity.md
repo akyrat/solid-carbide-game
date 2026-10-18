@@ -1,7 +1,7 @@
 ---
 id: T-183
 title: The car's real height: gravity, takeoff from the ramp's top and drop-off edges, and landing
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-003

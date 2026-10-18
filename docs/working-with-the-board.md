@@ -13,6 +13,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - Send images with SendUserFile: enlarged (nearest-neighbour), on a dark and a light background, side by side for comparisons. Always say where the real files are (full Windows paths).
 - Work that needs the board's review is played from the task's own folder before merging: tell the board to open `C:\solid-carbide-worktrees\<id>\game\project.godot`, or to press Play on the ticket's entry in the Builds tab of the task board (http://localhost:8765), which starts the same game; Open in editor opens the project in Godot.
 - The board can open files itself; when it asks where the files are, give paths, not more images.
+- Screenshots for every ticket (board, 2026-10-19): every ticket ends with screenshots of its work wherever anything can be shown (`tasks/README.md`, "Screenshots"), and the Project Lead shows them to the board when the ticket passes QA, goal runs included, with their paths.
 
 ## Art and money
 - PixelLab costs generations. Never call it without the board's go for that task. One round per task: report problems, don't regenerate. Extra calls only on the board's explicit say-so.
