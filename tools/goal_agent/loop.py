@@ -6,7 +6,10 @@ and the code and runs gap detection (layer 2) again for the sub-goals not yet `c
 through the same rule checks. Each step is one entry in the goal file's `## Iteration log`, and one more
 `iteration`. When no goal ticket is ready or in progress and every one has passed QA, the QA/Integration
 Agent checks the goal's own acceptance criteria in the goal's folder: all pass, the goal is
-`ready-to-play`; a fail goes back into gap detection as a gap.
+`ready-to-play`; a fail goes back into gap detection as a gap. Just before that check the runner brings the
+long GDD and the short GDD's fingerprint up to date in the goal's folder (committing only those docs) and
+gives the check's result to QA, so QA need not run the docs scripts. The goal check is told the pre-approved
+commands and reports `blocked`, like the ticket sessions.
 
 The goal pauses (status `paused`, the reason in `## Pauses` with its kind, a printed message) and changes
 nothing more on these stop rules (KINDS): the iteration cap; the art cap with an asset-generation ticket
@@ -17,6 +20,7 @@ The run is rebuilt from the files each step (goal file, tickets, worktrees), so 
 """
 
 import re
+import sys
 from pathlib import Path
 
 from goal_agent import build, gaps, goal_file, tickets
@@ -48,8 +52,11 @@ CHECK_SCHEMA = {
                            "notes": {"type": "string"}},
             "required": ["criterion", "result", "notes"]}},
         "refusals": {"type": "array", "items": {"type": "string"}},
+        "blocked": {"type": "boolean",
+                    "description": "true only when a refused action was essential and you could not finish "
+                                   "the checks without it"},
     },
-    "required": ["criteria", "refusals"],
+    "required": ["criteria", "refusals", "blocked"],
 }
 
 
@@ -195,23 +202,61 @@ def after_ticket(b, res, seen):
 
 # --- the goal check ---
 
-def check_prompt(b, criteria, folder):
+def sync_docs(b, folder):
+    """Bring the long GDD and the short GDD's fingerprint up to date in the goal's build folder, before the goal
+    check: runs `generate_long_gdd.py --check` through the shell (a non-zero exit means stale, and is the one
+    exit allowed here: exit 2, a doc that breaks its structure, or any other failure still pauses). If stale it
+    regenerates both, commits only the changed docs on the goal's build branch, and checks again. Returns the
+    last check's output, for the goal check's prompt."""
+    py, check_cmd = sys.executable, [sys.executable, "tools/generate_long_gdd.py", "--check"]
+
+    def checked():
+        done = b.shell.run(check_cmd, folder, check=False)
+        if done.returncode not in (0, 1):
+            raise Pause(f"A command the runner ran was refused or failed: {' '.join(check_cmd)}: "
+                        f"{(done.stderr or done.stdout).strip()[:800]}", "command")
+        return done
+    done = checked()
+    note = ""
+    if done.returncode == 1:
+        b.shell.run([py, "tools/generate_long_gdd.py"], folder)
+        b.shell.run([py, "tools/update_short_gdd_fingerprint.py"], folder)
+        changed = [l[3:].strip().strip('"') for l in b.shell.git(folder, "status", "--porcelain", "--", "docs").stdout
+                   .splitlines() if len(l) > 3]
+        if changed:
+            b.shell.git(folder, "add", "--", *changed)
+            b.shell.git(folder, "commit", "-q", "-m", f"{b.gid}: regenerate the long GDD and the short GDD's "
+                                                      f"fingerprint (goal runner)", "--", *changed)
+        note = f"The runner found the docs stale and regenerated them ({', '.join(changed) or 'no file changed'}); "
+        done = checked()
+    return f"{note}docs check now: {(done.stdout or done.stderr).strip()} (exit {done.returncode})"
+
+
+def check_prompt(b, criteria, folder, docs_check=""):
     lines = "\n".join(f"{i}. {c}" for i, c in enumerate(criteria, 1))
+    docs = (f"\nThe runner already ran the docs staleness check (generate_long_gdd.py --check) in this folder and "
+            f"brought the docs up to date. Its result: {docs_check}\nFor any criterion about the docs being in sync, "
+            f"use that result; don't run the docs scripts yourself.\n" if docs_check else "")
     return f"""Goal check for goal {b.gid} ("{b.goal.get('title')}"), in the goal's build folder {folder}
 (branch {b.places.goal_branch(b.gid)}). Every ticket of the goal has passed QA and is merged there.
 Check each of the goal's own acceptance criteria against the build, running the tests and scenes they name:
 {lines}
-Answer one entry per criterion, in this order, with pass or fail and short notes. Don't change any file.
-If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals."""
+{docs}Answer one entry per criterion, in this order, with pass or fail and short notes. Don't change any file.
+If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
+check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
+can't finish the checks without it; then stop.{build.pre_approved_note(b.root)}
+Answer with the criteria, every refusal you met, and blocked."""
 
 
 def goal_check(b, seen):
     """True when every goal criterion passes (the goal is then ready-to-play). Raises Pause."""
     goal, criteria = b.goal, goal_criteria(b.goal)
     folder = build.ensure_goal_build(b)
-    answer = build.ask_headless(b, "goal-check", check_prompt(b, criteria, folder), CHECK_SCHEMA, "qa-integration",
-                                build.QA_MODEL, folder)
-    build.check_refusals(answer, "The goal check")
+    docs_check = sync_docs(b, folder)
+    answer = build.ask_headless(b, "goal-check", check_prompt(b, criteria, folder, docs_check), CHECK_SCHEMA,
+                                "qa-integration", build.QA_MODEL, folder)
+    for r in build.check_refusals(answer, "The goal check"):          # the ones it got past: logged
+        goal.log(f"goal check: refused, got past and not blocking: {r}.")
     results = list(answer.data.get("criteria") or [])
     if len(results) != len(criteria):
         raise Pause(f"The goal check answered {len(results)} criteria for {len(criteria)}.", "qa")

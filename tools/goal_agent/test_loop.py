@@ -6,6 +6,7 @@ import contextlib
 import io
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -62,9 +63,9 @@ def qa(mark="pass", refusals=(), blocked=False):
     return {"summary": f"QA says {mark}.", "refusals": list(refusals), "blocked": blocked, "_marks": mark}
 
 
-def check(*results):
+def check(*results, refusals=(), blocked=False):
     return {"criteria": [{"criterion": f"criterion {i}", "result": r, "notes": "fake"} for i, r in enumerate(results, 1)],
-            "refusals": []}
+            "refusals": list(refusals), "blocked": blocked}
 
 
 def quiet(fn, *args, **kw):
@@ -335,6 +336,94 @@ class Pauses(GoalRepo):
         self.assertEqual([self.status(t) for t in ("T-001", "T-002", "T-003")],
                          ["flagged-for-review", "flagged-for-review", "open"])
         self.assertFalse(self.places.ticket_folder("T-003").exists(), "nothing more started")
+
+
+class GoalCheck(GoalRepo):
+    """The goal check like the ticket sessions (prompt, schema, refusals), and the docs sync before it."""
+
+    def one_ticket(self, *answers):
+        return {"plan": [plan(sub("S1"), criteria=["criterion 1"])],
+                "gaps": [gaps(missing("S1", draft("D1", title="Ticket one"))),
+                         gaps(named("S1", "covered", "Ticket one"))],
+                "agent": [agent()], "qa": [qa()], "goal-check": list(answers) or [check("pass")]}
+
+    def docs_clean(self, folder):
+        done = subprocess.run([sys.executable, "tools/generate_long_gdd.py", "--check"], cwd=str(folder),
+                              capture_output=True, text=True, encoding="utf-8")
+        return done.returncode == 0
+
+    def test_the_prompt_holds_the_pre_approved_note_and_the_docs_result_and_the_schema_requires_blocked(self):
+        settings = self.root / ".claude" / "settings.json"
+        settings.parent.mkdir(parents=True, exist_ok=True)
+        settings.write_text(json.dumps({"permissions": {"allow": ["Bash(python -m unittest discover:*)"]}}),
+                            encoding="utf-8")
+        b = self.planned(self.one_ticket())
+        goal = self.run_loop(b)
+        self.assertEqual(goal.get("status"), "ready-to-play", goal.section("Pauses"))
+        prompt = [c for c in b.claude.calls if c[0] == "goal-check"][0][1]
+        self.assertIn("Bash(python -m unittest discover:*)", prompt)
+        self.assertIn("pre-approved", prompt)
+        self.assertIn("docs check now: in sync", prompt)
+        self.assertIn("don't run the docs scripts yourself", prompt)
+        self.assertIn("Set blocked to true only when", prompt)
+        self.assertEqual(loop.CHECK_SCHEMA["properties"]["blocked"]["type"], "boolean")
+        self.assertIn("blocked", loop.CHECK_SCHEMA["required"])
+
+    def test_a_refusal_the_goal_check_got_past_is_logged_and_the_goal_is_ready(self):
+        b = self.planned(self.one_ticket(check("pass", refusals=["python -c refused"])))
+        goal = self.run_loop(b)
+        self.assertEqual(goal.get("status"), "ready-to-play", goal.section("Pauses"))
+        self.assertIn("goal check: refused, got past and not blocking: python -c refused", goal.section("Iteration log"))
+
+    def test_a_blocked_goal_check_pauses(self):
+        b = self.planned(self.one_ticket(check("pass", refusals=["python -c refused"], blocked=True)))
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "refusal", "The goal check", "python -c refused")
+
+    def test_a_goal_check_refusal_without_blocked_pauses(self):
+        answer = check("pass", refusals=["refused"])
+        del answer["blocked"]
+        goal = self.run_loop(self.planned(self.one_ticket(answer)))
+        self.assertPaused(goal, "refusal", "refused")
+
+    def test_stale_docs_are_regenerated_and_committed_on_the_build_branch_before_the_check(self):
+        b = self.planned(self.one_ticket())
+        folder = build.ensure_goal_build(b)
+        doc = folder / "docs" / "sample.md"
+        doc.write_bytes(doc.read_bytes().replace(b"Sample summary.", b"A changed summary."))
+        temp_repo.git(folder, "commit", "-q", "-am", "change a game area doc")
+        self.assertFalse(self.docs_clean(folder), "stale to begin with")
+        goal = self.run_loop(b)
+        self.assertEqual(goal.get("status"), "ready-to-play", goal.section("Pauses"))
+        self.assertTrue(self.docs_clean(folder))
+        self.assertEqual(temp_repo.git(folder, "status", "--porcelain", "--", "docs"), "")
+        subjects = temp_repo.git(folder, "log", "--format=%s", "playtest/G-001").splitlines()
+        sync = [i for i, s in enumerate(subjects) if "regenerate the long GDD" in s]
+        self.assertEqual(len(sync), 1, subjects)
+        changed = temp_repo.git(folder, "show", "--name-only", "--format=", f"HEAD~{sync[0]}").split()
+        self.assertEqual(sorted(changed), ["docs/long-gdd.md", "docs/short-gdd/README.md"])
+        prompt = [c for c in b.claude.calls if c[0] == "goal-check"][0][1]
+        self.assertIn("regenerated them", prompt)
+        self.assertIn("docs check now: in sync", prompt)
+
+    def test_docs_already_in_sync_are_left_alone(self):
+        b = self.planned(self.one_ticket())
+        folder = build.ensure_goal_build(b)
+        before = temp_repo.git(folder, "rev-list", "--count", "HEAD").strip()
+        text = loop.sync_docs(b, folder)
+        self.assertIn("in sync", text)
+        self.assertNotIn("regenerated", text)
+        self.assertEqual(temp_repo.git(folder, "rev-list", "--count", "HEAD").strip(), before, "nothing committed")
+        self.assertEqual(temp_repo.git(folder, "status", "--porcelain"), "")
+
+    def test_a_docs_check_that_fails_for_another_reason_pauses(self):
+        b = self.planned(self.one_ticket())
+        folder = build.ensure_goal_build(b)
+        doc = folder / "docs" / "sample.md"
+        doc.write_bytes(doc.read_bytes().replace(b"## Content", b"## Wrong"))     # breaks the structure: exit 2
+        with self.assertRaises(loop.Pause) as ctx:
+            loop.sync_docs(b, folder)
+        self.assertEqual(ctx.exception.kind, "command")
 
 
 class ReusedTickets(GoalRepo):

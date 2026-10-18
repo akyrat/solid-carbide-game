@@ -63,6 +63,6 @@
     {"criteria": [
       {"criterion": "The sample data file loads in a test", "result": "pass", "notes": "the test passes"},
       {"criterion": "The sample screen's scene runs", "result": "pass", "notes": "it runs"}
-    ], "refusals": []}
+    ], "refusals": [], "blocked": false}
   ]
 }
