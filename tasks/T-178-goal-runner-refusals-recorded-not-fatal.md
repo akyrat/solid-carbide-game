@@ -1,7 +1,7 @@
 ---
 id: T-178
 title: Goal runner: a refusal the agent got past is recorded, not a pause
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/working-with-the-board.md, course-material/goal-orient
 files_to_read_first: [tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/goal_agent/test_build.py, tools/goal_agent/test_loop.py, goals/G-002-add-an-image-of-the.md]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/goal_agent/fake_team.py, tools/goal_agent/fixtures/, tools/goal_agent/test_*.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -48,6 +48,10 @@ Quick fix started: a refusal an agent got past (skipped, not worked around) is r
 ### 2026-10-18, In progress → In QA
 
 Built: refusals an agent got past are logged and the ticket goes on; only a blocked agent or QA pauses the run. 309 tools tests pass. QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 4 criteria. Merged; G-002 resumes now.
 
 ## Result notes
 
