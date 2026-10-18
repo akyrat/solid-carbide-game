@@ -38,7 +38,7 @@ flowchart LR
 - **Obstacles:** crashed meteor boulders stand on the roads in set patterns, to drift around and bounce off.
 - **Tricks and the combo:** extended drifts, 360s and alternate drifts (switching between forward and backward drifts) are tricks. Each one raises a combo multiplier on every like earned, and pops its name out from the car in comic-style letters. Hitting anything cuts the combo, and it drains if the tricks stop. A higher combo also draws more monsters.
 - **Likes and gift packs:** drifts longer than a second earn likes every second, multiplied by the combo. Each time the likes bar fills, a Redgull helicopter flies over and drops a gift pack; driving over it pauses the game for the gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
-- **Weapons:** the car starts every run with a **gun** that aims and fires on its own at monsters in range. The second weapon is a **flamethrower out of the exhaust that fires only while drifting**. The weapons reset every run.
+- **Weapons:** the car starts every run with a **gun** that aims and fires on its own at monsters in range. The others are gained at level-ups: a **flamethrower out of the exhaust that fires only while drifting**, a **neon underglow** that hurts monsters around the car, **molotovs** thrown at random that leave fire on the ground, and a **windshield wiper** that sweeps monsters away. Each has 8 tiers. The weapons reset every run.
 - **Monsters:** light-green, four-legged lizards come in from the edges of the screen, a few more as the run goes on. They hurt the car on contact and drop coins.
 - **The kaiju:** at 7:00 a Godzilla-style kaiju arrives and walks slowly towards the car. Weapons can damage it at any time. It rains meteors (a red warning circle shows where they will land) that leave new boulders on the roads.
 - **Winning and losing:** defeat the kaiju before 8:00 to win. The run is lost if the car's health runs out or the kaiju survives the timer.
@@ -71,7 +71,7 @@ Night in a Tokyo-style cyberpunk city: dark navy and purple, lit by pink and cya
 
 | | MVP | After the MVP |
 |---|---|---|
-| Weapons | 2: the gun and the exhaust flamethrower | 8 to 12, three offered per gift pack |
+| Weapons | 5: the gun, the exhaust flamethrower, the neon underglow, molotovs and the windshield wiper | 8 to 12, three offered per gift pack |
 | Bosses | the kaiju in Crash City | a different monster boss for each city |
 | Map | one city, made once | more cities, one per level (how maps are made is still open) |
 | Challenges | none: boulders are plain obstacles | driving challenges marked by painted arrows, maybe |
