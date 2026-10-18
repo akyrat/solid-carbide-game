@@ -21,11 +21,12 @@ extends Node
 const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
 const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const NeonUnderglowScript := preload("res://scripts/weapons/neon_underglow.gd")
+const MolotovsScript := preload("res://scripts/weapons/molotovs.gd")
 const LevelUpOffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
-const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript]
+const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript, MolotovsScript]
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -75,6 +76,10 @@ var flamethrower: Node:
 var underglow: Node:
 	get:
 		return weapons.get("underglow")
+## The molotovs (molotovs.gd).
+var molotov: Node:
+	get:
+		return weapons.get("molotov")
 
 
 ## Binds the rack to a run scene (run.gd): its state and car, and a draw root
@@ -113,6 +118,9 @@ func reset_for_run() -> void:
 	# Playtest switch (T-168, data/playtest.json "underglow_at_start"): the same for the underglow.
 	if NeonUnderglowScript.playtest_switch_on():
 		upgrade("underglow")
+	# Playtest switch (T-169, data/playtest.json "molotov_at_start"): the same for the molotovs.
+	if MolotovsScript.playtest_switch_on():
+		upgrade("molotov")
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.
@@ -184,8 +192,10 @@ func step(dt: float) -> void:
 
 
 ## Adds a projectile (a Node2D with step(dt) and is_done()) to the drawing and the step.
-func add_projectile(p: Node2D) -> void:
-	draw_root.add_child(p, true)
+## `parent` draws it elsewhere than draw_root (the molotovs' fire areas, on the
+## ground); it is still stepped, freed once done and removed at a new run.
+func add_projectile(p: Node2D, parent: Node = null) -> void:
+	(parent if parent != null else draw_root).add_child(p, true)
 	projectiles.append(p)
 
 
