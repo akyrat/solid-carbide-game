@@ -1,7 +1,7 @@
 ---
 id: T-181
 title: The status guard stops refusing harmless commands that only mention its words
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -44,15 +44,19 @@ Approach is the builder's choice; one way is to refuse only when a command both 
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including every existing test in `tools/test_guard.py` (QA: pass / fail)
-- [ ] `tools/test_guard.py` has one test per command in the "must be allowed" list above (8 tests), each showing the hook lets it through (QA: pass / fail)
-- [ ] A test shows a shell command that writes `status: done` (or `lead:`, `qa_rounds:`) into a ticket's header is still refused, and one that a commit of a hand-edited ticket header is still refused by the ledger check (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including every existing test in `tools/test_guard.py` (QA: pass; 329 tests, OK)
+- [ ] `tools/test_guard.py` has one test per command in the "must be allowed" list above (8 tests), each showing the hook lets it through (QA: pass)
+- [ ] A test shows a shell command that writes `status: done` (or `lead:`, `qa_rounds:`) into a ticket's header is still refused, and one that a commit of a hand-edited ticket header is still refused by the ledger check (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Started: the status guard will refuse only commands that could actually write a ticket's status, qa_rounds or lead line, not ones that just mention the words. Today's false refusals become tests.
+
+### 2026-10-18, In progress → In QA
+
+Built: the guard judges each part of a command on its own and refuses only writes that could set a guarded header line; today's 8 false refusals are tests that pass, and 18 real header writes are still refused. 329 tools tests pass. QA checks it now.
 
 ## Result notes
 
