@@ -1,0 +1,38 @@
+{
+  "file": "wiper_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a car windshield wiper arm lying horizontally pointing right, thin dark steel arm with a black rubber blade along its length and a round pivot joint at the left end, side view, retro pixel art game sprite",
+    "image_size": {
+      "width": 96,
+      "height": 24
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a car windshield wiper arm lying horizontally pointing right, thin dark steel arm with a black rubber blade along its length and a round pivot joint at the left end, side view, retro pixel art game sprite",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-18T18:10:43+00:00",
+  "image": {
+    "width": 96,
+    "height": 24,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md"
+  ],
+  "task": "T-175",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

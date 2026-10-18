@@ -19,7 +19,11 @@ extends CanvasLayer
 ## frames, running while the tree is paused: the dim fades in, the sunburst
 ## grows, the ribbon and the emblem drop in, the cards slide up one after the
 ## other. Nothing can be taken or moved while it runs (`is_animating()`).
-## Texts: LevelUpTexts (approved in T-051).
+## Texts: LevelUpTexts (approved in T-051 and T-171).
+## Weapon image (T-173; HUD and menus, Decisions, 2026-10-18): every card shows
+## its weapon's image in a 64 x 64 slot above the title. The image is
+## `art/level_up/weapon_<weapon id>.png` once the art task adds it; until then a
+## placeholder drawn in code (16 x 16 pixels, never Redgull red).
 
 const Texts := preload("res://scripts/ui/level_up_texts.gd")
 const HudScript := preload("res://scripts/hud/hud.gd")
@@ -29,7 +33,65 @@ const LAYER := 15
 const DIM := Color(0, 0, 0, 0.6)
 const INK := Color(0, 0, 0)
 const HOVER_TINT := Color(1.15, 1.15, 1.15)
-const CARD_SIZE := Vector2(360, 300)
+## T-173: 74 px taller than T-141's 360 x 300 to make room for the weapon image
+## (64 px and its 10 px gap), so the texts keep the room they had.
+const CARD_SIZE := Vector2(360, 374)
+## The weapon image's slot on the card, in screen pixels.
+const IMAGE_SIZE := Vector2(64, 64)
+## The final images (art task), one per weapon id; missing ones use a placeholder.
+const WEAPON_ART := "res://art/level_up/weapon_%s.png"
+## Placeholder images (T-173): 16 x 16 pixel grids, one character per pixel
+## ("." is transparent), shown 4 screen pixels per pixel. No Redgull red.
+const PLACEHOLDER_COLORS := {
+	"k": Color8(20, 20, 24), "g": Color8(120, 124, 132), "s": Color8(184, 188, 196),
+	"b": Color8(72, 64, 58), "o": Color8(255, 170, 40), "y": Color8(255, 230, 90),
+	"w": Color8(255, 250, 210), "c": Color8(60, 230, 240), "d": Color8(50, 60, 90),
+	"v": Color8(150, 200, 230), "p": Color8(230, 220, 190), "e": Color8(60, 150, 70),
+	"l": Color8(140, 210, 140),
+}
+const PLACEHOLDER_GRIDS := {
+	# The starting gun: a small pistol (board, 2026-10-18).
+	"gun": [
+		"................", "................", "................",
+		"..kkkkkkkkkkkk..", "..kssssssssssk..", "..kggggggggggk..",
+		"..kkkkggkkkkkk..", "..kbbkk.k.......", "..kbbk.kk.......",
+		"..kbbkkk........", "..kbbk..........", "..kbbk..........",
+		"..kkkk..........", "................", "................", "................",
+	],
+	# The exhaust flamethrower: a tailpipe with a flame.
+	"flamethrower": [
+		"................", "................", "................", "................",
+		"..........yy....", "kkkkkk...yoy....", "kssssk..yoooy...",
+		"kggggkkyooyooy..", "kggggggoowwooy..", "kggggkkyooyooy..",
+		"kssssk..yoooy...", "kkkkkk...yoy....", "..........yy....",
+		"................", "................", "................",
+	],
+	# The neon underglow: a car inside a cyan ring.
+	"underglow": [
+		"................", "................", "................",
+		"....cccccccc....", "..cc........cc..", ".c....kkkk....c.",
+		"c....kddddk....c", "c...kddvvddk...c", "c...kddddddk...c",
+		"c....kkkkkk....c", ".c............c.", "..cc........cc..",
+		"....cccccccc....", "................", "................", "................",
+	],
+	# The molotovs: a green bottle with a lit rag.
+	"molotov": [
+		"......y.........", ".....yoy........", ".....yoy........",
+		"......p.........", "......kpk.......", "......kek.......",
+		"......kek.......", ".....kkekk......", "....keeeeek.....",
+		"....keleeek.....", "....keleeek.....", "....keeeeek.....",
+		"....keeeeek.....", "....kkkkkkk.....", "................", "................",
+	],
+	# The windshield wiper: a blade on its pivot.
+	"wiper": [
+		"................", "............kk..", "...........ksk..",
+		"..........ksk...", ".........ksk....", "........ksk.....",
+		".......ksk......", "......ksk.......", ".....ksk........",
+		"....ksk.........", "...ksk..........", "..kggk..........",
+		".kgggk..........", ".kkkk...........", "................", "................",
+	],
+}
+static var _placeholder_cache := {}
 ## Margin between a card's edge and its text (the frame's border and studs are 20 px).
 const CARD_MARGIN_X := 30
 const CARD_MARGIN_Y := 26
@@ -77,7 +139,7 @@ const CARD_STAGGER := 0.1
 ## The weapon rack (run.weapons), whose `offers` this screen shows.
 var rack: Node
 var offers: Node
-## The cards on show, left to right: {id, panel, body, highlight_frame, title, desc, button}.
+## The cards on show, left to right: {id, panel, body, highlight_frame, image, title, desc, button}.
 var cards: Array = []
 ## Index of the highlighted card.
 var highlight := 0
@@ -166,11 +228,41 @@ func setup(the_rack: Node) -> void:
 ## tier it would give (the weapon's tier now + 1).
 func card_text(id: String) -> Dictionary:
 	var key := id
-	if id == offers.UPGRADE_GUN:
-		key = "%s.tier%d" % [id, rack.gun.tier + 1]
-	elif id == offers.UPGRADE_FLAMETHROWER:
-		key = "%s.tier%d" % [id, rack.flamethrower.tier + 1]
+	if id.begins_with("upgrade_"):
+		var weapon: Node = rack.get_weapon(offers.weapon_of(id))
+		if weapon != null:
+			key = "%s.tier%d" % [id, weapon.tier + 1]
 	return {"title": Texts.TEXTS.get(key + ".title", ""), "desc": Texts.TEXTS.get(key + ".desc", "")}
+
+
+## The image a weapon's card shows: the art task's file once it is there,
+## otherwise the placeholder drawn in code.
+static func weapon_image(weapon_id: String) -> Texture2D:
+	var path := WEAPON_ART % weapon_id
+	if ResourceLoader.exists(path):
+		return load(path)
+	return placeholder_image(weapon_id)
+
+
+## The placeholder image for a weapon (16 x 16, transparent background), or
+## null for an id without one.
+static func placeholder_image(weapon_id: String) -> Texture2D:
+	if _placeholder_cache.has(weapon_id):
+		return _placeholder_cache[weapon_id]
+	if not PLACEHOLDER_GRIDS.has(weapon_id):
+		return null
+	var grid: Array = PLACEHOLDER_GRIDS[weapon_id]
+	var img := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for y in grid.size():
+		var row: String = grid[y]
+		for x in row.length():
+			var ch := row[x]
+			if ch != ".":
+				img.set_pixel(x, y, PLACEHOLDER_COLORS[ch])
+	var tex := ImageTexture.create_from_image(img)
+	_placeholder_cache[weapon_id] = tex
+	return tex
 
 
 ## Shows the cards for these choice ids and starts the build-up.
@@ -349,8 +441,18 @@ func _add_card(id: String) -> void:
 	body.set_anchors_preset(Control.PRESET_FULL_RECT)
 	body.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	panel.add_child(body)
-	var glow := _art_rect("highlight_frame.png", "HighlightFrame", Vector2(192, 162) * ART_SCALE)
+	# T-173: a 9-slice, so the 6-art-pixel frame keeps its thickness on the taller card.
+	var glow := NinePatchRect.new()
+	glow.name = "HighlightFrame"
+	glow.texture = load(ART + "highlight_frame.png")
+	glow.patch_margin_left = 10
+	glow.patch_margin_top = 10
+	glow.patch_margin_right = 10
+	glow.patch_margin_bottom = 10
+	glow.size = (CARD_SIZE + Vector2.ONE * 2.0 * HIGHLIGHT_REACH) / ART_SCALE
+	glow.scale = Vector2.ONE * ART_SCALE
 	glow.position = Vector2(-HIGHLIGHT_REACH, -HIGHLIGHT_REACH)
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	body.add_child(glow)
 	var frame := NinePatchRect.new()
 	frame.name = "Frame"
@@ -375,6 +477,15 @@ func _add_card(id: String) -> void:
 	v.add_theme_constant_override("separation", 10)
 	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_child(v)
+	var image := TextureRect.new()
+	image.name = "WeaponImage"
+	image.texture = weapon_image(offers.weapon_of(id))
+	image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	image.custom_minimum_size = IMAGE_SIZE
+	image.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	v.add_child(image)
 	var title := _label(text.title, CARD_TITLE_SIZE)
 	title.name = "Title"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -405,7 +516,8 @@ func _add_card(id: String) -> void:
 	button.pressed.connect(take.bind(id))
 	v.add_child(button)
 	_row.add_child(panel)
-	cards.append({"id": id, "panel": panel, "body": body, "highlight_frame": glow, "title": title, "desc": desc, "button": button})
+	cards.append({"id": id, "panel": panel, "body": body, "highlight_frame": glow, "image": image,
+			"title": title, "desc": desc, "button": button})
 
 
 ## The highlighted card shows T-140's bright gold frame.

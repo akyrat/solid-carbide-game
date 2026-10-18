@@ -1,0 +1,16 @@
+{
+ "task": "T-175",
+ "what": "The molotov bottle in flight.",
+ "size": [
+  32,
+  32
+ ],
+ "prompt": "a molotov cocktail bottle in flight, green glass bottle with a burning cloth rag in its neck and a small orange and yellow flame on top, 3/4 isometric view, retro pixel art game sprite",
+ "made_by": "game/tools/build_weapon_art.py from art-archive/T-175/molotov_bottle_raw.png (PixelLab /create-image-pixflux, 1 generation; request art-archive/T-175/req_molotov_bottle.json; record molotov_bottle_raw.json there)",
+ "resources_consulted": [
+  "docs/visual-style.md",
+  "docs/weapons.md"
+ ],
+ "script_fixes": "hard alpha, palette cut to 30 colours if over",
+ "hand_edit": "none"
+}

@@ -20,11 +20,14 @@ extends Node
 
 const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
 const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
+const NeonUnderglowScript := preload("res://scripts/weapons/neon_underglow.gd")
+const MolotovsScript := preload("res://scripts/weapons/molotovs.gd")
+const WindshieldWiperScript := preload("res://scripts/weapons/windshield_wiper.gd")
 const LevelUpOffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
-const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript]
+const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript, MolotovsScript, WindshieldWiperScript]
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -32,6 +35,13 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 const ENEMY_GROUP := "enemies"
 ## Used when a target has neither hit_radius_units() nor a collision shape.
 const DEFAULT_TARGET_RADIUS_UNITS := 0.5
+## The playtest switch file (res://data/playtest.json) and the key that gives
+## every weapon at the start of a run (T-172).
+const PLAYTEST_FILE := "playtest"
+const ALL_WEAPONS_KEY := "all_weapons_at_start"
+
+## Tests set this to 0 (off) or 1 (on) to override "all_weapons_at_start"; -1 reads the file.
+static var all_weapons_override := -1
 
 ## False stops the weapons and projectiles (tests).
 var enabled := true
@@ -70,6 +80,18 @@ var gun: Node:
 var flamethrower: Node:
 	get:
 		return weapons.get("flamethrower")
+## The neon underglow (neon_underglow.gd).
+var underglow: Node:
+	get:
+		return weapons.get("underglow")
+## The molotovs (molotovs.gd).
+var molotov: Node:
+	get:
+		return weapons.get("molotov")
+## The windshield wiper (windshield_wiper.gd).
+var wiper: Node:
+	get:
+		return weapons.get("wiper")
 
 
 ## Binds the rack to a run scene (run.gd): its state and car, and a draw root
@@ -105,6 +127,32 @@ func reset_for_run() -> void:
 	# the flamethrower with the level-up's own call (the level-up then offers the flamethrower's upgrades).
 	if ExhaustFlamethrowerScript.playtest_switch_on():
 		upgrade("flamethrower")
+	# Playtest switch (T-168, data/playtest.json "underglow_at_start"): the same for the underglow.
+	if NeonUnderglowScript.playtest_switch_on():
+		upgrade("underglow")
+	# Playtest switch (T-169, data/playtest.json "molotov_at_start"): the same for the molotovs.
+	if MolotovsScript.playtest_switch_on():
+		upgrade("molotov")
+	# Playtest switch (T-170, data/playtest.json "wiper_at_start"): the same for the wiper.
+	if WindshieldWiperScript.playtest_switch_on():
+		upgrade("wiper")
+	# Playtest switch (T-172, data/playtest.json "all_weapons_at_start"): every
+	# weapon the car does not have yet, at tier 1.
+	if all_weapons_switch_on():
+		for w in weapons.values():
+			if not w.is_owned():
+				w.upgrade()
+
+
+## The playtest switch: data/playtest.json "all_weapons_at_start" (or all_weapons_override).
+static func all_weapons_switch_on() -> bool:
+	if all_weapons_override >= 0:
+		return all_weapons_override == 1
+	var r := GameData.load_file(PLAYTEST_FILE)
+	if not r.ok:
+		return false
+	var v := GameData.get_value(r.data, ALL_WEAPONS_KEY)
+	return v.ok and bool(v.data)
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.
@@ -176,8 +224,10 @@ func step(dt: float) -> void:
 
 
 ## Adds a projectile (a Node2D with step(dt) and is_done()) to the drawing and the step.
-func add_projectile(p: Node2D) -> void:
-	draw_root.add_child(p, true)
+## `parent` draws it elsewhere than draw_root (the molotovs' fire areas, on the
+## ground); it is still stepped, freed once done and removed at a new run.
+func add_projectile(p: Node2D, parent: Node = null) -> void:
+	(parent if parent != null else draw_root).add_child(p, true)
 	projectiles.append(p)
 
 

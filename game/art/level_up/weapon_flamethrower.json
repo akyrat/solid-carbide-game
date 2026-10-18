@@ -1,0 +1,39 @@
+{
+  "file": "weapon_flamethrower.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a car exhaust tailpipe shooting a stream of orange and yellow fire, side view, metal pipe on the left, flames to the right, retro pixel art, game icon",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a car exhaust tailpipe shooting a stream of orange and yellow fire, side view, metal pipe on the left, flames to the right, retro pixel art, game icon",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-18T17:58:30+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md",
+    "docs/hud-and-menus.md"
+  ],
+  "task": "T-174",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

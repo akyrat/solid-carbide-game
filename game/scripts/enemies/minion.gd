@@ -13,7 +13,8 @@ extends CharacterBody2D
 ## isometric view. The spawner (minion_spawner.gd) moves it once per physics
 ## step through step(), so pausing the tree stops it.
 ##
-## Weapons damage it through take_damage() (game/README.md, "Minions").
+## Weapons damage it through take_damage() and push it through
+## apply_knockback() (game/README.md, "Minions").
 
 const PX_PER_UNIT := 16.0
 const LAYER_OBSTACLES := 1 << 0
@@ -27,6 +28,10 @@ const HEIGHT_UNITS := 0.8
 ## Minions closer than this (units, centre to centre) push apart a little, so
 ## a crowd spreads around the car instead of stacking on one point.
 const SEPARATION_UNITS := 1.2
+## How long a knockback (apply_knockback) takes to move the minion its whole
+## distance, in seconds, at an even speed (T-167). A feel number of the push,
+## not a balancing number: the distance comes from the weapon.
+const KNOCKBACK_SECONDS := 0.15
 
 ## Emitted once, when health reaches 0. `minion` is this node (freed at the
 ## end of the frame), `position_units` where it died (flat world, units).
@@ -52,6 +57,9 @@ var heading := Vector2.RIGHT
 var _dead := false
 ## The normal of the obstacle it touched last step (ZERO for none).
 var _wall_normal := Vector2.ZERO
+## A knockback still to travel (units, flat world) and the seconds left for it.
+var _knockback_left := Vector2.ZERO
+var _knockback_time := 0.0
 
 
 ## Sets the numbers from EnemyData.minion().
@@ -130,6 +138,9 @@ func _die() -> void:
 func walk(dt: float, target_units: Vector2, push: Vector2 = Vector2.ZERO) -> void:
 	if _dead:
 		return
+	if _knockback_time > 0.0:
+		_knockback_step(dt)
+		return
 	var to_target := target_units - position_units()
 	var dir := to_target.normalized() if to_target.length() > 0.001 else Vector2.ZERO
 	dir += push
@@ -154,6 +165,50 @@ func walk(dt: float, target_units: Vector2, push: Vector2 = Vector2.ZERO) -> voi
 			var hit2 := move_and_collide(rest)
 			if hit2 != null:
 				_wall_normal = hit2.get_normal()
+
+
+## Knocks the minion back (weapons call this; T-167): it is pushed `strength`
+## units (flat world) along `direction` (any length; normalized here) over
+## KNOCKBACK_SECONDS, instead of walking, then walks on. Obstacles stop it the
+## same way they stop its walking (it slides along them, never through). A
+## second push before the first ends adds to what is left and restarts the
+## time. Ignored when `strength` is not positive, `direction` is zero, or the
+## minion is dead. Only minions have it: the kaiju is never pushed.
+func apply_knockback(direction: Vector2, strength: float) -> void:
+	if _dead or strength <= 0.0 or direction.length() < 0.000001:
+		return
+	_knockback_left += direction.normalized() * strength
+	_knockback_time = KNOCKBACK_SECONDS
+
+
+## True while a knockback is still moving the minion.
+func is_knocked_back() -> bool:
+	return _knockback_time > 0.0
+
+
+## One physics step of a knockback: an even share of what is left.
+func _knockback_step(dt: float) -> void:
+	var share := 1.0 if dt >= _knockback_time else dt / _knockback_time
+	var move := _knockback_left * share
+	_knockback_left -= move
+	_knockback_time = maxf(_knockback_time - dt, 0.0)
+	if _knockback_time <= 0.0:
+		_knockback_left = Vector2.ZERO
+	velocity = Vector2.ZERO
+	var motion := move * PX_PER_UNIT
+	var hit := move_and_collide(motion)
+	_wall_normal = Vector2.ZERO
+	if hit != null:
+		_wall_normal = hit.get_normal()
+		# Stop pushing into the obstacle: keep only the part along it.
+		_knockback_left -= _wall_normal * minf(_knockback_left.dot(_wall_normal), 0.0)
+		var rest := hit.get_remainder()
+		rest -= _wall_normal * rest.dot(_wall_normal)
+		if rest.length() > 0.0:
+			var hit2 := move_and_collide(rest)
+			if hit2 != null:
+				_wall_normal = hit2.get_normal()
+				_knockback_left -= _wall_normal * minf(_knockback_left.dot(_wall_normal), 0.0)
 
 
 ## True when the minion's body touches the car's 1 x 1 unit body

@@ -1,7 +1,8 @@
 class_name LevelUpTexts
 extends RefCounted
-## The level-up screen's approved text (task T-051, keyed as in its table).
-## Card keys: "<choice id>.title" / ".desc" (get_flamethrower), and
+## The level-up screen's approved text (task T-051, keyed as in its table; the
+## three new weapons' 24 cards from T-171's table, added in T-173).
+## Card keys: "<choice id>.title" / ".desc" (get_<weapon>), and
 ## "<choice id>.tier<N>.title" / ".desc" for an upgrade giving tier N.
 
 const TEXTS := {
@@ -37,4 +38,53 @@ const TEXTS := {
 	"upgrade_flamethrower.tier7.desc": "The car steers 20% faster. Easier to keep the flames on.",
 	"upgrade_flamethrower.tier8.title": "Always Lit",
 	"upgrade_flamethrower.tier8.desc": "The flame never goes out, even when you aren't drifting. Pure brand energy.",
+	# T-171's table (task T-173): the neon underglow, the molotovs and the windshield wiper.
+	"get_underglow.title": "Neon Underglow",
+	"get_underglow.desc": "A neon ring burns enemies near your car, 1 damage a second. So aesthetic.",
+	"upgrade_underglow.tier2.title": "Brighter Glow",
+	"upgrade_underglow.tier2.desc": "Glow radius up 20%. Redgull says be seen.",
+	"upgrade_underglow.tier3.title": "Hotter Glow",
+	"upgrade_underglow.tier3.desc": "Glow damage up 50%, to 1.5. Looks expensive.",
+	"upgrade_underglow.tier4.title": "Faster Pulse",
+	"upgrade_underglow.tier4.desc": "Glow hits come 25% sooner. Stay on the beat.",
+	"upgrade_underglow.tier5.title": "Wider Glow",
+	"upgrade_underglow.tier5.desc": "Glow radius up another 25%. Own the whole block.",
+	"upgrade_underglow.tier6.title": "Hotter Glow II",
+	"upgrade_underglow.tier6.desc": "Glow damage up another 50%, to 2.25. Peak aesthetic.",
+	"upgrade_underglow.tier7.title": "Faster Pulse II",
+	"upgrade_underglow.tier7.desc": "Glow hits come 33% sooner. Never drop the beat.",
+	"upgrade_underglow.tier8.title": "Blinding Glow",
+	"upgrade_underglow.tier8.desc": "Glow radius up 30%. Sunglasses recommended.",
+	"get_molotov.title": "Hot Drop",
+	"get_molotov.desc": "Throws a molotov every 3 seconds. Fire lasts 3 seconds. Very shareable.",
+	"upgrade_molotov.tier2.title": "Bigger Blaze",
+	"upgrade_molotov.tier2.desc": "Fire radius up 20%. Redgull loves a big reveal.",
+	"upgrade_molotov.tier3.title": "Quick Throw",
+	"upgrade_molotov.tier3.desc": "Throws 20% sooner, every 2.4 seconds. Content never sleeps.",
+	"upgrade_molotov.tier4.title": "Spicier Fire",
+	"upgrade_molotov.tier4.desc": "Molotov damage up 50%, to 3. Redgull calls it flavour.",
+	"upgrade_molotov.tier5.title": "Double Drop",
+	"upgrade_molotov.tier5.desc": "Throw 2 molotovs at once. Twice the content.",
+	"upgrade_molotov.tier6.title": "Slow Burn",
+	"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for likes.",
+	"upgrade_molotov.tier7.title": "Bigger Blaze II",
+	"upgrade_molotov.tier7.desc": "Fire radius up another 30%. Think bigger.",
+	"upgrade_molotov.tier8.title": "Triple Drop",
+	"upgrade_molotov.tier8.desc": "Throw 3 molotovs at once. Redgull sends its regards.",
+	"get_wiper.title": "Wiper Blade",
+	"get_wiper.desc": "A giant wiper sweeps a half circle for 3 damage and shoves minions back.",
+	"upgrade_wiper.tier2.title": "Longer Blade",
+	"upgrade_wiper.tier2.desc": "Wiper length up 20%. Clean up more of the city.",
+	"upgrade_wiper.tier3.title": "Heavy Duty",
+	"upgrade_wiper.tier3.desc": "Wiper damage up 40%. Redgull calls it deep cleaning.",
+	"upgrade_wiper.tier4.title": "Faster Sweep",
+	"upgrade_wiper.tier4.desc": "Wiper sweeps 25% faster. No streaks left behind.",
+	"upgrade_wiper.tier5.title": "Hard Shove",
+	"upgrade_wiper.tier5.desc": "Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju.",
+	"upgrade_wiper.tier6.title": "Longer Blade II",
+	"upgrade_wiper.tier6.desc": "Wiper length up another 30%. A wider view for the viewers.",
+	"upgrade_wiper.tier7.title": "Heavy Duty II",
+	"upgrade_wiper.tier7.desc": "Wiper damage up another 40%. Squeaky clean, as promised.",
+	"upgrade_wiper.tier8.title": "Faster Sweep II",
+	"upgrade_wiper.tier8.desc": "Wiper sweeps another 30% faster. Always in frame.",
 }

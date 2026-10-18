@@ -65,4 +65,27 @@ Its tests are in [`tools/goal_agent/`](../../tools/goal_agent/) (`test_*.py`). T
 
 ## A feature it built
 
-*To come: the first real goal run, a game feature with its PixelLab art. Its goal file, tickets, iteration log and screenshots will be linked here.*
+My goal, in one go: **three new weapons (a neon underglow, molotovs and a windshield wiper), each with 8 upgrade tiers, level-ups offering two random choices from all five weapons, and an image of the weapon on every level-up card, with their PixelLab art.** I set an art budget of 40 generations, let it build straight through, and played the result once at the end. It works great.
+
+- **The run's whole record:** [goals/G-002](../../goals/G-002-add-an-image-of-the.md): the goal in my words, its 9 criteria (all passed), the 11 ranked sub-goals, the tickets and every iteration.
+- **Layer 1** turned the goal into 11 sub-goals, starting with the weapon numbers (everything else waited on them) and ending with an integration check.
+- **Layer 2** found nothing existing that covered them and wrote 11 tickets, [T-166](../../tasks/T-166-weapon-numbers-the-neon-underglow-the.md) to [T-176](../../tasks/T-176-qa-the-five-weapons-the-random.md), following the studio's rules: the weapons first with placeholder looks, the card text from the Narrative Theme Agent, the art tasks after the features they dress.
+- **Layer 3** had six different agents build them (game data, enemies, weapons, narrative, UI, art), each checked by QA; one ticket failed QA once and passed the second time. 9 of the 40 PixelLab generations were used.
+- **Layer 4** rescanned after each of the 11 iterations and ended when QA confirmed all 9 of the goal's criteria.
+
+![The level-up cards with their weapon images](images/level-up-cards.png)
+
+![The underglow, the wiper and molotovs in a run](images/weapons-in-the-world.png)
+
+### What the first real run taught me
+
+Getting there took two goal files: [G-001](../../goals/G-001-add-an-image-of-the.md) stopped in planning and was started again as G-002, and between them the runs paused eight times. Every pause was a safety stop doing its job, and each became a small fix (tickets T-164, T-165, T-177 to T-180):
+
+- **Planning:** the planner could try shell commands it wasn't meant to use. Now it gets read-only tools.
+- **Windows:** prompts were too long for the Windows command line. They now go to Claude on standard input.
+- **Permissions:**
+  - Agents running unattended couldn't run their tests or commit. I added a narrow list of pre-approved commands; the safety check rightly wouldn't let the AI widen its own permissions.
+  - A refused command the agent could do without stopped the whole run. Now it's logged, and only a refusal that blocks the work pauses the run.
+- **QA:** QA's pass marks with notes weren't recognised. The status script now accepts them.
+- **The goal check:** it needed the same rules as the other checks, and the docs check only the Project Lead may run.
+- **The usage limit:** it paused the run cleanly, and it resumed afterwards where it stopped.

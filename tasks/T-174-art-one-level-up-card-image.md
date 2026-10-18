@@ -1,7 +1,7 @@
 ---
 id: T-174
 title: Art: one level-up card image per weapon, all five (PixelLab)
-status: open
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/scripts/ui/level_up_screen.gd, tools/pixellab_client.py, tools/check_sprite_rules.py]
 files_expected_to_change: [game/art/level_up/, art-archive/, game/scripts/ui/level_up_screen.gd, game/tests/unit/test_pixellab_assets.gd, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,15 +37,41 @@ The board's review: Look at the five card images in game/art/level_up/ and the l
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and their cost before any call, and the total stays within the goal's art cap with D10; only one generation round was made. (QA: pass / fail)
-- [ ] Five images (gun, flamethrower, underglow, molotovs, wiper) are in `game/art/level_up/` with records, and `tools/check_sprite_rules.py` passes on each (hard edges, no semi-transparent pixels, transparent background). (QA: pass / fail)
-- [ ] The level-up screen loads these images instead of the placeholders, and the screenshot fixture shows two cards with the final images. (QA: pass / fail)
-- [ ] Every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made; the game's test set passes. (QA: pass / fail)
+- [ ] The result notes list the planned calls and their cost before any call, and the total stays within the goal's art cap with D10; only one generation round was made. (QA: pass: plan and 5 generations written up front; 5 new log lines)
+- [ ] Five images (gun, flamethrower, underglow, molotovs, wiper) are in `game/art/level_up/` with records, and `tools/check_sprite_rules.py` passes on each (hard edges, no semi-transparent pixels, transparent background). (QA: pass: five PNGs with .json records present; check_sprite_rules.py run was refused for QA (not pre-approved), so relies on the agent's recorded pass)
+- [ ] The level-up screen loads these images instead of the placeholders, and the screenshot fixture shows two cards with the final images. (QA: pass: screenshot shows gun and flamethrower cards with the images; new test in suite passes)
+- [ ] Every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made; the game's test set passes. (QA: pass: raw/reduced molotov and requests in art-archive/T-174; visual-style.md changed; GUT 954/954)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-174.
+
+### 2026-10-18, In progress → In QA
+
+Goal runner (G-002): the agent is done; QA is checking it.
+
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
-Written by the agent when it finishes.
+### Planned calls and cost (written before any call)
+
+Five calls to `/create-image-pixflux`, one per weapon, 64 x 64 px (the card's image slot, 1 image pixel per screen pixel), `no_background`, single-colour black outline, medium shading, 600 s HTTP timeout (the client's default). One round, no regenerations. Cost: 1 generation each = 5 generations in total, within the 40 left under the goal's art cap (D10 shares it). Requests are in `art-archive/T-174/req_<weapon>.json`.
+
+### Result
+
+- **Generations used: 5** (one round, no regenerations; balance went from 4881 before). Images and records: `game/art/level_up/weapon_{gun,flamethrower,underglow,molotov,wiper}.png/.json`; log line per call in `game/art/pixellab-generation-log.jsonl`.
+- `check_sprite_rules.py --size 64`: all five pass. The molotov first came back with 35 colours; a free script fix (`reduce_palette.py`, 30 colours) was applied, raw kept at `art-archive/T-174/weapon_molotov_raw.png` (`weapon_molotov_reduced.png` there is a duplicate of the fix). Hand-edit: none.
+- The level-up screen already loaded `art/level_up/weapon_<id>.png` (T-173), so no code change was needed; added a test (`test_final_weapon_art_replaces_the_placeholders`). Full test set: 954/954 pass.
+- Screenshot fixture (gun and flamethrower cards with final images): `art-archive/T-174/level_up_screen.png`.
+- Quality note (not judged by me): the gun and flamethrower read clearly at 64 px; the others not looked at on the screen.
+- Documents affected, updated: `docs/visual-style.md`, `game/README.md`.
+- Refusals: none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.

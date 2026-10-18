@@ -1,5 +1,5 @@
 {
-  "_comment": "The two MVP weapons, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to 8 are the 7 upgrades. No knockback (the weapons never push enemies).",
+  "_comment": "The five MVP weapons: the gun and the flamethrower, copied from the Unity prototype (docs/weapons/unity-weapons-report.md, sections 2 to 5) with the board's fixes (docs/weapons.md, Decisions): damage is never rounded, the flame area is the same size in every direction, missed bullets are removed once past the gun's range. Distances in units (1 unit = the car's width), times in seconds. A tier is 'effect' plus 'value'; effects add up in tier order. Tier 1 is getting the weapon; tiers 2 to 8 are the 7 upgrades. The gun and the flamethrower never push enemies; of the five only the wiper pushes (knockback_distance, minions only, never the kaiju). The underglow, molotov and wiper entries are the Game Data Agent's proposal (T-166) for the board's playtest; wiper sweep_arc_degrees is the semicircle, sweep_degrees_per_second how fast the arm turns, hit_cooldown the seconds before the same enemy can be hit again.",
   "max_tier": 8,
   "gun": {
     "damage": 2,
@@ -46,6 +46,59 @@
       { "tier": 6, "effect": "size_multiplier", "value": 1.3 },
       { "tier": 7, "effect": "turn_speed_multiplier", "value": 1.2 },
       { "tier": 8, "effect": "always_on", "value": 1 }
+    ]
+  },
+  "underglow": {
+    "damage": 1,
+    "radius": 2.5,
+    "tick_interval": 1,
+    "damage_on_enter": true,
+    "tiers": [
+      { "tier": 2, "effect": "radius_multiplier", "value": 1.2 },
+      { "tier": 3, "effect": "damage_multiplier", "value": 1.5 },
+      { "tier": 4, "effect": "tick_interval_multiplier", "value": 0.75 },
+      { "tier": 5, "effect": "radius_multiplier", "value": 1.25 },
+      { "tier": 6, "effect": "damage_multiplier", "value": 1.5 },
+      { "tier": 7, "effect": "tick_interval_multiplier", "value": 0.67 },
+      { "tier": 8, "effect": "radius_multiplier", "value": 1.3 }
+    ]
+  },
+  "molotov": {
+    "damage": 2,
+    "throw_interval": 3,
+    "molotovs_per_throw": 1,
+    "throw_distance_min": 3,
+    "throw_distance_max": 8,
+    "fire_radius": 1.5,
+    "fire_duration": 3,
+    "tick_interval": 0.5,
+    "damage_on_enter": true,
+    "tiers": [
+      { "tier": 2, "effect": "fire_radius_multiplier", "value": 1.2 },
+      { "tier": 3, "effect": "throw_interval_multiplier", "value": 0.8 },
+      { "tier": 4, "effect": "damage_multiplier", "value": 1.5 },
+      { "tier": 5, "effect": "add_molotovs", "value": 1 },
+      { "tier": 6, "effect": "add_fire_duration_seconds", "value": 1.5 },
+      { "tier": 7, "effect": "fire_radius_multiplier", "value": 1.3 },
+      { "tier": 8, "effect": "add_molotovs", "value": 1 }
+    ]
+  },
+  "wiper": {
+    "damage": 3,
+    "length": 2.5,
+    "sweep_arc_degrees": 180,
+    "sweep_degrees_per_second": 240,
+    "hit_cooldown": 0.5,
+    "knockback_distance": 1.5,
+    "knockback_kaiju": false,
+    "tiers": [
+      { "tier": 2, "effect": "length_multiplier", "value": 1.2 },
+      { "tier": 3, "effect": "damage_multiplier", "value": 1.4 },
+      { "tier": 4, "effect": "sweep_speed_multiplier", "value": 1.25 },
+      { "tier": 5, "effect": "knockback_multiplier", "value": 1.5 },
+      { "tier": 6, "effect": "length_multiplier", "value": 1.3 },
+      { "tier": 7, "effect": "damage_multiplier", "value": 1.4 },
+      { "tier": 8, "effect": "sweep_speed_multiplier", "value": 1.3 }
     ]
   }
 }

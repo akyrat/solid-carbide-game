@@ -49,7 +49,7 @@ func test_gun_missed_bullets_removed_past_range() -> void:
 func test_tier_count_is_seven_upgrades_each() -> void:
 	var w := WeaponData.new()
 	assert_eq(w.max_tier(), 8)
-	for weapon in ["gun", "flamethrower"]:
+	for weapon in ["gun", "flamethrower", "underglow", "molotov", "wiper"]:
 		var tiers := w.tiers(weapon)
 		assert_eq(tiers.size(), 7)
 		for i in 7:
@@ -98,6 +98,58 @@ func test_flame_damage_not_rounded_so_hotter_flame_adds_damage() -> void:
 	assert_eq(w.flame_at(2).damage, 2.0)
 	assert_almost_eq(w.flame_at(3).damage, 2.4, 0.0001)
 	assert_almost_eq(w.flame_at(8).damage, 2.4, 0.0001)
+
+
+func test_five_weapons_each_with_eight_tiers() -> void:
+	var raw: Dictionary = GameData.load_file("weapons").data
+	var count := 0
+	for k in raw:
+		if raw[k] is Dictionary and raw[k].has("tiers"):
+			count += 1
+			assert_eq(raw[k].tiers.size() + 1, 8, "%s has base plus 7 tiers" % k)
+	assert_eq(count, 5)
+
+
+func test_underglow_tiers() -> void:
+	var w := WeaponData.new()
+	var u1 := w.underglow_at(1)
+	assert_eq(u1.damage, 1.0)
+	assert_eq(u1.radius, 2.5)
+	assert_eq(u1.tick_interval, 1.0)
+	assert_true(u1.damage_on_enter)
+	var u8 := w.underglow_at(8)
+	assert_almost_eq(u8.damage, 2.25, 0.0001)
+	assert_almost_eq(u8.radius, 2.5 * 1.2 * 1.25 * 1.3, 0.0001)
+	assert_almost_eq(u8.tick_interval, 0.75 * 0.67, 0.0001)
+
+
+func test_molotov_tiers() -> void:
+	var w := WeaponData.new()
+	var m1 := w.molotov_at(1)
+	assert_eq(m1.molotovs_per_throw, 1)
+	assert_eq(m1.fire_radius, 1.5)
+	assert_eq(m1.fire_duration, 3.0)
+	assert_eq(m1.throw_interval, 3.0)
+	var m8 := w.molotov_at(8)
+	assert_eq(m8.molotovs_per_throw, 3)
+	assert_almost_eq(m8.fire_radius, 1.5 * 1.2 * 1.3, 0.0001)
+	assert_almost_eq(m8.fire_duration, 4.5, 0.0001)
+	assert_almost_eq(m8.throw_interval, 2.4, 0.0001)
+	assert_almost_eq(m8.damage, 3.0, 0.0001)
+
+
+func test_wiper_tiers_and_knockback() -> void:
+	var w := WeaponData.new()
+	var w1 := w.wiper_at(1)
+	assert_eq(w1.damage, 3.0)
+	assert_eq(w1.length, 2.5)
+	assert_eq(w1.knockback_distance, 1.5)
+	assert_false(w1.knockback_kaiju)
+	var w8 := w.wiper_at(8)
+	assert_almost_eq(w8.damage, 3.0 * 1.4 * 1.4, 0.0001)
+	assert_almost_eq(w8.length, 2.5 * 1.2 * 1.3, 0.0001)
+	assert_almost_eq(w8.knockback_distance, 2.25, 0.0001)
+	assert_almost_eq(w8.sweep_degrees_per_second, 240.0 * 1.25 * 1.3, 0.0001)
 
 
 func test_flame_area_does_not_depend_on_heading() -> void:
