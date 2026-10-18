@@ -4,7 +4,7 @@ title: The status script accepts a QA pass mark with a note
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
