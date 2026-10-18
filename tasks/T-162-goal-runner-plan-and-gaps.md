@@ -1,7 +1,7 @@
 ---
 id: T-162
 title: Goal runner, part 1: goal file, priority scoring and gap detection
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -54,19 +54,23 @@ This ticket builds **layers 1 and 2** (priority scoring and gap detection), the 
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including the new `tools/goal_agent/test_*.py`, and the tests make no Claude or network calls (QA: pass / fail)
-- [ ] There is a test for each: ranking puts a sub-goal others wait on before a higher-value one, and breaks ties by value then order; a dependency cycle is refused (QA: pass / fail)
-- [ ] There is a test for each refusal rule listed under `tickets.py`, and one showing a refused set is retried once and then pauses the goal with the reasons (QA: pass / fail)
-- [ ] There is a test that the next ticket id counts ids in `tasks/`, on `task/*` branches and in `master`'s log, and that an `in-flight` verdict reuses the named ticket instead of writing a new one (QA: pass / fail)
-- [ ] Reading and writing a goal file leaves it byte-identical (a test), and a written goal file has every header field and section listed above (QA: pass / fail)
-- [ ] `python tools/goal_agent/run.py start "<goal>" --fake tools/goal_agent/fixtures/<fixture>.json`, run by QA inside a temporary copy of the repo (not the real checkout), writes a goal file with status `planned`, ranked sub-goals and verdicts, and task files that follow `tasks/_TEMPLATE.md` with `goal:` set and `lead: Goal-G-NNN`; `run.py status G-NNN` prints them (QA: pass / fail)
-- [ ] Every file in `tools/goal_agent/` starts with a docstring naming the layer or role it covers, and `goals/README.md` exists (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including the new `tools/goal_agent/test_*.py`, and the tests make no Claude or network calls (QA: pass)
+- [ ] There is a test for each: ranking puts a sub-goal others wait on before a higher-value one, and breaks ties by value then order; a dependency cycle is refused (QA: pass)
+- [ ] There is a test for each refusal rule listed under `tickets.py`, and one showing a refused set is retried once and then pauses the goal with the reasons (QA: pass)
+- [ ] There is a test that the next ticket id counts ids in `tasks/`, on `task/*` branches and in `master`'s log, and that an `in-flight` verdict reuses the named ticket instead of writing a new one (QA: pass)
+- [ ] Reading and writing a goal file leaves it byte-identical (a test), and a written goal file has every header field and section listed above (QA: pass)
+- [ ] `python tools/goal_agent/run.py start "<goal>" --fake tools/goal_agent/fixtures/<fixture>.json`, run by QA inside a temporary copy of the repo (not the real checkout), writes a goal file with status `planned`, ranked sub-goals and verdicts, and task files that follow `tasks/_TEMPLATE.md` with `goal:` set and `lead: Goal-G-NNN`; `run.py status G-NNN` prints them (QA: pass)
+- [ ] Every file in `tools/goal_agent/` starts with a docstring naming the layer or role it covers, and `goals/README.md` exists (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Started: part 1 of the goal runner (the goal file, priority scoring, gap detection). It's built in its own folder, C:\solid-carbide-worktrees\T-162. QA checks it next. It's tooling, so it merges straight after QA.
+
+### 2026-10-18, In progress → In QA
+
+Built: the goal file, priority scoring, gap detection and the command line, with 49 new tests (259 tools tests pass). QA checks it now.
 
 ## Result notes
 
