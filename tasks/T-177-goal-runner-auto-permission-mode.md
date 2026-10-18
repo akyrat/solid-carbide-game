@@ -4,7 +4,7 @@ title: Goal runner: tell headless agents which commands are pre-approved
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
