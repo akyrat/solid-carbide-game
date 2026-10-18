@@ -7,8 +7,12 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
   register a name and start the watcher (tools/board_inbox.py).
 - PreToolUse Edit/Write/MultiEdit: refuses changes to a task file's status, qa_rounds or lead
   line. Moves and owners go through tools/task_status.py, which checks the workflow rules.
-- PreToolUse Bash/PowerShell: refuses shell commands that could rewrite those lines; commands that only
-  read (grep, sed -n, head, Get-Content, ...) may mention them (T-143).
+- PreToolUse Bash/PowerShell: refuses shell commands that could write those lines into a task file, or
+  whose writes it can't read. Commands that only read (grep, sed -n, head, Get-Content, ...), run the
+  status script, git or a test run, write files other than tickets, or append plain text without such a
+  line to a ticket may mention them (T-143, T-161, T-181). On `git commit` it also checks every ticket
+  that would be committed against the status script's record (tools/guard_ledger.py, T-149): the backstop
+  for any write the command check can't see.
 - PreToolUse Agent: refuses to start an agent on a task unless it runs on the task's model
   (tasks/README.md, "Models").
 - UserPromptSubmit, PostToolUse Agent: hands the Project Lead the board's moves on the task
@@ -136,7 +140,7 @@ READ_ONLY_COMMANDS = {
     "grep", "egrep", "fgrep", "rg", "sed", "head", "tail", "cat", "awk", "wc", "cut", "tr", "nl", "less", "more",
     "echo", "cd", "ls", "type", "findstr", "git",
     "select-string", "sls", "get-content", "gc", "select-object", "select", "where-object", "where",
-    "measure-object", "get-childitem", "write-output",
+    "measure-object", "get-childitem", "write-output", "test", "[", "true", "false", "printf", "pwd",
 }
 GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status", "merge-base", "rev-parse", "rev-list", "ls-files",
                  "cat-file", "for-each-ref"}
@@ -145,7 +149,64 @@ SAFE_REDIRECT_RE = re.compile(r">&\d|>>?\s*(/dev/null|\$null|nul)\b", re.I)
 
 HEREDOC_RE = re.compile(r"<<(?P<dash>-?)[ \t]*(?P<q>['\"]?)(?P<word>[\w.-]+)(?P=q)")
 CD_TASKS_RE = re.compile(r"(^|[;&|\n])\s*(cd|pushd|set-location)\s+[^;&|\n]*\btasks\b", re.I)
+CD_UNKNOWN_RE = re.compile(r"(^|[;&|\n])\s*(cd|pushd|set-location)\s+[^;&|\n]*[$`]", re.I)
 EXPANDS_RE = re.compile(r"`|\$\(")
+TICKET_PATH_RE = re.compile(r"(^|[\\/])tasks[ .]*([\\/]|$)|(^|[\\/])T-\d+[^\\/]*\.md[ .]*$", re.I)
+# what inline code or a command substitution must not name: the tasks folder, a ticket's file name or a glob
+CODE_TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|T-\d+[^\s'\"\\/]*\.md|T-\d*[*?\[]|[*?\[][^\s'\"]*\.md\b|\*\*",
+                             re.I)
+HEADER_LINE_RE = re.compile(r"^[ \t]*(status|qa[\W_]*rounds|lead)[ \t]*:", re.I)
+
+
+def runs_in_tasks(cmd, cwd=None):
+    """Whether the command runs inside a tasks folder (or a folder the hook can't name), so any file it
+    writes could be a ticket."""
+    return bool(CD_TASKS_RE.search(cmd) or CD_UNKNOWN_RE.search(cmd)
+                or (cwd and re.search(r"[\\/]tasks[\\/]*$", str(cwd), re.I)))
+
+
+def ticket_path(path, cwd=None, in_tasks=False):
+    """Whether a file a command writes could be a ticket: a path in a tasks folder or the folder itself, a
+    T-nnn*.md name, a name the shell expands ($, globs, braces), no name at all, or any file when the command
+    runs in the tasks folder (T-181)."""
+    if in_tasks or not path or re.search(r"[$`*?\[{]", path):
+        return True
+    return bool(TICKET_PATH_RE.search(path) or task_path_match(path, cwd))
+
+
+def words_of(text):
+    """The words of a simple command, split at unquoted blanks, with the quotes taken off."""
+    words, cur, quote, quoted = [], [], None, False
+    for c in text:
+        if quote:
+            if c == quote:
+                quote = None
+            else:
+                cur.append(c)
+        elif c in "'\"":
+            quote, quoted = c, True
+        elif c in " \t\r\n":
+            if cur or quoted:
+                words.append("".join(cur))
+            cur, quoted = [], False
+        else:
+            cur.append(c)
+    if cur or quoted:
+        words.append("".join(cur))
+    return words
+
+
+class Segment:
+    """One simple command of a shell command line: its text (here-document bodies and redirections left out),
+    the redirections of its output into files that could be tickets, as (">" or ">>", target), and its
+    here-document bodies, as (body, delimiter was quoted)."""
+
+    def __init__(self):
+        self.chars, self.redirects, self.heredocs = [], [], []
+
+    @property
+    def text(self):
+        return drop_keyword("".join(self.chars))
 
 
 def heredoc_body(cmd, line_end, m):
@@ -183,19 +244,47 @@ def redirect_target(cmd, i):
     return cmd[j:k], k
 
 
-def safe_target(target, cwd, in_tasks):
-    """A redirection target that is plainly a file outside the tasks folder (T-161)."""
-    return bool(target) and not in_tasks and not re.search(r"[$`*?\[(]", target) and not touches_tasks(target, cwd)
+def substitution(cmd, i, cwd, in_tasks):
+    """(segments, end) of the command substitution `$( ... )` at i: the commands inside it, and the index just
+    past its `)`. None when it can't be read (arithmetic, a here-document, a backtick, a case, no closing
+    parenthesis) or it names task files (T-181)."""
+    if cmd.startswith("$((", i):
+        return None
+    depth, quote, j = 1, None, i + 2
+    while j < len(cmd):
+        c = cmd[j]
+        if quote:
+            if c == quote:
+                quote = None
+        elif c in "'\"":
+            quote = c
+        elif c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        j += 1
+    else:
+        return None
+    inner = cmd[i + 2:j]
+    if "<<" in inner or "`" in inner or re.search(r"\bcase\b", inner) or CODE_TOUCHES_RE.search(inner):
+        return None
+    segments, unsafe = shell_segments(inner, cwd, in_tasks)
+    return None if unsafe else (segments, j + 1)
 
 
-def shell_segments(cmd, cwd=None):
-    """(segments, unsafe): the command split at unquoted | ; & and newlines, and whether it has an unquoted
-    redirection into a file that could be a task file, a command substitution, a backtick or an open quote
-    (anything that could write or run something). Here-document bodies are text, not commands, so they are
-    left out, and so are redirections into plain files outside the tasks folder (T-161)."""
-    segments, cur, quote, unsafe, i = [], [], None, False, 0
-    pending = []   # here-documents whose body starts on the line after the current one
-    in_tasks = bool(CD_TASKS_RE.search(cmd))
+def shell_segments(cmd, cwd=None, in_tasks=None):
+    """(segments, unsafe): the command split at unquoted | ; & and newlines into Segments, and whether it holds
+    something the hook can't read: a backtick, a process substitution, a command substitution that names task
+    files or can't be read, a redirection into a computed file name, a here-document without its terminator
+    (or, with an unquoted delimiter, one that runs a command) or an open quote. Here-document bodies are text,
+    not commands; they are kept on their segment. The commands inside a readable `$( ... )` become segments of
+    their own (T-181). Redirections into files that can't be tickets are left out (T-161)."""
+    if in_tasks is None:
+        in_tasks = runs_in_tasks(cmd, cwd)
+    segments, seg, quote, unsafe, i = [], Segment(), None, False, 0
+    pending = []   # (here-document, its segment) whose body starts on the line after the current one
     while i < len(cmd) and not unsafe:
         c = cmd[i]
         if quote:
@@ -211,50 +300,70 @@ def shell_segments(cmd, cwd=None):
                 else:
                     i = body[1]
                     continue
-            elif quote == '"' and (c == "`" or cmd.startswith("$(", i)):
+            elif quote == '"' and cmd.startswith("$(", i):
+                sub = substitution(cmd, i, cwd, in_tasks)
+                if sub is None:
+                    unsafe = True
+                else:
+                    segments.extend(sub[0])
+                    seg.chars.append("$SUB")   # its output is unknown text
+                    i = sub[1]
+                    continue
+            elif quote == '"' and c == "`":
                 unsafe = True
-            cur.append(c)
+            seg.chars.append(c)
         elif c in "'\"":
             quote = c
-            cur.append(c)
+            seg.chars.append(c)
         elif cmd.startswith("<<", i) and not cmd.startswith("<<<", i) and HEREDOC_RE.match(cmd, i):
             m = HEREDOC_RE.match(cmd, i)
-            pending.append(m)
+            pending.append((m, seg))
             i = m.end()
             continue
-        elif c == "`" or cmd.startswith("$(", i) or cmd.startswith("<(", i):
+        elif cmd.startswith("$(", i):
+            sub = substitution(cmd, i, cwd, in_tasks)
+            if sub is None:
+                unsafe = True
+            else:
+                segments.extend(sub[0])
+                seg.chars.append("$SUB")
+                i = sub[1]
+                continue
+        elif c == "`" or cmd.startswith("<(", i):
             unsafe = True
-            cur.append(c)
         elif c == ">":
             m = SAFE_REDIRECT_RE.match(cmd, i)
             if m:
                 i = m.end()
                 continue
             target, end = redirect_target(cmd, i)
-            if safe_target(target, cwd, in_tasks):
-                i = end
+            if re.search(r"`|\$\(|<\(", cmd[i:end]):
+                unsafe = True   # a file name computed by a command
                 continue
-            unsafe = True
-            cur.append(c)
+            if ticket_path(target, cwd, in_tasks):
+                seg.redirects.append((">>" if cmd.startswith(">>", i) else ">", target))
+            i = end
+            continue
         elif c == "\n" and pending:
-            for m in pending:
+            for m, owner in pending:
                 body = heredoc_body(cmd, i, m)
                 if body is None:
                     unsafe = True
                     break
+                owner.heredocs.append((body[0], bool(m.group("q"))))
                 i = body[1]
             pending = []
-            segments.append("".join(cur))
-            cur = []
+            segments.append(seg)
+            seg = Segment()
             continue
         elif c in "|;&\n":
-            segments.append("".join(cur))
-            cur = []
+            segments.append(seg)
+            seg = Segment()
         else:
-            cur.append(c)
+            seg.chars.append(c)
         i += 1
-    segments.append("".join(cur))
-    return [x for x in map(drop_keyword, segments) if x], unsafe or quote is not None or bool(pending)
+    segments.append(seg)
+    return [s for s in segments if s.text or s.redirects], unsafe or quote is not None or bool(pending)
 
 
 SHELL_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "!"}
@@ -262,19 +371,31 @@ SHELL_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "!"}
 
 def drop_keyword(seg):
     """A segment without its leading shell keyword: `if git merge x` is the command `git merge x`; a lone
-    fi, done or esac is no command."""
+    fi, done or esac is no command, and neither is the head of a loop, `for t in T-1 T-2` (T-181)."""
     seg = seg.strip()
     while seg.split(None, 1) and seg.split(None, 1)[0] in SHELL_KEYWORDS:
         seg = seg.split(None, 1)[1].strip() if len(seg.split(None, 1)) > 1 else ""
+    if re.fullmatch(r"for\s+\w+(\s+in\b.*)?", seg, re.S):
+        return ""
     return "" if seg in ("fi", "done", "esac") else seg
+
+
+def git_subcommand(words):
+    """The subcommand of a git command line, past its global options (-C <path>, -c <name=value>, --no-pager)."""
+    i = 1
+    while i < len(words) and words[i].startswith("-"):
+        i += 2 if words[i] in ("-C", "-c", "--git-dir", "--work-tree", "--namespace") else 1
+    return words[i] if i < len(words) else None
 
 
 def read_only_segment(seg):
     words = seg.split()
+    if not words:
+        return False
     name = words[0].lower()
     if name not in READ_ONLY_COMMANDS:
         return False
-    if name == "git" and (len(words) < 2 or words[1] not in GIT_READ_ONLY or "--output" in seg):
+    if name == "git" and (git_subcommand(words_of(seg)) not in GIT_READ_ONLY or "--output" in seg):
         return False
     if name == "rg" and "--pre" in seg:
         return False
@@ -289,15 +410,6 @@ def read_only_segment(seg):
     return True
 
 
-def read_only(cmd, cwd=None):
-    """True only when every part of the shell command is known to just read. When unsure, False (refuse):
-    a false refusal costs a retry, a missed write breaks the workflow rules (T-143)."""
-    segments, unsafe = shell_segments(cmd, cwd)
-    if unsafe or not segments:
-        return False
-    return all(read_only_segment(seg) for seg in segments)
-
-
 PYTHON_NAMES = {"python", "python3", "py", "python.exe", "python3.exe", "py.exe"}
 STATUS_SCRIPTS = {"task_status.py", "taskboard_sync.py"}
 GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge", "rebase", "stash", "branch",
@@ -305,7 +417,8 @@ GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge
 INLINE_CODE_RE = re.compile(
     r"(^|\s)(python3?|py|perl|ruby|node|powershell|pwsh)(\.exe)?\s+(-\S*\s+)*-(c|e|command|encodedcommand)\b", re.I)
 TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|(?<![\w-])T-[\d*?\[]|[*?\[][^\s]*\.md\b|\*\*", re.I)
-GUARD_WORD_RE = re.compile(r"qa[\W_]*rounds|status|\blead\b", re.I)
+# the bare words: `printf 'x\nlead: A'` holds "lead" right after the "n" of an escape (T-181)
+GUARD_WORD_RE = re.compile(r"qa[\W_]*rounds|status|lead", re.I)
 
 
 def script_call(seg):
@@ -319,13 +432,8 @@ def script_call(seg):
 
 def git_writer(seg):
     """A git subcommand that changes the repo (what it writes is committed state; commit_check covers commits)."""
-    words = seg.split()
-    if not words or words[0].lower() != "git":
-        return False
-    rest, i = words[1:], 0
-    while i < len(rest) and rest[i] in ("-C", "-c"):
-        i += 2
-    return i < len(rest) and rest[i] in GIT_WRITERS
+    words = words_of(seg)
+    return bool(words) and words[0].lower() == "git" and git_subcommand(words) in GIT_WRITERS
 
 
 def touches_tasks(cmd, cwd=None):
@@ -334,12 +442,111 @@ def touches_tasks(cmd, cwd=None):
     return bool(TOUCHES_RE.search(cmd) or (cwd and re.search(r"[\\/]tasks[\\/]*$", str(cwd), re.I)))
 
 
+TEXT_WRITERS = {"echo", "printf", "write-output"}
+FILE_WRITERS = {"cp", "mv", "rm", "touch", "mkdir", "rmdir", "ln", "tee", "install", "truncate", "dd",
+                "copy-item", "copy", "cpi", "move-item", "move", "mi", "remove-item", "ri", "del", "erase",
+                "new-item", "ni", "rename-item", "rni", "ren", "set-content", "sc", "add-content", "ac",
+                "out-file", "clear-content", "clc"}
+INTERPRETERS = PYTHON_NAMES | {"perl", "ruby", "node", "bash", "sh", "powershell", "pwsh"}
+
+
+def appended_text_ok(seg, words):
+    """Whether what a segment appends to a ticket is literal text without a status, qa_rounds or lead field at
+    a line start: echo, printf or Write-Output of plain words, or cat of a here-document. Every word, and
+    every line after a newline or a \\n, counts as a line start; text the shell or printf could compute ($,
+    backticks, numeric escapes) can't be read (T-181)."""
+    if not words:
+        return False
+    name = words[0].lower()
+    if name in TEXT_WRITERS and not seg.heredocs:
+        pieces = words[1:]
+    elif name == "cat" and seg.heredocs and all(w == "-" for w in words[1:]):
+        if any(not quoted and "$" in body for body, quoted in seg.heredocs):
+            return False
+        pieces = [body for body, _ in seg.heredocs]
+    else:
+        return False
+    for piece in pieces:
+        if name != "cat" and re.search(r"[$`]|\\[0-7xuUc]", piece):
+            return False
+        if any(HEADER_LINE_RE.match(line) for line in re.split(r"\\[nrfv]|\r|\n", piece)):
+            return False
+    return True
+
+
+def inline_code(seg, words):
+    """The code a segment runs inline (python -c, perl -e, powershell -Command, or a here-document fed to an
+    interpreter), with the rest of its command line, or None."""
+    if INLINE_CODE_RE.search(seg.text):
+        return seg.text
+    if words and words[0].lower() in INTERPRETERS and seg.heredocs and all(w.startswith("-") for w in words[1:]):
+        return "\n".join([seg.text] + [body for body, _ in seg.heredocs])
+    return None
+
+
+def is_test_run(words):
+    """`python -m unittest ...` or `python -m pytest ...`: a test run, which works on its own temporary files."""
+    if len(words) < 3 or words[0].lower() not in PYTHON_NAMES:
+        return False
+    i = 1
+    while i < len(words) and words[i].startswith("-") and words[i] != "-m":
+        i += 1
+    return words[i:i + 1] == ["-m"] and words[i + 1:i + 2] in (["unittest"], ["pytest"])
+
+
+def sed_files(words):
+    """The files a `sed` command line names (its script left out), or None when its script comes from a file."""
+    files, script_given, i = [], False, 1
+    while i < len(words):
+        w = words[i]
+        if w in ("-f", "--file") or w.startswith("--file="):
+            return None
+        if w in ("-e", "--expression"):
+            script_given, i = True, i + 2
+            continue
+        if w.startswith("--expression=") or (w.startswith("-") and not w.startswith("--") and w.endswith("e")):
+            script_given = True
+        elif not w.startswith("-"):
+            files.append(w)
+        i += 1
+    return files if script_given else files[1:]
+
+
+def risky_segment(seg, cwd=None, in_tasks=False):
+    """Whether one simple command could write a ticket's status, qa_rounds or lead line, or the hook can't tell
+    (T-181). Allowed: reads, real calls of the status script, git (its commits meet commit_check), test runs,
+    inline code that names no task file, file writes (cp, mv, sed -i, Set-Content, ...) that can't reach a
+    ticket, and appends of plain text with no such line (a result note). Any other command is risky."""
+    words = words_of(seg.text)
+    for op, _target in seg.redirects:
+        if op != ">>" or not appended_text_ok(seg, words):
+            return True
+    if not words:
+        return False
+    if read_only_segment(seg.text) or script_call(seg.text) or git_writer(seg.text) or is_test_run(words):
+        return False
+    code = inline_code(seg, words)
+    if code is not None:
+        return in_tasks or bool(CODE_TOUCHES_RE.search(code))
+    name = words[0].lower()
+    if name == "sed":
+        if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", " ".join(words[1:])):
+            return True   # the script writes a file or runs a command
+        files = sed_files(words)
+        return files is None or any(ticket_path(f, cwd, in_tasks) for f in files)
+    if name in FILE_WRITERS:
+        return any(ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks) for w in words[1:])
+    return True
+
+
 def risky_segments(cmd, cwd=None):
-    """The parts of a shell command that are neither reads, real calls of the status script, nor git writes."""
-    segments, unsafe = shell_segments(cmd, cwd)
+    """The parts of a shell command that could write a ticket's guarded lines, or the whole command when the
+    hook can't read it (an open quote, a backtick, a computed file name, ...)."""
+    in_tasks = runs_in_tasks(cmd, cwd)
+    segments, unsafe = shell_segments(cmd, cwd, in_tasks)
     if unsafe:
-        return [cmd]   # a redirection into a file, a substitution or an open quote: judge the whole command
-    return [s for s in segments if not (read_only_segment(s) or script_call(s) or git_writer(s))]
+        return [cmd]
+    return [s.text or cmd for s in segments if risky_segment(s, cwd, in_tasks)]
 
 
 def commit_check(cmd, cwd=None):
@@ -389,7 +596,7 @@ def pre_shell(tool_input, cwd=None):
     text = cmd   # a risky part anywhere makes the whole command suspect when it mentions the lines
     if INLINE_CODE_RE.search(text) or re.search(r"qa[\W_]*rounds|status", text, re.I):
         return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.")
-    if re.search(r"\blead\b", text, re.I):
+    if re.search(r"lead", text, re.I):
         return deny(f"A task's lead changes only through the status script: {STATUS_SCRIPT} <T-id> --lead <Name>.")
     return 0
 

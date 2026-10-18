@@ -189,6 +189,88 @@ class FalseRefusals(Base):
         self.assertEqual(self.cmd("git merge-base a b; sed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-1-x.md"), "deny")
 
 
+class HarmlessMentions(Base):
+    """T-181: commands refused on 2026-10-18 that could not write any ticket's status, qa_rounds or lead line."""
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    def test_allowed_1_commit_with_a_substitution_and_git_status(self):
+        self.assertEqual(self.cmd(
+            'cd /c/solid-carbide-game && test -z "$(git rev-parse -q --verify MERGE_HEAD)" && '
+            'git add tasks/T-162-x.md && git commit -q -m "T-162: notes" && git log --oneline -1 && '
+            'git status --short'), "allow")
+
+    def test_allowed_2_claim_worktree_copy_env_and_start(self):
+        self.assertEqual(self.cmd(
+            "python tools/task_status.py T-162 --lead X && "
+            "git worktree add -q -b task/T-162-x /c/solid-carbide-worktrees/T-162 master && "
+            "cp .env /c/solid-carbide-worktrees/T-162/.env && "
+            'python tools/task_status.py T-162 in-progress --reply "Started: the status line work."'), "allow")
+
+    def test_allowed_3_a_loop_over_task_folders(self):
+        for c in ['for t in T-151 T-152; do git -C $t add tasks/ && git -C $t commit -q -m "$t: notes"; done',
+                  'for t in T-151 T-152; do git -C $t add tasks/ && git -C $t commit -q -m "$t: status notes"; done']:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "allow")
+
+    def test_allowed_4_merges_then_inline_python_that_reads_settings(self):
+        self.assertEqual(self.cmd(
+            "git -C /c/solid-carbide-worktrees/G-002 merge -q --no-edit master; "
+            "git -C /c/solid-carbide-worktrees/T-166 merge -q --no-edit playtest/G-002; "
+            "python -c \"import json;print(len(json.load(open('.claude/settings.json'))['permissions']['allow']))\""),
+            "allow")
+
+    def test_allowed_5_a_result_note_appended_to_a_ticket(self):
+        self.assertEqual(self.cmd(
+            "printf '%s\\n' \"- 2026-10-18, Project Lead: the status check passed; the Project Lead's to run "
+            "QA next.\" >> tasks/T-176-x.md"), "allow")
+
+    def test_allowed_6_a_test_run_naming_the_status_script(self):
+        self.assertEqual(self.cmd("python -m unittest tools.test_task_status"), "allow")
+        self.assertEqual(self.cmd("cd /c/solid-carbide-worktrees/T-166 && python -m unittest tools.test_task_status"),
+                         "allow")
+
+    def test_allowed_7_a_python_heredoc_editing_code_files(self):
+        for path in ["tools/task_status.py", "tools/goal_agent/goal_file.py"]:
+            c = (f"cd /c/solid-carbide-worktrees/T-170 && python - <<'EOF'\nfrom pathlib import Path\n"
+                 f"p = Path('{path}')\nt = p.read_text(encoding='utf-8')\n"
+                 "t = t.replace('def status(', 'def current_status(')\n"
+                 "p.write_text(t, encoding='utf-8')\nprint('status renamed')\nEOF")
+            with self.subTest(path=path):
+                self.assertEqual(self.cmd(c), "allow")
+
+    def test_allowed_8_read_only_status_and_git_in_a_task_folder(self):
+        self.assertEqual(self.cmd(
+            "python /c/solid-carbide-game/tools/task_status.py T-166; "
+            "git -C /c/solid-carbide-worktrees/T-166 log --oneline -3; "
+            "git -C /c/solid-carbide-worktrees/T-166 diff --name-only"), "allow")
+
+    def test_still_refused_writes_of_a_guarded_header_line(self):
+        for c in ["printf 'status: done\\n' >> tasks/T-1-x.md",
+                  "printf 'notes\\nlead: Tools\\n' >> tasks/T-1-x.md",
+                  'echo "qa_rounds: 1" >> tasks/T-1-x.md',
+                  "Write-Output 'Status : done' >> tasks/T-1-x.md",
+                  "printf '%s\\n' \"$NOTE\" >> tasks/T-1-x.md  # status",
+                  "printf 'x\\012status: done' >> tasks/T-1-x.md",
+                  "cat >> tasks/T-1-x.md <<EOF\n$X status\nEOF",
+                  "echo hi >> $(ls tasks/T-1*) # status",
+                  "sed -i 's/^lead:.*/lead: Tools/' tasks/T-1-x.md",
+                  "cp /tmp/T-1-status-done.md tasks/T-1-x.md",
+                  "cd /c/w/T-1 && cp /tmp/x.md tasks/T-1-x.md && echo status",
+                  "Set-Content -Path:tasks/T-1-x.md -Value 'lead: Tools'",
+                  'cd /c/w/T-1 && test -z "$(sed -i \'s/status: open/status: done/\' tasks/T-1-x.md)"',
+                  "for f in tasks/T-1*.md; do sed -i 's/status: open/status: done/' $f; done",
+                  "python -c \"import pathlib; p=pathlib.Path('tasks/T-1-x.md'); "
+                  "p.write_text(p.read_text().replace('qa_rounds: 0','qa_rounds: 1'))\"",
+                  "cd /c/w/T-1 && python - <<'EOF'\nimport pathlib\np = pathlib.Path('tasks/T-1-x.md')\n"
+                  "p.write_text(p.read_text().replace('status: open', 'status: done'))\nEOF",
+                  "cd $T && sed -i 's/status: open/status: done/' T-1-x.md",
+                  "python tools/fix_status.py tasks/T-1-x.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 
@@ -233,6 +315,16 @@ class Git(Base):
         self.assertEqual(self.commit("git commit -m x"), "deny")
         self.git("checkout", "HEAD", "--", "tasks")
         self.assertEqual(self.commit(), "allow")
+
+    def test_t181_a_header_hand_edit_is_still_refused_at_commit(self):
+        # the shell check now lets more commands through; the ledger check still stops a hand-edited header
+        self.move("in-qa")
+        self.git("commit", "-qam", "to qa")
+        self.hand_edit("status: in-qa", "status: done")   # as a script the shell check can't read would
+        self.assertEqual(self.commit('git add tasks && git commit -q -m "T-001: notes"'), "deny")
+        self.git("checkout", "HEAD", "--", "tasks")
+        self.hand_edit("Done.", "Done.\n- 2026-10-18, Project Lead: notes.")   # a result note is fine
+        self.assertEqual(self.commit('git add tasks && git commit -q -m "T-001: notes"'), "allow")
 
     def test_a_script_move_can_be_committed(self):
         self.move("in-qa")

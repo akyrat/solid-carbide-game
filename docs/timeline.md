@@ -1425,3 +1425,8 @@ Entry format:
 - Decision or change: the board said the Project Lead should not have stopped G-002 to ask about the weapons: during a goal run, open questions are settled by the agents as playtest proposals, listed in the goal file and brought to the board with the build at the end, and the Project Lead makes the run's other decisions itself and reports them. The board also asked for a ticket to stop the status guard refusing harmless commands that only mention the guarded words near a ticket path (the cause of most of today's routed-around refusals): T-181.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-181 (new)
+
+## 2026-10-18: T-181 done: the status guard stops refusing harmless mentions
+- Decision or change: the guard's shell check now judges each part of a command on its own and refuses only what could write a ticket's `status`, `qa_rounds` or `lead` header line, or what it can't read (a computed file name, a substitution naming task files). Reads, status script calls, git, test runs, writes to files that can't be tickets, and plain-text appends to a ticket's notes with no guarded line are allowed. Today's 8 false refusals are tests that now pass; 18 writes of a guarded line are still refused, and the commit-time ledger check (T-149) stays as the backstop. QA round 1 passed all 3 criteria; it noted a possible gap (inline code that builds a ticket path without naming `tasks` or a `T-nnn` file), which the commit-time check still covers. All three test sets passed on the merge (329 tools, 282 game tools, GUT).
+- Documents touched: `tasks/README.md`
+- Tasks: T-181 (done)
