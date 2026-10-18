@@ -35,10 +35,10 @@ The windshield wiper (docs/weapons.md, Decisions, 2026-10-18) damages the enemie
 
 ## Acceptance criteria
 
-- [ ] `minion.gd` has a knockback call taking a direction and a strength; a test shows a minion in open ground ends up farther from the push's origin, in the push's direction, after the call. (QA: pass / fail)
-- [ ] A test pushes a minion toward a building or boulder and shows it stops at it and never ends up inside it. (QA: pass / fail)
-- [ ] The kaiju has no knockback call, and the existing enemy tests (minions, kaiju, meteors) still pass unchanged. (QA: pass / fail)
-- [ ] `docs/enemies.md` Content and `game/README.md` 'Minions' describe the call, its units, and that only minions can be pushed. (QA: pass / fail)
+- [ ] `minion.gd` has a knockback call taking a direction and a strength; a test shows a minion in open ground ends up farther from the push's origin, in the push's direction, after the call. (QA: pass)
+- [ ] A test pushes a minion toward a building or boulder and shows it stops at it and never ends up inside it. (QA: pass)
+- [ ] The kaiju has no knockback call, and the existing enemy tests (minions, kaiju, meteors) still pass unchanged. (QA: pass)
+- [ ] `docs/enemies.md` Content and `game/README.md` 'Minions' describe the call, its units, and that only minions can be pushed. (QA: pass)
 
 ## Updates
 
