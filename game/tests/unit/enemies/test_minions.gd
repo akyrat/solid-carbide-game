@@ -436,3 +436,122 @@ func test_car_damage_shakes_only_the_drawn_car_then_settles() -> void:
 	cs._process(0.5)
 	assert_false(cs.is_shaking())
 	assert_eq(cs.offset, base, "settled back")
+
+
+# ---- T-167: a weapon's knockback call on minions ----
+
+## Walks `m` towards `target` (as the spawner does) for `steps` physics steps,
+## checking after each that its circle stays out of `rect` (if not empty).
+func _walk_checking(m: Node, target: Vector2, steps: int, rect := Rect2()) -> void:
+	for i in steps:
+		m.walk(DT, target)
+		if rect.has_area():
+			var p: Vector2 = m.position_units()
+			var nearest := Vector2(clampf(p.x, rect.position.x, rect.end.x), clampf(p.y, rect.position.y, rect.end.y))
+			assert_false(rect.has_point(p), "centre never inside the building")
+			assert_gt(p.distance_to(nearest), MinionScript.RADIUS_UNITS - 0.05, "body never inside the building")
+
+
+## Walks `m` (as the spawner does) for as long as its knockback lasts, which
+## must end within KNOCKBACK_SECONDS of physics steps (plus one for rounding).
+func _walk_while_pushed(m: Node, target: Vector2, rect := Rect2()) -> void:
+	var max_steps := int(ceil(MinionScript.KNOCKBACK_SECONDS / DT)) + 1
+	var steps := 0
+	while m.is_knocked_back() and steps < max_steps + 5:
+		_walk_checking(m, target, 1, rect)
+		steps += 1
+	assert_false(m.is_knocked_back(), "the push is over")
+	assert_lte(steps, max_steps, "within KNOCKBACK_SECONDS")
+
+
+func test_knockback_pushes_a_minion_away_in_open_ground() -> void:
+	spawner.enabled = false
+	var origin := _car_units()
+	var start := origin + Vector2(8.0, 3.0)
+	var dir := (start - origin).normalized()
+	var strength := 1.5
+	for k in 5:  # the whole path is open ground
+		assert_true(spawner.is_free_spot(start + dir * (strength + 0.6) * k / 4.0), "open ground")
+	var m: Node = spawner.spawn_minion_at(start)
+	assert_false(m.is_knocked_back(), "not pushed until the call")
+	var before: float = m.position_units().distance_to(origin)
+	m.apply_knockback(dir * 7.0, strength)  # the direction's length does not matter
+	assert_true(m.is_knocked_back())
+	_walk_while_pushed(m, origin)  # the car is the walking target, but the push wins
+	var moved: Vector2 = m.position_units() - start
+	assert_almost_eq(moved.length(), strength, 0.01, "pushed the call's distance in units")
+	assert_almost_eq(moved.normalized().dot(dir), 1.0, 0.001, "in the push's direction")
+	assert_almost_eq(m.position_units().distance_to(origin) - before, strength, 0.01, "farther from the push's origin")
+	# Then it walks towards the car again.
+	var after: float = m.position_units().distance_to(origin)
+	m.walk(DT, origin)
+	assert_lt(m.position_units().distance_to(origin), after, "walks on after the push")
+
+
+func test_knockback_into_a_building_stops_at_its_wall() -> void:
+	spawner.enabled = false
+	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[0])
+	var start := Vector2(b.position.x - 1.5, b.get_center().y)
+	assert_true(spawner.is_free_spot(start))
+	var m: Node = spawner.spawn_minion_at(start)
+	m.apply_knockback(Vector2.RIGHT, 6.0)  # far more than the 1 unit gap
+	_walk_while_pushed(m, start, b)
+	var p: Vector2 = m.position_units()
+	assert_almost_eq(p.x, b.position.x - MinionScript.RADIUS_UNITS, 0.05, "stopped against the wall")
+	assert_almost_eq(p.y, start.y, 0.05, "not slid along a wall it hit head-on")
+
+
+func test_knockback_into_a_boulder_stops_at_it() -> void:
+	spawner.enabled = false
+	var bl: Dictionary = run.map.all_boulders()[0]
+	var centre := Vector2(float(bl.x), float(bl.y))
+	var r: float = float(bl.diameter) / 2.0
+	var touching := r + MinionScript.RADIUS_UNITS
+	var start := Vector2.ZERO
+	var found := false
+	for d in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
+		start = centre + d * (touching + 1.0)
+		if spawner.is_free_spot(start) and spawner.is_free_spot(centre + d * (touching + 0.5)):
+			found = true
+			break
+	assert_true(found, "open ground beside the boulder")
+	var m: Node = spawner.spawn_minion_at(start)
+	m.apply_knockback(centre - start, 6.0)
+	var steps := 0
+	while m.is_knocked_back() and steps < 100:
+		m.walk(DT, start)
+		steps += 1
+		assert_gt(m.position_units().distance_to(centre), touching - 0.05, "never inside the boulder")
+	assert_lt(m.position_units().distance_to(centre), touching + 0.1, "pushed up against it")
+
+
+func test_knockback_ignores_bad_calls_and_dead_minions() -> void:
+	spawner.enabled = false
+	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(8.0, 3.0))
+	m.apply_knockback(Vector2.RIGHT, 0.0)
+	m.apply_knockback(Vector2.RIGHT, -2.0)
+	m.apply_knockback(Vector2.ZERO, 2.0)
+	assert_false(m.is_knocked_back(), "zero or negative strength, or no direction: nothing")
+	m.take_damage(1000.0)
+	m.apply_knockback(Vector2.RIGHT, 2.0)
+	assert_false(m.is_knocked_back(), "a dead minion is not pushed")
+
+
+func test_two_pushes_add_up() -> void:
+	spawner.enabled = false
+	var start := _car_units() + Vector2(8.0, 3.0)
+	var m: Node = spawner.spawn_minion_at(start)
+	m.apply_knockback(Vector2.DOWN, 0.5)
+	m.walk(DT, _car_units())
+	m.apply_knockback(Vector2.DOWN, 0.5)
+	_walk_while_pushed(m, _car_units())
+	assert_almost_eq(m.position_units().y - start.y, 1.0, 0.02, "both pushes travelled")
+
+
+func test_only_minions_can_be_pushed() -> void:
+	var KaijuScript: Script = load("res://scripts/enemies/kaiju.gd")
+	var kaiju: Node = KaijuScript.new()
+	assert_false(kaiju.has_method("apply_knockback"), "the kaiju has no knockback call")
+	kaiju.free()
+	var m: Node = _live_minion()
+	assert_true(m.has_method("apply_knockback"))
