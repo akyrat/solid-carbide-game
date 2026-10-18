@@ -4,7 +4,7 @@ title: Goal runner: a refusal the agent got past is recorded, not a pause
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
