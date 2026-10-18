@@ -1,0 +1,24 @@
+{
+  "_about": "FakeClaude answers where gap detection's drafts break the rules twice, so the goal pauses with the reasons. Sample data, not game content.",
+  "plan": [
+    {
+      "goal_criteria": ["The sample works"],
+      "open_questions": [],
+      "sub_goals": [
+        {"id": "S1", "title": "Sample", "why": "Sample", "value": 3, "criteria": ["It works"], "needs": []}
+      ]
+    }
+  ],
+  "gaps": [
+    {"verdicts": [{"sub_goal": "S1", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+      {"key": "D1", "title": "Sample", "to": "nobody", "epic": "tooling", "milestone": "mvp", "model": "haiku",
+       "user_facing_text": "no", "changes_visuals": "no", "depends_on": [], "documents_affected": [],
+       "files_to_read_first": [], "files_expected_to_change": [], "description": "Sample.",
+       "acceptance_criteria": ["It works"], "review": ""}]}]},
+    {"verdicts": [{"sub_goal": "S1", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+      {"key": "D1", "title": "Sample", "to": "nobody", "epic": "tooling", "milestone": "mvp", "model": "sonnet",
+       "user_facing_text": "no", "changes_visuals": "no", "depends_on": [], "documents_affected": [],
+       "files_to_read_first": [], "files_expected_to_change": [], "description": "Sample.",
+       "acceptance_criteria": ["It works"], "review": ""}]}]}
+  ]
+}

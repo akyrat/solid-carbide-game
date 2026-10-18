@@ -1,0 +1,58 @@
+{
+  "_about": "FakeClaude answers for `run.py start \"Sample goal\" --fake tools/goal_agent/fixtures/sample-goal.json`. Sample data for testing the runner, not game content. The in-flight and covered verdicts name T-163 and T-161, which exist in the repo.",
+  "plan": [
+    {
+      "goal_criteria": [
+        "The sample data file loads in a test",
+        "The sample screen shows the sample text when its scene runs"
+      ],
+      "open_questions": ["The sample's docs don't say where the sample screen opens from."],
+      "sub_goals": [
+        {"id": "S1", "title": "Sample data file", "why": "The sample screen reads it", "value": 3,
+         "criteria": ["A test loads the sample data file"], "needs": []},
+        {"id": "S2", "title": "Sample screen text", "why": "The screen shows it", "value": 2,
+         "criteria": ["The text is in the text ticket's result notes"], "needs": []},
+        {"id": "S3", "title": "Sample screen", "why": "It is what the goal asks for", "value": 5,
+         "criteria": ["The screen's scene runs and shows the text"], "needs": ["S1", "S2"]},
+        {"id": "S4", "title": "Goal runner, part 2", "why": "Sample of an in-flight sub-goal", "value": 4,
+         "criteria": ["T-163 passes QA"], "needs": []},
+        {"id": "S5", "title": "Guard false refusals", "why": "Sample of a covered sub-goal", "value": 1,
+         "criteria": ["T-161 is done"], "needs": []}
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "verdicts": [
+        {"sub_goal": "S1", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+          {"key": "D1", "title": "Sample data file", "to": "game-data", "epic": "tooling", "milestone": "mvp",
+           "model": "sonnet", "user_facing_text": "no", "changes_visuals": "no", "depends_on": [],
+           "documents_affected": [], "files_to_read_first": ["tasks/README.md"],
+           "files_expected_to_change": ["game/data/sample.json"],
+           "description": "Sample ticket written by the goal runner's fixture.",
+           "acceptance_criteria": ["A test loads game/data/sample.json"], "review": ""}
+        ]},
+        {"sub_goal": "S2", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+          {"key": "D2", "title": "Sample screen text", "to": "narrative-theme", "epic": "narrative", "milestone": "mvp",
+           "model": "sonnet", "user_facing_text": "no", "changes_visuals": "no", "depends_on": [],
+           "documents_affected": [], "files_to_read_first": ["tasks/README.md", "docs/extended-narrative.md"],
+           "files_expected_to_change": [],
+           "description": "Sample text ticket written by the goal runner's fixture.",
+           "acceptance_criteria": ["The text is in this ticket's result notes"], "review": ""}
+        ]},
+        {"sub_goal": "S3", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+          {"key": "D3", "title": "Sample screen", "to": "ui", "epic": "hud-menus", "milestone": "mvp",
+           "model": "sonnet", "user_facing_text": "yes", "changes_visuals": "yes", "depends_on": ["D1", "D2"],
+           "documents_affected": [],
+           "files_to_read_first": ["tasks/README.md", "docs/visual-style.md", "docs/extended-narrative.md"],
+           "files_expected_to_change": ["game/scenes/sample_screen.tscn"],
+           "description": "Sample screen ticket written by the goal runner's fixture.",
+           "acceptance_criteria": ["The scene runs and shows the text from D2's ticket"],
+           "review": "play the sample screen"}
+        ]},
+        {"sub_goal": "S4", "verdict": "in-flight", "tickets": ["T-163"], "code": [], "drafts": []},
+        {"sub_goal": "S5", "verdict": "covered", "tickets": ["T-161"], "code": [], "drafts": []}
+      ]
+    }
+  ]
+}
