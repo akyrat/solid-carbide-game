@@ -1,7 +1,7 @@
 ---
 id: T-162
 title: Goal runner, part 1: goal file, priority scoring and gap detection
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -64,4 +64,47 @@ This ticket builds **layers 1 and 2** (priority scoring and gap detection), the 
 
 ## Updates
 
+### 2026-10-18, Open → In progress
+
+Started: part 1 of the goal runner (the goal file, priority scoring, gap detection). It's built in its own folder, C:\solid-carbide-worktrees\T-162. QA checks it next. It's tooling, so it merges straight after QA.
+
 ## Result notes
+
+**Built (agent, 2026-10-18).** Standard-library Python 3.9, all in `tools/goal_agent/` (a package; it puts `tools/` on `sys.path` itself, so it imports the same way under `unittest discover -s tools` and as `python tools/goal_agent/run.py`). Each file starts with a docstring naming its layer or role.
+
+- `__init__.py`: the package; names the layers.
+- `claude_call.py`: the only place that calls Claude. `RealClaude.ask(step, prompt, schema, model, agent, session_id, cwd, allowed_tools)` runs `claude -p <prompt> --output-format json --json-schema <schema>` (plus the flags given) and returns an `Answer` with `.data` (the `structured_output`, or `result` parsed as JSON) and `.denials` (`permission_denials`). `FakeClaude(fixture)` has the same interface and answers from a JSON fixture by step name, in order (an answer may carry `_permission_denials` to play a refusal). `Pause` is the exception any layer raises to pause the goal; its message is the reason.
+- `goal_file.py`: reads and writes `goals/G-NNN-short-title.md`. The header lines and each section are kept as their own text, so load-then-save is byte-identical (LF and CRLF). Header: `id, title, status, art_cap, art_used, iteration, max_iterations, created, lead`. Sections: `Goal, Goal acceptance criteria, Open questions, Sub-goals, Scoring, Tickets, Iteration log, Pauses`. I added `## Open questions` (the description asks for open questions "in the goal file" but its section list has no place for them); empty sections read `None yet.`. Ids are the next free `G-NNN`. Also the sub-goals table (render and read back).
+- `prioritize.py` (layer 1): the prompt (the goal, the short GDD for scope, the nine game area docs as the source of truth, "ideas come only from the board", open points go to `open_questions`), the JSON schema, and `rank()`: by sub-goals waiting on it (whole chain, as `ticket_impact.py`), then value, then Claude's order. Refuses (Pause) a cycle, unknown `needs`, repeated ids, a value outside 1 to 5, no criteria or sub-goals, and any permission denial. The rule is `SCORING_RULE`, written into `## Scoring`. Claude is called read-only (`--allowedTools Read,Glob,Grep`).
+- `gaps.py` (layer 2): scans every ticket by code (`taskboard_sync.tickets_now` with `task_folders`, so open tickets are read from their branch folders) and indexes `game/` (skipping `addons`, `.godot`, `art`, `audio`, and `.import` files) plus the headings of `game/README.md`. Gets one verdict per sub-goal (`covered`, `in-flight`, `missing` with drafts), checks the verdicts (one per sub-goal, named tickets exist, drafts only for `missing`) and the drafts (`tickets.check`). A refused set is asked once more with the reasons; refused again, it raises Pause with the reasons.
+- `tickets.py` (layer 2, ticket side): `check()` gives one reason per broken rule: `to` not in `.claude/agents/` or `project-lead`; `model` not sonnet/opus; `epic`/`milestone` not in the tables in `tasks/README.md` (read from that file); `changes_visuals: yes` without both docs; `user_facing_text: yes` without `docs/extended-narrative.md` or without depending on a `narrative-theme` draft or ticket; an `asset-generation` draft not depending on a functional draft/ticket, or without a review line; anything the player sees, reads or hears (`changes_visuals`/`user_facing_text` yes, or an `sfx` ticket) without a review line; empty criteria; `depends_on` naming neither a draft nor a ticket. `next_number()` takes the highest id in `tasks/`, `task/*` branch names and `git log master` subjects. `write()` renders each draft from `tasks/_TEMPLATE.md` (header lines set with `task_status.set_field`; `lead` and `qa_rounds` stay as in the template), `goal: G-NNN`, status `open` or `blocked` (depends on a draft or an unfinished ticket), then claims each one with `python <root>/tools/task_status.py T-NNN --lead Goal-G-NNN`; a refused claim pauses the goal. `mark_reused()` sets the `goal:` line of an `in-flight` ticket on master's copy, but leaves it alone when its branch is open (it is edited only on its branch) or it already has a goal; the goal log names those.
+- `run.py`: `start "<goal>" [--art-cap N] [--max-iterations N] [--fake FIXTURE]` and `status G-NNN`; `--help` lists both. `start` saves the goal file (`planned`, or `paused` with the reason in `## Pauses`), then commits the goal file, the new tickets and the reused tickets' goal lines, staging only those (`git add -- <files>`, `git commit -m ... -- <files>`), and only when `git rev-parse -q --verify MERGE_HEAD` prints nothing and the checkout is on `master` (otherwise it prints why and doesn't commit). Message: `G-001: planned, "<title>" (goal runner)`. Exit code 0 when planned, 1 when paused.
+- `temp_repo.py`: test support, a small temporary git repo with copies of the template, README, agents, status script, guard and the runner.
+- `try_fixture.py`: the QA helper (below).
+- `fixtures/sample-goal.json` (five sub-goals: three missing with a data, a text and a UI draft; one in-flight, T-163; one covered, T-161) and `fixtures/refused-twice.json` (drafts that break the rules twice). Both are clearly sample data, not game content.
+- `goals/README.md`: the folder, in a few lines.
+
+**The status guard (asked in "Things to watch").** A ticket file the script writes passes it. Reading `guard_ledger.py` and `board_gate.commit_check`: a new, untracked file passes when its guarded lines are blessed in the ledger or are a starting state (`open`/`blocked`, `qa_rounds: 0`). The runner writes the file in its starting state with an empty `lead:` line (as the template), then the status script's claim records the claimed state in the ledger, so the working copy and the staged copy both pass. `Guard.test_written_and_claimed_tickets_pass_the_guard` runs the temp repo's own copy of the hook on a `git commit` (untracked, then staged): no refusal. `Guard.test_the_guard_does_refuse_a_hand_edit` shows the same check does refuse a hand-edited status, so the test means something. One thing for the Project Lead: the guard is a Claude Code hook, so it sees only the commands Claude runs; the runner's own `git commit` (a subprocess) is not checked by it. That doesn't matter for its tickets, which pass anyway, but the runner never relies on the hook.
+
+**Acceptance criteria, one by one.**
+1. Full set: `python -m unittest discover -s tools -p "test_*.py"`: 259 tests, OK (49 of them new, in `tools/goal_agent/`). No Claude or network: only `FakeClaude`; the one `RealClaude` test patches `subprocess.run` (`test_prioritize.Claude.test_real_claude_command_and_denials`).
+2. Ranking: `test_prioritize.Ranking.test_waited_on_beats_higher_value`, `test_counts_the_whole_chain`, `test_ties_by_value_then_order`; cycle: `test_cycle_is_refused`, `test_self_cycle_is_refused`.
+3. Refusal rules, one test each in `test_tickets.Refusals`: `test_to_must_be_an_agent_or_project_lead`, `test_model_must_be_sonnet_or_opus`, `test_epic_and_milestone_must_be_in_the_tables`, `test_visuals_need_both_docs`, `test_text_needs_the_narrative_doc`, `test_text_needs_a_narrative_ticket_first`, `test_art_must_depend_on_its_functional_ticket`, `test_art_needs_a_review_line`, `test_what_the_player_meets_needs_a_review_line`, `test_empty_acceptance_criteria`, `test_depends_on_must_name_a_draft_or_a_ticket`. Retry then pause: `test_gaps.GapDetection.test_refused_set_is_retried_once_with_the_reasons`, `test_refused_twice_pauses_with_the_reasons`, and end to end `test_run.Start.test_refused_twice_pauses_the_goal` (status `paused`, reasons in `## Pauses`).
+4. Next id: `test_tickets.Ids.test_next_id_counts_tasks_branches_and_master_log`. In-flight reused: `test_run.Start.test_start_with_the_sample_fixture` (T-163 gets `goal: G-001`, no new file for it; only T-164 to T-166 are written) and `test_tickets.Writing.test_reused_ticket_gets_the_goal_line`.
+5. Byte-identical: `test_goal_file.RoundTrip.test_hand_written_file_is_byte_identical`, `test_crlf_file_is_byte_identical`, `test_new_file_is_byte_identical_and_complete` (which also checks every header field and section).
+6. QA's run in a temporary copy: see below; also `test_run.Start.test_start_with_the_sample_fixture` does the same in a temp repo through the command line.
+7. Docstrings and `goals/README.md`: `test_goal_file.Package.test_every_file_has_a_docstring_and_is_python_3_9`.
+
+**For QA (criterion 6).** From the task folder, after checking the code there is committed (the helper clones the committed state):
+
+```
+cd C:\solid-carbide-worktrees\T-162
+python tools/goal_agent/try_fixture.py
+```
+
+It prints the temporary folder, clones this branch into it, makes a local `master` there, runs `python tools/goal_agent/run.py start "Sample goal" --fake tools/goal_agent/fixtures/sample-goal.json` and `python tools/goal_agent/run.py status G-001` inside it, and shows the runner's commit. Expected: `G-001: planned`; sub-goals S1 to S5 ranked with verdicts missing, missing, missing, in-flight (T-163), covered (T-161); tickets T-164, T-165 (open) and T-166 (blocked) written from the template with `goal: G-001` and `lead: Goal-G-001`; the commit holds only `goals/G-001-sample-goal.md`, the three new tickets and T-163's goal line. Open the goal file and the tickets in the printed folder to check them. `python tools/goal_agent/try_fixture.py tools/goal_agent/fixtures/refused-twice.json` shows the paused case. The same by hand: `git clone -q C:\solid-carbide-worktrees\T-162 <temp>\repo`, then in `<temp>\repo`: `git checkout -q -B master`, then the two `run.py` commands. The real checkout is never touched (its `tasks/` and `goals/` are unchanged after the full test run and the helper).
+
+**Not done, and refusals met.**
+- `documents_affected`: `tasks/README.md`, `docs/working-with-the-board.md` and the course README already describe the runner as built (the board's commit 3a0d8fc); I did not edit them (docs are the Project Lead's). For the Project Lead to consider: the goal file's extra `## Open questions` section, and that a reused in-flight ticket gets `goal:` only when its branch isn't open.
+- Reused tickets are not claimed for `Goal-G-NNN` (they may belong to another session; no `--take-over`). T-163 can decide.
+- The guard hook refused several of my read-only shell commands as false positives (the known quirk: a command naming the worktree path `T-162` or `tasks/` together with `status`, e.g. `git -C C:/solid-carbide-worktrees/T-162 status --porcelain`, a heredoc Python check, `python -c` with a docstring check). I didn't work around them: I split commands, used `git diff --name-only` and `git ls-files --others` instead of `git status`, read files with the Read tool, and turned the checks I wanted into tests and the committed QA helper.

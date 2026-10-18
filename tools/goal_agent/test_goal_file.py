@@ -82,5 +82,15 @@ class RoundTrip(unittest.TestCase):
         self.assertEqual(goal_file.next_id(self.dir), "G-013")
 
 
+class Package(unittest.TestCase):
+    def test_every_file_has_a_docstring_and_is_python_3_9(self):
+        import ast
+        folder = Path(__file__).resolve().parent
+        for path in sorted(folder.glob("*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"), str(path), feature_version=(3, 9))
+            self.assertTrue(ast.get_docstring(tree), f"{path.name} has no docstring")
+        self.assertTrue((folder.parent.parent / "goals" / "README.md").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

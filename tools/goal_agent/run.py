@@ -52,8 +52,8 @@ def record_gaps(goal, plan, verdicts, written, existing):
             lines += [f"- {written[d['key']][0]}: {d['title']} ({v['sub_goal']}, written)" for d in v["drafts"]]
         else:
             ids = list(v["tickets"])
-            how = "reused" if v["verdict"] == "in-flight" else "covers it"
-            lines += [f"- {t}: {existing[t]['title']} ({v['sub_goal']}, {v['verdict']}, {how})" for t in ids]
+            how = ", reused" if v["verdict"] == "in-flight" else ""
+            lines += [f"- {t}: {existing[t]['title']} ({v['sub_goal']}, {v['verdict']}{how})" for t in ids]
         by_id[v["sub_goal"]] = {"verdict": v["verdict"], "ticket_ids": ids}
     record_sub_goals(goal, plan["sub_goals"], by_id)
     goal.set_section("Tickets", "\n".join(lines))
