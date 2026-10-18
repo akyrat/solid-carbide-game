@@ -1,7 +1,7 @@
 ---
 id: T-173
 title: Level-up screen: cards for the new weapons, and a weapon image on every card (placeholder images)
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-002
@@ -85,3 +85,4 @@ The fixture got an `offer_ids` export so the two new scenes reuse it. It needs a
 
 PixelLab: none used (0 generations). Refusals: none.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
