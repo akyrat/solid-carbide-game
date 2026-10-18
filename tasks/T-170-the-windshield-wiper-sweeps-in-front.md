@@ -1,7 +1,7 @@
 ---
 id: T-170
 title: The windshield wiper: sweeps in front of the car, damages and pushes minions back (placeholder look)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, docs/visual-style.md, docs/extended-narrative.md, game/data/weapons.json, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/enemies/minion.gd, game/tests/unit/weapons/test_starting_gun.gd, game/tests/unit/weapons/test_exhaust_flamethrower.gd, game/README.md]
 files_expected_to_change: [game/scripts/weapons/windshield_wiper.gd, game/scripts/weapons/weapons.gd, game/tests/unit/weapons/test_windshield_wiper.gd, game/tests/unit/weapons/test_starting_gun.gd, game/tests/unit/weapons/test_exhaust_flamethrower.gd, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-170.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -89,3 +93,4 @@ Written by the agent when it finishes.
 **Refusals:** a PreToolUse hook refused one Bash command: an inline `python -c` that edited `game/scripts/weapons/weapons.gd`. The hook's message was about task statuses, so it looks like a false match on the word "status" in the command. I made the same edits with the Edit tool instead. Not essential, not blocked.
 
 **Not committed:** Godot's line-ending-only `.import` changes in the working copy, as the working rules say.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
