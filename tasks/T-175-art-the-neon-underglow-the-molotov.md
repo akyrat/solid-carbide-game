@@ -1,7 +1,7 @@
 ---
 id: T-175
 title: Art: the neon underglow, the molotov and its fire area, and the windshield wiper in the world (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-002

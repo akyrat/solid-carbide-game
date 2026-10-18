@@ -1,7 +1,7 @@
 ---
 id: T-172
 title: Level-up offers: two different random choices from all five weapons
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
