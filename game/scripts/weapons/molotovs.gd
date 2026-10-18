@@ -52,6 +52,10 @@ const FIRE_ROOT_NAME := "MolotovFires"
 const PLAYTEST_FILE := "playtest"
 const PLAYTEST_KEY := "molotov_at_start"
 
+## The final bottle art (T-175): 32 art pixels per unit, drawn at scale 0.5.
+const ART_PATH := "res://art/weapons/molotov_bottle.png"
+const ART_TEXTURE := preload("res://art/weapons/molotov_bottle.png")
+const ART_SCALE := 0.5
 ## Placeholder bottle colours: green glass, a pale rag, an orange-yellow
 ## flame on the rag, a dark outline. Opaque; never Redgull red.
 const BOTTLE_GLASS := Color(0.3, 0.72, 0.38, 1.0)
@@ -277,7 +281,13 @@ class MolotovBottle:
 		return [BOTTLE_OUTLINE, BOTTLE_GLASS, BOTTLE_GLASS_DARK, BOTTLE_RAG, BOTTLE_FLAME]
 
 	func _draw() -> void:
-		# A bottle about 0.3 by 0.6 units, its neck up, in screen pixels.
+		var tex: Texture2D = ART_TEXTURE
+		if tex != null:
+			# The final art (T-175): 32 x 32 art pixels at scale 0.5.
+			var size := tex.get_size() * ART_SCALE
+			draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+			return
+		# The placeholder: a bottle about 0.3 by 0.6 units, its neck up, in screen pixels.
 		draw_rect(Rect2(-3, -3, 6, 9), BOTTLE_OUTLINE)
 		draw_rect(Rect2(-2, -2, 4, 7), BOTTLE_GLASS)
 		draw_rect(Rect2(-2, 3, 4, 2), BOTTLE_GLASS_DARK)

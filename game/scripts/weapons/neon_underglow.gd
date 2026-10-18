@@ -43,6 +43,12 @@ const PLAYTEST_KEY := "underglow_at_start"
 const RING_COLOUR := Color(0.25, 0.95, 1.0, 1.0)
 const RING_INNER_COLOUR := Color(0.1, 0.55, 0.75, 1.0)
 const RING_OUTLINE_COLOUR := Color(0.05, 0.07, 0.16, 1.0)
+## The final art (T-175): a 224 x 112 art-pixel ring drawn at scale 0.5 for the
+## radius it was made for (2.5 units, the first tier's).
+const ART_PATH := "res://art/weapons/underglow.png"
+const ART_TEXTURE := preload("res://art/weapons/underglow.png")
+const ART_SCALE := 0.5
+const ART_RADIUS_UNITS := 2.5
 ## Points of the drawn ellipse.
 const RING_POINTS := 64
 
@@ -246,9 +252,22 @@ class UnderglowDrawing:
 	func colours() -> Array:
 		return [RING_OUTLINE_COLOUR, RING_COLOUR, RING_INNER_COLOUR]
 
+	## The art's scale: 0.5 (32 art pixels per unit, drawn at 16 screen pixels per unit)
+	## at the first tier's radius, growing with the circle at the later tiers.
+	func art_scale() -> float:
+		return ART_SCALE * radius_px / (ART_RADIUS_UNITS * PX_PER_UNIT)
+
+	func _ready() -> void:
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
 	func _draw() -> void:
 		if radius_px <= 0.0:
 			return
-		draw_polyline(ring_points(radius_px + 1.0), RING_OUTLINE_COLOUR, 4.0, false)
-		draw_polyline(ring_points(radius_px), RING_COLOUR, 2.0, false)
-		draw_polyline(ring_points(radius_px - 3.0), RING_INNER_COLOUR, 1.0, false)
+		var tex: Texture2D = ART_TEXTURE
+		if tex == null:  # the placeholder ring, as before the art
+			draw_polyline(ring_points(radius_px + 1.0), RING_OUTLINE_COLOUR, 4.0, false)
+			draw_polyline(ring_points(radius_px), RING_COLOUR, 2.0, false)
+			draw_polyline(ring_points(radius_px - 3.0), RING_INNER_COLOUR, 1.0, false)
+			return
+		var size := tex.get_size() * art_scale()
+		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
