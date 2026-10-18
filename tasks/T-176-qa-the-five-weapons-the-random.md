@@ -50,4 +50,9 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-176.
 
 ## Result notes
 
-Written by the agent when it finishes.
+New test: `game/tests/unit/weapons/test_all_weapons_run.gd` (3 tests, 349 asserts, ~14 s). No game code changed.
+
+1. **60 s run from the main menu, all five weapons: PASS.** The test starts the run through the menu's Start button with `all_weapons_override = 1` (never the file), checks all five weapons owned, then runs 60 s of run time (Engine.time_scale 6, level-ups taken as they come, car health made huge so enemies don't end the run). No script errors in the log.
+2. **Repeated level-ups to three tier-8 weapons: PASS**, with a finding. `run.json` `max_level` is 12, so a real run has only 11 level-ups, but three weapons at tier 8 need 21 upgrades. The test takes the real level-ups first and, once `is_max_level()`, opens the remaining choices the way the gift pack does (`RunState.open_choice`). Every offer had 1 or 2 different ids, never a weapon at tier 8, no error; the choice resumes the run each time. For the Project Lead: in a real run only about 11 upgrades happen, so tier 8 is reached only through gift-pack choices.
+3. **Test sets and staleness: PARTIAL / not fully checked.** Game GUT suite: TESTS PASSED (962 tests). Python `game/tools` tests: 282 OK (1 skipped). Python `tools` tests: 303 OK. Staleness check (`python tools/generate_long_gdd.py --check`) and the regeneration of the long GDD and short GDD fingerprint were REFUSED (not in the pre-approved commands), so not run. No docs changed in this task (documents_affected is empty), so nothing should be stale from this branch.
+4. **`data/playtest.json` all switches false: PASS** (read, and the new test checks every key including `kaiju_early_arrival.enabled`).
