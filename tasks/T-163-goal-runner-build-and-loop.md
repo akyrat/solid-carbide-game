@@ -1,7 +1,7 @@
 ---
 id: T-163
 title: Goal runner, part 2: building the tickets and the iteration loop
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -64,19 +64,23 @@ During a goal, a ticket's dependencies wait in `needs-playtest` until the board 
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including the new goal runner tests and every existing `tools/test_task_status.py` test, with no Claude, PixelLab or network calls (QA: pass / fail)
-- [ ] `tools/test_task_status.py` has tests that a `needs-playtest` dependency with the same `goal:` lets a ticket start, that one with a different or empty `goal:` does not, and that moving a ticket to `needs-playtest` unblocks the same goal's waiting tickets (QA: pass / fail)
-- [ ] A test runs a whole fake goal in a temporary repo: planning, two tickets built in rank order, one failing QA once and passing on its retry with `model: opus`, both merged into `playtest/<goal id>`, the goal check passing, and the goal ending `ready-to-play` with one iteration log entry per step (QA: pass / fail)
-- [ ] There is a test for each pause reason listed under layer 4, each leaving the goal `paused` with its reason in `## Pauses` and starting nothing further (QA: pass / fail)
-- [ ] There is a test that the art cap blocks the next `asset-generation` ticket and that `art_used` counts the new lines in the PixelLab log (QA: pass / fail)
-- [ ] There is a test that `resume` picks a stopped goal up from its files (a ticket left `in-progress`, a ticket `in-qa`) without repeating finished tickets (QA: pass / fail)
-- [ ] `python tools/goal_agent/run.py --help` lists `start`, `resume` and `status`, and every new file starts with a docstring naming the layer it covers (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including the new goal runner tests and every existing `tools/test_task_status.py` test, with no Claude, PixelLab or network calls (QA: pass)
+- [ ] `tools/test_task_status.py` has tests that a `needs-playtest` dependency with the same `goal:` lets a ticket start, that one with a different or empty `goal:` does not, and that moving a ticket to `needs-playtest` unblocks the same goal's waiting tickets (QA: pass)
+- [ ] A test runs a whole fake goal in a temporary repo: planning, two tickets built in rank order, one failing QA once and passing on its retry with `model: opus`, both merged into `playtest/<goal id>`, the goal check passing, and the goal ending `ready-to-play` with one iteration log entry per step (QA: pass)
+- [ ] There is a test for each pause reason listed under layer 4, each leaving the goal `paused` with its reason in `## Pauses` and starting nothing further (QA: pass)
+- [ ] There is a test that the art cap blocks the next `asset-generation` ticket and that `art_used` counts the new lines in the PixelLab log (QA: pass)
+- [ ] There is a test that `resume` picks a stopped goal up from its files (a ticket left `in-progress`, a ticket `in-qa`) without repeating finished tickets (QA: pass)
+- [ ] `python tools/goal_agent/run.py --help` lists `start`, `resume` and `status`, and every new file starts with a docstring naming the layer it covers (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Started: part 2 of the goal runner (building the tickets with the agents, the iteration loop, resume, and the status-script rule for dependencies in the same goal). It's built in C:\solid-carbide-worktrees\T-163.
+
+### 2026-10-18, In progress → In QA
+
+Built: building tickets with the agents, the iteration loop with its pause rules, resume, and the same-goal dependency rule in the status script. 34 new tests (293 tools tests pass). QA checks it now.
 
 ## Result notes
 
