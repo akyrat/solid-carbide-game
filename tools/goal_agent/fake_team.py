@@ -50,11 +50,11 @@ class FakeTeam(FakeClaude):
         path = task_file(folder, prompt)
         for rel, text in (data.get("_files") or {}).items():
             Path(folder, rel).parent.mkdir(parents=True, exist_ok=True)
-            Path(folder, rel).write_text(text, encoding="utf-8")
+            Path(folder, rel).write_bytes(text.encode("utf-8"))      # as given: no line-ending translation
         log = Path(folder, ART_LOG)
         for i in range(int(data.get("_art") or 0)):
             log.parent.mkdir(parents=True, exist_ok=True)
-            with log.open("a", encoding="utf-8") as f:
+            with log.open("a", encoding="utf-8", newline="\n") as f:
                 f.write(json.dumps({"file": f"fake_{path.name[:5]}_{i}.png", "fake": True}) + "\n")
         text = path.read_bytes().decode("utf-8")
         path.write_bytes(add_note(text, f"Fake agent: {data.get('summary', '')}").encode("utf-8"))
@@ -64,7 +64,8 @@ class FakeTeam(FakeClaude):
 
     def qa(self, folder, prompt, mark, acts):
         path = task_file(folder, prompt)
-        new = "(QA: pass)" if mark == "pass" else "(QA: fail, the fake QA says no)"
+        round_no = (re.search(r"QA round (\d+)", prompt) or [None, "1"])[1]
+        new = "(QA: pass)" if mark == "pass" else f"(QA: fail, the fake QA says no in round {round_no})"
         box = "x" if mark == "pass" else " "
         text = path.read_bytes().decode("utf-8")
         text = CRITERION_RE.sub(lambda m: f"{m.group(1)}[{box}]{m.group(2)} {new}", text)
