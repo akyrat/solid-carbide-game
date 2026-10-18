@@ -30,9 +30,9 @@ Fix: the calls that should only read (priority scoring in `prioritize.py`, gap d
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass; suite ended OK, count line not seen in tail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
 - [ ] A test checks that `RealClaude.ask` with `tools` puts `--tools Read,Glob,Grep` on the `claude -p` command line (`subprocess.run` mocked), and one that the priority scoring and gap detection calls pass exactly `Read,Glob,Grep` as `tools` (QA: pass)
-- [ ] The agent and QA calls in `build.py` and the goal check in `loop.py` pass no `tools` (their command lines are unchanged), shown by reading the code or a test (QA: pass: build.py ask passes no tools; loop.py makes no ask calls)
+- [ ] The agent and QA calls in `build.py` and the goal check in `loop.py` pass no `tools` (their command lines are unchanged), shown by reading the code or a test (QA: pass)
 
 ## Updates
 
