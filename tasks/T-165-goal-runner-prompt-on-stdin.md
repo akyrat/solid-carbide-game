@@ -1,7 +1,7 @@
 ---
 id: T-165
 title: Goal runner: send prompts on standard input, and tell the planner the goal's id
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -37,4 +37,18 @@ The goal runner's second real run (G-002, `goals/G-002-add-an-image-of-the.md`, 
 
 ## Updates
 
+### 2026-10-18, Open → In progress
+
+Quick fix started: prompts go to Claude on standard input (Windows refused the long command line), and the planner is told the goal's id. Then G-002 resumes.
+
 ## Result notes
+
+What changed:
+- `tools/goal_agent/claude_call.py`: `RealClaude.ask` no longer puts the prompt on the `claude -p` command line; it passes it as `input=prompt` to `subprocess.run`. Everything else on the command line is unchanged. Docstring updated.
+- `tools/goal_agent/prioritize.py`: `prompt(goal_text, goal_id)` and `plan(claude, goal_text, goal_id, root, model)`; the planning prompt states the goal's id and that its build branch is `playtest/<goal id>`.
+- `tools/goal_agent/run.py`: `start` passes `goal.id` (created by `goal_file.new` before planning) to `prioritize.plan`.
+
+Tests by criterion:
+- Criterion 1: `python -m unittest discover -s tools -p "test_*.py"`: 300 tests, OK (no Claude or network calls).
+- Criterion 2: `test_prioritize.Claude.test_a_long_prompt_goes_on_standard_input_not_the_command_line` (50,000-character prompt, `subprocess.run` mocked: `input` is the prompt, no command-line part holds it, command stays short). Also updated `test_real_claude_command_and_denials` and `test_build.RealCommand.test_the_headless_claude_command` to check `input` and that the prompt is absent from the command.
+- Criterion 3: `test_prioritize.Plan.test_plan_asks_once_and_ranks` (prompt names `G-007` and `playtest/G-007`) and `test_run.Start.test_start_passes_the_new_goals_id_to_the_planner` (`run.start` passes `G-001`; prompt contains `G-001` and `playtest/G-001`).

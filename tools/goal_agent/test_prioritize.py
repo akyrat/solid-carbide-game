@@ -56,7 +56,7 @@ class Plan(unittest.TestCase):
     def test_plan_asks_once_and_ranks(self):
         claude = FakeClaude({"plan": [{"goal_criteria": ["g"], "open_questions": ["q"],
                                        "sub_goals": [sg("S1", 5, ["S2"]), sg("S2", 1)]}]})
-        plan = prioritize.plan(claude, "The board's goal", "root")
+        plan = prioritize.plan(claude, "The board's goal", "G-007", "root")
         self.assertEqual([s["id"] for s in plan["sub_goals"]], ["S2", "S1"])
         self.assertEqual(plan["open_questions"], ["q"])
         step, text, options = claude.calls[0]
@@ -65,12 +65,14 @@ class Plan(unittest.TestCase):
         self.assertIn("docs/short-gdd/short-gdd.md", text)
         self.assertIn("open_questions", text)        # docs leave it open -> a question, not an invented answer
         self.assertIn("Ideas come only from the board", text)
+        self.assertIn("G-007", text)                 # the planner is told which goal it is
+        self.assertIn("playtest/G-007", text)        # and its build branch
 
     def test_refusal_pauses(self):
         claude = FakeClaude({"plan": [{"goal_criteria": ["g"], "open_questions": [], "sub_goals": [sg("S1")],
                                        "_permission_denials": [{"tool_name": "Write"}]}]})
         with self.assertRaises(Pause):
-            prioritize.plan(claude, "goal", "root")
+            prioritize.plan(claude, "goal", "G-001", "root")
 
 
 class Claude(unittest.TestCase):
@@ -94,7 +96,7 @@ class Claude(unittest.TestCase):
 
     def test_plan_passes_only_read_tools(self):
         claude = FakeClaude({"plan": [{"goal_criteria": ["g"], "open_questions": [], "sub_goals": [sg("S1")]}]})
-        prioritize.plan(claude, "goal", "root")
+        prioritize.plan(claude, "goal", "G-001", "root")
         self.assertEqual(claude.calls[0][2]["tools"], "Read,Glob,Grep")
 
     def test_real_claude_command_and_denials(self):
@@ -105,12 +107,24 @@ class Claude(unittest.TestCase):
             answer = claude_call.RealClaude().ask("plan", "hello", {"type": "object"}, model="opus",
                                                   agent="qa-integration", session_id="abc", cwd="here")
         cmd = run.call_args[0][0]
-        self.assertEqual(cmd[:6], ["claude", "-p", "hello", "--output-format", "json", "--json-schema"])
+        self.assertEqual(cmd[:5], ["claude", "-p", "--output-format", "json", "--json-schema"])
+        self.assertNotIn("hello", cmd)
+        self.assertEqual(run.call_args[1]["input"], "hello")
         for flag in ("--model", "--agent", "--session-id"):
             self.assertIn(flag, cmd)
         self.assertEqual(run.call_args[1]["cwd"], "here")
         self.assertEqual(answer.data, {"a": 1})
         self.assertEqual(answer.denials, [{"tool_name": "Bash"}])
+
+    def test_a_long_prompt_goes_on_standard_input_not_the_command_line(self):
+        prompt = "x" * 50000
+        done = mock.Mock(stdout=json.dumps({"structured_output": {}}), stderr="", returncode=0)
+        with mock.patch.object(claude_call.subprocess, "run", return_value=done) as run:
+            claude_call.RealClaude().ask("gaps", prompt, {"type": "object"})
+        cmd, kw = run.call_args[0][0], run.call_args[1]
+        self.assertEqual(kw["input"], prompt)
+        self.assertTrue(all(prompt not in part and len(part) < 40000 for part in cmd))
+        self.assertLess(sum(len(part) for part in cmd), 8000)
 
     def test_parse_falls_back_to_result_text(self):
         self.assertEqual(claude_call.parse({"result": '{"b": 2}'}, "s"), {"b": 2})

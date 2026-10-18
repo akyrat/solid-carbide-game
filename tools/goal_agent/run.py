@@ -65,7 +65,7 @@ def start(goal_text, root, claude, art_cap=0, max_iterations=20, model=MODEL, co
     goal.log("started: planning.")
     files = [goal.path]
     try:
-        plan = prioritize.plan(claude, goal_text, root, model)
+        plan = prioritize.plan(claude, goal_text, goal.id, root, model)
         record_plan(goal, plan)
         goal.log(f"priority scoring: {len(plan['sub_goals'])} sub-goals ranked, "
                  f"{len(plan['goal_criteria'])} goal criteria, {len(plan['open_questions'])} open questions.")

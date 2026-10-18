@@ -82,6 +82,14 @@ class Start(unittest.TestCase):
         self.assertEqual(goal.get("status"), "planned")
         self.assertEqual(temp_repo.git(self.root, "rev-parse", "HEAD").strip(), head, "nothing committed")
 
+    def test_start_passes_the_new_goals_id_to_the_planner(self):
+        claude = FakeClaude(FIXTURES / "sample-goal.json")
+        goal = run.start("Sample goal", self.root, claude, commit=False)
+        step, text, _ = claude.calls[0]
+        self.assertEqual((step, goal.id), ("plan", "G-001"))
+        self.assertIn("G-001", text)
+        self.assertIn("playtest/G-001", text)
+
     def test_no_commit_off_master(self):
         temp_repo.git(self.root, "checkout", "-q", "-b", "task/T-999-elsewhere")
         head = temp_repo.git(self.root, "rev-parse", "HEAD").strip()

@@ -1,7 +1,8 @@
 """Claude (role: the only place that calls Claude). Every layer asks through one of these two objects.
 
-RealClaude runs `claude -p <prompt> --output-format json --json-schema <schema>` and returns the
-structured answer with the call's `permission_denials`, so the caller sees every refusal.
+RealClaude runs `claude -p --output-format json --json-schema <schema>` with the prompt on standard
+input (a long prompt does not fit on a Windows command line) and returns the structured answer with
+the call's `permission_denials`, so the caller sees every refusal.
 FakeClaude has the same interface but answers from a JSON fixture: {"<step>": [answer, answer, ...]},
 used in order, so tests and `run.py --fake` never call Claude. An answer may carry
 "_permission_denials": [...] to play a refusal.
@@ -34,14 +35,15 @@ class Answer:
 class RealClaude:
     def ask(self, step, prompt, schema, model=None, agent=None, session_id=None, cwd=None, allowed_tools=None,
             permission_mode=None, add_dir=None, tools=None, timeout=TIMEOUT):
-        cmd = ["claude", "-p", prompt, "--output-format", "json", "--json-schema", json.dumps(schema)]
+        cmd = ["claude", "-p", "--output-format", "json", "--json-schema", json.dumps(schema)]
         for flag, value in (("--model", model), ("--agent", agent), ("--session-id", session_id),
                             ("--allowedTools", allowed_tools), ("--permission-mode", permission_mode),
                             ("--add-dir", add_dir), ("--tools", tools)):
             if value:
                 cmd += [flag, value]
         try:
-            done = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
+            done = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8",
+                                  input=prompt, timeout=timeout)
         except (OSError, subprocess.TimeoutExpired) as e:
             raise Pause(f"Claude could not be run for step {step!r}: {e}")
         try:

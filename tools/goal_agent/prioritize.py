@@ -41,9 +41,12 @@ SCHEMA = {
 }
 
 
-def prompt(goal_text):
+def prompt(goal_text, goal_id):
     docs = "\n".join(f"- {d}" for d in GAME_AREA_DOCS)
     return f"""You are planning one goal for Solid Carbide, a Godot game built by a team of AI agents.
+
+This goal's id is {goal_id}. Its build branch is playtest/{goal_id}. Use this id and branch wherever the
+criteria name the goal or its branch.
 
 The board's goal, in its own words:
 {goal_text}
@@ -124,9 +127,9 @@ def rank(sub_goals):
             for r, s in enumerate(ranked, 1)]
 
 
-def plan(claude, goal_text, root, model=None):
+def plan(claude, goal_text, goal_id, root, model=None):
     """{goal_criteria, open_questions, sub_goals (ranked)} for a goal. Raises Pause."""
-    answer = claude.ask("plan", prompt(goal_text), SCHEMA, model=model, cwd=str(root),
+    answer = claude.ask("plan", prompt(goal_text, goal_id), SCHEMA, model=model, cwd=str(root),
                         allowed_tools="Read,Glob,Grep", tools="Read,Glob,Grep")
     if answer.denials:
         raise Pause(f"Priority scoring was refused: {answer.denials}", "refusal")
