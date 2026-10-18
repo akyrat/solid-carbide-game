@@ -1,7 +1,7 @@
 ---
 id: T-173
 title: Level-up screen: cards for the new weapons, and a weapon image on every card (placeholder images)
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-002
