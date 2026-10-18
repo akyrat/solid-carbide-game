@@ -40,12 +40,12 @@ The board's go-ahead for elevation (2026-10-19): docs/level-design.md, Decisions
 
 ## Acceptance criteria
 
-- [ ] `game/data/level/elevation_test.json` exists and holds one platform (outline and height) and one ramp (footprint, the side it climbs, bottom height 0 and top height equal to the platform's), as lists so more can be added later. (QA: pass / fail)
-- [ ] `game/scripts/level/ground_height.gd` loads that file and `height_at()` returns 0 off the platform, the platform's height on top, and a straight rise along the ramp; GUT tests check a point off the platform, a point on top, the ramp's foot, the ramp's middle (half the platform's height) and the ramp's top. (QA: pass / fail)
-- [ ] GUT tests show the query tells a ramp from a drop-off: moving in small steps across the ramp's climbing direction changes the height gradually (no step bigger than the step's share of the slope), while crossing any other platform edge is reported as a drop-off step of the platform's height. (QA: pass / fail)
-- [ ] `game/README.md` has an 'Elevation test scene' section describing the data file's format and the query's functions. (QA: pass / fail)
-- [ ] `docs/level-design.md`, Content, describes the test platform, the ramp, the drop-off edges and the height data format, with each number marked as a proposal. (QA: pass / fail)
-- [ ] The full GUT suite passes headless (`game/tools/run_tests.sh` or `.ps1`), with no existing test changed. (QA: pass / fail)
+- [ ] `game/data/level/elevation_test.json` exists and holds one platform (outline and height) and one ramp (footprint, the side it climbs, bottom height 0 and top height equal to the platform's), as lists so more can be added later. (QA: pass)
+- [ ] `game/scripts/level/ground_height.gd` loads that file and `height_at()` returns 0 off the platform, the platform's height on top, and a straight rise along the ramp; GUT tests check a point off the platform, a point on top, the ramp's foot, the ramp's middle (half the platform's height) and the ramp's top. (QA: pass)
+- [ ] GUT tests show the query tells a ramp from a drop-off: moving in small steps across the ramp's climbing direction changes the height gradually (no step bigger than the step's share of the slope), while crossing any other platform edge is reported as a drop-off step of the platform's height. (QA: pass)
+- [ ] `game/README.md` has an 'Elevation test scene' section describing the data file's format and the query's functions. (QA: pass)
+- [ ] `docs/level-design.md`, Content, describes the test platform, the ramp, the drop-off edges and the height data format, with each number marked as a proposal. (QA: pass)
+- [ ] The full GUT suite passes headless (`game/tools/run_tests.sh` or `.ps1`), with no existing test changed. (QA: pass)
 
 ## Updates
 
