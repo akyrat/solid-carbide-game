@@ -1,7 +1,7 @@
 ---
 id: T-172
 title: Level-up offers: two different random choices from all five weapons
-status: blocked
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -46,6 +46,10 @@ The board's review: Level up several times in a run from the task folder and see
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-172.
 
 ## Result notes
 
