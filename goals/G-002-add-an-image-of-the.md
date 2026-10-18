@@ -1,7 +1,7 @@
 ---
 id: G-002
 title: Add an image of the weapon on each level-up card, and add three new...
-status: building
+status: paused
 art_cap: 40
 art_used: 9
 iteration: 11
@@ -194,6 +194,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-18, iteration 10: paused (see Pauses).
 - 2026-10-18, iteration 10: resumed: its last pause (refusal: a headless session reported a refusal that blocked its work) can't be checked by the runner; --force.
 - 2026-10-18, iteration 11: T-176 (S11, qa-integration, opus): passed (done, QA rounds 2), merged into playtest/G-002; art 0; agent: I re-checked T-176 for round 2, and all four criteria now pass. All three test sets pass: the game's tests (962 of 962, including the new 60-second all-weapons run and the repeated level-up test, with no script errors), the game/tools tests (282 OK, 1 skipped) and the tools tests (303 OK). The Project Lead's recorded staleness result says everything is in sync, its commit 3d8ae24 changed docs/long-gdd.md, and playtest.json has every switch set to false. I wrote the result notes in the task file and committed them as 8af0812; no game code changed. Rescan: S11 covered.
+- 2026-10-18, iteration 11: paused (see Pauses).
 
 ## Pauses
 
@@ -203,4 +204,5 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-18 [qa]: QA left 3 criteria of T-166 unmarked.
 - 2026-10-18 [stop]: Claude reported an error for step 'gaps': You've hit your session limit · resets 9:10pm (Europe/London)
 - 2026-10-18 [refusal]: The qa-integration agent on T-176 reported a refusal; the runner never works around one: [{'tool_name': 'Bash', 'tool_use_id': 'toolu_01UWhgArAmnEXUMGLUDytU9s', 'tool_input': {'command': 'python tools/generate_long_gdd.py --check', 'description': 'Run the docs staleness check'}}, "`python tools/generate_long_gdd.py --check` (the staleness check criterion 3 needs) was refused because it isn't pre-approved. I didn't try the regeneration commands (`python tools/generate_long_gdd.py`, `python tools/update_short_gdd_fingerprint.py`) because they aren't pre-approved either."]
+- 2026-10-18 [refusal]: The goal check reported a refusal; the runner never works around one: [{'tool_name': 'Bash', 'tool_use_id': 'toolu_01PrTbi4ZgEMzaWQTwXc1yja', 'tool_input': {'command': '(bash game/tools/run_tests.sh > /tmp/g2_gut.txt 2>&1; echo EXIT $? >> /tmp/g2_gut.txt) & \ncd /c/solid-carbide-worktrees/G-002 && python -m unittest discover -s game/tools -p "test_*.py" 2>&1 | tail -4; python -m unittest discover -s tools -p "test_*.py" 2>&1 | tail -5; python tools/generate_long_gdd.py --check 2>&1 | tail -8; wait; tail -25 /tmp/g2_gut.txt', 'timeout': 400000}}, {'tool_name': 'Bash', 'tool_use_id': 'toolu_01DPUtrkP8KruW2b3Ym2Sh7Z', 'tool_input': {'command': 'bash game/tools/run_tests.sh > /tmp/g2_gut.txt 2>&1; echo EXIT $?; grep -E "Passing|Failing|Risky|Tests |Asserts|TESTS|FAILED|ERROR" /tmp/g2_gut.txt | head -20', 'timeout': 400000}}, {'tool_name': 'Bash', 'tool_use_id': 'toolu_01TK9LKEtkv8JRdtdo53RQbQ', 'tool_input': {'command': 'python -m unittest discover -s game/tools -p "test_*.py" 2>&1 | tail -3; python -m unittest discover -s tools -p "test_*.py" 2>&1 | tail -4; python tools/generate_long_gdd.py --check 2>&1 | tail -8', 'timeout': 300000}}, {'tool_name': 'Bash', 'tool_use_id': 'toolu_01CTXacp4CejMVJCEriuwKUA', 'tool_input': {'command': 'python tools/generate_long_gdd.py --check'}}, {'tool_name': 'Bash', 'tool_use_id': 'toolu_018Uz5CdjSWKz6wzmWaNfCju', 'tool_input': {'command': 'grep -h "art_used" /c/solid-carbide-game/goals/G-002*.md; wc -l game/art/pixellab-generation-log.jsonl; git diff master...HEAD --stat -- docs game/README.md | cat; grep -n "weapon" game/README.md | head -5; grep -rn "all_weapons\\|owns_all\\|every weapon" game/scripts --include=*.gd -il | head; sed -n 1,40p game/tests/unit/weapons/test_all_weapons_run.gd'}}, "`python tools/generate_long_gdd.py --check` (the staleness check): the permission system said 'This command requires approval', so I did not run it and did not work around it. I wanted it to confirm that nothing is stale after the long GDD and the short GDD fingerprint were regenerated.", "Reading C:/solid-carbide-game/goals/G-002*.md was refused as a multi-operation command that needs approval. I wanted to confirm art_used in the main checkout's copy of the goal file. I did not try again."]
 
