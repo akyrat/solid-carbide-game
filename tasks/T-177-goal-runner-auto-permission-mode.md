@@ -1,7 +1,7 @@
 ---
 id: T-177
 title: Goal runner: tell headless agents which commands are pre-approved
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -30,15 +30,19 @@ Fix: the prompt `build.py` gives each headless agent and QA session says which c
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows the agent and QA prompts list the `permissions.allow` entries read from a settings file and ask for plain, separate Bash commands; a missing or empty list leaves the prompt as it was (QA: pass / fail)
-- [ ] The headless sessions still run with `--permission-mode acceptEdits` (a test or the code) (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows the agent and QA prompts list the `permissions.allow` entries read from a settings file and ask for plain, separate Bash commands; a missing or empty list leaves the prompt as it was (QA: pass)
+- [ ] The headless sessions still run with `--permission-mode acceptEdits` (a test or the code) (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Started: the runner will tell its headless agents which commands the board pre-approved in the settings. Then G-002 resumes.
+
+### 2026-10-18, In progress → In QA
+
+Built: the runner lists the pre-approved commands from the settings in every agent and QA prompt, and asks for plain separate commands. 303 tools tests pass. QA checks it now.
 
 ## Result notes
 
