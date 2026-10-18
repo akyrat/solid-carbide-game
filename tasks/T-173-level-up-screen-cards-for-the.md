@@ -1,7 +1,7 @@
 ---
 id: T-173
 title: Level-up screen: cards for the new weapons, and a weapon image on every card (placeholder images)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, game/scripts/ui/level_up_screen.gd, game/scripts/ui/level_up_texts.gd, game/scripts/weapons/level_up_offers.gd, game/tests/unit/test_level_up_screen.gd, game/tests/fixtures/level_up_screen_demo.gd, game/README.md]
 files_expected_to_change: [game/scripts/ui/level_up_screen.gd, game/scripts/ui/level_up_texts.gd, game/tests/unit/test_level_up_screen.gd, game/tests/fixtures/level_up_screen_demo.gd, game/tests/fixtures/level_up_screen_demo.tscn, docs/hud-and-menus.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-173.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 UI Agent, 2026-10-18.
@@ -80,3 +84,4 @@ The fixture got an `offer_ids` export so the two new scenes reuse it. It needs a
 **Documents affected:** `docs/hud-and-menus.md` (Content, "Level-up screen": the image slot, the taller card, the placeholders) and `game/README.md` ("Level-up screen": the image slot, `weapon_image`/`placeholder_image`, the file names for T-174, the texts check, the tests and fixtures). Both updated.
 
 PixelLab: none used (0 generations). Refusals: none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
