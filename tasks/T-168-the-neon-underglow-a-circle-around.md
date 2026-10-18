@@ -1,7 +1,7 @@
 ---
 id: T-168
 title: The neon underglow: a circle around the car that damages enemies (placeholder look)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/visual-style.md, docs/extended-narrative.md, game/data/weapons.json, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/flamethrower/exhaust_flamethrower.gd, game/tests/unit/weapons/test_exhaust_flamethrower.gd, game/README.md]
 files_expected_to_change: [game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/weapons.gd, game/tests/unit/weapons/test_neon_underglow.gd, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-168.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -70,3 +74,4 @@ Written by the agent when it finishes.
 - **Files changed:** `game/scripts/weapons/neon_underglow.gd` (new), `game/scripts/weapons/weapons.gd`, `game/data/playtest.json` (new switch `underglow_at_start`, false), `game/tests/unit/weapons/test_neon_underglow.gd` (new), `game/tests/fixtures/weapons/underglow_demo.gd` and `.tscn` (new), `docs/weapons.md` (Content, "The neon underglow (built in task T-168)"), `game/README.md` (Weapons, "The neon underglow").
 - **Documents affected:** `docs/weapons.md`, `game/README.md`.
 - PixelLab: 0 generations. Refusals: none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
