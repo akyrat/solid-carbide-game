@@ -1,7 +1,7 @@
 ---
 id: T-169
 title: The molotovs: thrown from the car, they leave fire areas that burn enemies (placeholder look)
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -89,3 +89,4 @@ Weapon Behavior Agent, 2026-10-18.
 
 **PixelLab:** none used. **Refusals:** none.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
