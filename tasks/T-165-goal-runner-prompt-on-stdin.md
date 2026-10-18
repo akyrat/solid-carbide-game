@@ -1,7 +1,7 @@
 ---
 id: T-165
 title: Goal runner: send prompts on standard input, and tell the planner the goal's id
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -31,15 +31,19 @@ The goal runner's second real run (G-002, `goals/G-002-add-an-image-of-the.md`, 
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test (`subprocess.run` mocked) shows `RealClaude.ask` passes the prompt as standard input and not on the command line, with a prompt longer than 40,000 characters (QA: pass / fail)
-- [ ] A test shows the planning prompt names the goal's id and its build branch `playtest/<goal id>`, and that `run.py start` passes the new goal's id (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test (`subprocess.run` mocked) shows `RealClaude.ask` passes the prompt as standard input and not on the command line, with a prompt longer than 40,000 characters (QA: pass)
+- [ ] A test shows the planning prompt names the goal's id and its build branch `playtest/<goal id>`, and that `run.py start` passes the new goal's id (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Quick fix started: prompts go to Claude on standard input (Windows refused the long command line), and the planner is told the goal's id. Then G-002 resumes.
+
+### 2026-10-18, In progress → In QA
+
+Fixed: prompts go to Claude on standard input, and the planner is told the goal's id. 300 tools tests pass. QA checks it now.
 
 ## Result notes
 
