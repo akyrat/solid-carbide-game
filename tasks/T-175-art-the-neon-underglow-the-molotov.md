@@ -1,7 +1,7 @@
 ---
 id: T-175
 title: Art: the neon underglow, the molotov and its fire area, and the windshield wiper in the world (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, docs/working-with-the-board.md, game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/windshield_wiper.gd, tools/pixellab_client.py, tools/check_sprite_rules.py]
 files_expected_to_change: [game/art/weapons/, art-archive/, game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/windshield_wiper.gd, game/tests/unit/test_pixellab_assets.gd, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-175.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 ### Planned calls and cost (written before any call)
@@ -79,3 +83,4 @@ The fire flickers by script (a mirrored second frame, free); no PixelLab animati
 - Quality notes (not judged by me): the wiper art generated with its pivot in the middle, so only its right half is used, stretched to the 2.5-unit length; it reads thin on screen. The underglow is a filled purple disc with a pink rim rather than a transparent-centre ring, and more purple than cyan. The fire is static apart from the mirror flicker.
 - Documents affected, updated: `docs/visual-style.md`, `game/README.md`. Hand-edit: none.
 - Refusals: one `python -c` check was refused by a hook (task-status false positive), skipped; a `sed` was not pre-approved, done with the editor instead.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
