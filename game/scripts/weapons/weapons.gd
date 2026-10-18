@@ -35,6 +35,13 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 const ENEMY_GROUP := "enemies"
 ## Used when a target has neither hit_radius_units() nor a collision shape.
 const DEFAULT_TARGET_RADIUS_UNITS := 0.5
+## The playtest switch file (res://data/playtest.json) and the key that gives
+## every weapon at the start of a run (T-172).
+const PLAYTEST_FILE := "playtest"
+const ALL_WEAPONS_KEY := "all_weapons_at_start"
+
+## Tests set this to 0 (off) or 1 (on) to override "all_weapons_at_start"; -1 reads the file.
+static var all_weapons_override := -1
 
 ## False stops the weapons and projectiles (tests).
 var enabled := true
@@ -129,6 +136,23 @@ func reset_for_run() -> void:
 	# Playtest switch (T-170, data/playtest.json "wiper_at_start"): the same for the wiper.
 	if WindshieldWiperScript.playtest_switch_on():
 		upgrade("wiper")
+	# Playtest switch (T-172, data/playtest.json "all_weapons_at_start"): every
+	# weapon the car does not have yet, at tier 1.
+	if all_weapons_switch_on():
+		for w in weapons.values():
+			if not w.is_owned():
+				w.upgrade()
+
+
+## The playtest switch: data/playtest.json "all_weapons_at_start" (or all_weapons_override).
+static func all_weapons_switch_on() -> bool:
+	if all_weapons_override >= 0:
+		return all_weapons_override == 1
+	var r := GameData.load_file(PLAYTEST_FILE)
+	if not r.ok:
+		return false
+	var v := GameData.get_value(r.data, ALL_WEAPONS_KEY)
+	return v.ok and bool(v.data)
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.

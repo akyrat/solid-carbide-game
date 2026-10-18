@@ -103,6 +103,10 @@ func test_upgrade_card_shows_the_next_tier_text() -> void:
 
 func test_flamethrower_upgrade_card_shows_its_next_tier() -> void:
 	run.weapons.flamethrower.set_tier(4)
+	# T-172: the choices are drawn from all five weapons; with the three new ones
+	# at their last tier the two left are the gun's and the flamethrower's upgrades.
+	for id in ["underglow", "molotov", "wiper"]:
+		run.weapons.get_weapon(id).set_tier(run.weapons.get_weapon(id).max_tier())
 	_level_up()
 	var c := _card("upgrade_flamethrower")
 	assert_eq(c.title.text, Texts.TEXTS["upgrade_flamethrower.tier5.title"])
@@ -485,8 +489,12 @@ func test_keyboard_and_mouse_work_after_the_animation() -> void:
 	assert_false(screen.visible)
 	assert_eq(run.weapons.flamethrower.tier, 1)
 	_level_up()
-	_card("upgrade_gun").button.pressed.emit()
-	assert_eq(run.weapons.gun.tier, 2, "the button works")
+	# T-172: the second level-up's cards are drawn at random; press the first.
+	var id: String = screen.cards[0].id
+	var weapon: Node = run.weapons.get_weapon(offers.weapon_of(id))
+	var tier_before: int = weapon.tier
+	screen.cards[0].button.pressed.emit()
+	assert_eq(weapon.tier, tier_before + 1, "the button works")
 
 
 func test_a_second_screen_animates_again() -> void:
