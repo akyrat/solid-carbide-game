@@ -1,7 +1,7 @@
 ---
 id: T-174
 title: Art: one level-up card image per weapon, all five (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -74,3 +74,4 @@ Five calls to `/create-image-pixflux`, one per weapon, 64 x 64 px (the card's im
 - Documents affected, updated: `docs/visual-style.md`, `game/README.md`.
 - Refusals: none.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
