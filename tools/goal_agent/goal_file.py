@@ -18,6 +18,9 @@ HEADER_RE = re.compile(r"\A---\n(.*?\n)---\n", re.S)
 HEADING_RE = re.compile(r"^## (.*)$", re.M)
 ID_RE = re.compile(r"^(G-(\d{3,}))-")
 SUBGOAL_COLUMNS = ["rank", "id", "title", "score", "why", "verdict", "tickets"]
+PAUSE_RE = re.compile(r"^- \d{4}-\d{2}-\d{2}(?: \[([a-z-]+)\])?:", re.M)
+DETAIL_RE = re.compile(r"^### ([^:\n]+): (.*)\n\nNeeds: (.*?)\.\n\n((?:- .*\n?)*)", re.M)
+VALUE_RE = re.compile(r"value (\d+)")
 
 
 class GoalFile:
@@ -100,10 +103,23 @@ class GoalFile:
     def log(self, text, day=None):
         self.append("Iteration log", f"- {day or date.today().isoformat()}, iteration {self.get('iteration')}: {text}")
 
-    def pause(self, reason, day=None):
+    def pause(self, reason, day=None, kind=None):
+        """Status `paused`, the reason in `## Pauses` (with its kind in brackets, when given), and a log line."""
         self.set("status", "paused")
-        self.append("Pauses", f"- {day or date.today().isoformat()}: {reason}")
+        tag = f" [{kind}]" if kind else ""
+        self.append("Pauses", f"- {day or date.today().isoformat()}{tag}: {reason}")
         self.log("paused (see Pauses).", day)
+
+    def last_pause_kind(self):
+        """The kind of the newest pause in `## Pauses` ("stop" when it has none), or None without pauses."""
+        kinds = [m.group(1) or "stop" for m in PAUSE_RE.finditer(self.section("Pauses") or "")]
+        return kinds[-1] if kinds else None
+
+    def number(self, key, default=0):
+        try:
+            return int(self.get(key) or default)
+        except ValueError:
+            return default
 
 
 def slug(text, words=5):
@@ -116,7 +132,7 @@ def next_id(goals_dir):
     return f"G-{max(numbers, default=0) + 1:03d}"
 
 
-def new(goals_dir, goal_text, art_cap=0, max_iterations=10, day=None):
+def new(goals_dir, goal_text, art_cap=0, max_iterations=20, day=None):
     """A new goal file (not yet saved), status `planning`, with every header field and section."""
     gid = next_id(goals_dir)
     first_line = goal_text.strip().splitlines()[0] if goal_text.strip() else "goal"
@@ -157,3 +173,34 @@ def read_table(text):
         return []
     columns = [c.strip() for c in lines[0].strip("|").split("|")]
     return [dict(zip(columns, (c.strip() for c in l.strip("|").split("|")))) for l in lines[2:]]
+
+
+def write_sub_goals(goal, sub_goals, verdicts):
+    """The `## Sub-goals` section: the ranked table, then each sub-goal's criteria and needs.
+    `verdicts`: {sub-goal id: {"verdict", "ticket_ids"}}."""
+    rows, details = [], []
+    for s in sub_goals:
+        v = verdicts.get(s["id"], {})
+        rows.append({**s, "verdict": v.get("verdict", ""), "tickets": ", ".join(v.get("ticket_ids", []))})
+        needs = ", ".join(s["needs"]) or "nothing"
+        details.append(f"### {s['id']}: {s['title']}\n\nNeeds: {needs}.\n\n" + "\n".join(f"- {c}" for c in s["criteria"]))
+    goal.set_section("Sub-goals", table(rows) + "\n\n" + "\n\n".join(details))
+
+
+def read_sub_goals(goal):
+    """The sub-goals back from `## Sub-goals`, in rank order, as write_sub_goals() wrote them, each with its
+    `verdict` and `ticket_ids`: so a run can be rebuilt from the goal file alone."""
+    text = (goal.section("Sub-goals") or "") + "\n"
+    details = {m.group(1): m for m in DETAIL_RE.finditer(text)}
+    out = []
+    for r in read_table(text):
+        d = details.get(r["id"])
+        needs = [n.strip() for n in d.group(3).split(",")] if d and d.group(3) != "nothing" else []
+        value = VALUE_RE.search(r.get("score", ""))
+        out.append({"rank": int(r["rank"]) if r["rank"].isdigit() else len(out) + 1, "id": r["id"],
+                    "title": r["title"], "score": r.get("score", ""), "why": r.get("why", ""),
+                    "value": int(value.group(1)) if value else 1, "needs": needs,
+                    "criteria": [l[2:].strip() for l in d.group(4).splitlines() if l.startswith("- ")] if d else [],
+                    "verdict": r.get("verdict", ""),
+                    "ticket_ids": [t.strip() for t in r.get("tickets", "").split(",") if t.strip()]})
+    return sorted(out, key=lambda s: s["rank"])

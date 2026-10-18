@@ -1,8 +1,10 @@
-"""The goal runner (role: package). The board gives it a goal; it plans, finds the gaps and writes the tickets.
+"""The goal runner (role: package). The board gives it a goal; it plans, finds the gaps, writes and builds the tickets.
 
 Layer 1, priority scoring: prioritize.py. Layer 2, gap detection: gaps.py and tickets.py.
-Layers 3 and 4 (building and the loop) come in T-163. The goal file: goal_file.py. Claude: claude_call.py.
-The command line: run.py. The plan, layer by layer: course-material/goal-oriented-code-agent/README.md.
+Layer 3, code writing (building the tickets with the agents): build.py. Layer 4, the iteration loop: loop.py.
+The goal file: goal_file.py. Claude: claude_call.py. The command line: run.py.
+Test support: temp_repo.py and fake_team.py. QA's helper: try_fixture.py.
+The plan, layer by layer: course-material/goal-oriented-code-agent/README.md.
 """
 
 import sys

@@ -31,10 +31,13 @@ my goal ──► 1. Priority scoring ──► 2. Gap detection ──► 3. Co
 Everything a run does is written down in one **goal file** in [`goals/`](../../goals/): the goal in my words, its criteria, the ranked sub-goals, the tickets, and a log entry for every iteration. [`goal_file.py`](../../tools/goal_agent/goal_file.py) reads and writes it, [`claude_call.py`](../../tools/goal_agent/claude_call.py) is the only place that calls Claude, and [`run.py`](../../tools/goal_agent/run.py) is the command line:
 
 ```
-python tools/goal_agent/run.py start "<goal>" --art-cap 20
+python tools/goal_agent/run.py start "<goal>" --art-cap 20     # plan, then build until the goal is reached
+python tools/goal_agent/run.py start "<goal>" --plan-only      # only plan: read the sub-goals and tickets first
 python tools/goal_agent/run.py status G-001
-python tools/goal_agent/run.py resume G-001
+python tools/goal_agent/run.py resume G-001                    # carry on after a pause or a cut-off
 ```
+
+To see a whole run without calling Claude, `python tools/goal_agent/try_fixture.py` runs a sample goal in a temporary copy of the repo with a fake team of agents: it plans two sub-goals, builds both tickets (one fails QA once and passes on its retry), checks the goal and ends `ready-to-play`.
 
 ## Safety stops
 
@@ -44,6 +47,7 @@ An agent that runs on its own needs to know when to stop. The goal runner pauses
 - runs out of the art budget I gave it (PixelLab generations cost credits);
 - has a ticket that failed QA twice and that other work depends on;
 - sees the same gap come back twice with no progress;
+- hits a merge conflict, or is waiting on a ticket another session owns;
 - is refused anything by the permission system or the project's hooks. It never works around a refusal.
 
 ## My rules for a run

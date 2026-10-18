@@ -35,7 +35,7 @@ class Start(unittest.TestCase):
         return done.returncode, done.stdout + done.stderr
 
     def test_start_with_the_sample_fixture(self):
-        code, out = self.cli("start", "Sample goal", "--fake", "tools/goal_agent/fixtures/sample-goal.json")
+        code, out = self.cli("start", "Sample goal", "--plan-only", "--fake", "tools/goal_agent/fixtures/sample-goal.json")
         self.assertEqual(code, 0, out)
         goal = goal_file.find(self.root / "goals", "G-001")
         self.assertEqual(goal.get("status"), "planned")
@@ -101,6 +101,51 @@ class Start(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("start", out)
         self.assertIn("status", out)
+        self.assertIn("resume", out)
+        self.assertIn("{start,resume,status}", out)
+
+
+class WholeRun(unittest.TestCase):
+    """The command line through all four layers (T-163): start carries on into the loop, then status and resume."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = temp_repo.make(Path(self.tmp.name) / "repo")
+        self.worktrees = str(Path(self.tmp.name) / "worktrees")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def cli(self, *args):
+        done = subprocess.run([sys.executable, str(self.root / "tools" / "goal_agent" / "run.py"), *args,
+                               "--worktrees", self.worktrees],
+                              cwd=str(self.root), capture_output=True, text=True, encoding="utf-8")
+        return done.returncode, done.stdout + done.stderr
+
+    def test_start_builds_the_goal_and_status_shows_it(self):
+        code, out = self.cli("start", "Sample goal", "--fake", "tools/goal_agent/fixtures/whole-goal.json")
+        self.assertEqual(code, 0, out)
+        self.assertIn("G-001 is ready to play", out)
+        self.assertIn("G-001: ready-to-play", out)
+        code, out = self.cli("status", "G-001")
+        self.assertEqual(code, 0, out)
+        self.assertIn("G-001: ready-to-play, \"Sample goal\" (iteration 2 of 20, art 0 of 0)", out)
+        self.assertIn("Build: playtest/G-001 in", out)
+        self.assertIn("T-002 [needs-playtest]", out)
+        code, out = self.cli("resume", "G-001")
+        self.assertIn("nothing to resume", out)
+
+    def test_a_paused_goal_shows_its_pause_and_stays_paused_on_resume(self):
+        code, out = self.cli("start", "Sample goal", "--max-iterations", "1", "--fake",
+                             "tools/goal_agent/fixtures/whole-goal.json")
+        self.assertEqual(code, 1, out)
+        self.assertIn("G-001 paused (the goal reached its iteration cap)", out)
+        code, out = self.cli("status", "G-001")
+        self.assertIn("iteration 1 of 1", out)
+        self.assertIn("Pauses (last: max-iterations", out)
+        code, out = self.cli("resume", "G-001", "--fake", "tools/goal_agent/fixtures/whole-goal.json")
+        self.assertEqual(code, 1, out)
+        self.assertIn("stays paused", out)
 
 
 if __name__ == "__main__":

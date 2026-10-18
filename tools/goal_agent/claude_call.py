@@ -17,7 +17,12 @@ TIMEOUT = 1800   # seconds; a planning call reads several documents
 
 
 class Pause(Exception):
-    """Stop the run and pause the goal; the message is the reason (goal file, `## Pauses`)."""
+    """Stop the run and pause the goal; the message is the reason (goal file, `## Pauses`).
+    `kind` names the stop rule (loop.KINDS), so `run.py resume` can tell whether the reason is cleared."""
+
+    def __init__(self, message, kind="stop"):
+        super().__init__(message)
+        self.kind = kind
 
 
 class Answer:
@@ -27,14 +32,16 @@ class Answer:
 
 
 class RealClaude:
-    def ask(self, step, prompt, schema, model=None, agent=None, session_id=None, cwd=None, allowed_tools=None):
+    def ask(self, step, prompt, schema, model=None, agent=None, session_id=None, cwd=None, allowed_tools=None,
+            permission_mode=None, add_dir=None, timeout=TIMEOUT):
         cmd = ["claude", "-p", prompt, "--output-format", "json", "--json-schema", json.dumps(schema)]
         for flag, value in (("--model", model), ("--agent", agent), ("--session-id", session_id),
-                            ("--allowedTools", allowed_tools)):
+                            ("--allowedTools", allowed_tools), ("--permission-mode", permission_mode),
+                            ("--add-dir", add_dir)):
             if value:
                 cmd += [flag, value]
         try:
-            done = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=TIMEOUT)
+            done = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, encoding="utf-8", timeout=timeout)
         except (OSError, subprocess.TimeoutExpired) as e:
             raise Pause(f"Claude could not be run for step {step!r}: {e}")
         try:

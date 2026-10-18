@@ -156,7 +156,8 @@ def claim(root, tid, name):
     done = subprocess.run([sys.executable, str(Path(root) / "tools" / "task_status.py"), tid, "--lead", name],
                           cwd=str(root), capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0:
-        raise Pause(f"The status script refused to claim {tid} for {name}: {(done.stderr or done.stdout).strip()}")
+        raise Pause(f"The status script refused to claim {tid} for {name}: {(done.stderr or done.stdout).strip()}",
+                    "command")
 
 
 def write(drafts, existing, root, goal_id, claim=claim):
@@ -180,7 +181,7 @@ def write(drafts, existing, root, goal_id, claim=claim):
             claim(root, tid, f"Goal-{goal_id}")
     except Pause as p:
         names = ", ".join(path.name for _, path in written.values())
-        raise Pause(f"{p} The ticket files are written but not committed: {names}.")
+        raise Pause(f"{p} The ticket files are written but not committed: {names}.", p.kind)
     return written
 
 

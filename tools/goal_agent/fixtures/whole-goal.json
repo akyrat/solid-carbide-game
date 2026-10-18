@@ -1,0 +1,68 @@
+{
+  "_about": "FakeTeam answers for a whole fake goal: `run.py start \"Sample goal\" --fake tools/goal_agent/fixtures/whole-goal.json`. Two tickets built in rank order; the second fails QA once and passes on its retry (on opus); the goal check passes. Sample data for testing the runner, not game content. `title:<title>` names a ticket by its title, so the fixture works whatever ids the repo gives.",
+  "plan": [
+    {
+      "goal_criteria": ["The sample data file loads in a test", "The sample screen's scene runs"],
+      "open_questions": [],
+      "sub_goals": [
+        {"id": "S1", "title": "Sample screen", "why": "It is what the goal asks for", "value": 5,
+         "criteria": ["The sample screen's scene runs"], "needs": ["S2"]},
+        {"id": "S2", "title": "Sample data file", "why": "The sample screen reads it", "value": 3,
+         "criteria": ["A test loads the sample data file"], "needs": []}
+      ]
+    }
+  ],
+  "gaps": [
+    {
+      "verdicts": [
+        {"sub_goal": "S2", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+          {"key": "D1", "title": "Sample data file", "to": "game-data", "epic": "tooling", "milestone": "mvp",
+           "model": "sonnet", "user_facing_text": "no", "changes_visuals": "no", "depends_on": [],
+           "documents_affected": [], "files_to_read_first": ["tasks/README.md"],
+           "files_expected_to_change": ["game/data/sample.json"],
+           "description": "Sample ticket written by the goal runner's fixture.",
+           "acceptance_criteria": ["A test loads game/data/sample.json"], "review": "check the sample data"}
+        ]},
+        {"sub_goal": "S1", "verdict": "missing", "tickets": [], "code": [], "drafts": [
+          {"key": "D2", "title": "Sample screen", "to": "ui", "epic": "hud-menus", "milestone": "mvp",
+           "model": "sonnet", "user_facing_text": "no", "changes_visuals": "yes", "depends_on": ["D1"],
+           "documents_affected": [],
+           "files_to_read_first": ["tasks/README.md", "docs/visual-style.md", "docs/extended-narrative.md"],
+           "files_expected_to_change": ["game/scenes/sample_screen.tscn"],
+           "description": "Sample screen ticket written by the goal runner's fixture.",
+           "acceptance_criteria": ["The scene game/scenes/sample_screen.tscn runs"], "review": "play the sample screen"}
+        ]}
+      ]
+    },
+    {
+      "verdicts": [
+        {"sub_goal": "S2", "verdict": "covered", "tickets": ["title:Sample data file"], "code": ["data/sample.json"], "drafts": []},
+        {"sub_goal": "S1", "verdict": "in-flight", "tickets": ["title:Sample screen"], "code": [], "drafts": []}
+      ]
+    },
+    {
+      "verdicts": [
+        {"sub_goal": "S1", "verdict": "covered", "tickets": ["title:Sample screen"], "code": ["scenes/sample_screen.tscn"], "drafts": []}
+      ]
+    }
+  ],
+  "agent": [
+    {"summary": "Wrote the sample data file and its test.", "art_generations_used": 0, "refusals": [],
+     "_files": {"game/data/sample.json": "{\"sample\": true}\n"}},
+    {"summary": "Built the sample screen.", "art_generations_used": 0, "refusals": [],
+     "_files": {"game/scenes/sample_screen.tscn": "[gd_scene format=3]\n"}},
+    {"summary": "Fixed the sample screen so its scene runs.", "art_generations_used": 0, "refusals": [],
+     "_files": {"game/scenes/sample_screen.tscn": "[gd_scene format=3]\n[node name=\"Sample\" type=\"Control\"]\n"}}
+  ],
+  "qa": [
+    {"summary": "Every criterion passes.", "refusals": [], "_marks": "pass"},
+    {"summary": "The scene doesn't run.", "refusals": [], "_marks": "fail"},
+    {"summary": "Every criterion passes now.", "refusals": [], "_marks": "pass"}
+  ],
+  "goal-check": [
+    {"criteria": [
+      {"criterion": "The sample data file loads in a test", "result": "pass", "notes": "the test passes"},
+      {"criterion": "The sample screen's scene runs", "result": "pass", "notes": "it runs"}
+    ], "refusals": []}
+  ]
+}

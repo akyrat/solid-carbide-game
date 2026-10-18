@@ -37,6 +37,7 @@ The board can give the studio a whole goal ("the trick system with its final art
 - The board plays the result once, at the end, from that branch. Nothing reaches `master` before that playtest; then the Project Lead merges as usual.
 - Each run uses the session name `Goal-<goal id>` and claims its tickets, so it hears only its own moves.
 - Any refusal by a hook or the permission system pauses the run, with the reason in the goal file. The runner never works around it.
+- A run also pauses at its iteration cap, at its art cap, on a ticket flagged for review that work depends on, on a merge conflict, while waiting on a reused ticket, or when the same gap comes back with no progress. Each pause is written in the goal file with its kind. `run.py resume <goal id>` carries on once the reason is cleared (`--force` for the rest); `run.py start "<goal>" --plan-only` only plans, for the board to read the sub-goals and tickets before anything is built.
 
 ## Merging (Project Lead)
 - Check a merge really happened: `if git merge --no-ff --no-commit <branch>; then ...`.

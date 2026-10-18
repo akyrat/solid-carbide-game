@@ -45,7 +45,7 @@ def make(folder):
         shutil.copyfile(agent, root / ".claude" / "agents" / agent.name)
     shutil.copytree(REAL / "tools" / "goal_agent", root / "tools" / "goal_agent",
                     ignore=shutil.ignore_patterns("__pycache__"))
-    (root / ".gitignore").write_text(".board/\n__pycache__/\n", encoding="utf-8")
+    (root / ".gitignore").write_text(".board/\n__pycache__/\n.env\n.secrets/\n", encoding="utf-8")   # as the studio's
     for rel, text in (("game/README.md", "# Game\n## Setup\n"), ("game/scripts/car.gd", "extends Node\n"),
                       ("game/art/car.png", "x"), ("game/addons/gut/gut.gd", "x"), ("game/.godot/cache", "x")):
         (root / rel).parent.mkdir(parents=True, exist_ok=True)

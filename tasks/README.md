@@ -31,12 +31,12 @@ python C:/solid-carbide-game/tools/task_status.py T-012 --reply "Reply for a mov
 Always use the main repo's copy of the script, also from a task's branch folder: it finds open task branches and changes the task file where it lives. It checks the workflow, so a task can't skip a phase:
 
 - `open`/`blocked` → `planning` always (a blocked ticket can be refined while it waits).
-- `open`/`blocked`/`planning` → `in-progress` only when every task in `depends_on` is `done`.
+- `open`/`blocked`/`planning` → `in-progress` only when every task in `depends_on` is `done`, or is `needs-playtest` with the same non-empty `goal:` as this task (T-163; "Goal runs").
 - `planning` → `open` or `blocked`, and `in-progress` → `planning`, to go back.
 - `in-progress` → `in-qa` only once the agent has written its result notes.
 - Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
 - `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.
-- Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`.
+- Marking a task `done` moves every task now waiting on nothing from `blocked` to `open`. So does moving a goal's task to `needs-playtest`, for that goal's tasks.
 
 `--reply "<text>"` posts the Project Lead's reply to the board on the ticket (board, 2026-10-15, T-138): the same short text (2 to 3 paragraphs at most, Markdown allowed) it gives in the terminal. With a move it is recorded with that move; on its own it is recorded against the ticket's current lane, for a move an agent or the board's drag made. It is stored as a dated entry (`### <date>, <lane change>`, newest last) in the task file's `## Updates` section, which sits just before `## Result notes` and is added there when a task file has none. A refused move posts no reply. The task board shows it on the ticket and highlights the card (`docs/README.md`, "The task board").
 
@@ -79,7 +79,9 @@ The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 
 
 - Each goal has one file in `goals/`, `G-001-short-title.md`, with a parseable header. It holds the goal, its acceptance criteria (the runner's stop condition), the prioritised sub-goals, the tickets it wrote or reused, a log of every iteration, and the open questions the docs leave unanswered (for the board; the runner never invents an answer).
 - A ticket the runner writes or reuses gets the goal's id in its `goal:` header line. A reused ticket gets it only when its branch isn't open and it has no goal yet; the runner doesn't claim a reused ticket, since it may belong to another session. Its tickets follow every rule in this file: the template, the status script, placeholders before art, a text ticket before any player-facing text.
-- A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build.
+- A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build. Their worktrees stay until then, so their status can still be read; they are removed when the Project Lead merges the goal's build.
+- A reused ticket that another session owns is never built by the runner: the goal waits for it, and pauses (`waiting`) when nothing else can go on.
+- When the Project Lead merges the goal's build, a ticket's `status:` line may conflict (master's copy was unblocked by the status script, the build's copy moved on): keep the build's side.
 
 ## Building in playable steps
 
