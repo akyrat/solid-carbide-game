@@ -35,7 +35,7 @@ class Start(unittest.TestCase):
         return done.returncode, done.stdout + done.stderr
 
     def test_start_with_the_sample_fixture(self):
-        code, out = self.cli("start", "Sample goal", "--fake", "tools/goal_agent/fixtures/sample-goal.json")
+        code, out = self.cli("start", "Sample goal", "--plan-only", "--fake", "tools/goal_agent/fixtures/sample-goal.json")
         self.assertEqual(code, 0, out)
         goal = goal_file.find(self.root / "goals", "G-001")
         self.assertEqual(goal.get("status"), "planned")

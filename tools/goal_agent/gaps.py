@@ -111,18 +111,24 @@ def check_verdicts(verdicts, sub_goals, existing):
     return reasons
 
 
-def detect(claude, goal_text, sub_goals, root, model=None):
-    """(verdicts, existing tickets) once the drafts pass tickets.check(). Raises Pause."""
-    existing, code = existing_tickets(root), code_index(root)
+def detect(claude, goal_text, sub_goals, root, model=None, code_root=None, context=None):
+    """(verdicts, existing tickets) once the drafts pass tickets.check(). Raises Pause.
+    During a goal's loop (T-163), `code_root` is the goal's build folder, where its code so far is (Claude
+    reads there too), and `context` says what the last step found."""
+    existing, code = existing_tickets(root), code_index(code_root or root)
     reasons = None
     for attempt in (1, 2):
-        answer = claude.ask("gaps", prompt(goal_text, sub_goals, existing, code, reasons), SCHEMA, model=model,
-                            cwd=str(root), allowed_tools="Read,Glob,Grep")
+        text = prompt(goal_text, sub_goals, existing, code, reasons)
+        if context:
+            text += f"\n\nWhat the goal's last step found:\n{context}"
+        answer = claude.ask("gaps", text, SCHEMA, model=model, cwd=str(code_root or root),
+                            allowed_tools="Read,Glob,Grep")
         if answer.denials:
-            raise Pause(f"Gap detection was refused: {answer.denials}")
+            raise Pause(f"Gap detection was refused: {answer.denials}", "refusal")
         verdicts = list(answer.data.get("verdicts") or [])
         drafts = [d for v in verdicts for d in v.get("drafts") or []]
         reasons = check_verdicts(verdicts, sub_goals, existing) + tickets.check(drafts, existing, root)
         if not reasons:
             return verdicts, existing
-    raise Pause("Gap detection's tickets were refused twice:\n" + "\n".join(f"  - {r}" for r in reasons))
+    raise Pause("Gap detection's tickets were refused twice:\n" + "\n".join(f"  - {r}" for r in reasons),
+                "drafts-refused")

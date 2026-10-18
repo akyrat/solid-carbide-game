@@ -129,7 +129,7 @@ def plan(claude, goal_text, root, model=None):
     answer = claude.ask("plan", prompt(goal_text), SCHEMA, model=model, cwd=str(root),
                         allowed_tools="Read,Glob,Grep")
     if answer.denials:
-        raise Pause(f"Priority scoring was refused: {answer.denials}")
+        raise Pause(f"Priority scoring was refused: {answer.denials}", "refusal")
     data = answer.data
     if not data.get("goal_criteria") or not data.get("sub_goals"):
         raise Pause("Priority scoring: Claude gave no goal criteria or no sub-goals.")
