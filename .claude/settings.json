@@ -1,4 +1,24 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(cd *)",
+      "Bash(bash game/tools/run_tests.sh*)",
+      "Bash(bash game/tools/screenshot.sh *)",
+      "Bash(python -m unittest discover *)",
+      "Bash(python game/tools/*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show *)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)"
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "python tools/statusline.py"
