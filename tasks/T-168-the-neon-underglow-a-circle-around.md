@@ -1,7 +1,7 @@
 ---
 id: T-168
 title: The neon underglow: a circle around the car that damages enemies (placeholder look)
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -75,3 +75,4 @@ Written by the agent when it finishes.
 - **Documents affected:** `docs/weapons.md`, `game/README.md`.
 - PixelLab: 0 generations. Refusals: none.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
