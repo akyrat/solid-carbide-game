@@ -37,11 +37,11 @@ The board's review: Play a run from the task folder with the underglow given (by
 
 ## Acceptance criteria
 
-- [ ] A new run has no underglow; after `rack.upgrade("underglow")` a test shows a fake enemy that enters the circle takes damage on that step, and an enemy staying inside takes damage again once per tick interval from weapons.json, with the damage value from weapons.json times the garage damage multiplier. (QA: pass / fail)
-- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass / fail)
-- [ ] A test shows no damage while the run is paused or after it ends, and that a new run removes the underglow. (QA: pass / fail)
-- [ ] A placeholder circle drawn in code shows under the car while it is owned, in no shade of Redgull red, drawn below the car sprite (checked in a test or a screenshot fixture). (QA: pass / fail)
-- [ ] `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the underglow, and the game's test set passes. (QA: pass / fail)
+- [ ] A new run has no underglow; after `rack.upgrade("underglow")` a test shows a fake enemy that enters the circle takes damage on that step, and an enemy staying inside takes damage again once per tick interval from weapons.json, with the damage value from weapons.json times the garage damage multiplier. (QA: pass)
+- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass)
+- [ ] A test shows no damage while the run is paused or after it ends, and that a new run removes the underglow. (QA: pass)
+- [ ] A placeholder circle drawn in code shows under the car while it is owned, in no shade of Redgull red, drawn below the car sprite (checked in a test or a screenshot fixture). (QA: pass)
+- [ ] `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the underglow, and the game's test set passes. (QA: pass; GUT 879/879 passed, docs and README have the underglow)
 
 ## Updates
 
