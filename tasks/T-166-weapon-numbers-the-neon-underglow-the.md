@@ -1,7 +1,7 @@
 ---
 id: T-166
 title: Weapon numbers: the neon underglow, the molotovs and the windshield wiper, with 8 tiers each
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Goal-G-002
@@ -46,6 +46,10 @@ Add one entry per weapon to `game/data/weapons.json` (ids `underglow`, `molotov`
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Open → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-166.
 
 ## Result notes
 
