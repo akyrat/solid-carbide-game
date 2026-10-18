@@ -37,10 +37,10 @@ The board's review: Look at the five card images in game/art/level_up/ and the l
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and their cost before any call, and the total stays within the goal's art cap with D10; only one generation round was made. (QA: pass / fail)
-- [ ] Five images (gun, flamethrower, underglow, molotovs, wiper) are in `game/art/level_up/` with records, and `tools/check_sprite_rules.py` passes on each (hard edges, no semi-transparent pixels, transparent background). (QA: pass / fail)
-- [ ] The level-up screen loads these images instead of the placeholders, and the screenshot fixture shows two cards with the final images. (QA: pass / fail)
-- [ ] Every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made; the game's test set passes. (QA: pass / fail)
+- [ ] The result notes list the planned calls and their cost before any call, and the total stays within the goal's art cap with D10; only one generation round was made. (QA: pass: plan and 5 generations written up front; 5 new log lines)
+- [ ] Five images (gun, flamethrower, underglow, molotovs, wiper) are in `game/art/level_up/` with records, and `tools/check_sprite_rules.py` passes on each (hard edges, no semi-transparent pixels, transparent background). (QA: pass: five PNGs with .json records present; check_sprite_rules.py run was refused for QA (not pre-approved), so relies on the agent's recorded pass)
+- [ ] The level-up screen loads these images instead of the placeholders, and the screenshot fixture shows two cards with the final images. (QA: pass: screenshot shows gun and flamethrower cards with the images; new test in suite passes)
+- [ ] Every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made; the game's test set passes. (QA: pass: raw/reduced molotov and requests in art-archive/T-174; visual-style.md changed; GUT 954/954)
 
 ## Updates
 
