@@ -16,6 +16,7 @@ lines in game/art/pixellab-generation-log.jsonl on the ticket's branch. Every co
 Shell, and a refused or failed one pauses the goal, as does any refusal a headless session reports.
 """
 
+import json
 import re
 import shutil
 import subprocess
@@ -238,6 +239,27 @@ def art_left(b):
     return max(b.goal.number("art_cap") - b.goal.number("art_used"), 0)
 
 
+def pre_approved(root):
+    """The `permissions.allow` entries of the repo's .claude/settings.json: [] when the file or list is missing."""
+    try:
+        data = json.loads((Path(root) / ".claude" / "settings.json").read_text(encoding="utf-8"))
+        allowed = data["permissions"]["allow"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return []
+    return [str(a) for a in allowed] if isinstance(allowed, list) else []
+
+
+def pre_approved_note(root):
+    """Prompt lines naming the pre-approved commands ('' when there are none)."""
+    allowed = pre_approved(root)
+    if not allowed:
+        return ""
+    return ("\nThese commands are pre-approved in the project settings (permissions.allow):\n"
+            + "\n".join(f"  {a}" for a in allowed)
+            + "\nRun them as plain, separate Bash commands: no && chains, no pipes into other programs, no heredocs, "
+              "no PowerShell for them. Anything else needs an approval you can't get, and is refused.")
+
+
 def agent_prompt(b, ticket, folder):
     return f"""Work on task {ticket['id']} ("{ticket['title']}"), in its folder {folder}, on branch \
 {b.places.ticket_branch(ticket)}. Its task file there is {ticket['file']}.
@@ -249,7 +271,7 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - PixelLab: this goal has {art_left(b)} generations left under its art cap. Never go over it; one round per
   task, no regenerations.
-- If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.
+- If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.{pre_approved_note(b.root)}
 Answer with a short summary, the PixelLab generations you used, and every refusal you met."""
 
 
@@ -262,7 +284,7 @@ Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
 Mark each one in the task file as `(QA: pass)` or `(QA: fail, <why>)`, and commit the task file in that folder.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
-If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.
+If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.{pre_approved_note(b.root)}
 Answer with a short summary and every refusal you met."""
 
 

@@ -3,6 +3,7 @@ with Godot's .import noise reverted, a conflict, a ticket written by a rescan, a
 Temporary git repos with worktrees, and the fake team: nothing calls Claude, PixelLab or the network."""
 
 import ast
+import json
 import subprocess
 import sys
 import unittest
@@ -98,6 +99,33 @@ class HeadlessRuns(GoalRepo):
         self.assertIn("- [ ] It works (QA: pass / fail)", prompt)        # the ticket's criteria are listed
         self.assertIn("`(QA: pass)` or `(QA: fail, <why>)`", prompt)
         self.assertEqual((options["agent"], options["model"]), ("qa-integration", "sonnet"))
+
+    def prompts(self, b):
+        self.run_loop(b)
+        return [next(c for c in b.claude.calls if c[0] == step)[1] for step in ("agent", "qa")]
+
+    def test_prompts_list_the_pre_approved_commands_from_the_settings(self):
+        (self.root / ".claude").mkdir(exist_ok=True)
+        allow = ["Bash(git add *)", "Bash(python -m unittest discover *)"]
+        (self.root / ".claude" / "settings.json").write_text(json.dumps({"permissions": {"allow": allow}}),
+                                                             encoding="utf-8")
+        for prompt in self.prompts(self.planned(one_ticket())):
+            for entry in allow:
+                self.assertIn(entry, prompt)
+            self.assertIn("plain, separate Bash commands", prompt)
+            self.assertIn("no && chains", prompt)
+
+    def test_a_missing_or_empty_list_leaves_the_prompts_as_they_were(self):
+        self.assertEqual(build.pre_approved_note(self.root), "", "no settings file")
+        (self.root / ".claude").mkdir(exist_ok=True)
+        (self.root / ".claude" / "settings.json").write_text('{"permissions": {"allow": []}}', encoding="utf-8")
+        self.assertEqual(build.pre_approved_note(self.root), "")
+        (self.root / ".claude" / "settings.json").write_text("{}", encoding="utf-8")
+        for prompt in self.prompts(self.planned(one_ticket())):
+            self.assertNotIn("pre-approved", prompt)
+
+    def test_the_sessions_keep_accept_edits(self):
+        self.assertEqual(build.PERMISSION_MODE, "acceptEdits")
 
 
 class Merging(GoalRepo):
