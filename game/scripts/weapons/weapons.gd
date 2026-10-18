@@ -22,11 +22,12 @@ const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
 const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const NeonUnderglowScript := preload("res://scripts/weapons/neon_underglow.gd")
 const MolotovsScript := preload("res://scripts/weapons/molotovs.gd")
+const WindshieldWiperScript := preload("res://scripts/weapons/windshield_wiper.gd")
 const LevelUpOffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
-const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript, MolotovsScript]
+const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript, MolotovsScript, WindshieldWiperScript]
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -80,6 +81,10 @@ var underglow: Node:
 var molotov: Node:
 	get:
 		return weapons.get("molotov")
+## The windshield wiper (windshield_wiper.gd).
+var wiper: Node:
+	get:
+		return weapons.get("wiper")
 
 
 ## Binds the rack to a run scene (run.gd): its state and car, and a draw root
@@ -121,6 +126,9 @@ func reset_for_run() -> void:
 	# Playtest switch (T-169, data/playtest.json "molotov_at_start"): the same for the molotovs.
 	if MolotovsScript.playtest_switch_on():
 		upgrade("molotov")
+	# Playtest switch (T-170, data/playtest.json "wiper_at_start"): the same for the wiper.
+	if WindshieldWiperScript.playtest_switch_on():
+		upgrade("wiper")
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.

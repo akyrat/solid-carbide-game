@@ -129,6 +129,25 @@ func test_bullet_goes_for_the_closest_enemy_and_damages_it_by_the_data_amount() 
 	assert_eq(rack.projectiles.size(), 0, "the bullet is gone after its hit")
 
 
+## T-170: of the weapons only the wiper pushes; the gun's bullets never move an
+## enemy (Weapons, Decisions), a real minion or one recording every push.
+func test_bullets_never_move_an_enemy() -> void:
+	var real: Node = _minion(Vector2(-5.0, 0.0), 100.0)
+	var fake: Node2D = preload("res://tests/fixtures/weapons/fake_minion.gd").new()
+	fake.position = (_car_units() + Vector2(5.0, 0.5)) * 16.0
+	run.add_child(fake)
+	var real_at: Vector2 = real.position
+	var fake_at: Vector2 = fake.position
+	gun.set_tier(2)  # 3 bullets a volley: both are shot at
+	_run_for(gun.fire_interval() * 3 + 1.0)
+	assert_lt(real.health, 100.0, "the real minion was hit")
+	assert_gt(fake.damage_taken.size(), 0, "the recording one was hit")
+	assert_false(real.is_knocked_back(), "no push on the real minion")
+	assert_eq(real.position, real_at, "the real minion did not move")
+	assert_eq(fake.pushes, [], "no knockback call")
+	assert_eq(fake.position, fake_at, "did not move")
+
+
 func test_bullets_kill_a_minion_through_take_damage() -> void:
 	var m: Node = _minion(Vector2(6.0, 0.0))  # the data's health (4)
 	watch_signals(m)

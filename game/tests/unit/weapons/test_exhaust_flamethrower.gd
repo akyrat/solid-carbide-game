@@ -164,6 +164,26 @@ func test_big_enemy_is_burnt_when_its_body_overlaps_the_flames() -> void:
 	assert_eq(big.damage_taken.size(), 2, "and the ticks")
 
 
+## T-170: of the weapons only the wiper pushes; the flamethrower never moves an
+## enemy (Weapons, Decisions), a real minion or one recording every push.
+func test_flame_never_moves_an_enemy() -> void:
+	var real: Node = run.minions.spawn_minion_at(_behind(1.2) + Vector2(0.4, 0.0))
+	real.max_health = 1000.0
+	real.health = 1000.0
+	var fake: Node2D = preload("res://tests/fixtures/weapons/fake_minion.gd").new()
+	fake.position = (_behind(1.2) + Vector2(-0.4, 0.0)) * 16.0
+	run.add_child(fake)
+	var real_at: Vector2 = real.position
+	var fake_at: Vector2 = fake.position
+	_hold(true, 50)
+	assert_lt(real.health, 1000.0, "the real minion was burnt")
+	assert_gt(fake.damage_taken.size(), 0, "the recording one was burnt")
+	assert_false(real.is_knocked_back(), "no push on the real minion")
+	assert_eq(real.position, real_at, "the real minion did not move")
+	assert_eq(fake.pushes, [], "no knockback call")
+	assert_eq(fake.position, fake_at, "did not move")
+
+
 func test_no_damage_while_not_drifting() -> void:
 	var e := _enemy_at(_behind(1.2))
 	_hold(false, 50)
