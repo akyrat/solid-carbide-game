@@ -52,4 +52,26 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-175.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Planned calls and cost (written before any call)
+
+Four calls to `/create-image-pixflux`, one round, no regenerations, 600 s HTTP timeout (the client's default), `no_background`. 1 generation each = **4 generations**, within the 35 left under the goal's art cap (D9 shares it). Requests are in `art-archive/T-175/req_<piece>.json`. Raw outputs go to `art-archive/T-175/`; game-ready versions (free script clean-up, `game/tools/build_weapon_art.py`) go to `game/art/weapons/`.
+
+| Piece | Size (art px) | Why this size |
+|---|---|---|
+| underglow ring | 224 x 112 | the damage circle (2.5 units) seen in iso is 113 x 57 screen px, drawn at 0.5 |
+| molotov bottle | 32 x 32 | about 0.3 x 0.6 units |
+| molotov fire area | 136 x 68 | the 1.5-unit circle in iso is 68 x 34 screen px |
+| wiper arm | 96 x 24, pointing right | 2.5 units long; the script turns it into a 32-direction sheet (flat angle, iso-projected), so the engine never rotates pixel art |
+
+The fire flickers by script (a mirrored second frame, free); no PixelLab animation call.
+
+### Result
+
+- **Generations used: 4** (one round, no regenerations), one log line each in `game/art/pixellab-generation-log.jsonl`. Raw PNGs, records and requests: `art-archive/T-175/`.
+- Game-ready art in `game/art/weapons/` with records: `underglow.png` (224x112), `molotov_bottle.png` (32x32), `molotov_fire.png` and `molotov_fire_flip.png` (136x68), `wiper_sheet.png` (2048x512, 32 frames of 256x128). Made by `game/tools/build_weapon_art.py` (free fixes: hard alpha, and flame shades near Redgull's red pushed to orange; no palette cut was needed). `build_weapon_art.py check`: all pass (no semi-transparent pixels, at most 30 colours, transparent corners, no Redgull red). `check_sprite_rules.py --size 32` passes on the bottle (it only checks square frames, so the other pieces use the builder's own check).
+- The four scripts draw the art at scale 0.5 (preload; a `load()` inside `_draw` drew white rectangles in the screenshot). The placeholders remain only as a fallback branch. The wiper arm is picked from 32 pre-turned, iso-projected frames; the fire flickers between the art and its mirror (free). The bottle still spins by engine rotation (kept from the placeholder).
+- Screenshot fixture `game/tests/fixtures/weapons/weapon_art_demo.tscn` (all five weapons owned): `art-archive/T-175/weapon_art_screenshot.png` (underglow, wiper, bottles in flight) and `weapon_art_screenshot_fire.png` (fire areas).
+- Tests: new `game/tests/unit/weapons/test_weapon_art.gd`; full set 959/959.
+- Quality notes (not judged by me): the wiper art generated with its pivot in the middle, so only its right half is used, stretched to the 2.5-unit length; it reads thin on screen. The underglow is a filled purple disc with a pink rim rather than a transparent-centre ring, and more purple than cyan. The fire is static apart from the mirror flicker.
+- Documents affected, updated: `docs/visual-style.md`, `game/README.md`. Hand-edit: none.
+- Refusals: one `python -c` check was refused by a hook (task-status false positive), skipped; a `sed` was not pre-approved, done with the editor instead.

@@ -47,6 +47,13 @@ const PLAYTEST_FILE := "playtest"
 const PLAYTEST_KEY := "wiper_at_start"
 ## The group the kaiju is in (kaiju.gd): never pushed unless the data says so.
 const KAIJU_GROUP := "kaiju"
+## The final art (T-175): a sheet of 32 frames, 8 columns, 256 x 128 art pixels each.
+const ART_PATH := "res://art/weapons/wiper_sheet.png"
+const ART_SHEET := preload("res://art/weapons/wiper_sheet.png")
+const ART_FRAMES := 32
+const ART_COLS := 8
+const ART_CELL := Vector2i(256, 128)
+const ART_SCALE := 0.5
 ## Placeholder colours (opaque, hard edged: Visual style). A dark steel arm
 ## and a pale grey rubber blade with a dark outline; never Redgull red.
 const ARM_COLOUR := Color(0.18, 0.2, 0.26, 1.0)
@@ -353,8 +360,27 @@ class WiperDrawing:
 	func colours() -> Array:
 		return [OUTLINE_COLOUR, ARM_COLOUR, BLADE_COLOUR]
 
+	## The sheet frame for the arm's direction: the screen arm turned back to the
+	## flat world, as an angle in 32 steps (frame i = i * 11.25 degrees).
+	func frame_index() -> int:
+		var flat := ISO_TRANSFORM.affine_inverse().basis_xform(arm_px)
+		var a := fposmod(flat.angle(), TAU)
+		return int(round(a / TAU * float(ART_FRAMES))) % ART_FRAMES
+
+	func _ready() -> void:
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
 	func _draw() -> void:
 		if arm_px.length() < 0.5:
+			return
+		var sheet: Texture2D = ART_SHEET
+		if sheet != null:
+			# The final art (T-175): one of 32 pre-turned frames (256 x 128 art pixels,
+			# pivot at the cell's centre) at scale 0.5, so the engine turns no pixel art.
+			var i := frame_index()
+			var cell := Vector2(ART_CELL)
+			var src := Rect2(Vector2(i % ART_COLS, i / ART_COLS) * cell, cell)
+			draw_texture_rect_region(sheet, Rect2(-cell * ART_SCALE / 2.0, cell * ART_SCALE), src)
 			return
 		var blade_start := arm_px * 0.2
 		draw_line(Vector2.ZERO, arm_px, OUTLINE_COLOUR, 5.0, false)

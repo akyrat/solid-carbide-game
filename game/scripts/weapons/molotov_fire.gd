@@ -31,6 +31,15 @@ const FIRE_OUTLINE := Color(0.05, 0.07, 0.12, 1.0)
 const FIRE_OUTER := Color(1.0, 0.55, 0.1, 1.0)
 const FIRE_INNER := Color(1.0, 0.82, 0.25, 1.0)
 const FIRE_CORE := Color(1.0, 0.96, 0.7, 1.0)
+## The final art (T-175): the fire and its mirrored copy, the flicker's two frames.
+const ART_PATH := "res://art/weapons/molotov_fire.png"
+const ART_FLIP_PATH := "res://art/weapons/molotov_fire_flip.png"
+const ART_TEXTURE := preload("res://art/weapons/molotov_fire.png")
+const ART_FLIP_TEXTURE := preload("res://art/weapons/molotov_fire_flip.png")
+const ART_SCALE := 0.5
+const ART_RADIUS_UNITS := 1.5
+## The run's isometric projection (run.gd ISO_TRANSFORM).
+const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## How often the flicker changes, in seconds.
 const FLICKER_SECONDS := 0.1
 
@@ -143,6 +152,18 @@ func colours() -> Array:
 
 
 func _draw() -> void:
+	var tex: Texture2D = ART_FLIP_TEXTURE if _flicker % 2 == 1 else ART_TEXTURE
+	if tex != null:
+		# The final art (T-175): the fire ellipse as the iso view shows the circle
+		# it was made for (1.5 units), at scale 0.5 in screen pixels. This node is
+		# drawn in flat world pixels under the map's iso transform, so the sprite is
+		# undone through the inverse transform to keep its pixels square on screen.
+		var k := ART_SCALE * radius / ART_RADIUS_UNITS
+		var size := tex.get_size() * k
+		draw_set_transform_matrix(ISO_TRANSFORM.affine_inverse())
+		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)
+		draw_set_transform_matrix(Transform2D.IDENTITY)
+		return
 	var r := radius * PX_PER_UNIT
 	draw_circle(Vector2.ZERO, r + 1.0, FIRE_OUTLINE, true, -1.0, false)
 	draw_circle(Vector2.ZERO, r, FIRE_OUTER, true, -1.0, false)
