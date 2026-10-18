@@ -1,7 +1,7 @@
 ---
 id: T-179
 title: The status script accepts a QA pass mark with a note
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -31,15 +31,19 @@ Twice today a QA agent marked every criterion as passed but put a note inside th
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including every existing `tools/test_task_status.py` test (QA: pass / fail)
-- [ ] A test shows `(QA: pass)`, `(QA: pass; a note)`, `(QA: pass: a note)` and `(QA: PASS, note)` count as passed, and `(QA: pass / fail)`, `(QA: passed)` and an unmarked line count as unmarked (QA: pass / fail)
-- [ ] A test shows the goal runner's QA prompt names the exact forms `(QA: pass)` and `(QA: fail: <reason>)` (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, including every existing `tools/test_task_status.py` test (QA: pass)
+- [ ] A test shows `(QA: pass)`, `(QA: pass; a note)`, `(QA: pass: a note)` and `(QA: PASS, note)` count as passed, and `(QA: pass / fail)`, `(QA: passed)` and an unmarked line count as unmarked (QA: pass)
+- [ ] A test shows the goal runner's QA prompt names the exact forms `(QA: pass)` and `(QA: fail: <reason>)` (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Quick fix started: QA pass marks may carry a note, and the runner's QA prompt shows the exact forms. Then G-002 resumes, with T-166 already passed by QA.
+
+### 2026-10-18, In progress → In QA
+
+Built: a QA pass mark may carry a note; the runner's QA prompt shows the exact forms. 312 tools tests pass. QA checks it now.
 
 ## Result notes
 
