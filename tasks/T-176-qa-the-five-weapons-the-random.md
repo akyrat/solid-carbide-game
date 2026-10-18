@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
@@ -43,6 +43,10 @@ Check the goal's work together before the board's single playtest of `playtest/G
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-176.
 
 ## Result notes
 
