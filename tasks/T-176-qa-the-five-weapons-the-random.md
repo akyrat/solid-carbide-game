@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md, game/data/playtest.json, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/tests/unit/weapons/test_all_weapons_run.gd]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -60,6 +60,10 @@ Goal runner (G-002): failed QA once; back to the agent on opus.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Done
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 New test: `game/tests/unit/weapons/test_all_weapons_run.gd` (3 tests, 349 asserts, ~14 s). No game code changed.
@@ -76,3 +80,4 @@ New test: `game/tests/unit/weapons/test_all_weapons_run.gd` (3 tests, 349 assert
   2. PASS: test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers passes (tier 8 reached via gift-pack choices, since max_level 12 gives only 11 level-ups).
   3. PASS: GUT 962/962 passed; `game/tools` 282 OK (1 skipped); `tools` 303 OK (includes the docs checks). The Project Lead's recorded check says "in sync: 9 game area docs, the long GDD and the short GDD", and commit 3d8ae24 changes `docs/long-gdd.md` and `docs/short-gdd/README.md`.
   4. PASS: `game/data/playtest.json` has all five *_at_start keys and kaiju_early_arrival.enabled false.
+- 2026-10-18, in-qa → done: QA passed every criterion (goal G-002).
