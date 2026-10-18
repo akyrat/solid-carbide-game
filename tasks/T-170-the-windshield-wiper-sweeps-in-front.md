@@ -1,7 +1,7 @@
 ---
 id: T-170
 title: The windshield wiper: sweeps in front of the car, damages and pushes minions back (placeholder look)
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -94,3 +94,4 @@ Written by the agent when it finishes.
 
 **Not committed:** Godot's line-ending-only `.import` changes in the working copy, as the working rules say.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
