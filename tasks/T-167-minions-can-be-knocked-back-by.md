@@ -1,7 +1,7 @@
 ---
 id: T-167
 title: Minions can be knocked back by a weapon (a knockback call)
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-002
@@ -43,6 +43,10 @@ The windshield wiper (docs/weapons.md, Decisions, 2026-10-18) damages the enemie
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Open → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-167.
 
 ## Result notes
 
