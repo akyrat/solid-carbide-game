@@ -1,7 +1,7 @@
 ---
 id: T-167
 title: Minions can be knocked back by a weapon (a knockback call)
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-002
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-18, Open → In progress
 
 Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-167.
+
+### 2026-10-18, In progress → In QA
+
+Goal runner (G-002): the agent is done; QA is checking it.
 
 ## Result notes
 
