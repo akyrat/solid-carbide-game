@@ -1,7 +1,7 @@
 ---
 id: G-002
 title: Add an image of the weapon on each level-up card, and add three new...
-status: paused
+status: ready-to-play
 art_cap: 40
 art_used: 9
 iteration: 11
@@ -16,15 +16,15 @@ Add an image of the weapon on each level-up card, and add three new weapons: the
 
 ## Goal acceptance criteria
 
-- [ ] `game/data/weapons.json` holds five weapons: the starting gun, the exhaust flamethrower, the neon underglow, the molotovs and the windshield wiper. Each of the three new ones has base values and exactly 7 upgrade tiers (tiers 2 to 8), read through `game/scripts/data/weapon_data.gd`, and a data test checks this. (QA: pass / fail)
-- [ ] In a headless run with each new weapon given at tier 1: the neon underglow damages a minion inside its circle as soon as the minion enters, then again every second while it stays inside. A molotov thrown from the car leaves a circular fire area that damages a minion standing in it. The windshield wiper sweeps a semicircle in front of the car and damages a minion it hits and pushes it away from the car. The gun and the flamethrower still never push. An automated test covers each of these. (QA: pass / fail)
-- [ ] Each new weapon's tiers 2 to 8 can be applied from code. Each tier changes the weapon the way `weapons.json` says, and a test checks every tier. (QA: pass / fail)
-- [ ] Level-up offers: the first level-up of a normal run offers exactly 'upgrade the gun' and 'get the flamethrower'. Every later level-up offers two different choices drawn at random from every available choice (get a weapon the car doesn't have, or the next tier of one it has). A weapon at tier 8 is never offered. With one choice left, one card shows. With none left, the choice is skipped. Seeded tests cover all of these cases. (QA: pass / fail)
-- [ ] Every possible level-up card (get and each upgrade tier of all five weapons) shows approved text from the Narrative Theme Agent in `game/scripts/ui/level_up_texts.gd`, with no placeholder or missing key. A test walks every choice id and tier. (QA: pass / fail)
-- [ ] Every level-up card shows an image of its weapon. A screenshot fixture of the level-up screen shows two cards, each with its weapon image, inside the red and gold card frame. (QA: pass / fail)
-- [ ] The PixelLab art is in `game/art/` with its records, and every other generation is in `art-archive/<task>/`. That covers one card image per weapon (all five) plus the in-world art for the underglow, the molotov and its fire area, and the wiper. The art replaces the placeholders in the game, and `art_used` in the goal file is at or under the goal's art cap of 40. (QA: pass / fail)
-- [ ] The run scene opens and plays headless from the main menu with all five weapons owned at once (through a dev or playtest switch) for at least 60 seconds with no script errors. (QA: pass / fail)
-- [ ] The game's tests, the tools tests and the docs checks all pass on `playtest/G-002`. `docs/weapons.md` (Content), `docs/hud-and-menus.md` (Level-up screen), `docs/visual-style.md` (if art decisions were recorded) and `game/README.md` describe what was built, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: pass / fail)
+- [x] `game/data/weapons.json` holds five weapons: the starting gun, the exhaust flamethrower, the neon underglow, the molotovs and the windshield wiper. Each of the three new ones has base values and exactly 7 upgrade tiers (tiers 2 to 8), read through `game/scripts/data/weapon_data.gd`, and a data test checks this. (QA: pass)
+- [x] In a headless run with each new weapon given at tier 1: the neon underglow damages a minion inside its circle as soon as the minion enters, then again every second while it stays inside. A molotov thrown from the car leaves a circular fire area that damages a minion standing in it. The windshield wiper sweeps a semicircle in front of the car and damages a minion it hits and pushes it away from the car. The gun and the flamethrower still never push. An automated test covers each of these. (QA: pass)
+- [x] Each new weapon's tiers 2 to 8 can be applied from code. Each tier changes the weapon the way `weapons.json` says, and a test checks every tier. (QA: pass)
+- [x] Level-up offers: the first level-up of a normal run offers exactly 'upgrade the gun' and 'get the flamethrower'. Every later level-up offers two different choices drawn at random from every available choice (get a weapon the car doesn't have, or the next tier of one it has). A weapon at tier 8 is never offered. With one choice left, one card shows. With none left, the choice is skipped. Seeded tests cover all of these cases. (QA: pass)
+- [x] Every possible level-up card (get and each upgrade tier of all five weapons) shows approved text from the Narrative Theme Agent in `game/scripts/ui/level_up_texts.gd`, with no placeholder or missing key. A test walks every choice id and tier. (QA: pass)
+- [x] Every level-up card shows an image of its weapon. A screenshot fixture of the level-up screen shows two cards, each with its weapon image, inside the red and gold card frame. (QA: pass)
+- [x] The PixelLab art is in `game/art/` with its records, and every other generation is in `art-archive/<task>/`. That covers one card image per weapon (all five) plus the in-world art for the underglow, the molotov and its fire area, and the wiper. The art replaces the placeholders in the game, and `art_used` in the goal file is at or under the goal's art cap of 40. (QA: pass)
+- [x] The run scene opens and plays headless from the main menu with all five weapons owned at once (through a dev or playtest switch) for at least 60 seconds with no script errors. (QA: pass)
+- [x] The game's tests, the tools tests and the docs checks all pass on `playtest/G-002`. `docs/weapons.md` (Content), `docs/hud-and-menus.md` (Level-up screen), `docs/visual-style.md` (if art decisions were recorded) and `game/README.md` describe what was built, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: pass)
 
 ## Open questions
 
@@ -195,6 +195,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-18, iteration 10: resumed: its last pause (refusal: a headless session reported a refusal that blocked its work) can't be checked by the runner; --force.
 - 2026-10-18, iteration 11: T-176 (S11, qa-integration, opus): passed (done, QA rounds 2), merged into playtest/G-002; art 0; agent: I re-checked T-176 for round 2, and all four criteria now pass. All three test sets pass: the game's tests (962 of 962, including the new 60-second all-weapons run and the repeated level-up test, with no script errors), the game/tools tests (282 OK, 1 skipped) and the tools tests (303 OK). The Project Lead's recorded staleness result says everything is in sync, its commit 3d8ae24 changed docs/long-gdd.md, and playtest.json has every switch set to false. I wrote the result notes in the task file and committed them as 8af0812; no game code changed. Rescan: S11 covered.
 - 2026-10-18, iteration 11: paused (see Pauses).
+- 2026-10-18, iteration 11: resumed: its last pause (refusal: a headless session reported a refusal that blocked its work) can't be checked by the runner; --force.
+- 2026-10-18, iteration 11: goal check: refused, got past and not blocking: {"tool_input": {"command": "grep -rn \"art_used\\|art_cap\\|art-cap\" tasks/../tools/goal_agent/goals --include=G-002* -r"}, "tool_name": "Bash", "tool_use_id": "toolu_01JZpBq6wR36Vvq5mPxr7qkB"}.
+- 2026-10-18, iteration 11: goal check: refused, got past and not blocking: Grep with a path containing '..' was refused; I used a glob search instead, so nothing was skipped..
+- 2026-10-18, iteration 11: goal check: 9 of 9 goal criteria pass.
+- 2026-10-18, iteration 11: ready to play.
 
 ## Pauses
 
