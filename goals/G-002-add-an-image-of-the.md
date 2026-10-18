@@ -1,7 +1,7 @@
 ---
 id: G-002
 title: Add an image of the weapon on each level-up card, and add three new...
-status: paused
+status: building
 art_cap: 40
 art_used: 0
 iteration: 0
@@ -45,17 +45,17 @@ Answered by the board (2026-10-18, in `docs/weapons.md`, Decisions): burning onl
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S1 | Weapon data for the three new weapons (Game Data Agent) | unblocks 9, value 5 | Every new weapon and its 8 tiers read their numbers from weapons.json. The docs say the agents propose the numbers and what each tier changes, and the board judges them in the playtest. The text task and the behaviour tasks need these first. |  |  |
-| 2 | S3 | Enemy knockback hook (Enemy Behavior Agent) | unblocks 6, value 4 | The windshield wiper knocks enemies back, and enemies have no way to be pushed by a weapon today (minion and kaiju only have take_damage and walk). The wiper task needs a knockback call on enemies. |  |  |
-| 3 | S4 | Neon underglow behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The first of the three new weapons: a circle around the car that damages enemies on entry and every second. |  |  |
-| 4 | S5 | Molotovs behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The second new weapon: molotovs thrown from the car at random, each leaving a circular fire area that burns enemies. |  |  |
-| 5 | S6 | Windshield wiper behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The third new weapon: one wiper in front of the car sweeping a semicircle, damaging and knocking back the enemies it hits. It is the only weapon that pushes. |  |  |
-| 6 | S2 | Level-up card text for the three new weapons (Narrative Theme Agent) | unblocks 3, value 5 | Every card shows a title and a description, and text never uses placeholders. The cards for 'get' and tiers 2 to 8 of each new weapon need approved text before the screen task can show them. |  |  |
-| 7 | S7 | Level-up offers: two random choices from all five weapons (Weapon Behavior Agent) | unblocks 3, value 5 | The docs replace the fixed two-weapon offer with two different choices at random from every available choice. The first level-up still offers the flamethrower or a gun upgrade. |  |  |
-| 8 | S8 | Level-up screen: new card text and a weapon image on every card, placeholder images first (UI Agent) | unblocks 2, value 5 | The HUD and menus decision puts an image of the weapon on each card, and the screen must show the new choices with their approved text. Placeholder images come first, so the screen doesn't wait for the art. |  |  |
-| 9 | S9 | PixelLab art: one card image per weapon, all five (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the PixelLab art, and every card, including the gun's and the flamethrower's, shows its weapon's image. |  |  |
-| 10 | S10 | PixelLab art: in-world art for the underglow, molotovs and fire area, and the wiper (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the new weapons' PixelLab art. The behaviour tasks start with placeholders, and this task swaps the final art in. |  |  |
-| 11 | S11 | Integration check of the goal (QA/Integration Agent) | unblocks 0, value 4 | The goal is only done when all five weapons, the random offers and the card images work together in a real run, ready for the board's single playtest of `playtest/G-002`. |  |  |
+| 1 | S1 | Weapon data for the three new weapons (Game Data Agent) | unblocks 9, value 5 | Every new weapon and its 8 tiers read their numbers from weapons.json. The docs say the agents propose the numbers and what each tier changes, and the board judges them in the playtest. The text task and the behaviour tasks need these first. | missing | T-166 |
+| 2 | S3 | Enemy knockback hook (Enemy Behavior Agent) | unblocks 6, value 4 | The windshield wiper knocks enemies back, and enemies have no way to be pushed by a weapon today (minion and kaiju only have take_damage and walk). The wiper task needs a knockback call on enemies. | missing | T-167 |
+| 3 | S4 | Neon underglow behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The first of the three new weapons: a circle around the car that damages enemies on entry and every second. | missing | T-168 |
+| 4 | S5 | Molotovs behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The second new weapon: molotovs thrown from the car at random, each leaving a circular fire area that burns enemies. | missing | T-169 |
+| 5 | S6 | Windshield wiper behaviour with placeholder look (Weapon Behavior Agent) | unblocks 5, value 5 | The third new weapon: one wiper in front of the car sweeping a semicircle, damaging and knocking back the enemies it hits. It is the only weapon that pushes. | missing | T-170 |
+| 6 | S2 | Level-up card text for the three new weapons (Narrative Theme Agent) | unblocks 3, value 5 | Every card shows a title and a description, and text never uses placeholders. The cards for 'get' and tiers 2 to 8 of each new weapon need approved text before the screen task can show them. | missing | T-171 |
+| 7 | S7 | Level-up offers: two random choices from all five weapons (Weapon Behavior Agent) | unblocks 3, value 5 | The docs replace the fixed two-weapon offer with two different choices at random from every available choice. The first level-up still offers the flamethrower or a gun upgrade. | missing | T-172 |
+| 8 | S8 | Level-up screen: new card text and a weapon image on every card, placeholder images first (UI Agent) | unblocks 2, value 5 | The HUD and menus decision puts an image of the weapon on each card, and the screen must show the new choices with their approved text. Placeholder images come first, so the screen doesn't wait for the art. | missing | T-173 |
+| 9 | S9 | PixelLab art: one card image per weapon, all five (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the PixelLab art, and every card, including the gun's and the flamethrower's, shows its weapon's image. | missing | T-174 |
+| 10 | S10 | PixelLab art: in-world art for the underglow, molotovs and fire area, and the wiper (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the new weapons' PixelLab art. The behaviour tasks start with placeholders, and this task swaps the final art in. | missing | T-175 |
+| 11 | S11 | Integration check of the goal (QA/Integration Agent) | unblocks 0, value 4 | The goal is only done when all five weapons, the random offers and the card images work together in a real run, ready for the board's single playtest of `playtest/G-002`. | missing | T-176 |
 
 ### S1: Weapon data for the three new weapons (Game Data Agent)
 
@@ -154,13 +154,25 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 
 ## Tickets
 
-None yet.
+- T-166: Weapon numbers: the neon underglow, the molotovs and the windshield wiper, with 8 tiers each (S1, written)
+- T-167: Minions can be knocked back by a weapon (a knockback call) (S3, written)
+- T-168: The neon underglow: a circle around the car that damages enemies (placeholder look) (S4, written)
+- T-169: The molotovs: thrown from the car, they leave fire areas that burn enemies (placeholder look) (S5, written)
+- T-170: The windshield wiper: sweeps in front of the car, damages and pushes minions back (placeholder look) (S6, written)
+- T-171: Text: level-up cards for the neon underglow, the molotovs and the windshield wiper (S2, written)
+- T-172: Level-up offers: two different random choices from all five weapons (S7, written)
+- T-173: Level-up screen: cards for the new weapons, and a weapon image on every card (placeholder images) (S8, written)
+- T-174: Art: one level-up card image per weapon, all five (PixelLab) (S9, written)
+- T-175: Art: the neon underglow, the molotov and its fire area, and the windshield wiper in the world (PixelLab) (S10, written)
+- T-176: QA: the five weapons, the random offers and the card images together in a run (S11, written)
 
 ## Iteration log
 
 - 2026-10-18, iteration 0: started: planning.
 - 2026-10-18, iteration 0: priority scoring: 11 sub-goals ranked, 9 goal criteria, 10 open questions.
 - 2026-10-18, iteration 0: paused (see Pauses).
+- 2026-10-18, iteration 0: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-18, iteration 0: gap detection: S1 missing (wrote T-166), S3 missing (wrote T-167), S4 missing (wrote T-168), S5 missing (wrote T-169), S6 missing (wrote T-170), S2 missing (wrote T-171), S7 missing (wrote T-172), S8 missing (wrote T-173), S9 missing (wrote T-174), S10 missing (wrote T-175), S11 missing (wrote T-176).
 
 ## Pauses
 
