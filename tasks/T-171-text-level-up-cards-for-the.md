@@ -1,7 +1,7 @@
 ---
 id: T-171
 title: Text: level-up cards for the neon underglow, the molotovs and the windshield wiper
-status: blocked
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-002
@@ -44,6 +44,10 @@ The board's review: Read the 24 card texts in the ticket's result notes; they sh
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-171.
 
 ## Result notes
 
