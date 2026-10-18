@@ -37,9 +37,9 @@ The board's review: Read the 24 card texts in the ticket's result notes; they sh
 
 ## Acceptance criteria
 
-- [ ] The result notes hold a table of 24 title and description pairs keyed `get_underglow`, `upgrade_underglow.tier2` to `tier8`, and the same for `molotov` and `wiper`, with no key missing or repeated. (QA: pass / fail)
-- [ ] Each description states the change its tier makes as written in weapons.json (the same effect and number). (QA: pass / fail)
-- [ ] Each title and description is no longer than the longest existing one in `level_up_texts.gd`, and none contains a real brand name or a word the Extended narrative rules out for Redgull. (QA: pass / fail)
+- [ ] The result notes hold a table of 24 title and description pairs keyed `get_underglow`, `upgrade_underglow.tier2` to `tier8`, and the same for `molotov` and `wiper`, with no key missing or repeated. (QA: pass: 24 rows, keys complete and unique)
+- [ ] Each description states the change its tier makes as written in weapons.json (the same effect and number). (QA: pass: all 24 match weapons.json, e.g. 0.75 and 0.67 intervals as 25% and 33% sooner, molotov 2.4 s / 3 dmg / 4.5 s, knockback 1.5 to 2.25)
+- [ ] Each title and description is no longer than the longest existing one in `level_up_texts.gd`, and none contains a real brand name or a word the Extended narrative rules out for Redgull. (QA: pass: longest new description about 73 chars vs 78 existing, titles at most 16 vs 19; no real brands, nothing the narrative rules out)
 
 ## Updates
 
