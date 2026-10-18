@@ -1,7 +1,7 @@
 ---
 id: T-170
 title: The windshield wiper: sweeps in front of the car, damages and pushes minions back (placeholder look)
-status: blocked
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -46,6 +46,10 @@ The board's review: Play a run from the task folder with the wiper given and see
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-170.
 
 ## Result notes
 
