@@ -34,6 +34,11 @@ class GapDetection(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def test_detect_passes_only_read_tools(self):
+        claude = FakeClaude({"gaps": [GOOD]})
+        gaps.detect(claude, "goal", SUB_GOALS, self.root)
+        self.assertEqual(claude.calls[0][2]["tools"], "Read,Glob,Grep")
+
     def test_code_index_skips_addons_cache_and_art(self):
         files, heads = gaps.code_index(self.root)
         self.assertEqual(files, ["README.md", "scripts/car.gd"])

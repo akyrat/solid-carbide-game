@@ -127,7 +127,7 @@ def rank(sub_goals):
 def plan(claude, goal_text, root, model=None):
     """{goal_criteria, open_questions, sub_goals (ranked)} for a goal. Raises Pause."""
     answer = claude.ask("plan", prompt(goal_text), SCHEMA, model=model, cwd=str(root),
-                        allowed_tools="Read,Glob,Grep")
+                        allowed_tools="Read,Glob,Grep", tools="Read,Glob,Grep")
     if answer.denials:
         raise Pause(f"Priority scoring was refused: {answer.denials}", "refusal")
     data = answer.data
