@@ -11,7 +11,8 @@ Agent checks the goal's own acceptance criteria in the goal's folder: all pass, 
 The goal pauses (status `paused`, the reason in `## Pauses` with its kind, a printed message) and changes
 nothing more on these stop rules (KINDS): the iteration cap; the art cap with an asset-generation ticket
 next; a flagged ticket other goal tickets wait on (independent work carries on first); the same gap or
-failing goal criterion twice with no ticket passing in between; any refusal; two refused sets of drafts.
+failing goal criterion twice with no ticket passing in between; a refusal that blocked a session (one it got
+past is only written in the iteration log); two refused sets of drafts.
 The run is rebuilt from the files each step (goal file, tickets, worktrees), so `resume` is the same loop.
 """
 
@@ -27,7 +28,7 @@ KINDS = {
     "flagged": "a ticket is flagged for review and nothing else can go on",
     "waiting": "goal tickets wait on tickets this goal doesn't build",
     "repeat": "the same gap or failing goal criterion came back twice with no ticket passing in between",
-    "refusal": "a headless session reported a refusal",
+    "refusal": "a headless session reported a refusal that blocked its work",
     "command": "a command the runner ran was refused or failed",
     "drafts-refused": "gap detection's drafts were refused twice",
     "merge": "a merge into the goal's build conflicted",
@@ -182,8 +183,10 @@ def after_ticket(b, res, seen):
         found = (f"stopped ({p.kind})", [], p)
     merged = f", merged into {b.places.goal_branch(b.gid)}" if res["outcome"] == "passed" else ""
     said = " / ".join(s.strip().rstrip(".") for s in res["summaries"]) or "(nothing new)"
+    skipped = (f" Refused, got past and not blocking: {' / '.join(res['refusals'])}."
+               if res.get("refusals") else "")
     goal.log(f"{res['id']} ({View(b).sub_of.get(res['id'], '?')}, {res['to']}, {res['model']}): {res['outcome']} "
-             f"({res['status']}, QA rounds {res['rounds']}){merged}; art {res['art']}; agent: {said}. "
+             f"({res['status']}, QA rounds {res['rounds']}){merged}; art {res['art']}; agent: {said}.{skipped} "
              f"Rescan: {found[0]}.")
     save(b, found[1], f"{b.gid}: iteration {goal.get('iteration')}, {res['id']} {res['outcome']} (goal runner)")
     if found[2]:

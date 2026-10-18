@@ -50,16 +50,16 @@ def art(key, title, deps):
                  files_to_read_first=VISUAL_READS, depends_on=list(deps))
 
 
-def agent(summary="Did the work.", art=0, refusals=(), denials=None, files=None):
-    a = {"summary": summary, "art_generations_used": art, "refusals": list(refusals), "_art": art,
+def agent(summary="Did the work.", art=0, refusals=(), denials=None, files=None, blocked=False):
+    a = {"summary": summary, "art_generations_used": art, "refusals": list(refusals), "blocked": blocked, "_art": art,
          "_files": files or {"game/data/work.txt": summary + "\n"}}
     if denials:
         a["_permission_denials"] = denials
     return a
 
 
-def qa(mark="pass"):
-    return {"summary": f"QA says {mark}.", "refusals": [], "_marks": mark}
+def qa(mark="pass", refusals=(), blocked=False):
+    return {"summary": f"QA says {mark}.", "refusals": list(refusals), "blocked": blocked, "_marks": mark}
 
 
 def check(*results):
@@ -197,17 +197,72 @@ class Pauses(GoalRepo):
         self.assertFalse(self.places.ticket_folder("T-002").exists(), "not started")
 
     def test_a_refusal_in_a_headless_session(self):
-        b = self.planned(self.two_tickets(agent=[agent(denials=[{"tool_name": "Bash", "tool_input": {"command": "x"}}])]))
+        b = self.planned(self.two_tickets(agent=[agent(denials=[{"tool_name": "Bash", "tool_input": {"command": "x"}}],
+                                                       blocked=True)]))
         goal = self.run_loop(b)
         self.assertPaused(goal, "refusal", "never works around", "Bash")
         self.assertEqual(self.steps(b), ["plan", "gaps", "agent"])
         self.assertEqual((self.status("T-001"), self.status("T-002")), ("in-progress", "open"))
 
     def test_a_refusal_the_agent_reports(self):
-        b = self.planned(self.two_tickets(agent=[agent(refusals=["the hook refused git push"])]))
+        b = self.planned(self.two_tickets(agent=[agent(refusals=["the hook refused git push"], blocked=True)]))
         goal = self.run_loop(b)
         self.assertPaused(goal, "refusal", "the hook refused git push")
         self.assertEqual(self.steps(b), ["plan", "gaps", "agent"])
+
+    def test_a_refusal_the_agent_got_past_is_logged_and_the_ticket_goes_on(self):
+        denial = {"tool_name": "Bash", "tool_input": {"command": "python -c x"}}
+        b = self.planned(self.two_tickets(agent=[agent(refusals=["the hook refused git push"], denials=[denial])]),
+                         max_iterations=1)
+        goal = self.run_loop(b)
+        self.assertEqual(goal.last_pause_kind(), "max-iterations", goal.section("Pauses"))
+        self.assertEqual(self.steps(b)[:5], ["plan", "gaps", "agent", "qa", "gaps"], "on to QA, then the rescan")
+        self.assertEqual(self.status("T-001"), "done")
+        first = self.entries(goal)[0]
+        self.assertIn("T-001", first)
+        self.assertIn("passed", first)
+        self.assertIn("not blocking", first)
+        self.assertIn("the hook refused git push", first)
+        self.assertIn("python -c x", first, "a permission denial is written too")
+
+    def test_a_blocked_agent_pauses_with_the_refusal_in_the_pauses(self):
+        b = self.planned(self.two_tickets(agent=[agent(refusals=["no write to the main checkout"], blocked=True)]))
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "refusal", "no write to the main checkout")
+        self.assertEqual(self.steps(b), ["plan", "gaps", "agent"])
+
+    def test_a_refusal_qa_got_past_is_logged(self):
+        b = self.planned(self.two_tickets(qa=[qa(refusals=["python -c refused"])]), max_iterations=1)
+        goal = self.run_loop(b)
+        self.assertEqual(goal.last_pause_kind(), "max-iterations", goal.section("Pauses"))
+        self.assertEqual(self.status("T-001"), "done")
+        self.assertIn("QA: python -c refused", self.entries(goal)[0])
+
+    def test_a_blocked_qa_pauses(self):
+        b = self.planned(self.two_tickets(qa=[qa(refusals=["python -c refused"], blocked=True)]))
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "refusal", "QA on T-001", "python -c refused")
+        self.assertEqual(self.steps(b), ["plan", "gaps", "agent", "qa"])
+        self.assertEqual(self.status("T-001"), "in-qa")
+
+    def test_a_refusal_without_a_blocked_answer_counts_as_blocked(self):
+        a = agent(refusals=["refused"])
+        del a["blocked"]
+        goal = self.run_loop(self.planned(self.two_tickets(agent=[a])))
+        self.assertPaused(goal, "refusal", "refused")
+
+    def test_both_schemas_require_blocked_and_the_prompts_explain_it(self):
+        self.assertEqual(build.AGENT_SCHEMA["properties"]["blocked"]["type"], "boolean")
+        self.assertEqual(build.QA_SCHEMA["properties"]["blocked"]["type"], "boolean")
+        self.assertIn("blocked", build.AGENT_SCHEMA["required"])
+        self.assertIn("blocked", build.QA_SCHEMA["required"])
+        b = self.planned(self.two_tickets())
+        t = self.now()["T-001"]
+        folder = self.places.ticket_folder("T-001")
+        for prompt in (build.agent_prompt(b, t, folder), build.qa_prompt(b, t, folder, "## Acceptance criteria\n")):
+            self.assertIn("never work around it", prompt)
+            self.assertIn("Set blocked to true only when", prompt)
+            self.assertIn("list it in refusals", prompt)
 
     def test_a_refused_command(self):
         class Refusing(Shell):
@@ -376,7 +431,7 @@ class Resume(GoalRepo):
 
     def test_a_paused_goal_stays_paused_until_its_reason_is_cleared_or_forced(self):
         f = self.three_tickets()
-        f["agent"][0] = agent(denials=[{"tool_name": "Write"}])
+        f["agent"][0] = agent(denials=[{"tool_name": "Write"}], blocked=True)
         b = self.planned(f)
         self.assertPaused(self.run_loop(b), "refusal")
         calls = len(b.claude.calls)

@@ -48,7 +48,7 @@ An agent that runs on its own needs to know when to stop. The goal runner pauses
 - has a ticket that failed QA twice and that other work depends on;
 - sees the same gap come back twice with no progress;
 - hits a merge conflict, or is waiting on a ticket another session owns;
-- is refused anything by the permission system or the project's hooks. It never works around a refusal.
+- is refused something it needs by the permission system or the project's hooks. It never works around a refusal: an agent skips a refused step it can do without and the refusal is logged; when the step was essential, the run pauses.
 
 ## My rules for a run
 

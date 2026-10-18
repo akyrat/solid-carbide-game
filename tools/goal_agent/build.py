@@ -44,13 +44,19 @@ AGENT_SCHEMA = {
         "art_generations_used": {"type": "integer", "minimum": 0},
         "refusals": {"type": "array", "items": {"type": "string"},
                      "description": "every action the permission system or a hook refused, with what you wanted"},
+        "blocked": {"type": "boolean",
+                    "description": "true only when a refused action was essential and you could not finish "
+                                   "your job without it"},
     },
-    "required": ["summary", "art_generations_used", "refusals"],
+    "required": ["summary", "art_generations_used", "refusals", "blocked"],
 }
 QA_SCHEMA = {
     "type": "object",
-    "properties": {"summary": {"type": "string"}, "refusals": {"type": "array", "items": {"type": "string"}}},
-    "required": ["summary", "refusals"],
+    "properties": {"summary": {"type": "string"}, "refusals": {"type": "array", "items": {"type": "string"}},
+                   "blocked": {"type": "boolean",
+                               "description": "true only when a refused action was essential and you could not "
+                                              "finish the checks without it"}},
+    "required": ["summary", "refusals", "blocked"],
 }
 
 
@@ -222,9 +228,14 @@ def register_session(b):
 
 
 def check_refusals(answer, who):
-    refused = list(answer.denials) + list((answer.data or {}).get("refusals") or [])
-    if refused:
+    """The refusals a headless session met. If it says `blocked` (a missing field counts as blocked, and so does
+    a session whose schema has no such field, like the goal check), the goal pauses; otherwise the session got
+    past them without working around them, and they are returned (as text) to be recorded."""
+    data = answer.data or {}
+    refused = list(answer.denials) + list(data.get("refusals") or [])
+    if refused and data.get("blocked", True):
         raise Pause(f"{who} reported a refusal; the runner never works around one: {refused}", "refusal")
+    return [r if isinstance(r, str) else json.dumps(r, sort_keys=True) for r in refused]
 
 
 def ask_headless(b, step, prompt, schema, agent, model, folder):
@@ -271,8 +282,10 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - PixelLab: this goal has {art_left(b)} generations left under its art cap. Never go over it; one round per
   task, no regenerations.
-- If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.{pre_approved_note(b.root)}
-Answer with a short summary, the PixelLab generations you used, and every refusal you met."""
+- If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip it
+  and carry on; list it in refusals, and in your result notes. Set blocked to true only when the refused action was
+  essential and you can't finish the task without it; then stop.{pre_approved_note(b.root)}
+Answer with a short summary, the PixelLab generations you used, every refusal you met, and blocked."""
 
 
 def qa_prompt(b, ticket, folder, text):
@@ -284,22 +297,24 @@ Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
 Mark each one in the task file as `(QA: pass)` or `(QA: fail, <why>)`, and commit the task file in that folder.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
-If the permission system or a hook refuses anything, never work around it: stop, and list it in refusals.{pre_approved_note(b.root)}
-Answer with a short summary and every refusal you met."""
+If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
+check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
+can't finish the checks without it; then stop.{pre_approved_note(b.root)}
+Answer with a short summary, every refusal you met, and blocked."""
 
 
 def run_agent(b, ticket, folder):
+    """The agent's answer; its `refusals` are the ones it got past (a blocked agent pauses the goal)."""
     answer = ask_headless(b, "agent", agent_prompt(b, ticket, folder), AGENT_SCHEMA, ticket["to"],
                           ticket["model"] or "sonnet", folder)
-    check_refusals(answer, f"The {ticket['to']} agent on {ticket['id']}")
-    return answer.data
+    return dict(answer.data, refusals=check_refusals(answer, f"The {ticket['to']} agent on {ticket['id']}"))
 
 
 def run_qa(b, ticket, folder):
+    """QA's answer; its `refusals` are the ones it got past (a blocked QA pauses the goal)."""
     text = Path(folder, ticket["file"]).read_text(encoding="utf-8")
     answer = ask_headless(b, "qa", qa_prompt(b, ticket, folder, text), QA_SCHEMA, "qa-integration", QA_MODEL, folder)
-    check_refusals(answer, f"QA on {ticket['id']}")
-    return answer.data
+    return dict(answer.data, refusals=check_refusals(answer, f"QA on {ticket['id']}"))
 
 
 # --- art and merging ---
@@ -344,8 +359,9 @@ def merge(b, ticket):
 
 def build_ticket(b, tid):
     """Build one ticket from wherever it stands (so a stopped run picks it up again); returns its result:
-    {id, outcome: passed | flagged, status, rounds, model, art, summaries}."""
-    summaries = []
+    {id, outcome: passed | flagged, status, rounds, model, art, summaries, refusals (the ones the agent and
+    QA got past, to be recorded)}."""
+    summaries, skipped = [], []
     while True:
         t = tickets_now(b.root)[tid]
         folder = b.places.ticket_folder(tid)
@@ -356,12 +372,14 @@ def build_ticket(b, tid):
             commit_ticket(b, tickets_now(b.root)[tid], f"{tid}: in progress (goal runner, {b.gid})")
         elif status == "in-progress":
             ensure_ticket_folder(b, t)
-            summaries.append(run_agent(b, t, folder).get("summary", ""))
+            done = run_agent(b, t, folder)
+            summaries.append(done.get("summary", ""))
+            skipped += [f"{t['to']}: {r}" for r in done["refusals"]]
             move(b, tid, "in-qa", reply=f"Goal runner ({b.gid}): the agent is done; QA is checking it.")
             commit_ticket(b, t, f"{tid}: in QA (goal runner, {b.gid})")
         elif status == "in-qa":
             ensure_ticket_folder(b, t)
-            run_qa(b, t, folder)
+            skipped += [f"QA: {r}" for r in run_qa(b, t, folder)["refusals"]]
             t = tickets_now(b.root)[tid]
             passed, failed, unchecked = verdicts(t["path"].read_text(encoding="utf-8"))
             if unchecked:
@@ -374,7 +392,7 @@ def build_ticket(b, tid):
                 move(b, tid, "flagged-for-review", note=f"Failed QA a second time (goal {b.gid}).",
                      reply=f"Goal runner ({b.gid}): failed QA twice; flagged for the board.")
                 commit_ticket(b, t, f"{tid}: flagged for review (goal runner, {b.gid})")
-                return result(b, tid, "flagged", summaries)
+                return result(b, tid, "flagged", summaries, refusals=skipped)
             else:
                 why = "; ".join(re.sub(r"^\s*- \[[ xX]\] ", "", l) for l in failed)[:600]
                 move(b, tid, "in-progress", note=f"QA failed: {why} Back to the agent on {RETRY_MODEL}.",
@@ -386,19 +404,19 @@ def build_ticket(b, tid):
             commit_ticket(b, t, f"{tid}: {status} (goal runner, {b.gid})")
             art = art_used(b, t) if folder.exists() else 0
             merge(b, t)
-            return result(b, tid, "passed", summaries, art)
+            return result(b, tid, "passed", summaries, art, skipped)
         elif status == "flagged-for-review":
-            return result(b, tid, "flagged", summaries)
+            return result(b, tid, "flagged", summaries, refusals=skipped)
         else:
             raise Pause(f"{tid} is {status}; the goal runner doesn't build a ticket from there.", "stop")
 
 
-def result(b, tid, outcome, summaries, art=None):
+def result(b, tid, outcome, summaries, art=None, refusals=()):
     t = tickets_now(b.root)[tid]
     if art is None:
         art = art_used(b, t) if b.places.ticket_folder(tid).exists() else 0
     return {"id": tid, "outcome": outcome, "status": t["status"], "rounds": t["qa_rounds"], "model": t["model"],
-            "to": t["to"], "art": art, "summaries": [s for s in summaries if s]}
+            "to": t["to"], "art": art, "summaries": [s for s in summaries if s], "refusals": list(refusals)}
 
 
 # --- committing the goal's files on master ---
