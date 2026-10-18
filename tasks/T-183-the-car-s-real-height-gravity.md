@@ -1,7 +1,7 @@
 ---
 id: T-183
 title: The car's real height: gravity, takeoff from the ramp's top and drop-off edges, and landing
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -55,6 +55,10 @@ docs/drifting.md, Decisions, 'Elevation' (board, 2026-10-17, go-ahead 2026-10-19
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-183.
 
 ## Result notes
 
