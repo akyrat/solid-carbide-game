@@ -1,7 +1,7 @@
 ---
 id: T-162
 title: Goal runner, part 1: goal file, priority scoring and gap detection
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/working-with-the-board.md, course-mat
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, CLAUDE.md, tasks/_TEMPLATE.md, tools/task_status.py, tools/taskboard_sync.py, tools/ticket_impact.py, tools/guard_ledger.py, .claude/hooks/board_gate.py, docs/short-gdd/short-gdd.md, course-material/goal-oriented-code-agent/README.md]
 files_expected_to_change: [tools/goal_agent/__init__.py, tools/goal_agent/claude_call.py, tools/goal_agent/goal_file.py, tools/goal_agent/prioritize.py, tools/goal_agent/gaps.py, tools/goal_agent/tickets.py, tools/goal_agent/run.py, tools/goal_agent/test_*.py, tools/goal_agent/fixtures/, goals/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -71,6 +71,10 @@ Started: part 1 of the goal runner (the goal file, priority scoring, gap detecti
 ### 2026-10-18, In progress → In QA
 
 Built: the goal file, priority scoring, gap detection and the command line, with 49 new tests (259 tools tests pass). QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 7 criteria. Merged into master; it's tooling, so no playtest. T-163 (building and the loop) starts next.
 
 ## Result notes
 
