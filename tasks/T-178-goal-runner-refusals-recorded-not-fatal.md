@@ -1,7 +1,7 @@
 ---
 id: T-178
 title: Goal runner: a refusal the agent got past is recorded, not a pause
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -34,16 +34,20 @@ New rule:
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows an agent session reporting a refusal with `blocked` false lets the ticket go on to QA and pass, and the refusal is written in the goal file's iteration log (QA: pass / fail)
-- [ ] A test shows an agent or QA session with `blocked` true pauses the goal with the refusal in `## Pauses`, and the existing pause tests for the runner's own refused commands still pass (QA: pass / fail)
-- [ ] Both prompts tell the agent when to set `blocked`, and `blocked` is required in both result schemas (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows an agent session reporting a refusal with `blocked` false lets the ticket go on to QA and pass, and the refusal is written in the goal file's iteration log (QA: pass)
+- [ ] A test shows an agent or QA session with `blocked` true pauses the goal with the refusal in `## Pauses`, and the existing pause tests for the runner's own refused commands still pass (QA: pass)
+- [ ] Both prompts tell the agent when to set `blocked`, and `blocked` is required in both result schemas (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Quick fix started: a refusal an agent got past (skipped, not worked around) is recorded and the ticket goes on to QA; the run pauses only when an agent says a refusal blocked its work.
+
+### 2026-10-18, In progress → In QA
+
+Built: refusals an agent got past are logged and the ticket goes on; only a blocked agent or QA pauses the run. 309 tools tests pass. QA checks it now.
 
 ## Result notes
 
