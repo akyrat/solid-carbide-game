@@ -24,9 +24,11 @@ Add an image of the weapon on each level-up card, and add three new weapons: the
 - [ ] Every level-up card shows an image of its weapon. A screenshot fixture of the level-up screen shows two cards, each with its weapon image, inside the red and gold card frame. (QA: pass / fail)
 - [ ] The PixelLab art is in `game/art/` with its records, and every other generation is in `art-archive/<task>/`. That covers one card image per weapon (all five) plus the in-world art for the underglow, the molotov and its fire area, and the wiper. The art replaces the placeholders in the game, and `art_used` in the goal file is at or under the goal's art cap of 40. (QA: pass / fail)
 - [ ] The run scene opens and plays headless from the main menu with all five weapons owned at once (through a dev or playtest switch) for at least 60 seconds with no script errors. (QA: pass / fail)
-- [ ] The game's tests, the tools tests and the docs checks all pass on `playtest/G-001`. `docs/weapons.md` (Content), `docs/hud-and-menus.md` (Level-up screen), `docs/visual-style.md` (if art decisions were recorded) and `game/README.md` describe what was built, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: pass / fail)
+- [ ] The game's tests, the tools tests and the docs checks all pass on `playtest/G-002`. `docs/weapons.md` (Content), `docs/hud-and-menus.md` (Level-up screen), `docs/visual-style.md` (if art decisions were recorded) and `game/README.md` describe what was built, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: pass / fail)
 
 ## Open questions
+
+Answered by the board (2026-10-18, in `docs/weapons.md`, Decisions): burning only while inside the fire area; the wiper is always on and pushes only minions (the kaiju is damaged, not pushed); the garage damage bonus applies to every weapon; the gun's card shows a small pixel-art gun. The rest are left to the agents as proposals for the playtest.
 
 - Does a burning enemy keep burning after it leaves a molotov's fire area, and for how long? (Weapons, Open questions, 2026-10-18)
 - Is the kaiju knocked back by the windshield wiper, or only minions? Today the kaiju's body overlap rule exists for the flamethrower, but nothing is said about pushing it.
@@ -53,7 +55,7 @@ Add an image of the weapon on each level-up card, and add three new weapons: the
 | 8 | S8 | Level-up screen: new card text and a weapon image on every card, placeholder images first (UI Agent) | unblocks 2, value 5 | The HUD and menus decision puts an image of the weapon on each card, and the screen must show the new choices with their approved text. Placeholder images come first, so the screen doesn't wait for the art. |  |  |
 | 9 | S9 | PixelLab art: one card image per weapon, all five (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the PixelLab art, and every card, including the gun's and the flamethrower's, shows its weapon's image. |  |  |
 | 10 | S10 | PixelLab art: in-world art for the underglow, molotovs and fire area, and the wiper (Asset Generation Agent) | unblocks 1, value 4 | The goal asks for the new weapons' PixelLab art. The behaviour tasks start with placeholders, and this task swaps the final art in. |  |  |
-| 11 | S11 | Integration check of the goal (QA/Integration Agent) | unblocks 0, value 4 | The goal is only done when all five weapons, the random offers and the card images work together in a real run, ready for the board's single playtest of `playtest/G-001`. |  |  |
+| 11 | S11 | Integration check of the goal (QA/Integration Agent) | unblocks 0, value 4 | The goal is only done when all five weapons, the random offers and the card images work together in a real run, ready for the board's single playtest of `playtest/G-002`. |  |  |
 
 ### S1: Weapon data for the three new weapons (Game Data Agent)
 

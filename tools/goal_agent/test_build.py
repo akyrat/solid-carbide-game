@@ -152,7 +152,9 @@ class RealCommand(unittest.TestCase):
             answer = RealClaude().ask("agent", "Work on task T-001", build.AGENT_SCHEMA, model="opus", agent="ui",
                                       session_id="abc", cwd="C:/w/T-001", permission_mode="acceptEdits", timeout=5)
         cmd, kw = run.call_args[0][0], run.call_args[1]
-        self.assertEqual(cmd[:3], ["claude", "-p", "Work on task T-001"])
+        self.assertEqual(cmd[:2], ["claude", "-p"])
+        self.assertNotIn("Work on task T-001", cmd)
+        self.assertEqual(kw["input"], "Work on task T-001")
         for flag, value in (("--model", "opus"), ("--agent", "ui"), ("--session-id", "abc"),
                             ("--permission-mode", "acceptEdits"), ("--output-format", "json")):
             self.assertEqual(cmd[cmd.index(flag) + 1], value)

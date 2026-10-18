@@ -538,6 +538,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Molotovs:** thrown from the car at random, each one makes a circular area on fire where it lands. Enemies in a fire area burn and take damage.
   - **Windshield wiper:** one wiper in front of the car that sweeps in a semicircle, like a windshield wiper. Enemies it hits take damage and are knocked back. It is the only weapon that pushes enemies (the "never push enemies back" rule above is about the gun and the flamethrower).
   - They join the MVP, which then has 5 weapons. Each has 8 tiers like the gun and the flamethrower: getting it is tier 1, then 7 upgrades. Their numbers and what each tier changes are proposals by the agents, judged in the board's playtest.
+  - Answers to the goal runner's questions (board, 2026-10-18): an enemy burns only while it is inside a molotov's fire area, not after it leaves. The windshield wiper sweeps all the time; it damages the kaiju but pushes only minions. The garage's damage bonus multiplies the damage of every weapon, the three new ones included. The starting gun's level-up card shows a small pixel-art gun.
   - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has). The first level-up still offers "get the flamethrower" or "upgrade the gun".
 
 ### Content
@@ -834,7 +835,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `87f6fe181fcd4ddb44a43b04f3806816825275224d58961c2b9d932a4bc73145` |
 | `level-design.md` | `84279a9d2327081183378b5b752bd5f2890e7994befdd49036c3ef1b1aab5bc0` |
 | `enemies.md` | `a4e223167564b38196fcf58905daa6cf53a210dc1d89a98e99b7eb5fcacb5d08` |
-| `weapons.md` | `a5686b2e3c665fed68e1d9c7abf6d2b7399381fa621c1c47a7a910ed981c762a` |
+| `weapons.md` | `af6c77cb181ff3d2f821d38354efece97ae97f561085bcd06fddf766f6f88d4b` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `e40a08de0c7dce42dda2e6341e16bd3f1704512583e65c023d8677c64f44c194` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
