@@ -85,6 +85,8 @@ Every status change in these steps goes through `python tools/task_status.py` (`
 
 Nothing about the game gets changed outside a task file, except documentation and agent definitions (which you change only after asking the board first).
 
+When the board gives a whole goal instead of a single request, the goal runner (`tools/goal_agent/`) does steps 2 to 7 in a loop until the goal's own criteria pass, and the board plays the result once at the end (`docs/working-with-the-board.md`, "Goal runs").
+
 ## Common rules for every agent
 
 - To reduce token spend, when an agent spots repeatable work that a script can do, it writes a script instead of doing the work by hand. This is each agent's own working habit, not a shared system.

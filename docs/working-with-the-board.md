@@ -30,6 +30,14 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - The QA column also means "ready for the board's review" (board, 2026-10-16). A task usually goes to QA for the QA/Integration Agent, but when the board says so, or the ticket says so, it goes there for the board alone, with no QA agent, for example after a quick-tuning tweak: as soon as the tweak is in, move the task to QA with a note that it is ready for the board to play, and tell the board. Don't leave it in In progress while it waits for the board.
 - The board often scopes down ("only one for now", "post MVP", "much later"). Record it in the docs, split the ticket, move the rest to a later milestone, and delete nothing.
 
+## Goal runs
+The board can give the studio a whole goal ("the trick system with its final art", or "the whole short GDD") and let the goal runner build it without review along the way (board, 2026-10-18; `tools/goal_agent/`, `tasks/README.md`, "Goal runs"). While a goal is running, these replace the rules above that assume the board reviews each step:
+- The goal is the board's go for PixelLab, up to the goal's art cap (`--art-cap`, set by the board per goal). No sample review: the art is judged in the final playtest. Still one generation round per task: weak art is noted, not regenerated.
+- QA passing counts as done for the runner. Each ticket that passes is merged into the goal's build branch `playtest/<goal id>`, not into `master`.
+- The board plays the result once, at the end, from that branch. Nothing reaches `master` before that playtest; then the Project Lead merges as usual.
+- Each run uses the session name `Goal-<goal id>` and claims its tickets, so it hears only its own moves.
+- Any refusal by a hook or the permission system pauses the run, with the reason in the goal file. The runner never works around it.
+
 ## Merging (Project Lead)
 - Check a merge really happened: `if git merge --no-ff --no-commit <branch>; then ...`.
 - Revert Godot's line-ending-only `.import` noise before committing; never commit it.

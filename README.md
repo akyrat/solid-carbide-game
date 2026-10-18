@@ -11,6 +11,7 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 - `agent-notes/`: each agent's working copy of its relationships, which it updates from experience. `agent-notes/agents-interactions.md` is the shared overview of the whole crew.
 - `docs/`: the documents. The separate documents are the source of truth, then the long GDD, then the short GDD.
 - `tasks/`: task files, the official record of all work.
+- `goals/`: one file per goal given to the goal runner (`tools/goal_agent/`): its sub-goals, tickets and iteration log.
 - `game/`: the Godot project.
 - `tools/`: project tooling that is not part of the game, such as the agent diagram generator.
 

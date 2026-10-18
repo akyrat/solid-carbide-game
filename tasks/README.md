@@ -73,6 +73,14 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 - **When the board marks the task done,** the Project Lead merges the branch into `master`, then removes the worktree and deletes the branch.
 - **Documentation-only work** (for example the Project Lead's own document edits) is committed straight to `master`.
 
+## Goal runs
+
+The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:
+
+- Each goal has one file in `goals/`, `G-001-short-title.md`, with a parseable header. It holds the goal, its acceptance criteria (the runner's stop condition), the prioritised sub-goals, the tickets it wrote or reused, and a log of every iteration.
+- A ticket the runner writes or reuses gets the goal's id in its `goal:` header line. Its tickets follow every rule in this file: the template, the status script, placeholders before art, a text ticket before any player-facing text.
+- A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build.
+
 ## Building in playable steps
 
 The board's way of building the game (2026-10-10): always aim for the smallest playable version of the work, playtest it, then build on it. The Project Lead orders and splits tasks so each wave ends in something the board can play. The current steps toward the MVP:

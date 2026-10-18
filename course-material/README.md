@@ -5,3 +5,4 @@ Material for my course assignments. It is not part of the game: each assignment 
 | Assignment | Folder |
 |---|---|
 | A working asset pipeline with agents and their output | [`asset-pipeline/`](asset-pipeline/README.md) |
+| A goal-oriented code agent | [`goal-oriented-code-agent/`](goal-oriented-code-agent/README.md) |
