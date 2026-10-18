@@ -228,8 +228,8 @@ def register_session(b):
 
 
 def check_refusals(answer, who):
-    """The refusals a headless session met. If it says `blocked` (a missing field counts as blocked, and so does
-    a session whose schema has no such field, like the goal check), the goal pauses; otherwise the session got
+    """The refusals a headless session met. If it says `blocked` (a missing field counts as blocked), the goal
+    pauses; otherwise the session got
     past them without working around them, and they are returned (as text) to be recorded."""
     data = answer.data or {}
     refused = list(answer.denials) + list(data.get("refusals") or [])

@@ -1,16 +1,23 @@
 """Test support (role: a small temporary git repo for the tests, so they never touch the real checkout).
 
 make() copies in what the runner reads (the task template and README, the agent definitions, the status
-script and its helpers, the guard hook, the goal runner itself) and commits it on master.
+script and its helpers, the guard hook, the docs scripts, the goal runner itself), writes one small game area
+doc with its long GDD and short GDD fingerprint (in sync, made by the real scripts) and commits it on master.
 """
 
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 REAL = Path(__file__).resolve().parents[2]
 COPY = ["tasks/_TEMPLATE.md", "tasks/README.md", "tools/taskboard_sync.py", "tools/guard_ledger.py",
-        "tools/task_status.py", "tools/board_inbox.py", ".claude/hooks/board_gate.py"]
+        "tools/task_status.py", "tools/board_inbox.py", ".claude/hooks/board_gate.py", "tools/generate_long_gdd.py",
+        "tools/update_short_gdd_fingerprint.py"]
+SAMPLE_DOC = ("---\ntitle: Sample\ngdd_order: 1\nscope: A sample game area doc.\nagents_work_on: ui\nagents_read: ui\n---\n\n"
+              "# Sample\n\n## Summary\n\nSample summary.\n\n## Decisions\n\n(None yet.)\n\n## Content\n\n"
+              "(To be written.)\n\n## Open questions\n\n(None yet.)\n\n## References\n\n(None yet.)\n")
+SHORT_README = "# Short GDD\n\nLast updated from long GDD: 0\n"
 
 
 def git(root, *args, check=True):
@@ -50,6 +57,11 @@ def make(folder):
                       ("game/art/car.png", "x"), ("game/addons/gut/gut.gd", "x"), ("game/.godot/cache", "x")):
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         (root / rel).write_text(text, encoding="utf-8")
+    (root / "docs" / "short-gdd").mkdir(parents=True)
+    (root / "docs" / "sample.md").write_bytes(SAMPLE_DOC.encode("utf-8"))
+    (root / "docs" / "short-gdd" / "README.md").write_bytes(SHORT_README.encode("utf-8"))
+    for script in ("generate_long_gdd.py", "update_short_gdd_fingerprint.py"):
+        subprocess.run([sys.executable, str(root / "tools" / script)], cwd=str(root), check=True, capture_output=True)
     git(root, "init", "-q")
     git(root, "symbolic-ref", "HEAD", "refs/heads/master")
     git(root, "config", "user.name", "Test")

@@ -1,7 +1,7 @@
 ---
 id: T-180
 title: Goal runner: the goal check gets the pre-approved list and blocked field, and the runner syncs the docs first
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -36,5 +36,9 @@ G-002 built all 11 tickets, then paused in the goal check (`goals/G-002-add-an-i
 - [ ] A test (temporary repo, the two docs scripts faked or real) shows stale docs are regenerated and committed on the goal's build branch before the goal check, and docs already in sync are left alone with nothing committed (QA: pass / fail)
 
 ## Updates
+
+### 2026-10-18, Open → In progress
+
+Quick fix started: the goal check gets the pre-approved list and the blocked field, and the runner syncs the docs before it. Then G-002 resumes at its goal check.
 
 ## Result notes
