@@ -4,7 +4,7 @@ title: The status guard stops refusing harmless commands that only mention its w
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
