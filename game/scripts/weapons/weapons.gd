@@ -20,11 +20,12 @@ extends Node
 
 const StartingGunScript := preload("res://scripts/weapons/starting_gun.gd")
 const ExhaustFlamethrowerScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
+const NeonUnderglowScript := preload("res://scripts/weapons/neon_underglow.gd")
 const LevelUpOffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 
 ## Every weapon the car can have, one node each. A new weapon adds its script here.
-const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript]
+const WEAPON_SCRIPTS := [StartingGunScript, ExhaustFlamethrowerScript, NeonUnderglowScript]
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -70,6 +71,10 @@ var gun: Node:
 var flamethrower: Node:
 	get:
 		return weapons.get("flamethrower")
+## The neon underglow (neon_underglow.gd).
+var underglow: Node:
+	get:
+		return weapons.get("underglow")
 
 
 ## Binds the rack to a run scene (run.gd): its state and car, and a draw root
@@ -105,6 +110,9 @@ func reset_for_run() -> void:
 	# the flamethrower with the level-up's own call (the level-up then offers the flamethrower's upgrades).
 	if ExhaustFlamethrowerScript.playtest_switch_on():
 		upgrade("flamethrower")
+	# Playtest switch (T-168, data/playtest.json "underglow_at_start"): the same for the underglow.
+	if NeonUnderglowScript.playtest_switch_on():
+		upgrade("underglow")
 
 
 ## The factor every weapon's damage is multiplied by: 1 + bonus / 100.

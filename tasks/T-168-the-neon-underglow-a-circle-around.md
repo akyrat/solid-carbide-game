@@ -1,7 +1,7 @@
 ---
 id: T-168
 title: The neon underglow: a circle around the car that damages enemies (placeholder look)
-status: blocked
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/visual-style.md, docs/extended-narrative.md, game/data/weapons.json, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/flamethrower/exhaust_flamethrower.gd, game/tests/unit/weapons/test_exhaust_flamethrower.gd, game/README.md]
 files_expected_to_change: [game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/weapons.gd, game/tests/unit/weapons/test_neon_underglow.gd, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,16 +37,41 @@ The board's review: Play a run from the task folder with the underglow given (by
 
 ## Acceptance criteria
 
-- [ ] A new run has no underglow; after `rack.upgrade("underglow")` a test shows a fake enemy that enters the circle takes damage on that step, and an enemy staying inside takes damage again once per tick interval from weapons.json, with the damage value from weapons.json times the garage damage multiplier. (QA: pass / fail)
-- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass / fail)
-- [ ] A test shows no damage while the run is paused or after it ends, and that a new run removes the underglow. (QA: pass / fail)
-- [ ] A placeholder circle drawn in code shows under the car while it is owned, in no shade of Redgull red, drawn below the car sprite (checked in a test or a screenshot fixture). (QA: pass / fail)
-- [ ] `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the underglow, and the game's test set passes. (QA: pass / fail)
+- [ ] A new run has no underglow; after `rack.upgrade("underglow")` a test shows a fake enemy that enters the circle takes damage on that step, and an enemy staying inside takes damage again once per tick interval from weapons.json, with the damage value from weapons.json times the garage damage multiplier. (QA: pass)
+- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass)
+- [ ] A test shows no damage while the run is paused or after it ends, and that a new run removes the underglow. (QA: pass)
+- [ ] A placeholder circle drawn in code shows under the car while it is owned, in no shade of Redgull red, drawn below the car sprite (checked in a test or a screenshot fixture). (QA: pass)
+- [ ] `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the underglow, and the game's test set passes. (QA: pass; GUT 879/879 passed, docs and README have the underglow)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-168.
+
+### 2026-10-18, In progress → In QA
+
+Goal runner (G-002): the agent is done; QA is checking it.
+
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Weapon Behavior Agent, 2026-10-18.**
+
+- **Built:** `game/scripts/weapons/neon_underglow.gd` (id `underglow`, not owned at the start of a run), listed in `WEAPON_SCRIPTS` in `weapons.gd` (also `run.weapons.underglow`). Every number and tiers 2 to 8 come from `weapons.json` through `WeaponData.underglow_at()`; damage is multiplied by `rack.damage_multiplier()`. Targets follow the rack's rules (minions by centre, an enemy with `hit_radius_units()`, the kaiju, by body overlap). No level-up choice (D7).
+- **Proposal, leaving and re-entering within the same second:** each enemy has its own hit clock. An enemy inside is hit when it hasn't been hit by the underglow in the last tick interval. So it is hit on the step it enters and every interval after, but one that steps out and back in before its interval is over gets **no extra hit on re-entering**: it is hit when its interval runs out, if still inside. This stops enemies on the edge from being hit every step as they jitter in and out. One that stayed out longer than the interval is hit as it enters. Written in `docs/weapons.md` Content as a proposal for the playtest.
+- **Placeholder look:** a ring drawn in code (the damage circle through the isometric transform), opaque and hard-edged: dark outline, cyan ring, darker cyan inner line. No Redgull red. It is the first child of the run's `View`, so it sits below the car sprite, the drift smoke and the flames, and grows with the radius tiers. The Asset Generation Agent swaps the art in later (D10).
+- **For the board's review:** open `C:\solid-carbide-worktrees\T-168\game\project.godot`, open `tests/fixtures/weapons/underglow_demo.tscn` and press F6. That starts a run from the main menu with the underglow given and four minions inside the ring, and after 2 seconds the keyboard drives the car. Or set `underglow_at_start` to `true` in `game/data/playtest.json` (a new playtest switch, off by default) and play normally with F5. Screenshot: `bash game/tools/screenshot.sh res://tests/fixtures/weapons/underglow_demo.tscn screenshots/underglow.png 40` (saved to `C:\solid-carbide-worktrees\T-168\screenshots\underglow.png`, which git ignores; the hits printed 1.05 because the real save's garage damage bonus is applied there).
+- **Tests:** `game/tests/unit/weapons/test_neon_underglow.gd`, 23 tests (one per tier 2 to 8). Full GUT suite: `TESTS PASSED`, 879 passing. Python tool tests: `OK`, 278 run, 1 skipped.
+- **Left uncommitted:** Godot's line-ending-only `.import` noise from the test run. I didn't revert it, because `git checkout` isn't on the approved command list.
+- **Files changed:** `game/scripts/weapons/neon_underglow.gd` (new), `game/scripts/weapons/weapons.gd`, `game/data/playtest.json` (new switch `underglow_at_start`, false), `game/tests/unit/weapons/test_neon_underglow.gd` (new), `game/tests/fixtures/weapons/underglow_demo.gd` and `.tscn` (new), `docs/weapons.md` (Content, "The neon underglow (built in task T-168)"), `game/README.md` (Weapons, "The neon underglow").
+- **Documents affected:** `docs/weapons.md`, `game/README.md`.
+- PixelLab: 0 generations. Refusals: none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
