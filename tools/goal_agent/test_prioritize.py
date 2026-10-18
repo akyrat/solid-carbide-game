@@ -74,6 +74,29 @@ class Plan(unittest.TestCase):
 
 
 class Claude(unittest.TestCase):
+    def run_real(self, **options):
+        done = mock.Mock(stdout=json.dumps({"structured_output": {}}), stderr="", returncode=0)
+        with mock.patch.object(claude_call.subprocess, "run", return_value=done) as run:
+            claude_call.RealClaude().ask("plan", "hello", {}, **options)
+        return run.call_args[0][0]
+
+    def test_tools_option_goes_on_the_command_line(self):
+        cmd = self.run_real(tools="Read,Glob,Grep")
+        self.assertEqual(cmd[cmd.index("--tools") + 1], "Read,Glob,Grep")
+
+    def test_no_tools_option_leaves_the_command_unchanged(self):
+        self.assertNotIn("--tools", self.run_real())
+
+    def test_fake_claude_records_tools(self):
+        claude = FakeClaude({"plan": [{}]})
+        claude.ask("plan", "p", {}, tools="Read")
+        self.assertEqual(claude.calls[0][2]["tools"], "Read")
+
+    def test_plan_passes_only_read_tools(self):
+        claude = FakeClaude({"plan": [{"goal_criteria": ["g"], "open_questions": [], "sub_goals": [sg("S1")]}]})
+        prioritize.plan(claude, "goal", "root")
+        self.assertEqual(claude.calls[0][2]["tools"], "Read,Glob,Grep")
+
     def test_real_claude_command_and_denials(self):
         out = {"type": "result", "is_error": False, "result": "", "structured_output": {"a": 1},
                "permission_denials": [{"tool_name": "Bash"}]}

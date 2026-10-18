@@ -122,7 +122,7 @@ def detect(claude, goal_text, sub_goals, root, model=None, code_root=None, conte
         if context:
             text += f"\n\nWhat the goal's last step found:\n{context}"
         answer = claude.ask("gaps", text, SCHEMA, model=model, cwd=str(code_root or root),
-                            allowed_tools="Read,Glob,Grep")
+                            allowed_tools="Read,Glob,Grep", tools="Read,Glob,Grep")
         if answer.denials:
             raise Pause(f"Gap detection was refused: {answer.denials}", "refusal")
         verdicts = list(answer.data.get("verdicts") or [])

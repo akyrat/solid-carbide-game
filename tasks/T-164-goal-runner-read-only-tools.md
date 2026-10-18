@@ -1,7 +1,7 @@
 ---
 id: T-164
 title: Goal runner: planning and gap detection get only read tools
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -36,4 +36,15 @@ Fix: the calls that should only read (priority scoring in `prioritize.py`, gap d
 
 ## Updates
 
+### 2026-10-18, Open → In progress
+
+Quick fix started: planning and gap detection will offer Claude only Read, Glob and Grep, so it can't try the shell. Then G-001 resumes.
+
 ## Result notes
+
+What changed: `RealClaude.ask` (claude_call.py) has a new `tools` option that adds `--tools <list>` to the `claude -p` command (omitted when not given). `FakeClaude.ask` already took any option through `**options` and records it in `calls`, so it needed no change. `prioritize.plan` and `gaps.detect` now pass `tools="Read,Glob,Grep"` (keeping `allowed_tools` the same). `build.py` and `loop.py` are untouched and pass no `tools` (grep finds no `tools=` there).
+
+Tests per criterion (all use mocks or FakeClaude, no Claude or network calls):
+- Criterion 1: full suite, `python -m unittest discover -s tools -p "test_*.py"`, passes: 298 tests, OK (5 new).
+- Criterion 2: `test_prioritize.Claude.test_tools_option_goes_on_the_command_line` (subprocess.run mocked, `--tools Read,Glob,Grep` on the command), `test_plan_passes_only_read_tools` (priority scoring), `test_gaps.GapDetection.test_detect_passes_only_read_tools` (gap detection); also `test_fake_claude_records_tools`.
+- Criterion 3: `test_no_tools_option_leaves_the_command_unchanged` (no `--tools` without the option); build.py and loop.py unchanged.

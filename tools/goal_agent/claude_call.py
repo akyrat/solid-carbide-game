@@ -33,11 +33,11 @@ class Answer:
 
 class RealClaude:
     def ask(self, step, prompt, schema, model=None, agent=None, session_id=None, cwd=None, allowed_tools=None,
-            permission_mode=None, add_dir=None, timeout=TIMEOUT):
+            permission_mode=None, add_dir=None, tools=None, timeout=TIMEOUT):
         cmd = ["claude", "-p", prompt, "--output-format", "json", "--json-schema", json.dumps(schema)]
         for flag, value in (("--model", model), ("--agent", agent), ("--session-id", session_id),
                             ("--allowedTools", allowed_tools), ("--permission-mode", permission_mode),
-                            ("--add-dir", add_dir)):
+                            ("--add-dir", add_dir), ("--tools", tools)):
             if value:
                 cmd += [flag, value]
         try:
