@@ -53,4 +53,12 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-166.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Data Agent. Added `underglow`, `molotov` and `wiper` to `game/data/weapons.json` (gun and flamethrower untouched; comment updated: only the wiper pushes, minions only). `WeaponData` got `underglow_at`, `molotov_at`, `wiper_at`; the data test now covers 5 weapons x (base + 7 tiers) and the new values. Docs: `docs/weapons.md` Content ("Numbers for the three new weapons") and `game/README.md` "Game data". **Tests run (second pass):** `bash game/tools/run_tests.sh`: 850/850 passing, including `test_weapon_data.gd` 13/13 (five weapons x 8 tiers, the new tier tests, wiper knockback). The JSON loads through the loader in those tests.
+
+Proposal (all for the board's playtest; the garage damage bonus multiplies each):
+
+- **Underglow:** radius 2.5, 1 damage on entering and every 1 s (damage_on_enter). Tiers: 2 radius x1.2; 3 damage x1.5; 4 interval x0.75; 5 radius x1.25; 6 damage x1.5; 7 interval x0.67; 8 radius x1.3. Reasoning: it is always on and needs no aim, so it starts weak (1 dps, below the gun's ~1.6 dps per bullet and far below the flamethrower's 10 dps) and grows by area, damage and speed in turns; final about 4.5 dps in a 5.85 radius, a constant wide aura but still under the flamethrower's burst.
+- **Molotov:** one per 3 s, lands 3 to 8 units away at random, fire radius 1.5 for 3 s, 2 damage on entering and every 0.5 s inside (4 dps per enemy, area stays on the ground). Tiers: 2 radius x1.2; 3 interval x0.8; 4 damage x1.5; 5 +1 molotov; 6 +1.5 s fire; 7 radius x1.3; 8 +1 molotov. Final: 3 per throw every 2.4 s, radius 2.34, 4.5 s, 3 damage. Reasoning: random placement and delay make it less reliable than the flamethrower, so per-enemy dps is mid (4 to 6) and strength comes from stacked area and count.
+- **Wiper:** arm 2.5 long, 180 degree sweep at 240 deg/s (a pass every 0.75 s), 3 damage per hit, same enemy hit again after 0.5 s, minions pushed 1.5 units, kaiju not pushed (knockback_kaiju false). Tiers: 2 length x1.2; 3 damage x1.4; 4 speed x1.25; 5 knockback x1.5; 6 length x1.3; 7 damage x1.4; 8 speed x1.3. Final: length 3.9, damage about 5.9, knockback 2.25. Reasoning: short range but high per-hit damage and crowd control; knockback keeps minions off the car, so it is a defensive weapon with the lowest reach of the five.
+
+Open for the board: the enter-damage and tick values are guesses until played; the knockback unit (distance moved, in units) is my reading of "pushes back".
