@@ -1,7 +1,7 @@
 ---
 id: T-166
 title: Weapon numbers: the neon underglow, the molotovs and the windshield wiper, with 8 tiers each
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/scripts/data/weapon_data.gd, game/tests/unit/test_weapon_data.gd, game/README.md]
 files_expected_to_change: [game/data/weapons.json, game/scripts/data/weapon_data.gd, game/tests/unit/test_weapon_data.gd, docs/weapons.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-166.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Done
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Game Data Agent. Added `underglow`, `molotov` and `wiper` to `game/data/weapons.json` (gun and flamethrower untouched; comment updated: only the wiper pushes, minions only). `WeaponData` got `underglow_at`, `molotov_at`, `wiper_at`; the data test now covers 5 weapons x (base + 7 tiers) and the new values. Docs: `docs/weapons.md` Content ("Numbers for the three new weapons") and `game/README.md` "Game data". **Tests run (second pass):** `bash game/tools/run_tests.sh`: 850/850 passing, including `test_weapon_data.gd` 13/13 (five weapons x 8 tiers, the new tier tests, wiper knockback). The JSON loads through the loader in those tests.
@@ -66,3 +70,4 @@ Proposal (all for the board's playtest; the garage damage bonus multiplies each)
 - **Wiper:** arm 2.5 long, 180 degree sweep at 240 deg/s (a pass every 0.75 s), 3 damage per hit, same enemy hit again after 0.5 s, minions pushed 1.5 units, kaiju not pushed (knockback_kaiju false). Tiers: 2 length x1.2; 3 damage x1.4; 4 speed x1.25; 5 knockback x1.5; 6 length x1.3; 7 damage x1.4; 8 speed x1.3. Final: length 3.9, damage about 5.9, knockback 2.25. Reasoning: short range but high per-hit damage and crowd control; knockback keeps minions off the car, so it is a defensive weapon with the lowest reach of the five.
 
 Open for the board: the enter-damage and tick values are guesses until played; the knockback unit (distance moved, in units) is my reading of "pushes back".
+- 2026-10-18, in-qa → done: QA passed every criterion (goal G-002).
