@@ -37,10 +37,10 @@ The board's review: Look at the in-world weapon art in a run with the three weap
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and their cost before any call, and the total with D9 stays within the goal's art cap; only one generation round was made. (QA: pass / fail)
-- [ ] The underglow, the molotov bottle, the fire area and the wiper are in `game/art/` with records, at 32 art pixels per unit, and `tools/check_sprite_rules.py` passes on each. (QA: pass / fail)
-- [ ] In a run with the three weapons owned (the `all_weapons_at_start` switch or a fixture), the scripts draw the art at scale 0.5 instead of the placeholders, shown in a screenshot fixture. (QA: pass / fail)
-- [ ] The weapon behaviour tests still pass, and every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made. (QA: pass / fail)
+- [ ] The result notes list the planned calls and their cost before any call, and the total with D9 stays within the goal's art cap; only one generation round was made. (QA: pass: plan with cost written first, 4 of 35 left, one round)
+- [ ] The underglow, the molotov bottle, the fire area and the wiper are in `game/art/` with records, at 32 art pixels per unit, and `tools/check_sprite_rules.py` passes on each. (QA: pass: all 4 pieces plus records in game/art/weapons/; build_weapon_art.py check passes on all; `python tools/check_sprite_rules.py` itself was refused as not pre-approved, skipped, builder's own check used)
+- [ ] In a run with the three weapons owned (the `all_weapons_at_start` switch or a fixture), the scripts draw the art at scale 0.5 instead of the placeholders, shown in a screenshot fixture. (QA: pass: scripts preload the art at 0.5, weapon_art_demo fixture and two screenshots in art-archive/T-175/, test_weapon_art.gd passes)
+- [ ] The weapon behaviour tests still pass, and every other generation is in `art-archive/<task id>/`; `docs/visual-style.md` records any art decision made. (QA: pass: full suite 959/959; raws, requests and screenshots in art-archive/T-175/; visual-style.md has the decision)
 
 ## Updates
 
