@@ -1,7 +1,7 @@
 ---
 id: T-177
 title: Goal runner: tell headless agents which commands are pre-approved
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, .claude/settings.json, tools/goal_agent/build.py, tools/goal_agent/test_build.py, goals/G-002-add-an-image-of-the.md]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,6 +43,10 @@ Started: the runner will tell its headless agents which commands the board pre-a
 ### 2026-10-18, In progress → In QA
 
 Built: the runner lists the pre-approved commands from the settings in every agent and QA prompt, and asks for plain separate commands. 303 tools tests pass. QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 3 criteria. Merged; G-002 resumes now.
 
 ## Result notes
 
