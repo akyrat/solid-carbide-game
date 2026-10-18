@@ -1,7 +1,7 @@
 ---
 id: T-174
 title: Art: one level-up card image per weapon, all five (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/weapons.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/scripts/ui/level_up_screen.gd, tools/pixellab_client.py, tools/check_sprite_rules.py]
 files_expected_to_change: [game/art/level_up/, art-archive/, game/scripts/ui/level_up_screen.gd, game/tests/unit/test_pixellab_assets.gd, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-174.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 ### Planned calls and cost (written before any call)
@@ -69,3 +73,4 @@ Five calls to `/create-image-pixflux`, one per weapon, 64 x 64 px (the card's im
 - Quality note (not judged by me): the gun and flamethrower read clearly at 64 px; the others not looked at on the screen.
 - Documents affected, updated: `docs/visual-style.md`, `game/README.md`.
 - Refusals: none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
