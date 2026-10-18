@@ -1,7 +1,7 @@
 ---
 id: T-167
 title: Minions can be knocked back by a weapon (a knockback call)
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/weapons.md, game/scripts/enemies/minion.gd, game/scripts/enemies/minion_spawner.gd, game/scripts/enemies/kaiju.gd, game/tests/unit/enemies/test_minions.gd, game/README.md]
 files_expected_to_change: [game/scripts/enemies/minion.gd, game/tests/unit/enemies/test_minions.gd, docs/enemies.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-167.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Done
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Enemy Behavior Agent, 2026-10-18.
@@ -62,3 +66,4 @@ Enemy Behavior Agent, 2026-10-18.
 - **Test run:** `bash game/tools/run_tests.sh`: 856/856 passed (74 scripts), including minions 33/33, kaiju 25/25, meteors 22/22.
 - **Documents:** `docs/enemies.md` (Content, "The minion": new "Knocked back by a weapon" item); `game/README.md` ("Minions": new "Pushing a minion" section and the test list).
 - PixelLab: none used. Refusals: none.
+- 2026-10-18, in-qa → done: QA passed every criterion (goal G-002).
