@@ -37,11 +37,11 @@ The board's review: Play a run from the task folder with the molotovs given and 
 
 ## Acceptance criteria
 
-- [ ] A new run has no molotovs; after `rack.upgrade("molotov")`, a seeded test shows a molotov thrown at the interval from weapons.json lands within the distance weapons.json gives and leaves a fire area of the radius weapons.json gives. (QA: pass / fail)
-- [ ] A test shows a fake enemy inside a fire area takes damage with the values from weapons.json (times the garage damage multiplier), and one outside or that has left the area takes no more damage. (QA: pass / fail)
-- [ ] Tests show fire areas expire after their duration, stop while paused, and are removed on a new run. (QA: pass / fail)
-- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass / fail)
-- [ ] Placeholder bottle and fire area are drawn in code, in no shade of Redgull red; `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the molotovs, and the game's test set passes. (QA: pass / fail)
+- [ ] A new run has no molotovs; after `rack.upgrade("molotov")`, a seeded test shows a molotov thrown at the interval from weapons.json lands within the distance weapons.json gives and leaves a fire area of the radius weapons.json gives. (QA: pass)
+- [ ] A test shows a fake enemy inside a fire area takes damage with the values from weapons.json (times the garage damage multiplier), and one outside or that has left the area takes no more damage. (QA: pass)
+- [ ] Tests show fire areas expire after their duration, stop while paused, and are removed on a new run. (QA: pass)
+- [ ] A test per tier 2 to 8 applies the tier from code and checks the change weapons.json gives it. (QA: pass)
+- [ ] Placeholder bottle and fire area are drawn in code, in no shade of Redgull red; `docs/weapons.md` Content and `game/README.md` 'Weapons' describe the molotovs, and the game's test set passes. (QA: pass; GUT 904/904, color test passes, docs mention molotovs)
 
 ## Updates
 
