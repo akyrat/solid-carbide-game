@@ -1,7 +1,7 @@
 ---
 id: T-174
 title: Art: one level-up card image per weapon, all five (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
