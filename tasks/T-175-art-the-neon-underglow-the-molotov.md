@@ -1,7 +1,7 @@
 ---
 id: T-175
 title: Art: the neon underglow, the molotov and its fire area, and the windshield wiper in the world (PixelLab)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -45,6 +45,10 @@ The board's review: Look at the in-world weapon art in a run with the three weap
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-175.
 
 ## Result notes
 
