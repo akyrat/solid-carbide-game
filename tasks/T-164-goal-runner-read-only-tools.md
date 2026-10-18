@@ -1,7 +1,7 @@
 ---
 id: T-164
 title: Goal runner: planning and gap detection get only read tools
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -30,15 +30,19 @@ Fix: the calls that should only read (priority scoring in `prioritize.py`, gap d
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test checks that `RealClaude.ask` with `tools` puts `--tools Read,Glob,Grep` on the `claude -p` command line (`subprocess.run` mocked), and one that the priority scoring and gap detection calls pass exactly `Read,Glob,Grep` as `tools` (QA: pass / fail)
-- [ ] The agent and QA calls in `build.py` and the goal check in `loop.py` pass no `tools` (their command lines are unchanged), shown by reading the code or a test (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass; suite ended OK, count line not seen in tail)
+- [ ] A test checks that `RealClaude.ask` with `tools` puts `--tools Read,Glob,Grep` on the `claude -p` command line (`subprocess.run` mocked), and one that the priority scoring and gap detection calls pass exactly `Read,Glob,Grep` as `tools` (QA: pass)
+- [ ] The agent and QA calls in `build.py` and the goal check in `loop.py` pass no `tools` (their command lines are unchanged), shown by reading the code or a test (QA: pass: build.py ask passes no tools; loop.py makes no ask calls)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Quick fix started: planning and gap detection will offer Claude only Read, Glob and Grep, so it can't try the shell. Then G-001 resumes.
+
+### 2026-10-18, In progress → In QA
+
+Fixed: planning and gap detection now offer Claude only Read, Glob and Grep. 5 new tests (298 pass). QA checks it now.
 
 ## Result notes
 
