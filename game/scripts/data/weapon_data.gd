@@ -1,6 +1,6 @@
 class_name WeaponData
 extends RefCounted
-## The two MVP weapons' numbers from res://data/weapons.json, worked out per tier.
+## The five MVP weapons' numbers from res://data/weapons.json, worked out per tier.
 ## A weapon's tier is 1 (just got it) to max_tier(); effects add up in tier order.
 
 var _data: Dictionary = {}
@@ -23,7 +23,7 @@ func max_tier() -> int:
 	return int(_data["max_tier"])
 
 
-## The raw tier list of "gun" or "flamethrower" (tiers 2 to 8).
+## The raw tier list of "gun", "flamethrower", "underglow", "molotov" or "wiper" (tiers 2 to 8).
 func tiers(weapon: String) -> Array:
 	return _data[weapon]["tiers"]
 
@@ -91,4 +91,84 @@ func flame_at(tier: int) -> Dictionary:
 		"linger": float(f["linger"]),
 		"ramp_start_fraction": float(f["ramp_start_fraction"]),
 		"ramp_seconds": float(f["ramp_seconds"]),
+	}
+
+
+## What the neon underglow does at `tier`: damage (on entering and per tick), radius,
+## tick_interval, damage_on_enter.
+func underglow_at(tier: int) -> Dictionary:
+	var u: Dictionary = _data["underglow"]
+	var damage := float(u["damage"])
+	var radius := float(u["radius"])
+	var tick := float(u["tick_interval"])
+	for t in tiers("underglow"):
+		if int(t["tier"]) > tier:
+			continue
+		match String(t["effect"]):
+			"radius_multiplier": radius *= float(t["value"])
+			"damage_multiplier": damage *= float(t["value"])
+			"tick_interval_multiplier": tick *= float(t["value"])
+	return {
+		"damage": damage,
+		"radius": radius,
+		"tick_interval": tick,
+		"damage_on_enter": bool(u["damage_on_enter"]),
+	}
+
+
+## What the molotovs do at `tier`: damage, throw_interval, molotovs_per_throw, throw_distance_min,
+## throw_distance_max, fire_radius, fire_duration, tick_interval, damage_on_enter.
+func molotov_at(tier: int) -> Dictionary:
+	var m: Dictionary = _data["molotov"]
+	var damage := float(m["damage"])
+	var interval := float(m["throw_interval"])
+	var count := int(m["molotovs_per_throw"])
+	var radius := float(m["fire_radius"])
+	var duration := float(m["fire_duration"])
+	for t in tiers("molotov"):
+		if int(t["tier"]) > tier:
+			continue
+		match String(t["effect"]):
+			"fire_radius_multiplier": radius *= float(t["value"])
+			"throw_interval_multiplier": interval *= float(t["value"])
+			"damage_multiplier": damage *= float(t["value"])
+			"add_molotovs": count += int(t["value"])
+			"add_fire_duration_seconds": duration += float(t["value"])
+	return {
+		"damage": damage,
+		"throw_interval": interval,
+		"molotovs_per_throw": count,
+		"throw_distance_min": float(m["throw_distance_min"]),
+		"throw_distance_max": float(m["throw_distance_max"]),
+		"fire_radius": radius,
+		"fire_duration": duration,
+		"tick_interval": float(m["tick_interval"]),
+		"damage_on_enter": bool(m["damage_on_enter"]),
+	}
+
+
+## What the windshield wiper does at `tier`: damage, length, sweep_arc_degrees,
+## sweep_degrees_per_second, hit_cooldown, knockback_distance, knockback_kaiju.
+func wiper_at(tier: int) -> Dictionary:
+	var w: Dictionary = _data["wiper"]
+	var damage := float(w["damage"])
+	var length := float(w["length"])
+	var speed := float(w["sweep_degrees_per_second"])
+	var knock := float(w["knockback_distance"])
+	for t in tiers("wiper"):
+		if int(t["tier"]) > tier:
+			continue
+		match String(t["effect"]):
+			"length_multiplier": length *= float(t["value"])
+			"damage_multiplier": damage *= float(t["value"])
+			"sweep_speed_multiplier": speed *= float(t["value"])
+			"knockback_multiplier": knock *= float(t["value"])
+	return {
+		"damage": damage,
+		"length": length,
+		"sweep_arc_degrees": float(w["sweep_arc_degrees"]),
+		"sweep_degrees_per_second": speed,
+		"hit_cooldown": float(w["hit_cooldown"]),
+		"knockback_distance": knock,
+		"knockback_kaiju": bool(w["knockback_kaiju"]),
 	}
