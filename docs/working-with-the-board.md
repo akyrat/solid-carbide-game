@@ -33,6 +33,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 ## Goal runs
 The board can give the studio a whole goal ("the trick system with its final art", or "the whole short GDD") and let the goal runner build it without review along the way (board, 2026-10-18; `tools/goal_agent/`, `tasks/README.md`, "Goal runs"). While a goal is running, these replace the rules above that assume the board reviews each step:
 - The goal is the board's go for PixelLab, up to the goal's art cap (`--art-cap`, set by the board per goal). No sample review: the art is judged in the final playtest. Still one generation round per task: weak art is noted, not regenerated.
+- No questions to the board during a run (board, 2026-10-18). Open questions the docs leave unanswered are settled by the agents as proposals for the playtest, the same way they propose numbers, and are listed in the goal file; the Project Lead brings them to the board with the build, at the end. The Project Lead doesn't stop a run to ask, and makes the run's other decisions itself (the board's go, 2026-10-18), reporting them at the end.
 - QA passing counts as done for the runner. Each ticket that passes is merged into the goal's build branch `playtest/<goal id>`, not into `master`.
 - The board plays the result once, at the end, from that branch. Nothing reaches `master` before that playtest; then the Project Lead merges as usual.
 - Each run uses the session name `Goal-<goal id>` and claims its tickets, so it hears only its own moves.
