@@ -1,7 +1,7 @@
 ---
 id: T-170
 title: The windshield wiper: sweeps in front of the car, damages and pushes minions back (placeholder look)
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
