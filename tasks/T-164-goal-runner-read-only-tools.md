@@ -1,7 +1,7 @@
 ---
 id: T-164
 title: Goal runner: planning and gap detection get only read tools
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/goal_agent/claude_call.py, tools/goal_agent/prioritize.py, tools/goal_agent/gaps.py, goals/G-001-add-an-image-of-the.md]
 files_expected_to_change: [tools/goal_agent/claude_call.py, tools/goal_agent/prioritize.py, tools/goal_agent/gaps.py, tools/goal_agent/test_*.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,6 +43,10 @@ Quick fix started: planning and gap detection will offer Claude only Read, Glob 
 ### 2026-10-18, In progress → In QA
 
 Fixed: planning and gap detection now offer Claude only Read, Glob and Grep. 5 new tests (298 pass). QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 3 criteria. Merged; G-001 resumes now.
 
 ## Result notes
 
