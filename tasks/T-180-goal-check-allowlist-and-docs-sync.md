@@ -4,7 +4,7 @@ title: Goal runner: the goal check gets the pre-approved list and blocked field,
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
