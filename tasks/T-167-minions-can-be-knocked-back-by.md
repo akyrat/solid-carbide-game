@@ -50,4 +50,11 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-167.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Enemy Behavior Agent, 2026-10-18.
+
+- **The call:** `minion.gd` now has `apply_knockback(direction: Vector2, strength: float)` and `is_knocked_back()`. `strength` is the push's distance in flat-world units (matching the wiper's "pushed back 1.5 units" in `docs/weapons.md`); `direction` is any length and is normalized. The minion travels the distance over `KNOCKBACK_SECONDS` (0.15 s, a proposed feel number in the code, not balancing data) at an even speed, inside its own `walk()` step, so the spawner needs no change and the pause stops it. While pushed it does not walk; then it walks on. Movement uses the same `move_and_collide` and mask 1 as walking: it slides along obstacles, and the part of the push into an obstacle is dropped, so it is never pushed into one. A second push during a push adds to what is left and restarts the 0.15 s. Zero/negative strength, a zero direction and dead minions are ignored. Without a call, `walk()` runs exactly as before (one early branch only taken while a push is active).
+- **Kaiju:** untouched; it has no `apply_knockback`. The wiper should check `has_method("apply_knockback")` or the `minions` group before pushing (written in `game/README.md`, "Minions").
+- **Tests** (`game/tests/unit/enemies/test_minions.gd`, T-167 section, 6 new): open-ground push (the call's distance, in its direction, farther from the origin, within 0.15 s, then walks on); a push into a building stops at its wall with the body never inside (checked every step); a push into a map boulder stops against it, never inside; bad calls and dead minions ignored; two pushes add up; the kaiju has no knockback call. The existing tests are unchanged.
+- **Test run:** `bash game/tools/run_tests.sh`: 856/856 passed (74 scripts), including minions 33/33, kaiju 25/25, meteors 22/22.
+- **Documents:** `docs/enemies.md` (Content, "The minion": new "Knocked back by a weapon" item); `game/README.md` ("Minions": new "Pushing a minion" section and the test list).
+- PixelLab: none used. Refusals: none.
