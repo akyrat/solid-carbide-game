@@ -1,7 +1,7 @@
 ---
 id: T-174
 title: Art: one level-up card image per weapon, all five (PixelLab)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-002
@@ -45,6 +45,10 @@ The board's review: Look at the five card images in game/art/level_up/ and the l
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-18, Blocked → In progress
+
+Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-174.
 
 ## Result notes
 
