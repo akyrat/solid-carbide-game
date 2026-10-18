@@ -35,10 +35,10 @@ Check the goal's work together before the board's single playtest of `playtest/G
 
 ## Acceptance criteria
 
-- [ ] A run started from the main menu with all five weapons owned runs headless for 60 seconds with no script errors in the log. (QA: pass / fail)
-- [ ] A test levels a run up repeatedly until at least three weapons reach tier 8, with no offer ever holding the same id twice or a choice for a weapon at tier 8, and no error. (QA: pass / fail)
-- [ ] The game's tests, the tools tests and the docs checks all pass, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: pass / fail)
-- [ ] `data/playtest.json` as committed has every switch false. (QA: pass / fail)
+- [ ] A run started from the main menu with all five weapons owned runs headless for 60 seconds with no script errors in the log. (QA: pass: test_run_from_the_main_menu_with_all_five_weapons_for_60_seconds passes in the full GUT run, no script errors)
+- [ ] A test levels a run up repeatedly until at least three weapons reach tier 8, with no offer ever holding the same id twice or a choice for a weapon at tier 8, and no error. (QA: pass: test_repeated_level_ups_take_three_weapons_to_tier_8_with_valid_offers passes; note tier 8 is reached via gift-pack choices, since max_level 12 gives only 11 level-ups)
+- [ ] The game's tests, the tools tests and the docs checks all pass, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: fail: GUT 962/962, game/tools 282 OK, tools 303 OK; but the long GDD / fingerprint regeneration and staleness check are not pre-approved commands and were not run. Docs changed on this branch (weapons, enemies, hud-and-menus, visual-style), so staleness is unverified; the Project Lead must run it at merge)
+- [ ] `data/playtest.json` as committed has every switch false. (QA: pass: all five *_at_start keys and kaiju_early_arrival.enabled are false)
 
 ## Updates
 
