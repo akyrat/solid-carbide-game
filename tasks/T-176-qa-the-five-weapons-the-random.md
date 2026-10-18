@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: in-qa
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
@@ -14,8 +14,8 @@ depends_on: [T-172, T-173, T-174, T-175]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md, game/data/playtest.json, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/tests/unit/weapons/test_all_weapons_run.gd]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-176.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → In progress
+
+Goal runner (G-002): failed QA once; back to the agent on opus.
+
 ## Result notes
 
 New test: `game/tests/unit/weapons/test_all_weapons_run.gd` (3 tests, 349 asserts, ~14 s). No game code changed.
@@ -60,3 +64,4 @@ New test: `game/tests/unit/weapons/test_all_weapons_run.gd` (3 tests, 349 assert
 2. **Repeated level-ups to three tier-8 weapons: PASS**, with a finding. `run.json` `max_level` is 12, so a real run has only 11 level-ups, but three weapons at tier 8 need 21 upgrades. The test takes the real level-ups first and, once `is_max_level()`, opens the remaining choices the way the gift pack does (`RunState.open_choice`). Every offer had 1 or 2 different ids, never a weapon at tier 8, no error; the choice resumes the run each time. For the Project Lead: in a real run only about 11 upgrades happen, so tier 8 is reached only through gift-pack choices.
 3. **Test sets and staleness: PARTIAL / not fully checked.** Game GUT suite: TESTS PASSED (962 tests). Python `game/tools` tests: 282 OK (1 skipped). Python `tools` tests: 303 OK. Staleness check (`python tools/generate_long_gdd.py --check`) and the regeneration of the long GDD and short GDD fingerprint were REFUSED (not in the pre-approved commands), so not run. No docs changed in this task (documents_affected is empty), so nothing should be stale from this branch.
 4. **`data/playtest.json` all switches false: PASS** (read, and the new test checks every key including `kaiju_early_arrival.enabled`).
+- 2026-10-18, in-qa → in-progress: QA failed: The game's tests, the tools tests and the docs checks all pass, and the staleness check reports nothing stale after the long GDD and the short GDD fingerprint are regenerated. (QA: fail: GUT 962/962, game/tools 282 OK, tools 303 OK; but the long GDD / fingerprint regeneration and staleness check are not pre-approved commands and were not run. Docs changed on this branch (weapons, enemies, hud-and-menus, visual-style), so staleness is unverified; the Project Lead must run it at merge) Back to the agent on opus.
