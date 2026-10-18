@@ -1,7 +1,7 @@
 ---
 id: T-182
 title: Elevation test scene: ground-height data (one platform, one ramp, drop-off edges) and a ground-height query
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/README.md, game/data/level/mvp_map.json, game/scripts/driving/test_room.gd]
 files_expected_to_change: [game/data/level/elevation_test.json, game/scripts/level/ground_height.gd, game/tests/unit/test_ground_height.gd, game/README.md, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,11 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-182.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Done
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
 Done. Added `game/data/level/elevation_test.json` (lists `platforms` and `ramps`; proposals: platform 16x16 at (-8,-8), height 3; east ramp 12x8 at (8,-4), 0 to 3), `game/scripts/level/ground_height.gd` (`GroundHeight`: `from_file`, `load_file`, `height_at`, `is_ramp`, `ramp_at`, `edge_between` returning `{drop, height, up}`), and `game/tests/unit/test_ground_height.gd` (9 tests: off, top, ramp foot/middle/top, gradual climb in 0.1 steps, drop-offs on all other sides, level moves). Documented in `game/README.md` ("Elevation test scene") and `docs/level-design.md` (Content, "Elevation test scene"). Full GUT suite passes headless; no existing test changed. Convention: x east, y south, so north is -y. No PixelLab used. No refusals.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-003).
