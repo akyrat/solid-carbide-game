@@ -1,7 +1,7 @@
 ---
 id: T-171
 title: Text: level-up cards for the neon underglow, the molotovs and the windshield wiper
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/weapons.md, docs/hud-and-menus.md, game/data/weapons.json, game/scripts/ui/level_up_texts.gd]
 files_expected_to_change: []
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-171.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 24 cards written (narrative-theme), numbers from game/data/weapons.json (T-166). Titles are 16 characters or fewer and descriptions 78 or fewer, within the longest existing ones (16 and 78). No brand names. Keys follow `level_up_texts.gd`: add `.title` / `.desc` to each key. The UI task copies this word for word.
@@ -85,3 +89,4 @@ Goal runner (G-002): the agent is done; QA is checking it.
 | upgrade_wiper.tier8 | Faster Sweep II | Wiper sweeps another 30% faster. Always in frame. |
 
 Notes: tier 4 and 7 of the underglow shorten the tick by 0.75 and 0.67, so the text says hits come 25% and 33% sooner. No files changed; no documents affected.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
