@@ -1,7 +1,7 @@
 ---
 id: T-171
 title: Text: level-up cards for the neon underglow, the molotovs and the windshield wiper
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Goal-G-002
@@ -90,3 +90,4 @@ Goal runner (G-002): QA passed; merged into playtest/G-002.
 
 Notes: tier 4 and 7 of the underglow shorten the tick by 0.75 and 0.67, so the text says hits come 25% and 33% sooner. No files changed; no documents affected.
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
