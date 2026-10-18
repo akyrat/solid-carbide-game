@@ -1,0 +1,26 @@
+{
+  "_comment": "Elevation test scene (T-182). Flat-world units, x east, y south. Every number is a proposal for the board's playtest. A platform is an axis-aligned rectangle with a height; a ramp is a rectangle next to a platform side it climbs (north/east/south/west), rising from bottom_height at its far end to top_height at the platform. Every platform side without a ramp is a drop-off.",
+  "platforms": [
+    {
+      "id": "platform_1",
+      "x": -8.0,
+      "y": -8.0,
+      "w": 16.0,
+      "h": 16.0,
+      "height": 3.0
+    }
+  ],
+  "ramps": [
+    {
+      "id": "ramp_1",
+      "platform": "platform_1",
+      "side": "east",
+      "x": 8.0,
+      "y": -4.0,
+      "w": 12.0,
+      "h": 8.0,
+      "bottom_height": 0.0,
+      "top_height": 3.0
+    }
+  ]
+}

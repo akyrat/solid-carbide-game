@@ -57,4 +57,4 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-182.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. Added `game/data/level/elevation_test.json` (lists `platforms` and `ramps`; proposals: platform 16x16 at (-8,-8), height 3; east ramp 12x8 at (8,-4), 0 to 3), `game/scripts/level/ground_height.gd` (`GroundHeight`: `from_file`, `load_file`, `height_at`, `is_ramp`, `ramp_at`, `edge_between` returning `{drop, height, up}`), and `game/tests/unit/test_ground_height.gd` (9 tests: off, top, ramp foot/middle/top, gradual climb in 0.1 steps, drop-offs on all other sides, level moves). Documented in `game/README.md` ("Elevation test scene") and `docs/level-design.md` (Content, "Elevation test scene"). Full GUT suite passes headless; no existing test changed. Convention: x east, y south, so north is -y. No PixelLab used. No refusals.

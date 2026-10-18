@@ -1057,3 +1057,25 @@ Task T-046 (Enemy Behavior Agent): the kaiju's one special move, with T-039's nu
 **Tests:** `tests/unit/enemies/test_kaiju_meteors.gd`, part of the GUT suite: the attack hooked into the boss and the map's drawing; no attack without the kaiju; attacks on the data's schedule; the windup, then the data's number of warning circles near the car where the placement check accepts, shown for 2 seconds, and the meteors landing where they showed; a meteor on the car damaging it and knocking it away, one elsewhere doing nothing; one boulder per meteor through `add_meteor_boulder()`, none on a spot the check refuses; the boulder waiting until the car is off the spot; the car bouncing off a meteor boulder; everything stopping while paused; nothing landing after the run ends; a new run clearing it; the placeholders not Redgull red; (T-142) a boulder fully visible and solid just before 10 seconds, fading and then removed from the scene and the physics world, the map's own boulders staying, and both numbers read from the data. The tests set the playtest switch off and do not depend on it.
 
 **Redgull logo (T-075):** the board's pick (2026-10-16) is PixelLab's `/create-image-pixflux` result at init strength 80 (`art-archive/T-075/redgull_logo_raw_init128_s80.png`, made from the script silhouette `game/tools/draw_gull_silhouette.py`, variant `v1`'s init image `silhouette_init_128.png`). `python game/tools/make_logo_sizes.py <raw.png> game/art/logo` flattens it to its own main red (RGB 135,17,27) as `game/art/logo/redgull_logo_128.png` and builds `redgull_logo_64.png` and `redgull_logo_32.png` from it (area-averaged alpha, hard threshold, eye cut-out kept at least 2x1 px). Only these three files stay in `game/art/logo/`; every other candidate is in `art-archive/T-075/`. `python game/tools/check_logo_one_colour.py <png>` checks one visible dark-red colour, a transparent background and no semi-transparent pixels. Tests: `game/tools/test_check_logo_one_colour.py`. Not used in a scene yet. 6 generations in total: the first sample plus 5 of the board's allowance of 10.
+
+## Elevation test scene (T-182)
+
+The ground side of the elevation test scene (Level design, Decisions, "Raised areas and ramps"): data and a query only, no drawing and no car changes. Every number is a proposal for the board's playtest.
+
+### Ground-height data
+
+`game/data/level/elevation_test.json`, in flat-world units (x east, y south, so north is -y; the car's units). Two lists, so more can be added later (the level editor):
+
+- `platforms`: each has `id`, an axis-aligned rectangle (`x`, `y` = its north-west corner, `w`, `h`) and `height` (units). Proposal: one platform, 16 by 16 units at (-8, -8), height 3.
+- `ramps`: each has `id`, `platform` (the id it climbs), `side` (`north`, `east`, `south` or `west`: the platform side it climbs), a footprint rectangle (`x`, `y`, `w`, `h`) next to that side, `bottom_height` (0) and `top_height` (the platform's). The height rises in a straight line from the far end of the footprint (bottom) to the platform side (top). Proposal: one ramp on the east side, 12 by 8 units at (8, -4).
+- Every platform side without a ramp (and the platform's sides beside a ramp) is a drop-off.
+
+### The query
+
+`scripts/level/ground_height.gd` (`GroundHeight`, a RefCounted with no nodes or physics). `GroundHeight.from_file(path = DEFAULT_PATH)` (or `new()` then `load_file(path)`, which returns false on a bad file and leaves the ground flat):
+
+- `height_at(point: Vector2) -> float`: 0 off the platform, the platform's height on top, the straight rise along a ramp.
+- `is_ramp(point) -> bool` and `ramp_at(point) -> Dictionary` (empty off a ramp).
+- `edge_between(a, b) -> Dictionary`: `{"drop": bool, "height": float, "up": bool}`. `drop` is true when the move from a to b crosses a platform edge that is not a ramp; `height` is the step's size and `up` says it is a climb (from below). Moving along a ramp is never a drop.
+
+Tests: `tests/unit/test_ground_height.gd`.
