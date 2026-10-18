@@ -37,11 +37,11 @@ The board's review: Level up several times in a run from the task folder and see
 
 ## Acceptance criteria
 
-- [ ] A test shows the first level-up of a normal run offers exactly `upgrade_gun` and `get_flamethrower`. (QA: pass / fail)
-- [ ] Seeded tests over many later level-ups show: two different ids each time, every id drawn is available (a get for a weapon not owned, an upgrade for one owned below tier 8), and over the seeds every available id is offered at least once. (QA: pass / fail)
-- [ ] Tests show one choice when only one is left, the choice skipped (run resumes, no offers_ready) when none is left, and the `flamethrower_at_start` switch still gives the flamethrower and leads to its upgrades being offered. (QA: pass / fail)
-- [ ] Tests show taking each of the six new ids applies the weapon or its next tier and resumes the run, and `all_weapons_at_start` (false in the committed playtest.json) gives all five weapons at tier 1 when set to true. (QA: pass / fail)
-- [ ] `docs/weapons.md` Content 'The level-up offers' and `game/README.md` 'The level-up offers' describe the random draw, the new ids and the switch; the game's test set passes. (QA: pass / fail)
+- [ ] A test shows the first level-up of a normal run offers exactly `upgrade_gun` and `get_flamethrower`. (QA: pass)
+- [ ] Seeded tests over many later level-ups show: two different ids each time, every id drawn is available (a get for a weapon not owned, an upgrade for one owned below tier 8), and over the seeds every available id is offered at least once. (QA: pass)
+- [ ] Tests show one choice when only one is left, the choice skipped (run resumes, no offers_ready) when none is left, and the `flamethrower_at_start` switch still gives the flamethrower and leads to its upgrades being offered. (QA: pass)
+- [ ] Tests show taking each of the six new ids applies the weapon or its next tier and resumes the run, and `all_weapons_at_start` (false in the committed playtest.json) gives all five weapons at tier 1 when set to true. (QA: pass)
+- [ ] `docs/weapons.md` Content 'The level-up offers' and `game/README.md` 'The level-up offers' describe the random draw, the new ids and the switch; the game's test set passes. (QA: pass)
 
 ## Updates
 
