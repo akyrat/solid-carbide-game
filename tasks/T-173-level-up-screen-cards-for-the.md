@@ -37,11 +37,11 @@ The board's review: Open the level-up screen screenshot and level up in a run fr
 
 ## Acceptance criteria
 
-- [ ] `level_up_texts.gd` holds D6's 24 texts word for word, and a test walks every choice id and tier `level_up_offers.gd` can produce and finds a non-empty title and description for each. (QA: pass / fail)
-- [ ] A test shows each card has an image node showing its weapon's image, a different one per weapon; placeholder images contain no Redgull red. (QA: pass / fail)
-- [ ] The existing level-up screen tests (animation, keyboard and mouse) pass unchanged. (QA: pass / fail)
-- [ ] A screenshot fixture shows two cards with their images, titles, descriptions and 'Take it' buttons inside the red and gold frame, with no text overlapping the image or running outside the card. (QA: pass / fail)
-- [ ] `docs/hud-and-menus.md` Content 'Level-up screen' and `game/README.md` 'Level-up screen' describe the image slot; the game's test set passes. (QA: pass / fail)
+- [ ] `level_up_texts.gd` holds D6's 24 texts word for word, and a test walks every choice id and tier `level_up_offers.gd` can produce and finds a non-empty title and description for each. (QA: pass: 24 rows checked 0 problems; walk test in 953/953 suite)
+- [ ] A test shows each card has an image node showing its weapon's image, a different one per weapon; placeholder images contain no Redgull red. (QA: pass)
+- [ ] The existing level-up screen tests (animation, keyboard and mouse) pass unchanged. (QA: pass)
+- [ ] A screenshot fixture shows two cards with their images, titles, descriptions and 'Take it' buttons inside the red and gold frame, with no text overlapping the image or running outside the card. (QA: pass: screenshot checked)
+- [ ] `docs/hud-and-menus.md` Content 'Level-up screen' and `game/README.md` 'Level-up screen' describe the image slot; the game's test set passes. (QA: pass: 953/953)
 
 ## Updates
 
