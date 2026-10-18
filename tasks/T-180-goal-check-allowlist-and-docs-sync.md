@@ -1,7 +1,7 @@
 ---
 id: T-180
 title: Goal runner: the goal check gets the pre-approved list and blocked field, and the runner syncs the docs first
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, tools/goal_agent/loop.py, tools/goal_agent/build.py, tools/goal_agent/test_loop.py, tools/generate_long_gdd.py, tools/update_short_gdd_fingerprint.py, goals/G-002-add-an-image-of-the.md]
 files_expected_to_change: [tools/goal_agent/loop.py, tools/goal_agent/build.py, tools/goal_agent/fake_team.py, tools/goal_agent/fixtures/, tools/goal_agent/test_*.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,6 +44,10 @@ Quick fix started: the goal check gets the pre-approved list and the blocked fie
 ### 2026-10-18, In progress → In QA
 
 Built: the goal check lists the pre-approved commands and has the blocked field, and the runner syncs the docs before it. 319 tools tests pass. QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 3 criteria. Merged; G-002 resumes at its goal check.
 
 ## Result notes
 
