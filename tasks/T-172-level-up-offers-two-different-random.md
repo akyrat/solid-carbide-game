@@ -1,7 +1,7 @@
 ---
 id: T-172
 title: Level-up offers: two different random choices from all five weapons
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/visual-style.md, docs/extended-narrative.md, game/scripts/weapons/level_up_offers.gd, game/scripts/weapons/weapons.gd, game/scripts/weapons/flamethrower/exhaust_flamethrower.gd, game/data/playtest.json, game/tests/unit/weapons/test_level_up_offers.gd, game/README.md]
 files_expected_to_change: [game/scripts/weapons/level_up_offers.gd, game/scripts/weapons/weapons.gd, game/data/playtest.json, game/tests/unit/weapons/test_level_up_offers.gd, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-172.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Weapon Behavior Agent, 2026-10-18.
@@ -81,3 +85,4 @@ Weapon Behavior Agent, 2026-10-18.
 **Documents affected:** `docs/weapons.md` (Content, "The level-up offers (built in tasks T-043 and T-172)", and the three new weapons' "Owning it" lines), `game/README.md` (Weapons, "The level-up offers", and the three new weapons' "How it plugs in" lines).
 
 **PixelLab:** none used. **Refusals:** one: redirecting the test log to `/tmp` (outside the folder) was refused; I wrote it to an ignored `game/*.tmp` file in the task folder instead (not essential, nothing committed).
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
