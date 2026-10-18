@@ -1,7 +1,7 @@
 ---
 id: T-172
 title: Level-up offers: two different random choices from all five weapons
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -86,3 +86,4 @@ Weapon Behavior Agent, 2026-10-18.
 
 **PixelLab:** none used. **Refusals:** one: redirecting the test log to `/tmp` (outside the folder) was refused; I wrote it to an ignored `game/*.tmp` file in the task folder instead (not essential, nothing committed).
 - 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
+- 2026-10-18, needs-playtest → done: Board's playtest of G-002 (2026-10-18): works great.
