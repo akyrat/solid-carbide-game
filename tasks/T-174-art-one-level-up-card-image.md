@@ -52,4 +52,16 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-174.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Planned calls and cost (written before any call)
+
+Five calls to `/create-image-pixflux`, one per weapon, 64 x 64 px (the card's image slot, 1 image pixel per screen pixel), `no_background`, single-colour black outline, medium shading, 600 s HTTP timeout (the client's default). One round, no regenerations. Cost: 1 generation each = 5 generations in total, within the 40 left under the goal's art cap (D10 shares it). Requests are in `art-archive/T-174/req_<weapon>.json`.
+
+### Result
+
+- **Generations used: 5** (one round, no regenerations; balance went from 4881 before). Images and records: `game/art/level_up/weapon_{gun,flamethrower,underglow,molotov,wiper}.png/.json`; log line per call in `game/art/pixellab-generation-log.jsonl`.
+- `check_sprite_rules.py --size 64`: all five pass. The molotov first came back with 35 colours; a free script fix (`reduce_palette.py`, 30 colours) was applied, raw kept at `art-archive/T-174/weapon_molotov_raw.png` (`weapon_molotov_reduced.png` there is a duplicate of the fix). Hand-edit: none.
+- The level-up screen already loaded `art/level_up/weapon_<id>.png` (T-173), so no code change was needed; added a test (`test_final_weapon_art_replaces_the_placeholders`). Full test set: 954/954 pass.
+- Screenshot fixture (gun and flamethrower cards with final images): `art-archive/T-174/level_up_screen.png`.
+- Quality note (not judged by me): the gun and flamethrower read clearly at 64 px; the others not looked at on the screen.
+- Documents affected, updated: `docs/visual-style.md`, `game/README.md`.
+- Refusals: none.

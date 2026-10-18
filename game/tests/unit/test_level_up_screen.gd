@@ -623,6 +623,26 @@ func test_each_card_shows_its_weapons_image_a_different_one_per_weapon() -> void
 	assert_eq(screen.cards[0].image.texture, screen.weapon_image("molotov"))
 
 
+func test_final_weapon_art_replaces_the_placeholders() -> void:
+	# T-174: the five PixelLab images, 64 x 64, hard edged, shown instead of the 16 x 16 placeholders.
+	for w in offers.WEAPON_ORDER:
+		var path: String = screen.WEAPON_ART % w
+		assert_true(ResourceLoader.exists(path), "%s: %s is there" % [w, path])
+		var tex: Texture2D = screen.weapon_image(w)
+		assert_eq(tex.get_size(), Vector2(64, 64), "%s: 64 x 64, not the placeholder" % w)
+		assert_ne(tex, screen.placeholder_image(w))
+		var img: Image = tex.get_image()
+		var opaque := 0
+		for y in img.get_height():
+			for x in img.get_width():
+				var a := img.get_pixel(x, y).a
+				assert_true(a == 0.0 or a == 1.0, "%s (%d, %d): no semi-transparent pixels" % [w, x, y])
+				if a > 0.0:
+					opaque += 1
+		assert_gt(opaque, 300, "%s: something is drawn" % w)
+		assert_eq(img.get_pixel(0, 0).a, 0.0, "%s: transparent background" % w)
+
+
 func test_placeholder_images_are_hard_edged_and_never_redgull_red() -> void:
 	for w in offers.WEAPON_ORDER:
 		var tex: Texture2D = screen.placeholder_image(w)
