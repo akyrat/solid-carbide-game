@@ -42,3 +42,15 @@ G-002 built all 11 tickets, then paused in the goal check (`goals/G-002-add-an-i
 Quick fix started: the goal check gets the pre-approved list and the blocked field, and the runner syncs the docs before it. Then G-002 resumes at its goal check.
 
 ## Result notes
+
+What changed:
+- `loop.py`: `CHECK_SCHEMA` requires a boolean `blocked`; `check_prompt` carries the pre-approved note (`build.pre_approved_note`), the skip-if-not-essential and `blocked` wording, and the docs check result with an instruction to use it instead of running the docs scripts; `goal_check` logs refusals QA got past (`build.check_refusals`: pause when blocked or missing). New `sync_docs`: runs `generate_long_gdd.py --check` in the goal's build folder through `Shell.run(check=False)` (exit 1 = stale is the only non-zero exit allowed; any other exit pauses as a `command` pause; `Shell` is unchanged), if stale runs `generate_long_gdd.py` and `update_short_gdd_fingerprint.py`, commits only the changed `docs/` files on the goal's build branch, checks again.
+- `build.py`: `check_refusals` docstring corrected.
+- `temp_repo.py`: the temporary repo now holds the two docs scripts and a small in-sync sample doc, long GDD and short GDD fingerprint. `fixtures/whole-goal.json` and the `check()` helper in `test_loop.py` give the goal check answer `blocked`. `fake_team.py` needed no change.
+
+Tests (all in `tools/goal_agent/test_loop.py`, class `GoalCheck`):
+- Criterion 1: full suite, 319 tests, all pass, no Claude or network.
+- Criterion 2: `test_the_prompt_holds_the_pre_approved_note_and_the_docs_result_and_the_schema_requires_blocked`, `test_a_refusal_the_goal_check_got_past_is_logged_and_the_goal_is_ready`, `test_a_blocked_goal_check_pauses`, `test_a_goal_check_refusal_without_blocked_pauses`.
+- Criterion 3: `test_stale_docs_are_regenerated_and_committed_on_the_build_branch_before_the_check`, `test_docs_already_in_sync_are_left_alone`, `test_a_docs_check_that_fails_for_another_reason_pauses`.
+
+Docs: nothing changed. `docs/working-with-the-board.md` is listed as affected; the Project Lead may want a line there that the runner syncs the docs before the goal check.
