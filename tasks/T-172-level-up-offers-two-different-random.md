@@ -53,4 +53,27 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-172.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Weapon Behavior Agent, 2026-10-18.
+
+**What was built**
+- `game/scripts/weapons/level_up_offers.gd`: the 9 choice ids (`upgrade_gun`, `get_`/`upgrade_` for flamethrower, underglow, molotov, wiper; `ALL_IDS`), built from the rack per weapon: `get_<w>` while not owned, `upgrade_<w>` while owned below tier 8 (`available_offers()`). Each choice draws 2 different ids uniformly from the available ones with the script's own seedable `rng`, shown in `ALL_IDS` order; 1 id when only one is left; the choice is skipped (no `offers_ready`, `choice_made()` at once) when none is left. The first choice of a normal run (no choice taken yet this run, the car owns only the gun) is always `upgrade_gun` + `get_flamethrower`. `compute_offers()` still changes nothing: it returns the next draw and puts the generator's state back. `choose(id)` applies any id through `rack.upgrade(weapon_of(id))`.
+- `game/scripts/weapons/weapons.gd`: playtest switch `all_weapons_at_start` (static `all_weapons_switch_on()`, test override `all_weapons_override`): gives every weapon not yet owned at tier 1 in `reset_for_run()`, after the per-weapon switches, so nothing is given twice.
+- `game/data/playtest.json`: `"all_weapons_at_start": false` and its line in `_comment`.
+
+**Tests** (`tests/unit/weapons/test_level_up_offers.gd`, rewritten, 24 tests, ~9,800 asserts): first offer over 40 seeds; 40 seeded runs taken from level 1 until nothing is left (39 choices each), each offer two different available ids, all 9 ids seen; same seed same offers; `compute_offers()`; order; tier 8 never offered; one left; none left; each of the six new ids applied and the run resumed; `flamethrower_at_start` leading to `upgrade_flamethrower`; `all_weapons_at_start` on/off and false in the committed file.
+- `tests/unit/test_level_up_screen.gd` (UI Agent's): two tests assumed a fixed later offer. `test_flamethrower_upgrade_card_shows_its_next_tier` now maxes the three new weapons first; `test_keyboard_and_mouse_work_after_the_animation` presses whichever card is first on the second level-up and checks that weapon's tier went up.
+- Full GUT suite: 946/946 passed (`bash game/tools/run_tests.sh`). Python tool tests (`game/tools`): 278 OK.
+
+**Choices made where the docs are silent (for the board's playtest)**
+- "First level-up of a normal run" = no choice taken yet this run and the car has only the gun. So with `flamethrower_at_start` (or any other `*_at_start` switch) the first level-up is drawn.
+- The two drawn ids are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper), not the drawn order, so the gun's card stays first as before.
+
+**Open for other agents**
+- The level-up screen has no card text for the six new ids yet: `card_text()` returns empty title and description for them (and `upgrade_<new weapon>` needs per-tier keys as the gun's and flamethrower's do). That is a Narrative Theme text task plus a UI task; this task has `user_facing_text: no`.
+- The level-up screen's test runs leave many queued card nodes reported as GUT "orphans" in the big seeded loops; harmless, the tests pass.
+
+**Board's review:** in the task folder, open `game/project.godot` and play (F5); level up several times: from the second level-up on, the two cards are random among the five weapons (new weapons' cards show no text yet, see above). Set `all_weapons_at_start` to `true` in `game/data/playtest.json` to start with all five.
+
+**Documents affected:** `docs/weapons.md` (Content, "The level-up offers (built in tasks T-043 and T-172)", and the three new weapons' "Owning it" lines), `game/README.md` (Weapons, "The level-up offers", and the three new weapons' "How it plugs in" lines).
+
+**PixelLab:** none used. **Refusals:** one: redirecting the test log to `/tmp` (outside the folder) was refused; I wrote it to an ignored `game/*.tmp` file in the task folder instead (not essential, nothing committed).
