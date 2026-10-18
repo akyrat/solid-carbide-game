@@ -1,7 +1,7 @@
 ---
 id: T-181
 title: The status guard stops refusing harmless commands that only mention its words
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/guard_ledger.py, tools/test_guard.py, tasks/T-143-hook-allow-reading-task-headers.md, tasks/T-149-guard-qa-rounds-hand-edits.md, tasks/T-161-guard-false-refusals.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started: the status guard will refuse only commands that could actually write a 
 ### 2026-10-18, In progress → In QA
 
 Built: the guard judges each part of a command on its own and refuses only writes that could set a guarded header line; today's 8 false refusals are tests that pass, and 18 real header writes are still refused. 329 tools tests pass. QA checks it now.
+
+### 2026-10-18, In QA → Done
+
+QA passed all 3 criteria. Merged: the guard now refuses only commands that could write a ticket's status, qa_rounds or lead line.
 
 ## Result notes
 
