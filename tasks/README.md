@@ -77,8 +77,8 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 
 The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:
 
-- Each goal has one file in `goals/`, `G-001-short-title.md`, with a parseable header. It holds the goal, its acceptance criteria (the runner's stop condition), the prioritised sub-goals, the tickets it wrote or reused, and a log of every iteration.
-- A ticket the runner writes or reuses gets the goal's id in its `goal:` header line. Its tickets follow every rule in this file: the template, the status script, placeholders before art, a text ticket before any player-facing text.
+- Each goal has one file in `goals/`, `G-001-short-title.md`, with a parseable header. It holds the goal, its acceptance criteria (the runner's stop condition), the prioritised sub-goals, the tickets it wrote or reused, a log of every iteration, and the open questions the docs leave unanswered (for the board; the runner never invents an answer).
+- A ticket the runner writes or reuses gets the goal's id in its `goal:` header line. A reused ticket gets it only when its branch isn't open and it has no goal yet; the runner doesn't claim a reused ticket, since it may belong to another session. Its tickets follow every rule in this file: the template, the status script, placeholders before art, a text ticket before any player-facing text.
 - A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build.
 
 ## Building in playable steps

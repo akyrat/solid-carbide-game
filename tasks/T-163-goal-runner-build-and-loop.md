@@ -1,7 +1,7 @@
 ---
 id: T-163
 title: Goal runner, part 2: building the tickets and the iteration loop
-status: blocked
+status: open
 from: project-lead
 to: project-lead
 lead: Coursework
