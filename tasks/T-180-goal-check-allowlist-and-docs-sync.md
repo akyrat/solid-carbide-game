@@ -1,7 +1,7 @@
 ---
 id: T-180
 title: Goal runner: the goal check gets the pre-approved list and blocked field, and the runner syncs the docs first
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -31,15 +31,19 @@ G-002 built all 11 tickets, then paused in the goal check (`goals/G-002-add-an-i
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows the goal check's prompt holds the pre-approved note and the docs check result, and its schema requires `blocked`; a goal check reporting a refusal with `blocked` false still ends the goal `ready-to-play` when every criterion passes, and one with `blocked` true pauses it (QA: pass / fail)
-- [ ] A test (temporary repo, the two docs scripts faked or real) shows stale docs are regenerated and committed on the goal's build branch before the goal check, and docs already in sync are left alone with nothing committed (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows the goal check's prompt holds the pre-approved note and the docs check result, and its schema requires `blocked`; a goal check reporting a refusal with `blocked` false still ends the goal `ready-to-play` when every criterion passes, and one with `blocked` true pauses it (QA: pass)
+- [ ] A test (temporary repo, the two docs scripts faked or real) shows stale docs are regenerated and committed on the goal's build branch before the goal check, and docs already in sync are left alone with nothing committed (QA: pass)
 
 ## Updates
 
 ### 2026-10-18, Open → In progress
 
 Quick fix started: the goal check gets the pre-approved list and the blocked field, and the runner syncs the docs before it. Then G-002 resumes at its goal check.
+
+### 2026-10-18, In progress → In QA
+
+Built: the goal check lists the pre-approved commands and has the blocked field, and the runner syncs the docs before it. 319 tools tests pass. QA checks it now.
 
 ## Result notes
 
