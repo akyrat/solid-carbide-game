@@ -1,0 +1,101 @@
+{
+  "task": "T-157",
+  "direction_frame": 12,
+  "frame_width": 128,
+  "frame_height": 128,
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "px_per_unit": 32,
+  "made_by": "PixelLab /rotate (from_image = car_iso.png frame 12, init_image = the pose guide from game/tools/render_trick_guides.py), then game/tools/build_trick_frames.py (alpha cut, palette mapped to car_iso.png's colours, centred by whole pixels; no new pixels)",
+  "play_note": "draw car_iso.png frame 12 before frame 0 and after the last frame",
+  "what": "nose pop: dip onto the nose, then a backflip",
+  "frame_count": 6,
+  "frames": [
+    {
+      "index": 0,
+      "file": "car_nose_ne_0.png",
+      "source": "art-archive/T-157/raw/pitch_340.png",
+      "source_record": "art-archive/T-157/raw/pitch_340.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_340.png",
+      "pitch_deg": -20,
+      "colours_before": 186,
+      "colours_after": 30,
+      "shift_px": {
+        "x": 0,
+        "y": -2
+      }
+    },
+    {
+      "index": 1,
+      "file": "car_nose_ne_1.png",
+      "source": "art-archive/T-157/raw/pitch_045.png",
+      "source_record": "art-archive/T-157/raw/pitch_045.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_045.png",
+      "pitch_deg": 45,
+      "colours_before": 177,
+      "colours_after": 30,
+      "shift_px": {
+        "x": -2,
+        "y": 0
+      }
+    },
+    {
+      "index": 2,
+      "file": "car_nose_ne_2.png",
+      "source": "art-archive/T-157/raw/pitch_090.png",
+      "source_record": "art-archive/T-157/raw/pitch_090.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_090.png",
+      "pitch_deg": 90,
+      "colours_before": 155,
+      "colours_after": 26,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 3,
+      "file": "car_nose_ne_3.png",
+      "source": "art-archive/T-157/raw/pitch_135.png",
+      "source_record": "art-archive/T-157/raw/pitch_135.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_135.png",
+      "pitch_deg": 135,
+      "colours_before": 192,
+      "colours_after": 29,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 4,
+      "file": "car_nose_ne_4.png",
+      "source": "art-archive/T-157/raw/pitch_180.png",
+      "source_record": "art-archive/T-157/raw/pitch_180.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_180.png",
+      "pitch_deg": 180,
+      "colours_before": 102,
+      "colours_after": 23,
+      "shift_px": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "index": 5,
+      "file": "car_nose_ne_5.png",
+      "source": "art-archive/T-157/raw/pitch_270.png",
+      "source_record": "art-archive/T-157/raw/pitch_270.json",
+      "guide": "art-archive/T-157/guides/guide_pitch_270.png",
+      "pitch_deg": 270,
+      "colours_before": 110,
+      "colours_after": 25,
+      "shift_px": {
+        "x": 4,
+        "y": 1
+      }
+    }
+  ]
+}

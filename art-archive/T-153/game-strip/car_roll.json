@@ -1,0 +1,12 @@
+{
+  "direction_frame": 12,
+  "frame_count": 9,
+  "frame_width": 128,
+  "frame_height": 128,
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "px_per_unit": 32.0,
+  "note": "frame 0 is car_iso frame 12 (upright); frames 1 to 8 are car_roll_ne_0..7 moved by whole pixels so each bounding-box centre sits on center_px; the roll is to the car's right; made by game/tools/build_car_roll.py (T-153)"
+}

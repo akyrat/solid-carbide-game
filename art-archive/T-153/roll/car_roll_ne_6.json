@@ -1,0 +1,130 @@
+{
+  "file": "car_roll_ne_6.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "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",
+      "format": "png"
+    },
+    "action": "the whole car does one full barrel roll around its long axis, rolling to its right (clockwise as seen from behind the car) while hovering in the air: first upright on its wheels, then tipping right, then on its right side with the wheels pointing sideways, then upside down with the underside, axles and wheels facing up, then on its left side, then tipping back to upright on its wheels. The car keeps its shape, dark green paint and two white stripes, and stays in the same spot, no ground, no shadow, no motion blur",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 153001
+  },
+  "prompt": "",
+  "job_id": "c96530a1-8b0e-49e5-b84d-74ffc49b2930",
+  "usage": {
+    "type": "generations",
+    "generations": 2.0
+  },
+  "generated_at": "2026-10-16T21:55:33+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "game/art/car/car_iso.json",
+    "game/scripts/driving/car_model.gd",
+    "docs/visual-style.md",
+    "https://api.pixellab.ai/v2/openapi.json"
+  ],
+  "task": "T-153",
+  "job_status": "completed",
+  "notes": "T-153: side flip roll, frame 12 (start heading 270 deg)",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 6,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "car_roll_ne_0.png",
+    "car_roll_ne_1.png",
+    "car_roll_ne_2.png",
+    "car_roll_ne_3.png",
+    "car_roll_ne_4.png",
+    "car_roll_ne_5.png",
+    "car_roll_ne_6.png",
+    "car_roll_ne_7.png",
+    "car_roll_ne_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 2.0
+    },
+    "id": "c96530a1-8b0e-49e5-b84d-74ffc49b2930",
+    "status": "completed",
+    "created_at": "2026-10-16T21:53:19.393062+00:00",
+    "last_response": {
+      "seed": 153001,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 2,
+        "cost_if_paid": 0.031087275399102103
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<8712 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<10440 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<10252 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<8448 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7692 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<8096 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7588 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7792 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<8400 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8666666666666667,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 2.0
+      },
+      "generation_id": "8b525a1d-833a-47f3-8d8a-5f3c2dbaa327",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-16T21:53:40.640724+00:00"
+    }
+  }
+}

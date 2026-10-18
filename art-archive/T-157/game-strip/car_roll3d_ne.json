@@ -1,0 +1,129 @@
+{
+  "task": "T-157",
+  "direction_frame": 12,
+  "frame_width": 128,
+  "frame_height": 128,
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "px_per_unit": 32,
+  "made_by": "PixelLab /rotate (from_image = car_iso.png frame 12, init_image = the pose guide from game/tools/render_trick_guides.py), then game/tools/build_trick_frames.py (alpha cut, palette mapped to car_iso.png's colours, centred by whole pixels; no new pixels)",
+  "play_note": "draw car_iso.png frame 12 before frame 0 and after the last frame",
+  "what": "side roll to the car's right, 40-degree steps",
+  "frame_count": 8,
+  "frames": [
+    {
+      "index": 0,
+      "file": "car_roll3d_ne_0.png",
+      "source": "art-archive/T-157/raw/roll_040.png",
+      "source_record": "art-archive/T-157/raw/roll_040.json",
+      "guide": "art-archive/T-157/guides/guide_roll_040.png",
+      "roll_deg": 40,
+      "colours_before": 146,
+      "colours_after": 27,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 1,
+      "file": "car_roll3d_ne_1.png",
+      "source": "art-archive/T-157/raw/roll_080_s600.png",
+      "source_record": "art-archive/T-157/raw/roll_080_s600.json",
+      "guide": "art-archive/T-157/guides/guide_roll_080.png",
+      "roll_deg": 80,
+      "colours_before": 107,
+      "colours_after": 26,
+      "shift_px": {
+        "x": 1,
+        "y": 0
+      }
+    },
+    {
+      "index": 2,
+      "file": "car_roll3d_ne_2.png",
+      "source": "art-archive/T-157/raw/roll_120.png",
+      "source_record": "art-archive/T-157/raw/roll_120.json",
+      "guide": "art-archive/T-157/guides/guide_roll_120.png",
+      "roll_deg": 120,
+      "colours_before": 191,
+      "colours_after": 30,
+      "shift_px": {
+        "x": -1,
+        "y": 0
+      }
+    },
+    {
+      "index": 3,
+      "file": "car_roll3d_ne_3.png",
+      "source": "art-archive/T-157/raw/roll_160.png",
+      "source_record": "art-archive/T-157/raw/roll_160.json",
+      "guide": "art-archive/T-157/guides/guide_roll_160.png",
+      "roll_deg": 160,
+      "colours_before": 174,
+      "colours_after": 29,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 4,
+      "file": "car_roll3d_ne_4.png",
+      "source": "art-archive/T-157/raw/roll_200.png",
+      "source_record": "art-archive/T-157/raw/roll_200.json",
+      "guide": "art-archive/T-157/guides/guide_roll_200.png",
+      "roll_deg": 200,
+      "colours_before": 146,
+      "colours_after": 25,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 5,
+      "file": "car_roll3d_ne_5.png",
+      "source": "art-archive/T-157/raw/roll_240.png",
+      "source_record": "art-archive/T-157/raw/roll_240.json",
+      "guide": "art-archive/T-157/guides/guide_roll_240.png",
+      "roll_deg": 240,
+      "colours_before": 134,
+      "colours_after": 26,
+      "shift_px": {
+        "x": 0,
+        "y": 2
+      }
+    },
+    {
+      "index": 6,
+      "file": "car_roll3d_ne_6.png",
+      "source": "art-archive/T-157/raw/roll_280.png",
+      "source_record": "art-archive/T-157/raw/roll_280.json",
+      "guide": "art-archive/T-157/guides/guide_roll_280.png",
+      "roll_deg": 280,
+      "colours_before": 127,
+      "colours_after": 29,
+      "shift_px": {
+        "x": -2,
+        "y": -1
+      }
+    },
+    {
+      "index": 7,
+      "file": "car_roll3d_ne_7.png",
+      "source": "art-archive/T-157/raw/roll_320.png",
+      "source_record": "art-archive/T-157/raw/roll_320.json",
+      "guide": "art-archive/T-157/guides/guide_roll_320.png",
+      "roll_deg": 320,
+      "colours_before": 191,
+      "colours_after": 30,
+      "shift_px": {
+        "x": -1,
+        "y": -2
+      }
+    }
+  ]
+}

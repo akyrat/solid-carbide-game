@@ -1,0 +1,101 @@
+{
+  "task": "T-153",
+  "frames": [
+    {
+      "index": 0,
+      "source": "art-archive/T-153/roll/car_roll_ne_1.png",
+      "bbox": [
+        23,
+        27,
+        111,
+        105
+      ],
+      "colours": 29
+    },
+    {
+      "index": 1,
+      "source": "art-archive/T-153/roll/car_roll_ne_2.png",
+      "bbox": [
+        28,
+        20,
+        107,
+        107
+      ],
+      "colours": 29
+    },
+    {
+      "index": 2,
+      "source": "art-archive/T-153/roll/car_roll_ne_3.png",
+      "bbox": [
+        35,
+        21,
+        98,
+        106
+      ],
+      "colours": 28
+    },
+    {
+      "index": 3,
+      "source": "art-archive/T-153/roll/car_roll_ne_4.png",
+      "bbox": [
+        32,
+        26,
+        98,
+        102
+      ],
+      "colours": 28
+    },
+    {
+      "index": 4,
+      "source": "art-archive/T-153/roll/car_roll_ne_5.png",
+      "bbox": [
+        22,
+        34,
+        102,
+        97
+      ],
+      "colours": 26
+    },
+    {
+      "index": 5,
+      "source": "art-archive/T-153/roll/car_roll_ne_6.png",
+      "bbox": [
+        18,
+        40,
+        108,
+        98
+      ],
+      "colours": 27
+    },
+    {
+      "index": 6,
+      "source": "art-archive/T-153/roll/car_roll_ne_7.png",
+      "bbox": [
+        17,
+        39,
+        111,
+        97
+      ],
+      "colours": 26
+    },
+    {
+      "index": 7,
+      "source": "art-archive/T-153/roll/car_roll_ne_8.png",
+      "bbox": [
+        16,
+        33,
+        112,
+        101
+      ],
+      "colours": 30
+    }
+  ],
+  "frame_count": 8,
+  "frame_size": 128,
+  "rolls_from_car_iso_frame": 12,
+  "direction": "world heading 270 degrees (the drift prototype's start), nose up-right on screen",
+  "roll": "to the car's right around its long axis; the game draws car_iso frame 12 before frame 0 and after the last",
+  "made_by": "PixelLab /animate-with-text-v3, one call (art-archive/T-153/roll_req.json, log in game/art/pixellab-generation-log.jsonl)",
+  "processing": "alpha cut at 128 (no semi-transparent pixels), palette mapped to car_iso.json's palette; no moves",
+  "shadow": false
+}

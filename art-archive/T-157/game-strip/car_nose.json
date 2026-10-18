@@ -1,0 +1,21 @@
+{
+  "direction_frame": 12,
+  "frame_count": 7,
+  "frame_width": 128,
+  "frame_height": 128,
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "px_per_unit": 32.0,
+  "note": "frame 0 is car_iso frame 12 (upright, unmoved); frames 1 to 6 are the nose pop: dip onto the nose, then a backflip, already centred on center_px; made by game/tools/build_trick_frames.py (T-157)",
+  "pitch_deg": [
+    0,
+    -20,
+    45,
+    90,
+    135,
+    180,
+    270
+  ]
+}
