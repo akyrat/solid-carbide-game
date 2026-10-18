@@ -1,7 +1,7 @@
 ---
 id: T-168
 title: The neon underglow: a circle around the car that damages enemies (placeholder look)
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002

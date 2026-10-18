@@ -1,7 +1,7 @@
 ---
 id: T-169
 title: The molotovs: thrown from the car, they leave fire areas that burn enemies (placeholder look)
-status: blocked
+status: open
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002

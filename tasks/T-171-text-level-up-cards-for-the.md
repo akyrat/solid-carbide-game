@@ -1,7 +1,7 @@
 ---
 id: T-171
 title: Text: level-up cards for the neon underglow, the molotovs and the windshield wiper
-status: blocked
+status: open
 from: project-lead
 to: narrative-theme
 lead: Goal-G-002
