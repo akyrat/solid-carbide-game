@@ -1,7 +1,7 @@
 ---
 id: T-169
 title: The molotovs: thrown from the car, they leave fire areas that burn enemies (placeholder look)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Goal-G-002
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/visual-style.md, docs/extended-narrative.md, game/data/weapons.json, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/bullet.gd, game/scripts/weapons/starting_gun.gd, game/scripts/enemies/enemy_depth.gd, game/README.md]
 files_expected_to_change: [game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/weapons.gd, game/tests/unit/weapons/test_molotovs.gd, docs/weapons.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-002): started, in C:\solid-carbide-worktrees\T-169.
 
 Goal runner (G-002): the agent is done; QA is checking it.
 
+### 2026-10-18, In QA → Needs playtest
+
+Goal runner (G-002): QA passed; merged into playtest/G-002.
+
 ## Result notes
 
 Weapon Behavior Agent, 2026-10-18.
@@ -84,3 +88,4 @@ Weapon Behavior Agent, 2026-10-18.
 **Not committed:** Godot's line-ending-only `.import` noise, left in the working tree as the rules say.
 
 **PixelLab:** none used. **Refusals:** none.
+- 2026-10-18, in-qa → needs-playtest: QA passed every criterion (goal G-002).
