@@ -1,7 +1,7 @@
 ---
 id: T-176
 title: QA: the five weapons, the random offers and the card images together in a run
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-002
