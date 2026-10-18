@@ -1,7 +1,7 @@
 ---
 id: T-182
 title: Elevation test scene: ground-height data (one platform, one ramp, drop-off edges) and a ground-height query
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Goal-G-003
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-19, Open → In progress
 
 Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-182.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
 
 ## Result notes
 
