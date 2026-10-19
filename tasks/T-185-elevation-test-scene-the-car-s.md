@@ -1,7 +1,7 @@
 ---
 id: T-185
 title: Elevation test scene: the car's drawing lifts with its height, a shadow on the ground, placeholder platform and ramp
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/driving/drift_prototype.gd, game/scripts/driving/car_sprite.gd, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/level/ground_height.gd, game/scripts/enemies/enemy_depth.gd]
 files_expected_to_change: [game/scenes/elevation_test/elevation_test.tscn, game/scripts/driving/elevation_test.gd, game/scripts/driving/car_shadow.gd, game/scripts/level/elevation_platform_drawing.gd, game/scripts/driving/car_sprite.gd, game/tests/unit/test_elevation_drawing.gd, game/tests/fixtures/elevation_test_*.tscn, game/tests/fixtures/elevation_test_demo.gd, docs/drifting/elevation-*.png, docs/drifting.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-185.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Needs playtest
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-19.
@@ -91,3 +95,4 @@ They are in `docs/drifting/` as the Description asks, not also in `art-archive/T
 **Not done here:** the headless run of the scene itself (`"$GODOT_BIN" --headless ...`) is not among the pre-approved commands, so I didn't run it; the GUT test instantiates the scene and runs it for 50 physics frames headless with no errors, and the screenshot runs logged no errors or warnings. No refusals met. PixelLab: none used.
 
 **Documents updated:** `docs/drifting.md` (Content, new "Elevation test scene" section), `game/README.md` ("Elevation test scene (T-182)" intro, "The car's height (T-183)" pointer, new "The scene and its drawing (T-185)").
+- 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-003).
