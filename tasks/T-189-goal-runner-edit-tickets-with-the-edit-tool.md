@@ -1,7 +1,7 @@
 ---
 id: T-189
 title: Goal runner: agents and QA edit ticket files with the file editing tool only
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/goal_agent/test_build.py, goals/G-003-build-the-elevation-system-in.md]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/goal_agent/test_build.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,6 +42,10 @@ Quick fix started: the runner tells agents and QA to edit ticket files only with
 ### 2026-10-19, In progress → In QA
 
 Built: agent, QA and goal check prompts say to edit tickets only with the file editing tool. 330 tools tests pass. QA checks it now.
+
+### 2026-10-19, In QA → Done
+
+QA passed both criteria. Merged; G-003 resumes at T-183's QA.
 
 ## Result notes
 
