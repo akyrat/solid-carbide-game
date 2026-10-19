@@ -1,7 +1,7 @@
 ---
 id: G-003
 title: Build the elevation system in a test scene, as written in docs/drif...
-status: ready-to-play
+status: done
 art_cap: 20
 art_used: 3
 iteration: 7
@@ -145,6 +145,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 7: T-188 (S7, driving-drift, opus): passed (done, QA rounds 2), merged into playtest/G-003; art 0; agent: (nothing new). Rescan: S7 covered.
 - 2026-10-19, iteration 7: goal check: 8 of 8 goal criteria pass.
 - 2026-10-19, iteration 7: ready to play.
+- 2026-10-19: the board played it and asked for three changes (see-through raised areas, a round shadow, no bigger-when-high option), built as T-191 and T-192 on the goal's build. The board played again: "super happy with it". The Project Lead marked the tickets done and merged `playtest/G-003` into `master`. Goal done.
 
 ## Pauses
 

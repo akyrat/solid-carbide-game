@@ -1,0 +1,36 @@
+{
+  "file": "raw_ramp_top.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "seamless top-down texture of dark navy-purple asphalt road surface with worn white painted chevron arrows and light cracks, flat, pixel art",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": false,
+    "shading": "medium shading",
+    "detail": "medium detail"
+  },
+  "prompt": "seamless top-down texture of dark navy-purple asphalt road surface with worn white painted chevron arrows and light cracks, flat, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-19T00:54:05+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/art/ground/road_tile.png"
+  ],
+  "task": "T-186",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

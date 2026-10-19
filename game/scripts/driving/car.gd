@@ -18,6 +18,7 @@ extends CharacterBody2D
 
 const CarModel := preload("res://scripts/driving/car_model.gd")
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
+const CarHeight := preload("res://scripts/driving/car_height.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -76,6 +77,31 @@ var tuning:
 	get:
 		return model.tuning
 
+## The car's real height above the ground (task T-183, car_height.gd), stepped
+## after the flat step. It changes the flat driving only where the ground's
+## sides are walls (task T-184): the car stops and bounces there.
+var height_model = CarHeight.new()
+## The ground-height source (a GroundHeight, ground_height.gd), or null. Null
+## (the drift prototype, the run): the height stays 0.
+var ground = null:
+	get:
+		return height_model.ground
+	set(value):
+		height_model.ground = value
+		height_model.reset(model.get_position())
+## Height above the ground's zero, units (0 with no ground source).
+var height: float:
+	get:
+		return height_model.height
+## Vertical speed, units/s, up positive.
+var vertical_speed: float:
+	get:
+		return height_model.vertical_speed
+## True while the car is in the air.
+var airborne: bool:
+	get:
+		return height_model.airborne
+
 ## When false, physics_step uses scripted_input instead of the keyboard (tests).
 var use_keyboard := true
 ## [W held, S held, steer] used when use_keyboard is false.
@@ -85,6 +111,8 @@ var scripted_input := [false, false, 0.0]
 var _pending_knockback := Vector2.ZERO
 ## Obstacles the car is touching: "collider id:shape index" -> surface normal.
 var _contacts := {}
+## Sides of the ground the car is touching (task T-184): key -> {point, normal}.
+var _side_contacts := {}
 
 
 func _init() -> void:
@@ -136,6 +164,7 @@ func physics_step() -> void:
 		_pending_knockback = Vector2.ZERO
 	rotation = model.rotation
 	velocity = model.get_velocity() * PX_PER_UNIT
+	var flat_before: Vector2 = model.get_position()
 	var hit := move_and_collide(velocity * model.dt)
 	# Moving sets the body's transform, which wraps rotation into -PI..PI; keep
 	# the model's own angle, as before collisions existed.
@@ -151,6 +180,14 @@ func physics_step() -> void:
 		model.set_position(position / PX_PER_UNIT)
 		_bounce(hit)
 	_update_contacts(hit)
+	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt)
+	if side.wall:
+		# A side of the ground higher than the car (task T-184): stop at it and
+		# bounce like off any wall.
+		model.set_position(side.point)
+		position = model.get_position() * PX_PER_UNIT
+		_bounce_off_side(side)
+	_update_side_contacts()
 	stepped.emit()
 
 
@@ -178,6 +215,16 @@ func pending_knockback() -> Vector2:
 ## surface is kept. Emits hit_obstacle for a new hit.
 func _bounce(hit: KinematicCollision2D) -> void:
 	var n := hit.get_normal()
+	var impact := _reflect(n)
+	var key := _contact_key(hit.get_collider(), hit.get_collider_shape_index())
+	if not _contacts.has(key):
+		hit_obstacle.emit(hit.get_collider(), hit.get_collider_shape_index(), n, impact)
+	_contacts[key] = n
+
+
+## Reflects the velocity off a surface with outward normal n (see _bounce) and
+## returns the speed into it before the bounce, units/s.
+func _reflect(n: Vector2) -> float:
 	var v := model.get_velocity()
 	var into := v.dot(n)
 	var impact := maxf(0.0, -into)
@@ -185,10 +232,31 @@ func _bounce(hit: KinematicCollision2D) -> void:
 		var e := clampf(float(tuning.wall_bounce), 0.0, 1.0)
 		model.set_velocity(v - (1.0 + e) * into * n)
 	velocity = model.get_velocity() * PX_PER_UNIT
-	var key := _contact_key(hit.get_collider(), hit.get_collider_shape_index())
-	if not _contacts.has(key):
-		hit_obstacle.emit(hit.get_collider(), hit.get_collider_shape_index(), n, impact)
-	_contacts[key] = n
+	return impact
+
+
+## The same bounce off a side of the ground (task T-184; a drop-off edge from
+## below, a ramp's side). hit_obstacle gets the GroundHeight as the collider
+## and the area's index (GroundHeight.area_index_at) as the shape index. It
+## counts once per side until the car is REARM_GAP_UNITS away from it.
+func _bounce_off_side(side: Dictionary) -> void:
+	var n: Vector2 = side.normal
+	var impact := _reflect(n)
+	var key := "side:%d:%d,%d" % [side.area, roundi(n.x), roundi(n.y)]
+	if not _side_contacts.has(key):
+		hit_obstacle.emit(ground, side.area, n, impact)
+	_side_contacts[key] = {"point": side.point, "normal": n}
+
+
+## Forgets the ground's sides the car has moved away from (_bounce_off_side).
+func _update_side_contacts() -> void:
+	if _side_contacts.is_empty():
+		return
+	var pos: Vector2 = model.get_position()
+	for key in _side_contacts.keys():
+		var c: Dictionary = _side_contacts[key]
+		if (pos - c.point).dot(c.normal) > REARM_GAP_UNITS:
+			_side_contacts.erase(key)
 
 
 ## Forgets the contacts the car has moved away from, so hitting them again

@@ -1,0 +1,36 @@
+{
+  "file": "raw_platform_wall.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "flat front view of a cool blue-grey concrete retaining wall at night, vertical panel seams, a lighter lip along the top edge, cracks, filling the whole image, pixel art",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": false,
+    "shading": "medium shading",
+    "detail": "medium detail"
+  },
+  "prompt": "flat front view of a cool blue-grey concrete retaining wall at night, vertical panel seams, a lighter lip along the top edge, cracks, filling the whole image, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-19T00:53:46+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "game/data/level/elevation_test.json"
+  ],
+  "task": "T-186",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

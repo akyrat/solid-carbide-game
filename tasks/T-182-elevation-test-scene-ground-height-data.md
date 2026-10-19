@@ -1,7 +1,7 @@
 ---
 id: T-182
 title: Elevation test scene: ground-height data (one platform, one ramp, drop-off edges) and a ground-height query
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/README.md, game/data/level/mvp_map.json, game/scripts/driving/test_room.gd]
 files_expected_to_change: [game/data/level/elevation_test.json, game/scripts/level/ground_height.gd, game/tests/unit/test_ground_height.gd, game/README.md, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,17 +40,30 @@ The board's go-ahead for elevation (2026-10-19): docs/level-design.md, Decisions
 
 ## Acceptance criteria
 
-- [ ] `game/data/level/elevation_test.json` exists and holds one platform (outline and height) and one ramp (footprint, the side it climbs, bottom height 0 and top height equal to the platform's), as lists so more can be added later. (QA: pass / fail)
-- [ ] `game/scripts/level/ground_height.gd` loads that file and `height_at()` returns 0 off the platform, the platform's height on top, and a straight rise along the ramp; GUT tests check a point off the platform, a point on top, the ramp's foot, the ramp's middle (half the platform's height) and the ramp's top. (QA: pass / fail)
-- [ ] GUT tests show the query tells a ramp from a drop-off: moving in small steps across the ramp's climbing direction changes the height gradually (no step bigger than the step's share of the slope), while crossing any other platform edge is reported as a drop-off step of the platform's height. (QA: pass / fail)
-- [ ] `game/README.md` has an 'Elevation test scene' section describing the data file's format and the query's functions. (QA: pass / fail)
-- [ ] `docs/level-design.md`, Content, describes the test platform, the ramp, the drop-off edges and the height data format, with each number marked as a proposal. (QA: pass / fail)
-- [ ] The full GUT suite passes headless (`game/tools/run_tests.sh` or `.ps1`), with no existing test changed. (QA: pass / fail)
+- [ ] `game/data/level/elevation_test.json` exists and holds one platform (outline and height) and one ramp (footprint, the side it climbs, bottom height 0 and top height equal to the platform's), as lists so more can be added later. (QA: pass)
+- [ ] `game/scripts/level/ground_height.gd` loads that file and `height_at()` returns 0 off the platform, the platform's height on top, and a straight rise along the ramp; GUT tests check a point off the platform, a point on top, the ramp's foot, the ramp's middle (half the platform's height) and the ramp's top. (QA: pass)
+- [ ] GUT tests show the query tells a ramp from a drop-off: moving in small steps across the ramp's climbing direction changes the height gradually (no step bigger than the step's share of the slope), while crossing any other platform edge is reported as a drop-off step of the platform's height. (QA: pass)
+- [ ] `game/README.md` has an 'Elevation test scene' section describing the data file's format and the query's functions. (QA: pass)
+- [ ] `docs/level-design.md`, Content, describes the test platform, the ramp, the drop-off edges and the height data format, with each number marked as a proposal. (QA: pass)
+- [ ] The full GUT suite passes headless (`game/tools/run_tests.sh` or `.ps1`), with no existing test changed. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-19, Open → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-182.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
+
+### 2026-10-19, In QA → Done
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Done. Added `game/data/level/elevation_test.json` (lists `platforms` and `ramps`; proposals: platform 16x16 at (-8,-8), height 3; east ramp 12x8 at (8,-4), 0 to 3), `game/scripts/level/ground_height.gd` (`GroundHeight`: `from_file`, `load_file`, `height_at`, `is_ramp`, `ramp_at`, `edge_between` returning `{drop, height, up}`), and `game/tests/unit/test_ground_height.gd` (9 tests: off, top, ramp foot/middle/top, gradual climb in 0.1 steps, drop-offs on all other sides, level moves). Documented in `game/README.md` ("Elevation test scene") and `docs/level-design.md` (Content, "Elevation test scene"). Full GUT suite passes headless; no existing test changed. Convention: x east, y south, so north is -y. No PixelLab used. No refusals.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-003).

@@ -27,6 +27,8 @@ const SHAKE_HZ := 20.0
 var _base_offset := Vector2.ZERO
 var _shake_left := 0.0
 
+var _base_scale := Vector2.ONE
+
 
 func _init() -> void:
 	centered = true
@@ -54,7 +56,8 @@ func use_sheet(view: String) -> void:
 	_base_offset = frame_size / 2.0 - center
 	offset = _base_offset
 	var s := world_px_per_unit / float(layout.get("px_per_unit", world_px_per_unit))
-	scale = Vector2(s, s)
+	_base_scale = Vector2(s, s)
+	scale = _base_scale
 
 
 ## Starts the damage shake (restarts it if one is running). Runs in _process, so pausing stops it.
@@ -74,6 +77,23 @@ func _process(delta: float) -> void:
 	var t := SHAKE_SECONDS - _shake_left
 	var px := Vector2(sin(t * TAU * SHAKE_HZ), cos(t * TAU * SHAKE_HZ * 0.5) * 0.5) * SHAKE_PIXELS * k
 	offset = _base_offset + (px / scale.x if scale.x != 0.0 else px)
+
+
+## The lift of the drawing for a height above the ground (task T-185;
+## Drifting, Decisions, "Elevation"): straight up the screen, px_per_unit
+## pixels per unit of height (16, the rest of the drawing's scale). The same in
+## the flat and the isometric view: height is always drawn up the screen.
+static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> Vector2:
+	return Vector2(0.0, -height_units * px_per_unit)
+
+
+## Places the drawing at the car's drawn map position (on the ground, height
+## 0), lifted up the screen by the car's height (lift_for_height). The lift is
+## part of the node's position, so physics interpolation smooths it too. The
+## drawing's scale is the sheet's own at every height (task T-192).
+func place(drawn_ground_px: Vector2, height_units: float) -> void:
+	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
+	scale = _base_scale
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).
