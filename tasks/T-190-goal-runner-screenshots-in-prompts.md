@@ -1,7 +1,7 @@
 ---
 id: T-190
 title: Goal runner: agents take screenshots and QA checks them
-status: open
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -32,9 +32,26 @@ Fix, in `tools/goal_agent/build.py`:
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows the agent prompt asks for screenshots in `art-archive/<ticket id>/screenshots/`, including a picture drawn from the data when nothing is on screen, and the QA prompt asks QA to fail a ticket that could be pictured and has none (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows the agent prompt asks for screenshots in `art-archive/<ticket id>/screenshots/`, including a picture drawn from the data when nothing is on screen, and the QA prompt asks QA to fail a ticket that could be pictured and has none (QA: pass)
 
 ## Updates
 
+### 2026-10-19, Open → In progress
+
+Started: the runner's prompts tell agents to take screenshots (or draw a picture from the data) and QA to fail a ticket without them.
+
+### 2026-10-19, In progress → In QA
+
+Built: the agent prompt asks for screenshots (or a picture drawn from the data), and the QA prompt fails a ticket that could be pictured and has none. 331 tools tests pass. QA checks it now.
+
+### 2026-10-19, In QA → Done
+
+QA passed both criteria. Merged: runner agents now take screenshots (or draw from the data), and QA fails a ticket without them. It applies from the next resume or run.
+
 ## Result notes
+
+- `tools/goal_agent/build.py`: new shared constants `SCREENSHOTS_RULE` (added to the agent prompt as a bullet after the ticket-editing rule) and `QA_SCREENSHOTS_RULE` (added to the QA prompt after the same rule), worded as the Description says.
+- `tools/goal_agent/test_build.py`: new test `test_agent_prompt_asks_for_screenshots_and_qa_prompt_fails_a_ticket_without_them` in `HeadlessRuns`.
+- Full suite `python -m unittest discover -s tools -p "test_*.py"`: 331 tests, OK (no Claude or network calls).
+- No screenshots: tooling.

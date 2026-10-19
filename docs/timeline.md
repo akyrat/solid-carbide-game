@@ -1445,3 +1445,8 @@ Entry format:
 - Decision or change: G-003 paused on T-183's QA although every criterion passed: QA wrote its marks with a `python -c` script, which the guard rightly refuses (a script writing a task file), and QA reported itself blocked. The runner's agent, QA and goal check prompts now say to edit ticket files only with the file editing tool. QA round 1 passed both criteria; all three test sets passed on the merge (330 tools, 282 game tools, GUT). The Project Lead drew T-183's picture (a side view of the car's height at four speeds, simulated from its numbers: at top speed the car flies about 55 units off the ramp) in `art-archive/T-183/screenshots/`. G-003 resumes.
 - Documents touched: none
 - Tasks: T-189 (done), G-003
+
+## 2026-10-19: T-190 done: runner agents take screenshots, QA checks them
+- Decision or change: T-184's agent skipped the screenshots rule (its work had nothing on screen, and it drew nothing from the data), and QA passed it; the Project Lead drew T-184's picture. The runner's agent prompt now asks for screenshots as `tasks/README.md` says (a picture from the data when nothing is on screen), and its QA prompt fails a ticket that could be pictured and has none. QA round 1 passed both criteria; all three test sets passed on the merge. It applies from the runner's next start or resume. Also: the Project Lead merged `master` into G-003's build mid-run, which made T-183's merge conflict on its status line (resolved to the branch's done); goal builds are not merged with `master` mid-run again. While this merge was open, the runner held back its own commit on `master`, as designed.
+- Documents touched: none
+- Tasks: T-190 (done), G-003

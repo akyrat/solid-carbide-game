@@ -104,6 +104,16 @@ class HeadlessRuns(GoalRepo):
         self.run_loop(b)
         return [next(c for c in b.claude.calls if c[0] == step)[1] for step in ("agent", "qa")]
 
+    def test_agent_prompt_asks_for_screenshots_and_qa_prompt_fails_a_ticket_without_them(self):
+        agent, qa = self.prompts(self.planned(one_ticket()))
+        for words in ("art-archive/<ticket id>/screenshots/", "listed in your result notes",
+                      "a picture drawn from the data by a script when nothing is on screen yet",
+                      "none only for tooling, docs or text-only work"):
+            self.assertIn(words, agent)
+        for words in ("screenshots rule", "could be pictured", "art-archive/<ticket id>/screenshots/",
+                      "fails, whatever its criteria say"):
+            self.assertIn(words, qa)
+
     def test_prompts_list_the_pre_approved_commands_from_the_settings(self):
         (self.root / ".claude").mkdir(exist_ok=True)
         allow = ["Bash(git add *)", "Bash(python -m unittest discover *)"]
