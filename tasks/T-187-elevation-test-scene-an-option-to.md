@@ -1,7 +1,7 @@
 ---
 id: T-187
 title: Elevation test scene: an option to draw the car slightly bigger when high (off by default)
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-003

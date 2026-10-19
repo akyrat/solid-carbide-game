@@ -1,7 +1,7 @@
 ---
 id: T-186
 title: Art: the ramp and the raised platform for the elevation test scene (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-003
