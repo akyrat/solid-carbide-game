@@ -1,7 +1,7 @@
 ---
 id: T-201
 title: Task board: screenshots and recordings shown on the ticket
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -35,17 +35,21 @@ The board server restarts are as today (`python tools/taskboard/server.py --stop
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no network calls beyond the test's own local server (QA: pass / fail)
-- [ ] Tests show `/api/tickets` lists a ticket's media from `art-archive/<id>/screenshots/` (main checkout and an open task folder) and from its `Board review files:` line, and none for a ticket without any (QA: pass / fail)
-- [ ] Tests show the media endpoint serves a listed PNG and an MP4 with the right content type, and refuses a path with `..`, a non-media file, and a file outside the ticket's places (QA: pass / fail)
-- [ ] The detail view shows the "Screenshots and recordings" section with thumbnails, a full-size view, and video players for MP4/WebM, and cards show a media count; checked by QA in a browser or by reading the page code against this description (QA: pass / fail)
-- [ ] `docs/README.md` ("The task board") and `tasks/README.md` ("Screenshots") say where media go and that the board shows them (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no network calls beyond the test's own local server (QA: pass, 346 tests OK)
+- [ ] Tests show `/api/tickets` lists a ticket's media from `art-archive/<id>/screenshots/` (main checkout and an open task folder) and from its `Board review files:` line, and none for a ticket without any (QA: pass, MediaTests and sync media tests cover listing; live /api/tickets: T-191 lists 5 media)
+- [ ] Tests show the media endpoint serves a listed PNG and an MP4 with the right content type, and refuses a path with `..`, a non-media file, and a file outside the ticket's places (QA: pass, live: PNG served 200 image/png; `..` paths 400; MP4/non-media/outside covered by tests)
+- [ ] The detail view shows the "Screenshots and recordings" section with thumbnails, a full-size view, and video players for MP4/WebM, and cards show a media count; checked by QA in a browser or by reading the page code against this description (QA: pass, checked live on a second server (port 8791): API ok; page code matches description. Two small flaws, see below)
+- [ ] `docs/README.md` ("The task board") and `tasks/README.md` ("Screenshots") say where media go and that the board shows them (QA: pass, both docs updated)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Started: each ticket on the board gets a 'Screenshots and recordings' section (thumbnails, full-size view, video players), and cards show a media count.
+
+### 2026-10-19, In progress → In QA
+
+Built: tickets list their screenshots and recordings, a safe endpoint serves them, and the detail view shows thumbnails, a full-size view and video players; cards show a count. 346 tools tests pass. QA checks it now.
 
 ## Result notes
 
