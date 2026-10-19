@@ -4,7 +4,7 @@ title: Goal runner: agents take screenshots and QA checks them
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
