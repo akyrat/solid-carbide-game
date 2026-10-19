@@ -58,4 +58,13 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-188.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Checked every number in the three 'Elevation test scene' sections against `car_height.gd`, `elevation_test.gd`, `car_shadow.gd` and `elevation_test.json`. All match: gravity 12, takeoff minimum speed 4, takeoff factor 1, curb step 0.1, sample step 0.05, platform 16 x 16 at (-8, -8) and 3 high, ramp 12 x 8 at (8, -4) from 0 to 3, start (26, 0) facing west, shadow 3.2 x 1.2, 16 px per unit, bigger-when-high 0.05 per unit.
+
+Gaps fixed:
+- `docs/drifting.md`: the task range now reads T-182 to T-187. The 'Placeholders' bullet said the platform and ramp are drawn by script only. It is now a T-186 PixelLab art bullet, with the two final-art screenshots, plus a bullet saying the script drawing is the fallback.
+- `docs/level-design.md`: the ramp's position and a pointer to the art in Drifting, Content.
+- `game/README.md`: the section's intro now lists T-186 and T-187.
+
+No game code changed.
+
+Not run, because the project settings don't pre-approve them: the GUT suite and `tools/generate_long_gdd.py` with the staleness check. The goal runner regenerates the long GDD itself. Only docs changed, so the GUT suite is unaffected.

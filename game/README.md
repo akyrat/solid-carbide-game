@@ -1060,7 +1060,7 @@ Task T-046 (Enemy Behavior Agent): the kaiju's one special move, with T-039's nu
 
 ## Elevation test scene (T-182)
 
-The elevation test scene (Level design, Decisions, "Raised areas and ramps"; Drifting, Decisions, "Elevation"). T-182 made the ground side (data and a query), T-183 and T-184 the car's height, T-185 the scene and its drawing ("The scene and its drawing (T-185)" below, with how to run it). Every number is a proposal for the board's playtest.
+The elevation test scene (Level design, Decisions, "Raised areas and ramps"; Drifting, Decisions, "Elevation"). T-182 made the ground side (data and a query), T-183 and T-184 the car's height, T-185 the scene and its drawing ("The scene and its drawing (T-185)" below, with how to run it), T-186 the platform and ramp art, T-187 the bigger-when-high option. Every number is a proposal for the board's playtest.
 
 ### Ground-height data
 
