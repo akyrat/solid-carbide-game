@@ -1,7 +1,7 @@
 ---
 id: T-193
 title: Elevation sample map: height data for three layers (stacked areas, ramps between rooftops) and a height-data validator
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/README.md, game/scripts/level/ground_height.gd, game/data/level/elevation_test.json, game/tests/unit/test_ground_height.gd, game/scripts/driving/car_height.gd]
 files_expected_to_change: [game/scripts/level/ground_height.gd, game/tests/unit/test_ground_height_layers.gd, game/tests/fixtures/height/three_layers.json, game/tools/check_height_data.py, game/tools/test_check_height_data.py, game/README.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-193.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Done
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
+
 ## Result notes
 
 Level/Challenge Design Agent, 2026-10-19.
@@ -78,3 +82,4 @@ Level/Challenge Design Agent, 2026-10-19.
 - **Tests:** GUT 1054/1054 passed (TESTS PASSED). Python tool tests: 303 OK (1 skipped). Project tool tests (`tools/`): 331 OK.
 - **Screenshots:** none. This is data, a query and a validator with nothing on screen yet, so there is nothing to picture. The next ticket's sample map is the first thing on screen.
 - PixelLab: 0 generations. Refusals: none.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-004).
