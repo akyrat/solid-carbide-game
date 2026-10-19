@@ -41,12 +41,12 @@ Check each number written in the docs against the code and data, and correct the
 
 ## Acceptance criteria
 
-- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section with the scene's path, how to run it, what the car's height does, and every proposed number marked as a proposal. (QA: pass / fail)
-- [ ] docs/level-design.md, Content, describes the test platform, ramp and drop-off edges and the height data format. (QA: pass / fail)
-- [ ] game/README.md has the scene's path, how to run it, its data format and the code's main functions. (QA: pass / fail)
-- [ ] Every number in those sections matches the code or data (gravity, takeoff, platform and ramp sizes and heights, the scale switch's value). (QA: pass / fail)
-- [ ] No file under `game/` other than `game/README.md` changes; the full GUT suite still passes headless. (QA: pass / fail)
-- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: pass / fail)
+- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section with the scene's path, how to run it, what the car's height does, and every proposed number marked as a proposal. (QA: pass)
+- [ ] docs/level-design.md, Content, describes the test platform, ramp and drop-off edges and the height data format. (QA: pass)
+- [ ] game/README.md has the scene's path, how to run it, its data format and the code's main functions. (QA: pass)
+- [ ] Every number in those sections matches the code or data (gravity, takeoff, platform and ramp sizes and heights, the scale switch's value). (QA: pass: gravity 12, takeoff 4, curb 0.1, platform/ramp data, shadow 3.2x1.2, scale 0.05 per unit all match)
+- [ ] No file under `game/` other than `game/README.md` changes; the full GUT suite still passes headless. (QA: pass: the task's own commit touches only README in game/; GUT 1024/1024 passed)
+- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, `python tools/generate_long_gdd.py` was refused as not pre-approved; the goal runner regenerates the long GDD and runs the check itself)
 
 ## Updates
 
