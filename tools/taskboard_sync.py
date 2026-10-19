@@ -4,7 +4,8 @@ The task files in tasks/ are the source of truth. The local task board
 (tools/taskboard/server.py) reads them through tickets_now() on every refresh, including
 open tasks from their branch folders (found with `git worktree list`), so it never needs a
 sync. tools/task_status.py and the hooks (.claude/hooks/board_gate.py) use the same parsing
-helpers. The earlier task board page published on claude.ai, and the export and apply
+helpers. goals_now() reads the goal runner's goal files for the board's Goals strip (T-202).
+The earlier task board page published on claude.ai, and the export and apply
 commands that kept it filled, are gone (2026-10-12).
 
 A library, not a command: import it from tools/ (see tools/taskboard/server.py).
@@ -187,6 +188,7 @@ def ticket(path, folder=""):
         "updates": parse_updates(text),
         "folder": folder,
         "media": media,
+        "goal": fields.get("goal", ""),
     }
 
 
@@ -230,6 +232,94 @@ def tickets_now(tasks_dir=None, folders=None):
         if t:
             tickets.append(t)
     return tickets
+
+
+# --- Goals (T-202): the goal runner's goal files (goals/G-NNN-*.md), as the board shows them ---
+
+GOAL_ID_RE = re.compile(r"G-\d{3,}")
+GOAL_NAME_RE = re.compile(r"^(G-\d{3,})-.*\.md$")
+GOAL_NUMBERS = ("art_cap", "art_used", "iteration", "max_iterations")
+PAUSE_ENTRY_RE = re.compile(r"^- (\d{4}-\d{2}-\d{2})(?: \[([a-z-]+)\])?:[ \t]?(.*)$")
+PAUSE_REASON_MAX = 4000
+FINISHED = ("done", "cancelled")
+
+
+def goal_files(goals_dir):
+    """Every goal file in goals_dir (G-NNN-short-title.md), sorted by name."""
+    folder = Path(goals_dir)
+    if not folder.is_dir():
+        return []
+    return sorted(p for p in folder.glob("G-*.md") if GOAL_NAME_RE.match(p.name) and p.is_file())
+
+
+def goal_pauses(section):
+    """The entries of a goal file's `## Pauses` section, oldest first (file order):
+    [{"date", "kind" ("stop" when it has none, as goal_file.last_pause_kind), "reason"}].
+    A line that doesn't start a new entry continues the one before it."""
+    out = []
+    for line in (section or "").replace("\r\n", "\n").split("\n"):
+        match = PAUSE_ENTRY_RE.match(line)
+        if match:
+            out.append({"date": match.group(1), "kind": match.group(2) or "stop", "reason": match.group(3).strip()})
+        elif out and line.strip():
+            out[-1]["reason"] = (out[-1]["reason"] + "\n" + line.strip()).strip()
+    for p in out:
+        if len(p["reason"]) > PAUSE_REASON_MAX:
+            p["reason"] = p["reason"][:PAUSE_REASON_MAX] + " (cut short here; the rest is in the goal file)"
+    return out
+
+
+def ticket_number(task_id):
+    digits = re.sub(r"\D", "", str(task_id))
+    return int(digits) if digits else 0
+
+
+def goal(path, tickets=(), build_folders=None):
+    """The document the board shows for one goal file, read with the goal runner's own reader
+    (tools/goal_agent/goal_file.py). `tickets`: every ticket as tickets_now() returns them; the goal's
+    tickets are those whose `goal:` line names it. `build_folders`: {folder name: folder} of the
+    worktrees, from `git worktree list`; the goal's build folder is the one named after its id.
+    None for a file that can't be read."""
+    from goal_agent import goal_file   # imported here: the hooks import this module and never need it
+
+    try:
+        g = goal_file.GoalFile.load(path)
+    except (OSError, ValueError, UnicodeDecodeError):
+        return None
+    gid = g.get("id") or GOAL_NAME_RE.match(Path(path).name).group(1)
+    mine = sorted((t for t in tickets if t.get("goal") == gid), key=lambda t: ticket_number(t["id"]))
+    counts = {}
+    for t in mine:
+        counts[t["status"]] = counts.get(t["status"], 0) + 1
+    pauses = goal_pauses(g.section("Pauses"))
+    status = g.get("status") or ""
+    folder = (build_folders or {}).get(gid)
+    doc = {
+        "id": gid,
+        "title": g.get("title") or "",
+        "status": status,
+        "created": g.get("created") or "",
+        "lead": g.get("lead") or "",
+        "file": f"goals/{Path(path).name}",
+        "goal_text": g.section("Goal") or "",
+        "pauses": pauses,
+        "latest_pause": pauses[-1] if status == "paused" and pauses else None,
+        "tickets": [t["id"] for t in mine],
+        "ticket_counts": counts,
+        "tickets_total": len(mine),
+        "tickets_finished": sum(n for s, n in counts.items() if s in FINISHED),
+        "build_folder": str(folder) if folder else "",
+        "has_build": bool(folder),
+    }
+    for key in GOAL_NUMBERS:
+        doc[key] = g.number(key)
+    return doc
+
+
+def goals_now(goals_dir, tickets=(), build_folders=None):
+    """Every goal as the board shows it, newest (highest id) first."""
+    out = [d for d in (goal(p, tickets, build_folders) for p in goal_files(goals_dir)) if d]
+    return sorted(out, key=lambda d: ticket_number(d["id"]), reverse=True)
 
 
 @contextlib.contextmanager

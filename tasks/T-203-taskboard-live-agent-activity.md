@@ -1,7 +1,7 @@
 ---
 id: T-203
 title: Task board: what the agents are doing now, live
-status: blocked
+status: open
 from: project-lead
 to: project-lead
 lead: Coursework

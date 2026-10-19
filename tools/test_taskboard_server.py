@@ -1,4 +1,4 @@
-"""Tests for the Builds and media endpoints of tools/taskboard/server.py. Run from the repo root:
+"""Tests for the Builds, media and goals endpoints of tools/taskboard/server.py. Run from the repo root:
 
   python -m unittest discover -s tools -p "test_*.py"
 
@@ -281,6 +281,137 @@ class MediaTests(unittest.TestCase):
         before = server.version()
         self.write(self.main, "art-archive/T-913/screenshots/b.jpg", b"jpg")
         self.assertNotEqual(server.version(), before)
+
+
+def goal_text(gid, status, pauses="None yet."):
+    return (f"---\nid: {gid}\ntitle: Goal {gid}\nstatus: {status}\nart_cap: 50\nart_used: 7\niteration: 2\n"
+            f"max_iterations: 20\ncreated: 2026-10-19\nlead: Goal-{gid}\n---\n\n## Goal\n\nThe goal of {gid}.\n\n"
+            f"## Iteration log\n\nNone yet.\n\n## Pauses\n\n{pauses}\n\n")
+
+
+def goal_task(task_id, goal, status):
+    return f"---\nid: {task_id}\ntitle: Ticket {task_id}\nstatus: {status}\nto: ui\ngoal: {goal}\n---\n\nBody\n"
+
+
+class GoalsTests(unittest.TestCase):
+    """T-202: GET /api/goals and GET /api/goal-file, against goals/ in the main checkout."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        # The server is run from a task folder (wt-T-922); the goals are read from the main checkout.
+        self.main, self.wt, self.build = base / "main", base / "wt-T-922", base / "G-008"
+        MediaTests.write(self.main, "goals/G-008-paused-goal.md",
+                         goal_text("G-008", "paused", "- 2026-10-18 [refusal]: first\n- 2026-10-19 [stop]: session limit").encode())
+        MediaTests.write(self.main, "goals/G-007-done-goal.md", goal_text("G-007", "done").encode())
+        MediaTests.write(self.main, "goals/README.md", b"# Goals\n")
+        MediaTests.write(self.wt, "goals/G-008-paused-goal.md", goal_text("G-008", "building").encode())   # an old copy
+        for task_id, goal, status in [("T-921", "G-008", "done"), ("T-922", "G-008", "open"), ("T-923", "G-007", "cancelled"),
+                                      ("T-924", "", "open")]:
+            MediaTests.write(self.wt, f"tasks/{task_id}-t.md", goal_task(task_id, goal, status).encode())
+        # T-922 lives in its open task folder, where it is in QA.
+        task_wt = base / "wt-T-922-branch"
+        MediaTests.write(task_wt, "tasks/T-922-t.md", goal_task("T-922", "G-008", "in-qa").encode())
+        (self.build / "game").mkdir(parents=True)
+        self.listing = [(self.main, "master"), (self.wt, "task/T-930-x"), (self.build, "playtest/G-008")]
+        folders = {"T-922": task_wt}
+        patches = [mock.patch.object(server, "worktrees", lambda root=None: self.listing),
+                   mock.patch.object(server.tb, "ROOT", self.wt),
+                   mock.patch.object(server.tb, "TASKS_DIR", self.wt / "tasks"),
+                   mock.patch.object(server.tb, "STATE_DIR", base / "state"),
+                   mock.patch.object(server.tb, "task_folders", lambda root=None: folders)]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+        self.httpd = server.make_server(0)
+        self.port = self.httpd.server_address[1]
+        threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
+        self.addCleanup(self.httpd.server_close)
+        self.addCleanup(self.httpd.shutdown)
+
+    def get(self, path, headers=None):
+        req = urllib.request.Request(f"http://127.0.0.1:{self.port}{path}", headers=headers or {})
+        try:
+            with urllib.request.urlopen(req) as r:
+                return r.status, r.headers, r.read()
+        except urllib.error.HTTPError as e:
+            return e.code, e.headers, e.read()
+
+    def goals(self):
+        code, _, body = self.get("/api/goals")
+        self.assertEqual(code, 200)
+        data = json.loads(body)
+        self.assertEqual(data["version"], server.version())
+        return data["goals"]
+
+    def test_goals_come_from_the_main_checkout_newest_first(self):
+        goals = self.goals()
+        self.assertEqual([g["id"] for g in goals], ["G-008", "G-007"])
+        self.assertEqual(goals[0]["status"], "paused")   # the main checkout's copy, not the task folder's
+
+    def test_header_fields_and_goal_text(self):
+        g = self.goals()[0]
+        self.assertEqual({k: g[k] for k in ("id", "title", "status", "art_cap", "art_used", "iteration", "max_iterations")},
+                         {"id": "G-008", "title": "Goal G-008", "status": "paused", "art_cap": 50, "art_used": 7,
+                          "iteration": 2, "max_iterations": 20})
+        self.assertEqual((g["goal_text"], g["file"]), ("The goal of G-008.", "goals/G-008-paused-goal.md"))
+
+    def test_tickets_with_a_count_per_status_including_an_open_task_folder(self):
+        g8, g7 = self.goals()
+        self.assertEqual(g8["tickets"], ["T-921", "T-922"])
+        self.assertEqual(g8["ticket_counts"], {"done": 1, "in-qa": 1})
+        self.assertEqual((g8["tickets_total"], g8["tickets_finished"]), (2, 1))
+        self.assertEqual((g7["tickets"], g7["ticket_counts"], g7["tickets_finished"]), (["T-923"], {"cancelled": 1}, 1))
+
+    def test_latest_pause_when_paused(self):
+        g8, g7 = self.goals()
+        self.assertEqual([p["kind"] for p in g8["pauses"]], ["refusal", "stop"])
+        self.assertEqual(g8["latest_pause"], {"date": "2026-10-19", "kind": "stop", "reason": "session limit"})
+        self.assertIsNone(g7["latest_pause"])
+
+    def test_whether_the_build_folder_exists(self):
+        g8, g7 = self.goals()
+        self.assertEqual((g8["has_build"], g8["build_folder"]), (True, str(self.build)))
+        self.assertEqual((g7["has_build"], g7["build_folder"]), (False, ""))
+        self.assertIn("G-008", [b["id"] for b in server.builds()])   # Play and Open in editor use this Builds entry
+
+    def test_goals_on_tickets(self):
+        code, _, body = self.get("/api/tickets")
+        goals = {t["id"]: t["goal"] for t in json.loads(body)["tickets"]}
+        self.assertEqual(goals, {"T-921": "G-008", "T-922": "G-008", "T-923": "G-007", "T-924": ""})
+
+    def test_no_goals_folder_is_an_empty_list(self):
+        for p in sorted((self.main / "goals").iterdir()):
+            p.unlink()
+        (self.main / "goals").rmdir()
+        self.assertEqual(self.goals(), [])
+
+    def test_goal_file_full_text(self):
+        code, headers, body = self.get("/api/goal-file?id=G-008")
+        self.assertEqual((code, headers["Content-Type"]), (200, "text/plain; charset=utf-8"))
+        self.assertEqual(body.decode("utf-8"), (self.main / "goals" / "G-008-paused-goal.md").read_text(encoding="utf-8"))
+        for bad, expected in [("G-999", 404), ("../tasks/T-921", 400), ("README", 400), ("", 400)]:
+            self.assertEqual(self.get("/api/goal-file?" + urllib.parse.urlencode({"id": bad}))[0], expected, bad)
+        self.assertEqual(self.get("/api/goal-file?id=G-008", {"Host": "example.com"})[0], 403)
+
+    def test_version_changes_when_a_goal_file_changes(self):
+        before = server.version()
+        MediaTests.write(self.main, "goals/G-008-paused-goal.md", goal_text("G-008", "building").encode())
+        self.assertNotEqual(server.version(), before)
+        before = server.version()
+        MediaTests.write(self.main, "goals/G-009-new.md", goal_text("G-009", "planning").encode())
+        self.assertNotEqual(server.version(), before)
+
+
+class GoalsPageTests(unittest.TestCase):
+    """T-202: the page has the Goals strip, the goal detail, the Goal filter and the goal label on cards."""
+
+    def test_page_parts(self):
+        page = server.PAGE.read_text(encoding="utf-8")
+        for part in ['id="goals"', 'id="goal-detail"', 'id="goal-filters"', "/api/goals", "/api/goal-file",
+                     "tbp-goal-filter", "tbp-goals-finished", "Finished goals", "chip goal-tag", "tickets done"]:
+            self.assertIn(part, page, part)
 
 
 if __name__ == "__main__":
