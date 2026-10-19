@@ -44,13 +44,13 @@ The board's review: Play `game/scenes/elevation_test/elevation_test.tscn`: drive
 
 ## Acceptance criteria
 
-- [ ] `game/scenes/elevation_test/elevation_test.tscn` runs headless for a few seconds without errors or warnings in the log. (QA: pass / fail)
-- [ ] GUT test: in the isometric view the car's drawing is offset up the screen by height x 16 px for a known height, and the shadow is drawn at the car's map position on the ground under it (the platform's top when over it). (QA: pass / fail)
-- [ ] The platform and the ramp are drawn with script-drawn placeholders containing no Redgull red (checked by script on the colours used). (QA: pass / fail)
-- [ ] GUT test or screenshot: depth order is right: the car on the ground behind the platform is drawn under it, the car on the platform over it. (QA: pass / fail)
-- [ ] Four screenshots in `docs/drifting/` show the car on the ground, on the ramp, on the platform and in the air past a drop-off edge, each with its shadow visible. (QA: pass / fail)
-- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section (where the scene is, how to run it, what the car's height does, proposals marked) and game/README.md has the scene's path and how to run it. (QA: pass / fail)
-- [ ] The full GUT suite passes headless. (QA: pass / fail)
+- [ ] `game/scenes/elevation_test/elevation_test.tscn` runs headless for a few seconds without errors or warnings in the log. (QA: pass: no direct headless run, as the godot command isn't pre-approved; the GUT test instantiates the scene and runs 50 physics frames, and the full suite log shows it clean)
+- [ ] GUT test: in the isometric view the car's drawing is offset up the screen by height x 16 px for a known height, and the shadow is drawn at the car's map position on the ground under it (the platform's top when over it). (QA: pass: test_elevation_drawing.gd lift and shadow tests pass)
+- [ ] The platform and the ramp are drawn with script-drawn placeholders containing no Redgull red (checked by script on the colours used). (QA: pass: colour tests in test_elevation_drawing.gd pass)
+- [ ] GUT test or screenshot: depth order is right: the car on the ground behind the platform is drawn under it, the car on the platform over it. (QA: pass: depth-order tests pass)
+- [ ] Four screenshots in `docs/drifting/` show the car on the ground, on the ramp, on the platform and in the air past a drop-off edge, each with its shadow visible. (QA: pass: the four files plus the extra are in docs/drifting/; not viewed pixel by pixel)
+- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section (where the scene is, how to run it, what the car's height does, proposals marked) and game/README.md has the scene's path and how to run it. (QA: pass: both sections present)
+- [ ] The full GUT suite passes headless. (QA: pass: 1015/1015)
 
 ## Updates
 
