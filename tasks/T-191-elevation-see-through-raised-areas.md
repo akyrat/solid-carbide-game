@@ -1,7 +1,7 @@
 ---
 id: T-191
 title: Elevation test scene: raised areas turn see-through like buildings, and no car popping over them at a wall hit
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -82,3 +82,4 @@ One side effect to look at in the playtest: a car falling off the platform's nor
 - `wall_hit_west_side.png` and `wall_hit_north_side.png`: the step the car meets the west side (top-left on screen) and the north side (top-right), at x or y = -8.003, with the platform see-through and the car drawn under it. Fixtures: `elevation_test_wall_west.tscn` and `elevation_test_wall_north.tscn`.
 - `wall_hit_west_side_solid.png` and `wall_hit_north_side_solid.png`: the same moments with the fade off, so only the depth order shows. The car is hidden under the platform and not drawn over it. Fixtures: `elevation_test_wall_{west,north}_solid.tscn`.
 - In the see-through shots a pink oval shows through the platform at its centre. It is the street grid's origin marker (`ground_grid.gd`, `origin_color`, a circle at (0, 0)), seen through the platform, not something this task added.
+- 2026-10-19, needs-playtest → done: Board's playtest of G-003 (2026-10-19): super happy with it.
