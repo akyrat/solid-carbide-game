@@ -1,7 +1,7 @@
 ---
 id: T-191
 title: Elevation test scene: raised areas turn see-through like buildings, and no car popping over them at a wall hit
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/level/see_through_building.gd, game/scripts/level/elevation_platform_drawing.gd, game/scenes/elevation_test/elevation_test.tscn]
 files_expected_to_change: [game/scripts/level/elevation_platform_drawing.gd, game/scenes/elevation_test/elevation_test.tscn, game/tests/unit/, game/tests/fixtures/, game/README.md, docs/drifting.md, art-archive/T-191/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -51,6 +51,10 @@ Started from your playtest: the platform turns see-through like the buildings wh
 ### 2026-10-19, In progress → In QA
 
 Built: the platform and ramp turn see-through like the buildings (shared code), and the wall-hit pop is fixed (the depth rule now uses the car's centre). 18 new tests, GUT 1042/1042. QA checks it now.
+
+### 2026-10-19, In QA → Needs playtest
+
+QA passed all 5 criteria. In the goal's build for your playtest: the platform and ramp turn see-through like the buildings, and no car pop at a back-side wall hit. T-192 (round shadow, bigger option removed) starts now.
 
 ## Result notes
 
