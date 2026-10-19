@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: in-qa
+status: flagged-for-review
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/data/level/elevation_test.json, game/scripts/driving/car_height.gd, game/scripts/level/ground_height.gd, game/scripts/driving/elevation_test.gd]
 files_expected_to_change: [docs/drifting.md, docs/level-design.md, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -68,6 +68,10 @@ Goal runner (G-003): failed QA once; back to the agent on opus.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Flagged for review
+
+Goal runner (G-003): failed QA twice; flagged for the board.
+
 ## Result notes
 
 Checked every number in the three 'Elevation test scene' sections against `car_height.gd`, `elevation_test.gd`, `car_shadow.gd` and `elevation_test.json`. All match: gravity 12, takeoff minimum speed 4, takeoff factor 1, curb step 0.1, sample step 0.05, platform 16 x 16 at (-8, -8) and 3 high, ramp 12 x 8 at (8, -4) from 0 to 3, start (26, 0) facing west, shadow 3.2 x 1.2, 16 px per unit, bigger-when-high 0.05 per unit.
@@ -83,3 +87,4 @@ Not run, because the project settings don't pre-approve them: the GUT suite and 
 - 2026-10-19, in-qa → in-progress: QA failed: The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, `python tools/generate_long_gdd.py` was refused as not pre-approved; the goal runner regenerates the long GDD and runs the check itself) Back to the agent on opus.
 
 Round 2 (2026-10-19): the only failed criterion is the docs staleness check after the long GDD's regeneration. Neither command is on the pre-approved list. `python tools/check_docs_staleness.py` was tried once this round and refused ("requires approval"). I didn't try to get around it. Under `docs/working-with-the-board.md`, "Goal runs" (T-180), the goal runner regenerates the long GDD and runs the staleness check itself on the goal's build before the goal check, and gives QA the result. So QA should take that criterion from the runner's result, not from this agent. The docs content from round 1 is unchanged and passed QA on the other five criteria. Nothing else changed this round. QA's GUT run left `.import` line-ending noise and a `.uid` file in the folder. I didn't commit them.
+- 2026-10-19, in-qa → flagged-for-review: Failed QA a second time (goal G-003).
