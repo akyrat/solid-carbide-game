@@ -42,12 +42,14 @@ GUT tests in `game/tests/unit/test_elevation_edges.gd` for each case.
 
 ## Acceptance criteria
 
-- [ ] docs/drifting.md records the proposals for a drop-off edge met from the ground below, landing over or beside the platform, and the ramp's sides, each marked as a proposal for the board's playtest. (QA: pass / fail)
-- [ ] GUT test: a car on the ground driving into a drop-off edge from below behaves as recorded (it bounces like off a wall and stays on the ground). (QA: pass / fail)
-- [ ] GUT test: a jump ending over the platform's top lands the car on the top (height = platform height, vertical speed 0); a jump ending off it lands on the ground. (QA: pass / fail)
-- [ ] GUT test: over a range of jumps toward the platform, no physics step ends with the car inside the platform's outline below its top. (QA: pass / fail)
-- [ ] GUT test: driving off the ramp's sides behaves as recorded (from the ramp: falls to the ground; from the ground beside it: meets it as a wall). (QA: pass / fail)
-- [ ] Every existing driving test passes unchanged, and the full GUT suite passes headless. (QA: pass / fail)
+- [ ] docs/drifting.md records the proposals for a drop-off edge met from the ground below, landing over or beside the platform, and the ramp's sides, each marked as a proposal for the board's playtest. (QA: pass)
+- [ ] GUT test: a car on the ground driving into a drop-off edge from below behaves as recorded (it bounces like off a wall and stays on the ground). (QA: pass)
+- [ ] GUT test: a jump ending over the platform's top lands the car on the top (height = platform height, vertical speed 0); a jump ending off it lands on the ground. (QA: pass)
+- [ ] GUT test: over a range of jumps toward the platform, no physics step ends with the car inside the platform's outline below its top. (QA: pass)
+- [ ] GUT test: driving off the ramp's sides behaves as recorded (from the ramp: falls to the ground; from the ground beside it: meets it as a wall). (QA: pass)
+- [ ] Every existing driving test passes unchanged, and the full GUT suite passes headless. (QA: pass: 996/996, 0 failing)
+
+QA round 1 (2026-10-19): all criteria pass. Tests are in test_elevation_edges.gd (14); docs/drifting.md lines 92-97 mark each as a proposal.
 
 ## Updates
 
