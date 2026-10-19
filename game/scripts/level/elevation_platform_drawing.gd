@@ -12,6 +12,18 @@ extends Node2D
 ##
 ## Depth order (is_behind): the scene gives each area its own z_index and puts
 ## the car and its shadow just under the first area they are behind.
+##
+## See-through (task T-191; Level design, Decisions, "Raised areas turn
+## see-through like buildings"): while the area covers the car on screen (the
+## car is behind it, is_behind, and the car's drawn shape overlaps the area's
+## silhouette), the whole area fades to the map buildings' SEE_THROUGH_ALPHA
+## (15%) over their SEE_THROUGH_FADE_TIME (0.15 s), and back when it no longer
+## covers it. The numbers are mvp_map.gd's, the fade step is map_building.gd's
+## (faded_alpha) and the car's shape is mvp_map.gd's (car_screen_shape_at):
+## shared, not copied. Only modulate.a changes, so the art sprite fades with it.
+
+const MapBuildingScript := preload("res://scripts/level/map_building.gd")
+const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 
 const PX_PER_UNIT := 16.0
 
@@ -29,6 +41,13 @@ var kind := "platform"
 var block := {}
 ## Flat world pixels -> drawn pixels (the scene's view transform, origin 0).
 var view_basis := Transform2D.IDENTITY
+
+## How visible the area is while it covers the car (1 = solid): the buildings'.
+var see_through_alpha: float = MvpMapScript.SEE_THROUGH_ALPHA
+## Seconds for the whole fade, either way (0 = instant): the buildings'.
+var fade_time: float = MvpMapScript.SEE_THROUGH_FADE_TIME
+## True while the area covers the car (set by update_fade).
+var covering := false
 
 
 ## The PixelLab art (task T-186, game/art/elevation/): a sprite per kind, drawn
@@ -116,18 +135,57 @@ func drawn(point: Vector2, height: float) -> Vector2:
 
 
 ## True when something centred at centre (flat units), radius units around it,
-## at height (units) is behind this area and must be drawn under it: its
-## footprint lies wholly west or north of the area's rectangle (the far sides
-## in the isometric view) and not wholly east or south of it, and it is lower
-## than the area's top next to it. Anything on the area, above it, or in front
-## of it is drawn over it.
+## at height (units) is behind this area and must be drawn under it: its centre
+## is west or north of the area's rectangle (the far sides in the isometric
+## view), its footprint is not wholly east or south of it, and it is lower than
+## the area's top next to it. Anything on the area, above it, or in front of it
+## is drawn over it.
+##
+## The far side is judged by the centre, not the whole footprint (task T-191):
+## the ground's sides stop the car's centre (car_height.gd, _walk), so at a
+## wall hit from behind the car's 1 by 1 footprint reaches into the rectangle
+## while its centre stays just outside. Judged by the footprint, the car was
+## "not behind" there and popped over the area for the hit.
 func is_behind(centre: Vector2, radius: float, height: float) -> bool:
 	var r := rect()
-	var behind := centre.x + radius <= r.position.x or centre.y + radius <= r.position.y
+	var behind := centre.x <= r.position.x or centre.y <= r.position.y
 	var in_front := centre.x - radius >= r.end.x or centre.y - radius >= r.end.y
 	if not behind or in_front:
 		return false
 	return height < top_height_at(centre) - 0.001
+
+
+## The area's outline on screen, in drawn pixels: the convex hull of its top
+## face and its ground corners (the area is a box or a wedge, so convex).
+func silhouette() -> PackedVector2Array:
+	var r := rect()
+	var pts := top_face()
+	for p in [r.position, Vector2(r.end.x, r.position.y), r.end, Vector2(r.position.x, r.end.y)]:
+		pts.append(drawn(p, 0.0))
+	return Geometry2D.convex_hull(pts)
+
+
+## True when the area covers the car: the car (centre in flat units, radius
+## units around it, at height units) is behind it and the car's drawn shape
+## (drawn pixels, car_shape) overlaps the area's silhouette.
+func covers(centre: Vector2, radius: float, height: float, car_shape: PackedVector2Array) -> bool:
+	if block.is_empty() or not is_behind(centre, radius, height):
+		return false
+	return not Geometry2D.intersect_polygons(silhouette(), car_shape).is_empty()
+
+
+## Decides whether the area covers the car and moves the fade by `delta`
+## seconds, as the map's buildings do (map_building.gd, faded_alpha). Returns
+## `covering`.
+func update_fade(centre: Vector2, radius: float, height: float, car_shape: PackedVector2Array, delta: float) -> bool:
+	covering = covers(centre, radius, height, car_shape)
+	modulate.a = MapBuildingScript.faded_alpha(modulate.a, covering, delta, see_through_alpha, fade_time)
+	return covering
+
+
+## The area's alpha now (1 = solid). The same as modulate.a.
+func alpha() -> float:
+	return modulate.a
 
 
 ## The four corners' drawn points of the top face (NW, NE, SE, SW).

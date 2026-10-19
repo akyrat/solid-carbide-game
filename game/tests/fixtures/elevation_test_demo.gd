@@ -12,6 +12,9 @@ extends Node
 @export var drive_steps := 5
 ## Camera zoom (orthographic size); 0 keeps the saved zoom.
 @export var zoom := 0.0
+## False keeps the raised areas solid (task T-191): the screenshot then shows
+## the depth order alone (the car drawn under or over them).
+@export var see_through := true
 
 var scene: Node2D
 var _steps := 0
@@ -22,6 +25,9 @@ func _ready() -> void:
 	add_child(scene)
 	scene.car.use_keyboard = false
 	scene.car.scripted_input = [true, false, 0.0]
+	if not see_through:
+		for a in scene.areas:
+			a.see_through_alpha = 1.0
 	scene.place_car(start_units, start_rotation)
 	if zoom > 0.0:
 		scene.camera_follow.set_base_size(zoom)

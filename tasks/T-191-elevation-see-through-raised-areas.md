@@ -1,7 +1,7 @@
 ---
 id: T-191
 title: Elevation test scene: raised areas turn see-through like buildings, and no car popping over them at a wall hit
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -44,4 +44,33 @@ Board review files: art-archive/T-191/screenshots/
 
 ## Updates
 
+### 2026-10-19, Open → In progress
+
+Started from your playtest: the platform turns see-through like the buildings when the car is behind it, and the car won't pop over it at a back-side wall hit. Built on the goal's build.
+
 ## Result notes
+
+**Driving & Drift Agent, 2026-10-19.** Both problems fixed on `task/T-191-elevation-see-through` (from `playtest/G-003`).
+
+**1. See-through raised areas.** The platform and the ramp each fade as a whole (only `modulate.a`, so the PixelLab art sprite, a child, fades with it) to 15% over 0.15 s while they cover the car, and back over 0.15 s. "Covers" is the buildings' rule: the car is behind the area (the scene's depth rule, `is_behind`) and the car's on-screen shape overlaps the area's silhouette. The car's shape is lifted by its height, so a car above the platform never makes it fade.
+
+The code is shared with the map's buildings, not copied. `game/scripts/level/map_building.gd` (`faded_alpha`, the fade step, now also used by the buildings' own `step_fade`) and `game/scripts/level/mvp_map.gd` (the `SEE_THROUGH_ALPHA` and `SEE_THROUGH_FADE_TIME` numbers, and `car_screen_shape_at`, the car's on-screen shape) are the real map's code, not `see_through_building.gd`. That file is the T-020 research demo, set to 35%. The ticket's 15% and 0.15 s are the map's numbers. The two shared functions are small refactors: the buildings' behaviour is unchanged, and their tests pass.
+
+**2. Car popping over the platform at a back-side wall hit.** The cause: `is_behind` counted the car as behind only when its whole 1 x 1 footprint (radius 0.5) was west or north of the platform. The platform's sides stop the car's centre point (`car_height.gd`, `_walk`), not its body. So from about 0.5 units before the wall until the hit, the footprint reached into the platform's rectangle. The car was then neither behind nor in front, and was drawn over everything. The fix is to judge "behind" by the centre (the "in front" test is unchanged). With the old rule the new tests fail at the first step within 0.5 units of the wall, at x or y = -8.399, with the car at z 5 over the platform at z 3. With the fix they pass.
+
+One side effect to look at in the playtest: a car falling off the platform's north or west edge is drawn under it as soon as its centre is past the edge and it is below the top. Before, that happened only once it was 0.5 units clear. This is physically right, but the change shows.
+
+**Files changed:** `game/scripts/level/elevation_platform_drawing.gd`, `game/scripts/driving/elevation_test.gd` (`update_see_through`, `car_shape`, `covering_areas`; it was not in files_expected_to_change, but it is where the scene's per-step logic lives), `game/scripts/level/map_building.gd`, `game/scripts/level/mvp_map.gd`, `game/tests/fixtures/elevation_test_demo.gd` (a `see_through` switch for the screenshots), 5 new fixtures, `game/tests/unit/test_elevation_see_through.gd`, `docs/drifting.md` (Content, "Elevation test scene": the Depth order bullet, a new See-through bullet, and the old "For the board's playtest" line rewritten), and `game/README.md` (the depth rule, plus a new section, "See-through raised areas (T-191)"). `elevation_test.tscn` did not need to change.
+
+**Not done here:** `docs/level-design.md` is listed as affected, but its T-191 decision is on `master` and this branch does not have it. Its Content needs no change for this work. The Project Lead can check it at merge.
+
+**Tests per criterion** (all in `game/tests/unit/test_elevation_see_through.gd`):
+- Criterion 1: `test_the_fade_uses_the_buildings_numbers`, `test_the_fade_step_is_the_buildings_one`, `test_the_platform_fades_while_it_covers_the_car_and_comes_back` (half way after 0.075 s, 15% after 0.15 s, back to solid after 0.15 s), `test_the_platform_fades_with_the_car_north_of_it_too`, `test_the_ramp_fades_when_it_covers_the_car`, `test_nothing_fades_when_the_car_is_on_or_in_front_of_the_areas`, `test_the_platform_does_not_fade_when_the_car_is_behind_but_far_from_it_on_screen`, `test_the_car_above_the_platform_does_not_make_it_fade`, `test_only_modulate_alpha_changes_so_the_art_fades_with_the_area`, `test_the_scene_fades_by_itself_while_driving`.
+- Criterion 2: `test_driving_into_the_west_side_straight_stays_under_the_platform`, `..._west_side_at_an_angle_...`, `..._west_side_while_steering_...`, `test_driving_into_the_north_side_straight_stays_under_the_platform`, `..._north_side_at_an_angle_...`, `..._north_side_while_steering_...`. Each drives with W held for 150 steps and checks the car (and its shadow) is under the platform on every step. Each also checks that a wall hit happened and that the footprint reached into the side. Also `test_at_the_back_side_hit_the_platform_is_see_through` and `test_a_car_straddling_a_back_side_is_behind_by_its_centre`.
+- Criterion 3: `bash game/tools/run_tests.sh`: 1042/1042 passed, including the existing `test_elevation_drawing.gd`, `test_elevation_edges.gd` and `test_elevation_art.gd`. The 1 orphan in the full run is not from the new file, which runs with none.
+
+**Screenshots** (`art-archive/T-191/screenshots/`, taken with `game/tools/screenshot.sh` at zoom 10):
+- `behind_see_through.png`: the car on the street west of the platform, behind it, with the platform see-through. Fixture: `elevation_test_see_through.tscn`.
+- `wall_hit_west_side.png` and `wall_hit_north_side.png`: the step the car meets the west side (top-left on screen) and the north side (top-right), at x or y = -8.003, with the platform see-through and the car drawn under it. Fixtures: `elevation_test_wall_west.tscn` and `elevation_test_wall_north.tscn`.
+- `wall_hit_west_side_solid.png` and `wall_hit_north_side_solid.png`: the same moments with the fade off, so only the depth order shows. The car is hidden under the platform and not drawn over it. Fixtures: `elevation_test_wall_{west,north}_solid.tscn`.
+- In the see-through shots a pink oval shows through the platform at its centre. It is the street grid's origin marker (`ground_grid.gd`, `origin_color`, a circle at (0, 0)), seen through the platform, not something this task added.
