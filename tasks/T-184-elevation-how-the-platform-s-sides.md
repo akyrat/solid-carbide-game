@@ -1,7 +1,7 @@
 ---
 id: T-184
 title: Elevation: how the platform's sides meet the car (drop-off edge from below, landing on top or beside, the ramp's sides)
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/scripts/driving/car.gd, game/scripts/driving/car_height.gd, game/scripts/level/ground_height.gd]
 files_expected_to_change: [game/scripts/driving/car_height.gd, game/scripts/driving/car.gd, game/scripts/level/ground_height.gd, game/tests/unit/test_elevation_edges.gd, docs/drifting.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-184.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Done
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-19.
@@ -80,3 +84,4 @@ Driving & Drift Agent, 2026-10-19.
 **Open for the board's playtest:** the curb height 0.1; a fall off a ramp's side starts with vertical speed 0 (it doesn't keep the ramp's climb); the hit signal's collider for a side is the `GroundHeight` object (the combo ignores the collider today).
 
 Refusals: none. PixelLab: none used.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-003).
