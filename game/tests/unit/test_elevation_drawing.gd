@@ -110,13 +110,46 @@ func test_the_shadow_is_on_the_ramp_when_over_it() -> void:
 	assert_almost_eq(scene.shadow.position.y, _drawn(Vector2(14, 0)).y - 24.0, 1e-6)
 
 
-func test_the_shadow_turns_with_the_car_and_is_longer_than_wide() -> void:
+func _bounds(pts: PackedVector2Array) -> Rect2:
+	var r := Rect2(pts[0], Vector2.ZERO)
+	for p in pts:
+		r = r.expand(p)
+	return r
+
+
+func test_the_shadow_is_an_ellipse_centred_under_the_cars_map_position() -> void:
+	_put(Vector2(0, 12), 0.7)
+	var pts: PackedVector2Array = scene.shadow.outline()
+	var sum := Vector2.ZERO
+	for p in pts:
+		sum += p
+	assert_almost_eq((sum / pts.size()).length(), 0.0, 1e-4, "centred on the shadow's position")
+	assert_eq(scene.shadow.position, _drawn(Vector2(0, 12)), "at the car's map position")
+
+
+func test_the_shadow_is_about_one_unit_across_and_twice_as_wide_as_tall() -> void:
+	_put(Vector2(0, 12))
+	var b := _bounds(scene.shadow.outline())
+	# 1 unit across on the ground: sqrt(2) x 16 px wide on screen in this view.
+	assert_almost_eq(b.size.x, 16.0 * sqrt(2.0), 0.1)
+	assert_almost_eq(b.size.x / b.size.y, 2.0, 0.01, "2:1 on screen")
+	# every point of the outline is half a unit from the centre on the ground
+	var inv := ISO.affine_inverse()
+	for p in scene.shadow.outline():
+		assert_almost_eq(inv.basis_xform(p).length(), 8.0, 1e-3)
+
+
+func test_the_shadow_does_not_turn_with_the_car() -> void:
 	_put(Vector2(0, 12), 0.0)
 	var a: PackedVector2Array = scene.shadow.outline()
-	_put(Vector2(0, 12), PI / 2.0)
-	var b: PackedVector2Array = scene.shadow.outline()
-	assert_ne(a, b)
-	assert_gt(CarShadowScript.SIZE_UNITS.x, CarShadowScript.SIZE_UNITS.y)
+	for rot in [0.5, PI / 2.0, PI, 4.0]:
+		_put(Vector2(0, 12), rot)
+		assert_eq(scene.shadow.outline(), a, "same outline at heading %s" % rot)
+
+
+func test_the_shadow_keeps_its_colour_and_is_opaque() -> void:
+	assert_eq(CarShadowScript.COLOR, Color(0.02, 0.02, 0.05, 1.0))
+	assert_eq(scene.shadow.modulate, Color.WHITE)
 
 
 # --- Colours -----------------------------------------------------------------
@@ -228,33 +261,11 @@ func test_the_scene_runs_for_a_second_on_its_own() -> void:
 	assert_eq(scene.car_sprite.sheet, "iso")
 
 
-## Task T-187: the option to draw the car bigger when high.
-func test_bigger_when_high_is_off_by_default() -> void:
-	assert_false(scene.draw_bigger_when_high)
-	assert_eq(scene.car_sprite.height_scale_per_unit, 0.0)
+## Task T-192: the car is drawn at its normal size at every height.
+func test_the_cars_drawing_scale_is_the_same_at_every_height() -> void:
 	var base: Vector2 = scene.car_sprite.scale
-	for h in [0.0, 1.5, 3.0]:
+	for h in [0.0, 1.5, 3.0, 4.5]:
 		scene.car_sprite.place(Vector2.ZERO, h)
 		assert_eq(scene.car_sprite.scale, base, "scale unchanged at height %s" % h)
-
-
-func test_bigger_when_high_scales_with_height() -> void:
-	var sprite = scene.car_sprite
-	var base: Vector2 = sprite.scale
-	sprite.height_scale_per_unit = scene.HEIGHT_SCALE_PER_UNIT
-	sprite.place(Vector2.ZERO, 0.0)
-	assert_eq(sprite.scale, base, "scale 1 at height 0")
-	sprite.place(Vector2.ZERO, 3.0)
-	# 1 + 0.05 x 3 = 1.15
-	assert_almost_eq(sprite.scale.x, base.x * 1.15, 1e-5)
-	assert_gt(sprite.scale.x, base.x)
-
-
-func test_bigger_when_high_factor_formula_and_shadow_size() -> void:
-	assert_eq(CarSpriteScript.scale_factor_for_height(0.0, 0.05), 1.0)
-	assert_almost_eq(CarSpriteScript.scale_factor_for_height(3.0, 0.05), 1.15, 1e-6)
-	assert_eq(CarSpriteScript.scale_factor_for_height(3.0, 0.0), 1.0)
-	var shadow_scale: Vector2 = scene.shadow.scale
-	scene.car_sprite.height_scale_per_unit = 0.05
-	scene.car_sprite.place(Vector2.ZERO, 3.0)
-	assert_eq(scene.shadow.scale, shadow_scale, "the shadow keeps its size")
+	assert_false("draw_bigger_when_high" in scene)
+	assert_false("height_scale_per_unit" in scene.car_sprite)

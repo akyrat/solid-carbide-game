@@ -1060,7 +1060,7 @@ Task T-046 (Enemy Behavior Agent): the kaiju's one special move, with T-039's nu
 
 ## Elevation test scene (T-182)
 
-The elevation test scene (Level design, Decisions, "Raised areas and ramps"; Drifting, Decisions, "Elevation"). T-182 made the ground side (data and a query), T-183 and T-184 the car's height, T-185 the scene and its drawing ("The scene and its drawing (T-185)" below, with how to run it), T-186 the platform and ramp art, T-187 the bigger-when-high option. Every number is a proposal for the board's playtest.
+The elevation test scene (Level design, Decisions, "Raised areas and ramps"; Drifting, Decisions, "Elevation"). T-182 made the ground side (data and a query), T-183 and T-184 the car's height, T-185 the scene and its drawing ("The scene and its drawing (T-185)" below, with how to run it), T-186 the platform and ramp art, T-192 the round shadow (T-187's bigger-when-high option was tried and removed). Every number is a proposal for the board's playtest.
 
 ### Ground-height data
 
@@ -1124,16 +1124,16 @@ How it is built (like the drift prototype, isometric only):
 
 - `PhysicsWorld` (never drawn) holds the `Car` (`car.gd`), whose `ground` is the scene's `GroundHeight` (`ground_height`, from `data/level/elevation_test.json`). `place_car(units, rotation)` puts the car at rest on the ground there (the fixtures use it).
 - `View` draws the street (`ground_grid.gd`, z_index -100), one `elevation_platform_drawing.gd` node per platform and ramp (`areas`, back to front), the `CarShadow` (`car_shadow.gd`), the `CarSprite` (`car_sprite.gd`, the final isometric sheet) and the `Camera`.
-- `sync_view()` runs after every physics step (`car.stepped`): `car_sprite.place(drawn ground position, car.height)`, `shadow.place(map position, heading, ground height under the car)`, `update_depth()`, then the camera (`camera_follow.gd`, as in the drift prototype) on the car's drawn position at height 0.
+- `sync_view()` runs after every physics step (`car.stepped`): `car_sprite.place(drawn ground position, car.height)`, `shadow.place(map position, ground height under the car)`, `update_depth()`, then the camera (`camera_follow.gd`, as in the drift prototype) on the car's drawn position at height 0.
 
 The drawing's main functions:
 
 - `car_sprite.gd`: `lift_for_height(height_units, px_per_unit = 16) -> Vector2`, the lift straight up the screen (`(0, -height x 16)`); `place(drawn_ground_px, height_units)` sets the sprite's position to the drawn map position plus the lift. The lift is in the position, so physics interpolation smooths it.
-- `car_shadow.gd`: `place(map_units, rotation, ground_height)` puts the shadow at the drawn map position lifted by the ground's height under the car; `outline()` is its turned footprint, `SIZE_UNITS` (3.2 x 1.2 units, a proposal), drawn in one opaque `COLOR`.
+- `car_shadow.gd` (round since T-192): `place(map_units, ground_height)` puts the shadow at the drawn map position lifted by the ground's height under the car; `outline()` is a 32-point circle on the ground, `DIAMETER_UNITS` (1.0 unit across, a proposal), run through the view's transform so it is an ellipse twice as wide as tall on screen, centred on the shadow's position; it does not turn with the car. Drawn in one opaque `COLOR`, no antialiasing. The car's drawing is always at the sheet's own scale, at every height.
 - `elevation_platform_drawing.gd`: `setup(kind, block, view_basis)` with a `GroundHeight` platform or ramp; `corner_heights()` (NW, NE, SE, SW), `top_height_at(point)`, `top_face()`, `east_face()`, `south_face()` (drawn polygons; a side of height 0 has none); `colors_used()` lists every colour (no Redgull red); `is_behind(centre, radius, height)` is the depth rule: the centre west or north of the area's rectangle (the footprint, `radius` around it, not wholly east or south of it) and lower than its top there. The centre, not the footprint, since T-191: the sides stop the car's centre, so at a back-side wall hit its footprint reaches into the rectangle.
 - `elevation_test.gd`: `z_for(centre, height, offset)` puts something just under the first area it is behind, or over every area (areas at z_index 3, 6, ...; the shadow at offset 0 under the car at offset 1); `update_depth()` places the shadow with the ground's height under the car and the car with its own height; `sync_view()` then calls `update_see_through(car.model.dt)` (see-through, T-191 below).
 
-Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
+Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` and, for the round shadow (T-192; `lift_units` puts the car in the air), `elevation_test_shadow_{street,platform,air,platform_air}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
 
 ### See-through raised areas (T-191)
 
@@ -1147,9 +1147,9 @@ The platform and the ramp turn see-through like the map's buildings (Drifting, C
 
 Tests: `tests/unit/test_elevation_see_through.gd` (the fade and its numbers; driving into the west and north sides straight, angled and steering, the car under the platform on every step). Screenshot fixtures: `tests/fixtures/elevation_test_see_through.tscn` (behind the platform), `elevation_test_wall_west.tscn` and `elevation_test_wall_north.tscn` (the step the car meets each back side), and `elevation_test_wall_{west,north}_solid.tscn` (the same with the fade off, `elevation_test_demo.gd`'s `see_through = false`, to show the depth order alone).
 
-### Drawing the car bigger when high (T-187)
+### The round shadow, and no bigger-when-high (T-192)
 
-An option for the board's playtest, **off by default**. `elevation_test.gd` has `@export var draw_bigger_when_high := false`: tick it in the editor's Inspector on the scene's root node (or set it in a fixture before the scene is ready) to turn it on. No on-screen text or menu. When on, `car_sprite.height_scale_per_unit` is `HEIGHT_SCALE_PER_UNIT` = **0.05** (a proposal), and `car_sprite.place()` sets the drawing's scale to its sheet scale x `scale_factor_for_height(height, per_unit)` = **1 + 0.05 x height**: 1 on the ground, 1.15 on the platform's top (3 units). Off, the per-unit value is 0 and the factor is 1 at every height. The shadow keeps its size. Tests: `tests/unit/test_elevation_drawing.gd` (`test_bigger_when_high_*`).
+The board tried drawing the car bigger when high (T-187) and removed it: `draw_bigger_when_high`, `HEIGHT_SCALE_PER_UNIT`, `height_scale_per_unit` and `scale_factor_for_height` are gone, and the car is drawn at the sheet's own scale at every height. The shadow is a round shadow instead (`car_shadow.gd`, above): a 1-unit circle on the ground under the car's map position, an ellipse twice as wide as tall on screen, not turning with the car. Tests: `tests/unit/test_elevation_drawing.gd` (`test_the_cars_drawing_scale_is_the_same_at_every_height`, `test_the_shadow_*`). Screenshots: `art-archive/T-192/screenshots/`.
 
 ### The platform and ramp art (T-186)
 

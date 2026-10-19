@@ -15,6 +15,9 @@ extends Node
 ## False keeps the raised areas solid (task T-191): the screenshot then shows
 ## the depth order alone (the car drawn under or over them).
 @export var see_through := true
+## Units above the ground at the start (task T-192, shadow screenshots): the car
+## is put in the air that high and stays there (drive_steps 1).
+@export var lift_units := 0.0
 
 var scene: Node2D
 var _steps := 0
@@ -29,6 +32,10 @@ func _ready() -> void:
 		for a in scene.areas:
 			a.see_through_alpha = 1.0
 	scene.place_car(start_units, start_rotation)
+	if lift_units > 0.0:
+		scene.car.height_model.height = scene.car.height + lift_units
+		scene.car.height_model.airborne = true
+		scene.car.scripted_input = [false, false, 0.0]
 	if zoom > 0.0:
 		scene.camera_follow.set_base_size(zoom)
 	scene.sync_view()
