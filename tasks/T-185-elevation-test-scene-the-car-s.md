@@ -1,7 +1,7 @@
 ---
 id: T-185
 title: Elevation test scene: the car's drawing lifts with its height, a shadow on the ground, placeholder platform and ramp
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -96,3 +96,4 @@ They are in `docs/drifting/` as the Description asks, not also in `art-archive/T
 
 **Documents updated:** `docs/drifting.md` (Content, new "Elevation test scene" section), `game/README.md` ("Elevation test scene (T-182)" intro, "The car's height (T-183)" pointer, new "The scene and its drawing (T-185)").
 - 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-003).
+- 2026-10-19, needs-playtest → done: Board's playtest of G-003 (2026-10-19): super happy with it.
