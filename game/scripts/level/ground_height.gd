@@ -33,6 +33,10 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 			"id": str(p.get("id", "")),
 			"rect": Rect2(float(p.x), float(p.y), float(p.w), float(p.h)),
 			"height": float(p.height),
+			# The platform it stands on (T-193), "" for the street. Only the
+			# validator (tools/check_height_data.py) reads it: the highest area
+			# at a point wins anyway.
+			"on": str(p.get("on", "")),
 		})
 	for r in data.get("ramps", []):
 		ramps.append({
@@ -148,7 +152,9 @@ func side_normal(index: int, a: Vector2, b: Vector2) -> Vector2:
 
 ## Moving from a to b: {"drop": bool, "height": float, "up": bool}.
 ## drop is true when the move crosses a platform edge that is not a ramp; height is the
-## size of that step (the platform's height) and up is true when the step is a climb.
+## size of that step (the difference between the two sides' heights: a platform's
+## height above the street, or 3 from a height-6 area onto the height-3 area it
+## stands on) and up is true when the step is a climb.
 ## Walking along a ramp is never a drop: its height changes gradually.
 func edge_between(a: Vector2, b: Vector2) -> Dictionary:
 	var length := a.distance_to(b)

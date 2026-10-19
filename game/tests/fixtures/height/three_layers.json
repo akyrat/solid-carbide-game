@@ -1,0 +1,46 @@
+{
+  "_comment": "Three-layer height fixture (T-193): the street (0), roof_low (height 3) and roof_high (height 6) standing on it, a ramp from the street to roof_low and a ramp on roof_low up to roof_high. Same format as data/level/elevation_test.json plus a platform's optional 'on' field (game/README.md, 'Elevation sample map'). Test data only; every number is a proposal.",
+  "platforms": [
+    {
+      "id": "roof_low",
+      "x": -20.0,
+      "y": -20.0,
+      "w": 40.0,
+      "h": 40.0,
+      "height": 3.0
+    },
+    {
+      "id": "roof_high",
+      "on": "roof_low",
+      "x": -10.0,
+      "y": -10.0,
+      "w": 16.0,
+      "h": 16.0,
+      "height": 6.0
+    }
+  ],
+  "ramps": [
+    {
+      "id": "ramp_street_to_low",
+      "platform": "roof_low",
+      "side": "east",
+      "x": 20.0,
+      "y": -4.0,
+      "w": 12.0,
+      "h": 8.0,
+      "bottom_height": 0.0,
+      "top_height": 3.0
+    },
+    {
+      "id": "ramp_low_to_high",
+      "platform": "roof_high",
+      "side": "east",
+      "x": 6.0,
+      "y": -4.0,
+      "w": 12.0,
+      "h": 8.0,
+      "bottom_height": 3.0,
+      "top_height": 6.0
+    }
+  ]
+}
