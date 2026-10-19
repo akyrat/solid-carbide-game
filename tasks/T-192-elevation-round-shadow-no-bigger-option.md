@@ -1,7 +1,7 @@
 ---
 id: T-192
 title: Elevation test scene: a round shadow under the car, and the bigger-when-high option removed
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -74,3 +74,4 @@ QA passed all 5 criteria. In the goal's build for your playtest: the round shado
 - `shadow_platform.png`: car on the platform.
 - `shadow_air.png`: car in the air off the platform's south edge, shadow on the street below it.
 - `shadow_platform_air.png`: car in the air over the platform, shadow on the platform's top.
+- 2026-10-19, needs-playtest → done: Board's playtest of G-003 (2026-10-19): super happy with it.
