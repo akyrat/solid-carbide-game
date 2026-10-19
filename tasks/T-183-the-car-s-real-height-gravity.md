@@ -43,14 +43,14 @@ docs/drifting.md, Decisions, 'Elevation' (board, 2026-10-17, go-ahead 2026-10-19
 
 ## Acceptance criteria
 
-- [ ] The car has a height and a vertical speed separate from its flat position; with no ground-height source its height stays 0. (QA: pass / fail)
-- [ ] Every existing driving test (`test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`, `test_tricks.gd`, `test_boost.gd`) passes unchanged. (QA: pass / fail)
-- [ ] GUT test: a car driven up the ramp has, each step, a height equal to the ground height under it. (QA: pass / fail)
-- [ ] GUT test: a car leaving the ramp's top, and a car leaving a drop-off edge, with enough speed, leaves the ground; the ramp takeoff's vertical speed matches the formula in the README for the car's speed and the ramp's slope. (QA: pass / fail)
-- [ ] GUT test: in the air the height follows gravity (vertical speed falls by gravity x step time each step). (QA: pass / fail)
-- [ ] GUT test: the car lands when its height reaches the ground under it, and its vertical speed then is 0. (QA: pass / fail)
-- [ ] Gravity and every takeoff or landing number are in one place, listed in `game/README.md` as proposals for the board's playtest. (QA: pass / fail)
-- [ ] The full GUT suite passes headless. (QA: pass / fail)
+- [ ] The car has a height and a vertical speed separate from its flat position; with no ground-height source its height stays 0. (QA: pass)
+- [ ] Every existing driving test (`test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`, `test_tricks.gd`, `test_boost.gd`) passes unchanged. (QA: pass: files untouched in diff, all pass)
+- [ ] GUT test: a car driven up the ramp has, each step, a height equal to the ground height under it. (QA: pass)
+- [ ] GUT test: a car leaving the ramp's top, and a car leaving a drop-off edge, with enough speed, leaves the ground; the ramp takeoff's vertical speed matches the formula in the README for the car's speed and the ramp's slope. (QA: pass)
+- [ ] GUT test: in the air the height follows gravity (vertical speed falls by gravity x step time each step). (QA: pass)
+- [ ] GUT test: the car lands when its height reaches the ground under it, and its vertical speed then is 0. (QA: pass)
+- [ ] Gravity and every takeoff or landing number are in one place, listed in `game/README.md` as proposals for the board's playtest. (QA: pass: constants at top of car_height.gd, table in README)
+- [ ] The full GUT suite passes headless. (QA: pass: 982/982)
 
 ## Updates
 
