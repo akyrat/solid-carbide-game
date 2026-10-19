@@ -1,0 +1,33 @@
+{
+  "asset": "platform",
+  "task": "T-186",
+  "image": {
+    "width": 1024,
+    "height": 608
+  },
+  "px_per_unit": 32,
+  "drawn_at_scale": 0.5,
+  "top_left_art_px": [
+    -512,
+    -352
+  ],
+  "note": "top_left_art_px is where the image's top-left sits relative to the scene's drawn origin (art px, +y down); the game draws it at scale 0.5.",
+  "piece_id": "platform_1",
+  "source_json": "game/data/level/elevation_test.json",
+  "pixellab": [
+    {
+      "record": "art-archive/T-186/raw_platform_top.json",
+      "image": "art-archive/T-186/raw_platform_top.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-186/raw_platform_wall.json",
+      "image": "art-archive/T-186/raw_platform_wall.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    }
+  ],
+  "script": "game/tools/build_elevation_art.py",
+  "steps": "PixelLab textures projected onto the isometric faces by script (mirror tiling), outline and rim, reduced to at most 30 colours."
+}

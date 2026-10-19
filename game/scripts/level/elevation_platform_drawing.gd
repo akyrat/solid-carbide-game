@@ -31,11 +31,43 @@ var block := {}
 var view_basis := Transform2D.IDENTITY
 
 
+## The PixelLab art (task T-186, game/art/elevation/): a sprite per kind, drawn
+## at scale 0.5 (32 art px per unit in the 16 px per unit world). Its record
+## gives where its top-left sits from the drawn origin, in art px. When the art
+## exists, it replaces the script drawing below (kept as the fallback).
+const ART_DIR := "res://art/elevation/"
+const ART_SCALE := 0.5
+
+var art_sprite: Sprite2D
+
+
 func setup(the_kind: String, the_block: Dictionary, basis: Transform2D) -> void:
 	kind = the_kind
 	block = the_block
 	view_basis = basis
+	_load_art()
 	queue_redraw()
+
+
+func _load_art() -> void:
+	if art_sprite != null:
+		art_sprite.queue_free()
+		art_sprite = null
+	var png := ART_DIR + kind + ".png"
+	var record := ART_DIR + kind + ".json"
+	if not ResourceLoader.exists(png) or not FileAccess.file_exists(record):
+		return
+	var info = JSON.parse_string(FileAccess.get_file_as_string(record))
+	if not (info is Dictionary) or not info.has("top_left_art_px"):
+		return
+	art_sprite = Sprite2D.new()
+	art_sprite.name = "Art"
+	art_sprite.texture = load(png)
+	art_sprite.centered = false
+	art_sprite.scale = Vector2(ART_SCALE, ART_SCALE)
+	art_sprite.position = Vector2(info.top_left_art_px[0], info.top_left_art_px[1]) * ART_SCALE
+	art_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(art_sprite)
 
 
 ## Every colour this drawing can use (for the colour check in the tests).
@@ -138,7 +170,7 @@ func south_face() -> PackedVector2Array:
 
 
 func _draw() -> void:
-	if block.is_empty():
+	if block.is_empty() or art_sprite != null:
 		return
 	var r := rect()
 	var h := corner_heights()
