@@ -1134,3 +1134,9 @@ The drawing's main functions:
 - `elevation_test.gd`: `z_for(centre, height, offset)` puts something just under the first area it is behind, or over every area (areas at z_index 3, 6, ...; the shadow at offset 0 under the car at offset 1); `update_depth()` places the shadow with the ground's height under the car and the car with its own height.
 
 Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
+
+### The platform and ramp art (T-186)
+
+PixelLab art replaces the script drawing: `art/elevation/platform.png` (1024 x 608) and `ramp.png` (640 x 416), each with its record (`platform.json`, `ramp.json`: sources, `top_left_art_px` from the drawn origin, 32 art px per unit). `elevation_platform_drawing.gd` adds a `Sprite2D` (`art_sprite`, scale 0.5, nearest filter, at `top_left_art_px` x 0.5) when the PNG and record exist, and then draws nothing itself; the script drawing stays as the fallback, and its geometry functions and the depth order (`is_behind`) are unchanged.
+
+Made from 3 PixelLab textures (art-archive/T-186/, 3 generations) by `python game/tools/build_elevation_art.py build` (projects them onto the faces of `data/level/elevation_test.json`; `check` runs the rules on the committed files; run `build` again if the JSON's sizes change). Tests: `game/tools/test_build_elevation_art.py` (Python) and `tests/unit/test_elevation_art.gd`. Screenshots: `docs/drifting/elevation-final-art.png` (car at the platform's edge, in the air) and `elevation-final-art-platform.png` (on the platform).

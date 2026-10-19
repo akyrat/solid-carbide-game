@@ -61,4 +61,23 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-186.
 
 ## Result notes
 
-Written by the agent when it finishes.
+### Plan, written before the first PixelLab call
+
+PixelLab's largest image is 400 x 400, but the platform is 1024 x 608 art px and the ramp 640 x 416 (16 x 16 and 12 x 8 units at 32 art px per unit), so PixelLab makes the **surface textures** and a script (`game/tools/build_elevation_art.py`) projects them exactly onto the isometric faces of `elevation_test.json`'s platform and ramp (same projection as the placeholder drawing: screen = ((x - y), (x + y) / 2) x 32, heights lifted 32 px per unit). Planned calls (all `create-image-pixflux`, 128 x 128, 600 s timeout, one round, no regeneration), 3 of the cap of 20:
+
+1. Platform top: seamless-looking cracked grey concrete / asphalt slab, top-down (1 generation).
+2. Drop-off side wall: grey concrete retaining wall with panel seams and a lighter lip at the top (1 generation).
+3. Ramp surface: dark asphalt with white lane markings / worn chevrons, top-down (1 generation).
+
+Cost: 1 generation each, 3 in all (balance before: 4872 of 5000 subscription generations). Free script steps (projection, outline, palette reduction to 30 colours or fewer) come after.
+
+### Result
+
+- **PixelLab generations made: 3** (cap 20), exactly the planned calls, one round, no regeneration, 600 s timeout. Balance before 4872 of 5000 subscription generations. Raw textures and their records: `art-archive/T-186/raw_platform_top`, `raw_platform_wall`, `raw_ramp_top` (.png and .json); calls also appended to `game/art/pixellab-generation-log.jsonl`.
+- **Game-ready:** `game/art/elevation/platform.png` (1024 x 608, 29 colours) and `ramp.png` (640 x 416, 26 colours), each with a record `.json` (sources, `top_left_art_px`). PixelLab's largest image is 400 x 400, so a script (`game/tools/build_elevation_art.py`) projects the textures exactly onto the isometric faces of the platform and ramp in `elevation_test.json` (platform top plus east and south drop-off faces; ramp's sloped top plus its south triangle), with outline, rim light and palette reduction. Free script fix before anything paid: the platform's top was desaturated and darkened.
+- **Rules:** `python game/tools/build_elevation_art.py check` and the Python and GUT tests show no semi-transparent pixels, at most 30 colours, transparent corners, no Redgull red. (`tools/check_sprite_rules.py` only takes square frames, so the same four rules are in the build script's `rules()`.)
+- **Scene:** `elevation_platform_drawing.gd` now shows the art as a `Sprite2D` (scale 0.5, nearest) instead of drawing the placeholder; geometry and depth order unchanged; headless tests pass: `test_elevation_art.gd` (6 new), `test_elevation_drawing.gd` (19), `test_elevation_edges.gd` (14), and `test_build_elevation_art.py` (4). I did not run the whole suite.
+- **Screenshots:** `docs/drifting/elevation-final-art.png` (car at the platform's edge, in the air, with the ramp's start) and `elevation-final-art-platform.png` (car on the platform, ramp beside it).
+- **Weak results (not regenerated):** the top texture is blue cobblestone with bright vignette blobs, mirrored, so a repeating pattern rather than plain concrete/asphalt; the ramp is purple with white arrows, not the street's grey asphalt; the wall reads as brick. The geometry, scale and depth order are right. The board judges the look in the final playtest; a regeneration of the textures (3 more generations) and a rebuild would fix it cheaply.
+- Documents changed: `docs/visual-style.md`, `game/README.md`.
+- Refusals: one. `python -c "import PIL"` (a check that Pillow exists) needed an approval I could not get; I skipped it, since `reduce_palette.py` already uses Pillow, and the build ran fine.
