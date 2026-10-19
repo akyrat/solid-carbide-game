@@ -1,7 +1,7 @@
 ---
 id: T-202
 title: Task board: goals shown on the board, with a goal filter
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/test_taskboard_server.py, tools/test_taskboard_sync.py, tools/goal_agent/goal_file.py, goals/README.md, goals/G-003-build-the-elevation-system-in.md]
 files_expected_to_change: [tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/test_taskboard_server.py, tools/test_taskboard_sync.py, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -47,6 +47,10 @@ Started: a Goals strip on the board (status, progress, art, the goal's detail an
 ### 2026-10-19, In progress → In QA
 
 Built: the Goals strip (status, progress, art, iteration), each goal's detail with its tickets, pauses, goal file and Play, a Goal filter row and goal labels on cards. 366 tools tests pass; checked live on a second server. QA checks it now.
+
+### 2026-10-19, In QA → Done
+
+QA passed all 4 criteria, checked live. Merged: the board shows a Goals strip, each goal's detail, a Goal filter and goal labels on cards, once restarted. T-203 (live agent activity) is next.
 
 ## Result notes
 
