@@ -1,7 +1,7 @@
 ---
 id: T-196
 title: Elevation sample map: the drive-only scene (the MVP map's city with rooftops and ramps, placeholder drawing)
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -62,6 +62,10 @@ The board's review: Drive the elevation sample map (placeholder drawing for roof
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-196.
 
 ## Result notes
 
