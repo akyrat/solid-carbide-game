@@ -1,7 +1,7 @@
 ---
 id: T-185
 title: Elevation test scene: the car's drawing lifts with its height, a shadow on the ground, placeholder platform and ramp
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-003

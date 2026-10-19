@@ -1,10 +1,10 @@
 ---
 id: G-003
 title: Build the elevation system in a test scene, as written in docs/drif...
-status: paused
+status: building
 art_cap: 20
 art_used: 0
-iteration: 1
+iteration: 2
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-003
@@ -45,10 +45,10 @@ Build the elevation system in a test scene, as written in docs/drifting.md (Deci
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
 | 1 | S1 | Ground-height data for the test scene: one platform, one ramp, drop-off edges | unblocks 6, value 5 | The car's height needs to know how high the ground is under it. Level design says the map's data format leaves room for heights and ramps from the start, for the board's later level editor. | covered | T-182 |
-| 2 | S2 | The car's real height: gravity, takeoff and landing | unblocks 5, value 5 | This is the heart of the goal (Drifting, Decisions, 'Elevation'): a height separate from the map position, with gravity, a takeoff speed and a landing. | in-flight | T-183 |
+| 2 | S2 | The car's real height: gravity, takeoff and landing | unblocks 5, value 5 | This is the heart of the goal (Drifting, Decisions, 'Elevation'): a height separate from the map position, with gravity, a takeoff speed and a landing. | covered | T-183, T-182 |
 | 3 | S4 | The illusion of height: lifted car drawing, shadow on the ground, placeholder platform and ramp | unblocks 3, value 5 | In this 2D game height is only seen through the drawing: the car lifts up the screen with its height while its shadow stays on the ground (Drifting, Decisions, 'Elevation'). The functional work starts with placeholders, not waiting for the art. | in-flight | T-185 |
 | 4 | S5 | PixelLab art for the ramp and the raised platform | unblocks 1, value 5 | The board asked for PixelLab art for both in this goal. | in-flight | T-186 |
-| 5 | S3 | How the platform's sides meet the car | unblocks 1, value 4 | Driving up the ramp and jumping off the edges only works if the platform's sides behave consistently with the car's height (driving into a drop-off edge from the ground, landing on the platform, falling off it). | in-flight | T-184 |
+| 5 | S3 | How the platform's sides meet the car | unblocks 1, value 4 | Driving up the ramp and jumping off the edges only works if the platform's sides behave consistently with the car's height (driving into a drop-off edge from the ground, landing on the platform, falling off it). | covered | T-184 |
 | 6 | S7 | Document the build and keep the docs in sync | unblocks 0, value 4 | A task is not done until its affected docs are updated; the separate docs are the source of truth and the goal's criteria check them. | in-flight | T-188 |
 | 7 | S6 | Option: car drawn slightly bigger when high | unblocks 0, value 2 | Drifting, Decisions names drawing the car slightly bigger when high as an option for the board's playtest. | in-flight | T-187 |
 
@@ -134,6 +134,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 1: paused (see Pauses).
 - 2026-10-19, iteration 1: resumed: its last pause (refusal: a headless session reported a refusal that blocked its work) can't be checked by the runner; --force.
 - 2026-10-19, iteration 1: paused (see Pauses).
+- 2026-10-19, iteration 1: resumed: its last pause (merge: a merge into the goal's build conflicted) can't be checked by the runner; --force.
+- 2026-10-19, iteration 2: T-184 (S3, driving-drift, opus): passed (done, QA rounds 1), merged into playtest/G-003; art 0; agent: I built the three edge proposals for T-184, and the full test suite passes headless (996/996), with every existing driving test unchanged. A car on the ground that drives into a drop-off edge or a ramp's side stops and bounces off it like any wall, with the same Wall bounce share and the same hit signal. A car in the air also bounces off a platform's side if it is below the top, clears the side if it is above it, and lands on the top or beside the platform. A car driving off a ramp's side falls to the ground with gravity. I added one small proposal of my own for the playtest: a step of 0.1 units or less is driven over like a curb, so near the ramp's foot the car can drive onto it from the side. The proposals are written in docs/drifting.md and game/README.md, the 14 new tests are in game/tests/unit/test_elevation_edges.gd, and everything is committed on the task branch. Rescan: S2 covered, S3 covered, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight.
 
 ## Pauses
 
