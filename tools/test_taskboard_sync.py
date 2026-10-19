@@ -174,6 +174,112 @@ class TaskboardSyncTests(unittest.TestCase):
         for path in tb.task_files():
             self.assertIsNotNone(tb.ticket(path), path.name)
 
+    def test_ticket_reads_its_goal(self):
+        path = self.tasks / "T-900-test.md"
+        self.assertEqual(tb.ticket(path)["goal"], "")   # no goal line
+        path.write_text(TASK.replace("to: ui\n", "to: ui\ngoal: G-007\n"), encoding="utf-8")
+        self.assertEqual(tb.ticket(path)["goal"], "G-007")
+        path.write_text(TASK.replace("to: ui\n", "to: ui\ngoal:\n"), encoding="utf-8")
+        self.assertEqual(tb.ticket(path)["goal"], "")
+
+
+def goal_text(gid="G-007", status="paused", pauses="None yet.", art_cap=30, art_used=4, iteration=3):
+    """A goal file as the goal runner writes it (tools/goal_agent/goal_file.py)."""
+    return (f"---\nid: {gid}\ntitle: Build the thing\nstatus: {status}\nart_cap: {art_cap}\nart_used: {art_used}\n"
+            f"iteration: {iteration}\nmax_iterations: 20\ncreated: 2026-10-19\nlead: Goal-{gid}\n---\n\n"
+            "## Goal\n\nBuild the thing, as written in the docs.\n\n"
+            "## Goal acceptance criteria\n\n- [ ] It runs. (QA: pass / fail)\n\n"
+            "## Tickets\n\n- T-901: one (S1, written)\n\n"
+            "## Iteration log\n\n- 2026-10-19, iteration 0: started: planning.\n\n"
+            f"## Pauses\n\n{pauses}\n\n")
+
+
+def goal_task(task_id, goal="", status="open"):
+    return f"---\nid: {task_id}\ntitle: Ticket {task_id}\nstatus: {status}\nto: ui\ngoal: {goal}\n---\n\nBody\n"
+
+
+class GoalTests(unittest.TestCase):
+    """T-202: the goal files as the board shows them."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        self.goals, self.tasks, self.wt = base / "goals", base / "tasks", base / "worktrees" / "T-902"
+        for folder in (self.goals, self.tasks, self.wt / "tasks"):
+            folder.mkdir(parents=True)
+        pauses = ("- 2026-10-18 [refusal]: The agent reported a refusal.\n"
+                  "- 2026-10-19: Claude could not be run for step 'agent':\n  You've hit your session limit")
+        (self.goals / "G-007-build-the-thing.md").write_text(goal_text(pauses=pauses), encoding="utf-8")
+        (self.goals / "G-006-older.md").write_text(goal_text("G-006", "done", art_cap=0), encoding="utf-8")
+        (self.goals / "README.md").write_text("# Goals\n", encoding="utf-8")
+        (self.goals / "G-005-broken.md").write_text("no header here\n", encoding="utf-8")
+        for task_id, goal, status in [("T-901", "G-007", "done"), ("T-902", "G-007", "open"), ("T-903", "G-007", "cancelled"),
+                                      ("T-904", "G-006", "done"), ("T-905", "", "open")]:
+            (self.tasks / f"{task_id}-t.md").write_text(goal_task(task_id, goal, status), encoding="utf-8")
+        # T-902's branch is open: its task folder's copy (in QA) is the one that counts.
+        (self.wt / "tasks" / "T-902-t.md").write_text(goal_task("T-902", "G-007", "in-qa"), encoding="utf-8")
+        self.tickets = tb.tickets_now(self.tasks, {"T-902": self.wt})
+
+    def test_goal_files_skip_other_files(self):
+        self.assertEqual([p.name for p in tb.goal_files(self.goals)],
+                         ["G-005-broken.md", "G-006-older.md", "G-007-build-the-thing.md"])
+        self.assertEqual(tb.goal_files(Path(self.tmp.name) / "missing"), [])
+
+    def test_goal_reads_the_header_and_goal_text(self):
+        g = tb.goal(self.goals / "G-007-build-the-thing.md", self.tickets)
+        self.assertEqual((g["id"], g["title"], g["status"], g["art_cap"], g["art_used"], g["iteration"], g["max_iterations"]),
+                         ("G-007", "Build the thing", "paused", 30, 4, 3, 20))
+        self.assertEqual((g["created"], g["lead"], g["file"]), ("2026-10-19", "Goal-G-007", "goals/G-007-build-the-thing.md"))
+        self.assertEqual(g["goal_text"], "Build the thing, as written in the docs.")
+
+    def test_goal_tickets_from_their_goal_lines_with_counts(self):
+        g = tb.goal(self.goals / "G-007-build-the-thing.md", self.tickets)
+        self.assertEqual(g["tickets"], ["T-901", "T-902", "T-903"])
+        self.assertEqual(g["ticket_counts"], {"done": 1, "in-qa": 1, "cancelled": 1})   # T-902 from its task folder
+        self.assertEqual((g["tickets_total"], g["tickets_finished"]), (3, 2))
+        older = tb.goal(self.goals / "G-006-older.md", self.tickets)
+        self.assertEqual((older["tickets"], older["ticket_counts"]), (["T-904"], {"done": 1}))
+
+    def test_goal_pauses_and_latest_pause_when_paused(self):
+        g = tb.goal(self.goals / "G-007-build-the-thing.md", self.tickets)
+        self.assertEqual(g["pauses"], [
+            {"date": "2026-10-18", "kind": "refusal", "reason": "The agent reported a refusal."},
+            {"date": "2026-10-19", "kind": "stop", "reason": "Claude could not be run for step 'agent':\nYou've hit your session limit"}])
+        self.assertEqual(g["latest_pause"], g["pauses"][-1])
+        done = tb.goal(self.goals / "G-006-older.md", self.tickets)
+        self.assertEqual((done["pauses"], done["latest_pause"]), ([], None))
+
+    def test_latest_pause_only_while_paused(self):
+        path = self.goals / "G-007-build-the-thing.md"
+        path.write_text(goal_text(status="building", pauses="- 2026-10-18 [stop]: old"), encoding="utf-8")
+        g = tb.goal(path, self.tickets)
+        self.assertEqual(len(g["pauses"]), 1)
+        self.assertIsNone(g["latest_pause"])
+
+    def test_goal_build_folder(self):
+        folder = Path(self.tmp.name) / "worktrees" / "G-007"
+        g = tb.goal(self.goals / "G-007-build-the-thing.md", self.tickets, {"G-007": folder, "T-902": self.wt})
+        self.assertEqual((g["has_build"], g["build_folder"]), (True, str(folder)))
+        g = tb.goal(self.goals / "G-007-build-the-thing.md", self.tickets, {"T-902": self.wt})
+        self.assertEqual((g["has_build"], g["build_folder"]), (False, ""))
+
+    def test_goals_now_newest_first_skipping_unreadable_files(self):
+        self.assertEqual([g["id"] for g in tb.goals_now(self.goals, self.tickets)], ["G-007", "G-006"])
+
+    def test_long_pause_reasons_are_cut(self):
+        p = tb.goal_pauses("- 2026-10-18 [stop]: " + "x" * (tb.PAUSE_REASON_MAX + 50))
+        self.assertTrue(p[0]["reason"].startswith("x" * tb.PAUSE_REASON_MAX))
+        self.assertIn("cut short", p[0]["reason"])
+
+    def test_real_goal_files_all_parse(self):
+        files = tb.goal_files(tb.ROOT / "goals")
+        docs = tb.goals_now(tb.ROOT / "goals")
+        self.assertEqual(len(docs), len(files))
+        for d in docs:
+            self.assertRegex(d["id"], r"^G-\d{3,}$")
+            self.assertTrue(d["goal_text"], d["id"])
+
 
 if __name__ == "__main__":
     unittest.main()

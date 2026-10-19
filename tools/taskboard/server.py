@@ -18,6 +18,10 @@ A ticket's screenshots and recordings (T-201) are listed with it in /api/tickets
 served one at a time, read-only, by GET /api/media?id=T-012&path=<relative path>: only image and
 video files the ticket lists, from the checkout it lives in.
 
+The goal runner's goals (T-202) come from the main checkout's goals/ (taskboard_sync.goals_now):
+GET /api/goals lists each with its tickets and whether its build folder exists, and
+GET /api/goal-file?id=G-004 returns one goal file's full text, read-only.
+
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
 """
@@ -63,11 +67,33 @@ def inbox_path():
     return tb.STATE_DIR / "board-inbox.jsonl"
 
 
+_MAIN = {}
+
+
+def main_checkout():
+    """The main checkout (the first entry of `git worktree list`), where the goal runner commits the
+    goal files. Looked up once per served folder: it never moves."""
+    if tb.ROOT not in _MAIN:
+        _MAIN[tb.ROOT] = Path(worktrees()[0][0])
+    return _MAIN[tb.ROOT]
+
+
+def goals_dir():
+    return main_checkout() / "goals"
+
+
 def version(folders=None):
-    """Changes whenever a task file the board shows changes, a task branch opens or closes, or a
-    screenshot is added to, changed in or removed from a ticket's art-archive/<id>/screenshots/."""
+    """Changes whenever a task file the board shows changes, a task branch opens or closes, a
+    screenshot is added to, changed in or removed from a ticket's art-archive/<id>/screenshots/,
+    or a goal file in the main checkout's goals/ is added, changed or removed."""
     folders = tb.task_folders() if folders is None else folders
     h = hashlib.sha256()
+    for path in tb.goal_files(goals_dir()):
+        try:
+            st = path.stat()
+        except OSError:
+            continue
+        h.update(f"{path}|{st.st_mtime_ns}|{st.st_size}\n".encode("utf-8"))
     for path in tb.task_files():
         folder = folders.get(path.name[:5])
         real = folder / "tasks" / path.name if folder and (folder / "tasks" / path.name).exists() else path
@@ -88,6 +114,28 @@ def version(folders=None):
 def tickets_payload():
     folders = tb.task_folders()
     return {"version": version(folders), "generated_at": now(), "tickets": tb.tickets_now(folders=folders)}
+
+
+def goals_payload():
+    """Every goal file with its tickets (from their `goal:` lines, wherever the ticket lives) and
+    whether its build folder (the worktree named after the goal's id) exists."""
+    folders = tb.task_folders()
+    builds_by_name = {Path(f).name: Path(f) for f, _ in worktrees()[1:]}
+    goals = tb.goals_now(goals_dir(), tb.tickets_now(folders=folders), builds_by_name)
+    return {"version": version(folders), "generated_at": now(), "goals": goals}
+
+
+def goal_file_text(goal_id):
+    """One goal file's full text, read-only. Returns (http status, text or error body)."""
+    if not isinstance(goal_id, str) or not tb.GOAL_ID_RE.fullmatch(goal_id):
+        return 400, {"error": "A goal file request needs a goal id like G-004."}
+    for path in tb.goal_files(goals_dir()):
+        if path.name.startswith(goal_id + "-"):
+            try:
+                return 200, path.read_bytes().decode("utf-8", errors="replace")
+            except OSError:
+                break
+    return 404, {"error": "No such goal file."}
 
 
 def media_file(task_id, rel, folders=None):
@@ -272,6 +320,14 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, {"builds": builds()})
         if path == "/api/tickets":
             return self.send(200, tickets_payload())
+        if path == "/api/goals":
+            return self.send(200, goals_payload())
+        if path == "/api/goal-file":
+            query = urllib.parse.parse_qs(self.path.partition("?")[2])
+            code, out = goal_file_text((query.get("id") or [""])[0])
+            if code != 200:
+                return self.send(code, out)
+            return self.send(200, out.encode("utf-8"), "text/plain; charset=utf-8")
         if path == "/api/media":
             query = urllib.parse.parse_qs(self.path.partition("?")[2])
             code, out = media_file((query.get("id") or [""])[0], (query.get("path") or [""])[0])
