@@ -273,7 +273,7 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 .detail-build { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 16px; }
 .notice { margin-top: 24px; padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
 /* Screenshots and recordings (T-201) */
-.chip.shots { background: #1d2f4a; color: #9fd8ff; }
+.chip.shot-count { background: #1d2f4a; color: #9fd8ff; }
 .media { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 10px; }
 .media h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .media h3 .n { margin-left: auto; font-family: var(--mono); letter-spacing: 0; color: var(--faint); }
@@ -370,7 +370,7 @@ dialog.lightbox p { margin: 10px 0 0; text-align: center; font: 500 12px/1.4 var
   <figure style="margin:0"><img id="lightbox-img" alt=""><p id="lightbox-cap"></p></figure>
 </dialog>
 
-<dialog id="movenote"aria-labelledby="move-title" style="width:min(480px, calc(100% - 32px))">
+<dialog id="movenote" aria-labelledby="move-title" style="width:min(480px, calc(100% - 32px))">
   <div class="row"><span class="id" id="move-id"></span></div>
   <h2 id="move-title"></h2>
   <p class="note" id="move-route"></p>
@@ -950,7 +950,7 @@ const mediaUrl = (t, m) => `/api/media?id=${encodeURIComponent(t.id)}&path=${enc
 const baseName = (p) => String(p).split("/").pop();
 function shotsChip(t) {
   const n = mediaOf(t).length;
-  return n ? `<span class="chip shots" title="Screenshots and recordings on this ticket">${n} ${n === 1 ? "shot" : "shots"}</span>` : "";
+  return n ? `<span class="chip shot-count" title="Screenshots and recordings on this ticket">${n} ${n === 1 ? "shot" : "shots"}</span>` : "";
 }
 function renderMedia(t) {
   const el = $("detail-media"), list = mediaOf(t);
