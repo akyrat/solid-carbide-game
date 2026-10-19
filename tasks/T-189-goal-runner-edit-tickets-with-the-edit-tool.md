@@ -1,7 +1,7 @@
 ---
 id: T-189
 title: Goal runner: agents and QA edit ticket files with the file editing tool only
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -30,14 +30,18 @@ Fix: the agent prompt and the QA prompt in `tools/goal_agent/build.py`, and the 
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows the agent, QA and goal check prompts all say to edit ticket files only with the file editing tool, never with scripts or shell commands (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows the agent, QA and goal check prompts all say to edit ticket files only with the file editing tool, never with scripts or shell commands (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Quick fix started: the runner tells agents and QA to edit ticket files only with the file editing tool. Then G-003 resumes at T-183's QA.
+
+### 2026-10-19, In progress → In QA
+
+Built: agent, QA and goal check prompts say to edit tickets only with the file editing tool. 330 tools tests pass. QA checks it now.
 
 ## Result notes
 
