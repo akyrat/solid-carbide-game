@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/elevation_sample_demo.gd" id="1_demo"]
+
+[node name="ElevationSampleRamp03" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(-81, -59)
+start_rotation = -1.5708
+drive_steps = 3
+zoom = 14.0

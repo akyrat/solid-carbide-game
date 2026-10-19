@@ -1,7 +1,9 @@
 """Runs one Godot scene headless for a number of seconds and checks its output for errors (task T-196).
 
 Usage, from the repo root:
-    python game/tools/run_scene_headless.py <res://path/to/scene.tscn> [seconds, default 10]
+    python game/tools/run_scene_headless.py <res://path/to/scene.tscn> [seconds, default 10] [--show]
+
+--show also prints everything the scene printed (a fixture's state, for example).
 
 GODOT_BIN comes from the environment, or from .env at the repo root (as game/tools/godot_env.sh).
 The project is imported first (as game/tools/run_tests.sh). The scene runs with --headless for the given wall-clock seconds and is then stopped. Exit codes:
@@ -73,6 +75,8 @@ def run(scene, seconds, godot):
 
 
 def main(argv):
+    show = "--show" in argv
+    argv = [a for a in argv if a != "--show"]
     if len(argv) < 2 or not argv[1].startswith("res://"):
         print(__doc__)
         return 2
@@ -82,6 +86,8 @@ def main(argv):
         print("GODOT_BIN is not set or does not exist (see README.md, 'Secrets and API keys').")
         return 2
     output, stopped = run(argv[1], seconds, godot)
+    if show:
+        print(output)
     errors = error_lines(output)
     how = "stopped after %.0f s" % seconds if stopped else "quit by itself"
     if errors:

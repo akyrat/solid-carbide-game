@@ -87,6 +87,7 @@ func test_one_drawing_per_raised_area_and_ramp() -> void:
 		if a != null:
 			assert_eq(a.get_script(), PlatformDrawingScript)
 			assert_true(a.is_inside_tree())
+			assert_null(a.art_sprite, "%s uses the script drawing (placeholder)" % id)
 	assert_eq(_area("ramp-nw-0-3").kind, "ramp")
 	assert_eq(_area("roof-nw-6").kind, "platform")
 

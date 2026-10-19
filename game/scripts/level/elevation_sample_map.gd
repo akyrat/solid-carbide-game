@@ -131,6 +131,12 @@ func _add_area(kind: String, block: Dictionary) -> void:
 	var d = PlatformDrawingScript.new()
 	d.name = "%s_%s" % [kind, str(block.id).replace("-", "_")]
 	d.setup(kind, block, ISO_TRANSFORM)
+	# The script drawing is the placeholder here: the elevation test's art
+	# (art/elevation/) is drawn for that scene's own sizes, so it is not used.
+	if d.art_sprite != null:
+		d.art_sprite.free()
+		d.art_sprite = null
+		d.queue_redraw()
 	view_root.add_child(d)
 	areas.append(d)
 
