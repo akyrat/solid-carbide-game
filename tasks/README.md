@@ -137,7 +137,9 @@ Every task ends with screenshots of its work wherever anything can be shown (boa
 - **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
 - **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
 
-They go in `art-archive/<task id>/screenshots/` and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say.
+They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say. Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
+
+The task board shows them on the ticket (T-201): every image and recording (`.png`, `.jpg`, `.gif`, `.webp`, `.mp4`, `.webm`) in that folder, and any media file on the `Board review files:` line, appears in the ticket's "Screenshots and recordings" section, read from the task folder while the branch is open (`docs/README.md`, "The task board").
 
 ## Models
 

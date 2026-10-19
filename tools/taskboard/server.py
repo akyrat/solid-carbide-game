@@ -14,6 +14,10 @@ move is shown on the page with its reason. Each move the board makes is also app
 .board/board-inbox.jsonl, which is never emptied: each Project Lead session reads it with its own
 cursor (tools/board_inbox.py), through the hooks and its watcher.
 
+A ticket's screenshots and recordings (T-201) are listed with it in /api/tickets ("media") and
+served one at a time, read-only, by GET /api/media?id=T-012&path=<relative path>: only image and
+video files the ticket lists, from the checkout it lives in.
+
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
 """
@@ -26,6 +30,7 @@ import re
 import subprocess
 import sys
 import threading
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -59,7 +64,8 @@ def inbox_path():
 
 
 def version(folders=None):
-    """Changes whenever a task file the board shows changes, or a task branch opens or closes."""
+    """Changes whenever a task file the board shows changes, a task branch opens or closes, or a
+    screenshot is added to, changed in or removed from a ticket's art-archive/<id>/screenshots/."""
     folders = tb.task_folders() if folders is None else folders
     h = hashlib.sha256()
     for path in tb.task_files():
@@ -70,12 +76,47 @@ def version(folders=None):
         except OSError:
             continue
         h.update(f"{real}|{st.st_mtime_ns}|{st.st_size}\n".encode("utf-8"))
+        for shot in tb.screenshot_files(real.parent.parent, path.name[:5]):
+            try:
+                sst = shot.stat()
+            except OSError:
+                continue
+            h.update(f"{shot}|{sst.st_mtime_ns}|{sst.st_size}\n".encode("utf-8"))
     return h.hexdigest()[:16]
 
 
 def tickets_payload():
     folders = tb.task_folders()
     return {"version": version(folders), "generated_at": now(), "tickets": tb.tickets_now(folders=folders)}
+
+
+def media_file(task_id, rel, folders=None):
+    """The file the media endpoint may serve for one ticket. Returns (http status, Path or error body).
+    Only a file the ticket lists as its media (tb.ticket_media: its screenshots folder and media on its
+    `Board review files:` line, in the checkout the ticket lives in) is served; anything else is refused."""
+    if not isinstance(task_id, str) or not re.fullmatch(r"T-\d+", task_id):
+        return 400, {"error": "A media request needs a ticket id like T-012."}
+    if not isinstance(rel, str) or not rel:
+        return 400, {"error": "A media request needs a path."}
+    clean = rel.replace("\\", "/")
+    if ".." in clean.split("/") or clean.startswith("/") or ":" in clean or "\0" in clean:
+        return 400, {"error": "That path is not allowed."}
+    if not tb.media_kind(clean):
+        return 415, {"error": "Only images and recordings (png, jpg, gif, webp, mp4, webm) are served."}
+    folders = tb.task_folders() if folders is None else folders
+    files = sorted(tb.TASKS_DIR.glob(f"{task_id}-*.md"))
+    if not files:
+        return 404, {"error": "No such ticket."}
+    name = files[0].name
+    folder = folders.get(task_id)
+    task_file = folder / "tasks" / name if folder and (folder / "tasks" / name).exists() else files[0]
+    t = tb.ticket(task_file)
+    base = task_file.resolve().parent.parent
+    listed = {m["path"] for m in (t or {}).get("media", [])}
+    safe = tb.safe_relative(base, clean)
+    if not safe or safe not in listed:
+        return 404, {"error": "That file is not one of this ticket's screenshots or recordings."}
+    return 200, base / safe
 
 
 def godot_bin(root=None):
@@ -231,7 +272,59 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, {"builds": builds()})
         if path == "/api/tickets":
             return self.send(200, tickets_payload())
+        if path == "/api/media":
+            query = urllib.parse.parse_qs(self.path.partition("?")[2])
+            code, out = media_file((query.get("id") or [""])[0], (query.get("path") or [""])[0])
+            if code != 200:
+                return self.send(code, out)
+            return self.send_media(out)
         return self.send(404, {"error": "Not found."})
+
+    def send_media(self, file):
+        """Stream one media file with its content type; a single `Range: bytes=a-b` gets a 206,
+        so recordings can be scrubbed. The file is read only now, in chunks."""
+        try:
+            size = file.stat().st_size
+            f = file.open("rb")
+        except OSError:
+            return self.send(404, {"error": "That file can't be read."})
+        with f:
+            start, end, code = 0, size - 1, 200
+            match = re.fullmatch(r"bytes=(\d*)-(\d*)", (self.headers.get("Range") or "").strip())
+            if match and (match.group(1) or match.group(2)):
+                if match.group(1):
+                    start = int(match.group(1))
+                    end = min(int(match.group(2)), size - 1) if match.group(2) else size - 1
+                else:
+                    start = max(0, size - int(match.group(2)))
+                if start > end or start >= size:
+                    self.send_response(416)
+                    self.send_header("Content-Range", f"bytes */{size}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return None
+                code = 206
+            self.send_response(code)
+            self.send_header("Content-Type", tb.media_kind(file.name)[1])
+            self.send_header("Content-Length", str(end - start + 1 if size else 0))
+            self.send_header("Accept-Ranges", "bytes")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            if code == 206:
+                self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+            self.end_headers()
+            f.seek(start)
+            left = end - start + 1 if size else 0
+            try:
+                while left > 0:
+                    chunk = f.read(min(65536, left))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    left -= len(chunk)
+            except (ConnectionError, OSError):
+                pass   # the browser stopped a video download half way: normal
+        return None
 
     def do_POST(self):
         if not self.local_host() or self.headers.get("X-Board") != "1":

@@ -34,6 +34,15 @@ UPDATE_HEAD_RE = re.compile(r"^### (\d{4}-\d{2}-\d{2}), (.+?)[ \t]*$", re.M)
 NOTES_PLACEHOLDER = "Written by the agent when it finishes."
 NOTES_MAX = 20000
 NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,29}")   # a Project Lead session's name, also a ticket's lead
+# A ticket's screenshots and recordings (T-201): the only file types the board lists and serves.
+MEDIA_TYPES = {
+    ".png": ("image", "image/png"),
+    ".jpg": ("image", "image/jpeg"),
+    ".gif": ("image", "image/gif"),
+    ".webp": ("image", "image/webp"),
+    ".mp4": ("video", "video/mp4"),
+    ".webm": ("video", "video/webm"),
+}
 
 
 def parse_list(value):
@@ -85,13 +94,80 @@ def parse_updates(text):
     return out
 
 
+def media_kind(name):
+    """("image" | "video", content type) for a media file name, or None for any other file."""
+    return MEDIA_TYPES.get(Path(str(name)).suffix.lower())
+
+
+def screenshot_files(base, task_id):
+    """The media files in <base>/art-archive/<task id>/screenshots/ and its subfolders, sorted."""
+    if not re.fullmatch(r"T-\d+", str(task_id)):
+        return []
+    folder = Path(base) / "art-archive" / task_id / "screenshots"
+    if not folder.is_dir():
+        return []
+    return sorted(p for p in folder.rglob("*") if media_kind(p.name) and p.is_file())
+
+
+def safe_relative(base, rel):
+    """`rel` as a clean relative path ("a/b.png") inside `base`, or None: no absolute paths, drive
+    letters or `..`, and the real file (links followed) must stay inside `base`."""
+    if not isinstance(rel, str) or not rel or "\0" in rel:
+        return None
+    rel = rel.strip().replace("\\", "/")
+    parts = rel.split("/")
+    if rel.startswith("/") or ":" in rel or any(p in ("", ".", "..") for p in parts):
+        return None
+    try:
+        root = Path(base).resolve()
+        (root / rel).resolve().relative_to(root)
+    except (OSError, ValueError, RuntimeError):
+        return None
+    return "/".join(parts)
+
+
+def ticket_media(base, task_id, review_files=()):
+    """A ticket's screenshots and recordings, looked up in the checkout it lives in (`base`): every
+    media file in art-archive/<id>/screenshots/, then the media named on its `Board review files:`
+    line. [{"path" (relative to base, with /), "kind" (image or video), "size" (bytes)}]."""
+    base = Path(base)
+    found, out = set(), []
+
+    def add(rel):
+        rel = safe_relative(base, rel)
+        if not rel or rel in found or not media_kind(rel):
+            return
+        try:
+            st = (base / rel).stat()
+        except OSError:
+            return
+        if not (base / rel).is_file():
+            return
+        found.add(rel)
+        out.append({"path": rel, "kind": media_kind(rel)[0], "size": st.st_size})
+
+    for p in screenshot_files(base, task_id):
+        add(p.relative_to(base).as_posix())
+    for f in review_files:
+        f = str(f).strip().replace("\\", "/")
+        if re.match(r"^[A-Za-z]:/", f):   # an absolute path is accepted only inside the ticket's checkout
+            try:
+                f = Path(f).resolve().relative_to(base.resolve()).as_posix()
+            except (OSError, ValueError):
+                continue
+        add(f)
+    return out
+
+
 def ticket(path, folder=""):
-    """The document the page shows for one task file. `folder` is the task's branch folder, if open."""
+    """The document the page shows for one task file. `folder` is the task's branch folder, if open.
+    Its media are looked up in the checkout the task file is in (the folder above tasks/)."""
     text = path.read_text(encoding="utf-8")
     fields = parse_header(text)
     if not fields or "id" not in fields:
         return None
     review, review_files, notes = review_parts(text)
+    media = ticket_media(Path(path).resolve().parent.parent, fields["id"], review_files)
     return {
         "id": fields["id"],
         "title": fields.get("title", ""),
@@ -110,6 +186,7 @@ def ticket(path, folder=""):
         "result_notes": notes,
         "updates": parse_updates(text),
         "folder": folder,
+        "media": media,
     }
 
 
