@@ -1,7 +1,7 @@
 ---
 id: T-192
 title: Elevation test scene: a round shadow under the car, and the bigger-when-high option removed
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/level/elevation_platform_drawing.gd, game/scenes/elevation_test/elevation_test.tscn]
 files_expected_to_change: [game/scripts/level/elevation_platform_drawing.gd, game/scenes/elevation_test/elevation_test.tscn, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-192/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -51,6 +51,10 @@ Started from your playtest: a round shadow under the car's centre, same colour a
 ### 2026-10-19, In progress → In QA
 
 Built: the shadow is a round patch under the car's centre (same colour, doesn't turn), and the bigger-when-high option is gone. GUT 1043/1043. QA checks it now.
+
+### 2026-10-19, In QA → Needs playtest
+
+QA passed all 5 criteria. In the goal's build for your playtest: the round shadow under the car, and no bigger-when-high option.
 
 ## Result notes
 
