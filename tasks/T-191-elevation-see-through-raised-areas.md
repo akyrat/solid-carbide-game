@@ -1,7 +1,7 @@
 ---
 id: T-191
 title: Elevation test scene: raised areas turn see-through like buildings, and no car popping over them at a wall hit
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -36,17 +36,21 @@ Board review files: art-archive/T-191/screenshots/
 
 ## Acceptance criteria
 
-- [ ] With the car behind the platform and covered by it on screen, the platform (and the ramp, when it covers the car) is drawn see-through, fading in and out like the buildings; a GUT test checks it fades when covering the car and comes back when it doesn't, and that the fade uses the buildings' numbers (15%, 0.15 s) (QA: pass / fail)
-- [ ] A GUT test drives the car into each of the platform's two back sides (the ones hidden from the viewer) from behind and checks the car is drawn under the platform on every step of the hit, never over it (QA: pass / fail)
-- [ ] The existing elevation tests and the full GUT suite pass (`bash game/tools/run_tests.sh`) (QA: pass / fail)
-- [ ] Screenshots in `art-archive/T-191/screenshots/` show the car behind a see-through platform and the car at a back-side wall hit, and are listed in the result notes (QA: pass / fail)
-- [ ] `docs/drifting.md` (Content, the elevation test scene) and `game/README.md` describe the see-through and where its code lives (QA: pass / fail)
+- [ ] With the car behind the platform and covered by it on screen, the platform (and the ramp, when it covers the car) is drawn see-through, fading in and out like the buildings; a GUT test checks it fades when covering the car and comes back when it doesn't, and that the fade uses the buildings' numbers (15%, 0.15 s) (QA: pass)
+- [ ] A GUT test drives the car into each of the platform's two back sides (the ones hidden from the viewer) from behind and checks the car is drawn under the platform on every step of the hit, never over it (QA: pass)
+- [ ] The existing elevation tests and the full GUT suite pass (`bash game/tools/run_tests.sh`) (QA: pass)
+- [ ] Screenshots in `art-archive/T-191/screenshots/` show the car behind a see-through platform and the car at a back-side wall hit, and are listed in the result notes (QA: pass)
+- [ ] `docs/drifting.md` (Content, the elevation test scene) and `game/README.md` describe the see-through and where its code lives (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Started from your playtest: the platform turns see-through like the buildings when the car is behind it, and the car won't pop over it at a back-side wall hit. Built on the goal's build.
+
+### 2026-10-19, In progress → In QA
+
+Built: the platform and ramp turn see-through like the buildings (shared code), and the wall-hit pop is fixed (the depth rule now uses the car's centre). 18 new tests, GUT 1042/1042. QA checks it now.
 
 ## Result notes
 
