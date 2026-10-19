@@ -1440,3 +1440,8 @@ Entry format:
 - Decision or change: the board asked to see screenshots of the work wherever possible, as a rule for every ticket. Every task now ends with screenshots in `art-archive/<task id>/screenshots/`, listed in its result notes: in-game screenshots when something is on screen, a picture drawn from the data when nothing is on screen yet, none for tooling and docs. The agent takes them, QA checks them, and the Project Lead shows them to the board when the ticket passes, goal runs included. G-003's first ticket, T-182 (ground-height data only), got a picture of its layout drawn from its data by the Project Lead.
 - Documents touched: `docs/working-with-the-board.md`, `tasks/README.md`
 - Tasks: T-182 (G-003)
+
+## 2026-10-19: T-189 done: runner agents edit tickets with the file editing tool only
+- Decision or change: G-003 paused on T-183's QA although every criterion passed: QA wrote its marks with a `python -c` script, which the guard rightly refuses (a script writing a task file), and QA reported itself blocked. The runner's agent, QA and goal check prompts now say to edit ticket files only with the file editing tool. QA round 1 passed both criteria; all three test sets passed on the merge (330 tools, 282 game tools, GUT). The Project Lead drew T-183's picture (a side view of the car's height at four speeds, simulated from its numbers: at top speed the car flies about 55 units off the ramp) in `art-archive/T-183/screenshots/`. G-003 resumes.
+- Documents touched: none
+- Tasks: T-189 (done), G-003
