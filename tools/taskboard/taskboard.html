@@ -272,6 +272,24 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
 .build button[disabled] { opacity: .45; cursor: default; }
 .detail-build { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 16px; }
 .notice { margin-top: 24px; padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); text-align: center; }
+/* Screenshots and recordings (T-201) */
+.chip.shot-count { background: #1d2f4a; color: #9fd8ff; }
+.media { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 10px; }
+.media h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.media h3 .n { margin-left: auto; font-family: var(--mono); letter-spacing: 0; color: var(--faint); }
+.shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.shot { margin: 0; display: grid; gap: 5px; min-width: 0; }
+.shot .frame { display: grid; place-items: center; aspect-ratio: 4 / 3; background: #080a1c; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; padding: 0; cursor: zoom-in; width: 100%; }
+.shot .frame:hover { border-color: var(--cyan); }
+.shot img, .shot video { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; display: block; }
+.shot video { cursor: default; background: #080a1c; border: 1px solid var(--line); border-radius: 6px; aspect-ratio: 4 / 3; }
+.shot figcaption { font: 500 11px/1.3 var(--mono); color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shot figcaption .k { color: var(--faint); }
+dialog.lightbox { width: 100vw; max-width: 100vw; height: 100vh; max-height: 100vh; margin: 0; padding: 16px; border: 0; border-radius: 0; background: #04050d; display: none; place-items: center; cursor: zoom-out; overflow: auto; }
+dialog.lightbox[open] { display: grid; }
+dialog.lightbox::backdrop { background: #04050d; }
+dialog.lightbox img { image-rendering: pixelated; max-width: none; display: block; }
+dialog.lightbox p { margin: 10px 0 0; text-align: center; font: 500 12px/1.4 var(--mono); color: var(--muted); }
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -334,6 +352,7 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   <h2 id="detail-title"></h2>
   <section class="lead-box" id="detail-updates" aria-label="Latest from the Project Lead" hidden></section>
   <section class="review" id="detail-review" aria-label="Your review"></section>
+  <section class="media" id="detail-media" aria-label="Screenshots and recordings" hidden></section>
   <section class="detail-build" id="detail-build" aria-label="Build" hidden></section>
   <section class="deps" id="detail-deps" aria-label="Dependencies"></section>
   <dl id="detail-fields"></dl>
@@ -345,6 +364,10 @@ dialog .file { font-family: var(--mono); font-size: 12px; color: var(--cyan); }
   </div>
   <p class="note">A move changes the task file straight away, through the status script, so the workflow rules apply. The Project Lead hears about it at its next step.</p>
   <div class="dialog-actions"><button class="close" id="detail-close">Close</button></div>
+</dialog>
+
+<dialog id="lightbox" class="lightbox" aria-label="Screenshot, full size">
+  <figure style="margin:0"><img id="lightbox-img" alt=""><p id="lightbox-cap"></p></figure>
 </dialog>
 
 <dialog id="movenote" aria-labelledby="move-title" style="width:min(480px, calc(100% - 32px))">
@@ -566,7 +589,7 @@ function renderBoard() {
     const cards = items.map((t) => `
       <article class="card${t.status === "cancelled" ? " is-cancelled" : ""}${mine(t) ? " is-mine" : ""}${isUnread(t) ? " is-new" : ""}" tabindex="0" data-id="${esc(t.id)}" style="--c:${lane.color}" aria-label="${esc(t.id)} ${esc(t.title)}${mine(t) ? ", your ticket" : ""}${isUnread(t) ? ", changed since you last opened it" : ""}">
         ${mine(t) ? '<div class="mine-label">Your ticket</div>' : ""}
-        <div class="row"><span class="id">${esc(t.id)}</span>${isUnread(t) ? '<span class="chip new" title="Changed since you last opened it">New</span>' : ""}${badges(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
+        <div class="row"><span class="id">${esc(t.id)}</span>${isUnread(t) ? '<span class="chip new" title="Changed since you last opened it">New</span>' : ""}${badges(t)}${shotsChip(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
       </article>`).join("");
     return `<section class="lane" data-lane="${lane.key}" style="--c:${lane.color}">
@@ -850,6 +873,7 @@ function openDetail(id) {
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
   renderUpdates(t);
   renderReview(t);
+  renderMedia(t);
   renderDetailBuild(t);
   renderDeps(t);
   if (markSeen(t)) { renderBoard(); renderOverview(); renderInbox(); }
@@ -918,6 +942,57 @@ $("detail-review").addEventListener("click", async (e) => {
     toast("Press Ctrl+C to copy the selected path");
   }
 });
+
+// "Screenshots and recordings" (T-201): the ticket's media from art-archive/<id>/screenshots/ and its
+// "Board review files:" line, served one by one by the local server (GET /api/media).
+const mediaOf = (t) => t.media || [];
+const mediaUrl = (t, m) => `/api/media?id=${encodeURIComponent(t.id)}&path=${encodeURIComponent(m.path)}&s=${m.size}`;
+const baseName = (p) => String(p).split("/").pop();
+function shotsChip(t) {
+  const n = mediaOf(t).length;
+  return n ? `<span class="chip shot-count" title="Screenshots and recordings on this ticket">${n} ${n === 1 ? "shot" : "shots"}</span>` : "";
+}
+function renderMedia(t) {
+  const el = $("detail-media"), list = mediaOf(t);
+  // The detail view is redrawn on every refresh: keep playing videos untouched unless the list changed.
+  const sig = t.id + "|" + JSON.stringify(list);
+  if (el.dataset.sig === sig) return;
+  el.dataset.sig = sig;
+  el.hidden = !list.length;
+  if (!list.length) { el.innerHTML = ""; return; }
+  const item = (m) => {
+    const url = esc(mediaUrl(t, m)), name = esc(baseName(m.path));
+    const body = m.kind === "video"
+      ? `<video src="${url}" muted loop autoplay playsinline controls preload="metadata" aria-label="${name}"></video>`
+      : `<button type="button" class="frame" data-full="${url}" data-name="${esc(m.path)}" aria-label="Open ${name} full size"><img src="${url}" alt="${name}" loading="lazy"></button>`;
+    return `<figure class="shot">${body}<figcaption title="${esc(m.path)}">${name}${m.kind === "video" ? ' <span class="k">· video</span>' : ""}</figcaption></figure>`;
+  };
+  el.innerHTML = `<h3>Screenshots and recordings <span class="n">${list.length}</span></h3><div class="shots">${list.map(item).join("")}</div>`;
+}
+// Full size: small pixel art is enlarged by a whole number so its pixels stay square; large images shrink to fit.
+function openLightbox(url, name) {
+  const img = $("lightbox-img");
+  img.removeAttribute("style");
+  img.onload = () => {
+    const w = img.naturalWidth, h = img.naturalHeight;
+    const fit = Math.min((window.innerWidth - 32) / w, (window.innerHeight - 70) / h);
+    const scale = fit >= 1 ? Math.floor(fit) : fit;
+    img.style.width = Math.round(w * scale) + "px";
+    img.style.height = Math.round(h * scale) + "px";
+    $("lightbox-cap").textContent = `${name} · ${w}×${h}${scale !== 1 ? ` · shown at ${scale >= 1 ? scale + "×" : Math.round(scale * 100) + "%"}` : ""} · Esc or click to close`;
+  };
+  $("lightbox-cap").textContent = name;
+  img.alt = name;
+  img.src = url;
+  $("lightbox").showModal();
+}
+$("detail-media").addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-full]");
+  if (b) openLightbox(b.dataset.full, b.dataset.name);
+});
+$("lightbox").addEventListener("click", () => $("lightbox").close());
+// Closing the ticket stops its recordings.
+$("detail").addEventListener("close", () => { const el = $("detail-media"); el.innerHTML = ""; el.dataset.sig = ""; el.hidden = true; });
 
 function renderDeps(t) {
   const link = (d) => `<button type="button" class="dlink" data-id="${esc(d.id)}" style="--c:${statusColor(d.status)}"${d.missing ? " disabled" : ""}>

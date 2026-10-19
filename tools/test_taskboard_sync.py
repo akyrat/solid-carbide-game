@@ -119,6 +119,57 @@ class TaskboardSyncTests(unittest.TestCase):
         _, flags = self.run_task_folders_as("posix")
         self.assertEqual(flags, 0)
 
+    def add_file(self, base, rel, data=b"x"):
+        path = Path(base) / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        return path
+
+    def test_media_from_the_screenshots_folder_and_its_subfolders(self):
+        root = Path(self.tmp.name)
+        self.add_file(root, "art-archive/T-900/screenshots/a.png", b"12345")
+        self.add_file(root, "art-archive/T-900/screenshots/run/clip.MP4")
+        self.add_file(root, "art-archive/T-900/screenshots/notes.txt")    # not media
+        self.add_file(root, "art-archive/T-900/raw.png")                  # not in screenshots/
+        media = tb.ticket(self.tasks / "T-900-test.md")["media"]
+        self.assertEqual(media, [
+            {"path": "art-archive/T-900/screenshots/a.png", "kind": "image", "size": 5},
+            {"path": "art-archive/T-900/screenshots/run/clip.MP4", "kind": "video", "size": 1}])
+
+    def test_media_from_the_board_review_files_line(self):
+        root = Path(self.tmp.name)
+        self.add_file(root, "game/shot.webp")
+        self.add_file(root, "art-archive/T-900/screenshots/a.gif")
+        outside = self.add_file(Path(self.tmp.name).parent, f"outside-{Path(self.tmp.name).name}.png")
+        self.addCleanup(outside.unlink)
+        body = ("Board review files: [game/shot.webp, docs/x.md, game/missing.png, ../" + outside.name
+                + ", " + str(outside) + ", art-archive/T-900/screenshots/a.gif]\n")
+        (self.tasks / "T-900-test.md").write_text(TASK + body, encoding="utf-8")
+        media = tb.ticket(self.tasks / "T-900-test.md")["media"]
+        self.assertEqual([(m["path"], m["kind"]) for m in media],
+                         [("art-archive/T-900/screenshots/a.gif", "image"), ("game/shot.webp", "image")])
+
+    def test_media_of_an_open_task_come_from_its_folder(self):
+        root = Path(self.tmp.name)
+        self.add_file(root, "art-archive/T-900/screenshots/main.png")
+        folder = root / "worktrees" / "T-900"
+        (folder / "tasks").mkdir(parents=True)
+        (folder / "tasks" / "T-900-test.md").write_text(TASK, encoding="utf-8")
+        self.add_file(folder, "art-archive/T-900/screenshots/branch.webm")
+        t = tb.tickets_now(self.tasks, {"T-900": folder})[0]
+        self.assertEqual([(m["path"], m["kind"]) for m in t["media"]], [("art-archive/T-900/screenshots/branch.webm", "video")])
+        t = tb.tickets_now(self.tasks, {})[0]
+        self.assertEqual([m["path"] for m in t["media"]], ["art-archive/T-900/screenshots/main.png"])
+
+    def test_no_media_is_an_empty_list(self):
+        self.assertEqual(tb.ticket(self.tasks / "T-900-test.md")["media"], [])
+
+    def test_safe_relative_refuses_escapes(self):
+        base = Path(self.tmp.name)
+        for bad in ["../x.png", "a/../../x.png", "/etc/x.png", "C:/x.png", "a\\..\\x.png", "", "a//b.png", "./a.png"]:
+            self.assertIsNone(tb.safe_relative(base, bad), bad)
+        self.assertEqual(tb.safe_relative(base, "a\\b.png"), "a/b.png")
+
     def test_real_task_files_all_parse(self):
         for path in tb.task_files():
             self.assertIsNotNone(tb.ticket(path), path.name)
