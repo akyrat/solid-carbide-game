@@ -46,6 +46,11 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 
 - **Elevation** (board, 2026-10-17; go-ahead 2026-10-19): the car gets a real height above the ground, separate from where it is on the map, with gravity, a takeoff speed and a landing. It can drive up a ramp onto a raised area, drive along it, and jump off its edge or off a ramp. The illusion of height in this 2D game: the car's drawing lifts up the screen with its height while its shadow stays on the ground; drawing the car slightly bigger when high is an option for the board's playtest. Built first in a test scene, the way the drift prototype was, not in the real map. The map side (raised areas and ramps) is in Level design. Later, on top of it: the car jumping on its own, grinds, and rotating the car in the air (the trick system, rebuilt from the reference); far later, maybe loops.
 
+- **Elevation test scene, the board's playtest** (board, 2026-10-19): the board likes the physics: how the car drives, how it looks going up the ramp, and jumping over the platform ("amazing"). Three changes before it merges:
+  - **See-through raised areas.** When the car is behind a raised area it must not disappear: the raised area turns see-through the way the map's buildings do (Level design, "When a building fades"), reusing the same logic. And driving into a raised area's side from behind (its top-right or top-left side on screen, where the car is hidden) must not make the car suddenly draw over the raised area.
+  - **No "bigger when high" option.** The board tried drawing the car bigger with height and didn't like it: the option is removed, and the car is always drawn at its normal size.
+  - **A round shadow.** The shadow is a circle right under the centre of the car, in the same colour and feel as now, instead of the rectangle, so the player sees where the car is on the ground when it is in the air.
+
 ## Content
 
 ### Prototypes so far

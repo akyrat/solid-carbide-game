@@ -1450,3 +1450,8 @@ Entry format:
 - Decision or change: T-184's agent skipped the screenshots rule (its work had nothing on screen, and it drew nothing from the data), and QA passed it; the Project Lead drew T-184's picture. The runner's agent prompt now asks for screenshots as `tasks/README.md` says (a picture from the data when nothing is on screen), and its QA prompt fails a ticket that could be pictured and has none. QA round 1 passed both criteria; all three test sets passed on the merge. It applies from the runner's next start or resume. Also: the Project Lead merged `master` into G-003's build mid-run, which made T-183's merge conflict on its status line (resolved to the branch's done); goal builds are not merged with `master` mid-run again. While this merge was open, the runner held back its own commit on `master`, as designed.
 - Documents touched: none
 - Tasks: T-190 (done), G-003
+
+## 2026-10-19: G-003 played: the board likes the elevation physics; three changes before merging
+- Decision or change: G-003 finished (the board moved T-188 to done by asking to resume: its only fail was the staleness check only the Project Lead runs, and it passed). The board played the elevation test scene and likes the physics, the ramp and the jump over the platform. Before merging: raised areas turn see-through like the buildings when the car is behind them, and the car must not pop over the platform when it hits its side from behind (T-191); the bigger-when-high option is removed, and the shadow becomes a circle under the car's centre, same colour and feel (T-192). Both build on `playtest/G-003` for the board to test there.
+- Documents touched: `docs/drifting.md`, `docs/level-design.md`
+- Tasks: T-188 (done), T-191 (open), T-192 (blocked, waits on T-191)
