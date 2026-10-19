@@ -62,4 +62,12 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-183.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-19.
+
+- New `game/scripts/driving/car_height.gd`: a node-free height model (height, vertical speed, airborne, `took_off` and `landed` signals). It follows the ground on the ground and the ramp, takes off at the ramp's top (climbing, flat speed at least `RAMP_TAKEOFF_MIN_SPEED`, vertical speed = the ramp's slope rate, formula in `game/README.md`), and falls off a drop-off edge with vertical speed 0. In the air, gravity, then the height follows. It lands by snapping to the ground with vertical speed 0.
+- `car.gd`: owns `height_model`, steps it after the flat step (after any bounce) with the flat position before and after. Adds `ground` (null by default, so height stays 0 in the prototype and the run), plus `height`, `vertical_speed` and `airborne`. The flat driving code is untouched: the car steers in the air exactly as on the ground (**proposal**: the docs don't say whether it can steer in the air).
+- Numbers (proposals for the playtest, at the top of `car_height.gd`, listed in `game/README.md`, "Elevation test scene", "The car's height"): gravity 12 units/s², ramp takeoff min speed 4 units/s, ramp takeoff factor 1.0. At cruise speed off the test ramp: 2.75 units/s up.
+- Left for the next task, as the Description says: the platform's sides against the car. Driving into a drop-off edge from below snaps the car up to the platform for now. Landing over the platform's edge and the ramp's sides are also left.
+- Tests: `game/tests/unit/test_car_height.gd`, 11 tests (no ground source → 0; following the ramp each step; ramp-top takeoff matches the formula; a slow car follows the ground; drop-off takeoff; gravity per step; landing on the street and on the platform; flat driving identical with and without a ground source). Full GUT suite: 982/982 passed headless. The existing driving tests are unchanged and pass.
+- Documents affected: `game/README.md` (updated).
+- PixelLab: 0 generations. Refusals: none.
