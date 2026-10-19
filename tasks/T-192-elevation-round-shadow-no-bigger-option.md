@@ -4,7 +4,7 @@ title: Elevation test scene: a round shadow under the car, and the bigger-when-h
 status: blocked
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal: G-003

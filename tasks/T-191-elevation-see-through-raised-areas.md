@@ -4,7 +4,7 @@ title: Elevation test scene: raised areas turn see-through like buildings, and n
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal: G-003
