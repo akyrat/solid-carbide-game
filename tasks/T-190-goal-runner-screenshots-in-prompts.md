@@ -1,7 +1,7 @@
 ---
 id: T-190
 title: Goal runner: agents take screenshots and QA checks them
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -37,4 +37,13 @@ Fix, in `tools/goal_agent/build.py`:
 
 ## Updates
 
+### 2026-10-19, Open → In progress
+
+Started: the runner's prompts tell agents to take screenshots (or draw a picture from the data) and QA to fail a ticket without them.
+
 ## Result notes
+
+- `tools/goal_agent/build.py`: new shared constants `SCREENSHOTS_RULE` (added to the agent prompt as a bullet after the ticket-editing rule) and `QA_SCREENSHOTS_RULE` (added to the QA prompt after the same rule), worded as the Description says.
+- `tools/goal_agent/test_build.py`: new test `test_agent_prompt_asks_for_screenshots_and_qa_prompt_fails_a_ticket_without_them` in `HeadlessRuns`.
+- Full suite `python -m unittest discover -s tools -p "test_*.py"`: 331 tests, OK (no Claude or network calls).
+- No screenshots: tooling.
