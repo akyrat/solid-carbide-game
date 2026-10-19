@@ -1,7 +1,7 @@
 ---
 id: T-192
 title: Elevation test scene: a round shadow under the car, and the bigger-when-high option removed
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Coursework
