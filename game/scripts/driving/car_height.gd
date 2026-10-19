@@ -3,11 +3,12 @@ extends RefCounted
 ## "Elevation"): a node-free model, separate from the flat top-down driving.
 ## car.gd steps it once per physics step, after its flat step, with where the
 ## car was, where it is now and its flat velocity. It never changes the flat
-## position or speed.
+## position or speed itself; car.gd does, when step() reports a wall.
 ##
 ## Units are the flat world's (x east, y south); height is in the same units,
 ## up is positive. The ground comes from a GroundHeight query (ground_height.gd).
-## With no ground the height stays 0.
+## With no ground the height stays 0. The ground's sides (task T-184) can stop
+## the move: step() returns the wall for car.gd to bounce off (see _walk).
 ##
 ## Every number below is a proposal for the board's playtest (game/README.md,
 ## "Elevation test scene", "The car's height").
@@ -21,6 +22,15 @@ const RAMP_TAKEOFF_MIN_SPEED := 4.0
 ## Share of the ramp's vertical speed the car keeps when it takes off (proposal;
 ## 1 = it carries on exactly along the ramp's slope).
 const RAMP_TAKEOFF_FACTOR := 1.0
+## The biggest step of the ground, units, the car drives over like a curb
+## (proposal, task T-184). A step up higher than this, to more than this above
+## the car, is a wall: a drop-off edge met from below, a ramp's side, or a
+## platform's side met in the air below its top. A step down higher than this
+## is a drop: the car leaves the ground and falls. A ramp's slope is never a
+## step (it rises SAMPLE_STEP x slope per piece).
+const STEP_CLIMB_MAX := 0.1
+## Length of the pieces a move is walked in, units (as GroundHeight.SAMPLE_STEP).
+const SAMPLE_STEP := 0.05
 
 ## Height above y = 0 ground, units.
 var height := 0.0
@@ -71,20 +81,29 @@ static func ramp_vertical_speed(r: Dictionary, velocity: Vector2) -> float:
 
 ## One physics step of dt seconds: the car moved from prev to pos (flat units)
 ## with flat velocity (units/s).
-func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> void:
+##
+## Returns what the ground's sides did to the move (task T-184), see _walk:
+## when "wall" is true the car met the side of a higher area (a drop-off edge
+## from below, a ramp's side, or a platform's side while in the air below its
+## top) and stopped at "point", the last place along the move outside it; the
+## caller moves the flat car there and bounces it off "normal". The height is
+## stepped as if the car had moved from prev to that point.
+func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> Dictionary:
 	if ground == null:
 		height = 0.0
 		vertical_speed = 0.0
 		airborne = false
-		return
+		return {"wall": false}
+	var walk := _walk(prev, pos, dt)
+	if walk.wall:
+		pos = walk.point
 	if airborne:
 		_step_air(pos, dt)
-		return
-	# On the ground. Falling off a drop-off edge (not a ramp, a step down).
-	var edge: Dictionary = ground.edge_between(prev, pos)
-	if edge.drop and not edge.up:
-		_take_off(false, 0.0, height)
-		return
+		return walk
+	# On the ground. Falling off a step down: a drop-off edge, or a ramp's side.
+	if walk.drop:
+		_take_off(false, 0.0, walk.drop_height)
+		return walk
 	# Leaving the ramp at its top, climbing, fast enough.
 	var r: Dictionary = ground.ramp_at(prev)
 	if not r.is_empty() and not ground.is_ramp(pos) and velocity.length() >= RAMP_TAKEOFF_MIN_SPEED:
@@ -93,11 +112,60 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> void:
 		if vz > 0.0 and height + vz * dt > at_ground:
 			# Carry on along the slope's line for this step.
 			_take_off(true, vz, height + vz * dt)
-			return
-	# Otherwise the height follows the ground under the car. Driving into a
-	# platform side from below is the next task's: here it just snaps.
+			return walk
+	# Otherwise the height follows the ground under the car (a step up higher
+	# than STEP_CLIMB_MAX was a wall, so this is a slope or a curb).
 	height = ground.height_at(pos)
 	vertical_speed = 0.0
+	return walk
+
+
+## Walks the move from prev to pos in SAMPLE_STEP pieces, with the car's height
+## along it: in the air, the straight line from this step's start height to its
+## end height under gravity; on the ground, the ground's height, held where it
+## steps down (the car leaves the ground there).
+##
+## A wall: a piece that steps the ground up by more than STEP_CLIMB_MAX (a side,
+## not a slope) to a height more than STEP_CLIMB_MAX above the car. The walk
+## stops there. A drop (on the ground only): the first piece that steps the
+## ground down by more than STEP_CLIMB_MAX; drop_height is the car's height
+## just before it.
+##
+## Returns {"wall": bool, "point": Vector2 (where the car stops; pos with no
+## wall), "normal": Vector2 (the side's outward normal), "area": int (the higher
+## area's index, GroundHeight.area_index_at), "wall_height": float (the ground's
+## height past the side), "drop": bool, "drop_height": float}.
+func _walk(prev: Vector2, pos: Vector2, dt: float) -> Dictionary:
+	var out := {"wall": false, "point": pos, "normal": Vector2.ZERO, "area": -1,
+		"wall_height": 0.0, "drop": false, "drop_height": 0.0}
+	var n := maxi(1, ceili(prev.distance_to(pos) / SAMPLE_STEP))
+	var h0 := height
+	var h1 := height + (vertical_speed - GRAVITY * dt) * dt
+	var h := height
+	var a := prev
+	var g_a: float = ground.height_at(prev)
+	for i in range(1, n + 1):
+		var t := float(i) / float(n)
+		var b := prev.lerp(pos, t)
+		var g_b: float = ground.height_at(b)
+		var h_b := lerpf(h0, h1, t) if airborne else h
+		if g_b - g_a > STEP_CLIMB_MAX and g_b > h_b + STEP_CLIMB_MAX:
+			var area: int = ground.area_index_at(b)
+			out.wall = true
+			out.point = a
+			out.area = area
+			out.normal = ground.side_normal(area, a, b)
+			out.wall_height = g_b
+			return out
+		if not airborne and not out.drop:
+			if g_b < h - STEP_CLIMB_MAX:
+				out.drop = true
+				out.drop_height = h
+			else:
+				h = g_b
+		a = b
+		g_a = g_b
+	return out
 
 
 func _take_off(from_ramp: bool, vz: float, new_height: float) -> void:

@@ -1087,10 +1087,10 @@ Tests: `tests/unit/test_ground_height.gd`.
 - `car.height` (units, up), `car.vertical_speed` (units/s, up positive, 0 on the ground), `car.airborne`. Signals on `height_model`: `took_off(from_ramp, vertical_speed)` and `landed(impact_vertical_speed)`.
 - **On the ground** (the ramp included) the height is the ground's height under the car.
 - **Takeoff at the ramp's top:** on the step the car goes from the ramp onto ground that is not ramp, climbing, at a flat speed of at least `RAMP_TAKEOFF_MIN_SPEED`, it leaves the ground with vertical speed `vz = (velocity . climb direction) x (top_height - bottom_height) / ramp length x RAMP_TAKEOFF_FACTOR` (the climb direction points from the ramp's foot to its top; ramp length is the footprint's size along it). Its height that step carries on along the slope's line: `height + vz x dt`. With the test scene's ramp (rise 3 over 12) at cruise speed, 11 units/s, that is 2.75 units/s. Slower, it just follows the ground onto the platform.
-- **Takeoff at a drop-off edge:** on the step the car crosses a step down (`edge_between`), it is in the air with vertical speed 0 (flat platform ground), at any speed, and falls.
+- **Takeoff at a drop-off edge:** on the step the car crosses a step down (a drop-off edge or, since T-184, a ramp's side; see "The platform's sides" below), it is in the air with vertical speed 0 (flat platform ground), at any speed, and falls.
 - **In the air:** each step `vertical_speed -= GRAVITY x dt`, then `height += vertical_speed x dt`.
 - **Landing:** when the height reaches the ground under the car, the height snaps to the ground and the vertical speed becomes 0.
-- Not here (the next task's): the platform's sides against the car (driving into a drop-off edge from below snaps the car up for now), landing over the platform's edge, the ramp's sides.
+- The platform's and the ramp's sides against the car: "The platform's sides (T-184)" below.
 
 Every number, in one place at the top of `car_height.gd`, is a proposal for the board's playtest:
 
@@ -1099,5 +1099,17 @@ Every number, in one place at the top of `car_height.gd`, is a proposal for the 
 | `GRAVITY` | 12 units/s² | Pulls the vertical speed down in the air |
 | `RAMP_TAKEOFF_MIN_SPEED` | 4 units/s | The slowest flat speed that leaves the ground at the ramp's top |
 | `RAMP_TAKEOFF_FACTOR` | 1.0 | Share of the ramp's vertical speed kept at takeoff |
+| `STEP_CLIMB_MAX` | 0.1 units | The biggest step of the ground driven over like a curb (T-184) |
 
 Tests: `tests/unit/test_car_height.gd`.
+
+### The platform's sides (T-184)
+
+The proposals (Drifting, Content, "Elevation: the platform's sides"), all in `car_height.gd`'s `step`, which now returns what the sides did to the move:
+
+- **The walk.** Each step, the move from the flat position before to the one after is walked in 0.05-unit pieces (`SAMPLE_STEP`) with the car's height along it: in the air, the straight line from the step's start height to its end height under gravity; on the ground, the ground's height. A piece that steps the ground **up** by more than `STEP_CLIMB_MAX` (a side, not a slope: the test ramp rises 0.0125 per piece) to more than `STEP_CLIMB_MAX` above the car is a **wall**: the walk stops at the last piece outside it. On the ground, the first piece that steps the ground **down** by more than `STEP_CLIMB_MAX` is a **drop**: the car takes off there (`took_off(false, 0)`) at its height before the step and falls. This replaces `edge_between` for the car (still in `GroundHeight`, unchanged), so a ramp's side is a drop too; driving along, up or down a ramp is neither.
+- **A wall** (a drop-off edge from below, a ramp's side from beside it, or a platform's side met in the air below its top): `step` returns `{"wall": true, "point", "normal", "area", "wall_height", ...}`. `car.gd` moves the car to `point`, reflects its velocity off `normal` exactly as off a physics wall (`tuning.wall_bounce`, "Bounce") and emits `hit_obstacle(ground, area, normal, impact_speed)`: the collider is the `GroundHeight`, the shape index the area's index (`GroundHeight.area_index_at`: a platform's index in `platforms`, a ramp's `platforms.size()` + its index in `ramps`). Pressed against the side it counts once; it re-arms once the car is more than `REARM_GAP_UNITS` (0.25) from where it stopped, as for walls. The height is stepped as if the car had moved only to `point`, so a car in the air keeps falling beside the side.
+- **Landing** is unchanged: when the height reaches the ground under the car's end position, on the top or on the street. Together with the walls, a step never ends with the car lower than the ground under it.
+- `GroundHeight` adds `area_index_at(point) -> int`, `area_rect(index) -> Rect2` and `side_normal(index, a, b) -> Vector2` (the outward normal of the side a move from a, outside, to b, inside, enters through; at a corner the side crossed last).
+
+Tests: `tests/unit/test_elevation_edges.gd`.
