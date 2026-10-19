@@ -1,7 +1,7 @@
 ---
 id: T-190
 title: Goal runner: agents take screenshots and QA checks them
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 files_expected_to_change: [tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,6 +44,10 @@ Started: the runner's prompts tell agents to take screenshots (or draw a picture
 ### 2026-10-19, In progress → In QA
 
 Built: the agent prompt asks for screenshots (or a picture drawn from the data), and the QA prompt fails a ticket that could be pictured and has none. 331 tools tests pass. QA checks it now.
+
+### 2026-10-19, In QA → Done
+
+QA passed both criteria. Merged: runner agents now take screenshots (or draw from the data), and QA fails a ticket without them. It applies from the next resume or run.
 
 ## Result notes
 
