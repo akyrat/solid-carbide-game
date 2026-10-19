@@ -18,6 +18,7 @@ extends CharacterBody2D
 
 const CarModel := preload("res://scripts/driving/car_model.gd")
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
+const CarHeight := preload("res://scripts/driving/car_height.gd")
 
 ## Pixels per unit in the flat world. Matches the placeholder car sheets
 ## (game/art/placeholders/car/*.json, px_per_unit), so a 1-unit-wide car is
@@ -75,6 +76,30 @@ var detect_tricks := true
 var tuning:
 	get:
 		return model.tuning
+
+## The car's real height above the ground (task T-183, car_height.gd), stepped
+## after the flat step. It never changes the flat driving.
+var height_model = CarHeight.new()
+## The ground-height source (a GroundHeight, ground_height.gd), or null. Null
+## (the drift prototype, the run): the height stays 0.
+var ground = null:
+	get:
+		return height_model.ground
+	set(value):
+		height_model.ground = value
+		height_model.reset(model.get_position())
+## Height above the ground's zero, units (0 with no ground source).
+var height: float:
+	get:
+		return height_model.height
+## Vertical speed, units/s, up positive.
+var vertical_speed: float:
+	get:
+		return height_model.vertical_speed
+## True while the car is in the air.
+var airborne: bool:
+	get:
+		return height_model.airborne
 
 ## When false, physics_step uses scripted_input instead of the keyboard (tests).
 var use_keyboard := true
@@ -136,6 +161,7 @@ func physics_step() -> void:
 		_pending_knockback = Vector2.ZERO
 	rotation = model.rotation
 	velocity = model.get_velocity() * PX_PER_UNIT
+	var flat_before: Vector2 = model.get_position()
 	var hit := move_and_collide(velocity * model.dt)
 	# Moving sets the body's transform, which wraps rotation into -PI..PI; keep
 	# the model's own angle, as before collisions existed.
@@ -151,6 +177,7 @@ func physics_step() -> void:
 		model.set_position(position / PX_PER_UNIT)
 		_bounce(hit)
 	_update_contacts(hit)
+	height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt)
 	stepped.emit()
 
 
