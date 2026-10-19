@@ -1,7 +1,7 @@
 ---
 id: T-202
 title: Task board: goals shown on the board, with a goal filter
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -33,16 +33,20 @@ Goals given to the goal runner (`goals/G-NNN-*.md`, `tasks/README.md`, "Goal run
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass / fail)
-- [ ] Tests show `/api/goals` returns each goal file's header fields and goal text, its tickets (from their `goal:` lines, including a ticket living in an open task folder) with a count per status, its latest pause when paused, and whether its build folder exists (QA: pass / fail)
-- [ ] The page shows the Goals strip (status chip, progress, art, iteration, finished goals folded), a goal's detail (text, ticket links, pauses, goal file, Play and Open in editor when its build exists), the Goal filter row and the goal label on cards; checked live by QA on a second board server (not port 8765) against the real `goals/` folder, or by reading the page code against this description where a browser isn't available (QA: pass / fail)
-- [ ] `docs/README.md` ("The task board") describes the goals strip, the goal detail, the Goal filter and `/api/goals` (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes (QA: pass)
+- [ ] Tests show `/api/goals` returns each goal file's header fields and goal text, its tickets (from their `goal:` lines, including a ticket living in an open task folder) with a count per status, its latest pause when paused, and whether its build folder exists (QA: pass)
+- [ ] The page shows the Goals strip (status chip, progress, art, iteration, finished goals folded), a goal's detail (text, ticket links, pauses, goal file, Play and Open in editor when its build exists), the Goal filter row and the goal label on cards; checked live by QA on a second board server (not port 8765) against the real `goals/` folder, or by reading the page code against this description where a browser isn't available (QA: pass)
+- [ ] `docs/README.md` ("The task board") describes the goals strip, the goal detail, the Goal filter and `/api/goals` (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Started: a Goals strip on the board (status, progress, art, the goal's detail and Play), a Goal filter, and each card labelled with its goal.
+
+### 2026-10-19, In progress → In QA
+
+Built: the Goals strip (status, progress, art, iteration), each goal's detail with its tickets, pauses, goal file and Play, a Goal filter row and goal labels on cards. 366 tools tests pass; checked live on a second server. QA checks it now.
 
 ## Result notes
 
