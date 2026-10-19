@@ -1,10 +1,10 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: planned
+status: building
 art_cap: 50
 art_used: 0
-iteration: 0
+iteration: 1
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-004
@@ -45,13 +45,13 @@ Build the drive-only elevation sample map as written in docs/level-design.md (De
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S1 | Multi-level height data and query (map file format) | unblocks 6, value 5 | The map file has to hold three layers, ramps that start on a rooftop (3 to 6), and areas next to or on top of each other, in a format a later level editor can edit. Today's format assumes one platform and ramps from 0. | missing | T-193 |
-| 2 | S2 | The sample map's layout file | unblocks 4, value 5 | The goal is a city-sized map with three layers made by the agents; this is the map itself, as data a level editor could later edit. | missing | T-194 |
-| 3 | S3 | The car's height across three layers | unblocks 4, value 5 | The approved car height model was only tested on one platform at 3 from the street. The goal needs ramp takeoffs from 3 to 6, drops from 6 onto 3 or 0, and walls between layers. | missing | T-195 |
-| 4 | S4 | The drive-only sample map scene | unblocks 3, value 5 | The thing the board plays: the city with the car, its camera, the ground art, the buildings and boulders, and the raised areas, with nothing from the run. | missing | T-196 |
-| 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | missing | T-197 |
-| 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | missing | T-198 |
-| 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | missing | T-199, T-200 |
+| 1 | S1 | Multi-level height data and query (map file format) | unblocks 6, value 5 | The map file has to hold three layers, ramps that start on a rooftop (3 to 6), and areas next to or on top of each other, in a format a later level editor can edit. Today's format assumes one platform and ramps from 0. | covered | T-193, T-182 |
+| 2 | S2 | The sample map's layout file | unblocks 4, value 5 | The goal is a city-sized map with three layers made by the agents; this is the map itself, as data a level editor could later edit. | in-flight | T-194 |
+| 3 | S3 | The car's height across three layers | unblocks 4, value 5 | The approved car height model was only tested on one platform at 3 from the street. The goal needs ramp takeoffs from 3 to 6, drops from 6 onto 3 or 0, and walls between layers. | in-flight | T-195 |
+| 4 | S4 | The drive-only sample map scene | unblocks 3, value 5 | The thing the board plays: the city with the car, its camera, the ground art, the buildings and boulders, and the raised areas, with nothing from the run. | in-flight | T-196 |
+| 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | in-flight | T-197 |
+| 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | in-flight | T-198 |
+| 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | in-flight | T-199, T-200 |
 
 ### S1: Multi-level height data and query (map file format)
 
@@ -130,12 +130,15 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - T-198: Art: rooftops and parking-garage ramps for the elevation sample map (PixelLab) (S6, written)
 - T-199: Elevation sample map: final documentation and the final screenshot set (S7, written)
 - T-200: QA: the elevation sample map on playtest/G-004, before the board's playtest (S7, written)
+- T-182: Elevation test scene: ground-height data (one platform, one ramp, drop-off edges) and a ground-height query (S1, covered)
 
 ## Iteration log
 
 - 2026-10-19, iteration 0: started: planning.
 - 2026-10-19, iteration 0: priority scoring: 7 sub-goals ranked, 12 goal criteria, 9 open questions.
 - 2026-10-19, iteration 0: gap detection: 0 covered, 0 in flight, 7 missing; wrote 8 tickets.
+- 2026-10-19, iteration 0: building.
+- 2026-10-19, iteration 1: T-193 (S1, level-challenge, opus): passed (done, QA rounds 1), merged into playtest/G-004; art 0; agent: T-193 is finished in C:\solid-carbide-worktrees\T-193, in 3 commits on its branch. Platforms can now name the area they stand on with an optional `on` field, which GroundHeight keeps. I added the three-layer fixture (game/tests/fixtures/height/three_layers.json) and a validator, `python game/tools/check_height_data.py <file>`, which prints OK for both elevation_test.json and the fixture; its 17 Python tests reject every case the ticket lists, plus a few more. The existing query already handled ramps between rooftops (heights 1.5 and 4.5 halfway up, the right areas and side normals, a 3-unit drop between floors), so no code fix was needed. 11 new GUT tests check this, including the car's height following both ramps up and landing on the height-3 floor. The new fields and the validator are documented in game/README.md and docs/level-design.md. elevation_test.json and its three test files are unchanged against master. All three test sets pass (GUT 1054/1054, game Python tools 303 OK, project tools 331 OK). There are no screenshots because nothing is on screen yet, as the result notes say. Godot left its usual line-ending-only .import changes in the folder; I didn't commit them. The SessionStart hook said this session has no name and that port 8765 is taken by the main checkout's task board; I didn't act on that because I'm a goal-run agent. Rescan: S1 covered, S2 in-flight, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight.
 
 ## Pauses
 

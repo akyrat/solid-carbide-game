@@ -1,7 +1,7 @@
 ---
 id: T-194
 title: Elevation sample map: the layout file, built by script from the MVP map, with rooftops at 3 and 6 and parking-garage ramps
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
