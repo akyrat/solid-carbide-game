@@ -1,7 +1,7 @@
 ---
 id: T-184
 title: Elevation: how the platform's sides meet the car (drop-off edge from below, landing on top or beside, the ramp's sides)
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
