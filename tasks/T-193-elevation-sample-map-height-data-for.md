@@ -44,13 +44,13 @@ Keep the file format a list of areas a level editor could later edit (Level desi
 
 ## Acceptance criteria
 
-- [ ] game/tests/fixtures/height/three_layers.json has a height-3 area, a height-6 area marked as standing on it, a ramp with bottom_height 0 and top_height 3, and a ramp with bottom_height 3 and top_height 6 standing on the height-3 area. (QA: pass / fail)
-- [ ] GUT tests in game/tests/unit/test_ground_height_layers.gd check height_at, ramp_at and area_index_at on that fixture for a point on the street (0, empty ramp, -1), on the height-3 area (3), on the height-6 area (6), halfway up the 0-to-3 ramp (1.5) and halfway up the 3-to-6 ramp (4.5), and they pass. (QA: pass / fail)
-- [ ] `python game/tools/check_height_data.py game/data/level/elevation_test.json` and the same on the three-layer fixture exit with code 0. (QA: pass / fail)
-- [ ] game/tools/test_check_height_data.py has tests where the validator rejects (non-zero exit, a message naming the problem): two overlapping areas with no stacking field; a ramp whose top side doesn't touch the area it names; a ramp whose bottom_height doesn't match the ground at its foot; a ramp whose top_height doesn't match the area it climbs to. The Python tool tests pass. (QA: pass / fail)
-- [ ] game/data/level/elevation_test.json is unchanged (git diff against master is empty), and test_ground_height.gd, test_car_height.gd and test_elevation_edges.gd pass unchanged. (QA: pass / fail)
-- [ ] game/README.md and docs/level-design.md (Content, 'Elevation sample map') document every height-data field, including the new stacking field and a ramp's bottom_height, and how to run the validator. (QA: pass / fail)
-- [ ] All three test sets (GUT, Python tools, headless scene run) pass; the result notes say in one line that there is nothing to picture. (QA: pass / fail)
+- [ ] game/tests/fixtures/height/three_layers.json has a height-3 area, a height-6 area marked as standing on it, a ramp with bottom_height 0 and top_height 3, and a ramp with bottom_height 3 and top_height 6 standing on the height-3 area. (QA: pass)
+- [ ] GUT tests in game/tests/unit/test_ground_height_layers.gd check height_at, ramp_at and area_index_at on that fixture for a point on the street (0, empty ramp, -1), on the height-3 area (3), on the height-6 area (6), halfway up the 0-to-3 ramp (1.5) and halfway up the 3-to-6 ramp (4.5), and they pass. (QA: pass)
+- [ ] `python game/tools/check_height_data.py game/data/level/elevation_test.json` and the same on the three-layer fixture exit with code 0. (QA: pass)
+- [ ] game/tools/test_check_height_data.py has tests where the validator rejects (non-zero exit, a message naming the problem): two overlapping areas with no stacking field; a ramp whose top side doesn't touch the area it names; a ramp whose bottom_height doesn't match the ground at its foot; a ramp whose top_height doesn't match the area it climbs to. The Python tool tests pass. (QA: pass)
+- [ ] game/data/level/elevation_test.json is unchanged (git diff against master is empty), and test_ground_height.gd, test_car_height.gd and test_elevation_edges.gd pass unchanged. (QA: pass)
+- [ ] game/README.md and docs/level-design.md (Content, 'Elevation sample map') document every height-data field, including the new stacking field and a ramp's bottom_height, and how to run the validator. (QA: pass)
+- [ ] All three test sets (GUT, Python tools, headless scene run) pass; the result notes say in one line that there is nothing to picture. (QA: pass: GUT 1054/1054, Python tool tests 303 OK, screenshots rule n/a)
 
 ## Updates
 
