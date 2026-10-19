@@ -1,7 +1,7 @@
 ---
 id: T-187
 title: Elevation test scene: an option to draw the car slightly bigger when high (off by default)
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -61,3 +61,4 @@ Goal runner (G-003): QA passed; merged into playtest/G-003.
 
 Switch added: `@export var draw_bigger_when_high := false` on the elevation test scene's root (tick it in the Inspector). When on, the car's drawing scale = sheet scale x (1 + 0.05 x height) (`HEIGHT_SCALE_PER_UNIT`, a proposal; 1.15 on the platform's top). `car_sprite.gd`: `height_scale_per_unit`, `scale_factor_for_height()`, `place()` sets the scale. Shadow unchanged. Documented in `game/README.md` ("Drawing the car bigger when high (T-187)") and `docs/drifting.md`. Three GUT tests added to `test_elevation_drawing.gd` (off: scale unchanged at all heights; on: 1 at height 0, 1.15 at 3; shadow scale unchanged). Full GUT suite: 1024/1024 pass headless. No PixelLab used. Note: I appended the tests with a shell heredoc (not the Edit tool) by mistake; it was not refused.
 - 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-003).
+- 2026-10-19, needs-playtest → done: Board's playtest of G-003 (2026-10-19): the board tried the option and didn't like it; T-192 removed it at the board's request. Done as built and played.
