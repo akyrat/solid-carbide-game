@@ -1,7 +1,7 @@
 ---
 id: T-186
 title: Art: the ramp and the raised platform for the elevation test scene (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, docs/working-with-the-board.md, game/README.md, game/scripts/level/elevation_platform_drawing.gd, game/data/level/elevation_test.json, tools/check_sprite_rules.py]
 files_expected_to_change: [game/art/elevation/*.png, game/art/elevation/*.json, art-archive/<this task's id>/, game/scripts/level/elevation_platform_drawing.gd, game/scenes/elevation_test/elevation_test.tscn, game/tests/unit/test_elevation_art.gd, docs/drifting/elevation-final-art.png, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-186.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Needs playtest
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
 ### Plan, written before the first PixelLab call
@@ -85,3 +89,4 @@ Cost: 1 generation each, 3 in all (balance before: 4872 of 5000 subscription gen
 - **Weak results (not regenerated):** the top texture is blue cobblestone with bright vignette blobs, mirrored, so a repeating pattern rather than plain concrete/asphalt; the ramp is purple with white arrows, not the street's grey asphalt; the wall reads as brick. The geometry, scale and depth order are right. The board judges the look in the final playtest; a regeneration of the textures (3 more generations) and a rebuild would fix it cheaply.
 - Documents changed: `docs/visual-style.md`, `game/README.md`.
 - Refusals: one. `python -c "import PIL"` (a check that Pillow exists) needed an approval I could not get; I skipped it, since `reduce_palette.py` already uses Pillow, and the build ran fine.
+- 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-003).
