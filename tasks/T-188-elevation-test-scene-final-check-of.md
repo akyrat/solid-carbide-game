@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: blocked
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -14,8 +14,8 @@ depends_on: [T-182, T-183, T-184, T-185, T-186, T-187]
 documents_affected: [docs/drifting.md, docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/data/level/elevation_test.json, game/scripts/driving/car_height.gd, game/scripts/level/ground_height.gd, game/scripts/driving/elevation_test.gd]
 files_expected_to_change: [docs/drifting.md, docs/level-design.md, game/README.md]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 2
 ---
 
 <!--
@@ -41,17 +41,56 @@ Check each number written in the docs against the code and data, and correct the
 
 ## Acceptance criteria
 
-- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section with the scene's path, how to run it, what the car's height does, and every proposed number marked as a proposal. (QA: pass / fail)
-- [ ] docs/level-design.md, Content, describes the test platform, ramp and drop-off edges and the height data format. (QA: pass / fail)
-- [ ] game/README.md has the scene's path, how to run it, its data format and the code's main functions. (QA: pass / fail)
-- [ ] Every number in those sections matches the code or data (gravity, takeoff, platform and ramp sizes and heights, the scale switch's value). (QA: pass / fail)
-- [ ] No file under `game/` other than `game/README.md` changes; the full GUT suite still passes headless. (QA: pass / fail)
-- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: pass / fail)
+- [ ] docs/drifting.md, Content, has an 'Elevation test scene' section with the scene's path, how to run it, what the car's height does, and every proposed number marked as a proposal. (QA: pass)
+- [ ] docs/level-design.md, Content, describes the test platform, ramp and drop-off edges and the height data format. (QA: pass)
+- [ ] game/README.md has the scene's path, how to run it, its data format and the code's main functions. (QA: pass)
+- [ ] Every number in those sections matches the code or data (gravity, takeoff, platform and ramp sizes and heights, the scale switch's value). (QA: pass: gravity 12, takeoff 4, curb 0.1, platform/ramp data, shadow 3.2x1.2, scale 0.05 per unit all match)
+- [ ] No file under `game/` other than `game/README.md` changes; the full GUT suite still passes headless. (QA: pass: the task's own commit touches only README in game/; GUT 1024/1024 passed)
+- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, neither `python tools/generate_long_gdd.py` nor `python tools/check_docs_staleness.py` is pre-approved, so QA can't run them; round 2: docs unchanged since round 1, the goal runner's own regeneration and staleness result decides this one)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-188.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
+
+### 2026-10-19, In QA → In progress
+
+Goal runner (G-003): failed QA once; back to the agent on opus.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
+
+### 2026-10-19, In QA → Flagged for review
+
+Goal runner (G-003): failed QA twice; flagged for the board.
+
+### 2026-10-19, Flagged for review → Done
+
+Done on the board's call: the only failing criterion was the staleness check only I can run, and it passes. G-003 resumes to its goal check.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Checked every number in the three 'Elevation test scene' sections against `car_height.gd`, `elevation_test.gd`, `car_shadow.gd` and `elevation_test.json`. All match: gravity 12, takeoff minimum speed 4, takeoff factor 1, curb step 0.1, sample step 0.05, platform 16 x 16 at (-8, -8) and 3 high, ramp 12 x 8 at (8, -4) from 0 to 3, start (26, 0) facing west, shadow 3.2 x 1.2, 16 px per unit, bigger-when-high 0.05 per unit.
+
+Gaps fixed:
+- `docs/drifting.md`: the task range now reads T-182 to T-187. The 'Placeholders' bullet said the platform and ramp are drawn by script only. It is now a T-186 PixelLab art bullet, with the two final-art screenshots, plus a bullet saying the script drawing is the fallback.
+- `docs/level-design.md`: the ramp's position and a pointer to the art in Drifting, Content.
+- `game/README.md`: the section's intro now lists T-186 and T-187.
+
+No game code changed.
+
+Not run, because the project settings don't pre-approve them: the GUT suite and `tools/generate_long_gdd.py` with the staleness check. The goal runner regenerates the long GDD itself. Only docs changed, so the GUT suite is unaffected.
+- 2026-10-19, in-qa → in-progress: QA failed: The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, `python tools/generate_long_gdd.py` was refused as not pre-approved; the goal runner regenerates the long GDD and runs the check itself) Back to the agent on opus.
+
+Round 2 (2026-10-19): the only failed criterion is the docs staleness check after the long GDD's regeneration. Neither command is on the pre-approved list. `python tools/check_docs_staleness.py` was tried once this round and refused ("requires approval"). I didn't try to get around it. Under `docs/working-with-the-board.md`, "Goal runs" (T-180), the goal runner regenerates the long GDD and runs the staleness check itself on the goal's build before the goal check, and gives QA the result. So QA should take that criterion from the runner's result, not from this agent. The docs content from round 1 is unchanged and passed QA on the other five criteria. Nothing else changed this round. QA's GUT run left `.import` line-ending noise and a `.uid` file in the folder. I didn't commit them.
+- 2026-10-19, in-qa → flagged-for-review: Failed QA a second time (goal G-003).
+- 2026-10-19, Project Lead: the only failing criterion needs the docs staleness check, which only the Project Lead runs (the agents' pre-approved list doesn't have it; T-180 covers the goal check, not tickets). Regenerated the long GDD (`python tools/generate_long_gdd.py`) and the short GDD fingerprint on this branch; `python tools/generate_long_gdd.py --check` then printed "in sync: 9 game area docs, the long GDD and the short GDD". The ticket's work passed the other five criteria. Waiting for the board's call on the flag.
+- 2026-10-19, flagged-for-review → done: Board's call, 2026-10-19 ('can you resume'): the only failing criterion was the docs staleness check, which the Project Lead ran on this branch (in sync); the other five criters passed QA.
