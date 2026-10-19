@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -63,6 +63,10 @@ Goal runner (G-003): the agent is done; QA is checking it.
 ### 2026-10-19, In QA → In progress
 
 Goal runner (G-003): failed QA once; back to the agent on opus.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
 
 ## Result notes
 
