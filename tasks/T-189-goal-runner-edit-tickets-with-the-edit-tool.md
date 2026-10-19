@@ -4,7 +4,7 @@ title: Goal runner: agents and QA edit ticket files with the file editing tool o
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
