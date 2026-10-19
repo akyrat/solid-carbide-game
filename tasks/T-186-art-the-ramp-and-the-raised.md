@@ -1,7 +1,7 @@
 ---
 id: T-186
 title: Art: the ramp and the raised platform for the elevation test scene (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-003
@@ -90,3 +90,4 @@ Cost: 1 generation each, 3 in all (balance before: 4872 of 5000 subscription gen
 - Documents changed: `docs/visual-style.md`, `game/README.md`.
 - Refusals: one. `python -c "import PIL"` (a check that Pillow exists) needed an approval I could not get; I skipped it, since `reduce_palette.py` already uses Pillow, and the build ran fine.
 - 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-003).
+- 2026-10-19, needs-playtest → done: Board's playtest of G-003 (2026-10-19): super happy with it.
