@@ -67,3 +67,26 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-194.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Level/Challenge Design Agent, 2026-10-19.** Done; every layout choice is a proposal for the board's playtest.
+
+What was built:
+- `game/tools/build_elevation_sample_map.py` reads `game/data/level/mvp_map.json` (unchanged) and writes `game/data/level/elevation_sample_map.json`: every MVP layout key mvp_map.gd reads (`map`, `gravel`, `buildings`, `pattern_copies`, `challenges`, `challenge_designs`, `ground_rows`, ...), same 240 by 240 size, plus `platforms` and `ramps` in the T-193 height-data format. It runs `check_height_data.check_data` on its output (refuses to write invalid data) and has `--check` (rebuilds in memory, exit 1 on a difference or invalid data). It also draws the overview PNG (standard library PNG writer).
+- Layout (proposal): two parking garages, the second the first turned half a turn about the centre. North-west: first-floor rooftop (3) at x -96..-12, y -96..-66 (the top row's two west blocks and the road between); second-floor rooftop (6, `on` the first) at x -42..-12 (30 by 30), its N/E/S sides dropping 6 to the street. 0-to-3 ramp on the first floor's south side (x -86..-76, y -66..-54); 3-to-6 ramp on the first floor climbing the second floor's west side (x -54..-42, y -86..-76). Ramps 12 long per 3 of rise (test scene's slope), 10 wide. Drive: street → 3 → 6 → off the east edge onto the x 0 road.
+- Left out of the sample file: 4 buildings under rooftops; 8 boulders on a rooftop, a ramp or the 6-unit strip in front of a ramp foot (copies 11, 16, 45, 50, all Two Boulders, which leaves them empty, so they are dropped); challenge-5 (on copy-16; challenges are off in the MVP). `ground_rows` rebuilt with the remaining buildings; `challenge_rule` counts updated.
+- Tests: `game/tools/test_build_elevation_sample_map.py` (20 tests): heights exactly {0, 3, 6}; area at 3 and at 6; 0→3 and 3→6 ramps; reachability graph walk (every area, so every height-6 one, reachable from the street); ramp footprint and foot strip clear of buildings, boulders and the map edge, foot strip on the ramp's bottom ground; no boulder on a rooftop or ramp; no building under a rooftop; only those buildings/boulders dropped; MVP size and keys kept; validator accepts the file; check mode matches and catches a changed/missing file; picture uses distinct colours for 0, 3 and 6.
+
+Test runs: `python -m unittest discover -s game/tools -p "test_*.py"`: 323 tests OK (1 skipped, pre-existing; this includes the existing test_build_mvp_map.py). `bash game/tools/run_tests.sh`: TESTS PASSED (includes test_mvp_map.gd). `python -m unittest discover -s tools -p "test_*.py"`: 331 tests OK. `python game/tools/check_height_data.py game/data/level/elevation_sample_map.json`: OK. `python game/tools/build_elevation_sample_map.py --check`: OK. mvp_map.json not touched.
+
+Screenshots: nothing on screen yet (the map scene is a later ticket), so a picture drawn from the data by the script: `art-archive/T-194/screenshots/elevation-sample-map.png` (same as `docs/level-design/elevation-sample-map.png`, linked from Level design, Content, "Elevation sample map"). Grey street, tan gravel, purple buildings, light blue = height 3, amber = height 6, ramps shaded foot→top with a white arrowhead pointing uphill, orange dots = boulders.
+
+Documents updated: `docs/level-design.md` (Content, "Elevation sample map": the layout, picture, proposals), `game/README.md` ("Elevation sample map", "The layout file (T-194)", how to rebuild and check).
+
+Open questions for the board's playtest (settled with the safe option, not asked during the goal run):
+- Boulders on rooftops: none (dropped every boulder on a rooftop, a ramp or in front of a ramp foot).
+- Two garages instead of one, and 84 by 30 first floors rather than the 2 by 2 block size from "Raised areas and ramps": every 2 by 2 group of blocks includes a gravel-centre block, so a 2 by 2 rooftop would cover part of the gravel; the rooftops stay on building blocks and the road between them.
+- The rooftops cover the road between their two blocks, so that stretch of road (x -66..-42 north, x 42..66 south) is no longer street.
+- Ramp size 12 by 10 per 3 of rise; the 0→3 ramps take 12 of the 24-unit road in front of them, leaving 12 to drive past.
+- `ground_rows` marks cells under a rooftop as road (`R`), since the legend has no rooftop letter; the heights come from `platforms`.
+
+PixelLab: none used (0 generations). Refusals: none. Godot's line-ending-only `.import` changes from the test run were left uncommitted.
