@@ -4,7 +4,7 @@ title: Task board: goals shown on the board, with a goal filter
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
