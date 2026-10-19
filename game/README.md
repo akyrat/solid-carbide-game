@@ -1159,7 +1159,7 @@ Made from 3 PixelLab textures (art-archive/T-186/, 3 generations) by `python gam
 
 ## Elevation sample map (T-193)
 
-The drive-only sample map with three layers (Level design, Decisions, "Elevation sample map"; Content, "Elevation sample map"): the street (height 0), a first floor (height 3) and a second floor (height 6). T-193 made its height data and the validator; the map itself is the next ticket. Every number is a proposal for the board's playtest.
+The drive-only sample map with three layers (Level design, Decisions, "Elevation sample map"; Content, "Elevation sample map"): the street (height 0), a first floor (height 3) and a second floor (height 6). T-193 made its height data and the validator, T-194 the layout file ("The layout file (T-194)" below); the map scene itself is a later ticket. Every number is a proposal for the board's playtest.
 
 ### Height data
 
@@ -1185,3 +1185,17 @@ The query is unchanged ("Elevation test scene", "The query" above): `height_at`,
 **Validator:** from the repo root, `python game/tools/check_height_data.py <file.json>`. It prints `OK` and exits 0 when the file is valid; otherwise one line per problem and exit code 1. It rejects: overlapping platforms neither of which stands on the other; an `on` naming an unknown area, or an area that doesn't contain the whole footprint, or one that isn't lower; a ramp climbing to an unknown area; an unknown `side`; a ramp whose top doesn't touch the side it climbs; a `top_height` that doesn't match the area it climbs to; a `bottom_height` that doesn't match the ground at its foot; a ramp overlapping an area it doesn't stand on wholly; missing numbers, non-positive sizes, missing or repeated ids. Run it on every height-data file before handing a map over.
 
 Tests: `tests/fixtures/height/three_layers.json` (a height-3 area at (-20, -20), 40 by 40; a height-6 area on it at (-10, -10), 16 by 16; a 0-to-3 ramp east of the first and a 3-to-6 ramp on it east of the second, each 12 by 8) with `tests/unit/test_ground_height_layers.gd` (GUT), and `tools/test_check_height_data.py` (Python tool tests).
+
+### The layout file (T-194)
+
+`data/level/elevation_sample_map.json`: the MVP map's layout (`data/level/mvp_map.json`) with the same keys `mvp_map.gd` reads (`map`, `gravel`, `buildings`, `pattern_copies`, `challenges`, `challenge_designs`, `ground_rows` and the rest), so the map script can load it, plus `platforms` and `ramps` in the height-data format above. The layout (two parking garages, rooftops at 3 and 6) and its picture: Level design, Content, "Elevation sample map". Every rooftop and ramp is a proposal for the board's playtest.
+
+From the repo root:
+
+- `python game/tools/build_elevation_sample_map.py` rebuilds the file from `mvp_map.json` (never changes it), runs the validator on the result, and draws `docs/level-design/elevation-sample-map.png` (and its copy in `art-archive/T-194/screenshots/`).
+- `python game/tools/build_elevation_sample_map.py --check` rebuilds it in memory and prints `OK` (exit 0) when the committed file matches and the height data is valid; otherwise it says what differs (exit 1).
+- To change the layout, edit `ROOFTOPS` and `RAMPS` (and `RAMP_LENGTH`, `RAMP_WIDTH`, `FOOT_APPROACH`) at the top of the script and run it again.
+
+What the script does to the MVP layout: it leaves out every building overlapping a rooftop; every boulder overlapping a rooftop, a ramp or the strip `FOOT_APPROACH` (6) units deep in front of a ramp's foot; every pattern copy left with no boulder; and every challenge whose copy lost a boulder (challenges are off in the MVP). It rebuilds `ground_rows` from the remaining buildings (cells under a rooftop are `R`), updates `challenge_rule`'s counts, and adds `name`, `task`, `based_on` and `elevation_note` (what was left out).
+
+Tests: `tools/test_build_elevation_sample_map.py` (Python tool tests): heights exactly {0, 3, 6}; an area at 3 and one at 6; a 0-to-3 and a 3-to-6 ramp; every area reachable from the street up ramps (a graph walk); no ramp or ramp foot strip on a building, a boulder or off the map; no boulder on a rooftop or ramp; no building under a rooftop; the validator accepts the file; the check mode matches.
