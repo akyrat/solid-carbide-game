@@ -1,7 +1,7 @@
 ---
 id: T-192
 title: Elevation test scene: a round shadow under the car, and the bigger-when-high option removed
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -36,17 +36,21 @@ Board review files: art-archive/T-192/screenshots/
 
 ## Acceptance criteria
 
-- [ ] `draw_bigger_when_high` and its scaling are gone from the scene, the code and the tests; a GUT test checks the car's drawing scale is the same at every height (QA: pass / fail)
-- [ ] The shadow is a filled ellipse centred under the car's map position, about 1 unit across on the ground (2:1 on screen), the same colour as before, opaque with no semi-transparent pixels, the same at every heading; GUT tests check its centre, its size and that it doesn't turn with the car (QA: pass / fail)
-- [ ] The full GUT suite passes (`bash game/tools/run_tests.sh`) (QA: pass / fail)
-- [ ] Screenshots in `art-archive/T-192/screenshots/` show the round shadow with the car on the street, on the platform and in the air, and are listed in the result notes (QA: pass / fail)
-- [ ] `docs/drifting.md` and `game/README.md` no longer describe the bigger-when-high option, and describe the round shadow (QA: pass / fail)
+- [ ] `draw_bigger_when_high` and its scaling are gone from the scene, the code and the tests; a GUT test checks the car's drawing scale is the same at every height (QA: pass; test checks scale at 4 heights, grep finds the name only in the test's gone-assertion)
+- [ ] The shadow is a filled ellipse centred under the car's map position, about 1 unit across on the ground (2:1 on screen), the same colour as before, opaque with no semi-transparent pixels, the same at every heading; GUT tests check its centre, its size and that it doesn't turn with the car (QA: pass)
+- [ ] The full GUT suite passes (`bash game/tools/run_tests.sh`) (QA: pass; all tests passed)
+- [ ] Screenshots in `art-archive/T-192/screenshots/` show the round shadow with the car on the street, on the platform and in the air, and are listed in the result notes (QA: pass; round shadow clear in both air shots)
+- [ ] `docs/drifting.md` and `game/README.md` no longer describe the bigger-when-high option, and describe the round shadow (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Blocked → In progress
 
 Started from your playtest: a round shadow under the car's centre, same colour and feel, and the bigger-when-high option removed. Built on the goal's build after T-191.
+
+### 2026-10-19, In progress → In QA
+
+Built: the shadow is a round patch under the car's centre (same colour, doesn't turn), and the bigger-when-high option is gone. GUT 1043/1043. QA checks it now.
 
 ## Result notes
 
