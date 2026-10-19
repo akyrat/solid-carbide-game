@@ -1060,7 +1060,7 @@ Task T-046 (Enemy Behavior Agent): the kaiju's one special move, with T-039's nu
 
 ## Elevation test scene (T-182)
 
-The ground side of the elevation test scene (Level design, Decisions, "Raised areas and ramps"): data and a query only, no drawing and no car changes. Every number is a proposal for the board's playtest.
+The elevation test scene (Level design, Decisions, "Raised areas and ramps"; Drifting, Decisions, "Elevation"). T-182 made the ground side (data and a query), T-183 and T-184 the car's height, T-185 the scene and its drawing ("The scene and its drawing (T-185)" below, with how to run it). Every number is a proposal for the board's playtest.
 
 ### Ground-height data
 
@@ -1082,7 +1082,7 @@ Tests: `tests/unit/test_ground_height.gd`.
 
 ### The car's height (T-183)
 
-`scripts/driving/car_height.gd`, a node-free model (Drifting, Decisions, "Elevation"). The car (`car.gd`) owns one in `height_model` and steps it once per physics step, after its flat step, with the flat position before and after and the flat velocity. It reads the ground from `car.ground` (a `GroundHeight`); with `ground` null (the drift prototype, the run) the height stays 0. The flat driving (50 steps per second, the Unity values) is not changed, in the air too: the car steers in the air exactly as on the ground (a proposal; the docs don't say). Physics only: nothing draws the height yet.
+`scripts/driving/car_height.gd`, a node-free model (Drifting, Decisions, "Elevation"). The car (`car.gd`) owns one in `height_model` and steps it once per physics step, after its flat step, with the flat position before and after and the flat velocity. It reads the ground from `car.ground` (a `GroundHeight`); with `ground` null (the drift prototype, the run) the height stays 0. The flat driving (50 steps per second, the Unity values) is not changed, in the air too: the car steers in the air exactly as on the ground (a proposal; the docs don't say). The drawing of the height: "The scene and its drawing (T-185)" below.
 
 - `car.height` (units, up), `car.vertical_speed` (units/s, up positive, 0 on the ground), `car.airborne`. Signals on `height_model`: `took_off(from_ramp, vertical_speed)` and `landed(impact_vertical_speed)`.
 - **On the ground** (the ramp included) the height is the ground's height under the car.
@@ -1113,3 +1113,24 @@ The proposals (Drifting, Content, "Elevation: the platform's sides"), all in `ca
 - `GroundHeight` adds `area_index_at(point) -> int`, `area_rect(index) -> Rect2` and `side_normal(index, a, b) -> Vector2` (the outward normal of the side a move from a, outside, to b, inside, enters through; at a corner the side crossed last).
 
 Tests: `tests/unit/test_elevation_edges.gd`.
+
+### The scene and its drawing (T-185)
+
+The scene itself (Drifting, Content, "Elevation test scene"): `scenes/elevation_test/elevation_test.tscn`, script `scripts/driving/elevation_test.gd`. Not the main scene, not reachable from the menus, no on-screen text.
+
+**Run it:** open the scene in the editor and press F6, or from the repo root `"$GODOT_BIN" --path game res://scenes/elevation_test/elevation_test.tscn`. W/S/A/D drive. The car starts at (26, 0) facing west (`START_UNITS`, `START_ROTATION`), in front of the ramp's foot.
+
+How it is built (like the drift prototype, isometric only):
+
+- `PhysicsWorld` (never drawn) holds the `Car` (`car.gd`), whose `ground` is the scene's `GroundHeight` (`ground_height`, from `data/level/elevation_test.json`). `place_car(units, rotation)` puts the car at rest on the ground there (the fixtures use it).
+- `View` draws the street (`ground_grid.gd`, z_index -100), one `elevation_platform_drawing.gd` node per platform and ramp (`areas`, back to front), the `CarShadow` (`car_shadow.gd`), the `CarSprite` (`car_sprite.gd`, the final isometric sheet) and the `Camera`.
+- `sync_view()` runs after every physics step (`car.stepped`): `car_sprite.place(drawn ground position, car.height)`, `shadow.place(map position, heading, ground height under the car)`, `update_depth()`, then the camera (`camera_follow.gd`, as in the drift prototype) on the car's drawn position at height 0.
+
+The drawing's main functions:
+
+- `car_sprite.gd`: `lift_for_height(height_units, px_per_unit = 16) -> Vector2`, the lift straight up the screen (`(0, -height x 16)`); `place(drawn_ground_px, height_units)` sets the sprite's position to the drawn map position plus the lift. The lift is in the position, so physics interpolation smooths it.
+- `car_shadow.gd`: `place(map_units, rotation, ground_height)` puts the shadow at the drawn map position lifted by the ground's height under the car; `outline()` is its turned footprint, `SIZE_UNITS` (3.2 x 1.2 units, a proposal), drawn in one opaque `COLOR`.
+- `elevation_platform_drawing.gd`: `setup(kind, block, view_basis)` with a `GroundHeight` platform or ramp; `corner_heights()` (NW, NE, SE, SW), `top_height_at(point)`, `top_face()`, `east_face()`, `south_face()` (drawn polygons; a side of height 0 has none); `colors_used()` lists every colour (no Redgull red); `is_behind(centre, radius, height)` is the depth rule: wholly west or north of the area's rectangle (not wholly east or south of it) and lower than its top there.
+- `elevation_test.gd`: `z_for(centre, height, offset)` puts something just under the first area it is behind, or over every area (areas at z_index 3, 6, ...; the shadow at offset 0 under the car at offset 1); `update_depth()` places the shadow with the ground's height under the car and the car with its own height.
+
+Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
