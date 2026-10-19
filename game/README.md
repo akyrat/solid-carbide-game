@@ -1156,3 +1156,32 @@ The board tried drawing the car bigger when high (T-187) and removed it: `draw_b
 PixelLab art replaces the script drawing: `art/elevation/platform.png` (1024 x 608) and `ramp.png` (640 x 416), each with its record (`platform.json`, `ramp.json`: sources, `top_left_art_px` from the drawn origin, 32 art px per unit). `elevation_platform_drawing.gd` adds a `Sprite2D` (`art_sprite`, scale 0.5, nearest filter, at `top_left_art_px` x 0.5) when the PNG and record exist, and then draws nothing itself; the script drawing stays as the fallback, and its geometry functions and the depth order (`is_behind`) are unchanged.
 
 Made from 3 PixelLab textures (art-archive/T-186/, 3 generations) by `python game/tools/build_elevation_art.py build` (projects them onto the faces of `data/level/elevation_test.json`; `check` runs the rules on the committed files; run `build` again if the JSON's sizes change). Tests: `game/tools/test_build_elevation_art.py` (Python) and `tests/unit/test_elevation_art.gd`. Screenshots: `docs/drifting/elevation-final-art.png` (car at the platform's edge, in the air) and `elevation-final-art-platform.png` (on the platform).
+
+## Elevation sample map (T-193)
+
+The drive-only sample map with three layers (Level design, Decisions, "Elevation sample map"; Content, "Elevation sample map"): the street (height 0), a first floor (height 3) and a second floor (height 6). T-193 made its height data and the validator; the map itself is the next ticket. Every number is a proposal for the board's playtest.
+
+### Height data
+
+The same format as the elevation test scene's (`data/level/elevation_test.json`, unchanged), read by the same `GroundHeight` (`scripts/level/ground_height.gd`). A JSON object with two lists, in flat-world units (x east, y south, so north is -y), so a level editor can later add, move and remove areas. Every field:
+
+- `platforms` (a list of raised areas, rooftops):
+  - `id` (text, unique): the name ramps and other platforms use for it.
+  - `x`, `y` (numbers): the rectangle's north-west corner; `w`, `h` (numbers, above 0): its width (east) and depth (south). Axis-aligned.
+  - `height` (number): the ground's height on top, in units (3 for a first floor, 6 for a second floor).
+  - `on` (text, optional, new in T-193): the `id` of the platform it stands on (a second-floor rooftop on a first-floor one). Leave it out for an area standing on the street. Its whole rectangle must be inside that platform, and it must be higher. Two platforms may overlap only when one stands on the other (directly or through others); any other overlap is a mistake. `GroundHeight` keeps it as `on` ("" when missing) but doesn't need it: at any point the highest area wins.
+- `ramps` (a list of slopes):
+  - `id` (text, unique).
+  - `platform` (text): the `id` of the area the ramp climbs to.
+  - `side` (`north`, `east`, `south` or `west`): that area's side the ramp climbs; the ramp lies outside the area on that side (an `east` ramp is east of its area and rises westward).
+  - `x`, `y`, `w`, `h` (numbers): the ramp's footprint. Its top end lies on the area's side, within its length.
+  - `bottom_height` (number, default 0): the height at the foot (the end away from the area). It must match the ground the ramp stands on: 0 on the street, or the height of the platform holding its whole footprint (3 for a ramp on a first floor up to a second floor).
+  - `top_height` (number): the height at the top; it must match the height of the area it climbs to.
+  - The height rises in a straight line from foot to top. The ramp's other two sides are drop-offs.
+- Anything else (for example `_comment`) is ignored.
+
+The query is unchanged ("Elevation test scene", "The query" above): `height_at`, `ramp_at` and `area_index_at` give the highest area at a point (a ramp over the platform it stands on), and `side_normal` and `edge_between` work between rooftops too (the step from a height-6 area onto the height-3 area under it is 3).
+
+**Validator:** from the repo root, `python game/tools/check_height_data.py <file.json>`. It prints `OK` and exits 0 when the file is valid; otherwise one line per problem and exit code 1. It rejects: overlapping platforms neither of which stands on the other; an `on` naming an unknown area, or an area that doesn't contain the whole footprint, or one that isn't lower; a ramp climbing to an unknown area; an unknown `side`; a ramp whose top doesn't touch the side it climbs; a `top_height` that doesn't match the area it climbs to; a `bottom_height` that doesn't match the ground at its foot; a ramp overlapping an area it doesn't stand on wholly; missing numbers, non-positive sizes, missing or repeated ids. Run it on every height-data file before handing a map over.
+
+Tests: `tests/fixtures/height/three_layers.json` (a height-3 area at (-20, -20), 40 by 40; a height-6 area on it at (-10, -10), 16 by 16; a 0-to-3 ramp east of the first and a 3-to-6 ramp on it east of the second, each 12 by 8) with `tests/unit/test_ground_height_layers.gd` (GUT), and `tools/test_check_height_data.py` (Python tool tests).

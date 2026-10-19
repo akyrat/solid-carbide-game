@@ -62,4 +62,15 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-193.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Level/Challenge Design Agent, 2026-10-19.
+
+- **Stacking field:** a platform's optional `on: "<platform id>"` names the area it stands on. `GroundHeight.load_file` keeps it as `on` ("" when missing); the query doesn't need it (the highest area at a point already wins), only the validator reads it.
+- **Ramps between rooftops:** checked `height_at`, `ramp_at`, `area_index_at`, `side_normal`, `edge_between` and `car_height.gd` with a 3-to-6 ramp standing on a height-3 area. Nothing assumed a ramp's foot at street level, so no code fix was needed. The only change is in `edge_between`'s comment: a step's `height` is the difference between the two sides (3 from the height-6 area onto the height-3 one), not a platform's height.
+- **Fixture** `game/tests/fixtures/height/three_layers.json`: roof_low (-20, -20, 40 x 40, height 3), roof_high on it (-10, -10, 16 x 16, height 6, `on: roof_low`), ramp_street_to_low (east of roof_low, x 20..32, y -4..4, 0 to 3) and ramp_low_to_high (east of roof_high, on roof_low, x 6..18, y -4..4, 3 to 6). All numbers are proposals.
+- **GUT** `game/tests/unit/test_ground_height_layers.gd` (11 tests): street (0, empty ramp, -1), roof_low (3, index 0), roof_high (6, index 1), halfway up the 0-to-3 ramp (1.5, index 2) and the 3-to-6 ramp (4.5, index 3); the 3-to-6 ramp's foot and top with no jump; side normals; edges between layers (a drop of 3 from roof_high onto roof_low); street to second floor along the ramps is never a drop; and `car_height.gd` following both ramps up to 6, then falling off roof_high and landing on roof_low at 3.
+- **Validator** `python game/tools/check_height_data.py <file>`: prints `OK` and exits 0, or prints one line per problem and exits 1. Beyond the ticket's list it also rejects an `on` naming an unknown or not-lower area, a ramp climbing to an unknown area, a ramp overlapping an area it doesn't stand on wholly, and missing or repeated ids and bad numbers. Both `elevation_test.json` and the fixture print OK. Tests: `game/tools/test_check_height_data.py` (17 tests). The rejection tests cover overlap with no stacking field, a top that doesn't touch, a top that runs past the side, a bottom_height that doesn't match (both on a rooftop and on the street), a top_height that doesn't match, an unknown side, a stacked area outside its base, unknown ids, a ramp half on an area, and bad JSON.
+- **Unchanged:** `game/data/level/elevation_test.json`, `test_ground_height.gd`, `test_car_height.gd` and `test_elevation_edges.gd` (`git diff master` on them is empty).
+- **Docs:** `game/README.md` has a new section "Elevation sample map (T-193)" with "Height data", which covers every field (old and new) and the validator. `docs/level-design.md` has Content, "Elevation sample map", **Height data**.
+- **Tests:** GUT 1054/1054 passed (TESTS PASSED). Python tool tests: 303 OK (1 skipped). Project tool tests (`tools/`): 331 OK.
+- **Screenshots:** none. This is data, a query and a validator with nothing on screen yet, so there is nothing to picture. The next ticket's sample map is the first thing on screen.
+- PixelLab: 0 generations. Refusals: none.
