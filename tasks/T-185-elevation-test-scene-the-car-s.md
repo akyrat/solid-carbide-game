@@ -1,7 +1,7 @@
 ---
 id: T-185
 title: Elevation test scene: the car's drawing lifts with its height, a shadow on the ground, placeholder platform and ramp
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -55,6 +55,10 @@ The board's review: Play `game/scenes/elevation_test/elevation_test.tscn`: drive
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-185.
 
 ## Result notes
 
