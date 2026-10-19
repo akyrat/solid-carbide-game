@@ -226,3 +226,35 @@ func test_the_scene_runs_for_a_second_on_its_own() -> void:
 	await wait_physics_frames(50)
 	assert_true(is_instance_valid(scene.car))
 	assert_eq(scene.car_sprite.sheet, "iso")
+
+
+## Task T-187: the option to draw the car bigger when high.
+func test_bigger_when_high_is_off_by_default() -> void:
+	assert_false(scene.draw_bigger_when_high)
+	assert_eq(scene.car_sprite.height_scale_per_unit, 0.0)
+	var base: Vector2 = scene.car_sprite.scale
+	for h in [0.0, 1.5, 3.0]:
+		scene.car_sprite.place(Vector2.ZERO, h)
+		assert_eq(scene.car_sprite.scale, base, "scale unchanged at height %s" % h)
+
+
+func test_bigger_when_high_scales_with_height() -> void:
+	var sprite = scene.car_sprite
+	var base: Vector2 = sprite.scale
+	sprite.height_scale_per_unit = scene.HEIGHT_SCALE_PER_UNIT
+	sprite.place(Vector2.ZERO, 0.0)
+	assert_eq(sprite.scale, base, "scale 1 at height 0")
+	sprite.place(Vector2.ZERO, 3.0)
+	# 1 + 0.05 x 3 = 1.15
+	assert_almost_eq(sprite.scale.x, base.x * 1.15, 1e-5)
+	assert_gt(sprite.scale.x, base.x)
+
+
+func test_bigger_when_high_factor_formula_and_shadow_size() -> void:
+	assert_eq(CarSpriteScript.scale_factor_for_height(0.0, 0.05), 1.0)
+	assert_almost_eq(CarSpriteScript.scale_factor_for_height(3.0, 0.05), 1.15, 1e-6)
+	assert_eq(CarSpriteScript.scale_factor_for_height(3.0, 0.0), 1.0)
+	var shadow_scale: Vector2 = scene.shadow.scale
+	scene.car_sprite.height_scale_per_unit = 0.05
+	scene.car_sprite.place(Vector2.ZERO, 3.0)
+	assert_eq(scene.shadow.scale, shadow_scale, "the shadow keeps its size")
