@@ -1,7 +1,7 @@
 ---
 id: T-183
 title: The car's real height: gravity, takeoff from the ramp's top and drop-off edges, and landing
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd, game/scripts/level/ground_height.gd, game/tests/unit/test_drift_model.gd]
 files_expected_to_change: [game/scripts/driving/car_height.gd, game/scripts/driving/car.gd, game/tests/unit/test_car_height.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-183.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Done
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-19.
@@ -75,3 +79,4 @@ Driving & Drift Agent, 2026-10-19.
 - Tests: `game/tests/unit/test_car_height.gd`, 11 tests (no ground source → 0; following the ramp each step; ramp-top takeoff matches the formula; a slow car follows the ground; drop-off takeoff; gravity per step; landing on the street and on the platform; flat driving identical with and without a ground source). Full GUT suite: 982/982 passed headless. The existing driving tests are unchanged and pass.
 - Documents affected: `game/README.md` (updated).
 - PixelLab: 0 generations. Refusals: none.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-003).
