@@ -1,10 +1,10 @@
 ---
 id: G-003
 title: Build the elevation system in a test scene, as written in docs/drif...
-status: paused
+status: building
 art_cap: 20
 art_used: 3
-iteration: 6
+iteration: 7
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-003
@@ -49,7 +49,7 @@ Build the elevation system in a test scene, as written in docs/drifting.md (Deci
 | 3 | S4 | The illusion of height: lifted car drawing, shadow on the ground, placeholder platform and ramp | unblocks 3, value 5 | In this 2D game height is only seen through the drawing: the car lifts up the screen with its height while its shadow stays on the ground (Drifting, Decisions, 'Elevation'). The functional work starts with placeholders, not waiting for the art. | covered | T-185, T-182, T-183, T-184 |
 | 4 | S5 | PixelLab art for the ramp and the raised platform | unblocks 1, value 5 | The board asked for PixelLab art for both in this goal. | covered | T-186 |
 | 5 | S3 | How the platform's sides meet the car | unblocks 1, value 4 | Driving up the ramp and jumping off the edges only works if the platform's sides behave consistently with the car's height (driving into a drop-off edge from the ground, landing on the platform, falling off it). | covered | T-184 |
-| 6 | S7 | Document the build and keep the docs in sync | unblocks 0, value 4 | A task is not done until its affected docs are updated; the separate docs are the source of truth and the goal's criteria check them. | in-flight | T-188 |
+| 6 | S7 | Document the build and keep the docs in sync | unblocks 0, value 4 | A task is not done until its affected docs are updated; the separate docs are the source of truth and the goal's criteria check them. | covered | T-188, T-182, T-183, T-184, T-185, T-186, T-187 |
 | 7 | S6 | Option: car drawn slightly bigger when high | unblocks 0, value 2 | Drifting, Decisions names drawing the car slightly bigger when high as an option for the board's playtest. | covered | T-187 |
 
 ### S1: Ground-height data for the test scene: one platform, one ramp, drop-off edges
@@ -141,6 +141,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 5: T-187 (S6, driving-drift, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-003; art 0; agent: Added an off-by-default @export switch `draw_bigger_when_high` to the elevation test scene. When on, the car's drawing scale is 1 + 0.05 x height (a proposal), applied in car_sprite.gd's place(); the shadow keeps its size. I added 3 GUT tests and documented the switch in game/README.md and docs/drifting.md. The full GUT suite passes (1024/1024) and the work is committed on the task branch. One slip: I appended the tests with a heredoc instead of the Edit tool; it wasn't refused, and I noted it in the result notes. Rescan: S7 in-flight, S6 covered.
 - 2026-10-19, iteration 6: T-188 (S7, driving-drift, opus): flagged (flagged-for-review, QA rounds 2); art 0; agent: I checked the elevation test scene numbers in the three docs against the code and data, and they all match. The docs still had three gaps, now fixed. `docs/drifting.md` now describes the T-186 platform and ramp art and lists the script drawing as the fallback, and its task range reads T-182 to T-187. `docs/level-design.md` now gives the ramp's position. The `game/README.md` section intro now mentions T-186 and T-187. The doc fixes and result notes are committed. I did not run the GUT suite, the long GDD regeneration or the staleness check: none of them is on the pre-approved command list, and the tools/ scripts aren't under `game/tools/`. Only docs changed, so the GUT suite is unaffected, and the goal runner regenerates the long GDD itself / I couldn't clear T-188's one failed criterion. It needs the long GDD regenerated and the docs staleness check run. I tried the staleness check once (`python tools/check_docs_staleness.py`) and it was refused because it isn't pre-approved. Under T-180, the goal runner regenerates the long GDD and runs that check itself on the goal's build, so QA should take this criterion from the runner's result. The docs from round 1 haven't changed and already passed the other five criteria. This round I only added notes to the task file's Result notes and committed them. QA's test run left line-ending changes in `.import` files and an extra `.uid` file in the folder; I didn't commit those. Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/generate_long_gdd.py"}, "tool_name": "Bash", "tool_use_id": "toolu_01KgHygid979xbm5XVSXWtNK"} / QA: `python tools/generate_long_gdd.py` was refused (not pre-approved); the staleness check was therefore not run. / driving-drift: {"tool_input": {"command": "python tools/check_docs_staleness.py"}, "tool_name": "Bash", "tool_use_id": "toolu_01C6KoJzsUpYz9RgAGFJCQYu"} / driving-drift: Bash: `python tools/check_docs_staleness.py` was refused ("requires approval"). I wanted to run the docs staleness check for the last acceptance criterion. Regenerating the long GDD (`python tools/generate_long_gdd.py`), which round 1 tried, isn't pre-approved either. The goal runner runs both itself (T-180).. Rescan: S7 in-flight.
 - 2026-10-19, iteration 6: paused (see Pauses).
+- 2026-10-19, iteration 6: resumed: its last pause (flagged) is cleared.
+- 2026-10-19, iteration 7: T-188 (S7, driving-drift, opus): passed (done, QA rounds 2), merged into playtest/G-003; art 0; agent: (nothing new). Rescan: S7 covered.
 
 ## Pauses
 
