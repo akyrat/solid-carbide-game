@@ -126,12 +126,18 @@ func update_fade(car_centre_units: Vector2, car_shape: PackedVector2Array, delta
 ## at a speed that takes fade_time for the whole way.
 func step_fade(is_covering: bool, delta: float) -> void:
 	target_alpha = see_through_alpha if is_covering else 1.0
-	var a := modulate.a
-	if fade_time <= 0.0:
-		a = target_alpha
-	else:
-		a = move_toward(a, target_alpha, delta / fade_time * (1.0 - see_through_alpha))
-	modulate.a = a
+	modulate.a = faded_alpha(modulate.a, is_covering, delta, see_through_alpha, fade_time)
+
+
+## The fade's one step, shared with the elevation test scene's raised areas
+## (task T-191, elevation_platform_drawing.gd): alpha a moved by `delta`
+## seconds towards `see` (covering) or 1, at a speed that takes `time` seconds
+## for the whole way (0 = straight there).
+static func faded_alpha(a: float, is_covering: bool, delta: float, see: float, time: float) -> float:
+	var target := see if is_covering else 1.0
+	if time <= 0.0:
+		return target
+	return move_toward(a, target, delta / time * (1.0 - see))
 
 
 ## Puts the building straight back to solid (a new map, or the flat view).

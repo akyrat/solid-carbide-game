@@ -9,7 +9,9 @@ extends Node2D
 ## (car_shadow.gd) stays at its map position on the ground under it: the
 ## platform's top or the ramp when over them, the street otherwise. The platform
 ## and the ramp are script-drawn placeholders (elevation_platform_drawing.gd),
-## in depth order with the car and its shadow (update_depth).
+## in depth order with the car and its shadow (update_depth), and turn
+## see-through like the map's buildings while they cover the car (task T-191,
+## update_see_through; elevation_platform_drawing.gd).
 ##
 ## Not the project's main scene and not reachable from the menus. No on-screen
 ## text. Run it from the editor (open the scene, F6) or with
@@ -23,6 +25,7 @@ const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
 const PlatformDrawingScript := preload("res://scripts/level/elevation_platform_drawing.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
+const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 
 ## The drift prototype's isometric projection: screen = (x - y, (x + y) / 2).
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -162,6 +165,7 @@ func sync_view(snap_camera: bool = true) -> void:
 	var under: float = ground_height.height_at(units)
 	shadow.place(units, car.rotation, under)
 	update_depth()
+	update_see_through(car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
 		camera_follow.snap(at_ground, frac)
@@ -187,6 +191,27 @@ func update_depth() -> void:
 	var units: Vector2 = car.model.get_position()
 	shadow.z_index = z_for(units, ground_height.height_at(units), 0)
 	car_sprite.z_index = z_for(units, car.height, 1)
+
+
+## The car's drawn shape on screen (drawn pixels): the map's car shape (1 by 3
+## units, 1 unit tall, mvp_map.gd car_screen_shape_at) lifted by its height.
+func car_shape() -> PackedVector2Array:
+	return MvpMapScript.car_screen_shape_at(car.model.get_position(), car.rotation,
+		car.height * CarScript.PX_PER_UNIT)
+
+
+## See-through raised areas (task T-191): each area that covers the car fades
+## like the map's buildings, the others fade back, by `delta` seconds.
+func update_see_through(delta: float) -> void:
+	var units: Vector2 = car.model.get_position()
+	var shape := car_shape()
+	for a in areas:
+		a.update_fade(units, DEPTH_RADIUS, car.height, shape, delta)
+
+
+## The areas that covered the car at the last update_see_through().
+func covering_areas() -> Array:
+	return areas.filter(func(a) -> bool: return a.covering)
 
 
 func _apply_zoom() -> void:

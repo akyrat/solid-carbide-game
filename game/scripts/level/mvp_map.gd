@@ -723,12 +723,19 @@ func _process(delta: float) -> void:
 ## `rotation` (radians, nose along +x at 0), together with the same rectangle
 ## raised CAR_HEIGHT_UNITS, as one convex outline.
 func car_screen_shape(centre: Vector2, rotation: float) -> PackedVector2Array:
+	return car_screen_shape_at(centre, rotation)
+
+
+## The same shape for any scene in this projection, lifted `lift_px` screen
+## pixels up (the elevation test scene's car drawn at its height, task T-191).
+static func car_screen_shape_at(centre: Vector2, rotation: float, lift_px: float = 0.0) -> PackedVector2Array:
 	var half := Vector2(CAR_LENGTH_UNITS, CAR_WIDTH_UNITS) / 2.0
 	var up := Vector2(0.0, -CAR_HEIGHT_UNITS * PX_PER_UNIT)
+	var lift := Vector2(0.0, -lift_px)
 	var pts := PackedVector2Array()
 	for s in [Vector2(-1, -1), Vector2(1, -1), Vector2(1, 1), Vector2(-1, 1)]:
 		var corner: Vector2 = centre + (half * s).rotated(rotation)
-		var p := ISO_TRANSFORM * (corner * PX_PER_UNIT)
+		var p := ISO_TRANSFORM * (corner * PX_PER_UNIT) + lift
 		pts.append(p)
 		pts.append(p + up)
 	return Geometry2D.convex_hull(pts)

@@ -1130,10 +1130,22 @@ The drawing's main functions:
 
 - `car_sprite.gd`: `lift_for_height(height_units, px_per_unit = 16) -> Vector2`, the lift straight up the screen (`(0, -height x 16)`); `place(drawn_ground_px, height_units)` sets the sprite's position to the drawn map position plus the lift. The lift is in the position, so physics interpolation smooths it.
 - `car_shadow.gd`: `place(map_units, rotation, ground_height)` puts the shadow at the drawn map position lifted by the ground's height under the car; `outline()` is its turned footprint, `SIZE_UNITS` (3.2 x 1.2 units, a proposal), drawn in one opaque `COLOR`.
-- `elevation_platform_drawing.gd`: `setup(kind, block, view_basis)` with a `GroundHeight` platform or ramp; `corner_heights()` (NW, NE, SE, SW), `top_height_at(point)`, `top_face()`, `east_face()`, `south_face()` (drawn polygons; a side of height 0 has none); `colors_used()` lists every colour (no Redgull red); `is_behind(centre, radius, height)` is the depth rule: wholly west or north of the area's rectangle (not wholly east or south of it) and lower than its top there.
-- `elevation_test.gd`: `z_for(centre, height, offset)` puts something just under the first area it is behind, or over every area (areas at z_index 3, 6, ...; the shadow at offset 0 under the car at offset 1); `update_depth()` places the shadow with the ground's height under the car and the car with its own height.
+- `elevation_platform_drawing.gd`: `setup(kind, block, view_basis)` with a `GroundHeight` platform or ramp; `corner_heights()` (NW, NE, SE, SW), `top_height_at(point)`, `top_face()`, `east_face()`, `south_face()` (drawn polygons; a side of height 0 has none); `colors_used()` lists every colour (no Redgull red); `is_behind(centre, radius, height)` is the depth rule: the centre west or north of the area's rectangle (the footprint, `radius` around it, not wholly east or south of it) and lower than its top there. The centre, not the footprint, since T-191: the sides stop the car's centre, so at a back-side wall hit its footprint reaches into the rectangle.
+- `elevation_test.gd`: `z_for(centre, height, offset)` puts something just under the first area it is behind, or over every area (areas at z_index 3, 6, ...; the shadow at offset 0 under the car at offset 1); `update_depth()` places the shadow with the ground's height under the car and the car with its own height; `sync_view()` then calls `update_see_through(car.model.dt)` (see-through, T-191 below).
 
 Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
+
+### See-through raised areas (T-191)
+
+The platform and the ramp turn see-through like the map's buildings (Drifting, Content, "Elevation test scene"; Level design, Content, "When a building fades") while they cover the car. The code is shared with the buildings, not copied:
+
+- The numbers: each area's `see_through_alpha` and `fade_time` default to `mvp_map.gd`'s `SEE_THROUGH_ALPHA` (0.15) and `SEE_THROUGH_FADE_TIME` (0.15 s), the buildings' constants.
+- The fade step: `map_building.gd`'s static `faded_alpha(a, covering, delta, see, time)`, which the buildings' `step_fade` now calls too.
+- The car's shape on screen: `mvp_map.gd`'s static `car_screen_shape_at(centre, rotation, lift_px)` (the 1 by 3 unit car, 1 unit tall; `car_screen_shape` calls it with no lift). The scene lifts it by the car's height (`elevation_test.gd`, `car_shape()`).
+- `elevation_platform_drawing.gd`: `silhouette()` (the convex hull of the top face and the ground corners, drawn pixels), `covers(centre, radius, height, car_shape)` (`is_behind` and the shapes overlap), `update_fade(centre, radius, height, car_shape, delta)` (sets `covering` and moves `modulate.a`; the art sprite is a child, so it fades with it), `alpha()`.
+- `elevation_test.gd`: `update_see_through(delta)` updates every area with the car's position, height and shape, after every physics step (from `sync_view`); `covering_areas()` lists the areas covering the car.
+
+Tests: `tests/unit/test_elevation_see_through.gd` (the fade and its numbers; driving into the west and north sides straight, angled and steering, the car under the platform on every step). Screenshot fixtures: `tests/fixtures/elevation_test_see_through.tscn` (behind the platform), `elevation_test_wall_west.tscn` and `elevation_test_wall_north.tscn` (the step the car meets each back side), and `elevation_test_wall_{west,north}_solid.tscn` (the same with the fade off, `elevation_test_demo.gd`'s `see_through = false`, to show the depth order alone).
 
 ### Drawing the car bigger when high (T-187)
 
