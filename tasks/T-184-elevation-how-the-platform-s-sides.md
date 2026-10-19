@@ -1,7 +1,7 @@
 ---
 id: T-184
 title: Elevation: how the platform's sides meet the car (drop-off edge from below, landing on top or beside, the ramp's sides)
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-19, Blocked → In progress
 
 Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-184.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
 
 ## Result notes
 
