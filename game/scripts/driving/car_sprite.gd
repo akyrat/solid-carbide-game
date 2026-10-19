@@ -76,6 +76,21 @@ func _process(delta: float) -> void:
 	offset = _base_offset + (px / scale.x if scale.x != 0.0 else px)
 
 
+## The lift of the drawing for a height above the ground (task T-185;
+## Drifting, Decisions, "Elevation"): straight up the screen, px_per_unit
+## pixels per unit of height (16, the rest of the drawing's scale). The same in
+## the flat and the isometric view: height is always drawn up the screen.
+static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> Vector2:
+	return Vector2(0.0, -height_units * px_per_unit)
+
+
+## Places the drawing at the car's drawn map position (on the ground, height
+## 0), lifted up the screen by the car's height (lift_for_height). The lift is
+## part of the node's position, so physics interpolation smooths it too.
+func place(drawn_ground_px: Vector2, height_units: float) -> void:
+	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
+
+
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).
 func frame_for_rotation(rot: float) -> int:
 	var step := deg_to_rad(float(layout.get("step_deg", 22.5)))
