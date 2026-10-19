@@ -224,3 +224,15 @@ func test_the_mvp_map_keeps_its_own_layout() -> void:
 	assert_eq(m.layout_path, MvpMapScript.LAYOUT_PATH)
 	assert_eq(MvpMapScript.LAYOUT_PATH, "res://data/level/mvp_map.json")
 	m.free()
+
+
+func test_the_runs_map_scene_loads_the_mvp_layout() -> void:
+	# The run builds its map from scenes/level/mvp_map.tscn without a layout_path.
+	var mvp: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level/mvp_map.json"))
+	var m = load("res://scenes/level/mvp_map.tscn").instantiate()
+	add_child_autofree(m)
+	assert_eq(m.layout_path, "res://data/level/mvp_map.json")
+	assert_eq(m.buildings.size(), mvp.buildings.size())
+	assert_false(m.layout.has("platforms"), "no rooftops on the MVP map")
+	var run_src := FileAccess.get_file_as_string("res://scripts/run/run.gd")
+	assert_false(run_src.contains("layout_path"), "the run never sets another layout")

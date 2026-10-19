@@ -1159,7 +1159,7 @@ Made from 3 PixelLab textures (art-archive/T-186/, 3 generations) by `python gam
 
 ## Elevation sample map (T-193)
 
-The drive-only sample map with three layers (Level design, Decisions, "Elevation sample map"; Content, "Elevation sample map"): the street (height 0), a first floor (height 3) and a second floor (height 6). T-193 made its height data and the validator, T-194 the layout file ("The layout file (T-194)" below); the map scene itself is a later ticket. Every number is a proposal for the board's playtest.
+The drive-only sample map with three layers (Level design, Decisions, "Elevation sample map"; Content, "Elevation sample map"): the street (height 0), a first floor (height 3) and a second floor (height 6). T-193 made its height data and the validator, T-194 the layout file ("The layout file (T-194)" below), T-196 the drive-only scene ("The scene (T-196)" below). Every number is a proposal for the board's playtest.
 
 ### Height data
 
@@ -1199,3 +1199,21 @@ From the repo root:
 What the script does to the MVP layout: it leaves out every building overlapping a rooftop; every boulder overlapping a rooftop, a ramp or the strip `FOOT_APPROACH` (6) units deep in front of a ramp's foot; every pattern copy left with no boulder; and every challenge whose copy lost a boulder (challenges are off in the MVP). It rebuilds `ground_rows` from the remaining buildings (cells under a rooftop are `R`), updates `challenge_rule`'s counts, and adds `name`, `task`, `based_on` and `elevation_note` (what was left out).
 
 Tests: `tools/test_build_elevation_sample_map.py` (Python tool tests): heights exactly {0, 3, 6}; an area at 3 and one at 6; a 0-to-3 and a 3-to-6 ramp; every area reachable from the street up ramps (a graph walk); no ramp or ramp foot strip on a building, a boulder or off the map; no boulder on a rooftop or ramp; no building under a rooftop; the validator accepts the file; the check mode matches.
+
+### The scene (T-196)
+
+`scenes/elevation_sample/elevation_sample_map.tscn`, script `scripts/level/elevation_sample_map.gd`: the elevation test scene made city-sized. Drive-only: no enemies, minions, kaiju, weapons, run timer, likes, levels or HUD; the car just drives around freely. Not the main scene, not reachable from the menus (no button: one would need its text from the Narrative Theme Agent), no on-screen text.
+
+**Open it (a proposal, as the elevation test scene):** open the scene in the editor and press F6, or from the repo root `"$GODOT_BIN" --path game res://scenes/elevation_sample/elevation_sample_map.tscn`. W/S/A/D drive. The car starts on the road at (-81, -50) facing north (`START_UNITS`, `START_ROTATION`), 4 units from the foot of the north-west garage's 0-to-3 ramp, so W drives straight up it.
+
+**Run it headless** (no window, to check for errors): `python game/tools/run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 10` imports the project, runs the scene for 10 seconds and exits 0 when Godot printed no error lines (1 with the lines, 2 for bad arguments or no `GODOT_BIN`). `--show` also prints what the scene printed. Tests: `tools/test_run_scene_headless.py`.
+
+What it holds:
+
+- `Map`: the MVP map's script (`mvp_map.gd`, from `scenes/level/mvp_map.tscn`) with `layout_path` set to `data/level/elevation_sample_map.json` before it enters the tree, in the isometric view: the ground art, the buildings with their art (see-through, the map fades them itself: `map.car` is the car), the boulders and the edge walls. `layout_path` (new in T-196) defaults to `LAYOUT_PATH` (`mvp_map.json`), so the run's map is unchanged.
+- `PhysicsWorld` (never drawn) holds the `Car` (`car.gd`), whose `ground` is the scene's `ground_height` (a `GroundHeight` read from the same file), so the car has its real height (`car_height.gd`) on the rooftops and ramps. It collides with the map's buildings, boulders and edge walls. `place_car(units, rotation)` puts it at rest on the ground there.
+- `View`: one `elevation_platform_drawing.gd` node per platform and ramp in the file (`areas`, named `platform_<id>` and `ramp_<id>`), drawn with its script drawing (the placeholder; the elevation test's PixelLab art is for that scene's sizes, so the scene removes it); the `CarShadow` (`car_shadow.gd`, on the ground under the car: the rooftop's top, the ramp or the street); the `CarSprite` (the final isometric sheet, lifted by the car's height); and the `Camera` (`camera_follow.gd` with the saved zoom and camera options, following the car's map position on height-0 ground, as the elevation test scene).
+
+Depth order (a first version; the full order across many areas and buildings is a later ticket): `restack()` sorts the map's building slots and the areas together, back to front (`drawn_before`: an item standing on another is drawn after it, otherwise one wholly west or north of the other first; ties by the centre's x + y), and gives each its own z_index (`BUILDING_Z_STEP` apart, `depth_items`); then the boulders (`boulder_z`) and the pavement signs are put back in that order. `z_for(height)` puts the car just under the lowest building, boulder or area that covers it (behind it and overlapping on screen, the car's shape lifted by its height), otherwise over everything; the shadow goes one under its own place. The areas fade like the buildings while they cover the car (`update_see_through`).
+
+Tests: `tests/unit/test_elevation_sample_map.gd`. Screenshot fixtures (`tests/fixtures/elevation_sample_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops): `elevation_sample_{street,ramp_0_3,ramp_3_6,height_3,height_6,air}.tscn`. For example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_sample_air.tscn art-archive/T-196/screenshots/air.png 700` (the air shot drives 106 steps, so it needs many frames). Screenshots: `art-archive/T-196/screenshots/`.

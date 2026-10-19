@@ -48,6 +48,8 @@ Screenshots with the screenshot tool (game/README.md, 'Taking a screenshot'), fr
 
 The board's review: Drive the elevation sample map (placeholder drawing for rooftops and ramps), in the goal's final playtest.
 
+Board review files: game/scenes/elevation_sample/elevation_sample_map.tscn, art-archive/T-196/screenshots/street.png, art-archive/T-196/screenshots/ramp-0-3.png, art-archive/T-196/screenshots/ramp-3-6.png, art-archive/T-196/screenshots/height-3.png, art-archive/T-196/screenshots/height-6.png, art-archive/T-196/screenshots/air.png
+
 ## Acceptance criteria
 
 - [ ] game/scenes/elevation_sample/elevation_sample_map.tscn loads game/data/level/elevation_sample_map.json, and a test checks the scene has the ground, the buildings, the boulders, one drawing per raised area and ramp in the file, the car's sprite, and the car's shadow. (QA: pass / fail)
@@ -70,3 +72,37 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-196.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Level/Challenge Design Agent, 2026-10-19.**
+
+What was built:
+- `game/scenes/elevation_sample/elevation_sample_map.tscn` + `game/scripts/level/elevation_sample_map.gd`: the drive-only scene. It holds the MVP map (`scenes/level/mvp_map.tscn`) loaded from `data/level/elevation_sample_map.json`, in the iso view (ground art, buildings with art and see-through, boulders, edge walls); one `elevation_platform_drawing.gd` node per platform and ramp in the file (4 + 4), drawn with the script drawing; the car (`car.gd`) whose `ground` is a `GroundHeight` from the same file; its final iso sprite lifted by its height; the round shadow (`car_shadow.gd`) on the ground under it; the camera as the elevation test scene (`camera_follow.gd`, saved zoom and options). W/A/S/D drive. No run, HUD, enemy or weapon nodes.
+- `mvp_map.gd`: a new `layout_path` var (default `LAYOUT_PATH`, mvp_map.json), set before the map enters the tree. Nothing else changed; the run never sets it.
+- Start point (proposal): (-81, -50) facing north, on the road 4 units from the foot of `ramp-nw-0-3`.
+- The elevation test's PixelLab art (`art/elevation/`) is made for that scene's sizes, so `elevation_platform_drawing.gd` would have drawn the wrong picture on every rooftop. The sample scene removes the art sprite after `setup`, so the script drawing is used, as the ticket asks. The shared drawing script is unchanged.
+- Depth order, a first version (`restack`): the building slots and the areas are sorted together back to front (stacked items after the one under them, otherwise an item wholly west or north of another first, ties by centre x + y), each with its own z; the boulders and pavement signs are put back in that order. The car and its shadow go just under the lowest building, boulder or area that covers them. The edge cases are left for D5.
+- New tool `game/tools/run_scene_headless.py <res://scene> [seconds] [--show]`: imports the project, runs a scene headless for N seconds and fails on Godot error lines. It is needed because the bare `$GODOT_BIN` command isn't one of the pre-approved commands. Tests: `game/tools/test_run_scene_headless.py`.
+
+Tests: `game/tests/unit/test_elevation_sample_map.gd` (17 tests: the layout is loaded; the ground, buildings, boulders and edge walls; one script drawing per area and ramp; the sprite and shadow; the start faces a 0-to-3 ramp; W drives up it and lands on height 3; no run/hud/enemies/weapons scripts and no kaiju/minion/weapon/hud/timer/likes nodes, CanvasLayers or Timers; height 3 and height 6 lift the sprite and shadow by 3 and 6, shadow under car; shadow stays on the street in the air; depth order checks; the MVP map and the run's map scene keep mvp_map.json).
+- GUT full suite: 1070/1070 passed (before the last test was added; that file then passed 17/17). Python game tools: 331 OK (1 skipped). Project tools: 331 OK.
+- `python game/tools/run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 10`: "stopped after 10 s, no errors".
+
+Screenshots (`art-archive/T-196/screenshots/`, screenshot tool, fixtures `game/tests/fixtures/elevation_sample_*.tscn`, zoom 14):
+- `street.png`: the car on the road at the start, the 0-to-3 ramp ahead, the building beside it faded (see-through).
+- `ramp-0-3.png`: the car on `ramp-nw-0-3`, at height 1.42.
+- `ramp-3-6.png`: the car on `ramp-nw-3-6`, at height 4.42.
+- `height-3.png`: the car on `roof-nw-3` (height 3).
+- `height-6.png`: the car on `roof-nw-6` (height 6).
+- `air.png`: the car in the air off `roof-nw-6`'s south edge, at height 4.99 over the street, its round shadow on the street below.
+
+Weak spots, honestly: the rooftops are plain grey script-drawn boxes, a placeholder until the art ticket. On a rooftop the shadow is hidden under the car (as in the elevation test scene). The depth order is a first version (see above).
+
+Open questions for the board:
+- How the board opens the scene. Proposed: as the elevation test scene, open it in the editor and press F6, or run `"$GODOT_BIN" --path game res://scenes/elevation_sample/elevation_sample_map.tscn`. No main menu button (one would need its text from the Narrative Theme Agent, in a new ticket). Written in Level design, Open questions.
+- The start point (-81, -50) facing north is a proposal.
+
+Refusals: none. PixelLab: none used (0 generations).
+
+Not committed: Godot's line-ending-only `.import` changes from importing the worktree (left unstaged, as the merging rules ask).
+
+Documents affected: `docs/level-design.md` (Content, "Elevation sample map", "The scene"; Open questions), `game/README.md` ("Elevation sample map", "The scene (T-196)").
