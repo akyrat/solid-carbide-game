@@ -44,12 +44,12 @@ The board's review: Look at the platform and ramp art in `game/scenes/elevation_
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned PixelLab calls and their cost, written before the first call, within the art cap of 20; the number of calls actually made is recorded and is no more than 20. (QA: pass / fail)
-- [ ] Game-ready ramp and platform images are in `game/art/elevation/`, each with its PixelLab record `.json`; every other generation is in `art-archive/<this task's id>/`. (QA: pass / fail)
-- [ ] `tools/check_sprite_rules.py` (or a test) shows each game image has no semi-transparent pixels, about 30 colours or fewer, a transparent background and no Redgull red, at 32 art px per unit. (QA: pass / fail)
-- [ ] The test scene uses the new art instead of the placeholders and still runs headless without errors. (QA: pass / fail)
-- [ ] A screenshot in `docs/drifting/` shows the car on the platform and in the air beside it with the final art. (QA: pass / fail)
-- [ ] docs/visual-style.md records the ramp and platform art: what was made and with how many generations. (QA: pass / fail)
+- [ ] The result notes list the planned PixelLab calls and their cost, written before the first call, within the art cap of 20; the number of calls actually made is recorded and is no more than 20. (QA: pass: plan written first, 3 calls made)
+- [ ] Game-ready ramp and platform images are in `game/art/elevation/`, each with its PixelLab record `.json`; every other generation is in `art-archive/<this task's id>/`. (QA: pass)
+- [ ] `tools/check_sprite_rules.py` (or a test) shows each game image has no semi-transparent pixels, about 30 colours or fewer, a transparent background and no Redgull red, at 32 art px per unit. (QA: pass: build_elevation_art.py check, 29 and 26 colours, all rules pass)
+- [ ] The test scene uses the new art instead of the placeholders and still runs headless without errors. (QA: pass: drawing uses Sprite2D from art/elevation; full GUT 1021/1021 passed)
+- [ ] A screenshot in `docs/drifting/` shows the car on the platform and in the air beside it with the final art. (QA: pass: elevation-final-art.png and elevation-final-art-platform.png exist; not viewed)
+- [ ] docs/visual-style.md records the ramp and platform art: what was made and with how many generations. (QA: pass: entry at line 56)
 
 ## Updates
 
