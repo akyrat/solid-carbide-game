@@ -1,7 +1,7 @@
 ---
 id: T-190
 title: Goal runner: agents take screenshots and QA checks them
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -32,14 +32,18 @@ Fix, in `tools/goal_agent/build.py`:
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] A test shows the agent prompt asks for screenshots in `art-archive/<ticket id>/screenshots/`, including a picture drawn from the data when nothing is on screen, and the QA prompt asks QA to fail a ticket that could be pictured and has none (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] A test shows the agent prompt asks for screenshots in `art-archive/<ticket id>/screenshots/`, including a picture drawn from the data when nothing is on screen, and the QA prompt asks QA to fail a ticket that could be pictured and has none (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Started: the runner's prompts tell agents to take screenshots (or draw a picture from the data) and QA to fail a ticket without them.
+
+### 2026-10-19, In progress → In QA
+
+Built: the agent prompt asks for screenshots (or a picture drawn from the data), and the QA prompt fails a ticket that could be pictured and has none. 331 tools tests pass. QA checks it now.
 
 ## Result notes
 
