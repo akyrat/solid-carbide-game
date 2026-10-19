@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -51,6 +51,10 @@ Check each number written in the docs against the code and data, and correct the
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-188.
 
 ## Result notes
 
