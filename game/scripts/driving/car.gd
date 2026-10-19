@@ -78,7 +78,8 @@ var tuning:
 		return model.tuning
 
 ## The car's real height above the ground (task T-183, car_height.gd), stepped
-## after the flat step. It never changes the flat driving.
+## after the flat step. It changes the flat driving only where the ground's
+## sides are walls (task T-184): the car stops and bounces there.
 var height_model = CarHeight.new()
 ## The ground-height source (a GroundHeight, ground_height.gd), or null. Null
 ## (the drift prototype, the run): the height stays 0.

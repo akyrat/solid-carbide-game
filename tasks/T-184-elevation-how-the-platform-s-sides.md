@@ -59,4 +59,18 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-184.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-19.
+
+**What was built (all proposals for the board's playtest):**
+- `car_height.gd`: `step()` now walks each move in 0.05-unit pieces with the car's height along it and returns what the ground's sides did. A step up of the ground larger than `STEP_CLIMB_MAX` (0.1 units, new proposal: curbs that small are driven over) to more than that above the car is a **wall**: the walk stops at the last piece outside it. On the ground, a step down larger than that is a **drop**: the car takes off at its height before the step and falls. So: a drop-off edge from below is a wall; a car in the air below the top meets the side as a wall and keeps falling beside it; a car above the top clears it; driving off a ramp's side falls with gravity; a ramp's side from the ground is a wall as high as the ramp there. Landing is unchanged (on the top over the platform, on the street beside it).
+- `car.gd`: on a wall, moves the car to the stop point, bounces with the same `wall_bounce` maths as physics walls (shared `_reflect`), and emits `hit_obstacle(ground, area index, normal, impact)`, once per side until the car is 0.25 units away (as for walls).
+- `ground_height.gd`: `area_index_at`, `area_rect`, `side_normal`. `edge_between` is unchanged (the car no longer uses it).
+- No visuals change (nothing draws the height yet), so no screenshots.
+
+**Tests:** `game/tests/unit/test_elevation_edges.gd`, 14 tests: drop-off edge from below (bounce share, stays on the ground, one hit while pressed, re-arm), clearing it from above, meeting it in the air below the top, landing on the top (ramp jump and a direct jump) and on the ground (off the west edge, beside the platform), a sweep of 280 jumps (5 approaches × 7 heights × 4 vertical speeds × 2 steerings, ~42,000 steps) checking no step ends with the car below the ground under it or inside the platform below its top, the ramp's sides from the ramp (falls, no snap) and from the ground (wall at the ramp's height), the curb near the ramp's foot, and climbing/going down the ramp. Full GUT suite headless: 996/996 passed (`test_car_height.gd`, including `test_flat_driving_unchanged_by_height`, unchanged and passing). The one orphan reported is in `test_player_progress.gd`, not touched here.
+
+**Documents updated:** `docs/drifting.md` (Content, new "Elevation: the platform's sides (task T-184)", each point marked as a proposal), `game/README.md` ("The car's height (T-183)" updated, new "The platform's sides (T-184)").
+
+**Open for the board's playtest:** the curb height 0.1; a fall off a ramp's side starts with vertical speed 0 (it doesn't keep the ramp's climb); the hit signal's collider for a side is the `GroundHeight` object (the combo ignores the collider today).
+
+Refusals: none. PixelLab: none used.

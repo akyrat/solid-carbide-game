@@ -3,11 +3,12 @@ extends RefCounted
 ## "Elevation"): a node-free model, separate from the flat top-down driving.
 ## car.gd steps it once per physics step, after its flat step, with where the
 ## car was, where it is now and its flat velocity. It never changes the flat
-## position or speed.
+## position or speed itself; car.gd does, when step() reports a wall.
 ##
 ## Units are the flat world's (x east, y south); height is in the same units,
 ## up is positive. The ground comes from a GroundHeight query (ground_height.gd).
-## With no ground the height stays 0.
+## With no ground the height stays 0. The ground's sides (task T-184) can stop
+## the move: step() returns the wall for car.gd to bounce off (see _walk).
 ##
 ## Every number below is a proposal for the board's playtest (game/README.md,
 ## "Elevation test scene", "The car's height").
