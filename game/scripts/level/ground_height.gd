@@ -91,6 +91,61 @@ func height_at(point: Vector2) -> float:
 	return best
 
 
+## Which area gives the ground's height at the point (task T-184): a ramp's
+## index is platforms.size() + its index in ramps, a platform's its index in
+## platforms; -1 on the street (height 0). Matches height_at: a ramp wins over
+## a platform, the highest platform over a lower one.
+func area_index_at(point: Vector2) -> int:
+	for i in ramps.size():
+		if _contains(ramps[i].rect, point):
+			return platforms.size() + i
+	var best := -1
+	var best_h := 0.0
+	for i in platforms.size():
+		var p: Dictionary = platforms[i]
+		if _contains(p.rect, point) and p.height > best_h:
+			best = i
+			best_h = p.height
+	return best
+
+
+## The rectangle of area index (see area_index_at).
+func area_rect(index: int) -> Rect2:
+	if index < platforms.size():
+		return platforms[index].rect
+	return ramps[index - platforms.size()].rect
+
+
+## The outward normal of the side of area index's rectangle that a move from a
+## (outside it) to b (inside it) enters through (task T-184). At a corner, the
+## side crossed last (the one actually entered through).
+func side_normal(index: int, a: Vector2, b: Vector2) -> Vector2:
+	var rect := area_rect(index)
+	var best := Vector2.ZERO
+	var best_t := -INF
+	var d := b - a
+	var candidates := []
+	if a.x < rect.position.x:
+		candidates.append([Vector2.LEFT, rect.position.x, true])
+	if a.x > rect.end.x:
+		candidates.append([Vector2.RIGHT, rect.end.x, true])
+	if a.y < rect.position.y:
+		candidates.append([Vector2.UP, rect.position.y, false])
+	if a.y > rect.end.y:
+		candidates.append([Vector2.DOWN, rect.end.y, false])
+	for c in candidates:
+		var along: float = d.x if c[2] else d.y
+		var start: float = a.x if c[2] else a.y
+		var t := 0.0 if absf(along) < 1e-12 else (float(c[1]) - start) / along
+		if t > best_t:
+			best_t = t
+			best = c[0]
+	if best == Vector2.ZERO:
+		# a is not outside (should not happen): push straight back along the move.
+		best = -d.normalized() if d != Vector2.ZERO else Vector2.UP
+	return best
+
+
 ## Moving from a to b: {"drop": bool, "height": float, "up": bool}.
 ## drop is true when the move crosses a platform edge that is not a ramp; height is the
 ## size of that step (the platform's height) and up is true when the step is a climb.
