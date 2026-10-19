@@ -4,7 +4,7 @@ title: Task board: what the agents are doing now, live
 status: blocked
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
