@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -14,8 +14,8 @@ depends_on: [T-182, T-183, T-184, T-185, T-186, T-187]
 documents_affected: [docs/drifting.md, docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/data/level/elevation_test.json, game/scripts/driving/car_height.gd, game/scripts/level/ground_height.gd, game/scripts/driving/elevation_test.gd]
 files_expected_to_change: [docs/drifting.md, docs/level-design.md, game/README.md]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-188.
 
 Goal runner (G-003): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → In progress
+
+Goal runner (G-003): failed QA once; back to the agent on opus.
+
 ## Result notes
 
 Checked every number in the three 'Elevation test scene' sections against `car_height.gd`, `elevation_test.gd`, `car_shadow.gd` and `elevation_test.json`. All match: gravity 12, takeoff minimum speed 4, takeoff factor 1, curb step 0.1, sample step 0.05, platform 16 x 16 at (-8, -8) and 3 high, ramp 12 x 8 at (8, -4) from 0 to 3, start (26, 0) facing west, shadow 3.2 x 1.2, 16 px per unit, bigger-when-high 0.05 per unit.
@@ -72,3 +76,4 @@ Gaps fixed:
 No game code changed.
 
 Not run, because the project settings don't pre-approve them: the GUT suite and `tools/generate_long_gdd.py` with the staleness check. The goal runner regenerates the long GDD itself. Only docs changed, so the GUT suite is unaffected.
+- 2026-10-19, in-qa → in-progress: QA failed: The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, `python tools/generate_long_gdd.py` was refused as not pre-approved; the goal runner regenerates the long GDD and runs the check itself) Back to the agent on opus.
