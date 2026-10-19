@@ -1,7 +1,7 @@
 ---
 id: T-185
 title: Elevation test scene: the car's drawing lifts with its height, a shadow on the ground, placeholder platform and ramp
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-19, Blocked → In progress
 
 Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-185.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
 
 ## Result notes
 
