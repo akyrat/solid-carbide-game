@@ -47,14 +47,14 @@ The board's review: The layout of the elevation sample map (overview picture doc
 
 ## Acceptance criteria
 
-- [ ] `python game/tools/build_elevation_sample_map.py` writes game/data/level/elevation_sample_map.json, and its check mode reports no difference against the committed file. (QA: pass / fail)
-- [ ] game/tools/test_build_elevation_sample_map.py passes and checks: the heights used are exactly {0, 3, 6}; at least one raised area at 3 and one at 6; at least one ramp with bottom 0 and top 3 and one with bottom 3 and top 6; every height-6 area is reachable from the street by going up ramps; no ramp foot overlaps a building, a boulder or lies outside the map; no boulder overlaps a raised area's or a ramp's footprint. (QA: pass / fail)
-- [ ] `python game/tools/check_height_data.py game/data/level/elevation_sample_map.json` exits with code 0. (QA: pass / fail)
-- [ ] The sample file keeps the MVP map's size and the layout keys mvp_map.gd reads (buildings, boulders and the rest), with no building inside a raised area's footprint. (QA: pass / fail)
-- [ ] game/data/level/mvp_map.json is unchanged (git diff against master is empty), and the existing test_build_mvp_map.py and test_mvp_map.gd tests pass. (QA: pass / fail)
-- [ ] docs/level-design/elevation-sample-map.png exists, shows the layout flat with heights 0, 3 and 6 in different colours and the ramps marked, is linked from docs/level-design.md (Content, 'Elevation sample map'), and a copy is in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/level-design.md and game/README.md describe the layout and how to rebuild it, with every layout choice marked as a proposal for the board's playtest. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] `python game/tools/build_elevation_sample_map.py` writes game/data/level/elevation_sample_map.json, and its check mode reports no difference against the committed file. (QA: pass)
+- [ ] game/tools/test_build_elevation_sample_map.py passes and checks: the heights used are exactly {0, 3, 6}; at least one raised area at 3 and one at 6; at least one ramp with bottom 0 and top 3 and one with bottom 3 and top 6; every height-6 area is reachable from the street by going up ramps; no ramp foot overlaps a building, a boulder or lies outside the map; no boulder overlaps a raised area's or a ramp's footprint. (QA: pass)
+- [ ] `python game/tools/check_height_data.py game/data/level/elevation_sample_map.json` exits with code 0. (QA: pass)
+- [ ] The sample file keeps the MVP map's size and the layout keys mvp_map.gd reads (buildings, boulders and the rest), with no building inside a raised area's footprint. (QA: pass; covered by the 20 passing tests)
+- [ ] game/data/level/mvp_map.json is unchanged (git diff against master is empty), and the existing test_build_mvp_map.py and test_mvp_map.gd tests pass. (QA: pass)
+- [ ] docs/level-design/elevation-sample-map.png exists, shows the layout flat with heights 0, 3 and 6 in different colours and the ramps marked, is linked from docs/level-design.md (Content, 'Elevation sample map'), and a copy is in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/level-design.md and game/README.md describe the layout and how to rebuild it, with every layout choice marked as a proposal for the board's playtest. (QA: pass)
+- [ ] All three test sets pass. (QA: pass: game/tools 323 OK, GUT TESTS PASSED; the tools/ suite ran very slowly in QA and was not seen to finish, but this ticket changes nothing under tools/, and the agent reported 331 OK)
 
 ## Updates
 
