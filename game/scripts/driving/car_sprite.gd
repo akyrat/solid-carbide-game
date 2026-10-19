@@ -27,6 +27,12 @@ const SHAKE_HZ := 20.0
 var _base_offset := Vector2.ZERO
 var _shake_left := 0.0
 
+## The option "draw the car bigger when high" (task T-187; Drifting, Decisions,
+## "Elevation"): extra drawing scale per unit of height. 0 is off (the default):
+## the scale stays the sheet's own at every height.
+var height_scale_per_unit := 0.0
+var _base_scale := Vector2.ONE
+
 
 func _init() -> void:
 	centered = true
@@ -54,7 +60,8 @@ func use_sheet(view: String) -> void:
 	_base_offset = frame_size / 2.0 - center
 	offset = _base_offset
 	var s := world_px_per_unit / float(layout.get("px_per_unit", world_px_per_unit))
-	scale = Vector2(s, s)
+	_base_scale = Vector2(s, s)
+	scale = _base_scale
 
 
 ## Starts the damage shake (restarts it if one is running). Runs in _process, so pausing stops it.
@@ -89,6 +96,13 @@ static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> V
 ## part of the node's position, so physics interpolation smooths it too.
 func place(drawn_ground_px: Vector2, height_units: float) -> void:
 	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
+	scale = _base_scale * scale_factor_for_height(height_units, height_scale_per_unit)
+
+
+## The drawing's scale factor at a height: 1 + per_unit x height (never below
+## 1). With per_unit 0 (the option off) it is 1 at every height.
+static func scale_factor_for_height(height_units: float, per_unit: float) -> float:
+	return 1.0 + maxf(per_unit, 0.0) * maxf(height_units, 0.0)
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).

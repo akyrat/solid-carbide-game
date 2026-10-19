@@ -1135,6 +1135,10 @@ The drawing's main functions:
 
 Every colour and size in the drawing is a proposal for the board's playtest. Tests: `tests/unit/test_elevation_drawing.gd`. Screenshot fixtures: `tests/fixtures/elevation_test_{ground,ramp,platform,air,behind}.tscn` (`elevation_test_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops), for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_test_air.tscn docs/drifting/elevation-air.png 90`.
 
+### Drawing the car bigger when high (T-187)
+
+An option for the board's playtest, **off by default**. `elevation_test.gd` has `@export var draw_bigger_when_high := false`: tick it in the editor's Inspector on the scene's root node (or set it in a fixture before the scene is ready) to turn it on. No on-screen text or menu. When on, `car_sprite.height_scale_per_unit` is `HEIGHT_SCALE_PER_UNIT` = **0.05** (a proposal), and `car_sprite.place()` sets the drawing's scale to its sheet scale x `scale_factor_for_height(height, per_unit)` = **1 + 0.05 x height**: 1 on the ground, 1.15 on the platform's top (3 units). Off, the per-unit value is 0 and the factor is 1 at every height. The shadow keeps its size. Tests: `tests/unit/test_elevation_drawing.gd` (`test_bigger_when_high_*`).
+
 ### The platform and ramp art (T-186)
 
 PixelLab art replaces the script drawing: `art/elevation/platform.png` (1024 x 608) and `ramp.png` (640 x 416), each with its record (`platform.json`, `ramp.json`: sources, `top_left_art_px` from the drawn origin, 32 art px per unit). `elevation_platform_drawing.gd` adds a `Sprite2D` (`art_sprite`, scale 0.5, nearest filter, at `top_left_art_px` x 0.5) when the PNG and record exist, and then draws nothing itself; the script drawing stays as the fallback, and its geometry functions and the depth order (`is_behind`) are unchanged.
