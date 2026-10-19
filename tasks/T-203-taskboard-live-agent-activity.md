@@ -30,7 +30,8 @@ The board wants to see live what the agents are doing, at a level it can read at
 2. **Plain phrases, no AI.** The board turns the latest events into one short phrase, by rules, not a model: which tool on what, in words. Examples: "Reading `docs/level-design.md`", "Editing `ground_height.gd`", "Running the game's tests", "Taking screenshots", "Calling PixelLab", "Committing", "Thinking"; QA: "QA checking"; with how long it has been doing it. Unknown tools get a generic phrase.
 3. **Free signals for every ticket.** For any ticket in progress or in QA (runner or not): time in its lane, the number of commits on its task branch, and the time of its last activity (newest of: its activity log, its branch's last commit, its task file's change).
 4. **A "Now" panel.** In-progress and in-QA cards show one line: the phrase and how long ago ("Running the game's tests · 2 min"), or, without an activity log, the free signals ("3 commits · last activity 1 min ago"). The ticket's detail view shows its last 20 phrases as a short timeline. Goal cards (T-202's strip) show the ticket being worked on and its phrase, with "ticket N of M, iteration K". A card with no activity for 10 minutes is marked quiet. It updates with the board's normal refresh.
-5. **Bounded.** Activity logs are read from the end (only the last events), and capped in size; a run's log can be deleted at any time without breaking anything.
+5. **A resumed goal says so.** `run.py resume` sets the goal's status to `building` and saves the goal file when it carries on, so the board (T-202's Goals strip) doesn't show a running goal as `paused` until its next ticket finishes. A test covers it.
+6. **Bounded.** Activity logs are read from the end (only the last events), and capped in size; a run's log can be deleted at any time without breaking anything.
 
 ## Acceptance criteria
 
