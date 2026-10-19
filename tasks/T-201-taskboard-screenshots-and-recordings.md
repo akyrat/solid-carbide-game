@@ -1,7 +1,7 @@
 ---
 id: T-201
 title: Task board: screenshots and recordings shown on the ticket
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md, tasks/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/test_taskboard_server.py]
 files_expected_to_change: [tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/test_taskboard_server.py]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,6 +50,10 @@ Started: each ticket on the board gets a 'Screenshots and recordings' section (t
 ### 2026-10-19, In progress → In QA
 
 Built: tickets list their screenshots and recordings, a safe endpoint serves them, and the detail view shows thumbnails, a full-size view and video players; cards show a count. 346 tools tests pass. QA checks it now.
+
+### 2026-10-19, In QA → Done
+
+QA passed all 5 criteria (checked live through a second server); the two small page flaws QA noted are fixed. Merged: the board shows each ticket's screenshots and recordings once restarted.
 
 ## Result notes
 
