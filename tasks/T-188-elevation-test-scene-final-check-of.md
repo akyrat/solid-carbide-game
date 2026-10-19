@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
