@@ -46,7 +46,7 @@ Check each number written in the docs against the code and data, and correct the
 - [ ] game/README.md has the scene's path, how to run it, its data format and the code's main functions. (QA: pass)
 - [ ] Every number in those sections matches the code or data (gravity, takeoff, platform and ramp sizes and heights, the scale switch's value). (QA: pass: gravity 12, takeoff 4, curb 0.1, platform/ramp data, shadow 3.2x1.2, scale 0.05 per unit all match)
 - [ ] No file under `game/` other than `game/README.md` changes; the full GUT suite still passes headless. (QA: pass: the task's own commit touches only README in game/; GUT 1024/1024 passed)
-- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, `python tools/generate_long_gdd.py` was refused as not pre-approved; the goal runner regenerates the long GDD and runs the check itself)
+- [ ] The docs staleness check (`python tools/check_docs_staleness.py` or the project's equivalent) passes after the long GDD is regenerated. (QA: fail: not run, neither `python tools/generate_long_gdd.py` nor `python tools/check_docs_staleness.py` is pre-approved, so QA can't run them; round 2: docs unchanged since round 1, the goal runner's own regeneration and staleness result decides this one)
 
 ## Updates
 
