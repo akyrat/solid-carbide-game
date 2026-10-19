@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: building
+status: paused
 art_cap: 50
 art_used: 0
 iteration: 2
@@ -142,8 +142,10 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 1: paused (see Pauses).
 - 2026-10-19, iteration 1: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-19, iteration 2: T-194 (S2, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: I built game/tools/build_elevation_sample_map.py. It reads mvp_map.json without changing it and writes game/data/level/elevation_sample_map.json: the same layout keys and 240 by 240 size, plus two parking garages. Each has a height-3 rooftop with a height-6 rooftop on it, a ramp from the street up to 3 and a ramp from 3 up to 6. The 4 buildings under the rooftops are left out, and so are the 8 boulders on a rooftop, a ramp or the strip in front of a ramp's foot. The 4 pattern copies left empty and 1 challenge go with them; challenges are off in the MVP anyway. The script checks its output with the height validator and has a --check mode. It has 20 Python tests, and it draws the overview picture to docs/level-design/elevation-sample-map.png with a copy in art-archive/T-194/screenshots/. I described the layout in docs/level-design.md and game/README.md, with every choice marked as a proposal for the board's playtest. All three test sets pass (Python game/tools, GUT, Python tools) and the validator prints OK. Open questions are listed in the result notes: no boulders on rooftops, two garages of 84 by 30 instead of the 2 by 2 block size, and the 12 by 10 ramps. Rescan: S2 covered, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight.
+- 2026-10-19, iteration 2: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-19 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 2:40pm (Europe/London)
+- 2026-10-19 [stop]: Claude reported an error for step 'qa': You've hit your session limit · resets 6:10pm (Europe/London)
 
