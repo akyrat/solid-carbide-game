@@ -1,7 +1,7 @@
 ---
 id: T-194
 title: Elevation sample map: the layout file, built by script from the MVP map, with rooftops at 3 and 6 and parking-garage ramps
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/tools/build_mvp_map.py, game/tools/test_build_mvp_map.py, game/data/level/mvp_map.json, game/scripts/level/ground_height.gd, game/tools/check_height_data.py, game/scripts/driving/car_height.gd]
 files_expected_to_change: [game/tools/build_elevation_sample_map.py, game/tools/test_build_elevation_sample_map.py, game/data/level/elevation_sample_map.json, docs/level-design/elevation-sample-map.png, docs/level-design.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -68,6 +68,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-194.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-19, In QA → Needs playtest
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -94,3 +98,4 @@ Open questions for the board's playtest (settled with the safe option, not asked
 - `ground_rows` marks cells under a rooftop as road (`R`), since the legend has no rooftop letter; the heights come from `platforms`.
 
 PixelLab: none used (0 generations). Refusals: none. Godot's line-ending-only `.import` changes from the test run were left uncommitted.
+- 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-004).
