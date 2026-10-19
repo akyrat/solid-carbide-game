@@ -1,7 +1,7 @@
 ---
 id: T-188
 title: Elevation test scene: final check of its documentation in Drifting, Level design and the game README
-status: flagged-for-review
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -72,6 +72,10 @@ Goal runner (G-003): the agent is done; QA is checking it.
 
 Goal runner (G-003): failed QA twice; flagged for the board.
 
+### 2026-10-19, Flagged for review → Done
+
+Done on the board's call: the only failing criterion was the staleness check only I can run, and it passes. G-003 resumes to its goal check.
+
 ## Result notes
 
 Checked every number in the three 'Elevation test scene' sections against `car_height.gd`, `elevation_test.gd`, `car_shadow.gd` and `elevation_test.json`. All match: gravity 12, takeoff minimum speed 4, takeoff factor 1, curb step 0.1, sample step 0.05, platform 16 x 16 at (-8, -8) and 3 high, ramp 12 x 8 at (8, -4) from 0 to 3, start (26, 0) facing west, shadow 3.2 x 1.2, 16 px per unit, bigger-when-high 0.05 per unit.
@@ -89,3 +93,4 @@ Not run, because the project settings don't pre-approve them: the GUT suite and 
 Round 2 (2026-10-19): the only failed criterion is the docs staleness check after the long GDD's regeneration. Neither command is on the pre-approved list. `python tools/check_docs_staleness.py` was tried once this round and refused ("requires approval"). I didn't try to get around it. Under `docs/working-with-the-board.md`, "Goal runs" (T-180), the goal runner regenerates the long GDD and runs the staleness check itself on the goal's build before the goal check, and gives QA the result. So QA should take that criterion from the runner's result, not from this agent. The docs content from round 1 is unchanged and passed QA on the other five criteria. Nothing else changed this round. QA's GUT run left `.import` line-ending noise and a `.uid` file in the folder. I didn't commit them.
 - 2026-10-19, in-qa → flagged-for-review: Failed QA a second time (goal G-003).
 - 2026-10-19, Project Lead: the only failing criterion needs the docs staleness check, which only the Project Lead runs (the agents' pre-approved list doesn't have it; T-180 covers the goal check, not tickets). Regenerated the long GDD (`python tools/generate_long_gdd.py`) and the short GDD fingerprint on this branch; `python tools/generate_long_gdd.py --check` then printed "in sync: 9 game area docs, the long GDD and the short GDD". The ticket's work passed the other five criteria. Waiting for the board's call on the flag.
+- 2026-10-19, flagged-for-review → done: Board's call, 2026-10-19 ('can you resume'): the only failing criterion was the docs staleness check, which the Project Lead ran on this branch (in sync); the other five criters passed QA.
