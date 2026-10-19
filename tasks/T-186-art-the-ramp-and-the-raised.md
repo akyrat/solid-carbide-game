@@ -1,7 +1,7 @@
 ---
 id: T-186
 title: Art: the ramp and the raised platform for the elevation test scene (PixelLab)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-003
@@ -54,6 +54,10 @@ The board's review: Look at the platform and ramp art in `game/scenes/elevation_
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-186.
 
 ## Result notes
 
