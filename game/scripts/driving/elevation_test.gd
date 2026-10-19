@@ -45,13 +45,6 @@ const DEPTH_RADIUS := 0.5
 const Z_GROUND := -100
 const Z_STEP := 3
 
-## The option (T-187): draw the car bigger when high. Off by default; tick it in
-## the editor's Inspector (the scene's root) to try it. The shadow keeps its size.
-@export var draw_bigger_when_high := false
-## Extra drawing scale per unit of height when the option is on (a proposal):
-## 0.05, so the platform's top (3 units) draws the car 1.15 times as big.
-const HEIGHT_SCALE_PER_UNIT := 0.05
-
 var ground_height: GroundHeight
 var physics_world: Node2D
 var car: CharacterBody2D
@@ -114,7 +107,6 @@ func _ready() -> void:
 	car_sprite.world_px_per_unit = CarScript.PX_PER_UNIT
 	view_root.add_child(car_sprite)
 	car_sprite.use_sheet("iso")
-	car_sprite.height_scale_per_unit = HEIGHT_SCALE_PER_UNIT if draw_bigger_when_high else 0.0
 
 	camera = Camera2D.new()
 	camera.name = "Camera"
@@ -163,7 +155,7 @@ func sync_view(snap_camera: bool = true) -> void:
 	car_sprite.place(at_ground, car.height)
 	car_sprite.set_heading(car.rotation)
 	var under: float = ground_height.height_at(units)
-	shadow.place(units, car.rotation, under)
+	shadow.place(units, under)
 	update_depth()
 	update_see_through(car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)

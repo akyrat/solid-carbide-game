@@ -27,10 +27,6 @@ const SHAKE_HZ := 20.0
 var _base_offset := Vector2.ZERO
 var _shake_left := 0.0
 
-## The option "draw the car bigger when high" (task T-187; Drifting, Decisions,
-## "Elevation"): extra drawing scale per unit of height. 0 is off (the default):
-## the scale stays the sheet's own at every height.
-var height_scale_per_unit := 0.0
 var _base_scale := Vector2.ONE
 
 
@@ -93,16 +89,11 @@ static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> V
 
 ## Places the drawing at the car's drawn map position (on the ground, height
 ## 0), lifted up the screen by the car's height (lift_for_height). The lift is
-## part of the node's position, so physics interpolation smooths it too.
+## part of the node's position, so physics interpolation smooths it too. The
+## drawing's scale is the sheet's own at every height (task T-192).
 func place(drawn_ground_px: Vector2, height_units: float) -> void:
 	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
-	scale = _base_scale * scale_factor_for_height(height_units, height_scale_per_unit)
-
-
-## The drawing's scale factor at a height: 1 + per_unit x height (never below
-## 1). With per_unit 0 (the option off) it is 1 at every height.
-static func scale_factor_for_height(height_units: float, per_unit: float) -> float:
-	return 1.0 + maxf(per_unit, 0.0) * maxf(height_units, 0.0)
+	scale = _base_scale
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).
