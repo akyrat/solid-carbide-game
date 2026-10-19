@@ -271,6 +271,10 @@ def pre_approved_note(root):
               "no PowerShell for them. Anything else needs an approval you can't get, and is refused.")
 
 
+EDIT_TICKETS_RULE = ("Edit ticket files (result notes, QA marks, notes) only with the file editing tool (Edit or Write), "
+                     "never with shell commands or scripts: the guard refuses scripts that write task files.")
+
+
 def agent_prompt(b, ticket, folder):
     return f"""Work on task {ticket['id']} ("{ticket['title']}"), in its folder {folder}, on branch \
 {b.places.ticket_branch(ticket)}. Its task file there is {ticket['file']}.
@@ -280,6 +284,7 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Work and commit only in that folder, in small commits. Never commit to master, never merge, never push.
 - Write tests for your code and run them. Write your result notes in the task file's "## Result notes".
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
+- {EDIT_TICKETS_RULE}
 - PixelLab: this goal has {art_left(b)} generations left under its art cap. Never go over it; one round per
   task, no regenerations.
 - If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip it
@@ -297,6 +302,7 @@ Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
 Mark each one in the task file as `(QA: pass)` or `(QA: fail: <reason>)`, and commit the task file in that folder.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
+{EDIT_TICKETS_RULE}
 If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
 check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
 can't finish the checks without it; then stop.{pre_approved_note(b.root)}

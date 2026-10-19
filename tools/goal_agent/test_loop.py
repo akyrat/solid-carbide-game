@@ -265,6 +265,17 @@ class Pauses(GoalRepo):
             self.assertIn("Set blocked to true only when", prompt)
             self.assertIn("list it in refusals", prompt)
 
+    def test_agent_qa_and_goal_check_prompts_say_to_edit_tickets_with_the_editing_tool_only(self):
+        b = self.planned(self.two_tickets())
+        t = self.now()["T-001"]
+        folder = self.places.ticket_folder("T-001")
+        prompts = (build.agent_prompt(b, t, folder), build.qa_prompt(b, t, folder, "## Acceptance criteria\n"),
+                   loop.check_prompt(b, ["It works"], folder))
+        for prompt in prompts:
+            self.assertIn("only with the file editing tool (Edit or Write)", prompt)
+            self.assertIn("never with shell commands or scripts", prompt)
+            self.assertIn("the guard refuses scripts that write task files", prompt)
+
     def test_a_refused_command(self):
         class Refusing(Shell):
             def run(self, cmd, cwd, check=True):
