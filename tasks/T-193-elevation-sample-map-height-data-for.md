@@ -1,7 +1,7 @@
 ---
 id: T-193
 title: Elevation sample map: height data for three layers (stacked areas, ramps between rooftops) and a height-data validator
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -55,6 +55,10 @@ Keep the file format a list of areas a level editor could later edit (Level desi
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Open → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-193.
 
 ## Result notes
 
