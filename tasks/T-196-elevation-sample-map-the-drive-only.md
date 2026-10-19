@@ -1,7 +1,7 @@
 ---
 id: T-196
 title: Elevation sample map: the drive-only scene (the MVP map's city with rooftops and ramps, placeholder drawing)
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
