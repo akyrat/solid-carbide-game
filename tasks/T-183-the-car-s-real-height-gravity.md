@@ -1,7 +1,7 @@
 ---
 id: T-183
 title: The car's real height: gravity, takeoff from the ramp's top and drop-off edges, and landing
-status: open
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/scripts/driving/car.gd, game/scripts/driving/car_model.gd, game/scripts/level/ground_height.gd, game/tests/unit/test_drift_model.gd]
 files_expected_to_change: [game/scripts/driving/car_height.gd, game/scripts/driving/car.gd, game/tests/unit/test_car_height.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,19 +43,40 @@ docs/drifting.md, Decisions, 'Elevation' (board, 2026-10-17, go-ahead 2026-10-19
 
 ## Acceptance criteria
 
-- [ ] The car has a height and a vertical speed separate from its flat position; with no ground-height source its height stays 0. (QA: pass / fail)
-- [ ] Every existing driving test (`test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`, `test_tricks.gd`, `test_boost.gd`) passes unchanged. (QA: pass / fail)
-- [ ] GUT test: a car driven up the ramp has, each step, a height equal to the ground height under it. (QA: pass / fail)
-- [ ] GUT test: a car leaving the ramp's top, and a car leaving a drop-off edge, with enough speed, leaves the ground; the ramp takeoff's vertical speed matches the formula in the README for the car's speed and the ramp's slope. (QA: pass / fail)
-- [ ] GUT test: in the air the height follows gravity (vertical speed falls by gravity x step time each step). (QA: pass / fail)
-- [ ] GUT test: the car lands when its height reaches the ground under it, and its vertical speed then is 0. (QA: pass / fail)
-- [ ] Gravity and every takeoff or landing number are in one place, listed in `game/README.md` as proposals for the board's playtest. (QA: pass / fail)
-- [ ] The full GUT suite passes headless. (QA: pass / fail)
+- [ ] The car has a height and a vertical speed separate from its flat position; with no ground-height source its height stays 0. (QA: pass)
+- [ ] Every existing driving test (`test_drift_model.gd`, `test_drift_prototype.gd`, `test_car_collisions.gd`, `test_tricks.gd`, `test_boost.gd`) passes unchanged. (QA: pass: files untouched in diff, all pass)
+- [ ] GUT test: a car driven up the ramp has, each step, a height equal to the ground height under it. (QA: pass)
+- [ ] GUT test: a car leaving the ramp's top, and a car leaving a drop-off edge, with enough speed, leaves the ground; the ramp takeoff's vertical speed matches the formula in the README for the car's speed and the ramp's slope. (QA: pass)
+- [ ] GUT test: in the air the height follows gravity (vertical speed falls by gravity x step time each step). (QA: pass)
+- [ ] GUT test: the car lands when its height reaches the ground under it, and its vertical speed then is 0. (QA: pass)
+- [ ] Gravity and every takeoff or landing number are in one place, listed in `game/README.md` as proposals for the board's playtest. (QA: pass: constants at top of car_height.gd, table in README)
+- [ ] The full GUT suite passes headless. (QA: pass: 982/982)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-183.
+
+### 2026-10-19, In progress → In QA
+
+Goal runner (G-003): the agent is done; QA is checking it.
+
+### 2026-10-19, In QA → Done
+
+Goal runner (G-003): QA passed; merged into playtest/G-003.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-19.
+
+- New `game/scripts/driving/car_height.gd`: a node-free height model (height, vertical speed, airborne, `took_off` and `landed` signals). It follows the ground on the ground and the ramp, takes off at the ramp's top (climbing, flat speed at least `RAMP_TAKEOFF_MIN_SPEED`, vertical speed = the ramp's slope rate, formula in `game/README.md`), and falls off a drop-off edge with vertical speed 0. In the air, gravity, then the height follows. It lands by snapping to the ground with vertical speed 0.
+- `car.gd`: owns `height_model`, steps it after the flat step (after any bounce) with the flat position before and after. Adds `ground` (null by default, so height stays 0 in the prototype and the run), plus `height`, `vertical_speed` and `airborne`. The flat driving code is untouched: the car steers in the air exactly as on the ground (**proposal**: the docs don't say whether it can steer in the air).
+- Numbers (proposals for the playtest, at the top of `car_height.gd`, listed in `game/README.md`, "Elevation test scene", "The car's height"): gravity 12 units/s², ramp takeoff min speed 4 units/s, ramp takeoff factor 1.0. At cruise speed off the test ramp: 2.75 units/s up.
+- Left for the next task, as the Description says: the platform's sides against the car. Driving into a drop-off edge from below snaps the car up to the platform for now. Landing over the platform's edge and the ramp's sides are also left.
+- Tests: `game/tests/unit/test_car_height.gd`, 11 tests (no ground source → 0; following the ramp each step; ramp-top takeoff matches the formula; a slow car follows the ground; drop-off takeoff; gravity per step; landing on the street and on the platform; flat driving identical with and without a ground source). Full GUT suite: 982/982 passed headless. The existing driving tests are unchanged and pass.
+- Documents affected: `game/README.md` (updated).
+- PixelLab: 0 generations. Refusals: none.
+- 2026-10-19, in-qa → done: QA passed every criterion (goal G-003).

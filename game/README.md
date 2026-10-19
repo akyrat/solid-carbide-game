@@ -1079,3 +1079,25 @@ The ground side of the elevation test scene (Level design, Decisions, "Raised ar
 - `edge_between(a, b) -> Dictionary`: `{"drop": bool, "height": float, "up": bool}`. `drop` is true when the move from a to b crosses a platform edge that is not a ramp; `height` is the step's size and `up` says it is a climb (from below). Moving along a ramp is never a drop.
 
 Tests: `tests/unit/test_ground_height.gd`.
+
+### The car's height (T-183)
+
+`scripts/driving/car_height.gd`, a node-free model (Drifting, Decisions, "Elevation"). The car (`car.gd`) owns one in `height_model` and steps it once per physics step, after its flat step, with the flat position before and after and the flat velocity. It reads the ground from `car.ground` (a `GroundHeight`); with `ground` null (the drift prototype, the run) the height stays 0. The flat driving (50 steps per second, the Unity values) is not changed, in the air too: the car steers in the air exactly as on the ground (a proposal; the docs don't say). Physics only: nothing draws the height yet.
+
+- `car.height` (units, up), `car.vertical_speed` (units/s, up positive, 0 on the ground), `car.airborne`. Signals on `height_model`: `took_off(from_ramp, vertical_speed)` and `landed(impact_vertical_speed)`.
+- **On the ground** (the ramp included) the height is the ground's height under the car.
+- **Takeoff at the ramp's top:** on the step the car goes from the ramp onto ground that is not ramp, climbing, at a flat speed of at least `RAMP_TAKEOFF_MIN_SPEED`, it leaves the ground with vertical speed `vz = (velocity . climb direction) x (top_height - bottom_height) / ramp length x RAMP_TAKEOFF_FACTOR` (the climb direction points from the ramp's foot to its top; ramp length is the footprint's size along it). Its height that step carries on along the slope's line: `height + vz x dt`. With the test scene's ramp (rise 3 over 12) at cruise speed, 11 units/s, that is 2.75 units/s. Slower, it just follows the ground onto the platform.
+- **Takeoff at a drop-off edge:** on the step the car crosses a step down (`edge_between`), it is in the air with vertical speed 0 (flat platform ground), at any speed, and falls.
+- **In the air:** each step `vertical_speed -= GRAVITY x dt`, then `height += vertical_speed x dt`.
+- **Landing:** when the height reaches the ground under the car, the height snaps to the ground and the vertical speed becomes 0.
+- Not here (the next task's): the platform's sides against the car (driving into a drop-off edge from below snaps the car up for now), landing over the platform's edge, the ramp's sides.
+
+Every number, in one place at the top of `car_height.gd`, is a proposal for the board's playtest:
+
+| Constant | Value | Meaning |
+|---|---|---|
+| `GRAVITY` | 12 units/s² | Pulls the vertical speed down in the air |
+| `RAMP_TAKEOFF_MIN_SPEED` | 4 units/s | The slowest flat speed that leaves the ground at the ramp's top |
+| `RAMP_TAKEOFF_FACTOR` | 1.0 | Share of the ramp's vertical speed kept at takeoff |
+
+Tests: `tests/unit/test_car_height.gd`.
