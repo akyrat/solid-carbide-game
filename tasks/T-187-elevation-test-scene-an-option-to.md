@@ -37,9 +37,9 @@ The board's review: Play the elevation test scene with the switch on and off, an
 
 ## Acceptance criteria
 
-- [ ] A switch, off by default, makes the car's drawing scale grow with its height; how to switch it and the proposed scale per unit of height are in `game/README.md`. (QA: pass / fail)
-- [ ] GUT test: with the switch on, the drawing's scale is 1 at height 0 and larger than 1 at a known height (matching the README's formula); with it off, the scale is 1 at every height. (QA: pass / fail)
-- [ ] The full GUT suite passes headless and the test scene runs headless without errors. (QA: pass / fail)
+- [ ] A switch, off by default, makes the car's drawing scale grow with its height; how to switch it and the proposed scale per unit of height are in `game/README.md`. (QA: pass: `draw_bigger_when_high` export, default false, 0.05 per unit, documented in README)
+- [ ] GUT test: with the switch on, the drawing's scale is 1 at height 0 and larger than 1 at a known height (matching the README's formula); with it off, the scale is 1 at every height. (QA: pass: tests in test_elevation_drawing.gd check 1.0 at 0, 1.15 at 3, off = 1)
+- [ ] The full GUT suite passes headless and the test scene runs headless without errors. (QA: pass: GUT 1024/1024 in 84 scripts; the scene is instantiated by the tests with no script errors)
 
 ## Updates
 
