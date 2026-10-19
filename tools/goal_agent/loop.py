@@ -242,6 +242,7 @@ def check_prompt(b, criteria, folder, docs_check=""):
 Check each of the goal's own acceptance criteria against the build, running the tests and scenes they name:
 {lines}
 {docs}Answer one entry per criterion, in this order, with pass or fail and short notes. Don't change any file.
+{build.EDIT_TICKETS_RULE}
 If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
 check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
 can't finish the checks without it; then stop.{build.pre_approved_note(b.root)}
