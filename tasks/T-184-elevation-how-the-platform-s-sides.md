@@ -1,7 +1,7 @@
 ---
 id: T-184
 title: Elevation: how the platform's sides meet the car (drop-off edge from below, landing on top or beside, the ramp's sides)
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-003
@@ -52,6 +52,10 @@ GUT tests in `game/tests/unit/test_elevation_edges.gd` for each case.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-19, Blocked → In progress
+
+Goal runner (G-003): started, in C:\solid-carbide-worktrees\T-184.
 
 ## Result notes
 
