@@ -1,7 +1,7 @@
 ---
 id: G-003
 title: Build the elevation system in a test scene, as written in docs/drif...
-status: building
+status: ready-to-play
 art_cap: 20
 art_used: 3
 iteration: 7
@@ -16,14 +16,14 @@ Build the elevation system in a test scene, as written in docs/drifting.md (Deci
 
 ## Goal acceptance criteria
 
-- [ ] A test scene for elevation exists on the branch playtest/G-003 (path recorded in game/README.md, section on the elevation test scene) and runs headless in Godot 4.6 for at least 10 seconds with no script errors in the log; the drift prototype stays the project's main scene. (QA: pass / fail)
-- [ ] The scene holds exactly one raised platform, with a ramp on one side and drop-off edges on its other sides, as in docs/level-design.md, Decisions, 'Raised areas and ramps'. (QA: pass / fail)
-- [ ] GUT tests on playtest/G-003 pass and show that the car has a height separate from its map position: on flat ground it stays at 0; driving up the ramp raises it to the platform's height; driving along the platform keeps it there; driving off a drop-off edge or the ramp's top at speed makes it airborne, with its height following gravity until it lands; landing sets its height to the ground under it and its vertical speed to 0. (QA: pass / fail)
-- [ ] A screenshot (or captured frames) from the running test scene, saved in the goal's folder, shows the car in the air off the drop-off edge with its drawing lifted up the screen and its shadow on the ground under its map position; a second one shows the car on the platform. (QA: pass / fail)
-- [ ] The ramp and the raised platform are drawn with PixelLab art in game/art/ (each with its PixelLab record .json), every other generation in art-archive/<task>/, the total PixelLab generations for the goal at or under its art cap (20), and the art follows docs/visual-style.md, Decisions (32 art px per unit drawn at 0.5, hard pixel edges, no semi-transparent pixels, no Redgull red). (QA: pass / fail)
-- [ ] All the existing test sets still pass on playtest/G-003 (the drift prototype's driving tests unchanged: flat driving behaves as before). (QA: pass / fail)
-- [ ] No trick system code is on playtest/G-003: no arrow-key tricks, grinds, air rotation or self-jump key (checked by searching the goal's diff). (QA: pass / fail)
-- [ ] docs/drifting.md (Content) and docs/level-design.md (Content) describe what was built, with every proposed number listed as a proposal for the board's playtest; docs/visual-style.md records the ramp and platform art; the docs staleness check passes after the long GDD is regenerated. (QA: pass / fail)
+- [x] A test scene for elevation exists on the branch playtest/G-003 (path recorded in game/README.md, section on the elevation test scene) and runs headless in Godot 4.6 for at least 10 seconds with no script errors in the log; the drift prototype stays the project's main scene. (QA: pass)
+- [x] The scene holds exactly one raised platform, with a ramp on one side and drop-off edges on its other sides, as in docs/level-design.md, Decisions, 'Raised areas and ramps'. (QA: pass)
+- [x] GUT tests on playtest/G-003 pass and show that the car has a height separate from its map position: on flat ground it stays at 0; driving up the ramp raises it to the platform's height; driving along the platform keeps it there; driving off a drop-off edge or the ramp's top at speed makes it airborne, with its height following gravity until it lands; landing sets its height to the ground under it and its vertical speed to 0. (QA: pass)
+- [x] A screenshot (or captured frames) from the running test scene, saved in the goal's folder, shows the car in the air off the drop-off edge with its drawing lifted up the screen and its shadow on the ground under its map position; a second one shows the car on the platform. (QA: pass)
+- [x] The ramp and the raised platform are drawn with PixelLab art in game/art/ (each with its PixelLab record .json), every other generation in art-archive/<task>/, the total PixelLab generations for the goal at or under its art cap (20), and the art follows docs/visual-style.md, Decisions (32 art px per unit drawn at 0.5, hard pixel edges, no semi-transparent pixels, no Redgull red). (QA: pass)
+- [x] All the existing test sets still pass on playtest/G-003 (the drift prototype's driving tests unchanged: flat driving behaves as before). (QA: pass)
+- [x] No trick system code is on playtest/G-003: no arrow-key tricks, grinds, air rotation or self-jump key (checked by searching the goal's diff). (QA: pass)
+- [x] docs/drifting.md (Content) and docs/level-design.md (Content) describe what was built, with every proposed number listed as a proposal for the board's playtest; docs/visual-style.md records the ramp and platform art; the docs staleness check passes after the long GDD is regenerated. (QA: pass)
 
 ## Open questions
 
@@ -143,6 +143,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 6: paused (see Pauses).
 - 2026-10-19, iteration 6: resumed: its last pause (flagged) is cleared.
 - 2026-10-19, iteration 7: T-188 (S7, driving-drift, opus): passed (done, QA rounds 2), merged into playtest/G-003; art 0; agent: (nothing new). Rescan: S7 covered.
+- 2026-10-19, iteration 7: goal check: 8 of 8 goal criteria pass.
+- 2026-10-19, iteration 7: ready to play.
 
 ## Pauses
 
