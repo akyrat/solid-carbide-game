@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: building
+status: paused
 art_cap: 50
 art_used: 0
 iteration: 1
@@ -139,8 +139,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19, iteration 0: gap detection: 0 covered, 0 in flight, 7 missing; wrote 8 tickets.
 - 2026-10-19, iteration 0: building.
 - 2026-10-19, iteration 1: T-193 (S1, level-challenge, opus): passed (done, QA rounds 1), merged into playtest/G-004; art 0; agent: T-193 is finished in C:\solid-carbide-worktrees\T-193, in 3 commits on its branch. Platforms can now name the area they stand on with an optional `on` field, which GroundHeight keeps. I added the three-layer fixture (game/tests/fixtures/height/three_layers.json) and a validator, `python game/tools/check_height_data.py <file>`, which prints OK for both elevation_test.json and the fixture; its 17 Python tests reject every case the ticket lists, plus a few more. The existing query already handled ramps between rooftops (heights 1.5 and 4.5 halfway up, the right areas and side normals, a 3-unit drop between floors), so no code fix was needed. 11 new GUT tests check this, including the car's height following both ramps up and landing on the height-3 floor. The new fields and the validator are documented in game/README.md and docs/level-design.md. elevation_test.json and its three test files are unchanged against master. All three test sets pass (GUT 1054/1054, game Python tools 303 OK, project tools 331 OK). There are no screenshots because nothing is on screen yet, as the result notes say. Godot left its usual line-ending-only .import changes in the folder; I didn't commit them. The SessionStart hook said this session has no name and that port 8765 is taken by the main checkout's task board; I didn't act on that because I'm a goal-run agent. Rescan: S1 covered, S2 in-flight, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight.
+- 2026-10-19, iteration 1: paused (see Pauses).
 
 ## Pauses
 
-None yet.
+- 2026-10-19 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 2:40pm (Europe/London)
 
