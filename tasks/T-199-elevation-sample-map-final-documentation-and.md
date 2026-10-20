@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: in-qa
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -14,8 +14,8 @@ depends_on: [T-195, T-197, T-198]
 documents_affected: [docs/level-design.md, docs/visual-style.md, docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/drifting.md, game/README.md, tools/screenshot.sh]
 files_expected_to_change: [docs/level-design.md, docs/visual-style.md, docs/drifting.md, game/README.md, art-archive/<task id>/screenshots/]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-199.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → In progress
+
+Goal runner (G-004): failed QA once; back to the agent on opus.
+
 ## Result notes
 
 **Docs.** Checked level-design, visual-style, drifting and game/README against the merged build: the height data, layout, scene, depth order, see-through, art (8 generations of 50, weak results noted) and scripted drive were already described and marked as proposals. Only gap fixed: docs/level-design.md now has the art, the scripted drive and the final screenshot set (pointers, no repeated decisions). visual-style.md, drifting.md, game/README.md needed no change.
@@ -83,3 +87,4 @@ Weak: in air.png the car's shadow is not clearly visible (it falls on the roofto
 **Open questions for the board:** (1) How it opens the scene (proposed: editor + F6, or the run command; no menu button). (2) Layout choices: two garages (NW and SE), start at (-81,-50), 12-unit ramps 10 wide, 4 buildings and 8 boulders left out. (3) Whether the overview needs a dedicated fixture or a scene option. (4) Whether the car shadow in the air reads well enough.
 
 Refusals: the drive script run; removing the temporary fixture and reverting .import noise.
+- 2026-10-20, in-qa → in-progress: QA failed: The scripted reachability drive's log (layers 0, 3 and 6 reached, maximum height, airtime) from the merged build is pasted in the result notes. (QA: fail: the pasted log is T-195's, not from the merged build; QA's own run of drive_elevation_sample.sh was also refused, so it could not be rerun) Back to the agent on opus.
