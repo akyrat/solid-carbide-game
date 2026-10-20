@@ -10,7 +10,10 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
 - PreToolUse Bash/PowerShell: refuses shell commands that could write those lines into a task file, or
   whose writes it can't read. Commands that only read (grep, sed -n, head, Get-Content, ...), run the
   status script, git or a test run, write files other than tickets, or append plain text without such a
-  line to a ticket may mention them (T-143, T-161, T-181). On `git commit` it also checks every ticket
+  line to a ticket may mention them (T-143, T-161, T-181). A script run from a file (python x.py, bash x.sh)
+  is judged by its own code: it passes unless that code writes or matches a guarded header line, or names
+  task files and writes files; the game's test runner counts as a test run. A refusal names the part of the
+  command that caused it and why (T-212). On `git commit` it also checks every ticket
   that would be committed against the status script's record (tools/guard_ledger.py, T-149): the backstop
   for any write the command check can't see.
 - PreToolUse Agent: refuses to start an agent on a task unless it runs on the task's model
@@ -484,8 +487,17 @@ def inline_code(seg, words):
     return None
 
 
+TEST_RUNNERS = {"game/tools/run_tests.sh", "game/tools/run_tests.ps1"}
+
+
 def is_test_run(words):
-    """`python -m unittest ...` or `python -m pytest ...`: a test run, which works on its own temporary files."""
+    """`python -m unittest ...`, `python -m pytest ...` or the game's own test runner (bash
+    game/tools/run_tests.sh, run_tests.ps1, T-212): a test run, which works on its own temporary files."""
+    if words and words[0].lower() in {"bash", "sh", "powershell", "pwsh", "powershell.exe", "pwsh.exe"}:
+        if any(re.fullmatch(r"-(c|e|command|encodedcommand)", w, re.I) for w in words[1:]):
+            return False
+        script = next((w.replace("\\", "/") for w in words[1:] if re.search(r"\.(sh|ps1)$", w, re.I)), "")
+        return any(script == r or script.endswith("/" + r) for r in TEST_RUNNERS)
     if len(words) < 3 or words[0].lower() not in PYTHON_NAMES:
         return False
     i = 1
@@ -512,41 +524,139 @@ def sed_files(words):
     return files if script_given else files[1:]
 
 
-def risky_segment(seg, cwd=None, in_tasks=False):
-    """Whether one simple command could write a ticket's status, qa_rounds or lead line, or the hook can't tell
-    (T-181). Allowed: reads, real calls of the status script, git (its commits meet commit_check), test runs,
-    inline code that names no task file, file writes (cp, mv, sed -i, Set-Content, ...) that can't reach a
-    ticket, and appends of plain text with no such line (a result note). Any other command is risky."""
+# What a script's own text must not hold for the guard to let it run on task files (T-212): a status, qa_rounds or
+# lead header line it writes or looks for (`"status: done"`, `^lead:`), or the field names as quoted keys next to
+# the tasks folder; and the tasks folder or a ticket's file name together with a file write.
+SOURCE_HEADER_RE = re.compile(
+    r"""(['"^]|\\n|\(\?m\))[ \t]*(status|qa[\W_]*rounds|lead)[ \t]*:|['"](status|qa_rounds|lead)['"]\s*,""", re.I)
+# a path to the tasks folder or a ticket file, in code (a mention in a comment or a sentence is not one)
+SOURCE_TASKS_RE = re.compile(r"""['"/\\]tasks['"/\\]|T-\d*[*?]|T-\d+[^\s'"]*\.md|TASKS_DIR""")
+SOURCE_WRITES_RE = re.compile(
+    r"write_text|write_bytes|\.write\(|open\([^)\n]*['\"][^'\"\n]*[wax+]|shutil\.|os\.(replace|rename|remove)|"
+    r"\.(replace|rename|unlink)\(|Set-Content|Add-Content|Out-File|Copy-Item|Move-Item|sed\s+-i|(^|\s)(cp|mv|tee)\s|"
+    r"[^>&\d]>>?\s*[\"'$\w/.]", re.I)
+SCRIPT_RE = re.compile(r"\.(py|sh|ps1)$", re.I)
+SCRIPT_RUN_RE = re.compile(r"\.(py|sh|ps1)\b", re.I)
+SCRIPT_WRITES_LINES = "so it could write a status, qa_rounds or lead line"
+SCRIPT_MAX_BYTES = 2_000_000
+
+
+def windows_path(p):
+    """A Git Bash path (/c/x) as Windows reads it (C:/x); other paths unchanged."""
+    m = re.match(r"^/([a-zA-Z])(/|$)", p)
+    return f"{m.group(1).upper()}:/{p[3:]}" if m and os.name == "nt" else p
+
+
+def script_of(words):
+    """The script file a segment runs (`python [-u] x.py args`, `bash x.sh`, `powershell -File x.ps1`), or None:
+    no script file (inline code, a module, an interpreter alone) or not an interpreter."""
+    if not words or words[0].lower() not in INTERPRETERS | {"powershell.exe", "pwsh.exe"}:
+        return None
+    for w in words[1:]:
+        if re.fullmatch(r"-(c|e|m|command|encodedcommand)", w, re.I):
+            return None
+        if w.startswith("-"):
+            continue
+        return w if SCRIPT_RE.search(w) else None
+    return None
+
+
+def script_reason(script, bases):
+    """Why the script a command runs could write a ticket's guarded lines, judged by its own text (T-212): ""
+    when every copy found under the command's folders holds neither a guarded header line nor the tasks folder
+    together with a file write. A script that can't be found or read is refused."""
+    found = []
+    for base in bases:
+        path = Path(windows_path(script))
+        path = path if path.is_absolute() else Path(windows_path(str(base))) / path
+        try:
+            if path.is_file() and path.stat().st_size <= SCRIPT_MAX_BYTES:
+                found.append((path, path.read_bytes().decode("utf-8", "replace")))
+        except OSError:
+            continue
+    if not found:
+        return f"`{script}`: the guard can't find or read that script, so it can't tell what it writes"
+    for path, src in found:
+        m = SOURCE_HEADER_RE.search(src)
+        if m:
+            return f"`{script}`: its code holds `{m.group(0).strip()}`, {SCRIPT_WRITES_LINES}"
+        if SOURCE_TASKS_RE.search(src) and SOURCE_WRITES_RE.search(src):
+            return f"`{script}`: its code names task files and writes files"
+    return ""
+
+
+def cd_bases(cmd, cwd=None):
+    """The folders a command's relative paths could be read from: the working folder and every folder it cds into."""
+    base = cwd or os.getcwd()
+    bases = [base]
+    for m in re.finditer(r"(?:\bcd|\bpushd|Set-Location)\s+(\"[^\"]+\"|'[^']+'|[^\s;&|]+)", cmd, re.I):
+        bases.append(os.path.join(base, windows_path(m.group(1).strip("'\""))))
+    return bases
+
+
+def why_risky(seg, cwd=None, in_tasks=False, bases=None):
+    """Why one simple command could write a ticket's status, qa_rounds or lead line, or why the hook can't tell
+    (T-181, T-212); "" when it can't. Allowed: reads, real calls of the status script, git (its commits meet
+    commit_check), test runs, inline code that names no task file, scripts whose own code can't write those lines
+    (script_reason), file writes (cp, mv, sed -i, Set-Content, ...) that can't reach a ticket, and appends of
+    plain text with no such line (a result note). Any other command is risky."""
     words = words_of(seg.text)
-    for op, _target in seg.redirects:
-        if op != ">>" or not appended_text_ok(seg, words):
-            return True
+    for op, target in seg.redirects:
+        if op != ">>":
+            return f"`>` into `{target or '?'}`, which could be a ticket"
+        if not appended_text_ok(seg, words):
+            return f"what it appends to `{target or '?'}` could hold a status, qa_rounds or lead line"
     if not words:
-        return False
+        return ""
     if read_only_segment(seg.text) or script_call(seg.text) or git_writer(seg.text) or is_test_run(words):
-        return False
+        return ""
     code = inline_code(seg, words)
     if code is not None:
-        return in_tasks or bool(CODE_TOUCHES_RE.search(code))
+        if in_tasks:
+            return "inline code run inside a tasks folder"
+        m = CODE_TOUCHES_RE.search(code)
+        return f"inline code that names task files (`{m.group(0)}`)" if m else ""
     name = words[0].lower()
     if name == "sed":
         if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", " ".join(words[1:])):
-            return True   # the script writes a file or runs a command
+            return "a sed script that writes a file or runs a command"
         files = sed_files(words)
-        return files is None or any(ticket_path(f, cwd, in_tasks) for f in files)
+        if files is None:
+            return "a sed script read from a file"
+        hit = next((f for f in files if ticket_path(f, cwd, in_tasks)), None)
+        return f"sed on `{hit}`, which could be a ticket" if hit else ""
     if name in FILE_WRITERS:
-        return any(ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks) for w in words[1:])
-    return True
+        hit = next((w for w in words[1:] if ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks)), None)
+        return f"`{name}` on `{hit}`, which could be a ticket" if hit else ""
+    script = script_of(words)
+    if script and not in_tasks:
+        return script_reason(script, bases or [cwd or os.getcwd()])
+    return f"`{words[0]}`: a command the guard can't tell won't write a ticket"
 
 
-def risky_segments(cmd, cwd=None):
-    """The parts of a shell command that could write a ticket's guarded lines, or the whole command when the
-    hook can't read it (an open quote, a backtick, a computed file name, ...)."""
+def risky_segment(seg, cwd=None, in_tasks=False, bases=None):
+    return bool(why_risky(seg, cwd, in_tasks, bases))
+
+
+def risky_parts(cmd, cwd=None):
+    """[(part, why)]: the parts of a shell command that could write a ticket's guarded lines, with the reason, or
+    the whole command when the hook can't read it (an open quote, a backtick, a computed file name, ...)."""
     in_tasks = runs_in_tasks(cmd, cwd)
     segments, unsafe = shell_segments(cmd, cwd, in_tasks)
     if unsafe:
-        return [cmd]
-    return [s.text or cmd for s in segments if risky_segment(s, cwd, in_tasks)]
+        return [(cmd, "the guard can't read the command (a backtick, an open quote, a computed file name, a "
+                      "command substitution that names task files, or a here-document without its end)")]
+    bases = cd_bases(cmd, cwd)
+    out = []
+    for s in segments:
+        why = why_risky(s, cwd, in_tasks, bases)
+        if why:
+            out.append((s.text or cmd, why))
+    return out
+
+
+def risky_segments(cmd, cwd=None):
+    return [part for part, _ in risky_parts(cmd, cwd)]
 
 
 def commit_check(cmd, cwd=None):
@@ -588,16 +698,29 @@ def pre_shell(tool_input, cwd=None):
         return refused
     if not touches_tasks(cmd, cwd):
         return 0
-    if not GUARD_WORD_RE.search(cmd) and not INLINE_CODE_RE.search(cmd):
+    mentions = bool(GUARD_WORD_RE.search(cmd) or INLINE_CODE_RE.search(cmd))
+    if not mentions and not SCRIPT_RUN_RE.search(cmd):
         return 0
-    risky = risky_segments(cmd, cwd)
+    risky = risky_parts(cmd, cwd)
+    if not mentions:
+        # T-212: the command doesn't name the lines, but a script it runs on a ticket's file has code that writes them
+        risky = [(p, w) for p, w in risky if w.endswith(SCRIPT_WRITES_LINES)
+                 and any(TICKET_PATH_RE.search(a) for a in words_of(p)[1:])]
+        if risky:
+            return deny(f"Task statuses and leads change only through the status script: {STATUS_SCRIPT} <T-id> "
+                        f"<status>. Refused because of `{risky[0][0][:160]}`: {risky[0][1]}.")
     if not risky:
         return 0
     text = cmd   # a risky part anywhere makes the whole command suspect when it mentions the lines
+    part, why = risky[0]
+    short = part if len(part) <= 160 else part[:157] + "..."
+    because = (f" Refused because of `{short}`: {why}. Commands that only read, run tests or the status script "
+               "pass; run that part on its own, or change the ticket through the status script.")
     if INLINE_CODE_RE.search(text) or re.search(r"qa[\W_]*rounds|status", text, re.I):
-        return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.")
+        return deny(f"Task statuses change only through the status script: {STATUS_SCRIPT} <T-id> <status>.{because}")
     if re.search(r"lead", text, re.I):
-        return deny(f"A task's lead changes only through the status script: {STATUS_SCRIPT} <T-id> --lead <Name>.")
+        return deny(f"A task's lead changes only through the status script: {STATUS_SCRIPT} <T-id> --lead <Name>."
+                    f"{because}")
     return 0
 
 
