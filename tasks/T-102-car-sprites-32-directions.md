@@ -4,7 +4,7 @@ title: The car in 32 directions, built from the approved 16 (PixelLab)
 status: open
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: final-release
 user_facing_text: no
@@ -12,7 +12,7 @@ changes_visuals: yes
 depends_on: [T-101]
 documents_affected: [game/README.md, art-archive/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, docs/extended-narrative.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md, art-archive/README.md, game/README.md]
-files_expected_to_change: [the car sprite sheet and its JSON, game/tools/build_car_sheet.py, tests, the PixelLab generation log, art-archive/, game/README.md]
+files_expected_to_change: [the car sprite sheet and its JSON, game/art/car/car_iso_noshadow.png and its JSON, game/tools/build_car_noshadow.py, game/tools/build_car_sheet.py, tests, the PixelLab generation log, art-archive/, game/README.md]
 model: opus
 qa_rounds: 0
 ---
@@ -27,6 +27,8 @@ A task is not done until every document listed in documents_affected has been up
 -->
 
 ## Description
+
+**Scheduled now (board, 2026-10-20).** The board wants 32 directions so the car turns more smoothly, and approves this task's PixelLab generations. Sample first (`docs/working-with-the-board.md`, "Art and money"): generate **one** new in-between frame first, build it into an image the board can look at next to its two neighbours (enlarged, on a dark and a light background), and stop there: hand back with the result notes saying the sample is ready for the board. Only after the board approves it, generate the other 15 the same way. After the full sheet, rebuild the shadowless frames for the air (T-204, `game/art/car/car_iso_noshadow.png`) from the 32-frame sheet with the free script `game/tools/build_car_noshadow.py` (extend it if it assumes 16 frames), so the car in the air also turns in 32 directions.
 
 **For some point after the MVP's current steps; not scheduled (board, 2026-10-12).** The board played the 16-direction car (T-101), likes its look, and wants 32 directions at some point (Visual style, Decisions), so the car turns more smoothly on screen.
 
@@ -44,10 +46,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A check script shows every frame follows Visual style's technical rules (transparent background, no semi-transparent pixels, about 30 colours or fewer, judged as in T-014) (QA: pass / fail)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
 - [ ] In a run started from the main menu and in the drift prototype, the car shows all 32 frames following its heading, with no change to the driving code (screenshots) (QA: pass / fail)
+- [ ] `game/art/car/car_iso_noshadow.png` is rebuilt with 32 frames by `build_car_noshadow.py`, and in the air the car shows them following its heading (screenshot) (QA: pass / fail)
 - [ ] Every unused or raw generation is in `art-archive/T-102/` with its record and listed in `art-archive/README.md` (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: playtest the car in a run and judge the 32 directions; one round only, so problems are reported rather than regenerated.
+The board's review: first the one-frame sample, then playtest the car in a run and judge the 32 directions; one round only, so problems are reported rather than regenerated.
 Board review files: the car sheet under `game/art/car/`.
 
 ## Result notes

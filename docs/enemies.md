@@ -80,6 +80,7 @@ What the game does now, with the numbers in `game/data/enemies.json`, `meteor_at
 
 ## Open questions
 
+- How enemies handle heights on the elevation sample map, now the run's map (Level design, Decisions, 2026-10-20): whether they stay on the street, use the ramps, or reach the car on a rooftop, and whether the rooftops' edges block them like buildings. Proposed by the Enemy Behavior Agent for the board's playtest (T-207); the board decides after playing it.
 
 ## References
 
