@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: in-qa
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
@@ -14,8 +14,8 @@ depends_on: [T-199]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, game/README.md]
 files_expected_to_change: []
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-200.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → In progress
+
+Goal runner (G-004): failed QA once; back to the agent on opus.
+
 ## Result notes
 
 **QA results (round 1, on playtest/G-004 at 738ba6d + T-200 start commit):**
@@ -75,3 +79,4 @@ Goal runner (G-004): the agent is done; QA is checking it.
 **Screenshots:** none: this is a check ticket, with nothing new to picture.
 
 **Refusals:** `bash game/tools/drive_elevation_sample.sh` and `python tools/generate_long_gdd.py --help` (not on the pre-approved list). Neither was essential; criterion 4 is covered by the GUT test of the same drive, criterion 6 is left to the runner.
+- 2026-10-20, in-qa → in-progress: QA failed: The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given) Back to the agent on opus.
