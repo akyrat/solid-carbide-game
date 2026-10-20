@@ -1,7 +1,7 @@
 ---
 id: T-205
 title: The car is drawn without its sprite shadow while in the air
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/driving/car_sprite.gd, game/art/car/car_iso_noshadow.json]
 files_expected_to_change: [game/scripts/driving/car_sprite.gd, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-205/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,6 +50,10 @@ Started: the car uses the shadowless frames while in the air and its normal spri
 ### 2026-10-20, In progress → In QA
 
 Built: the car uses the shadowless frames while in the air and its normal sprite on the ground or a rooftop; switches on the takeoff and landing steps; the run and drift prototype are unchanged. GUT passes; screenshots on the ticket. QA checks it now.
+
+### 2026-10-20, In QA → Needs playtest
+
+QA passed all 5 criteria. Before/after of the car in the air added to the ticket: the sprite's drop shadow is gone, a thin dark underside remains. Merged into the sample map's build when G-004 finishes, for your playtest.
 
 ## Result notes
 
