@@ -1,7 +1,7 @@
 ---
 id: T-203
 title: Task board: what the agents are doing now, live
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -35,17 +35,21 @@ The board wants to see live what the agents are doing, at a level it can read at
 
 ## Acceptance criteria
 
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass / fail)
-- [ ] Tests (subprocess mocked) show `RealClaude.ask` streams with `--output-format stream-json`, writes each event to `.board/activity/<id>.jsonl` as it arrives, and still returns the same structured answer and refusals as before (QA: pass / fail)
-- [ ] Tests show the event-to-phrase rules for reading, editing, running tests, screenshots, PixelLab, committing and an unknown tool, and that the board's ticket data carries the latest phrase, its age, the time in lane, the branch's commit count and the last activity time (QA: pass / fail)
-- [ ] The page shows the Now line on in-progress and in-QA cards, the last-20 timeline in the detail view, the current ticket and phrase on goal cards, and the quiet mark; checked live by QA on a second board server (not port 8765) with a sample activity log, or by reading the page code where a browser isn't available (QA: pass / fail)
-- [ ] `docs/README.md` ("The task board") and `tasks/README.md` ("Goal runs") describe the activity logs and the Now panel (QA: pass / fail)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with no Claude or network calls (QA: pass)
+- [ ] Tests (subprocess mocked) show `RealClaude.ask` streams with `--output-format stream-json`, writes each event to `.board/activity/<id>.jsonl` as it arrives, and still returns the same structured answer and refusals as before (QA: pass)
+- [ ] Tests show the event-to-phrase rules for reading, editing, running tests, screenshots, PixelLab, committing and an unknown tool, and that the board's ticket data carries the latest phrase, its age, the time in lane, the branch's commit count and the last activity time (QA: pass)
+- [ ] The page shows the Now line on in-progress and in-QA cards, the last-20 timeline in the detail view, the current ticket and phrase on goal cards, and the quiet mark; checked live by QA on a second board server (not port 8765) with a sample activity log, or by reading the page code where a browser isn't available (QA: pass)
+- [ ] `docs/README.md` ("The task board") and `tasks/README.md` ("Goal runs") describe the activity logs and the Now panel (QA: pass)
 
 ## Updates
 
 ### 2026-10-19, Open → In progress
 
 Started: the runner records what its agents do, and the board shows it as a plain-language Now line on cards, a timeline per ticket, and the current ticket on goal cards, plus free signals for every ticket.
+
+### 2026-10-20, In progress → In QA
+
+Built: the runner records its agents' steps, and the board shows them as a Now line on cards, a timeline per ticket and the current ticket on goal cards, with free signals and a Quiet chip; a resumed goal says building. 399 tools tests pass; checked live on a second server. Note: four old tests briefly called the real claude command (each failed at once); they're fixed. QA checks it now.
 
 ## Result notes
 
