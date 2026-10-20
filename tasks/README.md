@@ -82,6 +82,8 @@ The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 
 - A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build. Their worktrees stay until then, so their status can still be read; they are removed when the Project Lead merges the goal's build.
 - A reused ticket that another session owns is never built by the runner: the goal waits for it, and pauses (`waiting`) when nothing else can go on.
 - When the Project Lead merges the goal's build, a ticket's `status:` line may conflict (master's copy was unblocked by the status script, the build's copy moved on): keep the build's side.
+- The runner records what its headless sessions do (T-203): each session runs with `--output-format stream-json --verbose`, and every event is appended, as it arrives, to `.board/activity/<ticket id>.jsonl` (the agent and QA) or `.board/activity/<goal id>.jsonl` (the goal check) in the main checkout, git-ignored like the rest of `.board/`. One line per event: its time, its step (`agent`, `qa`, `goal-check`) and the event, cut down (long text shortened, tool output left out). The answer and the refusals the runner reads are the same as before. A log past 2 MB keeps only its last 500 KB, and a log can be deleted at any time. The task board shows it as each card's Now line, a timeline in the ticket's detail and the current ticket on the goal's card (`docs/README.md`, "The task board").
+- `run.py resume` sets the goal's status to `building` and saves the goal file as soon as it carries on, so the board doesn't show a running goal as `paused` until its next ticket finishes.
 
 ## Building in playable steps
 
@@ -137,7 +139,9 @@ Every task ends with screenshots of its work wherever anything can be shown (boa
 - **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
 - **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
 
-They go in `art-archive/<task id>/screenshots/` and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say.
+They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say. Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
+
+The task board shows them on the ticket (T-201): every image and recording (`.png`, `.jpg`, `.gif`, `.webp`, `.mp4`, `.webm`) in that folder, and any media file on the `Board review files:` line, appears in the ticket's "Screenshots and recordings" section, read from the task folder while the branch is open (`docs/README.md`, "The task board").
 
 ## Models
 

@@ -14,6 +14,21 @@ move is shown on the page with its reason. Each move the board makes is also app
 .board/board-inbox.jsonl, which is never emptied: each Project Lead session reads it with its own
 cursor (tools/board_inbox.py), through the hooks and its watcher.
 
+A ticket's screenshots and recordings (T-201) are listed with it in /api/tickets ("media") and
+served one at a time, read-only, by GET /api/media?id=T-012&path=<relative path>: only image and
+video files the ticket lists, from the checkout it lives in.
+
+The goal runner's goals (T-202) come from the main checkout's goals/ (taskboard_sync.goals_now):
+GET /api/goals lists each with its tickets and whether its build folder exists, and
+GET /api/goal-file?id=G-004 returns one goal file's full text, read-only.
+
+Live activity (T-203): every in-progress or in-QA ticket in /api/tickets has `now`: the latest phrase from
+its activity log (.board/activity/<id>.jsonl in the main checkout, written by the goal runner) with its
+age and the last 20 phrases, and the free signals: time in its lane (the moves log), commits on its
+branch, and its last activity; `quiet` after 10 minutes without any. A building goal in /api/goals has
+`now`: the ticket being worked on and its phrase. Logs are read from the end only. BOARD_MAIN_STATE
+stands in for the main checkout's .board/ (a second server checked with sample logs).
+
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
 """
@@ -26,6 +41,8 @@ import re
 import subprocess
 import sys
 import threading
+import time
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -58,10 +75,33 @@ def inbox_path():
     return tb.STATE_DIR / "board-inbox.jsonl"
 
 
+_MAIN = {}
+
+
+def main_checkout():
+    """The main checkout (the first entry of `git worktree list`), where the goal runner commits the
+    goal files. Looked up once per served folder: it never moves."""
+    if tb.ROOT not in _MAIN:
+        _MAIN[tb.ROOT] = Path(worktrees()[0][0])
+    return _MAIN[tb.ROOT]
+
+
+def goals_dir():
+    return main_checkout() / "goals"
+
+
 def version(folders=None):
-    """Changes whenever a task file the board shows changes, or a task branch opens or closes."""
+    """Changes whenever a task file the board shows changes, a task branch opens or closes, a
+    screenshot is added to, changed in or removed from a ticket's art-archive/<id>/screenshots/,
+    or a goal file in the main checkout's goals/ is added, changed or removed."""
     folders = tb.task_folders() if folders is None else folders
     h = hashlib.sha256()
+    for path in tb.goal_files(goals_dir()):
+        try:
+            st = path.stat()
+        except OSError:
+            continue
+        h.update(f"{path}|{st.st_mtime_ns}|{st.st_size}\n".encode("utf-8"))
     for path in tb.task_files():
         folder = folders.get(path.name[:5])
         real = folder / "tasks" / path.name if folder and (folder / "tasks" / path.name).exists() else path
@@ -70,12 +110,234 @@ def version(folders=None):
         except OSError:
             continue
         h.update(f"{real}|{st.st_mtime_ns}|{st.st_size}\n".encode("utf-8"))
+        for shot in tb.screenshot_files(real.parent.parent, path.name[:5]):
+            try:
+                sst = shot.stat()
+            except OSError:
+                continue
+            h.update(f"{shot}|{sst.st_mtime_ns}|{sst.st_size}\n".encode("utf-8"))
+    # T-203: an activity log's new events, at most once per ACTIVITY_TICK seconds, and a new commit in a
+    # task folder (its worktree's HEAD log), so the Now lines follow without reading on every check.
+    for log_id, path in sorted(activity_files().items()):
+        try:
+            h.update(f"{log_id}|{int(path.stat().st_mtime // ACTIVITY_TICK)}\n".encode("utf-8"))
+        except OSError:
+            continue
+    for task_id, folder in sorted(folders.items()):
+        head_log = worktree_head_log(folder)
+        if not head_log:
+            continue
+        try:
+            h.update(f"{task_id}|{head_log.stat().st_mtime_ns}\n".encode("utf-8"))
+        except OSError:
+            continue
     return h.hexdigest()[:16]
+
+
+ACTIVITY_TICK = 10
+
+
+def worktree_head_log(folder):
+    """The HEAD log git keeps for a worktree (it changes on every commit there), or None."""
+    try:
+        text = (Path(folder) / ".git").read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    if not text.startswith("gitdir:"):
+        return None
+    return Path(text[len("gitdir:"):].strip()) / "logs" / "HEAD"
 
 
 def tickets_payload():
     folders = tb.task_folders()
-    return {"version": version(folders), "generated_at": now(), "tickets": tb.tickets_now(folders=folders)}
+    stamp = time.time()
+    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    return {"version": version(folders), "generated_at": iso(stamp), "tickets": tickets}
+
+
+def goals_payload():
+    """Every goal file with its tickets (from their `goal:` lines, wherever the ticket lives) and
+    whether its build folder (the worktree named after the goal's id) exists; a building goal also
+    has `now`: the ticket being worked on and its phrase (T-203)."""
+    folders = tb.task_folders()
+    stamp = time.time()
+    builds_by_name = {Path(f).name: Path(f) for f, _ in worktrees()[1:]}
+    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    goals = tb.goals_now(goals_dir(), tickets, builds_by_name)
+    logs = activity_files()
+    for g in goals:
+        g["now"] = goal_now(g, tickets, logs, stamp)
+    return {"version": version(folders), "generated_at": iso(stamp), "goals": goals}
+
+
+# --- Live activity (T-203): the Now line on cards, the ticket's timeline, the goal cards' current ticket ---
+
+ACTIVE = ("in-progress", "in-qa")
+QUIET_AFTER = 600            # seconds without any activity: the card is marked quiet
+MOVES_READ_BYTES = 512_000   # only the end of the moves log is read
+
+
+def iso(stamp):
+    return datetime.fromtimestamp(stamp, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if stamp is not None else None
+
+
+def main_state():
+    """The main checkout's .board/ (where the runner writes the activity logs and the status script its moves
+    log). BOARD_MAIN_STATE points somewhere else, for a second board server checked with sample logs."""
+    env = os.environ.get("BOARD_MAIN_STATE")
+    return Path(env) if env else main_checkout() / ".board"
+
+
+def activity_files():
+    """{ticket or goal id: its activity log} for every log there is."""
+    try:
+        return {p.stem: p for p in (main_state() / "activity").glob("*.jsonl") if tb.ACTIVITY_ID_RE.fullmatch(p.stem)}
+    except OSError:
+        return {}
+
+
+def lane_times():
+    """{ticket id: (status, time)} of each ticket's newest move in the moves log (its end only)."""
+    path, out = main_state() / "moves.log", {}
+    try:
+        with path.open("rb") as f:
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(max(0, size - MOVES_READ_BYTES))
+            lines = f.read().decode("utf-8", errors="replace").split("\n")
+    except OSError:
+        return out
+    if size > MOVES_READ_BYTES:
+        lines = lines[1:]
+    for line in lines:
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(entry, dict) and entry.get("id") and entry.get("at"):
+            out[entry["id"]] = (entry.get("to"), entry["at"])
+    return out
+
+
+def branch_signals(folder, branch):
+    """(commits only on this branch, the newest one's time in seconds or None) for a ticket's folder."""
+    if not folder or not branch or branch == "(detached)":
+        return 0, None
+    try:
+        out = subprocess.run(["git", "-C", str(folder), "log", "--format=%ct", "HEAD", "--not",
+                              f"--exclude={branch}", "--branches"], capture_output=True, text=True,
+                             check=True, creationflags=tb.no_window(), timeout=10).stdout.split()
+    except (OSError, subprocess.SubprocessError):
+        return 0, None
+    return len(out), (int(out[0]) if out and out[0].isdigit() else None)
+
+
+def age(stamp, at):
+    t = tb.parse_time(at) if isinstance(at, str) else at
+    return None if t is None else max(0, int(stamp - t))
+
+
+def ticket_now(t, log, lane, branch, stamp):
+    """What the board shows of one in-progress or in-QA ticket: the activity log's latest phrase and its
+    last TIMELINE_MAX phrases, and the free signals: time in its lane, commits on its branch, last activity."""
+    summary = tb.activity_summary(tb.read_activity(log)) if log else None
+    commits, last_commit = branch_signals(t.get("folder"), branch)
+    task_file = Path(t["folder"]) / t["file"] if t.get("folder") else tb.ROOT / t["file"]
+    try:
+        changed = task_file.stat().st_mtime
+    except OSError:
+        changed = None
+    since = lane[1] if lane and lane[0] == t["status"] else None
+    times = [x for x in (tb.parse_time(summary["last_at"]) if summary else None, last_commit, changed) if x is not None]
+    last = max(times) if times else None
+    out = {"phrase": summary["phrase"] if summary else "", "phrase_since": summary["since"] if summary else None,
+           "phrase_age_s": age(stamp, summary["since"]) if summary else None, "step": summary["step"] if summary else "",
+           "timeline": summary["timeline"] if summary else [],
+           "in_lane_since": since, "in_lane_s": age(stamp, since) if since else None,
+           "commits": commits, "last_commit_at": iso(last_commit), "file_changed_at": iso(changed),
+           "last_activity_at": iso(last), "last_activity_s": age(stamp, last) if last is not None else None}
+    out["quiet"] = out["last_activity_s"] is not None and out["last_activity_s"] >= QUIET_AFTER
+    return out
+
+
+def with_now(tickets, stamp=None):
+    """The tickets, each in progress or in QA with its `now` (the others: None)."""
+    stamp = time.time() if stamp is None else stamp
+    active = [t for t in tickets if t["status"] in ACTIVE]
+    logs = activity_files() if active else {}
+    lanes = lane_times() if active else {}
+    branches = {str(Path(f)): b for f, b in worktrees()} if any(t.get("folder") for t in active) else {}
+    for t in tickets:
+        t["now"] = (ticket_now(t, logs.get(t["id"]), lanes.get(t["id"]), branches.get(str(Path(t["folder"])))
+                               if t.get("folder") else None, stamp) if t["status"] in ACTIVE else None)
+    return tickets
+
+
+def goal_now(g, tickets, logs, stamp):
+    """For a building goal: the ticket being worked on (its newest active one), "ticket N of M", the
+    iteration, and the phrase; the goal check's phrase when the goal's own log is newer. None otherwise."""
+    if g.get("status") != "building":
+        return None
+    by_id = {t["id"]: t for t in tickets}
+    mine = [by_id[i] for i in g["tickets"] if by_id.get(i, {}).get("now")]
+    pick = max(mine, key=lambda t: (t["now"]["last_activity_s"] is not None, -(t["now"]["last_activity_s"] or 0)),
+               default=None)
+    out = {"ticket": "", "ticket_index": 0, "tickets_total": g["tickets_total"], "iteration": g["iteration"],
+           "phrase": "", "phrase_since": None, "phrase_age_s": None, "last_activity_at": None, "quiet": False}
+    if pick:
+        n = pick["now"]
+        out.update(ticket=pick["id"], ticket_index=g["tickets"].index(pick["id"]) + 1, phrase=n["phrase"],
+                   phrase_since=n["phrase_since"], phrase_age_s=n["phrase_age_s"],
+                   last_activity_at=n["last_activity_at"], quiet=n["quiet"])
+    own = tb.activity_summary(tb.read_activity(logs[g["id"]])) if g["id"] in logs else None
+    if own and own["step"] == "goal-check" and (out["last_activity_at"] is None
+                                                or (tb.parse_time(own["last_at"]) or 0) > (tb.parse_time(out["last_activity_at"]) or 0)):
+        out.update(ticket="", ticket_index=0, phrase=own["phrase"], phrase_since=own["since"],
+                   phrase_age_s=age(stamp, own["since"]), last_activity_at=own["last_at"],
+                   quiet=(age(stamp, own["last_at"]) or 0) >= QUIET_AFTER)
+    return out
+
+
+def goal_file_text(goal_id):
+    """One goal file's full text, read-only. Returns (http status, text or error body)."""
+    if not isinstance(goal_id, str) or not tb.GOAL_ID_RE.fullmatch(goal_id):
+        return 400, {"error": "A goal file request needs a goal id like G-004."}
+    for path in tb.goal_files(goals_dir()):
+        if path.name.startswith(goal_id + "-"):
+            try:
+                return 200, path.read_bytes().decode("utf-8", errors="replace")
+            except OSError:
+                break
+    return 404, {"error": "No such goal file."}
+
+
+def media_file(task_id, rel, folders=None):
+    """The file the media endpoint may serve for one ticket. Returns (http status, Path or error body).
+    Only a file the ticket lists as its media (tb.ticket_media: its screenshots folder and media on its
+    `Board review files:` line, in the checkout the ticket lives in) is served; anything else is refused."""
+    if not isinstance(task_id, str) or not re.fullmatch(r"T-\d+", task_id):
+        return 400, {"error": "A media request needs a ticket id like T-012."}
+    if not isinstance(rel, str) or not rel:
+        return 400, {"error": "A media request needs a path."}
+    clean = rel.replace("\\", "/")
+    if ".." in clean.split("/") or clean.startswith("/") or ":" in clean or "\0" in clean:
+        return 400, {"error": "That path is not allowed."}
+    if not tb.media_kind(clean):
+        return 415, {"error": "Only images and recordings (png, jpg, gif, webp, mp4, webm) are served."}
+    folders = tb.task_folders() if folders is None else folders
+    files = sorted(tb.TASKS_DIR.glob(f"{task_id}-*.md"))
+    if not files:
+        return 404, {"error": "No such ticket."}
+    name = files[0].name
+    folder = folders.get(task_id)
+    task_file = folder / "tasks" / name if folder and (folder / "tasks" / name).exists() else files[0]
+    t = tb.ticket(task_file)
+    base = task_file.resolve().parent.parent
+    listed = {m["path"] for m in (t or {}).get("media", [])}
+    safe = tb.safe_relative(base, clean)
+    if not safe or safe not in listed:
+        return 404, {"error": "That file is not one of this ticket's screenshots or recordings."}
+    return 200, base / safe
 
 
 def godot_bin(root=None):
@@ -231,7 +493,67 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, {"builds": builds()})
         if path == "/api/tickets":
             return self.send(200, tickets_payload())
+        if path == "/api/goals":
+            return self.send(200, goals_payload())
+        if path == "/api/goal-file":
+            query = urllib.parse.parse_qs(self.path.partition("?")[2])
+            code, out = goal_file_text((query.get("id") or [""])[0])
+            if code != 200:
+                return self.send(code, out)
+            return self.send(200, out.encode("utf-8"), "text/plain; charset=utf-8")
+        if path == "/api/media":
+            query = urllib.parse.parse_qs(self.path.partition("?")[2])
+            code, out = media_file((query.get("id") or [""])[0], (query.get("path") or [""])[0])
+            if code != 200:
+                return self.send(code, out)
+            return self.send_media(out)
         return self.send(404, {"error": "Not found."})
+
+    def send_media(self, file):
+        """Stream one media file with its content type; a single `Range: bytes=a-b` gets a 206,
+        so recordings can be scrubbed. The file is read only now, in chunks."""
+        try:
+            size = file.stat().st_size
+            f = file.open("rb")
+        except OSError:
+            return self.send(404, {"error": "That file can't be read."})
+        with f:
+            start, end, code = 0, size - 1, 200
+            match = re.fullmatch(r"bytes=(\d*)-(\d*)", (self.headers.get("Range") or "").strip())
+            if match and (match.group(1) or match.group(2)):
+                if match.group(1):
+                    start = int(match.group(1))
+                    end = min(int(match.group(2)), size - 1) if match.group(2) else size - 1
+                else:
+                    start = max(0, size - int(match.group(2)))
+                if start > end or start >= size:
+                    self.send_response(416)
+                    self.send_header("Content-Range", f"bytes */{size}")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return None
+                code = 206
+            self.send_response(code)
+            self.send_header("Content-Type", tb.media_kind(file.name)[1])
+            self.send_header("Content-Length", str(end - start + 1 if size else 0))
+            self.send_header("Accept-Ranges", "bytes")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            if code == 206:
+                self.send_header("Content-Range", f"bytes {start}-{end}/{size}")
+            self.end_headers()
+            f.seek(start)
+            left = end - start + 1 if size else 0
+            try:
+                while left > 0:
+                    chunk = f.read(min(65536, left))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    left -= len(chunk)
+            except (ConnectionError, OSError):
+                pass   # the browser stopped a video download half way: normal
+        return None
 
     def do_POST(self):
         if not self.local_host() or self.headers.get("X-Board") != "1":

@@ -75,10 +75,15 @@ class Plan(unittest.TestCase):
             prioritize.plan(claude, "goal", "G-001", "root")
 
 
+def fake_proc(result):
+    """A fake streaming `claude` process (T-203: RealClaude reads stream-json through Popen)."""
+    from goal_agent.test_claude_call import FakeProc
+    return FakeProc([dict({"type": "result"}, **result)])
+
+
 class Claude(unittest.TestCase):
     def run_real(self, **options):
-        done = mock.Mock(stdout=json.dumps({"structured_output": {}}), stderr="", returncode=0)
-        with mock.patch.object(claude_call.subprocess, "run", return_value=done) as run:
+        with mock.patch.object(claude_call.subprocess, "Popen", return_value=fake_proc({"structured_output": {}})) as run:
             claude_call.RealClaude().ask("plan", "hello", {}, **options)
         return run.call_args[0][0]
 
@@ -102,14 +107,14 @@ class Claude(unittest.TestCase):
     def test_real_claude_command_and_denials(self):
         out = {"type": "result", "is_error": False, "result": "", "structured_output": {"a": 1},
                "permission_denials": [{"tool_name": "Bash"}]}
-        done = mock.Mock(stdout=json.dumps(out), stderr="", returncode=0)
-        with mock.patch.object(claude_call.subprocess, "run", return_value=done) as run:
+        proc = fake_proc(out)
+        with mock.patch.object(claude_call.subprocess, "Popen", return_value=proc) as run:
             answer = claude_call.RealClaude().ask("plan", "hello", {"type": "object"}, model="opus",
                                                   agent="qa-integration", session_id="abc", cwd="here")
         cmd = run.call_args[0][0]
-        self.assertEqual(cmd[:5], ["claude", "-p", "--output-format", "json", "--json-schema"])
+        self.assertEqual(cmd[:6], ["claude", "-p", "--output-format", "stream-json", "--verbose", "--json-schema"])
         self.assertNotIn("hello", cmd)
-        self.assertEqual(run.call_args[1]["input"], "hello")
+        self.assertEqual(proc.stdin.sent, "hello")
         for flag in ("--model", "--agent", "--session-id"):
             self.assertIn(flag, cmd)
         self.assertEqual(run.call_args[1]["cwd"], "here")
@@ -118,11 +123,11 @@ class Claude(unittest.TestCase):
 
     def test_a_long_prompt_goes_on_standard_input_not_the_command_line(self):
         prompt = "x" * 50000
-        done = mock.Mock(stdout=json.dumps({"structured_output": {}}), stderr="", returncode=0)
-        with mock.patch.object(claude_call.subprocess, "run", return_value=done) as run:
+        proc = fake_proc({"structured_output": {}})
+        with mock.patch.object(claude_call.subprocess, "Popen", return_value=proc) as run:
             claude_call.RealClaude().ask("gaps", prompt, {"type": "object"})
-        cmd, kw = run.call_args[0][0], run.call_args[1]
-        self.assertEqual(kw["input"], prompt)
+        cmd = run.call_args[0][0]
+        self.assertEqual(proc.stdin.sent, prompt)
         self.assertTrue(all(prompt not in part and len(part) < 40000 for part in cmd))
         self.assertLess(sum(len(part) for part in cmd), 8000)
 

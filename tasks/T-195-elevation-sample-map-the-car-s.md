@@ -1,7 +1,7 @@
 ---
 id: T-195
 title: Elevation sample map: the car's height across three layers, and a scripted drive from the street to 6 and off
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Goal-G-004
