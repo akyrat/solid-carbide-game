@@ -1,7 +1,7 @@
 ---
 id: T-197
 title: Elevation sample map: depth order and see-through across every raised area, ramp and building
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/level/elevation_sample_map.gd, game/scripts/level/elevation_platform_drawing.gd, game/scripts/level/map_building.gd, game/scripts/level/mvp_map.gd, game/scripts/driving/elevation_test.gd, game/tests/unit/test_elevation_see_through.gd, game/tests/unit/test_see_through_map.gd]
 files_expected_to_change: [game/scripts/level/elevation_sample_map.gd, game/scripts/level/elevation_platform_drawing.gd, game/tests/unit/test_elevation_sample_depth.gd, game/tests/unit/test_elevation_sample_see_through.gd, game/tests/fixtures/elevation_sample_*.tscn, game/README.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-197.
 ### 2026-10-20, In progress → In QA
 
 Goal runner (G-004): the agent is done; QA is checking it.
+
+### 2026-10-20, In QA → Needs playtest
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
 
 ## Result notes
 
@@ -111,3 +115,4 @@ Board review files: `art-archive/T-197/screenshots/behind_height_3.png`, `art-ar
 - `Remove-Item` of a temporary probe test, `game/tests/unit/test_tmp_probe.gd`, was refused. I emptied the file (no tests in it) and did not commit it; it is safe to delete.
 
 **Limits worth knowing:** the car has one z_index, so if it is behind one item and in front of a later one that overlaps it on screen, the later one is drawn over it. The grid tests found no such place on this layout. Every position, zoom and fixture is a proposal.
+- 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
