@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
@@ -46,6 +46,10 @@ Check the whole elevation sample map goal together on its build branch, playtest
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-200.
 
 ## Result notes
 
