@@ -20,6 +20,11 @@ const DEFAULT_DYNAMIC_ZOOM_MAX := 17.0
 ## and it is the default (board, 2026-10-16): sound effects are silent until turned up.
 const DEFAULT_SFX_VOLUME := 0.0
 const SFX_BUS := "SFX"
+## The music's volume (task T-209), 0 to 100, in section "audio", on its own "Music" bus so it
+## never moves the sound effects. The starting value is a proposal for the playtest; T-210's
+## pause screen slider sets it.
+const DEFAULT_MUSIC_VOLUME := 40.0
+const MUSIC_BUS := "Music"
 
 ## Where the settings are read and written. Tests point this at a test file.
 static var path := DEFAULT_PATH
@@ -150,6 +155,44 @@ static func ensure_sfx_bus() -> int:
 ## (data/sfx.json) as they are, in between it scales the loudness (a straight 0..1 gain).
 static func apply_sfx_volume(volume: float) -> void:
 	var i := ensure_sfx_bus()
+	var gain := clampf(volume, 0.0, 100.0) / 100.0
+	AudioServer.set_bus_mute(i, gain <= 0.0)
+	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(gain, 0.0001)))
+
+
+## The saved music volume, 0 to 100 (default DEFAULT_MUSIC_VOLUME).
+static func load_music_volume() -> float:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_MUSIC_VOLUME
+	var v = cfg.get_value("audio", "music_volume", DEFAULT_MUSIC_VOLUME)
+	if not (v is float or v is int):
+		return DEFAULT_MUSIC_VOLUME
+	return clampf(float(v), 0.0, 100.0)
+
+
+static func save_music_volume(v: float) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("audio", "music_volume", clampf(v, 0.0, 100.0))
+	return cfg.save(path) == OK
+
+
+## Makes sure the "Music" audio bus exists (the music plays on it) and returns its index.
+static func ensure_music_bus() -> int:
+	var i := AudioServer.get_bus_index(MUSIC_BUS)
+	if i < 0:
+		AudioServer.add_bus()
+		i = AudioServer.bus_count - 1
+		AudioServer.set_bus_name(i, MUSIC_BUS)
+		AudioServer.set_bus_send(i, "Master")
+	return i
+
+
+## Sets the Music bus to `volume` (0 to 100): 0 is muted, 100 is full, in between a straight
+## 0..1 gain (like the SFX bus).
+static func apply_music_volume(volume: float) -> void:
+	var i := ensure_music_bus()
 	var gain := clampf(volume, 0.0, 100.0) / 100.0
 	AudioServer.set_bus_mute(i, gain <= 0.0)
 	AudioServer.set_bus_volume_db(i, linear_to_db(maxf(gain, 0.0001)))

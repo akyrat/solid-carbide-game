@@ -13,6 +13,7 @@ const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
+const MusicPlayerScript := preload("res://scripts/game/music_player.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
 ## Emitted after the main menu is shown (at launch and after every run).
@@ -26,6 +27,8 @@ var menu: Control
 var garage: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
+## The music, from launch to exit (task T-209). Not a screen.
+var music: Node
 ## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
 ## into it when the run ends, win or loss.
 var progress: PlayerProgress
@@ -37,6 +40,9 @@ var quit_game: Callable = func(): get_tree().quit()
 
 func _ready() -> void:
 	progress = PlayerProgress.new()
+	# The music (T-209) is a child of this node, so it outlives every screen change.
+	music = MusicPlayerScript.new()
+	add_child(music)
 	show_menu()
 
 

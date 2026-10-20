@@ -1,7 +1,7 @@
 ---
 id: T-209
 title: "Music: the board's two tracks loop through the game, alternating"
-status: open
+status: in-progress
 from: project-lead
 to: sfx
 lead: Coursework
@@ -59,6 +59,19 @@ Board review files: the main menu.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-20, Open → In progress
+
+Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- Both tracks copied byte-identical (checked with cmp) to `game/audio/music/demo_beat_1.mp3` and `demo_beat_2.mp3`; source and original file names in the `.json` next to each ("made by the board, for this game").
+- `game/scripts/game/music_player.gd` (`MusicPlayer`): one `AudioStreamPlayer`, process mode Always, a child of the game flow (`GameFlow.music`), so it outlives menu, run, garage and pause. When a track ends it starts the other (1, 2, 1, ...).
+- Own bus "Music"; setting `GameSettings.load_music_volume()` / `save_music_volume()` / `apply_music_volume()`, key `music_volume` in section `audio`, 0 to 100, saved like the SFX volume. T-210's slider calls these.
+- Starting value proposal: **40** (a gain of 0.4, about -8 dB). Why: the SFX default is silent and the board turns it up, but music should be heard on first launch; 40 leaves headroom under the engine and weapon sounds, and I could not judge the mp3s' loudness here, so the board tunes it by ear in the playtest.
+- `check_sfx_licenses.py` skips the `music` folder (the board's own work has no Freesound license); test added.
+- Tests: `game/tests/unit/game/test_music.gd` (order 1, 2, 1; one player kept; playback position through menu, run, pause, menu; setting range and save; separate bus). The `test_screen_flow.gd` helper now ignores the music node.
+- Results: GUT 1136/1136 passed; tools unittest 399 OK; game/tools unittest 355 OK (1 skipped).
+- Documents updated: `docs/game-loop-architecture.md`, `game/README.md`.

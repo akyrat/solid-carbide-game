@@ -38,8 +38,10 @@ func _press(button: Button) -> void:
 
 
 func _only_screen() -> Node:
-	assert_eq(game.get_child_count(), 1, "exactly one screen on show")
-	return game.get_child(0)
+	# The music node (T-209) is not a screen.
+	var screens: Array = game.get_children().filter(func(c): return c != game.music)
+	assert_eq(screens.size(), 1, "exactly one screen on show")
+	return screens[0]
 
 
 func test_the_main_scene_is_the_game_flow() -> void:
