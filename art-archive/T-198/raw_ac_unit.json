@@ -1,0 +1,39 @@
+{
+  "file": "raw_ac_unit.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "rooftop air conditioning unit, grey metal box with a round fan grille on top, isometric view, small amber light, pixel art",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "view": "high top-down",
+    "isometric": true
+  },
+  "prompt": "rooftop air conditioning unit, grey metal box with a round fan grille on top, isometric view, small amber light, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-20T20:50:42+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-198",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}
