@@ -22,6 +22,13 @@ The goal runner's goals (T-202) come from the main checkout's goals/ (taskboard_
 GET /api/goals lists each with its tickets and whether its build folder exists, and
 GET /api/goal-file?id=G-004 returns one goal file's full text, read-only.
 
+Live activity (T-203): every in-progress or in-QA ticket in /api/tickets has `now`: the latest phrase from
+its activity log (.board/activity/<id>.jsonl in the main checkout, written by the goal runner) with its
+age and the last 20 phrases, and the free signals: time in its lane (the moves log), commits on its
+branch, and its last activity; `quiet` after 10 minutes without any. A building goal in /api/goals has
+`now`: the ticket being worked on and its phrase. Logs are read from the end only. BOARD_MAIN_STATE
+stands in for the main checkout's .board/ (a second server checked with sample logs).
+
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
 """
@@ -34,6 +41,7 @@ import re
 import subprocess
 import sys
 import threading
+import time
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -108,21 +116,186 @@ def version(folders=None):
             except OSError:
                 continue
             h.update(f"{shot}|{sst.st_mtime_ns}|{sst.st_size}\n".encode("utf-8"))
+    # T-203: an activity log's new events, at most once per ACTIVITY_TICK seconds, and a new commit in a
+    # task folder (its worktree's HEAD log), so the Now lines follow without reading on every check.
+    for log_id, path in sorted(activity_files().items()):
+        try:
+            h.update(f"{log_id}|{int(path.stat().st_mtime // ACTIVITY_TICK)}\n".encode("utf-8"))
+        except OSError:
+            continue
+    for task_id, folder in sorted(folders.items()):
+        head_log = worktree_head_log(folder)
+        if not head_log:
+            continue
+        try:
+            h.update(f"{task_id}|{head_log.stat().st_mtime_ns}\n".encode("utf-8"))
+        except OSError:
+            continue
     return h.hexdigest()[:16]
+
+
+ACTIVITY_TICK = 10
+
+
+def worktree_head_log(folder):
+    """The HEAD log git keeps for a worktree (it changes on every commit there), or None."""
+    try:
+        text = (Path(folder) / ".git").read_text(encoding="utf-8").strip()
+    except OSError:
+        return None
+    if not text.startswith("gitdir:"):
+        return None
+    return Path(text[len("gitdir:"):].strip()) / "logs" / "HEAD"
 
 
 def tickets_payload():
     folders = tb.task_folders()
-    return {"version": version(folders), "generated_at": now(), "tickets": tb.tickets_now(folders=folders)}
+    stamp = time.time()
+    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    return {"version": version(folders), "generated_at": iso(stamp), "tickets": tickets}
 
 
 def goals_payload():
     """Every goal file with its tickets (from their `goal:` lines, wherever the ticket lives) and
-    whether its build folder (the worktree named after the goal's id) exists."""
+    whether its build folder (the worktree named after the goal's id) exists; a building goal also
+    has `now`: the ticket being worked on and its phrase (T-203)."""
     folders = tb.task_folders()
+    stamp = time.time()
     builds_by_name = {Path(f).name: Path(f) for f, _ in worktrees()[1:]}
-    goals = tb.goals_now(goals_dir(), tb.tickets_now(folders=folders), builds_by_name)
-    return {"version": version(folders), "generated_at": now(), "goals": goals}
+    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    goals = tb.goals_now(goals_dir(), tickets, builds_by_name)
+    logs = activity_files()
+    for g in goals:
+        g["now"] = goal_now(g, tickets, logs, stamp)
+    return {"version": version(folders), "generated_at": iso(stamp), "goals": goals}
+
+
+# --- Live activity (T-203): the Now line on cards, the ticket's timeline, the goal cards' current ticket ---
+
+ACTIVE = ("in-progress", "in-qa")
+QUIET_AFTER = 600            # seconds without any activity: the card is marked quiet
+MOVES_READ_BYTES = 512_000   # only the end of the moves log is read
+
+
+def iso(stamp):
+    return datetime.fromtimestamp(stamp, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ") if stamp is not None else None
+
+
+def main_state():
+    """The main checkout's .board/ (where the runner writes the activity logs and the status script its moves
+    log). BOARD_MAIN_STATE points somewhere else, for a second board server checked with sample logs."""
+    env = os.environ.get("BOARD_MAIN_STATE")
+    return Path(env) if env else main_checkout() / ".board"
+
+
+def activity_files():
+    """{ticket or goal id: its activity log} for every log there is."""
+    try:
+        return {p.stem: p for p in (main_state() / "activity").glob("*.jsonl") if tb.ACTIVITY_ID_RE.fullmatch(p.stem)}
+    except OSError:
+        return {}
+
+
+def lane_times():
+    """{ticket id: (status, time)} of each ticket's newest move in the moves log (its end only)."""
+    path, out = main_state() / "moves.log", {}
+    try:
+        with path.open("rb") as f:
+            f.seek(0, os.SEEK_END)
+            size = f.tell()
+            f.seek(max(0, size - MOVES_READ_BYTES))
+            lines = f.read().decode("utf-8", errors="replace").split("\n")
+    except OSError:
+        return out
+    if size > MOVES_READ_BYTES:
+        lines = lines[1:]
+    for line in lines:
+        try:
+            entry = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(entry, dict) and entry.get("id") and entry.get("at"):
+            out[entry["id"]] = (entry.get("to"), entry["at"])
+    return out
+
+
+def branch_signals(folder, branch):
+    """(commits only on this branch, the newest one's time in seconds or None) for a ticket's folder."""
+    if not folder or not branch or branch == "(detached)":
+        return 0, None
+    try:
+        out = subprocess.run(["git", "-C", str(folder), "log", "--format=%ct", "HEAD", "--not",
+                              f"--exclude={branch}", "--branches"], capture_output=True, text=True,
+                             check=True, creationflags=tb.no_window(), timeout=10).stdout.split()
+    except (OSError, subprocess.SubprocessError):
+        return 0, None
+    return len(out), (int(out[0]) if out and out[0].isdigit() else None)
+
+
+def age(stamp, at):
+    t = tb.parse_time(at) if isinstance(at, str) else at
+    return None if t is None else max(0, int(stamp - t))
+
+
+def ticket_now(t, log, lane, branch, stamp):
+    """What the board shows of one in-progress or in-QA ticket: the activity log's latest phrase and its
+    last TIMELINE_MAX phrases, and the free signals: time in its lane, commits on its branch, last activity."""
+    summary = tb.activity_summary(tb.read_activity(log)) if log else None
+    commits, last_commit = branch_signals(t.get("folder"), branch)
+    task_file = Path(t["folder"]) / t["file"] if t.get("folder") else tb.ROOT / t["file"]
+    try:
+        changed = task_file.stat().st_mtime
+    except OSError:
+        changed = None
+    since = lane[1] if lane and lane[0] == t["status"] else None
+    times = [x for x in (tb.parse_time(summary["last_at"]) if summary else None, last_commit, changed) if x is not None]
+    last = max(times) if times else None
+    out = {"phrase": summary["phrase"] if summary else "", "phrase_since": summary["since"] if summary else None,
+           "phrase_age_s": age(stamp, summary["since"]) if summary else None, "step": summary["step"] if summary else "",
+           "timeline": summary["timeline"] if summary else [],
+           "in_lane_since": since, "in_lane_s": age(stamp, since) if since else None,
+           "commits": commits, "last_commit_at": iso(last_commit), "file_changed_at": iso(changed),
+           "last_activity_at": iso(last), "last_activity_s": age(stamp, last) if last is not None else None}
+    out["quiet"] = out["last_activity_s"] is not None and out["last_activity_s"] >= QUIET_AFTER
+    return out
+
+
+def with_now(tickets, stamp=None):
+    """The tickets, each in progress or in QA with its `now` (the others: None)."""
+    stamp = time.time() if stamp is None else stamp
+    active = [t for t in tickets if t["status"] in ACTIVE]
+    logs = activity_files() if active else {}
+    lanes = lane_times() if active else {}
+    branches = {str(Path(f)): b for f, b in worktrees()} if any(t.get("folder") for t in active) else {}
+    for t in tickets:
+        t["now"] = (ticket_now(t, logs.get(t["id"]), lanes.get(t["id"]), branches.get(str(Path(t["folder"])))
+                               if t.get("folder") else None, stamp) if t["status"] in ACTIVE else None)
+    return tickets
+
+
+def goal_now(g, tickets, logs, stamp):
+    """For a building goal: the ticket being worked on (its newest active one), "ticket N of M", the
+    iteration, and the phrase; the goal check's phrase when the goal's own log is newer. None otherwise."""
+    if g.get("status") != "building":
+        return None
+    by_id = {t["id"]: t for t in tickets}
+    mine = [by_id[i] for i in g["tickets"] if by_id.get(i, {}).get("now")]
+    pick = max(mine, key=lambda t: (t["now"]["last_activity_s"] is not None, -(t["now"]["last_activity_s"] or 0)),
+               default=None)
+    out = {"ticket": "", "ticket_index": 0, "tickets_total": g["tickets_total"], "iteration": g["iteration"],
+           "phrase": "", "phrase_since": None, "phrase_age_s": None, "last_activity_at": None, "quiet": False}
+    if pick:
+        n = pick["now"]
+        out.update(ticket=pick["id"], ticket_index=g["tickets"].index(pick["id"]) + 1, phrase=n["phrase"],
+                   phrase_since=n["phrase_since"], phrase_age_s=n["phrase_age_s"],
+                   last_activity_at=n["last_activity_at"], quiet=n["quiet"])
+    own = tb.activity_summary(tb.read_activity(logs[g["id"]])) if g["id"] in logs else None
+    if own and own["step"] == "goal-check" and (out["last_activity_at"] is None
+                                                or (tb.parse_time(own["last_at"]) or 0) > (tb.parse_time(out["last_activity_at"]) or 0)):
+        out.update(ticket="", ticket_index=0, phrase=own["phrase"], phrase_since=own["since"],
+                   phrase_age_s=age(stamp, own["since"]), last_activity_at=own["last_at"],
+                   quiet=(age(stamp, own["last_at"]) or 0) >= QUIET_AFTER)
+    return out
 
 
 def goal_file_text(goal_id):

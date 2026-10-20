@@ -82,6 +82,8 @@ The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 
 - A goal's tickets that pass QA are merged into `playtest/<goal id>`, and wait there in `needs-playtest` (or `done`, for work the player never meets) until the board has played the goal's build. Their worktrees stay until then, so their status can still be read; they are removed when the Project Lead merges the goal's build.
 - A reused ticket that another session owns is never built by the runner: the goal waits for it, and pauses (`waiting`) when nothing else can go on.
 - When the Project Lead merges the goal's build, a ticket's `status:` line may conflict (master's copy was unblocked by the status script, the build's copy moved on): keep the build's side.
+- The runner records what its headless sessions do (T-203): each session runs with `--output-format stream-json --verbose`, and every event is appended, as it arrives, to `.board/activity/<ticket id>.jsonl` (the agent and QA) or `.board/activity/<goal id>.jsonl` (the goal check) in the main checkout, git-ignored like the rest of `.board/`. One line per event: its time, its step (`agent`, `qa`, `goal-check`) and the event, cut down (long text shortened, tool output left out). The answer and the refusals the runner reads are the same as before. A log past 2 MB keeps only its last 500 KB, and a log can be deleted at any time. The task board shows it as each card's Now line, a timeline in the ticket's detail and the current ticket on the goal's card (`docs/README.md`, "The task board").
+- `run.py resume` sets the goal's status to `building` and saves the goal file as soon as it carries on, so the board doesn't show a running goal as `paused` until its next ticket finishes.
 
 ## Building in playable steps
 
