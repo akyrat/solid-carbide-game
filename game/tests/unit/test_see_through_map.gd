@@ -213,6 +213,9 @@ func test_in_a_run_from_the_main_menu_the_building_fades_and_comes_back() -> voi
 	game.menu.start_button.pressed.emit()
 	await wait_process_frames(2)
 	var run: Node2D = game.run
+	# This block is the MVP map's (T-206: under a rooftop on the elevation map).
+	run.use_elevation_map = false
+	run.start_run()
 	var block := _covering_slot(run.map, BEHIND)
 	assert_not_null(block, "a skyscraper slot covers the car behind the block")
 	_place_run_car(run, BEHIND)

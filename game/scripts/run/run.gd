@@ -25,6 +25,18 @@ extends Node2D
 ##
 ## Other agents reach the run's state through `state`, or from anywhere in the
 ## tree with get_tree().get_first_node_in_group("run_state").
+##
+## The run's map (task T-206; Level design, Decisions, "The elevation sample
+## map becomes the run's map"): with USE_ELEVATION_MAP true (the default) the
+## map is built from the elevation sample map's layout
+## (data/level/elevation_sample_map.json) with its rooftops and ramps
+## (elevation_layer.gd, the same code the drive-only sample scene uses): the
+## car has its real height on them (car_height.gd), is drawn lifted by it with
+## its round shadow on the ground under it and its shadowless frames in the
+## air, and the rooftops, ramps and buildings covering it fade. Enemies,
+## coins, pickups and effects are drawn at street level (height 0) in the
+## depth order. Set USE_ELEVATION_MAP to false for the MVP map (mvp_map.json),
+## as before T-206.
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MapScript := preload("res://scripts/level/mvp_map.gd")
@@ -57,11 +69,22 @@ const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
 const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
+## The map's rooftops and ramps (task T-206): depth order, see-through, ground height.
+const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
+## The car's round shadow on the ground (task T-187), drawn with the elevation map only.
+const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
+
+## Which map a run plays on (task T-206): true, the elevation sample map's
+## layout with its rooftops and ramps; false, the MVP map (as before T-206).
+const USE_ELEVATION_MAP := true
+## The elevation sample map's layout file (Level design, Content, "Elevation sample map").
+const ELEVATION_LAYOUT_PATH := "res://data/level/elevation_sample_map.json"
 
 ## Same 2:1 isometric projection as the drift prototype and the map.
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Where the car starts, in units from the map's centre: the centre of the
-## gravel square, the one open space on the map.
+## gravel square, the one open space on the map. The same on the elevation
+## map, whose gravel square is the MVP map's (a proposal, T-206).
 const START_POSITION_UNITS := Vector2.ZERO
 ## The car's heading at the start, in radians: nose along -y (up in the flat
 ## view), as in the drift prototype (CarModel's default).
@@ -129,6 +152,15 @@ var sounds: Node
 ## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
 ## just before View. Its off-screen arrows are the child "GiftArrows".
 var gift_drops: GiftDrops
+## Whether the next map built is the elevation map (USE_ELEVATION_MAP by
+## default). Read by start_run() each time it builds a new map; tests set it.
+var use_elevation_map: bool = USE_ELEVATION_MAP
+## The map's rooftops and ramps (elevation_layer.gd), a child "Elevation" of
+## the map; null on the MVP map. A new run's map brings a new one.
+var elevation = null
+## The car's round shadow (car_shadow.gd), child "CarShadow" of the run, just
+## before View; shown on the elevation map only.
+var shadow: Node2D
 
 
 func _ready() -> void:
@@ -139,6 +171,12 @@ func _ready() -> void:
 	physics_world.name = "PhysicsWorld"
 	physics_world.visible = false
 	add_child(physics_world)
+
+	shadow = CarShadowScript.new()
+	shadow.name = "CarShadow"
+	shadow.view_basis = ISO_TRANSFORM
+	shadow.visible = false
+	add_child(shadow)
 
 	view_root = Node2D.new()
 	view_root.name = "View"
@@ -254,9 +292,23 @@ func _build_world() -> void:
 	map = MapScene.instantiate()
 	map.name = "Map"
 	map.challenges_enabled = challenges_enabled
+	if use_elevation_map:
+		map.layout_path = ELEVATION_LAYOUT_PATH
 	add_child(map)
 	move_child(map, 0)  # drawn under the car
 	map.set_view(VIEW)
+	elevation = null
+	if use_elevation_map:
+		# The rooftops and ramps (T-206), sorted with the map's buildings.
+		elevation = ElevationLayerScript.new()
+		elevation.name = "Elevation"
+		map.add_child(elevation)
+		elevation.setup(map, ELEVATION_LAYOUT_PATH)
+	shadow.visible = elevation != null
+	# Back to the street's drawing until sync_view() places them (T-206).
+	drift_smoke.position = Vector2.ZERO
+	boost_effect.position = Vector2.ZERO
+	car_sprite.set_in_air(false)
 	# Drift marks go on the ground: right after the ground tiles in the map's
 	# drawing, so the buildings, boulders and the car (View) are drawn over them.
 	drift_marks = DriftMarksScene.instantiate()
@@ -270,6 +322,8 @@ func _build_world() -> void:
 	car.model.y = START_POSITION_UNITS.y
 	car.model.rotation = START_ROTATION
 	physics_world.add_child(car)
+	if elevation != null:
+		car.ground = elevation.ground_height  # the car's height on the rooftops and ramps
 	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
@@ -290,6 +344,7 @@ func _build_world() -> void:
 	map.car = car
 	sync_view(true)
 	car_sprite.reset_physics_interpolation()
+	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
 
 
@@ -323,6 +378,9 @@ func _on_car_moved() -> void:
 ## on it when snap_camera is true (or both camera options are off), otherwise
 ## one physics step of the camera options toward it.
 func sync_view(snap_camera: bool = true) -> void:
+	if elevation != null:
+		_sync_view_elevation(snap_camera)
+		return
 	var drawn := ISO_TRANSFORM * car.position
 	car_sprite.position = drawn
 	car_sprite.set_heading(car.rotation)
@@ -339,6 +397,39 @@ func sync_view(snap_camera: bool = true) -> void:
 	view_root.z_index = map.car_z_index(car.position / CarScript.PX_PER_UNIT, car.rotation)
 	if level_up_burst != null:
 		level_up_burst.position = drawn
+
+
+## sync_view() on the elevation map (T-206), as the drive-only sample scene:
+## the car drawn lifted by its height (its shadowless frames in the air), its
+## round shadow on the ground under it, both in the depth order with the
+## rooftops, ramps, buildings and boulders, the see-through, and the camera
+## following the car's map position at street level. The car's own effects
+## (drift smoke, boost) are lifted with the ground under the car, so they stay
+## at its tyres on a rooftop (a proposal).
+func _sync_view_elevation(snap_camera: bool) -> void:
+	var units: Vector2 = car.model.get_position()
+	var at_ground := ISO_TRANSFORM * (units * CarScript.PX_PER_UNIT)
+	var ground_h: float = elevation.ground_height.height_at(units)
+	car_sprite.place(at_ground, car.height)
+	car_sprite.set_in_air(CarSpriteScript.is_in_air(car.height, ground_h))
+	car_sprite.set_heading(car.rotation)
+	shadow.place(units, ground_h)
+	var lift: Vector2 = CarSpriteScript.lift_for_height(ground_h, CarScript.PX_PER_UNIT)
+	drift_smoke.position = lift
+	boost_effect.position = lift
+	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
+	shadow.z_index = elevation.z_for(units, car.rotation, ground_h) - 1
+	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
+	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
+	if snap_camera:
+		camera_follow.snap(at_ground, frac)
+	else:
+		camera_follow.step(at_ground, frac, car.model.dt)
+	camera.position = camera_follow.position
+	if snap_camera or camera_follow.dynamic:
+		_apply_zoom()
+	if level_up_burst != null:
+		level_up_burst.position = car_sprite.position
 
 
 ## Sets the camera zoom (Unity's orthographic size), as the pause screen's slider does.

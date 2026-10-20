@@ -1,7 +1,7 @@
 ---
 id: T-206
 title: A run plays on the elevation sample map
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -56,6 +56,55 @@ Board review files: `game/scenes/run/run.tscn` via the main menu.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-20, Open → In progress
+
+Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Game Loop Agent, 2026-10-21
+
+Two agents worked on this ticket: the first was cut off before it committed, and the second checked its work, kept it, and finished the ticket.
+
+**What was built**
+- `game/scripts/level/elevation_layer.gd` (new) holds the rooftops and ramps with their drawings, the ground height, the shared depth order of rooftops, ramps and buildings (`restack`, `z_for`), and see-through. The code was moved out of `elevation_sample_map.gd` and not copied: the drive-only scene now calls its layer through thin wrappers, so the scene and the run share one copy of the code.
+- `game/scripts/run/run.gd`: `const USE_ELEVATION_MAP := true` switches the map, and `run.use_elevation_map` sets the same thing per run instance for tests. On the elevation map the run loads `data/level/elevation_sample_map.json` into the map, adds the layer, sets `car.ground` and shows the round `CarShadow`. `_sync_view_elevation()` does what the drive-only scene does: it lifts the car by its height, uses the shadowless frames in the air, places the shadow on the ground, sets the depth order, runs see-through, and makes the camera follow at street level. With the switch set to false, the run builds the MVP map exactly as before.
+- `mvp_map.gd`: `map.elevation` (null on the MVP map) brings the rooftops and ramps into `top_z_index`, `car_z_index`, the boulder z-order and `is_open_spot`. Street level only, so gift packages and meteors never land on a rooftop. The map's own building fade is off when the layer is present. `enemy_depth.gd` draws enemies, coins and pickups under any rooftop that covers them, at height 0. Enemy behaviour is unchanged (T-207).
+- `weapons.gd`: `is_target(e)` is now untyped, so a target that has already been freed returns false instead of raising a script error. The earlier agent found this error on the elevation map.
+
+**Proposals for the playtest**
+- The start is unchanged: (0, 0) in the gravel square, nose north, at street level on this layout.
+- Enemies, coins, pickups and effects are drawn at height 0 in the depth order. Gift packages and meteor landings pick street-level spots only.
+- On a rooftop, the drift smoke and boost are lifted with the ground under the car, so they stay at its tyres.
+
+**Tests**
+- New: `game/tests/unit/run/test_run_elevation_map.gd` (13 tests). They cover the switch in both directions, one drawing per area, a new layer for each run, the height, shadow and air frames, the car's depth order on a rooftop and behind one, see-through, the camera, open spots, enemy depth, and a run going on with enemies.
+- Tests that check the MVP map's own blocks now set `run.use_elevation_map = false`.
+- `test_run_scene.gd` now checks one boulder body per pattern copy: 56 on the elevation map, 60 on the MVP map.
+- I fixed a broken assertion the earlier agent left in `test_elevation_sample_map.gd`, and restored that file's line endings to LF.
+- Results: full GUT suite 1141/1141 passed. Python `tools/` 399 OK. `game/tools/` 354 OK (1 skipped).
+
+**2-minute scripted run** (`python game/tools/run_scene_headless.py res://tests/fixtures/run_elevation_soak.tscn 150 --show`)
+- The car spent time on the street, at height 3 and at height 6 (max 6.00), with up to 21 minions and 201 shots.
+- There were 4 level-up screens through the gift packs, and the kaiju arrived. The run was still going at 120 s.
+- No errors appeared during the run.
+- At quit, Godot prints one line: `ERROR: 1 resources still in use at exit`. It is the engine-loop sound's stream (`748027_sedan-engine-loop.ogg`) still being held. The same line appears on the MVP map (`run_mvp_soak.tscn`), so it is older than this ticket and not caused by the run. Freeing the game before quitting did not remove it. I left it for a separate SFX or tooling ticket if wanted.
+
+**Drive-only scene:** `run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 10` reports no errors, and its GUT tests all pass.
+
+**Screenshots** (`art-archive/T-206/screenshots/`)
+- `run_elevation_street.png`: on the street.
+- `run_elevation_rooftop.png`: on the height-6 rooftop.
+- `run_elevation_air.png`: in the air off the rooftop, with the round shadow on the street.
+- `run_elevation_behind.png`: behind a rooftop, which is see-through.
+- `run_elevation_kaiju.png`: the kaiju arriving, with a see-through building.
+- `drive_only_elevation_sample.png`: the drive-only scene, unchanged.
+
+**Docs updated**
+- `docs/level-design.md`: Content, "Elevation sample map", "The run on this map".
+- `docs/game-loop-architecture.md`: "The run scene".
+- `game/README.md`: "The run", "The run's map (T-206)", plus the sample-map sections that now point to the shared layer.
+
+No commands were refused.

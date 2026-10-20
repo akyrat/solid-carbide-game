@@ -312,6 +312,9 @@ func test_in_the_run_smoke_is_drawn_with_the_car_over_the_map_and_under_the_hud(
 
 func test_a_building_that_covers_the_car_also_covers_the_smoke() -> void:
 	var run := _run()
+	# This block is the MVP map's (T-206: under a rooftop on the elevation map).
+	run.use_elevation_map = false
+	run.start_run()
 	var map: Node2D = run.map
 	var block: Node2D = null
 	var shape: PackedVector2Array = map.car_screen_shape(BEHIND, -PI / 2.0)

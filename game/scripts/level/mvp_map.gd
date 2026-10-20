@@ -132,6 +132,11 @@ var meteor_line_color := Color(0.50, 1.0, 0.55, 1.0)
 
 ## Optional: the car to check the challenges against every physics step.
 var car: Node2D = null
+## The map's elevation (task T-206, elevation_layer.gd), or null: set by the
+## layer's setup(). With it, the depth order's top, the car's place in it, the
+## boulders' places and the open-spot check take the raised areas into
+## account, and the layer fades the buildings itself (not _process).
+var elevation = null
 ## Whether this map builds its preset challenges. Set before the map enters the
 ## tree; the default is CHALLENGES_ENABLED (off in the MVP).
 var challenges_enabled := CHALLENGES_ENABLED
@@ -505,6 +510,9 @@ func is_open_spot(centre: Vector2, radius: float) -> bool:
 	for o in all_boulders():
 		if centre.distance_to(Vector2(float(o.x), float(o.y))) < r + float(o.diameter) / 2.0:
 			return false
+	# T-206: with elevation, open ground is street level only (no rooftop or ramp).
+	if elevation != null and not elevation.is_street(centre, r):
+		return false
 	return true
 
 
@@ -716,7 +724,7 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-	if car != null:
+	if car != null and elevation == null:
 		update_see_through(car.position / PX_PER_UNIT, car.rotation, delta)
 
 
@@ -788,11 +796,22 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 	for s in boulder_sprites:
 		if s.covers(car_centre_units, shape, box):
 			z = mini(z, s.z_index - 1)
+	# T-206: and under the raised areas that cover it, at street level.
+	if elevation != null:
+		z = elevation.z_under_areas(z, car_centre_units, elevation.DEPTH_RADIUS, 0.0, shape)
 	return z
 
 
-## A z_index over every building (the car's when nothing covers it).
+## A z_index over every building (the car's when nothing covers it), and over
+## every raised area when the map has elevation (T-206).
 func top_z_index() -> int:
+	if elevation != null:
+		return elevation.top_z_index()
+	return own_top_z_index()
+
+
+## A z_index over every building, the map's own order (without elevation).
+func own_top_z_index() -> int:
 	return BUILDING_Z_BASE + BUILDING_Z_STEP * fade_items().size()
 
 
@@ -884,7 +903,18 @@ func _sync_boulder_sprites() -> void:
 ## building. The car's level for that place, so the car in front of the
 ## boulder (later in the tree) is drawn over it.
 func _boulder_z(centre_units: Vector2, outline: PackedVector2Array) -> int:
-	var z := top_z_index()
+	var z := _boulder_z_buildings(centre_units, outline)
+	# T-206: with elevation, over the areas too, and under the ones covering it.
+	if elevation != null:
+		if z >= own_top_z_index():
+			z = elevation.top_z_index()
+		z = elevation.boulder_z_under_areas(z, centre_units, outline)
+	return z
+
+
+## A boulder's z_index among the buildings only.
+func _boulder_z_buildings(centre_units: Vector2, outline: PackedVector2Array) -> int:
+	var z := own_top_z_index()
 	for b in fade_items():
 		if b.is_behind(centre_units) and not Geometry2D.intersect_polygons(b.iso_silhouette(), outline).is_empty():
 			z = mini(z, b.z_index - 1)

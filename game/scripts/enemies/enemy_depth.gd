@@ -13,6 +13,11 @@ extends RefCounted
 ##
 ## Silhouettes do not move, so their bounding boxes are cached per map: a cheap
 ## box test rules out most buildings before the polygon test.
+##
+## On a map with elevation (task T-206, map.elevation, elevation_layer.gd) the
+## raised areas and ramps join the order: the thing is drawn under every area
+## that covers it, as if it stood at street level (height 0). How enemies
+## handle heights is task T-207's.
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -68,6 +73,11 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 	for s in map.boulder_sprites:
 		if s.z_index - 1 < z and s.covers(centre_units, shape, box):
 			z = s.z_index - 1
+	# T-206: on a map with elevation, also under the raised areas and ramps
+	# that cover it, drawn at street level (height 0) like the street's things.
+	var elevation = map.get("elevation")
+	if elevation != null:
+		z = elevation.z_under_areas(z, centre_units, radius_units, 0.0, shape)
 	return z
 
 
