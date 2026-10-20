@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: building
+status: paused
 art_cap: 50
 art_used: 8
 iteration: 9
@@ -157,6 +157,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 7: resumed: its last pause (flagged) is cleared.
 - 2026-10-20, iteration 8: T-199 (S7, level-challenge, opus): passed (done, QA rounds 2), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S7 in-flight.
 - 2026-10-20, iteration 9: T-200 (S7, qa-integration, opus): flagged (flagged-for-review, QA rounds 2); art 0; agent: Six of the seven criteria pass; criterion 6 (long GDD) fails or can't be verified. GUT passed 1119/1119 and the Python tool tests 342 OK. The sample scene ran headless for 10 s with no errors. The scripted drive passed through the GUT test of the same drive (max height 6.89, airtime 1.00 s off the height-6 edge, landing on the street). I did not run the drive script itself, because it was refused. The diff has no trick or editor code, and mvp_map.json and elevation_test.json are unchanged. All 9 final screenshots exist. The long GDD (docs/long-gdd.md) has no diff on the branch although level-design.md, drifting.md and visual-style.md changed, and I wasn't given the runner's staleness result. The runner or Project Lead needs to regenerate it and run the staleness check. Results are in the task file's result notes and committed / Round 2 of T-200, on the one criterion that failed: the long GDD hasn't been regenerated on playtest/G-004. It still isn't: docs/long-gdd.md is unchanged even though level-design.md, drifting.md and visual-style.md changed. No agent can fix this. The docs scripts aren't pre-approved, and in a goal run only the runner regenerates the long GDD (sync_docs() in tools/goal_agent/loop.py), at the goal check, after every ticket has passed QA. So this criterion can't pass on this ticket. The Project Lead should count it as covered by the runner's docs check at the goal check, or drop it from the ticket. The other six criteria passed in round 1 (GUT 1119/1119, Python 342 OK, the headless scene runs and the reachability drive all pass). Since then only ticket commits have landed, so I didn't rerun them. Notes are in the task file and committed; no screenshots, because this is a check ticket with nothing new to show. Refused, got past and not blocking: qa-integration: {"tool_input": {"command": "bash game/tools/drive_elevation_sample.sh", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01VCUp4nz23fDzrstqCNTsCT"} / qa-integration: {"tool_input": {"command": "python tools/generate_long_gdd.py --help"}, "tool_name": "Bash", "tool_use_id": "toolu_018ovw9hyrWJqknWytMYBeda"} / qa-integration: bash game/tools/drive_elevation_sample.sh (not on the pre-approved list; used the GUT test of the same drive instead) / qa-integration: python tools/generate_long_gdd.py --help (not on the pre-approved list; long GDD check left to the runner) / QA: bash game/tools/drive_elevation_sample.sh was refused earlier (not on the pre-approved list); covered by test_drive_elevation_sample.gd. / QA: python tools/generate_long_gdd.py / the staleness check was refused earlier (not on the pre-approved list); not run, so criterion 6 is unverified.. Rescan: S7 covered.
+- 2026-10-20, iteration 9: paused (see Pauses).
 
 ## Pauses
 
@@ -164,4 +165,5 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-19 [stop]: Claude reported an error for step 'qa': You've hit your session limit · resets 6:10pm (Europe/London)
 - 2026-10-20 [stop]: Claude reported an error for step 'qa': You've hit your session limit · resets 10:30pm (Europe/London)
 - 2026-10-20 [flagged]: T-199 failed QA twice and is flagged for the board's review; T-200 wait on it. Nothing else can go on.
+- 2026-10-20 [flagged]: T-200 failed QA twice and is flagged for the board's review; the goal check waits for it. Nothing else can go on.
 
