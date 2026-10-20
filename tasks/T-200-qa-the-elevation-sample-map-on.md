@@ -35,13 +35,13 @@ Check the whole elevation sample map goal together on its build branch, playtest
 
 ## Acceptance criteria
 
-- [ ] On playtest/G-004 the GUT tests, the Python tool tests and the headless scene runs all pass (counts in the result notes). (QA: pass / fail)
-- [ ] A run started from the main menu loads mvp_map.json and starts the run as before (test_screen_flow.gd and test_run_scene.gd pass). (QA: pass / fail)
-- [ ] The elevation sample map scene runs headless for 10 seconds with no errors. (QA: pass / fail)
-- [ ] The scripted reachability drive passes on playtest/G-004 (street to 3 to 6, then off 6, landing), and its log of maximum height and airtime is in the result notes. (QA: pass / fail)
-- [ ] `git diff master...playtest/G-004 --stat` shows no trick or level-editor code added, and game/data/level/mvp_map.json and elevation_test.json unchanged. (QA: pass / fail)
-- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: pass / fail)
-- [ ] The final screenshot set listed in D7's result notes exists at those paths and shows what the notes say. (QA: pass / fail)
+- [ ] On playtest/G-004 the GUT tests, the Python tool tests and the headless scene runs all pass (counts in the result notes). (QA: pass)
+- [ ] A run started from the main menu loads mvp_map.json and starts the run as before (test_screen_flow.gd and test_run_scene.gd pass). (QA: pass)
+- [ ] The elevation sample map scene runs headless for 10 seconds with no errors. (QA: pass)
+- [ ] The scripted reachability drive passes on playtest/G-004 (street to 3 to 6, then off 6, landing), and its log of maximum height and airtime is in the result notes. (QA: pass: via the same drive in test_drive_elevation_sample.gd; the .sh wrapper was refused)
+- [ ] `git diff master...playtest/G-004 --stat` shows no trick or level-editor code added, and game/data/level/mvp_map.json and elevation_test.json unchanged. (QA: pass)
+- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given)
+- [ ] The final screenshot set listed in D7's result notes exists at those paths and shows what the notes say. (QA: pass)
 
 ## Updates
 
