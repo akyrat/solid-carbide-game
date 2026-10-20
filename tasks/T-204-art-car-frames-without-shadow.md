@@ -1,7 +1,7 @@
 ---
 id: T-204
 title: Art: the car's 16 frames without their drop shadow (free script)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/drifting.md, game/README.md, game/art/car/car_iso.png, game/art/car/car_iso.json, tasks/T-014-car-sprites-16-directions.md]
 files_expected_to_change: [game/tools/build_car_noshadow.py, game/tools/test_build_car_noshadow.py, game/art/car/car_iso_noshadow.png, game/art/car/car_iso_noshadow.json, art-archive/T-204/, game/README.md, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Started: a free script makes a shadowless copy of the car's 16 frames, shown nex
 ### 2026-10-20, In progress → In QA
 
 Built (no PixelLab): a script removes the sprite's drop shadow from all 16 frames. 7 frames are clean; 9 keep a thin dark band or a few pixels under the sill or bumper, which read as the car's underside. Side-by-sides on the ticket. QA checks it now.
+
+### 2026-10-20, In QA → Needs playtest
+
+QA passed all 5 criteria. Waits for your playtest of the sample map; T-205 (use it in the air) starts now.
 
 ## Result notes
 
