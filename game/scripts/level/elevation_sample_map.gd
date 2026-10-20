@@ -146,13 +146,11 @@ func _ready() -> void:
 func _add_area(kind: String, block: Dictionary) -> void:
 	var d = PlatformDrawingScript.new()
 	d.name = "%s_%s" % [kind, str(block.id).replace("-", "_")]
-	d.setup(kind, block, ISO_TRANSFORM)
-	# The script drawing is the placeholder here: the elevation test's art
+	# The area's own art (task T-198): art/elevation_sample/<id>.png with its
+	# record, built from this map's file. The elevation test's art
 	# (art/elevation/) is drawn for that scene's own sizes, so it is not used.
-	if d.art_sprite != null:
-		d.art_sprite.free()
-		d.art_sprite = null
-		d.queue_redraw()
+	# With the art missing the script drawing is drawn instead (the fallback).
+	d.setup(kind, block, ISO_TRANSFORM, PlatformDrawingScript.SAMPLE_ART_DIR, str(block.id))
 	view_root.add_child(d)
 	areas.append(d)
 

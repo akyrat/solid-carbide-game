@@ -1,0 +1,39 @@
+{
+  "file": "raw_vent.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "rooftop ventilation stack, short steel pipe with a cap, cool grey metal, isometric view, pixel art",
+    "image_size": {
+      "width": 48,
+      "height": 48
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "view": "high top-down",
+    "isometric": true
+  },
+  "prompt": "rooftop ventilation stack, short steel pipe with a cap, cool grey metal, isometric view, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-20T20:51:00+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-198",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

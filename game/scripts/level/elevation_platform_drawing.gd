@@ -58,12 +58,23 @@ const ART_DIR := "res://art/elevation/"
 const ART_SCALE := 0.5
 
 var art_sprite: Sprite2D
+## Where this drawing looks for its art: a folder and the file name without its
+## extension. The test scene's default is ART_DIR and the kind; the elevation
+## sample map (task T-198) uses art/elevation_sample/ and the area's id, one
+## sprite and record per area (SAMPLE_ART_DIR). With no art there, the script
+## drawing below is drawn (the fallback).
+var art_dir := ART_DIR
+var art_name := ""
+
+const SAMPLE_ART_DIR := "res://art/elevation_sample/"
 
 
-func setup(the_kind: String, the_block: Dictionary, basis: Transform2D) -> void:
+func setup(the_kind: String, the_block: Dictionary, basis: Transform2D, the_art_dir: String = ART_DIR, the_art_name: String = "") -> void:
 	kind = the_kind
 	block = the_block
 	view_basis = basis
+	art_dir = the_art_dir
+	art_name = the_art_name
 	_load_art()
 	queue_redraw()
 
@@ -72,8 +83,9 @@ func _load_art() -> void:
 	if art_sprite != null:
 		art_sprite.queue_free()
 		art_sprite = null
-	var png := ART_DIR + kind + ".png"
-	var record := ART_DIR + kind + ".json"
+	var stem := art_name if art_name != "" else kind
+	var png := art_dir + stem + ".png"
+	var record := art_dir + stem + ".json"
 	if not ResourceLoader.exists(png) or not FileAccess.file_exists(record):
 		return
 	var info = JSON.parse_string(FileAccess.get_file_as_string(record))
