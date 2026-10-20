@@ -1,7 +1,7 @@
 ---
 id: T-194
 title: Elevation sample map: the layout file, built by script from the MVP map, with rooftops at 3 and 6 and parking-garage ramps
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -99,3 +99,4 @@ Open questions for the board's playtest (settled with the safe option, not asked
 
 PixelLab: none used (0 generations). Refusals: none. Godot's line-ending-only `.import` changes from the test run were left uncommitted.
 - 2026-10-19, in-qa → needs-playtest: QA passed every criterion (goal G-004).
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
