@@ -1,7 +1,7 @@
 ---
 id: T-213
 title: The guard refuses a script whose arguments write a task's header lines
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test feeds `pre_shell` the example above (with a real `w.py` that only writes its arguments) and the guard refuses it, naming the arguments as the reason (QA: pass / fail)
-- [ ] T-212's two quoted read-only commands still pass and every existing guard test still passes (QA: pass / fail)
-- [ ] `tasks/README.md` describes the rule in one sentence (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] A test feeds `pre_shell` the example above (with a real `w.py` that only writes its arguments) and the guard refuses it, naming the arguments as the reason (QA: pass - test_a_generic_writer_script_is_refused_by_its_arguments denies it with "its arguments name a task file")
+- [ ] T-212's two quoted read-only commands still pass and every existing guard test still passes (QA: pass - tools.test_guard 44 tests OK; one existing case's expected reason changed to the arguments reason, still refused)
+- [ ] `tasks/README.md` describes the rule in one sentence (QA: pass - one clause added to the shell-command paragraph)
+- [ ] All Python tool tests pass (QA: pass - tools suite OK; game/tools 354 tests OK, 1 skipped)
 
 ## Updates
 
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: closing the guard loosening QA found in T-212.
+
+### 2026-10-21, In progress → In QA
+
+Built: the guard now refuses a script whose arguments name a ticket and carry a status, qa_rounds or lead line. Sent to QA.
 
 ## Result notes
 
