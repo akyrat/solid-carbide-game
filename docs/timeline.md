@@ -1495,3 +1495,28 @@ Entry format:
 - Decision or change: the board wants a run to play on the elevation sample map as the full game with enemies, to see how they behave (T-206 builds it, T-207 looks at the enemies and proposes how they handle heights; the MVP map stays, switchable). The car moves to 32 directions now (T-102, sample frame first, the board approves its generations; the shadowless air frames are rebuilt for 32 by the free script). The board's two tracks, "DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)", loop through the whole game, alternating, with a music volume slider on the pause screen (T-208 label, T-209 music, T-210 slider). Short tutorial levels that show the tricks are noted, not requested yet (T-211, for the board to describe).
 - Documents touched: `docs/level-design.md`, `docs/enemies.md`, `docs/visual-style.md`, `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`
 - Tasks: T-102 (scheduled), T-206 to T-211 (open or blocked)
+
+## 2026-10-20: T-208 done: the music volume slider's label
+- Decision or change: the pause screen's music volume slider is labelled "Music volume", the plain sibling of "SFX volume" and "Camera zoom level" (HUD and menus, Content). Docs-only text, merged straight after QA; T-210 uses it word for word.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-208 (done)
+
+## 2026-10-20: G-001 cancelled
+- Decision or change: the board cancelled G-001, the goal runner's first real run, which paused in planning on 2026-10-18 and was never built; G-002 built the same goal. The old G-004 folder was deleted once the board closed Godot.
+- Documents touched: `goals/G-001-add-an-image-of-the.md`
+- Tasks: G-001 (cancelled)
+
+## 2026-10-21: T-212 done: the board's drag out of QA, and the guard's false alarms
+- Decision or change: at the board's request, a drag by the board can take a ticket out of QA before every criterion is marked, after a pop-up that lists the unmarked criteria and takes the board's explanation (added to the result notes; no QA round counted); the command line still refuses that move. The guard now refuses only shell commands that can write a ticket's status, qa_rounds or lead line, and says why; test runs and read-only commands pass. QA found one loosening (a generic writer script whose arguments carry the header line passes the command check; the commit check still catches it): follow-up T-213. The pop-up's screenshot was saved by the Project Lead after the merge, since the old guard had refused the agent's folder creation.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-212 (done), T-213 (open)
+
+## 2026-10-21: T-213 done: the guard refuses scripts whose arguments write a ticket's header
+- Decision or change: closes the loosening QA found in T-212: a script run whose arguments name a task file and carry a status, qa_rounds or lead line or field name is refused again, with a reason; read-only commands still pass. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`
+- Tasks: T-213 (done)
+
+## 2026-10-21: The board played the full game on the elevation map
+- Decision or change: no drift smoke while the car is airborne; the exhaust flamethrower's flames come out at the car's height (they spawned away from the car on rooftops and in the air); T-206 goes back to its agent for both. Enemies ignored every raised surface: the board decides they follow the car up the ramps, with pathfinding over streets, ramps and rooftops, and a rooftop's edge blocks them from below (T-207, rewritten).
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/level-design.md`
+- Tasks: T-206 (back to in-progress), T-207

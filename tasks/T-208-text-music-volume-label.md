@@ -1,7 +1,7 @@
 ---
 id: T-208
 title: "Text: the music volume slider's label"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/extended-narrative.md]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,13 +37,28 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has a music volume slider entry with the label's exact text and this ticket's id (QA: pass / fail)
-- [ ] The label is one short line in the same style as "SFX volume" and "Camera zoom level" (QA: pass / fail)
+- [ ] HUD and menus, Content, has a music volume slider entry with the label's exact text and this ticket's id (QA: pass)
+- [ ] The label is one short line in the same style as "SFX volume" and "Camera zoom level" (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-20, Open → In progress
+
+Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
+### 2026-10-20, In progress → In QA
+
+The label is written: "Music volume". Sent to QA.
+
+### 2026-10-20, In QA → Done
+
+QA passed both criteria. Merged into master: the label is "Music volume".
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Label: "Music volume" (plain, lowercase second word, matching "SFX volume" and "Camera zoom level"; no story flavor, as settings labels are plain). Written into docs/hud-and-menus.md, Content, as the "Music volume slider" entry (T-208), directly after the SFX volume slider's entry. Documents affected: docs/hud-and-menus.md.
+- 2026-10-20, in-qa → done: QA passed; docs-only text, merged straight after QA

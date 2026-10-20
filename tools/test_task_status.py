@@ -238,6 +238,58 @@ class QaMarks(unittest.TestCase):
         self.assertEqual((len(passed), len(failed)), (0, 1))
 
 
+UNMARKED = ("- [ ] It builds (QA: pass)", "- [ ] The sample looks right (QA: pass / fail)",
+            "- [ ] It runs fast (QA: fail: 40 fps)", "- [ ] The board likes it")
+
+
+class BoardOutOfQa(Base):
+    """T-212: the board's drag may take a ticket out of QA while QA hasn't marked every criterion."""
+
+    def setUp(self):
+        super().setUp()
+        self.put("T-001", status="in-qa", qa_rounds=1, criteria=UNMARKED, notes="Built it.")
+
+    def text(self):
+        return (self.tasks / "T-001-test.md").read_text(encoding="utf-8")
+
+    def test_the_board_moves_it_to_in_progress_keeping_qa_rounds_with_its_explanation(self):
+        ts.move("T-001", "in-progress", "It went to QA only for my sample review.", folders={}, by="board")
+        fields = tb.parse_header(self.text())
+        self.assertEqual((fields["status"], fields["qa_rounds"]), ("in-progress", "1"))
+        self.assertIn("in-qa → in-progress: It went to QA only for my sample review.", self.text())
+
+    def test_the_board_moves_it_to_planning(self):
+        ts.move("T-001", "planning", None, folders={}, by="board")
+        fields = tb.parse_header(self.text())
+        self.assertEqual((fields["status"], fields["qa_rounds"]), ("planning", "1"))
+        self.assertIn("the board took it out of QA with 2 acceptance criteria not marked", self.text())
+
+    def test_the_command_line_is_still_refused(self):
+        for new in ("in-progress", "planning"):
+            with self.subTest(new=new):
+                self.assertIn("Allowed now: cancelled", self.refused("T-001", new))
+        self.assertEqual(self.status("T-001"), "in-qa")
+
+    def test_the_board_still_cannot_skip_to_done(self):
+        with self.assertRaises(ts.Refused):
+            ts.move("T-001", "done", None, folders={}, by="board")
+
+    def test_the_warning_lists_the_unmarked_and_failed_criteria_word_for_word(self):
+        fields = tb.parse_header(self.text())
+        w = ts.unmarked_warning(fields, self.text(), "in-progress", "board")
+        self.assertEqual(w, {"unmarked": ["The sample looks right (QA: pass / fail)", "The board likes it"],
+                             "failed": ["It runs fast (QA: fail: 40 fps)"]})
+        self.assertIsNone(ts.unmarked_warning(fields, self.text(), "in-progress", "agent"))
+        self.assertIsNone(ts.unmarked_warning(fields, self.text(), "done", "board"))
+
+    def test_a_fully_marked_ticket_keeps_todays_rules(self):
+        self.put("T-002", status="in-qa", criteria=("- [ ] A (QA: pass)",), notes="Built it.")
+        self.assertIsNone(ts.unmarked_warning(tb.parse_header(task("T-002", status="in-qa")), task(
+            "T-002", status="in-qa", criteria=("- [ ] A (QA: pass)",)), "in-progress", "board"))
+        with self.assertRaises(ts.Refused):
+            ts.move("T-002", "planning", None, folders={}, by="board")
+
+
 class GoalDependencies(Base):
     """T-163: during a goal, a dependency waiting in needs-playtest counts as met for the same goal's tickets."""
 
@@ -664,6 +716,47 @@ class LocalBoard(Base):
     def test_cancelling_from_the_board_asks_for_a_note(self):
         self.assertIn("a note", self.move("T-002", "cancelled")[1]["error"])
         self.assertEqual(self.move("T-002", "cancelled", "Dropped by the board.")[0], 200)
+
+    def test_t212_move_check_and_the_confirmed_drag_out_of_qa(self):
+        self.put("T-003", status="in-qa", criteria=UNMARKED, notes="Built it.")
+        before = (self.tasks / "T-003-test.md").read_bytes()
+        code, body = self.call("/api/move-check?id=T-003&status=in-progress")
+        self.assertEqual(code, 200)
+        self.assertEqual(body["warning"]["unmarked"], ["The sample looks right (QA: pass / fail)", "The board likes it"])
+        self.assertEqual(body["warning"]["failed"], ["It runs fast (QA: fail: 40 fps)"])
+        self.assertIsNone(self.call("/api/move-check?id=T-001&status=in-qa")[1]["warning"])
+        self.assertEqual(self.call("/api/move-check?id=T-003&status=nonsense")[0], 400)
+        self.assertEqual(self.call("/api/move-check?id=T-404&status=planning")[0], 404)
+        bi.take("s1")
+        # not confirmed (or the pop-up cancelled): nothing changes, and the answer carries the warning
+        code, body = self.move("T-003", "in-progress", "why")
+        self.assertEqual((code, body["warning"]["unmarked"][1]), (409, "The board likes it"))
+        self.assertEqual((self.tasks / "T-003-test.md").read_bytes(), before)
+        self.assertEqual(bi.take("s1")[1], [])
+        # going ahead: moved, qa_rounds kept, the explanation in the notes and with the move in the inbox
+        code, _ = self.call("/api/move", {"id": "T-003", "status": "planning", "note": "Only a sample review.",
+                                          "confirm_unmarked": True}, {"X-Board": "1", "Content-Type": "application/json"})
+        self.assertEqual(code, 200)
+        text = (self.tasks / "T-003-test.md").read_text(encoding="utf-8")
+        self.assertEqual((tb.parse_header(text)["status"], tb.parse_header(text)["qa_rounds"]), ("planning", "0"))
+        self.assertIn("in-qa → planning: Only a sample review.", text)
+        _, moves = bi.take("s1")
+        self.assertEqual([(m["id"], m["to"], m["note"]) for m, _ in moves], [("T-003", "planning", "Only a sample review.")])
+
+    def test_t212_other_refused_drags_are_unchanged(self):
+        self.put("T-004", status="in-qa", criteria=UNMARKED, notes="Built it.")
+        code, body = self.call("/api/move", {"id": "T-004", "status": "done", "confirm_unmarked": True},
+                               {"X-Board": "1", "Content-Type": "application/json"})
+        self.assertEqual(code, 409)
+        self.assertNotIn("warning", body)
+        self.assertEqual(self.status("T-004"), "in-qa")
+
+    def test_t212_the_page_has_the_warning(self):
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.port}/", timeout=5) as r:
+            page = r.read().decode("utf-8")
+        for part in ('id="qawarn"', 'id="qawarn-note"', 'id="qawarn-go"', 'id="qawarn-cancel"', "/api/move-check",
+                     "confirm_unmarked"):
+            self.assertIn(part, page)
 
     def test_refuses_writes_without_the_board_header(self):
         code, _ = self.call("/api/move", {"id": "T-001", "status": "in-qa"}, {"Content-Type": "application/json"})
