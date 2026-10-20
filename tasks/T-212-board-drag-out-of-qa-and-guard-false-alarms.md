@@ -1,7 +1,7 @@
 ---
 id: T-212
 title: The board's drag can take a ticket out of QA with a warning, and the guard stops refusing read-only commands
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/task_status.py, tools/taskboard/server.py, .claude/hooks/board_gate.py, tasks/T-181-guard-stop-refusing-harmless-mentions.md]
 files_expected_to_change: [tools/task_status.py, tools/taskboard/, .claude/hooks/board_gate.py, tools/test_*.py, tasks/README.md, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -70,6 +70,10 @@ Started, at the board's request: the board's drag out of QA with a warning pop-u
 
 Built: the drag-out-of-QA pop-up and a guard that only refuses real ticket writes. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 5 criteria. Merged into master; the board server restarts so the pop-up shows.
+
 ## Result notes
 
 - 2026-10-21, Project Lead's tooling agent (opus): built both parts.
@@ -88,3 +92,4 @@ Built: the drag-out-of-QA pop-up and a guard that only refuses real ticket write
 - Refusals by the live guard (the main checkout's copy, before this fix), each skipped and not retried:
   1. **What:** a Bash call that wrote a scratch script and ran it to print the branch guard's decisions on the two quoted commands. **Why:** the call's text named `tasks/`, "status" and inline code, so the old guard took it for a ticket write. **Skipped:** that call. The same check later ran as a scratch script file, invoked with a command that names no ticket.
   2. **What:** `mkdir -p …/art-archive/T-212/screenshots && curl -s "http://localhost:8799/api/move-check?id=T-102&status=in-progress"`. **Why:** the old guard read `/T-212` as a ticket path, the URL held "status", and `curl` was an unknown command. **Skipped:** creating the screenshots folder and the curl check. The endpoint is covered by the server tests instead, and the screenshot stays in the scratchpad.
+- 2026-10-21, in-qa → done: QA passed all 5; tooling, merged straight after QA
