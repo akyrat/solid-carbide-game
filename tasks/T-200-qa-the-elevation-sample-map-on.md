@@ -40,7 +40,7 @@ Check the whole elevation sample map goal together on its build branch, playtest
 - [ ] The elevation sample map scene runs headless for 10 seconds with no errors. (QA: pass)
 - [ ] The scripted reachability drive passes on playtest/G-004 (street to 3 to 6, then off 6, landing), and its log of maximum height and airtime is in the result notes. (QA: pass: via the same drive in test_drive_elevation_sample.gd; the .sh wrapper was refused)
 - [ ] `git diff master...playtest/G-004 --stat` shows no trick or level-editor code added, and game/data/level/mvp_map.json and elevation_test.json unchanged. (QA: pass)
-- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given)
+- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given; round 2: still no diff on docs/long-gdd.md, and no runner result given. Runner's sync_docs runs only at the goal check, so this criterion cannot be met by this ticket)
 - [ ] The final screenshot set listed in D7's result notes exists at those paths and shows what the notes say. (QA: pass)
 
 ## Updates
