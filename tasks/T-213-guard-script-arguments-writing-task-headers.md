@@ -1,7 +1,7 @@
 ---
 id: T-213
 title: The guard refuses a script whose arguments write a task's header lines
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/T-212-board-drag-out-of-qa-and-guard-false-alarms.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: closing the guard loosening QA found in T-212.
 
 Built: the guard now refuses a script whose arguments name a ticket and carry a status, qa_rounds or lead line. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -66,3 +70,4 @@ Written by the agent when it finishes.
 - T-212's two quoted read-only commands and all 44 guard tests pass; `tools` tests pass; `game/tools` tests pass (354 tests, OK, 1 skipped).
 - Refused: one `python - <<EOF` edit script (inline code naming `tasks`), skipped; the same edits were made with the Edit tool instead. A later scratch debug script was also refused and abandoned.
 - Nothing to picture: tooling only.
+- 2026-10-21, in-qa → done: QA passed all 4; tooling, merged straight after QA
