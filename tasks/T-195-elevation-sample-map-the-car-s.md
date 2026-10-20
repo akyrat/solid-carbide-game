@@ -1,7 +1,7 @@
 ---
 id: T-195
 title: Elevation sample map: the car's height across three layers, and a scripted drive from the street to 6 and off
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Goal-G-004
@@ -59,6 +59,10 @@ The board's review: How the car climbs, jumps and lands across the three layers,
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-195.
 
 ## Result notes
 
