@@ -1,7 +1,7 @@
 ---
 id: T-197
 title: Elevation sample map: depth order and see-through across every raised area, ramp and building
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -116,3 +116,4 @@ Board review files: `art-archive/T-197/screenshots/behind_height_3.png`, `art-ar
 
 **Limits worth knowing:** the car has one z_index, so if it is behind one item and in front of a later one that overlaps it on screen, the later one is drawn over it. The grid tests found no such place on this layout. Every position, zoom and fixture is a proposal.
 - 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
