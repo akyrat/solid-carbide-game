@@ -1,7 +1,7 @@
 ---
 id: T-198
 title: Art: rooftops and parking-garage ramps for the elevation sample map (PixelLab)
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-004
@@ -56,6 +56,10 @@ The board's review: The rooftop and parking-garage ramp art on the elevation sam
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-198.
 
 ## Result notes
 
