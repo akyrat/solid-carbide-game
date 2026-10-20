@@ -81,3 +81,23 @@ Eight `/create-image-pixflux` calls, one generation each, 600 s HTTP timeout (`p
 | 8 | raw_cracks | 64x64, transparent | light crack decal |
 
 Everything else (projection onto the faces, outlines, details placement, the colour reduction) is free script work in `game/tools/build_elevation_sample_art.py`.
+
+### What was done
+
+**PixelLab:** exactly the 8 planned calls, all `create-image-pixflux`, 1 generation each = **8 generations used** (42 of the goal's 50 left), 600 s HTTP timeout (the client's `HTTP_TIMEOUT_SECONDS`), none repeated, none failed. Raws and records: `art-archive/T-198/raw_*.png/.json`; request files: `art-archive/T-198/requests/`; the client also logged them in `game/art/pixellab-generation-log.jsonl`. The plan was committed (c3f46df) before the first call.
+
+**Builder:** `game/tools/build_elevation_sample_art.py` (`build`, `--check`). It reads `elevation_sample_map.json` and writes one sprite and record per area into `game/art/elevation_sample/` (4 rooftops: roof-nw-3, roof-nw-6, roof-se-3, roof-se-6; 4 ramps: ramp-nw-0-3, ramp-nw-3-6, ramp-se-0-3, ramp-se-3-6). It handles all four ramp sides, stacked rooftops (walls start at the height they stand on) and ramps standing on a rooftop; a ramp has no wall at the end where it joins its rooftop and no outline there. Rooftop walls use the building wall texture with lit windows; ramp sides use darker rooftop concrete. Rooftop details: parapet along the back (north, west) edges with gaps at ramp joins and under higher rooftops, AC units, vents and a sign near the back edges (away from ramps and stacked rooftops), crack decals. Every sprite is reduced to 30 colours or fewer.
+
+**Game:** `elevation_platform_drawing.gd` `setup()` takes an optional art folder and name (defaults are the elevation test scene's, so that scene and `art/elevation/` are unchanged); `elevation_sample_map.gd` passes `art/elevation_sample/` and the area's id instead of freeing the art. With the art missing the script drawing is drawn (the fallback). The art sprite is a child of the drawing, so it fades with it.
+
+**Tests:** `game/tools/test_build_elevation_sample_art.py` (11 tests, pass); `game/tests/unit/test_elevation_sample_art.gd` (7: sprites and records, rules, every area shows its art sprite, placement by record, fallback to the script drawing for a missing name, the art's alpha follows the area's see-through fade to 15% and back, the test scene keeps its art); `test_elevation_sample_map.gd` changed its placeholder assertion to expect the art. Full GUT run: 1119 passing, TESTS PASSED. Python tool tests (`python -m unittest discover -s game/tools -p "test_*.py"`): 342 tests OK. `python game/tools/build_elevation_sample_art.py --check` passes (every sprite: transparent corners, no semi-transparent pixels, 28 to 30 colours, no Redgull red; records 32 art px per unit, scale 0.5, size matches). I ran only the pre-approved commands, so `python -m unittest discover -s tools` (the repo-level `tools/` tests) was not run: it is not importable as a start directory and I could not try other forms.
+
+**Weak results (not regenerated; also in docs/visual-style.md):** the rooftop texture came back as a grid of big tiles with strong dark seams (it reads as a paved floor more than a rooftop); the building wall is very dark with small lit windows; the parapet is thin and grey, only on the back edges; the details are few and small, the crack decals faint; the see-through screenshot also shows a large dark square that is the existing map's building placeholder under the faded rooftop, not part of this art. The garage ramps read best. Details are baked in the sprite, so the car drives through them.
+
+**Screenshots** (in `art-archive/T-198/screenshots/`, taken in the game with the existing sample map fixtures): `street.png` (the street at the start), `rooftop_height_3.png` (the car on the height-3 rooftop), `rooftop_height_6.png` (on the height-6 rooftop), `ramp.png` (on the 0-to-3 ramp), `see_through.png` (the car behind the height-3 rooftop, which has faded).
+
+**Board review files:** art-archive/T-198/screenshots/street.png, rooftop_height_3.png, rooftop_height_6.png, ramp.png, see_through.png; sprites in game/art/elevation_sample/.
+
+Documents affected and updated: docs/visual-style.md (Decisions, "Elevation sample map art": generations used, weak results), game/README.md ("Rooftop and ramp art (T-198)", how to rebuild).
+
+**Refusals:** none from a hook or the permission system. An inline `python -c` contact-sheet command asked for approval and was not run (not essential; I looked at the raw images one by one instead).

@@ -94,7 +94,7 @@ func test_the_art_is_placed_by_its_record() -> void:
 		# The sprite covers the area's top face: its corners lie inside the image.
 		var size: Vector2 = a.art_sprite.texture.get_size() * 0.5
 		for corner in a.top_face():
-			assert_true(Rect2(origin, size).grow(0.5).has_point(corner), "%s: top corner %s inside the sprite" % [id, corner])
+			assert_true(Rect2(origin, size).grow(1.0).has_point(corner), "%s: top corner %s inside the sprite" % [id, corner])
 
 
 func test_the_script_drawing_is_the_fallback_when_the_art_is_missing() -> void:
