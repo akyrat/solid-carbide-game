@@ -1,7 +1,7 @@
 ---
 id: T-197
 title: Elevation sample map: depth order and see-through across every raised area, ramp and building
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -54,6 +54,10 @@ The board's review: Depth order and see-through rooftops on the elevation sample
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-197.
 
 ## Result notes
 
