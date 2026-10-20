@@ -64,3 +64,20 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-198.
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Planned PixelLab calls and cost (written before the first call)
+
+Eight `/create-image-pixflux` calls, one generation each, 600 s HTTP timeout (`pixellab_client.py`'s `HTTP_TIMEOUT_SECONDS`), no retries, no regeneration. **Total: 8 generations** (cap 50; the goal has 50 left). Raw results and records go to `art-archive/T-198/`.
+
+| # | name | size | what |
+|---|------|------|------|
+| 1 | raw_roof_top | 128x128 | rooftop surface texture: cracked cool blue-grey concrete/tar, light stains, flat, top-down |
+| 2 | raw_wall | 128x128 | building wall with lit windows (steel and glass, small amber accents) |
+| 3 | raw_ramp_top | 128x128 | garage ramp concrete with painted lane markings (top-down) |
+| 4 | raw_ac_unit | 64x64, transparent | rooftop AC unit |
+| 5 | raw_vent | 48x48, transparent | rooftop vent stack |
+| 6 | raw_sign | 64x64, transparent | small rooftop sign (cyan/amber, no red) |
+| 7 | raw_parapet | 128x32, transparent | low parapet wall segment |
+| 8 | raw_cracks | 64x64, transparent | light crack decal |
+
+Everything else (projection onto the faces, outlines, details placement, the colour reduction) is free script work in `game/tools/build_elevation_sample_art.py`.
