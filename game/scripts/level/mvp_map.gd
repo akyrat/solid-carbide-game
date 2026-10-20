@@ -136,7 +136,11 @@ var car: Node2D = null
 ## tree; the default is CHALLENGES_ENABLED (off in the MVP).
 var challenges_enabled := CHALLENGES_ENABLED
 
-## The layout data, as loaded from LAYOUT_PATH.
+## Which layout file the map loads (task T-196). Set before the map enters the
+## tree to build another map from the same keys (the elevation sample map's
+## data/level/elevation_sample_map.json); the default is the MVP map's.
+var layout_path := LAYOUT_PATH
+## The layout data, as loaded from layout_path.
 var layout: Dictionary = {}
 ## The ground tiles' layout, as loaded from GROUND_PATH ({} if missing).
 var ground_layout: Dictionary = {}
@@ -213,7 +217,7 @@ static func points_of(arr: Array) -> PackedVector2Array:
 
 func _ready() -> void:
 	if layout.is_empty():
-		layout = load_layout()
+		layout = load_layout(layout_path)
 	if ground_layout.is_empty():
 		ground_layout = load_layout(GROUND_PATH)
 	if boulder_art.is_empty():
