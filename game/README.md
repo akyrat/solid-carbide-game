@@ -1217,3 +1217,26 @@ What it holds:
 Depth order (a first version; the full order across many areas and buildings is a later ticket): `restack()` sorts the map's building slots and the areas together, back to front (`drawn_before`: an item standing on another is drawn after it, otherwise one wholly west or north of the other first; ties by the centre's x + y), and gives each its own z_index (`BUILDING_Z_STEP` apart, `depth_items`); then the boulders (`boulder_z`) and the pavement signs are put back in that order. `z_for(height)` puts the car just under the lowest building, boulder or area that covers it (behind it and overlapping on screen, the car's shape lifted by its height), otherwise over everything; the shadow goes one under its own place. The areas fade like the buildings while they cover the car (`update_see_through`).
 
 Tests: `tests/unit/test_elevation_sample_map.gd`. Screenshot fixtures (`tests/fixtures/elevation_sample_demo.gd`: a start, W held for `drive_steps` physics steps, then the car stops): `elevation_sample_{street,ramp_0_3,ramp_3_6,height_3,height_6,air}.tscn`. For example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_sample_air.tscn art-archive/T-196/screenshots/air.png 700` (the air shot drives 106 steps, so it needs many frames). Screenshots: `art-archive/T-196/screenshots/`.
+
+### The car's height on the three layers (T-195)
+
+The car's height (`car_height.gd`, "The car's height (T-183)" and "The platform's sides (T-184)" above) works unchanged on the sample map's three layers: no fix was needed for ramps whose foot is on a rooftop (a 3-to-6 ramp), because the walk, the takeoff and the landing read the ground's height under the car, wherever its zero is. Its constants are unchanged.
+
+**Tests** (`tests/unit/test_car_height_layers.gd`, the real `car.gd` and `car_height.gd` on `data/level/elevation_sample_map.json`'s ground). The ramps and areas are picked from the file by their heights, never by coordinates, so a layout change doesn't break them:
+
+- up a 0-to-3 ramp and up a 3-to-6 ramp, the height is the ground's under the car on every step;
+- off a 3-to-6 ramp's top at about cruise speed, the car takes off with `vertical_speed = ramp_vertical_speed x RAMP_TAKEOFF_FACTOR`, along the slope's line;
+- off a height-6 side, it falls and lands on the height-3 area past it, and, off another side, on the street (each side found by searching the height-6 areas' sides for flat ground at 6 inside and at 3, or 0, outside, no ramp);
+- on a height-3 rooftop, the side of a height-6 area is a wall: one hit (`hit_obstacle` with the `GroundHeight` and the area's index), the bounce, the car stays at 3;
+- in the sample map scene, every tall building and every boulder with a clear 6-unit approach (88 of them) blocks the car on the street, on height 3, on height 6 and in the air (at 8 units, rising). The layout keeps rooftops away from buildings and boulders, so for 3 and 6 the test raises a temporary rooftop under the approach and the obstacle; the buildings and boulders are the map's own bodies, which block in the flat world at every height.
+
+**The scripted drive** (`tools/drive_elevation_sample.gd`): the real car in the sample map scene, driven by scripted inputs from the street up a 0-to-3 ramp, up the 3-to-6 ramp on the rooftop it reaches, across the height-6 rooftop and off its far edge. The route comes from the file by heights (`plan()`: the first 0-to-3 ramp with a 3-to-6 ramp on its rooftop); the inputs hold W and steer toward waypoints along it (A/D in proportion to the heading error, `STEER_GAIN`), then release W once the car leaves the edge. It prints each layer reached with its time, the waypoints, every jump (where it took off, its takeoff vertical speed, its maximum height, its airtime and where it landed), the maximum height, the airtime of the jump off the height-6 edge, any wall or obstacle hit, and PASS or FAIL. From the repo root:
+
+```
+bash game/tools/drive_elevation_sample.sh [--csv=<file.csv>] [--plot=<file.png>]
+powershell -ExecutionPolicy Bypass -File game/tools/drive_elevation_sample.ps1 [--csv=<file.csv>] [--plot=<file.png>]
+```
+
+It runs headless. Exit codes: 0 = the street, height 3 and height 6 reached in that order and the car landed off the height-6 edge; 1 = not; 2 = bad arguments or no such route in the file. `--csv` writes one line per physics step (time, position, height, the ground's height under the car, airborne, W, steer); `--plot` draws the height over time as a PNG (and `<name>_light.png`): the car's height, the ground under it, the time in the air shaded, lines at 0, 3 and 6, a tick every second. `tests/unit/test_drive_elevation_sample.gd` runs the same drive and checks it passes (no wall on the way up, about 1 s in the air off the edge, landing on the street).
+
+Screenshot fixtures (`tests/fixtures/elevation_sample_drive_demo.gd`: the same drive, stopped after `steps` physics steps, or `plot = true` to show the plot instead of the map): `elevation_sample_drive_{height_3,ramp_jump,off_edge,plot,plot_light}.tscn`, for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_sample_drive_plot.tscn art-archive/T-195/screenshots/height-over-time.png 30`. Screenshots: `art-archive/T-195/screenshots/`.
