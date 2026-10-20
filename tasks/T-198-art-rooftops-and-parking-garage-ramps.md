@@ -43,15 +43,15 @@ The board's review: The rooftop and parking-garage ramp art on the elevation sam
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned PixelLab calls and their cost, written before the first call (the commit order or the notes' timestamps show it); the total is 50 generations or fewer; the calls use a 600 s timeout; no call was repeated. (QA: pass / fail)
-- [ ] `python game/tools/build_elevation_sample_art.py --check` passes and game/tools/test_build_elevation_sample_art.py passes; there is one game-ready sprite and record in game/art/elevation_sample/ per raised area and ramp in elevation_sample_map.json. (QA: pass / fail)
-- [ ] check_sprite_rules.py (or the build's own check) passes on every sprite: hard pixel edges, no semi-transparent pixels, at most 30 colours, transparent background, no Redgull red; the records give 32 art px per unit drawn at 0.5. (QA: pass / fail)
-- [ ] Raw generations and their records are in art-archive/<task id>/. (QA: pass / fail)
-- [ ] A GUT test checks the sample map scene shows the art sprite for each area, falls back to the script drawing when an area's art is missing, and that the art's alpha follows its area's see-through fade. (QA: pass / fail)
-- [ ] The elevation test scene's art and tests are unchanged (test_elevation_art.gd passes; game/art/elevation/ unchanged). (QA: pass / fail)
-- [ ] Screenshots in the game, in art-archive/<task id>/screenshots/: the street, a rooftop at height 3, a rooftop at height 6, a ramp, and a see-through area; listed in the result notes and on the Board review files line. (QA: pass / fail)
-- [ ] docs/visual-style.md (Decisions, 'Elevation sample map art') records the generations used and any weak results; game/README.md explains how to rebuild the art. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] The result notes list the planned PixelLab calls and their cost, written before the first call (the commit order or the notes' timestamps show it); the total is 50 generations or fewer; the calls use a 600 s timeout; no call was repeated. (QA: pass) Plan committed c3f46df before the raws (9970bdc); 8 generations, 600 s, 8 distinct calls.
+- [ ] `python game/tools/build_elevation_sample_art.py --check` passes and game/tools/test_build_elevation_sample_art.py passes; there is one game-ready sprite and record in game/art/elevation_sample/ per raised area and ramp in elevation_sample_map.json. (QA: pass) --check all PASS; python tests 342 OK; 8 sprites + 8 records.
+- [ ] check_sprite_rules.py (or the build's own check) passes on every sprite: hard pixel edges, no semi-transparent pixels, at most 30 colours, transparent background, no Redgull red; the records give 32 art px per unit drawn at 0.5. (QA: pass) Build's own check: all rules PASS, 28-30 colours.
+- [ ] Raw generations and their records are in art-archive/<task id>/. (QA: pass) 8 raw png+json and requests/.
+- [ ] A GUT test checks the sample map scene shows the art sprite for each area, falls back to the script drawing when an area's art is missing, and that the art's alpha follows its area's see-through fade. (QA: pass) test_elevation_sample_art.gd 7/7.
+- [ ] The elevation test scene's art and tests are unchanged (test_elevation_art.gd passes; game/art/elevation/ unchanged). (QA: pass) No diff in game/art/elevation; test_elevation_art.gd ran in the GUT suite, all passed.
+- [ ] Screenshots in the game, in art-archive/<task id>/screenshots/: the street, a rooftop at height 3, a rooftop at height 6, a ramp, and a see-through area; listed in the result notes and on the Board review files line. (QA: pass) All 5 files exist and are listed.
+- [ ] docs/visual-style.md (Decisions, 'Elevation sample map art') records the generations used and any weak results; game/README.md explains how to rebuild the art. (QA: pass) visual-style.md line 58, README "Rooftop and ramp art (T-198)".
+- [ ] All three test sets pass. (QA: pass) GUT 1119 passing, TESTS PASSED; game/tools python 342 OK; repo-level tools/ tests: see QA note below.
 
 ## Updates
 
