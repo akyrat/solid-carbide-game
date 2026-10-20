@@ -67,24 +67,37 @@ Goal runner (G-004): failed QA once; back to the agent on opus.
 
 **Docs.** Checked level-design, visual-style, drifting and game/README against the merged build: the height data, layout, scene, depth order, see-through, art (8 generations of 50, weak results noted) and scripted drive were already described and marked as proposals. Only gap fixed: docs/level-design.md now has the art, the scripted drive and the final screenshot set (pointers, no repeated decisions). visual-style.md, drifting.md, game/README.md needed no change.
 
-**Scripted drive log.** I could not run `bash game/tools/drive_elevation_sample.sh` in this ticket: it is not on the pre-approved list and was refused. The last log of the same drive, from T-195 (the merged build changed only art and depth order since; the drive is physics only), pasted from tasks/T-195:
+**Scripted drive log (round 2, from the merged build).** `bash game/tools/drive_elevation_sample.sh` was refused again (not pre-approved). The same drive (the same `tools/drive_elevation_sample.gd` code, `Drive.plan` + `Drive.drive` + `Drive.log_lines` on the real `elevation_sample_map.tscn`) is run by the unit test `tests/unit/test_drive_elevation_sample.gd`, which prints the log. I ran it with the pre-approved test runner on this branch, which holds the goal's build with T-195, T-196, T-197 and T-198 merged (HEAD's parent chain includes `798dbbb Merge task/T-198... into playtest/G-004`): `bash game/tools/run_tests.sh -gselect=test_drive_elevation_sample -glog=3` → 4/4 passed, 31 asserts. The log it printed:
 ```
+Elevation sample drive (T-195): from the street (-81.0, -50.0) up ramp-nw-0-3 onto roof-nw-3, up ramp-nw-3-6 onto roof-nw-6, then off its edge
 Layers reached, in order: 0 at 0.00 s, 3 at 1.82 s, 6 at 5.30 s, 0 at 7.32 s
-Jump 1, off a ramp's top at 1.10 s: from height 3.08, max height 3.75, airtime 0.70 s, landed on height 3.0
-Jump 2, off a ramp's top at 4.52 s: from height 6.04, max height 6.89, airtime 0.76 s, landed on height 6.0
-Jump 3, off the height-6 edge at 6.30 s: from height 6.00, airtime 1.00 s, landed on the street (0)
+Waypoints: the 0-to-3 ramp's foot 0.22 s; on the height-3 rooftop 1.20 s; the run-up to the 3-to-6 ramp 3.18 s; the 3-to-6 ramp's foot 3.74 s; the 3-to-6 ramp's top 4.54 s; the height-6 edge 6.26 s; past the edge 7.08 s
+Jump 1, off a ramp's top at 1.10 s: from height 3.08, takeoff vertical speed 4.13 units/s, max height 3.75, airtime 0.70 s, landed on height 3.0 at 1.80 s (impact -4.28 units/s)
+Jump 2, off a ramp's top at 4.52 s: from height 6.04, takeoff vertical speed 4.62 units/s, max height 6.89, airtime 0.76 s, landed on height 6.0 at 5.28 s (impact -4.50 units/s)
+Jump 3, off the height-6 edge at 6.30 s: from height 6.00, takeoff vertical speed 0.00 units/s, max height 6.00, airtime 1.00 s, landed on the street (0) at 7.30 s (impact -12.00 units/s)
 Maximum height: 6.89 units, at 4.92 s
+Airtime of the jump off the height-6 edge: 1.00 s
+Wall and obstacle hits: 0
+Ended at (6.4, -82.3), height 0.00, after 7.82 s
+PASS: the street, height 3 and height 6 reached, and the car landed off the height-6 edge
 ```
-QA or the board should rerun the .sh on the merged build.
+Same numbers as T-195's run: the art and depth-order work since did not change the drive. The .sh itself (it adds only the optional CSV and plot files) still needs a rerun by someone allowed to run it, if wanted.
 
 **Screenshots** (final art, from the existing elevation_sample fixtures with game/tools/screenshot.sh; the overview from a temporary fixture with zoom 150 centred on (0,0)):
-- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\street.png
-- ...\ramp-0-3.png, ...\ramp-3-6.png, ...\height-3.png, ...\height-6.png, ...\air.png, ...\behind-height-3.png, ...\behind-height-6.png, ...\city-overview.png (same folder)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\street.png (the car on the street)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\ramp-0-3.png (on a 0-to-3 ramp)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\ramp-3-6.png (on a 3-to-6 ramp)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\height-3.png (on height 3)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\height-6.png (on height 6)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\air.png (in the air, with its shadow)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\behind-height-3.png (behind a see-through height-3 area)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\behind-height-6.png (behind a see-through height-6 area)
+- C:\solid-carbide-worktrees\T-199\art-archive\T-199\screenshots\city-overview.png (overview of the city)
 Weak: in air.png the car's shadow is not clearly visible (it falls on the rooftop under the car); the overview is off-centre by the camera follow offset.
 
 **Left in the worktree, not committed:** an untracked temporary fixture game/tests/fixtures/elevation_sample_overview_tmp.tscn, and Godot's .import line-ending noise under game/; deleting/reverting them was refused (not pre-approved). Delete the fixture and `git checkout -- game` before merging.
 
 **Open questions for the board:** (1) How it opens the scene (proposed: editor + F6, or the run command; no menu button). (2) Layout choices: two garages (NW and SE), start at (-81,-50), 12-unit ramps 10 wide, 4 buildings and 8 boulders left out. (3) Whether the overview needs a dedicated fixture or a scene option. (4) Whether the car shadow in the air reads well enough.
 
-Refusals: the drive script run; removing the temporary fixture and reverting .import noise.
+Refusals: the drive script run (round 1 and again in round 2); removing the temporary fixture and reverting .import noise.
 - 2026-10-20, in-qa → in-progress: QA failed: The scripted reachability drive's log (layers 0, 3 and 6 reached, maximum height, airtime) from the merged build is pasted in the result notes. (QA: fail: the pasted log is T-195's, not from the merged build; QA's own run of drive_elevation_sample.sh was also refused, so it could not be rerun) Back to the agent on opus.
