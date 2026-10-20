@@ -43,13 +43,13 @@ The board's review: Depth order and see-through rooftops on the elevation sample
 
 ## Acceptance criteria
 
-- [ ] GUT tests in the sample map scene check the z order for: the car on height 3 behind a height-6 area (car and shadow under it); the car in the air above height 6 over a height-3 area (car over it); the car behind a building next to a raised area (car under the building); the car on top of a height-6 area (over it and over the height-3 area it stands on). They pass. (QA: pass / fail)
-- [ ] GUT tests check that a raised area or ramp covering the car fades to mvp_map.gd's SEE_THROUGH_ALPHA over SEE_THROUGH_FADE_TIME, that areas not covering it stay at alpha 1, and that the fade comes from map_building.gd's faded_alpha (no copied fade code: grep shows no second fade formula). (QA: pass / fail)
-- [ ] Tests like test_elevation_see_through.gd drive the car into the back sides (top-left and top-right on screen) of a height-3 and a height-6 area and check the car stays under the area every step through the hit; they pass. (QA: pass / fail)
-- [ ] test_elevation_see_through.gd, test_elevation_drawing.gd, test_see_through_map.gd and test_see_through_buildings.gd pass unchanged. (QA: pass / fail)
-- [ ] Screenshots in art-archive/<task id>/screenshots/ show the car behind a see-through height-3 area, behind a see-through height-6 area, and behind a building next to a raised area; listed in the result notes and on the Board review files line. (QA: pass / fail)
-- [ ] game/README.md and docs/level-design.md describe the depth order and see-through on the sample map. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] GUT tests in the sample map scene check the z order for: the car on height 3 behind a height-6 area (car and shadow under it); the car in the air above height 6 over a height-3 area (car over it); the car behind a building next to a raised area (car under the building); the car on top of a height-6 area (over it and over the height-3 area it stands on). They pass. (QA: pass) test_elevation_sample_depth.gd has one test per case; all pass.
+- [ ] GUT tests check that a raised area or ramp covering the car fades to mvp_map.gd's SEE_THROUGH_ALPHA over SEE_THROUGH_FADE_TIME, that areas not covering it stay at alpha 1, and that the fade comes from map_building.gd's faded_alpha (no copied fade code: grep shows no second fade formula). (QA: pass) Tests pass; grep finds only map_building.gd's move_toward, the area calls faded_alpha.
+- [ ] Tests like test_elevation_see_through.gd drive the car into the back sides (top-left and top-right on screen) of a height-3 and a height-6 area and check the car stays under the area every step through the hit; they pass. (QA: pass) Back-side hit tests in test_elevation_sample_see_through.gd pass.
+- [ ] test_elevation_see_through.gd, test_elevation_drawing.gd, test_see_through_map.gd and test_see_through_buildings.gd pass unchanged. (QA: pass) Not in the diff; all pass in the GUT run.
+- [ ] Screenshots in art-archive/<task id>/screenshots/ show the car behind a see-through height-3 area, behind a see-through height-6 area, and behind a building next to a raised area; listed in the result notes and on the Board review files line. (QA: pass) Three PNGs exist, listed in notes and on the files line.
+- [ ] game/README.md and docs/level-design.md describe the depth order and see-through on the sample map. (QA: pass) Both have the sections.
+- [ ] All three test sets pass. (QA: pass) GUT 1112/1112; unittest game/tools 331 OK; tools 331 OK.
 
 ## Updates
 
