@@ -1,10 +1,10 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: paused
+status: building
 art_cap: 50
 art_used: 0
-iteration: 4
+iteration: 5
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-004
@@ -49,7 +49,7 @@ Build the drive-only elevation sample map as written in docs/level-design.md (De
 | 2 | S2 | The sample map's layout file | unblocks 4, value 5 | The goal is a city-sized map with three layers made by the agents; this is the map itself, as data a level editor could later edit. | covered | T-194, T-193 |
 | 3 | S3 | The car's height across three layers | unblocks 4, value 5 | The approved car height model was only tested on one platform at 3 from the street. The goal needs ramp takeoffs from 3 to 6, drops from 6 onto 3 or 0, and walls between layers. | covered | T-195, T-193, T-194, T-196, T-183, T-184 |
 | 4 | S4 | The drive-only sample map scene | unblocks 3, value 5 | The thing the board plays: the city with the car, its camera, the ground art, the buildings and boulders, and the raised areas, with nothing from the run. | covered | T-196, T-194, T-193 |
-| 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | in-flight | T-197 |
+| 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | covered | T-197 |
 | 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | in-flight | T-198 |
 | 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | in-flight | T-199, T-200 |
 
@@ -149,6 +149,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 3: T-196 (S4, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S3 in-flight, S4 covered, S5 in-flight, S6 in-flight, S7 in-flight.
 - 2026-10-20, iteration 4: T-195 (S3, driving-drift, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: The car's height already works on the sample map's three layers, so car_height.gd is unchanged: no fix was needed. New tests on the real car code pass: the climbs, the takeoff off a 3-to-6 ramp, drops off a height-6 edge onto 3 and onto the street, and the height-6 side acting as a wall from a height-3 rooftop. In the sample map scene, all 8 tall buildings and 88 boulders block the car on the street, at 3, at 6 and in the air. The new scripted drive (game/tools/drive_elevation_sample.gd/.sh/.ps1, with its GUT test) reaches 0, 3 and 6 in that order and lands back on the street after 1.00 s in the air, with a maximum height of 6.89. I wrote both docs and the result notes, including the log, and saved a height-over-time plot plus 3 in-game shots in art-archive/T-195/screenshots/. All three test sets pass (1083 GUT, 331 + 331 Python). Refused, got past and not blocking: driving-drift: {"tool_input": {"command": "bash game/tools/drive_elevation_sample.sh --plot=art-archive/T-195/screenshots/height-over-time.png --csv=art-archive/T-195/screenshots/drive.csv", "description": "Run the scripted elevation drive headless and save the plot", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01HCfrxT62DDbkQzofiixb3u"} / driving-drift: bash game/tools/drive_elevation_sample.sh --plot=art-archive/T-195/screenshots/height-over-time.png --csv=art-archive/T-195/screenshots/drive.csv: I wanted to run the new command-line drive myself to check it works and to save the plot. It is not on the pre-approved list, so I skipped it. QA can run it. The same drive() function ran and passed in the GUT test, and I saved the plot with the pre-approved screenshot tool on a fixture scene. / QA: bash game/tools/drive_elevation_sample.sh (not on the pre-approved list; skipped, non-essential because the GUT test runs the same drive()). Rescan: S3 covered, S5 in-flight, S6 in-flight, S7 in-flight.
 - 2026-10-20, iteration 4: paused (see Pauses).
+- 2026-10-20, iteration 4: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-20, iteration 5: T-197 (S5, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S5 covered, S6 in-flight, S7 in-flight.
 
 ## Pauses
 
