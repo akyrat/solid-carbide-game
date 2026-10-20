@@ -1,7 +1,7 @@
 ---
 id: T-206
 title: A run plays on the elevation sample map
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -43,11 +43,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A run started from the main menu's Start plays on the elevation sample map's layout: its rooftops, ramps, buildings and roads, with the car's height, round shadow, see-through and depth order as in the drive-only scene (screenshots of the car on the street, on a rooftop and in the air during a run) (QA: pass / fail)
-- [ ] During that run the enemies spawn and chase the car, weapons fire, the timer, likes and levels run, and the level-up gift drop and the kaiju still come, with no errors in Godot's output over a 2-minute headless or scripted run (QA: pass / fail)
-- [ ] The MVP map is still in the project, and one named constant or setting switches the run back to it; `game/README.md` says which (QA: pass / fail)
-- [ ] The drive-only elevation sample scene still runs (F6) as before (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass, with new tests for the run building the elevation map (QA: pass / fail)
+- [ ] A run started from the main menu's Start plays on the elevation sample map's layout: its rooftops, ramps, buildings and roads, with the car's height, round shadow, see-through and depth order as in the drive-only scene (screenshots of the car on the street, on a rooftop and in the air during a run) (QA: pass: street, rooftop, air (round shadow on street) and see-through screenshots show the elevation layout in a run)
+- [ ] During that run the enemies spawn and chase the car, weapons fire, the timer, likes and levels run, and the level-up gift drop and the kaiju still come, with no errors in Godot's output over a 2-minute headless or scripted run (QA: pass: 150 s soak ran, car at heights 0/3/6, minions, shots, 4 level-ups via gifts, kaiju; the only error line is the exit-time "1 resources still in use at exit", none during play)
+- [ ] The MVP map is still in the project, and one named constant or setting switches the run back to it; `game/README.md` says which (QA: pass: USE_ELEVATION_MAP in run.gd, documented in game/README.md; MVP soak runs on it)
+- [ ] The drive-only elevation sample scene still runs (F6) as before (QA: pass: drive-only scene ran 10 s with no errors)
+- [ ] The full GUT suite and all Python tool tests pass, with new tests for the run building the elevation map (QA: pass: GUT 1141/1141; tools 399 OK; game/tools 354 OK (1 skipped); 13 new tests in test_run_elevation_map.gd)
 
 The board's review: start a run from the main menu and play the full game on the elevation sample map.
 Board review files: `game/scenes/run/run.tscn` via the main menu.
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-20, Open → In progress
 
 Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
+### 2026-10-21, In progress → In QA
+
+Built: a run from the main menu plays the full game on the elevation map (switch back with USE_ELEVATION_MAP in run.gd). Sent to QA.
 
 ## Result notes
 
@@ -108,3 +112,8 @@ Two agents worked on this ticket: the first was cut off before it committed, and
 - `game/README.md`: "The run", "The run's map (T-206)", plus the sample-map sections that now point to the shared layer.
 
 No commands were refused.
+
+
+### QA, round 1
+
+All 5 criteria pass. The "1 resources still in use at exit" line also appears in run_mvp_soak.tscn (run here on the branch, where the MVP fixture exists; the MVP map's code path is unchanged by the switch), so it is not specific to the elevation map; it is not an error during play.
