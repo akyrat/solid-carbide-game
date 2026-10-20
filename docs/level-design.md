@@ -245,11 +245,18 @@ The file is `game/data/level/elevation_sample_map.json`, made by `python game/to
 
 - **Start** (proposal): on the road at (-81, -50), facing north, 4 units from the foot of the north-west garage's 0-to-3 ramp, so W drives straight up it.
 - **How the board opens it** (proposal, an open question below): like the elevation test scene, open the scene in the editor and press F6, or the run command in `game/README.md`, "Elevation sample map", "The scene (T-196)". No main menu button.
-- **Depth order:** a first version that keeps the scene playable (the buildings and rooftops sorted together); the full order across many areas and buildings is a later ticket.
+- **Depth order** (task T-197): every rooftop, ramp and building is drawn in one back-to-front order with the others: a second-floor rooftop over the first-floor one it stands on, a ramp standing on a rooftop over that rooftop, and otherwise whatever lies wholly west or north of another (the far sides on screen) under it. The car and its shadow are drawn under any rooftop, ramp or building they are behind and lower than its top, and over the ones they are on, above or in front of: on a height-3 rooftop behind a height-6 one, the car is over the first and under the second; in the air above 6 it is over both. As in the elevation test scene (T-191), "behind" is judged by the car's centre, so a car driving into a rooftop's back side (top-left or top-right on screen) stays under it through the hit, with no popping over it. How it works: `game/README.md`, "Elevation sample map", "Depth order and see-through (T-197)".
+- **See-through** (task T-197; Decisions, "Raised areas turn see-through like buildings"): every rooftop and ramp that covers the car fades exactly like the buildings ("When a building fades"), with the buildings' own fade, not a copy; the others stay solid. The buildings keep fading as on the MVP map, judged against the car drawn at its height.
 
 ![The car on the street in front of the north-west garage's 0-to-3 ramp](../art-archive/T-196/screenshots/street.png)
 
 ![The car in the air off the height-6 rooftop's south edge, its round shadow on the street below](../art-archive/T-196/screenshots/air.png)
+
+![The car on the street behind the north-west garage's height-3 rooftop, which is see-through](../art-archive/T-197/screenshots/behind_height_3.png)
+
+![The car on the height-3 rooftop behind the see-through height-6 rooftop](../art-archive/T-197/screenshots/behind_height_6.png)
+
+![The car on the road behind a see-through skyscraper, next to the north-west garage](../art-archive/T-197/screenshots/behind_building.png)
 
 ## Open questions
 

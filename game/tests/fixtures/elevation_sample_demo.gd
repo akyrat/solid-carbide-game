@@ -14,6 +14,9 @@ extends Node
 ## Units above the ground at the start: the car is put in the air that high
 ## and stays there (use drive_steps 1).
 @export var lift_units := 0.0
+## Whether W is held (false: the car stands still for drive_steps steps, so
+## the see-through areas have time to fade, task T-197).
+@export var hold_w := true
 
 var scene: Node2D
 var _steps := 0
@@ -24,13 +27,15 @@ func _ready() -> void:
 	add_child(scene)
 	scene.car.use_keyboard = false
 	scene.car.detect_tricks = false
-	scene.car.scripted_input = [true, false, 0.0]
+	scene.car.scripted_input = [hold_w, false, 0.0]
 	scene.place_car(start_units, start_rotation)
 	if lift_units > 0.0:
 		scene.car.height_model.height = scene.car.height + lift_units
 		scene.car.height_model.airborne = true
 		scene.car.scripted_input = [false, false, 0.0]
 	if zoom > 0.0:
+		# A fixed zoom: the saved dynamic camera would override it (T-197).
+		scene.camera_follow.dynamic = false
 		scene.camera_follow.set_base_size(zoom)
 	scene.sync_view()
 	scene.car.stepped.connect(_on_stepped)
