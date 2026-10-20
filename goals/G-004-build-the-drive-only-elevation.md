@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: building
+status: paused
 art_cap: 50
 art_used: 0
 iteration: 4
@@ -148,9 +148,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 2: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-20, iteration 3: T-196 (S4, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S3 in-flight, S4 covered, S5 in-flight, S6 in-flight, S7 in-flight.
 - 2026-10-20, iteration 4: T-195 (S3, driving-drift, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: The car's height already works on the sample map's three layers, so car_height.gd is unchanged: no fix was needed. New tests on the real car code pass: the climbs, the takeoff off a 3-to-6 ramp, drops off a height-6 edge onto 3 and onto the street, and the height-6 side acting as a wall from a height-3 rooftop. In the sample map scene, all 8 tall buildings and 88 boulders block the car on the street, at 3, at 6 and in the air. The new scripted drive (game/tools/drive_elevation_sample.gd/.sh/.ps1, with its GUT test) reaches 0, 3 and 6 in that order and lands back on the street after 1.00 s in the air, with a maximum height of 6.89. I wrote both docs and the result notes, including the log, and saved a height-over-time plot plus 3 in-game shots in art-archive/T-195/screenshots/. All three test sets pass (1083 GUT, 331 + 331 Python). Refused, got past and not blocking: driving-drift: {"tool_input": {"command": "bash game/tools/drive_elevation_sample.sh --plot=art-archive/T-195/screenshots/height-over-time.png --csv=art-archive/T-195/screenshots/drive.csv", "description": "Run the scripted elevation drive headless and save the plot", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01HCfrxT62DDbkQzofiixb3u"} / driving-drift: bash game/tools/drive_elevation_sample.sh --plot=art-archive/T-195/screenshots/height-over-time.png --csv=art-archive/T-195/screenshots/drive.csv: I wanted to run the new command-line drive myself to check it works and to save the plot. It is not on the pre-approved list, so I skipped it. QA can run it. The same drive() function ran and passed in the GUT test, and I saved the plot with the pre-approved screenshot tool on a fixture scene. / QA: bash game/tools/drive_elevation_sample.sh (not on the pre-approved list; skipped, non-essential because the GUT test runs the same drive()). Rescan: S3 covered, S5 in-flight, S6 in-flight, S7 in-flight.
+- 2026-10-20, iteration 4: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-19 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 2:40pm (Europe/London)
 - 2026-10-19 [stop]: Claude reported an error for step 'qa': You've hit your session limit · resets 6:10pm (Europe/London)
+- 2026-10-20 [stop]: Claude reported an error for step 'qa': You've hit your session limit · resets 10:30pm (Europe/London)
 
