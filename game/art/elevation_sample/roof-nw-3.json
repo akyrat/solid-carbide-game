@@ -1,0 +1,64 @@
+{
+  "asset": "roof-nw-3",
+  "task": "T-198",
+  "kind": "platform",
+  "piece_id": "roof-nw-3",
+  "image": {
+    "width": 3648,
+    "height": 1929
+  },
+  "px_per_unit": 32,
+  "drawn_at_scale": 0.5,
+  "top_left_art_px": [
+    -960,
+    -3177
+  ],
+  "note": "top_left_art_px is where the image's top-left sits relative to the scene's drawn origin (art px, +y down); the game draws it at scale 0.5.",
+  "source_json": "game/data/level/elevation_sample_map.json",
+  "pixellab": [
+    {
+      "record": "art-archive/T-198/raw_roof_top.json",
+      "image": "art-archive/T-198/raw_roof_top.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_wall.json",
+      "image": "art-archive/T-198/raw_wall.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_ac_unit.json",
+      "image": "art-archive/T-198/raw_ac_unit.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_vent.json",
+      "image": "art-archive/T-198/raw_vent.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_sign.json",
+      "image": "art-archive/T-198/raw_sign.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_parapet.json",
+      "image": "art-archive/T-198/raw_parapet.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_cracks.json",
+      "image": "art-archive/T-198/raw_cracks.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    }
+  ],
+  "script": "game/tools/build_elevation_sample_art.py",
+  "steps": "PixelLab textures projected onto the isometric faces by script (mirror tiling), parapet, details and cracks on rooftops, outline and rim, reduced to at most 30 colours."
+}

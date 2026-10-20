@@ -1,0 +1,34 @@
+{
+  "asset": "ramp-se-3-6",
+  "task": "T-198",
+  "kind": "ramp",
+  "piece_id": "ramp-se-3-6",
+  "image": {
+    "width": 703,
+    "height": 448
+  },
+  "px_per_unit": 32,
+  "drawn_at_scale": 0.5,
+  "top_left_art_px": [
+    -1408,
+    1696
+  ],
+  "note": "top_left_art_px is where the image's top-left sits relative to the scene's drawn origin (art px, +y down); the game draws it at scale 0.5.",
+  "source_json": "game/data/level/elevation_sample_map.json",
+  "pixellab": [
+    {
+      "record": "art-archive/T-198/raw_ramp_top.json",
+      "image": "art-archive/T-198/raw_ramp_top.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    },
+    {
+      "record": "art-archive/T-198/raw_roof_top.json",
+      "image": "art-archive/T-198/raw_roof_top.png",
+      "endpoint": "create-image-pixflux",
+      "generations": 1
+    }
+  ],
+  "script": "game/tools/build_elevation_sample_art.py",
+  "steps": "PixelLab textures projected onto the isometric faces by script (mirror tiling), parapet, details and cracks on rooftops, outline and rim, reduced to at most 30 colours."
+}
