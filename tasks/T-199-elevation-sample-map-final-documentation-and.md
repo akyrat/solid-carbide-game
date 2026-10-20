@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: flagged-for-review
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -71,6 +71,10 @@ Goal runner (G-004): the agent is done; QA is checking it.
 
 Goal runner (G-004): failed QA twice; flagged for the board.
 
+### 2026-10-20, Flagged for review → Done
+
+Done on your call: round 2 passed every criterion; the flag was a leftover round-1 mark. G-004 resumes for the final QA (T-200).
+
 ## Result notes
 
 **Docs.** Checked level-design, visual-style, drifting and game/README against the merged build: the height data, layout, scene, depth order, see-through, art (8 generations of 50, weak results noted) and scripted drive were already described and marked as proposals. Only gap fixed: docs/level-design.md now has the art, the scripted drive and the final screenshot set (pointers, no repeated decisions). visual-style.md, drifting.md, game/README.md needed no change.
@@ -110,3 +114,4 @@ Weak: in air.png the car's shadow is not clearly visible (it falls on the roofto
 Refusals: the drive script run (round 1 and again in round 2); removing the temporary fixture and reverting .import noise.
 - 2026-10-20, in-qa → in-progress: QA failed: The scripted reachability drive's log (layers 0, 3 and 6 reached, maximum height, airtime) from the merged build is pasted in the result notes. (QA: fail: the pasted log is T-195's, not from the merged build; QA's own run of drive_elevation_sample.sh was also refused, so it could not be rerun) Back to the agent on opus.
 - 2026-10-20, in-qa → flagged-for-review: Failed QA a second time (goal G-004).
+- 2026-10-20, flagged-for-review → done: Board's call, 2026-10-20 ('done, carry on'): QA's round 2 passed every criterion; the flag came from round-1 fail marks left on two lines.
