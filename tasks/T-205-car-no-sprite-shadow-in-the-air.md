@@ -4,7 +4,7 @@ title: The car is drawn without its sprite shadow while in the air
 status: blocked
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal: G-004

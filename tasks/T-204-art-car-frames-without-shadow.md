@@ -4,7 +4,7 @@ title: Art: the car's 16 frames without their drop shadow (free script)
 status: open
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: mvp
 goal: G-004
