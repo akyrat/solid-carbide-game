@@ -1,7 +1,7 @@
 ---
 id: T-197
 title: Elevation sample map: depth order and see-through across every raised area, ramp and building
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-004

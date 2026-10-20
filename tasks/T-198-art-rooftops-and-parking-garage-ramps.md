@@ -1,7 +1,7 @@
 ---
 id: T-198
 title: Art: rooftops and parking-garage ramps for the elevation sample map (PixelLab)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-004
