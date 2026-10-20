@@ -1,7 +1,7 @@
 ---
 id: T-205
 title: The car is drawn without its sprite shadow while in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -35,17 +35,21 @@ Board review files: art-archive/T-205/screenshots/
 
 ## Acceptance criteria
 
-- [ ] A GUT test shows the car's drawing uses the shadowless sheet whenever its height is above the ground under it and the normal sheet on the ground, with the same frame for the same heading, and that the switch happens on the step it takes off and the step it lands (QA: pass / fail)
-- [ ] A GUT test shows the run's car and the drift prototype's car always use the normal sheet (QA: pass / fail)
-- [ ] The full GUT suite passes (`bash game/tools/run_tests.sh`) (QA: pass / fail)
-- [ ] Screenshots in `art-archive/T-205/screenshots/` show the car in the air with only the round shadow and on the street with its sprite shadow, listed in the result notes (QA: pass / fail)
-- [ ] `docs/drifting.md` (Content, elevation) and `game/README.md` describe the switch (QA: pass / fail)
+- [ ] A GUT test shows the car's drawing uses the shadowless sheet whenever its height is above the ground under it and the normal sheet on the ground, with the same frame for the same heading, and that the switch happens on the step it takes off and the step it lands (QA: pass)
+- [ ] A GUT test shows the run's car and the drift prototype's car always use the normal sheet (QA: pass)
+- [ ] The full GUT suite passes (`bash game/tools/run_tests.sh`) (QA: pass, 1080/1080)
+- [ ] Screenshots in `art-archive/T-205/screenshots/` show the car in the air with only the round shadow and on the street with its sprite shadow, listed in the result notes (QA: pass)
+- [ ] `docs/drifting.md` (Content, elevation) and `game/README.md` describe the switch (QA: pass)
 
 ## Updates
 
 ### 2026-10-20, Blocked → In progress
 
 Started: the car uses the shadowless frames while in the air and its normal sprite on the ground. Built on the sample map's build with T-204's frames.
+
+### 2026-10-20, In progress → In QA
+
+Built: the car uses the shadowless frames while in the air and its normal sprite on the ground or a rooftop; switches on the takeoff and landing steps; the run and drift prototype are unchanged. GUT passes; screenshots on the ticket. QA checks it now.
 
 ## Result notes
 
