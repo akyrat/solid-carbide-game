@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: in-qa
+status: flagged-for-review
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, game/README.md]
 files_expected_to_change: []
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -63,6 +63,10 @@ Goal runner (G-004): failed QA once; back to the agent on opus.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → Flagged for review
+
+Goal runner (G-004): failed QA twice; flagged for the board.
+
 ## Result notes
 
 **QA results (round 1, on playtest/G-004 at 738ba6d + T-200 start commit):**
@@ -91,3 +95,4 @@ Goal runner (G-004): the agent is done; QA is checking it.
 - For the Project Lead: count criterion 6 as covered by the runner's `sync_docs` at the goal check, or drop it from this ticket. Otherwise this ticket fails round 2 for a reason no agent can fix. I didn't try the docs scripts again, so I met no refusal this round.
 
 - 2026-10-20, in-qa → in-progress: QA failed: The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given) Back to the agent on opus.
+- 2026-10-20, in-qa → flagged-for-review: Failed QA a second time (goal G-004).
