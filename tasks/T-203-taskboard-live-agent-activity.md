@@ -1,7 +1,7 @@
 ---
 id: T-203
 title: Task board: what the agents are doing now, live
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md, tasks/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/goal_agent/claude_call.py, tools/goal_agent/build.py, tools/goal_agent/loop.py, tools/test_taskboard_server.py, tools/goal_agent/test_build.py]
 files_expected_to_change: [tools/goal_agent/claude_call.py, tools/goal_agent/build.py, tools/goal_agent/test_*.py, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/taskboard_sync.py, tools/test_taskboard_server.py, tools/test_taskboard_sync.py, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,6 +50,10 @@ Started: the runner records what its agents do, and the board shows it as a plai
 ### 2026-10-20, In progress → In QA
 
 Built: the runner records its agents' steps, and the board shows them as a Now line on cards, a timeline per ticket and the current ticket on goal cards, with free signals and a Quiet chip; a resumed goal says building. 399 tools tests pass; checked live on a second server. Note: four old tests briefly called the real claude command (each failed at once); they're fixed. QA checks it now.
+
+### 2026-10-20, In QA → Done
+
+QA passed all 5 criteria. Merged: the board shows what the agents are doing (Now lines, timelines, goal progress, Quiet chips). The goal runner records activity from its next start or resume.
 
 ## Result notes
 
