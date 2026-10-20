@@ -1,7 +1,7 @@
 ---
 id: T-213
 title: The guard refuses a script whose arguments write a task's header lines
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -48,6 +48,17 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: closing the guard loosening QA found in T-212.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- `board_gate.py`: new `script_args_reason`, called before `script_reason` in `why_risky`. A script run whose arguments (up to a shell comment) name a task file or the tasks folder and also hold `status`, `qa_rounds` or `lead` as a word is refused, with the reason "its arguments name a task file (...) and hold a `status` line or field name".
+- `tools/test_guard.py`: new test `test_a_generic_writer_script_is_refused_by_its_arguments` (real `w.py` that only writes its arguments; `python w.py tasks/T-1.md "status: done"` denied, reason names the arguments; same file with a non-ticket path or without a field name still allowed). The existing `set2.sh lead Tools tasks/T-1-x.md` case now expects the arguments reason, since that rule fires first; it is still refused.
+- `tasks/README.md`: one sentence added to the shell-command paragraph.
+- T-212's two quoted read-only commands and all 44 guard tests pass; `tools` tests pass; `game/tools` tests pass (354 tests, OK, 1 skipped).
+- Refused: one `python - <<EOF` edit script (inline code naming `tasks`), skipped; the same edits were made with the Edit tool instead. A later scratch debug script was also refused and abandoned.
+- Nothing to picture: tooling only.

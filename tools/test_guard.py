@@ -317,13 +317,25 @@ class ReadOnlyCommands(Base):
         self.script("set2.sh", "sed -i \"s/^$1:.*/$1: $2/\" tasks/T-1-x.md\n")
         for c, why in [("python fix.py tasks/T-1-x.md", "its code holds `^status:`"),
                        ("python set.py tasks # status", "its code names task files and writes files"),
-                       ("bash set2.sh lead Tools tasks/T-1-x.md", "its code names task files and writes files"),
-                       ("python missing.py tasks/T-1-x.md # status", "can't find or read that script"),
+                       ("bash set2.sh lead Tools tasks/T-1-x.md", "its arguments name a task file"),                       ("python missing.py tasks/T-1-x.md # status", "can't find or read that script"),
                        ("sed -i 's/status: open/status: done/' tasks/T-1-x.md", "sed on `tasks/T-1-x.md`")]:
             with self.subTest(c=c):
                 r = self.reason(c, str(self.root))
                 self.assertIn("status script", r)
                 self.assertIn(why, r)
+
+    def test_a_generic_writer_script_is_refused_by_its_arguments(self):
+        """T-213: the script only writes argv[2] into argv[1]; its arguments carry the task file and the line."""
+        self.script("w.py", "import sys\nopen(sys.argv[1], 'a').write(sys.argv[2])\n")
+        for c in ['python w.py tasks/T-1.md "status: done"', "python w.py tasks/T-1.md qa_rounds",
+                  "python w.py tasks lead"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, str(self.root)), "deny")
+        r = self.reason('python w.py tasks/T-1.md "status: done"', str(self.root))
+        self.assertIn("its arguments name a task file", r)
+        self.assertIn("status script", r)
+        self.assertEqual(self.cmd("python w.py notes.txt 'status: done'", str(self.root)), "allow")
+        self.assertEqual(self.cmd("python w.py tasks/T-1.md 'a note'", str(self.root)), "allow")
 
     def test_inline_code_and_test_runner_lookalikes_stay_refused(self):
         self.script("count.py", "import sys\nprint(sys.argv)\n")

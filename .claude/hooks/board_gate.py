@@ -585,6 +585,26 @@ def script_reason(script, bases):
     return ""
 
 
+ARG_FIELD_RE = re.compile(r"(?<![\w-])(status|qa_rounds|lead)(?![\w-])", re.I)
+
+
+def script_args_reason(script, words):
+    """Why the arguments of a script run could make it write a ticket's guarded lines (T-213): they name a task
+    file or the tasks folder and also hold a status, qa_rounds or lead line or field name, whatever the script's
+    own code looks like (a generic writer script takes both as arguments). "" otherwise."""
+    args = words[words.index(script) + 1:] if script in words else []
+    for i, a in enumerate(args):
+        if a.startswith("#"):
+            args = args[:i]   # a shell comment
+            break
+    names = next((a for a in args if CODE_TOUCHES_RE.search(a) or TICKET_PATH_RE.search(a)), None)
+    field = next((m.group(0) for a in args for m in [ARG_FIELD_RE.search(a)] if m), None)
+    if names and field:
+        return (f"`{script}`: its arguments name a task file (`{names}`) and hold a `{field}` line or field name, "
+                f"{SCRIPT_WRITES_LINES}")
+    return ""
+
+
 def cd_bases(cmd, cwd=None):
     """The folders a command's relative paths could be read from: the working folder and every folder it cds into."""
     base = cwd or os.getcwd()
@@ -630,7 +650,7 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None):
         return f"`{name}` on `{hit}`, which could be a ticket" if hit else ""
     script = script_of(words)
     if script and not in_tasks:
-        return script_reason(script, bases or [cwd or os.getcwd()])
+        return script_args_reason(script, words) or script_reason(script, bases or [cwd or os.getcwd()])
     return f"`{words[0]}`: a command the guard can't tell won't write a ticket"
 
 
