@@ -33,6 +33,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Polish for the MVP, once the MVP is playable end to end: minions get a damage animation when hit, and when two minions bump into each other they fall down, get up again and carry on running at the car. How long they stay down is proposed by the Enemy Behavior Agent; the board judges it in playtests. (board, 2026-10-14)
 - The kaiju walks round buildings and boulders, like the minions, rather than through them. (board, 2026-10-14)
 
+- **Enemies follow the car up the ramps** (board, 2026-10-21, after playing the full game on the elevation map, where enemies ignored every raised surface): enemies treat rooftops as raised ground they can only reach by the ramps. To reach a car on a rooftop they find their way to a ramp, drive or walk up it and follow the car, with pathfinding over the map's streets, ramps and rooftops; a rooftop's edge blocks them like a wall from below. (T-207)
+
 ## Content
 
 ### The minion (built in task T-044)
@@ -80,7 +82,6 @@ What the game does now, with the numbers in `game/data/enemies.json`, `meteor_at
 
 ## Open questions
 
-- How enemies handle heights on the elevation sample map, now the run's map (Level design, Decisions, 2026-10-20): whether they stay on the street, use the ramps, or reach the car on a rooftop, and whether the rooftops' edges block them like buildings. Proposed by the Enemy Behavior Agent for the board's playtest (T-207); the board decides after playing it.
 
 ## References
 

@@ -1515,3 +1515,8 @@ Entry format:
 - Decision or change: closes the loosening QA found in T-212: a script run whose arguments name a task file and carry a status, qa_rounds or lead line or field name is refused again, with a reason; read-only commands still pass. Tooling, merged straight after QA.
 - Documents touched: `tasks/README.md`
 - Tasks: T-213 (done)
+
+## 2026-10-21: The board played the full game on the elevation map
+- Decision or change: no drift smoke while the car is airborne; the exhaust flamethrower's flames come out at the car's height (they spawned away from the car on rooftops and in the air); T-206 goes back to its agent for both. Enemies ignored every raised surface: the board decides they follow the car up the ramps, with pathfinding over streets, ramps and rooftops, and a rooftop's edge blocks them from below (T-207, rewritten).
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/level-design.md`
+- Tasks: T-206 (back to in-progress), T-207
