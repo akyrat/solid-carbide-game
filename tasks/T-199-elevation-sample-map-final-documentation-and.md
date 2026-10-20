@@ -41,11 +41,11 @@ No code changes in this ticket.
 
 ## Acceptance criteria
 
-- [ ] docs/level-design.md (Content, 'Elevation sample map'), docs/visual-style.md (the art results), docs/drifting.md and game/README.md describe the height data, layout, scene, run command, scripted drive and art as built, with every number and layout choice marked as a proposal. (QA: pass / fail)
-- [ ] The scripted reachability drive's log (layers 0, 3 and 6 reached, maximum height, airtime) from the merged build is pasted in the result notes. (QA: pass / fail)
-- [ ] The final screenshot set is in art-archive/<task id>/screenshots/ (street, 0-to-3 ramp, 3-to-6 ramp, height 3, height 6, in the air with the shadow, see-through height-3 and height-6 areas, city overview), and the result notes list their full Windows paths. (QA: pass / fail)
-- [ ] The result notes list the open questions for the board. (QA: pass / fail)
-- [ ] `git diff` of this ticket's branch touches only docs, game/README.md and art-archive/ files. (QA: pass / fail)
+- [ ] docs/level-design.md (Content, 'Elevation sample map'), docs/visual-style.md (the art results), docs/drifting.md and game/README.md describe the height data, layout, scene, run command, scripted drive and art as built, with every number and layout choice marked as a proposal. (QA: pass: the four docs describe the data, layout, scene, run command, drive and art, proposals marked; level-design gained pointers only)
+- [ ] The scripted reachability drive's log (layers 0, 3 and 6 reached, maximum height, airtime) from the merged build is pasted in the result notes. (QA: fail: the pasted log is T-195's, not from the merged build; QA's own run of drive_elevation_sample.sh was also refused, so it could not be rerun)
+- [ ] The final screenshot set is in art-archive/<task id>/screenshots/ (street, 0-to-3 ramp, 3-to-6 ramp, height 3, height 6, in the air with the shadow, see-through height-3 and height-6 areas, city overview), and the result notes list their full Windows paths. (QA: pass: all 9 PNGs present; notes give the folder's full path and abbreviate the rest with "...", and note weak air shadow and off-centre overview)
+- [ ] The result notes list the open questions for the board. (QA: pass)
+- [ ] `git diff` of this ticket's branch touches only docs, game/README.md and art-archive/ files. (QA: pass: the ticket's own commits touch only docs/level-design.md, art-archive/T-199 and the task file; the untracked temp fixture is uncommitted and must be deleted before merge)
 
 ## Updates
 
