@@ -1,7 +1,7 @@
 ---
 id: T-209
 title: "Music: the board's two tracks loop through the game, alternating"
-status: in-progress
+status: in-qa
 from: project-lead
 to: sfx
 lead: Coursework
@@ -46,11 +46,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Both tracks are in `game/audio/music/`, byte-identical to the board's files, and their source is recorded (QA: pass / fail)
-- [ ] A test shows the music player plays track 1, then track 2, then track 1 again, and that one player is kept across screen changes (QA: pass / fail)
-- [ ] The music keeps playing without restarting from the main menu into a run, through the pause screen and back to the menu (checked in a scripted run that reads the playback position before and after each change) (QA: pass / fail)
-- [ ] The music's volume is separate from the sound effects': a `game_settings.gd` setting from 0 to 100 changes the music only, and is saved and loaded like the SFX volume; tests cover it (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Both tracks are in `game/audio/music/`, byte-identical to the board's files, and their source is recorded (QA: pass, byte-identical to the board's files, source .json next to each)
+- [ ] A test shows the music player plays track 1, then track 2, then track 1 again, and that one player is kept across screen changes (QA: pass, test_plays_track_1_then_2_then_1_again and test_one_player_kept_across_screen_changes)
+- [ ] The music keeps playing without restarting from the main menu into a run, through the pause screen and back to the menu (checked in a scripted run that reads the playback position before and after each change) (QA: pass, test_keeps_playing_without_restarting_through_menu_run_pause_menu reads the position at each step)
+- [ ] The music's volume is separate from the sound effects': a `game_settings.gd` setting from 0 to 100 changes the music only, and is saved and loaded like the SFX volume; tests cover it (QA: pass, separate Music bus; save/load/clamp and SFX-untouched tests)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass, GUT 1136/1136; Python tools 399 OK; game/tools 355 OK (1 skipped))
 
 The board's review: listen to the music from the main menu into a run and back.
 Board review files: the main menu.
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-20, Open → In progress
 
 Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
+### 2026-10-20, In progress → In QA
+
+Built: both tracks play through the game, 1 then 2, never restarting between screens, on their own Music bus (starting volume 40, a proposal). Sent to QA.
 
 ## Result notes
 
