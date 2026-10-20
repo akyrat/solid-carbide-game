@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
@@ -58,6 +58,10 @@ Goal runner (G-004): the agent is done; QA is checking it.
 ### 2026-10-20, In QA → In progress
 
 Goal runner (G-004): failed QA once; back to the agent on opus.
+
+### 2026-10-20, In progress → In QA
+
+Goal runner (G-004): the agent is done; QA is checking it.
 
 ## Result notes
 
