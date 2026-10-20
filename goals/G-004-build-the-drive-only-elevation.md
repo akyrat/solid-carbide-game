@@ -4,7 +4,7 @@ title: Build the drive-only elevation sample map as written in docs/level-...
 status: building
 art_cap: 50
 art_used: 8
-iteration: 8
+iteration: 9
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-004
@@ -51,7 +51,7 @@ Build the drive-only elevation sample map as written in docs/level-design.md (De
 | 4 | S4 | The drive-only sample map scene | unblocks 3, value 5 | The thing the board plays: the city with the car, its camera, the ground art, the buildings and boulders, and the raised areas, with nothing from the run. | covered | T-196, T-194, T-193 |
 | 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | covered | T-197 |
 | 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | covered | T-198 |
-| 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | in-flight | T-199, T-200 |
+| 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | covered | T-199, T-200, T-194, T-195, T-196, T-197, T-198 |
 
 ### S1: Multi-level height data and query (map file format)
 
@@ -156,6 +156,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 7: paused (see Pauses).
 - 2026-10-20, iteration 7: resumed: its last pause (flagged) is cleared.
 - 2026-10-20, iteration 8: T-199 (S7, level-challenge, opus): passed (done, QA rounds 2), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S7 in-flight.
+- 2026-10-20, iteration 9: T-200 (S7, qa-integration, opus): flagged (flagged-for-review, QA rounds 2); art 0; agent: Six of the seven criteria pass; criterion 6 (long GDD) fails or can't be verified. GUT passed 1119/1119 and the Python tool tests 342 OK. The sample scene ran headless for 10 s with no errors. The scripted drive passed through the GUT test of the same drive (max height 6.89, airtime 1.00 s off the height-6 edge, landing on the street). I did not run the drive script itself, because it was refused. The diff has no trick or editor code, and mvp_map.json and elevation_test.json are unchanged. All 9 final screenshots exist. The long GDD (docs/long-gdd.md) has no diff on the branch although level-design.md, drifting.md and visual-style.md changed, and I wasn't given the runner's staleness result. The runner or Project Lead needs to regenerate it and run the staleness check. Results are in the task file's result notes and committed / Round 2 of T-200, on the one criterion that failed: the long GDD hasn't been regenerated on playtest/G-004. It still isn't: docs/long-gdd.md is unchanged even though level-design.md, drifting.md and visual-style.md changed. No agent can fix this. The docs scripts aren't pre-approved, and in a goal run only the runner regenerates the long GDD (sync_docs() in tools/goal_agent/loop.py), at the goal check, after every ticket has passed QA. So this criterion can't pass on this ticket. The Project Lead should count it as covered by the runner's docs check at the goal check, or drop it from the ticket. The other six criteria passed in round 1 (GUT 1119/1119, Python 342 OK, the headless scene runs and the reachability drive all pass). Since then only ticket commits have landed, so I didn't rerun them. Notes are in the task file and committed; no screenshots, because this is a check ticket with nothing new to show. Refused, got past and not blocking: qa-integration: {"tool_input": {"command": "bash game/tools/drive_elevation_sample.sh", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01VCUp4nz23fDzrstqCNTsCT"} / qa-integration: {"tool_input": {"command": "python tools/generate_long_gdd.py --help"}, "tool_name": "Bash", "tool_use_id": "toolu_018ovw9hyrWJqknWytMYBeda"} / qa-integration: bash game/tools/drive_elevation_sample.sh (not on the pre-approved list; used the GUT test of the same drive instead) / qa-integration: python tools/generate_long_gdd.py --help (not on the pre-approved list; long GDD check left to the runner) / QA: bash game/tools/drive_elevation_sample.sh was refused earlier (not on the pre-approved list); covered by test_drive_elevation_sample.gd. / QA: python tools/generate_long_gdd.py / the staleness check was refused earlier (not on the pre-approved list); not run, so criterion 6 is unverified.. Rescan: S7 covered.
 
 ## Pauses
 
