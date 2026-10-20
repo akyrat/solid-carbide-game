@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
