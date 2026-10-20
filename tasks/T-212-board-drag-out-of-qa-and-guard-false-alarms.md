@@ -1,7 +1,7 @@
 ---
 id: T-212
 title: The board's drag can take a ticket out of QA with a warning, and the guard stops refusing read-only commands
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -52,11 +52,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `task_status.py` with `by="board"` moves an `in-qa` ticket with unmarked criteria to `in-progress` and to `planning`, keeping `qa_rounds`, and writes the board's explanation into the result notes; the command line still refuses the same move; tests cover both (QA: pass / fail)
-- [ ] Dragging such a ticket on the task board shows a pop-up listing the unmarked criteria word for word, with an explanation box, go-ahead and cancel; cancel leaves the ticket as it was (screenshot of the pop-up, and a server test for the endpoint the pop-up uses) (QA: pass / fail)
-- [ ] The guard lets the two commands quoted in the description through (tests feeding them to `pre_shell`), and still refuses every case the existing guard tests refuse (QA: pass / fail)
-- [ ] `tasks/README.md` ("Changing a task's status") and `docs/README.md` ("The task board") describe the new drag and the guard's rule (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] `task_status.py` with `by="board"` moves an `in-qa` ticket with unmarked criteria to `in-progress` and to `planning`, keeping `qa_rounds`, and writes the board's explanation into the result notes; the command line still refuses the same move; tests cover both (QA: pass; BoardOutOfQa and server tests cover board and CLI, qa_rounds kept, note written)
+- [ ] Dragging such a ticket on the task board shows a pop-up listing the unmarked criteria word for word, with an explanation box, go-ahead and cancel; cancel leaves the ticket as it was (screenshot of the pop-up, and a server test for the endpoint the pop-up uses) (QA: pass; screenshot is in the scratchpad at C:\Users\andre\AppData\Local\Temp\claude\C--solid-carbide-game\88cd5834-9793-4b7d-b02c-e2740a308d7c\scratchpad\qa-warning-popup.png, not under art-archive/T-212/screenshots/; it shows unmarked criteria, the marked fail, explanation box, Cancel and Move anyway; 409 without confirm_unmarked changes nothing, covered by test_t212_* server tests)
+- [ ] The guard lets the two commands quoted in the description through (tests feeding them to `pre_shell`), and still refuses every case the existing guard tests refuse (QA: pass; ReadOnlyCommands feeds both quoted commands to pre_shell and all older guard tests pass; sed, redirects, inline code and scripts with header lines or tasks plus writes are still denied. Note for the Project Lead: a generic writer script that holds no task path or header text in its code, run as python w.py tasks/T-1.md "status: done", is now allowed by the command check; the git commit ledger check still backstops it)
+- [ ] `tasks/README.md` ("Changing a task's status") and `docs/README.md` ("The task board") describe the new drag and the guard's rule (QA: pass; both sections present)
+- [ ] All Python tool tests pass (QA: pass; tools 413 OK, game/tools 354 OK with 1 skipped)
 
 ## Updates
 
@@ -65,6 +65,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-20, Open → In progress
 
 Started, at the board's request: the board's drag out of QA with a warning pop-up, and the guard's false alarms.
+
+### 2026-10-21, In progress → In QA
+
+Built: the drag-out-of-QA pop-up and a guard that only refuses real ticket writes. Sent to QA.
 
 ## Result notes
 
