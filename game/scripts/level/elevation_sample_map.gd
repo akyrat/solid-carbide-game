@@ -17,11 +17,21 @@ extends Node2D
 ## - the camera following as in the elevation test scene (camera_follow.gd,
 ##   the saved zoom and camera options).
 ##
-## Depth order (a first version; the full order across many areas and
-## buildings is a later ticket): the buildings' slots and the raised areas are
-## sorted together, back to front (restack), and each gets its own z_index,
-## BUILDING_Z_STEP apart. The car and its shadow go just under the lowest item
-## that covers them (behind it and overlapping on screen), or over everything.
+## Depth order (task T-197; Level design, Decisions, "Elevation sample map:
+## depth order"): the buildings' slots and the raised areas are sorted
+## together, back to front (restack, drawn_before), and each gets its own
+## z_index, BUILDING_Z_STEP apart from DEPTH_Z_BASE. A stacked rooftop and a
+## ramp standing on a rooftop come after the rooftop under them; an item
+## wholly on another's far side (west or north) comes before it. The car and
+## its shadow go just under the lowest item that covers them (they are behind
+## it, lower than its top, and overlap it on screen), or over everything: so
+## they are drawn over the areas they are on, above or in front of.
+##
+## See-through: every raised area and ramp covering the car fades
+## (elevation_platform_drawing.gd, update_fade), and so does every building
+## covering it (map_building.gd, update_fade), both with the car's shape drawn
+## at its height, the same shape the depth order uses; the fade step is
+## map_building.gd's faded_alpha for both.
 ##
 ## Not the project's main scene and not reachable from the menus (a proposal).
 ## No on-screen text. Run it from the editor (open the scene, F6) or with
@@ -48,6 +58,11 @@ const START_ROTATION := -PI / 2.0
 
 ## The car's footprint around its centre for the depth order, units.
 const DEPTH_RADIUS := 0.5
+
+## z_index of the first item (building slot or area) in depth order: one step
+## over the map's own base, so a car under a boulder under the first item, and
+## its shadow under it, still stay over the ground (z 0).
+const DEPTH_Z_BASE := MvpMapScript.BUILDING_Z_BASE + MvpMapScript.BUILDING_Z_STEP
 
 var map: Node2D
 ## The map's ground height (ground_height.gd, a GroundHeight; untyped so the
@@ -104,8 +119,9 @@ func _ready() -> void:
 	view_root.add_child(car_sprite)
 	car_sprite.use_sheet("iso")
 
-	# The map fades its buildings over the car every frame (see-through).
-	map.car = car
+	# The scene fades the map's buildings itself (update_see_through), with the
+	# car's shape at its height; map.car stays unset so the map does not fade
+	# them a second time with the shape on the ground.
 
 	camera = Camera2D.new()
 	camera.name = "Camera"
@@ -241,7 +257,7 @@ func restack() -> void:
 		for j in edges[best]:
 			before_count[j] -= 1
 	for k in depth_items.size():
-		depth_items[k].z_index = MvpMapScript.BUILDING_Z_BASE + MvpMapScript.BUILDING_Z_STEP * k
+		depth_items[k].z_index = DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * k
 	for sp in map.boulder_sprites:
 		sp.z_index = boulder_z(sp)
 	for sp in signs:
@@ -255,13 +271,17 @@ static func _centre_sum(item) -> float:
 
 ## A z_index over every building and area.
 func top_z_index() -> int:
-	return MvpMapScript.BUILDING_Z_BASE + MvpMapScript.BUILDING_Z_STEP * depth_items.size()
+	return DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * depth_items.size()
 
 
 ## A boulder sprite's z_index: the map's (under the buildings that cover it),
-## and under every raised area it is behind and overlaps on screen.
+## and under every raised area it is behind and overlaps on screen. A boulder
+## nothing covers goes over every item, areas included (the map's own top is
+## only over its buildings).
 func boulder_z(sp) -> int:
 	var z: int = map._boulder_z(sp.centre_units, sp.outline)
+	if z >= map.top_z_index():
+		z = top_z_index()
 	for a in areas:
 		if a.is_behind(sp.centre_units, 0.0, 0.0) \
 				and not Geometry2D.intersect_polygons(a.silhouette(), sp.outline).is_empty():
@@ -301,17 +321,27 @@ func update_depth() -> void:
 	shadow.z_index = z_for(ground_height.height_at(units)) - 1
 
 
-## See-through raised areas: each area covering the car fades like the map's
-## buildings (the map fades the buildings itself, map.car).
+## See-through: each raised area, ramp and building covering the car fades,
+## the others fade back, by `delta` seconds. The areas with their own cover
+## test (behind and lower than the top), the buildings with theirs (behind),
+## both against the car's shape at its height, as the depth order (z_for).
 func update_see_through(delta: float) -> void:
 	var units: Vector2 = car.model.get_position()
 	var shape := car_shape_at(car.height)
 	for a in areas:
 		a.update_fade(units, DEPTH_RADIUS, car.height, shape, delta)
+	for b in map.fade_items():
+		b.update_fade(units, shape, delta)
 
 
+## The raised areas and ramps that covered the car at the last update_see_through().
 func covering_areas() -> Array:
 	return areas.filter(func(a) -> bool: return a.covering)
+
+
+## The map's buildings (slots or blocks) that covered the car at the last update_see_through().
+func covering_buildings() -> Array:
+	return map.fade_items().filter(func(b) -> bool: return b.covering)
 
 
 ## After each physics step: the car's drawing (lifted by its height), its
