@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -62,6 +62,10 @@ Goal runner (G-004): the agent is done; QA is checking it.
 ### 2026-10-20, In QA → In progress
 
 Goal runner (G-004): failed QA once; back to the agent on opus.
+
+### 2026-10-20, In progress → In QA
+
+Goal runner (G-004): the agent is done; QA is checking it.
 
 ## Result notes
 
