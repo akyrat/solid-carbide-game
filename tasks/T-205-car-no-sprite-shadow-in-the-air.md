@@ -1,7 +1,7 @@
 ---
 id: T-205
 title: The car is drawn without its sprite shadow while in the air
-status: blocked
+status: open
 from: project-lead
 to: driving-drift
 lead: Coursework
