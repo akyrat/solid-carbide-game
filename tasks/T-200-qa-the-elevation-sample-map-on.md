@@ -1,7 +1,7 @@
 ---
 id: T-200
 title: QA: the elevation sample map on playtest/G-004, before the board's playtest
-status: blocked
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-004
@@ -14,8 +14,8 @@ depends_on: [T-199]
 documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, game/README.md]
 files_expected_to_change: []
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 2
 ---
 
 <!--
@@ -35,18 +35,64 @@ Check the whole elevation sample map goal together on its build branch, playtest
 
 ## Acceptance criteria
 
-- [ ] On playtest/G-004 the GUT tests, the Python tool tests and the headless scene runs all pass (counts in the result notes). (QA: pass / fail)
-- [ ] A run started from the main menu loads mvp_map.json and starts the run as before (test_screen_flow.gd and test_run_scene.gd pass). (QA: pass / fail)
-- [ ] The elevation sample map scene runs headless for 10 seconds with no errors. (QA: pass / fail)
-- [ ] The scripted reachability drive passes on playtest/G-004 (street to 3 to 6, then off 6, landing), and its log of maximum height and airtime is in the result notes. (QA: pass / fail)
-- [ ] `git diff master...playtest/G-004 --stat` shows no trick or level-editor code added, and game/data/level/mvp_map.json and elevation_test.json unchanged. (QA: pass / fail)
-- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: pass / fail)
-- [ ] The final screenshot set listed in D7's result notes exists at those paths and shows what the notes say. (QA: pass / fail)
+- [ ] On playtest/G-004 the GUT tests, the Python tool tests and the headless scene runs all pass (counts in the result notes). (QA: pass)
+- [ ] A run started from the main menu loads mvp_map.json and starts the run as before (test_screen_flow.gd and test_run_scene.gd pass). (QA: pass)
+- [ ] The elevation sample map scene runs headless for 10 seconds with no errors. (QA: pass)
+- [ ] The scripted reachability drive passes on playtest/G-004 (street to 3 to 6, then off 6, landing), and its log of maximum height and airtime is in the result notes. (QA: pass: via the same drive in test_drive_elevation_sample.gd; the .sh wrapper was refused)
+- [ ] `git diff master...playtest/G-004 --stat` shows no trick or level-editor code added, and game/data/level/mvp_map.json and elevation_test.json unchanged. (QA: pass)
+- [ ] The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given; round 2: still no diff on docs/long-gdd.md, and no runner result given. Runner's sync_docs runs only at the goal check, so this criterion cannot be met by this ticket)
+- [ ] The final screenshot set listed in D7's result notes exists at those paths and shows what the notes say. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-200.
+
+### 2026-10-20, In progress → In QA
+
+Goal runner (G-004): the agent is done; QA is checking it.
+
+### 2026-10-20, In QA → In progress
+
+Goal runner (G-004): failed QA once; back to the agent on opus.
+
+### 2026-10-20, In progress → In QA
+
+Goal runner (G-004): the agent is done; QA is checking it.
+
+### 2026-10-20, In QA → Flagged for review
+
+Goal runner (G-004): failed QA twice; flagged for the board.
+
 ## Result notes
 
-Written by the agent when it finishes.
+**QA results (round 1, on playtest/G-004 at 738ba6d + T-200 start commit):**
+
+1. Tests: pass. GUT 1119/1119 passed (92 scripts). Python `unittest discover game/tools`: 342 tests, OK (1 skipped). Headless scene run: pass (item 3). (A "SOME FRAMES FAIL" line in the Python output is a checker's own test fixture, not a failure.)
+2. Main menu to run: pass. test_screen_flow.gd and test_run_scene.gd are in the 1119 GUT tests, all passing, and mvp_map.gd (the run's map) loads in them (kaiju/enemy tests build it). mvp_map.json is unchanged.
+3. Pass. `python game/tools/run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 10`: "stopped after 10 s, no errors".
+4. Pass, with one limit. `bash game/tools/drive_elevation_sample.sh` was refused (not on the pre-approved list), so I did not run it. The same drive runs inside test_drive_elevation_sample.gd (4/4 passed); its log:
+   - Layers reached: 0 at 0.00 s, 3 at 1.82 s, 6 at 5.30 s, 0 at 7.32 s
+   - Jump 1 (0-to-3 ramp top): max height 3.75, airtime 0.70 s, landed on 3
+   - Jump 2 (3-to-6 ramp top): max height 6.89, airtime 0.76 s, landed on 6
+   - Jump 3 (off the height-6 edge): max height 6.00, airtime 1.00 s, landed on the street
+   - Maximum height 6.89 units at 4.92 s; airtime off the height-6 edge 1.00 s; wall hits 0; PASS
+5. Pass. `git diff --stat master...HEAD`: 144 files, none under any trick code (no scripts/tricks, car or UI changes; the only grep hit for "trick|editor" in the new map script is a comment "run it from the editor"). No level-editor code. mvp_map.json and elevation_test.json show no diff. Changes in mvp_map.gd (8 lines), ground_height.gd and elevation_platform_drawing.gd are the height-layer support.
+6. FAIL / not verified. docs/long-gdd.md is tracked and has no diff on the branch, although docs/level-design.md, drifting.md and visual-style.md changed. The runner's staleness result was not given to me, and `python tools/generate_long_gdd.py` / the staleness check is not on my pre-approved list (refused). So on the files I can see, the long GDD was not regenerated on the branch. The runner or Project Lead needs to run the regeneration and the check.
+7. Pass. All 9 PNGs listed in T-199's result notes exist in art-archive/T-199/screenshots/ on the branch (street, ramp-0-3, ramp-3-6, height-3, height-6, air, behind-height-3, behind-height-6, city-overview). I looked at air.png and behind-height-6.png: they show the car on a rooftop and the ramp; the shadow under the car in air.png is hard to see and the see-through effect in behind-height-6.png is not obvious. T-199's notes already say the air shadow is weak.
+
+**Screenshots:** none: this is a check ticket, with nothing new to picture.
+
+**Refusals:** `bash game/tools/drive_elevation_sample.sh` and `python tools/generate_long_gdd.py --help` (not on the pre-approved list). Neither was essential; criterion 4 is covered by the GUT test of the same drive, criterion 6 is left to the runner.
+
+**Round 2 (agent, on opus), on criterion 6:**
+- Since round 1 the branch has only T-200's own ticket commits (`git log`: 738ba6d is still the last merge), so the results for criteria 1–5 and 7 stand; I did not rerun the suites.
+- `git diff --stat master...HEAD -- docs/` still shows drifting.md, level-design.md (+ elevation-sample-map.png) and visual-style.md changed, with no change to docs/long-gdd.md. So the long GDD is still not regenerated on this branch.
+- No agent can fix that. `python tools/generate_long_gdd.py` and `tools/update_short_gdd_fingerprint.py` are not on the pre-approved list. In goal runs only the runner runs them: `tools/goal_agent/loop.py`, `sync_docs()` (lines 205–232) runs `generate_long_gdd.py --check`, regenerates the docs if they are stale, commits them on playtest/G-004 and passes the result to the **goal check**. That happens after every ticket, this one included, has passed QA. So criterion 6 cannot pass on this ticket, by design. It belongs to the goal check, where the runner's docs result is given.
+- For the Project Lead: count criterion 6 as covered by the runner's `sync_docs` at the goal check, or drop it from this ticket. Otherwise this ticket fails round 2 for a reason no agent can fix. I didn't try the docs scripts again, so I met no refusal this round.
+
+- 2026-10-20, in-qa → in-progress: QA failed: The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given) Back to the agent on opus.
+- 2026-10-20, in-qa → flagged-for-review: Failed QA a second time (goal G-004).
