@@ -1,7 +1,7 @@
 ---
 id: T-195
 title: Elevation sample map: the car's height across three layers, and a scripted drive from the street to 6 and off
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Goal-G-004
@@ -121,3 +121,4 @@ Worth knowing for the playtest: just past the edge the car lands on the road bet
 
 **Refusals:** `bash game/tools/drive_elevation_sample.sh --plot=... --csv=...` needed an approval I couldn't get. I skipped it because it wasn't essential (see above). PixelLab: none used.
 - 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
