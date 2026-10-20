@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-20, Blocked → In progress
 
 Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-199.
+
+### 2026-10-20, In progress → In QA
+
+Goal runner (G-004): the agent is done; QA is checking it.
 
 ## Result notes
 
