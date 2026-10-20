@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: building
+status: ready-to-play
 art_cap: 50
 art_used: 8
 iteration: 10
@@ -16,18 +16,18 @@ Build the drive-only elevation sample map as written in docs/level-design.md (De
 
 ## Goal acceptance criteria
 
-- [ ] On branch playtest/G-004, a drive-only elevation sample map scene exists (e.g. game/scenes/elevation_sample/elevation_sample_map.tscn), runs headless for at least 10 seconds with no script errors, and its run command is written in game/README.md and in docs/level-design.md (Content, 'Elevation sample map'). (QA: pass / fail)
-- [ ] The scene contains no enemies, no weapons, no run timer, no likes/levels and no level-up screen: QA checks that no enemy, weapon, timer or run-state node exists in the running scene tree, and that the car drives with W/A/S/D only. (QA: pass / fail)
-- [ ] The sample map's file (e.g. game/data/level/elevation_sample_map.json) exists and holds the map's roads/ground, buildings, boulders, raised areas (platforms with height) and ramps (with bottom and top height) as data. A test confirms that the only heights used are 0, 3 and 6, with at least one raised area at 3 and one at 6, at least one ramp from 0 to 3, and at least one ramp from 3 to 6. (QA: pass / fail)
-- [ ] The map is city-sized: a test confirms its extent equals the MVP map's (240 by 240 units) unless the board's answer to the open questions says otherwise, and it keeps the MVP map's roads, buildings and boulders outside the raised areas. (QA: pass / fail)
-- [ ] A reachability test drives the car with the real driving code (scripted inputs, headless) from the start onto a height-3 rooftop by a street ramp, then up a 3-to-6 ramp onto a height-6 rooftop, and then off a height-6 edge into the air, landing at a lower height. The test passes, and it logs the car's maximum height and airtime. (QA: pass / fail)
-- [ ] The approved elevation system is reused, not copied or changed in behaviour: the elevation test scene's existing tests (test_ground_height, test_car_height, test_elevation_edges, test_elevation_drawing, test_elevation_see_through, test_elevation_art) still pass, and the sample map uses car_height.gd, GroundHeight, car_shadow.gd (round shadow) and the shared see-through fade (map_building.gd faded_alpha, mvp_map.gd SEE_THROUGH constants). (QA: pass / fail)
-- [ ] See-through works on the sample map: tests show that a raised area or ramp at height 3 or 6 that covers the car fades to 0.15 over 0.15 s, the same way the map's buildings do, and that the car is never drawn over a raised area it is behind, including at a wall hit on a raised area's back side. (QA: pass / fail)
-- [ ] Every raised area and ramp on the sample map is drawn with PixelLab art (rooftops with parapet, vents, AC units, a small rooftop sign and light cracks; building-wall sides with lit windows; concrete parking-garage ramps) in the City colours palette. The art is in game/art/, the raw generations and records are in art-archive/<task>/, the total PixelLab generations are 50 or fewer and are logged in the result notes, and an art check confirms at most 30 colours per sprite, no semi-transparent pixels, hard edges and no Redgull red. (QA: pass / fail)
-- [ ] No trick system and no level editor exist on the branch: no new trick input, trick HUD or editor scene/tool was added (QA diffs playtest/G-004 against master). (QA: pass / fail)
-- [ ] The MVP run is unchanged: the main scene still starts a run on the MVP map, and all three test sets (Godot unit tests, Python tool tests, per-run tests) pass on playtest/G-004. (QA: pass / fail)
-- [ ] Screenshots exist (committed, paths listed in the tickets) of the car on the street, on a ramp from 0 to 3, on a height-3 rooftop, on a ramp from 3 to 6, on a height-6 rooftop, in the air after jumping off a height-6 edge with its round shadow on the ground below, and behind a see-through raised area. (QA: pass / fail)
-- [ ] docs/level-design.md (Content, 'Elevation sample map'), docs/visual-style.md (the art's results, under 'Elevation sample map art'), and game/README.md describe what was built, and the docs staleness check passes after the long GDD is regenerated. (QA: pass / fail)
+- [x] On branch playtest/G-004, a drive-only elevation sample map scene exists (e.g. game/scenes/elevation_sample/elevation_sample_map.tscn), runs headless for at least 10 seconds with no script errors, and its run command is written in game/README.md and in docs/level-design.md (Content, 'Elevation sample map'). (QA: pass)
+- [x] The scene contains no enemies, no weapons, no run timer, no likes/levels and no level-up screen: QA checks that no enemy, weapon, timer or run-state node exists in the running scene tree, and that the car drives with W/A/S/D only. (QA: pass)
+- [x] The sample map's file (e.g. game/data/level/elevation_sample_map.json) exists and holds the map's roads/ground, buildings, boulders, raised areas (platforms with height) and ramps (with bottom and top height) as data. A test confirms that the only heights used are 0, 3 and 6, with at least one raised area at 3 and one at 6, at least one ramp from 0 to 3, and at least one ramp from 3 to 6. (QA: pass)
+- [x] The map is city-sized: a test confirms its extent equals the MVP map's (240 by 240 units) unless the board's answer to the open questions says otherwise, and it keeps the MVP map's roads, buildings and boulders outside the raised areas. (QA: pass)
+- [x] A reachability test drives the car with the real driving code (scripted inputs, headless) from the start onto a height-3 rooftop by a street ramp, then up a 3-to-6 ramp onto a height-6 rooftop, and then off a height-6 edge into the air, landing at a lower height. The test passes, and it logs the car's maximum height and airtime. (QA: pass)
+- [x] The approved elevation system is reused, not copied or changed in behaviour: the elevation test scene's existing tests (test_ground_height, test_car_height, test_elevation_edges, test_elevation_drawing, test_elevation_see_through, test_elevation_art) still pass, and the sample map uses car_height.gd, GroundHeight, car_shadow.gd (round shadow) and the shared see-through fade (map_building.gd faded_alpha, mvp_map.gd SEE_THROUGH constants). (QA: pass)
+- [x] See-through works on the sample map: tests show that a raised area or ramp at height 3 or 6 that covers the car fades to 0.15 over 0.15 s, the same way the map's buildings do, and that the car is never drawn over a raised area it is behind, including at a wall hit on a raised area's back side. (QA: pass)
+- [x] Every raised area and ramp on the sample map is drawn with PixelLab art (rooftops with parapet, vents, AC units, a small rooftop sign and light cracks; building-wall sides with lit windows; concrete parking-garage ramps) in the City colours palette. The art is in game/art/, the raw generations and records are in art-archive/<task>/, the total PixelLab generations are 50 or fewer and are logged in the result notes, and an art check confirms at most 30 colours per sprite, no semi-transparent pixels, hard edges and no Redgull red. (QA: pass)
+- [x] No trick system and no level editor exist on the branch: no new trick input, trick HUD or editor scene/tool was added (QA diffs playtest/G-004 against master). (QA: pass)
+- [x] The MVP run is unchanged: the main scene still starts a run on the MVP map, and all three test sets (Godot unit tests, Python tool tests, per-run tests) pass on playtest/G-004. (QA: pass)
+- [x] Screenshots exist (committed, paths listed in the tickets) of the car on the street, on a ramp from 0 to 3, on a height-3 rooftop, on a ramp from 3 to 6, on a height-6 rooftop, in the air after jumping off a height-6 edge with its round shadow on the ground below, and behind a see-through raised area. (QA: pass)
+- [x] docs/level-design.md (Content, 'Elevation sample map'), docs/visual-style.md (the art's results, under 'Elevation sample map art'), and game/README.md describe what was built, and the docs staleness check passes after the long GDD is regenerated. (QA: pass)
 
 ## Open questions
 
@@ -160,6 +160,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 9: paused (see Pauses).
 - 2026-10-20, iteration 9: resumed: its last pause (flagged) is cleared.
 - 2026-10-20, iteration 10: T-200 (S7, qa-integration, opus): passed (done, QA rounds 2), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: every sub-goal is covered.
+- 2026-10-20, iteration 10: goal check: refused, got past and not blocking: {"tool_input": {"command": "grep -n -i -E \"generations|total\" art-archive/T-198/../../tasks/T-198-art-rooftops-and-parking-garage-ramps.md"}, "tool_name": "Bash", "tool_use_id": "toolu_014tZgp68psXdSSBs5u1atLQ"}.
+- 2026-10-20, iteration 10: goal check: 12 of 12 goal criteria pass.
+- 2026-10-20, iteration 10: ready to play.
 
 ## Pauses
 
