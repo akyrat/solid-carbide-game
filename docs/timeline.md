@@ -1500,3 +1500,8 @@ Entry format:
 - Decision or change: the pause screen's music volume slider is labelled "Music volume", the plain sibling of "SFX volume" and "Camera zoom level" (HUD and menus, Content). Docs-only text, merged straight after QA; T-210 uses it word for word.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-208 (done)
+
+## 2026-10-20: G-001 cancelled
+- Decision or change: the board cancelled G-001, the goal runner's first real run, which paused in planning on 2026-10-18 and was never built; G-002 built the same goal. The old G-004 folder was deleted once the board closed Godot.
+- Documents touched: `goals/G-001-add-an-image-of-the.md`
+- Tasks: G-001 (cancelled)

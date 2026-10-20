@@ -1,7 +1,7 @@
 ---
 id: G-001
 title: Add an image of the weapon on each level-up card, and add three new...
-status: paused
+status: cancelled
 art_cap: 40
 art_used: 0
 iteration: 0
@@ -43,3 +43,7 @@ None yet.
 
 - 2026-10-18 [refusal]: Priority scoring was refused: [{'tool_name': 'Bash', 'tool_use_id': 'toolu_01VTjC83GvdxrqfX9tKS31VY', 'tool_input': {'command': 'cd /c/solid-carbide-game/game && ls scripts/weapons scripts/hud scripts/ui data art art/* | head -80; grep -ril "levelup\\|level_up" scripts | head', 'description': 'List weapon, HUD, data and art files'}}]
 
+
+## Cancelled
+
+Cancelled by the board on 2026-10-20. It paused in planning on 2026-10-18 and was never built; G-002 built the same goal instead.
