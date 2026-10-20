@@ -271,6 +271,69 @@ class HarmlessMentions(Base):
                 self.assertEqual(self.cmd(c), "deny")
 
 
+class ReadOnlyCommands(Base):
+    """T-212: two commands refused on 2026-10-20 that could not write any ticket line, and scripts judged by their code."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    def reason(self, command, cwd=None):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_shell({"command": command}, cwd)
+        return json.loads(buf.getvalue())["hookSpecificOutput"]["permissionDecisionReason"] if buf.getvalue() else ""
+
+    def script(self, name, code):
+        path = self.root / name
+        path.write_text(code, encoding="utf-8")
+        return path
+
+    def test_allowed_1_the_t209_qa_command(self):
+        self.assertEqual(self.cmd(
+            'bash game/tools/run_tests.sh | grep -E "TESTS|T-209|tasks/"; python -m unittest discover -s tools -p '
+            '"test_*.py"; python -m unittest discover -s game/tools -p "test_*.py"; git status --short | grep -v '
+            'import | head', str(self.REPO)), "allow")
+
+    def test_allowed_2_the_t102_pixellab_call_and_inline_python_reading_images(self):
+        self.assertEqual(self.cmd(
+            f"cd {self.REPO.as_posix()} && python game/tools/pixellab_client.py rotate --consulted "
+            "docs/visual-style.md tasks/T-102-x.md --task T-102 --out art-archive/T-102/a.png && "
+            "python -c \"from PIL import Image; im = Image.open('art-archive/T-102/a.png'); "
+            "print('heading', im.size, 'status ok')\""), "allow")
+
+    def test_a_script_that_only_reads_runs_on_task_files(self):
+        self.script("count.py", "import sys\nfor p in sys.argv[1:]:\n    print(p, len(open(p).read()))\n")
+        self.assertEqual(self.cmd("python count.py tasks/T-1-x.md  # status", str(self.root)), "allow")
+        self.assertEqual(self.cmd("bash game/tools/run_tests.sh -gselect=test_x; grep status tasks/T-1-x.md",
+                                  str(self.REPO)), "allow")
+
+    def test_scripts_that_could_write_the_lines_are_still_refused_with_the_reason(self):
+        self.script("fix.py", "import re, sys\np = sys.argv[1]\nt = open(p).read()\n"
+                              "open(p, 'w').write(re.sub('^status: .*', 'status: done', t))\n")
+        self.script("set.py", "import sys\nfrom pathlib import Path\nfor p in Path('tasks').glob('T-*.md'):\n"
+                              "    p.write_text(p.read_text().replace('a', 'b'))\n")
+        self.script("set2.sh", "sed -i \"s/^$1:.*/$1: $2/\" tasks/T-1-x.md\n")
+        for c, why in [("python fix.py tasks/T-1-x.md", "its code holds `^status:`"),
+                       ("python set.py tasks # status", "its code names task files and writes files"),
+                       ("bash set2.sh lead Tools tasks/T-1-x.md", "its code names task files and writes files"),
+                       ("python missing.py tasks/T-1-x.md # status", "can't find or read that script"),
+                       ("sed -i 's/status: open/status: done/' tasks/T-1-x.md", "sed on `tasks/T-1-x.md`")]:
+            with self.subTest(c=c):
+                r = self.reason(c, str(self.root))
+                self.assertIn("status script", r)
+                self.assertIn(why, r)
+
+    def test_inline_code_and_test_runner_lookalikes_stay_refused(self):
+        self.script("count.py", "import sys\nprint(sys.argv)\n")
+        for c in ["bash -c \"sed -i 's/status: open/status: done/' tasks/T-1-x.md\"",
+                  "bash game/tools/run_tests.sh; python -c \"open('tasks/T-1-x.md','w').write('status: done')\"",
+                  "cd tasks && python count.py T-1-x.md # status"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, str(self.root)), "deny")
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 

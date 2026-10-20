@@ -1505,3 +1505,8 @@ Entry format:
 - Decision or change: the board cancelled G-001, the goal runner's first real run, which paused in planning on 2026-10-18 and was never built; G-002 built the same goal. The old G-004 folder was deleted once the board closed Godot.
 - Documents touched: `goals/G-001-add-an-image-of-the.md`
 - Tasks: G-001 (cancelled)
+
+## 2026-10-21: T-212 done: the board's drag out of QA, and the guard's false alarms
+- Decision or change: at the board's request, a drag by the board can take a ticket out of QA before every criterion is marked, after a pop-up that lists the unmarked criteria and takes the board's explanation (added to the result notes; no QA round counted); the command line still refuses that move. The guard now refuses only shell commands that can write a ticket's status, qa_rounds or lead line, and says why; test runs and read-only commands pass. QA found one loosening (a generic writer script whose arguments carry the header line passes the command check; the commit check still catches it): follow-up T-213. The pop-up's screenshot was saved by the Project Lead after the merge, since the old guard had refused the agent's folder creation.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-212 (done), T-213 (open)
