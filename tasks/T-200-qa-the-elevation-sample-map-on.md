@@ -53,4 +53,21 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-200.
 
 ## Result notes
 
-Written by the agent when it finishes.
+**QA results (round 1, on playtest/G-004 at 738ba6d + T-200 start commit):**
+
+1. Tests: pass. GUT 1119/1119 passed (92 scripts). Python `unittest discover game/tools`: 342 tests, OK (1 skipped). Headless scene run: pass (item 3). (A "SOME FRAMES FAIL" line in the Python output is a checker's own test fixture, not a failure.)
+2. Main menu to run: pass. test_screen_flow.gd and test_run_scene.gd are in the 1119 GUT tests, all passing, and mvp_map.gd (the run's map) loads in them (kaiju/enemy tests build it). mvp_map.json is unchanged.
+3. Pass. `python game/tools/run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 10`: "stopped after 10 s, no errors".
+4. Pass, with one limit. `bash game/tools/drive_elevation_sample.sh` was refused (not on the pre-approved list), so I did not run it. The same drive runs inside test_drive_elevation_sample.gd (4/4 passed); its log:
+   - Layers reached: 0 at 0.00 s, 3 at 1.82 s, 6 at 5.30 s, 0 at 7.32 s
+   - Jump 1 (0-to-3 ramp top): max height 3.75, airtime 0.70 s, landed on 3
+   - Jump 2 (3-to-6 ramp top): max height 6.89, airtime 0.76 s, landed on 6
+   - Jump 3 (off the height-6 edge): max height 6.00, airtime 1.00 s, landed on the street
+   - Maximum height 6.89 units at 4.92 s; airtime off the height-6 edge 1.00 s; wall hits 0; PASS
+5. Pass. `git diff --stat master...HEAD`: 144 files, none under any trick code (no scripts/tricks, car or UI changes; the only grep hit for "trick|editor" in the new map script is a comment "run it from the editor"). No level-editor code. mvp_map.json and elevation_test.json show no diff. Changes in mvp_map.gd (8 lines), ground_height.gd and elevation_platform_drawing.gd are the height-layer support.
+6. FAIL / not verified. docs/long-gdd.md is tracked and has no diff on the branch, although docs/level-design.md, drifting.md and visual-style.md changed. The runner's staleness result was not given to me, and `python tools/generate_long_gdd.py` / the staleness check is not on my pre-approved list (refused). So on the files I can see, the long GDD was not regenerated on the branch. The runner or Project Lead needs to run the regeneration and the check.
+7. Pass. All 9 PNGs listed in T-199's result notes exist in art-archive/T-199/screenshots/ on the branch (street, ramp-0-3, ramp-3-6, height-3, height-6, air, behind-height-3, behind-height-6, city-overview). I looked at air.png and behind-height-6.png: they show the car on a rooftop and the ramp; the shadow under the car in air.png is hard to see and the see-through effect in behind-height-6.png is not obvious. T-199's notes already say the air shadow is weak.
+
+**Screenshots:** none: this is a check ticket, with nothing new to picture.
+
+**Refusals:** `bash game/tools/drive_elevation_sample.sh` and `python tools/generate_long_gdd.py --help` (not on the pre-approved list). Neither was essential; criterion 4 is covered by the GUT test of the same drive, criterion 6 is left to the runner.
