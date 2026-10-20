@@ -1,7 +1,7 @@
 ---
 id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
-status: ready-to-play
+status: done
 art_cap: 50
 art_used: 8
 iteration: 10
@@ -163,6 +163,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 10: goal check: refused, got past and not blocking: {"tool_input": {"command": "grep -n -i -E \"generations|total\" art-archive/T-198/../../tasks/T-198-art-rooftops-and-parking-garage-ramps.md"}, "tool_name": "Bash", "tool_use_id": "toolu_014tZgp68psXdSSBs5u1atLQ"}.
 - 2026-10-20, iteration 10: goal check: 12 of 12 goal criteria pass.
 - 2026-10-20, iteration 10: ready to play.
+- 2026-10-20: the board played the map, with the shadow fix (T-204, T-205) merged into the build: "plays great". Merged into master. Goal done.
 
 ## Pauses
 
