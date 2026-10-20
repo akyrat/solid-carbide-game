@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-004

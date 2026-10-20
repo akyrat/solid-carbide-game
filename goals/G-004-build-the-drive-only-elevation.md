@@ -3,8 +3,8 @@ id: G-004
 title: Build the drive-only elevation sample map as written in docs/level-...
 status: building
 art_cap: 50
-art_used: 0
-iteration: 5
+art_used: 8
+iteration: 6
 max_iterations: 20
 created: 2026-10-19
 lead: Goal-G-004
@@ -50,7 +50,7 @@ Build the drive-only elevation sample map as written in docs/level-design.md (De
 | 3 | S3 | The car's height across three layers | unblocks 4, value 5 | The approved car height model was only tested on one platform at 3 from the street. The goal needs ramp takeoffs from 3 to 6, drops from 6 onto 3 or 0, and walls between layers. | covered | T-195, T-193, T-194, T-196, T-183, T-184 |
 | 4 | S4 | The drive-only sample map scene | unblocks 3, value 5 | The thing the board plays: the city with the car, its camera, the ground art, the buildings and boulders, and the raised areas, with nothing from the run. | covered | T-196, T-194, T-193 |
 | 5 | S5 | Depth order and see-through for many raised areas and buildings | unblocks 1, value 5 | The approved see-through and depth rules were built for one platform. On a city map with many rooftops at two heights, next to tall buildings, the car must never vanish or wrongly draw over something it is behind. | covered | T-197 |
-| 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | in-flight | T-198 |
+| 6 | S6 | PixelLab art: rooftops and parking-garage ramps | unblocks 1, value 5 | The goal names its PixelLab art: raised areas as building rooftops and ramps as concrete parking-garage ramps, following the City brief and City colours, and not reusing the test scene's castle-stone art. | covered | T-198 |
 | 7 | S7 | Integration, screenshots and docs on playtest/G-004 | unblocks 0, value 4 | The board plays the result once at the end. Everything has to work together on the build branch, with the MVP run untouched and the docs describing what was built. | in-flight | T-199, T-200 |
 
 ### S1: Multi-level height data and query (map file format)
@@ -151,6 +151,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-20, iteration 4: paused (see Pauses).
 - 2026-10-20, iteration 4: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-20, iteration 5: T-197 (S5, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 0; agent: (nothing new). Rescan: S5 covered, S6 in-flight, S7 in-flight.
+- 2026-10-20, iteration 6: T-198 (S6, asset-generation, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-004; art 8; agent: Built the rooftop and parking-garage ramp art for all 8 raised areas (4 rooftops, 4 ramps) with one sprite and record each in game/art/elevation_sample/. Added game/tools/build_elevation_sample_art.py (build and --check) and its Python tests. The sample map scene now shows each area's art and falls back to the script drawing when art is missing, and the art fades with its area. The elevation test scene is unchanged. The GUT suite passes (1119 tests) and so does the Python tool suite (342 tests). The repo-level `tools/` tests were not run: `python -m unittest discover -s tools` fails because `tools/` isn't importable as a start directory, and other forms need approval I couldn't get. The art is weak in places: the rooftop texture is a tile grid, the walls are very dark, and the parapet and details are small. I noted this in docs/visual-style.md and the result notes. Screenshots of the street, rooftops at 3 and 6, a ramp and a see-through area are in art-archive/T-198/screenshots/. Refused, got past and not blocking: asset-generation: {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nnames=['raw_ac_unit','raw_vent','raw_sign','raw_parapet','raw_cracks']\nW=sum(Image.open('art-archive/T-198/%s.png'%n).width*4+10 for n in names)\nim=Image.new('RGBA',(W,260),(60,60,70,255));x=0\nfor n in names:\n    i=Image.open('art-archive/T-198/%s.png'%n).convert('RGBA');i=i.resize((i.width*4,i.height*4),Image.NEAREST)\n    im.alpha_composite(i,(x,0));x+=i.width+10\nim.save('art-archive/T-198/contact_details.png')\n\""}, "tool_name": "Bash", "tool_use_id": "toolu_01XBMheLipfVFKHJtW86QavR"} / asset-generation: An inline `python -c` command to make a contact sheet of the raw images was not approved and not run. It wasn't essential; I viewed the images one at a time instead. / asset-generation: I only ran the pre-approved commands, so `python -m unittest discover -s tools -t .` (the repo-level tools tests) failed with an import error (`tools/` is not an importable start directory). I could not try other forms.. Rescan: S6 covered, S7 in-flight.
 
 ## Pauses
 
