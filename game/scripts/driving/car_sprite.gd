@@ -14,8 +14,20 @@ const SHEETS := {
 	"iso": "res://art/car/car_iso",
 }
 
+## While the car is in the air (task T-205; Drifting, Decisions, "No sprite
+## shadow in the air") the isometric view draws it from the shadowless sheet
+## (T-204), so only the round shadow on the ground shows. Same layout, same
+## frames; the flat view has none. Only scenes with a ground-height source ever
+## call set_in_air(true): the run and the drift prototype never do.
+const AIR_SHEETS := {
+	"iso": "res://art/car/car_iso_noshadow",
+}
+
 var layout := {}
 var sheet := ""
+var in_air := false
+var _ground_texture: Texture2D
+var _air_texture: Texture2D
 ## World pixels per unit of the drawing (the flat world's scale).
 var world_px_per_unit := 16.0
 
@@ -47,7 +59,10 @@ func use_sheet(view: String) -> void:
 		return
 	layout = parsed
 	sheet = view
-	texture = load(base + ".png")
+	_ground_texture = load(base + ".png")
+	_air_texture = load(AIR_SHEETS[view] + ".png") if AIR_SHEETS.has(view) else null
+	in_air = false
+	texture = _ground_texture
 	hframes = int(layout.get("columns", layout.frame_count))
 	vframes = int(layout.get("rows", 1))
 	var frame_size := Vector2(float(layout.frame_width), float(layout.frame_height))
@@ -94,6 +109,20 @@ static func lift_for_height(height_units: float, px_per_unit: float = 16.0) -> V
 func place(drawn_ground_px: Vector2, height_units: float) -> void:
 	position = drawn_ground_px + lift_for_height(height_units, world_px_per_unit)
 	scale = _base_scale
+
+
+## True when the car's height is above the ground under it.
+static func is_in_air(height_units: float, ground_under_units: float) -> bool:
+	return height_units > ground_under_units + 0.0001
+
+
+## Switches between the normal sheet (on the ground) and the shadowless one (in
+## the air). The frame stays the same: both sheets share one layout.
+func set_in_air(value: bool) -> void:
+	in_air = value
+	if _ground_texture == null:
+		return
+	texture = _air_texture if (value and _air_texture != null) else _ground_texture
 
 
 ## Frame index for a car rotation (radians, nose along +x at 0, clockwise).

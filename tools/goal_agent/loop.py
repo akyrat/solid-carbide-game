@@ -255,7 +255,7 @@ def goal_check(b, seen):
     folder = build.ensure_goal_build(b)
     docs_check = sync_docs(b, folder)
     answer = build.ask_headless(b, "goal-check", check_prompt(b, criteria, folder, docs_check), CHECK_SCHEMA,
-                                "qa-integration", build.QA_MODEL, folder)
+                                "qa-integration", build.QA_MODEL, folder, activity=b.gid)
     for r in build.check_refusals(answer, "The goal check"):          # the ones it got past: logged
         goal.log(f"goal check: refused, got past and not blocking: {r}.")
     results = list(answer.data.get("criteria") or [])
@@ -373,6 +373,7 @@ def resume(b, force=False):
     else:
         goal.log(f"resumed from {status}.")
     goal.set("status", "building")
+    goal.save()            # at once, so the board's Goals strip shows it building, not paused (T-203)
     run(b)
     return goal, f"{b.gid}: {goal.get('status')}"
 

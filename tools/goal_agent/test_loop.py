@@ -543,6 +543,25 @@ class Resume(GoalRepo):
         self.assertIn("--force", goal.section("Iteration log"))
         self.assertEqual(b.claude.calls[calls][0], "agent", "T-001's agent runs again")
 
+    def test_a_resumed_goal_is_saved_as_building_before_its_next_ticket(self):
+        """T-203: the goal file says `building` as soon as resume carries on, not only once a ticket finishes."""
+        b = self.planned(self.three_tickets(), max_iterations=1)
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "max-iterations")
+        goal.set("max_iterations", 20)
+        goal.save()
+        on_disk = []
+        team, ask = b.claude, b.claude.ask
+
+        def watching(step, prompt, schema, **options):
+            if not on_disk:
+                on_disk.append(goal_file.find(self.root / "goals", "G-001").get("status"))
+            return ask(step, prompt, schema, **options)
+        team.ask = watching
+        (goal2, _), _ = quiet(loop.resume, loop.load(self.places, team, "G-001"))
+        self.assertEqual(on_disk, ["building"], "saved before the first session of the resumed run")
+        self.assertEqual(goal2.get("status"), "ready-to-play", goal2.section("Pauses"))
+
     def test_a_cleared_reason_is_checked_by_the_loops_own_rules(self):
         b = self.planned(self.three_tickets(), max_iterations=1)
         self.assertPaused(self.run_loop(b), "max-iterations")
