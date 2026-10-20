@@ -1,7 +1,7 @@
 ---
 id: T-204
 title: Art: the car's 16 frames without their drop shadow (free script)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -37,17 +37,21 @@ Board review files: art-archive/T-204/screenshots/
 
 ## Acceptance criteria
 
-- [ ] `game/art/car/car_iso_noshadow.png` exists with the same size and frame layout as `car_iso.png`, a record `car_iso_noshadow.json` with the same frame fields, and `car_iso.png` is unchanged (QA: pass / fail)
-- [ ] Tests (`game/tools/test_build_car_noshadow.py`, standard-library Python plus the tools the other art scripts use) show the script is byte-identical on a rerun, removes only pixels outside the car's silhouette, keeps every other pixel equal to the original, and leaves no new colours (QA: pass / fail)
-- [ ] `python -m unittest discover -s game/tools -p "test_*.py"` and `bash game/tools/run_tests.sh` pass (QA: pass / fail)
-- [ ] Screenshots in `art-archive/T-204/screenshots/` show all 16 frames, original and shadowless side by side, on dark and light backgrounds, listed in the result notes with any doubtful frames named (QA: pass / fail)
-- [ ] `game/README.md` and `docs/visual-style.md` say how the sheet is made and where it is used (QA: pass / fail)
+- [ ] `game/art/car/car_iso_noshadow.png` exists with the same size and frame layout as `car_iso.png`, a record `car_iso_noshadow.json` with the same frame fields, and `car_iso.png` is unchanged (QA: pass; same fields, only `file` differs plus two added note fields; `git diff master` on car_iso.png empty)
+- [ ] Tests (`game/tools/test_build_car_noshadow.py`, standard-library Python plus the tools the other art scripts use) show the script is byte-identical on a rerun, removes only pixels outside the car's silhouette, keeps every other pixel equal to the original, and leaves no new colours (QA: pass; the 11 tests cover all four points and ran inside the suite)
+- [ ] `python -m unittest discover -s game/tools -p "test_*.py"` and `bash game/tools/run_tests.sh` pass (QA: pass; unittest 298 OK, 1 skipped; run_tests.sh TESTS PASSED)
+- [ ] Screenshots in `art-archive/T-204/screenshots/` show all 16 frames, original and shadowless side by side, on dark and light backgrounds, listed in the result notes with any doubtful frames named (QA: pass; all 4 PNGs viewed, 16 frames original|shadowless, dark and light; notes name 6, 7, 14, 2, 3, 10, 11, 8, 15)
+- [ ] `game/README.md` and `docs/visual-style.md` say how the sheet is made and where it is used (QA: pass; both describe the script, rules, and in-air use by T-205)
 
 ## Updates
 
 ### 2026-10-20, Open → In progress
 
 Started: a free script makes a shadowless copy of the car's 16 frames, shown next to the originals for you to judge. No PixelLab.
+
+### 2026-10-20, In progress → In QA
+
+Built (no PixelLab): a script removes the sprite's drop shadow from all 16 frames. 7 frames are clean; 9 keep a thin dark band or a few pixels under the sill or bumper, which read as the car's underside. Side-by-sides on the ticket. QA checks it now.
 
 ## Result notes
 
