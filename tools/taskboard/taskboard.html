@@ -327,6 +327,29 @@ dialog.lightbox p { margin: 10px 0 0; text-align: center; font: 500 12px/1.4 var
 .goal-build button { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; cursor: pointer; }
 .goal-build button[disabled] { opacity: .45; cursor: default; }
 .goal-build .meta { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+/* Live activity (T-203): the Now line on cards, the ticket's timeline, the goal cards' current ticket */
+.now-line { margin-top: 6px; display: flex; align-items: baseline; gap: 6px; font-size: 12px; line-height: 1.35; color: var(--muted); min-width: 0; }
+.now-line .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--done); box-shadow: 0 0 6px var(--done); transform: translateY(-1px); }
+.now-line .txt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.now-line .txt b { color: var(--ink); font-weight: 500; }
+.now-line code, .now-box code { font-family: var(--mono); font-size: 11px; color: var(--cyan); }
+.now-line.is-quiet .dot { background: var(--warn); box-shadow: none; }
+.chip.quiet { background: #47231b; color: var(--warn); flex: none; }
+.now-box { background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid var(--done); border-radius: 8px; padding: 12px 14px; margin: 0 0 16px; display: grid; gap: 8px; }
+.now-box.is-quiet { border-left-color: var(--warn); }
+.now-box h3 { margin: 0; display: flex; align-items: center; gap: 8px; font: 600 12px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.now-box h3 .chip { margin-left: auto; }
+.now-box .cur { font-size: 14px; }
+.now-box .sig { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; max-height: 15em; overflow-y: auto; }
+.timeline li { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 8px; font-size: 12.5px; }
+.timeline .at { font: 500 11.5px/1.5 var(--mono); color: var(--faint); }
+.timeline li:first-child .ph { color: var(--ink); }
+.timeline .ph { color: var(--muted); overflow-wrap: anywhere; }
+.goal .gnow { font-size: 11.5px; color: var(--muted); display: grid; gap: 1px; min-width: 0; }
+.goal .gnow .which { color: var(--ink); }
+.goal .gnow .ph { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goal .gnow.is-quiet .ph { color: var(--warn); }
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 60; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -389,6 +412,7 @@ dialog.lightbox p { margin: 10px 0 0; text-align: center; font: 500 12px/1.4 var
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="row"><span class="id" id="detail-id"></span></div>
   <h2 id="detail-title"></h2>
+  <section class="now-box" id="detail-now" aria-label="What it is doing now" hidden></section>
   <section class="lead-box" id="detail-updates" aria-label="Latest from the Project Lead" hidden></section>
   <section class="review" id="detail-review" aria-label="Your review"></section>
   <section class="media" id="detail-media" aria-label="Screenshots and recordings" hidden></section>
@@ -646,6 +670,67 @@ function badges(t) {
   return out.join("");
 }
 
+// Live activity (T-203). The server sends times; ages are worked out here against the server's clock
+// (skew), and the Now lines are redrawn every 15 seconds, so "2 min" and the quiet mark keep up between refreshes.
+const QUIET_S = 600;
+let skew = 0;
+const serverNow = () => Date.now() - skew;
+const secsSince = (at) => { const t = Date.parse(at || ""); return Number.isNaN(t) ? null : Math.max(0, Math.round((serverNow() - t) / 1000)); };
+function dur(s) {
+  if (s === null || s === undefined) return "";
+  if (s < 60) return "under a minute";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m} min`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return m % 60 ? `${h} h ${m % 60} min` : `${h} h`;
+  const d = Math.floor(h / 24);
+  return `${d} day${d === 1 ? "" : "s"}`;
+}
+const ago = (s) => s === null || s === undefined ? "" : s < 60 ? "just now" : `${dur(s)} ago`;
+const phraseHtml = (p) => esc(p).replace(/`([^`]+)`/g, "<code>$1</code>");
+const isQuiet = (n) => { const s = secsSince(n?.last_activity_at); return s !== null && s >= QUIET_S; };
+const commitsText = (n) => `${n.commits} commit${n.commits === 1 ? "" : "s"}`;
+// One line on an in-progress or in-QA card: the phrase and how long it has been doing it, or the free signals.
+function nowLine(n) {
+  const quiet = isQuiet(n) ? `<span class="chip quiet" title="No activity for 10 minutes or more">Quiet</span>` : "";
+  const text = n.phrase
+    ? `<b>${phraseHtml(n.phrase)}</b> · ${esc(dur(secsSince(n.phrase_since)))}`
+    : `${esc(commitsText(n))}${n.last_activity_at ? ` · last activity ${esc(ago(secsSince(n.last_activity_at)))}` : ""}`;
+  return `<span class="dot"></span><span class="txt" title="${esc(n.phrase || commitsText(n))}">${text}</span>${quiet}`;
+}
+// The detail view: the Now line, the free signals and the last 20 phrases, newest first.
+function renderNow(t) {
+  const el = $("detail-now"), n = t.now;
+  el.hidden = !n;
+  if (!n) { el.innerHTML = ""; return; }
+  el.classList.toggle("is-quiet", isQuiet(n));
+  const clock = (at) => { const d = new Date(Date.parse(at)); return Number.isNaN(d.getTime()) ? "" : d.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }); };
+  const sig = [
+    n.in_lane_since ? `In ${esc((STATUS_TEXT[t.status] || t.status).toLowerCase())} for ${esc(dur(secsSince(n.in_lane_since)))}` : "",
+    `${esc(commitsText(n))} on its branch`,
+    n.last_activity_at ? `Last activity ${esc(ago(secsSince(n.last_activity_at)))}` : "No activity seen yet",
+  ].filter(Boolean).map((s) => `<span>${s}</span>`).join("");
+  const steps = (n.timeline || []).slice().reverse();
+  el.innerHTML = `<h3>Now${isQuiet(n) ? '<span class="chip quiet">Quiet</span>' : ""}</h3>
+    <div class="cur">${n.phrase ? `${phraseHtml(n.phrase)} · ${esc(dur(secsSince(n.phrase_since)))}` : "No activity log: the goal runner isn't working on it."}</div>
+    <div class="sig">${sig}</div>
+    ${steps.length ? `<ol class="timeline" aria-label="The last ${steps.length} things it did, newest first">${steps.map((s) =>
+      `<li><span class="at">${esc(clock(s.at))}</span><span class="ph">${phraseHtml(s.phrase)}</span></li>`).join("")}</ol>` : ""}`;
+}
+function tickNow() {
+  document.querySelectorAll("[data-now]").forEach((el) => {
+    const t = tickets.find((x) => x.id === el.dataset.now);
+    if (!t?.now) return;
+    el.innerHTML = nowLine(t.now);
+    el.classList.toggle("is-quiet", isQuiet(t.now));
+  });
+  document.querySelectorAll("[data-goal-now]").forEach((el) => {
+    const g = goalById(el.dataset.goalNow);
+    if (g?.now) { el.innerHTML = goalNowLine(g); el.classList.toggle("is-quiet", isQuiet(g.now)); }
+  });
+  if (detailId && $("detail").open) { const t = tickets.find((x) => x.id === detailId); if (t) renderNow(t); }
+}
+
 function renderBoard() {
   const list = visible().filter(passesFilter).filter(passesOwner).filter(passesGoal);
   $("reset-cols").hidden = colOrder.join() === DEFAULT_ORDER.join();
@@ -660,6 +745,7 @@ function renderBoard() {
         ${mine(t) ? '<div class="mine-label">Your ticket</div>' : ""}
         <div class="row"><span class="id">${esc(t.id)}</span>${isUnread(t) ? '<span class="chip new" title="Changed since you last opened it">New</span>' : ""}${badges(t)}${shotsChip(t)}${t.lead ? `<span class="chip owner" title="Owned by the Project Lead session ${esc(t.lead)}">${esc(t.lead)}</span>` : ""}${goalTag(t)}<span class="chip agent">${esc(AGENTS[t.to] || t.to)}</span></div>
         <div class="title">${esc(t.title)}</div>
+        ${t.now ? `<div class="now-line${isQuiet(t.now) ? " is-quiet" : ""}" data-now="${esc(t.id)}">${nowLine(t.now)}</div>` : ""}
       </article>`).join("");
     return `<section class="lane" data-lane="${lane.key}" style="--c:${lane.color}">
       <h2 title="Drag to move this column"><span class="dot"></span>${lane.name}<span class="n">${items.length}</span></h2>
@@ -942,6 +1028,7 @@ function openDetail(id) {
   ];
   if (t.file_status && t.status !== t.file_status) rows.splice(1, 0, ["In the file", STATUS_TEXT[t.file_status] || t.file_status]);
   if (t.goal) rows.splice(rows.length - 1, 0, ["Goal", goalById(t.goal) ? `${t.goal}: ${goalById(t.goal).title}` : t.goal]);
+  renderNow(t);
   renderUpdates(t);
   renderReview(t);
   renderMedia(t);
@@ -1119,7 +1206,19 @@ function goalCard(g) {
     <span class="gt">${esc(shortTitle(g.title))}</span>
     <span class="meter" role="img" aria-label="${pct}% of its tickets finished"><i style="width:${pct}%"></i></span>
     <span class="gm">${goalMeta(g)}</span>
+    ${g.now && (g.now.ticket || g.now.phrase) ? `<span class="gnow${isQuiet(g.now) ? " is-quiet" : ""}" data-goal-now="${esc(g.id)}">${goalNowLine(g)}</span>` : ""}
   </button>`;
+}
+// A building goal's card (T-203): the ticket being worked on, "ticket N of M, iteration K", and its phrase.
+function goalNowLine(g) {
+  const n = g.now;
+  const which = n.ticket
+    ? `${esc(n.ticket)} · ticket ${n.ticket_index} of ${n.tickets_total}, iteration ${n.iteration}`
+    : `Goal check · iteration ${n.iteration}`;
+  const ph = n.phrase
+    ? `${phraseHtml(n.phrase)} · ${esc(dur(secsSince(n.phrase_since)))}`
+    : (n.last_activity_at ? `Last activity ${esc(ago(secsSince(n.last_activity_at)))}` : "No activity seen yet");
+  return `<span class="which">${which}</span><span class="ph">${isQuiet(n) ? "Quiet · " : ""}${ph}</span>`;
 }
 function renderGoals() {
   const el = $("goals");
@@ -1486,6 +1585,7 @@ async function refresh(force = false) {
     const data = await (await fetch("/api/tickets", { cache: "no-store" })).json();
     tickets = data.tickets || [];
     version = data.version;
+    if (data.generated_at && !Number.isNaN(Date.parse(data.generated_at))) skew = Date.now() - Date.parse(data.generated_at);
     lastRead = new Date();
     serverDown = false;
     buildIndex();
@@ -1501,6 +1601,7 @@ async function refresh(force = false) {
 refresh(true);
 refreshBuilds();
 setInterval(() => { if (!drag?.started && !colDrag?.started) { refresh(); refreshBuilds(); } }, 2000);
+setInterval(() => { if (!drag?.started && !colDrag?.started) tickNow(); }, 15000);
 </script>
 </body>
 </html>

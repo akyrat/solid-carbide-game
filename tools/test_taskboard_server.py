@@ -414,5 +414,163 @@ class GoalsPageTests(unittest.TestCase):
             self.assertIn(part, page, part)
 
 
+def iso_at(stamp):
+    return server.iso(stamp)
+
+
+class ActivityTests(unittest.TestCase):
+    """T-203: the Now data on in-progress and in-QA tickets, and on building goals' cards."""
+
+    NOW = 1_800_000_000          # a fixed "now" for the ages
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        self.main, self.state, self.wt = base / "main", base / "main" / ".board", base / "wt-T-931"
+        tasks = [("T-931", "in-progress", "G-010"), ("T-932", "in-qa", ""), ("T-933", "done", "G-010"),
+                 ("T-934", "in-progress", "G-010")]
+        for task_id, status, goal in tasks:
+            MediaTests.write(self.main, f"tasks/{task_id}-t.md", goal_task(task_id, goal, status).encode())
+        MediaTests.write(self.wt, "tasks/T-931-t.md", goal_task("T-931", "G-010", "in-progress").encode())
+        MediaTests.write(self.main, "goals/G-010-live.md", goal_text("G-010", "building").encode())
+        n = self.NOW
+        log = [(n - 900, "agent", {"type": "system", "subtype": "init"}),
+               (n - 600, "agent", {"type": "assistant", "message": {"content": [
+                   {"type": "tool_use", "name": "Read", "input": {"file_path": "C:/solid-carbide-worktrees/T-931/docs/level-design.md"}}]}}),
+               (n - 120, "agent", {"type": "assistant", "message": {"content": [
+                   {"type": "tool_use", "name": "Bash", "input": {"command": "bash game/tools/run_tests.sh"}}]}}),
+               (n - 30, "agent", {"type": "user", "message": {"content": [{"type": "tool_result", "content": "ok"}]}})]
+        for at, step, event in log:
+            server.tb.append_activity(self.state / "activity", "T-931", step, event, at=iso_at(at))
+        moves = [{"id": "T-931", "from": "open", "to": "in-progress", "at": iso_at(n - 3600)},
+                 {"id": "T-932", "from": "in-progress", "to": "in-qa", "at": iso_at(n - 1200)},
+                 {"id": "T-934", "from": "open", "to": "in-progress", "at": iso_at(n - 7200)}]
+        (self.state / "moves.log").write_text("".join(json.dumps(m) + "\n" for m in moves), encoding="utf-8")
+        old = n - 3 * 3600
+        for task_id in ("T-932", "T-934"):
+            p = self.main / "tasks" / f"{task_id}-t.md"
+            server.os.utime(p, (old, old))
+        p = self.wt / "tasks" / "T-931-t.md"
+        server.os.utime(p, (n - 5000, n - 5000))
+        folders = {"T-931": self.wt}
+        signals = {str(self.wt): (3, n - 60)}
+        patches = [mock.patch.object(server, "worktrees", lambda root=None: [(self.main, "master"), (self.wt, "task/T-931-t")]),
+                   mock.patch.object(server.tb, "ROOT", self.main),
+                   mock.patch.object(server.tb, "TASKS_DIR", self.main / "tasks"),
+                   mock.patch.object(server.tb, "STATE_DIR", base / "state"),
+                   mock.patch.object(server.tb, "task_folders", lambda root=None: folders),
+                   mock.patch.object(server, "branch_signals", lambda folder, branch: signals.get(str(folder), (0, None))),
+                   mock.patch.object(server.time, "time", lambda: n)]
+        for p in patches:
+            p.start()
+            self.addCleanup(p.stop)
+
+    def tickets(self):
+        return {t["id"]: t for t in server.tickets_payload()["tickets"]}
+
+    def test_a_runner_ticket_carries_its_phrase_age_lane_time_commits_and_last_activity(self):
+        n = self.tickets()["T-931"]["now"]
+        self.assertEqual((n["phrase"], n["phrase_since"], n["phrase_age_s"], n["step"]),
+                         ("Running the game's tests", iso_at(self.NOW - 120), 120, "agent"))
+        self.assertEqual((n["in_lane_since"], n["in_lane_s"]), (iso_at(self.NOW - 3600), 3600))
+        self.assertEqual((n["commits"], n["last_commit_at"]), (3, iso_at(self.NOW - 60)))
+        self.assertEqual((n["last_activity_at"], n["last_activity_s"], n["quiet"]), (iso_at(self.NOW - 30), 30, False),
+                         "the newest of the log, the branch's last commit and the task file")
+        self.assertEqual([s["phrase"] for s in n["timeline"]],
+                         ["Starting", "Reading `docs/level-design.md`", "Running the game's tests"])
+
+    def test_without_a_log_the_free_signals_and_the_quiet_mark(self):
+        t = self.tickets()
+        n = t["T-932"]["now"]
+        self.assertEqual((n["phrase"], n["timeline"], n["commits"]), ("", [], 0))
+        self.assertEqual((n["in_lane_s"], n["last_activity_s"], n["quiet"]), (1200, 3 * 3600, True))
+        self.assertIsNone(t["T-933"]["now"], "only in-progress and in-QA tickets")
+
+    def test_a_ticket_quiet_for_ten_minutes(self):
+        with mock.patch.object(server.time, "time", lambda: self.NOW + 569):
+            self.assertFalse(self.tickets()["T-931"]["now"]["quiet"])
+        with mock.patch.object(server.time, "time", lambda: self.NOW + 570):
+            self.assertTrue(self.tickets()["T-931"]["now"]["quiet"], "600 seconds after its last event")
+
+    def test_a_building_goal_shows_the_ticket_being_worked_on(self):
+        g = server.goals_payload()["goals"][0]
+        self.assertEqual({k: g["now"][k] for k in ("ticket", "ticket_index", "tickets_total", "iteration", "phrase", "quiet")},
+                         {"ticket": "T-931", "ticket_index": 1, "tickets_total": 3, "iteration": 2,
+                          "phrase": "Running the game's tests", "quiet": False})
+
+    def test_the_goal_check_shows_on_the_goal_card(self):
+        server.tb.append_activity(self.state / "activity", "G-010", "goal-check", {"type": "system", "subtype": "init"},
+                                  at=iso_at(self.NOW - 5))
+        g = server.goals_payload()["goals"][0]
+        self.assertEqual((g["now"]["ticket"], g["now"]["phrase"]), ("", "Goal check"))
+
+    def test_a_goal_not_building_has_no_now(self):
+        MediaTests.write(self.main, "goals/G-010-live.md", goal_text("G-010", "paused").encode())
+        self.assertIsNone(server.goals_payload()["goals"][0]["now"])
+
+    def test_a_deleted_log_breaks_nothing(self):
+        (self.state / "activity" / "T-931.jsonl").unlink()
+        n = self.tickets()["T-931"]["now"]
+        self.assertEqual((n["phrase"], n["commits"], n["last_activity_s"]), ("", 3, 60))
+        (self.state / "activity").rmdir()
+        self.assertEqual(self.tickets()["T-931"]["now"]["timeline"], [])
+
+    def test_the_version_follows_new_activity(self):
+        before = server.version()
+        log = self.state / "activity" / "T-931.jsonl"
+        server.tb.append_activity(self.state / "activity", "T-931", "agent", {"type": "system", "subtype": "init"})
+        later = log.stat().st_mtime + 2 * server.ACTIVITY_TICK
+        server.os.utime(log, (later, later))
+        self.assertNotEqual(server.version(), before)
+
+    def test_the_main_state_folder_can_be_pointed_elsewhere(self):
+        with mock.patch.dict(server.os.environ, {"BOARD_MAIN_STATE": str(Path(self.tmp.name) / "sample")}):
+            self.assertEqual(server.main_state(), Path(self.tmp.name) / "sample")
+            self.assertEqual(server.activity_files(), {})
+        with mock.patch.dict(server.os.environ, {}, clear=False):
+            server.os.environ.pop("BOARD_MAIN_STATE", None)
+            server._MAIN.pop(self.main, None)
+            self.assertEqual(server.main_state(), self.main / ".board")
+
+
+class BranchSignalTests(unittest.TestCase):
+    """T-203: the commits on a ticket's own branch, from git (a temporary repo)."""
+
+    def git(self, *args):
+        import subprocess
+        subprocess.run(["git", "-C", str(self.repo), *args], check=True, capture_output=True)
+
+    def test_commits_only_on_the_tasks_branch(self):
+        with tempfile.TemporaryDirectory() as d:
+            self.repo = Path(d)
+            self.git("init", "-q", "-b", "master")
+            self.git("config", "user.email", "t@example.com")
+            self.git("config", "user.name", "t")
+            for i, branch in enumerate([None, "task/T-940-x", None, None]):
+                if branch:
+                    self.git("checkout", "-q", "-b", branch)
+                (self.repo / f"f{i}.txt").write_text(str(i))
+                self.git("add", "-A")
+                self.git("commit", "-q", "-m", f"c{i}")
+            self.assertEqual(server.branch_signals(self.repo, "task/T-940-x")[0], 3)
+            self.assertIsInstance(server.branch_signals(self.repo, "task/T-940-x")[1], int)
+            self.git("checkout", "-q", "master")
+            self.assertEqual(server.branch_signals(self.repo, "master"), (0, None), "master's commit is on the branch too")
+            self.assertEqual(server.branch_signals(self.repo, ""), (0, None))
+            self.assertEqual(server.branch_signals(Path(d) / "missing", "task/T-940-x"), (0, None))
+
+
+class ActivityPageTests(unittest.TestCase):
+    """T-203: the page has the Now line, the detail timeline, the goal cards' current ticket and the quiet mark."""
+
+    def test_page_parts(self):
+        page = server.PAGE.read_text(encoding="utf-8")
+        for part in ['id="detail-now"', "function nowLine", "function renderNow", "function goalNowLine", "data-now=",
+                     "data-goal-now=", "chip quiet", "QUIET_S = 600", "class=\"timeline\"", "ticket ${n.ticket_index} of ${n.tickets_total}, iteration ${n.iteration}",
+                     "last activity", "tickNow"]:
+            self.assertIn(part, page, part)
+
+
 if __name__ == "__main__":
     unittest.main()

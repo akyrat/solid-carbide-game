@@ -281,5 +281,138 @@ class GoalTests(unittest.TestCase):
             self.assertTrue(d["goal_text"], d["id"])
 
 
+def tool(name, **args):
+    """A stream-json assistant event calling one tool."""
+    return {"type": "assistant", "message": {"content": [{"type": "tool_use", "id": "t", "name": name, "input": args}]}}
+
+
+def bash(command):
+    return tool("Bash", command=command, description="x")
+
+
+class PhraseTests(unittest.TestCase):
+    """T-203: the rules that turn the runner's events into plain phrases (no AI)."""
+
+    def test_reading_and_editing_name_the_file(self):
+        wt = "C:\\solid-carbide-worktrees\\T-196\\"
+        self.assertEqual(tb.event_phrase(tool("Read", file_path=wt + "docs\\level-design.md")), "Reading `docs/level-design.md`")
+        self.assertEqual(tb.event_phrase(tool("Read", file_path="C:/solid-carbide-game/tasks/README.md")), "Reading `tasks/README.md`")
+        self.assertEqual(tb.event_phrase(tool("Edit", file_path=wt + "game\\scripts\\level\\ground_height.gd")),
+                         "Editing `game/scripts/level/ground_height.gd`")
+        deep = wt + "game/scripts/level/elevation/some/very/deep/folder/ground_height.gd"
+        self.assertEqual(tb.event_phrase(tool("Edit", file_path=deep)), "Editing `ground_height.gd`")
+        self.assertEqual(tb.event_phrase(tool("Write", file_path="D:/elsewhere/notes.txt")), "Writing `notes.txt`")
+
+    def test_running_tests(self):
+        for cmd in ("bash game/tools/run_tests.sh", "powershell -ExecutionPolicy Bypass -File game/tools/run_tests.ps1",
+                    "bash game/tools/run_tests.sh -gselect=test_ground"):
+            self.assertEqual(tb.event_phrase(bash(cmd)), "Running the game's tests", cmd)
+        for cmd in ('python -m unittest discover -s tools -p "test_*.py"', "python game/tools/test_pixel_sheet.py"):
+            self.assertEqual(tb.event_phrase(bash(cmd)), "Running the tools' tests", cmd)
+
+    def test_screenshots_pixellab_and_committing(self):
+        self.assertEqual(tb.event_phrase(bash("bash game/tools/screenshot.sh res://tests/fixtures/x.tscn screenshots/a.png 40")),
+                         "Taking screenshots")
+        self.assertEqual(tb.event_phrase(bash("python game/tools/pixellab_client.py rotate car")), "Calling PixelLab")
+        self.assertEqual(tb.event_phrase(tool("mcp__pixellab__create_character", description="car")), "Calling PixelLab")
+        self.assertEqual(tb.event_phrase(bash('git commit -m "T-196: ground height"')), "Committing")
+        self.assertEqual(tb.event_phrase(bash("git -C C:/w/T-196 commit -q -m x")), "Committing")
+        self.assertEqual(tb.event_phrase(bash("git status --short")), "Using git")
+
+    def test_an_unknown_tool_gets_a_generic_phrase(self):
+        self.assertEqual(tb.event_phrase(tool("FrobnicateWidget", x=1)), "Using FrobnicateWidget")
+        self.assertEqual(tb.event_phrase(tool("mcp__someserver__do_thing")), "Using do_thing")
+        self.assertEqual(tb.event_phrase(bash("ls -la")), "Running a command")
+        self.assertEqual(tb.event_phrase(tool("Grep", pattern="x")), "Searching the files")
+
+    def test_thinking_starting_finishing_and_events_without_a_phrase(self):
+        self.assertEqual(tb.event_phrase({"type": "assistant", "message": {"content": [{"type": "thinking", "thinking": "hm"}]}}),
+                         "Thinking")
+        self.assertEqual(tb.event_phrase({"type": "assistant", "message": {"content": [{"type": "text", "text": "Now"}]}}),
+                         "Thinking")
+        self.assertEqual(tb.event_phrase({"type": "system", "subtype": "init"}), "Starting")
+        self.assertEqual(tb.event_phrase({"type": "result", "is_error": False}), "Finished")
+        self.assertIsNone(tb.event_phrase({"type": "user", "message": {"content": [{"type": "tool_result"}]}}))
+        self.assertIsNone(tb.event_phrase({"type": "stream_event"}))
+        self.assertIsNone(tb.event_phrase("not an event"))
+
+    def test_qa_and_the_goal_check_say_so(self):
+        self.assertEqual(tb.step_phrase("qa", "Thinking"), "QA checking")
+        self.assertEqual(tb.step_phrase("qa", "Running the game's tests"), "QA checking: running the game's tests")
+        self.assertEqual(tb.step_phrase("goal-check", "Starting"), "Goal check")
+        self.assertEqual(tb.step_phrase("agent", "Committing"), "Committing")
+
+
+class ActivityLogTests(unittest.TestCase):
+    """T-203: the activity logs: written one event per line, read from the end only, capped in size."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.dir = Path(self.tmp.name) / "activity"
+
+    def test_append_and_read_back_with_a_summary(self):
+        events = [("12:00:00", "agent", {"type": "system", "subtype": "init"}),
+                  ("12:00:05", "agent", tool("Read", file_path="C:/solid-carbide-worktrees/T-1/docs/drifting.md")),
+                  ("12:00:06", "agent", {"type": "user", "message": {"content": [{"type": "tool_result", "content": "x" * 9000}]}}),
+                  ("12:00:09", "agent", tool("Read", file_path="C:/solid-carbide-worktrees/T-1/docs/drifting.md")),
+                  ("12:01:00", "agent", bash("bash game/tools/run_tests.sh")),
+                  ("12:03:00", "qa", {"type": "assistant", "message": {"content": [{"type": "thinking", "thinking": "."}]}})]
+        for clock, step, event in events:
+            tb.append_activity(self.dir, "T-001", step, event, at=f"2026-10-19T{clock}Z")
+        path = self.dir / "T-001.jsonl"
+        self.assertEqual(len(path.read_text(encoding="utf-8").splitlines()), 6)
+        self.assertLess(path.stat().st_size, 3000, "long tool output is not kept")
+        s = tb.activity_summary(tb.read_activity(path))
+        self.assertEqual([x["phrase"] for x in s["timeline"]],
+                         ["Starting", "Reading `docs/drifting.md`", "Running the game's tests", "QA checking"])
+        self.assertEqual((s["phrase"], s["since"], s["step"], s["last_at"]),
+                         ("QA checking", "2026-10-19T12:03:00Z", "qa", "2026-10-19T12:03:00Z"))
+        self.assertEqual(s["timeline"][1]["at"], "2026-10-19T12:00:05Z", "a repeated phrase keeps its first time")
+
+    def test_the_timeline_keeps_the_last_twenty(self):
+        for i in range(30):
+            tb.append_activity(self.dir, "T-002", "agent", tool("Edit", file_path=f"C:/w/f{i}.gd"), at=f"2026-10-19T12:{i:02d}:00Z")
+        s = tb.activity_summary(tb.read_activity(self.dir / "T-002.jsonl"))
+        self.assertEqual(len(s["timeline"]), 20)
+        self.assertEqual((s["timeline"][0]["phrase"], s["phrase"]), ("Editing `f10.gd`", "Editing `f29.gd`"))
+
+    def test_reading_only_the_end(self):
+        path = self.dir / "T-003.jsonl"
+        for i in range(200):
+            tb.append_activity(self.dir, "T-003", "agent", tool("Edit", file_path=f"C:/w/f{i}.gd"), at="2026-10-19T12:00:00Z")
+        entries = tb.read_activity(path, max_bytes=2000)
+        self.assertTrue(0 < len(entries) < 20)
+        self.assertEqual(entries[-1]["event"]["message"]["content"][0]["input"]["file_path"], "C:/w/f199.gd")
+        with mock.patch("builtins.open", wraps=open) as opened:
+            tb.read_activity(path, max_bytes=2000)
+        self.assertEqual(opened.call_count, 1)
+
+    def test_bad_lines_and_a_missing_or_deleted_log(self):
+        self.assertEqual(tb.read_activity(self.dir / "T-009.jsonl"), [])
+        self.assertIsNone(tb.activity_summary([]))
+        self.dir.mkdir(parents=True)
+        (self.dir / "T-004.jsonl").write_text('not json\n{"at": "2026-10-19T12:00:00Z", "step": "agent", "event": '
+                                              '{"type": "system", "subtype": "init"}}\n{"half', encoding="utf-8")
+        self.assertEqual(len(tb.read_activity(self.dir / "T-004.jsonl")), 1)
+        (self.dir / "T-004.jsonl").unlink()
+        self.assertTrue(tb.append_activity(self.dir, "T-004", "agent", {"type": "system", "subtype": "init"}))
+
+    def test_only_ticket_and_goal_ids_name_a_log(self):
+        for bad in ("../x", "T-1/../../y", "README", "", None):
+            self.assertIsNone(tb.append_activity(self.dir, bad, "agent", {"type": "system"}), bad)
+        self.assertTrue(tb.append_activity(self.dir, "G-004", "goal-check", {"type": "system"}))
+
+    def test_a_log_is_capped_in_size(self):
+        with mock.patch.object(tb, "ACTIVITY_MAX_BYTES", 5000), mock.patch.object(tb, "ACTIVITY_KEEP_BYTES", 2000):
+            for i in range(300):
+                tb.append_activity(self.dir, "T-005", "agent", tool("Edit", file_path=f"C:/w/f{i}.gd"), at="2026-10-19T12:00:00Z")
+        path = self.dir / "T-005.jsonl"
+        self.assertLessEqual(path.stat().st_size, 5000)
+        entries = tb.read_activity(path)
+        self.assertEqual(len(entries), len(path.read_text(encoding="utf-8").splitlines()), "it starts on a whole line")
+        self.assertEqual(entries[-1]["event"]["message"]["content"][0]["input"]["file_path"], "C:/w/f299.gd")
+
+
 if __name__ == "__main__":
     unittest.main()

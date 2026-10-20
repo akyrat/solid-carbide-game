@@ -100,6 +100,13 @@ class HeadlessRuns(GoalRepo):
         self.assertIn("`(QA: pass)` or `(QA: fail: <reason>)`", prompt)
         self.assertEqual((options["agent"], options["model"]), ("qa-integration", "sonnet"))
 
+    def test_each_session_names_the_activity_log_it_writes_to(self):
+        """T-203: the agent and QA log under the ticket's id, the goal check under the goal's."""
+        b = self.planned(one_ticket())
+        self.run_loop(b)
+        logged = {(c[0], c[2].get("activity")) for c in b.claude.calls if c[0] in ("agent", "qa", "goal-check")}
+        self.assertEqual(logged, {("agent", "T-001"), ("qa", "T-001"), ("goal-check", "G-001")})
+
     def prompts(self, b):
         self.run_loop(b)
         return [next(c for c in b.claude.calls if c[0] == step)[1] for step in ("agent", "qa")]
@@ -181,23 +188,23 @@ class Merging(GoalRepo):
 
 class RealCommand(unittest.TestCase):
     def test_the_headless_claude_command(self):
-        import json
+        """The command and its options (T-203 streams it: more in test_claude_call.py)."""
         from unittest import mock
         from goal_agent.claude_call import RealClaude
-        out = {"is_error": False, "structured_output": {"summary": "s"}, "permission_denials": []}
-        done = mock.Mock(stdout=json.dumps(out), stderr="", returncode=0)
-        with mock.patch("subprocess.run", return_value=done) as run:
+        from goal_agent.test_claude_call import FakeProc, result
+        proc = FakeProc([result({"summary": "s"})])
+        with mock.patch("subprocess.Popen", return_value=proc) as popen:
             answer = RealClaude().ask("agent", "Work on task T-001", build.AGENT_SCHEMA, model="opus", agent="ui",
                                       session_id="abc", cwd="C:/w/T-001", permission_mode="acceptEdits", timeout=5)
-        cmd, kw = run.call_args[0][0], run.call_args[1]
+        cmd, kw = popen.call_args[0][0], popen.call_args[1]
         self.assertEqual(cmd[:2], ["claude", "-p"])
         self.assertNotIn("Work on task T-001", cmd)
-        self.assertEqual(kw["input"], "Work on task T-001")
+        self.assertEqual(proc.stdin.sent, "Work on task T-001")
         for flag, value in (("--model", "opus"), ("--agent", "ui"), ("--session-id", "abc"),
-                            ("--permission-mode", "acceptEdits"), ("--output-format", "json")):
+                            ("--permission-mode", "acceptEdits"), ("--output-format", "stream-json")):
             self.assertEqual(cmd[cmd.index(flag) + 1], value)
         self.assertNotIn("--add-dir", cmd)
-        self.assertEqual((kw["cwd"], kw["timeout"]), ("C:/w/T-001", 5))
+        self.assertEqual(kw["cwd"], "C:/w/T-001")
         self.assertEqual(answer.data, {"summary": "s"})
 
 

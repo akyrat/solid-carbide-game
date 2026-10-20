@@ -238,12 +238,14 @@ def check_refusals(answer, who):
     return [r if isinstance(r, str) else json.dumps(r, sort_keys=True) for r in refused]
 
 
-def ask_headless(b, step, prompt, schema, agent, model, folder):
+def ask_headless(b, step, prompt, schema, agent, model, folder, activity=None):
     """One headless session in `folder` (no --add-dir: with acceptEdits it could edit the main checkout, and
-    the runner, not the agent, moves the ticket)."""
+    the runner, not the agent, moves the ticket). `activity`: the ticket or goal id whose activity log
+    (.board/activity/<id>.jsonl, T-203) gets the session's events."""
     sid = register_session(b)
     return b.claude.ask(step, prompt, schema, model=model, agent=None if agent == "project-lead" else agent,
-                        session_id=sid, cwd=str(folder), permission_mode=PERMISSION_MODE, timeout=AGENT_TIMEOUT)
+                        session_id=sid, cwd=str(folder), permission_mode=PERMISSION_MODE, timeout=AGENT_TIMEOUT,
+                        activity=activity)
 
 
 def art_left(b):
@@ -324,14 +326,15 @@ Answer with a short summary, every refusal you met, and blocked."""
 def run_agent(b, ticket, folder):
     """The agent's answer; its `refusals` are the ones it got past (a blocked agent pauses the goal)."""
     answer = ask_headless(b, "agent", agent_prompt(b, ticket, folder), AGENT_SCHEMA, ticket["to"],
-                          ticket["model"] or "sonnet", folder)
+                          ticket["model"] or "sonnet", folder, activity=ticket["id"])
     return dict(answer.data, refusals=check_refusals(answer, f"The {ticket['to']} agent on {ticket['id']}"))
 
 
 def run_qa(b, ticket, folder):
     """QA's answer; its `refusals` are the ones it got past (a blocked QA pauses the goal)."""
     text = Path(folder, ticket["file"]).read_text(encoding="utf-8")
-    answer = ask_headless(b, "qa", qa_prompt(b, ticket, folder, text), QA_SCHEMA, "qa-integration", QA_MODEL, folder)
+    answer = ask_headless(b, "qa", qa_prompt(b, ticket, folder, text), QA_SCHEMA, "qa-integration", QA_MODEL, folder,
+                          activity=ticket["id"])
     return dict(answer.data, refusals=check_refusals(answer, f"QA on {ticket['id']}"))
 
 
