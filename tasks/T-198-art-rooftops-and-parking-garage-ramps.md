@@ -1,7 +1,7 @@
 ---
 id: T-198
 title: Art: rooftops and parking-garage ramps for the elevation sample map (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/level-design.md, docs/working-with-the-board.md, game/README.md, game/tools/build_elevation_art.py, game/tools/test_build_elevation_art.py, game/tools/check_sprite_rules.py, game/tools/city_palettes.py, game/tools/pixellab_client.py, game/scripts/level/elevation_platform_drawing.gd, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/tools/build_elevation_sample_art.py, game/tools/test_build_elevation_sample_art.py, game/art/elevation_sample/, game/scripts/level/elevation_platform_drawing.gd, game/scripts/level/elevation_sample_map.gd, game/tests/unit/test_elevation_sample_art.gd, art-archive/<task id>/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-198.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → Needs playtest
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -105,3 +109,4 @@ Everything else (projection onto the faces, outlines, details placement, the col
 Documents affected and updated: docs/visual-style.md (Decisions, "Elevation sample map art": generations used, weak results), game/README.md ("Rooftop and ramp art (T-198)", how to rebuild).
 
 **Refusals:** none from a hook or the permission system. An inline `python -c` contact-sheet command asked for approval and was not run (not essential; I looked at the raw images one by one instead).
+- 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
