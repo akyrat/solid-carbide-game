@@ -1,0 +1,17 @@
+{
+  "raw": "art-archive\\T-102\\car_rot11_from_f02_south_raw.png",
+  "left_frame": 2,
+  "right_frame": 3,
+  "colours_before": 258,
+  "colours_after": 31,
+  "shift_px": {
+    "x": 1,
+    "y": 1
+  },
+  "axis_angle_deg": {
+    "left": 102.3,
+    "new": 105.2,
+    "right": 135.0
+  },
+  "axis_note": "long axis of all opaque pixels (car and its shadow), degrees clockwise from screen right, 0-180"
+}
