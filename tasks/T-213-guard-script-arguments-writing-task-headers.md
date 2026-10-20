@@ -4,7 +4,7 @@ title: The guard refuses a script whose arguments write a task's header lines
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
