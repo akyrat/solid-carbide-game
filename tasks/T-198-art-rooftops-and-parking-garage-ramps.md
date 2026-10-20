@@ -1,7 +1,7 @@
 ---
 id: T-198
 title: Art: rooftops and parking-garage ramps for the elevation sample map (PixelLab)
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-004
@@ -110,3 +110,4 @@ Documents affected and updated: docs/visual-style.md (Decisions, "Elevation samp
 
 **Refusals:** none from a hook or the permission system. An inline `python -c` contact-sheet command asked for approval and was not run (not essential; I looked at the raw images one by one instead).
 - 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
