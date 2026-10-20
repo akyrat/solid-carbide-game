@@ -1,7 +1,7 @@
 ---
 id: T-199
 title: Elevation sample map: final documentation and the final screenshot set
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -50,6 +50,10 @@ No code changes in this ticket.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-20, Blocked → In progress
+
+Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-199.
 
 ## Result notes
 
