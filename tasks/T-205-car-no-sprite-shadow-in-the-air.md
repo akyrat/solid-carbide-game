@@ -1,7 +1,7 @@
 ---
 id: T-205
 title: The car is drawn without its sprite shadow while in the air
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -65,3 +65,4 @@ Tests (all in `game/tests/unit/test_car_noshadow_in_air.gd`):
 - Criterion 3: `bash game/tools/run_tests.sh` passes (TESTS PASSED).
 
 Screenshots: `art-archive/T-205/screenshots/air.png` (car in the air, only the round shadow) and `street.png` (car on the street, its sprite shadow). No GIF: the tests check the switch step by step.
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
