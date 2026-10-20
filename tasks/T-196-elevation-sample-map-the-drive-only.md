@@ -1,7 +1,7 @@
 ---
 id: T-196
 title: Elevation sample map: the drive-only scene (the MVP map's city with rooftops and ramps, placeholder drawing)
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -115,3 +115,4 @@ Not committed: Godot's line-ending-only `.import` changes from importing the wor
 
 Documents affected: `docs/level-design.md` (Content, "Elevation sample map", "The scene"; Open questions), `game/README.md` ("Elevation sample map", "The scene (T-196)").
 - 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
+- 2026-10-20, needs-playtest → done: Board's playtest of G-004 (2026-10-20): plays great.
