@@ -52,14 +52,14 @@ Board review files: game/scenes/elevation_sample/elevation_sample_map.tscn, art-
 
 ## Acceptance criteria
 
-- [ ] game/scenes/elevation_sample/elevation_sample_map.tscn loads game/data/level/elevation_sample_map.json, and a test checks the scene has the ground, the buildings, the boulders, one drawing per raised area and ramp in the file, the car's sprite, and the car's shadow. (QA: pass / fail)
-- [ ] A test checks the scene tree has no enemies, minions, kaiju, weapons, run timer, likes, levels or HUD run-state nodes (no run.gd, hud.gd, weapons.gd, minion_spawner.gd or kaiju nodes). (QA: pass / fail)
-- [ ] A test places the car on a height-3 area and on a height-6 area: the car's sprite is lifted by its height and the shadow sits on the area's top under the car. (QA: pass / fail)
-- [ ] The scene runs headless for 10 seconds with no errors in the output; the run command is in game/README.md. (QA: pass / fail)
-- [ ] The MVP run is unchanged: test_mvp_map.gd, test_run_scene.gd and test_screen_flow.gd pass, and a run started from the main menu loads mvp_map.json. (QA: pass / fail)
-- [ ] Screenshots exist in art-archive/<task id>/screenshots/ showing the car on the street, on a 0-to-3 ramp, on a 3-to-6 ramp, on height 3, on height 6, and in the air with its shadow below, and they are listed in the result notes and on the Board review files line. (QA: pass / fail)
-- [ ] game/README.md and docs/level-design.md describe the scene, how to open it (the proposal) and what it shows; the result notes list how the board opens it as an open question. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] game/scenes/elevation_sample/elevation_sample_map.tscn loads game/data/level/elevation_sample_map.json, and a test checks the scene has the ground, the buildings, the boulders, one drawing per raised area and ramp in the file, the car's sprite, and the car's shadow. (QA: pass)
+- [ ] A test checks the scene tree has no enemies, minions, kaiju, weapons, run timer, likes, levels or HUD run-state nodes (no run.gd, hud.gd, weapons.gd, minion_spawner.gd or kaiju nodes). (QA: pass)
+- [ ] A test places the car on a height-3 area and on a height-6 area: the car's sprite is lifted by its height and the shadow sits on the area's top under the car. (QA: pass)
+- [ ] The scene runs headless for 10 seconds with no errors in the output; the run command is in game/README.md. (QA: pass)
+- [ ] The MVP run is unchanged: test_mvp_map.gd, test_run_scene.gd and test_screen_flow.gd pass, and a run started from the main menu loads mvp_map.json. (QA: pass)
+- [ ] Screenshots exist in art-archive/<task id>/screenshots/ showing the car on the street, on a 0-to-3 ramp, on a 3-to-6 ramp, on height 3, on height 6, and in the air with its shadow below, and they are listed in the result notes and on the Board review files line. (QA: pass)
+- [ ] game/README.md and docs/level-design.md describe the scene, how to open it (the proposal) and what it shows; the result notes list how the board opens it as an open question. (QA: pass)
+- [ ] All three test sets pass. (QA: pass)
 
 ## Updates
 
