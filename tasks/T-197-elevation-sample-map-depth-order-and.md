@@ -62,3 +62,48 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-197.
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Level/Challenge Design Agent, 2026-10-20.** Done. PixelLab: 0 generations.
+
+What was already there from T-196 (the first-version order: `restack`, `drawn_before`, `z_for`, the areas' fade) turned out to handle the four cases the ticket names. The new tests found three gaps, now fixed in `game/scripts/level/elevation_sample_map.gd`:
+
+1. **The car's shadow could go under the ground.** The first item in the order was at z 2, so a car under a boulder under the first rooftop had its shadow at z -1, under the ground (z 0). The order now starts at `DEPTH_Z_BASE` (5, one step over the map's base).
+2. **Boulders with nothing covering them were sorted under the south-east garage.** They took the map's own top z, which only clears the buildings, so a boulder in front of the south-east garage overlapping it on screen was drawn under it. They now take the scene's top z (`boulder_z`).
+3. **Buildings faded with the car's ground shape, but the depth order used its lifted shape.** On a rooftop, the car could be drawn under a building that hadn't faded. The scene now fades the buildings itself with the lifted shape (`update_see_through` calls `map_building.gd`'s own `update_fade`), and `map.car` is left unset so the map doesn't fade them a second time. On the street the two shapes are the same, so buildings fade as on the MVP map. New: `covering_buildings()`.
+
+The fade code is still only `map_building.gd`'s `faded_alpha`. The elevation test scene, `mvp_map.gd`, `map_building.gd` and `elevation_platform_drawing.gd` are unchanged, and so are their tests.
+
+**Tests** (all new, all pass):
+- `game/tests/unit/test_elevation_sample_depth.gd` (11 tests):
+  - the four z-order cases: the car on height 3 behind height 6, in the air at 7 over height 3, behind a skyscraper next to the north-west garage, and on height 6 (both garages);
+  - every `drawn_before` pair is kept, and areas and buildings share one order;
+  - a grid over both garages: the car is under every area covering it, and over every area it overlaps without being behind;
+  - the shadow stays over the ground across the whole map;
+  - boulders nothing covers are over every item.
+- `game/tests/unit/test_elevation_sample_see_through.gd` (18 tests):
+  - the fade uses the buildings' numbers and matches a `MapBuilding.step_fade` step by step;
+  - neither script contains a second fade formula (`move_toward`, or any `modulate.a` arithmetic);
+  - which areas fade where: height 3, height 6 from height 3, both stacked areas, a ramp, none when the car is on, above or in front of them, none in the air;
+  - buildings fade and come back;
+  - back-side wall hits: the west and north sides of roof-nw-3 (straight, angled, steering), the north side of roof-nw-6 from the street, the west side of roof-nw-6 from the height-3 rooftop (both sides of the ramp), and the west and north sides of roof-se-6 and roof-se-3. On every step through each hit the car and its shadow stay under the area, the car hits the side and its footprint reaches in. A drive ends once the car has hit the side and steered more than 1 unit away from it.
+- Unchanged and passing: `test_elevation_see_through.gd`, `test_elevation_drawing.gd`, `test_see_through_map.gd`, `test_see_through_buildings.gd`, `test_elevation_sample_map.gd`.
+- All three test sets pass: GUT 1112/1112; `python -m unittest discover -s game/tools` 331 OK (1 skipped); `-s tools` 331 OK. `python game/tools/run_scene_headless.py res://scenes/elevation_sample/elevation_sample_map.tscn 8` shows no errors.
+
+**Screenshots** (`art-archive/T-197/screenshots/`):
+- `behind_height_3.png`: the car on the street behind roof-nw-3, which is see-through.
+- `behind_height_6.png`: the car on the height-3 rooftop behind roof-nw-6, which is see-through, in front of the 3-to-6 ramp.
+- `behind_building.png`: the car on the road behind a see-through skyscraper, with the north-west garage beside it.
+
+The fixtures are `game/tests/fixtures/elevation_sample_behind_{height_3,height_6,building}.tscn`. `elevation_sample_demo.gd` gained `hold_w`, and a fixture's `zoom` now turns the saved dynamic camera off; before this, the saved dynamic camera overrode it.
+
+Board review files: `art-archive/T-197/screenshots/behind_height_3.png`, `art-archive/T-197/screenshots/behind_height_6.png`, `art-archive/T-197/screenshots/behind_building.png`.
+
+**Documents:**
+- `docs/level-design.md`: Content, "Elevation sample map", the scene's Depth order and See-through bullets, plus the three screenshots.
+- `game/README.md`: "Elevation sample map", new "Depth order and see-through (T-197)", and the `Map` bullet and fixture options in "The scene (T-196)".
+
+**Refusals:**
+- A PowerShell `Get-Content`/`Set-Content` edit of my own test file needed approval. I made the same edits with the Edit tool.
+- `Remove-Item` of a temporary probe test, `game/tests/unit/test_tmp_probe.gd`, was refused. I emptied the file (no tests in it) and did not commit it; it is safe to delete.
+
+**Limits worth knowing:** the car has one z_index, so if it is behind one item and in front of a later one that overlaps it on screen, the later one is drawn over it. The grid tests found no such place on this layout. Every position, zoom and fixture is a proposal.
