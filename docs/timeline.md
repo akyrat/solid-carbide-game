@@ -1495,3 +1495,8 @@ Entry format:
 - Decision or change: the board wants a run to play on the elevation sample map as the full game with enemies, to see how they behave (T-206 builds it, T-207 looks at the enemies and proposes how they handle heights; the MVP map stays, switchable). The car moves to 32 directions now (T-102, sample frame first, the board approves its generations; the shadowless air frames are rebuilt for 32 by the free script). The board's two tracks, "DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)", loop through the whole game, alternating, with a music volume slider on the pause screen (T-208 label, T-209 music, T-210 slider). Short tutorial levels that show the tricks are noted, not requested yet (T-211, for the board to describe).
 - Documents touched: `docs/level-design.md`, `docs/enemies.md`, `docs/visual-style.md`, `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`
 - Tasks: T-102 (scheduled), T-206 to T-211 (open or blocked)
+
+## 2026-10-20: T-208 done: the music volume slider's label
+- Decision or change: the pause screen's music volume slider is labelled "Music volume", the plain sibling of "SFX volume" and "Camera zoom level" (HUD and menus, Content). Docs-only text, merged straight after QA; T-210 uses it word for word.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-208 (done)
