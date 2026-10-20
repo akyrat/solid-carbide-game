@@ -1,7 +1,7 @@
 ---
 id: T-196
 title: Elevation sample map: the drive-only scene (the MVP map's city with rooftops and ramps, placeholder drawing)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/scripts/driving/elevation_test.gd, game/scripts/level/mvp_map.gd, game/scripts/level/elevation_platform_drawing.gd, game/scripts/driving/car_shadow.gd, game/scripts/driving/camera_follow.gd, game/data/level/elevation_sample_map.json, game/tests/fixtures/elevation_test_demo.gd]
 files_expected_to_change: [game/scenes/elevation_sample/elevation_sample_map.tscn, game/scripts/level/elevation_sample_map.gd, game/scripts/level/mvp_map.gd, game/tests/unit/test_elevation_sample_map.gd, game/tests/fixtures/elevation_sample_demo.gd, game/tests/fixtures/elevation_sample_*.tscn, game/README.md, docs/level-design.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -73,6 +73,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-196.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → Needs playtest
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -110,3 +114,4 @@ Refusals: none. PixelLab: none used (0 generations).
 Not committed: Godot's line-ending-only `.import` changes from importing the worktree (left unstaged, as the merging rules ask).
 
 Documents affected: `docs/level-design.md` (Content, "Elevation sample map", "The scene"; Open questions), `game/README.md` ("Elevation sample map", "The scene (T-196)").
+- 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
