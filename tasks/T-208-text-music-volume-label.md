@@ -1,7 +1,7 @@
 ---
 id: T-208
 title: "Text: the music volume slider's label"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has a music volume slider entry with the label's exact text and this ticket's id (QA: pass / fail)
-- [ ] The label is one short line in the same style as "SFX volume" and "Camera zoom level" (QA: pass / fail)
+- [ ] HUD and menus, Content, has a music volume slider entry with the label's exact text and this ticket's id (QA: pass)
+- [ ] The label is one short line in the same style as "SFX volume" and "Camera zoom level" (QA: pass)
 
 ## Updates
 
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-20, Open → In progress
 
 Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, in parallel with the others.
+
+### 2026-10-20, In progress → In QA
+
+The label is written: "Music volume". Sent to QA.
 
 ## Result notes
 
