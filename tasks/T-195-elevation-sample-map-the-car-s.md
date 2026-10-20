@@ -1,7 +1,7 @@
 ---
 id: T-195
 title: Elevation sample map: the car's height across three layers, and a scripted drive from the street to 6 and off
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Goal-G-004
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/scripts/driving/car_height.gd, game/scripts/driving/car.gd, game/scripts/level/ground_height.gd, game/data/level/elevation_sample_map.json, game/tests/unit/test_car_height.gd, game/tests/unit/test_elevation_edges.gd, game/tools/check_challenge.sh]
 files_expected_to_change: [game/tests/unit/test_car_height_layers.gd, game/tools/drive_elevation_sample.gd, game/tools/drive_elevation_sample.sh, game/tools/drive_elevation_sample.ps1, game/tests/unit/test_drive_elevation_sample.gd, game/scripts/driving/car_height.gd, docs/drifting.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -68,6 +68,10 @@ Goal runner (G-004): started, in C:\solid-carbide-worktrees\T-195.
 
 Goal runner (G-004): the agent is done; QA is checking it.
 
+### 2026-10-20, In QA → Needs playtest
+
+Goal runner (G-004): QA passed; merged into playtest/G-004.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-20.
@@ -116,3 +120,4 @@ Worth knowing for the playtest: just past the edge the car lands on the road bet
 **Documents affected:** `docs/drifting.md` (Content, "Elevation: the three layers of the sample map (task T-195)") and `game/README.md` ("The car's height on the three layers (T-195)").
 
 **Refusals:** `bash game/tools/drive_elevation_sample.sh --plot=... --csv=...` needed an approval I couldn't get. I skipped it because it wasn't essential (see above). PixelLab: none used.
+- 2026-10-20, in-qa → needs-playtest: QA passed every criterion (goal G-004).
