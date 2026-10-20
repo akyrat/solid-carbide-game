@@ -79,4 +79,11 @@ Goal runner (G-004): failed QA once; back to the agent on opus.
 **Screenshots:** none: this is a check ticket, with nothing new to picture.
 
 **Refusals:** `bash game/tools/drive_elevation_sample.sh` and `python tools/generate_long_gdd.py --help` (not on the pre-approved list). Neither was essential; criterion 4 is covered by the GUT test of the same drive, criterion 6 is left to the runner.
+
+**Round 2 (agent, on opus), on criterion 6:**
+- Since round 1 the branch has only T-200's own ticket commits (`git log`: 738ba6d is still the last merge), so the results for criteria 1–5 and 7 stand; I did not rerun the suites.
+- `git diff --stat master...HEAD -- docs/` still shows drifting.md, level-design.md (+ elevation-sample-map.png) and visual-style.md changed, with no change to docs/long-gdd.md. So the long GDD is still not regenerated on this branch.
+- No agent can fix that. `python tools/generate_long_gdd.py` and `tools/update_short_gdd_fingerprint.py` are not on the pre-approved list. In goal runs only the runner runs them: `tools/goal_agent/loop.py`, `sync_docs()` (lines 205–232) runs `generate_long_gdd.py --check`, regenerates the docs if they are stale, commits them on playtest/G-004 and passes the result to the **goal check**. That happens after every ticket, this one included, has passed QA. So criterion 6 cannot pass on this ticket, by design. It belongs to the goal check, where the runner's docs result is given.
+- For the Project Lead: count criterion 6 as covered by the runner's `sync_docs` at the goal check, or drop it from this ticket. Otherwise this ticket fails round 2 for a reason no agent can fix. I didn't try the docs scripts again, so I met no refusal this round.
+
 - 2026-10-20, in-qa → in-progress: QA failed: The long GDD is regenerated and the staleness check passes on the build (as given by the runner). (QA: fail: docs/long-gdd.md has no diff on the branch though level-design, drifting and visual-style docs changed; no runner staleness result was given) Back to the agent on opus.
