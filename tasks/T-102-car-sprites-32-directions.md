@@ -1,7 +1,7 @@
 ---
 id: T-102
 title: The car in 32 directions, built from the approved 16 (PixelLab)
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md, art-archive/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, docs/extended-narrative.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md, art-archive/README.md, game/README.md]
 files_expected_to_change: [the car sprite sheet and its JSON, game/art/car/car_iso_noshadow.png and its JSON, game/tools/build_car_noshadow.py, game/tools/build_car_sheet.py, tests, the PixelLab generation log, art-archive/, game/README.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -86,6 +86,14 @@ The board played it: LGTM. Its playtest replaces the missing turning GIFs; one m
 ### 2026-10-21, In progress → In QA
 
 Board's playtest replaces the GIFs; QA round 2.
+
+### 2026-10-21, In QA → Needs playtest
+
+QA round 2 passed all 7.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the 32 directions. Merged into master.
 
 ## Result notes
 
@@ -200,3 +208,4 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 
 **Documents affected:** `game/README.md` (new section "The car in 32 directions (T-102)"; the T-101 section now says it describes the old 16 frames) and `art-archive/README.md` (4 more rows).
 - 2026-10-21, in-qa → in-progress: Board: 102 LGTM after playing it; the board's playtest replaces the turning screenshots
+- 2026-10-21, needs-playtest → done: Board: 102 LGTM
