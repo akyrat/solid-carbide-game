@@ -335,6 +335,9 @@ func _build_world() -> void:
 	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
+	# Hype (T-249): marks laid from now on take the combo's heat step.
+	state.combo_changed.connect(drift_marks.set_multiplier)
+	drift_marks.set_multiplier(state.combo)
 	# Drift smoke (T-121): from the same rear tyre places as the marks.
 	drift_smoke.clear()
 	drift_smoke.bind(car, drift_marks)
