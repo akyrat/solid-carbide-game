@@ -37,13 +37,13 @@ The board's review: Open the level creator, make a new level and place and delet
 
 ## Acceptance criteria
 
-- [ ] The editor draws the level with mvp_map.gd and elevation_layer.gd (the run's scripts), not a copy: a test or the code shows both are instantiated by the editor. (QA: pass / fail)
-- [ ] The side panel shows every asset in creator_assets.json, grouped by kind, with the category names from creator_texts.json (a unit test compares the panel's entries with the catalogue). (QA: pass / fail)
-- [ ] A scripted unit test places one ground tile, one road, one building, one boulder, one rooftop and one ramp: the level data then holds each; deleting one removes it from the data and from the drawing. (QA: pass / fail)
-- [ ] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', lists the editor's controls (pick, place, delete, pan, zoom). (QA: pass / fail)
-- [ ] A screenshot of the editor with the side panel and placed pieces is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] The editor draws the level with mvp_map.gd and elevation_layer.gd (the run's scripts), not a copy: a test or the code shows both are instantiated by the editor. (QA: pass)
+- [ ] The side panel shows every asset in creator_assets.json, grouped by kind, with the category names from creator_texts.json (a unit test compares the panel's entries with the catalogue). (QA: pass)
+- [ ] A scripted unit test places one ground tile, one road, one building, one boulder, one rooftop and one ramp: the level data then holds each; deleting one removes it from the data and from the drawing. (QA: pass)
+- [ ] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass)
+- [ ] game/README.md, 'Level creator', lists the editor's controls (pick, place, delete, pan, zoom). (QA: pass)
+- [ ] A screenshot of the editor with the side panel and placed pieces is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
