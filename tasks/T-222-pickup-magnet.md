@@ -1,7 +1,7 @@
 ---
 id: T-222
 title: Pickups are pulled to the car within one car length
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/README.md, tasks/T-220-health-drops.md]
 files_expected_to_change: [game/scripts/run/, game/scripts/enemies/, game/data/run.json, game/tests/unit/, game/README.md, art-archive/T-222/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,14 @@ Started at the board's request.
 
 Built: coins, gift packs and health drops fly to the car within 3 units (1 car length). Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4 (the Project Lead re-ran game/tools: 387 OK). Ready for the board: C:\solid-carbide-worktrees\T-222\game\project.godot, with the health drops too.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the magnet. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -71,3 +79,4 @@ Built and merged with T-220 (893277b), so the magnet covers coins, landed gift p
 - GIF and screenshots: `art-archive/T-222/screenshots/pickup_magnet.gif`, `magnet_40.png`, `magnet_60.png`, `magnet_80.png` (coins counter rises as coins beside the path fly in). Fixture: `game/tests/fixtures/pickup_magnet_gif_demo.tscn`. The GIF shows coins only (health drops and packs are covered by tests).
 - Proposals for the playtest: pull speed 30 units/s (above the car's top speed 27.5), constant speed; the reach ignores heights (a pickup on a rooftop is pulled by a car on the street below within 3 units on the flat map); only landed gift packs are pulled, not falling ones; a package is still picked up by its own 2.0-unit radius.
 - Documents updated: docs/game-loop-architecture.md, game/README.md. Nothing refused.
+- 2026-10-21, needs-playtest → done: Board: the pickup magnet works well
