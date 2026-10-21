@@ -7,6 +7,16 @@ extends Node2D
 ## east, north-east, north); south-west, west and north-west are the south-east,
 ## east and north-east sheets mirrored. If a sheet is missing, the T-044
 ## placeholder shape is drawn instead. No shadow under it (board, 2026-10-15). No Redgull red.
+##
+## Falling (task T-226): while the minion falls off a rooftop's edge
+## (set_falling, from the spawner) it plays the falling animation, and for
+## LAND_SECONDS after it lands a squash. The art hook (T-227): falling frames
+## in FALL_SHEET_DIR, one sheet per direction named like the walk sheets
+## (minion_fall_e.png, _se, _s, _ne, _n; the other three mirrored), FRAME_SIZE
+## square frames in a row, as many as the sheet is wide, played at FALL_FPS.
+## Until those sheets exist, the placeholder is made by script from the walk
+## frames: the legs flail (the walk cycle at FLAIL_SPEED times its speed) and
+## the body tips from side to side (FALL_TILT radians), stretched a little.
 
 const BODY_COLOR := Color(0.55, 0.80, 0.45)
 const BELLY_COLOR := Color(0.70, 0.90, 0.55)
@@ -27,6 +37,19 @@ const LIFT := 5.0
 const SHEETS := [["e", false], ["se", false], ["s", false], ["se", true],
 	["e", true], ["ne", true], ["n", false], ["ne", false]]
 const SHEET_DIR := "res://art/minion/minion_%s.png"
+## T-226 / T-227: the falling frames' sheets (see the top).
+const FALL_SHEET_DIR := "res://art/minion/minion_fall_%s.png"
+## Falling frames per second (the art's).
+const FALL_FPS := 10.0
+## The placeholder fall: walk cycle speed-up, tilt (radians), wobbles a second,
+## and stretch (x, y).
+const FLAIL_SPEED := 3.0
+const FALL_TILT := 0.35
+const FALL_WOBBLE_HZ := 3.0
+const FALL_STRETCH := Vector2(0.9, 1.12)
+## The squash on landing: how long, and the scale at its start (x, y).
+const LAND_SECONDS := 0.18
+const LAND_SQUASH := Vector2(1.3, 0.7)
 
 static var _textures := {}
 
@@ -34,6 +57,11 @@ static var _textures := {}
 var facing := Vector2.RIGHT
 ## Walk cycle, 0..1, for the legs (and the frame).
 var _walk := 0.0
+## T-226: true while the minion falls; seconds into the fall; seconds of the
+## landing squash left.
+var falling := false
+var fall_seconds := 0.0
+var land_left := 0.0
 
 
 func _ready() -> void:
@@ -42,8 +70,55 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_walk = fmod(_walk + delta * (WALK_FPS / FRAME_COUNT), 1.0)
+	advance(delta)
 	queue_redraw()
+
+
+## Moves the animation on `delta` seconds (the walk, the fall, the squash).
+func advance(delta: float) -> void:
+	var speed := FLAIL_SPEED if falling else 1.0
+	_walk = fmod(_walk + delta * speed * (WALK_FPS / FRAME_COUNT), 1.0)
+	if falling:
+		fall_seconds += delta
+	land_left = maxf(land_left - delta, 0.0)
+
+
+## T-226: the minion falls (true) or stands (false). Starting a fall restarts
+## the falling animation; ending one starts the landing squash.
+func set_falling(on: bool) -> void:
+	if on and not falling:
+		fall_seconds = 0.0
+		land_left = 0.0
+	elif not on and falling:
+		land_left = LAND_SECONDS
+	falling = on
+
+
+## What it plays now: "fall", "land" (the squash) or "walk".
+func animation() -> String:
+	if falling:
+		return "fall"
+	return "land" if land_left > 0.0 else "walk"
+
+
+## The drawing's transform for the fall or the squash, about `pivot`
+## (identity while walking).
+func anim_transform(pivot: Vector2, placeholder_fall: bool = true) -> Transform2D:
+	var rot := 0.0
+	var sc := Vector2.ONE
+	if falling and placeholder_fall:
+		rot = sin(fall_seconds * TAU * FALL_WOBBLE_HZ) * FALL_TILT
+		sc = FALL_STRETCH
+	elif land_left > 0.0:
+		sc = Vector2.ONE.lerp(LAND_SQUASH, land_left / LAND_SECONDS)
+	if rot == 0.0 and sc == Vector2.ONE:
+		return Transform2D.IDENTITY
+	return Transform2D(0.0, pivot) * Transform2D(rot, sc, 0.0, Vector2.ZERO) * Transform2D(0.0, -pivot)
+
+
+## The falling frames' sheet for a direction (T-227), or null until it exists.
+static func fall_sheet(name: String) -> Texture2D:
+	return _sheet_at(FALL_SHEET_DIR % name)
 
 
 ## Sets the facing from a flat-world direction (projected to the screen).
@@ -65,26 +140,43 @@ static func frame_for(walk: float) -> int:
 
 
 static func _sheet(name: String) -> Texture2D:
-	if not _textures.has(name):
-		var path := SHEET_DIR % name
-		_textures[name] = load(path) if ResourceLoader.exists(path) else null
-	return _textures[name]
+	return _sheet_at(SHEET_DIR % name)
+
+
+static func _sheet_at(path: String) -> Texture2D:
+	if not _textures.has(path):
+		_textures[path] = load(path) if ResourceLoader.exists(path) else null
+	return _textures[path]
 
 
 func _draw() -> void:
 	var entry: Array = SHEETS[compass_index(facing)]
+	var pivot := Vector2(0.0, -LIFT)
+	if falling:
+		var fall_tex := fall_sheet(entry[0])
+		if fall_tex != null:
+			# T-227's frames, as they are.
+			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
+			var f := int(fall_seconds * FALL_FPS) % n
+			_draw_art(fall_tex, entry[1], f)
+			return
+	draw_set_transform_matrix(anim_transform(pivot))
 	var tex := _sheet(entry[0])
 	if tex != null:
-		_draw_art(tex, entry[1])
-		return
-	_draw_placeholder()
+		_draw_art(tex, entry[1], frame_for(_walk))
+	else:
+		_draw_placeholder()
+	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
-func _draw_art(tex: Texture2D, mirrored: bool) -> void:
-	var src := Rect2(frame_for(_walk) * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
+	var src := Rect2(frame * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
 	var size := FRAME_SIZE * ART_SCALE
 	var w := -size if mirrored else size
-	draw_texture_rect_region(tex, Rect2(Vector2(-w / 2.0, -size / 2.0 - LIFT), Vector2(w, size)), src)
+	# A negative width flips the frame in place: Godot draws it from the
+	# rect's x to x + size, so x is -size / 2 both ways (T-226 fix: it was
+	# -w / 2, which put every mirrored frame one frame width to the right).
+	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -size / 2.0 - LIFT), Vector2(w, size)), src)
 
 
 func _draw_placeholder() -> void:

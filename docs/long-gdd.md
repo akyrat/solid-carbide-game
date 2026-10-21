@@ -686,8 +686,8 @@ What the game does now, with the numbers in `game/data/enemies.json`, `meteor_at
 What the game does on a map with rooftops and ramps (the elevation map, Level design), following the decision "Enemies follow the car up the ramps". On the MVP map nothing here applies and the enemies walk as described above. Points marked "proposal" go beyond the decision and wait for the board's playtest. How it is built: `game/README.md`, "Enemies on the rooftops and ramps".
 
 - **Standing on the ground:** every enemy stands on the ground under it: on the street, on a rooftop, or part way up a ramp, and is drawn lifted by that height, in the depth order at that height (over the rooftop it stands on, under a higher rooftop or a building in front of it).
-- **Edges are walls:** a rooftop's edge stops an enemy like a wall, from below and from above, so an enemy changes level only along a ramp. It keeps its whole body off an edge, and slides along it. The sides of a ramp are walls too, except near its foot, where the ramp is still low (proposal). A weapon's knockback cannot push a minion over an edge either.
-- **Finding the way:** on the car's own surface (the street, one rooftop, one ramp) an enemy walks straight at the car as before. Otherwise it follows a path to the car over the streets, ramps and rooftops, round buildings and boulders, going up or down each ramp along its middle; the path is renewed about once a second, and at once when the car changes surface.
+- **Edges are walls:** a rooftop's edge stops an enemy like a wall from below, so an enemy climbs only along a ramp. From above it stops an enemy too, except where the enemy's way to the car drops off it (since T-226: "Enemies drop off ledges" below). It keeps its whole body off an edge, and slides along it. The sides of a ramp are walls too, except near its foot, where the ramp is still low (proposal). A weapon's knockback cannot push a minion over an edge either.
+- **Finding the way:** on the car's own surface (the street, one rooftop, one ramp) an enemy walks straight at the car as before. Otherwise it follows a path to the car over the streets, ramps and rooftops, round buildings and boulders, going up each ramp along its middle (and down by a ramp only where that is shorter than dropping off an edge, T-226); the path is renewed about once a second, and at once when the car changes surface.
 - **Spawning:** minions come in from the screen's edges on the street only, never on a rooftop or a ramp. The kaiju arrives on the street too (proposal).
 - **Staying round the car:** a minion on its way to a ramp is not removed for being far off screen, as long as it is within 120 units of the car (half the map; others are removed a screen beyond the visible one, as before), so minions walking round to a far ramp still arrive (proposal).
 - **Contact damage at the car's level:** a minion or the kaiju only hits the car when the car's height (in the air too) is within 1 unit of the ground the enemy stands on: a car on a rooftop is safe from the minions on the street below its edge, and a car that jumps higher than 1 unit over a minion is not hit (proposal for the 1 unit).
@@ -695,6 +695,17 @@ What the game does on a map with rooftops and ramps (the elevation map, Level de
 - **The kaiju (proposal):** the same rules as the minions: it climbs the ramps (its 4-unit body fits the 10-unit ramps), edges stop it, it is drawn at its height and only hits the car at its level, although it is taller than the highest rooftop.
 - **Coins:** a coin is drawn at the height where its minion died, and stays on that level. Picking one up is unchanged: driving over it, at any height (proposal).
 - **Weapons:** unchanged by this task: the weapons find and hit enemies at any height (proposal; a later weapons task can change it).
+
+#### Enemies drop off ledges (built in task T-226)
+
+What the game does on the elevation map, following the decision "Enemies jump down off ledges". Points marked "proposal" go beyond the decision and wait for the board's playtest. How it is built, and the hook for the falling art: `game/README.md`, "Enemies drop off ledges".
+
+- **Dropping off:** an enemy on a rooftop whose way to the car is lower down takes the shortest way, which is usually straight off the nearest edge rather than round to a ramp. It walks out over the edge and falls. It never drops off a ramp's sides, never drops by accident (pushing apart or a weapon's knockback never takes it over an edge), and still never climbs an edge or ends up inside a building.
+- **The fall (proposal):** it falls like the car does, from rest under the car's own gravity: about 0.7 s from a height-3 rooftop and 1 s from height 6, walking on at its usual speed meanwhile, so it lands a few units out from the wall (it cannot pass through a building or a higher rooftop while falling). It is drawn at its height in the air, in the depth order at that height, all the way down.
+- **How the drop looks (proposal, placeholder):** from the moment it leaves the edge until it lands, a falling animation made by script from its walk frames: the legs flail (the walk cycle three times as fast for a minion, 2.5 times for the kaiju) and the body tips from side to side (and a minion is stretched a little); on landing a short squash (0.18 s for a minion, 0.25 s for the kaiju). The kaiju's ground shadow is not drawn while it is in the air. No Redgull red. Final falling frames come from a separate art task (T-227) and replace the placeholder per direction as soon as they are in the project.
+- **Hurting the car while falling (proposal):** yes, with the same rule as on the ground, by its height in the air: a falling enemy hits the car only when the car's height is within 1 unit of the enemy's height, so one landing on the car hits it, and one still high above it does not.
+- **The kaiju (proposal):** it drops off edges too, with the same rules and the same fall.
+- **Numbers (proposal):** the gravity (the car's), the animation's speeds, tilt and squash are in the code, not balancing data.
 
 ### References
 
@@ -1094,7 +1105,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `a41567e474f3b35e749f6621680dc90da53cc107d9a372e451edd66912ae2f73` |
 | `drifting.md` | `f34bdd746f43fc5fb9089f660f75c72e256bcb4c0e4af828c17465d6f2d83be4` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
-| `enemies.md` | `0d559ffeb283ee80a2a125cae361362afb7271ba276e804fff175ff2af26be25` |
+| `enemies.md` | `965eae9788028d11b44a7a0e23670716e52946e62cb28d4ffead87ee0c0ddf97` |
 | `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
 | `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
 | `visual-style.md` | `b1d7ed698144d7cb3314c681b5f5a0e817c405e84c6ec617e2d2f81166538dab` |

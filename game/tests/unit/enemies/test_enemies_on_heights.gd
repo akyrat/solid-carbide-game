@@ -131,19 +131,25 @@ func test_the_mvp_map_has_no_heights_for_enemies() -> void:
 	assert_eq(m.ground_height(), 0.0)
 
 
-func test_no_link_joins_cells_more_than_a_step_apart() -> void:
+## T-226 changed this: links more than a step apart now exist, but only as
+## one-way drops (down), never up.
+func test_no_link_climbs_more_than_a_step() -> void:
 	var nav = spawner.navigation
 	var bad := 0
+	var two_way_drops := 0
 	var links := 0
 	for k in nav.heights.size():
 		if not nav.astar.has_point(k):
 			continue
 		for other in nav.astar.get_point_connections(k):
 			links += 1
-			if absf(nav.heights[other] - nav.heights[k]) > EnemyHeightScript.MAX_STEP:
+			if nav.heights[other] - nav.heights[k] > EnemyHeightScript.MAX_STEP:
 				bad += 1
+			if nav.heights[k] - nav.heights[other] > EnemyHeightScript.MAX_STEP 					and nav.astar.are_points_connected(other, k, false):
+				two_way_drops += 1
 	assert_gt(links, 10000)
-	assert_eq(bad, 0, "every link changes the height by MAX_STEP at most")
+	assert_eq(bad, 0, "no link climbs by more than MAX_STEP")
+	assert_eq(two_way_drops, 0, "every drop link is one-way, down")
 
 
 func test_buildings_and_boulders_are_closed_cells() -> void:
@@ -158,7 +164,9 @@ func test_buildings_and_boulders_are_closed_cells() -> void:
 		assert_false(nav.astar.has_point(nav.cell_at(c)), "no path through the boulder at %s" % c)
 
 
-func test_no_link_crosses_a_rooftop_edge() -> void:
+## T-226 changed this: no link climbs a rooftop's edge from below (the drop
+## links go down only; test_enemies_drop_off_ledges.gd checks they exist).
+func test_no_link_climbs_a_rooftop_edge() -> void:
 	var nav = spawner.navigation
 	var crossings := 0
 	for p in ground.platforms:
@@ -176,10 +184,11 @@ func test_no_link_crosses_a_rooftop_edge() -> void:
 					[Vector2(rect.end.x - 1.0, y), Vector2(rect.end.x + 1.0, y)]]:
 				crossings += _linked_across(nav, pair[0], pair[1])
 			y += 2.0
-	assert_eq(crossings, 0, "no link between a rooftop and lower ground beside it")
+	assert_eq(crossings, 0, "no link from lower ground up onto a rooftop beside it")
 
 
-## 1 when the cells at a and b are linked although their ground differs by more than a step.
+## 1 when the cell at b (outside, lower) links up to the cell at a although
+## their ground differs by more than a step.
 func _linked_across(nav, a: Vector2, b: Vector2) -> int:
 	var ka: int = nav.cell_at(a)
 	var kb: int = nav.cell_at(b)
@@ -187,7 +196,7 @@ func _linked_across(nav, a: Vector2, b: Vector2) -> int:
 		return 0
 	if absf(nav.heights[ka] - nav.heights[kb]) <= EnemyHeightScript.MAX_STEP:
 		return 0  # a ramp's top meets the rooftop here: level ground
-	return 1 if nav.astar.are_points_connected(ka, kb) else 0
+	return 1 if nav.astar.are_points_connected(kb, ka, false) else 0
 
 
 func test_a_path_from_the_street_to_height_6_goes_by_both_ramps() -> void:
@@ -303,7 +312,10 @@ func test_minions_on_the_street_reach_a_car_on_the_se_height_6_rooftop_by_the_ra
 
 # --- AC 2: down the ramps, and no edge crossed ------------------------------------
 
-func test_minions_on_the_rooftops_come_down_by_a_ramp_to_a_car_on_the_street() -> void:
+## T-207's way down, kept with the drop links left out (T-226: with them the
+## minions drop off the edges; test_enemies_drop_off_ledges.gd).
+func test_without_drops_minions_on_the_rooftops_come_down_by_a_ramp() -> void:
+	spawner.navigation = EnemyNavigationScript.build_for_map(run.map, false)
 	_place_car(Vector2(-70, -48), -PI / 2.0)
 	assert_almost_eq(run.car.height, 0.0, 0.001)
 	var starts := [Vector2(-27, -81), Vector2(-70, -80), Vector2(-90, -70), Vector2(-20, -70)]

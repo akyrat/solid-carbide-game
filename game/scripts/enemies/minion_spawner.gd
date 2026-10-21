@@ -39,6 +39,9 @@ extends Node
 ## per map, shared with the kaiju). Minions spawn on the street only; they
 ## push apart only from minions at their level; their sprites and coins are
 ## drawn lifted by the ground's height, in the depth order at that height.
+## T-226: a minion whose path drops off a rooftop's edge may walk out over it
+## (minion.may_drop, from its follower) and falls; while it falls it is drawn
+## at its height in the air, with the falling animation (minion_sprite.gd).
 ## `heights_enabled` false (tests, the soak's comparison) makes them ignore
 ## the heights, as before T-207.
 
@@ -98,6 +101,8 @@ var visible_rect_override := Rect2()
 ## T-207: false makes the minions ignore the map's heights (as before T-207).
 ## Read when a run's world is built (set it, then start a new run).
 var heights_enabled := true
+## T-226: how many times minions have dropped off an edge (the soak's count).
+var drops_total := 0
 ## Microseconds the last step() took (T-207: the soak's frame time).
 var last_step_usec := 0
 ## The map's ground heights (GroundHeight) and the enemies' navigation
@@ -224,7 +229,11 @@ func move_step(dt: float) -> void:
 		var target := car_units
 		if navigation != null and m.follower != null:
 			target = m.follower.target(navigation, m.position_units(), car_units, dt)
+			m.may_drop = m.follower.dropping(navigation, m.position_units(), m.body_height())
+		var was_falling: bool = m.is_falling()
 		m.walk(dt, target, pushes[i])
+		if not was_falling and m.is_falling():
+			drops_total += 1
 		i += 1
 		m.contact_step(dt, car, state)
 		if state != null and not state.is_running():
@@ -260,7 +269,7 @@ func _separation() -> Array:
 	var hs := []
 	for m in minions:
 		pos.append(m.position_units())
-		hs.append(m.ground_height() if ground != null else 0.0)
+		hs.append(m.body_height() if ground != null else 0.0)
 	for a in minions.size():
 		var push := Vector2.ZERO
 		for b in minions.size():
@@ -454,7 +463,8 @@ func _place_sprite(m: Node) -> void:
 	var s: Node2D = m.sprite
 	if s == null:
 		return
-	var h: float = m.ground_height()
+	var h: float = m.body_height()
 	s.position = ISO_TRANSFORM * m.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(m.heading)
+	s.set_falling(m.is_falling())
 	s.z_index = depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS, h)

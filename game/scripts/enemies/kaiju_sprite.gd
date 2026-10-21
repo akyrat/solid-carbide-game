@@ -15,6 +15,16 @@ extends Node2D
 ## from the way it walks and a frame from the same walk cycle as the stomp.
 ## The feet stand on the ground point. If a sheet is missing, the placeholder
 ## shape below is drawn instead.
+##
+## Falling (task T-226, a proposal: the kaiju drops off edges too): while it
+## falls (set_falling, from the boss controller) it plays the falling
+## animation, and a squash for LAND_SECONDS after it lands; no ground shadow
+## while it is in the air. The art hook (T-227): falling frames in
+## FALL_SHEET_DIR (kaiju_fall_e.png, _se, _s, _ne, _n; the others mirrored),
+## FRAME_SIZE square frames in a row, as many as the sheet is wide, played at
+## FALL_FPS. Until they exist the placeholder is made by script from the walk
+## frames: the stomp at FLAIL_SPEED times its speed and the body tipping back
+## and forth about its feet (FALL_TILT radians).
 
 const BODY_COLOR := Color(0.20, 0.30, 0.28)
 const BELLY_COLOR := Color(0.38, 0.47, 0.40)
@@ -40,6 +50,14 @@ const ART_TOP_Y := 17.0
 const SHEETS := [["e", false], ["se", false], ["s", false], ["se", true],
 	["e", true], ["ne", true], ["n", false], ["ne", false]]
 const SHEET_DIR := "res://art/kaiju/kaiju_%s.png"
+## T-226 / T-227: the falling frames' sheets (see the top).
+const FALL_SHEET_DIR := "res://art/kaiju/kaiju_fall_%s.png"
+const FALL_FPS := 8.0
+const FLAIL_SPEED := 2.5
+const FALL_TILT := 0.15
+const FALL_WOBBLE_HZ := 1.5
+const LAND_SECONDS := 0.25
+const LAND_SQUASH := Vector2(1.2, 0.8)
 
 static var _textures := {}
 
@@ -49,6 +67,11 @@ var facing := Vector2.RIGHT
 var facing_x := -1.0
 ## Walk cycle, 0..1, for the stomp.
 var _walk := 0.0
+## T-226: true while the kaiju falls; seconds into the fall; seconds of the
+## landing squash left.
+var falling := false
+var fall_seconds := 0.0
+var land_left := 0.0
 
 
 func _ready() -> void:
@@ -56,8 +79,49 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	_walk = fmod(_walk + delta * 0.9, 1.0)
+	advance(delta)
 	queue_redraw()
+
+
+## Moves the animation on `delta` seconds (the stomp, the fall, the squash).
+func advance(delta: float) -> void:
+	_walk = fmod(_walk + delta * 0.9 * (FLAIL_SPEED if falling else 1.0), 1.0)
+	if falling:
+		fall_seconds += delta
+	land_left = maxf(land_left - delta, 0.0)
+
+
+## T-226: the kaiju falls (true) or stands (false), as the minion's sprite.
+func set_falling(on: bool) -> void:
+	if on and not falling:
+		fall_seconds = 0.0
+		land_left = 0.0
+	elif not on and falling:
+		land_left = LAND_SECONDS
+	falling = on
+
+
+## What it plays now: "fall", "land" (the squash) or "walk".
+func animation() -> String:
+	if falling:
+		return "fall"
+	return "land" if land_left > 0.0 else "walk"
+
+
+## The drawing's transform for the placeholder fall or the squash, about its
+## feet (identity while walking).
+func anim_transform(placeholder_fall: bool = true) -> Transform2D:
+	if falling and placeholder_fall:
+		return Transform2D(sin(fall_seconds * TAU * FALL_WOBBLE_HZ) * FALL_TILT, Vector2.ZERO)
+	if land_left > 0.0:
+		var sc := Vector2.ONE.lerp(LAND_SQUASH, land_left / LAND_SECONDS)
+		return Transform2D(0.0, sc, 0.0, Vector2.ZERO)
+	return Transform2D.IDENTITY
+
+
+## The falling frames' sheet for a direction (T-227), or null until it exists.
+static func fall_sheet(sheet_name: String) -> Texture2D:
+	return _sheet_at(FALL_SHEET_DIR % sheet_name)
 
 
 ## Sets the facing from a flat-world direction (projected to the screen).
@@ -81,10 +145,13 @@ static func frame_for(walk: float) -> int:
 
 
 static func _sheet(sheet_name: String) -> Texture2D:
-	if not _textures.has(sheet_name):
-		var path := SHEET_DIR % sheet_name
-		_textures[sheet_name] = load(path) if ResourceLoader.exists(path) else null
-	return _textures[sheet_name]
+	return _sheet_at(SHEET_DIR % sheet_name)
+
+
+static func _sheet_at(path: String) -> Texture2D:
+	if not _textures.has(path):
+		_textures[path] = load(path) if ResourceLoader.exists(path) else null
+	return _textures[path]
 
 
 ## True when the final art is in the project.
@@ -132,14 +199,25 @@ func _blob(cx: float, cy: float, rx: float, ry: float, color: Color, outline: bo
 
 func _draw() -> void:
 	var gr := RADIUS_UNITS * PX * sqrt(2.0)
-	_ground_shadow(gr)
+	if not falling:
+		_ground_shadow(gr)
 	var entry: Array = SHEETS[compass_index(facing)]
+	if falling:
+		var fall_tex := fall_sheet(entry[0])
+		if fall_tex != null:
+			# T-227's frames, as they are.
+			var n := maxi(1, fall_tex.get_width() / FRAME_SIZE)
+			_draw_art(fall_tex, entry[1], int(fall_seconds * FALL_FPS) % n)
+			return
+	var anim := anim_transform()
 	var tex := _sheet(entry[0])
 	if tex != null:
-		_draw_art(tex, entry[1])
+		draw_set_transform_matrix(anim)
+		_draw_art(tex, entry[1], frame_for(_walk))
+		draw_set_transform_matrix(Transform2D.IDENTITY)
 		return
 	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sc, sc))
+	draw_set_transform_matrix(anim * Transform2D(0.0, Vector2(sc, sc), 0.0, Vector2.ZERO))
 	var stomp := sin(_walk * TAU)
 	var lift_a := maxf(stomp, 0.0) * 6.0
 	var lift_b := maxf(-stomp, 0.0) * 6.0
@@ -171,11 +249,14 @@ func _draw() -> void:
 	draw_rect(Rect2(eye - Vector2(2, 1), Vector2(4, 2)), EYE_COLOR)
 
 
-func _draw_art(tex: Texture2D, mirrored: bool) -> void:
-	var src := Rect2(frame_for(_walk) * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
+	var src := Rect2(frame * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
 	var size := FRAME_SIZE * ART_SCALE
 	var w := -size if mirrored else size
-	draw_texture_rect_region(tex, Rect2(Vector2(-w / 2.0, -ART_FEET_Y * ART_SCALE), Vector2(w, size)), src)
+	# A negative width flips the frame in place: Godot draws it from the
+	# rect's x to x + size, so x is -size / 2 both ways (T-226 fix: it was
+	# -w / 2, which put every mirrored frame one frame width to the right).
+	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -ART_FEET_Y * ART_SCALE), Vector2(w, size)), src)
 
 
 func _ground_shadow(rx: float) -> void:

@@ -223,6 +223,7 @@ func step(dt: float) -> void:
 	var target := car_units
 	if navigation != null and kaiju.follower != null:
 		target = kaiju.follower.target(navigation, kaiju.position_units(), car_units, dt, false)
+		kaiju.may_drop = kaiju.follower.dropping(navigation, kaiju.position_units(), kaiju.body_height())
 	kaiju.walk(dt, target)
 	kaiju.contact_step(dt, car, state)
 	update_drawing()
@@ -367,7 +368,8 @@ func _place_sprite() -> void:
 	if not _live() or kaiju.sprite == null:
 		return
 	var s: Node2D = kaiju.sprite
-	var h: float = kaiju.ground_height()
+	var h: float = kaiju.body_height()
 	s.position = ISO_TRANSFORM * kaiju.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(kaiju.heading)
+	s.set_falling(kaiju.is_falling())
 	s.z_index = depth.z_index_for(kaiju.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS, h)

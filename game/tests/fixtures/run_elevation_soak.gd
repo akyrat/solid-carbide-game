@@ -180,7 +180,8 @@ func _print_frame_time() -> void:
 		busy.mean, busy.p99, busy.max, busy.step_mean, busy.step_max, busy.n])
 	var nav = run.minions.navigation
 	if nav != null:
-		print("run_elevation_soak: navigation built in %.1f ms, %d points" % [nav.build_usec / 1000.0, nav.astar.get_point_count()])
+		print("run_elevation_soak: navigation built in %.1f ms, %d points, %d drop links; minions dropped off edges %d times (T-226)" % [
+			nav.build_usec / 1000.0, nav.astar.get_point_count(), nav.drop_links, run.minions.drops_total])
 
 
 static func _stats(frames: Array) -> Dictionary:

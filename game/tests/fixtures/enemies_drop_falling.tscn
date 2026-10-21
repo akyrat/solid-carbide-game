@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/enemies_drop_demo.gd" id="1_demo"]
+
+[node name="EnemiesDropFalling" type="Node"]
+script = ExtResource("1_demo")
+car_units = Vector2(-20, -58)
+car_rotation = 0.0
+minion_spots = Array[Vector2]([Vector2(-27, -81), Vector2(-20, -74), Vector2(-33, -88), Vector2(-15, -84), Vector2(-24, -92), Vector2(-38, -76)])
+walk_seconds = 0.0
+zoom = 9.0
+stop_at_seconds = 2.1

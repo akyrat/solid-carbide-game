@@ -25,11 +25,14 @@ extends CharacterBody2D
 ## keeps off the edge), it climbs only by the ramps (10 units wide, wide
 ## enough for it), and its contact damage only hits the car at its level.
 ## The boss controller picks its way through `follower`.
+## Drops (task T-226, a proposal): it drops off a rooftop's edge on its path
+## and falls as a minion does (`may_drop`, `fall`, enemy_fall.gd).
 
 const PX_PER_UNIT := 16.0
 const LAYER_OBSTACLES := 1 << 0
 const LAYER_ENEMIES := 1 << 2
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
+const EnemyFallScript := preload("res://scripts/enemies/enemy_fall.gd")
 
 ## The placeholder's body radius on the ground, in units (the collision circle
 ## and the reach for touching the car): 4 units across, the car being 1 wide
@@ -65,12 +68,19 @@ var heading := Vector2.LEFT
 var ground = null
 ## Its way to the car over the ramps (enemy_path_follower.gd); set by the controller.
 var follower: RefCounted = null
+## T-226: true for this step when its path drops off an edge here (set by its
+## controller from follower.dropping()): it may then walk out over the edge.
+var may_drop := false
+## Its fall off an edge (enemy_fall.gd, T-226).
+var fall = EnemyFallScript.new()
 
 var _dead := false
 ## The normal of the obstacle it touched last step (ZERO for none).
 var _wall_normal := Vector2.ZERO
 ## The normal of a ground edge that stopped the last move (ZERO for none).
 var _edge_normal := Vector2.ZERO
+## True while the current move may go over an edge (walking with may_drop).
+var _drop_now := false
 
 
 ## Sets the numbers from EnemyData.kaiju().
@@ -111,11 +121,34 @@ func position_units() -> Vector2:
 
 func set_position_units(p: Vector2) -> void:
 	position = p * PX_PER_UNIT
+	fall.reset()
 
 
 ## The height of the ground it stands on, units (0 with no ground).
 func ground_height() -> float:
 	return EnemyHeightScript.height_at(ground, position_units())
+
+
+## The height of its body, units (T-226): in the air while it falls off an
+## edge, otherwise the ground's.
+func body_height() -> float:
+	return fall.body_height(ground_height())
+
+
+## True while it falls off an edge (T-226).
+func is_falling() -> bool:
+	return fall.falling
+
+
+## After a move from a body height of `h0` (T-226): starts a fall when it has
+## walked out over ground more than MAX_STEP lower, and steps a fall `dt`.
+func _fall_step(dt: float, h0: float) -> void:
+	if ground == null:
+		return
+	var g := ground_height()
+	if not fall.falling and h0 - g > EnemyHeightScript.MAX_STEP:
+		fall.start(h0)
+	fall.step(dt, g)
 
 
 ## Moves by `motion` (pixels), limited first by the ground's edges (T-207),
@@ -124,7 +157,8 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 	_edge_normal = Vector2.ZERO
 	if ground == null:
 		return move_and_collide(motion)
-	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, RADIUS_UNITS)
+	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, RADIUS_UNITS,
+		body_height(), _drop_now or fall.falling)
 	_edge_normal = lim.normal
 	for seg in lim.segments:
 		if (seg as Vector2).length() < 0.000001:
@@ -180,8 +214,10 @@ func _die() -> void:
 func walk(dt: float, target_units: Vector2) -> void:
 	if _dead:
 		return
+	var h0 := body_height()
 	var to_target := target_units - position_units()
 	if to_target.length() < 0.001:
+		_fall_step(dt, h0)
 		return
 	var dir := to_target.normalized()
 	if _wall_normal != Vector2.ZERO and dir.dot(_wall_normal) < 0.0:
@@ -191,6 +227,7 @@ func walk(dt: float, target_units: Vector2) -> void:
 		dir = along.normalized()
 	heading = dir
 	velocity = dir * move_speed * PX_PER_UNIT
+	_drop_now = may_drop
 	var hit := _move(velocity * dt)
 	_wall_normal = _edge_normal
 	if hit != null:
@@ -203,6 +240,8 @@ func walk(dt: float, target_units: Vector2) -> void:
 				_wall_normal = hit2.get_normal()
 			elif _edge_normal != Vector2.ZERO:
 				_wall_normal = _edge_normal
+	_drop_now = false
+	_fall_step(dt, h0)
 
 
 ## True when the kaiju's body touches the car's 1 x 1 unit body
@@ -224,7 +263,7 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
 		return false
-	if ground != null and not EnemyHeightScript.at_car_level(ground_height(), EnemyHeightScript.car_height(car)):
+	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
 		return false
 	if contact_cooldown > 0.0:
 		return false

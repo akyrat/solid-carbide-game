@@ -1645,3 +1645,8 @@ Entry format:
 - Decision or change: the health drop is the board's approved PixelLab sample (1 generation) with three free script fixes the board chose: a clean white plus, its darkest red moved well away from Redgull's, and scaled to about a coin's size (`game/tools/build_health_canister.py`, `game/art/effects/health_canister.png`). The board: "LGTM".
 - Documents touched: `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-221 (done)
+
+## 2026-10-21: T-226 done: enemies jump down off ledges
+- Decision or change: enemies above the car drop off a rooftop's edge to chase it (one-way links in the A* grid; going up still needs a ramp), falling with the car's gravity and playing a placeholder falling animation (flailing legs, tilt, squash on landing) until T-227's art. In the test, minions reached a car below in 2 to 6 s instead of 22 to 25 s. A falling enemy hurts the car only within 1 unit of its height; the kaiju drops too. Also fixed: west-facing enemies were drawn beside their shadows (since T-068/T-069). The board: "LGTM".
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-226 (done), T-227 (starts)
