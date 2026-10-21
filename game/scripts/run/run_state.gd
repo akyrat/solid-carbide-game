@@ -74,6 +74,10 @@ signal combo_trick(trick_id: String, added: float, multiplier: float)
 ## The combo multiplier changed (a trick, a collision, the drain, or a new
 ## run). For the HUD's combo counter (T-083) and enemy spawning (T-085).
 signal combo_changed(multiplier: float)
+## A crash cut a combo that was going (T-245): a collision or any damage took
+## the multiplier down (not the drain, and not when there was no combo to cut).
+## For the combo broken popup.
+signal combo_broken
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -325,7 +329,10 @@ func add_trick(trick_id: String) -> void:
 func collision() -> void:
 	if not running:
 		return
+	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
+	if before - combo > EPSILON:
+		combo_broken.emit()
 
 
 ## How much the minion spawn rate is multiplied at the current combo
