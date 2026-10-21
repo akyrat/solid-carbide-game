@@ -146,6 +146,18 @@ func test_no_link_joins_cells_more_than_a_step_apart() -> void:
 	assert_eq(bad, 0, "every link changes the height by MAX_STEP at most")
 
 
+func test_buildings_and_boulders_are_closed_cells() -> void:
+	var nav = spawner.navigation
+	for b in run.map.layout.buildings:
+		var c: Vector2 = run.map.rect_of(b).get_center()
+		assert_false(nav.astar.has_point(nav.cell_at(c)), "no path through the building at %s" % c)
+	var boulders: Array = run.map.all_boulders()
+	assert_gt(boulders.size(), 0)
+	for b in boulders:
+		var c := Vector2(float(b.x), float(b.y))
+		assert_false(nav.astar.has_point(nav.cell_at(c)), "no path through the boulder at %s" % c)
+
+
 func test_no_link_crosses_a_rooftop_edge() -> void:
 	var nav = spawner.navigation
 	var crossings := 0
@@ -217,6 +229,38 @@ func test_the_follower_walks_straight_on_the_cars_surface() -> void:
 	for i in 10:
 		f.target(nav, Vector2(-70, -80), car, DT)
 	assert_eq(f.paths_found, 1, "no new path before REPATH_SECONDS")
+
+
+func test_paths_are_spread_over_steps_when_many_need_one() -> void:
+	_place_car(Vector2(-27, -81), PI / 2.0)
+	var ms := []
+	for i in 10:
+		ms.append(_spawn(Vector2(-70 + i, -48)))
+	spawner.move_step(DT)
+	var with_path := ms.filter(func(m) -> bool: return m.follower.has_path())
+	assert_eq(with_path.size(), EnemyNavigationScript.PATHS_PER_STEP, "at most PATHS_PER_STEP paths in one step")
+	for _i in 3:
+		spawner.move_step(DT)
+	with_path = ms.filter(func(m) -> bool: return m.follower.has_path())
+	assert_eq(with_path.size(), 10, "all of them a few steps later")
+
+
+func test_a_minion_on_its_way_to_a_ramp_is_not_removed_off_screen() -> void:
+	_place_car(Vector2(-27, -81), PI / 2.0)
+	spawner.visible_rect_override = Rect2(ISO * (Vector2(-27, -81) * 16.0) - Vector2(200, 120), Vector2(400, 240))
+	var climbing := _spawn(Vector2(-81, -45))  # far off screen, on its way to ramp-nw-0-3
+	var idle := _spawn(Vector2(-81, -45))
+	idle.follower = null  # no path: removed as before T-207
+	spawner.move_step(DT)
+	assert_true(climbing.follower.has_path())
+	spawner._despawn_far()
+	assert_true(spawner.minions.has(climbing), "kept: it is on its way by the ramps")
+	assert_false(spawner.minions.has(idle), "removed: off screen with no path")
+	var lost := _spawn(Vector2(100, 100))  # beyond ON_PATH_KEEP_UNITS from the car
+	spawner.move_step(DT)
+	assert_true(lost.follower.has_path())
+	spawner._despawn_far()
+	assert_false(spawner.minions.has(lost), "removed when farther than ON_PATH_KEEP_UNITS")
 
 
 # --- AC 1: up the ramps to a car on a height-6 rooftop -------------------------------

@@ -33,7 +33,11 @@ func _init(start_clock: float = 0.0) -> void:
 
 ## The point (flat units) to walk towards this step, `dt` seconds, from
 ## `from` to the car at `car_units`. `nav` null (no heights): the car.
-func target(nav, from: Vector2, car_units: Vector2, dt: float) -> Vector2:
+## `budgeted` (the minions): a new path only while the navigation's budget
+## for the step lasts (enemy_navigation.gd, PATHS_PER_STEP); otherwise it
+## keeps its old path (or walks at the car) and asks again next step. The
+## kaiju, one enemy, passes false.
+func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = true) -> Vector2:
 	if nav == null:
 		return car_units
 	var car_s: int = nav.surface_at(car_units)
@@ -41,7 +45,7 @@ func target(nav, from: Vector2, car_units: Vector2, dt: float) -> Vector2:
 		_forget()
 		return car_units
 	clock -= dt
-	if car_s != car_surface or clock <= 0.0:
+	if (car_s != car_surface or clock <= 0.0) and (not budgeted or nav.can_find_path()):
 		path = nav.find_path(from, car_units)
 		index = 0
 		clock = REPATH_SECONDS

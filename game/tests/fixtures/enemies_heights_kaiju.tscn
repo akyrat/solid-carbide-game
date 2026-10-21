@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/enemies_heights_demo.gd" id="1_demo"]
+
+[node name="EnemiesHeightsKaiju" type="Node"]
+script = ExtResource("1_demo")
+car_units = Vector2(-81, -82)
+car_rotation = 1.5708
+kaiju_spot = Vector2(-81, -46)
+walk_seconds = 4.5
+zoom = 18.0

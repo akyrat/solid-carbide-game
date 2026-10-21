@@ -59,6 +59,10 @@ const SPAWN_TRIES := 12
 const COIN_SPREAD_UNITS := 0.6
 ## How strongly minions push apart (see Minion.SEPARATION_UNITS).
 const SEPARATION_WEIGHT := 0.8
+## T-207: how far from the car (units) a minion on its way to a ramp may be
+## before it is removed (others: a screen beyond the visible one). Half the
+## map: the farthest a rooftop is from its ramp's foot is about 80. A proposal.
+const ON_PATH_KEEP_UNITS := 120.0
 
 ## A minion spawned.
 signal minion_spawned(minion: Node)
@@ -92,6 +96,8 @@ var visible_rect_override := Rect2()
 ## T-207: false makes the minions ignore the map's heights (as before T-207).
 ## Read when a run's world is built (set it, then start a new run).
 var heights_enabled := true
+## Microseconds the last step() took (T-207: the soak's frame time).
+var last_step_usec := 0
 ## The map's ground heights (GroundHeight) and the enemies' navigation
 ## (enemy_navigation.gd); both null on a map without heights.
 var ground = null
@@ -183,11 +189,13 @@ func step(dt: float) -> void:
 		return
 	if state != null and not state.is_running():
 		return
+	var t0 := Time.get_ticks_usec()
 	_prune()
 	_spawn_step(dt)
 	move_step(dt)
 	_despawn_far()
 	update_drawing()
+	last_step_usec = Time.get_ticks_usec() - t0
 
 
 ## One physics step of the minions already there: each walks (straight at the
@@ -197,6 +205,8 @@ func move_step(dt: float) -> void:
 	if car == null or not is_instance_valid(car):
 		return
 	var car_units: Vector2 = car.position / PX_PER_UNIT
+	if navigation != null:
+		navigation.new_step()
 	var pushes := _separation()
 	var i := 0
 	for m in minions.duplicate():
@@ -377,13 +387,21 @@ func is_free_spot(units: Vector2) -> bool:
 
 
 ## Removes minions a whole screen beyond the visible screen (no coins).
+## A minion on its way to the car by the ramps (T-207: its follower has a
+## path) is removed only when it is more than ON_PATH_KEEP_UNITS from the car,
+## so it is not removed while it walks round to a ramp far from the car (a
+## proposal).
 func _despawn_far() -> void:
 	var v := visible_rect()
 	var keep := v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
+	var car_units: Vector2 = car.position / PX_PER_UNIT
 	for m in minions.duplicate():
-		if not keep.has_point(ISO_TRANSFORM * m.position):
-			minions.erase(m)
-			m.queue_free()
+		if keep.has_point(ISO_TRANSFORM * m.position):
+			continue
+		if m.follower != null and m.follower.has_path() 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
+			continue
+		minions.erase(m)
+		m.queue_free()
 
 
 ## Puts every sprite at its body's place in the view and in the depth order.

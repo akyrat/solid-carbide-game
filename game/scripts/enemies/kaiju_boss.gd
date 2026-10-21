@@ -222,7 +222,7 @@ func step(dt: float) -> void:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	var target := car_units
 	if navigation != null and kaiju.follower != null:
-		target = kaiju.follower.target(navigation, kaiju.position_units(), car_units, dt)
+		target = kaiju.follower.target(navigation, kaiju.position_units(), car_units, dt, false)
 	kaiju.walk(dt, target)
 	kaiju.contact_step(dt, car, state)
 	update_drawing()

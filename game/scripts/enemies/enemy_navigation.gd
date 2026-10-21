@@ -3,7 +3,7 @@ extends RefCounted
 ## T-207; Enemies, Decisions, "Enemies follow the car up the ramps").
 ##
 ## A grid of CELL by CELL unit cells over the whole map, in Godot's AStar2D:
-## one point per open cell (not in a building), and a link between two
+## one point per open cell (not in a building or on a boulder), and a link between two
 ## neighbouring cells (the four sides and the four corners) only when the
 ## ground between them changes by EnemyHeight.MAX_STEP or less. Rooftop edges
 ## (3 or 6 units) and the high part of a ramp's sides are never linked, so the
@@ -37,6 +37,10 @@ const RAMP_OUT := 1.5
 ## only skims the ramp's low end: its cells are kept as they are.
 const CLIMB_MIN := 1.0
 const META_KEY := "enemy_navigation"
+## Paths found at most per step (the spawner calls new_step() each step), so
+## a crowd that needs paths at the same moment (the car drives up a ramp) asks
+## for them over a few steps instead of in one.
+const PATHS_PER_STEP := 4
 
 var ground
 var astar := AStar2D.new()
@@ -50,6 +54,9 @@ var open := PackedByteArray()
 var ramp_of := PackedInt32Array()
 ## Microseconds the last build took (for the result notes and the soak).
 var build_usec := 0
+## Paths found since the last new_step(), and in all.
+var paths_this_step := 0
+var paths_total := 0
 
 
 ## The navigation of `map` (built by mvp_map.gd) on a map with elevation
@@ -66,15 +73,19 @@ static func for_map(map: Node) -> RefCounted:
 	var blocks: Array = []
 	for b in map.layout.buildings:
 		blocks.append(map.rect_of(b))
+	var boulders: Array = []
+	for b in map.all_boulders():
+		boulders.append([Vector2(float(b.x), float(b.y)), float(b.diameter) / 2.0])
 	var nav = load("res://scripts/enemies/enemy_navigation.gd").new()
-	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height)
+	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders)
 	map.set_meta(META_KEY, nav)
 	return nav
 
 
 ## Builds the grid over `map_rect` (units) with `blocks` (building rectangles)
+## and `boulders` ([centre, radius] in units, the map's at the run's start)
 ## closed, and the heights of `the_ground` (a GroundHeight).
-func build(map_rect: Rect2, blocks: Array, the_ground) -> void:
+func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = []) -> void:
 	var t0 := Time.get_ticks_usec()
 	ground = the_ground
 	origin = map_rect.position
@@ -100,6 +111,11 @@ func build(map_rect: Rect2, blocks: Array, the_ground) -> void:
 		_for_cells_in(ground.ramps[i].rect, func(k: int, _c: Vector2) -> void: ramp_of[k] = ri)
 	for b in blocks:
 		_for_cells_in((b as Rect2).grow(BUILDING_MARGIN), func(k: int, _c: Vector2) -> void: open[k] = 0)
+	for bo in boulders:
+		var centre: Vector2 = bo[0]
+		var reach: float = float(bo[1]) + BUILDING_MARGIN
+		_for_cells_in(Rect2(centre - Vector2(reach, reach), Vector2(reach, reach) * 2.0),
+			func(k: int, c: Vector2) -> void: if c.distance_to(centre) < reach: open[k] = 0)
 	astar.clear()
 	astar.reserve_space(n)
 	for k in n:
@@ -197,10 +213,22 @@ func _cell_near(units: Vector2, h: float) -> int:
 	return best
 
 
+## A new step: the path budget (PATHS_PER_STEP) starts again.
+func new_step() -> void:
+	paths_this_step = 0
+
+
+## True while this step's path budget is not used up.
+func can_find_path() -> bool:
+	return paths_this_step < PATHS_PER_STEP
+
+
 ## A path (units) from `from` to `to` over the streets, ramps and rooftops,
 ## each on the ground under it. The first point is near `from`, the last at
 ## `to`'s cell. Empty when there is no way (or either end is off the grid).
 func find_path(from: Vector2, to: Vector2) -> PackedVector2Array:
+	paths_this_step += 1
+	paths_total += 1
 	var a := _cell_near(from, ground.height_at(from))
 	var b := _cell_near(to, ground.height_at(to))
 	if a < 0 or b < 0:
