@@ -1,7 +1,7 @@
 ---
 id: T-210
 title: "The pause screen's music volume slider"
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Coursework
@@ -49,6 +49,18 @@ Board review files: the pause screen in a run.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Blocked → In progress
+
+Started: the Music volume slider under SFX volume on the pause screen.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Built: a "Music volume" slider (T-208's label) on its own row `MusicRow` directly under the SFX row in `game/scripts/ui/pause_screen.gd`, laid out like it (label of `LABEL_WIDTH`, same-width slider, number at the right end), 0 to 100. It starts from `GameSettings.load_music_volume()`, and each move saves (`save_music_volume`) and applies (`apply_music_volume`) to the Music bus at once, never the SFX bus. The music is not paused by the pause screen (T-209 plays it on the Music bus).
+
+Proposals and notes:
+- The strip is one row taller (about 29 px). Its test budgets were raised to fit: thin band below 0.35 of the screen height (was 0.30), ends above half the screen (was 0.45), and above y 340 with the dynamic-camera buttons (was 300). The strip still starts at `STRIP_TOP` 92, below the HUD timer. The board may want a tighter strip later.
+- Tests: `game/tests/unit/test_music_volume_slider.gd` (label, range, start from saved value, applies at once, SFX untouched, saved, layout under SFX). Full GUT suite 1141/1141 pass; `python -m unittest discover -s tools` 414 OK; `-s game/tools` 355 OK (1 skipped).
+- Ran Godot with GODOT_BIN read from the main checkout's .env (the worktree has no .env); no command was refused.
+- Long GDD regeneration not run (done at merge by the Project Lead); docs/hud-and-menus.md and game/README.md updated.
+
+Screenshots: `art-archive/T-210/screenshots/pause_music_slider.png` (paused run from the menu: "Music volume" row under "SFX volume", strip below the HUD timer; the board's saved settings had the dynamic camera on, so the tuning buttons show).

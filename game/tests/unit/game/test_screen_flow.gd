@@ -253,9 +253,9 @@ func test_the_pause_strip_is_compact_and_below_the_timer() -> void:
 	var timer: Label = game.run.hud.timer_label
 	var screen_h := float(ProjectSettings.get_setting("display/window/size/viewport_height"))
 	assert_false(strip.get_global_rect().intersects(timer.get_global_rect()), "strip and timer are apart")
-	assert_lt(strip.size.y, screen_h * 0.30, "the strip is a thin band (room for the SFX volume row, T-077)")
+	assert_lt(strip.size.y, screen_h * 0.35, "the strip is a thin band (room for the SFX and music volume rows, T-077, T-210)")
 	assert_almost_eq(strip.size.y, strip.get_combined_minimum_size().y, 1.0, "only as tall as its content")
-	assert_lt(strip.get_global_rect().end.y, screen_h * 0.45, "most of the map stays visible")
+	assert_lt(strip.get_global_rect().end.y, screen_h * 0.5, "most of the map stays visible (half, with the music row, T-210)")
 
 
 func test_the_camera_settings_come_back_on_resume() -> void:
