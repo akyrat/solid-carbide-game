@@ -1655,3 +1655,8 @@ Entry format:
 - Decision or change: on a height-6 rooftop the car sat high on the screen, because the run's camera followed only the car's ground position (T-206's proposal, not a deliberate height illusion). The board chose to have the camera follow the car as drawn, height included, eased smoothly, so the car stays near the middle (Drifting, Decisions). T-228 builds it.
 - Documents touched: `docs/drifting.md`
 - Tasks: T-228 (in progress)
+
+## 2026-10-21: A level creator, built by a goal run
+- Decision or change: the board wants to make levels by hand in a separate level creator app: browse the levels made, play one as a full run, or create a new one by placing the game's existing assets from a side panel, rotating them between the views the art has, at heights 3 and 6, with snapping to the tile grid and to neighbours (Level design, Decisions). Custom levels play only from the creator. Built by the goal runner (G-005) with an art cap of 0; the board plays the result once at the end. The board also approved T-227's falling sample.
+- Documents touched: `docs/level-design.md`
+- Tasks: G-005, T-227
