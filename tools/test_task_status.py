@@ -237,6 +237,41 @@ class QaMarks(unittest.TestCase):
         passed, failed, _ = self.verdicts_of("A (QA: pass; x) (QA: fail: y)")
         self.assertEqual((len(passed), len(failed)), (0, 1))
 
+    def test_only_the_last_mark_counts(self):
+        """T-215 (T-199's false flag): a round-2 pass after a round-1 fail is a pass, and the other way round."""
+        passed, failed, unchecked = self.verdicts_of(
+            "A (QA: fail, crashes) (QA: pass)", "B (QA: fail: x) (QA: pass; fixed in round 2)",
+            "C (QA: pass / fail) (QA: pass)", "D (QA: pass) (QA: fail, broke again)")
+        self.assertEqual([l.strip()[6] for l in passed], ["A", "B", "C"])
+        self.assertEqual([l.strip()[6] for l in failed], ["D"])
+        self.assertEqual(unchecked, [])
+
+    def test_a_full_stop_after_pass_or_fail(self):
+        """T-215 (T-210): "(QA: pass. reason)" and "(QA: fail. reason)"."""
+        passed, failed, unchecked = self.verdicts_of("A (QA: pass. 414 tests OK)", "B (QA: fail. the log is empty)",
+                                                     "C (QA: pass.)")
+        self.assertEqual(([l.strip()[6] for l in passed], [l.strip()[6] for l in failed], unchecked),
+                         (["A", "C"], ["B"], []))
+
+    def test_the_placeholder_is_never_a_mark(self):
+        passed, failed, unchecked = self.verdicts_of("A (QA: pass / fail)", "B (QA: fail / pass)")
+        self.assertEqual((len(passed), len(failed), len(unchecked)), (0, 0, 2))
+
+    def test_a_round_two_pass_moves_the_ticket_on(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            saved = (tb.TASKS_DIR, tb.STATE_DIR, ts.LOG)
+            tb.TASKS_DIR, tb.STATE_DIR = Path(tmp) / "tasks", Path(tmp) / ".board"
+            ts.LOG = tb.STATE_DIR / "moves.log"
+            try:
+                tb.TASKS_DIR.mkdir()
+                (tb.TASKS_DIR / "T-001-test.md").write_bytes(task("T-001", status="in-qa", qa_rounds=1, criteria=(
+                    "- [x] A (QA: fail, crashes) (QA: pass)",)).encode("utf-8"))
+                ts.move("T-001", "done", folders={})
+                self.assertEqual(tb.parse_header((tb.TASKS_DIR / "T-001-test.md").read_text(encoding="utf-8"))["status"],
+                                 "done")
+            finally:
+                tb.TASKS_DIR, tb.STATE_DIR, ts.LOG = saved
+
 
 UNMARKED = ("- [ ] It builds (QA: pass)", "- [ ] The sample looks right (QA: pass / fail)",
             "- [ ] It runs fast (QA: fail: 40 fps)", "- [ ] The board likes it")

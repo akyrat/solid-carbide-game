@@ -39,8 +39,9 @@ import guard_ledger as gl  # noqa: E402
 LOG = tb.STATE_DIR / "moves.log"
 CRITERIA_RE = re.compile(r"^## Acceptance criteria[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
 CRITERION_RE = re.compile(r"^\s*- \[[ xX]\] .*$", re.M)
-QA_PASS_RE = re.compile(r"\(QA:\s*pass(?:\)|\s*[;:,]|\s-)", re.I)    # "(QA: pass)", or a note: "(QA: pass; 850/850)"
-QA_FAIL_RE = re.compile(r"\(QA:\s*fail\b", re.I)
+# "(QA: pass)", or with a note: "(QA: pass; 850/850)", "(QA: pass. reason)" (T-215); never "(QA: pass / fail)"
+QA_PASS_RE = re.compile(r"\(QA:\s*pass(?:\)|\s*[.;:,]|\s-)", re.I)
+QA_FAIL_RE = re.compile(r"\(QA:\s*fail\b(?!\s*/)", re.I)
 FINAL = {"done", "cancelled"}
 NOTE_REQUIRED = {
     "cancelled": "say why the task is no longer wanted (tasks are never deleted)",
@@ -77,13 +78,21 @@ def header(path):
     return fields
 
 
+def last_mark(line):
+    """"pass", "fail" or None: the last QA mark on a criterion line. QA replaces its old mark each round, but a
+    line with a round-1 fail followed by a round-2 pass counts as a pass (T-215)."""
+    marks = [(m.start(), "pass") for m in QA_PASS_RE.finditer(line)] + [(m.start(), "fail") for m in QA_FAIL_RE.finditer(line)]
+    return max(marks)[1] if marks else None
+
+
 def verdicts(text):
-    """(passed, failed, unchecked) acceptance criteria, from QA's '(QA: pass)' / '(QA: fail)' marks."""
+    """(passed, failed, unchecked) acceptance criteria, from QA's '(QA: pass)' / '(QA: fail)' marks: only the
+    last mark on each criterion counts."""
     section = CRITERIA_RE.search(text.replace("\r\n", "\n"))
     lines = CRITERION_RE.findall(section.group(1)) if section else []
-    passed = [l for l in lines if QA_PASS_RE.search(l) and not QA_FAIL_RE.search(l)]
-    failed = [l for l in lines if QA_FAIL_RE.search(l) and "pass / fail" not in l]
-    unchecked = [l for l in lines if l not in passed and l not in failed]
+    passed = [l for l in lines if last_mark(l) == "pass"]
+    failed = [l for l in lines if last_mark(l) == "fail"]
+    unchecked = [l for l in lines if last_mark(l) is None]
     return passed, failed, unchecked
 
 

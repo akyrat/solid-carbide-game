@@ -64,7 +64,11 @@ Answer with:
   why it serves the goal, a value estimate from 1 (nice to have) to 5 (the goal fails without it), its own
   acceptance criteria (checkable by QA), and needs: the ids of the sub-goals it needs first.
 - open_questions: what the goal and the docs leave open.
-Don't rank them: the ranking is computed from needs and value."""
+Don't rank them: the ranking is computed from needs and value.
+Never write a criterion (goal or sub-goal) about the long GDD, the short GDD (or its fingerprint), the docs
+staleness check, the timeline or merging. Only the Project Lead regenerates the GDDs, runs the staleness check,
+writes the timeline and merges, at merge time after the board's playtest; no agent or QA can make such a
+criterion pass, so QA would fail it (and the runner drops such criteria from the tickets)."""
 
 
 def find_cycle(sub_goals):

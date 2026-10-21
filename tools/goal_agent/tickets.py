@@ -4,6 +4,9 @@ check() refuses a set of drafts, with one reason per broken rule (CLAUDE.md, tas
 write() turns accepted drafts into task files from tasks/_TEMPLATE.md, with `goal:` set, starting as
 `open` (or `blocked` while they depend on unfinished work), and claims each one for the goal's session
 (`lead: Goal-G-NNN`) through the status script, the only way a `lead` line changes.
+Criteria only the Project Lead can meet (the long GDD, the short GDD, the docs staleness check, the timeline,
+merging: lead_only()) are dropped before a ticket is written (T-215): only the Project Lead does those, at merge,
+so no agent or QA could make them pass. A draft left with no criteria is refused.
 Ticket ids are the next free number after every id in tasks/, on task/* branches and in master's log.
 """
 
@@ -41,6 +44,46 @@ DRAFT = {
                  "depends_on", "documents_affected", "files_to_read_first", "files_expected_to_change",
                  "description", "acceptance_criteria", "review"],
 }
+
+
+MERGE = r"\bmerg(?:e|ed|es|ing)\b"
+LEAD_ONLY = [
+    (re.compile(r"\blong[- ]?gdd\b|long-gdd\.md|generate_long_gdd", re.I), "the long GDD"),
+    (re.compile(r"\bshort[- ]?gdd\b|short-gdd|update_short_gdd_fingerprint", re.I), "the short GDD"),
+    (re.compile(r"\bstaleness\b|\bdocs? (?:are |is )?(?:not )?stale\b", re.I), "the docs staleness check"),
+    (re.compile(r"docs/timeline\.md|\btimeline (?:entry|entries|record)\b|\b(?:in|to|on) the timeline\b", re.I),
+     "the timeline"),
+    (re.compile(MERGE + r".*\b(?:master|branch|playtest|goal's build)\b|\b(?:master|branch|playtest)\b.*" + MERGE, re.I),
+     "merging"),
+]
+LEAD_ONLY_WHY = ("Only the Project Lead regenerates the long GDD and the short GDD's fingerprint, runs the docs "
+                 "staleness check, writes the timeline and merges, at merge time; no agent or QA can make such a "
+                 "criterion pass, so QA would fail it.")
+
+
+def lead_only(criterion):
+    """What a criterion is about that only the Project Lead can do ("the long GDD", ...), or None (T-215)."""
+    for pattern, what in LEAD_ONLY:
+        if pattern.search(criterion or ""):
+            return what
+    return None
+
+
+def kept_criteria(d):
+    """The draft's criteria without the empty ones and the ones only the Project Lead can meet."""
+    return [c for c in d.get("acceptance_criteria") or [] if c.strip() and not lead_only(c)]
+
+
+def dropped_criteria(d):
+    return [c.strip() for c in d.get("acceptance_criteria") or [] if c.strip() and lead_only(c)]
+
+
+def dropped_note(dropped):
+    """The goal file's iteration log text for the criteria write() left out ("" for none)."""
+    if not dropped:
+        return ""
+    return ("dropped criteria only the Project Lead can meet (T-215): "
+            + "; ".join(f"{tid}: \"{c}\" ({what})" for tid, c, what in dropped) + ".")
 
 
 def agents(root):
@@ -101,8 +144,10 @@ def check(drafts, existing, root):
                 say("every art ticket needs a \"The board's review:\" line.")
         elif shows_player(d) and not (d.get("review") or "").strip():
             say("it changes what the player sees, reads or hears but has no \"The board's review:\" line.")
-        if not [c for c in d.get("acceptance_criteria") or [] if c.strip()]:
-            say("it has no acceptance criteria.")
+        if not kept_criteria(d):
+            dropped = dropped_criteria(d)
+            say("it has no acceptance criteria" + (f" left once the ones only the Project Lead can meet are dropped "
+                                                    f"({'; '.join(dropped)}). {LEAD_ONLY_WHY}" if dropped else "."))
         for dep in deps:
             if dep not in by_key and dep not in existing:
                 say(f"depends_on names {dep!r}, which is neither another draft nor an existing ticket.")
@@ -143,7 +188,7 @@ def render(template, d, tid, goal_id, depends_on, status):
     description = d["description"].strip()
     if (d.get("review") or "").strip():
         description += f"\n\nThe board's review: {d['review'].strip()}"
-    criteria = "\n".join(f"- [ ] {c.strip()} (QA: pass / fail)" for c in d["acceptance_criteria"] if c.strip())
+    criteria = "\n".join(f"- [ ] {c.strip()} (QA: pass / fail)" for c in kept_criteria(d))
     text = re.sub(r"(^## Description\n\n).*?(?=^## Acceptance criteria)", lambda m: m.group(1) + description + "\n\n",
                   text, count=1, flags=re.S | re.M)
     text = re.sub(r"(^## Acceptance criteria\n\n).*?(?=^## Updates)", lambda m: m.group(1) + criteria + "\n\n",
@@ -160,8 +205,10 @@ def claim(root, tid, name):
                     "command")
 
 
-def write(drafts, existing, root, goal_id, claim=claim):
-    """Write the drafts as task files and claim them; returns {draft key: (ticket id, path)}."""
+def write(drafts, existing, root, goal_id, claim=claim, dropped=None):
+    """Write the drafts as task files and claim them; returns {draft key: (ticket id, path)}. Criteria only the
+    Project Lead can meet are left out; each is added to `dropped` (a list, when given) as
+    (ticket id, criterion, what it is about)."""
     root = Path(root)
     template = (root / "tasks" / "_TEMPLATE.md").read_text(encoding="utf-8").replace("\r\n", "\n")
     number = next_number(root)
@@ -172,6 +219,8 @@ def write(drafts, existing, root, goal_id, claim=claim):
         unfinished = [dep for dep in d.get("depends_on") or [] if dep in ids
                       or (existing.get(dep) or {}).get("status") != "done"]
         tid = ids[d["key"]]
+        if dropped is not None:
+            dropped += [(tid, c, lead_only(c)) for c in dropped_criteria(d)]
         path = root / "tasks" / f"{tid}-{slug(d['title'], 6)}.md"
         text = render(template, d, tid, goal_id, deps, "blocked" if unfinished else "open")
         path.write_bytes(text.encode("utf-8"))

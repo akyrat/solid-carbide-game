@@ -10,7 +10,13 @@ together with its name, and gets only the new moves that concern it:
 
 - moves on tickets it owns, and moves on tickets nobody owns (with a note to claim them first);
 - never moves on another session's tickets;
-- a session without a name gets every move, with a reminder to ask the board for a name.
+- a session without a name gets every move, with a reminder to ask the board for a name;
+- a move on a goal's ticket (lead `Goal-G-NNN`) goes to the goal run's own session while that one is
+  active (it read the inbox in the last ACTIVE_FOR). Once it has ended (T-215), the move goes to the
+  session that started or last resumed the run (the goal file's `session:` line, run.py --session),
+  if it is live; if not, to one other live session, chosen the same way by every session: the ones
+  that read the inbox in the last ACTIVE_FOR (their watcher runs) first, then by name. The move's
+  line says why it came. The ticket keeps its lead, so the runner still builds it on resume.
 
 The hooks (.claude/hooks/board_gate.py) and the watcher below advance the same cursor, so a move
 reaches a session once. A session with no cursor yet starts at the current end of the inbox: it
@@ -43,6 +49,8 @@ import task_status as ts  # noqa: E402
 
 SESSION_ID_RE = re.compile(r"[A-Za-z0-9_-]{1,100}")
 LIVE_FOR = timedelta(hours=12)   # a session seen this recently still holds its name
+ACTIVE_FOR = timedelta(minutes=5)   # a session that read the inbox this recently is running (hooks, watcher)
+GOAL_LEAD_RE = re.compile(r"Goal-(G-\d+)", re.I)   # a goal run's lead (tasks/README.md, "Goal runs")
 SEEN_EVERY = 60                  # seconds between "last seen" updates when nothing else changes
 READ_WAIT = 3                    # seconds a reader waits for another reader of the same session
 NAME_CMD = "python tools/board_inbox.py name"
@@ -115,9 +123,13 @@ def all_sessions():
     return out
 
 
-def is_live(data, at=None):
+def is_live(data, at=None, within=LIVE_FOR):
     seen = parse_stamp(data.get("seen"))
-    return bool(seen) and (at or now()) - seen < LIVE_FOR
+    return bool(seen) and (at or now()) - seen < within
+
+
+def is_active(data, at=None):
+    return is_live(data, at, ACTIVE_FOR)
 
 
 def name_of(sid):
@@ -225,8 +237,53 @@ def ticket_owner(task_id, folders=None):
         return ""
 
 
-def relevant(moves, name, owner_of=None):
-    """[(move, needs_claim)] for a session named `name` ("" for no name)."""
+def goals_dir():
+    return tb.TASKS_DIR.parent / "goals"
+
+
+def goal_session(goal_id):
+    """The name of the session that started or last resumed a goal's run: its goal file's `session:` header
+    line (run.py --session); "" when it has none."""
+    for path in sorted(goals_dir().glob(f"{goal_id}-*.md")):
+        try:
+            head = path.read_text(encoding="utf-8").replace("\r\n", "\n").split("\n---", 1)[0]
+        except OSError:
+            continue
+        for line in head.split("\n")[1:]:
+            key, _, value = line.partition(":")
+            if key == "session":
+                return value.strip()
+        return ""
+    return ""
+
+
+def goal_route(owner, sessions, at=None):
+    """For a ticket whose lead is a goal run's (`Goal-G-NNN`): (name, why), the session its moves go to now.
+    (None, "") while the run's own session is active: the normal rule applies, and that session gets them.
+    ("", why) when no live session can take them."""
+    at = at or now()
+    gid = GOAL_LEAD_RE.fullmatch(owner).group(1).upper()
+    if any(same_name(d.get("name"), owner) and is_active(d, at) for d in sessions.values()):
+        return None, ""
+    live = sorted(((d["name"], d) for d in sessions.values() if d.get("name")
+                   and not GOAL_LEAD_RE.fullmatch(d["name"]) and is_live(d, at)),
+                  key=lambda nd: (not is_active(nd[1], at), nd[0].casefold()))
+    starter = goal_session(gid)
+    ended = f"goal {gid}'s run session has ended"
+    for n, _ in live:
+        if same_name(n, starter):
+            return n, f"{ended}; it comes to {n}, the session that started or resumed the run"
+    if live:
+        pick = live[0][0]
+        why = (f"the session that started or resumed the run, {starter}, isn't live" if starter
+               else "the goal file names no session that started or resumed the run")
+        return pick, f"{ended} and {why}; it comes to {pick}, the first live session (watching ones first, then by name)"
+    return "", f"{ended} and no other session is live"
+
+
+def relevant(moves, name, owner_of=None, sessions=None, at=None):
+    """[(move, needs_claim)] for a session named `name` ("" for no name). A move on a goal's ticket that
+    comes to this session because the run's own session has ended (goal_route) is a copy with `routed`: why."""
     if not moves:
         return []
     if not name:
@@ -234,13 +291,20 @@ def relevant(moves, name, owner_of=None):
     if owner_of is None:
         folders = tb.task_folders()
         owner_of = lambda tid: ticket_owner(tid, folders)  # noqa: E731
-    out = []
+    out, routes = [], {}
     for m in moves:
         owner = owner_of(m["id"])
         if not owner:
             out.append((m, True))
         elif same_name(owner, name):
             out.append((m, False))
+        elif GOAL_LEAD_RE.fullmatch(owner):
+            key = owner.casefold()
+            if key not in routes:
+                routes[key] = goal_route(owner, all_sessions() if sessions is None else sessions, at)
+            to, why = routes[key]
+            if to and same_name(to, name):
+                out.append((dict(m, routed=why), False))
     return out
 
 
@@ -268,6 +332,8 @@ def move_line(m, needs_claim=False, name=""):
     line = f"{m['id']} {m.get('from')} → {m.get('to')}"
     if m.get("note"):
         line += f" (note: {m['note']})"
+    if m.get("routed"):
+        line += f" [{m['routed']}]"
     if needs_claim:
         line += (f" [no owner yet: claim it with {LEAD_CMD} {m['id']} --lead {name}, "
                  "and act on it only if the claim succeeds]")

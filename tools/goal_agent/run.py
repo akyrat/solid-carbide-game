@@ -12,6 +12,9 @@
       The goal's status, iteration, art spent, its sub-goals with their verdicts, its tickets with their
       current status, and any pause.
 
+--session NAME (start and resume): the name of the Project Lead session running the command, recorded in the
+goal file's `session:` line. Once the run's own headless session has ended, the board's drags on the goal's
+tickets (lead Goal-G-NNN) go to that session (tools/board_inbox.py, T-215).
 --fake answers from a JSON fixture (fake_team.FakeTeam) instead of calling Claude; the fake team also does
 the agents' and QA's work in the ticket folders. --worktrees puts the goal's folders somewhere else than
 C:\\solid-carbide-worktrees (for QA's runs in a temporary copy).
@@ -58,11 +61,15 @@ def record_gaps(goal, plan, verdicts, written, existing):
     goal.set_section("Tickets", "\n".join(lines))
 
 
-def start(goal_text, root, claude, art_cap=0, max_iterations=20, model=MODEL, commit=True):
-    """Layers 1 and 2 for a new goal; returns the goal file (saved, and committed when `commit`)."""
+def start(goal_text, root, claude, art_cap=0, max_iterations=20, model=MODEL, commit=True, session=None):
+    """Layers 1 and 2 for a new goal; returns the goal file (saved, and committed when `commit`).
+    `session`: the name of the Project Lead session that starts the run (the goal file's `session:` line), which
+    gets the board's drags on the goal's tickets once the run's own session has ended (board_inbox.py, T-215)."""
     root = Path(root)
     goal = goal_file.new(root / "goals", goal_text, art_cap, max_iterations)
-    goal.log("started: planning.")
+    if session:
+        goal.set("session", session)
+    goal.log("started: planning" + (f", by the session {session}." if session else "."))
     files = [goal.path]
     try:
         plan = prioritize.plan(claude, goal_text, goal.id, root, model)
@@ -71,8 +78,11 @@ def start(goal_text, root, claude, art_cap=0, max_iterations=20, model=MODEL, co
                  f"{len(plan['goal_criteria'])} goal criteria, {len(plan['open_questions'])} open questions.")
         verdicts, existing = gaps.detect(claude, goal_text, plan["sub_goals"], root, model)
         drafts = [d for v in verdicts for d in v.get("drafts") or []]
-        written = tickets.write(drafts, existing, root, goal.id)
+        dropped = []
+        written = tickets.write(drafts, existing, root, goal.id, dropped=dropped)
         files += [path for _, path in written.values()]
+        if dropped:
+            goal.log(tickets.dropped_note(dropped))
         left = []
         for t in [t for v in verdicts if v["verdict"] == "in-flight" for t in v["tickets"]]:
             path = tickets.mark_reused(root, existing[t], goal.id)
@@ -137,7 +147,12 @@ def main(argv=None):
         p.add_argument("--worktrees", metavar="FOLDER", help="where the goal's folders go (default: beside the repo)")
     for p in (s, r):
         p.add_argument("--fake", metavar="FIXTURE", help="answer from a fake-team fixture instead of calling Claude")
+        p.add_argument("--session", metavar="NAME", help="the name of the Project Lead session that starts or resumes "
+                                                         "the run: it gets the board's drags on the goal's tickets "
+                                                         "once the run's own session has ended")
     args = ap.parse_args(argv)
+    if getattr(args, "session", None) and not tb.NAME_RE.fullmatch(args.session):
+        ap.error(f"--session needs a session name (one short word: letters, digits, - or _), not {args.session!r}")
     places = build.Places(ROOT, args.worktrees)
     try:
         if args.command == "status":
@@ -145,12 +160,12 @@ def main(argv=None):
             return 0
         claude = FakeTeam(args.fake) if args.fake else RealClaude()
         if args.command == "start":
-            goal = start(args.goal, ROOT, claude, args.art_cap, args.max_iterations)
+            goal = start(args.goal, ROOT, claude, args.art_cap, args.max_iterations, session=args.session)
             if goal.get("status") == "planned" and not args.plan_only:
                 loop.run(build.Build(places, claude, goal))
             print(f"{goal.id}: {goal.get('status')} ({goal.path})")
             return 0 if goal.get("status") in ("planned", "ready-to-play") else 1
-        goal, message = loop.resume(loop.load(places, claude, args.goal_id), args.force)
+        goal, message = loop.resume(loop.load(places, claude, args.goal_id), args.force, session=args.session)
         print(message)
         return 0 if goal.get("status") == "ready-to-play" else 1
     except FileNotFoundError as e:
