@@ -19,6 +19,11 @@ extends Control
 ## cursor shows the art of the current view and mirror. Heights: the side panel's rooftops at
 ## height 3 and 6 and ramps 0 to 3 and 3 to 6; a 6 placed on a 3 stands on it ("on"), and a ramp
 ## climbs the rooftop whose side its top touches (LevelDocument).
+##
+## Snapping (T-237): a piece goes on the tile grid and lines up with close neighbours, a ramp onto
+## the side of the rooftop it climbs (snapping.gd, LevelSnapping); the preview shows where. A
+## rooftop or ramp that would overlap in a way the level check refuses is not placed, and the top
+## bar shows the overlap message.
 
 signal back_pressed
 
@@ -49,6 +54,10 @@ var mirror_button: Button
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
+## A message for the board (the overlap message when a piece can't be placed); empty otherwise.
+var message_label: Label
+## Why the last piece was not placed (LevelSnapping.overlap_problem), "" when it was.
+var last_problem: String = ""
 ## The view and mirror the picked asset is placed in (one its catalogue entry lists).
 var pick_view: String = ""
 var pick_mirror: bool = false
@@ -67,8 +76,11 @@ var map: Node2D
 var elevation: Node2D
 ## The selected piece (LevelDocument.piece_at), {} for none.
 var selected: Dictionary = {}
-## The cell under the mouse, (-1, -1) for none.
+## The cell under the mouse, (-1, -1) for none, and the point under it (units).
 var hover_cell := Vector2i(-1, -1)
+var hover_units := Vector2.ZERO
+## A point inside a cell, from its corner (units): names that cell to LevelDocument.place.
+const CELL_MIDDLE := LevelDocument.CELL / 2.0
 
 var _overlay: Node2D
 var _dragging := false
@@ -139,6 +151,10 @@ func _ready() -> void:
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
+	message_label = Label.new()
+	message_label.name = "MessageLabel"
+	message_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.3))
+	bar.add_child(message_label)
 
 	map_view = SubViewportContainer.new()
 	map_view.name = "MapView"
@@ -227,15 +243,45 @@ func _refresh_after(kind: String) -> void:
 
 # ---- Placing, selecting and deleting ------------------------------------------------------------
 
-## Places the catalogue asset `asset_id` at the tile under `units` (into the data and the
-## drawing), in the picked view and mirror when it is the picked asset (else its first ones).
-## Returns the placed piece, or {}.
+## Places the catalogue asset `asset_id` with the cursor at `units` (into the data and the
+## drawing), in the picked view and mirror when it is the picked asset (else its first ones),
+## snapped to the tile grid and to close neighbours (LevelSnapping.placement, T-237). A rooftop or
+## ramp that would overlap in a way check_height_data.py refuses is not placed, and the message
+## label shows creator_texts.json's "overlap_message". Returns the placed piece, or {}.
 func place_asset(asset_id: String, units: Vector2) -> Dictionary:
 	var picked_now := panel != null and asset_id == panel.picked
-	var piece := document.place(asset_id, units, pick_view if picked_now else "", pick_mirror if picked_now else false)
-	if not piece.is_empty():
-		_refresh_after(str(piece.kind))
+	var view := pick_view if picked_now else ""
+	var mirror := pick_mirror if picked_now else false
+	var at := LevelSnapping.placement(document, asset_id, units, view, mirror)
+	if at.is_empty():
+		return {}
+	# The snapped corner is a cell corner: the middle of its cell names that cell.
+	var corner: Vector2 = at.corner
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror)
+	if piece.is_empty():
+		return {}
+	if str(piece.kind) in ["rooftop", "ramp"]:
+		last_problem = LevelSnapping.overlap_problem(document, str(piece.kind), piece.item)
+		if last_problem != "":
+			document.delete(piece)
+			_show_message(CreatorTexts.get_text("overlap_message"))
+			return {}
+	last_problem = ""
+	_show_message("")
+	_refresh_after(str(piece.kind))
 	return piece
+
+
+## Where the picked asset would go with the cursor at `units` (LevelSnapping.placement), {} for none.
+func placement_at(units: Vector2) -> Dictionary:
+	if _picked() == "" or document == null:
+		return {}
+	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror)
+
+
+func _show_message(text: String) -> void:
+	if message_label != null:
+		message_label.text = text
 
 
 ## Selects the piece drawn on top at `units` (LevelDocument.piece_at).
@@ -395,7 +441,8 @@ func _on_map_input(event: InputEvent) -> void:
 		var mm := event as InputEventMouseMotion
 		if _dragging:
 			pan_by(mm.relative)
-		var c := document.cell_at(screen_to_units(mm.position))
+		hover_units = screen_to_units(mm.position)
+		var c := document.cell_at(hover_units)
 		if c != hover_cell:
 			hover_cell = c
 			_overlay.queue_redraw()
@@ -480,14 +527,13 @@ class _Overlay extends Node2D:
 			return
 		var w := 2.0 / maxf(editor.zoom, 0.01)
 		if editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
-			var e := LevelDocument.entry(editor.panel.picked)
-			if not e.is_empty():
-				var corner: Vector2 = doc.cell_corner(editor.hover_cell)
-				var pv: Dictionary = editor.preview_of(corner)
+			# Where the piece would go, snapped (LevelSnapping): its art and footprint there.
+			var at: Dictionary = editor.placement_at(doc.cell_corner(editor.hover_cell) + Vector2(editor.CELL_MIDDLE, editor.CELL_MIDDLE))
+			if not at.is_empty():
+				var pv: Dictionary = editor.preview_of(at.corner)
 				if not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
-				var r := Rect2(corner, Vector2(float(e.footprint_units[0]), float(e.footprint_units[1])))
-				_outline(r, Color(0.55, 0.85, 1.0, 0.9), w)
+				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
 		if not editor.selected.is_empty():
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
 

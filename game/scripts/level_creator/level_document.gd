@@ -7,7 +7,8 @@ extends RefCounted
 ## itself (the same Dictionary the editor holds).
 ##
 ## Pieces go at the clicked tile here: the piece's top-left corner on the corner of the 2 x 2 unit
-## cell under the cursor. Snapping is a later ticket (T-237).
+## cell under the cursor. The editor snaps first (snapping.gd, T-237) and passes a point in the
+## snapped corner's cell.
 ##
 ## Rotate and mirror (T-236; Level design, Decisions, "Level creator"): a piece is placed in one of
 ## the views its catalogue entry lists ("views") and one of its mirrors ("mirrors"), and only
