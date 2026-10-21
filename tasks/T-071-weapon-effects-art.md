@@ -56,6 +56,10 @@ The board's review: judge the look. One round only, so problems are reported rat
 
 Started at the board's request, in C:\solid-carbide-worktrees$t.
 
+### 2026-10-21, In progress → In QA
+
+Flame sample in (1 generation). The flame is good; PixelLab added a tailpipe, which a free script can erase. Pictures: C:\solid-carbide-worktrees\T-071\art-archive\T-071\exhaust_flame_review.png
+
 ## Result notes
 
 ### Sample round (board's go 2026-10-21; sample first, nothing swapped into the game)
@@ -73,4 +77,5 @@ Started at the board's request, in C:\solid-carbide-worktrees$t.
 
 **Problems, reported not regenerated:** (1) the model drew a grey metal pipe (a tailpipe) at the plume's base, which the game does not want (the exhaust is on the car); (2) the plume points to the upper right, not the lower left asked for, a mirror and a turn away from what the prompt said; (3) the plume is one organic shape, so the flicker will need a script (mirror and shade shift). Good: palette is orange, yellow, pale core, no red, hard edges, clean selective outline, reads well at car scale. Free fixes proposed, no PixelLab: erase the grey pipe pixels by script and give the flame's base a clean tip; turn or mirror it as needed when making the 16 directions.
 
-Written by the agent when it finishes.
+- 2026-10-21, in-progress → in-qa: Flame sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: LGTM
