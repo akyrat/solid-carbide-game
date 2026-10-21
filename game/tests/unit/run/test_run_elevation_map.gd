@@ -230,3 +230,26 @@ func test_the_flame_on_a_rooftop_burns_what_is_at_the_car() -> void:
 	assert_true(flame.is_inside(e), "the enemy behind the car's exhaust is in the flames")
 	assert_false(flame.is_inside(far), "one far away is not")
 	assert_gt(flame.hits, 0)
+
+
+## Drifting, Decisions, "No drift smoke or tyre marks in the air": no tyre
+## marks while airborne, even with the drift state on; new ones on landing.
+func test_no_tyre_marks_in_the_air_and_back_on_landing() -> void:
+	_place(Vector2(0, -81))
+	run.car.model.is_drifting = true
+	run.car.stepped.emit()
+	var before: int = run.drift_marks.marks_started
+	assert_gt(before, 0, "drifting on the street lays marks")
+	run.car.height_model.height = 4.0
+	run.car.height_model.airborne = true
+	var segments_before: int = run.drift_marks.segment_count()
+	for i in 10:
+		run.car.model.is_drifting = true
+		run.car.stepped.emit()
+	assert_eq(run.drift_marks.marks_started, before, "no new marks in the air")
+	assert_true(run.drift_marks.segment_count() <= segments_before, "nothing laid in the air")
+	run.car.height_model.height = 0.0
+	run.car.height_model.airborne = false
+	run.car.model.is_drifting = true
+	run.car.stepped.emit()
+	assert_gt(run.drift_marks.marks_started, before, "new marks once landed")

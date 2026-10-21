@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/game-loop-architecture.md, game/
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/drifting.md, game/README.md, game/scripts/run/run.gd, game/scripts/level/elevation_sample_map.gd, game/data/level/elevation_sample_map.json, tasks/T-196-elevation-sample-map.md, tasks/T-197-elevation-sample-depth-order.md]
 files_expected_to_change: [game/scripts/run/run.gd, game/scenes/run/run.tscn, game/tests/unit/, game/README.md, art-archive/T-206/screenshots/]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -71,6 +71,18 @@ QA passed all 5. Ready for the board: open C:\solid-carbide-worktrees\T-206\game
 ### 2026-10-21, Needs playtest → In progress
 
 Back to the agent with the board's two fixes: no drift smoke in the air, and the flamethrower at the car's height. Enemies on ramps goes to T-207.
+
+### 2026-10-21, In progress → In QA
+
+Both fixes in: no drift smoke in the air, and the flames come out at the car's height. Ready for the board to play: C:\solid-carbide-worktrees\T-206\game\project.godot or Play on T-206 in the Builds tab.
+
+### 2026-10-21, In QA → Needs playtest
+
+QA passed round 1; the board's tweak follows.
+
+### 2026-10-21, Needs playtest → In progress
+
+Back to the agent: no tyre marks in the air, like the smoke.
 
 ## Result notes
 
@@ -152,5 +164,25 @@ All 5 criteria pass. The "1 resources still in use at exit" line also appears in
 **Docs updated:** `docs/drifting.md` and `docs/weapons.md` (the decision lines copied from master), and `game/README.md` ("The run's map (T-206)").
 
 **Not asked for, noticed:** the drift marks are still drawn on the street under a car that is drifting in the air. You can see them faintly in the air screenshot. I left them as they are; whether to stop them in the air is the board's call.
+
+No commands were refused.
+- 2026-10-21, in-progress → in-qa: Ready for the board to play: the board's two fixes are in (no smoke in the air, flamethrower at height); one QA round before merging
+- 2026-10-21, needs-playtest → in-progress: Board (2026-10-21): no tyre marks in the air either, like the smoke
+
+### Tweak 2, Game Loop Agent, 2026-10-21: no tyre marks in the air
+
+**What changed:** `game/scripts/driving/drift_marks.gd` `bind()` now lays marks only when `lays(car)` is true: the car is drifting and not airborne. This works the same way as the smoke fix. The marks end on takeoff, even with the drift keys held, and a new mark starts on the first step after landing.
+
+**Docs updated:**
+- I copied the decision line from master into `docs/drifting.md`. It is now "No drift smoke or tyre marks in the air", replacing the smoke-only line.
+- `game/README.md` ("The run's map (T-206)").
+
+**New test:** `test_no_tyre_marks_in_the_air_and_back_on_landing` in `game/tests/unit/run/test_run_elevation_map.gd`. It checks that drifting on the street lays marks, that 10 drifting steps in the air start no new mark and lay no segments, and that a new mark starts after landing.
+
+**Test results:** GUT 1147/1147 passed. Python `tools/` 399 OK. `game/tools/` 354 OK (1 skipped).
+
+**Screenshot:** `art-archive/T-206/screenshots/run_elevation_air_no_marks.png`. The car is in the air at height 5 with W and D held, drifting, and nothing under it except its round shadow: no smoke and no tyre marks. It comes from the fixture `run_elevation_air_drift_keys.tscn`.
+
+**Stale screenshot:** the earlier `run_elevation_air_drift_keys.png` still shows the faint marks from before this fix. I kept it, as the "never delete" rule says.
 
 No commands were refused.

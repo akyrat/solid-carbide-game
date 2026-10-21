@@ -72,10 +72,19 @@ func _process(delta: float) -> void:
 	advance(delta)
 
 
-## Lays marks after the car's every physics step.
+## Lays marks after the car's every physics step. None while the car is
+## airborne, even with the drift keys held: the marks end on takeoff and new
+## ones start on landing (Drifting, Decisions, "No drift smoke or tyre marks in
+## the air", task T-206).
 func bind(car: Node) -> void:
 	car.stepped.connect(func() -> void:
-		lay(car.model.is_drifting, car.model.get_position(), car.model.rotation))
+		lay(lays(car), car.model.get_position(), car.model.rotation))
+
+
+## Whether `car` lays marks this step: drifting and not airborne (a car
+## without a height, `airborne` missing, is always on the ground).
+static func lays(car: Node) -> bool:
+	return car.model.is_drifting and car.get("airborne") != true
 
 
 ## The two rear tyres' places on the ground, in units: [left, right].
