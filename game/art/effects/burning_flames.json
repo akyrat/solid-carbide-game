@@ -1,0 +1,21 @@
+{
+ "task": "T-071",
+ "what": "The flames of a burning enemy: 2 frames of 48x54 side by side, the second the mirror (the flicker).",
+ "size": [
+  96,
+  54
+ ],
+ "frames": 2,
+ "frame_size": [
+  48,
+  54
+ ],
+ "prompt": "a cluster of burning flames flickering upwards, a tall central tongue of fire with smaller tongues on both sides, bright pale yellow core, orange middle, deep orange tips, a few small embers floating up, seen from the front, retro pixel art",
+ "made_by": "game/tools/build_weapon_effects.py from art-archive/T-071/burning_raw.png (PixelLab /create-image-pixflux, 1 generation; request art-archive/T-071/req_burning.json; record burning_raw.json there)",
+ "resources_consulted": [
+  "docs/visual-style.md",
+  "docs/weapons.md"
+ ],
+ "script_fixes": "the logs PixelLab drew under the flames cut off (bottom rows and the brown pixels), mirrored second frame",
+ "hand_edit": "none"
+}

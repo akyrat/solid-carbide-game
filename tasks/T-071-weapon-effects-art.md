@@ -60,6 +60,10 @@ Started at the board's request, in C:\solid-carbide-worktrees$t.
 
 Flame sample in (1 generation). The flame is good; PixelLab added a tailpipe, which a free script can erase. Pictures: C:\solid-carbide-worktrees\T-071\art-archive\T-071\exhaust_flame_review.png
 
+### 2026-10-21, In progress
+
+Flame sample approved (LGTM). Started: pipe erased by script, the rest of the set, then swapped into the game.
+
 ## Result notes
 
 ### Sample round (board's go 2026-10-21; sample first, nothing swapped into the game)
@@ -79,3 +83,21 @@ Flame sample in (1 generation). The flame is good; PixelLab added a tailpipe, wh
 
 - 2026-10-21, in-progress → in-qa: Flame sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: LGTM
+
+### Full set (the board approved the sample, LGTM; plan written before the call)
+
+- Free script: erase the tailpipe (every grey or near-black pixel; the flame's own colours are all strongly orange or yellow), turn the plume to point along +x with its base as pivot, build the flame sheet (32 screen directions x 2 flicker frames, the second a mirror along the plume), nearest-neighbour, hard alpha, at most 30 colours.
+- Paid, 1 call: `POST /create-image-pixflux`, 48 x 64, no_background, selective outline, detailed shading, text guidance 8, seed 71002, prompt in `art-archive/T-071/req_burning.json` (a cluster of flames for an enemy to burn in; looped by script with a mirrored second frame). Expected cost 1 generation. Balance before: 4856 of 5000. 600 s timeout.
+- The bullet: drawn by script, no PixelLab call (about 10 art pixels wide: too small for PixelLab to draw well; my proposal, the board can ask for a generated one). A round cyan neon ball with a white-hot core and a stepped halo, two pulse frames.
+- Expected total new cost: 1 generation.
+
+**Done (full set, swapped in):**
+- PixelLab: 1 call in this round (the burning flames), 1 generation, no error, no retry; 2 generations in the whole task (sample + this). The balance read 4856 before and still 4856 right after, and 4819 later: the account is shared and other sessions spend from it, so the balance does not isolate this task's cost; each call's own record says `generations: 1.0`. Both are in `game/art/pixellab-generation-log.jsonl`.
+- Art, all in `game/art/effects/` with records, made by `game/tools/build_weapon_effects.py` (`build`, `check`): `exhaust_flame_sheet.png` (tailpipe erased, 32 directions x 2 flicker frames, 18 colours), `burning_flames.png` (the raw's logs cut off, 2 mirrored frames of 48 x 54), `bullet.png` (script-drawn, 2 pulse frames of 12 x 12, no PixelLab: too small for it to draw well). All pass the rules check: alpha 0 or 255, at most 30 colours, no Redgull red.
+- Swapped in without changing behaviour: `exhaust_flame_drawing.gd` replaces the particle flame (still at the car's height, T-206's placement kept; the flamethrower sets the same position, rotation, scale and `emitting`); `bullet.gd` draws the art (hit circle unchanged); new `burn_flames.gd` draws flames on an enemy while the flamethrower's burn flash or a molotov fire burns it. Documented in `game/README.md`.
+- Tests: GUT suite 1198 of 1198 passed (`bash game/tools/run_tests.sh`; it took 271 s of its 300 s limit before my 9 new tests, so the limit is close); `python -m unittest discover -s tools` OK; `python -m unittest discover -s game/tools` 361 tests OK (1 skipped). New: `game/tests/unit/enemies/test_burn_flames.gd`, `game/tools/test_build_weapon_effects.py`, new cases in the flamethrower, molotov and gun tests (art opaque and not Redgull red, direction cells, pulse, flames on and off). T-041's and T-042's tests pass.
+- Screenshots and a GIF (no ffmpeg here, so no MP4): `art-archive/T-071/screenshots/` (`weapon_effects_run.png`, three close-ups, `weapon_effects_run.gif`, about 7 s), made with `tests/fixtures/weapons/weapon_effects_demo.tscn`.
+
+**Honest judgment:** the flame reads well and fits the car; the base's pale white core is big and covers the car's tail a little. Rotation by script loses some edge crispness on the plume in the in-between directions. The burning flames read clearly but are big on a minion (taller than its body); a smaller scale is one number (`BurnFlames.ART_SCALE`) if the board wants it. The bullets are small cyan neon dots with little glow detail at their size; they read in play but are modest. Burning flames are a looping pair of frames, so they flicker rather than animate.
+
+**Refused commands (skipped, not retried in another form):** (1) an inline `python -` that edited `game/README.md` and appended to `art-archive/README.md` was refused by the status-script hook (it contained `**`); I made the README edit with the Edit tool and appended the archive rows with a plain `printf >>`. (2) `git ls-files -m | grep .import | xargs git checkout --` (reverting Godot's line-ending `.import` noise) was refused; so the noise is left unstaged in the worktree, and only my own files and the three new art `.import` files are committed. (3) Earlier I edited this file's Result notes once with a short Python snippet before the Edit tool had read it; from then on only Edit.

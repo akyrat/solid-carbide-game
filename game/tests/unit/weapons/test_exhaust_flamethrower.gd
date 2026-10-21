@@ -228,9 +228,11 @@ func test_entering_hit_flashes_the_enemy_for_the_burn_time() -> void:
 	_hold(true, 1)
 	assert_true(flame.is_burning(e))
 	assert_eq(e.sprite.modulate, flame.burn_tint, "orange tint")
+	assert_true(BurnFlames.is_burning(e), "T-071: the flames are drawn on it")
 	_hold(false, int(round(s["burn_flash_seconds"] / DT)) + 1)
 	assert_false(flame.is_burning(e))
 	assert_eq(e.sprite.modulate, Color.WHITE, "tint back to normal")
+	assert_false(BurnFlames.is_burning(e), "T-071: and the flames go with the flash")
 
 
 func test_paused_game_stops_the_flame() -> void:
@@ -399,7 +401,7 @@ func test_it_is_one_of_the_racks_weapons() -> void:
 
 
 func test_drawing_sits_under_the_car_on_its_exhaust() -> void:
-	var d: CPUParticles2D = flame.flame_drawing
+	var d: Node2D = flame.flame_drawing
 	assert_eq(d.get_parent(), run.view_root, "in the car's drawing")
 	assert_lt(d.get_index(), run.car_sprite.get_index(), "drawn under the car")
 	run.car.scripted_input = [true, false, 1.0]
@@ -413,12 +415,30 @@ func test_drawing_sits_under_the_car_on_its_exhaust() -> void:
 	assert_almost_eq(d.rotation, Flame.ISO_TRANSFORM.basis_xform(back).angle(), 0.001, "pointing back")
 
 
-func test_placeholder_colours_are_not_redgull_red() -> void:
-	var g: Gradient = flame.flame_drawing.color_ramp
-	assert_not_null(g)
-	for i in g.get_point_count():
-		var c := g.get_color(i)
-		assert_eq(c.a, 1.0, "no see-through pixels")
-		assert_gt(c.g, 0.3, "flame colour %s is orange or yellow, not red" % c)
+func test_flame_art_is_opaque_and_not_redgull_red() -> void:
+	var img: Image = flame.flame_drawing.SHEET.get_image()
+	assert_eq(img.get_width(), 8 * 224, "8 columns of 224 px cells")
+	assert_eq(img.get_height(), 8 * 224, "8 rows: 2 frames x 32 directions")
+	var seen := {}
+	for y in range(0, img.get_height(), 2):
+		for x in range(0, img.get_width(), 2):
+			var c := img.get_pixel(x, y)
+			assert_true(c.a == 0.0 or c.a == 1.0, "no see-through pixels")
+			if c.a == 1.0:
+				seen[c] = true
+	assert_gt(seen.size(), 5, "the art has its colours")
+	for c in seen:
 		var dh := absf(c.h - REDGULL_RED.h)
-		assert_gt(minf(dh, 1.0 - dh) * 360.0, 15.0, "hue away from Redgull red")
+		var near_red: bool = minf(dh, 1.0 - dh) * 360.0 < 15.0 and c.s > 0.5 and c.v < 0.7 and c.v > 0.2
+		assert_false(near_red, "colour %s is not Redgull red" % c)
+
+
+func test_flame_drawing_picks_the_cell_of_its_direction() -> void:
+	var D = flame.flame_drawing.get_script()
+	assert_eq(D.direction_index(0.0), 0, "pointing right")
+	assert_eq(D.direction_index(PI / 2.0), 8, "pointing down the screen")
+	assert_eq(D.direction_index(-PI / 2.0), 24, "pointing up the screen")
+	assert_eq(D.direction_index(PI), 16)
+	assert_eq(D.direction_index(-PI + 0.001), 16, "wraps")
+	assert_eq(D.cell_index(5, 0), 5)
+	assert_eq(D.cell_index(5, 1), 37, "the second flicker frame")

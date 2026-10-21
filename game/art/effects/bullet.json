@@ -1,0 +1,21 @@
+{
+ "task": "T-071",
+ "what": "The starting gun's bullet: a cyan neon ball with a white-hot core, 2 pulse frames of 12x12 side by side.",
+ "size": [
+  24,
+  12
+ ],
+ "frames": 2,
+ "frame_size": [
+  12,
+  12
+ ],
+ "prompt": null,
+ "made_by": "game/tools/build_weapon_effects.py (drawn by script, no PixelLab call). Byte-identical every run.",
+ "resources_consulted": [
+  "docs/visual-style.md",
+  "docs/weapons.md"
+ ],
+ "script_fixes": "drawn by script, no PixelLab call (about 10 art pixels wide)",
+ "hand_edit": "none"
+}

@@ -98,6 +98,7 @@ func step(dt: float) -> void:
 	age += dt
 	if age > duration + EPS:
 		_done = true
+		_set_flames(inside, {})
 		inside.clear()
 		since_hit.clear()
 		return
@@ -119,11 +120,27 @@ func step(dt: float) -> void:
 	for id in since_hit.keys():
 		if not now_inside.has(id) and since_hit[id] >= tick_interval - EPS:
 			since_hit.erase(id)
+	_set_flames(inside, now_inside)
 	inside = now_inside
 	var f := int(age / FLICKER_SECONDS)
 	if f != _flicker:
 		_flicker = f
 		queue_redraw()
+
+
+## T-071: the flames on enemies that went in or came out of the fire (drawing only).
+func _set_flames(before: Dictionary, after: Dictionary) -> void:
+	for id in after:
+		if not before.has(id):
+			BurnFlames.add_source(after[id], get_instance_id())
+	for id in before:
+		if not after.has(id) and is_instance_valid(before[id]):
+			BurnFlames.remove_source(before[id], get_instance_id())
+
+
+func _exit_tree() -> void:
+	_set_flames(inside, {})
+	inside = {}
 
 
 ## Whether a point (flat world, units) is inside the circle.
