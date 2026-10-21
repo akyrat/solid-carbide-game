@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a 180 turn during one airtime gives the 180 trick, and a full turn the 360 trick, the same for left and right turns; a smaller turn, or the same turn on the ground, gives neither (QA: pass / fail)
-- [ ] Each aerial trick raises the combo through the existing combo data and shows its popup with T-218's text word for word (tests, and a screenshot of each popup in a run) (QA: pass / fail)
-- [ ] A GIF of each trick in a run on the elevation map is in `art-archive/T-219/screenshots/` (QA: pass / fail)
-- [ ] The car's driving and air steering are unchanged (existing driving tests pass unchanged); the proposals are in the result notes and Drifting, Content (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a 180 turn during one airtime gives the 180 trick, and a full turn the 360 trick, the same for left and right turns; a smaller turn, or the same turn on the ground, gives neither (QA: pass; test_air_tricks.gd covers 180/360 both ways, smaller turns, ground turns, and GUT passes)
+- [ ] Each aerial trick raises the combo through the existing combo data and shows its popup with T-218's text word for word (tests, and a screenshot of each popup in a run) (QA: pass; combo.json trick_add values and trick_popups.gd texts match T-218, tests pass, both popup PNGs show the texts; the 360 popup is from the staged drop)
+- [ ] A GIF of each trick in a run on the elevation map is in `art-archive/T-219/screenshots/` (QA: pass; air_180_run.gif is a real run off a rooftop and shows the car in the air with its shadow; air_360_staged_drop.gif is staged, a 22-unit drop in a run, because no real jump is long enough, and says so honestly, the car is small but turns a full circle)
+- [ ] The car's driving and air steering are unchanged (existing driving tests pass unchanged); the proposals are in the result notes and Drifting, Content (QA: pass; car.gd diff only adds a read-only observe_air call, no steering change, only test_ids changed in test_tricks.gd, proposals are in the result notes and docs/drifting.md)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT all passed, tools 414 OK, game/tools 388 OK (1 skipped))
 
 The board's review: play a run and do both aerial tricks off the rooftops and ramps.
 Board review files: the GIFs in `art-archive/T-219/screenshots/`.
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Blocked → In progress
 
 Started: the air 180 and air 360, with AIR 180! and AIR 360!.
+
+### 2026-10-21, In progress → In QA
+
+Built: AIR 180! and AIR 360! with combo values. The air 180 works off a height-6 rooftop; the air 360 can't be reached on today's map (the longest airtime is 1.0 s, a 360 needs 1.9 s). Sent to QA.
 
 ## Result notes
 
