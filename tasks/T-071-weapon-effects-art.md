@@ -42,11 +42,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass; check script passes all 3 sheets: alpha 0/255, <=30 colours, transparent corners)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass; 2 calls logged in pixellab-generation-log.jsonl and archive records with prompt and settings; balances noted with shared-account caveat; sample then one more call, board-approved in between)
-- [ ] A screenshot shows the final bullets and flames, and a burning enemy (QA: pass; screenshots and GIF show flames, bullets and flame column on burning enemies)
-- [ ] T-041's and T-042's tests still pass (QA: pass; test_exhaust_flamethrower and test_starting_gun files all pass, no failing test seen)
-- [ ] The full GUT suite and all Python tool tests pass (QA: fail; GUT run hit the 300 s limit twice (305 s each, exit 124) before finishing, no failing test seen; Python tools 414 OK in 285 s, game/tools 361 OK. Limit needs raising or suite speeding up)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass; round 2: check script passes all 3 sheets, alpha 0/255, <=30 colours, transparent corners)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass; round 2: 2 calls with prompt, settings, cost in the log and archive README on the merged branch; balances noted with shared-account caveat)
+- [ ] A screenshot shows the final bullets and flames, and a burning enemy (QA: pass; round 2: screenshots and GIF in art-archive/T-071/screenshots unchanged)
+- [ ] T-041's and T-042's tests still pass (QA: pass; round 2: flamethrower and gun tests pass inside the full GUT run)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; round 2: GUT all passed in 276 s under the 900 s limit; tools unittest OK; game/tools 364 OK, 1 skipped)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
