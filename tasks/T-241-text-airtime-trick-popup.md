@@ -1,7 +1,7 @@
 ---
 id: T-241
 title: "Text: the airtime trick's popup"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, docs/extended-narrative.md]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,11 @@ Started at the board's request.
 
 Text written: HANG TIME!. Sent to QA.
 
+### 2026-10-22, In QA → Done
+
+QA passed both. Merged: HANG TIME!. T-242 starts.
+
 ## Result notes
 
 Popup text: **HANG TIME!** followed by "+{amount}", written in docs/hud-and-menus.md (Content, Trick popups, T-241). Proposal: it does not show the airtime (the live counter T-243 does); same size as the AIR popups. Chosen for the voice of LONG DRIFT! and FULL 360!, and clearly apart from AIR 180!/AIR 360!. Only docs/hud-and-menus.md changed.
+- 2026-10-22, in-qa → done: QA passed both; docs-only text, merged straight after QA
