@@ -75,8 +75,11 @@ func test_back_returns_to_the_list() -> void:
 
 
 func test_play_emits_the_signal_with_the_path() -> void:
+	# Play now starts a run on the file (T-239), so the level is a whole map: the sample map's data.
 	var path := dir.path_join("a.json")
-	LevelStore.save_level(path, _level("Alpha"))
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/level/elevation_sample_map.json"))
+	data.name = "Alpha"
+	LevelStore.save_level(path, data)
 	var c := _creator()
 	watch_signals(c)
 	c.list_screen.rows[0].play.pressed.emit()
