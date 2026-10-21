@@ -1,7 +1,7 @@
 ---
 id: T-218
 title: "Text: the two aerial tricks' popups"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -44,6 +44,15 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: the popup texts for the air 180 and air 360.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Narrative Theme Agent: wrote the two popup texts into docs/hud-and-menus.md (Trick popups, in the Content section, next to LONG DRIFT!, FULL 360!, ALT DRIFT!):
+- Air 180: "AIR 180!"
+- Air 360: "AIR 360!"
+Same voice as the existing popups (capitals, one short line, exclamation mark; Bangers has capitals only). The word AIR tells an air 360 from the drift's "FULL 360!". The combo amount ("+{amount}") is appended as for the other tricks. No other documents affected.
