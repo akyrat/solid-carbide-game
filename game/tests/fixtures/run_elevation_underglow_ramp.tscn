@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/run_elevation_demo.gd" id="1_demo"]
+
+[node name="RunElevationUnderglowRamp" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(-81, -62)
+start_rotation = -1.5708
+drive_steps = 3
+underglow_tier = 3
+wiper_tier = 1
+zoom = 14.0

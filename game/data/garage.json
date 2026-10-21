@@ -1,5 +1,5 @@
 {
-  "_comment": "Garage upgrades: 3 permanent upgrades, 10 levels each. Level 0 is the unbought base. price = coins to buy that level. Assumes about 250 coins per average run (T-039 not done). Proposed numbers; the board judges them in playtests.",
+  "_comment": "Garage upgrades: 4 permanent upgrades, 10 levels each. Level 0 is the unbought base. price = coins to buy that level. Assumes about 250 coins per average run (T-039 not done). Proposed numbers; the board judges them in playtests.",
   "max_level": 10,
   "upgrades": {
     "acceleration": {
@@ -173,6 +173,64 @@
           "level": 10,
           "price": 445,
           "value": 50
+        }
+      ]
+    },
+    "pickup_magnet": {
+      "_comment": "The pickup magnet's radius in units (T-224; run.json's pickup_magnet.radius_units is the base, 3.0 = 1 car length). +0.6 units (a fifth of a car length) per level, 9.0 (3 car lengths) at level 10. Prices as the acceleration upgrade. Proposed numbers.",
+      "stat": "pickup_magnet_radius_units",
+      "unit": "units",
+      "base_value": 3.0,
+      "levels": [
+        {
+          "level": 1,
+          "price": 40,
+          "value": 3.6
+        },
+        {
+          "level": 2,
+          "price": 50,
+          "value": 4.2
+        },
+        {
+          "level": 3,
+          "price": 60,
+          "value": 4.8
+        },
+        {
+          "level": 4,
+          "price": 80,
+          "value": 5.4
+        },
+        {
+          "level": 5,
+          "price": 100,
+          "value": 6.0
+        },
+        {
+          "level": 6,
+          "price": 120,
+          "value": 6.6
+        },
+        {
+          "level": 7,
+          "price": 155,
+          "value": 7.2
+        },
+        {
+          "level": 8,
+          "price": 190,
+          "value": 7.8
+        },
+        {
+          "level": 9,
+          "price": 240,
+          "value": 8.4
+        },
+        {
+          "level": 10,
+          "price": 300,
+          "value": 9.0
         }
       ]
     }

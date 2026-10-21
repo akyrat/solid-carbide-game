@@ -48,7 +48,7 @@ func _count(id: String) -> int:
 # --- Extended drift --------------------------------------------------------------------
 
 func test_ids() -> void:
-	assert_eq(TrickDetector.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift"])
+	assert_eq(TrickDetector.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift", "air_one_eighty", "air_three_sixty"])
 
 
 func test_drift_held_3_5_seconds_gives_exactly_3_extended_drifts() -> void:

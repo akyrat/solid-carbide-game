@@ -25,6 +25,9 @@ extends Node
 @export var steer := 1.0
 ## Gives the car the exhaust flamethrower at the start (its tier).
 @export var flamethrower_tier := 0
+## Gives the car the neon underglow / the windshield wiper at the start (T-225).
+@export var underglow_tier := 0
+@export var wiper_tier := 0
 
 var game: Node
 var run: Node2D
@@ -53,6 +56,10 @@ func _ready() -> void:
 	if zoom > 0.0:
 		run.camera_follow.dynamic = false
 		run.set_zoom(zoom)
+	if underglow_tier > 0:
+		run.weapons.underglow.set_tier(underglow_tier)
+	if wiper_tier > 0:
+		run.weapons.wiper.set_tier(wiper_tier)
 	if time_left > 0.0:
 		run.state.time_left = time_left
 	if flamethrower_tier > 0:

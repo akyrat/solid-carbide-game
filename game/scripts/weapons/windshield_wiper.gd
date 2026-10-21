@@ -226,6 +226,15 @@ func pivot_units() -> Vector2:
 	return car_units() + forward() * PIVOT_OFFSET_UNITS
 
 
+## The car's height in units (car_height.gd): 0 on the street and for a car without one.
+func car_height() -> float:
+	var car := _car()
+	if car == null:
+		return 0.0
+	var h = car.get("height")
+	return float(h) if h != null else 0.0
+
+
 ## The arm's direction in the world at `angle_deg` from the car's facing.
 func arm_direction(angle_deg: float = NAN) -> Vector2:
 	var a := sweep_angle if is_nan(angle_deg) else angle_deg
@@ -323,7 +332,8 @@ func _update_drawing() -> void:
 		return
 	var pivot_px := pivot_units() * PX_PER_UNIT
 	var tip_px := tip_units() * PX_PER_UNIT
-	drawing.position = ISO_TRANSFORM * pivot_px
+	# At the car's height (T-225): the arm is lifted as the car sprite is.
+	drawing.position = ISO_TRANSFORM * pivot_px + Vector2(0.0, -car_height() * PX_PER_UNIT)
 	drawing.set_arm(ISO_TRANSFORM.basis_xform(tip_px - pivot_px))
 	if drawing.visible and not was_visible:
 		drawing.reset_physics_interpolation()  # no slide from the last run's spot

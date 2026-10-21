@@ -63,7 +63,8 @@ signal cruise_jump(from_speed: float, w_just_pressed: bool)
 ## and the UI, hook into this. It changes no driving.
 signal boost(from_speed: float)
 ## Emitted once per trick the car does (task T-079), with the trick's id:
-## "extended_drift", "three_sixty" or "alternate_drift" (TrickDetector.TRICK_IDS).
+## "extended_drift", "three_sixty" or "alternate_drift", or (task T-219) the
+## aerial tricks "air_one_eighty" and "air_three_sixty" (TrickDetector.TRICK_IDS).
 ## For the combo (task T-081) and the trick popups. See trick_detector.gd.
 signal trick(trick_id: String)
 
@@ -155,9 +156,9 @@ func physics_step() -> void:
 		s = scripted_input[1]
 		steer = scripted_input[2]
 	var rotation_before: float = model.rotation
+	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
+	model.airborne = height_model.airborne
 	model.update_velocity(w, s, steer)
-	if detect_tricks:
-		tricks.observe(model, w, s, steer, rotation_before)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -188,6 +189,13 @@ func physics_step() -> void:
 		position = model.get_position() * PX_PER_UNIT
 		_bounce_off_side(side)
 	_update_side_contacts()
+	if detect_tricks:
+		# Tricks (task T-079), observed after the height step so the detector
+		# knows whether this step ends in the air: the drift 360 ignores those
+		# steps' turning (T-219, board: each spin pays once), and the aerial
+		# tricks (T-219) count it. Reads only.
+		tricks.observe(model, w, s, steer, rotation_before, height_model.airborne)
+		tricks.observe_air(height_model.airborne, model.rotation - rotation_before)
 	stepped.emit()
 
 
