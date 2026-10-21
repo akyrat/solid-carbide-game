@@ -1530,3 +1530,8 @@ Entry format:
 - Decision or change: the pause screen has a "Music volume" slider (T-208's label) under "SFX volume", 0 to 100, changing only the music at once and saved between sessions. The pause strip grew by one row; QA notes it now has no room for another. The board played it: "LGTM".
 - Documents touched: `docs/hud-and-menus.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-210 (done)
+
+## 2026-10-21: T-206 done: a run plays the full game on the elevation map
+- Decision or change: a run started from the main menu plays on the elevation sample map's layout as the full game (enemies, weapons, timer, likes, levels, gift drops, kaiju), with the car's height, round shadow, see-through and depth order; the MVP map stays, switched by `USE_ELEVATION_MAP` in `run.gd`. The shared elevation code is `elevation_layer.gd`. After the board's playtest: no drift smoke and no tyre marks while airborne, and the exhaust flames at the car's height. The board approved it together with T-207.
+- Documents touched: `docs/level-design.md`, `docs/game-loop-architecture.md`, `docs/drifting.md`, `docs/weapons.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-206 (done)

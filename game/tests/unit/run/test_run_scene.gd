@@ -14,7 +14,10 @@ func before_each() -> void:
 func test_run_starts_with_map_car_and_fresh_state() -> void:
 	assert_not_null(run.map, "map loaded")
 	assert_eq(run.map.challenge_ids(), [], "no challenges in the MVP (T-097)")
-	assert_eq(run.map.boulder_bodies.size(), 60, "the 60 pattern copies (T-096)")
+	# One body per pattern copy in the map's file: the MVP map's 60 (T-096),
+	# 56 on the elevation sample map (the run's default since T-206).
+	assert_eq(run.map.boulder_bodies.size(), run.map.layout.pattern_copies.size(), "one per pattern copy")
+	assert_eq(run.map.boulder_bodies.size(), 56 if run.elevation != null else 60)
 	assert_not_null(run.car, "car loaded")
 	assert_eq(run.car.get_script(), preload("res://scripts/driving/car.gd"))
 	assert_eq(run.map.car, run.car, "the map checks challenges against the car")
@@ -75,6 +78,7 @@ func test_second_run_resets_world_and_state() -> void:
 ## Challenges are left out of the MVP but kept (T-097): switched on, a run's map
 ## has the 18 preset challenges again, and a second run opens them all again.
 func test_challenges_switched_on_come_back_and_reset_on_a_new_run() -> void:
+	run.use_elevation_map = false  # the MVP map's challenges (T-206)
 	run.challenges_enabled = true
 	run.start_run()
 	assert_eq(run.map.challenge_ids().size(), run.map.layout.challenges.size(), "the MVP map's challenges")
