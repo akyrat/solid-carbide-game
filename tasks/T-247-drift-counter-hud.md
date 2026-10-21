@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-243]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-243-airtime-counter-hud.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, game/README.md, docs/hud-and-menus.md, art-archive/T-247/screenshots/]
