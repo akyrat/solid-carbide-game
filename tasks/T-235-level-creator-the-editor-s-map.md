@@ -1,7 +1,7 @@
 ---
 id: T-235
 title: Level creator: the editor's map canvas, the side panel, placing and deleting pieces
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/data/level/creator_texts.json, game/data/level/creator_assets.json, game/scripts/level/level_store.gd, game/scripts/level_creator/editor.gd, game/scripts/level/mvp_map.gd, game/scripts/level/elevation_layer.gd, game/scripts/level/elevation_platform_drawing.gd, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/scenes/level_creator/editor.tscn, game/scripts/level_creator/editor.gd, game/scripts/level_creator/asset_panel.gd, game/scripts/level_creator/level_document.gd, game/tests/unit/level_creator/test_editor_place_delete.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-235.
 ### 2026-10-21, In progress → In QA
 
 Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
 
 ## Result notes
 
@@ -108,3 +112,4 @@ Level/Challenge Design Agent, 2026-10-21.
 **Documents affected:** none. `game/README.md`, "Level creator", got the editor and its controls; it is the game's own readme.
 
 PixelLab: 0 generations. Refusals: one `sed` command to print parts of the sibling task files was refused (it needed approval). It wasn't essential: I read the files with the file reader instead. Godot's line-ending-only `.import` changes in the working copy were left uncommitted.
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
