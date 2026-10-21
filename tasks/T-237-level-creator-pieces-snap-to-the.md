@@ -1,7 +1,7 @@
 ---
 id: T-237
 title: Level creator: pieces snap to the tile grid and to close neighbours
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -48,6 +48,10 @@ The board's review: In the level creator, place pieces next to each other and ch
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-237.
 
 ## Result notes
 
