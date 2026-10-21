@@ -1,7 +1,7 @@
 ---
 id: T-206
 title: A run plays on the elevation sample map
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/game-loop-architecture.md, game/
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/drifting.md, game/README.md, game/scripts/run/run.gd, game/scripts/level/elevation_sample_map.gd, game/data/level/elevation_sample_map.json, tasks/T-196-elevation-sample-map.md, tasks/T-197-elevation-sample-depth-order.md]
 files_expected_to_change: [game/scripts/run/run.gd, game/scenes/run/run.tscn, game/tests/unit/, game/README.md, art-archive/T-206/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,14 @@ Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, i
 ### 2026-10-21, In progress → In QA
 
 Built: a run from the main menu plays the full game on the elevation map (switch back with USE_ELEVATION_MAP in run.gd). Sent to QA.
+
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: open C:\solid-carbide-worktrees\T-206\game\project.godot, or Play on T-206 in the Builds tab, and start a run from the main menu.
+
+### 2026-10-21, Needs playtest → In progress
+
+Back to the agent with the board's two fixes: no drift smoke in the air, and the flamethrower at the car's height. Enemies on ramps goes to T-207.
 
 ## Result notes
 
@@ -117,3 +125,32 @@ No commands were refused.
 ### QA, round 1
 
 All 5 criteria pass. The "1 resources still in use at exit" line also appears in run_mvp_soak.tscn (run here on the branch, where the MVP fixture exists; the MVP map's code path is unchanged by the switch), so it is not specific to the elevation map; it is not an error during play.
+- 2026-10-21, needs-playtest → in-progress: Board's playtest (2026-10-21): no drift smoke while the car is airborne; the exhaust flamethrower ignores the car's height and spawns away from the car on rooftops and in the air, so draw and place it at the car's height. Enemies ignoring raised surfaces goes to T-207.
+
+### Tweak, Game Loop Agent, 2026-10-21: the board's two fixes
+
+1. **No drift smoke in the air** (Drifting, Decisions, "No drift smoke in the air"; I copied the line from master into this branch's `docs/drifting.md`).
+   - `drift_smoke.gd` `bind()` now makes smoke only when `smokes(car)` is true: the car is drifting and not airborne.
+   - The smoke stops while the car is in the air, even with the drift keys held, and comes back on the first step after landing. On a rooftop the car is not airborne, so it still makes smoke there.
+2. **The flamethrower at height** (Weapons, Decisions, "The flamethrower at height"; I copied the line from master into `docs/weapons.md`).
+   - `exhaust_flamethrower.gd` `_update_drawing()` now lifts the flame drawing by the car's height (`car_height()`), the same way the car sprite is lifted. On a rooftop or in the air the flames come out of the exhaust where the car is drawn.
+   - Proposal: the damage area is still the flat rectangle behind the car's map position, so it burns what is at the car's spot. Enemies stay at street level, because enemies on raised surfaces are T-207's job.
+   - Only the drawing's placement changed in the weapon code.
+
+**New tests:** 5 in `game/tests/unit/run/test_run_elevation_map.gd`.
+- No smoke in the air, and smoke again after landing.
+- Smoke on a rooftop.
+- The flame at the car's exhaust on a rooftop (height 6) and in the air (height 4).
+- The flame on a rooftop burns an enemy behind the exhaust and not one far away.
+
+**Test results:** GUT 1146/1146 passed. Python `tools/` 399 OK. `game/tools/` 354 OK (1 skipped).
+
+**Screenshots:**
+- `art-archive/T-206/screenshots/run_elevation_air_drift_keys.png`: the car in the air with W and D held, drifting, and 0 smoke puffs. The fixture is `run_elevation_air_drift_keys.tscn`.
+- `art-archive/T-206/screenshots/run_elevation_flamethrower_rooftop.png`: the car drifting on the height-6 rooftop with flames at its exhaust. The fixture is `run_elevation_flamethrower_rooftop.tscn`.
+
+**Docs updated:** `docs/drifting.md` and `docs/weapons.md` (the decision lines copied from master), and `game/README.md` ("The run's map (T-206)").
+
+**Not asked for, noticed:** the drift marks are still drawn on the street under a car that is drifting in the air. You can see them faintly in the air screenshot. I left them as they are; whether to stop them in the air is the board's call.
+
+No commands were refused.

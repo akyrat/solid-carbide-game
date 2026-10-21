@@ -143,3 +143,90 @@ func test_the_run_goes_on_with_enemies_and_weapons() -> void:
 	await wait_seconds(4.0)
 	assert_true(run.state.is_running())
 	assert_gt(run.minions.minions.size(), 0, "enemies spawned")
+
+
+# --- The board's tweaks after playing it (2026-10-21) ---------------------------
+
+## Drifting, Decisions, "No drift smoke in the air": no smoke while airborne,
+## even with the drift state on; it comes back on landing.
+func test_no_drift_smoke_in_the_air_and_back_on_landing() -> void:
+	_place(Vector2(0, -81))
+	run.drift_smoke.clear()
+	run.car.model.is_drifting = true
+	run.car.height_model.height = 4.0
+	run.car.height_model.airborne = true
+	for i in 10:
+		run.car.stepped.emit()
+	assert_eq(run.drift_smoke.puff_count(), 0, "no smoke in the air while drifting")
+	run.car.height_model.height = 0.0
+	run.car.height_model.airborne = false
+	run.car.model.is_drifting = true
+	run.car.stepped.emit()
+	assert_gt(run.drift_smoke.puff_count(), 0, "smoke again once landed")
+
+
+func test_drift_smoke_on_a_rooftop_while_drifting() -> void:
+	_place(Vector2(-27, -81))
+	run.drift_smoke.clear()
+	run.car.model.is_drifting = true
+	run.car.stepped.emit()
+	assert_gt(run.drift_smoke.puff_count(), 0, "on a rooftop the car is not airborne: smoke")
+
+
+## Weapons, Decisions, "The flamethrower at height": the flames come out of the
+## exhaust where the car is drawn, at its height, and burn what they touch there.
+func _flame_on_at(units: Vector2, height: float, airborne: bool):
+	_place(units)
+	if airborne:
+		run.car.height_model.height = height
+		run.car.height_model.airborne = true
+		run.sync_view()
+	assert_almost_eq(run.car.height, height, 0.001)
+	run.minions.enabled = false
+	run.weapons.gun.set_tier(0)
+	assert_true(run.weapons.upgrade("flamethrower"))
+	var flame = run.weapons.flamethrower
+	run.car.model.is_drifting = true
+	run.car.model.vx = 5.0
+	run.car.model.vy = 0.0
+	flame.step(0.02)
+	assert_true(flame.active)
+	return flame
+
+
+func _check_flame_at_height(flame, height: float) -> void:
+	var rot: float = run.car.model.rotation
+	var back := -Vector2(cos(rot), sin(rot))
+	var ground: Vector2 = run.ISO_TRANSFORM * ((run.car.model.get_position() + back * flame.EXHAUST_OFFSET_UNITS) * 16.0)
+	var d: CPUParticles2D = flame.flame_drawing
+	assert_almost_eq(d.position.x, ground.x, 0.01)
+	assert_almost_eq(d.position.y, ground.y - height * 16.0, 0.01, "lifted by the car's height")
+	# The exhaust is where the car is drawn: the same lift as the car sprite.
+	var car_ground: Vector2 = run.ISO_TRANSFORM * (run.car.model.get_position() * 16.0)
+	assert_almost_eq(run.car_sprite.position.y - d.position.y, car_ground.y - ground.y, 0.01,
+		"the flame keeps its place next to the drawn car")
+
+
+func test_the_flame_on_a_rooftop_is_at_the_cars_exhaust() -> void:
+	var flame = _flame_on_at(Vector2(-27, -81), 6.0, false)
+	_check_flame_at_height(flame, 6.0)
+
+
+func test_the_flame_in_the_air_is_at_the_cars_exhaust() -> void:
+	var flame = _flame_on_at(Vector2(0, -81), 4.0, true)
+	_check_flame_at_height(flame, 4.0)
+
+
+func test_the_flame_on_a_rooftop_burns_what_is_at_the_car() -> void:
+	var flame = _flame_on_at(Vector2(-27, -81), 6.0, false)
+	var e: Node2D = preload("res://tests/fixtures/weapons/fake_enemy.gd").new()
+	var rot: float = run.car.model.rotation
+	e.position = (run.car.model.get_position() - Vector2(cos(rot), sin(rot)) * 1.5) * 16.0
+	run.add_child(e)
+	var far: Node2D = preload("res://tests/fixtures/weapons/fake_enemy.gd").new()
+	far.position = (run.car.model.get_position() + Vector2(0, 20)) * 16.0
+	run.add_child(far)
+	flame.step(0.02)
+	assert_true(flame.is_inside(e), "the enemy behind the car's exhaust is in the flames")
+	assert_false(flame.is_inside(far), "one far away is not")
+	assert_gt(flame.hits, 0)

@@ -19,6 +19,12 @@ extends Node
 @export var time_left := 0.0
 ## Keeps the car's health full, so the run never ends while the shot is taken.
 @export var keep_health := true
+## From this physics step on (-1: never), the drift keys are held too: W with
+## A or D (`steer`), so the car drifts, or tries to in the air (T-206 tweaks).
+@export var steer_from := -1
+@export var steer := 1.0
+## Gives the car the exhaust flamethrower at the start (its tier).
+@export var flamethrower_tier := 0
 
 var game: Node
 var run: Node2D
@@ -49,6 +55,8 @@ func _ready() -> void:
 		run.set_zoom(zoom)
 	if time_left > 0.0:
 		run.state.time_left = time_left
+	if flamethrower_tier > 0:
+		run.weapons.flamethrower.set_tier(flamethrower_tier)
 	run.sync_view()
 	run.car_sprite.reset_physics_interpolation()
 	run.camera.reset_physics_interpolation()
@@ -62,10 +70,13 @@ func _process(_delta: float) -> void:
 
 func _on_stepped() -> void:
 	_steps += 1
+	if steer_from >= 0 and _steps == steer_from:
+		run.car.scripted_input = [hold_w, false, steer]
 	if _steps == drive_steps:
 		run.car.scripted_input = [false, false, 0.0]
 		run.car.set_physics_process(false)
 		var units: Vector2 = run.car.model.get_position()
-		print("run_elevation_demo: stopped at %s, height %.2f, ground %.2f, minions %d, kaiju %s" % [
-			units, run.car.height, run.elevation.ground_height.height_at(units),
+		print("run_elevation_demo: stopped at %s, height %.2f, ground %.2f, airborne %s, drifting %s, smoke puffs %d, flame on %s, minions %d, kaiju %s" % [
+			units, run.car.height, run.elevation.ground_height.height_at(units), run.car.airborne,
+			run.car.model.is_drifting, run.drift_smoke.puff_count(), run.weapons.flamethrower.active,
 			run.minions.minions.size(), run.kaiju_boss.kaiju != null])
