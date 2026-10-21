@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/driving/trick_detector.gd, game/scripts/data/combo_data.gd, game/scripts/hud/trick_popups.gd, tasks/T-218-text-aerial-trick-popups.md]
 files_expected_to_change: [game/scripts/driving/trick_detector.gd, game/data/, game/scripts/hud/, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-219/screenshots/]
 model: opus
-qa_rounds: 3
+qa_rounds: 4
 ---
 
 <!--
@@ -95,6 +95,14 @@ Back to the agent: no drifting in the air; the car keeps its takeoff path and on
 ### 2026-10-21, In progress → In QA
 
 No drifting in the air is in: the car keeps its takeoff path and only spins. Final QA check.
+
+### 2026-10-21, In QA → Needs playtest
+
+Final QA passed all 5. Ready for the board: C:\solid-carbide-worktrees\T-219\game\project.godot; in the air the car now keeps its takeoff path and only spins.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the aerial tricks. Merged into master.
 
 ## Result notes
 
@@ -203,3 +211,4 @@ Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), 
   - Results: GUT suite 1244/1244, `tools` 439 OK, `game/tools` 388 OK (1 skipped).
 - **Recording:** new `art-archive/T-219/screenshots/air_360_run_straight.gif`, with its popup `air_360_run_straight_popup.png`; the older GIFs are kept. I looked at the frames. It is a real run on the elevation map: the car drives off a height-6 rooftop with W, then holds W and A for the whole fall. The camera follows the car, so the straight path shows as the street and boulders scrolling steadily one way while the car spins (about 470 degrees) over its shadow. It lands to AIR 360! +0.5 alone, at Combo x1.5, with no LONG DRIFT! and no FULL 360!.
 - Documents affected: `docs/drifting.md` (Content: "What the car's height does", and "Aerial tricks (task T-219)" with its new "No drifting in the air" bullet, the drift 360 bullet and the recordings), `game/README.md` ("Tricks").
+- 2026-10-21, needs-playtest → done: Board: the aerial tricks work great, LGTM
