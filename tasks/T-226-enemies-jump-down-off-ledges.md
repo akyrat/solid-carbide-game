@@ -1,7 +1,7 @@
 ---
 id: T-226
 title: Enemies jump down off ledges to chase the car
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/README.md, tasks/T-207-enemies-on-the-elevation-map.md, game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/enemy_path_follower.gd, game/scripts/enemies/enemy_height.gd]
 files_expected_to_change: [game/scripts/enemies/, game/tests/unit/, docs/enemies.md, game/README.md, art-archive/T-226/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,14 @@ Started: enemies drop off rooftop edges to chase a car below.
 ### 2026-10-21, In progress → In QA
 
 Built: enemies drop off rooftop edges with a stand-in falling animation (from about 23 s to about 4 s to reach the car). Also fixed west-facing enemies being drawn off their shadows. Sent to QA.
+
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: C:\solid-carbide-worktrees\T-226\game\project.godot; get below enemies on a rooftop and watch them drop.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved it. Merged into master; T-227 starts.
 
 ## Result notes
 
@@ -128,3 +136,4 @@ Written by the agent when it finishes.
 **Refused commands** (skipped and not retried in the same form):
 - A Bash chain that started with `S=<scratchpad path> && ...` to build the GIF and contact sheets. The guard couldn't tell that a shell variable assignment wouldn't write a ticket. I ran the GIF tool on its own with full paths, as the refusal message suggested.
 - A Bash chain with `rm -f <scratchpad>/drop/*` before recording again ("the guard can't read the command"). I recorded into new scratchpad folders instead and deleted nothing.
+- 2026-10-21, needs-playtest → done: Board: T-226 LGTM
