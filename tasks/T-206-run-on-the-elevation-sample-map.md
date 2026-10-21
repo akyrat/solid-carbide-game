@@ -1,7 +1,7 @@
 ---
 id: T-206
 title: A run plays on the elevation sample map
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -83,6 +83,10 @@ QA passed round 1; the board's tweak follows.
 ### 2026-10-21, Needs playtest → In progress
 
 Back to the agent: no tyre marks in the air, like the smoke.
+
+### 2026-10-21, In progress → In QA
+
+Tweak in: no tyre marks in the air. Ready for the board to play.
 
 ## Result notes
 
@@ -186,3 +190,4 @@ No commands were refused.
 **Stale screenshot:** the earlier `run_elevation_air_drift_keys.png` still shows the faint marks from before this fix. I kept it, as the "never delete" rule says.
 
 No commands were refused.
+- 2026-10-21, in-progress → in-qa: Ready for the board to play: no tyre marks in the air either; one QA round before merging
