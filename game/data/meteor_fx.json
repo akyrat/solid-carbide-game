@@ -1,0 +1,4 @@
+{
+  "_comment": "Which comet tail and impact animation the kaiju meteors use (T-070): pixel, pixellab, particles, or off (the earlier placeholder). The environment variable METEOR_FX overrides it. See game/README.md, Meteor effects.",
+  "version": "pixel"
+}

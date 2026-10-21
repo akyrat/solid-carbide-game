@@ -68,6 +68,10 @@ Started at the board's request, in C:\solid-carbide-worktrees$t.
 
 Meteor sample is weak: a stone pillar on a tile base, not a falling meteor (1 generation, 4860 to 4859). Recommended: the free option, the approved boulder as the falling body with a script-drawn trail. Pictures: C:\solid-carbide-worktrees\T-070\art-archive\T-070\review_meteor_dark.png
 
+### 2026-10-21, In progress
+
+Started: the agent makes 2 or 3 versions of the comet tail and impact, with a video of each.
+
 ## Result notes
 
 ### Sample round (2026-10-21, board's go for PixelLab given)
@@ -83,5 +87,29 @@ Proposal for the rest (the board judges):
 - Nothing swapped into the game yet.
 
 Skipped commands: none refused.
+
+### Rescoped round: comet tail and impact, three versions (2026-10-21)
+
+**Planned before calling:** 2 x `/animate-with-text-v3` (tail, impact), 8 frames each from a script-drawn first frame, no_background, seeds 70001 and 70002, 600 s timeout, expected about 1 generation each (T-068's walk calls cost 1 each); the rest free. Balance before: 4856 (Tier 2).
+**Actual:** each call cost **2 generations** (records in `game/art/pixellab-generation-log.jsonl`), 4 in all for the rescope (5 with the earlier sample, of the 10 allowed). Balance after: 4839; the account is shared with other sessions running at the same time, so the drop (17) is not all this task's: the calls' own usage is 2 + 2. Params: `art-archive/T-070/pixellab/{tail,impact}_req.json`; raw frames (9 each, first 8 used) in `pixellab/{tail,impact}_raw/`. No regeneration.
+
+**How each version is made** (setting `data/meteor_fx.json` `version`, env `METEOR_FX`; `game/README.md`, "Meteor effects"):
+- `pixel` (default): script-drawn sheets (`game/tools/build_meteor_fx.py build`): a 6-frame tapered violet-to-white tail with shed sparks, and an 8-frame impact (white flash and spike, 2:1 shockwave ring, glow pool, rock shards, grey-violet dust puffs). 0 generations.
+- `pixellab`: the same first frames animated by PixelLab, cut to 128 x 128, 30 colours max, hard alpha (`from-pixellab`). 4 generations.
+- `particles`: no art files, square pixel embers, ring, sparks, shards, dust drawn live in `meteor_fx.gd`, impact 0.6 s. 0 generations.
+- `off`: the old placeholder.
+The meteor, warning circle and boulder are unchanged; the boulder still appears at the instant of landing (delaying it would change T-046/T-147 behaviour), so the impact's first flash frames play over it rather than before it. Cell 128 art px drawn at 0.75 (proposal).
+
+**Honest judgment (the board judges):**
+- `pixel`: the most consistent look; the tail reads as a violet comet streak, the impact is a clear flash, ring and puffs. The tail is a smooth gradient (less "pixel art" than the boulders), the ring is flat and wide, a bit like a splash.
+- `pixellab`: tail is almost the same as the script one but gets a stray white star at the head in some frames (looks like a glitch); the impact turned pale pink and blobby, the dust became pink bubbles, less readable than the script version. Weakest; not regenerated.
+- `particles`: chunkier, clearly pixel-blocky and lively (sparks, flying shards), but the tail is thin and sparse (a short streak with a few pink squares) and the dust squares look boxy.
+- Recommendation: `pixel`, optionally with the particles' flying shards.
+
+**Recordings** (GIF, 9 s each, from the real run scene via `tests/fixtures/meteor_fx_demo.tscn`, three meteors every 1.5 s): `C:\solid-carbide-worktrees\T-070\art-archive\T-070\screenshots\meteor_fx_pixel.gif`, `meteor_fx_pixellab.gif`, `meteor_fx_particles.gif`. Previews of the sheets: `art-archive/T-070/preview_*`.
+**Tests:** `tests/unit/enemies/test_meteor_fx.gd` (tail only while falling, impact once and gone, each version draws, setting, sheets, no red) and `game/tools/test_build_meteor_fx.py`. All pass: GUT 1196/1196 (needed GUT_TIME_LIMIT=900, the default 300 s timed out on a loaded machine), game/tools unittest 361 OK, tools unittest OK. T-046's and T-147's tests are in that run.
+**Skipped/refused commands:** none refused (one hook rejected `pip list` and a `sed -n` once; I used other read tools).
+**Proposals:** the default version `pixel`; cell size and scale; frame counts; the fixture and recording script.
+**Documents affected:** game/README.md updated.
 - 2026-10-21, in-progress → in-qa: Meteor sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 5 acceptance criteria not marked

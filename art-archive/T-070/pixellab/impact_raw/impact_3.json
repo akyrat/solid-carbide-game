@@ -1,0 +1,126 @@
+{
+  "file": "impact_3.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAACUUlEQVR42u3bPVKEMAAGUGtnvICFR/AY1paWllaeyLN4DE9hYaE1DgVODIQNkLCwvDeTcf3dHb6PJAvj1RUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANTUvP80zXfTtB8dDQVAAVAADhZ+N5TgeAW4ub5NDkfoIAX4evls7u+e/h4/P74qwEUFHU7z0ZTfBt2G3xWgDV8BLj34kQKEY+h3HNWdhv328JEsQE7wY8PR39JZPTJOht2+K4jHjOeR0haCD0KMQw83eicLsKAUUqsUfGo6T40u9K4A4UZv6G/0ZomFhZBizbM+44ztQs9dAnqzRObMMFhMZai3g88d4VnfCzVRgMGfLbhESHhu+FPDSO30TxRg0hIwc0aQdMWzfvRsTH0/+tpocSY8/1gRpJ4Iv3fQSk/DmQXo9gL/No0FX4vkowKEwf89LnSws68DBD/f2zvMLaUSrLDmZ1wIis/oU2O0AIVenwKsEH7qjA7f7g19PjhjpJaOCa8zXuIOX4KpF3fmXJnrAgwLEM8G7ePuncDcK49TCqAIAwWYvPYvuBcwNmoWwHKQswwULkBWiEt+VwF2WIBSBVKAHRag9OyhAPPDX7QJLBlkzfBdD5hxJXDrJRB++QIsugy8w/AVoMaNoK0E78zf4N3AtYKPnt9Fn3PcFVxSiIXPlboNLOVzzQZrDdP9CvcJtlgEG711i/Dvc8FbHlabGfxfwE42jGd6FyGZLc8MlYajv8cN5IQR/h1H9cJnB0frgOVwFAAAAAAAAAAAAAAAAAAAAACAbfoF+ykTC2o0pN8AAAAASUVORK5CYII="
+    },
+    "action": "a meteor hits the ground: the white flash bursts into a magenta shockwave ring on the ground, rock shards fly up and fall, grey-violet dust puffs rise and fade away, the last frame almost empty",
+    "frame_count": 8,
+    "seed": 70002,
+    "no_background": true
+  },
+  "prompt": "",
+  "job_id": "f9e2f484-756c-4998-bc00-b7970f2f9c4c",
+  "usage": {
+    "type": "generations",
+    "generations": 2.0
+  },
+  "generated_at": "2026-10-21T09:35:14+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-070",
+  "job_status": "completed",
+  "notes": "impact animation from script first frame",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 3,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "impact_0.png",
+    "impact_1.png",
+    "impact_2.png",
+    "impact_3.png",
+    "impact_4.png",
+    "impact_5.png",
+    "impact_6.png",
+    "impact_7.png",
+    "impact_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 2.0
+    },
+    "id": "f9e2f484-756c-4998-bc00-b7970f2f9c4c",
+    "status": "completed",
+    "created_at": "2026-10-21T09:33:20.716558+00:00",
+    "last_response": {
+      "seed": 70002,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 2,
+        "cost_if_paid": 0.026758590757846833
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1720 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<2136 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<3412 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<2324 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<2440 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<3120 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<2328 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<2052 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1492 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 1.0,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 2.0
+      },
+      "generation_id": "1d4b29fc-5e8d-4484-a85d-af4d3f56547d",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-21T09:33:35.150342+00:00"
+    }
+  }
+}

@@ -1294,3 +1294,19 @@ It runs headless. Exit codes: 0 = the street, height 3 and height 6 reached in t
 Screenshot fixtures (`tests/fixtures/elevation_sample_drive_demo.gd`: the same drive, stopped after `steps` physics steps, or `plot = true` to show the plot instead of the map): `elevation_sample_drive_{height_3,ramp_jump,off_edge,plot,plot_light}.tscn`, for example `bash game/tools/screenshot.sh res://tests/fixtures/elevation_sample_drive_plot.tscn art-archive/T-195/screenshots/height-over-time.png 30`. Screenshots: `art-archive/T-195/screenshots/`.
 
 **The car without its sprite shadow in the air (T-205).** `scripts/driving/car_sprite.gd` loads `art/car/car_iso_noshadow.png` (T-204; same layout as `car_iso.png`) next to the normal sheet. `set_in_air(bool)` swaps only the texture, so the frame, offset and scale do not change; `is_in_air(height, ground_under)` is true when the car's height is above the ground under it. `sync_view()` of the elevation sample map and of the elevation test scene calls it after every physics step, so the sheet switches on the takeoff step and the landing step. The run calls it too on the elevation map (T-206, "The run's map (T-206)"); on the MVP map and in the drift prototype the car always draws `car_iso.png` (and the flat view has no air sheet). Tests: `tests/unit/test_car_noshadow_in_air.gd`. Screenshots: `art-archive/T-205/screenshots/` (`air.png` from `elevation_sample_air.tscn`, `street.png` from `elevation_sample_street.tscn`).
+
+## Meteor effects: the comet tail and the impact (task T-070)
+
+The kaiju's meteors (scripts/enemies/kaiju_meteors.gd) now stream a **comet tail** behind them while they fall (the last `FALL_SECONDS`, 0.5 s, of the warning) and play an **impact animation** where they land (it replaces the plain dust burst; the boulder still appears at landing, as in T-046/T-147, under the first flash frames). The meteor, the warning circle and the boulder are unchanged. Drawing is in `scripts/enemies/meteor_fx.gd` (`MeteorFx`), called by the attack's sky drawing; tail and impact are pure functions of flight time and impact age.
+
+**The setting:** `data/meteor_fx.json`, key `version`, one of:
+- `pixel` (default): sprite sheets drawn by script, `art/effects/meteor_tail_pixel.png` (6 frames, loops at 14 fps) and `meteor_impact_pixel.png` (8 frames over 0.5 s). No PixelLab. `python game/tools/build_meteor_fx.py build` redraws them (byte-identical).
+- `pixellab`: sheets animated by PixelLab (`/animate-with-text-v3`, 2 calls) from first frames the script drew, `meteor_tail_pixellab.png` (8 frames) and `meteor_impact_pixellab.png` (8 frames). Built from the raw frames in `art-archive/T-070/pixellab/` by `build_meteor_fx.py from-pixellab` (background and half-transparent pixels cut, at most 30 colours).
+- `particles`: no sprites; square pixel embers, ring, sparks, shards and dust computed each frame in `meteor_fx.gd` (impact 0.6 s).
+- `off`: the earlier placeholder (no tail, the plain dust burst).
+
+The environment variable `METEOR_FX` overrides the file (used for recordings). Sheet cells are 128 x 128 art pixels drawn at 0.75; palette is the boulders' violet and magenta, white-hot core, grey-violet dust, never Redgull red. `python game/tools/build_meteor_fx.py check` runs the sprite rules.
+
+**Recording:** `bash game/tools/record_meteor_fx.sh <version> <out.gif> [seconds]` plays `tests/fixtures/meteor_fx_demo.tscn` (a run with meteors falling at once and every 1.5 s, three at a time, the car standing still; needs a window) and writes a GIF with `tools/frames_to_gif.py`. Recordings: `art-archive/T-070/screenshots/meteor_fx_<version>.gif`.
+
+**Tests:** `tests/unit/enemies/test_meteor_fx.gd` (tail only while falling, the impact once and gone, each version draws, the setting, sheet sizes and no red) and `tools/test_build_meteor_fx.py`.
