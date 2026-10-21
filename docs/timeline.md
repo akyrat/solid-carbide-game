@@ -1535,3 +1535,8 @@ Entry format:
 - Decision or change: a run started from the main menu plays on the elevation sample map's layout as the full game (enemies, weapons, timer, likes, levels, gift drops, kaiju), with the car's height, round shadow, see-through and depth order; the MVP map stays, switched by `USE_ELEVATION_MAP` in `run.gd`. The shared elevation code is `elevation_layer.gd`. After the board's playtest: no drift smoke and no tyre marks while airborne, and the exhaust flames at the car's height. The board approved it together with T-207.
 - Documents touched: `docs/level-design.md`, `docs/game-loop-architecture.md`, `docs/drifting.md`, `docs/weapons.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-206 (done)
+
+## 2026-10-21: T-207 done: enemies follow the car up the ramps
+- Decision or change: enemies stand on the ground under them, find their way to the car with A* pathfinding over a 2-unit grid of the elevation map (ramps are the only links between levels), treat rooftop edges as walls, and hit the car only within 1 unit of their own level; minions spawn and the kaiju arrives on the street. Eight proposals for the playtest are in Enemies, Content, "Enemies on the rooftops and ramps". Heights cost about 0.3 to 1 ms per physics step. The board played it: "LGTM".
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-207 (done)

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/enemies_heights_demo.gd" id="1_demo"]
+
+[node name="EnemiesHeightsRooftop" type="Node"]
+script = ExtResource("1_demo")
+car_units = Vector2(30, 80)
+car_rotation = 3.1416
+minion_spots = Array[Vector2]([Vector2(70, 80), Vector2(65, 90), Vector2(75, 72), Vector2(60, 85), Vector2(68, 70), Vector2(62, 75), Vector2(72, 92)])
+walk_seconds = 3.6
+zoom = 12.0

@@ -18,6 +18,13 @@ extends Node
 ##   arrives.
 ## Every 10 s it prints one line; at the end a summary
 ## ("run_elevation_soak: done ...") and the game quits.
+##
+## Frame time (task T-207): every frame it reads Godot's physics time for the
+## frame (Performance.TIME_PHYSICS_PROCESS) and the minions' own step
+## (run.minions.last_step_usec), with the number of minions on screen; the
+## summary ("run_elevation_soak: frame time ...") gives them at the most
+## minions on screen. `enemy_heights` false runs the enemies as before T-207
+## (they ignore the heights), to compare.
 
 const RUN_SECONDS := 120.0
 const SPOT_SECONDS := 12.0
@@ -39,6 +46,11 @@ const SPOTS := [
 @export var mvp_map := false
 ## How long the run is played, real seconds.
 @export var run_seconds := RUN_SECONDS
+## T-207: false makes the enemies ignore the heights (as before T-207), to compare.
+@export var enemy_heights := true
+## T-207: spawning, removing and "on screen" use the game window's screen
+## (1152 x 648) instead of the headless run's tiny viewport.
+@export var real_screen := false
 
 var game: Node
 var run: Node2D
@@ -53,6 +65,8 @@ var max_minions := 0
 var max_height := 0.0
 var level_up_screens := 0
 var kaiju_seen := false
+## Per frame: [minions on screen, physics frame ms, minions' step ms].
+var _frames: Array = []
 
 
 func _ready() -> void:
@@ -66,6 +80,10 @@ func _ready() -> void:
 	if mvp_map:
 		run.use_elevation_map = false
 		run.start_run()
+	if not enemy_heights:
+		run.minions.heights_enabled = false
+		run.kaiju_boss.heights_enabled = false
+		run.start_run()
 	run.car.use_keyboard = false
 	run.weapons.gun.fired.connect(func(_b, _t) -> void: shots += 1)
 	run.state.level_up_choice_started.connect(func(_l) -> void: level_up_screens += 1)
@@ -77,6 +95,8 @@ func _process(delta: float) -> void:
 	if run == null or not is_instance_valid(run):
 		return
 	elapsed += delta
+	if real_screen:
+		_apply_real_screen()
 	var state = run.state
 	state.health = state.max_health
 	# The level-up screen: take the highlighted weapon once it is built up.
@@ -109,8 +129,77 @@ func _process(delta: float) -> void:
 		_print_line("at")
 	if elapsed >= run_seconds:
 		_print_line("done")
+		_print_frame_time()
 		set_process(false)
 		_quit()
+
+
+## The visible screen of the game's window (1152 x 648) at the run's zoom
+## (run.gd, _apply_zoom: the orthographic size camera_follow.size), round the
+## camera's centre: a headless run's viewport is far smaller, and its zoom
+## follows it, which makes the minions spawn and disappear at the wrong
+## distances from the car.
+func _apply_real_screen() -> void:
+	var cam: Camera2D = run.camera
+	var size := Vector2(1152, 648) * (2.0 * float(run.camera_follow.size) * 16.0 / 648.0)
+	var rect := Rect2(cam.get_screen_center_position() - size / 2.0, size)
+	run.minions.visible_rect_override = rect
+	run.kaiju_boss.visible_rect_override = rect
+
+
+## Once per physics step (T-207): Godot's physics time of the last step, the
+## minions' own step, and how many are on screen.
+func _physics_process(_delta: float) -> void:
+	if run == null or not is_instance_valid(run) or not is_processing():
+		return
+	_frames.append([_on_screen(), Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
+		run.minions.last_step_usec / 1000.0])
+
+
+## Minions inside the visible screen now.
+func _on_screen() -> int:
+	var rect: Rect2 = run.minions.visible_rect()
+	var iso := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
+	var n := 0
+	for m in run.minions.minions:
+		if is_instance_valid(m) and rect.has_point(iso * m.position):
+			n += 1
+	return n
+
+
+## The frame time summary: over every frame, and over the frames with the
+## most minions on screen (the top count and one under it).
+func _print_frame_time() -> void:
+	var top := 0
+	for f in _frames:
+		top = maxi(top, f[0])
+	var all := _stats(_frames)
+	var busy := _stats(_frames.filter(func(f) -> bool: return f[0] >= top - 1))
+	print("run_elevation_soak: frame time, enemy heights %s, real screen %s: most minions on screen %d; physics step ms mean %.2f, p99 %.2f, max %.2f over %d steps; at %d+ on screen: physics ms mean %.2f, p99 %.2f, max %.2f, minions' step ms mean %.3f, max %.3f over %d steps" % [
+		enemy_heights, real_screen, top, all.mean, all.p99, all.max, all.n, maxi(top - 1, 0),
+		busy.mean, busy.p99, busy.max, busy.step_mean, busy.step_max, busy.n])
+	var nav = run.minions.navigation
+	if nav != null:
+		print("run_elevation_soak: navigation built in %.1f ms, %d points" % [nav.build_usec / 1000.0, nav.astar.get_point_count()])
+
+
+static func _stats(frames: Array) -> Dictionary:
+	var phys := []
+	var step_sum := 0.0
+	var step_max := 0.0
+	for f in frames:
+		phys.append(f[1])
+		step_sum += f[2]
+		step_max = maxf(step_max, f[2])
+	phys.sort()
+	var n := phys.size()
+	if n == 0:
+		return {"mean": 0.0, "p99": 0.0, "max": 0.0, "n": 0, "step_mean": 0.0, "step_max": 0.0}
+	var sum := 0.0
+	for p in phys:
+		sum += p
+	return {"mean": sum / n, "p99": phys[mini(n - 1, int(n * 0.99))], "max": phys[n - 1], "n": n,
+		"step_mean": step_sum / n, "step_max": step_max}
 
 
 func _put_car(spot: Array) -> void:

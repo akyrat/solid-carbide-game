@@ -646,6 +646,21 @@ What the game does now, with the numbers in `game/data/enemies.json`, `meteor_at
 - **Pause and new runs:** the attack, the warning circles and the falling meteors stop while the game is paused, nothing lands once the run is over, and a new run clears them all.
 - **Playtest switch:** for the board's playtest of this task the kaiju arrives 30 seconds into the run (the T-045 switch, above), so its first attack comes 35 seconds in; it is set back to 7 minutes right before the task merges.
 
+#### Enemies on the rooftops and ramps (built in task T-207)
+
+What the game does on a map with rooftops and ramps (the elevation map, Level design), following the decision "Enemies follow the car up the ramps". On the MVP map nothing here applies and the enemies walk as described above. Points marked "proposal" go beyond the decision and wait for the board's playtest. How it is built: `game/README.md`, "Enemies on the rooftops and ramps".
+
+- **Standing on the ground:** every enemy stands on the ground under it: on the street, on a rooftop, or part way up a ramp, and is drawn lifted by that height, in the depth order at that height (over the rooftop it stands on, under a higher rooftop or a building in front of it).
+- **Edges are walls:** a rooftop's edge stops an enemy like a wall, from below and from above, so an enemy changes level only along a ramp. It keeps its whole body off an edge, and slides along it. The sides of a ramp are walls too, except near its foot, where the ramp is still low (proposal). A weapon's knockback cannot push a minion over an edge either.
+- **Finding the way:** on the car's own surface (the street, one rooftop, one ramp) an enemy walks straight at the car as before. Otherwise it follows a path to the car over the streets, ramps and rooftops, round buildings and boulders, going up or down each ramp along its middle; the path is renewed about once a second, and at once when the car changes surface.
+- **Spawning:** minions come in from the screen's edges on the street only, never on a rooftop or a ramp. The kaiju arrives on the street too (proposal).
+- **Staying round the car:** a minion on its way to a ramp is not removed for being far off screen, as long as it is within 120 units of the car (half the map; others are removed a screen beyond the visible one, as before), so minions walking round to a far ramp still arrive (proposal).
+- **Contact damage at the car's level:** a minion or the kaiju only hits the car when the car's height (in the air too) is within 1 unit of the ground the enemy stands on: a car on a rooftop is safe from the minions on the street below its edge, and a car that jumps higher than 1 unit over a minion is not hit (proposal for the 1 unit).
+- **Pushing apart:** minions push apart only from minions at their own level (proposal).
+- **The kaiju (proposal):** the same rules as the minions: it climbs the ramps (its 4-unit body fits the 10-unit ramps), edges stop it, it is drawn at its height and only hits the car at its level, although it is taller than the highest rooftop.
+- **Coins:** a coin is drawn at the height where its minion died, and stays on that level. Picking one up is unchanged: driving over it, at any height (proposal).
+- **Weapons:** unchanged by this task: the weapons find and hit enemies at any height (proposal; a later weapons task can change it).
+
 ### References
 
 - Enemy numbers (the minion, how many minions are kept around over the run, coin drops, the kaiju and its meteor attack): [../game/data/enemies.json](../game/data/enemies.json), read through `game/scripts/data/enemy_data.gd`; the reasons for each number are in task T-039's result notes.
@@ -1032,7 +1047,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `4e8a665bcbc1fed63a6365d67fd20a3c7a0e9c3255140caccb62396a1ed0a743` |
 | `drifting.md` | `1b7332e1fb56ca212282ecb801bff8503815ed2b8cf951133ddc11e98c323f18` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
-| `enemies.md` | `ef80bb0ad175f42befc6adddf30af472d4650dca1facb3572453850e0db74a07` |
+| `enemies.md` | `20de82830ed0ed8272e94da686711642faa1bb2ccc2dcb14d9e1e0b5a086a492` |
 | `weapons.md` | `7ed2079e2feaa5a2170c084f7c879c7af47c0bcd537d4dd6667dbe7902ef8f3a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `209f41b6a804a1db59f5346dc9910384d0d973e820b9fa574f7c0528e8ed0684` |
