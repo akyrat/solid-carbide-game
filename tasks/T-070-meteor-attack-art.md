@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -50,6 +50,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
+## Updates
+
+### 2026-10-21, Open → In progress
+
+Started at the board's request, in C:\solid-carbide-worktrees$t.
+
 ## Result notes
 
-Written by the agent when it finishes.
+### Sample round (2026-10-21, board's go for PixelLab given)
+
+Planned call (written before calling): 1 x `/create-image-pixflux`, 128 x 128, isometric, no background, selective outline, detailed shading, highly detailed, text guidance 8; prompt in `art-archive/T-070/meteor_req.json`. Expected cost: 1 generation. Balance before: 4860 generations (Tier 2, 5000 total). After: 4859. Actual cost: 1 generation. HTTP timeout 600 s. One round, no regeneration.
+
+Result: `art-archive/T-070/meteor_sample_raw.png` (record `meteor_sample_raw.json`). 57 colours (over the 30 limit; would need `reduce_palette.py`), no semi-transparent pixels, transparent background. Review images: `art-archive/T-070/review_meteor_dark.png` and `review_meteor_light.png` (4x, nearest-neighbour, boulder_a on the left for scale). Problems: the model drew a purple stone pillar standing on a paved tile base, with a thin pale streak at the top right, so it does not read as a falling meteor and the tile base is unusable. The palette and cracks match the boulders. Not regenerated.
+
+Proposal for the rest (the board judges):
+- Free, script-drawn (like the level-up particles and drift smoke, Visual style): the warning circle (a pixel-art ellipse ring on the isometric ground, no Redgull red by the placeholder rule, but the docs call for a red danger circle: the board should say whether a traffic-sign red is allowed here as for the alert signs; otherwise orange), and the dust burst (a few script-drawn grey-brown puff frames, no PixelLab).
+- Free alternative for the meteor itself: reuse boulder_a (already approved art) as the falling body, with a script-drawn magenta and violet trail drawn behind it. This costs no generations and makes the falling rock match the landed boulder exactly.
+- Paid, only if the board wants a distinct falling look: one more round of the meteor with a changed prompt (a round fireball rock, no tile or base) or the boulder as `init_image`. Not done: needs the board's say.
+- Nothing swapped into the game yet.
+
+Skipped commands: none refused.

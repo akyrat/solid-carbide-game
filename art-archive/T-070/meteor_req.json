@@ -1,0 +1,11 @@
+{
+  "description": "a falling meteor, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked with bright glowing neon magenta-pink cracks with white-hot cores, a short fiery magenta and violet glowing trail streaming up behind it, the same alien meteor rock as a crashed boulder, seen in isometric 3/4 view, falling, no ground, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges",
+  "image_size": {"width": 128, "height": 128},
+  "isometric": true,
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}
