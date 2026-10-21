@@ -18,10 +18,18 @@ extends CharacterBody2D
 ## It draws nothing itself: `sprite` (kaiju_sprite.gd) draws it in the
 ## isometric view. The controller moves it once per physics step through
 ## walk() and contact_step(), so pausing the tree stops it.
+##
+## Heights (task T-207, a proposal for the playtest): the same rules as a
+## minion's (enemy_height.gd). With `ground` set it stands on the ground under
+## its centre, a rooftop's edge stops it like a wall (its whole 2-unit radius
+## keeps off the edge), it climbs only by the ramps (10 units wide, wide
+## enough for it), and its contact damage only hits the car at its level.
+## The boss controller picks its way through `follower`.
 
 const PX_PER_UNIT := 16.0
 const LAYER_OBSTACLES := 1 << 0
 const LAYER_ENEMIES := 1 << 2
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
 ## The placeholder's body radius on the ground, in units (the collision circle
 ## and the reach for touching the car): 4 units across, the car being 1 wide
@@ -53,10 +61,16 @@ var contact_cooldown := 0.0
 var detour_side := 1.0
 ## The direction it last walked (flat world, normalized), for the drawing.
 var heading := Vector2.LEFT
+## The ground's heights (a GroundHeight, ground_height.gd), or null (flat map).
+var ground = null
+## Its way to the car over the ramps (enemy_path_follower.gd); set by the controller.
+var follower: RefCounted = null
 
 var _dead := false
 ## The normal of the obstacle it touched last step (ZERO for none).
 var _wall_normal := Vector2.ZERO
+## The normal of a ground edge that stopped the last move (ZERO for none).
+var _edge_normal := Vector2.ZERO
 
 
 ## Sets the numbers from EnemyData.kaiju().
@@ -97,6 +111,28 @@ func position_units() -> Vector2:
 
 func set_position_units(p: Vector2) -> void:
 	position = p * PX_PER_UNIT
+
+
+## The height of the ground it stands on, units (0 with no ground).
+func ground_height() -> float:
+	return EnemyHeightScript.height_at(ground, position_units())
+
+
+## Moves by `motion` (pixels), limited first by the ground's edges (T-207),
+## then by the obstacles; as the minion's.
+func _move(motion: Vector2) -> KinematicCollision2D:
+	_edge_normal = Vector2.ZERO
+	if ground == null:
+		return move_and_collide(motion)
+	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, RADIUS_UNITS)
+	_edge_normal = lim.normal
+	for seg in lim.segments:
+		if (seg as Vector2).length() < 0.000001:
+			continue
+		var hit := move_and_collide(seg * PX_PER_UNIT)
+		if hit != null:
+			return hit
+	return null
 
 
 ## The kaiju's body on the ground, as a radius in units (its collision
@@ -155,16 +191,18 @@ func walk(dt: float, target_units: Vector2) -> void:
 		dir = along.normalized()
 	heading = dir
 	velocity = dir * move_speed * PX_PER_UNIT
-	var hit := move_and_collide(velocity * dt)
-	_wall_normal = Vector2.ZERO
+	var hit := _move(velocity * dt)
+	_wall_normal = _edge_normal
 	if hit != null:
 		_wall_normal = hit.get_normal()
 		var rest := hit.get_remainder()
 		rest -= _wall_normal * rest.dot(_wall_normal)
 		if rest.length() > 0.0:
-			var hit2 := move_and_collide(rest)
+			var hit2 := _move(rest)
 			if hit2 != null:
 				_wall_normal = hit2.get_normal()
+			elif _edge_normal != Vector2.ZERO:
+				_wall_normal = _edge_normal
 
 
 ## True when the kaiju's body touches the car's 1 x 1 unit body
@@ -185,6 +223,8 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 		return false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
+		return false
+	if ground != null and not EnemyHeightScript.at_car_level(ground_height(), EnemyHeightScript.car_height(car)):
 		return false
 	if contact_cooldown > 0.0:
 		return false

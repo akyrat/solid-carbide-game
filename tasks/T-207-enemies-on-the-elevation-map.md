@@ -1,7 +1,7 @@
 ---
 id: T-207
 title: Enemies follow the car up the ramps on the elevation map, with pathfinding
-status: blocked
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -54,6 +54,10 @@ Board review files: a run from the main menu.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Blocked → In progress
+
+Started from T-206's build: enemies find their way up the ramps to the car, with pathfinding, as the board decided.
 
 ## Result notes
 

@@ -22,11 +22,21 @@ extends Node
 ## `after_seconds` into the run instead of at the boss time.
 ## `early_arrival_seconds` holds it (-1 = off); `playtest_override` lets tests
 ## ignore the file.
+##
+## Heights (task T-207, a proposal for the playtest): on a map with rooftops
+## and ramps the kaiju follows the minions' rules (minion_spawner.gd,
+## enemy_height.gd): it arrives on the street, stands on the ground under it,
+## rooftop edges stop it, it finds its way to the car by the ramps (the same
+## navigation as the minions, enemy_navigation.gd), it is drawn lifted by the
+## ground's height, and its contact damage only hits the car at its level.
 
 const KaijuScript := preload("res://scripts/enemies/kaiju.gd")
 const KaijuSpriteScript := preload("res://scripts/enemies/kaiju_sprite.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 const KaijuMeteorsScript := preload("res://scripts/enemies/kaiju_meteors.gd")
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
+const EnemyNavigationScript := preload("res://scripts/enemies/enemy_navigation.gd")
+const FollowerScript := preload("res://scripts/enemies/enemy_path_follower.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -78,6 +88,13 @@ var kaiju: Node = null
 ## playtest switch) and has not found a free spot yet (it tries again each step).
 var arrival_due := false
 var depth = EnemyDepthScript.new()
+## T-207: false makes the kaiju ignore the map's heights (as before T-207).
+## Read when a run's world is built.
+var heights_enabled := true
+## The map's ground heights (GroundHeight) and the enemies' navigation; null
+## on a map without heights.
+var ground = null
+var navigation: RefCounted = null
 ## The kaiju's meteor attack (task T-046, kaiju_meteors.gd): child "Meteors".
 var meteors: Node = null
 
@@ -140,6 +157,12 @@ func _on_world_rebuilt() -> void:
 	car = _run.car
 	map = _run.map
 	depth.set_map(map)
+	ground = null
+	navigation = null
+	var elevation = map.get("elevation") if map != null else null
+	if heights_enabled and elevation != null:
+		ground = elevation.ground_height
+		navigation = EnemyNavigationScript.for_map(map)
 	clear()
 
 
@@ -196,7 +219,11 @@ func step(dt: float) -> void:
 			try_appear()
 	if not _live():
 		return
-	kaiju.walk(dt, car.position / PX_PER_UNIT)
+	var car_units: Vector2 = car.position / PX_PER_UNIT
+	var target := car_units
+	if navigation != null and kaiju.follower != null:
+		target = kaiju.follower.target(navigation, kaiju.position_units(), car_units, dt)
+	kaiju.walk(dt, target)
 	kaiju.contact_step(dt, car, state)
 	update_drawing()
 
@@ -221,6 +248,8 @@ func appear_at(units: Vector2) -> Node:
 	k.setup(_stats)
 	k.set_position_units(units)
 	k.detour_side = 1.0 if rng.randf() < 0.5 else -1.0
+	k.ground = ground
+	k.follower = FollowerScript.new()
 	if car != null:
 		var to_car: Vector2 = car.position / PX_PER_UNIT - units
 		if to_car.length() > 0.001:
@@ -307,13 +336,17 @@ func pick_arrival_point():
 	return null
 
 
-## True when the kaiju fits at `units`: inside the map, not on a building or a boulder.
+## True when the kaiju fits at `units`: inside the map, not on a building or
+## a boulder, and on a map with heights on the street (T-207).
 func is_free_spot(units: Vector2) -> bool:
 	if map == null:
 		return true
 	var rad: float = KaijuScript.RADIUS_UNITS
 	var m: Rect2 = map.rect_of(map.layout.map.rect)
 	if not m.grow(-rad).has_point(units):
+		return false
+	var elevation = map.get("elevation")
+	if elevation != null and not elevation.is_street(units, rad):
 		return false
 	for b in map.layout.buildings:
 		if map.rect_of(b).grow(rad).has_point(units):
@@ -334,6 +367,7 @@ func _place_sprite() -> void:
 	if not _live() or kaiju.sprite == null:
 		return
 	var s: Node2D = kaiju.sprite
-	s.position = ISO_TRANSFORM * kaiju.position
+	var h: float = kaiju.ground_height()
+	s.position = ISO_TRANSFORM * kaiju.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(kaiju.heading)
-	s.z_index = depth.z_index_for(kaiju.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS)
+	s.z_index = depth.z_index_for(kaiju.position_units(), KaijuScript.RADIUS_UNITS, KaijuScript.HEIGHT_UNITS, h)
