@@ -47,6 +47,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 - **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
+- **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). (T-222)
 
 ### Content
 
@@ -167,7 +168,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **Extended drift:** every second of drifting counts as one low-value trick.
   - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
   - **Alternate drift:** drift forwards, release W while still steering, switch to S and drift backwards, then back to W, so the car draws semicircles. Each switch between a forward and a backward drift while keeping the same steering direction counts as one high-value trick. The Driving & Drift Agent proposes the timing limits; the board tunes them.
-- **Aerial tricks** (board, 2026-10-21): two tricks in the air, from turning the car while it is airborne (off a ramp or a rooftop's edge): a **180** (the heading turns 180 degrees during one airtime) and a **360** (a full turn). Either direction counts the same: a left 180 and a right 180 are the same trick, and so for the 360. What they are worth, and whether a 360 also counts its 180, are the Driving & Drift Agent's proposals for the playtest (Game loop architecture, Decisions, for how tricks raise the combo). Their popup texts: HUD and menus, Content (T-218). (T-219)
+- **Aerial tricks** (board, 2026-10-21): two tricks in the air, from turning the car while it is airborne (off a ramp or a rooftop's edge): a **180** (the heading turns 180 degrees during one airtime) and a **360** (a full turn). Either direction counts the same: a left 180 and a right 180 are the same trick, and so for the 360. What they are worth, and whether a 360 also counts its 180, are the Driving & Drift Agent's proposals for the playtest (Game loop architecture, Decisions, for how tricks raise the combo). Their popup texts: HUD and menus, Content (T-218). (T-219) The car turns faster in the air than on the ground, so an air 360 fits in a jump off the tallest rooftop (board, 2026-10-21, after T-219 found the longest airtime, 1 second, too short for a 360 at the ground turn rate); how fast is the Driving & Drift Agent's proposal for the playtest.
 - Settling the movement mechanics is one of the project's top priorities and the first thing to work on.
 - When W makes the car jump instantly to cruise speed, a short "boost" effect plays to emphasise the jump. This comes after the MVP (tasks T-008 and T-009, final release). Its look: Visual style, Decisions.
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
@@ -602,6 +603,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 - **Enemies follow the car up the ramps** (board, 2026-10-21, after playing the full game on the elevation map, where enemies ignored every raised surface): enemies treat rooftops as raised ground they can only reach by the ramps. To reach a car on a rooftop they find their way to a ramp, drive or walk up it and follow the car, with pathfinding over the map's streets, ramps and rooftops; a rooftop's edge blocks them like a wall from below. (T-207)
 
+- **Health drops** (board, 2026-10-21): enemies also drop health pickups, at the same drop rate as the coins. Picking one up restores 30% of the car's health (never above its maximum). It looks like a red gas canister with a white cross on it (look: Visual style, Decisions). (T-220, art T-221)
+
 ### Content
 
 #### The minion (built in task T-044)
@@ -813,8 +816,18 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves.
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
+- **Pickup magnet upgrade** (board, 2026-10-21): the radius within which coins, gift packs and health drops are pulled to the car (Game loop architecture, Decisions, "Pickup magnet") is a garage upgrade, starting at 1 car length; its levels, prices and how far each level reaches are the Game Data Agent's proposals. Its name and description in the garage: T-223. (T-224)
 
 ### Content
+
+#### Pickup magnet text (T-223)
+
+The fourth upgrade's text, in the form of the other three (name up to 25 characters, description up to 80; T-224 uses it word for word, with the key `pickup_magnet`). It names no number, because the Game Data Agent proposes how far each level reaches.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.pickup_magnet.name | Brand Magnet | 12/25 |
+| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
 
 #### Saving
 
@@ -867,6 +880,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **Drift smoke:** while the car drifts, puffs of smoke come off its two rear tyres, stay where they were left, grow and then shrink or break up. The smoke sprites are drawn by a script, not generated with PixelLab, within the pixel style above (no semi-transparent pixels), and not in Redgull red.
 - **Every generated asset is kept, and kept apart by status.** Art that is clean and ready for the game lives under `game/art/`. Every other generation (rejected versions, failed attempts, test runs, edits the board didn't choose) is never deleted: it is archived, with its record, in `art-archive/` at the top of the repo, outside the game folder, one folder per task. So `game/art/` holds only assets fit for the game, and the archive holds everything else.
 - Art details these decisions leave open (for example how many directions and animation frames the minion and the kaiju have, or how many building and ground-tile variants there are) are proposed by the Asset Generation Agent in each art task; the board judges them.
+- **Health drop** (board, 2026-10-21): a red gas canister with a white cross on it, small, lying on the ground like the coins. Its red is a canister red, not Redgull's red, which stays Redgull's own (Palette). (T-221)
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact. (2026-10-08) The board keeps the meteor as it falls today and adds only a comet-tail animation while it falls and an impact animation when it lands; no new meteor pictures; two or three versions to compare as recordings, made however suits best, PixelLab included (board, 2026-10-21, T-070).
 - **The kaiju:** a giant monster several times the car's size, in the style of Godzilla.
 - **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player.
@@ -1045,12 +1059,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `4e8a665bcbc1fed63a6365d67fd20a3c7a0e9c3255140caccb62396a1ed0a743` |
-| `drifting.md` | `2bc852ca064fd65bdead4833fa94b6071db25d902a26ea57e4b4a8ad2370c7fe` |
+| `game-loop-architecture.md` | `bf015f10cf911a7f496a83f06015dc4aa962220896fc06059541ada41793943c` |
+| `drifting.md` | `4222a82d9a6029531c97dc77e5d42ae88aa326331ca0fb238ec17e2b4f15800a` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
-| `enemies.md` | `5d08afe48734703683b1cd2651e67eaf5f589ac54651fa53214738de337aaa01` |
+| `enemies.md` | `de4731fa57de7b04f717a6bb0570c00c7820b26a8fc3fa6ed912501e4c824fff` |
 | `weapons.md` | `4c3108b30ae8748d107e30710257a4b220f0473f5742da4e10d3d8481b9c1ccd` |
-| `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
-| `visual-style.md` | `a1e2714bd2324b5e1662a9ec69e7b4dac51743de8705c7bfd0d69de32bfb621d` |
+| `garage-design.md` | `a0a6f81828bcdfab4a90010c317ffc650cb968978664e9e59cb8c1e20cffa0d6` |
+| `visual-style.md` | `b1d7ed698144d7cb3314c681b5f5a0e817c405e84c6ec617e2d2f81166538dab` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
 | `hud-and-menus.md` | `de0e23d2e84561773ac6d0234c6c8d2615b463f1c9a7f5dc6202d290fcb357ed` |

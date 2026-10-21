@@ -1585,3 +1585,28 @@ Entry format:
 - Decision or change: the air 180 pops "AIR 180!" and the air 360 "AIR 360!", in the voice of LONG DRIFT!, FULL 360! and ALT DRIFT! (HUD and menus, Content). Docs-only text, merged straight after QA; T-219 starts.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-218 (done), T-219 (in progress)
+
+## 2026-10-21: T-216 done: the guard lets more read-only commands through
+- Decision or change: the guard no longer refuses `sed -n`, removing an agent's own capture images, sourcing a script that only sets variables, `pip list`, `git check-ignore` and similar printing git commands, or `xargs git checkout` of Godot's line-ending noise; it still refuses `rm`, `sed -i` and scripts that write a ticket's status, qa_rounds or lead lines. The Project Lead's criterion asking to refuse `git checkout` of a ticket was wrong (the commit check relies on it) and was corrected. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`
+- Tasks: T-216 (done)
+
+## 2026-10-21: T-215 done: goal runner and QA-mark fixes
+- Decision or change: the goal runner's ticket writer drops criteria only the Project Lead can meet (long or short GDD, staleness check, timeline, merging); `task_status.py` counts only the last QA mark on each criterion and reads "(QA: pass. ...)"; QA is told to replace its old marks; board moves on goal tickets reach a live session once the run's own session has ended (`run.py --session` records it); tool tests no longer print lines that look like real commits on master. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-215 (done)
+
+## 2026-10-21: T-217 done: the game's current state in the README
+- Decision or change: the root README has a "Current state of the game" section with three GIFs recorded from the real game: the car drifting with minions chasing it (on the gravel square; the weakest of the three), the car drifting off a height-6 rooftop and landing, and the kaiju chasing the car while meteors fall. README and GIFs only, merged straight after QA.
+- Documents touched: `README.md`
+- Tasks: T-217 (done)
+
+## 2026-10-21: Health drops, a pickup magnet and its garage upgrade
+- Decision or change: enemies drop health pickups at the coins' drop rate, each restoring 30% of the car's health, drawn as a red gas canister with a white cross (in a canister red, not Redgull's) (T-220 with a placeholder, art T-221 sample first). Coins, gift packs and health drops are pulled to the car within 1 car length (T-222), and that radius is a garage upgrade (text T-223, upgrade T-224).
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`, `docs/garage-design.md`, `docs/visual-style.md`
+- Tasks: T-220 to T-224
+
+## 2026-10-21: T-223 done: the pickup magnet upgrade's garage text
+- Decision or change: the magnet upgrade is called "Brand Magnet", described as "Pickups reach you from further per level. Redgull calls it engagement." (Garage design, Content), in the form and voice of the other three upgrades. The board also chose faster turning in the air so the air 360 fits in a jump off the tallest rooftop (Drifting, Decisions). Docs-only text, merged straight after QA.
+- Documents touched: `docs/garage-design.md`, `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-223 (done), T-219

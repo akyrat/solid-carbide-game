@@ -19,8 +19,18 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves. (2026-10-08)
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP. (2026-10-08)
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions. (2026-10-09)
+- **Pickup magnet upgrade** (board, 2026-10-21): the radius within which coins, gift packs and health drops are pulled to the car (Game loop architecture, Decisions, "Pickup magnet") is a garage upgrade, starting at 1 car length; its levels, prices and how far each level reaches are the Game Data Agent's proposals. Its name and description in the garage: T-223. (T-224)
 
 ## Content
+
+### Pickup magnet text (T-223)
+
+The fourth upgrade's text, in the form of the other three (name up to 25 characters, description up to 80; T-224 uses it word for word, with the key `pickup_magnet`). It names no number, because the Game Data Agent proposes how far each level reaches.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.pickup_magnet.name | Brand Magnet | 12/25 |
+| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
 
 ### Saving
 
@@ -32,7 +42,7 @@ A plain list (task T-058, `game/scenes/menu/garage_screen.tscn`, script `game/sc
 
 ## Open questions
 
-- (After MVP) More upgrades, for example top speed, cruise speed, steering, drift grip, or upgrades not about driving such as coin magnet range.
+- (After MVP) More upgrades, for example top speed, cruise speed, steering, drift grip, or other upgrades not about driving (the pickup magnet is now decided: Decisions, 2026-10-21).
 - (After MVP) The garage screen's visual style.
 - (After MVP) Unlockable cars with different driving styles (from this document's scope).
 

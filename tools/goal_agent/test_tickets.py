@@ -94,6 +94,39 @@ class Refusals(unittest.TestCase):
         self.assertRefused([draft(acceptance_criteria=[])], "no acceptance criteria")
         self.assertRefused([draft(acceptance_criteria=["  "])], "no acceptance criteria")
 
+    def test_criteria_only_the_project_lead_can_meet_are_recognised(self):
+        lead_only = {
+            "The long GDD is regenerated": "the long GDD",
+            "docs/long-gdd.md includes the new section": "the long GDD",
+            "python tools/generate_long_gdd.py --check passes": "the long GDD",
+            "The short GDD's fingerprint is updated": "the short GDD",
+            "The staleness check passes": "the docs staleness check",
+            "The docs are not stale": "the docs staleness check",
+            "A timeline entry lists the documents touched": "the timeline",
+            "docs/timeline.md has the decision": "the timeline",
+            "The branch is merged into playtest/G-004": "merging",
+            "Merged into master after QA": "merging",
+        }
+        for criterion, what in lead_only.items():
+            self.assertEqual(tickets.lead_only(criterion), what, criterion)
+        for criterion in ("The car drifts at 60 px/s", "The HUD shows the timer", "docs/drifting.md lists the tuning",
+                          "The tests in game/tests pass", "The enemies merge into a swarm of 5"):
+            self.assertIsNone(tickets.lead_only(criterion), criterion)
+
+    def test_a_draft_with_only_lead_only_criteria_is_refused_with_why(self):
+        self.assertRefused([draft(acceptance_criteria=["The long GDD is regenerated", "The staleness check passes"])],
+                           "only the Project Lead can meet")
+        self.assertRefused([draft(acceptance_criteria=["A timeline entry is added"])], "QA would fail it")
+        self.assertEqual(self.reasons([draft(acceptance_criteria=["It works", "The long GDD is regenerated"])]), [],
+                         "a draft with a checkable criterion left is accepted; the other is dropped when written")
+
+    def test_the_prompts_say_why(self):
+        from goal_agent import gaps, prioritize
+        for text in (gaps.prompt("Goal", [], {}, ([], [])), prioritize.prompt("Goal", "G-001")):
+            for words in ("long GDD", "short GDD", "staleness check", "timeline", "merging", "only the Project Lead",
+                          "QA would fail it"):
+                self.assertIn(words.lower(), text.lower(), words)
+
     def test_depends_on_must_name_a_draft_or_a_ticket(self):
         self.assertRefused([draft(depends_on=["T-999"])], "neither another draft nor an existing ticket")
         self.assertEqual(self.reasons([draft(depends_on=["T-999"])], {"T-999": {"to": "ui", "status": "open"}}), [])
@@ -149,6 +182,20 @@ class Writing(Repo):
         self.assertEqual(statuses, {"D1": "open", "D2": "blocked", "D3": "blocked"})
         self.assertEqual(tb.parse_header(written["D2"][1].read_text(encoding="utf-8"))["depends_on"], ["T-012"])
         self.assertIn("The board's review: play it", written["D3"][1].read_text(encoding="utf-8"))
+
+    def test_lead_only_criteria_are_dropped_from_the_written_ticket(self):
+        dropped = []
+        criteria = ["It works", "The long GDD is regenerated", "The short GDD's fingerprint is updated",
+                    "The staleness check passes", "A timeline entry is added", "The branch is merged into master"]
+        written = tickets.write([draft(acceptance_criteria=criteria)], {}, self.root, "G-001", dropped=dropped)
+        text = written["D1"][1].read_text(encoding="utf-8")
+        section = text.split("## Acceptance criteria", 1)[1].split("\n## ", 1)[0]
+        self.assertEqual(section.strip(), "- [ ] It works (QA: pass / fail)")
+        self.assertEqual([(tid, what) for tid, _, what in dropped],
+                         [("T-001", "the long GDD"), ("T-001", "the short GDD"), ("T-001", "the docs staleness check"),
+                          ("T-001", "the timeline"), ("T-001", "merging")])
+        self.assertIn('T-001: "The long GDD is regenerated" (the long GDD)', tickets.dropped_note(dropped))
+        self.assertEqual(tickets.dropped_note([]), "")
 
     def test_a_refused_claim_pauses(self):
         def refuse(root, tid, name):

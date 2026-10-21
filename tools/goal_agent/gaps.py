@@ -82,7 +82,10 @@ For each sub-goal give one verdict:
   depends_on names other drafts by key or existing tickets by id. A visual: a functional ticket with a
   placeholder, and an asset-generation ticket that depends on it. Player-facing text: a narrative-theme
   ticket first, which the main ticket depends on. Anything the player sees, reads or hears gets a
-  review line (the text after "The board's review:"). Build only what the goal and the docs say.{retry}"""
+  review line (the text after "The board's review:"). Build only what the goal and the docs say.
+Acceptance criteria are only what the ticket's agent can do and QA can check in the ticket's own folder. Never
+write a criterion about the long GDD, the short GDD (or its fingerprint), the docs staleness check, the timeline
+or merging: {tickets.LEAD_ONLY_WHY} Such criteria are dropped from the ticket.{retry}"""
 
 
 def check_verdicts(verdicts, sub_goals, existing):

@@ -1,6 +1,8 @@
 """Tests for the command line (run.py): `start` with the fixtures, `status`, and the runner's own commit.
 Runs in temporary git repos with their own copy of the runner; FakeClaude only, no Claude calls."""
 
+import contextlib
+import io
 import subprocess
 import sys
 import tempfile
@@ -75,16 +77,24 @@ class Start(unittest.TestCase):
         self.assertEqual(list((self.root / "tasks").glob("T-164-*.md")), [], "no ticket written")
         self.assertIn("G-001: paused", temp_repo.git(self.root, "log", "-1", "--format=%s"))
 
+    def start(self, claude, **kw):
+        """run.start with its printed lines captured: (goal, output). Test output never shows a commit message."""
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            goal = run.start("Sample goal", self.root, claude, **kw)
+        return goal, out.getvalue()
+
     def test_no_commit_during_a_merge(self):
         head = temp_repo.git(self.root, "rev-parse", "HEAD").strip()
         (self.root / ".git" / "MERGE_HEAD").write_text(head + "\n")   # what git leaves during a merge
-        goal = run.start("Sample goal", self.root, FakeClaude(FIXTURES / "sample-goal.json"))
+        goal, out = self.start(FakeClaude(FIXTURES / "sample-goal.json"))
         self.assertEqual(goal.get("status"), "planned")
         self.assertEqual(temp_repo.git(self.root, "rev-parse", "HEAD").strip(), head, "nothing committed")
+        self.assertIn("Not committed: a merge is in progress", out)
+        self.assertIn(f"[test repository {self.root.resolve()}]", out)
 
     def test_start_passes_the_new_goals_id_to_the_planner(self):
         claude = FakeClaude(FIXTURES / "sample-goal.json")
-        goal = run.start("Sample goal", self.root, claude, commit=False)
+        goal, _ = self.start(claude, commit=False)
         step, text, _ = claude.calls[0]
         self.assertEqual((step, goal.id), ("plan", "G-001"))
         self.assertIn("G-001", text)
@@ -93,16 +103,33 @@ class Start(unittest.TestCase):
     def test_no_commit_off_master(self):
         temp_repo.git(self.root, "checkout", "-q", "-b", "task/T-999-elsewhere")
         head = temp_repo.git(self.root, "rev-parse", "HEAD").strip()
-        run.start("Sample goal", self.root, FakeClaude(FIXTURES / "sample-goal.json"))
+        _, out = self.start(FakeClaude(FIXTURES / "sample-goal.json"))
         self.assertEqual(temp_repo.git(self.root, "rev-parse", "HEAD").strip(), head)
+        self.assertIn("not master", out)
 
     def test_commit_stages_only_the_goal_files(self):
         stray = self.root / "stray.txt"
         stray.write_text("someone else's work")
         temp_repo.git(self.root, "add", "stray.txt")
-        run.start("Sample goal", self.root, FakeClaude(FIXTURES / "sample-goal.json"))
+        _, out = self.start(FakeClaude(FIXTURES / "sample-goal.json"))
+        self.assertEqual(out.strip(), f'Committed on master: G-001: planned, "Sample goal" (goal runner) '
+                                      f"[test repository {self.root.resolve()}]")
         self.assertNotIn("stray.txt", temp_repo.git(self.root, "log", "-1", "--name-only", "--format=%s"))
         self.assertIn("A  stray.txt", temp_repo.git(self.root, "status", "--porcelain"))
+
+    def test_start_records_the_session_that_starts_the_run(self):
+        goal, _ = self.start(FakeClaude(FIXTURES / "sample-goal.json"), commit=False, session="Coursework")
+        self.assertEqual(goal_file.find(self.root / "goals", "G-001").get("session"), "Coursework")
+        self.assertIn("by the session Coursework", goal.section("Iteration log"))
+        code, out = self.cli("start", "Sample goal", "--plan-only", "--session", "two words", "--fake",
+                             "tools/goal_agent/fixtures/sample-goal.json")
+        self.assertEqual(code, 2, out)
+        self.assertIn("--session needs a session name", out)
+
+    def test_a_test_repository_is_never_made_inside_the_real_one(self):
+        with self.assertRaises(RuntimeError):
+            temp_repo.make(temp_repo.REAL / "tmp-test-repo")
+        self.assertFalse((temp_repo.REAL / "tmp-test-repo").exists())
 
     def test_help_lists_the_commands(self):
         code, out = self.cli("--help")
@@ -154,6 +181,12 @@ class WholeRun(unittest.TestCase):
         code, out = self.cli("resume", "G-001", "--fake", "tools/goal_agent/fixtures/whole-goal.json")
         self.assertEqual(code, 1, out)
         self.assertIn("stays paused", out)
+        self.assertIsNone(goal_file.find(self.root / "goals", "G-001").get("session"), "a run that didn't resume")
+        code, out = self.cli("resume", "G-001", "--force", "--session", "Coursework", "--fake",
+                             "tools/goal_agent/fixtures/whole-goal.json")
+        goal = goal_file.find(self.root / "goals", "G-001")
+        self.assertEqual(goal.get("session"), "Coursework", out)
+        self.assertIn("resumed by the session Coursework", goal.section("Iteration log"))
 
 
 if __name__ == "__main__":

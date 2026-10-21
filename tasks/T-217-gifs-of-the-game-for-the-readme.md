@@ -1,7 +1,7 @@
 ---
 id: T-217
 title: GIFs of the game's current state, for a README section
-status: open
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, game/README.md, docs/level-design.md, docs/enemies.md]
 files_expected_to_change: [art-archive/T-217/, game/tests/fixtures/, game/tools/, README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,15 +43,39 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Three GIFs in `art-archive/T-217/screenshots/` show, in the real game with the HUD: the car drifting with enemies chasing it; the car jumping off a tall platform while drifting; the kaiju chasing the car while meteors fall (QA: pass / fail)
-- [ ] Each GIF is under 5 MB and a few seconds long (QA: pass / fail)
-- [ ] The root `README.md` has a "Current state of the game" section showing the three GIFs, each with one line, by relative path (QA: pass / fail)
-- [ ] No game behaviour changed: only fixtures, recording tools and docs; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Three GIFs in `art-archive/T-217/screenshots/` show, in the real game with the HUD: the car drifting with enemies chasing it; the car jumping off a tall platform while drifting; the kaiju chasing the car while meteors fall (QA: pass; real game with HUD in all three, jump and kaiju clear. GIF 1 is open gravel with few small minions, but they gather and chase the car in the later frames, so it just meets the criterion; weakest of the three)
+- [ ] Each GIF is under 5 MB and a few seconds long (QA: pass; 4.3, 2.7 and 3.9 MB; 3.6, 3.6 and 3.3 s)
+- [ ] The root `README.md` has a "Current state of the game" section showing the three GIFs, each with one line, by relative path (QA: pass; section before Layout, three images with one line each, paths resolve)
+- [ ] No game behaviour changed: only fixtures, recording tools and docs; the full GUT suite and all Python tool tests pass (QA: pass; diff is README, GIFs, fixture and recording tools only; GUT 1212/1212, tools 414 OK, game/tools 387 OK with 1 skipped)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: three GIFs of the game today and a README section.
+
+### 2026-10-21, In progress → In QA
+
+Three GIFs and the README section are in. Sent to QA.
+
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged: the README shows the three GIFs.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done. Three GIFs recorded from the real game (menu, Start, the run on the elevation map, HUD on) by one scripted fixture, `game/tests/fixtures/readme_gif_demo.gd` (mode from the env var `README_GIF`: street, jump, kaiju), with `bash game/tools/record_readme_gif.sh <mode> <out.gif> [seconds] [skip]` (Godot `--write-movie`, 30 fps, then `frames_to_gif.py`). No game behaviour changed: the fixture only scripts the car's inputs, keeps its health full, and fixes the camera zoom (10 / 13 / 16) so it does not depend on the camera options saved on this machine. `game/tools/frames_to_gif.py` got optional `--first`, `--last`, `--colors` and `--shared` (one palette for the whole GIF); defaults unchanged. The GIFs are 576 x 324 (half the game's 1152 x 648 window, nearest-neighbour), 15 fps, full frame so the whole HUD shows. Frames were looked at, as contact sheets.
+
+In `art-archive/T-217/screenshots/`:
+- `drift_with_chasers.gif`: 4.3 MB, 60 frames, 4.0 s. The car drifts figure-eight loops with tyre smoke and skid marks while the green minions gather and chase it; a coin is picked up at the end. Honest notes: it is on the open gravel in the middle of the map, not on an asphalt street (the streets have boulders in the middle, which stopped the scripted car); the minions are small at this zoom and only about 5 to 10 are on screen, so "chased" is readable but not dramatic.
+- `drifting_jump.gif`: 2.7 MB, 60 frames, 4.0 s. The car builds speed on the height-6 rooftop, kicks into a drift, goes off the rooftop's east edge still drifting (about 2 s in the air, its round shadow on the street below), and lands on the street with smoke and skid marks. Shows what the task asks.
+- `kaiju_meteors.gif`: 3.9 MB, 55 frames, 3.7 s. The kaiju (brought in at once with 60.5 s left on the clock) walks after the car with its bar above it; orange warning circles appear, three meteors fall with their purple tails, land with dust and purple rings, and leave boulders; the car's health bar dips once. Shows what the task asks. A flamethrower is not shown (not part of the task).
+
+All three are under 5 MB. README: a "Current state of the game" section before "Layout", with the three GIFs by relative path and one line each.
+
+Tests: `bash game/tools/run_tests.sh` passed (All tests passed); `python -m unittest discover -s tools -p "test_*.py"` OK; `python -m unittest discover -s game/tools -p "test_*.py"` OK (387 tests, 1 skipped). No command was refused, except one compound shell command my own variable use triggered the status-script guard; I reran it as plain commands. Documents affected: README.md.
+- 2026-10-21, in-qa → done: QA passed all 4; README and GIFs only, merged straight after QA
