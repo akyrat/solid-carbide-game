@@ -1,7 +1,7 @@
 ---
 id: T-218
 title: "Text: the two aerial tricks' popups"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, docs/extended-narrative.md]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Started: the popup texts for the air 180 and air 360.
 
 Texts written: "AIR 180!" and "AIR 360!". Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed both. Merged: AIR 180! and AIR 360!. T-219 starts now.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -60,3 +64,4 @@ Narrative Theme Agent: wrote the two popup texts into docs/hud-and-menus.md (Tri
 - Air 180: "AIR 180!"
 - Air 360: "AIR 360!"
 Same voice as the existing popups (capitals, one short line, exclamation mark; Bangers has capitals only). The word AIR tells an air 360 from the drift's "FULL 360!". The combo amount ("+{amount}") is appended as for the other tricks. No other documents affected.
+- 2026-10-21, in-qa → done: QA passed both; docs-only text, merged straight after QA
