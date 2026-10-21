@@ -63,6 +63,10 @@ Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, i
 
 Sample ready for the board: 1 PixelLab call, 1 generation, balance 4861 to 4860. Weak: the new frame barely turns (about 17 degrees short of halfway), almost a copy of its neighbour. Pictures: C:\solid-carbide-worktrees\T-102\art-archive\T-102\sample_frame05_dark.png and sample_frame05_light.png. The other 15 wait for the board.
 
+### 2026-10-21, In progress
+
+Started: one more sample call with a bigger turn (1 generation), placed by where it lands.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -100,3 +104,23 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 **Documents affected:** `art-archive/README.md` (3 rows). `game/README.md` is not changed yet; it will be updated with the full sheet.
 - 2026-10-20, in-progress → in-qa: One-frame sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 7 acceptance criteria not marked
+
+### Second sample, option (a) (board's go, 2026-10-21): plan, written before the call
+
+**One call:** `POST /rotate`, the same request as the first sample (from T-101's frame 2, south, cut from `car_iso.png`; `color_image` = `car_sw_front.png`; `isometric: true`; `high top-down` both ways; `from_direction: south`; `image_guidance_scale: 7.5`), with **`direction_change: 16`** instead of 11. Why 16: `+11` turned the car only about 3 degrees (a tenth of a step), while T-101's `+22` from the same frame gave a whole step (frame 3); 16 is near the middle of that range, so it is the value most likely to land about halfway rather than repeat either neighbour. Expected cost: **1 generation**. HTTP timeout 600 s. The result is placed by the heading it actually lands on (measured with `build_car_inbetween_sample.py` as before) and processed for free (palette, centring). No regeneration. Balance before: **4857** of 5000 (other tasks used some since the first sample).
+
+### Second sample: what was done
+
+**Call made (1, no regeneration):** `POST /rotate` exactly as planned (`direction_change: 16`). Saved as `art-archive/T-102/car_rot16_from_f02_south_raw.png` with its record JSON and a line in `game/art/pixellab-generation-log.jsonl`. **Cost: 1 generation. Balance before 4857, after 4856** of 5000.
+
+**Where it landed and where it is placed:** long-axis angle on screen (as before): frame 2 = 102.3, **new = 125.7**, frame 3 = 135.0. It lies between frames 2 and 3, about 72% of the way to frame 3 (halfway would be about 119), so it is placed as **new frame 5 (heading 56.25)**. In T-101's "seen nose" terms (frame 2 = 90, frame 3 = 120) that is about 112, against an ideal 111.6 for heading 56.25: **within a few degrees of its heading** (my estimate, about plus or minus 5). On the axis measure it leans towards frame 3, so the step 4-5 in the 32-frame sheet would be a bit bigger than 5-6.
+
+**Processing (free):** palette-mapped (232 colours to 32, all from the approved 33-colour palette) and centred (moved 1, 1). `check_sprite_rules.py`: 128 x 128, transparent corners, 0 semi-transparent pixels, 32 colours ("about 30", as judged in T-014/T-101).
+
+**My honest view:** this one works as an in-between: it is clearly turned past frame 2 and short of frame 3, and it is the same car, colours, stripes, size and shadow. The stripes and windscreen read cleanly. There are a few loose light pixels along the right-hand side and rear wheel, and the hood stripes are slightly uneven, at about the same level as T-101's rotated frames. `+16` from one even frame worked here, but `+11` barely turned the car, so the same value may land differently from other frames. If the board approves this sample, the plan for the other 15 would be one `+16` call from each even frame, each placed by its measured heading, with misses reported, not regenerated.
+
+**Pictures (for the board):** `art-archive/T-102/sample2_frame05_dark.png` and `sample2_frame05_light.png` (frame 2, new frame 5, frame 3, 4x, nearest neighbour); `sample2_frame05_processed.png`; `sample2_frame05_measure.json`. Listed in `art-archive/README.md`. Nothing in `game/art/car/` changed.
+
+**Hooks:** no command was refused this round.
+
+**Documents affected:** `art-archive/README.md` (2 more rows).
