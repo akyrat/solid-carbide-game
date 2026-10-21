@@ -24,8 +24,16 @@ extends Control
 ## the side of the rooftop it climbs (snapping.gd, LevelSnapping); the preview shows where. A
 ## rooftop or ramp that would overlap in a way the level check refuses is not placed, and the top
 ## bar shows the overlap message.
+##
+## Saving (T-238): the Save button writes the level, named from the level name field, through
+## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
+## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
+## levels folder is saved over its own file; a new level, or a file opened from elsewhere (the
+## game's own map), gets a new file there named after the level (save_path).
 
 signal back_pressed
+## After a successful save, with the file written.
+signal saved(path: String)
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
@@ -47,6 +55,12 @@ const OVERLAY_Z := 4000
 var level_data: Dictionary = {}
 ## The file the level was loaded from; "" for a new level.
 var level_path: String = ""
+## The levels folder a level is saved into (the creator's; tests set a temporary one).
+var levels_dir: String = LevelStore.LEVELS_DIR
+## The level name field and its label, and the Save button.
+var name_field: LineEdit
+var name_label: Label
+var save_button: Button
 var back_button: Button
 var delete_button: Button
 var rotate_button: Button
@@ -133,6 +147,19 @@ func _ready() -> void:
 	back_button.text = CreatorTexts.get_text("back_button")
 	back_button.pressed.connect(func(): back_pressed.emit())
 	bar.add_child(back_button)
+	name_label = Label.new()
+	name_label.name = "NameLabel"
+	name_label.text = CreatorTexts.get_text("name_field_label")
+	bar.add_child(name_label)
+	name_field = LineEdit.new()
+	name_field.name = "NameField"
+	name_field.custom_minimum_size = Vector2(220, 0)
+	bar.add_child(name_field)
+	save_button = Button.new()
+	save_button.name = "SaveButton"
+	save_button.text = CreatorTexts.get_text("save_label")
+	save_button.pressed.connect(save)
+	bar.add_child(save_button)
 	delete_button = Button.new()
 	delete_button.name = "DeleteButton"
 	delete_button.text = CreatorTexts.get_text("delete_label")
@@ -188,6 +215,7 @@ func _ready() -> void:
 		if level_data.is_empty():
 			level_data = empty_level()
 		document = LevelDocument.new(level_data)
+	_show_name()
 	_rebuild_map()
 	_apply_view()
 	_update_pose_controls()
@@ -196,8 +224,61 @@ func _ready() -> void:
 func _load_document() -> void:
 	document = LevelDocument.new(level_data)
 	selected = {}
+	_show_name()
+	_show_message("")
 	if is_node_ready():
 		_rebuild_map()
+
+
+## The name field shows the level's name (its file name when the file has none).
+func _show_name() -> void:
+	if name_field == null:
+		return
+	var n := str(level_data.get("name", ""))
+	if n == "" and level_path != "":
+		n = level_path.get_file().get_basename()
+	name_field.text = n
+
+
+# ---- Saving (T-238) -----------------------------------------------------------------------------
+
+## The name the level is saved under: the name field's text, or the default name when it is empty.
+func level_name() -> String:
+	var n := name_field.text.strip_edges() if name_field != null else str(level_data.get("name", ""))
+	return n if n != "" else CreatorTexts.get_text("default_level_name")
+
+
+## Where Save writes: the level's own file when it was opened from the levels folder (or saved
+## there before), else a new file in the levels folder named after the level
+## (LevelDocument.file_stem), with "-2", "-3"... when that name is taken.
+func save_path() -> String:
+	if level_path != "" and _same_dir(level_path.get_base_dir(), levels_dir):
+		return level_path
+	var stem := LevelDocument.file_stem(level_name())
+	var path := levels_dir.path_join(stem + ".json")
+	var n := 2
+	while FileAccess.file_exists(path):
+		path = levels_dir.path_join("%s-%d.json" % [stem, n])
+		n += 1
+	return path
+
+
+static func _same_dir(a: String, b: String) -> bool:
+	return a.simplify_path().trim_suffix("/") == b.simplify_path().trim_suffix("/")
+
+
+## The Save button: writes the level (LevelDocument.file_data) with LevelStore.save_level and shows
+## creator_texts.json's "save_confirmation". Returns OK or the error (nothing is shown then).
+func save() -> Error:
+	var path := save_path()
+	var err := LevelStore.save_level(path, document.file_data(level_name()))
+	if err != OK:
+		_show_message("")
+		return err
+	level_path = path
+	_show_message(CreatorTexts.get_text("save_confirmation"))
+	saved.emit(path)
+	return OK
 
 
 # ---- Drawing ------------------------------------------------------------------------------------

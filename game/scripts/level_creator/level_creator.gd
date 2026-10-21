@@ -38,6 +38,7 @@ func open_editor_with(path: String) -> void:
 func _open_editor(path: String) -> void:
 	_clear()
 	editor = EDITOR_SCENE.instantiate()
+	editor.levels_dir = levels_dir
 	if path == "":
 		editor.open_new()
 	else:

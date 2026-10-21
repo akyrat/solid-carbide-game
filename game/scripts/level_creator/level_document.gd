@@ -505,6 +505,42 @@ static func _erase_same(list: Array, item) -> bool:
 	return false
 
 
+# ---- Saving (T-238) -----------------------------------------------------------------------------
+
+## The level as it is written to its file, in the map-file format of elevation_sample_map.json:
+## `data` named `level_name` (also set in `data` itself), with every key the run, GroundHeight and
+## the enemies' pathfinding read present (map, legend, ground_rows, buildings, pattern_copies,
+## platforms, ramps). Keys already there are kept as they are, so an opened file (the game's own
+## map) is written unchanged apart from its name. A deep copy: later edits don't change it.
+func file_data(level_name: String) -> Dictionary:
+	data["name"] = level_name
+	var m = data.get("map")
+	if not (m is Dictionary and m.get("rect") is Dictionary and m.has("width") and m.has("height")):
+		var r := map_rect()
+		var keep: Dictionary = m if m is Dictionary else {}
+		keep["width"] = r.size.x
+		keep["height"] = r.size.y
+		keep["rect"] = {"x": r.position.x, "y": r.position.y, "w": r.size.x, "h": r.size.y}
+		data["map"] = keep
+	for key in ["buildings", "pattern_copies", "platforms", "ramps"]:
+		_list(key)
+	if not (data.get("ground_rows") is Array) or not (data.get("legend") is Dictionary):
+		refresh_ground_rows()
+	return data.duplicate(true)
+
+
+## A file name (without .json) for a level name: lower case, letters, digits, "-" and "_" kept,
+## spaces as "_", anything else dropped; "level" when nothing is left.
+static func file_stem(level_name: String) -> String:
+	var out := ""
+	for ch in level_name.strip_edges().to_lower():
+		if ch == " ":
+			out += "_"
+		elif (ch >= "a" and ch <= "z") or (ch >= "0" and ch <= "9") or ch == "-" or ch == "_":
+			out += ch
+	return out if out != "" else "level"
+
+
 # ---- For the drawing (mvp_map.gd and elevation_layer.gd) ---------------------------------------
 
 ## The layout mvp_map.gd builds from: the data, with the map's own keys it needs and a file
