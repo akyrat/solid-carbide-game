@@ -1,7 +1,7 @@
 ---
 id: T-071
 title: Art: gun bullets, exhaust flames and burning
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/weapons.md, tasks/T-041-starting-gun.md, tasks/T-042-exhaust-flamethrower.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,10 @@ Flame sample approved (LGTM). Started: pipe erased by script, the rest of the se
 ### 2026-10-21, In progress → In QA
 
 Built and swapped in: flames (pipe erased, 32 directions, flicker), burning enemies, bullets. 1 more generation. Sent to QA.
+
+### 2026-10-21, In QA → In progress
+
+QA: 4 of 5 pass; the 5th failed only because the test suite outgrew its 300-second limit (every test that ran passed). T-214 raises the limit; then QA re-checks.
 
 ## Result notes
 
