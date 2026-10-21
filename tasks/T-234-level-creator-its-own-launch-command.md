@@ -1,7 +1,7 @@
 ---
 id: T-234
 title: Level creator: its own launch command and the level list screen
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-005

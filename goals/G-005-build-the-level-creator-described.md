@@ -4,7 +4,7 @@ title: Build the level creator described in docs/level-design.md, Decision...
 status: building
 art_cap: 0
 art_used: 0
-iteration: 1
+iteration: 2
 max_iterations: 20
 created: 2026-10-21
 lead: Goal-G-005
@@ -50,7 +50,7 @@ Build the level creator described in docs/level-design.md, Decisions, 'Level cre
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
 | 1 | S2 | Level storage, listing and validation | unblocks 7, value 5 | The creator must list the levels made so far, load one to edit or play, and save files the run accepts unchanged. | covered | T-231 |
-| 2 | S4 | Text for the creator's screens | unblocks 7, value 4 | Project rule: any text a task shows on screen comes from the Narrative Theme Agent first, with no placeholder text; the list and editor screens need button and label text. | in-flight | T-233 |
+| 2 | S4 | Text for the creator's screens | unblocks 7, value 4 | Project rule: any text a task shows on screen comes from the Narrative Theme Agent first, with no placeholder text; the list and editor screens need button and label text. | covered | T-233 |
 | 3 | S3 | Catalogue of every asset already in the game | unblocks 6, value 5 | The side panel must offer every existing asset (ground tiles, roads, buildings, boulders, rooftops, ramps) with the views and mirrors the art actually has, without new art. | in-flight | T-232 |
 | 4 | S6 | Editor scene: canvas, side panel, place and delete | unblocks 5, value 5 | The core of creating a level: see the map as the game draws it, pick an asset from the panel, place it, delete it. | in-flight | T-235 |
 | 5 | S7 | Rotate, mirror and heights | unblocks 3, value 5 | The goal asks to rotate between the art's views and mirror before placing, with rooftops and ramps at heights 3 and 6 as on today's map. | in-flight | T-236 |
@@ -179,6 +179,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-21, iteration 0: gap detection: 0 covered, 0 in flight, 11 missing; wrote 11 tickets.
 - 2026-10-21, iteration 0: building.
 - 2026-10-21, iteration 1: T-231 (S2, level-challenge, sonnet): passed (done, QA rounds 1), merged into playtest/G-005; art 0; agent: T-231 is built and committed on its branch. It adds `LevelStore` (list, load and save levels), the `check_level.py` validator and a 'Level creator' section in `game/README.md`. I propose `game/data/levels/` (read as `res://data/levels/`) as the levels folder, written up in the result notes for the board. The sample map passes the validator, the 15 new validator tests and the 6 new GUT tests pass, the Python tool suite (408 tests) passes, and the full GUT suite passes. There is nothing to screenshot (tooling only), and the result notes say so. Rescan: S1 in-flight, S2 covered, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight.
+- 2026-10-21, iteration 2: T-233 (S4, narrative-theme, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-005; art 0; agent: I wrote game/data/level/creator_texts.json with 26 pieces, each with a text and a "where it appears" note. I added a "Level creator text" section to docs/level-design.md, Content, pointing to the JSON, and wrote the result notes (text only, nothing to screenshot). Everything is committed on the task branch. I did not validate the JSON with a parser, because my `python -c` check was refused. The longest button is "Back to list" (12 characters) and the longest category name is "Buildings" (9), both checked by eye. The controls hint uses R, M and Del, which are my proposal, so the creator's scripts must use the same keys. Refused, got past and not blocking: narrative-theme: {"tool_input": {"command": "python -c \"import json;d=json.load(open('game/data/level/creator_texts.json'));print(len(d),max(len(v['text']) for k,v in d.items() if k!='note' and 'text' in v))\""}, "tool_name": "Bash", "tool_use_id": "toolu_01HCF43kfr379TKPpNs8mv4L"} / narrative-theme: Wanted to run `python -c` to parse creator_texts.json and measure text lengths; it needs approval and was refused. I skipped it (not essential) and checked by eye instead.. Rescan: S1 in-flight, S3 in-flight, S4 covered, S5 in-flight, S6 in-flight, S7 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight.
 
 ## Pauses
 
