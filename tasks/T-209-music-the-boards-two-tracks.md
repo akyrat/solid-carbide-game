@@ -1,7 +1,7 @@
 ---
 id: T-209
 title: "Music: the board's two tracks loop through the game, alternating"
-status: in-qa
+status: done
 from: project-lead
 to: sfx
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/run/run_sounds.gd, game/scripts/ui/game_settings.gd, game/project.godot]
 files_expected_to_change: [game/audio/music/, game/scripts/, game/project.godot, game/default_bus_layout.tres, game/tests/unit/, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,14 @@ Started: the agent is working in its own folder, C:\solid-carbide-worktrees$t, i
 
 Built: both tracks play through the game, 1 then 2, never restarting between screens, on their own Music bus (starting volume 40, a proposal). Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: open C:\solid-carbide-worktrees\T-209\game\project.godot, or Play on T-209 in the Builds tab; listen from the main menu into a run and back (starting volume 40).
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the music. Merged into master; the music volume slider (T-210) starts now.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -79,3 +87,4 @@ Written by the agent when it finishes.
 - Tests: `game/tests/unit/game/test_music.gd` (order 1, 2, 1; one player kept; playback position through menu, run, pause, menu; setting range and save; separate bus). The `test_screen_flow.gd` helper now ignores the music node.
 - Results: GUT 1136/1136 passed; tools unittest 399 OK; game/tools unittest 355 OK (1 skipped).
 - Documents updated: `docs/game-loop-architecture.md`, `game/README.md`.
+- 2026-10-21, needs-playtest → done: Board: the build with the music plays just fine
