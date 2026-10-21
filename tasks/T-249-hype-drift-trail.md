@@ -1,7 +1,7 @@
 ---
 id: T-249
 title: The drift trail changes and gains effects with the hype level
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -48,6 +48,10 @@ Board review files: the screenshots and GIF in `art-archive/T-249/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the drift trail heats up with the combo, effects proposed by the agent.
 
 ## Result notes
 
