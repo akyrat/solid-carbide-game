@@ -1,7 +1,7 @@
 ---
 id: T-238
 title: Level creator: save a level, and reopen it
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -48,6 +48,10 @@ The board's review: In the level creator, save a level, go back to the list, fin
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-238.
 
 ## Result notes
 
