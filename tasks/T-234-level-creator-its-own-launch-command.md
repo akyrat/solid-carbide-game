@@ -1,7 +1,7 @@
 ---
 id: T-234
 title: Level creator: its own launch command and the level list screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/README.md, game/data/level/creator_texts.json, game/scripts/level/level_store.gd, game/scripts/menu/main_menu.gd, game/scripts/game/game_flow.gd, game/project.godot]
 files_expected_to_change: [game/scenes/level_creator/level_creator.tscn, game/scripts/level_creator/level_creator.gd, game/scripts/level_creator/level_list_screen.gd, game/scenes/level_creator/editor.tscn, game/scripts/level_creator/editor.gd, game/tests/unit/level_creator/test_level_list.gd, game/tests/unit/level_creator/test_creator_texts_only.gd, game/tools/level_creator.ps1, game/tools/level_creator.sh, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-234.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Built the creator's main scene (`scenes/level_creator/level_creator.tscn`, `scripts/level_creator/level_creator.gd`), the list screen (`level_list_screen.gd`), a stub editor (`editor.tscn`/`editor.gd`: empty map for new, loaded file for edit, a Back button), `CreatorTexts` (reads `creator_texts.json`), launch scripts `game/tools/level_creator.sh` and `.ps1`, and the README section (command, export exclusions; no export_presets.cfg exists). Play emits `LevelCreator.play_requested(path)`. Placeholder look, no Redgull red.
@@ -64,3 +68,4 @@ Built the creator's main scene (`scenes/level_creator/level_creator.tscn`, `scri
 - Tests: `tests/unit/level_creator/test_level_list.gd` (empty list, two levels, new, edit, back, play) and `test_creator_texts_only.gd` (scan for hard-coded labels, and that every key used exists). Full GUT suite: 1321 passing, none failing. `run_scene_headless.py` on the scene: no errors. grep for level_creator in scripts/menu, scripts/game, scenes/menu, project.godot: nothing.
 - Screenshots (`art-archive/T-234/screenshots/`): `list-empty.png`, `list-filled.png` (two temporary levels, since removed; no levels are committed).
 - No PixelLab used. No refusals.
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
