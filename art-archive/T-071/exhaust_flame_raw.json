@@ -1,0 +1,41 @@
+{
+  "file": "exhaust_flame_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a jet of exhaust flame blasting out of a car tailpipe, a long tapering plume of fire pointing to the lower left, seen from a 3/4 isometric view, bright pale yellow core, orange middle, deep orange tips with a few small sparks, flame tongues licking backwards, retro pixel art",
+    "negative_description": "red, car, text, letters, ground, smoke, background",
+    "image_size": {
+      "width": 128,
+      "height": 96
+    },
+    "no_background": true,
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8,
+    "seed": 71001
+  },
+  "prompt": "a jet of exhaust flame blasting out of a car tailpipe, a long tapering plume of fire pointing to the lower left, seen from a 3/4 isometric view, bright pale yellow core, orange middle, deep orange tips with a few small sparks, flame tongues licking backwards, retro pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T00:49:53+00:00",
+  "image": {
+    "width": 128,
+    "height": 96,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md",
+    "art-archive/T-175/req_molotov_fire.json"
+  ],
+  "task": "T-071",
+  "job_status": null,
+  "notes": "Sample: exhaust flame plume pointing lower-left; one round, no regeneration",
+  "generator": "game/tools/pixellab_client.py"
+}

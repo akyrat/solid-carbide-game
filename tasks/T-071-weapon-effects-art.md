@@ -1,7 +1,7 @@
 ---
 id: T-071
 title: Art: gun bullets, exhaust flames and burning
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -50,6 +50,27 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
+## Updates
+
+### 2026-10-21, Open → In progress
+
+Started at the board's request, in C:\solid-carbide-worktrees$t.
+
 ## Result notes
+
+### Sample round (board's go 2026-10-21; sample first, nothing swapped into the game)
+
+**Checked first (nothing made twice):** `game/art/effects/` holds boost lines, coin, drift mark, drift smoke, level-up particles; `game/art/weapons/` holds the molotov bottle and fire, underglow, wiper (T-175). No bullet, exhaust flame or burning art exists. The current placeholders are a black-and-orange `CPUParticles2D` flame cone and a cyan dot bullet (`docs/weapons.md`).
+
+**Proposal for the whole task (free vs paid):**
+- Paid, PixelLab, 1 generation each (`create-image-pixflux`, one round): (1) the exhaust flame plume (this sample), (2) the burning effect on an enemy (a small flame wrap about a minion's size, looped by script), (3) the bullet (a small glowing round, about 12 x 12; a fallback is to draw it free).
+- Free, by script from those: the flame in all car directions (the plume turned in the flat world and projected by the iso transform, as T-175 did for the wiper), flicker frames (mirror, plus a one-shade palette shift), the burning sprite's frames, and the bullet's trail or spin if wanted. If the board finds the bullet fine drawn by hand, it needs no PixelLab at all.
+- Expected total: about 3 generations.
+
+**Planned call (this sample), written before calling:** one `POST /create-image-pixflux`, 128 x 96, no_background, selective outline, detailed shading, highly detailed, text guidance 8, seed 71001; prompt and negatives in `art-archive/T-071/req_exhaust_flame.json`. Expected cost 1 generation (T-175's equivalent call cost 1.0). HTTP timeout 600 s (client default). Balance before: 4860 of 5000 generations.
+
+**Done (sample):** one call, 1 generation, no errors, no retry. Balance before 4860, after 4858 of 5000 generations (the extra 1 is probably spent elsewhere in the account at the same time). Saved `art-archive/T-071/exhaust_flame_raw.png` + `.json` (the record has the prompt, settings, usage), the request `req_exhaust_flame.json`, and the review images `exhaust_flame_review.png` (dark over light), `_dark.png`, `_light.png` (4x nearest-neighbour, next to car_iso direction 12). Row added to `art-archive/README.md`. Rules check (`check_sprite_rules.py`; its 128 x 128 size test fails only because this sprite is 128 x 96): transparent corners, alpha only 0 or 255, 18 colours.
+
+**Problems, reported not regenerated:** (1) the model drew a grey metal pipe (a tailpipe) at the plume's base, which the game does not want (the exhaust is on the car); (2) the plume points to the upper right, not the lower left asked for, a mirror and a turn away from what the prompt said; (3) the plume is one organic shape, so the flicker will need a script (mirror and shade shift). Good: palette is orange, yellow, pale core, no red, hard edges, clean selective outline, reads well at car scale. Free fixes proposed, no PixelLab: erase the grey pipe pixels by script and give the flame's base a clean tip; turn or mirror it as needed when making the 16 directions.
 
 Written by the agent when it finishes.
