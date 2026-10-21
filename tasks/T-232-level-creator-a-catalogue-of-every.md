@@ -1,7 +1,7 @@
 ---
 id: T-232
 title: Level creator: a catalogue of every placeable asset already in the game, built by script
-status: open
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -46,6 +46,10 @@ The level creator's side panel offers every asset already in the game (Level des
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Open → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-232.
 
 ## Result notes
 
