@@ -33,7 +33,9 @@ A task is not done until every document listed in documents_affected has been up
 - a **comet tail** that streams behind the meteor while it falls;
 - an **impact animation** when it hits the ground, before it becomes the boulder.
 
-Keep the meteor, the warning circle and the boulder as they are; don't call PixelLab (no new generations; the sample already made stays in `art-archive/T-070/`). Make both animations by script or as Godot effects, free, in the boulders' magenta and violet glow, never Redgull red. Their length, size and number of frames are your proposals for the board's playtest. The board wants to **see them animated**, not judge still images: record a short video (MP4 or GIF) of a few meteors falling with their tails and hitting the ground, in a real run, into `art-archive/T-070/screenshots/` (`tasks/README.md`, "Screenshots"), and the board plays the build.
+Keep the meteor, the warning circle and the boulder as they are. How to make the two animations is your choice (board, 2026-10-21): PixelLab (its animation endpoints, if they suit effects), a script, Godot particles, or a mix. The board's go covers up to 10 PixelLab generations for this task; plan the calls and cost in the result notes first, as usual, and the earlier sample stays in `art-archive/T-070/`. Use the boulders' magenta and violet glow, never Redgull red.
+
+Make **two or three different versions** of the tail and impact, for the board to compare. The board wants to **see them animated**, not judge still images: record a short video (MP4 or GIF) of each version, with a few meteors falling with their tails and hitting the ground in a real run, into `art-archive/T-070/screenshots/` (`tasks/README.md`, "Screenshots"). In the build, one setting picks the version (say which in `game/README.md`), so the board can also play each one. Lengths, sizes and frame counts are your proposals.
 
 The rest of this description is the original brief, kept for its style rules, which the animations follow where they apply.
 
@@ -48,8 +50,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 ## Acceptance criteria
 
 - [ ] While a meteor falls, a comet tail streams behind it, and when it lands an impact animation plays before the boulder appears; the meteor, warning circle and boulder are unchanged (QA: pass / fail)
-- [ ] A recording (MP4 or GIF) from a real run shows several meteors falling with their tails and hitting the ground, in `art-archive/T-070/screenshots/` (QA: pass / fail)
-- [ ] No new PixelLab calls were made after the sample, and the animations use no Redgull red (QA: pass / fail)
+- [ ] Two or three versions exist, one setting picks between them (documented in `game/README.md`), and a recording (MP4 or GIF) of each from a real run shows several meteors falling with their tails and hitting the ground, in `art-archive/T-070/screenshots/` (QA: pass / fail)
+- [ ] The record lists every PixelLab call with its settings and cost, and the balance before and after, at most 10 generations; the animations use no Redgull red (QA: pass / fail)
 - [ ] Tests cover that the tail shows only while falling and the impact plays once on landing; T-046's and T-147's tests still pass (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
