@@ -1,7 +1,7 @@
 ---
 id: T-223
 title: "Text: the pickup magnet upgrade's name and description in the garage"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -44,6 +44,19 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Written into Garage design, Content, "Pickup magnet text (T-223)". Same form as T-059: a name (max 25) and one description line (max 80), no numbers since Game Data proposes the reach per level, Redgull-joke ending like the other three.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.pickup_magnet.name | Brand Magnet | 12/25 |
+| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
+
+No XP or experience wording. Documents changed: docs/garage-design.md.

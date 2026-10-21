@@ -23,6 +23,15 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 
 ## Content
 
+### Pickup magnet text (T-223)
+
+The fourth upgrade's text, in the form of the other three (name up to 25 characters, description up to 80; T-224 uses it word for word, with the key `pickup_magnet`). It names no number, because the Game Data Agent proposes how far each level reaches.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.pickup_magnet.name | Brand Magnet | 12/25 |
+| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
+
 ### Saving
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/README.md` ("Game data", "Saving and buying").
