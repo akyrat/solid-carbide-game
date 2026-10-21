@@ -1,7 +1,7 @@
 ---
 id: T-244
 title: "Text: the combo broken popup"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the combo broken popup's exact text, with this ticket's id (QA: pass / fail)
-- [ ] It is one short line in the trick popups' voice that reads as a loss (QA: pass / fail)
+- [ ] HUD and menus, Content, has the combo broken popup's exact text, with this ticket's id (QA: pass; "Combo broken popup" section cites T-244 and gives COMBO BROKEN!)
+- [ ] It is one short line in the trick popups' voice that reads as a loss (QA: pass; capitals and exclamation mark like AIR 360!, "BROKEN" reads as a loss)
 
 ## Updates
 
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Text written: COMBO BROKEN!. Sent to QA.
 
 ## Result notes
 
