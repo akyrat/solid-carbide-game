@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a 180 turn during one airtime gives the 180 trick, and a full turn the 360 trick, the same for left and right turns; a smaller turn, or the same turn on the ground, gives neither (QA: pass; round 2: test_air_tricks.gd (24 tests) covers 180/360 both ways, smaller and ground turns, GUT all passed)
-- [ ] Each aerial trick raises the combo through the existing combo data and shows its popup with T-218's text word for word (tests, and a screenshot of each popup in a run) (QA: pass; round 2: combo.json trick_add and trick_popups.gd texts match T-218, popup PNGs for 180, 360 and the real-run 360 exist)
-- [ ] A GIF of each trick in a run on the elevation map is in `art-archive/T-219/screenshots/` (QA: pass; round 2: air_180_run.gif, air_360_run.gif (real run, car airborne with shadow, AIR 360! popup seen in frames) and a staged drop GIF are in art-archive/T-219/screenshots/)
-- [ ] The car's driving and air steering are unchanged (existing driving tests pass unchanged); the proposals are in the result notes and Drifting, Content (QA: pass; round 2: ground driving unchanged, only air steering change is the board's air_turn_multiplier 2.5 tuning value, proposals in notes and docs/drifting.md)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass; round 2: GUT all passed, tools 439 OK, game/tools 388 OK (1 skipped))
+- [ ] Tests show a 180 turn during one airtime gives the 180 trick, and a full turn the 360 trick, the same for left and right turns; a smaller turn, or the same turn on the ground, gives neither (QA: pass; round 3: test_air_tricks.gd covers 180/360 both ways, smaller and ground turns, GUT 1240/1240 passing)
+- [ ] Each aerial trick raises the combo through the existing combo data and shows its popup with T-218's text word for word (tests, and a screenshot of each popup in a run) (QA: pass; round 3: combo.json and trick_popups.gd texts match T-218, popup PNGs exist incl. air_360_run_pays_once_popup.png, frames show AIR 360! +0.5 with only LONG DRIFT as the drift line, no FULL 360!)
+- [ ] A GIF of each trick in a run on the elevation map is in `art-archive/T-219/screenshots/` (QA: pass; round 3: air_180_run.gif, air_360_run.gif, air_360_run_pays_once.gif and a staged drop GIF are in art-archive/T-219/screenshots/)
+- [ ] The car's driving and air steering are unchanged (existing driving tests pass unchanged); the proposals are in the result notes and Drifting, Content (QA: pass; round 3: ground driving unchanged, air changes are only the board's faster air turn rate and each spin paying once, covered by test_the_real_car_air_spin_with_w_held_pays_only_the_air_360)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; round 3: GUT 1240/1240, tools 439 OK, game/tools 388 OK (1 skipped))
 
 The board's review: play a run and do both aerial tricks off the rooftops and ramps.
 Board review files: the GIFs in `art-archive/T-219/screenshots/`.
@@ -79,6 +79,10 @@ QA round 2 passed all 5.
 ### 2026-10-21, Needs playtest → In progress
 
 Back to the agent: each spin pays once.
+
+### 2026-10-21, In progress → In QA
+
+Each spin pays once is in: an air spin pays only AIR 360!. Final QA check.
 
 ## Result notes
 
