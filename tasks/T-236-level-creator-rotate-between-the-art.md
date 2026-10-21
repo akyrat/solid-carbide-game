@@ -1,7 +1,7 @@
 ---
 id: T-236
 title: Level creator: rotate between the art's views, mirror, and rooftops and ramps at heights 3 and 6
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/data/level/creator_texts.json, game/data/level/creator_assets.json, game/scripts/level_creator/editor.gd, game/scripts/level/elevation_layer.gd, game/tools/check_height_data.py, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/scripts/level_creator/editor.gd, game/scripts/level_creator/asset_panel.gd, game/scripts/level_creator/level_document.gd, game/tests/unit/level_creator/test_editor_rotate_heights.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-236.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Level/Challenge Design Agent, 2026-10-21. An earlier session left this work uncommitted in the folder and was cut off. I checked it, tested it and committed it, then added the README section, the screenshots and these notes.
@@ -95,3 +99,4 @@ Level/Challenge Design Agent, 2026-10-21. An earlier session left this work unco
 - Refusals: one `cd /c/...` inside a Bash command was refused (cd outside the allowed path form). It wasn't needed, and I ran the commands from the working folder instead.
 - Godot's line-ending-only `.import` changes are left uncommitted.
 - Documents affected: none (game/README.md only).
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
