@@ -1,10 +1,10 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: planned
+status: building
 art_cap: 0
 art_used: 0
-iteration: 0
+iteration: 1
 max_iterations: 20
 created: 2026-10-21
 lead: Goal-G-005
@@ -49,17 +49,17 @@ Build the level creator described in docs/level-design.md, Decisions, 'Level cre
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S2 | Level storage, listing and validation | unblocks 7, value 5 | The creator must list the levels made so far, load one to edit or play, and save files the run accepts unchanged. | missing | T-231 |
-| 2 | S4 | Text for the creator's screens | unblocks 7, value 4 | Project rule: any text a task shows on screen comes from the Narrative Theme Agent first, with no placeholder text; the list and editor screens need button and label text. | missing | T-233 |
-| 3 | S3 | Catalogue of every asset already in the game | unblocks 6, value 5 | The side panel must offer every existing asset (ground tiles, roads, buildings, boulders, rooftops, ramps) with the views and mirrors the art actually has, without new art. | missing | T-232 |
-| 4 | S6 | Editor scene: canvas, side panel, place and delete | unblocks 5, value 5 | The core of creating a level: see the map as the game draws it, pick an asset from the panel, place it, delete it. | missing | T-235 |
-| 5 | S7 | Rotate, mirror and heights | unblocks 3, value 5 | The goal asks to rotate between the art's views and mirror before placing, with rooftops and ramps at heights 3 and 6 as on today's map. | missing | T-236 |
-| 6 | S1 | The run can play any map file | unblocks 2, value 5 | The creator plays levels as the game's own run; today the run's layout path is a constant, so the run, the elevation layer and enemy navigation must take a level path while the game's default stays the elevation sample map. | missing | T-230 |
-| 7 | S5 | Creator launch and level list screen | unblocks 2, value 5 | The board opens the creator like the game and picks a level or creates a new one. | missing | T-234 |
-| 8 | S9 | Save and reopen levels | unblocks 2, value 5 | Levels must be saved in the elevation map's file format so the run, the heights and pathfinding work unchanged, and existing levels must be editable. | missing | T-238 |
-| 9 | S10 | Play a level as a full run from the creator | unblocks 1, value 5 | The board must play any listed level as the game's own run: 8 minutes, enemies, kaiju, on the elevation map. | missing | T-239 |
-| 10 | S8 | Snapping to the tile grid and to close neighbours | unblocks 1, value 4 | The board wants pieces to align with little effort. | missing | T-237 |
-| 11 | S11 | End-to-end check: from nothing to playing | unblocks 0, value 5 | The board's playtest condition: create from nothing, save, see it in the list, play it. | missing | T-240 |
+| 1 | S2 | Level storage, listing and validation | unblocks 7, value 5 | The creator must list the levels made so far, load one to edit or play, and save files the run accepts unchanged. | covered | T-231 |
+| 2 | S4 | Text for the creator's screens | unblocks 7, value 4 | Project rule: any text a task shows on screen comes from the Narrative Theme Agent first, with no placeholder text; the list and editor screens need button and label text. | in-flight | T-233 |
+| 3 | S3 | Catalogue of every asset already in the game | unblocks 6, value 5 | The side panel must offer every existing asset (ground tiles, roads, buildings, boulders, rooftops, ramps) with the views and mirrors the art actually has, without new art. | in-flight | T-232 |
+| 4 | S6 | Editor scene: canvas, side panel, place and delete | unblocks 5, value 5 | The core of creating a level: see the map as the game draws it, pick an asset from the panel, place it, delete it. | in-flight | T-235 |
+| 5 | S7 | Rotate, mirror and heights | unblocks 3, value 5 | The goal asks to rotate between the art's views and mirror before placing, with rooftops and ramps at heights 3 and 6 as on today's map. | in-flight | T-236 |
+| 6 | S1 | The run can play any map file | unblocks 2, value 5 | The creator plays levels as the game's own run; today the run's layout path is a constant, so the run, the elevation layer and enemy navigation must take a level path while the game's default stays the elevation sample map. | in-flight | T-230 |
+| 7 | S5 | Creator launch and level list screen | unblocks 2, value 5 | The board opens the creator like the game and picks a level or creates a new one. | in-flight | T-234 |
+| 8 | S9 | Save and reopen levels | unblocks 2, value 5 | Levels must be saved in the elevation map's file format so the run, the heights and pathfinding work unchanged, and existing levels must be editable. | in-flight | T-238 |
+| 9 | S10 | Play a level as a full run from the creator | unblocks 1, value 5 | The board must play any listed level as the game's own run: 8 minutes, enemies, kaiju, on the elevation map. | in-flight | T-239 |
+| 10 | S8 | Snapping to the tile grid and to close neighbours | unblocks 1, value 4 | The board wants pieces to align with little effort. | in-flight | T-237 |
+| 11 | S11 | End-to-end check: from nothing to playing | unblocks 0, value 5 | The board's playtest condition: create from nothing, save, see it in the list, play it. | in-flight | T-240 |
 
 ### S2: Level storage, listing and validation
 
@@ -177,6 +177,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-21, iteration 0: started: planning, by the session Coursework.
 - 2026-10-21, iteration 0: priority scoring: 11 sub-goals ranked, 9 goal criteria, 15 open questions.
 - 2026-10-21, iteration 0: gap detection: 0 covered, 0 in flight, 11 missing; wrote 11 tickets.
+- 2026-10-21, iteration 0: building.
+- 2026-10-21, iteration 1: T-231 (S2, level-challenge, sonnet): passed (done, QA rounds 1), merged into playtest/G-005; art 0; agent: T-231 is built and committed on its branch. It adds `LevelStore` (list, load and save levels), the `check_level.py` validator and a 'Level creator' section in `game/README.md`. I propose `game/data/levels/` (read as `res://data/levels/`) as the levels folder, written up in the result notes for the board. The sample map passes the validator, the 15 new validator tests and the 6 new GUT tests pass, the Python tool suite (408 tests) passes, and the full GUT suite passes. There is nothing to screenshot (tooling only), and the result notes say so. Rescan: S1 in-flight, S2 covered, S3 in-flight, S4 in-flight, S5 in-flight, S6 in-flight, S7 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight.
 
 ## Pauses
 
