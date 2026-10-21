@@ -46,7 +46,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The game opens on a main menu with three buttons: Start (begins a run), Garage, and Exit. When a run ends, win or loss, the player returns straight to the main menu, with no win or loss message in the MVP.
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
-- **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). (tasks T-209, T-210)
+- **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
 
 ### Content
 
@@ -190,6 +190,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **No "bigger when high" option.** The board tried drawing the car bigger with height and didn't like it: the option is removed, and the car is always drawn at its normal size.
   - **A round shadow.** The shadow is a circle right under the centre of the car, in the same colour and feel as now, instead of the rectangle, so the player sees where the car is on the ground when it is in the air.
 - **No sprite shadow in the air** (board, 2026-10-20, from the elevation sample map's screenshots): the car's sprite has a drop shadow drawn into most of its 16 frames, which travels up with the car when it is in the air, beside the round shadow. In the air the car is drawn without it, so only the round shadow shows; on the ground it keeps the sprite's own shadow, as now. The shadowless frames are made by a free script, not PixelLab (Visual style, Decisions, "The car without its shadow").
+- **No drift smoke in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke, even if the drift keys are held; the smoke comes back when it lands. (T-206)
 
 ### Content
 
@@ -337,7 +338,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Raised areas and ramps** (board, 2026-10-17; go-ahead 2026-10-19): the map can have elevated areas, for example in the size of the current 2 by 2 grid of blocks. One side of a raised area is a ramp the car drives up; its other edges are drop-offs the car can jump off. How the car's height works: Drifting, Decisions, "Elevation". First built in a test scene with one raised platform, one ramp and one drop-off edge, not in the real map. The map's data format leaves room for heights and ramps from the start, for the level editor the board wants later.
 - **Raised areas turn see-through like buildings** (board, 2026-10-19, after playing the elevation test scene): when a raised area (and its ramp) covers the car on screen, it fades the way buildings do ("When a building fades" below), with the same logic, so the car never vanishes behind it.
 - **Elevation sample map** (board, 2026-10-19, after approving the elevation test scene): elevation goes into the game first, the tricks later. A drive-only sample map (no enemies, weapons or run timer; driving around freely, like the test scene but city-sized), made by the agents, with **three layers**: the street (height 0), a first floor (height 3) and a second floor (height 6), with ramps connecting the street to the first floor and the first floor to the second, so the car can jump from higher with more airtime. The raised areas are building rooftops and the ramps parking-garage-style ramps (look: Visual style, Decisions, "Elevation sample map art"). It uses the elevation system as approved (the car's height, edges, see-through, the round shadow) and the map's buildings, boulders and roads. Its map file holds the heights and ramps in the format a level editor would later edit. After the board's playtest: if the board is happy, maybe aerial tricks next (a 360 in the air, a combo from airtime); if not, a level editor so the board can make levels by hand and playtest them at once. The arrow-key tricks come after both. Full runs on elevated maps (enemies that handle heights) are a later step.
-- **The elevation sample map becomes the run's map** (board, 2026-10-20, after playing it: "plays great"): a run started from the main menu now plays on the elevation sample map's layout, with its rooftops, ramps and the car's height, as the full game (enemies, weapons, timer, likes, levels, the kaiju), so the board can see how the enemies behave on it. The MVP map stays in the project and can be switched back to (tasks T-206, T-207). How enemies handle heights is not decided yet: the agents propose it for the playtest (Enemies, Open questions).
+- **The elevation sample map becomes the run's map** (board, 2026-10-20, after playing it: "plays great"): a run started from the main menu now plays on the elevation sample map's layout, with its rooftops, ramps and the car's height, as the full game (enemies, weapons, timer, likes, levels, the kaiju), so the board can see how the enemies behave on it. The MVP map stays in the project and can be switched back to (tasks T-206, T-207). How enemies handle heights: Enemies, Decisions, "Enemies follow the car up the ramps" (board, 2026-10-21).
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 
 ### Content
@@ -589,6 +590,8 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - Polish for the MVP, once the MVP is playable end to end: minions get a damage animation when hit, and when two minions bump into each other they fall down, get up again and carry on running at the car. How long they stay down is proposed by the Enemy Behavior Agent; the board judges it in playtests.
 - The kaiju walks round buildings and boulders, like the minions, rather than through them.
 
+- **Enemies follow the car up the ramps** (board, 2026-10-21, after playing the full game on the elevation map, where enemies ignored every raised surface): enemies treat rooftops as raised ground they can only reach by the ramps. To reach a car on a rooftop they find their way to a ramp, drive or walk up it and follow the car, with pathfinding over the map's streets, ramps and rooftops; a rooftop's edge blocks them like a wall from below. (T-207)
+
 ### Content
 
 #### The minion (built in task T-044)
@@ -660,6 +663,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Copied:** the flame uses the gun's damage (2), not its own (1); the bullet's hit circle stays 2 units across, larger than it is drawn; the gun looks for a target only once per firing interval; the weapons never push enemies back; the flame's steering tier makes the car steer 20% faster, compounding; the flame's tier 5 only makes the burn flash last longer; reversing while steering counts as drifting, so the flame comes on.
   - **Fixed:** damage is not rounded to whole numbers, so the flame's "hotter flame" tier always adds damage; the flame's area is the same size whichever way the car faces; a bullet that misses is removed once it has flown past the gun's range.
 - The exhaust flamethrower does not switch off the drift smoke (unlike the Unity prototype): smoke and flames both show. A minion is in the flames when its centre is; the kaiju is when any part of its body overlaps them. The starting gun's bullet size and its wait before the first shot stay as built (the Unity values).
+- **The flamethrower at height** (board, 2026-10-21): on a rooftop or in the air, the exhaust flames come out of the car's exhaust where the car is drawn, at its height, not somewhere else on the map; they burn what they touch at that spot. (T-206)
 - **Three new weapons** (board, 2026-10-18), gained at a level-up like the flamethrower:
   - **Neon underglow:** neon lights under the car that make a circular area around it. Enemies inside take damage every second, and an enemy takes damage as soon as it enters the area.
   - **Molotovs:** thrown from the car at random, each one makes a circular area on fire where it lands. Enemies in a fire area burn and take damage.
@@ -1016,11 +1020,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `c71e20e9d635ecd21f4035ac5e685e084edc0d6c88da150144510499526fbed6` |
-| `drifting.md` | `6d9a0b12fd96bdab8fbb7991551b64502862e36e1d1d9a26f80484bdfffc8272` |
-| `level-design.md` | `c6eb34611be9c633f991aa5913470f2046cab58b5b35b2770f8e22c6786a7d3c` |
-| `enemies.md` | `1d0d20f3dc24e1cc017a10ce8df7f7bb77331ed486d269296da9f93ae3e7be71` |
-| `weapons.md` | `6bc1e52470dd1b313c6c5677f66cbb81185c419bffae59ae8e1481d61e67af85` |
+| `game-loop-architecture.md` | `daf6a4f305b11de3cac6ba88ee730a491b2783ee6392634a5a7e7b1c53bde53f` |
+| `drifting.md` | `b94936134b6af3532d68407d9cabe6aa23ea491afc112da4cb4cf7b2ea0a62b3` |
+| `level-design.md` | `dbe68dd8f68548d187f8cefdd37ee5fee5e0f3b40154a79414e79efd71e8e2d9` |
+| `enemies.md` | `ef80bb0ad175f42befc6adddf30af472d4650dca1facb3572453850e0db74a07` |
+| `weapons.md` | `7ed2079e2feaa5a2170c084f7c879c7af47c0bcd537d4dd6667dbe7902ef8f3a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `209f41b6a804a1db59f5346dc9910384d0d973e820b9fa574f7c0528e8ed0684` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |

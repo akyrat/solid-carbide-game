@@ -24,5 +24,12 @@ class T(unittest.TestCase):
     def test_noncommercial(self):
         m = dict(META, license_name="CC BY-NC 4.0", license_url="https://creativecommons.org/licenses/by-nc/4.0/")
         self.assertEqual(self.run_check(m), 1)
+    def test_music_folder_is_skipped(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.mkdir(os.path.join(d, "music"))
+            open(os.path.join(d, "music", "m.mp3"), "wb").close()
+            make(d, dict(META))
+            self.assertEqual(c.check(d), ([r for r in c.check(d)[0]], 0))
+            self.assertEqual(len(c.check(d)[0]), 1)
 
 if __name__ == "__main__": unittest.main()

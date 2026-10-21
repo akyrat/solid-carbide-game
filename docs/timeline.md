@@ -1520,3 +1520,8 @@ Entry format:
 - Decision or change: no drift smoke while the car is airborne; the exhaust flamethrower's flames come out at the car's height (they spawned away from the car on rooftops and in the air); T-206 goes back to its agent for both. Enemies ignored every raised surface: the board decides they follow the car up the ramps, with pathfinding over streets, ramps and rooftops, and a rooftop's edge blocks them from below (T-207, rewritten).
 - Documents touched: `docs/drifting.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/level-design.md`
 - Tasks: T-206 (back to in-progress), T-207
+
+## 2026-10-21: T-209 done: the board's music plays through the game
+- Decision or change: the board's two tracks ("DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)") play from the main menu on, alternating and looping, never restarting between screens or on pause, on their own "Music" bus with a saved 0 to 100 setting (starting at 40, the agent's proposal). The board played it: "plays just fine". The music volume slider (T-210) starts now.
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-209 (done), T-210 (in progress)
