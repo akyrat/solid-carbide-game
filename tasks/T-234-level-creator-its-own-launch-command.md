@@ -55,4 +55,8 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-234.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built the creator's main scene (`scenes/level_creator/level_creator.tscn`, `scripts/level_creator/level_creator.gd`), the list screen (`level_list_screen.gd`), a stub editor (`editor.tscn`/`editor.gd`: empty map for new, loaded file for edit, a Back button), `CreatorTexts` (reads `creator_texts.json`), launch scripts `game/tools/level_creator.sh` and `.ps1`, and the README section (command, export exclusions; no export_presets.cfg exists). Play emits `LevelCreator.play_requested(path)`. Placeholder look, no Redgull red.
+
+- Tests: `tests/unit/level_creator/test_level_list.gd` (empty list, two levels, new, edit, back, play) and `test_creator_texts_only.gd` (scan for hard-coded labels, and that every key used exists). Full GUT suite: 1321 passing, none failing. `run_scene_headless.py` on the scene: no errors. grep for level_creator in scripts/menu, scripts/game, scenes/menu, project.godot: nothing.
+- Screenshots (`art-archive/T-234/screenshots/`): `list-empty.png`, `list-filled.png` (two temporary levels, since removed; no levels are committed).
+- No PixelLab used. No refusals.
