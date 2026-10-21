@@ -1,7 +1,7 @@
 ---
 id: T-224
 title: The pickup magnet's radius as a garage upgrade
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Coursework
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The garage screen lists the magnet upgrade with T-223's text word for word, its level and next price, and buying it raises its level and is saved (tests, screenshot) (QA: pass / fail)
-- [ ] A run uses the radius of the bought level: level 0 is 1 car length, and each level's radius comes from `game/data/garage.json` (tests) (QA: pass / fail)
-- [ ] The proposed levels, radii and prices are in the data and the result notes (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The garage screen lists the magnet upgrade with T-223's text word for word, its level and next price, and buying it raises its level and is saved (tests, screenshot) (QA: pass; screenshot shows Brand Magnet, Level 3, Price 80, text matches the T-223 entry word for word; garage screen tests pass)
+- [ ] A run uses the radius of the bought level: level 0 is 1 car length, and each level's radius comes from `game/data/garage.json` (tests) (QA: pass; test_magnet_upgrade.gd checks level 0 = 3.0 and every level against the data)
+- [ ] The proposed levels, radii and prices are in the data and the result notes (QA: pass; 10 levels 3.6-9.0 and prices 40-300 in garage.json match the notes table)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; run_tests.sh TESTS PASSED, tools unittest 439 OK, game/tools 387 OK skipped=1)
 
 The board's review: buy the magnet upgrade in the garage and feel the bigger radius in a run.
 Board review files: the screenshots in `art-archive/T-224/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Blocked → In progress
 
 Started: Brand Magnet in the garage.
+
+### 2026-10-21, In progress → In QA
+
+Built: Brand Magnet in the garage, 10 levels from 3 to 9 units. Sent to QA.
 
 ## Result notes
 
