@@ -1,7 +1,7 @@
 ---
 id: T-102
 title: The car in 32 directions, built from the approved 16 (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -99,3 +99,4 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 
 **Documents affected:** `art-archive/README.md` (3 rows). `game/README.md` is not changed yet; it will be updated with the full sheet.
 - 2026-10-20, in-progress → in-qa: One-frame sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: the board took it out of QA with 7 acceptance criteria not marked
