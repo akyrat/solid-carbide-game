@@ -1,7 +1,7 @@
 ---
 id: T-231
 title: Level creator: the levels folder, saving, listing and loading levels, and a level validator
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/tools/check_height_data.py, game/tools/test_check_height_data.py, game/data/level/elevation_sample_map.json, game/scripts/level/mvp_map.gd, game/scripts/enemies/enemy_navigation.gd]
 files_expected_to_change: [game/scripts/level/level_store.gd, game/tests/unit/test_level_store.gd, game/tools/check_level.py, game/tools/test_check_level.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-231.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-21, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 **Levels folder (a proposal for the board):** `game/data/levels/`, read as `res://data/levels/` (`LevelStore.LEVELS_DIR`). The creator runs from the repo and is never exported. The folder itself isn't created until a level is saved (`save_level` makes it); `list_levels` returns an empty list while it is missing.
@@ -72,3 +76,4 @@ Goal runner (G-005): the agent is done; QA is checking it.
 **Screenshots:** none — this is tooling (storage script and validator), nothing is on screen.
 
 **Documents affected:** none (the folder is a proposal; `game/README.md` is the game's own readme).
+- 2026-10-21, in-qa → done: QA passed every criterion (goal G-005).
