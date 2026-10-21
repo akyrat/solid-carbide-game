@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -28,9 +28,14 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-**Blocked until T-046 (the meteor attack, with placeholders) is done.**
+**Rescoped by the board (2026-10-21), after the PixelLab sample.** The board doesn't want new meteor pictures: the meteor already falls as it should. Add only two animations (Visual style, Decisions, "The kaiju's meteor attack"):
 
-The meteor attack, as Visual style, Decisions describes it: a red warning circle on the ground, a falling meteor, and a burst of dust on impact. The landed meteors become the boulders from T-065. Swap them in for T-046's placeholders.
+- a **comet tail** that streams behind the meteor while it falls;
+- an **impact animation** when it hits the ground, before it becomes the boulder.
+
+Keep the meteor, the warning circle and the boulder as they are; don't call PixelLab (no new generations; the sample already made stays in `art-archive/T-070/`). Make both animations by script or as Godot effects, free, in the boulders' magenta and violet glow, never Redgull red. Their length, size and number of frames are your proposals for the board's playtest. The board wants to **see them animated**, not judge still images: record a short video (MP4 or GIF) of a few meteors falling with their tails and hitting the ground, in a real run, into `art-archive/T-070/screenshots/` (`tasks/README.md`, "Screenshots"), and the board plays the build.
+
+The rest of this description is the original brief, kept for its style rules, which the animations follow where they apply.
 
 Follow Visual style, Decisions: pixel art for the isometric view at about 40 pixels per unit, a selective dark outline, detailed shading, about 30 colours per sprite, glow drawn into the pixels (no engine bloom), no anti-aliasing, no semi-transparent pixels, a transparent background, and the night neon palette. Real-world things are inspiration only: no real logos, no copies of existing characters. Details the docs leave open (directions, frame counts, variants, sizes) are this agent's proposal, written in the result notes for the board to judge (Visual style, Decisions).
 
@@ -42,19 +47,24 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot sequence shows the warning circle, a falling meteor and the dust burst (QA: pass / fail)
-- [ ] T-046's tests still pass (QA: pass / fail)
+- [ ] While a meteor falls, a comet tail streams behind it, and when it lands an impact animation plays before the boulder appears; the meteor, warning circle and boulder are unchanged (QA: pass / fail)
+- [ ] A recording (MP4 or GIF) from a real run shows several meteors falling with their tails and hitting the ground, in `art-archive/T-070/screenshots/` (QA: pass / fail)
+- [ ] No new PixelLab calls were made after the sample, and the animations use no Redgull red (QA: pass / fail)
+- [ ] Tests cover that the tail shows only while falling and the impact plays once on landing; T-046's and T-147's tests still pass (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
-The board's review: judge the look. One round only, so problems are reported rather than regenerated.
+The board's review: play a run and watch the meteors' tails and impacts.
+Board review files: the recording in `art-archive/T-070/screenshots/`.
 
 ## Updates
 
 ### 2026-10-21, Open → In progress
 
 Started at the board's request, in C:\solid-carbide-worktrees$t.
+
+### 2026-10-21, In progress → In QA
+
+Meteor sample is weak: a stone pillar on a tile base, not a falling meteor (1 generation, 4860 to 4859). Recommended: the free option, the approved boulder as the falling body with a script-drawn trail. Pictures: C:\solid-carbide-worktrees\T-070\art-archive\T-070\review_meteor_dark.png
 
 ## Result notes
 
@@ -71,3 +81,4 @@ Proposal for the rest (the board judges):
 - Nothing swapped into the game yet.
 
 Skipped commands: none refused.
+- 2026-10-21, in-progress → in-qa: Meteor sample ready for the board alone, no QA agent
