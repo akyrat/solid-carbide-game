@@ -4,6 +4,22 @@
 
 A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju attack, built in Godot 4 by a team of Claude Code agents. This repository holds both the documentation and the game.
 
+## Current state of the game
+
+Three short recordings of the real game as it is today (2026-10-21): a run on the elevation map, with the final car, the kaiju, the flames and the meteor effects, and the HUD. Scripted by `game/tests/fixtures/readme_gif_demo.gd`, recorded with `bash game/tools/record_readme_gif.sh` (task T-217).
+
+![The car drifting on the open gravel, with enemies gathering and chasing it](art-archive/T-217/screenshots/drift_with_chasers.gif)
+
+The car drifting while the minions chase it.
+
+![The car drifting along a height-6 rooftop, jumping off its edge and landing on the street below](art-archive/T-217/screenshots/drifting_jump.gif)
+
+The car jumping off a tall (height 6) rooftop while drifting, landing on the street below.
+
+![The kaiju chases the car; warning circles, falling meteors with tails, impacts and boulders](art-archive/T-217/screenshots/kaiju_meteors.gif)
+
+The kaiju chasing the car and throwing down meteors: warning circles, meteors with their tails, impacts and boulders.
+
 ## Layout
 
 - `CLAUDE.md`: the Project Lead's standing instructions. The Claude Code session you talk to acts as the Project Lead.
