@@ -1,7 +1,7 @@
 ---
 id: T-233
 title: Text: the level creator's screens
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Goal-G-005
@@ -49,6 +49,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-233.
+
+### 2026-10-21, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
 
 ## Result notes
 
