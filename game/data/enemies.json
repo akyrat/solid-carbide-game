@@ -32,7 +32,7 @@
     "coins_per_drop": 10
   },
   "meteor_attack": {
-    "_comment": "Attacks start first_attack_after_seconds after the kaiju appears, then every seconds_between_attacks. Each attack: windup_seconds of the kaiju's short animation, then meteors_per_attack warning circles at once, each landing warning_seconds later within land_within_units_of_car of the car. A meteor hits the car when the car's centre is within impact_radius_units of where it lands (the boulder's radius: boulders are 3 units across). warning_seconds is decided (Enemies, Decisions), not a balancing number. A boulder a meteor leaves stays boulder_lifetime_seconds after it lands (decided, Enemies, Decisions), then fades out over boulder_fade_seconds and is gone (T-142; the fade's length is a proposed number).",
+    "_comment": "Attacks start first_attack_after_seconds after the kaiju appears, then every seconds_between_attacks. Each attack: windup_seconds of the kaiju's short animation, then meteors_per_attack warning circles at once, each landing warning_seconds later within land_within_units_of_car of the car. A meteor hits the car when the car's centre is within impact_radius_units of where it lands (the boulder's radius: boulders are 3 units across). warning_seconds is decided (Enemies, Decisions), not a balancing number. A boulder a meteor leaves stays boulder_lifetime_seconds after it lands (decided, Enemies, Decisions), then fades out over boulder_fade_seconds and is gone (T-142; the fade's length is a proposed number). A meteor's warning circle keeps boulder_clearance_units of free ground between its edge and any boulder a meteor left that still stands, fading or waiting included (T-147; a proposed number: the boulder's drawing is taller than its circle, so a circle touching it looked as if it was under it).",
     "first_attack_after_seconds": 5,
     "seconds_between_attacks": 8,
     "windup_seconds": 1.0,
@@ -43,6 +43,7 @@
     "impact_damage": 15,
     "knockback": 20,
     "boulder_lifetime_seconds": 10,
-    "boulder_fade_seconds": 2.0
+    "boulder_fade_seconds": 2.0,
+    "boulder_clearance_units": 1.5
   }
 }
