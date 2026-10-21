@@ -1540,3 +1540,8 @@ Entry format:
 - Decision or change: enemies stand on the ground under them, find their way to the car with A* pathfinding over a 2-unit grid of the elevation map (ramps are the only links between levels), treat rooftop edges as walls, and hit the car only within 1 unit of their own level; minions spawn and the kaiju arrives on the street. Eight proposals for the playtest are in Enemies, Content, "Enemies on the rooftops and ramps". Heights cost about 0.3 to 1 ms per physics step. The board played it: "LGTM".
 - Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-207 (done)
+
+## 2026-10-21: T-147 done: meteors keep clear of standing boulders
+- Decision or change: meteors looked as if they fell on standing meteor boulders because a spot could touch a boulder and the boulder's sprite stands taller than its footprint. Meteors now keep `boulder_clearance_units` (1.5, a proposal in `game/data/enemies.json`, `meteor_attack`) of clear ground from every standing, fading or pending boulder. The board approved it from the screenshot without playing it, and will name this ticket if the problem comes back.
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-147 (done)

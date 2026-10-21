@@ -386,3 +386,93 @@ func test_the_lifetime_and_fade_come_from_the_data() -> void:
 	assert_true(is_instance_valid(body) and body.is_inside_tree())
 	_steps(1.6)
 	assert_false(is_instance_valid(body) and body.is_inside_tree(), "gone at lifetime + fade from the data")
+
+
+# ---- Never on a standing boulder (task T-147) ------------------------------------------------
+
+## Runs `attacks` drop_meteors() calls (warnings cleared between them) and returns every spot picked.
+func _many_spots(attacks: int) -> Array:
+	var out: Array = []
+	for i in attacks:
+		out.append_array(met.drop_meteors())
+		met.warnings.clear()
+	return out
+
+
+## A boulder placed on the map by a meteor, a few units from the car, with the attack otherwise idle.
+func _boulder_near_car() -> Dictionary:
+	_kaiju_near(30.0)
+	met.enabled = false
+	met.rng.seed = 147
+	var spot := _good_spot(4.0)
+	var body: Node = run.map.add_meteor_boulder(spot)
+	met.standing_boulders.append({"body": body, "age": 0.0})
+	return {"spot": spot, "body": body}
+
+
+func _assert_all_clear_of(spots: Array, boulder: Vector2, msg: String) -> void:
+	var need: float = run.map.boulder_diameter() + m["boulder_clearance_units"]
+	assert_gt(spots.size(), 100, "many spots were picked")
+	for s in spots:
+		if s.distance_to(boulder) < need:
+			fail_test("%s: spot %s is %.2f from the boulder, needs %.2f" % [msg, s, s.distance_to(boulder), need])
+			return
+	pass_test(msg)
+
+
+func test_the_clearance_comes_from_the_data() -> void:
+	assert_true(m.has("boulder_clearance_units"))
+	assert_gt(m["boulder_clearance_units"], 0.0)
+	assert_eq(met.stat("boulder_clearance_units"), m["boulder_clearance_units"])
+
+
+func test_no_meteor_lands_on_or_next_to_a_standing_meteor_boulder() -> void:
+	var b := _boulder_near_car()
+	_assert_all_clear_of(_many_spots(150), b.spot, "standing boulder")
+
+
+func test_a_fading_boulder_is_still_avoided() -> void:
+	var b := _boulder_near_car()
+	_steps(m["boulder_lifetime_seconds"] + m["boulder_fade_seconds"] / 2.0)
+	assert_true(is_instance_valid(b.body) and b.body.is_inside_tree(), "fading, not gone")
+	assert_lt(_sprite_of(b.body).modulate.a, 1.0, "it is fading")
+	_assert_all_clear_of(_many_spots(150), b.spot, "fading boulder")
+
+
+func test_a_boulder_waiting_for_the_car_is_avoided() -> void:
+	_kaiju_near(30.0)
+	met.enabled = false
+	met.rng.seed = 147
+	# A meteor lands on the car: its boulder waits in pending_boulders.
+	var spot := _car_units()
+	met.land(spot)
+	assert_eq(met.pending_boulders.size(), 1, "the boulder waits")
+	_assert_all_clear_of(_many_spots(150), spot, "waiting boulder")
+
+
+func test_a_removed_boulders_spot_can_be_used_again() -> void:
+	var b := _boulder_near_car()
+	assert_false(met.is_good_spot(b.spot), "taken while it stands")
+	assert_false(met.is_good_spot(b.spot + Vector2(run.map.boulder_diameter() + 0.5, 0.0)), "inside the clearance")
+	_steps(m["boulder_lifetime_seconds"] + m["boulder_fade_seconds"] + 0.1)
+	assert_false(is_instance_valid(b.body) and b.body.is_inside_tree(), "gone")
+	assert_true(met.is_good_spot(b.spot), "its spot is free again")
+	var again := _many_spots(150)
+	var near := 0
+	for s in again:
+		if s.distance_to(b.spot) < run.map.boulder_diameter():
+			near += 1
+	assert_gt(near, 0, "meteors land on the freed spot's area again")
+
+
+func test_a_meteor_the_clearance_apart_from_a_boulder_is_accepted() -> void:
+	var b := _boulder_near_car()
+	var d: float = run.map.boulder_diameter()
+	var apart: float = d + m["boulder_clearance_units"] + 0.05
+	for i in 64:
+		var p: Vector2 = b.spot + Vector2.RIGHT.rotated(TAU * i / 64.0) * apart
+		if run.map.can_place_meteor_boulder(p):
+			assert_true(met.is_good_spot(p), "just beyond the clearance is fine")
+			return
+	fail_test("no open spot beyond the clearance")
+
