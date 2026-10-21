@@ -1,7 +1,7 @@
 ---
 id: T-223
 title: "Text: the pickup magnet upgrade's name and description in the garage"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Garage design, Content, has the magnet upgrade's exact name (and description line, if the other upgrades have one), with this ticket's id (QA: pass / fail)
-- [ ] It matches the existing upgrades' form and voice (QA: pass / fail)
+- [ ] Garage design, Content, has the magnet upgrade's exact name (and description line, if the other upgrades have one), with this ticket's id (QA: pass; "Brand Magnet" and desc line under Content, "Pickup magnet text (T-223)")
+- [ ] It matches the existing upgrades' form and voice (QA: pass; name under 25, desc 70/80, same Redgull-joke ending as T-059 texts; no number, explained)
 
 ## Updates
 
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Text written: Brand Magnet, "Pickups reach you from further per level. Redgull calls it engagement." Sent to QA.
 
 ## Result notes
 
