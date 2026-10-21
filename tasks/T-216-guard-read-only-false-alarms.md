@@ -40,7 +40,7 @@ After T-212 and T-213 the guard (`.claude/hooks/board_gate.py`, `pre_shell`) sti
 - an inline Python step that only reads images, when the same command also names task files (T-102, before T-212).
 - `git ls-files -m | xargs git checkout --` to revert Godot's `.import` line-ending noise (T-071).
 
-Let each of these through when it can't touch a task file's header lines, judged as T-212 and T-213 do (what the command or script actually writes, and where). Keep refusing everything the existing guard tests refuse, including a `rm` or `sed -i` on a task file, a `git checkout` of a task file, and scripts whose code or arguments write those lines. A refusal still names what made it refuse.
+Let each of these through when it can't touch a task file's header lines, judged as T-212 and T-213 do (what the command or script actually writes, and where). Keep refusing everything the existing guard tests refuse, including a `rm` or `sed -i` on a task file and scripts whose code or arguments write those lines. A refusal still names what made it refuse.
 
 This changes a hook. If an edit to `.claude/` is refused by the permission system or a safety check, stop and say so; don't work around it.
 
