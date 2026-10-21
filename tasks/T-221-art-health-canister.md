@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: one PixelLab sample of the canister first.
 
+### 2026-10-21, In progress → In QA
+
+Canister sample in (1 generation): reads as a red canister; the cross is a blobby X, it's about twice a coin's size, and its darkest red is close to Redgull's. Free script fixes can redraw the cross, shift the red and scale it down. Picture: C:\solid-carbide-worktrees\T-221\art-archive\T-221\canister_sample_review.png
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -72,3 +76,5 @@ Written by the agent when it finishes.
 **Honest judgment (the board decides):** it reads as a red canister lying on its side, with a dark outline, shading, a small valve and a metal band, in the pixel style. Problems: (1) the white mark is a blobby X-like shape, not a clear cross; (2) it is about 24 x 17 art pixels, roughly twice the coin's 10 x 12, so "small, like the coins" would need a scale-down by script; (3) its darkest red (143, 37, 30) is fairly close to Redgull's red (135, 17, 27), though the main reds (192, 67, 62 and 241, 88, 86) are lighter and warmer, so it reads as a canister red; a free script shift of the darkest shade is possible. A free script could also redraw the cross as a clean white plus on the same pixels. Not regenerated.
 
 **Refused commands:** none.
+- 2026-10-21, in-progress → in-qa: Canister sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: the board took it out of QA with 4 acceptance criteria not marked
