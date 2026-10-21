@@ -4,7 +4,7 @@ title: The drift trail changes and gains effects with the hype level
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal:

@@ -4,7 +4,7 @@ title: The guard lets more harmless commands through (find, shell variables, God
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
