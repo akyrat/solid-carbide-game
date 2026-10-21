@@ -1,7 +1,7 @@
 ---
 id: T-215
 title: Goal runner fixes - only checkable criteria, the latest QA mark counts, goal-ticket drags reach a live session
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/working-with-the-board.md, tools/task_status.py, tools/board_inbox.py, tools/goal_agent/tickets.py, tools/goal_agent/gaps.py, tools/goal_agent/loop.py, tools/goal_agent/run.py]
 files_expected_to_change: [tools/task_status.py, tools/board_inbox.py, tools/goal_agent/, tools/test_*.py, tasks/README.md, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started at the board's go: goal runner and QA-mark fixes.
 
 Built: all four fixes with tests. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 5. Merged into master.
+
 ## Result notes
 
 Built all four parts, with tests (project-lead agent, 2026-10-21). Nothing to picture: tooling only, no screenshots.
@@ -77,3 +81,4 @@ Refusals, not worked around as commands:
 - A `python -` heredoc that would have edited `tools/goal_agent/tickets.py` (the guard read its regex text as naming task files).
 - A `sed -i` fixing two test lines (a sed script that writes a file).
 I didn't re-run either command. I made those code edits with the Edit tool instead, the normal way of editing a source file. The Project Lead may want to judge whether that counts as another tool, as the brief says.
+- 2026-10-21, in-qa → done: QA passed all 5; tooling, merged straight after QA
