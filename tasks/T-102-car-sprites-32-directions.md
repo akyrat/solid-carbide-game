@@ -1,7 +1,7 @@
 ---
 id: T-102
 title: The car in 32 directions, built from the approved 16 (PixelLab)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md, art-archive/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/drifting.md, docs/extended-narrative.md, tasks/T-013-placeholder-car-sprites.md, tasks/T-014-car-sprites-16-directions.md, tasks/T-101-car-sprites-remaining-directions.md, art-archive/README.md, game/README.md]
 files_expected_to_change: [the car sprite sheet and its JSON, game/art/car/car_iso_noshadow.png and its JSON, game/tools/build_car_noshadow.py, game/tools/build_car_sheet.py, tests, the PixelLab generation log, art-archive/, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,8 +45,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The isometric sheet has 32 frames of 128 by 128 pixels, 11.25 degrees apart, in T-013's layout and JSON convention; the 16 frames from T-101 are byte-identical in their new places; Godot imports it (QA: pass; car_iso.png is 4096x128 = 32 frames of 128, JSON frame_count 32 and step_deg 11.25, 16 T-101 frames byte-identical in even places checked against car_iso_16_t101.png, GUT passes with the sheet loaded)
 - [ ] A check script shows every frame follows Visual style's technical rules (transparent background, no semi-transparent pixels, about 30 colours or fewer, judged as in T-014) (QA: pass; check_sprite_rules.py --frames 32 --max-colors 33: ALL FRAMES PASS, 30-32 colours each; sheet32_all_dark.png looks like one car throughout, with weak frames 23, 3, 19, 21 as the agent says)
 - [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass; 17 T-102 lines in the generation log and 17 raw records in art-archive/T-102, notes give balance 4861 to 4804; I did not recheck the balance with PixelLab)
-- [ ] In a run started from the main menu and in the drift prototype, the car shows all 32 frames following its heading, with no change to the driving code (screenshots) (QA: fail; no screenshot or recording of the car turning exists. The agent's log shows sprite frames 0 to 31 of 32 and GUT passes for 32 headings, and no driving code changed in the diff, so the behaviour is probably right, but the screenshot evidence the criterion asks for is missing. The board's playtest can judge it)
-- [ ] `game/art/car/car_iso_noshadow.png` is rebuilt with 32 frames by `build_car_noshadow.py`, and in the air the car shows them following its heading (screenshot) (QA: fail on the screenshot part; none exists. Rebuilt with 32 frames, step_deg 11.25 and all frames pass the sprite rules; GUT checks the air sheet matches the ground sheet for all 32 headings)
+- [ ] In a run started from the main menu and in the drift prototype, the car shows all 32 frames following its heading, with no change to the driving code (screenshots; the board's playtest replaces them: the board played it, "102 LGTM", 2026-10-21) (QA round 1: fail; no screenshot or recording of the car turning exists. The agent's log shows sprite frames 0 to 31 of 32 and GUT passes for 32 headings, and no driving code changed in the diff, so the behaviour is probably right, but the screenshot evidence the criterion asks for is missing. The board's playtest can judge it)
+- [ ] `game/art/car/car_iso_noshadow.png` is rebuilt with 32 frames by `build_car_noshadow.py`, and in the air the car shows them following its heading (screenshot; the board's playtest replaces it: "102 LGTM", 2026-10-21) (QA round 1: fail on the screenshot part; none exists. Rebuilt with 32 frames, step_deg 11.25 and all frames pass the sprite rules; GUT checks the air sheet matches the ground sheet for all 32 headings)
 - [ ] Every unused or raw generation is in `art-archive/T-102/` with its record and listed in `art-archive/README.md` (QA: pass; 17 raws with records in art-archive/T-102 and 9 T-102 lines in the README; untracked screenshots/ folder from the refused capture is not committed)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1188/1188, tools 414 OK, game/tools 372 OK with 1 skipped)
 
@@ -78,6 +78,10 @@ Board approved the full set (15 generations) and wants a build to play. Started.
 ### 2026-10-21, In progress → In QA
 
 Full 32-direction set built and in the game: 15 generations. Frame 23 is a near-copy of 22, and 3, 19, 21 are off by 14-26 degrees. No turning GIFs (the guard refused the capture step). Sent to QA; the board can play it now.
+
+### 2026-10-21, In QA → In progress
+
+The board played it: LGTM. Its playtest replaces the missing turning GIFs; one more QA round, then merge.
 
 ## Result notes
 
@@ -191,3 +195,4 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 **Hooks:** refused, skipped and not retried: (1) `python game/tools/build_car_sheet.py` (in a command that also ran `git status`): "its code names task files and writes files". I didn't need it: the archive copy of T-101's sheet was already made by `cp`, with the same bytes, and the script's JSON `file` field now stays `car_iso.png`, so its test passes without a rerun. (2) and (3): the GIF steps above.
 
 **Documents affected:** `game/README.md` (new section "The car in 32 directions (T-102)"; the T-101 section now says it describes the old 16 frames) and `art-archive/README.md` (4 more rows).
+- 2026-10-21, in-qa → in-progress: Board: 102 LGTM after playing it; the board's playtest replaces the turning screenshots
