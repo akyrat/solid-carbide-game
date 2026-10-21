@@ -1,7 +1,7 @@
 ---
 id: T-248
 title: The guard lets more harmless commands through (find, shell variables, Godot recording and import)
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -46,10 +46,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests feed `pre_shell` each command listed above (with real paths of the same shape) and the guard lets each through (QA: pass / fail)
-- [ ] Tests show the guard still refuses `find -delete` or `-exec rm` on a tasks folder, a `--write-movie` into a tasks folder, and every case the existing guard tests refuse (QA: pass / fail)
-- [ ] `tasks/README.md` describes the change in a sentence or two, next to T-216's rule (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] Tests feed `pre_shell` each command listed above (with real paths of the same shape) and the guard lets each through (QA: pass; MoreHarmlessCommands tests allow find, shell variables, Godot --write-movie and --import with real-shaped paths; 59 guard tests OK)
+- [ ] Tests show the guard still refuses `find -delete` or `-exec rm` on a tasks folder, a `--write-movie` into a tasks folder, and every case the existing guard tests refuse (QA: pass; test_still_refused covers find -delete/-exec rm/-fprint on tasks, --write-movie into tasks, plus the old refusals; all in the 59 OK)
+- [ ] `tasks/README.md` describes the change in a sentence or two, next to T-216's rule (QA: pass; sentence added in "Changing a task's status" after T-216's rule)
+- [ ] All Python tool tests pass (QA: pass; tools 446 OK, game/tools 393 OK with 1 skipped)
 
 ## Updates
 
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's go: the guard lets a read-only find, shell variables and Godot's recording and import through.
+
+### 2026-10-22, In progress → In QA
+
+Built: the guard passes a plain find, shell variables, Godot's --import and --write-movie, and Markdown ** in inline code. Sent to QA.
 
 ## Result notes
 
