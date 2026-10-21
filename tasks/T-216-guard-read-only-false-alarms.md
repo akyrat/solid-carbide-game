@@ -49,7 +49,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 ## Acceptance criteria
 
 - [ ] Tests feed `pre_shell` each command listed above (with real file paths of the same shape) and the guard lets each through (QA: pass / fail)
-- [ ] Tests show the guard still refuses `rm` and `sed -i` on a task file, `git checkout -- tasks/T-1-x.md`, and every case the existing guard tests refuse (QA: pass / fail)
+- [ ] Tests show the guard still refuses `rm` and `sed -i` on a task file, and every case the existing guard tests refuse (QA: pass / fail)
 - [ ] `tasks/README.md` describes the rule in a sentence or two (QA: pass / fail)
 - [ ] All Python tool tests pass (QA: pass / fail)
 
