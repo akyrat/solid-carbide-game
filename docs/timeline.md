@@ -1600,3 +1600,8 @@ Entry format:
 - Decision or change: the root README has a "Current state of the game" section with three GIFs recorded from the real game: the car drifting with minions chasing it (on the gravel square; the weakest of the three), the car drifting off a height-6 rooftop and landing, and the kaiju chasing the car while meteors fall. README and GIFs only, merged straight after QA.
 - Documents touched: `README.md`
 - Tasks: T-217 (done)
+
+## 2026-10-21: Health drops, a pickup magnet and its garage upgrade
+- Decision or change: enemies drop health pickups at the coins' drop rate, each restoring 30% of the car's health, drawn as a red gas canister with a white cross (in a canister red, not Redgull's) (T-220 with a placeholder, art T-221 sample first). Coins, gift packs and health drops are pulled to the car within 1 car length (T-222), and that radius is a garage upgrade (text T-223, upgrade T-224).
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`, `docs/garage-design.md`, `docs/visual-style.md`
+- Tasks: T-220 to T-224
