@@ -1,7 +1,7 @@
 ---
 id: T-225
 title: The neon underglow rises with the car on raised surfaces and in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] On a rooftop, a ramp and (as proposed) in the air, the underglow is drawn under the car at its height, in the right depth order (tests, and screenshots in a run) (QA: pass / fail)
-- [ ] On the street the underglow looks and works as before (tests) (QA: pass / fail)
-- [ ] The result notes say whether the molotov fire and the wiper had the same bug, and what was done (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] On a rooftop, a ramp and (as proposed) in the air, the underglow is drawn under the car at its height, in the right depth order (tests, and screenshots in a run) (QA: pass; rooftop, ramp and air screenshots show the ring under the car at its height, car drawn over roof, tests added)
+- [ ] On the street the underglow looks and works as before (tests) (QA: pass; street screenshot shows ring round the car on the ground, street test added)
+- [ ] The result notes say whether the molotov fire and the wiper had the same bug, and what was done (QA: pass; wiper fixed, molotov is ground fire so no bug)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT TESTS PASSED, tools 439 OK, game/tools 387 OK, 1 skipped)
 
 The board's review: drive onto a rooftop with the underglow.
 Board review files: the screenshots in `art-archive/T-225/screenshots/`.
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: the underglow rises with the car.
+
+### 2026-10-21, In progress → In QA
+
+Fixed: the underglow (and the wiper, which had the same bug) rise with the car. Sent to QA.
 
 ## Result notes
 
