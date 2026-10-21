@@ -88,6 +88,13 @@ func setup(p: Node) -> void:
 	box.add_child(collisions_title)
 	for s in CarTuning.COLLISION_SETTINGS:
 		_add_slider(box, s, prototype.car.tuning.get(s.key), true)
+	var air_title := Label.new()
+	air_title.text = "In the air (not in the Unity prototype)"
+	box.add_child(HSeparator.new())
+	box.add_child(air_title)
+	# Task T-219: kept with the collision sliders (same tooltip style, no Unity value).
+	for s in CarTuning.AIR_SETTINGS:
+		_add_slider(box, s, prototype.car.tuning.get(s.key), true)
 	var tricks_title := Label.new()
 	tricks_title.text = "Tricks (the readout shows the last one)"
 	box.add_child(HSeparator.new())

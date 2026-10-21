@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/air_trick_gif_demo.gd" id="1_demo"]
+
+[node name="AirTrickGif360" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(0, 10)
+start_rotation = 1.5708
+lift_units = 22.0
+steer = -1.0
+drive_off_edge = false
+zoom = 30.0
+steer_steps = 40

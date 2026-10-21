@@ -224,6 +224,10 @@ func test_no_step_ends_inside_the_platform_below_its_top() -> void:
 					car.height_model.airborne = true
 					car.height_model.height = h
 					car.height_model.vertical_speed = vz
+					# T-219 (board: no drifting in the air): the car keeps its
+					# velocity in the air, so it is launched at cruise speed
+					# along its heading, as if it had jumped.
+					car.model.set_velocity(Vector2.from_angle(s[1]) * car.tuning.forward_speed)
 					var was_air := true
 					for i in 150:
 						car.physics_step()

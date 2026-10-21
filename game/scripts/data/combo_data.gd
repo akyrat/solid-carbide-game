@@ -27,7 +27,8 @@ func max_multiplier() -> float:
 	return float(_data["max_multiplier"])
 
 
-## What one trick adds to the multiplier: "extended_drift", "three_sixty" or "alternate_drift".
+## What one trick adds to the multiplier: "extended_drift", "three_sixty", "alternate_drift",
+## "air_one_eighty" or "air_three_sixty" (TrickDetector.TRICK_IDS).
 func trick_add(trick: String) -> float:
 	var tricks: Dictionary = _data["trick_add"]
 	if not tricks.has(trick):

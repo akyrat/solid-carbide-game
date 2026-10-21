@@ -5,7 +5,9 @@
   "trick_add": {
     "extended_drift": 0.05,
     "three_sixty": 0.25,
-    "alternate_drift": 0.5
+    "alternate_drift": 0.5,
+    "air_one_eighty": 0.25,
+    "air_three_sixty": 0.5
   },
   "collision_cut": 0.8,
   "collision_cut_applies_to": "above_start",

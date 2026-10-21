@@ -50,6 +50,14 @@ var alternate_max_switch_seconds := 0.5
 var alternate_min_drift_seconds := 0.3
 ## When true, A or D must stay held on the same side during the switch.
 var alternate_keep_steering := true
+## Turning in the air (task T-219, board 2026-10-21: the car turns faster in
+## the air than on the ground, so an air 360 fits in a jump off the tallest
+## rooftop). The body's rotation rate while airborne, as a multiple of the
+## ground rate (turn_rate()). Proposed 2.5: 479.75 deg/s, 9.6 degrees a
+## physics step, so a 360 takes 38 steps (0.76 s) of the 49 a fall off a
+## height-6 rooftop counts, leaving about 0.2 s to spare, and a 180 takes 19
+## (0.38 s). Ground steering is unchanged.
+var air_turn_multiplier := 2.5
 
 ## The acceleration garage upgrade (task T-060): sets the time to top speed to
 ## the upgrade's value at the player's saved level (level 0 is the base, 2.3 s,
@@ -142,6 +150,18 @@ const COLLISION_SETTINGS := [
 ]
 
 
+## Settings for the car in the air (task T-219). Not part of the Unity
+## prototype (no height there); the tuning panel shows them in their own group.
+## Same fields as COLLISION_SETTINGS.
+const AIR_SETTINGS := [
+	{"key": "air_turn_multiplier", "name": "Air turn speed", "unit": "x ground turn rate",
+		"label": "How much faster the car turns while in the air",
+		"tip": "In the air the car rotates this many times faster than on the ground (191.9 deg/s there). Game default 2.5 = 479.75 deg/s: an air 360 takes 0.76 s and an air 180 0.38 s, and a fall off a height-6 rooftop lasts 1.0 s. 1 = the same as on the ground.",
+		"unity_note": "Unity: no height, the car never leaves the ground",
+		"min": 1.0, "max": 4.0, "step": 0.05},
+]
+
+
 ## Trick detection settings (task T-079). Not handling values: they only
 ## decide when trick_detector.gd counts an alternate drift. The tuning panel
 ## shows them in their own group. "toggle": true marks an on/off setting.
@@ -180,6 +200,12 @@ func turn_rate() -> float:
 	return turn_speed * steer_sensitivity
 
 
+## Degrees per second the body rotates while A or D is held, on the ground or
+## (task T-219) in the air, air_turn_multiplier times faster.
+func turn_rate_for(airborne: bool) -> float:
+	return turn_rate() * (air_turn_multiplier if airborne else 1.0)
+
+
 ## The Unity values, by setting key.
 static func unity_values() -> Dictionary:
 	return UNITY.duplicate()
@@ -189,7 +215,7 @@ static func unity_values() -> Dictionary:
 static func default_values() -> Dictionary:
 	var fresh = load("res://scripts/driving/car_tuning.gd").new()
 	var out := {}
-	for s in SETTINGS + COLLISION_SETTINGS + TRICK_SETTINGS:
+	for s in SETTINGS + COLLISION_SETTINGS + AIR_SETTINGS + TRICK_SETTINGS:
 		out[s.key] = fresh.get(s.key)
 	return out
 
