@@ -1,7 +1,7 @@
 ---
 id: T-237
 title: Level creator: pieces snap to the tile grid and to close neighbours
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/data/level/creator_texts.json, game/scripts/level_creator/editor.gd, game/scripts/level_creator/level_document.gd, game/scripts/enemies/enemy_navigation.gd, game/tools/check_level.py, game/tools/check_height_data.py]
 files_expected_to_change: [game/scripts/level_creator/snapping.gd, game/scripts/level_creator/editor.gd, game/tests/unit/level_creator/test_snapping.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-237.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-22, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Done by the Level/Challenge Design Agent, 2026-10-22. No PixelLab calls (0 generations). No refusals.
@@ -90,3 +94,4 @@ All 55 level-creator tests pass, including `test_creator_texts_only.gd`. **Full 
 - `overlap_refused.png`: a second rooftop across the first is refused, and the top bar shows the overlap message.
 
 **Documents affected:** none of the game area docs. game/README.md was updated.
+- 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
