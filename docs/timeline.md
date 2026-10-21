@@ -1550,3 +1550,8 @@ Entry format:
 - Decision or change: a sample for the board's review goes to the QA column, and the board approves or sends it back by dragging it out (the T-212 pop-up), not by an OK in chat, so the move is always the board's own (board, 2026-10-21).
 - Documents touched: none besides this entry
 - Tasks: T-069, T-070, T-071, T-102
+
+## 2026-10-21: T-069 done: the kaiju's art
+- Decision or change: the kaiju is drawn from the board's approved PixelLab sample in 8 directions (5 drawn, 3 mirrored) with 6 walk frames each, 7 units tall, replacing T-045's placeholder without changing its behaviour. The set cost 32 generations against the 6 to 12 planned (the 224-pixel canvas costs more per call); agents now stop and report as soon as a call costs more than planned. Weak points reported: a subtle walk, small differences between directions, a front three-quarter view. The board: "looks good".
+- Documents touched: `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-069 (done)

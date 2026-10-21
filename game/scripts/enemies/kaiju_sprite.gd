@@ -7,6 +7,14 @@ extends Node2D
 ## stomps as it walks. Dark slate green with a lighter belly, pale cyan back
 ## plates and yellow eyes; no Redgull red. The final kaiju art comes from a
 ## separate art task and replaces this node's drawing.
+##
+## Final art (task T-069): 6-frame walk sheets of 224 x 224 pixels in
+## `art/kaiju/` (`kaiju_s/se/e/ne/n.png`; south-west, west and north-west mirror
+## south-east, east and north-east), drawn at scale 0.5 (16 screen pixels per
+## unit, so the 224-pixel canvas is the kaiju's 7 units), the direction chosen
+## from the way it walks and a frame from the same walk cycle as the stomp.
+## The feet stand on the ground point. If a sheet is missing, the placeholder
+## shape below is drawn instead.
 
 const BODY_COLOR := Color(0.20, 0.30, 0.28)
 const BELLY_COLOR := Color(0.38, 0.47, 0.40)
@@ -22,6 +30,21 @@ const PX := 16.0
 ## The figure below is drawn for a height of DESIGN_HEIGHT_PX and scaled to HEIGHT_UNITS.
 const DESIGN_HEIGHT_PX := 160.0
 
+const FRAME_SIZE := 224
+const FRAME_COUNT := 6
+const ART_SCALE := 0.5
+## Where the feet are in the art's frame (y, art pixels), and the top of the head.
+const ART_FEET_Y := 203.0
+const ART_TOP_Y := 17.0
+## Sheet per compass index (0 = east, then clockwise on screen), as [sheet name, mirrored].
+const SHEETS := [["e", false], ["se", false], ["s", false], ["se", true],
+	["e", true], ["ne", true], ["n", false], ["ne", false]]
+const SHEET_DIR := "res://art/kaiju/kaiju_%s.png"
+
+static var _textures := {}
+
+## Screen direction it faces (normalized), set by face().
+var facing := Vector2.RIGHT
 ## 1 = facing right on screen, -1 = facing left. Set by face().
 var facing_x := -1.0
 ## Walk cycle, 0..1, for the stomp.
@@ -41,12 +64,38 @@ func _process(delta: float) -> void:
 func face(flat_dir: Vector2) -> void:
 	var iso := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 	var d: Vector2 = iso.basis_xform(flat_dir)
+	if d.length() > 0.001:
+		facing = d.normalized()
 	if absf(d.x) > 0.001:
 		facing_x = signf(d.x)
 
 
+## Index into SHEETS for a screen direction.
+static func compass_index(dir: Vector2) -> int:
+	return posmod(roundi(dir.angle() / (PI / 4.0)), 8)
+
+
+## Walk frame (0 to FRAME_COUNT - 1) for a walk phase of 0 to 1.
+static func frame_for(walk: float) -> int:
+	return clampi(int(walk * FRAME_COUNT), 0, FRAME_COUNT - 1)
+
+
+static func _sheet(sheet_name: String) -> Texture2D:
+	if not _textures.has(sheet_name):
+		var path := SHEET_DIR % sheet_name
+		_textures[sheet_name] = load(path) if ResourceLoader.exists(path) else null
+	return _textures[sheet_name]
+
+
+## True when the final art is in the project.
+static func has_art() -> bool:
+	return _sheet("e") != null
+
+
 ## The drawing's height above its feet, in screen pixels.
 static func drawn_height_px() -> float:
+	if has_art():
+		return (ART_FEET_Y - ART_TOP_Y) * ART_SCALE
 	return HEIGHT_UNITS * PX
 
 
@@ -84,6 +133,11 @@ func _blob(cx: float, cy: float, rx: float, ry: float, color: Color, outline: bo
 func _draw() -> void:
 	var gr := RADIUS_UNITS * PX * sqrt(2.0)
 	_ground_shadow(gr)
+	var entry: Array = SHEETS[compass_index(facing)]
+	var tex := _sheet(entry[0])
+	if tex != null:
+		_draw_art(tex, entry[1])
+		return
 	var sc := HEIGHT_UNITS * PX / DESIGN_HEIGHT_PX
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2(sc, sc))
 	var stomp := sin(_walk * TAU)
@@ -115,6 +169,13 @@ func _draw() -> void:
 	var eye := _p(36, 138 + bob)
 	draw_rect(Rect2(eye - Vector2(3, 2), Vector2(6, 4)), OUTLINE_COLOR)
 	draw_rect(Rect2(eye - Vector2(2, 1), Vector2(4, 2)), EYE_COLOR)
+
+
+func _draw_art(tex: Texture2D, mirrored: bool) -> void:
+	var src := Rect2(frame_for(_walk) * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
+	var size := FRAME_SIZE * ART_SCALE
+	var w := -size if mirrored else size
+	draw_texture_rect_region(tex, Rect2(Vector2(-w / 2.0, -ART_FEET_Y * ART_SCALE), Vector2(w, size)), src)
 
 
 func _ground_shadow(rx: float) -> void:
