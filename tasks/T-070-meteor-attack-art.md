@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-046-kaiju-meteor-attack.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -88,6 +88,14 @@ The board picked particles; it is now the default.
 
 Particles is the default; final QA round before merging.
 
+### 2026-10-21, In QA → Needs playtest
+
+Final QA passed all 5.
+
+### 2026-10-21, Needs playtest → Done
+
+The board picked particles. Merged into master.
+
 ## Result notes
 
 ### Sample round (2026-10-21, board's go for PixelLab given)
@@ -132,3 +140,4 @@ The meteor, warning circle and boulder are unchanged; the boulder still appears 
 - 2026-10-21, in-progress → in-qa: Meteor sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 5 acceptance criteria not marked
 - 2026-10-21, needs-playtest → in-progress: Board picked the particles version from the GIFs
+- 2026-10-21, needs-playtest → done: Board picked the particles version from the GIFs
