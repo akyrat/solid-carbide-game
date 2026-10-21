@@ -4,7 +4,7 @@ title: Art: the kaiju
 status: open
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: mvp
 user_facing_text: no

@@ -1495,3 +1495,58 @@ Entry format:
 - Decision or change: the board wants a run to play on the elevation sample map as the full game with enemies, to see how they behave (T-206 builds it, T-207 looks at the enemies and proposes how they handle heights; the MVP map stays, switchable). The car moves to 32 directions now (T-102, sample frame first, the board approves its generations; the shadowless air frames are rebuilt for 32 by the free script). The board's two tracks, "DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)", loop through the whole game, alternating, with a music volume slider on the pause screen (T-208 label, T-209 music, T-210 slider). Short tutorial levels that show the tricks are noted, not requested yet (T-211, for the board to describe).
 - Documents touched: `docs/level-design.md`, `docs/enemies.md`, `docs/visual-style.md`, `docs/hud-and-menus.md`, `docs/game-loop-architecture.md`
 - Tasks: T-102 (scheduled), T-206 to T-211 (open or blocked)
+
+## 2026-10-20: T-208 done: the music volume slider's label
+- Decision or change: the pause screen's music volume slider is labelled "Music volume", the plain sibling of "SFX volume" and "Camera zoom level" (HUD and menus, Content). Docs-only text, merged straight after QA; T-210 uses it word for word.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-208 (done)
+
+## 2026-10-20: G-001 cancelled
+- Decision or change: the board cancelled G-001, the goal runner's first real run, which paused in planning on 2026-10-18 and was never built; G-002 built the same goal. The old G-004 folder was deleted once the board closed Godot.
+- Documents touched: `goals/G-001-add-an-image-of-the.md`
+- Tasks: G-001 (cancelled)
+
+## 2026-10-21: T-212 done: the board's drag out of QA, and the guard's false alarms
+- Decision or change: at the board's request, a drag by the board can take a ticket out of QA before every criterion is marked, after a pop-up that lists the unmarked criteria and takes the board's explanation (added to the result notes; no QA round counted); the command line still refuses that move. The guard now refuses only shell commands that can write a ticket's status, qa_rounds or lead line, and says why; test runs and read-only commands pass. QA found one loosening (a generic writer script whose arguments carry the header line passes the command check; the commit check still catches it): follow-up T-213. The pop-up's screenshot was saved by the Project Lead after the merge, since the old guard had refused the agent's folder creation.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-212 (done), T-213 (open)
+
+## 2026-10-21: T-213 done: the guard refuses scripts whose arguments write a ticket's header
+- Decision or change: closes the loosening QA found in T-212: a script run whose arguments name a task file and carry a status, qa_rounds or lead line or field name is refused again, with a reason; read-only commands still pass. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`
+- Tasks: T-213 (done)
+
+## 2026-10-21: The board played the full game on the elevation map
+- Decision or change: no drift smoke while the car is airborne; the exhaust flamethrower's flames come out at the car's height (they spawned away from the car on rooftops and in the air); T-206 goes back to its agent for both. Enemies ignored every raised surface: the board decides they follow the car up the ramps, with pathfinding over streets, ramps and rooftops, and a rooftop's edge blocks them from below (T-207, rewritten).
+- Documents touched: `docs/drifting.md`, `docs/weapons.md`, `docs/enemies.md`, `docs/level-design.md`
+- Tasks: T-206 (back to in-progress), T-207
+
+## 2026-10-21: T-209 done: the board's music plays through the game
+- Decision or change: the board's two tracks ("DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)") play from the main menu on, alternating and looping, never restarting between screens or on pause, on their own "Music" bus with a saved 0 to 100 setting (starting at 40, the agent's proposal). The board played it: "plays just fine". The music volume slider (T-210) starts now.
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-209 (done), T-210 (in progress)
+
+## 2026-10-21: T-210 done: the music volume slider
+- Decision or change: the pause screen has a "Music volume" slider (T-208's label) under "SFX volume", 0 to 100, changing only the music at once and saved between sessions. The pause strip grew by one row; QA notes it now has no room for another. The board played it: "LGTM".
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-210 (done)
+
+## 2026-10-21: T-206 done: a run plays the full game on the elevation map
+- Decision or change: a run started from the main menu plays on the elevation sample map's layout as the full game (enemies, weapons, timer, likes, levels, gift drops, kaiju), with the car's height, round shadow, see-through and depth order; the MVP map stays, switched by `USE_ELEVATION_MAP` in `run.gd`. The shared elevation code is `elevation_layer.gd`. After the board's playtest: no drift smoke and no tyre marks while airborne, and the exhaust flames at the car's height. The board approved it together with T-207.
+- Documents touched: `docs/level-design.md`, `docs/game-loop-architecture.md`, `docs/drifting.md`, `docs/weapons.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-206 (done)
+
+## 2026-10-21: T-207 done: enemies follow the car up the ramps
+- Decision or change: enemies stand on the ground under them, find their way to the car with A* pathfinding over a 2-unit grid of the elevation map (ramps are the only links between levels), treat rooftop edges as walls, and hit the car only within 1 unit of their own level; minions spawn and the kaiju arrives on the street. Eight proposals for the playtest are in Enemies, Content, "Enemies on the rooftops and ramps". Heights cost about 0.3 to 1 ms per physics step. The board played it: "LGTM".
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-207 (done)
+
+## 2026-10-21: T-147 done: meteors keep clear of standing boulders
+- Decision or change: meteors looked as if they fell on standing meteor boulders because a spot could touch a boulder and the boulder's sprite stands taller than its footprint. Meteors now keep `boulder_clearance_units` (1.5, a proposal in `game/data/enemies.json`, `meteor_attack`) of clear ground from every standing, fading or pending boulder. The board approved it from the screenshot without playing it, and will name this ticket if the problem comes back.
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-147 (done)
+
+## 2026-10-21: Art samples wait in QA for the board's drag
+- Decision or change: a sample for the board's review goes to the QA column, and the board approves or sends it back by dragging it out (the T-212 pop-up), not by an OK in chat, so the move is always the board's own (board, 2026-10-21).
+- Documents touched: none besides this entry
+- Tasks: T-069, T-070, T-071, T-102

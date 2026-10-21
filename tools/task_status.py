@@ -87,6 +87,22 @@ def verdicts(text):
     return passed, failed, unchecked
 
 
+BOARD_OUT_OF_QA = ("in-progress", "planning")
+
+
+def unmarked_warning(fields, text, new, by):
+    """For the board's drag of an in-qa ticket to in-progress or planning while QA hasn't marked every
+    acceptance criterion: {"unmarked": [...], "failed": [...]}, each criterion word for word (T-212).
+    None for any other move."""
+    if by != "board" or fields.get("status") != "in-qa" or new not in BOARD_OUT_OF_QA:
+        return None
+    _, failed, unchecked = verdicts(text)
+    if not unchecked:
+        return None
+    clean = lambda l: re.sub(r"^\s*- \[[ xX]\]\s*", "", l).strip()   # noqa: E731
+    return {"unmarked": [clean(l) for l in unchecked], "failed": [clean(l) for l in failed]}
+
+
 def has_result_notes(text):
     return bool(tb.review_parts(text)[2])
 
@@ -111,8 +127,9 @@ def unfinished_deps(fields, folders):
     return out
 
 
-def allowed(fields, text, folders):
-    """{status: why it is allowed} and {status: why not} for this task right now."""
+def allowed(fields, text, folders, by="agent"):
+    """{status: why it is allowed} and {status: why not} for this task right now. `by="board"` (a drag on
+    the task board) may also take an in-qa ticket with unmarked criteria back to in-progress or planning."""
     old = fields.get("status", "open")
     deps = unfinished_deps(fields, folders)
     rounds = int(fields.get("qa_rounds", "0") or 0)
@@ -147,6 +164,10 @@ def allowed(fields, text, folders):
             why = f"QA hasn't marked every acceptance criterion pass or fail ({len(unchecked)} left)"
             for s in ("done", "needs-playtest", "in-progress", "flagged-for-review"):
                 no[s] = why
+            if by == "board":   # T-212: the board may take it back, after the task board's warning
+                for s in BOARD_OUT_OF_QA:
+                    no.pop(s, None)
+                    ok[s] = f"the board's call, with {len(unchecked)} acceptance criteria not marked by QA"
         elif failed:
             if rounds + 1 >= 2:
                 rule("flagged-for-review", True, "", "failed QA a second time")
@@ -282,7 +303,8 @@ def move(task_id, new, note=None, folders=None, by="agent", reply=None):
     old = fields.get("status", "open")
     if new == old:
         raise Refused(f"{task_id} is already {old}.")
-    ok, no = allowed(fields, text, folders)
+    ok, no = allowed(fields, text, folders, by)
+    warning = unmarked_warning(fields, text, new, by)
     if new not in ok:
         why = no.get(new) or no.get("*") or f"{old} can't move to {new}"
         moves = ", ".join(ok) or "none"
@@ -292,7 +314,10 @@ def move(task_id, new, note=None, folders=None, by="agent", reply=None):
     if old == "needs-playtest" and new == "in-progress" and not note:
         raise Refused("Sending a playtest back needs --note with what the board asked for.")
     out = []
-    if old == "in-qa":
+    if warning:   # not a QA round: QA never finished checking it (T-212)
+        n = len(warning["unmarked"])
+        note = note or f"the board took it out of QA with {n} acceptance {'criterion' if n == 1 else 'criteria'} not marked"
+    elif old == "in-qa":
         rounds = int(fields.get("qa_rounds", "0") or 0) + 1
         text = set_field(text, "qa_rounds", str(rounds))
         out.append(f"qa_rounds: {rounds}")

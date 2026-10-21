@@ -17,21 +17,9 @@ extends Node2D
 ## - the camera following as in the elevation test scene (camera_follow.gd,
 ##   the saved zoom and camera options).
 ##
-## Depth order (task T-197; Level design, Decisions, "Elevation sample map:
-## depth order"): the buildings' slots and the raised areas are sorted
-## together, back to front (restack, drawn_before), and each gets its own
-## z_index, BUILDING_Z_STEP apart from DEPTH_Z_BASE. A stacked rooftop and a
-## ramp standing on a rooftop come after the rooftop under them; an item
-## wholly on another's far side (west or north) comes before it. The car and
-## its shadow go just under the lowest item that covers them (they are behind
-## it, lower than its top, and overlap it on screen), or over everything: so
-## they are drawn over the areas they are on, above or in front of.
-##
-## See-through: every raised area and ramp covering the car fades
-## (elevation_platform_drawing.gd, update_fade), and so does every building
-## covering it (map_building.gd, update_fade), both with the car's shape drawn
-## at its height, the same shape the depth order uses; the fade step is
-## map_building.gd's faded_alpha for both.
+## Depth order (task T-197) and see-through: elevation_layer.gd (task T-206
+## took them out of this scene, so the run shares them). The scene keeps its
+## own functions for them as thin calls to its layer (`elevation`).
 ##
 ## Not the project's main scene and not reachable from the menus (a proposal).
 ## No on-screen text. Run it from the editor (open the scene, F6) or with
@@ -42,8 +30,7 @@ const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 const CarScript := preload("res://scripts/driving/car.gd")
 const CarSpriteScript := preload("res://scripts/driving/car_sprite.gd")
 const CarShadowScript := preload("res://scripts/driving/car_shadow.gd")
-const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
-const PlatformDrawingScript := preload("res://scripts/level/elevation_platform_drawing.gd")
+const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 
@@ -57,25 +44,29 @@ const START_UNITS := Vector2(-81.0, -50.0)
 const START_ROTATION := -PI / 2.0
 
 ## The car's footprint around its centre for the depth order, units.
-const DEPTH_RADIUS := 0.5
+const DEPTH_RADIUS := ElevationLayerScript.DEPTH_RADIUS
 
-## z_index of the first item (building slot or area) in depth order: one step
-## over the map's own base, so a car under a boulder under the first item, and
-## its shadow under it, still stay over the ground (z 0).
-const DEPTH_Z_BASE := MvpMapScript.BUILDING_Z_BASE + MvpMapScript.BUILDING_Z_STEP
+## z_index of the first item (building slot or area) in depth order.
+const DEPTH_Z_BASE := ElevationLayerScript.DEPTH_Z_BASE
 
 var map: Node2D
+## The map's elevation (elevation_layer.gd): the areas, their depth order and see-through.
+var elevation
 ## The map's ground height (ground_height.gd, a GroundHeight; untyped so the
-## scene loads before the class cache is built).
+## scene loads before the class cache is built), the layer's.
 var ground_height
 var physics_world: Node2D
 var car: CharacterBody2D
 var view_root: Node2D
 ## The raised areas' drawings (elevation_platform_drawing.gd), in the file's
-## order: the platforms, then the ramps.
-var areas: Array = []
+## order: the platforms, then the ramps (the layer's).
+var areas: Array:
+	get:
+		return elevation.areas if elevation != null else []
 ## Every item in the depth order (building slots and areas), back to front.
-var depth_items: Array = []
+var depth_items: Array:
+	get:
+		return elevation.depth_items if elevation != null else []
 var shadow: Node2D
 var car_sprite: Sprite2D
 var camera: Camera2D
@@ -89,7 +80,13 @@ func _ready() -> void:
 	add_child(map)
 	map.set_view("iso")
 
-	ground_height = GroundHeightScript.from_file(LAYOUT_PATH)
+	# The rooftops and ramps (elevation_layer.gd): drawn in the map's place in
+	# the tree, sorted with its buildings.
+	elevation = ElevationLayerScript.new()
+	elevation.name = "Elevation"
+	map.add_child(elevation)
+	elevation.setup(map, LAYOUT_PATH)
+	ground_height = elevation.ground_height
 
 	physics_world = Node2D.new()
 	physics_world.name = "PhysicsWorld"
@@ -103,11 +100,6 @@ func _ready() -> void:
 	view_root = Node2D.new()
 	view_root.name = "View"
 	add_child(view_root)
-	for p in ground_height.platforms:
-		_add_area("platform", p)
-	for r in ground_height.ramps:
-		_add_area("ramp", r)
-	restack()
 
 	shadow = CarShadowScript.new()
 	shadow.name = "CarShadow"
@@ -143,18 +135,6 @@ func _ready() -> void:
 	car.stepped.connect(func() -> void: sync_view(false))
 
 
-func _add_area(kind: String, block: Dictionary) -> void:
-	var d = PlatformDrawingScript.new()
-	d.name = "%s_%s" % [kind, str(block.id).replace("-", "_")]
-	# The area's own art (task T-198): art/elevation_sample/<id>.png with its
-	# record, built from this map's file. The elevation test's art
-	# (art/elevation/) is drawn for that scene's own sizes, so it is not used.
-	# With the art missing the script drawing is drawn instead (the fallback).
-	d.setup(kind, block, ISO_TRANSFORM, PlatformDrawingScript.SAMPLE_ART_DIR, str(block.id))
-	view_root.add_child(d)
-	areas.append(d)
-
-
 ## Puts the car at a flat position (units) with a heading, at rest on the
 ## ground there (for the start and the screenshot fixtures).
 func place_car(units: Vector2, rot: float) -> void:
@@ -170,147 +150,40 @@ static func drawn_ground(units: Vector2) -> Vector2:
 	return ISO_TRANSFORM * (units * CarScript.PX_PER_UNIT)
 
 
-# ---- Depth order -------------------------------------------------------------
+# ---- Depth order and see-through (elevation_layer.gd) ------------------------
 
-## An item's footprint in units: a building slot's or an area's rectangle.
 static func item_rect(item) -> Rect2:
-	if item.get("footprint") != null:
-		return item.footprint
-	return item.rect()
+	return ElevationLayerScript.item_rect(item)
 
 
-## The height an item stands on: 0 for buildings and street areas, the area
-## under it for a stacked rooftop or a ramp standing on a rooftop.
 func item_base(item) -> float:
-	if item.get("footprint") != null:
-		return 0.0
-	if item.kind == "ramp":
-		return float(item.block.bottom_height)
-	var on := str(item.block.get("on", ""))
-	if on == "":
-		return 0.0
-	for p in ground_height.platforms:
-		if p.id == on:
-			return float(p.height)
-	return 0.0
+	return elevation.item_base(item)
 
 
-## True when item a must be drawn before (under) item b: a stands lower inside
-## b's rectangle (a rooftop under a rooftop or a ramp standing on it), or a is
-## wholly on b's far side (west or north of it) and b is not on a's.
 func drawn_before(a, b) -> bool:
-	var ra := item_rect(a)
-	var rb := item_rect(b)
-	var overlap := ra.position.x < rb.end.x and rb.position.x < ra.end.x \
-		and ra.position.y < rb.end.y and rb.position.y < ra.end.y
-	if overlap:
-		return item_base(a) < item_base(b)
-	var a_far := ra.end.x <= rb.position.x or ra.end.y <= rb.position.y
-	var b_far := rb.end.x <= ra.position.x or rb.end.y <= ra.position.y
-	return a_far and not b_far
+	return elevation.drawn_before(a, b)
 
 
-## Sorts the map's building slots and the raised areas together, back to front
-## (drawn_before, ties by the centre's x + y), and gives each its z_index; then
-## puts the boulders and the pavement signs back in their places in that order.
 func restack() -> void:
-	var signs := {}
-	if map.alert_signs_root != null:
-		for sp in map.alert_signs_root.get_children():
-			for s in map.fade_items():
-				if s.z_index + 1 == sp.z_index:
-					signs[sp] = s
-	var items: Array = map.fade_items().duplicate()
-	items.append_array(areas)
-	var n := items.size()
-	var before_count := []
-	before_count.resize(n)
-	before_count.fill(0)
-	var edges := []
-	for i in n:
-		edges.append([])
-	for i in n:
-		for j in n:
-			if i != j and drawn_before(items[i], items[j]):
-				edges[i].append(j)
-				before_count[j] += 1
-	var done := []
-	done.resize(n)
-	done.fill(false)
-	depth_items = []
-	for _k in n:
-		var best := -1
-		for i in n:
-			if done[i] or before_count[i] > 0:
-				continue
-			if best < 0 or _centre_sum(items[i]) < _centre_sum(items[best]):
-				best = i
-		if best < 0:
-			# A cycle (should not happen): take the nearest-to-the-back left.
-			for i in n:
-				if not done[i] and (best < 0 or _centre_sum(items[i]) < _centre_sum(items[best])):
-					best = i
-		done[best] = true
-		depth_items.append(items[best])
-		for j in edges[best]:
-			before_count[j] -= 1
-	for k in depth_items.size():
-		depth_items[k].z_index = DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * k
-	for sp in map.boulder_sprites:
-		sp.z_index = boulder_z(sp)
-	for sp in signs:
-		sp.z_index = signs[sp].z_index + 1
+	elevation.restack()
 
 
-static func _centre_sum(item) -> float:
-	var c := item_rect(item).get_center()
-	return c.x + c.y
-
-
-## A z_index over every building and area.
 func top_z_index() -> int:
-	return DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * depth_items.size()
+	return elevation.top_z_index()
 
 
-## A boulder sprite's z_index: the map's (under the buildings that cover it),
-## and under every raised area it is behind and overlaps on screen. A boulder
-## nothing covers goes over every item, areas included (the map's own top is
-## only over its buildings).
 func boulder_z(sp) -> int:
-	var z: int = map._boulder_z(sp.centre_units, sp.outline)
-	if z >= map.top_z_index():
-		z = top_z_index()
-	for a in areas:
-		if a.is_behind(sp.centre_units, 0.0, 0.0) \
-				and not Geometry2D.intersect_polygons(a.silhouette(), sp.outline).is_empty():
-			z = mini(z, a.z_index - 1)
-	return z
+	return elevation.boulder_z(sp)
 
 
-## The car's drawn shape on screen at a height (units): the map's 1 by 3 unit
-## car shape lifted by that height.
+## The car's drawn shape on screen at a height (units).
 func car_shape_at(height: float) -> PackedVector2Array:
-	return MvpMapScript.car_screen_shape_at(car.model.get_position(), car.rotation,
-		height * CarScript.PX_PER_UNIT)
+	return ElevationLayerScript.car_shape_at(car.model.get_position(), car.rotation, height)
 
 
-## The z_index for the car drawn at `height` (units): just under the lowest
-## building, boulder or raised area that covers it, otherwise over them all.
+## The z_index for the car drawn at `height` (units).
 func z_for(height: float) -> int:
-	var units: Vector2 = car.model.get_position()
-	var shape := car_shape_at(height)
-	var z := top_z_index()
-	for b in map.fade_items():
-		if b.covers(units, shape):
-			z = mini(z, b.z_index - 1)
-	var box := MvpMapScript._bounds(shape)
-	for s in map.boulder_sprites:
-		if s.covers(units, shape, box):
-			z = mini(z, s.z_index - 1)
-	for a in areas:
-		if a.covers(units, DEPTH_RADIUS, height, shape):
-			z = mini(z, a.z_index - 1)
-	return z
+	return elevation.z_for(car.model.get_position(), car.rotation, height)
 
 
 func update_depth() -> void:
@@ -319,27 +192,17 @@ func update_depth() -> void:
 	shadow.z_index = z_for(ground_height.height_at(units)) - 1
 
 
-## See-through: each raised area, ramp and building covering the car fades,
-## the others fade back, by `delta` seconds. The areas with their own cover
-## test (behind and lower than the top), the buildings with theirs (behind),
-## both against the car's shape at its height, as the depth order (z_for).
+## See-through for the car at its height, by `delta` seconds.
 func update_see_through(delta: float) -> void:
-	var units: Vector2 = car.model.get_position()
-	var shape := car_shape_at(car.height)
-	for a in areas:
-		a.update_fade(units, DEPTH_RADIUS, car.height, shape, delta)
-	for b in map.fade_items():
-		b.update_fade(units, shape, delta)
+	elevation.update_see_through(car.model.get_position(), car.rotation, car.height, delta)
 
 
-## The raised areas and ramps that covered the car at the last update_see_through().
 func covering_areas() -> Array:
-	return areas.filter(func(a) -> bool: return a.covering)
+	return elevation.covering_areas()
 
 
-## The map's buildings (slots or blocks) that covered the car at the last update_see_through().
 func covering_buildings() -> Array:
-	return map.fade_items().filter(func(b) -> bool: return b.covering)
+	return elevation.covering_buildings()
 
 
 ## After each physics step: the car's drawing (lifted by its height), its

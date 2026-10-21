@@ -102,7 +102,7 @@ func test_strip_stays_below_the_hud_timer() -> void:
 	ps.pause()
 	await wait_frames(3)
 	assert_gte(ps.strip.get_global_rect().position.y, ps.STRIP_TOP - 0.5)
-	assert_lt(ps.strip.get_global_rect().end.y, 300.0, "compact: stays in the top of the screen")
+	assert_lt(ps.strip.get_global_rect().end.y, 340.0, "compact: stays in the top of the screen (with the music row, T-210)")
 
 
 ## QA round 1: over the run's bright asphalt the unchecked box and the buttons

@@ -10,7 +10,9 @@ import freesound as fs
 
 def check(folder):
     rows, bad = [], 0
-    for root, _, files in os.walk(folder):
+    for root, dirs, files in os.walk(folder):
+        # The board's own music (T-209) is not from Freesound; its source is in its own json.
+        dirs[:] = [d for d in dirs if d != "music"]
         for f in sorted(files):
             if not f.lower().endswith((".wav", ".ogg", ".mp3")):
                 continue

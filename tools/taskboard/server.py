@@ -29,6 +29,12 @@ branch, and its last activity; `quiet` after 10 minutes without any. A building 
 `now`: the ticket being worked on and its phrase. Logs are read from the end only. BOARD_MAIN_STATE
 stands in for the main checkout's .board/ (a second server checked with sample logs).
 
+Out of QA with unmarked criteria (T-212): a drag of an in-qa ticket to In progress or Planning while QA hasn't
+marked every acceptance criterion first asks GET /api/move-check?id=T-012&status=in-progress, which returns the
+unmarked (and failed) criteria word for word; the page shows them in a warning with an explanation box.
+POST /api/move makes that move only with "confirm_unmarked": true (otherwise 409 with the warning, nothing
+changed); the explanation is the move's note. It isn't a QA round.
+
 The server listens on 127.0.0.1 only. Writes need the X-Board header (a browser page on
 another site can't send it without permission) and a localhost Host header.
 """
@@ -440,12 +446,39 @@ def launch(entry_id, mode, root=None):
     return 200, {"ok": True}
 
 
-def board_move(task_id, status, note=None):
-    """Move a task for the board. Returns (http status, body)."""
+def move_warning(task_id, status, folders=None):
+    """The warning the page shows before the board's drag takes an in-qa ticket with unmarked acceptance
+    criteria back to in-progress or planning (T-212): {"unmarked": [...], "failed": [...]}, or None.
+    Raises ts.Refused when there is no such ticket."""
+    folders = tb.task_folders() if folders is None else folders
+    path = ts.find(task_id, folders)[0]
+    text = path.read_bytes().decode("utf-8")
+    return ts.unmarked_warning(tb.parse_header(text) or {}, text, status, "board")
+
+
+def move_check(task_id, status):
+    """GET /api/move-check: whether a drag needs the warning first. Returns (http status, body)."""
+    if not isinstance(task_id, str) or not re.fullmatch(r"T-\d+", task_id) or status not in tb.STATUSES:
+        return 400, {"error": "A move check needs a ticket id like T-012 and a status."}
+    try:
+        return 200, {"warning": move_warning(task_id, status)}
+    except ts.Refused as e:
+        return 404, {"error": str(e)}
+
+
+def board_move(task_id, status, note=None, confirmed=False):
+    """Move a task for the board. Returns (http status, body). A move that needs the warning (move_warning)
+    happens only with confirmed=True, after the board went ahead in the page's pop-up; until then it is
+    answered 409 with the warning, and nothing changes."""
     with MOVE_LOCK:
         folders = tb.task_folders()
         try:
             old = ts.header(ts.find(task_id, folders)[0]).get("status")
+            warning = move_warning(task_id, status, folders)
+            if warning and not confirmed:
+                n = len(warning["unmarked"])
+                return 409, {"error": f"QA hasn't marked {n} acceptance criteria of {task_id}: confirm the move "
+                                      "in the warning first.", "warning": warning}
             lines = ts.move(task_id, status, note or None, folders=folders, by="board")
         except ts.Refused as e:
             return 409, {"error": str(e).replace("--note", "a note")}
@@ -495,6 +528,10 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(200, tickets_payload())
         if path == "/api/goals":
             return self.send(200, goals_payload())
+        if path == "/api/move-check":
+            query = urllib.parse.parse_qs(self.path.partition("?")[2])
+            code, out = move_check((query.get("id") or [""])[0], (query.get("status") or [""])[0])
+            return self.send(code, out)
         if path == "/api/goal-file":
             query = urllib.parse.parse_qs(self.path.partition("?")[2])
             code, out = goal_file_text((query.get("id") or [""])[0])
@@ -568,7 +605,7 @@ class Handler(BaseHTTPRequestHandler):
             task_id, status = body.get("id"), body.get("status")
             if not isinstance(task_id, str) or not isinstance(status, str):
                 return self.send(400, {"error": "A move needs an id and a status."})
-            code, out = board_move(task_id, status, body.get("note"))
+            code, out = board_move(task_id, status, body.get("note"), body.get("confirm_unmarked") is True)
             return self.send(code, out)
         if path == "/api/launch":
             entry_id, mode = body.get("id"), body.get("mode")
