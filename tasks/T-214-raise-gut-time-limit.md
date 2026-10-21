@@ -1,7 +1,7 @@
 ---
 id: T-214
 title: The GUT test run's time limit fits the suite's size
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Both scripts default to 900 seconds, `GUT_TIME_LIMIT` still overrides it, and their comments give today's run times (QA: pass / fail)
-- [ ] The full GUT suite passes with the default limit in this folder (QA: pass / fail)
-- [ ] `game/README.md` states the limit and the override (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] Both scripts default to 900 seconds, `GUT_TIME_LIMIT` still overrides it, and their comments give today's run times (QA: pass; both default 900, override kept, comments give 270-306 s)
+- [ ] The full GUT suite passes with the default limit in this folder (QA: pass; default-limit run passed in 336 s wall (320 s GUT), over the old 300)
+- [ ] `game/README.md` states the limit and the override (QA: pass; README Time limit states 900 s and GUT_TIME_LIMIT override)
+- [ ] All Python tool tests pass (QA: pass; tools OK, game/tools 355 tests OK (1 skipped))
 
 ## Updates
 
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: the test suite's time limit goes from 300 to 900 seconds.
+
+### 2026-10-21, In progress → In QA
+
+Built: the limit is now 900 s, with GUT_TIME_LIMIT as the override. Sent to QA.
 
 ## Result notes
 
