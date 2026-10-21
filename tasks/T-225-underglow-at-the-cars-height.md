@@ -58,3 +58,11 @@ Started: the underglow rises with the car.
 ## Result notes
 
 Written by the agent when it finishes.
+
+- **Fix:** `neon_underglow.gd` now lifts its ring by the car's height (`car_height()`, position minus `height * 16` px), the same way T-206 lifted the exhaust flames. The ring sits in the car's `View` under the car sprite, so it shares the car's depth order with the raised areas (the View's z is set from the car's height).
+- **Molotov fire and wiper:** the wiper had the same bug (its arm stayed on the street) and is fixed the same way (`windshield_wiper.gd`). The molotov fire is a ground fire where the bottle lands, not attached to the car, so it has no such bug; left as is.
+- **Damage area:** unchanged (a flat circle round the car's ground position); a test checks it at height. Proposal: enemies on another level (e.g. street enemies while the car is on a roof) are hit by the same flat circle; that is not plainly broken, so not changed.
+- **Proposals for the playtest:** in the air the ring stays under the car (rises with it) rather than staying on the ground with the round shadow; the wiper's arm rises with the car too.
+- **Tests:** 7 new GUT tests in `game/tests/unit/run/test_run_elevation_map.gd` (street, both rooftops, air, damage area, wiper). GUT 1238 passed; `tools` unittest 439 OK; `game/tools` unittest 387 OK (1 skipped).
+- **Screenshots** (`art-archive/T-225/screenshots/`): `underglow_street.png`, `underglow_rooftop.png`, `underglow_ramp.png`, `underglow_air.png`. Fixtures `run_elevation_underglow_*.tscn`.
+- **Documents:** `docs/weapons.md`, `game/README.md`. No refused commands.
