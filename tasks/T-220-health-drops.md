@@ -1,7 +1,7 @@
 ---
 id: T-220
 title: Enemies drop health pickups that restore 30% of the car's health
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -41,11 +41,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a dying enemy drops a health pickup at the data's drop chance, where it died and at its height, and that driving over it restores 30% of the maximum health, capped at the maximum (QA: pass / fail)
-- [ ] The drop chance and the 30% are read from `game/data/enemies.json` (test) (QA: pass / fail)
-- [ ] The placeholder is a red canister with a white cross, not Redgull's red, drawn in the depth order like the coins (screenshot in a run) (QA: pass / fail)
-- [ ] Health pickups stand still while paused and are gone on a new run (tests); coins behave as before (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a dying enemy drops a health pickup at the data's drop chance, where it died and at its height, and that driving over it restores 30% of the maximum health, capped at the maximum (QA: pass; tests for chance, position, height, heal 30% capped, driving over it all pass)
+- [ ] The drop chance and the 30% are read from `game/data/enemies.json` (test) (QA: pass; test reads data numbers and chance from enemies.json health_drops)
+- [ ] The placeholder is a red canister with a white cross, not Redgull's red, drawn in the depth order like the coins (screenshot in a run) (QA: pass; screenshot shows orange-red canisters with white cross beside coins, not Redgull red)
+- [ ] Health pickups stand still while paused and are gone on a new run (tests); coins behave as before (QA: pass; pause/new-run and coin tests pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1222/1222, tools 439 OK, game/tools 387 OK)
 
 The board's review: play a run, pick up health drops after taking damage.
 Board review files: the screenshots in `art-archive/T-220/screenshots/`.
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Built: health canisters drop at 60%, restore 30% (capped). Placeholder look. Sent to QA.
 
 ## Result notes
 
