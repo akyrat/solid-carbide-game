@@ -52,4 +52,12 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-230.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Loop Agent, 2026-10-21.
+
+- **run.gd:** new `var layout_path: String = ELEVATION_LAYOUT_PATH` (set before the run enters the tree, or before `start_run()`), and `start_run(path: String = "")` sets it when a path is given (later `start_run()` calls keep that map). `current_layout_path()` returns it, or `ELEVATION_LAYOUT_PATH` when it is empty. `_build_world()` uses that one path for `map.layout_path` and `elevation.setup(map, path)`; the enemies' navigation (`enemy_navigation.gd`, `for_map`) is built from that map, so all come from the same file. res:// and user:// both work (FileAccess). With nothing set, the run is exactly as before (constant and `USE_ELEVATION_MAP` unchanged; the MVP switch still wins).
+- **Tests:** `game/tests/unit/run/test_run_layout_path.gd` (9 tests, 41 asserts, pass). It writes a copy of `elevation_sample_map.json` to `RunPaths.file("t230_custom_map.json")` (user://test_runs/<pid>/) with the first building (12, -96) removed and the rooftop `roof-se-6` removed (with `ramp-se-3-6`, the ramp up to it, so no ramp leads to a missing rooftop). Checks: default run uses the sample map; empty path falls back; a run set before the tree has one building fewer on the map and one platform fewer in the elevation layer's `ground_height` (the layer keeps no path, so the platform count and ids prove it read the copy); `start_run(path)` switches maps; the MVP switch still builds the MVP map; enemy navigation (`for_map(run.map)`) uses the copy's heights and `find_path((-60,-48) street, (-80,-80) on roof-nw-3)` is non-empty, has a segment passing over a ramp's rectangle, and ends on the rooftop; the removed building's cells are open in the navigation grid.
+- **Existing run tests** (`tests/unit/run/`) unchanged and passing in the full suite.
+- **game/README.md**, "The run", "The run's map (T-206)": new bullet "Another map file (T-230)" saying how to start a run on another map file.
+- **Full GUT suite:** `bash game/tools/run_tests.sh` passes headless: 108 scripts, 1311/1311 tests, 314 s.
+- **Screenshots:** nothing to screenshot: no visible change (the default run looks exactly as before; the change is a path the run reads).
+- PixelLab: 0 generations. Refusals: none.
