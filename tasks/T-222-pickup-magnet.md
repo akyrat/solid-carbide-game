@@ -1,7 +1,7 @@
 ---
 id: T-222
 title: Pickups are pulled to the car within one car length
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -51,6 +51,19 @@ Board review files: the GIF in `art-archive/T-222/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built and merged with T-220 (893277b), so the magnet covers coins, landed gift packs and health drops.
+
+- `game/scripts/run/pickup_magnet.gd` (child "PickupMagnet" of the run): each physics step, pickups in groups `coins` and `health_pickups` and landed gift packages within the reach fly straight at the car; a pulled coin or drop is collected within 0.5 units of the car's centre (same as touching). Sprites move with their pickup.
+- One value: `game/data/run.json` `pickup_magnet.radius_units` = 3.0 (1 car length: the car is drawn 3 units long), read by `RunData` into `RunState.pickup_magnet_radius_units` at every `start_run()`; T-224 sets it there. Tests change it.
+- Tests: `game/tests/unit/run/test_pickup_magnet.gd` (10 tests: coin, gift pack, health drop in/out of reach, one value changes reach, falling pack not pulled, paused). GUT 1232 pass; `tools` and `game/tools` Python tests pass.
+- GIF and screenshots: `art-archive/T-222/screenshots/pickup_magnet.gif`, `magnet_40.png`, `magnet_60.png`, `magnet_80.png` (coins counter rises as coins beside the path fly in). Fixture: `game/tests/fixtures/pickup_magnet_gif_demo.tscn`. The GIF shows coins only (health drops and packs are covered by tests).
+- Proposals for the playtest: pull speed 30 units/s (above the car's top speed 27.5), constant speed; the reach ignores heights (a pickup on a rooftop is pulled by a car on the street below within 3 units on the flat map); only landed gift packs are pulled, not falling ones; a package is still picked up by its own 2.0-unit radius.
+- Documents updated: docs/game-loop-architecture.md, game/README.md. Nothing refused.
