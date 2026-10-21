@@ -1,0 +1,83 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5 submitted, polling every 5 s
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (0 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (5 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (10 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (15 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (20 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (25 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (31 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (36 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (41 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (46 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (52 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (57 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (62 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (67 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (73 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (78 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (83 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (88 s)
+  job 0bc368cd-22c7-47b3-b32b-c57f10e3cde5: processing (93 s)
+  saved 7 images in art-archive\T-069\walk_n: kaiju_walk_n_0.png, kaiju_walk_n_1.png, kaiju_walk_n_2.png, kaiju_walk_n_3.png, kaiju_walk_n_4.png, kaiju_walk_n_5.png, kaiju_walk_n_6.png; usage {"type": "generations", "generations": 5.0}
+{
+  "file": [
+    "kaiju_walk_n_0.png",
+    "kaiju_walk_n_1.png",
+    "kaiju_walk_n_2.png",
+    "kaiju_walk_n_3.png",
+    "kaiju_walk_n_4.png",
+    "kaiju_walk_n_5.png",
+    "kaiju_walk_n_6.png"
+  ],
+  "job_id": "0bc368cd-22c7-47b3-b32b-c57f10e3cde5",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "image": [
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
+EXIT 0

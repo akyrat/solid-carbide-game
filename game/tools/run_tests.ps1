@@ -6,8 +6,8 @@
 . (Join-Path $PSScriptRoot 'godot_env.ps1')
 
 # Time limit (task T-137): a run that goes past it is stopped by this script (only the process tree
-# it started) and fails. A normal full run takes about 90 s. $env:GUT_TIME_LIMIT overrides it.
-$limit = 300
+# it started) and fails. A normal full run takes about 270 to 306 s when the computer is busy with several agents (2026-10-21; it was about 90 s at first). $env:GUT_TIME_LIMIT overrides it.
+$limit = 900
 if ($env:GUT_TIME_LIMIT) { $limit = [int]$env:GUT_TIME_LIMIT }
 
 # Runs one Godot command line through cmd (so stderr is plain text), with the time limit.

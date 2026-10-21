@@ -1,7 +1,7 @@
 ---
 id: T-071
 title: Art: gun bullets, exhaust flames and burning
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -71,6 +71,10 @@ Built and swapped in: flames (pipe erased, 32 directions, flicker), burning enem
 ### 2026-10-21, In QA → In progress
 
 QA: 4 of 5 pass; the 5th failed only because the test suite outgrew its 300-second limit (every test that ran passed). T-214 raises the limit; then QA re-checks.
+
+### 2026-10-21, In progress → In QA
+
+T-214 raised the test time limit; sent back to QA for its second round.
 
 ## Result notes
 
