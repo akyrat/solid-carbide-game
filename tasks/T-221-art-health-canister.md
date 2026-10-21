@@ -59,6 +59,10 @@ Started: one PixelLab sample of the canister first.
 
 Canister sample in (1 generation): reads as a red canister; the cross is a blobby X, it's about twice a coin's size, and its darkest red is close to Redgull's. Free script fixes can redraw the cross, shift the red and scale it down. Picture: C:\solid-carbide-worktrees\T-221\art-archive\T-221\canister_sample_review.png
 
+### 2026-10-21, In progress
+
+Board chose (a): the sample with three free script fixes, then into the game.
+
 ## Result notes
 
 Written by the agent when it finishes.

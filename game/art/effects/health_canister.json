@@ -1,0 +1,20 @@
+{
+  "file": "health_canister.png",
+  "task": "T-221",
+  "source": "art-archive/T-221/canister_raw.png",
+  "generator": "game/tools/build_health_canister.py",
+  "image": {
+    "width": 14,
+    "height": 10
+  },
+  "colours": [
+    "#170e0e",
+    "#aa3828",
+    "#ab9694",
+    "#c0433e",
+    "#f15856",
+    "#fdf8f5"
+  ],
+  "min_distance_to_redgull_red": 54.0,
+  "notes": "Free script on the board-approved raw sample: white mark redrawn as a plus, darkest red moved away from Redgull's red, scaled down by block majority. No PixelLab."
+}
