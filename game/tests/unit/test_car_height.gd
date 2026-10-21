@@ -194,19 +194,22 @@ func test_ramp_jump_lands_on_platform() -> void:
 func test_flat_driving_unchanged_by_height() -> void:
 	var with_h := _car(Vector2(19.5, 0.3), PI, true)
 	var without := _car(Vector2(19.5, 0.3), PI, false)
-	# Task T-219 (board, 2026-10-21): the car now turns faster in the air on
-	# purpose (air_turn_multiplier). At 1 the height still changes nothing in
-	# the flat driving, which is what this test checks; the faster air turn is
-	# tested in test_air_tricks.gd.
-	with_h.tuning.air_turn_multiplier = 1.0
-	without.tuning.air_turn_multiplier = 1.0
+	# Task T-219 (board, 2026-10-21, "no drifting in the air"): in the air the
+	# car keeps its takeoff velocity and only spins, on purpose, so the flat
+	# driving is compared while the car with height is on the ground: up to
+	# its first takeoff. The air is tested in test_air_tricks.gd.
 	var inputs := [[true, false, 0.0], [true, false, 0.4], [true, false, -1.0], [false, true, 0.0]]
+	var compared := 0
 	for i in 240:
 		var inp: Array = inputs[(i / 30) % inputs.size()]
 		with_h.scripted_input = inp
 		without.scripted_input = inp
 		with_h.physics_step()
 		without.physics_step()
+		if with_h.airborne:
+			break
+		compared += 1
 		assert_eq(with_h.model.get_position(), without.model.get_position(), "step %d" % i)
 		assert_eq(with_h.model.get_velocity(), without.model.get_velocity(), "step %d" % i)
 		assert_eq(with_h.model.rotation, without.model.rotation, "step %d" % i)
+	assert_gt(compared, 20, "compared on the ground, up the ramp")

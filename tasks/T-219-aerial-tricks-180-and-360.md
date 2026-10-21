@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/driving/trick_detector.gd, game/scripts/data/combo_data.gd, game/scripts/hud/trick_popups.gd, tasks/T-218-text-aerial-trick-popups.md]
 files_expected_to_change: [game/scripts/driving/trick_detector.gd, game/data/, game/scripts/hud/, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-219/screenshots/]
 model: opus
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -83,6 +83,14 @@ Back to the agent: each spin pays once.
 ### 2026-10-21, In progress → In QA
 
 Each spin pays once is in: an air spin pays only AIR 360!. Final QA check.
+
+### 2026-10-21, In QA → Needs playtest
+
+Final QA passed all 5. Ready for the board: C:\solid-carbide-worktrees\T-219\game\project.godot or Play on T-219 in the Builds tab; spin off a height-6 rooftop.
+
+### 2026-10-21, Needs playtest → In progress
+
+Back to the agent: no drifting in the air; the car keeps its takeoff path and only spins.
 
 ## Result notes
 
@@ -155,3 +163,39 @@ Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), 
   - Results: GUT suite 1240/1240, `tools` 439 OK, `game/tools` 388 OK (1 skipped).
 - **Recording:** new `art-archive/T-219/screenshots/air_360_run_pays_once.gif`, with its popup `air_360_run_pays_once_popup.png`; the older `air_360_run.gif` is kept. I looked at the frames. It is a real run on the elevation map: the car drives off a height-6 rooftop with W and turns with A for the whole fall (about 470 degrees). Nothing pops mid-air. It lands to AIR 360! +0.5 with LONG DRIFT! +0.05 under it, at Combo x1.55, and there is no FULL 360!. The LONG DRIFT! comes from the drift's seconds, which still count in the air.
 - Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)": the drift 360 bullet, and the recordings), `game/README.md` ("Tricks", "360").
+- 2026-10-21, needs-playtest → in-progress: Board's playtest (2026-10-21): no drifting mid-air. Once airborne the car keeps its takeoff speed and direction; the keys only spin it (heading), they don't change its path. Otherwise happy with it.
+
+**Tweak 3, 2026-10-21 (Driving & Drift Agent): no drifting in the air.**
+- **Built:** in `car_model.gd`, `update_velocity()` returns early while `airborne` is set (it is set by `car.gd` from the height model before each step).
+  - The velocity is left exactly as it was at takeoff: no speeding up, braking, steering of the path, grip or drift.
+  - The keys only spin the body at the air turn rate (`air_turn_multiplier` 2.5, kept). A and D spin it; W and S alone do nothing.
+  - `is_drifting` is false in the air and the drift amount fades at the exit rate.
+  - The takeoff step is still a ground step. Wall bounces and enemy knockback still act in the air, as they are applied outside the driving model. Ground driving is unchanged.
+- **Knock-on effects:** the car isn't drifting in the air, so the following are off in the air:
+  - LONG DRIFT! (airtime is no drift time, as the line on master says)
+  - drift likes
+  - the drift sound
+  - smoke and tyre marks (already off)
+  - the exhaust flamethrower, which fires while drifting
+  - A takeoff is now a break in the drift, so a drift 360 in progress starts again from zero after landing. This replaces tweak 2's "kept through the airtime".
+- **Landing:** driving resumes on the step after the landing, from the heading the car landed with and the velocity it kept.
+  - Landing straight on, it drives on.
+  - Landing at an angle, the speed along the new nose becomes forward speed and the rest is a sideways slide that fades with normal grip (0.98 kept per step, about a third left after 1 s). In effect it lands into a drift-like slide.
+  - With W held, a forward speed under cruise snaps up to cruise along the new nose.
+  - Landing backwards with W held, it snaps to cruise forward along the new nose, a sudden turnaround.
+  - A or D held with W or S on landing is a normal drift from that step.
+- **Tests:**
+  - `test_air_tricks.gd` now has 32 tests:
+    - the velocity in the air stays the takeoff velocity with eight key combinations held, and the car is never drifting;
+    - the heading spins at the air rate while the car flies straight on;
+    - landing at 90 degrees keeps the velocity, then the slide fades;
+    - no LONG DRIFT! or FULL 360! in a long fall with W+A;
+    - a drift 360 in progress restarts after an airtime;
+    - AIR 360! off a height-6 rooftop, both driven off and as a staged drop.
+  - Existing tests changed:
+    - `test_car_height.gd`, `test_flat_driving_unchanged_by_height`: it now compares the cars only until the car with height first leaves the ground.
+    - `test_car_height_layers.gd` (the sample-map obstacle test, air case) and `test_elevation_edges.gd` (`test_no_step_ends_inside_the_platform_below_its_top`): they put a standing car in the air with W held and relied on W pushing it in the air. They now launch it at cruise speed along its heading.
+  - The ground driving tests (`test_drift_model.gd`, `test_tricks.gd` and others) pass unchanged.
+  - Results: GUT suite 1244/1244, `tools` 439 OK, `game/tools` 388 OK (1 skipped).
+- **Recording:** new `art-archive/T-219/screenshots/air_360_run_straight.gif`, with its popup `air_360_run_straight_popup.png`; the older GIFs are kept. I looked at the frames. It is a real run on the elevation map: the car drives off a height-6 rooftop with W, then holds W and A for the whole fall. The camera follows the car, so the straight path shows as the street and boulders scrolling steadily one way while the car spins (about 470 degrees) over its shadow. It lands to AIR 360! +0.5 alone, at Combo x1.5, with no LONG DRIFT! and no FULL 360!.
+- Documents affected: `docs/drifting.md` (Content: "What the car's height does", and "Aerial tricks (task T-219)" with its new "No drifting in the air" bullet, the drift 360 bullet and the recordings), `game/README.md` ("Tricks").

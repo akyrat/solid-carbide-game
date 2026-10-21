@@ -378,6 +378,10 @@ func test_in_the_sample_map_buildings_and_boulders_block_the_car_at_every_height
 				car.height_model.airborne = true
 				car.height_model.height = h
 				car.height_model.vertical_speed = 6.0
+				# T-219 (board: no drifting in the air): in the air the car
+				# keeps its velocity and W does nothing, so it is launched at
+				# cruise speed towards the obstacle, as if it had jumped.
+				car.model.set_velocity(Vector2.from_angle(car.model.rotation) * car.tuning.forward_speed)
 			assert_almost_eq(car.height, h, EPS, "%s %s: starts at its height" % [o.kind, level])
 			hits.clear()
 			car.scripted_input = [true, false, 0.0]

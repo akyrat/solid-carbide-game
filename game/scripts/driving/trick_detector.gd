@@ -13,9 +13,9 @@ extends RefCounted
 ##   during one unbroken drift; 720 gives two. A break in the drift, or turning
 ##   back the other way, starts the count again. Turning on a step that ends in
 ##   the air does not count (task T-219, board: each spin pays once; it counts
-##   for the aerial tricks instead). A drift 360 in progress at takeoff is kept
-##   as it is through the airtime, neither growing nor reset, as long as the
-##   drift keys stay held, and carries on counting after landing.
+##   for the aerial tricks instead). Since the board's "no drifting in the
+##   air" the model is not drifting while airborne, so a takeoff is a break:
+##   a drift 360 in progress starts again from zero after landing.
 ## - "alternate_drift": a switch between a forward drift (W + A or D) and a
 ##   backward drift (S + A or D) with the same steering direction. See the
 ##   alternate_* values in car_tuning.gd for its timing limits.

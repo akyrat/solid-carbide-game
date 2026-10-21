@@ -330,28 +330,102 @@ func test_detection_off_gives_no_air_tricks() -> void:
 
 # --- Each spin pays once (task T-219, board): air turning is not the drift 360's ---
 
+## Drift steps (W + A) with the model in the air or not: in the air the model
+## is not drifting (board: no drifting in the air).
 func _drift_steps(model, steps: int, airborne: bool) -> void:
 	for i in steps:
 		var before: float = model.rotation
+		model.airborne = airborne
 		model.step(true, false, A)
 		_det.observe(model, true, false, A, before, airborne)
 
 
-func test_drift_360_ignores_steps_that_end_in_the_air() -> void:
+func test_drift_360_and_long_drift_ignore_the_air() -> void:
 	var m = CarModel.new()
 	_drift_steps(m, 200, true)
-	assert_eq(_count("three_sixty"), 0, "a drift spun in the air is no FULL 360")
-	assert_gt(_count("extended_drift"), 0, "the drift itself goes on in the air")
+	assert_eq(_count("three_sixty"), 0, "a spin in the air is no FULL 360")
+	assert_eq(_count("extended_drift"), 0, "airtime is no drift time")
 
 
-func test_a_drift_360_in_progress_at_takeoff_is_kept_and_carries_on_after_landing() -> void:
+## Since "no drifting in the air", a takeoff is a break in the drift: a drift
+## 360 (and the extended drift's second) in progress starts again from zero.
+func test_a_drift_360_in_progress_at_takeoff_starts_again_after_landing() -> void:
 	var m = CarModel.new()
 	_drift_steps(m, 50, false)  # 191.9 degrees on the ground
-	_drift_steps(m, 30, true)   # in the air: not counted, not reset
-	_drift_steps(m, 43, false)  # 50 + 43 = 93 ground steps: 356.9 degrees
-	assert_eq(_count("three_sixty"), 0)
-	_drift_steps(m, 1, false)   # the 94th ground step
+	_drift_steps(m, 30, true)   # in the air: not drifting, a break
+	_drift_steps(m, 93, false)  # 93 ground steps since landing: 356.9 degrees
+	assert_eq(_count("three_sixty"), 0, "the 50 steps before the jump don't count")
+	_drift_steps(m, 1, false)   # the 94th since landing
 	assert_eq(_count("three_sixty"), 1)
+
+
+# --- No drifting in the air (task T-219, board): the path is kept, the car only spins ---
+
+func test_airborne_velocity_stays_the_takeoff_velocity_with_any_keys() -> void:
+	var car := _car(_street_point(30.0), 0.0)
+	car.height_model.height = 22.0
+	car.height_model.airborne = true
+	var v0 := Vector2(9.0, -4.0)
+	car.model.set_velocity(v0)
+	var r0: float = car.model.rotation
+	var keys := [[true, false, A], [true, false, D], [false, true, A], [false, true, 0.0],
+		[true, true, D], [false, false, A], [true, false, 0.0], [false, false, 0.0]]
+	for k in keys:
+		for i in 10:
+			car.scripted_input = k
+			car.physics_step()
+			assert_true(car.airborne)
+			assert_eq(car.model.get_velocity(), v0, "keys %s" % [k])
+			assert_false(car.model.is_drifting, "no drifting in the air")
+	assert_ne(car.model.rotation, r0, "the heading still spins")
+
+
+func test_in_the_air_the_heading_spins_at_the_air_rate_and_nothing_else() -> void:
+	var car := _car(_street_point(30.0), 0.0)
+	car.height_model.height = 22.0
+	car.height_model.airborne = true
+	car.model.set_velocity(Vector2(11.0, 0.0))
+	car.scripted_input = [true, false, A]
+	var start: Vector2 = car.model.get_position()
+	for i in 20:
+		var before: float = car.model.rotation
+		car.physics_step()
+		assert_almost_eq(car.model.rotation - before, -STEP_TURN * car.tuning.air_turn_multiplier, 1e-9)
+	var moved: Vector2 = car.model.get_position() - start
+	assert_almost_eq(moved.y, 0.0, 1e-9, "flies straight on")
+	assert_almost_eq(moved.x, 11.0 * 20 * car.model.dt, 1e-4)
+
+
+func test_driving_resumes_on_landing_from_the_kept_velocity() -> void:
+	var p := _street_point(30.0)
+	var car := _car(p, 0.0)
+	car.height_model.height = 1.0
+	car.height_model.airborne = true
+	car.model.set_velocity(Vector2(11.0, 0.0))
+	car.model.rotation = PI / 2.0  # landing at 90 degrees to the path
+	car.scripted_input = [false, false, 0.0]
+	while car.airborne:
+		car.physics_step()
+	var v_land: Vector2 = car.model.get_velocity()
+	assert_eq(v_land, Vector2(11.0, 0.0), "landed with the takeoff velocity")
+	car.physics_step()
+	var v_next: Vector2 = car.model.get_velocity()
+	assert_lt(v_next.length(), v_land.length(), "grip works again: the sideways slide fades")
+	assert_lt(absf(v_next.x), 11.0, "sliding sideways, slowing")
+
+
+func test_no_long_drift_while_spinning_in_the_air_with_w_held() -> void:
+	var car := _car(_street_point(30.0), 0.0)
+	car.height_model.height = 22.0
+	car.height_model.airborne = true
+	car.scripted_input = [true, false, A]
+	var steps := 0
+	while car.airborne and steps < 200:
+		car.physics_step()
+		steps += 1
+	assert_gt(steps, 90, "almost 2 s in the air")
+	assert_eq(_count("extended_drift"), 0, "airtime is no drift time")
+	assert_eq(_count("three_sixty"), 0)
 
 
 func test_the_real_car_drift_360_on_the_ground_still_works() -> void:
@@ -371,6 +445,7 @@ func test_the_real_car_air_spin_with_w_held_pays_only_the_air_360() -> void:
 	var car := _car(p, 0.0)
 	car.height_model.height = 6.0
 	car.height_model.airborne = true
+	car.model.set_velocity(Vector2(11.0, 0.0))
 	car.scripted_input = [true, false, A]
 	var steps := 0
 	while car.airborne and steps < 200:
