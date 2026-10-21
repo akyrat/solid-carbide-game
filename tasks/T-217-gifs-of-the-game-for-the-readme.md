@@ -1,7 +1,7 @@
 ---
 id: T-217
 title: GIFs of the game's current state, for a README section
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -43,10 +43,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Three GIFs in `art-archive/T-217/screenshots/` show, in the real game with the HUD: the car drifting with enemies chasing it; the car jumping off a tall platform while drifting; the kaiju chasing the car while meteors fall (QA: pass / fail)
-- [ ] Each GIF is under 5 MB and a few seconds long (QA: pass / fail)
-- [ ] The root `README.md` has a "Current state of the game" section showing the three GIFs, each with one line, by relative path (QA: pass / fail)
-- [ ] No game behaviour changed: only fixtures, recording tools and docs; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Three GIFs in `art-archive/T-217/screenshots/` show, in the real game with the HUD: the car drifting with enemies chasing it; the car jumping off a tall platform while drifting; the kaiju chasing the car while meteors fall (QA: pass; real game with HUD in all three, jump and kaiju clear. GIF 1 is open gravel with few small minions, but they gather and chase the car in the later frames, so it just meets the criterion; weakest of the three)
+- [ ] Each GIF is under 5 MB and a few seconds long (QA: pass; 4.3, 2.7 and 3.9 MB; 3.6, 3.6 and 3.3 s)
+- [ ] The root `README.md` has a "Current state of the game" section showing the three GIFs, each with one line, by relative path (QA: pass; section before Layout, three images with one line each, paths resolve)
+- [ ] No game behaviour changed: only fixtures, recording tools and docs; the full GUT suite and all Python tool tests pass (QA: pass; diff is README, GIFs, fixture and recording tools only; GUT 1212/1212, tools 414 OK, game/tools 387 OK with 1 skipped)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: three GIFs of the game today and a README section.
+
+### 2026-10-21, In progress → In QA
+
+Three GIFs and the README section are in. Sent to QA.
 
 ## Result notes
 
