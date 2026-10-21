@@ -1650,3 +1650,8 @@ Entry format:
 - Decision or change: enemies above the car drop off a rooftop's edge to chase it (one-way links in the A* grid; going up still needs a ramp), falling with the car's gravity and playing a placeholder falling animation (flailing legs, tilt, squash on landing) until T-227's art. In the test, minions reached a car below in 2 to 6 s instead of 22 to 25 s. A falling enemy hurts the car only within 1 unit of its height; the kaiju drops too. Also fixed: west-facing enemies were drawn beside their shadows (since T-068/T-069). The board: "LGTM".
 - Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-226 (done), T-227 (starts)
+
+## 2026-10-21: The camera follows the car's height
+- Decision or change: on a height-6 rooftop the car sat high on the screen, because the run's camera followed only the car's ground position (T-206's proposal, not a deliberate height illusion). The board chose to have the camera follow the car as drawn, height included, eased smoothly, so the car stays near the middle (Drifting, Decisions). T-228 builds it.
+- Documents touched: `docs/drifting.md`
+- Tasks: T-228 (in progress)
