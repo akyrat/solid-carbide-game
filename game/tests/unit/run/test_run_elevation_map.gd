@@ -253,3 +253,74 @@ func test_no_tyre_marks_in_the_air_and_back_on_landing() -> void:
 	run.car.model.is_drifting = true
 	run.car.stepped.emit()
 	assert_gt(run.drift_marks.marks_started, before, "new marks once landed")
+
+
+# --- T-225: the underglow and the wiper rise with the car ------------------------
+
+func _glow_at(units: Vector2, height: float, airborne: bool):
+	_place(units)
+	if airborne:
+		run.car.height_model.height = height
+		run.car.height_model.airborne = true
+		run.sync_view()
+	assert_almost_eq(run.car.height, height, 0.001)
+	run.minions.enabled = false
+	assert_true(run.weapons.upgrade("underglow"))
+	var glow = run.weapons.underglow
+	glow.step(0.02)
+	return glow
+
+
+func _check_glow_at_height(glow, height: float) -> void:
+	var d: Node2D = glow.drawing
+	assert_true(d.visible)
+	var ground: Vector2 = run.ISO_TRANSFORM * (run.car.model.get_position() * 16.0)
+	assert_almost_eq(d.position.x, ground.x, 0.01)
+	assert_almost_eq(d.position.y, ground.y - height * 16.0, 0.01, "lifted by the car's height")
+	assert_almost_eq(run.car_sprite.position.y - d.position.y, 0.0, 0.01, "centred under the drawn car")
+	assert_eq(d.get_parent(), run.car_sprite.get_parent(), "in the car's view, so the same depth order")
+	assert_lt(d.get_index(), run.car_sprite.get_index(), "under the car sprite")
+
+
+func test_the_underglow_on_the_street_is_on_the_ground() -> void:
+	var glow = _glow_at(Vector2(-81, -40), 0.0, false)
+	_check_glow_at_height(glow, 0.0)
+
+
+func test_the_underglow_on_a_rooftop_rises_with_the_car() -> void:
+	var glow = _glow_at(Vector2(-27, -81), 6.0, false)
+	_check_glow_at_height(glow, 6.0)
+	assert_almost_eq(glow.car_height(), 6.0, 0.001)
+
+
+func test_the_underglow_on_a_lower_roof_rises_with_the_car() -> void:
+	var glow = _glow_at(Vector2(-70, -81), 3.0, false)
+	_check_glow_at_height(glow, 3.0)
+
+
+func test_the_underglow_in_the_air_rises_with_the_car() -> void:
+	var glow = _glow_at(Vector2(0, -81), 4.0, true)
+	_check_glow_at_height(glow, 4.0)
+
+
+func test_the_underglow_damage_area_is_unchanged_at_height() -> void:
+	var glow = _glow_at(Vector2(-27, -81), 6.0, false)
+	var near: Node2D = preload("res://tests/fixtures/weapons/fake_enemy.gd").new()
+	near.position = (run.car.model.get_position() + Vector2(1.0, 0.0)) * 16.0
+	run.add_child(near)
+	var far: Node2D = preload("res://tests/fixtures/weapons/fake_enemy.gd").new()
+	far.position = (run.car.model.get_position() + Vector2(0, 20)) * 16.0
+	run.add_child(far)
+	assert_true(glow.is_inside(near))
+	assert_false(glow.is_inside(far))
+
+
+func test_the_wiper_on_a_rooftop_rises_with_the_car() -> void:
+	_place(Vector2(-27, -81))
+	run.minions.enabled = false
+	assert_true(run.weapons.upgrade("wiper"))
+	var w = run.weapons.wiper
+	w.step(0.02)
+	var d: Node2D = w.drawing
+	var ground: Vector2 = run.ISO_TRANSFORM * (w.pivot_units() * 16.0)
+	assert_almost_eq(d.position.y, ground.y - 6.0 * 16.0, 0.01, "lifted by the car's height")

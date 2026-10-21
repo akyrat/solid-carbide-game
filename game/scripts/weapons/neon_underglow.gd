@@ -164,6 +164,15 @@ func car_units() -> Vector2:
 	return Vector2(car.model.x, car.model.y) if car != null else Vector2.ZERO
 
 
+## The car's height in units (car_height.gd): 0 on the street and for a car without one.
+func car_height() -> float:
+	var car := _car()
+	if car == null:
+		return 0.0
+	var h = car.get("height")
+	return float(h) if h != null else 0.0
+
+
 ## Whether a point (flat world, units) is inside the circle now.
 func contains_point(p: Vector2) -> bool:
 	if _car() == null:
@@ -223,7 +232,10 @@ func _update_drawing() -> void:
 	drawing.set_radius_px(radius() * PX_PER_UNIT)
 	var car := _car()
 	if car != null:
-		drawing.position = ISO_TRANSFORM * (car_units() * PX_PER_UNIT)
+		# At the car's height (T-225, as the flames since T-206): the ring is
+		# lifted as the car sprite is, so on a rooftop, a ramp or in the air it
+		# stays under the drawn car. It shares the car view's depth order.
+		drawing.position = ISO_TRANSFORM * (car_units() * PX_PER_UNIT) + Vector2(0.0, -car_height() * PX_PER_UNIT)
 		if drawing.visible and not was_visible:
 			drawing.reset_physics_interpolation()  # no slide from the last run's spot
 

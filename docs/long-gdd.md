@@ -722,6 +722,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Fixed:** damage is not rounded to whole numbers, so the flame's "hotter flame" tier always adds damage; the flame's area is the same size whichever way the car faces; a bullet that misses is removed once it has flown past the gun's range.
 - The exhaust flamethrower does not switch off the drift smoke (unlike the Unity prototype): smoke and flames both show. A minion is in the flames when its centre is; the kaiju is when any part of its body overlaps them. The starting gun's bullet size and its wait before the first shot stay as built (the Unity values).
 - **The flamethrower at height** (board, 2026-10-21): on a rooftop or in the air, the exhaust flames come out of the car's exhaust where the car is drawn, at its height, not somewhere else on the map; they burn what they touch at that spot. (T-206)
+- **The underglow and the wiper at height** (board, 2026-10-21): the neon ring is drawn under the car at the car's height, so on a rooftop, a ramp or in the air it rises with the car instead of staying on the street; the windshield wiper's arm is lifted the same way. Their damage areas are unchanged. The molotov fire stays on the ground where the bottle landed, so it is not lifted. In the air the ring stays under the car (a proposal for the playtest). (T-225)
 - **Three new weapons** (board, 2026-10-18), gained at a level-up like the flamethrower:
   - **Neon underglow:** neon lights under the car that make a circular area around it. Enemies inside take damage every second, and an enemy takes damage as soon as it enters the area.
   - **Molotovs:** thrown from the car at random, each one makes a circular area on fire where it lands. Enemies in a fire area burn and take damage.
@@ -1093,7 +1094,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `f34bdd746f43fc5fb9089f660f75c72e256bcb4c0e4af828c17465d6f2d83be4` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
 | `enemies.md` | `59c78dd9bf3af95a7fa6b2fd479dd0fed1fb50352c1fdfbfd062f457c91ed6ec` |
-| `weapons.md` | `4c3108b30ae8748d107e30710257a4b220f0473f5742da4e10d3d8481b9c1ccd` |
+| `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
 | `garage-design.md` | `a0a6f81828bcdfab4a90010c317ffc650cb968978664e9e59cb8c1e20cffa0d6` |
 | `visual-style.md` | `b1d7ed698144d7cb3314c681b5f5a0e817c405e84c6ec617e2d2f81166538dab` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |

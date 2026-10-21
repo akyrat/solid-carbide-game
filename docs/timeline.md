@@ -1625,3 +1625,8 @@ Entry format:
 - Decision or change: turning the car 180 or 360 degrees while airborne pops AIR 180! (+0.25 combo) or AIR 360! (+0.5), left and right the same. After the board's playtests: the car spins 2.5 times faster in the air (a tuning value), so a 360 fits a jump off a height-6 rooftop; each spin pays once (air turning doesn't count towards the drift 360); and there is no drifting in the air: the car keeps its takeoff speed and direction and the keys only spin it, so airtime gives no LONG DRIFT! and the flamethrower is off. The board: "work great, LGTM".
 - Documents touched: `docs/drifting.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-219 (done)
+
+## 2026-10-21: T-225 done: the underglow and wiper rise with the car
+- Decision or change: the board found the neon underglow stayed on the street when the car was on a raised surface. The ring is now drawn under the car at its height on rooftops, ramps and in the air, and the windshield wiper (same bug) rises with the car too; the molotov fire was fine. Damage areas are unchanged (flat around the car). The board: "works, also with the wiper".
+- Documents touched: `docs/weapons.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-225 (done)
