@@ -1,7 +1,7 @@
 ---
 id: T-237
 title: Level creator: pieces snap to the tile grid and to close neighbours
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
