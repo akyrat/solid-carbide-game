@@ -1,7 +1,7 @@
 ---
 id: T-250
 title: "Text: the level creator's new pieces and controls"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -44,8 +44,8 @@ Pieces, each with where it appears:
 
 ## Acceptance criteria
 
-- [ ] `game/data/level/creator_texts.json` is valid JSON and has a text and a "where it appears" note for every piece listed above, and T-233's keys are unchanged (QA: pass / fail)
-- [ ] Level design, Content, "Level creator text" lists them with this ticket's id; labels fit the lengths above (QA: pass / fail)
+- [ ] `game/data/level/creator_texts.json` is valid JSON and has a text and a "where it appears" note for every piece listed above, and T-233's keys are unchanged (QA: pass; JSON valid, 48 entries, all 25 T-233 keys identical to playtest/G-005, all 23 new keys have text and where note)
+- [ ] Level design, Content, "Level creator text" lists them with this ticket's id; labels fit the lengths above (QA: pass; all listed in level-design.md with T-250; buttons and panel labels <=16 chars, Props is 5; only the hint lines are longer, as they are lines)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's go: labels for the creator's new pieces and controls.
+
+### 2026-10-22, In progress → In QA
+
+Text written: 23 new labels (sizing, ramp directions, road pieces, props, buildings, hint). Sent to QA.
 
 ## Result notes
 
