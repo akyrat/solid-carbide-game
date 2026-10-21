@@ -1,7 +1,7 @@
 ---
 id: T-214
 title: The GUT test run's time limit fits the suite's size
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -48,6 +48,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: the test suite's time limit goes from 300 to 900 seconds.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- `run_tests.sh` and `run_tests.ps1` now default to 900 seconds; `GUT_TIME_LIMIT` still overrides. Their comments give today's run times (about 270 to 306 s when busy, about 90 s at first). `game/README.md` ("Time limit") states 900 s, the run times and the override (example now 1200).
+- Nothing under `tools/goal_agent/` or `.claude/agents/` passes a 300-second GUT limit (searched), so nothing else changed. No test changed.
+- Full GUT run with the default limit: passed, 393 s wall-clock (the computer was busy; it would have failed at 300).
+- `python -m unittest discover -s tools -p "test_*.py"`: OK. `... -s game/tools ...`: 355 tests, OK (1 skipped).
+- Nothing to picture (no visuals). No command was refused.
