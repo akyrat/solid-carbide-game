@@ -67,6 +67,10 @@ Sample ready for the board: 1 PixelLab call, 1 generation, balance 4861 to 4860.
 
 Started: one more sample call with a bigger turn (1 generation), placed by where it lands.
 
+### 2026-10-21, In progress → In QA
+
+Second sample works: +16 lands near halfway (about 112 against 111.6). 1 generation. Pictures: C:\solid-carbide-worktrees\T-102\art-archive\T-102\sample2_frame05_dark.png. Full set: 15 more generations, if the board approves.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -124,3 +128,5 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 **Hooks:** no command was refused this round.
 
 **Documents affected:** `art-archive/README.md` (2 more rows).
+- 2026-10-21, in-progress → in-qa: Second sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: the board took it out of QA with 7 acceptance criteria not marked
