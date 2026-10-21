@@ -44,6 +44,8 @@ func load_data(data: Dictionary) -> bool:
 			# validator (tools/check_height_data.py) reads it: the highest area
 			# at a point wins anyway.
 			"on": str(p.get("on", "")),
+			# The art piece it is drawn with (T-236, the level creator's view), "" for its own id's.
+			"art": str(p.get("art", "")),
 		})
 	for r in data.get("ramps", []):
 		ramps.append({
@@ -53,6 +55,7 @@ func load_data(data: Dictionary) -> bool:
 			"rect": Rect2(float(r.x), float(r.y), float(r.w), float(r.h)),
 			"bottom_height": float(r.get("bottom_height", 0.0)),
 			"top_height": float(r.top_height),
+			"art": str(r.get("art", "")),
 		})
 	return true
 
