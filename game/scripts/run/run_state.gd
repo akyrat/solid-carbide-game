@@ -224,6 +224,19 @@ func damage_car(amount: float) -> void:
 		_end(RESULT_LOSS)
 
 
+## Restores `amount` health points to the car, never above the maximum (health pickups,
+## T-220). Not damage: it does not touch the combo. Ignored when the run is not going or
+## `amount` is not positive. Returns the points actually restored.
+func heal_car(amount: float) -> float:
+	if not running or amount <= 0.0:
+		return 0.0
+	var before := health
+	health = minf(health + amount, max_health)
+	if health != before:
+		health_changed.emit(health, max_health)
+	return health - before
+
+
 ## Adds coins collected this run. Ignored when the run is not going or
 ## `amount` is not positive.
 func add_coins(amount: int) -> void:

@@ -48,6 +48,12 @@ func coins() -> Dictionary:
 	return _section("coins")
 
 
+## Health pickups a killed minion drops (T-220): drop_chance (0 to 1), restore_fraction
+## (the share of the car's maximum health one pickup restores).
+func health_drops() -> Dictionary:
+	return _section("health_drops")
+
+
 ## health, move_speed, contact_damage, contact_damage_interval, knockback.
 func kaiju() -> Dictionary:
 	return _section("kaiju")
