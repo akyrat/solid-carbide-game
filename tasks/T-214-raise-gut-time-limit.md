@@ -1,7 +1,7 @@
 ---
 id: T-214
 title: The GUT test run's time limit fits the suite's size
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/tools/run_tests.sh, game/tools/run_tests.ps1, game/README.md]
 files_expected_to_change: [game/tools/run_tests.sh, game/tools/run_tests.ps1, game/README.md, tools/goal_agent/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: the test suite's time limit goes from 300 to 900 seconds.
 
 Built: the limit is now 900 s, with GUT_TIME_LIMIT as the override. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -65,3 +69,4 @@ Written by the agent when it finishes.
 - Full GUT run with the default limit: passed, 393 s wall-clock (the computer was busy; it would have failed at 300).
 - `python -m unittest discover -s tools -p "test_*.py"`: OK. `... -s game/tools ...`: 355 tests, OK (1 skipped).
 - Nothing to picture (no visuals). No command was refused.
+- 2026-10-21, in-qa → done: QA passed all 4; tooling, merged straight after QA
