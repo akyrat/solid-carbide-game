@@ -1,7 +1,7 @@
 ---
 id: T-218
 title: "Text: the two aerial tricks' popups"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the exact text of both aerial trick popups, with this ticket's id (QA: pass / fail)
-- [ ] Each is one short line in the existing trick popups' voice, and the air 360's text differs from the drift 360's (QA: pass / fail)
+- [ ] HUD and menus, Content, has the exact text of both aerial trick popups, with this ticket's id (QA: pass; "AIR 180!" and "AIR 360!" in Trick popups with T-218)
+- [ ] Each is one short line in the existing trick popups' voice, and the air 360's text differs from the drift 360's (QA: pass; short capitals lines with "!", AIR 360! differs from FULL 360!)
 
 ## Updates
 
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: the popup texts for the air 180 and air 360.
+
+### 2026-10-21, In progress → In QA
+
+Texts written: "AIR 180!" and "AIR 360!". Sent to QA.
 
 ## Result notes
 
