@@ -1,7 +1,7 @@
 ---
 id: T-238
 title: Level creator: save a level, and reopen it
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
