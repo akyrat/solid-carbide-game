@@ -1665,3 +1665,8 @@ Entry format:
 - Decision or change: every time the car is airborne, its airtime is a trick that pays on landing, scaled by seconds and hundredths in the air (defaults proposed by the agent); a small HUD label near the combo popups counts the airtime up (0.00) next to a jump icon while the car is in the air. Text first (T-241), then the trick (T-242); the counter (T-243) has no words.
 - Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
 - Tasks: T-241, T-242, T-243 (open)
+
+## 2026-10-21: A combo broken popup on crashes
+- Decision or change: when a crash cuts the combo, a red (not Redgull's red), broken-looking popup pops from the car like the trick popups; only on crashes, not when the combo drains (HUD and menus, Decisions). Text first (T-244), then the popup (T-245). The airtime tickets (T-241, T-243) start now.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-244, T-245, T-241, T-243
