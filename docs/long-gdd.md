@@ -869,7 +869,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
 - **The kaiju's meteor attack:** a red warning circle on the ground, then a falling meteor and a burst of dust on impact. (2026-10-08) The board keeps the meteor as it falls today and adds only a comet-tail animation while it falls and an impact animation when it lands; no new meteor pictures; two or three versions to compare as recordings, made however suits best, PixelLab included (board, 2026-10-21, T-070).
 - **The kaiju:** a giant monster several times the car's size, in the style of Godzilla.
 - **The minion:** light green (not too bright), scaled lizards that walk on four legs towards the player.
-- The car is drawn in 16 directions, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions). It moves to **32 directions**, 11.25 degrees apart, built from the approved 16 (board, 2026-10-12), now scheduled so the car turns more smoothly (board, 2026-10-20; T-102): a sample of the new frames first, for the board's review, then the rest. The shadowless frames for the air (T-204) are rebuilt from the 32-frame sheet by the same free script.
+- The car is drawn in **32 directions**, 11.25 degrees apart (since T-102, 2026-10-21; the board played it: "LGTM"), first in 16, 22.5 degrees apart, 3 times as long as it is wide (size: Drifting, Decisions). It moves to **32 directions**, 11.25 degrees apart, built from the approved 16 (board, 2026-10-12), now scheduled so the car turns more smoothly (board, 2026-10-20; T-102): a sample of the new frames first, for the board's review, then the rest. The shadowless frames for the air (T-204) are rebuilt from the 32-frame sheet by the same free script.
 - Until the final pixel art exists, the car uses simple placeholder sprites: plain 3:1 rectangles with a distinct nose, drawn by a script rather than generated with PixelLab, in a flat top-down set and an isometric set.
 - The minion is animated: it walks on all fours in 8 directions (5 drawn, 3 mirrored) with 7 walk frames each, built from the sample lizard the board approved (task T-068). Polish once the MVP is playable: a damage animation, and a fall-down and get-up animation for when minions bump into each other (Enemies, Decisions).
 - The level-up screen's art is red and gold, themed on Redgull (the weapons it offers are Redgull gift packs, so Redgull's red fits here).
@@ -1050,6 +1050,6 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `enemies.md` | `5d08afe48734703683b1cd2651e67eaf5f589ac54651fa53214738de337aaa01` |
 | `weapons.md` | `4c3108b30ae8748d107e30710257a4b220f0473f5742da4e10d3d8481b9c1ccd` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
-| `visual-style.md` | `01e034f7e36b80189151626e60b69c2a8c0064d09b671e8e7edeb7a03d7e524e` |
+| `visual-style.md` | `a1e2714bd2324b5e1662a9ec69e7b4dac51743de8705c7bfd0d69de32bfb621d` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
 | `hud-and-menus.md` | `7b4d32f2e40ee92ccb792f1553165c8d10f59041ecd6d8cadc0bacb6a397921a` |

@@ -76,8 +76,8 @@ func test_above_the_ground_the_shadowless_sheet() -> void:
 
 func test_the_frame_is_the_same_on_both_sheets() -> void:
 	var s := _scene(SAMPLE_SCENE)
-	for i in 16:
-		var rot := float(i) * deg_to_rad(22.5) + 0.05
+	for i in 32:
+		var rot := float(i) * deg_to_rad(11.25) + 0.03
 		s.place_car(Vector2(0, -81), rot)
 		s.sync_view()
 		var ground_frame: int = s.car_sprite.frame
@@ -87,7 +87,7 @@ func test_the_frame_is_the_same_on_both_sheets() -> void:
 		assert_true(_is_shadowless(s.car_sprite))
 		assert_eq(s.car_sprite.frame, ground_frame, "heading %d" % i)
 		assert_eq(s.car_sprite.frame, s.car_sprite.frame_for_rotation(rot))
-		assert_eq(s.car_sprite.hframes, 16)
+		assert_eq(s.car_sprite.hframes, 32)
 
 
 func test_the_switch_is_on_the_takeoff_step_and_the_landing_step() -> void:

@@ -1,0 +1,308 @@
+{
+  "car_size_note": "px_per_unit is fitted to the PixelLab art so the car is drawn about 3 units long on average over the 16 directions (Drifting, Decisions); the drawing only, the physics body is a 1 by 1 unit square. To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
+  "car_size_px": {
+    "length": 96.0,
+    "width": 32.0
+  },
+  "car_size_units": {
+    "length": 3.0,
+    "width": 1.0
+  },
+  "center_note": "point in frame pixel coordinates (top-left of the frame = 0, 0) where the car's centre sits: the centre of the approved frame 4's bounding box; every other frame was moved by whole pixels to put its own bounding-box centre there",
+  "center_px": {
+    "x": 64.5,
+    "y": 65.5
+  },
+  "columns": 16,
+  "file": "car_iso.png",
+  "frame0_faces": "world heading 0 degrees, nose along world +x: drawn pointing down-right on screen (PixelLab south-east)",
+  "frame0_heading_deg": 0.0,
+  "frame_count": 16,
+  "frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula as the placeholder sheets",
+  "frame_height": 128,
+  "frame_width": 128,
+  "frames": [
+    {
+      "colours_after": 31,
+      "colours_before": 49,
+      "heading_deg": 0.0,
+      "index": 0,
+      "made_by": "/generate-8-rotations-v3 image 2 (south-east)",
+      "nose_screen_angle_deg": 26.57,
+      "seen_nose_screen_angle_deg_approx": 25,
+      "shift_px": {
+        "x": -1,
+        "y": 2
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_2.png"
+    },
+    {
+      "colours_after": 31,
+      "colours_before": 240,
+      "heading_deg": 22.5,
+      "index": 1,
+      "made_by": "/rotate of frame 0 by 22",
+      "nose_screen_angle_deg": 50.36,
+      "seen_nose_screen_angle_deg_approx": 70,
+      "shift_px": {
+        "x": -1,
+        "y": 4
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f00_south-east.png"
+    },
+    {
+      "colours_after": 30,
+      "colours_before": 49,
+      "heading_deg": 45.0,
+      "index": 2,
+      "made_by": "/generate-8-rotations-v3 image 1 (south)",
+      "nose_screen_angle_deg": 90.0,
+      "seen_nose_screen_angle_deg_approx": 90,
+      "shift_px": {
+        "x": -1,
+        "y": 0
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_1.png"
+    },
+    {
+      "colours_after": 29,
+      "colours_before": 220,
+      "heading_deg": 67.5,
+      "index": 3,
+      "made_by": "/rotate of frame 2 by 22",
+      "nose_screen_angle_deg": 129.64,
+      "seen_nose_screen_angle_deg_approx": 120,
+      "shift_px": {
+        "x": 2,
+        "y": 3
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f02_south.png"
+    },
+    {
+      "colours_after": 33,
+      "colours_before": 33,
+      "heading_deg": 90.0,
+      "index": 4,
+      "made_by": "T-014 /create-image-pixflux, approved by the board",
+      "nose_screen_angle_deg": 153.43,
+      "seen_nose_screen_angle_deg_approx": 163,
+      "shift_px": {
+        "x": 0,
+        "y": 0
+      },
+      "source": "game/art/car/car_sw_front.png"
+    },
+    {
+      "colours_after": 30,
+      "colours_before": 253,
+      "heading_deg": 112.5,
+      "index": 5,
+      "made_by": "/rotate of frame 4 by 22",
+      "nose_screen_angle_deg": 168.3,
+      "seen_nose_screen_angle_deg_approx": 170,
+      "shift_px": {
+        "x": 1,
+        "y": 2
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f04_sw.png"
+    },
+    {
+      "colours_after": 27,
+      "colours_before": 49,
+      "heading_deg": 135.0,
+      "index": 6,
+      "made_by": "/generate-8-rotations-v3 image 7 (west)",
+      "nose_screen_angle_deg": 180.0,
+      "seen_nose_screen_angle_deg_approx": 170,
+      "shift_px": {
+        "x": 0,
+        "y": 1
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_7.png"
+    },
+    {
+      "colours_after": 32,
+      "colours_before": 259,
+      "heading_deg": 157.5,
+      "index": 7,
+      "made_by": "/rotate of frame 6 by 22",
+      "nose_screen_angle_deg": 191.7,
+      "seen_nose_screen_angle_deg_approx": 182,
+      "shift_px": {
+        "x": 1,
+        "y": 4
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f06_west.png"
+    },
+    {
+      "colours_after": 29,
+      "colours_before": 49,
+      "heading_deg": 180.0,
+      "index": 8,
+      "made_by": "/generate-8-rotations-v3 image 6 (north-west)",
+      "nose_screen_angle_deg": 206.57,
+      "seen_nose_screen_angle_deg_approx": 200,
+      "shift_px": {
+        "x": 1,
+        "y": -2
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_6.png"
+    },
+    {
+      "colours_after": 32,
+      "colours_before": 272,
+      "heading_deg": 202.5,
+      "index": 9,
+      "made_by": "/rotate of frame 8 by 22",
+      "nose_screen_angle_deg": 230.36,
+      "seen_nose_screen_angle_deg_approx": 218,
+      "shift_px": {
+        "x": 0,
+        "y": -1
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f08_north-west.png"
+    },
+    {
+      "colours_after": 30,
+      "colours_before": 49,
+      "heading_deg": 225.0,
+      "index": 10,
+      "made_by": "/generate-8-rotations-v3 image 5 (north)",
+      "nose_screen_angle_deg": 270.0,
+      "seen_nose_screen_angle_deg_approx": 260,
+      "shift_px": {
+        "x": -3,
+        "y": -3
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_5.png"
+    },
+    {
+      "colours_after": 32,
+      "colours_before": 247,
+      "heading_deg": 247.5,
+      "index": 11,
+      "made_by": "/rotate of frame 10 by 22",
+      "nose_screen_angle_deg": 309.64,
+      "seen_nose_screen_angle_deg_approx": 270,
+      "shift_px": {
+        "x": 2,
+        "y": -2
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png"
+    },
+    {
+      "colours_after": 31,
+      "colours_before": 49,
+      "heading_deg": 270.0,
+      "index": 12,
+      "made_by": "/generate-8-rotations-v3 image 4 (north-east)",
+      "nose_screen_angle_deg": 333.43,
+      "seen_nose_screen_angle_deg_approx": 320,
+      "shift_px": {
+        "x": 2,
+        "y": 2
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_4.png"
+    },
+    {
+      "colours_after": 30,
+      "colours_before": 210,
+      "heading_deg": 292.5,
+      "index": 13,
+      "made_by": "/rotate of frame 12 by 22",
+      "nose_screen_angle_deg": 348.3,
+      "seen_nose_screen_angle_deg_approx": 343,
+      "shift_px": {
+        "x": 1,
+        "y": 2
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f12_north-east.png"
+    },
+    {
+      "colours_after": 27,
+      "colours_before": 49,
+      "heading_deg": 315.0,
+      "index": 14,
+      "made_by": "/generate-8-rotations-v3 image 3 (east)",
+      "nose_screen_angle_deg": 360.0,
+      "seen_nose_screen_angle_deg_approx": 0,
+      "shift_px": {
+        "x": 1,
+        "y": 4
+      },
+      "source": "art-archive/T-101/frames/car_rot8_v3_3.png"
+    },
+    {
+      "colours_after": 31,
+      "colours_before": 233,
+      "heading_deg": 337.5,
+      "index": 15,
+      "made_by": "/rotate of frame 14 by 22",
+      "nose_screen_angle_deg": 11.7,
+      "seen_nose_screen_angle_deg_approx": 17,
+      "shift_px": {
+        "x": 3,
+        "y": 1
+      },
+      "source": "art-archive/T-101/frames/car_rot22_from_f14_east.png"
+    }
+  ],
+  "order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
+  "palette": [
+    "#03151b",
+    "#042809",
+    "#06021b",
+    "#060918",
+    "#06260e",
+    "#071c19",
+    "#072112",
+    "#0a041f",
+    "#0a2c11",
+    "#0a3e1f",
+    "#0c0a21",
+    "#0c4c2c",
+    "#165d3c",
+    "#176c4d",
+    "#228a64",
+    "#2c2251",
+    "#36b48b",
+    "#413b58",
+    "#514d68",
+    "#53f2bb",
+    "#686082",
+    "#7c76a6",
+    "#7df6d6",
+    "#8b85b5",
+    "#958fc3",
+    "#9dfff4",
+    "#9e9acc",
+    "#d2caf6",
+    "#dff1f9",
+    "#e66e66",
+    "#edfbfb",
+    "#f3b42e",
+    "#f6ddf8"
+  ],
+  "placeholder": false,
+  "projection": "PixelLab's isometric view (high top-down), drawn by PixelLab; the game draws the world in 2:1 isometric, screen = (x - y, (x + y) / 2). PixelLab's diagonals are flatter than 2:1, so the nose's angle on screen is close to, not exactly, nose_screen_angle_deg (see seen_nose_screen_angle_deg_approx per frame)",
+  "px_per_unit": 32.0,
+  "record": {
+    "command": "python game/tools/build_car_sheet.py",
+    "made_by": "PixelLab (T-101: one /generate-8-rotations-v3 call and eight /rotate calls; frame 4 is T-014's approved sprite), assembled by game/tools/build_car_sheet.py",
+    "pixellab_records": "each source frame has its PixelLab record JSON next to it; every call is in game/art/pixellab-generation-log.jsonl",
+    "processing": "palette: each opaque pixel mapped to the nearest colour (CIELAB) of the approved sprite's palette; centring: whole-pixel moves; no other change and no new pixels",
+    "resources_consulted": [
+      "docs/visual-style.md",
+      "docs/extended-narrative.md",
+      "docs/drifting.md",
+      "tasks/T-101-car-sprites-remaining-directions.md",
+      "tasks/T-014-car-sprites-16-directions.md",
+      "tasks/T-013-placeholder-car-sprites.md",
+      "game/art/placeholders/car/car_iso.json"
+    ],
+    "task": "T-101"
+  },
+  "rows": 1,
+  "step_deg": 22.5,
+  "view": "iso"
+}

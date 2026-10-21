@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/car_turn_gif_demo.gd" id="1_demo"]
+
+[node name="CarTurnGif_run" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(-81, -40)
+start_rotation = 0.0
+zoom = 6.0

@@ -1570,3 +1570,8 @@ Entry format:
 - Decision or change: the meteor keeps its look and gets a comet tail while it falls and an impact animation when it lands. Three versions were built and recorded (pixel, pixellab, particles); the board watched the GIFs and picked **particles**, now the default (`version` in `game/data/meteor_fx.json`; the others stay selectable). 5 of the 10 allowed generations were used. The boulder still appears the instant the meteor lands, so the impact's first flash plays over it.
 - Documents touched: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-070 (done)
+
+## 2026-10-21: T-102 done: the car in 32 directions
+- Decision or change: the car is drawn in 32 directions, 11.25 degrees apart: the approved 16 kept byte for byte, plus 16 in-betweens made with PixelLab's Rotate (+16 degrees from each frame, each placed by where it landed), 17 generations in all with the two samples. The shadowless air frames were rebuilt for 32 by the free script. Weak frames reported: 23 is a near-copy of 22, and 3, 19 and 21 are 14 to 26 degrees off. No turning GIFs (a guard refusal stopped the capture); the board played the build instead and its playtest replaces them: "102 LGTM".
+- Documents touched: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-102 (done)
