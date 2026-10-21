@@ -1,7 +1,7 @@
 ---
 id: T-206
 title: A run plays on the elevation sample map
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/game-loop-architecture.md, game/
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/drifting.md, game/README.md, game/scripts/run/run.gd, game/scripts/level/elevation_sample_map.gd, game/data/level/elevation_sample_map.json, tasks/T-196-elevation-sample-map.md, tasks/T-197-elevation-sample-depth-order.md]
 files_expected_to_change: [game/scripts/run/run.gd, game/scenes/run/run.tscn, game/tests/unit/, game/README.md, art-archive/T-206/screenshots/]
 model: opus
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -87,6 +87,14 @@ Back to the agent: no tyre marks in the air, like the smoke.
 ### 2026-10-21, In progress → In QA
 
 Tweak in: no tyre marks in the air. Ready for the board to play.
+
+### 2026-10-21, In QA → Needs playtest
+
+Final QA passed all 5 with the board's tweaks in. Ready for the board (or play T-207, which contains it).
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved it with T-207. Merged into master.
 
 ## Result notes
 
@@ -191,3 +199,4 @@ No commands were refused.
 
 No commands were refused.
 - 2026-10-21, in-progress → in-qa: Ready for the board to play: no tyre marks in the air either; one QA round before merging
+- 2026-10-21, needs-playtest → done: Board: T-206 can be closed too (with T-207: LGTM)
