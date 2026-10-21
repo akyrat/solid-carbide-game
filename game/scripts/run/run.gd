@@ -69,6 +69,8 @@ const RunSoundsScript := preload("res://scripts/run/run_sounds.gd")
 const LevelUpScreenScript := preload("res://scripts/ui/level_up_screen.gd")
 ## The gift pack drop (task T-144): a helicopter drops a package per level-up; driving over it opens the level-up screen.
 const GiftDropsScript := preload("res://scripts/run/gift_drops.gd")
+## The pickup magnet (task T-222): pulls coins, gift packs and health drops near the car to it.
+const PickupMagnetScript := preload("res://scripts/run/pickup_magnet.gd")
 ## The map's rooftops and ramps (task T-206): depth order, see-through, ground height.
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
 ## The car's round shadow on the ground (task T-187), drawn with the elevation map only.
@@ -152,6 +154,8 @@ var sounds: Node
 ## The gift pack drop (task T-144, gift_drops.gd): child "GiftDrops", drawn
 ## just before View. Its off-screen arrows are the child "GiftArrows".
 var gift_drops: GiftDrops
+## The pickup magnet (task T-222, pickup_magnet.gd): child "PickupMagnet".
+var pickup_magnet: PickupMagnet
 ## Whether the next map built is the elevation map (USE_ELEVATION_MAP by
 ## default). Read by start_run() each time it builds a new map; tests set it.
 var use_elevation_map: bool = USE_ELEVATION_MAP
@@ -265,6 +269,10 @@ func _ready() -> void:
 	add_child(gift_drops)
 	move_child(gift_drops, view_root.get_index())  # drawn with the world, under the car
 	gift_drops.bind(self)
+	pickup_magnet = PickupMagnetScript.new()
+	pickup_magnet.name = "PickupMagnet"
+	add_child(pickup_magnet)
+	pickup_magnet.bind(self)
 	# The sound effects (task T-077, run_sounds.gd; files and volumes in data/sfx.json).
 	sounds = RunSoundsScript.new()
 	add_child(sounds)
