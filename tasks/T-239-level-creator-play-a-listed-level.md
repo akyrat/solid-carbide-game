@@ -1,7 +1,7 @@
 ---
 id: T-239
 title: Level creator: play a listed level as a full run, and come back to the creator
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/data/level/creator_texts.json, game/scripts/run/run.gd, game/scripts/game/game_flow.gd, game/scripts/level_creator/level_creator.gd, game/scripts/level_creator/level_list_screen.gd, game/scripts/enemies/enemy_navigation.gd]
 files_expected_to_change: [game/scripts/level_creator/level_creator.gd, game/tests/unit/level_creator/test_play_level.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-239.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-22, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Game Loop Agent, 2026-10-22.
@@ -93,3 +97,4 @@ Game Loop Agent, 2026-10-22.
 **PixelLab:** 0 generations. **Refusals:** none.
 
 **Uncommitted:** Godot's line-ending-only `.import` noise in the working tree was not committed.
+- 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
