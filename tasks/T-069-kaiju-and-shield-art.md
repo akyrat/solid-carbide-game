@@ -1,7 +1,7 @@
 ---
 id: T-069
 title: Art: the kaiju
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -42,11 +42,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass / fail)
-- [ ] A screenshot shows the final kaiju in a run (QA: pass / fail)
-- [ ] T-045's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new sprite has a transparent background, no semi-transparent pixels, and about 30 colours or fewer (QA: pass; check_sprite_rules.py --size 224 --frames 6 on all five kaiju sheets: ALL FRAMES PASS, 0 semi-transparent, 30 colours)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after; only one round of generation was made (QA: pass; log has 7 rows (sample + 6 calls) with prompts, settings, usage, balances noted; one round, no regeneration; overrun: 32 for the set against the 6 to 12 planned, explained by canvas-size cost)
+- [ ] A screenshot shows the final kaiju in a run (QA: pass; screenshots/kaiju_walking.png shows the new kaiju sprite beside the car in a run with HUD)
+- [ ] T-045's tests still pass (QA: pass; full GUT suite passes, kaiju tests included)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1194/1194 in 385 s with GUT_TIME_LIMIT=900; tools 414 tests OK (458 s); game/tools 358 tests OK, 1 skipped)
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
@@ -63,6 +63,10 @@ Kaiju sample in (1 generation). Good palette and detail, but side-on rather than
 ### 2026-10-21, In progress
 
 Sample approved by the board. Started: the full kaiju set from the sample, then swapped into the game.
+
+### 2026-10-21, In progress → In QA
+
+Full kaiju set built and swapped in (8 directions, 6 walk frames). Cost 32 generations against about 6 to 12 planned. Sent to QA.
 
 ## Result notes
 
