@@ -18,9 +18,9 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 ## units (the car's body is 1 x 1 unit): the same as touching it.
 const TOUCH_UNITS := 0.5
 ## Groups of pickups that take part. Coins join "coins" themselves (coin.gd);
-## health drops join "health_drops". Each is a flat-world node with `position`
+## health drops join "health_pickups". Each is a flat-world node with `position`
 ## in pixels, an optional `sprite` drawn in the isometric view, and collect().
-const GROUPS := ["coins", "health_drops"]
+const GROUPS := ["coins", "health_pickups"]
 
 var run: Node2D
 var state: RunState

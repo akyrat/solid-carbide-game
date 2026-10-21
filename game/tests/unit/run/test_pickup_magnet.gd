@@ -57,23 +57,7 @@ func _landed_package(offset: Vector2) -> GiftPackage:
 
 
 func _health_drop(offset: Vector2) -> Node:
-	var d := HealthDropStub.new()
-	d.position = (_car() + offset) * P
-	d.add_to_group("health_drops")
-	run.add_child(d)
-	return d
-
-
-class HealthDropStub extends Node2D:
-	var taken := false
-	var sprite = null
-
-	func is_taken() -> bool:
-		return taken
-
-	func collect() -> void:
-		taken = true
-		remove_from_group("health_drops")
+	return run.minions.spawn_health_pickup_at(_car() + offset)
 
 
 func test_the_reach_is_one_car_length_from_run_json() -> void:
@@ -136,11 +120,13 @@ func test_a_falling_gift_pack_is_not_pulled() -> void:
 
 
 func test_a_health_drop_inside_the_reach_is_pulled_and_outside_stays() -> void:
+	state.health = 10.0
 	var near := _health_drop(Vector2(-2.5, 0))
 	var far := _health_drop(Vector2(-4.0, 0))
 	var far_at: Vector2 = far.position
 	_steps(60)
 	assert_true(near.is_taken(), "picked up")
+	assert_gt(state.health, 10.0, "healed")
 	assert_eq(far.position, far_at)
 
 
