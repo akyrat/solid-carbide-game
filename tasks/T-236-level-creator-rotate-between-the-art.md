@@ -37,12 +37,12 @@ The board's review: In the level creator, rotate and mirror pieces before placin
 
 ## Acceptance criteria
 
-- [ ] A unit test per asset kind: stepping rotate and mirror on the selected asset offers exactly the views and mirrors its catalogue entry lists, and no others. (QA: pass / fail)
-- [ ] A unit test places a rooftop at 3, a rooftop at 6 on it (its 'on' field naming the 3), a ramp 0 to 3 and a ramp 3 to 6 with the side they climb; the level data written to a temporary file passes python game/tools/check_height_data.py. (QA: pass / fail)
-- [ ] The rotate, mirror and height labels come from creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', lists the rotate, mirror and height controls. (QA: pass / fail)
-- [ ] A screenshot of rooftops at 3 and 6 with their ramps in the editor is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] A unit test per asset kind: stepping rotate and mirror on the selected asset offers exactly the views and mirrors its catalogue entry lists, and no others. (QA: pass: six per-kind tests, all pass)
+- [ ] A unit test places a rooftop at 3, a rooftop at 6 on it (its 'on' field naming the 3), a ramp 0 to 3 and a ramp 3 to 6 with the side they climb; the level data written to a temporary file passes python game/tools/check_height_data.py. (QA: pass: test runs the checker on the temp file, passes)
+- [ ] The rotate, mirror and height labels come from creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass: label test and test_creator_texts_only pass in full suite)
+- [ ] game/README.md, 'Level creator', lists the rotate, mirror and height controls. (QA: pass: README line 1350)
+- [ ] A screenshot of rooftops at 3 and 6 with their ramps in the editor is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass: three heights*.png in diff, listed in notes)
+- [ ] The full GUT suite passes. (QA: pass: all tests passed)
 
 ## Updates
 
