@@ -1,7 +1,7 @@
 ---
 id: T-240
 title: QA: the level creator end to end, from an empty creator to playing a level
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-005
