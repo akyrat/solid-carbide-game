@@ -95,11 +95,19 @@ func _process(delta: float) -> void:
 
 
 ## Makes smoke after the car's every physics step. `marks` (optional) is the
-## drift marks node whose rear_tyres() gives the tyre places.
+## drift marks node whose rear_tyres() gives the tyre places. No smoke while
+## the car is airborne, even with the drift keys held; it comes back on landing
+## (Drifting, Decisions, "No drift smoke in the air", task T-206).
 func bind(car: Node, marks: Object = null) -> void:
 	tyre_source = marks
 	car.stepped.connect(func() -> void:
-		emit_step(car.model.is_drifting, car.model.get_position(), car.model.rotation, car.model.dt))
+		emit_step(smokes(car), car.model.get_position(), car.model.rotation, car.model.dt))
+
+
+## Whether `car` makes smoke this step: drifting and not airborne (a car
+## without a height, `airborne` missing, is always on the ground).
+static func smokes(car: Node) -> bool:
+	return car.model.is_drifting and car.get("airborne") != true
 
 
 ## The two rear tyres' places on the ground, in units: [left, right].
