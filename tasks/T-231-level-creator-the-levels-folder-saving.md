@@ -52,4 +52,19 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-231.
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Levels folder (a proposal for the board):** `game/data/levels/`, read as `res://data/levels/` (`LevelStore.LEVELS_DIR`). The creator runs from the repo and is never exported. The folder itself isn't created until a level is saved (`save_level` makes it); `list_levels` returns an empty list while it is missing.
+
+**Built:**
+- `game/scripts/level/level_store.gd` (`LevelStore`): `list_levels(dir)` ([{name, path}] sorted by name then path; name = the file's `name` or its file name; skips non-JSON files and files that aren't a JSON object), `load_level(path)` (Dictionary, empty on a missing or bad file, no engine error), `save_level(path, data)` (indented JSON, creates the folder, returns OK or an Error).
+- `game/tests/unit/test_level_store.gd` (6 tests, files only under `RunPaths`): save, list, load round trip with equal data; sorting; skipping other files and a missing folder; missing file; overwrite; the sample map loads with its sections.
+- `game/tools/check_level.py`: runs `check_height_data.check_data`, then checks that buildings, rooftops, ramps and boulders (centre ± diameter/2) lie inside `map.rect`, that building, rooftop and ramp edges lie on multiples of 2 (`CELL`), and that `ground_rows` has map height rows of map width columns (1 tile = 1 unit; the sample map is 240 x 240). One line per problem, exit 1; `OK`, exit 0.
+- `game/tools/test_check_level.py` (15 tests): valid small level, the sample map, touching the edge; rejects a building, rooftop, ramp and boulder outside the map, an odd building, rooftop and ramp edge, too few rows, a short row, a height-data problem (ramp top_height), bad JSON, one line per problem.
+- `game/README.md`: new 'Level creator (T-231)' section (folder, storage, validator command), for later creator tickets to extend.
+
+**Checks run:** `python game/tools/check_level.py game/data/level/elevation_sample_map.json` prints OK (exit 0). `python -m unittest discover -s game/tools -p "test_*.py"`: 408 tests OK. `bash game/tools/run_tests.sh`: TESTS PASSED (full GUT suite).
+
+**Open question for the board:** the "even units" rule is checked on edges (x, y, x+w, y+h); an odd-sized rect on an odd origin passes only if both edges are even, which is what the pathfinding grid needs.
+
+**Screenshots:** none — this is tooling (storage script and validator), nothing is on screen.
+
+**Documents affected:** none (the folder is a proposal; `game/README.md` is the game's own readme).
