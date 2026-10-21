@@ -1,7 +1,7 @@
 ---
 id: T-215
 title: Goal runner fixes - only checkable criteria, the latest QA mark counts, goal-ticket drags reach a live session
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -42,11 +42,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A test shows the planner's ticket writer drops or refuses a criterion about the long GDD, the short GDD, the staleness check, the timeline or merging, and the planner's prompt says why (QA: pass / fail)
-- [ ] Tests show `verdicts()` counts only the last mark on a criterion (a round-1 fail followed by a round-2 pass is a pass) and reads "(QA: pass. ...)" and "(QA: fail. ...)"; `tasks/README.md` tells QA to replace its old mark (QA: pass / fail)
-- [ ] A test shows a board move on a ticket whose lead is `Goal-G-00N`, after the run's session has ended, is delivered to the live session described in the result notes, and `board_inbox.py watch` prints it (QA: pass / fail)
-- [ ] After `python -m unittest discover -s tools -p "test_*.py"`, the real repository's `master` and its `MERGE_HEAD` are unchanged (checked before and after), and the output has no line that looks like a real commit on master (QA: pass / fail)
-- [ ] `tasks/README.md` and `docs/README.md` describe the changes; all Python tool tests pass (QA: pass / fail)
+- [ ] A test shows the planner's ticket writer drops or refuses a criterion about the long GDD, the short GDD, the staleness check, the timeline or merging, and the planner's prompt says why (QA: pass; test_tickets covers the filter, dropping on write, refusal and the prompts in prioritize.py and gaps.py)
+- [ ] Tests show `verdicts()` counts only the last mark on a criterion (a round-1 fail followed by a round-2 pass is a pass) and reads "(QA: pass. ...)" and "(QA: fail. ...)"; `tasks/README.md` tells QA to replace its old mark (QA: pass; test_task_status.QaMarks covers last mark and full stop; tasks/README.md tells QA to replace its mark)
+- [ ] A test shows a board move on a ticket whose lead is `Goal-G-00N`, after the run's session has ended, is delivered to the live session described in the result notes, and `board_inbox.py watch` prints it (QA: pass; test_board_inbox.GoalTickets delivers the move and the watcher prints it, routed as the result notes describe)
+- [ ] After `python -m unittest discover -s tools -p "test_*.py"`, the real repository's `master` and its `MERGE_HEAD` are unchanged (checked before and after), and the output has no line that looks like a real commit on master (QA: pass; master 06275fc and MERGE_HEAD 11fd811 same before and after the tools run, 0 commit lines in the output, tests use temp repos)
+- [ ] `tasks/README.md` and `docs/README.md` describe the changes; all Python tool tests pass (QA: pass; both READMEs updated; tools 431 tests OK, game/tools 370 OK, 1 skipped)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's go: goal runner and QA-mark fixes.
+
+### 2026-10-21, In progress → In QA
+
+Built: all four fixes with tests. Sent to QA.
 
 ## Result notes
 
