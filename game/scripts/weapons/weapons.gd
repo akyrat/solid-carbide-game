@@ -247,8 +247,9 @@ func living_enemies() -> Array:
 	return out
 
 
-## True for a living enemy a weapon can damage.
-static func is_target(e: Object) -> bool:
+## True for a living enemy a weapon can damage. Untyped (T-206): a target
+## queued earlier and freed since must give false, not a script error.
+static func is_target(e) -> bool:
 	if e == null or not is_instance_valid(e) or not e.has_method("take_damage"):
 		return false
 	if e is Node and (e as Node).is_queued_for_deletion():

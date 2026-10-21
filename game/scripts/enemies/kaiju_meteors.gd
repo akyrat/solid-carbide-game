@@ -23,8 +23,9 @@ extends Node
 ##
 ## Placement rules of this code (not balancing numbers): a landing spot is
 ## picked uniformly within land_within_units_of_car of the car, must pass the
-## map's placement check, and must not overlap another meteor still to land or
-## the kaiju's body. A boulder never appears on top of the car or the kaiju:
+## map's placement check, keep boulder_clearance_units clear of every meteor
+## boulder still on the map (fading and waiting ones too) and of another meteor
+## still to land (T-147), and must not overlap the kaiju's body. A boulder never appears on top of the car or the kaiju:
 ## when one of them is over the spot as the meteor lands, the boulder waits
 ## until it has moved off (the car is knocked away at once on a hit).
 ##
@@ -264,11 +265,17 @@ func is_good_spot(units: Vector2) -> bool:
 	if not map.can_place_meteor_boulder(units):
 		return false
 	var d: float = map.boulder_diameter()
+	# T-147: clear of every boulder a meteor left that is still on the map (standing
+	# or fading), by boulder_clearance_units of free ground between the circles.
+	var apart := d + stat("boulder_clearance_units")
+	for b in map.meteor_boulders:
+		if Vector2(float(b.x), float(b.y)).distance_to(units) < apart:
+			return false
 	for w in warnings:
-		if w.units.distance_to(units) < d:
+		if w.units.distance_to(units) < apart:
 			return false
 	for p in pending_boulders:
-		if p.distance_to(units) < d:
+		if p.distance_to(units) < apart:
 			return false
 	var k := _kaiju()
 	if k != null and k.position_units().distance_to(units) < d / 2.0 + KaijuScript.RADIUS_UNITS:

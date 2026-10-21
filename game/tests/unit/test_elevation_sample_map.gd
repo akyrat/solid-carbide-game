@@ -234,5 +234,5 @@ func test_the_runs_map_scene_loads_the_mvp_layout() -> void:
 	assert_eq(m.layout_path, "res://data/level/mvp_map.json")
 	assert_eq(m.buildings.size(), mvp.buildings.size())
 	assert_false(m.layout.has("platforms"), "no rooftops on the MVP map")
-	var run_src := FileAccess.get_file_as_string("res://scripts/run/run.gd")
-	assert_false(run_src.contains("layout_path"), "the run never sets another layout")
+	# T-206: the run sets the elevation sample map's layout only behind its
+	# switch (run.gd, USE_ELEVATION_MAP); test_run_elevation_map.gd checks both ways.
