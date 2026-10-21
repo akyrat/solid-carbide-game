@@ -1,7 +1,7 @@
 ---
 id: T-236
 title: Level creator: rotate between the art's views, mirror, and rooftops and ramps at heights 3 and 6
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -47,6 +47,10 @@ The board's review: In the level creator, rotate and mirror pieces before placin
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-236.
 
 ## Result notes
 
