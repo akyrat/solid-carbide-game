@@ -1,7 +1,7 @@
 ---
 id: T-246
 title: A drift pays once at its end, scaled by how long it lasted
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -49,6 +49,30 @@ Board review files: the GIF in `art-archive/T-246/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the agent when it finishes (Driving & Drift Agent).
+
+**Built.** A whole drift now pays once, when it ends (keys let go, a break, or a takeoff), and nothing while it lasts.
+- `game/scripts/driving/trick_detector.gd`: the per-second emit is gone. On the first step that is not drifting it emits one `extended_drift` if the drift lasted at least `drift_min_seconds`, with its length in `last_trick_seconds` (set just before the signal; 0 for other tricks). `reset()` forgets a drift in progress without paying. 360 and alternate drift untouched.
+- `game/data/combo.json`: `trick_add.extended_drift` removed, new `drift_pay` block. `ComboData` gets `drift_min_seconds()`, `drift_amount(seconds)`, `trick_amount(trick, seconds)`; `after_trick(multiplier, trick, seconds := 0.0)`.
+- `RunState.add_trick(trick_id, seconds := 0.0)`; `run.gd` connects the car's `trick` signal through a lambda that passes `car.tricks.last_trick_seconds`. The `trick(trick_id)` signal itself is unchanged, so the popups (existing LONG DRIFT! text, small size, "+amount") needed no change. The XP from drifting seconds (`run_state.gd`) is untouched.
+- Merge note for T-242: it will touch `trick_detector.gd` (observe_air/_land and the ids) and `combo.json` `trick_add`; my edits there are the extended-drift block in `observe()`, the header comment, the removed `EXTENDED_DRIFT_SECONDS`, the new `last_trick_seconds`/`drift_min_seconds` vars and `_emit`, and the `drift_pay` block plus removal of one `trick_add` line. If T-242 also forwards a per-trick amount through `add_trick`, the two should share one parameter.
+
+**Scaling proposal (all in `combo.json`, `drift_pay`, for the playtest):**
+- `per_second` 0.05: the old build paid 0.05 per full second, so a drift pays about what it did in total (4 s: 0.20), now counting hundredths (2.38 s pays +0.12).
+- `min_seconds` 1.0: the old build paid nothing before the first full second.
+- `max` 0.5: equal to an ALT DRIFT!, reached at 10 s; the old build had no cap.
+Listed in Drifting, Content, "Drift pays once, at its end (task T-246)".
+
+**Tests.** `test_tricks.gd` (pays nothing while it lasts and once at its end; 1.5 s and 3.5 s give amounts 1.5x and 3.5x one second's; 0.98 s pays nothing, 1.0 s pays; steering side change does not end it; a break ends it; reset), `test_run_likes.gd` (a run scene: no combo while drifting, one payment scaled by the length and the popup "LONG DRIFT! +0.0x", drift-second XP unchanged), plus updated `test_hud_combo.gd`, `test_hud_combo_hidden.gd`, `test_run_combo.gd`, `test_run_likes_drain.gd`, `test_combo_data.gd`, `test_air_tricks.gd` for the new amount. Results: GUT 1291 of 1291 pass; `python -m unittest discover -s tools` 439 OK; `python -m unittest discover -s game/tools` 393 OK (1 skipped). FULL 360! and ALT DRIFT! are covered by the existing tests, unchanged.
+
+**Proposals / notes.** (1) The likes drain is no longer reset every drift second by the old trick, so it can start a little earlier during a long drift; a drift that ends pays then. Fixtures `combo_demo.gd` and `popups_follow_demo.gd` still emit `extended_drift` directly with length 0, so their popups show no amount. (2) A drift in progress when a run ends or `reset()` is called pays nothing.
+
+**Screenshots** (in `art-archive/T-246/screenshots/`): `long_drift_popup.png` (LONG DRIFT! +0.12 after a 2.38 s drift, with FULL 360! +0.25 from the same drift) and `long_drift_pays_at_end.gif` (a 3.5 s drift, the popup appears as it ends). Fixture `game/tests/fixtures/drift_pay_gif.tscn`. In the recording the car drives over a ramp at the start and an AIR 180! pays first (the staged start spot); it is not part of the drift.
+
+Documents affected: `docs/drifting.md` (Content: new "Drift pays once, at its end" section; the tricks and takeoff lines), `game/README.md` ("Tricks").

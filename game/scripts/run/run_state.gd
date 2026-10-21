@@ -305,12 +305,13 @@ func drift_step(drifting: bool, delta: float) -> void:
 ## combo goes up by the trick's amount in combo.json, held at the cap, and the
 ## drain wait starts again. Sends combo_trick, then combo_changed. Ignored
 ## when the run is not going, and for an id that is not one of the car's
-## tricks (TrickDetector.TRICK_IDS).
-func add_trick(trick_id: String) -> void:
+## tricks (TrickDetector.TRICK_IDS). `seconds` is the length of a whole drift
+## for "extended_drift" (task T-246): its amount scales by it.
+func add_trick(trick_id: String, seconds := 0.0) -> void:
 	if not running or not TrickDetector.TRICK_IDS.has(trick_id):
 		return
 	var before := combo
-	combo = _combo_data.after_trick(combo, trick_id)
+	combo = _combo_data.after_trick(combo, trick_id, seconds)
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(trick_id, combo - before, combo)

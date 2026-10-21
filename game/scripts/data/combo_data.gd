@@ -27,14 +27,38 @@ func max_multiplier() -> float:
 	return float(_data["max_multiplier"])
 
 
-## What one trick adds to the multiplier: "extended_drift", "three_sixty", "alternate_drift",
-## "air_one_eighty" or "air_three_sixty" (TrickDetector.TRICK_IDS).
+## What one trick adds to the multiplier: "three_sixty", "alternate_drift",
+## "air_one_eighty" or "air_three_sixty" (TrickDetector.TRICK_IDS). The extended
+## drift is scaled by its length instead: drift_amount().
 func trick_add(trick: String) -> float:
 	var tricks: Dictionary = _data["trick_add"]
 	if not tricks.has(trick):
 		push_error("Game data value missing: trick_add.%s in combo.json" % trick)
 		return 0.0
 	return float(tricks[trick])
+
+
+## Shortest drift that pays, in seconds (drift_pay.min_seconds, task T-246).
+func drift_min_seconds() -> float:
+	return float(_data["drift_pay"]["min_seconds"])
+
+
+## What a whole drift of `seconds` adds to the multiplier, paid once when it
+## ends: seconds times drift_pay.per_second, nothing under min_seconds, at most
+## drift_pay.max (task T-246).
+func drift_amount(seconds: float) -> float:
+	var d: Dictionary = _data["drift_pay"]
+	if seconds < float(d["min_seconds"]) - 1e-6:
+		return 0.0
+	return minf(seconds * float(d["per_second"]), float(d["max"]))
+
+
+## What a trick adds: the data's amount, or for the extended drift the scaled
+## amount for its `seconds`.
+func trick_amount(trick: String, seconds := 0.0) -> float:
+	if trick == "extended_drift":
+		return drift_amount(seconds)
+	return trick_add(trick)
 
 
 func collision_cut() -> float:
@@ -56,8 +80,8 @@ func after_collision(multiplier: float) -> float:
 
 
 ## The multiplier after one trick, held at the maximum.
-func after_trick(multiplier: float, trick: String) -> float:
-	return minf(multiplier + trick_add(trick), max_multiplier())
+func after_trick(multiplier: float, trick: String, seconds := 0.0) -> float:
+	return minf(multiplier + trick_amount(trick, seconds), max_multiplier())
 
 
 ## The multiplier after `seconds` with no trick: nothing for the wait, then the drain, down to the start value.

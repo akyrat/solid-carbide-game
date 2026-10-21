@@ -51,30 +51,68 @@ func test_ids() -> void:
 	assert_eq(TrickDetector.TRICK_IDS, ["extended_drift", "three_sixty", "alternate_drift", "air_one_eighty", "air_three_sixty"])
 
 
-func test_drift_held_3_5_seconds_gives_exactly_3_extended_drifts() -> void:
+func _stop() -> void:
+	_run(1, false, false, 0.0)  # no keys: the drift ends
+
+
+func test_a_drift_pays_nothing_while_it_lasts_and_once_at_its_end() -> void:
 	_hold(3.5, true, false, A)
-	assert_eq(_count("extended_drift"), 3)
+	assert_eq(_count("extended_drift"), 0, "nothing while the drift lasts")
+	_stop()
+	assert_eq(_count("extended_drift"), 1, "one trick when it ends")
+	_hold(1.0, false, false, 0.0)
+	assert_eq(_count("extended_drift"), 1, "and only once")
 
 
-func test_extended_drift_fires_on_each_full_second() -> void:
+func test_the_drift_carries_its_length_in_seconds() -> void:
+	var lengths: Array = []
+	_det.trick.connect(func(id: String) -> void:
+		if id == "extended_drift":
+			lengths.append(_det.last_trick_seconds))
+	_hold(1.5, true, false, A)
+	_stop()
+	_hold(3.5, true, false, A)
+	_stop()
+	assert_eq(lengths.size(), 2)
+	assert_almost_eq(lengths[0], 1.5, 0.001)
+	assert_almost_eq(lengths[1], 3.5, 0.001)
+	var c := ComboData.new()
+	assert_almost_eq(c.drift_amount(lengths[0]), 1.5 * c.drift_amount(1.0), 0.0001, "scaled by length")
+	assert_almost_eq(c.drift_amount(lengths[1]), 3.5 * c.drift_amount(1.0), 0.0001)
+	assert_gt(c.drift_amount(lengths[1]), c.drift_amount(lengths[0]))
+
+
+func test_a_drift_below_the_minimum_pays_nothing() -> void:
 	_run(49, true, false, A)
-	assert_eq(_count("extended_drift"), 0, "not before 1 s")
-	_run(1, true, false, A)
-	assert_eq(_count("extended_drift"), 1, "at 1 s")
+	_stop()
+	assert_eq(_count("extended_drift"), 0, "0.98 s is under the minimum")
+	_run(50, true, false, A)
+	_stop()
+	assert_eq(_count("extended_drift"), 1, "1 s pays")
+
+
+func test_changing_steering_side_does_not_end_the_drift() -> void:
+	_run(50, true, false, A)
 	_run(50, true, false, D)
-	assert_eq(_count("extended_drift"), 2, "changing steering side does not break the drift")
-
-
-func test_a_break_restarts_the_extended_drift_second() -> void:
-	_hold(0.9, true, false, A)
-	_run(1, true, false, 0.0)  # W alone: not drifting
-	_hold(0.9, true, false, A)
 	assert_eq(_count("extended_drift"), 0)
+	_stop()
+	assert_eq(_count("extended_drift"), 1, "one drift of 2 s, not two")
+	assert_almost_eq(_det.last_trick_seconds, 2.0, 0.001)
+
+
+func test_a_break_ends_the_drift_and_the_next_one_starts_from_zero() -> void:
+	_hold(1.2, true, false, A)
+	_run(1, true, false, 0.0)  # W alone: not drifting
+	assert_eq(_count("extended_drift"), 1, "the first drift paid at the break")
+	_hold(0.9, true, false, A)
+	_stop()
+	assert_eq(_count("extended_drift"), 1, "0.9 s is under the minimum")
 
 
 func test_backward_drift_is_a_drift_too() -> void:
 	_hold(2.0, false, true, D)
-	assert_eq(_count("extended_drift"), 2)
+	_stop()
+	assert_eq(_count("extended_drift"), 1)
 
 
 func test_steering_without_w_or_s_is_not_a_drift() -> void:
@@ -198,13 +236,15 @@ func test_limits_are_read_live_from_the_tuning() -> void:
 
 func test_reset_clears_everything() -> void:
 	_hold(1.5, true, false, A)
+	_stop()
 	assert_eq(_det.last_trick, "extended_drift")
 	assert_eq(_det.counts["extended_drift"], 1)
 	_det.reset()
 	assert_eq(_det.last_trick, "")
 	assert_eq(_det.counts["extended_drift"], 0)
 	_hold(0.6, true, false, A)
-	assert_eq(_count("extended_drift"), 1, "the half second before the reset is forgotten")
+	_stop()
+	assert_eq(_det.counts["extended_drift"], 0, "the 0.6 s drift after the reset is too short")
 
 
 # --- The car node ----------------------------------------------------------------------
@@ -233,10 +273,11 @@ func test_car_emits_one_signal_per_trick() -> void:
 	var car := _car(_world())
 	var got: Array = []
 	car.trick.connect(func(id: String) -> void: got.append(id))
-	_drive(car, 94, true, false, A)   # 1.88 s: one extended drift, one 360
-	_drive(car, 5, false, false, A)
+	_drive(car, 94, true, false, A)   # 1.88 s: one 360, paid at once
+	_drive(car, 5, false, false, A)   # the drift ends: one extended drift (T-246)
 	_drive(car, 50, false, true, A)   # backward drift: an alternate drift
-	assert_eq(got, ["extended_drift", "three_sixty", "alternate_drift", "extended_drift"])
+	_drive(car, 1, false, false, A)   # it ends: a second extended drift
+	assert_eq(got, ["three_sixty", "extended_drift", "alternate_drift", "extended_drift"])
 	assert_eq(car.tricks.last_trick, "extended_drift")
 
 
@@ -337,10 +378,13 @@ func test_readout_shows_the_last_trick() -> void:
 	_drive(p.car, 94, true, false, A)
 	var text: String = TuningPanel.trick_text(p.car.tricks)
 	assert_string_contains(text, "Last trick: 360")
-	assert_string_contains(text, "extended 1   360 1   alternate 0")
+	assert_string_contains(text, "extended 0   360 1   alternate 0")
+	_drive(p.car, 1, false, false, A)  # the drift ends and pays once (T-246)
+	assert_string_contains(TuningPanel.trick_text(p.car.tricks), "extended 1   360 1   alternate 0")
+	text = TuningPanel.trick_text(p.car.tricks)
 	p.panel.visible = true
 	p.panel._process(0.0)
-	assert_string_contains(p.panel.readout.text, "Last trick: 360")
+	assert_string_contains(p.panel.readout.text, "Last trick: extended drift")
 
 
 func test_default_values_include_the_trick_limits() -> void:

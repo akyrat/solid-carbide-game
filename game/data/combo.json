@@ -3,11 +3,16 @@
   "start_multiplier": 1.0,
   "max_multiplier": 6.0,
   "trick_add": {
-    "extended_drift": 0.05,
     "three_sixty": 0.25,
     "alternate_drift": 0.5,
     "air_one_eighty": 0.25,
     "air_three_sixty": 0.5
+  },
+  "drift_pay": {
+    "_comment": "A whole drift pays once, when it ends (Drifting, Decisions, T-246): seconds of drift times per_second, nothing under min_seconds, at most max. Proposals for the playtest.",
+    "per_second": 0.05,
+    "min_seconds": 1.0,
+    "max": 0.5
   },
   "collision_cut": 0.8,
   "collision_cut_applies_to": "above_start",

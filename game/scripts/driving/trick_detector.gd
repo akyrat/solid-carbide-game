@@ -7,8 +7,13 @@ extends RefCounted
 ## model's update and its height step (T-219), with the keys used for that step. Each trick found
 ## emits `trick` once, with the trick's id:
 ##
-## - "extended_drift": every full second of one unbroken drift. "Drifting" is
-##   the model's own is_drifting (W, or S without W, held together with A or D).
+## - "extended_drift": one whole unbroken drift, found when it ends (task T-246,
+##   Drifting, Decisions, "Drift pays once, at its end"), if it lasted at least
+##   combo.json's drift_pay.min_seconds. Nothing is emitted while it lasts. The
+##   drift's length in seconds is in `last_trick_seconds` while `trick` is
+##   emitted; the combo scales its amount by it (ComboData.drift_amount).
+##   "Drifting" is the model's own is_drifting (W, or S without W, held
+##   together with A or D). A takeoff ends the drift, so it pays there.
 ## - "three_sixty": the heading has turned a full 360 degrees in one direction
 ##   during one unbroken drift; 720 gives two. A break in the drift, or turning
 ##   back the other way, starts the count again. Turning on a step that ends in
@@ -46,8 +51,6 @@ const TRICK_IDS := [TRICK_EXTENDED_DRIFT, TRICK_THREE_SIXTY, TRICK_ALTERNATE_DRI
 ## The two aerial tricks (task T-219).
 const AIR_TRICK_IDS := [TRICK_AIR_ONE_EIGHTY, TRICK_AIR_THREE_SIXTY]
 
-## Seconds of unbroken drift per extended-drift trick (Drifting, Decisions).
-const EXTENDED_DRIFT_SECONDS := 1.0
 ## Heading change per 360 trick, in radians (Drifting, Decisions).
 const FULL_TURN := TAU
 ## Heading change per air 180, in radians (Drifting, Decisions, "Aerial tricks").
@@ -61,11 +64,16 @@ signal trick(trick_id: String)
 ## The last trick found ("" before the first), and seconds of observed steps
 ## since then. For the drift prototype's readout.
 var last_trick := ""
+## The length in seconds of the drift that paid, set just before `trick` is
+## emitted for "extended_drift" (task T-246); 0 for every other trick.
+var last_trick_seconds := 0.0
+## Shortest drift that pays, seconds (combo.json, drift_pay.min_seconds).
+var drift_min_seconds: float = ComboData.new().drift_min_seconds()
 var seconds_since_last := 0.0
 ## trick id -> how many have been found since the last reset().
 var counts := {}
 
-# Extended drift: seconds of the current unbroken drift not yet counted.
+# Extended drift: seconds of the current unbroken drift so far.
 var _drift_time := 0.0
 # 360: heading turned in the current unbroken drift, in one direction (radians, signed).
 var _turn := 0.0
@@ -98,6 +106,7 @@ func _init() -> void:
 ## Forgets every drift in progress, the last trick and the counts.
 func reset() -> void:
 	last_trick = ""
+	last_trick_seconds = 0.0
 	seconds_since_last = 0.0
 	counts = {}
 	for id in TRICK_IDS:
@@ -133,10 +142,11 @@ func observe(model, w: bool, s: bool, steer: float, rotation_before: float, airb
 	# Extended drift.
 	if drifting:
 		_drift_time += dt
-		while _drift_time >= EXTENDED_DRIFT_SECONDS - EPSILON:
-			_drift_time -= EXTENDED_DRIFT_SECONDS
-			_emit(TRICK_EXTENDED_DRIFT)
 	else:
+		# The drift ends: it pays once, by its length (task T-246).
+		if _drift_time >= drift_min_seconds - EPSILON and _drift_time > 0.0:
+			last_trick_seconds = _drift_time
+			_emit(TRICK_EXTENDED_DRIFT)
 		_drift_time = 0.0
 
 	# 360.
@@ -240,6 +250,8 @@ func _start_segment(dir: int, steer_side: int, t) -> void:
 
 func _emit(trick_id: String) -> void:
 	last_trick = trick_id
+	if trick_id != TRICK_EXTENDED_DRIFT:
+		last_trick_seconds = 0.0
 	seconds_since_last = 0.0
 	counts[trick_id] = int(counts.get(trick_id, 0)) + 1
 	trick.emit(trick_id)
