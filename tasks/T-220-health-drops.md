@@ -1,7 +1,7 @@
 ---
 id: T-220
 title: Enemies drop health pickups that restore 30% of the car's health
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/visual-style.md, docs/game-loop-architecture.md, game/README.md, game/data/enemies.json]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/run/, game/data/enemies.json, game/tests/unit/, game/README.md, docs/enemies.md, art-archive/T-220/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,14 @@ Started at the board's request.
 
 Built: health canisters drop at 60%, restore 30% (capped). Placeholder look. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: C:\solid-carbide-worktrees\T-220\game\project.godot, or play T-222's build, which contains it.
+
+### 2026-10-21, Needs playtest → Done
+
+Approved with T-222's build. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -75,3 +83,4 @@ Proposals for the playtest:
 - Pickup is not damage: it does not touch the combo.
 
 Refused commands: none.
+- 2026-10-21, needs-playtest → done: Board played it inside T-222's build: the pickup magnet works well
