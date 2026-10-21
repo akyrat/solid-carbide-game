@@ -1,7 +1,7 @@
 ---
 id: T-207
 title: Enemies follow the car up the ramps on the elevation map, with pathfinding
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/level-design.md, game/README.md, tasks/T-206-run-on-the-elevation-sample-map.md, game/scripts/enemies/enemy_depth.gd, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/scripts/enemies/, game/tests/unit/, docs/enemies.md, game/README.md, art-archive/T-207/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started from T-206's build: enemies find their way up the ramps to the car, with
 ### 2026-10-21, In progress → In QA
 
 Built: enemies follow the car up the ramps with A* pathfinding; rooftop edges stop them; they hit only at the car's level. Sent to QA.
+
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 6. Ready for the board: C:\solid-carbide-worktrees\T-207\game\project.godot or Play on T-207 in the Builds tab. This build also has all of T-206's fixes.
 
 ## Result notes
 
@@ -149,3 +153,4 @@ Written by the agent when it finishes.
 **Refused commands** (skipped, not retried in another form):
 - A Bash chain starting with `git check-ignore -v .env`. The guard couldn't tell it wouldn't write a ticket. I wanted to check that `.env` is ignored before giving this worktree a `.env` with only the `GODOT_BIN` line, which the test runner needs. I read `.gitignore` instead, then wrote that one-line `.env` (git-ignored).
 - `sed -n 455,470p <test file>` (read-only, but the guard took it for a sed that writes). I used the Read tool instead.
+- 2026-10-21, needs-playtest → done: LGTM! T-206 CAN BE CLOSED TOO!
