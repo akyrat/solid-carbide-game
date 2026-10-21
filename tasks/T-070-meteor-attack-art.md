@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-046-kaiju-meteor-attack.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -76,6 +76,10 @@ Started: the agent makes 2 or 3 versions of the comet tail and impact, with a vi
 
 Three versions built (pixel, pixellab, particles), each with a GIF from a real run; 4 generations. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: watch the three GIFs or play C:\solid-carbide-worktrees\T-070\game\project.godot (version in game/data/meteor_fx.json).
+
 ## Result notes
 
 ### Sample round (2026-10-21, board's go for PixelLab given)
@@ -115,5 +119,7 @@ The meteor, warning circle and boulder are unchanged; the boulder still appears 
 **Skipped/refused commands:** none refused (one hook rejected `pip list` and a `sed -n` once; I used other read tools).
 **Proposals:** the default version `pixel`; cell size and scale; frame counts; the fixture and recording script.
 **Documents affected:** game/README.md updated.
+
+**Tweak (board, 2026-10-21, after watching the GIFs):** the board picked `particles`. `data/meteor_fx.json` now has `"version": "particles"` (also the fallback in `meteor_fx.gd` if the file is missing); `pixel`, `pixellab` and `off` stay selectable. game/README.md ("Meteor effects") says so. No test assumed `pixel` as the default (they set an override).
 - 2026-10-21, in-progress → in-qa: Meteor sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 5 acceptance criteria not marked

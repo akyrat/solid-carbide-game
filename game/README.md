@@ -1300,9 +1300,9 @@ Screenshot fixtures (`tests/fixtures/elevation_sample_drive_demo.gd`: the same d
 The kaiju's meteors (scripts/enemies/kaiju_meteors.gd) now stream a **comet tail** behind them while they fall (the last `FALL_SECONDS`, 0.5 s, of the warning) and play an **impact animation** where they land (it replaces the plain dust burst; the boulder still appears at landing, as in T-046/T-147, under the first flash frames). The meteor, the warning circle and the boulder are unchanged. Drawing is in `scripts/enemies/meteor_fx.gd` (`MeteorFx`), called by the attack's sky drawing; tail and impact are pure functions of flight time and impact age.
 
 **The setting:** `data/meteor_fx.json`, key `version`, one of:
-- `pixel` (default): sprite sheets drawn by script, `art/effects/meteor_tail_pixel.png` (6 frames, loops at 14 fps) and `meteor_impact_pixel.png` (8 frames over 0.5 s). No PixelLab. `python game/tools/build_meteor_fx.py build` redraws them (byte-identical).
+- `pixel`: sprite sheets drawn by script, `art/effects/meteor_tail_pixel.png` (6 frames, loops at 14 fps) and `meteor_impact_pixel.png` (8 frames over 0.5 s). No PixelLab. `python game/tools/build_meteor_fx.py build` redraws them (byte-identical).
 - `pixellab`: sheets animated by PixelLab (`/animate-with-text-v3`, 2 calls) from first frames the script drew, `meteor_tail_pixellab.png` (8 frames) and `meteor_impact_pixellab.png` (8 frames). Built from the raw frames in `art-archive/T-070/pixellab/` by `build_meteor_fx.py from-pixellab` (background and half-transparent pixels cut, at most 30 colours).
-- `particles`: no sprites; square pixel embers, ring, sparks, shards and dust computed each frame in `meteor_fx.gd` (impact 0.6 s).
+- `particles` (default, the board's pick, 2026-10-21): no sprites; square pixel embers, ring, sparks, shards and dust computed each frame in `meteor_fx.gd` (impact 0.6 s).
 - `off`: the earlier placeholder (no tail, the plain dust burst).
 
 The environment variable `METEOR_FX` overrides the file (used for recordings). Sheet cells are 128 x 128 art pixels drawn at 0.75; palette is the boulders' violet and magenta, white-hot core, grey-violet dust, never Redgull red. `python game/tools/build_meteor_fx.py check` runs the sprite rules.

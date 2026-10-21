@@ -53,7 +53,7 @@ static func version() -> String:
 	if env in VERSIONS:
 		return env
 	if _file_version == "":
-		_file_version = "pixel"
+		_file_version = "particles"
 		var f := FileAccess.open(SETTINGS_PATH, FileAccess.READ)
 		if f != null:
 			var d = JSON.parse_string(f.get_as_text())
