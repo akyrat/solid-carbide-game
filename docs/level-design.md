@@ -211,6 +211,18 @@ The designs are stored unplaced (units from the pattern's centre, angle 0) in th
 
 ![The same, isometric](level-design/meteor-challenge-iso.png)
 
+### Level creator text
+
+The creator's text lives in `game/data/level/creator_texts.json` (the source; each piece has a text and a note of where it appears). Plain labels: the creator is the board's own tool (task T-233). Buttons fit 16 characters, category names 12.
+
+- **List screen:** title "Levels"; button "New level" (alone when there are no levels); per level "Play" and "Edit".
+- **Editor, naming:** default name "New level"; field label "Level name".
+- **Side panel categories:** Ground, Roads, Buildings, Boulders, Rooftops, Ramps.
+- **Heights:** rooftops "Height 3", "Height 6"; ramps "Ramp 0 to 3", "Ramp 3 to 6".
+- **Actions:** Rotate, Mirror, Delete, Save; confirmation "Level saved."; back button "Back to list".
+- **Overlap message:** "Can't place here: it overlaps another piece."
+- **Controls hint:** "Mouse: place. R: rotate. M: mirror. Del: delete." (the keys R, M and Del are the text's proposal; the creator's scripts must use the same keys).
+
 ### Elevation test scene
 
 The ground side of the elevation test scene (task T-182; Decisions, "Raised areas and ramps"). Every number below is a proposal for the board's playtest. Units are the flat world's (x east, y south).

@@ -52,4 +52,4 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-233.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Wrote game/data/level/creator_texts.json (26 pieces, each with text and where note) and the "Level creator text" section in docs/level-design.md, Content. Longest button text is "Back to list" (12 characters), longest category name "Buildings" (9). The controls hint uses R, M and Del as proposed keys; the creator's scripts must match. Not run through a JSON parser: my `python -c` check was refused (needs approval); I wrote the file by hand and read it back by eye. Nothing to screenshot (text only).
