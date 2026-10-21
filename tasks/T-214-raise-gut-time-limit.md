@@ -1,7 +1,7 @@
 ---
 id: T-214
 title: The GUT test run's time limit fits the suite's size
-status: open
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/tools/run_tests.sh, game/tools/run_tests.ps1, game/README.md]
 files_expected_to_change: [game/tools/run_tests.sh, game/tools/run_tests.ps1, game/README.md, tools/goal_agent/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,15 +39,34 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Both scripts default to 900 seconds, `GUT_TIME_LIMIT` still overrides it, and their comments give today's run times (QA: pass / fail)
-- [ ] The full GUT suite passes with the default limit in this folder (QA: pass / fail)
-- [ ] `game/README.md` states the limit and the override (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] Both scripts default to 900 seconds, `GUT_TIME_LIMIT` still overrides it, and their comments give today's run times (QA: pass; both default 900, override kept, comments give 270-306 s)
+- [ ] The full GUT suite passes with the default limit in this folder (QA: pass; default-limit run passed in 336 s wall (320 s GUT), over the old 300)
+- [ ] `game/README.md` states the limit and the override (QA: pass; README Time limit states 900 s and GUT_TIME_LIMIT override)
+- [ ] All Python tool tests pass (QA: pass; tools OK, game/tools 355 tests OK (1 skipped))
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: the test suite's time limit goes from 300 to 900 seconds.
+
+### 2026-10-21, In progress → In QA
+
+Built: the limit is now 900 s, with GUT_TIME_LIMIT as the override. Sent to QA.
+
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- `run_tests.sh` and `run_tests.ps1` now default to 900 seconds; `GUT_TIME_LIMIT` still overrides. Their comments give today's run times (about 270 to 306 s when busy, about 90 s at first). `game/README.md` ("Time limit") states 900 s, the run times and the override (example now 1200).
+- Nothing under `tools/goal_agent/` or `.claude/agents/` passes a 300-second GUT limit (searched), so nothing else changed. No test changed.
+- Full GUT run with the default limit: passed, 393 s wall-clock (the computer was busy; it would have failed at 300).
+- `python -m unittest discover -s tools -p "test_*.py"`: OK. `... -s game/tools ...`: 355 tests, OK (1 skipped).
+- Nothing to picture (no visuals). No command was refused.
+- 2026-10-21, in-qa → done: QA passed all 4; tooling, merged straight after QA

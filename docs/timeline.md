@@ -1555,3 +1555,8 @@ Entry format:
 - Decision or change: the kaiju is drawn from the board's approved PixelLab sample in 8 directions (5 drawn, 3 mirrored) with 6 walk frames each, 7 units tall, replacing T-045's placeholder without changing its behaviour. The set cost 32 generations against the 6 to 12 planned (the 224-pixel canvas costs more per call); agents now stop and report as soon as a call costs more than planned. Weak points reported: a subtle walk, small differences between directions, a front three-quarter view. The board: "looks good".
 - Documents touched: `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-069 (done)
+
+## 2026-10-21: T-214 done: the GUT run's time limit is 900 seconds
+- Decision or change: the full GUT suite now takes about 270 to 390 seconds on a busy computer, past the old 300-second limit (T-071's QA failed only on that). `run_tests.sh` and `run_tests.ps1` default to 900 seconds; `GUT_TIME_LIMIT` still overrides it. Tooling, merged straight after QA.
+- Documents touched: `game/README.md`
+- Tasks: T-214 (done)

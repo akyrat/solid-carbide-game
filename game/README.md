@@ -44,7 +44,7 @@ To run only some tests, add GUT options after the command. For example, `-gselec
 
 ### Time limit (T-137)
 
-A run that goes past **300 seconds** is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 300 seconds and was stopped` and exits with code **124**. A normal full run takes about 90 to 110 seconds (two at once, a little more), so 300 is comfortably above it. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=600 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.
+A run that goes past **900 seconds** is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 900 seconds and was stopped` and exits with code **124**. A full run takes about 90 to 110 seconds on a quiet computer and 270 to 306 seconds when it is busy with several agents (2026-10-21), so 900 is comfortably above it. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=1200 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.
 
 ### Per-run test files (T-137)
 
