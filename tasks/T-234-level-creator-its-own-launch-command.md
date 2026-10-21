@@ -37,13 +37,13 @@ The board's review: Open the level creator with the README's command and look at
 
 ## Acceptance criteria
 
-- [ ] The command in game/README.md, 'Level creator', opens the creator scene; the scene runs headless (tools/run_scene_headless.py) with no errors in the log. (QA: pass / fail)
-- [ ] grep finds no reference to level_creator in game/scripts/menu/, game/scripts/game/ or game/scenes/menu/; project.godot's main scene is unchanged; any export_presets.cfg excludes the creator's folders, and the README says they must be excluded. (QA: pass / fail)
-- [ ] A unit test with no levels: the list screen shows only the new-level button. A unit test with two saved levels (in a temporary folder): both are listed by name, each with a play and an edit action. (QA: pass / fail)
-- [ ] A unit test: pressing new level opens the editor scene with an empty map; pressing edit on a level opens the editor with that level's data loaded. (QA: pass / fail)
-- [ ] Every label on the screen is from game/data/level/creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings passes. (QA: pass / fail)
-- [ ] Screenshots of the empty list and of a list with levels are in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] The command in game/README.md, 'Level creator', opens the creator scene; the scene runs headless (tools/run_scene_headless.py) with no errors in the log. (QA: pass)
+- [ ] grep finds no reference to level_creator in game/scripts/menu/, game/scripts/game/ or game/scenes/menu/; project.godot's main scene is unchanged; any export_presets.cfg excludes the creator's folders, and the README says they must be excluded. (QA: pass)
+- [ ] A unit test with no levels: the list screen shows only the new-level button. A unit test with two saved levels (in a temporary folder): both are listed by name, each with a play and an edit action. (QA: pass)
+- [ ] A unit test: pressing new level opens the editor scene with an empty map; pressing edit on a level opens the editor with that level's data loaded. (QA: pass)
+- [ ] Every label on the screen is from game/data/level/creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings passes. (QA: pass)
+- [ ] Screenshots of the empty list and of a list with levels are in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
