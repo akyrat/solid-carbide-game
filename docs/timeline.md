@@ -1660,3 +1660,8 @@ Entry format:
 - Decision or change: the board wants to make levels by hand in a separate level creator app: browse the levels made, play one as a full run, or create a new one by placing the game's existing assets from a side panel, rotating them between the views the art has, at heights 3 and 6, with snapping to the tile grid and to neighbours (Level design, Decisions). Custom levels play only from the creator. Built by the goal runner (G-005) with an art cap of 0; the board plays the result once at the end. The board also approved T-227's falling sample.
 - Documents touched: `docs/level-design.md`
 - Tasks: G-005, T-227
+
+## 2026-10-21: An airtime trick and a live airtime counter
+- Decision or change: every time the car is airborne, its airtime is a trick that pays on landing, scaled by seconds and hundredths in the air (defaults proposed by the agent); a small HUD label near the combo popups counts the airtime up (0.00) next to a jump icon while the car is in the air. Text first (T-241), then the trick (T-242); the counter (T-243) has no words.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
+- Tasks: T-241, T-242, T-243 (open)
