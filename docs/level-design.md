@@ -224,6 +224,15 @@ The creator's text lives in `game/data/level/creator_texts.json` (the source; ea
 - **Overlap message:** "Can't place here: it overlaps another piece."
 - **Controls hint:** "Mouse: place. R: rotate. M: mirror. Del: delete." (the keys R, M and Del are the text's proposal; the creator's scripts must use the same keys).
 
+Added for the piece set (task T-250; same file, T-233's keys unchanged; the pieces' tickets are T-251 to T-254):
+
+- **Sizing a rooftop:** top bar hint "Drag to set the size."; readout "Size: {w} x {d}" (`size_hint`, `size_readout`).
+- **Ramp directions:** "Climbs north", "Climbs east", "Climbs south", "Climbs west" on the top bar for a picked ramp; height label "Ramp 0 to 6" (`ramp_height_0_6`, used only if the creator adds it).
+- **Road pieces (Roads):** "Corner", "T-junction", "Crossroads", "Dead end".
+- **Props (new category "Props"):** "Concrete barrier", "Traffic cones", "Crate stack", "AC unit", "Water tank", "Roof vent", "Street lamp", "Rooftop sign".
+- **Buildings:** "Small building", "Long building".
+- **Controls hint with sizing:** "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. Del: delete." (`controls_hint_sizing`; the old `controls_hint` stays; the creator should show the new one, same keys).
+
 ### Elevation test scene
 
 The ground side of the elevation test scene (task T-182; Decisions, "Raised areas and ramps"). Every number below is a proposal for the board's playtest. Units are the flat world's (x east, y south).

@@ -1,7 +1,7 @@
 ---
 id: T-250
 title: "Text: the level creator's new pieces and controls"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -51,6 +51,16 @@ Pieces, each with where it appears:
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's go: labels for the creator's new pieces and controls.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Narrative Theme Agent, 2026-10-22: wrote 23 new keys at the end of `game/data/level/creator_texts.json` (T-233's 25 keys are unchanged; the file has 48 entries): size_hint, size_readout, ramp_dir_north/east/south/west, ramp_height_0_6, road_corner, road_t_junction, road_crossroads, road_dead_end, category_props, prop_barrier, prop_cones, prop_crates, prop_ac_unit, prop_water_tank, prop_roof_vent, prop_street_lamp, prop_roof_sign, building_small, building_long, controls_hint_sizing. Each has a text and a where note. Buttons and panel labels fit 16 characters (category "Props" is 5); the two hint lines (size_hint, controls_hint_sizing) are lines, not buttons. controls_hint_sizing is a new key because the old controls_hint must stay unchanged; the creator should show the new one. Listed in `docs/level-design.md`, Content, "Level creator text".
+
+Tests: `python -m unittest discover -s game/tools -p "test_*.py"` 416 tests OK (1 skipped); `bash game/tools/run_tests.sh -gselect=test_creator_texts_only` 4 of 4 passing (it scans scripts for hard-coded labels; no test checks the JSON's keys).
+
+Refusal note: my first attempt, one inline `python -` heredoc to write both files, was refused by the status-script guard (it saw `**` as task files). A second attempt to append these notes with a shell variable and heredoc was refused too. I did not work around either; the Project Lead told me to use Edit and Write for the non-task files, and I used Edit for these notes.
