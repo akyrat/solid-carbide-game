@@ -1,7 +1,7 @@
 ---
 id: T-244
 title: "Text: the combo broken popup"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -44,6 +44,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Text: **COMBO BROKEN!** (HUD and menus, Content, "Combo broken popup", T-244). One short line in the trick popups' voice; reads as a loss. Proposal: no amount lost shown, text only. Matches the Visual/Extended narrative tone (stunt-stream chaos); no story conflict found.
