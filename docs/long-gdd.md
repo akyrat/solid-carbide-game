@@ -190,7 +190,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **No "bigger when high" option.** The board tried drawing the car bigger with height and didn't like it: the option is removed, and the car is always drawn at its normal size.
   - **A round shadow.** The shadow is a circle right under the centre of the car, in the same colour and feel as now, instead of the rectangle, so the player sees where the car is on the ground when it is in the air.
 - **No sprite shadow in the air** (board, 2026-10-20, from the elevation sample map's screenshots): the car's sprite has a drop shadow drawn into most of its 16 frames, which travels up with the car when it is in the air, beside the round shadow. In the air the car is drawn without it, so only the round shadow shows; on the ground it keeps the sprite's own shadow, as now. The shadowless frames are made by a free script, not PixelLab (Visual style, Decisions, "The car without its shadow").
-- **No drift smoke in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke, even if the drift keys are held; the smoke comes back when it lands. (T-206)
+- **No drift smoke or tyre marks in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke and no tyre marks, even if the drift keys are held; both come back when it lands (tyre marks: board, 2026-10-21, same day). (T-206)
 
 ### Content
 
@@ -999,7 +999,7 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 - **Hint:** "Press Escape to get back to the stream." (texts from T-047).
 - **Zoom slider:** "Camera zoom level" (T-093), a slider from 6 to 20 (default 14.4) with its value as a number at the right end. Moving it zooms the view behind the strip at once while the game stays paused, and the value is saved.
 - **SFX volume slider** (T-077): "SFX volume" (the board's name), a slider from 0 to 100 with its value as a number at the right end, on its own row directly under the zoom slider, laid out exactly like it (label, slider of the same width, value at the right end). It starts at 0, which is silent, so sound effects are silent until the player turns it up. Moving it changes the volume of every sound effect at once (the sounds' own volumes are in `game/data/sfx.json`; at 100 they play at those volumes, at 0 nothing is heard), and the value is saved between sessions like the zoom.
-- **Music volume slider** (T-208): "Music volume", one short plain settings line at the left of the slider, the sibling of "SFX volume" and "Camera zoom level". T-210 uses this text word for word. The slider sits on its own row directly under the SFX volume slider, laid out like it.
+- **Music volume slider** (T-208): "Music volume", one short plain settings line at the left of the slider, the sibling of "SFX volume" and "Camera zoom level". T-210 uses this text word for word. The slider sits on its own row directly under the SFX volume slider, laid out like it. Built in T-210: it starts from the saved music setting (T-209, starting value 40, a proposal for the playtest), changes the music at once while the music keeps playing under the pause, and is saved between sessions. The strip is one row taller (it ends about 290 pixels from the top at 1152x648, about 325 with the dynamic-camera buttons), still below the HUD timer.
 - **Camera checkboxes** (T-124): "Camera smoothing" and "Dynamic camera" side by side, the board's own names (what they do: Drifting, Content, "Camera options"). Each starts from the saved setting, applies at once when switched and is saved. Placeholder look: a light square frame on a dark fill, with a light square inside when checked, so both states show over any ground.
 - **Tuning buttons** (T-124), shown only while "Dynamic camera" is on: "Set min zoom" and "Set max zoom", each followed by the stored value as a number (for example 11.0 and 17.0, the proposed starting values). Pressing one stores the zoom slider's current value as the dynamic camera's zoom at a standstill (min) or at top forward speed (max), saves it, and updates the number. The board can move the slider, press a button and resume to try it. They are a temporary tuning tool for the board, plain labels rather than game text, and are removed once the board has settled the values. Placeholder look: a light frame round a dark fill.
 
@@ -1021,11 +1021,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `daf6a4f305b11de3cac6ba88ee730a491b2783ee6392634a5a7e7b1c53bde53f` |
-| `drifting.md` | `b94936134b6af3532d68407d9cabe6aa23ea491afc112da4cb4cf7b2ea0a62b3` |
+| `drifting.md` | `1b7332e1fb56ca212282ecb801bff8503815ed2b8cf951133ddc11e98c323f18` |
 | `level-design.md` | `dbe68dd8f68548d187f8cefdd37ee5fee5e0f3b40154a79414e79efd71e8e2d9` |
 | `enemies.md` | `ef80bb0ad175f42befc6adddf30af472d4650dca1facb3572453850e0db74a07` |
 | `weapons.md` | `7ed2079e2feaa5a2170c084f7c879c7af47c0bcd537d4dd6667dbe7902ef8f3a` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `209f41b6a804a1db59f5346dc9910384d0d973e820b9fa574f7c0528e8ed0684` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
-| `hud-and-menus.md` | `aee8fa3b31cc350026557ff2a8f0796368d1c21fd9ba9ffa12d9cb35448ed08b` |
+| `hud-and-menus.md` | `7b4d32f2e40ee92ccb792f1553165c8d10f59041ecd6d8cadc0bacb6a397921a` |

@@ -1525,3 +1525,8 @@ Entry format:
 - Decision or change: the board's two tracks ("DEMO BEAT 1" and "DEMO BEAT 2 (ANDY GAME)") play from the main menu on, alternating and looping, never restarting between screens or on pause, on their own "Music" bus with a saved 0 to 100 setting (starting at 40, the agent's proposal). The board played it: "plays just fine". The music volume slider (T-210) starts now.
 - Documents touched: `docs/game-loop-architecture.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-209 (done), T-210 (in progress)
+
+## 2026-10-21: T-210 done: the music volume slider
+- Decision or change: the pause screen has a "Music volume" slider (T-208's label) under "SFX volume", 0 to 100, changing only the music at once and saved between sessions. The pause strip grew by one row; QA notes it now has no room for another. The board played it: "LGTM".
+- Documents touched: `docs/hud-and-menus.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-210 (done)

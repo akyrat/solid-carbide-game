@@ -146,6 +146,8 @@ python game/tools/freesound.py download --query "car engine idle" --count 3 --ou
 
 **SFX volume (T-077, board 2026-10-16).** Every sound plays on the audio bus "SFX" (`GameSettings.ensure_sfx_bus()`), whose volume is the pause screen's "SFX volume" slider, 0 to 100, **default 0 = silent**. At 100 the sounds play at `data/sfx.json`'s volumes; in between the bus gain is the slider divided by 100. It is saved in `user://settings.cfg`, section `audio`, key `sfx_volume` (`GameSettings.load_sfx_volume` / `save_sfx_volume` / `apply_sfx_volume`) and applied when a run starts and on every change. **To hear anything in a playtest, turn the slider up (Escape).**
 
+**Music volume slider (T-210).** The pause screen has a "Music volume" slider (`MusicRow`, `music_slider`, `music_label` in `scripts/ui/pause_screen.gd`) on its own row directly under the SFX row, laid out like it (label of `LABEL_WIDTH`, slider of the same width, value as a number at the right end), 0 to 100. It starts from `GameSettings.load_music_volume()` (default 40), and on every move saves with `save_music_volume` and applies at once with `apply_music_volume` to the "Music" bus only, never the SFX bus; the music keeps playing under the pause. The strip grew by one row, so its test limits were raised (the strip ends below half the screen, and below y 340 with the dynamic-camera buttons). Tests: `tests/unit/test_music_volume_slider.gd`. Screenshot: `art-archive/T-210/screenshots/pause_music_slider.png`.
+
 Tests: `tests/unit/run/test_run_sounds.gd`, `tests/unit/test_sfx_volume.gd`.
 
 **Credits (CC BY).** Every sound in the game is CC0 except one:
