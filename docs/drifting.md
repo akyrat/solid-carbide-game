@@ -161,6 +161,19 @@ The air 180 and air 360 (Decisions, "Aerial tricks"), built in `game/scripts/dri
   - Kept from before each spin paid once: [air_360_run.gif](../art-archive/T-219/screenshots/air_360_run.gif), with the faster air turn, in a run on the elevation map. The car drives off a height-6 rooftop's side with W and turns with A for the whole fall (50 steps, about 470 degrees). FULL 360! +0.25 pops mid-air, and the car lands to AIR 360! +0.5 (with LONG DRIFT! +0.05). Popup: [air_360_run_popup.png](../art-archive/T-219/screenshots/air_360_run_popup.png).
   - From the first build, at the ground turn rate (kept, not re-recorded): [air_180_run.gif](../art-archive/T-219/screenshots/air_180_run.gif), the same drive turning about 188 degrees in the air and landing to AIR 180! +0.25. Also [air_360_staged_drop.gif](../art-archive/T-219/screenshots/air_360_staged_drop.gif), a staged drop: the car is let go 22 units above the gravel square, zoomed out, and turns a full circle in 95 steps to AIR 360! +0.5. Popups: [air_180_popup.png](../art-archive/T-219/screenshots/air_180_popup.png), [air_360_popup.png](../art-archive/T-219/screenshots/air_360_popup.png).
 
+### Airtime trick (task T-242)
+
+The board's airtime trick (Decisions, "Airtime trick", 2026-10-21): every airtime is a trick of its own, paid on landing by how long the car was in the air. Built in `game/scripts/driving/trick_detector.gd` (how: `game/README.md`, "Airtime trick"); it reads the car's airborne state like the aerial tricks and changes no driving. Its popup is "HANG TIME!" with its amount (HUD and menus, Content, T-241). The live counter while airborne is T-243's. Every number below is a proposal for the board's playtest, in `game/data/combo.json`, `airtime`.
+
+- **Seconds** are the sum of the physics steps that end in the air (0.02 s each), so a rooftop fall of 49 steps is 0.98 s.
+- **Amount** = airtime (to hundredths) times `per_second`, nothing under `min_seconds`, held at `max_add`, rounded to hundredths. It adds to the combo like any trick (held at the combo's cap; at the cap only the name shows).
+- **Proposed numbers and why:**
+  - `min_seconds` **0.3**: a curb or a small hop stays under it, so only a real jump pays and the popup never fires for nothing. Ramp tops and rooftop falls (about 0.7 s to 1.0 s) are well over it.
+  - `per_second` **0.2**: the rooftop fall (0.98 s) pays **0.20** and a 0.7 s ramp hop 0.14. That is less than an AIR 180! (0.25), since an airtime alone asks for no steering.
+  - `max_add` **0.6**: reached at 3 s, a little above an AIR 360! (0.5), so a very long fall is worth about a spin and a bit, never much more than the hardest aerial trick. Today's highest drop is 1.0 s, so the cap is not reached on today's map.
+- **Next to the aerial tricks:** it pays on the same landing step, after AIR 180! or AIR 360!, as its own popup. A spin does not replace it: a 360 off a height-6 rooftop pays AIR 360! +0.5 and HANG TIME! +0.2.
+- **Recording:** [airtime_run.gif](../art-archive/T-242/screenshots/airtime_run.gif), a run on the elevation map: the car drives straight off a height-6 rooftop's side, flies 0.98 s over its shadow and lands to HANG TIME! +0.2 (combo x1.2). Popup: [airtime_popup.png](../art-archive/T-242/screenshots/airtime_popup.png).
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.

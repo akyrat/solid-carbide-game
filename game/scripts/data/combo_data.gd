@@ -37,6 +37,17 @@ func trick_add(trick: String) -> float:
 	return float(tricks[trick])
 
 
+## What the airtime trick adds for an airtime of `seconds` (task T-242; combo.json,
+## "airtime"): nothing under min_seconds, else per_second times the seconds
+## (taken to hundredths), held at max_add. Rounded to hundredths, as the popup shows it.
+func airtime_add(seconds: float) -> float:
+	var a: Dictionary = _data["airtime"]
+	var s := snappedf(seconds, 0.01)
+	if s < float(a["min_seconds"]) - 0.000001:
+		return 0.0
+	return snappedf(minf(s * float(a["per_second"]), float(a["max_add"])), 0.01)
+
+
 func collision_cut() -> float:
 	return float(_data["collision_cut"])
 

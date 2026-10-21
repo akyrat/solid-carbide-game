@@ -318,6 +318,26 @@ func add_trick(trick_id: String) -> void:
 		combo_changed.emit(combo)
 
 
+## The car landed after `seconds` in the air (task T-242, the airtime trick;
+## the run scene connects the car's `airtime_trick`). The combo goes up by
+## combo.json's airtime amount for those seconds, like add_trick, and the
+## popup gets combo_trick with the id "airtime". Nothing happens when the
+## airtime is too short to pay.
+func add_airtime_trick(seconds: float) -> void:
+	if not running:
+		return
+	var amount := _combo_data.airtime_add(seconds)
+	if amount <= 0.0:
+		return
+	var before := combo
+	combo = minf(combo + amount, _combo_data.max_multiplier())
+	combo_idle = 0.0
+	likes_drain_idle = 0.0
+	combo_trick.emit(TrickDetector.TRICK_AIRTIME, combo - before, combo)
+	if combo != before:
+		combo_changed.emit(combo)
+
+
 ## The car collided with something (the run scene connects the car's
 ## `hit_obstacle`; damage_car() calls it too): the combo is cut as combo.json
 ## says (80% of the part above the start value). Ignored when the run is not

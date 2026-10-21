@@ -34,7 +34,15 @@ extends RefCounted
 ##   two make one air 360, an odd one left over makes one air 180. So 180 gives
 ##   an air 180, 360 an air 360 (not its 180 too), 540 an air 360 and an air
 ##   180, 720 two air 360s. Only heading turned while in the air counts.
-##   Proposals for the board's playtest (Drifting, Content, "Aerial tricks").
+##   Proposals for the board's playtest (Drifting, Decisions, "Aerial tricks").
+##
+## The airtime trick (task T-242; Drifting, Decisions, "Airtime trick"): every
+## airtime is a trick of its own. On the landing step, after the aerial
+## tricks, the detector counts it ("airtime" in `counts`, and last_trick) and
+## emits `airtime_trick` with the seconds in the air (the sum of the `dt` of
+## the steps that ended in the air). It is not one of TRICK_IDS: its combo
+## amount depends on the seconds (ComboData.airtime_add), so it has its own
+## signal. Callers that give no `dt` (older tests) get no airtime.
 
 const TRICK_EXTENDED_DRIFT := "extended_drift"
 const TRICK_THREE_SIXTY := "three_sixty"
@@ -43,6 +51,8 @@ const TRICK_AIR_ONE_EIGHTY := "air_one_eighty"
 const TRICK_AIR_THREE_SIXTY := "air_three_sixty"
 const TRICK_IDS := [TRICK_EXTENDED_DRIFT, TRICK_THREE_SIXTY, TRICK_ALTERNATE_DRIFT,
 	TRICK_AIR_ONE_EIGHTY, TRICK_AIR_THREE_SIXTY]
+## The airtime trick's id (task T-242), in `counts`, last_trick and the popups.
+const TRICK_AIRTIME := "airtime"
 ## The two aerial tricks (task T-219).
 const AIR_TRICK_IDS := [TRICK_AIR_ONE_EIGHTY, TRICK_AIR_THREE_SIXTY]
 
@@ -57,6 +67,9 @@ const EPSILON := 1e-6
 
 ## Emitted once per trick, with one of TRICK_IDS.
 signal trick(trick_id: String)
+## Emitted once per landing, with the seconds the car was in the air (task T-242).
+## Whether it pays is the combo's decision (combo.json, airtime).
+signal airtime_trick(seconds: float)
 
 ## The last trick found ("" before the first), and seconds of observed steps
 ## since then. For the drift prototype's readout.
@@ -89,6 +102,8 @@ var _gap_steer_kept := true
 var _air := false
 var _air_turn := 0.0
 var _air_best := 0.0
+# Seconds of the current airtime so far (task T-242).
+var _air_seconds := 0.0
 
 
 func _init() -> void:
@@ -102,6 +117,7 @@ func reset() -> void:
 	counts = {}
 	for id in TRICK_IDS:
 		counts[id] = 0
+	counts[TRICK_AIRTIME] = 0
 	_drift_time = 0.0
 	_turn = 0.0
 	_seg_dir = 0
@@ -115,6 +131,7 @@ func reset() -> void:
 	_air = false
 	_air_turn = 0.0
 	_air_best = 0.0
+	_air_seconds = 0.0
 
 
 ## One physics step. model is the CarModel after its update_velocity() for this
@@ -179,8 +196,9 @@ func observe(model, w: bool, s: bool, steer: float, rotation_before: float, airb
 ## after the car's height step, with `airborne` (the car is in the air at the
 ## end of the step) and `turned`, the heading's change on that step (radians).
 ## Turning on a step that ends in the air counts; the tricks are paid out on
-## the step the car lands (see the top of this file).
-func observe_air(airborne: bool, turned: float) -> void:
+## the step the car lands (see the top of this file). `dt` is the step's
+## length in seconds, for the airtime trick (task T-242).
+func observe_air(airborne: bool, turned: float, dt := 0.0) -> void:
 	if not airborne:
 		if _air:
 			_land()
@@ -189,6 +207,8 @@ func observe_air(airborne: bool, turned: float) -> void:
 		_air = true
 		_air_turn = 0.0
 		_air_best = 0.0
+		_air_seconds = 0.0
+	_air_seconds += dt
 	if turned != 0.0:
 		if _air_turn != 0.0 and signf(turned) != signf(_air_turn):
 			_air_turn = 0.0
@@ -203,13 +223,20 @@ static func half_turns(radians: float) -> int:
 
 func _land() -> void:
 	var halves := half_turns(_air_best)
+	var seconds := _air_seconds
 	_air = false
+	_air_seconds = 0.0
 	_air_turn = 0.0
 	_air_best = 0.0
 	for i in halves / 2:
 		_emit(TRICK_AIR_THREE_SIXTY)
 	if halves % 2 == 1:
 		_emit(TRICK_AIR_ONE_EIGHTY)
+	if seconds > 0.0:
+		last_trick = TRICK_AIRTIME
+		seconds_since_last = 0.0
+		counts[TRICK_AIRTIME] = int(counts.get(TRICK_AIRTIME, 0)) + 1
+		airtime_trick.emit(seconds)
 
 
 func _end_segment() -> void:
