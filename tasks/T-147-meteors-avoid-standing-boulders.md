@@ -4,7 +4,7 @@ title: Meteors never land on a boulder left by an earlier meteor that is still s
 status: open
 from: project-lead
 to: enemy-behavior
-lead: Art
+lead: Coursework
 epic: enemies
 milestone: mvp
 user_facing_text: no
