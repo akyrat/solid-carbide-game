@@ -1,7 +1,7 @@
 ---
 id: T-236
 title: Level creator: rotate between the art's views, mirror, and rooftops and ramps at heights 3 and 6
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
