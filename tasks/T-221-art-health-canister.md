@@ -1,7 +1,7 @@
 ---
 id: T-221
 title: "Art: the health drop, a red gas canister with a white cross (PixelLab)"
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [art-archive/README.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/enemies.md, tasks/T-220-health-drops.md, art-archive/README.md, game/README.md]
 files_expected_to_change: [game/art/, game/scripts/, game/tests/unit/, art-archive/T-221/, art-archive/README.md, game/README.md, game/art/pixellab-generation-log.jsonl]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,10 @@ Board chose (a): the sample with three free script fixes, then into the game.
 
 Fixed by script and swapped in: clean plus, red away from Redgull's, coin-sized. No extra generations. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4. Ready for the board: C:\solid-carbide-worktrees\T-221\game\project.godot; the health canisters now use the final art.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -101,3 +105,4 @@ Written by the agent when it finishes.
 **Honest judgment:** reads well at a distance; up close it is a red blob with a plus, little canister detail left. Documents updated: `game/README.md`, `art-archive/README.md`. Refused commands: none.
 - 2026-10-21, in-progress → in-qa: Canister sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 4 acceptance criteria not marked
+- 2026-10-21, needs-playtest → done: LGTM
