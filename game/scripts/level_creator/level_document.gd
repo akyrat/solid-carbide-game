@@ -7,17 +7,31 @@ extends RefCounted
 ## itself (the same Dictionary the editor holds).
 ##
 ## Pieces go at the clicked tile here: the piece's top-left corner on the corner of the 2 x 2 unit
-## cell under the cursor. Rotate, mirror, heights and snapping are later tickets (T-236, T-237).
+## cell under the cursor. Snapping is a later ticket (T-237).
+##
+## Rotate and mirror (T-236; Level design, Decisions, "Level creator"): a piece is placed in one of
+## the views its catalogue entry lists ("views") and one of its mirrors ("mirrors"), and only
+## those, since the art exists only in the angles that were generated. The texture of that view
+## and mirror (texture_of) decides what the piece writes: a building's look, a boulder's variant,
+## a rooftop's or a ramp's art, and a ramp's side.
 ##
 ## What a placed piece writes (catalogue ids from data/level/creator_assets.json):
 ## - ground, road: the cell's tile in data.ground (tiles = the catalogue ids used, cells = an index
 ##   into tiles per cell, rows of cols), and ground_rows/legend kept in step (G ground, R road,
 ##   B building, one letter per unit).
 ## - building: {x, y, w, h, asset, look} in buildings (the catalogue footprint; mvp_map.gd draws
-##   the one tower named, building_towers.gd single_of).
-## - boulder: its own pattern copy {id, boulders: [{x, y, diameter, variant}]}.
-## - rooftop: {id, x, y, w, h, height} in platforms. ramp: {id, platform, side, x, y, w, h,
-##   bottom_height, top_height} in ramps (platform "" until the heights ticket, T-236).
+##   the one tower named, building_towers.gd single_of; look = the view's texture variant, so a
+##   short building's mirror is its look 1).
+## - boulder: its own pattern copy {id, boulders: [{x, y, diameter, variant}]} (the mirror's
+##   variant, "a_mirror").
+## - rooftop: {id, x, y, w, h, height, view, art[, on]} in platforms: art = the view's art piece
+##   (art/elevation_sample/<art>.png); "on" = the lower rooftop holding its whole footprint (a 6
+##   on a 3), as in the elevation sample map's height data.
+## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art} in ramps: side =
+##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
+##   height whose side its top end touches ("" while there is none).
+## The links ("on", "platform") are filled in again after every place and delete (_relink), so a
+## rooftop placed after its ramp, or a 3 deleted under a 6, keep the data in step.
 
 const CATALOGUE_PATH := "res://data/level/creator_assets.json"
 ## The game's own ground tiles (T-103): the atlas, its tile size and columns.
@@ -58,6 +72,48 @@ static func entry(id: String) -> Dictionary:
 		if str(e.id) == id:
 			return e
 	return {}
+
+
+## The views the asset's art exists in (its catalogue entry's "views"), in the catalogue's order.
+static func views_of(id: String) -> Array:
+	return entry(id).get("views", []).duplicate()
+
+
+## The mirrors the asset's art exists in (its catalogue entry's "mirrors": false, true).
+static func mirrors_of(id: String) -> Array:
+	return entry(id).get("mirrors", []).duplicate()
+
+
+## The asset's view, or its first view when it has no such view.
+static func valid_view(id: String, view: String) -> String:
+	var vs := views_of(id)
+	if vs.is_empty():
+		return ""
+	return view if view in vs else str(vs[0])
+
+
+## The asset's mirror, or its first mirror when it has no such mirror.
+static func valid_mirror(id: String, mirror: bool) -> bool:
+	var ms := mirrors_of(id)
+	if ms.is_empty():
+		return false
+	return mirror if mirror in ms else bool(ms[0])
+
+
+## The asset's texture (its catalogue record: view, mirror, variant, texture[, region, side]) for a
+## view and mirror: the first that matches both, else the first of that view, else its first.
+static func texture_of(id: String, view: String, mirror: bool) -> Dictionary:
+	var e := entry(id)
+	var ts: Array = e.get("textures", [])
+	if ts.is_empty():
+		return {}
+	for t in ts:
+		if str(t.get("view", "")) == view and bool(t.get("mirror", false)) == mirror:
+			return t
+	for t in ts:
+		if str(t.get("view", "")) == view:
+			return t
+	return ts[0]
 
 
 static func game_ground() -> Dictionary:
@@ -225,9 +281,10 @@ static func _kind_of_tile(id: String) -> String:
 
 # ---- Placing and deleting ----------------------------------------------------------------------
 
-## Places the catalogue asset `asset_id` with its top-left corner on the cell under `units`.
+## Places the catalogue asset `asset_id` with its top-left corner on the cell under `units`, in
+## `view` and `mirror` (one its entry lists; another, or "", gives its first view and mirror).
 ## Returns the placed piece (see piece_at), or {} for an unknown asset or a point outside the map.
-func place(asset_id: String, units: Vector2) -> Dictionary:
+func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false) -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -235,6 +292,9 @@ func place(asset_id: String, units: Vector2) -> Dictionary:
 	var kind := str(e.kind)
 	var corner := cell_corner(c)
 	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	view = valid_view(asset_id, view)
+	mirror = valid_mirror(asset_id, mirror)
+	var tex := texture_of(asset_id, view, mirror)
 	match kind:
 		"ground", "road":
 			cells[c.y][c.x] = asset_id
@@ -242,28 +302,104 @@ func place(asset_id: String, units: Vector2) -> Dictionary:
 			refresh_ground_rows()
 			return {"kind": kind, "cell": c}
 		"building":
-			var b := {"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y, "asset": asset_id, "look": 0}
+			var look := int(str(tex.get("variant", "0"))) if str(tex.get("variant", "0")).is_valid_int() else 0
+			var b := {"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y, "asset": asset_id, "look": look}
 			_list("buildings").append(b)
 			refresh_ground_rows()
 			return {"kind": kind, "item": b}
 		"boulder":
 			var boulder := {"x": corner.x + foot.x / 2.0, "y": corner.y + foot.y / 2.0, "diameter": foot.x,
-				"variant": str(e.textures[0].variant)}
+				"variant": str(tex.variant)}
 			var copy := {"id": _next_id("pattern_copies", "boulder-"), "boulders": [boulder]}
 			_list("pattern_copies").append(copy)
 			return {"kind": kind, "item": boulder, "copy": copy}
 		"rooftop":
 			var p := {"id": _next_id("platforms", "roof-"), "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
-				"height": int(e.height)}
+				"height": int(e.height), "view": view, "art": str(tex.variant)}
 			_list("platforms").append(p)
+			_relink()
 			return {"kind": kind, "item": p}
 		"ramp":
-			var r := {"id": _next_id("ramps", "ramp-"), "platform": "", "side": str(e.textures[0].get("side", "east")),
+			var r := {"id": _next_id("ramps", "ramp-"), "platform": "", "side": str(tex.get("side", "east")),
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
-				"bottom_height": int(e.heights[0]), "top_height": int(e.heights[1])}
+				"bottom_height": int(e.heights[0]), "top_height": int(e.heights[1]),
+				"view": view, "art": str(tex.variant)}
 			_list("ramps").append(r)
+			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+# ---- Heights: a 6 on a 3, a ramp on the side it climbs -----------------------------------------
+
+## The highest rooftop lower than `height` that holds the whole of `r` (units), {} for none.
+func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictionary:
+	var best: Dictionary = {}
+	for p in _list("platforms"):
+		if is_same(p, except) or float(p.height) >= height:
+			continue
+		if _holds(_rect(p), r) and (best.is_empty() or float(p.height) > float(best.height)):
+			best = p
+	return best
+
+
+## The rooftop a ramp climbs to: at its top height, with the ramp's top end on its `side` and
+## within it (check_height_data.py's rule); {} for none.
+func ramp_target(ramp: Dictionary) -> Dictionary:
+	var rr := _rect(ramp)
+	for p in _list("platforms"):
+		if absf(float(p.height) - float(ramp.top_height)) > 0.001:
+			continue
+		if top_touches(str(ramp.side), rr, _rect(p)):
+			return p
+	return {}
+
+
+## True when a ramp `ramp` (units) touches area `area` along its `side` (the side of the area it
+## climbs), within that side.
+static func top_touches(side: String, ramp: Rect2, area: Rect2) -> bool:
+	const E := 0.001
+	match side:
+		"east":
+			return absf(ramp.position.x - area.end.x) <= E and ramp.position.y >= area.position.y - E and ramp.end.y <= area.end.y + E
+		"west":
+			return absf(ramp.end.x - area.position.x) <= E and ramp.position.y >= area.position.y - E and ramp.end.y <= area.end.y + E
+		"north":
+			return absf(ramp.end.y - area.position.y) <= E and ramp.position.x >= area.position.x - E and ramp.end.x <= area.end.x + E
+		"south":
+			return absf(ramp.position.y - area.end.y) <= E and ramp.position.x >= area.position.x - E and ramp.end.x <= area.end.x + E
+	return false
+
+
+static func _holds(outer: Rect2, inner: Rect2) -> bool:
+	const E := 0.001
+	return inner.position.x >= outer.position.x - E and inner.position.y >= outer.position.y - E \
+		and inner.end.x <= outer.end.x + E and inner.end.y <= outer.end.y + E
+
+
+## Fills in the links again: each rooftop's "on" (the highest lower rooftop holding it whole, none
+## on the street) and each ramp's "platform" (ramp_target). A link still right is left as it is.
+func _relink() -> void:
+	var by_id := {}
+	for p in _list("platforms"):
+		by_id[str(p.get("id", ""))] = p
+	for p in _list("platforms"):
+		var on := str(p.get("on", ""))
+		if on != "" and by_id.has(on) and float(by_id[on].height) < float(p.height) \
+				and _holds(_rect(by_id[on]), _rect(p)):
+			continue
+		var under := rooftop_under(_rect(p), float(p.height), p)
+		if under.is_empty():
+			p.erase("on")
+		else:
+			p["on"] = str(under.id)
+	for r in _list("ramps"):
+		var cur := str(r.get("platform", ""))
+		if cur != "" and by_id.has(cur) and absf(float(by_id[cur].height) - float(r.top_height)) <= 0.001 \
+				and top_touches(str(r.side), _rect(r), _rect(by_id[cur])):
+			continue
+		var t := ramp_target(r)
+		r["platform"] = str(t.id) if not t.is_empty() else ""
 
 
 func _list(key: String) -> Array:
@@ -349,9 +485,13 @@ func delete(piece: Dictionary) -> bool:
 					_erase_same(_list("pattern_copies"), copy)
 				return true
 		"rooftop":
-			return _erase_same(_list("platforms"), piece.item)
+			if _erase_same(_list("platforms"), piece.item):
+				_relink()
+				return true
 		"ramp":
-			return _erase_same(_list("ramps"), piece.item)
+			if _erase_same(_list("ramps"), piece.item):
+				_relink()
+				return true
 	return false
 
 

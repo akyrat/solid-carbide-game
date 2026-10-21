@@ -101,6 +101,13 @@ func _load_art() -> void:
 	add_child(art_sprite)
 
 
+## Moves the art by `offset_units` (flat units) from where its record puts it: the level creator's
+## pieces (T-236) reuse the sample map's art away from where it was made.
+func shift_art(offset_units: Vector2) -> void:
+	if art_sprite != null:
+		art_sprite.position += view_basis * (offset_units * PX_PER_UNIT)
+
+
 ## Every colour this drawing can use (for the colour check in the tests).
 static func colors_used() -> Array:
 	return [TOP_COLOR, TOP_GRID_COLOR, RAMP_TOP_COLOR, RAMP_GRID_COLOR, EAST_COLOR, SOUTH_COLOR, EDGE_COLOR]

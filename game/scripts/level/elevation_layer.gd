@@ -81,9 +81,40 @@ func _add_area(kind: String, block: Dictionary) -> void:
 	d.name = "%s_%s" % [kind, str(block.id).replace("-", "_")]
 	# The area's own art (task T-198): art/elevation_sample/<id>.png with its
 	# record. With the art missing the script drawing is drawn instead.
-	d.setup(kind, block, ISO_TRANSFORM, PlatformDrawingScript.SAMPLE_ART_DIR, str(block.id))
+	# A piece placed in the level creator (T-236) names the art of the view it
+	# was placed in ("art": roof-se-3, ...): that art, moved from where it
+	# stands on the elevation sample map to where this piece stands.
+	var art := str(block.get("art", ""))
+	d.setup(kind, block, ISO_TRANSFORM, PlatformDrawingScript.SAMPLE_ART_DIR, art if art != "" else str(block.id))
+	if art != "" and art != str(block.id):
+		d.shift_art(art_offset(art, block.rect))
 	add_child(d)
 	areas.append(d)
+
+
+## The elevation sample map, whose rooftops' and ramps' art the level creator reuses.
+const SAMPLE_LAYOUT_PATH := "res://data/level/elevation_sample_map.json"
+static var _sample_rects: Dictionary = {}
+
+
+## Where an art piece's rooftop or ramp stands on the elevation sample map (units), by id;
+## Rect2() when there is no such piece.
+static func sample_rect(art: String) -> Rect2:
+	if _sample_rects.is_empty():
+		var d = JSON.parse_string(FileAccess.get_file_as_string(SAMPLE_LAYOUT_PATH))
+		if d is Dictionary:
+			for key in ["platforms", "ramps"]:
+				for p in d.get(key, []):
+					_sample_rects[str(p.id)] = Rect2(float(p.x), float(p.y), float(p.w), float(p.h))
+	return _sample_rects.get(art, Rect2())
+
+
+## How far (units) the art piece `art` moves to stand on `rect`: from its place on the sample map.
+static func art_offset(art: String, rect: Rect2) -> Vector2:
+	var r := sample_rect(art)
+	if r == Rect2():
+		return Vector2.ZERO
+	return rect.position - r.position
 
 
 # ---- Depth order -------------------------------------------------------------

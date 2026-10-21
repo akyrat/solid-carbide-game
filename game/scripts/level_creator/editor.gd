@@ -12,6 +12,13 @@ extends Control
 ## cursor (right-click selects too and drops the pick); the Delete button or the Del key removes the
 ## selected piece; Esc drops the pick and the selection. Pan: drag with the middle mouse button, or
 ## the arrow keys. Zoom: the mouse wheel.
+##
+## Rotate and mirror (T-236): before placing, the Rotate button or the R key steps the picked asset
+## to the next view its catalogue entry lists, and the Mirror button or the M key to its next mirror
+## (only those: the art exists only in the angles that were generated); the preview under the
+## cursor shows the art of the current view and mirror. Heights: the side panel's rooftops at
+## height 3 and 6 and ramps 0 to 3 and 3 to 6; a 6 placed on a 3 stands on it ("on"), and a ramp
+## climbs the rooftop whose side its top touches (LevelDocument).
 
 signal back_pressed
 
@@ -37,7 +44,14 @@ var level_data: Dictionary = {}
 var level_path: String = ""
 var back_button: Button
 var delete_button: Button
+var rotate_button: Button
+var mirror_button: Button
+## The picked asset's height label (creator_texts.json; empty for a piece without a height).
+var height_label: Label
 var hint_label: Label
+## The view and mirror the picked asset is placed in (one its catalogue entry lists).
+var pick_view: String = ""
+var pick_mirror: bool = false
 ## The level's data model (level_document.gd), over level_data.
 var document: LevelDocument
 var panel: LevelCreatorAssetPanel
@@ -112,6 +126,19 @@ func _ready() -> void:
 	delete_button.text = CreatorTexts.get_text("delete_label")
 	delete_button.pressed.connect(delete_selected)
 	bar.add_child(delete_button)
+	rotate_button = Button.new()
+	rotate_button.name = "RotateButton"
+	rotate_button.text = CreatorTexts.get_text("rotate_label")
+	rotate_button.pressed.connect(rotate_pick)
+	bar.add_child(rotate_button)
+	mirror_button = Button.new()
+	mirror_button.name = "MirrorButton"
+	mirror_button.text = CreatorTexts.get_text("mirror_label")
+	mirror_button.pressed.connect(mirror_pick)
+	bar.add_child(mirror_button)
+	height_label = Label.new()
+	height_label.name = "HeightLabel"
+	bar.add_child(height_label)
 
 	map_view = SubViewportContainer.new()
 	map_view.name = "MapView"
@@ -147,6 +174,7 @@ func _ready() -> void:
 		document = LevelDocument.new(level_data)
 	_rebuild_map()
 	_apply_view()
+	_update_pose_controls()
 
 
 func _load_document() -> void:
@@ -200,9 +228,11 @@ func _refresh_after(kind: String) -> void:
 # ---- Placing, selecting and deleting ------------------------------------------------------------
 
 ## Places the catalogue asset `asset_id` at the tile under `units` (into the data and the
-## drawing). Returns the placed piece, or {}.
+## drawing), in the picked view and mirror when it is the picked asset (else its first ones).
+## Returns the placed piece, or {}.
 func place_asset(asset_id: String, units: Vector2) -> Dictionary:
-	var piece := document.place(asset_id, units)
+	var picked_now := panel != null and asset_id == panel.picked
+	var piece := document.place(asset_id, units, pick_view if picked_now else "", pick_mirror if picked_now else false)
 	if not piece.is_empty():
 		_refresh_after(str(piece.kind))
 	return piece
@@ -240,8 +270,58 @@ static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
 	return is_same(a.get("item"), b.get("item"))
 
 
-func _on_asset_picked(_id: String) -> void:
+func _on_asset_picked(id: String) -> void:
+	pick_view = LevelDocument.valid_view(id, "") if id != "" else ""
+	pick_mirror = LevelDocument.valid_mirror(id, false) if id != "" else false
+	_update_pose_controls()
 	_overlay.queue_redraw()
+
+
+# ---- Rotate and mirror --------------------------------------------------------------------------
+
+## Rotate: the picked asset's next view of those its catalogue entry lists (back to the first after
+## the last). Returns the view now.
+func rotate_pick() -> String:
+	pick_view = _next_of(LevelDocument.views_of(_picked()), pick_view, pick_view)
+	_overlay.queue_redraw()
+	return pick_view
+
+
+## Mirror: the picked asset's next mirror of those its catalogue entry lists. Returns it.
+func mirror_pick() -> bool:
+	pick_mirror = bool(_next_of(LevelDocument.mirrors_of(_picked()), pick_mirror, pick_mirror))
+	_overlay.queue_redraw()
+	return pick_mirror
+
+
+## The picked asset's catalogue texture for the current view and mirror ({} with nothing picked).
+func pick_texture() -> Dictionary:
+	if _picked() == "":
+		return {}
+	return LevelDocument.texture_of(_picked(), pick_view, pick_mirror)
+
+
+func _picked() -> String:
+	return panel.picked if panel != null else ""
+
+
+static func _next_of(list: Array, current, fallback):
+	if list.is_empty():
+		return fallback
+	var i := list.find(current)
+	return list[(i + 1) % list.size()]
+
+
+## Rotate and Mirror are on only when the picked asset has more than one view or mirror; the
+## height label names the picked rooftop's or ramp's height.
+func _update_pose_controls() -> void:
+	if rotate_button == null:
+		return
+	var id := _picked()
+	rotate_button.disabled = LevelDocument.views_of(id).size() < 2
+	mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
+	var key: String = LevelCreatorAssetPanel.LABEL_KEYS.get(id, "")
+	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
 
 
 # ---- Camera and input ---------------------------------------------------------------------------
@@ -328,6 +408,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	match k.keycode:
 		KEY_DELETE:
 			delete_selected()
+		KEY_R:
+			rotate_pick()
+		KEY_M:
+			mirror_pick()
 		KEY_ESCAPE:
 			panel.pick("")
 			selected = {}
@@ -345,8 +429,48 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
-## Draws, over the map: the picked asset's footprint at the cell under the mouse, and the
-## selected piece's outline (both on the ground, in the isometric view).
+## The preview's alpha (a proposal): the art of the picked view, see-through over the map.
+const PREVIEW_ALPHA := 0.65
+const ElevationDrawingScript := preload("res://scripts/level/elevation_platform_drawing.gd")
+
+
+## The preview of the picked asset in its current view and mirror with its top-left corner at
+## `corner` (units): {texture, rect} in map pixels, {} with nothing picked. A rooftop's or ramp's
+## art goes exactly where it is drawn once placed (its record, moved from the sample map); other
+## art is fitted over its footprint, its bottom on the footprint's front corner.
+func preview_of(corner: Vector2) -> Dictionary:
+	var id := _picked()
+	var e := LevelDocument.entry(id)
+	var t := pick_texture()
+	if e.is_empty() or t.is_empty():
+		return {}
+	if str(e.kind) in ["rooftop", "ramp"]:
+		var art := str(t.variant)
+		var record_path: String = ElevationDrawingScript.SAMPLE_ART_DIR + art + ".json"
+		var info = JSON.parse_string(FileAccess.get_file_as_string(record_path)) if FileAccess.file_exists(record_path) else null
+		var tex := load(str(t.texture)) as Texture2D
+		if tex != null and info is Dictionary and info.has("top_left_art_px"):
+			var s: float = ElevationDrawingScript.ART_SCALE
+			var shift: Vector2 = ElevationLayerScript.art_offset(art, Rect2(corner, Vector2.ONE))
+			var pos := Vector2(info.top_left_art_px[0], info.top_left_art_px[1]) * s + ISO_TRANSFORM * (shift * PX_PER_UNIT)
+			return {"texture": tex, "rect": Rect2(pos, tex.get_size() * s)}
+	var icon := LevelCreatorAssetPanel.icon_of({"textures": [t]})
+	if icon == null:
+		return {}
+	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	var pts: Array = []
+	for p in [corner, corner + Vector2(foot.x, 0), corner + foot, corner + Vector2(0, foot.y)]:
+		pts.append(ISO_TRANSFORM * (p * PX_PER_UNIT))
+	var min_x: float = pts.map(func(p): return p.x).min()
+	var max_x: float = pts.map(func(p): return p.x).max()
+	var bottom: float = pts.map(func(p): return p.y).max()
+	var size := icon.get_size() * ((max_x - min_x) / maxf(icon.get_size().x, 1.0))
+	return {"texture": icon, "rect": Rect2(Vector2((min_x + max_x - size.x) / 2.0, bottom - size.y), size)}
+
+
+## Draws, over the map: the picked asset's preview (its art in the current view and mirror) and
+## footprint at the cell under the mouse, and the selected piece's outline (both on the ground, in
+## the isometric view).
 class _Overlay extends Node2D:
 	var editor
 
@@ -358,8 +482,11 @@ class _Overlay extends Node2D:
 		if editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
 			var e := LevelDocument.entry(editor.panel.picked)
 			if not e.is_empty():
-				var r := Rect2(doc.cell_corner(editor.hover_cell),
-					Vector2(float(e.footprint_units[0]), float(e.footprint_units[1])))
+				var corner: Vector2 = doc.cell_corner(editor.hover_cell)
+				var pv: Dictionary = editor.preview_of(corner)
+				if not pv.is_empty():
+					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
+				var r := Rect2(corner, Vector2(float(e.footprint_units[0]), float(e.footprint_units[1])))
 				_outline(r, Color(0.55, 0.85, 1.0, 0.9), w)
 		if not editor.selected.is_empty():
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
