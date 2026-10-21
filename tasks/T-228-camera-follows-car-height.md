@@ -1,7 +1,7 @@
 ---
 id: T-228
 title: The camera follows the car's height, keeping it near the middle of the screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show that with the car at height 6, after the easing settles, the car's drawn position is at the middle of the screen (within a few pixels), and on the street the camera behaves exactly as before (QA: pass / fail)
-- [ ] Tests show the height part of the camera eases rather than jumping when the car's height changes suddenly (QA: pass / fail)
-- [ ] Screenshots of the car on the street and on a height-6 rooftop, and a GIF of a ramp climb and a jump, from a run, show the car near the middle (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show that with the car at height 6, after the easing settles, the car's drawn position is at the middle of the screen (within a few pixels), and on the street the camera behaves exactly as before (QA: pass; test_camera_follow_height settles centred at height 6, street identical with/without lift; run test centres on drawn car (changed test keeps its purpose: still checks the camera position on a rooftop, now per the new decision, and the lifted car is asserted))
+- [ ] Tests show the height part of the camera eases rather than jumping when the car's height changes suddenly (QA: pass; sudden-change easing tests in test_camera_follow_height and the run, all GUT passing)
+- [ ] Screenshots of the car on the street and on a height-6 rooftop, and a GIF of a ramp climb and a jump, from a run, show the car near the middle (QA: pass; street and rooftop PNGs have the car at the screen centre, GIF frames show it near the middle (first frame car hidden behind a faded building))
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT all passed, tools 439 OK, game/tools 393 OK (1 skipped))
 
 The board's review: drive up to a height-6 rooftop and jump off it.
 Board review files: the screenshots and GIF in `art-archive/T-228/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: the camera follows the car's height, eased smoothly.
+
+### 2026-10-21, In progress → In QA
+
+Built: the camera follows the car's height, eased (about 0.75 s to settle). Sent to QA.
 
 ## Result notes
 
