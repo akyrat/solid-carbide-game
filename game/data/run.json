@@ -68,6 +68,11 @@
   "car": {
     "starting_health": 100
   },
+  "pickup_magnet": {
+    "_comment": "Pickup magnet (Game loop architecture, Decisions, 2026-10-21): coins, landed gift packs and health drops within radius_units of the car's centre are pulled towards it at pull_speed_units_per_second. radius_units 3.0 is 1 car length (the car is drawn 3 units long, Drifting, Decisions); the garage upgrade (T-224) sets RunState.pickup_magnet_radius_units from it. The pull speed is a proposal: faster than the car's top speed (27.5), so a pickup always catches the car.",
+    "radius_units": 3.0,
+    "pull_speed_units_per_second": 30.0
+  },
   "likes_drain": {
     "_comment": "Likes drain (Game loop architecture, Decisions, 2026-10-13): once the combo has fully drained, the likes bar empties, never below the start of the current level. A share of the current level's bar per second, not a flat XP amount, so a full bar always takes the same time to empty at every level; a flat amount would be harsh at level 1 and meaningless at level 11 (931 XP). bar_share_per_second 0.08 is the board's playtest value (2026-10-13, four times the first proposal of 0.02): a full bar empties in 1 / 0.08 = 12.5 s, 8 likes a second at level 1, and the drain only ever eats progress made inside the current level. extra_wait_seconds is an optional pause after the combo has drained before the drain starts; 0 follows the board's rule (the combo's own 2 s wait and drain already give a buffer).",
     "enabled": true,

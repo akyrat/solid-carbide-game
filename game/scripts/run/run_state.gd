@@ -81,6 +81,11 @@ var health := 0.0
 var max_health := 0.0
 ## Coins collected this run.
 var coins := 0
+## The pickup magnet's reach in units (run.json's pickup_magnet; the garage upgrade, T-224, sets it
+## when a run starts). Read by pickup_magnet.gd every step; a test can change it.
+var pickup_magnet_radius_units := 3.0
+## How fast pickups inside the reach fly to the car, units per second (run.json).
+var pickup_pull_speed := 30.0
 ## XP (shown to players as likes) toward the next level, after leftovers.
 var xp := 0.0
 ## The level now, 1 at the start of a run.
@@ -133,6 +138,8 @@ func start_run() -> void:
 	if _combo_data == null:
 		_combo_data = ComboData.new()
 	max_health = _run_data.starting_health()
+	pickup_magnet_radius_units = _run_data.pickup_magnet_radius_units()
+	pickup_pull_speed = _run_data.pickup_pull_speed_units_per_second()
 	if progress != null:
 		max_health = progress.current_value("car_health")
 	health = max_health

@@ -73,3 +73,13 @@ func likes_drain_xp_per_second(level: int) -> float:
 	if not likes_drain_enabled():
 		return 0.0
 	return likes_drain_bar_share_per_second() * xp_needed(level)
+
+
+## The pickup magnet's reach in units from the car's centre (1 car length, 3 units, to start with).
+func pickup_magnet_radius_units() -> float:
+	return float(_data["pickup_magnet"]["radius_units"])
+
+
+## How fast a pickup inside the reach flies to the car, units per second.
+func pickup_pull_speed_units_per_second() -> float:
+	return float(_data["pickup_magnet"]["pull_speed_units_per_second"])

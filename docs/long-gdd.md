@@ -47,7 +47,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu.
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 - **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
-- **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). (T-222)
+- **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). Built in T-222: the radius is 3 units (the car is drawn 3 units long, Drifting, Decisions), read from `run.json`'s `pickup_magnet`, and pickups fly to the car at 30 units per second (proposals for the playtest: the pull speed, and the reach ignoring heights); `game/README.md`, "The pickup magnet (T-222)". (T-222)
 
 ### Content
 
@@ -1060,7 +1060,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `bf015f10cf911a7f496a83f06015dc4aa962220896fc06059541ada41793943c` |
+| `game-loop-architecture.md` | `a41567e474f3b35e749f6621680dc90da53cc107d9a372e451edd66912ae2f73` |
 | `drifting.md` | `ba252960eef7607db1a9bdb313512cd5e61b873a5c1597137ff1e61267e0bfeb` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
 | `enemies.md` | `59c78dd9bf3af95a7fa6b2fd479dd0fed1fb50352c1fdfbfd062f457c91ed6ec` |

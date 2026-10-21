@@ -1615,3 +1615,8 @@ Entry format:
 - Decision or change: dying minions drop a health canister (60%, rolled separately from the coins, so one kill can drop both; the kaiju drops none); driving over one restores 30% of the car's maximum health, capped; a full-health car still uses it up. Numbers in `game/data/enemies.json`, `health_drops`. Placeholder canister, not Redgull red, until T-221's art. The board played it in T-222's build.
 - Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-220 (done)
+
+## 2026-10-21: T-222 done: the pickup magnet
+- Decision or change: coins, landed gift packs and health drops fly to the car at 30 units/s once within 3 units (1 car length, `game/data/run.json`, `pickup_magnet.radius_units`), measured on the flat map. The board: "works well". The board also found the neon underglow doesn't rise with the car on raised surfaces (T-225).
+- Documents touched: `docs/game-loop-architecture.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-222 (done), T-225 (open)
