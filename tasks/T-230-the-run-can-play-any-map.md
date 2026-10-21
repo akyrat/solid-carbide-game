@@ -35,12 +35,12 @@ The level creator (Level design, Decisions, 'Level creator', board 2026-10-21) p
 
 ## Acceptance criteria
 
-- [ ] run.gd (or its start function) accepts a layout file path, used for both the map and the elevation layer; with none given it uses res://data/level/elevation_sample_map.json, and the existing run tests (tests/unit/run/) pass unchanged. (QA: pass / fail)
-- [ ] A unit test starts a run on a copy of elevation_sample_map.json saved under another path with one building and one platform removed: the run's map has one building and one platform fewer than a default run, and the elevation layer was set up with the copied file's path (not the constant). (QA: pass / fail)
-- [ ] A unit test on that copied file: enemy navigation builds for the run's map and find_path from a street cell to a rooftop cell returns a non-empty path whose points pass over a ramp's rectangle. (QA: pass / fail)
-- [ ] game/README.md, 'The run', says how to start a run on another map file. (QA: pass / fail)
-- [ ] The full GUT suite passes headless. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (no visible change). (QA: pass / fail)
+- [ ] run.gd (or its start function) accepts a layout file path, used for both the map and the elevation layer; with none given it uses res://data/level/elevation_sample_map.json, and the existing run tests (tests/unit/run/) pass unchanged. (QA: pass: start_run(path)/layout_path, default constant kept; run tests green)
+- [ ] A unit test starts a run on a copy of elevation_sample_map.json saved under another path with one building and one platform removed: the run's map has one building and one platform fewer than a default run, and the elevation layer was set up with the copied file's path (not the constant). (QA: pass: test_run_layout_path.gd passes; building and platform counts checked)
+- [ ] A unit test on that copied file: enemy navigation builds for the run's map and find_path from a street cell to a rooftop cell returns a non-empty path whose points pass over a ramp's rectangle. (QA: pass: navigation test passes)
+- [ ] game/README.md, 'The run', says how to start a run on another map file. (QA: pass: "Another map file (T-230)" bullet)
+- [ ] The full GUT suite passes headless. (QA: pass: 108 scripts, 1311/1311)
+- [ ] The result notes say in one line that there is nothing to screenshot (no visible change). (QA: pass: Screenshots line in result notes)
 
 ## Updates
 
