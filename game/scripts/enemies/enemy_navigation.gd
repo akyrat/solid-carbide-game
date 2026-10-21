@@ -24,6 +24,14 @@ extends RefCounted
 ## the ramp's centre line, RAMP_OUT units beyond its foot and beyond its top,
 ## so every enemy (the kaiju is 4 units wide, a ramp 10) goes up and down a
 ## ramp along its middle and not along its sides.
+##
+## Drops (task T-226; Enemies, Decisions, "Enemies jump down off ledges"):
+## each open rooftop cell beside lower ground (more than MAX_STEP lower, on
+## one of its four sides, neither cell on a ramp) also has a one-way link down
+## to that cell, so a path down may drop off an edge; nothing links back up,
+## so going up is still only by the ramps. A path's drop is two points in a
+## row, the cell on the edge and the cell below it (is_drop); the enemy walks
+## out over the edge between them and falls (enemy_fall.gd).
 
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
@@ -57,6 +65,9 @@ var build_usec := 0
 ## Paths found since the last new_step(), and in all.
 var paths_this_step := 0
 var paths_total := 0
+## T-226: whether the grid has the one-way drop links, and how many.
+var drops_enabled := true
+var drop_links := 0
 
 
 ## The navigation of `map` (built by mvp_map.gd) on a map with elevation
@@ -70,6 +81,16 @@ static func for_map(map: Node) -> RefCounted:
 		return null
 	if map.has_meta(META_KEY):
 		return map.get_meta(META_KEY)
+	var nav = build_for_map(map)
+	map.set_meta(META_KEY, nav)
+	return nav
+
+
+## A new navigation for `map` (which must have elevation), not kept on the
+## map. `drops` false leaves out the drop links (T-226), for comparison with
+## the paths before T-226 (tests, the soak).
+static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
+	var elevation = map.get("elevation")
 	var blocks: Array = []
 	for b in map.layout.buildings:
 		blocks.append(map.rect_of(b))
@@ -77,15 +98,15 @@ static func for_map(map: Node) -> RefCounted:
 	for b in map.all_boulders():
 		boulders.append([Vector2(float(b.x), float(b.y)), float(b.diameter) / 2.0])
 	var nav = load("res://scripts/enemies/enemy_navigation.gd").new()
-	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders)
-	map.set_meta(META_KEY, nav)
+	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders, drops)
 	return nav
 
 
 ## Builds the grid over `map_rect` (units) with `blocks` (building rectangles)
 ## and `boulders` ([centre, radius] in units, the map's at the run's start)
-## closed, and the heights of `the_ground` (a GroundHeight).
-func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = []) -> void:
+## closed, and the heights of `the_ground` (a GroundHeight); `drops`: the
+## one-way drop links off the rooftops' edges (T-226).
+func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], drops: bool = true) -> void:
 	var t0 := Time.get_ticks_usec()
 	ground = the_ground
 	origin = map_rect.position
@@ -140,7 +161,42 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = []) -> 
 					astar.connect_points(k, s + 1)
 				if i > 0 and _square_level(k, k - 1, s, s - 1):
 					astar.connect_points(k, s - 1)
+	drops_enabled = drops
+	drop_links = 0
+	if drops:
+		_add_drops()
 	build_usec = Time.get_ticks_usec() - t0
+
+
+## The one-way drop links (T-226): from every open cell off the ramps down to
+## each of its four neighbours that is open, off the ramps and more than
+## MAX_STEP lower.
+func _add_drops() -> void:
+	var step := EnemyHeightScript.MAX_STEP
+	for j in rows:
+		for i in cols:
+			var k := j * cols + i
+			if open[k] == 0 or ramp_of[k] >= 0:
+				continue
+			var h := heights[k]
+			for d in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
+				var ni: int = i + int(d[0])
+				var nj: int = j + int(d[1])
+				if ni < 0 or nj < 0 or ni >= cols or nj >= rows:
+					continue
+				var e := nj * cols + ni
+				if open[e] == 0 or ramp_of[e] >= 0 or h - heights[e] <= step:
+					continue
+				astar.connect_points(k, e, false)
+				drop_links += 1
+
+
+## True when going from path point `a` to the next one, `b`, drops off an
+## edge: they are neighbouring cells (a drop link) and `b`'s ground is more
+## than MAX_STEP lower than `a`'s. A ramp's two points (top, then foot) are
+## much farther apart, so going down a ramp is not a drop.
+func is_drop(a: Vector2, b: Vector2) -> bool:
+	return a.distance_to(b) <= CELL * 1.01 		and ground.height_at(a) - ground.height_at(b) > EnemyHeightScript.MAX_STEP
 
 
 ## True when the four cells are open and their heights within MAX_STEP of each

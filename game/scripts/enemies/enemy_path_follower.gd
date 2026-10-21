@@ -9,11 +9,21 @@ extends RefCounted
 ## enemy's clock starts at a random point, so the asks spread over the steps).
 ## The enemy walks to each point of the path in turn, the next once it is
 ## within REACH units, and after the last one straight at the car.
+##
+## Drops (T-226): when the path drops off a rooftop's edge (two points in a
+## row, the second more than MAX_STEP lower; enemy_navigation.gd, is_drop),
+## dropping() is true from DROP_NEAR units before the edge's point until the
+## point below it is the target, and the enemy may then walk out over the edge.
 
 ## Seconds between two paths for one enemy while it is not on the car's surface.
 const REPATH_SECONDS := 1.0
 ## A path point counts as reached this close, units.
 const REACH := 1.0
+## How near (units) the point on an edge the enemy may come before it may drop
+## off: farther than a cell plus REACH, so a body that keeps its radius off the
+## edge (the kaiju's 2 units) still reaches that point.
+const DROP_NEAR := 3.0
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
 var path := PackedVector2Array()
 var index := 0
@@ -56,6 +66,20 @@ func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = 
 	if index >= path.size():
 		return car_units
 	return path[index]
+
+
+## True when the enemy at `from`, its body at `body_h` units, is on its way
+## off an edge this step (see the top): its target is the point below an edge
+## and more than MAX_STEP below it, or its target is the point on an edge,
+## DROP_NEAR units away or less, and the path drops from there. Never on the
+## way down a ramp (its foot is not a drop from its top's point).
+func dropping(nav, from: Vector2, body_h: float) -> bool:
+	if nav == null or index >= path.size():
+		return false
+	var p := path[index]
+	if index > 0 and nav.is_drop(path[index - 1], p):
+		return body_h - nav.ground.height_at(p) > EnemyHeightScript.MAX_STEP
+	return index + 1 < path.size() and from.distance_to(p) <= DROP_NEAR and nav.is_drop(p, path[index + 1])
 
 
 func has_path() -> bool:
