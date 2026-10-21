@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -49,11 +49,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] While a meteor falls, a comet tail streams behind it, and when it lands an impact animation plays before the boulder appears; the meteor, warning circle and boulder are unchanged (QA: pass / fail)
-- [ ] Two or three versions exist, one setting picks between them (documented in `game/README.md`), and a recording (MP4 or GIF) of each from a real run shows several meteors falling with their tails and hitting the ground, in `art-archive/T-070/screenshots/` (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its settings and cost, and the balance before and after, at most 10 generations; the animations use no Redgull red (QA: pass / fail)
-- [ ] Tests cover that the tail shows only while falling and the impact plays once on landing; T-046's and T-147's tests still pass (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] While a meteor falls, a comet tail streams behind it, and when it lands an impact animation plays before the boulder appears; the meteor, warning circle and boulder are unchanged (QA: pass; GIFs show tails and impacts over unchanged meteor, orange warning circle and boulders; kaiju_meteors.gd diff only adds the fx calls)
+- [ ] Two or three versions exist, one setting picks between them (documented in `game/README.md`), and a recording (MP4 or GIF) of each from a real run shows several meteors falling with their tails and hitting the ground, in `art-archive/T-070/screenshots/` (QA: pass; three versions pixel/pixellab/particles plus off, picked by data/meteor_fx.json or METEOR_FX, documented in game/README.md; three 90-frame GIFs of a real run with several meteors)
+- [ ] The record lists every PixelLab call with its settings and cost, and the balance before and after, at most 10 generations; the animations use no Redgull red (QA: pass; log has 3 T-070 entries = 1 + 2 + 2 = 5 generations of 10, balances 4860 to 4859 and 4856 to 4839 noted; tests check no red)
+- [ ] Tests cover that the tail shows only while falling and the impact plays once on landing; T-046's and T-147's tests still pass (QA: pass; test_meteor_fx.gd covers tail only while falling and impact once and gone; T-046 and T-147 tests in the passing GUT run)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1196/1196 in 298 s with GUT_TIME_LIMIT=900; game/tools unittest 361 OK; tools unittest 414 OK in 321 s)
 
 The board's review: play a run and watch the meteors' tails and impacts.
 Board review files: the recording in `art-archive/T-070/screenshots/`.
@@ -71,6 +71,10 @@ Meteor sample is weak: a stone pillar on a tile base, not a falling meteor (1 ge
 ### 2026-10-21, In progress
 
 Started: the agent makes 2 or 3 versions of the comet tail and impact, with a video of each.
+
+### 2026-10-21, In progress → In QA
+
+Three versions built (pixel, pixellab, particles), each with a GIF from a real run; 4 generations. Sent to QA.
 
 ## Result notes
 
