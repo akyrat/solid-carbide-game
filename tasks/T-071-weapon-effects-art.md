@@ -1,7 +1,7 @@
 ---
 id: T-071
 title: Art: gun bullets, exhaust flames and burning
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/weapons.md, tasks/T-041-starting-gun.md, tasks/T-042-exhaust-flamethrower.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -76,6 +76,14 @@ QA: 4 of 5 pass; the 5th failed only because the test suite outgrew its 300-seco
 
 T-214 raised the test time limit; sent back to QA for its second round.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA round 2 passed all 5.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved it. Merged into master.
+
 ## Result notes
 
 ### Sample round (board's go 2026-10-21; sample first, nothing swapped into the game)
@@ -113,3 +121,4 @@ T-214 raised the test time limit; sent back to QA for its second round.
 **Honest judgment:** the flame reads well and fits the car; the base's pale white core is big and covers the car's tail a little. Rotation by script loses some edge crispness on the plume in the in-between directions. The burning flames read clearly but are big on a minion (taller than its body); a smaller scale is one number (`BurnFlames.ART_SCALE`) if the board wants it. The bullets are small cyan neon dots with little glow detail at their size; they read in play but are modest. Burning flames are a looping pair of frames, so they flicker rather than animate.
 
 **Refused commands (skipped, not retried in another form):** (1) an inline `python -` that edited `game/README.md` and appended to `art-archive/README.md` was refused by the status-script hook (it contained `**`); I made the README edit with the Edit tool and appended the archive rows with a plain `printf >>`. (2) `git ls-files -m | grep .import | xargs git checkout --` (reverting Godot's line-ending `.import` noise) was refused; so the noise is left unstaged in the worktree, and only my own files and the three new art `.import` files are committed. (3) Earlier I edited this file's Result notes once with a short Python snippet before the Edit tool had read it; from then on only Edit.
+- 2026-10-21, needs-playtest → done: Board: T-071 looks good
