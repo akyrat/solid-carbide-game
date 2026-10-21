@@ -1,0 +1,94 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096 submitted, polling every 5 s
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (0 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (5 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (10 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (15 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (20 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (25 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (31 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (36 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (41 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (46 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (51 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (56 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (61 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (67 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (72 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (77 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (82 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (90 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (95 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (102 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (108 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (113 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (118 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (123 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (128 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (134 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (139 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (144 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (149 s)
+  job de1656e4-c8a4-459d-ba5e-bd15d191e096: processing (154 s)
+  saved 7 images in art-archive\T-069\walk_se: kaiju_walk_se_0.png, kaiju_walk_se_1.png, kaiju_walk_se_2.png, kaiju_walk_se_3.png, kaiju_walk_se_4.png, kaiju_walk_se_5.png, kaiju_walk_se_6.png; usage {"type": "generations", "generations": 5.0}
+{
+  "file": [
+    "kaiju_walk_se_0.png",
+    "kaiju_walk_se_1.png",
+    "kaiju_walk_se_2.png",
+    "kaiju_walk_se_3.png",
+    "kaiju_walk_se_4.png",
+    "kaiju_walk_se_5.png",
+    "kaiju_walk_se_6.png"
+  ],
+  "job_id": "de1656e4-c8a4-459d-ba5e-bd15d191e096",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "image": [
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
+EXIT 0
