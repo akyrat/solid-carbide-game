@@ -1,7 +1,7 @@
 ---
 id: T-233
 title: Text: the level creator's screens
-status: open
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/extended-narrative.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,15 +37,28 @@ The board's review: Read the creator's text in game/data/level/creator_texts.jso
 
 ## Acceptance criteria
 
-- [ ] game/data/level/creator_texts.json exists, is valid JSON and has a text and a 'where it appears' note for each piece in the description: list title, new-level button, play and edit actions, default level name and name field label, the six panel category names, the rooftop and ramp height labels, rotate, mirror, delete and save labels, save confirmation, overlap message, back-to-list button and controls hint. (QA: pass / fail)
-- [ ] No button text is longer than 16 characters and no category name longer than 12. (QA: pass / fail)
-- [ ] docs/level-design.md, Content, has a 'Level creator text' section listing each piece and pointing to creator_texts.json. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (text only). (QA: pass / fail)
+- [ ] game/data/level/creator_texts.json exists, is valid JSON and has a text and a 'where it appears' note for each piece in the description: list title, new-level button, play and edit actions, default level name and name field label, the six panel category names, the rooftop and ramp height labels, rotate, mirror, delete and save labels, save confirmation, overlap message, back-to-list button and controls hint. (QA: pass)
+- [ ] No button text is longer than 16 characters and no category name longer than 12. (QA: pass)
+- [ ] docs/level-design.md, Content, has a 'Level creator text' section listing each piece and pointing to creator_texts.json. (QA: pass)
+- [ ] The result notes say in one line that there is nothing to screenshot (text only). (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-233.
+
+### 2026-10-21, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Wrote game/data/level/creator_texts.json (26 pieces, each with text and where note) and the "Level creator text" section in docs/level-design.md, Content. Longest button text is "Back to list" (12 characters), longest category name "Buildings" (9). The controls hint uses R, M and Del as proposed keys; the creator's scripts must match. Not run through a JSON parser: my `python -c` check was refused (needs approval); I wrote the file by hand and read it back by eye. Nothing to screenshot (text only).
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
