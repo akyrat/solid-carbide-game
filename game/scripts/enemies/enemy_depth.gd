@@ -13,6 +13,13 @@ extends RefCounted
 ##
 ## Silhouettes do not move, so their bounding boxes are cached per map: a cheap
 ## box test rules out most buildings before the polygon test.
+##
+## On a map with elevation (task T-206, map.elevation, elevation_layer.gd) the
+## raised areas and ramps join the order: the thing is drawn under every area
+## that covers it. Since task T-207 the thing stands on the ground under it:
+## `ground_h` (units; 0 on the street) lifts its screen shape up the screen,
+## as its sprite is lifted, and an area covers it only where it stands lower
+## than the area's top there (elevation_platform_drawing.gd, is_behind).
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -45,8 +52,9 @@ static func screen_shape(centre_units: Vector2, radius_units: float, height_unit
 	return Geometry2D.convex_hull(pts)
 
 
-## The z_index for something at `centre_units` with that size.
-func z_index_for(centre_units: Vector2, radius_units: float, height_units: float) -> int:
+## The z_index for something at `centre_units` with that size, standing on
+## ground `ground_h` units high (T-207; 0 on the street).
+func z_index_for(centre_units: Vector2, radius_units: float, height_units: float, ground_h: float = 0.0) -> int:
 	if map == null:
 		return 0
 	var z: int = map.top_z_index()
@@ -54,6 +62,8 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 		return z
 	_cache_items()
 	var shape := screen_shape(centre_units, radius_units, height_units)
+	if ground_h != 0.0:
+		shape = Transform2D(0.0, Vector2(0.0, -ground_h * PX_PER_UNIT)) * shape
 	var box := _bounds(shape)
 	for i in _items.size():
 		var b = _items[i]
@@ -68,6 +78,11 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 	for s in map.boulder_sprites:
 		if s.z_index - 1 < z and s.covers(centre_units, shape, box):
 			z = s.z_index - 1
+	# T-206, T-207: on a map with elevation, also under the raised areas and
+	# ramps that cover it at the height it stands on.
+	var elevation = map.get("elevation")
+	if elevation != null:
+		z = elevation.z_under_areas(z, centre_units, radius_units, ground_h, shape)
 	return z
 
 

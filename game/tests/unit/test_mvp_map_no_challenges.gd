@@ -38,6 +38,9 @@ func start_from_menu() -> Node2D:
 	game.menu.start_button.pressed.emit()
 	await wait_process_frames(1)
 	run = game.run
+	# This file checks the MVP map (T-206: the run's default is the elevation map).
+	run.use_elevation_map = false
+	run.start_run()
 	run.state.score.connect(func(a: float, id: String) -> void: scores.append([a, id]))
 	return run
 

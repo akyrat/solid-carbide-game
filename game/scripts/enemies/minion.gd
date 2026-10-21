@@ -15,10 +15,18 @@ extends CharacterBody2D
 ##
 ## Weapons damage it through take_damage() and push it through
 ## apply_knockback() (game/README.md, "Minions").
+##
+## Heights (task T-207, enemy_height.gd): with `ground` set (the map's
+## GroundHeight, on the elevation map) it stands on the ground under its
+## centre (ground_height()), a rooftop's edge stops its walking and its
+## knockback like a wall (from below and from above), and its contact damage
+## only hits the car at its level. Which way to walk (the ramps) is the
+## spawner's, through `follower` (enemy_path_follower.gd).
 
 const PX_PER_UNIT := 16.0
 const LAYER_OBSTACLES := 1 << 0
 const LAYER_ENEMIES := 1 << 2
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
 ## The placeholder's body radius on the ground, in units (the collision
 ## circle, and the reach for touching the car). A size, not a balancing number.
@@ -53,6 +61,10 @@ var contact_cooldown := 0.0
 var detour_side := 1.0
 ## The direction it last walked (flat world, normalized), for the drawing.
 var heading := Vector2.RIGHT
+## The ground's heights (a GroundHeight, ground_height.gd), or null (flat map).
+var ground = null
+## Its way to the car over the ramps (enemy_path_follower.gd); set by the spawner.
+var follower: RefCounted = null
 
 var _dead := false
 ## The normal of the obstacle it touched last step (ZERO for none).
@@ -60,6 +72,8 @@ var _wall_normal := Vector2.ZERO
 ## A knockback still to travel (units, flat world) and the seconds left for it.
 var _knockback_left := Vector2.ZERO
 var _knockback_time := 0.0
+## The normal of a ground edge that stopped the last move (ZERO for none).
+var _edge_normal := Vector2.ZERO
 
 
 ## Sets the numbers from EnemyData.minion().
@@ -100,6 +114,29 @@ func position_units() -> Vector2:
 
 func set_position_units(p: Vector2) -> void:
 	position = p * PX_PER_UNIT
+
+
+## The height of the ground it stands on, units (0 with no ground).
+func ground_height() -> float:
+	return EnemyHeightScript.height_at(ground, position_units())
+
+
+## Moves by `motion` (pixels), limited first by the ground's edges (T-207),
+## then by the obstacles. Returns the obstacle hit, or null; an edge that
+## stopped it is in _edge_normal.
+func _move(motion: Vector2) -> KinematicCollision2D:
+	_edge_normal = Vector2.ZERO
+	if ground == null:
+		return move_and_collide(motion)
+	var lim: Dictionary = EnemyHeightScript.limit_motion(ground, position_units(), motion / PX_PER_UNIT, RADIUS_UNITS)
+	_edge_normal = lim.normal
+	for seg in lim.segments:
+		if (seg as Vector2).length() < 0.000001:
+			continue
+		var hit := move_and_collide(seg * PX_PER_UNIT)
+		if hit != null:
+			return hit
+	return null
 
 
 ## Damages the minion by `amount` (weapons call this). At 0 health it dies:
@@ -154,17 +191,19 @@ func walk(dt: float, target_units: Vector2, push: Vector2 = Vector2.ZERO) -> voi
 		dir = along.normalized()
 	heading = dir
 	velocity = dir * move_speed * PX_PER_UNIT
-	var hit := move_and_collide(velocity * dt)
-	_wall_normal = Vector2.ZERO
+	var hit := _move(velocity * dt)
+	_wall_normal = _edge_normal
 	if hit != null:
 		_wall_normal = hit.get_normal()
 		# Slide the rest of the step along the obstacle.
 		var rest := hit.get_remainder()
 		rest -= _wall_normal * rest.dot(_wall_normal)
 		if rest.length() > 0.0:
-			var hit2 := move_and_collide(rest)
+			var hit2 := _move(rest)
 			if hit2 != null:
 				_wall_normal = hit2.get_normal()
+			elif _edge_normal != Vector2.ZERO:
+				_wall_normal = _edge_normal
 
 
 ## Knocks the minion back (weapons call this; T-167): it is pushed `strength`
@@ -196,8 +235,11 @@ func _knockback_step(dt: float) -> void:
 		_knockback_left = Vector2.ZERO
 	velocity = Vector2.ZERO
 	var motion := move * PX_PER_UNIT
-	var hit := move_and_collide(motion)
-	_wall_normal = Vector2.ZERO
+	var hit := _move(motion)
+	_wall_normal = _edge_normal
+	if _edge_normal != Vector2.ZERO:
+		# An edge (T-207): stop pushing over it, keep the part along it.
+		_knockback_left -= _edge_normal * minf(_knockback_left.dot(_edge_normal), 0.0)
 	if hit != null:
 		_wall_normal = hit.get_normal()
 		# Stop pushing into the obstacle: keep only the part along it.
@@ -205,7 +247,7 @@ func _knockback_step(dt: float) -> void:
 		var rest := hit.get_remainder()
 		rest -= _wall_normal * rest.dot(_wall_normal)
 		if rest.length() > 0.0:
-			var hit2 := move_and_collide(rest)
+			var hit2 := _move(rest)
 			if hit2 != null:
 				_wall_normal = hit2.get_normal()
 				_knockback_left -= _wall_normal * minf(_knockback_left.dot(_wall_normal), 0.0)
@@ -223,13 +265,17 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 ## every contact_damage_interval seconds (the first hit as soon as it
 ## touches): the car loses contact_damage through `state.damage_car()` and is
 ## knocked back away from the minion through `car.apply_knockback()`.
-## Returns true when it hit this step.
+## On a map with heights (T-207) only when the car is at its level
+## (EnemyHeight.at_car_level: a car on a rooftop above it, or high in the air,
+## is not hit). Returns true when it hit this step.
 func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	contact_cooldown = maxf(contact_cooldown - dt, 0.0)
 	if _dead or car == null:
 		return false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	if not touches_car(car_units, car.rotation):
+		return false
+	if ground != null and not EnemyHeightScript.at_car_level(ground_height(), EnemyHeightScript.car_height(car)):
 		return false
 	if contact_cooldown > 0.0:
 		return false
