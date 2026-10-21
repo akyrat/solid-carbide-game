@@ -43,11 +43,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A run started from the main menu's Start plays on the elevation sample map's layout: its rooftops, ramps, buildings and roads, with the car's height, round shadow, see-through and depth order as in the drive-only scene (screenshots of the car on the street, on a rooftop and in the air during a run) (QA: pass: street, rooftop, air (round shadow on street) and see-through screenshots show the elevation layout in a run)
-- [ ] During that run the enemies spawn and chase the car, weapons fire, the timer, likes and levels run, and the level-up gift drop and the kaiju still come, with no errors in Godot's output over a 2-minute headless or scripted run (QA: pass: 150 s soak ran, car at heights 0/3/6, minions, shots, 4 level-ups via gifts, kaiju; the only error line is the exit-time "1 resources still in use at exit", none during play)
-- [ ] The MVP map is still in the project, and one named constant or setting switches the run back to it; `game/README.md` says which (QA: pass: USE_ELEVATION_MAP in run.gd, documented in game/README.md; MVP soak runs on it)
-- [ ] The drive-only elevation sample scene still runs (F6) as before (QA: pass: drive-only scene ran 10 s with no errors)
-- [ ] The full GUT suite and all Python tool tests pass, with new tests for the run building the elevation map (QA: pass: GUT 1141/1141; tools 399 OK; game/tools 354 OK (1 skipped); 13 new tests in test_run_elevation_map.gd)
+- [ ] A run started from the main menu's Start plays on the elevation sample map's layout: its rooftops, ramps, buildings and roads, with the car's height, round shadow, see-through and depth order as in the drive-only scene (screenshots of the car on the street, on a rooftop and in the air during a run) (QA: pass; street, rooftop, air (round shadow, no smoke or tyre marks) and see-through screenshots show the elevation layout in a run)
+- [ ] During that run the enemies spawn and chase the car, weapons fire, the timer, likes and levels run, and the level-up gift drop and the kaiju still come, with no errors in Godot's output over a 2-minute headless or scripted run (QA: pass; 150 s soak re-run with the tweaks, only the exit-time "1 resources still in use at exit" line, none during play)
+- [ ] The MVP map is still in the project, and one named constant or setting switches the run back to it; `game/README.md` says which (QA: pass; USE_ELEVATION_MAP in run.gd, documented in game/README.md)
+- [ ] The drive-only elevation sample scene still runs (F6) as before (QA: pass; drive-only scene's tests pass in the full suite; its scene code is unchanged since the round 1 run with no errors)
+- [ ] The full GUT suite and all Python tool tests pass, with new tests for the run building the elevation map (QA: pass; GUT 1147/1147, tools 399 OK, game/tools 354 OK (1 skipped); new tests in test_run_elevation_map.gd cover the tweaks)
 
 The board's review: start a run from the main menu and play the full game on the elevation sample map.
 Board review files: `game/scenes/run/run.tscn` via the main menu.
