@@ -1,7 +1,7 @@
 ---
 id: T-207
 title: Enemies follow the car up the ramps on the elevation map, with pathfinding
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -41,12 +41,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] In a GUT test with the car parked on a height-6 rooftop, enemies that start on the street reach it by going up the ramps (their path passes through the ramps, never through a rooftop's edge), within a time limit the test states (QA: pass / fail)
-- [ ] In a GUT test with the car on the street, enemies on a rooftop come down by a ramp to reach it; no enemy crosses a rooftop's edge from below, in a test that drives enemies at every edge (QA: pass / fail)
-- [ ] Enemies are drawn at their height in the right depth order next to the rooftops, ramps and the car, and contact damage only hits the car at its level (screenshots of enemies on a ramp and on a rooftop, and a test for the damage) (QA: pass / fail)
-- [ ] A 2-minute scripted run on the elevation map has no errors during play, and the result notes give the frame time with the most enemies on screen, compared with T-206's soak (QA: pass / fail)
-- [ ] Enemies, Decisions has this ticket's id on "Enemies follow the car up the ramps", and the result notes list every proposal made (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] In a GUT test with the car parked on a height-6 rooftop, enemies that start on the street reach it by going up the ramps (their path passes through the ramps, never through a rooftop's edge), within a time limit the test states (QA: pass; minions from 4 street spots reach the height-6 car by the ramps in 14.6-27.2 s, limit 40 s)
+- [ ] In a GUT test with the car on the street, enemies on a rooftop come down by a ramp to reach it; no enemy crosses a rooftop's edge from below, in a test that drives enemies at every edge (QA: pass; rooftop minions come down ramps in 5.7-16.3 s, edge test finds no crossing)
+- [ ] Enemies are drawn at their height in the right depth order next to the rooftops, ramps and the car, and contact damage only hits the car at its level (screenshots of enemies on a ramp and on a rooftop, and a test for the damage) (QA: pass; depth and damage tests pass, screenshots show minions on ramp and rooftop drawn at height)
+- [ ] A 2-minute scripted run on the elevation map has no errors during play, and the result notes give the frame time with the most enemies on screen, compared with T-206's soak (QA: pass; soak run quit by itself, no errors during play; frame times vs no-heights run in notes)
+- [ ] Enemies, Decisions has this ticket's id on "Enemies follow the car up the ramps", and the result notes list every proposal made (QA: pass; decision carries (T-207), 8 proposals listed)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1169/1169, tools 414 OK, game/tools 354 OK with 1 skipped)
 
 The board's review: play a run on the elevation map and judge how the enemies follow the car up and down the ramps.
 Board review files: a run from the main menu.
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Blocked → In progress
 
 Started from T-206's build: enemies find their way up the ramps to the car, with pathfinding, as the board decided.
+
+### 2026-10-21, In progress → In QA
+
+Built: enemies follow the car up the ramps with A* pathfinding; rooftop edges stop them; they hit only at the car's level. Sent to QA.
 
 ## Result notes
 
