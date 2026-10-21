@@ -224,6 +224,15 @@ func car_units() -> Vector2:
 	return Vector2(car.model.x, car.model.y) if car != null else Vector2.ZERO
 
 
+## The car's height in units (car_height.gd): 0 on the street and for a car without one.
+func car_height() -> float:
+	var car := _car()
+	if car == null:
+		return 0.0
+	var h = car.get("height")
+	return float(h) if h != null else 0.0
+
+
 ## Whether a point (flat world, units) is inside the damage area now.
 func contains_point(p: Vector2) -> bool:
 	var car := _car()
@@ -345,7 +354,10 @@ func _update_drawing() -> void:
 	var rot: float = car.model.rotation
 	var back := -Vector2(cos(rot), sin(rot))
 	var exhaust_px := (car_units() + back * EXHAUST_OFFSET_UNITS) * PX_PER_UNIT
-	flame_drawing.position = ISO_TRANSFORM * exhaust_px
+	# At the car's height (Weapons, Decisions, "The flamethrower at height",
+	# task T-206): lifted as the car sprite is, so on a rooftop or in the air
+	# the flame comes out of the exhaust where the car is drawn.
+	flame_drawing.position = ISO_TRANSFORM * exhaust_px + Vector2(0.0, -car_height() * PX_PER_UNIT)
 	flame_drawing.rotation = ISO_TRANSFORM.basis_xform(back).angle()
 	var s: float = float(stats["size_multiplier"]) * size_fraction()
 	flame_drawing.scale = Vector2(s, s)

@@ -29,12 +29,27 @@ extends Node
 ## place in the isometric view and given its place in the buildings' depth
 ## order (enemy_depth.gd, the map's rule for the car). At the same depth the
 ## car is drawn over a minion.
+##
+## Heights (task T-207; Enemies, Decisions, "Enemies follow the car up the
+## ramps"): on a map with rooftops and ramps (map.elevation) each minion gets
+## the map's ground (minion.ground: it stands on it, edges stop it, its
+## contact damage only hits the car at its level) and a follower
+## (enemy_path_follower.gd) that walks it straight at the car on the car's
+## surface and otherwise along a path by the ramps (enemy_navigation.gd, one
+## per map, shared with the kaiju). Minions spawn on the street only; they
+## push apart only from minions at their level; their sprites and coins are
+## drawn lifted by the ground's height, in the depth order at that height.
+## `heights_enabled` false (tests, the soak's comparison) makes them ignore
+## the heights, as before T-207.
 
 const MinionScript := preload("res://scripts/enemies/minion.gd")
 const MinionSpriteScript := preload("res://scripts/enemies/minion_sprite.gd")
 const CoinScript := preload("res://scripts/enemies/coin.gd")
 const CoinSpriteScript := preload("res://scripts/enemies/coin_sprite.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
+const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
+const EnemyNavigationScript := preload("res://scripts/enemies/enemy_navigation.gd")
+const FollowerScript := preload("res://scripts/enemies/enemy_path_follower.gd")
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -44,6 +59,10 @@ const SPAWN_TRIES := 12
 const COIN_SPREAD_UNITS := 0.6
 ## How strongly minions push apart (see Minion.SEPARATION_UNITS).
 const SEPARATION_WEIGHT := 0.8
+## T-207: how far from the car (units) a minion on its way to a ramp may be
+## before it is removed (others: a screen beyond the visible one). Half the
+## map: the farthest a rooftop is from its ramp's foot is about 80. A proposal.
+const ON_PATH_KEEP_UNITS := 120.0
 
 ## A minion spawned.
 signal minion_spawned(minion: Node)
@@ -74,6 +93,15 @@ var bodies_root: Node2D = null
 var draw_root: Node2D = null
 ## The visible screen in the view's pixels; empty = use the camera.
 var visible_rect_override := Rect2()
+## T-207: false makes the minions ignore the map's heights (as before T-207).
+## Read when a run's world is built (set it, then start a new run).
+var heights_enabled := true
+## Microseconds the last step() took (T-207: the soak's frame time).
+var last_step_usec := 0
+## The map's ground heights (GroundHeight) and the enemies' navigation
+## (enemy_navigation.gd); both null on a map without heights.
+var ground = null
+var navigation: RefCounted = null
 
 var minions: Array = []
 var coins: Array = []
@@ -120,6 +148,12 @@ func _on_world_rebuilt() -> void:
 	car = _run.car
 	map = _run.map
 	depth.set_map(map)
+	ground = null
+	navigation = null
+	var elevation = map.get("elevation") if map != null else null
+	if heights_enabled and elevation != null:
+		ground = elevation.ground_height
+		navigation = EnemyNavigationScript.for_map(map)
 	clear()
 
 
@@ -155,19 +189,35 @@ func step(dt: float) -> void:
 		return
 	if state != null and not state.is_running():
 		return
+	var t0 := Time.get_ticks_usec()
 	_prune()
 	_spawn_step(dt)
+	move_step(dt)
+	_despawn_far()
+	update_drawing()
+	last_step_usec = Time.get_ticks_usec() - t0
+
+
+## One physics step of the minions already there: each walks (straight at the
+## car, or by its follower's path on a map with heights) and deals its contact
+## damage. No spawning, no removing (step() does those).
+func move_step(dt: float) -> void:
+	if car == null or not is_instance_valid(car):
+		return
 	var car_units: Vector2 = car.position / PX_PER_UNIT
+	if navigation != null:
+		navigation.new_step()
 	var pushes := _separation()
 	var i := 0
 	for m in minions.duplicate():
-		m.walk(dt, car_units, pushes[i])
+		var target := car_units
+		if navigation != null and m.follower != null:
+			target = m.follower.target(navigation, m.position_units(), car_units, dt)
+		m.walk(dt, target, pushes[i])
 		i += 1
 		m.contact_step(dt, car, state)
 		if state != null and not state.is_running():
 			break
-	_despawn_far()
-	update_drawing()
 
 
 func _prune() -> void:
@@ -189,17 +239,22 @@ func _spawn_step(dt: float) -> void:
 	spawn_minion_at(p)
 
 
-## Separation pushes, one per minion in `minions` order.
+## Separation pushes, one per minion in `minions` order. On a map with
+## heights only minions at the same level push apart (T-207).
 func _separation() -> Array:
 	var out := []
 	var sep: float = MinionScript.SEPARATION_UNITS
 	var pos := []
+	var hs := []
 	for m in minions:
 		pos.append(m.position_units())
+		hs.append(m.ground_height() if ground != null else 0.0)
 	for a in minions.size():
 		var push := Vector2.ZERO
 		for b in minions.size():
 			if a == b:
+				continue
+			if absf(hs[a] - hs[b]) > EnemyHeightScript.LEVEL_TOLERANCE:
 				continue
 			var d: Vector2 = pos[a] - pos[b]
 			var l := d.length()
@@ -216,6 +271,8 @@ func spawn_minion_at(units: Vector2) -> Node:
 	m.setup(_stats)
 	m.set_position_units(units)
 	m.detour_side = 1.0 if rng.randf() < 0.5 else -1.0
+	m.ground = ground
+	m.follower = FollowerScript.new(rng.randf() * FollowerScript.REPATH_SECONDS)
 	bodies_root.add_child(m, true)
 	var s: Node2D = MinionSpriteScript.new()
 	s.name = "MinionSprite"
@@ -241,8 +298,9 @@ func spawn_coin_at(units: Vector2, value: int = 1) -> Node:
 	s.name = "CoinSprite"
 	draw_root.add_child(s, true)
 	c.sprite = s
-	s.position = ISO_TRANSFORM * c.position
-	s.z_index = depth.z_index_for(units, CoinScript.RADIUS_UNITS, 0.6)
+	var h := EnemyHeightScript.height_at(ground, units)
+	s.position = ISO_TRANSFORM * c.position + Vector2(0.0, -h * PX_PER_UNIT)
+	s.z_index = depth.z_index_for(units, CoinScript.RADIUS_UNITS, 0.6, h)
 	s.reset_physics_interpolation()
 	coins.append(c)
 	return c
@@ -262,6 +320,9 @@ func _on_minion_died(m: Node, at_units: Vector2) -> void:
 		var offset := Vector2.ZERO
 		if n > 1:
 			offset = Vector2.RIGHT.rotated(TAU * k / n + rng.randf() * TAU / n) * COIN_SPREAD_UNITS
+			# T-207: a coin stays on the level the minion died on.
+			if absf(EnemyHeightScript.height_at(ground, at_units + offset) - EnemyHeightScript.height_at(ground, at_units)) > EnemyHeightScript.MAX_STEP:
+				offset = Vector2.ZERO
 		spawn_coin_at(at_units + offset, 1)
 	minion_killed.emit(m, n)
 
@@ -302,13 +363,18 @@ func pick_spawn_point():
 	return null
 
 
-## True when a minion fits at `units`: inside the map, not on a building or a boulder.
+## True when a minion fits at `units`: inside the map, not on a building or a
+## boulder, and on a map with heights on the street (T-207), clear of every
+## rooftop and ramp.
 func is_free_spot(units: Vector2) -> bool:
 	if map == null:
 		return true
 	var rad: float = MinionScript.RADIUS_UNITS
 	var m: Rect2 = map.rect_of(map.layout.map.rect)
 	if not m.grow(-rad).has_point(units):
+		return false
+	var elevation = map.get("elevation")
+	if elevation != null and not elevation.is_street(units, rad):
 		return false
 	for b in map.layout.buildings:
 		if map.rect_of(b).grow(rad).has_point(units):
@@ -321,13 +387,21 @@ func is_free_spot(units: Vector2) -> bool:
 
 
 ## Removes minions a whole screen beyond the visible screen (no coins).
+## A minion on its way to the car by the ramps (T-207: its follower has a
+## path) is removed only when it is more than ON_PATH_KEEP_UNITS from the car,
+## so it is not removed while it walks round to a ramp far from the car (a
+## proposal).
 func _despawn_far() -> void:
 	var v := visible_rect()
 	var keep := v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
+	var car_units: Vector2 = car.position / PX_PER_UNIT
 	for m in minions.duplicate():
-		if not keep.has_point(ISO_TRANSFORM * m.position):
-			minions.erase(m)
-			m.queue_free()
+		if keep.has_point(ISO_TRANSFORM * m.position):
+			continue
+		if m.follower != null and m.follower.has_path() 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
+			continue
+		minions.erase(m)
+		m.queue_free()
 
 
 ## Puts every sprite at its body's place in the view and in the depth order.
@@ -340,6 +414,7 @@ func _place_sprite(m: Node) -> void:
 	var s: Node2D = m.sprite
 	if s == null:
 		return
-	s.position = ISO_TRANSFORM * m.position
+	var h: float = m.ground_height()
+	s.position = ISO_TRANSFORM * m.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(m.heading)
-	s.z_index = depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS)
+	s.z_index = depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS, h)
