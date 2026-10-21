@@ -1,7 +1,7 @@
 ---
 id: T-235
 title: Level creator: the editor's map canvas, the side panel, placing and deleting pieces
-status: blocked
+status: open
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
