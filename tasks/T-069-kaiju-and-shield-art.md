@@ -1,7 +1,7 @@
 ---
 id: T-069
 title: Art: the kaiju
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-045-kaiju.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -68,6 +68,14 @@ Sample approved by the board. Started: the full kaiju set from the sample, then 
 
 Full kaiju set built and swapped in (8 directions, 6 walk frames). Cost 32 generations against about 6 to 12 planned. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5. Ready for the board: C:\solid-carbide-worktrees\T-069\game\project.godot or Play on T-069 in the Builds tab; the kaiju arrives late in the run (or watch kaiju_walking.gif).
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the kaiju. Merged into master.
+
 ## Result notes
 
 ### Sample round (2026-10-21, board's go for T-069's generations)
@@ -111,3 +119,4 @@ Same recipe as the minion (T-068), from the approved sample's cleaned copy (`kai
 **Files:** `art-archive/T-069/kaiju_se_sample.png` (raw), `kaiju_se_sample_clean.png` (transparent), review images `review_kaiju_se_dark.png` and `review_kaiju_se_light.png` (3x nearest-neighbour, the car's first frame beside it for scale). Nothing is swapped into the game yet. Refused command: an inline Python edit of this file was refused by the status hook, so I made this edit with the Edit tool instead.
 - 2026-10-21, in-progress → in-qa: Kaiju sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 5 acceptance criteria not marked
+- 2026-10-21, needs-playtest → done: Board: 69 looks good
