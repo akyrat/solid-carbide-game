@@ -37,14 +37,14 @@ The board's review: In the level creator, press play on a level you made and pla
 
 ## Acceptance criteria
 
-- [ ] A unit test presses play on a listed level: a run starts on that file (the run's layout path is the level's path), the timer reads 8:00 and minions spawn; fast-forwarding the run state to the kaiju's time makes the kaiju appear; the run's map holds the level's buildings, platforms and ramps. (QA: pass / fail)
-- [ ] A unit test on that custom level: enemy navigation built for the run's map returns a path from the street to a rooftop that passes over its ramp. (QA: pass / fail)
-- [ ] A unit test: when the run ends (win and loss), the creator's level list is shown again. (QA: pass / fail)
-- [ ] A run started from the game's main menu still uses res://data/level/elevation_sample_map.json (test). (QA: pass / fail)
-- [ ] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', says how to play a level and where the run returns. (QA: pass / fail)
-- [ ] A screenshot of a run on a custom level is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] A unit test presses play on a listed level: a run starts on that file (the run's layout path is the level's path), the timer reads 8:00 and minions spawn; fast-forwarding the run state to the kaiju's time makes the kaiju appear; the run's map holds the level's buildings, platforms and ramps. (QA: pass)
+- [ ] A unit test on that custom level: enemy navigation built for the run's map returns a path from the street to a rooftop that passes over its ramp. (QA: pass)
+- [ ] A unit test: when the run ends (win and loss), the creator's level list is shown again. (QA: pass)
+- [ ] A run started from the game's main menu still uses res://data/level/elevation_sample_map.json (test). (QA: pass)
+- [ ] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass)
+- [ ] game/README.md, 'Level creator', says how to play a level and where the run returns. (QA: pass)
+- [ ] A screenshot of a run on a custom level is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
