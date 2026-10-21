@@ -1,7 +1,7 @@
 ---
 id: T-230
 title: The run can play any map file, with the elevation sample map as the default
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, game/README.md, game/scripts/run/run.gd, game/scripts/level/mvp_map.gd, game/scripts/level/elevation_layer.gd, game/scripts/enemies/enemy_navigation.gd, game/data/level/elevation_sample_map.json, game/tests/unit/run/test_run_elevation_map.gd]
 files_expected_to_change: [game/scripts/run/run.gd, game/tests/unit/run/test_run_layout_path.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-230.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-21, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Game Loop Agent, 2026-10-21.
@@ -65,3 +69,4 @@ Game Loop Agent, 2026-10-21.
 - **Full GUT suite:** `bash game/tools/run_tests.sh` passes headless: 108 scripts, 1311/1311 tests, 314 s.
 - **Screenshots:** nothing to screenshot: no visible change (the default run looks exactly as before; the change is a path the run reads).
 - PixelLab: 0 generations. Refusals: none.
+- 2026-10-21, in-qa → done: QA passed every criterion (goal G-005).
