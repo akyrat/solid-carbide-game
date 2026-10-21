@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/driving/trick_detector.gd, game/scripts/data/combo_data.gd, game/scripts/hud/trick_popups.gd, tasks/T-218-text-aerial-trick-popups.md]
 files_expected_to_change: [game/scripts/driving/trick_detector.gd, game/data/, game/scripts/hud/, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-219/screenshots/]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -72,6 +72,14 @@ Back to the agent: faster turning in the air, so AIR 360! can be done off the ta
 
 Faster air turning in (2.5x, a tuning value): AIR 360! works off a height-6 rooftop with about 0.2 s of margin. Final QA round.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA round 2 passed all 5.
+
+### 2026-10-21, Needs playtest → In progress
+
+Back to the agent: each spin pays once.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-21.
@@ -124,3 +132,22 @@ Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), 
   - The old GIFs and popups are kept and were not re-recorded. `air_180_run.gif` shows the old ground-rate turn.
 - **Refused:** a `sleep 240; cat ...` command to wait for a background test run (the harness blocks sleeps). I skipped it and waited for the run's notification instead.
 - Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), `game/README.md` ("Tricks").
+- 2026-10-21, needs-playtest → in-progress: Board (2026-10-21): each spin pays once; turning in the air no longer counts towards the drift 360
+
+**Tweak 2, 2026-10-21 (Driving & Drift Agent): each spin pays once.**
+- **Built:** `car.gd` now calls `tricks.observe(...)` after the height step, not before it, and passes `height_model.airborne`. The detector still only reads the car. In `trick_detector.gd`, the drift 360 doesn't add the heading change of a step that ends in the air. Those are exactly the steps the aerial tricks count, so no step's turn counts for both. The extended and alternate drifts are unchanged.
+- **A drift 360 already in progress at takeoff:**
+  - It is kept as it is through the airtime: it neither grows nor resets, as long as the drift keys stay held (W, or S, with A or D; holding them in the air is still a drift).
+  - From the landing step on, it carries on counting from where it was. For example, 50 ground steps, any airtime, then 44 ground steps make one FULL 360!.
+  - Letting go of the drift keys in the air is a break, as on the ground, and starts it from zero.
+  - The takeoff step itself ends in the air, so its turn goes to the air trick. The landing step ends on the ground, so its turn goes to the drift 360.
+- **Tests:** `test_air_tricks.gd` now has 28 tests.
+  - The drive off a height-6 rooftop with W+A gives AIR 360! and no FULL 360!.
+  - The detector: 200 drift steps that end in the air give no FULL 360! but still give the extended drift.
+  - The in-progress case: 50 ground + 30 air + 43 ground steps give nothing, and the 94th ground step gives FULL 360!.
+  - The real car: a ground drift 360 still fires after 94 ground steps.
+  - The real car: a staged 6-unit fall with W+A held pays only AIR 360!.
+  - `test_tricks.gd` (the ground drift 360 and the other ground tricks) passes unchanged.
+  - Results: GUT suite 1240/1240, `tools` 439 OK, `game/tools` 388 OK (1 skipped).
+- **Recording:** new `art-archive/T-219/screenshots/air_360_run_pays_once.gif`, with its popup `air_360_run_pays_once_popup.png`; the older `air_360_run.gif` is kept. I looked at the frames. It is a real run on the elevation map: the car drives off a height-6 rooftop with W and turns with A for the whole fall (about 470 degrees). Nothing pops mid-air. It lands to AIR 360! +0.5 with LONG DRIFT! +0.05 under it, at Combo x1.55, and there is no FULL 360!. The LONG DRIFT! comes from the drift's seconds, which still count in the air.
+- Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)": the drift 360 bullet, and the recordings), `game/README.md` ("Tricks", "360").

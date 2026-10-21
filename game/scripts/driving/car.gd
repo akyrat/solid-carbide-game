@@ -159,8 +159,6 @@ func physics_step() -> void:
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
 	model.update_velocity(w, s, steer)
-	if detect_tricks:
-		tricks.observe(model, w, s, steer, rotation_before)
 	if _pending_knockback != Vector2.ZERO:
 		model.vx += _pending_knockback.x
 		model.vy += _pending_knockback.y
@@ -192,8 +190,11 @@ func physics_step() -> void:
 		_bounce_off_side(side)
 	_update_side_contacts()
 	if detect_tricks:
-		# The aerial tricks (task T-219): the heading turned on this step, and
-		# whether the car is in the air after its height step. Reads only.
+		# Tricks (task T-079), observed after the height step so the detector
+		# knows whether this step ends in the air: the drift 360 ignores those
+		# steps' turning (T-219, board: each spin pays once), and the aerial
+		# tricks (T-219) count it. Reads only.
+		tricks.observe(model, w, s, steer, rotation_before, height_model.airborne)
 		tricks.observe_air(height_model.airborne, model.rotation - rotation_before)
 	stepped.emit()
 

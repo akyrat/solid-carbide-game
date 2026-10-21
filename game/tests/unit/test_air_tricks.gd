@@ -313,6 +313,7 @@ func test_driving_off_a_6_rooftop_and_turning_gives_the_360() -> void:
 		car.physics_step()
 		air += 1
 	assert_eq(_air_tricks(), ["air_three_sixty"], "%d steps in the air" % air)
+	assert_eq(_count("three_sixty"), 0, "each spin pays once: no FULL 360 for the air spin (W held)")
 
 
 func test_detection_off_gives_no_air_tricks() -> void:
@@ -325,6 +326,60 @@ func test_detection_off_gives_no_air_tricks() -> void:
 	for i in 80:
 		car.physics_step()
 	assert_eq(_tricks, [])
+
+
+# --- Each spin pays once (task T-219, board): air turning is not the drift 360's ---
+
+func _drift_steps(model, steps: int, airborne: bool) -> void:
+	for i in steps:
+		var before: float = model.rotation
+		model.step(true, false, A)
+		_det.observe(model, true, false, A, before, airborne)
+
+
+func test_drift_360_ignores_steps_that_end_in_the_air() -> void:
+	var m = CarModel.new()
+	_drift_steps(m, 200, true)
+	assert_eq(_count("three_sixty"), 0, "a drift spun in the air is no FULL 360")
+	assert_gt(_count("extended_drift"), 0, "the drift itself goes on in the air")
+
+
+func test_a_drift_360_in_progress_at_takeoff_is_kept_and_carries_on_after_landing() -> void:
+	var m = CarModel.new()
+	_drift_steps(m, 50, false)  # 191.9 degrees on the ground
+	_drift_steps(m, 30, true)   # in the air: not counted, not reset
+	_drift_steps(m, 43, false)  # 50 + 43 = 93 ground steps: 356.9 degrees
+	assert_eq(_count("three_sixty"), 0)
+	_drift_steps(m, 1, false)   # the 94th ground step
+	assert_eq(_count("three_sixty"), 1)
+
+
+func test_the_real_car_drift_360_on_the_ground_still_works() -> void:
+	var car := _car(_street_point(8.0), 0.0)
+	car.scripted_input = [true, false, A]
+	for i in 94:
+		car.physics_step()
+		if car.airborne:
+			fail_test("left the ground")
+			return
+	assert_eq(_count("three_sixty"), 1, "94 ground steps: a FULL 360")
+	assert_eq(_air_tricks(), [])
+
+
+func test_the_real_car_air_spin_with_w_held_pays_only_the_air_360() -> void:
+	var p := _street_point(3.0)
+	var car := _car(p, 0.0)
+	car.height_model.height = 6.0
+	car.height_model.airborne = true
+	car.scripted_input = [true, false, A]
+	var steps := 0
+	while car.airborne and steps < 200:
+		car.physics_step()
+		steps += 1
+	car.scripted_input = [false, false, 0.0]
+	car.physics_step()
+	assert_eq(_air_tricks(), ["air_three_sixty"])
+	assert_eq(_count("three_sixty"), 0, "no FULL 360 for the same spin")
 
 
 # --- The run: combo and popups ------------------------------------------------------

@@ -3,15 +3,19 @@ extends RefCounted
 ## car's own driving, task T-079. It only reads the car: it never changes the
 ## car's speed, position or rotation. No nodes, so tests can run it directly.
 ##
-## The car (car.gd) calls observe() once per physics step, right after the
-## driving model's update, with the keys used for that step. Each trick found
+## The car (car.gd) calls observe() once per physics step, after the driving
+## model's update and its height step (T-219), with the keys used for that step. Each trick found
 ## emits `trick` once, with the trick's id:
 ##
 ## - "extended_drift": every full second of one unbroken drift. "Drifting" is
 ##   the model's own is_drifting (W, or S without W, held together with A or D).
 ## - "three_sixty": the heading has turned a full 360 degrees in one direction
 ##   during one unbroken drift; 720 gives two. A break in the drift, or turning
-##   back the other way, starts the count again.
+##   back the other way, starts the count again. Turning on a step that ends in
+##   the air does not count (task T-219, board: each spin pays once; it counts
+##   for the aerial tricks instead). A drift 360 in progress at takeoff is kept
+##   as it is through the airtime, neither growing nor reset, as long as the
+##   drift keys stay held, and carries on counting after landing.
 ## - "alternate_drift": a switch between a forward drift (W + A or D) and a
 ##   backward drift (S + A or D) with the same steering direction. See the
 ##   alternate_* values in car_tuning.gd for its timing limits.
@@ -115,8 +119,9 @@ func reset() -> void:
 
 ## One physics step. model is the CarModel after its update_velocity() for this
 ## step; w, s and steer are the keys it used (steer +1 = A, -1 = D);
-## rotation_before is the model's rotation before that update.
-func observe(model, w: bool, s: bool, steer: float, rotation_before: float) -> void:
+## rotation_before is the model's rotation before that update; airborne is
+## true when the step ends with the car in the air (task T-219).
+func observe(model, w: bool, s: bool, steer: float, rotation_before: float, airborne := false) -> void:
 	var dt: float = model.dt
 	var t = model.tuning
 	seconds_since_last += dt
@@ -137,7 +142,8 @@ func observe(model, w: bool, s: bool, steer: float, rotation_before: float) -> v
 	# 360.
 	if drifting:
 		var turned: float = model.rotation - rotation_before
-		if turned != 0.0:
+		# In the air the turn is the aerial tricks' (observe_air), not the drift 360's.
+		if turned != 0.0 and not airborne:
 			if _turn != 0.0 and signf(turned) != signf(_turn):
 				_turn = 0.0
 			_turn += turned
