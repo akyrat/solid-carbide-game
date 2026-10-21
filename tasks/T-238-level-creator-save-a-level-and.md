@@ -1,7 +1,7 @@
 ---
 id: T-238
 title: Level creator: save a level, and reopen it
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/data/level/creator_texts.json, game/scripts/level/level_store.gd, game/tools/check_level.py, game/scripts/level_creator/editor.gd, game/scripts/level_creator/level_document.gd, game/scripts/level_creator/level_list_screen.gd, game/scripts/level/mvp_map.gd, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/scripts/level_creator/editor.gd, game/scripts/level_creator/level_document.gd, game/tests/unit/level_creator/test_editor_save.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-238.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-22, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -82,3 +86,4 @@ README: `game/README.md`, "Level creator", new bullet "Saving (T-238)".
 Screenshots: `art-archive/T-238/screenshots/saved.png` (the editor after Save: name field "Rooftop corner", "Level saved." on the top bar), from the new fixture `tests/fixtures/level_creator_save_demo.tscn` (saves into a temporary folder, never `data/levels/`).
 
 PixelLab: 0 generations. Refusals: none. Documents affected: none (game/README.md only).
+- 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
