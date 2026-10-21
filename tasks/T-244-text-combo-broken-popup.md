@@ -1,7 +1,7 @@
 ---
 id: T-244
 title: "Text: the combo broken popup"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/extended-narrative.md]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,13 +37,28 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the combo broken popup's exact text, with this ticket's id (QA: pass / fail)
-- [ ] It is one short line in the trick popups' voice that reads as a loss (QA: pass / fail)
+- [ ] HUD and menus, Content, has the combo broken popup's exact text, with this ticket's id (QA: pass; "Combo broken popup" section cites T-244 and gives COMBO BROKEN!)
+- [ ] It is one short line in the trick popups' voice that reads as a loss (QA: pass; capitals and exclamation mark like AIR 360!, "BROKEN" reads as a loss)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Text written: COMBO BROKEN!. Sent to QA.
+
+### 2026-10-21, In QA → Done
+
+QA passed both. Merged: COMBO BROKEN!. T-245 starts.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Text: **COMBO BROKEN!** (HUD and menus, Content, "Combo broken popup", T-244). One short line in the trick popups' voice; reads as a loss. Proposal: no amount lost shown, text only. Matches the Visual/Extended narrative tone (stunt-stream chaos); no story conflict found.
+- 2026-10-21, in-qa → done: QA passed both; docs-only text, merged straight after QA
