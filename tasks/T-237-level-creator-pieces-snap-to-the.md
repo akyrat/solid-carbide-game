@@ -37,13 +37,13 @@ The board's review: In the level creator, place pieces next to each other and ch
 
 ## Acceptance criteria
 
-- [ ] A unit test places pieces from off-grid cursor positions: every placed piece's edges lie on even units. (QA: pass / fail)
-- [ ] Unit tests: a piece placed within the documented snap distance of a neighbour lines its edge up with the neighbour's edge, including a ramp's top end onto a rooftop's side; a piece placed farther away does not move to the neighbour. (QA: pass / fail)
-- [ ] A unit test: a piece that would overlap in a way check_level.py refuses is not placed or is flagged (as the result notes say), and the overlap message from creator_texts.json is shown. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', gives the snap distance; the result notes give it as a proposal for the board. (QA: pass / fail)
-- [ ] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass / fail)
-- [ ] A screenshot of a ramp snapped onto a rooftop's side is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [x] A unit test places pieces from off-grid cursor positions: every placed piece's edges lie on even units. (QA: pass)
+- [x] Unit tests: a piece placed within the documented snap distance of a neighbour lines its edge up with the neighbour's edge, including a ramp's top end onto a rooftop's side; a piece placed farther away does not move to the neighbour. (QA: pass)
+- [x] A unit test: a piece that would overlap in a way check_level.py refuses is not placed or is flagged (as the result notes say), and the overlap message from creator_texts.json is shown. (QA: pass)
+- [x] game/README.md, 'Level creator', gives the snap distance; the result notes give it as a proposal for the board. (QA: pass)
+- [x] The test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass)
+- [x] A screenshot of a ramp snapped onto a rooftop's side is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [x] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
