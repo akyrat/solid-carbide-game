@@ -1,7 +1,7 @@
 ---
 id: T-241
 title: "Text: the airtime trick's popup"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -44,6 +44,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Popup text: **HANG TIME!** followed by "+{amount}", written in docs/hud-and-menus.md (Content, Trick popups, T-241). Proposal: it does not show the airtime (the live counter T-243 does); same size as the AIR popups. Chosen for the voice of LONG DRIFT! and FULL 360!, and clearly apart from AIR 180!/AIR 360!. Only docs/hud-and-menus.md changed.
