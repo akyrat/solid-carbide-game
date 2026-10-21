@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: PixelLab falling frames for the minion, one direction as a GIF sample first.
 
+### 2026-10-21, In progress → In QA
+
+Falling sample (south-east only, 1 generation): same lizard, legs splayed and tail whipping, more a scramble than a tumble. GIF: C:\solid-carbide-worktrees\T-227\art-archive\T-227\minion_fall_se_sample_in_run_close.gif. The other 4 directions need about 4 more generations.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -74,3 +78,5 @@ Run recording: `art-archive/T-227/minion_fall_se_sample_in_run_close.gif` (3x cl
 Refused: `rm -rf` of the scratch frame folder (guard, thought it might be a ticket) and, once, Godot's non-console exe and a `--headless --import` run of the console exe. Skipped and not retried in another form; I used a new scratch folder and `run_scene_headless.py` (which imports the project) instead, then the console exe for the movie, which was allowed.
 
 Remaining: the other directions (s, e, ne, n) after approval: 4 calls, about 4 generations. Not started.
+- 2026-10-21, in-progress → in-qa: South-east sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: the board took it out of QA with 4 acceptance criteria not marked
