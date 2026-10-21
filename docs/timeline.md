@@ -1595,3 +1595,8 @@ Entry format:
 - Decision or change: the goal runner's ticket writer drops criteria only the Project Lead can meet (long or short GDD, staleness check, timeline, merging); `task_status.py` counts only the last QA mark on each criterion and reads "(QA: pass. ...)"; QA is told to replace its old marks; board moves on goal tickets reach a live session once the run's own session has ended (`run.py --session` records it); tool tests no longer print lines that look like real commits on master. Tooling, merged straight after QA.
 - Documents touched: `tasks/README.md`, `docs/README.md`
 - Tasks: T-215 (done)
+
+## 2026-10-21: T-217 done: the game's current state in the README
+- Decision or change: the root README has a "Current state of the game" section with three GIFs recorded from the real game: the car drifting with minions chasing it (on the gravel square; the weakest of the three), the car drifting off a height-6 rooftop and landing, and the kaiju chasing the car while meteors fall. README and GIFs only, merged straight after QA.
+- Documents touched: `README.md`
+- Tasks: T-217 (done)
