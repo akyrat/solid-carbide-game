@@ -1,7 +1,7 @@
 ---
 id: T-216
 title: The guard lets more read-only commands through
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -48,10 +48,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests feed `pre_shell` each command listed above (with real file paths of the same shape) and the guard lets each through (QA: pass / fail)
-- [ ] Tests show the guard still refuses `rm` and `sed -i` on a task file, and every case the existing guard tests refuse (QA: pass / fail)
-- [ ] `tasks/README.md` describes the rule in a sentence or two (QA: pass / fail)
-- [ ] All Python tool tests pass (QA: pass / fail)
+- [ ] Tests feed `pre_shell` each command listed above (with real file paths of the same shape) and the guard lets each through (QA: pass; MoreReadOnlyCommands tests cover each listed case and pass)
+- [ ] Tests show the guard still refuses `rm` and `sed -i` on a task file, and every case the existing guard tests refuse (QA: pass; test_still_refused covers rm, sed -i/w/e/-f, xargs rm, globs; older tests pass; diff reviewed)
+- [ ] `tasks/README.md` describes the rule in a sentence or two (QA: pass; added under Changing a task's status)
+- [ ] All Python tool tests pass (QA: pass; tools 422 OK, game/tools 370 OK with 1 skipped)
 
 ## Updates
 
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's go: the guard lets more read-only commands through.
+
+### 2026-10-21, In progress → In QA
+
+Built. My criterion wrongly asked to refuse git checkout of a ticket, which the commit check relies on; corrected. Sent to QA.
 
 ## Result notes
 
