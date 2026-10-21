@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The pause screen shows the slider under "SFX volume", with T-208's label word for word, laid out like the SFX volume slider (screenshot) (QA: pass. Row directly under "SFX volume", same label column, slider width and right-end number.)
-- [ ] Moving it changes the music's volume at once and not the sound effects', and the value is saved and loaded between sessions (tests) (QA: pass. test_music_volume_slider.gd covers applies at once, SFX bus untouched, saved and loaded; passes in the full suite.)
-- [ ] The pause strip still sits below the HUD timer without overlapping it (screenshot) (QA: pass. Strip starts at y 92, timer ends about y 78, no overlap. The loosened limits (0.30 to 0.35, 0.45 to 0.5, y 300 to 340) stay within the "compact strip, only as tall as its content, below the timer" decision: one extra row (about 29 px), tests still assert content height and no overlap. Strip ends at about 322 of 648 with the dynamic-camera buttons, just under the new half-screen cap, so another row would not fit.)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass. GUT 1141/1141; tools unittest OK; game/tools 355 OK, 1 skipped.)
+- [ ] The pause screen shows the slider under "SFX volume", with T-208's label word for word, laid out like the SFX volume slider (screenshot) (QA: pass; Row directly under "SFX volume", same label column, slider width and right-end number.)
+- [ ] Moving it changes the music's volume at once and not the sound effects', and the value is saved and loaded between sessions (tests) (QA: pass; test_music_volume_slider.gd covers applies at once, SFX bus untouched, saved and loaded; passes in the full suite.)
+- [ ] The pause strip still sits below the HUD timer without overlapping it (screenshot) (QA: pass; Strip starts at y 92, timer ends about y 78, no overlap. The loosened limits (0.30 to 0.35, 0.45 to 0.5, y 300 to 340) stay within the "compact strip, only as tall as its content, below the timer" decision: one extra row (about 29 px), tests still assert content height and no overlap. Strip ends at about 322 of 648 with the dynamic-camera buttons, just under the new half-screen cap, so another row would not fit.)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1141/1141; tools unittest OK; game/tools 355 OK, 1 skipped.)
 
 The board's review: pause during a run and move the music volume slider.
 Board review files: the pause screen in a run.
