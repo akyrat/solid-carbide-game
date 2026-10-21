@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: blocked
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -52,6 +52,34 @@ Board review files: the GIFs in `art-archive/T-219/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Blocked → In progress
+
+Started: the air 180 and air 360, with AIR 180! and AIR 360!.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Driving & Drift Agent, 2026-10-21.
+
+**Built.** `trick_detector.gd` has two new tricks, `air_one_eighty` and `air_three_sixty` (in `TRICK_IDS`, plus `AIR_TRICK_IDS`), found by a new `observe_air(airborne, turned)`. `car.gd` calls it once per physics step after its height step, with `height_model.airborne` and the heading's change on that step. It only reads; the driving and the air steering are unchanged. `combo.json` has `trick_add.air_one_eighty` 0.25 and `.air_three_sixty` 0.5, so the run's existing `add_trick` raises the combo through `ComboData`. `trick_popups.gd` shows T-218's texts word for word, AIR 180! and AIR 360!, at the normal size with "+{amount}". `make_turn_gif.py` has `--glob` and `--every` so it can build GIFs from Godot movie-maker frames.
+
+**Proposals for the playtest** (also in Drifting, Content, "Aerial tricks"):
+- Worth: air 180 is +0.25 (the same as a drift 360). Air 360 is +0.5 (the same as an alternate drift).
+- A 360 counts only the 360, not its 180 as well. The airtime's best turn is paid in half turns: 540 gives an air 360 and an air 180, and 720 gives two air 360s.
+- The turn must be finished before landing. Only heading turned on steps that end in the air counts, and the tricks are paid out on the landing step.
+- Either direction counts. Turning back starts a new count, the airtime keeps its largest turn, and letting go of the steering keeps the count.
+- A drift 360 that spans a jump and the air turn count independently. The drift 360 still counts through the air as before, so one spin can give FULL 360! and AIR 180!.
+
+**Honest limit: the air 360 can't be done on today's map.** The car turns 191.9 degrees a second. The longest airtime is a fall from a height-6 rooftop: 50 steps, 1.0 s, 191.9 degrees at most. A 360 needs 94 steps (1.9 s), a fall of about 21 units. The air 180 is just possible: the player must steer for the whole fall, and starting 4 steps (0.08 s) late misses it. Ramp hops (about 0.7 s) are too short. Making the 360 reachable is the board's decision (taller rooftops or ramps, lower gravity, or a faster turn in the air); I didn't change any of them.
+
+**Recordings** (`art-archive/T-219/screenshots/`):
+- `air_180_run.gif`: a real run on the elevation map. The car drives off a height-6 rooftop's side with W and turns with A in the air (50 steps, about 188 degrees). Its round shadow is on the street, it lands facing the other way, and AIR 180! +0.25 pops with LONG DRIFT! +0.05 under it (the drift keys were held in the air). The car is sometimes close to the top edge of the crop but always in frame.
+- `air_360_staged_drop.gif`: staged, because no real jump is long enough. In a run, the car is let go 22 units above the gravel square and the camera is zoomed out to 30 so it stays in frame. The car is small, but it visibly turns a full circle (95 steps, 364.6 degrees), lands, and AIR 360! +0.5 shows with Combo x1.5.
+- Popups: `air_180_popup.png` (the run, AIR 180! +0.25, Combo x1.3) and `air_360_popup.png` (the staged drop at the run's own zoom, AIR 360! +0.5, Combo x1.5).
+
+**Tests.** There is a new `game/tests/unit/test_air_tricks.gd` with 21 tests. They cover the detector (180 and 360 both ways, smaller turns, the same turns on the ground, 540 and 720, two airtimes, turning back, reset). They also cover the real car falling and driving off a height-6 rooftop on the map's ground, detection off, and the run's combo and popups with the exact texts. In `test_tricks.gd`, only `test_ids` changed, to list the two new ids. Every driving test passes unchanged. Results: the GUT suite passes 1233/1233, `tools` 414 OK, `game/tools` 388 OK (1 skipped). `test_make_turn_gif.py` has a new test for `--glob`/`--every`.
+
+**Refused by a hook (skipped, not retried):**
+1. A Bash command that set a shell variable to the scratchpad path, to count GIF frames. The guard couldn't tell it wouldn't write a ticket. I ran the read on its own afterwards.
+2. A `python -` heredoc that edited `docs/drifting.md` and `game/README.md`, refused because its text contained `**`. I then made those two doc edits with the Edit tool. They don't touch any ticket.
+
+Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), `game/README.md` ("Tricks").

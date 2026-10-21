@@ -25,6 +25,17 @@ class TurnGifTests(unittest.TestCase):
                 self.assertEqual(g.size, (60, 30))
                 self.assertEqual(g.n_frames, 3)
 
+    def test_glob_and_every_pick_movie_frames(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as d:
+            for i in range(5):
+                Image.new("RGB", (60, 40), (i * 40, 0, 0)).save(Path(d) / f"f{i:08d}.png")
+            Image.new("RGB", (60, 40)).save(Path(d) / "turn_000.png")
+            out = Path(d) / "x.gif"
+            self.assertEqual(m.make(Path(d), out, size=(20, 10), scale=1, pattern="f*.png", every=2), 3)
+            with Image.open(out) as g:
+                self.assertEqual(g.n_frames, 3)
+
 
 if __name__ == "__main__":
     unittest.main()

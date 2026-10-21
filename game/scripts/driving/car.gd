@@ -63,7 +63,8 @@ signal cruise_jump(from_speed: float, w_just_pressed: bool)
 ## and the UI, hook into this. It changes no driving.
 signal boost(from_speed: float)
 ## Emitted once per trick the car does (task T-079), with the trick's id:
-## "extended_drift", "three_sixty" or "alternate_drift" (TrickDetector.TRICK_IDS).
+## "extended_drift", "three_sixty" or "alternate_drift", or (task T-219) the
+## aerial tricks "air_one_eighty" and "air_three_sixty" (TrickDetector.TRICK_IDS).
 ## For the combo (task T-081) and the trick popups. See trick_detector.gd.
 signal trick(trick_id: String)
 
@@ -188,6 +189,10 @@ func physics_step() -> void:
 		position = model.get_position() * PX_PER_UNIT
 		_bounce_off_side(side)
 	_update_side_contacts()
+	if detect_tricks:
+		# The aerial tricks (task T-219): the heading turned on this step, and
+		# whether the car is in the air after its height step. Reads only.
+		tricks.observe_air(height_model.airborne, model.rotation - rotation_before)
 	stepped.emit()
 
 
