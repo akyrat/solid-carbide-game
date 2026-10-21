@@ -56,3 +56,19 @@ Started at the board's request: the drift trail heats up with the combo, effects
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built by the Driving & Drift Agent (2026-10-22). Proposal for the board's playtest; all drawn in code, no PixelLab, no red.
+
+- `drift_marks.gd`: `set_multiplier(m)` sets `heat_step = ComboHeat.step_for(m)` (thresholds read from `ComboHeat.THRESHOLDS`, none copied). Each piece takes the step current when it is started and keeps it; the run connects it to `RunState.combo_changed` (3 lines in `run.gd`). The drift prototype never calls it, so its marks stay plain. New `drift_heat_sparks.gd` draws the sparks and flames (opaque pixel squares that shrink and pop out).
+- The look of each step is in `drift_marks.tscn` (`heat_looks`, `flicker_frame`):
+
+| Step | Combo | Glow behind marks | Core line | Sparks per tyre per second | Flames |
+| --- | --- | --- | --- | --- | --- |
+| 1 | x2 | yellow, 0.4 units, steady | none | 14 yellow | none |
+| 2 | x3 | orange, 0.5 units, flickers between two oranges | yellow, 0.08 units | 28 orange and yellow | none |
+| 3 | x4+ | 0.65 units, flickers orange, light orange, yellow | white-hot, 0.12 units | 48 white, yellow, orange | 26 per second, 9 px squares rising, orange to yellow to white-hot |
+
+- Tests: new `tests/unit/test_drift_marks_hype.gd` (11 tests). Full GUT suite 1298/1298 pass; `python -m unittest discover -s tools` 439 OK; `-s game/tools` 393 OK (1 skipped, as before).
+- Screenshots and GIF in `art-archive/T-249/screenshots/`: `hype_plain_x1.png`, `hype_step1_x2.png`, `hype_step2_x3.png`, `hype_step3_x4.png`, `hype_trail_climb.gif`. Fixtures: `tests/fixtures/drift_marks_hype_*.tscn`. Each step looks clearly hotter; sparks are small, flames show best at x4.
+- Docs updated: `game/README.md` (Drift marks, "Hype look"), `docs/visual-style.md` (Hype drift trail).
+- Refusal: the hook refused my first attempt to write these notes with inline `python -` (it names task files). I did not retry another way; the Project Lead then allowed Edit on this section.
