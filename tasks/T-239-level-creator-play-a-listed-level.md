@@ -1,7 +1,7 @@
 ---
 id: T-239
 title: Level creator: play a listed level as a full run, and come back to the creator
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 lead: Goal-G-005

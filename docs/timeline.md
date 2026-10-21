@@ -1660,3 +1660,33 @@ Entry format:
 - Decision or change: the board wants to make levels by hand in a separate level creator app: browse the levels made, play one as a full run, or create a new one by placing the game's existing assets from a side panel, rotating them between the views the art has, at heights 3 and 6, with snapping to the tile grid and to neighbours (Level design, Decisions). Custom levels play only from the creator. Built by the goal runner (G-005) with an art cap of 0; the board plays the result once at the end. The board also approved T-227's falling sample.
 - Documents touched: `docs/level-design.md`
 - Tasks: G-005, T-227
+
+## 2026-10-21: An airtime trick and a live airtime counter
+- Decision or change: every time the car is airborne, its airtime is a trick that pays on landing, scaled by seconds and hundredths in the air (defaults proposed by the agent); a small HUD label near the combo popups counts the airtime up (0.00) next to a jump icon while the car is in the air. Text first (T-241), then the trick (T-242); the counter (T-243) has no words.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`
+- Tasks: T-241, T-242, T-243 (open)
+
+## 2026-10-21: A combo broken popup on crashes
+- Decision or change: when a crash cuts the combo, a red (not Redgull's red), broken-looking popup pops from the car like the trick popups; only on crashes, not when the combo drains (HUD and menus, Decisions). Text first (T-244), then the popup (T-245). The airtime tickets (T-241, T-243) start now.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-244, T-245, T-241, T-243
+
+## 2026-10-22: T-244 done: the combo broken popup's text
+- Decision or change: the popup a crash shows when it cuts the combo reads "COMBO BROKEN!", with no amount (HUD and menus, Content). Docs-only text, merged straight after QA; T-245 starts.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-244 (done), T-245
+
+## 2026-10-22: T-241 done: the airtime trick's popup text, and a drift that pays once
+- Decision or change: the airtime trick's popup reads "HANG TIME!" with its amount, without the seconds (HUD and menus, Content); docs-only, merged straight after QA, so T-242 starts. The board also chose that a drift pays once at its end, scaled by its length, with a live drift counter next to the airtime one (Drifting and HUD and menus, Decisions; T-246, T-247).
+- Documents touched: `docs/hud-and-menus.md`, `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-241 (done), T-242, T-246, T-247
+
+## 2026-10-22: The hype drift trail, more harmless commands for the guard, and the README GIFs wait for the new combo mechanics
+- Decision or change: the board chose that the drift marks change and gain effects on the combo heat steps (x2, x3, x4 and up), with the effects proposed by the agents for the playtest (Visual style, Decisions, "Hype drift trail"; T-249). The board's go to let the guard pass a read-only `find`, shell variable assignments and Godot's `--write-movie` and `--import`, which agents kept hitting (T-248). The README GIFs (T-229) now wait for the airtime trick, both live counters and the drift paying once, and show them.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-249, T-248, T-229
+
+## 2026-10-22: The level creator gets a full piece set, with PixelLab
+- Decision or change: after playing G-005's level creator, the board judged today's assets not enough for a full level and gave its go for up to 100 PixelLab generations for a comprehensive piece set: a multi-layer world with rooftops of any size, ramps between the layers and pieces in more rotations (Level design, Decisions, "Level creator piece set"; replaces "no new art is generated for it"). The Project Lead's plan: the text first (T-250); rooftops of any size and ramps in all four directions drawn in the engine (T-251); road corners, junctions and dead ends by script (T-252); eight props as obstacles in four rotations (T-253); small and long buildings (T-254); then their art: new textures (T-255, cap 10), props (T-256, cap 40) and buildings (T-257, cap 12), 62 generations at most. The board also took T-243 out of T-247's dependencies, and asked for T-229 to start as soon as the drift and airtime work is done, without waiting for its word.
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-250, T-251, T-252, T-253, T-254, T-255, T-256, T-257, T-247, T-229
