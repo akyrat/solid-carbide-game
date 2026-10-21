@@ -36,7 +36,8 @@ extends Node2D
 ## air, and the rooftops, ramps and buildings covering it fade. Enemies,
 ## coins, pickups and effects are drawn at street level (height 0) in the
 ## depth order. Set USE_ELEVATION_MAP to false for the MVP map (mvp_map.json),
-## as before T-206.
+## as before T-206. Since T-230 the map file is `layout_path` (any file in the
+## elevation sample map's format; the sample map by default).
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MapScript := preload("res://scripts/level/mvp_map.gd")
@@ -159,6 +160,15 @@ var pickup_magnet: PickupMagnet
 ## Whether the next map built is the elevation map (USE_ELEVATION_MAP by
 ## default). Read by start_run() each time it builds a new map; tests set it.
 var use_elevation_map: bool = USE_ELEVATION_MAP
+## The map file the run plays (task T-230; Level design, Decisions, "Level
+## creator"): a res:// or user:// path to a layout in the elevation sample
+## map's format. Both the map (buildings, boulders, ground) and the elevation
+## layer (rooftops, ramps) are built from it, and the enemies' navigation is
+## built from that map. Set it before the run enters the tree, or before
+## start_run(), or pass it to start_run(); empty means
+## ELEVATION_LAYOUT_PATH (the main menu's run). Read only when
+## use_elevation_map is true.
+var layout_path: String = ELEVATION_LAYOUT_PATH
 ## The map's rooftops and ramps (elevation_layer.gd), a child "Elevation" of
 ## the map; null on the MVP map. A new run's map brings a new one.
 var elevation = null
@@ -283,7 +293,10 @@ func _ready() -> void:
 ## Starts a fresh run: a new map (every challenge open again, when challenges
 ## are on; meteor boulders from the last run gone), the car back
 ## at the start, and the state reset (full health, 8:00, 0 coins).
-func start_run() -> void:
+## `path`, when given, becomes the run's layout_path first (task T-230).
+func start_run(path: String = "") -> void:
+	if path != "":
+		layout_path = path
 	_build_world()
 	world_rebuilt.emit()
 	state.start_run()
@@ -300,8 +313,9 @@ func _build_world() -> void:
 	map = MapScene.instantiate()
 	map.name = "Map"
 	map.challenges_enabled = challenges_enabled
+	var path := current_layout_path()
 	if use_elevation_map:
-		map.layout_path = ELEVATION_LAYOUT_PATH
+		map.layout_path = path
 	add_child(map)
 	move_child(map, 0)  # drawn under the car
 	map.set_view(VIEW)
@@ -311,7 +325,7 @@ func _build_world() -> void:
 		elevation = ElevationLayerScript.new()
 		elevation.name = "Elevation"
 		map.add_child(elevation)
-		elevation.setup(map, ELEVATION_LAYOUT_PATH)
+		elevation.setup(map, path)
 	shadow.visible = elevation != null
 	# Back to the street's drawing until sync_view() places them (T-206).
 	drift_smoke.position = Vector2.ZERO
@@ -354,6 +368,12 @@ func _build_world() -> void:
 	car_sprite.reset_physics_interpolation()
 	shadow.reset_physics_interpolation()
 	camera.reset_physics_interpolation()
+
+
+## The map file the next map is built from (task T-230): layout_path, or
+## ELEVATION_LAYOUT_PATH when it is empty.
+func current_layout_path() -> String:
+	return layout_path if layout_path != "" else ELEVATION_LAYOUT_PATH
 
 
 ## The car hit a wall, building, map edge or boulder: a collision for the combo.

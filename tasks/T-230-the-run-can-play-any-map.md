@@ -1,7 +1,7 @@
 ---
 id: T-230
 title: The run can play any map file, with the elevation sample map as the default
-status: open
+status: done
 from: project-lead
 to: game-loop
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, game/README.md, game/scripts/run/run.gd, game/scripts/level/mvp_map.gd, game/scripts/level/elevation_layer.gd, game/scripts/enemies/enemy_navigation.gd, game/data/level/elevation_sample_map.json, game/tests/unit/run/test_run_elevation_map.gd]
 files_expected_to_change: [game/scripts/run/run.gd, game/tests/unit/run/test_run_layout_path.gd, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,17 +35,38 @@ The level creator (Level design, Decisions, 'Level creator', board 2026-10-21) p
 
 ## Acceptance criteria
 
-- [ ] run.gd (or its start function) accepts a layout file path, used for both the map and the elevation layer; with none given it uses res://data/level/elevation_sample_map.json, and the existing run tests (tests/unit/run/) pass unchanged. (QA: pass / fail)
-- [ ] A unit test starts a run on a copy of elevation_sample_map.json saved under another path with one building and one platform removed: the run's map has one building and one platform fewer than a default run, and the elevation layer was set up with the copied file's path (not the constant). (QA: pass / fail)
-- [ ] A unit test on that copied file: enemy navigation builds for the run's map and find_path from a street cell to a rooftop cell returns a non-empty path whose points pass over a ramp's rectangle. (QA: pass / fail)
-- [ ] game/README.md, 'The run', says how to start a run on another map file. (QA: pass / fail)
-- [ ] The full GUT suite passes headless. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (no visible change). (QA: pass / fail)
+- [ ] run.gd (or its start function) accepts a layout file path, used for both the map and the elevation layer; with none given it uses res://data/level/elevation_sample_map.json, and the existing run tests (tests/unit/run/) pass unchanged. (QA: pass: start_run(path)/layout_path, default constant kept; run tests green)
+- [ ] A unit test starts a run on a copy of elevation_sample_map.json saved under another path with one building and one platform removed: the run's map has one building and one platform fewer than a default run, and the elevation layer was set up with the copied file's path (not the constant). (QA: pass: test_run_layout_path.gd passes; building and platform counts checked)
+- [ ] A unit test on that copied file: enemy navigation builds for the run's map and find_path from a street cell to a rooftop cell returns a non-empty path whose points pass over a ramp's rectangle. (QA: pass: navigation test passes)
+- [ ] game/README.md, 'The run', says how to start a run on another map file. (QA: pass: "Another map file (T-230)" bullet)
+- [ ] The full GUT suite passes headless. (QA: pass: 108 scripts, 1311/1311)
+- [ ] The result notes say in one line that there is nothing to screenshot (no visible change). (QA: pass: Screenshots line in result notes)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-230.
+
+### 2026-10-21, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-21, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Game Loop Agent, 2026-10-21.
+
+- **run.gd:** new `var layout_path: String = ELEVATION_LAYOUT_PATH` (set before the run enters the tree, or before `start_run()`), and `start_run(path: String = "")` sets it when a path is given (later `start_run()` calls keep that map). `current_layout_path()` returns it, or `ELEVATION_LAYOUT_PATH` when it is empty. `_build_world()` uses that one path for `map.layout_path` and `elevation.setup(map, path)`; the enemies' navigation (`enemy_navigation.gd`, `for_map`) is built from that map, so all come from the same file. res:// and user:// both work (FileAccess). With nothing set, the run is exactly as before (constant and `USE_ELEVATION_MAP` unchanged; the MVP switch still wins).
+- **Tests:** `game/tests/unit/run/test_run_layout_path.gd` (9 tests, 41 asserts, pass). It writes a copy of `elevation_sample_map.json` to `RunPaths.file("t230_custom_map.json")` (user://test_runs/<pid>/) with the first building (12, -96) removed and the rooftop `roof-se-6` removed (with `ramp-se-3-6`, the ramp up to it, so no ramp leads to a missing rooftop). Checks: default run uses the sample map; empty path falls back; a run set before the tree has one building fewer on the map and one platform fewer in the elevation layer's `ground_height` (the layer keeps no path, so the platform count and ids prove it read the copy); `start_run(path)` switches maps; the MVP switch still builds the MVP map; enemy navigation (`for_map(run.map)`) uses the copy's heights and `find_path((-60,-48) street, (-80,-80) on roof-nw-3)` is non-empty, has a segment passing over a ramp's rectangle, and ends on the rooftop; the removed building's cells are open in the navigation grid.
+- **Existing run tests** (`tests/unit/run/`) unchanged and passing in the full suite.
+- **game/README.md**, "The run", "The run's map (T-206)": new bullet "Another map file (T-230)" saying how to start a run on another map file.
+- **Full GUT suite:** `bash game/tools/run_tests.sh` passes headless: 108 scripts, 1311/1311 tests, 314 s.
+- **Screenshots:** nothing to screenshot: no visible change (the default run looks exactly as before; the change is a path the run reads).
+- PixelLab: 0 generations. Refusals: none.
+- 2026-10-21, in-qa → done: QA passed every criterion (goal G-005).
