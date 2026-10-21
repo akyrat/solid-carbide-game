@@ -1,7 +1,7 @@
 ---
 id: T-235
 title: Level creator: the editor's map canvas, the side panel, placing and deleting pieces
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -48,6 +48,10 @@ The board's review: Open the level creator, make a new level and place and delet
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-235.
 
 ## Result notes
 
