@@ -10,9 +10,10 @@ extends Node2D
 ## after 1 + pierce_hits hits, or once it has flown missed_bullet_max_travel
 ## (the gun's range). It never pushes enemies and passes through walls.
 ##
-## The drawing is a placeholder: a small cyan neon dot with a white-hot core
-## and a dark outline, the gun's drawn size (0.32 units). The final bullet art
-## comes from a separate art task and replaces _draw(). No Redgull red.
+## The drawing is the final art (task T-071): a cyan neon ball with a white-hot
+## core and a dark outline, game/art/effects/bullet.png (two pulse frames of
+## 12 x 12 art pixels, drawn at scale 0.5 like the rest of the world). The hit
+## circle is unchanged. No Redgull red.
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
@@ -20,9 +21,12 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 ## body height), so it looks fired from the car rather than skimming the road.
 const DRAW_HEIGHT_UNITS := 0.5
 
-const CORE_COLOR := Color(1.0, 1.0, 0.92)
-const GLOW_COLOR := Color(0.35, 0.95, 1.0)
-const OUTLINE_COLOR := Color(0.05, 0.07, 0.12)
+const ART := preload("res://art/effects/bullet.png")
+const ART_FRAME := 12
+const ART_FRAMES := 2
+const ART_SCALE := 0.5
+## The bullet pulses between its two frames every this many units flown.
+const PULSE_UNITS := 0.4
 
 ## Emitted for every hit, with the enemy and the damage dealt.
 signal hit(enemy: Node, damage: float)
@@ -42,6 +46,8 @@ var rack: Node = null
 ## Enemies this bullet has hit already (instance ids).
 var _hit_ids := {}
 var _done := false
+## Which pulse frame is drawn (0 or 1).
+var frame := 0
 
 
 ## Sets the bullet up from the gun's stats (WeaponData.gun_at).
@@ -77,6 +83,10 @@ func step(dt: float) -> void:
 	_check_hits()
 	if not _done and travelled > max_travel:
 		_done = true
+	var f := int(travelled / PULSE_UNITS) % ART_FRAMES
+	if f != frame:
+		frame = f
+		queue_redraw()
 	_place()
 
 
@@ -109,8 +119,6 @@ func _place() -> void:
 
 
 func _draw() -> void:
-	# Drawn size in the view's pixels, at least a few pixels so it reads.
-	var r := maxf(drawn_size * PX_PER_UNIT / 2.0, 2.0)
-	draw_rect(Rect2(Vector2(-r - 1.0, -r - 1.0), Vector2(2.0 * r + 2.0, 2.0 * r + 2.0)), OUTLINE_COLOR)
-	draw_rect(Rect2(Vector2(-r, -r), Vector2(2.0 * r, 2.0 * r)), GLOW_COLOR)
-	draw_rect(Rect2(Vector2(-r / 2.0, -r / 2.0), Vector2(r, r)), CORE_COLOR)
+	var size := ART_FRAME * ART_SCALE
+	draw_texture_rect_region(ART, Rect2(Vector2(-size / 2.0, -size / 2.0), Vector2(size, size)),
+		Rect2(Vector2(frame * ART_FRAME, 0), Vector2(ART_FRAME, ART_FRAME)))

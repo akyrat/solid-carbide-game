@@ -198,7 +198,7 @@ func _check_flame_at_height(flame, height: float) -> void:
 	var rot: float = run.car.model.rotation
 	var back := -Vector2(cos(rot), sin(rot))
 	var ground: Vector2 = run.ISO_TRANSFORM * ((run.car.model.get_position() + back * flame.EXHAUST_OFFSET_UNITS) * 16.0)
-	var d: CPUParticles2D = flame.flame_drawing
+	var d: Node2D = flame.flame_drawing
 	assert_almost_eq(d.position.x, ground.x, 0.01)
 	assert_almost_eq(d.position.y, ground.y - height * 16.0, 0.01, "lifted by the car's height")
 	# The exhaust is where the car is drawn: the same lift as the car sprite.

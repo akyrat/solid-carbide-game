@@ -1560,3 +1560,8 @@ Entry format:
 - Decision or change: the full GUT suite now takes about 270 to 390 seconds on a busy computer, past the old 300-second limit (T-071's QA failed only on that). `run_tests.sh` and `run_tests.ps1` default to 900 seconds; `GUT_TIME_LIMIT` still overrides it. Tooling, merged straight after QA.
 - Documents touched: `game/README.md`
 - Tasks: T-214 (done)
+
+## 2026-10-21: T-071 done: flames, burning and bullets art
+- Decision or change: the exhaust flame is the board's approved PixelLab sample with its tailpipe erased by script, in 32 directions with 2 flicker frames, drawn at the car's height; enemies on fire show small flames; the bullet is a cyan neon ball drawn by script (too small for PixelLab). 2 generations. QA round 1 failed only on the old 300-second test time limit (fixed by T-214). The board: "looks good".
+- Documents touched: `docs/weapons.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-071 (done)

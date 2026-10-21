@@ -725,7 +725,7 @@ What the built gun does in the game. It follows Decisions and the Unity prototyp
 - The gun targets every damageable enemy, not only minions, so the kaiju will be shot as soon as it exists.
 - The upgrade tiers (2 to 8) can be applied from code and change the gun as T-040's data says: 3 bullets a volley at tier 2 and 5 at tier 6, a shorter interval at tiers 3, 4 and 7 (1.06, 0.893 and 0.754 seconds), an 18-unit range at tier 5, and bullets passing through their first enemy at tier 8. Offering them at a level-up is built too (the level-up offers, below).
 - The gun stops while the run is paused and once the run has ended.
-- The bullets are placeholders for now: a small cyan dot with a white core and a dark outline, drawn about half a unit above the ground. The final bullet art comes from a separate art task.
+- The bullets are a small cyan neon ball with a white-hot core, pulsing in 2 frames, drawn about half a unit above the ground (art: T-071, drawn by script, `game/art/effects/bullet.png`).
 
 #### The exhaust flamethrower (built in task T-042)
 
@@ -737,7 +737,7 @@ What the built flamethrower does in the game. It follows Decisions (the prototyp
 - **Who is inside:** a minion is inside when its centre is. An enemy that reports its body size, such as the kaiju, is inside when any part of its body overlaps the area (board, 2026-10-14).
 - **Damage:** an enemy entering the flame takes 2 at once and flashes orange for 0.38 seconds; every 0.2 seconds while the flame is on, every enemy inside takes 2 more. No limit on how many it hits, no push. It burns every enemy, through their damage function.
 - **Tiers:** tiers 2, 4 and 6 make the area bigger (x1.2, x1.2, x1.3); tier 3 multiplies the damage by 1.2 (2.4 per hit, not rounded); tier 5 makes the flash 0.5 seconds longer; tier 7 makes the car turn 20% faster; tier 8 keeps it always on at full size.
-- **Look:** placeholder flames (orange and yellow squares) out of the exhaust, drawn just under the car, sized with the area. The drift smoke still shows with the flames (board, 2026-10-14). The final flame art replaces the placeholder.
+- **Look:** a pixel-art flame plume (orange, yellow and a pale core) out of the exhaust in 32 directions, flickering between 2 frames, drawn just under the car, sized with the area, at the car's height. The drift smoke still shows with the flames (board, 2026-10-14). Enemies it burns show small flames on them (`burning_flames.png`). Art: T-071, from a PixelLab sample the board approved (`game/art/effects/exhaust_flame_sheet.png`).
 
 #### Numbers for the three new weapons (proposal, task T-166)
 
@@ -1048,7 +1048,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `1b7332e1fb56ca212282ecb801bff8503815ed2b8cf951133ddc11e98c323f18` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
 | `enemies.md` | `5d08afe48734703683b1cd2651e67eaf5f589ac54651fa53214738de337aaa01` |
-| `weapons.md` | `7ed2079e2feaa5a2170c084f7c879c7af47c0bcd537d4dd6667dbe7902ef8f3a` |
+| `weapons.md` | `4c3108b30ae8748d107e30710257a4b220f0473f5742da4e10d3d8481b9c1ccd` |
 | `garage-design.md` | `97280a6c4c6afcd3923d2b400d4dcc8ee01ae5ec9fe226bfd70222b253de63a5` |
 | `visual-style.md` | `01e034f7e36b80189151626e60b69c2a8c0064d09b671e8e7edeb7a03d7e524e` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |

@@ -340,11 +340,33 @@ func test_nothing_fires_while_paused_or_after_the_run_ends() -> void:
 	assert_eq(shots.size(), 0, "nothing after the run ends")
 
 
-func test_placeholder_bullet_avoids_redgull_red() -> void:
+func test_bullet_art_is_opaque_and_avoids_redgull_red() -> void:
 	const BulletScript := preload("res://scripts/weapons/bullet.gd")
-	for c in [BulletScript.CORE_COLOR, BulletScript.GLOW_COLOR, BulletScript.OUTLINE_COLOR]:
-		var reddish: bool = c.r > 0.5 and c.g < 0.35 and c.b < 0.35
-		assert_false(reddish, "%s is not red" % c)
+	var img: Image = BulletScript.ART.get_image()
+	assert_eq(img.get_width(), BulletScript.ART_FRAME * BulletScript.ART_FRAMES, "two pulse frames side by side")
+	assert_eq(img.get_height(), BulletScript.ART_FRAME)
+	var opaque := 0
+	for y in img.get_height():
+		for x in img.get_width():
+			var c := img.get_pixel(x, y)
+			assert_true(c.a == 0.0 or c.a == 1.0, "no see-through pixels")
+			if c.a == 1.0:
+				opaque += 1
+				assert_false(c.r > 0.5 and c.g < 0.35 and c.b < 0.35, "%s is not red" % c)
+	assert_gt(opaque, 60, "the bullet is drawn")
+
+
+func test_bullet_pulses_between_its_two_frames_as_it_flies() -> void:
+	const BulletScript := preload("res://scripts/weapons/bullet.gd")
+	var b = BulletScript.new()
+	add_child_autofree(b)
+	b.setup(null, Vector2.ZERO, Vector2.RIGHT, {"bullet_speed": 15.0, "damage": 1.0, "bullet_hit_radius": 1.0,
+		"pierce_hits": 0, "missed_bullet_max_travel": 50.0})
+	assert_eq(b.frame, 0)
+	b.step(0.03)  # 0.45 units flown
+	assert_eq(b.frame, 1, "the second frame after a pulse's length")
+	b.step(0.03)
+	assert_eq(b.frame, 0, "and back")
 
 
 class FakeEnemy:
