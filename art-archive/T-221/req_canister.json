@@ -1,0 +1,9 @@
+{
+  "description": "a small red gas canister lying on its side on the ground, a plain white cross painted on its side, rounded metal cylinder with a small valve on top, 3/4 isometric view, retro pixel art game pickup sprite",
+  "image_size": {"width": 32, "height": 32},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}

@@ -1,7 +1,7 @@
 ---
 id: T-221
 title: "Art: the health drop, a red gas canister with a white cross (PixelLab)"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -51,6 +51,24 @@ Board review files: the sample images and screenshots in `art-archive/T-221/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Blocked → In progress
+
+Started: one PixelLab sample of the canister first.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Sample (2026-10-21), stopped for the board's review
+
+**Planned call** (written here after the call went out, by mistake: my first attempt to write this entry failed on a missing file read, and I ran the call in the same step; the call matched this plan): one `create-image-pixflux`, 32 x 32, no background, black outline, medium shading, highly detailed, text guidance 8; request `art-archive/T-221/req_canister.json`; expected cost 1 generation; checked beforehand that no T-221 call was in the log and `art-archive/T-221/` did not exist.
+
+**Cost and balance:** 1 generation, as planned. Balance before 4804 of 5000 generations; after 4803 (the first read straight after the call still showed 4804, a lag). One round, no regeneration.
+
+**Files** (`art-archive/T-221/`): `canister_raw.png` (+ `.json` record), `req_canister.json`, review picture `canister_sample_review.png` (8x nearest-neighbour, dark and light, coin 10 x 12 beside it). Nothing is swapped into the game; no change to `game/`.
+
+**Check** (`check_sprite_rules.py --size 32`): all pass. 32 x 32, transparent corners, no semi-transparent pixels, 9 colours.
+
+**Honest judgment (the board decides):** it reads as a red canister lying on its side, with a dark outline, shading, a small valve and a metal band, in the pixel style. Problems: (1) the white mark is a blobby X-like shape, not a clear cross; (2) it is about 24 x 17 art pixels, roughly twice the coin's 10 x 12, so "small, like the coins" would need a scale-down by script; (3) its darkest red (143, 37, 30) is fairly close to Redgull's red (135, 17, 27), though the main reds (192, 67, 62 and 241, 88, 86) are lighter and warmer, so it reads as a canister red; a free script shift of the darkest shade is possible. A free script could also redraw the cross as a clean white plus on the same pixels. Not regenerated.
+
+**Refused commands:** none.
