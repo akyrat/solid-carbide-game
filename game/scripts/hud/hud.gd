@@ -53,6 +53,8 @@ const COMBO_COLOR := Color(1.0, 0.25, 0.75)
 const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 ## Space between the combo counter and the likes row under it.
 const COMBO_GAP := 4
+## The airtime counter's top left corner from the screen's centre (T-243).
+const AIRTIME_OFFSET := Vector2(70, -10)
 
 var timer_label: Label
 var health_label: Label
@@ -80,6 +82,9 @@ var combo_heat: ComboHeat
 var likes_fire: LikesFire
 ## The likes bar's level-up animation (T-139).
 var level_up_flash: LevelUpFlash
+## The live airtime counter (T-243), shown only while the car is airborne.
+var airtime_counter: AirtimeCounter
+var _car: Node
 var _state: RunState
 static var _comic_font: FontFile = null
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
@@ -93,6 +98,39 @@ func _ready() -> void:
 	_build_left()
 	_build_bottom()
 	_build_coins()
+	_build_airtime()
+
+
+## The airtime counter (T-243): hidden until the car is airborne. It sits right
+## of the screen's centre, a little below it: at the bottom right of where the
+## combo popups show (they pop out above the car, which the camera keeps at the
+## centre). A proposal for the playtest.
+func _build_airtime() -> void:
+	airtime_counter = AirtimeCounter.new()
+	airtime_counter.name = "AirtimeCounter"
+	add_child(airtime_counter)
+	airtime_counter.resized.connect(_layout_airtime)
+	_layout_airtime()
+	get_viewport().size_changed.connect(_layout_airtime)
+
+
+func _layout_airtime() -> void:
+	var view := get_viewport().get_visible_rect().size
+	airtime_counter.position = (view / 2.0 + AIRTIME_OFFSET).round()
+
+
+## Follows the car's airborne state from now on (T-243): counts its airtime
+## while it is in the air. Call again when the car is rebuilt.
+func bind_car(car: Node) -> void:
+	if _car != null and is_instance_valid(_car) and _car.stepped.is_connected(_on_car_stepped):
+		_car.stepped.disconnect(_on_car_stepped)
+	_car = car
+	airtime_counter.stop()
+	car.stepped.connect(_on_car_stepped)
+
+
+func _on_car_stepped() -> void:
+	airtime_counter.step(_car.airborne, _car.model.dt)
 
 
 func _build_timer() -> void:

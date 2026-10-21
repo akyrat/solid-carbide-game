@@ -1349,3 +1349,10 @@ The environment variable `METEOR_FX` overrides the file (used for recordings). S
 **Recording:** `bash game/tools/record_meteor_fx.sh <version> <out.gif> [seconds]` plays `tests/fixtures/meteor_fx_demo.tscn` (a run with meteors falling at once and every 1.5 s, three at a time, the car standing still; needs a window) and writes a GIF with `tools/frames_to_gif.py`. Recordings: `art-archive/T-070/screenshots/meteor_fx_<version>.gif`.
 
 **Tests:** `tests/unit/enemies/test_meteor_fx.gd` (tail only while falling, the impact once and gone, each version draws, the setting, sheet sizes and no red) and `tools/test_build_meteor_fx.py`.
+
+## Airtime counter (HUD)
+
+Task T-243 (HUD and menus, Decisions, "Airtime counter"). `scripts/hud/airtime_counter.gd` (`AirtimeCounter`, a child "AirtimeCounter" of the `Hud`): a wing icon (placeholder drawn in code, white with a black outline, never Redgull red) and the airtime as a two-decimal number in Bangers (`0.00`, seconds, no unit). `Hud.bind_car(car)` (called by `run.gd` for each new car) follows the car's `stepped` signal and feeds `AirtimeCounter.step(car.airborne, car.model.dt)`: it shows from the first airborne step, adds one physics step each step in the air (the same airtime the airtime trick pays out for) and hides and resets on landing. The HUD places it at `Hud.AIRTIME_OFFSET` (70, -10) from the screen's centre: right of the car and a little below where the combo popups pop out. Size, place and icon are proposals for the playtest.
+
+- **Tests:** `tests/unit/hud/test_hud_airtime_counter.gd`.
+- **Screenshot and GIF:** `tests/fixtures/airtime_counter_gif.tscn` (a drive off a rooftop; `AIRTIME_PNG` saves a mid-jump screenshot), recorded with `--write-movie` and `tools/frames_to_gif.py`; results in `art-archive/T-243/screenshots/`.
