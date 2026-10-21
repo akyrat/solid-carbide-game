@@ -1,7 +1,7 @@
 ---
 id: T-240
 title: QA: the level creator end to end, from an empty creator to playing a level
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-005
@@ -45,6 +45,10 @@ The final check of the level creator goal, on the goal's build (playtest/G-005),
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-240.
 
 ## Result notes
 
