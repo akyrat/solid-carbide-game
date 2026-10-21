@@ -1,7 +1,7 @@
 ---
 id: T-242
 title: The airtime trick, paying out on landing by how long the car was in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a landing after an airtime pays the airtime trick, with the amount the data's scaling gives for that airtime (two different airtimes give the expected different amounts), and that airtime below the minimum pays nothing (QA: pass / fail)
-- [ ] The popup shows T-241's text word for word; AIR 180! and AIR 360! still pay as before alongside it (tests, screenshot) (QA: pass / fail)
-- [ ] The scaling numbers live in `game/data/combo.json` and are listed with their reasons in the result notes and Drifting, Content (QA: pass / fail)
-- [ ] A GIF of a jump off a rooftop paying out is in `art-archive/T-242/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a landing after an airtime pays the airtime trick, with the amount the data's scaling gives for that airtime (two different airtimes give the expected different amounts), and that airtime below the minimum pays nothing (QA: pass; test_airtime_trick.gd covers two airtimes giving different amounts, below-minimum pays nothing, cap; GUT all passed)
+- [ ] The popup shows T-241's text word for word; AIR 180! and AIR 360! still pay as before alongside it (tests, screenshot) (QA: pass; popup reads HANG TIME! +0.2 in screenshot and GIF, matches docs/hud-and-menus.md Content; air_tricks tests pass, GUT all passed)
+- [ ] The scaling numbers live in `game/data/combo.json` and are listed with their reasons in the result notes and Drifting, Content (QA: pass; airtime min_seconds/per_second/max_add in combo.json, reasons in result notes and docs/drifting.md 'Airtime trick (task T-242)')
+- [ ] A GIF of a jump off a rooftop paying out is in `art-archive/T-242/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; airtime_run.gif (72 frames: rooftop edge, fall, landing popup) present; GUT passed, tools 439 OK, game/tools 393 OK skipped=1)
 
 The board's review: jump off rooftops and ramps and watch the airtime pay out.
 Board review files: the GIF in `art-archive/T-242/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started.
+
+### 2026-10-22, In progress → In QA
+
+Airtime trick built: every landing after 0.3 s or more in the air pays HANG TIME! with an amount scaled by the airtime. Sent to QA.
 
 ## Result notes
 
