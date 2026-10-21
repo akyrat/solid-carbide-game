@@ -1,7 +1,7 @@
 ---
 id: T-221
 title: "Art: the health drop, a red gas canister with a white cross (PixelLab)"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows the sprite follows Visual style's technical rules and uses no Redgull red (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass / fail)
-- [ ] In a run the health drop shows the new art, behaving as before (screenshot; T-220's tests pass) (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows the sprite follows Visual style's technical rules and uses no Redgull red (QA: pass; check_sprite_rules: transparent corners, no semi-transparent pixels, 6 colours; only the square-frame size line fails as the sprite is 14x10 by design; nearest red is 54 from Redgull's, tested in test_canister_art_is_not_redgull_red)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass; log line has prompt and cost 1 generation, req_canister.json the settings, notes give balance 4804 to 4803)
+- [ ] In a run the health drop shows the new art, behaving as before (screenshot; T-220's tests pass) (QA: pass; zoom screenshot shows two small red canisters with white cross beside coins; test_health_drops passes in the GUT run)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1275/1275, tools 439 OK, game/tools 393 OK with 1 skipped)
 
 The board's review: first the sample, then the canister in a run.
 Board review files: the sample images and screenshots in `art-archive/T-221/`.
@@ -62,6 +62,10 @@ Canister sample in (1 generation): reads as a red canister; the cross is a blobb
 ### 2026-10-21, In progress
 
 Board chose (a): the sample with three free script fixes, then into the game.
+
+### 2026-10-21, In progress → In QA
+
+Fixed by script and swapped in: clean plus, red away from Redgull's, coin-sized. No extra generations. Sent to QA.
 
 ## Result notes
 
