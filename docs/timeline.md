@@ -1680,3 +1680,8 @@ Entry format:
 - Decision or change: the airtime trick's popup reads "HANG TIME!" with its amount, without the seconds (HUD and menus, Content); docs-only, merged straight after QA, so T-242 starts. The board also chose that a drift pays once at its end, scaled by its length, with a live drift counter next to the airtime one (Drifting and HUD and menus, Decisions; T-246, T-247).
 - Documents touched: `docs/hud-and-menus.md`, `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-241 (done), T-242, T-246, T-247
+
+## 2026-10-22: The hype drift trail, more harmless commands for the guard, and the README GIFs wait for the new combo mechanics
+- Decision or change: the board chose that the drift marks change and gain effects on the combo heat steps (x2, x3, x4 and up), with the effects proposed by the agents for the playtest (Visual style, Decisions, "Hype drift trail"; T-249). The board's go to let the guard pass a read-only `find`, shell variable assignments and Godot's `--write-movie` and `--import`, which agents kept hitting (T-248). The README GIFs (T-229) now wait for the airtime trick, both live counters and the drift paying once, and show them.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-249, T-248, T-229

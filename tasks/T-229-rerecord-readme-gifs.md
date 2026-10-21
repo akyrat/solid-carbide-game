@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: no
-depends_on: [T-228]
+depends_on: [T-228, T-242, T-243, T-246, T-247]
 documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, game/README.md, tasks/T-217-gifs-of-the-game-for-the-readme.md, game/tests/fixtures/readme_gif_demo.gd, game/tools/record_readme_gif.sh]
 files_expected_to_change: [art-archive/T-229/, game/tests/fixtures/, game/tools/, README.md]
@@ -31,13 +31,13 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-T-217 put three GIFs in the root README's "Current state of the game" section. Since then the board has approved: the car in 32 directions (T-102), the aerial tricks with no drifting in the air (T-219), health drops with their canister art (T-220, T-221), the pickup magnet (T-222), the flame, bullet and burning art (T-071), the meteors' comet tail and impact (T-070), enemies following up ramps and dropping off ledges (T-207, T-226), the underglow at the car's height (T-225), and the camera following the car's height (T-228). Two of T-217's GIFs are also weak: the first is on the gravel square rather than a street, and the kaiju one shows the kaiju beside its shadow (a bug T-226 fixed).
+T-217 put three GIFs in the root README's "Current state of the game" section. Since then the board has approved: the car in 32 directions (T-102), the aerial tricks with no drifting in the air (T-219), health drops with their canister art (T-220, T-221), the pickup magnet (T-222), the flame, bullet and burning art (T-071), the meteors' comet tail and impact (T-070), enemies following up ramps and dropping off ledges (T-207, T-226), the underglow at the car's height (T-225), the camera following the car's height (T-228), and the new drift and airtime combo mechanics (board, 2026-10-22): the airtime trick with its HANG TIME! popup (T-242), the live airtime counter (T-243), a drift paying once at its end with LONG DRIFT! (T-246) and the live drift counter (T-247). Two of T-217's GIFs are also weak: the first is on the gravel square rather than a street, and the kaiju one shows the kaiju beside its shadow (a bug T-226 fixed).
 
 Re-record the README's GIFs from today's master with T-217's fixtures and tools:
 
-1. **The car drifting on a street while enemies chase it** (on asphalt; place the car where the scripted drive isn't stopped by boulders, and enough minions to read as a chase).
+1. **The car drifting on a street while enemies chase it** (on asphalt; place the car where the scripted drive isn't stopped by boulders, and enough minions to read as a chase), with the drift counter counting and the drift paying out as LONG DRIFT! when it ends.
 2. **The car drifting off a height-6 rooftop and landing**, with the camera following its height.
-3. **An aerial trick:** an air 360 off a rooftop, with its AIR 360! popup.
+3. **An aerial trick:** an air 360 off a rooftop, with its AIR 360! popup, the airtime counter counting while the car is up, and HANG TIME! on landing.
 4. **The kaiju chasing the car while meteors fall**, standing on its shadow, with the meteors' tails and impacts.
 5. **Enemies dropping off a ledge** after the car, and **pickups (coins, a health canister) pulled in by the magnet**: one GIF or two, your choice.
 
@@ -47,7 +47,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GIFs in `art-archive/T-229/screenshots/` show, from the real game with the HUD: drifting on a street with enemies chasing; drifting off a height-6 rooftop; an air 360 with AIR 360!; the kaiju on its shadow with meteors falling; enemies dropping off a ledge; pickups pulled in by the magnet (QA: pass / fail)
+- [ ] GIFs in `art-archive/T-229/screenshots/` show, from the real game with the HUD: drifting on a street with enemies chasing, the drift counter counting and LONG DRIFT! at the drift's end; drifting off a height-6 rooftop; an air 360 with AIR 360!, the airtime counter and HANG TIME!; the kaiju on its shadow with meteors falling; enemies dropping off a ledge; pickups pulled in by the magnet (QA: pass / fail)
 - [ ] Each GIF is under 5 MB and a few seconds long (QA: pass / fail)
 - [ ] The root README's "Current state of the game" section shows the new GIFs by relative path, one line each (QA: pass / fail)
 - [ ] No game behaviour changed; the full GUT suite and all Python tool tests pass (QA: pass / fail)
