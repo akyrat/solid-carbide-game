@@ -1545,3 +1545,8 @@ Entry format:
 - Decision or change: meteors looked as if they fell on standing meteor boulders because a spot could touch a boulder and the boulder's sprite stands taller than its footprint. Meteors now keep `boulder_clearance_units` (1.5, a proposal in `game/data/enemies.json`, `meteor_attack`) of clear ground from every standing, fading or pending boulder. The board approved it from the screenshot without playing it, and will name this ticket if the problem comes back.
 - Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-147 (done)
+
+## 2026-10-21: Art samples wait in QA for the board's drag
+- Decision or change: a sample for the board's review goes to the QA column, and the board approves or sends it back by dragging it out (the T-212 pop-up), not by an OK in chat, so the move is always the board's own (board, 2026-10-21).
+- Documents touched: none besides this entry
+- Tasks: T-069, T-070, T-071, T-102
