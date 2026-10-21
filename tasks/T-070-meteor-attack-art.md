@@ -1,7 +1,7 @@
 ---
 id: T-070
 title: Art: the kaiju's meteor attack (warning circle, meteor, dust burst)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -84,3 +84,4 @@ Proposal for the rest (the board judges):
 
 Skipped commands: none refused.
 - 2026-10-21, in-progress → in-qa: Meteor sample ready for the board alone, no QA agent
+- 2026-10-21, in-qa → in-progress: the board took it out of QA with 5 acceptance criteria not marked
