@@ -1,7 +1,7 @@
 ---
 id: T-216
 title: The guard lets more read-only commands through
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/T-212-board-drag-out-of-qa-and-guard-false-alarms.md, tasks/T-213-guard-script-arguments-writing-task-headers.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Started at the board's go: the guard lets more read-only commands through.
 
 Built. My criterion wrongly asked to refuse git checkout of a ticket, which the commit check relies on; corrected. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -83,3 +87,4 @@ Written by the agent when it finishes.
 - `python -m unittest discover -s game/tools -p "test_*.py"`: 370 OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"`: 422 OK.
 - Nothing to picture: a hook change with no screen.
 - Refusals: none.
+- 2026-10-21, in-qa → done: QA passed all 4; tooling, merged straight after QA
