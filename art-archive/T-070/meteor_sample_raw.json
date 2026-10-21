@@ -1,0 +1,41 @@
+{
+  "file": "meteor_sample_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a falling meteor, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked with bright glowing neon magenta-pink cracks with white-hot cores, a short fiery magenta and violet glowing trail streaming up behind it, the same alien meteor rock as a crashed boulder, seen in isometric 3/4 view, falling, no ground, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a falling meteor, a chunky rounded lump of dark charcoal and deep navy-purple rock, cracked with bright glowing neon magenta-pink cracks with white-hot cores, a short fiery magenta and violet glowing trail streaming up behind it, the same alien meteor rock as a crashed boulder, seen in isometric 3/4 view, falling, no ground, no ground shadow, no text, night-time neon cyberpunk game sprite, retro pixel art, hard pixel edges",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T00:49:38+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/enemies.md",
+    "art-archive/T-065/boulder_sample_raw.json"
+  ],
+  "task": "T-070",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

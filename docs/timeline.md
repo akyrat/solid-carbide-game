@@ -1550,3 +1550,23 @@ Entry format:
 - Decision or change: a sample for the board's review goes to the QA column, and the board approves or sends it back by dragging it out (the T-212 pop-up), not by an OK in chat, so the move is always the board's own (board, 2026-10-21).
 - Documents touched: none besides this entry
 - Tasks: T-069, T-070, T-071, T-102
+
+## 2026-10-21: T-069 done: the kaiju's art
+- Decision or change: the kaiju is drawn from the board's approved PixelLab sample in 8 directions (5 drawn, 3 mirrored) with 6 walk frames each, 7 units tall, replacing T-045's placeholder without changing its behaviour. The set cost 32 generations against the 6 to 12 planned (the 224-pixel canvas costs more per call); agents now stop and report as soon as a call costs more than planned. Weak points reported: a subtle walk, small differences between directions, a front three-quarter view. The board: "looks good".
+- Documents touched: `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-069 (done)
+
+## 2026-10-21: T-214 done: the GUT run's time limit is 900 seconds
+- Decision or change: the full GUT suite now takes about 270 to 390 seconds on a busy computer, past the old 300-second limit (T-071's QA failed only on that). `run_tests.sh` and `run_tests.ps1` default to 900 seconds; `GUT_TIME_LIMIT` still overrides it. Tooling, merged straight after QA.
+- Documents touched: `game/README.md`
+- Tasks: T-214 (done)
+
+## 2026-10-21: T-071 done: flames, burning and bullets art
+- Decision or change: the exhaust flame is the board's approved PixelLab sample with its tailpipe erased by script, in 32 directions with 2 flicker frames, drawn at the car's height; enemies on fire show small flames; the bullet is a cyan neon ball drawn by script (too small for PixelLab). 2 generations. QA round 1 failed only on the old 300-second test time limit (fixed by T-214). The board: "looks good".
+- Documents touched: `docs/weapons.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-071 (done)
+
+## 2026-10-21: T-070 done: the meteors' comet tail and impact
+- Decision or change: the meteor keeps its look and gets a comet tail while it falls and an impact animation when it lands. Three versions were built and recorded (pixel, pixellab, particles); the board watched the GIFs and picked **particles**, now the default (`version` in `game/data/meteor_fx.json`; the others stay selectable). 5 of the 10 allowed generations were used. The boulder still appears the instant the meteor lands, so the impact's first flash plays over it.
+- Documents touched: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-070 (done)

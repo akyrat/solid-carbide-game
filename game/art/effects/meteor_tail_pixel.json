@@ -1,0 +1,72 @@
+{
+ "file": "meteor_tail_pixel.png",
+ "what": "The meteor attack's comet tail (loops while the meteor falls), version pixel (task T-070).",
+ "frames": 6,
+ "frame_size": [
+  128,
+  128
+ ],
+ "drawn_scale": 0.75,
+ "anchor": [
+  64,
+  118
+ ],
+ "palette": {
+  "W": [
+   255,
+   244,
+   255
+  ],
+  "K": [
+   255,
+   190,
+   245
+  ],
+  "P": [
+   240,
+   104,
+   236
+  ],
+  "V": [
+   156,
+   70,
+   214
+  ],
+  "D": [
+   92,
+   46,
+   150
+  ],
+  "N": [
+   46,
+   30,
+   88
+  ],
+  "O": [
+   13,
+   10,
+   26
+  ],
+  "g": [
+   176,
+   168,
+   198
+  ],
+  "m": [
+   128,
+   118,
+   164
+  ],
+  "d": [
+   86,
+   78,
+   124
+  ],
+  "s": [
+   96,
+   80,
+   110
+  ]
+ },
+ "made_by": "game/tools/build_meteor_fx.py build (a script; no PixelLab call). Byte-identical every run."
+}

@@ -1,0 +1,23 @@
+{
+ "task": "T-071",
+ "what": "The exhaust flame: 2 flicker frames x 32 screen directions, 224x224 cells in 8 columns, the flame's base at each cell's centre; direction d points at screen angle d*11.25 degrees (0 = right, clockwise); cell = frame*32 + d.",
+ "size": [
+  1792,
+  1792
+ ],
+ "frames": 2,
+ "directions": 32,
+ "cell": [
+  224,
+  224
+ ],
+ "columns": 8,
+ "prompt": "a jet of exhaust flame blasting out of a car tailpipe, a long tapering plume of fire pointing to the lower left, seen from a 3/4 isometric view, bright pale yellow core, orange middle, deep orange tips with a few small sparks, flame tongues licking backwards, retro pixel art",
+ "made_by": "game/tools/build_weapon_effects.py from art-archive/T-071/exhaust_flame_raw.png (PixelLab /create-image-pixflux, 1 generation; request art-archive/T-071/req_exhaust_flame.json; record exhaust_flame_raw.json there)",
+ "resources_consulted": [
+  "docs/visual-style.md",
+  "docs/weapons.md"
+ ],
+ "script_fixes": "tailpipe erased (grey and near-black pixels), plume turned and mirrored by nearest-neighbour rotation, hard alpha",
+ "hand_edit": "none"
+}

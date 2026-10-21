@@ -1,0 +1,44 @@
+{
+  "file": "kaiju_se_sample.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a giant Godzilla-style kaiju monster standing upright on two thick legs, mid-stride, heavy tail trailing behind, small arms, a row of large pale cyan dorsal plates down its back, dark slate green scaly hide, lighter grey-green belly, jagged teeth, glowing yellow eyes, towering monster, creature game sprite, pixel art",
+    "negative_description": "text, letters, logo, red, orange, fire, flames, laser, perspective, gradient, blur, ground, shadow, background, buildings, humans, two heads, wings, the Godzilla film logo",
+    "image_size": {
+      "width": 224,
+      "height": 224
+    },
+    "view": "high top-down",
+    "isometric": true,
+    "direction": "south-east",
+    "no_background": true,
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8,
+    "seed": 69001
+  },
+  "prompt": "a giant Godzilla-style kaiju monster standing upright on two thick legs, mid-stride, heavy tail trailing behind, small arms, a row of large pale cyan dorsal plates down its back, dark slate green scaly hide, lighter grey-green belly, jagged teeth, glowing yellow eyes, towering monster, creature game sprite, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T00:49:24+00:00",
+  "image": {
+    "width": 224,
+    "height": 224,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/enemies.md",
+    "art-archive/T-068/minion_se_sample.json"
+  ],
+  "task": "T-069",
+  "job_status": null,
+  "notes": "Sample: one direction (south-east), one frame, 224x224 (=7 units at 32 px/unit)",
+  "generator": "game/tools/pixellab_client.py"
+}

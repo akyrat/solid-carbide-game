@@ -1,0 +1,85 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1 submitted, polling every 5 s
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (0 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (5 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (10 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (15 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (20 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (25 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (31 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (36 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (41 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (47 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (52 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (57 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (62 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (67 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (72 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (77 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (83 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (88 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (93 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (98 s)
+  job ad88369f-e17a-4067-bf92-11f454a4a9b1: processing (103 s)
+  saved 7 images in art-archive\T-069\walk_ne: kaiju_walk_ne_0.png, kaiju_walk_ne_1.png, kaiju_walk_ne_2.png, kaiju_walk_ne_3.png, kaiju_walk_ne_4.png, kaiju_walk_ne_5.png, kaiju_walk_ne_6.png; usage {"type": "generations", "generations": 5.0}
+{
+  "file": [
+    "kaiju_walk_ne_0.png",
+    "kaiju_walk_ne_1.png",
+    "kaiju_walk_ne_2.png",
+    "kaiju_walk_ne_3.png",
+    "kaiju_walk_ne_4.png",
+    "kaiju_walk_ne_5.png",
+    "kaiju_walk_ne_6.png"
+  ],
+  "job_id": "ad88369f-e17a-4067-bf92-11f454a4a9b1",
+  "usage": {
+    "type": "generations",
+    "generations": 5.0
+  },
+  "image": [
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 224,
+      "height": 224,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
+EXIT 0

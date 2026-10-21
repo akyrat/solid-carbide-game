@@ -39,10 +39,12 @@ const EXHAUST_OFFSET_UNITS := 0.42
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Float tolerance for the timers (0.2 s is 10 steps of 0.02 s).
 const EPS := 1e-6
-## The placeholder flame drawing; the art task swaps it.
+## The flame drawing (T-071: the final art, exhaust_flame_drawing.gd).
 const FlameScene := preload("res://scenes/weapons/flamethrower/exhaust_flame.tscn")
 ## The playtest switch file (res://data/playtest.json), one key of several.
 const PLAYTEST_FILE := "playtest"
+## The id the flamethrower burns an enemy under (burn_flames.gd).
+const BURN_SOURCE := "flamethrower"
 const PLAYTEST_KEY := "flamethrower_at_start"
 
 ## Tests set this to 0 (off) or 1 (on) to override data/playtest.json; -1 reads the file.
@@ -55,9 +57,9 @@ signal enemy_hit(enemy: Node, amount: float)
 var stats: Dictionary = {}
 ## The burn flash's tint (weapons.json, flamethrower.burn_flash_tint).
 var burn_tint := Color(1, 0.62, 0.38, 1)
-## The placeholder drawing (CPUParticles2D in the run's View), made the first
+## The drawing (exhaust_flame_drawing.gd in the run's View), made the first
 ## time the flamethrower is owned in a run scene.
-var flame_drawing: CPUParticles2D = null
+var flame_drawing: Node2D = null
 
 ## Whether the flame is on this step.
 var active := false
@@ -295,6 +297,7 @@ func _start_burn(e: Node) -> void:
 		return
 	burning[e.get_instance_id()] = {"node": e, "left": float(stats["burn_flash_seconds"])}
 	_tint(e, burn_tint)
+	BurnFlames.add_source(e, BURN_SOURCE)  # T-071: the flames on the enemy (drawing only)
 
 
 func _age_burns(dt: float) -> void:
@@ -304,6 +307,7 @@ func _age_burns(dt: float) -> void:
 		if b["left"] <= EPS or not is_instance_valid(b["node"]):
 			if is_instance_valid(b["node"]):
 				_tint(b["node"], Color.WHITE)
+				BurnFlames.remove_source(b["node"], BURN_SOURCE)
 			burning.erase(id)
 
 
@@ -312,6 +316,7 @@ func _clear_burns() -> void:
 		var n = burning[id]["node"]
 		if is_instance_valid(n):
 			_tint(n, Color.WHITE)
+			BurnFlames.remove_source(n, BURN_SOURCE)
 	burning.clear()
 
 
@@ -326,7 +331,7 @@ func _tint(e: Node, c: Color) -> void:
 		s.modulate = c
 
 
-# --- Drawing (placeholder) -----------------------------------------------
+# --- Drawing (the final art, T-071) --------------------------------------
 
 ## Makes the drawing in the run's View, just under the car sprite, once.
 func _ensure_drawing() -> void:

@@ -1,0 +1,40 @@
+{
+  "file": "burning_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a cluster of burning flames flickering upwards, a tall central tongue of fire with smaller tongues on both sides, bright pale yellow core, orange middle, deep orange tips, a few small embers floating up, seen from the front, retro pixel art",
+    "negative_description": "red, creature, animal, text, letters, ground, smoke, pipe, background",
+    "image_size": {
+      "width": 48,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8,
+    "seed": 71002
+  },
+  "prompt": "a cluster of burning flames flickering upwards, a tall central tongue of fire with smaller tongues on both sides, bright pale yellow core, orange middle, deep orange tips, a few small embers floating up, seen from the front, retro pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T09:30:24+00:00",
+  "image": {
+    "width": 48,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md"
+  ],
+  "task": "T-071",
+  "job_status": null,
+  "notes": "Burning-enemy flame cluster; one round",
+  "generator": "game/tools/pixellab_client.py"
+}

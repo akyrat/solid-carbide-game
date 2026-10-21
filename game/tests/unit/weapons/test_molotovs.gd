@@ -195,6 +195,26 @@ func test_an_enemy_that_leaves_takes_no_more_damage() -> void:
 	e.position = (spot + Vector2(float(s["fire_radius"]) + 0.5, 0.0)) * 16.0  # walks out
 	_step(_steps_for(s["fire_duration"]))
 	assert_eq(e.damage_taken.size(), 1, "no burning after it has left")
+	assert_false(BurnFlames.is_burning(e), "T-071: no flames after it has left")
+
+
+## T-071: an enemy in a fire area has flames on it, and only while it is inside.
+func test_an_enemy_in_the_fire_has_flames_until_it_leaves_or_the_fire_ends() -> void:
+	rack.upgrade("molotov")
+	var s: Dictionary = data.molotov_at(1)
+	var spot := _car_units() + Vector2(-5.0, 0.0)
+	var e := _enemy_at(spot)
+	_fire_at(spot)
+	_step(1)
+	assert_true(BurnFlames.is_burning(e), "flames while inside")
+	e.position = (spot + Vector2(float(s["fire_radius"]) + 0.5, 0.0)) * 16.0
+	_step(1)
+	assert_false(BurnFlames.is_burning(e), "flames out when it leaves")
+	e.position = spot * 16.0
+	_step(1)
+	assert_true(BurnFlames.is_burning(e), "back in")
+	_step(_steps_for(s["fire_duration"]) + 2)
+	assert_false(BurnFlames.is_burning(e), "flames out when the fire ends")
 
 
 func test_big_enemy_burns_when_its_body_overlaps_the_fire() -> void:
