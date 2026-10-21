@@ -1,7 +1,7 @@
 ---
 id: T-069
 title: Art: the kaiju
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -50,6 +50,23 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 The board's review: judge the look. One round only, so problems are reported rather than regenerated.
 
+## Updates
+
+### 2026-10-21, Open → In progress
+
+Started at the board's request, in C:\solid-carbide-worktrees$t.
+
 ## Result notes
 
-Written by the agent when it finishes.
+### Sample round (2026-10-21, board's go for T-069's generations)
+
+**Planned call and cost (written before calling):** one `/create-image-pixflux` call, 224x224, `view: high top-down`, `isometric: true`, `direction: south-east`, `no_background: true`, selective outline, detailed shading, highly detailed, seed 69001; expected cost 1 generation. Prompt and settings: `art-archive/T-069/kaiju_se_sample_req.json` (record: `kaiju_se_sample.json`; log row in `game/art/pixellab-generation-log.jsonl`). Balance before: 4860 of 5000 generations (USD credit 0). Balance after: the account still showed 4860.0 right after the call (the counter may lag); the call reported usage of 1 generation. One call only, no regeneration.
+
+**Proposal for the board (mine, nothing in the docs):**
+- Size: 7 units tall, as T-045's placeholder (224 art pixels at 32 px per unit; canvas 224x224), about 2.3 car lengths tall. Against the elevation sample map: skyscrapers are drawn 15 units high, so it is shorter than the towers but taller than a rooftop's height of 6 units; from the street it stands about as high as a second-floor rooftop, so it will not loom over rooftops. If the board wants that, 9 units (288 px) is the next size up.
+- Directions: 8, like the minion (5 drawn, 3 mirrored), built from this sample with the minion's recipe (rotate, then animate).
+- Walk frames: 6 per direction (a slow, heavy stride), so about 30 drawn frames plus 18 mirrored.
+
+**Judgment of the sample (honest):** it reads as a Godzilla-style kaiju: dark green hide, big pale cyan dorsal plates, yellow eyes, teeth, curled tail, in the night palette, with a selective outline and shading; 20 colours, no semi-transparent pixels. It is not a copy of the film monster. Problems: (1) PixelLab ignored `no_background` at this canvas size and returned an opaque speckled grey background; I removed it by a free flood-fill script and kept the raw (`kaiju_se_sample_clean.png`); the walk frames may have the same fault. (2) The view is a front three-quarter, upright pose, not a clean isometric one: it faces the camera and the right, the tail curls up on the left instead of lying along the isometric ground axes like the car, so it may look a little out of place beside the isometric buildings. (3) The limbs look like segmented shiny balls, somewhat toy-like, and the mid-stride is not clear. (4) The sprite fills the canvas almost to its edges (x 13 to 211, y 18 to 206), leaving no room for more tail or glow. No glow is drawn into the pixels yet.
+
+**Files:** `art-archive/T-069/kaiju_se_sample.png` (raw), `kaiju_se_sample_clean.png` (transparent), review images `review_kaiju_se_dark.png` and `review_kaiju_se_light.png` (3x nearest-neighbour, the car's first frame beside it for scale). Nothing is swapped into the game yet. Refused command: an inline Python edit of this file was refused by the status hook, so I made this edit with the Edit tool instead.
