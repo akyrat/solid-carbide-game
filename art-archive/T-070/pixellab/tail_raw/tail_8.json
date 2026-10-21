@@ -1,0 +1,126 @@
+{
+  "file": "tail_8.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAEQ0lEQVR42u2dzW1cMQyEXUlKcBmpIYcUkIpySi0pI1XkkENyfoYCEJAJ/VB6XqxIfgM8LGAvYEAcjWZI7frlBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAPz7/ulgFADzj9dOX6+vr9+vPt9//X8tTflYeVicJStGLnJdHCg8BEux8eWoFYPcnJEHZ+YUAogAQIEnx5VUIgAIki2gi/1oB8AAAZDj7JfbJ7ucISEgAkf/aA7BCieJfIcD189+7PgAqkCz/yyM/o/gJ4l/d/RMPQB8g0e7Xxa9nAcTAhPJfJwBUIDgJWvIPARIVX8c/PQpmpYJnfy3/ogY1ASBC8OLr/E8XMKH7xwAmK37L/aMAyaKfFFzkXxSgHgWDBNFPKwDyH9z86eL3DCAECHr2S7FF/nsKQAQM6PqR/2SQ0e5M/rUBhACBFEBeRQHq5g8RMGn00/LfUgBIkMD91x1AFCBJ8ZF/5L+Z//UYGCIEyf2twc9MASh+IPmvBz+1/NcRsHUEQIIgBJgZQBQgwflfj35bxacTmKD4KwrAEZBI/mkCBXX/dXNHF7+nAPiAgEeAVf5pBCVp/sgDCRIU36IAre8FhARB3P+qAvRSgLyXVXaUAFYVYDQQggCOCFAXc1UBuBMYTP57MwCtAHQCUQCMYJSzX151obUC6GmgJgGr6jwCCgEsCsCt4CDFt9wBnCkAnw0MQIRRBJx5AOYBDgtfE6BlAN+lgL/XcCZAGnBuAlvFX/EA3AsIYABHHcCeAvRmAqywMxM4I0GtAETBJMeAVoBZOxgVcFz4oQFsKABpIBARTPLfUQCuiAfK/6NBkEUBaiVghR2e/cNB0IICQADHCjD0AJMoyDEQqPgzBbAYQVbaiQGcfR/ArhGUv8FKH6wCWgGsHmA0FUQFnO3+kQG0KoA2kngAJx6gJ/8oQHCMOoB3FUDeAwEcN4FWU0BNAnkfJtCRARyOgjePAXyAky7gR/YB6Ag6Of+X7gGU4sujPACjYafxz9IBXPUA8ntuCTswf1YSjBRAk6D+TAFTQQcEmE0BmwowGAgxE3BmAFtn/6oCtP6BNM0gBw2gbQ+wOBCCBAfHv94AaFcB6ofCHxz/RgrQ3PkGA8hnBR3sfiHBVgfQSAKmgs4i4E7xLR5Aik8UPKwBtJz/b3gAfEAU93/DA0CAwwiw7f47s4CRAkCCA0lgVgCD/M8UgHbwQWf/dvt3ogAWElCFA3f+Su//jgKw+lEMoPE+QOtjYniAAw3g3eJbFYDiH5L9e/Lf+yaQHRK0UgDHwJOhi/EMBUAFnrT7WyTYLv7mLIAoeJACtIpvyv+kAOR/JwWgAIfl/+3mzw0F4F7AIdGvNfpdln9DJ1AXn0oc1gF8pAHEAxxU+JYHeHTxGQgdbABHV78/mgQowIEeYBYBuwOggQewfEkEJHBw9j/KA1CJaPmfPgAAAAAAEuANjozzKf7K9N8AAAAASUVORK5CYII="
+    },
+    "action": "a glowing magenta and violet comet tail streams upward behind a falling meteor, the flames lick and flicker, sparks fly off and fade, a seamless looping flicker",
+    "frame_count": 8,
+    "seed": 70001,
+    "no_background": true
+  },
+  "prompt": "",
+  "job_id": "38511de8-7db1-4f8a-b640-8c9af2c6622d",
+  "usage": {
+    "type": "generations",
+    "generations": 2.0
+  },
+  "generated_at": "2026-10-21T09:33:17+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md"
+  ],
+  "task": "T-070",
+  "job_status": "completed",
+  "notes": "comet tail animation from script first frame",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 8,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "tail_0.png",
+    "tail_1.png",
+    "tail_2.png",
+    "tail_3.png",
+    "tail_4.png",
+    "tail_5.png",
+    "tail_6.png",
+    "tail_7.png",
+    "tail_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 2.0
+    },
+    "id": "38511de8-7db1-4f8a-b640-8c9af2c6622d",
+    "status": "completed",
+    "created_at": "2026-10-21T09:31:18.820804+00:00",
+    "last_response": {
+      "seed": 70001,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 2,
+        "cost_if_paid": 0.02832391326295005
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<3832 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4988 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<5228 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<5032 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4748 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4500 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4352 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<4236 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<3976 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.9333333333333333,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 2.0
+      },
+      "generation_id": "685ab04a-0720-4ef7-b39d-490718259dff",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-21T09:31:36.551355+00:00"
+    }
+  }
+}

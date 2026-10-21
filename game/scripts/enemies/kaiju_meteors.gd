@@ -126,6 +126,7 @@ func bind(run: Node, kaiju_boss: Node) -> void:
 	sky_draw.name = "MeteorSky"
 	sky_draw.owner_attack = self
 	sky_draw.z_index = RenderingServer.CANVAS_ITEM_Z_MAX - 16
+	sky_draw.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	run.add_child(sky_draw)
 	run.world_rebuilt.connect(_on_world_rebuilt)
 	if run.car != null:
@@ -209,8 +210,14 @@ func step(dt: float) -> void:
 	_age_boulders(dt)
 	for d in dust:
 		d.age += dt
-	dust = dust.filter(func(d) -> bool: return d.age < DUST_SECONDS)
+	dust = dust.filter(func(d) -> bool: return d.age < MeteorFx.impact_seconds())
 	_redraw()
+
+
+## The warnings whose meteor is in the air right now (the comet tail shows only
+## for these, T-070): the meteor is seen for the last FALL_SECONDS before landing.
+func falling() -> Array:
+	return warnings.filter(func(w) -> bool: return w.time_left > 0.0 and w.time_left <= FALL_SECONDS)
 
 
 ## Starts an attack: the windup (windup_seconds), after which the meteors drop.
@@ -297,7 +304,7 @@ func land(units: Vector2) -> bool:
 		if away.length() < 0.001:
 			away = Vector2.RIGHT.rotated(car.rotation + PI)  # straight on: backwards
 		car.apply_knockback(away, stat("knockback"))
-	dust.append({"units": units, "age": 0.0})
+	dust.append({"units": units, "age": 0.0})  # the impact animation (T-070): plays once, then goes
 	meteor_landed.emit(units, hit)
 	pending_boulders.append(units)
 	_place_waiting_boulders()
@@ -426,13 +433,18 @@ class _SkyDraw extends Node2D:
 			var ground: Vector2 = ISO_TRANSFORM * (w.units * PX_PER_UNIT)
 			var at := ground - Vector2(-20.0, FALL_HEIGHT_PX) * (1.0 - p)
 			var back := Vector2(-20.0, FALL_HEIGHT_PX).normalized()
+			if MeteorFx.tail_active(w.time_left, FALL_SECONDS):
+				MeteorFx.draw_tail(self, at, FALL_SECONDS - w.time_left, p, int(w.units.x * 31.0 + w.units.y * 17.0))
 			draw_line(at, at - back * 30.0, METEOR_GLOW, 6.0)
 			draw_circle(at, 13.0, METEOR_OUTLINE)
 			draw_circle(at, 11.0, METEOR_COLOR)
 			draw_circle(at + Vector2(3, -3), 4.0, METEOR_GLOW)
 		for d in a.dust:
-			var f: float = d.age / DUST_SECONDS
 			var c: Vector2 = ISO_TRANSFORM * (d.units * PX_PER_UNIT)
+			if MeteorFx.version() != "off":
+				MeteorFx.draw_impact(self, c, d.age, int(d.units.x * 31.0 + d.units.y * 17.0))
+				continue
+			var f: float = d.age / DUST_SECONDS
 			for i in 8:
 				var dir := Vector2.RIGHT.rotated(TAU * i / 8.0)
 				var off := Vector2(dir.x, dir.y * 0.5) * (10.0 + f * 34.0)

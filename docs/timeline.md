@@ -1565,3 +1565,8 @@ Entry format:
 - Decision or change: the exhaust flame is the board's approved PixelLab sample with its tailpipe erased by script, in 32 directions with 2 flicker frames, drawn at the car's height; enemies on fire show small flames; the bullet is a cyan neon ball drawn by script (too small for PixelLab). 2 generations. QA round 1 failed only on the old 300-second test time limit (fixed by T-214). The board: "looks good".
 - Documents touched: `docs/weapons.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-071 (done)
+
+## 2026-10-21: T-070 done: the meteors' comet tail and impact
+- Decision or change: the meteor keeps its look and gets a comet tail while it falls and an impact animation when it lands. Three versions were built and recorded (pixel, pixellab, particles); the board watched the GIFs and picked **particles**, now the default (`version` in `game/data/meteor_fx.json`; the others stay selectable). 5 of the 10 allowed generations were used. The boulder still appears the instant the meteor lands, so the impact's first flash plays over it.
+- Documents touched: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-070 (done)
