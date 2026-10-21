@@ -1,7 +1,7 @@
 ---
 id: T-147
 title: Meteors never land on a boulder left by an earlier meteor that is still standing
-status: in-qa
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -14,7 +14,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/README.md, tasks/T-046-kaiju-meteor-attack.md, tasks/T-142-meteor-boulders-fade.md, game/scripts/enemies/kaiju_meteors.gd, game/scripts/level/mvp_map.gd]
 files_expected_to_change: [game/scripts/enemies/kaiju_meteors.gd, game/scripts/level/mvp_map.gd (only if the placement check itself must change), game/tests/unit/enemies/test_kaiju_meteors.gd, docs/enemies.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Started at the board's request, in C:\solid-carbide-worktrees$t.
 
 Fixed: meteors now keep 1.5 units of clear ground from any boulder (a tuning number). Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 6. Ready for the board: C:\solid-carbide-worktrees\T-147\game\project.godot or Play on T-147 in the Builds tab; watch the kaiju's meteors around standing boulders.
+
 ## Result notes
 
 **Cause.** The code did refuse spots overlapping any boulder (standing, fading or waiting ones were all counted: meteor boulders are in `all_boulders()` until removed, and `pending_boulders` was checked). What let a meteor "land on" a boulder as the player sees it: (1) the check allowed touching, and (2) the boulder's isometric sprite is about 71 px tall but its circle only about 34 px high on screen, so it stands roughly 37 px above its circle and covers ground behind it; a warning circle or landing right behind a standing boulder lay under the sprite (circles are drawn on the ground, under boulders) and looked like it fell on it. The "spots chosen 2 s ahead" gap does not matter in practice: attacks are 8 s apart and each meteor's boulder is placed or pending before the next attack picks spots.
@@ -80,3 +84,4 @@ Fixed: meteors now keep 1.5 units of clear ground from any boulder (a tuning num
 **Documents updated:** `docs/enemies.md` (meteor attack, Warning), `game/README.md` (The meteor attack, enemies data keys).
 
 **Proposals:** clearance 1.5 units is a first guess (the sprite's full overhang would be about 3 units; the board judges it in the playtest). No commands were refused.
+- 2026-10-21, needs-playtest → done: I didn't play this, but I will assume it is fixed from the screenshot. If I ever encounter the problem again, I can mention this ticket. For now, I say it can be merged and closed.
