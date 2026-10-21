@@ -1,7 +1,7 @@
 ---
 id: T-225
 title: The neon underglow rises with the car on raised surfaces and in the air
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -50,6 +50,10 @@ Board review files: the screenshots in `art-archive/T-225/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Open → In progress
+
+Started: the underglow rises with the car.
 
 ## Result notes
 
