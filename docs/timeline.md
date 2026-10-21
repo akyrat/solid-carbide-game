@@ -1670,3 +1670,8 @@ Entry format:
 - Decision or change: when a crash cuts the combo, a red (not Redgull's red), broken-looking popup pops from the car like the trick popups; only on crashes, not when the combo drains (HUD and menus, Decisions). Text first (T-244), then the popup (T-245). The airtime tickets (T-241, T-243) start now.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-244, T-245, T-241, T-243
+
+## 2026-10-22: T-244 done: the combo broken popup's text
+- Decision or change: the popup a crash shows when it cuts the combo reads "COMBO BROKEN!", with no amount (HUD and menus, Content). Docs-only text, merged straight after QA; T-245 starts.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-244 (done), T-245
