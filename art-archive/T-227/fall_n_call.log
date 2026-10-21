@@ -1,0 +1,142 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62 submitted, polling every 5 s
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (0 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (5 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (10 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (15 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (20 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (26 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (31 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (36 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (41 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (46 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (52 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (57 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (62 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (67 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (79 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (84 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (91 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (97 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (102 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (107 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (112 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (119 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (126 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (132 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (137 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (143 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (148 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (154 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (160 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (165 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (171 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (176 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (182 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (187 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (192 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (197 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (202 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (208 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (213 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (218 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (225 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (230 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (235 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (240 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (246 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (252 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (257 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (263 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (268 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (273 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (279 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (284 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (298 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (303 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (308 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (314 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (319 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (324 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (333 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (338 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (343 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (349 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (355 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (361 s)
+  job 73138ebe-6680-4ef5-93e0-e6e91e0c0e62: processing (367 s)
+  saved 9 images in art-archive\T-227\fall_n: minion_fall_n_0.png, minion_fall_n_1.png, minion_fall_n_2.png, minion_fall_n_3.png, minion_fall_n_4.png, minion_fall_n_5.png, minion_fall_n_6.png, minion_fall_n_7.png, minion_fall_n_8.png; usage {"type": "generations", "generations": 1.0}
+{
+  "file": [
+    "minion_fall_n_0.png",
+    "minion_fall_n_1.png",
+    "minion_fall_n_2.png",
+    "minion_fall_n_3.png",
+    "minion_fall_n_4.png",
+    "minion_fall_n_5.png",
+    "minion_fall_n_6.png",
+    "minion_fall_n_7.png",
+    "minion_fall_n_8.png"
+  ],
+  "job_id": "73138ebe-6680-4ef5-93e0-e6e91e0c0e62",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "image": [
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}

@@ -17,7 +17,7 @@ FRAMES = 8
 ROOT = Path(__file__).resolve().parents[2]
 MINION = ROOT / "game" / "art" / "minion"
 # direction -> (raw folder under art-archive/T-227, file prefix)
-SOURCES = {"se": ("fall_se", "minion_fall_se")}
+SOURCES = {d: (f"fall_{d}", f"minion_fall_{d}") for d in ("s", "se", "e", "ne", "n")}
 
 
 def walk_palette():
@@ -47,13 +47,21 @@ def snap_frame(img, palette):
     return out
 
 
-def build_sheet(frame_paths, palette):
+# Free pixel fixes after the snap: direction -> {frame: [(x, y), ...]} pixels cleared.
+# South frames 5 and 6 have a pale vertical streak hanging below the chin.
+CLEAR = {"s": {5: [(27, 39), (27, 40), (27, 41), (27, 42), (28, 42)], 6: [(27, 40), (27, 41)]}}
+
+
+def build_sheet(frame_paths, palette, clear=None):
     sheet = Image.new("RGBA", (FRAME * len(frame_paths), FRAME), (0, 0, 0, 0))
     for i, p in enumerate(frame_paths):
         f = Image.open(p)
         if f.size != (FRAME, FRAME):
             raise ValueError(f"{p} is {f.size}, expected {FRAME}x{FRAME}")
-        sheet.paste(snap_frame(f, palette), (i * FRAME, 0))
+        fr = snap_frame(f, palette)
+        for xy in (clear or {}).get(i, []):
+            fr.putpixel(xy, (0, 0, 0, 0))
+        sheet.paste(fr, (i * FRAME, 0))
     return sheet
 
 
@@ -62,7 +70,7 @@ def main(argv):
     for d in argv or SOURCES:
         folder, prefix = SOURCES[d]
         src = ROOT / "art-archive" / "T-227" / folder
-        sheet = build_sheet([src / f"{prefix}_{i}.png" for i in range(FRAMES)], palette)
+        sheet = build_sheet([src / f"{prefix}_{i}.png" for i in range(FRAMES)], palette, CLEAR.get(d))
         sheet.save(MINION / f"minion_fall_{d}.png")
         print("wrote", MINION / f"minion_fall_{d}.png")
     return 0

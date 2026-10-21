@@ -1,0 +1,124 @@
+POST /animate-with-text-v3 (one paid call, no retries)
+  job 15e8c013-bdeb-4f22-960f-55f827592762 submitted, polling every 5 s
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (0 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (5 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (11 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (16 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (22 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (27 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (32 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (38 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (43 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (48 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (53 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (59 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (64 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (69 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (75 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (80 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (86 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (91 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (96 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (102 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (107 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (113 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (118 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (123 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (129 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (135 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (140 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (145 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (150 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (157 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (162 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (168 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (173 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (178 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (183 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (189 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (195 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (200 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (210 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (222 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (227 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (232 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (238 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (243 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (249 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (254 s)
+  job 15e8c013-bdeb-4f22-960f-55f827592762: processing (259 s)
+  saved 9 images in art-archive\T-227\fall_ne: minion_fall_ne_0.png, minion_fall_ne_1.png, minion_fall_ne_2.png, minion_fall_ne_3.png, minion_fall_ne_4.png, minion_fall_ne_5.png, minion_fall_ne_6.png, minion_fall_ne_7.png, minion_fall_ne_8.png; usage {"type": "generations", "generations": 1.0}
+{
+  "file": [
+    "minion_fall_ne_0.png",
+    "minion_fall_ne_1.png",
+    "minion_fall_ne_2.png",
+    "minion_fall_ne_3.png",
+    "minion_fall_ne_4.png",
+    "minion_fall_ne_5.png",
+    "minion_fall_ne_6.png",
+    "minion_fall_ne_7.png",
+    "minion_fall_ne_8.png"
+  ],
+  "job_id": "15e8c013-bdeb-4f22-960f-55f827592762",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "image": [
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "bit_depth": 8,
+      "color_type": 6
+    }
+  ]
+}
