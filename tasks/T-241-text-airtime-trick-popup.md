@@ -1,7 +1,7 @@
 ---
 id: T-241
 title: "Text: the airtime trick's popup"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the airtime popup's exact text, with this ticket's id (QA: pass / fail)
-- [ ] It is one short line in the existing trick popups' voice, clearly different from AIR 180! and AIR 360! (QA: pass / fail)
+- [ ] HUD and menus, Content, has the airtime popup's exact text, with this ticket's id (QA: pass; "HANG TIME!" + "+{amount}" in Trick popups with T-241)
+- [ ] It is one short line in the existing trick popups' voice, clearly different from AIR 180! and AIR 360! (QA: pass; two-word line, same voice, no AIR, explained as different from the AIR popups)
 
 ## Updates
 
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Text written: HANG TIME!. Sent to QA.
 
 ## Result notes
 
