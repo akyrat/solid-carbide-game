@@ -1,7 +1,7 @@
 ---
 id: T-226
 title: Enemies jump down off ledges to chase the car
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -39,11 +39,11 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] In a GUT test with enemies on a height-6 rooftop and the car on the street beside it, the enemies drop off the nearest edge instead of walking to a ramp, and reach the car sooner than before (the test states both times) (QA: pass / fail)
-- [ ] Tests show enemies still can't climb an edge from below, still use the ramps to go up, and never end up inside a building (QA: pass / fail)
-- [ ] A falling enemy's height and depth order follow it down (test, and a GIF from a run in `art-archive/T-226/screenshots/`) (QA: pass / fail)
-- [ ] A 2-minute scripted run on the elevation map has no errors during play, and the result notes give the frame time with the most enemies on screen (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] In a GUT test with enemies on a height-6 rooftop and the car on the street beside it, the enemies drop off the nearest edge instead of walking to a ramp, and reach the car sooner than before (the test states both times) (QA: pass; test prints before 22.7/24.7/21.8/25.0 s by ramps, after 3.7/1.9/5.6/4.2 s dropping; passes in the 1288-test GUT run)
+- [ ] Tests show enemies still can't climb an edge from below, still use the ramps to go up, and never end up inside a building (QA: pass; drop tests cover no climb from below, both ramps up, no building entry from every rooftop; the three changed T-207 tests keep their purpose: no-climb and one-way checks replace the old no-link ones, ramp-down runs with drops off)
+- [ ] A falling enemy's height and depth order follow it down (test, and a GIF from a run in `art-archive/T-226/screenshots/`) (QA: pass; test checks height only falls 6 to street, drawing lift and depth order at every step; GIF frames show minions tilted mid-fall in front of the wall, kaiju falling in front of it)
+- [ ] A 2-minute scripted run on the elevation map has no errors during play, and the result notes give the frame time with the most enemies on screen (QA: pass; soak screen run 150 s gave no errors during play, only exit-time 'ERROR: 2 resources still in use at exit', 1 before this ticket; notes give the frame times, mean 2.9-3.8 ms physics at 15-18 minions)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1288/1288, tools 439 OK, game/tools 388 OK with 1 skipped)
 
 The board's review: play a run, go below enemies on a rooftop and watch them jump down after you.
 Board review files: the GIF in `art-archive/T-226/screenshots/`.
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started: enemies drop off rooftop edges to chase a car below.
+
+### 2026-10-21, In progress → In QA
+
+Built: enemies drop off rooftop edges with a stand-in falling animation (from about 23 s to about 4 s to reach the car). Also fixed west-facing enemies being drawn off their shadows. Sent to QA.
 
 ## Result notes
 
