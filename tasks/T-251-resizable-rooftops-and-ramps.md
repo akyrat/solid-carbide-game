@@ -4,7 +4,7 @@ title: "Level creator: rooftops of any size, and ramps in every direction"
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:

@@ -4,7 +4,7 @@ title: "Level creator: smaller and longer buildings"
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:

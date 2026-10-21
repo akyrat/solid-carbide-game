@@ -4,7 +4,7 @@ title: "Art: the small and long buildings"
 status: blocked
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: mvp
 goal:

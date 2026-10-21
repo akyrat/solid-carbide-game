@@ -4,7 +4,7 @@ title: "Art: the creator's props, in four rotations"
 status: blocked
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: mvp
 goal:

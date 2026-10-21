@@ -4,7 +4,7 @@ title: "Level creator: road corners, T-junctions, crossroads and dead ends"
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:

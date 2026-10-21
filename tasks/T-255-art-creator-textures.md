@@ -4,7 +4,7 @@ title: "Art: new rooftop, car park, wall and ramp textures for the creator's res
 status: blocked
 from: project-lead
 to: asset-generation
-lead:
+lead: Coursework
 epic: art
 milestone: mvp
 goal:
