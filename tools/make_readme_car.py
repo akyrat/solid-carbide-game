@@ -1,7 +1,7 @@
 """Scale the approved car frame 2x (nearest-neighbour) for the root README.
 
 Usage: python tools/make_readme_car.py   (run from anywhere)
-Source: game/art/car/car_sw_front.png (frame 4 of game/art/car/car_iso.png).
+Source: game/art/car/car_sw_front.png (frame 8 of game/art/car/car_iso.png, 32 frames since T-102).
 Output: docs/readme/car.png
 """
 import os

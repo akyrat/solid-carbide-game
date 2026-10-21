@@ -25,9 +25,9 @@ class MakeReadmeCarTest(unittest.TestCase):
         self.assertEqual(out.size, (256, 256))
         self.assertEqual(list(out.getdata()), list(m.scale_nearest(src, 2).getdata()))
 
-    def test_source_is_frame_4_of_sheet(self):
+    def test_source_is_frame_8_of_sheet(self):  # frame 4 of 16 until T-102 made the sheet 32 frames
         sheet = Image.open(os.path.join(m.ROOT, "game", "art", "car", "car_iso.png")).convert("RGBA")
-        frame = sheet.crop((4 * 128, 0, 5 * 128, 128))
+        frame = sheet.crop((8 * 128, 0, 9 * 128, 128))
         src = Image.open(m.SOURCE).convert("RGBA")
         self.assertEqual(list(frame.getdata()), list(src.getdata()))
 

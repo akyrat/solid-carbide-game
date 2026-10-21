@@ -282,14 +282,15 @@ func test_zoom_slider_range_and_default() -> void:
 func test_sprite_frame_follows_heading() -> void:
 	var p := _scene()
 	var sp = p.car_sprite
-	assert_eq(sp.hframes, 16)
-	assert_eq(sp.frame, 12, "starts nose up: heading 270 degrees, frame 12")
+	# The isometric sheet has 32 directions since T-102 (11.25 degrees apart).
+	assert_eq(sp.hframes, 32)
+	assert_eq(sp.frame, 24, "starts nose up: heading 270 degrees, frame 24")
 	assert_eq(sp.frame_for_rotation(0.0), 0)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(22.5)), 1)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(-22.5)), 15)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(11.0)), 0)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(12.0)), 1)
-	assert_eq(sp.frame_for_rotation(deg_to_rad(360.0 + 90.0)), 4)
+	assert_eq(sp.frame_for_rotation(deg_to_rad(11.25)), 1)
+	assert_eq(sp.frame_for_rotation(deg_to_rad(-11.25)), 31)
+	assert_eq(sp.frame_for_rotation(deg_to_rad(5.0)), 0)
+	assert_eq(sp.frame_for_rotation(deg_to_rad(6.0)), 1)
+	assert_eq(sp.frame_for_rotation(deg_to_rad(360.0 + 90.0)), 8)
 	_drive(p, 30, false, false, -1.0)
 	assert_eq(sp.frame, sp.frame_for_rotation(p.car.rotation), "frame updated after steering")
 	# Isometric view (the start): the final car, 32 px per unit, in a 16 px per unit world.

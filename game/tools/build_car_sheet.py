@@ -41,8 +41,10 @@ COUNT = 16
 STEP = 22.5
 REFERENCE = "game/art/car/car_sw_front.png"
 REFERENCE_FRAME = 4
-OUT_PNG = "game/art/car/car_iso.png"
-OUT_JSON = "game/art/car/car_iso.json"
+# T-102: this 16-frame sheet is now the input of build_car_sheet32.py, which
+# writes the game's 32-frame game/art/car/car_iso.png.
+OUT_PNG = "art-archive/T-102/car_iso_16_t101.png"
+OUT_JSON = "art-archive/T-102/car_iso_16_t101.json"
 # Sprite pixels per unit, fitted to the PixelLab art (T-101 result notes): the
 # car comes out about 3 units long on average over the 16 directions.
 PX_PER_UNIT = 32.0
@@ -194,7 +196,7 @@ def build(repo: Path = REPO, sources=None):
             "shift_px": {"x": dx, "y": dy},
         })
     layout = {
-        "file": Path(OUT_PNG).name,
+        "file": "car_iso.png",  # the name T-101's sheet had in the game (T-102 keeps it as a copy in the archive)
         "view": "iso",
         "placeholder": False,
         "columns": COUNT,

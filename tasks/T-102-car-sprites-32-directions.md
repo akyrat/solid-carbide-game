@@ -71,6 +71,10 @@ Started: one more sample call with a bigger turn (1 generation), placed by where
 
 Second sample works: +16 lands near halfway (about 112 against 111.6). 1 generation. Pictures: C:\solid-carbide-worktrees\T-102\art-archive\T-102\sample2_frame05_dark.png. Full set: 15 more generations, if the board approves.
 
+### 2026-10-21, In progress
+
+Board approved the full set (15 generations) and wants a build to play. Started.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -130,3 +134,56 @@ API re-checked today (`https://api.pixellab.ai/v2/openapi.json`): `/rotate` take
 **Documents affected:** `art-archive/README.md` (2 more rows).
 - 2026-10-21, in-progress → in-qa: Second sample ready for the board alone, no QA agent
 - 2026-10-21, in-qa → in-progress: the board took it out of QA with 7 acceptance criteria not marked
+
+### Full set (board's go, 2026-10-21): plan, written before the calls
+
+**Calls: 15 x `POST /rotate`**, one from each of T-101's 16 frames except frame 2 (its in-between is the approved second sample). Each uses the same request as the approved sample: `from_image` = T-101's frame k cut from `game/art/car/car_iso.png`, `direction_change: 16`, `color_image` = `car_sw_front.png`, `isometric: true`, `high top-down` both ways, `image_guidance_scale: 7.5`, `to_direction: null`. `from_direction` (the API has only 8 compass directions): for the even T-101 frames their own compass direction (0 south-east, 4 south-west, 6 west, 8 north-west, 10 north, 12 north-east, 14 east); for the odd ones the compass direction nearest to the angle the frame is actually seen at in T-101's table (1 south, 3 south, 5 south-west, 7 west, 9 north-west, 11 north, 13 east, 15 south-east). Raws saved as `art-archive/T-102/car_rot16_from_fKK_<direction>_raw.png` with records, by a small driver script that calls the client once per frame, stops at the first error and never calls again for a raw that already exists (so a rerun can never pay twice). **Expected cost: 15 generations** (1 each), HTTP timeout 600 s. Balance before: **4819** of 5000. One round, no regeneration.
+
+**Placement:** each raw is meant for the new odd frame 2k+1 (heading 11.25 x (2k+1)). I measure where it lands between its two neighbours (T-101 frames k and k+1, now frames 2k and 2k+2) and place it by that: inside the interval it takes its slot; a raw that barely turned or overshot is reported as a miss, and placed where its measured heading puts it only if that slot has no better candidate. Then free processing as for the sample (palette, centring), the 32-frame sheet `game/art/car/car_iso.png` + JSON (T-101's 16 frames byte-identical in the even places), and the shadowless sheet rebuilt by `build_car_noshadow.py`.
+
+### Full set: what was done
+
+**Calls made: 15 x `POST /rotate`**, exactly as planned, one round, none failed, no regeneration (`game/tools/generate_car_inbetweens.py --run`; each raw has its record JSON next to it in `art-archive/T-102/`, and a line in `game/art/pixellab-generation-log.jsonl`, which now holds 17 T-102 calls). **Cost: 15 generations. Balance before 4819, after 4804** of 5000 (checked twice). T-102 in all: 17 calls, 17 generations.
+
+**Heading of every new frame.** Measured as the long axis of the car's body (shadow left out) between the two T-101 frames around it; "position" is 0 at the frame it came from and 1 at the next. "Seen" is the nose angle on screen estimated from that position and T-101's seen angles (plus or minus about 5 degrees, and it inherits T-101's own errors); "ideal" is the game's 2:1 projection. All 16 raws landed between their own two neighbours, so each sits in its own slot (no reassignment).
+
+| New frame | Heading | Ideal | Seen | Position | From T-101 frame | Note |
+|---|---|---|---|---|---|---|
+| 1 | 11.25 | 37 | 47 | 0.49 | 0 | 10 off |
+| 3 | 33.75 | 68 | 82 | 0.58 | 1 | **14 off**; looks almost the same as frame 4 (nose straight down) |
+| 5 | 56.25 | 112 | 109 | 0.65 | 2 | the approved sample |
+| 7 | 78.75 | 143 | 144 | 0.56 | 3 | heading fine, but drawn more front-on and squat than its neighbours |
+| 9 | 101.25 | 162 | 165 | 0.30 | 4 | |
+| 11 | 123.75 | 174 | 170 | 0.25 | 5 | |
+| 13 | 146.25 | 186 | 177 | 0.60 | 6 | side view, broken white side stripe |
+| 15 | 168.75 | 199 | 196 | 0.78 | 7 | side view, rough stripes and outline |
+| 17 | 191.25 | 217 | 215 | 0.83 | 8 | |
+| 19 | 213.75 | 248 | 227 | 0.22 | 9 | **21 off** (T-101's frames 9 and 10 are already off) |
+| 21 | 236.25 | 292 | 266 | 0.56 | 10 | **26 off** (between T-101's frame 10 and the 40-off frame 11) |
+| 23 | 258.75 | 323 | 273 | **0.07** | 11 | **miss: barely turned; nearly a copy of frame 22 (T-101's frame 11)**, so the turn through 20, 21, 22, 23, 24 still pauses and then jumps, as in T-101 |
+| 25 | 281.25 | 342 | 336 | 0.68 | 12 | |
+| 27 | 303.75 | 354 | 348 | 0.27 | 13 | |
+| 29 | 326.25 | 6 | 14 | 0.83 | 14 | side view, rough white side stripe |
+| 31 | 348.75 | 19 | 21 | 0.49 | 15 | |
+
+**T-101's off frames:** the new frames don't fix them (the 16 old frames are unchanged) and don't make them worse. Around T-101's frame 1 (now frame 2), new frames 1 and 3 split the gap, but frame 3 is close to frame 4. Around T-101's frame 11 (now frame 22), frame 21 falls in the middle of the gap from 20 to 22, but frame 23 is nearly a copy of 22, so the pause-and-jump there stays.
+
+**The sheet (free, no new pixels):** `game/art/car/car_iso.png` (4096 x 128, 32 frames of 128 x 128) and `car_iso.json` (`frame_count` 32, `columns` 32, `step_deg` 11.25, per frame its source, how it was made, colours, move, body axis, position and seen/ideal angles), built by the new `game/tools/build_car_sheet32.py`. T-101's 16 frames are copied pixel for pixel into frames 0, 2, ..., 30 (Python test); the approved sprite is now frame 8. The odd frames are palette-mapped (211 to 273 raw colours to 28 to 32, all from the approved 33-colour palette) and centred. `check_sprite_rules.py --frames 32 --max-colors 33`: ALL FRAMES PASS (128 x 128, transparent corners, 0 semi-transparent pixels). T-101's 16-frame sheet is kept as `art-archive/T-102/car_iso_16_t101.png` (+ JSON): `build_car_sheet.py` now writes there (same bytes as the sheet T-101 merged), and `build_car_sheet32.py` reads it. `car_sprite.gd` needed no change (it reads `frame_count` and `step_deg`); no driving code changed.
+
+**Shadowless air frames:** `python game/tools/build_car_noshadow.py` already worked for any frame count (it reads `frame_width` from the JSON); it rebuilt `game/art/car/car_iso_noshadow.png` + JSON with 32 frames (6817 shadow pixels made transparent). GUT checks the air sheet shows the same frame as the ground sheet for all 32 headings.
+
+**In the game:** a run from the main menu uses the 32 frames on the ground and in the air. The GIF fixture's log printed sprite frames 0 to 31 of 32 while turning, with `in air true` for the air run.
+
+**GIFs: not made (a hook refused a step).** I wrote the fixtures `game/tests/fixtures/car_turn_gif_run.tscn` / `car_turn_gif_air.tscn` (`car_turn_gif_demo.gd`: a run from the main menu, the car stopped and turned through a full circle, one viewport image per 3.75 degrees) and `game/tools/make_turn_gif.py` (crop around the car, 2x, looping GIF; tests in `test_make_turn_gif.py`). The first two captures ran, but at spots where the camera did not centre on the car (a rooftop at zoom 6: the car is at the top edge of the screen, and out of view in the air). Then the hook (`board_gate.py`) refused two commands: `rm -f` of those first captures in `art-archive/T-102/screenshots/turn_run/` and `turn_air/` ("could be a ticket"), and the next capture because of `source game/tools/godot_env.sh` ("a command the guard can't tell won't write a ticket"). As instructed, I did not retry in another form, so there are no GIFs. Those first captures are left in the folders, untracked (not committed). The fixtures are now set to the street spot (-81, -40) at zoom 6, where an earlier zoom-10 test run had the car centred; that setting is untested. To make the GIFs (from the repo root, in a shell where `GODOT_BIN` is set): `TURN_GIF_DIR=<abs dir> "$GODOT_BIN" --path game res://tests/fixtures/car_turn_gif_run.tscn`, then `python game/tools/make_turn_gif.py <dir> art-archive/T-102/screenshots/car_turn_run.gif`, the same with `car_turn_gif_air.tscn` and `--up 160` for the air.
+
+**My honest view:** most of the new frames are good in-betweens: they turn the right way, by roughly the right amount, and are the same car and palette. Weak ones: **23** (a near-copy of 22, so the old pause and jump around the car's rear view stays), **3** (close to frame 4), **19 and 21** (they follow T-101's heading errors in that quarter), and **7** (squat, front-on). The side views **13, 15 and 29** have rougher white side stripes than their neighbours. In motion the turn should look smoother everywhere except around frames 20 to 24, but I could not check that in the game without the GIFs.
+
+**Tests:**
+- GUT `bash game/tools/run_tests.sh`: the first run hit the script's 300 s limit (Godot captures were running at the same time). With `GUT_TIME_LIMIT=900`: **1188/1188 passing, TESTS PASSED**. Before that, the first run found `test_drift_prototype.gd`'s frame checks still assuming 16 frames; I updated them to 32.
+- Python `game/tools`: 372 OK (1 skipped, as before).
+- Python `tools`: 414 run, 1 failure (`test_make_readme_car`: the README car is frame 4 of the sheet). I changed it to frame 8 and that test now passes, but I did not rerun the whole `tools` set after the fix.
+- `.import` line-ending noise was not committed.
+
+**Hooks:** refused, skipped and not retried: (1) `python game/tools/build_car_sheet.py` (in a command that also ran `git status`): "its code names task files and writes files". I didn't need it: the archive copy of T-101's sheet was already made by `cp`, with the same bytes, and the script's JSON `file` field now stays `car_iso.png`, so its test passes without a rerun. (2) and (3): the GIF steps above.
+
+**Documents affected:** `game/README.md` (new section "The car in 32 directions (T-102)"; the T-101 section now says it describes the old 16 frames) and `art-archive/README.md` (4 more rows).

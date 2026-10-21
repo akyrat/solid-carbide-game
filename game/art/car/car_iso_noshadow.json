@@ -1,5 +1,5 @@
 {
-  "car_size_note": "px_per_unit is fitted to the PixelLab art so the car is drawn about 3 units long on average over the 16 directions (Drifting, Decisions); the drawing only, the physics body is a 1 by 1 unit square. To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
+  "car_size_note": "px_per_unit is fitted to the PixelLab art so the car is drawn about 3 units long on average over the 16 T-101 directions (Drifting, Decisions); the drawing only, the physics body is a 1 by 1 unit square. To scale the sprite to the world: scale = world size of 1 unit / px_per_unit",
   "car_size_px": {
     "length": 96.0,
     "width": 32.0
@@ -13,243 +13,547 @@
     "x": 64.5,
     "y": 65.5
   },
-  "columns": 16,
+  "columns": 32,
   "file": "car_iso_noshadow.png",
   "frame0_faces": "world heading 0 degrees, nose along world +x: drawn pointing down-right on screen (PixelLab south-east)",
   "frame0_heading_deg": 0.0,
-  "frame_count": 16,
-  "frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(22.5)), 16) for a car body whose nose is +x at rotation 0; the same formula as the placeholder sheets",
+  "frame_count": 32,
+  "frame_from_rotation": "posmod(roundi(rotation / deg_to_rad(11.25)), 32) for a car body whose nose is +x at rotation 0; the same formula as the placeholder sheets",
   "frame_height": 128,
   "frame_width": 128,
   "frames": [
     {
       "colours_after": 31,
-      "colours_before": 49,
       "heading_deg": 0.0,
       "index": 0,
       "made_by": "/generate-8-rotations-v3 image 2 (south-east)",
       "nose_screen_angle_deg": 26.57,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 25,
       "shift_px": {
         "x": -1,
         "y": 2
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_2.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_2.png",
+      "t101_frame": 0
+    },
+    {
+      "body_axis_deg": 40.3,
+      "colours_after": 30,
+      "colours_before": 258,
+      "heading_deg": 11.25,
+      "index": 1,
+      "made_by": "/rotate of T-101 frame 0 by 16 (T-102)",
+      "nose_screen_angle_deg": 36.81,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.49,
+      "rotated_from_t101_frame": 0,
+      "seen_nose_screen_angle_deg_approx": 47,
+      "shift_px": {
+        "x": -1,
+        "y": 2
+      },
+      "source": "art-archive/T-102/car_rot16_from_f00_south-east_raw.png"
     },
     {
       "colours_after": 31,
-      "colours_before": 240,
       "heading_deg": 22.5,
-      "index": 1,
+      "index": 2,
       "made_by": "/rotate of frame 0 by 22",
       "nose_screen_angle_deg": 50.36,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 70,
       "shift_px": {
         "x": -1,
         "y": 4
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f00_south-east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f00_south-east.png",
+      "t101_frame": 1
+    },
+    {
+      "body_axis_deg": 79.7,
+      "colours_after": 28,
+      "colours_before": 245,
+      "heading_deg": 33.75,
+      "index": 3,
+      "made_by": "/rotate of T-101 frame 1 by 16 (T-102)",
+      "nose_screen_angle_deg": 68.31,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.58,
+      "rotated_from_t101_frame": 1,
+      "seen_nose_screen_angle_deg_approx": 82,
+      "shift_px": {
+        "x": 4,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f01_south_raw.png"
     },
     {
       "colours_after": 30,
-      "colours_before": 49,
       "heading_deg": 45.0,
-      "index": 2,
+      "index": 4,
       "made_by": "/generate-8-rotations-v3 image 1 (south)",
       "nose_screen_angle_deg": 90.0,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 90,
       "shift_px": {
         "x": -1,
         "y": 0
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_1.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_1.png",
+      "t101_frame": 2
+    },
+    {
+      "body_axis_deg": 125.7,
+      "colours_after": 32,
+      "colours_before": 232,
+      "heading_deg": 56.25,
+      "index": 5,
+      "made_by": "/rotate of T-101 frame 2 by 16 (T-102)",
+      "nose_screen_angle_deg": 111.69,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.65,
+      "rotated_from_t101_frame": 2,
+      "seen_nose_screen_angle_deg_approx": 109,
+      "shift_px": {
+        "x": 1,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f02_south_raw.png"
     },
     {
       "colours_after": 29,
-      "colours_before": 220,
       "heading_deg": 67.5,
-      "index": 3,
+      "index": 6,
       "made_by": "/rotate of frame 2 by 22",
       "nose_screen_angle_deg": 129.64,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 120,
       "shift_px": {
         "x": 2,
         "y": 3
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f02_south.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f02_south.png",
+      "t101_frame": 3
+    },
+    {
+      "body_axis_deg": 148.5,
+      "colours_after": 29,
+      "colours_before": 211,
+      "heading_deg": 78.75,
+      "index": 7,
+      "made_by": "/rotate of T-101 frame 3 by 16 (T-102)",
+      "nose_screen_angle_deg": 143.19,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.56,
+      "rotated_from_t101_frame": 3,
+      "seen_nose_screen_angle_deg_approx": 144,
+      "shift_px": {
+        "x": 1,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f03_south_raw.png"
     },
     {
       "colours_after": 33,
-      "colours_before": 33,
       "heading_deg": 90.0,
-      "index": 4,
+      "index": 8,
       "made_by": "T-014 /create-image-pixflux, approved by the board",
       "nose_screen_angle_deg": 153.43,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 163,
       "shift_px": {
         "x": 0,
         "y": 0
       },
-      "source": "game/art/car/car_sw_front.png"
+      "source": "game/art/car/car_sw_front.png",
+      "t101_frame": 4
+    },
+    {
+      "body_axis_deg": 158.2,
+      "colours_after": 30,
+      "colours_before": 253,
+      "heading_deg": 101.25,
+      "index": 9,
+      "made_by": "/rotate of T-101 frame 4 by 16 (T-102)",
+      "nose_screen_angle_deg": 161.53,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.3,
+      "rotated_from_t101_frame": 4,
+      "seen_nose_screen_angle_deg_approx": 165,
+      "shift_px": {
+        "x": 1,
+        "y": 0
+      },
+      "source": "art-archive/T-102/car_rot16_from_f04_south-west_raw.png"
     },
     {
       "colours_after": 30,
-      "colours_before": 253,
       "heading_deg": 112.5,
-      "index": 5,
+      "index": 10,
       "made_by": "/rotate of frame 4 by 22",
       "nose_screen_angle_deg": 168.3,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 170,
       "shift_px": {
         "x": 1,
         "y": 2
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f04_sw.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f04_sw.png",
+      "t101_frame": 5
+    },
+    {
+      "body_axis_deg": 166.5,
+      "colours_after": 31,
+      "colours_before": 237,
+      "heading_deg": 123.75,
+      "index": 11,
+      "made_by": "/rotate of T-101 frame 5 by 16 (T-102)",
+      "nose_screen_angle_deg": 174.32,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.25,
+      "rotated_from_t101_frame": 5,
+      "seen_nose_screen_angle_deg_approx": 170,
+      "shift_px": {
+        "x": 0,
+        "y": 0
+      },
+      "source": "art-archive/T-102/car_rot16_from_f05_south-west_raw.png"
     },
     {
       "colours_after": 27,
-      "colours_before": 49,
       "heading_deg": 135.0,
-      "index": 6,
+      "index": 12,
       "made_by": "/generate-8-rotations-v3 image 7 (west)",
       "nose_screen_angle_deg": 180.0,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 170,
       "shift_px": {
         "x": 0,
         "y": 1
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_7.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_7.png",
+      "t101_frame": 6
+    },
+    {
+      "body_axis_deg": 175.8,
+      "colours_after": 31,
+      "colours_before": 256,
+      "heading_deg": 146.25,
+      "index": 13,
+      "made_by": "/rotate of T-101 frame 6 by 16 (T-102)",
+      "nose_screen_angle_deg": 185.68,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.6,
+      "rotated_from_t101_frame": 6,
+      "seen_nose_screen_angle_deg_approx": 177,
+      "shift_px": {
+        "x": 1,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f06_west_raw.png"
     },
     {
       "colours_after": 32,
-      "colours_before": 259,
       "heading_deg": 157.5,
-      "index": 7,
+      "index": 14,
       "made_by": "/rotate of frame 6 by 22",
       "nose_screen_angle_deg": 191.7,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 182,
       "shift_px": {
         "x": 1,
         "y": 4
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f06_west.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f06_west.png",
+      "t101_frame": 7
+    },
+    {
+      "body_axis_deg": 5.8,
+      "colours_after": 29,
+      "colours_before": 244,
+      "heading_deg": 168.75,
+      "index": 15,
+      "made_by": "/rotate of T-101 frame 7 by 16 (T-102)",
+      "nose_screen_angle_deg": 198.47,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.78,
+      "rotated_from_t101_frame": 7,
+      "seen_nose_screen_angle_deg_approx": 196,
+      "shift_px": {
+        "x": 1,
+        "y": -1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f07_west_raw.png"
     },
     {
       "colours_after": 29,
-      "colours_before": 49,
       "heading_deg": 180.0,
-      "index": 8,
+      "index": 16,
       "made_by": "/generate-8-rotations-v3 image 6 (north-west)",
       "nose_screen_angle_deg": 206.57,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 200,
       "shift_px": {
         "x": 1,
         "y": -2
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_6.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_6.png",
+      "t101_frame": 8
+    },
+    {
+      "body_axis_deg": 17.4,
+      "colours_after": 30,
+      "colours_before": 273,
+      "heading_deg": 191.25,
+      "index": 17,
+      "made_by": "/rotate of T-101 frame 8 by 16 (T-102)",
+      "nose_screen_angle_deg": 216.81,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.83,
+      "rotated_from_t101_frame": 8,
+      "seen_nose_screen_angle_deg_approx": 215,
+      "shift_px": {
+        "x": -1,
+        "y": 0
+      },
+      "source": "art-archive/T-102/car_rot16_from_f08_north-west_raw.png"
     },
     {
       "colours_after": 32,
-      "colours_before": 272,
       "heading_deg": 202.5,
-      "index": 9,
+      "index": 18,
       "made_by": "/rotate of frame 8 by 22",
       "nose_screen_angle_deg": 230.36,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 218,
       "shift_px": {
         "x": 0,
         "y": -1
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f08_north-west.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f08_north-west.png",
+      "t101_frame": 9
+    },
+    {
+      "body_axis_deg": 26.5,
+      "colours_after": 32,
+      "colours_before": 264,
+      "heading_deg": 213.75,
+      "index": 19,
+      "made_by": "/rotate of T-101 frame 9 by 16 (T-102)",
+      "nose_screen_angle_deg": 248.31,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.22,
+      "rotated_from_t101_frame": 9,
+      "seen_nose_screen_angle_deg_approx": 227,
+      "shift_px": {
+        "x": -1,
+        "y": 4
+      },
+      "source": "art-archive/T-102/car_rot16_from_f09_north-west_raw.png"
     },
     {
       "colours_after": 30,
-      "colours_before": 49,
       "heading_deg": 225.0,
-      "index": 10,
+      "index": 20,
       "made_by": "/generate-8-rotations-v3 image 5 (north)",
       "nose_screen_angle_deg": 270.0,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 260,
       "shift_px": {
         "x": -3,
         "y": -3
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_5.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_5.png",
+      "t101_frame": 10
+    },
+    {
+      "body_axis_deg": 74.7,
+      "colours_after": 30,
+      "colours_before": 234,
+      "heading_deg": 236.25,
+      "index": 21,
+      "made_by": "/rotate of T-101 frame 10 by 16 (T-102)",
+      "nose_screen_angle_deg": 291.69,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.56,
+      "rotated_from_t101_frame": 10,
+      "seen_nose_screen_angle_deg_approx": 266,
+      "shift_px": {
+        "x": 2,
+        "y": 7
+      },
+      "source": "art-archive/T-102/car_rot16_from_f10_north_raw.png"
     },
     {
       "colours_after": 32,
-      "colours_before": 247,
       "heading_deg": 247.5,
-      "index": 11,
+      "index": 22,
       "made_by": "/rotate of frame 10 by 22",
       "nose_screen_angle_deg": 309.64,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 270,
       "shift_px": {
         "x": 2,
         "y": -2
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f10_north.png",
+      "t101_frame": 11
+    },
+    {
+      "body_axis_deg": 96.0,
+      "colours_after": 29,
+      "colours_before": 230,
+      "heading_deg": 258.75,
+      "index": 23,
+      "made_by": "/rotate of T-101 frame 11 by 16 (T-102)",
+      "nose_screen_angle_deg": 323.19,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.07,
+      "rotated_from_t101_frame": 11,
+      "seen_nose_screen_angle_deg_approx": 273,
+      "shift_px": {
+        "x": 2,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f11_north_raw.png"
     },
     {
       "colours_after": 31,
-      "colours_before": 49,
       "heading_deg": 270.0,
-      "index": 12,
+      "index": 24,
       "made_by": "/generate-8-rotations-v3 image 4 (north-east)",
       "nose_screen_angle_deg": 333.43,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 320,
       "shift_px": {
         "x": 2,
         "y": 2
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_4.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_4.png",
+      "t101_frame": 12
+    },
+    {
+      "body_axis_deg": 155.6,
+      "colours_after": 29,
+      "colours_before": 254,
+      "heading_deg": 281.25,
+      "index": 25,
+      "made_by": "/rotate of T-101 frame 12 by 16 (T-102)",
+      "nose_screen_angle_deg": 341.53,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.68,
+      "rotated_from_t101_frame": 12,
+      "seen_nose_screen_angle_deg_approx": 336,
+      "shift_px": {
+        "x": 0,
+        "y": -1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f12_north-east_raw.png"
     },
     {
       "colours_after": 30,
-      "colours_before": 210,
       "heading_deg": 292.5,
-      "index": 13,
+      "index": 26,
       "made_by": "/rotate of frame 12 by 22",
       "nose_screen_angle_deg": 348.3,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 343,
       "shift_px": {
         "x": 1,
         "y": 2
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f12_north-east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f12_north-east.png",
+      "t101_frame": 13
+    },
+    {
+      "body_axis_deg": 165.9,
+      "colours_after": 30,
+      "colours_before": 231,
+      "heading_deg": 303.75,
+      "index": 27,
+      "made_by": "/rotate of T-101 frame 13 by 16 (T-102)",
+      "nose_screen_angle_deg": 354.32,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.27,
+      "rotated_from_t101_frame": 13,
+      "seen_nose_screen_angle_deg_approx": 348,
+      "shift_px": {
+        "x": 1,
+        "y": -1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f13_east_raw.png"
     },
     {
       "colours_after": 27,
-      "colours_before": 49,
       "heading_deg": 315.0,
-      "index": 14,
+      "index": 28,
       "made_by": "/generate-8-rotations-v3 image 3 (east)",
       "nose_screen_angle_deg": 360.0,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 0,
       "shift_px": {
         "x": 1,
         "y": 4
       },
-      "source": "art-archive/T-101/frames/car_rot8_v3_3.png"
+      "source": "art-archive/T-101/frames/car_rot8_v3_3.png",
+      "t101_frame": 14
+    },
+    {
+      "body_axis_deg": 12.7,
+      "colours_after": 30,
+      "colours_before": 248,
+      "heading_deg": 326.25,
+      "index": 29,
+      "made_by": "/rotate of T-101 frame 14 by 16 (T-102)",
+      "nose_screen_angle_deg": 5.68,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.83,
+      "rotated_from_t101_frame": 14,
+      "seen_nose_screen_angle_deg_approx": 14,
+      "shift_px": {
+        "x": 1,
+        "y": 0
+      },
+      "source": "art-archive/T-102/car_rot16_from_f14_east_raw.png"
     },
     {
       "colours_after": 31,
-      "colours_before": 233,
       "heading_deg": 337.5,
-      "index": 15,
+      "index": 30,
       "made_by": "/rotate of frame 14 by 22",
       "nose_screen_angle_deg": 11.7,
+      "note": "T-101's frame, copied unchanged",
       "seen_nose_screen_angle_deg_approx": 17,
       "shift_px": {
         "x": 3,
         "y": 1
       },
-      "source": "art-archive/T-101/frames/car_rot22_from_f14_east.png"
+      "source": "art-archive/T-101/frames/car_rot22_from_f14_east.png",
+      "t101_frame": 15
+    },
+    {
+      "body_axis_deg": 22.1,
+      "colours_after": 30,
+      "colours_before": 263,
+      "heading_deg": 348.75,
+      "index": 31,
+      "made_by": "/rotate of T-101 frame 15 by 16 (T-102)",
+      "nose_screen_angle_deg": 18.47,
+      "placed_by": "measured position",
+      "position_between_neighbours": 0.49,
+      "rotated_from_t101_frame": 15,
+      "seen_nose_screen_angle_deg_approx": 21,
+      "shift_px": {
+        "x": 0,
+        "y": 1
+      },
+      "source": "art-archive/T-102/car_rot16_from_f15_south-east_raw.png"
     }
   ],
   "noshadow_note": "made by game/tools/build_car_noshadow.py (task T-204) from car_iso.png: only drop-shadow pixels outside the car's silhouette are made transparent; used only while the car is in the air",
-  "noshadow_pixels_removed": 3808,
-  "order": "clockwise on screen: frame i shows world heading i * 22.5 degrees, Godot axes (y down), the same direction Godot's rotation grows",
+  "noshadow_pixels_removed": 6817,
+  "order": "clockwise on screen: frame i shows world heading i * 11.25 degrees, Godot axes (y down), the same direction Godot's rotation grows",
   "palette": [
     "#03151b",
     "#042809",
@@ -289,22 +593,21 @@
   "projection": "PixelLab's isometric view (high top-down), drawn by PixelLab; the game draws the world in 2:1 isometric, screen = (x - y, (x + y) / 2). PixelLab's diagonals are flatter than 2:1, so the nose's angle on screen is close to, not exactly, nose_screen_angle_deg (see seen_nose_screen_angle_deg_approx per frame)",
   "px_per_unit": 32.0,
   "record": {
-    "command": "python game/tools/build_car_sheet.py",
-    "made_by": "PixelLab (T-101: one /generate-8-rotations-v3 call and eight /rotate calls; frame 4 is T-014's approved sprite), assembled by game/tools/build_car_sheet.py",
-    "pixellab_records": "each source frame has its PixelLab record JSON next to it; every call is in game/art/pixellab-generation-log.jsonl",
-    "processing": "palette: each opaque pixel mapped to the nearest colour (CIELAB) of the approved sprite's palette; centring: whole-pixel moves; no other change and no new pixels",
+    "command": "python game/tools/build_car_sheet32.py",
+    "made_by": "T-101's 16 frames (even frames, unchanged) and 16 PixelLab /rotate frames of T-102 (odd frames), assembled by game/tools/build_car_sheet32.py",
+    "pixellab_records": "each raw has its PixelLab record JSON next to it; every call is in game/art/pixellab-generation-log.jsonl",
+    "processing": "odd frames: each opaque pixel mapped to the nearest colour (CIELAB) of the approved sprite's palette, whole-pixel centring, placed by measured heading; no new pixels",
     "resources_consulted": [
       "docs/visual-style.md",
       "docs/extended-narrative.md",
       "docs/drifting.md",
-      "tasks/T-101-car-sprites-remaining-directions.md",
-      "tasks/T-014-car-sprites-16-directions.md",
-      "tasks/T-013-placeholder-car-sprites.md",
-      "game/art/placeholders/car/car_iso.json"
+      "tasks/T-102-car-sprites-32-directions.md",
+      "tasks/T-101-car-sprites-remaining-directions.md"
     ],
-    "task": "T-101"
+    "t101_sheet": "art-archive/T-102/car_iso_16_t101.png",
+    "task": "T-102"
   },
   "rows": 1,
-  "step_deg": 22.5,
+  "step_deg": 11.25,
   "view": "iso"
 }
