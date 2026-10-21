@@ -10,3 +10,4 @@ lift_units = 22.0
 steer = -1.0
 drive_off_edge = false
 zoom = 0.0
+steer_steps = 40

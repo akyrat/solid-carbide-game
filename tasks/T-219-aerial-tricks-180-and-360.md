@@ -1,7 +1,7 @@
 ---
 id: T-219
 title: "Aerial tricks: a 180 and a 360 turned in the air"
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/driving/trick_detector.gd, game/scripts/data/combo_data.gd, game/scripts/hud/trick_popups.gd, tasks/T-218-text-aerial-trick-popups.md]
 files_expected_to_change: [game/scripts/driving/trick_detector.gd, game/data/, game/scripts/hud/, game/tests/unit/, game/README.md, docs/drifting.md, art-archive/T-219/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,14 @@ Started: the air 180 and air 360, with AIR 180! and AIR 360!.
 
 Built: AIR 180! and AIR 360! with combo values. The air 180 works off a height-6 rooftop; the air 360 can't be reached on today's map (the longest airtime is 1.0 s, a 360 needs 1.9 s). Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 5.
+
+### 2026-10-21, Needs playtest → In progress
+
+Back to the agent: faster turning in the air, so AIR 360! can be done off the tallest rooftop.
+
 ## Result notes
 
 Driving & Drift Agent, 2026-10-21.
@@ -87,3 +95,28 @@ Driving & Drift Agent, 2026-10-21.
 2. A `python -` heredoc that edited `docs/drifting.md` and `game/README.md`, refused because its text contained `**`. I then made those two doc edits with the Edit tool. They don't touch any ticket.
 
 Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), `game/README.md` ("Tricks").
+- 2026-10-21, needs-playtest → in-progress: Board (2026-10-21): faster turning in the air, so an air 360 fits in a jump off the tallest rooftop
+
+**Tweak, 2026-10-21 (Driving & Drift Agent): faster turning in the air.** The task first said not to change how the car turns in the air. The board has now asked for exactly that (Drifting, Decisions, "Aerial tricks"), so this tweak changes air steering on purpose. Ground steering is unchanged.
+- **Built:**
+  - `car_tuning.gd` has a new tuning value, `air_turn_multiplier`. It is a tuning value like the other handling settings, not a constant in the driving code, and it has its own `AIR_SETTINGS` group and an "In the air" slider in the drift prototype's tuning panel, from 1 to 4.
+  - `turn_rate_for(airborne)` is the ground rate (191.9 deg/s) times the multiplier while airborne.
+  - `car.gd` sets `model.airborne` from the height model before each step, and `car_model.gd` turns at that rate.
+- **Proposed value: 2.5**, which is 479.75 deg/s, 9.6 degrees per physics step.
+  - A fall off a height-6 rooftop counts 49 steps in the air.
+  - A 360 needs 38 steps (0.76 s), which leaves about 0.2 s of margin: starting the turn 10 steps late still gives AIR 360!, while 12 steps late gives only AIR 180!.
+  - A 180 needs 19 steps (0.38 s), half the 360, and also fits a ramp hop (about 0.7 s).
+  - The most a rooftop fall can turn is about 470 degrees, so there is no 540 on today's map.
+  - 2.4 was tried first and left only about 9 steps (0.18 s) of margin.
+- **For the playtest:** with W held, the air turn is also a drift. The faster turn then completes FULL 360! mid-air as well, so a whole-fall air 360 with W held usually pays FULL 360! +0.25 and AIR 360! +0.5, as the independent-counting proposal says. If that pays too much, the board can decide that air steps don't count for the drift 360.
+- **Tests:**
+  - `test_air_tricks.gd` now has 24 tests. They cover: the ground rate unchanged (191.9) and the multiplier in the tuning defaults; the real car turning one ground step on the ground and 2.5 times that in the air; a real 6-unit fall steering throughout giving AIR 360! both ways; the 0.2 s margin (10 steps late is a 360, 12 late a 180); 19 steps giving the 180 and 18 giving nothing; and driving off a height-6 rooftop and turning, and the run's combo, now giving AIR 360!.
+  - `test_car_height.gd`, `test_flat_driving_unchanged_by_height`: this test compares a car with height and one without, step by step, and the car with height went through the air. It now sets the multiplier to 1 on both cars, so it still checks that height alone changes nothing. That is the only change to an existing driving test.
+  - Results: `tools` 439 OK, `game/tools` 388 OK (1 skipped), GUT suite: see the reply.
+- **Recordings:**
+  - New `art-archive/T-219/screenshots/air_360_run.gif`: a real run on the elevation map. The car drives off a height-6 rooftop's side with W and turns with A for the whole fall (50 steps, about 470 degrees), its round shadow on the street. FULL 360! +0.25 pops mid-air, then it lands to AIR 360! +0.5 with LONG DRIFT! +0.05, Combo x1.8.
+  - Popup: `air_360_run_popup.png`.
+  - Fixtures: `air_trick_gif_360_run.tscn` is new. `air_trick_gif_180.tscn` now steers for only 22 air steps (`steer_steps`), so it still makes a 180. The staged fixtures now steer for 40 steps.
+  - The old GIFs and popups are kept and were not re-recorded. `air_180_run.gif` shows the old ground-rate turn.
+- **Refused:** a `sleep 240; cat ...` command to wait for a background test run (the harness blocks sleeps). I skipped it and waited for the run's notification instead.
+- Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), `game/README.md` ("Tricks").

@@ -5,12 +5,16 @@ extends GutTest
 ## driving off a rooftop on the elevation map's ground, and the run's combo
 ## and popups with T-218's texts.
 ##
-## One step of A or D turns the car 191.9 / 50 = 3.838 degrees with the game's
-## default tuning: a 180 takes 47 steps in the air, a 360 takes 94.
+## The detector tests feed it ground-rate steps: one step of A or D turns the
+## car 191.9 / 50 = 3.838 degrees on the ground (47 steps for a 180, 94 for a
+## 360). The real car turns air_turn_multiplier (2.5) times faster in the air
+## (the board's tweak): 9.6 degrees a step, 19 steps for a 180, 38 for a 360;
+## a fall off a height-6 rooftop counts 49 steps in the air.
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarModel := preload("res://scripts/driving/car_model.gd")
 const CarScript := preload("res://scripts/driving/car.gd")
+const CarTuningScript := preload("res://scripts/driving/car_tuning.gd")
 const GroundHeightScript := preload("res://scripts/level/ground_height.gd")
 const ComboDataScript := preload("res://scripts/data/combo_data.gd")
 const RUN := preload("res://scenes/run/run.tscn")
@@ -198,17 +202,19 @@ func _street_point(r: float) -> Vector2:
 	return Vector2.INF
 
 
-## The car let go `lift` units above the street, steering `steer` until it lands.
-## Returns the physics steps it was in the air.
-func _drop(lift: float, steer: float) -> int:
+## The car let go `lift` units above the street, standing; it steers `steer`
+## from `from_step` physics steps after the start for `for_steps` steps (-1:
+## until it lands). Returns the physics steps it was in the air.
+func _drop(lift: float, steer: float, from_step := 0, for_steps := -1) -> int:
 	var p := _street_point(3.0)
 	assert_ne(p, Vector2.INF, "a street point")
 	var car := _car(p, 0.0)
 	car.height_model.height = lift
 	car.height_model.airborne = true
-	car.scripted_input = [false, false, steer]
 	var steps := 0
 	while car.airborne and steps < 1000:
+		var on := steps >= from_step and (for_steps < 0 or steps < from_step + for_steps)
+		car.scripted_input = [false, false, steer if on else 0.0]
 		car.physics_step()
 		steps += 1
 	car.scripted_input = [false, false, 0.0]
@@ -216,20 +222,50 @@ func _drop(lift: float, steer: float) -> int:
 	return steps
 
 
-func test_the_real_car_falling_6_units_turning_gives_the_180_both_ways() -> void:
+## Task T-219, the board's tweak: the car turns air_turn_multiplier times faster
+## in the air, so a fall off a height-6 rooftop (50 steps) fits a 360.
+func test_air_turn_rate_is_a_tuning_value_and_the_ground_rate_is_unchanged() -> void:
+	var t = CarModel.new().tuning
+	assert_almost_eq(t.turn_rate_for(false), 191.9, 1e-9, "ground: 202 x 0.95, as before")
+	assert_almost_eq(t.turn_rate_for(true), 191.9 * t.air_turn_multiplier, 1e-9)
+	assert_almost_eq(float(t.air_turn_multiplier), 2.5, 1e-9, "proposed")
+	assert_true(CarTuningScript.default_values().has("air_turn_multiplier"))
+
+
+func test_the_real_car_turns_faster_only_in_the_air() -> void:
+	var car := _car(_street_point(3.0), 0.0)
+	car.scripted_input = [false, false, A]
+	car.physics_step()
+	assert_almost_eq(car.model.rotation, -STEP_TURN, 1e-9, "on the ground: one ground step")
+	car.height_model.height = 6.0
+	car.height_model.airborne = true
+	var before: float = car.model.rotation
+	car.physics_step()
+	assert_almost_eq(car.model.rotation - before, -STEP_TURN * car.tuning.air_turn_multiplier, 1e-9, "in the air")
+
+
+func test_the_real_car_falling_6_units_steering_throughout_gives_the_360_both_ways() -> void:
 	for steer in [A, D]:
 		_tricks = []
 		var steps := _drop(6.0, steer)
-		assert_between(steps, 47, 93, "a 6 unit fall is long enough for a 180, not a 360 (%d steps)" % steps)
-		assert_eq(_air_tricks(), ["air_one_eighty"], "steer %s" % steer)
-
-
-func test_the_real_car_falling_far_enough_for_a_full_turn_gives_the_360() -> void:
-	for steer in [A, D]:
-		_tricks = []
-		var steps := _drop(22.0, steer)
-		assert_between(steps, 94, 140, "%d steps" % steps)
+		assert_between(steps, 48, 52, "a 6 unit fall (%d steps)" % steps)
 		assert_eq(_air_tricks(), ["air_three_sixty"], "steer %s" % steer)
+
+
+func test_the_360_off_a_6_rooftop_has_a_fifth_of_a_second_to_spare() -> void:
+	_drop(6.0, A, 10)  # starting 0.2 s late still makes it
+	assert_eq(_air_tricks(), ["air_three_sixty"], "10 steps late")
+	_tricks = []
+	_drop(6.0, A, 12)
+	assert_eq(_air_tricks(), ["air_one_eighty"], "12 steps late: only the 180")
+
+
+func test_the_180_is_much_easier_it_takes_19_steps() -> void:
+	_drop(6.0, D, 0, 19)
+	assert_eq(_air_tricks(), ["air_one_eighty"], "0.38 s of steering")
+	_tricks = []
+	_drop(6.0, D, 0, 18)
+	assert_eq(_air_tricks(), [])
 
 
 func test_the_real_car_turning_on_the_ground_gives_neither() -> void:
@@ -248,7 +284,7 @@ func test_the_real_car_falling_without_turning_gives_neither() -> void:
 
 ## Drives off the side of a height-6 rooftop onto the street with W held,
 ## turning with W and A as soon as it is in the air: a drift in the air.
-func test_driving_off_a_6_rooftop_and_turning_gives_the_180() -> void:
+func test_driving_off_a_6_rooftop_and_turning_gives_the_360() -> void:
 	var g = GroundHeightScript.from_file(LAYOUT)
 	var edge := {}
 	for p in g.platforms:
@@ -276,7 +312,7 @@ func test_driving_off_a_6_rooftop_and_turning_gives_the_180() -> void:
 	while car.airborne and air < 500:
 		car.physics_step()
 		air += 1
-	assert_eq(_air_tricks(), ["air_one_eighty"], "%d steps in the air" % air)
+	assert_eq(_air_tricks(), ["air_three_sixty"], "%d steps in the air" % air)
 
 
 func test_detection_off_gives_no_air_tricks() -> void:
@@ -333,5 +369,5 @@ func test_a_real_fall_in_the_run_raises_the_combo() -> void:
 	while car.airborne and steps < 200:
 		car.physics_step()
 		steps += 1
-	assert_almost_eq(r.state.combo, before + ComboDataScript.new().trick_add("air_one_eighty"), 0.000001)
-	assert_true(r.trick_popups.popups().any(func(q) -> bool: return q.text.begins_with("AIR 180!")))
+	assert_almost_eq(r.state.combo, before + ComboDataScript.new().trick_add("air_three_sixty"), 0.000001)
+	assert_true(r.trick_popups.popups().any(func(q) -> bool: return q.text.begins_with("AIR 360!")))

@@ -194,6 +194,12 @@ func test_ramp_jump_lands_on_platform() -> void:
 func test_flat_driving_unchanged_by_height() -> void:
 	var with_h := _car(Vector2(19.5, 0.3), PI, true)
 	var without := _car(Vector2(19.5, 0.3), PI, false)
+	# Task T-219 (board, 2026-10-21): the car now turns faster in the air on
+	# purpose (air_turn_multiplier). At 1 the height still changes nothing in
+	# the flat driving, which is what this test checks; the faster air turn is
+	# tested in test_air_tricks.gd.
+	with_h.tuning.air_turn_multiplier = 1.0
+	without.tuning.air_turn_multiplier = 1.0
 	var inputs := [[true, false, 0.0], [true, false, 0.4], [true, false, -1.0], [false, true, 0.0]]
 	for i in 240:
 		var inp: Array = inputs[(i / 30) % inputs.size()]

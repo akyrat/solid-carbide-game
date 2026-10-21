@@ -40,6 +40,10 @@ var rotation := -PI / 2.0
 var drift_amount := 0.0
 ## True while W or S is held together with A or D.
 var is_drifting := false
+## True while the car is in the air (task T-219, the board's tweak): car.gd
+## sets it before each step from the car's height model. In the air the body
+## turns tuning.air_turn_multiplier times faster; on the ground nothing changes.
+var airborne := false
 
 var _w_was_held := false
 
@@ -110,7 +114,7 @@ func update_velocity(w: bool, s: bool, steer: float) -> void:
 
 	# Step 3. Steer. The new angle only applies after this step's velocity is
 	# built (Unity's MoveRotation), so the velocity lags the body by one step.
-	var new_rotation := rotation - deg_to_rad(steer * t.turn_rate() * dt)
+	var new_rotation := rotation - deg_to_rad(steer * t.turn_rate_for(airborne) * dt)
 
 	# Step 4. Split the velocity along the current (old) heading.
 	var c := cos(rotation)

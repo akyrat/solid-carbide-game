@@ -7,3 +7,4 @@ script = ExtResource("1_demo")
 start_units = Vector2(-27, -80)
 start_rotation = 1.5708
 steer = 1.0
+steer_steps = 22

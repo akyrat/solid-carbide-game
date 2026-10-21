@@ -21,6 +21,10 @@ extends "res://tests/fixtures/run_elevation_demo.gd"
 @export var drive_off_edge := true
 @export var after_landing := 45
 @export var popup_frame := 14
+## Air steps the steering is held for (-1: until landing). Since the board's
+## tweak (faster turning in the air) a whole fall off a height-6 rooftop is a
+## 360, so the 180 recording steers only part of it.
+@export var steer_steps := -1
 
 var _was_airborne := false
 var _landed_frame := -1
@@ -52,6 +56,8 @@ func _on_stepped() -> void:
 	if car.airborne:
 		_air_steps += 1
 		_turned += car.model.rotation - _rotation_before
+		if steer_steps >= 0 and _air_steps >= steer_steps:
+			car.scripted_input = [drive_off_edge, false, 0.0]
 	_rotation_before = car.model.rotation
 	if car.airborne and not _was_airborne and drive_off_edge:
 		car.scripted_input = [true, false, steer]

@@ -156,6 +156,8 @@ func physics_step() -> void:
 		s = scripted_input[1]
 		steer = scripted_input[2]
 	var rotation_before: float = model.rotation
+	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
+	model.airborne = height_model.airborne
 	model.update_velocity(w, s, steer)
 	if detect_tricks:
 		tricks.observe(model, w, s, steer, rotation_before)
