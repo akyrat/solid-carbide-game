@@ -1,7 +1,7 @@
 ---
 id: T-239
 title: Level creator: play a listed level as a full run, and come back to the creator
-status: blocked
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Goal-G-005
@@ -49,6 +49,10 @@ The board's review: In the level creator, press play on a level you made and pla
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-239.
 
 ## Result notes
 
