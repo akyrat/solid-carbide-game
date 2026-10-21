@@ -94,6 +94,25 @@ static func short_outline(w: float, h: float) -> Array:
 		Vector2(w * 0.5, h + 1.0), Vector2(0.0, h - drop + 1.0), Vector2(0.0, drop - 1.0)]
 
 
+## The one tower of a building placed in the level creator (T-235), from its map entry's "asset"
+## (a catalogue id, data/level/creator_assets.json) and "look" (which of its textures, default 0):
+## {short, index} with index into the art's bodies (skyscrapers) or short bodies. {} for a map
+## entry without an asset (a whole block of four, as on today's map) or an unknown asset.
+## Skyscraper "skyscraper-N" look L is body (N - 1) * 2 + L; short "short-N" look L is short body 2N + L.
+static func single_of(entry: Dictionary) -> Dictionary:
+	var asset := str(entry.get("asset", ""))
+	var look := int(entry.get("look", 0))
+	if asset.begins_with("skyscraper-") and asset.trim_prefix("skyscraper-").is_valid_int():
+		var n := int(asset.trim_prefix("skyscraper-"))
+		if n >= 1 and n <= TOWERS and look >= 0 and look < VARIANTS:
+			return {"short": false, "index": (n - 1) * VARIANTS + look}
+	elif asset.begins_with("short-") and asset.trim_prefix("short-").is_valid_int():
+		var n := int(asset.trim_prefix("short-"))
+		if n >= 0 and 2 * n + look < SHORT_BODIES and look >= 0 and look < 2:
+			return {"short": true, "index": 2 * n + look}
+	return {}
+
+
 static func load_texture(path: String) -> Texture2D:
 	var t := load(path) as Texture2D
 	if t != null:
@@ -103,7 +122,8 @@ static func load_texture(path: String) -> Texture2D:
 
 
 ## Builds the pavement sprites and the slot nodes. `footprint_units` is the block's footprint (units from the map's centre).
-func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
+## With `single` (single_of, T-235) it builds one tower standing on the footprint itself, with no pavement.
+func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2, single: Dictionary = {}) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	var slot := float(art.slot_units)
 	var foot := float(art.foot_units)
@@ -117,6 +137,12 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		for p in art.short.bodies:
 			short_texs.append(load_texture(str(p)))
 	plan = make_plan(roundi(footprint_units.position.x), roundi(footprint_units.position.y))
+	if not single.is_empty():
+		var idx := int(single.index)
+		plan = [{"si": 0, "sj": 0, "tower": idx / VARIANTS, "variant": idx % VARIANTS, "body": idx,
+			"short": bool(single.short), "short_body": idx}]
+		# The tower's footprint is the entry's rectangle: the slot starts a margin before it.
+		footprint_units = Rect2(footprint_units.position - Vector2(margin, margin), footprint_units.size)
 	plan.sort_custom(func(p, q):
 		var a: int = p.si + p.sj
 		var b: int = q.si + q.sj
@@ -135,7 +161,10 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		pv.centered = false
 		pv.position = ISO_TRANSFORM * (origin * PX_PER_UNIT) - Vector2(float(pv.texture.get_width()) * 0.5, 0.0) * SPRITE_SCALE
 		pv.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
-		pavement_root.add_child(pv)
+		if single.is_empty():
+			pavement_root.add_child(pv)
+		else:
+			pv.free()
 		var foot_rect := Rect2(origin + Vector2(margin, margin), Vector2(foot, foot))
 		var is_short: bool = e.short and not short_texs.is_empty()
 		var short_tex: Texture2D = short_texs[e.short_body] if is_short else null
@@ -170,6 +199,8 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		slot_nodes.append(node)
 		e["position"] = pos
 	tallest_units = float(art.height_units)
+	if not single.is_empty() and bool(single.short) and art.has("short"):
+		tallest_units = float(art.short.height_units)
 	outline = Geometry2D.convex_hull(points)
 	if not outline.is_empty() and outline[0] == outline[outline.size() - 1]:
 		outline.remove_at(outline.size() - 1)

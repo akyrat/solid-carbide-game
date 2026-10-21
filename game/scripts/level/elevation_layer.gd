@@ -55,6 +55,19 @@ var depth_items: Array = []
 func setup(the_map: Node2D, layout_path: String) -> void:
 	map = the_map
 	ground_height = GroundHeightScript.from_file(layout_path)
+	_build_areas()
+
+
+## The same from the map's data already loaded (the level creator's level being edited, T-235):
+## the data's platforms and ramps, as setup() reads them from a file.
+func setup_data(the_map: Node2D, data: Dictionary) -> void:
+	map = the_map
+	ground_height = GroundHeightScript.new()
+	ground_height.load_data(data)
+	_build_areas()
+
+
+func _build_areas() -> void:
 	for p in ground_height.platforms:
 		_add_area("platform", p)
 	for r in ground_height.ramps:

@@ -28,6 +28,13 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 	var data = JSON.parse_string(f.get_as_text())
 	if typeof(data) != TYPE_DICTIONARY:
 		return false
+	return load_data(data)
+
+
+## The same from data already loaded (the level creator's level being edited, T-235).
+func load_data(data: Dictionary) -> bool:
+	platforms = []
+	ramps = []
 	for p in data.get("platforms", []):
 		platforms.append({
 			"id": str(p.get("id", "")),
