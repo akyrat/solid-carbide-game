@@ -1,7 +1,7 @@
 ---
 id: T-228
 title: The camera follows the car's height, keeping it near the middle of the screen
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -49,6 +49,22 @@ Board review files: the screenshots and GIF in `art-archive/T-228/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: the camera follows the car's height, eased smoothly.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Built.** `camera_follow.gd`: `step()` and `snap()` take an optional last argument, the lift of the car's drawing (`CarSprite.lift_for_height`, 16 px per unit, 0 on the street). The ground part follows exactly as before (smoothing, dynamic camera); the height part (`height_offset`) eases on its own, and `position` is the sum. The run (`_sync_view_elevation`), the elevation sample scene and the elevation test scene pass the car's lift. On the street the lift is 0, so the camera is unchanged.
+
+**Easing proposal (a proposal, `HEIGHT_EASE_RATE` in `camera_follow.gd`):** 4 per second, the same exponential ease as the zoom and smoothing: about 63% of a change in 0.25 s, 95% in 0.75 s. In the GIF run the car is at most about 24 px off-centre during a ramp climb, a takeoff or a fall, and within 1 px of centre about 1.5 s after a change. Faster (6 to 8) would centre sooner but jerk more; slower (2 to 3) feels floaty.
+
+**Tests.** New `game/tests/unit/test_camera_follow_height.gd` (6 tests: height 6 settles centred, the street is identical with and without the lift argument, a sudden change eases step by step without a jump, ground smoothing kept, snap, elevation test scene). `test_run_elevation_map.gd`: the old "camera at street level" test now expects the lifted car, plus a new easing test in the run. Results: GUT 1295/1295 pass (`bash game/tools/run_tests.sh`, one earlier failure was my own new test being wrong, fixed), `tools` 439 OK, `game/tools` 393 OK (1 skipped).
+
+**Screenshots and GIF** (`art-archive/T-228/screenshots/`): `camera_street.png`, `camera_rooftop_height_6.png` (the car near the middle on a height-6 rooftop, both from a run), `camera_ramp_and_jump.gif` (a run driven up both ramps and off the height-6 rooftop; fixture `tests/fixtures/run_camera_height_gif.tscn`; car stays near the middle through the climb and the fall). Viewed myself: the car is mid-frame in all. The GIF is 3.8 MB.
+
+**Documents updated:** `docs/drifting.md` (new "Camera follows the car's height" entry; the old street-level camera sentence marked superseded), `game/README.md` (Camera options, the run's elevation section, the sample map's camera line).
+
+**Not done / refused:** nothing refused. The drift prototype has no heights, so it is unchanged.
