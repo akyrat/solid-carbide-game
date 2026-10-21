@@ -33,7 +33,7 @@ A task is not done until every document listed in documents_affected has been up
 
 The final art for the falling minion (Enemies, Decisions, "Enemies jump down off ledges": a falling enemy plays a falling animation from the edge until it lands, board, 2026-10-21). T-226 builds the fall with a placeholder animation made by script and leaves a hook for real frames; this task makes those frames from the approved minion art in `game/art/minion/` (the same character, palette and size), in its directions, and swaps them in through T-226's hook without changing behaviour.
 
-The board's go for PixelLab on this task needs asking first: plan the calls and cost in the result notes and stop for the Project Lead before calling. Then sample first (`docs/working-with-the-board.md`, "Art and money"): one direction's falling frames, shown to the board as a GIF, then the rest after approval. One round; problems are reported, not regenerated; free script fixes first. Follow Visual style's technical rules.
+The board has given its go for this task's PixelLab generations (2026-10-21). Plan the calls and cost in the result notes before calling, and stop and report if a call costs more than planned. Sample first (`docs/working-with-the-board.md`, "Art and money"): one direction's falling frames, shown to the board as a GIF, then the rest after approval. One round; problems are reported, not regenerated; free script fixes first. Follow Visual style's technical rules.
 
 Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes. End with a GIF of minions falling off a rooftop in a run.
 
