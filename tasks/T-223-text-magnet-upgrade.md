@@ -1,7 +1,7 @@
 ---
 id: T-223
 title: "Text: the pickup magnet upgrade's name and description in the garage"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/extended-narrative.md, game/data/garage.json]
 files_expected_to_change: [docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,13 +37,35 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Garage design, Content, has the magnet upgrade's exact name (and description line, if the other upgrades have one), with this ticket's id (QA: pass / fail)
-- [ ] It matches the existing upgrades' form and voice (QA: pass / fail)
+- [ ] Garage design, Content, has the magnet upgrade's exact name (and description line, if the other upgrades have one), with this ticket's id (QA: pass; "Brand Magnet" and desc line under Content, "Pickup magnet text (T-223)")
+- [ ] It matches the existing upgrades' form and voice (QA: pass; name under 25, desc 70/80, same Redgull-joke ending as T-059 texts; no number, explained)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Text written: Brand Magnet, "Pickups reach you from further per level. Redgull calls it engagement." Sent to QA.
+
+### 2026-10-21, In QA → Done
+
+QA passed both. Merged: Brand Magnet.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Written into Garage design, Content, "Pickup magnet text (T-223)". Same form as T-059: a name (max 25) and one description line (max 80), no numbers since Game Data proposes the reach per level, Redgull-joke ending like the other three.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.pickup_magnet.name | Brand Magnet | 12/25 |
+| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
+
+No XP or experience wording. Documents changed: docs/garage-design.md.
+- 2026-10-21, in-qa → done: QA passed both; docs-only text, merged straight after QA
