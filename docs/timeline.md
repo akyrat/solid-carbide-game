@@ -1580,3 +1580,8 @@ Entry format:
 - Decision or change: the board's first aerial tricks: a 180 and a 360 turned while the car is airborne, either direction counting the same (Drifting, Decisions); their popup texts first (T-218), then the detection, combo and popups (T-219). The board also wants three GIFs of the game today (drifting chased by enemies, jumping off a tall platform while drifting, the kaiju chasing and throwing meteors) in a "Current state of the game" section of the root README (T-217).
 - Documents touched: `docs/drifting.md`
 - Tasks: T-217, T-218 (open), T-219 (blocked on T-218)
+
+## 2026-10-21: T-218 done: the aerial tricks' popup texts
+- Decision or change: the air 180 pops "AIR 180!" and the air 360 "AIR 360!", in the voice of LONG DRIFT!, FULL 360! and ALT DRIFT! (HUD and menus, Content). Docs-only text, merged straight after QA; T-219 starts.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-218 (done), T-219 (in progress)

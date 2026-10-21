@@ -1,7 +1,7 @@
 ---
 id: T-218
 title: "Text: the two aerial tricks' popups"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, docs/extended-narrative.md]
 files_expected_to_change: [docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,13 +37,31 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the exact text of both aerial trick popups, with this ticket's id (QA: pass / fail)
-- [ ] Each is one short line in the existing trick popups' voice, and the air 360's text differs from the drift 360's (QA: pass / fail)
+- [ ] HUD and menus, Content, has the exact text of both aerial trick popups, with this ticket's id (QA: pass; "AIR 180!" and "AIR 360!" in Trick popups with T-218)
+- [ ] Each is one short line in the existing trick popups' voice, and the air 360's text differs from the drift 360's (QA: pass; short capitals lines with "!", AIR 360! differs from FULL 360!)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started: the popup texts for the air 180 and air 360.
+
+### 2026-10-21, In progress → In QA
+
+Texts written: "AIR 180!" and "AIR 360!". Sent to QA.
+
+### 2026-10-21, In QA → Done
+
+QA passed both. Merged: AIR 180! and AIR 360!. T-219 starts now.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Narrative Theme Agent: wrote the two popup texts into docs/hud-and-menus.md (Trick popups, in the Content section, next to LONG DRIFT!, FULL 360!, ALT DRIFT!):
+- Air 180: "AIR 180!"
+- Air 360: "AIR 360!"
+Same voice as the existing popups (capitals, one short line, exclamation mark; Bangers has capitals only). The word AIR tells an air 360 from the drift's "FULL 360!". The combo amount ("+{amount}") is appended as for the other tricks. No other documents affected.
+- 2026-10-21, in-qa → done: QA passed both; docs-only text, merged straight after QA
