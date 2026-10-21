@@ -1,7 +1,7 @@
 ---
 id: T-223
 title: "Text: the pickup magnet upgrade's name and description in the garage"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/extended-narrative.md, game/data/garage.json]
 files_expected_to_change: [docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Started at the board's request.
 
 Text written: Brand Magnet, "Pickups reach you from further per level. Redgull calls it engagement." Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed both. Merged: Brand Magnet.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -64,3 +68,4 @@ Written into Garage design, Content, "Pickup magnet text (T-223)". Same form as 
 | garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
 
 No XP or experience wording. Documents changed: docs/garage-design.md.
+- 2026-10-21, in-qa → done: QA passed both; docs-only text, merged straight after QA
