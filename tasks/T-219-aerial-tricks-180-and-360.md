@@ -112,7 +112,7 @@ Documents affected: `docs/drifting.md` (Content, "Aerial tricks (task T-219)"), 
 - **Tests:**
   - `test_air_tricks.gd` now has 24 tests. They cover: the ground rate unchanged (191.9) and the multiplier in the tuning defaults; the real car turning one ground step on the ground and 2.5 times that in the air; a real 6-unit fall steering throughout giving AIR 360! both ways; the 0.2 s margin (10 steps late is a 360, 12 late a 180); 19 steps giving the 180 and 18 giving nothing; and driving off a height-6 rooftop and turning, and the run's combo, now giving AIR 360!.
   - `test_car_height.gd`, `test_flat_driving_unchanged_by_height`: this test compares a car with height and one without, step by step, and the car with height went through the air. It now sets the multiplier to 1 on both cars, so it still checks that height alone changes nothing. That is the only change to an existing driving test.
-  - Results: `tools` 439 OK, `game/tools` 388 OK (1 skipped), GUT suite: see the reply.
+  - Results: GUT suite 1236/1236, `tools` 439 OK, `game/tools` 388 OK (1 skipped).
 - **Recordings:**
   - New `art-archive/T-219/screenshots/air_360_run.gif`: a real run on the elevation map. The car drives off a height-6 rooftop's side with W and turns with A for the whole fall (50 steps, about 470 degrees), its round shadow on the street. FULL 360! +0.25 pops mid-air, then it lands to AIR 360! +0.5 with LONG DRIFT! +0.05, Combo x1.8.
   - Popup: `air_360_run_popup.png`.
