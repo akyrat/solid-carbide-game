@@ -1630,3 +1630,8 @@ Entry format:
 - Decision or change: the board found the neon underglow stayed on the street when the car was on a raised surface. The ring is now drawn under the car at its height on rooftops, ramps and in the air, and the windshield wiper (same bug) rises with the car too; the molotov fire was fine. Damage areas are unchanged (flat around the car). The board: "works, also with the wiper".
 - Documents touched: `docs/weapons.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-225 (done)
+
+## 2026-10-21: T-224 done: Brand Magnet in the garage
+- Decision or change: the pickup magnet's reach is the garage's fourth upgrade, "Brand Magnet" (T-223's text), with 10 levels from 3 units (1 car length) to 9 units in steps of 0.6, priced 40 to 300 coins on the acceleration upgrade's curve (proposals in `game/data/garage.json`). A run uses the bought level's reach. The board: "LGTM".
+- Documents touched: `docs/garage-design.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-224 (done)

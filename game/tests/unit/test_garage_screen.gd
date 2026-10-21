@@ -27,13 +27,14 @@ func test_every_label_is_the_approved_text() -> void:
 	assert_eq(screen.title_label.text, "Redgull Pit Stop")
 	assert_eq(screen.back_button.text, "Back")
 	assert_eq(screen.coins_label.text, "Coins: 10000")
-	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact"}
+	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact", "pickup_magnet": "Brand Magnet"}
 	var descs := {
 		"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
 		"car_health": "+10 car health per level. Redgull says you'll be fine.",
 		"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
+		"pickup_magnet": "Pickups reach you from further per level. Redgull calls it engagement.",
 	}
-	assert_eq(screen.rows.size(), 3)
+	assert_eq(screen.rows.size(), 4)
 	for id in names:
 		var panel: Node = _find(screen, "Row_" + id)
 		assert_eq(panel.find_child("Name", true, false).text, names[id])
@@ -110,3 +111,11 @@ func test_follows_changes_made_elsewhere() -> void:
 	_open(0)
 	progress.bank_run("win", 55)
 	assert_eq(screen.coins_label.text, "Coins: 55")
+
+
+func test_buying_the_magnet_raises_its_level_and_is_saved() -> void:
+	_open(10000)
+	screen.rows["pickup_magnet"].buy.pressed.emit()
+	assert_eq(progress.level("pickup_magnet"), 1)
+	assert_eq(screen.rows["pickup_magnet"].level.text, "Level 1")
+	assert_eq(PlayerProgress.new(null, progress._path).level("pickup_magnet"), 1)

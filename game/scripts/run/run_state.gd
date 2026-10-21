@@ -142,6 +142,7 @@ func start_run() -> void:
 	pickup_pull_speed = _run_data.pickup_pull_speed_units_per_second()
 	if progress != null:
 		max_health = progress.current_value("car_health")
+		pickup_magnet_radius_units = progress.current_value("pickup_magnet")  # garage upgrade (T-224)
 	health = max_health
 	time_left = RUN_SECONDS
 	coins = 0

@@ -847,7 +847,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - Each upgrade has about 10 levels. The Game Data Agent works out each level's price and how much it improves.
 - In the MVP the garage screen is a plain list: each upgrade with its current level, the price of the next level and a button to buy it, plus the player's coins and a way back to the main menu. Its visual style comes after the MVP.
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
-- **Pickup magnet upgrade** (board, 2026-10-21): the radius within which coins, gift packs and health drops are pulled to the car (Game loop architecture, Decisions, "Pickup magnet") is a garage upgrade, starting at 1 car length; its levels, prices and how far each level reaches are the Game Data Agent's proposals. Its name and description in the garage: T-223. (T-224)
+- **Pickup magnet upgrade** (board, 2026-10-21): the radius within which coins, gift packs and health drops are pulled to the car (Game loop architecture, Decisions, "Pickup magnet") is a garage upgrade, starting at 1 car length; its levels, prices and how far each level reaches are the Game Data Agent's proposals. Built in T-224 (proposal): 10 levels, radius 3.0 units (1 car length) at level 0, +0.6 units (a fifth of a car length) per level, 9.0 (3 car lengths) at level 10; prices 40, 50, 60, 80, 100, 120, 155, 190, 240, 300, the same curve as the acceleration upgrade. The numbers live in `game/data/garage.json`. Its name and description in the garage: T-223. (T-224)
 
 ### Content
 
@@ -1095,7 +1095,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
 | `enemies.md` | `59c78dd9bf3af95a7fa6b2fd479dd0fed1fb50352c1fdfbfd062f457c91ed6ec` |
 | `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
-| `garage-design.md` | `a0a6f81828bcdfab4a90010c317ffc650cb968978664e9e59cb8c1e20cffa0d6` |
+| `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
 | `visual-style.md` | `b1d7ed698144d7cb3314c681b5f5a0e817c405e84c6ec617e2d2f81166538dab` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
 | `hud-and-menus.md` | `de0e23d2e84561773ac6d0234c6c8d2615b463f1c9a7f5dc6202d290fcb357ed` |
