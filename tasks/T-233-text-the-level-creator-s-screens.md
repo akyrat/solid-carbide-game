@@ -37,10 +37,10 @@ The board's review: Read the creator's text in game/data/level/creator_texts.jso
 
 ## Acceptance criteria
 
-- [ ] game/data/level/creator_texts.json exists, is valid JSON and has a text and a 'where it appears' note for each piece in the description: list title, new-level button, play and edit actions, default level name and name field label, the six panel category names, the rooftop and ramp height labels, rotate, mirror, delete and save labels, save confirmation, overlap message, back-to-list button and controls hint. (QA: pass / fail)
-- [ ] No button text is longer than 16 characters and no category name longer than 12. (QA: pass / fail)
-- [ ] docs/level-design.md, Content, has a 'Level creator text' section listing each piece and pointing to creator_texts.json. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (text only). (QA: pass / fail)
+- [ ] game/data/level/creator_texts.json exists, is valid JSON and has a text and a 'where it appears' note for each piece in the description: list title, new-level button, play and edit actions, default level name and name field label, the six panel category names, the rooftop and ramp height labels, rotate, mirror, delete and save labels, save confirmation, overlap message, back-to-list button and controls hint. (QA: pass)
+- [ ] No button text is longer than 16 characters and no category name longer than 12. (QA: pass)
+- [ ] docs/level-design.md, Content, has a 'Level creator text' section listing each piece and pointing to creator_texts.json. (QA: pass)
+- [ ] The result notes say in one line that there is nothing to screenshot (text only). (QA: pass)
 
 ## Updates
 
