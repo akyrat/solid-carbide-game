@@ -1,7 +1,7 @@
 ---
 id: T-233
 title: Text: the level creator's screens
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-005
@@ -45,6 +45,10 @@ The board's review: Read the creator's text in game/data/level/creator_texts.jso
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Open → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-233.
 
 ## Result notes
 
