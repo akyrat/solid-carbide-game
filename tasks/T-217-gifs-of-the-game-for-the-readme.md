@@ -1,7 +1,7 @@
 ---
 id: T-217
 title: GIFs of the game's current state, for a README section
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, game/README.md, docs/level-design.md, docs/enemies.md]
 files_expected_to_change: [art-archive/T-217/, game/tests/fixtures/, game/tools/, README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started: three GIFs of the game today and a README section.
 
 Three GIFs and the README section are in. Sent to QA.
 
+### 2026-10-21, In QA → Done
+
+QA passed all 4. Merged: the README shows the three GIFs.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -74,3 +78,4 @@ In `art-archive/T-217/screenshots/`:
 All three are under 5 MB. README: a "Current state of the game" section before "Layout", with the three GIFs by relative path and one line each.
 
 Tests: `bash game/tools/run_tests.sh` passed (All tests passed); `python -m unittest discover -s tools -p "test_*.py"` OK; `python -m unittest discover -s game/tools -p "test_*.py"` OK (387 tests, 1 skipped). No command was refused, except one compound shell command my own variable use triggered the status-script guard; I reran it as plain commands. Documents affected: README.md.
+- 2026-10-21, in-qa → done: QA passed all 4; README and GIFs only, merged straight after QA
