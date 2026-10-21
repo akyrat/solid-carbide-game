@@ -35,13 +35,13 @@ The level creator's side panel offers every asset already in the game (Level des
 
 ## Acceptance criteria
 
-- [ ] python game/tools/build_creator_assets.py writes game/data/level/creator_assets.json; running it twice gives the same file. (QA: pass / fail)
-- [ ] Each catalogue entry has an id, a kind (ground, road, building, boulder, rooftop or ramp), a footprint in units, its views and mirrors, and texture paths; rooftop entries exist at heights 3 and 6, ramp entries for 0 to 3 and 3 to 6. (QA: pass / fail)
-- [ ] A GUT test passes that checks every texture the catalogue names exists under game/art/, and that every building, boulder, ground and elevation texture the map and elevation layer draw today appears in the catalogue. (QA: pass / fail)
-- [ ] The script's Python tests pass. (QA: pass / fail)
-- [ ] git diff shows no PNG under game/art/ added or changed. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', says how to rebuild the catalogue. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (data). (QA: pass / fail)
+- [ ] python game/tools/build_creator_assets.py writes game/data/level/creator_assets.json; running it twice gives the same file. (QA: pass)
+- [ ] Each catalogue entry has an id, a kind (ground, road, building, boulder, rooftop or ramp), a footprint in units, its views and mirrors, and texture paths; rooftop entries exist at heights 3 and 6, ramp entries for 0 to 3 and 3 to 6. (QA: pass)
+- [ ] A GUT test passes that checks every texture the catalogue names exists under game/art/, and that every building, boulder, ground and elevation texture the map and elevation layer draw today appears in the catalogue. (QA: pass)
+- [ ] The script's Python tests pass. (QA: pass)
+- [ ] git diff shows no PNG under game/art/ added or changed. (QA: pass)
+- [ ] game/README.md, 'Level creator', says how to rebuild the catalogue. (QA: pass)
+- [ ] The result notes say in one line that there is nothing to screenshot (data). (QA: pass)
 
 ## Updates
 
