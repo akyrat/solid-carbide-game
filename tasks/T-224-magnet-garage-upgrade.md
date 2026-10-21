@@ -1,7 +1,7 @@
 ---
 id: T-224
 title: The pickup magnet's radius as a garage upgrade
-status: blocked
+status: in-progress
 from: project-lead
 to: game-data
 lead: Coursework
@@ -49,6 +49,21 @@ Board review files: the screenshots in `art-archive/T-224/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Blocked → In progress
+
+Started: Brand Magnet in the garage.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Game Data Agent, 2026-10-21. Built the fourth upgrade `pickup_magnet` ("Brand Magnet", T-223's description word for word) in `game/data/garage.json`, `GarageData.UPGRADES`, the garage screen's names and descriptions, and `RunState.start_run()` (the bought level sets `pickup_magnet_radius_units`; level 0 is run.json's 3.0, 1 car length). Saving and loading come from the shared upgrade list.
+
+Proposed levels (10), radius in units, price in coins (the radius is a fifth of a car length more per level; prices follow the acceleration upgrade's curve):
+
+| Level | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Radius | 3.0 | 3.6 | 4.2 | 4.8 | 5.4 | 6.0 | 6.6 | 7.2 | 7.8 | 8.4 | 9.0 |
+| Price | - | 40 | 50 | 60 | 80 | 100 | 120 | 155 | 190 | 240 | 300 |
+
+Tests: GUT 1237/1237 pass (new `tests/unit/run/test_magnet_upgrade.gd`; garage screen and garage data tests extended); tools unittest 439 OK; game/tools unittest 387 OK (1 skipped). Screenshot: `art-archive/T-224/screenshots/garage_magnet.png` (garage_screen_demo fixture, magnet at level 3). Four rows fit the 1152x648 window. Documents updated: docs/garage-design.md, game/README.md. Nothing refused.

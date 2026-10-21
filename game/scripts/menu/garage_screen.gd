@@ -1,6 +1,6 @@
 class_name GarageScreen
 extends Control
-## The MVP garage screen (task T-058): a plain list of the three upgrades, each with its
+## The MVP garage screen (task T-058): a plain list of the four upgrades, each with its
 ## level, the price of the next level and a buy button, plus the player's coins and a back
 ## button. It only shows the state and passes buying on to PlayerProgress (T-057); the back
 ## button sends a signal (the screen flow connects it). Garage design, Decisions.
@@ -20,11 +20,13 @@ const NAMES := {
 	"acceleration": "Energy Throttle",
 	"car_health": "Reinforced Chassis",
 	"damage_bonus": "Brand Impact",
+	"pickup_magnet": "Brand Magnet",
 }
 const DESCRIPTIONS := {
 	"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
 	"car_health": "+10 car health per level. Redgull says you'll be fine.",
 	"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
+	"pickup_magnet": "Pickups reach you from further per level. Redgull calls it engagement.",
 }
 
 ## The save/buy object. When null at _ready, the game's own (GameFlow.progress is passed in by

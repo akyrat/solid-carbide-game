@@ -35,6 +35,7 @@ func test_effects_only_improve() -> void:
 		assert_gt(g.value("acceleration", l), 0.0)
 		assert_gt(g.value("car_health", l), g.value("car_health", l - 1))
 		assert_gt(g.value("damage_bonus", l), g.value("damage_bonus", l - 1))
+		assert_gt(g.value("pickup_magnet", l), g.value("pickup_magnet", l - 1))
 
 
 func test_bases_match_the_game() -> void:
@@ -42,3 +43,8 @@ func test_bases_match_the_game() -> void:
 	assert_eq(g.value("car_health", 0), RunData.new().starting_health())
 	assert_almost_eq(g.value("acceleration", 0), preload("res://scripts/driving/car_tuning.gd").new().time_to_top_speed, 0.0001)
 	assert_eq(g.value("damage_bonus", 0), 0.0)
+
+
+func test_magnet_base_is_the_runs_radius() -> void:
+	var g := GarageData.new()
+	assert_eq(g.value("pickup_magnet", 0), RunData.new().pickup_magnet_radius_units())
