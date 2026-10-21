@@ -1,7 +1,7 @@
 ---
 id: T-224
 title: The pickup magnet's radius as a garage upgrade
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/game-loop-architecture.md, game/README.md, game/data/garage.json, tasks/T-222-pickup-magnet.md, tasks/T-223-text-magnet-upgrade.md]
 files_expected_to_change: [game/data/garage.json, game/scripts/, game/tests/unit/, game/README.md, docs/garage-design.md, art-archive/T-224/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,14 @@ Started: Brand Magnet in the garage.
 
 Built: Brand Magnet in the garage, 10 levels from 3 to 9 units. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4. Ready for the board: C:\solid-carbide-worktrees\T-224\game\project.godot; buy Brand Magnet in the garage, then play a run.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved Brand Magnet. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -71,3 +79,4 @@ Proposed levels (10), radius in units, price in coins (the radius is a fifth of 
 | Price | - | 40 | 50 | 60 | 80 | 100 | 120 | 155 | 190 | 240 | 300 |
 
 Tests: GUT 1237/1237 pass (new `tests/unit/run/test_magnet_upgrade.gd`; garage screen and garage data tests extended); tools unittest 439 OK; game/tools unittest 387 OK (1 skipped). Screenshot: `art-archive/T-224/screenshots/garage_magnet.png` (garage_screen_demo fixture, magnet at level 3). Four rows fit the 1152x648 window. Documents updated: docs/garage-design.md, game/README.md. Nothing refused.
+- 2026-10-21, needs-playtest → done: Board: T-224 LGTM
