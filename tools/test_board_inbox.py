@@ -267,6 +267,98 @@ class NoName(Base):
         self.assertNotIn("T-001", text)
 
 
+D = "dddd-4444"
+
+
+class GoalTickets(Base):
+    """T-215 (the missed T-200 drag): T-001 belongs to goal G-004's run (lead Goal-G-004). A ("Coursework") started
+    the run, B ("Camera") is another live session, D is the run's headless session."""
+
+    def setUp(self):
+        super().setUp()
+        self.put("T-001", "Goal-G-004")
+        self.put("T-002", "Camera")
+        bi.register(A, "Coursework")
+        bi.register(B, "Camera")
+        bi.register(D, "Goal-G-004")
+        self.goal(session="Coursework")
+
+    def goal(self, session=None):
+        goals = self.tasks.parent / "goals"
+        goals.mkdir(exist_ok=True)
+        line = "" if session is None else f"session: {session}\n"
+        (goals / "G-004-sample.md").write_text(f"---\nid: G-004\ntitle: Sample\nstatus: paused\nlead: Goal-G-004\n"
+                                               f"{line}---\n\n## Goal\n\nSample.\n", encoding="utf-8")
+
+    def age(self, sid, minutes):
+        data = bi.load(sid)
+        data["seen"] = bi.stamp(bi.now() - timedelta(minutes=minutes))
+        bi.save(sid, data)
+
+    def test_while_the_run_session_is_active_it_gets_the_move(self):
+        self.drag("T-001")
+        self.assertEqual(self.ids(D), [("T-001", False)])
+        self.assertEqual(self.ids(A), [])
+        self.assertEqual(self.ids(B), [])
+
+    def test_once_the_run_session_has_ended_the_session_that_started_it_gets_it(self):
+        self.age(D, 30)                     # the headless session ended half an hour ago
+        self.drag("T-001", "needs-playtest", "in-progress", note="the meteors are too slow")
+        self.assertEqual(self.ids(B), [])
+        out = io.StringIO()
+        bi.watch(A, interval=0, out=out, rounds=1)
+        line = out.getvalue().strip()
+        self.assertTrue(line.startswith("T-001 needs-playtest → in-progress (note: the meteors are too slow) ["), line)
+        self.assertIn("goal G-004's run session has ended", line)
+        self.assertIn("Coursework, the session that started or resumed the run", line)
+        self.assertEqual(bi.ticket_owner("T-001", {}), "Goal-G-004", "the ticket keeps its lead")
+
+    def test_the_hook_hands_it_over_too(self):
+        self.age(D, 30)
+        self.drag("T-001", "needs-playtest", "in-progress")
+        text = self.hook(gate.hand_over, "UserPromptSubmit", {"session_id": A})["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("T-001 needs-playtest → in-progress", text)
+        self.assertNotIn("No session owns", text)
+
+    def test_if_the_starter_is_not_live_either_one_other_live_session_gets_it(self):
+        self.age(D, 30)
+        self.age(A, 13 * 60)                # Coursework ended too
+        bi.register(C, "Tools")
+        self.age(C, 20)                     # live, but not watching right now
+        self.drag("T-001")
+        self.assertEqual(self.ids(C), [])
+        moves = bi.take(B)[1]
+        self.assertEqual([(m["id"], claim) for m, claim in moves], [("T-001", False)])
+        self.assertIn("Coursework, isn't live", moves[0][0]["routed"])
+        self.assertIn("comes to Camera", moves[0][0]["routed"])
+
+    def test_without_a_session_line_the_first_live_session_by_name_gets_it(self):
+        self.goal(session=None)
+        self.age(D, 30)
+        bi.register(C, "Alpha")
+        self.drag("T-001")
+        self.assertEqual(self.ids(A), [])
+        self.assertEqual(self.ids(B), [])
+        moves = bi.take(C)[1]
+        self.assertEqual(len(moves), 1)
+        self.assertIn("names no session", moves[0][0]["routed"])
+
+    def test_goal_sessions_never_take_another_goals_moves(self):
+        self.age(D, 30)
+        self.age(A, 13 * 60)
+        self.age(B, 13 * 60)
+        bi.register(C, "Goal-G-005")
+        self.drag("T-001")
+        self.assertEqual(self.ids(C), [])
+        self.assertEqual(bi.goal_route("Goal-G-004", bi.all_sessions())[0], "")
+
+    def test_other_tickets_follow_the_usual_rules(self):
+        self.age(D, 30)
+        self.drag("T-002")
+        self.assertEqual(self.ids(A), [])
+        self.assertEqual(self.ids(B), [("T-002", False)])
+
+
 class Watcher(Base):
     def test_prints_one_line_per_move_and_advances_the_cursor(self):
         self.put("T-001", "Tools")

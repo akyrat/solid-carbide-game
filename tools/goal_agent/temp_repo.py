@@ -44,6 +44,8 @@ def add_ticket(root, tid, **fields):
 def make(folder):
     """A git repo in `folder` (on master, one commit), ready for the goal runner. Returns its path."""
     root = Path(folder)
+    if root.resolve() == REAL or REAL in root.resolve().parents:
+        raise RuntimeError(f"temp_repo.make: {root} is inside the real repository {REAL}; use a temporary folder.")
     for rel in COPY:
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(REAL / rel, root / rel)

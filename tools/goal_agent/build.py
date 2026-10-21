@@ -21,6 +21,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import uuid
 from pathlib import Path
 
@@ -314,6 +315,8 @@ Its task file there is {ticket['file']}. It is part of goal {b.gid} (tasks/READM
 Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
 Mark each one in the task file as `(QA: pass)` or `(QA: fail: <reason>)`, and commit the task file in that folder.
+Replace the criterion's old mark (the `(QA: pass / fail)` placeholder, or an earlier round's mark) with your new one;
+never add a second mark after it. Only the last mark on a criterion counts.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 {EDIT_TICKETS_RULE}
 {QA_SCREENSHOTS_RULE}
@@ -442,24 +445,38 @@ def result(b, tid, outcome, summaries, art=None, refusals=()):
 
 # --- committing the goal's files on master ---
 
-def commit_files(root, paths, message):
-    """Commit only these files on master; refuses (prints why, returns False) during a merge or off master."""
+def where(root):
+    """How commit_files names the repository in its messages (T-215): always its folder, and a repository in the
+    temporary folder (the tests', QA's copies) is called a test repository, so their output never reads as a real
+    commit on the studio's master."""
+    root = Path(root).resolve()
+    try:
+        root.relative_to(Path(tempfile.gettempdir()).resolve())
+        return f" [test repository {root}]"
+    except ValueError:
+        return f" [{root}]"
+
+
+def commit_files(root, paths, message, out=None):
+    """Commit only these files on master; refuses (prints why, returns False) during a merge or off master.
+    Messages go to `out` (default stdout) and name the repository (where())."""
     git = lambda *a: subprocess.run(["git", "-C", str(root), *a], capture_output=True, text=True,  # noqa: E731
                                     encoding="utf-8")
+    say = lambda text: print(text + where(root), file=out or sys.stdout)  # noqa: E731
     if git("rev-parse", "-q", "--verify", "MERGE_HEAD").stdout.strip():
-        print("Not committed: a merge is in progress (another session's). Commit these files later.")
+        say("Not committed: a merge is in progress (another session's). Commit these files later.")
         return False
     branch = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
     if branch != "master":
-        print(f"Not committed: this checkout is on {branch!r}, not master.")
+        say(f"Not committed: this checkout is on {branch!r}, not master.")
         return False
     rel = sorted({str(Path(p).resolve().relative_to(Path(root).resolve())) for p in paths})
     for step in (["add", "--", *rel], ["commit", "-m", message, "--", *rel]):
         done = git(*step)
         if done.returncode != 0:
-            print(f"Not committed: git {step[0]} failed: {(done.stderr or done.stdout).strip()}")
+            say(f"Not committed: git {step[0]} failed: {(done.stderr or done.stdout).strip()}")
             return False
-    print(f"Committed on master: {message}")
+    say(f"Committed on master: {message}")
     return True
 
 

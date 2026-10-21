@@ -1590,3 +1590,8 @@ Entry format:
 - Decision or change: the guard no longer refuses `sed -n`, removing an agent's own capture images, sourcing a script that only sets variables, `pip list`, `git check-ignore` and similar printing git commands, or `xargs git checkout` of Godot's line-ending noise; it still refuses `rm`, `sed -i` and scripts that write a ticket's status, qa_rounds or lead lines. The Project Lead's criterion asking to refuse `git checkout` of a ticket was wrong (the commit check relies on it) and was corrected. Tooling, merged straight after QA.
 - Documents touched: `tasks/README.md`
 - Tasks: T-216 (done)
+
+## 2026-10-21: T-215 done: goal runner and QA-mark fixes
+- Decision or change: the goal runner's ticket writer drops criteria only the Project Lead can meet (long or short GDD, staleness check, timeline, merging); `task_status.py` counts only the last QA mark on each criterion and reads "(QA: pass. ...)"; QA is told to replace its old marks; board moves on goal tickets reach a live session once the run's own session has ended (`run.py --session` records it); tool tests no longer print lines that look like real commits on master. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-215 (done)

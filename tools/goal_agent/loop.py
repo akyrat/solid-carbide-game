@@ -137,7 +137,10 @@ def rescan(b, subs, seen, context=None):
     verdicts, existing = gaps.detect(b.claude, b.goal.section("Goal"), todo, b.root, MODEL,
                                      code_root=build.ensure_goal_build(b), context=context)
     drafts = [d for v in verdicts for d in v.get("drafts") or []]
-    written = tickets.write(drafts, existing, b.root, b.gid) if drafts else {}
+    dropped = []
+    written = tickets.write(drafts, existing, b.root, b.gid, dropped=dropped) if drafts else {}
+    if dropped:
+        b.goal.log(tickets.dropped_note(dropped))
     paths = [p for _, p in written.values()]
     listed = {tid for tid, _, _ in goal_tickets(b.goal)}
     by_id = {s["id"]: s for s in subs}
@@ -358,8 +361,10 @@ def cleared(b):
     return True, f"its last pause ({kind}) is cleared"
 
 
-def resume(b, force=False):
-    """Pick a stopped or paused goal up from its files and carry on. Returns (goal, message)."""
+def resume(b, force=False, session=None):
+    """Pick a stopped or paused goal up from its files and carry on. Returns (goal, message).
+    `session`: the name of the Project Lead session resuming it, recorded as the goal file's `session:` line
+    (it gets the board's drags on the goal's tickets once the run's own session has ended, T-215)."""
     goal, status = b.goal, b.goal.get("status")
     if status in ("ready-to-play", "done", "cancelled"):
         return goal, f"{b.gid} is {status}; nothing to resume."
@@ -372,6 +377,9 @@ def resume(b, force=False):
         goal.log(f"resumed: {why}" + ("; --force." if not ok else "."))
     else:
         goal.log(f"resumed from {status}.")
+    if session:
+        goal.set("session", session)
+        goal.log(f"resumed by the session {session}.")
     goal.set("status", "building")
     goal.save()            # at once, so the board's Goals strip shows it building, not paused (T-203)
     run(b)
