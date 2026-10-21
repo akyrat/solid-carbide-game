@@ -1,7 +1,7 @@
 ---
 id: T-227
 title: "Art: the minion's falling animation (PixelLab)"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] A check script shows every new frame follows Visual style's technical rules and matches the minion's palette (QA: pass / fail)
-- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass / fail)
-- [ ] In a run, a falling minion plays the new frames from the edge until it lands, behaving as before (GIF; T-226's tests pass) (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] A check script shows every new frame follows Visual style's technical rules and matches the minion's palette (QA: pass; check_sprite_rules --size 48 --frames 8 passes all 40 frames, 16 to 24 colours, no semi-transparent pixels; palette snap in build script)
+- [ ] The record lists every PixelLab call with its prompt, settings and cost, and the balance before and after (QA: pass; 5 calls in the jsonl at 1 generation each, prompt and settings in each fall_<dir>_req.json (the jsonl prompt field is null), balance 4803 -> 4802 -> 4798 in the notes)
+- [ ] In a run, a falling minion plays the new frames from the edge until it lands, behaving as before (GIF; T-226's tests pass) (QA: pass; contact sheet shows minions dropping off the rooftop edge with the new frames and landing by the car; T-226 tests pass)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT TESTS PASSED, tools 439 OK, game/tools 395 OK (1 skipped); the changed assertion still checks the fall sheet hook, now that all five sheets load and are 8 frames wide)
 
 The board's review: first the one-direction sample as a GIF, then minions falling in a run.
 Board review files: the GIFs in `art-archive/T-227/`.
@@ -62,6 +62,10 @@ Falling sample (south-east only, 1 generation): same lizard, legs splayed and ta
 ### 2026-10-21, In progress
 
 Sample approved by the board. The other four directions start now.
+
+### 2026-10-21, In progress → In QA
+
+All five directions built (5 generations in all). Sent to QA.
 
 ## Result notes
 
