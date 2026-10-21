@@ -1,7 +1,7 @@
 ---
 id: T-225
 title: The neon underglow rises with the car on raised surfaces and in the air
-status: in-qa
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/drifting.md, game/README.md, tasks/T-206-run-on-the-elevation-sample-map.md]
 files_expected_to_change: [game/scripts/weapons/, game/tests/unit/, game/README.md, docs/weapons.md, art-archive/T-225/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,14 @@ Started: the underglow rises with the car.
 
 Fixed: the underglow (and the wiper, which had the same bug) rise with the car. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4. Ready for the board: C:\solid-carbide-worktrees\T-225\game\project.godot; drive onto a rooftop with the underglow.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved it. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -70,3 +78,4 @@ Written by the agent when it finishes.
 - **Tests:** 7 new GUT tests in `game/tests/unit/run/test_run_elevation_map.gd` (street, both rooftops, air, damage area, wiper). GUT 1238 passed; `tools` unittest 439 OK; `game/tools` unittest 387 OK (1 skipped).
 - **Screenshots** (`art-archive/T-225/screenshots/`): `underglow_street.png`, `underglow_rooftop.png`, `underglow_ramp.png`, `underglow_air.png`. Fixtures `run_elevation_underglow_*.tscn`.
 - **Documents:** `docs/weapons.md`, `game/README.md`. No refused commands.
+- 2026-10-21, needs-playtest → done: Board: the underglow fix works, and with the wiper too
