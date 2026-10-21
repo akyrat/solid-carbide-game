@@ -46,6 +46,8 @@ const MinionScript := preload("res://scripts/enemies/minion.gd")
 const MinionSpriteScript := preload("res://scripts/enemies/minion_sprite.gd")
 const CoinScript := preload("res://scripts/enemies/coin.gd")
 const CoinSpriteScript := preload("res://scripts/enemies/coin_sprite.gd")
+const HealthPickupScript := preload("res://scripts/enemies/health_pickup.gd")
+const HealthPickupSpriteScript := preload("res://scripts/enemies/health_pickup_sprite.gd")
 const EnemyDepthScript := preload("res://scripts/enemies/enemy_depth.gd")
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 const EnemyNavigationScript := preload("res://scripts/enemies/enemy_navigation.gd")
@@ -105,11 +107,15 @@ var navigation: RefCounted = null
 
 var minions: Array = []
 var coins: Array = []
+## The health pickups on the ground (T-220), found the way the coins are
+## (also the group "health_pickups").
+var health_pickups: Array = []
 var depth = EnemyDepthScript.new()
 
 var _stats: Dictionary
 var _spawning: Dictionary
 var _coins: Dictionary
+var _health_drops: Dictionary
 ## Seconds since the last spawn (starts full, so the first one is at once).
 var _spawn_clock := 0.0
 var _run: Node = null
@@ -120,6 +126,7 @@ func _init() -> void:
 	_stats = data.minion()
 	_spawning = data.spawning()
 	_coins = data.coins()
+	_health_drops = data.health_drops()
 	_spawn_clock = _spawning.get("spawn_interval_seconds", 0.5)
 	rng.randomize()
 
@@ -165,8 +172,12 @@ func clear() -> void:
 	for c in coins:
 		if is_instance_valid(c):
 			c.queue_free()
+	for h in health_pickups:
+		if is_instance_valid(h):
+			h.queue_free()
 	minions.clear()
 	coins.clear()
+	health_pickups.clear()
 	_spawn_clock = _spawning.get("spawn_interval_seconds", 0.5)
 
 
@@ -223,6 +234,7 @@ func move_step(dt: float) -> void:
 func _prune() -> void:
 	minions = minions.filter(func(m) -> bool: return is_instance_valid(m) and not m.is_dead())
 	coins = coins.filter(func(c) -> bool: return is_instance_valid(c) and not c.is_taken())
+	health_pickups = health_pickups.filter(func(h) -> bool: return is_instance_valid(h) and not h.is_taken())
 
 
 func _spawn_step(dt: float) -> void:
@@ -306,6 +318,32 @@ func spawn_coin_at(units: Vector2, value: int = 1) -> Node:
 	return c
 
 
+## Adds a health pickup at `units`, with its sprite. It restores `fraction` of the car's
+## maximum health (the data's restore_fraction unless given).
+func spawn_health_pickup_at(units: Vector2, fraction: float = -1.0) -> Node:
+	var p: Area2D = HealthPickupScript.new()
+	p.name = "HealthPickup"
+	p.restore_fraction = float(_health_drops["restore_fraction"]) if fraction < 0.0 else fraction
+	p.state = state
+	p.position = units * PX_PER_UNIT
+	bodies_root.add_child(p, true)
+	var s: Node2D = HealthPickupSpriteScript.new()
+	s.name = "HealthPickupSprite"
+	draw_root.add_child(s, true)
+	p.sprite = s
+	var h := EnemyHeightScript.height_at(ground, units)
+	s.position = ISO_TRANSFORM * p.position + Vector2(0.0, -h * PX_PER_UNIT)
+	s.z_index = depth.z_index_for(units, HealthPickupScript.RADIUS_UNITS, 0.6, h)
+	s.reset_physics_interpolation()
+	health_pickups.append(p)
+	return p
+
+
+## Rolls the health drop's own chance (separate from the coins' roll).
+func roll_health_drop() -> bool:
+	return rng.randf() < float(_health_drops["drop_chance"])
+
+
 ## Rolls the data's drop chance; returns how many coins drop (0 or coins_per_drop).
 func roll_coin_drop() -> int:
 	if rng.randf() < float(_coins["drop_chance"]):
@@ -324,6 +362,8 @@ func _on_minion_died(m: Node, at_units: Vector2) -> void:
 			if absf(EnemyHeightScript.height_at(ground, at_units + offset) - EnemyHeightScript.height_at(ground, at_units)) > EnemyHeightScript.MAX_STEP:
 				offset = Vector2.ZERO
 		spawn_coin_at(at_units + offset, 1)
+	if roll_health_drop():
+		spawn_health_pickup_at(at_units)
 	minion_killed.emit(m, n)
 
 

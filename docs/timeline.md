@@ -1610,3 +1610,8 @@ Entry format:
 - Decision or change: the magnet upgrade is called "Brand Magnet", described as "Pickups reach you from further per level. Redgull calls it engagement." (Garage design, Content), in the form and voice of the other three upgrades. The board also chose faster turning in the air so the air 360 fits in a jump off the tallest rooftop (Drifting, Decisions). Docs-only text, merged straight after QA.
 - Documents touched: `docs/garage-design.md`, `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-223 (done), T-219
+
+## 2026-10-21: T-220 done: health drops
+- Decision or change: dying minions drop a health canister (60%, rolled separately from the coins, so one kill can drop both; the kaiju drops none); driving over one restores 30% of the car's maximum health, capped; a full-health car still uses it up. Numbers in `game/data/enemies.json`, `health_drops`. Placeholder canister, not Redgull red, until T-221's art. The board played it in T-222's build.
+- Documents touched: `docs/enemies.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-220 (done)

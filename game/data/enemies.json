@@ -19,6 +19,11 @@
     "drop_chance": 0.6,
     "coins_per_drop": 2
   },
+  "health_drops": {
+    "_comment": "Health pickups a killed minion drops (Enemies, Decisions, Health drops, 2026-10-21; T-220). drop_chance is rolled separately from the coins' (same rate by the board's decision, today 0.6), restore_fraction is the share of the car's maximum health one pickup restores (0.3 = 30%), never above the maximum. The kaiju drops none (a proposal for the playtest). Proposed numbers; the board judges them in playtests.",
+    "drop_chance": 0.6,
+    "restore_fraction": 0.3
+  },
   "kaiju": {
     "health": 500,
     "move_speed": 3,
