@@ -1635,3 +1635,8 @@ Entry format:
 - Decision or change: the pickup magnet's reach is the garage's fourth upgrade, "Brand Magnet" (T-223's text), with 10 levels from 3 units (1 car length) to 9 units in steps of 0.6, priced 40 to 300 coins on the acceleration upgrade's curve (proposals in `game/data/garage.json`). A run uses the bought level's reach. The board: "LGTM".
 - Documents touched: `docs/garage-design.md`, `game/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-224 (done)
+
+## 2026-10-21: Enemies jump down off ledges
+- Decision or change: the board noticed enemies on a rooftop walk all the way round to a ramp to reach a car below. Going down, they now jump off a rooftop's edge; going up still needs a ramp (Enemies, Decisions). T-226 builds it.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-226 (open)
