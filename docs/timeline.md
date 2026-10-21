@@ -1575,3 +1575,8 @@ Entry format:
 - Decision or change: the car is drawn in 32 directions, 11.25 degrees apart: the approved 16 kept byte for byte, plus 16 in-betweens made with PixelLab's Rotate (+16 degrees from each frame, each placed by where it landed), 17 generations in all with the two samples. The shadowless air frames were rebuilt for 32 by the free script. Weak frames reported: 23 is a near-copy of 22, and 3, 19 and 21 are 14 to 26 degrees off. No turning GIFs (a guard refusal stopped the capture); the board played the build instead and its playtest replaces them: "102 LGTM".
 - Documents touched: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-102 (done)
+
+## 2026-10-21: Aerial tricks, and the game's current state in the README
+- Decision or change: the board's first aerial tricks: a 180 and a 360 turned while the car is airborne, either direction counting the same (Drifting, Decisions); their popup texts first (T-218), then the detection, combo and popups (T-219). The board also wants three GIFs of the game today (drifting chased by enemies, jumping off a tall platform while drifting, the kaiju chasing and throwing meteors) in a "Current state of the game" section of the root README (T-217).
+- Documents touched: `docs/drifting.md`
+- Tasks: T-217, T-218 (open), T-219 (blocked on T-218)
