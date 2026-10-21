@@ -1,7 +1,7 @@
 ---
 id: T-222
 title: Pickups are pulled to the car within one car length
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -39,10 +39,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a coin, a gift pack and a health drop within the radius move towards the car and are picked up, and ones outside it stay where they are (QA: pass / fail)
-- [ ] The radius is read from one data value, in units, set to the car's length, which a test can change (QA: pass / fail)
-- [ ] A GIF from a run shows pickups being pulled to the car (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a coin, a gift pack and a health drop within the radius move towards the car and are picked up, and ones outside it stay where they are (QA: pass; test_pickup_magnet.gd covers all three in and out of reach)
+- [ ] The radius is read from one data value, in units, set to the car's length, which a test can change (QA: pass; run.json pickup_magnet.radius_units = 3.0, a test changes it)
+- [ ] A GIF from a run shows pickups being pulled to the car (QA: pass; GIF exists, screenshots show coins converging, counter 4 to 6)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1232/1232, tools 439 OK, game/tools no tests and exit 0)
 
 The board's review: play a run and pick things up with the magnet.
 Board review files: the GIF in `art-archive/T-222/screenshots/`.
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request.
+
+### 2026-10-21, In progress → In QA
+
+Built: coins, gift packs and health drops fly to the car within 3 units (1 car length). Sent to QA.
 
 ## Result notes
 
