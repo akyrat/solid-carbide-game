@@ -37,13 +37,13 @@ The board's review: In the level creator, save a level, go back to the list, fin
 
 ## Acceptance criteria
 
-- [ ] A unit test saves a level with one piece of every kind: the file is written to the (temporary) levels folder, has map, legend, ground_rows, buildings, pattern_copies, platforms and ramps, and passes python game/tools/check_level.py. (QA: pass / fail)
-- [ ] A unit test opens elevation_sample_map.json in the editor and saves it to a temporary path; mvp_map.gd and the elevation layer built from the saved file have the same buildings, boulders, platforms and ramps as built from the original. (QA: pass / fail)
-- [ ] A unit test: after saving, the list screen lists the saved level by name. (QA: pass / fail)
-- [ ] The save confirmation shown is the one in creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', says how to save and where the file goes. (QA: pass / fail)
-- [ ] A screenshot of the editor showing the save confirmation is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] A unit test saves a level with one piece of every kind: the file is written to the (temporary) levels folder, has map, legend, ground_rows, buildings, pattern_copies, platforms and ramps, and passes python game/tools/check_level.py. (QA: pass)
+- [ ] A unit test opens elevation_sample_map.json in the editor and saves it to a temporary path; mvp_map.gd and the elevation layer built from the saved file have the same buildings, boulders, platforms and ramps as built from the original. (QA: pass)
+- [ ] A unit test: after saving, the list screen lists the saved level by name. (QA: pass)
+- [ ] The save confirmation shown is the one in creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings still passes. (QA: pass)
+- [ ] game/README.md, 'Level creator', says how to save and where the file goes. (QA: pass)
+- [ ] A screenshot of the editor showing the save confirmation is in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
