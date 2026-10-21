@@ -1,7 +1,7 @@
 ---
 id: T-210
 title: "The pause screen's music volume slider"
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd, tasks/T-208-text-music-volume-label.md, tasks/T-209-music-the-boards-two-tracks.md]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/scenes/, game/tests/unit/, game/README.md, docs/hud-and-menus.md, art-archive/T-210/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,14 @@ Started: the Music volume slider under SFX volume on the pause screen.
 
 Built: "Music volume" slider under SFX volume, saved, music only. Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4. Ready for the board: open C:\solid-carbide-worktrees\T-210\game\project.godot or Play on T-210 in the Builds tab, pause in a run and move Music volume.
+
+### 2026-10-21, Needs playtest → Done
+
+The board approved the slider. Merged into master.
+
 ## Result notes
 
 Built: a "Music volume" slider (T-208's label) on its own row `MusicRow` directly under the SFX row in `game/scripts/ui/pause_screen.gd`, laid out like it (label of `LABEL_WIDTH`, same-width slider, number at the right end), 0 to 100. It starts from `GameSettings.load_music_volume()`, and each move saves (`save_music_volume`) and applies (`apply_music_volume`) to the Music bus at once, never the SFX bus. The music is not paused by the pause screen (T-209 plays it on the Music bus).
@@ -68,3 +76,4 @@ Proposals and notes:
 - Long GDD regeneration not run (done at merge by the Project Lead); docs/hud-and-menus.md and game/README.md updated.
 
 Screenshots: `art-archive/T-210/screenshots/pause_music_slider.png` (paused run from the menu: "Music volume" row under "SFX volume", strip below the HUD timer; the board's saved settings had the dynamic camera on, so the tuning buttons show).
+- 2026-10-21, needs-playtest → done: Board: LGTM
