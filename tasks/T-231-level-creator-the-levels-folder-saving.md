@@ -35,12 +35,12 @@ Storage for the level creator (Level design, Decisions, 'Level creator', board 2
 
 ## Acceptance criteria
 
-- [ ] game/README.md has a 'Level creator' section naming the levels folder and the validator command; the result notes give the folder as a proposal for the board. (QA: pass / fail)
-- [ ] game/scripts/level/level_store.gd provides list_levels(), load_level(path) and save_level(path, data); a GUT test saves a level into a temporary folder, finds it in list_levels(), loads it back and gets data equal to what it saved. (QA: pass / fail)
-- [ ] python game/tools/check_level.py game/data/level/elevation_sample_map.json exits 0. (QA: pass / fail)
-- [ ] check_level.py's Python tests pass on a valid file and fail on each broken case: a building outside the map, a rooftop outside the map, a ramp outside the map, a boulder outside the map, a building, rooftop or ramp edge on an odd unit, ground_rows of the wrong size, and a height-data problem check_height_data.py already reports. (QA: pass / fail)
-- [ ] The full GUT suite and the Python tool tests pass. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (tooling). (QA: pass / fail)
+- [ ] game/README.md has a 'Level creator' section naming the levels folder and the validator command; the result notes give the folder as a proposal for the board. (QA: pass)
+- [ ] game/scripts/level/level_store.gd provides list_levels(), load_level(path) and save_level(path, data); a GUT test saves a level into a temporary folder, finds it in list_levels(), loads it back and gets data equal to what it saved. (QA: pass)
+- [ ] python game/tools/check_level.py game/data/level/elevation_sample_map.json exits 0. (QA: pass)
+- [ ] check_level.py's Python tests pass on a valid file and fail on each broken case: a building outside the map, a rooftop outside the map, a ramp outside the map, a boulder outside the map, a building, rooftop or ramp edge on an odd unit, ground_rows of the wrong size, and a height-data problem check_height_data.py already reports. (QA: pass)
+- [ ] The full GUT suite and the Python tool tests pass. (QA: pass)
+- [ ] The result notes say in one line that there is nothing to screenshot (tooling). (QA: pass)
 
 ## Updates
 
