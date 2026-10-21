@@ -1585,3 +1585,8 @@ Entry format:
 - Decision or change: the air 180 pops "AIR 180!" and the air 360 "AIR 360!", in the voice of LONG DRIFT!, FULL 360! and ALT DRIFT! (HUD and menus, Content). Docs-only text, merged straight after QA; T-219 starts.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-218 (done), T-219 (in progress)
+
+## 2026-10-21: T-216 done: the guard lets more read-only commands through
+- Decision or change: the guard no longer refuses `sed -n`, removing an agent's own capture images, sourcing a script that only sets variables, `pip list`, `git check-ignore` and similar printing git commands, or `xargs git checkout` of Godot's line-ending noise; it still refuses `rm`, `sed -i` and scripts that write a ticket's status, qa_rounds or lead lines. The Project Lead's criterion asking to refuse `git checkout` of a ticket was wrong (the commit check relies on it) and was corrected. Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`
+- Tasks: T-216 (done)

@@ -146,7 +146,39 @@ READ_ONLY_COMMANDS = {
     "measure-object", "get-childitem", "write-output", "test", "[", "true", "false", "printf", "pwd",
 }
 GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status", "merge-base", "rev-parse", "rev-list", "ls-files",
-                 "cat-file", "for-each-ref"}
+                 "cat-file", "for-each-ref", "check-ignore", "check-attr", "ls-tree", "describe", "show-ref",
+                 "name-rev", "shortlog", "count-objects", "version", "help", "var", "cherry", "whatchanged"}
+PIP_NAMES = {"pip", "pip3", "pip.exe", "pip3.exe"}
+PIP_READ_ONLY = {"list", "show", "freeze", "check", "help", "--version", "-V"}
+
+
+def pip_read_only(words):
+    """`pip list`, `pip show x`, `pip freeze`, `python -m pip list`, ...: pip commands that only print (T-216)."""
+    if words and words[0].lower() in PIP_NAMES:
+        rest = words[1:]
+    elif words and words[0].lower() in PYTHON_NAMES and "-m" in words and words[words.index("-m") + 1:][:1] == ["pip"]:
+        rest = words[words.index("-m") + 2:]
+    else:
+        return False
+    sub = next((w for w in rest if not w.startswith("-") or w in PIP_READ_ONLY), None)
+    return sub in PIP_READ_ONLY
+
+
+XARGS_VALUE_OPTIONS = {"-n", "-L", "-P", "-s", "-d", "-E", "-I", "-a", "-l"}
+
+
+def xargs_command(words):
+    """The command `xargs ...` runs, as a Segment whose input words are an unknown `$XARGS` argument, or None when
+    it names none (T-216: `git ls-files -m | xargs git checkout --` is the git command it runs)."""
+    i = 1
+    while i < len(words) and words[i].startswith("-"):
+        i += 2 if words[i] in XARGS_VALUE_OPTIONS else 1
+    if i >= len(words):
+        return None
+    seg = Segment()
+    seg.chars = list(" ".join(w if not re.search(r"[\s'\"]", w) else ("'" + w + "'" if "'" not in w else '"' + w + '"')
+                              for w in words[i:]) + " $XARGS")
+    return seg
 SAFE_REDIRECT_RE = re.compile(r">&\d|>>?\s*(/dev/null|\$null|nul)\b", re.I)
 
 
@@ -172,8 +204,16 @@ def ticket_path(path, cwd=None, in_tasks=False):
     """Whether a file a command writes could be a ticket: a path in a tasks folder or the folder itself, a
     T-nnn*.md name, a name the shell expands ($, globs, braces), no name at all, or any file when the command
     runs in the tasks folder (T-181)."""
-    if in_tasks or not path or re.search(r"[$`*?\[{]", path):
+    if in_tasks or not path or re.search(r"[$`{]", path):
         return True
+    if re.search(r"[*?\[]", path):
+        # a glob can be a ticket unless its last part ends in a fixed extension other than .md (T-216: *.png)
+        name = re.split(r"[\\/]", path)[-1]
+        m = re.search(r"\.([A-Za-z0-9]+)$", name)
+        if not m or m.group(1).lower() == "md" or re.search(r"[*?\[\]]", name[m.start():]):
+            return True
+        folder = path[:len(path) - len(name)]
+        return bool(re.search(r"[*?\[]", folder) or TICKET_PATH_RE.search(folder))
     return bool(TICKET_PATH_RE.search(path) or task_path_match(path, cwd))
 
 
@@ -405,12 +445,59 @@ def read_only_segment(seg):
     if name == "awk" and re.search(r"system|[|>]|-i\b|inplace", seg):
         return False
     if name == "sed":
-        script = seg.split(None, 1)[1] if len(words) > 1 else ""
-        if re.search(r"(^|\s)-[A-Za-z]*i|--in-place|--file|(^|\s)-f\b", script):
-            return False
-        if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", script):
-            return False
+        parsed = sed_parse(words_of(seg))
+        return parsed is not None and not parsed[0] and not any(SED_WRITES_RE.search(s) for s in parsed[1])
     return True
+
+
+# a sed command that writes a file (w, W, the s///w flag) or runs one (e, the s///e flag)
+SED_WRITES_RE = re.compile(r"""(^|[\s;{}0-9$/'"!])[wWe](\s|$|[\w./\\"'-])""")
+
+
+def sed_parse(words):
+    """(in_place, scripts, files) of a sed command line, judged from its words (T-216: only the scripts are looked
+    at for w and e commands, not the file names). None when a script comes from a file (-f)."""
+    in_place, scripts, files, i = False, [], [], 1
+    while i < len(words):
+        w = words[i]
+        if w == "--":
+            files.extend(words[i + 1:])
+            break
+        if w.startswith("--"):
+            if w.startswith("--in-place"):
+                in_place = True
+            elif w.startswith("--file"):
+                return None
+            elif w == "--expression":
+                scripts.append(words[i + 1] if i + 1 < len(words) else "")
+                i += 1
+            elif w.startswith("--expression="):
+                scripts.append(w.split("=", 1)[1])
+        elif w.startswith("-") and len(w) > 1:
+            for k, c in enumerate(w[1:], 1):
+                if c == "i":
+                    in_place = True
+                    break   # the rest is the backup suffix
+                if c == "f":
+                    return None
+                if c == "e":
+                    rest = w[k + 1:]
+                    if not rest:
+                        scripts.append(words[i + 1] if i + 1 < len(words) else "")
+                        i += 1
+                    else:
+                        scripts.append(rest)
+                    break
+                if c == "l":
+                    if not w[k + 1:]:
+                        i += 1   # the line length
+                    break
+        else:
+            files.append(w)
+        i += 1
+    if not scripts:
+        scripts, files = files[:1], files[1:]
+    return in_place, scripts, files
 
 
 PYTHON_NAMES = {"python", "python3", "py", "python.exe", "python3.exe", "py.exe"}
@@ -504,24 +591,6 @@ def is_test_run(words):
     while i < len(words) and words[i].startswith("-") and words[i] != "-m":
         i += 1
     return words[i:i + 1] == ["-m"] and words[i + 1:i + 2] in (["unittest"], ["pytest"])
-
-
-def sed_files(words):
-    """The files a `sed` command line names (its script left out), or None when its script comes from a file."""
-    files, script_given, i = [], False, 1
-    while i < len(words):
-        w = words[i]
-        if w in ("-f", "--file") or w.startswith("--file="):
-            return None
-        if w in ("-e", "--expression"):
-            script_given, i = True, i + 2
-            continue
-        if w.startswith("--expression=") or (w.startswith("-") and not w.startswith("--") and w.endswith("e")):
-            script_given = True
-        elif not w.startswith("-"):
-            files.append(w)
-        i += 1
-    return files if script_given else files[1:]
 
 
 # What a script's own text must not hold for the guard to let it run on task files (T-212): a status, qa_rounds or
@@ -628,8 +697,15 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None):
             return f"what it appends to `{target or '?'}` could hold a status, qa_rounds or lead line"
     if not words:
         return ""
-    if read_only_segment(seg.text) or script_call(seg.text) or git_writer(seg.text) or is_test_run(words):
+    if (read_only_segment(seg.text) or script_call(seg.text) or git_writer(seg.text) or is_test_run(words)
+            or pip_read_only(words)):
         return ""
+    if words[0].lower() == "xargs":
+        inner = xargs_command(words)
+        if inner is None:
+            return ""   # xargs alone only echoes its input
+        why = why_risky(inner, cwd, in_tasks, bases)
+        return f"xargs runs {why}" if why else ""
     code = inline_code(seg, words)
     if code is not None:
         if in_tasks:
@@ -638,17 +714,17 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None):
         return f"inline code that names task files (`{m.group(0)}`)" if m else ""
     name = words[0].lower()
     if name == "sed":
-        if re.search(r"""(^|[\s;{}0-9$/'"])[wWe]\s*[\w./\\"'-]""", " ".join(words[1:])):
-            return "a sed script that writes a file or runs a command"
-        files = sed_files(words)
-        if files is None:
+        parsed = sed_parse(words)
+        if parsed is None:
             return "a sed script read from a file"
-        hit = next((f for f in files if ticket_path(f, cwd, in_tasks)), None)
+        if any(SED_WRITES_RE.search(s) for s in parsed[1]):
+            return "a sed script that writes a file or runs a command"
+        hit = next((f for f in parsed[2] if ticket_path(f, cwd, in_tasks)), None)
         return f"sed on `{hit}`, which could be a ticket" if hit else ""
     if name in FILE_WRITERS:
         hit = next((w for w in words[1:] if ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks)), None)
         return f"`{name}` on `{hit}`, which could be a ticket" if hit else ""
-    script = script_of(words)
+    script = words[1] if name in ("source", ".") and len(words) > 1 else script_of(words)
     if script and not in_tasks:
         return script_args_reason(script, words) or script_reason(script, bases or [cwd or os.getcwd()])
     return f"`{words[0]}`: a command the guard can't tell won't write a ticket"
