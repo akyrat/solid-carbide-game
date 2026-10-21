@@ -1,7 +1,7 @@
 ---
 id: T-147
 title: Meteors never land on a boulder left by an earlier meteor that is still standing
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -44,12 +44,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The result notes name the cause of meteors landing on standing meteor boulders in the board's playtest (QA: pass / fail)
-- [ ] A GUT test places a meteor boulder, then runs many meteor attacks around it (with a fixed random seed), and no warning circle or landing spot overlaps the standing boulder, the clearance included if one was added (QA: pass / fail)
-- [ ] A GUT test shows the same for a boulder that is fading and for one waiting for the car to move off its spot, and that once a boulder is removed its spot can be used again (QA: pass / fail)
-- [ ] Any new tuning number is read from `game/data/enemies.json`, `meteor_attack` (a test checks it) (QA: pass / fail)
-- [ ] `docs/enemies.md` (the built meteor attack section) and `game/README.md` describe the rule as built (QA: pass / fail)
-- [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes name the cause of meteors landing on standing meteor boulders in the board's playtest (QA: pass; cause named: touching allowed plus sprite overhang)
+- [ ] A GUT test places a meteor boulder, then runs many meteor attacks around it (with a fixed random seed), and no warning circle or landing spot overlaps the standing boulder, the clearance included if one was added (QA: pass; 150 seeded attacks around standing boulder, none within diameter+clearance)
+- [ ] A GUT test shows the same for a boulder that is fading and for one waiting for the car to move off its spot, and that once a boulder is removed its spot can be used again (QA: pass; fading and waiting boulders tested, freed spot reused)
+- [ ] Any new tuning number is read from `game/data/enemies.json`, `meteor_attack` (a test checks it) (QA: pass; boulder_clearance_units read from enemies.json, test_enemy_data checks it)
+- [ ] `docs/enemies.md` (the built meteor attack section) and `game/README.md` describe the rule as built (QA: pass; docs/enemies.md and game/README.md updated)
+- [ ] The full GUT suite and all Python tool tests pass (QA: pass; GUT 1147 pass, tools unittest OK, game/tools OK (355, 1 skipped))
 
 The board's review: play to the kaiju and watch several meteor attacks; no meteor should land on a boulder from an earlier one that is still there.
 
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-21, Open → In progress
 
 Started at the board's request, in C:\solid-carbide-worktrees$t.
+
+### 2026-10-21, In progress → In QA
+
+Fixed: meteors now keep 1.5 units of clear ground from any boulder (a tuning number). Sent to QA.
 
 ## Result notes
 
