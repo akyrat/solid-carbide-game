@@ -1,7 +1,7 @@
 ---
 id: T-234
 title: Level creator: its own launch command and the level list screen
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-005
@@ -48,6 +48,10 @@ The board's review: Open the level creator with the README's command and look at
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-21, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-234.
 
 ## Result notes
 
