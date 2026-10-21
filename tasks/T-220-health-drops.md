@@ -1,7 +1,7 @@
 ---
 id: T-220
 title: Enemies drop health pickups that restore 30% of the car's health
-status: open
+status: in-progress
 from: project-lead
 to: enemy-behavior
 lead: Coursework
@@ -54,6 +54,20 @@ Board review files: the screenshots in `art-archive/T-220/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Started at the board's request.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (enemy-behavior agent): a dying minion drops a health pickup where it died, at its ground height and in the coins' depth order. `game/scripts/enemies/health_pickup.gd` (Area2D, pickups layer, mask 2, group `health_pickups`, `spawner.health_pickups`), placeholder drawing `health_pickup_sprite.gd` (orange-red canister, white cross; not Redgull red). `RunState.heal_car()` restores `restore_fraction * max_health`, capped. Numbers in `game/data/enemies.json` `health_drops` (`drop_chance` 0.6, `restore_fraction` 0.3), read via `EnemyData.health_drops()`. Tests: `game/tests/unit/enemies/test_health_drops.gd`. GUT 1222/1222 pass; Python tests (tools 439, game/tools 387) pass. Screenshot: `art-archive/T-220/screenshots/health_pickups_run.png` (fixture `minions_demo.tscn` now also places two canisters).
+
+Proposals for the playtest:
+- The health roll is separate from the coin roll, so one kill can drop both (same 60% rate, own number in the data).
+- The kaiju drops no health pickups (its death ends the run anyway).
+- A full-health car still picks one up and uses it up (simplest; the magnet T-222 will not leave unusable ones lying around).
+- Pickup is not damage: it does not touch the combo.
+
+Refused commands: none.

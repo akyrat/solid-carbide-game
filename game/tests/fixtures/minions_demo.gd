@@ -40,6 +40,9 @@ func _ready() -> void:
 	if not near_buildings:
 		spawner.spawn_coin_at(car_units + Vector2(-3.0, -4.0), 1)
 		spawner.spawn_coin_at(car_units + Vector2(-2.4, -4.4), 1)
+		# T-220: two health pickups (placeholder canisters).
+		spawner.spawn_health_pickup_at(car_units + Vector2(3.0, -4.0))
+		spawner.spawn_health_pickup_at(car_units + Vector2(4.2, -3.2))
 	spawner.update_drawing()
 	var behind := 0
 	for m in spawner.minions:
