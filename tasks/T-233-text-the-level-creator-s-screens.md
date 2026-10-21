@@ -1,7 +1,7 @@
 ---
 id: T-233
 title: Text: the level creator's screens
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/extended-narrative.md, docs/hud-and-menus.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,11 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-233.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Wrote game/data/level/creator_texts.json (26 pieces, each with text and where note) and the "Level creator text" section in docs/level-design.md, Content. Longest button text is "Back to list" (12 characters), longest category name "Buildings" (9). The controls hint uses R, M and Del as proposed keys; the creator's scripts must match. Not run through a JSON parser: my `python -c` check was refused (needs approval); I wrote the file by hand and read it back by eye. Nothing to screenshot (text only).
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
