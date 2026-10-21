@@ -346,6 +346,99 @@ class ReadOnlyCommands(Base):
                 self.assertEqual(self.cmd(c, str(self.root)), "deny")
 
 
+class MoreReadOnlyCommands(Base):
+    """T-216: commands refused in the week of 2026-10-21 that could not write any ticket's header lines."""
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    def reason(self, command, cwd=None):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_shell({"command": command}, cwd)
+        return json.loads(buf.getvalue())["hookSpecificOutput"]["permissionDecisionReason"] if buf.getvalue() else ""
+
+    def assert_allowed(self, commands, cwd=None):
+        for c in commands:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, cwd), "allow", self.reason(c, cwd))
+
+    def test_allowed_1_a_sed_that_only_prints(self):
+        self.assert_allowed([
+            "sed -n '1,40p' docs/enemies.md tasks/T-207-enemy-waves.md | grep status",
+            "sed -n '1,40p' C:/solid-carbide-worktrees/T-070/game/scripts/weapons/meteor.gd; "
+            "grep -n status tasks/T-070-meteors.md",
+            "sed -n '/^status:/p;/^lead:/p' tasks/T-207-enemy-waves.md",
+            "sed -n -e '1,5p' -e '/qa_rounds/p' docs/weapons.md tasks/T-1-x.md",
+            "sed -ne '1,20p' docs/enemies.md tasks/T-1-x.md  # status",
+        ])
+
+    def test_allowed_2_rm_of_an_own_capture_folder(self):
+        self.assert_allowed([
+            "rm -f art-archive/T-102/capture/*.png && python tools/task_status.py T-102",
+            "rm -f C:/solid-carbide-worktrees/T-102/art-archive/T-102/capture/*.png; grep status tasks/T-102-x.md",
+            r"rm -f C:\solid-carbide-worktrees\T-102\art-archive\T-102\capture\frame_??.png # status",
+        ])
+
+    def test_allowed_3_source_a_script_that_only_sets_variables(self):
+        self.assert_allowed([
+            "source game/tools/godot_env.sh && grep -n status tasks/T-102-x.md",
+            ". game/tools/godot_env.sh; echo \"$GODOT_BIN\"; python tools/task_status.py T-102",
+        ], str(self.REPO))
+
+    def test_allowed_4_pip_list_and_git_check_ignore(self):
+        self.assert_allowed([
+            "pip list | grep -i pillow; grep status tasks/T-070-x.md",
+            "python -m pip list && python tools/task_status.py T-207",
+            "git check-ignore -v .env && git status --short && grep -n lead tasks/T-207-x.md",
+            "pip show pillow; pip --version; sed -n '1,10p' tasks/T-1-x.md | grep status",
+        ])
+
+    def test_allowed_5_inline_python_reading_images_next_to_task_files(self):
+        self.assert_allowed([
+            "grep -n status tasks/T-102-x.md && python -c \"from PIL import Image; import glob; "
+            "[print(p, Image.open(p).size) for p in sorted(glob.glob('art-archive/T-102/capture/*.png'))]\"",
+            "python game/tools/pixellab_client.py balance --task T-102 --consulted tasks/T-102-x.md 2>/dev/null; "
+            "python -c \"from PIL import Image; print(Image.open('art-archive/T-102/a.png').getbbox(), 'status')\"",
+        ], str(self.REPO))
+
+    def test_allowed_6_reverting_import_noise_through_xargs(self):
+        self.assert_allowed([
+            "git ls-files -m | xargs git checkout -- && python tools/task_status.py T-071",
+            "git ls-files -m -- '*.import' | xargs -r git checkout -- ; git status --short | grep tasks",
+            "git diff --name-only | xargs grep -l status",
+        ])
+
+    def test_still_refused(self):
+        for c in ["rm tasks/T-1-x.md # status", "rm -f tasks/*.md && echo status",
+                  "rm -f art-archive/T-1/* # status", "rm -f art-archive/T-1/*.md # status",
+                  "cd tasks && rm -f *.png # status",
+                  "sed -i 's/status: open/status: done/' tasks/T-1-x.md",
+                  "sed -n -i 's/status: open/status: done/p' tasks/T-1-x.md",
+                  "sed -n '1p' tasks/T-1-x.md --in-place # status",
+                  "sed -n 's/status: open/status: done/w tasks/T-1-x.md' docs/x.md",
+                  "sed -n -e '1p' -e 'w tasks/T-1-x.md' docs/x.md # status",
+                  "sed -n 's/x/y/e' tasks/T-1-x.md # status",
+                  "sed -f fix.sed tasks/T-1-x.md # status",
+                  "ls tasks | xargs rm # status",
+                  "git ls-files tasks | xargs sed -i 's/status: open/status: done/'",
+                  "pip install x; sed -i 's/lead:.*/lead: A/' tasks/T-1-x.md",
+                  "source missing_env.sh; grep status tasks/T-1-x.md",
+                  "git apply fix.patch # tasks/T-1-x.md status"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, str(self.root)), "deny")
+
+    def test_a_sourced_script_that_writes_the_lines_is_refused_with_the_reason(self):
+        (self.root / "set_env.sh").write_text("sed -i 's/^status:.*/status: done/' tasks/T-1-x.md\n", encoding="utf-8")
+        r = self.reason("source set_env.sh && grep status tasks/T-1-x.md", str(self.root))
+        self.assertIn("set_env.sh", r)
+        self.assertIn("status script", r)
+        r = self.reason("ls tasks | xargs rm # status", str(self.root))
+        self.assertIn("xargs runs `rm`", r)
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 
