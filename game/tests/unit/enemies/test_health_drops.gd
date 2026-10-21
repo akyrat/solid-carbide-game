@@ -142,9 +142,22 @@ func test_the_group_finds_it_and_coins_still_work() -> void:
 	assert_eq(run.state.coins, 1)
 
 
-func test_placeholder_is_not_redgull_red() -> void:
-	# Redgull's red (135,17,27) and the HUD heart's red (0.86, 0.1, 0.16) are taken.
-	for c in [SpriteScript.CANISTER_COLOR, SpriteScript.CANISTER_SHADE]:
-		assert_gt(c.g, 0.2, "not the deep Redgull red")
-		assert_gt(absf(c.g - 0.1) + absf(c.b - 0.16), 0.2, "far from the heart's red")
-	assert_eq(SpriteScript.CROSS_COLOR, Color.WHITE)
+func test_canister_art_is_not_redgull_red() -> void:
+	# T-221: the final art. Redgull's red is (135,17,27); no pixel may be near it, and the
+	# sprite is about a coin's size with hard (fully opaque or transparent) pixels.
+	var img: Image = SpriteScript.CANISTER_TEXTURE.get_image()
+	assert_lte(img.get_width(), 16, "about a coin wide")
+	assert_lte(img.get_height(), 12, "about a coin high")
+	var redgull := Vector3(135.0, 17.0, 27.0)
+	var white := 0
+	for y in img.get_height():
+		for x in img.get_width():
+			var c: Color = img.get_pixel(x, y)
+			assert_true(c.a == 0.0 or c.a == 1.0, "no semi-transparent pixels")
+			if c.a == 0.0:
+				continue
+			var v := Vector3(c.r8, c.g8, c.b8)
+			assert_gt(v.distance_to(redgull), 45.0, "far from Redgull's red")
+			if c.r8 > 240 and c.g8 > 240 and c.b8 > 240:
+				white += 1
+	assert_eq(white, 5, "the white cross is five pixels (a plus)")

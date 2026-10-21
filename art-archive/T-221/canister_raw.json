@@ -1,0 +1,38 @@
+{
+  "file": "canister_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a small red gas canister lying on its side on the ground, a plain white cross painted on its side, rounded metal cylinder with a small valve on top, 3/4 isometric view, retro pixel art game pickup sprite",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a small red gas canister lying on its side on the ground, a plain white cross painted on its side, rounded metal cylinder with a small valve on top, 3/4 isometric view, retro pixel art game pickup sprite",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T16:15:34+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "tasks/T-220-health-drops.md"
+  ],
+  "task": "T-221",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

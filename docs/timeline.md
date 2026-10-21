@@ -1640,3 +1640,8 @@ Entry format:
 - Decision or change: the board noticed enemies on a rooftop walk all the way round to a ramp to reach a car below. Going down, they now jump off a rooftop's edge; going up still needs a ramp (Enemies, Decisions). T-226 builds it.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-226 (open)
+
+## 2026-10-21: T-221 done: the health canister's art
+- Decision or change: the health drop is the board's approved PixelLab sample (1 generation) with three free script fixes the board chose: a clean white plus, its darkest red moved well away from Redgull's, and scaled to about a coin's size (`game/tools/build_health_canister.py`, `game/art/effects/health_canister.png`). The board: "LGTM".
+- Documents touched: `game/README.md`, `art-archive/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-221 (done)

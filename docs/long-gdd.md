@@ -631,6 +631,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - The kaiju walks round buildings and boulders, like the minions, rather than through them.
 
 - **Enemies follow the car up the ramps** (board, 2026-10-21, after playing the full game on the elevation map, where enemies ignored every raised surface): enemies treat rooftops as raised ground they can only reach by the ramps. To reach a car on a rooftop they find their way to a ramp, drive or walk up it and follow the car, with pathfinding over the map's streets, ramps and rooftops; a rooftop's edge blocks them like a wall from below. (T-207)
+- **Enemies jump down off ledges** (board, 2026-10-21, after playing T-207): going down, enemies don't walk all the way round to a ramp: to chase a car below them they jump (drop) off a rooftop's edge. Going up still needs a ramp, and an edge still blocks them from below. A falling enemy plays a falling animation from the edge until it lands (board, 2026-10-21; placeholder T-226, art T-227). (T-226)
 
 - **Health drops** (board, 2026-10-21): enemies also drop health pickups, at the same drop rate as the coins. Picking one up restores 30% of the car's health (never above its maximum). It looks like a red gas canister with a white cross on it (look: Visual style, Decisions). (T-220, art T-221)
 
@@ -1093,7 +1094,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `a41567e474f3b35e749f6621680dc90da53cc107d9a372e451edd66912ae2f73` |
 | `drifting.md` | `f34bdd746f43fc5fb9089f660f75c72e256bcb4c0e4af828c17465d6f2d83be4` |
 | `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
-| `enemies.md` | `59c78dd9bf3af95a7fa6b2fd479dd0fed1fb50352c1fdfbfd062f457c91ed6ec` |
+| `enemies.md` | `0d559ffeb283ee80a2a125cae361362afb7271ba276e804fff175ff2af26be25` |
 | `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
 | `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
 | `visual-style.md` | `b1d7ed698144d7cb3314c681b5f5a0e817c405e84c6ec617e2d2f81166538dab` |
