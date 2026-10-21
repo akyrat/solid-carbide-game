@@ -1,7 +1,7 @@
 ---
 id: T-238
 title: Level creator: save a level, and reopen it
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-238.
+
+### 2026-10-22, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
 
 ## Result notes
 
