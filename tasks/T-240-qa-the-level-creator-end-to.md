@@ -1,7 +1,7 @@
 ---
 id: T-240
 title: QA: the level creator end to end, from an empty creator to playing a level
-status: blocked
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/data/level/creator_assets.json, game/data/level/creator_texts.json, game/scripts/level/level_store.gd, game/scripts/level_creator/level_creator.gd, game/scripts/level_creator/editor.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/tests/unit/level_creator/test_creator_end_to_end.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,17 +35,36 @@ The final check of the level creator goal, on the goal's build (playtest/G-005),
 
 ## Acceptance criteria
 
-- [ ] The end-to-end GUT test passes on playtest/G-005: from an empty creator it places every kind of asset, uses rotate, mirror and delete, saves, finds the level in the list and starts a run on it with the timer at 8:00 and minions spawning. (QA: pass / fail)
-- [ ] The saved level from that test passes python game/tools/check_level.py. (QA: pass / fail)
-- [ ] The full GUT suite, the Python tool tests and the tools/ tests all pass. (QA: pass / fail)
-- [ ] A test confirms a run started from the game's main menu uses res://data/level/elevation_sample_map.json. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', explains how to open the creator, where levels are saved, and every control (place, delete, rotate, mirror, heights, snapping, save, play). (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing new to screenshot (the earlier creator tickets hold the screenshots). (QA: pass / fail)
+- [ ] The end-to-end GUT test passes on playtest/G-005: from an empty creator it places every kind of asset, uses rotate, mirror and delete, saves, finds the level in the list and starts a run on it with the timer at 8:00 and minions spawning. (QA: pass)
+- [ ] The saved level from that test passes python game/tools/check_level.py. (QA: pass)
+- [ ] The full GUT suite, the Python tool tests and the tools/ tests all pass. (QA: pass)
+- [ ] A test confirms a run started from the game's main menu uses res://data/level/elevation_sample_map.json. (QA: pass)
+- [ ] game/README.md, 'Level creator', explains how to open the creator, where levels are saved, and every control (place, delete, rotate, mirror, heights, snapping, save, play). (QA: pass)
+- [ ] The result notes say in one line that there is nothing new to screenshot (the earlier creator tickets hold the screenshots). (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-240.
+
+### 2026-10-22, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-22, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Test written: `game/tests/unit/level_creator/test_creator_end_to_end.gd` (2 tests, pass). README "Level creator" got an "End to end (T-240)" bullet; the rest of it (open, where levels are saved, place/delete/rotate/mirror/heights/snapping/save/play) was already complete. Nothing missing found.
+- AC1 pass: empty creator → every asset kind, rotate, mirror, delete, save, listed, Play → run on the file, 8:00, minions spawn.
+- AC2 pass: the test runs `check_level.py` on the saved file, exit 0.
+- AC3 pass: full GUT 1388 passing, 0 failing; `game/tools` Python tests 416 OK (1 skipped); `tools/` Python tests 439 OK (they are slow, 733 s, not hung). AC3 fully verified.
+- AC4 pass: `test_the_main_menu_run_uses_the_elevation_sample_map` (Start on the menu → `layout_path` and map are `elevation_sample_map.json`).
+- AC5 pass: README section reviewed.
+- AC6 pass: nothing new to screenshot; the earlier creator tickets (T-234 to T-239) hold the screenshots (art-archive/T-234 … T-239/screenshots/).
+- 2026-10-22, in-qa → done: QA passed every criterion (goal G-005).
