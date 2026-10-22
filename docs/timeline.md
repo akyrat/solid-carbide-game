@@ -1700,3 +1700,48 @@ Entry format:
 - Decision or change: the board found in a playtest that the airborne car's shadow doesn't show at all over raised ground (rooftops, ramps); it must always show on the ground under the car at that ground's height. Bug fix ticket T-258.
 - Documents touched: none (a bug against the existing Drifting and Level design decisions)
 - Tasks: T-258
+
+## 2026-10-22: T-249 done: the hype drift trail
+- Decision or change: the board played the hype drift trail and approved it: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4, each mark keeping the step it was laid at (Visual style, Decisions, "Hype drift trail"). The board also found that the drift marks don't show on rooftops and ramps (bug ticket T-259).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-249 (done), T-259
+
+## 2026-10-22: T-245 done: the COMBO BROKEN! popup
+- Decision or change: the board played the combo broken popup and approved it: a crash that cuts a combo pops a warning red-orange, cracked COMBO BROKEN! card that shakes and breaks apart, never when there is no combo or when it drains (HUD and menus, Decisions, "Combo broken popup").
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-245 (done)
+
+## 2026-10-22: T-258 done: the car's shadow on raised ground
+- Decision or change: the board played the fix and approved it: the airborne car's shadow is no longer lost under the rooftop or ramp it lies on (its depth now follows the car, so it is under a raised area only while the car is). One elevation test that encoded the old behaviour was changed to expect the fix. A first GUT run on the merge crashed (exit 139) and passed on a rerun.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-258 (done)
+
+## 2026-10-22: T-227 done: the minions' falling art
+- Decision or change: the board played the minions' falling animation (PixelLab art, 5 generations, replacing T-226's placeholder fall) and approved it.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-227 (done)
+
+## 2026-10-22: A Play creator button on the task board
+- Decision or change: the board asked for a quicker way to open the level creator than its PowerShell command: a Play creator button on each Builds entry that has the creator (T-260, tooling).
+- Documents touched: none yet (`docs/README.md` when T-260 is done)
+- Tasks: T-260
+
+## 2026-10-22: T-228, T-242, T-243, T-246, T-247 and T-229 done: the drift and airtime combo, and new README GIFs
+- Decision or change: the board played the T-229 build and approved all of it: the camera follows the car's height (T-228); every landing after 0.3 s or more in the air pays HANG TIME! scaled by the airtime (T-242); a live airtime counter (T-243); a drift pays once when it ends, 0.05 a second from 1 s, capped at 0.5, in the LONG DRIFT! popup (T-246); a live drift counter under the airtime one (T-247); and the root README's six re-recorded GIFs (T-229). A first GUT run on the merge crashed (exit 139, as on T-258's merge) and passed on a rerun.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-228, T-242, T-243, T-246, T-247, T-229 (all done)
+
+## 2026-10-22: T-260 done: a Play creator button on the task board
+- Decision or change: each Builds entry (and a goal build's detail) whose folder has the level creator gets a Play creator button that starts Godot on `res://scenes/level_creator/level_creator.tscn`, a fixed scene, only for folders in the worktree list. Tooling, merged straight after QA.
+- Documents touched: `docs/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-260 (done)
+
+## 2026-10-22: T-259 done: the drift marks on rooftops and ramps
+- Decision or change: the board played the fix and approved it: the drift marks (with the hype trail) are now drawn on the surface the car drifted on, at its height and over it, with the same depth rule as the shadow, and stay there when the car leaves.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-259 (done)
+
+## 2026-10-22: The level creator rework
+- Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-261, T-262, T-263, T-264, T-265

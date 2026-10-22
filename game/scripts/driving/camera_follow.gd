@@ -27,6 +27,13 @@ const SMOOTHING_RATE := 8.0
 ## same way. 3.0 covers about 63% of a change in 0.33 s and 95% in 1 s, so the
 ## zoom never jumps.
 const ZOOM_EASE_RATE := 3.0
+## The camera follows the car's height (task T-228; Drifting, Decisions,
+## 2026-10-21): the car is drawn lifted 16 px per unit of height, and the camera
+## adds that lift to its position, eased at this rate per second (a proposal):
+## about 63% of a change in 0.25 s, 95% in 0.75 s. A rooftop at height 6 (96 px)
+## is centred within 5 px after 0.75 s, while a jump or a landing is never a
+## cut. At height 0 the lift is 0 and the camera is exactly as it was.
+const HEIGHT_EASE_RATE := 4.0
 
 ## Whether the camera follows the car with a short smooth lag.
 var smoothing := false
@@ -38,8 +45,12 @@ var dynamic_max: float = GameSettingsScript.DEFAULT_DYNAMIC_ZOOM_MAX
 ## The slider's zoom, used while the dynamic camera is off.
 var base_size: float = GameSettingsScript.DEFAULT_ZOOM
 
-## Where the camera is now, in drawn pixels.
+## Where the camera is now, in drawn pixels (the ground part plus the height part).
 var position := Vector2.ZERO
+## The height part of the position now: the eased lift of the car's drawing
+## (0 on the street, negative y when the car is up).
+var height_offset := Vector2.ZERO
+var _ground_position := Vector2.ZERO
 ## The camera's size now.
 var size: float = GameSettingsScript.DEFAULT_ZOOM
 
@@ -55,12 +66,17 @@ func goal_size(speed_fraction: float) -> float:
 	return target_size(speed_fraction) if dynamic else base_size
 
 
-## One physics step of dt seconds toward the car at `target` (drawn pixels).
-func step(target: Vector2, speed_fraction: float, dt: float) -> void:
+## One physics step of dt seconds toward the car at `target` (drawn pixels, on
+## the ground). `lift` is the car's drawing lift for its height (0 by default,
+## the street): the ground part follows as the camera options say, the height
+## part eases on its own.
+func step(target: Vector2, speed_fraction: float, dt: float, lift: Vector2 = Vector2.ZERO) -> void:
 	if smoothing:
-		position += (target - position) * (1.0 - exp(-SMOOTHING_RATE * dt))
+		_ground_position += (target - _ground_position) * (1.0 - exp(-SMOOTHING_RATE * dt))
 	else:
-		position = target
+		_ground_position = target
+	height_offset += (lift - height_offset) * (1.0 - exp(-HEIGHT_EASE_RATE * dt))
+	position = _ground_position + height_offset
 	if dynamic:
 		var goal := target_size(speed_fraction)
 		size += (goal - size) * (1.0 - exp(-ZOOM_EASE_RATE * dt))
@@ -69,8 +85,10 @@ func step(target: Vector2, speed_fraction: float, dt: float) -> void:
 
 
 ## Puts the camera straight on the car at its goal size (a new run, a view switch).
-func snap(target: Vector2, speed_fraction: float) -> void:
-	position = target
+func snap(target: Vector2, speed_fraction: float, lift: Vector2 = Vector2.ZERO) -> void:
+	_ground_position = target
+	height_offset = lift
+	position = target + lift
 	size = goal_size(speed_fraction)
 
 

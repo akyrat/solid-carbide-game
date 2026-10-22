@@ -24,6 +24,12 @@ REAL_GODOT_BIN = server.godot_bin
 TASK = "---\nid: T-901\ntitle: A build\nstatus: needs-playtest\nlead: Tools\n---\n\nBody\n"
 
 
+def add_creator(folder):
+    scene = Path(folder) / "game" / "scenes" / "level_creator" / "level_creator.tscn"
+    scene.parent.mkdir(parents=True, exist_ok=True)
+    scene.write_text("", encoding="utf-8")
+
+
 class Fixture(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -59,6 +65,12 @@ class BuildsTests(Fixture):
         self.assertFalse(entries[2]["has_project"])
         self.assertEqual(entries[2]["ticket_title"], "")
 
+    def test_whether_each_folder_has_the_creator_scene(self):
+        self.assertEqual([e["has_creator"] for e in server.builds()], [False, False, False])
+        add_creator(self.wt)
+        add_creator(self.bare)   # a scene without game/project.godot cannot be started
+        self.assertEqual([e["has_creator"] for e in server.builds()], [False, True, False])
+
     def test_godot_bin_reads_only_that_key(self):
         with tempfile.TemporaryDirectory() as d:
             self.assertEqual(REAL_GODOT_BIN(d), "")
@@ -80,6 +92,21 @@ class LaunchTests(Fixture):
         code, _, start = self.run_launch("wt-T-901", "editor")
         self.assertEqual(code, 200)
         start.assert_called_once_with([str(self.godot), "--editor", "--path", game])
+
+    def test_creator_arguments(self):
+        add_creator(self.wt)
+        code, _, start = self.run_launch("wt-T-901", "creator")
+        self.assertEqual(code, 200)
+        start.assert_called_once_with([str(self.godot), "--path", str(self.wt / "game"),
+                                       "res://scenes/level_creator/level_creator.tscn"])
+
+    def test_creator_refused_without_the_scene(self):
+        add_creator(self.bare)
+        for entry_id in ("master", "other"):   # no scene; scene but no project.godot
+            code, body, start = self.run_launch(entry_id, "creator")
+            self.assertEqual(code, 409)
+            self.assertIn("error", body)
+            start.assert_not_called()
 
     def test_refusals_start_nothing(self):
         for entry_id, mode, expected in [("nope", "play", 404), ("wt-T-901", "run", 400), ("other", "play", 409)]:
@@ -140,6 +167,20 @@ class HttpTests(Fixture):
     def test_valid_launch(self):
         self.assertEqual(self.post({"id": "master", "mode": "play"})[0], 200)
         self.start.assert_called_once()
+
+    def test_creator_launch_takes_no_scene_from_the_request(self):
+        add_creator(self.wt)
+        code, _ = self.post({"id": "wt-T-901", "mode": "creator", "scene": "res://other.tscn",
+                             "args": ["--script", "x.gd"], "folder": "C:/Windows"})
+        self.assertEqual(code, 200)
+        self.start.assert_called_once_with([str(self.godot), "--path", str(self.wt / "game"),
+                                            "res://scenes/level_creator/level_creator.tscn"])
+
+    def test_creator_refused_outside_the_worktree_list(self):
+        for entry_id in ("C:/Windows", "../wt-T-901", "nope", "master"):
+            code, _ = self.post({"id": entry_id, "mode": "creator"})
+            self.assertTrue(400 <= code < 500, code)
+        self.start.assert_not_called()
 
     def test_refused_requests(self):
         cases = [

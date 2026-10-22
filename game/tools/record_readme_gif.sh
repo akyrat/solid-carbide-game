@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Records one README GIF of the run (task T-217).
-# Usage, from the repo root:  bash game/tools/record_readme_gif.sh <street|jump|kaiju> <out.gif> [seconds, default 6] [skip, default 2]
+# Usage, from the repo root:  bash game/tools/record_readme_gif.sh <street|jump|trick|kaiju|magnet|drop> <out.gif> [seconds, default 6] [skip, default 2]
 # Needs a real window (not headless) and Python with Pillow. Frames go to a temp folder.
 set -u
 source "$(dirname "${BASH_SOURCE[0]}")/godot_env.sh"

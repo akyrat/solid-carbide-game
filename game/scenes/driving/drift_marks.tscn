@@ -17,3 +17,47 @@ piece_segments = 16
 min_segment_units = 0.1
 rear_axle_units = 0.9
 half_track_units = 0.375
+heat_looks = [{
+"glow_color": Color(1, 0.86, 0.25, 1),
+"glow_width_units": 0.4,
+"core_color": Color(1, 0.86, 0.25, 1),
+"core_width_units": 0.0,
+"flicker_colors": [],
+"spark_rate": 14.0,
+"spark_speed": 40.0,
+"spark_life": 0.22,
+"spark_size_px": 3.0,
+"spark_colors": [Color(1, 0.86, 0.25, 1)],
+"flame_rate": 0.0,
+"flame_size_px": 0.0,
+"flame_life": 0.0
+}, {
+"glow_color": Color(1, 0.62, 0.12, 1),
+"glow_width_units": 0.5,
+"core_color": Color(1, 0.86, 0.25, 1),
+"core_width_units": 0.08,
+"flicker_colors": [Color(1, 0.62, 0.12, 1), Color(1, 0.72, 0.16, 1)],
+"spark_rate": 28.0,
+"spark_speed": 55.0,
+"spark_life": 0.28,
+"spark_size_px": 3.0,
+"spark_colors": [Color(1, 0.62, 0.12, 1), Color(1, 0.86, 0.25, 1)],
+"flame_rate": 0.0,
+"flame_size_px": 0.0,
+"flame_life": 0.0
+}, {
+"glow_color": Color(1, 0.6, 0.08, 1),
+"glow_width_units": 0.65,
+"core_color": Color(1, 0.98, 0.82, 1),
+"core_width_units": 0.12,
+"flicker_colors": [Color(1, 0.6, 0.08, 1), Color(1, 0.72, 0.16, 1), Color(1, 0.86, 0.25, 1)],
+"spark_rate": 48.0,
+"spark_speed": 70.0,
+"spark_life": 0.34,
+"spark_size_px": 4.0,
+"spark_colors": [Color(1, 0.98, 0.82, 1), Color(1, 0.86, 0.25, 1), Color(1, 0.62, 0.12, 1)],
+"flame_rate": 26.0,
+"flame_size_px": 9.0,
+"flame_life": 0.45
+}]
+flicker_frame = 0.083333

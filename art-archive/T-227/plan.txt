@@ -1,0 +1,1 @@
+T-227 plan: 1 call POST /animate-with-text-v3 (same as T-068 walk), first frame art-archive/T-068/rotations/minion_rot8_2.png (se), 8 frames, 48 px. Expected cost 1 generation (T-068 walk call cost 1.0). Balance before 4803 of 5000. Stop if usage > 1.

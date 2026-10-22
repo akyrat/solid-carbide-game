@@ -74,6 +74,10 @@ signal combo_trick(trick_id: String, added: float, multiplier: float)
 ## The combo multiplier changed (a trick, a collision, the drain, or a new
 ## run). For the HUD's combo counter (T-083) and enemy spawning (T-085).
 signal combo_changed(multiplier: float)
+## A crash cut a combo that was going (T-245): a collision or any damage took
+## the multiplier down (not the drain, and not when there was no combo to cut).
+## For the combo broken popup.
+signal combo_broken
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -305,15 +309,36 @@ func drift_step(drifting: bool, delta: float) -> void:
 ## combo goes up by the trick's amount in combo.json, held at the cap, and the
 ## drain wait starts again. Sends combo_trick, then combo_changed. Ignored
 ## when the run is not going, and for an id that is not one of the car's
-## tricks (TrickDetector.TRICK_IDS).
-func add_trick(trick_id: String) -> void:
+## tricks (TrickDetector.TRICK_IDS). `seconds` is the length of a whole drift
+## for "extended_drift" (task T-246): its amount scales by it.
+func add_trick(trick_id: String, seconds := 0.0) -> void:
 	if not running or not TrickDetector.TRICK_IDS.has(trick_id):
 		return
 	var before := combo
-	combo = _combo_data.after_trick(combo, trick_id)
+	combo = _combo_data.after_trick(combo, trick_id, seconds)
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(trick_id, combo - before, combo)
+	if combo != before:
+		combo_changed.emit(combo)
+
+
+## The car landed after `seconds` in the air (task T-242, the airtime trick;
+## the run scene connects the car's `airtime_trick`). The combo goes up by
+## combo.json's airtime amount for those seconds, like add_trick, and the
+## popup gets combo_trick with the id "airtime". Nothing happens when the
+## airtime is too short to pay.
+func add_airtime_trick(seconds: float) -> void:
+	if not running:
+		return
+	var amount := _combo_data.airtime_add(seconds)
+	if amount <= 0.0:
+		return
+	var before := combo
+	combo = minf(combo + amount, _combo_data.max_multiplier())
+	combo_idle = 0.0
+	likes_drain_idle = 0.0
+	combo_trick.emit(TrickDetector.TRICK_AIRTIME, combo - before, combo)
 	if combo != before:
 		combo_changed.emit(combo)
 
@@ -325,7 +350,10 @@ func add_trick(trick_id: String) -> void:
 func collision() -> void:
 	if not running:
 		return
+	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
+	if before - combo > EPSILON:
+		combo_broken.emit()
 
 
 ## How much the minion spawn rate is multiplied at the current combo

@@ -337,6 +337,14 @@ func _build_world() -> void:
 	drift_marks.name = "DriftMarks"
 	map.view_root.add_child(drift_marks)
 	map.view_root.move_child(drift_marks, map.ground_tiles.get_index() + 1)
+	if elevation != null:
+		# Marks on rooftops and ramps (T-259): lifted with the ground under each
+		# tyre and drawn over the area they lie on, as the car's shadow is.
+		var layer: Node2D = elevation
+		drift_marks.view_basis = ISO_TRANSFORM
+		drift_marks.height_at = func(units: Vector2) -> float: return layer.ground_height.height_at(units)
+		drift_marks.depth_for = func(units: Vector2, rot: float, height: float) -> int:
+			return layer.z_for(units, rot, height) - 1
 
 	car = CarScript.new()
 	car.name = "Car"
@@ -349,6 +357,9 @@ func _build_world() -> void:
 	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
+	# Hype (T-249): marks laid from now on take the combo's heat step.
+	state.combo_changed.connect(drift_marks.set_multiplier)
+	drift_marks.set_multiplier(state.combo)
 	# Drift smoke (T-121): from the same rear tyre places as the marks.
 	drift_smoke.clear()
 	drift_smoke.bind(car, drift_marks)
@@ -360,9 +371,12 @@ func _build_world() -> void:
 	map.meteor_challenge_completed.connect(state.challenge_completed)
 	# The combo (T-081): tricks raise it, hitting a wall, building, map edge
 	# or boulder cuts it (damage to the car cuts it inside the state).
-	car.trick.connect(state.add_trick)
+	# A whole drift pays by its length (T-246): the detector sets it before the signal.
+	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
+	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
+	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
 	sync_view(true)
 	car_sprite.reset_physics_interpolation()
@@ -431,7 +445,7 @@ func sync_view(snap_camera: bool = true) -> void:
 ## the car drawn lifted by its height (its shadowless frames in the air), its
 ## round shadow on the ground under it, both in the depth order with the
 ## rooftops, ramps, buildings and boulders, the see-through, and the camera
-## following the car's map position at street level. The car's own effects
+## following the car as drawn, height included (T-228, eased). The car's own effects
 ## (drift smoke, boost) are lifted with the ground under the car, so they stay
 ## at its tyres on a rooftop (a proposal).
 func _sync_view_elevation(snap_camera: bool) -> void:
@@ -450,9 +464,9 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
-		camera_follow.snap(at_ground, frac)
+		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	else:
-		camera_follow.step(at_ground, frac, car.model.dt)
+		camera_follow.step(at_ground, frac, car.model.dt, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	camera.position = camera_follow.position
 	if snap_camera or camera_follow.dynamic:
 		_apply_zoom()

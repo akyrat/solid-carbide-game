@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/run_marks_raised_demo.gd" id="1_demo"]
+
+[node name="run_marks_ramp_x4" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(-84, -52)
+start_rotation = -1.5708
+drive_steps = 45
+steer_from = 3
+steer = 1.0
+combo = 4.0
+zoom = 14.0

@@ -1,0 +1,130 @@
+{
+  "file": "minion_fall_ne_0.png",
+  "endpoint": "/animate-with-text-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAD6klEQVR4nO2Zz2vbZhjHP0pcbKd24zoJW7C2Q51AM7LGdhg7me1g2GVktJdmx1x23A6l0D9gh7W3/QVpb+2lhxwGYz5sGEygTZ2NriF1Elri1AE7SuofkkWcvjsIxXaaeo1kWxT8BWMjS6++n+d9nkevJGn204/4kDXgtAG76gM4rT6A0+oDOK0+gNNyOXXiYFwX5m8l5ZasjtNTgGbTN277AMgWX7HEBWEVomcAwbgu5m6WSEzPkXy6RLFcZ19XyedAjlUALEH0tAZmQ1EA8jl4tqmSmJ5jXIbcE5/lMXuaQis7GdjJAPDtl1FWskmSd8/xp3eCr7UNS2P2ZAY8kaq4OFEhnzOiD7BVXCe9rPFb5XOm5m+hluuWxu5pCo3LRuTBSKHiC4mp+Vus3f/F8pjdSiEBSIDwRKrMXNUIjAlmQ1G2iusAbDwyYnc5Nc/lEGylhy2dqCsAnkiVIb9LAMixGlPRhvlnmyoHhdZms7k4AgbwmdVxAE+kKkYvHaIWXHzxfYlxGRLTc7zcfUx6WQMkdv524R4+YnNxxDQt2o3ZTl2pAbXgbTEPxgXLVPCTI3YyHjCMm+lmSV0BOGk++XSJtYzhMZv0c/36x3z1g2rubtk8dDiFgnFdTCa0t8yb0hSppV1Kvjqi4gIbs9CxGfBEqkIt15mKNtJ5JZtkLSMdR79aMrY/eLDLuAxi9BBAXPlpDyzWge0Z8ESqAmDmqtay/eXuY/Z1FTOwxRfGd231vPQchDeoceU7lX9+9VItQXhhj83FkTPPhF0AMeR3MZkov/VHtvjqOPKm+f0NnwlB1u9CjlUIL+yhvx4k9zAAFtLIDoAAuDhRIZv0nwoBRtGaeV9bdUvmcUrKjZJyI187MM1bkq0ZCMZ1TDNZOBViMlEmMCb4LDwEVMW9n13mDYwALEfelJ0ilpSUG/31IGBANMtMH4CDgkR6WSO9rHHjts+8sZGaPpZltwak3MPAcfcIjDUaiaYYvprX+nKswtIfecBv87QNdaKNtkTx7o8+1jISyvYgz//yoJbrLbOTTfpt3QOfVMcuZMG4zu93jGhrioRa8FJbbRiXYxVyT3wmjK3lQ7M6AhCM62I/M8g3d0rk1weajR4v1qolUMt1wgsVs212BMI2QDCuCzlWYWjMKOZTzB8rFK0Z+9homycl/d8bGvNRyGl5a6x9jDa58WiA/Y13m6d1qdC7GlBSbsILeyjbbwSAJ/AGgNFLh4RmjAvUv8lzzVF9l7mOmW4Z9D3fkQn52gHu4SPOXwBl20gXteAFaBf1rut9AaD9atER83C2InbMZDt98E+n+wBOqw/gtPoATqsP4LT+A0/CiAUjsRp3AAAAAElFTkSuQmCC",
+      "format": "png"
+    },
+    "action": "a lizard falling through the air: legs splayed out and flailing, body tilted and tumbling slightly, tail whipping behind, mouth open in alarm, no ground beneath it, no shadow",
+    "frame_count": 8,
+    "no_background": true,
+    "seed": 227001
+  },
+  "prompt": "",
+  "job_id": "15e8c013-bdeb-4f22-960f-55f827592762",
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-21T20:31:03+00:00",
+  "image": {
+    "width": 48,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "art-archive/T-068/rotations/minion_rot8_4.png",
+    "art-archive/T-227/fall_se_req.json",
+    "docs/visual-style.md"
+  ],
+  "task": "T-227",
+  "job_status": "completed",
+  "notes": "T-227 round 2: falling frames, direction ne, from rotation 4",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 0,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "minion_fall_ne_0.png",
+    "minion_fall_ne_1.png",
+    "minion_fall_ne_2.png",
+    "minion_fall_ne_3.png",
+    "minion_fall_ne_4.png",
+    "minion_fall_ne_5.png",
+    "minion_fall_ne_6.png",
+    "minion_fall_ne_7.png",
+    "minion_fall_ne_8.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 1.0
+    },
+    "id": "15e8c013-bdeb-4f22-960f-55f827592762",
+    "status": "completed",
+    "created_at": "2026-10-21T20:26:32.609271+00:00",
+    "last_response": {
+      "seed": 227001,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 1,
+        "cost_if_paid": 0.02960741314623091
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<1404 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1368 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1400 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1408 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1444 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1468 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1440 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1396 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<1364 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.8666666666666667,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 1.0
+      },
+      "generation_id": "eb4541a2-cc77-4962-bf73-d095dcb002fc",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-21T20:27:14.801895+00:00",
+      "estimated_wait_seconds": 0
+    }
+  }
+}

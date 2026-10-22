@@ -117,11 +117,24 @@ func test_a_rooftop_covering_the_car_fades() -> void:
 	assert_true(run.elevation.covering_areas().has(_area("roof-nw-3")), "the rooftop covers the car")
 
 
-func test_the_camera_follows_the_car_at_street_level_on_a_rooftop() -> void:
+func test_the_camera_follows_the_car_as_drawn_on_a_rooftop() -> void:
 	_place(Vector2(-27, -81))
 	var at_ground: Vector2 = run.ISO_TRANSFORM * (Vector2(-27, -81) * 16.0)
 	assert_almost_eq(run.camera.position.x, at_ground.x, 0.01)
-	assert_almost_eq(run.camera.position.y, at_ground.y, 0.01)
+	assert_almost_eq(run.camera.position.y, at_ground.y - 6.0 * 16.0, 0.01, "lifted by the height")
+	assert_almost_eq(run.camera.position.y, run.car_sprite.position.y, 0.01, "on the drawn car")
+
+
+func test_the_run_camera_eases_to_the_car_when_its_height_changes() -> void:
+	_place(Vector2(-27, -81))
+	run.car.height_model.height = 0.0  # as if it had just come up from the street
+	run.sync_view(true)
+	run.car.height_model.height = 6.0
+	run.sync_view(false)
+	assert_gt(run.camera.position.y, run.car_sprite.position.y + 50.0, "one step later the camera is still well below the car")
+	for i in 60:
+		run.sync_view(false)
+	assert_almost_eq(run.camera.position.y, run.car_sprite.position.y, 3.0, "settled on the car")
 
 
 # --- The run's other things at street level ----------------------------------------
