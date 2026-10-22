@@ -52,7 +52,7 @@ SPECS = {
     # The generation shows the sign on a rooftop with a building: keep only the panel and its two
     # legs (polygons in raw pixels) and stand the anchor between the feet. Its long axis already
     # runs the way east and west need, so the mirror is north and south.
-    "roof_sign": {"raw": "roof_sign", "base_up": None, "flip": True, "anchor_raw": [79, 150],
+    "roof_sign": {"raw": "roof_sign", "base_up": None, "flip": True, "anchor_raw": [79, 150], "glyphs": True,
                   "keep": [[(19, 52), (121, 18), (133, 24), (133, 74), (60, 112), (47, 112), (19, 102)],
                            [(42, 100), (61, 100), (61, 166), (42, 166)],
                            [(97, 78), (115, 78), (115, 143), (97, 143)]]},
@@ -104,6 +104,53 @@ def apply_keep(arr, polygons):
     return out
 
 
+# T-256 (QA round 1): the generated marks were real Chinese characters, and the City brief wants
+# Japanese-like marks that are not real words. The marks are painted over with the panel's colour
+# and four made-up glyphs, drawn here from a few strokes (not characters of any script), replace them.
+GLYPH_STROKES = [
+    [((4, 0), (4, 23)), ((4, 6), (13, 6)), ((4, 16), (12, 23)), ((9, 10), (9, 15))],
+    [((0, 4), (13, 4)), ((7, 4), (7, 23)), ((0, 23), (13, 17)), ((2, 12), (7, 12))],
+    [((2, 0), (2, 12)), ((2, 12), (12, 12)), ((12, 12), (12, 23)), ((6, 18), (12, 18))],
+    [((0, 0), (10, 10)), ((10, 10), (0, 23)), ((5, 12), (13, 12)), ((13, 0), (13, 8))],
+]
+GLYPH_CORE = (255, 205, 70, 255)
+GLYPH_HALO = (230, 130, 40, 255)
+
+
+def replace_marks(arr):
+    """Paints over the amber marks on the sign's panel and draws the four made-up glyphs."""
+    from PIL import ImageDraw
+    out = arr.copy()
+    rgb = out[..., :3].astype(int)
+    yy, xx = np.mgrid[0:out.shape[0], 0:out.shape[1]]
+    region = (xx >= 38) & (xx <= 128) & (yy >= 30) & (yy <= 100) & (out[..., 3] > 0)
+    amber = region & (rgb[..., 0] > 150) & (rgb[..., 0] - rgb[..., 2] > 50)
+    grown = amber.copy()
+    for _ in range(2):
+        g = grown.copy()
+        g[1:, :] |= grown[:-1, :]
+        g[:-1, :] |= grown[1:, :]
+        g[:, 1:] |= grown[:, :-1]
+        g[:, :-1] |= grown[:, 1:]
+        grown = g & region
+    panel = region & ~grown & (rgb.sum(axis=2) < 330)
+    fill = np.median(out[panel][:, :3], axis=0).astype(np.uint8)
+    out[grown] = tuple(int(v) for v in fill) + (255,)
+    img = Image.fromarray(out, "RGBA")
+    d = ImageDraw.Draw(img)
+
+    def pt(u0, p):
+        u = u0 + p[0]
+        return (u, 76 - 0.35 * (u - 52) + p[1] - 12)
+
+    for width, col in ((4, GLYPH_HALO), (2, GLYPH_CORE)):
+        for i, strokes in enumerate(GLYPH_STROKES):
+            u0 = 46 + i * 20
+            for a, b in strokes:
+                d.line([pt(u0, a), pt(u0, b)], fill=col, width=width)
+    return np.array(img)
+
+
 def crop(arr):
     ys, xs = np.nonzero(arr[..., 3] > 0)
     return arr[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
@@ -152,6 +199,8 @@ def build(raw_dir=RAW, out_dir=OUT, props_json=PROPS_JSON, write_json=True):
         raw = np.array(Image.open(os.path.join(raw_dir, spec["raw"] + "_raw.png")).convert("RGBA"))
         if spec.get("keep"):
             raw = apply_keep(raw, spec["keep"])
+        if spec.get("glyphs"):
+            raw = replace_marks(raw)
         arr = clean(raw)
         ys, xs = np.nonzero(arr[..., 3] > 0)
         ox, oy = int(xs.min()), int(ys.min())
