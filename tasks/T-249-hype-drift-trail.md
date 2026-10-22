@@ -1,7 +1,7 @@
 ---
 id: T-249
 title: The drift trail changes and gains effects with the hype level
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the marks take the step of the combo's multiplier when they are laid (plain below x2, then steps 1, 2 and 3), using the combo heat's own thresholds, and keep it afterwards (QA: pass / fail)
-- [ ] The drift prototype's marks are unchanged, and the drift marks' existing tests pass (QA: pass / fail)
-- [ ] Screenshots of the four steps and a GIF of a trail heating up are in `art-archive/T-249/screenshots/`; no Redgull red (QA: pass / fail)
-- [ ] `game/README.md`, "Drift marks", and Visual style describe each step's look; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the marks take the step of the combo's multiplier when they are laid (plain below x2, then steps 1, 2 and 3), using the combo heat's own thresholds, and keep it afterwards (QA: pass; test_drift_marks_hype.gd covers it, step = ComboHeat.step_for, no copied numbers)
+- [ ] The drift prototype's marks are unchanged, and the drift marks' existing tests pass (QA: pass; prototype never calls set_multiplier, test_the_drift_prototype_keeps_the_plain_marks passes, full GUT green)
+- [ ] Screenshots of the four steps and a GIF of a trail heating up are in `art-archive/T-249/screenshots/`; no Redgull red (QA: pass; 4 PNGs and GIF present, steps visibly hotter, 0 pixels of 135,17,27)
+- [ ] `game/README.md`, "Drift marks", and Visual style describe each step's look; the full GUT suite and all Python tool tests pass (QA: pass; README and visual-style updated; GUT all passed, tools 439 OK, game/tools 393 OK skipped 1)
 
 The board's review: build a combo while drifting and watch the trail heat up.
 Board review files: the screenshots and GIF in `art-archive/T-249/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the drift trail heats up with the combo, effects proposed by the agent.
+
+### 2026-10-22, In progress → In QA
+
+Built: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4. Sent to QA.
 
 ## Result notes
 
