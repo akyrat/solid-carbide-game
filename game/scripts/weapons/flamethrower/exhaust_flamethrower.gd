@@ -34,10 +34,13 @@ extends "res://scripts/weapons/weapon.gd"
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
-## Where the drawn flame starts, in units behind the car's centre (Unity
-## report, section 3, "The particles"). Drawing only; the damage area is
-## the data's.
-const EXHAUST_OFFSET_UNITS := 0.42
+## Where the flame starts, in units behind the car's centre: the tailpipes,
+## at the car's rear bumper. It was 0.42 (the Unity prototype's, report section
+## 3, "The particles"), under the car's body; with the flame a quarter of the
+## size (T-267) the whole flame would have been hidden under the car, so it
+## starts at the rear (a proposal for the board's playtest). The drawing and the
+## hit area both start here.
+const EXHAUST_OFFSET_UNITS := 1.2
 ## The run's isometric projection (run.gd ISO_TRANSFORM).
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## The drawing's z_index in the car's View: one step behind the car and the enemies.

@@ -138,9 +138,9 @@ func test_drifting_slower_than_the_minimum_speed_does_not_light_it() -> void:
 
 func test_enemy_inside_takes_the_datas_damage_and_one_outside_does_not() -> void:
 	var s: Dictionary = data.flame_at(1)
-	var inside := _enemy_at(_behind(0.6))
+	var inside := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.3))
 	var in_front := _enemy_at(_behind(-2.0))
-	var beside := _enemy_at(_behind(0.6) + Vector2(4.0, 0.0))
+	var beside := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.3) + Vector2(4.0, 0.0))
 	var far_behind := _enemy_at(_behind(6.0))
 	_hold(true, 1)
 	assert_eq(inside.damage_taken, [s["damage"]], "one hit at once on entering")
@@ -179,11 +179,11 @@ func test_big_enemy_is_burnt_when_its_body_overlaps_the_flames() -> void:
 ## T-170: of the weapons only the wiper pushes; the flamethrower never moves an
 ## enemy (Weapons, Decisions), a real minion or one recording every push.
 func test_flame_never_moves_an_enemy() -> void:
-	var real: Node = run.minions.spawn_minion_at(_behind(0.8) + Vector2(0.4, 0.0))
+	var real: Node = run.minions.spawn_minion_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4) + Vector2(0.4, 0.0))
 	real.max_health = 1000.0
 	real.health = 1000.0
 	var fake: Node2D = preload("res://tests/fixtures/weapons/fake_minion.gd").new()
-	fake.position = (_behind(0.8) + Vector2(-0.4, 0.0)) * 16.0
+	fake.position = (_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4) + Vector2(-0.4, 0.0)) * 16.0
 	run.add_child(fake)
 	var real_at: Vector2 = real.position
 	var fake_at: Vector2 = fake.position
@@ -197,7 +197,7 @@ func test_flame_never_moves_an_enemy() -> void:
 
 
 func test_no_damage_while_not_drifting() -> void:
-	var e := _enemy_at(_behind(0.8))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	_hold(false, 50)
 	assert_eq(e.damage_taken.size(), 0)
 
@@ -332,7 +332,7 @@ func test_the_flame_is_drawn_behind_the_car_and_the_enemies() -> void:
 
 
 func test_flame_kills_a_real_minion() -> void:
-	var m: Node = run.minions.spawn_minion_at(_behind(0.8))
+	var m: Node = run.minions.spawn_minion_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	var health: float = m.health
 	var s: Dictionary = data.flame_at(1)
 	_hold(true, 1)
@@ -344,7 +344,7 @@ func test_flame_kills_a_real_minion() -> void:
 
 func test_entering_hit_flashes_the_enemy_for_the_burn_time() -> void:
 	var s: Dictionary = data.flame_at(1)
-	var e := _enemy_at(_behind(0.8))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	_hold(true, 1)
 	assert_true(flame.is_burning(e))
 	assert_eq(e.sprite.modulate, flame.burn_tint, "orange tint")
@@ -356,7 +356,7 @@ func test_entering_hit_flashes_the_enemy_for_the_burn_time() -> void:
 
 
 func test_paused_game_stops_the_flame() -> void:
-	var e := _enemy_at(_behind(0.8))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	run.car.scripted_input = [true, false, 1.0]
 	get_tree().paused = true
 	await wait_physics_frames(10)
@@ -412,7 +412,7 @@ func test_size_tiers_reach_further() -> void:
 
 func test_tier_3_hotter_flame_deals_more_damage() -> void:
 	_fresh(3)
-	var e := _enemy_at(_behind(0.8))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	_hold(true, 1)
 	var want: float = data.flame_at(3)["damage"]
 	assert_gt(want, float(data.flame_at(2)["damage"]))
@@ -425,7 +425,7 @@ func test_tier_5_burn_flash_lasts_longer() -> void:
 	assert_gt(long_s, short_s)
 	for t in [4, 5]:
 		_fresh(t)
-		var e := _enemy_at(_behind(0.8))
+		var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 		_hold(true, 1)
 		e.remove_from_group("enemies")
 		_hold(false, int(round(short_s / DT)) + 1)
@@ -454,7 +454,7 @@ func test_tier_8_always_on_without_drifting_at_full_size() -> void:
 	assert_false(flame.active)
 	_fresh(8)
 	_hold(false, 1)
-	var e := _enemy_at(_behind(0.6))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.3))
 	_hold(false, 1)
 	assert_true(flame.active, "on without a drift")
 	assert_eq(flame.size_fraction(), 1.0, "full size at once")
@@ -479,7 +479,7 @@ func test_a_new_run_starts_without_the_flamethrower() -> void:
 	assert_almost_eq(run.car.model.tuning.turn_speed, CarTuning.new().turn_speed, 1e-9,
 		"the new car steers at its normal speed")
 	rack.gun.set_tier(0)
-	var e := _enemy_at(_behind(0.8))
+	var e := _enemy_at(_behind(Flame.EXHAUST_OFFSET_UNITS + 0.4))
 	run.car.scripted_input = [true, false, 1.0]
 	_drive(30)
 	assert_eq(e.damage_taken.size(), 0, "drifting in the new run burns nothing")
