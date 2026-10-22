@@ -1720,3 +1720,8 @@ Entry format:
 - Decision or change: the board played the minions' falling animation (PixelLab art, 5 generations, replacing T-226's placeholder fall) and approved it.
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-227 (done)
+
+## 2026-10-22: A Play creator button on the task board
+- Decision or change: the board asked for a quicker way to open the level creator than its PowerShell command: a Play creator button on each Builds entry that has the creator (T-260, tooling).
+- Documents touched: none yet (`docs/README.md` when T-260 is done)
+- Tasks: T-260
