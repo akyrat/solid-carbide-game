@@ -10,7 +10,7 @@ const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 
 const KIND_KEYS := {
 	"ground": "category_ground", "road": "category_roads", "building": "category_buildings",
-	"boulder": "category_boulders", "rooftop": "category_rooftops", "ramp": "category_ramps",
+	"boulder": "category_boulders", "rooftop": "category_rooftops", "ramp": "category_ramps", "prop": "category_props",
 }
 
 
