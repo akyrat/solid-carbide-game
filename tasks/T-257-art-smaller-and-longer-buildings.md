@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-254]
+depends_on: []
 documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-254-smaller-and-longer-buildings.md, tasks/T-064-building-art.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/buildings/, game/art/pixellab-generation-log.jsonl, art-archive/T-257/, art-archive/README.md, game/data/level/, docs/visual-style.md, game/README.md]
