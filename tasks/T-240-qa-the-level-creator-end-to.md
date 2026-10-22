@@ -55,7 +55,7 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-240.
 Test written: `game/tests/unit/level_creator/test_creator_end_to_end.gd` (2 tests, pass). README "Level creator" got an "End to end (T-240)" bullet; the rest of it (open, where levels are saved, place/delete/rotate/mirror/heights/snapping/save/play) was already complete. Nothing missing found.
 - AC1 pass: empty creator → every asset kind, rotate, mirror, delete, save, listed, Play → run on the file, 8:00, minions spawn.
 - AC2 pass: the test runs `check_level.py` on the saved file, exit 0.
-- AC3 pass: full GUT 1388 passing, 0 failing; `game/tools` Python tests 416 OK (1 skipped); `tools/` Python tests (`python -m unittest discover -s tools`) did not finish: 65 tests passed, then it sat on one test for over 10 minutes with no output, so the third set is NOT confirmed (probably a test that waits on the task board server; not looked into). AC3 is therefore not fully verified.
+- AC3 pass: full GUT 1388 passing, 0 failing; `game/tools` Python tests 416 OK (1 skipped); `tools/` Python tests 439 OK (they are slow, 733 s, not hung). AC3 fully verified.
 - AC4 pass: `test_the_main_menu_run_uses_the_elevation_sample_map` (Start on the menu → `layout_path` and map are `elevation_sample_map.json`).
 - AC5 pass: README section reviewed.
 - AC6 pass: nothing new to screenshot; the earlier creator tickets (T-234 to T-239) hold the screenshots (art-archive/T-234 … T-239/screenshots/).
