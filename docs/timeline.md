@@ -1760,3 +1760,8 @@ Entry format:
 - Decision or change: the board halved the car's spin rate in the air (multiplier 2.5 to 1.25; T-269) and asked for a fifth garage upgrade that raises it (T-270, with its text in T-268). It also dislikes text in the form "Redgull says X": the two level-up card descriptions that use it (flamethrower tier 6, underglow tier 2) are rewritten, and no new text uses it (T-268).
 - Documents touched: `docs/drifting.md`, `docs/garage-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-268, T-269, T-270
+
+## 2026-10-22: Thread the needle
+- Decision or change: the board wants to mark two obstacles as a pair in the level creator; driving through the gap between them is a new trick, thread the needle, that raises the combo. Its worth, repeat rule and look are the agents' proposals (Level design, Decisions, "Thread the needle"; text T-271, build T-272).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-271, T-272
