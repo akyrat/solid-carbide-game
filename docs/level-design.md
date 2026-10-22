@@ -248,6 +248,13 @@ Added for the creator rework (task T-261; same file, every earlier key unchanged
 - **Road brush (top bar):** "Drag to paint a road" (`road_brush_hint`).
 - **Controls hint:** "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete." (`controls_hint_rework`; the older hints stay; the creator should show this one, same keys).
 
+Added for thread the needle (task T-271; same file, every earlier key unchanged; Decisions, "Thread the needle"; the build is T-272):
+
+- **Pair tool (top bar or Obstacles panel):** button "Pair obstacles" (`pair_tool`); hint while picked "Pair: click two obstacles" (`pair_hint`).
+- **Messages (top bar):** after a pair is made "Pair made. Drive between them." (`pair_made`); when the click is not on an obstacle "Not an obstacle. Pick a boulder, barrier, cones or crates." (`pair_not_obstacle`).
+- **Removing a pair:** button "Unpair" (`unpair_label`).
+- **Controls hint:** the rework hint with "P: pair." added: "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_pairs`; the older hints stay; the creator should show this one; P is the text's proposal and the creator must use the same key).
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".

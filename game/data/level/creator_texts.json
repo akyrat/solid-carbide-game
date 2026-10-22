@@ -89,5 +89,11 @@
   "banner_on": {"text": "Banner on", "where": "Editor top bar, Skyscraper (T-261): button that puts a banner on the skyscraper."},
   "banner_off": {"text": "Banner off", "where": "Editor top bar, Skyscraper (T-261): button that takes the banner off."},
   "road_brush_hint": {"text": "Drag to paint a road", "where": "Editor top bar, Road (T-261): hint while painting a road."},
-  "controls_hint_rework": {"text": "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete.", "where": "Editor: hint line along the screen edge for the reworked creator (T-261). Replaces controls_hint_sizing, which is kept unchanged."}
+  "controls_hint_rework": {"text": "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete.", "where": "Editor: hint line along the screen edge for the reworked creator (T-261). Replaces controls_hint_sizing, which is kept unchanged."},
+  "pair_tool": {"text": "Pair obstacles", "where": "Editor top bar or side panel, Obstacles (T-271): button of the tool that marks two obstacles as a pair, for the thread the needle trick."},
+  "pair_hint": {"text": "Pair: click two obstacles", "where": "Editor top bar (T-271): hint while the pair tool is picked, before the second obstacle is clicked."},
+  "pair_made": {"text": "Pair made. Drive between them.", "where": "Editor top bar (T-271): message after two obstacles are marked as a pair."},
+  "pair_not_obstacle": {"text": "Not an obstacle. Pick a boulder, barrier, cones or crates.", "where": "Editor top bar (T-271): message when a click with the pair tool lands on something that isn't an obstacle."},
+  "unpair_label": {"text": "Unpair", "where": "Editor top bar (T-271): button that removes the pair from a selected paired obstacle."},
+  "controls_hint_pairs": {"text": "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with the pair key added (T-271). Replaces controls_hint_rework, which is kept unchanged."}
 }

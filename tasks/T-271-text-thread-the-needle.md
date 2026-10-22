@@ -1,7 +1,7 @@
 ---
 id: T-271
 title: "Text: the thread the needle trick's popup and its creator labels"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -45,6 +45,14 @@ The board's decision (Level design, Decisions, "Thread the needle", 2026-10-22):
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the thread the needle popup and its creator labels.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- Popup: **THREAD THE NEEDLE!** followed by "+{amount}", in HUD and menus, Content, "Trick popups", for T-272 to use word for word.
+- Creator labels added to `game/data/level/creator_texts.json` (every existing key unchanged, each with a where note) and listed in Level design, Content, "Level creator text": `pair_tool` "Pair obstacles", `pair_hint` "Pair: click two obstacles", `pair_made` "Pair made. Drive between them.", `pair_not_obstacle` "Not an obstacle. Pick a boulder, barrier, cones or crates.", `unpair_label` "Unpair", `controls_hint_pairs` (the rework hint with "P: pair." added; P is the text's proposal, the creator must use the same key).
+- Documents affected: docs/hud-and-menus.md, docs/level-design.md.
