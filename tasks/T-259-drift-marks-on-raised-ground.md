@@ -1,7 +1,7 @@
 ---
 id: T-259
 title: The drift marks show on rooftops and ramps
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show marks laid while drifting on the street, a height 3 rooftop, a height 6 rooftop and a ramp are visible, at that surface's height and drawn over it, and stay there after the car leaves (QA: pass / fail)
-- [ ] The hype look (T-249), fade and lifetime are unchanged; the existing drift marks, elevation, depth order and see-through tests pass (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-259/screenshots/`; `game/README.md`, "Drift marks", notes the fix; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show marks laid while drifting on the street, a height 3 rooftop, a height 6 rooftop and a ramp are visible, at that surface's height and drawn over it, and stay there after the car leaves (QA: pass; new test file with 9 tests covers all four surfaces, lifted, over the area, kept after the car leaves; passes in the full suite, and the GIF shows marks staying on the ramp)
+- [ ] The hype look (T-249), fade and lifetime are unchanged; the existing drift marks, elevation, depth order and see-through tests pass (QA: pass; git diff master...HEAD -- game/tests adds files only, no existing test changed; all pass)
+- [ ] Screenshots and the GIF are in `art-archive/T-259/screenshots/`; `game/README.md`, "Drift marks", notes the fix; the full GUT suite and all Python tool tests pass (QA: pass; 3 screenshots and GIF present with marks visible on roof 3, roof 6, ramp x4 and rooftop-to-ramp; README Drift marks notes the fix; GUT all passed, tools 446 OK, game/tools 395 OK)
 
 The board's review: drift on rooftops and ramps and watch the marks.
 Board review files: the screenshots and GIF in `art-archive/T-259/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's report: drift marks must show on rooftops and ramps.
+
+### 2026-10-22, In progress → In QA
+
+Fixed: the marks were drawn flat under every rooftop and ramp; they now sit on the surface they were laid on. Sent to QA.
 
 ## Result notes
 
