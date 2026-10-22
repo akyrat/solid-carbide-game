@@ -1,7 +1,7 @@
 ---
 id: T-255
 title: "Art: new rooftop, car park, wall and ramp textures for the creator's resizable pieces"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -56,6 +56,15 @@ Board review files: the screenshots in `art-archive/T-255/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started on T-251's branch: new PixelLab textures for the resizable rooftops, car parks, walls and ramps, cap 10 generations.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Planned calls and cost (written before any call)
+
+Balance checked (free): 4792 of 5000 generations. 7 calls of `/create-image-pixflux` (T-198's log: 1 generation each), 600 s timeout, one round, no regeneration, requests in `art-archive/T-255/requests/`: (1) concrete rooftop top, (2) car park deck top, (3) office wall (light, lit windows), (4) garage wall (plain concrete with openings), (5) ramp top (chevrons up the slope), (6) ramp side (concrete), (7) parapet strip (128 x 32). Planned cost: 7 generations (cap 10; 3 spare, not to be used). Stop if a call costs more than 1.
+Selection plan: style resources `piece_style.tres` (T-198's, the default kept), `piece_style_office.tres` (new rooftop + office wall) and `piece_style_carpark.tres` (new car park deck + garage wall), chosen by a per-piece style choice if small, else by a setting.
