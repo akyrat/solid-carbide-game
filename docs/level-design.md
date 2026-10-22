@@ -236,6 +236,17 @@ Added for the piece set (task T-250; same file, T-233's keys unchanged; the piec
 - **Buildings:** "Small building", "Long building".
 - **Controls hint with sizing:** "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. Del: delete." (`controls_hint_sizing`; the old `controls_hint` stays; the creator should show the new one, same keys).
 
+Added for the creator rework (task T-261; same file, every earlier key unchanged; Decisions, "Level creator rework"):
+
+- **Groups (side panel):** "Roads", "Ground", "Levels", "Buildings", "Obstacles", "Decoration" (`group_*`).
+- **Pieces (side panel), Roads:** "Road", "Centre line", "Zebra crossing", "Cracked road". **Ground:** "Gravel", "Pavement". **Levels:** "Platform", "Ramp". **Buildings:** "Small building", "Long building", "Low-rise", "Skyscraper". **Obstacles:** "Boulder", "Barrier", "Cones", "Crates". **Decoration:** "Street lamp", "AC unit", "Water tank", "Roof vent", "Rooftop sign" (`piece_*`).
+- **Looks strip under a selected piece:** heading "Looks"; counter "Look {n} of {count}" (`looks_heading`, `look_counter`).
+- **Platform sizes (top bar):** "S", "M", "L", "Any size (drag)" (`platform_size_*`).
+- **Ramp arrows (top bar):** "Arrows up", "Arrows down" (`ramp_arrows_up`, `ramp_arrows_down`).
+- **Banner (top bar, skyscrapers):** "Banner on", "Banner off" (`banner_on`, `banner_off`).
+- **Road brush (top bar):** "Drag to paint a road" (`road_brush_hint`).
+- **Controls hint:** "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete." (`controls_hint_rework`; the older hints stay; the creator should show this one, same keys).
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".

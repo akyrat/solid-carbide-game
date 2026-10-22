@@ -1,7 +1,7 @@
 ---
 id: T-261
 title: "Text: the level creator rework's groups, pieces and keys"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -53,6 +53,10 @@ Pieces, each with where it appears:
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's go: labels for the reworked creator's groups, pieces and keys.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Added 41 keys to `game/data/level/creator_texts.json` (group_*, piece_*, looks_heading, look_counter, platform_size_s/m/l/any, ramp_arrows_up/down, banner_on/off, road_brush_hint, controls_hint_rework), each with a text and a where note. Every existing key is unchanged. Wording reuses T-250's where a piece already had a name ("Barrier" is the short form of "Concrete barrier", "Cones" of "Traffic cones", "Crates" of "Crate stack"). Longest button is "Any size (drag)" (15 characters); longest group name "Decoration" (10). Listed in docs/level-design.md, Content, "Level creator text". The new hint uses "R: turn" as the ticket says; the older hints stay.
