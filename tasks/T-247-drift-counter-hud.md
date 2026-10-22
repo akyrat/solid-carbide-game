@@ -1,7 +1,7 @@
 ---
 id: T-247
 title: The HUD's live drift counter, next to the airtime counter
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the counter appears when a drift starts, counts up in hundredths matching the drift's length, and disappears when the drift ends (QA: pass / fail)
-- [ ] It shows only a two-decimal number and its placeholder icon, beside the airtime counter, never Redgull red; both can show at once (screenshot) (QA: pass / fail)
-- [ ] A GIF of a drift shows it counting, in `art-archive/T-247/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the counter appears when a drift starts, counts up in hundredths matching the drift's length, and disappears when the drift ends (QA: pass; test_hud_drift_counter covers appear, hundredths count, disappear and restart; GUT 1305/1305 pass)
+- [ ] It shows only a two-decimal number and its placeholder icon, beside the airtime counter, never Redgull red; both can show at once (screenshot) (QA: pass; screenshots show number plus skid-mark icon, white, under the airtime counter without overlap; both together is staged in a fixture because drifting stops in the air, T-219, as noted)
+- [ ] A GIF of a drift shows it counting, in `art-archive/T-247/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; drift_counter.gif present, 2 s drift; GUT, tools 439 OK, game/tools 393 OK)
 
 The board's review: drift and watch the counter.
 Board review files: the screenshot and GIF in `art-archive/T-247/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started at the board's word, built on T-243's airtime counter branch; T-243 taken out of its dependencies.
+
+### 2026-10-22, In progress → In QA
+
+Built: a drift counter with a skid-marks icon under the airtime counter. In play the two rarely show together, since a drift ends at takeoff. Sent to QA.
 
 ## Result notes
 
