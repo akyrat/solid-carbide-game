@@ -65,7 +65,10 @@ func test_ids_are_tricks_with_combo_values() -> void:
 	var c = ComboDataScript.new()
 	assert_true(c.is_ok())
 	for id in TrickDetector.TRICK_IDS:
-		assert_gt(c.trick_add(id), 0.0, "combo.json has trick_add.%s" % id)
+		if id == TrickDetector.TRICK_EXTENDED_DRIFT:
+			assert_gt(c.drift_amount(1.0), 0.0, "combo.json has drift_pay")  # scaled by length (T-246)
+		else:
+			assert_gt(c.trick_add(id), 0.0, "combo.json has trick_add.%s" % id)
 
 
 func test_a_180_in_one_airtime_gives_the_180_left_and_right() -> void:
@@ -499,5 +502,7 @@ func test_a_real_fall_in_the_run_raises_the_combo() -> void:
 	while car.airborne and steps < 200:
 		car.physics_step()
 		steps += 1
-	assert_almost_eq(r.state.combo, before + ComboDataScript.new().trick_add("air_three_sixty"), 0.000001)
+	var c = ComboDataScript.new()
+	# The same fall also pays the airtime trick (T-242): 49 steps = 0.98 s.
+	assert_almost_eq(r.state.combo, before + c.trick_add("air_three_sixty") + c.airtime_add(0.98), 0.000001)
 	assert_true(r.trick_popups.popups().any(func(q) -> bool: return q.text.begins_with("AIR 360!")))

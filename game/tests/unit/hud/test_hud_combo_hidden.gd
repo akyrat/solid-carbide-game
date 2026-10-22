@@ -59,14 +59,14 @@ func test_shown_after_a_trick_with_the_right_text() -> void:
 	assert_true(hud.combo_label.visible, "shown after a trick")
 	assert_true(hud.combo_label.is_visible_in_tree())
 	assert_eq(hud.combo_label.text, "Combo x1.5")
-	r.state.add_trick("extended_drift")
+	r.state.add_trick("extended_drift", 1.0)
 	assert_true(hud.combo_label.visible)
 	assert_eq(hud.combo_label.text, "Combo x1.55")
 
 
 func test_even_the_smallest_trick_shows_it() -> void:
 	var r := _run()
-	r.state.add_trick("extended_drift")
+	r.state.add_trick("extended_drift", 1.0)
 	assert_true(r.hud.combo_label.visible)
 	assert_eq(r.hud.combo_label.text, "Combo x1.05")
 

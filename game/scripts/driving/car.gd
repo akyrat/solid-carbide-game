@@ -67,6 +67,9 @@ signal boost(from_speed: float)
 ## aerial tricks "air_one_eighty" and "air_three_sixty" (TrickDetector.TRICK_IDS).
 ## For the combo (task T-081) and the trick popups. See trick_detector.gd.
 signal trick(trick_id: String)
+## Emitted on each landing with the seconds the car was in the air (task T-242,
+## the airtime trick). Whether it pays is combo.json's airtime numbers.
+signal airtime_trick(seconds: float)
 
 var model = CarModel.new()
 ## Watches the driving for tricks (task T-079). It only reads the model.
@@ -118,6 +121,7 @@ var _side_contacts := {}
 
 func _init() -> void:
 	tricks.trick.connect(func(trick_id: String) -> void: trick.emit(trick_id))
+	tricks.airtime_trick.connect(func(seconds: float) -> void: airtime_trick.emit(seconds))
 
 
 func _ready() -> void:
@@ -195,7 +199,7 @@ func physics_step() -> void:
 		# steps' turning (T-219, board: each spin pays once), and the aerial
 		# tricks (T-219) count it. Reads only.
 		tricks.observe(model, w, s, steer, rotation_before, height_model.airborne)
-		tricks.observe_air(height_model.airborne, model.rotation - rotation_before)
+		tricks.observe_air(height_model.airborne, model.rotation - rotation_before, model.dt)
 	stepped.emit()
 
 

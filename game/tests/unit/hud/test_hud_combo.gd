@@ -19,7 +19,7 @@ func test_counter_shows_the_multiplier_with_the_label() -> void:
 	assert_eq(hud.combo_label.text, "Combo x1.5")
 	r.state.add_trick("three_sixty")
 	assert_eq(hud.combo_label.text, "Combo x1.75")
-	r.state.add_trick("extended_drift")
+	r.state.add_trick("extended_drift", 1.0)
 	assert_eq(hud.combo_label.text, "Combo x1.8")
 	r.state.collision()
 	assert_eq(hud.combo_label.text, Hud.combo_text(r.state.combo))
@@ -70,6 +70,7 @@ func test_each_trick_popup_shows_the_amount_added() -> void:
 	}
 	for id in expect:
 		r.state.combo = 1.0
+		r.car.tricks.last_trick_seconds = 1.0 if id == "extended_drift" else 0.0  # a 1 s drift (T-246)
 		r.car.trick.emit(id)
 		var shown: Array = r.trick_popups.popups()
 		# Since T-125 round 2 an older popup may make room under the screen-height

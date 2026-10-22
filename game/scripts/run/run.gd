@@ -349,9 +349,12 @@ func _build_world() -> void:
 	map.meteor_challenge_completed.connect(state.challenge_completed)
 	# The combo (T-081): tricks raise it, hitting a wall, building, map edge
 	# or boulder cuts it (damage to the car cuts it inside the state).
-	car.trick.connect(state.add_trick)
+	# A whole drift pays by its length (T-246): the detector sets it before the signal.
+	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
+	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
+	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
 	sync_view(true)
 	car_sprite.reset_physics_interpolation()
@@ -414,7 +417,7 @@ func sync_view(snap_camera: bool = true) -> void:
 ## the car drawn lifted by its height (its shadowless frames in the air), its
 ## round shadow on the ground under it, both in the depth order with the
 ## rooftops, ramps, buildings and boulders, the see-through, and the camera
-## following the car's map position at street level. The car's own effects
+## following the car as drawn, height included (T-228, eased). The car's own effects
 ## (drift smoke, boost) are lifted with the ground under the car, so they stay
 ## at its tyres on a rooftop (a proposal).
 func _sync_view_elevation(snap_camera: bool) -> void:
@@ -433,9 +436,9 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
-		camera_follow.snap(at_ground, frac)
+		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	else:
-		camera_follow.step(at_ground, frac, car.model.dt)
+		camera_follow.step(at_ground, frac, car.model.dt, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	camera.position = camera_follow.position
 	if snap_camera or camera_follow.dynamic:
 		_apply_zoom()

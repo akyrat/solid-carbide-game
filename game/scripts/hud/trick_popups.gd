@@ -28,6 +28,8 @@ const TEXTS := {
 	# The aerial tricks (task T-219), texts approved in task T-218.
 	"air_one_eighty": "AIR 180!",
 	"air_three_sixty": "AIR 360!",
+	# The airtime trick (task T-242), text approved in task T-241.
+	"airtime": "HANG TIME!",
 }
 ## Combo broken popup text approved in task T-244 (docs/hud-and-menus.md, "Combo broken popup").
 const BROKEN_TEXT := "COMBO BROKEN!"
@@ -46,6 +48,7 @@ const SIZES := {
 	"alternate_drift": SIZE_NORMAL,
 	"air_one_eighty": SIZE_NORMAL,
 	"air_three_sixty": SIZE_NORMAL,
+	"airtime": SIZE_NORMAL,
 }
 ## Drawn pixels per popup image pixel: one popup pixel is 2 art pixels (0.4 drawn px each).
 ## Task T-125 round 3: 0.5 so that three popups stack under the top limit at the default zoom.

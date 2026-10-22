@@ -1725,3 +1725,8 @@ Entry format:
 - Decision or change: the board asked for a quicker way to open the level creator than its PowerShell command: a Play creator button on each Builds entry that has the creator (T-260, tooling).
 - Documents touched: none yet (`docs/README.md` when T-260 is done)
 - Tasks: T-260
+
+## 2026-10-22: T-228, T-242, T-243, T-246, T-247 and T-229 done: the drift and airtime combo, and new README GIFs
+- Decision or change: the board played the T-229 build and approved all of it: the camera follows the car's height (T-228); every landing after 0.3 s or more in the air pays HANG TIME! scaled by the airtime (T-242); a live airtime counter (T-243); a drift pays once when it ends, 0.05 a second from 1 s, capped at 0.5, in the LONG DRIFT! popup (T-246); a live drift counter under the airtime one (T-247); and the root README's six re-recorded GIFs (T-229). A first GUT run on the merge crashed (exit 139, as on T-258's merge) and passed on a rerun.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-228, T-242, T-243, T-246, T-247, T-229 (all done)
