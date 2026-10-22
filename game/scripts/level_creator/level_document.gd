@@ -117,11 +117,18 @@ static func valid_mirror(id: String, mirror: bool) -> bool:
 
 ## The asset's texture (its catalogue record: view, mirror, variant, texture[, region, side]) for a
 ## view and mirror: the first that matches both, else the first of that view, else its first.
-static func texture_of(id: String, view: String, mirror: bool) -> Dictionary:
+##
+## `variant` (T-262): the texture with that variant too, when there is one (a skyscraper's second
+## body, one of its family's looks: written as the building's look).
+static func texture_of(id: String, view: String, mirror: bool, variant: String = "") -> Dictionary:
 	var e := entry(id)
 	var ts: Array = e.get("textures", [])
 	if ts.is_empty():
 		return {}
+	if variant != "":
+		for t in ts:
+			if str(t.get("view", "")) == view and bool(t.get("mirror", false)) == mirror and str(t.get("variant", "")) == variant:
+				return t
 	for t in ts:
 		if str(t.get("view", "")) == view and bool(t.get("mirror", false)) == mirror:
 			return t
@@ -360,8 +367,11 @@ static func _kind_of_tile(id: String) -> String:
 ## A rooftop or ramp of any size (T-251, is_resizable) takes `size` (piece_size: Vector2.ZERO for
 ## its default) and writes no view or art: it is drawn in the engine from the piece style. It is
 ## not placed when it would reach out of the map.
+##
+## `variant` (T-262): which of the view's textures, for a family look that is a second body of the
+## same entry (texture_of); "" for the first, as before.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO, style: String = "") -> Dictionary:
+		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "") -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -374,7 +384,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var resizable := is_resizable(asset_id)
 	if (resizable or kind == "prop") and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
-	var tex := texture_of(asset_id, view, mirror)
+	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
 		"ground", "road":
 			if e.has("parts"):

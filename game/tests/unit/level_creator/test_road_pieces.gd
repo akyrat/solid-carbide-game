@@ -67,17 +67,20 @@ func test_pieces_come_first_among_the_roads_and_old_tiles_keep_their_index() -> 
 				assert_lt(int(e.atlas_index), OLD_TILES, "%s keeps its index" % e.id)
 
 
-func test_the_panel_shows_the_pieces_with_their_labels_and_not_their_tiles() -> void:
+func test_the_pieces_are_centre_line_looks_named_on_the_top_bar_and_their_tiles_are_not() -> void:
+	# T-262: the pieces are looks of the Centre line family (R turns them); the top bar names them.
 	var e := _editor()
 	for entry in _pieces():
 		var id := str(entry.id)
 		var k := _kind_of(id)
+		assert_eq(CreatorFamilies.family_of_asset(id), "centre-line", id)
 		assert_eq(LevelCreatorAssetPanel.LABEL_KEYS[id], LABELS[k])
-		var label: Label = e.panel.buttons[id].get_meta("label")
-		assert_eq(label.text, CreatorTexts.get_text(LABELS[k]))
-		assert_ne(label.text, "")
+		e.panel.pick(id)
+		assert_eq(e.panel.picked, id)
+		assert_eq(e.height_label.text, CreatorTexts.get_text(LABELS[k]))
+		assert_ne(e.height_label.text, "")
 		for part in entry.parts:
-			assert_false(e.panel.buttons.has(str(part.tile)), "a part is not a button")
+			assert_eq(CreatorFamilies.family_of_asset(str(part.tile)), "", "a part is in no family")
 
 
 func test_a_piece_places_all_four_tiles_at_once() -> void:

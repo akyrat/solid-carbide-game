@@ -58,44 +58,48 @@ func test_a_new_level_is_an_empty_map_of_todays_size_all_plain_ground() -> void:
 
 # ---- The side panel -----------------------------------------------------------------------------
 
-func test_the_panel_lists_every_catalogue_asset_by_kind() -> void:
+func test_the_panel_lists_one_button_per_family_in_six_groups() -> void:
+	# T-262: the groups of the catalogue's families, from the ground up, one button per family.
 	var e := _editor()
 	var expected := {}
 	var order: Array = []
-	for cat in LevelCreatorAssetPanel.CATEGORIES:
-		var label := CreatorTexts.get_text(cat[1])
+	for g in ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]:
+		var label := CreatorTexts.get_text("group_" + g)
 		assert_ne(label, "")
 		expected[label] = []
 		order.append(label)
-	for entry in LevelDocument.panel_entries():
-		expected[CreatorTexts.get_text(KIND_KEYS[str(entry.kind)])].append(str(entry.id))
+		for f in CreatorFamilies.in_group(g):
+			expected[label].append(str(f.id))
 	var shown := e.panel.entries_by_category()
 	assert_eq(shown, expected)
-	assert_eq(shown.keys(), order, "categories in the panel's order")
-	var count := 0
-	for ids in shown.values():
-		count += ids.size()
-	assert_eq(count, LevelDocument.panel_entries().size(), "each asset once")
-	assert_eq(e.panel.buttons.size(), LevelDocument.panel_entries().size())
+	assert_eq(shown.keys(), order, "groups in the panel's order")
+	assert_eq(e.panel.buttons.size(), CreatorFamilies.families().size())
 	for id in e.panel.buttons:
 		assert_not_null(e.panel.buttons[id].icon, id + " shows its art")
 
 
-func test_rooftop_and_ramp_buttons_carry_their_height_labels() -> void:
+func test_the_platform_and_ramp_heights_show_on_the_top_bar() -> void:
+	# T-262: one Platform and one Ramp button; H steps the height, the top bar names it.
 	var e := _editor()
-	assert_eq(e.panel.buttons["rooftop-3"].text, CreatorTexts.get_text("rooftop_height_3"))
-	assert_eq(e.panel.buttons["rooftop-6"].text, CreatorTexts.get_text("rooftop_height_6"))
-	assert_eq(e.panel.buttons["ramp-0-3"].text, CreatorTexts.get_text("ramp_height_0_3"))
-	assert_eq(e.panel.buttons["ramp-3-6"].text, CreatorTexts.get_text("ramp_height_3_6"))
-	assert_eq(e.panel.buttons["ramp-0-6"].text, CreatorTexts.get_text("ramp_height_0_6"))
+	e.panel.pick("platform")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("rooftop_height_3"))
+	e.height_pick()
+	assert_eq(e.panel.picked, "rooftop-6")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("rooftop_height_6"))
+	e.panel.pick("ramp")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_3"))
+	e.height_pick()
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_3_6"))
+	e.height_pick()
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_6"))
 
 
 func test_the_editor_labels_come_from_the_texts() -> void:
 	var e := _editor()
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
-	# T-251: the hint with sizing replaces the old one.
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_sizing"))
+	# T-262: the reworked creator's hint (T-261's line) replaces T-251's.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_rework"))
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:

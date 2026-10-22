@@ -30,6 +30,11 @@ extends Control
 ## through the four directions it can climb); the top bar shows the size, and the preview is drawn
 ## in the engine as the piece will be (elevation_platform_drawing.gd, textured mode).
 ##
+## Families (T-262): the side panel is one button per kind of piece (asset_panel.gd, from the
+## catalogue's families); the keys V (look), R (turn), M (mirror) and H (height) step the picked
+## family's member (KEY_ACTIONS, creator_families.gd step), and the looks strip under it picks a
+## look (apply_member). A member is an asset, view, mirror and variant, placed as before.
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -81,6 +86,8 @@ var last_problem: String = ""
 ## The view and mirror the picked asset is placed in (one its catalogue entry lists).
 var pick_view: String = ""
 var pick_mirror: bool = false
+## Which of the view's textures (T-262: a skyscraper's second body is one of its family's looks); "" for the first.
+var pick_variant: String = ""
 ## The piece style a new rooftop or ramp of any size is drawn in (T-255; elevation_layer.gd PIECE_STYLES): the Style button steps it.
 var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
@@ -155,6 +162,7 @@ func _ready() -> void:
 	panel.name = "AssetPanel"
 	layout.add_child(panel)
 	panel.asset_picked.connect(_on_asset_picked)
+	panel.member_picked.connect(apply_member)
 
 	var main := VBoxContainer.new()
 	main.name = "Main"
@@ -237,7 +245,7 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	hint_label.text = CreatorTexts.get_text("controls_hint_sizing")
+	hint_label.text = CreatorTexts.get_text("controls_hint_rework")
 	main.add_child(hint_label)
 
 	_overlay = _Overlay.new()
@@ -370,12 +378,13 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	var picked_now := panel != null and asset_id == panel.picked
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
+	var variant := pick_variant if picked_now else ""
 	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size)
 	if at.is_empty():
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -554,25 +563,81 @@ static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
 
 
 func _on_asset_picked(id: String) -> void:
-	pick_view = LevelDocument.valid_view(id, "") if id != "" else ""
-	pick_mirror = LevelDocument.valid_mirror(id, false) if id != "" else false
+	if id != "" and panel != null and not panel.member.is_empty():
+		_pose_from(panel.member)
+	else:
+		pick_view = LevelDocument.valid_view(id, "") if id != "" else ""
+		pick_mirror = LevelDocument.valid_mirror(id, false) if id != "" else false
+		pick_variant = ""
 	_update_pose_controls()
 	_overlay.queue_redraw()
 
 
-# ---- Rotate and mirror --------------------------------------------------------------------------
+func _pose_from(m: Dictionary) -> void:
+	pick_view = str(m.view)
+	pick_mirror = bool(m.mirror)
+	pick_variant = str(m.get("variant", ""))
 
-## Rotate: the picked asset's next view of those its catalogue entry lists (back to the first after
-## the last). Returns the view now.
+
+# ---- Looks, turns, mirrors and heights (T-262) --------------------------------------------------
+
+## The keys that step the picked family's member (creator_families.gd step: the axis each steps).
+## The one place the creator's piece keys are handled (_unhandled_key_input reads it).
+const KEY_ACTIONS := {
+	KEY_V: "look",
+	KEY_R: "turn",
+	KEY_M: "flip",
+	KEY_H: "height",
+}
+
+
+## Picks `m`, a member of the picked family (the looks strip, the keys): the asset, view, mirror
+## and variant placed next.
+func apply_member(m: Dictionary) -> void:
+	if panel == null or m.is_empty():
+		return
+	panel.show_member(m)
+	_pose_from(m)
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## Steps the picked family's member along `axis` (look, turn, flip, height; KEY_ACTIONS). Returns
+## the member now ({} with nothing picked).
+func step_pick(axis: String) -> Dictionary:
+	if panel == null or panel.picked_family == "":
+		return {}
+	apply_member(CreatorFamilies.step(panel.picked_family, panel.member, axis))
+	return panel.member
+
+
+## V: the next look.
+func look_pick() -> Dictionary:
+	return step_pick("look")
+
+
+## H: the next height (a platform's 3 and 6, a ramp's steps).
+func height_pick() -> Dictionary:
+	return step_pick("height")
+
+
+## Rotate (R): the picked piece's next turn (its next view, or for a road tile the tile along the
+## other axis). Returns the view now.
 func rotate_pick() -> String:
+	if panel != null and panel.picked_family != "":
+		step_pick("turn")
+		return pick_view
 	pick_view = _next_of(LevelDocument.views_of(_picked()), pick_view, pick_view)
 	_update_pose_controls()
 	_overlay.queue_redraw()
 	return pick_view
 
 
-## Mirror: the picked asset's next mirror of those its catalogue entry lists. Returns it.
+## Mirror (M): the picked piece's mirrored look, when its art has one. Returns the asset's mirror now.
 func mirror_pick() -> bool:
+	if panel != null and panel.picked_family != "":
+		step_pick("flip")
+		return pick_mirror
 	pick_mirror = bool(_next_of(LevelDocument.mirrors_of(_picked()), pick_mirror, pick_mirror))
 	_overlay.queue_redraw()
 	return pick_mirror
@@ -597,7 +662,7 @@ func _update_style_button() -> void:
 func pick_texture() -> Dictionary:
 	if _picked() == "":
 		return {}
-	return LevelDocument.texture_of(_picked(), pick_view, pick_mirror)
+	return LevelDocument.texture_of(_picked(), pick_view, pick_mirror, pick_variant)
 
 
 func _picked() -> String:
@@ -617,8 +682,12 @@ func _update_pose_controls() -> void:
 	if rotate_button == null:
 		return
 	var id := _picked()
-	rotate_button.disabled = LevelDocument.views_of(id).size() < 2
-	mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
+	if panel != null and panel.picked_family != "":
+		rotate_button.disabled = not CreatorFamilies.can_step(panel.picked_family, panel.member, "turn")
+		mirror_button.disabled = not CreatorFamilies.can_step(panel.picked_family, panel.member, "flip")
+	else:
+		rotate_button.disabled = LevelDocument.views_of(id).size() < 2
+		mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
 	var key: String = LevelCreatorAssetPanel.label_key(id)
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
@@ -715,13 +784,20 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	var k := event as InputEventKey
 	if k == null or not k.pressed:
 		return
+	if KEY_ACTIONS.has(k.keycode):
+		# V, R, M, H (T-262): step the picked piece's look, turn, mirror or height.
+		match str(KEY_ACTIONS[k.keycode]):
+			"turn":
+				rotate_pick()
+			"flip":
+				mirror_pick()
+			var axis:
+				step_pick(axis)
+		get_viewport().set_input_as_handled()
+		return
 	match k.keycode:
 		KEY_DELETE:
 			delete_selected()
-		KEY_R:
-			rotate_pick()
-		KEY_M:
-			mirror_pick()
 		KEY_T:
 			style_pick()
 		KEY_ESCAPE:

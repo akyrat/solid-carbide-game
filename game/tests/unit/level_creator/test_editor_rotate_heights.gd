@@ -49,8 +49,17 @@ func _check_kind(kind: String) -> void:
 			for m in mirrors:
 				var t := LevelDocument.texture_of(id, str(v), bool(m))
 				assert_eq(str(t.view), str(v), id)
-		assert_eq(e.rotate_button.disabled, views.size() < 2, id + ": Rotate on only with views to switch")
-		assert_eq(e.mirror_button.disabled, mirrors.size() < 2, id + ": Mirror on only with mirrors")
+		# T-262: Rotate and Mirror step the asset's family (a road tile turns to the tile along the
+		# other axis, and its a0m tile is its mirror), so they are on when the family has a turn or
+		# a mirror to step to.
+		e.panel.pick(id)
+		var fid := e.panel.picked_family
+		assert_eq(e.rotate_button.disabled, not CreatorFamilies.can_step(fid, e.panel.member, "turn"), id + ": Rotate on only with turns")
+		assert_eq(e.mirror_button.disabled, not CreatorFamilies.can_step(fid, e.panel.member, "flip"), id + ": Mirror on only with mirrors")
+		if views.size() > 1:
+			assert_false(e.rotate_button.disabled, id + ": an asset with several views turns")
+		if mirrors.size() > 1:
+			assert_false(e.mirror_button.disabled, id + ": an asset with a mirror mirrors")
 	e.panel.pick("")
 
 
