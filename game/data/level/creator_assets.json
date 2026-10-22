@@ -2866,7 +2866,7 @@
      "view": "iso",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator/small_0.png",
+     "texture": "res://art/buildings/creator_final/small_0.png",
      "footprint_units": [
       6,
       6
@@ -2880,7 +2880,7 @@
      "view": "iso",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator/small_1.png",
+     "texture": "res://art/buildings/creator_final/small_1.png",
      "footprint_units": [
       6,
       6
@@ -2913,7 +2913,7 @@
      "view": "ew",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator/long_ew_0.png",
+     "texture": "res://art/buildings/creator_final/long_ew_0.png",
      "footprint_units": [
       12,
       6
@@ -2927,7 +2927,7 @@
      "view": "ew",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator/long_ew_1.png",
+     "texture": "res://art/buildings/creator_final/long_ew_1.png",
      "footprint_units": [
       12,
       6
@@ -2941,7 +2941,7 @@
      "view": "ns",
      "mirror": false,
      "variant": "0",
-     "texture": "res://art/buildings/creator/long_ns_0.png",
+     "texture": "res://art/buildings/creator_final/long_ns_0.png",
      "footprint_units": [
       6,
       12
@@ -2955,7 +2955,7 @@
      "view": "ns",
      "mirror": true,
      "variant": "1",
-     "texture": "res://art/buildings/creator/long_ns_1.png",
+     "texture": "res://art/buildings/creator_final/long_ns_1.png",
      "footprint_units": [
       6,
       12

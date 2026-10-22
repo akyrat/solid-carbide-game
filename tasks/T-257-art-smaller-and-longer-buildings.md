@@ -1,7 +1,7 @@
 ---
 id: T-257
 title: "Art: the small and long buildings"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -51,6 +51,24 @@ Board review files: the screenshot in `art-archive/T-257/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started on T-254's branch: PixelLab art for the small and long buildings, cap 12 generations.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Plan before the calls (Asset Generation Agent, 2026-10-22):** same method as T-129's short buildings (flat facades from `create-image-pixflux`, 1 generation each, sheared 2:1 and a script-drawn roof and pavement, palette B), 6 calls = **6 generations of the cap 12** (the other 6 stay unused):
+- small building, look 0 and look 1: a left and a right facade each, 160 x 144 px (4 calls);
+- long building, look 0 and look 1: one long facade each, 352 x 144 px (2 calls); the long building's short ends reuse the small building's facades (free).
+Requests are written by `game/tools/creator_building_requests.py` (palette image `art-archive/T-064/palette.png`, seeds 257001 to 257006), run one by one with `pixellab_client.py` (600 s timeout, each logged). Rooftop props are reused from T-129's raw art (free). Stop if a call costs more than 1 generation.
+
+**Result (Asset Generation Agent, 2026-10-22):**
+- **Generations used: 6 of the cap 12** (all `create-image-pixflux`, 1 each, as planned; no regeneration, no extra calls; all 6 in `game/art/pixellab-generation-log.jsonl`, task T-257). Raws and records: `art-archive/T-257/raw/`, requests `art-archive/T-257/requests/`.
+- **Art:** `game/art/buildings/creator_final/` (small_0, small_1, long_ew_0/1, long_ns_0/1), same sizes and anchors as T-254's placeholders (which are kept). Swapped in through `creator_buildings.json` only (paths); catalogue rebuilt with `build_creator_assets.py`. Built free by `game/tools/build_creator_buildings_art.py`: facades sheared 2:1, script roof, T-129 rooftop props, palette B, pavement over the footprint with a half-unit margin. All pass the rules (no half-transparent pixels, at most 30 colours, no Redgull red; `build_creator_buildings.py --check` OK).
+- **What they look like (honest):** they read as the same family as today's short buildings: dark steel-blue boxes, amber lit windows, tar roofs with tanks, AC units and rubble. Weak: the small building's two walls are two different buildings joined at the corner; the long buildings' short ends reuse the small walls; long look 1 is very dark with few lit windows; some facades carry a dark margin or half-cut neighbour from PixelLab; the pavement is mostly hidden, only a kerb band shows; props are reused from T-129, so the roofs look alike.
+- **Tests:** full GUT 1381 tests all passed (last line "All tests passed"); `game/tools` 424 OK (1 skipped); `tools` 439 OK. New: `game/tools/test_build_creator_buildings_art.py`.
+- **Screenshot:** `art-archive/T-257/screenshots/new_buildings.png` (looked at: skyscraper, short, small, long both rotations, all sit on their footprints).
+- **Documents:** `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`.
+- No refusals.

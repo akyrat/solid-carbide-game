@@ -3,7 +3,7 @@
 Reads data/level/creator_buildings.json (the one data file that names each piece's art per view and
 mirror, with its footprint and anchor) and draws every texture it names as a flat box in the city's
 palette B (Visual style, Decisions, "City colours": cool blue-grey walls, pale lit windows, never
-Redgull red). Same input, same pixels. T-257 replaces the PNGs and the data file's paths and anchors.
+Redgull red). Same input, same pixels. T-257 replaced the art (data paths now point to art/buildings/creator_final/, built by build_creator_buildings_art.py); this drawing only touches textures still under art/buildings/creator/.
 
   python game/tools/build_creator_buildings.py          draw the PNGs
   python game/tools/build_creator_buildings.py --check  check the data (anchors, files, colours)
@@ -92,6 +92,8 @@ def res_path(res):
 def build():
     data = load()
     for p, t in textures(data):
+        if "/creator/" not in t["texture"]:  # final art (T-257) is never overwritten by the placeholder drawing
+            continue
         w, h = t["footprint_units"]
         img, _ = draw_box(w, h, p["height_units"], int(t["variant"]))
         os.makedirs(os.path.dirname(res_path(t["texture"])), exist_ok=True)
