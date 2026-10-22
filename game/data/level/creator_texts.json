@@ -95,5 +95,10 @@
   "pair_made": {"text": "Pair made. Drive between them.", "where": "Editor top bar (T-271): message after two obstacles are marked as a pair."},
   "pair_not_obstacle": {"text": "Not an obstacle. Pick a boulder, barrier, cones or crates.", "where": "Editor top bar (T-271): message when a click with the pair tool lands on something that isn't an obstacle."},
   "unpair_label": {"text": "Unpair", "where": "Editor top bar (T-271): button that removes the pair from a selected paired obstacle."},
-  "controls_hint_pairs": {"text": "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with the pair key added (T-271). Replaces controls_hint_rework, which is kept unchanged."}
+  "controls_hint_pairs": {"text": "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with the pair key added (T-271). Replaces controls_hint_rework, which is kept unchanged."},
+  "spawn_label": {"text": "Start", "where": "Editor map (T-279): label on the spawn point's marker, where the car starts a run."},
+  "spawn_hint": {"text": "Start: drag to move. R: turn.", "where": "Editor top bar (T-279): hint while the spawn point is selected; R turns the car's starting heading, the same key as turning a piece."},
+  "spawn_blocked": {"text": "Can't start here: it's blocked.", "where": "Editor top bar (T-279): message when the spawn point is dropped inside a building, on an obstacle or off the map; it goes back to where it was."},
+  "spawn_no_delete": {"text": "The start can't be deleted.", "where": "Editor top bar (T-279): message when the board tries to delete the spawn point; a level always has one."},
+  "controls_hint_spawn": {"text": "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete.", "where": "Editor: hint line along the screen edge with moving the start added (T-279). Replaces controls_hint_pairs, which is kept unchanged."}
 }

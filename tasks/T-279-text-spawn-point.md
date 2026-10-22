@@ -1,7 +1,7 @@
 ---
 id: T-279
 title: "Text: the level creator's spawn point"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -42,6 +42,12 @@ The board's decision (Level design, Decisions, "The car's spawn point", 2026-10-
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the spawn point's labels.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Added five keys to `game/data/level/creator_texts.json` (every existing key unchanged) and listed them in Level design, Content, "Level creator text", with this ticket's id: `spawn_label` "Start", `spawn_hint` "Start: drag to move. R: turn.", `spawn_blocked` "Can't start here: it's blocked.", `spawn_no_delete` "The start can't be deleted.", `controls_hint_spawn` (the pairs hint with "move the start" added; replaces `controls_hint_pairs`, which is kept). R is used as the turn key, the same as for pieces; the build must use the same key. Documents affected: docs/level-design.md.

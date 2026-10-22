@@ -256,6 +256,14 @@ Added for thread the needle (task T-271; same file, every earlier key unchanged;
 - **Removing a pair:** button "Unpair" (`unpair_label`).
 - **Controls hint:** the rework hint with "P: pair." added: "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_pairs`; the older hints stay; the creator should show this one; P is the text's proposal and the creator must use the same key).
 
+Added for the car's spawn point (task T-279; same file, every earlier key unchanged; Decisions, "The car's spawn point"; the build is T-280):
+
+- **Marker (on the map):** "Start" (`spawn_label`).
+- **Hint while selected (top bar):** "Start: drag to move. R: turn." (`spawn_hint`; R is the same turn key as for pieces, the heading being a proposal).
+- **Message when it can't go where dropped (top bar):** "Can't start here: it's blocked." (`spawn_blocked`; inside a building, on an obstacle or off the map).
+- **Message when the board tries to delete it (top bar):** "The start can't be deleted." (`spawn_no_delete`).
+- **Controls hint:** the pairs hint with "move the start" added: "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_spawn`; the older hints stay; the creator should show this one).
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
