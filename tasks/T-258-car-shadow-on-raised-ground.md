@@ -1,7 +1,7 @@
 ---
 id: T-258
 title: The car's shadow shows on raised ground while the car is in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the shadow is visible and drawn above the raised area it lies on (depth order) and at that ground's height, while the car is airborne over the street, a height 3, a height 6 and a ramp (QA: pass / fail)
-- [ ] The existing elevation, depth order and see-through tests pass unchanged (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-258/screenshots/`; `game/README.md` notes the fix; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the shadow is visible and drawn above the raised area it lies on (depth order) and at that ground's height, while the car is airborne over the street, a height 3, a height 6 and a ramp (QA: pass; test_run_shadow_on_raised_ground.gd, 6 tests, covers street, 3, 6, ramp: visible, ground height, z over area and under car)
+- [ ] The existing elevation, depth order and see-through tests pass unchanged (QA: pass; tests diff shows only the allowed test_elevation_drawing.gd change plus new files; full suite passes)
+- [ ] Screenshots and the GIF are in `art-archive/T-258/screenshots/`; `game/README.md` notes the fix; the full GUT suite and all Python tool tests pass (QA: pass; 4 screenshots and GIF present and show the shadow, README notes the fix; GUT 1294/1294, tools 446 OK, game/tools 393 OK, goal_agent 119 OK)
 
 The board's review: jump between rooftops and watch the shadow.
 Board review files: the screenshots and GIF in `art-archive/T-258/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's report: the airborne car's shadow must show on rooftops and ramps too.
+
+### 2026-10-22, In progress → In QA
+
+Fixed: the shadow was drawn under the rooftop or ramp it lay on when the car flew in over it; it now stays visible. Sent to QA.
 
 ## Result notes
 
