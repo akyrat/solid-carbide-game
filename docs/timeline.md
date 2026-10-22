@@ -1740,3 +1740,8 @@ Entry format:
 - Decision or change: the board played the fix and approved it: the drift marks (with the hype trail) are now drawn on the surface the car drifted on, at its height and over it, with the same depth rule as the shadow, and stay there when the car leaves.
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-259 (done)
+
+## 2026-10-22: The level creator rework
+- Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-261, T-262, T-263, T-264, T-265
