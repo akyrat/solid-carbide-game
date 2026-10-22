@@ -52,3 +52,12 @@ Started at the board's request: a Play creator button on the Builds tab.
 ## Result notes
 
 Written by the agent when it finishes.
+
+### 2026-10-22, Project Lead's tooling agent
+
+- `tools/taskboard/server.py`: `CREATOR_SCENE` (`res://scenes/level_creator/level_creator.tscn`) is a fixed constant. Each `/api/builds` entry gains `has_creator` (true only when the folder has both `game/project.godot` and `game/scenes/level_creator/level_creator.tscn`). `/api/launch` takes a third mode, `creator`, which starts `"$GODOT_BIN" --path <folder>\game res://scenes/level_creator/level_creator.tscn` through the same detached, no-console `start_detached` as Play. It refuses with 409 a folder without the scene, and with 404 any id outside the worktree list. The request's other fields (`scene`, `args`, `folder`) are never read.
+- `tools/taskboard/taskboard.html`: a shared `creatorButton(b)` renders **Play creator** between Play and Open in editor, both on every Builds entry and in a goal build's detail. It is disabled, with a tooltip, where `has_creator` is false. The toast reads "Starting the level creator…". The existing click handlers already skip disabled buttons.
+- `tools/test_taskboard_server.py`: five new tests. They cover `has_creator` per folder (a scene without project.godot counts as false), the creator launch arguments, refusals without the scene, extra scene/args/folder fields in the HTTP request being ignored, and HTTP refusals for ids outside the worktree list.
+- `docs/README.md`, "The task board": describes the button.
+- Tests: `python -m unittest discover -s tools -p "test_*.py"` passed 451 tests, OK. `python -m unittest discover -s game/tools -p "test_*.py"` passed 395 tests, OK (1 skipped).
+- Screenshot: none. Making one would need a task board server serving this folder, and the instructions were not to touch the running server and to test with unit tests only. The creator scene exists today in the level-creator worktrees (T-234 to T-240, T-250 to T-257, G-005, creator-set) but not on master or in this folder, so on the live board those entries would show it enabled once this merges.
