@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-251]
+depends_on: []
 documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-198-art-rooftops-and-parking-garage-ramps.md, tasks/T-251-resizable-rooftops-and-ramps.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/elevation/, game/art/pixellab-generation-log.jsonl, art-archive/T-255/, art-archive/README.md, game/scenes/level/, game/data/level/, docs/visual-style.md, game/README.md]
