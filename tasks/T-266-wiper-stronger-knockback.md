@@ -4,7 +4,7 @@ title: The windshield wiper pushes minions about twice the car's length
 status: open
 from: project-lead
 to: game-data
-lead:
+lead: Coursework
 epic: weapons
 milestone: mvp
 goal:
