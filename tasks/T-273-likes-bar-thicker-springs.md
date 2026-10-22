@@ -4,7 +4,7 @@ title: A likes bar 4 times thicker that springs up when it fills
 status: open
 from: project-lead
 to: ui
-lead:
+lead: Coursework
 epic: hud-menus
 milestone: mvp
 goal:
