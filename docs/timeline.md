@@ -1695,3 +1695,8 @@ Entry format:
 - Decision or change: the guard now passes a read-only `find`, shell variable assignments, Godot's `--import` and `--write-movie` (outside task folders) and Markdown `**` in inline code, which agents kept hitting; `find -delete`/`-exec` writes and recordings into task folders are still refused. Inline code that rewrites a ticket's criteria lines stays refused (QA marks criteria with the Edit tool). Tooling, merged straight after QA.
 - Documents touched: `tasks/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-248 (done)
+
+## 2026-10-22: The car's shadow on raised ground
+- Decision or change: the board found in a playtest that the airborne car's shadow doesn't show at all over raised ground (rooftops, ramps); it must always show on the ground under the car at that ground's height. Bug fix ticket T-258.
+- Documents touched: none (a bug against the existing Drifting and Level design decisions)
+- Tasks: T-258
