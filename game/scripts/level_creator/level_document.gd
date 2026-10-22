@@ -337,7 +337,7 @@ static func _kind_of_tile(id: String) -> String:
 ## its default) and writes no view or art: it is drawn in the engine from the piece style. It is
 ## not placed when it would reach out of the map.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO) -> Dictionary:
+		size: Vector2 = Vector2.ZERO, style: String = "") -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -375,6 +375,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			if not resizable:
 				p["view"] = view
 				p["art"] = str(tex.variant)
+			elif style != "":
+				p["style"] = style
 			_list("platforms").append(p)
 			_relink()
 			return {"kind": kind, "item": p}
@@ -385,6 +387,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			if not resizable:
 				r["view"] = view
 				r["art"] = str(tex.variant)
+			elif style != "":
+				r["style"] = style
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}

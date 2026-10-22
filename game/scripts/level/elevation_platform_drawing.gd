@@ -128,7 +128,10 @@ func use_style(the_style: Resource, the_base: float, gaps: Dictionary = {}) -> v
 	style = the_style
 	base = the_base
 	edge_gaps = gaps
-	texture_repeat = CanvasItem.TEXTURE_REPEAT_MIRROR
+	# A ramp whose textures are seamless when tiled plainly (T-255) keeps its chevrons pointing
+	# one way; mirrored tiles would turn every other row's the other way.
+	var plain: bool = kind == "ramp" and bool(style.get("ramp_plain_repeat"))
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED if plain else CanvasItem.TEXTURE_REPEAT_MIRROR
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	queue_redraw()
 

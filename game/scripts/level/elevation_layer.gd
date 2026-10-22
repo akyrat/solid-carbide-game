@@ -90,8 +90,9 @@ func _add_area(kind: String, block: Dictionary) -> void:
 		d.shift_art(art_offset(art, block.rect))
 	# A piece with no art piece (the level creator's rooftops and ramps of any size, T-251) is
 	# drawn from the piece style's tileable textures instead.
-	if d.art_sprite == null and piece_style() != null:
-		d.use_style(piece_style(), area_base(kind, block), edge_gaps(kind, block))
+	var style = piece_style_named(str(block.get("style", "")))
+	if d.art_sprite == null and style != null:
+		d.use_style(style, area_base(kind, block), edge_gaps(kind, block))
 	add_child(d)
 	areas.append(d)
 
@@ -105,6 +106,26 @@ static func piece_style() -> Resource:
 	if _piece_style == null and ResourceLoader.exists(PIECE_STYLE_PATH):
 		_piece_style = load(PIECE_STYLE_PATH)
 	return _piece_style
+
+
+## The styles a piece can be placed in (T-255), in the order the editor's Style button steps
+## through them; each is a piece style resource. "office" (T-255's rooftop and office wall) is
+## the default, also for a piece with no "style" key; "carpark" is T-255's car park deck and
+## garage wall; "t198" is T-198's textures (the first placeholders).
+const PIECE_STYLES := {
+	"office": "res://art/creator_pieces/piece_style.tres",
+	"carpark": "res://art/creator_pieces/piece_style_carpark.tres",
+	"t198": "res://art/creator_pieces/piece_style_t198.tres",
+}
+const DEFAULT_PIECE_STYLE := "office"
+
+
+## The piece style resource of a style name ("" or an unknown name: the default), null when missing.
+static func piece_style_named(style_name: String) -> Resource:
+	var path: String = PIECE_STYLES.get(style_name, PIECE_STYLES[DEFAULT_PIECE_STYLE])
+	if path == PIECE_STYLE_PATH:
+		return piece_style()
+	return load(path) if ResourceLoader.exists(path) else piece_style()
 
 
 ## The height an area of the height data stands on: a ramp's bottom height, the rooftop under a

@@ -70,6 +70,7 @@ var back_button: Button
 var delete_button: Button
 var rotate_button: Button
 var mirror_button: Button
+var style_button: Button
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
@@ -80,6 +81,8 @@ var last_problem: String = ""
 ## The view and mirror the picked asset is placed in (one its catalogue entry lists).
 var pick_view: String = ""
 var pick_mirror: bool = false
+## The piece style a new rooftop or ramp of any size is drawn in (T-255; elevation_layer.gd PIECE_STYLES): the Style button steps it.
+var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
 var document: LevelDocument
 var panel: LevelCreatorAssetPanel
@@ -196,6 +199,11 @@ func _ready() -> void:
 	mirror_button.text = CreatorTexts.get_text("mirror_label")
 	mirror_button.pressed.connect(mirror_pick)
 	bar.add_child(mirror_button)
+	style_button = Button.new()
+	style_button.name = "StyleButton"
+	style_button.pressed.connect(style_pick)
+	bar.add_child(style_button)
+	_update_style_button()
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -367,7 +375,7 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -473,10 +481,11 @@ func preview_block() -> Dictionary:
 	if str(e.kind) == "ramp":
 		var t := LevelDocument.texture_of(id, pick_view, false)
 		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")),
-			"bottom_height": float(e.heights[0]), "top_height": float(e.heights[1]), "base": float(e.heights[0])}
+			"bottom_height": float(e.heights[0]), "top_height": float(e.heights[1]), "base": float(e.heights[0]),
+			"style": pick_style}
 	var under := document.rooftop_under(rect, float(e.height))
 	return {"kind": "platform", "id": "preview", "rect": rect, "height": float(e.height),
-		"base": float(under.height) if not under.is_empty() else 0.0}
+		"base": float(under.height) if not under.is_empty() else 0.0, "style": pick_style}
 
 
 ## Brings the engine-drawn preview in step with the pick, the mouse and the drag (each frame).
@@ -497,7 +506,7 @@ func _sync_preview() -> void:
 	preview_drawing = ElevationDrawingScript.new()
 	preview_drawing.name = "PreviewPiece"
 	preview_drawing.setup(str(b.kind), b, ISO_TRANSFORM, "res://art/creator_pieces/", "none")
-	preview_drawing.use_style(ElevationLayerScript.piece_style(), float(b.base))
+	preview_drawing.use_style(ElevationLayerScript.piece_style_named(pick_style), float(b.base))
 	preview_drawing.modulate.a = PREVIEW_ALPHA
 	preview_drawing.show_behind_parent = true
 	_overlay.add_child(preview_drawing)
@@ -567,6 +576,21 @@ func mirror_pick() -> bool:
 	pick_mirror = bool(_next_of(LevelDocument.mirrors_of(_picked()), pick_mirror, pick_mirror))
 	_overlay.queue_redraw()
 	return pick_mirror
+
+
+## Style (T-255): the next piece style for new rooftops and ramps (office, car park, T-198's).
+## Pieces already placed keep theirs. Returns the style now.
+func style_pick() -> String:
+	var names: Array = ElevationLayerScript.PIECE_STYLES.keys()
+	pick_style = names[(names.find(pick_style) + 1) % names.size()]
+	_update_style_button()
+	_overlay.queue_redraw()
+	return pick_style
+
+
+func _update_style_button() -> void:
+	if style_button != null:
+		style_button.text = CreatorTexts.get_text("style_label").replace("{style}", CreatorTexts.get_text("style_" + pick_style))
 
 
 ## The picked asset's catalogue texture for the current view and mirror ({} with nothing picked).
@@ -698,6 +722,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			rotate_pick()
 		KEY_M:
 			mirror_pick()
+		KEY_T:
+			style_pick()
 		KEY_ESCAPE:
 			size_drag_start = Vector2i(-1, -1)
 			panel.pick("")

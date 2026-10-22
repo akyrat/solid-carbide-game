@@ -18,12 +18,16 @@
   "ramp_height_3_6": {"text": "Ramp 3 to 6", "where": "Editor side panel, Ramps: label of the ramp from height 3 up to height 6."},
   "rotate_label": {"text": "Rotate", "where": "Editor: button that switches the piece to its next view."},
   "mirror_label": {"text": "Mirror", "where": "Editor: button that flips the piece."},
+  "style_label": {"text": "Style: {style}", "where": "Editor top bar: button that steps the style (textures) of the next rooftop or ramp placed; {style} is the style's name."},
+  "style_office": {"text": "Office", "where": "Editor top bar, Style button: the office rooftop and office wall textures."},
+  "style_carpark": {"text": "Car park", "where": "Editor top bar, Style button: the car park deck and garage wall textures."},
+  "style_t198": {"text": "First set", "where": "Editor top bar, Style button: the first placeholder textures (T-198's)."},
   "delete_label": {"text": "Delete", "where": "Editor: button that removes the selected piece."},
   "save_label": {"text": "Save", "where": "Editor: button that saves the level."},
   "save_confirmation": {"text": "Level saved.", "where": "Editor: message shown after a successful save."},
   "overlap_message": {"text": "Can't place here: it overlaps another piece.", "where": "Editor: message shown when a piece can't be placed because it overlaps another piece."},
   "back_button": {"text": "Back to list", "where": "Editor: button that returns to the list screen."},
-  "controls_hint": {"text": "Mouse: place. R: rotate. M: mirror. Del: delete.", "where": "Editor: hint line along the screen edge listing the controls."},
+  "controls_hint": {"text": "Mouse: place. R: rotate. M: mirror. T: style. Del: delete.", "where": "Editor: hint line along the screen edge listing the controls."},
   "size_hint": {"text": "Drag to set the size.", "where": "Editor top bar: hint while the board drags out a rooftop's size (T-251)."},
   "size_readout": {"text": "Size: {w} x {d}", "where": "Editor top bar: width and depth readout while sizing a rooftop; {w} and {d} are filled in by the creator (T-251)."},
   "ramp_dir_north": {"text": "Climbs north", "where": "Editor top bar: direction of a picked ramp, climbing north (T-251)."},
@@ -46,5 +50,5 @@
   "prop_roof_sign": {"text": "Rooftop sign", "where": "Editor side panel, Props: label of the rooftop sign (T-253)."},
   "building_small": {"text": "Small building", "where": "Editor side panel, Buildings: label of the small square building (T-254)."},
   "building_long": {"text": "Long building", "where": "Editor side panel, Buildings: label of the long building (T-254)."},
-  "controls_hint_sizing": {"text": "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. Del: delete.", "where": "Editor: hint line along the screen edge, the controls with dragging to size a rooftop added (T-250). Replaces controls_hint, which is kept unchanged."}
+  "controls_hint_sizing": {"text": "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. T: style. Del: delete.", "where": "Editor: hint line along the screen edge, the controls with dragging to size a rooftop added (T-250). Replaces controls_hint, which is kept unchanged."}
 }

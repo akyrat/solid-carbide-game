@@ -20,6 +20,9 @@ const TEXTURE_PX_PER_UNIT := 32.0
 ## The low wall standing on a rooftop's back edges (north and west); its transparent pixels show
 ## what is behind it. Null for no parapet.
 @export var parapet: Texture2D
+## Tile a ramp's textures plainly instead of mirrored (T-255): the ramp's textures must then be
+## seamless, which lets the chevrons on its top point the same way along its whole length.
+@export var ramp_plain_repeat := false
 ## The parapet's height, units (the sample map's: 20 art px).
 @export var parapet_height_units := 0.625
 ## The west parapet faces east, away from the light: its colour times this.

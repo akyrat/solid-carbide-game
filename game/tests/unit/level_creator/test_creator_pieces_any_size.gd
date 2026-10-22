@@ -193,7 +193,8 @@ func test_new_pieces_are_drawn_from_the_one_piece_style() -> void:
 	assert_eq(e.elevation.areas.size(), 10)
 	for a in e.elevation.areas:
 		assert_true(a.is_textured(), "%s drawn in the engine" % a.block.id)
-		assert_eq(a.texture_repeat, CanvasItem.TEXTURE_REPEAT_MIRROR)
+		# Ramps tile plainly since T-255 (ramp_plain_repeat: their arrows keep pointing one way).
+		assert_eq(a.texture_repeat, CanvasItem.TEXTURE_REPEAT_ENABLED if a.kind == "ramp" else CanvasItem.TEXTURE_REPEAT_MIRROR)
 		assert_eq(a.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 		var faces: Array = a.textured_faces()
 		assert_true(faces.any(func(f): return f.name == "top"), "%s has its top" % a.block.id)

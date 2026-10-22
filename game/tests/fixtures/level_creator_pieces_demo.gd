@@ -15,6 +15,8 @@ const Level := preload("res://tests/fixtures/level_creator_pieces_level.gd")
 @export var drag_from := Vector2.ZERO
 @export var drag_to := Vector2.ZERO
 @export var ramp_view := ""
+## The piece style (T-255) the whole level is built in: office, carpark or t198.
+@export var style := "office"
 
 var editor: LevelCreatorEditor
 
@@ -24,6 +26,8 @@ func _ready() -> void:
 	editor = EDITOR_SCENE.instantiate()
 	editor.open_new()
 	add_child(editor)
+	editor.pick_style = style
+	editor._update_style_button()
 	Level.build(editor)
 	await get_tree().process_frame
 	editor.zoom_by(zoom_factor, editor.map_view.size / 2.0)
