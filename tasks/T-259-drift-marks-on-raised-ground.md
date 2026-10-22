@@ -4,7 +4,7 @@ title: The drift marks show on rooftops and ramps
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal:

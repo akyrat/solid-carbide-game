@@ -4,7 +4,7 @@ title: The task board's Builds tab gets a "Play creator" button
 status: open
 from: project-lead
 to: project-lead
-lead:
+lead: Coursework
 epic: tooling
 milestone: mvp
 goal:
