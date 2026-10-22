@@ -1,7 +1,7 @@
 ---
 id: T-229
 title: Re-record the README's GIFs of the game's current state
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -47,10 +47,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] GIFs in `art-archive/T-229/screenshots/` show, from the real game with the HUD: drifting on a street with enemies chasing, the drift counter counting and LONG DRIFT! at the drift's end; drifting off a height-6 rooftop; an air 360 with AIR 360!, the airtime counter and HANG TIME!; the kaiju on its shadow with meteors falling; enemies dropping off a ledge; pickups pulled in by the magnet (QA: pass / fail)
-- [ ] Each GIF is under 5 MB and a few seconds long (QA: pass / fail)
-- [ ] The root README's "Current state of the game" section shows the new GIFs by relative path, one line each (QA: pass / fail)
-- [ ] No game behaviour changed; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [x] GIFs in `art-archive/T-229/screenshots/` show, from the real game with the HUD: drifting on a street with enemies chasing, the drift counter counting and LONG DRIFT! at the drift's end; drifting off a height-6 rooftop; an air 360 with AIR 360!, the airtime counter and HANG TIME!; the kaiju on its shadow with meteors falling; enemies dropping off a ledge; pickups pulled in by the magnet (QA: pass; I checked frames of all six: street drift with minions, drift counter, FULL 360! and LONG DRIFT! with COMBO; rooftop drift with the camera following height; air 360 with airtime counter, AIR 360! and HANG TIME!; kaiju on its shadow with warning circles and meteors; minions at the rooftop edge; coins and canisters near the car. Weak but present: tiny minions, canisters and meteor tails)
+- [x] Each GIF is under 5 MB and a few seconds long (QA: pass; 2.5, 3.9, 3.7, 3.4, 3.9 and 4.0 MB; 2.1 to 4.7 s each)
+- [x] The root README's "Current state of the game" section shows the new GIFs by relative path, one line each (QA: pass; README lines 11 to 31 show the six GIFs by relative path art-archive/T-229/screenshots/, one line each)
+- [x] No game behaviour changed; the full GUT suite and all Python tool tests pass (QA: pass; T-229's own commits touch only README.md, the fixture, game/tools script, art-archive and its ticket, and the game/scripts diff is the merged tickets only; GUT 1329/1329, game/tools Python 393 OK, tools Python 446 OK)
 
 ## Updates
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started at the board's word, on master plus the camera, airtime trick, drift pay and both counters (all passed QA, not yet played).
+
+### 2026-10-22, In progress → In QA
+
+Six new GIFs recorded, including the drift and airtime counters, LONG DRIFT! and HANG TIME!. Some are weak (tiny minions and canisters). Sent to QA.
 
 ## Result notes
 
