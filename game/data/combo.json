@@ -14,6 +14,11 @@
     "min_seconds": 1.0,
     "max": 0.5
   },
+  "hype_speed": {
+    "_comment": "The hype speed boost (T-275, Drifting, Decisions): the car's top speed (and so its acceleration, as the time to top speed stays) is this much above the base at combo heat step 1, 2 and 3 (ComboHeat.THRESHOLDS: x2, x3, x4 and up); none below x2. The bonus eases towards the step's amount by ease_per_second (0.2 = a full 0.16 in 0.8 s). Proposals for the playtest.",
+    "bonus_per_step": [0.08, 0.16, 0.25],
+    "ease_per_second": 0.2
+  },
   "collision_cut": 0.8,
   "collision_cut_applies_to": "above_start",
   "drain_wait_seconds": 2.0,

@@ -415,6 +415,20 @@ func _drain_likes(seconds: float) -> void:
 	xp_changed.emit(xp, xp_needed(), level)
 
 
+## The car's hype speed bonus for the combo now (task T-275): combo.json's
+## amount for the combo heat step (ComboHeat.step_for, its thresholds).
+func hype_speed_target() -> float:
+	if _combo_data == null:
+		_combo_data = ComboData.new()
+	return _combo_data.hype_speed_bonus(ComboHeat.step_for(combo))
+
+
+## Eases `current` towards hype_speed_target() over `dt` seconds, so a step
+## up or down isn't a jolt.
+func eased_hype_speed(current: float, dt: float) -> float:
+	return move_toward(current, hype_speed_target(), _combo_data.hype_speed_ease_per_second() * dt)
+
+
 func _set_combo(value: float) -> void:
 	if value == combo:
 		return

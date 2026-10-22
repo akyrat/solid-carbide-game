@@ -71,6 +71,21 @@ func trick_amount(trick: String, seconds := 0.0) -> float:
 	return trick_add(trick)
 
 
+## How much above the base the car's top speed is at a combo heat step (task
+## T-275; combo.json, hype_speed): 0 at step 0, else bonus_per_step[step - 1]
+## (a step past the list takes the last).
+func hype_speed_bonus(step: int) -> float:
+	var amounts: Array = _data["hype_speed"]["bonus_per_step"]
+	if step <= 0 or amounts.is_empty():
+		return 0.0
+	return float(amounts[mini(step, amounts.size()) - 1])
+
+
+## How fast the car's hype speed bonus eases to the step's amount, per second.
+func hype_speed_ease_per_second() -> float:
+	return float(_data["hype_speed"]["ease_per_second"])
+
+
 func collision_cut() -> float:
 	return float(_data["collision_cut"])
 
