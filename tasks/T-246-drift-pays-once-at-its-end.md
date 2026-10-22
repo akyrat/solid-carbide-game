@@ -1,7 +1,7 @@
 ---
 id: T-246
 title: A drift pays once at its end, scaled by how long it lasted
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show a drift pays nothing while it lasts and once when it ends, with the amount the data's scaling gives for its length (two different lengths give the expected amounts), and a drift below the minimum pays nothing (QA: pass / fail)
-- [ ] The popup is the existing LONG DRIFT! text with its amount; FULL 360!, ALT DRIFT! and the drift-second XP behave as before (tests) (QA: pass / fail)
-- [ ] The scaling numbers live in `game/data/combo.json` and are listed with their reasons in the result notes and Drifting, Content (QA: pass / fail)
-- [ ] A GIF of a long drift paying out is in `art-archive/T-246/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a drift pays nothing while it lasts and once when it ends, with the amount the data's scaling gives for its length (two different lengths give the expected amounts), and a drift below the minimum pays nothing (QA: pass; test_tricks.gd covers nothing while it lasts, one payment at end, 1.5 s and 3.5 s amounts, 0.98 s pays nothing; GUT green)
+- [ ] The popup is the existing LONG DRIFT! text with its amount; FULL 360!, ALT DRIFT! and the drift-second XP behave as before (tests) (QA: pass; popup is the existing LONG DRIFT! +0.12 in the screenshot and GIF; 360, ALT and XP tests unchanged and green)
+- [ ] The scaling numbers live in `game/data/combo.json` and are listed with their reasons in the result notes and Drifting, Content (QA: pass; drift_pay in combo.json, reasons in the result notes and docs/drifting.md Content)
+- [ ] A GIF of a long drift paying out is in `art-archive/T-246/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; GIF and PNG present, popup appears as the drift ends; GUT 1291/1291, tools 439 OK, game/tools 393 OK)
 
 The board's review: drift for a while and watch it pay out at the end.
 Board review files: the GIF in `art-archive/T-246/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started.
+
+### 2026-10-22, In progress → In QA
+
+Built: a drift pays once when it ends, 0.05 a second from 1 s, capped at 0.5, in the LONG DRIFT! popup. Sent to QA.
 
 ## Result notes
 
