@@ -1,7 +1,7 @@
 ---
 id: T-229
 title: Re-record the README's GIFs of the game's current state
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, game/README.md, tasks/T-217-gifs-of-the-game-for-the-readme.md, game/tests/fixtures/readme_gif_demo.gd, game/tools/record_readme_gif.sh]
 files_expected_to_change: [art-archive/T-229/, game/tests/fixtures/, game/tools/, README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,10 @@ Started at the board's word, on master plus the camera, airtime trick, drift pay
 
 Six new GIFs recorded, including the drift and airtime counters, LONG DRIFT! and HANG TIME!. Some are weak (tiny minions and canisters). Sent to QA.
 
+### 2026-10-22, In QA → Done
+
+The board played the build: good. Merging into master with the new README GIFs.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -80,3 +84,4 @@ Six GIFs in `art-archive/T-229/screenshots/` (T-217's three stay in `art-archive
 Changes: `game/tests/fixtures/readme_gif_demo.gd` has the modes street (trick detection on, minions placed), jump, trick, kaiju, magnet and drop; it only drives and sets up the run, no game behaviour changed. `game/tools/record_readme_gif.sh`'s usage line lists the modes. The root README section shows the six GIFs, one line each. A shared palette was tried first and dropped (it turned the HUD heart brown); the finals use per-frame palettes (`--colors 128` for street, jump, trick and drop; `--colors 96 --scale 0.55` for kaiju and magnet), `--crop 0.95`, with `--first/--last` windows.
 
 Tests: full GUT suite 1329/1329 pass; `python -m unittest discover -s game/tools -p "test_*.py"` 393 OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"` 446 OK. No refusals.
+- 2026-10-22, in-qa → done: board's playtest: good; QA passed; merged after its five base tickets were played
