@@ -1,0 +1,15 @@
+{
+ "no_background": true,
+ "outline": "single color black outline",
+ "shading": "medium shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "isometric": true,
+ "text_guidance_scale": 8,
+ "negative_description": "text, letters, words, logo, brand, red, perspective, blur, ground, street, shadow, people, car, background",
+ "description": "a stack of wooden shipping crates, one large dark brown crate on the ground with a smaller crate on top of it, plank seams and metal corner straps, muted colours, isometric view seen from above, night city, cool blue-grey steel and concrete colours, retro pixel art game sprite, a single object",
+ "image_size": {
+  "width": 144,
+  "height": 144
+ }
+}

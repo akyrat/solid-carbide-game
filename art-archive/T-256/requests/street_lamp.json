@@ -1,0 +1,15 @@
+{
+ "no_background": true,
+ "outline": "single color black outline",
+ "shading": "medium shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "isometric": true,
+ "text_guidance_scale": 8,
+ "negative_description": "text, letters, words, logo, brand, red, perspective, blur, ground, street, shadow, people, car, background",
+ "description": "a tall street lamp, a thin dark grey metal pole on a small round base with a short arm and a lamp head that glows warm amber yellow light, isometric view seen from above, night city, cool blue-grey steel and concrete colours, retro pixel art game sprite, a single object",
+ "image_size": {
+  "width": 64,
+  "height": 208
+ }
+}

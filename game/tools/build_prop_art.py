@@ -223,7 +223,11 @@ def build():
             name = sprite_name(prop["id"], rot)
             Image.fromarray(arr, "RGBA").save(os.path.join(OUT, name + ".png"))
             textures[rot] = {"texture": "res://art/props/%s.png" % name, "anchor_px": [anchor[0], anchor[1]]}
-        prop["textures"] = textures
+        # T-256: once the final art is in (files named *_art.png, build_prop_final_art.py), the
+        # placeholders are still redrawn but the textures keep pointing at the final art.
+        have = prop.get("textures") or {}
+        if not have or not all(t["texture"].endswith("_art.png") for t in have.values()):
+            prop["textures"] = textures
     with open(PROPS_JSON, "w", encoding="utf-8", newline="\n") as f:
         json.dump(data, f, indent=1)
         f.write("\n")

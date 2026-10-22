@@ -45,31 +45,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/barrier_north.png",
+     "texture": "res://art/props/barrier_north_art.png",
      "anchor_px": [
-      83,
-      82
+      62,
+      44
      ]
     },
     "east": {
-     "texture": "res://art/props/barrier_east.png",
+     "texture": "res://art/props/barrier_east_art.png",
      "anchor_px": [
-      83,
-      82
+      62,
+      44
      ]
     },
     "south": {
-     "texture": "res://art/props/barrier_south.png",
+     "texture": "res://art/props/barrier_south_art.png",
      "anchor_px": [
-      83,
-      82
+      62,
+      44
      ]
     },
     "west": {
-     "texture": "res://art/props/barrier_west.png",
+     "texture": "res://art/props/barrier_west_art.png",
      "anchor_px": [
-      83,
-      82
+      62,
+      44
      ]
     }
    }
@@ -130,31 +130,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/cones_north.png",
+     "texture": "res://art/props/cones_north_art.png",
      "anchor_px": [
       33,
-      53
+      24
      ]
     },
     "east": {
-     "texture": "res://art/props/cones_east.png",
+     "texture": "res://art/props/cones_east_art.png",
      "anchor_px": [
       33,
-      47
+      24
      ]
     },
     "south": {
-     "texture": "res://art/props/cones_south.png",
+     "texture": "res://art/props/cones_south_art.png",
      "anchor_px": [
-      39,
-      47
+      33,
+      24
      ]
     },
     "west": {
-     "texture": "res://art/props/cones_west.png",
+     "texture": "res://art/props/cones_west_art.png",
      "anchor_px": [
-      46,
-      50
+      33,
+      24
      ]
     }
    }
@@ -209,31 +209,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/crates_north.png",
+     "texture": "res://art/props/crates_north_art.png",
      "anchor_px": [
-      67,
-      93
+      38,
+      55
      ]
     },
     "east": {
-     "texture": "res://art/props/crates_east.png",
+     "texture": "res://art/props/crates_east_art.png",
      "anchor_px": [
-      67,
-      93
+      39,
+      55
      ]
     },
     "south": {
-     "texture": "res://art/props/crates_south.png",
+     "texture": "res://art/props/crates_south_art.png",
      "anchor_px": [
-      67,
-      93
+      38,
+      55
      ]
     },
     "west": {
-     "texture": "res://art/props/crates_west.png",
+     "texture": "res://art/props/crates_west_art.png",
      "anchor_px": [
-      67,
-      93
+      39,
+      55
      ]
     }
    }
@@ -285,31 +285,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/ac_unit_north.png",
+     "texture": "res://art/props/ac_unit_north_art.png",
      "anchor_px": [
-      61,
-      74
+      48,
+      51
      ]
     },
     "east": {
-     "texture": "res://art/props/ac_unit_east.png",
+     "texture": "res://art/props/ac_unit_east_art.png",
      "anchor_px": [
-      61,
-      74
+      48,
+      51
      ]
     },
     "south": {
-     "texture": "res://art/props/ac_unit_south.png",
+     "texture": "res://art/props/ac_unit_south_art.png",
      "anchor_px": [
-      61,
-      74
+      48,
+      51
      ]
     },
     "west": {
-     "texture": "res://art/props/ac_unit_west.png",
+     "texture": "res://art/props/ac_unit_west_art.png",
      "anchor_px": [
-      61,
-      74
+      48,
+      51
      ]
     }
    }
@@ -359,31 +359,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/water_tank_north.png",
+     "texture": "res://art/props/water_tank_north_art.png",
      "anchor_px": [
-      85,
-      150
+      77,
+      102
      ]
     },
     "east": {
-     "texture": "res://art/props/water_tank_east.png",
+     "texture": "res://art/props/water_tank_east_art.png",
      "anchor_px": [
-      85,
-      150
+      78,
+      102
      ]
     },
     "south": {
-     "texture": "res://art/props/water_tank_south.png",
+     "texture": "res://art/props/water_tank_south_art.png",
      "anchor_px": [
-      85,
-      150
+      77,
+      102
      ]
     },
     "west": {
-     "texture": "res://art/props/water_tank_west.png",
+     "texture": "res://art/props/water_tank_west_art.png",
      "anchor_px": [
-      85,
-      150
+      78,
+      102
      ]
     }
    }
@@ -433,31 +433,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/roof_vent_north.png",
+     "texture": "res://art/props/roof_vent_north_art.png",
      "anchor_px": [
-      46,
-      71
+      28,
+      41
      ]
     },
     "east": {
-     "texture": "res://art/props/roof_vent_east.png",
+     "texture": "res://art/props/roof_vent_east_art.png",
      "anchor_px": [
-      46,
-      71
+      29,
+      41
      ]
     },
     "south": {
-     "texture": "res://art/props/roof_vent_south.png",
+     "texture": "res://art/props/roof_vent_south_art.png",
      "anchor_px": [
-      46,
-      71
+      28,
+      41
      ]
     },
     "west": {
-     "texture": "res://art/props/roof_vent_west.png",
+     "texture": "res://art/props/roof_vent_west_art.png",
      "anchor_px": [
-      46,
-      71
+      29,
+      41
      ]
     }
    }
@@ -521,31 +521,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/street_lamp_north.png",
+     "texture": "res://art/props/street_lamp_north_art.png",
      "anchor_px": [
-      26,
-      186
+      28,
+      127
      ]
     },
     "east": {
-     "texture": "res://art/props/street_lamp_east.png",
+     "texture": "res://art/props/street_lamp_east_art.png",
      "anchor_px": [
-      26,
-      186
+      27,
+      127
      ]
     },
     "south": {
-     "texture": "res://art/props/street_lamp_south.png",
+     "texture": "res://art/props/street_lamp_south_art.png",
      "anchor_px": [
-      26,
-      186
+      28,
+      127
      ]
     },
     "west": {
-     "texture": "res://art/props/street_lamp_west.png",
+     "texture": "res://art/props/street_lamp_west_art.png",
      "anchor_px": [
-      26,
-      186
+      27,
+      127
      ]
     }
    }
@@ -614,31 +614,31 @@
    },
    "textures": {
     "north": {
-     "texture": "res://art/props/roof_sign_north.png",
+     "texture": "res://art/props/roof_sign_north_art.png",
      "anchor_px": [
-      72,
-      143
+      52,
+      130
      ]
     },
     "east": {
-     "texture": "res://art/props/roof_sign_east.png",
+     "texture": "res://art/props/roof_sign_east_art.png",
      "anchor_px": [
-      72,
-      143
+      60,
+      130
      ]
     },
     "south": {
-     "texture": "res://art/props/roof_sign_south.png",
+     "texture": "res://art/props/roof_sign_south_art.png",
      "anchor_px": [
-      72,
-      143
+      52,
+      130
      ]
     },
     "west": {
-     "texture": "res://art/props/roof_sign_west.png",
+     "texture": "res://art/props/roof_sign_west_art.png",
      "anchor_px": [
-      72,
-      143
+      60,
+      130
      ]
     }
    }

@@ -1,7 +1,7 @@
 ---
 id: T-256
 title: "Art: the creator's props, in four rotations"
-status: blocked
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -10,12 +10,12 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-253]
+depends_on: []
 documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-253-placeable-props.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/props/, game/art/pixellab-generation-log.jsonl, art-archive/T-256/, art-archive/README.md, game/data/level/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,10 +39,10 @@ Your folder is built on T-253's branch (the Project Lead makes it). End with a s
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA: pass / fail)
-- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA: pass / fail)
-- [ ] The props use the new art through T-253's data; every generation is kept (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA: pass; round 2, 8 of 40 generations, still 8 T-256 entries in the log, no new calls)
+- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA: pass; round 2, the sign's marks are now script-drawn made-up rune-like glyphs, not real characters or words (roof_sign_glyphs_4x.png, rotations_sheet.png); they look more runic than Japanese-like, for the board to judge; 32 PNGs, no Redgull red, no semi-transparent pixels, 30 colours, same object in four rotations; only the square frame-size rule 'fails', unavoidable for non-square props; props at 60 to 80% of footprints and north/south repeats remain for the board's playtest)
+- [ ] The props use the new art through T-253's data; every generation is kept (QA: pass; round 2, props.json uses the 32 *_art.png, placeholders and all 8 raws kept)
+- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass; round 2, screenshots remade and present, docs updated, GUT all passed, game/tools prop and sprite tests OK, tools tests 439 OK)
 
 The board's review: place every prop in each rotation and judge the art.
 Board review files: the screenshots in `art-archive/T-256/screenshots/`.
@@ -51,6 +51,46 @@ Board review files: the screenshots in `art-archive/T-256/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started on T-253's branch: PixelLab art for the eight props in four rotations, cap 40 generations.
+
+### 2026-10-22, In progress → In QA
+
+Art in: 8 of 40 generations, one picture per prop, rotations by mirroring. Weak: several props are small for their footprints, and the rooftop sign shows real Chinese characters. Sent to QA.
+
+### 2026-10-22, In QA → In progress
+
+QA failed one point: the sign shows real Chinese characters. Sent back for a free script fix (made-up glyphs), no new generations.
+
+### 2026-10-22, In progress → In QA
+
+Sign fixed by script: made-up glyphs, no new generations. Sent to QA round 2.
+
 ## Result notes
 
-Written by the agent when it finishes.
+### Plan before any call (Asset Generation Agent, 2026-10-22)
+
+- **Cost note:** the client's log shows every `/create-image-pixflux` call at `{"type": "generations", "generations": 1.0}`, whatever the size (up to 128 x 128 so far); `/rotate` is also 1.0 each but only ever used at 128 x 128 and with no way to check its size limit here, and the props are up to 171 x 193 art px, so `/rotate` is not relied on.
+- **Planned calls: 8 x `/create-image-pixflux`, 1 generation each = 8 generations** (cap 40; 13 already used by other tickets). One per prop, `isometric: true`, `view: high top-down`, `no_background`, `outline: single color black outline`, `shading: medium shading`, `detail: highly detailed`, sizes near the placeholders (barrier 160 x 112, cones 96 x 96, crates 144 x 144, AC unit 128 x 112, water tank 192 x 192, roof vent 96 x 96, street lamp 64 x 208, roof sign 160 x 192), 600 s HTTP timeout, no retries, log `game/art/pixellab-generation-log.jsonl`.
+- **The four rotations are made free, by script, from each one generation:** the footprint swaps for east and west, and a horizontal mirror of an isometric view is the same object seen along the other axis. Long props (barrier, roof sign) and square props (crates, AC unit): north and south are the generated picture, east and west its mirror. Round or near-round props (cones, water tank, roof vent, street lamp): the same picture, mirrored for east and west (so the lit side flips). The cost is that south repeats north (and west repeats east), so a one-sided detail (the sign's face) shows on both sides; noted honestly below. Spare budget (up to 32) is not spent: one round only.
+- Then a script (`game/tools/build_prop_final_art.py`) fits each sprite (crop to content, no upscaling), sets the anchor from the footprint, reduces to at most 30 colours, removes any Redgull red, writes `game/art/props/<name>_<rotation>_art.png` and switches `props.json` textures to them. The placeholders stay on disk.
+
+## Result (Asset Generation Agent, 2026-10-22)
+
+**Generations used: 8 of 40** (8 x `/create-image-pixflux`, 1.0 each as planned; all 8 in `game/art/pixellab-generation-log.jsonl`; the run was cut by a usage limit after the last call had been saved and logged, so nothing was repeated). One round, no regeneration. Raw generations, request bodies and records: `art-archive/T-256/raw/`, `art-archive/T-256/requests/`.
+
+How: one picture per prop, the four rotations made free by script (`game/tools/build_prop_final_art.py`: crop, alpha 0/255, at most 30 colours, red to orange, mirror for the other axis, anchor from the footprint). Final files `game/art/props/<name>_<rotation>_art.png`, selected through `props.json` textures only; the code-drawn placeholders are still on disk and `build_prop_art.py build` no longer overwrites the final textures. North and south are the same picture and east and west its mirror (barrier and sign are mirrored for north/south, since the generation's long axis ran the east/west way).
+
+What each looks like (honestly):
+- **Barrier:** a plain pale blue-grey concrete slab with a lighter top and a separate end block; clean but very pale and featureless, reads as a bright bar against the dark ground. 125 x 85 px, about 78% of the 4 x 1 diamond's width.
+- **Cones:** three orange and white cones on a small grey pad. Reads well, tiny (67 x 57 px).
+- **Crates:** a two-level stack of dark brown wooden crates with metal corners; reads as crates but is quite dark and warm, outside the steel palette (muted). 78 x 88 px, smaller than the 2 x 2 footprint (128 px wide).
+- **AC unit:** pale blue-grey box with a fan grille, a small amber light and side vents, on a pale pad. Good. 97 x 84 px.
+- **Water tank:** steel cylinder with bands, a conical lid, a cage and legs on a big blue pad; the best looking one. 156 x 167 px, its round pad is the collision's size, smaller than the 4 x 4 diamond (256 px).
+- **Roof vent:** a short round grey stack with a mushroom cap on a dark pad; small (58 x 74 px), smaller than its 2 x 2 footprint.
+- **Street lamp:** thin dark pole on a round grey base, curved arm and a warm amber lamp head; good. 56 x 134 px. The lamp head points one way, so east and west show it on the other side.
+- **Roof sign:** a dark panel with a cyan neon edge on two steel legs, amber glowing marks. The generation came with a rooftop and building around it; those were cut out by a script mask (panel and legs kept). **QA round 1 fix (free, no PixelLab):** the generated marks were real Chinese characters (one the real word 天), so `build_prop_final_art.py` (`replace_marks`) paints them over with the panel's colour and draws four made-up glyphs of a few straight strokes, amber with an orange halo, hard pixel edges, on the panel's slope. **The glyphs are script-drawn and are not real characters or words of any script.** All four rotations use them (mirrored in north and south; the same face shows from both sides). The generated original stays in `art-archive/T-256/raw/roof_sign_raw.png`.
+- **General weak points, not regenerated:** props are smaller than their footprints (crates, AC unit, vent, cones, barrier about 60 to 80% of the footprint's diamond), so their art sits inside the blocked area; the footprints or collisions in `props.json` can be tuned instead (board's playtest). Several props came with a base pad, which reads as a rooftop pad or footing. No Redgull red in any sprite (check passes).
+
+Tests: full GUT suite passed (`bash game/tools/run_tests.sh`, 400 s), `game/tools` Python tests 445 OK (new `test_build_prop_final_art.py`), `tools` Python tests 439 OK. Screenshots in `art-archive/T-256/screenshots/`: `rotations_sheet.png` (every prop, four rotations, anchors in magenta), `creator_close.png`, `creator_street.png`, `creator_roof.png`, `creator_panel.png` (every prop in four rotations in the creator, street and rooftop), `drive_end.png` (a run: the car beside the lamp). Refusals: two shell commands were refused by the guard hook (one using `set -a` to read the env file, one `curl` of PixelLab's openapi); I did not work around them, and the client reads the token itself, so nothing was needed. Documents updated: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`.
