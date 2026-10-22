@@ -1,7 +1,7 @@
 ---
 id: T-260
 title: The task board's Builds tab gets a "Play creator" button
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/test_taskboard_server.py, game/tools/level_creator.ps1]
 files_expected_to_change: [tools/taskboard/server.py, tools/taskboard/taskboard.html, tools/test_taskboard_server.py, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Started at the board's request: a Play creator button on the Builds tab.
 
 Built: a Play creator button on each Builds entry that has the level creator. Sent to QA.
 
+### 2026-10-22, In QA → Done
+
+QA passed all 3. Merged into master; the task board restarts to show the button.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -65,3 +69,4 @@ Written by the agent when it finishes.
 - `docs/README.md`, "The task board": describes the button.
 - Tests: `python -m unittest discover -s tools -p "test_*.py"` passed 451 tests, OK. `python -m unittest discover -s game/tools -p "test_*.py"` passed 395 tests, OK (1 skipped).
 - Screenshot: none. Making one would need a task board server serving this folder, and the instructions were not to touch the running server and to test with unit tests only. The creator scene exists today in the level-creator worktrees (T-234 to T-240, T-250 to T-257, G-005, creator-set) but not on master or in this folder, so on the live board those entries would show it enabled once this merges.
+- 2026-10-22, in-qa → done: QA passed all 3; tooling, merged straight after QA
