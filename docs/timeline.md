@@ -1770,3 +1770,8 @@ Entry format:
 - Decision or change: the likes bar becomes 4 times thicker (16 to 64 pixels) and springs to its new fill with a small overshoot instead of jumping (HUD and menus, Decisions; T-273). Brand Magnet's "Redgull calls it engagement" goes as well (added to T-268). The board will play everything outside the level creator together in one build, with patch notes and suggested objectives before it plays.
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-273, T-268
+
+## 2026-10-22: The neon underglow drawn in code
+- Decision or change: the board doesn't like the generated underglow sprite; the neon zone is drawn in code as pixel rings and stepped-halo glow marking exactly its damage circle, with the old sprite kept (Visual style, Decisions; T-274).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-274
