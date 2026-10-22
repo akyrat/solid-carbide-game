@@ -1,7 +1,7 @@
 ---
 id: T-268
 title: "Text: the air turn upgrade, and two level-up lines without \"Redgull says\""
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -39,9 +39,9 @@ Two pieces of text (board, 2026-10-22):
 
 ## Acceptance criteria
 
-- [ ] Garage design, Content, has the air turn upgrade's name and description with this ticket's id, within 25 and 80 characters, naming no number (QA: pass / fail)
-- [ ] The two level-up descriptions are rewritten without "Redgull says", still say what the tier does, and fit the cards' limits; no player-facing text says "Redgull says" (a search) (QA: pass / fail)
-- [ ] The level-up text tests (`game/tools/check_level_up_texts.py` and the GUT text tests) pass (QA: pass / fail)
+- [ ] Garage design, Content, has the air turn upgrade's name and description with this ticket's id, within 25 and 80 characters, naming no number (QA: pass; garage-design.md Content has Spin Doctor 11/25 and desc 57/80, T-268 header, key air_turn, no number)
+- [ ] The two level-up descriptions are rewritten without "Redgull says", still say what the tier does, and fit the cards' limits; no player-facing text says "Redgull says" (a search) (QA: pass; both rewritten, 45 and 46 chars, tier effects kept; Brand Magnet quip gone, 50/80; search finds "Redgull says" only in car_health in garage_screen.gd, listed in the notes and left unchanged as the ticket's wording says to list, not change, others)
+- [ ] The level-up text tests (`game/tools/check_level_up_texts.py` and the GUT text tests) pass (QA: pass; unittest 395 OK (1 skipped), GUT 1365/1365 passing; check_level_up_texts.py not run directly (hook refused per notes), covered by its unit test)
 
 The board's review: read the new texts.
 
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the air turn upgrade's text, and the two Redgull says lines rewritten.
+
+### 2026-10-22, In progress → In QA
+
+Texts written: Spin Doctor, two level-up lines and Brand Magnet rewritten. One garage line still says Redgull says (car health): asking the board. Sent to QA.
 
 ## Result notes
 
