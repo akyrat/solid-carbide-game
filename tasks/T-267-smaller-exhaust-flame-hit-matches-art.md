@@ -1,7 +1,7 @@
 ---
 id: T-267
 title: A smaller exhaust flame, drawn behind the car and enemies, that burns whatever touches it
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -41,10 +41,10 @@ Damage numbers and timing are unchanged. Work on your own branch and folder, as 
 
 ## Acceptance criteria
 
-- [ ] At tier 1 the drawn flame and its hit area are the proposed fraction of today's size (about a quarter), and grow with the size tiers as before (tests) (QA: pass / fail)
-- [ ] Tests show the hit area matches the drawn flame through the ramp-up and in every direction, and a minion whose edge (not centre) touches the flame takes damage (QA: pass / fail)
-- [ ] The flame draws behind the car and behind enemies (a depth test and the screenshot) (QA: pass / fail)
-- [ ] Weapons, Content and `game/README.md` give the new numbers and rule; the screenshot and GIF are in `art-archive/T-267/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] At tier 1 the drawn flame and its hit area are the proposed fraction of today's size (about a quarter), and grow with the size tiers as before (tests) (QA: pass; base_size_multiplier 0.625 = a quarter of 2.5, tiers unchanged; tests in test_weapon_data and test_exhaust_flamethrower pass)
+- [ ] Tests show the hit area matches the drawn flame through the ramp-up and in every direction, and a minion whose edge (not centre) touches the flame takes damage (QA: pass; hull-of-drawn-cell tests cover ramp, 8 directions, 5 tiers, and edge-touch burns a minion; GUT 1370/1370)
+- [ ] The flame draws behind the car and behind enemies (a depth test and the screenshot) (QA: pass; z_index -1 in the car's View plus depth test; screenshot and GIF frames show the minion drawn over the flame)
+- [ ] Weapons, Content and `game/README.md` give the new numbers and rule; the screenshot and GIF are in `art-archive/T-267/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; weapons.md and game/README.md changed, screenshot and GIF present, GUT 1370/1370, tools tests 451 OK; game/tools discover prints a usage text instead of a Ran line, an existing quirk, the individual game/tools tests I ran pass)
 
 The board's review: drift through minions with the flamethrower at its first level.
 Board review files: the screenshot and GIF in `art-archive/T-267/screenshots/`.
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: a smaller flame, drawn behind, that burns whatever touches it.
+
+### 2026-10-22, In progress → In QA
+
+Built: the flame is a quarter size at tier 1, drawn behind the car and enemies, and its hit area is the drawn flame itself. Sent to QA.
 
 ## Result notes
 
