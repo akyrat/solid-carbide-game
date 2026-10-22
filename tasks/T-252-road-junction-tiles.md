@@ -1,7 +1,7 @@
 ---
 id: T-252
 title: "Level creator: road corners, T-junctions, crossroads and dead ends"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -37,9 +37,9 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] The atlas and catalogue have corners, T-junctions and dead ends in 4 rotations and a crossroads; their lines join the straight tiles' lines without gaps (tests on the tile data, and the screenshot) (QA: pass / fail)
-- [ ] The tiles pass `check_sprite_rules.py`; the game's own map's ground is unchanged (a test) (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-252/screenshots/`; `game/README.md` describes the pieces; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The atlas and catalogue have corners, T-junctions and dead ends in 4 rotations and a crossroads; their lines join the straight tiles' lines without gaps (tests on the tile data, and the screenshot) (QA: pass; atlas and catalogue hold 4 corners, 4 T-junctions, 4 dead ends and a crossroads; test_lines_continue_the_straight_tiles checks the line pixels, and the screenshot shows lines running straight across every join with the existing two-tile straights)
+- [ ] The tiles pass `check_sprite_rules.py`; the game's own map's ground is unchanged (a test) (QA: pass; test_pieces_pass_check_sprite_rules and the old-tiles-unchanged and games-own-ground GUT tests pass)
+- [ ] The screenshot is in `art-archive/T-252/screenshots/`; `game/README.md` describes the pieces; the full GUT suite and all Python tool tests pass (QA: pass; screenshot present, README describes the pieces, GUT all passed, tools 439 OK, game/tools 425 OK)
 
 The board's review: lay out a street grid with corners and junctions.
 Board review files: the screenshot in `art-archive/T-252/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started: road corners, T-junctions, crossroads and dead ends, drawn by script.
+
+### 2026-10-22, In progress → In QA
+
+Built: corners, T-junctions, a crossroads and dead ends at the wide road's size, joining today's straights. Sent to QA.
 
 ## Result notes
 
