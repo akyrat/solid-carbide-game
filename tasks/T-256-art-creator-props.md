@@ -1,7 +1,7 @@
 ---
 id: T-256
 title: "Art: the creator's props, in four rotations"
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-253-placeable-props.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/props/, game/art/pixellab-generation-log.jsonl, art-archive/T-256/, art-archive/README.md, game/data/level/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started on T-253's branch: PixelLab art for the eight props in four rotations, c
 
 Art in: 8 of 40 generations, one picture per prop, rotations by mirroring. Weak: several props are small for their footprints, and the rooftop sign shows real Chinese characters. Sent to QA.
 
+### 2026-10-22, In QA → In progress
+
+QA failed one point: the sign shows real Chinese characters. Sent back for a free script fix (made-up glyphs), no new generations.
+
 ## Result notes
 
 ### Plan before any call (Asset Generation Agent, 2026-10-22)
@@ -82,7 +86,7 @@ What each looks like (honestly):
 - **Water tank:** steel cylinder with bands, a conical lid, a cage and legs on a big blue pad; the best looking one. 156 x 167 px, its round pad is the collision's size, smaller than the 4 x 4 diamond (256 px).
 - **Roof vent:** a short round grey stack with a mushroom cap on a dark pad; small (58 x 74 px), smaller than its 2 x 2 footprint.
 - **Street lamp:** thin dark pole on a round grey base, curved arm and a warm amber lamp head; good. 56 x 134 px. The lamp head points one way, so east and west show it on the other side.
-- **Roof sign:** a dark panel with a cyan neon edge on two steel legs, amber glowing marks. The generation came with a rooftop and building around it; those were cut out by a script mask (panel and legs kept). **Weak:** the marks came out as real Chinese characters (one reads as a real word, 天), not only Japanese-like marks, so Narrative or the board may want them replaced (a hand edit or a regeneration, which this round did not do); north and south show them mirrored; the same face shows from both sides.
+- **Roof sign:** a dark panel with a cyan neon edge on two steel legs, amber glowing marks. The generation came with a rooftop and building around it; those were cut out by a script mask (panel and legs kept). **QA round 1 fix (free, no PixelLab):** the generated marks were real Chinese characters (one the real word 天), so `build_prop_final_art.py` (`replace_marks`) paints them over with the panel's colour and draws four made-up glyphs of a few straight strokes, amber with an orange halo, hard pixel edges, on the panel's slope. **The glyphs are script-drawn and are not real characters or words of any script.** All four rotations use them (mirrored in north and south; the same face shows from both sides). The generated original stays in `art-archive/T-256/raw/roof_sign_raw.png`.
 - **General weak points, not regenerated:** props are smaller than their footprints (crates, AC unit, vent, cones, barrier about 60 to 80% of the footprint's diamond), so their art sits inside the blocked area; the footprints or collisions in `props.json` can be tuned instead (board's playtest). Several props came with a base pad, which reads as a rooftop pad or footing. No Redgull red in any sprite (check passes).
 
 Tests: full GUT suite passed (`bash game/tools/run_tests.sh`, 400 s), `game/tools` Python tests 445 OK (new `test_build_prop_final_art.py`), `tools` Python tests 439 OK. Screenshots in `art-archive/T-256/screenshots/`: `rotations_sheet.png` (every prop, four rotations, anchors in magenta), `creator_close.png`, `creator_street.png`, `creator_roof.png`, `creator_panel.png` (every prop in four rotations in the creator, street and rooftop), `drive_end.png` (a run: the car beside the lamp). Refusals: two shell commands were refused by the guard hook (one using `set -a` to read the env file, one `curl` of PixelLab's openapi); I did not work around them, and the client reads the token itself, so nothing was needed. Documents updated: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`.
