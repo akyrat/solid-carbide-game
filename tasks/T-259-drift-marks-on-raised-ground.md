@@ -54,4 +54,12 @@ Started at the board's report: drift marks must show on rooftops and ramps.
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Cause.** The marks were one flat node (`DriftMarks`) placed right after the ground tiles at z 0, with points at the street's pixels. On a rooftop or ramp the area's drawing (z above 0) covered them, and they were not lifted by the ground's height either.
+
+**Fix.** `drift_marks.gd` has `height_at`, `depth_for`, `view_basis` (set by `run.gd` on the elevation map, so the level creator's runs too). `point_px()` lifts each point by the ground height under that tyre; each piece gets the z_index `z_for(...) - 1` of where it is laid (over the area it lies on, under buildings/boulders/areas covering the car, as the shadow), and a piece closes and a new one starts when the depth changes. The sparks node follows the depth. Street marks stay z 0; hype look, fade, lifetime unchanged. The drift prototype is untouched (flat); the elevation test scene has no marks.
+
+**Tests.** New `tests/unit/run/test_run_drift_marks_on_raised_ground.gd` (9 tests): street, height 3, height 6, ramp (visible, lifted, over the area, stay after the car leaves), every area's top, hype look, fade and lifetime, depth-change closing, flat unchanged. Full GUT suite 1324/1324, tools 446 OK, game/tools 395 OK (1 skipped).
+
+**Screenshots** in `art-archive/T-259/screenshots/`: `marks_roof3.png`, `marks_roof6.png`, `marks_ramp_x4.png` (hype x4 trail on the ramp), `marks_roof_to_ramp.gif` (a drift across the height 3 rooftop and down the ramp). Fixtures `tests/fixtures/run_marks_*.tscn`, `run_marks_raised_demo.gd`. Documents: `game/README.md`, "Drift marks".
+
+No actions were refused.
