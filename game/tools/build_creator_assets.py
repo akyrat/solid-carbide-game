@@ -87,14 +87,26 @@ def ground_entries(atlas, road_tile):
     for t in atlas["tiles"]:
         name = t["name"]
         kind = "ground" if name.startswith("gravel") else "road"
-        out.append({"id": "%s-%s" % (kind, name), "kind": kind,
-                    "footprint_units": [GROUND_CELL, GROUND_CELL], "views": ["iso"], "mirrors": [False],
-                    "atlas_index": t["index"],
-                    "textures": [{"view": "iso", "mirror": False, "variant": name, "texture": path,
-                                  "region": [t["atlas_xy"][0], t["atlas_xy"][1], tw, th]}]})
-    # T-252: the road pieces (the atlas tiles marked "piece") come first among the roads.
-    pieces = {t["name"] for t in atlas["tiles"] if t.get("piece")}
-    out.sort(key=lambda e: 0 if e["textures"][0]["variant"] in pieces else 1)
+        e = {"id": "%s-%s" % (kind, name), "kind": kind,
+             "footprint_units": [GROUND_CELL, GROUND_CELL], "views": ["iso"], "mirrors": [False],
+             "atlas_index": t["index"],
+             "textures": [{"view": "iso", "mirror": False, "variant": name, "texture": path,
+                           "region": [t["atlas_xy"][0], t["atlas_xy"][1], tw, th]}]}
+        if t.get("piece"):
+            e["part"] = True  # one tile of a road piece: placed only through the piece, not in the panel
+        out.append(e)
+    # T-252: the road pieces (2 x 2 tiles each, one entry per rotation) come first among the roads.
+    pieces = []
+    for p in atlas.get("pieces", []):
+        parts = [{"dx": c * GROUND_CELL, "dy": r * GROUND_CELL, "tile": "road-" + p["tiles"][r][c]}
+                 for r in range(2) for c in range(2)]
+        w, h = p["sheet_size"]
+        pieces.append({"id": "road-" + p["name"], "kind": "road", "footprint_units": [2 * GROUND_CELL] * 2,
+                       "views": ["iso"], "mirrors": [False], "arms": p["arms"], "parts": parts,
+                       "textures": [{"view": "iso", "mirror": False, "variant": p["name"],
+                                     "texture": "res://art/ground/" + p["sheet"],
+                                     "region": [p["sheet_xy"][0], p["sheet_xy"][1], w, h]}]})
+    out = pieces + out
     out.append({"id": "road-road_tile", "kind": "road", "footprint_units": [GROUND_CELL, GROUND_CELL],
                 "views": ["iso"], "mirrors": [False],
                 "textures": [{"view": "iso", "mirror": False, "variant": "road_tile",

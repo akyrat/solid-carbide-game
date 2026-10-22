@@ -72,7 +72,7 @@ func _ready() -> void:
 		grid.columns = 4
 		list.add_child(grid)
 		var ids: Array = []
-		for e in LevelDocument.entries():
+		for e in LevelDocument.panel_entries():
 			if str(e.kind) != kind:
 				continue
 			var id := str(e.id)

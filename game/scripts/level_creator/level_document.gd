@@ -68,6 +68,12 @@ static func entries() -> Array:
 	return catalogue().get("entries", [])
 
 
+## The entries the side panel shows: the catalogue's without the single tiles of road pieces
+## ("part": placed only through their piece).
+static func panel_entries() -> Array:
+	return entries().filter(func(e): return not e.get("part", false))
+
+
 static func entry(id: String) -> Dictionary:
 	for e in entries():
 		if str(e.id) == id:
@@ -298,7 +304,14 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var tex := texture_of(asset_id, view, mirror)
 	match kind:
 		"ground", "road":
-			cells[c.y][c.x] = asset_id
+			if e.has("parts"):
+				# A road piece (T-252): its four tiles, each on its own cell (those inside the map).
+				for part in e.parts:
+					var pc := c + Vector2i(int(float(part.dx) / CELL), int(float(part.dy) / CELL))
+					if pc.x < cols() and pc.y < rows():
+						cells[pc.y][pc.x] = str(part.tile)
+			else:
+				cells[c.y][c.x] = asset_id
 			_write_cells()
 			refresh_ground_rows()
 			return {"kind": kind, "cell": c}
@@ -564,7 +577,7 @@ func ground_layout() -> Dictionary:
 	var extra: Array = []
 	var value := {}
 	for e in entries():
-		if not (str(e.kind) in ["ground", "road"]):
+		if not (str(e.kind) in ["ground", "road"]) or e.has("parts"):
 			continue
 		if e.has("atlas_index"):
 			value[str(e.id)] = int(e.atlas_index)

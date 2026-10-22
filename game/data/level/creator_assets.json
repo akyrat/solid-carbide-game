@@ -8,69 +8,11 @@
  ],
  "entries": [
   {
-   "id": "road-piece_mid_y",
-   "kind": "road",
-   "footprint_units": [
-    2.0,
-    2.0
-   ],
-   "views": [
-    "iso"
-   ],
-   "mirrors": [
-    false
-   ],
-   "atlas_index": 87,
-   "textures": [
-    {
-     "view": "iso",
-     "mirror": false,
-     "variant": "piece_mid_y",
-     "texture": "res://art/ground/ground_atlas.png",
-     "region": [
-      896,
-      640,
-      128,
-      64
-     ]
-    }
-   ]
-  },
-  {
-   "id": "road-piece_mid_x",
-   "kind": "road",
-   "footprint_units": [
-    2.0,
-    2.0
-   ],
-   "views": [
-    "iso"
-   ],
-   "mirrors": [
-    false
-   ],
-   "atlas_index": 88,
-   "textures": [
-    {
-     "view": "iso",
-     "mirror": false,
-     "variant": "piece_mid_x",
-     "texture": "res://art/ground/ground_atlas.png",
-     "region": [
-      0,
-      704,
-      128,
-      64
-     ]
-    }
-   ]
-  },
-  {
    "id": "road-piece_corner_ne",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -78,18 +20,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 89,
+   "arms": "ne",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_ne_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_ne_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_ne_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_ne_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_corner_ne",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      128,
-      704,
-      128,
-      64
+      0,
+      0,
+      256,
+      128
      ]
     }
    ]
@@ -98,8 +62,8 @@
    "id": "road-piece_corner_es",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -107,18 +71,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 90,
+   "arms": "es",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_es_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_es_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_es_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_es_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_corner_es",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
       256,
-      704,
-      128,
-      64
+      0,
+      256,
+      128
      ]
     }
    ]
@@ -127,8 +113,8 @@
    "id": "road-piece_corner_sw",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -136,18 +122,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 91,
+   "arms": "sw",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_sw_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_sw_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_sw_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_sw_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_corner_sw",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      384,
-      704,
-      128,
-      64
+      512,
+      0,
+      256,
+      128
      ]
     }
    ]
@@ -156,8 +164,8 @@
    "id": "road-piece_corner_nw",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -165,18 +173,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 92,
+   "arms": "nw",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_nw_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_corner_nw_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_nw_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_corner_nw_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_corner_nw",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      512,
-      704,
-      128,
-      64
+      768,
+      0,
+      256,
+      128
      ]
     }
    ]
@@ -185,8 +215,8 @@
    "id": "road-piece_t_nes",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -194,18 +224,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 93,
+   "arms": "nes",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_nes_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_nes_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_nes_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_nes_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_t_nes",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      640,
-      704,
+      0,
       128,
-      64
+      256,
+      128
      ]
     }
    ]
@@ -214,8 +266,8 @@
    "id": "road-piece_t_esw",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -223,18 +275,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 94,
+   "arms": "esw",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_esw_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_esw_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_esw_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_esw_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_t_esw",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      768,
-      704,
+      256,
       128,
-      64
+      256,
+      128
      ]
     }
    ]
@@ -243,8 +317,8 @@
    "id": "road-piece_t_swn",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -252,18 +326,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 95,
+   "arms": "swn",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_swn_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_swn_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_swn_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_swn_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_t_swn",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      896,
-      704,
+      512,
       128,
-      64
+      256,
+      128
      ]
     }
    ]
@@ -272,8 +368,8 @@
    "id": "road-piece_t_wne",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -281,18 +377,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 96,
+   "arms": "wne",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_wne_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_t_wne_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_wne_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_t_wne_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_t_wne",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      0,
       768,
       128,
-      64
+      256,
+      128
      ]
     }
    ]
@@ -301,8 +419,8 @@
    "id": "road-piece_cross",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -310,18 +428,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 97,
+   "arms": "nesw",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_cross_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_cross_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_cross_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_cross_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_cross",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      128,
-      768,
-      128,
-      64
+      0,
+      256,
+      256,
+      128
      ]
     }
    ]
@@ -330,8 +470,8 @@
    "id": "road-piece_dead_n",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -339,18 +479,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 98,
+   "arms": "n",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_n_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_n_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_n_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_n_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_dead_n",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
       256,
-      768,
-      128,
-      64
+      256,
+      256,
+      128
      ]
     }
    ]
@@ -359,8 +521,8 @@
    "id": "road-piece_dead_e",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -368,18 +530,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 99,
+   "arms": "e",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_e_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_e_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_e_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_e_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_dead_e",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      384,
-      768,
-      128,
-      64
+      512,
+      256,
+      256,
+      128
      ]
     }
    ]
@@ -388,8 +572,8 @@
    "id": "road-piece_dead_s",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -397,18 +581,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 100,
+   "arms": "s",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_s_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_s_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_s_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_s_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_dead_s",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      512,
       768,
-      128,
-      64
+      256,
+      256,
+      128
      ]
     }
    ]
@@ -417,8 +623,8 @@
    "id": "road-piece_dead_w",
    "kind": "road",
    "footprint_units": [
-    2.0,
-    2.0
+    4.0,
+    4.0
    ],
    "views": [
     "iso"
@@ -426,18 +632,40 @@
    "mirrors": [
     false
    ],
-   "atlas_index": 101,
+   "arms": "w",
+   "parts": [
+    {
+     "dx": 0.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_w_00"
+    },
+    {
+     "dx": 2.0,
+     "dy": 0.0,
+     "tile": "road-piece_dead_w_10"
+    },
+    {
+     "dx": 0.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_w_01"
+    },
+    {
+     "dx": 2.0,
+     "dy": 2.0,
+     "tile": "road-piece_dead_w_11"
+    }
+   ],
    "textures": [
     {
      "view": "iso",
      "mirror": false,
      "variant": "piece_dead_w",
-     "texture": "res://art/ground/ground_atlas.png",
+     "texture": "res://art/ground/road_pieces.png",
      "region": [
-      640,
-      768,
-      128,
-      64
+      0,
+      384,
+      256,
+      128
      ]
     }
    ]
@@ -2964,6 +3192,1566 @@
      ]
     }
    ]
+  },
+  {
+   "id": "road-piece_corner_ne_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 87,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_ne_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      640,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_ne_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 88,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_ne_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_ne_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 89,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_ne_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_ne_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 90,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_ne_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_es_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 91,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_es_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_es_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 92,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_es_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_es_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 93,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_es_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_es_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 94,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_es_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_sw_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 95,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_sw_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      704,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_sw_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 96,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_sw_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_sw_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 97,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_sw_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_sw_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 98,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_sw_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_nw_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 99,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_nw_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_nw_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 100,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_nw_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_nw_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 101,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_nw_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_corner_nw_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 102,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_corner_nw_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_nes_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 103,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_nes_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      768,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_nes_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 104,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_nes_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_nes_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 105,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_nes_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_nes_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 106,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_nes_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_esw_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 107,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_esw_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_esw_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 108,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_esw_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_esw_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 109,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_esw_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_esw_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 110,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_esw_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_swn_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 111,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_swn_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      832,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_swn_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 112,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_swn_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_swn_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 113,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_swn_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_swn_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 114,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_swn_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_wne_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 115,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_wne_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_wne_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 116,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_wne_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_wne_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 117,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_wne_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_t_wne_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 118,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_t_wne_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_cross_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 119,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_cross_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      896,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_cross_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 120,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_cross_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_cross_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 121,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_cross_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_cross_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 122,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_cross_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_n_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 123,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_n_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_n_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 124,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_n_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_n_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 125,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_n_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_n_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 126,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_n_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_e_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 127,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_e_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      960,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_e_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 128,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_e_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_e_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 129,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_e_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_e_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 130,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_e_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_s_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 131,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_s_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      384,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_s_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 132,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_s_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      512,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_s_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 133,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_s_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      640,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_s_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 134,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_s_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      768,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_w_00",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 135,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_w_00",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      896,
+      1024,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_w_10",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 136,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_w_10",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      0,
+      1088,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_w_01",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 137,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_w_01",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      128,
+      1088,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
+  },
+  {
+   "id": "road-piece_dead_w_11",
+   "kind": "road",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false
+   ],
+   "atlas_index": 138,
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "piece_dead_w_11",
+     "texture": "res://art/ground/ground_atlas.png",
+     "region": [
+      256,
+      1088,
+      128,
+      64
+     ]
+    }
+   ],
+   "part": true
   },
   {
    "id": "road-road_tile",
