@@ -1,7 +1,7 @@
 ---
 id: T-252
 title: "Level creator: road corners, T-junctions, crossroads and dead ends"
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -48,6 +48,18 @@ Board review files: the screenshot in `art-archive/T-252/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started: road corners, T-junctions, crossroads and dead ends, drawn by script.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Level/Challenge agent, done (no PixelLab call, no cost).
+
+- **Built:** 15 tiles appended to the ground atlas by `build_ground_tiles.py` (indexes 87 to 101, so every older tile and the game's own ground are unchanged): 4 corners, 4 T-junctions, a crossroads, 4 dead ends, and the 2 one-tile-wide straights that join them. Drawn from the approved road tile and the plain asphalt, no new colours. The creator catalogue (`creator_assets.json`, rebuilt) lists them first under Roads, one entry per rotation (`road-piece_*`); the panel shows T-250's labels (`road_corner`, `road_t_junction`, `road_crossroads`, `road_dead_end`) over each button.
+- **Design choice to check (a proposal):** the pieces are one-tile-wide roads (2 units) with the approved dashed line in the middle, because the older tiles' centre line sits on a tile edge (two tiles make a road) and cannot meet a corner or T in one tile. Each arm's line is exactly a half of the straight tile's line, so lines join with the dash phase kept. A dead end's closed side is gravel (gravel0's pixels) from 1.5 units on. The older wide-road tiles do not join these.
+- **x and y versions:** all older x and y ground tiles were already separate catalogue entries and shown in the panel; nothing needed changing. Rotation is by choosing the rotation's own button (Rotate is greyed out for roads, as before).
+- **Builder:** the only change in `build_creator_assets.py` is in `ground_entries` (a stable sort putting the pieces first); T-251's changes in `elevation_entries` should merge cleanly, and a rebuild regenerates the catalogue.
+- **Tests:** `RoadPieceTests` in `tools/test_build_ground_tiles.py` (old tiles and cells unchanged by hash, every rotation present, arm lines equal the straights' halves, lines reach exactly the open edges, dead-end gravel, `check_sprite_rules.check_rows` on each piece, tiling), `tools/test_build_creator_assets.py`, `tests/unit/level_creator/test_road_pieces.gd`. Full GUT suite passed (1379 tests, before the final test-file tidy; the new GUT file re-run below), both Python sets run.
+- **Screenshot:** `art-archive/T-252/screenshots/street_grid.png` (fixture `tests/fixtures/level_creator_roads_demo.tscn`): a 5 x 5 street grid with every piece, plus two short dead-end roads. Seen: the lines join at the tile edges, the ring with the crossroads reads as a street network; the dead ends are subtle against the gravel ground.
+- **Process notes:** one command (`sha256sum` on a file) and one scratchpad script run were refused by the status guard and skipped; I did not work around them. One early edit of the builder used an inline Python heredoc by mistake.
