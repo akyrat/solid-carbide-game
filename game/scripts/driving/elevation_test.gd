@@ -182,7 +182,9 @@ func z_for(centre: Vector2, height: float, offset: int) -> int:
 
 func update_depth() -> void:
 	var units: Vector2 = car.model.get_position()
-	shadow.z_index = z_for(units, ground_height.height_at(units), 0)
+	# Under the car; under an area only while the car is (T-258): a car in the
+	# air past an area's far edge keeps its shadow in view.
+	shadow.z_index = z_for(units, car.height, 1) - 1
 	car_sprite.z_index = z_for(units, car.height, 1)
 
 
