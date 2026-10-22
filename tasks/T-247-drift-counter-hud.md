@@ -1,7 +1,7 @@
 ---
 id: T-247
 title: The HUD's live drift counter, next to the airtime counter
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Coursework
@@ -48,6 +48,16 @@ Board review files: the screenshot and GIF in `art-archive/T-247/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started at the board's word, built on T-243's airtime counter branch; T-243 taken out of its dependencies.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built `DriftCounter` (`game/scripts/hud/drift_counter.gd`), a subclass of `AirtimeCounter` that only swaps the icon (new `_make_icon()` hook): two code-drawn skid marks, white with black outline. `Hud` builds it, feeds it `car.model.is_drifting` and `model.dt` each physics step and resets it in `bind_car`. Tests: `tests/unit/hud/test_hud_drift_counter.gd` (appears, counts in hundredths, disappears and restarts, both counters independent, rebinding, number and icon only and never red, place in a run); the airtime test's fake model got an `is_drifting` field. Full GUT suite, both Python tool test sets pass (see the final run below).
+
+Proposals for the playtest: the counter sits directly under the airtime counter (`Hud.DRIFT_OFFSET` (70, 30)); the icon is two skid marks. Finding: T-219 stops drifting in the air, so the drift counter ends at takeoff and both counters never really show at once in play; the screenshot with both is staged (airtime counter set by hand).
+
+Screenshots and GIF in `art-archive/T-247/screenshots/`: `drift_counter.png` (1.00), `drift_and_airtime_counters.png` (staged both), `drift_counter.gif` (a 2 s drift). Fixture: `game/tests/fixtures/drift_counter_gif.tscn`. Documents updated: `game/README.md`, `docs/hud-and-menus.md`.

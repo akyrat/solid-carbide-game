@@ -1356,3 +1356,10 @@ Task T-243 (HUD and menus, Decisions, "Airtime counter"). `scripts/hud/airtime_c
 
 - **Tests:** `tests/unit/hud/test_hud_airtime_counter.gd`.
 - **Screenshot and GIF:** `tests/fixtures/airtime_counter_gif.tscn` (a drive off a rooftop; `AIRTIME_PNG` saves a mid-jump screenshot), recorded with `--write-movie` and `tools/frames_to_gif.py`; results in `art-archive/T-243/screenshots/`.
+
+## Drift counter (HUD)
+
+Task T-247 (HUD and menus, Decisions, "Drift counter"). `scripts/hud/drift_counter.gd` (`DriftCounter`, a child "DriftCounter" of the `Hud`) extends `AirtimeCounter` and reuses its look and code (white Bangers number with a black outline, two decimals, seconds, no unit); only the icon differs: two curving skid marks drawn in code (`_make_icon()`, white with a black outline, never Redgull red). `Hud._on_car_stepped` feeds `step(car.model.is_drifting, car.model.dt)` once per physics step: it shows from the first drifting step, adds one step per step drifting and hides and resets when the drift ends (the moment it pays out, T-246). `Hud.bind_car` resets it with the airtime counter. Place: `Hud.DRIFT_OFFSET` (70, 30) from the screen's centre, directly under the airtime counter at the same x, so both fit at once. Place and icon are proposals for the playtest. Note: there is no drifting in the air (T-219), so in play the drift counter ends as the car leaves an edge and the airtime counter starts; the two can overlap only on the step boundary. The screenshot with both is staged.
+
+- **Tests:** `tests/unit/hud/test_hud_drift_counter.gd`.
+- **Screenshot and GIF:** `tests/fixtures/drift_counter_gif.tscn` (`DRIFT_PNG` and `DRIFT_BOTH_PNG` save screenshots), recorded with `--write-movie` and `tools/frames_to_gif.py`; results in `art-archive/T-247/screenshots/`.
