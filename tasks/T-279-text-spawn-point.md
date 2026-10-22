@@ -1,7 +1,7 @@
 ---
 id: T-279
 title: "Text: the level creator's spawn point"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/data/level/creator_texts.json, tasks/T-271-text-thread-the-needle.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -50,8 +50,13 @@ Started at the board's request: the spawn point's labels.
 
 Text written: Start marker, its hint and messages, and the updated controls line. Sent to QA.
 
+### 2026-10-22, In QA → Done
+
+QA passed both. Done: the spawn point's labels; T-280 uses them.
+
 ## Result notes
 
 Written by the agent when it finishes.
 
 Added five keys to `game/data/level/creator_texts.json` (every existing key unchanged) and listed them in Level design, Content, "Level creator text", with this ticket's id: `spawn_label` "Start", `spawn_hint` "Start: drag to move. R: turn.", `spawn_blocked` "Can't start here: it's blocked.", `spawn_no_delete` "The start can't be deleted.", `controls_hint_spawn` (the pairs hint with "move the start" added; replaces `controls_hint_pairs`, which is kept). R is used as the turn key, the same as for pieces; the build must use the same key. Documents affected: docs/level-design.md.
+- 2026-10-22, in-qa → done: QA passed both; text only, kept on the creator build line
