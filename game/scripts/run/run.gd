@@ -351,6 +351,7 @@ func _build_world() -> void:
 	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
+	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
 	sync_view(true)
 	car_sprite.reset_physics_interpolation()

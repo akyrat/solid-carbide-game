@@ -1,7 +1,7 @@
 ---
 id: T-247
 title: The HUD's live drift counter, next to the airtime counter
-status: blocked
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-243]
+depends_on: []
 documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/drifting.md, game/README.md, tasks/T-243-airtime-counter-hud.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, game/README.md, docs/hud-and-menus.md, art-archive/T-247/screenshots/]
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the counter appears when a drift starts, counts up in hundredths matching the drift's length, and disappears when the drift ends (QA: pass / fail)
-- [ ] It shows only a two-decimal number and its placeholder icon, beside the airtime counter, never Redgull red; both can show at once (screenshot) (QA: pass / fail)
-- [ ] A GIF of a drift shows it counting, in `art-archive/T-247/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the counter appears when a drift starts, counts up in hundredths matching the drift's length, and disappears when the drift ends (QA: pass; test_hud_drift_counter covers appear, hundredths count, disappear and restart; GUT 1305/1305 pass)
+- [ ] It shows only a two-decimal number and its placeholder icon, beside the airtime counter, never Redgull red; both can show at once (screenshot) (QA: pass; screenshots show number plus skid-mark icon, white, under the airtime counter without overlap; both together is staged in a fixture because drifting stops in the air, T-219, as noted)
+- [ ] A GIF of a drift shows it counting, in `art-archive/T-247/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; drift_counter.gif present, 2 s drift; GUT, tools 439 OK, game/tools 393 OK)
 
 The board's review: drift and watch the counter.
 Board review files: the screenshot and GIF in `art-archive/T-247/screenshots/`.
@@ -48,6 +48,20 @@ Board review files: the screenshot and GIF in `art-archive/T-247/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started at the board's word, built on T-243's airtime counter branch; T-243 taken out of its dependencies.
+
+### 2026-10-22, In progress → In QA
+
+Built: a drift counter with a skid-marks icon under the airtime counter. In play the two rarely show together, since a drift ends at takeoff. Sent to QA.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built `DriftCounter` (`game/scripts/hud/drift_counter.gd`), a subclass of `AirtimeCounter` that only swaps the icon (new `_make_icon()` hook): two code-drawn skid marks, white with black outline. `Hud` builds it, feeds it `car.model.is_drifting` and `model.dt` each physics step and resets it in `bind_car`. Tests: `tests/unit/hud/test_hud_drift_counter.gd` (appears, counts in hundredths, disappears and restarts, both counters independent, rebinding, number and icon only and never red, place in a run); the airtime test's fake model got an `is_drifting` field. Full GUT suite, both Python tool test sets pass (see the final run below).
+
+Proposals for the playtest: the counter sits directly under the airtime counter (`Hud.DRIFT_OFFSET` (70, 30)); the icon is two skid marks. Finding: T-219 stops drifting in the air, so the drift counter ends at takeoff and both counters never really show at once in play; the screenshot with both is staged (airtime counter set by hand).
+
+Screenshots and GIF in `art-archive/T-247/screenshots/`: `drift_counter.png` (1.00), `drift_and_airtime_counters.png` (staged both), `drift_counter.gif` (a 2 s drift). Fixture: `game/tests/fixtures/drift_counter_gif.tscn`. Documents updated: `game/README.md`, `docs/hud-and-menus.md`.
