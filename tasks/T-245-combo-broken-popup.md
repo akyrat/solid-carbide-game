@@ -1,7 +1,7 @@
 ---
 id: T-245
 title: A red, broken-looking popup when a crash breaks the combo
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the popup appears when a crash cuts a combo, and not when there is no combo or when the combo drains (QA: pass / fail)
-- [ ] It shows T-244's text word for word, in red (not Redgull's red) and a broken style, following the car (screenshot, GIF) (QA: pass / fail)
-- [ ] The GIF is in `art-archive/T-245/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the popup appears when a crash cuts a combo, and not when there is no combo or when the combo drains (QA: pass; test_combo_broken_popup.gd covers a cut, any damage, an obstacle hit, no combo, drain, signal only on a cut)
+- [ ] It shows T-244's text word for word, in red (not Redgull's red) and a broken style, following the car (screenshot, GIF) (QA: pass; screenshot shows COMBO BROKEN! above the car on a cracked orange-red card (255,80,16, not Redgull 135,17,27, not the heart); text matches T-244; follows-car test passes)
+- [ ] The GIF is in `art-archive/T-245/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; GIF and PNG present; GUT all passed, tools 439 OK, game/tools 393 OK skipped=1)
 
 The board's review: build a combo, crash into a wall, and watch the popup.
 Board review files: the screenshot and GIF in `art-archive/T-245/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started.
+
+### 2026-10-22, In progress → In QA
+
+Built: a red-orange cracked COMBO BROKEN! card that shakes and breaks apart, only when a crash cuts a combo. Sent to QA.
 
 ## Result notes
 
