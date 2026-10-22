@@ -1,7 +1,7 @@
 ---
 id: T-227
 title: "Art: the minion's falling animation (PixelLab)"
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [art-archive/README.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/enemies.md, tasks/T-226-enemies-jump-down-off-ledges.md, art-archive/README.md, game/README.md]
 files_expected_to_change: [game/art/minion/, game/scripts/enemies/, game/tests/unit/, art-archive/T-227/, art-archive/README.md, game/README.md, game/art/pixellab-generation-log.jsonl]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,14 @@ Sample approved by the board. The other four directions start now.
 
 All five directions built (5 generations in all). Sent to QA.
 
+### 2026-10-21, In QA → Needs playtest
+
+QA passed all 4. Ready for the board: C:\solid-carbide-worktrees\T-227\game\project.godot; get below minions on a rooftop and watch them fall.
+
+### 2026-10-22, Needs playtest → Done
+
+The board played it: it works. Merging into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -100,3 +108,4 @@ Judgment (mine): all five read as the same lizard falling, in the minion's colou
 Test change: `test_enemies_drop_off_ledges.gd` had `assert_null(fall_sheet("e"))` ("no falling art yet"); it now checks that all five sheets load and are 8 frames wide. Tests: `bash game/tools/run_tests.sh` 1288/1288 passed (first run failed only on that old assertion); `python -m unittest discover -s tools -p "test_*.py"` 439 OK; `python -m unittest discover -s game/tools -p "test_*.py"` 395 OK (1 skipped).
 
 GIF: `art-archive/T-227/minion_fall_all_in_run_close.gif` (3x, T-226's `enemies_drop_gif.tscn`, all five new sheets live, no placeholder). I looked at its frames (`review_all_run_close_contact.png`): minions drop off the rooftop's edge showing the new frames and land by the car, behaving as before. In this fixture they fall mostly facing east or south-east (and one briefly faces south-west), so the run shows two or three of the directions; all five are shown side by side in `review_fall_all5_dark.png` and `_light.png`. One minion in one frame looked orange-tinted (probably a hit flash from the car; not checked). No command was refused in round 2.
+- 2026-10-22, needs-playtest → done: board's playtest: falling minions work
