@@ -1,7 +1,7 @@
 ---
 id: T-260
 title: The task board's Builds tab gets a "Play creator" button
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -44,6 +44,10 @@ This is the task board's tooling, which the player never meets. Work on your own
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: a Play creator button on the Builds tab.
 
 ## Result notes
 
