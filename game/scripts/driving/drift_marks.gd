@@ -18,6 +18,15 @@ extends Node2D
 ##   `fade_time` seconds and is removed. At most max_segments segments are
 ##   kept; past it the oldest pieces go first.
 ##
+## Hype (task T-249; Visual style, Decisions, "Hype drift trail"): the marks
+## heat up with the combo, on the HUD's combo heat steps (ComboHeat.THRESHOLDS,
+## read from there). heat_step is 0 (the plain marks) below x2, then 1, 2, 3 from
+## x2, x3, x4. Each piece takes the step current when it is started and keeps it
+## for life, so the trail shows how hot the drift was. A piece of step 1 or more
+## gets a solid glow line behind it and a hot core line on it (heat_looks), the
+## tyres throw sparks, and at the top step flames (drift_heat_sparks.gd).
+## Nothing calls set_multiplier in the drift prototype, so it keeps the plain marks.
+##
 ## Every look and tuning value lives in scenes/driving/drift_marks.tscn (the
 ## exported variables below), so the art task (T-118) swaps the texture and
 ## retunes without touching this code.
@@ -29,6 +38,7 @@ extends Node2D
 
 ## Pixels per unit in the flat world (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
+const HeatSparks := preload("res://scripts/driving/drift_heat_sparks.gd")
 
 ## The mark's texture, drawn along each line (Line2D texture). Opaque pixels
 ## only; the whole piece fades through modulate.
@@ -54,6 +64,20 @@ const PX_PER_UNIT := 16.0
 ## How far each rear tyre is from the car's centre line, in units (the car is 1 wide).
 @export var half_track_units: float = 0.375
 
+## The look of each heat step, index 0 = step 1 (x2), 1 = step 2 (x3), 2 = step 3
+## (x4 and up). Keys: glow_color, glow_width_units (behind the mark, wider than
+## it), core_color, core_width_units (on the mark; 0 = none), flicker_colors
+## (glow colours picked each flicker frame; empty = steady), spark_rate (per
+## second per tyre), spark_speed (world px/s), spark_life, spark_size_px,
+## spark_colors, flame_rate (per second per tyre), flame_size_px, flame_life.
+## All colours opaque, in the combo heat's yellows, oranges and white-hot.
+@export var heat_looks: Array = []
+## Length of a flicker frame in seconds (the combo heat's, 1/12).
+@export var flicker_frame: float = 1.0 / 12.0
+
+## The current heat step, 0 to 3; marks started now take it.
+var heat_step := 0
+
 ## Seconds since this node started (only advances while not paused).
 var time := 0.0
 ## How many marks have been started (each drift starts two: one per tyre).
@@ -66,10 +90,41 @@ var _pieces: Array = []
 var _open: Array = [null, null]
 var _segments := 0
 var _was_drifting := false
+var _sparks: Node2D
+var _spark_carry := [0.0, 0.0]
+var _flame_carry := [0.0, 0.0]
+var _flicker_seed := -1
+
+
+func _ready() -> void:
+	_sparks = HeatSparks.new()
+	_sparks.name = "HeatSparks"
+	add_child(_sparks)
 
 
 func _process(delta: float) -> void:
 	advance(delta)
+
+
+## The combo multiplier now (from RunState.combo_changed): picks the heat step
+## for marks started from now on, with the combo heat's own thresholds.
+func set_multiplier(multiplier: float) -> void:
+	heat_step = ComboHeat.step_for(multiplier)
+
+
+## The look of heat step `step` (1 to 3), or {} for the plain marks.
+func look_for(step: int) -> Dictionary:
+	if step < 1 or step > heat_looks.size():
+		return {}
+	return heat_looks[step - 1]
+
+
+## The heat step a mark number's pieces were laid at (0 when it is gone).
+func step_of_mark(mark: int) -> int:
+	for p in _pieces:
+		if p.mark == mark:
+			return p.step
+	return 0
 
 
 ## Lays marks after the car's every physics step. None while the car is
@@ -135,6 +190,8 @@ func advance(delta: float) -> void:
 			line.modulate.a = 1.0
 		keep.append(p)
 	_pieces = keep
+	_flicker()
+	_throw_sparks(delta)
 
 
 ## Segments kept now, both tyres together.
@@ -173,6 +230,8 @@ func clear() -> void:
 	_open = [null, null]
 	_segments = 0
 	_was_drifting = false
+	if _sparks != null:
+		_sparks.clear()
 
 
 func _new_piece(mark: int, tyre: int, start_px: Vector2) -> Dictionary:
@@ -188,9 +247,66 @@ func _new_piece(mark: int, tyre: int, start_px: Vector2) -> Dictionary:
 	line.joint_mode = Line2D.LINE_JOINT_SHARP
 	line.add_point(start_px)
 	add_child(line)
-	var p := {"line": line, "mark": mark, "tyre": tyre, "closed_at": -1.0, "segments": 0}
+	var p := {"line": line, "mark": mark, "tyre": tyre, "closed_at": -1.0, "segments": 0,
+		"step": heat_step, "glow": null, "core": null}
+	var look := look_for(heat_step)
+	if not look.is_empty():
+		p.glow = _heat_line("Glow", look.glow_width_units, look.glow_color, start_px, line)
+		p.glow.show_behind_parent = true
+		if look.core_width_units > 0.0:
+			p.core = _heat_line("Core", look.core_width_units, look.core_color, start_px, line)
 	_pieces.append(p)
 	return p
+
+
+func _heat_line(node_name: String, width_units: float, color: Color, start_px: Vector2, parent: Line2D) -> Line2D:
+	var l := Line2D.new()
+	l.name = node_name
+	l.width = width_units * PX_PER_UNIT
+	l.default_color = color
+	l.antialiased = false
+	l.joint_mode = Line2D.LINE_JOINT_SHARP
+	l.add_point(start_px)
+	parent.add_child(l)
+	return l
+
+
+## Glow colours jump each flicker frame on steps that flicker (steady ones keep theirs).
+func _flicker() -> void:
+	var frame := int(floorf(time / flicker_frame))
+	if frame == _flicker_seed:
+		return
+	_flicker_seed = frame
+	for p in _pieces:
+		var look := look_for(p.step)
+		if look.is_empty() or look.flicker_colors.is_empty():
+			continue
+		var colors: Array = look.flicker_colors
+		var pick := int(abs(sin((frame + p.mark * 7 + p.tyre) * 12.9898) * 43758.5453)) % colors.size()
+		p.glow.default_color = colors[pick]
+
+
+## Sparks (and, at the top step, flames) off each tyre being laid at a hot step.
+func _throw_sparks(delta: float) -> void:
+	if _sparks == null:
+		return
+	_sparks.age(delta)
+	for t in 2:
+		var p = _open[t]
+		if p == null or p.step < 1:
+			_spark_carry[t] = 0.0
+			_flame_carry[t] = 0.0
+			continue
+		var look := look_for(p.step)
+		var at: Vector2 = p.line.get_point_position(p.line.get_point_count() - 1)
+		_spark_carry[t] += look.spark_rate * delta
+		while _spark_carry[t] >= 1.0:
+			_spark_carry[t] -= 1.0
+			_sparks.emit(at, look, false)
+		_flame_carry[t] += look.flame_rate * delta
+		while _flame_carry[t] >= 1.0:
+			_flame_carry[t] -= 1.0
+			_sparks.emit(at, look, true)
 
 
 func _extend(tyre: int, point_px: Vector2) -> void:
@@ -202,6 +318,9 @@ func _extend(tyre: int, point_px: Vector2) -> void:
 	if last.distance_to(point_px) < min_segment_units * PX_PER_UNIT:
 		return
 	line.add_point(point_px)
+	for extra in [p.glow, p.core]:
+		if extra != null:
+			extra.add_point(point_px)
 	p.segments += 1
 	_segments += 1
 	if p.segments >= piece_segments:
@@ -243,6 +362,9 @@ func _enforce_cap() -> void:
 			break
 		var line: Line2D = p.line
 		line.remove_point(0)
+		for extra in [p.glow, p.core]:
+			if extra != null:
+				extra.remove_point(0)
 		p.segments -= 1
 		_segments -= 1
 

@@ -1700,3 +1700,8 @@ Entry format:
 - Decision or change: the board found in a playtest that the airborne car's shadow doesn't show at all over raised ground (rooftops, ramps); it must always show on the ground under the car at that ground's height. Bug fix ticket T-258.
 - Documents touched: none (a bug against the existing Drifting and Level design decisions)
 - Tasks: T-258
+
+## 2026-10-22: T-249 done: the hype drift trail
+- Decision or change: the board played the hype drift trail and approved it: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4, each mark keeping the step it was laid at (Visual style, Decisions, "Hype drift trail"). The board also found that the drift marks don't show on rooftops and ramps (bug ticket T-259).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-249 (done), T-259
