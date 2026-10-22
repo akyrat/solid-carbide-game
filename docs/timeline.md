@@ -1765,3 +1765,8 @@ Entry format:
 - Decision or change: the board wants to mark two obstacles as a pair in the level creator; driving through the gap between them is a new trick, thread the needle, that raises the combo. Its worth, repeat rule and look are the agents' proposals (Level design, Decisions, "Thread the needle"; text T-271, build T-272).
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-271, T-272
+
+## 2026-10-22: A thicker likes bar that springs, and one game build to playtest
+- Decision or change: the likes bar becomes 4 times thicker (16 to 64 pixels) and springs to its new fill with a small overshoot instead of jumping (HUD and menus, Decisions; T-273). Brand Magnet's "Redgull calls it engagement" goes as well (added to T-268). The board will play everything outside the level creator together in one build, with patch notes and suggested objectives before it plays.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-273, T-268
