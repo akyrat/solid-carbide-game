@@ -1745,3 +1745,8 @@ Entry format:
 - Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-261, T-262, T-263, T-264, T-265
+
+## 2026-10-22: A stronger wiper push
+- Decision or change: the board asked for the windshield wiper to push minions about twice the car's size at its first level; the Project Lead reads that as twice the car's length, 6 units (from 1.5), with the tier multipliers unchanged (Weapons, Decisions, "A stronger wiper push"; T-266).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-266

@@ -771,6 +771,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Windshield wiper:** one wiper in front of the car that sweeps in a semicircle, like a windshield wiper. Enemies it hits take damage and are knocked back. It is the only weapon that pushes enemies (the "never push enemies back" rule above is about the gun and the flamethrower).
   - They join the MVP, which then has 5 weapons. Each has 8 tiers like the gun and the flamethrower: getting it is tier 1, then 7 upgrades. Their numbers and what each tier changes are proposals by the agents, judged in the board's playtest.
   - Answers to the goal runner's questions (board, 2026-10-18): an enemy burns only while it is inside a molotov's fire area, not after it leaves. The windshield wiper sweeps all the time; it damages the kaiju but pushes only minions. The garage's damage bonus multiplies the damage of every weapon, the three new ones included. The starting gun's level-up card shows a small pixel-art gun.
+- **A stronger wiper push** (board, 2026-10-22, after playtests): the windshield wiper's first level (tier 1, when it is picked up) pushes a minion back about twice the car's size; read as twice the car's length, 6 units (the car is 1 unit wide and 3 long), against 1.5 today. The later tiers keep their multipliers, so they grow from the new base. (T-266)
   - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has). The first level-up still offers "get the flamethrower" or "upgrade the gun".
 
 ### Content
@@ -1146,7 +1147,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `79992b7499de7176b5a8d7c168af4defc2e974159e4c819ceb29a41afec5aa94` |
 | `level-design.md` | `3bf7cfa14e5c863869c21fd2edc1cd6c62f1bbd9948aeb1e95ae6dc7c98126cd` |
 | `enemies.md` | `965eae9788028d11b44a7a0e23670716e52946e62cb28d4ffead87ee0c0ddf97` |
-| `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
+| `weapons.md` | `f32885ffb99abc1e274714c1e3f57b2f63206bbcbcf02e677c99e41eb2376dda` |
 | `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
 | `visual-style.md` | `3453b60999006d3aa092d4791f750b2365d7fc118191562f88ac5e06abeb2b04` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
