@@ -1086,6 +1086,8 @@ Task T-091. When the car sends a `trick` signal (Game loop architecture; the ids
 
 Task T-244 (decision: Decisions, "Combo broken popup", 2026-10-21). When a crash cuts the combo, the popup pops from the car like the trick popups, in red and broken-looking, with this exact text, for T-245 to use word for word: **COMBO BROKEN!**. It is one short line in the trick popups' voice (capitals, exclamation mark, like LONG DRIFT! and AIR 360!) and reads as a loss. Proposal for the playtest: it shows no amount lost (no "-{amount}"), only the line; the combo counter dropping to nothing already shows the size of the loss, and a bare line stays readable at a glance mid-crash.
 
+Task T-245 builds it (proposals for the playtest, the board decides the look): it appears only when a collision or any damage actually takes a combo down (the run state's `combo_broken`), never with no combo to cut and never when the combo drains away. It is the trick popups' card (same size, same place above the car, follows the car, stacks with the trick popups, same one second and fade) but a warning red-orange card (255, 80, 16, clear of the heart's Redgull red) with a black border and white lettering with a black outline, cracked in two along a jagged line through the text. It shakes for the first 0.3 seconds, and from 0.08 seconds the right half falls away (down and a little right) while it fades. Hard pixel edges, no semi-transparent pixels. How it is built: `game/README.md`, "Trick popups".
+
 #### Pause screen
 
 Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the pause screen; Escape again resumes from exactly where the car was. The screen is a compact, nearly opaque black strip across the whole width, starting just below the HUD timer and only as tall as its content, over a light dim of the rest of the screen, so as much of the map as possible stays visible. It works in the run (including runs started from the main menu) and in the drift prototype. From top to bottom, centred in the strip:
@@ -1123,4 +1125,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
 | `visual-style.md` | `3453b60999006d3aa092d4791f750b2365d7fc118191562f88ac5e06abeb2b04` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
-| `hud-and-menus.md` | `e49b04fa6a8045c72e2fc7b2cdea8e713de7ace386b0d875c1baa2fd650491a0` |
+| `hud-and-menus.md` | `8e03a70e956edb98f77d12b3c50f1428e0444dd49fbd49cc757c7f1829ac3a8c` |

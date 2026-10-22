@@ -1705,3 +1705,8 @@ Entry format:
 - Decision or change: the board played the hype drift trail and approved it: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4, each mark keeping the step it was laid at (Visual style, Decisions, "Hype drift trail"). The board also found that the drift marks don't show on rooftops and ramps (bug ticket T-259).
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-249 (done), T-259
+
+## 2026-10-22: T-245 done: the COMBO BROKEN! popup
+- Decision or change: the board played the combo broken popup and approved it: a crash that cuts a combo pops a warning red-orange, cracked COMBO BROKEN! card that shakes and breaks apart, never when there is no combo or when it drains (HUD and menus, Decisions, "Combo broken popup").
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-245 (done)

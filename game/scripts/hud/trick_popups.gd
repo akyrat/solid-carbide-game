@@ -18,6 +18,7 @@ extends Node2D
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
+const BrokenArt := preload("res://scripts/hud/combo_broken_art.gd")
 
 ## Texts approved in task T-082.
 const TEXTS := {
@@ -28,6 +29,8 @@ const TEXTS := {
 	"air_one_eighty": "AIR 180!",
 	"air_three_sixty": "AIR 360!",
 }
+## Combo broken popup text approved in task T-244 (docs/hud-and-menus.md, "Combo broken popup").
+const BROKEN_TEXT := "COMBO BROKEN!"
 ## Combo amount text approved in task T-082 (combo.added); {amount} is what the trick added.
 const ADDED_TEXT := "+{amount}"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
@@ -90,6 +93,23 @@ class PopupText extends Node2D:
 	var heat := 0
 	## The flame frame last drawn (the flaming step flickers through Art.FLAME_FRAMES).
 	var frame := 0
+	## The combo broken popup (task T-245): a red card cracked in two; it shakes
+	## at birth and its right half falls away. Drawn from BrokenArt.
+	var broken := false
+
+	## The two halves of the broken card (left, right).
+	func broken_textures() -> Array:
+		return BrokenArt.textures(text, Art.style_for(font_size))
+
+	## The shake (drawn px) at this age.
+	func broken_shake() -> Vector2:
+		var k := 1.0 - clampf(age / BrokenArt.SHAKE_TIME, 0.0, 1.0)
+		return Vector2(sin(age * 110.0), cos(age * 130.0)) * BrokenArt.SHAKE_PX * k
+
+	## How far the right half has fallen away (drawn px) at this age.
+	func broken_fall() -> Vector2:
+		var t := maxf(age - BrokenArt.FALL_DELAY, 0.0)
+		return Vector2(t * BrokenArt.FALL_DRIFT, t * t * BrokenArt.FALL_PX)
 
 	## The baked texture for this moment.
 	func texture() -> ImageTexture:
@@ -108,6 +128,8 @@ class PopupText extends Node2D:
 	## bubble's at every heat step, so stacking is as before (task T-133); the
 	## hotter rings and flames reach a little past it.
 	func size() -> Vector2:
+		if broken:
+			return Vector2(broken_textures()[0].get_size()) * PIXEL_SCALE
 		return Vector2(Art.texture(text, Art.style_for(font_size)).get_size()) * PIXEL_SCALE
 
 	## The car's drawn position now (the last known one if it cannot be asked).
@@ -137,6 +159,8 @@ class PopupText extends Node2D:
 		var s := lerpf(POP_FROM, 1.0, clampf(age / POP_TIME, 0.0, 1.0))
 		scale = Vector2(s, s)
 		modulate.a = 1.0 if t < 0.5 else 1.0 - (t - 0.5) * 2.0
+		if broken:
+			queue_redraw()
 		if heat >= Art.FLAME_STEP:
 			var f := int(floorf(age / ComboHeat.FLICKER_FRAME))
 			if f != frame:
@@ -157,6 +181,13 @@ class PopupText extends Node2D:
 
 	func _draw() -> void:
 		if text == "":
+			return
+		if broken:
+			var halves := broken_textures()
+			var bsize := Vector2(halves[0].get_size()) * PIXEL_SCALE
+			var shake := broken_shake()
+			draw_texture_rect(halves[0], Rect2(-bsize / 2.0 + shake, bsize), false)
+			draw_texture_rect(halves[1], Rect2(-bsize / 2.0 + shake + broken_fall(), bsize), false)
 			return
 		var tex := texture()
 		var size := Vector2(tex.get_size()) * PIXEL_SCALE
@@ -210,6 +241,8 @@ func bind_combo(run_state: Node, car_position: Callable) -> void:
 	_from_combo = true
 	if not run_state.combo_trick.is_connected(_on_combo_trick):
 		run_state.combo_trick.connect(_on_combo_trick)
+	if run_state.has_signal("combo_broken") and not run_state.combo_broken.is_connected(_on_combo_broken):
+		run_state.combo_broken.connect(_on_combo_broken)
 
 
 ## The popup text for a trick: its name and, when it added something, "+{amount}".
@@ -225,6 +258,11 @@ func _on_combo_trick(trick_id: String, added: float, multiplier: float) -> void:
 	if not TEXTS.has(trick_id):
 		return
 	show_popup(trick_text(trick_id, added), _combo_car_position.call(), SIZES[trick_id], _combo_car_position, heat_for(multiplier))
+
+
+## A crash cut the combo (task T-245): the red, cracked popup, from the car.
+func _on_combo_broken() -> void:
+	show_popup(BROKEN_TEXT, _combo_car_position.call(), SIZE_NORMAL, _combo_car_position, 0, true)
 
 
 func _on_score(amount: float, _challenge_id: String) -> void:
@@ -245,7 +283,8 @@ func _on_trick(trick_id: String) -> void:
 ## the car for its whole life (task T-125); without it, it stays at `at`.
 ## A popup that would overlap one already showing is moved up until it doesn't.
 ## `heat` is the combo heat step (0 to 3, heat_for()) it is drawn at (task T-133).
-func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable(), heat := 0) -> PopupText:
+## `broken` draws the combo broken look (task T-245) instead of the comic bubble.
+func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow := Callable(), heat := 0, broken := false) -> PopupText:
 	var showing := popups()
 	while showing.size() >= MAX_POPUPS:
 		var oldest = showing[0]
@@ -258,6 +297,7 @@ func show_popup(text: String, at: Vector2, font_size: int = SIZE_NORMAL, follow 
 	p.text = text
 	p.font_size = font_size
 	p.heat = clampi(heat, 0, Art.HEAT_STEPS - 1)
+	p.broken = broken
 	p.anchor = at
 	p.follow = follow
 	p.stack = _free_stack(p)
