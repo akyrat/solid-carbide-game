@@ -1,7 +1,7 @@
 ---
 id: T-259
 title: The drift marks show on rooftops and ramps
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/level-design.md, game/README.md, game/scripts/driving/drift_marks.gd, game/scenes/driving/drift_marks.tscn, game/scripts/level/elevation_layer.gd, game/scripts/run/run.gd, tasks/T-117-drift-marks.md, tasks/T-249-hype-drift-trail.md, tasks/T-258-car-shadow-on-raised-ground.md]
 files_expected_to_change: [game/scripts/driving/, game/scenes/driving/, game/scripts/level/elevation_layer.gd, game/scripts/run/, game/tests/, game/README.md, art-archive/T-259/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,14 @@ Started at the board's report: drift marks must show on rooftops and ramps.
 
 Fixed: the marks were drawn flat under every rooftop and ramp; they now sit on the surface they were laid on. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to play: drift on rooftops and ramps and watch the marks stay on them.
+
+### 2026-10-22, Needs playtest → Done
+
+The board played it: looks good. Merged into master.
+
 ## Result notes
 
 **Cause.** The marks were one flat node (`DriftMarks`) placed right after the ground tiles at z 0, with points at the street's pixels. On a rooftop or ramp the area's drawing (z above 0) covered them, and they were not lifted by the ground's height either.
@@ -67,3 +75,4 @@ Fixed: the marks were drawn flat under every rooftop and ramp; they now sit on t
 **Screenshots** in `art-archive/T-259/screenshots/`: `marks_roof3.png`, `marks_roof6.png`, `marks_ramp_x4.png` (hype x4 trail on the ramp), `marks_roof_to_ramp.gif` (a drift across the height 3 rooftop and down the ramp). Fixtures `tests/fixtures/run_marks_*.tscn`, `run_marks_raised_demo.gd`. Documents: `game/README.md`, "Drift marks".
 
 No actions were refused.
+- 2026-10-22, needs-playtest → done: board's playtest: looks good
