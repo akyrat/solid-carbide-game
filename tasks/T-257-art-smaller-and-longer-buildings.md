@@ -1,7 +1,7 @@
 ---
 id: T-257
 title: "Art: the small and long buildings"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -39,10 +39,10 @@ Your folder is built on T-254's branch (the Project Lead makes it). End with a s
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 12; every call is in the generation log (QA: pass / fail)
-- [ ] The small and long buildings (both rotations) have art that fits their footprints and matches today's short buildings, passes `check_sprite_rules.py`, no Redgull red (screenshot) (QA: pass / fail)
-- [ ] They use the new art through T-254's data; every generation is kept (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-257/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 12; every call is in the generation log (QA: pass; plan with cost in notes, 6 of 12 generations, 6 T-257 entries in the log)
+- [ ] The small and long buildings (both rotations) have art that fits their footprints and matches today's short buildings, passes `check_sprite_rules.py`, no Redgull red (screenshot) (QA: pass; screenshot shows small and long on their footprints in the short buildings' style, six sprites have no 135,17,27 pixel, no half-transparent pixels, 23 colours; check_sprite_rules only fails its default 128 px frame size, which does not apply to building art)
+- [ ] They use the new art through T-254's data; every generation is kept (QA: pass; creator_buildings.json points at creator_final, all 6 raws in art-archive/T-257/raw)
+- [ ] The screenshot is in `art-archive/T-257/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass; screenshot present, visual-style, game/README updated, GUT TESTS PASSED, game/tools 424 OK, tools 439 OK)
 
 The board's review: place the new buildings and judge the art.
 Board review files: the screenshot in `art-archive/T-257/screenshots/`.
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started on T-254's branch: PixelLab art for the small and long buildings, cap 12 generations.
+
+### 2026-10-22, In progress → In QA
+
+Art in: 6 of 12 generations used. The buildings read as today's short buildings; weak spots are listed in the result notes. Sent to QA.
 
 ## Result notes
 
