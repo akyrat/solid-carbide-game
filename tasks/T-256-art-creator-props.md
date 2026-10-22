@@ -1,7 +1,7 @@
 ---
 id: T-256
 title: "Art: the creator's props, in four rotations"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -51,6 +51,34 @@ Board review files: the screenshots in `art-archive/T-256/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started on T-253's branch: PixelLab art for the eight props in four rotations, cap 40 generations.
+
 ## Result notes
 
-Written by the agent when it finishes.
+### Plan before any call (Asset Generation Agent, 2026-10-22)
+
+- **Cost note:** the client's log shows every `/create-image-pixflux` call at `{"type": "generations", "generations": 1.0}`, whatever the size (up to 128 x 128 so far); `/rotate` is also 1.0 each but only ever used at 128 x 128 and with no way to check its size limit here, and the props are up to 171 x 193 art px, so `/rotate` is not relied on.
+- **Planned calls: 8 x `/create-image-pixflux`, 1 generation each = 8 generations** (cap 40; 13 already used by other tickets). One per prop, `isometric: true`, `view: high top-down`, `no_background`, `outline: single color black outline`, `shading: medium shading`, `detail: highly detailed`, sizes near the placeholders (barrier 160 x 112, cones 96 x 96, crates 144 x 144, AC unit 128 x 112, water tank 192 x 192, roof vent 96 x 96, street lamp 64 x 208, roof sign 160 x 192), 600 s HTTP timeout, no retries, log `game/art/pixellab-generation-log.jsonl`.
+- **The four rotations are made free, by script, from each one generation:** the footprint swaps for east and west, and a horizontal mirror of an isometric view is the same object seen along the other axis. Long props (barrier, roof sign) and square props (crates, AC unit): north and south are the generated picture, east and west its mirror. Round or near-round props (cones, water tank, roof vent, street lamp): the same picture, mirrored for east and west (so the lit side flips). The cost is that south repeats north (and west repeats east), so a one-sided detail (the sign's face) shows on both sides; noted honestly below. Spare budget (up to 32) is not spent: one round only.
+- Then a script (`game/tools/build_prop_final_art.py`) fits each sprite (crop to content, no upscaling), sets the anchor from the footprint, reduces to at most 30 colours, removes any Redgull red, writes `game/art/props/<name>_<rotation>_art.png` and switches `props.json` textures to them. The placeholders stay on disk.
+
+## Result (Asset Generation Agent, 2026-10-22)
+
+**Generations used: 8 of 40** (8 x `/create-image-pixflux`, 1.0 each as planned; all 8 in `game/art/pixellab-generation-log.jsonl`; the run was cut by a usage limit after the last call had been saved and logged, so nothing was repeated). One round, no regeneration. Raw generations, request bodies and records: `art-archive/T-256/raw/`, `art-archive/T-256/requests/`.
+
+How: one picture per prop, the four rotations made free by script (`game/tools/build_prop_final_art.py`: crop, alpha 0/255, at most 30 colours, red to orange, mirror for the other axis, anchor from the footprint). Final files `game/art/props/<name>_<rotation>_art.png`, selected through `props.json` textures only; the code-drawn placeholders are still on disk and `build_prop_art.py build` no longer overwrites the final textures. North and south are the same picture and east and west its mirror (barrier and sign are mirrored for north/south, since the generation's long axis ran the east/west way).
+
+What each looks like (honestly):
+- **Barrier:** a plain pale blue-grey concrete slab with a lighter top and a separate end block; clean but very pale and featureless, reads as a bright bar against the dark ground. 125 x 85 px, about 78% of the 4 x 1 diamond's width.
+- **Cones:** three orange and white cones on a small grey pad. Reads well, tiny (67 x 57 px).
+- **Crates:** a two-level stack of dark brown wooden crates with metal corners; reads as crates but is quite dark and warm, outside the steel palette (muted). 78 x 88 px, smaller than the 2 x 2 footprint (128 px wide).
+- **AC unit:** pale blue-grey box with a fan grille, a small amber light and side vents, on a pale pad. Good. 97 x 84 px.
+- **Water tank:** steel cylinder with bands, a conical lid, a cage and legs on a big blue pad; the best looking one. 156 x 167 px, its round pad is the collision's size, smaller than the 4 x 4 diamond (256 px).
+- **Roof vent:** a short round grey stack with a mushroom cap on a dark pad; small (58 x 74 px), smaller than its 2 x 2 footprint.
+- **Street lamp:** thin dark pole on a round grey base, curved arm and a warm amber lamp head; good. 56 x 134 px. The lamp head points one way, so east and west show it on the other side.
+- **Roof sign:** a dark panel with a cyan neon edge on two steel legs, amber glowing marks. The generation came with a rooftop and building around it; those were cut out by a script mask (panel and legs kept). **Weak:** the marks came out as real Chinese characters (one reads as a real word, 天), not only Japanese-like marks, so Narrative or the board may want them replaced (a hand edit or a regeneration, which this round did not do); north and south show them mirrored; the same face shows from both sides.
+- **General weak points, not regenerated:** props are smaller than their footprints (crates, AC unit, vent, cones, barrier about 60 to 80% of the footprint's diamond), so their art sits inside the blocked area; the footprints or collisions in `props.json` can be tuned instead (board's playtest). Several props came with a base pad, which reads as a rooftop pad or footing. No Redgull red in any sprite (check passes).
+
+Tests: full GUT suite passed (`bash game/tools/run_tests.sh`, 400 s), `game/tools` Python tests 445 OK (new `test_build_prop_final_art.py`), `tools` Python tests 439 OK. Screenshots in `art-archive/T-256/screenshots/`: `rotations_sheet.png` (every prop, four rotations, anchors in magenta), `creator_close.png`, `creator_street.png`, `creator_roof.png`, `creator_panel.png` (every prop in four rotations in the creator, street and rooftop), `drive_end.png` (a run: the car beside the lamp). Refusals: two shell commands were refused by the guard hook (one using `set -a` to read the env file, one `curl` of PixelLab's openapi); I did not work around them, and the client reads the token itself, so nothing was needed. Documents updated: `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`.
