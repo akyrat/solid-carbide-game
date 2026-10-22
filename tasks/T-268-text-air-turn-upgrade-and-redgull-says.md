@@ -1,7 +1,7 @@
 ---
 id: T-268
 title: "Text: the air turn upgrade, and two level-up lines without \"Redgull says\""
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -35,6 +35,7 @@ Two pieces of text (board, 2026-10-22):
 
 1. **The air turn upgrade** (Garage design, Decisions, "Air turn upgrade"): its name and description in the garage, in the form of the other four (name up to 25 characters, description up to 80, naming no number, since the Game Data Agent proposes the levels), with the key `air_turn`, written into Garage design, Content, as T-223 did for the magnet, for T-270 to use word for word.
 2. **No "Redgull says ..." lines** (HUD and menus, Decisions): rewrite the two level-up card descriptions that use that form, keeping what each says the tier does: `upgrade_flamethrower.tier6.desc` ("The flame area grows 30%. Redgull says think bigger.") and `upgrade_underglow.tier2.desc` ("Glow radius up 20%. Redgull says be seen."). Same length limits as the other card descriptions; no "Redgull says" form. Change them in `game/scripts/ui/level_up_texts.gd` (the text only) and wherever HUD and menus, Content lists them. Check no other player-facing text uses "Redgull says"; list any you find in the result notes without changing them.
+3. **Brand Magnet too** (board, 2026-10-22, added after the ticket started): rewrite the magnet's garage description, `garage.pickup_magnet.desc` ("Pickups reach you from further per level. Redgull calls it engagement."), without the "Redgull calls it" quip, still saying what the upgrade does, within 80 characters; in Garage design, Content, and wherever the game reads it (find the garage's text source).
 
 ## Acceptance criteria
 
@@ -47,6 +48,10 @@ The board's review: read the new texts.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the air turn upgrade's text, and the two Redgull says lines rewritten.
 
 ## Result notes
 
