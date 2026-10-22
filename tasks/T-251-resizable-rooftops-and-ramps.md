@@ -1,7 +1,7 @@
 ---
 id: T-251
 title: "Level creator: rooftops of any size, and ramps in every direction"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -43,10 +43,10 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] Tests show a rooftop can be placed at any even size from 4 x 4 up, at heights 3 and 6 (on a 3 and on the ground), and ramps in all four directions at 0 to 3 and 3 to 6, with the saved level passing `check_level.py` (QA: pass / fail)
-- [ ] Tests show the game's own map and its pieces draw and play as before, and enemies path up a new ramp (QA: pass / fail)
-- [ ] Textures are settings in one place; labels come from `creator_texts.json`; no Redgull red (QA: pass / fail)
-- [ ] Screenshots and a GIF of the car driving the built level are in `art-archive/T-251/screenshots/`; `game/README.md` "Level creator" describes the new pieces; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a rooftop can be placed at any even size from 4 x 4 up, at heights 3 and 6 (on a 3 and on the ground), and ramps in all four directions at 0 to 3 and 3 to 6, with the saved level passing `check_level.py` (QA: pass; test_creator_pieces_any_size.gd covers sizes 4x4 up at 3 and 6, on a 3 and the street, all ramp directions, check_level.py; full GUT 1386 pass)
+- [ ] Tests show the game's own map and its pieces draw and play as before, and enemies path up a new ramp (QA: pass; same test file covers the game map keeping its art and enemies pathing up 0-6 and 3-6 ramps; sample-map rebuild check OK)
+- [ ] Textures are settings in one place; labels come from `creator_texts.json`; no Redgull red (QA: pass; piece_style.tres is the one style, texts from creator_texts.json, no red in the style resource, tests check it)
+- [ ] Screenshots and a GIF of the car driving the built level are in `art-archive/T-251/screenshots/`; `game/README.md` "Level creator" describes the new pieces; the full GUT suite and all Python tool tests pass (QA: pass; 6 screenshots + drive.gif present, creator and drive_end frames look right, README documents T-251, GUT all passed, Python 439 and 423 OK)
 
 The board's review: build a level with rooftops of several sizes and ramps in every direction, and drive it.
 Board review files: the screenshots and GIF in `art-archive/T-251/screenshots/`.
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started: rooftops of any size and ramps in all four directions, drawn in the engine.
+
+### 2026-10-22, In progress → In QA
+
+Built: rooftops of any size by dragging (heights 3 and 6, a 6 on a 3 or on the street), ramps in all four directions including 0 to 6, drawn in the engine. Sent to QA.
 
 ## Result notes
 
