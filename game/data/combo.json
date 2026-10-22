@@ -13,6 +13,11 @@
   "collision_cut_applies_to": "above_start",
   "drain_wait_seconds": 2.0,
   "drain_per_second": 0.5,
+  "airtime": {
+    "min_seconds": 0.3,
+    "per_second": 0.2,
+    "max_add": 0.6
+  },
   "spawning": {
     "enabled": true,
     "extra_spawn_per_multiplier_point": 0.15,
