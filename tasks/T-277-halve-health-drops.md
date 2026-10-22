@@ -4,7 +4,7 @@ title: Health drops at half the rate
 status: open
 from: project-lead
 to: game-data
-lead:
+lead: Coursework
 epic: enemies
 milestone: mvp
 goal:

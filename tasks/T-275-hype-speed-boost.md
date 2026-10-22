@@ -4,7 +4,7 @@ title: The car goes faster the higher the hype level
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal:

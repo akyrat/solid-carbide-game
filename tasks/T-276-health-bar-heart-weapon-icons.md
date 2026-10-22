@@ -4,7 +4,7 @@ title: A bigger health bar with the heart under it, and the car's weapons as ico
 status: open
 from: project-lead
 to: ui
-lead:
+lead: Coursework
 epic: hud-menus
 milestone: mvp
 goal:
