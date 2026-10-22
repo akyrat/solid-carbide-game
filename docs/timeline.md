@@ -1750,3 +1750,8 @@ Entry format:
 - Decision or change: the board asked for the windshield wiper to push minions about twice the car's size at its first level; the Project Lead reads that as twice the car's length, 6 units (from 1.5), with the tier multipliers unchanged (Weapons, Decisions, "A stronger wiper push"; T-266).
 - Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-266
+
+## 2026-10-22: A smaller exhaust flame that burns what it touches
+- Decision or change: the board asked for the exhaust flame to start 4 to 5 times smaller, be drawn behind the car and enemies, and hurt a minion as soon as it touches the visible flame (its damage area = the drawn flame; replaces "a minion is in the flames when its centre is") (Weapons, Decisions; T-267).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-267
