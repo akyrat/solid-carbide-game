@@ -174,6 +174,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The reference feel is the Unity prototype on its Grass stage, the only stage the board played. Grass has no off-road slowdown, so the Isometric stage's off-road damping is not part of the reference.
 - The camera zoom is a player setting: a slider in the pause menu (HUD and menus, Decisions), with the Unity prototype's range, 6 to 20, and its default, 14.4. As in the Unity prototype, the player's choice is saved between sessions.
 - Two camera options to try, each a pause-screen checkbox, off by default and saved like the zoom (board, 2026-10-13): **camera smoothing** (the camera follows the car with a short smooth lag instead of sitting exactly on it), and the **dynamic camera** (the zoom follows the car's speed, from a min zoom at very low speed to a max zoom at the car's top forward speed, easing there with a short delay instead of jumping; while it is on it replaces the slider's fixed zoom). The board tunes the min and max in playtests with temporary pause-screen buttons. These are a change from the Unity prototype's camera, which stays the default.
+- **The camera follows the car's height** (board, 2026-10-21, after playing the elevation map, where on a height-6 rooftop the car sat high on the screen and the view was hard to read): the camera follows the car as drawn, height included, so the car stays near the middle of the screen on rooftops, ramps and in the air; the height change is eased smoothly so jumps and landings don't jerk the view. (T-228)
 - The car's top forward speed is **half** what it was: 16.5 units a second instead of 33 (the top-speed multiplier on the cruise speed goes from 3 to 1.5; the cruise speed of 11 is unchanged). Tried in the board's quick tuning on T-124 and kept.
 - The Godot car runs its physics at 50 steps per second, like the Unity prototype, so the per-step values carry over exactly. If 50 turns out not to be possible, the values are converted for 60.
 - The car's physics stays flat top-down, as in the Unity prototype, and the Godot version draws it isometrically.
@@ -372,6 +373,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Raised areas turn see-through like buildings** (board, 2026-10-19, after playing the elevation test scene): when a raised area (and its ramp) covers the car on screen, it fades the way buildings do ("When a building fades" below), with the same logic, so the car never vanishes behind it.
 - **Elevation sample map** (board, 2026-10-19, after approving the elevation test scene): elevation goes into the game first, the tricks later. A drive-only sample map (no enemies, weapons or run timer; driving around freely, like the test scene but city-sized), made by the agents, with **three layers**: the street (height 0), a first floor (height 3) and a second floor (height 6), with ramps connecting the street to the first floor and the first floor to the second, so the car can jump from higher with more airtime. The raised areas are building rooftops and the ramps parking-garage-style ramps (look: Visual style, Decisions, "Elevation sample map art"). It uses the elevation system as approved (the car's height, edges, see-through, the round shadow) and the map's buildings, boulders and roads. Its map file holds the heights and ramps in the format a level editor would later edit. After the board's playtest: if the board is happy, maybe aerial tricks next (a 360 in the air, a combo from airtime); if not, a level editor so the board can make levels by hand and playtest them at once. The arrow-key tricks come after both. Full runs on elevated maps (enemies that handle heights) are a later step.
 - **The elevation sample map becomes the run's map** (board, 2026-10-20, after playing it: "plays great"): a run started from the main menu now plays on the elevation sample map's layout, with its rooftops, ramps and the car's height, as the full game (enemies, weapons, timer, likes, levels, the kaiju), so the board can see how the enemies behave on it. The MVP map stays in the project and can be switched back to (tasks T-206, T-207). How enemies handle heights: Enemies, Decisions, "Enemies follow the car up the ramps" (board, 2026-10-21).
+- **Level creator** (board, 2026-10-21): a separate app, opened like the game but never shipped with it, where the board makes levels by hand. It lists the levels made so far: pick one to play it as a full run (the same 8 minutes, enemies and kaiju as the game), or press a button to create a new one (the only option when there are none). Creating or editing a level is a scene with a side panel of every asset already in the game (ground tiles, roads, buildings, boulders, rooftops, ramps): pick one, place it, rotate it before placing (which means switching between the views the art exists in and mirroring them, since the art has only the angles that were generated), with rooftops and ramps at heights 3 and 6 as on today's map, and pieces snapping to the map's tile grid and to close neighbours so they align with little effort. Custom levels are played only from the creator; the game keeps its own map. Enemies find their way on whatever is built. No new art is generated for it. Built by a goal run (G-005).
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 
 ### Content
@@ -531,6 +533,18 @@ The designs are stored unplaced (units from the pattern's centre, angle 0) in th
 ![A meteor challenge with its green arrow (at the gravel's edge) beside preset challenge-6 with its blue arrow](level-design/meteor-challenge.png)
 
 ![The same, isometric](level-design/meteor-challenge-iso.png)
+
+#### Level creator text
+
+The creator's text lives in `game/data/level/creator_texts.json` (the source; each piece has a text and a note of where it appears). Plain labels: the creator is the board's own tool (task T-233). Buttons fit 16 characters, category names 12.
+
+- **List screen:** title "Levels"; button "New level" (alone when there are no levels); per level "Play" and "Edit".
+- **Editor, naming:** default name "New level"; field label "Level name".
+- **Side panel categories:** Ground, Roads, Buildings, Boulders, Rooftops, Ramps.
+- **Heights:** rooftops "Height 3", "Height 6"; ramps "Ramp 0 to 3", "Ramp 3 to 6".
+- **Actions:** Rotate, Mirror, Delete, Save; confirmation "Level saved."; back button "Back to list".
+- **Overlap message:** "Can't place here: it overlaps another piece."
+- **Controls hint:** "Mouse: place. R: rotate. M: mirror. Del: delete." (the keys R, M and Del are the text's proposal; the creator's scripts must use the same keys).
 
 #### Elevation test scene
 
@@ -1103,8 +1117,8 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `a41567e474f3b35e749f6621680dc90da53cc107d9a372e451edd66912ae2f73` |
-| `drifting.md` | `f34bdd746f43fc5fb9089f660f75c72e256bcb4c0e4af828c17465d6f2d83be4` |
-| `level-design.md` | `a5ef36519c6a9102f549cb4741444ab34a1db7e5edb944003941b4f045a8fcb1` |
+| `drifting.md` | `6d2825c06de65503d05daf2429778645c897ffe2fdcb6976e1dea095c356db32` |
+| `level-design.md` | `ecc625072643da93f32d062afd5e0c7221f5765ab8fedc30bfda83501b142144` |
 | `enemies.md` | `965eae9788028d11b44a7a0e23670716e52946e62cb28d4ffead87ee0c0ddf97` |
 | `weapons.md` | `bb87d4440281af11e051dff3b4742efcd66973ce1d83e5369ec7667981e311a1` |
 | `garage-design.md` | `5d5d364ed5b19794565fe6d45fabeb422e46d2eeedff20bc00d233094d523393` |
