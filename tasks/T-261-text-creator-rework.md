@@ -1,7 +1,7 @@
 ---
 id: T-261
 title: "Text: the level creator rework's groups, pieces and keys"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/data/level/creator_texts.json, tasks/T-250-text-level-creator-piece-set.md]
 files_expected_to_change: [game/data/level/creator_texts.json, docs/level-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,11 @@ Started at the board's go: labels for the reworked creator's groups, pieces and 
 
 Text written: 41 labels for the groups, pieces, looks strip, sizes, arrows, banner, brush and keys. Sent to QA.
 
+### 2026-10-22, In QA → Done
+
+QA passed both. Done; T-262 (the panel regroup) starts on it.
+
 ## Result notes
 
 Added 41 keys to `game/data/level/creator_texts.json` (group_*, piece_*, looks_heading, look_counter, platform_size_s/m/l/any, ramp_arrows_up/down, banner_on/off, road_brush_hint, controls_hint_rework), each with a text and a where note. Every existing key is unchanged. Wording reuses T-250's where a piece already had a name ("Barrier" is the short form of "Concrete barrier", "Cones" of "Traffic cones", "Crates" of "Crate stack"). Longest button is "Any size (drag)" (15 characters); longest group name "Decoration" (10). Listed in docs/level-design.md, Content, "Level creator text". The new hint uses "R: turn" as the ticket says; the older hints stay.
+- 2026-10-22, in-qa → done: QA passed both; text only, kept on the creator build line
