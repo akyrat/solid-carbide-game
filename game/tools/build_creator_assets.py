@@ -4,7 +4,7 @@ Reads the art data already in the game (no art is made or changed):
   art/buildings/skyscrapers.json  skyscrapers, short buildings, their pavements
   art/boulders/boulders.json      boulders and their mirrored looks
   art/ground/ground_atlas.json    ground and road tiles (one atlas), road_tile.png
-  art/elevation_sample/*.json     rooftops and ramps (sizes from data/level/elevation_sample_map.json)
+  art/creator_pieces/             rooftops and ramps of any size (T-251; default sizes from data/level/elevation_sample_map.json)
 and writes data/level/creator_assets.json, one entry per placeable asset:
   id, kind (ground, road, building, boulder, rooftop, ramp), footprint_units [w, h],
   views, mirrors (false = the art as made, true = a mirrored look the art has),
@@ -99,38 +99,50 @@ def ground_entries(atlas, road_tile):
     return out
 
 
+PIECE_DIR = "art/creator_pieces/"
+PIECE_STYLE = "res://" + PIECE_DIR + "piece_style.tres"
+# T-251 (proposals for the board's playtest): a rooftop is dragged to any even size from
+# MIN_ROOFTOP; a click without a drag places the sample map's size (84 x 30 at 3, 30 x 30 at 6).
+# A ramp climbs north, east, south or west; its width along the rooftop's side is dragged (from
+# MIN_RAMP_WIDTH, default RAMP_WIDTH, the sample map's 10) and its length is fixed: 12 units per
+# 3 of rise (the sample map's slope), so 24 for a ramp 0 to 6.
+MIN_ROOFTOP = [4.0, 4.0]
+MIN_RAMP_WIDTH = 4.0
+RAMP_WIDTH = 10.0
+RAMP_LENGTH_PER_3 = 12.0
+# The direction a ramp climbs (its view) -> the side of the rooftop it climbs (the height data's
+# "side"): climbing north, it goes up the rooftop's south side.
+RAMP_DIRECTIONS = [("north", "south"), ("east", "west"), ("south", "north"), ("west", "east")]
+
+
+def piece_icon(entry_id):
+    return "res://" + PIECE_DIR + "icon_" + entry_id.replace("-", "_") + ".png"
+
+
 def elevation_entries(sample_map):
+    """T-251: rooftops of any size at 3 and 6, ramps 0 to 3, 3 to 6 and 0 to 6 climbing in four
+    directions, drawn in the engine from the piece style's textures (no art piece; T-232's fixed
+    pieces of the sample map's art are gone from the catalogue, the map still draws them). Their
+    texture is the panel's icon (build_creator_piece_art.py); "style" names what they are drawn
+    with. A ramp's footprint is the one climbing north or south (width x length)."""
     platforms = {p["id"]: p for p in sample_map["platforms"]}
-    ramps = {r["id"]: r for r in sample_map["ramps"]}
     out = []
     for h in (3, 6):
-        views, textures, size = [], [], None
-        for view in ("nw", "se"):
-            p = platforms["roof-%s-%d" % (view, h)]
-            s = [float(p["w"]), float(p["h"])]
-            if size is not None and s != size:
-                raise SystemExit("rooftop %d: nw and se sizes differ" % h)
-            size = s
-            views.append(view)
-            textures.append({"view": view, "mirror": False, "variant": p["id"],
-                             "texture": "res://" + SAMPLE_DIR + p["id"] + ".png"})
-        out.append({"id": "rooftop-%d" % h, "kind": "rooftop", "footprint_units": size, "height": h,
-                    "views": views, "mirrors": [False], "textures": textures})
-    for lo, hi in ((0, 3), (3, 6)):
-        views, textures, size = [], [], None
-        for view in ("nw", "se"):
-            r = ramps["ramp-%s-%d-%d" % (view, lo, hi)]
-            if float(r["bottom_height"]) != lo or float(r["top_height"]) != hi:
-                raise SystemExit("ramp %s heights do not match its name" % r["id"])
-            s = [float(r["w"]), float(r["h"])]
-            if size is not None and s != size:
-                raise SystemExit("ramp %d-%d: nw and se sizes differ" % (lo, hi))
-            size = s
-            views.append(view)
-            textures.append({"view": view, "mirror": False, "variant": r["id"], "side": r["side"],
-                             "texture": "res://" + SAMPLE_DIR + r["id"] + ".png"})
-        out.append({"id": "ramp-%d-%d" % (lo, hi), "kind": "ramp", "footprint_units": size,
-                    "heights": [lo, hi], "views": views, "mirrors": [False], "textures": textures})
+        p = platforms["roof-nw-%d" % h]
+        eid = "rooftop-%d" % h
+        out.append({"id": eid, "kind": "rooftop", "footprint_units": [float(p["w"]), float(p["h"])],
+                    "height": h, "resizable": True, "min_size_units": list(MIN_ROOFTOP),
+                    "style": PIECE_STYLE, "views": ["iso"], "mirrors": [False],
+                    "textures": [{"view": "iso", "mirror": False, "variant": "", "texture": piece_icon(eid)}]})
+    for lo, hi in ((0, 3), (3, 6), (0, 6)):
+        eid = "ramp-%d-%d" % (lo, hi)
+        length = RAMP_LENGTH_PER_3 * (hi - lo) / 3.0
+        out.append({"id": eid, "kind": "ramp", "footprint_units": [RAMP_WIDTH, length],
+                    "heights": [lo, hi], "resizable": True, "length_units": length,
+                    "width_units": RAMP_WIDTH, "min_width_units": MIN_RAMP_WIDTH, "style": PIECE_STYLE,
+                    "views": [d for d, _ in RAMP_DIRECTIONS], "mirrors": [False],
+                    "textures": [{"view": d, "mirror": False, "variant": "", "side": s,
+                                  "texture": piece_icon(eid)} for d, s in RAMP_DIRECTIONS]})
     return out
 
 

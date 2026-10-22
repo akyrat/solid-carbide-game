@@ -2912,25 +2912,24 @@
     30.0
    ],
    "height": 3,
+   "resizable": true,
+   "min_size_units": [
+    4.0,
+    4.0
+   ],
+   "style": "res://art/creator_pieces/piece_style.tres",
    "views": [
-    "nw",
-    "se"
+    "iso"
    ],
    "mirrors": [
     false
    ],
    "textures": [
     {
-     "view": "nw",
+     "view": "iso",
      "mirror": false,
-     "variant": "roof-nw-3",
-     "texture": "res://art/elevation_sample/roof-nw-3.png"
-    },
-    {
-     "view": "se",
-     "mirror": false,
-     "variant": "roof-se-3",
-     "texture": "res://art/elevation_sample/roof-se-3.png"
+     "variant": "",
+     "texture": "res://art/creator_pieces/icon_rooftop_3.png"
     }
    ]
   },
@@ -2942,25 +2941,24 @@
     30.0
    ],
    "height": 6,
+   "resizable": true,
+   "min_size_units": [
+    4.0,
+    4.0
+   ],
+   "style": "res://art/creator_pieces/piece_style.tres",
    "views": [
-    "nw",
-    "se"
+    "iso"
    ],
    "mirrors": [
     false
    ],
    "textures": [
     {
-     "view": "nw",
+     "view": "iso",
      "mirror": false,
-     "variant": "roof-nw-6",
-     "texture": "res://art/elevation_sample/roof-nw-6.png"
-    },
-    {
-     "view": "se",
-     "mirror": false,
-     "variant": "roof-se-6",
-     "texture": "res://art/elevation_sample/roof-se-6.png"
+     "variant": "",
+     "texture": "res://art/creator_pieces/icon_rooftop_6.png"
     }
    ]
   },
@@ -2975,27 +2973,48 @@
     0,
     3
    ],
+   "resizable": true,
+   "length_units": 12.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
    "views": [
-    "nw",
-    "se"
+    "north",
+    "east",
+    "south",
+    "west"
    ],
    "mirrors": [
     false
    ],
    "textures": [
     {
-     "view": "nw",
+     "view": "north",
      "mirror": false,
-     "variant": "ramp-nw-0-3",
+     "variant": "",
      "side": "south",
-     "texture": "res://art/elevation_sample/ramp-nw-0-3.png"
+     "texture": "res://art/creator_pieces/icon_ramp_0_3.png"
     },
     {
-     "view": "se",
+     "view": "east",
      "mirror": false,
-     "variant": "ramp-se-0-3",
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_0_3.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
      "side": "north",
-     "texture": "res://art/elevation_sample/ramp-se-0-3.png"
+     "texture": "res://art/creator_pieces/icon_ramp_0_3.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "side": "east",
+     "texture": "res://art/creator_pieces/icon_ramp_0_3.png"
     }
    ]
   },
@@ -3003,34 +3022,111 @@
    "id": "ramp-3-6",
    "kind": "ramp",
    "footprint_units": [
-    12.0,
-    10.0
+    10.0,
+    12.0
    ],
    "heights": [
     3,
     6
    ],
+   "resizable": true,
+   "length_units": 12.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
    "views": [
-    "nw",
-    "se"
+    "north",
+    "east",
+    "south",
+    "west"
    ],
    "mirrors": [
     false
    ],
    "textures": [
     {
-     "view": "nw",
+     "view": "north",
      "mirror": false,
-     "variant": "ramp-nw-3-6",
-     "side": "west",
-     "texture": "res://art/elevation_sample/ramp-nw-3-6.png"
+     "variant": "",
+     "side": "south",
+     "texture": "res://art/creator_pieces/icon_ramp_3_6.png"
     },
     {
-     "view": "se",
+     "view": "east",
      "mirror": false,
-     "variant": "ramp-se-3-6",
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_3_6.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "side": "north",
+     "texture": "res://art/creator_pieces/icon_ramp_3_6.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
      "side": "east",
-     "texture": "res://art/elevation_sample/ramp-se-3-6.png"
+     "texture": "res://art/creator_pieces/icon_ramp_3_6.png"
+    }
+   ]
+  },
+  {
+   "id": "ramp-0-6",
+   "kind": "ramp",
+   "footprint_units": [
+    10.0,
+    24.0
+   ],
+   "heights": [
+    0,
+    6
+   ],
+   "resizable": true,
+   "length_units": 24.0,
+   "width_units": 10.0,
+   "min_width_units": 4.0,
+   "style": "res://art/creator_pieces/piece_style.tres",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "side": "south",
+     "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "side": "west",
+     "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "side": "north",
+     "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "side": "east",
+     "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
     }
    ]
   }

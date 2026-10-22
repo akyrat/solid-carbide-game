@@ -15,8 +15,12 @@ func _editor() -> LevelCreatorEditor:
 	return e
 
 
+## Picks and places `id` (rotated once when `rotate`). A ramp 3 to 6 climbs east unless rotated
+## (T-251: the direction T-236's north-west art had), a ramp 0 to 3 north (its first view).
 func _place(e: LevelCreatorEditor, id: String, units: Vector2, rotate := false) -> Dictionary:
 	e.panel.pick(id)
+	if id == "ramp-3-6":
+		e.rotate_pick()
 	if rotate:
 		e.rotate_pick()
 	return e.place_asset(id, units)

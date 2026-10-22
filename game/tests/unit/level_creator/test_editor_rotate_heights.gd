@@ -110,40 +110,63 @@ func test_the_mirror_places_the_mirrored_art() -> void:
 		"the mirrored art of the catalogue")
 
 
-func test_the_rotated_rooftop_and_ramp_take_the_views_art_and_side() -> void:
+## Picks `id` and rotates it to `view` (T-251: a ramp's view is the direction it climbs).
+func _pick(e: LevelCreatorEditor, id: String, view: String = "") -> void:
+	e.panel.pick(id)
+	for i in 4:
+		if view == "" or e.pick_view == view:
+			return
+		e.rotate_pick()
+	assert_eq(e.pick_view, view, "%s has the view %s" % [id, view])
+
+
+func test_rotate_steps_a_ramp_through_the_four_directions_and_their_sides() -> void:
 	var e := _editor()
-	e.panel.pick("ramp-0-3")
-	assert_eq(e.pick_texture().side, "south")
-	e.rotate_pick()
-	assert_eq(e.pick_view, "se")
-	assert_eq(e.pick_texture().side, "north")
+	for id in ["ramp-0-3", "ramp-3-6", "ramp-0-6"]:
+		e.panel.pick(id)
+		var seen: Array = []
+		for i in 4:
+			seen.append([e.pick_view, str(e.pick_texture().side), e.direction_label.text])
+			e.rotate_pick()
+		assert_eq(seen, [
+			["north", "south", CreatorTexts.get_text("ramp_dir_north")],
+			["east", "west", CreatorTexts.get_text("ramp_dir_east")],
+			["south", "north", CreatorTexts.get_text("ramp_dir_south")],
+			["west", "east", CreatorTexts.get_text("ramp_dir_west")]], id)
+		assert_eq(e.pick_view, "north", id + ": round again")
+
+
+func test_a_placed_rooftop_or_ramp_of_any_size_writes_no_art_and_is_drawn_in_the_engine() -> void:
+	var e := _editor()
+	_pick(e, "ramp-0-3", "south")
 	var r := e.place_asset("ramp-0-3", Vector2(20.5, 20.5))
-	assert_eq(r.item.view, "se")
 	assert_eq(r.item.side, "north")
-	assert_eq(r.item.art, "ramp-se-0-3")
+	assert_false(r.item.has("art"))
+	assert_false(r.item.has("view"))
 	e.panel.pick("rooftop-3")
-	e.rotate_pick()
-	var p := e.place_asset("rooftop-3", Vector2(-100.5, 40.5))
-	assert_eq(p.item.art, "roof-se-3")
-	# The placed rooftop is drawn with that view's art, moved to where it stands.
-	var area = e.elevation.areas.filter(func(a): return a.block.id == p.item.id)[0]
-	assert_not_null(area.art_sprite)
-	assert_eq(area.art_sprite.texture.resource_path, "res://art/elevation_sample/roof-se-3.png")
-	var sample: Rect2 = e.elevation.sample_rect("roof-se-3")
-	var info = JSON.parse_string(FileAccess.get_file_as_string("res://art/elevation_sample/roof-se-3.json"))
-	var expect := Vector2(info.top_left_art_px[0], info.top_left_art_px[1]) * 0.5 \
-		+ LevelCreatorEditor.ISO_TRANSFORM * ((Vector2(-102, 40) - sample.position) * LevelCreatorEditor.PX_PER_UNIT)
-	assert_almost_eq(area.art_sprite.position, expect, Vector2(0.01, 0.01))
+	var p := e.place_asset("rooftop-3", Vector2(-100.5, 40.5), Vector2(16, 8))
+	assert_eq([p.item.w, p.item.h], [16.0, 8.0])
+	assert_false(p.item.has("art"))
+	for item in [p.item, r.item]:
+		var area = e.elevation.areas.filter(func(a): return a.block.id == item.id)[0]
+		assert_null(area.art_sprite, "no art piece")
+		assert_true(area.is_textured(), "drawn from the piece style")
 
 
 func test_the_preview_shows_the_current_view() -> void:
 	var e := _editor()
 	e.panel.pick("rooftop-6")
-	var a := e.preview_of(Vector2(0, 0))
-	assert_eq(a.texture.resource_path, "res://art/elevation_sample/roof-nw-6.png")
-	e.rotate_pick()
-	var b := e.preview_of(Vector2(0, 0))
-	assert_eq(b.texture.resource_path, "res://art/elevation_sample/roof-se-6.png")
+	assert_eq(e.preview_of(Vector2(0, 0)), {}, "a piece of any size: no art preview")
+	e.hover_cell = e.document.cell_at(Vector2(0.5, 0.5))
+	var b := e.preview_block()
+	assert_eq(b.kind, "platform")
+	assert_eq(b.rect, Rect2(0, 0, 30, 30))
+	_pick(e, "ramp-0-6", "west")
+	b = e.preview_block()
+	assert_eq([b.kind, b.side, b.rect.size], ["ramp", "east", Vector2(24, 10)])
+	e._sync_preview()
+	assert_not_null(e.preview_drawing)
+	assert_true(e.preview_drawing.is_textured())
 	e.panel.pick("boulder-b")
 	e.mirror_pick()
 	assert_eq(e.preview_of(Vector2(0, 0)).texture.resource_path, "res://art/boulders/boulder_b_mirror.png")
@@ -160,9 +183,9 @@ func _build_nw(e: LevelCreatorEditor) -> Dictionary:
 	var r3 := e.place_asset("rooftop-3", Vector2(-95.5, -95.5))
 	e.panel.pick("rooftop-6")
 	var r6 := e.place_asset("rooftop-6", Vector2(-41.5, -95.5))
-	e.panel.pick("ramp-0-3")
+	_pick(e, "ramp-0-3", "north")
 	var a := e.place_asset("ramp-0-3", Vector2(-85.5, -65.5))
-	e.panel.pick("ramp-3-6")
+	_pick(e, "ramp-3-6", "east")
 	var b := e.place_asset("ramp-3-6", Vector2(-53.5, -85.5))
 	return {"r3": r3.item, "r6": r6.item, "ramp03": a.item, "ramp36": b.item}
 
@@ -202,11 +225,9 @@ func test_rooftops_at_3_and_6_with_their_ramps_pass_the_height_check() -> void:
 
 func test_the_south_east_views_pass_the_height_check_too() -> void:
 	var e := _editor()
-	for step in [["rooftop-3", Vector2(12.5, 66.5)], ["rooftop-6", Vector2(12.5, 66.5)],
-			["ramp-0-3", Vector2(76.5, 54.5)], ["ramp-3-6", Vector2(42.5, 76.5)]]:
-		e.panel.pick(step[0])
-		e.rotate_pick()
-		assert_eq(e.pick_view, "se")
+	for step in [["rooftop-3", Vector2(12.5, 66.5), ""], ["rooftop-6", Vector2(12.5, 66.5), ""],
+			["ramp-0-3", Vector2(76.5, 54.5), "south"], ["ramp-3-6", Vector2(42.5, 76.5), "west"]]:
+		_pick(e, step[0], step[2])
 		assert_false(e.place_asset(step[0], step[1]).is_empty())
 	var ramps: Array = e.level_data.ramps
 	assert_eq([ramps[0].side, ramps[1].side], ["north", "east"])
@@ -220,7 +241,7 @@ func test_the_south_east_views_pass_the_height_check_too() -> void:
 func test_the_links_follow_places_and_deletes() -> void:
 	var doc := LevelDocument.new(LevelDocument.new_level_data("x"))
 	# A ramp first, then its rooftop: the ramp is linked once the rooftop is there.
-	var ramp := doc.place("ramp-0-3", Vector2(-85.5, -65.5))
+	var ramp := doc.place("ramp-0-3", Vector2(-85.5, -65.5), "north")
 	assert_eq(ramp.item.platform, "")
 	var r3 := doc.place("rooftop-3", Vector2(-95.5, -95.5))
 	assert_eq(ramp.item.platform, r3.item.id)
@@ -250,12 +271,12 @@ func test_the_controls_labels_come_from_the_texts() -> void:
 
 func test_r_and_m_keys_rotate_and_mirror() -> void:
 	var e := _editor()
-	e.panel.pick("rooftop-3")
+	e.panel.pick("ramp-3-6")
 	var k := InputEventKey.new()
 	k.keycode = KEY_R
 	k.pressed = true
 	e._unhandled_key_input(k)
-	assert_eq(e.pick_view, "se")
+	assert_eq(e.pick_view, "east")
 	e.panel.pick("boulder-b")
 	k.keycode = KEY_M
 	e._unhandled_key_input(k)

@@ -22,6 +22,14 @@ const LABEL_KEYS := {
 	"rooftop-6": "rooftop_height_6",
 	"ramp-0-3": "ramp_height_0_3",
 	"ramp-3-6": "ramp_height_3_6",
+	"ramp-0-6": "ramp_height_0_6",
+}
+## A ramp's view is the direction it climbs (T-251): the top bar's label for each.
+const RAMP_DIR_KEYS := {
+	"north": "ramp_dir_north",
+	"east": "ramp_dir_east",
+	"south": "ramp_dir_south",
+	"west": "ramp_dir_west",
 }
 const BUTTON_SIZE := Vector2(64, 64)
 const PANEL_WIDTH := 300.0

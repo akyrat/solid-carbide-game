@@ -41,7 +41,26 @@ class CatalogueTest(unittest.TestCase):
         roofs = sorted(e["height"] for e in self.entries if e["kind"] == "rooftop")
         self.assertEqual(roofs, [3, 6])
         ramps = sorted(e["heights"] for e in self.entries if e["kind"] == "ramp")
-        self.assertEqual(ramps, [[0, 3], [3, 6]])
+        self.assertEqual(ramps, [[0, 3], [0, 6], [3, 6]])
+
+    def test_rooftops_and_ramps_are_resizable(self):
+        # T-251: any even size from 4 x 4 for a rooftop; a ramp in four directions, its width
+        # dragged from 4, its length fixed at 12 units per 3 of rise.
+        for e in self.entries:
+            if e["kind"] not in ("rooftop", "ramp"):
+                continue
+            self.assertTrue(e["resizable"], e["id"])
+            self.assertTrue(bc.res_exists(e["style"]), e["style"])
+            if e["kind"] == "rooftop":
+                self.assertEqual(e["min_size_units"], [4.0, 4.0])
+                self.assertEqual(e["views"], ["iso"])
+            else:
+                lo, hi = e["heights"]
+                self.assertEqual(e["length_units"], 12.0 * (hi - lo) / 3)
+                self.assertEqual(e["min_width_units"], 4.0)
+                self.assertEqual(e["views"], ["north", "east", "south", "west"])
+                sides = {t["view"]: t["side"] for t in e["textures"]}
+                self.assertEqual(sides, {"north": "south", "east": "west", "south": "north", "west": "east"})
 
     def test_counts(self):
         count = lambda k: sum(1 for e in self.entries if e["kind"] == k)
