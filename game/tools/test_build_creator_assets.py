@@ -64,6 +64,28 @@ class CatalogueTest(unittest.TestCase):
         for p in sky["bodies"] + sky["short"]["bodies"] + sky["pavements"]:
             self.assertIn(p, named)
 
+    def test_road_pieces_come_first_among_the_roads(self):
+        """T-252: corners, T-junctions, crossroads and dead ends (and the 1-tile straights) in 4
+        rotations each, before the other road tiles; every piece is an atlas tile with its index."""
+        roads = [e for e in self.entries if e["kind"] == "road"]
+        ids = [e["id"] for e in roads]
+        pieces = [i for i in ids if i.startswith("road-piece_")]
+        self.assertEqual(ids[:len(pieces)], pieces)
+        for kind, n in (("corner_", 4), ("t_", 4), ("dead_", 4), ("mid_", 2), ("cross", 1)):
+            self.assertEqual(sum(1 for i in pieces if i.startswith("road-piece_" + kind)), n, kind)
+        self.assertEqual(len(pieces), 15)
+        atlas = bc.load("art/ground/ground_atlas.json")
+        index = {t["name"]: t["index"] for t in atlas["tiles"]}
+        for e in roads:
+            if e["id"] in pieces:
+                self.assertEqual(e["atlas_index"], index[e["id"][len("road-"):]])
+                self.assertEqual(e["footprint_units"], [2.0, 2.0])
+
+    def test_old_ground_tiles_keep_their_atlas_index(self):
+        for e in self.entries:
+            if e["kind"] in ("ground", "road") and "atlas_index" in e and not e["id"].startswith("road-piece_"):
+                self.assertLess(e["atlas_index"], 87)
+
 
 if __name__ == "__main__":
     unittest.main()

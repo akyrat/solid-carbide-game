@@ -92,6 +92,9 @@ def ground_entries(atlas, road_tile):
                     "atlas_index": t["index"],
                     "textures": [{"view": "iso", "mirror": False, "variant": name, "texture": path,
                                   "region": [t["atlas_xy"][0], t["atlas_xy"][1], tw, th]}]})
+    # T-252: the road pieces (the atlas tiles marked "piece") come first among the roads.
+    pieces = {t["name"] for t in atlas["tiles"] if t.get("piece")}
+    out.sort(key=lambda e: 0 if e["textures"][0]["variant"] in pieces else 1)
     out.append({"id": "road-road_tile", "kind": "road", "footprint_units": [GROUND_CELL, GROUND_CELL],
                 "views": ["iso"], "mirrors": [False],
                 "textures": [{"view": "iso", "mirror": False, "variant": "road_tile",
