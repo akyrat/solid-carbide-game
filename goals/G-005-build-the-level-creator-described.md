@@ -1,10 +1,10 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: paused
+status: building
 art_cap: 0
 art_used: 0
-iteration: 10
+iteration: 11
 max_iterations: 20
 created: 2026-10-21
 lead: Goal-G-005
@@ -59,7 +59,7 @@ Build the level creator described in docs/level-design.md, Decisions, 'Level cre
 | 8 | S9 | Save and reopen levels | unblocks 2, value 5 | Levels must be saved in the elevation map's file format so the run, the heights and pathfinding work unchanged, and existing levels must be editable. | covered | T-238, T-231 |
 | 9 | S10 | Play a level as a full run from the creator | unblocks 1, value 5 | The board must play any listed level as the game's own run: 8 minutes, enemies, kaiju, on the elevation map. | covered | T-239, T-230 |
 | 10 | S8 | Snapping to the tile grid and to close neighbours | unblocks 1, value 4 | The board wants pieces to align with little effort. | covered | T-237 |
-| 11 | S11 | End-to-end check: from nothing to playing | unblocks 0, value 5 | The board's playtest condition: create from nothing, save, see it in the list, play it. | in-flight | T-240 |
+| 11 | S11 | End-to-end check: from nothing to playing | unblocks 0, value 5 | The board's playtest condition: create from nothing, save, see it in the list, play it. | covered | T-240, T-230, T-231, T-232, T-234, T-235, T-236, T-237, T-238, T-239 |
 
 ### S2: Level storage, listing and validation
 
@@ -194,6 +194,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-22, iteration 10: resumed from building.
 - 2026-10-22, iteration 10: resumed by the session Coursework.
 - 2026-10-22, iteration 10: paused (see Pauses).
+- 2026-10-22, iteration 10: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-22, iteration 10: resumed by the session Coursework.
+- 2026-10-22, iteration 11: T-240 (S11, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-005; art 0; agent: (nothing new). Rescan: S11 covered.
 
 ## Pauses
 
