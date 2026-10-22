@@ -176,9 +176,196 @@ def xargs_command(words):
     if i >= len(words):
         return None
     seg = Segment()
-    seg.chars = list(" ".join(w if not re.search(r"[\s'\"]", w) else ("'" + w + "'" if "'" not in w else '"' + w + '"')
-                              for w in words[i:]) + " $XARGS")
+    seg.chars = list(quote_words(words[i:]) + " $XARGS")
     return seg
+
+
+def quote_words(words):
+    """Words joined back into a command line that words_of splits into the same words."""
+    return " ".join(w if not re.search(r"[\s'\"]", w) else ("'" + w + "'" if "'" not in w else '"' + w + '"')
+                    for w in words)
+
+
+def segment_of(words, like=None):
+    """A Segment running `words`, with the redirections and here-documents of `like`."""
+    seg = Segment()
+    seg.chars = list(quote_words(words))
+    if like is not None:
+        seg.redirects, seg.heredocs = like.redirects, like.heredocs
+    return seg
+
+
+ASSIGNMENT_RE = re.compile(r"[A-Za-z_]\w*=")
+GODOT_BIN_SET_RE = re.compile(r"(?<![$\w{])GODOT_BIN\s*=")
+
+
+def assignment_reason(seg, words, cwd, in_tasks, bases, godot_var_ok):
+    """T-248: `tmp=...` only sets a shell variable; `X=1 cmd` is judged as `cmd`, unless a value it hands that
+    command names the tasks folder or a ticket (TMPDIR=tasks mktemp)."""
+    i = 0
+    while i < len(words) and ASSIGNMENT_RE.match(words[i]):
+        i += 1
+    if i == len(words):
+        return ""
+    hit = next((w for w in words[:i] if TICKET_PATH_RE.search(w.split("=", 1)[1])
+                or CODE_TOUCHES_RE.search(w.split("=", 1)[1])), None)
+    if hit:
+        return f"`{hit}` hands `{words[i]}` a path in a tasks folder"
+    return why_risky(segment_of(words[i:], seg), cwd, in_tasks, bases, godot_var_ok)
+
+
+# find (T-248): reads, unless it deletes (-delete), runs a command (-exec ...) or writes a file (-fprint ...)
+FIND_EXEC = {"-exec", "-execdir", "-ok", "-okdir"}
+FIND_WRITES = {"-fprint": 1, "-fprint0": 1, "-fls": 1, "-fprintf": 2}
+FIND_EXEC_END = {";", "\\;", "+", "\\"}   # an unquoted \; leaves a lone \ (the segment splits at the ;)
+FIND_WALK_LIMIT = 20000
+
+
+def find_parts(words):
+    """(starting points, follows links, [-exec commands], [files -fprint writes], deletes) of a find command."""
+    i, follow = 1, False
+    while i < len(words):
+        if words[i] in ("-H", "-L", "-P"):
+            follow = follow or words[i] == "-L"
+            i += 1
+        elif words[i] == "-D":
+            i += 2
+        elif re.fullmatch(r"-O\d", words[i]):
+            i += 1
+        else:
+            break
+    starts = []
+    while i < len(words) and not re.match(r"[-(!)]|\\[()!]", words[i]):
+        starts.append(words[i])
+        i += 1
+    execs, written, delete = [], [], False
+    while i < len(words):
+        w = words[i]
+        if w in FIND_EXEC:
+            j = i + 1
+            while j < len(words) and words[j] not in FIND_EXEC_END:
+                j += 1
+            execs.append(words[i + 1:j])
+            i = j + 1
+            continue
+        if w in FIND_WRITES:
+            written.append(words[i + 1] if i + 1 < len(words) else "")
+            i += 1 + FIND_WRITES[w]
+            continue
+        delete = delete or w == "-delete"
+        follow = follow or w == "-follow"
+        i += 1
+    return starts or ["."], follow, execs, written, delete
+
+
+def holds_tickets(start, bases, in_tasks, follow):
+    """Whether a folder find starts from could hold a ticket: a tasks folder or ticket path, a name the shell
+    expands, or a folder with a tasks folder anywhere under it (looked up on disk). A path that doesn't exist
+    holds nothing."""
+    if in_tasks or ticket_path(start):
+        return True
+    for base in bases:
+        path = Path(windows_path(start))
+        path = path if path.is_absolute() else Path(windows_path(str(base))) / path
+        try:
+            path = Path(os.path.realpath(path))
+            if not path.exists():
+                continue
+            if not path.is_dir():
+                if task_path_match(str(path)):
+                    return True
+                continue
+            if path.name.lower() == "tasks":
+                return True
+            seen = 0
+            for _, dirs, _ in os.walk(path, followlinks=follow):
+                if any(d.lower() == "tasks" for d in dirs):
+                    return True
+                seen += len(dirs)
+                if seen > FIND_WALK_LIMIT:
+                    return True
+        except OSError:
+            return True
+    return False
+
+
+def find_reason(words, cwd, in_tasks, bases, godot_var_ok):
+    """Why a find command could write a ticket, or "" (T-248). It only reads unless it deletes, writes a file or
+    runs a command: -fprint into a file that could be a ticket, -delete under a folder that could hold tickets,
+    and -exec of anything but a read on files that could be tickets are refused; the commands it runs on other
+    files are judged as themselves."""
+    starts, follow, execs, written, delete = find_parts(words)
+    hit = next((f for f in written if ticket_path(f, cwd, in_tasks)), None)
+    if hit is not None:
+        return f"`find` writes `{hit or '?'}`, which could be a ticket"
+    if not delete and not execs:
+        return ""
+    bases = bases or [cwd or os.getcwd()]
+    under = [s for s in starts if holds_tickets(s, bases, in_tasks, follow)]
+    if delete and under:
+        return f"`find -delete` under `{under[0]}`, which could hold tickets"
+    for run in execs:
+        if not run:
+            continue
+        if under:
+            if read_only_segment(quote_words(run)):
+                continue
+            return f"`find -exec {run[0]}` on files under `{under[0]}`, which could be tickets"
+        why = why_risky(segment_of([w.replace("{}", "found-file") for w in run]), cwd, in_tasks, bases, godot_var_ok)
+        if why:
+            return f"find -exec runs {why}"
+    return ""
+
+
+# Godot (T-248): a run of the game, its movie recording and its asset import
+GODOT_RE = re.compile(r"(^|/)godot(4|[_-]v?\d[\w.-]*)?(\.exe)?$", re.I)   # godot, Godot_v4.6.2-stable_win64.exe
+GODOT_VARS = {"$GODOT_BIN", "${GODOT_BIN}"}
+GODOT_FILE_OPTIONS = {"--write-movie", "--log-file"}
+GODOT_VALUE_OPTIONS = GODOT_FILE_OPTIONS | {
+    "--path", "--fixed-fps", "--quit-after", "--resolution", "--position", "--rendering-driver",
+    "--rendering-method", "--audio-driver", "--display-driver", "--screen", "--time-scale", "--max-fps",
+    "--frame-delay", "--language", "-l", "--gpu-index"}
+GODOT_FLAGS = {
+    "--headless", "--import", "--quit", "-q", "--verbose", "-v", "--quiet", "--no-header", "--debug", "-d",
+    "--windowed", "-w", "--fullscreen", "-f", "--maximized", "-m", "--always-on-top", "-t", "--disable-vsync",
+    "--print-fps", "--single-window", "--editor", "-e", "--disable-crash-handler", "--debug-collisions",
+    "--debug-paths", "--debug-navigation", "--debug-avoidance", "--disable-render-loop"}
+GODOT_SCENE_RE = re.compile(r"^res://|\.(tscn|scn)$|(^|[\\/])project\.godot$", re.I)
+
+
+def is_godot(word, godot_var_ok):
+    return ((bool(GODOT_RE.search(word.replace("\\", "/"))) and not SCRIPT_RE.search(word))
+            or (godot_var_ok and word in GODOT_VARS))
+
+
+def godot_reason(words, cwd, in_tasks):
+    """Why a Godot run could write a ticket, or "" (T-248). It runs the game, records a movie or imports the
+    project's assets; it is refused when it writes a movie or log into a file that could be a ticket, runs a
+    project in a tasks folder, or takes an option or argument the guard doesn't know (--script, --export-...)."""
+    i, path_given = 1, False
+    while i < len(words):
+        w = words[i]
+        if w in ("--", "++") or w.startswith("#"):
+            break   # the game's own arguments, or a shell comment
+        opt, eq, value = w.partition("=")
+        if opt in GODOT_VALUE_OPTIONS:
+            if not eq:
+                value = words[i + 1] if i + 1 < len(words) else ""
+                i += 1
+            if opt in GODOT_FILE_OPTIONS and ticket_path(value, cwd, in_tasks):
+                return f"Godot's `{opt}` writes `{value or '?'}`, which could be a ticket"
+            if opt == "--path":
+                path_given = True
+                if ticket_path(value, cwd, False) or (in_tasks and not os.path.isabs(windows_path(value))):
+                    return f"Godot runs the project in `{value or '?'}`, which could be a tasks folder"
+        elif w in GODOT_FLAGS or GODOT_SCENE_RE.search(w):
+            pass
+        else:
+            return f"Godot with `{w}`, an option or argument the guard can't tell won't write a ticket"
+        i += 1
+    if in_tasks and not path_given:
+        return "Godot runs the project in a tasks folder"
+    return ""
 SAFE_REDIRECT_RE = re.compile(r">&\d|>>?\s*(/dev/null|\$null|nul)\b", re.I)
 
 
@@ -188,8 +375,11 @@ CD_UNKNOWN_RE = re.compile(r"(^|[;&|\n])\s*(cd|pushd|set-location)\s+[^;&|\n]*[$
 EXPANDS_RE = re.compile(r"`|\$\(")
 TICKET_PATH_RE = re.compile(r"(^|[\\/])tasks[ .]*([\\/]|$)|(^|[\\/])T-\d+[^\\/]*\.md[ .]*$", re.I)
 # what inline code or a command substitution must not name: the tasks folder, a ticket's file name or a glob
-CODE_TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|T-\d+[^\s'\"\\/]*\.md|T-\d*[*?\[]|[*?\[][^\s'\"]*\.md\b|\*\*",
-                             re.I)
+# `**` as a recursive glob (`**/`, `/**`, `'**'`: between blanks, quotes or path separators), not as Markdown
+# bold (`**Decision**`, `\n**Airtime:**`), T-248
+GLOB_STARS = r"""(?<![^\s'"/\\(=])\*\*(?=[\s'"/\\)]|$)"""
+CODE_TOUCHES_RE = re.compile(
+    r"(?<![\w-])tasks(?![\w-])|T-\d+[^\s'\"\\/]*\.md|T-\d*[*?\[]|[*?\[][^\s'\"]*\.md\b|" + GLOB_STARS, re.I)
 HEADER_LINE_RE = re.compile(r"^[ \t]*(status|qa[\W_]*rounds|lead)[ \t]*:", re.I)
 
 
@@ -506,7 +696,7 @@ GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge
                "worktree", "push", "pull", "fetch", "tag", "cherry-pick", "revert", "mv", "rm", "clean"}
 INLINE_CODE_RE = re.compile(
     r"(^|\s)(python3?|py|perl|ruby|node|powershell|pwsh)(\.exe)?\s+(-\S*\s+)*-(c|e|command|encodedcommand)\b", re.I)
-TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|(?<![\w-])T-[\d*?\[]|[*?\[][^\s]*\.md\b|\*\*", re.I)
+TOUCHES_RE = re.compile(r"(?<![\w-])tasks(?![\w-])|(?<![\w-])T-[\d*?\[]|[*?\[][^\s]*\.md\b|" + GLOB_STARS, re.I)
 # the bare words: `printf 'x\nlead: A'` holds "lead" right after the "n" of an escape (T-181)
 GUARD_WORD_RE = re.compile(r"qa[\W_]*rounds|status|lead", re.I)
 
@@ -683,12 +873,14 @@ def cd_bases(cmd, cwd=None):
     return bases
 
 
-def why_risky(seg, cwd=None, in_tasks=False, bases=None):
+def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
     """Why one simple command could write a ticket's status, qa_rounds or lead line, or why the hook can't tell
     (T-181, T-212); "" when it can't. Allowed: reads, real calls of the status script, git (its commits meet
     commit_check), test runs, inline code that names no task file, scripts whose own code can't write those lines
     (script_reason), file writes (cp, mv, sed -i, Set-Content, ...) that can't reach a ticket, and appends of
-    plain text with no such line (a result note). Any other command is risky."""
+    plain text with no such line (a result note); since T-248 also shell variable assignments, find, mktemp and
+    Godot runs that can't reach a ticket. Any other command is risky. `godot_var_ok`: $GODOT_BIN is Godot (the
+    command doesn't set it itself)."""
     words = words_of(seg.text)
     for op, target in seg.redirects:
         if op != ">>":
@@ -697,6 +889,8 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None):
             return f"what it appends to `{target or '?'}` could hold a status, qa_rounds or lead line"
     if not words:
         return ""
+    if ASSIGNMENT_RE.match(words[0]):
+        return assignment_reason(seg, words, cwd, in_tasks, bases, godot_var_ok)
     if (read_only_segment(seg.text) or script_call(seg.text) or git_writer(seg.text) or is_test_run(words)
             or pip_read_only(words)):
         return ""
@@ -704,8 +898,24 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None):
         inner = xargs_command(words)
         if inner is None:
             return ""   # xargs alone only echoes its input
-        why = why_risky(inner, cwd, in_tasks, bases)
+        why = why_risky(inner, cwd, in_tasks, bases, godot_var_ok)
         return f"xargs runs {why}" if why else ""
+    if words[0].lower() in ("find", "find.exe"):
+        return find_reason(words, cwd, in_tasks, bases, godot_var_ok)
+    if is_godot(words[0], godot_var_ok):
+        return godot_reason(words, cwd, in_tasks)
+    if words[0].lower() == "mktemp":
+        args, i = [], 1
+        while i < len(words):
+            w = re.sub(r"^--(tmpdir|suffix)=", "", words[i])
+            if w in ("-p", "--suffix"):
+                args.append(words[i + 1] if i + 1 < len(words) else "")
+                i += 1
+            elif not w.startswith("-"):
+                args.append(w)
+            i += 1
+        hit = next((a for a in args if ticket_path(a, cwd, in_tasks)), None)
+        return f"`mktemp` makes `{hit or '?'}`, which could be a ticket" if hit is not None else ""
     code = inline_code(seg, words)
     if code is not None:
         if in_tasks:
@@ -734,6 +944,41 @@ def risky_segment(seg, cwd=None, in_tasks=False, bases=None):
     return bool(why_risky(seg, cwd, in_tasks, bases))
 
 
+def with_literal_vars(cmd, segments, cwd, in_tasks):
+    """The segments, with `$name` and `${name}` replaced by the value after the segment that sets it, for each
+    variable the command sets exactly once, to a literal value, in a segment of its own (`tmp=art-archive/T-243/x;
+    mkdir -p $tmp`), and names nowhere else but in such uses (no `for name`, `read name`, ...) (T-248)."""
+    sets = {}
+    for i, s in enumerate(segments):
+        words = words_of(s.text)
+        if words and not s.redirects and all(ASSIGNMENT_RE.match(w) for w in words):
+            for w in words:
+                name, value = w.split("=", 1)
+                sets.setdefault(name, []).append((i, value))
+    known = {}
+    for name, found in sets.items():
+        if (len(found) == 1 and not re.search(r"[$`*?\[{~]", found[0][1])
+                and len(re.findall(rf"(?<![$\w{{]){name}(?!\w)", cmd)) == 1):
+            known[name] = found[0]
+    if not known:
+        return segments
+
+    def put(text, i):
+        for name, (at, value) in known.items():
+            if i > at:
+                text = re.sub(rf"\$(\{{{name}\}}|{name}(?!\w))", lambda _: value, text)
+        return text
+
+    out = []
+    for i, s in enumerate(segments):
+        new = Segment()
+        new.chars = list(put("".join(s.chars), i))
+        new.heredocs = s.heredocs
+        new.redirects = [(op, t2) for op, t in s.redirects for t2 in [put(t, i)] if ticket_path(t2, cwd, in_tasks)]
+        out.append(new)
+    return out
+
+
 def risky_parts(cmd, cwd=None):
     """[(part, why)]: the parts of a shell command that could write a ticket's guarded lines, with the reason, or
     the whole command when the hook can't read it (an open quote, a backtick, a computed file name, ...)."""
@@ -743,9 +988,11 @@ def risky_parts(cmd, cwd=None):
         return [(cmd, "the guard can't read the command (a backtick, an open quote, a computed file name, a "
                       "command substitution that names task files, or a here-document without its end)")]
     bases = cd_bases(cmd, cwd)
+    godot_var_ok = not GODOT_BIN_SET_RE.search(cmd)
+    segments = with_literal_vars(cmd, segments, cwd, in_tasks)
     out = []
     for s in segments:
-        why = why_risky(s, cwd, in_tasks, bases)
+        why = why_risky(s, cwd, in_tasks, bases, godot_var_ok)
         if why:
             out.append((s.text or cmd, why))
     return out

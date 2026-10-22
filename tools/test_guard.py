@@ -439,6 +439,149 @@ class MoreReadOnlyCommands(Base):
         self.assertIn("xargs runs `rm`", r)
 
 
+class MoreHarmlessCommands(Base):
+    """T-248: commands refused in the week of 2026-10-22 that could not write any ticket's header lines: a
+    read-only find, shell variables, and Godot's movie recording and asset import."""
+
+    GODOT = r"C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe"   # GODOT_BIN in .env, read by game/tools/godot_env.sh
+    GODOT_CONSOLE = r"C:\Tools\Godot\Godot_v4.6.2-stable_win64_console.exe"
+    WT = "C:/solid-carbide-worktrees/T-227"
+
+    def setUp(self):
+        super().setUp()
+        self.frames = self.root / "art-archive" / "T-227" / "frames"
+        self.frames.mkdir(parents=True)
+        (self.frames / "f00000001.png").write_bytes(b"png")
+        (self.root / "game").mkdir()
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    def reason(self, command, cwd=None):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_shell({"command": command}, cwd)
+        return json.loads(buf.getvalue())["hookSpecificOutput"]["permissionDecisionReason"] if buf.getvalue() else ""
+
+    def assert_allowed(self, commands, cwd=None):
+        for c in commands:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, cwd), "allow", self.reason(c, cwd))
+
+    def assert_refused(self, commands, cwd=None):
+        for c in commands:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, cwd), "deny")
+
+    def test_allowed_1_a_read_only_find(self):
+        self.assert_allowed([
+            "find /c/solid-carbide-worktrees/T-243/game -name '*.gd' -newer "
+            "tasks/T-243-airtime-counter-hud.md; grep -n status tasks/T-243-airtime-counter-hud.md",
+            "find tasks -name 'T-24*.md' | xargs grep -l status",
+            "find tasks -name 'T-243*' -exec grep -n status {} +",
+            "find tasks -name 'T-243*' -exec grep -n lead {} \\;",
+            "find game -type d -iname tasks; grep status tasks/T-243-x.md",
+            "find . -maxdepth 2 -name '*.tscn' -print | head; sed -n '1,12p' tasks/T-243-x.md # status",
+        ], str(self.root))
+        # what find runs on files outside any tasks folder is judged as itself
+        self.assert_allowed([
+            "find art-archive/T-227/frames -name '*.png' -delete; grep -n status tasks/T-227-x.md",
+            "find art-archive/T-227/frames -name 'f*.png' -exec rm {} + && python tools/task_status.py T-227",
+            "find game -name '*.import' -fprint art-archive/T-227/imports.txt # status",
+        ], str(self.root))
+
+    def test_allowed_2_shell_variable_assignments(self):
+        self.assert_allowed([
+            "tmp=$(mktemp -d) && grep -n status tasks/T-243-airtime-counter-hud.md",
+            "tmp=/c/solid-carbide-worktrees/T-243/art-archive/T-243/frames; mkdir -p $tmp && grep status "
+            "tasks/T-243-x.md",
+            'out="C:/solid-carbide-worktrees/T-243/art-archive/T-243"; ls "$out"; grep -n lead tasks/T-243-x.md',
+            "GODOT_DISABLE_LEAK_CHECKS=1 python tools/task_status.py T-243",
+            "LC_ALL=C grep -n '^status:' tasks/T-243-x.md",
+            "fps=50; secs=4; python tools/task_status.py T-243 # status",
+        ])
+
+    def test_allowed_3_godot_records_a_movie_into_an_own_folder(self):
+        self.assert_allowed([
+            f'"{self.GODOT}" --path game --fixed-fps 50 --write-movie {self.WT}/art-archive/T-227/frames/f.png '
+            "res://tests/fixtures/enemies_drop_gif.tscn; grep status tasks/T-227-art-minion-falling-animation.md",
+            f'"{self.GODOT_CONSOLE}" --path {self.WT}/game --fixed-fps 50 --quit-after 200 '
+            f"--write-movie {self.WT}/art-archive/T-227/frames/f.png res://tests/fixtures/enemies_drop_gif.tscn "
+            "&& python tools/task_status.py T-227",
+            'source game/tools/godot_env.sh && "$GODOT_BIN" --path game --write-movie '
+            "art-archive/T-227/frames/f.png --fixed-fps 50 --quit-after 200 "
+            "res://tests/fixtures/enemies_drop_gif.tscn; grep -n status tasks/T-227-x.md",
+        ], str(self.REPO))
+
+    def test_allowed_4_godot_imports_the_project(self):
+        self.assert_allowed([
+            f'"{self.GODOT_CONSOLE}" --headless --path game --import; grep -n status tasks/T-227-x.md',
+            f'"{self.GODOT}" --path {self.WT}/game --import && python tools/task_status.py T-227',
+            'source game/tools/godot_env.sh && "$GODOT_BIN" --headless --path game --import '
+            "&& grep status tasks/T-227-x.md",
+            f'cd {self.WT} && "{self.GODOT_CONSOLE}" --headless --editor --path game --quit --import # status',
+        ], str(self.REPO))
+
+    REPO = Path(__file__).resolve().parent.parent
+
+    def test_allowed_5_inline_python_appending_markdown_bold_to_docs(self):
+        """T-242: a python heredoc that appends notes with **bold** to two docs files, no task file."""
+        self.assert_allowed([
+            "cd /c/solid-carbide-worktrees/T-242 && python - <<'EOF'\nfrom pathlib import Path\n"
+            "for name, note in [('docs/drifting.md', '\\n**Airtime trick** (T-242): the status of the jump is "
+            "read from the car.\\n'), ('game/README.md', '\\n**Airtime:** see docs/drifting.md, lead by T-242.\\n')]:\n"
+            "    p = Path(name)\n    p.write_text(p.read_text(encoding='utf-8') + note, encoding='utf-8')\n"
+            "print('appended, status ok')\nEOF",
+        ])
+
+    def test_still_refused(self):
+        self.assert_refused([
+            "python - <<'EOF'\nimport glob\nfor f in glob.glob('**', recursive=True):\n"
+            "    open(f, 'a').write('status: done')\nEOF",
+            "python -c \"import pathlib; [p.write_text('status: done') for p in pathlib.Path('.').glob('**/T*')]\"",
+            "python - <<'EOF'\nfrom pathlib import Path\np = Path('tasks/T-1-x.md')\n"
+            "p.write_text(p.read_text() + '\\n**Note**\\nstatus: done')\nEOF",
+            # QA's criteria rewrite: inline code that writes a ticket is still refused, whatever lines it aims at
+            "python - <<'EOF'\nfrom pathlib import Path\np = Path('tasks/T-243-airtime-counter-hud.md')\n"
+            "t = p.read_text(encoding='utf-8')\nt = t.replace('(QA: pass / fail)', '(QA: pass)')\n"
+            "p.write_text(t, encoding='utf-8')\nprint('criteria marked, status unchanged')\nEOF",
+            "find tasks -name 'T-1*.md' -delete # status",
+            "find . -name 'T-1*.md' -delete # status",
+            "find tasks -name '*.md' -exec rm {} + # status",
+            "find tasks -name '*.md' -exec rm {} \\; # status",
+            "find tasks -exec sed -i 's/status: open/status: done/' {} +",
+            "find . -name 'T-*' -exec python -c \"import sys; open(sys.argv[1],'w').write('status: done')\" {} \\;",
+            "find tasks -name 'T-1*' -fprint tasks/T-1-x.md # status",
+            "find art-archive -fprint tasks/list.txt # lead",
+            "find art-archive -name '*.png' -exec cp {} tasks/T-1-x.md \\; # status",
+            "cd tasks && find . -name '*.png' -delete # status",
+            "tmp=1 sed -i 's/status: open/status: done/' tasks/T-1-x.md",
+            "f=tasks/T-1-x.md; sed -i 's/status: open/status: done/' $f",
+            "TMPDIR=tasks mktemp # status",
+            "mktemp -p tasks T-1-XXXX.md # status",
+            f'"{self.GODOT}" --path game --write-movie tasks/f.png res://x.tscn # status',
+            f'"{self.GODOT}" --path game --write-movie=tasks/T-1-x.md res://x.tscn # status',
+            f'"{self.GODOT}" --path tasks --import # status',
+            f'"{self.GODOT}" --headless --path game --script res://fix.gd tasks/T-1-x.md # status',
+            f'"{self.GODOT}" --headless --path game --export-release Web tasks/T-1-x.md # status',
+            'GODOT_BIN=sed; "$GODOT_BIN" -i "s/status: open/status: done/" tasks/T-1-x.md',
+            "cd tasks && godot --import # status",
+        ], str(self.root))
+
+    def test_a_refusal_names_what_made_it_refuse(self):
+        for c, why in [("find tasks -name '*.md' -delete # status", "`find -delete` under `tasks`"),
+                       ("find tasks -exec rm {} + # status", "`find -exec rm` on files under `tasks`"),
+                       ("find art-archive -fprint tasks/list.txt # status", "`find` writes `tasks/list.txt`"),
+                       (f'"{self.GODOT}" --path game --write-movie tasks/f.png # status',
+                        "Godot's `--write-movie` writes `tasks/f.png`"),
+                       (f'"{self.GODOT}" --script fix.gd tasks/T-1-x.md # status', "Godot with `--script`"),
+                       ("TMPDIR=tasks mktemp # status", "`TMPDIR=tasks` hands `mktemp`")]:
+            with self.subTest(c=c):
+                r = self.reason(c, str(self.root))
+                self.assertIn("status script", r)
+                self.assertIn(why, r)
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 

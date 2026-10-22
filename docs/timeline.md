@@ -1690,3 +1690,8 @@ Entry format:
 - Decision or change: after playing G-005's level creator, the board judged today's assets not enough for a full level and gave its go for up to 100 PixelLab generations for a comprehensive piece set: a multi-layer world with rooftops of any size, ramps between the layers and pieces in more rotations (Level design, Decisions, "Level creator piece set"; replaces "no new art is generated for it"). The Project Lead's plan: the text first (T-250); rooftops of any size and ramps in all four directions drawn in the engine (T-251); road corners, junctions and dead ends by script (T-252); eight props as obstacles in four rotations (T-253); small and long buildings (T-254); then their art: new textures (T-255, cap 10), props (T-256, cap 40) and buildings (T-257, cap 12), 62 generations at most. The board also took T-243 out of T-247's dependencies, and asked for T-229 to start as soon as the drift and airtime work is done, without waiting for its word.
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-250, T-251, T-252, T-253, T-254, T-255, T-256, T-257, T-247, T-229
+
+## 2026-10-22: T-248 done: the guard lets more harmless commands through
+- Decision or change: the guard now passes a read-only `find`, shell variable assignments, Godot's `--import` and `--write-movie` (outside task folders) and Markdown `**` in inline code, which agents kept hitting; `find -delete`/`-exec` writes and recordings into task folders are still refused. Inline code that rewrites a ticket's criteria lines stays refused (QA marks criteria with the Edit tool). Tooling, merged straight after QA.
+- Documents touched: `tasks/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-248 (done)
