@@ -38,7 +38,7 @@ This is the task board's tooling, which the player never meets. Work on your own
 ## Acceptance criteria
 
 - [ ] Tests show `/api/builds` reports for each folder whether it has the creator scene, and `/api/launch` with the creator option starts Godot on `res://scenes/level_creator/level_creator.tscn` for a listed folder, refuses folders outside the worktree list and takes no scene path from the request (QA: pass; has_creator tests, creator launch args, 409 without scene, extra request fields ignored and 404/400 outside the list are covered and pass)
-- [ ] The Builds tab (and a goal build's detail) shows Play creator next to Play, disabled where the scene is missing (code review, and a screenshot if one can be made) (QA: pass by code review; creatorButton(b) renders Play creator in both the Builds entries and the goal build detail, disabled with a tooltip when has_creator is false; no screenshot)
+- [ ] The Builds tab (and a goal build's detail) shows Play creator next to Play, disabled where the scene is missing (code review, and a screenshot if one can be made) (QA: pass; by code review, creatorButton(b) renders Play creator in both the Builds entries and the goal build detail, disabled with a tooltip when has_creator is false; no screenshot)
 - [ ] `docs/README.md`, "The task board", describes the button; all Python tool tests pass (QA: pass; docs/README.md describes the button; tools 451 OK, game/tools 395 OK, 1 skipped)
 
 ## Updates
