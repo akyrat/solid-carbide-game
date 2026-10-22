@@ -80,7 +80,7 @@ const TEXTS := {
 	"upgrade_wiper.tier4.title": "Faster Sweep",
 	"upgrade_wiper.tier4.desc": "Wiper sweeps 25% faster. No streaks left behind.",
 	"upgrade_wiper.tier5.title": "Hard Shove",
-	"upgrade_wiper.tier5.desc": "Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju.",
+	"upgrade_wiper.tier5.desc": "Knockback up 50%, from 6 to 9. Minions only, never the kaiju.",
 	"upgrade_wiper.tier6.title": "Longer Blade II",
 	"upgrade_wiper.tier6.desc": "Wiper length up another 30%. A wider view for the viewers.",
 	"upgrade_wiper.tier7.title": "Heavy Duty II",

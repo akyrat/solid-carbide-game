@@ -89,7 +89,7 @@
     "sweep_arc_degrees": 180,
     "sweep_degrees_per_second": 240,
     "hit_cooldown": 0.5,
-    "knockback_distance": 1.5,
+    "knockback_distance": 6,
     "knockback_kaiju": false,
     "tiers": [
       { "tier": 2, "effect": "length_multiplier", "value": 1.2 },

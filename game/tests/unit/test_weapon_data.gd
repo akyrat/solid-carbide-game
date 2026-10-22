@@ -143,12 +143,12 @@ func test_wiper_tiers_and_knockback() -> void:
 	var w1 := w.wiper_at(1)
 	assert_eq(w1.damage, 3.0)
 	assert_eq(w1.length, 2.5)
-	assert_eq(w1.knockback_distance, 1.5)
+	assert_eq(w1.knockback_distance, 6.0)
 	assert_false(w1.knockback_kaiju)
 	var w8 := w.wiper_at(8)
 	assert_almost_eq(w8.damage, 3.0 * 1.4 * 1.4, 0.0001)
 	assert_almost_eq(w8.length, 2.5 * 1.2 * 1.3, 0.0001)
-	assert_almost_eq(w8.knockback_distance, 2.25, 0.0001)
+	assert_almost_eq(w8.knockback_distance, 9.0, 0.0001)
 	assert_almost_eq(w8.sweep_degrees_per_second, 240.0 * 1.25 * 1.3, 0.0001)
 
 
