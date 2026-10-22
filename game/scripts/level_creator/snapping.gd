@@ -43,10 +43,15 @@ static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view
 		return {}
 	var kind := str(e.kind)
 	var corner := doc.cell_corner(c)
-	# A texture's own footprint wins (T-254); a rooftop or ramp of any size takes `size` (T-251).
+	# A texture's own footprint wins (T-254); a rooftop or ramp of any size takes `size` (T-251);
+	# a road piece (T-252, "parts") keeps its 2 x 2 tile footprint.
 	var foot := LevelDocument.piece_size(asset_id, view, size, doc.map_rect().size, mirror)
-	if kind in ["ground", "road"]:
+	if kind in ["ground", "road"] and not e.has("parts"):
 		foot = Vector2(CELL, CELL)
+	elif e.has("parts"):
+		# A road piece (T-252): 2 x 2 tiles, moved in so all four tiles are on the map.
+		var m := doc.map_rect()
+		corner = corner.clamp(m.position, m.end - foot)
 	var rect := Rect2(corner, foot)
 	var out := {"corner": corner, "rect": rect, "snapped": ""}
 	if not (kind in SNAPPING_KINDS):

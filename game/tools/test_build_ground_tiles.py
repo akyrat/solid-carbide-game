@@ -2,6 +2,7 @@
 
 Run from the repo root:  python -m unittest discover -s game/tools -p "test_*.py"
 """
+import hashlib
 import json
 import sys
 import unittest
@@ -183,6 +184,146 @@ class TileTests(unittest.TestCase):
         self.assertEqual(g.bands([(0, 4)], 0, 4), [])
         self.assertEqual(g.pick({"a": 1, "b": 1}, 3, 4, 1), g.pick({"a": 1, "b": 1}, 3, 4, 1))
         self.assertIn(g.pick({"a": 1, "b": 0}, 3, 4, 1), ("a",))
+
+
+# What the game's ground was before T-252 (hashes): its cell indexes and the names of the first
+# tiles. Appending the pieces' tiles to the atlas must not change them.
+OLD_CELLS_SHA = "5954f97b5cda6608"
+OLD_NAMES_SHA = "798d47a1b283e12a"
+PIECE_TILE_NAMES = ["piece_%s_%d%d" % (n, c, r) for n in g.PIECES for r in range(2) for c in range(2)]
+# The straight tile whose line lies on each tile edge (the two-tile-wide roads' centre line).
+STRAIGHT_OF_EDGE = {"x2": "y_line_r_a0", "x0": "y_line_l_a0", "y2": "x_line_r_a0", "y0": "x_line_l_a0"}
+
+
+def sha16(text):
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+def tile(name):
+    return g.atlas_tile(ATLAS, NAMES.index(name))
+
+
+def white_pixels(t):
+    return {(x, y) for y, r in enumerate(t) for x, p in enumerate(r) if g.is_line(p)}
+
+
+def edge_keys(name, c, r):
+    """The tile edges of piece tile (c, r) that carry a centre line (from the piece's open sides)."""
+    return [key for a in g.PIECES[name] for cc, rr, key in g.ARM_SEGMENTS[a] if (cc, rr) == (c, r)]
+
+
+class RoadPieceTests(unittest.TestCase):
+    """T-252: corners, T-junctions, crossroads and dead ends, 2 x 2 tiles (4 x 4 units) at the
+    two-tile-wide roads' size, drawn from the straight tiles' own pixels."""
+
+    def test_pieces_come_last_and_old_tiles_are_unchanged(self):
+        self.assertEqual(NAMES[g.OLD_TILES:], PIECE_TILE_NAMES)
+        self.assertEqual(len(PIECE_TILE_NAMES), 13 * 4)
+        self.assertEqual(sha16(json.dumps(GROUND["cells"])), OLD_CELLS_SHA)
+        self.assertEqual(sha16(json.dumps(NAMES[:g.OLD_TILES])), OLD_NAMES_SHA)
+        used = {k for row in GROUND["cells"] for k in row}
+        self.assertTrue(all(k < g.OLD_TILES for k in used), "the game's ground never uses a piece")
+
+    def test_every_rotation_exists(self):
+        arms = {n: set(a) for n, a in g.PIECES.items()}
+        for kind, count in (("corner", 2), ("t", 3), ("dead", 1)):
+            sets = [a for n, a in arms.items() if n.startswith(kind + "_")]
+            self.assertEqual(len({frozenset(a) for a in sets}), 4, kind)
+            self.assertTrue(all(len(a) == count for a in sets), kind)
+        for n, a in arms.items():
+            if n.startswith("corner_"):
+                self.assertNotIn(a, (set("ns"), set("ew")))
+        self.assertEqual(arms["cross"], set("nesw"))
+
+    def test_lines_continue_the_straight_tiles(self):
+        """On every open side the two tiles next to the road carry exactly the straight tiles'
+        line pixels (line_r and line_l, along y or x), so the centre line runs on across the join
+        with the same pixels and dash phase; asphalt is the plain a0 tile."""
+        a0 = tile("y_plain_a0")
+        for name, arm_set in g.PIECES.items():
+            closed = len(arm_set) == 1
+            for r in range(2):
+                for c in range(2):
+                    t = tile("piece_%s_%d%d" % (name, c, r))
+                    want = set()
+                    for key in edge_keys(name, c, r):
+                        want |= white_pixels(tile(STRAIGHT_OF_EDGE[key]))
+                    got = white_pixels(t)
+                    if closed:
+                        self.assertLessEqual(want, got, (name, c, r))
+                    else:
+                        self.assertEqual(got, want, (name, c, r))
+                        for y in range(g.H):
+                            for x in range(g.W):
+                                if (x, y) not in got:
+                                    self.assertEqual(t[y][x], a0[y][x], (name, c, r, x, y))
+
+    def test_each_open_side_has_the_pair_of_straight_tiles(self):
+        """The line reaches the piece's edge: an open side's two tiles hold line pixels within
+        0.2 units of that side, and a closed side has none (corners, T-junctions, crossroads)."""
+        near = {"n": lambda u, v: v < 0.2, "s": lambda u, v: v > 3.8, "w": lambda u, v: u < 0.2,
+                "e": lambda u, v: u > 3.8}
+        for name, arm_set in g.PIECES.items():
+            if name.startswith("dead_"):
+                continue
+            for side, test in near.items():
+                touching = False
+                for r in range(2):
+                    for c in range(2):
+                        for x, y in white_pixels(tile("piece_%s_%d%d" % (name, c, r))):
+                            wx, wy = g.local_units(x, y)
+                            touching |= test(2 * c + wx, 2 * r + wy)
+                self.assertEqual(touching, side in arm_set, (name, side))
+
+    def test_dead_end_has_a_kerb_across_the_road_and_gravel_beyond(self):
+        gravel = tile("gravel0")
+        for name, arm_set in g.PIECES.items():
+            if not name.startswith("dead_"):
+                continue
+            closed = {"n": "s", "s": "n", "e": "w", "w": "e"}[arm_set]
+            kerb = gravel_px = 0
+            for r in range(2):
+                for c in range(2):
+                    t = tile("piece_%s_%d%d" % (name, c, r))
+                    for y in range(g.H):
+                        for x in range(g.W):
+                            if not road.footprint(x, y):
+                                continue
+                            wx, wy = g.local_units(x, y)
+                            u, v = 2 * c + wx, 2 * r + wy
+                            d = {"s": 4 - v, "n": v, "e": 4 - u, "w": u}[closed]
+                            if d <= g.KERB_FROM:
+                                gravel_px += 1
+                                self.assertEqual(t[y][x], gravel[y][x], (name, c, r, x, y))
+                            elif d <= g.KERB_TO:
+                                kerb += 1
+                                self.assertEqual(t[y][x], g.WHITE, (name, c, r, x, y))
+            self.assertGreater(kerb, 800, name)  # a band across the whole 4-unit road
+            self.assertGreater(gravel_px, 1000, name)
+
+    def test_pieces_pass_check_sprite_rules(self):
+        import check_sprite_rules as rules
+        for n in PIECE_TILE_NAMES:
+            t = tile(n)
+            padded = [list(r) for r in t] + [[(0, 0, 0, 0)] * g.W for _ in range(g.W - g.H)]
+            results, _ = rules.check_rows(padded, size=128, max_colors=30)
+            self.assertTrue(all(ok for _, ok, _ in results), (n, results))
+            self.assertEqual(road.tiling_report(t), (0, 0), n)
+
+    def test_the_sheet_draws_each_piece_from_its_tiles(self):
+        sheet = road.load(g.SHEET_PNG)
+        rec = json.loads(g.dump(g.record(TILES)))
+        self.assertEqual(len(rec["pieces"]), 13)
+        for p in rec["pieces"]:
+            x0, y0 = p["sheet_xy"]
+            self.assertEqual(p["sheet_size"], [256, 128])
+            self.assertEqual(len(p["tiles"]), 2)
+            canvas = [[g.T] * g.PIECE_W for _ in range(g.PIECE_H)]
+            for r in range(2):
+                for c in range(2):
+                    road.blit(canvas, tile(p["tiles"][r][c]), 64 + (c - r) * 64, (c + r) * 32)
+            region = [row[x0:x0 + 256] for row in sheet[y0:y0 + 128]]
+            self.assertEqual(region, canvas, p["name"])
 
 
 class FilesTests(unittest.TestCase):

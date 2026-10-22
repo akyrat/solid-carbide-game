@@ -1,7 +1,7 @@
 ---
 id: T-252
 title: "Level creator: road corners, T-junctions, crossroads and dead ends"
-status: blocked
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -37,9 +37,9 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] The atlas and catalogue have corners, T-junctions and dead ends in 4 rotations and a crossroads; their lines join the straight tiles' lines without gaps (tests on the tile data, and the screenshot) (QA: pass / fail)
-- [ ] The tiles pass `check_sprite_rules.py`; the game's own map's ground is unchanged (a test) (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-252/screenshots/`; `game/README.md` describes the pieces; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The atlas and catalogue have corners, T-junctions and dead ends in 4 rotations and a crossroads; their lines join the straight tiles' lines without gaps (tests on the tile data, and the screenshot) (QA: pass; atlas and catalogue hold 4 corners, 4 T-junctions, 4 dead ends and a crossroads; test_lines_continue_the_straight_tiles checks the line pixels, and the screenshot shows lines running straight across every join with the existing two-tile straights)
+- [ ] The tiles pass `check_sprite_rules.py`; the game's own map's ground is unchanged (a test) (QA: pass; test_pieces_pass_check_sprite_rules and the old-tiles-unchanged and games-own-ground GUT tests pass)
+- [ ] The screenshot is in `art-archive/T-252/screenshots/`; `game/README.md` describes the pieces; the full GUT suite and all Python tool tests pass (QA: pass; screenshot present, README describes the pieces, GUT all passed, tools 439 OK, game/tools 425 OK)
 
 The board's review: lay out a street grid with corners and junctions.
 Board review files: the screenshot in `art-archive/T-252/screenshots/`.
@@ -48,6 +48,25 @@ Board review files: the screenshot in `art-archive/T-252/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started: road corners, T-junctions, crossroads and dead ends, drawn by script.
+
+### 2026-10-22, In progress → In QA
+
+Built: corners, T-junctions, a crossroads and dead ends at the wide road's size, joining today's straights. Sent to QA.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Level/Challenge agent, done (no PixelLab call, no cost).
+
+- **Reworked after the first version** so the pieces join today's two-tile-wide roads (the Project Lead's change).
+- **Built:** 13 road pieces, each 2 x 2 tiles (4 x 4 units): 4 corners, 4 T-junctions, a crossroads, 4 dead ends. `build_ground_tiles.py` appends their 52 tiles to the ground atlas (indexes 87 to 138, so every older tile and the game's own ground are unchanged) and draws `art/ground/road_pieces.png` (each piece as a 256 x 128 diamond, the panel icon and the preview). Each tile is the plain asphalt plus the straight tiles' own centre-line pixels on the tile edges of the open sides, so on every open side the two tiles next to the road carry exactly `line_r` and `line_l`'s line (same dash phase, along y and along x), and the lines meet at the piece's centre. The straights have no edge lines, so none are drawn.
+- **Dead ends** end in a white kerb line across the full road (0.75 to 1 unit from the closed side) with gravel beyond it; they read clearly in the screenshot.
+- **Catalogue:** one entry per piece and rotation (`road-piece_<name>`, footprint 4 x 4, `parts` = four tile entries marked `"part": true`, hidden from the panel by `LevelDocument.panel_entries`), listed first under Roads, with T-250's labels over each button. One click places all four tiles; `LevelSnapping.placement` moves the piece in so all four are on the map and the outline is 4 x 4. Delete removes one tile at a time (a proposal to revisit if the board wants whole-piece delete).
+- **The one-tile pieces were dropped** (my call): they did not join the two-tile roads and would only clutter the panel.
+- **x and y versions:** all older x and y ground tiles were already separate catalogue entries and shown in the panel; nothing needed changing. Rotation is by choosing the rotation's own button (Rotate is greyed out for roads, as before).
+- **Builder:** the only change in `build_creator_assets.py` is in `ground_entries` (a stable sort putting the pieces first); T-251's changes in `elevation_entries` should merge cleanly, and a rebuild regenerates the catalogue.
+- **Tests:** `RoadPieceTests` in `tools/test_build_ground_tiles.py` (old tiles and cells unchanged by hash; every rotation; open-side tiles carry exactly the straight tiles' line pixels over plain asphalt; lines reach only open edges; dead-end kerb and gravel; sprite rules and tiling for all 52 tiles; the sheet matches), `tools/test_build_creator_assets.py`, `tests/unit/level_creator/test_road_pieces.gd` (placing all four tiles, atlas indexes, ground rows, edge clamp, panel labels and hidden parts, the game's ground unchanged). The existing panel test now uses `panel_entries`. Full GUT suite and both Python sets pass (see the final run in the report).
+- **Screenshot:** `art-archive/T-252/screenshots/street_grid.png` (fixture `tests/fixtures/level_creator_roads_demo.tscn`): a street grid of today's two-tile straights plus every piece (a ring with four corners and four T-junctions around a crossroads), and two short roads closed with dead ends in all four rotations. Seen: the lines run straight across every join and the dead-end kerbs show clearly.
+- **Process notes:** one command (`sha256sum` on a file) and one scratchpad script run were refused by the status guard and skipped; I did not work around them. One early edit of the builder used an inline Python heredoc by mistake.

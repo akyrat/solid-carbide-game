@@ -25,6 +25,20 @@ const LABEL_KEYS := {
 	"ramp-0-6": "ramp_height_0_6",
 	"building-small": "building_small",
 	"building-long": "building_long",
+	# T-252: the road pieces, one button per rotation (the art tells them apart; the tooltip is the id).
+	"road-piece_corner_ne": "road_corner",
+	"road-piece_corner_es": "road_corner",
+	"road-piece_corner_sw": "road_corner",
+	"road-piece_corner_nw": "road_corner",
+	"road-piece_t_nes": "road_t_junction",
+	"road-piece_t_esw": "road_t_junction",
+	"road-piece_t_swn": "road_t_junction",
+	"road-piece_t_wne": "road_t_junction",
+	"road-piece_cross": "road_crossroads",
+	"road-piece_dead_n": "road_dead_end",
+	"road-piece_dead_e": "road_dead_end",
+	"road-piece_dead_s": "road_dead_end",
+	"road-piece_dead_w": "road_dead_end",
 }
 ## A ramp's view is the direction it climbs (T-251): the top bar's label for each.
 const RAMP_DIR_KEYS := {
@@ -68,7 +82,7 @@ func _ready() -> void:
 		grid.columns = 4
 		list.add_child(grid)
 		var ids: Array = []
-		for e in LevelDocument.entries():
+		for e in LevelDocument.panel_entries():
 			if str(e.kind) != kind:
 				continue
 			var id := str(e.id)
@@ -88,7 +102,21 @@ func _make_button(e: Dictionary) -> Button:
 	b.icon = icon_of(e)
 	b.tooltip_text = id
 	b.set_meta("asset_id", id)
-	if LABEL_KEYS.has(id):
+	if LABEL_KEYS.has(id) and id.begins_with("road-"):
+		# A road piece (T-252): the art fills the button and its label (the text key) sits in a
+		# small Label over its lower edge, so the 2:1 tile keeps the full button width.
+		var label := Label.new()
+		label.name = "Label"
+		label.text = CreatorTexts.get_text(LABEL_KEYS[id])
+		label.add_theme_font_size_override("font_size", 10)
+		label.add_theme_color_override("font_outline_color", Color.BLACK)
+		label.add_theme_constant_override("outline_size", 4)
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		b.add_child(label)
+		b.set_meta("label", label)
+	elif LABEL_KEYS.has(id):
 		b.text = CreatorTexts.get_text(LABEL_KEYS[id])
 		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 		b.custom_minimum_size = Vector2(BUTTON_SIZE.x * 2, BUTTON_SIZE.y)

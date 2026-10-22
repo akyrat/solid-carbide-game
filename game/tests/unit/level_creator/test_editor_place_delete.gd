@@ -67,7 +67,7 @@ func test_the_panel_lists_every_catalogue_asset_by_kind() -> void:
 		assert_ne(label, "")
 		expected[label] = []
 		order.append(label)
-	for entry in LevelDocument.entries():
+	for entry in LevelDocument.panel_entries():
 		expected[CreatorTexts.get_text(KIND_KEYS[str(entry.kind)])].append(str(entry.id))
 	var shown := e.panel.entries_by_category()
 	assert_eq(shown, expected)
@@ -75,8 +75,8 @@ func test_the_panel_lists_every_catalogue_asset_by_kind() -> void:
 	var count := 0
 	for ids in shown.values():
 		count += ids.size()
-	assert_eq(count, LevelDocument.entries().size(), "each asset once")
-	assert_eq(e.panel.buttons.size(), LevelDocument.entries().size())
+	assert_eq(count, LevelDocument.panel_entries().size(), "each asset once")
+	assert_eq(e.panel.buttons.size(), LevelDocument.panel_entries().size())
 	for id in e.panel.buttons:
 		assert_not_null(e.panel.buttons[id].icon, id + " shows its art")
 

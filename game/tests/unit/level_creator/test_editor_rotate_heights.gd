@@ -15,7 +15,7 @@ func _editor() -> LevelCreatorEditor:
 
 func _ids_of(kind: String) -> Array:
 	var out: Array = []
-	for en in LevelDocument.entries():
+	for en in LevelDocument.panel_entries():
 		if str(en.kind) == kind:
 			out.append(str(en.id))
 	return out
