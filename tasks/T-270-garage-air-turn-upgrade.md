@@ -4,7 +4,7 @@ title: The air turn upgrade in the garage
 status: blocked
 from: project-lead
 to: game-data
-lead:
+lead: Coursework
 epic: garage
 milestone: mvp
 goal:

@@ -4,7 +4,7 @@ title: "Text: the air turn upgrade, and two level-up lines without \"Redgull say
 status: open
 from: project-lead
 to: narrative-theme
-lead:
+lead: Coursework
 epic: narrative
 milestone: mvp
 goal:
