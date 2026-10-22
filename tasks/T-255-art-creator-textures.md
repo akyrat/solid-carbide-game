@@ -1,7 +1,7 @@
 ---
 id: T-255
 title: "Art: new rooftop, car park, wall and ramp textures for the creator's resizable pieces"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -44,10 +44,10 @@ Your folder is built on T-251's branch (the Project Lead makes it). End with scr
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 10; every call is in the generation log (QA: pass / fail)
-- [ ] Each texture tiles without visible seams across a large rooftop or wall (screenshot) and passes `check_sprite_rules.py`; no Redgull red (QA: pass / fail)
-- [ ] T-251's resizable pieces use the new textures, with T-198's selectable; every generation is kept (`game/art/elevation/` or `art-archive/T-255/`) (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-255/screenshots/`; Visual style and `game/README.md` record the textures; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 10; every call is in the generation log (QA: pass; plan written before calls, 7 generations, 7 T-255 entries in the log)
+- [ ] Each texture tiles without visible seams across a large rooftop or wall (screenshot) and passes `check_sprite_rules.py`; no Redgull red (QA: pass; builder check and check_sprite_rules pass for all 7, no seams visible in office/carpark screenshots, carpark shows scalloped light patterns but no hard seams)
+- [ ] T-251's resizable pieces use the new textures, with T-198's selectable; every generation is kept (`game/art/elevation/` or `art-archive/T-255/`) (QA: pass; office/carpark/t198 styles via T key, 7 raws kept in art-archive/T-255/)
+- [ ] Screenshots are in `art-archive/T-255/screenshots/`; Visual style and `game/README.md` record the textures; the full GUT suite and all Python tool tests pass (QA: pass; 6 screenshots present, visual-style.md and game/README.md updated, GUT all passed, all Python tests OK)
 
 The board's review: build rooftops, a car park and ramps, and judge the new textures against T-198's.
 Board review files: the screenshots in `art-archive/T-255/screenshots/`.
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started on T-251's branch: new PixelLab textures for the resizable rooftops, car parks, walls and ramps, cap 10 generations.
+
+### 2026-10-22, In progress → In QA
+
+Textures in: 7 of 10 generations. Office, car park and T-198 styles, chosen per piece with a Style button (T). Several textures are weak (busy roof and office wall). Sent to QA.
 
 ## Result notes
 
