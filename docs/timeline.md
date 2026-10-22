@@ -1780,3 +1780,8 @@ Entry format:
 - Decision or change: the board, calling it crucial to the game's feel, wants a small sideways slide to carry on when a drift ends, so the player steadies the car with counter-steer, as in Hotshot Racing and Mario Kart. Tuning values with live sliders; played on its own, separate from every other change (Drifting, Decisions; T-278).
 - Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-278
+
+## 2026-10-22: The car's spawn point in the level creator
+- Decision or change: every level has exactly one spawn point, visible from the moment a level opens, movable anywhere the car can stand and turnable for its heading, never deletable; a run on the level starts the car there (Level design, Decisions; text T-279, build T-280).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-279, T-280
