@@ -1,7 +1,7 @@
 ---
 id: T-253
 title: "Level creator: props (barriers, cones, crates, rooftop kit) as obstacles, in four rotations"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -42,10 +42,10 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] Tests show each of the 8 props can be placed in four rotations on the ground and on a rooftop, is saved and reopened, and the saved level passes `check_level.py` (QA: pass / fail)
-- [ ] Tests show the car collides with a prop (and the combo is cut as with a boulder) and enemies path round it (QA: pass / fail)
-- [ ] Each prop's art, footprint and collision live in one data file; labels come from `creator_texts.json`; no Redgull red (QA: pass / fail)
-- [ ] The screenshot and GIF are in `art-archive/T-253/screenshots/`; `game/README.md` describes props; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show each of the 8 props can be placed in four rotations on the ground and on a rooftop, is saved and reopened, and the saved level passes `check_level.py` (QA: pass; test_creator_props.gd covers 8 x 4 on ground and rooftop, save/reopen, check_level exit 0; full GUT passed)
+- [ ] Tests show the car collides with a prop (and the combo is cut as with a boulder) and enemies path round it (QA: pass; tests for rect and round props, all 8 with ComboData.after_collision, barrier nav; passed)
+- [ ] Each prop's art, footprint and collision live in one data file; labels come from `creator_texts.json`; no Redgull red (QA: pass; props.json holds footprint, collision, textures per rotation; labels are creator_texts.json keys; 32 sprites have no 135,17,27; mvp_map data unchanged)
+- [ ] The screenshot and GIF are in `art-archive/T-253/screenshots/`; `game/README.md` describes props; the full GUT suite and all Python tool tests pass (QA: pass; screenshots and GIF present, close-up shows 8 props x 4 rotations, drive_end shows crash into lamp; README Props section; GUT all passed, tools 439 OK, game/tools OK)
 
 The board's review: place props on the streets and rooftops, and drive into them.
 Board review files: the screenshot and GIF in `art-archive/T-253/screenshots/`.
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started on T-251's branch: eight props as obstacles in four rotations, placeholder look first.
+
+### 2026-10-22, In progress → In QA
+
+Built: eight props in four rotations, solid like boulders, on the street or rooftops, placeholder look. Sent to QA.
 
 ## Result notes
 
