@@ -1755,3 +1755,8 @@ Entry format:
 - Decision or change: the board asked for the exhaust flame to start 4 to 5 times smaller, be drawn behind the car and enemies, and hurt a minion as soon as it touches the visible flame (its damage area = the drawn flame; replaces "a minion is in the flames when its centre is") (Weapons, Decisions; T-267).
 - Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-267
+
+## 2026-10-22: A slower air turn with a garage upgrade, and no "Redgull says" lines
+- Decision or change: the board halved the car's spin rate in the air (multiplier 2.5 to 1.25; T-269) and asked for a fifth garage upgrade that raises it (T-270, with its text in T-268). It also dislikes text in the form "Redgull says X": the two level-up card descriptions that use it (flamethrower tier 6, underglow tier 2) are rewritten, and no new text uses it (T-268).
+- Documents touched: `docs/drifting.md`, `docs/garage-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-268, T-269, T-270
