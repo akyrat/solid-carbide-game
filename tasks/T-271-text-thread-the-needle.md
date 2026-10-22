@@ -1,7 +1,7 @@
 ---
 id: T-271
 title: "Text: the thread the needle trick's popup and its creator labels"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -38,8 +38,8 @@ The board's decision (Level design, Decisions, "Thread the needle", 2026-10-22):
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the popup text with this ticket's id, keeping the board's name, in the trick popups' voice with "+{amount}" (QA: pass / fail)
-- [ ] `creator_texts.json` is valid JSON with the pair labels (each with a "where it appears" note), every existing key unchanged, and they are listed in Level design, Content (QA: pass / fail)
+- [ ] HUD and menus, Content, has the popup text with this ticket's id, keeping the board's name, in the trick popups' voice with "+{amount}" (QA: pass; hud-and-menus.md Content has THREAD THE NEEDLE! with T-271 and "+{amount}", same voice as the others)
+- [ ] `creator_texts.json` is valid JSON with the pair labels (each with a "where it appears" note), every existing key unchanged, and they are listed in Level design, Content (QA: pass; JSON valid, 6 new keys each with a where note, no T-261 key changed, labels listed in level-design.md Content)
 
 ## Updates
 
@@ -48,6 +48,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the thread the needle popup and its creator labels.
+
+### 2026-10-22, In progress → In QA
+
+Text written: THREAD THE NEEDLE! and the pairing labels (P to pair). Sent to QA.
 
 ## Result notes
 
