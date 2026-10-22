@@ -35,12 +35,12 @@ The final check of the level creator goal, on the goal's build (playtest/G-005),
 
 ## Acceptance criteria
 
-- [ ] The end-to-end GUT test passes on playtest/G-005: from an empty creator it places every kind of asset, uses rotate, mirror and delete, saves, finds the level in the list and starts a run on it with the timer at 8:00 and minions spawning. (QA: pass / fail)
-- [ ] The saved level from that test passes python game/tools/check_level.py. (QA: pass / fail)
-- [ ] The full GUT suite, the Python tool tests and the tools/ tests all pass. (QA: pass / fail)
-- [ ] A test confirms a run started from the game's main menu uses res://data/level/elevation_sample_map.json. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', explains how to open the creator, where levels are saved, and every control (place, delete, rotate, mirror, heights, snapping, save, play). (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing new to screenshot (the earlier creator tickets hold the screenshots). (QA: pass / fail)
+- [ ] The end-to-end GUT test passes on playtest/G-005: from an empty creator it places every kind of asset, uses rotate, mirror and delete, saves, finds the level in the list and starts a run on it with the timer at 8:00 and minions spawning. (QA: pass)
+- [ ] The saved level from that test passes python game/tools/check_level.py. (QA: pass)
+- [ ] The full GUT suite, the Python tool tests and the tools/ tests all pass. (QA: pass)
+- [ ] A test confirms a run started from the game's main menu uses res://data/level/elevation_sample_map.json. (QA: pass)
+- [ ] game/README.md, 'Level creator', explains how to open the creator, where levels are saved, and every control (place, delete, rotate, mirror, heights, snapping, save, play). (QA: pass)
+- [ ] The result notes say in one line that there is nothing new to screenshot (the earlier creator tickets hold the screenshots). (QA: pass)
 
 ## Updates
 
