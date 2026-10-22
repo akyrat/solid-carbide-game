@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: no
-depends_on: [T-228, T-242, T-243, T-246, T-247]
+depends_on: []
 documents_affected: [README.md]
 files_to_read_first: [tasks/README.md, README.md, game/README.md, tasks/T-217-gifs-of-the-game-for-the-readme.md, game/tests/fixtures/readme_gif_demo.gd, game/tools/record_readme_gif.sh]
 files_expected_to_change: [art-archive/T-229/, game/tests/fixtures/, game/tools/, README.md]
