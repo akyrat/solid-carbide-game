@@ -4,7 +4,7 @@ title: The car's shadow shows on raised ground while the car is in the air
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal:
