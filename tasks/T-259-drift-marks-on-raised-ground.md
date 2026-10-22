@@ -1,7 +1,7 @@
 ---
 id: T-259
 title: The drift marks show on rooftops and ramps
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -47,6 +47,10 @@ Board review files: the screenshots and GIF in `art-archive/T-259/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's report: drift marks must show on rooftops and ramps.
 
 ## Result notes
 

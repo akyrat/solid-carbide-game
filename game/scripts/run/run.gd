@@ -323,6 +323,14 @@ func _build_world() -> void:
 	drift_marks.name = "DriftMarks"
 	map.view_root.add_child(drift_marks)
 	map.view_root.move_child(drift_marks, map.ground_tiles.get_index() + 1)
+	if elevation != null:
+		# Marks on rooftops and ramps (T-259): lifted with the ground under each
+		# tyre and drawn over the area they lie on, as the car's shadow is.
+		var layer: Node2D = elevation
+		drift_marks.view_basis = ISO_TRANSFORM
+		drift_marks.height_at = func(units: Vector2) -> float: return layer.ground_height.height_at(units)
+		drift_marks.depth_for = func(units: Vector2, rot: float, height: float) -> int:
+			return layer.z_for(units, rot, height) - 1
 
 	car = CarScript.new()
 	car.name = "Car"

@@ -31,6 +31,16 @@ extends Node2D
 ## exported variables below), so the art task (T-118) swaps the texture and
 ## retunes without touching this code.
 ##
+## Raised ground (task T-259; Drifting, Decisions, "Drift marks on raised ground"):
+## on a map with rooftops and ramps the run sets height_at, depth_for and
+## view_basis. Each point of a mark is then lifted up the screen by the ground's
+## height under that tyre (view_basis turns the screen lift into this node's own
+## flat pixels), and a piece takes the depth (z_index) depth_for gives where it
+## is laid: over the rooftop or ramp it lies on, under the buildings, boulders and
+## areas that cover the car there, as the car's shadow is. Street marks keep z 0,
+## under everything. A piece closes when its depth changes. Without the three
+## (the drift prototype) nothing is lifted and every piece stays at z 0.
+##
 ## Use: instantiate the scene, add it under the view, call bind(car). Or call
 ## lay(drifting, position_units, rotation) yourself after each physics step.
 ## It ages in _process (the default, pausable process mode), so marks do not
@@ -74,6 +84,15 @@ const HeatSparks := preload("res://scripts/driving/drift_heat_sparks.gd")
 @export var heat_looks: Array = []
 ## Length of a flicker frame in seconds (the combo heat's, 1/12).
 @export var flicker_frame: float = 1.0 / 12.0
+
+## Raised ground (T-259), set by the run; unset = flat ground. height_at:
+## Callable(units: Vector2) -> float, the ground's height there in units.
+## depth_for: Callable(units: Vector2, rotation: float, height: float) -> int,
+## the z_index for a mark laid at that height. view_basis: the view's transform
+## (flat world pixels -> screen), only its basis is used.
+var height_at := Callable()
+var depth_for := Callable()
+var view_basis := Transform2D.IDENTITY
 
 ## The current heat step, 0 to 3; marks started now take it.
 var heat_step := 0
@@ -159,16 +178,42 @@ func lay(drifting: bool, position_units: Vector2, rotation_rad: float) -> void:
 		_was_drifting = false
 		return
 	var tyres := rear_tyres(position_units, rotation_rad)
+	var z := depth_at(position_units, rotation_rad)
+	if _sparks != null:
+		_sparks.z_index = z
 	if not _was_drifting:
 		_close_open()
 		for t in 2:
 			marks_started += 1
-			_open[t] = _new_piece(marks_started, t, tyres[t] * PX_PER_UNIT)
+			_open[t] = _new_piece(marks_started, t, point_px(tyres[t]), z)
 	else:
 		for t in 2:
-			_extend(t, tyres[t] * PX_PER_UNIT)
+			_extend(t, point_px(tyres[t]), z)
 	_was_drifting = true
 	_enforce_cap()
+
+
+## A tyre's place in this node's pixels: the flat place, lifted by the ground's
+## height under it on raised ground.
+func point_px(tyre_units: Vector2) -> Vector2:
+	var p := tyre_units * PX_PER_UNIT
+	if not height_at.is_valid():
+		return p
+	var h: float = height_at.call(tyre_units)
+	if h <= 0.0:
+		return p
+	return p + view_basis.affine_inverse().basis_xform(Vector2(0.0, -h * PX_PER_UNIT))
+
+
+## The depth a mark laid with the car at `position_units` takes: 0 on the street
+## (and everywhere without raised ground), on raised ground depth_for's.
+func depth_at(position_units: Vector2, rotation_rad: float) -> int:
+	if not height_at.is_valid() or not depth_for.is_valid():
+		return 0
+	var h: float = height_at.call(position_units)
+	if h <= 0.0:
+		return 0
+	return depth_for.call(position_units, rotation_rad, h)
 
 
 ## Moves time on: closed pieces past their lifetime fade, then go.
@@ -234,7 +279,7 @@ func clear() -> void:
 		_sparks.clear()
 
 
-func _new_piece(mark: int, tyre: int, start_px: Vector2) -> Dictionary:
+func _new_piece(mark: int, tyre: int, start_px: Vector2, z: int = 0) -> Dictionary:
 	var line := Line2D.new()
 	line.name = "Mark%d_%s" % [mark, "L" if tyre == 0 else "R"]
 	line.width = width_units * PX_PER_UNIT
@@ -246,9 +291,10 @@ func _new_piece(mark: int, tyre: int, start_px: Vector2) -> Dictionary:
 	line.antialiased = false
 	line.joint_mode = Line2D.LINE_JOINT_SHARP
 	line.add_point(start_px)
+	line.z_index = z
 	add_child(line)
 	var p := {"line": line, "mark": mark, "tyre": tyre, "closed_at": -1.0, "segments": 0,
-		"step": heat_step, "glow": null, "core": null}
+		"step": heat_step, "glow": null, "core": null, "z": z}
 	var look := look_for(heat_step)
 	if not look.is_empty():
 		p.glow = _heat_line("Glow", look.glow_width_units, look.glow_color, start_px, line)
@@ -309,24 +355,25 @@ func _throw_sparks(delta: float) -> void:
 			_sparks.emit(at, look, true)
 
 
-func _extend(tyre: int, point_px: Vector2) -> void:
+func _extend(tyre: int, new_px: Vector2, z: int = 0) -> void:
 	var p = _open[tyre]
 	if p == null:
 		return
 	var line: Line2D = p.line
 	var last := line.get_point_position(line.get_point_count() - 1)
-	if last.distance_to(point_px) < min_segment_units * PX_PER_UNIT:
+	if last.distance_to(new_px) < min_segment_units * PX_PER_UNIT:
 		return
-	line.add_point(point_px)
+	line.add_point(new_px)
 	for extra in [p.glow, p.core]:
 		if extra != null:
-			extra.add_point(point_px)
+			extra.add_point(new_px)
 	p.segments += 1
 	_segments += 1
-	if p.segments >= piece_segments:
-		# Close this piece and carry on from its last point, so the mark stays joined.
+	if p.segments >= piece_segments or p.z != z:
+		# Close this piece (full, or the depth changed) and carry on from its last
+		# point, so the mark stays joined.
 		p.closed_at = time
-		_open[tyre] = _new_piece(p.mark, tyre, point_px)
+		_open[tyre] = _new_piece(p.mark, tyre, new_px, z)
 
 
 func _close_open() -> void:
