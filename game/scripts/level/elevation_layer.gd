@@ -88,8 +88,87 @@ func _add_area(kind: String, block: Dictionary) -> void:
 	d.setup(kind, block, ISO_TRANSFORM, PlatformDrawingScript.SAMPLE_ART_DIR, art if art != "" else str(block.id))
 	if art != "" and art != str(block.id):
 		d.shift_art(art_offset(art, block.rect))
+	# A piece with no art piece (the level creator's rooftops and ramps of any size, T-251) is
+	# drawn from the piece style's tileable textures instead.
+	var style = piece_style_named(str(block.get("style", "")))
+	if d.art_sprite == null and style != null:
+		d.use_style(style, area_base(kind, block), edge_gaps(kind, block))
 	add_child(d)
 	areas.append(d)
+
+
+## The look of the pieces drawn in the engine (T-251): every texture and number in one resource.
+const PIECE_STYLE_PATH := "res://art/creator_pieces/piece_style.tres"
+static var _piece_style: Resource
+
+
+static func piece_style() -> Resource:
+	if _piece_style == null and ResourceLoader.exists(PIECE_STYLE_PATH):
+		_piece_style = load(PIECE_STYLE_PATH)
+	return _piece_style
+
+
+## The styles a piece can be placed in (T-255), in the order the editor's Style button steps
+## through them; each is a piece style resource. "office" (T-255's rooftop and office wall) is
+## the default, also for a piece with no "style" key; "carpark" is T-255's car park deck and
+## garage wall; "t198" is T-198's textures (the first placeholders).
+const PIECE_STYLES := {
+	"office": "res://art/creator_pieces/piece_style.tres",
+	"carpark": "res://art/creator_pieces/piece_style_carpark.tres",
+	"t198": "res://art/creator_pieces/piece_style_t198.tres",
+}
+const DEFAULT_PIECE_STYLE := "office"
+
+
+## The piece style resource of a style name ("" or an unknown name: the default), null when missing.
+static func piece_style_named(style_name: String) -> Resource:
+	var path: String = PIECE_STYLES.get(style_name, PIECE_STYLES[DEFAULT_PIECE_STYLE])
+	if path == PIECE_STYLE_PATH:
+		return piece_style()
+	return load(path) if ResourceLoader.exists(path) else piece_style()
+
+
+## The height an area of the height data stands on: a ramp's bottom height, the rooftop under a
+## stacked rooftop ("on"), else 0.
+func area_base(kind: String, block: Dictionary) -> float:
+	if kind == "ramp":
+		return float(block.get("bottom_height", 0.0))
+	var on := str(block.get("on", ""))
+	for p in ground_height.platforms:
+		if on != "" and p.id == on:
+			return float(p.height)
+	return 0.0
+
+
+## How close (units) a ramp must come to a rooftop's edge to break its parapet and outline there
+## (the sample map's art: build_elevation_sample_art.py, blocked_intervals).
+const EDGE_GAP_REACH := 0.5
+
+
+## Where a rooftop's edges have no parapet and no outline (elevation_platform_drawing.gd,
+## edge_gaps): along each edge, every higher rooftop standing across it and every ramp that comes
+## within EDGE_GAP_REACH of it. Empty for a ramp.
+func edge_gaps(kind: String, block: Dictionary) -> Dictionary:
+	var out := {"north": [], "east": [], "south": [], "west": []}
+	if kind != "platform":
+		return out
+	var r: Rect2 = block.rect
+	var lines := {"north": [1, r.position.y], "south": [1, r.end.y], "west": [0, r.position.x], "east": [0, r.end.x]}
+	for edge in lines:
+		var axis: int = lines[edge][0]  # the axis across the edge
+		var at: float = lines[edge][1]
+		var along := 1 - axis
+		for p in ground_height.platforms:
+			var q: Rect2 = p.rect
+			if p.id == block.id or float(p.height) <= float(block.height):
+				continue
+			if q.position[axis] <= at + 0.001 and at <= q.end[axis] + 0.001:
+				out[edge].append([q.position[along], q.end[along]])
+		for ramp in ground_height.ramps:
+			var q: Rect2 = ramp.rect
+			if q.position[axis] - EDGE_GAP_REACH <= at and at <= q.end[axis] + EDGE_GAP_REACH:
+				out[edge].append([q.position[along] - EDGE_GAP_REACH, q.end[along] + EDGE_GAP_REACH])
+	return out
 
 
 ## The elevation sample map, whose rooftops' and ramps' art the level creator reuses.

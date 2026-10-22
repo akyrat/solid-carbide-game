@@ -46,6 +46,8 @@ func load_data(data: Dictionary) -> bool:
 			"on": str(p.get("on", "")),
 			# The art piece it is drawn with (T-236, the level creator's view), "" for its own id's.
 			"art": str(p.get("art", "")),
+			# The piece style it is drawn with (T-255, elevation_layer.gd piece_style_named), "" for the default.
+			"style": str(p.get("style", "")),
 		})
 	for r in data.get("ramps", []):
 		ramps.append({
@@ -56,6 +58,7 @@ func load_data(data: Dictionary) -> bool:
 			"bottom_height": float(r.get("bottom_height", 0.0)),
 			"top_height": float(r.top_height),
 			"art": str(r.get("art", "")),
+			"style": str(r.get("style", "")),
 		})
 	return true
 

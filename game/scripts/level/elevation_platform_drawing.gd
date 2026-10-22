@@ -108,6 +108,199 @@ func shift_art(offset_units: Vector2) -> void:
 		art_sprite.position += view_basis * (offset_units * PX_PER_UNIT)
 
 
+## Textured mode (task T-251): the level creator's rooftops and ramps of any size have no art
+## piece; with a style (piece_style.gd, art/creator_pieces/piece_style.tres) they are drawn from
+## its tileable textures projected onto the top and the east and south walls, in the art's
+## projection (32 art px per unit, drawn at 0.5), mirror-tiled, nearest filtering, with a dark
+## outline on the edges and a parapet on a rooftop's back edges. Null: the flat placeholder.
+var style: Resource
+## The height the area stands on (its walls start there): the rooftop under a stacked rooftop,
+## a ramp's bottom height; 0 on the street.
+var base := 0.0
+## Where an edge has no outline (and, on the back edges, no parapet): a ramp meeting it or a
+## higher rooftop standing on it. {"north": [[from, to], ...], "east", "south", "west"}, units
+## along the edge (x for north and south, y for east and west).
+var edge_gaps: Dictionary = {}
+
+
+## Switches to the textured mode with `the_style` (when the area has no art sprite).
+func use_style(the_style: Resource, the_base: float, gaps: Dictionary = {}) -> void:
+	style = the_style
+	base = the_base
+	edge_gaps = gaps
+	# A ramp whose textures are seamless when tiled plainly (T-255) keeps its chevrons pointing
+	# one way; mirrored tiles would turn every other row's the other way.
+	var plain: bool = kind == "ramp" and bool(style.get("ramp_plain_repeat"))
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED if plain else CanvasItem.TEXTURE_REPEAT_MIRROR
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	queue_redraw()
+
+
+## True when the area is drawn from the style's textures.
+func is_textured() -> bool:
+	return style != null and art_sprite == null and not block.is_empty()
+
+
+## A ramp's top end, the edge where it meets the rooftop it climbs (the opposite of `side`, the
+## rooftop's side): "west" for a ramp up an east side, ... "" for a rooftop.
+func join_edge() -> String:
+	if kind != "ramp":
+		return ""
+	return {"east": "west", "west": "east", "north": "south", "south": "north"}.get(str(block.side), "")
+
+
+## The textured mode's faces, back to front, each {name, points, uvs, texture, color}: the east
+## and south walls (a ramp's wall at its top end is left off: it meets its rooftop), the top, and
+## a rooftop's parapet runs (north, west). For the drawing and the tests.
+func textured_faces() -> Array:
+	var out: Array = []
+	if style == null or block.is_empty():
+		return out
+	var r := rect()
+	var h := corner_heights()
+	var is_ramp := kind == "ramp"
+	var join := join_edge()
+	var px: float = style.TEXTURE_PX_PER_UNIT
+	var side_tex: Texture2D = style.ramp_side if is_ramp else style.wall
+	var ne := Vector2(r.end.x, r.position.y)
+	var sw := Vector2(r.position.x, r.end.y)
+	if join != "east":
+		var shade: float = style.ramp_east_shade if is_ramp else style.roof_east_shade
+		_add_wall(out, "east", ne, r.end, h[1], h[2], 1, side_tex, shade, px)
+	if join != "south":
+		var shade: float = style.ramp_south_shade if is_ramp else style.roof_south_shade
+		_add_wall(out, "south", sw, r.end, h[3], h[2], 0, side_tex, shade, px)
+	var top_tex: Texture2D = style.ramp_top if is_ramp else style.roof_top
+	var swap := is_ramp and str(block.side) in ["east", "west"]  # the lane lines run along the ramp
+	var corners := [r.position, ne, r.end, sw]
+	var pts := top_face()
+	var uvs := PackedVector2Array()
+	for c in corners:
+		var p: Vector2 = c
+		uvs.append(_uv(Vector2(p.y, p.x) if swap else p, px, top_tex))
+	out.append({"name": "top", "points": pts, "uvs": uvs, "texture": top_tex, "color": Color.WHITE})
+	if not is_ramp and style.parapet != null:
+		var top := float(block.height)
+		var ph: float = style.parapet_height_units
+		for seg in _open_runs("north", r.position.x, r.end.x):
+			var a := Vector2(seg[0], r.position.y)
+			var b := Vector2(seg[1], r.position.y)
+			out.append(_parapet_face("parapet_north", a, b, seg[0], seg[1], top, ph, px, Color.WHITE))
+		var west_c := Color(style.parapet_west_shade, style.parapet_west_shade, style.parapet_west_shade)
+		for seg in _open_runs("west", r.position.y, r.end.y):
+			var a := Vector2(r.position.x, seg[0])
+			var b := Vector2(r.position.x, seg[1])
+			out.append(_parapet_face("parapet_west", a, b, seg[0], seg[1], top, ph, px, west_c))
+	return out
+
+
+## A wall from flat corner a to b (`axis` 1: along y, the east wall; 0: along x, the south wall),
+## its top at heights ha and hb, from `base` up. Left out when it has no height.
+func _add_wall(out: Array, wall_name: String, a: Vector2, b: Vector2, ha: float, hb: float, axis: int,
+		tex: Texture2D, shade: float, px: float) -> void:
+	if ha - base <= 0.001 and hb - base <= 0.001:
+		return
+	var off: float = style.wall_row_offset_px
+	var pts := PackedVector2Array()
+	var uvs := PackedVector2Array()
+	for c in [[a, ha, ha], [b, hb, hb], [b, hb, base], [a, ha, base]]:
+		var p: Vector2 = c[0]
+		var top: float = c[1]
+		var at: float = c[2]
+		var q := drawn(p, at)
+		var repeated := false
+		for o in pts:
+			if o.is_equal_approx(q):
+				repeated = true
+		if repeated:
+			continue
+		pts.append(q)
+		uvs.append(Vector2(p[axis] * px / tex.get_width(), ((top - at) * px + off) / tex.get_height()))
+	if pts.size() >= 3:
+		out.append({"name": wall_name, "points": pts, "uvs": uvs, "texture": tex, "color": Color(shade, shade, shade)})
+
+
+func _parapet_face(face_name: String, a: Vector2, b: Vector2, ta: float, tb: float, top: float, ph: float,
+		px: float, color: Color) -> Dictionary:
+	var tex: Texture2D = style.parapet
+	var w := float(tex.get_width())
+	return {"name": face_name, "texture": tex, "color": color,
+		"points": PackedVector2Array([drawn(a, top), drawn(b, top), drawn(b, top + ph), drawn(a, top + ph)]),
+		"uvs": PackedVector2Array([Vector2(ta * px / w, 1.0), Vector2(tb * px / w, 1.0),
+			Vector2(tb * px / w, 0.0), Vector2(ta * px / w, 0.0)])}
+
+
+static func _uv(p: Vector2, px: float, tex: Texture2D) -> Vector2:
+	return Vector2(p.x * px / tex.get_width(), p.y * px / tex.get_height())
+
+
+## The runs [from, to] of `edge` between lo and hi that no gap (edge_gaps) covers.
+func _open_runs(edge: String, lo: float, hi: float) -> Array:
+	var runs: Array = [[lo, hi]]
+	for g in edge_gaps.get(edge, []):
+		var next: Array = []
+		for run in runs:
+			var a: float = run[0]
+			var b: float = run[1]
+			var ga := maxf(a, float(g[0]))
+			var gb := minf(b, float(g[1]))
+			if ga >= gb:
+				next.append(run)
+				continue
+			if ga > a:
+				next.append([a, ga])
+			if gb < b:
+				next.append([gb, b])
+		runs = next
+	return runs.filter(func(run) -> bool: return float(run[1]) - float(run[0]) > 0.001)
+
+
+## The textured mode's outline: [[from, to], ...] drawn segments. The top's four edges (not at a
+## ramp's top end, not in the edge gaps), the visible vertical corners (NE, SE, SW; not at a ramp's
+## top end) and the walls' bottom edges.
+func outline_segments() -> Array:
+	var out: Array = []
+	if block.is_empty():
+		return out
+	var r := rect()
+	var h := corner_heights()
+	var join := join_edge()
+	var nw := r.position
+	var ne := Vector2(r.end.x, r.position.y)
+	var se := r.end
+	var sw := Vector2(r.position.x, r.end.y)
+	# The top's edges: name, from, to, the axis along it.
+	for e in [["north", nw, ne, 0], ["east", ne, se, 1], ["south", sw, se, 0], ["west", nw, sw, 1]]:
+		if e[0] == join:
+			continue
+		var a: Vector2 = e[1]
+		var axis: int = e[3]
+		for run in _open_runs(e[0], a[axis], (e[2] as Vector2)[axis]):
+			var pa := a
+			var pb := a
+			pa[axis] = run[0]
+			pb[axis] = run[1]
+			out.append([drawn(pa, top_height_at(pa)), drawn(pb, top_height_at(pb))])
+	# Vertical corners, with the two edges each belongs to, and its height.
+	for c in [[ne, ["north", "east"], h[1]], [se, ["east", "south"], h[2]], [sw, ["south", "west"], h[3]]]:
+		var p: Vector2 = c[0]
+		if join in c[1] or float(c[2]) - base <= 0.001:
+			continue
+		out.append([drawn(p, base), drawn(p, float(c[2]))])
+	if join != "east" and maxf(h[1], h[2]) - base > 0.001:
+		out.append([drawn(ne, base), drawn(se, base)])
+	if join != "south" and maxf(h[3], h[2]) - base > 0.001:
+		out.append([drawn(sw, base), drawn(se, base)])
+	return out
+
+
+func _draw_textured() -> void:
+	for f in textured_faces():
+		draw_polygon(f.points, PackedColorArray([f.color]), f.uvs, f.texture)
+	for s in outline_segments():
+		draw_line(s[0], s[1], style.outline_color, style.outline_width)
+
+
 ## Every colour this drawing can use (for the colour check in the tests).
 static func colors_used() -> Array:
 	return [TOP_COLOR, TOP_GRID_COLOR, RAMP_TOP_COLOR, RAMP_GRID_COLOR, EAST_COLOR, SOUTH_COLOR, EDGE_COLOR]
@@ -248,6 +441,9 @@ func south_face() -> PackedVector2Array:
 
 func _draw() -> void:
 	if block.is_empty() or art_sprite != null:
+		return
+	if style != null:
+		_draw_textured()
 		return
 	var r := rect()
 	var h := corner_heights()

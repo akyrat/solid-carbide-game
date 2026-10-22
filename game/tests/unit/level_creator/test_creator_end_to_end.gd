@@ -47,15 +47,19 @@ func test_empty_creator_to_playing_the_level() -> void:
 		_place(e, ids[i], spots[i])
 	var r3 := _place(e, "rooftop-3", Vector2(-95.5, -95.5))
 	var r6 := _place(e, "rooftop-6", Vector2(-41.5, -95.5))
-	_place(e, "ramp-0-3", Vector2(-85.5, -65.5))
-	_place(e, "ramp-3-6", Vector2(-53.5, -85.5))
+	_place(e, "ramp-0-3", Vector2(-85.5, -65.5))  # climbing north (its first direction, T-251)
+	e.panel.pick("ramp-3-6")
+	e.rotate_pick()  # climbing east, up the 6's west side
+	assert_false(e.place_asset("ramp-3-6", Vector2(-53.5, -85.5)).is_empty(), "ramp-3-6 placed")
 	assert_eq(r6.item.on, r3.item.id, "the 6 stands on the 3")
 
-	# Rotate and mirror: a rooftop 3 in its other view, a mirrored boulder.
-	e.panel.pick("rooftop-3")
-	assert_eq(e.rotate_pick(), "se")
-	assert_false(e.place_asset("rooftop-3", Vector2(-100.5, 40.5)).is_empty())
-	assert_eq(e.level_data.platforms[2].view, "se")
+	# Rotate and mirror (T-251: rooftops have one view, a ramp four directions): a ramp 0 to 3
+	# climbing east, a mirrored boulder.
+	e.panel.pick("ramp-0-3")
+	assert_eq(e.rotate_pick(), "east")
+	assert_false(e.place_asset("ramp-0-3", Vector2(-107.5, -89.5)).is_empty())  # up the 3's west side
+	assert_eq(e.level_data.ramps[2].side, "west")
+	assert_eq(e.level_data.ramps[2].platform, r3.item.id)
 	e.panel.pick("boulder-b")
 	assert_true(e.mirror_pick())
 	assert_false(e.place_asset("boulder-b", Vector2(60.5, -60.5)).is_empty())

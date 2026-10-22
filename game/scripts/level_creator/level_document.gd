@@ -31,6 +31,9 @@ extends RefCounted
 ## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art} in ramps: side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
 ##   height whose side its top end touches ("" while there is none).
+## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
+## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
+## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
 ## The links ("on", "platform") are filled in again after every place and delete (_relink), so a
 ## rooftop placed after its ramp, or a 3 deleted under a 6, keep the data in step.
 
@@ -125,6 +128,51 @@ static func footprint_of(id: String, view: String, mirror: bool) -> Vector2:
 	var t := texture_of(id, view, mirror)
 	var f: Array = t.get("footprint_units", e.get("footprint_units", [0, 0]))
 	return Vector2(float(f[0]), float(f[1]))
+
+
+## True for a rooftop or ramp of any size (T-251; its entry's "resizable").
+static func is_resizable(id: String) -> bool:
+	return bool(entry(id).get("resizable", false))
+
+
+## The axis (0 x, 1 y) a ramp's width runs along in `view` (the direction it climbs): along the
+## rooftop's side, so x for a ramp climbing north or south.
+static func ramp_width_axis(view: String) -> int:
+	return 0 if view in ["north", "south"] else 1
+
+
+## The footprint (units) `asset_id` is placed with in `view`, for a wanted `size` (Vector2.ZERO:
+## the entry's default). Fixed pieces: their footprint in that view and `mirror` (footprint_of: a
+## texture's own footprint wins, T-254). A resizable rooftop: `size` in whole cells (even units),
+## at least its min_size_units and at most `limit` (the map). A resizable ramp: its width along the
+## side from `size` on that axis (at least min_width_units), its length fixed (length_units),
+## turned for its view.
+static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vector2.ZERO,
+		limit: Vector2 = Vector2(MAP_SIZE, MAP_SIZE), mirror: bool = false) -> Vector2:
+	var e := entry(asset_id)
+	if e.is_empty():
+		return Vector2.ZERO
+	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	if not bool(e.get("resizable", false)):
+		return footprint_of(asset_id, valid_view(asset_id, view), valid_mirror(asset_id, mirror))
+	if str(e.kind) == "ramp":
+		var axis := ramp_width_axis(valid_view(asset_id, view))
+		var width := float(e.get("width_units", foot.x))
+		if size != Vector2.ZERO:
+			width = _even_at_least(size[axis], float(e.get("min_width_units", CELL)))
+		width = minf(width, limit[axis])
+		var length := float(e.get("length_units", foot.y))
+		return Vector2(width, length) if axis == 0 else Vector2(length, width)
+	if size == Vector2.ZERO:
+		return foot
+	var lo: Array = e.get("min_size_units", [CELL, CELL])
+	return Vector2(minf(_even_at_least(size.x, float(lo[0])), limit.x),
+		minf(_even_at_least(size.y, float(lo[1])), limit.y))
+
+
+## `v` rounded up to whole cells (even units), and at least `lo`.
+static func _even_at_least(v: float, lo: float) -> float:
+	return maxf(ceilf(v / CELL - 0.001) * CELL, lo)
 
 
 static func game_ground() -> Dictionary:
@@ -295,7 +343,12 @@ static func _kind_of_tile(id: String) -> String:
 ## Places the catalogue asset `asset_id` with its top-left corner on the cell under `units`, in
 ## `view` and `mirror` (one its entry lists; another, or "", gives its first view and mirror).
 ## Returns the placed piece (see piece_at), or {} for an unknown asset or a point outside the map.
-func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false) -> Dictionary:
+##
+## A rooftop or ramp of any size (T-251, is_resizable) takes `size` (piece_size: Vector2.ZERO for
+## its default) and writes no view or art: it is drawn in the engine from the piece style. It is
+## not placed when it would reach out of the map.
+func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
+		size: Vector2 = Vector2.ZERO, style: String = "") -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -304,7 +357,10 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var corner := cell_corner(c)
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
-	var foot := footprint_of(asset_id, view, mirror)
+	var foot := piece_size(asset_id, view, size, map_rect().size, mirror)
+	var resizable := is_resizable(asset_id)
+	if resizable and not _holds(map_rect(), Rect2(corner, foot)):
+		return {}
 	var tex := texture_of(asset_id, view, mirror)
 	match kind:
 		"ground", "road":
@@ -326,15 +382,24 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			return {"kind": kind, "item": boulder, "copy": copy}
 		"rooftop":
 			var p := {"id": _next_id("platforms", "roof-"), "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
-				"height": int(e.height), "view": view, "art": str(tex.variant)}
+				"height": int(e.height)}
+			if not resizable:
+				p["view"] = view
+				p["art"] = str(tex.variant)
+			elif style != "":
+				p["style"] = style
 			_list("platforms").append(p)
 			_relink()
 			return {"kind": kind, "item": p}
 		"ramp":
 			var r := {"id": _next_id("ramps", "ramp-"), "platform": "", "side": str(tex.get("side", "east")),
 				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
-				"bottom_height": int(e.heights[0]), "top_height": int(e.heights[1]),
-				"view": view, "art": str(tex.variant)}
+				"bottom_height": int(e.heights[0]), "top_height": int(e.heights[1])}
+			if not resizable:
+				r["view"] = view
+				r["art"] = str(tex.variant)
+			elif style != "":
+				r["style"] = style
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}

@@ -87,13 +87,15 @@ func test_rooftop_and_ramp_buttons_carry_their_height_labels() -> void:
 	assert_eq(e.panel.buttons["rooftop-6"].text, CreatorTexts.get_text("rooftop_height_6"))
 	assert_eq(e.panel.buttons["ramp-0-3"].text, CreatorTexts.get_text("ramp_height_0_3"))
 	assert_eq(e.panel.buttons["ramp-3-6"].text, CreatorTexts.get_text("ramp_height_3_6"))
+	assert_eq(e.panel.buttons["ramp-0-6"].text, CreatorTexts.get_text("ramp_height_0_6"))
 
 
 func test_the_editor_labels_come_from_the_texts() -> void:
 	var e := _editor()
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint"))
+	# T-251: the hint with sizing replaces the old one.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_sizing"))
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:

@@ -1,7 +1,7 @@
 ---
 id: T-255
 title: "Art: new rooftop, car park, wall and ramp textures for the creator's resizable pieces"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-251]
+depends_on: []
 documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-198-art-rooftops-and-parking-garage-ramps.md, tasks/T-251-resizable-rooftops-and-ramps.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/elevation/, game/art/pixellab-generation-log.jsonl, art-archive/T-255/, art-archive/README.md, game/scenes/level/, game/data/level/, docs/visual-style.md, game/README.md]
@@ -56,6 +56,34 @@ Board review files: the screenshots in `art-archive/T-255/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started on T-251's branch: new PixelLab textures for the resizable rooftops, car parks, walls and ramps, cap 10 generations.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+### Planned calls and cost (written before any call)
+
+Balance checked (free): 4792 of 5000 generations. 7 calls of `/create-image-pixflux` (T-198's log: 1 generation each), 600 s timeout, one round, no regeneration, requests in `art-archive/T-255/requests/`: (1) concrete rooftop top, (2) car park deck top, (3) office wall (light, lit windows), (4) garage wall (plain concrete with openings), (5) ramp top (chevrons up the slope), (6) ramp side (concrete), (7) parapet strip (128 x 32). Planned cost: 7 generations (cap 10; 3 spare, not to be used). Stop if a call costs more than 1.
+Selection plan: style resources `piece_style.tres` (T-198's, the default kept), `piece_style_office.tres` (new rooftop + office wall) and `piece_style_carpark.tres` (new car park deck + garage wall), chosen by a per-piece style choice if small, else by a setting.
+
+### Result (agent)
+
+**Generations: 7 of the cap 10** (each 1 generation, as planned; all 7 in `game/art/pixellab-generation-log.jsonl`; raws, requests and records in `art-archive/T-255/`, rows in `art-archive/README.md`). No regeneration, no refusals.
+
+**Selection (per piece):** a rooftop or ramp carries `style` (`office` default, `carpark`, `t198`), set with the editor's Style button (T key) for the next pieces placed; resources `piece_style.tres` (office), `piece_style_carpark.tres`, `piece_style_t198.tres` (T-198's, kept). Pieces with no `style` draw as office.
+
+**What they look like (honest):** textures are made by `game/tools/build_creator_textures_t255.py` into `game/art/creator_pieces/t255/`.
+- Roof top: paving again, but halved in scale and mirrored seamless, so it reads more like concrete slabs; fine grid, a bit busy.
+- Car park deck: PixelLab gave a lit floor with white bay lines only along one edge, and a spotlight pool; vignette divided out by script, scalloped light patterns remain from mirror tiling. Reads as a car park from a distance, weaker close up.
+- Office wall: PixelLab drew a whole building, not a wall texture; I cropped its window grid (4 x 4) and lifted it lighter than T-198's. Windows are small and dense, reads busy but lit.
+- Garage wall: one big dark opening per tile, repeated mirrored; reads clearly as a garage, light concrete.
+- Ramp top: dark asphalt with a centre line and plain white arrows (not chevrons). Free fix: ramps now tile plainly (`ramp_plain_repeat`) so the arrows all point up the slope, not alternately.
+- Ramp side: light brick-like concrete (halved, seamless); lighter than rooftop and brickish rather than poured.
+- Parapet: reused as generated (128 x 20).
+
+**Tests:** full GUT suite (see final message numbers), Python tool tests, new `tests/unit/level_creator/test_creator_piece_styles.gd`, `game/tools/test_build_creator_textures_t255.py`; `check_sprite_rules`-style rules (<= 30 colours, no semi-transparency, no Redgull red) via the builder's `check`.
+**Screenshots:** `art-archive/T-255/screenshots/` (`office`, `carpark`, `t198`, each with `_close`).
+**Documents affected (updated):** `docs/visual-style.md`, `game/README.md`.

@@ -25,6 +25,11 @@ extends Control
 ## rooftop or ramp that would overlap in a way the level check refuses is not placed, and the top
 ## bar shows the overlap message.
 ##
+## Sizing (T-251): rooftops (3 and 6) and ramps (0 to 3, 3 to 6, 0 to 6) are of any size: with one
+## picked, drag on the map to size it (a ramp: its width along the rooftop's side; R steps a ramp
+## through the four directions it can climb); the top bar shows the size, and the preview is drawn
+## in the engine as the piece will be (elevation_platform_drawing.gd, textured mode).
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -65,6 +70,7 @@ var back_button: Button
 var delete_button: Button
 var rotate_button: Button
 var mirror_button: Button
+var style_button: Button
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
@@ -75,6 +81,8 @@ var last_problem: String = ""
 ## The view and mirror the picked asset is placed in (one its catalogue entry lists).
 var pick_view: String = ""
 var pick_mirror: bool = false
+## The piece style a new rooftop or ramp of any size is drawn in (T-255; elevation_layer.gd PIECE_STYLES): the Style button steps it.
+var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
 var document: LevelDocument
 var panel: LevelCreatorAssetPanel
@@ -98,6 +106,19 @@ const CELL_MIDDLE := LevelDocument.CELL / 2.0
 
 var _overlay: Node2D
 var _dragging := false
+
+## Sizing (T-251): with a rooftop or ramp of any size picked, pressing the left button on the map
+## starts a drag at that cell and releasing it places the piece over the cells dragged across (a
+## ramp: its width along the rooftop's side; its length is fixed). A press and release on one cell
+## places the default size. (-1, -1) while no drag is on.
+var size_drag_start := Vector2i(-1, -1)
+## The top bar's sizing line: size_hint while a resizable piece is picked, size_readout during a
+## drag; and a picked ramp's direction (ramp_dir_*).
+var size_label: Label
+var direction_label: Label
+## The preview of a piece of any size, drawn in the engine as it will be (a child of the overlay).
+var preview_drawing: Node2D
+var _preview_key := ""
 
 
 ## A new level: an empty map with the default name.
@@ -139,8 +160,11 @@ func _ready() -> void:
 	main.name = "Main"
 	main.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	layout.add_child(main)
-	var bar := HBoxContainer.new()
+	# A flow container: the bar wraps onto a second line when the picked piece's labels (height,
+	# direction, size: T-251) don't fit beside the buttons.
+	var bar := HFlowContainer.new()
 	bar.name = "TopBar"
+	bar.add_theme_constant_override("h_separation", 14)
 	main.add_child(bar)
 	back_button = Button.new()
 	back_button.name = "BackButton"
@@ -175,9 +199,20 @@ func _ready() -> void:
 	mirror_button.text = CreatorTexts.get_text("mirror_label")
 	mirror_button.pressed.connect(mirror_pick)
 	bar.add_child(mirror_button)
+	style_button = Button.new()
+	style_button.name = "StyleButton"
+	style_button.pressed.connect(style_pick)
+	bar.add_child(style_button)
+	_update_style_button()
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
+	direction_label = Label.new()
+	direction_label.name = "DirectionLabel"
+	bar.add_child(direction_label)
+	size_label = Label.new()
+	size_label.name = "SizeLabel"
+	bar.add_child(size_label)
 	message_label = Label.new()
 	message_label.name = "MessageLabel"
 	message_label.add_theme_color_override("font_color", Color(1.0, 0.75, 0.3))
@@ -202,7 +237,7 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	hint_label.text = CreatorTexts.get_text("controls_hint")
+	hint_label.text = CreatorTexts.get_text("controls_hint_sizing")
 	main.add_child(hint_label)
 
 	_overlay = _Overlay.new()
@@ -329,16 +364,18 @@ func _refresh_after(kind: String) -> void:
 ## snapped to the tile grid and to close neighbours (LevelSnapping.placement, T-237). A rooftop or
 ## ramp that would overlap in a way check_height_data.py refuses is not placed, and the message
 ## label shows creator_texts.json's "overlap_message". Returns the placed piece, or {}.
-func place_asset(asset_id: String, units: Vector2) -> Dictionary:
+##
+## `size`: a rooftop's or ramp's size (T-251, LevelDocument.piece_size; ZERO: its default).
+func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
 	var picked_now := panel != null and asset_id == panel.picked
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
-	var at := LevelSnapping.placement(document, asset_id, units, view, mirror)
+	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size)
 	if at.is_empty():
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -354,10 +391,129 @@ func place_asset(asset_id: String, units: Vector2) -> Dictionary:
 
 
 ## Where the picked asset would go with the cursor at `units` (LevelSnapping.placement), {} for none.
-func placement_at(units: Vector2) -> Dictionary:
+func placement_at(units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
 	if _picked() == "" or document == null:
 		return {}
-	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror)
+	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, size)
+
+
+# ---- Sizing (T-251) -----------------------------------------------------------------------------
+
+## The cells a size drag from `from` to `to` covers, as {corner: the point naming its top-left
+## cell (units), size: Vector2 units}; size ZERO (the default size) when the two are one cell. A
+## ramp's drag only sets its width, along the rooftop's side (LevelDocument.ramp_width_axis): the
+## other axis stays at `from`.
+func drag_area(from: Vector2i, to: Vector2i) -> Dictionary:
+	var lo := Vector2i(mini(from.x, to.x), mini(from.y, to.y))
+	var hi := Vector2i(maxi(from.x, to.x), maxi(from.y, to.y))
+	var id := _picked()
+	if LevelDocument.entry(id).get("kind", "") == "ramp":
+		var axis := LevelDocument.ramp_width_axis(pick_view)
+		var other := 1 - axis
+		lo[other] = from[other]
+		hi[other] = from[other]
+	var size := Vector2(hi - lo + Vector2i.ONE) * LevelDocument.CELL
+	if from == to or (LevelDocument.entry(id).get("kind", "") == "ramp" and lo == hi):
+		size = Vector2.ZERO
+	return {"corner": document.cell_corner(lo) + Vector2(CELL_MIDDLE, CELL_MIDDLE), "size": size}
+
+
+## Where the picked piece goes now: during a size drag over the cells dragged across, otherwise at
+## the cell under the mouse in its default size. {} for none.
+func current_placement() -> Dictionary:
+	if _picked() == "" or document == null or hover_cell.x < 0:
+		return {}
+	if size_drag_start.x >= 0:
+		var a := drag_area(size_drag_start, hover_cell)
+		return placement_at(a.corner, a.size)
+	return placement_at(document.cell_corner(hover_cell) + Vector2(CELL_MIDDLE, CELL_MIDDLE))
+
+
+## Starts a size drag at the cell under `units` (the left button pressed with a resizable piece).
+func begin_size_drag(units: Vector2) -> void:
+	size_drag_start = document.cell_at(units)
+	hover_cell = size_drag_start
+	_update_pose_controls()
+
+
+## Ends the size drag with the mouse at `units`: places the picked piece over the dragged cells.
+## Returns the placed piece, or {}.
+func end_size_drag(units: Vector2) -> Dictionary:
+	if size_drag_start.x < 0:
+		return {}
+	var to := document.cell_at(units)
+	if to.x < 0:
+		to = hover_cell if hover_cell.x >= 0 else size_drag_start
+	var a := drag_area(size_drag_start, to)
+	size_drag_start = Vector2i(-1, -1)
+	var piece := place_asset(_picked(), a.corner, a.size)
+	_update_pose_controls()
+	return piece
+
+
+## The size line on the top bar: during a drag the size it would place (size_readout: {w} the
+## width east-west, {d} the depth north-south, units); with a resizable piece picked, size_hint.
+func _update_size_label() -> void:
+	if size_label == null:
+		return
+	if not LevelDocument.is_resizable(_picked()):
+		size_label.text = ""
+		return
+	var at := current_placement() if size_drag_start.x >= 0 else {}
+	if at.is_empty():
+		size_label.text = CreatorTexts.get_text("size_hint")
+		return
+	var s: Vector2 = at.rect.size
+	size_label.text = CreatorTexts.get_text("size_readout").format({"w": int(s.x), "d": int(s.y)})
+
+
+## The piece of any size the preview shows, in GroundHeight's format ({id, rect, height | side,
+## bottom_height, top_height}) with "kind" and "base"; {} when the picked asset is not resizable.
+func preview_block() -> Dictionary:
+	var id := _picked()
+	if not LevelDocument.is_resizable(id):
+		return {}
+	var at := current_placement()
+	if at.is_empty():
+		return {}
+	var e := LevelDocument.entry(id)
+	var rect: Rect2 = at.rect
+	if str(e.kind) == "ramp":
+		var t := LevelDocument.texture_of(id, pick_view, false)
+		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")),
+			"bottom_height": float(e.heights[0]), "top_height": float(e.heights[1]), "base": float(e.heights[0]),
+			"style": pick_style}
+	var under := document.rooftop_under(rect, float(e.height))
+	return {"kind": "platform", "id": "preview", "rect": rect, "height": float(e.height),
+		"base": float(under.height) if not under.is_empty() else 0.0, "style": pick_style}
+
+
+## Brings the engine-drawn preview in step with the pick, the mouse and the drag (each frame).
+func _sync_preview() -> void:
+	if _overlay == null:
+		return
+	var b := preview_block()
+	var key := str(b)
+	if key == _preview_key:
+		return
+	_preview_key = key
+	if preview_drawing != null and is_instance_valid(preview_drawing):
+		preview_drawing.queue_free()
+		preview_drawing = null
+	_update_size_label()
+	if b.is_empty():
+		return
+	preview_drawing = ElevationDrawingScript.new()
+	preview_drawing.name = "PreviewPiece"
+	preview_drawing.setup(str(b.kind), b, ISO_TRANSFORM, "res://art/creator_pieces/", "none")
+	preview_drawing.use_style(ElevationLayerScript.piece_style_named(pick_style), float(b.base))
+	preview_drawing.modulate.a = PREVIEW_ALPHA
+	preview_drawing.show_behind_parent = true
+	_overlay.add_child(preview_drawing)
+
+
+func _process(_delta: float) -> void:
+	_sync_preview()
 
 
 func _show_message(text: String) -> void:
@@ -410,6 +566,7 @@ func _on_asset_picked(id: String) -> void:
 ## the last). Returns the view now.
 func rotate_pick() -> String:
 	pick_view = _next_of(LevelDocument.views_of(_picked()), pick_view, pick_view)
+	_update_pose_controls()
 	_overlay.queue_redraw()
 	return pick_view
 
@@ -419,6 +576,21 @@ func mirror_pick() -> bool:
 	pick_mirror = bool(_next_of(LevelDocument.mirrors_of(_picked()), pick_mirror, pick_mirror))
 	_overlay.queue_redraw()
 	return pick_mirror
+
+
+## Style (T-255): the next piece style for new rooftops and ramps (office, car park, T-198's).
+## Pieces already placed keep theirs. Returns the style now.
+func style_pick() -> String:
+	var names: Array = ElevationLayerScript.PIECE_STYLES.keys()
+	pick_style = names[(names.find(pick_style) + 1) % names.size()]
+	_update_style_button()
+	_overlay.queue_redraw()
+	return pick_style
+
+
+func _update_style_button() -> void:
+	if style_button != null:
+		style_button.text = CreatorTexts.get_text("style_label").replace("{style}", CreatorTexts.get_text("style_" + pick_style))
 
 
 ## The picked asset's catalogue texture for the current view and mirror ({} with nothing picked).
@@ -449,6 +621,10 @@ func _update_pose_controls() -> void:
 	mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
 	var key: String = LevelCreatorAssetPanel.LABEL_KEYS.get(id, "")
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
+	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
+		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
+	direction_label.text = CreatorTexts.get_text(dir_key) if dir_key != "" else ""
+	_update_size_label()
 
 
 # ---- Camera and input ---------------------------------------------------------------------------
@@ -510,10 +686,14 @@ func _on_map_input(event: InputEvent) -> void:
 			_dragging = mb.pressed
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
-			if panel.picked != "":
+			if panel.picked != "" and LevelDocument.is_resizable(panel.picked):
+				begin_size_drag(units)
+			elif panel.picked != "":
 				place_asset(panel.picked, units)
 			else:
 				select_at(units)
+		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
+			end_size_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			panel.pick("")
 			select_at(screen_to_units(mb.position))
@@ -527,6 +707,8 @@ func _on_map_input(event: InputEvent) -> void:
 		if c != hover_cell:
 			hover_cell = c
 			_overlay.queue_redraw()
+			if size_drag_start.x >= 0:
+				_update_size_label()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -540,7 +722,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			rotate_pick()
 		KEY_M:
 			mirror_pick()
+		KEY_T:
+			style_pick()
 		KEY_ESCAPE:
+			size_drag_start = Vector2i(-1, -1)
 			panel.pick("")
 			selected = {}
 			_overlay.queue_redraw()
@@ -572,8 +757,8 @@ func preview_of(corner: Vector2) -> Dictionary:
 	var id := _picked()
 	var e := LevelDocument.entry(id)
 	var t := pick_texture()
-	if e.is_empty() or t.is_empty():
-		return {}
+	if e.is_empty() or t.is_empty() or bool(e.get("resizable", false)):
+		return {}  # a piece of any size: preview_block, drawn in the engine (T-251)
 	if str(e.kind) in ["rooftop", "ramp"]:
 		var art := str(t.variant)
 		var record_path: String = ElevationDrawingScript.SAMPLE_ART_DIR + art + ".json"
@@ -615,9 +800,12 @@ class _Overlay extends Node2D:
 			return
 		var w := 2.0 / maxf(editor.zoom, 0.01)
 		if editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
-			# Where the piece would go, snapped (LevelSnapping): its art and footprint there.
-			var at: Dictionary = editor.placement_at(doc.cell_corner(editor.hover_cell) + Vector2(editor.CELL_MIDDLE, editor.CELL_MIDDLE))
-			if not at.is_empty():
+			# Where the piece would go, snapped (LevelSnapping): its art and footprint there (a
+			# piece of any size: the engine-drawn preview, editor.preview_drawing, and footprint).
+			var at: Dictionary = editor.current_placement()
+			if not at.is_empty() and LevelDocument.is_resizable(editor.panel.picked):
+				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
+			elif not at.is_empty():
 				var pv: Dictionary = editor.preview_of(at.corner)
 				if not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))

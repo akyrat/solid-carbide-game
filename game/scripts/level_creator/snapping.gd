@@ -34,15 +34,17 @@ const SNAPPING_KINDS := ["building", "rooftop", "ramp"]
 ## The top-left corner (units) for placing `asset_id` with the cursor at `units`, in `view` and
 ## `mirror`: {corner: Vector2, rect: Rect2, snapped: "" | "neighbour" | "ramp"}; {} for an unknown
 ## asset or a cursor outside the map.
-static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view: String = "", mirror: bool = false) -> Dictionary:
+## `size`: a rooftop's or ramp's dragged size (T-251, LevelDocument.piece_size; ZERO: its default).
+static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
+		size: Vector2 = Vector2.ZERO) -> Dictionary:
 	var e := LevelDocument.entry(asset_id)
 	var c := doc.cell_at(units)
 	if e.is_empty() or c.x < 0:
 		return {}
 	var kind := str(e.kind)
 	var corner := doc.cell_corner(c)
-	var foot := LevelDocument.footprint_of(asset_id, LevelDocument.valid_view(asset_id, view),
-		LevelDocument.valid_mirror(asset_id, mirror))
+	# A texture's own footprint wins (T-254); a rooftop or ramp of any size takes `size` (T-251).
+	var foot := LevelDocument.piece_size(asset_id, view, size, doc.map_rect().size, mirror)
 	if kind in ["ground", "road"]:
 		foot = Vector2(CELL, CELL)
 	var rect := Rect2(corner, foot)

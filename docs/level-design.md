@@ -234,6 +234,18 @@ Added for the piece set (task T-250; same file, T-233's keys unchanged; the piec
 - **Buildings:** "Small building", "Long building".
 - **Controls hint with sizing:** "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. Del: delete." (`controls_hint_sizing`; the old `controls_hint` stays; the creator should show the new one, same keys).
 
+### Level creator: rooftops of any size and ramps in every direction
+
+Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
+
+- **Rooftops** at height 3 and 6, of any size: picked, then dragged on the map over the cells they cover, so every size is even (whole 2 x 2 unit cells), at least 4 by 4, at most the map. A click without a drag places the elevation sample map's size (84 by 30 at height 3, 30 by 30 at 6). A 6 stands on a 3 that holds its whole footprint (`on`) or on the street. Snapping and the overlap refusal are as before (T-237).
+- **Ramps** climb north, east, south or west (R steps through the four; the top bar names the direction), at 0 to 3, 3 to 6 and **0 to 6** (the height data allows it: a ramp from the street straight up to a 6 standing on the street, or on a 3 whose edge it shares). The width along the rooftop's side is dragged (at least 4 units, 10 on a click, the sample map's); the length is fixed at the sample map's slope, **12 units per 3 of rise** (12 for 0 to 3 and 3 to 6, 24 for 0 to 6).
+- **Drawn in the engine**, not as fixed pictures: tileable textures projected onto the top and the east and south walls (the sample map art's projection), mirror-tiled, hard pixel edges, a dark outline on the edges, and a low parapet on a rooftop's back (north and west) edges, broken where a ramp meets the edge or a higher rooftop stands on it. Walls start on what the piece stands on. Until T-255 the textures are T-198's (Visual style, "Elevation sample map art"); they are settings in one resource, so new ones swap in there.
+- **The game's own map** is unchanged: its rooftops and ramps, and pieces placed before T-251 (which name an `art` piece), keep their art.
+- **The multi-layer test level** (`game/tests/fixtures/level_creator_pieces_level.gd`; screenshots and a GIF of the car driving it in a run in `art-archive/T-251/screenshots/`): a 48 by 32 rooftop at 3 with a 14 by 12 at 6 on it, a 16 by 16 at 3, a 16 by 16 at 6 on the street; ramps 0 to 3 climbing north, east and west, 3 to 6 climbing south and east on the big 3, and a 0 to 6 climbing north.
+
+![The level creator with the multi-layer test level: rooftops of three sizes, a 6 on a 3, ramps in all four directions](../art-archive/T-251/screenshots/creator.png)
+
 ### Elevation test scene
 
 The ground side of the elevation test scene (task T-182; Decisions, "Raised areas and ramps"). Every number below is a proposal for the board's playtest. Units are the flat world's (x east, y south).
