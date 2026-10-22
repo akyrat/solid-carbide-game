@@ -1730,3 +1730,8 @@ Entry format:
 - Decision or change: the board played the T-229 build and approved all of it: the camera follows the car's height (T-228); every landing after 0.3 s or more in the air pays HANG TIME! scaled by the airtime (T-242); a live airtime counter (T-243); a drift pays once when it ends, 0.05 a second from 1 s, capped at 0.5, in the LONG DRIFT! popup (T-246); a live drift counter under the airtime one (T-247); and the root README's six re-recorded GIFs (T-229). A first GUT run on the merge crashed (exit 139, as on T-258's merge) and passed on a rerun.
 - Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-228, T-242, T-243, T-246, T-247, T-229 (all done)
+
+## 2026-10-22: T-260 done: a Play creator button on the task board
+- Decision or change: each Builds entry (and a goal build's detail) whose folder has the level creator gets a Play creator button that starts Godot on `res://scenes/level_creator/level_creator.tscn`, a fixed scene, only for folders in the worktree list. Tooling, merged straight after QA.
+- Documents touched: `docs/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-260 (done)

@@ -966,6 +966,9 @@ function render() {
 // Builds: master and every worktree, with buttons that start Godot through the local server.
 let builds = [], buildsJson = "", buildMsg = "", highlightBuild = null;
 const buildOf = (t) => builds.find((b) => b.ticket_id === t.id && b.has_project);
+// Play creator (T-260): starts the level creator's own scene; disabled for a folder without it.
+const creatorButton = (b) => `<button type="button" data-launch="creator" data-id="${esc(b.id)}"${b.has_creator ? "" : " disabled"}`
+  + ` title="${b.has_creator ? "Start the level creator" : "No game/scenes/level_creator/level_creator.tscn in this folder"}">Play creator</button>`;
 function renderBuilds() {
   const el = $("builds");
   if (!builds.length) { el.innerHTML = '<div class="notice">No builds found.</div>'; return; }
@@ -978,6 +981,7 @@ function renderBuilds() {
       <div><div class="what">${what}${status}</div>
       <div class="meta">${esc(b.branch)} · ${esc(b.folder)}${b.has_project ? "" : " · no game/project.godot"}</div></div>
       <div class="acts"><button type="button" data-launch="play" data-id="${esc(b.id)}"${dis}>Play</button>
+      ${creatorButton(b)}
       <button type="button" data-launch="editor" data-id="${esc(b.id)}"${dis}>Open in editor</button></div>
     </article>`;
   }).join("");
@@ -989,7 +993,7 @@ async function launchBuild(id, mode) {
     const body = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(body.error || "The board server refused to start Godot.");
     buildMsg = "";
-    toast(mode === "play" ? "Starting the game…" : "Opening the Godot editor…");
+    toast(mode === "play" ? "Starting the game…" : mode === "creator" ? "Starting the level creator…" : "Opening the Godot editor…");
   } catch (e) {
     buildMsg = String(e.message || e);
     toast(buildMsg, 7000);
@@ -1286,6 +1290,7 @@ function renderGoalDetail() {
   const b = builds.find((x) => x.id === g.id);
   const build = b
     ? `<div class="goal-build"><button type="button" data-launch="play" data-id="${esc(b.id)}"${b.has_project ? "" : " disabled"}>Play</button>
+        ${creatorButton(b)}
         <button type="button" data-launch="editor" data-id="${esc(b.id)}"${b.has_project ? "" : " disabled"}>Open in editor</button>
         <span class="meta">${esc(b.branch)} · ${esc(b.folder)}${b.has_project ? "" : " · no game/project.godot"}</span></div>`
     : `<p class="none">${g.has_build ? `Build folder ${esc(g.build_folder)}: loading the Builds list…` : "No build folder for this goal yet."}</p>`;
