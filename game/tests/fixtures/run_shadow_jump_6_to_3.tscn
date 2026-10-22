@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/run_elevation_demo.gd" id="1_demo"]
+
+[node name="RunShadowJump6To3" type="Node"]
+script = ExtResource("1_demo")
+start_units = Vector2(-22, -91)
+start_rotation = 3.14159
+drive_steps = 150
+zoom = 12.0

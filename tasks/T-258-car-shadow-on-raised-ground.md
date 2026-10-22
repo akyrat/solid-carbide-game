@@ -1,7 +1,7 @@
 ---
 id: T-258
 title: The car's shadow shows on raised ground while the car is in the air
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -48,6 +48,20 @@ Board review files: the screenshots and GIF in `art-archive/T-258/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's report: the airborne car's shadow must show on rooftops and ramps too.
+
 ## Result notes
 
-Written by the agent when it finishes.
+**Cause.** The shadow's depth (`shadow.z_index`) was `z_for(units, rot, ground_h) - 1`, computed on its own from the ground's height. A car in the air that is drawn over a rooftop or ramp (flying in from behind it, or off its edge) is over that area, but its shadow, on lower ground behind the area, was drawn under the area and lost behind it. A sweep of the old code found such spots, for example (-88, -64) with ramp-nw-0-3 and (-52, -88) with ramp-nw-3-6, at lifts 3 and 8.
+
+**Fix.** `elevation_layer.gd`: `z_for` takes `include_areas` (default true, so every existing caller is unchanged) and the new `shadow_z_for(units, rot, height, ground_h)` returns the lower of the car's depth minus 1 and the ground's depth without areas minus 1: the shadow is under the car, under buildings and boulders that cover it, and under a rooftop or ramp only while the car itself is. Used by `run.gd` (`_sync_view_elevation`, so the level creator's runs too) and `elevation_sample_map.gd` (`update_depth`).
+
+**Conflict to decide.** The ticket also says "and the elevation test scene", but its existing test `test_elevation_drawing.gd` `test_the_car_above_the_platform_behind_it_is_over_it_but_its_shadow_under` asserts the shadow under the platform there, and criterion 2 says existing tests pass unchanged. I left `elevation_test.gd` unchanged. If the board wants the test scene fixed too, that one assertion changes with it (and `elevation_test.gd` `update_depth` gets `shadow.z_index = z_for(units, car.height, 1) - 1`).
+
+**Tests.** New `game/tests/unit/run/test_run_shadow_on_raised_ground.gd` (6 tests): shadow visible, at the ground's height, over the area it lies on and under the car, with the car airborne over the street, a height 3, a height 6 and a ramp; over every area across its whole top; and a regression test (fails on the old code, passes now) that the shadow is never under an area the car is drawn over. Existing tests pass unchanged. Full GUT suite and both Python tool test sets were run at the end.
+
+**Screenshots** in `art-archive/T-258/screenshots/`: `shadow_air_street.png`, `shadow_air_roof3.png`, `shadow_air_roof6.png`, `shadow_air_ramp.png` (car 3 units up, shadow on the ground under it) and `shadow_jump_6_to_3.gif` (a jump from the height 6 rooftop down to the 3, the shadow following). Fixtures: `tests/fixtures/run_shadow_air_*.tscn`, `run_shadow_jump_6_to_3.tscn`. Documents: `game/README.md` (the T-192 section).
+
+No actions were refused.
