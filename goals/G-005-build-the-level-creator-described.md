@@ -1,7 +1,7 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: building
+status: paused
 art_cap: 0
 art_used: 0
 iteration: 11
@@ -197,9 +197,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-22, iteration 10: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-22, iteration 10: resumed by the session Coursework.
 - 2026-10-22, iteration 11: T-240 (S11, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-005; art 0; agent: (nothing new). Rescan: S11 covered.
+- 2026-10-22, iteration 11: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-21 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 2:10am (Europe/London)
 - 2026-10-22 [stop]: Claude's answer for step 'qa' is not the structured JSON asked for.
+- 2026-10-22 [stop]: Claude reported an error for step 'goal-check': You've hit your session limit · resets 2:20pm (Europe/London)
 
