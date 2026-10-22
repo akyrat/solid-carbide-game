@@ -90,7 +90,7 @@ Level/Challenge Design Agent, 2026-10-22. Built on the branch's G-005 creator pl
   - `check_level.py` passing on the saved levels
 - New: `game/tools/test_build_creator_piece_art.py`.
 - Updated: the T-236, T-237 and T-238 creator tests (new view semantics), `test_creator_assets.gd`, `test_build_creator_assets.py`.
-- Full GUT suite: RESULT_PENDING. Python: `game/tools` 423 tests OK, `tools` 439 tests OK.
+- Full GUT suite (`bash game/tools/run_tests.sh`): 1386 of 1386 passed. Python: `game/tools` 423 tests OK, `tools` 439 tests OK.
 
 **Screenshots** (`art-archive/T-251/screenshots/`)
 - `creator.png`: the multi-layer test level in the editor (rooftops 48 x 32 and 16 x 16 at 3, 14 x 12 on the 3 and 16 x 16 on the street at 6, ramps in all four directions).
