@@ -4,7 +4,7 @@ title: The neon underglow drawn in code instead of the generated sprite
 status: open
 from: project-lead
 to: weapon-behavior
-lead:
+lead: Coursework
 epic: weapons
 milestone: mvp
 goal:
