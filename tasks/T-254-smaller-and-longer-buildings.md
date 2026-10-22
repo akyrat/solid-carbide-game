@@ -1,7 +1,7 @@
 ---
 id: T-254
 title: "Level creator: smaller and longer buildings"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -37,9 +37,9 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] Tests show the small and long buildings (both rotations) can be placed, saved, reopened and pass `check_level.py`, collide with the car and are pathed round by enemies (QA: pass / fail)
-- [ ] Their art per rotation lives in one data file; labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-254/screenshots/`; `game/README.md` describes them; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the small and long buildings (both rotations) can be placed, saved, reopened and pass `check_level.py`, collide with the car and are pathed round by enemies (QA: pass; test_small_long_buildings.gd covers place/save/reopen/check_level/car wall/enemy path, full GUT 1381/1381)
+- [ ] Their art per rotation lives in one data file; labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass; creator_buildings.json holds art per rotation, labels in creator_texts.json, no Redgull red in code/data, no game map data changed)
+- [ ] The screenshot is in `art-archive/T-254/screenshots/`; `game/README.md` describes them; the full GUT suite and all Python tool tests pass (QA: pass; screenshot shows small, long both rotations beside tall and short buildings; README updated; GUT 1381 ok, tools 439 ok, game/tools 422 ok)
 
 The board's review: place the new buildings and drive round them.
 Board review files: the screenshot in `art-archive/T-254/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started: a small square building and a long building for the creator, placeholder look first.
+
+### 2026-10-22, In progress → In QA
+
+Built: a small 6x6 building and a long 12x6 one (6x12 rotated), placeholder boxes in the city palette. Sent to QA.
 
 ## Result notes
 
