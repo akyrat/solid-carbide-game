@@ -1,7 +1,7 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: building
+status: paused
 art_cap: 0
 art_used: 0
 iteration: 10
@@ -191,8 +191,12 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-22, iteration 8: T-237 (S8, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-005; art 0; agent: I built T-237: in the level creator, pieces now snap to the 2-unit tile grid and to close neighbours. A ramp's top end lands on the side of the rooftop it climbs and slides along it to fit, a 6 lines up with its 3's edges, and a building sits flush against a road or another building. The snap distance is a proposal for the board, 4 units, written in game/README.md, 'Level creator'. Rooftops and ramps that would overlap in a way check_level.py refuses are not placed, and the top bar shows the overlap message from creator_texts.json. The work is in game/scripts/level_creator/snapping.gd and editor.gd, with 16 new tests; the full GUT suite passes (1366/1366), including the hard-coded-label scan. Screenshots are in art-archive/T-237/screenshots/ (ramp_snapped.png, ramp_preview_snapped.png, overlap_refused.png), and the result notes are written and committed on the task branch. Rescan: S8 covered, S9 in-flight, S10 in-flight, S11 in-flight.
 - 2026-10-22, iteration 9: T-238 (S9, level-challenge, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-005; art 0; agent: I added saving to the level creator. The editor's top bar now has a level name field (with its label) and a Save button. Save writes the level in the elevation map's file format into the levels folder (using LevelStore.save_level) and then shows "Level saved.", the save_confirmation text from creator_texts.json. Choices the docs don't cover, made as proposals for the playtest: a level opened from the levels folder is saved over its own file; a new level, or the game's own sample map, gets a new file named after the level (a number is added if the name is taken); the sample map itself is never overwritten. The new test file (test_editor_save.gd) has 7 tests and they pass: the saved file passes check_level.py, the sample map saved from the editor builds the same buildings, boulders, platforms and ramps, and the list shows the saved level. The full GUT suite passes (1373/1373). I also updated game/README.md and added the screenshot art-archive/T-238/screenshots/saved.png. Commits 776f6bb and bd78529. Rescan: S9 covered, S10 in-flight, S11 in-flight.
 - 2026-10-22, iteration 10: T-239 (S10, game-loop, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-005; art 0; agent: Play on a listed level in the level creator now starts a full run on that level's file, the same run as the game's (8:00, minions, the kaiju, pause screen, weapons, garage upgrades). When the run ends, win or loss, the creator shows its level list again; this is a proposal for the board, written in the result notes and in game/README.md's new "Playing a level (T-239)" entry. To get there I moved the run setup in game_flow.gd into a shared `GameFlow.add_run`, so the main menu's run is unchanged and still plays the elevation sample map. I added 13 tests in test_play_level.gd and updated one test in test_level_list.gd. The full GUT suite passes (1386/1386). Two screenshots are in art-archive/T-239/screenshots/: run_on_custom_level.png and back_to_list_after_run.png; the clock still read 8:00 when they were taken. All of this is committed in three commits on the task branch, without Godot's .import line-ending noise. Rescan: S10 covered, S11 in-flight.
+- 2026-10-22, iteration 10: resumed from building.
+- 2026-10-22, iteration 10: resumed by the session Coursework.
+- 2026-10-22, iteration 10: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-21 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 2:10am (Europe/London)
+- 2026-10-22 [stop]: Claude's answer for step 'qa' is not the structured JSON asked for.
 
