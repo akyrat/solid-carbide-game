@@ -1735,3 +1735,8 @@ Entry format:
 - Decision or change: each Builds entry (and a goal build's detail) whose folder has the level creator gets a Play creator button that starts Godot on `res://scenes/level_creator/level_creator.tscn`, a fixed scene, only for folders in the worktree list. Tooling, merged straight after QA.
 - Documents touched: `docs/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-260 (done)
+
+## 2026-10-22: T-259 done: the drift marks on rooftops and ramps
+- Decision or change: the board played the fix and approved it: the drift marks (with the hype trail) are now drawn on the surface the car drifted on, at its height and over it, with the same depth rule as the shadow, and stay there when the car leaves.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-259 (done)
