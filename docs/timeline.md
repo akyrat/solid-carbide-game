@@ -1745,3 +1745,23 @@ Entry format:
 - Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-261, T-262, T-263, T-264, T-265
+
+## 2026-10-22: A stronger wiper push
+- Decision or change: the board asked for the windshield wiper to push minions about twice the car's size at its first level; the Project Lead reads that as twice the car's length, 6 units (from 1.5), with the tier multipliers unchanged (Weapons, Decisions, "A stronger wiper push"; T-266).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-266
+
+## 2026-10-22: A smaller exhaust flame that burns what it touches
+- Decision or change: the board asked for the exhaust flame to start 4 to 5 times smaller, be drawn behind the car and enemies, and hurt a minion as soon as it touches the visible flame (its damage area = the drawn flame; replaces "a minion is in the flames when its centre is") (Weapons, Decisions; T-267).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-267
+
+## 2026-10-22: A slower air turn with a garage upgrade, and no "Redgull says" lines
+- Decision or change: the board halved the car's spin rate in the air (multiplier 2.5 to 1.25; T-269) and asked for a fifth garage upgrade that raises it (T-270, with its text in T-268). It also dislikes text in the form "Redgull says X": the two level-up card descriptions that use it (flamethrower tier 6, underglow tier 2) are rewritten, and no new text uses it (T-268).
+- Documents touched: `docs/drifting.md`, `docs/garage-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-268, T-269, T-270
+
+## 2026-10-22: Thread the needle
+- Decision or change: the board wants to mark two obstacles as a pair in the level creator; driving through the gap between them is a new trick, thread the needle, that raises the combo. Its worth, repeat rule and look are the agents' proposals (Level design, Decisions, "Thread the needle"; text T-271, build T-272).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-271, T-272
