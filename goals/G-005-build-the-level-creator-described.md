@@ -1,7 +1,7 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: paused
+status: ready-to-play
 art_cap: 0
 art_used: 0
 iteration: 11
@@ -17,15 +17,15 @@ Build the level creator described in docs/level-design.md, Decisions, 'Level cre
 
 ## Goal acceptance criteria
 
-- [ ] A level creator scene exists in the game project (e.g. game/scenes/level_creator/level_creator.tscn) with a launch command or script documented in game/README.md, 'Level creator'; it opens headless without errors, and it is not reachable from any of the game's menus (no button or scene change to it in the main menu, pause or garage scripts) and is excluded from export presets. (QA: pass / fail)
-- [ ] With an empty levels folder the creator's first screen shows only a 'new level' button; with N saved levels it lists exactly N entries (a test checks both cases). (QA: pass / fail)
-- [ ] A scripted end-to-end test, driven on branch playtest/G-005, creates a level from nothing in the editor scene (places ground/road tiles, at least one building, one boulder, a height-3 rooftop with a 0-to-3 ramp and a height-6 rooftop with a 3-to-6 ramp, uses rotate/mirror and delete at least once), saves it, returns to the list and finds it there, then starts a full run on it: the run's timer starts at 8:00, minions spawn, and the run's map has the saved level's buildings, boulders, platforms and ramps. (QA: pass / fail)
-- [ ] Every level file the creator saves passes python game/tools/check_height_data.py and the creator's own level validator, and is in the same map-file format as game/data/level/elevation_sample_map.json (the same top-level fields the run reads: map, buildings, ground_rows, legend, pattern_copies/boulders, platforms, ramps). (QA: pass / fail)
-- [ ] Loading game/data/level/elevation_sample_map.json into the editor and saving it without changes gives a file the run builds into the same map (same buildings, boulders, platforms and ramps); a test checks it. (QA: pass / fail)
-- [ ] On a saved custom level with a ramp, enemy navigation builds a path from the street to a rooftop through the ramp (a unit test on the saved file). (QA: pass / fail)
-- [ ] A run started from the game's main menu still plays on game/data/level/elevation_sample_map.json, unchanged; the existing GUT unit tests, the Python tool tests and the run tests all pass on playtest/G-005. (QA: pass / fail)
-- [ ] No new art: the set of PNG files under game/art/ on playtest/G-005 is the same as on master before the goal, and no PixelLab call is recorded in any G-005 ticket. (QA: pass / fail)
-- [ ] Screenshots of the level list (empty and with levels), the editor with its side panel and placed pieces at heights 0, 3 and 6, and a run on a custom level are saved under art-archive/<ticket>/screenshots/ for the goal's tickets. (QA: pass / fail)
+- [x] A level creator scene exists in the game project (e.g. game/scenes/level_creator/level_creator.tscn) with a launch command or script documented in game/README.md, 'Level creator'; it opens headless without errors, and it is not reachable from any of the game's menus (no button or scene change to it in the main menu, pause or garage scripts) and is excluded from export presets. (QA: pass)
+- [x] With an empty levels folder the creator's first screen shows only a 'new level' button; with N saved levels it lists exactly N entries (a test checks both cases). (QA: pass)
+- [x] A scripted end-to-end test, driven on branch playtest/G-005, creates a level from nothing in the editor scene (places ground/road tiles, at least one building, one boulder, a height-3 rooftop with a 0-to-3 ramp and a height-6 rooftop with a 3-to-6 ramp, uses rotate/mirror and delete at least once), saves it, returns to the list and finds it there, then starts a full run on it: the run's timer starts at 8:00, minions spawn, and the run's map has the saved level's buildings, boulders, platforms and ramps. (QA: pass)
+- [x] Every level file the creator saves passes python game/tools/check_height_data.py and the creator's own level validator, and is in the same map-file format as game/data/level/elevation_sample_map.json (the same top-level fields the run reads: map, buildings, ground_rows, legend, pattern_copies/boulders, platforms, ramps). (QA: pass)
+- [x] Loading game/data/level/elevation_sample_map.json into the editor and saving it without changes gives a file the run builds into the same map (same buildings, boulders, platforms and ramps); a test checks it. (QA: pass)
+- [x] On a saved custom level with a ramp, enemy navigation builds a path from the street to a rooftop through the ramp (a unit test on the saved file). (QA: pass)
+- [x] A run started from the game's main menu still plays on game/data/level/elevation_sample_map.json, unchanged; the existing GUT unit tests, the Python tool tests and the run tests all pass on playtest/G-005. (QA: pass)
+- [x] No new art: the set of PNG files under game/art/ on playtest/G-005 is the same as on master before the goal, and no PixelLab call is recorded in any G-005 ticket. (QA: pass)
+- [x] Screenshots of the level list (empty and with levels), the editor with its side panel and placed pieces at heights 0, 3 and 6, and a run on a custom level are saved under art-archive/<ticket>/screenshots/ for the goal's tickets. (QA: pass)
 
 ## Open questions
 
@@ -198,6 +198,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-22, iteration 10: resumed by the session Coursework.
 - 2026-10-22, iteration 11: T-240 (S11, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-005; art 0; agent: (nothing new). Rescan: S11 covered.
 - 2026-10-22, iteration 11: paused (see Pauses).
+- 2026-10-22, iteration 11: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-22, iteration 11: resumed by the session Coursework.
+- 2026-10-22, iteration 11: goal check: refused, got past and not blocking: One sed command, refused for the T-235 agent. It wasn't essential and doesn't affect this check. I met no refusals myself..
+- 2026-10-22, iteration 11: goal check: 9 of 9 goal criteria pass.
+- 2026-10-22, iteration 11: ready to play.
 
 ## Pauses
 
