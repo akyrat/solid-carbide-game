@@ -1,7 +1,7 @@
 ---
 id: T-249
 title: The drift trail changes and gains effects with the hype level
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, game/README.md, game/scripts/driving/drift_marks.gd, game/scenes/driving/drift_marks.tscn, tasks/T-117-drift-marks.md, tasks/T-131-combo-heat-levels.md]
 files_expected_to_change: [game/scripts/driving/, game/scenes/driving/, game/tools/, game/art/effects/, game/tests/unit/, game/README.md, docs/visual-style.md, art-archive/T-249/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,14 @@ Started at the board's request: the drift trail heats up with the combo, effects
 
 Built: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 4. Ready to play: build a combo while drifting and watch the trail go yellow, orange, then white-hot with sparks and flames. Files: art-archive/T-249/screenshots/.
+
+### 2026-10-22, Needs playtest → Done
+
+The board played it: looks good. Merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -76,3 +84,4 @@ Built by the Driving & Drift Agent (2026-10-22). Proposal for the board's playte
 - Screenshots and GIF in `art-archive/T-249/screenshots/`: `hype_plain_x1.png`, `hype_step1_x2.png`, `hype_step2_x3.png`, `hype_step3_x4.png`, `hype_trail_climb.gif`. Fixtures: `tests/fixtures/drift_marks_hype_*.tscn`. Each step looks clearly hotter; sparks are small, flames show best at x4.
 - Docs updated: `game/README.md` (Drift marks, "Hype look"), `docs/visual-style.md` (Hype drift trail).
 - Refusal: the hook refused my first attempt to write these notes with inline `python -` (it names task files). I did not retry another way; the Project Lead then allowed Edit on this section.
+- 2026-10-22, needs-playtest → done: board's playtest: drift trail lgtm
