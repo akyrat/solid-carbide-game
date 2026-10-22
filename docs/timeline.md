@@ -1710,3 +1710,8 @@ Entry format:
 - Decision or change: the board played the combo broken popup and approved it: a crash that cuts a combo pops a warning red-orange, cracked COMBO BROKEN! card that shakes and breaks apart, never when there is no combo or when it drains (HUD and menus, Decisions, "Combo broken popup").
 - Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-245 (done)
+
+## 2026-10-22: T-258 done: the car's shadow on raised ground
+- Decision or change: the board played the fix and approved it: the airborne car's shadow is no longer lost under the rooftop or ramp it lies on (its depth now follows the car, so it is under a raised area only while the car is). One elevation test that encoded the old behaviour was changed to expect the fix. A first GUT run on the merge crashed (exit 139) and passed on a rerun.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-258 (done)

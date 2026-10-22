@@ -213,7 +213,7 @@ static func car_shape_at(units: Vector2, rot: float, height: float) -> PackedVec
 
 ## The z_index for the car drawn at `height` (units): just under the lowest
 ## building, boulder or raised area that covers it, otherwise over them all.
-func z_for(units: Vector2, rot: float, height: float) -> int:
+func z_for(units: Vector2, rot: float, height: float, include_areas: bool = true) -> int:
 	var shape := car_shape_at(units, rot, height)
 	var z := top_z_index()
 	for b in map.fade_items():
@@ -223,10 +223,21 @@ func z_for(units: Vector2, rot: float, height: float) -> int:
 	for s in map.boulder_sprites:
 		if s.covers(units, shape, box):
 			z = mini(z, s.z_index - 1)
-	for a in areas:
-		if a.covers(units, DEPTH_RADIUS, height, shape):
-			z = mini(z, a.z_index - 1)
+	if include_areas:
+		for a in areas:
+			if a.covers(units, DEPTH_RADIUS, height, shape):
+				z = mini(z, a.z_index - 1)
 	return z
+
+
+## The z_index of the car's round shadow (task T-258), for the car drawn at
+## `height` on ground of height `ground_h`: under the car, under the buildings
+## and boulders that cover the shadow, and under a rooftop or ramp only while
+## the car itself is under it. A car in the air past a rooftop's far edge is
+## drawn over the rooftop, and its shadow with it: drawn under the rooftop, as
+## it was, the shadow was lost behind it.
+func shadow_z_for(units: Vector2, rot: float, height: float, ground_h: float) -> int:
+	return mini(z_for(units, rot, height) - 1, z_for(units, rot, ground_h, false) - 1)
 
 
 ## See-through: each raised area, ramp and building covering the car (at

@@ -221,13 +221,15 @@ func test_the_car_on_the_street_in_front_of_the_platform_is_drawn_over_it() -> v
 	assert_gt(scene.car_sprite.z_index, _ramp().z_index)
 
 
-func test_the_car_above_the_platform_behind_it_is_over_it_but_its_shadow_under() -> void:
+func test_the_car_above_the_platform_behind_it_is_over_it_and_so_is_its_shadow() -> void:
 	_put(Vector2(0, -10))
 	scene.car.height_model.height = 3.5
 	scene.car.height_model.airborne = true
 	scene.sync_view()
 	assert_gt(scene.car_sprite.z_index, _platform().z_index)
-	assert_lt(scene.shadow.z_index, _platform().z_index)
+	# T-258: the shadow is not lost under the area the car is over.
+	assert_gt(scene.shadow.z_index, _platform().z_index)
+	assert_lt(scene.shadow.z_index, scene.car_sprite.z_index)
 
 
 func test_the_car_on_the_ramp_is_over_it_and_behind_it_under_it() -> void:
