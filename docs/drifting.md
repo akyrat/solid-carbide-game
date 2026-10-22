@@ -185,6 +185,24 @@ The Decision "Drift pays once, at its end" (board, 2026-10-22), built in `trick_
 
 The popup stays the small size (a drift is a small trick). Screenshot and GIF: `art-archive/T-246/screenshots/`.
 
+### Hype speed boost (task T-275)
+
+The decision is in Decisions ("Hype speed boost"). Proposals for the board's playtest, kept in `game/data/combo.json` (`hype_speed`):
+
+| Combo heat step | Combo (ComboHeat.THRESHOLDS) | Top speed above the base | Top speed (base 16.5 units/s) |
+| --- | --- | --- | --- |
+| 0 | below x2 | +0% | 16.5 |
+| 1 | from x2 | +8% | 17.8 |
+| 2 | from x3 | +16% | 19.1 |
+| 3 | from x4 up | +25% | 20.6 |
+
+- **Why these amounts:** the first step has to be felt, and the last must not break the street's spacing. +8% (1.3 units/s) is just noticeable, +16% clearly quicker, and +25% (4.1 units/s) is the reward for holding x4 or more. The steps grow as the combo climbs, as the HUD's heat steps do.
+- **Acceleration:** it rises with the top speed (my call). The ramp rate is top speed over the time to top speed, and that time (2.3 s, and the garage's acceleration upgrade) is untouched, so a hot car climbs to its higher top in the same time: about 25% quicker at x4. W's snap to cruise speed (11 units/s) is unchanged. Coasting loses a share of the top speed, so it scales the same way.
+- **Easing:** the bonus moves towards the step's amount at 0.2 per second (`ease_per_second`): +8% takes 0.4 s, the full +25% 1.25 s, and it falls back at the same rate, so a combo cut by a crash slows the car over about a second, not at once.
+- **What does not change:** turning, drift grip, and the drift prototype (no combo, so its top speed stays 16.5). The garage's speed upgrades multiply as before: the bonus multiplies the top speed as it stands.
+- **Jumps:** a fall off the tallest rooftop (height 6) lasts 1.0 s (gravity 12) and the car keeps its takeoff speed in the air, so a jump off it carries about 16.5 units at the base top speed and about 20.6 units at the top step (4.1 units farther), if the car has reached top speed on the roof. Ramps launch farther the same way. Challenge distances (Level design) were made at the base speed, so a hot car only lands farther.
+- Tests: `game/tests/unit/test_hype_speed.gd`.
+
 ### Trick prototype (reference)
 
 What the trick prototype built (tasks T-151 to T-160, 2026-10-16 and 17), kept as the reference for rebuilding the tricks on real height (Decisions, 2026-10-19). Its code is on the branch `hold/trick-prototype` (the README sections named below are on that branch); its PixelLab art is in `art-archive/T-153/` and `art-archive/T-157/`. The card texts were approved in T-154 and T-158: RIGHT FLIP!, LEFT FLIP!, NOSE POP!, CLEARED IT!, GRIND!. All numbers were proposals for the board's playtest.
