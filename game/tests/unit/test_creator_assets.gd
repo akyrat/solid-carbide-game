@@ -62,7 +62,7 @@ func test_rooftop_and_ramp_heights() -> void:
 	roofs.sort()
 	ramps.sort()
 	assert_eq(roofs, [3, 6])
-	assert_eq(ramps, ["0-3", "3-6"])
+	assert_eq(ramps, ["0-3", "0-6", "3-6"])
 
 
 func test_buildings_the_map_draws_are_listed() -> void:
@@ -93,9 +93,18 @@ func test_ground_the_map_draws_is_listed() -> void:
 				assert_true(atlas_indices.has(int(k)), "ground tile %d in the catalogue" % int(k))
 
 
-func test_elevation_textures_the_layer_draws_are_listed() -> void:
-	var named := _named()
-	var sample := _json(SAMPLE_MAP)
-	for area in sample.platforms + sample.ramps:
-		var png: String = SAMPLE_ART_DIR + str(area.id) + ".png"
-		assert_true(named.has(png), "%s in the catalogue" % png)
+## T-251: the catalogue's rooftops and ramps are of any size, drawn in the engine from the piece
+## style (art/creator_pieces/piece_style.tres) rather than from the sample map's art pieces; each
+## names that style, which exists and holds every face's texture.
+func test_rooftops_and_ramps_name_the_piece_style_they_are_drawn_with() -> void:
+	var n := 0
+	for e in _json(CATALOGUE).entries:
+		if not (str(e.kind) in ["rooftop", "ramp"]):
+			continue
+		n += 1
+		assert_true(bool(e.get("resizable", false)), "%s is resizable" % e.id)
+		assert_eq(str(e.style), "res://art/creator_pieces/piece_style.tres", str(e.id))
+	assert_eq(n, 5, "two rooftops and three ramps")
+	var style = load("res://art/creator_pieces/piece_style.tres")
+	for key in ["roof_top", "wall", "ramp_top", "ramp_side", "parapet"]:
+		assert_not_null(style.get(key), "the style has its %s texture" % key)

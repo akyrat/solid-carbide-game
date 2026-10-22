@@ -157,8 +157,11 @@ func _ready() -> void:
 	main.name = "Main"
 	main.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	layout.add_child(main)
-	var bar := HBoxContainer.new()
+	# A flow container: the bar wraps onto a second line when the picked piece's labels (height,
+	# direction, size: T-251) don't fit beside the buttons.
+	var bar := HFlowContainer.new()
 	bar.name = "TopBar"
+	bar.add_theme_constant_override("h_separation", 14)
 	main.add_child(bar)
 	back_button = Button.new()
 	back_button.name = "BackButton"
