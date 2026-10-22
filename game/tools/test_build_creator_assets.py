@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import build_creator_assets as bc  # noqa: E402
 
-KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp"}
+KINDS = {"ground", "road", "building", "boulder", "rooftop", "ramp", "prop"}
 
 
 class CatalogueTest(unittest.TestCase):
