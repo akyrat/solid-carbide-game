@@ -21,6 +21,7 @@ class FakeCar extends Node:
 
 class FakeModel extends RefCounted:
 	var dt := DT
+	var is_drifting := false
 
 
 func _hud() -> Array:

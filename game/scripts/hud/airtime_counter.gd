@@ -34,7 +34,7 @@ var icon: Control
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	icon = _WingIcon.new()
+	icon = _make_icon()
 	icon.name = "Icon"
 	icon.custom_minimum_size = ICON_SIZE
 	icon.size = ICON_SIZE
@@ -51,6 +51,11 @@ func _ready() -> void:
 	add_child(number_label)
 	_layout()
 	visible = false
+
+
+## The placeholder icon; DriftCounter (T-247) overrides it with its own.
+func _make_icon() -> Control:
+	return _WingIcon.new()
 
 
 ## "1.25": two decimals, no unit.

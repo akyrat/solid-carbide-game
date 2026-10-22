@@ -55,6 +55,9 @@ const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 const COMBO_GAP := 4
 ## The airtime counter's top left corner from the screen's centre (T-243).
 const AIRTIME_OFFSET := Vector2(70, -10)
+## The drift counter's top left corner from the screen's centre (T-247): under
+## the airtime counter, at the same x.
+const DRIFT_OFFSET := Vector2(70, 30)
 
 var timer_label: Label
 var health_label: Label
@@ -84,6 +87,8 @@ var likes_fire: LikesFire
 var level_up_flash: LevelUpFlash
 ## The live airtime counter (T-243), shown only while the car is airborne.
 var airtime_counter: AirtimeCounter
+## The live drift counter (T-247), shown only while the car is drifting.
+var drift_counter: DriftCounter
 var _car: Node
 var _state: RunState
 static var _comic_font: FontFile = null
@@ -99,6 +104,7 @@ func _ready() -> void:
 	_build_bottom()
 	_build_coins()
 	_build_airtime()
+	_build_drift()
 
 
 ## The airtime counter (T-243): hidden until the car is airborne. It sits right
@@ -119,6 +125,22 @@ func _layout_airtime() -> void:
 	airtime_counter.position = (view / 2.0 + AIRTIME_OFFSET).round()
 
 
+## The drift counter (T-247): hidden until the car drifts; under the airtime
+## counter, so both can show at once.
+func _build_drift() -> void:
+	drift_counter = DriftCounter.new()
+	drift_counter.name = "DriftCounter"
+	add_child(drift_counter)
+	drift_counter.resized.connect(_layout_drift)
+	_layout_drift()
+	get_viewport().size_changed.connect(_layout_drift)
+
+
+func _layout_drift() -> void:
+	var view := get_viewport().get_visible_rect().size
+	drift_counter.position = (view / 2.0 + DRIFT_OFFSET).round()
+
+
 ## Follows the car's airborne state from now on (T-243): counts its airtime
 ## while it is in the air. Call again when the car is rebuilt.
 func bind_car(car: Node) -> void:
@@ -126,11 +148,13 @@ func bind_car(car: Node) -> void:
 		_car.stepped.disconnect(_on_car_stepped)
 	_car = car
 	airtime_counter.stop()
+	drift_counter.stop()
 	car.stepped.connect(_on_car_stepped)
 
 
 func _on_car_stepped() -> void:
 	airtime_counter.step(_car.airborne, _car.model.dt)
+	drift_counter.step(_car.model.is_drifting, _car.model.dt)
 
 
 func _build_timer() -> void:
