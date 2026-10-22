@@ -1775,3 +1775,8 @@ Entry format:
 - Decision or change: the board doesn't like the generated underglow sprite; the neon zone is drawn in code as pixel rings and stepped-halo glow marking exactly its damage circle, with the old sprite kept (Visual style, Decisions; T-274).
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-274
+
+## 2026-10-22: A little side slip out of a drift
+- Decision or change: the board, calling it crucial to the game's feel, wants a small sideways slide to carry on when a drift ends, so the player steadies the car with counter-steer, as in Hotshot Racing and Mario Kart. Tuning values with live sliders; played on its own, separate from every other change (Drifting, Decisions; T-278).
+- Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-278
