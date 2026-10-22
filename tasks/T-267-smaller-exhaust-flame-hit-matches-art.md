@@ -4,7 +4,7 @@ title: A smaller exhaust flame, drawn behind the car and enemies, that burns wha
 status: open
 from: project-lead
 to: weapon-behavior
-lead:
+lead: Coursework
 epic: weapons
 milestone: mvp
 goal:
