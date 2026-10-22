@@ -1,7 +1,7 @@
 ---
 id: T-279
 title: "Text: the level creator's spawn point"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -35,8 +35,8 @@ The board's decision (Level design, Decisions, "The car's spawn point", 2026-10-
 
 ## Acceptance criteria
 
-- [ ] `creator_texts.json` is valid JSON with the spawn labels (each with a "where it appears" note), every existing key unchanged, listed in Level design, Content, with this ticket's id (QA: pass / fail)
-- [ ] The labels are short and plain like the creator's others (buttons about 16 characters) (QA: pass / fail)
+- [ ] `creator_texts.json` is valid JSON with the spawn labels (each with a "where it appears" note), every existing key unchanged, listed in Level design, Content, with this ticket's id (QA: pass; JSON valid, 5 new keys each with a where note, all T-271 keys unchanged, listed in Level design Content with T-279)
+- [ ] The labels are short and plain like the creator's others (buttons about 16 characters) (QA: pass; "Start" is the only label; messages are short plain sentences, hint under 30 characters)
 
 ## Updates
 
@@ -45,6 +45,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the spawn point's labels.
+
+### 2026-10-22, In progress → In QA
+
+Text written: Start marker, its hint and messages, and the updated controls line. Sent to QA.
 
 ## Result notes
 
