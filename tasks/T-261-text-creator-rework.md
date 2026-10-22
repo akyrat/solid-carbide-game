@@ -1,7 +1,7 @@
 ---
 id: T-261
 title: "Text: the level creator rework's groups, pieces and keys"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -46,8 +46,8 @@ Pieces, each with where it appears:
 
 ## Acceptance criteria
 
-- [ ] `creator_texts.json` is valid JSON with a text and a "where it appears" note for every piece above, and every existing key is unchanged (QA: pass / fail)
-- [ ] Level design, Content, "Level creator text" lists them with this ticket's id; buttons fit about 16 characters and group names about 12 (QA: pass / fail)
+- [ ] `creator_texts.json` is valid JSON with a text and a "where it appears" note for every piece above, and every existing key is unchanged (QA: pass; valid JSON, all 52 old keys identical to playtest/creator-set, 39 new keys each with text and where; result notes say 41 but the count is 39, all listed pieces covered)
+- [ ] Level design, Content, "Level creator text" lists them with this ticket's id; buttons fit about 16 characters and group names about 12 (QA: pass; all listed in level-design.md with T-261; longest button 15 chars, longest group 10)
 
 ## Updates
 
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's go: labels for the reworked creator's groups, pieces and keys.
+
+### 2026-10-22, In progress → In QA
+
+Text written: 41 labels for the groups, pieces, looks strip, sizes, arrows, banner, brush and keys. Sent to QA.
 
 ## Result notes
 
