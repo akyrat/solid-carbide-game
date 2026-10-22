@@ -1,7 +1,7 @@
 ---
 id: T-256
 title: "Art: the creator's props, in four rotations"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -39,10 +39,10 @@ Your folder is built on T-253's branch (the Project Lead makes it). End with a s
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA: pass; plan with cost written before the calls, 8 of 40 generations, 8 T-256 entries in the log, raws and requests archived)
-- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA: fail; the sign's marks are real Chinese characters, one the real word 天, against the ticket's 'Japanese-like marks that aren't real words'; also props are 60 to 80% of their footprints and north/south repeat each other, which the agent reported and the board may judge; passes: 32 PNGs, no RGB 135,17,27, no semi-transparent pixels, 30 colours, transparent corners, same object in all four rotations per the sheet; check_sprite_rules only 'fails' the square frame-size rule, which non-square props can't meet)
-- [ ] The props use the new art through T-253's data; every generation is kept (QA: pass; props.json lists 32 *_art.png textures, placeholders left on disk, 8 raws in art-archive/T-256/raw, no code changes beyond the data and tools)
-- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass; 6 screenshots present and seen, Visual style and game/README.md updated, GUT all passed, game/tools tests OK, tools tests 439 OK)
+- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA round 2: pass; 8 of 40 generations, still 8 T-256 entries in the log, no new calls)
+- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA round 2: pass; the sign's marks are now script-drawn made-up rune-like glyphs, not real characters or words (roof_sign_glyphs_4x.png, rotations_sheet.png); they look more runic than Japanese-like, for the board to judge; 32 PNGs, no Redgull red, no semi-transparent pixels, 30 colours, same object in four rotations; only the square frame-size rule 'fails', unavoidable for non-square props; props at 60 to 80% of footprints and north/south repeats remain for the board's playtest)
+- [ ] The props use the new art through T-253's data; every generation is kept (QA round 2: pass; props.json uses the 32 *_art.png, placeholders and all 8 raws kept)
+- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA round 2: pass; screenshots remade and present, docs updated, GUT all passed, game/tools prop and sprite tests OK, tools tests 439 OK)
 
 The board's review: place every prop in each rotation and judge the art.
 Board review files: the screenshots in `art-archive/T-256/screenshots/`.
@@ -62,6 +62,10 @@ Art in: 8 of 40 generations, one picture per prop, rotations by mirroring. Weak:
 ### 2026-10-22, In QA → In progress
 
 QA failed one point: the sign shows real Chinese characters. Sent back for a free script fix (made-up glyphs), no new generations.
+
+### 2026-10-22, In progress → In QA
+
+Sign fixed by script: made-up glyphs, no new generations. Sent to QA round 2.
 
 ## Result notes
 
