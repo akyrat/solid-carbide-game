@@ -4,7 +4,7 @@ title: "Level creator: closed ramps, arrows up or down, and S, M and L platforms
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:

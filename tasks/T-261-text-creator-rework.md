@@ -4,7 +4,7 @@ title: "Text: the level creator rework's groups, pieces and keys"
 status: open
 from: project-lead
 to: narrative-theme
-lead:
+lead: Coursework
 epic: narrative
 milestone: mvp
 goal:

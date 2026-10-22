@@ -4,7 +4,7 @@ title: "Level creator: one button per kind of piece, in six groups, with looks c
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:

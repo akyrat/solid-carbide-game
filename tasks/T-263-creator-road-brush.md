@@ -4,7 +4,7 @@ title: "Level creator: paint roads with a brush that joins them itself"
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:
