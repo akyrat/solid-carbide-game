@@ -55,4 +55,14 @@ Started at the board's request: the air turn upgrade's text, and the two Redgull
 
 ## Result notes
 
-Written by the agent when it finishes.
+Texts written (Narrative Theme):
+
+- Air turn upgrade (Garage design, Content, "Air turn text (T-268)"; key `air_turn`): name "Spin Doctor" (11/25); description "Spin faster in the air per level. More flips, more views." (57/80). No number.
+- `upgrade_flamethrower.tier6.desc`: "The flame area grows 30%. Go big or go viral." (45)
+- `upgrade_underglow.tier2.desc`: "Glow radius up 20%. Impossible to scroll past." (46)
+- Brand Magnet `garage.pickup_magnet.desc` (point 3): "Coins and drops fly to you from further per level." (50/80). Changed in Garage design, Content, `game/scripts/menu/garage_screen.gd` (DESCRIPTIONS) and its test `game/tests/unit/test_garage_screen.gd`.
+- T-171's table (what `check_level_up_texts.py` compares against) updated for underglow tier 2 so its test matches.
+
+Search for "Redgull says": none left in the two level-up lines. Still in player-facing text, unchanged as not asked: garage `car_health` ("+10 car health per level. Redgull says you'll be fine.") in garage_screen.gd. Other "Redgull calls it" quips (e.g. `damage_bonus`, flamethrower tier 3) also remain. HUD and menus has no Content list of the two level-up lines, so nothing to change there.
+
+Tests: `python -m unittest discover -s game/tools -p "test_*.py"` OK (395 run, 1 skipped, includes the level-up text check test); GUT suite all passed. `check_level_up_texts.py` itself was refused by the hook, so not run directly; its unit test covers the same comparison.
