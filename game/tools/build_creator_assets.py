@@ -63,6 +63,19 @@ def building_entries(sky):
     return entries
 
 
+def piece_building_entries(pieces):
+    """T-254: the small and long buildings, from data/level/creator_buildings.json (their art per view and
+    mirror, each texture with its own footprint and anchor). The entry's footprint is its first texture's."""
+    out = []
+    for p in pieces["pieces"]:
+        textures = [dict(t) for t in p["textures"]]
+        first = textures[0]["footprint_units"]
+        out.append({"id": p["id"], "kind": "building", "footprint_units": [float(first[0]), float(first[1])],
+                    "height_units": float(p["height_units"]), "views": list(p["views"]),
+                    "mirrors": list(p["mirrors"]), "textures": textures})
+    return out
+
+
 def boulder_entries(boulders):
     by_base = {}
     for v in boulders["variants"]:
@@ -139,6 +152,7 @@ def build():
     entries = []
     entries += ground_entries(load("art/ground/ground_atlas.json"), load("art/ground/road_tile.json"))
     entries += building_entries(sky)
+    entries += piece_building_entries(load("data/level/creator_buildings.json"))
     entries += boulder_entries(load("art/boulders/boulders.json"))
     entries += elevation_entries(load("data/level/elevation_sample_map.json"))
     return {

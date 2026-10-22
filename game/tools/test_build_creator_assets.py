@@ -45,7 +45,7 @@ class CatalogueTest(unittest.TestCase):
 
     def test_counts(self):
         count = lambda k: sum(1 for e in self.entries if e["kind"] == k)
-        self.assertEqual(count("building"), 6 + 4)
+        self.assertEqual(count("building"), 6 + 4 + 2)
         self.assertEqual(count("boulder"), 2)
         self.assertEqual(count("ground"), 3)
 

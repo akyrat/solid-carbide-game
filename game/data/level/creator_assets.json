@@ -2847,6 +2847,127 @@
    ]
   },
   {
+   "id": "building-small",
+   "kind": "building",
+   "footprint_units": [
+    6.0,
+    6.0
+   ],
+   "height_units": 4.3,
+   "views": [
+    "iso"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "iso",
+     "mirror": false,
+     "variant": "0",
+     "texture": "res://art/buildings/creator/small_0.png",
+     "footprint_units": [
+      6,
+      6
+     ],
+     "anchor_art_px": [
+      192,
+      330
+     ]
+    },
+    {
+     "view": "iso",
+     "mirror": true,
+     "variant": "1",
+     "texture": "res://art/buildings/creator/small_1.png",
+     "footprint_units": [
+      6,
+      6
+     ],
+     "anchor_art_px": [
+      192,
+      330
+     ]
+    }
+   ]
+  },
+  {
+   "id": "building-long",
+   "kind": "building",
+   "footprint_units": [
+    12.0,
+    6.0
+   ],
+   "height_units": 4.3,
+   "views": [
+    "ew",
+    "ns"
+   ],
+   "mirrors": [
+    false,
+    true
+   ],
+   "textures": [
+    {
+     "view": "ew",
+     "mirror": false,
+     "variant": "0",
+     "texture": "res://art/buildings/creator/long_ew_0.png",
+     "footprint_units": [
+      12,
+      6
+     ],
+     "anchor_art_px": [
+      384,
+      426
+     ]
+    },
+    {
+     "view": "ew",
+     "mirror": true,
+     "variant": "1",
+     "texture": "res://art/buildings/creator/long_ew_1.png",
+     "footprint_units": [
+      12,
+      6
+     ],
+     "anchor_art_px": [
+      384,
+      426
+     ]
+    },
+    {
+     "view": "ns",
+     "mirror": false,
+     "variant": "0",
+     "texture": "res://art/buildings/creator/long_ns_0.png",
+     "footprint_units": [
+      6,
+      12
+     ],
+     "anchor_art_px": [
+      192,
+      426
+     ]
+    },
+    {
+     "view": "ns",
+     "mirror": true,
+     "variant": "1",
+     "texture": "res://art/buildings/creator/long_ns_1.png",
+     "footprint_units": [
+      6,
+      12
+     ],
+     "anchor_art_px": [
+      192,
+      426
+     ]
+    }
+   ]
+  },
+  {
    "id": "boulder-a",
    "kind": "boulder",
    "footprint_units": [

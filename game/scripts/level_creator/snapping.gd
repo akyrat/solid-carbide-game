@@ -41,7 +41,8 @@ static func placement(doc: LevelDocument, asset_id: String, units: Vector2, view
 		return {}
 	var kind := str(e.kind)
 	var corner := doc.cell_corner(c)
-	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	var foot := LevelDocument.footprint_of(asset_id, LevelDocument.valid_view(asset_id, view),
+		LevelDocument.valid_mirror(asset_id, mirror))
 	if kind in ["ground", "road"]:
 		foot = Vector2(CELL, CELL)
 	var rect := Rect2(corner, foot)

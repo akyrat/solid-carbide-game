@@ -22,6 +22,8 @@ const LABEL_KEYS := {
 	"rooftop-6": "rooftop_height_6",
 	"ramp-0-3": "ramp_height_0_3",
 	"ramp-3-6": "ramp_height_3_6",
+	"building-small": "building_small",
+	"building-long": "building_long",
 }
 const BUTTON_SIZE := Vector2(64, 64)
 const PANEL_WIDTH := 300.0
