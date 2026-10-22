@@ -7,6 +7,8 @@ also checks that:
 - every building, rooftop (platform), ramp and boulder (pattern_copies[].boulders, a centre and a
   diameter) lies inside the map's rect (map.rect);
 - the edges of buildings, rooftops and ramps lie on even units (enemy_navigation.gd's CELL = 2);
+- every prop (props: {id, asset, rotation, x, y, w, h}, T-253) names a prop of data/level/props.json and
+  one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
 - ground_rows has as many rows and columns as the map's size in tiles (1 tile = 1 unit).
 
 Usage, from the repo root:
@@ -57,6 +59,45 @@ def _items(data, key):
     return out, problems
 
 
+PROPS_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "props.json"
+
+
+def check_props(data, map_rect):
+    """Problems with the level's props (T-253): a known prop and rotation, the footprint of that
+    prop turned to that rotation, inside the map."""
+    problems = []
+    try:
+        kinds = {p["id"]: p for p in json.loads(PROPS_JSON.read_text(encoding="utf-8"))["props"]}
+        rotations = json.loads(PROPS_JSON.read_text(encoding="utf-8"))["rotations"]
+    except (OSError, ValueError, KeyError):
+        kinds, rotations = {}, []
+    props = data.get("props", [])
+    if not isinstance(props, list):
+        return ["props: must be a list"]
+    for i, it in enumerate(props):
+        name = "prop %r" % it.get("id") if isinstance(it, dict) and it.get("id") else "prop #%d" % i
+        try:
+            r = _rect(it)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            problems.append("%s: needs numbers x, y, w, h" % name)
+            continue
+        asset, rot = it.get("asset"), it.get("rotation")
+        kind = kinds.get(asset)
+        if kind is None:
+            problems.append("%s: unknown prop %r" % (name, asset))
+        elif rot not in rotations:
+            problems.append("%s: unknown rotation %r" % (name, rot))
+        else:
+            fw, fh = (float(v) for v in kind["footprint_units"])
+            want = (fh, fw) if rot in ("east", "west") else (fw, fh)
+            if abs((r[2] - r[0]) - want[0]) > EPS or abs((r[3] - r[1]) - want[1]) > EPS:
+                problems.append("%s: its footprint is %g x %g, a %s facing %s is %g x %g"
+                                % (name, r[2] - r[0], r[3] - r[1], asset, rot, want[0], want[1]))
+        if map_rect is not None and not _inside(r, map_rect):
+            problems.append("%s: lies outside the map" % name)
+    return problems
+
+
 def check_level(data):
     """Returns a list of problems (strings); empty when the level is valid."""
     problems = list(check_height_data.check_data(data))
@@ -92,6 +133,8 @@ def check_level(data):
                     continue
                 if not _inside((x - r, y - r, x + r, y + r), map_rect):
                     problems.append("boulder #%d of copy %r: lies outside the map" % (j, cid))
+
+    problems.extend(check_props(data, map_rect))
 
     # ground_rows: one string per tile row, one letter per tile column.
     try:

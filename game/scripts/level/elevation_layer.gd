@@ -261,7 +261,7 @@ func restack() -> void:
 			before_count[j] -= 1
 	for k in depth_items.size():
 		depth_items[k].z_index = DEPTH_Z_BASE + MvpMapScript.BUILDING_Z_STEP * k
-	for sp in map.boulder_sprites:
+	for sp in map.depth_sprites():
 		sp.z_index = boulder_z(sp)
 	for sp in signs:
 		sp.z_index = signs[sp].z_index + 1
@@ -322,7 +322,7 @@ func z_for(units: Vector2, rot: float, height: float) -> int:
 		if b.covers(units, shape):
 			z = mini(z, b.z_index - 1)
 	var box := MvpMapScript._bounds(shape)
-	for s in map.boulder_sprites:
+	for s in map.depth_sprites():
 		if s.covers(units, shape, box):
 			z = mini(z, s.z_index - 1)
 	for a in areas:

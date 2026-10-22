@@ -31,6 +31,11 @@ extends RefCounted
 ## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art} in ramps: side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
 ##   height whose side its top end touches ("" while there is none).
+## - prop (T-253; data/level/props.json): {id, asset, rotation, x, y, w, h} in props: rotation = the
+##   view it was placed in (north, east, south, west: the direction it faces), x, y, w, h = its
+##   footprint turned to that rotation (east and west swap the two numbers). Placed on the ground or on
+##   a rooftop alike: level_props.gd stands it at the height under its centre. Not placed when its
+##   footprint would reach out of the map.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -45,7 +50,7 @@ const MAP_SIZE := 240
 const CELL := 2
 ## Proposal: a new level's ground is all this plain tile (the first ground tile of the catalogue).
 const BASE_GROUND := "ground-gravel0"
-const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp"]
+const KINDS := ["ground", "road", "building", "boulder", "rooftop", "ramp", "prop"]
 const LEGEND := {"R": "road", "G": "gravel", "B": "building"}
 ## mvp_map.gd's ground tiles: cell values from here on draw the layout's "extra" textures.
 const EXTRA_BASE := 1000
@@ -142,6 +147,8 @@ static func piece_size(asset_id: String, view: String = "", size: Vector2 = Vect
 	if e.is_empty():
 		return Vector2.ZERO
 	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	if str(e.kind) == "prop":
+		return Vector2(foot.y, foot.x) if valid_view(asset_id, view) in ["east", "west"] else foot
 	if not bool(e.get("resizable", false)):
 		return foot
 	if str(e.kind) == "ramp":
@@ -346,7 +353,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var corner := cell_corner(c)
 	var foot := piece_size(asset_id, view, size, map_rect().size)
 	var resizable := is_resizable(asset_id)
-	if resizable and not _holds(map_rect(), Rect2(corner, foot)):
+	if (resizable or kind == "prop") and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
@@ -369,6 +376,11 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			var copy := {"id": _next_id("pattern_copies", "boulder-"), "boulders": [boulder]}
 			_list("pattern_copies").append(copy)
 			return {"kind": kind, "item": boulder, "copy": copy}
+		"prop":
+			var pr := {"id": _next_id("props", "prop-"), "asset": asset_id, "rotation": view,
+				"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y}
+			_list("props").append(pr)
+			return {"kind": kind, "item": pr}
 		"rooftop":
 			var p := {"id": _next_id("platforms", "roof-"), "x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y,
 				"height": int(e.height)}
@@ -392,6 +404,13 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 
 
 # ---- Heights: a 6 on a 3, a ramp on the side it climbs -----------------------------------------
+
+## The ground height (units) at a point: the rooftop's or the ramp's under it, 0 on the street.
+func height_at(units: Vector2) -> float:
+	var g := GroundHeight.new()
+	g.load_data(data)
+	return g.height_at(units)
+
 
 ## The highest rooftop lower than `height` that holds the whole of `r` (units), {} for none.
 func rooftop_under(r: Rect2, height: float, except: Dictionary = {}) -> Dictionary:
@@ -488,6 +507,9 @@ func piece_at(units: Vector2) -> Dictionary:
 		for b in copy.get("boulders", []):
 			if units.distance_to(Vector2(float(b.x), float(b.y))) <= float(b.diameter) / 2.0:
 				return {"kind": "boulder", "item": b, "copy": copy}
+	for pr in data.get("props", []):
+		if _rect(pr).has_point(units):
+			return {"kind": "prop", "item": pr}
 	for r in _list("ramps"):
 		if _rect(r).has_point(units):
 			return {"kind": "ramp", "item": r}
@@ -553,6 +575,9 @@ func delete(piece: Dictionary) -> bool:
 			if _erase_same(_list("ramps"), piece.item):
 				_relink()
 				return true
+		"prop":
+			if _erase_same(_list("props"), piece.item):
+				return true
 	return false
 
 
@@ -611,7 +636,7 @@ func map_layout() -> Dictionary:
 	out["map"] = {"rect": {"x": m.position.x, "y": m.position.y, "w": m.size.x, "h": m.size.y}}
 	if not (out.get("gravel") is Dictionary):
 		out["gravel"] = {"x": 0.0, "y": 0.0, "w": 0.0, "h": 0.0}
-	for key in ["buildings", "pattern_copies", "platforms", "ramps"]:
+	for key in ["buildings", "pattern_copies", "platforms", "ramps", "props"]:
 		if not (out.get(key) is Array):
 			out[key] = []
 	return out
@@ -655,4 +680,6 @@ func placed_pieces() -> Array:
 		out.append({"kind": "rooftop", "item": p})
 	for r in _list("ramps"):
 		out.append({"kind": "ramp", "item": r})
+	for pr in data.get("props", []):
+		out.append({"kind": "prop", "item": pr})
 	return out

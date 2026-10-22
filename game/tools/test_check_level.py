@@ -119,5 +119,41 @@ class TestCheckLevel(unittest.TestCase):
         self.assertEqual(c.check_level(good), [])
 
 
+class TestCheckProps(unittest.TestCase):
+    """T-253: props lie inside the map, name a known prop and rotation, and have its turned footprint."""
+
+    def level(self, *props):
+        d = small_level()
+        d["props"] = list(props)
+        return d
+
+    def prop(self, asset="prop-barrier", rotation="north", x=0.0, y=0.0, w=4.0, h=1.0):
+        return {"id": "prop-1", "asset": asset, "rotation": rotation, "x": x, "y": y, "w": w, "h": h}
+
+    def test_a_valid_prop(self):
+        self.assertEqual(c.check_level(self.level(self.prop())), [])
+
+    def test_east_swaps_the_footprint(self):
+        self.assertEqual(c.check_level(self.level(self.prop(rotation="east", w=1.0, h=4.0))), [])
+        problems = c.check_level(self.level(self.prop(rotation="east")))
+        self.assertTrue(any("footprint" in p for p in problems), problems)
+
+    def test_rejects_a_prop_outside_the_map(self):
+        problems = c.check_level(self.level(self.prop(x=8.0)))
+        self.assertTrue(any("prop 'prop-1'" in p and "outside the map" in p for p in problems), problems)
+
+    def test_rejects_an_unknown_prop_and_rotation(self):
+        self.assertTrue(any("unknown prop" in p for p in c.check_level(self.level(self.prop(asset="prop-x")))))
+        self.assertTrue(any("unknown rotation" in p for p in c.check_level(self.level(self.prop(rotation="up")))))
+
+    def test_rejects_a_prop_without_numbers(self):
+        bad = self.prop()
+        del bad["w"]
+        self.assertTrue(any("needs numbers" in p for p in c.check_level(self.level(bad))))
+
+    def test_a_level_without_props_is_valid(self):
+        self.assertEqual(c.check_level(small_level()), [])
+
+
 if __name__ == "__main__":
     unittest.main()

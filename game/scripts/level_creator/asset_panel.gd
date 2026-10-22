@@ -15,6 +15,7 @@ const CATEGORIES := [
 	["boulder", "category_boulders"],
 	["rooftop", "category_rooftops"],
 	["ramp", "category_ramps"],
+	["prop", "category_props"],
 ]
 ## Rooftops and ramps carry a label (their heights) from creator_texts.json.
 const LABEL_KEYS := {
@@ -86,13 +87,21 @@ func _make_button(e: Dictionary) -> Button:
 	b.icon = icon_of(e)
 	b.tooltip_text = id
 	b.set_meta("asset_id", id)
-	if LABEL_KEYS.has(id):
-		b.text = CreatorTexts.get_text(LABEL_KEYS[id])
+	if label_key(id) != "":
+		b.text = CreatorTexts.get_text(label_key(id))
 		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 		b.custom_minimum_size = Vector2(BUTTON_SIZE.x * 2, BUTTON_SIZE.y)
 	b.toggled.connect(func(on: bool): _on_toggled(id, on))
 	buttons[id] = b
 	return b
+
+
+## The text key of an asset's label (creator_texts.json): the heights of rooftops and ramps, and a
+## prop's name (its catalogue entry's "label", T-253); "" for an asset without a label.
+static func label_key(id: String) -> String:
+	if LABEL_KEYS.has(id):
+		return LABEL_KEYS[id]
+	return str(LevelDocument.entry(id).get("label", ""))
 
 
 ## The asset's first texture (its atlas region for the ground tiles), for its button.

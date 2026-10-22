@@ -75,7 +75,7 @@ func z_index_for(centre_units: Vector2, radius_units: float, height_units: float
 			continue
 		if b.overlaps_on_screen(shape):
 			z = b.z_index - 1
-	for s in map.boulder_sprites:
+	for s in map.depth_sprites():
 		if s.z_index - 1 < z and s.covers(centre_units, shape, box):
 			z = s.z_index - 1
 	# T-206, T-207: on a map with elevation, also under the raised areas and

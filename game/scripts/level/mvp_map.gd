@@ -178,6 +178,11 @@ var boulders_draw: Node2D
 var boulder_sprites_root: Node2D
 ## The boulder sprites, in the order they were made (the map's own first).
 var boulder_sprites: Array = []
+## The props of the layout (T-253, level_props.gd): their bodies, their sprites (which the depth
+## order reads like boulder_sprites, see depth_sprites) and the node that holds the sprites.
+var prop_bodies: Array[StaticBody2D] = []
+var prop_sprites: Array = []
+var prop_sprites_root: Node2D
 ## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
 var _boulder_sprite_by_key: Dictionary = {}
 var ground_draw: Node2D
@@ -277,6 +282,7 @@ func _build() -> void:
 	_build_walls()
 	_build_boulders()
 	_sync_boulder_sprites()
+	LevelProps.build(self)
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
@@ -515,10 +521,23 @@ func is_open_spot(centre: Vector2, radius: float) -> bool:
 	for o in all_boulders():
 		if centre.distance_to(Vector2(float(o.x), float(o.y))) < r + float(o.diameter) / 2.0:
 			return false
+	if prop_blocks_spot(centre, r):
+		return false
 	# T-206: with elevation, open ground is street level only (no rooftop or ramp).
 	if elevation != null and not elevation.is_street(centre, r):
 		return false
 	return true
+
+
+## True when a round thing of `radius` units at `centre` would overlap a prop (T-253).
+func prop_blocks_spot(centre: Vector2, radius: float) -> bool:
+	return LevelProps.blocks_spot(layout, centre, radius)
+
+
+## The sprites the depth order covers the car and the enemies with: the boulders', then the
+## props' (T-253). The array itself when there are no props.
+func depth_sprites() -> Array:
+	return boulder_sprites if prop_sprites.is_empty() else boulder_sprites + prop_sprites
 
 
 ## Places one plain boulder at `centre` (units from the map's centre) during a
@@ -798,7 +817,7 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 			z = mini(z, b.z_index - 1)
 	# Boulders (T-065): under every boulder sprite that covers the car.
 	var box := _bounds(shape)
-	for s in boulder_sprites:
+	for s in depth_sprites():
 		if s.covers(car_centre_units, shape, box):
 			z = mini(z, s.z_index - 1)
 	# T-206: and under the raised areas that cover it, at street level.
@@ -949,6 +968,10 @@ func set_view(v: String) -> void:
 		# Boulder sprites (T-065) in screen pixels: undo the view's projection.
 		boulder_sprites_root.visible = uses_boulder_art()
 		boulder_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+	if prop_sprites_root != null:
+		# Prop sprites (T-253) in screen pixels too; the flat view draws no props.
+		prop_sprites_root.visible = v == "iso"
+		prop_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 	if boulders_draw != null:
 		boulders_draw.queue_redraw()
 	if ground_tiles != null:

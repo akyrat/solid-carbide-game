@@ -97,6 +97,10 @@ static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
 	var boulders: Array = []
 	for b in map.all_boulders():
 		boulders.append([Vector2(float(b.x), float(b.y)), float(b.diameter) / 2.0])
+	# T-253: the props close the cells they take (a rectangle like a building, a round one like a boulder).
+	var prop_obstacles: Dictionary = LevelProps.obstacles(map.layout)
+	blocks.append_array(prop_obstacles.rects)
+	boulders.append_array(prop_obstacles.circles)
 	var nav = load("res://scripts/enemies/enemy_navigation.gd").new()
 	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders, drops)
 	return nav
