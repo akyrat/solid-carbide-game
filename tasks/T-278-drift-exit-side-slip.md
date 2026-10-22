@@ -4,7 +4,7 @@ title: A little side slip out of a drift, to steady with counter-steer
 status: open
 from: project-lead
 to: driving-drift
-lead:
+lead: Coursework
 epic: driving
 milestone: mvp
 goal:
