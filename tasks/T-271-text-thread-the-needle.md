@@ -4,7 +4,7 @@ title: "Text: the thread the needle trick's popup and its creator labels"
 status: open
 from: project-lead
 to: narrative-theme
-lead:
+lead: Coursework
 epic: narrative
 milestone: mvp
 goal:
