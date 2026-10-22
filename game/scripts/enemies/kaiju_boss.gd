@@ -356,6 +356,8 @@ func is_free_spot(units: Vector2) -> bool:
 		var c := Vector2(float(b.x), float(b.y))
 		if c.distance_to(units) < float(b.diameter) / 2.0 + rad:
 			return false
+	if map.prop_blocks_spot(units, rad):
+		return false
 	return true
 
 

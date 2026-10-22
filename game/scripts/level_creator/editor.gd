@@ -619,7 +619,7 @@ func _update_pose_controls() -> void:
 	var id := _picked()
 	rotate_button.disabled = LevelDocument.views_of(id).size() < 2
 	mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
-	var key: String = LevelCreatorAssetPanel.LABEL_KEYS.get(id, "")
+	var key: String = LevelCreatorAssetPanel.label_key(id)
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
 		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
@@ -759,6 +759,8 @@ func preview_of(corner: Vector2) -> Dictionary:
 	var t := pick_texture()
 	if e.is_empty() or t.is_empty() or bool(e.get("resizable", false)):
 		return {}  # a piece of any size: preview_block, drawn in the engine (T-251)
+	if str(e.kind) == "prop":
+		return _prop_preview(id, corner)
 	if str(e.kind) in ["rooftop", "ramp"]:
 		var art := str(t.variant)
 		var record_path: String = ElevationDrawingScript.SAMPLE_ART_DIR + art + ".json"
@@ -786,6 +788,18 @@ func preview_of(corner: Vector2) -> Dictionary:
 	var bottom: float = pts.map(func(p): return p.y).max()
 	var size := icon.get_size() * ((max_x - min_x) / maxf(icon.get_size().x, 1.0))
 	return {"texture": icon, "rect": Rect2(Vector2((min_x + max_x - size.x) / 2.0, bottom - size.y), size)}
+
+
+## A prop's preview (T-253): its sprite in the picked rotation, standing where it would, at the
+## height under its centre (level_props.gd).
+func _prop_preview(id: String, corner: Vector2) -> Dictionary:
+	var s := LevelProps.sprite_of(id, pick_view)
+	if s.is_empty():
+		return {}
+	var centre := corner + LevelDocument.piece_size(id, pick_view) / 2.0
+	var scale: float = float(LevelProps.data().get("draw_scale", 0.5))
+	var pos: Vector2 = ISO_TRANSFORM * (centre * PX_PER_UNIT) - (s.anchor_px as Vector2) * scale 		- Vector2(0.0, document.height_at(centre) * PX_PER_UNIT)
+	return {"texture": s.texture, "rect": Rect2(pos, (s.texture as Texture2D).get_size() * scale)}
 
 
 ## Draws, over the map: the picked asset's preview (its art in the current view and mirror) and

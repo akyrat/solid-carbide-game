@@ -5473,6 +5473,366 @@
      "texture": "res://art/creator_pieces/icon_ramp_0_6.png"
     }
    ]
+  },
+  {
+   "id": "prop-barrier",
+   "kind": "prop",
+   "footprint_units": [
+    4.0,
+    1.0
+   ],
+   "height_units": 1.2,
+   "label": "prop_barrier",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/barrier_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/barrier_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/barrier_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/barrier_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-cones",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "height_units": 0.9,
+   "label": "prop_cones",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/cones_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/cones_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/cones_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/cones_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-crates",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "height_units": 2.2,
+   "label": "prop_crates",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/crates_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/crates_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/crates_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/crates_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-ac-unit",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "height_units": 1.5,
+   "label": "prop_ac_unit",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/ac_unit_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/ac_unit_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/ac_unit_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/ac_unit_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-water-tank",
+   "kind": "prop",
+   "footprint_units": [
+    4.0,
+    4.0
+   ],
+   "height_units": 3.3,
+   "label": "prop_water_tank",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/water_tank_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/water_tank_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/water_tank_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/water_tank_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-roof-vent",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "height_units": 1.45,
+   "label": "prop_roof_vent",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_vent_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_vent_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_vent_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_vent_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-street-lamp",
+   "kind": "prop",
+   "footprint_units": [
+    2.0,
+    2.0
+   ],
+   "height_units": 5.35,
+   "label": "prop_street_lamp",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/street_lamp_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/street_lamp_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/street_lamp_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/street_lamp_west.png"
+    }
+   ]
+  },
+  {
+   "id": "prop-roof-sign",
+   "kind": "prop",
+   "footprint_units": [
+    4.0,
+    1.0
+   ],
+   "height_units": 3.3,
+   "label": "prop_roof_sign",
+   "views": [
+    "north",
+    "east",
+    "south",
+    "west"
+   ],
+   "mirrors": [
+    false
+   ],
+   "textures": [
+    {
+     "view": "north",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_sign_north.png"
+    },
+    {
+     "view": "east",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_sign_east.png"
+    },
+    {
+     "view": "south",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_sign_south.png"
+    },
+    {
+     "view": "west",
+     "mirror": false,
+     "variant": "",
+     "texture": "res://art/props/roof_sign_west.png"
+    }
+   ]
   }
  ]
 }

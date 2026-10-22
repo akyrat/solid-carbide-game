@@ -4,6 +4,7 @@ Reads the art data already in the game (no art is made or changed):
   art/buildings/skyscrapers.json  skyscrapers, short buildings, their pavements
   art/boulders/boulders.json      boulders and their mirrored looks
   art/ground/ground_atlas.json    ground and road tiles (one atlas), road_tile.png
+  data/level/props.json           props (T-253: footprints, rotations, sprites)
   art/creator_pieces/             rooftops and ramps of any size (T-251; default sizes from data/level/elevation_sample_map.json)
 and writes data/level/creator_assets.json, one entry per placeable asset:
   id, kind (ground, road, building, boulder, rooftop, ramp), footprint_units [w, h],
@@ -174,6 +175,21 @@ def elevation_entries(sample_map):
     return out
 
 
+def prop_entries(props):
+    """T-253: the props of data/level/props.json (footprint, rotations and their sprites live there:
+    T-256 swaps the art in that file). One entry each, kind "prop", the four rotations as its views; a
+    view's texture is that rotation's sprite. footprint_units is the one facing north (east and west
+    swap its two numbers)."""
+    out = []
+    for p in props["props"]:
+        out.append({"id": p["id"], "kind": "prop", "footprint_units": [float(v) for v in p["footprint_units"]],
+                    "height_units": float(p["height_units"]), "label": p["label"],
+                    "views": list(props["rotations"]), "mirrors": [False],
+                    "textures": [{"view": r, "mirror": False, "variant": "", "texture": p["textures"][r]["texture"]}
+                                 for r in props["rotations"]]})
+    return out
+
+
 def build():
     sky = load("art/buildings/skyscrapers.json")
     entries = []
@@ -182,6 +198,7 @@ def build():
     entries += piece_building_entries(load("data/level/creator_buildings.json"))
     entries += boulder_entries(load("art/boulders/boulders.json"))
     entries += elevation_entries(load("data/level/elevation_sample_map.json"))
+    entries += prop_entries(load("data/level/props.json"))
     return {
         "about": "T-232: every placeable asset already in the game, built by game/tools/build_creator_assets.py "
                  "from the art data. Do not edit by hand; rebuild with the script.",

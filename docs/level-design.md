@@ -247,6 +247,19 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 
 ![The level creator with the multi-layer test level: rooftops of three sizes, a 6 on a 3, ramps in all four directions](../art-archive/T-251/screenshots/creator.png)
 
+### Level creator: props
+
+Task T-253 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. How it works and how to rebuild the placeholder art: `game/README.md`, "Level creator", "Props (T-253)".
+
+- **The set** (category "Props", names from T-250): concrete barrier, traffic cones, crate stack, AC unit, water tank, roof vent, street lamp, rooftop sign. Footprints (north-facing, units): barrier 4 by 1, rooftop sign 4 by 1, water tank 4 by 4, the rest 2 by 2. Heights drawn: barrier 1.2, cones 0.9, crates 2.2, AC unit 1.5, roof vent 1.45, sign 3.3, tank 3.3, lamp 5.35.
+- **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping, and is refused only where its footprint would leave the map.
+- **Ground or rooftop:** a prop stands at the height under the centre of its footprint (the street, a rooftop, a ramp's slope), drawn lifted by it.
+- **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Proposal: the physics is flat, so a car in the air above a rooftop prop crashes into it too.
+- **Placeholder look:** code-drawn boxes and cylinders (a top and two visible faces, a dark outline, never Redgull red), one sprite per prop and rotation. Everything about a prop is in `game/data/level/props.json` (footprint, collision, height, the sprite of each rotation and its anchor), so T-256's art changes only that file and the PNGs.
+- **Saved levels** keep their props in a `props` list; `check_level.py` checks that each names a known prop and rotation, has the right turned footprint and lies inside the map.
+
+![Every prop in its four rotations on the street, in the level creator](../art-archive/T-253/screenshots/creator_street.png)
+
 ### Elevation test scene
 
 The ground side of the elevation test scene (task T-182; Decisions, "Raised areas and ramps"). Every number below is a proposal for the board's playtest. Units are the flat world's (x east, y south).
