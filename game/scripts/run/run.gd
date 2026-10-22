@@ -346,7 +346,8 @@ func _build_world() -> void:
 	map.meteor_challenge_completed.connect(state.challenge_completed)
 	# The combo (T-081): tricks raise it, hitting a wall, building, map edge
 	# or boulder cuts it (damage to the car cuts it inside the state).
-	car.trick.connect(state.add_trick)
+	# A whole drift pays by its length (T-246): the detector sets it before the signal.
+	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
 	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)

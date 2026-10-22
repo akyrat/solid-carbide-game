@@ -194,11 +194,29 @@ func test_run_scene_drift_gives_xp() -> void:
 	var steps := int(ceil(1.0 / run.car.model.dt)) + 3
 	await wait_physics_frames(steps)
 	assert_true(run.car.model.is_drifting)
-	# T-081: the extended-drift trick at the 1 s mark raises the combo before
-	# that second's drift XP is paid, so the second is multiplied by it.
-	assert_gt(run.state.combo, 1.0, "the extended-drift trick raised the combo")
-	assert_almost_eq(run.state.xp, data.drift_xp_per_second() * run.state.combo, 0.000001,
-			"one second of drift in the run, times the combo")
+	# T-246: a drift pays its combo once, when it ends, so the drift's own
+	# second is paid at combo 1: the XP from drifting seconds is unchanged.
+	assert_eq(run.state.combo, 1.0, "no combo while the drift lasts")
+	assert_almost_eq(run.state.xp, data.drift_xp_per_second(), 1.0,
+			"one second of drift in the run")
+
+
+func test_run_scene_drift_pays_its_combo_once_when_it_ends() -> void:
+	var run: Node2D = RunScene.instantiate()
+	add_child_autofree(run)
+	run.car.use_keyboard = false
+	run.car.scripted_input = [true, false, 1.0]
+	await wait_physics_frames(int(ceil(1.5 / run.car.model.dt)))  # under a full 360, which pays at once
+	assert_eq(run.state.combo, 1.0, "nothing paid while it lasts")
+	run.car.scripted_input = [false, false, 0.0]
+	await wait_physics_frames(3)
+	var seconds: float = run.car.tricks.last_trick_seconds
+	assert_between(seconds, 1.5, 1.7, "the drift's length")
+	var c := ComboData.new()
+	assert_almost_eq(run.state.combo, 1.0 + c.drift_amount(seconds), 0.000001, "one payment, scaled by its length")
+	assert_gt(run.state.combo, 1.0)
+	var texts: Array = run.trick_popups.popups().map(func(p) -> String: return p.text)
+	assert_eq(texts.filter(func(t: String) -> bool: return t.begins_with("LONG DRIFT! +0.0")).size(), 1, "the popup shows the amount")
 
 
 func test_new_run_resets_xp_and_level() -> void:

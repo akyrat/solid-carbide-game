@@ -65,7 +65,10 @@ func test_ids_are_tricks_with_combo_values() -> void:
 	var c = ComboDataScript.new()
 	assert_true(c.is_ok())
 	for id in TrickDetector.TRICK_IDS:
-		assert_gt(c.trick_add(id), 0.0, "combo.json has trick_add.%s" % id)
+		if id == TrickDetector.TRICK_EXTENDED_DRIFT:
+			assert_gt(c.drift_amount(1.0), 0.0, "combo.json has drift_pay")  # scaled by length (T-246)
+		else:
+			assert_gt(c.trick_add(id), 0.0, "combo.json has trick_add.%s" % id)
 
 
 func test_a_180_in_one_airtime_gives_the_180_left_and_right() -> void:
