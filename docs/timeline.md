@@ -1715,3 +1715,8 @@ Entry format:
 - Decision or change: the board played the fix and approved it: the airborne car's shadow is no longer lost under the rooftop or ramp it lies on (its depth now follows the car, so it is under a raised area only while the car is). One elevation test that encoded the old behaviour was changed to expect the fix. A first GUT run on the merge crashed (exit 139) and passed on a rerun.
 - Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-258 (done)
+
+## 2026-10-22: T-227 done: the minions' falling art
+- Decision or change: the board played the minions' falling animation (PixelLab art, 5 generations, replacing T-226's placeholder fall) and approved it.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-227 (done)
