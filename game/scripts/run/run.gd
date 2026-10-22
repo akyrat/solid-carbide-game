@@ -411,7 +411,7 @@ func sync_view(snap_camera: bool = true) -> void:
 ## the car drawn lifted by its height (its shadowless frames in the air), its
 ## round shadow on the ground under it, both in the depth order with the
 ## rooftops, ramps, buildings and boulders, the see-through, and the camera
-## following the car's map position at street level. The car's own effects
+## following the car as drawn, height included (T-228, eased). The car's own effects
 ## (drift smoke, boost) are lifted with the ground under the car, so they stay
 ## at its tyres on a rooftop (a proposal).
 func _sync_view_elevation(snap_camera: bool) -> void:
@@ -430,9 +430,9 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
-		camera_follow.snap(at_ground, frac)
+		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	else:
-		camera_follow.step(at_ground, frac, car.model.dt)
+		camera_follow.step(at_ground, frac, car.model.dt, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	camera.position = camera_follow.position
 	if snap_camera or camera_follow.dynamic:
 		_apply_zoom()

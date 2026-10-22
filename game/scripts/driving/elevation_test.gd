@@ -147,8 +147,9 @@ static func drawn_ground(units: Vector2) -> Vector2:
 ## After each physics step: the car's drawing (lifted by its height), its
 ## shadow (on the ground under it), the depth order and the camera.
 ##
-## The camera follows the car's map position on height-0 ground, not the
-## lifted drawing, so a jump shows as the car rising on screen (a proposal).
+## The camera follows the car as drawn, height included (T-228): the ground
+## part as the camera options say, the height part eased (camera_follow.gd), so
+## the car stays near the middle of the screen on a platform and in a jump.
 func sync_view(snap_camera: bool = true) -> void:
 	var units: Vector2 = car.model.get_position()
 	var at_ground := drawn_ground(units)
@@ -161,9 +162,9 @@ func sync_view(snap_camera: bool = true) -> void:
 	update_see_through(car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
-		camera_follow.snap(at_ground, frac)
+		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	else:
-		camera_follow.step(at_ground, frac, car.model.dt)
+		camera_follow.step(at_ground, frac, car.model.dt, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	camera.position = camera_follow.position
 	if snap_camera or camera_follow.dynamic:
 		_apply_zoom()
