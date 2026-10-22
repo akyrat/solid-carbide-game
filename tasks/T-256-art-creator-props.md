@@ -1,7 +1,7 @@
 ---
 id: T-256
 title: "Art: the creator's props, in four rotations"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -39,10 +39,10 @@ Your folder is built on T-253's branch (the Project Lead makes it). End with a s
 
 ## Acceptance criteria
 
-- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA: pass / fail)
-- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA: pass / fail)
-- [ ] The props use the new art through T-253's data; every generation is kept (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes list the planned calls and cost before the calls, and the generations used, at most 40; every call is in the generation log (QA: pass; plan with cost written before the calls, 8 of 40 generations, 8 T-256 entries in the log, raws and requests archived)
+- [ ] All 8 props have art in four rotations that read as the same object, fit their footprints, pass `check_sprite_rules.py`, and have no Redgull red (screenshot) (QA: fail; the sign's marks are real Chinese characters, one the real word 天, against the ticket's 'Japanese-like marks that aren't real words'; also props are 60 to 80% of their footprints and north/south repeat each other, which the agent reported and the board may judge; passes: 32 PNGs, no RGB 135,17,27, no semi-transparent pixels, 30 colours, transparent corners, same object in all four rotations per the sheet; check_sprite_rules only 'fails' the square frame-size rule, which non-square props can't meet)
+- [ ] The props use the new art through T-253's data; every generation is kept (QA: pass; props.json lists 32 *_art.png textures, placeholders left on disk, 8 raws in art-archive/T-256/raw, no code changes beyond the data and tools)
+- [ ] Screenshots are in `art-archive/T-256/screenshots/`; Visual style and `game/README.md` record the art; the full GUT suite and all Python tool tests pass (QA: pass; 6 screenshots present and seen, Visual style and game/README.md updated, GUT all passed, game/tools tests OK, tools tests 439 OK)
 
 The board's review: place every prop in each rotation and judge the art.
 Board review files: the screenshots in `art-archive/T-256/screenshots/`.
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started on T-253's branch: PixelLab art for the eight props in four rotations, cap 40 generations.
+
+### 2026-10-22, In progress → In QA
+
+Art in: 8 of 40 generations, one picture per prop, rotations by mirroring. Weak: several props are small for their footprints, and the rooftop sign shows real Chinese characters. Sent to QA.
 
 ## Result notes
 
