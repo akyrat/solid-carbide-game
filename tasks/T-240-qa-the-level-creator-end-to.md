@@ -1,7 +1,7 @@
 ---
 id: T-240
 title: QA: the level creator end to end, from an empty creator to playing a level
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/data/level/creator_assets.json, game/data/level/creator_texts.json, game/scripts/level/level_store.gd, game/scripts/level_creator/level_creator.gd, game/scripts/level_creator/editor.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/tests/unit/level_creator/test_creator_end_to_end.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -54,6 +54,10 @@ Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-240.
 
 Goal runner (G-005): the agent is done; QA is checking it.
 
+### 2026-10-22, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
 Test written: `game/tests/unit/level_creator/test_creator_end_to_end.gd` (2 tests, pass). README "Level creator" got an "End to end (T-240)" bullet; the rest of it (open, where levels are saved, place/delete/rotate/mirror/heights/snapping/save/play) was already complete. Nothing missing found.
@@ -63,3 +67,4 @@ Test written: `game/tests/unit/level_creator/test_creator_end_to_end.gd` (2 test
 - AC4 pass: `test_the_main_menu_run_uses_the_elevation_sample_map` (Start on the menu → `layout_path` and map are `elevation_sample_map.json`).
 - AC5 pass: README section reviewed.
 - AC6 pass: nothing new to screenshot; the earlier creator tickets (T-234 to T-239) hold the screenshots (art-archive/T-234 … T-239/screenshots/).
+- 2026-10-22, in-qa → done: QA passed every criterion (goal G-005).
