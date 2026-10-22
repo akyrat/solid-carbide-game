@@ -11,6 +11,8 @@ and writes data/level/creator_assets.json, one entry per placeable asset:
   views, mirrors (false = the art as made, true = a mirrored look the art has),
   textures [{view, mirror, variant, texture, ...}], and for rooftops "height",
   for ramps "heights" [bottom, top].
+Since T-262 it also writes "groups" and "families": the side panel's one button per kind of piece,
+each family listing its members (family_entries; see "Families" below).
 The textures are exactly the ones the run draws: mvp_map.gd (ground atlas, boulder
 variants, building_towers.gd bodies / short bodies / pavements) and
 elevation_platform_drawing.gd (art_dir + the area's id + ".png").
@@ -190,6 +192,150 @@ def prop_entries(props):
     return out
 
 
+# ---- Families (T-262) ----------------------------------------------------------------------------
+# The side panel shows one button per family (a kind of piece), in six groups from the ground up
+# (Level design, Decisions, "Level creator rework"). A family lists its members: each is one way to
+# place a catalogue entry (an asset in one of its views and mirrors, and for a skyscraper one of its
+# two bodies), tagged with the family's look, turn, mirror and height, which the creator steps with
+# the keys V, R, M and H (editor.gd KEY_ACTIONS; creator_families.gd). A member places exactly what
+# the old panel's button placed, so saved levels are unchanged. New art adds members (looks) here,
+# not buttons. This is the one place that says which entry belongs where.
+GROUPS = ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]
+
+# The asphalt looks of the road tiles (ground_atlas.json names end in one of these). a0m is a0
+# mirrored left-right, so it is a0's mirror. Proposal (until T-263's brush): the visibly cracked
+# PixelLab asphalts (g4, g5, g7) are Cracked road; the plainer ones (a0, g6, g9) are Road.
+ASPHALT_LOOKS = ["a0", "g4", "g5", "g6", "g7", "g9"]
+ROAD_PLAIN_LOOKS = ["a0", "g6", "g9"]
+ROAD_CRACKED_LOOKS = ["g4", "g5", "g7"]
+# Road tiles along world y are turn 0, along world x turn 1.
+ROAD_TURNS = ["y", "x"]
+# The T-252 road pieces (they carry the centre line), by look, each in its turns (clockwise).
+ROAD_PIECE_LOOKS = [
+    ["corner_ne", "corner_es", "corner_sw", "corner_nw"],
+    ["t_nes", "t_esw", "t_swn", "t_wne"],
+    ["cross"],
+    ["dead_n", "dead_e", "dead_s", "dead_w"],
+]
+# Family id -> (group, text key, the catalogue ids in look order) for the families whose members
+# are an entry's own views and mirrors.
+SIMPLE_FAMILIES = [
+    ("gravel", "ground", "piece_gravel", ["ground-gravel0", "ground-gravel1", "ground-gravel2"]),
+    ("building-small", "buildings", "piece_building_small", ["building-small"]),
+    ("building-long", "buildings", "piece_building_long", ["building-long"]),
+    ("lowrise", "buildings", "piece_building_lowrise", ["short-0", "short-1", "short-2", "short-3"]),
+    ("boulder", "obstacles", "piece_boulder", ["boulder-a", "boulder-b"]),
+    ("barrier", "obstacles", "piece_barrier", ["prop-barrier"]),
+    ("cones", "obstacles", "piece_cones", ["prop-cones"]),
+    ("crates", "obstacles", "piece_crates", ["prop-crates"]),
+    ("street-lamp", "decoration", "piece_street_lamp", ["prop-street-lamp"]),
+    ("ac-unit", "decoration", "piece_ac_unit", ["prop-ac-unit"]),
+    ("water-tank", "decoration", "piece_water_tank", ["prop-water-tank"]),
+    ("roof-vent", "decoration", "piece_roof_vent", ["prop-roof-vent"]),
+    ("roof-sign", "decoration", "piece_roof_sign", ["prop-roof-sign"]),
+]
+# Families stepped by height (H): the entry for each height, in order.
+HEIGHT_FAMILIES = [
+    ("platform", "levels", "piece_platform", [("3", "rooftop-3"), ("6", "rooftop-6")]),
+    ("ramp", "levels", "piece_ramp", [("0-3", "ramp-0-3"), ("3-6", "ramp-3-6"), ("0-6", "ramp-0-6")]),
+]
+# The panel's order: by group, buildings smallest to tallest.
+FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "platform", "ramp",
+                "building-small", "building-long", "lowrise", "skyscraper", "boulder", "barrier", "cones",
+                "crates", "street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"]
+# Pavement (piece_pavement) is left out: the only pavement art is the 30-unit block pavements drawn
+# under buildings (cityB_pavement_*.png, 960 x 486 px), not a 2 x 2 unit ground tile.
+
+
+def member(asset, view, mirror, look, turn, height="", variant="", flip=None):
+    """asset, view, mirror, variant: what is placed (the old panel's pose). look, turn, flip, height:
+    where it sits in its family (the keys V, R, M, H step them); flip is the asset's mirror unless
+    the mirrored look is an entry of its own (a road tile's a0m)."""
+    return {"asset": asset, "view": view, "mirror": mirror, "variant": variant,
+            "look": look, "turn": turn, "flip": mirror if flip is None else flip, "height": height}
+
+
+def entry_members(e, look, height=""):
+    """One member per (view, mirror) the entry's art has: turn = the view's place in its views."""
+    out = []
+    for ti, view in enumerate(e["views"]):
+        for mirror in e["mirrors"]:
+            if any(t["view"] == view and t["mirror"] == mirror for t in e["textures"]):
+                out.append(member(e["id"], view, mirror, look, ti, height))
+    return out
+
+
+def summarise(fid, group, label, members):
+    def values(key):
+        seen = []
+        for m in members:
+            if m[key] not in seen:
+                seen.append(m[key])
+        return seen
+    return {"id": fid, "group": group, "label": label, "looks": len(values("look")),
+            "turns": len(values("turn")), "mirrors": values("flip"),
+            "heights": [h for h in values("height") if h != ""], "members": members}
+
+
+def road_tile_members(by_id, kinds, asphalts):
+    """Road tiles: one look per (tile kind, asphalt); turn 0 along y, 1 along x; a0m is a0's mirror.
+    Returns the members and the next free look number."""
+    out = []
+    look = 0
+    for kind in kinds:
+        for a in asphalts:
+            found = False
+            for mirror, suffix in ((False, a), (True, a + "m")):
+                for turn, axis in enumerate(ROAD_TURNS):
+                    aid = "road-%s_%s_%s" % (axis, kind, suffix)
+                    if aid in by_id:
+                        out.append(member(aid, "iso", False, look, turn, flip=mirror))
+                        found = True
+            if found:
+                look += 1
+    return out, look
+
+
+def family_entries(entries):
+    by_id = {e["id"]: e for e in entries}
+    fams = []
+    plain, _ = road_tile_members(by_id, ["plain"], ROAD_PLAIN_LOOKS)
+    fams.append(summarise("road", "roads", "piece_road", plain))
+    line, look = road_tile_members(by_id, ["line_r", "line_l"], ASPHALT_LOOKS)
+    for turns in ROAD_PIECE_LOOKS:
+        for turn, name in enumerate(turns):
+            line.append(member("road-piece_" + name, "iso", False, look, turn))
+        look += 1
+    if "road-road_tile" in by_id:
+        line.append(member("road-road_tile", "iso", False, look, 0))
+    fams.append(summarise("centre-line", "roads", "piece_centre_line", line))
+    zebra, _ = road_tile_members(by_id, ["zebra", "zebra_e0", "zebra_e1"], ASPHALT_LOOKS)
+    fams.append(summarise("zebra-crossing", "roads", "piece_zebra_crossing", zebra))
+    cracked, _ = road_tile_members(by_id, ["plain"], ROAD_CRACKED_LOOKS)
+    fams.append(summarise("cracked-road", "roads", "piece_cracked_road", cracked))
+    for fid, group, label, pairs in HEIGHT_FAMILIES:
+        ms = []
+        for height, aid in pairs:
+            ms += entry_members(by_id[aid], 0, height)
+        fams.append(summarise(fid, group, label, ms))
+    # Skyscrapers: each tower's two bodies are two looks (building_towers.gd single_of: look = body).
+    ms = []
+    look = 0
+    for e in entries:
+        if e["kind"] == "building" and e["id"].startswith("skyscraper-"):
+            for t in e["textures"]:
+                ms.append(member(e["id"], t["view"], t["mirror"], look, 0, variant=t["variant"]))
+                look += 1
+    fams.append(summarise("skyscraper", "buildings", "piece_building_skyscraper", ms))
+    for fid, group, label, ids in SIMPLE_FAMILIES:
+        ms = []
+        for look, aid in enumerate(ids):
+            ms += entry_members(by_id[aid], look)
+        fams.append(summarise(fid, group, label, ms))
+    fams.sort(key=lambda f: FAMILY_ORDER.index(f["id"]))
+    return fams
+
+
 def build():
     sky = load("art/buildings/skyscrapers.json")
     entries = []
@@ -204,6 +350,8 @@ def build():
                  "from the art data. Do not edit by hand; rebuild with the script.",
         "building_pavements": list(sky["pavements"]),
         "entries": entries,
+        "groups": list(GROUPS),
+        "families": family_entries(entries),
     }
 
 

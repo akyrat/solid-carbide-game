@@ -110,5 +110,66 @@ class CatalogueTest(unittest.TestCase):
                 self.assertLess(e["atlas_index"], 87)
 
 
+class FamilyTest(unittest.TestCase):
+    """T-262: one family per kind of piece, in six groups; every pose the old panel offered is a member."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cat = bc.build()
+        cls.fams = cls.cat["families"]
+        cls.by_id = {e["id"]: e for e in cls.cat["entries"]}
+
+    def test_groups_and_order(self):
+        self.assertEqual(self.cat["groups"], ["roads", "ground", "levels", "buildings", "obstacles", "decoration"])
+        groups = [f["group"] for f in self.fams]
+        self.assertEqual(groups, sorted(groups, key=self.cat["groups"].index))
+        self.assertEqual([f["id"] for f in self.fams], bc.FAMILY_ORDER)
+        self.assertEqual(len(self.fams), 20)
+
+    def test_labels_are_texts(self):
+        texts = bc.load("data/level/creator_texts.json")
+        for f in self.fams:
+            self.assertTrue(f["label"].startswith("piece_"), f["id"])
+            self.assertIn(f["label"], texts)
+
+    def test_every_old_pose_is_a_member_once(self):
+        # The old panel: a button per non-part entry, placed in each view and mirror its art has.
+        seen = {}
+        for f in self.fams:
+            for m in f["members"]:
+                key = (m["asset"], m["view"], m["mirror"], m["variant"])
+                self.assertNotIn(key, seen, "a pose in two families")
+                seen[key] = f["id"]
+                e = self.by_id[m["asset"]]
+                self.assertIn(m["view"], e["views"])
+                self.assertIn(m["mirror"], e["mirrors"])
+        for e in self.cat["entries"]:
+            if e.get("part"):
+                continue
+            for t in e["textures"]:
+                if e["id"].startswith("skyscraper-"):
+                    key = (e["id"], t["view"], t["mirror"], t["variant"])
+                else:
+                    key = (e["id"], t["view"], t["mirror"], "")
+                self.assertIn(key, seen, e["id"])
+
+    def test_poses_are_unique_within_a_family(self):
+        for f in self.fams:
+            keys = [(m["look"], m["turn"], m["flip"], m["height"]) for m in f["members"]]
+            self.assertEqual(len(keys), len(set(keys)), f["id"])
+
+    def test_steps(self):
+        fams = {f["id"]: f for f in self.fams}
+        self.assertEqual(fams["skyscraper"]["looks"], 12)
+        self.assertEqual(fams["boulder"]["looks"], 2)
+        self.assertEqual(fams["boulder"]["mirrors"], [False, True])
+        self.assertEqual(fams["platform"]["heights"], ["3", "6"])
+        self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6"])
+        self.assertEqual(fams["ramp"]["turns"], 4)
+        self.assertEqual(fams["road"]["turns"], 2)
+        self.assertEqual(fams["barrier"]["turns"], 4)
+        self.assertNotIn("pavement", fams)
+
+
 if __name__ == "__main__":
     unittest.main()
