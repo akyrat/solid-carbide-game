@@ -102,7 +102,22 @@
   "y_zebra_e0_g9",
   "x_zebra_e0_g9",
   "y_zebra_e1_g9",
-  "x_zebra_e1_g9"
+  "x_zebra_e1_g9",
+  "piece_mid_y",
+  "piece_mid_x",
+  "piece_corner_ne",
+  "piece_corner_es",
+  "piece_corner_sw",
+  "piece_corner_nw",
+  "piece_t_nes",
+  "piece_t_esw",
+  "piece_t_swn",
+  "piece_t_wne",
+  "piece_cross",
+  "piece_dead_n",
+  "piece_dead_e",
+  "piece_dead_s",
+  "piece_dead_w"
  ],
  "road_bands_x": [
   [

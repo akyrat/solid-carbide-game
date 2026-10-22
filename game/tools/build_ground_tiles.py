@@ -54,6 +54,7 @@ T = (0, 0, 0, 0)
 W, H = road.TILE_W, road.TILE_H
 CELL = road.UNITS_PER_TILE  # units per tile side
 ATLAS_COLS = 8
+OLD_TILES = 87  # the tiles before T-252's road pieces: gravel, asphalt, lines and crossings
 WHITE = (223, 221, 218, 255)  # the approved tile's own line white
 
 # The generated tiles used (index in the T-103 call -> role). Tiles 3 and 8 are not used (result notes).
@@ -196,6 +197,79 @@ def with_zebra(base, skip=()):
     return out
 
 
+# ---- road pieces (T-252) ----------------------------------------------------------------------
+
+# World directions of a tile's edges: n = -y (wy = 0), e = +x (wx = 2), s = +y (wy = 2), w = -x (wx = 0).
+# A road piece is one tile wide with the approved tile's centre line in its middle (wx = 1 along
+# world y, wy = 1 along world x); each arm is the half of that line from the centre to an edge.
+# Name -> the arms (edges the road leaves through).
+PIECES = {
+    "mid_y": "ns", "mid_x": "ew",
+    "corner_ne": "ne", "corner_es": "es", "corner_sw": "sw", "corner_nw": "nw",
+    "t_nes": "nes", "t_esw": "esw", "t_swn": "swn", "t_wne": "wne",
+    "cross": "nesw",
+    "dead_n": "n", "dead_e": "e", "dead_s": "s", "dead_w": "w",
+}
+# The dead end's closed side is gravel from this many units along the tile (0 to 2) on.
+DEAD_END_GRAVEL_FROM = 1.5
+
+
+def arm_pixels(tile_y, tile_x):
+    """For each arm, the set of line pixels (x, y) of the approved line: the along-y line from
+    `tile_y` (n: wy < 1, s: wy >= 1) and the along-x line from `tile_x` (e: wx >= 1, w: wx < 1)."""
+    arms = {k: set() for k in "nesw"}
+    for y in range(H):
+        for x in range(W):
+            if not road.footprint(x, y):
+                continue
+            wx, wy = local_units(x, y)
+            if is_line(tile_y[y][x]):
+                arms["n" if wy < 1 else "s"].add((x, y))
+            if is_line(tile_x[y][x]):
+                arms["e" if wx >= 1 else "w"].add((x, y))
+    return arms
+
+
+def road_piece(base, arms, arm_set, gravel=None, closed=None):
+    """`base` (asphalt, no line) with the line of every arm in `arm_set`; for a dead end the
+    closed side `closed` (an edge letter) is gravel past DEAD_END_GRAVEL_FROM."""
+    out = [list(r) for r in base]
+    for a in arm_set:
+        for (x, y) in arms[a]:
+            out[y][x] = WHITE
+    if closed:
+        for y in range(H):
+            for x in range(W):
+                if not road.footprint(x, y):
+                    continue
+                wx, wy = local_units(x, y)
+                d = {"s": wy, "n": 2 - wy, "e": wx, "w": 2 - wx}[closed]
+                if d >= DEAD_END_GRAVEL_FROM:
+                    out[y][x] = gravel[y][x]
+    return out
+
+
+def piece_tiles(approved, a0, gravel):
+    """The road pieces (PIECES), drawn from the approved tile and the plain asphalt a0, in order."""
+    flipped = cut_to_footprint(flip(approved))
+    arms = arm_pixels(cut_to_footprint(approved), flipped)
+    out = []
+    for name, arm_set in PIECES.items():
+        if name.startswith("mid_"):
+            rows = cut_to_footprint(approved) if name == "mid_y" else flipped
+            how = "the approved tile's centre line along world %s (1-tile-wide road)" % name[-1]
+        elif name.startswith("dead_"):
+            closed = {"n": "s", "s": "n", "e": "w", "w": "e"}[arm_set]
+            rows = road_piece(a0, arms, arm_set, gravel, closed)
+            how = "road ends: line from the %s edge to the centre, gravel from %s units on the other side" % (
+                arm_set, DEAD_END_GRAVEL_FROM)
+        else:
+            rows = road_piece(a0, arms, arm_set)
+            how = "asphalt a0 with the approved line's halves from the centre to the %s edges" % ", ".join(arm_set)
+        out.append(("piece_" + name, rows, "T-252 road piece (%s), %s" % (name, how)))
+    return out
+
+
 # ---- tiles ------------------------------------------------------------------------------------
 
 def raw_path(i):
@@ -229,6 +303,8 @@ def build_tiles(approved=None, raws=None):
         for kind, rows, h in kinds:
             tiles.append(("y_%s_%s" % (kind, bname), rows, "along world y: " + h))
             tiles.append(("x_%s_%s" % (kind, bname), flip(rows), "along world x (mirrored): " + h))
+    # T-252: the road pieces go last, so every earlier tile keeps its index (the game's ground).
+    tiles += piece_tiles(approved, a0, tiles[0][1])
     return tiles
 
 
@@ -423,7 +499,10 @@ def record(tiles):
         }],
         "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
         "layout": "game/data/level/mvp_ground.json",
-        "tiles": [{"index": k, "name": name, "atlas_xy": [(k % ATLAS_COLS) * W, (k // ATLAS_COLS) * H], "made": how}
+        "road_pieces": "T-252: the tiles named piece_* (corners, T-junctions, crossroads, dead ends and the "
+                       "1-tile-wide straights), drawn by script from the approved tile; no PixelLab call",
+        "tiles": [dict({"index": k, "name": name, "atlas_xy": [(k % ATLAS_COLS) * W, (k // ATLAS_COLS) * H],
+                        "made": how}, **({"piece": True} if name.startswith("piece_") else {}))
                   for k, (name, _, how) in enumerate(tiles)],
     }
 
@@ -434,7 +513,7 @@ def check_atlas(atlas, n, max_colors=30):
     for k in range(n):
         t = atlas_tile(atlas, k)
         res = road.check_tile(t, max_colors)
-        g, o = road.tiling_report(t) if k < 3 or k % 12 in (3, 4) else (0, 0)
+        g, o = road.tiling_report(t) if k < 3 or (k < OLD_TILES and k % 12 in (3, 4)) else (0, 0)
         res.append(("tiles with 0 gaps and 0 overlaps", (g, o) == (0, 0), "%d gaps, %d overlaps" % (g, o)))
         results.append((k, res))
     return results

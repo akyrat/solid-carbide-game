@@ -22,6 +22,7 @@
  ],
  "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
  "layout": "game/data/level/mvp_ground.json",
+ "road_pieces": "T-252: the tiles named piece_* (corners, T-junctions, crossroads, dead ends and the 1-tile-wide straights), drawn by script from the approved tile; no PixelLab call",
  "tiles": [
   {
    "index": 0,
@@ -805,6 +806,156 @@
     640
    ],
    "made": "along world x (mirrored): g9 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 87,
+   "name": "piece_mid_y",
+   "atlas_xy": [
+    896,
+    640
+   ],
+   "made": "T-252 road piece (mid_y), the approved tile's centre line along world y (1-tile-wide road)",
+   "piece": true
+  },
+  {
+   "index": 88,
+   "name": "piece_mid_x",
+   "atlas_xy": [
+    0,
+    704
+   ],
+   "made": "T-252 road piece (mid_x), the approved tile's centre line along world x (1-tile-wide road)",
+   "piece": true
+  },
+  {
+   "index": 89,
+   "name": "piece_corner_ne",
+   "atlas_xy": [
+    128,
+    704
+   ],
+   "made": "T-252 road piece (corner_ne), asphalt a0 with the approved line's halves from the centre to the n, e edges",
+   "piece": true
+  },
+  {
+   "index": 90,
+   "name": "piece_corner_es",
+   "atlas_xy": [
+    256,
+    704
+   ],
+   "made": "T-252 road piece (corner_es), asphalt a0 with the approved line's halves from the centre to the e, s edges",
+   "piece": true
+  },
+  {
+   "index": 91,
+   "name": "piece_corner_sw",
+   "atlas_xy": [
+    384,
+    704
+   ],
+   "made": "T-252 road piece (corner_sw), asphalt a0 with the approved line's halves from the centre to the s, w edges",
+   "piece": true
+  },
+  {
+   "index": 92,
+   "name": "piece_corner_nw",
+   "atlas_xy": [
+    512,
+    704
+   ],
+   "made": "T-252 road piece (corner_nw), asphalt a0 with the approved line's halves from the centre to the n, w edges",
+   "piece": true
+  },
+  {
+   "index": 93,
+   "name": "piece_t_nes",
+   "atlas_xy": [
+    640,
+    704
+   ],
+   "made": "T-252 road piece (t_nes), asphalt a0 with the approved line's halves from the centre to the n, e, s edges",
+   "piece": true
+  },
+  {
+   "index": 94,
+   "name": "piece_t_esw",
+   "atlas_xy": [
+    768,
+    704
+   ],
+   "made": "T-252 road piece (t_esw), asphalt a0 with the approved line's halves from the centre to the e, s, w edges",
+   "piece": true
+  },
+  {
+   "index": 95,
+   "name": "piece_t_swn",
+   "atlas_xy": [
+    896,
+    704
+   ],
+   "made": "T-252 road piece (t_swn), asphalt a0 with the approved line's halves from the centre to the s, w, n edges",
+   "piece": true
+  },
+  {
+   "index": 96,
+   "name": "piece_t_wne",
+   "atlas_xy": [
+    0,
+    768
+   ],
+   "made": "T-252 road piece (t_wne), asphalt a0 with the approved line's halves from the centre to the w, n, e edges",
+   "piece": true
+  },
+  {
+   "index": 97,
+   "name": "piece_cross",
+   "atlas_xy": [
+    128,
+    768
+   ],
+   "made": "T-252 road piece (cross), asphalt a0 with the approved line's halves from the centre to the n, e, s, w edges",
+   "piece": true
+  },
+  {
+   "index": 98,
+   "name": "piece_dead_n",
+   "atlas_xy": [
+    256,
+    768
+   ],
+   "made": "T-252 road piece (dead_n), road ends: line from the n edge to the centre, gravel from 1.5 units on the other side",
+   "piece": true
+  },
+  {
+   "index": 99,
+   "name": "piece_dead_e",
+   "atlas_xy": [
+    384,
+    768
+   ],
+   "made": "T-252 road piece (dead_e), road ends: line from the e edge to the centre, gravel from 1.5 units on the other side",
+   "piece": true
+  },
+  {
+   "index": 100,
+   "name": "piece_dead_s",
+   "atlas_xy": [
+    512,
+    768
+   ],
+   "made": "T-252 road piece (dead_s), road ends: line from the s edge to the centre, gravel from 1.5 units on the other side",
+   "piece": true
+  },
+  {
+   "index": 101,
+   "name": "piece_dead_w",
+   "atlas_xy": [
+    640,
+    768
+   ],
+   "made": "T-252 road piece (dead_w), road ends: line from the w edge to the centre, gravel from 1.5 units on the other side",
+   "piece": true
   }
  ]
 }

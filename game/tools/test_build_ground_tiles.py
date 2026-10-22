@@ -2,6 +2,7 @@
 
 Run from the repo root:  python -m unittest discover -s game/tools -p "test_*.py"
 """
+import hashlib
 import json
 import sys
 import unittest
@@ -183,6 +184,121 @@ class TileTests(unittest.TestCase):
         self.assertEqual(g.bands([(0, 4)], 0, 4), [])
         self.assertEqual(g.pick({"a": 1, "b": 1}, 3, 4, 1), g.pick({"a": 1, "b": 1}, 3, 4, 1))
         self.assertIn(g.pick({"a": 1, "b": 0}, 3, 4, 1), ("a",))
+
+
+PIECE_NAMES = ["piece_" + n for n in g.PIECES]
+# What the game's ground was before T-252 (hashes): its cell indexes and the names of the first
+# tiles. Appending pieces to the atlas must not change them.
+OLD_CELLS_SHA = "5954f97b5cda6608"
+OLD_NAMES_SHA = "798d47a1b283e12a"
+
+
+def sha16(text):
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
+
+
+def white_pixels(name):
+    t = g.atlas_tile(ATLAS, NAMES.index(name))
+    return {(x, y) for y, r in enumerate(t) for x, p in enumerate(r) if g.is_line(p)}
+
+
+class RoadPieceTests(unittest.TestCase):
+    """T-252: corners, T-junctions, crossroads and dead ends drawn from the approved tile."""
+
+    def test_pieces_come_last_and_old_tiles_are_unchanged(self):
+        self.assertEqual(NAMES[g.OLD_TILES:], PIECE_NAMES)
+        self.assertEqual(len(PIECE_NAMES), 15)  # 2 straights, 4 corners, 4 T, 1 cross, 4 dead ends
+        self.assertEqual(sha16(json.dumps(GROUND["cells"])), OLD_CELLS_SHA)
+        self.assertEqual(sha16(json.dumps(NAMES[:g.OLD_TILES])), OLD_NAMES_SHA)
+        used = {k for row in GROUND["cells"] for k in row}
+        self.assertTrue(all(k < g.OLD_TILES for k in used), "the game's ground never uses a piece")
+
+    def test_every_rotation_exists(self):
+        arms = {n: set(a) for n, a in g.PIECES.items()}
+        for kind in ("corner", "t", "dead"):
+            sets = [a for n, a in arms.items() if n.startswith(kind + "_")]
+            self.assertEqual(len({frozenset(a) for a in sets}), 4, kind)
+        self.assertEqual(arms["cross"], set("nesw"))
+        for n, a in arms.items():
+            if n.startswith("corner_"):
+                self.assertEqual(len(a), 2)
+                self.assertNotIn(a, (set("ns"), set("ew")))
+            if n.startswith("t_"):
+                self.assertEqual(len(a), 3)
+            if n.startswith("dead_"):
+                self.assertEqual(len(a), 1)
+
+    def test_lines_are_the_straight_tiles_halves(self):
+        """Each arm's line is exactly the straight tile's line half on that side, so the lines of
+        neighbouring pieces meet at tile edges with the same pixels and dash phase."""
+        mid_y, mid_x = white_pixels("piece_mid_y"), white_pixels("piece_mid_x")
+        half = {
+            "n": {p for p in mid_y if g.local_units(*p)[1] < 1},
+            "s": {p for p in mid_y if g.local_units(*p)[1] >= 1},
+            "e": {p for p in mid_x if g.local_units(*p)[0] >= 1},
+            "w": {p for p in mid_x if g.local_units(*p)[0] < 1},
+        }
+        for a in "nesw":
+            self.assertGreater(len(half[a]), 20, a)
+        for name, arm_set in g.PIECES.items():
+            if name.startswith("mid_"):
+                continue
+            want = set().union(*(half[a] for a in arm_set))
+            self.assertEqual(white_pixels("piece_" + name), want, name)
+
+    def test_line_reaches_every_open_edge_and_no_closed_one(self):
+        near = {"n": lambda wx, wy: wy < 0.3, "s": lambda wx, wy: wy > 1.7,
+                "w": lambda wx, wy: wx < 0.3, "e": lambda wx, wy: wx > 1.7}
+        for name, arm_set in g.PIECES.items():
+            if name.startswith("mid_"):
+                continue
+            w = white_pixels("piece_" + name)
+            for edge, test in near.items():
+                touching = any(test(*g.local_units(x, y)) for x, y in w)
+                self.assertEqual(touching, edge in arm_set, (name, edge))
+
+    def test_dead_end_is_gravel_on_its_closed_side(self):
+        gravel = g.atlas_tile(ATLAS, 0)
+        a0 = g.atlas_tile(ATLAS, NAMES.index("y_plain_a0"))
+        for name, arm_set in g.PIECES.items():
+            if not name.startswith("dead_"):
+                continue
+            t = g.atlas_tile(ATLAS, NAMES.index("piece_" + name))
+            closed = {"n": "s", "s": "n", "e": "w", "w": "e"}[arm_set]
+            far = 0
+            for y in range(g.H):
+                for x in range(g.W):
+                    if not road.footprint(x, y):
+                        continue
+                    wx, wy = g.local_units(x, y)
+                    d = {"s": wy, "n": 2 - wy, "e": wx, "w": 2 - wx}[closed]
+                    if d >= g.DEAD_END_GRAVEL_FROM:
+                        far += 1
+                        self.assertEqual(t[y][x], gravel[y][x], (name, x, y))
+                    elif not g.is_line(t[y][x]):
+                        self.assertEqual(t[y][x], a0[y][x], (name, x, y))
+            self.assertGreater(far, 200)
+
+    def test_open_pieces_are_plain_asphalt_with_the_line(self):
+        a0 = g.atlas_tile(ATLAS, NAMES.index("y_plain_a0"))
+        for name in ("piece_corner_ne", "piece_t_nes", "piece_cross"):
+            t = g.atlas_tile(ATLAS, NAMES.index(name))
+            for y in range(g.H):
+                for x in range(g.W):
+                    if not g.is_line(t[y][x]):
+                        self.assertEqual(t[y][x], a0[y][x], (name, x, y))
+
+    def test_pieces_pass_check_sprite_rules(self):
+        import check_sprite_rules as rules
+        for name in PIECE_NAMES:
+            t = g.atlas_tile(ATLAS, NAMES.index(name))
+            padded = [list(r) for r in t] + [[(0, 0, 0, 0)] * g.W for _ in range(g.W - g.H)]
+            results, _ = rules.check_rows(padded, size=128, max_colors=30)
+            self.assertTrue(all(ok for _, ok, _ in results), (name, results))
+
+    def test_pieces_tile_with_neighbours(self):
+        for name in PIECE_NAMES:
+            self.assertEqual(road.tiling_report(g.atlas_tile(ATLAS, NAMES.index(name))), (0, 0), name)
 
 
 class FilesTests(unittest.TestCase):
