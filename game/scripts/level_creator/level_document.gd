@@ -117,6 +117,16 @@ static func texture_of(id: String, view: String, mirror: bool) -> Dictionary:
 	return ts[0]
 
 
+## The footprint (units) the asset covers in a view and mirror: its texture's own "footprint_units"
+## when it has one (a long building covers 12 x 6 in one view and 6 x 12 in the other, T-254), else
+## the entry's.
+static func footprint_of(id: String, view: String, mirror: bool) -> Vector2:
+	var e := entry(id)
+	var t := texture_of(id, view, mirror)
+	var f: Array = t.get("footprint_units", e.get("footprint_units", [0, 0]))
+	return Vector2(float(f[0]), float(f[1]))
+
+
 static func game_ground() -> Dictionary:
 	if _game_ground.is_empty():
 		var d = JSON.parse_string(FileAccess.get_file_as_string(GAME_GROUND_PATH))
@@ -292,9 +302,9 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 		return {}
 	var kind := str(e.kind)
 	var corner := cell_corner(c)
-	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
 	view = valid_view(asset_id, view)
 	mirror = valid_mirror(asset_id, mirror)
+	var foot := footprint_of(asset_id, view, mirror)
 	var tex := texture_of(asset_id, view, mirror)
 	match kind:
 		"ground", "road":

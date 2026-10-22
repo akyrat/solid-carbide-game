@@ -559,6 +559,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 ## The preview's alpha (a proposal): the art of the picked view, see-through over the map.
 const PREVIEW_ALPHA := 0.65
+## Building art is drawn at this scale (32 art px per unit, 16 screen px per unit; building_towers.gd).
+const BUILDING_ART_SCALE := 0.5
 const ElevationDrawingScript := preload("res://scripts/level/elevation_platform_drawing.gd")
 
 
@@ -585,7 +587,12 @@ func preview_of(corner: Vector2) -> Dictionary:
 	var icon := LevelCreatorAssetPanel.icon_of({"textures": [t]})
 	if icon == null:
 		return {}
-	var foot := Vector2(float(e.footprint_units[0]), float(e.footprint_units[1]))
+	var foot := LevelDocument.footprint_of(_picked(), pick_view, pick_mirror)
+	if t.has("anchor_art_px"):
+		# Art with its own anchor (T-254): the anchor pixel stands on the footprint's front corner.
+		var a: Array = t.anchor_art_px
+		var at := ISO_TRANSFORM * ((corner + foot) * PX_PER_UNIT) - Vector2(float(a[0]), float(a[1])) * BUILDING_ART_SCALE
+		return {"texture": icon, "rect": Rect2(at, icon.get_size() * BUILDING_ART_SCALE)}
 	var pts: Array = []
 	for p in [corner, corner + Vector2(foot.x, 0), corner + foot, corner + Vector2(0, foot.y)]:
 		pts.append(ISO_TRANSFORM * (p * PX_PER_UNIT))

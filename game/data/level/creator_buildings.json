@@ -1,0 +1,30 @@
+{
+ "about": "T-254: the level creator's small and long buildings. Each piece lists its art per view (rotation) and mirror: the texture, the footprint in units that view covers, and anchor_art_px, the point of the image that stands on the footprint's front corner (its bottom-right corner on the map). The art is a code-drawn placeholder (game/tools/build_creator_buildings.py draws it from this file); T-257 swaps in the final art by changing the texture paths and anchors here and rebuilding the catalogue (python game/tools/build_creator_assets.py). Labels come from creator_texts.json (label_key).",
+ "art_px_per_unit": 32,
+ "pieces": [
+  {
+   "id": "building-small",
+   "label_key": "building_small",
+   "height_units": 4.3,
+   "views": ["iso"],
+   "mirrors": [false, true],
+   "textures": [
+    {"view": "iso", "mirror": false, "variant": "0", "texture": "res://art/buildings/creator_final/small_0.png", "footprint_units": [6, 6], "anchor_art_px": [192, 330]},
+    {"view": "iso", "mirror": true, "variant": "1", "texture": "res://art/buildings/creator_final/small_1.png", "footprint_units": [6, 6], "anchor_art_px": [192, 330]}
+   ]
+  },
+  {
+   "id": "building-long",
+   "label_key": "building_long",
+   "height_units": 4.3,
+   "views": ["ew", "ns"],
+   "mirrors": [false, true],
+   "textures": [
+    {"view": "ew", "mirror": false, "variant": "0", "texture": "res://art/buildings/creator_final/long_ew_0.png", "footprint_units": [12, 6], "anchor_art_px": [384, 426]},
+    {"view": "ew", "mirror": true, "variant": "1", "texture": "res://art/buildings/creator_final/long_ew_1.png", "footprint_units": [12, 6], "anchor_art_px": [384, 426]},
+    {"view": "ns", "mirror": false, "variant": "0", "texture": "res://art/buildings/creator_final/long_ns_0.png", "footprint_units": [6, 12], "anchor_art_px": [192, 426]},
+    {"view": "ns", "mirror": true, "variant": "1", "texture": "res://art/buildings/creator_final/long_ns_1.png", "footprint_units": [6, 12], "anchor_art_px": [192, 426]}
+   ]
+  }
+ ]
+}
