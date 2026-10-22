@@ -4,7 +4,7 @@ title: "Text: the level creator's spawn point"
 status: open
 from: project-lead
 to: narrative-theme
-lead:
+lead: Coursework
 epic: narrative
 milestone: mvp
 goal:

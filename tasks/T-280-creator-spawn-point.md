@@ -4,7 +4,7 @@ title: "Level creator: a spawn point every level has, always visible and movable
 status: blocked
 from: project-lead
 to: level-challenge
-lead:
+lead: Coursework
 epic: level-challenges
 milestone: mvp
 goal:
