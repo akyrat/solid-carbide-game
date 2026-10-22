@@ -189,7 +189,7 @@ func z_for(height: float) -> int:
 func update_depth() -> void:
 	var units: Vector2 = car.model.get_position()
 	car_sprite.z_index = z_for(car.height)
-	shadow.z_index = z_for(ground_height.height_at(units)) - 1
+	shadow.z_index = elevation.shadow_z_for(units, car.rotation, car.height, ground_height.height_at(units))
 
 
 ## See-through for the car at its height, by `delta` seconds.

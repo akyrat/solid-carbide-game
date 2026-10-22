@@ -426,7 +426,7 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	drift_smoke.position = lift
 	boost_effect.position = lift
 	view_root.z_index = elevation.z_for(units, car.rotation, car.height)
-	shadow.z_index = elevation.z_for(units, car.rotation, ground_h) - 1
+	shadow.z_index = elevation.shadow_z_for(units, car.rotation, car.height, ground_h)
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
