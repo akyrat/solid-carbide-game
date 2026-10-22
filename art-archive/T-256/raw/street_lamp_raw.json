@@ -1,0 +1,43 @@
+{
+  "file": "street_lamp_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "view": "high top-down",
+    "isometric": true,
+    "text_guidance_scale": 8,
+    "negative_description": "text, letters, words, logo, brand, red, perspective, blur, ground, street, shadow, people, car, background",
+    "description": "a tall street lamp, a thin dark grey metal pole on a small round base with a short arm and a lamp head that glows warm amber yellow light, isometric view seen from above, night city, cool blue-grey steel and concrete colours, retro pixel art game sprite, a single object",
+    "image_size": {
+      "width": 64,
+      "height": 208
+    }
+  },
+  "prompt": "a tall street lamp, a thin dark grey metal pole on a small round base with a short arm and a lamp head that glows warm amber yellow light, isometric view seen from above, night city, cool blue-grey steel and concrete colours, retro pixel art game sprite, a single object",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-22T10:33:56+00:00",
+  "image": {
+    "width": 64,
+    "height": 208,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "game/data/level/props.json",
+    "game/art/props/street_lamp_north.png"
+  ],
+  "task": "T-256",
+  "job_status": null,
+  "notes": "T-256: one generation per prop, the four rotations are made by script (mirror)",
+  "generator": "game/tools/pixellab_client.py"
+}
