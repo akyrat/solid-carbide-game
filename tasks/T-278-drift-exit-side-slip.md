@@ -1,7 +1,7 @@
 ---
 id: T-278
 title: A little side slip out of a drift, to steady with counter-steer
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/README.md, game/scripts/driving/, game/scenes/drift_prototype/]
 files_expected_to_change: [game/scripts/driving/, game/scenes/drift_prototype/, game/tests/, docs/drifting.md, game/README.md, art-archive/T-278/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,9 +41,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show that after a drift ends the car keeps a small sideways speed that decays to none within the proposed time, that counter-steer cancels it faster, that it never turns into a spin-out with no input, and that it doesn't apply in the air (QA: pass / fail)
-- [ ] The values are in `car_tuning.gd` with sliders in the drift prototype's tuning panel; drift tricks, payouts and the rest of the handling are unchanged (the existing driving tests pass unchanged) (QA: pass / fail)
-- [ ] Drifting, Content, and `game/README.md` describe it in plain words with the defaults and reasons; the GIF is in `art-archive/T-278/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show that after a drift ends the car keeps a small sideways speed that decays to none within the proposed time, that counter-steer cancels it faster, that it never turns into a spin-out with no input, and that it doesn't apply in the air (QA: pass; test_drift_exit_slip.gd, 17 tests, covers decay within 0.4 s, faster counter-steer, no spin-out, none in the air; all pass in the full suite)
+- [ ] The values are in `car_tuning.gd` with sliders in the drift prototype's tuning panel; drift tricks, payouts and the rest of the handling are unchanged (the existing driving tests pass unchanged) (QA: pass; four values in car_tuning.gd, SLIP_SETTINGS sliders in tuning_panel.gd; diff adds only the new test file, no existing test or trick/payout code touched; suite passes)
+- [ ] Drifting, Content, and `game/README.md` describe it in plain words with the defaults and reasons; the GIF is in `art-archive/T-278/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; docs/drifting.md and game/README.md describe it with defaults; GIFs and 3 stills in art-archive/T-278/screenshots, a still checked; GUT 1382/1382, tools 451 OK, game/tools 395 OK with 1 skipped)
 
 The board's review: drift in the prototype and in a run, steady the car out of each drift, and tune the sliders.
 Board review files: the GIF in `art-archive/T-278/screenshots/`.
