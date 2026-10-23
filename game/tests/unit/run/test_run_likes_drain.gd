@@ -259,6 +259,7 @@ func test_the_hud_likes_bar_empties_in_a_run() -> void:
 	add_child_autofree(run)
 	var s: RunState = run.state
 	s.add_xp(s.xp_needed() * 0.5)
+	run.hud.settle_likes()
 	var bar: ProgressBar = run.hud.likes_bar
 	var start_value := bar.value
 	# The bar rounds to whole likes (its step is 1), so allow 1 either way.

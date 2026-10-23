@@ -1,7 +1,7 @@
 ---
 id: T-273
 title: A likes bar 4 times thicker that springs up when it fills
-status: open
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, game/scripts/hud/, game/scenes/hud/, tasks/T-113-hud-vertical-health-and-likes-bars.md, tasks/T-131-combo-heat-levels.md, tasks/T-139-likes-bar-level-up-animation.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, docs/hud-and-menus.md, game/README.md, art-archive/T-273/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,10 +40,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The likes bar is 64 pixels tall and half the screen wide; the texts and counter above it sit on it without overlapping anything (screenshot, and a layout test) (QA: pass / fail)
-- [ ] Tests show the fill eases to its new value over the proposed time with a small overshoot, never shows below the old value or past full in a way that hides the level-up, triggers the level-up when it fills as before, and pauses with the game (QA: pass / fail)
-- [ ] The burning bar and the level-up animation fit the new size (screenshot) (QA: pass / fail)
-- [ ] The screenshots and GIF are in `art-archive/T-273/screenshots/`; HUD and menus, Content, and `game/README.md` give the new size and animation; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The likes bar is 64 pixels tall and half the screen wide; the texts and counter above it sit on it without overlapping anything (screenshot, and a layout test) (QA: pass; 64 px, half width, layout test at four sizes passes, screenshot shows no overlap)
+- [ ] Tests show the fill eases to its new value over the proposed time with a small overshoot, never shows below the old value or past full in a way that hides the level-up, triggers the level-up when it fills as before, and pauses with the game (QA: pass; test_likes_spring.gd covers ease and overshoot, never below old or past full, level-up then restart, pause, no spring on drain)
+- [ ] The burning bar and the level-up animation fit the new size (screenshot) (QA: pass; burning x4 screenshot shows flames on the 64 px bar; level-up sized from bar rect and shown in the GIF)
+- [ ] The screenshots and GIF are in `art-archive/T-273/screenshots/`; HUD and menus, Content, and `game/README.md` give the new size and animation; the full GUT suite and all Python tool tests pass (QA: pass; files and docs present, GUT 1372/1372, tools 451 OK, game/tools OK; layout ratio check loosened 10 to 5 because 576/64=9, and settle_likes() calls added, both keep intent)
 
 The board's review: earn likes with tricks and watch the bar.
 Board review files: the screenshots and GIF in `art-archive/T-273/screenshots/`.
@@ -52,6 +52,27 @@ Board review files: the screenshots and GIF in `art-archive/T-273/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the likes bar 4 times thicker, springing when it fills.
+
+### 2026-10-23, In progress → In QA
+
+Likes bar 64 px tall; fill springs up in 0.25 s with a small overshoot; level-up fills, then the new bar springs from empty. Sent to QA.
+
+### 2026-10-23, Needs playtest
+
+QA passed all 4. Ready to play in the game build: taller likes bar with a spring fill.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+UI Agent, T-273. Built:
+- The likes bar is 64 px tall (`Hud.LIKES_BAR_HEIGHT`), still half the screen wide and 16 px above the bottom edge; the row, "Hype Lv" and the combo counter moved up 48 px with it. The x4 flames (along the bar's top) and the level-up animation (sized from the bar's rectangle) fit without changes.
+- New `scripts/hud/likes_spring.gd` (`LikesSpring`, `hud.likes_spring`, pausable). Timing chosen, in one place: `DURATION` 0.25 s, ease-out-back with `OVERSHOOT` 1.2 (about 5 percent of the step). Likes going up spring; a level-up springs the old bar to full while the level-up flash and "Hype Lv" change at that moment, then the new bar starts from empty and springs to the leftover; draining likes and a new run snap with no animation. The bar never draws past full or below the old value.
+- `likes_bar.value` is now the shown fill; tests call `hud.settle_likes()` before reading the real one (updated test_hud_values, combo_heat, level_up_flash, likes_drain; the T-086 position test and the layout ratio check updated for the 64 px size).
+- Tests: `tests/unit/hud/test_likes_spring.gd` (curve, ease over the time with overshoot, never below old or past full, level-up at once then restart, paused, no spring when draining, 64 px and clear of the other parts at four window sizes), `tools/test_likes_spring_gif.py`. Full GUT suite: 1372 of 1372 passed. Python tool tests: `tools` 451 passed, `game/tools` 408 passed, 1 skipped.
+- Screenshots and GIF in `art-archive/T-273/screenshots/`: `likes_bar_plain.png`, `likes_bar_burning.png` (x4), `likes_bar_spring.gif` (30 fps, five gains with a level-up). Made with `bash game/tools/record_likes_spring.sh`. I looked at them: the bar, flames and level-up flash fit; the GIF shows the fill rising, the white-hot level-up cover, and the bar starting again.
+- Docs updated: `docs/hud-and-menus.md` (The HUD, bottom centre) and `game/README.md` (HUD layout value, new "Likes bar spring" paragraph).
+- Refusals: none.

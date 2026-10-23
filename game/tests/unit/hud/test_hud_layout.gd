@@ -95,7 +95,7 @@ func _assert_likes(hud: Hud, where: String) -> void:
 	var view := hud.get_viewport().get_visible_rect().size
 	var bar := hud.likes_bar.get_global_rect()
 	assert_eq(hud.likes_bar.fill_mode, ProgressBar.FILL_BEGIN_TO_END, "%s: likes fills left to right" % where)
-	assert_gt(bar.size.x, bar.size.y * 10.0, "%s: likes bar horizontal" % where)
+	assert_gt(bar.size.x, bar.size.y * 5.0, "%s: likes bar horizontal" % where)
 	assert_almost_eq(bar.size.x, view.x * 0.5, 1.0, "%s: likes bar half the screen wide" % where)
 	assert_almost_eq(bar.get_center().x, view.x * 0.5, 1.0, "%s: likes bar centred" % where)
 	assert_almost_eq(view.y - bar.end.y, float(Hud.MARGIN), 0.5, "%s: likes bar near the bottom edge" % where)
