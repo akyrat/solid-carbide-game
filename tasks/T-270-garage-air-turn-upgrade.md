@@ -56,6 +56,10 @@ Started: the air turn upgrade (Spin Doctor) in the garage, on top of T-269's hoo
 
 Spin Doctor in the garage: 10 levels, +0.125 each, back to 2.5 at the top; the air 360 off the tallest roof comes back at level 6. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 3. Ready to play in the game build: buy Spin Doctor levels and spin in the air; the 360 off the tallest roof is back at level 6.
+
 ## Result notes
 
 Written by the agent when it finishes.
