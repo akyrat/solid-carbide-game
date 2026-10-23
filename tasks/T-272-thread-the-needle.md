@@ -1,7 +1,7 @@
 ---
 id: T-272
 title: "Thread the needle: pair two obstacles in the creator, and drive between them for a trick"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/game-loop-architecture.md, game/
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/level_creator/, game/data/level/props.json, game/data/combo.json, game/scripts/run/run.gd, game/scripts/run/run_state.gd, tasks/T-242-airtime-trick.md, tasks/T-253-placeable-props.md, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/combo.json, game/tools/check_level.py, game/tests/, game/README.md, docs/level-design.md, docs/game-loop-architecture.md, art-archive/T-272/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started on the creator line: pair two obstacles, drive between them for THREAD T
 ### 2026-10-23, In progress → In QA
 
 Built: P pairs two obstacles in the creator; driving between them pays THREAD THE NEEDLE! +0.5, again after 3 s. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the creator build: pair two boulders with P and drive between them. T-280 starts on it.
 
 ## Result notes
 
