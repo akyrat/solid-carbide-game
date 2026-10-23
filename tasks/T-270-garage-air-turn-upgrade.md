@@ -1,7 +1,7 @@
 ---
 id: T-270
 title: The air turn upgrade in the garage
-status: blocked
+status: in-progress
 from: project-lead
 to: game-data
 lead: Coursework
@@ -47,6 +47,10 @@ Board review files: the screenshot in `art-archive/T-270/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-23, Blocked → In progress
+
+Started: the air turn upgrade (Spin Doctor) in the garage, on top of T-269's hook and T-268's text.
 
 ## Result notes
 
