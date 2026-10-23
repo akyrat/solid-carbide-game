@@ -273,6 +273,18 @@ Task T-263 (Decisions, "Level creator rework"). How it works and where its code 
 
 ![A street grid painted with the road brush in a few drags: corners, T-junctions, crossroads, dead ends and zebra crossings](../art-archive/T-263/screenshots/street_grid.png)
 
+### Level creator: closed ramps, arrows and platform sizes
+
+Task T-264 (Decisions, "Level creator rework"). How it works: `game/README.md`, "Level creator", "Closed ramps, arrows up or down, platform sizes (T-264)". The numbers are the Level/Challenge Design Agent's proposals for the board's playtest.
+
+- **Closed ramps:** every ramp, in each direction and height step, has a wall at its tall end down to what it stands on, in the ramp side's texture, even where it meets a rooftop or building.
+- **Arrows:** every ramp can have its arrows pointing up or down the slope, the board's choice per ramp (key A, or the top bar's "Arrows up" and "Arrows down"), saved with the ramp. The default is up.
+- **Platform sizes:** a platform at height 3 or 6 places in one click at S 8 x 8, M 16 x 16 or L 32 x 32 units, chosen on the top bar; the default is M. Dragging still sizes it freely ("Any size (drag)").
+
+![Ramps in four directions with their arrows up](../art-archive/T-264/screenshots/ramps_up.png)
+![The same ramps with their arrows down](../art-archive/T-264/screenshots/ramps_down.png)
+![S, M and L platforms at heights 3 and 6](../art-archive/T-264/screenshots/sizes.png)
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
