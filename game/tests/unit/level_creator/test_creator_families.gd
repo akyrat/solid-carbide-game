@@ -63,7 +63,7 @@ func test_six_groups_one_button_per_kind_with_labels_from_the_texts() -> void:
 		assert_eq(b.text, CreatorTexts.get_text(str(f.label)), fid)
 		assert_ne(b.text, "", fid)
 		assert_not_null(b.icon, fid + " shows its first look")
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_pairs"))  # T-272: the line with P: pair.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
 
 
 func test_picking_a_button_picks_its_first_look_and_shows_the_strip() -> void:
@@ -229,7 +229,8 @@ func test_a_level_saved_before_opens_takes_new_pieces_and_keeps_its_own() -> voi
 	# check_level.py finds no new problem (the board's level has four ramps not yet on a rooftop).
 	var res_before := _check_level(OLD_LEVEL)
 	var res_after := _check_level(e.level_path)
-	assert_eq(res_after[1], res_before[1], "the same report as before")
+	var before_lines: Array = Array(str(res_before[1]).split("\n")).filter(func(l): return not l.begins_with("spawn:"))  # T-280: an old file has none
+	assert_eq(str(res_after[1]), "\n".join(before_lines), "the same report as before")
 
 
 func test_a_new_level_with_every_kind_passes_check_level() -> void:

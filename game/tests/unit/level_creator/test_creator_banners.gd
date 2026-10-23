@@ -21,6 +21,7 @@ func _editor(path: String = "") -> LevelCreatorEditor:
 	e.levels_dir = dir
 	if path == "":
 		e.open_new()
+		e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	else:
 		e.open_level(path)
 	add_child_autofree(e)

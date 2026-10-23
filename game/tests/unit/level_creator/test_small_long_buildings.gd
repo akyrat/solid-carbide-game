@@ -20,6 +20,7 @@ func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.levels_dir = dir
 	e.open_new()
+	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	add_child_autofree(e)
 	return e
 

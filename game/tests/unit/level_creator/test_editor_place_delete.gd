@@ -17,6 +17,7 @@ const KIND_KEYS := {
 func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
+	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	add_child_autofree(e)
 	return e
 
@@ -99,7 +100,7 @@ func test_the_editor_labels_come_from_the_texts() -> void:
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
 	# T-262: the reworked creator's hint (T-261's line) replaces T-251's.
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_pairs"))  # T-272: the line with P: pair.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:
@@ -251,7 +252,10 @@ func test_opening_the_sample_map_draws_it_and_leaves_its_data_alone() -> void:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_level(path)
 	add_child_autofree(e)
-	assert_eq(e.level_data, original, "opening changes nothing")
+	var opened: Dictionary = e.level_data.duplicate(true)
+	opened.erase("spawn")  # T-280: the only addition, in memory: a spawn point at the centre
+	assert_eq(opened, original, "opening changes nothing else")
+	assert_true(LevelSpawn.has_spawn(e.level_data))
 	assert_eq(e.map.buildings.size(), original.buildings.size())
 	assert_eq(e.elevation.areas.size(), original.platforms.size() + original.ramps.size())
 	# The game's own ground tiles.

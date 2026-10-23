@@ -19,6 +19,7 @@ const LABELS := {"prop-barrier": "prop_barrier", "prop-cones": "prop_cones", "pr
 func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
+	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	e.levels_dir = RunPaths.file("t253_levels")
 	add_child_autofree(e)
 	return e

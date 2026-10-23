@@ -63,7 +63,9 @@ func test_edit_opens_the_editor_with_that_level() -> void:
 	c.list_screen.rows[0].edit.pressed.emit()
 	assert_not_null(c.editor)
 	assert_eq(c.editor.level_path, path)
-	assert_eq(c.editor.level_data, _level("Alpha"))
+	var opened: Dictionary = c.editor.level_data.duplicate(true)
+	opened.erase("spawn")  # T-280: a level without one opens with one at the centre
+	assert_eq(opened, _level("Alpha"))
 
 
 func test_back_returns_to_the_list() -> void:
