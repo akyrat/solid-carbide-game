@@ -1,7 +1,7 @@
 ---
 id: T-277
 title: Health drops at half the rate
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Coursework
@@ -46,6 +46,16 @@ The board's review: play a run and notice fewer health pickups.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: health drops at half the rate.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- `game/data/enemies.json`: `health_drops.drop_chance` 0.6 to 0.3 (comment updated). Coins' 0.6 and `restore_fraction` 0.3 unchanged.
+- `test_health_drops.gd`: the data test now expects 0.3, the coins at 0.6, and exactly half; new `test_health_drops_are_about_half_the_coins_over_many_kills` (1000 kills, ratio about 0.5).
+- Docs: `docs/enemies.md` (Content, health pickups: 30%, halved from 60%; Decisions already had it), `game/README.md` (Health drops).
+- Tests: full GUT suite passed; Python `tools` 451 OK; `game/tools` 395 OK (1 skipped).
+- Nothing to picture: no visual change.

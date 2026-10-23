@@ -30,7 +30,9 @@ func _car_units() -> Vector2:
 
 func test_data_has_the_numbers() -> void:
 	var d := data.health_drops()
-	assert_eq(d["drop_chance"], data.coins()["drop_chance"], "same drop rate as the coins")
+	assert_eq(d["drop_chance"], 0.3)
+	assert_eq(data.coins()["drop_chance"], 0.6, "the coins' rate is unchanged")
+	assert_almost_eq(float(d["drop_chance"]) * 2.0, float(data.coins()["drop_chance"]), 0.0001, "half the coins' rate")
 	assert_eq(d["restore_fraction"], 0.3)
 
 
@@ -50,6 +52,22 @@ func test_drops_at_about_the_data_chance_where_it_died() -> void:
 	assert_almost_eq(share, d["drop_chance"], 0.06)
 	for off in spots:
 		assert_lt(off.length(), 0.001, "dropped where the minion died")
+
+
+func test_health_drops_are_about_half_the_coins_over_many_kills() -> void:
+	var kills := 1000
+	var coin_drops := 0
+	var health_drops := 0
+	for i in kills:
+		var at := _car_units() + Vector2(6.0, 0.0)
+		var m: Node = spawner.spawn_minion_at(at)
+		var c0: int = spawner.coins.size()
+		var h0: int = spawner.health_pickups.size()
+		m.take_damage(1000.0)
+		coin_drops += 1 if spawner.coins.size() > c0 else 0
+		health_drops += 1 if spawner.health_pickups.size() > h0 else 0
+	gut.p("coin drops %d, health drops %d of %d" % [coin_drops, health_drops, kills])
+	assert_almost_eq(float(health_drops) / maxf(1.0, float(coin_drops)), 0.5, 0.12)
 
 
 func test_the_chance_is_read_from_the_data() -> void:
