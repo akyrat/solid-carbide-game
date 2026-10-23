@@ -173,7 +173,7 @@ func test_dragging_a_ramp_sets_only_its_width_along_the_side() -> void:
 
 func test_the_hint_and_labels_come_from_the_texts() -> void:
 	var e := _editor()
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_rework"))  # T-262: the reworked creator's line
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_pairs"))  # T-272: the reworked line with P: pair.
 	_pick(e, "ramp-0-6", "south")
 	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_6"))
 	assert_eq(e.direction_label.text, CreatorTexts.get_text("ramp_dir_south"))

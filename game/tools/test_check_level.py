@@ -155,5 +155,74 @@ class TestCheckProps(unittest.TestCase):
         self.assertEqual(c.check_level(small_level()), [])
 
 
+class TestCheckPairs(unittest.TestCase):
+    """T-272: every pair names two different existing obstacles, each in one pair at most."""
+
+    def level(self, *pairs):
+        d = small_level()
+        d["pattern_copies"].append({"id": "copy-02", "boulders": [
+            {"x": -6.0, "y": 6.0, "diameter": 3.0}, {"x": -2.0, "y": 6.0, "diameter": 3.0}]})
+        d["props"] = [
+            {"id": "prop-1", "asset": "prop-barrier", "rotation": "north", "x": 0.0, "y": 0.0, "w": 4.0, "h": 1.0},
+            {"id": "prop-2", "asset": "prop-street-lamp", "rotation": "north", "x": 4.0, "y": 0.0, "w": 2.0, "h": 2.0},
+            {"id": "prop-3", "asset": "prop-cones", "rotation": "north", "x": 6.0, "y": -8.0, "w": 2.0, "h": 2.0},
+        ]
+        d["pairs"] = list(pairs)
+        return d
+
+    def pair(self, a, b, pid="pair-1"):
+        return {"id": pid, "a": a, "b": b}
+
+    def test_the_obstacles_are_the_obstacles_groups_props(self):
+        self.assertEqual(c.obstacle_props(), {"prop-barrier", "prop-cones", "prop-crates"})
+
+    def test_valid_pairs(self):
+        d = self.level(self.pair("copy-01", "prop-1"), self.pair("copy-02/0", "copy-02/1", "pair-2"))
+        self.assertEqual(c.check_level(d), [])
+
+    def test_a_level_without_pairs_is_valid(self):
+        self.assertEqual(c.check_level(self.level()), [])
+
+    def test_the_elevation_sample_map_has_no_pairs_and_passes(self):
+        data = json.loads(SAMPLE.read_text(encoding="utf-8"))
+        self.assertNotIn("pairs", data)
+        self.assertEqual(c.check_pairs(data), [])
+
+    def test_rejects_a_pair_naming_a_missing_obstacle(self):
+        problems = c.check_level(self.level(self.pair("copy-01", "prop-9")))
+        self.assertTrue(any("pair 'pair-1'" in p and "'prop-9'" in p and "no such obstacle" in p for p in problems), problems)
+        problems = c.check_level(self.level(self.pair("copy-77", "prop-1")))
+        self.assertTrue(any("'copy-77'" in p for p in problems), problems)
+        problems = c.check_level(self.level(self.pair("copy-02/5", "prop-1")))
+        self.assertTrue(any("no boulder 5" in p for p in problems), problems)
+
+    def test_rejects_a_prop_that_is_not_an_obstacle(self):
+        problems = c.check_level(self.level(self.pair("copy-01", "prop-2")))
+        self.assertTrue(any("not an obstacle" in p for p in problems), problems)
+
+    def test_a_copy_of_several_boulders_needs_an_index(self):
+        problems = c.check_level(self.level(self.pair("copy-02", "prop-1")))
+        self.assertTrue(any("holds 2 boulders" in p for p in problems), problems)
+
+    def test_rejects_an_obstacle_with_itself_and_in_two_pairs(self):
+        problems = c.check_level(self.level(self.pair("prop-1", "prop-1")))
+        self.assertTrue(any("with itself" in p for p in problems), problems)
+        problems = c.check_level(self.level(self.pair("copy-01", "prop-1"), self.pair("prop-1", "prop-3", "pair-2")))
+        self.assertTrue(any("pair 'pair-2'" in p and "already in" in p for p in problems), problems)
+
+    def test_rejects_pairs_that_are_not_a_list(self):
+        d = self.level()
+        d["pairs"] = {"a": 1}
+        self.assertIn("pairs: must be a list", c.check_level(d))
+
+    def test_the_tool_refuses_a_missing_obstacle(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(self.level(self.pair("copy-01", "prop-9"))), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("no such obstacle", res.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()

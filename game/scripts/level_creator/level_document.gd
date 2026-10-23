@@ -36,6 +36,9 @@ extends RefCounted
 ##   footprint turned to that rotation (east and west swap the two numbers). Placed on the ground or on
 ##   a rooftop alike: level_props.gd stands it at the height under its centre. Not placed when its
 ##   footprint would reach out of the map.
+## - pair (T-272, thread the needle): {id: "pair-N", a, b} in pairs, two obstacles (boulders, or the
+##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
+##   Deleting either obstacle removes its pair. An obstacle is in at most one pair.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -629,10 +632,22 @@ func piece_rect(piece: Dictionary) -> Rect2:
 
 
 ## Removes a placed piece from the data. A ground or road tile goes back to the plain ground
-## (BASE_GROUND). Returns true when something was removed.
+## (BASE_GROUND). Returns true when something was removed. A pair (T-272) holding a removed obstacle
+## goes with it; the other pairs keep their obstacles (their refs written again, so a boulder of a
+## copy with several keeps its pair when another boulder of the copy goes).
 func delete(piece: Dictionary) -> bool:
 	if piece.is_empty():
 		return false
+	if not pairs().is_empty() and str(piece.get("kind", "")) in ["boulder", "prop"]:
+		var before := _resolved_pairs()
+		var done := _delete(piece)
+		if done:
+			_repair_pairs(before, piece.item)
+		return done
+	return _delete(piece)
+
+
+func _delete(piece: Dictionary) -> bool:
 	if piece.has("cell"):
 		var c: Vector2i = piece.cell
 		if tile_at(c) == BASE_GROUND:
@@ -664,6 +679,125 @@ func delete(piece: Dictionary) -> bool:
 			if _erase_same(_list("props"), piece.item):
 				return true
 	return false
+
+
+# ---- Pairs of obstacles, for thread the needle (T-272) -----------------------------------------
+
+## The level's pairs ([{id, a, b}], obstacle refs: ObstaclePairs), [] for none.
+func pairs() -> Array:
+	return ObstaclePairs.pairs_of(data)
+
+
+## True for a placed piece that can be paired: a boulder, or a prop of the Obstacles group
+## (barrier, cones, crates).
+static func is_obstacle(piece: Dictionary) -> bool:
+	match str(piece.get("kind", "")):
+		"boulder":
+			return piece.has("copy")
+		"prop":
+			return str(piece.item.get("asset", "")) in ObstaclePairs.obstacle_props()
+	return false
+
+
+## The ref naming an obstacle piece in a pair (ObstaclePairs), "" for a piece that is not one.
+static func obstacle_ref(piece: Dictionary) -> String:
+	if not is_obstacle(piece):
+		return ""
+	if str(piece.kind) == "boulder":
+		var copy: Dictionary = piece.copy
+		var bs: Array = copy.get("boulders", [])
+		for i in bs.size():
+			if is_same(bs[i], piece.item):
+				return ObstaclePairs.boulder_ref(copy, i)
+		return ""
+	return str(piece.item.get("id", ""))
+
+
+## The piece (as piece_at gives it) a ref names, {} for none.
+func piece_of_ref(ref: String) -> Dictionary:
+	var o := ObstaclePairs.resolve(data, ref)
+	if o.is_empty():
+		return {}
+	if str(o.kind) == "boulder":
+		return {"kind": "boulder", "item": o.item, "copy": o.copy}
+	return {"kind": "prop", "item": o.item}
+
+
+## The pair holding obstacle `piece`, {} for none (an obstacle is in at most one pair).
+func pair_of(piece: Dictionary) -> Dictionary:
+	var ref := obstacle_ref(piece)
+	if ref == "":
+		return {}
+	for p in pairs():
+		if str(p.get("a", "")) == ref or str(p.get("b", "")) == ref:
+			return p
+	return {}
+
+
+## Pairs obstacles `a` and `b` (two different obstacle pieces): written as {id: "pair-N", a, b} into
+## the level's "pairs". An obstacle is in at most one pair: a pair either was in before goes (a
+## proposal: the new pair wins). Returns the pair, {} when either is not an obstacle or both are one.
+func make_pair(a: Dictionary, b: Dictionary) -> Dictionary:
+	var ra := obstacle_ref(a)
+	var rb := obstacle_ref(b)
+	if ra == "" or rb == "" or ra == rb:
+		return {}
+	unpair(a)
+	unpair(b)
+	var p := {"id": _next_id("pairs", "pair-"), "a": ra, "b": rb}
+	_list("pairs").append(p)
+	return p
+
+
+## Removes the pair holding obstacle `piece`. Returns true when there was one.
+func unpair(piece: Dictionary) -> bool:
+	var p := pair_of(piece)
+	if p.is_empty():
+		return false
+	_erase_same(_list("pairs"), p)
+	return true
+
+
+## Each pair with the obstacle items its refs name now: [[pair, item a, item b]].
+func _resolved_pairs() -> Array:
+	var out: Array = []
+	for p in pairs():
+		var oa := ObstaclePairs.resolve(data, str(p.get("a", "")))
+		var ob := ObstaclePairs.resolve(data, str(p.get("b", "")))
+		out.append([p, oa.get("item"), ob.get("item")])
+	return out
+
+
+## After `removed` (an obstacle's item) was deleted: drops the pairs it was in, and writes the
+## others' refs again from the items they named (a copy's boulders shift when one goes).
+func _repair_pairs(before: Array, removed: Dictionary) -> void:
+	var keep: Array = []
+	for entry in before:
+		var p: Dictionary = entry[0]
+		if entry[1] == null or entry[2] == null or is_same(entry[1], removed) or is_same(entry[2], removed):
+			continue
+		var refs: Array = []
+		for item in [entry[1], entry[2]]:
+			refs.append(_ref_of_item(item))
+		if "" in refs:
+			continue
+		p["a"] = refs[0]
+		p["b"] = refs[1]
+		keep.append(p)
+	data["pairs"] = keep
+
+
+## The ref of an obstacle item still in the level (a boulder of a copy, or a prop), "" for none.
+func _ref_of_item(item: Dictionary) -> String:
+	for copy in _list("pattern_copies"):
+		var bs: Array = copy.get("boulders", [])
+		for i in bs.size():
+			if is_same(bs[i], item):
+				return ObstaclePairs.boulder_ref(copy, i)
+	for pr in data.get("props", []):
+		if is_same(pr, item):
+			return str(pr.get("id", ""))
+	return ""
 
 
 ## Removes the very Dictionary `item` (not an equal one) from `list`.

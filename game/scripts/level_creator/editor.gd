@@ -39,6 +39,11 @@ extends Control
 ## along a left-drag (a right-drag, or Del, erases), joined into corners, T-junctions, crossroads
 ## and dead ends by the brush; Zebra crossing is a click across a road (brush_mode).
 ##
+## Pairs (T-272, thread the needle): the Pair obstacles button or P turns the pair tool on; click
+## one obstacle (a boulder, barrier, cones or crates), then another, to pair them (anything else is
+## refused with a message); a pair shows as a dashed line and rings (_Overlay._draw_pairs). Unpair
+## (with a paired obstacle selected) or deleting either obstacle removes it (LevelDocument).
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -153,6 +158,17 @@ var _preview_key := ""
 var road_stroke_last := Vector2i(-1, -1)
 var road_erasing := false
 
+## Pairs of obstacles (T-272, thread the needle): the pair tool (the top bar's Pair obstacles, key P)
+## is on, the first obstacle clicked while it is ({} before), and the top bar's two buttons.
+var pair_mode := false
+var pair_first: Dictionary = {}
+var pair_button: Button
+var unpair_button: Button
+## How a pair shows in the editor (a proposal): a dashed line across the gap between the two and a
+## ring round each, in this colour (no Redgull red); the first obstacle clicked is ringed thicker.
+const PAIR_COLOR := Color(0.35, 1.0, 0.75, 0.95)
+const PAIR_DASH_UNITS := 1.0
+
 
 ## A new level: an empty map with the default name.
 func open_new() -> void:
@@ -262,6 +278,17 @@ func _ready() -> void:
 		b.pressed.connect(set_banner.bind(id == "on"))
 		bar.add_child(b)
 		banner_buttons[id] = b
+	pair_button = Button.new()
+	pair_button.name = "PairButton"
+	pair_button.text = CreatorTexts.get_text("pair_tool")
+	pair_button.toggle_mode = true
+	pair_button.pressed.connect(func(): set_pair_tool(pair_button.button_pressed))
+	bar.add_child(pair_button)
+	unpair_button = Button.new()
+	unpair_button.name = "UnpairButton"
+	unpair_button.text = CreatorTexts.get_text("unpair_label")
+	unpair_button.pressed.connect(unpair_selected)
+	bar.add_child(unpair_button)
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -295,7 +322,8 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	hint_label.text = CreatorTexts.get_text("controls_hint_rework")
+	# T-272: the rework's line with "P: pair." added (controls_hint_pairs).
+	hint_label.text = CreatorTexts.get_text("controls_hint_pairs")
 	# T-262: the longer line shrinks its font to fit a narrow window instead of running off its edge.
 	map_view.resized.connect(_fit_hint)
 	main.add_child(hint_label)
@@ -542,6 +570,70 @@ func arrows_pick() -> String:
 	return pick_arrows
 
 
+# ---- Pairs of obstacles (T-272, thread the needle) ----------------------------------------------
+
+## Turns the pair tool on or off (the top bar's Pair obstacles, key P). On, it drops the pick and
+## the selection; a left click then picks an obstacle (pair_click). Picking a piece, Esc or a
+## right-click turns it off.
+func set_pair_tool(on: bool) -> void:
+	pair_first = {}
+	if on:
+		pair_mode = true  # before the pick goes, so _on_asset_picked("") leaves it on
+		size_drag_start = Vector2i(-1, -1)
+		end_road_stroke()
+		if panel != null and panel.picked != "":
+			panel.pick("")
+		selected = {}
+	pair_mode = on
+	_show_message("")
+	_update_pose_controls()
+	if _overlay != null:
+		_overlay.queue_redraw()
+
+
+## P: the pair tool on or off. Returns whether it is on now.
+func pair_pick() -> bool:
+	set_pair_tool(not pair_mode)
+	return pair_mode
+
+
+## A click with the pair tool at `units`: the first obstacle clicked is held, the second (another
+## obstacle) makes the pair with it (LevelDocument.make_pair; pair_made on the top bar); the same
+## one again lets it go. Anything that is not an obstacle is refused with pair_not_obstacle, and the
+## first one stays held. Returns "first", "made", "cancelled" or "not_obstacle".
+func pair_click(units: Vector2) -> String:
+	var piece := document.piece_at(units)
+	if not LevelDocument.is_obstacle(piece):
+		_show_message(CreatorTexts.get_text("pair_not_obstacle"))
+		return "not_obstacle"
+	var result := "first"
+	if pair_first.is_empty():
+		pair_first = piece
+		_show_message("")
+	elif _same_piece(pair_first, piece):
+		pair_first = {}
+		_show_message("")
+		result = "cancelled"
+	else:
+		var p := document.make_pair(pair_first, piece)
+		pair_first = {}
+		result = "made" if not p.is_empty() else "cancelled"
+		_show_message(CreatorTexts.get_text("pair_made") if not p.is_empty() else "")
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return result
+
+
+## The top bar's Unpair: removes the pair of the selected obstacle. True when there was one.
+func unpair_selected() -> bool:
+	if selected.is_empty() or not document.unpair(selected):
+		return false
+	_show_message("")
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return true
+
+
 # ---- Sizing (T-251) -----------------------------------------------------------------------------
 
 ## The cells a size drag from `from` to `to` covers, as {corner: the point naming its top-left
@@ -669,6 +761,9 @@ func place_zebra(units: Vector2) -> bool:
 func _update_size_label() -> void:
 	if size_label == null:
 		return
+	if pair_mode:
+		size_label.text = CreatorTexts.get_text("pair_hint")  # T-272
+		return
 	if brush_mode() == "paint":
 		size_label.text = CreatorTexts.get_text("road_brush_hint")
 		return
@@ -763,6 +858,7 @@ func delete_selected() -> void:
 	var piece := selected
 	selected = {}
 	delete_piece(piece)
+	_update_pose_controls()
 
 
 static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
@@ -772,6 +868,9 @@ static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
 
 
 func _on_asset_picked(id: String) -> void:
+	if id != "" and pair_mode:
+		pair_mode = false  # T-272: picking a piece ends the pair tool
+		pair_first = {}
 	if id != "" and panel != null and not panel.member.is_empty():
 		_pose_from(panel.member)
 	else:
@@ -799,6 +898,7 @@ const KEY_ACTIONS := {
 	KEY_H: "height",
 	KEY_A: "arrows",
 	KEY_B: "banner",
+	KEY_P: "pair",
 }
 
 
@@ -918,6 +1018,11 @@ func _update_pose_controls() -> void:
 	for b_id in banner_buttons:
 		banner_buttons[b_id].visible = not bt.is_empty()
 		banner_buttons[b_id].button_pressed = (b_id == "on") == banner_now
+	# T-272: Pair obstacles pressed while the tool is on; Unpair shows with a paired obstacle selected.
+	if pair_button != null:
+		pair_button.set_pressed_no_signal(pair_mode)
+		unpair_button.visible = not pair_mode and not selected.is_empty() and document != null \
+			and not document.pair_of(selected).is_empty()
 	_update_size_label()
 
 
@@ -993,12 +1098,16 @@ func _on_map_input(event: InputEvent) -> void:
 				begin_size_drag(units)
 			elif panel.picked != "":
 				place_asset(panel.picked, units)
+			elif pair_mode:
+				pair_click(units)  # T-272
 			else:
 				select_at(units)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
 			end_size_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			panel.pick("")
+			if pair_mode:
+				set_pair_tool(false)
 			select_at(screen_to_units(mb.position))
 		map_view.accept_event()
 	elif event is InputEventMouseMotion:
@@ -1031,6 +1140,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				arrows_pick()
 			"banner":
 				banner_pick()
+			"pair":
+				pair_pick()
 			var axis:
 				step_pick(axis)
 		get_viewport().set_input_as_handled()
@@ -1048,7 +1159,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			size_drag_start = Vector2i(-1, -1)
 			end_road_stroke()
 			panel.pick("")
+			if pair_mode:
+				set_pair_tool(false)
 			selected = {}
+			_update_pose_controls()
 			_overlay.queue_redraw()
 		KEY_LEFT:
 			pan_by(Vector2(KEY_PAN_PX, 0))
@@ -1161,6 +1275,44 @@ class _Overlay extends Node2D:
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
 		if not editor.selected.is_empty():
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
+		_draw_pairs(doc, w)
+
+	## T-272: each pair as a dashed line across the gap and a ring round each of its obstacles, at
+	## the height they stand on; the pair tool's first obstacle ringed thicker.
+	func _draw_pairs(doc: LevelDocument, w: float) -> void:
+		var col: Color = editor.PAIR_COLOR
+		for p in doc.pairs():
+			var line := ObstaclePairs.line_of(doc.data, p)
+			if line.is_empty():
+				continue
+			var ha := doc.height_at(line.a)
+			var hb := doc.height_at(line.b)
+			draw_dashed_line(_at(line.gap_a, ha), _at(line.gap_b, hb), col, w * 1.5,
+				editor.PAIR_DASH_UNITS * editor.PX_PER_UNIT)
+			_ring(line.obstacle_a, ha, col, w)
+			_ring(line.obstacle_b, hb, col, w)
+		if not editor.pair_first.is_empty():
+			var ref := LevelDocument.obstacle_ref(editor.pair_first)
+			var o := ObstaclePairs.resolve(doc.data, ref)
+			if not o.is_empty():
+				_ring(o, doc.height_at(ObstaclePairs.centre_of(o)), col, w * 2.5)
+
+	func _at(units: Vector2, h: float) -> Vector2:
+		return editor.ISO_TRANSFORM * (units * editor.PX_PER_UNIT) - Vector2(0.0, h * editor.PX_PER_UNIT)
+
+	## A ring just outside an obstacle's collision (a circle's or a rectangle's), on the ground at `h`.
+	func _ring(o: Dictionary, h: float, color: Color, width: float) -> void:
+		var pts := PackedVector2Array()
+		if str(o.shape) == "circle":
+			var r := float(o.radius) + 0.4
+			for i in 33:
+				var t := TAU * i / 32.0
+				pts.append(_at(o.centre + Vector2(cos(t), sin(t)) * r, h))
+		else:
+			var rr: Rect2 = (o.rect as Rect2).grow(0.4)
+			for q in [rr.position, Vector2(rr.end.x, rr.position.y), rr.end, Vector2(rr.position.x, rr.end.y), rr.position]:
+				pts.append(_at(q, h))
+		draw_polyline(pts, color, width)
 
 	func _outline(r: Rect2, color: Color, width: float) -> void:
 		var pts := PackedVector2Array()

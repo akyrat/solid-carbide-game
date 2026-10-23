@@ -9,6 +9,10 @@ also checks that:
 - the edges of buildings, rooftops and ramps lie on even units (enemy_navigation.gd's CELL = 2);
 - every prop (props: {id, asset, rotation, x, y, w, h}, T-253) names a prop of data/level/props.json and
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
+- every pair (pairs: {id, a, b}, T-272, thread the needle) names two different obstacles that exist:
+  a boulder by its pattern copy's id (a copy of one boulder) or "<copy id>/<index>", or a prop of the
+  Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; and no
+  obstacle is in more than one pair (scripts/level/obstacle_pairs.gd, the same rules);
 - ground_rows has as many rows and columns as the map's size in tiles (1 tile = 1 unit).
 
 Usage, from the repo root:
@@ -98,6 +102,76 @@ def check_props(data, map_rect):
     return problems
 
 
+CATALOGUE_JSON = Path(__file__).resolve().parent.parent / "data" / "level" / "creator_assets.json"
+
+
+def obstacle_props():
+    """The prop ids the creator can pair (T-272): the props of the Obstacles group's families."""
+    try:
+        families = json.loads(CATALOGUE_JSON.read_text(encoding="utf-8")).get("families", [])
+    except (OSError, ValueError):
+        return set()
+    out = set()
+    for f in families:
+        if f.get("group") == "obstacles":
+            for m in f.get("members", []):
+                if str(m.get("asset", "")).startswith("prop-"):
+                    out.add(m["asset"])
+    return out
+
+
+def _obstacle_exists(data, ref, obstacle_ids):
+    """Why `ref` names no obstacle of the level, or None when it names one (obstacle_pairs.gd resolve)."""
+    if not isinstance(ref, str) or ref == "":
+        return "needs an obstacle"
+    copy_id, index = ref, None
+    head, sep, tail = ref.rpartition("/")
+    if sep and head and tail.isdigit():
+        copy_id, index = head, int(tail)
+    for copy in data.get("pattern_copies", []) or []:
+        if isinstance(copy, dict) and copy.get("id") == copy_id:
+            n = len(copy.get("boulders", []) or [])
+            if index is None:
+                return None if n == 1 else "%r holds %d boulders: name one as %r" % (ref, n, ref + "/0")
+            return None if index < n else "%r: copy %r has no boulder %d" % (ref, copy_id, index)
+    if index is None:
+        for it in data.get("props", []) or []:
+            if isinstance(it, dict) and it.get("id") == ref:
+                if it.get("asset") in obstacle_ids:
+                    return None
+                return "%r is a %s, not an obstacle" % (ref, it.get("asset"))
+    return "%r: no such obstacle" % ref
+
+
+def check_pairs(data):
+    """Problems with the level's pairs of obstacles (T-272)."""
+    pairs = data.get("pairs", [])
+    if not isinstance(pairs, list):
+        return ["pairs: must be a list"]
+    problems = []
+    obstacle_ids = obstacle_props()
+    used = {}
+    for i, p in enumerate(pairs):
+        name = "pair %r" % p.get("id") if isinstance(p, dict) and p.get("id") else "pair #%d" % i
+        if not isinstance(p, dict):
+            problems.append("%s: must be an object {id, a, b}" % name)
+            continue
+        refs = [p.get("a"), p.get("b")]
+        for side, ref in zip(("a", "b"), refs):
+            why = _obstacle_exists(data, ref, obstacle_ids)
+            if why is not None:
+                problems.append("%s: %s %s" % (name, side, why))
+        if refs[0] == refs[1]:
+            problems.append("%s: pairs an obstacle with itself" % name)
+            continue
+        for ref in refs:
+            if isinstance(ref, str) and ref in used:
+                problems.append("%s: %r is already in %s" % (name, ref, used[ref]))
+            elif isinstance(ref, str):
+                used[ref] = name
+    return problems
+
+
 def check_level(data):
     """Returns a list of problems (strings); empty when the level is valid."""
     problems = list(check_height_data.check_data(data))
@@ -135,6 +209,7 @@ def check_level(data):
                     problems.append("boulder #%d of copy %r: lies outside the map" % (j, cid))
 
     problems.extend(check_props(data, map_rect))
+    problems.extend(check_pairs(data))
 
     # ground_rows: one string per tile row, one letter per tile column.
     try:
