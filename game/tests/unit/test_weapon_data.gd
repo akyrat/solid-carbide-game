@@ -62,10 +62,9 @@ func test_flame_base_values_match_report() -> void:
 	assert_eq(f.tick_interval, 0.2)
 	assert_eq(f.min_speed, 0.85)
 	assert_eq(f.linger, 0.2)
-	assert_almost_eq(f.size_multiplier, 2.5, 0.0001)
-	assert_almost_eq(f.area_width, 2.625, 0.0001)
-	assert_almost_eq(f.area_depth, 3.25, 0.0001)
-	assert_almost_eq(f.inner_edge, 0.175, 0.0001)
+	# T-267: a quarter of the Unity prototype's 2.5; the hit area is the drawn flame, so no area numbers.
+	assert_almost_eq(f.size_multiplier, 0.625, 0.0001)
+	assert_false(f.has("area_width") or f.has("area_depth") or f.has("inner_edge"), "no separate area")
 	assert_eq(f.ramp_start_fraction, 0.5)
 	assert_eq(f.ramp_seconds, 1.0)
 	assert_eq(f.burn_flash_seconds, 0.38)
@@ -74,22 +73,21 @@ func test_flame_base_values_match_report() -> void:
 
 func test_flame_tiers_match_report_table() -> void:
 	var w := WeaponData.new()
-	# tier: [size multiplier, width, depth, burn flash, turn multiplier, always on]
+	# tier: [size multiplier, burn flash, turn multiplier, always on]. The size steps are the
+	# report's (x1.2 at tiers 2 and 4, x1.3 at tier 6) on T-267's smaller start (0.625).
 	var expected := {
-		1: [2.5, 2.625, 3.25, 0.38, 1.0, false], 2: [3.0, 3.15, 3.9, 0.38, 1.0, false],
-		3: [3.0, 3.15, 3.9, 0.38, 1.0, false], 4: [3.6, 3.78, 4.68, 0.38, 1.0, false],
-		5: [3.6, 3.78, 4.68, 0.88, 1.0, false], 6: [4.68, 4.914, 6.084, 0.88, 1.0, false],
-		7: [4.68, 4.914, 6.084, 0.88, 1.2, false], 8: [4.68, 4.914, 6.084, 0.88, 1.2, true],
+		1: [0.625, 0.38, 1.0, false], 2: [0.75, 0.38, 1.0, false],
+		3: [0.75, 0.38, 1.0, false], 4: [0.9, 0.38, 1.0, false],
+		5: [0.9, 0.88, 1.0, false], 6: [1.17, 0.88, 1.0, false],
+		7: [1.17, 0.88, 1.2, false], 8: [1.17, 0.88, 1.2, true],
 	}
 	for tier in expected:
 		var f := w.flame_at(tier)
 		var e: Array = expected[tier]
 		assert_almost_eq(f.size_multiplier, e[0], 0.0001, "size tier %d" % tier)
-		assert_almost_eq(f.area_width, e[1], 0.001, "width tier %d" % tier)
-		assert_almost_eq(f.area_depth, e[2], 0.001, "depth tier %d" % tier)
-		assert_almost_eq(f.burn_flash_seconds, e[3], 0.0001, "flash tier %d" % tier)
-		assert_almost_eq(f.turn_speed_multiplier, e[4], 0.0001, "turn tier %d" % tier)
-		assert_eq(f.always_on, e[5], "always on tier %d" % tier)
+		assert_almost_eq(f.burn_flash_seconds, e[1], 0.0001, "flash tier %d" % tier)
+		assert_almost_eq(f.turn_speed_multiplier, e[2], 0.0001, "turn tier %d" % tier)
+		assert_eq(f.always_on, e[3], "always on tier %d" % tier)
 
 
 func test_flame_damage_not_rounded_so_hotter_flame_adds_damage() -> void:
@@ -152,7 +150,8 @@ func test_wiper_tiers_and_knockback() -> void:
 	assert_almost_eq(w8.sweep_degrees_per_second, 240.0 * 1.25 * 1.3, 0.0001)
 
 
-func test_flame_area_does_not_depend_on_heading() -> void:
-	# Board's fix: the half-size is the fixed axis value 0.5, not the world bounding box (0.5 to 0.707).
+func test_flame_data_has_no_separate_area() -> void:
+	# T-267: the hit area is the drawn flame, so the old rectangle's numbers are gone from the data.
 	var raw: Dictionary = GameData.load_file("weapons").data
-	assert_eq(float(raw.flamethrower.car_half_size), 0.5)
+	for k in ["car_half_size", "inner_edge_multiplier", "depth_multiplier", "half_width_multiplier"]:
+		assert_false(raw.flamethrower.has(k), "%s is gone" % k)

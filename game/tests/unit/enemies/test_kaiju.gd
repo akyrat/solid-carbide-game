@@ -367,17 +367,20 @@ func test_flames_burn_the_kaiju_on_any_overlap_with_its_body() -> void:
 	rack.gun.set_tier(0)  # flames only
 	assert_true(rack.upgrade("flamethrower"))
 	var flame: Node = rack.flamethrower
-	var s: Dictionary = WeaponData.new().flame_at(1)
-	var far_edge: float = s["inner_edge"] + s["area_depth"]
-	# Nose along -y: behind the car is +y. Centre 1.5 units past the flames'
-	# far edge, so only its body (radius 2) reaches 0.5 units into them.
-	var car_p: Vector2 = run.car.model.get_position()
-	var k: Node = boss.appear_at(car_p + Vector2(0.0, far_edge + 1.5))
 	run.car.model.is_drifting = true
 	run.car.model.vx = 5.0
 	run.car.model.vy = 0.0
+	for i in 60:  # the flame is at full size (T-267: its hit area is the drawn flame)
+		flame.step(DT)
+	# Nose along -y: behind the car is +y. Centre 1.5 units past the flames'
+	# farthest point back, so only its body (radius 2) reaches into them.
+	var car_p: Vector2 = run.car.model.get_position()
+	var far_edge := 0.0
+	for p in flame.hit_polygon():
+		far_edge = maxf(far_edge, p.y - car_p.y)
+	var k: Node = boss.appear_at(car_p + Vector2(0.0, far_edge + 1.5))
 	var hp: float = k.health
-	for i in 70:
+	for i in 10:
 		flame.step(DT)
 	assert_false(flame.contains_point(k.position_units()), "its centre is outside the flames")
 	assert_true(flame.is_inside(k), "its body overlaps them")

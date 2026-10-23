@@ -17,12 +17,15 @@ extends "res://scripts/weapons/weapon.gd"
 ## - On: the car's drift state (CarModel.is_drifting: W, or S, held with A or
 ##   D) at `min_speed` or faster; then for `linger` seconds more; or always,
 ##   from tier 8.
-## - Area: a rectangle behind the car in the flat world, lined up with the car,
-##   from `inner_edge` behind its centre, `area_depth` deep and `area_width`
-##   wide at full size. Each drift starts it at `ramp_start_fraction` of full
-##   size, growing to full size over `ramp_seconds` of drifting (tier 8: always
-##   full size). An enemy is inside when its centre is; one that reports its
-##   body size with hit_radius_units() (the kaiju) when its body overlaps it.
+## - Area (T-267; Weapons, Decisions, "A smaller exhaust flame that burns what
+##   it touches"): the flame as it is drawn, at every moment: the outline of
+##   the pixels of the flame art's current cell (exhaust_flame_drawing.gd,
+##   cell_hull()), at the drawn size (`size_multiplier` times the drift ramp,
+##   from `ramp_start_fraction` to full over `ramp_seconds` of drifting; tier 8:
+##   always full size), from the exhaust, pointing back, laid on the flat world.
+##   An enemy is hit when any part of its body (the rack's radius_of()) touches
+##   it. Before T-267 the area was a separate rectangle in the data, about half
+##   the drawn flame's length, and minions counted only by their centre.
 ## - Damage: an enemy entering takes one hit at once and flashes orange for
 ##   `burn_flash_seconds`; every `tick_interval` while the flame is on, every
 ##   enemy inside takes one hit. One hit = take_damage(`damage`). No push.
@@ -31,16 +34,22 @@ extends "res://scripts/weapons/weapon.gd"
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
-## Where the drawn flame starts, in units behind the car's centre (Unity
-## report, section 3, "The particles"). Drawing only; the damage area is
-## the data's.
-const EXHAUST_OFFSET_UNITS := 0.42
+## Where the flame starts, in units behind the car's centre: the tailpipes,
+## at the car's rear bumper. It was 0.42 (the Unity prototype's, report section
+## 3, "The particles"), under the car's body; with the flame a quarter of the
+## size (T-267) the whole flame would have been hidden under the car, so it
+## starts at the rear (a proposal for the board's playtest). The drawing and the
+## hit area both start here.
+const EXHAUST_OFFSET_UNITS := 1.2
 ## The run's isometric projection (run.gd ISO_TRANSFORM).
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
+## The drawing's z_index in the car's View: one step behind the car and the enemies.
+const DRAW_Z_BEHIND := -1
 ## Float tolerance for the timers (0.2 s is 10 steps of 0.02 s).
 const EPS := 1e-6
 ## The flame drawing (T-071: the final art, exhaust_flame_drawing.gd).
 const FlameScene := preload("res://scenes/weapons/flamethrower/exhaust_flame.tscn")
+const DrawingScript := preload("res://scripts/weapons/flamethrower/exhaust_flame_drawing.gd")
 ## The playtest switch file (res://data/playtest.json), one key of several.
 const PLAYTEST_FILE := "playtest"
 ## The id the flamethrower burns an enemy under (burn_flames.gd).
@@ -210,14 +219,51 @@ func size_fraction() -> float:
 	return lerpf(start, 1.0, clampf(drift_time / ramp, 0.0, 1.0))
 
 
-## The damage area now, in the car's frame and units: {inner, depth, half_width}.
-func area() -> Dictionary:
-	var f := size_fraction()
-	return {
-		"inner": float(stats["inner_edge"]),
-		"depth": float(stats["area_depth"]) * f,
-		"half_width": float(stats["area_width"]) * 0.5 * f,
-	}
+## The drawn flame's scale now: the tier's size times the drift ramp. The drawing's
+## `scale` and the hit area both use it, so they cannot differ.
+func drawn_scale() -> float:
+	return float(stats["size_multiplier"]) * size_fraction()
+
+
+## Where the flame starts (its base), in units on the flat world.
+func exhaust_units() -> Vector2:
+	var car := _car()
+	if car == null:
+		return Vector2.ZERO
+	var rot: float = car.model.rotation
+	return car_units() - Vector2(cos(rot), sin(rot)) * EXHAUST_OFFSET_UNITS
+
+
+## The flame cell being drawn now: the direction its screen angle picks, and the
+## drawing's flicker frame (0 when there is no drawing).
+func current_cell() -> int:
+	var car := _car()
+	if car == null:
+		return 0
+	var rot: float = car.model.rotation
+	var back := -Vector2(cos(rot), sin(rot))
+	var d := DrawingScript.direction_index(ISO_TRANSFORM.basis_xform(back).angle())
+	var frame := 0
+	if flame_drawing != null and is_instance_valid(flame_drawing):
+		frame = flame_drawing.frame()
+	return DrawingScript.cell_index(d, frame)
+
+
+## The damage area now (T-267): the outline of the flame as it is drawn (the
+## current cell's pixels, at the drawn scale, from the exhaust), in the flat
+## world's units. The drawn pixels are at ART_SCALE screen pixels each times
+## the drawing's scale, and the screen is the isometric projection of the flat
+## world, so each outline point is taken back through the projection.
+func hit_polygon() -> PackedVector2Array:
+	var out := PackedVector2Array()
+	if _car() == null:
+		return out
+	var inv := ISO_TRANSFORM.affine_inverse()
+	var k: float = DrawingScript.ART_SCALE * drawn_scale() / PX_PER_UNIT
+	var base := exhaust_units()
+	for p in DrawingScript.cell_hull(current_cell()):
+		out.append(base + inv.basis_xform(p) * k)
+	return out
 
 
 ## The car's centre in units (flat world), from its driving model.
@@ -237,44 +283,32 @@ func car_height() -> float:
 
 ## Whether a point (flat world, units) is inside the damage area now.
 func contains_point(p: Vector2) -> bool:
-	var car := _car()
-	if car == null:
-		return false
-	var a := area()
-	var rot: float = car.model.rotation
-	var forward := Vector2(cos(rot), sin(rot))
-	var right := Vector2(-sin(rot), cos(rot))
-	var d := p - car_units()
-	var back := -d.dot(forward)
-	return back >= a["inner"] and back <= a["inner"] + a["depth"] and absf(d.dot(right)) <= a["half_width"]
+	var poly := hit_polygon()
+	return poly.size() >= 3 and Geometry2D.is_point_in_polygon(p, poly)
 
 
-## Whether an enemy is inside the damage area now. An enemy that reports its
-## body size (hit_radius_units(), the kaiju) is inside when its body overlaps
-## the area at all (board, 2026-10-14); any other enemy (the minions) when its
-## centre is inside, as in the Unity prototype.
+## Whether an enemy is hit now: any part of its body touches the drawn flame
+## (T-267, replacing "its centre" for the minions; the kaiju as before).
 func is_inside(e: Node) -> bool:
-	if e.has_method("hit_radius_units"):
-		return overlaps_circle(enemy_units(e), float(e.hit_radius_units()))
-	return contains_point(enemy_units(e))
+	return overlaps_circle(enemy_units(e), rack.radius_of(e) if rack != null else 0.5)
 
 
-## Whether a circle (flat world, units) overlaps the damage area now.
+## Whether a circle (flat world, units) touches the damage area now.
 func overlaps_circle(centre: Vector2, radius: float) -> bool:
-	var car := _car()
-	if car == null:
+	var poly := hit_polygon()
+	if poly.size() < 3:
 		return false
-	var a := area()
-	var rot: float = car.model.rotation
-	var forward := Vector2(cos(rot), sin(rot))
-	var right := Vector2(-sin(rot), cos(rot))
-	var d := centre - car_units()
-	var back := -d.dot(forward)
-	var side := d.dot(right)
-	# Closest point of the rectangle to the centre, in the car's frame.
-	var cb := clampf(back, a["inner"], a["inner"] + a["depth"])
-	var cs := clampf(side, -a["half_width"], a["half_width"])
-	return Vector2(back - cb, side - cs).length() <= maxf(radius, 0.0)
+	if Geometry2D.is_point_in_polygon(centre, poly):
+		return true
+	var r := maxf(radius, 0.0)
+	for i in poly.size():
+		var a := poly[i]
+		var b := poly[(i + 1) % poly.size()]
+		if a == b:
+			continue
+		if Geometry2D.get_closest_point_to_segment(centre, a, b).distance_to(centre) <= r:
+			return true
+	return false
 
 
 static func enemy_units(e: Node) -> Vector2:
@@ -344,6 +378,12 @@ func _ensure_drawing() -> void:
 		return
 	flame_drawing = FlameScene.instantiate()
 	flame_drawing.name = "ExhaustFlame"
+	# T-267: one step behind the car's depth (z is relative to the View's). The car
+	# and the enemies not covered by a building sit at the same depth, so a flame
+	# at the car's depth drew over the enemies that came before the View in the
+	# tree; one step down it is behind them and the car, over the ground, the
+	# rooftops and the buildings (their depths are all at least 2 steps lower).
+	flame_drawing.z_index = DRAW_Z_BEHIND
 	view.add_child(flame_drawing)
 	var sprite = rack.run.get("car_sprite")
 	if sprite != null and sprite.get_parent() == view:
@@ -358,12 +398,12 @@ func _update_drawing() -> void:
 		return
 	var rot: float = car.model.rotation
 	var back := -Vector2(cos(rot), sin(rot))
-	var exhaust_px := (car_units() + back * EXHAUST_OFFSET_UNITS) * PX_PER_UNIT
+	var exhaust_px := exhaust_units() * PX_PER_UNIT
 	# At the car's height (Weapons, Decisions, "The flamethrower at height",
 	# task T-206): lifted as the car sprite is, so on a rooftop or in the air
 	# the flame comes out of the exhaust where the car is drawn.
 	flame_drawing.position = ISO_TRANSFORM * exhaust_px + Vector2(0.0, -car_height() * PX_PER_UNIT)
 	flame_drawing.rotation = ISO_TRANSFORM.basis_xform(back).angle()
-	var s: float = float(stats["size_multiplier"]) * size_fraction()
+	var s := drawn_scale()
 	flame_drawing.scale = Vector2(s, s)
 	flame_drawing.emitting = active and is_owned()

@@ -27,6 +27,8 @@ var emitting := false:
 var _frame := 0
 var _clock := 0.0
 var _drawn_cell := -1
+## Convex hulls of the opaque pixels of each cell, made when first asked for: cell -> PackedVector2Array.
+static var _hulls := {}
 
 
 func _ready() -> void:
@@ -56,6 +58,36 @@ func _process(delta: float) -> void:
 	if cell != _drawn_cell:
 		_drawn_cell = cell
 		queue_redraw()
+
+
+## The flicker frame being drawn (0 or 1).
+func frame() -> int:
+	return _frame
+
+
+## The flame's outline in one cell (T-267): the convex hull of the cell's opaque
+## pixels, as points in art pixels from the cell's centre, which is the flame's
+## base. The drawing draws exactly these pixels, at ART_SCALE times the node's
+## `scale`, so this is the flame as it is drawn; the flamethrower's hit area is
+## this outline (exhaust_flamethrower.gd, hit_polygon()).
+static func cell_hull(cell: int) -> PackedVector2Array:
+	if _hulls.has(cell):
+		return _hulls[cell]
+	var img := SHEET.get_image()
+	var x0 := (cell % COLUMNS) * CELL
+	var y0 := (cell / COLUMNS) * CELL
+	var pts := PackedVector2Array()
+	for y in CELL:
+		for x in CELL:
+			if img.get_pixel(x0 + x, y0 + y).a > 0.0:
+				var p := Vector2(x - CELL / 2.0, y - CELL / 2.0)
+				pts.append(p)
+				pts.append(p + Vector2(1, 0))
+				pts.append(p + Vector2(0, 1))
+				pts.append(p + Vector2(1, 1))
+	var hull := Geometry2D.convex_hull(pts) if not pts.is_empty() else pts
+	_hulls[cell] = hull
+	return hull
 
 
 func current_cell() -> int:

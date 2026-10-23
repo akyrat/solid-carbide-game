@@ -57,9 +57,10 @@ func gun_at(tier: int) -> Dictionary:
 	}
 
 
-## What the flamethrower does at `tier`: damage, tick_interval, size_multiplier, area_width,
-## area_depth (full size, in units), inner_edge, burn_flash_seconds, turn_speed_multiplier,
-## always_on, min_speed, linger, ramp_start_fraction, ramp_seconds.
+## What the flamethrower does at `tier`: damage, tick_interval, size_multiplier (the drawn
+## flame's scale at full size; its hit area is the drawn flame, T-267, so there is no separate
+## area), burn_flash_seconds, turn_speed_multiplier, always_on, min_speed, linger,
+## ramp_start_fraction, ramp_seconds.
 func flame_at(tier: int) -> Dictionary:
 	var f: Dictionary = _data["flamethrower"]
 	var size := float(f["base_size_multiplier"])
@@ -76,14 +77,10 @@ func flame_at(tier: int) -> Dictionary:
 			"add_burn_flash_seconds": flash += float(t["value"])
 			"turn_speed_multiplier": turn *= float(t["value"])
 			"always_on": always_on = true
-	var half := float(f["car_half_size"])
 	return {
 		"damage": damage,
 		"tick_interval": float(f["tick_interval"]),
 		"size_multiplier": size,
-		"area_width": 2.0 * float(f["half_width_multiplier"]) * half * size,
-		"area_depth": float(f["depth_multiplier"]) * half * size,
-		"inner_edge": maxf(float(f["inner_edge_multiplier"]) * half, 0.05),
 		"burn_flash_seconds": flash,
 		"turn_speed_multiplier": turn,
 		"always_on": always_on,
