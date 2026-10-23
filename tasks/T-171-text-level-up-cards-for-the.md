@@ -83,7 +83,7 @@ Goal runner (G-002): QA passed; merged into playtest/G-002.
 | upgrade_wiper.tier2 | Longer Blade | Wiper length up 20%. Clean up more of the city. |
 | upgrade_wiper.tier3 | Heavy Duty | Wiper damage up 40%. Redgull calls it deep cleaning. |
 | upgrade_wiper.tier4 | Faster Sweep | Wiper sweeps 25% faster. No streaks left behind. |
-| upgrade_wiper.tier5 | Hard Shove | Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju. |
+| upgrade_wiper.tier5 | Hard Shove | Knockback up 50%, from 6 to 9. Minions only, never the kaiju. |
 | upgrade_wiper.tier6 | Longer Blade II | Wiper length up another 30%. A wider view for the viewers. |
 | upgrade_wiper.tier7 | Heavy Duty II | Wiper damage up another 40%. Squeaky clean, as promised. |
 | upgrade_wiper.tier8 | Faster Sweep II | Wiper sweeps another 30% faster. Always in frame. |

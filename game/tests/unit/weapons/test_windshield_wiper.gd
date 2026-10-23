@@ -201,6 +201,36 @@ func test_a_real_minion_is_damaged_and_knocked_back() -> void:
 		"pushed the data's distance away from the car")
 
 
+func test_the_tier_1_push_is_6_units_and_the_last_tier_9() -> void:
+	# T-266: about twice the car's length (3 units long) at the first level.
+	assert_eq(float(data.wiper_at(1)["knockback_distance"]), 6.0)
+	assert_almost_eq(float(data.wiper_at(5)["knockback_distance"]), 9.0, 1e-9, "tier 5 still x1.5")
+	assert_almost_eq(float(data.wiper_at(8)["knockback_distance"]), 9.0, 1e-9)
+	rack.upgrade("wiper")
+	var m: Node = run.minions.spawn_minion_at(_ahead(1.0))
+	m.max_health = 100.0
+	m.health = 100.0
+	var start: Vector2 = m.position_units()
+	var hit := false
+	for i in _steps_for(_pass_seconds()):
+		_step(1)
+		if m.is_knocked_back():
+			hit = true
+			break
+	assert_true(hit, "hit within one pass")
+	var hit_at: Vector2 = m.position_units()
+	var away: Vector2 = (hit_at - _car()).normalized()
+	var steps := 0
+	while m.is_knocked_back() and steps < 50:
+		m.walk(DT, _car())
+		steps += 1
+	assert_lte(steps, 9, "the push is over in about 0.15 s")
+	var moved: Vector2 = m.position_units() - hit_at
+	assert_almost_eq(moved.length(), 6.0, 0.1, "ends about 6 units from where it was hit")
+	assert_gt(moved.normalized().dot(away), 0.99, "straight away from the car")
+	assert_gt(start.distance_to(m.position_units()), 5.0)
+
+
 func test_the_kaiju_is_damaged_but_never_pushed() -> void:
 	rack.upgrade("wiper")
 	var s: Dictionary = data.wiper_at(1)

@@ -569,7 +569,7 @@ func test_t171s_texts_word_for_word() -> void:
 	assert_eq(Texts.TEXTS["upgrade_underglow.tier6.desc"], "Glow damage up another 50%, to 2.25. Peak aesthetic.")
 	assert_eq(Texts.TEXTS["get_molotov.desc"], "Throws a molotov every 3 seconds. Fire lasts 3 seconds. Very shareable.")
 	assert_eq(Texts.TEXTS["upgrade_molotov.tier8.title"], "Triple Drop")
-	assert_eq(Texts.TEXTS["upgrade_wiper.tier5.desc"], "Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju.")
+	assert_eq(Texts.TEXTS["upgrade_wiper.tier5.desc"], "Knockback up 50%, from 6 to 9. Minions only, never the kaiju.")
 	assert_eq(Texts.TEXTS["upgrade_wiper.tier8.title"], "Faster Sweep II")
 	for w in ["underglow", "molotov", "wiper"]:
 		for suffix in [".title", ".desc"]:
