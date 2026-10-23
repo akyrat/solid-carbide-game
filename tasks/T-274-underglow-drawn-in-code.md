@@ -1,7 +1,7 @@
 ---
 id: T-274
 title: The neon underglow drawn in code instead of the generated sprite
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -48,6 +48,10 @@ Board review files: the screenshots and GIF in `art-archive/T-274/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the neon zone drawn in code instead of the sprite.
 
 ## Result notes
 

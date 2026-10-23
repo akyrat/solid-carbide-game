@@ -77,6 +77,10 @@ Task T-009 made the cruise boost's motion lines (Decisions, "The cruise boost") 
 
 Task T-204 made the shadowless sheet (Decisions, "The car without its shadow") with a free script, no PixelLab: `game/art/car/car_iso_noshadow.png` (record `car_iso_noshadow.json`, same size, frames and centre as `car_iso.png`), made by `game/tools/build_car_noshadow.py`. Per frame, a near-black pixel becomes transparent only when it is connected to the transparent background through near-black pixels, lies outside the convex hull of the frame's other car pixels, and is more than one step from them; the thin outline and every other pixel stay as they are, with no new colours. Dark body panels inside that hull (under the sill between the wheels, under the bumpers) keep a little shadow, because it cannot be told from the body there. Used only while the car is in the air (T-205); on the ground the car uses `car_iso.png`. Screenshots of all 16 frames, original next to shadowless: `art-archive/T-204/screenshots/`.
 
+### The neon underglow in code
+
+Task T-274 draws the underglow's zone in code, as the Decisions entry says; the generated sprite of T-175 stays in `game/art/weapons/underglow.png` with a switch back (`use_sprite`). The look is the agent's proposal for the playtest: on the damage circle's edge a bright pink ring (a light core line and a hot pink line inside it), outside it a stepped purple halo (a solid band, then a checker-dithered one), inside it a purple floor glow (half-dithered, then sparse). Every pixel is opaque or empty, so there is no blur, bloom or smoothing. The halo and floor glow pulse in steps and a lighter arc travels round the ring; both stop while paused. Purple and pink only, never Redgull red. Its colours, widths and speeds are in `game/scenes/weapons/neon_underglow_look.tres` (how it is built: `game/README.md`, "The neon underglow"). Screenshots and a GIF: `art-archive/T-274/screenshots/`.
+
 ## Open questions
 
 - (After MVP) Does the car carry any Redgull livery or stickers? In the MVP it is kept simple: dark green with two white stripes.
