@@ -285,6 +285,18 @@ Task T-264 (Decisions, "Level creator rework"). How it works: `game/README.md`, 
 ![The same ramps with their arrows down](../art-archive/T-264/screenshots/ramps_down.png)
 ![S, M and L platforms at heights 3 and 6](../art-archive/T-264/screenshots/sizes.png)
 
+### Level creator: skyscraper banners on or off
+
+Task T-265 (Decisions, "Level creator rework"). How it works: `game/README.md`, "Level creator", "Skyscraper banners on or off (T-265)". The choices marked here are the Level/Challenge Design Agent's proposals for the board's playtest.
+
+- **What the banner is:** the vertical sign in the middle of a skyscraper's face is painted into the building's own picture (every one of the 12 looks has one), not a separate sprite. The kaiju alert banners of the game's own map (`game/art/banners/`) are a different thing and are not part of this.
+- **On or off per skyscraper:** key B, or the top bar's "Banner on" and "Banner off", chooses it for the next skyscraper placed; with a skyscraper selected and nothing picked, B changes that building. **Off by default.** The choice is saved with the building and the preview shows it.
+- **The pictures without a banner:** the same 12 bodies, built again by script from the same pieces with the sign left out (no PixelLab); the originals stay.
+- **Earlier saved levels** (a skyscraper with no banner choice written) open with the banner **off** (a proposal).
+- **The game's own map** keeps its banners and signs as before.
+
+![Six skyscrapers with their banner off, two with it on](../art-archive/T-265/screenshots/banners.png)
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
