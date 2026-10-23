@@ -1,7 +1,7 @@
 ---
 id: T-264
 title: "Level creator: closed ramps, arrows up or down, and S, M and L platforms"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/scripts/level/elevation_platform_drawing.gd, game/scripts/level/elevation_layer.gd, game/scripts/level_creator/, game/tools/build_creator_textures_t255.py, tasks/T-251-resizable-rooftops-and-ramps.md, tasks/T-255-art-creator-textures.md, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/tools/, game/art/creator_pieces/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-264/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started on T-263's branch: closed ramps, arrows up or down, S, M and L platforms
 ### 2026-10-23, In progress → In QA
 
 Built: walls at every ramp's tall end, arrows up or down per ramp (A), one-click S, M and L platforms. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4; ramp ends read as closed in every screenshot. Ready to play in the creator build. T-265 starts on it.
 
 ## Result notes
 
