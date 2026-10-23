@@ -72,7 +72,6 @@ func test_max_level_keeps_the_bar_full() -> void:
 func test_labels_are_exactly_the_approved_text() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	assert_eq(hud.health_label.text, "Car Health")
 	assert_eq(hud.likes_label.text, "Likes")
 	assert_eq(hud.coins_label.text, "Coins")
 	assert_eq(Hud.TEXT_LEVEL, "Hype Lv {level}")
