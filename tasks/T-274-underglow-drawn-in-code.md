@@ -55,4 +55,11 @@ Started at the board's request: the neon zone drawn in code instead of the sprit
 
 ## Result notes
 
-Written by the agent when it finishes.
+Weapon Behavior Agent (the look is a proposal for the playtest):
+
+- The zone is drawn in code: `game/scripts/weapons/underglow_glow.gd` builds an image pixel by pixel (opaque or empty pixels, nearest filter, no blur). On the damage circle's edge: a light pink core line and a hot pink line inside it; outside, a stepped purple halo (solid band, then checker-dithered); inside, a purple floor glow (half-dithered, then sparse). The halo and floor glow pulse in two steps (2 pulses per 2 s cycle) and a lighter arc travels once round the ring per cycle. It runs in `_process`, so it stops while paused. Images are cached per radius and frame (24 frames at 12 per second).
+- Every colour, width and speed: `game/scenes/weapons/neon_underglow_look.tres` (script `underglow_look.gd`). No Redgull red.
+- Switch back to the T-175 sprite: `use_sprite` on that resource. The sprite `game/art/weapons/underglow.png` is untouched. Damage, timing and radius code is unchanged; the zone is still placed at the car's height (T-225) as the first child of the View.
+- Tests: `test_neon_underglow.gd` (ring pixels lie exactly inside the damage circle at all 8 tiers, opaque pixels only and only the look's colours, no red, pulse and shimmer loop, frozen while paused, sprite kept with its switch) and `test_weapon_art.gd`. Full GUT suite passes; `game/tools` Python tests 395 OK (1 skipped); `tools` Python tests 451 OK.
+- Screenshots and GIF in `art-archive/T-274/screenshots/`: `underglow_street_t1.png`, `underglow_street_t8.png`, `underglow_roof_t1.png`, `underglow_roof_t8.png`, `underglow_pulse_minions.gif` (fixtures `game/tests/fixtures/run_underglow_look_*.tscn`). Looked at them: ring and halo read as neon on the street and the rooftop; at tier 8 the inside is mostly empty (fixed widths), a candidate to retune.
+- Documents affected: `docs/visual-style.md` (Content, "The neon underglow in code"), `game/README.md` ("The neon underglow"). No PixelLab calls.
