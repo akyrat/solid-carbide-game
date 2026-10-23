@@ -1,7 +1,7 @@
 ---
 id: T-265
 title: "Level creator: skyscraper banners on or off, off by default"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -37,9 +37,9 @@ Built on T-262's branch (the Project Lead makes your folder). End with a screens
 
 ## Acceptance criteria
 
-- [ ] Tests show a creator skyscraper places with no banner by default, B turns it on and off, and the choice is saved, reopened and drawn in a run (QA: pass / fail)
-- [ ] The game's own map still shows its banners as before (a test) (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-265/screenshots/`; `game/README.md` describes the toggle; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a creator skyscraper places with no banner by default, B turns it on and off, and the choice is saved, reopened and drawn in a run (QA: pass; test_creator_banners.gd 10 tests cover default off, B toggle, save, reopen, draw in a map)
+- [ ] The game's own map still shows its banners as before (a test) (QA: pass; own-map test present and the full suite passes; original art untouched)
+- [ ] The screenshot is in `art-archive/T-265/screenshots/`; `game/README.md` describes the toggle; the full GUT suite and all Python tool tests pass (QA: pass; screenshot shows 6 plain and 2 signed, README and level-design updated, GUT all passed, game/tools 486 OK, tools 451 OK, no art deleted)
 
 The board's review: place skyscrapers with and without banners.
 Board review files: the screenshot in `art-archive/T-265/screenshots/`.
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Blocked → In progress
 
 Started on T-264's branch: skyscraper banners on or off, off by default.
+
+### 2026-10-23, In progress → In QA
+
+Built: skyscrapers place without their sign by default, B turns it on. Sent to QA.
 
 ## Result notes
 
