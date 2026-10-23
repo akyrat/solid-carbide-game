@@ -1,7 +1,7 @@
 ---
 id: T-269
 title: The car spins half as fast in the air
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/README.md, game/scripts/driving/car_tuning.gd, tasks/T-219-aerial-tricks-180-and-360.md]
 files_expected_to_change: [game/scripts/driving/, game/tests/, docs/drifting.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `air_turn_multiplier` is 1.25 and a test shows the air turn rate is half of before; the ground rate is unchanged (QA: pass / fail)
-- [ ] A test shows a garage bonus set at the run's start raises the air turn rate (the hook T-270 uses) (QA: pass / fail)
-- [ ] The result notes say whether an air 360 is reachable at 1.25 and from which multiplier; Drifting, Content and `game/README.md` give the new number; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] `air_turn_multiplier` is 1.25 and a test shows the air turn rate is half of before; the ground rate is unchanged (QA: pass; multiplier 1.25, tests check the base, half of the old 2.5 rate, ground 191.9 unchanged)
+- [ ] A test shows a garage bonus set at the run's start raises the air turn rate (the hook T-270 uses) (QA: pass; apply_air_turn_bonus tests on the model and the real car show the air rate rises, ground unchanged)
+- [ ] The result notes say whether an air 360 is reachable at 1.25 and from which multiplier; Drifting, Content and `game/README.md` give the new number; the full GUT suite and all Python tool tests pass (QA: pass; notes say no air 360 at 1.25, reachable from about 1.9; drifting.md and game/README.md updated; GUT 1369/1369, Python 451 and 395 OK)
 
 The board's review: jump off a rooftop and spin.
 
