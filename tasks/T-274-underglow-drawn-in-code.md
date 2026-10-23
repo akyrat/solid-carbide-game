@@ -1,7 +1,7 @@
 ---
 id: T-274
 title: The neon underglow drawn in code instead of the generated sprite
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/README.md, game/data/weapons.json, tasks/T-168-the-neon-underglow-a-circle-around.md, tasks/T-175-art-the-neon-underglow-the-molotov.md, tasks/T-225-underglow-at-the-cars-height.md, tasks/T-249-hype-drift-trail.md]
 files_expected_to_change: [game/scripts/weapons/, game/scenes/weapons/, game/tests/, docs/visual-style.md, game/README.md, art-archive/T-274/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the drawn zone's radius matches the damage circle at every tier and it is drawn at the car's height; damage behaviour is unchanged (QA: pass / fail)
-- [ ] The look follows the pixel rules (no semi-transparent smoothing; colours from its settings; no Redgull red) and pauses with the game (tests and screenshots) (QA: pass / fail)
-- [ ] The T-175 sprite is kept with a switch back to it (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-274/screenshots/`; Visual style and `game/README.md` describe the look; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the drawn zone's radius matches the damage circle at every tier and it is drawn at the car's height; damage behaviour is unchanged (QA: pass; tier 1-8 ring-vs-circle test, car-height test, diff touches only drawing code, damage tests pass)
+- [ ] The look follows the pixel rules (no semi-transparent smoothing; colours from its settings; no Redgull red) and pauses with the game (tests and screenshots) (QA: pass; opaque-pixel, look-colour, no-red and paused-freeze tests pass; screenshot shows hard-edged purple/pink ring)
+- [ ] The T-175 sprite is kept with a switch back to it (QA: pass; underglow.png untouched, use_sprite switch and its test)
+- [ ] Screenshots and the GIF are in `art-archive/T-274/screenshots/`; Visual style and `game/README.md` describe the look; the full GUT suite and all Python tool tests pass (QA: pass; 4 PNGs + GIF present, docs updated, GUT passed, tools 451 OK, game/tools 395 OK)
 
 The board's review: pick up the underglow and drive through minions.
 Board review files: the screenshots and GIF in `art-archive/T-274/screenshots/`.
