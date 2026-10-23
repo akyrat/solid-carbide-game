@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/weapons.md, game/README.md, game/scripts/hud/, game/scenes/hud/, game/art/hud/likes_heart.png, game/art/level_up/, tasks/T-113-hud-vertical-health-and-likes-bars.md, tasks/T-174-art-one-level-up-card-image.md, tasks/T-243-airtime-counter-hud.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, docs/hud-and-menus.md, game/README.md, art-archive/T-276/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,10 +42,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The health bar is upright, 72 x 320 at the default window, filling from the bottom; the "Car Health" label is gone; the likes heart sits under it (screenshot, layout test) (QA: pass / fail)
-- [ ] Tests show an icon appears for each weapon the car has, in the order taken, with "x{n}" for tiers above 1, updating when a weapon is taken or upgraded, in the comic font (QA: pass / fail)
-- [ ] Nothing overlaps at the default window; no new art; no Redgull red besides the approved heart (screenshot) (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-276/screenshots/`; HUD and menus, Content, and `game/README.md` describe the new top left; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The health bar is upright, 72 x 320 at the default window, filling from the bottom; the "Car Health" label is gone; the likes heart sits under it (screenshot, layout test) (QA: pass; bar 72x320, fills bottom up, label gone, heart centred 6px under it in layout test and screenshots)
+- [ ] Tests show an icon appears for each weapon the car has, in the order taken, with "x{n}" for tiers above 1, updating when a weapon is taken or upgraded, in the comic font (QA: pass; test_hud_weapon_icons.gd covers gun at start, order, x2 to x8 updates and Bangers outline; changed tests keep their intent, "top half" to "top 60 percent" fits the taller bar)
+- [ ] Nothing overlaps at the default window; no new art; no Redgull red besides the approved heart (screenshot) (QA: pass; no overlap with timer, coins or car in both screenshots; no new art; only the heart is red)
+- [ ] Screenshots are in `art-archive/T-276/screenshots/`; HUD and menus, Content, and `game/README.md` describe the new top left; the full GUT suite and all Python tool tests pass (QA: fail; screenshots and docs ok, Python 451 and 395 OK, but the full GUT suite exits 139 on this branch in test_combo_broken_popup.gd:104 (await process_frame) on 4 runs, also with -gdir=res://tests/unit/hud, while that test alone passes and master's full suite exits 0 twice)
 
 The board's review: take a few weapons from gift packs and look at the top left.
 Board review files: the screenshots in `art-archive/T-276/screenshots/`.
@@ -73,3 +73,4 @@ Built (UI Agent). Top left of the HUD:
 - Results: full GUT suite 1372/1372 passed (exit 0); `python -m unittest discover -s game/tools` 395 OK (1 skipped); `python -m unittest discover -s tools` 451 OK.
 - Screenshots (fixtures `tests/fixtures/weapon_icons_gun.tscn`, `weapon_icons_mixed.tscn`): `art-archive/T-276/screenshots/top_left_gun_only.png` and `top_left_all_five_mixed.png` (gun x2, wiper x3, flamethrower tier 1, molotov x8, underglow x2). Nothing overlaps the timer, coins or car at 1152 x 648; no Redgull red besides the heart. The heart is small (the same 22 x 20 picture as the likes bar's); say if it should be bigger.
 - Documents updated: `docs/hud-and-menus.md` (Content, Top left), `game/README.md` (HUD section). 0 PixelLab generations.
+- 2026-10-23, in-qa → in-progress: QA round 1: full GUT suite exits 139 in test_combo_broken_popup.gd:104 on this branch (reproducible, master passes); other criteria pass
