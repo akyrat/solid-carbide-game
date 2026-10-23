@@ -1,7 +1,7 @@
 ---
 id: T-281
 title: The full test suite crashes (exit 139) in the combo popup test about two runs in three
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -46,6 +46,10 @@ Built from `master` on its own branch and folder, as `tasks/README.md` ("Git bra
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-23, Open → In progress
+
+Started at the board's go: find and fix the engine crash (exit 139) in the combo popup test.
 
 ## Result notes
 
