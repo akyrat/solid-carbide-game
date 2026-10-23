@@ -1,7 +1,7 @@
 ---
 id: T-269
 title: The car spins half as fast in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -50,6 +50,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the car spins half as fast in the air.
+
+### 2026-10-23, In progress → In QA
+
+Air turn halved (2.5 to 1.25); garage hook ready for T-270. At 1.25 only the air 180 is reachable off the tallest roof; the 360 needs about 1.9 total. Sent to QA.
 
 ## Result notes
 
