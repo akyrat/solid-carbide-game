@@ -33,16 +33,15 @@ func _ready() -> void:
 	editor = EDITOR_SCENE.instantiate()
 	editor.open_new()
 	add_child(editor)
-	# A road along x with its centre line, a zebra crossing, some cracked road.
-	for x in range(-40, 40, 2):
-		_place("road", Vector2(x, -6), 0, 1)
-		_place("centre-line", Vector2(x, -4), 0, 1)
-		_place("centre-line", Vector2(x, -2), 6, 1)
-		_place("road", Vector2(x, 0), 0, 1)
-	for y in range(-6, 2, 2):
-		_place("zebra-crossing", Vector2(-8, y))
-	for x in range(10, 30, 2):
-		_place("cracked-road", Vector2(x, -6), 1, 1)
+	# A road along x with its centre line, a zebra crossing, some cracked road (since T-263 painted
+	# with the road brush).
+	editor.panel.pick("centre-line")
+	editor.paint_road([Vector2(-38, -2), Vector2(8, -2)])
+	editor.panel.pick("cracked-road")
+	editor.look_pick()
+	editor.paint_road([Vector2(10, -2), Vector2(30, -2)])
+	editor.panel.pick("zebra-crossing")
+	editor.place_zebra(Vector2(-7, -3))
 	# Skyscrapers in four of their looks, low-rise and small buildings north of the road.
 	_place("skyscraper", Vector2(-40, -32), 0)
 	_place("skyscraper", Vector2(-26, -32), 1)

@@ -327,17 +327,19 @@ func test_a_zebra_crossing_goes_across_a_straight_road_where_clicked() -> void:
 	# Along y: the clicked row of tiles across the road (row 1 of the block).
 	var b := Vector2i(10, 13)
 	assert_true(e.place_zebra(RoadBrush.block_rect(e.document, b).position + Vector2(1, 3)))
-	assert_eq(_tiles(e, b), [["road-y_line_r_a0", "road-y_line_l_a0"], ["road-y_zebra_e0_a0", "road-y_zebra_e1_a0"]])
+	assert_eq(_tiles(e, b), [["road-y_line_r_a0", "road-y_line_l_a0"], ["road-y_zebra_a0", "road-y_zebra_a0"]])
 	# Along x: the clicked column.
 	var bx := Vector2i(23, 10)
 	assert_true(e.place_zebra(RoadBrush.block_rect(e.document, bx).position + Vector2(1, 1)))
-	assert_eq(_tiles(e, bx), [["road-x_zebra_e0_a0", "road-x_plain_a0"], ["road-x_zebra_e1_a0", "road-x_plain_a0"]])
+	assert_eq(_tiles(e, bx), [["road-x_zebra_a0", "road-x_plain_a0"], ["road-x_zebra_a0", "road-x_plain_a0"]])
 	# Not on a dead end, a junction, or off the road.
 	assert_false(e.place_zebra(_at(e, Vector2i(10, 10))))
 	assert_false(e.place_zebra(_at(e, Vector2i(40, 40))))
 	# The crossing stays when the road is painted over with another kind (the asphalt is the road's).
 	_paint(e, "cracked-road", [Vector2i(10, 12), Vector2i(10, 14)])
-	assert_eq(_tiles(e, b)[1], ["road-y_zebra_e0_g4", "road-y_zebra_e1_g4"])
+	assert_eq(_tiles(e, b)[1], ["road-y_zebra_g4", "road-y_zebra_g4"])
+	# A crossing saved with the game's edge tiles (e0, e1) is read back as a crossing too.
+	assert_eq(RoadBrush.tile_info("road-y_zebra_e1_g4"), {"line": false, "zebra": "y", "asphalt": "g4"})
 	assert_eq(RoadBrush.state_of(e.document, b).kind, "cracked-road")
 	# It goes when the block becomes a junction.
 	_paint(e, "cracked-road", [Vector2i(11, 13), Vector2i(13, 13)])

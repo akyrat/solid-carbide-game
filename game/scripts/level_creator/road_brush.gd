@@ -175,7 +175,9 @@ static func piece_of(arms: String) -> String:
 
 ## The four tiles (catalogue ids) of a road block of `kind` and `asphalt` with `arms`, rows of two
 ## columns ([[top-left, top-right], [bottom-left, bottom-right]]), with its crossing `zebra` when the
-## block is a straight along the crossing's road.
+## block is a straight along the crossing's road. A crossing is the full zebra tile on both tiles
+## across the road (a proposal: four stripes evenly across the 4-unit road; the game's map's e0 and
+## e1 tiles, which leave out the stripe at the road's edge, would leave only two).
 static func tiles_for(kind: String, asphalt: String, arms: String, zebra: Dictionary = {}) -> Array:
 	var line := kind == "centre-line"
 	var a := asphalt
@@ -188,13 +190,13 @@ static func tiles_for(kind: String, asphalt: String, arms: String, zebra: Dictio
 			t = [["road-y_line_r_" + a, "road-y_line_l_" + a], ["road-y_line_r_" + a, "road-y_line_l_" + a]] if line \
 				else _all("road-y_plain_" + a)
 			if str(zebra.get("axis", "")) == "y":
-				t[int(zebra.index)] = ["road-y_zebra_e0_" + asphalt, "road-y_zebra_e1_" + asphalt]
+				t[int(zebra.index)] = ["road-y_zebra_" + asphalt, "road-y_zebra_" + asphalt]
 		"straight_x":
 			t = [["road-x_line_r_" + a, "road-x_line_r_" + a], ["road-x_line_l_" + a, "road-x_line_l_" + a]] if line \
 				else _all("road-x_plain_" + a)
 			if str(zebra.get("axis", "")) == "x":
-				t[0][int(zebra.index)] = "road-x_zebra_e0_" + asphalt
-				t[1][int(zebra.index)] = "road-x_zebra_e1_" + asphalt
+				t[0][int(zebra.index)] = "road-x_zebra_" + asphalt
+				t[1][int(zebra.index)] = "road-x_zebra_" + asphalt
 		"single":
 			t = _all("road-y_plain_" + a)
 		_:
