@@ -57,6 +57,7 @@ func test_the_imported_art_keeps_its_colours_and_transparent_corner() -> void:
 func test_the_underglow_art_is_at_scale_half_for_its_radius() -> void:
 	var drawing = rack.underglow.drawing
 	assert_not_null(drawing, "the underglow is drawn in the run")
+	drawing.set_radius_px(Glow.PX_PER_UNIT * 2.5)  # tier 1's radius
 	assert_almost_eq(drawing.art_scale(), 0.5, 0.001, "scale 0.5 at tier 1's radius")
 
 
