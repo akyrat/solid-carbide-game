@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/weapons.md, game/README.md, game/scripts/hud/, game/scenes/hud/, game/art/hud/likes_heart.png, game/art/level_up/, tasks/T-113-hud-vertical-health-and-likes-bars.md, tasks/T-174-art-one-level-up-card-image.md, tasks/T-243-airtime-counter-hud.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, docs/hud-and-menus.md, game/README.md, art-archive/T-276/screenshots/]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -45,7 +45,7 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The health bar is upright, 72 x 320 at the default window, filling from the bottom; the "Car Health" label is gone; the likes heart sits under it (screenshot, layout test) (QA: pass; bar 72x320, fills bottom up, label gone, heart centred 6px under it in layout test and screenshots)
 - [ ] Tests show an icon appears for each weapon the car has, in the order taken, with "x{n}" for tiers above 1, updating when a weapon is taken or upgraded, in the comic font (QA: pass; test_hud_weapon_icons.gd covers gun at start, order, x2 to x8 updates and Bangers outline; changed tests keep their intent, "top half" to "top 60 percent" fits the taller bar)
 - [ ] Nothing overlaps at the default window; no new art; no Redgull red besides the approved heart (screenshot) (QA: pass; no overlap with timer, coins or car in both screenshots; no new art; only the heart is red)
-- [ ] Screenshots are in `art-archive/T-276/screenshots/`; HUD and menus, Content, and `game/README.md` describe the new top left; the full GUT suite and all Python tool tests pass (QA: fail; screenshots and docs ok, Python 451 and 395 OK, but the full GUT suite exits 139 on this branch in test_combo_broken_popup.gd:104 (await process_frame) on 4 runs, also with -gdir=res://tests/unit/hud, while that test alone passes and master's full suite exits 0 twice)
+- [ ] Screenshots are in `art-archive/T-276/screenshots/`; HUD and menus, Content, and `game/README.md` describe the new top left; the full GUT suite and all Python tool tests pass (QA: pass; round 2: screenshots and docs ok, Python 451 and 395 OK; full GUT run 2 of 3 completed with 1372 of 1372 passing, exit 0; runs 1 and 3 exited 139 at test_combo_broken_popup.gd, the known engine flake also seen on master; no code changed since round 1, only result notes)
 
 The board's review: take a few weapons from gift packs and look at the top left.
 Board review files: the screenshots in `art-archive/T-276/screenshots/`.
