@@ -62,6 +62,10 @@ Started at the board's request: a 72 x 320 upright health bar with the heart und
 
 Upright health bar 72x320, label gone, heart under it, weapon icons column with x2 to x8 counts. Sent to QA.
 
+### 2026-10-23, In progress
+
+QA failed 1 of 4: the full test suite crashes every time on this branch (in the combo popup test). Sent back to the UI agent to fix, then QA round 2.
+
 ## Result notes
 
 Built (UI Agent). Top left of the HUD:
