@@ -1,7 +1,7 @@
 ---
 id: T-264
 title: "Level creator: closed ramps, arrows up or down, and S, M and L platforms"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -41,10 +41,10 @@ The game's own map is unchanged. Built on T-262's branch (the Project Lead makes
 
 ## Acceptance criteria
 
-- [ ] Tests show every ramp draws a wall at its tall end, in every direction and height step (QA: pass / fail)
-- [ ] Tests show the arrows point up or down the slope as chosen, in every direction and height step, the choice is saved and reopened, and the default is up (QA: pass / fail)
-- [ ] Tests show S, M and L platforms place at 8, 16 and 32 units square at heights 3 and 6, and dragging still sizes them freely (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-264/screenshots/`; `game/README.md` describes the three; the game's own map is unchanged; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show every ramp draws a wall at its tall end, in every direction and height step (QA: pass; 12 new tests in test_creator_ramps.gd pass; in the screenshots the tall end reads closed: east side wall is visible beside the platform in ramps_up_close, and the north/west ends meet the rooftop so the block is closed, though against a rooftop the end wall itself is hidden, as the agent noted)
+- [ ] Tests show the arrows point up or down the slope as chosen, in every direction and height step, the choice is saved and reopened, and the default is up (QA: pass; arrows up/down, saved and default-up tests pass; ramps_up_close and ramps_down_close show the arrows flipping as chosen)
+- [ ] Tests show S, M and L platforms place at 8, 16 and 32 units square at heights 3 and 6, and dragging still sizes them freely (QA: pass; S/M/L and drag tests pass)
+- [ ] Screenshots are in `art-archive/T-264/screenshots/`; `game/README.md` describes the three; the game's own map is unchanged; the full GUT suite and all Python tool tests pass (QA: pass; 7 screenshots present, README section present, map data not touched by T-264, GUT 1551/1551, game/tools 483 OK, tools 451 OK)
 
 The board's review: place ramps both ways round and S, M and L platforms.
 Board review files: the screenshots in `art-archive/T-264/screenshots/`.
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Blocked → In progress
 
 Started on T-263's branch: closed ramps, arrows up or down, S, M and L platforms.
+
+### 2026-10-23, In progress → In QA
+
+Built: walls at every ramp's tall end, arrows up or down per ramp (A), one-click S, M and L platforms. Sent to QA.
 
 ## Result notes
 
