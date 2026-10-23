@@ -84,6 +84,12 @@ func apply_air_turn_bonus(added: float) -> void:
 	air_turn_bonus = maxf(0.0, added)
 
 
+## The air turn upgrade as the run applies it (task T-270): the bought level's total multiplier
+## (garage.json, base 1.25) minus the base is the amount added through apply_air_turn_bonus().
+func apply_air_turn_upgrade(progress: PlayerProgress) -> void:
+	apply_air_turn_bonus(progress.current_value("air_turn") - air_turn_multiplier)
+
+
 ## The Unity prototype's values, by setting key (report section 5).
 const UNITY := {
 	"forward_speed": 11.0,

@@ -2,7 +2,7 @@ class_name GarageData
 extends RefCounted
 ## The garage's upgrades from res://data/garage.json: price and effect for every level.
 
-const UPGRADES := ["acceleration", "car_health", "damage_bonus", "pickup_magnet"]
+const UPGRADES := ["acceleration", "car_health", "damage_bonus", "pickup_magnet", "air_turn"]
 
 var _data: Dictionary = {}
 var error: String = ""
