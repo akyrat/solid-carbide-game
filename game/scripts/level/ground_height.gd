@@ -59,6 +59,8 @@ func load_data(data: Dictionary) -> bool:
 			"top_height": float(r.top_height),
 			"art": str(r.get("art", "")),
 			"style": str(r.get("style", "")),
+			# T-264: which way the ramp's arrows point, "up" the slope (the default) or "down" it.
+			"arrows": "down" if str(r.get("arrows", "up")) == "down" else "up",
 		})
 	return true
 

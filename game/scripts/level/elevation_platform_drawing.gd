@@ -149,8 +149,21 @@ func join_edge() -> String:
 	return {"east": "west", "west": "east", "north": "south", "south": "north"}.get(str(block.side), "")
 
 
+## Which way a ramp's arrows point (T-264): "up" the slope (the default) or "down" it.
+func arrows() -> String:
+	return "down" if str(block.get("arrows", "up")) == "down" else "up"
+
+
+## The flat direction (a unit vector on x or y) a ramp's arrows point in: towards its top end for
+## "up", away from it for "down". ZERO for a rooftop.
+func arrow_direction() -> Vector2:
+	var up: Vector2 = {"east": Vector2(-1, 0), "west": Vector2(1, 0), "south": Vector2(0, -1),
+		"north": Vector2(0, 1)}.get(str(block.get("side", "")), Vector2.ZERO)
+	return up if arrows() == "up" else -up
+
+
 ## The textured mode's faces, back to front, each {name, points, uvs, texture, color}: the east
-## and south walls (a ramp's wall at its top end is left off: it meets its rooftop), the top, and
+## and south walls, a ramp's wall at its tall end too (T-264), the top, and
 ## a rooftop's parapet runs (north, west). For the drawing and the tests.
 func textured_faces() -> Array:
 	var out: Array = []
@@ -164,20 +177,34 @@ func textured_faces() -> Array:
 	var side_tex: Texture2D = style.ramp_side if is_ramp else style.wall
 	var ne := Vector2(r.end.x, r.position.y)
 	var sw := Vector2(r.position.x, r.end.y)
-	if join != "east":
-		var shade: float = style.ramp_east_shade if is_ramp else style.roof_east_shade
-		_add_wall(out, "east", ne, r.end, h[1], h[2], 1, side_tex, shade, px)
-	if join != "south":
-		var shade: float = style.ramp_south_shade if is_ramp else style.roof_south_shade
-		_add_wall(out, "south", sw, r.end, h[3], h[2], 0, side_tex, shade, px)
+	# T-264: a ramp is a closed block, so its tall end has its wall too, down to what it stands on,
+	# in the ramp side's texture, even where it meets a rooftop. On the west and north ends the
+	# wall faces away from the view and is drawn first, behind the top.
+	if is_ramp and join == "west":
+		_add_wall(out, "west", r.position, sw, h[0], h[3], 1, side_tex, style.ramp_east_shade, px)
+	if is_ramp and join == "north":
+		_add_wall(out, "north", r.position, ne, h[0], h[1], 0, side_tex, style.ramp_south_shade, px)
+	var east_shade: float = style.ramp_east_shade if is_ramp else style.roof_east_shade
+	_add_wall(out, "east", ne, r.end, h[1], h[2], 1, side_tex, east_shade, px)
+	var south_shade: float = style.ramp_south_shade if is_ramp else style.roof_south_shade
+	_add_wall(out, "south", sw, r.end, h[3], h[2], 0, side_tex, south_shade, px)
 	var top_tex: Texture2D = style.ramp_top if is_ramp else style.roof_top
 	var swap := is_ramp and str(block.side) in ["east", "west"]  # the lane lines run along the ramp
+	# T-264: the texture's arrows point towards smaller v; v runs along the ramp with the sign that
+	# makes them point up or down the slope (arrow_direction).
+	var v_sign := 1.0
+	if is_ramp:
+		var along: Vector2 = arrow_direction()
+		v_sign = -(along.x if swap else along.y)
 	var corners := [r.position, ne, r.end, sw]
 	var pts := top_face()
 	var uvs := PackedVector2Array()
 	for c in corners:
 		var p: Vector2 = c
-		uvs.append(_uv(Vector2(p.y, p.x) if swap else p, px, top_tex))
+		var q := Vector2(p.y, p.x) if swap else p
+		if is_ramp:
+			q.y *= v_sign
+		uvs.append(_uv(q, px, top_tex))
 	out.append({"name": "top", "points": pts, "uvs": uvs, "texture": top_tex, "color": Color.WHITE})
 	if not is_ramp and style.parapet != null:
 		var top := float(block.height)
@@ -284,12 +311,12 @@ func outline_segments() -> Array:
 	# Vertical corners, with the two edges each belongs to, and its height.
 	for c in [[ne, ["north", "east"], h[1]], [se, ["east", "south"], h[2]], [sw, ["south", "west"], h[3]]]:
 		var p: Vector2 = c[0]
-		if join in c[1] or float(c[2]) - base <= 0.001:
+		if float(c[2]) - base <= 0.001:
 			continue
 		out.append([drawn(p, base), drawn(p, float(c[2]))])
-	if join != "east" and maxf(h[1], h[2]) - base > 0.001:
+	if maxf(h[1], h[2]) - base > 0.001:
 		out.append([drawn(ne, base), drawn(se, base)])
-	if join != "south" and maxf(h[3], h[2]) - base > 0.001:
+	if maxf(h[3], h[2]) - base > 0.001:
 		out.append([drawn(sw, base), drawn(se, base)])
 	return out
 

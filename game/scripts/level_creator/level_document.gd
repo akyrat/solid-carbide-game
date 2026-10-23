@@ -28,7 +28,7 @@ extends RefCounted
 ## - rooftop: {id, x, y, w, h, height, view, art[, on]} in platforms: art = the view's art piece
 ##   (art/elevation_sample/<art>.png); "on" = the lower rooftop holding its whole footprint (a 6
 ##   on a 3), as in the elevation sample map's height data.
-## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art} in ramps: side =
+## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art, arrows} in ramps (arrows, T-264: "up" or "down" the slope, a ramp of any size; none is up): side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
 ##   height whose side its top end touches ("" while there is none).
 ## - prop (T-253; data/level/props.json): {id, asset, rotation, x, y, w, h} in props: rotation = the
@@ -381,8 +381,11 @@ static func _kind_of_tile(id: String) -> String:
 ##
 ## `variant` (T-262): which of the view's textures, for a family look that is a second body of the
 ## same entry (texture_of); "" for the first, as before.
+##
+## `arrows` (T-264): a ramp of any size's arrows, "up" the slope (the default) or "down" it, written
+## as the ramp's "arrows".
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "") -> Dictionary:
+		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up") -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -446,10 +449,18 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				r["art"] = str(tex.variant)
 			elif style != "":
 				r["style"] = style
+			if resizable:
+				r["arrows"] = "down" if arrows == "down" else "up"
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## Sets which way a ramp's arrows point (T-264): "up" the slope or "down" it. Returns the value now.
+func set_ramp_arrows(ramp: Dictionary, arrows: String) -> String:
+	ramp["arrows"] = "down" if arrows == "down" else "up"
+	return str(ramp.arrows)
 
 
 # ---- Heights: a 6 on a 3, a ramp on the side it climbs -----------------------------------------

@@ -80,6 +80,9 @@ var delete_button: Button
 var rotate_button: Button
 var mirror_button: Button
 var style_button: Button
+## T-264: the platform sizes S, M, L and Any size (the buttons by id), and the ramp arrows Up and Down.
+var size_buttons: Dictionary = {}
+var arrows_buttons: Dictionary = {}
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
@@ -92,6 +95,13 @@ var pick_view: String = ""
 var pick_mirror: bool = false
 ## Which of the view's textures (T-262: a skyscraper's second body is one of its family's looks); "" for the first.
 var pick_variant: String = ""
+## T-264: the size a platform's plain click places, by the top bar's S, M, L and Any size: the
+## squares in units (a proposal: 8, 16 and 32, the board's numbers). "any" is the board dragging the
+## size out; its plain click is M's, the default. Snapping and the overlap refusal apply as before.
+const PLATFORM_SIZES := {"s": 8.0, "m": 16.0, "l": 32.0}
+var pick_platform_size: String = "m"
+## T-264: which way a new ramp's arrows point, "up" the slope (the default) or "down" it (key A).
+var pick_arrows: String = "up"
 ## The piece style a new rooftop or ramp of any size is drawn in (T-255; elevation_layer.gd PIECE_STYLES): the Style button steps it.
 var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
@@ -223,6 +233,22 @@ func _ready() -> void:
 	style_button.pressed.connect(style_pick)
 	bar.add_child(style_button)
 	_update_style_button()
+	for id in ["s", "m", "l", "any"]:
+		var b := Button.new()
+		b.name = "Size_" + id
+		b.text = CreatorTexts.get_text("platform_size_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_platform_size.bind(id))
+		bar.add_child(b)
+		size_buttons[id] = b
+	for id in ["up", "down"]:
+		var b := Button.new()
+		b.name = "Arrows_" + id
+		b.text = CreatorTexts.get_text("ramp_arrows_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_arrows.bind(id))
+		bar.add_child(b)
+		arrows_buttons[id] = b
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -408,12 +434,13 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
 	var variant := pick_variant if picked_now else ""
+	size = default_size_for(asset_id, size)
 	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size)
 	if at.is_empty():
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant, pick_arrows)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -432,7 +459,40 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 func placement_at(units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
 	if _picked() == "" or document == null:
 		return {}
-	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, size)
+	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, default_size_for(_picked(), size))
+
+
+## The size a plain click gives `asset_id` (T-264): a rooftop's S, M or L square (M for "any"); a
+## size already given (a drag) is kept, and so is any other piece's.
+func default_size_for(asset_id: String, size: Vector2) -> Vector2:
+	if size != Vector2.ZERO or str(LevelDocument.entry(asset_id).get("kind", "")) != "rooftop" 			or not LevelDocument.is_resizable(asset_id):
+		return size
+	var side: float = PLATFORM_SIZES.get(pick_platform_size, PLATFORM_SIZES.m)
+	return Vector2(side, side)
+
+
+## The top bar's S, M, L or Any size (T-264): the size of the next platform's plain click.
+func set_platform_size(id: String) -> void:
+	pick_platform_size = id if id in ["s", "m", "l", "any"] else "m"
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## The top bar's Arrows up or down, and key A (T-264): which way the next ramp's arrows point. With
+## a ramp selected and no ramp picked, it turns that ramp's arrows instead.
+func set_arrows(arrows: String) -> void:
+	pick_arrows = "down" if arrows == "down" else "up"
+	if not selected.is_empty() and str(selected.kind) == "ramp" and str(LevelDocument.entry(_picked()).get("kind", "")) != "ramp":
+		document.set_ramp_arrows(selected.item, pick_arrows)
+		_rebuild_map()
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## A: the other way round for the arrows. Returns the arrows now.
+func arrows_pick() -> String:
+	set_arrows("up" if pick_arrows == "down" else "down")
+	return pick_arrows
 
 
 # ---- Sizing (T-251) -----------------------------------------------------------------------------
@@ -589,7 +649,7 @@ func preview_block() -> Dictionary:
 	var rect: Rect2 = at.rect
 	if str(e.kind) == "ramp":
 		var t := LevelDocument.texture_of(id, pick_view, false)
-		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")),
+		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")), "arrows": pick_arrows,
 			"bottom_height": float(e.heights[0]), "top_height": float(e.heights[1]), "base": float(e.heights[0]),
 			"style": pick_style}
 	var under := document.rooftop_under(rect, float(e.height))
@@ -688,6 +748,7 @@ const KEY_ACTIONS := {
 	KEY_R: "turn",
 	KEY_M: "flip",
 	KEY_H: "height",
+	KEY_A: "arrows",
 }
 
 
@@ -793,6 +854,14 @@ func _update_pose_controls() -> void:
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
 		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
 	direction_label.text = CreatorTexts.get_text(dir_key) if dir_key != "" else ""
+	# T-264: the S, M, L and Any size buttons show with a rooftop picked, Arrows up and down with a ramp.
+	var kind := str(LevelDocument.entry(id).get("kind", ""))
+	for b_id in size_buttons:
+		size_buttons[b_id].visible = kind == "rooftop"
+		size_buttons[b_id].button_pressed = b_id == pick_platform_size
+	for b_id in arrows_buttons:
+		arrows_buttons[b_id].visible = kind == "ramp"
+		arrows_buttons[b_id].button_pressed = b_id == pick_arrows
 	_update_size_label()
 
 
@@ -902,6 +971,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				rotate_pick()
 			"flip":
 				mirror_pick()
+			"arrows":
+				arrows_pick()
 			var axis:
 				step_pick(axis)
 		get_viewport().set_input_as_handled()
