@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: yes
 changes_visuals: yes
-depends_on: [T-268, T-269]
+depends_on: []
 documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/drifting.md, game/data/garage.json, game/README.md, tasks/T-224-magnet-garage-upgrade.md, tasks/T-269-halve-air-turn.md]
 files_expected_to_change: [game/data/garage.json, game/scripts/, game/tests/, docs/garage-design.md, game/README.md, art-archive/T-270/screenshots/]
