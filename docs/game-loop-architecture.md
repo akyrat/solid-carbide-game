@@ -110,6 +110,7 @@ How the level-up screen is reached (task T-144; how to use it: [game/README.md](
 The run also owns the combo (task T-081; how to use it: [game/README.md](../game/README.md), section "The run"; the numbers: [game/data/combo.json](../game/data/combo.json)):
 
 - Each trick the car does raises the combo multiplier by that trick's amount, up to a cap. The run sends a signal with the trick, the amount added and the new multiplier, for the trick popups.
+- The tricks: the extended drift (paid once per drift, by its length), the 360, the alternate drift (Drifting, Decisions), the air 180 and air 360 (Drifting, Decisions, "Aerial tricks"), the airtime trick (Drifting, Decisions, "Airtime trick"), and **thread the needle** (task T-272; Level design, Decisions, "Thread the needle"): on a level made in the creator, driving through the gap between two obstacles the board paired, without touching either. When each fires is in `game/README.md`, "Tricks" (thread the needle: "Level creator", "Thread the needle (T-272)"); what each adds is in `combo.json`.
 - The multiplier multiplies all XP gained: each completed challenge's XP (the "score" signal carries the multiplied amount) and each drift second's XP.
 - Hitting a wall, a building, the map edge or a boulder cuts the combo by 80%, and so does any damage to the car (enemies, meteors). The cut applies to the part of the multiplier above "no combo".
 - When no trick has come for 2 seconds, the combo drains, down to "no combo". A trick restarts the wait.

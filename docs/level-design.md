@@ -310,6 +310,23 @@ Added for the car's spawn point (task T-279; same file, every earlier key unchan
 - **Message when the board tries to delete it (top bar):** "The start can't be deleted." (`spawn_no_delete`).
 - **Controls hint:** the pairs hint with "move the start" added: "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_spawn`; the older hints stay; the creator should show this one).
 
+### Level creator: thread the needle
+
+Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it works: `game/README.md`, "Level creator", "Thread the needle (T-272)". The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest; the numbers are in `game/data/combo.json` (`trick_add.thread_the_needle` and `thread_the_needle`, with their reasons).
+
+- **Which pieces are obstacles:** the four of the panel's Obstacles group, boulders, barriers, cones and crates. Decoration (street lamps, AC units, water tanks, roof vents, rooftop signs) is refused with "Not an obstacle...", as are buildings, rooftops, ramps and the ground.
+- **Pairing:** the top bar's "Pair obstacles", or **P**, turns the pair tool on (it drops the picked piece); click one obstacle, then another: the top bar says "Pair made. Drive between them." The tool stays on for the next pair until P, Esc, a right-click or picking a piece. Clicking the same obstacle twice lets it go.
+- **One pair per obstacle:** pairing an obstacle that is already in a pair replaces its old pair (a proposal: the new pair wins).
+- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the first obstacle clicked with the tool on is ringed thicker.
+- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair", or delete either obstacle.
+- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles and no obstacle is in two.
+- **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
+- **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
+- **The game's own map** has no pairs and is unchanged.
+
+![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
+![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
