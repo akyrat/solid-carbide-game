@@ -39,6 +39,25 @@ var drift_exit_rate := 3.0
 ## off it (0 = no bounce, it slides along; 1 = full bounce). Not from the Unity
 ## prototype (no bounce there); proposed for the board's playtest (task T-033).
 var wall_bounce := 0.25
+## The side slip out of a drift (task T-278, board 2026-10-22; Drifting,
+## Decisions, "A little side slip out of a drift"; car_model.gd,
+## _exit_slip_turn). Proposals for the board's own playtest; not from the Unity
+## prototype, where the body stops turning dead the moment A or D is let go
+## (UNITY sets the slip off, so reset_to_unity gives the Unity car exactly).
+## How hard the body keeps turning when a drift ends, as a share of the turn
+## rate (191.9 deg/s), for a full sideways drift. Proposed 0.35: 67 deg/s.
+var exit_slip_turn := 0.35
+## Seconds the slip takes to fade to nothing with no input. Proposed 0.4: with
+## 0.35 the body turns about 14 degrees more after a full drift, a little
+## over half of one of the car sprite's 16 directions (22.5 degrees).
+var exit_slip_seconds := 0.4
+## How many times faster counter-steering fades the slip. Proposed 4: caught
+## within 0.1 s (5 physics steps).
+var exit_slip_catch := 4.0
+## The drift angle (degrees) that gives the full slip. Below it the slip
+## shrinks with the square of the angle, so small steering touches barely
+## slip. Proposed 60: a held drift settles at about 68 degrees.
+var exit_slip_full_angle := 60.0
 ## Alternate-drift trick (task T-079; trick_detector.gd). Proposed limits for
 ## the board to tune; not from the Unity prototype, and they never change how
 ## the car drives.
@@ -81,6 +100,8 @@ const UNITY := {
 	"drift_speed_reference": 20.0,
 	"drift_enter_rate": 12.0,
 	"drift_exit_rate": 3.0,
+	# Task T-278: the Unity car has no side slip out of a drift.
+	"exit_slip_turn": 0.0,
 }
 
 ## One entry per slider. "key" is the property above. "label" is the
@@ -135,6 +156,33 @@ const SETTINGS := [
 		"label": "How fast normal grip comes back when you stop",
 		"tip": "How fast the drift amount falls back to 0 after you stop drifting. 3 = gone in 0.33 s.",
 		"min": 1.0, "max": 30.0, "step": 0.5},
+]
+
+
+## The side slip out of a drift (task T-278). Not part of the Unity prototype;
+## the tuning panel shows them in their own group, "Out of a drift". Same
+## fields as COLLISION_SETTINGS.
+const SLIP_SETTINGS := [
+	{"key": "exit_slip_turn", "name": "Side slip: strength", "unit": "x turn rate",
+		"label": "Side slip out of a drift: how hard the car keeps turning",
+		"tip": "When you let go of A or D to end a drift, the car's tail keeps swinging out a little instead of stopping dead: the body keeps turning the drift's way at this share of the turn rate (191.9 deg/s), then fades to nothing. Catch it with a touch of the other key. Game default 0.35 (67 deg/s). 0 = off, the car stops turning the moment you let go.",
+		"unity_note": "Unity: no slip, 0",
+		"min": 0.0, "max": 0.75, "step": 0.01},
+	{"key": "exit_slip_seconds", "name": "Side slip: length", "unit": "s",
+		"label": "Side slip: how long it lasts if you do nothing",
+		"tip": "The slip fades in a straight line to nothing in this time with no input, so it always settles on its own. With the default strength, a full drift's slip turns the car about 14 degrees more in 0.4 s. Game default 0.4.",
+		"unity_note": "Unity: no slip",
+		"min": 0.05, "max": 0.75, "step": 0.01},
+	{"key": "exit_slip_catch", "name": "Side slip: catch", "unit": "x faster",
+		"label": "Side slip: how much faster counter-steer catches it",
+		"tip": "While you hold the key against the slip (D after a left drift, A after a right one), the slip fades this many times faster. Game default 4: caught within 0.1 s. 1 = counter-steer only turns the car, the slip fades at its own pace.",
+		"unity_note": "Unity: no slip",
+		"min": 1.0, "max": 10.0, "step": 0.5},
+	{"key": "exit_slip_full_angle", "name": "Side slip: full at drift angle", "unit": "deg",
+		"label": "Side slip: drift angle that gives the full slip",
+		"tip": "How sideways the car must be when the drift ends for the full slip. Less sideways gives less slip, with the square of the angle (half this angle = a quarter of the slip), so small steering touches barely slip. A held drift settles at about 68 degrees. Game default 60.",
+		"unity_note": "Unity: no slip",
+		"min": 10.0, "max": 90.0, "step": 1.0},
 ]
 
 
@@ -215,7 +263,7 @@ static func unity_values() -> Dictionary:
 static func default_values() -> Dictionary:
 	var fresh = load("res://scripts/driving/car_tuning.gd").new()
 	var out := {}
-	for s in SETTINGS + COLLISION_SETTINGS + AIR_SETTINGS + TRICK_SETTINGS:
+	for s in SETTINGS + SLIP_SETTINGS + COLLISION_SETTINGS + AIR_SETTINGS + TRICK_SETTINGS:
 		out[s.key] = fresh.get(s.key)
 	return out
 
