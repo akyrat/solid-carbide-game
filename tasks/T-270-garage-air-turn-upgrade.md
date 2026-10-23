@@ -1,7 +1,7 @@
 ---
 id: T-270
 title: The air turn upgrade in the garage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/drifting.md, game/data/garage.json, game/README.md, tasks/T-224-magnet-garage-upgrade.md, tasks/T-269-halve-air-turn.md]
 files_expected_to_change: [game/data/garage.json, game/scripts/, game/tests/, docs/garage-design.md, game/README.md, art-archive/T-270/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `garage.json` has the air turn upgrade's levels and prices; tests show buying a level saves it and the next run's air turn rate is the base times the level's value (QA: pass / fail)
-- [ ] The garage shows the row with T-268's name and description word for word (screenshot) (QA: pass / fail)
-- [ ] Garage design gives the numbers and reasons; the screenshot is in `art-archive/T-270/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] `garage.json` has the air turn upgrade's levels and prices; tests show buying a level saves it and the next run's air turn rate is the base times the level's value (QA: pass; garage.json air_turn has 10 levels with prices, hook in start_run, test_air_turn_upgrade.gd covers save and next-run rate)
+- [ ] The garage shows the row with T-268's name and description word for word (screenshot) (QA: pass; text matches Air turn text (T-268) exactly, screenshot shows the Spin Doctor row)
+- [ ] Garage design gives the numbers and reasons; the screenshot is in `art-archive/T-270/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; Decisions and README updated, screenshot present; GUT 1376/1376, tools 451 OK, game/tools OK)
 
 The board's review: buy a few levels and spin in the air.
 Board review files: the screenshot in `art-archive/T-270/screenshots/`.
