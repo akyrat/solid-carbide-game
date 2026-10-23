@@ -184,6 +184,7 @@ func test_flames_drawn_in_pixels_in_the_fire_palette() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
 	r.state.add_xp(r.state.xp_needed() * 0.5)
+	hud.settle_likes()
 	_show(hud, 6.0)
 	await get_tree().process_frame
 	var fire := hud.likes_fire

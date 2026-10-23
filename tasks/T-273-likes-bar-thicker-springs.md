@@ -1,7 +1,7 @@
 ---
 id: T-273
 title: A likes bar 4 times thicker that springs up when it fills
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Coursework
@@ -51,6 +51,10 @@ Board review files: the screenshots and GIF in `art-archive/T-273/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the likes bar 4 times thicker, springing when it fills.
 
 ## Result notes
 

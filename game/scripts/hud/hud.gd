@@ -21,7 +21,7 @@ const MARGIN := 16
 const HEALTH_BAR_SIZE := Vector2(24, 160)
 ## The likes bar (T-113): horizontal, this share of the screen's width.
 const LIKES_BAR_WIDTH := 0.5
-const LIKES_BAR_HEIGHT := 16.0
+const LIKES_BAR_HEIGHT := 64.0
 ## Space between a bar and the text line next to it.
 const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
@@ -64,6 +64,10 @@ var health_label: Label
 var health_bar: ProgressBar
 var likes_label: Label
 var likes_bar: ProgressBar
+## Springs the bar's fill to its new level (T-273); the bar shows its `shown`.
+var likes_spring: LikesSpring
+var _likes_level := 0
+var _follow_max := 1.0
 var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
@@ -207,6 +211,10 @@ func _build_bottom() -> void:
 	likes_fire = LikesFire.new()
 	bottom_area.add_child(likes_fire)
 	likes_bar.value_changed.connect(func(_v: float) -> void: _update_fire_fill())
+	likes_spring = LikesSpring.new()
+	add_child(likes_spring)
+	likes_spring.changed.connect(func(_s: float) -> void: _show_likes())
+	likes_spring.restarted.connect(_on_spring_restarted)
 	level_up_flash = LevelUpFlash.new()
 	bottom_area.add_child(level_up_flash)
 	likes_row = HBoxContainer.new()
@@ -388,6 +396,8 @@ func bind(state: RunState) -> void:
 	_state.combo_changed.connect(_on_combo_changed)
 	_state.level_up.connect(_on_level_up)
 	level_up_flash.stop()
+	_likes_level = 0
+	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
@@ -406,13 +416,47 @@ func _on_health_changed(health: float, max_health: float) -> void:
 
 func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
 	# At the top level xp_needed is 0: the bar stays full.
-	if xp_needed > 0.0:
-		likes_bar.max_value = xp_needed
-		likes_bar.value = xp
-	else:
-		likes_bar.max_value = 1.0
-		likes_bar.value = 1.0
+	var max_v := xp_needed if xp_needed > 0.0 else 1.0
+	var ratio := clampf(xp / xp_needed, 0.0, 1.0) if xp_needed > 0.0 else 1.0
 	level_label.text = TEXT_LEVEL.format({"level": level})
+	if likes_spring.has_follow:
+		# Still springing to full for the last level-up: only the leftover and
+		# the next level's size change.
+		_follow_max = max_v
+		likes_spring.set_follow(ratio)
+		_likes_level = level
+		return
+	if _likes_level > 0 and level > _likes_level:
+		# The bar fills completely (the old size stays), then starts again.
+		_follow_max = max_v
+		likes_spring.fill_then(ratio)
+	elif _likes_level > 0 and ratio >= likes_spring.target:
+		_set_likes_max(max_v)
+		likes_spring.spring_to(ratio)
+	else:
+		# A new run, or the likes draining: no spring.
+		_set_likes_max(max_v)
+		likes_spring.snap(ratio)
+	_likes_level = level
+
+
+func _set_likes_max(max_v: float) -> void:
+	likes_bar.max_value = max_v
+	_show_likes()
+
+
+## Draws the spring's fill on the bar, never past full.
+func _show_likes() -> void:
+	likes_bar.value = clampf(likes_spring.shown, 0.0, 1.0) * likes_bar.max_value
+
+
+func _on_spring_restarted() -> void:
+	likes_bar.max_value = _follow_max
+
+
+## Ends the likes bar's spring at once (tests and tools).
+func settle_likes() -> void:
+	likes_spring.finish()
 
 
 ## The player levelled up (T-139): the likes bar's animation plays now, at

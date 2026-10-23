@@ -48,6 +48,7 @@ func test_leaves_the_bar_and_texts_as_they_were() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
 	_level_up(r)
+	hud.settle_likes()
 	var value := hud.likes_bar.value
 	var max_v := hud.likes_bar.max_value
 	var text := hud.level_label.text
