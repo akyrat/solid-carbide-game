@@ -1,7 +1,7 @@
 ---
 id: T-277
 title: Health drops at half the rate
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/data/enemies.json, game/README.md, tasks/T-220-health-drops.md]
 files_expected_to_change: [game/data/enemies.json, game/tests/, docs/enemies.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,8 +37,8 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `drop_chance` is 0.3 and a test over many kills shows health drops at about half the coins' rate; the coins' rate and the restore amount are unchanged (QA: pass / fail)
-- [ ] Enemies, Content, and `game/README.md` give the new rate; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] `drop_chance` is 0.3 and a test over many kills shows health drops at about half the coins' rate; the coins' rate and the restore amount are unchanged (QA: pass; drop_chance 0.3, coins 0.6 and restore 0.3 unchanged, 1000-kill ratio test added and passes)
+- [ ] Enemies, Content, and `game/README.md` give the new rate; the full GUT suite and all Python tool tests pass (QA: pass; docs/enemies.md and game/README.md updated; GUT 1366/1366, Python 451 OK and 395 OK)
 
 The board's review: play a run and notice fewer health pickups.
 
