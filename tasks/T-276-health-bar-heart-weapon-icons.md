@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: a 72 x 320 upright health bar with the heart under it and weapon icons beside it.
+
+### 2026-10-23, In progress → In QA
+
+Upright health bar 72x320, label gone, heart under it, weapon icons column with x2 to x8 counts. Sent to QA.
 
 ## Result notes
 
