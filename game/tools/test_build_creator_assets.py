@@ -102,7 +102,9 @@ class CatalogueTest(unittest.TestCase):
                 self.assertEqual(tile["footprint_units"], [2.0, 2.0])
                 self.assertGreaterEqual(tile["atlas_index"], 87)
             self.assertEqual(e["textures"][0]["region"][2:], [256, 128])
-        self.assertEqual(sum(1 for e in self.entries if e.get("part")), 52)
+        self.assertEqual(sum(1 for e in self.entries if e.get("part") and e["id"].startswith("road-piece_")), 52)
+        # T-263: the road brush's tiles are parts too (3 asphalts x 52 centre-line, 7 x 16 dead ends).
+        self.assertEqual(sum(1 for e in self.entries if e.get("part") and e["id"].startswith("road-brush_")), 156 + 112)
 
     def test_old_ground_tiles_keep_their_atlas_index(self):
         for e in self.entries:
@@ -144,8 +146,8 @@ class FamilyTest(unittest.TestCase):
                 self.assertIn(m["view"], e["views"])
                 self.assertIn(m["mirror"], e["mirrors"])
         for e in self.cat["entries"]:
-            if e.get("part"):
-                continue
+            if e.get("part") or e["kind"] == "road":
+                continue  # T-263: roads are painted with the brush; their tiles stay in the catalogue
             for t in e["textures"]:
                 if e["id"].startswith("skyscraper-"):
                     key = (e["id"], t["view"], t["mirror"], t["variant"])
@@ -166,9 +168,39 @@ class FamilyTest(unittest.TestCase):
         self.assertEqual(fams["platform"]["heights"], ["3", "6"])
         self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6"])
         self.assertEqual(fams["ramp"]["turns"], 4)
-        self.assertEqual(fams["road"]["turns"], 2)
+        self.assertEqual(fams["road"]["turns"], 1)
         self.assertEqual(fams["barrier"]["turns"], 4)
         self.assertNotIn("pavement", fams)
+
+    def test_road_brushes(self):
+        """T-263: the road families are brushes; each look is an asphalt whose tiles all exist."""
+        fams = {f["id"]: f for f in self.fams}
+        self.assertEqual({fid: fams[fid].get("brush") for fid in ("road", "centre-line", "cracked-road", "zebra-crossing")},
+                         {"road": "paint", "centre-line": "paint", "cracked-road": "paint", "zebra-crossing": "zebra"})
+        self.assertNotIn("brush", fams["gravel"])
+        self.assertEqual([m["asphalt"] for m in fams["road"]["members"]], ["a0", "a0m", "g6", "g9"])
+        self.assertEqual([m["asphalt"] for m in fams["centre-line"]["members"]], ["a0", "a0m", "g6", "g9"])
+        self.assertEqual([m["asphalt"] for m in fams["cracked-road"]["members"]], ["g4", "g5", "g7"])
+        self.assertEqual(fams["road"]["mirrors"], [False, True])
+        for fid in ("road", "centre-line", "cracked-road"):
+            line = fid == "centre-line"
+            for m in fams[fid]["members"]:
+                a = m["asphalt"]
+                names = ["y_plain_", "x_plain_", "y_zebra_e0_", "y_zebra_e1_", "x_zebra_e0_", "x_zebra_e1_"]
+                if line:
+                    names += ["y_line_r_", "y_line_l_", "x_line_r_", "x_line_l_"]
+                for n in names:
+                    self.assertIn("road-" + n + a, self.by_id, (fid, a, n))
+                for piece in ("corner_ne", "t_nes", "cross", "dead_n", "dead_w"):
+                    for cr in ("00", "10", "01", "11"):
+                        if line:
+                            aid = "road-piece_%s_%s" % (piece, cr) if a == "a0" else "road-brush_line_%s_%s_%s" % (piece, a, cr)
+                        elif piece.startswith("dead_"):
+                            aid = "road-brush_plain_%s_%s_%s" % (piece, a, cr)
+                        else:
+                            continue
+                        self.assertIn(aid, self.by_id, (fid, a))
+                        self.assertTrue(self.by_id[aid]["part"])
 
 
 if __name__ == "__main__":

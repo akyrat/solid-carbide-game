@@ -68,7 +68,15 @@ func test_rotate_and_mirror_ground() -> void:
 
 
 func test_rotate_and_mirror_roads() -> void:
-	_check_kind("road")
+	# T-263: road tiles are no longer picked from the panel: the road brushes lay them and turn
+	# them themselves (road_brush.gd), so Rotate is off; Mirror steps a0 to its mirror a0m.
+	var e := _editor()
+	for fid in ["road", "centre-line", "cracked-road", "zebra-crossing"]:
+		e.panel.pick(fid)
+		assert_ne(e.brush_mode(), "", fid)
+		assert_true(e.rotate_button.disabled, fid + ": the brush turns roads itself")
+		assert_eq(e.mirror_button.disabled, fid in ["cracked-road", "zebra-crossing"], fid + ": a0's mirror a0m")
+	e.panel.pick("")
 
 
 func test_rotate_and_mirror_buildings() -> void:

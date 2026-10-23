@@ -35,6 +35,10 @@ extends Control
 ## family's member (KEY_ACTIONS, creator_families.gd step), and the looks strip under it picks a
 ## look (apply_member). A member is an asset, view, mirror and variant, placed as before.
 ##
+## The road brush (T-263, road_brush.gd): Road, Centre line and Cracked road paint whole roads
+## along a left-drag (a right-drag, or Del, erases), joined into corners, T-junctions, crossroads
+## and dead ends by the brush; Zebra crossing is a click across a road (brush_mode).
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -126,6 +130,13 @@ var direction_label: Label
 ## The preview of a piece of any size, drawn in the engine as it will be (a child of the overlay).
 var preview_drawing: Node2D
 var _preview_key := ""
+
+## The road brush (T-263, road_brush.gd): with Road, Centre line or Cracked road picked, the left
+## button paints road along the drag and the right button (or Del) erases it; with Zebra crossing
+## picked, a click lays a crossing across the road. The last block a stroke reached ((-1, -1): no
+## stroke on), and whether the stroke erases.
+var road_stroke_last := Vector2i(-1, -1)
+var road_erasing := false
 
 
 ## A new level: an empty map with the default name.
@@ -478,10 +489,81 @@ func end_size_drag(units: Vector2) -> Dictionary:
 	return piece
 
 
+## The road brush's mode for the picked family: "paint" (Road, Centre line, Cracked road), "zebra"
+## (Zebra crossing) or "" (not a road brush; the family's "brush" in creator_assets.json).
+func brush_mode() -> String:
+	if panel == null or panel.picked_family == "":
+		return ""
+	return str(CreatorFamilies.family(panel.picked_family).get("brush", ""))
+
+
+## The asphalt the brush paints: the picked look's (its member's "asphalt").
+func brush_asphalt() -> String:
+	return str(panel.member.get("asphalt", "a0")) if panel != null else "a0"
+
+
+## Starts a brush stroke at `units`: paints (or with `erase`, erases) the block there.
+func begin_road_stroke(units: Vector2, erase: bool = false) -> void:
+	road_erasing = erase
+	road_stroke_last = Vector2i(-1, -1)
+	continue_road_stroke(units)
+
+
+## Carries the stroke on to `units`: every block between the last one and this (next to each
+## other, no gaps), painted with the picked road kind and asphalt or erased.
+func continue_road_stroke(units: Vector2) -> void:
+	var b := RoadBrush.block_at(document, units)
+	if b.x < 0 or b == road_stroke_last:
+		return
+	var blocks: Array = [b] if road_stroke_last.x < 0 else RoadBrush.blocks_between(road_stroke_last, b)
+	road_stroke_last = b
+	var changed: Array = RoadBrush.erase(document, blocks) if road_erasing \
+		else RoadBrush.paint(document, blocks, panel.picked_family, brush_asphalt())
+	if not changed.is_empty():
+		_refresh_after("road")
+
+
+func end_road_stroke() -> void:
+	road_stroke_last = Vector2i(-1, -1)
+	road_erasing = false
+
+
+## Paints a whole drag at once (from the first point to the last, through each in turn): what a
+## drag with the left button does, for tests and fixtures.
+func paint_road(points: Array) -> void:
+	_stroke(points, false)
+
+
+## Erases road along a drag through `points` (what a right-drag does).
+func erase_road(points: Array) -> void:
+	_stroke(points, true)
+
+
+func _stroke(points: Array, erase: bool) -> void:
+	if points.is_empty():
+		return
+	begin_road_stroke(points[0], erase)
+	for p in points.slice(1):
+		continue_road_stroke(p)
+	end_road_stroke()
+
+
+## Zebra crossing: a crossing across the road at `units` (RoadBrush.zebra_at). True when laid.
+func place_zebra(units: Vector2) -> bool:
+	if not RoadBrush.zebra_at(document, units):
+		return false
+	_refresh_after("road")
+	return true
+
+
 ## The size line on the top bar: during a drag the size it would place (size_readout: {w} the
 ## width east-west, {d} the depth north-south, units); with a resizable piece picked, size_hint.
+## With a road brush picked (T-263): road_brush_hint.
 func _update_size_label() -> void:
 	if size_label == null:
+		return
+	if brush_mode() == "paint":
+		size_label.text = CreatorTexts.get_text("road_brush_hint")
 		return
 	if not LevelDocument.is_resizable(_picked()):
 		size_label.text = ""
@@ -771,6 +853,15 @@ func _on_map_input(event: InputEvent) -> void:
 			zoom_by(1.0 / ZOOM_STEP, mb.position)
 		elif mb.button_index == MOUSE_BUTTON_MIDDLE:
 			_dragging = mb.pressed
+		elif mb.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] and brush_mode() != "":
+			# The road brush (T-263): left paints along the drag, right erases; Zebra: a click.
+			var units := screen_to_units(mb.position)
+			if not mb.pressed:
+				end_road_stroke()
+			elif brush_mode() == "zebra" and mb.button_index == MOUSE_BUTTON_LEFT:
+				place_zebra(units)
+			else:
+				begin_road_stroke(units, mb.button_index == MOUSE_BUTTON_RIGHT)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
 			if panel.picked != "" and LevelDocument.is_resizable(panel.picked):
@@ -790,6 +881,8 @@ func _on_map_input(event: InputEvent) -> void:
 		if _dragging:
 			pan_by(mm.relative)
 		hover_units = screen_to_units(mm.position)
+		if road_stroke_last.x >= 0:
+			continue_road_stroke(hover_units)
 		var c := document.cell_at(hover_units)
 		if c != hover_cell:
 			hover_cell = c
@@ -815,11 +908,16 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		return
 	match k.keycode:
 		KEY_DELETE:
-			delete_selected()
+			if brush_mode() != "" and hover_cell.x >= 0:
+				# The road brush (T-263): Del erases the road block under the mouse.
+				erase_road([hover_units])
+			else:
+				delete_selected()
 		KEY_T:
 			style_pick()
 		KEY_ESCAPE:
 			size_drag_start = Vector2i(-1, -1)
+			end_road_stroke()
 			panel.pick("")
 			selected = {}
 			_overlay.queue_redraw()
@@ -907,7 +1005,15 @@ class _Overlay extends Node2D:
 		if doc == null:
 			return
 		var w := 2.0 / maxf(editor.zoom, 0.01)
-		if editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
+		var brush: String = editor.brush_mode()
+		if brush != "" and editor.hover_cell.x >= 0:
+			# The road brush (T-263): the block it paints or erases, or the crossing's row of tiles.
+			var r: Rect2 = RoadBrush.zebra_rect(doc, editor.hover_units) if brush == "zebra" \
+				else RoadBrush.block_rect(doc, RoadBrush.block_at(doc, editor.hover_units))
+			if r.size != Vector2.ZERO and (brush == "zebra" or RoadBrush.block_at(doc, editor.hover_units).x >= 0):
+				var col := Color(1.0, 0.55, 0.45, 0.9) if editor.road_erasing else Color(0.55, 0.85, 1.0, 0.9)
+				_outline(r, col, w)
+		elif editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
 			# Where the piece would go, snapped (LevelSnapping): its art and footprint there (a
 			# piece of any size: the engine-drawn preview, editor.preview_drawing, and footprint).
 			var at: Dictionary = editor.current_placement()

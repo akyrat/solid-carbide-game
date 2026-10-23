@@ -121,10 +121,13 @@ func test_r_turns_m_mirrors_and_h_changes_height() -> void:
 	assert_true(e.mirror_button.disabled, "a barrier has no mirror")
 	e.panel.pick("road")
 	assert_eq(e.panel.picked, "road-y_plain_a0")
+	# T-263: a road is painted with the brush, which turns it itself: R does nothing, M is a0m.
+	assert_true(e.rotate_button.disabled, "the road brush has no turns")
 	_key(e, KEY_R)
-	assert_eq(e.panel.picked, "road-x_plain_a0", "a road tile turns to the tile along x")
+	assert_eq(e.panel.picked, "road-y_plain_a0")
 	_key(e, KEY_M)
-	assert_eq(e.panel.picked, "road-x_plain_a0m", "and mirrors to its a0m tile")
+	assert_eq(e.panel.picked, "road-y_plain_a0m", "M mirrors the asphalt to a0m")
+	assert_eq(e.brush_asphalt(), "a0m")
 	e.panel.pick("boulder")
 	_key(e, KEY_M)
 	assert_eq(e.panel.picked, "boulder-a")
@@ -183,6 +186,8 @@ func test_every_old_pose_is_in_a_family_and_places_the_same_data() -> void:
 	var count := 0
 	for en in LevelDocument.panel_entries():
 		var id := str(en.id)
+		if str(en.kind) == "road":
+			continue  # T-263: roads are painted with the brush (test_road_brush.gd); the tiles stay in the catalogue
 		for v in en.views:
 			for mr in en.mirrors:
 				if LevelDocument.texture_of(id, str(v), bool(mr)).get("view") != v:
@@ -200,7 +205,7 @@ func test_every_old_pose_is_in_a_family_and_places_the_same_data() -> void:
 				assert_eq(str(a.get("item", a.get("cell"))), str(b.get("item", b.get("cell"))), "%s %s %s places the same" % [id, v, mr])
 				count += 1
 	assert_eq(JSON.stringify(old_doc.file_data("x")), JSON.stringify(new_doc.file_data("x")), "the same level data")
-	assert_gt(count, 120)
+	assert_gt(count, 50, "every pose but the road tiles'")
 
 
 # ---- Old levels and new saves -------------------------------------------------------------------

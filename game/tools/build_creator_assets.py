@@ -202,20 +202,23 @@ def prop_entries(props):
 # not buttons. This is the one place that says which entry belongs where.
 GROUPS = ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]
 
-# The asphalt looks of the road tiles (ground_atlas.json names end in one of these). a0m is a0
-# mirrored left-right, so it is a0's mirror. Proposal (until T-263's brush): the visibly cracked
-# PixelLab asphalts (g4, g5, g7) are Cracked road; the plainer ones (a0, g6, g9) are Road.
-ASPHALT_LOOKS = ["a0", "g4", "g5", "g6", "g7", "g9"]
+# The road families are brushes (T-263; scripts/level_creator/road_brush.gd): Road, Centre line and
+# Cracked road paint whole two-tile-wide roads along a drag ("brush": "paint"), and the brush
+# picks every tile itself (straights, corners, T-junctions, crossroads, dead ends); Zebra crossing
+# is clicked across a painted road ("brush": "zebra") and takes that road's asphalt. A look is an
+# asphalt (ground_atlas.json names end in one of these; the member's "asphalt"); a0m is a0
+# mirrored left-right, so it is a0's mirror (M). Proposals: the visibly cracked PixelLab asphalts
+# (g4, g5, g7) are Cracked road; the plainer ones (a0, g6, g9) are Road and Centre line. A member's
+# asset is that asphalt's straight tile along y, the button's and the strip's picture. The single
+# road tiles are no longer in the panel (they stay in the catalogue, so earlier levels draw).
 ROAD_PLAIN_LOOKS = ["a0", "g6", "g9"]
+ROAD_LINE_LOOKS = ["a0", "g6", "g9"]
 ROAD_CRACKED_LOOKS = ["g4", "g5", "g7"]
-# Road tiles along world y are turn 0, along world x turn 1.
-ROAD_TURNS = ["y", "x"]
-# The T-252 road pieces (they carry the centre line), by look, each in its turns (clockwise).
-ROAD_PIECE_LOOKS = [
-    ["corner_ne", "corner_es", "corner_sw", "corner_nw"],
-    ["t_nes", "t_esw", "t_swn", "t_wne"],
-    ["cross"],
-    ["dead_n", "dead_e", "dead_s", "dead_w"],
+# Family id -> (text key, the straight tile kind its pictures show, its asphalt looks).
+ROAD_BRUSHES = [
+    ("road", "piece_road", "plain", ROAD_PLAIN_LOOKS),
+    ("centre-line", "piece_centre_line", "line_r", ROAD_LINE_LOOKS),
+    ("cracked-road", "piece_cracked_road", "plain", ROAD_CRACKED_LOOKS),
 ]
 # Family id -> (group, text key, the catalogue ids in look order) for the families whose members
 # are an entry's own views and mirrors.
@@ -277,42 +280,33 @@ def summarise(fid, group, label, members):
             "heights": [h for h in values("height") if h != ""], "members": members}
 
 
-def road_tile_members(by_id, kinds, asphalts):
-    """Road tiles: one look per (tile kind, asphalt); turn 0 along y, 1 along x; a0m is a0's mirror.
-    Returns the members and the next free look number."""
+def brush_members(by_id, tile_kind, asphalts):
+    """A road brush's looks: one per asphalt (its straight tile along y as the picture), and a0's
+    mirror a0m. Each member names its asphalt."""
     out = []
-    look = 0
-    for kind in kinds:
-        for a in asphalts:
-            found = False
-            for mirror, suffix in ((False, a), (True, a + "m")):
-                for turn, axis in enumerate(ROAD_TURNS):
-                    aid = "road-%s_%s_%s" % (axis, kind, suffix)
-                    if aid in by_id:
-                        out.append(member(aid, "iso", False, look, turn, flip=mirror))
-                        found = True
-            if found:
-                look += 1
-    return out, look
+    for look, a in enumerate(asphalts):
+        for flip, suffix in ((False, a), (True, a + "m")):
+            aid = "road-y_%s_%s" % (tile_kind, suffix)
+            if aid in by_id:
+                m = member(aid, "iso", False, look, 0, flip=flip)
+                m["asphalt"] = suffix
+                out.append(m)
+    return out
+
+
+def brush_family(fid, label, brush, members):
+    f = summarise(fid, "roads", label, members)
+    f["brush"] = brush
+    return f
 
 
 def family_entries(entries):
     by_id = {e["id"]: e for e in entries}
     fams = []
-    plain, _ = road_tile_members(by_id, ["plain"], ROAD_PLAIN_LOOKS)
-    fams.append(summarise("road", "roads", "piece_road", plain))
-    line, look = road_tile_members(by_id, ["line_r", "line_l"], ASPHALT_LOOKS)
-    for turns in ROAD_PIECE_LOOKS:
-        for turn, name in enumerate(turns):
-            line.append(member("road-piece_" + name, "iso", False, look, turn))
-        look += 1
-    if "road-road_tile" in by_id:
-        line.append(member("road-road_tile", "iso", False, look, 0))
-    fams.append(summarise("centre-line", "roads", "piece_centre_line", line))
-    zebra, _ = road_tile_members(by_id, ["zebra", "zebra_e0", "zebra_e1"], ASPHALT_LOOKS)
-    fams.append(summarise("zebra-crossing", "roads", "piece_zebra_crossing", zebra))
-    cracked, _ = road_tile_members(by_id, ["plain"], ROAD_CRACKED_LOOKS)
-    fams.append(summarise("cracked-road", "roads", "piece_cracked_road", cracked))
+    for fid, label, tile_kind, asphalts in ROAD_BRUSHES:
+        fams.append(brush_family(fid, label, "paint", brush_members(by_id, tile_kind, asphalts)))
+    zebra = member("road-y_zebra_a0", "iso", False, 0, 0)
+    fams.append(brush_family("zebra-crossing", "piece_zebra_crossing", "zebra", [zebra]))
     for fid, group, label, pairs in HEIGHT_FAMILIES:
         ms = []
         for height, aid in pairs:

@@ -307,6 +307,17 @@ func _read_cells() -> void:
 		cells.append(out)
 
 
+## Sets many ground and road tiles at once (cell -> catalogue id; cells outside the map are left
+## out), then writes data.ground and ground_rows once (the road brush, T-263).
+func set_cells(changes: Dictionary) -> void:
+	for c in changes:
+		var cell: Vector2i = c
+		if cell.x >= 0 and cell.y >= 0 and cell.x < cols() and cell.y < rows():
+			cells[cell.y][cell.x] = str(changes[c])
+	_write_cells()
+	refresh_ground_rows()
+
+
 ## Writes `cells` into data.ground (tiles used, and an index per cell).
 func _write_cells() -> void:
 	var tiles: Array = []
