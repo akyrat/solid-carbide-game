@@ -1,7 +1,7 @@
 ---
 id: T-266
 title: The windshield wiper pushes minions about twice the car's length
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Coursework
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the wiper pushes minions 6 units at its first level.
+
+### 2026-10-23, In progress → In QA
+
+Wiper push built: 6 units at tier 1, 9 at the last tier (data only). The tier 5 card's numbers now read 6 to 9. Sent to QA.
 
 ## Result notes
 
