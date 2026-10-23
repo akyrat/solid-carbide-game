@@ -255,6 +255,7 @@ func _ready() -> void:
 	weapons.name = "Weapons"
 	add_child(weapons)
 	weapons.bind(self)
+	hud.bind_weapons(weapons)
 	# The level-up screen (T-052) opens when the car drives over the gift pack's
 	# package (T-144, gift_drops below), which pauses the run for the weapon
 	# choice; a level-up itself no longer pauses (the switch stays off).

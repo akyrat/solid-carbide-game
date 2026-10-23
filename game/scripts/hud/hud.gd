@@ -1,7 +1,8 @@
 class_name Hud
 extends CanvasLayer
 ## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
-## the car's health bar upright at the top left under "Car Health", the coins
+## the car's health bar upright at the top left (T-276: 72 x 320, the heart
+## under it, the weapon icons beside it), the coins
 ## at the top right, and the likes bar lying across the bottom centre with the
 ## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
 ## (hidden at no combo, T-116). The HUD only shows values: the run
@@ -18,7 +19,10 @@ const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 const MARGIN := 16
 ## The health bar (T-113): upright, filling from the bottom up.
-const HEALTH_BAR_SIZE := Vector2(24, 160)
+const HEALTH_BAR_SIZE := Vector2(72, 320)
+## T-276: the weapon icons start this far right of the bar, and the heart sits this far under it.
+const WEAPON_ICONS_GAP := 12
+const HEART_UNDER_GAP := 6
 ## The likes bar (T-113): horizontal, this share of the screen's width.
 const LIKES_BAR_WIDTH := 0.5
 const LIKES_BAR_HEIGHT := 16.0
@@ -38,7 +42,6 @@ const HEART_SCALE := 2
 const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
-const TEXT_HEALTH := "Car Health"
 const TEXT_LIKES := "Likes"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
@@ -60,7 +63,6 @@ const AIRTIME_OFFSET := Vector2(70, -10)
 const DRIFT_OFFSET := Vector2(70, 30)
 
 var timer_label: Label
-var health_label: Label
 var health_bar: ProgressBar
 var likes_label: Label
 var likes_bar: ProgressBar
@@ -73,8 +75,12 @@ var heart_box: Control
 ## The combo counter (T-083), centred above the likes row. Hidden at no
 ## combo (T-116): see show_combo().
 var combo_label: Label
-## The top-left area: "Car Health" and the health bar (T-113).
+## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
 var left_column: Control
+## The red heart centred under the health bar (T-276; the likes bar's heart picture).
+var health_heart: TextureRect
+## The car's weapons as icons beside the health bar (T-276).
+var weapon_icons: WeaponIcons
 ## A full-screen area holding the likes bar, its row and the combo counter.
 var bottom_area: Control
 ## The heart and "Likes", at the left end of the row above the likes bar.
@@ -178,21 +184,31 @@ func _build_left() -> void:
 	left_column.position = Vector2(MARGIN, MARGIN)
 	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(left_column)
-	health_label = _make_label("HealthLabel", TEXT_HEALTH)
-	left_column.add_child(health_label)
 	health_bar = _make_bar("HealthBar", HEALTH_COLOR, ProgressBar.FILL_BOTTOM_TO_TOP)
 	left_column.add_child(health_bar)
+	health_heart = _make_heart()
+	health_heart.name = "HealthHeart"
+	left_column.add_child(health_heart)
+	weapon_icons = WeaponIcons.new()
+	left_column.add_child(weapon_icons)
 	_layout_left()
-	health_label.resized.connect(_layout_left)
 
 
-## "Car Health" on one line, then the upright health bar directly under it,
-## both starting at the same left edge.
+## The upright health bar at the corner, the heart centred directly under it,
+## and the weapon icons' column to its right, starting at the bar's top.
 func _layout_left() -> void:
-	health_label.size = health_label.get_combined_minimum_size()
-	health_label.position = Vector2.ZERO
 	health_bar.size = HEALTH_BAR_SIZE
-	health_bar.position = Vector2(0.0, health_label.size.y + LABEL_GAP)
+	health_bar.position = Vector2.ZERO
+	health_heart.size = health_heart.custom_minimum_size
+	health_heart.position = Vector2(
+		floorf((HEALTH_BAR_SIZE.x - health_heart.size.x) / 2.0),
+		HEALTH_BAR_SIZE.y + HEART_UNDER_GAP)
+	weapon_icons.position = Vector2(HEALTH_BAR_SIZE.x + WEAPON_ICONS_GAP, 0.0)
+
+
+## Shows the weapon rack's weapons as icons (T-276); the run scene calls it once the rack is bound.
+func bind_weapons(rack: Node) -> void:
+	weapon_icons.setup(rack)
 
 
 func _build_bottom() -> void:
