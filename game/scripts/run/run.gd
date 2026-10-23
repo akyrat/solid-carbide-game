@@ -126,6 +126,9 @@ var boost_effect: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
+## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
+## every map; it pays the trick through state.add_needle_trick().
+var needle: ThreadTheNeedle
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
 ## The camera options (task T-123): where the camera is and its size. Off by
@@ -375,6 +378,18 @@ func _build_world() -> void:
 	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
 	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
+	# Thread the needle (T-272): the level's pairs of obstacles, a faint marker across each gap.
+	needle = ThreadTheNeedle.new(map.layout, ComboData.new().needle_rules())
+	needle.threaded.connect(func(_pair_id: String) -> void: state.add_needle_trick())
+	if not needle.gates.is_empty():
+		var hf := Callable()
+		var df := Callable()
+		if elevation != null:
+			var lay: Node2D = elevation
+			hf = func(units: Vector2) -> float: return lay.ground_height.height_at(units)
+			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
+		needle.build_markers(map, hf, df)
+	car.stepped.connect(_on_car_needle_step)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
@@ -391,8 +406,16 @@ func current_layout_path() -> String:
 
 
 ## The car hit a wall, building, map edge or boulder: a collision for the combo.
-func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+func _on_car_hit_obstacle(collider: Object, shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+	if needle != null:
+		needle.touched(collider, shape_index)  # T-272: a touch voids a pass through a pair
 	state.collision()
+
+
+## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).
+func _on_car_needle_step() -> void:
+	if needle != null and not needle.gates.is_empty():
+		needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 
 
 ## Feeds the car's drift state to the run's likes after each physics step.
