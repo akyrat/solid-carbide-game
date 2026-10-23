@@ -1,7 +1,7 @@
 ---
 id: T-281
 title: The full test suite crashes (exit 139) in the combo popup test about two runs in three
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, game/tools/run_tests.sh, game/tests/unit/hud/test_combo_broken_popup.gd, tasks/T-276-health-bar-heart-weapon-icons.md]
 files_expected_to_change: [game/tests/, game/tools/run_tests.sh, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,9 +39,9 @@ Built from `master` on its own branch and folder, as `tasks/README.md` ("Git bra
 
 ## Acceptance criteria
 
-- [ ] The result notes say in plain words what caused the crash and what changed; no test is skipped, removed or loosened (`git diff`) (QA: pass / fail)
-- [ ] The full GUT suite exits 0 on five runs in a row, and the HUD folder alone (`-gdir=res://tests/unit/hud`) exits 0 on five runs in a row (QA: pass / fail)
-- [ ] `game/README.md` notes the fix where it describes running the tests; all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes say in plain words what caused the crash and what changed; no test is skipped, removed or loosened (`git diff`) (QA: pass; diff only reorders the two checks in one assertion, same outcomes, nothing skipped/removed/loosened)
+- [ ] The full GUT suite exits 0 on five runs in a row, and the HUD folder alone (`-gdir=res://tests/unit/hud`) exits 0 on five runs in a row (QA: pass; full suite 5/5 exit 0, 1365/1365 each; HUD folder 5/5 exit 0, 101/101 each)
+- [ ] `game/README.md` notes the fix where it describes running the tests; all Python tool tests pass (QA: pass; README section added under Running the tests; tools 451 OK, game/tools 395 OK with 1 skipped)
 
 ## Updates
 
@@ -75,3 +75,4 @@ Game Loop Agent, 2026-10-23.
 - `python -m unittest discover -s game/tools -p "test_*.py"`: 395 tests, OK (1 skipped, which was already skipped before).
 
 Documents affected: `game/README.md`.
+- 2026-10-23, in-qa → done: QA passed; tooling only, merges straight after QA
