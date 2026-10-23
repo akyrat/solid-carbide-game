@@ -622,6 +622,8 @@ static func _rect(d: Dictionary) -> Rect2:
 
 ## The piece's footprint in units (a boulder's square around its circle).
 func piece_rect(piece: Dictionary) -> Rect2:
+	if str(piece.get("kind", "")) == "spawn":
+		return Rect2(LevelSpawn.position_of(data) - Vector2(CELL, CELL) / 2.0, Vector2(CELL, CELL))
 	if piece.has("cell"):
 		return Rect2(cell_corner(piece.cell), Vector2(CELL, CELL))
 	var it: Dictionary = piece.item
@@ -636,8 +638,8 @@ func piece_rect(piece: Dictionary) -> Rect2:
 ## goes with it; the other pairs keep their obstacles (their refs written again, so a boulder of a
 ## copy with several keeps its pair when another boulder of the copy goes).
 func delete(piece: Dictionary) -> bool:
-	if piece.is_empty():
-		return false
+	if piece.is_empty() or str(piece.get("kind", "")) == "spawn":
+		return false  # a level always has its spawn point (T-280)
 	if not pairs().is_empty() and str(piece.get("kind", "")) in ["boulder", "prop"]:
 		var before := _resolved_pairs()
 		var done := _delete(piece)
@@ -679,6 +681,51 @@ func _delete(piece: Dictionary) -> bool:
 			if _erase_same(_list("props"), piece.item):
 				return true
 	return false
+
+
+# ---- The spawn point (T-280) --------------------------------------------------------------------
+
+## Gives the level its spawn point when it has none (a new level, or one saved before T-280): the
+## map's centre, the run's own heading. Always exactly one.
+func ensure_spawn() -> void:
+	if not (data.get("spawn") is Dictionary and LevelSpawn.has_spawn(data)):
+		var c := LevelSpawn.centre_of(data)
+		data["spawn"] = {"x": c.x, "y": c.y, "heading": LevelSpawn.DEFAULT_HEADING}
+
+
+## The spawn point {x, y, heading} (the data's own dictionary, so a selection stays the same piece).
+func spawn() -> Dictionary:
+	ensure_spawn()
+	return data.spawn
+
+
+## The spawn point as a selectable piece: {kind: "spawn", item}.
+func spawn_piece() -> Dictionary:
+	return {"kind": "spawn", "item": spawn()}
+
+
+## "" when the car may start at `units`, else LevelSpawn.OFF_MAP or BLOCKED.
+func spawn_problem(units: Vector2) -> String:
+	return LevelSpawn.problem(data, units)
+
+
+## Moves the spawn point to the middle of the cell holding `units`. Returns "" when moved, else the
+## problem (the spawn point stays where it was).
+func move_spawn(units: Vector2) -> String:
+	var at := LevelSpawn.snap(data, units)
+	var why := LevelSpawn.problem(data, at)
+	if why == "":
+		var s := spawn()
+		s["x"] = at.x
+		s["y"] = at.y
+	return why
+
+
+## Turns the spawn point's heading to the next one (R). Returns the heading now.
+func turn_spawn() -> int:
+	var s := spawn()
+	s["heading"] = LevelSpawn.turned(int(s.get("heading", LevelSpawn.DEFAULT_HEADING)))
+	return int(s.heading)
 
 
 # ---- Pairs of obstacles, for thread the needle (T-272) -----------------------------------------
@@ -828,6 +875,7 @@ func file_data(level_name: String) -> Dictionary:
 		data["map"] = keep
 	for key in ["buildings", "pattern_copies", "platforms", "ramps"]:
 		_list(key)
+	ensure_spawn()
 	if not (data.get("ground_rows") is Array) or not (data.get("legend") is Dictionary):
 		refresh_ground_rows()
 	return data.duplicate(true)

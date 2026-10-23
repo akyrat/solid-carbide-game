@@ -322,8 +322,8 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	# T-272: the rework's line with "P: pair." added (controls_hint_pairs).
-	hint_label.text = CreatorTexts.get_text("controls_hint_pairs")
+	# T-280: the line with moving the start added (controls_hint_spawn).
+	hint_label.text = CreatorTexts.get_text("controls_hint_spawn")
 	# T-262: the longer line shrinks its font to fit a narrow window instead of running off its edge.
 	map_view.resized.connect(_fit_hint)
 	main.add_child(hint_label)
@@ -362,6 +362,7 @@ func _fit_hint() -> void:
 
 func _load_document() -> void:
 	document = LevelDocument.new(level_data)
+	document.ensure_spawn()  # T-280: every level has its spawn point
 	selected = {}
 	_show_name()
 	_show_message("")
@@ -490,6 +491,11 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 			document.delete(piece)
 			_show_message(CreatorTexts.get_text("overlap_message"))
 			return {}
+	if str(piece.kind) in ["building", "boulder", "prop"] and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
+		# T-280: a piece never goes over the start: the car must always be able to stand there.
+		document.delete(piece)
+		_show_message(CreatorTexts.get_text("spawn_blocked"))
+		return {}
 	last_problem = ""
 	_show_message("")
 	_refresh_after(str(piece.kind))
@@ -834,7 +840,10 @@ func _show_message(text: String) -> void:
 
 ## Selects the piece drawn on top at `units` (LevelDocument.piece_at).
 func select_at(units: Vector2) -> Dictionary:
+	if spawn_cell_has(units):
+		return select_spawn()
 	selected = document.piece_at(units)
+	_clear_spawn_hint()
 	_update_pose_controls()
 	_overlay.queue_redraw()
 	return selected
@@ -842,6 +851,9 @@ func select_at(units: Vector2) -> Dictionary:
 
 ## Removes a piece from the data and the drawing. Returns true when something was removed.
 func delete_piece(piece: Dictionary) -> bool:
+	if str(piece.get("kind", "")) == "spawn":
+		_show_message(CreatorTexts.get_text("spawn_no_delete"))  # T-280: a level always has one
+		return false
 	if not document.delete(piece):
 		return false
 	if not selected.is_empty() and _same_piece(selected, piece):
@@ -854,6 +866,9 @@ func delete_piece(piece: Dictionary) -> bool:
 ## The Delete button and the Del key: removes the selected piece.
 func delete_selected() -> void:
 	if selected.is_empty():
+		return
+	if str(selected.get("kind", "")) == "spawn":
+		delete_piece(selected)  # refused with its message; the start stays selected
 		return
 	var piece := selected
 	selected = {}
@@ -935,6 +950,9 @@ func height_pick() -> Dictionary:
 ## Rotate (R): the picked piece's next turn (its next view, or for a road tile the tile along the
 ## other axis). Returns the view now.
 func rotate_pick() -> String:
+	if _picked() == "" and str(selected.get("kind", "")) == "spawn":
+		turn_spawn()  # T-280: R turns the selected start's heading
+		return pick_view
 	if panel != null and panel.picked_family != "":
 		step_pick("turn")
 		return pick_view
@@ -1026,6 +1044,80 @@ func _update_pose_controls() -> void:
 	_update_size_label()
 
 
+# ---- The spawn point (T-280) --------------------------------------------------------------------
+
+## True while the spawn point is being dragged (from a left press on it to the release).
+var spawn_dragging := false
+## Where the dragged spawn point would land (the cell's middle under the mouse), and why it can't.
+var spawn_drop := Vector2.ZERO
+var spawn_drop_problem := ""
+## The spawn marker's colours (proposals; never Redgull red).
+const SPAWN_COLOR := Color(0.35, 0.95, 0.45, 0.95)
+const SPAWN_REFUSED_COLOR := Color(0.75, 0.75, 0.75, 0.8)
+const SPAWN_OUTLINE := Color(0.05, 0.1, 0.05, 1.0)
+
+
+## True when `units` is in the spawn point's cell.
+func spawn_cell_has(units: Vector2) -> bool:
+	return document != null and document.piece_rect(document.spawn_piece()).has_point(units)
+
+
+## Selects the spawn point (a click on it): the top bar shows spawn_hint.
+func select_spawn() -> Dictionary:
+	selected = document.spawn_piece()
+	_show_message(CreatorTexts.get_text("spawn_hint"))
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return selected
+
+
+func _clear_spawn_hint() -> void:
+	if message_label != null and message_label.text == CreatorTexts.get_text("spawn_hint"):
+		_show_message("")
+
+
+## Moves the spawn point to the cell under `units`, at that surface's height. A cell the car can't
+## stand in (a building, an obstacle, off the map) is refused with spawn_blocked and the point
+## stays. Returns true when it moved.
+func move_spawn(units: Vector2) -> bool:
+	var why := document.move_spawn(units)
+	if why != "":
+		_show_message(CreatorTexts.get_text("spawn_blocked"))
+		_overlay.queue_redraw()
+		return false
+	_show_message(CreatorTexts.get_text("spawn_hint") if str(selected.get("kind", "")) == "spawn" else "")
+	_overlay.queue_redraw()
+	return true
+
+
+## R: turns the start's heading to the next of the eight. Returns the heading (degrees).
+func turn_spawn() -> int:
+	var h := document.turn_spawn()
+	_overlay.queue_redraw()
+	return h
+
+
+func begin_spawn_drag() -> void:
+	select_spawn()
+	spawn_dragging = true
+	spawn_drop = LevelSpawn.position_of(level_data)
+	spawn_drop_problem = ""
+
+
+func update_spawn_drag(units: Vector2) -> void:
+	spawn_drop = LevelSpawn.snap(level_data, units)
+	spawn_drop_problem = document.spawn_problem(spawn_drop)
+	_overlay.queue_redraw()
+
+
+## Drops the dragged spawn point at `units`. Returns true when it moved.
+func end_spawn_drag(units: Vector2) -> bool:
+	spawn_dragging = false
+	var moved := move_spawn(units)
+	_overlay.queue_redraw()
+	return moved
+
+
 # ---- Camera and input ---------------------------------------------------------------------------
 
 ## A point in the map view (its local pixels) -> map units.
@@ -1094,7 +1186,9 @@ func _on_map_input(event: InputEvent) -> void:
 				begin_road_stroke(units, mb.button_index == MOUSE_BUTTON_RIGHT)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
-			if panel.picked != "" and LevelDocument.is_resizable(panel.picked):
+			if panel.picked == "" and not pair_mode and spawn_cell_has(units):
+				begin_spawn_drag()  # T-280: drag the start
+			elif panel.picked != "" and LevelDocument.is_resizable(panel.picked):
 				begin_size_drag(units)
 			elif panel.picked != "":
 				place_asset(panel.picked, units)
@@ -1102,6 +1196,8 @@ func _on_map_input(event: InputEvent) -> void:
 				pair_click(units)  # T-272
 			else:
 				select_at(units)
+		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and spawn_dragging:
+			end_spawn_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
 			end_size_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
@@ -1117,7 +1213,9 @@ func _on_map_input(event: InputEvent) -> void:
 		hover_units = screen_to_units(mm.position)
 		if road_stroke_last.x >= 0:
 			continue_road_stroke(hover_units)
-		var c := document.cell_at(hover_units)
+		if spawn_dragging:
+			update_spawn_drag(hover_units)
+		var c :=document.cell_at(hover_units)
 		if c != hover_cell:
 			hover_cell = c
 			_overlay.queue_redraw()
@@ -1273,9 +1371,51 @@ class _Overlay extends Node2D:
 				if not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
-		if not editor.selected.is_empty():
+		if not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
 		_draw_pairs(doc, w)
+		_draw_spawn(doc, w)
+
+	## T-280: the spawn point, always: a car-shaped arrow on its cell (turned to the heading), the
+	## label above, at the height of the surface it stands on. Dragged: a ghost at the drop cell.
+	func _draw_spawn(doc: LevelDocument, w: float) -> void:
+		var s := LevelSpawn.of(doc.data)
+		var at := Vector2(s.x, s.y)
+		var refused := false
+		if editor.spawn_dragging:
+			at = editor.spawn_drop
+			refused = editor.spawn_drop_problem != ""
+		var h := doc.height_at(at)
+		var col: Color = editor.SPAWN_REFUSED_COLOR if refused else editor.SPAWN_COLOR
+		var heading := deg_to_rad(float(s.heading))
+		var fwd := Vector2(cos(heading), sin(heading))
+		var side := Vector2(-fwd.y, fwd.x)
+		var cell := Rect2(at - Vector2.ONE, Vector2(2, 2))
+		var ring := PackedVector2Array()
+		for q in [cell.position, Vector2(cell.end.x, cell.position.y), cell.end, Vector2(cell.position.x, cell.end.y)]:
+			ring.append(_at(q, h))
+		draw_colored_polygon(ring, Color(col, 0.35))
+		ring.append(ring[0])
+		draw_polyline(ring, editor.SPAWN_OUTLINE, w * 3.0)
+		draw_polyline(ring, col, w * 1.5)
+		if str(editor.selected.get("kind", "")) == "spawn":
+			draw_polyline(ring, Color(1.0, 0.85, 0.3, 1.0), w * 3.0)  # the selection outline, at the point's height
+		# The arrow: a shaft and a head ahead of the cell's middle.
+		var tip := _at(at + fwd * 4.4, h)
+		var head_a := _at(at + fwd * 2.2 + side * 1.7, h)
+		var head_b := _at(at + fwd * 2.2 - side * 1.7, h)
+		var tail := _at(at - fwd * 2.2, h)
+		draw_line(_at(at + fwd * 2.2, h), tail, editor.SPAWN_OUTLINE, w * 7.0)
+		draw_line(_at(at + fwd * 2.2, h), tail, col, w * 4.0)
+		draw_colored_polygon(PackedVector2Array([tip, head_a, head_b]), col)
+		draw_polyline(PackedVector2Array([tip, head_a, head_b, tip]), editor.SPAWN_OUTLINE, w * 2.0)
+		var text := CreatorTexts.get_text("spawn_label")
+		var font := ThemeDB.fallback_font
+		var fs := int(clampf(16.0 / maxf(editor.zoom, 0.01), 16.0, 400.0))
+		var size := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+		var label_at := _at(at, h) + Vector2(-size.x / 2.0, -2.2 * editor.PX_PER_UNIT - 4.0 * w)
+		draw_string_outline(font, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, maxi(fs / 5, 2), editor.SPAWN_OUTLINE)
+		draw_string(font, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
 
 	## T-272: each pair as a dashed line across the gap and a ring round each of its obstacles, at
 	## the height they stand on; the pair tool's first obstacle ringed thicker.

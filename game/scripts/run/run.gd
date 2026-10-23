@@ -351,9 +351,16 @@ func _build_world() -> void:
 
 	car = CarScript.new()
 	car.name = "Car"
-	car.model.x = START_POSITION_UNITS.x
-	car.model.y = START_POSITION_UNITS.y
-	car.model.rotation = START_ROTATION
+	var start := START_POSITION_UNITS
+	var start_rotation := START_ROTATION
+	if LevelSpawn.has_spawn(map.layout):
+		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
+		# height there (car.ground below), facing its heading. The game's own map has none.
+		start = LevelSpawn.position_of(map.layout)
+		start_rotation = LevelSpawn.rotation_of(map.layout)
+	car.model.x = start.x
+	car.model.y = start.y
+	car.model.rotation = start_rotation
 	physics_world.add_child(car)
 	if elevation != null:
 		car.ground = elevation.ground_height  # the car's height on the rooftops and ramps

@@ -20,6 +20,7 @@ def small_level():
         "platforms": [{"id": "roof", "x": 0.0, "y": -8.0, "w": 6.0, "h": 6.0, "height": 3.0}],
         "ramps": [{"id": "ramp", "platform": "roof", "side": "south", "x": 2.0, "y": -2.0, "w": 2.0,
                    "h": 4.0, "bottom_height": 0.0, "top_height": 3.0}],
+        "spawn": {"x": -5.0, "y": 1.0, "heading": 270},
     }
 
 
@@ -222,6 +223,63 @@ class TestCheckPairs(unittest.TestCase):
             res = run_tool(p)
         self.assertEqual(res.returncode, 1, res.stdout)
         self.assertIn("no such obstacle", res.stdout)
+
+
+class TestSpawn(unittest.TestCase):
+    """T-280: every level has a spawn point a car can stand on."""
+
+    def level(self, **spawn):
+        d = small_level()
+        d["spawn"].update(spawn)
+        return d
+
+    def problems(self, d):
+        return [p for p in c.check_level(d) if p.startswith("spawn")]
+
+    def test_valid_spawn_points(self):
+        self.assertEqual(self.problems(self.level()), [])
+        for h in range(0, 360, 45):
+            self.assertEqual(self.problems(self.level(heading=h)), [])
+
+    def test_a_spawn_on_a_rooftop_or_a_ramp_is_fine(self):
+        self.assertEqual(self.problems(self.level(x=3.0, y=-5.0)), [])  # on the rooftop
+        self.assertEqual(self.problems(self.level(x=3.0, y=-1.0)), [])  # on the ramp
+
+    def test_a_missing_spawn_is_refused(self):
+        d = small_level()
+        del d["spawn"]
+        self.assertTrue(any("spawn: missing" in p for p in c.check_level(d)))
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(d), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual(res.returncode, 1, res.stdout)
+        self.assertIn("spawn: missing", res.stdout)
+
+    def test_the_games_own_map_needs_none(self):
+        self.assertEqual(run_tool(SAMPLE).returncode, 0)
+        d = small_level()
+        del d["spawn"]
+        self.assertEqual(c.check_level(d, require_spawn=False), [])
+
+    def test_refused_off_the_map_or_in_a_building_prop_or_boulder(self):
+        self.assertTrue(any("outside the map" in p for p in self.problems(self.level(x=11.0))))
+        self.assertTrue(any("outside the map" in p for p in self.problems(self.level(y=-10.5))))
+        self.assertTrue(any("building" in p for p in self.problems(self.level(x=-6.0, y=-6.0))))
+        d = self.level(x=-7.0, y=-3.0)  # the cell beside the building (a clear cell) is fine
+        self.assertEqual(self.problems(d), [])
+        d = self.level(x=6.0, y=6.0)
+        self.assertTrue(any("boulder" in p for p in self.problems(d)))
+        d = self.level(x=-1.0, y=5.0)
+        d["props"] = [{"id": "prop-1", "asset": "prop-barrier", "rotation": "north", "x": -2.0, "y": 4.0, "w": 2.0, "h": 2.0}]
+        self.assertTrue(any("prop" in p and "can't stand" in p for p in self.problems(d)))
+
+    def test_refused_for_a_bad_heading_or_missing_numbers(self):
+        self.assertTrue(any("heading" in p for p in self.problems(self.level(heading=30))))
+        self.assertTrue(any("heading" in p for p in self.problems(self.level(heading="north"))))
+        d = small_level()
+        d["spawn"] = {"y": 1.0, "heading": 0}
+        self.assertTrue(any("needs numbers" in p for p in self.problems(d)))
 
 
 if __name__ == "__main__":
