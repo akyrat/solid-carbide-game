@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -65,6 +65,10 @@ Upright health bar 72x320, label gone, heart under it, weapon icons column with 
 ### 2026-10-23, In progress
 
 QA failed 1 of 4: the full test suite crashes every time on this branch (in the combo popup test). Sent back to the UI agent to fix, then QA round 2.
+
+### 2026-10-23, In progress → In QA
+
+No branch cause found: master crashes the same way (2 of 3 runs of the HUD tests); 3 full runs here passed. Sent to QA round 2.
 
 ## Result notes
 
