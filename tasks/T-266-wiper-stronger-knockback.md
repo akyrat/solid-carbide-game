@@ -1,7 +1,7 @@
 ---
 id: T-266
 title: The windshield wiper pushes minions about twice the car's length
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/README.md, tasks/T-170-the-windshield-wiper-sweeps-in-front.md]
 files_expected_to_change: [game/data/weapons.json, game/tests/, docs/weapons.md, game/README.md, art-archive/T-266/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,9 +37,9 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] `weapons.json` has the wiper's tier-1 push at 6 units, the tier multipliers unchanged (final 9); a test shows a minion hit at tier 1 ends about 6 units from where it was, and the kaiju is not pushed (QA: pass / fail)
-- [ ] A pushed minion still stops at buildings and boulders and drops off ledges as before (tests) (QA: pass / fail)
-- [ ] Weapons, Content, and `game/README.md` give the new numbers; the GIF is in `art-archive/T-266/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] `weapons.json` has the wiper's tier-1 push at 6 units, the tier multipliers unchanged (final 9); a test shows a minion hit at tier 1 ends about 6 units from where it was, and the kaiju is not pushed (QA: pass; json 6, tiers 5/8 = 9, new test measures about 6 units, kaiju test passes)
+- [ ] A pushed minion still stops at buildings and boulders and drops off ledges as before (tests) (QA: pass; existing wall, boulder and ledge knockback tests pass at the new size, full GUT green)
+- [ ] Weapons, Content, and `game/README.md` give the new numbers; the GIF is in `art-archive/T-266/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; docs and README show 6 and 9, GIF and contact sheet present and show minions flung out, GUT 1366/1366, Python 451 and 395 OK; tier 5 card text changed only 1.5/2.25 to 6/9 and matches the data)
 
 The board's review: pick up the wiper and watch minions fly.
 Board review files: the GIF in `art-archive/T-266/screenshots/`.
