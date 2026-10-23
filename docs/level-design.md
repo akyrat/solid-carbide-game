@@ -327,6 +327,21 @@ Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it 
 ![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
 ![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
 
+### Level creator: the spawn point
+
+Built in task T-280 from Decisions, "The car's spawn point", with T-279's labels. The choices below are proposals for the playtest.
+
+- **The marker:** a green arrow on the point's cell, turned to the car's starting heading, with a dark outline and the label "Start" above it, drawn in code above every piece so nothing hides it, lifted to the surface it stands on (a rooftop's or ramp's height). Never Redgull red. Selected, it gets the yellow selection outline and the top bar shows its hint.
+- **Moving it:** press on it and drag; a ghost shows the cell under the mouse (grey when the car can't stand there) and the point snaps to that cell's middle on release. Anywhere the car can stand: the street, a rooftop or a ramp. A plain click only selects it. (The decision's "select it and click where it should go" is not built; the drag does the job.)
+- **Where the car can stand:** inside the map and clear of every building, obstacle (barrier, cones, crates and the other props) and boulder by 1 unit; the cell beside one is fine. Anywhere else is refused with "Can't start here: it's blocked." and the point stays where it was. A building or obstacle placed over it is refused with the same message.
+- **Turning it:** R with it selected steps the heading round eight directions (45 degrees each); a new level starts facing the way the run always did.
+- **Never deleted:** Del shows "The start can't be deleted." and it stays.
+- **Saved and used:** the level file's `spawn` ({x, y, heading}); a run started from the creator puts the car there, at the ground's height there, facing that way. The level check refuses a level whose spawn point is missing or not where a car can stand. The game's own map has none and starts the car as before.
+
+![A new level with its spawn point at the centre](../art-archive/T-280/screenshots/editor_new.png)
+![The spawn point moved onto a rooftop, turned to face the ramp and selected](../art-archive/T-280/screenshots/editor_roof.png)
+![A drop on a building refused with the message; the point stays on the rooftop](../art-archive/T-280/screenshots/editor_refused.png)
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".

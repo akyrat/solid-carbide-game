@@ -1,7 +1,7 @@
 ---
 id: T-280
 title: "Level creator: a spawn point every level has, always visible and movable"
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -54,6 +54,20 @@ Board review files: the screenshots and GIF in `art-archive/T-280/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Blocked → In progress
+
+Started on T-272's branch: a spawn point every level has, always visible and movable.
+
 ## Result notes
 
-Written by the agent when it finishes.
+**Built (Level/Challenge Agent).** Every level has one spawn point, always drawn, movable, turnable, never deleted, saved, and used by a run.
+
+- **Data** (`scripts/level/level_spawn.gd`, `LevelSpawn`, one place for the rules): the level file's `spawn` is `{x, y, heading}`: a 2 x 2 cell's middle (units) and a heading in degrees (the car model's rotation; 270 is the run's own start). No height is stored: the car stands on the ground there. Where a car can stand: inside the map and 1 unit clear of every building, prop and boulder (the cell beside one is fine); rooftops and ramps are fine.
+- **Editor** (`editor.gd`, `level_document.gd`): `ensure_spawn` on open and on save, so a new level and an old one open with it at the centre cell. Marker (`_Overlay._draw_spawn`): a green arrow on its cell turned to the heading, label `spawn_label`, dark outline, lifted to the surface height, at z 4000 above the pieces; yellow outline when selected. Drag it (`begin_spawn_drag`, ghost in grey when refused, drop snaps to a cell middle). Refused with `spawn_blocked` in a building, on an obstacle or off the map; it stays. R with it selected turns it round eight headings. Del shows `spawn_no_delete`. A click selects it and shows `spawn_hint`. Hint line is `controls_hint_spawn`.
+- **Run** (`run.gd`): the car starts at the layout's `spawn` (place, heading, and the ground's height there); the game's own map has none and starts as before. **Level check** (`check_level.py`, `check_spawn`): refuses a level without a valid spawn point (missing, bad heading, off the map, on a building, prop or boulder); the game's own map files in `game/data/level/` are exempt.
+- **Proposals and things to know for the playtest:** (1) eight headings, 1 unit clearance, green marker colours; (2) "select it and click where it should go" is NOT built: a click only selects, a drag moves (say if you want click-to-place too); (3) a piece placed over the start is refused (undone) with `spawn_blocked`, whose wording ("Can't start here") is a little off for that case; I wrote no text of my own; (4) the old tests that placed pieces at the map centre now start with the spawn moved out of the way (`level_data.spawn` at 111, 111); five hint assertions moved to `controls_hint_spawn`; (5) opening the game's map in the creator adds a spawn in memory only (a save writes it into the new level file, not the game's map).
+- **Tests:** new `tests/unit/level_creator/test_creator_spawn.gd` (23: new and old level open with it at the centre, label and hint line, drawing while dragged, select, drag, mouse events, onto a rooftop and a ramp, refusals in a building, on obstacles and off the map, next to a building allowed, R through eight headings, Del, a piece over it refused, saved/reopened/checked, check_level refuses a missing or bad one, a run starts the car at its place, height 3 and heading, an old level starts at the centre, the game's own map unchanged, no red). `TestSpawn` (6) in `tools/test_check_level.py`; `small_level()` now has a spawn. 18 older tests changed as listed above. Full GUT suite: 1616 passing, TESTS PASSED (first run before the test fixes had 18 failures, all in level_creator, all fixed). Python: `game/tools` 502 OK (1 skipped), `tools` 451 OK.
+- **Screenshots and GIF** (`art-archive/T-280/screenshots/`, I looked at all of them): `editor_new.png` (a new level, the marker at the centre of a crossroads, label "Start"); `editor_roof.png` (moved onto a rooftop beside a ramp, turned to face it, selected, top bar shows the hint); `editor_refused.png` (a building dropped on, "Can't start here: it's blocked.", the point stays); `editor_drag.png` (mid-drag ghost); `run_from_spawn.gif` (a run on that level: the car starts on the rooftop facing the ramp and drives down it) and `drive_end.png`. Fixtures: `tests/fixtures/level_creator_spawn_demo.tscn` (`T280_SHOT`) and `level_creator_spawn_drive.tscn`.
+- **Documents affected:** `docs/level-design.md` (Content, "Level creator: the spawn point", with the screenshots), `game/README.md` ("Level creator", "The spawn point (T-280)").
+
+No refusals.
