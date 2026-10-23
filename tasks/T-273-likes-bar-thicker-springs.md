@@ -1,7 +1,7 @@
 ---
 id: T-273
 title: A likes bar 4 times thicker that springs up when it fills
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, game/scripts/hud/, game/scenes/hud/, tasks/T-113-hud-vertical-health-and-likes-bars.md, tasks/T-131-combo-heat-levels.md, tasks/T-139-likes-bar-level-up-animation.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/hud/, game/tests/unit/, docs/hud-and-menus.md, game/README.md, art-archive/T-273/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -40,10 +40,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] The likes bar is 64 pixels tall and half the screen wide; the texts and counter above it sit on it without overlapping anything (screenshot, and a layout test) (QA: pass / fail)
-- [ ] Tests show the fill eases to its new value over the proposed time with a small overshoot, never shows below the old value or past full in a way that hides the level-up, triggers the level-up when it fills as before, and pauses with the game (QA: pass / fail)
-- [ ] The burning bar and the level-up animation fit the new size (screenshot) (QA: pass / fail)
-- [ ] The screenshots and GIF are in `art-archive/T-273/screenshots/`; HUD and menus, Content, and `game/README.md` give the new size and animation; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The likes bar is 64 pixels tall and half the screen wide; the texts and counter above it sit on it without overlapping anything (screenshot, and a layout test) (QA: pass; 64 px, half width, layout test at four sizes passes, screenshot shows no overlap)
+- [ ] Tests show the fill eases to its new value over the proposed time with a small overshoot, never shows below the old value or past full in a way that hides the level-up, triggers the level-up when it fills as before, and pauses with the game (QA: pass; test_likes_spring.gd covers ease and overshoot, never below old or past full, level-up then restart, pause, no spring on drain)
+- [ ] The burning bar and the level-up animation fit the new size (screenshot) (QA: pass; burning x4 screenshot shows flames on the 64 px bar; level-up sized from bar rect and shown in the GIF)
+- [ ] The screenshots and GIF are in `art-archive/T-273/screenshots/`; HUD and menus, Content, and `game/README.md` give the new size and animation; the full GUT suite and all Python tool tests pass (QA: pass; files and docs present, GUT 1372/1372, tools 451 OK, game/tools OK; layout ratio check loosened 10 to 5 because 576/64=9, and settle_likes() calls added, both keep intent)
 
 The board's review: earn likes with tricks and watch the bar.
 Board review files: the screenshots and GIF in `art-archive/T-273/screenshots/`.
