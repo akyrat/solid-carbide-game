@@ -1,7 +1,7 @@
 ---
 id: T-277
 title: Health drops at half the rate
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Coursework
@@ -49,6 +49,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: health drops at half the rate.
+
+### 2026-10-23, In progress → In QA
+
+Health drops halved (0.6 to 0.3); coins and the 30% restore unchanged. Sent to QA.
 
 ## Result notes
 
