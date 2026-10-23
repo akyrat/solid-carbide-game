@@ -42,6 +42,10 @@ This imports the project, then runs every test under `game/tests/` headless (no 
 
 To run only some tests, add GUT options after the command. For example, `-gselect=test_sample` runs only test scripts whose name contains `test_sample`, and `-gunit_test_name=drift` runs only tests whose name contains `drift`.
 
+### Never call a method on a node that may be freed (T-281)
+
+After an `await` (a frame, a timer), a node the game freed with `queue_free()` is gone. Calling any method on it, even `is_queued_for_deletion()`, can crash the whole engine (exit **139**, signal 11) instead of failing the test, and only in some runs, depending on whether its memory was reused. Always check `is_instance_valid(node)` first, for example `assert_true(not is_instance_valid(p) or p.is_queued_for_deletion())`, never the other way round. That is what made the suite crash at `test_it_goes_away_after_its_life` in `tests/unit/hud/test_combo_broken_popup.gd` in most runs before T-281.
+
 ### Time limit (T-137)
 
 A run that goes past **900 seconds** is stopped by the runner itself (only the Godot process it started, and its children), which prints `TIME LIMIT: the test run went past 900 seconds and was stopped` and exits with code **124**. A full run takes about 90 to 110 seconds on a quiet computer and 270 to 306 seconds when it is busy with several agents (2026-10-21), so 900 is comfortably above it. To change it, set `GUT_TIME_LIMIT` (seconds) for one run, for example `GUT_TIME_LIMIT=1200 bash game/tools/run_tests.sh`. To see the limit work, run `bash game/tools/check_time_limit.sh` (default 10 seconds): it runs GUT on `game/tools/hang_fixture/test_hang.gd`, a test that hangs forever on purpose and lives outside `tests/` so the normal suite never runs it, then checks the exit code, the message and that no Godot process is left behind.

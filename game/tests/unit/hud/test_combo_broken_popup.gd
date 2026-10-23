@@ -101,7 +101,9 @@ func test_it_goes_away_after_its_life() -> void:
 	var p = _broken(r)[0]
 	p.advance(Popups.LIFETIME + 0.1)
 	await get_tree().process_frame
-	assert_true(p.is_queued_for_deletion() or not is_instance_valid(p))
+	# Ask is_instance_valid() first: after the frame the popup is usually freed,
+	# and calling a method on a freed object crashes Godot 4.6 (T-281).
+	assert_true(not is_instance_valid(p) or p.is_queued_for_deletion())
 
 
 func test_right_half_falls_and_card_shakes_at_first() -> void:
