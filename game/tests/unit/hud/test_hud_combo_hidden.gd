@@ -25,7 +25,8 @@ func _run() -> Node2D:
 func _others(hud: Hud) -> Dictionary:
 	return {
 		"health bar": hud.health_bar.get_global_rect(),
-		"Car Health": hud.health_label.get_global_rect(),
+		"health heart": hud.health_heart.get_global_rect(),
+		"weapon icons": hud.weapon_icons.get_global_rect(),
 		"likes bar": hud.likes_bar.get_global_rect(),
 		"likes row": hud.likes_row.get_global_rect(),
 		"heart": hud.heart.get_global_rect(),

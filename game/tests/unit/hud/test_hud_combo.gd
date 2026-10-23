@@ -50,7 +50,7 @@ func test_counter_is_centred_above_the_likes_row_and_clear_of_the_rest() -> void
 	assert_false(c.intersects(hud.coins_label.get_global_rect()), "clear of the coins")
 	assert_false(c.intersects(hud.health_bar.get_global_rect()), "clear of the health bar")
 	assert_false(c.intersects(bar), "clear of the likes bar")
-	for l: Control in [hud.health_label, hud.likes_row, hud.level_label]:
+	for l: Control in [hud.health_heart, hud.weapon_icons, hud.likes_row, hud.level_label]:
 		assert_false(c.intersects(l.get_global_rect()), "clear of %s" % l.name)
 
 
