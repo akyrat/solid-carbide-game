@@ -59,14 +59,14 @@ func test_tricks_raise_the_multiplier_by_the_data_amounts() -> void:
 	var expected := combo_data.start_multiplier()
 	for id in ["extended_drift", "three_sixty", "alternate_drift"]:
 		var before := state.combo
-		state.add_trick(id)
-		expected += combo_data.trick_add(id)
+		state.add_trick(id, 1.0)
+		expected += combo_data.trick_amount(id, 1.0)
 		assert_almost_eq(state.combo, expected, 0.000001, id)
-		assert_almost_eq(state.combo - before, combo_data.trick_add(id), 0.000001, id)
+		assert_almost_eq(state.combo - before, combo_data.trick_amount(id, 1.0), 0.000001, id)
 	assert_eq(tricks.size(), 3)
 	assert_eq(tricks[0][0], "extended_drift")
-	assert_almost_eq(tricks[0][1], combo_data.trick_add("extended_drift"), 0.000001)
-	assert_almost_eq(tricks[0][2], 1.0 + combo_data.trick_add("extended_drift"), 0.000001)
+	assert_almost_eq(tricks[0][1], combo_data.drift_amount(1.0), 0.000001)
+	assert_almost_eq(tricks[0][2], 1.0 + combo_data.drift_amount(1.0), 0.000001)
 	assert_eq(tricks[2][0], "alternate_drift")
 	assert_almost_eq(tricks[2][1], combo_data.trick_add("alternate_drift"), 0.000001)
 	assert_almost_eq(tricks[2][2], expected, 0.000001)
@@ -179,8 +179,8 @@ func test_a_trick_before_2_seconds_stops_the_drain() -> void:
 	state.add_trick("alternate_drift")
 	for i in 5:
 		_simulate(combo_data.drain_wait_seconds() - 0.1)
-		state.add_trick("extended_drift")
-	var expected := 1.0 + combo_data.trick_add("alternate_drift") + 5.0 * combo_data.trick_add("extended_drift")
+		state.add_trick("extended_drift", 1.0)
+	var expected := 1.0 + combo_data.trick_add("alternate_drift") + 5.0 * combo_data.drift_amount(1.0)
 	assert_almost_eq(state.combo, expected, 0.000001, "never drained")
 
 

@@ -30,6 +30,20 @@ extends Control
 ## through the four directions it can climb); the top bar shows the size, and the preview is drawn
 ## in the engine as the piece will be (elevation_platform_drawing.gd, textured mode).
 ##
+## Families (T-262): the side panel is one button per kind of piece (asset_panel.gd, from the
+## catalogue's families); the keys V (look), R (turn), M (mirror) and H (height) step the picked
+## family's member (KEY_ACTIONS, creator_families.gd step), and the looks strip under it picks a
+## look (apply_member). A member is an asset, view, mirror and variant, placed as before.
+##
+## The road brush (T-263, road_brush.gd): Road, Centre line and Cracked road paint whole roads
+## along a left-drag (a right-drag, or Del, erases), joined into corners, T-junctions, crossroads
+## and dead ends by the brush; Zebra crossing is a click across a road (brush_mode).
+##
+## Pairs (T-272, thread the needle): the Pair obstacles button or P turns the pair tool on; click
+## one obstacle (a boulder, barrier, cones or crates), then another, to pair them (anything else is
+## refused with a message); a pair shows as a dashed line and rings (_Overlay._draw_pairs). Unpair
+## (with a paired obstacle selected) or deleting either obstacle removes it (LevelDocument).
+##
 ## Saving (T-238): the Save button writes the level, named from the level name field, through
 ## LevelStore.save_level into the levels folder (levels_dir), in the map-file format
 ## (LevelDocument.file_data); the top bar then shows the save confirmation. A level opened from the
@@ -43,6 +57,7 @@ signal saved(path: String)
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
+const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 
 const ISO_TRANSFORM := MvpMapScript.ISO_TRANSFORM
 const PX_PER_UNIT := MvpMapScript.PX_PER_UNIT
@@ -71,6 +86,13 @@ var delete_button: Button
 var rotate_button: Button
 var mirror_button: Button
 var style_button: Button
+## T-264: the platform sizes S, M, L and Any size (the buttons by id), and the ramp arrows Up and Down.
+var size_buttons: Dictionary = {}
+var arrows_buttons: Dictionary = {}
+## T-265: the top bar's Banner on and Banner off (by id, "on" and "off"), shown with a skyscraper picked or selected.
+var banner_buttons: Dictionary = {}
+## T-265: whether the next skyscraper placed shows its banner (key B): off by default.
+var pick_banner: bool = false
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
@@ -81,6 +103,15 @@ var last_problem: String = ""
 ## The view and mirror the picked asset is placed in (one its catalogue entry lists).
 var pick_view: String = ""
 var pick_mirror: bool = false
+## Which of the view's textures (T-262: a skyscraper's second body is one of its family's looks); "" for the first.
+var pick_variant: String = ""
+## T-264: the size a platform's plain click places, by the top bar's S, M, L and Any size: the
+## squares in units (a proposal: 8, 16 and 32, the board's numbers). "any" is the board dragging the
+## size out; its plain click is M's, the default. Snapping and the overlap refusal apply as before.
+const PLATFORM_SIZES := {"s": 8.0, "m": 16.0, "l": 32.0}
+var pick_platform_size: String = "m"
+## T-264: which way a new ramp's arrows point, "up" the slope (the default) or "down" it (key A).
+var pick_arrows: String = "up"
 ## The piece style a new rooftop or ramp of any size is drawn in (T-255; elevation_layer.gd PIECE_STYLES): the Style button steps it.
 var pick_style: String = ElevationLayerScript.DEFAULT_PIECE_STYLE
 ## The level's data model (level_document.gd), over level_data.
@@ -120,6 +151,24 @@ var direction_label: Label
 var preview_drawing: Node2D
 var _preview_key := ""
 
+## The road brush (T-263, road_brush.gd): with Road, Centre line or Cracked road picked, the left
+## button paints road along the drag and the right button (or Del) erases it; with Zebra crossing
+## picked, a click lays a crossing across the road. The last block a stroke reached ((-1, -1): no
+## stroke on), and whether the stroke erases.
+var road_stroke_last := Vector2i(-1, -1)
+var road_erasing := false
+
+## Pairs of obstacles (T-272, thread the needle): the pair tool (the top bar's Pair obstacles, key P)
+## is on, the first obstacle clicked while it is ({} before), and the top bar's two buttons.
+var pair_mode := false
+var pair_first: Dictionary = {}
+var pair_button: Button
+var unpair_button: Button
+## How a pair shows in the editor (a proposal): a dashed line across the gap between the two and a
+## ring round each, in this colour (no Redgull red); the first obstacle clicked is ringed thicker.
+const PAIR_COLOR := Color(0.35, 1.0, 0.75, 0.95)
+const PAIR_DASH_UNITS := 1.0
+
 
 ## A new level: an empty map with the default name.
 func open_new() -> void:
@@ -155,6 +204,7 @@ func _ready() -> void:
 	panel.name = "AssetPanel"
 	layout.add_child(panel)
 	panel.asset_picked.connect(_on_asset_picked)
+	panel.member_picked.connect(apply_member)
 
 	var main := VBoxContainer.new()
 	main.name = "Main"
@@ -204,6 +254,41 @@ func _ready() -> void:
 	style_button.pressed.connect(style_pick)
 	bar.add_child(style_button)
 	_update_style_button()
+	for id in ["s", "m", "l", "any"]:
+		var b := Button.new()
+		b.name = "Size_" + id
+		b.text = CreatorTexts.get_text("platform_size_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_platform_size.bind(id))
+		bar.add_child(b)
+		size_buttons[id] = b
+	for id in ["up", "down"]:
+		var b := Button.new()
+		b.name = "Arrows_" + id
+		b.text = CreatorTexts.get_text("ramp_arrows_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_arrows.bind(id))
+		bar.add_child(b)
+		arrows_buttons[id] = b
+	for id in ["on", "off"]:
+		var b := Button.new()
+		b.name = "Banner_" + id
+		b.text = CreatorTexts.get_text("banner_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_banner.bind(id == "on"))
+		bar.add_child(b)
+		banner_buttons[id] = b
+	pair_button = Button.new()
+	pair_button.name = "PairButton"
+	pair_button.text = CreatorTexts.get_text("pair_tool")
+	pair_button.toggle_mode = true
+	pair_button.pressed.connect(func(): set_pair_tool(pair_button.button_pressed))
+	bar.add_child(pair_button)
+	unpair_button = Button.new()
+	unpair_button.name = "UnpairButton"
+	unpair_button.text = CreatorTexts.get_text("unpair_label")
+	unpair_button.pressed.connect(unpair_selected)
+	bar.add_child(unpair_button)
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -237,7 +322,10 @@ func _ready() -> void:
 
 	hint_label = Label.new()
 	hint_label.name = "Hint"
-	hint_label.text = CreatorTexts.get_text("controls_hint_sizing")
+	# T-280: the line with moving the start added (controls_hint_spawn).
+	hint_label.text = CreatorTexts.get_text("controls_hint_spawn")
+	# T-262: the longer line shrinks its font to fit a narrow window instead of running off its edge.
+	map_view.resized.connect(_fit_hint)
 	main.add_child(hint_label)
 
 	_overlay = _Overlay.new()
@@ -256,8 +344,25 @@ func _ready() -> void:
 	_update_pose_controls()
 
 
+## The hint line's font: the theme's size, smaller (down to HINT_MIN_FONT) while the line is wider
+## than the map view.
+const HINT_MIN_FONT := 10
+
+
+func _fit_hint() -> void:
+	if hint_label == null or map_view == null or map_view.size.x <= 0.0:
+		return
+	hint_label.remove_theme_font_size_override("font_size")
+	var font := hint_label.get_theme_font("font")
+	var fs := hint_label.get_theme_font_size("font_size")
+	while fs > HINT_MIN_FONT and font.get_string_size(hint_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > map_view.size.x - 4.0:
+		fs -= 1
+	hint_label.add_theme_font_size_override("font_size", fs)
+
+
 func _load_document() -> void:
 	document = LevelDocument.new(level_data)
+	document.ensure_spawn()  # T-280: every level has its spawn point
 	selected = {}
 	_show_name()
 	_show_message("")
@@ -370,12 +475,14 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 	var picked_now := panel != null and asset_id == panel.picked
 	var view := pick_view if picked_now else ""
 	var mirror := pick_mirror if picked_now else false
+	var variant := pick_variant if picked_now else ""
+	size = default_size_for(asset_id, size)
 	var at := LevelSnapping.placement(document, asset_id, units, view, mirror, size)
 	if at.is_empty():
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant, pick_arrows, pick_banner)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -384,6 +491,11 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 			document.delete(piece)
 			_show_message(CreatorTexts.get_text("overlap_message"))
 			return {}
+	if str(piece.kind) in ["building", "boulder", "prop"] and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
+		# T-280: a piece never goes over the start: the car must always be able to stand there.
+		document.delete(piece)
+		_show_message(CreatorTexts.get_text("spawn_blocked"))
+		return {}
 	last_problem = ""
 	_show_message("")
 	_refresh_after(str(piece.kind))
@@ -394,7 +506,138 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 func placement_at(units: Vector2, size: Vector2 = Vector2.ZERO) -> Dictionary:
 	if _picked() == "" or document == null:
 		return {}
-	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, size)
+	return LevelSnapping.placement(document, _picked(), units, pick_view, pick_mirror, default_size_for(_picked(), size))
+
+
+## The size a plain click gives `asset_id` (T-264): a rooftop's S, M or L square (M for "any"); a
+## size already given (a drag) is kept, and so is any other piece's.
+func default_size_for(asset_id: String, size: Vector2) -> Vector2:
+	if size != Vector2.ZERO or str(LevelDocument.entry(asset_id).get("kind", "")) != "rooftop" 			or not LevelDocument.is_resizable(asset_id):
+		return size
+	var side: float = PLATFORM_SIZES.get(pick_platform_size, PLATFORM_SIZES.m)
+	return Vector2(side, side)
+
+
+## The top bar's S, M, L or Any size (T-264): the size of the next platform's plain click.
+func set_platform_size(id: String) -> void:
+	pick_platform_size = id if id in ["s", "m", "l", "any"] else "m"
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## The top bar's Arrows up or down, and key A (T-264): which way the next ramp's arrows point. With
+## a ramp selected and no ramp picked, it turns that ramp's arrows instead.
+func set_arrows(arrows: String) -> void:
+	pick_arrows = "down" if arrows == "down" else "up"
+	if not selected.is_empty() and str(selected.kind) == "ramp" and str(LevelDocument.entry(_picked()).get("kind", "")) != "ramp":
+		document.set_ramp_arrows(selected.item, pick_arrows)
+		_rebuild_map()
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## The skyscraper a banner choice applies to (T-265): the one picked, else (nothing picked) the selected
+## building when it is a skyscraper. {} for none; {"picked": true} for the picked one.
+func _banner_target() -> Dictionary:
+	if LevelDocument.is_skyscraper(_picked()):
+		return {"picked": true}
+	if _picked() == "" and not selected.is_empty() and str(selected.kind) == "building" \
+			and LevelDocument.is_skyscraper(str(selected.item.get("asset", ""))):
+		return {"building": selected.item}
+	return {}
+
+
+## The top bar's Banner on or off, and key B (T-265): whether the next skyscraper shows its banner. With
+## no skyscraper picked and one selected, it sets that building's banner instead (and redraws it).
+func set_banner(on: bool) -> void:
+	var t := _banner_target()
+	if t.has("building"):
+		document.set_building_banner(t.building, on)
+		_rebuild_map()
+	else:
+		pick_banner = on
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## B: the other way round for the banner. Returns the banner now (false with no skyscraper to apply it to).
+func banner_pick() -> bool:
+	var t := _banner_target()
+	if t.is_empty():
+		return false
+	var now: bool = pick_banner if t.has("picked") else LevelDocument.banner_of(t.building)
+	set_banner(not now)
+	return not now
+
+
+## A: the other way round for the arrows. Returns the arrows now.
+func arrows_pick() -> String:
+	set_arrows("up" if pick_arrows == "down" else "down")
+	return pick_arrows
+
+
+# ---- Pairs of obstacles (T-272, thread the needle) ----------------------------------------------
+
+## Turns the pair tool on or off (the top bar's Pair obstacles, key P). On, it drops the pick and
+## the selection; a left click then picks an obstacle (pair_click). Picking a piece, Esc or a
+## right-click turns it off.
+func set_pair_tool(on: bool) -> void:
+	pair_first = {}
+	if on:
+		pair_mode = true  # before the pick goes, so _on_asset_picked("") leaves it on
+		size_drag_start = Vector2i(-1, -1)
+		end_road_stroke()
+		if panel != null and panel.picked != "":
+			panel.pick("")
+		selected = {}
+	pair_mode = on
+	_show_message("")
+	_update_pose_controls()
+	if _overlay != null:
+		_overlay.queue_redraw()
+
+
+## P: the pair tool on or off. Returns whether it is on now.
+func pair_pick() -> bool:
+	set_pair_tool(not pair_mode)
+	return pair_mode
+
+
+## A click with the pair tool at `units`: the first obstacle clicked is held, the second (another
+## obstacle) makes the pair with it (LevelDocument.make_pair; pair_made on the top bar); the same
+## one again lets it go. Anything that is not an obstacle is refused with pair_not_obstacle, and the
+## first one stays held. Returns "first", "made", "cancelled" or "not_obstacle".
+func pair_click(units: Vector2) -> String:
+	var piece := document.piece_at(units)
+	if not LevelDocument.is_obstacle(piece):
+		_show_message(CreatorTexts.get_text("pair_not_obstacle"))
+		return "not_obstacle"
+	var result := "first"
+	if pair_first.is_empty():
+		pair_first = piece
+		_show_message("")
+	elif _same_piece(pair_first, piece):
+		pair_first = {}
+		_show_message("")
+		result = "cancelled"
+	else:
+		var p := document.make_pair(pair_first, piece)
+		pair_first = {}
+		result = "made" if not p.is_empty() else "cancelled"
+		_show_message(CreatorTexts.get_text("pair_made") if not p.is_empty() else "")
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return result
+
+
+## The top bar's Unpair: removes the pair of the selected obstacle. True when there was one.
+func unpair_selected() -> bool:
+	if selected.is_empty() or not document.unpair(selected):
+		return false
+	_show_message("")
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return true
 
 
 # ---- Sizing (T-251) -----------------------------------------------------------------------------
@@ -451,10 +694,84 @@ func end_size_drag(units: Vector2) -> Dictionary:
 	return piece
 
 
+## The road brush's mode for the picked family: "paint" (Road, Centre line, Cracked road), "zebra"
+## (Zebra crossing) or "" (not a road brush; the family's "brush" in creator_assets.json).
+func brush_mode() -> String:
+	if panel == null or panel.picked_family == "":
+		return ""
+	return str(CreatorFamilies.family(panel.picked_family).get("brush", ""))
+
+
+## The asphalt the brush paints: the picked look's (its member's "asphalt").
+func brush_asphalt() -> String:
+	return str(panel.member.get("asphalt", "a0")) if panel != null else "a0"
+
+
+## Starts a brush stroke at `units`: paints (or with `erase`, erases) the block there.
+func begin_road_stroke(units: Vector2, erase: bool = false) -> void:
+	road_erasing = erase
+	road_stroke_last = Vector2i(-1, -1)
+	continue_road_stroke(units)
+
+
+## Carries the stroke on to `units`: every block between the last one and this (next to each
+## other, no gaps), painted with the picked road kind and asphalt or erased.
+func continue_road_stroke(units: Vector2) -> void:
+	var b := RoadBrush.block_at(document, units)
+	if b.x < 0 or b == road_stroke_last:
+		return
+	var blocks: Array = [b] if road_stroke_last.x < 0 else RoadBrush.blocks_between(road_stroke_last, b)
+	road_stroke_last = b
+	var changed: Array = RoadBrush.erase(document, blocks) if road_erasing \
+		else RoadBrush.paint(document, blocks, panel.picked_family, brush_asphalt())
+	if not changed.is_empty():
+		_refresh_after("road")
+
+
+func end_road_stroke() -> void:
+	road_stroke_last = Vector2i(-1, -1)
+	road_erasing = false
+
+
+## Paints a whole drag at once (from the first point to the last, through each in turn): what a
+## drag with the left button does, for tests and fixtures.
+func paint_road(points: Array) -> void:
+	_stroke(points, false)
+
+
+## Erases road along a drag through `points` (what a right-drag does).
+func erase_road(points: Array) -> void:
+	_stroke(points, true)
+
+
+func _stroke(points: Array, erase: bool) -> void:
+	if points.is_empty():
+		return
+	begin_road_stroke(points[0], erase)
+	for p in points.slice(1):
+		continue_road_stroke(p)
+	end_road_stroke()
+
+
+## Zebra crossing: a crossing across the road at `units` (RoadBrush.zebra_at). True when laid.
+func place_zebra(units: Vector2) -> bool:
+	if not RoadBrush.zebra_at(document, units):
+		return false
+	_refresh_after("road")
+	return true
+
+
 ## The size line on the top bar: during a drag the size it would place (size_readout: {w} the
 ## width east-west, {d} the depth north-south, units); with a resizable piece picked, size_hint.
+## With a road brush picked (T-263): road_brush_hint.
 func _update_size_label() -> void:
 	if size_label == null:
+		return
+	if pair_mode:
+		size_label.text = CreatorTexts.get_text("pair_hint")  # T-272
+		return
+	if brush_mode() == "paint":
+		size_label.text = CreatorTexts.get_text("road_brush_hint")
 		return
 	if not LevelDocument.is_resizable(_picked()):
 		size_label.text = ""
@@ -480,7 +797,7 @@ func preview_block() -> Dictionary:
 	var rect: Rect2 = at.rect
 	if str(e.kind) == "ramp":
 		var t := LevelDocument.texture_of(id, pick_view, false)
-		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")),
+		return {"kind": "ramp", "id": "preview", "rect": rect, "side": str(t.get("side", "east")), "arrows": pick_arrows,
 			"bottom_height": float(e.heights[0]), "top_height": float(e.heights[1]), "base": float(e.heights[0]),
 			"style": pick_style}
 	var under := document.rooftop_under(rect, float(e.height))
@@ -523,17 +840,25 @@ func _show_message(text: String) -> void:
 
 ## Selects the piece drawn on top at `units` (LevelDocument.piece_at).
 func select_at(units: Vector2) -> Dictionary:
+	if spawn_cell_has(units):
+		return select_spawn()
 	selected = document.piece_at(units)
+	_clear_spawn_hint()
+	_update_pose_controls()
 	_overlay.queue_redraw()
 	return selected
 
 
 ## Removes a piece from the data and the drawing. Returns true when something was removed.
 func delete_piece(piece: Dictionary) -> bool:
+	if str(piece.get("kind", "")) == "spawn":
+		_show_message(CreatorTexts.get_text("spawn_no_delete"))  # T-280: a level always has one
+		return false
 	if not document.delete(piece):
 		return false
 	if not selected.is_empty() and _same_piece(selected, piece):
 		selected = {}
+		_update_pose_controls()
 	_refresh_after(str(piece.kind))
 	return true
 
@@ -542,9 +867,13 @@ func delete_piece(piece: Dictionary) -> bool:
 func delete_selected() -> void:
 	if selected.is_empty():
 		return
+	if str(selected.get("kind", "")) == "spawn":
+		delete_piece(selected)  # refused with its message; the start stays selected
+		return
 	var piece := selected
 	selected = {}
 	delete_piece(piece)
+	_update_pose_controls()
 
 
 static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
@@ -554,25 +883,90 @@ static func _same_piece(a: Dictionary, b: Dictionary) -> bool:
 
 
 func _on_asset_picked(id: String) -> void:
-	pick_view = LevelDocument.valid_view(id, "") if id != "" else ""
-	pick_mirror = LevelDocument.valid_mirror(id, false) if id != "" else false
+	if id != "" and pair_mode:
+		pair_mode = false  # T-272: picking a piece ends the pair tool
+		pair_first = {}
+	if id != "" and panel != null and not panel.member.is_empty():
+		_pose_from(panel.member)
+	else:
+		pick_view = LevelDocument.valid_view(id, "") if id != "" else ""
+		pick_mirror = LevelDocument.valid_mirror(id, false) if id != "" else false
+		pick_variant = ""
 	_update_pose_controls()
 	_overlay.queue_redraw()
 
 
-# ---- Rotate and mirror --------------------------------------------------------------------------
+func _pose_from(m: Dictionary) -> void:
+	pick_view = str(m.view)
+	pick_mirror = bool(m.mirror)
+	pick_variant = str(m.get("variant", ""))
 
-## Rotate: the picked asset's next view of those its catalogue entry lists (back to the first after
-## the last). Returns the view now.
+
+# ---- Looks, turns, mirrors and heights (T-262) --------------------------------------------------
+
+## The keys that step the picked family's member (creator_families.gd step: the axis each steps).
+## The one place the creator's piece keys are handled (_unhandled_key_input reads it).
+const KEY_ACTIONS := {
+	KEY_V: "look",
+	KEY_R: "turn",
+	KEY_M: "flip",
+	KEY_H: "height",
+	KEY_A: "arrows",
+	KEY_B: "banner",
+	KEY_P: "pair",
+}
+
+
+## Picks `m`, a member of the picked family (the looks strip, the keys): the asset, view, mirror
+## and variant placed next.
+func apply_member(m: Dictionary) -> void:
+	if panel == null or m.is_empty():
+		return
+	panel.show_member(m)
+	_pose_from(m)
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## Steps the picked family's member along `axis` (look, turn, flip, height; KEY_ACTIONS). Returns
+## the member now ({} with nothing picked).
+func step_pick(axis: String) -> Dictionary:
+	if panel == null or panel.picked_family == "":
+		return {}
+	apply_member(CreatorFamilies.step(panel.picked_family, panel.member, axis))
+	return panel.member
+
+
+## V: the next look.
+func look_pick() -> Dictionary:
+	return step_pick("look")
+
+
+## H: the next height (a platform's 3 and 6, a ramp's steps).
+func height_pick() -> Dictionary:
+	return step_pick("height")
+
+
+## Rotate (R): the picked piece's next turn (its next view, or for a road tile the tile along the
+## other axis). Returns the view now.
 func rotate_pick() -> String:
+	if _picked() == "" and str(selected.get("kind", "")) == "spawn":
+		turn_spawn()  # T-280: R turns the selected start's heading
+		return pick_view
+	if panel != null and panel.picked_family != "":
+		step_pick("turn")
+		return pick_view
 	pick_view = _next_of(LevelDocument.views_of(_picked()), pick_view, pick_view)
 	_update_pose_controls()
 	_overlay.queue_redraw()
 	return pick_view
 
 
-## Mirror: the picked asset's next mirror of those its catalogue entry lists. Returns it.
+## Mirror (M): the picked piece's mirrored look, when its art has one. Returns the asset's mirror now.
 func mirror_pick() -> bool:
+	if panel != null and panel.picked_family != "":
+		step_pick("flip")
+		return pick_mirror
 	pick_mirror = bool(_next_of(LevelDocument.mirrors_of(_picked()), pick_mirror, pick_mirror))
 	_overlay.queue_redraw()
 	return pick_mirror
@@ -597,7 +991,7 @@ func _update_style_button() -> void:
 func pick_texture() -> Dictionary:
 	if _picked() == "":
 		return {}
-	return LevelDocument.texture_of(_picked(), pick_view, pick_mirror)
+	return LevelDocument.texture_of(_picked(), pick_view, pick_mirror, pick_variant)
 
 
 func _picked() -> String:
@@ -617,14 +1011,111 @@ func _update_pose_controls() -> void:
 	if rotate_button == null:
 		return
 	var id := _picked()
-	rotate_button.disabled = LevelDocument.views_of(id).size() < 2
-	mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
+	if panel != null and panel.picked_family != "":
+		rotate_button.disabled = not CreatorFamilies.can_step(panel.picked_family, panel.member, "turn")
+		mirror_button.disabled = not CreatorFamilies.can_step(panel.picked_family, panel.member, "flip")
+	else:
+		rotate_button.disabled = LevelDocument.views_of(id).size() < 2
+		mirror_button.disabled = LevelDocument.mirrors_of(id).size() < 2
 	var key: String = LevelCreatorAssetPanel.label_key(id)
 	height_label.text = CreatorTexts.get_text(key) if key != "" else ""
 	var dir_key: String = LevelCreatorAssetPanel.RAMP_DIR_KEYS.get(pick_view, "") \
 		if str(LevelDocument.entry(id).get("kind", "")) == "ramp" else ""
 	direction_label.text = CreatorTexts.get_text(dir_key) if dir_key != "" else ""
+	# T-264: the S, M, L and Any size buttons show with a rooftop picked, Arrows up and down with a ramp.
+	var kind := str(LevelDocument.entry(id).get("kind", ""))
+	for b_id in size_buttons:
+		size_buttons[b_id].visible = kind == "rooftop"
+		size_buttons[b_id].button_pressed = b_id == pick_platform_size
+	for b_id in arrows_buttons:
+		arrows_buttons[b_id].visible = kind == "ramp"
+		arrows_buttons[b_id].button_pressed = b_id == pick_arrows
+	# T-265: Banner on and off show with a skyscraper picked (or selected, nothing picked).
+	var bt := _banner_target()
+	var banner_now: bool = pick_banner if bt.has("picked") else (LevelDocument.banner_of(bt.building) if bt.has("building") else false)
+	for b_id in banner_buttons:
+		banner_buttons[b_id].visible = not bt.is_empty()
+		banner_buttons[b_id].button_pressed = (b_id == "on") == banner_now
+	# T-272: Pair obstacles pressed while the tool is on; Unpair shows with a paired obstacle selected.
+	if pair_button != null:
+		pair_button.set_pressed_no_signal(pair_mode)
+		unpair_button.visible = not pair_mode and not selected.is_empty() and document != null \
+			and not document.pair_of(selected).is_empty()
 	_update_size_label()
+
+
+# ---- The spawn point (T-280) --------------------------------------------------------------------
+
+## True while the spawn point is being dragged (from a left press on it to the release).
+var spawn_dragging := false
+## Where the dragged spawn point would land (the cell's middle under the mouse), and why it can't.
+var spawn_drop := Vector2.ZERO
+var spawn_drop_problem := ""
+## The spawn marker's colours (proposals; never Redgull red).
+const SPAWN_COLOR := Color(0.35, 0.95, 0.45, 0.95)
+const SPAWN_REFUSED_COLOR := Color(0.75, 0.75, 0.75, 0.8)
+const SPAWN_OUTLINE := Color(0.05, 0.1, 0.05, 1.0)
+
+
+## True when `units` is in the spawn point's cell.
+func spawn_cell_has(units: Vector2) -> bool:
+	return document != null and document.piece_rect(document.spawn_piece()).has_point(units)
+
+
+## Selects the spawn point (a click on it): the top bar shows spawn_hint.
+func select_spawn() -> Dictionary:
+	selected = document.spawn_piece()
+	_show_message(CreatorTexts.get_text("spawn_hint"))
+	_update_pose_controls()
+	_overlay.queue_redraw()
+	return selected
+
+
+func _clear_spawn_hint() -> void:
+	if message_label != null and message_label.text == CreatorTexts.get_text("spawn_hint"):
+		_show_message("")
+
+
+## Moves the spawn point to the cell under `units`, at that surface's height. A cell the car can't
+## stand in (a building, an obstacle, off the map) is refused with spawn_blocked and the point
+## stays. Returns true when it moved.
+func move_spawn(units: Vector2) -> bool:
+	var why := document.move_spawn(units)
+	if why != "":
+		_show_message(CreatorTexts.get_text("spawn_blocked"))
+		_overlay.queue_redraw()
+		return false
+	_show_message(CreatorTexts.get_text("spawn_hint") if str(selected.get("kind", "")) == "spawn" else "")
+	_overlay.queue_redraw()
+	return true
+
+
+## R: turns the start's heading to the next of the eight. Returns the heading (degrees).
+func turn_spawn() -> int:
+	var h := document.turn_spawn()
+	_overlay.queue_redraw()
+	return h
+
+
+func begin_spawn_drag() -> void:
+	select_spawn()
+	spawn_dragging = true
+	spawn_drop = LevelSpawn.position_of(level_data)
+	spawn_drop_problem = ""
+
+
+func update_spawn_drag(units: Vector2) -> void:
+	spawn_drop = LevelSpawn.snap(level_data, units)
+	spawn_drop_problem = document.spawn_problem(spawn_drop)
+	_overlay.queue_redraw()
+
+
+## Drops the dragged spawn point at `units`. Returns true when it moved.
+func end_spawn_drag(units: Vector2) -> bool:
+	spawn_dragging = false
+	var moved := move_spawn(units)
+	_overlay.queue_redraw()
+	return moved
 
 
 # ---- Camera and input ---------------------------------------------------------------------------
@@ -684,18 +1175,35 @@ func _on_map_input(event: InputEvent) -> void:
 			zoom_by(1.0 / ZOOM_STEP, mb.position)
 		elif mb.button_index == MOUSE_BUTTON_MIDDLE:
 			_dragging = mb.pressed
+		elif mb.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] and brush_mode() != "":
+			# The road brush (T-263): left paints along the drag, right erases; Zebra: a click.
+			var units := screen_to_units(mb.position)
+			if not mb.pressed:
+				end_road_stroke()
+			elif brush_mode() == "zebra" and mb.button_index == MOUSE_BUTTON_LEFT:
+				place_zebra(units)
+			else:
+				begin_road_stroke(units, mb.button_index == MOUSE_BUTTON_RIGHT)
 		elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 			var units := screen_to_units(mb.position)
-			if panel.picked != "" and LevelDocument.is_resizable(panel.picked):
+			if panel.picked == "" and not pair_mode and spawn_cell_has(units):
+				begin_spawn_drag()  # T-280: drag the start
+			elif panel.picked != "" and LevelDocument.is_resizable(panel.picked):
 				begin_size_drag(units)
 			elif panel.picked != "":
 				place_asset(panel.picked, units)
+			elif pair_mode:
+				pair_click(units)  # T-272
 			else:
 				select_at(units)
+		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and spawn_dragging:
+			end_spawn_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and size_drag_start.x >= 0:
 			end_size_drag(screen_to_units(mb.position))
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			panel.pick("")
+			if pair_mode:
+				set_pair_tool(false)
 			select_at(screen_to_units(mb.position))
 		map_view.accept_event()
 	elif event is InputEventMouseMotion:
@@ -703,7 +1211,11 @@ func _on_map_input(event: InputEvent) -> void:
 		if _dragging:
 			pan_by(mm.relative)
 		hover_units = screen_to_units(mm.position)
-		var c := document.cell_at(hover_units)
+		if road_stroke_last.x >= 0:
+			continue_road_stroke(hover_units)
+		if spawn_dragging:
+			update_spawn_drag(hover_units)
+		var c :=document.cell_at(hover_units)
 		if c != hover_cell:
 			hover_cell = c
 			_overlay.queue_redraw()
@@ -715,19 +1227,40 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	var k := event as InputEventKey
 	if k == null or not k.pressed:
 		return
+	if KEY_ACTIONS.has(k.keycode):
+		# V, R, M, H (T-262): step the picked piece's look, turn, mirror or height.
+		match str(KEY_ACTIONS[k.keycode]):
+			"turn":
+				rotate_pick()
+			"flip":
+				mirror_pick()
+			"arrows":
+				arrows_pick()
+			"banner":
+				banner_pick()
+			"pair":
+				pair_pick()
+			var axis:
+				step_pick(axis)
+		get_viewport().set_input_as_handled()
+		return
 	match k.keycode:
 		KEY_DELETE:
-			delete_selected()
-		KEY_R:
-			rotate_pick()
-		KEY_M:
-			mirror_pick()
+			if brush_mode() != "" and hover_cell.x >= 0:
+				# The road brush (T-263): Del erases the road block under the mouse.
+				erase_road([hover_units])
+			else:
+				delete_selected()
 		KEY_T:
 			style_pick()
 		KEY_ESCAPE:
 			size_drag_start = Vector2i(-1, -1)
+			end_road_stroke()
 			panel.pick("")
+			if pair_mode:
+				set_pair_tool(false)
 			selected = {}
+			_update_pose_controls()
 			_overlay.queue_redraw()
 		KEY_LEFT:
 			pan_by(Vector2(KEY_PAN_PX, 0))
@@ -772,6 +1305,12 @@ func preview_of(corner: Vector2) -> Dictionary:
 			var pos := Vector2(info.top_left_art_px[0], info.top_left_art_px[1]) * s + ISO_TRANSFORM * (shift * PX_PER_UNIT)
 			return {"texture": tex, "rect": Rect2(pos, tex.get_size() * s)}
 	var icon := LevelCreatorAssetPanel.icon_of({"textures": [t]})
+	if LevelDocument.is_skyscraper(id) and not pick_banner:
+		# T-265: the skyscraper without its banner (the sign-less copy of the body).
+		var plain := BuildingTowers.nobanner_path(str(t.texture))
+		var plain_tex := BuildingTowers.load_texture(plain) if plain != "" else null
+		if plain_tex != null:
+			icon = plain_tex
 	if icon == null:
 		return {}
 	var foot := LevelDocument.footprint_of(_picked(), pick_view, pick_mirror)
@@ -813,7 +1352,15 @@ class _Overlay extends Node2D:
 		if doc == null:
 			return
 		var w := 2.0 / maxf(editor.zoom, 0.01)
-		if editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
+		var brush: String = editor.brush_mode()
+		if brush != "" and editor.hover_cell.x >= 0:
+			# The road brush (T-263): the block it paints or erases, or the crossing's row of tiles.
+			var r: Rect2 = RoadBrush.zebra_rect(doc, editor.hover_units) if brush == "zebra" \
+				else RoadBrush.block_rect(doc, RoadBrush.block_at(doc, editor.hover_units))
+			if r.size != Vector2.ZERO and (brush == "zebra" or RoadBrush.block_at(doc, editor.hover_units).x >= 0):
+				var col := Color(1.0, 0.55, 0.45, 0.9) if editor.road_erasing else Color(0.55, 0.85, 1.0, 0.9)
+				_outline(r, col, w)
+		elif editor.panel != null and editor.panel.picked != "" and editor.hover_cell.x >= 0:
 			# Where the piece would go, snapped (LevelSnapping): its art and footprint there (a
 			# piece of any size: the engine-drawn preview, editor.preview_drawing, and footprint).
 			var at: Dictionary = editor.current_placement()
@@ -824,8 +1371,88 @@ class _Overlay extends Node2D:
 				if not pv.is_empty():
 					draw_texture_rect(pv.texture, pv.rect, false, Color(1, 1, 1, editor.PREVIEW_ALPHA))
 				_outline(at.rect, Color(0.55, 0.85, 1.0, 0.9), w)
-		if not editor.selected.is_empty():
+		if not editor.selected.is_empty() and str(editor.selected.get("kind", "")) != "spawn":
 			_outline(doc.piece_rect(editor.selected), Color(1.0, 0.85, 0.3, 1.0), w * 1.5)
+		_draw_pairs(doc, w)
+		_draw_spawn(doc, w)
+
+	## T-280: the spawn point, always: a car-shaped arrow on its cell (turned to the heading), the
+	## label above, at the height of the surface it stands on. Dragged: a ghost at the drop cell.
+	func _draw_spawn(doc: LevelDocument, w: float) -> void:
+		var s := LevelSpawn.of(doc.data)
+		var at := Vector2(s.x, s.y)
+		var refused := false
+		if editor.spawn_dragging:
+			at = editor.spawn_drop
+			refused = editor.spawn_drop_problem != ""
+		var h := doc.height_at(at)
+		var col: Color = editor.SPAWN_REFUSED_COLOR if refused else editor.SPAWN_COLOR
+		var heading := deg_to_rad(float(s.heading))
+		var fwd := Vector2(cos(heading), sin(heading))
+		var side := Vector2(-fwd.y, fwd.x)
+		var cell := Rect2(at - Vector2.ONE, Vector2(2, 2))
+		var ring := PackedVector2Array()
+		for q in [cell.position, Vector2(cell.end.x, cell.position.y), cell.end, Vector2(cell.position.x, cell.end.y)]:
+			ring.append(_at(q, h))
+		draw_colored_polygon(ring, Color(col, 0.35))
+		ring.append(ring[0])
+		draw_polyline(ring, editor.SPAWN_OUTLINE, w * 3.0)
+		draw_polyline(ring, col, w * 1.5)
+		if str(editor.selected.get("kind", "")) == "spawn":
+			draw_polyline(ring, Color(1.0, 0.85, 0.3, 1.0), w * 3.0)  # the selection outline, at the point's height
+		# The arrow: a shaft and a head ahead of the cell's middle.
+		var tip := _at(at + fwd * 4.4, h)
+		var head_a := _at(at + fwd * 2.2 + side * 1.7, h)
+		var head_b := _at(at + fwd * 2.2 - side * 1.7, h)
+		var tail := _at(at - fwd * 2.2, h)
+		draw_line(_at(at + fwd * 2.2, h), tail, editor.SPAWN_OUTLINE, w * 7.0)
+		draw_line(_at(at + fwd * 2.2, h), tail, col, w * 4.0)
+		draw_colored_polygon(PackedVector2Array([tip, head_a, head_b]), col)
+		draw_polyline(PackedVector2Array([tip, head_a, head_b, tip]), editor.SPAWN_OUTLINE, w * 2.0)
+		var text := CreatorTexts.get_text("spawn_label")
+		var font := ThemeDB.fallback_font
+		var fs := int(clampf(16.0 / maxf(editor.zoom, 0.01), 16.0, 400.0))
+		var size := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs)
+		var label_at := _at(at, h) + Vector2(-size.x / 2.0, -2.2 * editor.PX_PER_UNIT - 4.0 * w)
+		draw_string_outline(font, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, maxi(fs / 5, 2), editor.SPAWN_OUTLINE)
+		draw_string(font, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, col)
+
+	## T-272: each pair as a dashed line across the gap and a ring round each of its obstacles, at
+	## the height they stand on; the pair tool's first obstacle ringed thicker.
+	func _draw_pairs(doc: LevelDocument, w: float) -> void:
+		var col: Color = editor.PAIR_COLOR
+		for p in doc.pairs():
+			var line := ObstaclePairs.line_of(doc.data, p)
+			if line.is_empty():
+				continue
+			var ha := doc.height_at(line.a)
+			var hb := doc.height_at(line.b)
+			draw_dashed_line(_at(line.gap_a, ha), _at(line.gap_b, hb), col, w * 1.5,
+				editor.PAIR_DASH_UNITS * editor.PX_PER_UNIT)
+			_ring(line.obstacle_a, ha, col, w)
+			_ring(line.obstacle_b, hb, col, w)
+		if not editor.pair_first.is_empty():
+			var ref := LevelDocument.obstacle_ref(editor.pair_first)
+			var o := ObstaclePairs.resolve(doc.data, ref)
+			if not o.is_empty():
+				_ring(o, doc.height_at(ObstaclePairs.centre_of(o)), col, w * 2.5)
+
+	func _at(units: Vector2, h: float) -> Vector2:
+		return editor.ISO_TRANSFORM * (units * editor.PX_PER_UNIT) - Vector2(0.0, h * editor.PX_PER_UNIT)
+
+	## A ring just outside an obstacle's collision (a circle's or a rectangle's), on the ground at `h`.
+	func _ring(o: Dictionary, h: float, color: Color, width: float) -> void:
+		var pts := PackedVector2Array()
+		if str(o.shape) == "circle":
+			var r := float(o.radius) + 0.4
+			for i in 33:
+				var t := TAU * i / 32.0
+				pts.append(_at(o.centre + Vector2(cos(t), sin(t)) * r, h))
+		else:
+			var rr: Rect2 = (o.rect as Rect2).grow(0.4)
+			for q in [rr.position, Vector2(rr.end.x, rr.position.y), rr.end, Vector2(rr.position.x, rr.end.y), rr.position]:
+				pts.append(_at(q, h))
+		draw_polyline(pts, color, width)
 
 	func _outline(r: Rect2, color: Color, width: float) -> void:
 		var pts := PackedVector2Array()

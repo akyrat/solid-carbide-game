@@ -3,16 +3,34 @@
   "start_multiplier": 1.0,
   "max_multiplier": 6.0,
   "trick_add": {
-    "extended_drift": 0.05,
     "three_sixty": 0.25,
     "alternate_drift": 0.5,
     "air_one_eighty": 0.25,
-    "air_three_sixty": 0.5
+    "air_three_sixty": 0.5,
+    "thread_the_needle": 0.5
+  },
+  "thread_the_needle": {
+    "_comment": "T-272, proposals for the playtest (Level design, Decisions, \"Thread the needle\"). Worth (trick_add.thread_the_needle): 0.5, as ALT DRIFT! and AIR 360!, twice a FULL 360!, since it needs a line aimed through a gap the board placed. repeat_seconds: the same pair pays again on a later pass in either direction, once this long has gone by since it last paid, so weaving back and forth over the line does not pay every crossing. counts_in_air: a pass in the air (a jump through the gap) counts too; the car can't fly over the obstacles themselves, since a car in the air crashes into them as on the ground. touch_window_seconds and clear_seconds: a touch of either obstacle in the window before the car crosses the line, or until clear_seconds after it, voids the pass (the crash cuts the combo as always); the trick pays clear_seconds after the crossing.",
+    "repeat_seconds": 3.0,
+    "counts_in_air": true,
+    "touch_window_seconds": 0.5,
+    "clear_seconds": 0.25
+  },
+  "drift_pay": {
+    "_comment": "A whole drift pays once, when it ends (Drifting, Decisions, T-246): seconds of drift times per_second, nothing under min_seconds, at most max. Proposals for the playtest.",
+    "per_second": 0.05,
+    "min_seconds": 1.0,
+    "max": 0.5
   },
   "collision_cut": 0.8,
   "collision_cut_applies_to": "above_start",
   "drain_wait_seconds": 2.0,
   "drain_per_second": 0.5,
+  "airtime": {
+    "min_seconds": 0.3,
+    "per_second": 0.2,
+    "max_add": 0.6
+  },
   "spawning": {
     "enabled": true,
     "extra_spawn_per_multiplier_point": 0.15,

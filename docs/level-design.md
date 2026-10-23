@@ -54,6 +54,9 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Level creator piece set** (board, 2026-10-22, after playing G-005's creator; replaces "no new art is generated for it"): today's assets are not enough to build a full level, so the creator gets a comprehensive set of pieces generated with PixelLab, up to **100 generations** in all (the board's go). The aim is a functional, multi-layer world to drive around: rooftops and platforms that can be made smaller and bigger, ramps between the layers, and pieces in more rotations. What the set holds is the Project Lead's plan (the tickets list it); the board judges it in the playtest.
   - **Road pieces (T-252):** drawn by script from the existing road tiles (no PixelLab), at today's two-tile-wide roads' size so they join the straight roads the game's map and the creator already use: each piece is 2 x 2 tiles (4 x 4 units), placed with one click, and on every open side its lane (centre) line continues the straight tiles' line exactly. 4 corners, 4 T-junctions, a crossroads and 4 dead ends; a dead end closes the road with a white kerb line across it and gravel beyond. Each rotation is its own button under Roads, labelled from `creator_texts.json`, listed before the older road tiles. The older road tiles (centre-line halves, zebra crossings; x and y versions) stay as they were, so the game's own map is unchanged. Details: `game/README.md`, "Level creator (T-231)".
 - **Small and long buildings** (T-254, part of the piece set above): two more short buildings for the creator, both with their roofs showing, solid, see-through when the car is behind them and pathed round by enemies like today's. The **small** one covers 6 x 6 units, the **long** one 12 x 6 (6 x 12 rotated, R). **Height (a proposal for the board): 4.3 units**, the same as today's short buildings. Placeholder look: a code-drawn box in the city's palette (pale lit windows on cool blue-grey walls); T-257 generates the final art. Their art per rotation and mirror is in `game/data/level/creator_buildings.json`. The game's own map is unchanged.
+- **Level creator rework** (board, 2026-10-22, after playing the piece set; the plan the board read: https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN): the side panel is one button per kind of thing, in six groups from the ground up (Roads, Ground, Levels, Buildings, Obstacles, Decoration), with a piece's looks, turns, mirror and height chosen by keys and shown in a strip under the selected piece, instead of a button per rotation and variant. **Roads are painted with a brush**: drag to lay a road, which comes whole (a centre line in its middle, not two half tiles) and joins itself into corners, T-junctions, crossroads and dead ends; road kinds are plain, centre line, zebra crossing and cracked. **Ramps** are closed blocks with a wall at their tall end, and each ramp in each direction and height step can have its arrows pointing up or down the slope, the board's choice per ramp. **Platforms** (rooftops) have one-click sizes S 8 x 8, M 16 x 16 and L 32 x 32 units at heights 3 and 6, besides dragging any size. **Skyscraper banners** are on or off per building, off by default. No new generations.
+- **The car's spawn point** (board, 2026-10-22): every level has a spawn point, where the car starts a run on it. It is visible in the editor from the moment a level opens and the board can move it anywhere the car can stand (dragging it, and turning it for the car's starting heading, a proposal). It can never be deleted: a level always has exactly one. A new level starts with it at the map's centre; a level saved before this has it there too. (T-279, T-280)
+- **Thread the needle** (board, 2026-10-22): in the level creator the board can mark two obstacles (anything the car crashes into and that cuts the combo: boulders, barriers, cones, crates) as a pair. In a run on that level, driving through the gap between a marked pair is a trick, **thread the needle**, that raises the combo like the other tricks (Game loop architecture, Decisions, "The combo"). What it is worth, whether it pays again on the next pass, and how the pair shows in the editor and in the run are the agents' proposals for the playtest. Its popup text: HUD and menus, Content (T-271). (T-272)
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 
 ## Content
@@ -234,6 +237,110 @@ Added for the piece set (task T-250; same file, T-233's keys unchanged; the piec
 - **Props (new category "Props"):** "Concrete barrier", "Traffic cones", "Crate stack", "AC unit", "Water tank", "Roof vent", "Street lamp", "Rooftop sign".
 - **Buildings:** "Small building", "Long building".
 - **Controls hint with sizing:** "Mouse: place. Drag: size a rooftop. R: rotate. M: mirror. Del: delete." (`controls_hint_sizing`; the old `controls_hint` stays; the creator should show the new one, same keys).
+
+Added for the creator rework (task T-261; same file, every earlier key unchanged; Decisions, "Level creator rework"):
+
+- **Groups (side panel):** "Roads", "Ground", "Levels", "Buildings", "Obstacles", "Decoration" (`group_*`).
+- **Pieces (side panel), Roads:** "Road", "Centre line", "Zebra crossing", "Cracked road". **Ground:** "Gravel", "Pavement". **Levels:** "Platform", "Ramp". **Buildings:** "Small building", "Long building", "Low-rise", "Skyscraper". **Obstacles:** "Boulder", "Barrier", "Cones", "Crates". **Decoration:** "Street lamp", "AC unit", "Water tank", "Roof vent", "Rooftop sign" (`piece_*`).
+- **Looks strip under a selected piece:** heading "Looks"; counter "Look {n} of {count}" (`looks_heading`, `look_counter`).
+- **Platform sizes (top bar):** "S", "M", "L", "Any size (drag)" (`platform_size_*`).
+- **Ramp arrows (top bar):** "Arrows up", "Arrows down" (`ramp_arrows_up`, `ramp_arrows_down`).
+- **Banner (top bar, skyscrapers):** "Banner on", "Banner off" (`banner_on`, `banner_off`).
+- **Road brush (top bar):** "Drag to paint a road" (`road_brush_hint`).
+- **Controls hint:** "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete." (`controls_hint_rework`; the older hints stay; the creator should show this one, same keys).
+
+### Level creator: one button per kind of piece
+
+Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/README.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
+
+- **The panel:** six groups from the ground up with one button per kind (20 in all): Roads (Road, Centre line, Zebra crossing, Cracked road), Ground (Gravel), Levels (Platform, Ramp), Buildings, smallest to tallest (Small building, Long building, Low-rise, Skyscraper), Obstacles (Boulder, Barrier, Cones, Crates), Decoration (Street lamp, AC unit, Water tank, Roof vent, Rooftop sign). **Pavement is left out:** the game's only pavement art is the block pavement drawn under buildings, not a ground tile.
+- **Keys:** V next look, R turn, M mirror, H height (Platform 3 / 6; Ramp 0 to 3, 3 to 6, 0 to 6), T style. Under the picked piece a **looks strip** shows its looks as small clickable pictures with "Look n of count".
+- **Looks (proposals):** Road is the plainer asphalts (the approved tile with its mirror, and two PixelLab ones); **Cracked road** is the three visibly cracked PixelLab asphalts; Centre line holds the line tiles on every asphalt and the corner, T-junction, crossroads and dead-end pieces (R turns them); Zebra crossing the zebra tiles on every asphalt; a road tile turns (R) to its tile along the other axis. **Skyscraper** has 12 looks: each of the 6 towers' two bodies (the second body was in the game's art but not offered by the old panel). Since T-263 the road kinds are brushes ("Level creator: the road brush" below).
+- **Saved levels** are unchanged: a piece writes the same data as before, so earlier levels open, place and play as before.
+
+![The level creator's side panel, Skyscraper picked, its looks strip under the Buildings group](../art-archive/T-262/screenshots/panel_skyscraper.png)
+
+### Level creator: the road brush
+
+Task T-263 (Decisions, "Level creator rework"). How it works and where its code and tiles are: `game/README.md`, "Level creator", "The road brush (T-263)". The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest.
+
+- **Painting:** pick Road, Centre line or Cracked road, press the left button on the map and drag. The road comes whole along the drag, today's two-tile-wide road (4 units), with the centre line in its middle for Centre line. The road follows the drag in steps along x and y, with no gaps when the drag goes diagonally. V picks the asphalt: Road and Centre line a0 (M: its mirror a0m), g6, g9; Cracked road g4, g5, g7. Painting over a road changes its kind and asphalt. The top bar shows "Drag to paint a road".
+- **Joining:** wherever painted roads meet, the editor picks the piece itself: straights along y and x, corners, T-junctions, crossroads, and a dead end at each open end (a kerb across the road, gravel beyond). With Centre line the line runs on through every piece. On Road and Cracked road a corner, T-junction or crossroads is plain asphalt.
+- **Erasing:** a right-drag erases road along the drag, and Del erases the road under the mouse. The roads around then join again.
+- **Zebra crossing:** pick it and click on a straight road. The crossing goes across the road on the row of tiles clicked, on that road's own asphalt, and stays when the road is painted over with another kind. It is not laid on a corner, junction or dead end, and goes away when its block becomes one.
+- **Never over:** a road is not painted over a building, platform or ramp. It stops at them, and they close it in a dead end.
+- **Proposals:** roads lie on a 4-unit grid (blocks of 2 x 2 tiles). Every road block joins every road block next to it, so two roads painted side by side become one wide road. A single block on its own is plain asphalt. Where a centre-line road meets a road without a line, the line runs to the edge of its own block. A crossing has four stripes evenly across the road (the full zebra tile on both tiles). The game's map leaves out the stripe at each edge, which on a road this narrow would leave only two.
+- **New tiles, drawn by script (no PixelLab):** T-252's centre-line pieces on the asphalts a0m, g6 and g9, and the dead ends of roads without a line on all seven asphalts. 268 tiles, appended to the ground atlas, so every earlier tile keeps its index.
+- **Saved levels** write the same ground data as before (a road tile per cell), so a painted level passes the level check and plays. Earlier levels open unchanged, and a road saved earlier joins a newly painted one when its tiles fill whole blocks. The old single road tiles are no longer panel looks; they stay in the catalogue so old levels draw.
+
+![A street grid painted with the road brush in a few drags: corners, T-junctions, crossroads, dead ends and zebra crossings](../art-archive/T-263/screenshots/street_grid.png)
+
+### Level creator: closed ramps, arrows and platform sizes
+
+Task T-264 (Decisions, "Level creator rework"). How it works: `game/README.md`, "Level creator", "Closed ramps, arrows up or down, platform sizes (T-264)". The numbers are the Level/Challenge Design Agent's proposals for the board's playtest.
+
+- **Closed ramps:** every ramp, in each direction and height step, has a wall at its tall end down to what it stands on, in the ramp side's texture, even where it meets a rooftop or building.
+- **Arrows:** every ramp can have its arrows pointing up or down the slope, the board's choice per ramp (key A, or the top bar's "Arrows up" and "Arrows down"), saved with the ramp. The default is up.
+- **Platform sizes:** a platform at height 3 or 6 places in one click at S 8 x 8, M 16 x 16 or L 32 x 32 units, chosen on the top bar; the default is M. Dragging still sizes it freely ("Any size (drag)").
+
+![Ramps in four directions with their arrows up](../art-archive/T-264/screenshots/ramps_up.png)
+![The same ramps with their arrows down](../art-archive/T-264/screenshots/ramps_down.png)
+![S, M and L platforms at heights 3 and 6](../art-archive/T-264/screenshots/sizes.png)
+
+### Level creator: skyscraper banners on or off
+
+Task T-265 (Decisions, "Level creator rework"). How it works: `game/README.md`, "Level creator", "Skyscraper banners on or off (T-265)". The choices marked here are the Level/Challenge Design Agent's proposals for the board's playtest.
+
+- **What the banner is:** the vertical sign in the middle of a skyscraper's face is painted into the building's own picture (every one of the 12 looks has one), not a separate sprite. The kaiju alert banners of the game's own map (`game/art/banners/`) are a different thing and are not part of this.
+- **On or off per skyscraper:** key B, or the top bar's "Banner on" and "Banner off", chooses it for the next skyscraper placed; with a skyscraper selected and nothing picked, B changes that building. **Off by default.** The choice is saved with the building and the preview shows it.
+- **The pictures without a banner:** the same 12 bodies, built again by script from the same pieces with the sign left out (no PixelLab); the originals stay.
+- **Earlier saved levels** (a skyscraper with no banner choice written) open with the banner **off** (a proposal).
+- **The game's own map** keeps its banners and signs as before.
+
+![Six skyscrapers with their banner off, two with it on](../art-archive/T-265/screenshots/banners.png)
+Added for thread the needle (task T-271; same file, every earlier key unchanged; Decisions, "Thread the needle"; the build is T-272):
+- **Pair tool (top bar or Obstacles panel):** button "Pair obstacles" (`pair_tool`); hint while picked "Pair: click two obstacles" (`pair_hint`).
+- **Messages (top bar):** after a pair is made "Pair made. Drive between them." (`pair_made`); when the click is not on an obstacle "Not an obstacle. Pick a boulder, barrier, cones or crates." (`pair_not_obstacle`).
+- **Removing a pair:** button "Unpair" (`unpair_label`).
+- **Controls hint:** the rework hint with "P: pair." added: "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_pairs`; the older hints stay; the creator should show this one; P is the text's proposal and the creator must use the same key).
+Added for the car's spawn point (task T-279; same file, every earlier key unchanged; Decisions, "The car's spawn point"; the build is T-280):
+- **Marker (on the map):** "Start" (`spawn_label`).
+- **Hint while selected (top bar):** "Start: drag to move. R: turn." (`spawn_hint`; R is the same turn key as for pieces, the heading being a proposal).
+- **Message when it can't go where dropped (top bar):** "Can't start here: it's blocked." (`spawn_blocked`; inside a building, on an obstacle or off the map).
+- **Message when the board tries to delete it (top bar):** "The start can't be deleted." (`spawn_no_delete`).
+- **Controls hint:** the pairs hint with "move the start" added: "Drag: paint roads, size platforms, move the start. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. P: pair. T: style. Del: delete." (`controls_hint_spawn`; the older hints stay; the creator should show this one).
+
+### Level creator: thread the needle
+
+Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it works: `game/README.md`, "Level creator", "Thread the needle (T-272)". The points marked as proposals are the Level/Challenge Design Agent's, for the board's playtest; the numbers are in `game/data/combo.json` (`trick_add.thread_the_needle` and `thread_the_needle`, with their reasons).
+
+- **Which pieces are obstacles:** the four of the panel's Obstacles group, boulders, barriers, cones and crates. Decoration (street lamps, AC units, water tanks, roof vents, rooftop signs) is refused with "Not an obstacle...", as are buildings, rooftops, ramps and the ground.
+- **Pairing:** the top bar's "Pair obstacles", or **P**, turns the pair tool on (it drops the picked piece); click one obstacle, then another: the top bar says "Pair made. Drive between them." The tool stays on for the next pair until P, Esc, a right-click or picking a piece. Clicking the same obstacle twice lets it go.
+- **One pair per obstacle:** pairing an obstacle that is already in a pair replaces its old pair (a proposal: the new pair wins).
+- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the first obstacle clicked with the tool on is ringed thicker.
+- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair", or delete either obstacle.
+- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles and no obstacle is in two.
+- **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
+- **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
+- **The game's own map** has no pairs and is unchanged.
+
+![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
+![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+
+### Level creator: the spawn point
+
+Built in task T-280 from Decisions, "The car's spawn point", with T-279's labels. The choices below are proposals for the playtest.
+
+- **The marker:** a green arrow on the point's cell, turned to the car's starting heading, with a dark outline and the label "Start" above it, drawn in code above every piece so nothing hides it, lifted to the surface it stands on (a rooftop's or ramp's height). Never Redgull red. Selected, it gets the yellow selection outline and the top bar shows its hint.
+- **Moving it:** press on it and drag; a ghost shows the cell under the mouse (grey when the car can't stand there) and the point snaps to that cell's middle on release. Anywhere the car can stand: the street, a rooftop or a ramp. A plain click only selects it. (The decision's "select it and click where it should go" is not built; the drag does the job.)
+- **Where the car can stand:** inside the map and clear of every building, obstacle (barrier, cones, crates and the other props) and boulder by 1 unit; the cell beside one is fine. Anywhere else is refused with "Can't start here: it's blocked." and the point stays where it was. A building or obstacle placed over it is refused with the same message.
+- **Turning it:** R with it selected steps the heading round eight directions (45 degrees each); a new level starts facing the way the run always did.
+- **Never deleted:** Del shows "The start can't be deleted." and it stays.
+- **Saved and used:** the level file's `spawn` ({x, y, heading}); a run started from the creator puts the car there, at the ground's height there, facing that way. The level check refuses a level whose spawn point is missing or not where a car can stand. The game's own map has none and starts the car as before.
+
+![A new level with its spawn point at the centre](../art-archive/T-280/screenshots/editor_new.png)
+![The spawn point moved onto a rooftop, turned to face the ramp and selected](../art-archive/T-280/screenshots/editor_roof.png)
+![A drop on a building refused with the message; the point stays on the rooftop](../art-archive/T-280/screenshots/editor_refused.png)
 
 ### Level creator: rooftops of any size and ramps in every direction
 

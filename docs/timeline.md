@@ -1700,3 +1700,88 @@ Entry format:
 - Decision or change: the board found in a playtest that the airborne car's shadow doesn't show at all over raised ground (rooftops, ramps); it must always show on the ground under the car at that ground's height. Bug fix ticket T-258.
 - Documents touched: none (a bug against the existing Drifting and Level design decisions)
 - Tasks: T-258
+
+## 2026-10-22: T-249 done: the hype drift trail
+- Decision or change: the board played the hype drift trail and approved it: the drift marks glow yellow at x2, orange with a yellow core at x3, and white-hot with sparks and flames from x4, each mark keeping the step it was laid at (Visual style, Decisions, "Hype drift trail"). The board also found that the drift marks don't show on rooftops and ramps (bug ticket T-259).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-249 (done), T-259
+
+## 2026-10-22: T-245 done: the COMBO BROKEN! popup
+- Decision or change: the board played the combo broken popup and approved it: a crash that cuts a combo pops a warning red-orange, cracked COMBO BROKEN! card that shakes and breaks apart, never when there is no combo or when it drains (HUD and menus, Decisions, "Combo broken popup").
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-245 (done)
+
+## 2026-10-22: T-258 done: the car's shadow on raised ground
+- Decision or change: the board played the fix and approved it: the airborne car's shadow is no longer lost under the rooftop or ramp it lies on (its depth now follows the car, so it is under a raised area only while the car is). One elevation test that encoded the old behaviour was changed to expect the fix. A first GUT run on the merge crashed (exit 139) and passed on a rerun.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-258 (done)
+
+## 2026-10-22: T-227 done: the minions' falling art
+- Decision or change: the board played the minions' falling animation (PixelLab art, 5 generations, replacing T-226's placeholder fall) and approved it.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-227 (done)
+
+## 2026-10-22: A Play creator button on the task board
+- Decision or change: the board asked for a quicker way to open the level creator than its PowerShell command: a Play creator button on each Builds entry that has the creator (T-260, tooling).
+- Documents touched: none yet (`docs/README.md` when T-260 is done)
+- Tasks: T-260
+
+## 2026-10-22: T-228, T-242, T-243, T-246, T-247 and T-229 done: the drift and airtime combo, and new README GIFs
+- Decision or change: the board played the T-229 build and approved all of it: the camera follows the car's height (T-228); every landing after 0.3 s or more in the air pays HANG TIME! scaled by the airtime (T-242); a live airtime counter (T-243); a drift pays once when it ends, 0.05 a second from 1 s, capped at 0.5, in the LONG DRIFT! popup (T-246); a live drift counter under the airtime one (T-247); and the root README's six re-recorded GIFs (T-229). A first GUT run on the merge crashed (exit 139, as on T-258's merge) and passed on a rerun.
+- Documents touched: `docs/drifting.md`, `docs/hud-and-menus.md`, `README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-228, T-242, T-243, T-246, T-247, T-229 (all done)
+
+## 2026-10-22: T-260 done: a Play creator button on the task board
+- Decision or change: each Builds entry (and a goal build's detail) whose folder has the level creator gets a Play creator button that starts Godot on `res://scenes/level_creator/level_creator.tscn`, a fixed scene, only for folders in the worktree list. Tooling, merged straight after QA.
+- Documents touched: `docs/README.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-260 (done)
+
+## 2026-10-22: T-259 done: the drift marks on rooftops and ramps
+- Decision or change: the board played the fix and approved it: the drift marks (with the hype trail) are now drawn on the surface the car drifted on, at its height and over it, with the same depth rule as the shadow, and stay there when the car leaves.
+- Documents touched: `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-259 (done)
+
+## 2026-10-22: The level creator rework
+- Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-261, T-262, T-263, T-264, T-265
+
+## 2026-10-22: A stronger wiper push
+- Decision or change: the board asked for the windshield wiper to push minions about twice the car's size at its first level; the Project Lead reads that as twice the car's length, 6 units (from 1.5), with the tier multipliers unchanged (Weapons, Decisions, "A stronger wiper push"; T-266).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-266
+
+## 2026-10-22: A smaller exhaust flame that burns what it touches
+- Decision or change: the board asked for the exhaust flame to start 4 to 5 times smaller, be drawn behind the car and enemies, and hurt a minion as soon as it touches the visible flame (its damage area = the drawn flame; replaces "a minion is in the flames when its centre is") (Weapons, Decisions; T-267).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-267
+
+## 2026-10-22: A slower air turn with a garage upgrade, and no "Redgull says" lines
+- Decision or change: the board halved the car's spin rate in the air (multiplier 2.5 to 1.25; T-269) and asked for a fifth garage upgrade that raises it (T-270, with its text in T-268). It also dislikes text in the form "Redgull says X": the two level-up card descriptions that use it (flamethrower tier 6, underglow tier 2) are rewritten, and no new text uses it (T-268).
+- Documents touched: `docs/drifting.md`, `docs/garage-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-268, T-269, T-270
+
+## 2026-10-22: Thread the needle
+- Decision or change: the board wants to mark two obstacles as a pair in the level creator; driving through the gap between them is a new trick, thread the needle, that raises the combo. Its worth, repeat rule and look are the agents' proposals (Level design, Decisions, "Thread the needle"; text T-271, build T-272).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-271, T-272
+
+## 2026-10-22: A thicker likes bar that springs, and one game build to playtest
+- Decision or change: the likes bar becomes 4 times thicker (16 to 64 pixels) and springs to its new fill with a small overshoot instead of jumping (HUD and menus, Decisions; T-273). Brand Magnet's "Redgull calls it engagement" goes as well (added to T-268). The board will play everything outside the level creator together in one build, with patch notes and suggested objectives before it plays.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-273, T-268
+
+## 2026-10-22: The neon underglow drawn in code
+- Decision or change: the board doesn't like the generated underglow sprite; the neon zone is drawn in code as pixel rings and stepped-halo glow marking exactly its damage circle, with the old sprite kept (Visual style, Decisions; T-274).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-274
+
+## 2026-10-22: A little side slip out of a drift
+- Decision or change: the board, calling it crucial to the game's feel, wants a small sideways slide to carry on when a drift ends, so the player steadies the car with counter-steer, as in Hotshot Racing and Mario Kart. Tuning values with live sliders; played on its own, separate from every other change (Drifting, Decisions; T-278).
+- Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-278
+
+## 2026-10-22: The car's spawn point in the level creator
+- Decision or change: every level has exactly one spawn point, visible from the moment a level opens, movable anywhere the car can stand and turnable for its heading, never deletable; a run on the level starts the car there (Level design, Decisions; text T-279, build T-280).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-279, T-280

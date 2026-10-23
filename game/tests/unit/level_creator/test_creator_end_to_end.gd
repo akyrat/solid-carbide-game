@@ -25,7 +25,7 @@ func after_each() -> void:
 
 func _place(e: LevelCreatorEditor, id: String, at: Vector2) -> Dictionary:
 	e.panel.pick(id)
-	var r := e.place_asset(id, at)
+	var r := e.place_asset(id, at, {"rooftop-3": Vector2(84, 30), "rooftop-6": Vector2(30, 30)}.get(id, Vector2.ZERO))  # T-264: the old plain-click sizes
 	assert_false(r.is_empty(), id + " placed")
 	return r
 

@@ -19,6 +19,7 @@ const LABELS := {"prop-barrier": "prop_barrier", "prop-cones": "prop_cones", "pr
 func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
+	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	e.levels_dir = RunPaths.file("t253_levels")
 	add_child_autofree(e)
 	return e
@@ -75,14 +76,17 @@ func test_each_prop_is_described_in_one_data_file_with_art_per_rotation() -> voi
 			assert_true(anchor.x >= 0 and anchor.y >= 0 and anchor.x < size.x and anchor.y < size.y, "%s %s anchor" % [id, rot])
 
 
-func test_the_panel_lists_the_props_under_the_props_category_with_creator_texts_labels() -> void:
+func test_the_panel_lists_the_props_under_obstacles_and_decoration_with_creator_texts_labels() -> void:
+	# T-262: the props are families under Obstacles and Decoration, one button each, named piece_*.
 	var e := _editor()
 	var by_cat := e.panel.entries_by_category()
-	assert_true(by_cat.has(CreatorTexts.get_text("category_props")), "the Props category")
-	assert_eq(by_cat[CreatorTexts.get_text("category_props")], PROP_IDS)
+	assert_eq(by_cat[CreatorTexts.get_text("group_obstacles")], ["boulder", "barrier", "cones", "crates"])
+	assert_eq(by_cat[CreatorTexts.get_text("group_decoration")],
+		["street-lamp", "ac-unit", "water-tank", "roof-vent", "roof-sign"])
 	for id in PROP_IDS:
-		var b: Button = e.panel.buttons[id]
-		assert_eq(b.text, CreatorTexts.get_text(LABELS[id]), id)
+		var fid := CreatorFamilies.family_of_asset(id)
+		var b: Button = e.panel.buttons[fid]
+		assert_eq(b.text, CreatorTexts.get_text("piece_" + str(LABELS[id]).trim_prefix("prop_")), id)
 		assert_ne(b.text, "", id)
 
 

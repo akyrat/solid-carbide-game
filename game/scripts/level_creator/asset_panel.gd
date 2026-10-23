@@ -1,23 +1,23 @@
 class_name LevelCreatorAssetPanel
 extends PanelContainer
-## The level creator editor's side panel (task T-235): every asset of the catalogue
-## (data/level/creator_assets.json), grouped by kind under the category names of
-## data/level/creator_texts.json, one button per asset showing its art. Pressing one picks it
-## (asset_picked); pressing the picked one again drops the pick.
+## The level creator editor's side panel (task T-235; one button per kind of piece since T-262).
+## The families of the catalogue (data/level/creator_assets.json "families", built by
+## build_creator_assets.py; stepped by creator_families.gd) in six groups from the ground up, under
+## the group names of data/level/creator_texts.json (group_*), one button per family with its
+## name (piece_*) and its first look's art. Pressing one picks it (asset_picked, with the asset of
+## its first member); pressing the picked one again drops the pick.
+##
+## The looks strip (T-262) sits under the picked family's group: the heading (looks_heading), a
+## small picture per look at the picked height, clickable (member_picked), and the counter
+## (look_counter). The editor's keys V, R, M and H step the member (editor.gd KEY_ACTIONS) and show
+## it here with show_member.
 
 signal asset_picked(asset_id: String)
+## A look clicked in the looks strip: the family member to pick.
+signal member_picked(member: Dictionary)
 
-## Kind -> the text key of its category, in the panel's order.
-const CATEGORIES := [
-	["ground", "category_ground"],
-	["road", "category_roads"],
-	["building", "category_buildings"],
-	["boulder", "category_boulders"],
-	["rooftop", "category_rooftops"],
-	["ramp", "category_ramps"],
-	["prop", "category_props"],
-]
-## Rooftops and ramps carry a label (their heights) from creator_texts.json.
+## Rooftops and ramps carry a label (their heights) from creator_texts.json, shown on the top bar
+## for the picked member's asset (editor.gd height_label), as do the buildings and road pieces.
 const LABEL_KEYS := {
 	"rooftop-3": "rooftop_height_3",
 	"rooftop-6": "rooftop_height_6",
@@ -26,7 +26,6 @@ const LABEL_KEYS := {
 	"ramp-0-6": "ramp_height_0_6",
 	"building-small": "building_small",
 	"building-long": "building_long",
-	# T-252: the road pieces, one button per rotation (the art tells them apart; the tooltip is the id).
 	"road-piece_corner_ne": "road_corner",
 	"road-piece_corner_es": "road_corner",
 	"road-piece_corner_sw": "road_corner",
@@ -48,17 +47,32 @@ const RAMP_DIR_KEYS := {
 	"south": "ramp_dir_south",
 	"west": "ramp_dir_west",
 }
-const BUTTON_SIZE := Vector2(64, 64)
+## A family button (icon over its name), two to a row; a look in the strip.
+const BUTTON_SIZE := Vector2(136, 64)
+const LOOK_SIZE := Vector2(40, 40)
+const COLUMNS := 2
 const PANEL_WIDTH := 300.0
 
-## The picked asset's id, "" for none.
+## The picked member's asset id, "" for none.
 var picked: String = ""
-## Asset id -> its button.
+## The picked family's id, "" for none, and its member (creator_families.gd), {} for none.
+var picked_family: String = ""
+var member: Dictionary = {}
+## Family id -> its button.
 var buttons: Dictionary = {}
-## The category labels, in order, and the asset ids under each: [{kind, label, ids}].
+## The groups, in order: [{group, label, grid, ids (family ids)}].
 var groups: Array = []
+## The looks strip and its parts (under the picked family's group; hidden with nothing picked).
+var looks_strip: VBoxContainer
+var looks_heading: Label
+var looks_row: HFlowContainer
+var look_counter: Label
+## The strip's look buttons, in order (each has the member it picks as meta "member").
+var look_buttons: Array = []
 
 var _group := ButtonGroup.new()
+var _list: VBoxContainer
+var _pending: Dictionary = {}
 
 
 func _ready() -> void:
@@ -68,67 +82,65 @@ func _ready() -> void:
 	scroll.name = "Scroll"
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
-	var list := VBoxContainer.new()
-	list.name = "List"
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	for cat in CATEGORIES:
-		var kind: String = cat[0]
+	_list = VBoxContainer.new()
+	_list.name = "List"
+	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(_list)
+	for g in CreatorFamilies.groups():
+		var group := str(g)
 		var header := Label.new()
-		header.name = "Category_" + kind
-		header.text = CreatorTexts.get_text(cat[1])
-		list.add_child(header)
+		header.name = "Group_" + group
+		header.text = CreatorTexts.get_text("group_" + group)
+		_list.add_child(header)
 		var grid := GridContainer.new()
-		grid.name = "Grid_" + kind
-		grid.columns = 4
-		list.add_child(grid)
+		grid.name = "Grid_" + group
+		grid.columns = COLUMNS
+		_list.add_child(grid)
 		var ids: Array = []
-		for e in LevelDocument.panel_entries():
-			if str(e.kind) != kind:
-				continue
-			var id := str(e.id)
-			grid.add_child(_make_button(e))
-			ids.append(id)
-		groups.append({"kind": kind, "label": header, "ids": ids})
+		for f in CreatorFamilies.in_group(group):
+			grid.add_child(_make_button(f))
+			ids.append(str(f.id))
+		groups.append({"group": group, "label": header, "grid": grid, "ids": ids})
+	_make_strip()
 
 
-func _make_button(e: Dictionary) -> Button:
-	var id := str(e.id)
+func _make_button(f: Dictionary) -> Button:
+	var fid := str(f.id)
 	var b := Button.new()
-	b.name = "Asset_" + id.replace("-", "_")
+	b.name = "Family_" + fid.replace("-", "_")
 	b.toggle_mode = true
 	b.button_group = _group
 	b.custom_minimum_size = BUTTON_SIZE
 	b.expand_icon = true
-	b.icon = icon_of(e)
-	b.tooltip_text = id
-	b.set_meta("asset_id", id)
-	if LABEL_KEYS.has(id) and id.begins_with("road-"):
-		# A road piece (T-252): the art fills the button and its label (the text key) sits in a
-		# small Label over its lower edge, so the 2:1 tile keeps the full button width.
-		var label := Label.new()
-		label.name = "Label"
-		label.text = CreatorTexts.get_text(LABEL_KEYS[id])
-		label.add_theme_font_size_override("font_size", 10)
-		label.add_theme_color_override("font_outline_color", Color.BLACK)
-		label.add_theme_constant_override("outline_size", 4)
-		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		b.add_child(label)
-		b.set_meta("label", label)
-	elif label_key(id) != "":
-		# Heights, buildings, and a prop's name (its entry's "label", T-253).
-		b.text = CreatorTexts.get_text(label_key(id))
-		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-		b.custom_minimum_size = Vector2(BUTTON_SIZE.x * 2, BUTTON_SIZE.y)
-	b.toggled.connect(func(on: bool): _on_toggled(id, on))
-	buttons[id] = b
+	b.icon = member_icon(f.members[0])
+	b.text = CreatorTexts.get_text(str(f.label))
+	b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+	b.tooltip_text = fid
+	b.set_meta("family", fid)
+	b.toggled.connect(func(on: bool): _on_toggled(fid, on))
+	buttons[fid] = b
 	return b
 
 
-## The text key of an asset's label (creator_texts.json): the heights of rooftops and ramps, and a
-## prop's name (its catalogue entry's "label", T-253); "" for an asset without a label.
+func _make_strip() -> void:
+	looks_strip = VBoxContainer.new()
+	looks_strip.name = "LooksStrip"
+	looks_heading = Label.new()
+	looks_heading.name = "Heading"
+	looks_heading.text = CreatorTexts.get_text("looks_heading")
+	looks_strip.add_child(looks_heading)
+	looks_row = HFlowContainer.new()
+	looks_row.name = "Looks"
+	looks_strip.add_child(looks_row)
+	look_counter = Label.new()
+	look_counter.name = "Counter"
+	looks_strip.add_child(look_counter)
+	looks_strip.visible = false
+	_list.add_child(looks_strip)
+
+
+## The text key of an asset's label (creator_texts.json): the heights of rooftops and ramps, the
+## buildings, the road pieces, and a prop's name (its entry's "label", T-253); "" for none.
 static func label_key(id: String) -> String:
 	if LABEL_KEYS.has(id):
 		return LABEL_KEYS[id]
@@ -148,27 +160,90 @@ static func icon_of(e: Dictionary) -> Texture2D:
 	return at
 
 
-func _on_toggled(id: String, on: bool) -> void:
+## A family member's picture: its asset's texture in its view, mirror and variant.
+static func member_icon(m: Dictionary) -> Texture2D:
+	var t := LevelDocument.texture_of(str(m.asset), str(m.view), bool(m.mirror), str(m.get("variant", "")))
+	return icon_of({"textures": [t]}) if not t.is_empty() else null
+
+
+func _on_toggled(fid: String, on: bool) -> void:
 	if on:
-		picked = id
-	elif picked == id:
-		picked = ""
+		picked_family = fid
+		var m: Dictionary = _pending if not _pending.is_empty() else CreatorFamilies.first_member(fid)
+		_pending = {}
+		show_member(m)
+	elif picked_family == fid:
+		picked_family = ""
+		show_member({})
+	else:
+		return
 	asset_picked.emit(picked)
 
 
-## Picks an asset as if its button were pressed ("" drops the pick).
-func pick(id: String) -> void:
+## Shows `m` (a member of the picked family) as the pick: the asset placed, the looks strip.
+func show_member(m: Dictionary) -> void:
+	member = m
+	picked = str(m.get("asset", ""))
+	_update_strip()
+
+
+func _update_strip() -> void:
+	for b in look_buttons:
+		looks_row.remove_child(b)
+		b.queue_free()
+	look_buttons = []
+	if picked_family == "" or member.is_empty():
+		looks_strip.visible = false
+		return
+	# Under the picked family's group (right after its grid of buttons).
+	for g in groups:
+		if picked_family in g.ids:
+			_list.move_child(looks_strip, (g.grid as Node).get_index() + 1)
+	var all := CreatorFamilies.looks(picked_family, member)
+	var at := CreatorFamilies.look_index(picked_family, member)
+	for i in all.size():
+		var m: Dictionary = all[i]
+		var b := Button.new()
+		b.name = "Look_%d" % i
+		b.toggle_mode = true
+		b.button_pressed = i == at
+		b.custom_minimum_size = LOOK_SIZE
+		b.expand_icon = true
+		b.icon = member_icon(m)
+		b.tooltip_text = str(m.asset)
+		b.set_meta("member", m)
+		b.pressed.connect(func(): member_picked.emit(m))
+		looks_row.add_child(b)
+		look_buttons.append(b)
+	look_counter.text = CreatorTexts.get_text("look_counter").format({"n": at + 1, "count": all.size()})
+	looks_strip.visible = true
+
+
+## Picks a family (its id) or a catalogue asset (the family holding it, at the member placing that
+## asset in `view` and `mirror`) as if its button were pressed; "" drops the pick.
+func pick(id: String, view: String = "", mirror: bool = false) -> void:
 	if id == "":
 		var b := _group.get_pressed_button()
 		if b != null:
 			b.button_pressed = false
 		picked = ""
+		picked_family = ""
+		member = {}
+		_update_strip()
 		return
-	if buttons.has(id):
-		buttons[id].button_pressed = true
+	var fid := id if buttons.has(id) else CreatorFamilies.family_of_asset(id)
+	if not buttons.has(fid):
+		return
+	var m: Dictionary = CreatorFamilies.first_member(fid) if fid == id else CreatorFamilies.member_for(id, view, mirror)
+	if picked_family == fid:
+		show_member(m)
+		asset_picked.emit(picked)
+		return
+	_pending = m
+	buttons[fid].button_pressed = true
 
 
-## The panel's entries: category text -> asset ids, in the panel's order.
+## The panel's buttons: group text -> family ids, in the panel's order.
 func entries_by_category() -> Dictionary:
 	var out := {}
 	for g in groups:

@@ -1,7 +1,7 @@
 ---
 id: T-258
 title: The car's shadow shows on raised ground while the car is in the air
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/level-design.md, game/README.md, game/scripts/driving/car_shadow.gd, game/scripts/driving/elevation_test.gd, game/scripts/level/elevation_layer.gd, game/scripts/run/run.gd, tasks/T-185-elevation-test-scene-the-car-s.md, tasks/T-192-elevation-round-shadow-no-bigger-option.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/level/elevation_layer.gd, game/scripts/run/, game/tests/, game/README.md, art-archive/T-258/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,14 @@ Started at the board's report: the airborne car's shadow must show on rooftops a
 
 Fixed: the shadow was drawn under the rooftop or ramp it lay on when the car flew in over it; it now stays visible. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to play: jump between rooftops and ramps and watch the shadow. Files: art-archive/T-258/screenshots/.
+
+### 2026-10-22, Needs playtest → Done
+
+The board played it: the shadow looks good. Merged into master.
+
 ## Result notes
 
 **Cause.** The shadow's depth (`shadow.z_index`) was `z_for(units, rot, ground_h) - 1`, computed on its own from the ground's height. A car in the air that is drawn over a rooftop or ramp (flying in from behind it, or off its edge) is over that area, but its shadow, on lower ground behind the area, was drawn under the area and lost behind it. A sweep of the old code found such spots, for example (-88, -64) with ramp-nw-0-3 and (-52, -88) with ramp-nw-3-6, at lifts 3 and 8.
@@ -69,3 +77,4 @@ Fixed: the shadow was drawn under the rooftop or ramp it lay on when the car fle
 **Screenshots** in `art-archive/T-258/screenshots/`: `shadow_air_street.png`, `shadow_air_roof3.png`, `shadow_air_roof6.png`, `shadow_air_ramp.png` (car 3 units up, shadow on the ground under it) and `shadow_jump_6_to_3.gif` (a jump from the height 6 rooftop down to the 3, the shadow following). Fixtures: `tests/fixtures/run_shadow_air_*.tscn`, `run_shadow_jump_6_to_3.tscn`. Documents: `game/README.md` (the T-192 section).
 
 No actions were refused.
+- 2026-10-22, needs-playtest → done: board's playtest: shadow on raised ground looks good

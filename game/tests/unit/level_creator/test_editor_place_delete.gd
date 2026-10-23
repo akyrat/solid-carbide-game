@@ -17,6 +17,7 @@ const KIND_KEYS := {
 func _editor() -> LevelCreatorEditor:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_new()
+	e.level_data["spawn"] = {"x": 111.0, "y": 111.0, "heading": 270}  # T-280: out of the way of the tests' pieces
 	add_child_autofree(e)
 	return e
 
@@ -58,44 +59,48 @@ func test_a_new_level_is_an_empty_map_of_todays_size_all_plain_ground() -> void:
 
 # ---- The side panel -----------------------------------------------------------------------------
 
-func test_the_panel_lists_every_catalogue_asset_by_kind() -> void:
+func test_the_panel_lists_one_button_per_family_in_six_groups() -> void:
+	# T-262: the groups of the catalogue's families, from the ground up, one button per family.
 	var e := _editor()
 	var expected := {}
 	var order: Array = []
-	for cat in LevelCreatorAssetPanel.CATEGORIES:
-		var label := CreatorTexts.get_text(cat[1])
+	for g in ["roads", "ground", "levels", "buildings", "obstacles", "decoration"]:
+		var label := CreatorTexts.get_text("group_" + g)
 		assert_ne(label, "")
 		expected[label] = []
 		order.append(label)
-	for entry in LevelDocument.panel_entries():
-		expected[CreatorTexts.get_text(KIND_KEYS[str(entry.kind)])].append(str(entry.id))
+		for f in CreatorFamilies.in_group(g):
+			expected[label].append(str(f.id))
 	var shown := e.panel.entries_by_category()
 	assert_eq(shown, expected)
-	assert_eq(shown.keys(), order, "categories in the panel's order")
-	var count := 0
-	for ids in shown.values():
-		count += ids.size()
-	assert_eq(count, LevelDocument.panel_entries().size(), "each asset once")
-	assert_eq(e.panel.buttons.size(), LevelDocument.panel_entries().size())
+	assert_eq(shown.keys(), order, "groups in the panel's order")
+	assert_eq(e.panel.buttons.size(), CreatorFamilies.families().size())
 	for id in e.panel.buttons:
 		assert_not_null(e.panel.buttons[id].icon, id + " shows its art")
 
 
-func test_rooftop_and_ramp_buttons_carry_their_height_labels() -> void:
+func test_the_platform_and_ramp_heights_show_on_the_top_bar() -> void:
+	# T-262: one Platform and one Ramp button; H steps the height, the top bar names it.
 	var e := _editor()
-	assert_eq(e.panel.buttons["rooftop-3"].text, CreatorTexts.get_text("rooftop_height_3"))
-	assert_eq(e.panel.buttons["rooftop-6"].text, CreatorTexts.get_text("rooftop_height_6"))
-	assert_eq(e.panel.buttons["ramp-0-3"].text, CreatorTexts.get_text("ramp_height_0_3"))
-	assert_eq(e.panel.buttons["ramp-3-6"].text, CreatorTexts.get_text("ramp_height_3_6"))
-	assert_eq(e.panel.buttons["ramp-0-6"].text, CreatorTexts.get_text("ramp_height_0_6"))
+	e.panel.pick("platform")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("rooftop_height_3"))
+	e.height_pick()
+	assert_eq(e.panel.picked, "rooftop-6")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("rooftop_height_6"))
+	e.panel.pick("ramp")
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_3"))
+	e.height_pick()
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_3_6"))
+	e.height_pick()
+	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_6"))
 
 
 func test_the_editor_labels_come_from_the_texts() -> void:
 	var e := _editor()
 	assert_eq(e.delete_button.text, CreatorTexts.get_text("delete_label"))
 	assert_eq(e.back_button.text, CreatorTexts.get_text("back_button"))
-	# T-251: the hint with sizing replaces the old one.
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_sizing"))
+	# T-262: the reworked creator's hint (T-261's line) replaces T-251's.
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
 
 
 func test_picking_in_the_panel_and_clicking_places() -> void:
@@ -125,7 +130,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	var r := e.place_asset(road, Vector2(-20.0, -30.0))
 	var bld := e.place_asset("skyscraper-3", Vector2(40.0, 40.0))
 	var bo := e.place_asset("boulder-a", Vector2(-50.0, 20.0))
-	var roof := e.place_asset("rooftop-3", Vector2(-100.0, -100.0))
+	var roof := e.place_asset("rooftop-3", Vector2(-100.0, -100.0), Vector2(84, 30))
 	var ramp := e.place_asset("ramp-0-3", Vector2(-90.0, -70.0))
 	for p in [g, r, bld, bo, roof, ramp]:
 		assert_false(p.is_empty())
@@ -137,7 +142,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	assert_eq(g.cell, Vector2i(44, 44))
 	assert_eq(e.level_data.ground_rows[-30 + 120][-20 + 120], "R", "ground_rows marks the road")
 	assert_eq(e.level_data.buildings.size(), 1)
-	assert_eq(e.level_data.buildings[0], {"x": 40.0, "y": 40.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-3", "look": 0})
+	assert_eq(e.level_data.buildings[0], {"x": 40.0, "y": 40.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-3", "look": 0, "banner": false})
 	assert_eq(e.level_data.ground_rows[45 + 120][45 + 120], "B", "ground_rows marks the building")
 	assert_eq(e.level_data.pattern_copies.size(), 1)
 	assert_eq(e.level_data.platforms.size(), 1)
@@ -155,7 +160,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	assert_eq(e.map.buildings.size(), 1)
 	assert_eq(e.map.slots.size(), 1, "one tower, the one placed")
 	assert_eq(e.map.slots[0].footprint, Rect2(40, 40, 12, 12))
-	assert_eq(e.map.slots[0].towers.get_node("Sprite").texture.resource_path, "res://art/buildings/skyscraper_3_0.png")
+	assert_eq(e.map.slots[0].towers.get_node("Sprite").texture.resource_path, "res://art/buildings/nobanner/skyscraper_3_0.png")  # T-265: banner off by default
 	assert_eq(e.map.all_boulders().size(), 1)
 	assert_eq(e.map.boulder_sprites.size(), 1)
 	assert_eq(e.map.boulder_sprites[0].variant, "a")
@@ -247,7 +252,10 @@ func test_opening_the_sample_map_draws_it_and_leaves_its_data_alone() -> void:
 	var e: LevelCreatorEditor = EDITOR_SCENE.instantiate()
 	e.open_level(path)
 	add_child_autofree(e)
-	assert_eq(e.level_data, original, "opening changes nothing")
+	var opened: Dictionary = e.level_data.duplicate(true)
+	opened.erase("spawn")  # T-280: the only addition, in memory: a spawn point at the centre
+	assert_eq(opened, original, "opening changes nothing else")
+	assert_true(LevelSpawn.has_spawn(e.level_data))
 	assert_eq(e.map.buildings.size(), original.buildings.size())
 	assert_eq(e.elevation.areas.size(), original.platforms.size() + original.ramps.size())
 	# The game's own ground tiles.
@@ -256,8 +264,8 @@ func test_opening_the_sample_map_draws_it_and_leaves_its_data_alone() -> void:
 
 
 func test_single_of_names_the_tower() -> void:
-	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-1"}), {"short": false, "index": 0})
-	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-6", "look": 1}), {"short": false, "index": 11})
+	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-1"}), {"short": false, "index": 0, "banner": false})
+	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-6", "look": 1}), {"short": false, "index": 11, "banner": false})
 	assert_eq(BuildingTowers.single_of({"asset": "short-2", "look": 1}), {"short": true, "index": 5})
 	assert_eq(BuildingTowers.single_of({}), {})
 	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-9"}), {})

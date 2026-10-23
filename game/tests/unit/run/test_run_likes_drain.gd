@@ -62,7 +62,7 @@ func _simulate(seconds: float, step: float = 1.0 / 60.0) -> void:
 ## then the drain of what the trick added.
 func _combo_gone_after(trick_id: String) -> float:
 	return combo_data.drain_wait_seconds() \
-			+ combo_data.trick_add(trick_id) / combo_data.drain_per_second()
+			+ combo_data.trick_amount(trick_id, 1.0) / combo_data.drain_per_second()
 
 
 func test_the_drain_numbers_load() -> void:
@@ -120,7 +120,7 @@ func test_a_trick_stops_the_drain() -> void:
 	_simulate(2.0)
 	var at_trick := state.xp
 	assert_lt(at_trick, 50.0, "draining before the trick")
-	state.add_trick("extended_drift")
+	state.add_trick("extended_drift", 1.0)
 	assert_false(state.is_likes_draining(), "the trick stops it")
 	_simulate(_combo_gone_after("extended_drift") - 0.1)
 	assert_eq(state.xp, at_trick, "no drain until the combo has drained again")
@@ -233,7 +233,7 @@ func test_extra_wait_delays_the_drain() -> void:
 	assert_eq(state.xp, 50.0, "waiting")
 	_simulate(1.6)
 	assert_almost_eq(state.xp, 50.0 - 1.5 * data.likes_drain_xp_per_second(1), 0.001)
-	state.add_trick("extended_drift")
+	state.add_trick("extended_drift", 1.0)
 	_simulate(_combo_gone_after("extended_drift") + 1.4)
 	var after := state.xp
 	_simulate(0.05)

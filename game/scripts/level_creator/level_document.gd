@@ -28,7 +28,7 @@ extends RefCounted
 ## - rooftop: {id, x, y, w, h, height, view, art[, on]} in platforms: art = the view's art piece
 ##   (art/elevation_sample/<art>.png); "on" = the lower rooftop holding its whole footprint (a 6
 ##   on a 3), as in the elevation sample map's height data.
-## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art} in ramps: side =
+## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art, arrows} in ramps (arrows, T-264: "up" or "down" the slope, a ramp of any size; none is up): side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
 ##   height whose side its top end touches ("" while there is none).
 ## - prop (T-253; data/level/props.json): {id, asset, rotation, x, y, w, h} in props: rotation = the
@@ -36,6 +36,9 @@ extends RefCounted
 ##   footprint turned to that rotation (east and west swap the two numbers). Placed on the ground or on
 ##   a rooftop alike: level_props.gd stands it at the height under its centre. Not placed when its
 ##   footprint would reach out of the map.
+## - pair (T-272, thread the needle): {id: "pair-N", a, b} in pairs, two obstacles (boulders, or the
+##   Obstacles group's props) named by their refs (ObstaclePairs); make_pair, unpair, pair_of.
+##   Deleting either obstacle removes its pair. An obstacle is in at most one pair.
 ## Since T-251 the catalogue's rooftops and ramps are of any size (is_resizable, piece_size): they
 ## write no view and no art (drawn in the engine from the piece style), and a ramp's view is the
 ## direction it climbs (north, east, south, west), its side the rooftop's side opposite.
@@ -117,11 +120,18 @@ static func valid_mirror(id: String, mirror: bool) -> bool:
 
 ## The asset's texture (its catalogue record: view, mirror, variant, texture[, region, side]) for a
 ## view and mirror: the first that matches both, else the first of that view, else its first.
-static func texture_of(id: String, view: String, mirror: bool) -> Dictionary:
+##
+## `variant` (T-262): the texture with that variant too, when there is one (a skyscraper's second
+## body, one of its family's looks: written as the building's look).
+static func texture_of(id: String, view: String, mirror: bool, variant: String = "") -> Dictionary:
 	var e := entry(id)
 	var ts: Array = e.get("textures", [])
 	if ts.is_empty():
 		return {}
+	if variant != "":
+		for t in ts:
+			if str(t.get("view", "")) == view and bool(t.get("mirror", false)) == mirror and str(t.get("variant", "")) == variant:
+				return t
 	for t in ts:
 		if str(t.get("view", "")) == view and bool(t.get("mirror", false)) == mirror:
 			return t
@@ -300,6 +310,17 @@ func _read_cells() -> void:
 		cells.append(out)
 
 
+## Sets many ground and road tiles at once (cell -> catalogue id; cells outside the map are left
+## out), then writes data.ground and ground_rows once (the road brush, T-263).
+func set_cells(changes: Dictionary) -> void:
+	for c in changes:
+		var cell: Vector2i = c
+		if cell.x >= 0 and cell.y >= 0 and cell.x < cols() and cell.y < rows():
+			cells[cell.y][cell.x] = str(changes[c])
+	_write_cells()
+	refresh_ground_rows()
+
+
 ## Writes `cells` into data.ground (tiles used, and an index per cell).
 func _write_cells() -> void:
 	var tiles: Array = []
@@ -360,8 +381,18 @@ static func _kind_of_tile(id: String) -> String:
 ## A rooftop or ramp of any size (T-251, is_resizable) takes `size` (piece_size: Vector2.ZERO for
 ## its default) and writes no view or art: it is drawn in the engine from the piece style. It is
 ## not placed when it would reach out of the map.
+##
+## `variant` (T-262): which of the view's textures, for a family look that is a second body of the
+## same entry (texture_of); "" for the first, as before.
+##
+## `arrows` (T-264): a ramp of any size's arrows, "up" the slope (the default) or "down" it, written
+## as the ramp's "arrows".
+##
+## `banner` (T-265): a skyscraper's banner (the vertical sign on its face), written as the building's
+## "banner" (true or false; off by default). Other buildings never get the key.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO, style: String = "") -> Dictionary:
+		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up",
+		banner: bool = false) -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -374,7 +405,7 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 	var resizable := is_resizable(asset_id)
 	if (resizable or kind == "prop") and not _holds(map_rect(), Rect2(corner, foot)):
 		return {}
-	var tex := texture_of(asset_id, view, mirror)
+	var tex := texture_of(asset_id, view, mirror, variant)
 	match kind:
 		"ground", "road":
 			if e.has("parts"):
@@ -391,6 +422,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 		"building":
 			var look := int(str(tex.get("variant", "0"))) if str(tex.get("variant", "0")).is_valid_int() else 0
 			var b := {"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y, "asset": asset_id, "look": look}
+			if is_skyscraper(asset_id):
+				b["banner"] = banner
 			_list("buildings").append(b)
 			refresh_ground_rows()
 			return {"kind": kind, "item": b}
@@ -425,10 +458,37 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				r["art"] = str(tex.variant)
 			elif style != "":
 				r["style"] = style
+			if resizable:
+				r["arrows"] = "down" if arrows == "down" else "up"
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## True for a skyscraper's catalogue id (T-265: the only building with a banner).
+static func is_skyscraper(asset_id: String) -> bool:
+	return asset_id.begins_with("skyscraper-")
+
+
+## Whether a building entry shows its banner (T-265): a skyscraper with "banner": true. A skyscraper
+## without the key (a level saved before T-265) is off; the game's own map has no such entries.
+static func banner_of(building: Dictionary) -> bool:
+	return is_skyscraper(str(building.get("asset", ""))) and bool(building.get("banner", false))
+
+
+## Turns a skyscraper's banner on or off (T-265). Returns the value now (false for any other building).
+func set_building_banner(building: Dictionary, on: bool) -> bool:
+	if not is_skyscraper(str(building.get("asset", ""))):
+		return false
+	building["banner"] = on
+	return on
+
+
+## Sets which way a ramp's arrows point (T-264): "up" the slope or "down" it. Returns the value now.
+func set_ramp_arrows(ramp: Dictionary, arrows: String) -> String:
+	ramp["arrows"] = "down" if arrows == "down" else "up"
+	return str(ramp.arrows)
 
 
 # ---- Heights: a 6 on a 3, a ramp on the side it climbs -----------------------------------------
@@ -562,6 +622,8 @@ static func _rect(d: Dictionary) -> Rect2:
 
 ## The piece's footprint in units (a boulder's square around its circle).
 func piece_rect(piece: Dictionary) -> Rect2:
+	if str(piece.get("kind", "")) == "spawn":
+		return Rect2(LevelSpawn.position_of(data) - Vector2(CELL, CELL) / 2.0, Vector2(CELL, CELL))
 	if piece.has("cell"):
 		return Rect2(cell_corner(piece.cell), Vector2(CELL, CELL))
 	var it: Dictionary = piece.item
@@ -572,10 +634,22 @@ func piece_rect(piece: Dictionary) -> Rect2:
 
 
 ## Removes a placed piece from the data. A ground or road tile goes back to the plain ground
-## (BASE_GROUND). Returns true when something was removed.
+## (BASE_GROUND). Returns true when something was removed. A pair (T-272) holding a removed obstacle
+## goes with it; the other pairs keep their obstacles (their refs written again, so a boulder of a
+## copy with several keeps its pair when another boulder of the copy goes).
 func delete(piece: Dictionary) -> bool:
-	if piece.is_empty():
-		return false
+	if piece.is_empty() or str(piece.get("kind", "")) == "spawn":
+		return false  # a level always has its spawn point (T-280)
+	if not pairs().is_empty() and str(piece.get("kind", "")) in ["boulder", "prop"]:
+		var before := _resolved_pairs()
+		var done := _delete(piece)
+		if done:
+			_repair_pairs(before, piece.item)
+		return done
+	return _delete(piece)
+
+
+func _delete(piece: Dictionary) -> bool:
 	if piece.has("cell"):
 		var c: Vector2i = piece.cell
 		if tile_at(c) == BASE_GROUND:
@@ -609,6 +683,170 @@ func delete(piece: Dictionary) -> bool:
 	return false
 
 
+# ---- The spawn point (T-280) --------------------------------------------------------------------
+
+## Gives the level its spawn point when it has none (a new level, or one saved before T-280): the
+## map's centre, the run's own heading. Always exactly one.
+func ensure_spawn() -> void:
+	if not (data.get("spawn") is Dictionary and LevelSpawn.has_spawn(data)):
+		var c := LevelSpawn.centre_of(data)
+		data["spawn"] = {"x": c.x, "y": c.y, "heading": LevelSpawn.DEFAULT_HEADING}
+
+
+## The spawn point {x, y, heading} (the data's own dictionary, so a selection stays the same piece).
+func spawn() -> Dictionary:
+	ensure_spawn()
+	return data.spawn
+
+
+## The spawn point as a selectable piece: {kind: "spawn", item}.
+func spawn_piece() -> Dictionary:
+	return {"kind": "spawn", "item": spawn()}
+
+
+## "" when the car may start at `units`, else LevelSpawn.OFF_MAP or BLOCKED.
+func spawn_problem(units: Vector2) -> String:
+	return LevelSpawn.problem(data, units)
+
+
+## Moves the spawn point to the middle of the cell holding `units`. Returns "" when moved, else the
+## problem (the spawn point stays where it was).
+func move_spawn(units: Vector2) -> String:
+	var at := LevelSpawn.snap(data, units)
+	var why := LevelSpawn.problem(data, at)
+	if why == "":
+		var s := spawn()
+		s["x"] = at.x
+		s["y"] = at.y
+	return why
+
+
+## Turns the spawn point's heading to the next one (R). Returns the heading now.
+func turn_spawn() -> int:
+	var s := spawn()
+	s["heading"] = LevelSpawn.turned(int(s.get("heading", LevelSpawn.DEFAULT_HEADING)))
+	return int(s.heading)
+
+
+# ---- Pairs of obstacles, for thread the needle (T-272) -----------------------------------------
+
+## The level's pairs ([{id, a, b}], obstacle refs: ObstaclePairs), [] for none.
+func pairs() -> Array:
+	return ObstaclePairs.pairs_of(data)
+
+
+## True for a placed piece that can be paired: a boulder, or a prop of the Obstacles group
+## (barrier, cones, crates).
+static func is_obstacle(piece: Dictionary) -> bool:
+	match str(piece.get("kind", "")):
+		"boulder":
+			return piece.has("copy")
+		"prop":
+			return str(piece.item.get("asset", "")) in ObstaclePairs.obstacle_props()
+	return false
+
+
+## The ref naming an obstacle piece in a pair (ObstaclePairs), "" for a piece that is not one.
+static func obstacle_ref(piece: Dictionary) -> String:
+	if not is_obstacle(piece):
+		return ""
+	if str(piece.kind) == "boulder":
+		var copy: Dictionary = piece.copy
+		var bs: Array = copy.get("boulders", [])
+		for i in bs.size():
+			if is_same(bs[i], piece.item):
+				return ObstaclePairs.boulder_ref(copy, i)
+		return ""
+	return str(piece.item.get("id", ""))
+
+
+## The piece (as piece_at gives it) a ref names, {} for none.
+func piece_of_ref(ref: String) -> Dictionary:
+	var o := ObstaclePairs.resolve(data, ref)
+	if o.is_empty():
+		return {}
+	if str(o.kind) == "boulder":
+		return {"kind": "boulder", "item": o.item, "copy": o.copy}
+	return {"kind": "prop", "item": o.item}
+
+
+## The pair holding obstacle `piece`, {} for none (an obstacle is in at most one pair).
+func pair_of(piece: Dictionary) -> Dictionary:
+	var ref := obstacle_ref(piece)
+	if ref == "":
+		return {}
+	for p in pairs():
+		if str(p.get("a", "")) == ref or str(p.get("b", "")) == ref:
+			return p
+	return {}
+
+
+## Pairs obstacles `a` and `b` (two different obstacle pieces): written as {id: "pair-N", a, b} into
+## the level's "pairs". An obstacle is in at most one pair: a pair either was in before goes (a
+## proposal: the new pair wins). Returns the pair, {} when either is not an obstacle or both are one.
+func make_pair(a: Dictionary, b: Dictionary) -> Dictionary:
+	var ra := obstacle_ref(a)
+	var rb := obstacle_ref(b)
+	if ra == "" or rb == "" or ra == rb:
+		return {}
+	unpair(a)
+	unpair(b)
+	var p := {"id": _next_id("pairs", "pair-"), "a": ra, "b": rb}
+	_list("pairs").append(p)
+	return p
+
+
+## Removes the pair holding obstacle `piece`. Returns true when there was one.
+func unpair(piece: Dictionary) -> bool:
+	var p := pair_of(piece)
+	if p.is_empty():
+		return false
+	_erase_same(_list("pairs"), p)
+	return true
+
+
+## Each pair with the obstacle items its refs name now: [[pair, item a, item b]].
+func _resolved_pairs() -> Array:
+	var out: Array = []
+	for p in pairs():
+		var oa := ObstaclePairs.resolve(data, str(p.get("a", "")))
+		var ob := ObstaclePairs.resolve(data, str(p.get("b", "")))
+		out.append([p, oa.get("item"), ob.get("item")])
+	return out
+
+
+## After `removed` (an obstacle's item) was deleted: drops the pairs it was in, and writes the
+## others' refs again from the items they named (a copy's boulders shift when one goes).
+func _repair_pairs(before: Array, removed: Dictionary) -> void:
+	var keep: Array = []
+	for entry in before:
+		var p: Dictionary = entry[0]
+		if entry[1] == null or entry[2] == null or is_same(entry[1], removed) or is_same(entry[2], removed):
+			continue
+		var refs: Array = []
+		for item in [entry[1], entry[2]]:
+			refs.append(_ref_of_item(item))
+		if "" in refs:
+			continue
+		p["a"] = refs[0]
+		p["b"] = refs[1]
+		keep.append(p)
+	data["pairs"] = keep
+
+
+## The ref of an obstacle item still in the level (a boulder of a copy, or a prop), "" for none.
+func _ref_of_item(item: Dictionary) -> String:
+	for copy in _list("pattern_copies"):
+		var bs: Array = copy.get("boulders", [])
+		for i in bs.size():
+			if is_same(bs[i], item):
+				return ObstaclePairs.boulder_ref(copy, i)
+	for pr in data.get("props", []):
+		if is_same(pr, item):
+			return str(pr.get("id", ""))
+	return ""
+
+
 ## Removes the very Dictionary `item` (not an equal one) from `list`.
 static func _erase_same(list: Array, item) -> bool:
 	for i in list.size():
@@ -637,6 +875,7 @@ func file_data(level_name: String) -> Dictionary:
 		data["map"] = keep
 	for key in ["buildings", "pattern_copies", "platforms", "ramps"]:
 		_list(key)
+	ensure_spawn()
 	if not (data.get("ground_rows") is Array) or not (data.get("legend") is Dictionary):
 		refresh_ground_rows()
 	return data.duplicate(true)

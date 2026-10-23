@@ -67,17 +67,16 @@ func test_pieces_come_first_among_the_roads_and_old_tiles_keep_their_index() -> 
 				assert_lt(int(e.atlas_index), OLD_TILES, "%s keeps its index" % e.id)
 
 
-func test_the_panel_shows_the_pieces_with_their_labels_and_not_their_tiles() -> void:
-	var e := _editor()
+func test_the_pieces_keep_their_labels_but_the_brush_places_them_now() -> void:
+	# T-263: the road brush picks the pieces itself (road_brush.gd), so they and their tiles are in
+	# no family of the panel; the catalogue keeps them (and their labels) so earlier levels draw.
 	for entry in _pieces():
 		var id := str(entry.id)
 		var k := _kind_of(id)
+		assert_eq(CreatorFamilies.family_of_asset(id), "", id)
 		assert_eq(LevelCreatorAssetPanel.LABEL_KEYS[id], LABELS[k])
-		var label: Label = e.panel.buttons[id].get_meta("label")
-		assert_eq(label.text, CreatorTexts.get_text(LABELS[k]))
-		assert_ne(label.text, "")
 		for part in entry.parts:
-			assert_false(e.panel.buttons.has(str(part.tile)), "a part is not a button")
+			assert_eq(CreatorFamilies.family_of_asset(str(part.tile)), "", "a part is in no family")
 
 
 func test_a_piece_places_all_four_tiles_at_once() -> void:
@@ -113,4 +112,4 @@ func test_the_games_own_ground_does_not_use_the_pieces() -> void:
 		for k in row:
 			assert_lt(int(k), OLD_TILES, "no piece in the game's ground")
 	for k in range(OLD_TILES, g.names.size()):
-		assert_true(str(g.names[k]).begins_with("piece_"))
+		assert_true(str(g.names[k]).begins_with("piece_") or str(g.names[k]).begins_with("brush_"), "T-252's and T-263's pieces")

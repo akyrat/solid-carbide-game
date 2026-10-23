@@ -46,7 +46,7 @@ func _place_one_of_each(e: LevelCreatorEditor) -> void:
 		e.panel.pick(step[0])
 		if step[0] == "ramp-3-6":
 			e.rotate_pick()  # climbing east, up the 6's west side (T-251)
-		assert_false(e.place_asset(step[0], step[1]).is_empty(), step[0] + " placed")
+		assert_false(e.place_asset(step[0], step[1], {"rooftop-3": Vector2(84, 30), "rooftop-6": Vector2(30, 30)}.get(step[0], Vector2.ZERO)).is_empty(), step[0] + " placed")
 	e.panel.pick("")
 
 

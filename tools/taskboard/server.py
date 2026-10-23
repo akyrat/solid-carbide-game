@@ -64,6 +64,9 @@ PAGE = HERE / "taskboard.html"
 DEFAULT_PORT = 8765
 MOVE_LOCK = threading.Lock()
 TASK_BRANCH_RE = re.compile(r"task/(T-\d+)-")
+# The level creator's own main scene (T-260): the one scene Play creator starts. The page never sends a scene.
+CREATOR_SCENE = "res://scenes/level_creator/level_creator.tscn"
+CREATOR_FILE = Path("game") / "scenes" / "level_creator" / "level_creator.tscn"
 
 
 def port():
@@ -406,13 +409,18 @@ def builds(root=None):
             "ticket_status": t["status"] if t else "",
             "lead": t["lead"] if t else "",
             "has_project": project.is_file(),
+            "has_creator": project.is_file() and (folder / CREATOR_FILE).is_file(),
         })
     return entries
 
 
 def launcher_args(gbin, folder, mode):
     game = str(Path(folder) / "game")
-    return [gbin, "--path", game] if mode == "play" else [gbin, "--editor", "--path", game]
+    if mode == "play":
+        return [gbin, "--path", game]
+    if mode == "creator":
+        return [gbin, "--path", game, CREATOR_SCENE]
+    return [gbin, "--editor", "--path", game]
 
 
 def start_detached(args):
@@ -427,13 +435,15 @@ def start_detached(args):
 
 def launch(entry_id, mode, root=None):
     """Start Godot for one entry of the worktree list. Returns (http status, body)."""
-    if mode not in ("play", "editor"):
-        return 400, {"error": "Mode must be play or editor."}
+    if mode not in ("play", "editor", "creator"):
+        return 400, {"error": "Mode must be play, editor or creator."}
     entry = next((e for e in builds(root) if e["id"] == entry_id), None)
     if entry is None:
         return 404, {"error": "That build is not in the worktree list."}
     if not entry["has_project"]:
         return 409, {"error": "That folder has no game/project.godot."}
+    if mode == "creator" and not entry["has_creator"]:
+        return 409, {"error": "That folder has no level creator (game/scenes/level_creator/level_creator.tscn)."}
     gbin = godot_bin(root)
     if not gbin:
         return 500, {"error": "GODOT_BIN is not set in .env. See .env.example."}

@@ -49,8 +49,17 @@ func _check_kind(kind: String) -> void:
 			for m in mirrors:
 				var t := LevelDocument.texture_of(id, str(v), bool(m))
 				assert_eq(str(t.view), str(v), id)
-		assert_eq(e.rotate_button.disabled, views.size() < 2, id + ": Rotate on only with views to switch")
-		assert_eq(e.mirror_button.disabled, mirrors.size() < 2, id + ": Mirror on only with mirrors")
+		# T-262: Rotate and Mirror step the asset's family (a road tile turns to the tile along the
+		# other axis, and its a0m tile is its mirror), so they are on when the family has a turn or
+		# a mirror to step to.
+		e.panel.pick(id)
+		var fid := e.panel.picked_family
+		assert_eq(e.rotate_button.disabled, not CreatorFamilies.can_step(fid, e.panel.member, "turn"), id + ": Rotate on only with turns")
+		assert_eq(e.mirror_button.disabled, not CreatorFamilies.can_step(fid, e.panel.member, "flip"), id + ": Mirror on only with mirrors")
+		if views.size() > 1:
+			assert_false(e.rotate_button.disabled, id + ": an asset with several views turns")
+		if mirrors.size() > 1:
+			assert_false(e.mirror_button.disabled, id + ": an asset with a mirror mirrors")
 	e.panel.pick("")
 
 
@@ -59,7 +68,15 @@ func test_rotate_and_mirror_ground() -> void:
 
 
 func test_rotate_and_mirror_roads() -> void:
-	_check_kind("road")
+	# T-263: road tiles are no longer picked from the panel: the road brushes lay them and turn
+	# them themselves (road_brush.gd), so Rotate is off; Mirror steps a0 to its mirror a0m.
+	var e := _editor()
+	for fid in ["road", "centre-line", "cracked-road", "zebra-crossing"]:
+		e.panel.pick(fid)
+		assert_ne(e.brush_mode(), "", fid)
+		assert_true(e.rotate_button.disabled, fid + ": the brush turns roads itself")
+		assert_eq(e.mirror_button.disabled, fid in ["cracked-road", "zebra-crossing"], fid + ": a0's mirror a0m")
+	e.panel.pick("")
 
 
 func test_rotate_and_mirror_buildings() -> void:
@@ -160,7 +177,7 @@ func test_the_preview_shows_the_current_view() -> void:
 	e.hover_cell = e.document.cell_at(Vector2(0.5, 0.5))
 	var b := e.preview_block()
 	assert_eq(b.kind, "platform")
-	assert_eq(b.rect, Rect2(0, 0, 30, 30))
+	assert_eq(b.rect, Rect2(0, 0, 16, 16), "T-264: a click is M")
 	_pick(e, "ramp-0-6", "west")
 	b = e.preview_block()
 	assert_eq([b.kind, b.side, b.rect.size], ["ramp", "east", Vector2(24, 10)])
@@ -180,9 +197,9 @@ func test_the_preview_shows_the_current_view() -> void:
 ## climbing its south side and a ramp 3 to 6 climbing the 6's west side.
 func _build_nw(e: LevelCreatorEditor) -> Dictionary:
 	e.panel.pick("rooftop-3")
-	var r3 := e.place_asset("rooftop-3", Vector2(-95.5, -95.5))
+	var r3 := e.place_asset("rooftop-3", Vector2(-95.5, -95.5), Vector2(84, 30))
 	e.panel.pick("rooftop-6")
-	var r6 := e.place_asset("rooftop-6", Vector2(-41.5, -95.5))
+	var r6 := e.place_asset("rooftop-6", Vector2(-41.5, -95.5), Vector2(30, 30))
 	_pick(e, "ramp-0-3", "north")
 	var a := e.place_asset("ramp-0-3", Vector2(-85.5, -65.5))
 	_pick(e, "ramp-3-6", "east")
@@ -228,7 +245,7 @@ func test_the_south_east_views_pass_the_height_check_too() -> void:
 	for step in [["rooftop-3", Vector2(12.5, 66.5), ""], ["rooftop-6", Vector2(12.5, 66.5), ""],
 			["ramp-0-3", Vector2(76.5, 54.5), "south"], ["ramp-3-6", Vector2(42.5, 76.5), "west"]]:
 		_pick(e, step[0], step[2])
-		assert_false(e.place_asset(step[0], step[1]).is_empty())
+		assert_false(e.place_asset(step[0], step[1], {"rooftop-3": Vector2(84, 30), "rooftop-6": Vector2(30, 30)}.get(step[0], Vector2.ZERO)).is_empty())
 	var ramps: Array = e.level_data.ramps
 	assert_eq([ramps[0].side, ramps[1].side], ["north", "east"])
 	assert_eq(ramps[0].platform, e.level_data.platforms[0].id)

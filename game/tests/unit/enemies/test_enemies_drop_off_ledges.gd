@@ -330,7 +330,11 @@ func test_the_falling_animation_plays_only_while_falling() -> void:
 	s.advance(MinionSpriteScript.LAND_SECONDS + 0.01)
 	assert_eq(s.animation(), "walk", "then walking again")
 	assert_eq(s.anim_transform(Vector2(0, -5)), Transform2D.IDENTITY)
-	assert_null(MinionSpriteScript.fall_sheet("e"), "no falling art yet (T-227): the placeholder")
+	for d in ["s", "se", "e", "ne", "n"]:
+		var fs := MinionSpriteScript.fall_sheet(d)
+		assert_not_null(fs, "T-227: falling sheet for " + d)
+		if fs != null:
+			assert_eq(fs.get_size(), Vector2(MinionSpriteScript.FRAME_SIZE * 8, MinionSpriteScript.FRAME_SIZE), "8 frames in a row: " + d)
 	var k = KaijuSpriteScript.new()
 	add_child_autofree(k)
 	assert_eq(k.animation(), "walk")

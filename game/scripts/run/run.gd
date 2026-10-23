@@ -126,6 +126,9 @@ var boost_effect: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
+## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
+## every map; it pays the trick through state.add_needle_trick().
+var needle: ThreadTheNeedle
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
 ## The camera options (task T-123): where the camera is and its size. Off by
@@ -337,18 +340,36 @@ func _build_world() -> void:
 	drift_marks.name = "DriftMarks"
 	map.view_root.add_child(drift_marks)
 	map.view_root.move_child(drift_marks, map.ground_tiles.get_index() + 1)
+	if elevation != null:
+		# Marks on rooftops and ramps (T-259): lifted with the ground under each
+		# tyre and drawn over the area they lie on, as the car's shadow is.
+		var layer: Node2D = elevation
+		drift_marks.view_basis = ISO_TRANSFORM
+		drift_marks.height_at = func(units: Vector2) -> float: return layer.ground_height.height_at(units)
+		drift_marks.depth_for = func(units: Vector2, rot: float, height: float) -> int:
+			return layer.z_for(units, rot, height) - 1
 
 	car = CarScript.new()
 	car.name = "Car"
-	car.model.x = START_POSITION_UNITS.x
-	car.model.y = START_POSITION_UNITS.y
-	car.model.rotation = START_ROTATION
+	var start := START_POSITION_UNITS
+	var start_rotation := START_ROTATION
+	if LevelSpawn.has_spawn(map.layout):
+		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
+		# height there (car.ground below), facing its heading. The game's own map has none.
+		start = LevelSpawn.position_of(map.layout)
+		start_rotation = LevelSpawn.rotation_of(map.layout)
+	car.model.x = start.x
+	car.model.y = start.y
+	car.model.rotation = start_rotation
 	physics_world.add_child(car)
 	if elevation != null:
 		car.ground = elevation.ground_height  # the car's height on the rooftops and ramps
 	car.stepped.connect(_on_car_moved)
 	car.stepped.connect(_on_car_stepped)
 	drift_marks.bind(car)
+	# Hype (T-249): marks laid from now on take the combo's heat step.
+	state.combo_changed.connect(drift_marks.set_multiplier)
+	drift_marks.set_multiplier(state.combo)
 	# Drift smoke (T-121): from the same rear tyre places as the marks.
 	drift_smoke.clear()
 	drift_smoke.bind(car, drift_marks)
@@ -360,9 +381,24 @@ func _build_world() -> void:
 	map.meteor_challenge_completed.connect(state.challenge_completed)
 	# The combo (T-081): tricks raise it, hitting a wall, building, map edge
 	# or boulder cuts it (damage to the car cuts it inside the state).
-	car.trick.connect(state.add_trick)
+	# A whole drift pays by its length (T-246): the detector sets it before the signal.
+	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
+	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
+	# Thread the needle (T-272): the level's pairs of obstacles, a faint marker across each gap.
+	needle = ThreadTheNeedle.new(map.layout, ComboData.new().needle_rules())
+	needle.threaded.connect(func(_pair_id: String) -> void: state.add_needle_trick())
+	if not needle.gates.is_empty():
+		var hf := Callable()
+		var df := Callable()
+		if elevation != null:
+			var lay: Node2D = elevation
+			hf = func(units: Vector2) -> float: return lay.ground_height.height_at(units)
+			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
+		needle.build_markers(map, hf, df)
+	car.stepped.connect(_on_car_needle_step)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
+	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
 	sync_view(true)
 	car_sprite.reset_physics_interpolation()
@@ -377,8 +413,16 @@ func current_layout_path() -> String:
 
 
 ## The car hit a wall, building, map edge or boulder: a collision for the combo.
-func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+func _on_car_hit_obstacle(collider: Object, shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+	if needle != null:
+		needle.touched(collider, shape_index)  # T-272: a touch voids a pass through a pair
 	state.collision()
+
+
+## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).
+func _on_car_needle_step() -> void:
+	if needle != null and not needle.gates.is_empty():
+		needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 
 
 ## Feeds the car's drift state to the run's likes after each physics step.
@@ -431,7 +475,7 @@ func sync_view(snap_camera: bool = true) -> void:
 ## the car drawn lifted by its height (its shadowless frames in the air), its
 ## round shadow on the ground under it, both in the depth order with the
 ## rooftops, ramps, buildings and boulders, the see-through, and the camera
-## following the car's map position at street level. The car's own effects
+## following the car as drawn, height included (T-228, eased). The car's own effects
 ## (drift smoke, boost) are lifted with the ground under the car, so they stay
 ## at its tyres on a rooftop (a proposal).
 func _sync_view_elevation(snap_camera: bool) -> void:
@@ -450,9 +494,9 @@ func _sync_view_elevation(snap_camera: bool) -> void:
 	elevation.update_see_through(units, car.rotation, car.height, car.model.dt)
 	var frac: float = CameraFollowScript.speed_fraction_of(car.model)
 	if snap_camera:
-		camera_follow.snap(at_ground, frac)
+		camera_follow.snap(at_ground, frac, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	else:
-		camera_follow.step(at_ground, frac, car.model.dt)
+		camera_follow.step(at_ground, frac, car.model.dt, CarSpriteScript.lift_for_height(car.height, CarScript.PX_PER_UNIT))
 	camera.position = camera_follow.position
 	if snap_camera or camera_follow.dynamic:
 		_apply_zoom()

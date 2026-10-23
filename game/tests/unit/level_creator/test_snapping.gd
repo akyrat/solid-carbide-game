@@ -17,13 +17,19 @@ func _editor() -> LevelCreatorEditor:
 
 ## Picks and places `id` (rotated once when `rotate`). A ramp 3 to 6 climbs east unless rotated
 ## (T-251: the direction T-236's north-west art had), a ramp 0 to 3 north (its first view).
+## The sizes a rooftop had before T-264 gave it S, M and L (a plain click was 84 x 30 at 3, 30 x 30 at 6):
+## these tests keep their layouts by passing them.
+static func old_size(id: String) -> Vector2:
+	return {"rooftop-3": Vector2(84, 30), "rooftop-6": Vector2(30, 30)}.get(id, Vector2.ZERO)
+
+
 func _place(e: LevelCreatorEditor, id: String, units: Vector2, rotate := false) -> Dictionary:
 	e.panel.pick(id)
 	if id == "ramp-3-6":
 		e.rotate_pick()
 	if rotate:
 		e.rotate_pick()
-	return e.place_asset(id, units)
+	return e.place_asset(id, units, old_size(id))
 
 
 func _r(item: Dictionary) -> Rect2:

@@ -157,7 +157,7 @@ func test_dragging_sizes_a_rooftop_and_the_top_bar_shows_the_size() -> void:
 	# A click: the default size.
 	_press(e, Vector2(-9.5, 70.5), true)
 	_press(e, Vector2(-9.5, 70.5), false)
-	assert_eq(_r(e.level_data.platforms[2]).size, Vector2(84, 30))
+	assert_eq(_r(e.level_data.platforms[2]).size, Vector2(16, 16), "T-264: a click is M, 16 x 16")
 
 
 func test_dragging_a_ramp_sets_only_its_width_along_the_side() -> void:
@@ -173,7 +173,7 @@ func test_dragging_a_ramp_sets_only_its_width_along_the_side() -> void:
 
 func test_the_hint_and_labels_come_from_the_texts() -> void:
 	var e := _editor()
-	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_sizing"))
+	assert_eq(e.hint_label.text, CreatorTexts.get_text("controls_hint_spawn"))  # T-280: the line with moving the start.
 	_pick(e, "ramp-0-6", "south")
 	assert_eq(e.height_label.text, CreatorTexts.get_text("ramp_height_0_6"))
 	assert_eq(e.direction_label.text, CreatorTexts.get_text("ramp_dir_south"))
@@ -203,7 +203,7 @@ func test_new_pieces_are_drawn_from_the_one_piece_style() -> void:
 		assert_gt(a.outline_segments().size(), 0, "with an outline")
 
 
-func test_walls_start_on_what_a_piece_stands_on_and_a_ramp_has_no_wall_at_its_top() -> void:
+func test_walls_start_on_what_a_piece_stands_on_and_a_ramp_has_a_wall_at_its_top() -> void:
 	var e := _editor()
 	Level.build(e)
 	var by_id := {}
@@ -216,11 +216,8 @@ func test_walls_start_on_what_a_piece_stands_on_and_a_ramp_has_no_wall_at_its_to
 		if a.kind != "ramp":
 			continue
 		var names: Array = a.textured_faces().map(func(f): return f.name)
-		match str(a.block.side):
-			"west":  # climbing east: its top end is its east end
-				assert_false("east" in names, "%s: no wall at its top end" % a.block.id)
-			"north":  # climbing south: its top end is its south end
-				assert_false("south" in names, "%s: no wall at its top end" % a.block.id)
+		# T-264: a ramp is closed, its tall end has its wall (test_creator_ramps.gd).
+		assert_true(a.join_edge() in names, "%s: a wall at its top end" % a.block.id)
 	# The big 3's parapet breaks where the 3 to 6 on it climbs south (its north edge is the 6's).
 	var big = by_id[str(e.level_data.platforms[0].id)]
 	assert_false(big.edge_gaps.south.is_empty(), "a ramp meets the 3's south edge")

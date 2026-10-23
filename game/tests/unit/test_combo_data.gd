@@ -10,8 +10,8 @@ func test_loads_through_loader() -> void:
 func test_trick_order() -> void:
 	var c := ComboData.new()
 	assert_gt(c.trick_add("alternate_drift"), c.trick_add("three_sixty"))
-	assert_gt(c.trick_add("three_sixty"), c.trick_add("extended_drift"))
-	assert_gt(c.trick_add("extended_drift"), 0.0)
+	assert_gt(c.trick_add("three_sixty"), c.drift_amount(1.0))
+	assert_gt(c.drift_amount(1.0), 0.0)
 
 
 func test_decided_values() -> void:
