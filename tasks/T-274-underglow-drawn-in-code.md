@@ -57,6 +57,10 @@ Started at the board's request: the neon zone drawn in code instead of the sprit
 
 Underglow drawn in code: pixel neon ring, dithered halo and floor glow, pulse and shimmer; settings in one .tres; old sprite kept with a switch. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 4. Ready to play in the game build: underglow drawn in code; tier 8's inside looks mostly empty, a likely retune.
+
 ## Result notes
 
 Weapon Behavior Agent (the look is a proposal for the playtest):
