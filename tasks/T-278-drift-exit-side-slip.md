@@ -60,6 +60,10 @@ Started at the board's request: a little side slip out of a drift, to steady wit
 
 Drift slip built: letting go of a drift keeps the turn going briefly (0.35 strength, 0.4 s, counter-steer catches it 4x faster); 4 sliders in the prototype. Subtle at these defaults. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 3. Ready to play on its own: drift in the prototype and a run, steady the car out of each drift, and tune the 4 sliders. Subtle at defaults; try strength 0.5 and length 0.5 s.
+
 ## Result notes
 
 Written by the agent when it finishes.
