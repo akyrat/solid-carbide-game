@@ -1,7 +1,7 @@
 ---
 id: T-272
 title: "Thread the needle: pair two obstacles in the creator, and drive between them for a trick"
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -53,6 +53,54 @@ Board review files: the screenshot and GIF in `art-archive/T-272/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Blocked → In progress
+
+Started on the creator line: pair two obstacles, drive between them for THREAD THE NEEDLE!.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Level/Challenge Design Agent, 2026-10-23.** Built on the branch as given (T-262 to T-265, T-271's and T-279's labels). Commits `d6dd4b0` to `a968e59`.
+
+**In the creator.**
+- Obstacles are the boulders plus the Obstacles group's props (barrier, cones, crates). The list is read from the catalogue's `obstacles` group in `creator_assets.json`, so there is only one list.
+- The pair tool is the top bar's "Pair obstacles", or **P** (`KEY_ACTIONS`). Click one obstacle, then a second one. Anything else gets `pair_not_obstacle` and the first click is kept. Clicking the same obstacle again lets it go. The tool stays on until P, Esc, a right-click or picking a piece.
+- Unpair appears when a paired obstacle is selected. Deleting either obstacle also removes the pair.
+- The hint line is now `controls_hint_pairs`. T-279's `controls_hint_spawn` is left for T-280, which builds the spawn point.
+- Pairs are saved as `pairs: [{id, a, b}]` and reopen with the level.
+- A ref is a boulder's copy id, or `<copy>/<index>` for copies that hold several boulders (the game's own map has those), or a prop's id. The shared code is `scripts/level/obstacle_pairs.gd`.
+- `check_level.py` (`check_pairs`) checks that each pair names two different obstacles that exist, and that no obstacle is in two pairs.
+
+**Proposals for the playtest.** The numbers are in `combo.json` with their reasons.
+- **Worth: 0.5.** That is the same as ALT DRIFT! and AIR 360!, and twice a FULL 360!. You have to aim a line through a gap the board placed.
+- **Repeat rule:** a pair pays again in either direction once 3.0 s have passed since it last paid (`repeat_seconds`). So weaving back and forth over the line doesn't pay on every crossing.
+- **Air: it counts** (`counts_in_air: true`), so a jump through the gap pays. The car can't fly over the obstacles themselves, because a car in the air still crashes into them.
+- **Touching:** a touch of either obstacle from 0.5 s before the crossing to 0.25 s after it cancels the pass (`touch_window_seconds`, `clear_seconds`). The crash cuts the combo as usual. The popup appears 0.25 s after the crossing.
+- **Last-made pair wins:** pairing an obstacle that is already in a pair replaces its old pair.
+- **Editor look:** a mint-green dashed line from one obstacle's edge to the other's, and a ring round each. The obstacle being held for a new pair gets a thicker ring.
+- **Look in the run:** a faint dashed chalk-white line on the ground across the gap (alpha 0.35), drawn in code. It is never red.
+
+**In the run.**
+- `scripts/level/thread_the_needle.gd` reads the map's pairs. `run.gd` feeds it the car's centre after every step and every `hit_obstacle`.
+- `RunState.add_needle_trick()` raises the combo by `trick_add.thread_the_needle`. The popup reads **THREAD THE NEEDLE!** plus "+{amount}", for example "THREAD THE NEEDLE! +0.5".
+- The game's own map has no pairs, so there are no gates and no marker.
+- Game loop architecture's combo section now lists the tricks, thread the needle included.
+
+**Tests.**
+- New GUT tests: `tests/unit/level_creator/test_creator_pairs.gd` (16) and `tests/unit/run/test_thread_the_needle.gd` (16).
+- New Python tests: `TestCheckPairs` in `tools/test_check_level.py`.
+- Three hint assertions changed from `controls_hint_rework` to `controls_hint_pairs`.
+- Full GUT suite: 1593 passing, TESTS PASSED. Python: `game/tools` 496 OK (1 skipped), `tools` 451 OK.
+
+**Screenshots** (`art-archive/T-272/screenshots/`):
+- `pair_in_editor.png`: two pairs, plus a crate held as the first of a new pair.
+- `thread_the_needle.gif`: the car drives through a boulder pair across a road, and the popup shows.
+- `popup.png`: the frame with the popup.
+- `drive_end.png`: the last frame.
+
+I looked at all of them. One thing to note for the playtest: the game's boulder sprites are drawn larger than their collision circles (3 across), so on screen the gap looks narrower than it really is. That was already true before this ticket.
+
+**Documents affected:** `docs/level-design.md` (Content, "Level creator: thread the needle"), `docs/game-loop-architecture.md` (The combo, the list of tricks), `game/README.md` ("Level creator", "Thread the needle (T-272)"; Tricks; the validator line).
+
+No refusals.
