@@ -1,7 +1,7 @@
 ---
 id: T-262
 title: "Level creator: one button per kind of piece, in six groups, with looks chosen by keys"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -46,10 +46,10 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] The panel shows the six groups with one button per kind (about 25 in all), labels from `creator_texts.json`; V, R, M and H step through a piece's looks, turns, mirror and heights, and the looks strip shows and picks them (tests and screenshots) (QA: pass / fail)
-- [ ] Every look, turn and mirror the old panel offered can still be placed (a test walks the old catalogue and finds each in a family) (QA: pass / fail)
-- [ ] Levels saved before this ticket open, place and play as before, and new saves pass `check_level.py` (tests) (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-262/screenshots/`; `game/README.md` "Level creator" describes the panel; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] The panel shows the six groups with one button per kind (about 25 in all), labels from `creator_texts.json`; V, R, M and H step through a piece's looks, turns, mirror and heights, and the looks strip shows and picks them (tests and screenshots) (QA: pass; 20 buttons in six groups (Pavement left out as allowed), labels from json, V/R/M/H and strip tested in test_creator_families.gd, screenshots show strip and counter)
+- [ ] Every look, turn and mirror the old panel offered can still be placed (a test walks the old catalogue and finds each in a family) (QA: pass; test walks old catalogue into families, in the suite which passes)
+- [ ] Levels saved before this ticket open, place and play as before, and new saves pass `check_level.py` (tests) (QA: pass; old fixture opens, places, plays and gives the same check_level report as before, new level with every kind passes)
+- [ ] Screenshots are in `art-archive/T-262/screenshots/`; `game/README.md` "Level creator" describes the panel; the full GUT suite and all Python tool tests pass (QA: pass; four screenshots present, game/README.md section added, GUT passes, game/tools 478 OK, tools 451 OK)
 
 The board's review: browse the panel and place a few pieces with their looks.
 Board review files: the screenshots in `art-archive/T-262/screenshots/`.
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Blocked → In progress
 
 Started: one button per kind of piece in six groups, looks on keys.
+
+### 2026-10-23, In progress → In QA
+
+Built: 20 buttons in six groups, looks on V, R, M and H, a looks strip. Sent to QA.
 
 ## Result notes
 
