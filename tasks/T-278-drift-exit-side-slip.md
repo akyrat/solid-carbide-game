@@ -1,7 +1,7 @@
 ---
 id: T-278
 title: A little side slip out of a drift, to steady with counter-steer
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: a little side slip out of a drift, to steady with counter-steer. Played on its own.
+
+### 2026-10-23, In progress → In QA
+
+Drift slip built: letting go of a drift keeps the turn going briefly (0.35 strength, 0.4 s, counter-steer catches it 4x faster); 4 sliders in the prototype. Subtle at these defaults. Sent to QA.
 
 ## Result notes
 
