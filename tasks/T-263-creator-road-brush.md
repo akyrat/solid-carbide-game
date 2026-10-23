@@ -1,7 +1,7 @@
 ---
 id: T-263
 title: "Level creator: paint roads with a brush that joins them itself"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level_creator/, game/tools/build_ground_tiles.py, game/art/ground/ground_atlas.json, tasks/T-252-road-junction-tiles.md, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level_creator/, game/tools/, game/art/ground/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-263/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started on T-262's branch: paint roads with a brush that joins them itself.
 ### 2026-10-23, In progress → In QA
 
 Built: drag to paint whole roads that join into corners, T-junctions, crossroads and dead ends; right-drag erases. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the creator build: paint a street grid with the brush. T-264 starts on it.
 
 ## Result notes
 
