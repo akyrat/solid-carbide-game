@@ -53,4 +53,21 @@ Started at the board's go: find and fix the engine crash (exit 139) in the combo
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Loop Agent, 2026-10-23.
+
+**What caused it.** The test itself. Its last line was `assert_true(p.is_queued_for_deletion() or not is_instance_valid(p))`. The popup frees itself (`queue_free()`) once its life is over, so after the `await get_tree().process_frame` it is already gone. The assertion then called a method, `is_queued_for_deletion()`, on the freed popup *before* checking `is_instance_valid()`. In this Godot build (4.6.2) a call on a freed object does not reliably fail with an error. It reads freed memory, so whether the engine crashes (signal 11, exit 139) depends on whether that memory was reused, which is why the crash came and went. Nothing in the game code is wrong. Earlier tests, freed runs, timers and GUT are not involved.
+
+**How it was found.** A copy of the file run on its own crashed 4 runs in 15. A copy with only this test crashed 19 in 20. Making the same Run and awaiting the frame without the assertion crashed 0 in 20, `assert_false(is_instance_valid(p))` alone crashed 0 in 20, and `print(p.is_queued_for_deletion())` alone crashed 8 in 10. The bisect copies lived in a temporary folder that has been removed.
+
+**What changed.**
+- `game/tests/unit/hud/test_combo_broken_popup.gd`: the assertion now checks validity first: `assert_true(not is_instance_valid(p) or p.is_queued_for_deletion())`. It accepts the same outcomes as before (the popup is freed, or queued to be freed) and only the order of the two checks changed. No test was skipped, removed or loosened. The reordered single test ran 30 in 30 without a crash.
+- `game/README.md`, "Running the tests": a new section, "Never call a method on a node that may be freed (T-281)", gives the rule and the example.
+- `game/tools/run_tests.sh` is unchanged. A warm-up frame was not needed.
+
+**Run results (this folder).**
+- HUD folder (`bash game/tools/run_tests.sh -gdir=res://tests/unit/hud`): exit 0 on 5 runs in a row, 101/101 each time. Before the fix it crashed 1 run in 9.
+- Full suite (`bash game/tools/run_tests.sh`): exit 0 on 5 runs in a row, 1365/1365 each time. Before the fix it crashed 2 runs in 3.
+- `python -m unittest discover -s tools -p "test_*.py"`: 451 tests, OK.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 395 tests, OK (1 skipped, which was already skipped before).
+
+Documents affected: `game/README.md`.
