@@ -1,7 +1,7 @@
 ---
 id: T-266
 title: The windshield wiper pushes minions about twice the car's length
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Coursework
@@ -47,6 +47,10 @@ Board review files: the GIF in `art-archive/T-266/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the wiper pushes minions 6 units at its first level.
 
 ## Result notes
 
