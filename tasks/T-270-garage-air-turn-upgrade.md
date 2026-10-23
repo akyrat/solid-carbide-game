@@ -1,7 +1,7 @@
 ---
 id: T-270
 title: The air turn upgrade in the garage
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Coursework
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Blocked → In progress
 
 Started: the air turn upgrade (Spin Doctor) in the garage, on top of T-269's hook and T-268's text.
+
+### 2026-10-23, In progress → In QA
+
+Spin Doctor in the garage: 10 levels, +0.125 each, back to 2.5 at the top; the air 360 off the tallest roof comes back at level 6. Sent to QA.
 
 ## Result notes
 
