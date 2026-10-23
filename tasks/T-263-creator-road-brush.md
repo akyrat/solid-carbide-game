@@ -1,7 +1,7 @@
 ---
 id: T-263
 title: "Level creator: paint roads with a brush that joins them itself"
-status: blocked
+status: in-progress
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -49,6 +49,84 @@ Board review files: the screenshots and GIF in `art-archive/T-263/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Blocked → In progress
+
+Started on T-262's branch: paint roads with a brush that joins them itself.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Level/Challenge Design Agent, 2026-10-23. No PixelLab call.
+
+**Built.**
+- **Painting:** pick Road, Centre line or Cracked road and drag with the left button. Each 2 x 2 tile block (4 x 4 units, today's two-tile road) the mouse passes over becomes road, and the blocks in between are filled in, so a diagonal drag leaves no gap.
+- **Joining:** the brush picks every tile itself from the road blocks next to each block: straights along y and x, corners, T-junctions, crossroads, and a dead end with its kerb at each open end.
+  - **Centre line:** the line runs on through every piece.
+  - **Road and Cracked road:** a junction is the plain asphalt.
+- **Looks:** V picks the asphalt. Road and Centre line: a0 (M: a0m), g6, g9. Cracked road: g4, g5, g7. R does nothing.
+- **Painting over** a road changes its kind and asphalt.
+- **Erasing:** a right-drag erases along the drag, and Del erases the block under the mouse. The neighbours join again.
+- **Zebra crossing:** a click on a straight road lays a crossing across it, on the row of tiles clicked.
+- **Never over:** a road is never painted over a building, platform or ramp.
+- **On screen:** the top bar shows `road_brush_hint`. A blue outline marks the block under the mouse, red while erasing.
+- **Code:**
+  - `game/scripts/level_creator/road_brush.gd` (`RoadBrush`)
+  - the editor's stroke functions in `editor.gd`
+  - `LevelDocument.set_cells`
+  - the brush families in `build_creator_assets.py` (`ROAD_BRUSHES`: `"brush"` and per member `"asphalt"`)
+
+**Tiles drawn by script:**
+- `build_ground_tiles.py` `brush_tiles` appends 268 tiles after T-252's (indexes 139 to 406):
+  - T-252's 13 centre-line pieces on a0m, g6 and g9
+  - the four dead ends without a line on all seven asphalts
+- Every earlier tile keeps its index. The game's ground cells are unchanged (the hash test passes). `mvp_ground.json` only lists the new names.
+
+**Saved data:** a road tile per cell, as before. A painted level passes `check_level.py` and plays, and the board's earlier level opens unchanged. The old single road tiles and T-252 pieces are no longer panel looks. They stay in the catalogue, so old levels draw and `place_asset` still places them.
+
+**Proposals for the playtest:**
+- Roads lie on a 4-unit grid of blocks. Every road block joins every road block next to it, so two roads painted side by side merge into one wide road.
+- A lone block is plain asphalt.
+- Where a centre-line road meets a road without a line, the line stops at its own block's edge.
+- Zebra crossing:
+  - It is the full zebra tile on both tiles across the road: four stripes. The map's edge tiles (e0, e1) would leave only two on a road this narrow.
+  - It stays when the road is repainted with another kind, takes the road's asphalt, and goes when its block becomes a junction.
+  - It has no top-bar hint, because no text exists for one.
+- Right-drag and Del for erasing.
+- Older roads join a painted one only when their tiles fill whole blocks of the grid.
+
+**Tests:**
+- New `game/tests/unit/level_creator/test_road_brush.gd` (13 tests):
+  - a drag along y and along x for each kind
+  - a diagonal drag leaves no gap
+  - the mouse: left-drag paints, right-drag and Del erase, and the hint shows
+  - a plus, an L and a T for each kind give the right piece and tiles
+  - the street grid has every junction kind
+  - the centre line joins on every open side
+  - pieces on the other asphalts
+  - erasing joins the neighbours again
+  - repainting changes the kind
+  - zebra crossings
+  - never over a building or platform
+  - a painted level saves, passes `check_level.py` and plays
+  - the earlier level opens unchanged
+- `tools/test_build_ground_tiles.py` `BrushTileTests`: the line pixels on each open side are the straight tiles' own, pixel for pixel. The plain dead ends have the kerb and no line, and pass the sprite rules.
+- `tools/test_build_creator_assets.py` `test_road_brushes`.
+- T-262's tests updated for the brush: `test_creator_families.gd`, `test_road_pieces.gd`, `test_editor_rotate_heights.gd`, `FamilyTest`.
+- The T-262 panel screenshot fixture now paints its roads.
+
+**Results:**
+- Full GUT suite: 1539 of 1539 passed. The first run exited 139; the rerun passed.
+- `python -m unittest discover -s game/tools`: 483 OK (1 skipped).
+- `python -m unittest discover -s tools`: 451 OK.
+
+**Screenshots** in `art-archive/T-263/screenshots/`:
+- `street_grid.png`: the grid painted in 6 drags with 4 crossings. It has every corner, all four T-junctions, two crossroads, dead ends and straights, in all three kinds.
+- `street_grid_close.png`: the centre line's junctions up close.
+- `paint.gif`: painting it one block at a time.
+- `paint_end.png`: its last frame.
+- Fixtures: `game/tests/fixtures/level_creator_road_brush_grid.gd`, `_demo.tscn`, `_close.tscn`, `_paint.tscn`.
+
+**Seen, not this ticket's:** the Zebra crossing and Cracked road buttons' icons are drawn much smaller than Road's. This was already the case in T-262's `panel.png`.
+
+**Documents updated:**
+- `game/README.md`, "Level creator", "The road brush (T-263)", and two T-262 lines
+- `docs/level-design.md`, Content, "Level creator: the road brush", and one T-262 line
