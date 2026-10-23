@@ -1,7 +1,7 @@
 ---
 id: T-274
 title: The neon underglow drawn in code instead of the generated sprite
-status: open
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/README.md, game/data/weapons.json, tasks/T-168-the-neon-underglow-a-circle-around.md, tasks/T-175-art-the-neon-underglow-the-molotov.md, tasks/T-225-underglow-at-the-cars-height.md, tasks/T-249-hype-drift-trail.md]
 files_expected_to_change: [game/scripts/weapons/, game/scenes/weapons/, game/tests/, docs/visual-style.md, game/README.md, art-archive/T-274/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,10 +37,10 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 
 ## Acceptance criteria
 
-- [ ] Tests show the drawn zone's radius matches the damage circle at every tier and it is drawn at the car's height; damage behaviour is unchanged (QA: pass / fail)
-- [ ] The look follows the pixel rules (no semi-transparent smoothing; colours from its settings; no Redgull red) and pauses with the game (tests and screenshots) (QA: pass / fail)
-- [ ] The T-175 sprite is kept with a switch back to it (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-274/screenshots/`; Visual style and `game/README.md` describe the look; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the drawn zone's radius matches the damage circle at every tier and it is drawn at the car's height; damage behaviour is unchanged (QA: pass; tier 1-8 ring-vs-circle test, car-height test, diff touches only drawing code, damage tests pass)
+- [ ] The look follows the pixel rules (no semi-transparent smoothing; colours from its settings; no Redgull red) and pauses with the game (tests and screenshots) (QA: pass; opaque-pixel, look-colour, no-red and paused-freeze tests pass; screenshot shows hard-edged purple/pink ring)
+- [ ] The T-175 sprite is kept with a switch back to it (QA: pass; underglow.png untouched, use_sprite switch and its test)
+- [ ] Screenshots and the GIF are in `art-archive/T-274/screenshots/`; Visual style and `game/README.md` describe the look; the full GUT suite and all Python tool tests pass (QA: pass; 4 PNGs + GIF present, docs updated, GUT passed, tools 451 OK, game/tools 395 OK)
 
 The board's review: pick up the underglow and drive through minions.
 Board review files: the screenshots and GIF in `art-archive/T-274/screenshots/`.
@@ -49,6 +49,25 @@ Board review files: the screenshots and GIF in `art-archive/T-274/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the neon zone drawn in code instead of the sprite.
+
+### 2026-10-23, In progress → In QA
+
+Underglow drawn in code: pixel neon ring, dithered halo and floor glow, pulse and shimmer; settings in one .tres; old sprite kept with a switch. Sent to QA.
+
+### 2026-10-23, Needs playtest
+
+QA passed all 4. Ready to play in the game build: underglow drawn in code; tier 8's inside looks mostly empty, a likely retune.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Weapon Behavior Agent (the look is a proposal for the playtest):
+
+- The zone is drawn in code: `game/scripts/weapons/underglow_glow.gd` builds an image pixel by pixel (opaque or empty pixels, nearest filter, no blur). On the damage circle's edge: a light pink core line and a hot pink line inside it; outside, a stepped purple halo (solid band, then checker-dithered); inside, a purple floor glow (half-dithered, then sparse). The halo and floor glow pulse in two steps (2 pulses per 2 s cycle) and a lighter arc travels once round the ring per cycle. It runs in `_process`, so it stops while paused. Images are cached per radius and frame (24 frames at 12 per second).
+- Every colour, width and speed: `game/scenes/weapons/neon_underglow_look.tres` (script `underglow_look.gd`). No Redgull red.
+- Switch back to the T-175 sprite: `use_sprite` on that resource. The sprite `game/art/weapons/underglow.png` is untouched. Damage, timing and radius code is unchanged; the zone is still placed at the car's height (T-225) as the first child of the View.
+- Tests: `test_neon_underglow.gd` (ring pixels lie exactly inside the damage circle at all 8 tiers, opaque pixels only and only the look's colours, no red, pulse and shimmer loop, frozen while paused, sprite kept with its switch) and `test_weapon_art.gd`. Full GUT suite passes; `game/tools` Python tests 395 OK (1 skipped); `tools` Python tests 451 OK.
+- Screenshots and GIF in `art-archive/T-274/screenshots/`: `underglow_street_t1.png`, `underglow_street_t8.png`, `underglow_roof_t1.png`, `underglow_roof_t8.png`, `underglow_pulse_minions.gif` (fixtures `game/tests/fixtures/run_underglow_look_*.tscn`). Looked at them: ring and halo read as neon on the street and the rooftop; at tier 8 the inside is mostly empty (fixed widths), a candidate to retune.
+- Documents affected: `docs/visual-style.md` (Content, "The neon underglow in code"), `game/README.md` ("The neon underglow"). No PixelLab calls.
