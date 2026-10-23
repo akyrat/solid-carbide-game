@@ -54,4 +54,12 @@ Started at the board's request: the wiper pushes minions 6 units at its first le
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (Game Data Agent).
+
+- `game/data/weapons.json`: wiper `knockback_distance` 1.5 -> 6; tier multipliers unchanged (tier 5 x1.5, final 9).
+- No code change needed: the minion's knockback already moves it in even shares over 0.15 s (about 0.8 unit per physics step) through the same obstacle, boulder and ledge handling as walking; the existing tests in test_minions.gd (walls and boulders at 6) and the two ledge tests (8 units) already cover pushes of this size and pass.
+- Tests: new `test_the_tier_1_push_is_6_units_and_the_last_tier_9` in test_windshield_wiper.gd (a real minion ends about 6 units from where it was hit, straight away from the car; tiers 1/5/8 = 6/9/9; the kaiju test is unchanged and passes); test_weapon_data.gd updated (6 and 9). Full GUT suite: 1366/1366 pass. Python: `tools` set OK (451); `game/tools` set OK (395) once the level-up text below was fixed.
+- Side effect to flag: the tier 5 level-up card said "from 1.5 to 2.25". I changed it to "from 6 to 9" in `game/scripts/ui/level_up_texts.gd`, its test, and the text table in T-171's ticket (which a checker script compares against). A Narrative Theme read of that line may be wanted.
+- Docs: `docs/weapons.md` (Content numbers, built-wiper knockback line) and `game/README.md` updated. The long GDD was not regenerated (the Project Lead's merge step does it).
+- Screenshots: `art-archive/T-266/screenshots/wiper_push_tier1.gif` (tier 1, minions flung from the arm; the recording log showed each hit minion moving about 5.2 units in 0.3 s, i.e. 6 minus the walk back towards the car) and `wiper_push_frames.png` (contact sheet I looked at: the arm sweeps and minions end up scattered several car lengths out). Recording fixture: `game/tests/fixtures/weapons/wiper_push_gif_demo.tscn`.
+- Refusals: one hook refusal (a Godot recording command chained after rm/mkdir); I reran the Godot part on its own, as the hook said. No other.
