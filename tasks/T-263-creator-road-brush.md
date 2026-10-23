@@ -1,7 +1,7 @@
 ---
 id: T-263
 title: "Level creator: paint roads with a brush that joins them itself"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -37,10 +37,10 @@ Built on T-262's branch (the Project Lead makes your folder). Labels from `creat
 
 ## Acceptance criteria
 
-- [ ] Tests show a drag paints a full-width road along it, and that meeting roads become the right straight, corner, T-junction, crossroads or dead end, for each road kind; erasing re-joins the neighbours (QA: pass / fail)
-- [ ] The centre line runs in the middle of the road and joins across every piece without gaps (tests on the tile data and the screenshot) (QA: pass / fail)
-- [ ] A painted level saves, passes `check_level.py` and plays; earlier levels open unchanged (tests) (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-263/screenshots/`; `game/README.md` describes the brush; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a drag paints a full-width road along it, and that meeting roads become the right straight, corner, T-junction, crossroads or dead end, for each road kind; erasing re-joins the neighbours (QA: pass; test_road_brush.gd 13 tests in the full GUT run cover drag, kinds, pieces, erase)
+- [ ] The centre line runs in the middle of the road and joins across every piece without gaps (tests on the tile data and the screenshot) (QA: pass; BrushTileTests pixel checks pass, and street_grid_close.png shows the line continuous through junctions)
+- [ ] A painted level saves, passes `check_level.py` and plays; earlier levels open unchanged (tests) (QA: pass; saves, check_level and play tests plus old-level test pass)
+- [ ] Screenshots and the GIF are in `art-archive/T-263/screenshots/`; `game/README.md` describes the brush; the full GUT suite and all Python tool tests pass (QA: pass; GUT 1539/1539 on rerun after one exit 139 on the combo popup test, game/tools 483 OK, tools 451 OK, 4 files incl. GIF present, README documents the brush)
 
 The board's review: paint a street grid with the brush.
 Board review files: the screenshots and GIF in `art-archive/T-263/screenshots/`.
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Blocked → In progress
 
 Started on T-262's branch: paint roads with a brush that joins them itself.
+
+### 2026-10-23, In progress → In QA
+
+Built: drag to paint whole roads that join into corners, T-junctions, crossroads and dead ends; right-drag erases. Sent to QA.
 
 ## Result notes
 
