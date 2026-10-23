@@ -1,7 +1,7 @@
 ---
 id: T-265
 title: "Level creator: skyscraper banners on or off, off by default"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/building_towers.gd, game/scripts/level/map_building.gd, game/art/banners/, game/scripts/level_creator/, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-265/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Started on T-264's branch: skyscraper banners on or off, off by default.
 ### 2026-10-23, In progress → In QA
 
 Built: skyscrapers place without their sign by default, B turns it on. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the creator build: place skyscrapers with and without their sign (B). T-272 starts on it.
 
 ## Result notes
 
