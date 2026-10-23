@@ -59,3 +59,12 @@ Started at the board's request: the likes bar 4 times thicker, springing when it
 ## Result notes
 
 Written by the agent when it finishes.
+
+UI Agent, T-273. Built:
+- The likes bar is 64 px tall (`Hud.LIKES_BAR_HEIGHT`), still half the screen wide and 16 px above the bottom edge; the row, "Hype Lv" and the combo counter moved up 48 px with it. The x4 flames (along the bar's top) and the level-up animation (sized from the bar's rectangle) fit without changes.
+- New `scripts/hud/likes_spring.gd` (`LikesSpring`, `hud.likes_spring`, pausable). Timing chosen, in one place: `DURATION` 0.25 s, ease-out-back with `OVERSHOOT` 1.2 (about 5 percent of the step). Likes going up spring; a level-up springs the old bar to full while the level-up flash and "Hype Lv" change at that moment, then the new bar starts from empty and springs to the leftover; draining likes and a new run snap with no animation. The bar never draws past full or below the old value.
+- `likes_bar.value` is now the shown fill; tests call `hud.settle_likes()` before reading the real one (updated test_hud_values, combo_heat, level_up_flash, likes_drain; the T-086 position test and the layout ratio check updated for the 64 px size).
+- Tests: `tests/unit/hud/test_likes_spring.gd` (curve, ease over the time with overshoot, never below old or past full, level-up at once then restart, paused, no spring when draining, 64 px and clear of the other parts at four window sizes), `tools/test_likes_spring_gif.py`. Full GUT suite: 1372 of 1372 passed. Python tool tests: `tools` 451 passed, `game/tools` 408 passed, 1 skipped.
+- Screenshots and GIF in `art-archive/T-273/screenshots/`: `likes_bar_plain.png`, `likes_bar_burning.png` (x4), `likes_bar_spring.gif` (30 fps, five gains with a level-up). Made with `bash game/tools/record_likes_spring.sh`. I looked at them: the bar, flames and level-up flash fit; the GIF shows the fill rising, the white-hot level-up cover, and the bar starting again.
+- Docs updated: `docs/hud-and-menus.md` (The HUD, bottom centre) and `game/README.md` (HUD layout value, new "Likes bar spring" paragraph).
+- Refusals: none.
