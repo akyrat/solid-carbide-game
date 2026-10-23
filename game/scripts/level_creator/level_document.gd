@@ -384,8 +384,12 @@ static func _kind_of_tile(id: String) -> String:
 ##
 ## `arrows` (T-264): a ramp of any size's arrows, "up" the slope (the default) or "down" it, written
 ## as the ramp's "arrows".
+##
+## `banner` (T-265): a skyscraper's banner (the vertical sign on its face), written as the building's
+## "banner" (true or false; off by default). Other buildings never get the key.
 func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = false,
-		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up") -> Dictionary:
+		size: Vector2 = Vector2.ZERO, style: String = "", variant: String = "", arrows: String = "up",
+		banner: bool = false) -> Dictionary:
 	var e := entry(asset_id)
 	var c := cell_at(units)
 	if e.is_empty() or c.x < 0:
@@ -415,6 +419,8 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 		"building":
 			var look := int(str(tex.get("variant", "0"))) if str(tex.get("variant", "0")).is_valid_int() else 0
 			var b := {"x": corner.x, "y": corner.y, "w": foot.x, "h": foot.y, "asset": asset_id, "look": look}
+			if is_skyscraper(asset_id):
+				b["banner"] = banner
 			_list("buildings").append(b)
 			refresh_ground_rows()
 			return {"kind": kind, "item": b}
@@ -455,6 +461,25 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## True for a skyscraper's catalogue id (T-265: the only building with a banner).
+static func is_skyscraper(asset_id: String) -> bool:
+	return asset_id.begins_with("skyscraper-")
+
+
+## Whether a building entry shows its banner (T-265): a skyscraper with "banner": true. A skyscraper
+## without the key (a level saved before T-265) is off; the game's own map has no such entries.
+static func banner_of(building: Dictionary) -> bool:
+	return is_skyscraper(str(building.get("asset", ""))) and bool(building.get("banner", false))
+
+
+## Turns a skyscraper's banner on or off (T-265). Returns the value now (false for any other building).
+func set_building_banner(building: Dictionary, on: bool) -> bool:
+	if not is_skyscraper(str(building.get("asset", ""))):
+		return false
+	building["banner"] = on
+	return on
 
 
 ## Sets which way a ramp's arrows point (T-264): "up" the slope or "down" it. Returns the value now.

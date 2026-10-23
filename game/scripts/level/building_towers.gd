@@ -24,6 +24,7 @@ const VARIANTS := 2
 ## Short building bodies (task T-129): 4 designs x 2 looks.
 const SHORT_BODIES := 8
 ## The small and long buildings' art data (T-254).
+const BODY_DIR := "res://art/buildings/"
 const PIECES_PATH := "res://data/level/creator_buildings.json"
 
 ## One placed skyscraper: {si, sj, tower (0..5), variant (0..1), body (index), position (screen px)}.
@@ -110,12 +111,22 @@ static func single_of(entry: Dictionary) -> Dictionary:
 	if asset.begins_with("skyscraper-") and asset.trim_prefix("skyscraper-").is_valid_int():
 		var n := int(asset.trim_prefix("skyscraper-"))
 		if n >= 1 and n <= TOWERS and look >= 0 and look < VARIANTS:
-			return {"short": false, "index": (n - 1) * VARIANTS + look}
+			# T-265: a creator skyscraper shows its banner (the vertical sign painted into the body art) only
+			# when the entry says "banner": true; without the key it is off.
+			return {"short": false, "index": (n - 1) * VARIANTS + look, "banner": bool(entry.get("banner", false))}
 	elif asset.begins_with("short-") and asset.trim_prefix("short-").is_valid_int():
 		var n := int(asset.trim_prefix("short-"))
 		if n >= 0 and 2 * n + look < SHORT_BODIES and look >= 0 and look < 2:
 			return {"short": true, "index": 2 * n + look}
 	return {}
+
+
+## The same skyscraper body without its banner (T-265): `art/buildings/nobanner/` holds the 12 bodies made by
+## game/tools/build_skyscrapers_nobanner.py (the build with the sign left out). "" for another path.
+static func nobanner_path(path: String) -> String:
+	if not path.begins_with(BODY_DIR + "skyscraper_"):
+		return ""
+	return path.replace(BODY_DIR, BODY_DIR + "nobanner/")
 
 
 ## The small and long buildings of the level creator (T-254; data/level/creator_buildings.json): for a
@@ -255,7 +266,10 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2, single: D
 		art_node.name = "Art"
 		var sp := Sprite2D.new()
 		sp.name = "Sprite"
-		sp.texture = short_tex if is_short else load_texture(str(art.bodies[e.body]))
+		var body_path := str(art.bodies[e.body])
+		if not single.is_empty() and not bool(single.short) and not bool(single.get("banner", false)):
+			body_path = nobanner_path(body_path) if nobanner_path(body_path) != "" else body_path
+		sp.texture = short_tex if is_short else load_texture(body_path)
 		sp.centered = false
 		sp.position = pos
 		sp.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)

@@ -52,6 +52,7 @@ signal saved(path: String)
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MvpMapScript := preload("res://scripts/level/mvp_map.gd")
 const ElevationLayerScript := preload("res://scripts/level/elevation_layer.gd")
+const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 
 const ISO_TRANSFORM := MvpMapScript.ISO_TRANSFORM
 const PX_PER_UNIT := MvpMapScript.PX_PER_UNIT
@@ -83,6 +84,10 @@ var style_button: Button
 ## T-264: the platform sizes S, M, L and Any size (the buttons by id), and the ramp arrows Up and Down.
 var size_buttons: Dictionary = {}
 var arrows_buttons: Dictionary = {}
+## T-265: the top bar's Banner on and Banner off (by id, "on" and "off"), shown with a skyscraper picked or selected.
+var banner_buttons: Dictionary = {}
+## T-265: whether the next skyscraper placed shows its banner (key B): off by default.
+var pick_banner: bool = false
 ## The picked asset's height label (creator_texts.json; empty for a piece without a height).
 var height_label: Label
 var hint_label: Label
@@ -249,6 +254,14 @@ func _ready() -> void:
 		b.pressed.connect(set_arrows.bind(id))
 		bar.add_child(b)
 		arrows_buttons[id] = b
+	for id in ["on", "off"]:
+		var b := Button.new()
+		b.name = "Banner_" + id
+		b.text = CreatorTexts.get_text("banner_" + id)
+		b.toggle_mode = true
+		b.pressed.connect(set_banner.bind(id == "on"))
+		bar.add_child(b)
+		banner_buttons[id] = b
 	height_label = Label.new()
 	height_label.name = "HeightLabel"
 	bar.add_child(height_label)
@@ -440,7 +453,7 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 		return {}
 	# The snapped corner is a cell corner: the middle of its cell names that cell.
 	var corner: Vector2 = at.corner
-	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant, pick_arrows)
+	var piece := document.place(asset_id, corner + Vector2(CELL_MIDDLE, CELL_MIDDLE), view, mirror, at.rect.size, pick_style, variant, pick_arrows, pick_banner)
 	if piece.is_empty():
 		return {}
 	if str(piece.kind) in ["rooftop", "ramp"]:
@@ -487,6 +500,40 @@ func set_arrows(arrows: String) -> void:
 		_rebuild_map()
 	_update_pose_controls()
 	_overlay.queue_redraw()
+
+
+## The skyscraper a banner choice applies to (T-265): the one picked, else (nothing picked) the selected
+## building when it is a skyscraper. {} for none; {"picked": true} for the picked one.
+func _banner_target() -> Dictionary:
+	if LevelDocument.is_skyscraper(_picked()):
+		return {"picked": true}
+	if _picked() == "" and not selected.is_empty() and str(selected.kind) == "building" \
+			and LevelDocument.is_skyscraper(str(selected.item.get("asset", ""))):
+		return {"building": selected.item}
+	return {}
+
+
+## The top bar's Banner on or off, and key B (T-265): whether the next skyscraper shows its banner. With
+## no skyscraper picked and one selected, it sets that building's banner instead (and redraws it).
+func set_banner(on: bool) -> void:
+	var t := _banner_target()
+	if t.has("building"):
+		document.set_building_banner(t.building, on)
+		_rebuild_map()
+	else:
+		pick_banner = on
+	_update_pose_controls()
+	_overlay.queue_redraw()
+
+
+## B: the other way round for the banner. Returns the banner now (false with no skyscraper to apply it to).
+func banner_pick() -> bool:
+	var t := _banner_target()
+	if t.is_empty():
+		return false
+	var now: bool = pick_banner if t.has("picked") else LevelDocument.banner_of(t.building)
+	set_banner(not now)
+	return not now
 
 
 ## A: the other way round for the arrows. Returns the arrows now.
@@ -693,6 +740,7 @@ func _show_message(text: String) -> void:
 ## Selects the piece drawn on top at `units` (LevelDocument.piece_at).
 func select_at(units: Vector2) -> Dictionary:
 	selected = document.piece_at(units)
+	_update_pose_controls()
 	_overlay.queue_redraw()
 	return selected
 
@@ -703,6 +751,7 @@ func delete_piece(piece: Dictionary) -> bool:
 		return false
 	if not selected.is_empty() and _same_piece(selected, piece):
 		selected = {}
+		_update_pose_controls()
 	_refresh_after(str(piece.kind))
 	return true
 
@@ -749,6 +798,7 @@ const KEY_ACTIONS := {
 	KEY_M: "flip",
 	KEY_H: "height",
 	KEY_A: "arrows",
+	KEY_B: "banner",
 }
 
 
@@ -862,6 +912,12 @@ func _update_pose_controls() -> void:
 	for b_id in arrows_buttons:
 		arrows_buttons[b_id].visible = kind == "ramp"
 		arrows_buttons[b_id].button_pressed = b_id == pick_arrows
+	# T-265: Banner on and off show with a skyscraper picked (or selected, nothing picked).
+	var bt := _banner_target()
+	var banner_now: bool = pick_banner if bt.has("picked") else (LevelDocument.banner_of(bt.building) if bt.has("building") else false)
+	for b_id in banner_buttons:
+		banner_buttons[b_id].visible = not bt.is_empty()
+		banner_buttons[b_id].button_pressed = (b_id == "on") == banner_now
 	_update_size_label()
 
 
@@ -973,6 +1029,8 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				mirror_pick()
 			"arrows":
 				arrows_pick()
+			"banner":
+				banner_pick()
 			var axis:
 				step_pick(axis)
 		get_viewport().set_input_as_handled()
@@ -1035,6 +1093,12 @@ func preview_of(corner: Vector2) -> Dictionary:
 			var pos := Vector2(info.top_left_art_px[0], info.top_left_art_px[1]) * s + ISO_TRANSFORM * (shift * PX_PER_UNIT)
 			return {"texture": tex, "rect": Rect2(pos, tex.get_size() * s)}
 	var icon := LevelCreatorAssetPanel.icon_of({"textures": [t]})
+	if LevelDocument.is_skyscraper(id) and not pick_banner:
+		# T-265: the skyscraper without its banner (the sign-less copy of the body).
+		var plain := BuildingTowers.nobanner_path(str(t.texture))
+		var plain_tex := BuildingTowers.load_texture(plain) if plain != "" else null
+		if plain_tex != null:
+			icon = plain_tex
 	if icon == null:
 		return {}
 	var foot := LevelDocument.footprint_of(_picked(), pick_view, pick_mirror)

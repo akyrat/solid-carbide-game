@@ -141,7 +141,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	assert_eq(g.cell, Vector2i(44, 44))
 	assert_eq(e.level_data.ground_rows[-30 + 120][-20 + 120], "R", "ground_rows marks the road")
 	assert_eq(e.level_data.buildings.size(), 1)
-	assert_eq(e.level_data.buildings[0], {"x": 40.0, "y": 40.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-3", "look": 0})
+	assert_eq(e.level_data.buildings[0], {"x": 40.0, "y": 40.0, "w": 12.0, "h": 12.0, "asset": "skyscraper-3", "look": 0, "banner": false})
 	assert_eq(e.level_data.ground_rows[45 + 120][45 + 120], "B", "ground_rows marks the building")
 	assert_eq(e.level_data.pattern_copies.size(), 1)
 	assert_eq(e.level_data.platforms.size(), 1)
@@ -159,7 +159,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	assert_eq(e.map.buildings.size(), 1)
 	assert_eq(e.map.slots.size(), 1, "one tower, the one placed")
 	assert_eq(e.map.slots[0].footprint, Rect2(40, 40, 12, 12))
-	assert_eq(e.map.slots[0].towers.get_node("Sprite").texture.resource_path, "res://art/buildings/skyscraper_3_0.png")
+	assert_eq(e.map.slots[0].towers.get_node("Sprite").texture.resource_path, "res://art/buildings/nobanner/skyscraper_3_0.png")  # T-265: banner off by default
 	assert_eq(e.map.all_boulders().size(), 1)
 	assert_eq(e.map.boulder_sprites.size(), 1)
 	assert_eq(e.map.boulder_sprites[0].variant, "a")
@@ -260,8 +260,8 @@ func test_opening_the_sample_map_draws_it_and_leaves_its_data_alone() -> void:
 
 
 func test_single_of_names_the_tower() -> void:
-	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-1"}), {"short": false, "index": 0})
-	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-6", "look": 1}), {"short": false, "index": 11})
+	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-1"}), {"short": false, "index": 0, "banner": false})
+	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-6", "look": 1}), {"short": false, "index": 11, "banner": false})
 	assert_eq(BuildingTowers.single_of({"asset": "short-2", "look": 1}), {"short": true, "index": 5})
 	assert_eq(BuildingTowers.single_of({}), {})
 	assert_eq(BuildingTowers.single_of({"asset": "skyscraper-9"}), {})
