@@ -247,6 +247,17 @@ Added for the creator rework (task T-261; same file, every earlier key unchanged
 - **Road brush (top bar):** "Drag to paint a road" (`road_brush_hint`).
 - **Controls hint:** "Drag: paint roads, size platforms. R: turn. V: next look. M: mirror. H: height. A: arrows. B: banner. T: style. Del: delete." (`controls_hint_rework`; the older hints stay; the creator should show this one, same keys).
 
+### Level creator: one button per kind of piece
+
+Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/README.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
+
+- **The panel:** six groups from the ground up with one button per kind (20 in all): Roads (Road, Centre line, Zebra crossing, Cracked road), Ground (Gravel), Levels (Platform, Ramp), Buildings, smallest to tallest (Small building, Long building, Low-rise, Skyscraper), Obstacles (Boulder, Barrier, Cones, Crates), Decoration (Street lamp, AC unit, Water tank, Roof vent, Rooftop sign). **Pavement is left out:** the game's only pavement art is the block pavement drawn under buildings, not a ground tile.
+- **Keys:** V next look, R turn, M mirror, H height (Platform 3 / 6; Ramp 0 to 3, 3 to 6, 0 to 6), T style. Under the picked piece a **looks strip** shows its looks as small clickable pictures with "Look n of count".
+- **Looks (proposals):** Road is the plainer asphalts (the approved tile with its mirror, and two PixelLab ones); **Cracked road** is the three visibly cracked PixelLab asphalts; Centre line holds the line tiles on every asphalt and the corner, T-junction, crossroads and dead-end pieces (R turns them); Zebra crossing the zebra tiles on every asphalt; a road tile turns (R) to its tile along the other axis. **Skyscraper** has 12 looks: each of the 6 towers' two bodies (the second body was in the game's art but not offered by the old panel). Until the road brush (T-263) the road kinds place today's tiles.
+- **Saved levels** are unchanged: a piece writes the same data as before, so earlier levels open, place and play as before.
+
+![The level creator's side panel, Skyscraper picked, its looks strip under the Buildings group](../art-archive/T-262/screenshots/panel_skyscraper.png)
+
 ### Level creator: rooftops of any size and ramps in every direction
 
 Task T-251 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. Units are the flat world's (x east, y south). How it works and how to rebuild it: `game/README.md`, "Level creator", "Rooftops and ramps of any size (T-251)".
