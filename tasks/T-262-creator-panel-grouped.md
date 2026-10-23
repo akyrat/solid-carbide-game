@@ -1,7 +1,7 @@
 ---
 id: T-262
 title: "Level creator: one button per kind of piece, in six groups, with looks chosen by keys"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/scripts/level_creator/, game/tools/build_creator_assets.py, game/data/level/creator_assets.json, game/data/level/props.json, game/data/level/creator_buildings.json]
 files_expected_to_change: [game/scripts/level_creator/, game/scenes/level_creator/, game/tools/build_creator_assets.py, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-262/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Started: one button per kind of piece in six groups, looks on keys.
 ### 2026-10-23, In progress → In QA
 
 Built: 20 buttons in six groups, looks on V, R, M and H, a looks strip. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the creator build: browse the panel and place pieces with V, R, M and H. T-263 (road brush) starts on it.
 
 ## Result notes
 
