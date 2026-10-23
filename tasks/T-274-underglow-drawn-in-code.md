@@ -1,7 +1,7 @@
 ---
 id: T-274
 title: The neon underglow drawn in code instead of the generated sprite
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the neon zone drawn in code instead of the sprite.
+
+### 2026-10-23, In progress → In QA
+
+Underglow drawn in code: pixel neon ring, dithered halo and floor glow, pulse and shimmer; settings in one .tres; old sprite kept with a switch. Sent to QA.
 
 ## Result notes
 
