@@ -36,6 +36,7 @@ func test_effects_only_improve() -> void:
 		assert_gt(g.value("car_health", l), g.value("car_health", l - 1))
 		assert_gt(g.value("damage_bonus", l), g.value("damage_bonus", l - 1))
 		assert_gt(g.value("pickup_magnet", l), g.value("pickup_magnet", l - 1))
+		assert_gt(g.value("air_turn", l), g.value("air_turn", l - 1))
 
 
 func test_bases_match_the_game() -> void:

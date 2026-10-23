@@ -8,6 +8,7 @@ func _ready() -> void:
 	p.coins = 120
 	p.levels["damage_bonus"] = GarageData.new().max_level()
 	p.levels["pickup_magnet"] = 3  # T-224
+	p.levels["air_turn"] = 6  # T-270
 	var screen: GarageScreen = preload("res://scenes/menu/garage_screen.tscn").instantiate()
 	screen.progress = p
 	add_child(screen)
