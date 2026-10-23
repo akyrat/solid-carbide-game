@@ -4,4 +4,7 @@
 
 [node name="DriftExitSlipGifRun" type="Node"]
 script = ExtResource("1_demo")
+zoom = 8.0
 in_run = true
+start_units = Vector2(0, 10)
+start_rotation = 0.0

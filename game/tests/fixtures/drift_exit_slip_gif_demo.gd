@@ -35,6 +35,11 @@ var _slip_default := 0.35
 
 
 func _ready() -> void:
+	# For trying start spots: DRIFT_SLIP_START="x,y,heading in radians".
+	var env := OS.get_environment("DRIFT_SLIP_START").split(",")
+	if env.size() == 3:
+		start_units = Vector2(float(env[0]), float(env[1]))
+		start_rotation = float(env[2])
 	if in_run:
 		var game: Node = preload("res://scenes/game/game.tscn").instantiate()
 		add_child(game)
@@ -64,6 +69,7 @@ func _ready() -> void:
 		p.set_view("iso")
 		p.panel.visible = false
 		if zoom > 0.0:
+			p.camera_follow.dynamic = false
 			p.set_zoom(zoom)
 		car = p.car
 		car.use_keyboard = false
@@ -72,14 +78,16 @@ func _ready() -> void:
 	layer.layer = 20
 	add_child(layer)
 	_caption = Label.new()
-	_caption.position = Vector2(24, 140)
-	_caption.add_theme_font_size_override("font_size", 22)
+	_caption.position = Vector2(262, 100)
+	_caption.add_theme_font_size_override("font_size", 18)
 	_caption.add_theme_color_override("font_color", Color(1, 1, 1))
 	_caption.add_theme_color_override("font_outline_color", Color(0, 0, 0))
 	_caption.add_theme_constant_override("outline_size", 6)
 	layer.add_child(_caption)
 	_next_part()
 	car.stepped.connect(_on_stepped)
+	car.hit_obstacle.connect(func(_c, _i, _n, speed: float) -> void:
+		print("drift_exit_slip_gif_demo: hit an obstacle in part %d at %.1f units/s" % [_part, speed]))
 
 
 var _keep_alive: Node = null

@@ -4,3 +4,4 @@
 
 [node name="DriftExitSlipGif" type="Node"]
 script = ExtResource("1_demo")
+zoom = 8.0
