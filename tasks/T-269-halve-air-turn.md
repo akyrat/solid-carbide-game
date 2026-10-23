@@ -55,6 +55,10 @@ Started at the board's request: the car spins half as fast in the air.
 
 Air turn halved (2.5 to 1.25); garage hook ready for T-270. At 1.25 only the air 180 is reachable off the tallest roof; the 360 needs about 1.9 total. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 3. Ready to play in the game build: air turn halved; air 360 off the tallest roof returns with the garage upgrade.
+
 ## Result notes
 
 Driving & Drift Agent:
