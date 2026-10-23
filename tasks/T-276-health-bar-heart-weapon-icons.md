@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Coursework
@@ -54,6 +54,18 @@ Board review files: the screenshots in `art-archive/T-276/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: a 72 x 320 upright health bar with the heart under it and weapon icons beside it.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Built (UI Agent). Top left of the HUD:
+- Health bar: upright, 72 x 320 (`Hud.HEALTH_BAR_SIZE`), fills bottom up; the "Car Health" label and `health_label` are gone. A second copy of the likes heart picture (`hud.health_heart`, same texture, board-approved red) sits centred 6 px under the bar. The likes bar's own heart at the bottom is untouched (T-273 owns it).
+- Weapon icons: new `scripts/hud/weapon_icons.gd` (`WeaponIcons`, `hud.weapon_icons`), bound by `hud.bind_weapons(run.weapons)` in `run.gd`. One 48 x 48 row per weapon the car has, the gun included, in the order taken; icon = `LevelUpScreen.weapon_image(id)` (the T-174 card picture at 3x, nearest, no new art); "x2" ... "x8" beside it above tier 1, Bangers 32, white with a black outline. It follows each weapon's `tier_changed`, so a taken or upgraded weapon shows at once; a new run drops back to the gun.
+- Proposals for the playtest: the gun is shown; icon 48 px with 8 px gaps (five weapons take 272 of the bar's 320 px); count size 32 in white; icons start 12 px right of the bar at its top. Bangers is all caps, so the count reads "X2" on screen (the text is "x2").
+- `gift_arrows.gd`'s HUD keep-clear rectangles now name the heart and the icons instead of the label.
+- Tests: new `tests/unit/hud/test_hud_weapon_icons.gd` (gun only at the start, order taken, count and its updates to x8, comic font and outline, new run resets, five weapons at tier 8 fit beside the bar, bar 72 x 320 with the heart and no label); the layout, combo, combo-hidden, values and gift-drops tests updated (layout tests now run with all five weapons at mixed tiers; "Car Health" checks became heart and icon checks; "top half" became top 60 percent).
+- Results: full GUT suite 1372/1372 passed (exit 0); `python -m unittest discover -s game/tools` 395 OK (1 skipped); `python -m unittest discover -s tools` 451 OK.
+- Screenshots (fixtures `tests/fixtures/weapon_icons_gun.tscn`, `weapon_icons_mixed.tscn`): `art-archive/T-276/screenshots/top_left_gun_only.png` and `top_left_all_five_mixed.png` (gun x2, wiper x3, flamethrower tier 1, molotov x8, underglow x2). Nothing overlaps the timer, coins or car at 1152 x 648; no Redgull red besides the heart. The heart is small (the same 22 x 20 picture as the likes bar's); say if it should be bigger.
+- Documents updated: `docs/hud-and-menus.md` (Content, Top left), `game/README.md` (HUD section). 0 PixelLab generations.
