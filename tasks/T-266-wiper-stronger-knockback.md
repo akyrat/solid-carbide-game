@@ -56,6 +56,10 @@ Started at the board's request: the wiper pushes minions 6 units at its first le
 
 Wiper push built: 6 units at tier 1, 9 at the last tier (data only). The tier 5 card's numbers now read 6 to 9. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 3. Ready to play in the game build: wiper pushes 6, last tier 9.
+
 ## Result notes
 
 Done (Game Data Agent).
