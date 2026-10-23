@@ -1,7 +1,7 @@
 ---
 id: T-280
 title: "Level creator: a spawn point every level has, always visible and movable"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started on T-272's branch: a spawn point every level has, always visible and movable.
 
+### 2026-10-23, In progress → In QA
+
+Spawn point built: drag to move, R turns (8 headings), can't delete, run starts there. Click-to-place not built, drag only. Sent to QA.
+
 ## Result notes
 
 **Built (Level/Challenge Agent).** Every level has one spawn point, always drawn, movable, turnable, never deleted, saved, and used by a run.
@@ -71,3 +75,4 @@ Started on T-272's branch: a spawn point every level has, always visible and mov
 - **Documents affected:** `docs/level-design.md` (Content, "Level creator: the spawn point", with the screenshots), `game/README.md` ("Level creator", "The spawn point (T-280)").
 
 No refusals.
+- 2026-10-23, in-progress → in-qa: Built: spawn point (8 headings, drag to move, refused in buildings/obstacles/off map, can't delete, saved, run starts there). Click-to-place not built (drag only).
