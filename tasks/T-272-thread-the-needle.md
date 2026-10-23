@@ -1,7 +1,7 @@
 ---
 id: T-272
 title: "Thread the needle: pair two obstacles in the creator, and drive between them for a trick"
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -41,10 +41,10 @@ Built on T-262's branch once it passes QA (the Project Lead makes your folder), 
 
 ## Acceptance criteria
 
-- [ ] Tests show two obstacles can be paired and unpaired, a non-obstacle is refused, pairs save and reopen, and `check_level.py` refuses a pair that names a missing obstacle (QA: pass / fail)
-- [ ] Tests show crossing the gap between a pair pays the trick once with the data's amount and T-271's popup, touching either obstacle pays nothing and cuts the combo, and the repeat rule works as proposed (QA: pass / fail)
-- [ ] The numbers live in `combo.json` with their reasons; Game loop architecture lists the trick; the game's own map is unchanged (QA: pass / fail)
-- [ ] The screenshot and GIF are in `art-archive/T-272/screenshots/`; `game/README.md` describes it; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show two obstacles can be paired and unpaired, a non-obstacle is refused, pairs save and reopen, and `check_level.py` refuses a pair that names a missing obstacle (QA: pass; GUT creator_pairs (16) cover pair/unpair, refusal, save/reopen; TestCheckPairs covers missing obstacle; all green)
+- [ ] Tests show crossing the gap between a pair pays the trick once with the data's amount and T-271's popup, touching either obstacle pays nothing and cuts the combo, and the repeat rule works as proposed (QA: pass; GUT thread_the_needle (16) cover pay once, touch cancels, repeat_seconds; popup is THREAD THE NEEDLE! +0.5, matching T-271 in hud-and-menus.md)
+- [ ] The numbers live in `combo.json` with their reasons; Game loop architecture lists the trick; the game's own map is unchanged (QA: pass; combo.json has numbers and reasons, game-loop-architecture lists the trick, mvp_ground.json unchanged by T-272 commits and has no pairs)
+- [ ] The screenshot and GIF are in `art-archive/T-272/screenshots/`; `game/README.md` describes it; the full GUT suite and all Python tool tests pass (QA: pass; screenshots and GIF checked, GIF shows the car crossing and popup; README updated; GUT 1593 pass (first run segfaulted 139 in an unrelated popup test, rerun clean), game/tools 496 OK, tools 451 OK)
 
 The board's review: pair two boulders in the creator and drive between them.
 Board review files: the screenshot and GIF in `art-archive/T-272/screenshots/`.
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Blocked → In progress
 
 Started on the creator line: pair two obstacles, drive between them for THREAD THE NEEDLE!.
+
+### 2026-10-23, In progress → In QA
+
+Built: P pairs two obstacles in the creator; driving between them pays THREAD THE NEEDLE! +0.5, again after 3 s. Sent to QA.
 
 ## Result notes
 
