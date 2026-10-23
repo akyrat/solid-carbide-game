@@ -70,6 +70,10 @@ QA failed 1 of 4: the full test suite crashes every time on this branch (in the 
 
 No branch cause found: master crashes the same way (2 of 3 runs of the HUD tests); 3 full runs here passed. Sent to QA round 2.
 
+### 2026-10-23, Needs playtest
+
+QA round 2 passed all 4 (1 of 3 full test runs completed; the other 2 hit the known engine crash also seen on master). Ready to play in the game build.
+
 ## Result notes
 
 Built (UI Agent). Top left of the HUD:
