@@ -63,6 +63,11 @@ var air_turn_multiplier := 1.25
 ## the air turn (T-270) sets it at a run's start through apply_air_turn_bonus(),
 ## as apply_acceleration_upgrade() sets its value. 0 is no upgrade.
 var air_turn_bonus := 0.0
+## The hype speed boost (task T-275, Drifting, Decisions): the share the top
+## speed is raised by right now, 0 to about 0.25. Not a slider: the run sets it
+## from the combo heat step (run.gd, combo.json hype_speed); the drift prototype
+## never does, so it stays 0 there.
+var hype_speed_bonus := 0.0
 
 ## The acceleration garage upgrade (task T-060): sets the time to top speed to
 ## the upgrade's value at the player's saved level (level 0 is the base, 2.3 s,
@@ -192,9 +197,10 @@ const TRICK_SETTINGS := [
 ]
 
 
-## Top speed in units/s.
+## Top speed in units/s, raised by the hype speed bonus (T-275). The ramp and
+## coast rates follow it, so the car also speeds up faster by the same share.
 func top_speed() -> float:
-	return forward_speed * top_speed_multiplier
+	return forward_speed * top_speed_multiplier * (1.0 + hype_speed_bonus)
 
 
 ## Speed change per step for speeding up, braking and the reverse climb.
