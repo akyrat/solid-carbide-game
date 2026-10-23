@@ -1785,3 +1785,8 @@ Entry format:
 - Decision or change: every level has exactly one spawn point, visible from the moment a level opens, movable anywhere the car can stand and turnable for its heading, never deletable; a run on the level starts the car there (Level design, Decisions; text T-279, build T-280).
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-279, T-280
+
+## 2026-10-23: The test suite's exit 139 crash fixed
+- Decision or change: the full GUT suite crashed the engine (exit 139) about two runs in three, in the combo popup test, which made every ticket's checks slow and unreliable. With the board's go it was fixed ahead of the queue: the test called a method on a popup that had already freed itself, reading freed memory; the two checks were swapped so validity is checked first, accepting the same outcomes. Ten runs in a row passed. game/README.md now states the rule (T-281).
+- Documents touched: `game/README.md`
+- Tasks: T-281

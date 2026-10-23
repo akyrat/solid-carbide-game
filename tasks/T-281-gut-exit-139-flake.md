@@ -1,7 +1,7 @@
 ---
 id: T-281
 title: The full test suite crashes (exit 139) in the combo popup test about two runs in three
-status: open
+status: done
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, game/tools/run_tests.sh, game/tests/unit/hud/test_combo_broken_popup.gd, tasks/T-276-health-bar-heart-weapon-icons.md]
 files_expected_to_change: [game/tests/, game/tools/run_tests.sh, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,14 +39,40 @@ Built from `master` on its own branch and folder, as `tasks/README.md` ("Git bra
 
 ## Acceptance criteria
 
-- [ ] The result notes say in plain words what caused the crash and what changed; no test is skipped, removed or loosened (`git diff`) (QA: pass / fail)
-- [ ] The full GUT suite exits 0 on five runs in a row, and the HUD folder alone (`-gdir=res://tests/unit/hud`) exits 0 on five runs in a row (QA: pass / fail)
-- [ ] `game/README.md` notes the fix where it describes running the tests; all Python tool tests pass (QA: pass / fail)
+- [ ] The result notes say in plain words what caused the crash and what changed; no test is skipped, removed or loosened (`git diff`) (QA: pass; diff only reorders the two checks in one assertion, same outcomes, nothing skipped/removed/loosened)
+- [ ] The full GUT suite exits 0 on five runs in a row, and the HUD folder alone (`-gdir=res://tests/unit/hud`) exits 0 on five runs in a row (QA: pass; full suite 5/5 exit 0, 1365/1365 each; HUD folder 5/5 exit 0, 101/101 each)
+- [ ] `game/README.md` notes the fix where it describes running the tests; all Python tool tests pass (QA: pass; README section added under Running the tests; tools 451 OK, game/tools 395 OK with 1 skipped)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Open → In progress
+
+Started at the board's go: find and fix the engine crash (exit 139) in the combo popup test.
+
+### 2026-10-23, In progress → In QA
+
+Cause found: the test called a method on a popup that had already freed itself, reading freed memory. Swapped the two checks; 5 clean full runs in a row. Sent to QA.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Game Loop Agent, 2026-10-23.
+
+**What caused it.** The test itself. Its last line was `assert_true(p.is_queued_for_deletion() or not is_instance_valid(p))`. The popup frees itself (`queue_free()`) once its life is over, so after the `await get_tree().process_frame` it is already gone. The assertion then called a method, `is_queued_for_deletion()`, on the freed popup *before* checking `is_instance_valid()`. In this Godot build (4.6.2) a call on a freed object does not reliably fail with an error. It reads freed memory, so whether the engine crashes (signal 11, exit 139) depends on whether that memory was reused, which is why the crash came and went. Nothing in the game code is wrong. Earlier tests, freed runs, timers and GUT are not involved.
+
+**How it was found.** A copy of the file run on its own crashed 4 runs in 15. A copy with only this test crashed 19 in 20. Making the same Run and awaiting the frame without the assertion crashed 0 in 20, `assert_false(is_instance_valid(p))` alone crashed 0 in 20, and `print(p.is_queued_for_deletion())` alone crashed 8 in 10. The bisect copies lived in a temporary folder that has been removed.
+
+**What changed.**
+- `game/tests/unit/hud/test_combo_broken_popup.gd`: the assertion now checks validity first: `assert_true(not is_instance_valid(p) or p.is_queued_for_deletion())`. It accepts the same outcomes as before (the popup is freed, or queued to be freed) and only the order of the two checks changed. No test was skipped, removed or loosened. The reordered single test ran 30 in 30 without a crash.
+- `game/README.md`, "Running the tests": a new section, "Never call a method on a node that may be freed (T-281)", gives the rule and the example.
+- `game/tools/run_tests.sh` is unchanged. A warm-up frame was not needed.
+
+**Run results (this folder).**
+- HUD folder (`bash game/tools/run_tests.sh -gdir=res://tests/unit/hud`): exit 0 on 5 runs in a row, 101/101 each time. Before the fix it crashed 1 run in 9.
+- Full suite (`bash game/tools/run_tests.sh`): exit 0 on 5 runs in a row, 1365/1365 each time. Before the fix it crashed 2 runs in 3.
+- `python -m unittest discover -s tools -p "test_*.py"`: 451 tests, OK.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 395 tests, OK (1 skipped, which was already skipped before).
+
+Documents affected: `game/README.md`.
+- 2026-10-23, in-qa → done: QA passed; tooling only, merges straight after QA
