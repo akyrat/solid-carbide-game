@@ -129,7 +129,7 @@ func test_place_one_of_each_kind_then_delete_them() -> void:
 	var r := e.place_asset(road, Vector2(-20.0, -30.0))
 	var bld := e.place_asset("skyscraper-3", Vector2(40.0, 40.0))
 	var bo := e.place_asset("boulder-a", Vector2(-50.0, 20.0))
-	var roof := e.place_asset("rooftop-3", Vector2(-100.0, -100.0))
+	var roof := e.place_asset("rooftop-3", Vector2(-100.0, -100.0), Vector2(84, 30))
 	var ramp := e.place_asset("ramp-0-3", Vector2(-90.0, -70.0))
 	for p in [g, r, bld, bo, roof, ramp]:
 		assert_false(p.is_empty())

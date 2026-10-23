@@ -177,7 +177,7 @@ func test_the_preview_shows_the_current_view() -> void:
 	e.hover_cell = e.document.cell_at(Vector2(0.5, 0.5))
 	var b := e.preview_block()
 	assert_eq(b.kind, "platform")
-	assert_eq(b.rect, Rect2(0, 0, 30, 30))
+	assert_eq(b.rect, Rect2(0, 0, 16, 16), "T-264: a click is M")
 	_pick(e, "ramp-0-6", "west")
 	b = e.preview_block()
 	assert_eq([b.kind, b.side, b.rect.size], ["ramp", "east", Vector2(24, 10)])
@@ -197,9 +197,9 @@ func test_the_preview_shows_the_current_view() -> void:
 ## climbing its south side and a ramp 3 to 6 climbing the 6's west side.
 func _build_nw(e: LevelCreatorEditor) -> Dictionary:
 	e.panel.pick("rooftop-3")
-	var r3 := e.place_asset("rooftop-3", Vector2(-95.5, -95.5))
+	var r3 := e.place_asset("rooftop-3", Vector2(-95.5, -95.5), Vector2(84, 30))
 	e.panel.pick("rooftop-6")
-	var r6 := e.place_asset("rooftop-6", Vector2(-41.5, -95.5))
+	var r6 := e.place_asset("rooftop-6", Vector2(-41.5, -95.5), Vector2(30, 30))
 	_pick(e, "ramp-0-3", "north")
 	var a := e.place_asset("ramp-0-3", Vector2(-85.5, -65.5))
 	_pick(e, "ramp-3-6", "east")
@@ -245,7 +245,7 @@ func test_the_south_east_views_pass_the_height_check_too() -> void:
 	for step in [["rooftop-3", Vector2(12.5, 66.5), ""], ["rooftop-6", Vector2(12.5, 66.5), ""],
 			["ramp-0-3", Vector2(76.5, 54.5), "south"], ["ramp-3-6", Vector2(42.5, 76.5), "west"]]:
 		_pick(e, step[0], step[2])
-		assert_false(e.place_asset(step[0], step[1]).is_empty())
+		assert_false(e.place_asset(step[0], step[1], {"rooftop-3": Vector2(84, 30), "rooftop-6": Vector2(30, 30)}.get(step[0], Vector2.ZERO)).is_empty())
 	var ramps: Array = e.level_data.ramps
 	assert_eq([ramps[0].side, ramps[1].side], ["north", "east"])
 	assert_eq(ramps[0].platform, e.level_data.platforms[0].id)
