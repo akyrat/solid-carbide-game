@@ -1745,3 +1745,43 @@ Entry format:
 - Decision or change: after playing the piece set, the board asked for a better-organised creator. It read the Project Lead's plan as a page (https://claude.ai/artifact/2TXG35AkZFYXKvfNUUPfNN) and chose: one button per kind of piece in six groups with looks on keys (T-262), roads painted with a brush that joins itself (T-263), closed ramps with arrows up or down per ramp and S, M and L platforms at 8, 16 and 32 units (T-264), and skyscraper banners on or off, off by default (T-265), with their text first (T-261). No new generations (Level design, Decisions, "Level creator rework").
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-261, T-262, T-263, T-264, T-265
+
+## 2026-10-22: A stronger wiper push
+- Decision or change: the board asked for the windshield wiper to push minions about twice the car's size at its first level; the Project Lead reads that as twice the car's length, 6 units (from 1.5), with the tier multipliers unchanged (Weapons, Decisions, "A stronger wiper push"; T-266).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-266
+
+## 2026-10-22: A smaller exhaust flame that burns what it touches
+- Decision or change: the board asked for the exhaust flame to start 4 to 5 times smaller, be drawn behind the car and enemies, and hurt a minion as soon as it touches the visible flame (its damage area = the drawn flame; replaces "a minion is in the flames when its centre is") (Weapons, Decisions; T-267).
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-267
+
+## 2026-10-22: A slower air turn with a garage upgrade, and no "Redgull says" lines
+- Decision or change: the board halved the car's spin rate in the air (multiplier 2.5 to 1.25; T-269) and asked for a fifth garage upgrade that raises it (T-270, with its text in T-268). It also dislikes text in the form "Redgull says X": the two level-up card descriptions that use it (flamethrower tier 6, underglow tier 2) are rewritten, and no new text uses it (T-268).
+- Documents touched: `docs/drifting.md`, `docs/garage-design.md`, `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-268, T-269, T-270
+
+## 2026-10-22: Thread the needle
+- Decision or change: the board wants to mark two obstacles as a pair in the level creator; driving through the gap between them is a new trick, thread the needle, that raises the combo. Its worth, repeat rule and look are the agents' proposals (Level design, Decisions, "Thread the needle"; text T-271, build T-272).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-271, T-272
+
+## 2026-10-22: A thicker likes bar that springs, and one game build to playtest
+- Decision or change: the likes bar becomes 4 times thicker (16 to 64 pixels) and springs to its new fill with a small overshoot instead of jumping (HUD and menus, Decisions; T-273). Brand Magnet's "Redgull calls it engagement" goes as well (added to T-268). The board will play everything outside the level creator together in one build, with patch notes and suggested objectives before it plays.
+- Documents touched: `docs/hud-and-menus.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-273, T-268
+
+## 2026-10-22: The neon underglow drawn in code
+- Decision or change: the board doesn't like the generated underglow sprite; the neon zone is drawn in code as pixel rings and stepped-halo glow marking exactly its damage circle, with the old sprite kept (Visual style, Decisions; T-274).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-274
+
+## 2026-10-22: A little side slip out of a drift
+- Decision or change: the board, calling it crucial to the game's feel, wants a small sideways slide to carry on when a drift ends, so the player steadies the car with counter-steer, as in Hotshot Racing and Mario Kart. Tuning values with live sliders; played on its own, separate from every other change (Drifting, Decisions; T-278).
+- Documents touched: `docs/drifting.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-278
+
+## 2026-10-22: The car's spawn point in the level creator
+- Decision or change: every level has exactly one spawn point, visible from the moment a level opens, movable anywhere the car can stand and turnable for its heading, never deletable; a run on the level starts the car there (Level design, Decisions; text T-279, build T-280).
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-279, T-280
