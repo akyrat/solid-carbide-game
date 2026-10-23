@@ -1,7 +1,7 @@
 ---
 id: T-281
 title: The full test suite crashes (exit 139) in the combo popup test about two runs in three
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Coursework
@@ -50,6 +50,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-23, Open → In progress
 
 Started at the board's go: find and fix the engine crash (exit 139) in the combo popup test.
+
+### 2026-10-23, In progress → In QA
+
+Cause found: the test called a method on a popup that had already freed itself, reading freed memory. Swapped the two checks; 5 clean full runs in a row. Sent to QA.
 
 ## Result notes
 
