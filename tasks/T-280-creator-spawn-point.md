@@ -62,6 +62,10 @@ Started on T-272's branch: a spawn point every level has, always visible and mov
 
 Spawn point built: drag to move, R turns (8 headings), can't delete, run starts there. Click-to-place not built, drag only. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 4. Ready to play in the creator build: drag the Start marker onto a rooftop, R to turn it, then play.
+
 ## Result notes
 
 **Built (Level/Challenge Agent).** Every level has one spawn point, always drawn, movable, turnable, never deleted, saved, and used by a run.
