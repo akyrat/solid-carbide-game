@@ -1,7 +1,7 @@
 ---
 id: T-280
 title: "Level creator: a spawn point every level has, always visible and movable"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/scripts/level_creator/, game/scripts/run/run.gd, game/tools/check_level.py, tasks/T-239-level-creator-play-a-listed-level.md, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/run/, game/tools/check_level.py, game/tests/, game/README.md, docs/level-design.md, art-archive/T-280/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,10 +42,10 @@ Built on T-262's branch once it passes QA (the Project Lead makes your folder), 
 
 ## Acceptance criteria
 
-- [ ] Tests show a new level and an old level open with a visible spawn point at the centre, it can be moved and turned, it can't be deleted, and it is refused inside a building, an obstacle or off the map (QA: pass / fail)
-- [ ] Tests show the spawn point saves and reopens, and a run from the creator starts the car at its place, height and heading; `check_level.py` refuses a level without a valid one (QA: pass / fail)
-- [ ] Labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass / fail)
-- [ ] Screenshots and the GIF are in `art-archive/T-280/screenshots/`; `game/README.md` describes it; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a new level and an old level open with a visible spawn point at the centre, it can be moved and turned, it can't be deleted, and it is refused inside a building, an obstacle or off the map (QA: pass; 23 new GUT tests cover new/old level at centre, move, 8-heading turn, no delete, refusals; all pass)
+- [ ] Tests show the spawn point saves and reopens, and a run from the creator starts the car at its place, height and heading; `check_level.py` refuses a level without a valid one (QA: pass; save/reopen, run start place/height/heading, check_level refusals tested and pass)
+- [ ] Labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass; labels from creator_texts.json, marker green, no Redgull red, game/data/level unchanged vs T-272)
+- [ ] Screenshots and the GIF are in `art-archive/T-280/screenshots/`; `game/README.md` describes it; the full GUT suite and all Python tool tests pass (QA: pass; screenshots and GIF present, README and level-design updated; GUT 1616/1616 (first run hit the known exit 139 flake, rerun clean), game/tools 502 OK, tools 451 OK)
 
 The board's review: open a level, move the spawn point onto a rooftop, and play from there.
 Board review files: the screenshots and GIF in `art-archive/T-280/screenshots/`.
@@ -76,3 +76,4 @@ Spawn point built: drag to move, R turns (8 headings), can't delete, run starts 
 
 No refusals.
 - 2026-10-23, in-progress → in-qa: Built: spawn point (8 headings, drag to move, refused in buildings/obstacles/off map, can't delete, saved, run starts there). Click-to-place not built (drag only).
+- 2026-10-23, in-qa → needs-playtest: QA round 1: all pass. 18 older test changes keep intent. Click-to-place not built (drag only).
