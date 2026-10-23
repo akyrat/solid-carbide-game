@@ -217,7 +217,8 @@ class RoadPieceTests(unittest.TestCase):
     two-tile-wide roads' size, drawn from the straight tiles' own pixels."""
 
     def test_pieces_come_last_and_old_tiles_are_unchanged(self):
-        self.assertEqual(NAMES[g.OLD_TILES:], PIECE_TILE_NAMES)
+        # T-263's brush tiles come after them (BrushTileTests).
+        self.assertEqual(NAMES[g.OLD_TILES:g.OLD_TILES + len(PIECE_TILE_NAMES)], PIECE_TILE_NAMES)
         self.assertEqual(len(PIECE_TILE_NAMES), 13 * 4)
         self.assertEqual(sha16(json.dumps(GROUND["cells"])), OLD_CELLS_SHA)
         self.assertEqual(sha16(json.dumps(NAMES[:g.OLD_TILES])), OLD_NAMES_SHA)
@@ -324,6 +325,84 @@ class RoadPieceTests(unittest.TestCase):
                     road.blit(canvas, tile(p["tiles"][r][c]), 64 + (c - r) * 64, (c + r) * 32)
             region = [row[x0:x0 + 256] for row in sheet[y0:y0 + 128]]
             self.assertEqual(region, canvas, p["name"])
+
+
+BRUSH_LINE_NAMES = [g.brush_line_name(n, a, c, r) for a in g.BRUSH_LINE_ASPHALTS for n in g.PIECES
+                    for r in range(2) for c in range(2)]
+BRUSH_DEAD_NAMES = [g.brush_dead_name(n, a, c, r) for a in g.BASE_WEIGHTS for n in g.DEAD_ENDS
+                    for r in range(2) for c in range(2)]
+
+
+class BrushTileTests(unittest.TestCase):
+    """T-263: the road brush's pieces: T-252's centre-line pieces on the other asphalts of the
+    Road kind, and the dead ends of roads without a centre line on every asphalt."""
+
+    def test_brush_tiles_come_after_the_pieces(self):
+        start = g.OLD_TILES + len(PIECE_TILE_NAMES)
+        self.assertEqual(NAMES[start:], BRUSH_LINE_NAMES + BRUSH_DEAD_NAMES)
+        self.assertEqual(len(BRUSH_LINE_NAMES), 3 * 13 * 4)
+        self.assertEqual(len(BRUSH_DEAD_NAMES), 7 * 4 * 4)
+        rec = json.loads(g.dump(g.record(TILES)))
+        self.assertTrue(all(t.get("piece") for t in rec["tiles"][g.OLD_TILES:]))
+        self.assertEqual(len(rec["pieces"]), 13, "the sheet keeps T-252's pieces only")
+
+    def test_line_pieces_carry_the_straight_tiles_line_on_their_asphalt(self):
+        """Like T-252's: every open side's tiles hold exactly the straight tiles' line pixels (of
+        that asphalt's line_r and line_l), so the line joins across every piece without a gap, and
+        the rest is that asphalt's plain tile."""
+        for a in g.BRUSH_LINE_ASPHALTS:
+            plain = tile("y_plain_" + a)
+            for name, arm_set in g.PIECES.items():
+                closed = len(arm_set) == 1
+                for r in range(2):
+                    for c in range(2):
+                        t = tile(g.brush_line_name(name, a, c, r))
+                        want = set()
+                        for key in edge_keys(name, c, r):
+                            want |= white_pixels(tile(STRAIGHT_OF_EDGE[key].replace("_a0", "_" + a)))
+                        got = white_pixels(t)
+                        if closed:
+                            self.assertLessEqual(want, got, (a, name, c, r))
+                            continue
+                        self.assertEqual(got - white_pixels(plain), want - white_pixels(plain), (a, name, c, r))
+                        for y in range(g.H):
+                            for x in range(g.W):
+                                if (x, y) not in want:
+                                    self.assertEqual(t[y][x], plain[y][x], (a, name, c, r, x, y))
+
+    def test_plain_dead_ends_have_a_kerb_and_no_line(self):
+        gravel = tile("gravel0")
+        for a in g.BASE_WEIGHTS:
+            plain = tile("y_plain_" + a)
+            for name, arm_set in g.DEAD_ENDS.items():
+                closed = {"n": "s", "s": "n", "e": "w", "w": "e"}[arm_set]
+                kerb = 0
+                for r in range(2):
+                    for c in range(2):
+                        t = tile(g.brush_dead_name(name, a, c, r))
+                        for y in range(g.H):
+                            for x in range(g.W):
+                                if not road.footprint(x, y):
+                                    continue
+                                wx, wy = g.local_units(x, y)
+                                u, v = 2 * c + wx, 2 * r + wy
+                                d = {"s": 4 - v, "n": v, "e": 4 - u, "w": u}[closed]
+                                if d <= g.KERB_FROM:
+                                    self.assertEqual(t[y][x], gravel[y][x])
+                                elif d <= g.KERB_TO:
+                                    kerb += 1
+                                    self.assertEqual(t[y][x], g.WHITE)
+                                else:
+                                    self.assertEqual(t[y][x], plain[y][x], "no centre line: the plain asphalt")
+                self.assertGreater(kerb, 800, (a, name))
+
+    def test_brush_tiles_pass_check_sprite_rules(self):
+        import check_sprite_rules as rules
+        for n in BRUSH_LINE_NAMES + BRUSH_DEAD_NAMES:
+            t = tile(n)
+            padded = [list(r) for r in t] + [[(0, 0, 0, 0)] * g.W for _ in range(g.W - g.H)]
+            results, _ = rules.check_rows(padded, size=128, max_colors=30)
+            self.assertTrue(all(ok for _, ok, _ in results), (n, results))
 
 
 class FilesTests(unittest.TestCase):
