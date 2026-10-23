@@ -246,6 +246,8 @@ func _ready() -> void:
 	hint_label = Label.new()
 	hint_label.name = "Hint"
 	hint_label.text = CreatorTexts.get_text("controls_hint_rework")
+	# T-262: the longer line shrinks its font to fit a narrow window instead of running off its edge.
+	map_view.resized.connect(_fit_hint)
 	main.add_child(hint_label)
 
 	_overlay = _Overlay.new()
@@ -262,6 +264,22 @@ func _ready() -> void:
 	_rebuild_map()
 	_apply_view()
 	_update_pose_controls()
+
+
+## The hint line's font: the theme's size, smaller (down to HINT_MIN_FONT) while the line is wider
+## than the map view.
+const HINT_MIN_FONT := 10
+
+
+func _fit_hint() -> void:
+	if hint_label == null or map_view == null or map_view.size.x <= 0.0:
+		return
+	hint_label.remove_theme_font_size_override("font_size")
+	var font := hint_label.get_theme_font("font")
+	var fs := hint_label.get_theme_font_size("font_size")
+	while fs > HINT_MIN_FONT and font.get_string_size(hint_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x > map_view.size.x - 4.0:
+		fs -= 1
+	hint_label.add_theme_font_size_override("font_size", fs)
 
 
 func _load_document() -> void:

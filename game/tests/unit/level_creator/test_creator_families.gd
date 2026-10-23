@@ -84,6 +84,16 @@ func test_picking_a_button_picks_its_first_look_and_shows_the_strip() -> void:
 	assert_false(e.panel.looks_strip.visible)
 
 
+func test_the_hint_line_fits_the_map_view() -> void:
+	var e := _editor()
+	await wait_process_frames(2)
+	e._fit_hint()
+	var fs := e.hint_label.get_theme_font_size("font_size")
+	assert_gte(fs, LevelCreatorEditor.HINT_MIN_FONT)
+	var w := e.hint_label.get_theme_font("font").get_string_size(e.hint_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+	assert_true(w <= e.map_view.size.x or fs == LevelCreatorEditor.HINT_MIN_FONT, "the line fits (%d px in %d)" % [w, e.map_view.size.x])
+
+
 # ---- The keys -----------------------------------------------------------------------------------
 
 func test_v_steps_the_looks_and_the_strip_follows() -> void:
