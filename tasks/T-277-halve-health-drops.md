@@ -54,6 +54,10 @@ Started at the board's request: health drops at half the rate.
 
 Health drops halved (0.6 to 0.3); coins and the 30% restore unchanged. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed both. Ready to play in the game build: health drops half as often as coins.
+
 ## Result notes
 
 Written by the agent when it finishes.
