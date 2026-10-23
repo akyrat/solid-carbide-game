@@ -32,7 +32,7 @@ func test_every_label_is_the_approved_text() -> void:
 		"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
 		"car_health": "+10 car health per level. Redgull says you'll be fine.",
 		"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
-		"pickup_magnet": "Pickups reach you from further per level. Redgull calls it engagement.",
+		"pickup_magnet": "Coins and drops fly to you from further per level.",
 	}
 	assert_eq(screen.rows.size(), 4)
 	for id in names:

@@ -31,7 +31,16 @@ The fourth upgrade's text, in the form of the other three (name up to 25 charact
 | Key | Text | Length |
 |---|---|---|
 | garage.pickup_magnet.name | Brand Magnet | 12/25 |
-| garage.pickup_magnet.desc | Pickups reach you from further per level. Redgull calls it engagement. | 70/80 |
+| garage.pickup_magnet.desc | Coins and drops fly to you from further per level. | 50/80 |
+
+### Air turn text (T-268)
+
+The fifth upgrade's text, in the form of the other four (name up to 25 characters, description up to 80; T-270 uses it word for word, with the key `air_turn`). It names no number, because the Game Data Agent proposes how much each level adds.
+
+| Key | Text | Length |
+|---|---|---|
+| garage.air_turn.name | Spin Doctor | 11/25 |
+| garage.air_turn.desc | Spin faster in the air per level. More flips, more views. | 57/80 |
 
 ### Saving
 

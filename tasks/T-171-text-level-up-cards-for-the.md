@@ -64,7 +64,7 @@ Goal runner (G-002): QA passed; merged into playtest/G-002.
 | Key | Title | Description |
 |---|---|---|
 | get_underglow | Neon Underglow | A neon ring burns enemies near your car, 1 damage a second. So aesthetic. |
-| upgrade_underglow.tier2 | Brighter Glow | Glow radius up 20%. Redgull says be seen. |
+| upgrade_underglow.tier2 | Brighter Glow | Glow radius up 20%. Impossible to scroll past. |
 | upgrade_underglow.tier3 | Hotter Glow | Glow damage up 50%, to 1.5. Looks expensive. |
 | upgrade_underglow.tier4 | Faster Pulse | Glow hits come 25% sooner. Stay on the beat. |
 | upgrade_underglow.tier5 | Wider Glow | Glow radius up another 25%. Own the whole block. |
