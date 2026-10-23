@@ -227,6 +227,12 @@ func test_the_run_draws_a_faint_marker_across_the_gap() -> void:
 	var root: Node2D = run.map.view_root.get_node_or_null("NeedleMarkers")
 	assert_not_null(root)
 	assert_eq(root.get_child_count(), 1)
+	var m = root.get_child(0)
+	# In map.view_root's flat pixels (the view projects them): across the gap, x -1.5 to 1.5 at y -40.
+	var px: float = run.map.PX_PER_UNIT
+	assert_almost_eq((m.from as Vector2).distance_to(Vector2(-1.5, -40) * px), 0.0, 0.01)
+	assert_almost_eq((m.to as Vector2).distance_to(Vector2(1.5, -40) * px), 0.0, 0.01)
+	assert_eq(m.z_index, 0, "on the street: with the ground")
 	var c := ThreadTheNeedle.MARKER_COLOR
 	assert_lt(c.a, 0.5, "faint")
 	assert_false(c.r8 >= 150 and c.g8 <= 100 and c.b8 <= 100, "not Redgull red")

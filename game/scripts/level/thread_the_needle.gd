@@ -118,7 +118,7 @@ const MARKER_DASH_UNITS := 0.75
 
 
 ## Draws a marker per gate into `map` (an mvp_map.gd node): one Node2D per pair under
-## map.view_root, right over the ground tiles (where the drift marks go), lifted by `height_at`
+## map.view_root (in its flat map pixels, which the view projects), right over the ground tiles (where the drift marks go), lifted by `height_at`
 ## (Callable(units) -> float, the ground height; none: the street) and taking depth_for's depth on
 ## raised ground (Callable(units, rotation, height) -> int). Returns the markers' root ("NeedleMarkers").
 func build_markers(map: Node2D, height_at := Callable(), depth_for := Callable()) -> Node2D:
@@ -132,9 +132,11 @@ func build_markers(map: Node2D, height_at := Callable(), depth_for := Callable()
 		var px: float = map.PX_PER_UNIT
 		var mid: Vector2 = (g.gap_a + g.gap_b) / 2.0
 		var h: float = float(height_at.call(mid)) if height_at.is_valid() else 0.0
-		var lift := Vector2(0.0, -h * px)
-		m.from = map.ISO_TRANSFORM * (g.gap_a * px) + lift
-		m.to = map.ISO_TRANSFORM * (g.gap_b * px) + lift
+		# map.view_root carries the view's projection: draw in flat map pixels, the lift undone
+		# through it (as the drift marks do).
+		var lift: Vector2 = map.ISO_TRANSFORM.affine_inverse().basis_xform(Vector2(0.0, -h * px))
+		m.from = g.gap_a * px + lift
+		m.to = g.gap_b * px + lift
 		m.width = MARKER_WIDTH_UNITS * px
 		m.dash = MARKER_DASH_UNITS * px
 		if h > 0.0 and depth_for.is_valid():
