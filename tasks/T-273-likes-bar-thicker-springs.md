@@ -60,6 +60,10 @@ Started at the board's request: the likes bar 4 times thicker, springing when it
 
 Likes bar 64 px tall; fill springs up in 0.25 s with a small overshoot; level-up fills, then the new bar springs from empty. Sent to QA.
 
+### 2026-10-23, Needs playtest
+
+QA passed all 4. Ready to play in the game build: taller likes bar with a spring fill.
+
 ## Result notes
 
 Written by the agent when it finishes.
