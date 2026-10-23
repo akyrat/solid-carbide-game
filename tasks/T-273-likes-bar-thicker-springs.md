@@ -1,7 +1,7 @@
 ---
 id: T-273
 title: A likes bar 4 times thicker that springs up when it fills
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Coursework
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-22, Open → In progress
 
 Started at the board's request: the likes bar 4 times thicker, springing when it fills.
+
+### 2026-10-23, In progress → In QA
+
+Likes bar 64 px tall; fill springs up in 0.25 s with a small overshoot; level-up fills, then the new bar springs from empty. Sent to QA.
 
 ## Result notes
 
