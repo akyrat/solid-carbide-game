@@ -1,7 +1,7 @@
 ---
 id: T-286
 title: "A weapon visibly grows, animated, when a size upgrade is picked"
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-24, Open → In progress
 
 Started: weapons grow on screen, animated, when a size upgrade is picked; built on the game build.
+
+### 2026-10-24, In progress → In QA
+
+Grow built: wiper, underglow and flame grow to their new size in 0.4 s with a small overshoot when a size card is picked; damage follows. Wiper art now also stretches with its tiers. Sent to QA.
 
 ## Result notes
 
