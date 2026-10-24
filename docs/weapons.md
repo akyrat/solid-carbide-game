@@ -16,6 +16,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 
 - The MVP has 2 weapons: the starting gun and the exhaust flamethrower (below); since 2026-10-18, 5 (the three new weapons, below). Each level-up offers a choice between them (the level-up flow below). (2026-10-07; per level-up rather than per challenge since 2026-10-08)
 - The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from. (2026-10-07; per level-up since 2026-10-08)
+- **Size upgrades grow on screen** (board, 2026-10-24, after playing the game build): when a picked upgrade makes a weapon bigger (the wiper, the underglow, the flame), the weapon grows to its new size with a short animation instead of jumping to it. The damage area follows what is drawn. The timing is the Weapon Behavior Agent's proposal (T-286).
 - The Game Data Agent works out how weapon upgrades scale from level to level, starting from the Unity prototype's upgrade values (below). (2026-10-08)
 - **Starting gun:** the player starts every run with it. It has no visible weapon on the car, only the bullets it fires. It fires only when an enemy is within range, aims automatically, and fires at set intervals. (2026-10-08)
 - **Exhaust flamethrower:** fires flames out of the car's exhaust, only while the car is drifting. (2026-10-08)

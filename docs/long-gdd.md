@@ -755,6 +755,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 
 - The MVP has 2 weapons: the starting gun and the exhaust flamethrower (below); since 2026-10-18, 5 (the three new weapons, below). Each level-up offers a choice between them (the level-up flow below).
 - The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from.
+- **Size upgrades grow on screen** (board, 2026-10-24, after playing the game build): when a picked upgrade makes a weapon bigger (the wiper, the underglow, the flame), the weapon grows to its new size with a short animation instead of jumping to it. The damage area follows what is drawn. The timing is the Weapon Behavior Agent's proposal (T-286).
 - The Game Data Agent works out how weapon upgrades scale from level to level, starting from the Unity prototype's upgrade values (below).
 - **Starting gun:** the player starts every run with it. It has no visible weapon on the car, only the bullets it fires. It fires only when an enemy is within range, aims automatically, and fires at set intervals.
 - **Exhaust flamethrower:** fires flames out of the car's exhaust, only while the car is drifting.
@@ -1156,7 +1157,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `1df9ac6ffe370d8acc17268caa204ca1739394f4b81a24ff3a986e21b62de829` |
 | `level-design.md` | `26fd7dc495fc7c97d77e0ce0185a758eccd5dd4da2f100b15e59593ee421ed1c` |
 | `enemies.md` | `5696db0e2d567bdcee096c74dfe344ddd61a53fc57b05a1874c64aa5a1555b5a` |
-| `weapons.md` | `0ca41bde54c40d425d0d2f83364e92d54a3eb34e3377cdbcdcab3a5b9b06884a` |
+| `weapons.md` | `bd1876afb11b4b40c8cb68c16075e808c5392534072c112f8581e9b8ba50511e` |
 | `garage-design.md` | `547df09e02086f5951779df92a8b902a59d698183a2a8c1bf33450f9643c222c` |
 | `visual-style.md` | `da41dfe41f1386effeed2f7ca7e0aaefdc1272ec7cec8ca4d84d80178a5313b8` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |

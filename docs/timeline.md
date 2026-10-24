@@ -1800,3 +1800,8 @@ Entry format:
 - Decision or change: the board wants a "+" button in the creator's side panel to send a description of a new piece through the Asset Generation Agent, so it follows Visual style and the narrative, and the piece appears in the panel. Split into text (T-282), the tab and panel (T-283), the request inbox to a Project Lead session (T-284) and the script that adds a piece to the catalogue (T-285) (Level design, Decisions, "Asking for a new piece from the creator").
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-282, T-283, T-284, T-285
+
+## 2026-10-24: Game build playtest notes: size upgrades grow on screen
+- Decision or change: after playing the game build, the board wants a weapon to visibly grow, animated, when a size upgrade is picked (the wiper, the underglow, the flame) (Weapons, Decisions; T-286, built on the game build). The board also asked for changes to the likes bar's colour and fill; their wording is being confirmed before a ticket is written.
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-286
