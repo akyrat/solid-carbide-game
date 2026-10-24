@@ -772,6 +772,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 
 - The MVP has 2 weapons: the starting gun and the exhaust flamethrower (below); since 2026-10-18, 5 (the three new weapons, below). Each level-up offers a choice between them (the level-up flow below).
 - The final release has around 8 to 12 weapons, and each level-up offers 3 to choose from.
+- **Size upgrades grow on screen** (board, 2026-10-24, after playing the game build): when a picked upgrade makes a weapon bigger (the wiper, the underglow, the flame), the weapon grows to its new size with a short animation instead of jumping to it. The damage area follows what is drawn. The timing is the Weapon Behavior Agent's proposal (T-286).
 - The Game Data Agent works out how weapon upgrades scale from level to level, starting from the Unity prototype's upgrade values (below).
 - **Starting gun:** the player starts every run with it. It has no visible weapon on the car, only the bullets it fires. It fires only when an enemy is within range, aims automatically, and fires at set intervals.
 - **Exhaust flamethrower:** fires flames out of the car's exhaust, only while the car is drifting.
@@ -882,6 +883,16 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 - **Pause and new run:** the arm and its hits stop while the run is paused or over; a new run removes the wiper and puts the arm back to its start.
 - **Tiers:** as the proposal above (length, damage, sweep speed and knockback multipliers), applied from code.
 - **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never Redgull red. The final art replaces it.
+
+#### Size upgrades grow on screen (built in task T-286)
+
+What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/README.md`, "Weapons", "Size upgrades grow".
+
+- **Which tiers grow:** the ones whose effect in `weapons.json` is a size. The windshield wiper's tiers 2 and 6 (arm length x1.2 and x1.3), the neon underglow's tiers 2, 5 and 8 (radius x1.2, x1.25, x1.3) and the exhaust flamethrower's tiers 2, 4 and 6 (flame size x1.2, x1.2, x1.3). Every other tier, and getting a weapon, plays no grow. The molotovs' tiers 2 and 7 (fire radius) play none either: each fire area is made when a bottle lands and keeps its size, so the next bottle just makes a bigger one and there is no standing weapon to grow (the board can ask for the fires on the ground to grow too).
+- **When:** when the card or gift pack that raises the size is picked. The run is paused for the pick, so the grow starts as the game resumes and stands still while it is paused.
+- **The curve (one place, `game/scripts/weapons/size_grow.gd`):** the size goes from the old size to the new one in **0.4 seconds** with a small overshoot (an ease-out-back, strength 3.0, about 20% of the step: a step is 20 to 30% of the size, so the size passes the new one by about 5% and settles) and ends exactly on the data's size. 0.4 seconds is long enough to read as growing and short enough that nobody waits for it; the overshoot is a small pop and not a wobble. The likes bar's spring (0.25 s, T-273) is the model; a weapon is bigger and further from the eye, so it gets a little longer.
+- **Damage follows the drawing:** the wiper's reach, the underglow's circle and the flame's outline are all read from the size being drawn at each step, so nothing is hit outside what is drawn (and the overshoot is hit as drawn). Damage, timing and everything else are unchanged.
+- **The wiper's art now follows its length (T-286):** the wiper's sheet was drawn for the first tier's 2.5 units and was never stretched, so the drawn blade stayed the same size at every tier while only the hit area grew. The art is now stretched by the arm's length over 2.5, so the drawing grows with the tiers and the hit area is the drawing. The underglow's ring and the flame already scaled with their size.
 
 #### The level-up offers (built in tasks T-043 and T-172)
 
@@ -1188,7 +1199,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `9f5293de30b53fd3c70076309213e94a4c215000853cbe47f5aec63869eae790` |
 | `level-design.md` | `8b98f23d6911d3d83c41cb342e9aa17a508c69dcbd2987c25558b0e8daf0f0df` |
 | `enemies.md` | `8ac1b45c3008f429f5ec06a73e16811d99585509f1426db0cf57895171173357` |
-| `weapons.md` | `23e19cb145088d455006406e8cff53253ec13ffdb4cb957caed605c0433fa80e` |
+| `weapons.md` | `794a904025fb1b9a6e7f41d66053443234d722ec63f42fc651b4a4dd4fa77f42` |
 | `garage-design.md` | `2426e0a3b4f0779d493a40041f1568126a184b9f31d31d5b3eea780318727efd` |
 | `visual-style.md` | `20eaf6bb8df1860b6fc2068ea44ad0e927678150be40d6dcb987905db8df6835` |
 | `extended-narrative.md` | `1167ffa9dd4158f3a921ef3e78d104b7546afddd7337c59e14a39a54ede99895` |
