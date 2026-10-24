@@ -1795,3 +1795,8 @@ Entry format:
 - Decision or change: the board lifts the level creator piece set's cap of 100 PixelLab generations: all the budget is available. The other art rules (the board's go per task, planned calls written first) are unchanged. The board also asked how an in-creator "+" button could send an asset description through the Asset Generation Agent; that is being planned, nothing is built yet.
 - Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: none yet
+
+## 2026-10-24: Asking for a new piece from inside the level creator
+- Decision or change: the board wants a "+" button in the creator's side panel to send a description of a new piece through the Asset Generation Agent, so it follows Visual style and the narrative, and the piece appears in the panel. Split into text (T-282), the tab and panel (T-283), the request inbox to a Project Lead session (T-284) and the script that adds a piece to the catalogue (T-285) (Level design, Decisions, "Asking for a new piece from the creator").
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-282, T-283, T-284, T-285
