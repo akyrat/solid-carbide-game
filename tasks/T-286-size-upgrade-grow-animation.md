@@ -1,7 +1,7 @@
 ---
 id: T-286
 title: "A weapon visibly grows, animated, when a size upgrade is picked"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/README.md, game/data/weapons.json, game/scripts/weapons/, game/scripts/ui/level_up_screen.gd, tasks/T-266-wiper-stronger-knockback.md, tasks/T-267-smaller-exhaust-flame-hit-matches-art.md, tasks/T-274-underglow-drawn-in-code.md]
 files_expected_to_change: [game/scripts/weapons/, game/tests/, docs/weapons.md, game/README.md, art-archive/T-286/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,9 +44,9 @@ Built on the game build: the Project Lead makes your folder from `playtest/game-
 
 ## Acceptance criteria
 
-- [ ] Tests show that picking a size tier makes the weapon's drawn size go from the old to the new size over the proposed time, settling exactly on the data's new size, for each size-upgrading weapon; that a non-size tier plays no grow; and that it pauses while the game is paused (QA: pass / fail)
-- [ ] Tests show the damage area matches the drawn size during the grow, and the weapons' existing damage and tier tests pass unchanged (QA: pass / fail)
-- [ ] Weapons, Content, and `game/README.md` describe it with the numbers and reasons; the GIFs are in `art-archive/T-286/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show that picking a size tier makes the weapon's drawn size go from the old to the new size over the proposed time, settling exactly on the data's new size, for each size-upgrading weapon; that a non-size tier plays no grow; and that it pauses while the game is paused (QA: pass; test_size_grow.gd covers curve 0.4 s settling exactly, each weapon old to new, every data size tier grows and others do not, pause stands still)
+- [ ] Tests show the damage area matches the drawn size during the grow, and the weapons' existing damage and tier tests pass unchanged (QA: pass; drawn ring, reach and flame scale equal the hit area per step; diff only adds test files, none changed; wiper tier 1 art scale is 1.0 so unchanged, hit area uses the same length())
+- [ ] Weapons, Content, and `game/README.md` describe it with the numbers and reasons; the GIFs are in `art-archive/T-286/screenshots/`; the full GUT suite and all Python tool tests pass (QA: pass; weapons.md and README give 0.4 s / 3.0 with reasons; 3 GIFs present; GUT 1419/1419 exit 0, tools 451 OK, game/tools OK)
 
 The board's review: pick size upgrades for the wiper, underglow and flamethrower and watch each grow.
 Board review files: the GIFs in `art-archive/T-286/screenshots/`.
