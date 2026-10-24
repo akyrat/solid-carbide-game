@@ -1790,3 +1790,18 @@ Entry format:
 - Decision or change: the full GUT suite crashed the engine (exit 139) about two runs in three, in the combo popup test, which made every ticket's checks slow and unreliable. With the board's go it was fixed ahead of the queue: the test called a method on a popup that had already freed itself, reading freed memory; the two checks were swapped so validity is checked first, accepting the same outcomes. Ten runs in a row passed. game/README.md now states the rule (T-281).
 - Documents touched: `game/README.md`
 - Tasks: T-281
+
+## 2026-10-24: No cap on the level creator's art
+- Decision or change: the board lifts the level creator piece set's cap of 100 PixelLab generations: all the budget is available. The other art rules (the board's go per task, planned calls written first) are unchanged. The board also asked how an in-creator "+" button could send an asset description through the Asset Generation Agent; that is being planned, nothing is built yet.
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: none yet
+
+## 2026-10-24: Asking for a new piece from inside the level creator
+- Decision or change: the board wants a "+" button in the creator's side panel to send a description of a new piece through the Asset Generation Agent, so it follows Visual style and the narrative, and the piece appears in the panel. Split into text (T-282), the tab and panel (T-283), the request inbox to a Project Lead session (T-284) and the script that adds a piece to the catalogue (T-285) (Level design, Decisions, "Asking for a new piece from the creator").
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-282, T-283, T-284, T-285
+
+## 2026-10-24: Game build playtest notes: size upgrades grow on screen
+- Decision or change: after playing the game build, the board wants a weapon to visibly grow, animated, when a size upgrade is picked (the wiper, the underglow, the flame) (Weapons, Decisions; T-286, built on the game build). The board also asked for changes to the likes bar's colour and fill; their wording is being confirmed before a ticket is written.
+- Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-286

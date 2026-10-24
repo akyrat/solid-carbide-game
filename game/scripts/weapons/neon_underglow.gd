@@ -63,12 +63,16 @@ var since_hit: Dictionary = {}
 ## The placeholder drawing (in the run's View), made the first time the
 ## underglow is owned in a run scene.
 var drawing: Node2D = null
+## The circle's radius as drawn and hit with (T-286): runs to the data's radius
+## over SizeGrow.DURATION when a tier makes the circle bigger.
+var grow := SizeGrow.new()
 
 
 func _init() -> void:
 	weapon_id = "underglow"
 	starts_owned = false
 	stats = data.underglow_at(1)
+	grow.snap(float(stats["radius"]))
 
 
 ## The playtest switch: data/playtest.json "underglow_at_start" (or playtest_override).
@@ -93,6 +97,11 @@ func _car() -> Node2D:
 func apply_tier() -> void:
 	stats = data.underglow_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
+	# T-286: a bigger circle grows from the old radius to the new one.
+	if is_owned() and is_upgrade_step():
+		grow.grow_to(float(stats["radius"]))
+	else:
+		grow.snap(float(stats["radius"]))
 	if is_owned():
 		_ensure_drawing()
 	else:
@@ -113,6 +122,7 @@ func reset_for_run() -> void:
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going, after the car has moved).
 func step(dt: float) -> void:
+	grow.advance(dt)
 	if _car() == null:
 		return
 	var interval: float = float(stats["tick_interval"])
@@ -146,9 +156,10 @@ func targets() -> Array:
 	return rack.living_enemies() if rack != null else []
 
 
-## The damage circle's radius now, in units.
+## The damage circle's radius now, in units: as drawn, so the hit area follows
+## the drawing while it grows (T-286). The data's radius is stats["radius"].
 func radius() -> float:
-	return float(stats["radius"])
+	return grow.value
 
 
 ## The car's centre in units (flat world), from its driving model.
