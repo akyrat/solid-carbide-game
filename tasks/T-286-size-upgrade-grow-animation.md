@@ -1,7 +1,7 @@
 ---
 id: T-286
 title: "A weapon visibly grows, animated, when a size upgrade is picked"
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -54,6 +54,10 @@ Board review files: the GIFs in `art-archive/T-286/screenshots/`.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-24, Open → In progress
+
+Started: weapons grow on screen, animated, when a size upgrade is picked; built on the game build.
 
 ## Result notes
 
