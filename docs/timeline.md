@@ -1790,3 +1790,8 @@ Entry format:
 - Decision or change: the full GUT suite crashed the engine (exit 139) about two runs in three, in the combo popup test, which made every ticket's checks slow and unreliable. With the board's go it was fixed ahead of the queue: the test called a method on a popup that had already freed itself, reading freed memory; the two checks were swapped so validity is checked first, accepting the same outcomes. Ten runs in a row passed. game/README.md now states the rule (T-281).
 - Documents touched: `game/README.md`
 - Tasks: T-281
+
+## 2026-10-24: No cap on the level creator's art
+- Decision or change: the board lifts the level creator piece set's cap of 100 PixelLab generations: all the budget is available. The other art rules (the board's go per task, planned calls written first) are unchanged. The board also asked how an in-creator "+" button could send an asset description through the Asset Generation Agent; that is being planned, nothing is built yet.
+- Documents touched: `docs/level-design.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: none yet
