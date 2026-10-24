@@ -63,6 +63,10 @@ Started: weapons grow on screen, animated, when a size upgrade is picked; built 
 
 Grow built: wiper, underglow and flame grow to their new size in 0.4 s with a small overshoot when a size card is picked; damage follows. Wiper art now also stretches with its tiers. Sent to QA.
 
+### 2026-10-24, Needs playtest
+
+QA passed all 3. In the game build now: pick a size card for the wiper, underglow or flame and watch it grow.
+
 ## Result notes
 
 Written by the agent when it finishes.
