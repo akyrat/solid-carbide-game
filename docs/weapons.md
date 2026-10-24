@@ -128,6 +128,16 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 - **Tiers:** as the proposal above (length, damage, sweep speed and knockback multipliers), applied from code.
 - **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never Redgull red. The final art replaces it.
 
+### Size upgrades grow on screen (built in task T-286)
+
+What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/README.md`, "Weapons", "Size upgrades grow".
+
+- **Which tiers grow:** the ones whose effect in `weapons.json` is a size. The windshield wiper's tiers 2 and 6 (arm length x1.2 and x1.3), the neon underglow's tiers 2, 5 and 8 (radius x1.2, x1.25, x1.3) and the exhaust flamethrower's tiers 2, 4 and 6 (flame size x1.2, x1.2, x1.3). Every other tier, and getting a weapon, plays no grow. The molotovs' tiers 2 and 7 (fire radius) play none either: each fire area is made when a bottle lands and keeps its size, so the next bottle just makes a bigger one and there is no standing weapon to grow (the board can ask for the fires on the ground to grow too).
+- **When:** when the card or gift pack that raises the size is picked. The run is paused for the pick, so the grow starts as the game resumes and stands still while it is paused.
+- **The curve (one place, `game/scripts/weapons/size_grow.gd`):** the size goes from the old size to the new one in **0.4 seconds** with a small overshoot (an ease-out-back, strength 3.0, about 20% of the step: a step is 20 to 30% of the size, so the size passes the new one by about 5% and settles) and ends exactly on the data's size. 0.4 seconds is long enough to read as growing and short enough that nobody waits for it; the overshoot is a small pop and not a wobble. The likes bar's spring (0.25 s, T-273) is the model; a weapon is bigger and further from the eye, so it gets a little longer.
+- **Damage follows the drawing:** the wiper's reach, the underglow's circle and the flame's outline are all read from the size being drawn at each step, so nothing is hit outside what is drawn (and the overshoot is hit as drawn). Damage, timing and everything else are unchanged.
+- **The wiper's art now follows its length (T-286):** the wiper's sheet was drawn for the first tier's 2.5 units and was never stretched, so the drawn blade stayed the same size at every tier while only the hit area grew. The art is now stretched by the arm's length over 2.5, so the drawing grows with the tiers and the hit area is the drawing. The underglow's ring and the flame already scaled with their size.
+
 ### The level-up offers (built in tasks T-043 and T-172)
 
 What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/README.md`, "Weapons", "The level-up offers".

@@ -23,6 +23,11 @@ var weapon_id := ""
 var starts_owned := false
 ## 0 = not owned; 1 to max_tier.
 var tier := 0
+## The tier before the last set_tier() (0 right after a new weapon node).
+var previous_tier := 0
+## True only while upgrade() sets the tier: the pick of a level-up card or gift
+## pack (T-286). A tier set by set_tier() directly (a new run, tests) never grows.
+var _via_upgrade := false
 ## The rack this weapon belongs to (set by weapons.gd): its car, state,
 ## enemies and projectiles.
 var rack: Node = null
@@ -45,6 +50,7 @@ func is_max_tier() -> bool:
 ## Sets the tier (clamped to 0..max_tier) and applies that tier's values.
 func set_tier(new_tier: int) -> void:
 	var t := clampi(new_tier, 0, max_tier())
+	previous_tier = tier
 	tier = t
 	apply_tier()
 	tier_changed.emit(weapon_id, tier)
@@ -55,13 +61,23 @@ func set_tier(new_tier: int) -> void:
 func upgrade() -> bool:
 	if is_max_tier():
 		return false
+	_via_upgrade = true
 	set_tier(tier + 1)
+	_via_upgrade = false
 	return true
 
 
 ## A new run: back to tier 1 for the starting weapon, not owned for the rest.
 func reset_for_run() -> void:
 	set_tier(1 if starts_owned else 0)
+
+
+## True when the tier just set is a picked upgrade of a weapon the car already
+## had (T-286): a size that changes then grows on screen instead of jumping.
+## Getting the weapon (tier 0 to 1), a new run and tiers set straight (set_tier)
+## snap to the size at once.
+func is_upgrade_step() -> bool:
+	return _via_upgrade and previous_tier >= 1 and tier > previous_tier
 
 
 ## Reads the values of the current tier. Overridden by each weapon.

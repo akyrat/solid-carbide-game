@@ -81,6 +81,9 @@ var last_hit: Dictionary = {}
 ## The placeholder drawing (in the run's View), made the first time the wiper
 ## is owned in a run scene.
 var drawing: Node2D = null
+## The arm's length as drawn and hit with (T-286): runs to the data's length
+## over SizeGrow.DURATION when a tier makes the arm longer.
+var grow := SizeGrow.new()
 ## True when the arm turned back at an end during the last step.
 var _turned_this_step := false
 
@@ -89,6 +92,7 @@ func _init() -> void:
 	weapon_id = "wiper"
 	starts_owned = false
 	stats = data.wiper_at(1)
+	grow.snap(float(stats["length"]))
 	_reset_sweep()
 
 
@@ -114,6 +118,11 @@ func _car() -> Node2D:
 func apply_tier() -> void:
 	stats = data.wiper_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
+	# T-286: a longer arm grows from the old length to the new one.
+	if is_owned() and is_upgrade_step():
+		grow.grow_to(float(stats["length"]))
+	else:
+		grow.snap(float(stats["length"]))
 	if is_owned():
 		_ensure_drawing()
 	else:
@@ -140,6 +149,7 @@ func _reset_sweep() -> void:
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going, after the car has moved).
 func step(dt: float) -> void:
+	grow.advance(dt)
 	if _car() == null:
 		return
 	var cooldown: float = float(stats["hit_cooldown"])
@@ -193,9 +203,16 @@ func half_arc() -> float:
 	return float(stats["sweep_arc_degrees"]) / 2.0
 
 
-## The arm's length now, in units.
+## The first tier's length, which the art (T-175) was drawn for: the art is
+## stretched by the length over this, so the blade grows with the tiers (T-286).
+func base_length() -> float:
+	return float(data.wiper_at(1)["length"])
+
+
+## The arm's length now, in units: as drawn, so the hit area follows the
+## drawing while it grows (T-286). The data's length is stats["length"].
 func length() -> float:
-	return float(stats["length"])
+	return grow.value
 
 
 ## Every living, damageable enemy in the run (the rack's rule).
@@ -334,7 +351,7 @@ func _update_drawing() -> void:
 	var tip_px := tip_units() * PX_PER_UNIT
 	# At the car's height (T-225): the arm is lifted as the car sprite is.
 	drawing.position = ISO_TRANSFORM * pivot_px + Vector2(0.0, -car_height() * PX_PER_UNIT)
-	drawing.set_arm(ISO_TRANSFORM.basis_xform(tip_px - pivot_px))
+	drawing.set_arm(ISO_TRANSFORM.basis_xform(tip_px - pivot_px), length() / base_length())
 	if drawing.visible and not was_visible:
 		drawing.reset_physics_interpolation()  # no slide from the last run's spot
 	var sprite = rack.run.get("car_sprite") if rack.run != null else null
@@ -360,10 +377,13 @@ class WiperDrawing:
 	extends Node2D
 
 	var arm_px := Vector2.ZERO
+	## How much the art is stretched: the arm's length over the first tier's (T-286).
+	var art_k := 1.0
 
-	func set_arm(v: Vector2) -> void:
-		if not v.is_equal_approx(arm_px):
+	func set_arm(v: Vector2, k: float = 1.0) -> void:
+		if not v.is_equal_approx(arm_px) or not is_equal_approx(k, art_k):
 			arm_px = v
+			art_k = k
 			queue_redraw()
 
 	## Every colour the blade draws with (tests check none is Redgull red).
@@ -390,7 +410,8 @@ class WiperDrawing:
 			var i := frame_index()
 			var cell := Vector2(ART_CELL)
 			var src := Rect2(Vector2(i % ART_COLS, i / ART_COLS) * cell, cell)
-			draw_texture_rect_region(sheet, Rect2(-cell * ART_SCALE / 2.0, cell * ART_SCALE), src)
+			var size := cell * ART_SCALE * art_k  # T-286: grows with the arm's length
+			draw_texture_rect_region(sheet, Rect2(-size / 2.0, size), src)
 			return
 		var blade_start := arm_px * 0.2
 		draw_line(Vector2.ZERO, arm_px, OUTLINE_COLOUR, 5.0, false)

@@ -69,6 +69,10 @@ var burn_tint := Color(1, 0.62, 0.38, 1)
 ## The drawing (exhaust_flame_drawing.gd in the run's View), made the first
 ## time the flamethrower is owned in a run scene.
 var flame_drawing: Node2D = null
+## The flame's tier size as drawn and hit with (T-286): runs to the data's
+## size_multiplier over SizeGrow.DURATION when a tier makes the flame bigger.
+## The drift ramp (size_fraction) multiplies it as before.
+var grow := SizeGrow.new()
 
 ## Whether the flame is on this step.
 var active := false
@@ -98,6 +102,7 @@ func _init() -> void:
 		var a: Array = tint.data
 		burn_tint = Color(float(a[0]), float(a[1]), float(a[2]), float(a[3]) if a.size() > 3 else 1.0)
 	stats = data.flame_at(1)
+	grow.snap(float(stats["size_multiplier"]))
 
 
 ## The playtest switch: data/playtest.json "flamethrower_at_start" (or playtest_override).
@@ -122,6 +127,11 @@ func _car() -> Node2D:
 func apply_tier() -> void:
 	stats = data.flame_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
+	# T-286: a bigger flame grows from the old size to the new one.
+	if is_owned() and is_upgrade_step():
+		grow.grow_to(float(stats["size_multiplier"]))
+	else:
+		grow.snap(float(stats["size_multiplier"]))
 	_apply_turn_speed()
 	if is_owned():
 		_ensure_drawing()
@@ -168,6 +178,7 @@ func _reset_flame() -> void:
 
 ## One physics step of `dt` seconds (the rack calls it while owned, after the car has moved).
 func step(dt: float) -> void:
+	grow.advance(dt)
 	var car := _car()
 	if car == null:
 		return
@@ -222,7 +233,7 @@ func size_fraction() -> float:
 ## The drawn flame's scale now: the tier's size times the drift ramp. The drawing's
 ## `scale` and the hit area both use it, so they cannot differ.
 func drawn_scale() -> float:
-	return float(stats["size_multiplier"]) * size_fraction()
+	return grow.value * size_fraction()
 
 
 ## Where the flame starts (its base), in units on the flat world.
