@@ -1,0 +1,43 @@
+{
+  "file": "v2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a low, long, heavy mini kaiju lizard crawling on all four thick bent legs, belly close to the ground, body stretched flat and long along the ground diagonally, head lowered at the front pointing towards the bottom right of the screen, long thick tail lying flat on the ground trailing to the top left, seen from above in isometric 3/4 view showing its back and one side, muted dusky sage green scaly hide with dark olive green scales and a dark shadowed underside, pale grey-green belly, a heavy reptilian head with a wide open snapping jaw full of small pale teeth, dark brown mouth inside, yellow eyes, thick clawed feet, small dorsal spikes along the back, cool blue night lighting with dark shadows and a faint cool rim light, lying directly on the ground, no base, no platform, no ground shadow, retro pixel art game sprite, hard pixel edges, dark outline",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "direction": "south-east",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a low, long, heavy mini kaiju lizard crawling on all four thick bent legs, belly close to the ground, body stretched flat and long along the ground diagonally, head lowered at the front pointing towards the bottom right of the screen, long thick tail lying flat on the ground trailing to the top left, seen from above in isometric 3/4 view showing its back and one side, muted dusky sage green scaly hide with dark olive green scales and a dark shadowed underside, pale grey-green belly, a heavy reptilian head with a wide open snapping jaw full of small pale teeth, dark brown mouth inside, yellow eyes, thick clawed feet, small dorsal spikes along the back, cool blue night lighting with dark shadows and a faint cool rim light, lying directly on the ground, no base, no platform, no ground shadow, retro pixel art game sprite, hard pixel edges, dark outline",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-25T18:28:14+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-293/style-loop/v1.png",
+    "game/art/car/car_iso.png"
+  ],
+  "task": "T-293",
+  "job_status": null,
+  "notes": "T-293 style loop version 2 (2 of max 4 generations): refine for rules 3 (lower 3/4 view, flat body, SE), 4 (duller cooler night greens), 6 (dark brown mouth, no reds)",
+  "generator": "game/tools/pixellab_client.py"
+}

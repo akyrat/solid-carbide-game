@@ -1,0 +1,12 @@
+{
+  "description": "a low, long, heavy mini kaiju lizard crawling on all four thick bent legs, belly close to the ground, body stretched flat and long along the ground diagonally, head lowered at the front pointing towards the bottom right of the screen, long thick tail lying flat on the ground trailing to the top left, seen from above in isometric 3/4 view showing its back and one side, muted dusky sage green scaly hide with dark olive green scales and a dark shadowed underside, pale grey-green belly, a heavy reptilian head with a wide open snapping jaw full of small pale teeth, dark brown mouth inside, yellow eyes, thick clawed feet, small dorsal spikes along the back, cool blue night lighting with dark shadows and a faint cool rim light, lying directly on the ground, no base, no platform, no ground shadow, retro pixel art game sprite, hard pixel edges, dark outline",
+  "image_size": {"width": 128, "height": 128},
+  "isometric": true,
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "south-east",
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}
