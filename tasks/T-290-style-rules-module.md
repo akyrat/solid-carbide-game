@@ -1,7 +1,7 @@
 ---
 id: T-290
 title: "One style rules module: the script checks of the style guide, in one place"
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [game/README.md, tasks/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/check_sprite_rules.py, game/tools/check_logo_one_colour.py, game/tools/reduce_palette.py]
 files_expected_to_change: [game/tools/, game/README.md, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -66,6 +66,10 @@ Started: one style rules module for the style guide's script checks, replacing t
 ### 2026-10-25, In progress → In QA
 
 Built: style_rules.py holds every script check of the style guide; the old checkers are thin wrappers and 19 build scripts import its red check. Tests 451 / 409 / GUT 1419 pass, no art changed. Now with QA.
+
+### 2026-10-25, In QA → Done
+
+QA passed all 7 criteria. Merged to master: the style guide's script checks now live in one module.
 
 ## Result notes
 
