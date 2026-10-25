@@ -7,6 +7,7 @@ import contextlib
 import importlib.util
 import io
 import json
+import shutil
 import threading
 import urllib.error
 import urllib.request
@@ -847,6 +848,78 @@ class Handover(Base):
         out = self.run_hook(gate.hand_over, "PostToolUse", self.data)
         self.assertEqual(out["hookSpecificOutput"]["additionalContext"],
                          gate.describe_moves([{"id": "T-001", "from": "open", "to": "in-progress", "note": ""}]))
+
+
+class StyleLoopHelpers(Base):
+    """T-291: the style loop writes its tickets only through this script (board, 2026-10-25): set_section and
+    write_section for `## Style review`, task_checkout, sandbox, and its in-progress → flagged-for-review move."""
+
+    def test_set_section_adds_the_section_before_result_notes_then_replaces_it(self):
+        text = task("T-001")
+        added = ts.set_section(text, "Style review", "round 1")
+        self.assertIn("## Style review\n\nround 1\n\n## Result notes", added)
+        self.assertEqual(ts.set_section(added, "Style review", "round 1"), added, "the same body twice changes nothing")
+        replaced = ts.set_section(added, "Style review", "round 1\nround 2")
+        self.assertEqual(replaced.count("## Style review"), 1)
+        self.assertIn("## Style review\n\nround 1\nround 2\n\n## Result notes", replaced)
+        self.assertTrue(replaced.startswith(text.split("## Description")[0]), "the header is untouched")
+
+    def test_set_section_after_updates_keeps_crlf_and_works_at_the_end(self):
+        with_updates = ts.add_update(task("T-001"), "Open → In progress", "Started.").replace("\n", "\r\n")
+        text = ts.set_section(with_updates, "Style review", "a\nb")
+        self.assertNotIn("\n", text.replace("\r\n", ""))
+        self.assertLess(text.index("## Updates"), text.index("## Style review"))
+        self.assertLess(text.index("## Style review"), text.index("## Result notes"))
+        self.assertTrue(ts.set_section("# T\n\n## Style review\n\nold\n", "Style review", "new").endswith(
+            "## Style review\n\nnew\n"))
+        self.assertEqual(ts.set_section("# T\n", "Style review", "new"), "# T\n\n## Style review\n\nnew\n")
+
+    def test_write_section_finds_the_task_by_its_id(self):
+        path = self.put("T-001", status="in-progress")
+        self.assertEqual(ts.write_section("T-001", "Style review", "round 1", folders={}), path)
+        text = path.read_text(encoding="utf-8")
+        self.assertIn("## Style review\n\nround 1\n", text)
+        self.assertEqual(self.status("T-001"), "in-progress")
+        self.assertEqual(ts.task_checkout("T-001", folders={}), self.root)
+        with self.assertRaises(ts.Refused):
+            ts.write_section("T-999", "Style review", "x", folders={})
+
+    def test_write_section_writes_in_the_task_folder_while_its_branch_is_open(self):
+        self.put("T-001", status="in-progress")
+        folder = self.root / "worktree"
+        (folder / "tasks").mkdir(parents=True)
+        branch_copy = folder / "tasks" / "T-001-test.md"
+        branch_copy.write_bytes(task("T-001", status="in-progress").encode("utf-8"))
+        ts.write_section("T-001", "Style review", "round 1", folders={"T-001": folder})
+        self.assertIn("round 1", branch_copy.read_text(encoding="utf-8"))
+        self.assertNotIn("round 1", (self.tasks / "T-001-test.md").read_text(encoding="utf-8"))
+        self.assertEqual(ts.task_checkout("T-001", folders={"T-001": folder}), folder)
+
+    def test_only_the_style_loop_flags_an_in_progress_task(self):
+        self.put("T-001", status="in-progress")
+        self.refused("T-001", "flagged-for-review")
+        ts.move("T-001", "flagged-for-review", note="still below 8", folders={}, by="style-loop")
+        self.assertEqual(self.status("T-001"), "flagged-for-review")
+        self.put("T-002", status="open")
+        with self.assertRaises(ts.Refused):
+            ts.move("T-002", "flagged-for-review", folders={}, by="style-loop")
+
+    def test_sandbox_works_on_a_copy_and_puts_the_paths_back(self):
+        path = self.put("T-001", status="in-progress")
+        before = path.read_bytes()
+        with ts.sandbox("T-001", keep=False) as base:
+            copy = ts.find("T-001")[0]
+            self.assertEqual(copy.parent.parent, base)
+            ts.write_section("T-001", "Style review", "fake")
+            ts.move("T-001", "flagged-for-review", note="n", by="style-loop")
+            self.assertEqual(ts.header(copy)["status"], "flagged-for-review")
+        self.assertFalse(base.exists(), "keep=False removes the folder")
+        self.assertEqual(path.read_bytes(), before, "the real task is unchanged")
+        self.assertEqual((tb.TASKS_DIR, ts.LOG), (self.tasks, tb.STATE_DIR / "moves.log"))
+        with ts.sandbox(text=task("T-005")) as base:
+            self.assertEqual(ts.header(ts.find("T-005")[0])["id"], "T-005")
+        self.assertTrue(base.exists(), "kept by default, so a fake run can be opened")
+        self.addCleanup(shutil.rmtree, base, True)
 
 
 if __name__ == "__main__":

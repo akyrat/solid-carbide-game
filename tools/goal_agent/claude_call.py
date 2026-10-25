@@ -49,10 +49,11 @@ class RealClaude:
         self.activity_dir = Path(activity_dir) if activity_dir else ACTIVITY_DIR
 
     def ask(self, step, prompt, schema, model=None, agent=None, session_id=None, cwd=None, allowed_tools=None,
-            permission_mode=None, add_dir=None, tools=None, timeout=TIMEOUT, activity=None):
-        """`activity`: the ticket or goal id whose activity log gets this session's events (none if None)."""
+            permission_mode=None, add_dir=None, tools=None, timeout=TIMEOUT, activity=None, resume=None):
+        """`activity`: the ticket or goal id whose activity log gets this session's events (none if None).
+        `resume`: the id of an earlier session to carry on, with its memory (the style loop's refines, T-291)."""
         cmd = ["claude", "-p", "--output-format", "stream-json", "--verbose", "--json-schema", json.dumps(schema)]
-        for flag, value in (("--model", model), ("--agent", agent), ("--session-id", session_id),
+        for flag, value in (("--model", model), ("--agent", agent), ("--session-id", session_id), ("--resume", resume),
                             ("--allowedTools", allowed_tools), ("--permission-mode", permission_mode),
                             ("--add-dir", add_dir), ("--tools", tools)):
             if value:

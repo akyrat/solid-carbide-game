@@ -1840,3 +1840,8 @@ Entry format:
 - Decision or change: the board wants the minion bigger and more detailed, like a mini kaiju: still a lizard on all fours, with a reptilian face and a snapping jaw with teeth, about as big as the car. First one sample direction, made through the style loop as its first real run (also the first example for the course's Style Guide Agent assignment), with the board's go for at most 4 PixelLab generations. The walk sheets and the in-game size follow once the board approves the sample.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-293
+
+## 2026-10-25: The style loop tool (T-291)
+- Decision or change: `tools/style_loop/run.py` runs the style loop with no one stepping in: the task's agent makes a version, the script checks and the Style Evaluator give a score and a reason, and below 8 the same agent session refines it, at most 3 times; every round is written into the ticket's `## Style review`. The loop writes tickets only through the status script, so the ticket guard stays unchanged (board). The board approved a new status move for the loop only: In progress to Flagged for review, when a version is still below 8 after 3 refines. A fake mode runs a whole loop free.
+- Documents touched: `tasks/README.md`, `docs/README.md`
+- Tasks: T-291

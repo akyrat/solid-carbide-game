@@ -26,9 +26,12 @@ A task whose branch is open is changed in its branch folder (tasks/README.md, "G
 Exit codes: 0 moved, claimed (or shown), 1 move or claim refused (the reason is printed), 2 usage error.
 """
 
+import contextlib
 import json
 import re
+import shutil
 import sys
+import tempfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -37,6 +40,7 @@ import taskboard_sync as tb  # noqa: E402
 import guard_ledger as gl  # noqa: E402
 
 LOG = tb.STATE_DIR / "moves.log"
+TASKS_FOLDER = tb.TASKS_DIR.name
 CRITERIA_RE = re.compile(r"^## Acceptance criteria[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
 CRITERION_RE = re.compile(r"^\s*- \[[ xX]\] .*$", re.M)
 # "(QA: pass)", or with a note: "(QA: pass; 850/850)", "(QA: pass. reason)" (T-215); never "(QA: pass / fail)"
@@ -166,6 +170,8 @@ def allowed(fields, text, folders, by="agent"):
         rule("planning", True, "", "back to refining with the board")
         rule("blocked", True, "")
         rule("open", True, "")
+        if by == "style-loop":   # T-291: still below 8 after 3 refines (tasks/README.md, "The style loop")
+            rule("flagged-for-review", True, "", "the style loop stayed below 8 after 3 refines")
     if old == "in-qa":
         passed, failed, unchecked = verdicts(text)
         review = bool(tb.review_parts(text)[0])
@@ -249,8 +255,69 @@ def add_update(text, change, reply):
     return norm.replace("\n", newline)
 
 
+SECTION_ORDER = ("Updates", "Style review", "Result notes")
+
+
+def set_section(text, heading, body):
+    """The text with the body of `## <heading>` replaced by `body` (T-291: the style loop's `## Style review`).
+    A missing section is added before the first later section of SECTION_ORDER (Style review sits just
+    before Result notes, as in tasks/_TEMPLATE.md), or at the end. Never touches the header."""
+    newline = "\r\n" if "\r\n" in text else "\n"
+    norm = text.replace("\r\n", "\n")
+    block = f"## {heading}\n\n{body.strip()}\n\n"
+    found = re.search(rf"^## {re.escape(heading)}[ \t]*\n.*?(?=^## |\Z)", norm, re.S | re.M)
+    if found:
+        norm = norm[:found.start()] + block + norm[found.end():].lstrip("\n")
+    else:
+        later = SECTION_ORDER[SECTION_ORDER.index(heading) + 1:] if heading in SECTION_ORDER else ()
+        at = next((m.start() for h in later for m in [re.search(rf"^## {re.escape(h)}[ \t]*$", norm, re.M)] if m), None)
+        norm = norm[:at] + block + norm[at:] if at is not None else norm.rstrip("\n") + "\n\n" + block
+    return norm.rstrip("\n").replace("\n", newline) + newline
+
+
 def write(path, text):
     path.write_bytes(text.encode("utf-8"))
+
+
+def write_section(task_id, heading, body, folders=None):
+    """Sets the body of a task's `## <heading>` (set_section), in the task file found by its id where it lives
+    (its task folder while its branch is open); returns the file's path. It never touches the header. The style
+    loop writes its `## Style review` through it, so only this script writes tickets (board, 2026-10-25, T-291)."""
+    path, _ = find(task_id, folders)
+    write(path, set_section(path.read_bytes().decode("utf-8"), heading, body))
+    return path
+
+
+def task_checkout(task_id, folders=None):
+    """The checkout a task's file lives in: its task folder while its branch is open, else the main checkout."""
+    return find(task_id, folders)[0].parent.parent
+
+
+@contextlib.contextmanager
+def sandbox(task_id=None, text=None, keep=True):
+    """A new temporary folder standing in for the repo, for fake runs and tests (T-291): it holds a copy of the
+    task's file (`task_id`), or a new task file with `text`, and this script (find, move, write_section, its
+    moves log and its guard record) works there until the block ends, so the real tickets are never changed.
+    Yields the folder, which is kept afterwards unless keep=False."""
+    global LOG
+    source = find(task_id)[0] if task_id else None
+    base = Path(tempfile.mkdtemp(prefix="task-sandbox-"))
+    folder = base / TASKS_FOLDER
+    folder.mkdir()
+    if source:
+        shutil.copyfile(source, folder / source.name)
+    if text is not None:
+        (folder / f"{tb.parse_header(text)['id']}-sandbox.md").write_bytes(text.encode("utf-8"))
+    saved = (tb.TASKS_DIR, tb.STATE_DIR, LOG, tb.task_folders)
+    tb.TASKS_DIR, tb.STATE_DIR = folder, base / ".board"
+    LOG = tb.STATE_DIR / "moves.log"
+    tb.task_folders = lambda root=None: {}
+    try:
+        yield base
+    finally:
+        tb.TASKS_DIR, tb.STATE_DIR, LOG, tb.task_folders = saved
+        if not keep:
+            shutil.rmtree(base, ignore_errors=True)
 
 
 def guard_check(task_id, path, text, folders):
