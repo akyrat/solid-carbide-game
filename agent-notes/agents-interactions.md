@@ -43,6 +43,7 @@ flowchart TD
     narrative_theme["Narrative Theme"]
     qa_integration["QA/Integration"]
     sfx["SFX"]
+    style_evaluator["Style Evaluator"]
     ui["UI"]
     weapon_behavior["Weapon Behavior"]
     board -->|"Requests and decisions"| project_lead
@@ -59,6 +60,7 @@ flowchart TD
     project_lead -->|"task files"| weapon_behavior
     asset_generation -->|"Enemy sprites"| enemy_behavior
     asset_generation -->|"Map and obstacle art"| level_challenge
+    asset_generation -->|"Art versions to score, through the…"| style_evaluator
     asset_generation -->|"HUD, menu and garage art"| ui
     asset_generation -->|"Weapon and projectile art"| weapon_behavior
     driving_drift -->|"The car's drift state"| game_loop
@@ -81,9 +83,12 @@ flowchart TD
     level_challenge -->|"The signal that a challenge was…"| game_loop
     level_challenge -->|"The map and challenges to check"| qa_integration
     level_challenge -->|"Challenge positions"| ui
+    narrative_theme -->|"Text versions to score, through the…"| style_evaluator
     narrative_theme -->|"Menu, weapon and gift pack text"| ui
     qa_integration -->|"A pass or fail for each…"| project_lead
     sfx -->|"Sound integration to check"| qa_integration
+    style_evaluator -->|"A score and a reason, to…"| asset_generation
+    style_evaluator -->|"A score and a reason, to…"| narrative_theme
     ui -->|"Screens and HUD to check"| qa_integration
     weapon_behavior -->|"Weapon code to check"| qa_integration
     weapon_behavior -->|"The weapon choices for the menu…"| ui
@@ -105,6 +110,7 @@ flowchart TD
 | Project Lead | Weapon Behavior | Task files for how weapons fire and behave. | both |
 | Asset Generation | Enemy Behavior | Enemy sprites, which replace the placeholders. | both |
 | Asset Generation | Level/Challenge Design | Map and obstacle art. | both |
+| Asset Generation | Style Evaluator | Art versions to score, through the style loop. | Style Evaluator only |
 | Asset Generation | UI | HUD, menu and garage art, which replaces the placeholders. | both |
 | Asset Generation | Weapon Behavior | Weapon and projectile art, which replaces the placeholders. | both |
 | Driving & Drift | Game Loop | The car's drift state, for likes from drifting. | Game Loop only |
@@ -127,9 +133,12 @@ flowchart TD
 | Level/Challenge Design | Game Loop | The signal that a challenge was completed. | Game Loop only |
 | Level/Challenge Design | QA/Integration | The map and challenges to check. | both |
 | Level/Challenge Design | UI | Challenge positions, for the arrow that points to the next one. | both |
+| Narrative Theme | Style Evaluator | Text versions to score, through the style loop. | Style Evaluator only |
 | Narrative Theme | UI | Menu, weapon and gift pack text. | both |
 | QA/Integration | Project Lead | A pass or fail for each acceptance criterion, written on the task file. | both |
 | SFX | QA/Integration | Sound integration to check. | both |
+| Style Evaluator | Asset Generation | A score and a reason, to refine the art from. | Style Evaluator only |
+| Style Evaluator | Narrative Theme | A score and a reason, to refine the text from. | Style Evaluator only |
 | UI | QA/Integration | Screens and HUD to check. | both |
 | Weapon Behavior | QA/Integration | Weapon code to check. | both |
 | Weapon Behavior | UI | The weapon choices for the menu that opens after a challenge. | both |
@@ -147,7 +156,9 @@ flowchart LR
     game_loop["Game Loop"]
     level_challenge["Level/Challenge Design"]
     narrative_theme["Narrative Theme"]
+    qa_integration["QA/Integration"]
     sfx["SFX"]
+    style_evaluator["Style Evaluator"]
     ui["UI"]
     weapon_behavior["Weapon Behavior"]
     asset_generation --- enemy_behavior
@@ -162,6 +173,7 @@ flowchart LR
     enemy_behavior --- sfx
     enemy_behavior --- weapon_behavior
     game_loop --- ui
+    qa_integration --- style_evaluator
     sfx --- ui
     sfx --- weapon_behavior
     ui --- weapon_behavior
@@ -181,6 +193,7 @@ flowchart LR
 | Enemy Behavior and SFX | Each enemy gets the right sounds for how it moves and attacks. | both |
 | Enemy Behavior and Weapon Behavior | Weapon damage and enemy health and speed have to be balanced against each other. | both |
 | Game Loop and UI | How the screens connect and what each one shows. | Game Loop only |
+| QA/Integration and Style Evaluator | QA checks that art and text tasks went through the loop. | Style Evaluator only |
 | SFX and UI | Music is associated with screens, such as the menu or the garage, and UI sounds go with the interface. | both |
 | SFX and Weapon Behavior | Firing and impact sounds match how each weapon behaves. | both |
 | UI and Weapon Behavior | How the weapon menu looks and what each choice shows. | both |

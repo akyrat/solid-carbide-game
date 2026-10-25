@@ -53,6 +53,7 @@ Takes the board's requests, checks what is feasible, delegates to the right agen
 - **SFX Agent** (`sfx`): Sound effects; music is human-made
 - **Narrative Theme Agent** (`narrative-theme`): Keeps text on-story
 - **QA/Integration Agent** (`qa-integration`): Checks it all runs together
+- **Style Evaluator Agent** (`style-evaluator`): Scores art and text against the style guide in the style loop
 
 ## Documents you maintain
 

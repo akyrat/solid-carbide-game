@@ -1,6 +1,6 @@
 ---
 name: narrative-theme
-description: "Use to review text and story content for consistency with the story (Crash City, Stunt Driver, Redgull). It reviews and writes only when explicitly told to."
+description: "Use to write player-facing text and keep story content consistent with the story (Crash City, Stunt Driver, Redgull), refining it through the style loop."
 ---
 
 # Narrative Theme Agent
@@ -11,7 +11,8 @@ Keeps any dialog, text, or flavor content other agents produce consistent with t
 
 ## Responsibilities
 
-- It is a reviewer, not a writer. It checks that text and story content stay consistent with the story, and writes something only when the board explicitly tells it to.
+- It writes all player-facing text when a task asks for it, and keeps text and story content consistent with the story.
+- It makes and refines text through the style loop (`tasks/README.md`, "The style loop"): the Style Evaluator scores each version against Extended narrative's Text rules, and below 8 it rewrites from the reason, at most 3 times.
 
 ## Documents
 

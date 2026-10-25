@@ -14,8 +14,8 @@ Generates the neon cyberpunk pixel art automatically via PixelLab's API.
 - It keeps one consistent style by working from the Visual style document, which it depends on. The Extended narrative document is a close second reference, since the visual style is partly themed from the story.
 - It writes the art prompts itself.
 - It keeps track of everything it generates. Every asset is stored locally, so nothing goes to waste, along with the prompt that produced it, the resources it looked at before generating, and any other relevant information.
-- For each task file asking for a new asset, it does its research and then generates one round of designs. It does not keep reworking the result, which keeps PixelLab spend in check.
-- It creates assets but never judges whether an asset is good. Only the board decides that.
+- For each task file asking for a new asset, it does its research and then makes and refines the asset through the style loop (`tasks/README.md`, "The style loop"): the Style Evaluator scores each version, and below 8 it refines from the reason, free script fixes before a paid regeneration, at most 3 times. It does not rework the result outside the loop, which keeps PixelLab spend in check.
+- The Style Evaluator's score checks the style guide; only the board decides whether an asset is good.
 
 ## Documents
 
