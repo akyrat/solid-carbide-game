@@ -1,7 +1,7 @@
 ---
 id: T-292
 title: "Enforce the style loop: no PixelLab call and no art or text ticket to QA without it"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -40,12 +40,12 @@ The goal runner's prompt to headless agents (`tools/goal_agent/build.py`) still 
 
 ## Acceptance criteria
 
-- [ ] `python game/tools/pixellab_client.py generate ...` run directly, outside a loop, exits non-zero without calling PixelLab, and its message names `tools/style_loop/run.py`. Shown by a unit test with the HTTP call mocked (nothing is charged). (QA: pass / fail)
-- [ ] Inside a style loop run (fake mode is enough), the same `generate` call is allowed through to the HTTP layer (mocked in the test). (QA: pass / fail)
-- [ ] `python tools/task_status.py <id> in-qa` on an `epic: art` or `epic: narrative` ticket with an empty `## Style review` section is refused with a message naming the loop; with at least one round it is accepted; tickets of other epics are unaffected. Shown by unit tests. (QA: pass / fail)
-- [ ] `tools/goal_agent/build.py` no longer tells agents "one round per task" and names the style loop instead; its tests pass. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
-- [ ] `tasks/README.md`, "The style loop", says how it is enforced, replacing "being built in T-290 to T-292", and `game/README.md`'s PixelLab client section says `generate` runs only inside the loop. (QA: pass / fail)
+- [x] `python game/tools/pixellab_client.py generate ...` run directly, outside a loop, exits non-zero without calling PixelLab, and its message names `tools/style_loop/run.py`. Shown by a unit test with the HTTP call mocked (nothing is charged). (QA: pass; direct run exited 1 at the gate naming tools/style_loop/run.py, nothing sent; unit tests pass)
+- [x] Inside a style loop run (fake mode is enough), the same `generate` call is allowed through to the HTTP layer (mocked in the test). (QA: pass; live-marker and end-to-end fake-run tests pass)
+- [x] `python tools/task_status.py <id> in-qa` on an `epic: art` or `epic: narrative` ticket with an empty `## Style review` section is refused with a message naming the loop; with at least one round it is accepted; tickets of other epics are unaffected. Shown by unit tests. (QA: pass; tests in test_task_status.py pass)
+- [x] `tools/goal_agent/build.py` no longer tells agents "one round per task" and names the style loop instead; its tests pass. (QA: pass; STYLE_LOOP_RULE replaces "one round per task"; tests pass)
+- [x] All three test sets pass. (QA: pass; tools 485 OK, game/tools 417 OK (1 skipped), GUT 1419/1419)
+- [x] `tasks/README.md`, "The style loop", says how it is enforced, replacing "being built in T-290 to T-292", and `game/README.md`'s PixelLab client section says `generate` runs only inside the loop. (QA: pass; "How it is enforced (T-292)" present, old wording gone; game/README updated)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-25, Open → In progress
 
 Started: enforce the style loop. PixelLab generates only inside a loop run, and art or text tickets can't go to QA without a Style review. Opus agent in C:\solid-carbide-worktrees\T-292.
+
+### 2026-10-25, In progress → In QA
+
+Built: PixelLab generates only inside a live style loop run, and art or narrative tickets can't reach QA without Style review rounds. Tests 485 / 417 / GUT 1419 pass. Now with QA.
 
 ## Result notes
 
