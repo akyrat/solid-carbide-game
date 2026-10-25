@@ -24,10 +24,11 @@ extends "res://scripts/weapons/weapon.gd"
 ## comes back before its interval is over is not hit again on entering: it is
 ## hit when its interval is over, if it is still inside.
 ##
-## Look: a placeholder neon ring drawn in code (UnderglowDrawing, below) in the
-## run's View, at the very bottom of the car's drawing (under the car sprite,
-## the drift smoke and the flames), showing the damage circle in the isometric
-## view. Cyan, never Redgull red. The art task swaps the final art in.
+## Look (T-274): a neon zone drawn in code (underglow_glow.gd) in the run's View,
+## at the very bottom of the car's drawing (under the car sprite, the drift smoke
+## and the flames), marking the damage circle in the isometric view, at the car's
+## height. Purple and pink, never Redgull red; its settings are in
+## scenes/weapons/neon_underglow_look.tres.
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
@@ -38,19 +39,11 @@ const EPS := 1e-6
 ## The playtest switch file (res://data/playtest.json), one key of several.
 const PLAYTEST_FILE := "playtest"
 const PLAYTEST_KEY := "underglow_at_start"
-## Placeholder ring colours (opaque, no anti-aliasing: Visual style). Cyan neon
-## from the city's palette; never Redgull red.
-const RING_COLOUR := Color(0.25, 0.95, 1.0, 1.0)
-const RING_INNER_COLOUR := Color(0.1, 0.55, 0.75, 1.0)
-const RING_OUTLINE_COLOUR := Color(0.05, 0.07, 0.16, 1.0)
-## The final art (T-175): a 224 x 112 art-pixel ring drawn at scale 0.5 for the
-## radius it was made for (2.5 units, the first tier's).
+## The zone drawn in code (T-274): underglow_glow.gd, its look in
+## scenes/weapons/neon_underglow_look.tres (with the switch back to the T-175 sprite).
+const GlowDrawing := preload("res://scripts/weapons/underglow_glow.gd")
+## The generated sprite of T-175, kept (the look's use_sprite switches back to it).
 const ART_PATH := "res://art/weapons/underglow.png"
-const ART_TEXTURE := preload("res://art/weapons/underglow.png")
-const ART_SCALE := 0.5
-const ART_RADIUS_UNITS := 2.5
-## Points of the drawn ellipse.
-const RING_POINTS := 64
 
 ## Tests set this to 0 (off) or 1 (on) to override data/playtest.json; -1 reads the file.
 static var playtest_override := -1
@@ -70,12 +63,16 @@ var since_hit: Dictionary = {}
 ## The placeholder drawing (in the run's View), made the first time the
 ## underglow is owned in a run scene.
 var drawing: Node2D = null
+## The circle's radius as drawn and hit with (T-286): runs to the data's radius
+## over SizeGrow.DURATION when a tier makes the circle bigger.
+var grow := SizeGrow.new()
 
 
 func _init() -> void:
 	weapon_id = "underglow"
 	starts_owned = false
 	stats = data.underglow_at(1)
+	grow.snap(float(stats["radius"]))
 
 
 ## The playtest switch: data/playtest.json "underglow_at_start" (or playtest_override).
@@ -100,6 +97,11 @@ func _car() -> Node2D:
 func apply_tier() -> void:
 	stats = data.underglow_at(maxi(tier, 1))
 	stats["damage"] = boosted_damage(float(stats["damage"]))
+	# T-286: a bigger circle grows from the old radius to the new one.
+	if is_owned() and is_upgrade_step():
+		grow.grow_to(float(stats["radius"]))
+	else:
+		grow.snap(float(stats["radius"]))
 	if is_owned():
 		_ensure_drawing()
 	else:
@@ -120,6 +122,7 @@ func reset_for_run() -> void:
 ## One physics step of `dt` seconds (the rack calls it while owned and the run
 ## is going, after the car has moved).
 func step(dt: float) -> void:
+	grow.advance(dt)
 	if _car() == null:
 		return
 	var interval: float = float(stats["tick_interval"])
@@ -153,9 +156,10 @@ func targets() -> Array:
 	return rack.living_enemies() if rack != null else []
 
 
-## The damage circle's radius now, in units.
+## The damage circle's radius now, in units: as drawn, so the hit area follows
+## the drawing while it grows (T-286). The data's radius is stats["radius"].
 func radius() -> float:
-	return float(stats["radius"])
+	return grow.value
 
 
 ## The car's centre in units (flat world), from its driving model.
@@ -205,7 +209,7 @@ func _hit(e: Node) -> void:
 	e.take_damage(amount)
 
 
-# --- Drawing (placeholder) -------------------------------------------------
+# --- Drawing -------------------------------------------------
 
 ## Makes the drawing in the run's View, at the bottom of the car's drawing, once.
 func _ensure_drawing() -> void:
@@ -216,14 +220,14 @@ func _ensure_drawing() -> void:
 	var view = rack.run.get("view_root")
 	if view == null:
 		return
-	drawing = UnderglowDrawing.new()
+	drawing = GlowDrawing.new()
 	drawing.name = "NeonUnderglow"
 	drawing.visible = false
 	view.add_child(drawing)
 	view.move_child(drawing, 0)  # under the car sprite, the smoke and the flames
 
 
-## Puts the ring on the car, sized to the damage circle, shown while owned.
+## Puts the zone on the car, sized to the damage circle, shown while owned.
 func _update_drawing() -> void:
 	if drawing == null or not is_instance_valid(drawing):
 		return
@@ -238,48 +242,3 @@ func _update_drawing() -> void:
 		drawing.position = ISO_TRANSFORM * (car_units() * PX_PER_UNIT) + Vector2(0.0, -car_height() * PX_PER_UNIT)
 		if drawing.visible and not was_visible:
 			drawing.reset_physics_interpolation()  # no slide from the last run's spot
-
-
-## The placeholder ring: the damage circle (flat world) seen in the isometric
-## view, an ellipse twice as wide as tall, drawn as opaque hard-edged lines.
-class UnderglowDrawing:
-	extends Node2D
-
-	var radius_px := 0.0
-
-	func set_radius_px(r: float) -> void:
-		if not is_equal_approx(r, radius_px):
-			radius_px = r
-			queue_redraw()
-
-	## The ring's points in the drawing's own pixels (the circle through ISO_TRANSFORM).
-	func ring_points(r: float) -> PackedVector2Array:
-		var pts := PackedVector2Array()
-		for i in RING_POINTS + 1:
-			var a := TAU * float(i) / float(RING_POINTS)
-			pts.append(ISO_TRANSFORM.basis_xform(Vector2(cos(a), sin(a)) * r))
-		return pts
-
-	## Every colour the ring draws with (tests check none is Redgull red).
-	func colours() -> Array:
-		return [RING_OUTLINE_COLOUR, RING_COLOUR, RING_INNER_COLOUR]
-
-	## The art's scale: 0.5 (32 art pixels per unit, drawn at 16 screen pixels per unit)
-	## at the first tier's radius, growing with the circle at the later tiers.
-	func art_scale() -> float:
-		return ART_SCALE * radius_px / (ART_RADIUS_UNITS * PX_PER_UNIT)
-
-	func _ready() -> void:
-		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-
-	func _draw() -> void:
-		if radius_px <= 0.0:
-			return
-		var tex: Texture2D = ART_TEXTURE
-		if tex == null:  # the placeholder ring, as before the art
-			draw_polyline(ring_points(radius_px + 1.0), RING_OUTLINE_COLOUR, 4.0, false)
-			draw_polyline(ring_points(radius_px), RING_COLOUR, 2.0, false)
-			draw_polyline(ring_points(radius_px - 3.0), RING_INNER_COLOUR, 1.0, false)
-			return
-		var size := tex.get_size() * art_scale()
-		draw_texture_rect(tex, Rect2(-size / 2.0, size), false)

@@ -151,7 +151,7 @@ The air 180 and air 360 (Decisions, "Aerial tricks"), built in `game/scripts/dri
 - **Worth:** `air_one_eighty` adds 0.25 to the combo (as much as a drift 360) and `air_three_sixty` 0.5 (twice the turn, as much as an alternate drift, the hardest ground trick), in `game/data/combo.json`, `trick_add`.
 - **A drift 360 that spans the jump: each spin pays once** (Decisions, "Aerial tricks", board 2026-10-21; this replaces the first build's independent counting). Turning on a step that ends in the air counts only for the aerial tricks and never towards the drift's FULL 360!, so an air spin with W held pays AIR 360! (or AIR 180!) and no FULL 360!.
   - **At takeoff**, since there is no drifting in the air, the airtime is a break in the drift. A drift 360 in progress starts again from zero, and a drift in progress ends there and pays (T-246). A drift segment ends too, for the alternate drift's switch timing. After landing, a drift starts counting from the landing. (Before "no drifting in the air", a drift 360 in progress was kept through the airtime.)
-- **Faster turning in the air** (Decisions, "Aerial tricks"; the board chose this after the first build found the 360 out of reach): in the air the car turns `air_turn_multiplier` times faster than on the ground. This is a tuning value in `game/scripts/driving/car_tuning.gd`, with a slider in the drift prototype's tuning panel ("In the air"). Proposed: **2.5**, which is 479.75 degrees a second (9.6 per physics step) in the air. The ground rate stays 191.9. The faster rate applies on every step that starts with the car in the air, so the takeoff step still turns at the ground rate.
+- **Faster turning in the air** (Decisions, "Aerial tricks"; the board chose this after the first build found the 360 out of reach): in the air the car turns `air_turn_multiplier` times faster than on the ground. This is a tuning value in `game/scripts/driving/car_tuning.gd`, with a slider in the drift prototype's tuning panel ("In the air"). **Halved in T-269** (Decisions, "Slower air turn, upgradable", board 2026-10-22): the base is now **1.25**, which is 239.9 degrees a second (4.8 per physics step) in the air; the first build had 2.5 (479.75). The ground rate stays 191.9. A garage bonus (T-270) is added to the multiplier at a run's start (`air_turn_bonus`, set by `apply_air_turn_bonus()`; 0 without the upgrade). At 1.25 an air 180 takes 38 steps (0.76 s) and is reachable off the tallest rooftop (a fall counts 49 steps, 0.98 s); an air 360 takes about 76 and is not. A 360 off that rooftop becomes reachable from a total of about **1.9** (1.85 is just short, 1.95 works; 2.0 has a margin), so the upgrade's top levels should reach about 2.0 or more. The faster rate applies on every step that starts with the car in the air, so the takeoff step still turns at the ground rate.
 - **What it gives on today's map** (measured in the tests): the highest drop is a height-6 rooftop onto the street, 1.0 s, of which 49 steps count as in the air.
   - **A 360 takes 38 steps (0.76 s).** A player who steers the whole fall makes it with **about 0.2 s to spare**: starting the turn 10 steps (0.2 s) late still gives AIR 360!, while 12 steps late gives only AIR 180!.
   - **A 180 takes 19 steps (0.38 s)**, half of that, so it also fits a hop off a ramp's top (about 0.7 s).
@@ -184,6 +184,24 @@ The Decision "Drift pays once, at its end" (board, 2026-10-22), built in `trick_
 - **max: 0.5.** The same as an ALT DRIFT!, reached at 10 s of drifting, so one very long drift cannot outrun the other tricks. The old build had no cap.
 
 The popup stays the small size (a drift is a small trick). Screenshot and GIF: `art-archive/T-246/screenshots/`.
+
+### Hype speed boost (task T-275)
+
+The decision is in Decisions ("Hype speed boost"). Proposals for the board's playtest, kept in `game/data/combo.json` (`hype_speed`):
+
+| Combo heat step | Combo (ComboHeat.THRESHOLDS) | Top speed above the base | Top speed (base 16.5 units/s) |
+| --- | --- | --- | --- |
+| 0 | below x2 | +0% | 16.5 |
+| 1 | from x2 | +8% | 17.8 |
+| 2 | from x3 | +16% | 19.1 |
+| 3 | from x4 up | +25% | 20.6 |
+
+- **Why these amounts:** the first step has to be felt, and the last must not break the street's spacing. +8% (1.3 units/s) is just noticeable, +16% clearly quicker, and +25% (4.1 units/s) is the reward for holding x4 or more. The steps grow as the combo climbs, as the HUD's heat steps do.
+- **Acceleration:** it rises with the top speed (my call). The ramp rate is top speed over the time to top speed, and that time (2.3 s, and the garage's acceleration upgrade) is untouched, so a hot car climbs to its higher top in the same time: about 25% quicker at x4. W's snap to cruise speed (11 units/s) is unchanged. Coasting loses a share of the top speed, so it scales the same way.
+- **Easing:** the bonus moves towards the step's amount at 0.2 per second (`ease_per_second`): +8% takes 0.4 s, the full +25% 1.25 s, and it falls back at the same rate, so a combo cut by a crash slows the car over about a second, not at once.
+- **What does not change:** turning, drift grip, and the drift prototype (no combo, so its top speed stays 16.5). The garage's speed upgrades multiply as before: the bonus multiplies the top speed as it stands.
+- **Jumps:** a fall off the tallest rooftop (height 6) lasts 1.0 s (gravity 12) and the car keeps its takeoff speed in the air, so a jump off it carries about 16.5 units at the base top speed and about 20.6 units at the top step (4.1 units farther), if the car has reached top speed on the roof. Ramps launch farther the same way. Challenge distances (Level design) were made at the base speed, so a hot car only lands farther.
+- Tests: `game/tests/unit/test_hype_speed.gd`.
 
 ### Trick prototype (reference)
 

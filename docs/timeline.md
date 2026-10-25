@@ -1805,3 +1805,8 @@ Entry format:
 - Decision or change: after playing the game build, the board wants a weapon to visibly grow, animated, when a size upgrade is picked (the wiper, the underglow, the flame) (Weapons, Decisions; T-286, built on the game build). The board also asked for changes to the likes bar's colour and fill; their wording is being confirmed before a ticket is written.
 - Documents touched: `docs/weapons.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-286
+
+## 2026-10-25: The game build played and merged
+- Decision or change: the board played the game build, checked every objective on its patch notes page and is happy with everything. Merged into master: the stronger wiper push (T-266), the smaller flame (T-267), the new texts (T-268), the halved air turn (T-269) and Spin Doctor in the garage (T-270), the taller springing likes bar (T-273), the underglow drawn in code (T-274), the hype speed boost (T-275), the upright health bar with heart and weapon icons (T-276), fewer health drops (T-277), and size upgrades growing on screen (T-286). The board's likes bar notes (outline in the heart's red, fill in the drift trail's colours, a themed bar) and the question of views instead of likes wait on one decision: whether drifting keeps paying per second or only tricks pay.
+- Documents touched: `docs/weapons.md`, `docs/drifting.md`, `docs/hud-and-menus.md`, `docs/garage-design.md`, `docs/enemies.md`, `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-266, T-267, T-268, T-269, T-270, T-273, T-274, T-275, T-276, T-277, T-286

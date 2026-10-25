@@ -343,10 +343,29 @@ func test_damage_bonus_multiplies_every_tier() -> void:
 	rack.set_damage_bonus(0.0)
 
 
-# --- The placeholder ring --------------------------------------------------------
+# --- The zone drawn in code (T-274) ------------------------------------------------
 
-func test_ring_is_drawn_under_the_car_while_owned() -> void:
-	assert_true(glow.drawing == null or not glow.drawing.visible, "not owned: no ring")
+const Look := preload("res://scripts/weapons/underglow_look.gd")
+
+
+## A copy of the scene's look with the shimmer off, so the ring's colours are steady.
+func _steady_look() -> Resource:
+	var l: Resource = load("res://scenes/weapons/neon_underglow_look.tres").duplicate()
+	l.shimmer_arc = 0.0
+	return l
+
+
+## The flat distance of image pixel (x, y) from the circle's centre, for an image of w x h.
+func _flat_dist(x: int, y: int, w: int, h: int) -> float:
+	var sx := float(x - w / 2) + 0.5
+	var sy := float(y - h / 2) + 0.5
+	var fx := sx / 2.0 + sy
+	var fy := sy - sx / 2.0
+	return sqrt(fx * fx + fy * fy)
+
+
+func test_zone_is_drawn_under_the_car_while_owned() -> void:
+	assert_true(glow.drawing == null or not glow.drawing.visible, "not owned: no zone")
 	rack.upgrade("underglow")
 	var d: Node2D = glow.drawing
 	assert_not_null(d)
@@ -361,23 +380,132 @@ func test_ring_is_drawn_under_the_car_while_owned() -> void:
 	var want: Vector2 = Glow.ISO_TRANSFORM * (run.car.model.get_position() * 16.0)
 	assert_almost_eq(d.position.x, want.x, 0.01, "follows the car")
 	assert_almost_eq(d.position.y, want.y, 0.01)
-	# The ring is the circle in the isometric view: twice as wide as tall.
-	var pts: PackedVector2Array = d.ring_points(10.0)
-	var w := 0.0
-	var h := 0.0
-	for p in pts:
-		w = maxf(w, absf(p.x))
-		h = maxf(h, absf(p.y))
-	assert_almost_eq(w / h, 2.0, 0.05)
 	glow.set_tier(8)
 	assert_almost_eq(d.radius_px, data.underglow_at(8)["radius"] * 16.0, 1e-6, "grows with the radius tiers")
 
 
-func test_ring_colours_are_opaque_and_not_redgull_red() -> void:
+## The ring's bright pixels sit exactly inside the damage circle's edge at every tier.
+func test_the_ring_marks_the_damage_circle_at_every_tier() -> void:
 	rack.upgrade("underglow")
-	for c in glow.drawing.colours():
-		assert_eq(c.a, 1.0, "no see-through pixels")
+	var d = glow.drawing
+	var l: Resource = _steady_look()
+	d.set_look(l)
+	var core_w: float = l.ring_core_px
+	var mid_w: float = core_w + l.ring_mid_px
+	for t in range(1, data.max_tier() + 1):
+		glow.set_tier(t)
+		var r: float = glow.radius() * 16.0
+		var img: Image = d.build_image(0)
+		var w := img.get_width()
+		var h := img.get_height()
+		var core := 0
+		var halo := 0
+		var inner := 0
+		for y in h:
+			for x in w:
+				var c := img.get_pixel(x, y)
+				if c.a == 0.0:
+					continue
+				var dist := _flat_dist(x, y, w, h)
+				if _same(c, l.ring_core_colour):
+					core += 1
+					assert_true(dist <= r + 1e-3 and dist > r - core_w - 1e-3, "tier %d core pixel at %.2f, edge %.2f" % [t, dist, r])
+				elif _same(c, l.ring_mid_colour):
+					assert_true(dist <= r - core_w + 1e-3 and dist > r - mid_w - 1e-3, "tier %d mid pixel" % t)
+				elif _same(c, l.halo_near_colour) or _same(c, l.halo_far_colour):
+					if dist > r:
+						halo += 1
+					else:
+						inner += 1
+		assert_gt(core, 20, "tier %d: the ring is drawn" % t)
+		assert_gt(halo, 20, "tier %d: the halo is outside the edge" % t)
+		# The image is the circle seen from above: wider than tall by 2 (the isometric view).
+		assert_almost_eq(float(w) / float(h), 2.0, 0.1, "tier %d: an ellipse twice as wide as tall" % t)
+		assert_gt(float(w), r * 2.0, "tier %d: the circle fits" % t)
+
+
+func test_drawn_pixels_are_opaque_and_from_the_look() -> void:
+	rack.upgrade("underglow")
+	var d = glow.drawing
+	var allowed: Array = d.look.colours()
+	for frame in [0, 5, 12, 19]:
+		var img: Image = d.build_image(frame)
+		var seen := 0
+		for y in img.get_height():
+			for x in img.get_width():
+				var c := img.get_pixel(x, y)
+				assert_true(c.a == 0.0 or c.a == 1.0, "no semi-transparent pixel")
+				if c.a == 1.0:
+					seen += 1
+					var ok := false
+					for a in allowed:
+						if _same(c, a):
+							ok = true
+					if not ok:
+						fail_test("pixel colour %s is not one of the look's" % c)
+						return
+		assert_gt(seen, 100)
+	assert_eq(d.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "no engine smoothing")
+
+
+func test_look_colours_are_opaque_purples_and_pinks_not_redgull_red() -> void:
+	rack.upgrade("underglow")
+	for c in glow.drawing.look.colours():
+		assert_eq(c.a, 1.0, "no see-through colour")
 		for red in REDGULL_REDS:
 			var dh := absf(c.h - red.h)
 			assert_gt(minf(dh, 1.0 - dh) * 360.0, 30.0, "colour %s hue far from Redgull red" % c)
 		assert_false(c.r > c.g + 0.2 and c.r > c.b + 0.2, "colour %s is not a red" % c)
+		assert_gt(c.b, c.g, "colour %s leans purple or pink" % c)
+
+
+func test_the_pulse_and_the_shimmer_move_and_loop() -> void:
+	rack.upgrade("underglow")
+	var d = glow.drawing
+	var l: Resource = d.look
+	var frames := int(l.cycle_frames)
+	var imgs := {}
+	for f in frames:
+		imgs[f] = d.build_image(f).get_data()
+	assert_ne(imgs[0], imgs[3], "the look changes between frames")
+	assert_eq(imgs[0], d.build_image(frames).get_data(), "and loops after one cycle")
+	var levels := {}
+	for f in frames:
+		levels[d.pulse_level(f)] = true
+	assert_eq(levels.keys().size(), 3, "the pulse steps through 0, 1 and 2")
+	# The shimmer arc travels once round the circle in a cycle.
+	assert_almost_eq(d.shimmer_angle(frames / 2), PI, 1e-6)
+
+
+func test_the_zone_stops_animating_while_paused() -> void:
+	rack.upgrade("underglow")
+	var d = glow.drawing
+	d.set_time(0.0)
+	await wait_physics_frames(3)
+	await get_tree().process_frame
+	assert_gt(d.time, 0.0, "it animates while the game runs")
+	get_tree().paused = true
+	var frozen: float = d.time
+	await wait_physics_frames(10)
+	assert_eq(d.time, frozen, "frozen while paused")
+	get_tree().paused = false
+
+
+func test_the_t175_sprite_is_kept_with_a_switch_back_to_it() -> void:
+	assert_true(FileAccess.file_exists(Glow.ART_PATH) or ResourceLoader.exists(Glow.ART_PATH), "the sprite is still in game/art")
+	rack.upgrade("underglow")
+	var d = glow.drawing
+	assert_false(d.look.use_sprite, "the drawn zone is the default")
+	var l: Resource = d.look.duplicate()
+	l.use_sprite = true
+	d.set_look(l)
+	await get_tree().process_frame
+	assert_true(d.look.use_sprite)
+	d.set_radius_px(Glow.PX_PER_UNIT * 2.5)
+	assert_almost_eq(d.art_scale(), 0.5, 0.001, "the sprite is drawn at its scale")
+	d.set_look(Look.new())
+
+
+## Colours match to the 8 bits an image keeps.
+func _same(a: Color, b: Color) -> bool:
+	return absf(a.r - b.r) < 0.005 and absf(a.g - b.g) < 0.005 and absf(a.b - b.b) < 0.005

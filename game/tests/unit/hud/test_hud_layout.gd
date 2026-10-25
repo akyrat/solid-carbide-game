@@ -1,6 +1,6 @@
 extends GutTest
 ## Task T-113 (round 2): the car's health bar stands upright at the top left
-## with "Car Health" directly above it; the likes bar lies across the bottom
+## (T-276: 72 x 320, the heart under it, weapon icons beside it); the likes bar lies across the bottom
 ## centre, half the screen wide, with the likes row (heart and "Likes" at the
 ## left end, "Hype Lv" at the right end, on one line) directly above it and
 ## the combo counter centred above that. No HUD element overlaps another, the
@@ -10,6 +10,7 @@ extends GutTest
 const RUN := preload("res://scenes/run/run.tscn")
 const GAME := preload("res://scenes/game/game.tscn")
 const HUD_SCENE := preload("res://scenes/hud/hud.tscn")
+const WeaponsScript := preload("res://scripts/weapons/weapons.gd")
 var TEST_SETTINGS := RunPaths.file("test_settings_t113.cfg")
 const SIZES: Array[Vector2i] = [
 	Vector2i(1152, 648), Vector2i(1280, 720), Vector2i(1920, 1080), Vector2i(1024, 576)]
@@ -54,6 +55,12 @@ func _hud_at(size: Vector2i) -> Hud:
 	hud.level_label.text = Hud.TEXT_LEVEL.format({"level": 99})
 	hud.combo_label.text = Hud.combo_text(5.75)
 	hud.coins_value_label.text = "99999"
+	# All five weapons at mixed tiers (T-276), the tallest the icon column gets.
+	var rack: Node = WeaponsScript.new()
+	add_child_autofree(rack)
+	for tier in [1, 2, 8, 3, 5]:
+		rack.get_weapon(rack.weapons.keys()[[1, 2, 8, 3, 5].find(tier)]).set_tier(tier)
+	hud.bind_weapons(rack)
 	return hud
 
 
@@ -62,7 +69,8 @@ func _parts(hud: Hud) -> Dictionary:
 	return {
 		"health bar": hud.health_bar.get_global_rect(),
 		"likes bar": hud.likes_bar.get_global_rect(),
-		"Car Health": hud.health_label.get_global_rect(),
+		"health heart": hud.health_heart.get_global_rect(),
+		"weapon icons": hud.weapon_icons.get_global_rect(),
 		"heart": hud.heart.get_global_rect(),
 		"Likes": hud.likes_label.get_global_rect(),
 		"Hype Lv": hud.level_label.get_global_rect(),
@@ -79,23 +87,26 @@ func _font_size(l: Label) -> int:
 func _assert_health(hud: Hud, where: String) -> void:
 	var view := hud.get_viewport().get_visible_rect().size
 	var bar := hud.health_bar.get_global_rect()
-	var label := hud.health_label.get_global_rect()
+	var heart := hud.health_heart.get_global_rect()
 	assert_eq(hud.health_bar.fill_mode, ProgressBar.FILL_BOTTOM_TO_TOP, "%s: health fills bottom up" % where)
 	assert_gt(bar.size.y, bar.size.x * 4.0, "%s: health bar upright" % where)
 	assert_almost_eq(bar.position.x, float(Hud.MARGIN), 0.5, "%s: health bar at the left edge" % where)
 	assert_lt(bar.end.x, view.x * 0.25, "%s: health bar in the left quarter" % where)
-	assert_lt(bar.end.y, view.y * 0.5, "%s: health bar in the top half" % where)
-	assert_almost_eq(label.position.x, bar.position.x, 0.5, "%s: Car Health left-aligned with the bar" % where)
-	assert_lte(label.end.y, bar.position.y, "%s: Car Health above the bar" % where)
-	assert_lt(bar.position.y - label.end.y, NEAR, "%s: Car Health directly above the bar" % where)
-	assert_almost_eq(label.position.y, float(Hud.MARGIN), 0.5, "%s: Car Health at the top" % where)
+	assert_lt(bar.end.y, view.y * 0.6, "%s: health bar in the top 60 percent" % where)
+	assert_almost_eq(bar.size.x, 72.0, 0.5, "%s: health bar 72 wide" % where)
+	assert_almost_eq(bar.size.y, 320.0, 0.5, "%s: health bar 320 tall" % where)
+	assert_almost_eq(bar.position.y, float(Hud.MARGIN), 0.5, "%s: health bar at the top" % where)
+	assert_almost_eq(heart.get_center().x, bar.get_center().x, 1.0, "%s: heart centred under the bar" % where)
+	assert_gte(heart.position.y, bar.end.y, "%s: heart under the bar" % where)
+	assert_lt(heart.position.y - bar.end.y, NEAR, "%s: heart directly under the bar" % where)
+	assert_true(hud.get_node_or_null("Left/HealthLabel") == null, "%s: no Car Health label" % where)
 
 
 func _assert_likes(hud: Hud, where: String) -> void:
 	var view := hud.get_viewport().get_visible_rect().size
 	var bar := hud.likes_bar.get_global_rect()
 	assert_eq(hud.likes_bar.fill_mode, ProgressBar.FILL_BEGIN_TO_END, "%s: likes fills left to right" % where)
-	assert_gt(bar.size.x, bar.size.y * 10.0, "%s: likes bar horizontal" % where)
+	assert_gt(bar.size.x, bar.size.y * 5.0, "%s: likes bar horizontal" % where)
 	assert_almost_eq(bar.size.x, view.x * 0.5, 1.0, "%s: likes bar half the screen wide" % where)
 	assert_almost_eq(bar.get_center().x, view.x * 0.5, 1.0, "%s: likes bar centred" % where)
 	assert_almost_eq(view.y - bar.end.y, float(Hud.MARGIN), 0.5, "%s: likes bar near the bottom edge" % where)
@@ -184,7 +195,6 @@ func test_layout_follows_longer_texts() -> void:
 func test_same_font_size_within_each_group() -> void:
 	var hud := _hud_at(Vector2i(1152, 648))
 	await get_tree().process_frame
-	assert_eq(_font_size(hud.health_label), Hud.LABEL_FONT_SIZE, "Car Health")
 	assert_eq(_font_size(hud.likes_label), _font_size(hud.level_label), "Likes and Hype Lv the same size")
 	assert_eq(_font_size(hud.likes_label), Hud.LABEL_FONT_SIZE, "Likes")
 
@@ -196,7 +206,7 @@ func test_clear_of_the_middle() -> void:
 		await get_tree().process_frame
 		var view := Vector2(size)
 		var middle := Rect2(view * 0.5 - Vector2(250, 150), Vector2(500, 250))
-		for n: String in ["health bar", "likes bar", "Car Health", "heart", "Likes", "Hype Lv", "combo"]:
+		for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo"]:
 			assert_false(_parts(hud)[n].intersects(middle),
 				"%dx%d: %s clear of the car and popups" % [size.x, size.y, n])
 
@@ -213,6 +223,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["health bar", "likes bar", "Car Health", "heart", "Likes", "Hype Lv", "combo", "timer"]:
+	for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo", "timer"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()

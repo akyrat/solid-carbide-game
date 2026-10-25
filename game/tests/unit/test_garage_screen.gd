@@ -27,14 +27,15 @@ func test_every_label_is_the_approved_text() -> void:
 	assert_eq(screen.title_label.text, "Redgull Pit Stop")
 	assert_eq(screen.back_button.text, "Back")
 	assert_eq(screen.coins_label.text, "Coins: 10000")
-	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact", "pickup_magnet": "Brand Magnet"}
+	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact", "pickup_magnet": "Brand Magnet", "air_turn": "Spin Doctor"}
 	var descs := {
 		"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
 		"car_health": "+10 car health per level. Redgull says you'll be fine.",
 		"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
-		"pickup_magnet": "Pickups reach you from further per level. Redgull calls it engagement.",
+		"pickup_magnet": "Coins and drops fly to you from further per level.",
+		"air_turn": "Spin faster in the air per level. More flips, more views.",
 	}
-	assert_eq(screen.rows.size(), 4)
+	assert_eq(screen.rows.size(), 5)
 	for id in names:
 		var panel: Node = _find(screen, "Row_" + id)
 		assert_eq(panel.find_child("Name", true, false).text, names[id])

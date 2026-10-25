@@ -53,11 +53,21 @@ var alternate_keep_steering := true
 ## Turning in the air (task T-219, board 2026-10-21: the car turns faster in
 ## the air than on the ground, so an air 360 fits in a jump off the tallest
 ## rooftop). The body's rotation rate while airborne, as a multiple of the
-## ground rate (turn_rate()). Proposed 2.5: 479.75 deg/s, 9.6 degrees a
-## physics step, so a 360 takes 38 steps (0.76 s) of the 49 a fall off a
-## height-6 rooftop counts, leaving about 0.2 s to spare, and a 180 takes 19
-## (0.38 s). Ground steering is unchanged.
-var air_turn_multiplier := 2.5
+## ground rate (turn_rate()). Halved in T-269 (board 2026-10-22): 1.25 is
+## 239.9 deg/s, 4.8 degrees a physics step, so a 180 takes 38 steps (0.76 s)
+## and a 360 would take 76, more than the 49 a fall off a height-6 rooftop
+## counts; the garage's air turn upgrade (T-270) raises it. A 360 off that
+## rooftop needs about 1.9 (2.0 with a margin). Ground steering is unchanged.
+var air_turn_multiplier := 1.25
+## Added to air_turn_multiplier while airborne (T-269). The garage upgrade for
+## the air turn (T-270) sets it at a run's start through apply_air_turn_bonus(),
+## as apply_acceleration_upgrade() sets its value. 0 is no upgrade.
+var air_turn_bonus := 0.0
+## The hype speed boost (task T-275, Drifting, Decisions): the share the top
+## speed is raised by right now, 0 to about 0.25. Not a slider: the run sets it
+## from the combo heat step (run.gd, combo.json hype_speed); the drift prototype
+## never does, so it stays 0 there.
+var hype_speed_bonus := 0.0
 
 ## The acceleration garage upgrade (task T-060): sets the time to top speed to
 ## the upgrade's value at the player's saved level (level 0 is the base, 2.3 s,
@@ -65,6 +75,19 @@ var air_turn_multiplier := 2.5
 ## does, so it keeps its own tuning.
 func apply_acceleration_upgrade(progress: PlayerProgress) -> void:
 	time_to_top_speed = progress.current_value("acceleration")
+
+
+## The air turn garage upgrade's hook (task T-269): the amount added to
+## air_turn_multiplier for this run. T-270 calls it from GameFlow.start_run()
+## next to apply_acceleration_upgrade(); the drift prototype never does.
+func apply_air_turn_bonus(added: float) -> void:
+	air_turn_bonus = maxf(0.0, added)
+
+
+## The air turn upgrade as the run applies it (task T-270): the bought level's total multiplier
+## (garage.json, base 1.25) minus the base is the amount added through apply_air_turn_bonus().
+func apply_air_turn_upgrade(progress: PlayerProgress) -> void:
+	apply_air_turn_bonus(progress.current_value("air_turn") - air_turn_multiplier)
 
 
 ## The Unity prototype's values, by setting key (report section 5).
@@ -156,7 +179,7 @@ const COLLISION_SETTINGS := [
 const AIR_SETTINGS := [
 	{"key": "air_turn_multiplier", "name": "Air turn speed", "unit": "x ground turn rate",
 		"label": "How much faster the car turns while in the air",
-		"tip": "In the air the car rotates this many times faster than on the ground (191.9 deg/s there). Game default 2.5 = 479.75 deg/s: an air 360 takes 0.76 s and an air 180 0.38 s, and a fall off a height-6 rooftop lasts 1.0 s. 1 = the same as on the ground.",
+		"tip": "In the air the car rotates this many times faster than on the ground (191.9 deg/s there). Game default 1.25 = 239.9 deg/s: an air 180 takes 0.76 s and an air 360 1.52 s, and a fall off a height-6 rooftop lasts 1.0 s, so a 360 there needs about 1.9 (the garage upgrade). 1 = the same as on the ground.",
 		"unity_note": "Unity: no height, the car never leaves the ground",
 		"min": 1.0, "max": 4.0, "step": 0.05},
 ]
@@ -180,9 +203,10 @@ const TRICK_SETTINGS := [
 ]
 
 
-## Top speed in units/s.
+## Top speed in units/s, raised by the hype speed bonus (T-275). The ramp and
+## coast rates follow it, so the car also speeds up faster by the same share.
 func top_speed() -> float:
-	return forward_speed * top_speed_multiplier
+	return forward_speed * top_speed_multiplier * (1.0 + hype_speed_bonus)
 
 
 ## Speed change per step for speeding up, braking and the reverse climb.
@@ -201,9 +225,9 @@ func turn_rate() -> float:
 
 
 ## Degrees per second the body rotates while A or D is held, on the ground or
-## (task T-219) in the air, air_turn_multiplier times faster.
+## (task T-219) in the air, (air_turn_multiplier + air_turn_bonus) times faster.
 func turn_rate_for(airborne: bool) -> float:
-	return turn_rate() * (air_turn_multiplier if airborne else 1.0)
+	return turn_rate() * ((air_turn_multiplier + air_turn_bonus) if airborne else 1.0)
 
 
 ## The Unity values, by setting key.

@@ -1,22 +1,22 @@
 extends GutTest
 ## Task T-086: the heart art swap moves nothing else on the HUD. The likes row's
 ## top and height, "Hype Lv" and the combo counter (at every step) sit exactly
-## where they did before T-086 (measured from master's code, T-131 layout).
+## where they did before T-086 (measured from master's code, T-131 layout), moved up 48 px by the 64 px likes bar (T-273).
 
 const HUD_SCENE := preload("res://scenes/hud/hud.tscn")
 ## Measured from master's hud.gd (f6ff2eb, before T-086) at 1152x648 with
 ## "Hype Lv 99": rects as [x, y, w, h].
-const ROW := Rect2(288, 584, 67, 26)
-const LIKES := Rect2(320, 584, 35, 26)
-const LEVEL := Rect2(792, 584, 72, 26)
-const BAR := Rect2(288, 616, 576, 16)
+const ROW := Rect2(288, 536, 67, 26)
+const LIKES := Rect2(320, 536, 35, 26)
+const LEVEL := Rect2(792, 536, 72, 26)
+const BAR := Rect2(288, 568, 576, 64)
 ## The combo counter's layout rect (position and size, before the heat's
 ## pulse scale, which changes with time), per multiplier.
 const COMBO := {
-	1.5: Rect2(516, 547, 120, 33),
-	2.0: Rect2(501, 541, 150, 39),
-	3.0: Rect2(488, 534, 176, 46),
-	4.5: Rect2(473, 525, 207, 55),
+	1.5: Rect2(516, 499, 120, 33),
+	2.0: Rect2(501, 493, 150, 39),
+	3.0: Rect2(488, 486, 176, 46),
+	4.5: Rect2(473, 477, 207, 55),
 }
 
 
@@ -59,4 +59,4 @@ func test_heart_is_level_with_likes_inside_its_26px_box() -> void:
 	var heart := hud.heart.get_global_rect()
 	assert_eq(heart.size, Vector2(22, 20))
 	# Likes' letters span y 587-601 (screenshot); the heart's red 587-602.
-	assert_eq(heart.position.y, 585.0, "heart box top, level with the letters")
+	assert_eq(heart.position.y, 537.0, "heart box top, level with the letters")

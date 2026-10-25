@@ -75,7 +75,7 @@ func hud_rects() -> Array:
 	var h := _hud_node
 	if h == null or not is_instance_valid(h):
 		return out
-	for group in [["timer_label"], ["health_label", "health_bar", "left_column"],
+	for group in [["timer_label"], ["health_bar", "health_heart", "weapon_icons", "left_column"],
 			["coins_label"], ["likes_bar", "likes_row", "level_label", "combo_label", "likes_fire"]]:
 		var r := Rect2()
 		var any := false

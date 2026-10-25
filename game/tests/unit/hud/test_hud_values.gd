@@ -28,11 +28,13 @@ func test_likes_bar_and_level_follow_xp() -> void:
 	assert_eq(hud.likes_bar.value, 0.0)
 	var need: float = r.state.xp_needed()
 	r.state.add_xp(need * 0.5)
+	hud.settle_likes()
 	assert_almost_eq(hud.likes_bar.value, r.state.xp, 0.001)
 	assert_almost_eq(hud.likes_bar.max_value, need, 0.001)
 	r.state.add_xp(need)
 	assert_eq(r.state.level, 2)
 	assert_eq(hud.level_label.text, "Hype Lv 2")
+	hud.settle_likes()
 	assert_almost_eq(hud.likes_bar.value, r.state.xp, 0.001)
 	assert_almost_eq(hud.likes_bar.max_value, r.state.xp_needed(), 0.001)
 
@@ -65,6 +67,7 @@ func test_max_level_keeps_the_bar_full() -> void:
 			break
 		r.state.add_xp(r.state.xp_needed())
 	assert_true(r.state.is_max_level())
+	r.hud.settle_likes()
 	assert_eq(r.hud.likes_bar.value, r.hud.likes_bar.max_value)
 	assert_eq(r.hud.level_label.text, "Hype Lv %d" % r.state.level)
 
@@ -72,7 +75,6 @@ func test_max_level_keeps_the_bar_full() -> void:
 func test_labels_are_exactly_the_approved_text() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	assert_eq(hud.health_label.text, "Car Health")
 	assert_eq(hud.likes_label.text, "Likes")
 	assert_eq(hud.coins_label.text, "Coins")
 	assert_eq(Hud.TEXT_LEVEL, "Hype Lv {level}")

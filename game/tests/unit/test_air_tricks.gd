@@ -7,9 +7,10 @@ extends GutTest
 ##
 ## The detector tests feed it ground-rate steps: one step of A or D turns the
 ## car 191.9 / 50 = 3.838 degrees on the ground (47 steps for a 180, 94 for a
-## 360). The real car turns air_turn_multiplier (2.5) times faster in the air
-## (the board's tweak): 9.6 degrees a step, 19 steps for a 180, 38 for a 360;
-## a fall off a height-6 rooftop counts 49 steps in the air.
+## 360). The real car turns (air_turn_multiplier + the garage bonus) times faster
+## in the air. The timing tests give the car a 1.25 bonus (a total of 2.5, the
+## rate before T-269 halved the base): 9.6 degrees a step, 19 steps for a 180,
+## 38 for a 360; a fall off a height-6 rooftop counts 49 steps in the air.
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 const CarModel := preload("res://scripts/driving/car_model.gd")
@@ -27,11 +28,14 @@ var STEP_TURN := 0.0
 
 var _det
 var _tricks: Array = []
+## The garage air turn bonus the test car gets (see the header).
+var _air_bonus := 1.25
 
 
 func before_each() -> void:
 	_det = TrickDetector.new()
 	_tricks = []
+	_air_bonus = 1.25
 	_det.trick.connect(func(id: String) -> void: _tricks.append(id))
 	var m = CarModel.new()
 	STEP_TURN = deg_to_rad(m.tuning.turn_rate() * m.dt)
@@ -186,6 +190,7 @@ func _car(start: Vector2, rotation: float) -> CharacterBody2D:
 	car.set_physics_process(false)
 	car.use_keyboard = false
 	car.ground = _ground
+	car.tuning.apply_air_turn_bonus(_air_bonus)
 	car.trick.connect(func(id: String) -> void: _tricks.append(id))
 	return car
 
@@ -231,8 +236,30 @@ func test_air_turn_rate_is_a_tuning_value_and_the_ground_rate_is_unchanged() -> 
 	var t = CarModel.new().tuning
 	assert_almost_eq(t.turn_rate_for(false), 191.9, 1e-9, "ground: 202 x 0.95, as before")
 	assert_almost_eq(t.turn_rate_for(true), 191.9 * t.air_turn_multiplier, 1e-9)
-	assert_almost_eq(float(t.air_turn_multiplier), 2.5, 1e-9, "proposed")
+	assert_almost_eq(float(t.air_turn_multiplier), 1.25, 1e-9, "halved in T-269")
 	assert_true(CarTuningScript.default_values().has("air_turn_multiplier"))
+
+
+## Task T-269: the garage's air turn bonus, set at a run's start, adds to the multiplier.
+func test_the_air_turn_bonus_raises_the_air_rate_only() -> void:
+	var t = CarModel.new().tuning
+	assert_almost_eq(float(t.air_turn_bonus), 0.0, 1e-9, "no upgrade by default")
+	t.apply_air_turn_bonus(0.75)
+	assert_almost_eq(t.turn_rate_for(true), 191.9 * 2.0, 1e-9, "1.25 + 0.75")
+	assert_almost_eq(t.turn_rate_for(false), 191.9, 1e-9, "ground unchanged")
+	t.apply_air_turn_bonus(-1.0)
+	assert_almost_eq(float(t.air_turn_bonus), 0.0, 1e-9, "never below the base")
+
+
+func test_the_real_car_turns_the_bonus_faster_in_the_air() -> void:
+	var car := _car(_street_point(3.0), 0.0)
+	car.tuning.apply_air_turn_bonus(0.75)
+	car.scripted_input = [false, false, A]
+	car.height_model.height = 6.0
+	car.height_model.airborne = true
+	var before: float = car.model.rotation
+	car.physics_step()
+	assert_almost_eq(car.model.rotation - before, -STEP_TURN * 2.0, 1e-9)
 
 
 func test_the_real_car_turns_faster_only_in_the_air() -> void:
@@ -244,7 +271,7 @@ func test_the_real_car_turns_faster_only_in_the_air() -> void:
 	car.height_model.airborne = true
 	var before: float = car.model.rotation
 	car.physics_step()
-	assert_almost_eq(car.model.rotation - before, -STEP_TURN * car.tuning.air_turn_multiplier, 1e-9, "in the air")
+	assert_almost_eq(car.model.rotation - before, -STEP_TURN * (car.tuning.air_turn_multiplier + car.tuning.air_turn_bonus), 1e-9, "in the air")
 
 
 func test_the_real_car_falling_6_units_steering_throughout_gives_the_360_both_ways() -> void:
@@ -261,6 +288,28 @@ func test_the_360_off_a_6_rooftop_has_a_fifth_of_a_second_to_spare() -> void:
 	_tricks = []
 	_drop(6.0, A, 12)
 	assert_eq(_air_tricks(), ["air_one_eighty"], "12 steps late: only the 180")
+
+
+## Task T-269: at the base 1.25 (no upgrade) a fall off a height-6 rooftop gives the
+## 180 but not the 360; the 360 needs about 1.9 in total (1.85 is short, 1.95 is enough).
+func test_at_the_base_turn_rate_the_tallest_rooftop_gives_a_180_not_a_360() -> void:
+	_air_bonus = 0.0
+	_drop(6.0, A)
+	assert_eq(_air_tricks(), ["air_one_eighty"], "1.25: a 180 only")
+
+
+func test_the_360_off_the_tallest_rooftop_needs_a_total_of_about_1_9() -> void:
+	_air_bonus = 0.6  # 1.85 in total
+	_drop(6.0, A)
+	assert_eq(_air_tricks(), ["air_one_eighty"], "1.85: just short")
+	_tricks = []
+	_air_bonus = 0.7  # 1.95
+	_drop(6.0, A)
+	assert_eq(_air_tricks(), ["air_three_sixty"], "1.95: reachable")
+	_tricks = []
+	_air_bonus = 0.75  # 2.0
+	_drop(6.0, D)
+	assert_eq(_air_tricks(), ["air_three_sixty"], "2.0: reachable the other way too")
 
 
 func test_the_180_is_much_easier_it_takes_19_steps() -> void:
@@ -393,7 +442,7 @@ func test_in_the_air_the_heading_spins_at_the_air_rate_and_nothing_else() -> voi
 	for i in 20:
 		var before: float = car.model.rotation
 		car.physics_step()
-		assert_almost_eq(car.model.rotation - before, -STEP_TURN * car.tuning.air_turn_multiplier, 1e-9)
+		assert_almost_eq(car.model.rotation - before, -STEP_TURN * (car.tuning.air_turn_multiplier + car.tuning.air_turn_bonus), 1e-9)
 	var moved: Vector2 = car.model.get_position() - start
 	assert_almost_eq(moved.y, 0.0, 1e-9, "flies straight on")
 	assert_almost_eq(moved.x, 11.0 * 20 * car.model.dt, 1e-4)
@@ -496,6 +545,7 @@ func test_a_real_fall_in_the_run_raises_the_combo() -> void:
 	car.ground = r.elevation.ground_height
 	car.height_model.height = 6.0
 	car.height_model.airborne = true
+	car.tuning.apply_air_turn_bonus(1.25)
 	car.scripted_input = [false, false, D]
 	var before: float = r.state.combo
 	var steps := 0

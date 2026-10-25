@@ -1,7 +1,8 @@
 class_name Hud
 extends CanvasLayer
 ## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
-## the car's health bar upright at the top left under "Car Health", the coins
+## the car's health bar upright at the top left (T-276: 72 x 320, the heart
+## under it, the weapon icons beside it), the coins
 ## at the top right, and the likes bar lying across the bottom centre with the
 ## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
 ## (hidden at no combo, T-116). The HUD only shows values: the run
@@ -18,10 +19,13 @@ const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 const MARGIN := 16
 ## The health bar (T-113): upright, filling from the bottom up.
-const HEALTH_BAR_SIZE := Vector2(24, 160)
+const HEALTH_BAR_SIZE := Vector2(72, 320)
+## T-276: the weapon icons start this far right of the bar, and the heart sits this far under it.
+const WEAPON_ICONS_GAP := 12
+const HEART_UNDER_GAP := 6
 ## The likes bar (T-113): horizontal, this share of the screen's width.
 const LIKES_BAR_WIDTH := 0.5
-const LIKES_BAR_HEIGHT := 16.0
+const LIKES_BAR_HEIGHT := 64.0
 ## Space between a bar and the text line next to it.
 const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
@@ -38,7 +42,6 @@ const HEART_SCALE := 2
 const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
-const TEXT_HEALTH := "Car Health"
 const TEXT_LIKES := "Likes"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
@@ -60,10 +63,13 @@ const AIRTIME_OFFSET := Vector2(70, -10)
 const DRIFT_OFFSET := Vector2(70, 30)
 
 var timer_label: Label
-var health_label: Label
 var health_bar: ProgressBar
 var likes_label: Label
 var likes_bar: ProgressBar
+## Springs the bar's fill to its new level (T-273); the bar shows its `shown`.
+var likes_spring: LikesSpring
+var _likes_level := 0
+var _follow_max := 1.0
 var level_label: Label
 var coins_label: Label
 var coins_value_label: Label
@@ -73,8 +79,12 @@ var heart_box: Control
 ## The combo counter (T-083), centred above the likes row. Hidden at no
 ## combo (T-116): see show_combo().
 var combo_label: Label
-## The top-left area: "Car Health" and the health bar (T-113).
+## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
 var left_column: Control
+## The red heart centred under the health bar (T-276; the likes bar's heart picture).
+var health_heart: TextureRect
+## The car's weapons as icons beside the health bar (T-276).
+var weapon_icons: WeaponIcons
 ## A full-screen area holding the likes bar, its row and the combo counter.
 var bottom_area: Control
 ## The heart and "Likes", at the left end of the row above the likes bar.
@@ -178,21 +188,31 @@ func _build_left() -> void:
 	left_column.position = Vector2(MARGIN, MARGIN)
 	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(left_column)
-	health_label = _make_label("HealthLabel", TEXT_HEALTH)
-	left_column.add_child(health_label)
 	health_bar = _make_bar("HealthBar", HEALTH_COLOR, ProgressBar.FILL_BOTTOM_TO_TOP)
 	left_column.add_child(health_bar)
+	health_heart = _make_heart()
+	health_heart.name = "HealthHeart"
+	left_column.add_child(health_heart)
+	weapon_icons = WeaponIcons.new()
+	left_column.add_child(weapon_icons)
 	_layout_left()
-	health_label.resized.connect(_layout_left)
 
 
-## "Car Health" on one line, then the upright health bar directly under it,
-## both starting at the same left edge.
+## The upright health bar at the corner, the heart centred directly under it,
+## and the weapon icons' column to its right, starting at the bar's top.
 func _layout_left() -> void:
-	health_label.size = health_label.get_combined_minimum_size()
-	health_label.position = Vector2.ZERO
 	health_bar.size = HEALTH_BAR_SIZE
-	health_bar.position = Vector2(0.0, health_label.size.y + LABEL_GAP)
+	health_bar.position = Vector2.ZERO
+	health_heart.size = health_heart.custom_minimum_size
+	health_heart.position = Vector2(
+		floorf((HEALTH_BAR_SIZE.x - health_heart.size.x) / 2.0),
+		HEALTH_BAR_SIZE.y + HEART_UNDER_GAP)
+	weapon_icons.position = Vector2(HEALTH_BAR_SIZE.x + WEAPON_ICONS_GAP, 0.0)
+
+
+## Shows the weapon rack's weapons as icons (T-276); the run scene calls it once the rack is bound.
+func bind_weapons(rack: Node) -> void:
+	weapon_icons.setup(rack)
 
 
 func _build_bottom() -> void:
@@ -207,6 +227,10 @@ func _build_bottom() -> void:
 	likes_fire = LikesFire.new()
 	bottom_area.add_child(likes_fire)
 	likes_bar.value_changed.connect(func(_v: float) -> void: _update_fire_fill())
+	likes_spring = LikesSpring.new()
+	add_child(likes_spring)
+	likes_spring.changed.connect(func(_s: float) -> void: _show_likes())
+	likes_spring.restarted.connect(_on_spring_restarted)
 	level_up_flash = LevelUpFlash.new()
 	bottom_area.add_child(level_up_flash)
 	likes_row = HBoxContainer.new()
@@ -388,6 +412,8 @@ func bind(state: RunState) -> void:
 	_state.combo_changed.connect(_on_combo_changed)
 	_state.level_up.connect(_on_level_up)
 	level_up_flash.stop()
+	_likes_level = 0
+	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
@@ -406,13 +432,47 @@ func _on_health_changed(health: float, max_health: float) -> void:
 
 func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
 	# At the top level xp_needed is 0: the bar stays full.
-	if xp_needed > 0.0:
-		likes_bar.max_value = xp_needed
-		likes_bar.value = xp
-	else:
-		likes_bar.max_value = 1.0
-		likes_bar.value = 1.0
+	var max_v := xp_needed if xp_needed > 0.0 else 1.0
+	var ratio := clampf(xp / xp_needed, 0.0, 1.0) if xp_needed > 0.0 else 1.0
 	level_label.text = TEXT_LEVEL.format({"level": level})
+	if likes_spring.has_follow:
+		# Still springing to full for the last level-up: only the leftover and
+		# the next level's size change.
+		_follow_max = max_v
+		likes_spring.set_follow(ratio)
+		_likes_level = level
+		return
+	if _likes_level > 0 and level > _likes_level:
+		# The bar fills completely (the old size stays), then starts again.
+		_follow_max = max_v
+		likes_spring.fill_then(ratio)
+	elif _likes_level > 0 and ratio >= likes_spring.target:
+		_set_likes_max(max_v)
+		likes_spring.spring_to(ratio)
+	else:
+		# A new run, or the likes draining: no spring.
+		_set_likes_max(max_v)
+		likes_spring.snap(ratio)
+	_likes_level = level
+
+
+func _set_likes_max(max_v: float) -> void:
+	likes_bar.max_value = max_v
+	_show_likes()
+
+
+## Draws the spring's fill on the bar, never past full.
+func _show_likes() -> void:
+	likes_bar.value = clampf(likes_spring.shown, 0.0, 1.0) * likes_bar.max_value
+
+
+func _on_spring_restarted() -> void:
+	likes_bar.max_value = _follow_max
+
+
+## Ends the likes bar's spring at once (tests and tools).
+func settle_likes() -> void:
+	likes_spring.finish()
 
 
 ## The player levelled up (T-139): the likes bar's animation plays now, at

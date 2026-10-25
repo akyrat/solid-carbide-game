@@ -255,6 +255,7 @@ func _ready() -> void:
 	weapons.name = "Weapons"
 	add_child(weapons)
 	weapons.bind(self)
+	hud.bind_weapons(weapons)
 	# The level-up screen (T-052) opens when the car drives over the gift pack's
 	# package (T-144, gift_drops below), which pauses the run for the weapon
 	# choice; a level-up itself no longer pauses (the switch stays off).
@@ -378,6 +379,8 @@ func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2
 ## Feeds the car's drift state to the run's likes after each physics step.
 func _on_car_stepped() -> void:
 	state.drift_step(car.model.is_drifting, car.model.dt)
+	# Hype speed boost (T-275): the top speed eases to the combo heat step's.
+	car.tuning.hype_speed_bonus = state.eased_hype_speed(car.tuning.hype_speed_bonus, car.model.dt)
 
 
 ## T-072: the car took damage: the drawn car shakes briefly (its drawing only).

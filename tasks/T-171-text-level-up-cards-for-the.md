@@ -64,7 +64,7 @@ Goal runner (G-002): QA passed; merged into playtest/G-002.
 | Key | Title | Description |
 |---|---|---|
 | get_underglow | Neon Underglow | A neon ring burns enemies near your car, 1 damage a second. So aesthetic. |
-| upgrade_underglow.tier2 | Brighter Glow | Glow radius up 20%. Redgull says be seen. |
+| upgrade_underglow.tier2 | Brighter Glow | Glow radius up 20%. Impossible to scroll past. |
 | upgrade_underglow.tier3 | Hotter Glow | Glow damage up 50%, to 1.5. Looks expensive. |
 | upgrade_underglow.tier4 | Faster Pulse | Glow hits come 25% sooner. Stay on the beat. |
 | upgrade_underglow.tier5 | Wider Glow | Glow radius up another 25%. Own the whole block. |
@@ -83,7 +83,7 @@ Goal runner (G-002): QA passed; merged into playtest/G-002.
 | upgrade_wiper.tier2 | Longer Blade | Wiper length up 20%. Clean up more of the city. |
 | upgrade_wiper.tier3 | Heavy Duty | Wiper damage up 40%. Redgull calls it deep cleaning. |
 | upgrade_wiper.tier4 | Faster Sweep | Wiper sweeps 25% faster. No streaks left behind. |
-| upgrade_wiper.tier5 | Hard Shove | Knockback up 50%, from 1.5 to 2.25. Minions only, never the kaiju. |
+| upgrade_wiper.tier5 | Hard Shove | Knockback up 50%, from 6 to 9. Minions only, never the kaiju. |
 | upgrade_wiper.tier6 | Longer Blade II | Wiper length up another 30%. A wider view for the viewers. |
 | upgrade_wiper.tier7 | Heavy Duty II | Wiper damage up another 40%. Squeaky clean, as promised. |
 | upgrade_wiper.tier8 | Faster Sweep II | Wiper sweeps another 30% faster. Always in frame. |
