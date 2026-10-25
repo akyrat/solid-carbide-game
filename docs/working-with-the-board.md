@@ -16,12 +16,12 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - Screenshots for every ticket (board, 2026-10-19): every ticket ends with screenshots of its work wherever anything can be shown (`tasks/README.md`, "Screenshots"), and the Project Lead shows them to the board when the ticket passes QA, goal runs included, with their paths.
 
 ## Art and money
-- PixelLab costs generations. Never call it without the board's go for that task. One round per task: report problems, don't regenerate. Extra calls only on the board's explicit say-so.
+- PixelLab costs generations. Never call it without the board's go for that task. Every asset goes through the style loop (`tasks/README.md`, "The style loop", board, 2026-10-25): its refines are the only regenerations, at most 3 per asset, so one asset costs up to 4 generations within the task's go. Extra calls beyond that only on the board's explicit say-so.
 - Free script fixes come before paid generations. Agents write their planned calls and cost in the result notes before calling. Use a long HTTP timeout (600 s): timed-out calls are still charged.
 - Sample first: one asset (one car direction, one road tile) for review, then the full set built from the approved sample, then into the game for a playtest.
 - Never delete generated art: game-ready art in `game/art/`, everything else in `art-archive/<task>/` (Visual style, Decisions). Never delete tickets: use status `cancelled`.
 - The board sometimes edits art by hand. Its editor saves indexed PNGs: convert to RGBA, keep the pixels, and record the hand edit.
-- Placeholders never use Redgull red (only the HUD heart, board-approved).
+- Where Redgull red may appear: Visual style, Content, "Rules", rule 6 (placeholders never).
 
 ## How the board builds the game
 - Small playable steps, each ending in a playtest (`tasks/README.md`, "Building in playable steps"). The board reorders steps freely; update that list when it does.
@@ -33,7 +33,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 
 ## Goal runs
 The board can give the studio a whole goal ("the trick system with its final art", or "the whole short GDD") and let the goal runner build it without review along the way (board, 2026-10-18; `tools/goal_agent/`, `tasks/README.md`, "Goal runs"). While a goal is running, these replace the rules above that assume the board reviews each step:
-- The goal is the board's go for PixelLab, up to the goal's art cap (`--art-cap`, set by the board per goal). No sample review: the art is judged in the final playtest. Still one generation round per task: weak art is noted, not regenerated.
+- The goal is the board's go for PixelLab, up to the goal's art cap (`--art-cap`, set by the board per goal). No sample review: the art is judged in the final playtest. Art still goes through the style loop, within the art cap; art that stays below 8 after its refines is noted for the final playtest.
 - No questions to the board during a run (board, 2026-10-18). Open questions the docs leave unanswered are settled by the agents as proposals for the playtest, the same way they propose numbers, and are listed in the goal file; the Project Lead brings them to the board with the build, at the end. The Project Lead doesn't stop a run to ask, and makes the run's other decisions itself (the board's go, 2026-10-18), reporting them at the end.
 - QA passing counts as done for the runner. Each ticket that passes is merged into the goal's build branch `playtest/<goal id>`, not into `master`.
 - The board plays the result once, at the end, from that branch. Nothing reaches `master` before that playtest; then the Project Lead merges as usual.

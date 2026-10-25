@@ -30,6 +30,19 @@ The player is Stunt Driver, sent by the energy-drink brand Redgull to cities hit
 
 ## Content
 
+### Text rules
+
+The text style guide: every piece of player-facing text is checked against these rules, each written once here (with Visual style's Rules, the style guide the style loop scores against; `tasks/README.md`, "The style loop"). Each rule condenses a decision; when the decision changes, its rule changes with it. Rules marked *(script)* are checked by a script, the others by the Style Evaluator.
+
+1. **Tone:** satirical, ironic and tongue-in-cheek. It makes fun of soulless corporate language, social media and brand obsession. Redgull is out of touch and focused on profit, never evil and never sincere; the fun should feel slightly unethical. The city's people and their fear are never the joke. No grimdark, gore or earnest heroics. (Decisions, "Tone"; Content, "The alert banners")
+2. **Vocabulary** *(script, banned words)*: the player sees "likes", never "XP" or "points"; the weapon reward is a "gift pack"; the player is "Stunt Driver"; the sponsor is "Redgull"; the run is a livestream to Redgull's audience; the monster is "the kaiju", never "Godzilla" and never given a name. (Decisions)
+3. **Who speaks:** Redgull's voice is for Redgull's things (gift packs, level-up, garage, the stream). The city never speaks in Redgull's voice: its signs are picture-only. No line takes the form "Redgull says ..." (HUD and menus, Decisions, "No "Redgull says ..." lines"). No real brands. (Decisions; Visual style, Decisions, "City brief")
+4. **Format and length, by kind of text** *(script)*:
+   - **Trick and combo popups:** one short line in capitals ending in "!", like LONG DRIFT!, AIR 360! and COMBO BROKEN! (HUD and menus, Content, "Trick popups", "Combo broken popup")
+   - **Level-up cards:** a title of at most 30 characters and a description of at most 90 that says first what the card does, then at most one satirical aside. (T-051, T-171)
+   - **Garage upgrades:** a name of at most 25 characters and a description of at most 80 that names no number. (T-268)
+   - **Menu and settings labels:** short and plain, in sentence case, like "Music volume". (HUD and menus, Content)
+
 ### The first map: downtown Tokyo under attack
 
 The first level is downtown Tokyo at night, in the middle of the kaiju's attack (Decisions, 2026-10-14). The kaiju is a giant monster in the style of Godzilla, never called Godzilla, and still unnamed: until the board names it, the story and every text call it "the kaiju". It is the level's final boss, and the whole city is already reacting to it.

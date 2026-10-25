@@ -170,5 +170,20 @@ Otherwise each field is `no`. The Project Lead sets both fields when writing a t
 
 **Art replaces placeholders.** When work has a visual and a functional side, the functional task builds it with a placeholder and does not wait for the art. The linked art task lists the functional task in `depends_on` and, once its art is made, swaps it in for the placeholder itself; its acceptance criteria include seeing the final art in the game.
 
+**Art and text go through the style loop** (next section) before they reach the game.
+
 **Player-facing text comes from the Narrative Theme Agent.** When a task has `user_facing_text: yes`, the Project Lead also writes a linked text task for the Narrative Theme Agent: what each piece of text is for, where it appears, any space limit, and the facts it must state. That agent writes the final text in its task's result notes. The main task lists the text task in `depends_on` and uses exactly that text: no placeholder text, and no wording of the building agent's own. If an agent finds its work needs text that its text task doesn't cover, it doesn't write any; it says so in its result notes and the Project Lead gets the text from the Narrative Theme Agent.
+
+## The style loop
+
+Every asset and every piece of player-facing text is made through the style loop, so the game keeps one style (board, 2026-10-25). The style guide it scores against is Visual style, Content, "Rules" for art and Extended narrative, Content, "Text rules" for text.
+
+1. **Generate:** the task's agent makes the asset or text: the Asset Generation Agent for art (PixelLab or script-drawn), the Narrative Theme Agent for text.
+2. **Evaluate:** the Style Evaluator scores it from 1 to 10 against the rules and gives the reason: which rules it breaks and how. Rules a script can check (size, colours, transparency, Redgull red, lengths, banned words) are checked by script first, and the result goes into the score.
+3. **Refine:** below 8, the agent that made it rewrites or remakes it from the reason, and the new version is evaluated again. For art, free script fixes come before a paid regeneration.
+4. **Stop:** at 8 or more the version is kept. After 3 refines still below 8, the best-scoring version is kept and the task is flagged for the board's review, with every version.
+
+Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. QA fails an art or text task without it. The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
+
+The loop's tool and its enforcement are being built in T-290 to T-292.
 
