@@ -1,7 +1,7 @@
 ---
 id: T-275
 title: The car goes faster the higher the hype level
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md, game/scripts/driving/car_tuning.gd, tasks/T-131-combo-heat-levels.md, tasks/T-249-hype-drift-trail.md]
 files_expected_to_change: [game/scripts/driving/, game/scripts/run/, game/data/combo.json, game/tests/, docs/drifting.md, game/README.md, art-archive/T-275/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Started at the board's request: the car goes faster the higher the hype level.
 ### 2026-10-22, In progress → In QA
 
 Built: top speed +8% at x2, +16% at x3, +25% at x4, easing in and out. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the game build: build a combo and feel the car speed up. One frame showed speed above top speed; check it in the playtest.
 
 ## Result notes
 
