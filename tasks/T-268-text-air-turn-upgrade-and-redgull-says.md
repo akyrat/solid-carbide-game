@@ -1,7 +1,7 @@
 ---
 id: T-268
 title: "Text: the air turn upgrade, and two level-up lines without \"Redgull says\""
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md, docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, docs/hud-and-menus.md, docs/extended-narrative.md, game/scripts/ui/level_up_texts.gd, tasks/T-223-text-magnet-upgrade.md]
 files_expected_to_change: [docs/garage-design.md, docs/hud-and-menus.md, game/scripts/ui/level_up_texts.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started at the board's request: the air turn upgrade's text, and the two Redgull
 ### 2026-10-22, In progress → In QA
 
 Texts written: Spin Doctor, two level-up lines and Brand Magnet rewritten. One garage line still says Redgull says (car health): asking the board. Sent to QA.
+
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to read in the game build: Spin Doctor, the two level-up lines and Brand Magnet.
 
 ## Result notes
 
