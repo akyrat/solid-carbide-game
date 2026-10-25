@@ -11,7 +11,9 @@ the Python standard library. It:
 - appends every paid generation call (success or failure) to a JSONL log.
 
 It never retries a generation call: each one costs money. A failed call stops
-with an error and is logged.
+with an error and is logged. `generate` runs only inside a live style loop run
+started by tools/style_loop/run.py (T-292; require_style_loop below); outside
+one it is refused before anything is sent. `balance` works anywhere.
 
 Usage, from the repo root (see game/README.md for details):
 
@@ -91,6 +93,77 @@ class PixelLabError(RuntimeError):
 
 class PollTimeout(PixelLabError):
     """Polling a background job went on for longer than the timeout."""
+
+
+# ----------------------------------------------------------- style loop ----
+# T-292: a paid generation runs only inside a live style loop run (tasks/README.md, "The style loop").
+# tools/style_loop/run.py writes a run marker (JSON: run, pid, task, kind, started) in the git-ignored .board/
+# folder, names it in this environment variable for the agents it starts (their shells inherit it), and deletes
+# it when the run ends. The marker is live while it exists and the run's process (pid) is still running.
+
+STYLE_LOOP_VAR = "SOLID_CARBIDE_STYLE_LOOP_RUN"
+LOOP_COMMAND = "python tools/style_loop/run.py art --task T-NNN --brief <brief file> --out <png>"
+
+
+class NotInStyleLoop(PixelLabError):
+    """`generate` was run outside a live style loop run."""
+
+
+def pid_alive(pid: int) -> bool:
+    """Whether a process with this id is running. Never signals it (os.kill would end it on Windows)."""
+    if pid <= 0:
+        return False
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.OpenProcess.argtypes = (wintypes.DWORD, wintypes.BOOL, wintypes.DWORD)
+        handle = kernel32.OpenProcess(0x1000, False, pid)   # PROCESS_QUERY_LIMITED_INFORMATION
+        if not handle:
+            return ctypes.get_last_error() == 5   # access denied: it exists
+        try:
+            code = wintypes.DWORD()
+            if not kernel32.GetExitCodeProcess(handle, ctypes.byref(code)):
+                return False
+            return code.value == 259   # STILL_ACTIVE
+        finally:
+            kernel32.CloseHandle(handle)
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def require_style_loop(env: dict[str, str] | None = None) -> dict[str, Any]:
+    """The live style loop run this process is inside (its marker); raises NotInStyleLoop otherwise."""
+    env = os.environ if env is None else env
+    where = (env.get(STYLE_LOOP_VAR) or "").strip()
+
+    def refuse(why: str) -> NotInStyleLoop:
+        return NotInStyleLoop(
+            f"generate runs only inside a style loop run ({why}). Every asset is made through the style loop: "
+            f"{LOOP_COMMAND} (tasks/README.md, \"The style loop\"). Nothing was sent to PixelLab."
+        )
+
+    if not where:
+        raise refuse(f"{STYLE_LOOP_VAR} is not set")
+    try:
+        marker = json.loads(Path(where).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        raise refuse(f"its run marker {where} is gone or unreadable: the run has ended") from None
+    try:
+        pid = int(marker.get("pid")) if isinstance(marker, dict) else 0
+    except (TypeError, ValueError):
+        pid = 0
+    if not pid or not marker.get("run"):
+        raise refuse(f"its run marker {where} names no run")
+    if not pid_alive(pid):
+        raise refuse(f"the run in {where} (process {pid}) is no longer running")
+    return marker
 
 
 # ---------------------------------------------------------------- token ----
@@ -414,7 +487,8 @@ def generate(
     poll_kwargs: dict[str, Any] | None = None,
     echo: Callable[[str], None] = print,
 ) -> dict[str, Any]:
-    """Make exactly one generation call, save PNG + record. No retries."""
+    """Make exactly one generation call, save PNG + record. No retries. Only inside a live style loop run."""
+    loop_run = require_style_loop()
     if endpoint not in ENDPOINTS:
         raise PixelLabError(f"Unknown endpoint {endpoint}. Known: {', '.join(sorted(ENDPOINTS))}")
     if not consulted:
@@ -434,7 +508,7 @@ def generate(
         poll_kwargs["timeout"] = spec["poll_timeout"]
     log_entry: dict[str, Any] = {
         "time": now_iso(), "endpoint": endpoint, "name": name, "out_dir": str(out_dir).replace("\\", "/"),
-        "task": task, "prompt": params.get("description"),
+        "task": task, "prompt": params.get("description"), "style_loop_run": loop_run.get("run"),
     }
     job_id: str | None = None
     ids: dict[str, Any] = {}
@@ -549,7 +623,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="PixelLab client for the Asset Generation Agent.")
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("balance", help="Show the account balance (free).")
-    g = sub.add_parser("generate", help="Make ONE paid generation call and save PNG + record.")
+    g = sub.add_parser("generate", help="Make ONE paid generation call and save PNG + record "
+                                        "(only inside a style loop run: tools/style_loop/run.py).")
     g.add_argument("--endpoint", required=True, type=normalize_endpoint, choices=sorted(ENDPOINTS),
                    help="e.g. create-image-pixflux (leading slash optional; Git Bash mangles a leading slash).")
     src = g.add_mutually_exclusive_group(required=True)
@@ -564,6 +639,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
+        if args.cmd == "generate":
+            require_style_loop()   # T-292: refused before the token is read or anything is sent
         token = load_token()
         http = Http(token)
         if args.cmd == "balance":

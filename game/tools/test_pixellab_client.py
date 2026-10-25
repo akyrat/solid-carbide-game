@@ -4,13 +4,18 @@ Run from the repo root:  python -m unittest discover -s game/tools -p "test_*.py
 """
 
 import base64
+import contextlib
+import io
 import json
+import os
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
 import zlib
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pixellab_client as pc  # noqa: E402
@@ -158,11 +163,109 @@ class PollTests(unittest.TestCase):
             pc.poll_job(http, "j", clock=clock, sleep=clock.sleep)
 
 
+@contextlib.contextmanager
+def live_loop(folder: Path, pid: int | None = None):
+    """A style loop run marker in `folder`, named in the environment, as tools/style_loop/loop.live_run writes
+    it (that writer is tested end to end in tools/style_loop/test_loop.py)."""
+    marker = folder / "style-loop-run.json"
+    marker.write_text(json.dumps({"run": "test-run", "pid": os.getpid() if pid is None else pid,
+                                  "task": "T-TEST", "kind": "art"}), encoding="utf-8")
+    with mock.patch.dict(os.environ, {pc.STYLE_LOOP_VAR: str(marker)}):
+        yield marker
+
+
+def dead_pid() -> int:
+    """The id of a process that has already ended."""
+    proc = subprocess.Popen([sys.executable, "-c", "pass"])
+    proc.wait()
+    return proc.pid
+
+
+class StyleLoopGateTests(unittest.TestCase):
+    """T-292: generate runs only inside a live style loop run; balance anywhere. HTTP is faked: nothing is charged."""
+
+    ARGS = ["generate", "--endpoint", "create-image-pixflux", "--params", '{"description": "a car"}',
+            "--name", "car", "--consulted", "docs/visual-style.md", "--task", "T-TEST"]
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+        self.addCleanup(self.tmp.cleanup)
+        env = {k: v for k, v in os.environ.items() if k != pc.STYLE_LOOP_VAR}
+        self.enterContext(mock.patch.dict(os.environ, env, clear=True))
+        self.http = FakeHttp([(200, {"image": {"base64": png_b64(8, 8)}, "usage": {"usd": 0.01}})])
+        self.enterContext(mock.patch.object(pc, "Http", lambda token: self.http))
+        self.enterContext(mock.patch.object(pc, "load_token", lambda: TOKEN))
+
+    def cli(self, *extra):
+        argv = self.ARGS + ["--out-dir", str(self.dir / "out"), "--log", str(self.dir / "log.jsonl")] + list(extra)
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = pc.main(argv)
+        return code, out.getvalue(), err.getvalue()
+
+    def assert_refused(self, why):
+        code, _, err = self.cli()
+        self.assertEqual(code, 1)
+        self.assertIn("tools/style_loop/run.py", err)
+        self.assertIn(why, err)
+        self.assertEqual(self.http.calls, [], "nothing is sent to PixelLab")
+        self.assertFalse((self.dir / "out").exists())
+        self.assertFalse((self.dir / "log.jsonl").exists(), "a refused call is not a generation call")
+
+    def test_generate_outside_a_loop_is_refused_before_any_request(self):
+        self.assert_refused(f"{pc.STYLE_LOOP_VAR} is not set")
+
+    def test_a_missing_marker_is_refused(self):
+        with mock.patch.dict(os.environ, {pc.STYLE_LOOP_VAR: str(self.dir / "gone.json")}):
+            self.assert_refused("the run has ended")
+
+    def test_a_marker_whose_run_has_ended_is_refused(self):
+        with live_loop(self.dir, pid=dead_pid()):
+            self.assert_refused("is no longer running")
+
+    def test_a_marker_without_a_run_is_refused(self):
+        (self.dir / "bad.json").write_text("{}", encoding="utf-8")
+        with mock.patch.dict(os.environ, {pc.STYLE_LOOP_VAR: str(self.dir / "bad.json")}):
+            self.assert_refused("names no run")
+
+    def test_generate_inside_a_live_loop_reaches_the_http_layer(self):
+        with live_loop(self.dir):
+            code, out, err = self.cli()
+        self.assertEqual(code, 0, err)
+        self.assertEqual([c[:2] for c in self.http.calls], [("POST", "/create-image-pixflux")])
+        self.assertTrue((self.dir / "out" / "car.png").is_file())
+        log = json.loads((self.dir / "log.jsonl").read_text(encoding="utf-8"))
+        self.assertEqual(log["style_loop_run"], "test-run")
+
+    def test_the_library_call_is_gated_too(self):
+        with self.assertRaises(pc.NotInStyleLoop):
+            pc.generate(self.http, endpoint="/create-image-pixflux", params={"description": "x"},
+                        out_dir=self.dir / "out", name="x", consulted=["x"], task=None,
+                        log_path=self.dir / "log.jsonl", echo=lambda s: None)
+        self.assertEqual(self.http.calls, [])
+
+    def test_balance_works_outside_a_loop(self):
+        self.http.responses = [(200, {"usd": 5})]
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(pc.main(["balance"]), 0)
+        self.assertEqual(self.http.calls, [("GET", "/balance", None)])
+
+    def test_pid_alive(self):
+        self.assertTrue(pc.pid_alive(os.getpid()))
+        self.assertFalse(pc.pid_alive(dead_pid()))
+        self.assertFalse(pc.pid_alive(0))
+
+
 class GenerateTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.dir = Path(self.tmp.name)
         self.log = self.dir / "log.jsonl"
+        loop = live_loop(self.dir)   # T-292: these tests run inside a live style loop run
+        loop.__enter__()
+        self.addCleanup(loop.__exit__, None, None, None)
 
     def tearDown(self):
         self.tmp.cleanup()

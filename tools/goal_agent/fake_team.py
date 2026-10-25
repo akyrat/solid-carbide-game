@@ -3,7 +3,9 @@
 FakeTeam is a FakeClaude (answers by step name, in order, from a fixture) that also does what a headless
 session would do in its folder, so layer 3 and 4 run for real on git without calling Claude:
 - step "agent": writes the files in the answer's "_files" ({path: text}) and "_art" lines in the PixelLab
-  generation log, writes its summary into the task file's result notes, and commits in the folder;
+  generation log, writes its summary into the task file's result notes, and commits in the folder; on an art or
+  narrative ticket it also writes one style loop round in `## Style review`, as the loop would, so the status
+  script lets it go to QA (T-292; "_no_style_review": true leaves it out);
 - step "qa": marks every acceptance criterion "(QA: pass)" or "(QA: fail, ...)" ("_marks": pass or fail,
   default pass) and commits the task file;
 - step "gaps": a ticket named "title:<ticket title>" in an answer is replaced by that ticket's id, so a
@@ -15,7 +17,8 @@ import re
 import subprocess
 from pathlib import Path
 
-from task_status import add_note
+from task_status import STYLE_EPICS, add_note, set_section
+from taskboard_sync import parse_header
 from goal_agent.claude_call import FakeClaude
 from goal_agent.build import ART_LOG
 
@@ -57,6 +60,8 @@ class FakeTeam(FakeClaude):
             with log.open("a", encoding="utf-8", newline="\n") as f:
                 f.write(json.dumps({"file": f"fake_{path.name[:5]}_{i}.png", "fake": True}) + "\n")
         text = path.read_bytes().decode("utf-8")
+        if parse_header(text).get("epic") in STYLE_EPICS and not data.get("_no_style_review"):
+            text = set_section(text, "Style review", "Fake style loop run.\n\n### Round 1\n\n- Score: 9/10")
         path.write_bytes(add_note(text, f"Fake agent: {data.get('summary', '')}").encode("utf-8"))
         git(folder, "add", "-A")
         git(folder, "commit", "-q", "-m", f"{path.name[:5]}: fake agent work")

@@ -463,6 +463,15 @@ class ArtCap(GoalRepo):
                          gaps(named("S2", "in-flight", "Art one", "Art two"))],
                 "agent": [agent(), agent("Generated the art.", art=2)], "qa": [qa(), qa()]}
 
+    def test_an_art_ticket_without_a_style_review_never_reaches_qa(self):
+        """T-292: the status script refuses the in-qa move, so the run pauses on the refused command."""
+        f = self.fixture()
+        f["agent"][1]["_no_style_review"] = True
+        b = self.planned(f, art_cap=5)
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "command", "style loop", "tools/style_loop/run.py art --task T-002")
+        self.assertEqual(self.status("T-002"), "in-progress")
+
     def test_art_used_counts_the_new_log_lines_and_the_cap_blocks_the_next_art_ticket(self):
         log = self.root / build.ART_LOG
         log.parent.mkdir(parents=True, exist_ok=True)

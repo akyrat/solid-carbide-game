@@ -283,6 +283,11 @@ SCREENSHOTS_RULE = ("End with screenshots, as tasks/README.md, \"Screenshots\" s
                     "the data by a script when nothing is on screen yet (a map of a layout, a side view of a motion, a "
                     "plot of a curve); none only for tooling, docs or text-only work, saying so in one line.")
 
+STYLE_LOOP_RULE = ("Every asset and every piece of player-facing text is made through the style loop (tasks/README.md, "
+                   "\"The style loop\"): python tools/style_loop/run.py art|text --task <ticket id> --brief <file> ...; "
+                   "it writes the ticket's \"## Style review\". PixelLab generates only inside a loop run, and an art "
+                   "or narrative ticket goes to QA only with a Style review (T-292).")
+
 QA_SCREENSHOTS_RULE = ("Check the screenshots rule (tasks/README.md, \"Screenshots\") as part of the ticket: a ticket whose "
                        "work could be pictured (on screen or drawn from its data) and has no screenshots in "
                        "art-archive/<ticket id>/screenshots/ fails, whatever its criteria say.")
@@ -299,8 +304,8 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - {EDIT_TICKETS_RULE}
 - {SCREENSHOTS_RULE}
-- PixelLab: this goal has {art_left(b)} generations left under its art cap. Never go over it; one round per
-  task, no regenerations.
+- {STYLE_LOOP_RULE} PixelLab: this goal has {art_left(b)} generations left under its art cap; never go over it
+  (one loop run can use up to 4).
 - If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip it
   and carry on; list it in refusals, and in your result notes. Set blocked to true only when the refused action was
   essential and you can't finish the task without it; then stop.{pre_approved_note(b.root)}
