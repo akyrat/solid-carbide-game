@@ -1,7 +1,7 @@
 ---
 id: T-286
 title: "A weapon visibly grows, animated, when a size upgrade is picked"
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -67,6 +67,10 @@ Grow built: wiper, underglow and flame grow to their new size in 0.4 s with a sm
 
 QA passed all 3. In the game build now: pick a size card for the wiper, underglow or flame and watch it grow.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -80,3 +84,4 @@ Written by the agent when it finishes.
 - **GIFs (frames looked at through contact sheets):** `art-archive/T-286/screenshots/wiper_grow.gif` (tier 2 at 1 s, tier 6 at 3 s; the blade visibly lengthens, though thin), `underglow_grow.gif` (tiers 2 and 5; the ring swells, small pop visible), `flamethrower_grow.gif` (drifting circle, tiers 2 and 4; the flame is bigger after each, less obvious because the drift ramp also moves its size). Fixture: `game/tests/fixtures/weapons/size_grow_demo.tscn`, picked by the environment variable `SIZE_GROW_WEAPON`.
 - **Open point for the playtest:** the underglow rebuilds its pixel image on each radius change, so during the 0.4 s grow it rebuilds about 20 images; not noticed in the recording, but worth watching on a slow computer.
 - **Refusals:** one hook refusal of `which ffmpeg` (not needed; I used Pillow). I also ran two small edits as inline Python by mistake against the instruction to use Edit; they were applied and checked with git diff.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
