@@ -12,17 +12,16 @@ Each round goes into the task's `## Style review` section (the task file where i
 its branch is open). A run that stays below 8 after 3 refines flags the task (task_status.py).
 
 --fake FIXTURE answers from a JSON fixture with FakeClaude instead of calling Claude ({"generate": [...],
-"refine": [...], "evaluate": [...]}, fixtures/). It never touches the real task: it works on a copy of the task
-file in a new temporary folder (with its own task status record), where the archive and --out go too; the
-folder's path is printed first and kept, so the result can be opened.
+"refine": [...], "evaluate": [...]}, fixtures/). It never touches the real task: it works in task_status.sandbox,
+a copy of the task in a new temporary folder (with its own task status record), where the archive and --out go
+too; the folder's path is printed first and kept, so the result can be opened. Only task_status.py finds and
+writes the ticket (board, 2026-10-25).
 Exit codes: 0 kept at 8 or more, 1 kept below 8 (flagged), stopped or refused, 2 usage error.
 """
 
 import argparse
 import contextlib
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))   # tools/, for style_loop and goal_agent
@@ -33,23 +32,6 @@ from goal_agent.claude_call import FakeClaude, Pause, RealClaude  # noqa: E402
 from style_loop import loop  # noqa: E402
 
 style_rules = loop.style_rules
-
-
-@contextlib.contextmanager
-def sandbox(task_path):
-    """A temporary folder with a copy of the task file, standing in for the repo: the status script and its
-    guard record work there (as in test_task_status.py), so a fake run never changes a real task."""
-    base = Path(tempfile.mkdtemp(prefix="style-loop-fake-"))
-    (base / "tasks").mkdir()
-    shutil.copyfile(task_path, base / "tasks" / task_path.name)
-    saved = (tb.TASKS_DIR, tb.STATE_DIR, ts.LOG, tb.task_folders)
-    tb.TASKS_DIR, tb.STATE_DIR = base / "tasks", base / ".board"
-    ts.LOG = tb.STATE_DIR / "moves.log"
-    tb.task_folders = lambda root=None: {}
-    try:
-        yield base
-    finally:
-        tb.TASKS_DIR, tb.STATE_DIR, ts.LOG, tb.task_folders = saved
 
 
 def parser():
@@ -76,20 +58,19 @@ def main(argv=None, claude=None):
     tb.utf8_output()
     args = parser().parse_args(argv)
     try:
-        task_path, _ = ts.find(args.task)
+        ts.find(args.task)
         brief_path = Path(args.brief)
         brief = brief_path.read_text(encoding="utf-8")
     except (ts.Refused, OSError) as e:
         print(f"Refused. {e}", file=sys.stderr)
         return 2
-    with (sandbox(task_path) if args.fake else contextlib.nullcontext()) as base:
+    with (ts.sandbox(args.task) if args.fake else contextlib.nullcontext()) as base:
         if base:
             print(f"Fake run on a copy of {args.task}: {base}")
-            task_path = base / "tasks" / task_path.name
         out = Path(args.out) if args.out else None
         if base and out:
             out = base / "out" / out.name
-        spec = loop.Spec(kind=args.kind, task=args.task, task_file=task_path, root=task_path.parent.parent,
+        spec = loop.Spec(kind=args.kind, task=args.task, root=ts.task_checkout(args.task),
                          brief=brief, brief_name=brief_path.as_posix(), out=out,
                          text_kind=getattr(args, "text_kind", None), size=getattr(args, "size", None),
                          frames=getattr(args, "frames", 0), redgull=getattr(args, "redgull", False),
@@ -108,7 +89,7 @@ def main(argv=None, claude=None):
         print(f"Kept version {kept.n}, score {kept.score}/10: {loop.show_version(spec, kept.version)}")
         if kept.score < loop.PASS:
             print(f"Below {loop.PASS} after {loop.MAX_REFINES} refines: {args.task} is flagged for the board's review.")
-        print(f"Style review written in {task_path}")
+        print(f"Style review written in {ts.find(args.task)[0]}")
         return 0 if kept.score >= loop.PASS else 1
 
 

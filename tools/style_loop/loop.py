@@ -7,7 +7,8 @@
 4. Stop: at PASS or more; or after MAX_REFINES refines, the best-scoring version is kept (the earliest on a tie)
    and the task is flagged for the board's review through task_status.py.
 
-Every round is written into the task's `## Style review` section as it ends (task_status.set_section), and the
+Every round is written into the task's `## Style review` section as it ends, by task_status.write_section (only
+the status script finds and writes tickets: board, 2026-10-25), and the
 last line says which version was kept. Every art version is saved in art-archive/<task id>/style-loop/ and never
 overwritten; the kept one is copied to the brief's output file. `claude` is a RealClaude or a FakeClaude
 (tools/goal_agent/claude_call.py), the only way this tool calls Claude.
@@ -52,9 +53,8 @@ SCORE_SCHEMA = {"type": "object", "required": ["score", "reason", "rules_broken"
 class Spec:
     """One run: what is made, for which task, from which brief, and the script checks' options."""
     kind: str                      # "art" or "text"
-    task: str                      # T-NNN
-    task_file: Path                # the task file the record goes into
-    root: Path                     # the checkout the agents work in; art-archive/ is here
+    task: str                      # T-NNN; its ticket is found and written only by task_status.py
+    root: Path                     # the checkout the agents work in (task_status.task_checkout); art-archive/ is here
     brief: str                     # the brief's text
     brief_name: str = ""           # where the brief came from, for the record
     out: Path = None               # where the kept version goes (art: required; text: optional)
@@ -268,5 +268,4 @@ def record(spec, rounds, kept=None):
 
 
 def write_record(spec, rounds, kept=None):
-    text = spec.task_file.read_bytes().decode("utf-8")
-    ts.write(spec.task_file, ts.set_section(text, "Style review", record(spec, rounds, kept)))
+    return ts.write_section(spec.task, "Style review", record(spec, rounds, kept))

@@ -26,9 +26,12 @@ A task whose branch is open is changed in its branch folder (tasks/README.md, "G
 Exit codes: 0 moved, claimed (or shown), 1 move or claim refused (the reason is printed), 2 usage error.
 """
 
+import contextlib
 import json
 import re
+import shutil
 import sys
+import tempfile
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -37,6 +40,7 @@ import taskboard_sync as tb  # noqa: E402
 import guard_ledger as gl  # noqa: E402
 
 LOG = tb.STATE_DIR / "moves.log"
+TASKS_FOLDER = tb.TASKS_DIR.name
 CRITERIA_RE = re.compile(r"^## Acceptance criteria[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
 CRITERION_RE = re.compile(r"^\s*- \[[ xX]\] .*$", re.M)
 # "(QA: pass)", or with a note: "(QA: pass; 850/850)", "(QA: pass. reason)" (T-215); never "(QA: pass / fail)"
@@ -273,6 +277,47 @@ def set_section(text, heading, body):
 
 def write(path, text):
     path.write_bytes(text.encode("utf-8"))
+
+
+def write_section(task_id, heading, body, folders=None):
+    """Sets the body of a task's `## <heading>` (set_section), in the task file found by its id where it lives
+    (its task folder while its branch is open); returns the file's path. It never touches the header. The style
+    loop writes its `## Style review` through it, so only this script writes tickets (board, 2026-10-25, T-291)."""
+    path, _ = find(task_id, folders)
+    write(path, set_section(path.read_bytes().decode("utf-8"), heading, body))
+    return path
+
+
+def task_checkout(task_id, folders=None):
+    """The checkout a task's file lives in: its task folder while its branch is open, else the main checkout."""
+    return find(task_id, folders)[0].parent.parent
+
+
+@contextlib.contextmanager
+def sandbox(task_id=None, text=None, keep=True):
+    """A new temporary folder standing in for the repo, for fake runs and tests (T-291): it holds a copy of the
+    task's file (`task_id`), or a new task file with `text`, and this script (find, move, write_section, its
+    moves log and its guard record) works there until the block ends, so the real tickets are never changed.
+    Yields the folder, which is kept afterwards unless keep=False."""
+    global LOG
+    source = find(task_id)[0] if task_id else None
+    base = Path(tempfile.mkdtemp(prefix="task-sandbox-"))
+    folder = base / TASKS_FOLDER
+    folder.mkdir()
+    if source:
+        shutil.copyfile(source, folder / source.name)
+    if text is not None:
+        (folder / f"{tb.parse_header(text)['id']}-sandbox.md").write_bytes(text.encode("utf-8"))
+    saved = (tb.TASKS_DIR, tb.STATE_DIR, LOG, tb.task_folders)
+    tb.TASKS_DIR, tb.STATE_DIR = folder, base / ".board"
+    LOG = tb.STATE_DIR / "moves.log"
+    tb.task_folders = lambda root=None: {}
+    try:
+        yield base
+    finally:
+        tb.TASKS_DIR, tb.STATE_DIR, LOG, tb.task_folders = saved
+        if not keep:
+            shutil.rmtree(base, ignore_errors=True)
 
 
 def guard_check(task_id, path, text, folders):

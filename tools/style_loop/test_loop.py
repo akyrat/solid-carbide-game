@@ -1,6 +1,6 @@
-"""Tests for the style loop (T-291): loop.py, run.py, and the two helpers it added to task_status.py
-(set_section, and the style loop's in-progress → flagged-for-review move). FakeClaude only: nothing calls Claude
-or PixelLab. Each test works on a temporary tasks folder, as test_task_status.py does.
+"""Tests for the style loop (T-291): loop.py and run.py. FakeClaude only: nothing calls Claude or PixelLab.
+Each test works in task_status.sandbox, so only the status script finds and writes the test's ticket (its
+helpers, write_section and the style loop's flag, are tested in tools/test_task_status.py).
 
   python -m unittest discover -s tools -p "test_*.py"
 """
@@ -8,7 +8,6 @@ or PixelLab. Each test works on a temporary tasks folder, as test_task_status.py
 import contextlib
 import io
 import json
-import shutil
 import struct
 import sys
 import tempfile
@@ -83,30 +82,25 @@ def evaluation(score, reason="r", rules=()):
 
 class Base(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
-        tasks = self.root / "tasks"
-        tasks.mkdir()
-        self.task = tasks / "T-901-a-text-task.md"
-        self.task.write_bytes(TASK.encode("utf-8"))
-        saved = (tb.TASKS_DIR, tb.STATE_DIR, ts.LOG, tb.task_folders)
-        tb.TASKS_DIR, tb.STATE_DIR = tasks, self.root / ".board"
-        ts.LOG = tb.STATE_DIR / "moves.log"
-        tb.task_folders = lambda root=None: {}
-        self.addCleanup(self.restore, saved)
-
-    @staticmethod
-    def restore(saved):
-        tb.TASKS_DIR, tb.STATE_DIR, ts.LOG, tb.task_folders = saved
+        # the status script's own sandbox holds the test's task; only task_status.py finds and writes it
+        self.root = self.enterContext(ts.sandbox(text=TASK, keep=False))
+        saved = tempfile.tempdir
+        tempfile.tempdir = str(self.root)   # a fake run's own sandbox goes inside this one, and goes with it
+        self.addCleanup(setattr, tempfile, "tempdir", saved)
 
     def spec(self, kind="text", **kw):
         kw.setdefault("text_kind", "popup" if kind == "text" else None)
-        return loop.Spec(kind=kind, task="T-901", task_file=self.task, root=self.root, brief="A combo popup.",
+        return loop.Spec(kind=kind, task="T-901", root=ts.task_checkout("T-901"), brief="A combo popup.",
                          brief_name="brief.md", **kw)
 
+    def ticket(self):
+        return ts.find("T-901")[0]
+
+    def status(self):
+        return ts.header(self.ticket()).get("status")
+
     def text(self):
-        return self.task.read_text(encoding="utf-8")
+        return self.ticket().read_text(encoding="utf-8")
 
     def section(self):
         text = self.text()
@@ -124,7 +118,7 @@ class TextLoop(Base):
         self.assertEqual([r.score for r in rounds], [4, 6, 9])
         self.assertEqual([c[0] for c in claude.calls],
                          ["generate", "evaluate", "refine", "evaluate", "refine", "evaluate"])
-        self.assertEqual(ts.header(self.task)["status"], "in-progress", "a kept version at 8 flags nothing")
+        self.assertEqual(self.status(), "in-progress", "a kept version at 8 flags nothing")
 
     def test_the_style_review_has_every_round_with_its_parts(self):
         loop.run(FakeClaude(FIXTURES / "text-4-6-9.json"), self.spec())
@@ -176,7 +170,7 @@ class TextLoop(Base):
         self.assertEqual([r.score for r in rounds], [5, 7, 6, 4])
         self.assertEqual(len([c for c in claude.calls if c[0] == "refine"]), 3)
         self.assertEqual((kept.n, kept.score), (2, 7))
-        self.assertEqual(ts.header(self.task)["status"], "flagged-for-review")
+        self.assertEqual(self.status(), "flagged-for-review")
         self.assertIn("in-progress → flagged-for-review: the style loop kept version 2", self.text())
         log = [json.loads(l) for l in ts.LOG.read_text(encoding="utf-8").splitlines()]
         self.assertEqual((log[-1]["from"], log[-1]["to"], log[-1]["by"]), ("in-progress", "flagged-for-review", "style-loop"))
@@ -299,65 +293,37 @@ class ArtLoop(Base):
             loop.run(FakeClaude({"generate": [{"file": "nowhere.png", "changed": ""}]}), self.spec("art"))
 
 
-class StatusScript(Base):
-    def test_set_section_replaces_a_section_or_adds_it_before_result_notes(self):
-        text = ts.set_section(TASK, "Style review", "new body")
-        self.assertIn("## Style review\n\nnew body\n\n## Result notes", text)
-        self.assertEqual(text.count("## Style review"), 1)
-        without = TASK.replace("## Style review\n\nOnly for art and text tasks: one entry per round of the style loop, "
-                               "written by the loop's tool.\n\n", "")
-        added = ts.set_section(without, "Style review", "body")
-        self.assertIn("## Style review\n\nbody\n\n## Result notes", added)
-        self.assertLess(added.index("## Updates"), added.index("## Style review"))
-        self.assertEqual(ts.set_section(added, "Style review", "body"), added, "the same body twice changes nothing")
-
-    def test_set_section_keeps_crlf_and_the_header(self):
-        crlf = TASK.replace("\n", "\r\n")
-        text = ts.set_section(crlf, "Style review", "a\nb")
-        self.assertNotIn("\n", text.replace("\r\n", ""))
-        self.assertTrue(text.startswith(crlf.split("## Description")[0]))
-
-    def test_set_section_at_the_end_of_a_file(self):
-        self.assertTrue(ts.set_section("# T\n\n## Style review\n\nold\n", "Style review", "new").endswith(
-            "## Style review\n\nnew\n"))
-        self.assertTrue(ts.set_section("# T\n", "Style review", "new").endswith("# T\n\n## Style review\n\nnew\n"))
-
-    def test_only_the_style_loop_flags_an_in_progress_task(self):
-        with self.assertRaises(ts.Refused):
-            ts.move("T-901", "flagged-for-review")
-        ts.move("T-901", "flagged-for-review", note="n", by="style-loop")
-        self.assertEqual(ts.header(self.task)["status"], "flagged-for-review")
-
-
 class CommandLine(Base):
     def cli(self, *argv):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             code = run.main(list(argv))
-        text = out.getvalue() + err.getvalue()
-        if text.startswith("Fake run on a copy of"):
-            self.addCleanup(shutil.rmtree, text.split(": ", 1)[1].splitlines()[0], True)
-        return code, text
+        return code, out.getvalue() + err.getvalue()
+
+    @staticmethod
+    def copy_of_ticket(out):
+        """The ticket in the fake run's own sandbox, whose folder the run prints first."""
+        base = Path(out.split(": ", 1)[1].splitlines()[0])
+        return next((base / ts.TASKS_FOLDER).iterdir())
 
     def test_a_fake_text_run_goes_end_to_end_on_a_copy_of_the_task(self):
+        ticket = self.ticket()
         code, out = self.cli("text", "--task", "T-901", "--brief", str(FIXTURES / "sample-brief.md"),
                              "--kind", "popup", "--fake", str(FIXTURES / "text-4-6-9.json"))
         self.assertEqual(code, 0, out)
         self.assertIn("Round 3: score 9/10", out)
         self.assertIn('Kept version 3, score 9/10: "SAMPLE COMBO!"', out)
         self.assertEqual(self.text(), TASK, "a fake run never changes the real task")
-        copy = Path(out.split(": ", 1)[1].splitlines()[0]) / "tasks" / self.task.name
-        self.assertIn("### Round 3", copy.read_text(encoding="utf-8"))
-        self.assertEqual(tb.TASKS_DIR, self.task.parent, "the sandbox puts the paths back")
+        self.assertIn("### Round 3", self.copy_of_ticket(out).read_text(encoding="utf-8"))
+        self.assertEqual(self.ticket(), ticket, "the fake run's sandbox puts the status script's paths back")
 
     def test_a_fake_run_below_8_flags_only_the_copy(self):
         code, out = self.cli("text", "--task", "T-901", "--brief", str(FIXTURES / "sample-brief.md"),
                              "--kind", "popup", "--fake", str(FIXTURES / "text-never-8.json"))
         self.assertEqual(code, 1, out)
         self.assertIn("flagged for the board's review", out)
-        copy = Path(out.split(": ", 1)[1].splitlines()[0]) / "tasks" / self.task.name
-        self.assertEqual(ts.header(copy)["status"], "flagged-for-review")
-        self.assertEqual(ts.header(self.task)["status"], "in-progress")
+        self.assertEqual(ts.header(self.copy_of_ticket(out)).get("status"), "flagged-for-review")
+        self.assertEqual(self.status(), "in-progress")
 
     def test_a_fake_art_run_archives_in_the_copy(self):
         made = self.root / "made.png"
