@@ -1,7 +1,7 @@
 ---
 id: T-266
 title: The windshield wiper pushes minions about twice the car's length
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Coursework
@@ -60,6 +60,10 @@ Wiper push built: 6 units at tier 1, 9 at the last tier (data only). The tier 5 
 
 QA passed all 3. Ready to play in the game build: wiper pushes 6, last tier 9.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Done (Game Data Agent).
@@ -71,3 +75,4 @@ Done (Game Data Agent).
 - Docs: `docs/weapons.md` (Content numbers, built-wiper knockback line) and `game/README.md` updated. The long GDD was not regenerated (the Project Lead's merge step does it).
 - Screenshots: `art-archive/T-266/screenshots/wiper_push_tier1.gif` (tier 1, minions flung from the arm; the recording log showed each hit minion moving about 5.2 units in 0.3 s, i.e. 6 minus the walk back towards the car) and `wiper_push_frames.png` (contact sheet I looked at: the arm sweeps and minions end up scattered several car lengths out). Recording fixture: `game/tests/fixtures/weapons/wiper_push_gif_demo.tscn`.
 - Refusals: one hook refusal (a Godot recording command chained after rm/mkdir); I reran the Godot part on its own, as the hook said. No other.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
