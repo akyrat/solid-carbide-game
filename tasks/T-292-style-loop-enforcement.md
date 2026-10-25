@@ -1,7 +1,7 @@
 ---
 id: T-292
 title: "Enforce the style loop: no PixelLab call and no art or text ticket to QA without it"
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, game/tools/pixellab_client.py, tools/task_status.py, tools/style_loop/run.py, tools/goal_agent/build.py]
 files_expected_to_change: [game/tools/pixellab_client.py, game/tools/test_pixellab_client.py, tools/task_status.py, tools/test_task_status.py, tools/goal_agent/build.py, tools/goal_agent/test_build.py, tasks/README.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Started: enforce the style loop. PixelLab generates only inside a loop run, and 
 ### 2026-10-25, In progress → In QA
 
 Built: PixelLab generates only inside a live style loop run, and art or narrative tickets can't reach QA without Style review rounds. Tests 485 / 417 / GUT 1419 pass. Now with QA.
+
+### 2026-10-25, In QA → Done
+
+QA passed all 6 criteria. Merged to master: the style loop is now enforced for PixelLab and for art and text tickets.
 
 ## Result notes
 
