@@ -1,7 +1,7 @@
 ---
 id: T-267
 title: A smaller exhaust flame, drawn behind the car and enemies, that burns whatever touches it
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/data/weapons.json, game/README.md, tasks/T-042-exhaust-flamethrower.md, tasks/T-071-weapon-effects-art.md]
 files_expected_to_change: [game/data/weapons.json, game/scripts/weapons/, game/scenes/weapons/, game/tests/, docs/weapons.md, game/README.md, art-archive/T-267/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Started at the board's request: a smaller flame, drawn behind, that burns whatev
 ### 2026-10-22, In progress → In QA
 
 Built: the flame is a quarter size at tier 1, drawn behind the car and enemies, and its hit area is the drawn flame itself. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the game build: drift through minions with the flamethrower at its first level.
 
 ## Result notes
 
