@@ -1,7 +1,7 @@
 ---
 id: T-291
 title: "The style loop: generate, evaluate with a score and a reason, refine below 8"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -54,14 +54,14 @@ Every art version is kept in `art-archive/<task id>/style-loop/` (never deleted)
 
 ## Acceptance criteria
 
-- [ ] `python tools/style_loop/run.py art --task T-NNN --brief <file> --out <png>` and `python tools/style_loop/run.py text --task T-NNN --brief <file>` exist and run the four steps above; the generator and refiner are the same agent session (resumed), and the evaluator is the `style-evaluator` agent. (QA: pass / fail)
-- [ ] The tool calls Claude only through `tools/goal_agent/claude_call.py` (`grep -rn "claude -p\|subprocess" tools/style_loop/` shows no other call to Claude). (QA: pass / fail)
-- [ ] With a fake fixture where versions score 4, 6 and 9, the run stops after the third version, keeps it, and the task's `## Style review` section has three rounds, each with the version, the script checks, the score, the reason, and (rounds 2 and 3) what changed. Shown by a unit test on a temporary copy of a task file. (QA: pass / fail)
-- [ ] With a fake fixture that never reaches 8, the run stops after 3 refines (4 versions), keeps the best-scoring one, and the task is set to `flagged-for-review` through `task_status.py`. Shown by a unit test. (QA: pass / fail)
-- [ ] Every art version of a run is saved in `art-archive/<task id>/style-loop/`, none deleted. Shown by a unit test. (QA: pass / fail)
-- [ ] `python tools/style_loop/run.py text --task T-NNN --brief <file> --fake <fixture>` runs end to end without Claude, and the fixture is committed. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
-- [ ] `tasks/README.md`, "The style loop", gives the commands, and `docs/README.md` lists the tool with the other tools. (QA: pass / fail)
+- [x] `python tools/style_loop/run.py art --task T-NNN --brief <file> --out <png>` and `python tools/style_loop/run.py text --task T-NNN --brief <file>` exist and run the four steps above; the generator and refiner are the same agent session (resumed), and the evaluator is the `style-evaluator` agent. (QA: pass; run.py art/text exist, loop resumes the same generator session, evaluator is style-evaluator (test_the_generator_is_one_session_resumed_and_the_evaluator_is_the_style_evaluator))
+- [x] The tool calls Claude only through `tools/goal_agent/claude_call.py` (`grep -rn "claude -p\|subprocess" tools/style_loop/` shows no other call to Claude). (QA: pass; grep for claude -p / subprocess in tools/style_loop finds nothing, calls go through claude_call)
+- [x] With a fake fixture where versions score 4, 6 and 9, the run stops after the third version, keeps it, and the task's `## Style review` section has three rounds, each with the version, the script checks, the score, the reason, and (rounds 2 and 3) what changed. Shown by a unit test on a temporary copy of a task file. (QA: pass; test_scores_4_6_9 and test_the_style_review_has_every_round_with_its_parts pass on a sandbox copy)
+- [x] With a fake fixture that never reaches 8, the run stops after 3 refines (4 versions), keeps the best-scoring one, and the task is set to `flagged-for-review` through `task_status.py`. Shown by a unit test. (QA: pass; test_never_reaching_8_keeps_the_best_of_4_versions_and_flags_the_task passes)
+- [x] Every art version of a run is saved in `art-archive/<task id>/style-loop/`, none deleted. Shown by a unit test. (QA: pass; test_every_art_version_is_saved_in_the_archive_and_the_kept_one_goes_to_out and test_an_earlier_run_is_never_overwritten pass)
+- [x] `python tools/style_loop/run.py text --task T-NNN --brief <file> --fake <fixture>` runs end to end without Claude, and the fixture is committed. (QA: pass; fake command ran end to end (4, 6, 9, kept version 3), fixtures committed, real ticket's Style review stays empty)
+- [x] All three test sets pass. (QA: pass; tools 478 OK, game/tools 409 OK (1 skipped), GUT 1419/1419)
+- [x] `tasks/README.md`, "The style loop", gives the commands, and `docs/README.md` lists the tool with the other tools. (QA: pass; tasks/README.md 'The style loop' lists the commands and docs/README.md lists the tool)
 
 ## Updates
 
@@ -70,6 +70,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-25, Open → In progress
 
 Started: the style loop tool (generate, evaluate with a score and reason, refine below 8, at most 3 refines, every round written in the ticket). Opus agent in C:\solid-carbide-worktrees\T-291.
+
+### 2026-10-25, In progress → In QA
+
+Built and reworked: the loop runs end to end in fake mode from the shell; it writes the ticket only through the status script, and the guard is unchanged. Tests 478 / 409 / GUT 1419 pass. Now with QA.
 
 ## Result notes
 
