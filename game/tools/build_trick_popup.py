@@ -33,7 +33,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
+# Every colour keeps farther than this from Redgull red (Visual style rule 6).
+from style_rules import RED_MIN_DISTANCE as MIN_RED_DISTANCE, red_distance  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
 ROOT = GAME.parent
@@ -43,9 +45,6 @@ SAMPLE_PNG = ARCHIVE / "trick_popup_sample.png"
 SAMPLE_JSON = ARCHIVE / "trick_popup_sample.json"
 
 MAX_COLORS = 30
-# Redgull red, as the HUD heart draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
-REDGULL_RED = (219, 26, 41)
-MIN_RED_DISTANCE = 0.5  # 0..1 RGB distance every colour keeps from the heart red
 
 PALETTE = {
     # burst
@@ -266,10 +265,6 @@ def build_popup(text, size="normal"):
             if letters[y][x]:
                 names[oy + y][ox + x] = letters[y][x]
     return [[(PALETTE[n] + (255,)) if n else (0, 0, 0, 0) for n in row] for row in names], (ox, oy, tw, th), e2
-
-
-def red_distance(c):
-    return math.sqrt(sum(((a - b) / 255.0) ** 2 for a, b in zip(c, REDGULL_RED)))
 
 
 def check_popup(rows, max_colors=MAX_COLORS):

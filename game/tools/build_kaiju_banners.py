@@ -33,8 +33,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_drift_mark as marks  # noqa: E402  (shared Redgull-red check)
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -238,7 +237,7 @@ def check_rows(rows, max_colors=MAX_COLORS):
     colors = {p[:3] for p in px if p[3] == 255}
     stray = sorted(colors - ALLOWED)
     out.append(("only the sign red, white, black and the post greys", not stray, "others: %s" % stray if stray else "none"))
-    reds = sorted(c for c in colors if marks.is_redgull_red(c) and c != SIGN_RED)
+    reds = sorted(c for c in colors if rules.is_redgull_red(c) and c != SIGN_RED)
     out.append(("no red but the one sign red", not reds, "other reds: %s" % reds if reds else "none"))
     out.append(("has the sign red outline", SIGN_RED in colors, "present" if SIGN_RED in colors else "missing"))
     out.append(("at most 5 colours", len(colors) <= 5, "%d colours" % len(colors)))

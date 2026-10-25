@@ -22,6 +22,9 @@ from pathlib import Path
 
 from PIL import Image
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_rules import RED_MIN_DISTANCE, red_distance  # noqa: E402  (Visual style rule 6)
+
 REPO = Path(__file__).resolve().parents[2]
 ARCHIVE = REPO / "art-archive" / "T-009"
 RAW_DIR = ARCHIVE / "call2"
@@ -34,16 +37,10 @@ SIZE = 64            # PixelLab frame size (square)
 CELL = 80            # sheet cell: room for the 64 px frame turned to any angle
 DIRECTIONS = 16      # screen angles, 22.5 degrees apart, row 0 = pointing right (east on screen)
 ALPHA_CUT = 128      # alpha below this -> transparent, else opaque
-# Hud.HEART_COLOR (Redgull red, 0..1); every colour must be farther than 0.5 from it.
-REDGULL = (0.86, 0.08, 0.16)
 
 # Pale cyans and whites (also call 1's color_image), darkest last.
 PALETTE = [(248, 252, 255), (200, 240, 252), (140, 216, 240), (80, 168, 216), (48, 104, 160)]
 OUTLINE = (24, 40, 80)
-
-
-def red_distance(rgb) -> float:
-    return math.dist([c / 255.0 for c in rgb[:3]], REDGULL)
 
 
 def draw_first_frame() -> Image.Image:
@@ -88,7 +85,7 @@ def frame_palette(frames: list[Image.Image], cap: int = 30) -> list[tuple[int, i
         for r, g, b, a in f.convert("RGBA").getdata():
             if a >= ALPHA_CUT:
                 counts[(r, g, b)] = counts.get((r, g, b), 0) + 1
-    ranked = [c for c, _ in sorted(counts.items(), key=lambda kv: -kv[1]) if red_distance(c) > 0.5]
+    ranked = [c for c, _ in sorted(counts.items(), key=lambda kv: -kv[1]) if red_distance(c) > RED_MIN_DISTANCE]
     return ranked[:cap] or PALETTE
 
 
@@ -172,7 +169,7 @@ def check_sheet(sheet: Image.Image, frame_count: int) -> dict:
         "closest_to_redgull_red": round(closest, 3),
         "opaque_pixels_per_frame_row0": opaque_per_frame,
     }
-    result["pass"] = semi == 0 and len(colors) <= 30 and closest > 0.5 and all(opaque_per_frame)
+    result["pass"] = semi == 0 and len(colors) <= 30 and closest > RED_MIN_DISTANCE and all(opaque_per_frame)
     return result
 
 

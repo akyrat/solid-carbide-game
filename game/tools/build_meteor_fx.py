@@ -35,7 +35,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -382,12 +382,7 @@ def check(argv_paths=None):
 
 def _redgull_pixels(path):
     _, _, rows = rules.decode_png(Path(path).read_bytes())
-    n = 0
-    for r in rows:
-        for (R, G, B, A) in r:
-            if A and R > 150 and G < 90 and B < 90:
-                n += 1
-    return n
+    return sum(1 for r in rows for p in r if p[3] and rules.is_redgull_red(p[:3]))
 
 
 def main(argv=None):

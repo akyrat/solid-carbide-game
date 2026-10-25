@@ -29,7 +29,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
 REPO = GAME.parent

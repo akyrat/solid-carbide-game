@@ -52,13 +52,9 @@ class TileTest(unittest.TestCase):
 
 
 class CheckTest(unittest.TestCase):
-    def test_redgull_red_and_reds_are_caught(self):
-        self.assertTrue(b.is_redgull_red(b.REDGULL_RED))
-        self.assertTrue(b.is_redgull_red((255, 0, 0)))
-
     def test_check_fails_red_semi_transparent_and_light_pixels(self):
         rows = [list(r) for r in b.draw()]
-        rows[2][1] = b.REDGULL_RED + (255,)
+        rows[2][1] = b.rules.HEART_COLOR + (255,)
         rows[3][1] = (12, 10, 20, 128)
         rows[4][1] = (200, 200, 220, 255)
         failed = {r[0] for r in b.check_rows(rows) if not r[1]}

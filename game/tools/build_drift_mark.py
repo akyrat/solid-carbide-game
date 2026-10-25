@@ -26,13 +26,13 @@ Running build twice gives byte-identical files.
 from __future__ import annotations
 
 import argparse
-import colorsys
 import json
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
+from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -42,9 +42,6 @@ OUT_JSON = GAME / "art" / "effects" / "drift_mark.json"
 ARCHIVE = REPO / "art-archive" / "T-118"
 
 MAX_COLORS = 30
-
-# Redgull red, as the HUD heart draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
-REDGULL_RED = (219, 26, 41)
 
 # The MVP map's ground (game/art/ground/ground_atlas.png, the most common pixel
 # of an asphalt and a gravel tile), for the previews and the readability check.
@@ -90,17 +87,6 @@ def draw(grid=TREAD):
     if any(len(r) != len(grid[0]) for r in grid):
         raise ValueError("ragged tread")
     return [[T if ch == "." else PALETTE[ch] + (255,) for ch in line] for line in grid]
-
-
-def is_redgull_red(rgb, max_dist=128, hue_deg=25):
-    """True for Redgull red or anything that reads as a red: within half the colour range of it
-    (0.5 in 0..1 units, as the GUT tests), or a saturated red hue."""
-    dist = sum((a - b) ** 2 for a, b in zip(rgb, REDGULL_RED)) ** 0.5
-    if dist < max_dist:
-        return True
-    h, s, v = colorsys.rgb_to_hsv(*(c / 255.0 for c in rgb))
-    hue = h * 360.0
-    return min(hue, 360.0 - hue) < hue_deg and s > 0.4 and v > 0.25
 
 
 def luma(rgb):

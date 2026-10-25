@@ -22,7 +22,7 @@ class BuildHealthCanisterTest(unittest.TestCase):
 
     def test_no_colour_near_redgull_red(self):
         for c in b.opaque_colours(self.out):
-            self.assertGreaterEqual(b.distance(c, b.REDGULL), b.MIN_REDGULL_DISTANCE, c)
+            self.assertGreaterEqual(b.rgb_distance(c, b.REDGULL_RED), b.MIN_REDGULL_DISTANCE, c)
 
     def test_still_clearly_red(self):
         reds = [c for c in b.opaque_colours(self.out) if c[0] > 150 and c[0] > 2 * c[1]]

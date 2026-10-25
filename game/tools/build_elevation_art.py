@@ -26,6 +26,9 @@ import sys
 
 from PIL import Image
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RAW = os.path.join(ROOT, "art-archive", "T-186")
 OUT = os.path.join(ROOT, "game", "art", "elevation")
@@ -227,7 +230,8 @@ def rules(path):
     corners = [px[0], px[w - 1], px[(h - 1) * w], px[-1]]
     semi = sum(1 for p in px if 0 < p[3] < 255)
     colors = {p[:3] for p in px if p[3] == 255}
-    red = sum(1 for p in px if p[3] == 255 and p[0] > 110 and p[1] < 60 and p[2] < 70)
+    reds = {c for c in colors if is_redgull_red(c)}
+    red = sum(1 for p in px if p[3] == 255 and p[:3] in reds)
     return [
         ("transparent background (corners)", all(c[3] == 0 for c in corners), str(corners)),
         ("no semi-transparent pixels", semi == 0, "%d" % semi),

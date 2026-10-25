@@ -36,6 +36,9 @@ import sys
 import numpy as np
 from PIL import Image
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RAW = os.path.join(ROOT, "art-archive", "T-198")
 OUT = os.path.join(ROOT, "game", "art", "elevation_sample")
@@ -492,8 +495,11 @@ def rules(path):
     corners = [a[0, 0], a[0, w - 1], a[h - 1, 0], a[h - 1, w - 1]]
     semi = int(((a[..., 3] > 0) & (a[..., 3] < 255)).sum())
     opaque = a[a[..., 3] == 255][:, :3]
-    colors = len({tuple(c) for c in opaque.tolist()}) if len(opaque) else 0
-    red = int(((opaque[:, 0] > 110) & (opaque[:, 1] < 60) & (opaque[:, 2] < 70)).sum()) if len(opaque) else 0
+    counts = {}
+    for c in map(tuple, opaque.tolist()):
+        counts[c] = counts.get(c, 0) + 1
+    colors = len(counts)
+    red = sum(n for c, n in counts.items() if is_redgull_red(c))
     return [
         ("transparent background (corners)", all(c[3] == 0 for c in corners), str([tuple(c) for c in corners])),
         ("no semi-transparent pixels", semi == 0, "%d" % semi),

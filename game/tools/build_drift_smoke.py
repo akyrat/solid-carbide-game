@@ -30,8 +30,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_drift_mark as marks  # noqa: E402  (the shared red and luma checks, ground colours)
-import check_sprite_rules as rules  # noqa: E402
+import build_drift_mark as marks  # noqa: E402  (the luma check, ground colours)
+import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -131,7 +131,7 @@ def check_rows(rows, max_colors=MAX_COLORS):
     out = [r for r in results if not r[0].startswith("frame size")]
     px = [p for r in rows for p in r]
     colors = {p[:3] for p in px if p[3] == 255}
-    reds = sorted(c for c in colors if marks.is_redgull_red(c))
+    reds = sorted(c for c in colors if rules.is_redgull_red(c))
     out.append(("no Redgull red (nor any red)", not reds, "reds: %s" % reds if reds else "none"))
     cool = sorted(c for c in colors if c[2] < c[0] or c[2] < c[1])
     out.append(("cool: blue is the strongest channel of every colour", not cool, "not cool: %s" % cool if cool else "none"))

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build the final Redgull logo files (T-075) from the board's pick.
-128: the raw PixelLab output flattened to its own main red (135,17,27).
+128: the raw PixelLab output flattened to its own main red (style_rules.REDGULL_RED).
 64 and 32: made from the 128 by area-averaging the alpha, then a hard threshold (no semi-transparent
 pixels), then a small tidy so the eye cut-out and the beak tip survive:
   - the eye hole is kept at least 2x1 px (a 1-pixel hole is widened by one pixel to the right);
@@ -9,7 +9,10 @@ import sys
 from pathlib import Path
 from PIL import Image
 
-RED = (135, 17, 27, 255)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_rules import REDGULL_RED  # noqa: E402
+
+RED = REDGULL_RED + (255,)
 
 
 def flatten(im: Image.Image) -> Image.Image:

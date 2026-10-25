@@ -18,6 +18,9 @@ import sys
 from pathlib import Path
 from PIL import Image
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_rules import REDGULL_RED  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "art-archive/T-146/gift_box_from_T-140_raw.png"
 LOGO = ROOT / "game/art/logo/redgull_logo_32.png"
@@ -28,7 +31,7 @@ MAX_COLOURS = 30
 OUTLINE = (24, 10, 20, 255)
 TAG = (236, 224, 200, 255)
 TAG_EDGE = (120, 70, 40, 255)
-LOGO_RED = (135, 17, 27, 255)
+LOGO_RED = REDGULL_RED + (255,)
 
 
 def hard_alpha(im: Image.Image, cut: int = 128) -> Image.Image:

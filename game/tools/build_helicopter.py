@@ -4,7 +4,7 @@
 No PixelLab call: every step is a script on the approved sample
 (art-archive/T-145/helicopter_sample.png). It
 - mirrors the sample (the sample's nose points down-left; the helicopter flies left to right),
-- recolours the charcoal body to Redgull red (the logo's 135,17,27 at the middle of the ramp),
+- recolours the charcoal body to Redgull red (the logo's red, style_rules.REDGULL_RED, at the middle of the ramp),
 - erases the four static rotor blades and draws them again, turned a step per frame (4 frames),
 - stamps the approved Redgull logo (game/art/logo/) on a pale panel on the fuselage side and the tail fin.
 
@@ -21,6 +21,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from style_rules import REDGULL_RED  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = ROOT / "art-archive" / "T-145" / "helicopter_sample.png"
 LOGO = ROOT / "game" / "art" / "logo" / "redgull_logo_32.png"
@@ -31,9 +34,9 @@ RECORD = OUT_DIR / "helicopter_sheet.json"
 
 W, H = 192, 160
 FRAMES = 4
-LOGO_RED = (135, 17, 27)
+LOGO_RED = REDGULL_RED
 # Red ramp, dark to light, around the logo's red.
-RAMP = [(52, 6, 14), (86, 11, 20), (112, 14, 24), (135, 17, 27), (166, 28, 36), (198, 52, 50), (232, 120, 104)]
+RAMP = [(52, 6, 14), (86, 11, 20), (112, 14, 24), LOGO_RED, (166, 28, 36), (198, 52, 50), (232, 120, 104)]
 PANEL = (226, 220, 224)
 PANEL_SHADE = (176, 168, 178)
 OUTLINE = (5, 4, 8)

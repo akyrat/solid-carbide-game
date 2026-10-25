@@ -32,7 +32,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402  (PNG decoding)
+import style_rules as rules  # noqa: E402  (PNG decoding)
 from remove_car_shadow import write_png  # noqa: E402  (PNG encoding)
 
 REPO = Path(__file__).resolve().parents[2]

@@ -27,6 +27,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import reduce_palette as palette  # noqa: E402
+from style_rules import REDGULL_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
 
 GAME = Path(__file__).resolve().parent.parent
 REPO = GAME.parent
@@ -52,12 +53,11 @@ def hard_alpha(im: Image.Image) -> Image.Image:
     return im
 
 
-REDGULL_RED = (135, 17, 27)
-RED_NEAR = 60.0  # RGB distance inside which a colour could read as Redgull's red
+RED_NEAR = 60.0  # RGB distance (0..255) from the logo's red inside which a deep flame shade is pushed to orange
 
 
 def near_redgull(c) -> bool:
-    return math.dist(c[:3], REDGULL_RED) < RED_NEAR
+    return rgb_distance(c, REDGULL_RED) < RED_NEAR
 
 
 def unred(im: Image.Image) -> Image.Image:

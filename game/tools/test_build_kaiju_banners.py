@@ -45,7 +45,7 @@ class SpriteTest(unittest.TestCase):
             self.assertTrue(cs <= b.ALLOWED, name)
             self.assertIn(b.SIGN_RED, cs, name)
             for c in cs - {b.SIGN_RED}:
-                self.assertFalse(b.marks.is_redgull_red(c), (name, c))
+                self.assertFalse(b.rules.is_redgull_red(c), (name, c))
 
     def test_building_signs_are_only_red_white_and_black(self):
         for name, (rows, info) in self.sprites.items():

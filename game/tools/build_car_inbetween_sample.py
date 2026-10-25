@@ -30,7 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_car_sheet as cs  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 from remove_car_shadow import write_png  # noqa: E402
 
 DARK = (24, 22, 34, 255)

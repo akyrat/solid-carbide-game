@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_drift_smoke as b  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 
 
 class SpriteTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class SpriteTest(unittest.TestCase):
 
     def test_no_colour_reads_as_red_and_all_are_cool(self):
         for c in b.PALETTE.values():
-            self.assertFalse(b.marks.is_redgull_red(c), c)
+            self.assertFalse(rules.is_redgull_red(c), c)
             self.assertGreater(c[2], c[0])
             self.assertGreater(c[2], c[1])
 

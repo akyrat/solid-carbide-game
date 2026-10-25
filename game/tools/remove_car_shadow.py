@@ -20,7 +20,7 @@ import zlib
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-import check_sprite_rules as c
+import style_rules as c
 
 DARK = (6, 2, 27)
 # the shadow's dotted edge also uses a few near-black variants

@@ -23,13 +23,13 @@ Running build twice gives byte-identical files.
 from __future__ import annotations
 
 import argparse
-import colorsys
 import json
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
+from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -38,9 +38,6 @@ OUT_JSON = GAME / "art" / "effects" / "level_up_particles.json"
 
 FRAME = 11
 MAX_COLORS = 30
-
-# Redgull red, as the HUD heart draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
-REDGULL_RED = (219, 26, 41)
 
 # The palette: night neon (Visual style, Decisions, "Palette" and "Glow").
 # Each neon colour has a light core shade, the neon itself, a mid shade and a
@@ -158,17 +155,6 @@ def build_sheet(shapes=SHAPES, size=FRAME):
     """One row of frames: rows of RGBA, len(shapes) * size wide."""
     frames = [draw_shape(g, size) for _, g in shapes]
     return [sum((f[y] for f in frames), []) for y in range(size)]
-
-
-def is_redgull_red(rgb, max_dist=128, hue_deg=25):
-    """True for Redgull red or anything that reads as a red: within half the colour range of it
-    (the T-112 test's distance, 0.5 in 0..1 units), or a saturated red hue."""
-    dist = sum((a - b) ** 2 for a, b in zip(rgb, REDGULL_RED)) ** 0.5
-    if dist < max_dist:
-        return True
-    h, s, v = colorsys.rgb_to_hsv(*(c / 255.0 for c in rgb))
-    hue = h * 360.0
-    return min(hue, 360.0 - hue) < hue_deg and s > 0.4 and v > 0.25
 
 
 def check_rows(rows, frames, size=FRAME, max_colors=MAX_COLORS):
