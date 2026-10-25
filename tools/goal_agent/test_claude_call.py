@@ -97,6 +97,15 @@ class Streaming(unittest.TestCase):
         self.assertEqual(popen.return_value.stdin.sent, "Work on task T-001")   # the prompt on standard input
         self.assertEqual(kw["cwd"], "C:/w/T-001")
 
+    def test_resume_carries_on_an_earlier_session(self):
+        """T-291: the style loop resumes the generator's session for a refine."""
+        with mock.patch("subprocess.Popen", return_value=FakeProc([INIT, result({"text": "t"})])) as popen:
+            RealClaude(self.dir).ask("refine", "Refine it", {"type": "object"}, agent="narrative-theme",
+                                     resume="abc", timeout=5)
+        cmd = popen.call_args[0][0]
+        self.assertEqual(cmd[cmd.index("--resume") + 1], "abc")
+        self.assertNotIn("--session-id", cmd)
+
     def test_each_event_is_written_as_it_arrives(self):
         seen = []
         proc = FakeProc([INIT, READ, RESULT_OK, result({"summary": "s"})], before=lambda i: seen.append(len(self.lines())))

@@ -1,0 +1,15 @@
+{
+  "_about": "A fake style loop on a popup (sample text, not game text): versions score 4, 6 and 9, so the third is kept. Used by test_loop.py and run.py --fake.",
+  "generate": [
+    {"text": "Sample combo popup", "changed": "First version from the brief."}
+  ],
+  "refine": [
+    {"text": "SAMPLE COMBO POPUP", "changed": "Put it in capitals (text rule 4)."},
+    {"text": "SAMPLE COMBO!", "changed": "Shorter, and ends with an exclamation mark (text rule 4)."}
+  ],
+  "evaluate": [
+    {"score": 4, "reason": "Rule 4: a popup is one line in capitals ending with \"!\"; this is in sentence case and has no \"!\".", "rules_broken": [4]},
+    {"score": 6, "reason": "Rule 4: in capitals now, but a popup ends with \"!\"; it is also longer than a quick popup reads.", "rules_broken": [4]},
+    {"score": 9, "reason": "Follows rules 2 to 4: one line, capitals, ends with \"!\", no banned words.", "rules_broken": []}
+  ]
+}

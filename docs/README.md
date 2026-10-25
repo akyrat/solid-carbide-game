@@ -55,6 +55,8 @@ The task files in `tasks/` are the board's only data. The server reads them, and
 
 **Which tickets to do next:** `python tools/ticket_impact.py` lists the unfinished MVP tickets with the most other tickets waiting on them, directly and down the chain (`--top N` for more rows, `--all` to include later milestones).
 
+**The style loop:** `python tools/style_loop/run.py art|text --task T-012 --brief <file> ...` makes an asset or a text through the style loop with no one stepping in (generate, score, refine below 8, at most 3 refines) and writes every round in the task's `## Style review`; `--fake <fixture>` runs it free on a copy of the task (T-291; the commands are in `tasks/README.md`, "The style loop").
+
 ## How separate documents are written
 
 The nine separate documents (Extended narrative to HUD and menus in the table above; the board calls them game area docs) all follow one structure, so a script can build the long GDD from them (task T-007). The long GDD, short GDD, timeline and unfiled game details do not follow it.

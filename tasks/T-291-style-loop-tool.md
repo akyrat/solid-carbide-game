@@ -1,7 +1,7 @@
 ---
 id: T-291
 title: "The style loop: generate, evaluate with a score and a reason, refine below 8"
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -67,6 +67,23 @@ Every art version is kept in `art-archive/<task id>/style-loop/` (never deleted)
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-25, Open → In progress
+
+Started: the style loop tool (generate, evaluate with a score and reason, refine below 8, at most 3 refines, every round written in the ticket). Opus agent in C:\solid-carbide-worktrees\T-291.
+
 ## Result notes
 
-Written by the agent when it finishes.
+**Built** (all in `tools/style_loop/`, plus two small additions to shared code):
+- `loop.py`: the four steps. Generate (asset-generation for art, narrative-theme for text, `session_id=<new uuid>`), script checks (`style_rules.text_checks` / `art_checks`, imported, no subprocess), evaluate (`style-evaluator`, tools `Read,Glob,Grep`, JSON schema `score` 1-10, `reason`, `rules_broken`), refine below 8 by resuming the same generator session (`resume=<uuid>`) with the score, reason, rules and failed script checks; at most 3 refines; keeps the best (earliest on a tie). Each round is written into `## Style review` as it ends (version text or archived file, what changed for rounds 2+, script checks, score, reason, rules broken, any refusals), then a `**Kept:**` line. Art: the agent is asked to save at `art-archive/<task>/style-loop/v<N>.png`; a file saved elsewhere is copied there; an earlier run's file is never overwritten (`v1-2.png`); the kept PNG is copied to `--out`.
+- `run.py`: the command line (`art` / `text`, see `tasks/README.md`, "The style loop"). `--fake <fixture>` uses `FakeClaude` and runs in a sandbox: a copy of the task file in a new temporary folder, with the status script's paths pointed there (as `test_task_status.py` does), so a fake run never changes the real task; archive and `--out` go into that folder too.
+- `fixtures/text-4-6-9.json` (keeps version 3), `fixtures/text-never-8.json` (scores 5, 7, 6, 4: keeps version 2, flags), `fixtures/sample-brief.md`.
+- `tools/goal_agent/claude_call.py`: `RealClaude.ask(..., resume=<session id>)` adds `--resume`; the only way to carry on a session, so refines remember what was made (test added in `test_claude_call.py`).
+- `tools/task_status.py`: `set_section(text, heading, body)` (replaces a section, or adds `## Style review` before `## Result notes`, keeps CRLF and the header); and `move(..., by="style-loop")` allows `in-progress` → `flagged-for-review`, which the loop uses to flag (status rules in `tasks/README.md` updated).
+
+**Run:** `python tools/style_loop/run.py text --task T-NNN --brief tools/style_loop/fixtures/sample-brief.md --kind popup --fake tools/style_loop/fixtures/text-4-6-9.json`.
+
+**Fake demo:** running `run.py` from the shell was refused by the guard hook ("its code names task files and writes files"), so it wasn't run by hand; the same command runs end to end in `test_loop.py` (`CommandLine`): 4-6-9 prints rounds 1-3 and "Kept version 3, score 9/10", exit 0, the real task unchanged and the copy holding three rounds; never-8 exits 1 with the copy flagged. The tool will need the guard to let it run (T-292 or the board).
+
+**Tests:** 24 new in `tools/style_loop/test_loop.py` (+1 in `test_claude_call.py`), discovered by the tools set. `tools`: 476 OK; `game/tools`: 409 OK (1 skipped); GUT: 1419/1419 passing. `grep -rn "claude -p\|subprocess" tools/style_loop/` finds nothing.
+
+**Screenshots:** none, tooling.

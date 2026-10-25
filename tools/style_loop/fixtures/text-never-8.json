@@ -1,0 +1,17 @@
+{
+  "_about": "A fake style loop on a popup (sample text, not game text) that never reaches 8: versions score 5, 7, 6 and 4, so after 3 refines version 2 is kept and the task is flagged. Used by test_loop.py.",
+  "generate": [
+    {"text": "Sample points popup", "changed": "First version from the brief."}
+  ],
+  "refine": [
+    {"text": "SAMPLE POINTS!", "changed": "Capitals and an exclamation mark (text rule 4)."},
+    {"text": "SAMPLE POINTS POPUP!", "changed": "Longer, to name what the popup is for."},
+    {"text": "Sample points", "changed": "Back to a short label."}
+  ],
+  "evaluate": [
+    {"score": 5, "reason": "Rule 2: \"points\" is banned; rule 4: not in capitals, no \"!\".", "rules_broken": [2, 4]},
+    {"score": 7, "reason": "Rule 2: \"points\" is still there.", "rules_broken": [2]},
+    {"score": 6, "reason": "Rule 2: \"points\" is still there, and it reads longer than a popup should.", "rules_broken": [2]},
+    {"score": 4, "reason": "Rule 2: \"points\"; rule 4: a popup is in capitals and ends with \"!\".", "rules_broken": [2, 4]}
+  ]
+}

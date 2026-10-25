@@ -166,6 +166,8 @@ def allowed(fields, text, folders, by="agent"):
         rule("planning", True, "", "back to refining with the board")
         rule("blocked", True, "")
         rule("open", True, "")
+        if by == "style-loop":   # T-291: still below 8 after 3 refines (tasks/README.md, "The style loop")
+            rule("flagged-for-review", True, "", "the style loop stayed below 8 after 3 refines")
     if old == "in-qa":
         passed, failed, unchecked = verdicts(text)
         review = bool(tb.review_parts(text)[0])
@@ -247,6 +249,26 @@ def add_update(text, change, reply):
         else:
             norm = norm.rstrip("\n") + "\n\n" + block.rstrip("\n") + "\n"
     return norm.replace("\n", newline)
+
+
+SECTION_ORDER = ("Updates", "Style review", "Result notes")
+
+
+def set_section(text, heading, body):
+    """The text with the body of `## <heading>` replaced by `body` (T-291: the style loop's `## Style review`).
+    A missing section is added before the first later section of SECTION_ORDER (Style review sits just
+    before Result notes, as in tasks/_TEMPLATE.md), or at the end. Never touches the header."""
+    newline = "\r\n" if "\r\n" in text else "\n"
+    norm = text.replace("\r\n", "\n")
+    block = f"## {heading}\n\n{body.strip()}\n\n"
+    found = re.search(rf"^## {re.escape(heading)}[ \t]*\n.*?(?=^## |\Z)", norm, re.S | re.M)
+    if found:
+        norm = norm[:found.start()] + block + norm[found.end():].lstrip("\n")
+    else:
+        later = SECTION_ORDER[SECTION_ORDER.index(heading) + 1:] if heading in SECTION_ORDER else ()
+        at = next((m.start() for h in later for m in [re.search(rf"^## {re.escape(h)}[ \t]*$", norm, re.M)] if m), None)
+        norm = norm[:at] + block + norm[at:] if at is not None else norm.rstrip("\n") + "\n\n" + block
+    return norm.rstrip("\n").replace("\n", newline) + newline
 
 
 def write(path, text):

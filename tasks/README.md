@@ -34,6 +34,7 @@ Always use the main repo's copy of the script, also from a task's branch folder:
 - `open`/`blocked`/`planning` → `in-progress` only when every task in `depends_on` is `done`, or is `needs-playtest` with the same non-empty `goal:` as this task (T-163; "Goal runs").
 - `planning` → `open` or `blocked`, and `in-progress` → `planning`, to go back.
 - `in-progress` → `in-qa` only once the agent has written its result notes.
+- `in-progress` → `flagged-for-review` only by the style loop's tool, when a version is still below 8 after 3 refines ("The style loop", T-291); not from the command line.
 - Out of `in-qa` only once QA has marked every acceptance criterion `(QA: pass)` or `(QA: fail ...)`. A pass mark may carry a short note after `;`, `:`, `,` or ` -`, for example `(QA: pass; 850/850)` (T-179), or after a full stop, `(QA: pass. 414 tests OK)` (T-215). QA replaces a criterion's old mark (the `(QA: pass / fail)` placeholder, or the last round's mark) with its new one, and never adds a second mark after it; if a line still carries several, only the last one counts, so a round-1 `(QA: fail ...)` followed by a round-2 `(QA: pass)` is a pass (T-215). The script adds one to `qa_rounds`. All pass: `done`, or `needs-playtest` when the task has a `The board's review:` line. A fail: back to `in-progress` the first time, `flagged-for-review` the second time.
 - The board's drag out of QA (board, 2026-10-20, T-212): it isn't assumed that QA has marked every criterion. A drag on the task board (`by="board"`) may take an `in-qa` ticket whose criteria aren't all marked back to `in-progress` or `planning`, after a warning that lists the unmarked criteria (and any marked fail) word for word and asks what has gone wrong (`docs/README.md`, "The task board"). The explanation is the move's note: it goes into the result notes and reaches the owning session with the move as `(note: ...)`; without one, the note says how many criteria were unmarked. It doesn't count as a QA round (`qa_rounds` unchanged). Moves from the command line, by agents and the Project Lead, are still refused while criteria are unmarked.
 - `done` and `cancelled` are final; rework is a new task. Cancelling needs `--note`.
@@ -185,5 +186,16 @@ Every asset and every piece of player-facing text is made through the style loop
 
 Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. QA fails an art or text task without it. The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
 
-The script checks are in `game/tools/style_rules.py` (T-290); the loop's tool and its enforcement are being built in T-291 and T-292.
+The script checks are in `game/tools/style_rules.py` (T-290). The loop's tool (T-291) runs the four steps with no one stepping in:
+
+```
+python tools/style_loop/run.py art --task T-012 --brief <brief file> --out game/art/<file>.png [--size WxH] [--frames N] [--redgull] [--allow-red R,G,B] [--max-colors N]
+python tools/style_loop/run.py text --task T-012 --brief <brief file> --kind popup|card_title|card_desc|garage_name|garage_desc|label [--out <file>]
+python tools/style_loop/run.py text --task T-012 --brief tools/style_loop/fixtures/sample-brief.md --kind popup --fake tools/style_loop/fixtures/text-4-6-9.json
+```
+
+- The generator is the Asset Generation Agent (art) or the Narrative Theme Agent (text), in one session that is resumed for each refine, so it remembers what it made; the evaluator is the Style Evaluator, which answers with `score`, `reason` and `rules_broken`. Every Claude call goes through `tools/goal_agent/claude_call.py`. The script check options are `style_rules.py`'s.
+- Each round is written into the task's `## Style review` as it ends; the last line names the kept version and its score. Every art version is saved in `art-archive/<task id>/style-loop/v<N>.png` (an earlier run's file is never overwritten: `v1-2.png`), and the kept one is copied to `--out`. The kept text is printed and written to `--out` if given.
+- Still below 8 after 3 refines: the best-scoring version is kept (the earliest on a tie) and the tool moves the task from `in-progress` to `flagged-for-review` through the status script; only the style loop may make that move.
+- `--fake <fixture>` answers from a fixture with `FakeClaude` (`tools/style_loop/fixtures/`: `text-4-6-9.json` keeps version 3, `text-never-8.json` flags) and works on a copy of the task file in a new temporary folder, whose path it prints; the real task is never changed. Exit codes: 0 kept at 8 or more, 1 below 8, stopped or refused, 2 usage error. Its enforcement in QA is T-292.
 
