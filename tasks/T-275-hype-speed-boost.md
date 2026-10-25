@@ -1,7 +1,7 @@
 ---
 id: T-275
 title: The car goes faster the higher the hype level
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -60,6 +60,10 @@ Built: top speed +8% at x2, +16% at x3, +25% at x4, easing in and out. Sent to Q
 
 QA passed all 3. Ready to play in the game build: build a combo and feel the car speed up. One frame showed speed above top speed; check it in the playtest.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -74,3 +78,4 @@ Built by the Driving & Drift Agent (2026-10-22). Proposals for the board's playt
 - GIF: `art-archive/T-275/screenshots/hype_speed_climb.gif` (drift circle, combo x1 to x4 every 2.5 s then back to x1; a label shows combo, top speed and speed). Fixture `tests/fixtures/hype_speed_demo.tscn`. I looked at frames: top speed reads 16.5, 19.1, 20.6 as the combo climbs; actual speed in the circle stays below top speed because drifting costs speed.
 - Docs updated: `docs/drifting.md` (Content), `game/README.md` ("Hype speed boost").
 - Refusals: none on edits; the guard refused two Bash commands (one with `cygpath`, one with a `2>/dev/null` redirect on Godot); I reran them without those.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
