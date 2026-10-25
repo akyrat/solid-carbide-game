@@ -1,7 +1,7 @@
 ---
 id: T-270
 title: The air turn upgrade in the garage
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Coursework
@@ -60,6 +60,10 @@ Spin Doctor in the garage: 10 levels, +0.125 each, back to 2.5 at the top; the a
 
 QA passed all 3. Ready to play in the game build: buy Spin Doctor levels and spin in the air; the 360 off the tallest roof is back at level 6.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -77,3 +81,4 @@ Proposed levels (10), value = total multiplier of the ground turn rate, price in
 The air 360 off the tallest rooftop becomes reachable at level 6 (2.0; the threshold is about 1.9, and level 5's 1.875 is just short). The air 180 is reachable from level 0. Reasons are in Garage design, Decisions, "Air turn upgrade".
 
 Tests: GUT 1376/1376 pass (new `tests/unit/game/test_air_turn_upgrade.gd`: data steps and base, every level sets the next run's air rate, a bought level is saved and reaches the next run, ground rate unchanged, prototype unaffected; garage data and garage screen tests extended); tools unittest 451 OK; game/tools unittest 395 OK (1 skipped). Screenshot (looked at: five rows fit, Spin Doctor at level 6, price 155, text matches): `art-archive/T-270/screenshots/garage_air_turn.png`. Documents updated: docs/garage-design.md, game/README.md. Nothing refused. Note: `run_tests.sh` needs GODOT_BIN in the environment in this worktree, which has no `.env`; I passed it from the main checkout's `.env` without copying it.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
