@@ -28,7 +28,6 @@ import argparse
 import base64
 import io
 import json
-import math
 import sys
 from collections import deque
 from pathlib import Path
@@ -39,10 +38,7 @@ TOOLS = Path(__file__).resolve().parent
 GAME = TOOLS.parent
 REPO = GAME.parent
 sys.path.insert(0, str(TOOLS))
-
-# Redgull red, as the HUD heart draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
-REDGULL_RED = (219, 26, 41)
-RED_MIN_DISTANCE = 0.5  # 0..1 RGB distance, as T-074
+from style_rules import RED_MIN_DISTANCE, red_distance  # noqa: E402,F401  (Visual style rule 6)
 
 MAX_COLORS = 30
 UNIT_W = 32   # art px for one unit along a ground axis, horizontally (iso: 1 unit = 32 x 16)
@@ -55,10 +51,6 @@ CAR_SHEET = GAME / "art" / "car" / "car_iso.png"
 
 
 # ------------------------------------------------------------- palette ----
-
-def red_distance(c):
-    return math.sqrt(sum(((a - b) / 255.0) ** 2 for a, b in zip(c[:3], REDGULL_RED)))
-
 
 def opaque_colors(img):
     img = img.convert("RGBA")
@@ -301,7 +293,7 @@ def clean(raw, pal, tolerance=24):
 
 
 def sprite_report(img):
-    """Visual style's rules, as check_sprite_rules checks them, for any size; plus the red rule."""
+    """Visual style's rules, as style_rules checks them, for any size; plus the red rule."""
     img = img.convert("RGBA")
     px = list(img.getdata())
     w, h = img.size

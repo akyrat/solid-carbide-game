@@ -1825,3 +1825,8 @@ Entry format:
 - Decision or change: the board approved a new agent, the Style Evaluator, which scores art and text from 1 to 10 against the style guide in the style loop and gives the reason, and never makes or fixes anything. The Asset Generation Agent now makes and refines assets through the loop (in place of "one round" and "never judges"; the board still decides what is good), and the Narrative Theme Agent writes all player-facing text and refines it through the loop (in place of "a reviewer, not a writer").
 - Documents touched: `CLAUDE.md`, `.claude/agents/style-evaluator.md`, `.claude/agents/asset-generation.md`, `.claude/agents/narrative-theme.md`, `agent-notes/style-evaluator.md`, `agent-notes/agents-interactions.md`
 - Tasks: T-291
+
+## 2026-10-25: One module for the style guide's script checks (T-290)
+- Decision or change: `game/tools/style_rules.py` now holds every script check of the style guide (Visual style rules 1, 3 and 6; Text rules 2, 3 and 4), printing which rule each check covers. The old sprite and logo checkers are thin wrappers around it, and 19 build scripts use its Redgull red check instead of their own copies. No art changed. Open for the board: whether rule 6 lists the car's pale tail-light red as allowed (the car's checks allow it for now).
+- Documents touched: `game/README.md`, `tasks/README.md`
+- Tasks: T-290

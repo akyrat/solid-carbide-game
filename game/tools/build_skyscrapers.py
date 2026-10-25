@@ -23,7 +23,8 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_buildings import REDGULL_RED, RED_MIN_DISTANCE, palette_from_image  # noqa: E402
+from build_buildings import palette_from_image  # noqa: E402
+from style_rules import RED_MIN_DISTANCE, red_distance  # noqa: E402  (Visual style rule 6)
 
 REPO = Path(__file__).resolve().parents[2]
 PALETTE_PNG = REPO / "art-archive" / "T-064" / "palette.png"
@@ -349,7 +350,7 @@ def pavement_slot(kerb_sw, kerb_se, pal, seed=1):
 
 def red_ok(arr):
     for c in {tuple(p[:3]) for p in arr.reshape(-1, 4).tolist() if p[3] == 255}:
-        if float(np.sqrt(sum(((a - b) / 255.0) ** 2 for a, b in zip(c, REDGULL_RED)))) <= RED_MIN_DISTANCE:
+        if red_distance(c) <= RED_MIN_DISTANCE:
             return False
     return True
 

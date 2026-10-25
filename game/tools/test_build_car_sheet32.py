@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_car_sheet32 as b  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 import generate_car_inbetweens as gen  # noqa: E402
 
 T = (0, 0, 0, 0)

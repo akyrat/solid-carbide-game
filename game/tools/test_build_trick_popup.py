@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_trick_popup as b  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 
 TEXTS = [
     ("FULL 360! +0.25", "normal"),

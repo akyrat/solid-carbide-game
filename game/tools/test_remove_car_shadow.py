@@ -1,7 +1,7 @@
 import sys, unittest
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
-import check_sprite_rules as c
+import style_rules as c
 import remove_car_shadow as r
 
 ART = Path(__file__).resolve().parents[1] / "art" / "car"

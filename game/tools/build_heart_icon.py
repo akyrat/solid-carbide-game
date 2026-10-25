@@ -22,8 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_drift_mark as marks  # noqa: E402  (shared Redgull-red check)
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -32,7 +31,7 @@ OUT_DIR = GAME / "art" / "hud"
 PNG = OUT_DIR / "likes_heart.png"
 ARCHIVE = REPO / "art-archive" / "T-086"
 
-RED = (219, 26, 41)  # Hud.HEART_COLOR (0.86, 0.1, 0.16), Redgull red
+RED = rules.HEART_COLOR  # Hud.HEART_COLOR (0.86, 0.1, 0.16), Redgull red
 OUTLINE = (8, 8, 15)  # Hud.OUTLINE_COLOR (0.03, 0.03, 0.06)
 CLEAR = (0, 0, 0, 0)
 
@@ -74,7 +73,7 @@ def check_rows(icon):
     results[0] = ("size %dx%d" % SIZE, (len(icon[0]), len(icon)) == SIZE, "%dx%d" % (len(icon[0]), len(icon)))
     colours = {p[:3] for r in icon for p in r if p[3]}
     results.append(("only Redgull red and the outline colour", colours == {RED, OUTLINE}, str(colours)))
-    results.append(("the red is Redgull red", marks.is_redgull_red(RED), str(RED)))
+    results.append(("the red is Redgull red", rules.is_redgull_red(RED), str(RED)))
     return results
 
 

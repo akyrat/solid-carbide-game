@@ -15,7 +15,7 @@ class GiftPlaceholdersTest(unittest.TestCase):
 
     def test_no_red_in_the_palette(self):
         for c in (b.OUTLINE, b.DARK, b.BODY, b.BODY_DARK, b.WINDOW, b.BOX, b.BOX_DARK, b.LID, b.RIBBON):
-            self.assertFalse(b.marks.is_redgull_red(c), c)
+            self.assertFalse(b.rules.is_redgull_red(c), c)
 
     def test_check_finds_a_red_pixel(self):
         img = b.package_rows()

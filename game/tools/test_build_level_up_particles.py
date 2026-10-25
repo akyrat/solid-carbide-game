@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_level_up_particles as b  # noqa: E402
-import check_sprite_rules as rules  # noqa: E402
+import style_rules as rules  # noqa: E402
 
 
 class SheetTest(unittest.TestCase):
@@ -49,18 +49,9 @@ class SheetTest(unittest.TestCase):
 
 
 class RedCheckTest(unittest.TestCase):
-    def test_redgull_red_and_reds_are_caught(self):
-        self.assertTrue(b.is_redgull_red(b.REDGULL_RED))
-        self.assertTrue(b.is_redgull_red((255, 0, 0)))
-        self.assertTrue(b.is_redgull_red((200, 40, 60)))
-
-    def test_neon_pink_cyan_violet_pass(self):
-        for c in [(255, 64, 200), (0, 229, 255), (160, 90, 255), (255, 255, 255)]:
-            self.assertFalse(b.is_redgull_red(c), c)
-
     def test_check_fails_a_sheet_with_red_or_semi_transparent_pixels(self):
         rows = [list(r) for r in b.build_sheet()]
-        rows[5][5] = b.REDGULL_RED + (255,)
+        rows[5][5] = rules.HEART_COLOR + (255,)
         rows[5][16] = (0, 229, 255, 128)
         failed = {r[0] for r in b.check_rows(rows, len(b.SHAPES)) if not r[1]}
         self.assertIn("no Redgull red (nor any red)", failed)
