@@ -1,7 +1,7 @@
 ---
 id: T-277
 title: Health drops at half the rate
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Coursework
@@ -58,6 +58,10 @@ Health drops halved (0.6 to 0.3); coins and the 30% restore unchanged. Sent to Q
 
 QA passed both. Ready to play in the game build: health drops half as often as coins.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -67,3 +71,4 @@ Written by the agent when it finishes.
 - Docs: `docs/enemies.md` (Content, health pickups: 30%, halved from 60%; Decisions already had it), `game/README.md` (Health drops).
 - Tests: full GUT suite passed; Python `tools` 451 OK; `game/tools` 395 OK (1 skipped).
 - Nothing to picture: no visual change.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
