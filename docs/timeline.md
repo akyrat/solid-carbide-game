@@ -1830,3 +1830,8 @@ Entry format:
 - Decision or change: `game/tools/style_rules.py` now holds every script check of the style guide (Visual style rules 1, 3 and 6; Text rules 2, 3 and 4), printing which rule each check covers. The old sprite and logo checkers are thin wrappers around it, and 19 build scripts use its Redgull red check instead of their own copies. No art changed. Open for the board: whether rule 6 lists the car's pale tail-light red as allowed (the car's checks allow it for now).
 - Documents touched: `game/README.md`, `tasks/README.md`
 - Tasks: T-290
+
+## 2026-10-25: The car's tail lights may be red
+- Decision or change: the board allows the car's pale tail-light red (RGB 230, 110, 102) as a non-Redgull red in Visual style rule 6, next to the alert signs, the health canister and the combo broken popup. The style rules check already allowed it for the car (T-290).
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-290
