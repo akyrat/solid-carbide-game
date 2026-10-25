@@ -1835,3 +1835,8 @@ Entry format:
 - Decision or change: the board allows the car's pale tail-light red (RGB 230, 110, 102) as a non-Redgull red in Visual style rule 6, next to the alert signs, the health canister and the combo broken popup. The style rules check already allowed it for the car (T-290).
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-290
+
+## 2026-10-25: The minion redesigned as a mini kaiju
+- Decision or change: the board wants the minion bigger and more detailed, like a mini kaiju: still a lizard on all fours, with a reptilian face and a snapping jaw with teeth, about as big as the car. First one sample direction, made through the style loop as its first real run (also the first example for the course's Style Guide Agent assignment), with the board's go for at most 4 PixelLab generations. The walk sheets and the in-game size follow once the board approves the sample.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-293
