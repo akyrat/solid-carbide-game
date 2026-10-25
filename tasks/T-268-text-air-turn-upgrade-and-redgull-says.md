@@ -1,7 +1,7 @@
 ---
 id: T-268
 title: "Text: the air turn upgrade, and two level-up lines without \"Redgull says\""
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -61,6 +61,10 @@ Texts written: Spin Doctor, two level-up lines and Brand Magnet rewritten. One g
 
 QA passed all 3. Ready to read in the game build: Spin Doctor, the two level-up lines and Brand Magnet.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Texts written (Narrative Theme):
@@ -74,3 +78,4 @@ Texts written (Narrative Theme):
 Search for "Redgull says": none left in the two level-up lines. Still in player-facing text, unchanged as not asked: garage `car_health` ("+10 car health per level. Redgull says you'll be fine.") in garage_screen.gd. Other "Redgull calls it" quips (e.g. `damage_bonus`, flamethrower tier 3) also remain. HUD and menus has no Content list of the two level-up lines, so nothing to change there.
 
 Tests: `python -m unittest discover -s game/tools -p "test_*.py"` OK (395 run, 1 skipped, includes the level-up text check test); GUT suite all passed. `check_level_up_texts.py` itself was refused by the hook, so not run directly; its unit test covers the same comparison.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
