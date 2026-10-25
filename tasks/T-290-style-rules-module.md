@@ -1,7 +1,7 @@
 ---
 id: T-290
 title: "One style rules module: the script checks of the style guide, in one place"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -47,13 +47,13 @@ Then the old copies go: `check_sprite_rules.py` and `check_logo_one_colour.py` a
 
 ## Acceptance criteria
 
-- [ ] `game/tools/style_rules.py` exists with a command line: `art <png> [--size WxH] [--frames N] [--redgull]` and `text "<text>" --kind popup|card_title|card_desc|garage_name|garage_desc|label`. Each prints JSON: a list of checks, each with the rule number, ok true/false and a detail, and exits 1 when any check fails. (QA: pass / fail)
-- [ ] Unit tests for `style_rules.py` cover each art check and each text check, with a passing and a failing example (for example COMBO BROKEN! passes as a popup, "combo broken" fails; "Gain more XP" fails rule 2). (QA: pass / fail)
-- [ ] No Python file in `game/tools/` other than `style_rules.py` defines its own Redgull red constant or red-distance check: `grep -n "135, *17, *27" game/tools/*.py` matches only `style_rules.py` and tests. (QA: pass / fail)
-- [ ] `check_sprite_rules.py` and `check_logo_one_colour.py` are gone or are thin wrappers calling `style_rules.py`, and every caller and doc mention still works. (QA: pass / fail)
-- [ ] `git status` shows no changed files under `game/art/` (no art was rebuilt differently). (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"` and `bash game/tools/run_tests.sh`. (QA: pass / fail)
-- [ ] `game/README.md` describes `style_rules.py` in place of the old checkers, and `tasks/README.md`, "The style loop", names it as the script check. (QA: pass / fail)
+- [x] `game/tools/style_rules.py` exists with a command line: `art <png> [--size WxH] [--frames N] [--redgull]` and `text "<text>" --kind popup|card_title|card_desc|garage_name|garage_desc|label`. Each prints JSON: a list of checks, each with the rule number, ok true/false and a detail, and exits 1 when any check fails. (QA: pass; CLI art/text verified, JSON with rule numbers, exit 1 on fail (text 'combo broken' exits 1))
+- [x] Unit tests for `style_rules.py` cover each art check and each text check, with a passing and a failing example (for example COMBO BROKEN! passes as a popup, "combo broken" fails; "Gain more XP" fails rule 2). (QA: pass; test_style_rules.py has 17 tests, passing and failing examples for art and text checks; pass)
+- [x] No Python file in `game/tools/` other than `style_rules.py` defines its own Redgull red constant or red-distance check: `grep -n "135, *17, *27" game/tools/*.py` matches only `style_rules.py` and tests. (QA: pass; grep matches only style_rules.py:37)
+- [x] `check_sprite_rules.py` and `check_logo_one_colour.py` are gone or are thin wrappers calling `style_rules.py`, and every caller and doc mention still works. (QA: pass; both are thin wrappers re-exporting from style_rules.py; their tests and callers pass)
+- [x] `git status` shows no changed files under `game/art/` (no art was rebuilt differently). (QA: pass; no art files changed (only line-ending .import noise, reverted))
+- [x] All three test sets pass: `python -m unittest discover -s tools -p "test_*.py"`, `python -m unittest discover -s game/tools -p "test_*.py"` and `bash game/tools/run_tests.sh`. (QA: pass; 451 OK, 409 OK (1 skipped), GUT 1419 of 1419)
+- [x] `game/README.md` describes `style_rules.py` in place of the old checkers, and `tasks/README.md`, "The style loop", names it as the script check. (QA: pass; game/README.md and tasks/README.md both name style_rules.py)
 
 ## Updates
 
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-25, Open → In progress
 
 Started: one style rules module for the style guide's script checks, replacing the scattered checkers. Opus agent in C:\solid-carbide-worktrees\T-290.
+
+### 2026-10-25, In progress → In QA
+
+Built: style_rules.py holds every script check of the style guide; the old checkers are thin wrappers and 19 build scripts import its red check. Tests 451 / 409 / GUT 1419 pass, no art changed. Now with QA.
 
 ## Result notes
 
