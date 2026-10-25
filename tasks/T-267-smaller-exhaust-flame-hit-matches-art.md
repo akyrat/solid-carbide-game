@@ -1,7 +1,7 @@
 ---
 id: T-267
 title: A smaller exhaust flame, drawn behind the car and enemies, that burns whatever touches it
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -65,6 +65,10 @@ Built: the flame is a quarter size at tier 1, drawn behind the car and enemies, 
 
 QA passed all 4. Ready to play in the game build: drift through minions with the flamethrower at its first level.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 **Cause of the art/hit mismatch.** The damage area was a separate rectangle built from four numbers in `weapons.json` (`car_half_size`, `inner_edge_multiplier`, `depth_multiplier`, `half_width_multiplier`): 3.25 units deep and 2.6 wide at full size, starting 0.175 behind the car's centre. The drawing was the 95-pixel plume scaled by the same size factor but unrelated to the rectangle: about twice its depth on the screen, starting 0.42 behind the centre, and a teardrop against a rectangle. Minions also counted only by their centre. So the flame could cover most of a minion without burning it. The draw order was a second cause: the flame sat at the car's depth in the View, so enemies at the same depth that come earlier in the tree were drawn over it.
@@ -85,3 +89,4 @@ QA passed all 4. Ready to play in the game build: drift through minions with the
 **Documents updated:** `docs/weapons.md`, `game/README.md`.
 
 **Refusal:** an `rm` of my scratch GUT log (`C:\solid-carbide-worktrees\scratch_gut.log`, outside the worktree) was refused by the safety check; I did not work around it. It can be deleted by hand.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
