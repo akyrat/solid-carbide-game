@@ -32,8 +32,10 @@ _spec.loader.exec_module(gate)
 
 
 def task(tid, status="open", depends_on="", qa_rounds=0, criteria=("- [ ] It works (QA: pass / fail)",),
-         notes="Written by the agent when it finishes.", review=None, lead=None, goal=None):
+         notes="Written by the agent when it finishes.", review=None, lead=None, goal=None, epic="hud-menus",
+         style=None):
     review_line = f"\nThe board's review: {review}\n" if review else ""
+    style_block = "" if style is None else f"## Style review\n\n{style}\n\n"
     lead_line = "" if lead is None else ("lead:\n" if not lead else f"lead: {lead}\n")
     lead_line += "" if goal is None else (f"goal: {goal}\n" if goal else "goal:\n")
     return f"""---
@@ -42,7 +44,7 @@ title: Task {tid}
 status: {status}
 from: project-lead
 to: ui
-{lead_line}epic: hud-menus
+{lead_line}epic: {epic}
 milestone: mvp
 depends_on: [{depends_on}]
 model: sonnet
@@ -61,7 +63,7 @@ Something to build.{review_line}
 
 {chr(10).join(criteria)}
 
-## Result notes
+{style_block}## Result notes
 
 {notes}
 """
@@ -158,6 +160,36 @@ class StatusRules(Base):
     def test_cannot_skip_qa(self):
         self.put("T-001", status="in-progress", notes="Built it.")
         self.assertIn("Allowed now: in-qa", self.refused("T-001", "done"))
+
+    ROUND = "Run by `tools/style_loop/run.py`.\n\n### Round 1\n\n- Score: 9/10"
+
+    def test_art_and_text_go_to_qa_only_through_the_style_loop(self):   # T-292
+        for epic, kind in (("art", "art"), ("narrative", "text")):
+            for empty in (None, "Only for art and text tasks: one entry per round of the style loop."):
+                self.put("T-001", status="in-progress", notes="Built it.", epic=epic, style=empty)
+                why = self.refused("T-001", "in-qa")
+                self.assertIn("style loop", why)
+                self.assertIn(f"tools/style_loop/run.py {kind} --task T-001", why)
+                self.assertEqual(self.status("T-001"), "in-progress")
+            self.put("T-001", status="in-progress", notes="Built it.", epic=epic, style=self.ROUND)
+            self.move("T-001", "in-qa")
+            self.assertEqual(self.status("T-001"), "in-qa")
+
+    def test_the_style_loop_gate_leaves_other_epics_alone(self):
+        for epic in ("hud-menus", "tooling", "driving", "sound"):
+            self.put("T-001", status="in-progress", notes="Built it.", epic=epic)
+            self.move("T-001", "in-qa")
+            self.assertEqual(self.status("T-001"), "in-qa")
+
+    def test_result_notes_are_asked_for_before_the_style_review(self):
+        self.put("T-001", status="in-progress", epic="art")
+        self.assertIn("result notes", self.refused("T-001", "in-qa"))
+
+    def test_style_rounds_counts_only_the_style_review_section(self):
+        text = task("T-001", style=self.ROUND + "\n\n### Round 2\n\n- Score: 8/10")
+        self.assertEqual(ts.style_rounds(text), 2)
+        self.assertEqual(ts.style_rounds(task("T-001", notes="### Round 1 (not in the Style review)")), 0)
+        self.assertEqual(ts.style_rounds(text.replace("\n", "\r\n")), 2)
 
     def test_qa_must_mark_every_criterion(self):
         self.put("T-001", status="in-qa", criteria=("- [x] A (QA: pass)", "- [ ] B (QA: pass / fail)"))

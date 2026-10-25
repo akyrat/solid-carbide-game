@@ -5,15 +5,18 @@ helpers, write_section and the style loop's flag, are tested in tools/test_task_
   python -m unittest discover -s tools -p "test_*.py"
 """
 
+import base64
 import contextlib
 import io
 import json
+import os
 import struct
 import sys
 import tempfile
 import unittest
 import zlib
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -338,6 +341,72 @@ class CommandLine(Base):
         self.assertTrue((base / "art-archive" / "T-901" / "style-loop" / "v1.png").is_file())
         self.assertEqual((base / "out" / "thing.png").read_bytes(), made.read_bytes())
         self.assertFalse((self.root / "art-archive").exists())
+
+    def test_pixellab_generates_only_inside_the_run(self):
+        """T-292: the agent the loop starts may call `pixellab_client.py generate`; outside the run it is refused.
+        The HTTP layer is faked: nothing is charged."""
+        pc = loop.pixellab_client
+        root, seen = self.root, {}
+        sent = []
+
+        class FakeHttp:
+            token = "fake-token-1234567890"
+
+            def request(self, method, path, body=None):
+                sent.append((method, path))
+                return 200, {"image": {"base64": base64.b64encode(png_bytes(sprite((10, 60, 120)))).decode()}}
+
+        def generate(name):
+            err = io.StringIO()
+            with contextlib.redirect_stderr(err), contextlib.redirect_stdout(io.StringIO()):
+                code = pc.main(["generate", "--endpoint", "create-image-pixflux", "--params", '{"description": "x"}',
+                                "--out-dir", str(root / "made"), "--name", name, "--consulted", "docs/visual-style.md",
+                                "--log", str(root / "pixellab.jsonl")])
+            return code, err.getvalue()
+
+        class Agent(FakeClaude):
+            """The Asset Generation Agent, calling PixelLab from inside the run as the real one does."""
+            def ask(self, step, prompt, schema, **options):
+                answer = super().ask(step, prompt, schema, **options)
+                if step == "generate":
+                    seen["marker"] = Path(os.environ[pc.STYLE_LOOP_VAR])
+                    seen["inside"] = generate("inside")
+                    answer.data["file"] = str(root / "made" / "inside.png")
+                return answer
+
+        fixture = self.root / "art.json"
+        fixture.write_text(json.dumps({"generate": [{"file": "", "changed": "first"}],
+                                       "evaluate": [evaluation(9)]}), encoding="utf-8")
+        with mock.patch.object(pc, "Http", lambda token: FakeHttp()), mock.patch.object(pc, "load_token", lambda: FakeHttp.token), \
+                mock.patch.dict(os.environ):
+            os.environ.pop(pc.STYLE_LOOP_VAR, None)
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+                code = run.main(["art", "--task", "T-901", "--brief", str(FIXTURES / "sample-brief.md"),
+                                 "--out", "game/art/thing.png", "--size", "4x4", "--fake", str(fixture)],
+                                claude=Agent(fixture))
+            out = buf.getvalue()
+            code_after, err_after = generate("after")
+            self.assertNotIn(pc.STYLE_LOOP_VAR, os.environ, "the run puts the environment back")
+        self.assertEqual(seen["inside"][0], 0, seen["inside"][1])
+        self.assertEqual(code, 0, out)
+        self.assertEqual(sent, [("POST", "/create-image-pixflux")], "only the call inside the run is sent")
+        marker = seen["marker"]
+        self.assertEqual(marker.parent.name, "style-loop")
+        self.assertEqual(marker.parent.parent.name, ".board", "the marker is in a git-ignored .board/ folder")
+        self.assertFalse(marker.exists(), "the marker is deleted when the run ends")
+        self.assertEqual(code_after, 1)
+        self.assertIn("tools/style_loop/run.py", err_after)
+
+    def test_the_marker_is_live_only_during_the_run_and_names_it(self):
+        spec = self.spec("art")
+        with loop.live_run(spec) as marker:
+            data = json.loads(marker.read_text(encoding="utf-8"))
+            self.assertEqual((data["pid"], data["task"], data["kind"]), (os.getpid(), "T-901", "art"))
+            self.assertEqual(loop.pixellab_client.require_style_loop()["run"], data["run"])
+        self.assertFalse(marker.exists())
+        with self.assertRaises(loop.pixellab_client.NotInStyleLoop):
+            loop.pixellab_client.require_style_loop({loop.pixellab_client.STYLE_LOOP_VAR: str(marker)})
 
     def test_usage_errors(self):
         code, out = self.cli("text", "--task", "T-999", "--brief", str(FIXTURES / "sample-brief.md"), "--kind", "popup")

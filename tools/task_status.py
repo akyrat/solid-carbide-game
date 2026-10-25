@@ -120,6 +120,27 @@ def has_result_notes(text):
     return bool(tb.review_parts(text)[2])
 
 
+STYLE_EPICS = {"art": "art", "narrative": "text"}   # epic -> the style loop's kind (tasks/README.md, "The style loop")
+STYLE_REVIEW_RE = re.compile(r"^## Style review[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
+STYLE_ROUND_RE = re.compile(r"^### Round \d+", re.M)
+
+
+def style_rounds(text):
+    """How many style loop rounds the task's `## Style review` section records (its `### Round N` headings)."""
+    section = STYLE_REVIEW_RE.search(text.replace("\r\n", "\n"))
+    return len(STYLE_ROUND_RE.findall(section.group(1))) if section else 0
+
+
+def style_gate(fields, text):
+    """Why an art or narrative ticket can't go to QA yet (its Style review has no rounds), or None (T-292)."""
+    kind = STYLE_EPICS.get(fields.get("epic", ""))
+    if not kind or style_rounds(text):
+        return None
+    return (f"an {fields.get('epic')} ticket goes to QA only through the style loop, and its \"## Style review\" "
+            f"has no rounds yet: run python tools/style_loop/run.py {kind} --task {fields.get('id', 'T-NNN')} ... "
+            "(tasks/README.md, \"The style loop\")")
+
+
 def dep_met(fields, dep_fields):
     """A dependency is met when it is done, or (tasks/README.md, "Goal runs") when it waits in
     needs-playtest and both tickets belong to the same goal (the same non-empty `goal:` line)."""
@@ -166,7 +187,11 @@ def allowed(fields, text, folders, by="agent"):
         rule("open", True, "")
         rule("blocked", True, "")
     if old == "in-progress":
-        rule("in-qa", has_result_notes(text), "the agent hasn't written its result notes yet")
+        style = style_gate(fields, text)
+        if not has_result_notes(text):
+            rule("in-qa", False, "the agent hasn't written its result notes yet")
+        else:
+            rule("in-qa", not style, style)
         rule("planning", True, "", "back to refining with the board")
         rule("blocked", True, "")
         rule("open", True, "")

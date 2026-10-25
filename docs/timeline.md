@@ -1845,3 +1845,8 @@ Entry format:
 - Decision or change: `tools/style_loop/run.py` runs the style loop with no one stepping in: the task's agent makes a version, the script checks and the Style Evaluator give a score and a reason, and below 8 the same agent session refines it, at most 3 times; every round is written into the ticket's `## Style review`. The loop writes tickets only through the status script, so the ticket guard stays unchanged (board). The board approved a new status move for the loop only: In progress to Flagged for review, when a version is still below 8 after 3 refines. A fake mode runs a whole loop free.
 - Documents touched: `tasks/README.md`, `docs/README.md`
 - Tasks: T-291
+
+## 2026-10-25: The style loop is enforced (T-292)
+- Decision or change: the PixelLab client generates only inside a live style loop run, and art and narrative tickets can't move to QA without rounds in their Style review, whoever moves them. The goal runner's agents are told the loop rule in place of "one round per task". Every asset and text from now on is made through the loop.
+- Documents touched: `tasks/README.md`, `game/README.md`
+- Tasks: T-292

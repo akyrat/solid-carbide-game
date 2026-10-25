@@ -14,19 +14,23 @@ overwritten; the kept one is copied to the brief's output file. `claude` is a Re
 (tools/goal_agent/claude_call.py), the only way this tool calls Claude.
 """
 
+import contextlib
 import json
+import os
 import shutil
 import sys
 import uuid
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import task_status as ts   # tools/ is on the path: style_loop/__init__.py
+import taskboard_sync as tb
 from goal_agent.claude_call import Pause
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "game" / "tools"))
 import style_rules  # noqa: E402
+import pixellab_client  # noqa: E402   (only its run marker's names: this tool never calls PixelLab itself)
 
 PASS = 8
 MAX_REFINES = 3
@@ -78,12 +82,52 @@ class Round:
     refused: list = field(default_factory=list)
 
 
+# --- the run marker (T-292) ---
+
+@contextlib.contextmanager
+def live_run(spec, state_dir=None):
+    """While the block runs, this is a live style loop run: a marker in <state_dir>/style-loop/<run>.json
+    (default: the status script's .board/, git-ignored) and its path in pixellab_client.STYLE_LOOP_VAR, which
+    the agents started from this process inherit (RealClaude's Popen passes the environment on), so their
+    `pixellab_client.py generate` is let through. The marker is deleted and the variable put back when the
+    block ends. Yields the marker's path."""
+    run_id = uuid.uuid4().hex
+    folder = Path(state_dir or tb.STATE_DIR) / "style-loop"
+    folder.mkdir(parents=True, exist_ok=True)
+    marker = folder / f"{run_id}.json"
+    marker.write_text(json.dumps({
+        "run": run_id, "pid": os.getpid(), "task": spec.task, "kind": spec.kind,
+        "started": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")}) + "\n", encoding="utf-8")
+    var, saved = pixellab_client.STYLE_LOOP_VAR, os.environ.get(pixellab_client.STYLE_LOOP_VAR)
+    os.environ[var] = str(marker.resolve())
+    try:
+        yield marker
+    finally:
+        if saved is None:
+            os.environ.pop(var, None)
+        else:
+            os.environ[var] = saved
+        marker.unlink(missing_ok=True)
+
+
 # --- the four steps ---
 
 def run(claude, spec, flag=None):
     """Runs the loop; returns (the kept round, every round). `flag(spec, kept)` is called when the kept
     version is still below PASS (default: task_status.move to flagged-for-review)."""
     flag = flag or flag_task
+    with live_run(spec):   # T-292: PixelLab generates only while this is live
+        rounds = rounds_until_kept(claude, spec)
+    kept = max(rounds, key=lambda r: (r.score, -r.n))
+    keep(spec, kept)
+    write_record(spec, rounds, kept)
+    if kept.score < PASS:
+        flag(spec, kept)
+    return kept, rounds
+
+
+def rounds_until_kept(claude, spec):
+    """Steps 1 to 3: generate, evaluate and refine until a version reaches PASS or MAX_REFINES are used."""
     agent, session, rounds = GENERATOR[spec.kind], str(uuid.uuid4()), []
     for n in range(1, MAX_REFINES + 2):
         target = archive_target(spec, n) if spec.kind == "art" else None
@@ -105,12 +149,7 @@ def run(claude, spec, flag=None):
         write_record(spec, rounds)
         if score >= PASS:
             break
-    kept = max(rounds, key=lambda r: (r.score, -r.n))
-    keep(spec, kept)
-    write_record(spec, rounds, kept)
-    if kept.score < PASS:
-        flag(spec, kept)
-    return kept, rounds
+    return rounds
 
 
 def archive_target(spec, n):

@@ -92,8 +92,9 @@ class HeadlessRuns(GoalRepo):
         self.assertEqual(options["permission_mode"], build.PERMISSION_MODE)
         self.assertTrue(prompt.startswith("Work on task T-001"))
         for words in ("goal G-001", "commit only in that folder", "result notes", "tests",
-                      "never work around it", "generations left"):
+                      "never work around it", "generations left", "tools/style_loop/run.py", "\"## Style review\""):
             self.assertIn(words, prompt)
+        self.assertNotIn("one round per", prompt, "the style loop rule replaces it (T-292)")
         step, prompt, options = next(c for c in b.claude.calls if c[0] == "qa")
         self.assertTrue(prompt.startswith("QA round 1 for task T-001"))
         self.assertIn("- [ ] It works (QA: pass / fail)", prompt)        # the ticket's criteria are listed
