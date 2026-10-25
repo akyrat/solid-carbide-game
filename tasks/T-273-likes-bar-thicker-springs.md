@@ -1,7 +1,7 @@
 ---
 id: T-273
 title: A likes bar 4 times thicker that springs up when it fills
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Coursework
@@ -64,6 +64,10 @@ Likes bar 64 px tall; fill springs up in 0.25 s with a small overshoot; level-up
 
 QA passed all 4. Ready to play in the game build: taller likes bar with a spring fill.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -76,3 +80,4 @@ UI Agent, T-273. Built:
 - Screenshots and GIF in `art-archive/T-273/screenshots/`: `likes_bar_plain.png`, `likes_bar_burning.png` (x4), `likes_bar_spring.gif` (30 fps, five gains with a level-up). Made with `bash game/tools/record_likes_spring.sh`. I looked at them: the bar, flames and level-up flash fit; the GIF shows the fill rising, the white-hot level-up cover, and the bar starting again.
 - Docs updated: `docs/hud-and-menus.md` (The HUD, bottom centre) and `game/README.md` (HUD layout value, new "Likes bar spring" paragraph).
 - Refusals: none.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
