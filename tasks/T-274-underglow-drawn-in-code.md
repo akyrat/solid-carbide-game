@@ -1,7 +1,7 @@
 ---
 id: T-274
 title: The neon underglow drawn in code instead of the generated sprite
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Coursework
@@ -61,6 +61,10 @@ Underglow drawn in code: pixel neon ring, dithered halo and floor glow, pulse an
 
 QA passed all 4. Ready to play in the game build: underglow drawn in code; tier 8's inside looks mostly empty, a likely retune.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Weapon Behavior Agent (the look is a proposal for the playtest):
@@ -71,3 +75,4 @@ Weapon Behavior Agent (the look is a proposal for the playtest):
 - Tests: `test_neon_underglow.gd` (ring pixels lie exactly inside the damage circle at all 8 tiers, opaque pixels only and only the look's colours, no red, pulse and shimmer loop, frozen while paused, sprite kept with its switch) and `test_weapon_art.gd`. Full GUT suite passes; `game/tools` Python tests 395 OK (1 skipped); `tools` Python tests 451 OK.
 - Screenshots and GIF in `art-archive/T-274/screenshots/`: `underglow_street_t1.png`, `underglow_street_t8.png`, `underglow_roof_t1.png`, `underglow_roof_t8.png`, `underglow_pulse_minions.gif` (fixtures `game/tests/fixtures/run_underglow_look_*.tscn`). Looked at them: ring and halo read as neon on the street and the rooftop; at tier 8 the inside is mostly empty (fixed widths), a candidate to retune.
 - Documents affected: `docs/visual-style.md` (Content, "The neon underglow in code"), `game/README.md` ("The neon underglow"). No PixelLab calls.
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
