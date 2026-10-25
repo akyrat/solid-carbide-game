@@ -1,7 +1,7 @@
 ---
 id: T-291
 title: "The style loop: generate, evaluate with a score and a reason, refine below 8"
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/README.md]
 files_to_read_first: [tasks/README.md, docs/README.md, docs/visual-style.md, docs/extended-narrative.md, .claude/agents/style-evaluator.md, tools/goal_agent/claude_call.py, tools/goal_agent/try_fixture.py, tools/task_status.py, game/tools/pixellab_client.py, game/tools/style_rules.py]
 files_expected_to_change: [tools/style_loop/, tasks/README.md, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -74,6 +74,10 @@ Started: the style loop tool (generate, evaluate with a score and reason, refine
 ### 2026-10-25, In progress → In QA
 
 Built and reworked: the loop runs end to end in fake mode from the shell; it writes the ticket only through the status script, and the guard is unchanged. Tests 478 / 409 / GUT 1419 pass. Now with QA.
+
+### 2026-10-25, In QA → Done
+
+QA passed all 8 criteria. Merged to master: the style loop tool runs generate, evaluate (score and reason) and refine, and writes every round into the ticket.
 
 ## Result notes
 
