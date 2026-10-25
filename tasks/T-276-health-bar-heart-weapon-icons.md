@@ -1,7 +1,7 @@
 ---
 id: T-276
 title: A bigger health bar with the heart under it, and the car's weapons as icons beside it
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Coursework
@@ -74,6 +74,10 @@ No branch cause found: master crashes the same way (2 of 3 runs of the HUD tests
 
 QA round 2 passed all 4 (1 of 3 full test runs completed; the other 2 hit the known engine crash also seen on master). Ready to play in the game build.
 
+### 2026-10-25, Needs playtest → Done
+
+Played and approved by the board in the game build; merged into master.
+
 ## Result notes
 
 Built (UI Agent). Top left of the HUD:
@@ -87,3 +91,4 @@ Built (UI Agent). Top left of the HUD:
 - Screenshots (fixtures `tests/fixtures/weapon_icons_gun.tscn`, `weapon_icons_mixed.tscn`): `art-archive/T-276/screenshots/top_left_gun_only.png` and `top_left_all_five_mixed.png` (gun x2, wiper x3, flamethrower tier 1, molotov x8, underglow x2). Nothing overlaps the timer, coins or car at 1152 x 648; no Redgull red besides the heart. The heart is small (the same 22 x 20 picture as the likes bar's); say if it should be bigger.
 - Documents updated: `docs/hud-and-menus.md` (Content, Top left), `game/README.md` (HUD section). 0 PixelLab generations.
 - 2026-10-23, in-qa → in-progress: QA round 1: full GUT suite exits 139 in test_combo_broken_popup.gd:104 on this branch (reproducible, master passes); other criteria pass
+- 2026-10-25, needs-playtest → done: The board played the game build and checked every objective on the patch notes: happy with everything (2026-10-25).
