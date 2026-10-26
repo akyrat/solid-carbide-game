@@ -1,7 +1,7 @@
 ---
 id: T-296
 title: "Style loop: a repeated run adds to the Style review instead of replacing it"
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tools/style_loop/loop.py, tools/style_loop/run.py, tools/task_status.py, tools/style_loop/test_loop.py, tasks/T-294-art-greenbull-emblem.md]
 files_expected_to_change: [tools/style_loop/loop.py, tools/style_loop/test_loop.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Building it in this session: the goal runner waits for reused tickets and doesn'
 
 Built: a repeated style loop run now adds its own record after the earlier runs instead of replacing them; 5 new tests, 490 tools tests pass. Going to QA.
 
+### 2026-10-26, In QA → Done
+
+QA passed all four criteria. Merged to master: goal G-006 can resume.
+
 ## Result notes
 
 - `tools/style_loop/loop.py`: `write_record` now reads the Style review once per run (`Spec.earlier`, via `earlier_runs`). With earlier rounds present, they are kept: a single-run review (bare `### Round N`) becomes `### Run 1` with `#### Round N`; a review that already has `### Run N` parts is kept as it is. The new run is written as `### Run N+1` after them, with `#### Round N`, and only that part is rewritten as the run goes. An empty/template-only review, or a first run, is written as before (plain `### Round N`).
@@ -64,3 +68,4 @@ Built: a repeated style loop run now adds its own record after the earlier runs 
 - Tests: `RepeatedRun` in `tools/style_loop/test_loop.py` (4 tests: run 2 keeps run 1, run 3, only own part rewritten while going, `--fake` run on a sandbox copy), one test in `tools/test_task_status.py` (two runs can go to in-qa, an empty review cannot). Full suite: 490 tests, OK.
 - Nothing left open.
 - QA round 1: all four criteria pass. Full suite OK (490 tests); RepeatedRun and TextLoop 14 tests OK. Empty review: earlier_runs returns ('', 0), so a first run writes plain `### Round N` as before. The sandbox `--fake` test checks the real ticket is unchanged and the copy has Run 1 and Run 2; run 1's exact text kept is asserted by the second-run test (wrapped one heading level down, as the ticket allows).
+- 2026-10-26, in-qa → done: QA round 1 passed all 4 criteria; tooling, merged straight after QA.
