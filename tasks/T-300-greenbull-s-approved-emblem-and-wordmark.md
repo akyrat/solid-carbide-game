@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/working-with-the-board.md, tasks/T-294-art-greenbull-emblem.md, tasks/T-295-art-greenbull-wordmark.md, art-archive/T-294/, art-archive/T-295/, game/art/logo/]
 files_expected_to_change: [game/art/logo/greenbull_emblem_128.png, game/art/logo/greenbull_emblem_64.png, game/art/logo/greenbull_emblem_32.png, game/art/logo/greenbull_wordmark.png, game/art/logo/, docs/visual-style.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -70,6 +70,10 @@ Goal runner (G-006): failed QA once; back to the agent on opus.
 ### 2026-10-26, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-26, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -165,3 +169,4 @@ PixelLab generations used by this ticket: 0.
 - All three test sets pass: game/tools python 463 tests OK (1 skipped), tools/ 491 OK, GUT 1419/1419.
 - Refused during the loop runs: the generator's own chained `cp`/`cmp`, `sha256sum` and `python -c` check commands (listed in each round's "Refused"); not essential, the copies were made and checked here with `git diff --no-index`. No PixelLab call.
 - 2026-10-26, in-qa → in-progress: QA failed: The ticket's Style review has one style loop round per file, each keeping the byte-identical copy. (QA: fail: the Style review section holds only one round (the wordmark, v1-4); the three emblem rounds are described in the result notes but not recorded as rounds there); All three test sets pass. (QA: fail: game/tools/test_check_logo_one_colour.py test_only_three_final_files fails (reran alone, same): it expects only the three redgull files in game/art/logo/, now there are seven. GUT 1419/1419 and tools/ 491 tests pass.) Back to the agent on opus.
+- 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
