@@ -8,6 +8,9 @@ Version 1 of the style loop (code moved here from art-archive/T-295/style-loop/d
 
 Run (from the repo root):
     python game/tools/greenbull_wordmark.py art-archive/T-295/style-loop/v1.png
+Run 2 (dark green leads): add --scheme dark (dark green face, 2 px light green top edge,
+light green drop shade), e.g.
+    python game/tools/greenbull_wordmark.py --scheme dark art-archive/T-295/style-loop/v1-2.png
 It refuses to overwrite an existing file, so earlier loop versions are never lost.
 """
 import sys
@@ -80,8 +83,18 @@ def glyph_mask(ch):
     return cells
 
 
-def word_layer(word):
+# Colour schemes (run 1 = "light"; run 2 = "dark", where dark green leads as the board asked).
+#   face: letter body colour; edge: colour of the face's top edge rows (None = no edge);
+#   edge_rows: how many rows of the face's top edge; shade: drop shade colour.
+SCHEMES = {
+    "light": {"face": LIGHT, "edge": None, "edge_rows": 0, "shade": DARK},
+    "dark": {"face": DARK, "edge": LIGHT, "edge_rows": 2, "shade": LIGHT},
+}
+
+
+def word_layer(word, scheme="light"):
     """Dict (x, y) -> colour for the word, before slant, origin at (1, 1)."""
+    sc = SCHEMES[scheme]
     face = set()
     x0 = 1
     for ch in word:
@@ -102,8 +115,12 @@ def word_layer(word):
                 if p not in body:
                     outline.add(p)
     px = {p: OUTLINE for p in outline}
-    px.update({p: DARK for p in shade})
-    px.update({p: LIGHT for p in face})
+    px.update({p: sc["shade"] for p in shade})
+    px.update({p: sc["face"] for p in face})
+    if sc["edge"] is not None:
+        for (x, y) in face:
+            if any((x, y - d) not in face for d in range(1, sc["edge_rows"] + 1)):
+                px[(x, y)] = sc["edge"]
     return px
 
 
@@ -112,12 +129,12 @@ def slant(px):
     return {(x + (max_y - y) // SLANT_ROWS, y): c for (x, y), c in px.items()}
 
 
-def render(emblem_path=EMBLEM):
+def render(emblem_path=EMBLEM, scheme="light"):
     img = Image.new("RGBA", CANVAS, CLEAR)
     emblem = Image.open(emblem_path).convert("RGBA")
     img.paste(emblem, (0, (CANVAS[1] - emblem.height) // 2))
 
-    px = slant(word_layer(WORD))
+    px = slant(word_layer(WORD, scheme))
     min_x = min(x for x, _ in px); max_x = max(x for x, _ in px)
     min_y = min(y for _, y in px); max_y = max(y for _, y in px)
     w, h = max_x - min_x + 1, max_y - min_y + 1
@@ -146,14 +163,20 @@ def check(img, emblem):
 
 
 def main(argv):
-    if len(argv) != 2:
+    args = list(argv[1:])
+    scheme = "light"
+    if "--scheme" in args:
+        i = args.index("--scheme")
+        scheme = args[i + 1] if i + 1 < len(args) else ""
+        del args[i:i + 2]
+    if len(args) != 1 or scheme not in SCHEMES:
         print(__doc__)
         return 2
-    out = Path(argv[1])
+    out = Path(args[0])
     if out.exists():
         print(f"refusing to overwrite {out}")
         return 1
-    img, emblem, (w, h) = render()
+    img, emblem, (w, h) = render(scheme=scheme)
     problems = check(img, emblem)
     if problems:
         print("FAILED:", problems)
