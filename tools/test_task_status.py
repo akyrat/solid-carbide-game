@@ -175,6 +175,19 @@ class StatusRules(Base):
             self.move("T-001", "in-qa")
             self.assertEqual(self.status("T-001"), "in-qa")
 
+    TWO_RUNS = ("### Run 1\n\nRun by `tools/style_loop/run.py`.\n\n#### Round 1\n\n- Score: 6/10\n\n"
+                "### Run 2\n\nRun by `tools/style_loop/run.py`.\n\n#### Round 1\n\n- Score: 9/10")
+
+    def test_a_task_with_two_style_runs_can_go_to_qa_and_an_empty_review_still_cannot(self):   # T-296
+        self.assertEqual(ts.style_rounds(task("T-001", style=self.TWO_RUNS)), 2)
+        self.assertEqual(ts.style_rounds(task("T-001", style="### Run 1\n\nNo rounds yet.")), 0)
+        self.put("T-001", status="in-progress", notes="Built it.", epic="art", style=self.TWO_RUNS)
+        self.move("T-001", "in-qa")
+        self.assertEqual(self.status("T-001"), "in-qa")
+        self.put("T-001", status="in-progress", notes="Built it.", epic="art", style="### Run 1\n\nNo rounds yet.")
+        self.assertIn("style loop", self.refused("T-001", "in-qa"))
+        self.assertEqual(self.status("T-001"), "in-progress")
+
     def test_the_style_loop_gate_leaves_other_epics_alone(self):
         for epic in ("hud-menus", "tooling", "driving", "sound"):
             self.put("T-001", status="in-progress", notes="Built it.", epic=epic)

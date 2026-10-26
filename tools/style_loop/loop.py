@@ -17,6 +17,7 @@ overwritten; the kept one is copied to the brief's output file. `claude` is a Re
 import contextlib
 import json
 import os
+import re
 import shutil
 import sys
 import uuid
@@ -68,6 +69,7 @@ class Spec:
     redgull: bool = False
     allow_red: list = field(default_factory=list)
     max_colors: int = 30
+    earlier: tuple = None          # (text, runs) of the Style review's earlier runs, read on the first write (T-296)
 
 
 @dataclass
@@ -306,5 +308,34 @@ def record(spec, rounds, kept=None):
     return "\n".join(lines)
 
 
+RUN_RE = re.compile(r"^### Run (\d+)", re.M)
+ROUND_RE = re.compile(r"^### Round \d+", re.M)
+
+
+def earlier_runs(text):
+    """The earlier runs' record as the Style review keeps it (T-296): its `### Run N` parts as they are; a review
+    written by a single run (bare `### Round N` headings) becomes `### Run 1`, its rounds one level down; nothing
+    when the section holds no rounds. Returns (text, how many runs)."""
+    body = text.strip()
+    if RUN_RE.search(body):
+        return body, max(int(n) for n in RUN_RE.findall(body))
+    if ROUND_RE.search(body):
+        return "### Run 1\n\n" + re.sub(r"^### Round", "#### Round", body, flags=re.M), 1
+    return "", 0
+
+
+def current_review(task):
+    path, _ = ts.find(task)
+    found = ts.STYLE_REVIEW_RE.search(path.read_bytes().decode("utf-8").replace("\r\n", "\n"))
+    return found.group(1) if found else ""
+
+
 def write_record(spec, rounds, kept=None):
-    return ts.write_section(spec.task, "Style review", record(spec, rounds, kept))
+    """Writes this run's part of the Style review, after the earlier runs', which stay as they were."""
+    if spec.earlier is None:
+        spec.earlier = earlier_runs(current_review(spec.task))
+    text, runs = spec.earlier
+    if not runs:
+        return ts.write_section(spec.task, "Style review", record(spec, rounds, kept))
+    mine = re.sub(r"^### Round", "#### Round", record(spec, rounds, kept), flags=re.M)
+    return ts.write_section(spec.task, "Style review", f"{text}\n\n### Run {runs + 1}\n\n{mine}")

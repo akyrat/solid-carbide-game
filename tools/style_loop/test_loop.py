@@ -214,6 +214,61 @@ class TextLoop(Base):
         self.assertIn('- Refused: {"tool_name": "Bash"}', self.section())
 
 
+class RepeatedRun(Base):   # T-296
+    def run_text(self, fixture="text-4-6-9.json"):
+        return loop.run(FakeClaude(FIXTURES / fixture), self.spec())
+
+    def test_a_second_run_keeps_the_first_runs_record_and_adds_its_own(self):
+        self.run_text()
+        first = self.section().strip()
+        self.assertIn("### Round 3", first)
+        self.run_text("text-never-8.json")
+        second = self.section()
+        wrapped = first.replace("### Round", "#### Round")
+        self.assertIn("### Run 1\n\n" + wrapped, second, "run 1 is kept as it was, one heading level down")
+        self.assertIn("### Run 2", second)
+        self.assertLess(second.index("### Run 1"), second.index("### Run 2"))
+        self.assertEqual(second.count("#### Round 1"), 2)
+        self.assertEqual(ts.style_rounds(self.text()), 3 + 4, "the QA gate counts every run's rounds")
+
+    def test_a_third_run_is_run_3_and_earlier_runs_stay_unchanged(self):
+        self.run_text()
+        self.run_text()
+        before = self.section().split("### Run 2")[0]
+        self.run_text()
+        after = self.section()
+        self.assertTrue(after.startswith(before))
+        self.assertEqual([h for h in after.splitlines() if h.startswith("### Run")], ["### Run 1", "### Run 2", "### Run 3"])
+
+    def test_a_run_rewrites_only_its_own_part_while_it_goes(self):
+        self.run_text()
+        run1 = self.section().split("### Run 2")[0] if "### Run 2" in self.section() else self.section()
+        seen = []
+        real = loop.write_record
+
+        def spy(spec, rounds, kept=None):
+            path = real(spec, rounds, kept)
+            seen.append(self.section())
+            return path
+        with mock.patch.object(loop, "write_record", spy):
+            self.run_text()
+        self.assertGreater(len(seen), 1)
+        for text in seen:
+            self.assertIn(run1.strip().replace("### Round", "#### Round"), text)
+
+    def test_a_fake_run_on_a_sandbox_copy_adds_after_the_existing_run(self):
+        self.run_text()
+        ticket = self.text()
+        code, out = CommandLine.cli(self, "text", "--task", "T-901", "--brief", str(FIXTURES / "sample-brief.md"),
+                                    "--kind", "popup", "--fake", str(FIXTURES / "text-4-6-9.json"))
+        self.assertEqual(code, 0, out)
+        self.assertEqual(self.text(), ticket, "the real task is not changed")
+        copy = CommandLine.copy_of_ticket(out).read_text(encoding="utf-8")
+        self.assertIn("### Run 1", copy)
+        self.assertIn("### Run 2", copy)
+        self.assertIn("#### Round 3", copy)
+
+
 class ArtLoop(Base):
     def made(self, name, colour):
         path = self.root / "made" / name
