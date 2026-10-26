@@ -1,7 +1,7 @@
 ---
 id: T-298
 title: Style rules: the new rule 6 (Greenbull's colours), Greenbull's logo check, and Redgull as a banned word
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Goal-G-006
@@ -54,6 +54,10 @@ Run check_sprite_rules.py over game/art on master and on your branch and compare
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-298.
 
 ## Style review
 
