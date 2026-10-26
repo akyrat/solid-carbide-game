@@ -66,3 +66,21 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Done:** `game/tools/copy_greenbull_logo.py` (test: `test_copy_greenbull_logo.py`) copied the four approved files into `game/art/logo/` byte for byte, each with a `<name>.json` record (source file, ticket, run, sha256). No PixelLab call was made (0 generations); no entry in the generation log for T-300.
+
+SHA-256 (same as the archive source):
+- greenbull_emblem_128.png (T-294, run 2) cea473b9b498858a8012a919cae100ff79931cd4c712a902703e90c5ec3ef1b8
+- greenbull_emblem_64.png (T-294, run 2) cf298e5399c60c14800dad1727b661f05250ba2686bdb30b3a6715290f75c11a
+- greenbull_emblem_32.png (T-294, run 2) b3031add06d699dda6011b64f4d52cb7def65ff98e0df1eb5404d3e8b7c750d2
+- greenbull_wordmark.png (T-295, run 1) 07c1f06c47fdfbdf3e113d3705f9136f8a9f5c917ab7955f263057ffbc719ba8
+
+Script checks: `style_rules.py art <file> --greenbull` and `check_greenbull_logo.py` pass on all four (transparent corners, 0 semi-transparent, 5 colours, opaque pixels, Greenbull colours on Greenbull's own things).
+
+Redgull logo files: left in `game/art/logo/` (not moved, not deleted; `git mv` is not on the approved command list). All three test sets: Godot GUT 1419/1419 passed; the new python test passes.
+
+Visual style, Decisions, "Greenbull's look" now says where the files are.
+
+Screenshots: `art-archive/T-300/screenshots/logo_files_dark.png` and `logo_files_light.png` (made by `game/tools/make_logo_review_shots.py`).
+
+**NOT DONE, refused:** the style loop run (`python tools/style_loop/run.py art --task T-300 --brief art-archive/T-300/brief.md --out ... --greenbull`) was refused ("requires approval"; it is not on the pre-approved list). So the `## Style review` has no rounds, and the ticket cannot move to in-qa (T-292). Brief written: `art-archive/T-300/brief.md`. The loop must be run once per file by the runner or the board.

@@ -1,0 +1,9 @@
+{
+ "task": "T-300",
+ "what": "Greenbull wordmark (the head with GREENBULL in pixel letters). Approved by the board; copied unchanged, no generation, no edit.",
+ "source_file": "art-archive/T-295/greenbull_wordmark.png",
+ "source_ticket": "T-295",
+ "source_run": "run 1",
+ "sha256": "07c1f06c47fdfbdf3e113d3705f9136f8a9f5c917ab7955f263057ffbc719ba8",
+ "prompt": null
+}

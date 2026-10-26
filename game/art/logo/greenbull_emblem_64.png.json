@@ -1,0 +1,9 @@
+{
+ "task": "T-300",
+ "what": "Greenbull emblem (the bull's head alone), 64 px. Approved by the board; copied unchanged, no generation, no edit.",
+ "source_file": "art-archive/T-294/greenbull_emblem_64.png",
+ "source_ticket": "T-294",
+ "source_run": "run 2",
+ "sha256": "cf298e5399c60c14800dad1727b661f05250ba2686bdb30b3a6715290f75c11a",
+ "prompt": null
+}
