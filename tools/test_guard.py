@@ -678,17 +678,55 @@ class Git(Base):
 class SedBodyEdits(Base):
     """T-297: a sed -i on a ticket passes when every script is readable and can't write a guarded line."""
 
+    def setUp(self):
+        super().setUp()
+        path = self.put("T-012", status="open", qa_rounds=0)
+        with open(path, "ab") as f:
+            f.write(b"\n- [ ] The wordmark shows\n\nteh old line\n## Result notes\n")
+
     def cmd(self, command, cwd=None):
         # the hook only looks closely at a command that mentions status, qa_rounds or lead; the comment makes it
-        return decide(gate.pre_shell, {"command": command + "  # status"}, cwd)
+        return decide(gate.pre_shell, {"command": command + "  # status"}, cwd or str(self.root))
+
+    def test_a_script_that_would_change_a_header_line_is_refused(self):
+        # round 2: no guarded word in the script, but the edit is tried on the file's text
+        for c in ["sed -i 's/open/done/' tasks/T-012-test.md",
+                  "sed -i 's/0/1/' tasks/T-012-test.md",
+                  "sed -i 's/o/0/g' tasks/T-012-test.md",
+                  "sed -i '/: 0$/d' tasks/T-012-test.md",
+                  "sed -i '/in-progress/s/ /_/' tasks/T-012-test.md",
+                  "sed -i 's/open/done/' tasks/T-012-test.md tasks/T-012-test.md",
+                  "sed -i 's/teh/the/;s/open/done/' tasks/T-012-test.md",
+                  "sed -i -e 's/teh/the/' -e 's/open/done/' tasks/T-012-test.md",
+                  "sed -i '/old line/a x\\ns/open/done/' tasks/T-012-test.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+
+    def test_a_file_that_cannot_be_read_or_a_script_that_cannot_be_run_exactly_is_refused(self):
+        for c in ["sed -i 's/teh/the/' tasks/T-099-missing.md",
+                  "sed -i 's/teh/the/' tasks/T-012-*.md",
+                  "sed -i -E 's/te(h)/the/' tasks/T-012-test.md",
+                  "sed -i -n 's/teh/the/p' tasks/T-012-test.md",
+                  "sed -i 's/teh/\\n/' tasks/T-012-test.md",
+                  "sed -i 's/t[a-z]h/the/' tasks/T-012-test.md",
+                  "sed -i 's/teh/the/2' tasks/T-012-test.md",
+                  "sed -i '/old/,/new/s/a/b/' tasks/T-012-test.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+
+    def test_the_edit_is_not_written(self):
+        path = self.tasks / "T-012-test.md"
+        before = path.read_bytes()
+        self.cmd("sed -i 's/teh/the/' tasks/T-012-test.md")
+        self.assertEqual(path.read_bytes(), before)
 
     def test_body_edits_pass(self):
-        for c in ["sed -i 's/teh/the/' tasks/T-012-x.md",
-                  "sed -i 's/- \\[ \\] The wordmark/- [x] The wordmark/' tasks/T-012-x.md",
-                  "sed -i -e 's/a/b/g' -e 's#x#y#' tasks/T-012-x.md",
-                  "sed -i '/^- \\[ \\] The wordmark/s/ /_/' tasks/T-012-x.md",
-                  "sed -i '/old line/d' tasks/T-012-x.md",
-                  "sed -i '/## Result notes/a Done by hand' tasks/T-012-x.md"]:
+        for c in ["sed -i 's/teh/the/' tasks/T-012-test.md",
+                  "sed -i 's/- \\[ \\] The wordmark/- [x] The wordmark/' tasks/T-012-test.md",
+                  "sed -i -e 's/teh/the/g' -e 's#wordmark#logo#' tasks/T-012-test.md",
+                  "sed -i '/^- \\[ \\] The wordmark/s/ /_/' tasks/T-012-test.md",
+                  "sed -i '/old line/d' tasks/T-012-test.md",
+                  "sed -i '/## Result notes/a Done by hand' tasks/T-012-test.md"]:
             with self.subTest(c=c):
                 buf = io.StringIO()
                 with contextlib.redirect_stdout(buf):
@@ -696,23 +734,23 @@ class SedBodyEdits(Base):
                 self.assertEqual(self.cmd(c), "allow", buf.getvalue())
 
     def test_the_rest_stays_refused(self):
-        for c in ["sed -i 's/status: open/status: done/' tasks/T-012-x.md",
-                  "sed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-012-x.md",
-                  "sed -i 's/x/lead: A/' tasks/T-012-x.md",
-                  "sed -i 's/rounds: 0/rounds: 1/' tasks/T-012-x.md",
-                  "sed -i '1,5s/a/b/' tasks/T-012-x.md",
-                  "sed -i '1d' tasks/T-012-x.md",
-                  "sed -i '4c\\x' tasks/T-012-x.md",
-                  "sed -i 's/: 0/: 1/' tasks/T-012-x.md",
-                  "sed -i -f fix.sed tasks/T-012-x.md",
-                  "sed -i 'w out.md' tasks/T-012-x.md",
-                  "sed -i 's/a/b/w out.md' tasks/T-012-x.md",
-                  "sed -i 's/a/b/e' tasks/T-012-x.md",
-                  "sed -i 'e echo hi' tasks/T-012-x.md",
-                  "sed -i \"$S\" tasks/T-012-x.md",
-                  "sed -i \"$(cat s.txt)\" tasks/T-012-x.md",
-                  "sed -i 'y/a/b/' tasks/T-012-x.md",
-                  "sed -i 's/a/b' tasks/T-012-x.md"]:
+        for c in ["sed -i 's/status: open/status: done/' tasks/T-012-test.md",
+                  "sed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-012-test.md",
+                  "sed -i 's/x/lead: A/' tasks/T-012-test.md",
+                  "sed -i 's/rounds: 0/rounds: 1/' tasks/T-012-test.md",
+                  "sed -i '1,5s/a/b/' tasks/T-012-test.md",
+                  "sed -i '1d' tasks/T-012-test.md",
+                  "sed -i '4c\\x' tasks/T-012-test.md",
+                  "sed -i 's/: 0/: 1/' tasks/T-012-test.md",
+                  "sed -i -f fix.sed tasks/T-012-test.md",
+                  "sed -i 'w out.md' tasks/T-012-test.md",
+                  "sed -i 's/a/b/w out.md' tasks/T-012-test.md",
+                  "sed -i 's/a/b/e' tasks/T-012-test.md",
+                  "sed -i 'e echo hi' tasks/T-012-test.md",
+                  "sed -i \"$S\" tasks/T-012-test.md",
+                  "sed -i \"$(cat s.txt)\" tasks/T-012-test.md",
+                  "sed -i 'y/a/b/' tasks/T-012-test.md",
+                  "sed -i 's/a/b' tasks/T-012-test.md"]:
             with self.subTest(c=c):
                 self.assertEqual(self.cmd(c), "deny")
 
