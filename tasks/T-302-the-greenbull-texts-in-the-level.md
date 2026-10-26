@@ -78,3 +78,11 @@ Done. D4 is T-301's result notes table (its final texts); I put all 11 in word f
 
 Refusals: none.
 - 2026-10-26, in-qa → in-progress: QA failed: All three test sets pass. (QA: fail: GUT 1419/1419 and tools 501 OK, but `python -m unittest discover game/tools` has 1 failure: test_check_level_up_texts.test_the_real_files_match_t171s_table compares the game's texts to T-171's old Redgull table and now differs on 4 elements, upgrade_molotov.tier2.desc among them; failed again when rerun alone. The test or its table needs updating to the new texts) Back to the agent on opus.
+
+Round 2 (fix for the failed criterion "All three test sets pass"):
+- Cause: `game/tools/check_level_up_texts.py` (T-173) compared level_up_texts.gd only to T-171's old card table, which still has the Redgull wording. T-171's ticket is history and stays as it is.
+- Fix: the checker now reads T-301's table too (`NEWER_TASKS`) and puts its "New (final)" texts over the T-171 texts they replaced (`newer_texts`, `apply_newer`, `expected_rows`). With a task file given on the command line it still checks that table alone, as before.
+- Tests: `test_check_level_up_texts.py` has a new test for the layering, and the real-files test now checks T-171's table with T-301's texts (24 rows, 0 problems; it also checks molotov tier 2 now reads Greenbull).
+- `python -m unittest discover game/tools`: 464 OK (1 skipped). `python -m unittest discover tools`: 501 OK. `python game/tools/check_level_up_texts.py`: 24 rows checked, 0 problems. GUT not rerun: no GDScript or scene changed in this round (1419/1419 in round 1).
+- Screenshots: unchanged from round 1 (this round changed only a Python check tool).
+- Refusals: none.
