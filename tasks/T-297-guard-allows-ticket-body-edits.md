@@ -39,10 +39,10 @@ Only `sed -i` is in scope; Python and PowerShell writes that name a task file st
 
 ## Acceptance criteria
 
-- [ ] A `sed -i 's/teh/the/' tasks/T-012-x.md` and a `sed -i 's/- \[ \] The wordmark/- [x] The wordmark/' tasks/T-012-x.md` pass the hook, as new tests in `tools/test_guard.py` show. (QA: pass / fail)
-- [ ] These stay refused, as tests show: a script naming `status`, `qa_rounds` or `lead`; an address range starting at line 1; `-f script.sed`; a `w` or `e` command; a script the guard can't read (from a variable or substitution). (QA: pass / fail)
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes. (QA: pass / fail)
-- [ ] `tasks/README.md`, "Changing a task's status", says which `sed -i` edits of a ticket pass. (QA: pass / fail)
+- [ ] A `sed -i 's/teh/the/' tasks/T-012-x.md` and a `sed -i 's/- \[ \] The wordmark/- [x] The wordmark/' tasks/T-012-x.md` pass the hook, as new tests in `tools/test_guard.py` show. (QA: pass)
+- [ ] These stay refused, as tests show: a script naming `status`, `qa_rounds` or `lead`; an address range starting at line 1; `-f script.sed`; a `w` or `e` command; a script the guard can't read (from a variable or substitution). (QA: pass)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes. (QA: pass)
+- [ ] `tasks/README.md`, "Changing a task's status", says which `sed -i` edits of a ticket pass. (QA: pass)
 
 ## Updates
 
@@ -63,3 +63,4 @@ Built: a sed -i edit of a ticket's body now passes the guard when it can't write
 - Limit left open: a numeric-free `s` pattern such as `s/0/1/` could still change `qa_rounds: 0`; the second guard (`guard_ledger.py`, on commit) catches that.
 - `tasks/README.md`, "Changing a task's status": says which `sed -i` edits pass.
 - Tests: new class `SedBodyEdits` in `tools/test_guard.py` (6 passing commands, 17 refused). Full run `python -m unittest discover -s tools -p "test_*.py"`: 487 tests, OK.
+- QA round 1: all four criteria pass (SedBodyEdits tests show the passing and refused sets; full tools suite 487 tests OK; README updated). Open point for the Project Lead: the rule matches the ticket text literally (it checks only the words in the script), but a script naming none of the guarded words can still change a header line: `s/open/done/` turns `status: open` into `status: done`, and `s/0/1/` changes `qa_rounds: 0` (both verified accepted by `sed_body_script_ok`). Only the commit-time ledger guard catches these. This is wider than the builder's `s/0/1/` note; decide if acceptable or if `s` should be narrowed (e.g. anchor on body text, or refuse short patterns).
