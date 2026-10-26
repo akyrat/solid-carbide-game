@@ -1,7 +1,7 @@
 ---
 id: T-301
 title: Text: the level-up screen, its cards and the garage, rewritten for Greenbull
-status: blocked
+status: open
 from: project-lead
 to: narrative-theme
 lead: Goal-G-006

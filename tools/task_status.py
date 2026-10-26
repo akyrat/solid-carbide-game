@@ -122,11 +122,11 @@ def has_result_notes(text):
 
 STYLE_EPICS = {"art": "art", "narrative": "text"}   # epic -> the style loop's kind (tasks/README.md, "The style loop")
 STYLE_REVIEW_RE = re.compile(r"^## Style review[ \t]*\n(.*?)(?=^## |\Z)", re.S | re.M)
-STYLE_ROUND_RE = re.compile(r"^### Round \d+", re.M)
+STYLE_ROUND_RE = re.compile(r"^#{3,4} Round \d+", re.M)
 
 
 def style_rounds(text):
-    """How many style loop rounds the task's `## Style review` section records (its `### Round N` headings)."""
+    """How many style loop rounds the task's `## Style review` section records (its `### Round N` headings, or `#### Round N` under `### Run N` when a task has several runs)."""
     section = STYLE_REVIEW_RE.search(text.replace("\r\n", "\n"))
     return len(STYLE_ROUND_RE.findall(section.group(1))) if section else 0
 
