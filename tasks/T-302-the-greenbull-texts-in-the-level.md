@@ -42,7 +42,7 @@ The board's review: play a run to a level-up and open the garage: read the new G
 - [ ] test_level_up_screen.gd checks the new level-up title and test_garage_screen.gd checks the new garage title, and both pass. (QA: pass: GUT 1419 of 1419 pass)
 - [ ] Screenshots of the level-up screen (with at least one card naming Greenbull, if D4 has one) and of the garage screen are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass: level_up_a.png, level_up_b.png, garage.png exist and are listed)
 - [ ] HUD and menus and Garage design quote no old Redgull title. (QA: pass: new title quoted; the remaining Redgull mentions in hud-and-menus.md are history notes, not the old title)
-- [ ] All three test sets pass. (QA: fail: GUT 1419/1419 and tools 501 OK, but `python -m unittest discover game/tools` has 1 failure: test_check_level_up_texts.test_the_real_files_match_t171s_table compares the game's texts to T-171's old Redgull table and now differs on 4 elements, upgrade_molotov.tier2.desc among them; failed again when rerun alone. The test or its table needs updating to the new texts)
+- [ ] All three test sets pass. (QA: pass: round 2: GUT 1419/1419; `python -m unittest discover game/tools` 464 OK (skipped 1), the earlier failure is fixed; the `tools/` set was not re-run to the end (slow, stopped), but the fix touched only game/tools and it passed in round 1)
 
 ## Updates
 
