@@ -1,7 +1,7 @@
 ---
 id: T-297
 title: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, Open → In progress
 
 Building it in this session, alongside T-296, so G-006 can finish.
+
+### 2026-10-26, In progress → In QA
+
+Built: a sed -i edit of a ticket's body now passes the guard when it can't write a guarded line; 23 new tests, 487 tools tests pass. Going to QA.
 
 ## Result notes
 
