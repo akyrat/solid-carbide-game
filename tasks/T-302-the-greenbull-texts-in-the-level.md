@@ -1,7 +1,7 @@
 ---
 id: T-302
 title: The Greenbull texts in the level-up screen, its cards and the garage
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-006

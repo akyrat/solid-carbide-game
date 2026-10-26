@@ -1,10 +1,10 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: paused
+status: building
 art_cap: 1900
 art_used: 0
-iteration: 3
+iteration: 4
 max_iterations: 20
 created: 2026-10-26
 lead: Goal-G-006
@@ -49,7 +49,7 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 | 2 | S2 | Style loop tool follows the new rule 6 | unblocks 8, value 4 | The style loop (tools/style_loop/) runs every rebrand asset and text; it must pass the Greenbull flag for Greenbull's things and score against the new rule 6, or every run of S5, S8, S9 and S10 is judged by the old rule. | covered | T-299, T-298 |
 | 3 | S7 | Greenbull's emblem and wordmark copied into game/art | unblocks 5, value 5 | The approved emblem and wordmark replace the Redgull logo in every piece of art that stamps it (level-up ribbon and gift box, package, helicopter); they are copied, not remade. | covered | T-300 |
 | 4 | S3 | T-296: the style loop keeps earlier runs' records (reused as it is) | unblocks 5, value 3 | The board's go allows up to three style loop runs per asset; without T-296 a repeated run on the level-up, package or helicopter art erases the earlier run's record and fails QA. | covered | T-296 |
-| 5 | S5 | Greenbull texts written by the Narrative Theme Agent through the style loop | unblocks 3, value 5 | Every player-facing text that names Redgull or leans on the old brand must be rewritten for Greenbull before it goes into the game (text never uses placeholders). | in-flight | T-301 |
+| 5 | S5 | Greenbull texts written by the Narrative Theme Agent through the style loop | unblocks 3, value 5 | Every player-facing text that names Redgull or leans on the old brand must be rewritten for Greenbull before it goes into the game (text never uses placeholders). | covered | T-301 |
 | 6 | S6 | Put the Greenbull texts in the game | unblocks 2, value 5 | The rewritten texts only count once the level-up screen, its cards and the garage show them. | in-flight | T-302 |
 | 7 | S8 | Level-up screen art in Greenbull's colours | unblocks 2, value 5 | The level-up screen is the most visible piece of Redgull's red and gold (header ribbon with gull medallions, gift pack emblem, card frame, highlight frame, button plates, sunburst); the goal fails while it shows them. | in-flight | T-303 |
 | 8 | S9 | Gift pack package (standing and falling) in Greenbull's colours | unblocks 2, value 5 | The package carries Greenbull's brand and is seen every level-up; today it has the Redgull logo in Redgull red. | in-flight | T-304 |
@@ -197,6 +197,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-26, iteration 3: paused (see Pauses).
 - 2026-10-26, iteration 3: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-26, iteration 3: paused (see Pauses).
+- 2026-10-26, iteration 3: resumed: its last pause (command: a command the runner ran was refused or failed) can't be checked by the runner; --force.
+- 2026-10-26, iteration 4: T-301 (S5, narrative-theme, opus): passed (needs-playtest, QA rounds 2), merged into playtest/G-006; art 0; agent: The board decided the two garage descriptions should name no number, so I reran car_health and damage_bonus through the style loop using the run2 briefs. Both scored 9/10 in the first round and passed all four style_rules checks: "More car health each level. Greenbull's legal team rates you 'probably fine'." and "Each level makes your weapons hit harder. Impact, fully synergized." The style loop added their records to the Style review and wrote the two texts to art-archive/T-301/out/. I updated the result notes (the table, the style_rules output, a round 2 note, and the settled open question) and committed; the other ten texts are unchanged, as the board accepted them. Rescan: S5 covered, S6 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight, S12 in-flight.
 
 ## Pauses
 
