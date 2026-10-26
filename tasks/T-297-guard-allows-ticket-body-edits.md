@@ -1,7 +1,7 @@
 ---
 id: T-297
 title: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -60,6 +60,10 @@ Built: a sed -i edit of a ticket's body now passes the guard when it can't write
 ### 2026-10-26, In QA → In progress
 
 Back to the builder: QA found that a script naming no guarded word can still rewrite a header line (s/open/done/ turns status: open into status: done). The guard will try the edit on the ticket's text and refuse it if any status, lead or qa_rounds line would change.
+
+### 2026-10-26, In progress → In QA
+
+Fixed: the guard now tries a sed edit on the ticket's text and refuses it if a status, lead or qa_rounds line would change; s/open/done/ and s/0/1/ are refused, the body edits still pass. 490 tools tests pass. QA round 2.
 
 ## Result notes
 
