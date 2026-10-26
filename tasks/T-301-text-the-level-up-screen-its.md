@@ -1,7 +1,7 @@
 ---
 id: T-301
 title: Text: the level-up screen, its cards and the garage, rewritten for Greenbull
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/extended-narrative.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/visual-style.md, docs/hud-and-menus.md, docs/garage-design.md, game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, tasks/T-051-text-level-up-screen.md, tasks/T-059-text-garage-screen.md, tasks/T-268-text-air-turn-and-level-up-lines.md]
 files_expected_to_change: [docs/extended-narrative.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -74,6 +74,10 @@ Back to work on your decision: the two garage texts drop their numbers (rule 4) 
 ### 2026-10-26, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-26, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -397,3 +401,4 @@ Refusals: none.
 - 2026-10-26, in-qa → in-progress: QA failed: Each text has a style loop record (at least one round) in the ticket's Style review. (QA: fail: the Style review section holds only the last run (damage_bonus); the other 10 texts have no round record in it, only a summary table in the result notes. Restore their records in Style review) Back to the agent on opus.
 - 2026-10-26, in-progress → flagged-for-review: the style loop kept version 2 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 - 2026-10-26, flagged-for-review → in-progress: The board (2026-10-26): drop the numbers from the two garage descriptions, following Text rules rule 4 (a garage description names no number; the garage shows the real stats). Rerun car_health and damage_bonus through the style loop with the new briefs art-archive/T-301/briefs/garage_car_health_run2.md and garage_damage_bonus_run2.md, and put the kept texts in place of the old ones. The style loop now keeps earlier runs' records (T-296 is in this branch), so don't restore records by hand. The board accepts the other ten texts as they are, including the 'calls it' forms and the molotov tier 4 card.
+- 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
