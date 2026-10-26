@@ -1,7 +1,7 @@
 ---
 id: T-294
 title: "Art: Greenbull's emblem, a bull's head, through the style loop"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, agent-notes/asset-generation.md, tasks/T-075-redgull-logo-art.md, game/art/logo/redgull_logo_128.png, game/art/car/car_iso.png]
 files_expected_to_change: [art-archive/T-294/, docs/visual-style.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -69,6 +69,10 @@ Emblem made: the loop ran twice, both kept at 8/10 on their first version (2 of 
 ### 2026-10-26, In progress → In QA
 
 QA round 1 failed one criterion: run 1's Style review was missing, because the loop tool replaces the whole section on each run. Restored from run 1's own output; back to QA for round 2.
+
+### 2026-10-26, Needs playtest
+
+Passed QA (round 2, after the run 1 record was restored). Waiting for your review: run 2 is my pick, run 1 kept. Patch notes: https://claude.ai/artifact/L47vbXEL6wYndn4tx22fMt
 
 ## Style review
 
@@ -148,3 +152,4 @@ Run 2's notes are in `art-archive/T-294/style-loop/v1-2.md` (script `game/tools/
 ## QA round 2 (2026-10-26)
 
 - Style review: PASS. Run 1 restored with its Kept line; run 2 with its Kept line. The other six criteria still hold (game/art diff vs master is only the log; 2 generations).
+- 2026-10-26, in-qa → needs-playtest: QA round 2: all criteria pass
