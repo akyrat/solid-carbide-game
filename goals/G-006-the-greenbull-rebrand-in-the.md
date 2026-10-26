@@ -1,7 +1,7 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: building
+status: paused
 art_cap: 1900
 art_used: 0
 iteration: 1
@@ -186,8 +186,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-26, iteration 0: gap detection: 0 covered, 2 in flight, 10 missing; wrote 10 tickets.
 - 2026-10-26, iteration 0: building.
 - 2026-10-26, iteration 1: T-298 (S1, project-lead, opus): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: I brought style_rules.py in line with the new rule 6. Red no longer fails any sprite. Greenbull's light green and yellow, and any colour within 25 of them (RGB distance), fail without --greenbull, which replaces --redgull; --allow-red still works under its new name --allow-colour. The logo check now passes the approved emblem and wordmark: it checks rule 1 only, since the logo is exempt from rule 2. The old one-colour check is kept as history. In text, "Redgull" is banned in any case, rule 3 now catches "Greenbull says ...", and "Greenbull" counts as a proper name. I added check_greenbull_logo.py and a rule 6 report to check_sprite_rules.py, with tests, and updated game/README.md. All 462 tests in game/tools pass. The report over all 105 PNGs in game/art, master against the branch, changed only one asset from pass to fail: coin.png, whose gold (255, 204, 64) is 15 from Greenbull's yellow; that is left for the board. One test outside this ticket now fails: tools/style_loop/test_loop.py::test_the_script_checks_find_a_red still expects red to fail rule 6, and T-299 owns that fix. Committed in 2 commits on the task branch; no screenshots, since this is tooling only. Refused, got past and not blocking: project-lead: {"tool_input": {"command": "cd game/tools; python -m unittest test_style_rules test_check_sprite_rules test_check_greenbull_logo test_check_logo_one_colour", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01AArFPu4zkjufcMSemtijyc"} / project-lead: Bash `cd game/tools; python -m unittest test_style_rules ...` needed approval (compound command). Not essential: I ran the same tests with the pre-approved `python -m unittest discover -s game/tools -p ...`.. Rescan: S1 covered, S2 in-flight, S7 in-flight, S3 in-flight, S5 in-flight, S6 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight, S12 in-flight, S4 in-flight.
+- 2026-10-26, iteration 1: paused (see Pauses).
 
 ## Pauses
 
-None yet.
+- 2026-10-26 [waiting]: Nothing left to build, and these goal tickets haven't passed QA: T-299 (blocked, lead Goal-G-006, waits on T-296); T-300 (blocked, lead Goal-G-006, waits on T-299); T-301 (blocked, lead Goal-G-006, waits on T-299); T-302 (blocked, lead Goal-G-006, waits on T-301); T-303 (blocked, lead Goal-G-006, waits on T-302, T-300, T-299); T-304 (blocked, lead Goal-G-006, waits on T-300, T-299); T-305 (blocked, lead Goal-G-006, waits on T-300, T-299); T-306 (blocked, lead Goal-G-006, waits on T-299, T-302, T-303, T-304, T-305); T-307 (blocked, lead Goal-G-006, waits on T-300, T-302, T-303, T-304, T-305, T-306); T-296 (open, lead Greenbull, reused: this goal doesn't build it); T-297 (open, lead Greenbull, reused: this goal doesn't build it).
 
