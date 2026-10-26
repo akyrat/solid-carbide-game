@@ -1,7 +1,7 @@
 ---
 id: T-305
 title: Art: the gift pack helicopter sheet in Greenbull's colours
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
