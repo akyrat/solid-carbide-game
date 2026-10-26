@@ -39,10 +39,10 @@ The record of a single run (the usual case) may stay as it is today.
 
 ## Acceptance criteria
 
-- [ ] A fake run (`--fake`) on a sandbox copy of a task whose Style review already holds a run leaves that run's text unchanged and adds the new run after it, as a new test in `tools/style_loop/test_loop.py` shows. (QA: pass / fail)
-- [ ] A task with two runs can still move to `in-qa` (the QA gate finds its rounds), and a task with an empty Style review still can't, as tests in `tools/test_task_status.py` show. (QA: pass / fail)
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes. (QA: pass / fail)
-- [ ] `tasks/README.md`, "The style loop", says what a repeated run writes. (QA: pass / fail)
+- [ ] A fake run (`--fake`) on a sandbox copy of a task whose Style review already holds a run leaves that run's text unchanged and adds the new run after it, as a new test in `tools/style_loop/test_loop.py` shows. (QA: pass)
+- [ ] A task with two runs can still move to `in-qa` (the QA gate finds its rounds), and a task with an empty Style review still can't, as tests in `tools/test_task_status.py` show. (QA: pass)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes. (QA: pass)
+- [ ] `tasks/README.md`, "The style loop", says what a repeated run writes. (QA: pass)
 
 ## Updates
 
@@ -63,3 +63,4 @@ Built: a repeated style loop run now adds its own record after the earlier runs 
 - `tasks/README.md`, "The style loop": says what a repeated run writes, and the gate line mentions `#### Round N`.
 - Tests: `RepeatedRun` in `tools/style_loop/test_loop.py` (4 tests: run 2 keeps run 1, run 3, only own part rewritten while going, `--fake` run on a sandbox copy), one test in `tools/test_task_status.py` (two runs can go to in-qa, an empty review cannot). Full suite: 490 tests, OK.
 - Nothing left open.
+- QA round 1: all four criteria pass. Full suite OK (490 tests); RepeatedRun and TextLoop 14 tests OK. Empty review: earlier_runs returns ('', 0), so a first run writes plain `### Round N` as before. The sandbox `--fake` test checks the real ticket is unchanged and the copy has Run 1 and Run 2; run 1's exact text kept is asserted by the second-run test (wrapped one heading level down, as the ticket allows).
