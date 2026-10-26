@@ -1,7 +1,7 @@
 ---
 id: T-301
 title: Text: the level-up screen, its cards and the garage, rewritten for Greenbull
-status: in-qa
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-006
@@ -14,8 +14,8 @@ depends_on: [T-298, T-299]
 documents_affected: [docs/extended-narrative.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/visual-style.md, docs/hud-and-menus.md, docs/garage-design.md, game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, tasks/T-051-text-level-up-screen.md, tasks/T-059-text-garage-screen.md, tasks/T-268-text-air-turn-and-level-up-lines.md]
 files_expected_to_change: [docs/extended-narrative.md]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-301.
 ### 2026-10-26, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-26, In QA → In progress
+
+Goal runner (G-006): failed QA once; back to the agent on opus.
 
 ## Style review
 
@@ -130,3 +134,4 @@ Text only: no screenshots (the texts are seen in the game in D5). No code was ch
 4. The loop's overwriting of the Style review section by each run is a tooling gap to pass to the Project Lead.
 
 Refusals: none.
+- 2026-10-26, in-qa → in-progress: QA failed: Each text has a style loop record (at least one round) in the ticket's Style review. (QA: fail: the Style review section holds only the last run (damage_bonus); the other 10 texts have no round record in it, only a summary table in the result notes. Restore their records in Style review) Back to the agent on opus.
