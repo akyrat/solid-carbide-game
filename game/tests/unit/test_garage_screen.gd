@@ -24,14 +24,14 @@ func _open(coins: int) -> void:
 
 func test_every_label_is_the_approved_text() -> void:
 	_open(10000)
-	assert_eq(screen.title_label.text, "Redgull Pit Stop")
+	assert_eq(screen.title_label.text, "Greenbull brand-safe pit stop")
 	assert_eq(screen.back_button.text, "Back")
 	assert_eq(screen.coins_label.text, "Coins: 10000")
 	var names := {"acceleration": "Energy Throttle", "car_health": "Reinforced Chassis", "damage_bonus": "Brand Impact", "pickup_magnet": "Brand Magnet", "air_turn": "Spin Doctor"}
 	var descs := {
 		"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
-		"car_health": "+10 car health per level. Redgull says you'll be fine.",
-		"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
+		"car_health": "More car health each level. Greenbull's legal team rates you 'probably fine'.",
+		"damage_bonus": "Each level makes your weapons hit harder. Impact, fully synergized.",
 		"pickup_magnet": "Coins and drops fly to you from further per level.",
 		"air_turn": "Spin faster in the air per level. More flips, more views.",
 	}

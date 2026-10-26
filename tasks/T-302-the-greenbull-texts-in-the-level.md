@@ -58,4 +58,14 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done. D4 is T-301's result notes table (its final texts); I put all 11 in word for word, no wording of my own.
+
+- `game/scripts/ui/level_up_texts.gd`: levelup.title ("Greenbull sent a gift pack!"), upgrade_gun.tier2.desc, upgrade_gun.tier6.desc, upgrade_flamethrower.tier3.desc, upgrade_molotov.tier2.desc, tier4.desc, tier8.desc, upgrade_wiper.tier3.desc.
+- `game/scripts/menu/garage_screen.gd`: TITLE ("Greenbull brand-safe pit stop"), car_health and damage_bonus descriptions (no numbers, as T-301 round 2).
+- Tests: test_level_up_screen.gd (two title checks) and test_garage_screen.gd (title and the two descriptions) now check the new texts.
+- Docs: `docs/hud-and-menus.md` quoted the old level-up title, now the new one. `docs/garage-design.md` quotes no old title or description, so it needed no edit.
+- `grep -i redgull game/scripts game/scenes game/data`: no player-facing text left; every remaining hit is a code comment about "Redgull red" or the gift helicopter, for the code sweep ticket.
+- Tests: `bash game/tools/run_tests.sh`: 1419 of 1419 pass. The Python tool tests (`python -m unittest discover tools`) were still running when I wrote this; I touched no Python.
+- Screenshots in `art-archive/T-302/screenshots/`: `level_up_a.png` (level-up screen, gun tier 2 card naming Greenbull's lawyers, new title), `level_up_b.png` (new weapons demo), `garage.png` (garage with the new title and descriptions). In garage.png the right-hand Buy buttons are cut off at the window's edge; the layout was not changed here, and I did not check whether it was already so before.
+
+Refusals: none.

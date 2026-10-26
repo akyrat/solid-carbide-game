@@ -83,7 +83,7 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 		assert_eq(c.title.text, Texts.TEXTS[key + ".title"])
 		assert_eq(c.desc.text, Texts.TEXTS[key + ".desc"])
 		assert_eq(c.button.text, "Take it")
-	assert_eq(screen.title_label.text, "Redgull Sent a Gift Pack!")
+	assert_eq(screen.title_label.text, "Greenbull sent a gift pack!")
 
 
 func test_exact_text_for_known_cards() -> void:
@@ -294,7 +294,7 @@ func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
 	var f: Font = l.get_theme_font("font")
 	var w := f.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x
 	assert_lt(w, l.size.x, "the whole title fits between the medallions")
-	assert_eq(l.text, "Redgull Sent a Gift Pack!", "T-051's text unchanged")
+	assert_eq(l.text, "Greenbull sent a gift pack!", "the Greenbull title (T-301)")
 
 
 func test_card_texts_wrap_at_word_boundaries_and_fit_the_card() -> void:
