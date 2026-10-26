@@ -1870,3 +1870,8 @@ Entry format:
 - Decision or change: the board approves Greenbull's emblem (T-294, run 2: the angular bull's head with the lightning blaze, at 128, 64 and 32 pixels) and wordmark (T-295, run 1: light green letters, crisper on dark than run 2's dark green letters); both merged, waiting in `art-archive/` for the goal run to put them in the game. The board also approves the Project Lead's proposals: the brand colours' values and red no longer being reserved stay as written in Visual style; the Narrative Theme Agent's definition says Greenbull; T-296 (the style loop keeps earlier runs' records) joins the goal run; the ticket guard should allow ticket edits that don't touch the status, lead or qa_rounds lines (agents twice redid a refused edit with the Edit tool), which joins the goal run as T-297. The README now says four recordings, and the course's Style Guide Agent assignment has its Examples 2 and 3, approved.
 - Documents touched: `.claude/agents/narrative-theme.md`, `README.md`, `course-material/style-guide-agent/README.md`
 - Tasks: T-294, T-295, T-296, T-297
+
+## 2026-10-26: The style loop keeps earlier runs
+- Decision or change: a repeated style loop run on one asset now adds its record after the earlier runs' instead of replacing the Style review: each run under `### Run N`, its rounds as `#### Round N`; a single run is written as before. The QA gate finds both heading levels. Built in this session because goal G-006 reuses the ticket and the goal runner doesn't build reused tickets (it waits for them); G-006 paused on it until now. QA round 1 passed all 4 criteria.
+- Documents touched: `tasks/README.md`
+- Tasks: T-296
