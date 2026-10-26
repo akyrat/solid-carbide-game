@@ -4,7 +4,7 @@ title: "Style loop: a repeated run adds to the Style review instead of replacing
 status: open
 from: project-lead
 to: project-lead
-lead: Greenbull
+lead: Goal-G-006
 epic: tooling
 milestone: mvp
 goal: G-006
