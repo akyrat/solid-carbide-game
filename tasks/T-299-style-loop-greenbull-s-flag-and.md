@@ -1,7 +1,7 @@
 ---
 id: T-299
 title: Style loop: Greenbull's flag and the new rule 6 in the evaluator's style guide
-status: blocked
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Goal-G-006
@@ -44,6 +44,10 @@ The style loop tool (T-291) still speaks of Redgull: run.py has a --redgull opti
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Blocked → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-299.
 
 ## Style review
 
