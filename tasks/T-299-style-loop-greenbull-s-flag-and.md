@@ -1,7 +1,7 @@
 ---
 id: T-299
 title: Style loop: Greenbull's flag and the new rule 6 in the evaluator's style guide
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, tools/style_loop/loop.py, tools/style_loop/run.py, tools/style_loop/test_loop.py, game/tools/style_rules.py, tasks/T-291-style-loop-tool.md, tasks/T-296-style-loop-keeps-earlier-runs.md]
 files_expected_to_change: [tools/style_loop/loop.py, tools/style_loop/run.py, tools/style_loop/test_loop.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-299.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-26, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -66,3 +70,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 - `python -m unittest discover -s tools/style_loop -p "test_*.py"`: 28 tests pass.
 - Screenshots: none, tooling only; nothing to picture.
 - PixelLab generations used: 0. Refusals: none for the work; one ad-hoc Python edit script wasn't approved, and I made the same edits with the Edit tool.
+- 2026-10-26, in-qa → done: QA passed every criterion (goal G-006).
