@@ -50,13 +50,13 @@ Board review files: art-archive/T-294/review_emblem_dark.png, art-archive/T-294/
 
 ## Acceptance criteria
 
-- [ ] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: pass / fail)
-- [ ] Every version is in `art-archive/T-294/style-loop/` with its PixelLab record, and the kept emblem is `art-archive/T-294/greenbull_emblem_128.png`, with `greenbull_emblem_64.png` and `greenbull_emblem_32.png` beside it. (QA: pass / fail)
-- [ ] `python game/tools/style_rules.py art art-archive/T-294/greenbull_emblem_128.png --size 128x128` passes, or its failures are named in the Style review. (QA: pass / fail)
-- [ ] The kept emblem's colours are the three brand colours (RGB 12, 76, 44; 104, 220, 96; 247, 208, 52) plus at most two dark outline or shade colours, as a short script listing its colours shows; yellow covers fewer opaque pixels than either green. (QA: pass / fail)
-- [ ] At most 12 PixelLab generations were used, as `game/art/pixellab-generation-log.jsonl` shows for T-294. (QA: pass / fail)
-- [ ] The two review images exist: the emblem at 128, 64 and 32 next to the old Redgull logo and a car frame, enlarged with nearest-neighbour, on a dark and a light background. (QA: pass / fail)
-- [ ] Nothing under `game/art/` changed except the PixelLab log. (QA: pass / fail)
+- [ ] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: fail, run 1 round and Kept line missing)
+- [x] Every version is in `art-archive/T-294/style-loop/` with its PixelLab record, and the kept emblem is `art-archive/T-294/greenbull_emblem_128.png`, with `greenbull_emblem_64.png` and `greenbull_emblem_32.png` beside it. (QA: pass)
+- [x] `python game/tools/style_rules.py art art-archive/T-294/greenbull_emblem_128.png --size 128x128` passes, or its failures are named in the Style review. (QA: pass)
+- [x] The kept emblem's colours are the three brand colours (RGB 12, 76, 44; 104, 220, 96; 247, 208, 52) plus at most two dark outline or shade colours, as a short script listing its colours shows; yellow covers fewer opaque pixels than either green. (QA: pass)
+- [x] At most 12 PixelLab generations were used, as `game/art/pixellab-generation-log.jsonl` shows for T-294. (QA: pass)
+- [x] The two review images exist: the emblem at 128, 64 and 32 next to the old Redgull logo and a car frame, enlarged with nearest-neighbour, on a dark and a light background. (QA: pass)
+- [x] Nothing under `game/art/` changed except the PixelLab log. (QA: pass)
 
 ## Updates
 
