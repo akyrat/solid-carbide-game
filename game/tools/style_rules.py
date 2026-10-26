@@ -7,21 +7,22 @@ the rule it checks, so the Style Evaluator can quote it:
 
   art   Visual style rule 1 (alpha 0 or 255 only, transparent background, at most 30 colours),
         rule 3 (the expected size: the whole image, or each frame of a one-row sheet) and
-        rule 6 (no Redgull red, unless the asset is one of Redgull's own things); the logo's
-        one-colour check (Visual style, Decisions, "Redgull's look").
-  text  Extended narrative text rule 2 (banned words), rule 3 (no "Redgull says ..." line)
-        and rule 4 (format and length, by kind of text).
+        rule 6 (Greenbull's light green and yellow only on Greenbull's own things; red is not
+        reserved, T-298); Greenbull's logo check (flat brand art: rule 1, exempt from rule 2).
+  text  Extended narrative text rule 2 (banned words, "Redgull" among them), rule 3 (no
+        "Greenbull says ..." line) and rule 4 (format and length, by kind of text).
 
 Command line (prints a JSON list of checks, each {"rule", "check", "ok", "detail"}; exits 1
 when any check fails):
 
-  python game/tools/style_rules.py art <png> [--size WxH] [--frames N] [--redgull]
-                                             [--allow-red R,G,B ...] [--max-colors N] [--logo]
+  python game/tools/style_rules.py art <png> [--size WxH] [--frames N] [--greenbull]
+                                             [--allow-colour R,G,B ...] [--max-colors N] [--logo]
   python game/tools/style_rules.py text "<text>" --kind popup|card_title|card_desc|garage_name|garage_desc|label
 
 Build scripts import from here: the PNG reader (decode_png), the sprite checks (check,
-check_rows, split_sheet, check_sheet), the Redgull reds (REDGULL_RED, HEART_COLOR) and the
-red checks (red_distance, RED_MIN_DISTANCE, is_redgull_red, rgb_distance).
+check_rows, split_sheet, check_sheet), Greenbull's colours (GREENBULL_*, greenbull_colour),
+and the red-distance helpers the code-drawn colours still use (REDGULL_RED, HEART_COLOR,
+red_distance, RED_MIN_DISTANCE, is_redgull_red, rgb_distance; renamed in a later ticket).
 """
 import argparse
 import colorsys
@@ -60,6 +61,29 @@ def is_redgull_red(rgb, max_dist=128, hue_deg=25):
     h, s, v = colorsys.rgb_to_hsv(*(c / 255.0 for c in rgb[:3]))
     hue = h * 360.0
     return min(hue, 360.0 - hue) < hue_deg and s > 0.4 and v > 0.25
+
+
+# ----------------------------------------------------------- Greenbull's colours ----
+
+# Greenbull's palette as Visual style rule 6 gives it (Decisions, "Greenbull's look").
+GREENBULL_DARK_GREEN = (12, 76, 44)    # the main colour, also the car's body: not checked here
+GREENBULL_LIGHT_GREEN = (104, 220, 96)
+GREENBULL_YELLOW = (247, 208, 52)
+# The colours rule 6 keeps to Greenbull's own things.
+GREENBULL_ACCENTS = (GREENBULL_LIGHT_GREEN, GREENBULL_YELLOW)
+# A colour closer than this (0..255 RGB distance) to the light green or the yellow reads as it,
+# measured as the red check measures closeness to the heart's red (about 0.1 in 0..1 units).
+# Tight, so that the city's amber (255, 178, 60; 32 from the yellow), the car's headlights and
+# the fire oranges keep clear (T-298); fire yellows closer than this need --allow-colour.
+GREENBULL_MAX_DIST = 25
+
+
+def greenbull_colour(rgb, max_dist=GREENBULL_MAX_DIST):
+    """The Greenbull accent (light green or yellow) `rgb` reads as, or None."""
+    for ref in GREENBULL_ACCENTS:
+        if rgb_distance(rgb, ref) < max_dist:
+            return ref
+    return None
 
 
 # ------------------------------------------------------------------ PNG reading ----
@@ -157,12 +181,18 @@ def check_sheet(path, frames, size=128, max_colors=30):
     return [check_rows(fr, size, max_colors) for fr in split_sheet(rows, frames)]
 
 
-# ------------------------------------------------------------------ logo check ----
+# ----------------------------------------------------------------- logo checks ----
 
 def check_logo(im):
-    """The Redgull logo (T-075): exactly one visible colour, a dark red, a transparent
-    background and no semi-transparent pixels. `im` is a Pillow image. Returns a list of
-    problems (empty = pass)."""
+    """Greenbull's logo, emblem or wordmark (T-298; logo_checks below). `im` is a Pillow image.
+    Returns a list of problems (empty = pass)."""
+    return ["%s (%s)" % (c["check"], c["detail"]) for c in logo_checks(im) if not c["ok"]]
+
+
+def check_redgull_logo(im):
+    """The old Redgull logo's check (T-075), kept as its history since the rebrand (T-298):
+    exactly one visible colour, a dark red, a transparent background and no semi-transparent
+    pixels. `im` is a Pillow image. Returns a list of problems (empty = pass)."""
     im = im.convert("RGBA")
     px = list(im.getdata())
     problems = []
@@ -190,11 +220,11 @@ def _result(rule, name, ok, detail):
     return {"rule": rule, "check": name, "ok": bool(ok), "detail": detail}
 
 
-def art_checks(rows, size=None, frames=0, redgull=False, allow_red=(), max_colors=30):
+def art_checks(rows, size=None, frames=0, greenbull=False, allow=(), max_colors=30):
     """Visual style rules 1, 3 and 6 on decoded rows. `size` is (w, h) of the image, or of
-    each frame when `frames` > 0; None skips the size check. `redgull` marks one of Redgull's
-    own things (rule 6 does not apply); `allow_red` lists the other reds rule 6 allows on this
-    asset (the kaiju signs', the health canister's, the combo broken popup's)."""
+    each frame when `frames` > 0; None skips the size check. `greenbull` marks one of
+    Greenbull's own things (its light green and yellow are allowed); `allow` lists colours
+    near them that rule 6 allows on this asset all the same (a fire's yellow, for example)."""
     out = []
     parts = split_sheet(rows, frames) if frames else [rows]
     for i, fr in enumerate(parts):
@@ -206,29 +236,38 @@ def art_checks(rows, size=None, frames=0, redgull=False, allow_red=(), max_color
                     out.append(_result(3, prefix + name.replace("frame size", "size"), ok, detail))
             else:
                 out.append(_result(1, prefix + name, ok, detail))
-    if not redgull:
-        allowed = {tuple(c) for c in allow_red}
+    name = "Greenbull's light green and yellow only on Greenbull's things"
+    if greenbull:
+        out.append(_result(6, name, True, "one of Greenbull's own things"))
+    else:
+        allowed = {tuple(c) for c in allow}
         colours = {p[:3] for r in rows for p in r if p[3] == 255}
-        reds = sorted(c for c in colours if c not in allowed and is_redgull_red(c))
-        out.append(_result(6, "no Redgull red (nor any red that reads as it)", not reds,
-                           "reds: %s" % [list(c) for c in reds[:5]] if reds else "none"))
+        found = sorted(c for c in colours if c not in allowed and greenbull_colour(c))
+        out.append(_result(6, name, not found,
+                           "Greenbull's colours: %s" % [list(c) for c in found[:5]] if found else "none"))
     return out
 
 
 def logo_checks(im):
-    """The logo's one-colour check as a rule-6 result (the logo is exempt from rules 1 and 2)."""
-    problems = check_logo(im)
-    return [_result(6, "the logo: one visible dark red, transparent background, hard pixels",
-                    not problems, "; ".join(problems) or "ok")]
+    """Greenbull's logo (emblem or wordmark) as rule results: flat brand art, so exempt from
+    rule 2's shading and detail but bound by rule 1 (Visual style, Content, "Rules"); its
+    colours are Greenbull's own, so rule 6 does not apply. `im` is a Pillow image."""
+    im = im.convert("RGBA")
+    w, h = im.size
+    px = list(im.getdata())
+    rows = [px[y * w:(y + 1) * w] for y in range(h)]
+    res, _ = check_rows(rows, (w, h))
+    return [_result(1, "Greenbull's logo: " + name, ok, detail)
+            for name, ok, detail in res if not name.startswith("frame size")]
 
 
 # ------------------------------------------------------------------ text checks ----
 
-BANNED_WORDS = ("XP", "points", "Godzilla")
+BANNED_WORDS = ("XP", "points", "Godzilla", "Redgull")
 TEXT_LIMITS = {"card_title": 30, "card_desc": 90, "garage_name": 25, "garage_desc": 80}
 KINDS = ("popup", "card_title", "card_desc", "garage_name", "garage_desc", "label")
 # Names a label may capitalise after its first word (Extended narrative, text rule 2's names).
-PROPER_NAMES = {"Redgull", "Stunt", "Driver", "Tokyo"}
+PROPER_NAMES = {"Greenbull", "Stunt", "Driver", "Tokyo"}
 
 
 def text_checks(text, kind):
@@ -237,10 +276,10 @@ def text_checks(text, kind):
         raise ValueError("unknown kind %r (one of %s)" % (kind, ", ".join(KINDS)))
     out = []
     found = [w for w in BANNED_WORDS if re.search(r"\b%s\b" % re.escape(w), text, re.IGNORECASE)]
-    out.append(_result(2, "no banned words (XP, points, Godzilla)", not found,
+    out.append(_result(2, "no banned words (%s)" % ", ".join(BANNED_WORDS), not found,
                        "found: %s" % ", ".join(found) if found else "none"))
-    says = re.search(r"\bRedgull\s+says\b", text, re.IGNORECASE)
-    out.append(_result(3, 'no "Redgull says ..." line', not says, "found" if says else "none"))
+    says = re.search(r"\bGreenbull\s+says\b", text, re.IGNORECASE)
+    out.append(_result(3, 'no "Greenbull says ..." line', not says, "found" if says else "none"))
     one_line = "\n" not in text.strip()
     if kind == "popup":
         letters = [c for c in text if c.isalpha()]
@@ -291,11 +330,14 @@ def main(argv=None):
     a_art.add_argument("png")
     a_art.add_argument("--size", type=_parse_size, help="WxH of the image, or of each frame with --frames")
     a_art.add_argument("--frames", type=int, default=0, help="a one-row sheet of this many frames")
-    a_art.add_argument("--redgull", action="store_true", help="one of Redgull's own things: rule 6 does not apply")
-    a_art.add_argument("--allow-red", type=_parse_rgb, action="append", default=[],
-                       help="a red rule 6 allows on this asset (R,G,B); repeatable")
+    a_art.add_argument("--greenbull", action="store_true",
+                       help="one of Greenbull's own things: rule 6 allows its light green and yellow")
+    a_art.add_argument("--allow-colour", "--allow-red", dest="allow", type=_parse_rgb, action="append",
+                       default=[], help="a colour near Greenbull's that rule 6 allows on this asset "
+                       "(R,G,B); repeatable (--allow-red is its old name)")
     a_art.add_argument("--max-colors", type=int, default=30, help="the colour limit (default 30, rule 1)")
-    a_art.add_argument("--logo", action="store_true", help="the one-colour Redgull logo check instead")
+    a_art.add_argument("--logo", action="store_true",
+                       help="Greenbull's logo check instead (emblem or wordmark: rule 1, exempt from rule 2)")
     a_text = sub.add_parser("text", help="check a text against Extended narrative text rules 2 to 4")
     a_text.add_argument("text")
     a_text.add_argument("--kind", required=True, choices=KINDS)
@@ -309,7 +351,7 @@ def main(argv=None):
         try:
             with open(a.png, "rb") as f:
                 _, _, rows = decode_png(f.read())
-            out = art_checks(rows, a.size, a.frames, a.redgull, a.allow_red, a.max_colors)
+            out = art_checks(rows, a.size, a.frames, a.greenbull, a.allow, a.max_colors)
         except ValueError as e:
             out = [_result(1, "an 8-bit RGBA PNG that splits into the frames", False, str(e))]
     print(json.dumps(out, indent=1))
