@@ -1,0 +1,3 @@
+Garage upgrade description, key car_health (garage_screen.gd DESCRIPTIONS), shown under the upgrade "Reinforced Chassis".
+Old text: "+10 car health per level. Redgull says you'll be fine."
+Rewrite for Greenbull (one word, the new sponsor; Extended narrative, "The rebrand"). It MUST keep the fact and number "+10 car health per level" exactly (the board's task requires the same numbers as today, even though the generic garage rule says no number; keep it). Then at most one short satirical aside in Greenbull's voice about reassurance that doesn't read as sincere. At most 80 characters. Do not say what Greenbull sells. No "Greenbull says ..." line.

@@ -1,0 +1,3 @@
+Garage upgrade description, key damage_bonus (garage_screen.gd DESCRIPTIONS), shown under the upgrade "Brand Impact".
+Old text: "+5% weapon damage per level. Redgull calls it synergy."
+Rewrite for Greenbull (one word, the new sponsor; Extended narrative, "The rebrand"). The board's decision (2026-10-26): follow Text rules rule 4 and name NO number; the garage shows the real stats separately. Say plainly that each level makes the weapons hit harder, then at most one short satirical aside about corporate buzzwords. At most 80 characters. Do not say what Greenbull sells. No "Greenbull says ..." line.
