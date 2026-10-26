@@ -1,6 +1,6 @@
 # Style Guide Agent: Solid Carbide
 
-Solid Carbide is a drift-driving roguelite built in Godot 4 by a team of AI agents (Claude Code). The player is **Stunt Driver**, sponsored by the out-of-touch energy drink **Redgull**, drifting through a night-time Tokyo under a kaiju attack for a livestream's likes. I am the designer; a **Project Lead** agent turns what I ask for into tickets for twelve specialist agents.
+Solid Carbide is a drift-driving roguelite built in Godot 4 by a team of AI agents (Claude Code). The player is **Stunt Driver**, sponsored by the out-of-touch brand **Greenbull** (called Redgull until a rebrand on 2026-10-26), drifting through a night-time Tokyo under a kaiju attack for a livestream's likes. I am the designer; a **Project Lead** agent turns what I ask for into tickets for twelve specialist agents.
 
 For this assignment I built the **style loop** and made it part of how the studio works: every asset and every piece of player-facing text is generated, scored against the game's style guide by an evaluator agent, and refined from the evaluator's reason until it scores 8/10, with no one stepping in. It is enforced, so nothing can skip it.
 
@@ -12,10 +12,10 @@ The style guide is two numbered rule lists inside the game's existing design doc
 
 | Rules | Where | Constraint types |
 |---|---|---|
-| **Visual style, Rules 1–10** | [`docs/visual-style.md`](../../docs/visual-style.md), Content, "Rules" | pixel-art format (size, transparency, ≤ 30 colours); mood (night, retro, drawn glow); palette and lore (Redgull red only on Redgull's things; the steel-and-glass city; the alien boulders); no copies (the kaiju is Godzilla-*style*, never Godzilla); each subject's look |
-| **Text rules 1–4** | [`docs/extended-narrative.md`](../../docs/extended-narrative.md), Content, "Text rules" | tone (satirical, Redgull out of touch, never mocking the city's people); vocabulary ("likes" never "XP", "the kaiju" never "Godzilla", "gift pack", "Stunt Driver"); who speaks (no "Redgull says…"); format and length by kind (popups in capitals ending "!", card titles ≤ 30 characters…) |
+| **Visual style, Rules 1–10** | [`docs/visual-style.md`](../../docs/visual-style.md), Content, "Rules" | pixel-art format (size, transparency, ≤ 30 colours); mood (night, retro, drawn glow); palette and lore (Greenbull's colours only on Greenbull's things; the steel-and-glass city; the alien boulders); no copies (the kaiju is Godzilla-*style*, never Godzilla); each subject's look |
+| **Text rules 1–4** | [`docs/extended-narrative.md`](../../docs/extended-narrative.md), Content, "Text rules" | tone (satirical, Greenbull out of touch, never mocking the city's people); vocabulary ("likes" never "XP", "the kaiju" never "Godzilla", "Greenbull" never its old name, "gift pack", "Stunt Driver"); who speaks (no "Greenbull says…"); format and length by kind (popups in capitals ending "!", card titles ≤ 30 characters…) |
 
-The rules a script can check are checked by one module, [`game/tools/style_rules.py`](../../game/tools/style_rules.py) (sizes, colours, transparency, Redgull red, lengths, banned words); the evaluator judges the rest.
+The rules a script can check are checked by one module, [`game/tools/style_rules.py`](../../game/tools/style_rules.py) (sizes, colours, transparency, the sponsor's colours, lengths, banned words); the evaluator judges the rest.
 
 ## 02. The Evaluator and Refiner loop
 
@@ -49,12 +49,12 @@ I asked for the small lizard enemy to become "slightly like a mini kaiju monster
 
 | Round | Score | What the Evaluator caught | Violation class |
 |---|---|---|---|
-| v1 | 5/10 | Red in the mouth (rule 6, Redgull red only on Redgull's things); bright daylight greens (rule 4, night); upright side view (rule 3, isometric) | palette / lore, mood, format |
+| v1 | 5/10 | Red in the mouth (rule 6 as it was then: the sponsor's red only on the sponsor's things); bright daylight greens (rule 4, night); upright side view (rule 3, isometric) | palette / lore, mood, format |
 | v2 | 5/10 | Fixed the red, the night palette and the view; but a thin, small lizard, not car-sized (rule 3, scale), little detail (rule 2) | format / scale |
 | v3 | 4/10 | Car-sized with teeth, but standing upright like Godzilla (rule 9, no copies of existing characters) | lore |
 | v4 | 6/10 | Fixed the Godzilla look and the view (four legs on the ground, seen from above); one dull pink left in the mouth (rule 6) | palette |
 
-Each refine fixed what the reason named, and found the next problem. It still ended below 8 after three refines, so the loop kept the best version and flagged the ticket for me, as designed. I reviewed it next to the car and the old minion ([dark](../../art-archive/T-293/review_sample_vs_car_dark.png), [light](../../art-archive/T-293/review_sample_vs_car_light.png)), approved version 4, kept its dull pink mouth (now an allowed colour in rule 6), and had its baked-in shadow removed by a free script, since its rotations and animations will be made from it:
+Each refine fixed what the reason named, and found the next problem. It still ended below 8 after three refines, so the loop kept the best version and flagged the ticket for me, as designed. I reviewed it next to the car and the old minion ([dark](../../art-archive/T-293/review_sample_vs_car_dark.png), [light](../../art-archive/T-293/review_sample_vs_car_light.png)), approved version 4, kept its dull pink mouth (since the rebrand, red is no longer the sponsor's colour, so rule 6 no longer flags it), and had its baked-in shadow removed by a free script, since its rotations and animations will be made from it:
 
 ![Version 4, and without its shadow](../../art-archive/T-293/review_noshadow_dark.png)
 
@@ -68,4 +68,4 @@ To come.
 
 ## 04. Where it fits in the pipeline
 
-This Style Guide Agent runs on every asset and every piece of player-facing text the Asset Generation and Narrative Theme agents make, before the ticket can reach QA, so all of Solid Carbide's art stays in its night-time, steel-and-glass Tokyo look and all its text keeps Redgull's out-of-touch, satirical voice.
+This Style Guide Agent runs on every asset and every piece of player-facing text the Asset Generation and Narrative Theme agents make, before the ticket can reach QA, so all of Solid Carbide's art stays in its night-time, steel-and-glass Tokyo look and all its text keeps Greenbull's out-of-touch, satirical voice.
