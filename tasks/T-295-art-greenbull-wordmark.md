@@ -67,6 +67,10 @@ Started: the GREENBULL wordmark, built from the emblem's run 2, through the styl
 
 Wordmark made: two loop runs, both 8/10 on their first version, script-drawn (0 PixelLab generations). Run 1 (light green letters) reads best on dark and is the main file; run 2 (dark green leads) is stronger on light. Review: art-archive/T-295/review_wordmark_dark.png and _light.png. Now in QA.
 
+### 2026-10-26, Needs playtest
+
+Passed QA (round 1). Waiting for your review: run 1 (light green letters) is the main file, run 2 (dark green leads) the alternative. Patch notes: https://claude.ai/artifact/L47vbXEL6wYndn4tx22fMt
+
 ## Style review
 
 The loop ran twice on this asset. The tool sets this whole section on each run (fix: T-296), so run 2 replaced run 1's record; the Project Lead restored run 1 below, word for word from a copy of the ticket saved right after run 1, including its refused command. (A first attempt at run 1 stopped before any round, with no image: the agent's drawing script was kept under `art-archive/T-295/`, where the ticket guard refuses to run scripts; the brief then asked for scripts in `game/tools/`.)
