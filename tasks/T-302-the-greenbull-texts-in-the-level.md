@@ -37,12 +37,12 @@ The board's review: play a run to a level-up and open the garage: read the new G
 
 ## Acceptance criteria
 
-- [ ] level_up_texts.gd and garage_screen.gd (and any other file D4 lists) hold D4's texts word for word for every key D4 lists. (QA: pass / fail)
-- [ ] `git grep -i redgull game/scripts game/scenes game/data` finds no player-facing text (any match left is a code comment, listed in the result notes for the code sweep ticket). (QA: pass / fail)
-- [ ] test_level_up_screen.gd checks the new level-up title and test_garage_screen.gd checks the new garage title, and both pass. (QA: pass / fail)
-- [ ] Screenshots of the level-up screen (with at least one card naming Greenbull, if D4 has one) and of the garage screen are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass / fail)
-- [ ] HUD and menus and Garage design quote no old Redgull title. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] level_up_texts.gd and garage_screen.gd (and any other file D4 lists) hold D4's texts word for word for every key D4 lists. (QA: pass: all 11 texts match art-archive/T-301/out/*.txt exactly)
+- [ ] `git grep -i redgull game/scripts game/scenes game/data` finds no player-facing text (any match left is a code comment, listed in the result notes for the code sweep ticket). (QA: pass: every hit is a code comment)
+- [ ] test_level_up_screen.gd checks the new level-up title and test_garage_screen.gd checks the new garage title, and both pass. (QA: pass: GUT 1419 of 1419 pass)
+- [ ] Screenshots of the level-up screen (with at least one card naming Greenbull, if D4 has one) and of the garage screen are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass: level_up_a.png, level_up_b.png, garage.png exist and are listed)
+- [ ] HUD and menus and Garage design quote no old Redgull title. (QA: pass: new title quoted; the remaining Redgull mentions in hud-and-menus.md are history notes, not the old title)
+- [ ] All three test sets pass. (QA: fail: GUT 1419/1419 and tools 501 OK, but `python -m unittest discover game/tools` has 1 failure: test_check_level_up_texts.test_the_real_files_match_t171s_table compares the game's texts to T-171's old Redgull table and now differs on 4 elements, upgrade_molotov.tier2.desc among them; failed again when rerun alone. The test or its table needs updating to the new texts)
 
 ## Updates
 
