@@ -1,0 +1,45 @@
+{
+  "file": "v1_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a heavy menacing mini kaiju lizard monster walking on all four thick legs, mid-stride, facing towards the bottom right of the screen, light muted green scaly hide with darker green scales and ridges along its back, pale yellow-green belly, a big heavy reptilian head with a wide open snapping jaw full of small pale sharp teeth, dull pink mouth inside, thick clawed feet, a long thick tail, small row of dorsal spikes, low and wide body, lying directly on the ground, no base, no platform, no ground shadow, isometric 3/4 view seeing its top and one side, night lighting, retro pixel art game sprite, hard pixel edges, dark outline",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "direction": "south-east",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a heavy menacing mini kaiju lizard monster walking on all four thick legs, mid-stride, facing towards the bottom right of the screen, light muted green scaly hide with darker green scales and ridges along its back, pale yellow-green belly, a big heavy reptilian head with a wide open snapping jaw full of small pale sharp teeth, dull pink mouth inside, thick clawed feet, a long thick tail, small row of dorsal spikes, low and wide body, lying directly on the ground, no base, no platform, no ground shadow, isometric 3/4 view seeing its top and one side, night lighting, retro pixel art game sprite, hard pixel edges, dark outline",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-25T18:26:34+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "docs/enemies.md",
+    "art-archive/T-068/review_all8_directions_dark.png",
+    "game/art/car/car_iso.png",
+    "agent-notes/asset-generation.md"
+  ],
+  "task": "T-293",
+  "job_status": null,
+  "notes": "T-293 style loop version 1 (1 of max 4 generations): mini kaiju minion, south-east sample",
+  "generator": "game/tools/pixellab_client.py"
+}

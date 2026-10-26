@@ -1855,3 +1855,8 @@ Entry format:
 - Decision or change: the board likes version 4 of the style loop's minion sample (T-293) and wants it without the baked-in ground shadow, since its rotations and animations will be made from it; the shadow is removed by a free script. The board keeps its dull pink mouth (RGB 147, 93, 93), which Visual style rule 6 now lists as an allowed non-Redgull red.
 - Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
 - Tasks: T-293
+
+## 2026-10-26: The minion sample merged (T-293)
+- Decision or change: the style loop's first real run, the minion redesigned as a car-sized mini kaiju, is approved by the board: version 4 (6/10 in the loop, flagged as designed), without its baked-in shadow, removed by a free script (`game/tools/remove_sprite_shadow.py`), dull pink mouth kept. It stays in `art-archive/T-293/` until the rotation and walk-frame tickets turn it into game art. Its Style review is Example 1 of the course's Style Guide Agent assignment.
+- Documents touched: none (decisions recorded earlier today in `docs/visual-style.md`)
+- Tasks: T-293

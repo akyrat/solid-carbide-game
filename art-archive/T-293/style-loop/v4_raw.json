@@ -1,0 +1,42 @@
+{
+  "file": "v4_raw.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a huge heavy monitor lizard, like a giant armoured komodo dragon, crawling low on all four thick muscular legs splayed out to the sides, all four clawed feet flat on the ground, thick wide body stretched long and horizontal diagonally across the image, belly close to the ground, broad back clearly visible from above, seen from above in isometric 3/4 view showing its back and one side, head pointing towards the bottom right of the screen, a big wide flat reptilian head with its jaw wide open showing small pale teeth, dark brown mouth inside, long very thick tail lying flat on the ground trailing to the top left, low rough bumpy scale ridges along the spine, muted light green scaly hide, not too bright, with a dense pattern of darker green scales, pale grey-green belly, cool moonlit night shading with dark blue-green shadows on the far side and underside and small pale highlight pixels on the back and head, the creature fills most of the image, lying directly on the ground, no base, no platform, no ground shadow, retro pixel art game sprite, hard pixel edges, dark selective outline",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "isometric": true,
+    "no_background": true,
+    "view": "high top-down",
+    "direction": "south-east",
+    "outline": "selective outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a huge heavy monitor lizard, like a giant armoured komodo dragon, crawling low on all four thick muscular legs splayed out to the sides, all four clawed feet flat on the ground, thick wide body stretched long and horizontal diagonally across the image, belly close to the ground, broad back clearly visible from above, seen from above in isometric 3/4 view showing its back and one side, head pointing towards the bottom right of the screen, a big wide flat reptilian head with its jaw wide open showing small pale teeth, dark brown mouth inside, long very thick tail lying flat on the ground trailing to the top left, low rough bumpy scale ridges along the spine, muted light green scaly hide, not too bright, with a dense pattern of darker green scales, pale grey-green belly, cool moonlit night shading with dark blue-green shadows on the far side and underside and small pale highlight pixels on the back and head, the creature fills most of the image, lying directly on the ground, no base, no platform, no ground shadow, retro pixel art game sprite, hard pixel edges, dark selective outline",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-25T18:31:14+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-293/style-loop/v2.png",
+    "art-archive/T-293/style-loop/v3.png"
+  ],
+  "task": "T-293",
+  "job_status": null,
+  "notes": "T-293 style loop version 4 (4 of max 4 generations, the last): low four-legged monitor-lizard posture from v2 with v3's bulk and open toothed jaw; no 'kaiju' word to avoid the upright Godzilla pose; muted moonlit greens",
+  "generator": "game/tools/pixellab_client.py"
+}

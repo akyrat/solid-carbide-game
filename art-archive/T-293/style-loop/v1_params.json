@@ -1,0 +1,12 @@
+{
+  "description": "a heavy menacing mini kaiju lizard monster walking on all four thick legs, mid-stride, facing towards the bottom right of the screen, light muted green scaly hide with darker green scales and ridges along its back, pale yellow-green belly, a big heavy reptilian head with a wide open snapping jaw full of small pale sharp teeth, dull pink mouth inside, thick clawed feet, a long thick tail, small row of dorsal spikes, low and wide body, lying directly on the ground, no base, no platform, no ground shadow, isometric 3/4 view seeing its top and one side, night lighting, retro pixel art game sprite, hard pixel edges, dark outline",
+  "image_size": {"width": 128, "height": 128},
+  "isometric": true,
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "south-east",
+  "outline": "selective outline",
+  "shading": "detailed shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}
