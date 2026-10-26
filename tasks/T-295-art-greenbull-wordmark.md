@@ -1,7 +1,7 @@
 ---
 id: T-295
 title: "Art: Greenbull's wordmark, the emblem with GREENBULL, through the style loop"
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: [T-294]
+depends_on: []
 documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, agent-notes/asset-generation.md, tasks/T-294-art-greenbull-emblem.md, art-archive/T-294/greenbull_emblem_128.png]
 files_expected_to_change: [art-archive/T-295/, docs/visual-style.md]
@@ -59,6 +59,12 @@ Board review files: art-archive/T-295/review_wordmark_dark.png, art-archive/T-29
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-26, Open → In progress
+
+Started: the GREENBULL wordmark, built from the emblem's run 2, through the style loop (up to 12 PixelLab generations). The dependency on T-294 is dropped: its emblem is copied in, and a different pick by the board means a free script rebuild.
+
 ## Style review
 
 ## Result notes
+
+- 2026-10-26, Project Lead: the dependency on T-294 is dropped so the wordmark can be made while the board is away. T-294 passed QA and waits for the board's review in needs-playtest; its kept emblem (run 2, the Project Lead's pick) is copied into `art-archive/T-295/` (128, 64 and 32). If the board picks the other run, the wordmark is rebuilt with that emblem by script, for free.
