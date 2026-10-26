@@ -1,7 +1,7 @@
 ---
 id: T-296
 title: "Style loop: a repeated run adds to the Style review instead of replacing it"
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, Open → In progress
 
 Building it in this session: the goal runner waits for reused tickets and doesn't build them, so G-006 needs it done first.
+
+### 2026-10-26, In progress → In QA
+
+Built: a repeated style loop run now adds its own record after the earlier runs instead of replacing them; 5 new tests, 490 tools tests pass. Going to QA.
 
 ## Result notes
 
