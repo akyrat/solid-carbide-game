@@ -1,7 +1,7 @@
 ---
 id: T-297
 title: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line"
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/guard_ledger.py, tools/test_guard.py]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: sonnet
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -65,6 +65,10 @@ Back to the builder: QA found that a script naming no guarded word can still rew
 
 Fixed: the guard now tries a sed edit on the ticket's text and refuses it if a status, lead or qa_rounds line would change; s/open/done/ and s/0/1/ are refused, the body edits still pass. 490 tools tests pass. QA round 2.
 
+### 2026-10-26, In QA → Done
+
+QA round 2 passed all five criteria. Merged to master: a sed edit of a ticket's body passes the guard when it can't change a status, lead or qa_rounds line.
+
 ## Result notes
 
 - `.claude/hooks/board_gate.py`: new `sed_body_script_ok` (and `_sed_delimited`); the sed branch of `why_risky` lets a `sed` on a ticket pass when every script is parsed in full and is only `s` (flags g p i I M and digits; no `w`/`e`), or `d`/`a`/`i`/`c` with a `/regex/` address, naming none of `status`, `qa_rounds`, `lead` (nor the fragments `stat`, `round`, `lead`, `qa`), no colon in a pattern or address, no numeric address below 2. Anything else (`-f`, `w`, `e`, `y`, unreadable variable/substitution scripts, `1,5s`, `1d`) stays refused. The old `SED_WRITES_RE` check is skipped for a script that passes this parse (it wrongly flagged text like " wordmark").
@@ -76,3 +80,4 @@ Fixed: the guard now tries a sed edit on the ticket's text and refuses it if a s
 - QA round 1, criterion 5 (added later): fails, the branch is unchanged since my check, so `s/open/done/` and `s/0/1/` are still accepted and no test covers them.
 - Round 2 (criterion 5): `board_gate.py` now parses the script into commands (`sed_body_parse`) and, for every target file that could be a ticket, runs them on the file's current text in Python without writing (`sed_changes_guarded_lines`, with `_bre` and `_replacement` translating basic regex and replacement exactly). It refuses when any line starting `status`, `qa_rounds` or `lead` would change, appear or vanish. It also refuses when the file can't be found or read (a glob, `$`, missing file), when an option other than `-i`/`-e` is given (`-n`, `-E`, `-z`...), or when the script can't be simulated exactly (brackets, groups, `\n`, back-references, flags other than g/i/I, regex ranges). Also fixed: `a`/`i`/`c` text now ends at the line end, and the next line is parsed as a command. Tests added to `SedBodyEdits` (sample ticket with `status: open`, `qa_rounds: 0`): `s/open/done/`, `s/0/1/` and 7 more header-changing scripts refused, 8 unreadable/inexact cases refused, nothing written, the two criterion-1 edits still pass. Note `s/a/b/g` is now refused too (it would turn `status` into `stbtus`).
 - QA round 2: all five criteria pass at 695fd4a7; tools suite 490 tests OK. My own attacks through the hook were refused as wanted: `s/open/done/`, `s/0/1/I`, `s/O/0/I`, `s/n/N/2`, `s/s/S/2`, `s/$/ x/`, a negated address, a `-e` pair where the second changes a header, an `a` text line followed by `s/open/done/`, `\(` groups, `-n`, a glob, a missing file. Body edits (`s/teh/the/`, also with a non-ticket file before or after, or the ticket twice) still pass.
+- 2026-10-26, in-qa → done: QA round 2 passed all 5 criteria; tooling, merged straight after QA.
