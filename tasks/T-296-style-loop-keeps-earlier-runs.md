@@ -53,3 +53,9 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 Building it in this session: the goal runner waits for reused tickets and doesn't build them, so G-006 needs it done first.
 
 ## Result notes
+
+- `tools/style_loop/loop.py`: `write_record` now reads the Style review once per run (`Spec.earlier`, via `earlier_runs`). With earlier rounds present, they are kept: a single-run review (bare `### Round N`) becomes `### Run 1` with `#### Round N`; a review that already has `### Run N` parts is kept as it is. The new run is written as `### Run N+1` after them, with `#### Round N`, and only that part is rewritten as the run goes. An empty/template-only review, or a first run, is written as before (plain `### Round N`).
+- `tools/task_status.py`: the QA gate's `STYLE_ROUND_RE` now matches `### Round N` and `#### Round N`.
+- `tasks/README.md`, "The style loop": says what a repeated run writes, and the gate line mentions `#### Round N`.
+- Tests: `RepeatedRun` in `tools/style_loop/test_loop.py` (4 tests: run 2 keeps run 1, run 3, only own part rewritten while going, `--fake` run on a sandbox copy), one test in `tools/test_task_status.py` (two runs can go to in-qa, an empty review cannot). Full suite: 490 tests, OK.
+- Nothing left open.
