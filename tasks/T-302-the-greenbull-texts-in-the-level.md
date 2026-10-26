@@ -1,7 +1,7 @@
 ---
 id: T-302
 title: The Greenbull texts in the level-up screen, its cards and the garage
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -47,6 +47,10 @@ The board's review: play a run to a level-up and open the garage: read the new G
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Blocked → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-302.
 
 ## Style review
 
