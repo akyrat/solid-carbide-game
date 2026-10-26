@@ -1,7 +1,7 @@
 ---
 id: T-295
 title: "Art: Greenbull's wordmark, the emblem with GREENBULL, through the style loop"
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, agent-notes/asset-generation.md, tasks/T-294-art-greenbull-emblem.md, art-archive/T-294/greenbull_emblem_128.png]
 files_expected_to_change: [art-archive/T-295/, docs/visual-style.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,14 +46,14 @@ Board review files: art-archive/T-295/review_wordmark_dark.png, art-archive/T-29
 
 ## Acceptance criteria
 
-- [ ] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: pass / fail)
-- [ ] Every version is in `art-archive/T-295/style-loop/` (with its PixelLab record when PixelLab made it, or the script that drew it), and the kept wordmark is `art-archive/T-295/greenbull_wordmark.png`. (QA: pass / fail)
-- [ ] `python game/tools/style_rules.py art art-archive/T-295/greenbull_wordmark.png` passes, or its failures are named in the Style review. (QA: pass / fail)
-- [ ] The wordmark reads GREENBULL, spelled exactly, as the QA agent sees when it looks at the review image. (QA: pass / fail)
-- [ ] Its colours are the three brand colours plus at most two dark outline or shade colours, and yellow covers fewer opaque pixels than either green, as a short script listing its colours shows. (QA: pass / fail)
-- [ ] At most 12 PixelLab generations were used, as `game/art/pixellab-generation-log.jsonl` shows for T-295. (QA: pass / fail)
-- [ ] The two review images exist: the wordmark and the emblem, enlarged with nearest-neighbour, on a dark and a light background. (QA: pass / fail)
-- [ ] Nothing under `game/art/` changed except the PixelLab log. (QA: pass / fail)
+- [ ] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: pass. Both runs hold every round with a Kept line, run 1 restored.)
+- [ ] Every version is in `art-archive/T-295/style-loop/` (with its PixelLab record when PixelLab made it, or the script that drew it), and the kept wordmark is `art-archive/T-295/greenbull_wordmark.png`. (QA: pass. v1 and v1-2 with records and script copies in style-loop/; kept file present.)
+- [ ] `python game/tools/style_rules.py art art-archive/T-295/greenbull_wordmark.png` passes, or its failures are named in the Style review. (QA: pass. Exit 0 on the kept file and on run 2.)
+- [ ] The wordmark reads GREENBULL, spelled exactly, as the QA agent sees when it looks at the review image. (QA: pass. Reads GREENBULL in both review images.)
+- [ ] Its colours are the three brand colours plus at most two dark outline or shade colours, and yellow covers fewer opaque pixels than either green, as a short script listing its colours shows. (QA: pass. 5 colours on both; yellow 46 px vs greens 1119/2709 and 1441/2387.)
+- [ ] At most 12 PixelLab generations were used, as `game/art/pixellab-generation-log.jsonl` shows for T-295. (QA: pass. 0 T-295 lines in the log.)
+- [ ] The two review images exist: the wordmark and the emblem, enlarged with nearest-neighbour, on a dark and a light background. (QA: pass. Both review images exist, as described.)
+- [ ] Nothing under `game/art/` changed except the PixelLab log. (QA: pass. git diff master...HEAD -- game/art is empty.)
 
 ## Updates
 
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, Open → In progress
 
 Started: the GREENBULL wordmark, built from the emblem's run 2, through the style loop (up to 12 PixelLab generations). The dependency on T-294 is dropped: its emblem is copied in, and a different pick by the board means a free script rebuild.
+
+### 2026-10-26, In progress → In QA
+
+Wordmark made: two loop runs, both 8/10 on their first version, script-drawn (0 PixelLab generations). Run 1 (light green letters) reads best on dark and is the main file; run 2 (dark green leads) is stronger on light. Review: art-archive/T-295/review_wordmark_dark.png and _light.png. Now in QA.
 
 ## Style review
 
@@ -116,3 +120,4 @@ Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-295/br
     - On dark, run 1 is clearly better. Its light green faces read at once, and the dark shade adds depth. In run 2 the dark green bodies almost merge into the dark background, so the letters are carried by the thin light green edges and read like stripes. That makes them busier and less crisp, especially E, B and the two Ls.
     - On light, both read well. Run 2 is the stronger and more on-brand of the two there: the dark green letters with a light edge match the emblem's dark-green-led look. Run 1 looks a little lighter but is still clear.
     - Most game uses are on dark screens (the level-up header, menus), so I would keep run 1. Run 2 would suit light surfaces such as the gift pack package. A cheap middle option, if the board wants dark green to lead on dark too, is a free script change: a thicker light green top and left edge on run 2, as the evaluator suggested. The board chooses.
+- 2026-10-26, in-qa → needs-playtest: QA round 1: all 8 criteria pass
