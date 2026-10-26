@@ -1,7 +1,7 @@
 ---
 id: T-302
 title: The Greenbull texts in the level-up screen, its cards and the garage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/visual-style.md, docs/hud-and-menus.md, docs/garage-design.md, game/README.md, game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, game/tests/unit/test_level_up_screen.gd, game/tests/unit/test_garage_screen.gd]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, game/tests/unit/test_level_up_screen.gd, game/tests/unit/test_garage_screen.gd, docs/hud-and-menus.md, docs/garage-design.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -64,6 +64,10 @@ Goal runner (G-006): failed QA once; back to the agent on opus.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-26, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -90,3 +94,4 @@ Round 2 (fix for the failed criterion "All three test sets pass"):
 - `python -m unittest discover game/tools`: 464 OK (1 skipped). `python -m unittest discover tools`: 501 OK. `python game/tools/check_level_up_texts.py`: 24 rows checked, 0 problems. GUT not rerun: no GDScript or scene changed in this round (1419/1419 in round 1).
 - Screenshots: unchanged from round 1 (this round changed only a Python check tool).
 - Refusals: none.
+- 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
