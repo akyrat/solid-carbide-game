@@ -1,7 +1,7 @@
 ---
 id: T-294
 title: "Art: Greenbull's emblem, a bull's head, through the style loop"
-status: open
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -62,6 +62,10 @@ Board review files: art-archive/T-294/review_emblem_dark.png, art-archive/T-294/
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-26, In progress → In QA
+
+Emblem made: the loop ran twice, both kept at 8/10 on their first version (2 of 12 PixelLab generations). Run 2 (angular, lightning blaze) is the Project Lead's pick; run 1 is kept for comparison. 64 and 32 px made by script. Review: art-archive/T-294/review_emblem_dark.png and _light.png. Now in QA.
+
 ## Style review
 
 Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-294/brief_run2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
@@ -108,3 +112,14 @@ Run 2's notes are in `art-archive/T-294/style-loop/v1-2.md` (script `game/tools/
   - Run 1 is friendlier and simpler: a calm, rounder head with big light-green horns and yellow horn tips. It reads more clearly at a glance and stands out better on dark, but it looks more like a mascot than a cool sponsor logo, and spends more yellow (361 px, three places).
   - 64 px: holds up well; everything from the master survives (blaze, brow, eyes, nostrils, ring).
   - 32 px: still reads as a bull's head: two horns, ears, two yellow eyes under the brow, the light-green blaze as a vertical stripe (its zigzag is mostly lost) and the yellow ring at the bottom. The nostrils merge into one dark muzzle block and the horns are 1 to 2 px thick at the tips. Fine as an icon or a small decal; at that size it is the silhouette and yellow eyes that carry it.
+
+## QA round 1 (2026-10-26)
+
+- Style review section: FAIL. It holds only run 2 (Round 1, one Kept line). Run 1's round (version file, script checks, score, reason) and its Kept line are not on the ticket; the brief says both runs count.
+- Files and archive: PASS. style-loop/ holds both versions with PixelLab JSON records; greenbull_emblem_128/64/32.png exist.
+- style_rules.py 128x128: PASS (all 6 checks).
+- Colours: PASS. 128/64/32 each have 5 opaque colours: the three brand colours plus outline 14,22,18 and deeper green 6,46,26. Yellow is 154/46/16 px, below both greens.
+- Generations: PASS. 2 for T-294 in the log (max 12).
+- Review images: PASS. Dark and light sheets show run 2 at 128/64/32, run 1, old Redgull logo and car, enlarged.
+- Nothing under game/art changed except the log: PASS (only pixellab-generation-log.jsonl, +2 lines).
+- Tools tests (game/tools discover): PASS, 432 tests OK (1 skipped).
