@@ -16,7 +16,8 @@
       "Bash(grep *)",
       "Bash(cat *)",
       "Bash(head *)",
-      "Bash(tail *)"
+      "Bash(tail *)",
+      "Bash(python tools/style_loop/run.py *)"
     ]
   },
   "statusLine": {
