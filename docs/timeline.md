@@ -1880,3 +1880,8 @@ Entry format:
 - Decision or change: the board's decision that the ticket guard allows edits that don't touch a ticket's status, lead or qa_rounds lines (agents twice redid a refused `sed -i` with the Edit tool). A `sed -i` on a ticket now passes when the guard can read its whole script, the script names none of those words, and a dry run of it on the ticket's current text changes none of those lines; anything it can't simulate exactly stays refused. QA round 1 found that `s/open/done/` passed and rewrote `status: open`; the Project Lead added a criterion for it and the dry run closed it; QA round 2 passed all 5 criteria.
 - Documents touched: `tasks/README.md`
 - Tasks: T-297
+
+## 2026-10-26: Greenbull's garage texts name no number
+- Decision or change: goal G-006's text ticket T-301 was flagged because its brief kept "+10" and "+5%" in two garage descriptions while Text rules rule 4 says a garage description names no number. The board follows the rule: both texts drop their numbers (the garage shows the real stats) and go through the style loop again. The board accepts the other ten Greenbull texts as written. The goal's build branch `playtest/G-006` had been made before T-296, so its loop runs still erased earlier records; master (T-296, T-297, the board's settings) is merged into it.
+- Documents touched: none (the rule already said so)
+- Tasks: T-301, goal G-006
