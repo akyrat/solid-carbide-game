@@ -1,7 +1,7 @@
 ---
 id: T-295
 title: "Art: Greenbull's wordmark, the emblem with GREENBULL, through the style loop"
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -71,6 +71,10 @@ Wordmark made: two loop runs, both 8/10 on their first version, script-drawn (0 
 
 Passed QA (round 1). Waiting for your review: run 1 (light green letters) is the main file, run 2 (dark green leads) the alternative. Patch notes: https://claude.ai/artifact/L47vbXEL6wYndn4tx22fMt
 
+### 2026-10-26, Needs playtest → Done
+
+Approved by the board: run 1 is Greenbull's wordmark. Merging to master.
+
 ## Style review
 
 The loop ran twice on this asset. The tool sets this whole section on each run (fix: T-296), so run 2 replaced run 1's record; the Project Lead restored run 1 below, word for word from a copy of the ticket saved right after run 1, including its refused command. (A first attempt at run 1 stopped before any round, with no image: the agent's drawing script was kept under `art-archive/T-295/`, where the ticket guard refuses to run scripts; the brief then asked for scripts in `game/tools/`.)
@@ -125,3 +129,4 @@ Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-295/br
     - On light, both read well. Run 2 is the stronger and more on-brand of the two there: the dark green letters with a light edge match the emblem's dark-green-led look. Run 1 looks a little lighter but is still clear.
     - Most game uses are on dark screens (the level-up header, menus), so I would keep run 1. Run 2 would suit light surfaces such as the gift pack package. A cheap middle option, if the board wants dark green to lead on dark too, is a free script change: a thicker light green top and left edge on run 2, as the evaluator suggested. The board chooses.
 - 2026-10-26, in-qa → needs-playtest: QA round 1: all 8 criteria pass
+- 2026-10-26, needs-playtest → done: The board approved run 1 (light green letters, crisper on dark), 2026-10-26.
