@@ -1,7 +1,7 @@
 ---
 id: T-298
 title: Style rules: the new rule 6 (Greenbull's colours), Greenbull's logo check, and Redgull as a banned word
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/style_rules.py, game/tools/test_style_rules.py, game/tools/check_logo_one_colour.py, game/tools/test_check_logo_one_colour.py, game/tools/check_sprite_rules.py, tasks/T-290-style-rules-module.md, tasks/T-294-art-greenbull-emblem.md, tasks/T-295-art-greenbull-wordmark.md]
 files_expected_to_change: [game/tools/style_rules.py, game/tools/test_style_rules.py, game/tools/check_logo_one_colour.py, game/tools/test_check_logo_one_colour.py, game/tools/check_sprite_rules.py, game/tools/test_check_sprite_rules.py, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-298.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-26, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -103,3 +107,4 @@ Written by the agent when it finishes.
 **Screenshots:** none. This is tooling only, with nothing on screen to picture.
 
 PixelLab: 0 generations.
+- 2026-10-26, in-qa → done: QA passed every criterion (goal G-006).
