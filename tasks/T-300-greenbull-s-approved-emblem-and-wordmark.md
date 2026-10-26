@@ -45,11 +45,11 @@ The board's review: open the four files in game/art/logo/ (and the screenshots) 
 - [ ] Each of the four files has a json record beside it naming its source file, its ticket (T-294 or T-295) and its run (run 2 or run 1). (QA: pass)
 - [ ] The redgull_logo_128.png, _64.png and _32.png files and their records still exist, either in game/art/logo/ or moved with git mv into art-archive/<this ticket>/ (git log --follow shows the move); none is deleted. (QA: pass: the three redgull PNGs are still in game/art/logo/, none deleted; no redgull .json ever existed in git there)
 - [ ] `python game/tools/style_rules.py art <file> --greenbull` and D1's logo check pass on each of the four copies (output in the result notes). (QA: pass: style_rules --greenbull all checks ok on the four; the logo check is part of it)
-- [ ] The ticket's Style review has one style loop round per file, each keeping the byte-identical copy. (QA: fail: the Style review section holds only one round (the wordmark, v1-4); the three emblem rounds are described in the result notes but not recorded as rounds there)
+- [ ] The ticket's Style review has one style loop round per file, each keeping the byte-identical copy. (QA: pass: Style review now has four subsections, one round each, all 9/10, each kept v1 byte-identical copy)
 - [ ] No PixelLab call is made: the result notes say so, and the PixelLab generation log has no entry for this ticket. (QA: pass)
 - [ ] Visual style, Decisions, 'Greenbull's look', says where the game-ready logo files are. (QA: pass)
 - [ ] The four files are shown enlarged on a dark and a light background in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass)
-- [ ] All three test sets pass. (QA: fail: game/tools/test_check_logo_one_colour.py test_only_three_final_files fails (reran alone, same): it expects only the three redgull files in game/art/logo/, now there are seven. GUT 1419/1419 and tools/ 491 tests pass.)
+- [ ] All three test sets pass. (QA: pass: game/tools 463 OK (1 skipped), tools/ exit 0, GUT all passed)
 
 ## Updates
 
