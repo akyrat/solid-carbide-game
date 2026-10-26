@@ -1850,3 +1850,8 @@ Entry format:
 - Decision or change: the PixelLab client generates only inside a live style loop run, and art and narrative tickets can't move to QA without rounds in their Style review, whoever moves them. The goal runner's agents are told the loop rule in place of "one round per task". Every asset and text from now on is made through the loop.
 - Documents touched: `tasks/README.md`, `game/README.md`
 - Tasks: T-292
+
+## 2026-10-26: The redesigned minion: version 4, without its shadow, pink mouth kept
+- Decision or change: the board likes version 4 of the style loop's minion sample (T-293) and wants it without the baked-in ground shadow, since its rotations and animations will be made from it; the shadow is removed by a free script. The board keeps its dull pink mouth (RGB 147, 93, 93), which Visual style rule 6 now lists as an allowed non-Redgull red.
+- Documents touched: `docs/visual-style.md`, `docs/long-gdd.md`, `docs/short-gdd/README.md`
+- Tasks: T-293
