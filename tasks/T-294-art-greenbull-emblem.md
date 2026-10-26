@@ -1,7 +1,7 @@
 ---
 id: T-294
 title: "Art: Greenbull's emblem, a bull's head, through the style loop"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -50,7 +50,7 @@ Board review files: art-archive/T-294/review_emblem_dark.png, art-archive/T-294/
 
 ## Acceptance criteria
 
-- [ ] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: fail, run 1 round and Kept line missing)
+- [x] The task's `## Style review` section holds every round of every loop run: each version's file, the script checks, the score, the reason and (from round 2) what changed, and a "Kept" line per run. (QA: pass, round 2: both runs and Kept lines present)
 - [x] Every version is in `art-archive/T-294/style-loop/` with its PixelLab record, and the kept emblem is `art-archive/T-294/greenbull_emblem_128.png`, with `greenbull_emblem_64.png` and `greenbull_emblem_32.png` beside it. (QA: pass)
 - [x] `python game/tools/style_rules.py art art-archive/T-294/greenbull_emblem_128.png --size 128x128` passes, or its failures are named in the Style review. (QA: pass)
 - [x] The kept emblem's colours are the three brand colours (RGB 12, 76, 44; 104, 220, 96; 247, 208, 52) plus at most two dark outline or shade colours, as a short script listing its colours shows; yellow covers fewer opaque pixels than either green. (QA: pass)
@@ -65,6 +65,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, In progress → In QA
 
 Emblem made: the loop ran twice, both kept at 8/10 on their first version (2 of 12 PixelLab generations). Run 2 (angular, lightning blaze) is the Project Lead's pick; run 1 is kept for comparison. 64 and 32 px made by script. Review: art-archive/T-294/review_emblem_dark.png and _light.png. Now in QA.
+
+### 2026-10-26, In progress → In QA
+
+QA round 1 failed one criterion: run 1's Style review was missing, because the loop tool replaces the whole section on each run. Restored from run 1's own output; back to QA for round 2.
 
 ## Style review
 
@@ -140,3 +144,7 @@ Run 2's notes are in `art-archive/T-294/style-loop/v1-2.md` (script `game/tools/
 - Nothing under game/art changed except the log: PASS (only pixellab-generation-log.jsonl, +2 lines).
 - Tools tests (game/tools discover): PASS, 432 tests OK (1 skipped).
 - 2026-10-26, in-qa → in-progress: QA round 1: fails 1 criterion, run 1's Style review round and Kept line are missing from the ticket; the rest pass
+
+## QA round 2 (2026-10-26)
+
+- Style review: PASS. Run 1 restored with its Kept line; run 2 with its Kept line. The other six criteria still hold (game/art diff vs master is only the log; 2 generations).
