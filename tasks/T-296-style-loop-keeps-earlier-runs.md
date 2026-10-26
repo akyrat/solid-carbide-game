@@ -7,7 +7,7 @@ to: project-lead
 lead: Greenbull
 epic: tooling
 milestone: mvp
-goal:
+goal: G-006
 user_facing_text: no
 changes_visuals: no
 depends_on: []
