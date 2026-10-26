@@ -1,7 +1,7 @@
 ---
 id: T-299
 title: Style loop: Greenbull's flag and the new rule 6 in the evaluator's style guide
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Goal-G-006
@@ -48,6 +48,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, Blocked → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-299.
+
+### 2026-10-26, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
