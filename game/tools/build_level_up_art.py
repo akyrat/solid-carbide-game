@@ -114,9 +114,13 @@ def card_frame():
     for y in range(k, h - k):
         hline(im, k, w - 1 - k, y, CREAM)
     hline(im, k, w - 1 - k, k, CREAM_D)  # a soft shadow under the top border
-    for cx, cy in ((12, 12), (w - 13, 12), (12, h - 13), (w - 13, h - 13)):  # small yellow studs
+    # Small yellow studs on the dark green band, inside the 10-pixel 9-slice margin so they stay
+    # in the corner slices and never stretch; the inner corner pixel keeps the outline as a shadow.
+    for cx, cy, sx, sy in ((4, 4, 1, 1), (w - 5, 4, -1, 1), (4, h - 5, 1, -1), (w - 5, h - 5, -1, -1)):
         for dx in (-1, 0, 1):
             for dy in (-1, 0, 1):
+                if dx * sx == 1 and dy * sy == 1:
+                    continue
                 put(im, cx + dx, cy + dy, YEL_L if dx + dy < 0 else YEL)
     return im
 

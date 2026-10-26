@@ -59,7 +59,122 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-303.
 
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+### Run 1
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/header_ribbon.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: The ribbon matches the brief. It has a light, plain green centre field for the title, dark green trim with a thin yellow line on top, dark green folded tails with a V notch, and a pale round medallion with the bull's-head emblem at each end. There is no red and no gull. Edges are hard, there is no anti-aliasing, and the background is transparent. The script checks pass: 11 colours, alpha 0 or 255 only, and the light green and yellow sit on one of Greenbull's own things (rule 6). Rule 1 passes. Rule 3 passes on size; the 3/4 view doesn't apply to a flat UI piece. The image is small, so I could only judge the emblem, the yellow line and the outline at low detail. The dark outline is fairly heavy and uniform, with few lighter highlight pixels breaking it (rule 2). The light field has little shading, but it has to stay plain for the title. A pixel or two of lighter highlight along the dark trim and the tail edges would be the only improvement worth making. No rule is clearly broken.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "mkdir -p art-archive/T-303/style-loop && python game/tools/build_level_up_art.py piece header_ribbon art-archive/T-303/style-loop/v1.png && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-303/style-loop/v1.png');print(im.mode,im.size)\npx=list(im.getdata());print('colours',len(set(p for p in px if p[3])),'alphas',set(p[3] for p in px))\nprint('red?',[p for p in set(px) if p[3] and p[0]>150 and p[1]<90])\nim.resize((760,88),Image.NEAREST).save('art-archive/T-303/style-loop/v1_x2_preview.png')\n\"", "description": "Build v1 ribbon and check its format"}, "tool_name": "Bash", "tool_use_id": "toolu_0185KNJ56VEyixGi6ucceXMw"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1.png`, copied to `game/art/level_up/header_ribbon.png`): it reached 8 or more.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/gift_pack_emblem.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-2.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: The image is small, so this score rests on a low-resolution look. It passes the rules I can judge.
+
+Rule 1: the script checks pass (22 colours, no semi-transparent pixels, transparent background).
+
+Rule 2: the dark selective outline holds, and the shading from the PixelLab box is kept on the box faces and the bow.
+
+Rule 6: the dark green leads on the box, the ribbon and bow are light greens, and the sparkles are yellow used sparingly. The piece is one of Greenbull's own things. There is no red.
+
+Rule 9: Greenbull's emblem sits on a pale disc where the gull was, and no gull remains. The emblem is flat brand art and is exempt from rule 2.
+
+Rule 3: the size is right, and the scale doesn't apply to a UI emblem.
+
+Minor, optional polish: the emblem on the box front is small and low-contrast against the dark green, and the pale disc could be a touch brighter, so the bull's head reads at a glance. This does not break a rule.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "ls art-archive/T-303/style-loop/ && python game/tools/build_level_up_art.py piece gift_pack_emblem \"C:/solid-carbide-worktrees/T-303/art-archive/T-303/style-loop/v1-2.png\" && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-303/style-loop/v1-2.png');print(im.mode,im.size)\npx=list(im.getdata());print('colours',len(set(p for p in px if p[3])),'alphas',set(p[3] for p in px))\nprint('reddish',sum(1 for r,g,b,a in px if a and r>g+40 and r>b+40))\n\"", "description": "Build gift pack emblem version 1 and check it"}, "tool_name": "Bash", "tool_use_id": "toolu_01VqjaZ8SH8RoDp2A8bbfxC3"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1-2.png`, copied to `game/art/level_up/gift_pack_emblem.png`): it reached 8 or more.
+
+### Run 3
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/card_frame.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-3.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: The frame meets the brief and the rules that apply to a flat UI piece. It has a dark green outer band with a light green inner band, stepped corners, a plain pale fill, small yellow corner studs and no red. The script checks all pass (180x150, 10 colours, no semi-transparent pixels, transparent corners), so rules 1, 3 and 6 hold. Greenbull's colours are on a level-up screen piece, which rule 6 allows. The plain middle will stretch cleanly as a 9-slice. Rules 7-10 don't apply. Rule 2 is applied loosely to this flat frame: the dark outline is thin and the highlight pixels are sparse. The yellow studs are tiny and sit on the corner edge, so they are barely visible at this size. To go higher, add a few light green highlight pixels or a darker outline line on the band, and make the studs 1-2 pixels larger or clearer, without touching the plain centre or the 10-pixel margin.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "ls art-archive/T-303/style-loop/ 2>/dev/null; python game/tools/build_level_up_art.py piece card_frame /tmp/cf_now.png && python -c \"\nfrom PIL import Image\nim=Image.open('/tmp/cf_now.png');im.resize((720,600),0).save('/tmp/cf_now_big.png')\"", "description": "Check archive and render current card frame"}, "tool_name": "Bash", "tool_use_id": "toolu_01EyEsfBkmFJedntnvJknB8U"}; {"tool_input": {"file_path": "C:\\Users\\andre\\AppData\\Local\\Temp\\cf_now.png"}, "tool_name": "Read", "tool_use_id": "toolu_01DaCRMgwTYd9P6E9BzuPLor"}; {"tool_input": {"command": "python -m pytest -q game/tools/test_build_level_up_art.py 2>&1 | tail -5", "description": "Run the level-up art script tests"}, "tool_name": "Bash", "tool_use_id": "toolu_015nUkgYG84ZSUrCvuYWEyxS"}; {"tool_input": {"command": "python -m pytest -q game/tools/test_build_level_up_art.py", "description": "Run the level-up art script tests"}, "tool_name": "Bash", "tool_use_id": "toolu_01PLJTfCSXaPWRtaUEsMuFSM"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1-3.png`, copied to `game/art/level_up/card_frame.png`): it reached 8 or more.
+
+### Run 4
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/highlight_frame.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-4.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: No rule is clearly broken. Rule 1 passes on the script facts: 192x162, 5 colours, alpha 0 or 255 only, transparent middle and corners, hard pixel edges. Rule 6 passes: the frame uses Greenbull's light green and yellow on the level-up screen, which is one of its own things, with dark green leading and no red. Rule 5 is met in principle: the glow is a drawn ring in a mid green, with no blur. Rule 4 is not violated, because this is a flat UI piece. Rules 3 and 10 do not apply beyond the size check. I could only see the image at 1x on a white background. The band is thin, about 5 to 6 px, and well inside the 10 px margin. The mid-green glow ring and the dark outer outline barely stand out from the light green and yellow lines. Possible small refinement: make the stepped mid-green glow ring a clearer 2 px band and check that the dark outline sits on both the inner and outer edges. The inner and outer lines can read as one thin stripe, so a bit more separation (dark line, pale line, yellow line) would make the chosen card stand out more against the dark green card borders. Rule 2's highlight pixels breaking the outline are barely visible on such a thin frame.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "python game/tools/build_level_up_art.py piece highlight_frame art-archive/T-303/style-loop/v1-4.png && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-303/style-loop/v1-4.png');print(im.mode,im.size,len(set(im.getdata())),set(p[3] for p in im.getdata()), im.getpixel((96,81)))\nfor f in ['v1','v1-2','v1-3','v1-4']:\n  a=Image.open(f'art-archive/T-303/style-loop/{f}.png').convert('RGBA');print(f,a.tobytes()==im.tobytes())\n\"; git log --oneline -3 -- game/tools/build_level_up_art.py", "description": "Render v1-4 and check its format"}, "tool_name": "Bash", "tool_use_id": "toolu_011aNq1oX4MgYEgBEPLnpkJQ"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1-4.png`, copied to `game/art/level_up/highlight_frame.png`): it reached 8 or more.
+
+### Run 5
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/button_plate.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-5.png`
+- Script checks: 6 of 6 pass
+- Score: 9/10
+- Reason: The plate matches the brief. It is a 72x22 raised plate with a light green face, a pale top highlight row, a mid-green shade at the bottom, a dark green edge, a dark outline and stepped, transparent corners. Black text will read on the light face. The script checks pass as facts: 6 colours, alpha 0 or 255 only, transparent corners, and the light green correctly sits on a Greenbull level-up piece (rules 1 and 6). There is no red. Rule 2 is met as far as a flat UI plate allows. The outline is dark and the highlight row breaks the top edge. Rules 3 to 5 and 7 to 10 don't apply to a flat screen UI piece. The only possible improvement is optional: a few lighter pixels breaking the outline at the corners would follow rule 2's "broken by lighter highlight pixels" more closely. This is a minor point and no fix is required.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "python game/tools/build_level_up_art.py piece button_plate art-archive/T-303/style-loop/v1-5.png && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-303/style-loop/v1-5.png');print(im.mode,im.size)\npx=list(im.getdata());print('colours',len(set(px)),'alphas',sorted(set(p[3] for p in px)))\nprint('corners',[im.getpixel(c) for c in [(0,0),(71,0),(0,21),(71,21)]])\nprint('red?',[p for p in set(px) if p[3] and p[0]>150 and p[1]<100])\nfor y in range(22): print(''.join('.' if im.getpixel((x,y))[3]==0 else 'O#dDmLlPYC'[0] for x in range(0,72,3)))\n\"", "description": "Build the button plate and check its format"}, "tool_name": "Bash", "tool_use_id": "toolu_01LLqCkBAE5UP6ZyzBfp4K2V"}
+
+**Kept:** version 1, score 9/10 (`art-archive/T-303/style-loop/v1-5.png`, copied to `game/art/level_up/button_plate.png`): it reached 8 or more.
+
+### Run 6
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/button_plate_pressed.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-6.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: The plate matches the brief. It is a flat mid-green face, darker than the normal light-green plate, with no top highlight. It has a dark green edge, a near-black outline, stepped corners and transparent corners. There is no red. The script checks pass: 72x22, 3 colours, no semi-transparent pixels. Rules 1, 3 and 6 are met. Black text should still read on the mid-green face. Rule 2 (selective outline broken by highlight pixels, detailed shading) is only loosely met. With 3 colours the plate is very plain, and the outline has no lighter pixels breaking it. The brief asks for exactly this, since a pressed plate has no highlight, so the penalty is small. To lift the score, add a few lighter or darker face pixels, such as an inner shadow row under the top edge for a pushed-in feel. Keep the face dark enough for black text and stay within Greenbull's greens. Rules 4, 5 and 7 to 10 do not apply to this piece.
+- Rules broken: 2
+- Refused: {"tool_input": {"command": "python game/tools/build_level_up_art.py piece button_plate_pressed art-archive/T-303/style-loop/v1-6.png && python -c \"\nfrom PIL import Image;im=Image.open('art-archive/T-303/style-loop/v1-6.png');print(im.mode,im.size,len(im.getcolors(999)));print(set(p[3] for p in im.getdata()));print(im.getpixel((0,0)))\"", "description": "Build pressed button plate v1-6 and check it"}, "tool_name": "Bash", "tool_use_id": "toolu_01BedsxJ92P54voR3QFp3B6B"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1-6.png`, copied to `game/art/level_up/button_plate_pressed.png`): it reached 8 or more.
+
+### Run 7
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/briefs/sunburst.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-303/style-loop/v1-7.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: The piece meets the rules it is scored on. Rule 1: hard pixel edges, 4 colours, alpha 0 or 255 only, transparent outside the disc. Rule 6: only dark greens, with no light green, no yellow and no red, and the dark green leads. Rules 3 and 4: a screen UI piece, so the isometric view and scale don't apply, and the dark, retro sunburst fits the night mood. The disc has a dark rim and 24 rays that alternate between darker and slightly lighter greens. It reads as a quiet backdrop. Rule 2 (selective outline, detailed shading) doesn't fit a flat backdrop, so I didn't penalise the flat rays. I deducted 2 points because the lightest green rays are fairly bright against the darkest, so the contrast is a little higher than "dark and low in contrast" asks for behind busy cards at 75% opacity. If it is refined, lower the lightest green slightly, or make the gap between the lightest and darkest greens smaller. This is a minor fix, not a rule break.
+- Rules broken: none
+- Refused: {"tool_input": {"command": "mkdir -p art-archive/T-303/style-loop && python game/tools/build_level_up_art.py piece sunburst art-archive/T-303/style-loop/v1-7.png && python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-303/style-loop/v1-7.png');print(im.mode,im.size)\nc=im.getcolors(100000);print(len(c),sorted(set(p[1][3] for p in c)));print([p[1] for p in c])\"", "description": "Build sunburst v1-7 and check palette/alpha"}, "tool_name": "Bash", "tool_use_id": "toolu_012Ln8ATJuZDP2qDkFEgEzr9"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-303/style-loop/v1-7.png`, copied to `game/art/level_up/sunburst.png`): it reached 8 or more.
 
 ## Result notes
 
