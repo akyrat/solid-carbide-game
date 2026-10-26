@@ -1,7 +1,7 @@
 ---
 id: T-296
 title: "Style loop: a repeated run adds to the Style review instead of replacing it"
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -47,5 +47,9 @@ The record of a single run (the usual case) may stay as it is today.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Open → In progress
+
+Building it in this session: the goal runner waits for reused tickets and doesn't build them, so G-006 needs it done first.
 
 ## Result notes
