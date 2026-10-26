@@ -1,7 +1,7 @@
 ---
 id: T-303
 title: Art: the level-up screen in Greenbull's colours, with its emblem
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
