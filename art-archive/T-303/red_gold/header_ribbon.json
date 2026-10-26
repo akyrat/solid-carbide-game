@@ -1,0 +1,11 @@
+{
+ "task": "T-140",
+ "what": "The banner: red ribbon with gold trim and folded tails, a cream medallion with the Redgull gull at each end; the game letters the title between x 76 and 304. Shown 2x (760 wide, as wide as the two cards and their gap).",
+ "logo": "logo on both medallions",
+ "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
+ "size": [
+  380,
+  44
+ ],
+ "prompt": null
+}
