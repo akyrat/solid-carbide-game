@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
