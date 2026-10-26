@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -66,6 +66,10 @@ Goal runner (G-006): the agent is done; QA is checking it.
 ### 2026-10-26, In QA → In progress
 
 Goal runner (G-006): failed QA once; back to the agent on opus.
+
+### 2026-10-26, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
