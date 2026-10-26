@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-26, Blocked → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-300.
+
+### 2026-10-26, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
