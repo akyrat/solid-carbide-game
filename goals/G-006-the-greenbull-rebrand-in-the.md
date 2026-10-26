@@ -1,10 +1,10 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: planned
+status: building
 art_cap: 1900
 art_used: 0
-iteration: 0
+iteration: 1
 max_iterations: 20
 created: 2026-10-26
 lead: Goal-G-006
@@ -45,17 +45,17 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S1 | Style rules check follows the new rule 6 and text rules | unblocks 9, value 5 | Every art and text asset in the rebrand is scored by game/tools/style_rules.py (and check_sprite_rules.py); with the old rule 6 the new green art fails and red is wrongly refused, so nothing else can pass the style loop. | missing | T-298 |
-| 2 | S2 | Style loop tool follows the new rule 6 | unblocks 8, value 4 | The style loop (tools/style_loop/) runs every rebrand asset and text; it must pass the Greenbull flag for Greenbull's things and score against the new rule 6, or every run of S5, S8, S9 and S10 is judged by the old rule. | missing | T-299 |
-| 3 | S7 | Greenbull's emblem and wordmark copied into game/art | unblocks 5, value 5 | The approved emblem and wordmark replace the Redgull logo in every piece of art that stamps it (level-up ribbon and gift box, package, helicopter); they are copied, not remade. | missing | T-300 |
+| 1 | S1 | Style rules check follows the new rule 6 and text rules | unblocks 9, value 5 | Every art and text asset in the rebrand is scored by game/tools/style_rules.py (and check_sprite_rules.py); with the old rule 6 the new green art fails and red is wrongly refused, so nothing else can pass the style loop. | covered | T-298 |
+| 2 | S2 | Style loop tool follows the new rule 6 | unblocks 8, value 4 | The style loop (tools/style_loop/) runs every rebrand asset and text; it must pass the Greenbull flag for Greenbull's things and score against the new rule 6, or every run of S5, S8, S9 and S10 is judged by the old rule. | in-flight | T-299 |
+| 3 | S7 | Greenbull's emblem and wordmark copied into game/art | unblocks 5, value 5 | The approved emblem and wordmark replace the Redgull logo in every piece of art that stamps it (level-up ribbon and gift box, package, helicopter); they are copied, not remade. | in-flight | T-300 |
 | 4 | S3 | T-296: the style loop keeps earlier runs' records (reused as it is) | unblocks 5, value 3 | The board's go allows up to three style loop runs per asset; without T-296 a repeated run on the level-up, package or helicopter art erases the earlier run's record and fails QA. | in-flight | T-296 |
-| 5 | S5 | Greenbull texts written by the Narrative Theme Agent through the style loop | unblocks 3, value 5 | Every player-facing text that names Redgull or leans on the old brand must be rewritten for Greenbull before it goes into the game (text never uses placeholders). | missing | T-301 |
-| 6 | S6 | Put the Greenbull texts in the game | unblocks 2, value 5 | The rewritten texts only count once the level-up screen, its cards and the garage show them. | missing | T-302 |
-| 7 | S8 | Level-up screen art in Greenbull's colours | unblocks 2, value 5 | The level-up screen is the most visible piece of Redgull's red and gold (header ribbon with gull medallions, gift pack emblem, card frame, highlight frame, button plates, sunburst); the goal fails while it shows them. | missing | T-303 |
-| 8 | S9 | Gift pack package (standing and falling) in Greenbull's colours | unblocks 2, value 5 | The package carries Greenbull's brand and is seen every level-up; today it has the Redgull logo in Redgull red. | missing | T-304 |
-| 9 | S10 | Helicopter sheet in Greenbull's colours | unblocks 2, value 5 | The helicopter that drops each gift pack is Greenbull's; its body is in Redgull red with the Redgull logo stamped on it. | missing | T-305 |
-| 10 | S11 | Code comments, tests, tool names and game/README.md follow the new name | unblocks 1, value 3 | Item (5) of the goal: the code base and its README stop saying Redgull, without changing what the game does. | missing | T-306 |
-| 11 | S12 | Rebrand sweep: no Redgull left where the player can see it, with screenshots | unblocks 0, value 4 | The goal's stop condition: a run shows no Redgull name, logo or brand red anywhere, and every changed screen has screenshots. | missing | T-307 |
+| 5 | S5 | Greenbull texts written by the Narrative Theme Agent through the style loop | unblocks 3, value 5 | Every player-facing text that names Redgull or leans on the old brand must be rewritten for Greenbull before it goes into the game (text never uses placeholders). | in-flight | T-301 |
+| 6 | S6 | Put the Greenbull texts in the game | unblocks 2, value 5 | The rewritten texts only count once the level-up screen, its cards and the garage show them. | in-flight | T-302 |
+| 7 | S8 | Level-up screen art in Greenbull's colours | unblocks 2, value 5 | The level-up screen is the most visible piece of Redgull's red and gold (header ribbon with gull medallions, gift pack emblem, card frame, highlight frame, button plates, sunburst); the goal fails while it shows them. | in-flight | T-303 |
+| 8 | S9 | Gift pack package (standing and falling) in Greenbull's colours | unblocks 2, value 5 | The package carries Greenbull's brand and is seen every level-up; today it has the Redgull logo in Redgull red. | in-flight | T-304 |
+| 9 | S10 | Helicopter sheet in Greenbull's colours | unblocks 2, value 5 | The helicopter that drops each gift pack is Greenbull's; its body is in Redgull red with the Redgull logo stamped on it. | in-flight | T-305 |
+| 10 | S11 | Code comments, tests, tool names and game/README.md follow the new name | unblocks 1, value 3 | Item (5) of the goal: the code base and its README stop saying Redgull, without changing what the game does. | in-flight | T-306 |
+| 11 | S12 | Rebrand sweep: no Redgull left where the player can see it, with screenshots | unblocks 0, value 4 | The goal's stop condition: a run shows no Redgull name, logo or brand red anywhere, and every changed screen has screenshots. | in-flight | T-307 |
 | 12 | S4 | T-297: the ticket guard lets a safe sed edit of a ticket's body through (reused as it is) | unblocks 0, value 2 | Named in the goal; keeps agents from being refused for harmless ticket edits during the run. | in-flight | T-297 |
 
 ### S1: Style rules check follows the new rule 6 and text rules
@@ -184,6 +184,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-26, iteration 0: priority scoring: 12 sub-goals ranked, 11 goal criteria, 9 open questions.
 - 2026-10-26, iteration 0: dropped criteria only the Project Lead can meet (T-215): T-307: "Its report in this ticket's folder (playtest/G-006 with every dependency merged) shows no flagged PNG, no loaded file named with 'redgull' and no player-facing text with 'Redgull' (report in the result notes)." (merging).
 - 2026-10-26, iteration 0: gap detection: 0 covered, 2 in flight, 10 missing; wrote 10 tickets.
+- 2026-10-26, iteration 0: building.
+- 2026-10-26, iteration 1: T-298 (S1, project-lead, opus): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: I brought style_rules.py in line with the new rule 6. Red no longer fails any sprite. Greenbull's light green and yellow, and any colour within 25 of them (RGB distance), fail without --greenbull, which replaces --redgull; --allow-red still works under its new name --allow-colour. The logo check now passes the approved emblem and wordmark: it checks rule 1 only, since the logo is exempt from rule 2. The old one-colour check is kept as history. In text, "Redgull" is banned in any case, rule 3 now catches "Greenbull says ...", and "Greenbull" counts as a proper name. I added check_greenbull_logo.py and a rule 6 report to check_sprite_rules.py, with tests, and updated game/README.md. All 462 tests in game/tools pass. The report over all 105 PNGs in game/art, master against the branch, changed only one asset from pass to fail: coin.png, whose gold (255, 204, 64) is 15 from Greenbull's yellow; that is left for the board. One test outside this ticket now fails: tools/style_loop/test_loop.py::test_the_script_checks_find_a_red still expects red to fail rule 6, and T-299 owns that fix. Committed in 2 commits on the task branch; no screenshots, since this is tooling only. Refused, got past and not blocking: project-lead: {"tool_input": {"command": "cd game/tools; python -m unittest test_style_rules test_check_sprite_rules test_check_greenbull_logo test_check_logo_one_colour", "timeout": 300000}, "tool_name": "Bash", "tool_use_id": "toolu_01AArFPu4zkjufcMSemtijyc"} / project-lead: Bash `cd game/tools; python -m unittest test_style_rules ...` needed approval (compound command). Not essential: I ran the same tests with the pre-approved `python -m unittest discover -s game/tools -p ...`.. Rescan: S1 covered, S2 in-flight, S7 in-flight, S3 in-flight, S5 in-flight, S6 in-flight, S8 in-flight, S9 in-flight, S10 in-flight, S11 in-flight, S12 in-flight, S4 in-flight.
 
 ## Pauses
 
