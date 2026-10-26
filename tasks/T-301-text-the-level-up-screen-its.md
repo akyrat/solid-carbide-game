@@ -44,12 +44,12 @@ The board's review: read the new Greenbull texts in the result notes; they are j
 
 ## Acceptance criteria
 
-- [ ] The result notes list every rewritten text with its key, its file and where it appears, at least: levelup.title, the seven level-up card descriptions named in the description, the garage TITLE and the car_health and damage_bonus descriptions, plus any other text `git grep -i redgull game/scripts game/scenes game/data` finds. (QA: pass / fail)
-- [ ] Each final text passes `python game/tools/style_rules.py text "<text>"` (output in the result notes): no banned words, 'Redgull' included, and no 'Greenbull says ...' line. (QA: pass / fail)
-- [ ] Each text has a style loop record (at least one round) in the ticket's Style review. (QA: pass / fail)
-- [ ] Each rewritten card and garage description states the same numbers as the text it replaces (old and new side by side in the result notes). (QA: pass / fail)
-- [ ] No text says what Greenbull sells. (QA: pass / fail)
-- [ ] Texts that don't name Redgull and don't lean on the old brand are not in the list. (QA: pass / fail)
+- [ ] The result notes list every rewritten text with its key, its file and where it appears, at least: levelup.title, the seven level-up card descriptions named in the description, the garage TITLE and the car_health and damage_bonus descriptions, plus any other text `git grep -i redgull game/scripts game/scenes game/data` finds. (QA: pass: all 11 texts in the table; the grep's other hits are code comments about colour)
+- [ ] Each final text passes `python game/tools/style_rules.py text "<text>"` (output in the result notes): no banned words, 'Redgull' included, and no 'Greenbull says ...' line. (QA: pass: I reran style_rules on all 11; rules 2 and 3 ok on every one; the two garage descriptions fail only the rule 4 'names no number' check, which the old texts also failed and the notes flag for the board)
+- [ ] Each text has a style loop record (at least one round) in the ticket's Style review. (QA: fail: the Style review section holds only the last run (damage_bonus); the other 10 texts have no round record in it, only a summary table in the result notes. Restore their records in Style review)
+- [ ] Each rewritten card and garage description states the same numbers as the text it replaces (old and new side by side in the result notes). (QA: pass: numbers 3, 5, 20%, 20%, 50%/3, 3, 40%, 10, 5% match old and new)
+- [ ] No text says what Greenbull sells. (QA: pass: none does)
+- [ ] Texts that don't name Redgull and don't lean on the old brand are not in the list. (QA: pass: only the 11 Redgull texts are listed)
 
 ## Updates
 
