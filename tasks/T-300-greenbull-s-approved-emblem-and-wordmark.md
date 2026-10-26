@@ -69,18 +69,67 @@ Goal runner (G-006): failed QA once; back to the agent on opus.
 
 ## Style review
 
+One style loop run per file, all with `--greenbull`. The loop writes this section afresh on each run, so the agent gathered the four runs' records here word for word, one subsection per file (QA round 1 found only the last run kept).
+
+### File 1: greenbull_emblem_128.png
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-300/brief_emblem_128_qa2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-300/style-loop/v1-5.png`
+- Script checks: 5 of 5 pass
+- Score: 9/10
+- Reason: The image shows Greenbull's emblem, a green bull head with a lightning bolt and yellow eyes, drawn as flat brand art. It follows rule 1: transparent background, hard edges, 5 colours. Rule 6 is met: the light green and yellow appear only on the logo, which is one of Greenbull's own things. Rule 2 does not apply, because the logo is exempt from shading and detail. Rule 9 is met: no real brand, words or characters. The brand-art exemption covers rule 4 and the other scene rules. Nothing needs fixing. Keep the same approved file.
+- Rules broken: none
+- Refused: two Bash commands of the generator (a chained `cp`/`cmp` copy check and a `sha256sum` check); the copy itself was made.
+
+**Kept:** version 1, score 9/10 (`art-archive/T-300/style-loop/v1-5.png`, copied to `game/art/logo/greenbull_emblem_128.png`): it reached 8 or more. Byte-identical to `art-archive/T-294/greenbull_emblem_128.png` (`git diff --no-index` shows no difference).
+
+### File 2: greenbull_emblem_64.png
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-300/brief_emblem_64_qa2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-300/style-loop/v1-6.png`
+- Script checks: 5 of 5 pass
+- Score: 9/10
+- Reason: Greenbull's emblem is flat brand art, so it is exempt from rule 2's shading and detail. It shows a green bull head with a lightning bolt, drawn with hard pixel edges and only 5 colours on a transparent background. The script checks for rules 1 and 6 pass. It uses Greenbull's dark green, light green and yellow, and it is one of Greenbull's own things, so rule 6 is met. It has no real brand, word or character (rule 9). Rules 3, 4, 5, 7, 8 and 10 don't apply to a logo. I found nothing to fix. I took one point off because the image is small and I can't check the exact pixel edges at this size.
+- Rules broken: none
+- Refused: three Bash commands of the generator (a chained `cp`/`cmp` copy check, a `sha256sum` check and a `python -c` hash check); the copy itself was made.
+
+**Kept:** version 1, score 9/10 (`art-archive/T-300/style-loop/v1-6.png`, copied to `game/art/logo/greenbull_emblem_64.png`): it reached 8 or more. Byte-identical to `art-archive/T-294/greenbull_emblem_64.png`.
+
+### File 3: greenbull_emblem_32.png
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-300/brief_emblem_32_qa2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-300/style-loop/v1-7.png`
+- Script checks: 5 of 5 pass
+- Score: 9/10
+- Reason: The image is Greenbull's emblem, a green bull head, drawn as flat brand art. Rule 1 passes on the script facts: 5 colours, a transparent background, no semi-transparent pixels and hard edges. Rule 2's shading and detail don't apply to the logo. Rule 6 passes: the greens are on Greenbull's own logo, which is allowed. Rule 9 passes: it shows no real brand or readable word. Rules 3, 4, 5, 7, 8 and 10 don't apply to a flat logo. I found no rule it breaks, so no fix is needed.
+- Rules broken: none
+- Refused: two Bash commands of the generator (a chained `cp`/`cmp` copy check and a `python -c` hash check); the copy itself was made.
+
+**Kept:** version 1, score 9/10 (`art-archive/T-300/style-loop/v1-7.png`, copied to `game/art/logo/greenbull_emblem_32.png`): it reached 8 or more. Byte-identical to `art-archive/T-294/greenbull_emblem_32.png`.
+
+### File 4: greenbull_wordmark.png
+
 Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-300/brief_wordmark.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: `art-archive/T-300/style-loop/v1-4.png`
 - Script checks: 5 of 5 pass
 - Score: 9/10
 - Reason: Greenbull logo (bull-head emblem plus italic GREENBULL wordmark) is flat brand art, exempt from rule 2's shading and detail. Rule 1 passes: 5 colours, no semi-transparent pixels, transparent background, hard pixel edges. Rule 6 passes: the dark green, light green and yellow appear only on Greenbull's own logo and wordmark. Rule 9: "GREENBULL" is the sponsor's own invented name, not a real brand, and the emblem is not a copy of an existing logo. Rules 3, 4, 5, 7, 8 and 10 do not apply to a logo. No rule is broken, so no fix is needed.
 - Rules broken: none
-- Refused: {"tool_input": {"command": "ls art-archive/T-300/style-loop/ && ls -l art-archive/T-295/greenbull_wordmark.png && cp art-archive/T-295/greenbull_wordmark.png art-archive/T-300/style-loop/v1-4.png && cmp art-archive/T-295/greenbull_wordmark.png art-archive/T-300/style-loop/v1-4.png && echo IDENTICAL && python -c \"from PIL import Image; im=Image.open('art-archive/T-300/style-loop/v1-4.png'); print(im.mode, im.size)\"", "description": "Copy approved wordmark to v1-4 and verify"}, "tool_name": "Bash", "tool_use_id": "toolu_018EeXNZHLw9oYsfmNebvTgr"}; {"tool_input": {"command": "sha256sum art-archive/T-295/greenbull_wordmark.png art-archive/T-300/style-loop/v1-4.png && python -c \"from PIL import Image; im=Image.open('art-archive/T-300/style-loop/v1-4.png'); print(im.mode, im.size)\"", "description": "Verify copy hashes and image mode"}, "tool_name": "Bash", "tool_use_id": "toolu_01Vy3NVjsHZ2sigXiEXBRogb"}
+- Refused: two Bash commands of the generator (a chained `cp`/`cmp` copy check and a `sha256sum` check); the copy itself was made.
 
-**Kept:** version 1, score 9/10 (`art-archive/T-300/style-loop/v1-4.png`, copied to `game/art/logo/greenbull_wordmark.png`): it reached 8 or more.
+**Kept:** version 1, score 9/10 (`art-archive/T-300/style-loop/v1-4.png`, copied to `game/art/logo/greenbull_wordmark.png`): it reached 8 or more. Byte-identical to `art-archive/T-295/greenbull_wordmark.png`.
 
 ## Result notes
 
@@ -105,4 +154,10 @@ Screenshots: `art-archive/T-300/screenshots/logo_files_dark.png` and `logo_files
 **Style loop:** run once per file with `--greenbull` (this time the command was allowed), with briefs `art-archive/T-300/brief_emblem_128.md`, `_64`, `_32`, `brief_wordmark.md` telling the generator to copy the approved file unchanged. All four rounds scored 9/10 on round 1 and kept version 1 (`art-archive/T-300/style-loop/v1.png`, `v1-2.png`, `v1-3.png`, `v1-4.png`); no refine. The first attempt for 64 px failed because the generator wrote no PNG (a free retry with a clearer brief worked; no PixelLab call). The loop's `--out` files in `game/art/logo/` were not changed (git status shows them unmodified, so still byte-identical to the archive sources). The earlier general `brief.md` is kept in the archive.
 
 PixelLab generations used by this ticket: 0.
+
+**QA round 1 fixes (2026-10-26):**
+- Style review: the loop rewrites the whole section on each run, so only the last run (the wordmark) had stayed. The three emblems were run through the loop again with `--greenbull` and new briefs that name no fixed version path (`art-archive/T-300/brief_emblem_128_qa2.md`, `_64_qa2`, `_32_qa2`): each scored 9/10 on round 1, kept version 1 (`style-loop/v1-5.png`, `v1-6.png`, `v1-7.png`). After each run the agent copied its record into the Style review word for word (only the long refused-command JSON shortened to one line each), so the section now has one subsection per file: three emblems plus the wordmark's earlier round (v1-4). `git diff --no-index` shows v1-4..v1-7 byte-identical to their T-294/T-295 sources, and `git status` shows the four files in `game/art/logo/` unchanged. The earlier v1, v1-2, v1-3 are kept in the archive.
+- Test: `game/tools/test_check_logo_one_colour.py` `test_only_three_final_files` became `test_only_final_files`, which expects the three kept Redgull files plus Greenbull's four.
+- All three test sets pass: game/tools python 463 tests OK (1 skipped), tools/ 491 OK, GUT 1419/1419.
+- Refused during the loop runs: the generator's own chained `cp`/`cmp`, `sha256sum` and `python -c` check commands (listed in each round's "Refused"); not essential, the copies were made and checked here with `git diff --no-index`. No PixelLab call.
 - 2026-10-26, in-qa → in-progress: QA failed: The ticket's Style review has one style loop round per file, each keeping the byte-identical copy. (QA: fail: the Style review section holds only one round (the wordmark, v1-4); the three emblem rounds are described in the result notes but not recorded as rounds there); All three test sets pass. (QA: fail: game/tools/test_check_logo_one_colour.py test_only_three_final_files fails (reran alone, same): it expects only the three redgull files in game/art/logo/, now there are seven. GUT 1419/1419 and tools/ 491 tests pass.) Back to the agent on opus.

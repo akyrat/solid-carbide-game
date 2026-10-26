@@ -25,9 +25,12 @@ class T(unittest.TestCase):
             p = ROOT / f"game/art/logo/redgull_logo_{n}.png"
             self.assertEqual(c.check(Image.open(p)), [], p.name)
 
-    def test_only_three_final_files(self):
+    def test_only_final_files(self):
+        # The three old Redgull files are kept beside Greenbull's approved emblem and wordmark (T-300).
         names = sorted(p.name for p in (ROOT / "game/art/logo").glob("*.png"))
-        self.assertEqual(names, ["redgull_logo_128.png", "redgull_logo_32.png", "redgull_logo_64.png"])
+        self.assertEqual(names, ["greenbull_emblem_128.png", "greenbull_emblem_32.png", "greenbull_emblem_64.png",
+                                 "greenbull_wordmark.png",
+                                 "redgull_logo_128.png", "redgull_logo_32.png", "redgull_logo_64.png"])
 
 
 if __name__ == "__main__":
