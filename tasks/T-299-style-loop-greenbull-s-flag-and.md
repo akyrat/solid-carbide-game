@@ -35,11 +35,11 @@ The style loop tool (T-291) still speaks of Redgull: run.py has a --redgull opti
 
 ## Acceptance criteria
 
-- [ ] `git grep -i redgull tools/style_loop` finds nothing. (QA: pass / fail)
-- [ ] A test runs the loop (with --fake) on an art asset marked --greenbull and checks that style_rules.art_checks was called with the Greenbull flag set; a second test checks it is not set without the option. (QA: pass / fail)
-- [ ] A test reads the style guide text the loop extracts for the Style Evaluator and finds "Greenbull's colours" in it and no 'Redgull'. (QA: pass / fail)
-- [ ] tasks/README.md, 'The style loop', shows --greenbull in the art command and no --redgull. (QA: pass / fail)
-- [ ] tools/style_loop/test_loop.py passes. (QA: pass / fail)
+- [ ] `git grep -i redgull tools/style_loop` finds nothing. (QA: pass)
+- [ ] A test runs the loop (with --fake) on an art asset marked --greenbull and checks that style_rules.art_checks was called with the Greenbull flag set; a second test checks it is not set without the option. (QA: pass)
+- [ ] A test reads the style guide text the loop extracts for the Style Evaluator and finds "Greenbull's colours" in it and no 'Redgull'. (QA: pass)
+- [ ] tasks/README.md, 'The style loop', shows --greenbull in the art command and no --redgull. (QA: pass)
+- [ ] tools/style_loop/test_loop.py passes. (QA: pass)
 
 ## Updates
 
