@@ -1875,3 +1875,8 @@ Entry format:
 - Decision or change: a repeated style loop run on one asset now adds its record after the earlier runs' instead of replacing the Style review: each run under `### Run N`, its rounds as `#### Round N`; a single run is written as before. The QA gate finds both heading levels. Built in this session because goal G-006 reuses the ticket and the goal runner doesn't build reused tickets (it waits for them); G-006 paused on it until now. QA round 1 passed all 4 criteria.
 - Documents touched: `tasks/README.md`
 - Tasks: T-296
+
+## 2026-10-26: The ticket guard lets body edits through
+- Decision or change: the board's decision that the ticket guard allows edits that don't touch a ticket's status, lead or qa_rounds lines (agents twice redid a refused `sed -i` with the Edit tool). A `sed -i` on a ticket now passes when the guard can read its whole script, the script names none of those words, and a dry run of it on the ticket's current text changes none of those lines; anything it can't simulate exactly stays refused. QA round 1 found that `s/open/done/` passed and rewrote `status: open`; the Project Lead added a criterion for it and the dry run closed it; QA round 2 passed all 5 criteria.
+- Documents touched: `tasks/README.md`
+- Tasks: T-297
