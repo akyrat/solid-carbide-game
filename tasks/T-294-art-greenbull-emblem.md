@@ -1,7 +1,7 @@
 ---
 id: T-294
 title: "Art: Greenbull's emblem, a bull's head, through the style loop"
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -73,6 +73,10 @@ QA round 1 failed one criterion: run 1's Style review was missing, because the l
 ### 2026-10-26, Needs playtest
 
 Passed QA (round 2, after the run 1 record was restored). Waiting for your review: run 2 is my pick, run 1 kept. Patch notes: https://claude.ai/artifact/L47vbXEL6wYndn4tx22fMt
+
+### 2026-10-26, Needs playtest → Done
+
+Approved by the board: run 2 is Greenbull's emblem. Merging to master.
 
 ## Style review
 
@@ -153,3 +157,4 @@ Run 2's notes are in `art-archive/T-294/style-loop/v1-2.md` (script `game/tools/
 
 - Style review: PASS. Run 1 restored with its Kept line; run 2 with its Kept line. The other six criteria still hold (game/art diff vs master is only the log; 2 generations).
 - 2026-10-26, in-qa → needs-playtest: QA round 2: all criteria pass
+- 2026-10-26, needs-playtest → done: The board approved run 2 (the angular bull's head with the lightning blaze), 2026-10-26.
