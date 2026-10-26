@@ -690,6 +690,233 @@ def sed_parse(words):
     return in_place, scripts, files
 
 
+SED_GUARD_FRAGMENT_RE = re.compile(r"stat|round|lead|qa", re.I)
+
+
+def _sed_delimited(text, i, delim):
+    """The text from i up to the next unescaped delim, and the index after it; None when there is none."""
+    out = []
+    while i < len(text):
+        c = text[i]
+        if c == "\\" and i + 1 < len(text):
+            out.append(text[i:i + 2])
+            i += 2
+            continue
+        if c == delim:
+            return "".join(out), i + 1
+        out.append(c)
+        i += 1
+    return None
+
+
+def sed_body_parse(script):
+    """T-297: the commands of a sed script that is fully read and cannot name a `status`, `qa_rounds` or `lead`
+    line of a ticket, as dicts (a1, a2, neg, cmd, pat, rep, flags, text); None when the script holds anything
+    else. Allowed: s commands (flags g, i, I only) and d, a, i, c with a /regex/ address and literal text, whose
+    pattern, replacement, text and address don't name those words (or hold a colon in a pattern or address),
+    whose numeric address is not in the first lines, with no w or e flag."""
+    if SED_GUARD_FRAGMENT_RE.search(script):
+        return None
+    cmds, i, n = [], 0, len(script)
+    while True:
+        while i < n and script[i] in " \t\n;":
+            i += 1
+        if i >= n:
+            return cmds
+        addrs = []
+        for k in range(2):   # one address, or a range
+            if i < n and script[i].isdigit():
+                j = i
+                while j < n and script[j].isdigit():
+                    j += 1
+                if int(script[i:j]) < 2:
+                    return None
+                addrs.append(("num", int(script[i:j])))
+                i = j
+            elif i < n and script[i] == "/":
+                got = _sed_delimited(script, i + 1, "/")
+                if got is None or ":" in got[0]:
+                    return None
+                addrs.append(("re", got[0]))
+                i = got[1]
+            elif i < n and script[i] == "$":
+                addrs.append(("last", 0))
+                i += 1
+            else:
+                break
+            if k == 0 and i < n and script[i] == ",":
+                i += 1
+            else:
+                break
+        neg = False
+        while i < n and script[i] in " !":
+            neg = neg or script[i] == "!"
+            i += 1
+        if i >= n:
+            return None
+        cmd = {"a1": addrs[0] if addrs else None, "a2": addrs[1] if len(addrs) > 1 else None, "neg": neg,
+               "cmd": script[i], "pat": "", "rep": "", "flags": "", "text": ""}
+        i += 1
+        if cmd["cmd"] == "s":
+            if i >= n or script[i].isalnum() or script[i] in "\\\n":
+                return None
+            delim = script[i]
+            pat = _sed_delimited(script, i + 1, delim)
+            if pat is None or ":" in pat[0] or delim in ".*^$[]&":
+                return None
+            rep = _sed_delimited(script, pat[1], delim)
+            if rep is None:
+                return None
+            cmd["pat"], cmd["rep"] = pat[0].replace("\\" + delim, delim) if delim != "/" else pat[0], rep[0]
+            cmd["delim"] = delim
+            i = j = rep[1]
+            while j < n and script[j] not in " ;\n}":
+                if script[j] not in "gpiIM0123456789":
+                    return None   # w, e or anything else
+                j += 1
+            cmd["flags"] = script[i:j]
+            i = j
+        elif cmd["cmd"] == "d":
+            if not addrs or addrs[0][0] != "re":
+                return None
+        elif cmd["cmd"] in "aic":
+            if not addrs or addrs[0][0] != "re":
+                return None
+            end = script.find("\n", i)
+            end = n if end < 0 else end
+            cmd["text"] = script[i:end].strip()   # GNU one-liner; the next line is a new command
+            i = end
+        else:
+            return None
+        cmds.append(cmd)
+
+
+def sed_body_script_ok(script):
+    """T-297: whether a sed script is one `sed_body_parse` reads (the guard then also runs it on each ticket)."""
+    return sed_body_parse(script) is not None
+
+
+def _bre(pat):
+    """A POSIX basic regular expression as a Python one; None when it can't be translated exactly (groups,
+    brackets, counted repeats, back-references, anchors in the middle, a leading `*`...)."""
+    out, i, n = [], 0, len(pat)
+    while i < n:
+        c = pat[i]
+        if c == "\\":
+            if i + 1 >= n or not re.fullmatch(r"[\\.\[\]*^$/#|,+?(){}<>@!%&~=\"' -]", pat[i + 1]) \
+                    or pat[i + 1] in "(){}|+?<>":
+                return None
+            out.append(re.escape(pat[i + 1]))
+            i += 2
+            continue
+        if c == "[":
+            return None
+        if c == "*" and not out:
+            return None
+        if c == "^" and i > 0 or c == "$" and i < n - 1:
+            return None
+        out.append(c if c in ".*^$" else re.escape(c))
+        i += 1
+    return "".join(out)
+
+
+def _replacement(rep):
+    """A sed replacement as a function of the match; None when it uses anything but literal text, `&` and
+    escaped backslash, `&` or delimiter."""
+    parts, i = [], 0
+    while i < len(rep):
+        c = rep[i]
+        if c == "\\":
+            if i + 1 >= len(rep) or not re.fullmatch(r"[\\&/#|,.:;!%@~=\"' -]", rep[i + 1]):
+                return None
+            parts.append(("lit", rep[i + 1]))
+            i += 2
+            continue
+        parts.append(("amp", "") if c == "&" else ("lit", c))
+        i += 1
+    return lambda m: "".join(m.group(0) if kind == "amp" else v for kind, v in parts)
+
+
+GUARDED_LINE_RE = re.compile(r"^[ \t]*(status|qa[\W_]*rounds|lead)\b", re.I | re.M)
+
+
+def sed_guarded_lines(text):
+    return [m.group(0) + text[m.end():text.find("\n", m.end()) if text.find("\n", m.end()) >= 0 else len(text)]
+            for m in GUARDED_LINE_RE.finditer(text)]
+
+
+def sed_changes_guarded_lines(cmds, text):
+    """T-297: runs parsed sed commands on a file's text (nothing is written) and tells whether any `status`,
+    `qa_rounds` or `lead` line would change. None when the script can't be run exactly; the caller refuses."""
+    if "\r" in text:
+        return None
+    lines = text.split("\n")
+    trailing = lines[-1] == ""
+    if trailing:
+        lines.pop()
+    plan = []
+    for c in cmds:
+        item = dict(c)
+        for key in ("a1", "a2"):
+            a = c[key]
+            if a and a[0] == "re":
+                rx = _bre(a[1])
+                if rx is None:
+                    return None
+                item[key] = ("re", re.compile(rx))
+        if c["a2"] is not None and not (c["a1"][0] == "num" and c["a2"][0] == "num"):
+            return None   # only numeric ranges are simulated
+        if c["cmd"] == "s":
+            rx, fn = _bre(c["pat"]), _replacement(c["rep"])
+            if rx is None or fn is None or set(c["flags"]) - set("giI") or c["flags"].count("g") > 1:
+                return None
+            item["rx"] = re.compile(rx, re.I if set(c["flags"]) & set("iI") else 0)
+            item["fn"] = fn
+        elif c["cmd"] in "aic" and "\\" in c["text"]:
+            return None
+        plan.append(item)
+
+    def selected(c, no, line, last):
+        a1, a2 = c["a1"], c["a2"]
+        if a1 is None:
+            hit = True
+        elif a2 is not None:
+            hit = a1[1] <= no <= a2[1]
+        elif a1[0] == "num":
+            hit = no == a1[1]
+        elif a1[0] == "last":
+            hit = last
+        else:
+            hit = bool(a1[1].search(line))
+        return hit != c["neg"]
+
+    out = []
+    for no, line in enumerate(lines, 1):
+        before, after, deleted = [], [], False
+        for c in plan:
+            if not selected(c, no, line, no == len(lines)):
+                continue
+            if c["cmd"] == "s":
+                line = c["rx"].sub(c["fn"], line, count=0 if "g" in c["flags"] else 1)
+            elif c["cmd"] == "d":
+                deleted = True
+                break
+            elif c["cmd"] == "i":
+                before.append(c["text"])
+            elif c["cmd"] == "a":
+                after.append(c["text"])
+            else:   # c
+                deleted = True
+                before.append(c["text"])
+                break
+        out.extend(before)
+        if not deleted:
+            out.append(line)
+        out.extend(after)
+    new = "\n".join(out) + ("\n" if trailing else "")
+    return sed_guarded_lines(new) != sed_guarded_lines(text)
+
+
 PYTHON_NAMES = {"python", "python3", "py", "python.exe", "python3.exe", "py.exe"}
 STATUS_SCRIPTS = {"task_status.py", "taskboard_sync.py"}
 GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge", "rebase", "stash", "branch",
@@ -927,9 +1154,30 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
         parsed = sed_parse(words)
         if parsed is None:
             return "a sed script read from a file"
-        if any(SED_WRITES_RE.search(s) for s in parsed[1]):
+        # T-297: a script read in full that can't write a status, qa_rounds or lead line (it also has no w or e)
+        body_ok = bool(parsed[1]) and all(sed_body_script_ok(s) for s in parsed[1])
+        if not body_ok and any(SED_WRITES_RE.search(s) for s in parsed[1]):
             return "a sed script that writes a file or runs a command"
         hit = next((f for f in parsed[2] if ticket_path(f, cwd, in_tasks)), None)
+        if hit and body_ok:
+            # the script is also tried on each ticket's text (nothing is written): a header line that would change,
+            # a file that can't be read or a script that can't be run exactly is refused (T-297)
+            cmds = [c for s in parsed[1] for c in sed_body_parse(s)]
+            odd = [w for w in words[1:] if w.startswith("-") and len(w) > 1
+                   and w not in ("-i", "-e", "--in-place", "--expression", "--")]
+            for f in (f for f in parsed[2] if ticket_path(f, cwd, in_tasks)):
+                path = next((p for p in (os.path.join(b, f) for b in [cwd or os.getcwd()] + list(bases or []))
+                             if not re.search(r"[*?\[{$`]", f) and os.path.isfile(p)), None)
+                try:
+                    text = Path(path).read_bytes().decode("utf-8") if path and not odd else None
+                except (OSError, UnicodeDecodeError):
+                    text = None
+                changed = None if text is None else sed_changes_guarded_lines(cmds, text)
+                if changed is None:
+                    return f"sed on `{f}`: the guard can't try the script on that file to see that it leaves the status, qa_rounds and lead lines alone"
+                if changed:
+                    return f"sed on `{f}` would change its status, qa_rounds or lead line"
+            return ""
         return f"sed on `{hit}`, which could be a ticket" if hit else ""
     if name in FILE_WRITERS:
         hit = next((w for w in words[1:] if ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks)), None)
