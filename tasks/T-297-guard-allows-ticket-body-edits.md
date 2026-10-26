@@ -1,7 +1,7 @@
 ---
 id: T-297
 title: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line"
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -47,5 +47,9 @@ Only `sed -i` is in scope; Python and PowerShell writes that name a task file st
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Open → In progress
+
+Building it in this session, alongside T-296, so G-006 can finish.
 
 ## Result notes
