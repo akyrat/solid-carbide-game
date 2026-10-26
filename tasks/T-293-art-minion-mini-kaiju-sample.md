@@ -1,7 +1,7 @@
 ---
 id: T-293
 title: "Art: the minion redesigned as a car-sized mini kaiju, one sample direction through the style loop"
-status: flagged-for-review
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -65,6 +65,10 @@ Started: the first real style loop run. The Asset Generation Agent makes one sou
 ### 2026-10-25, Flagged for review
 
 The loop ran for real: 4 versions, 4 PixelLab generations, the best scored 6/10, so the loop flagged it for the board. The Style review shows every score and reason; the review images are in art-archive/T-293/.
+
+### 2026-10-26, Flagged for review → Done
+
+Approved by the board: version 4 without its shadow. Merged to master; the sample stays in art-archive until the rotation and walk tickets.
 
 ## Style review
 
@@ -163,3 +167,4 @@ The image is judged against the brief, not only the rules. The creature looks li
 - Commands refused during the loop (all in the Style review's "Refused" lines, none worked around): a compound command checking the loop env and the client's help (twice, as two variants), the v1 raw check that wrote preview images with inline Python, the recolour command naming a task script, the v2 rename-and-reduce chain, and the v3 palette-reduction probe loop.
 
 - 2026-10-26, quick tweak from the board: "I like the last one, but I don't want it to have a shadow. at least not the sprite, because we're going to generate, you know, animations from this and rotations." Version 4 is approved; the baked-in ground shadow is removed by a free script (no PixelLab, no loop run): `game/tools/remove_sprite_shadow.py` (test `game/tools/test_remove_sprite_shadow.py`) makes transparent only pixels of the two shadow colours (70,90,109) and (74,96,114) that connect to the transparent background. It removed 1060 pixels, kept every other pixel unchanged, and adds no colours (22 colours left). Result: `art-archive/T-293/minion_sample_se_noshadow.png`; v4.png and minion_sample_se.png are kept as they are. Review images: `art-archive/T-293/review_noshadow_dark.png` and `_light.png` (v4 left, no-shadow right, 4x); I looked at the dark one: no shadow left, nothing of the lizard eaten. `style_rules.py art` check: every rule passes except rule 6, the dull pink (147,93,93) in the mouth, left unchanged for the Project Lead to ask the board.
+- 2026-10-26, flagged-for-review → done: The board's review (2026-10-26): likes version 4; wants it without the baked-in shadow (removed by script) and keeps the dull pink mouth.
