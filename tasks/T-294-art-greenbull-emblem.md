@@ -1,7 +1,7 @@
 ---
 id: T-294
 title: "Art: Greenbull's emblem, a bull's head, through the style loop"
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, agent-notes/asset-generation.md, tasks/T-075-redgull-logo-art.md, game/art/logo/redgull_logo_128.png, game/art/car/car_iso.png]
 files_expected_to_change: [art-archive/T-294/, docs/visual-style.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,22 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 Emblem made: the loop ran twice, both kept at 8/10 on their first version (2 of 12 PixelLab generations). Run 2 (angular, lightning blaze) is the Project Lead's pick; run 1 is kept for comparison. 64 and 32 px made by script. Review: art-archive/T-294/review_emblem_dark.png and _light.png. Now in QA.
 
 ## Style review
+
+The loop ran twice on this asset (the board's go of up to 12 generations allows up to three runs). The tool sets this whole section on each run, so run 2 replaced run 1's record; the Project Lead restored run 1 below, word for word from the loop's own output read before run 2 started, except its list of refused commands (five read-only checks of the loop's environment variable, an old request's parameters and the agent notes), which was not kept.
+
+### Run 1, round 1 (restored)
+
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-294/brief.md`. Generator: asset-generation; evaluator: style-evaluator.
+
+- Version 1: `art-archive/T-294/style-loop/v1.png`
+- Script checks: 6 of 6 pass
+- Score: 8/10
+- Reason: Rule 1 is met: the script checks pass (hard edges, 5 colours, transparent background, no semi-transparent pixels), and the image shows a clean pixel look with a dark near-black outline. Rule 6 is met: dark green leads on the head, light green is used for the horns and the inner face shape, and yellow is a small accent on the eyes and nose ring only. No Redgull red appears. Rule 9 is met: it is an original front-facing bull's head, with no real-brand look, no charging bulls, no sun or circle and no words. Rule 3: the size is 128x128. Rule 2's detailed shading doesn't apply to flat brand art. The head is symmetric, has thick horns and a clear muzzle with a ring, and should read at 32x32. I found no rule it breaks. Optional polish only: the horns reach close to the canvas sides, so check that they keep a margin, and the bright green inner face shape could be a little bolder. Neither point breaks a rule.
+- Rules broken: none
+
+**Kept (run 1):** version 1, score 8/10 (`art-archive/T-294/style-loop/v1.png`, then copied to `art-archive/T-294/greenbull_emblem_128.png`; now kept as `greenbull_emblem_128_run1.png`, since the Project Lead picked run 2). It passed, but the Project Lead judged it plain (a calm farm bull rather than "a cool logo") and ran the loop again with a bolder brief.
+
+### Run 2
 
 Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-294/brief_run2.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
@@ -123,3 +139,4 @@ Run 2's notes are in `art-archive/T-294/style-loop/v1-2.md` (script `game/tools/
 - Review images: PASS. Dark and light sheets show run 2 at 128/64/32, run 1, old Redgull logo and car, enlarged.
 - Nothing under game/art changed except the log: PASS (only pixellab-generation-log.jsonl, +2 lines).
 - Tools tests (game/tools discover): PASS, 432 tests OK (1 skipped).
+- 2026-10-26, in-qa → in-progress: QA round 1: fails 1 criterion, run 1's Style review round and Kept line are missing from the ticket; the rest pass
