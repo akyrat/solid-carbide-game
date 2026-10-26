@@ -1,7 +1,7 @@
 ---
 id: T-297
 title: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line"
-status: in-qa
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/guard_ledger.py, tools/test_guard.py]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Building it in this session, alongside T-296, so G-006 can finish.
 ### 2026-10-26, In progress → In QA
 
 Built: a sed -i edit of a ticket's body now passes the guard when it can't write a guarded line; 23 new tests, 487 tools tests pass. Going to QA.
+
+### 2026-10-26, In QA → In progress
+
+Back to the builder: QA found that a script naming no guarded word can still rewrite a header line (s/open/done/ turns status: open into status: done). The guard will try the edit on the ticket's text and refuse it if any status, lead or qa_rounds line would change.
 
 ## Result notes
 
