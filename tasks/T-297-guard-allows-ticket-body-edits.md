@@ -4,7 +4,7 @@ title: "Ticket guard: a shell edit of a ticket's body passes when it can't write
 status: open
 from: project-lead
 to: project-lead
-lead: Goal-G-006
+lead: Greenbull
 epic: tooling
 milestone: mvp
 goal: G-006
