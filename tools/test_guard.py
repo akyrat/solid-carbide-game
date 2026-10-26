@@ -675,6 +675,48 @@ class Git(Base):
         self.assertEqual(self.commit(), "allow")
 
 
+class SedBodyEdits(Base):
+    """T-297: a sed -i on a ticket passes when every script is readable and can't write a guarded line."""
+
+    def cmd(self, command, cwd=None):
+        # the hook only looks closely at a command that mentions status, qa_rounds or lead; the comment makes it
+        return decide(gate.pre_shell, {"command": command + "  # status"}, cwd)
+
+    def test_body_edits_pass(self):
+        for c in ["sed -i 's/teh/the/' tasks/T-012-x.md",
+                  "sed -i 's/- \\[ \\] The wordmark/- [x] The wordmark/' tasks/T-012-x.md",
+                  "sed -i -e 's/a/b/g' -e 's#x#y#' tasks/T-012-x.md",
+                  "sed -i '/^- \\[ \\] The wordmark/s/ /_/' tasks/T-012-x.md",
+                  "sed -i '/old line/d' tasks/T-012-x.md",
+                  "sed -i '/## Result notes/a Done by hand' tasks/T-012-x.md"]:
+            with self.subTest(c=c):
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf):
+                    gate.pre_shell({"command": c + "  # status"}, None)
+                self.assertEqual(self.cmd(c), "allow", buf.getvalue())
+
+    def test_the_rest_stays_refused(self):
+        for c in ["sed -i 's/status: open/status: done/' tasks/T-012-x.md",
+                  "sed -i 's/qa_rounds: 0/qa_rounds: 1/' tasks/T-012-x.md",
+                  "sed -i 's/x/lead: A/' tasks/T-012-x.md",
+                  "sed -i 's/rounds: 0/rounds: 1/' tasks/T-012-x.md",
+                  "sed -i '1,5s/a/b/' tasks/T-012-x.md",
+                  "sed -i '1d' tasks/T-012-x.md",
+                  "sed -i '4c\\x' tasks/T-012-x.md",
+                  "sed -i 's/: 0/: 1/' tasks/T-012-x.md",
+                  "sed -i -f fix.sed tasks/T-012-x.md",
+                  "sed -i 'w out.md' tasks/T-012-x.md",
+                  "sed -i 's/a/b/w out.md' tasks/T-012-x.md",
+                  "sed -i 's/a/b/e' tasks/T-012-x.md",
+                  "sed -i 'e echo hi' tasks/T-012-x.md",
+                  "sed -i \"$S\" tasks/T-012-x.md",
+                  "sed -i \"$(cat s.txt)\" tasks/T-012-x.md",
+                  "sed -i 'y/a/b/' tasks/T-012-x.md",
+                  "sed -i 's/a/b' tasks/T-012-x.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c), "deny")
+
+
 class LedgerUnits(unittest.TestCase):
     def test_state_sees_every_line_and_ignores_the_comment_block(self):
         text = "---\nid: T-1\nstatus: open\nqa_rounds: 0\nlead:\nStatus : done\n---\n<!--\nstatus: x\n-->\n"

@@ -53,3 +53,9 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 Building it in this session, alongside T-296, so G-006 can finish.
 
 ## Result notes
+
+- `.claude/hooks/board_gate.py`: new `sed_body_script_ok` (and `_sed_delimited`); the sed branch of `why_risky` lets a `sed` on a ticket pass when every script is parsed in full and is only `s` (flags g p i I M and digits; no `w`/`e`), or `d`/`a`/`i`/`c` with a `/regex/` address, naming none of `status`, `qa_rounds`, `lead` (nor the fragments `stat`, `round`, `lead`, `qa`), no colon in a pattern or address, no numeric address below 2. Anything else (`-f`, `w`, `e`, `y`, unreadable variable/substitution scripts, `1,5s`, `1d`) stays refused. The old `SED_WRITES_RE` check is skipped for a script that passes this parse (it wrongly flagged text like " wordmark").
+- Note: the hook only looks closely at a command that mentions status, qa_rounds or lead (even in a comment); the new tests add ` # status` to their commands so the sed rule is what decides.
+- Limit left open: a numeric-free `s` pattern such as `s/0/1/` could still change `qa_rounds: 0`; the second guard (`guard_ledger.py`, on commit) catches that.
+- `tasks/README.md`, "Changing a task's status": says which `sed -i` edits pass.
+- Tests: new class `SedBodyEdits` in `tools/test_guard.py` (6 passing commands, 17 refused). Full run `python -m unittest discover -s tools -p "test_*.py"`: 487 tests, OK.

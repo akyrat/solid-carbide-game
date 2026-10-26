@@ -690,6 +690,94 @@ def sed_parse(words):
     return in_place, scripts, files
 
 
+SED_GUARD_FRAGMENT_RE = re.compile(r"stat|round|lead|qa", re.I)
+
+
+def _sed_delimited(text, i, delim):
+    """The text from i up to the next unescaped delim, and the index after it; None when there is none."""
+    out = []
+    while i < len(text):
+        c = text[i]
+        if c == "\\" and i + 1 < len(text):
+            out.append(text[i:i + 2])
+            i += 2
+            continue
+        if c == delim:
+            return "".join(out), i + 1
+        out.append(c)
+        i += 1
+    return None
+
+
+def sed_body_script_ok(script):
+    """T-297: True when a sed script is fully read and cannot write a `status`, `qa_rounds` or `lead` line of a
+    ticket: only s commands (and d, a, i, c with literal text) whose pattern, replacement, text and address don't
+    name those words (or hold a colon in a pattern or address), whose numeric address is not in the first lines,
+    and with no w or e flag. Anything it can't parse is refused."""
+    if SED_GUARD_FRAGMENT_RE.search(script):
+        return False
+    i, n = 0, len(script)
+    while True:
+        while i < n and script[i] in " \t\n;":
+            i += 1
+        if i >= n:
+            return True
+        address = False
+        for _ in range(2):   # one address, or a range
+            if i < n and script[i].isdigit():
+                j = i
+                while j < n and script[j].isdigit():
+                    j += 1
+                if int(script[i:j]) < 2:
+                    return False
+                i, address = j, "num"
+            elif i < n and script[i] == "/":
+                got = _sed_delimited(script, i + 1, "/")
+                if got is None or ":" in got[0]:
+                    return False
+                i, address = got[1], address or "re"
+            elif i < n and script[i] == "$":
+                i, address = i + 1, address or "num"
+            else:
+                break
+            if i < n and script[i] == "," and _ == 0:
+                i += 1
+            else:
+                break
+        while i < n and script[i] in " !":
+            i += 1
+        if i >= n:
+            return False
+        cmd = script[i]
+        i += 1
+        if cmd == "s":
+            if i >= n or script[i].isalnum() or script[i] in "\\\n":
+                return False
+            delim = script[i]
+            pat = _sed_delimited(script, i + 1, delim)
+            if pat is None or ":" in pat[0]:
+                return False
+            rep = _sed_delimited(script, pat[1], delim)
+            if rep is None:
+                return False
+            i = rep[1]
+            j = i
+            while j < n and script[j] not in " ;\n}":
+                if script[j] not in "gpiIM0123456789":
+                    return False   # w, e or anything else
+                j += 1
+            i = j
+        elif cmd == "d":
+            if address != "re":
+                return False
+        elif cmd in "aic":
+            if address != "re":
+                return False
+            return True   # the rest of the script is the literal text (already free of the guarded words)
+        else:
+            return False
+
+
 PYTHON_NAMES = {"python", "python3", "py", "python.exe", "python3.exe", "py.exe"}
 STATUS_SCRIPTS = {"task_status.py", "taskboard_sync.py"}
 GIT_WRITERS = {"add", "commit", "checkout", "switch", "restore", "reset", "merge", "rebase", "stash", "branch",
@@ -927,9 +1015,13 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
         parsed = sed_parse(words)
         if parsed is None:
             return "a sed script read from a file"
-        if any(SED_WRITES_RE.search(s) for s in parsed[1]):
+        # T-297: a script read in full that can't write a status, qa_rounds or lead line (it also has no w or e)
+        body_ok = bool(parsed[1]) and all(sed_body_script_ok(s) for s in parsed[1])
+        if not body_ok and any(SED_WRITES_RE.search(s) for s in parsed[1]):
             return "a sed script that writes a file or runs a command"
         hit = next((f for f in parsed[2] if ticket_path(f, cwd, in_tasks)), None)
+        if hit and body_ok:
+            return ""
         return f"sed on `{hit}`, which could be a ticket" if hit else ""
     if name in FILE_WRITERS:
         hit = next((w for w in words[1:] if ticket_path(re.sub(r"^-+[\w-]*[:=]", "", w), cwd, in_tasks)), None)
