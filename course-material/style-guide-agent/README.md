@@ -1,10 +1,10 @@
 # Style Guide Agent: Solid Carbide
 
-Solid Carbide is a drift-driving roguelite built in Godot 4 by a team of AI agents (Claude Code). The player is **Stunt Driver**, sponsored by the out-of-touch brand **Greenbull** (called Redgull until a rebrand on 2026-10-26), drifting through a night-time Tokyo under a kaiju attack for a livestream's likes. I am the designer; a **Project Lead** agent turns what I ask for into tickets for twelve specialist agents.
+Solid Carbide is a drift-driving roguelite built in Godot 4 by a team of AI agents (Claude Code). The player is **Stunt Driver**, sponsored by the out-of-touch brand **Greenbull** (called Redgull until its rebrand on 2026-10-26, Example 2), drifting through a night-time Tokyo under a kaiju attack for a livestream's likes. I am the designer; a **Project Lead** agent turns what I ask for into tickets for twelve specialist agents.
 
 For this assignment I built the **style loop** and made it part of how the studio works: every asset and every piece of player-facing text is generated, scored against the game's style guide by an evaluator agent, and refined from the evaluator's reason until it scores 8/10, with no one stepping in. It is enforced, so nothing can skip it.
 
-> Status: the loop is built, tested and merged. Example 1 is its first real run, approved and merged. Examples 2 and 3 are still to come.
+> Status: the loop is built, tested and merged. Example 1 is its first real run, approved and merged. Examples 2 and 3 come from the Greenbull rebrand: checked by QA, approved by me (the emblem's run 2 and the wordmark's run 1) and merged.
 
 ## 01. The style guide, taken from the game's own documents
 
@@ -12,10 +12,10 @@ The style guide is two numbered rule lists inside the game's existing design doc
 
 | Rules | Where | Constraint types |
 |---|---|---|
-| **Visual style, Rules 1–10** | [`docs/visual-style.md`](../../docs/visual-style.md), Content, "Rules" | pixel-art format (size, transparency, ≤ 30 colours); mood (night, retro, drawn glow); palette and lore (Greenbull's colours only on Greenbull's things; the steel-and-glass city; the alien boulders); no copies (the kaiju is Godzilla-*style*, never Godzilla); each subject's look |
+| **Visual style, Rules 1–10** | [`docs/visual-style.md`](../../docs/visual-style.md), Content, "Rules" | pixel-art format (size, transparency, ≤ 30 colours); mood (night, retro, drawn glow); palette and lore (Greenbull's colours only on Greenbull's things, rule 6; the steel-and-glass city; the alien boulders); no copies (the kaiju is Godzilla-*style*, never Godzilla); each subject's look |
 | **Text rules 1–4** | [`docs/extended-narrative.md`](../../docs/extended-narrative.md), Content, "Text rules" | tone (satirical, Greenbull out of touch, never mocking the city's people); vocabulary ("likes" never "XP", "the kaiju" never "Godzilla", "Greenbull" never its old name, "gift pack", "Stunt Driver"); who speaks (no "Greenbull says…"); format and length by kind (popups in capitals ending "!", card titles ≤ 30 characters…) |
 
-The rules a script can check are checked by one module, [`game/tools/style_rules.py`](../../game/tools/style_rules.py) (sizes, colours, transparency, the sponsor's colours, lengths, banned words); the evaluator judges the rest.
+The rules a script can check are checked by one module, [`game/tools/style_rules.py`](../../game/tools/style_rules.py) (sizes, colours, transparency, the brand's colours, lengths, banned words); the evaluator judges the rest.
 
 ## 02. The Evaluator and Refiner loop
 
@@ -58,13 +58,35 @@ Each refine fixed what the reason named, and found the next problem. It still en
 
 ![Version 4, and without its shadow](../../art-archive/T-293/review_noshadow_dark.png)
 
-### Example 2
+### Example 2: the sponsor's new logo, a bull's head (art)
 
-To come.
+I renamed the game's sponsor from Redgull to **Greenbull** in a complete rebrand, and asked for a new logo: "a head of a bull … like a cool logo", in dark green, light green and yellow, "don't use yellow too much", and nothing like the real energy-drink logo. The rebrand changed the style guide first: Visual style rule 6 went from "Redgull red" to **"Greenbull's colours"**, so the loop scored the logo against the new rule. The whole record is the ticket's Style review: [T-294](../../tasks/T-294-art-greenbull-emblem.md).
 
-### Example 3
+| Run | Version | Score | What the Evaluator said | Violation class |
+|---|---|---|---|---|
+| 1 | [v1](../../art-archive/T-294/style-loop/v1.png) | 8/10 | Kept: rule 6 met (dark green leads, yellow only on the eyes and nose ring), rule 9 met (its own bull's head, no charging bulls, no sun), rule 1 met. Only polish: the horns nearly touch the edges | none broken |
+| 2 | [v1-2](../../art-archive/T-294/style-loop/v1-2.png) | 8/10 | Kept: rules 1, 6 and 9 met; yellow only as small angry eyes. Only polish: thin horns may thin out at 32 px, a muddy muzzle | none broken |
 
-To come.
+Both runs passed on their first version, and that taught me something about the loop: **the Evaluator checks the rules, not taste.** Run 1 broke no rule, but it read as a calm farm bull, not "a cool logo". The Project Lead judged it plain, kept it, and ran the loop again with a bolder brief (sharper horns, a V-shaped face, a heavy brow, a lightning blaze). That second run is the emblem. My generation budget lets a loop run up to three times on one asset for exactly this; the emblem used 2 PixelLab generations of the 12 I allowed.
+
+![The emblem (run 2) at 128, 64 and 32 px, then run 1, the old Redgull logo and the car](../../art-archive/T-294/review_emblem_dark.png)
+
+One thing went wrong, and QA caught it: the loop tool rewrites the whole Style review on each run, so run 2 erased run 1's record. QA failed the ticket for the missing round; the Project Lead restored it from run 1's own output, and QA passed it in round 2. Repeated runs were new, and the tool should add to the record instead of replacing it.
+
+### Example 3: the wordmark, GREENBULL next to the emblem (art)
+
+The logo also needed a wordmark: the emblem from Example 2 with the name GREENBULL. PixelLab is weak at lettering, so the agent drew the letters with a script (the loop accepts script-drawn art) and pasted the emblem in unchanged. The whole record is the ticket's Style review: [T-295](../../tasks/T-295-art-greenbull-wordmark.md).
+
+| Run | Version | Score | What the Evaluator said | Violation class |
+|---|---|---|---|---|
+| 1 | [v1](../../art-archive/T-295/style-loop/v1.png) | 8/10 | Kept: spelled right, bold slanted letters, its own lettering (rule 9), yellow only in the emblem. One soft point against rule 6: the letters are mostly light green, but dark green should lead | palette |
+| 2 | [v1-2](../../art-archive/T-295/style-loop/v1-2.png) | 8/10 | Kept: dark green now leads the letters (rule 6 met). Soft point: the thin light green edge makes it busier and a little less crisp on dark | none broken |
+
+This is the loop working as a refiner across runs. Run 1 passed, but the Evaluator's reason named a real gap against my direction ("lean into the dark green"), and run 2 fixed exactly that, at no PixelLab cost. The fix had a price, though: run 2 is less legible on a dark background. The rules can't settle that trade-off between my brand colour and legibility; it's my call, made by looking at both.
+
+![Wordmark runs 1 and 2 with the emblem, on dark](../../art-archive/T-295/review_wordmark_dark.png)
+
+Two practical lessons came out of this run. The first attempt stopped with no image, because the agent kept its drawing script inside the ticket's archive folder, where the ticket guard refuses to run scripts; the brief now tells agents to keep scripts in `game/tools/`. And run 2 erased run 1's record, as in Example 2, so the Project Lead restored it from a copy saved after run 1. Ticket [T-296](../../tasks/T-296-style-loop-keeps-earlier-runs.md) makes the tool keep earlier runs.
 
 ## 04. Where it fits in the pipeline
 

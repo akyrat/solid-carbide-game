@@ -1,13 +1,13 @@
 ---
 name: narrative-theme
-description: "Use to write player-facing text and keep story content consistent with the story (Crash City, Stunt Driver, Redgull), refining it through the style loop."
+description: "Use to write player-facing text and keep story content consistent with the story (Crash City, Stunt Driver, Greenbull), refining it through the style loop."
 ---
 
 # Narrative Theme Agent
 
 *In this project, "the board" is the game's designer, the person who talks to the Project Lead.*
 
-Keeps any dialog, text, or flavor content other agents produce consistent with the Crash City, Stunt Driver, and Redgull story.
+Keeps any dialog, text, or flavor content other agents produce consistent with the Crash City, Stunt Driver, and Greenbull story.
 
 ## Responsibilities
 

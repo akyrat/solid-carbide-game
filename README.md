@@ -6,7 +6,7 @@ A 2D isometric drift-driving roguelite in a neon cyberpunk city under kaiju atta
 
 ## Current state of the game
 
-Six short recordings of the real game as it is today (2026-10-22): a run on the elevation map, with the final car, the kaiju, the flames and the meteor effects, the tricks and the HUD. Scripted by `game/tests/fixtures/readme_gif_demo.gd`, recorded with `bash game/tools/record_readme_gif.sh` (tasks T-217 and T-229).
+Four short recordings of the real game as it is today (2026-10-22): a run on the elevation map, with the final car, the kaiju, the flames and the meteor effects, the tricks and the HUD. Scripted by `game/tests/fixtures/readme_gif_demo.gd`, recorded with `bash game/tools/record_readme_gif.sh` (tasks T-217 and T-229).
 
 ![The car drifting on a street with minions chasing it, the drift counter counting and LONG DRIFT! paying when the drift ends](art-archive/T-229/screenshots/drift_chasers_long_drift.gif)
 
