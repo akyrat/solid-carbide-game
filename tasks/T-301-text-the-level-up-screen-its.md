@@ -73,9 +73,11 @@ Back to work on your decision: the two garage texts drop their numbers (rule 4) 
 
 ## Style review
 
+### Run 1
+
 Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `art-archive/T-301/briefs/garage_car_health.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "+10 car health per level. Greenbull is contractually confident you'll be fine."
 - Script checks: 3 of 4 pass; failed: rule 4, garage_desc: names no number (numbers: ['10'])
@@ -83,7 +85,7 @@ Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `a
 - Reason: Rule 4 (garage upgrades) is broken. The script fails "garage_desc: names no number" because of "+10". The rule says a garage description of at most 80 characters "names no number", so the text breaks it as written. The brief required "+10 car health per level" and acknowledged that it conflicts with the rule. So the agent can't fix this by rewording. Either the board's exception is written into the rules, or the number goes and the text says what the upgrade does without it, for example "More car health per level." followed by the aside. Everything else passes. Length is 78 of 80 characters (rule 4). There is no banned word (rule 2) and no "Greenbull says ..." line (rule 3). Greenbull is the only voice and the text sells nothing. Tone (rule 1) is good: "contractually confident you'll be fine" is corporate-speak reassurance that doesn't read as sincere, with no grimdark and no joke at the city's expense. Only the number keeps it from scoring higher, and if the exception is recorded the text would score about 9.
 - Rules broken: 4
 
-### Round 2
+#### Round 2
 
 - Version 2: "+10 car health per level. Greenbull is contractually confident you'll be fine."
 - What changed: Unchanged from version 1, on purpose. The only defect is the "+10", and the brief says that number must stay exactly ("+10 car health per level"). Rewording can't fix it: either the board's exception goes into Text rules rule 4 (and style_rules.py), which the evaluator says would score about 9, or the board drops the number, giving "More car health per level. Greenbull is contractually confident you'll be fine." I didn't drop it myself because that would overrule the board's brief. This is flagged for the board to decide.
@@ -94,7 +96,7 @@ Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `a
 Everything else follows the rules. Rule 1 (tone): "contractually confident you'll be fine" is a satirical aside about reassurance that isn't sincere. It is out of touch and corporate, and not earnest. The city's people and their fear are not the joke. Rule 2 (vocabulary): no banned words, and "Greenbull" is used correctly. Rule 3 (who speaks): this is garage text, so Greenbull's voice is right. It is not a "Greenbull says ..." line, and there are no real brands. The text says first what the upgrade does, then adds one aside.
 - Rules broken: 4
 
-### Round 3
+#### Round 3
 
 - Version 3: "+10 car health per level. Greenbull is contractually confident you'll be fine."
 - What changed: Unchanged again, on purpose. The only failure is the "+10", and the board's brief requires that number exactly. Both evaluations say rewording can't fix it and the conflict needs a decision above the author. Every other rule passes (tone, vocabulary, who speaks, 78 of 80 characters), so changing anything else would only risk what works. For the board: either write its exception into Text rules rule 4 and style_rules.py (expected score about 9), or approve dropping the number, giving "More car health per level. Greenbull is contractually confident you'll be fine."
@@ -103,7 +105,7 @@ Everything else follows the rules. Rule 1 (tone): "contractually confident you'l
 - Reason: The tone is right and it breaks no other rule. Rule 1: "contractually confident you'll be fine" is a cold, insincere, corporate reassurance, which fits Greenbull. Rule 2: it says "Greenbull" and uses no banned words. Rule 3: it has no "Greenbull says ..." line and names no brand. It also doesn't say what Greenbull sells. Rule 4 (garage upgrades): the description is 78 characters, within the 80 limit, but it must name no number, and "+10" breaks that (the script reports numbers ['10']). The brief says to keep "+10 car health per level" because the board's task wants the same numbers as today, so the brief conflicts with rule 4. The script check still fails, and the style guide doesn't make an exception. Fix: if rule 4 governs, rewrite the fact without a digit, for example "Sturdier chassis, more health with every level." and keep the aside. If the board's number requirement stands, the rule needs a board exception. Until then this text breaks rule 4.
 - Rules broken: 4
 
-### Round 4
+#### Round 4
 
 - Version 4: "+10 car health per level. Greenbull is contractually confident you'll be fine."
 - What changed: Unchanged, the last refine. Three evaluations (6, 7, 6) found only one problem: the "+10", which the board's brief requires exactly. Rewording can't fix it, and every other rule passes (tone, vocabulary, who speaks, 78 of 80 characters). This is for the board to decide: either record its exception in Text rules rule 4 and style_rules.py (expected score about 9), or approve dropping the number, giving "More car health per level. Greenbull is contractually confident you'll be fine."
@@ -133,7 +135,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: levelup.title.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind label, brief `art-archive/T-301/briefs/levelup_title.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Greenbull Sent a Gift Pack!"
 - Script checks: 3 of 4 pass; failed: rule 4, label: sentence case (capitalised: ['Sent', 'Gift', 'Pack!'])
@@ -141,7 +143,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 - Reason: Rule 4 is broken. The script check says a label must be in sentence case, and this one isn't: "Sent", "Gift" and "Pack!" are capitalised. To fix it, write "Greenbull sent a gift pack!". "Greenbull" keeps its capital as a proper noun. The text passes the other rules. Rule 1: the tone is a light, corporate-sounding Greenbull announcement, with no sincerity or grimness. Rule 2: it uses "Greenbull" and "gift pack", with no banned words. Rule 3: it's Greenbull's own voice on Greenbull's level-up screen, and it isn't a "Greenbull says ..." line. It's 27 characters, within the 30 limit and on one line. It also doesn't say what Greenbull sells, as the brief asked.
 - Rules broken: 4
 
-### Round 2
+#### Round 2
 
 - Version 2: "Greenbull sent a gift pack!"
 - What changed: Version 2 fixes rule 4: the title is now in sentence case ("sent", "gift", "pack!" lowercase), and "Greenbull" keeps its capital because it's a proper noun. The wording, the exclamation and the length (27 characters) stay the same, so rules 1 to 3 and the brief still pass.
@@ -156,7 +158,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: garage TITLE.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind label, brief `art-archive/T-301/briefs/garage_title.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Greenbull Pit Stop"
 - Script checks: 3 of 4 pass; failed: rule 4, label: sentence case (capitalised: ['Pit', 'Stop'])
@@ -164,7 +166,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 - Reason: Rule 4 (menu and settings labels: short, plain, sentence case, like "Music volume") is broken. "Greenbull Pit Stop" capitalises "Pit" and "Stop", and the script check says so. Fix: sentence case, "Greenbull pit stop" (the proper noun "Greenbull" keeps its capital). Rule 2 passes: "Greenbull" is spelled right and there are no banned words. Rule 3 passes: it is Greenbull's own garage and it is not a "Greenbull says ..." line. Rule 1 (tone) is only lightly served: it is plain and mildly corporate but has no satire. A title label doesn't need any, and the brief asked for a short title.
 - Rules broken: 4
 
-### Round 2
+#### Round 2
 
 - Version 2: "Greenbull pit stop"
 - What changed: Version 2 fixes Text rule 4, the only rule the evaluator said was broken. The title is now in sentence case: "Pit Stop" became "pit stop", and "Greenbull" keeps its capital because it is a proper noun. Everything that passed in version 1 is unchanged. It still uses the new one-word sponsor name, still marks the garage as Greenbull's own space, still says nothing about what Greenbull sells, and still has no "Greenbull says ..." line. It stays a short title. I didn't add satire, since the evaluator said a title label doesn't need it and the brief asked for a short title.
@@ -173,7 +175,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 - Reason: Rules 2, 3 and 4 pass: the script checks all pass, and the title is short, plain, one line and in sentence case. It uses "Greenbull" (not Redgull), doesn't say what Greenbull sells, and has no "Greenbull says ..." line. Rule 1 (tone) is the only weak point. The text is a bare rename of "Redgull Pit Stop" and has no satire, so it adds no corporate or brand-obsessed irony. Rule 4's menu-label format asks for short and plain, so this is acceptable, but the score stays at 7 because the tone is neutral. Optional fix: a short title with a slight corporate wink, still one line in sentence case, with no number and no "says". Nothing is broken, so no rules are listed.
 - Rules broken: none
 
-### Round 3
+#### Round 3
 
 - Version 3: "Greenbull brand-safe pit stop"
 - What changed: Version 3 is aimed at Text rule 1 (tone), the only weak point the evaluator named. Version 2 was a bare rename, so I added "brand-safe", a piece of real corporate marketing jargon. It jokes about brand obsession: the city outside is in the middle of a disaster, and the sponsor's main worry is keeping the brand safe. It does that without making the city's people the joke. Everything that passed is unchanged. The title is still one short line in sentence case, with only "Greenbull" capitalised. "Greenbull" is spelled as one word and the old name doesn't appear. It doesn't say what Greenbull sells, has no "says" line, uses no numbers and names no real brands. It still marks the garage as Greenbull's own place. I left out a ™ symbol because the game's font might not support it.
@@ -188,7 +190,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_gun.tier2.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_gun_t2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Two extra bullets per volley, 3 in all. Generosity, as Greenbull's lawyers define it."
 - Script checks: 3 of 3 pass
@@ -202,7 +204,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_gun.tier6.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_gun_t6.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Two more bullets per volley, 5 in all. Greenbull feels generous while the cameras roll."
 - Script checks: 3 of 3 pass
@@ -216,7 +218,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_flamethrower.tier3.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_flame_t3.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Flame damage up 20%. Greenbull's hottest take yet, pending legal review."
 - Script checks: 3 of 3 pass
@@ -230,7 +232,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_molotov.tier2.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_molotov_t2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Fire radius up 20%. Greenbull loves a big reveal."
 - Script checks: 3 of 3 pass
@@ -244,7 +246,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_molotov.tier4.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_molotov_t4.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Molotov damage up 50%, to 3. Marketing calls it warm content."
 - Script checks: 3 of 3 pass
@@ -258,7 +260,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_molotov.tier8.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_molotov_t8.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Throw 3 molotovs at once. A warm brand moment, brought to you by Greenbull."
 - Script checks: 3 of 3 pass
@@ -272,7 +274,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: upgrade_wiper.tier3.desc.** Run by `tools/style_loop/run.py` on 2026-10-26: text, kind card_desc, brief `art-archive/T-301/briefs/card_wiper_t3.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "Wiper damage up 40%. Greenbull rebranded it a premium deep clean."
 - Script checks: 3 of 3 pass
@@ -286,7 +288,7 @@ The records below are the other 10 runs of this ticket. `run.py text` rewrites t
 
 **Run: damage_bonus** (from the first round of work, before QA; it was the last run then, so its record survived in this section and was not rerun). Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `art-archive/T-301/briefs/garage_damage_bonus.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: "+5% weapon damage per level. Greenbull calls it disruptive synergy."
 - Script checks: 3 of 4 pass; failed: rule 4, garage_desc: names no number (numbers: ['5'])
@@ -298,7 +300,7 @@ The rest follows the rules. Rule 1: the aside "disruptive synergy" mocks corpora
 Weakness: "disruptive" is only a mild addition to the old line. A sharper buzzword might score higher, but no rule requires one.
 - Rules broken: 4
 
-### Round 2
+#### Round 2
 
 - Version 2: "+5% weapon damage per level. Greenbull calls it scaling our core values."
 - What changed: Version 2. The rule 4 number failure is still there and can't be fixed in the text. The brief from the board's task says to keep "+5% weapon damage per level" word for word, so I kept the number. Removing it would break the brief. The Project Lead needs to decide whether the brief's exception stands. I fixed the weakness the evaluator named: "disruptive synergy" was only a small change from the old line, so the aside is now "scaling our core values". It's a fresher corporate buzzword, and it makes more weapon damage sound like company values, which is more pointed and a little unethical. Everything else is unchanged: the effect comes first, then one aside, and it's 72 characters (under 80). It says "Greenbull", has no "Greenbull says ..." form, doesn't say what Greenbull sells, and has no banned words or real brands.
@@ -307,7 +309,7 @@ Weakness: "disruptive" is only a mild addition to the old line. A sharper buzzwo
 - Reason: Rule 4 (garage upgrades: description names no number) is flagged by the script: "+5%" is a number. The brief makes an explicit exception: it requires "+5% weapon damage per level" kept exactly, because the board's task wants the same numbers as today. So I count this as a brief-approved exception, not a fault in the text, and it still fails the script check as written. If the board's exception isn't recorded in the guide, the check will keep failing and the rule or the check needs the exception. Rules 1, 2 and 3 pass: Greenbull is named, no banned words, no "Greenbull says" line, the satirical aside is on corporate buzzwords, and nothing says what Greenbull sells. Length is 72 of 80 characters, within the limit. The text says what it does first, then one aside, as asked. The aside "scaling our core values" is a bit weak and generic as a joke. "our" slightly breaks the "Greenbull calls it ..." framing, because it switches to a first-person corporate voice. To improve it, keep "Greenbull calls it scaling core values." (or "...a core value scale-up") so the aside stays in the same third-person frame as the old line. This is a minor point and not a rule break.
 - Rules broken: 4
 
-### Round 3
+#### Round 3
 
 - Version 3: "+5% weapon damage per level. Greenbull calls it high-impact brand alignment."
 - What changed: Version 3. I fixed the two things the evaluator named. First, the aside no longer says "our", so it stays in the "Greenbull calls it ..." frame. Second, the generic "scaling our core values" is now "high-impact brand alignment". That's a pun: "high-impact" means both a corporate buzzword and weapon hits, and it ties back to the upgrade's name, "Brand Impact". Kept: the effect comes first, then one aside, and it's 76 characters (under 80). It says "Greenbull", has no "Greenbull says ..." line, doesn't say what Greenbull sells, and has no banned words or real brands. Rule 4's number check still fails. "+5% weapon damage per level" stays word for word because the brief from the board's task requires it, and no wording can pass both the brief and the script. The Project Lead needs to decide: record the board's exception in Text rules, or accept this score as expected.
@@ -317,6 +319,34 @@ Weakness: "disruptive" is only a mild addition to the old line. A sharper buzzwo
 - Rules broken: 4
 
 **Kept:** version 3, score 8/10 ("+5% weapon damage per level. Greenbull calls it high-impact brand alignment.", copied to `art-archive/T-301/out/damage_bonus.txt`): it reached 8 or more.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `art-archive/T-301/briefs/garage_car_health_run2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "More car health each level. Greenbull's legal team rates you 'probably fine'."
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: Passes every rule I checked. Rule 1: the aside, "Greenbull's legal team rates you 'probably fine'", mocks corporate language and hedged reassurance. Greenbull sounds out of touch and insincere, and the city's people are not the joke. Rule 2: it uses "Greenbull" and no banned words. Rule 3: it is Greenbull's voice in the garage, which is allowed. It is not a "Greenbull says ..." line, and it names no real brand. Rule 4: it is 77 characters (limit 80) and names no number. It says plainly that each level gives more car health, then adds one aside, and it doesn't say what Greenbull sells. The only weakness is small: the 'probably fine' quotes and the legal-team joke are a little less sharp than a contractual-confidence line. This needs no fix.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("More car health each level. Greenbull's legal team rates you 'probably fine'.", copied to `art-archive/T-301/out/car_health.txt`): it reached 8 or more.
+
+### Run 3
+
+Run by `tools/style_loop/run.py` on 2026-10-26: text, kind garage_desc, brief `art-archive/T-301/briefs/garage_damage_bonus_run2.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Each level makes your weapons hit harder. Impact, fully synergized."
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: It follows the rules. Rule 4: 67 characters, which is under 80, and it names no number. It says plainly what the upgrade does first ("Each level makes your weapons hit harder.") and then adds one short aside ("Impact, fully synergized."), as the garage-upgrade and brief format asks. Rule 1: the aside mocks corporate buzzwords (synergized), is ironic, and does not joke about the city's people. Rule 2: no banned words. Rule 3: it is in Greenbull's garage voice, there is no "Greenbull says ..." line, and no real brand or product is named. Nothing is broken. The only weakness is that the aside is mild. "Impact, fully synergized." is a little flat and only loosely echoes the upgrade name "Brand Impact", so it could be sharper or more clearly out of touch. That is a matter of taste, not a rule breach.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Each level makes your weapons hit harder. Impact, fully synergized.", copied to `art-archive/T-301/out/damage_bonus.txt`): it reached 8 or more.
 
 ## Result notes
 
@@ -337,8 +367,8 @@ Text only: no screenshots (the texts are seen in the game in D5). No code was ch
 | upgrade_molotov.tier4.desc | level_up_texts.gd, molotov tier 4 card | Molotov damage up 50%, to 3. Redgull calls it flavour. | Molotov damage up 50%, to 3. Marketing calls it warm content. | 1 round, 9/10 | 50%, 3 / 50%, 3 |
 | upgrade_molotov.tier8.desc | level_up_texts.gd, molotov tier 8 card | Throw 3 molotovs at once. Redgull sends its regards. | Throw 3 molotovs at once. A warm brand moment, brought to you by Greenbull. | 1 round, 9/10 | 3 / 3 |
 | upgrade_wiper.tier3.desc | level_up_texts.gd, wiper tier 3 card | Wiper damage up 40%. Redgull calls it deep cleaning. | Wiper damage up 40%. Greenbull rebranded it a premium deep clean. | 1 round, 9/10 | 40% / 40% |
-| car_health | garage_screen.gd, garage upgrade row (Reinforced Chassis) | +10 car health per level. Redgull says you'll be fine. | +10 car health per level. Greenbull is contractually confident you'll be fine. | 4 rounds, kept version 2 at **7/10** (below 8) | 10 / 10 |
-| damage_bonus | garage_screen.gd, garage upgrade row (Brand Impact) | +5% weapon damage per level. Redgull calls it synergy. | +5% weapon damage per level. Greenbull calls it high-impact brand alignment. | 3 rounds, 8/10 | 5% / 5% |
+| car_health | garage_screen.gd, garage upgrade row (Reinforced Chassis) | +10 car health per level. Redgull says you'll be fine. | More car health each level. Greenbull's legal team rates you 'probably fine'. | rerun (brief `garage_car_health_run2.md`): 1 round, 9/10 | 10 / none (board, 2026-10-26: no number, rule 4) |
+| damage_bonus | garage_screen.gd, garage upgrade row (Brand Impact) | +5% weapon damage per level. Redgull calls it synergy. | Each level makes your weapons hit harder. Impact, fully synergized. | rerun (brief `garage_damage_bonus_run2.md`): 1 round, 9/10 | 5% / none (board, 2026-10-26: no number, rule 4) |
 
 `git grep -i redgull game/scripts game/scenes game/data`, rerun on this branch, finds these same 11 player-facing texts. Every other hit is a code comment about "Redgull red" (colour rules) or about the gift helicopter (`gift_arrows.gd`, `gift_helicopter.gd`), none of which the player sees, so they are not in the table.
 
@@ -346,19 +376,18 @@ Text only: no screenshots (the texts are seen in the game in D5). No code was ch
 - levelup.title (label): rule 2 ok, rule 3 ok, label one line ok, sentence case ok (the loop's round 2 script checks, 4 of 4).
 - TITLE (label): rule 2 ok, rule 3 ok, one line ok, sentence case ok (rerun by hand: all `"ok": true`).
 - The seven card_desc texts: rule 2 ok, rule 3 ok, at most 90 characters ok on every one (85, 87, 72, 49, 61, 75 and 65 characters; rerun by hand, except molotov tier 2, whose 3 of 3 checks are in its loop record).
-- car_health (garage_desc): rule 2 ok, rule 3 ok, at most 80 ok (78 characters); fails `garage_desc: names no number` (numbers: ['10']).
-- damage_bonus (garage_desc): rule 2 ok, rule 3 ok, at most 80 ok (76); fails `garage_desc: names no number` (numbers: ['5']).
-The two number failures come from the task's instruction to keep today's numbers. The old garage texts fail the same check.
+- car_health (garage_desc, final after the board's decision): rule 2 ok, rule 3 ok, at most 80 ok (77 characters), names no number ok: all four `"ok": true` (rerun by hand).
+- damage_bonus (garage_desc, final after the board's decision): rule 2 ok, rule 3 ok, at most 80 ok (67 characters), names no number ok: all four `"ok": true` (rerun by hand).
 
-**car_health is below 8 and has flagged the task.** In this rerun the evaluator scored the number conflict harder (6, 7, 6, 6) than in the first round, which kept "...Greenbull is legally optimistic about your safety." at 8/10, but that record was lost. Every round names rule 4's "names no number" as the only fault, and the text can't pass it while it keeps "+10", which the task requires. The loop flagged T-301 (`flagged-for-review`). I didn't touch the status.
+**Round 2 (after the flag, 2026-10-26):** the board decided the two garage descriptions drop their numbers (Text rules rule 4; the garage shows the real stats). I reran car_health and damage_bonus once each with the new briefs `art-archive/T-301/briefs/garage_car_health_run2.md` and `garage_damage_bonus_run2.md`. Both were kept at 9/10 in round 1 with 4 of 4 script checks passing. The loop wrote them to `art-archive/T-301/out/car_health.txt` and `damage_bonus.txt`, replacing the old kept texts. Their records are the last two runs in the Style review, added by the loop after the earlier records (T-296). The older car_health (7/10, flagged) and damage_bonus records stay above them as history. Because of the board's decision, the "same numbers" criterion now applies only to the nine other texts: the two garage descriptions purposely state no number. damage_bonus doesn't name Greenbull (its brief didn't ask for the name). It reads as the sponsor's buzzword voice, and the evaluator passed it.
 
 **Open questions for the board (proposals, nothing blocks the other texts):**
-1. **Garage numbers against Text rules rule 4 (the reason for the flag).** Rule 4 says a garage description names no number, but this task keeps "+10" and "+5%". Proposal: write an exception into rule 4 for the garage's own effect line, since the garage shows real stats (Garage design), and let `style_rules.py` allow it. The alternative is to drop the numbers, for example "More car health every level. Greenbull is contractually confident you'll be fine."
+1. ~~Garage numbers against Text rules rule 4.~~ Settled by the board (2026-10-26): no numbers. Done in round 2 above.
 2. "... calls it ..." forms: damage_bonus ("Greenbull calls it ...") and molotov tier 4 ("Marketing calls it ..."). The script and the evaluator pass them, and the old texts used the same form. If the board reads them as speech lines, they need a plain aside.
 3. Molotov tier 4 no longer names Greenbull ("Marketing calls it warm content"). It reads as Greenbull's marketing, but if every card should say the name, "Greenbull's marketing calls it warm content." fits (73 characters).
 4. Tooling gap for the Project Lead: `run.py text` rewrites the Style review on every run, so a ticket with several texts loses all records but the last unless they are copied by hand. One option is for the loop to add each run's record instead of replacing the section.
 
-**Documents:** `docs/extended-narrative.md` (listed as affected) already records the rebrand: Decisions, "The rebrand", and Text rules 2 and 3 name Greenbull, ban "Redgull" and ban "Greenbull says ...". These texts are game content that D5 puts into the code, so the document needs no edit for them. The one change it may need is a rule 4 exception for the garage numbers (question 1), which waits for the board's decision. I don't write that myself.
+**Documents:** `docs/extended-narrative.md` (listed as affected) already records the rebrand: Decisions, "The rebrand", and Text rules 2 and 3 name Greenbull, ban "Redgull" and ban "Greenbull says ...". These texts are game content that D5 puts into the code, so the document needs no edit for them. The board's round 2 decision follows rule 4 as written, so the document needs no change.
 
 Refusals: none.
 - 2026-10-26, in-qa → in-progress: QA failed: Each text has a style loop record (at least one round) in the ticket's Style review. (QA: fail: the Style review section holds only the last run (damage_bonus); the other 10 texts have no round record in it, only a summary table in the result notes. Restore their records in Style review) Back to the agent on opus.
