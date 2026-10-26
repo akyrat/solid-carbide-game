@@ -43,6 +43,7 @@ Only `sed -i` is in scope; Python and PowerShell writes that name a task file st
 - [ ] These stay refused, as tests show: a script naming `status`, `qa_rounds` or `lead`; an address range starting at line 1; `-f script.sed`; a `w` or `e` command; a script the guard can't read (from a variable or substitution). (QA: pass)
 - [ ] `python -m unittest discover -s tools -p "test_*.py"` passes. (QA: pass)
 - [ ] `tasks/README.md`, "Changing a task's status", says which `sed -i` edits of a ticket pass. (QA: pass)
+- [ ] Added by the Project Lead after QA round 1 found that `s/open/done/` and `s/0/1/` pass and rewrite `status: open` and `qa_rounds: 0`: a script that names no guarded word but would still change a `status`, `lead` or `qa_rounds` line is refused. The guard tries the readable `sed` script on the ticket's current text (in Python, without writing) and refuses when any of those lines would change, or when the file can't be read; tests show `s/open/done/` and `s/0/1/` refused on a ticket whose header has `status: open` and `qa_rounds: 0`, and the two edits in the first criterion still passing. (QA: fail: branch has no dry-run of the script on the ticket text; `sed_body_script_ok('s/open/done/')` and `'s/0/1/'` still return True, no tests for them)
 
 ## Updates
 
@@ -64,3 +65,4 @@ Built: a sed -i edit of a ticket's body now passes the guard when it can't write
 - `tasks/README.md`, "Changing a task's status": says which `sed -i` edits pass.
 - Tests: new class `SedBodyEdits` in `tools/test_guard.py` (6 passing commands, 17 refused). Full run `python -m unittest discover -s tools -p "test_*.py"`: 487 tests, OK.
 - QA round 1: all four criteria pass (SedBodyEdits tests show the passing and refused sets; full tools suite 487 tests OK; README updated). Open point for the Project Lead: the rule matches the ticket text literally (it checks only the words in the script), but a script naming none of the guarded words can still change a header line: `s/open/done/` turns `status: open` into `status: done`, and `s/0/1/` changes `qa_rounds: 0` (both verified accepted by `sed_body_script_ok`). Only the commit-time ledger guard catches these. This is wider than the builder's `s/0/1/` note; decide if acceptable or if `s` should be narrowed (e.g. anchor on body text, or refuse short patterns).
+- QA round 1, criterion 5 (added later): fails, the branch is unchanged since my check, so `s/open/done/` and `s/0/1/` are still accepted and no test covers them.
