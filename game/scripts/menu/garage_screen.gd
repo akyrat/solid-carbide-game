@@ -8,7 +8,7 @@ extends Control
 signal back_pressed
 
 ## Text approved in T-059 ({n} is where the number goes).
-const TITLE := "Redgull Pit Stop"
+const TITLE := "Greenbull brand-safe pit stop"
 const LEVEL_TEXT := "Level {n}"
 const PRICE_TEXT := "Price: {n}"
 const COINS_TEXT := "Coins: {n}"
@@ -25,8 +25,8 @@ const NAMES := {
 }
 const DESCRIPTIONS := {
 	"acceleration": "Top speed 0.1 s sooner per level. More drifting, more content.",
-	"car_health": "+10 car health per level. Redgull says you'll be fine.",
-	"damage_bonus": "+5% weapon damage per level. Redgull calls it synergy.",
+	"car_health": "More car health each level. Greenbull's legal team rates you 'probably fine'.",
+	"damage_bonus": "Each level makes your weapons hit harder. Impact, fully synergized.",
 	"pickup_magnet": "Coins and drops fly to you from further per level.",
 	"air_turn": "Spin faster in the air per level. More flips, more views.",
 }

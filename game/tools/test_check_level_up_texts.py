@@ -20,6 +20,12 @@ GD = '''const TEXTS := {
 }
 '''
 
+NEWER = """| Key | File / where it appears | Old | New (final) | Rounds, score |
+|---|---|---|---|---|
+| upgrade_wiper.tier2.desc | level_up_texts.gd | Wiper length up 20%. | Wiper length up 20%. Greenbull approves. | 1 round |
+| TITLE | garage_screen.gd | Redgull Pit Stop | Greenbull pit stop | 1 round |
+"""
+
 
 class CheckLevelUpTextsTest(unittest.TestCase):
     def test_reads_the_table_without_its_header(self):
@@ -37,9 +43,19 @@ class CheckLevelUpTextsTest(unittest.TestCase):
         self.assertTrue(problems[0].startswith("differs: get_wiper.desc"))
         self.assertEqual(problems[1], "missing: upgrade_wiper.tier2.desc")
 
-    def test_the_real_files_match_t171s_table(self):
-        rows = check.table_rows(check.DEFAULT_TASK.read_text(encoding="utf-8"))
+    def test_newer_texts_replace_only_the_keys_they_name(self):
+        newer = check.newer_texts(NEWER)
+        self.assertEqual(newer, {"upgrade_wiper.tier2.desc": "Wiper length up 20%. Greenbull approves.",
+                                 "TITLE": "Greenbull pit stop"})
+        rows = check.apply_newer(check.table_rows(TABLE), newer)
+        self.assertEqual(rows["upgrade_wiper.tier2"], ("Longer Blade", "Wiper length up 20%. Greenbull approves."))
+        self.assertEqual(rows["get_wiper"], ("Wiper Blade", "Sweeps. Very clean."))
+        self.assertNotIn("TITLE", rows)
+
+    def test_the_real_files_match_t171s_table_with_t301s_texts(self):
+        rows = check.expected_rows()
         self.assertEqual(len(rows), 24)
+        self.assertEqual(rows["upgrade_molotov.tier2"][1], "Fire radius up 20%. Greenbull loves a big reveal.")
         texts = check.gd_texts(check.TEXTS_GD.read_text(encoding="utf-8"))
         self.assertEqual(check.compare(rows, texts), [])
 
