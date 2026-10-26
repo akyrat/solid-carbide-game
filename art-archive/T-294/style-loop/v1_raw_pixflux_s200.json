@@ -1,0 +1,46 @@
+{
+  "file": "v1_raw_pixflux_s200.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "brand logo emblem, bull head, front view, symmetric, thick curved horns, angry slanted eyes, nose ring, bold flat shapes, dark green head, light green horns, black outline, flat vector-like pixel art icon",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "flat shading",
+    "detail": "low detail",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "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"
+    },
+    "init_image_strength": 200
+  },
+  "prompt": "brand logo emblem, bull head, front view, symmetric, thick curved horns, angry slanted eyes, nose ring, bold flat shapes, dark green head, light green horns, black outline, flat vector-like pixel art icon",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-26T02:14:34+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "tasks/T-075-redgull-logo-art.md",
+    "art-archive/T-294/brief.md",
+    "art-archive/T-294/style-loop/script_c.png"
+  ],
+  "task": "T-294",
+  "job_status": null,
+  "notes": "Style loop run 1 version 1: script-drawn bull head (draw_bull_emblem.py) as init_image, strength 200; colours remapped to the brand values by script afterwards.",
+  "generator": "game/tools/pixellab_client.py"
+}
