@@ -42,14 +42,14 @@ Run check_sprite_rules.py over game/art on master and on your branch and compare
 
 ## Acceptance criteria
 
-- [ ] style_rules.py's art check no longer fails a sprite for red pixels: a test with a pure red (255, 0, 0) sprite passes rule 6. (QA: pass / fail)
-- [ ] Without the Greenbull flag, the art check fails rule 6 for a sprite using RGB 104, 220, 96 and for one using RGB 247, 208, 52 (one test each); with --greenbull (renamed from --redgull) the same sprites pass rule 6 (tests). (QA: pass / fail)
-- [ ] The logo check accepts art-archive/T-294/greenbull_emblem_128.png, _64.png, _32.png and art-archive/T-295/greenbull_wordmark.png (tests), in place of the one-colour Redgull check. (QA: pass / fail)
-- [ ] The text check fails rule 2 on a text containing 'Redgull', 'REDGULL' and 'redgull' (tests) and fails rule 3 on 'Greenbull says hi' (test); a text naming 'Greenbull' alone passes both rules (test). (QA: pass / fail)
-- [ ] The result notes list check_sprite_rules.py's rule 6 result over game/art on master and on the branch: every asset that passed rule 6 on master still passes, except any asset now flagged, each listed with the reason. (QA: pass / fail)
-- [ ] `python game/tools/style_rules.py art --help` shows --greenbull and no --redgull. (QA: pass / fail)
-- [ ] game/README.md, 'The style rules', describes the new rule 6 check, the --greenbull flag, the Greenbull logo check and the Redgull ban, and doesn't say rule 6 reserves red. (QA: pass / fail)
-- [ ] game/tools/test_style_rules.py, the logo check's test (test_check_logo_one_colour.py or its renamed successor) and all the Python tool tests in game/tools pass. (QA: pass / fail)
+- [ ] style_rules.py's art check no longer fails a sprite for red pixels: a test with a pure red (255, 0, 0) sprite passes rule 6. (QA: pass: test_rule_6_red_is_not_reserved)
+- [ ] Without the Greenbull flag, the art check fails rule 6 for a sprite using RGB 104, 220, 96 and for one using RGB 247, 208, 52 (one test each); with --greenbull (renamed from --redgull) the same sprites pass rule 6 (tests). (QA: pass: light green and yellow tests exist, pass)
+- [ ] The logo check accepts art-archive/T-294/greenbull_emblem_128.png, _64.png, _32.png and art-archive/T-295/greenbull_wordmark.png (tests), in place of the one-colour Redgull check. (QA: pass: test_greenbull_logo_accepts_the_approved_emblem_and_wordmark, test_check_greenbull_logo)
+- [ ] The text check fails rule 2 on a text containing 'Redgull', 'REDGULL' and 'redgull' (tests) and fails rule 3 on 'Greenbull says hi' (test); a text naming 'Greenbull' alone passes both rules (test). (QA: pass)
+- [ ] The result notes list check_sprite_rules.py's rule 6 result over game/art on master and on the branch: every asset that passed rule 6 on master still passes, except any asset now flagged, each listed with the reason. (QA: pass: result notes list coin.png as the one new flag, with reasons; I did not rerun the report)
+- [ ] `python game/tools/style_rules.py art --help` shows --greenbull and no --redgull. (QA: pass)
+- [ ] game/README.md, 'The style rules', describes the new rule 6 check, the --greenbull flag, the Greenbull logo check and the Redgull ban, and doesn't say rule 6 reserves red. (QA: pass)
+- [ ] game/tools/test_style_rules.py, the logo check's test (test_check_logo_one_colour.py or its renamed successor) and all the Python tool tests in game/tools pass. (QA: pass: 462 tests OK, 1 skipped)
 
 ## Updates
 
