@@ -4,7 +4,7 @@ Solid Carbide is a drift-driving roguelite built in Godot 4 by a team of AI agen
 
 For this assignment I built the **style loop** and made it part of how the studio works: every asset and every piece of player-facing text is generated, scored against the game's style guide by an evaluator agent, and refined from the evaluator's reason until it scores 8/10, with no one stepping in. It is enforced, so nothing can skip it.
 
-> Status: the loop is built, tested and merged. Example 1 is its first real run; its files are on the ticket's branch until I approve the art. Examples 2 and 3 are still to come.
+> Status: the loop is built, tested and merged. Example 1 is its first real run, approved and merged. Examples 2 and 3 are still to come.
 
 ## 01. The style guide, taken from the game's own documents
 
@@ -54,7 +54,9 @@ I asked for the small lizard enemy to become "slightly like a mini kaiju monster
 | v3 | 4/10 | Car-sized with teeth, but standing upright like Godzilla (rule 9, no copies of existing characters) | lore |
 | v4 | 6/10 | Fixed the Godzilla look and the view (four legs on the ground, seen from above); one dull pink left in the mouth (rule 6) | palette |
 
-Each refine fixed what the reason named, and found the next problem. It still ended below 8 after three refines, so the loop kept the best version and flagged the ticket for me, as designed: the ticket's Result notes and review images ([dark](../../art-archive/T-293/review_sample_vs_car_dark.png), [light](../../art-archive/T-293/review_sample_vs_car_light.png)) are what I review.
+Each refine fixed what the reason named, and found the next problem. It still ended below 8 after three refines, so the loop kept the best version and flagged the ticket for me, as designed. I reviewed it next to the car and the old minion ([dark](../../art-archive/T-293/review_sample_vs_car_dark.png), [light](../../art-archive/T-293/review_sample_vs_car_light.png)), approved version 4, kept its dull pink mouth (now an allowed colour in rule 6), and had its baked-in shadow removed by a free script, since its rotations and animations will be made from it:
+
+![Version 4, and without its shadow](../../art-archive/T-293/review_noshadow_dark.png)
 
 ### Example 2
 
