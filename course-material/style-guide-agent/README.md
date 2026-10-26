@@ -71,7 +71,7 @@ Both runs passed on their first version, and that taught me something about the 
 
 ![The emblem (run 2) at 128, 64 and 32 px, then run 1, the old Redgull logo and the car](../../art-archive/T-294/review_emblem_dark.png)
 
-One thing went wrong, and QA caught it: the loop tool rewrites the whole Style review on each run, so run 2 erased run 1's record. QA failed the ticket for the missing round; the Project Lead restored it from run 1's own output, and QA passed it in round 2. Repeated runs were new, and the tool should add to the record instead of replacing it.
+One thing went wrong, and QA caught it: the loop tool rewrote the whole Style review on each run, so run 2 erased run 1's record. QA failed the ticket for the missing round; the Project Lead restored it from run 1's own output, and QA passed it in round 2. Repeated runs were new, and the tool had to add to the record instead of replacing it; that is now fixed (Example 3).
 
 ### Example 3: the wordmark, GREENBULL next to the emblem (art)
 
@@ -86,7 +86,7 @@ This is the loop working as a refiner across runs. Run 1 passed, but the Evaluat
 
 ![Wordmark runs 1 and 2 with the emblem, on dark](../../art-archive/T-295/review_wordmark_dark.png)
 
-Two practical lessons came out of this run. The first attempt stopped with no image, because the agent kept its drawing script inside the ticket's archive folder, where the ticket guard refuses to run scripts; the brief now tells agents to keep scripts in `game/tools/`. And run 2 erased run 1's record, as in Example 2, so the Project Lead restored it from a copy saved after run 1. Ticket [T-296](../../tasks/T-296-style-loop-keeps-earlier-runs.md) makes the tool keep earlier runs.
+Two practical lessons came out of this run. The first attempt stopped with no image, because the agent kept its drawing script inside the ticket's archive folder, where the ticket guard refuses to run scripts; the brief now tells agents to keep scripts in `game/tools/`. And run 2 erased run 1's record, as in Example 2, so the Project Lead restored it from a copy saved after run 1. The record is what exposed this flaw in the loop itself, so it was fixed the same day: since ticket [T-296](../../tasks/T-296-style-loop-keeps-earlier-runs.md), a repeated run keeps the earlier runs' rounds and adds its own after them, each under its own "Run N" heading, and QA checked it.
 
 ## 04. Where it fits in the pipeline
 
