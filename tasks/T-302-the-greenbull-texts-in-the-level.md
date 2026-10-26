@@ -1,7 +1,7 @@
 ---
 id: T-302
 title: The Greenbull texts in the level-up screen, its cards and the garage
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -14,8 +14,8 @@ depends_on: [T-301]
 documents_affected: [docs/hud-and-menus.md, docs/garage-design.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/visual-style.md, docs/hud-and-menus.md, docs/garage-design.md, game/README.md, game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, game/tests/unit/test_level_up_screen.gd, game/tests/unit/test_garage_screen.gd]
 files_expected_to_change: [game/scripts/ui/level_up_texts.gd, game/scripts/menu/garage_screen.gd, game/tests/unit/test_level_up_screen.gd, game/tests/unit/test_garage_screen.gd, docs/hud-and-menus.md, docs/garage-design.md]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-302.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-26, In QA → In progress
+
+Goal runner (G-006): failed QA once; back to the agent on opus.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done. D4 is T-301's result notes table (its final texts); I put all 11 in word f
 - Screenshots in `art-archive/T-302/screenshots/`: `level_up_a.png` (level-up screen, gun tier 2 card naming Greenbull's lawyers, new title), `level_up_b.png` (new weapons demo), `garage.png` (garage with the new title and descriptions). In garage.png the right-hand Buy buttons are cut off at the window's edge; the layout was not changed here, and I did not check whether it was already so before.
 
 Refusals: none.
+- 2026-10-26, in-qa → in-progress: QA failed: All three test sets pass. (QA: fail: GUT 1419/1419 and tools 501 OK, but `python -m unittest discover game/tools` has 1 failure: test_check_level_up_texts.test_the_real_files_match_t171s_table compares the game's texts to T-171's old Redgull table and now differs on 4 elements, upgrade_molotov.tier2.desc among them; failed again when rerun alone. The test or its table needs updating to the new texts) Back to the agent on opus.
