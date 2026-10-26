@@ -1,7 +1,7 @@
 ---
 id: T-301
 title: Text: the level-up screen, its cards and the garage, rewritten for Greenbull
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Goal-G-006
@@ -70,6 +70,10 @@ Goal runner (G-006): failed QA once; back to the agent on opus.
 ### 2026-10-26, Flagged for review → In progress
 
 Back to work on your decision: the two garage texts drop their numbers (rule 4) and go through the loop again. The style loop fix is now in the goal's build.
+
+### 2026-10-26, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
