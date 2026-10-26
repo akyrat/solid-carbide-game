@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -54,6 +54,10 @@ The board's review: open the four files in game/art/logo/ (and the screenshots) 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-26, Blocked → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-300.
 
 ## Style review
 
