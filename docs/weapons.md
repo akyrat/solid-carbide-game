@@ -102,7 +102,7 @@ What the built underglow does in the game. It follows Decisions ("Three new weap
 - **Damage:** an enemy is hit on the step it enters, then every tick interval (1 second at tier 1) while it stays inside; each hit is the tier's damage times the garage damage bonus, through the enemy's damage function. No limit on how many it hits, no push. It stops while the run is paused and once the run has ended.
 - **Leaving and coming back** (the Weapon Behavior Agent's proposal, for the board's playtest): each enemy has its own clock. An enemy that leaves and comes back before a tick interval has passed since its last hit is not hit again on entering; it is hit once its interval is over, if it is still inside. One that was out for longer is hit as it enters.
 - **Tiers:** as the proposal above (radius, damage and tick interval multipliers), applied from code.
-- **Look:** a placeholder neon ring drawn in code under the car, the circle as seen in the isometric view: opaque cyan with a darker inner line and a dark outline, never Redgull red, sized with the radius tiers. The final art replaces it.
+- **Look:** a placeholder neon ring drawn in code under the car, the circle as seen in the isometric view: opaque cyan with a darker inner line and a dark outline, never in Greenbull's colours, sized with the radius tiers. The final art replaces it.
 
 ### The molotovs (built in task T-169)
 
@@ -114,7 +114,7 @@ What the built molotovs do in the game. They follow Decisions ("Three new weapon
 - **Damage:** an enemy inside a fire area is hit on the step it enters, then every tick interval (0.5 seconds) while it stays inside; each hit is the tier's damage times the garage damage bonus, through the enemy's damage function. An enemy that leaves takes nothing more (board, 2026-10-18). A minion is inside when its centre is; an enemy that reports its body size, such as the kaiju, when any part of its body overlaps the circle. Each fire area counts on its own, so an enemy inside two is hit by both (proposal). No push.
 - **Pause and new run:** bottles in flight and fire areas stop while the run is paused or over, and a new run removes them all.
 - **Tiers:** as the proposal above, applied from code. A fire area keeps the values of the tier it landed at.
-- **Look:** placeholders drawn in code. The bottle is a small green bottle with a pale rag and a yellow flame, spinning as it flies. The fire is a flat circle on the ground, drawn under the buildings, enemies and car: orange with a yellow middle and a pale core, a dark rim and small yellow flickers. Never Redgull red. The final art replaces them.
+- **Look:** placeholders drawn in code. The bottle is a small green bottle with a pale rag and a yellow flame, spinning as it flies. The fire is a flat circle on the ground, drawn under the buildings, enemies and car: orange with a yellow middle and a pale core, a dark rim and small yellow flickers. Never in Greenbull's colours. The final art replaces them.
 
 ### The windshield wiper (built in task T-170)
 
@@ -126,7 +126,7 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 - **Knockback:** a hit minion is pushed 6 units (tier 1; 9 at the last tier) straight away from the car's centre, through the minion's knockback call (obstacles stop it). The kaiju is damaged but never pushed. The gun's bullets and the flamethrower still never push (tested).
 - **Pause and new run:** the arm and its hits stop while the run is paused or over; a new run removes the wiper and puts the arm back to its start.
 - **Tiers:** as the proposal above (length, damage, sweep speed and knockback multipliers), applied from code.
-- **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never Redgull red. The final art replaces it.
+- **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never in Greenbull's colours. The final art replaces it.
 
 ### Size upgrades grow on screen (built in task T-286)
 

@@ -8,13 +8,13 @@
 
 **In one sentence:** *Solid Carbide* is a driving roguelite where you survive by out-drifting monsters for a livestream audience that rewards you with weapons.
 
-**In one paragraph:** Monsters have overrun Crash City, and the energy-drink brand Redgull has sent its sponsored Stunt Driver in, not to help, but to drift for the cameras. Every run is livestreamed. Holding long drifts and chaining tricks earns likes; filling the likes bar levels you up and Redgull drops you a gift pack: a new weapon or an upgrade. Your weapons fire on their own, so you only ever drive. Monsters swarm in and drop coins, which buy permanent car upgrades in the garage between runs. At the 7-minute mark a Godzilla-style kaiju arrives, raining meteors, and your weapons have one minute to bring it down. One minute, one kaiju, one skill: drifting.
+**In one paragraph:** Monsters have overrun Crash City, and the energy-drink brand Greenbull has sent its sponsored Stunt Driver in, not to help, but to drift for the cameras. Every run is livestreamed. Holding long drifts and chaining tricks earns likes; filling the likes bar levels you up and Greenbull drops you a gift pack: a new weapon or an upgrade. Your weapons fire on their own, so you only ever drive. Monsters swarm in and drop coins, which buy permanent car upgrades in the garage between runs. At the 7-minute mark a Godzilla-style kaiju arrives, raining meteors, and your weapons have one minute to bring it down. One minute, one kaiju, one skill: drifting.
 
 ## The world and the tone
 
-Humanitarian crises are breaking out around the world, and Redgull sends its stunt driver to each disaster zone, one city per level. The first is Crash City and its kaiju.
+Humanitarian crises are breaking out around the world, and Greenbull sends its stunt driver to each disaster zone, one city per level. The first is Crash City and its kaiju.
 
-The tone is **satirical**. Redgull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Redgull **gift packs**. Redgull also funds the car's upgrades, all in service of the sponsorship.
+The tone is **satirical**. Greenbull isn't evil, just completely out of touch: obsessed with its brand, its feed and its numbers. The game is fun to play, but the player should sense that what they're doing is slightly unethical, and it says so whenever it can. Players never see "XP": they see **likes**, and the rewards arrive as Greenbull **gift packs**. Greenbull also funds the car's upgrades, all in service of the sponsorship.
 
 ## Design pillars
 
@@ -37,7 +37,7 @@ flowchart LR
 - **Driving:** W drives forward, S brakes and reverses, A and D steer and drift. The car jumps straight to a cruising speed and builds a long, fast slide when turned, which carries more speed than driving straight.
 - **Obstacles:** crashed meteor boulders stand on the roads in set patterns, to drift around and bounce off.
 - **Tricks and the combo:** extended drifts, 360s and alternate drifts (switching between forward and backward drifts) are tricks. Each one raises a combo multiplier on every like earned, and pops its name out from the car in comic-style letters. Hitting anything cuts the combo, and it drains if the tricks stop. A higher combo also draws more monsters.
-- **Likes and gift packs:** drifts longer than a second earn likes every second, multiplied by the combo. Each time the likes bar fills, a Redgull helicopter flies over and drops a gift pack; driving over it pauses the game for the gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
+- **Likes and gift packs:** drifts longer than a second earn likes every second, multiplied by the combo. Each time the likes bar fills, a Greenbull helicopter flies over and drops a gift pack; driving over it pauses the game for the gift pack: a choice of two weapons or upgrades. The first is always the exhaust flamethrower or a gun upgrade.
 - **Weapons:** the car starts every run with a **gun** that aims and fires on its own at monsters in range. The others are gained at level-ups: a **flamethrower out of the exhaust that fires only while drifting**, a **neon underglow** that hurts monsters around the car, **molotovs** thrown at random that leave fire on the ground, and a **windshield wiper** that sweeps monsters away. Each has 8 tiers. The weapons reset every run.
 - **Monsters:** light-green, four-legged lizards come in from the edges of the screen, a few more as the run goes on. They hurt the car on contact and drop coins.
 - **The kaiju:** at 7:00 a Godzilla-style kaiju arrives and walks slowly towards the car. Weapons can damage it at any time. It rains meteors (a red warning circle shows where they will land) that leave new boulders on the roads.
@@ -65,7 +65,7 @@ The map is one city: 240 by 240 units (one unit is a car's width), a 4 by 4 grid
 
 ## The look
 
-Night in downtown Tokyo under a kaiju attack: steel-and-glass towers with pale lit windows and small amber signs over cracked asphalt, alien boulders glowing navy, purple and magenta, and the game's own effects in pink and cyan neon. Redgull's logo is a minimal side profile of a seagull's head in a single dark red, slightly evil and unsettling, and the company's red shows up only on its own things, such as the weapons it sends; the city itself is not Redgull's. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
+Night in downtown Tokyo under a kaiju attack: steel-and-glass towers with pale lit windows and small amber signs over cracked asphalt, alien boulders glowing navy, purple and magenta, and the game's own effects in pink and cyan neon. Greenbull's logo is a cool bull's head in dark green, light green and a little yellow, and the company's colours show up only on its own things, such as the weapons it sends; the city itself is not Greenbull's. The car is a dark-green, late-sixties fastback muscle car with two white stripes. All art is hard-edged, retro pixel art in a 3/4 isometric view, with a dark outline, detailed shading, glow drawn into the pixels and no blur. Real cars and monsters are only inspiration: no real logos, no copies of existing characters.
 
 ## The MVP, and what comes after
 

@@ -180,7 +180,7 @@ Otherwise each field is `no`. The Project Lead sets both fields when writing a t
 Every asset and every piece of player-facing text is made through the style loop, so the game keeps one style (board, 2026-10-25). The style guide it scores against is Visual style, Content, "Rules" for art and Extended narrative, Content, "Text rules" for text.
 
 1. **Generate:** the task's agent makes the asset or text: the Asset Generation Agent for art (PixelLab or script-drawn), the Narrative Theme Agent for text.
-2. **Evaluate:** the Style Evaluator scores it from 1 to 10 against the rules and gives the reason: which rules it breaks and how. Rules a script can check (size, colours, transparency, Redgull red, lengths, banned words) are checked by script first, with `game/tools/style_rules.py` (`art` for an image, `text` for a text; each check names its rule number; `game/README.md`, "The style rules"), and the result goes into the score.
+2. **Evaluate:** the Style Evaluator scores it from 1 to 10 against the rules and gives the reason: which rules it breaks and how. Rules a script can check (size, colours, transparency, Greenbull's colours, lengths, banned words) are checked by script first, with `game/tools/style_rules.py` (`art` for an image, `text` for a text; each check names its rule number; `game/README.md`, "The style rules"), and the result goes into the score.
 3. **Refine:** below 8, the agent that made it rewrites or remakes it from the reason, and the new version is evaluated again. For art, free script fixes come before a paid regeneration.
 4. **Stop:** at 8 or more the version is kept. After 3 refines still below 8, the best-scoring version is kept and the task is flagged for the board's review, with every version.
 

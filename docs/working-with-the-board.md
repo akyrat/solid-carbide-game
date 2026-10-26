@@ -21,7 +21,7 @@ Game decisions are not here: they live in the game area docs (`docs/`). Task rul
 - Sample first: one asset (one car direction, one road tile) for review, then the full set built from the approved sample, then into the game for a playtest.
 - Never delete generated art: game-ready art in `game/art/`, everything else in `art-archive/<task>/` (Visual style, Decisions). Never delete tickets: use status `cancelled`.
 - The board sometimes edits art by hand. Its editor saves indexed PNGs: convert to RGBA, keep the pixels, and record the hand edit.
-- Where Redgull red may appear: Visual style, Content, "Rules", rule 6 (placeholders never).
+- Where Greenbull's colours may appear: Visual style, Content, "Rules", rule 6 (placeholders never).
 
 ## How the board builds the game
 - Small playable steps, each ending in a playtest (`tasks/README.md`, "Building in playable steps"). The board reorders steps freely; update that list when it does.

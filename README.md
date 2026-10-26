@@ -10,27 +10,11 @@ Six short recordings of the real game as it is today (2026-10-22): a run on the 
 
 ![The car drifting on a street with minions chasing it, the drift counter counting and LONG DRIFT! paying when the drift ends](art-archive/T-229/screenshots/drift_chasers_long_drift.gif)
 
-The car drifting on the street while the minions chase it: the drift counter counts, and LONG DRIFT! pays out when the drift ends.
-
 ![The car drifting off a height-6 rooftop and landing in the street, the camera following its height](art-archive/T-229/screenshots/drift_off_rooftop.gif)
-
-The car drifting off a tall (height 6) rooftop and landing in the street, the camera following its height.
 
 ![An air 360 off a rooftop with its AIR 360! popup, the airtime counter counting and HANG TIME! on landing](art-archive/T-229/screenshots/air_360_hang_time.gif)
 
-An aerial trick: an air 360 off a rooftop, the airtime counter counting while the car is up, then AIR 360! and HANG TIME! on landing.
-
 ![The kaiju chases the car; warning circles, falling meteors and impacts](art-archive/T-229/screenshots/kaiju_meteors.gif)
-
-The kaiju chasing the car, standing on its shadow, and throwing down meteors: warning circles, falling meteors, impacts and boulders.
-
-![Minions walking off a rooftop's edge after the car, falling to the street](art-archive/T-229/screenshots/enemies_drop_off_ledge.gif)
-
-Minions chasing the car off a rooftop's ledge and dropping to the street below.
-
-![Coins and health canisters pulled in to the car by the pickup magnet](art-archive/T-229/screenshots/pickups_magnet.gif)
-
-Coins and health canisters pulled in by the car's pickup magnet.
 
 ## Layout
 
