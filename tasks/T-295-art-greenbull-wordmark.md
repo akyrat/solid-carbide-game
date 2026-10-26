@@ -65,6 +65,19 @@ Started: the GREENBULL wordmark, built from the emblem's run 2, through the styl
 
 ## Style review
 
+Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-295/brief.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: `art-archive/T-295/style-loop/v1.png`
+- Script checks: 5 of 5 pass
+- Score: 8/10
+- Reason: The checks pass: rule 1 (transparent background, hard edges, 5 colours) and rule 6 (no Redgull red). The image reads as a clean flat wordmark. The angular bull-head emblem sits on the left, reused unchanged. GREENBULL is spelled correctly in capitals, with bold, slanted, even-height letters. They have a near-black outline and a dark green drop shade, so they should read on dark and light backgrounds. The lettering is custom and doesn't copy Red Bull or any real brand (rule 9). Yellow stays a tiny accent, only in the emblem's eyes. Rule 2 does not apply to flat brand art. One soft point against rule 6: the letter faces are mostly light green, and the dark green appears only as the shade and the emblem. The rule says dark green leads on Greenbull's things (and the board asked for it as the main theme colour). For the next version, make dark green the dominant letter colour. For example, use a dark green face with a light green top highlight or edge, or make the dark green shade thicker. Keep the black outline. I only judged the image at its small displayed size, so check that the letter gaps and the E/B/U shapes stay crisp at the full 256 x 64.
+- Rules broken: 6
+- Refused: {"tool_input": {"command": "python -c \"\nfrom PIL import Image\ne=Image.open('art-archive/T-295/greenbull_emblem_64.png'); print(e.mode,e.size, sorted(set(c for c in e.convert('RGBA').getdata() if c[3])))\" && sed -n 1,40p game/tools/greenbull_emblem.py | head -20; ls game/tools | grep -i -E \"test_|green\"", "description": "Check emblem palette and existing tool layout"}, "tool_name": "Bash", "tool_use_id": "toolu_013Uxy1w7q2ivYpy7uG8jFXe"}
+
+**Kept:** version 1, score 8/10 (`art-archive/T-295/style-loop/v1.png`, copied to `art-archive/T-295/greenbull_wordmark.png`): it reached 8 or more.
+
 ## Result notes
 
 - 2026-10-26, Project Lead: the dependency on T-294 is dropped so the wordmark can be made while the board is away. T-294 passed QA and waits for the board's review in needs-playtest; its kept emblem (run 2, the Project Lead's pick) is copied into `art-archive/T-295/` (128, 64 and 32). If the board picks the other run, the wordmark is rebuilt with that emblem by script, for free.
