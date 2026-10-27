@@ -1,7 +1,7 @@
 ---
 id: T-321
 title: The first gift pack offers two random choices from every weapon
-status: in-qa
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, game/README.md, game/scripts/weapons/level_up_offers.gd]
 files_expected_to_change: [game/scripts/weapons/level_up_offers.gd, game/tests/unit/, game/README.md, docs/weapons.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,14 @@ Started: the Weapon Behavior Agent is making the first gift pack draw from every
 
 Built: the first gift pack now draws two random choices from every weapon. QA is checking it.
 
+### 2026-10-27, In QA → Needs playtest
+
+QA passed all 6 criteria. Ready for your playtest: C:\solid-carbide-worktrees\T-321\game\project.godot, or Play on T-321 in the Builds tab.
+
+### 2026-10-27, Needs playtest → Done
+
+Approved after the board's playtest of batch-1028; merging to master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -74,3 +82,4 @@ Weapon Behavior Agent, 2026-10-27.
 - Screenshots (`art-archive/T-321/screenshots/`): `first_level_up_1.png` (Hot Take Exhaust and Hot Drop), `first_level_up_2.png` (Bonus Bullets and Hot Take Exhaust), `first_level_up_3.png`: three first level-ups with different pairs (seeds 7, 14, 21).
 - Documents updated: `docs/weapons.md` (Decisions line for the five-weapon offers, Content, "The level-up offers"), `game/README.md` (draw, playtest switch, tests, level-up screen switch note). The long GDD is not regenerated here (the Project Lead does it at merge).
 - Skipped: nothing.
+- 2026-10-27, needs-playtest → done: The board played batch-1028 and approved it.
