@@ -88,21 +88,25 @@ func test_a_new_run_empties_the_column_back_to_the_gun() -> void:
 	assert_false(icons.get_children().any(func(c: Node) -> bool: return c.is_queued_for_deletion() == false and c.name.contains("wiper")), "the wiper's nodes are gone")
 
 
-func test_all_five_weapons_at_tier_eight_fit_beside_the_bar() -> void:
+func test_all_six_weapons_at_tier_eight_fit_beside_the_bar() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
 	for id: String in r.weapons.weapons:
 		r.weapons.get_weapon(id).set_tier(8)
 	var bar := hud.health_bar.get_global_rect()
 	var icons := hud.weapon_icons
-	assert_eq(icons.order.size(), 5)
+	assert_eq(icons.order.size(), 6, "the five weapons and Bricks (T-324)")
 	var box := Rect2()
 	for id: String in icons.order:
 		var row: Dictionary = icons.rows[id]
 		var rect: Rect2 = row.icon.get_global_rect().merge(Rect2(row.count.get_global_position(), row.count.size))
 		box = rect if box.size == Vector2.ZERO else box.merge(rect)
 	assert_gte(box.position.x, bar.end.x, "right of the bar")
-	assert_lte(box.end.y, bar.end.y, "no taller than the bar")
+	# T-324: six rows (6 x 48 + 5 x 8 = 328 px) reach 8 px past the 320 px bar, beside
+	# the heart under it; the Project Lead has the layout question for the UI Agent.
+	var heart := hud.health_heart.get_global_rect()
+	assert_lte(box.end.y, heart.end.y, "no lower than the heart under the bar")
+	assert_false(box.intersects(heart), "clear of the heart")
 	assert_lt(box.end.x, 1152.0 * 0.25, "in the left quarter, clear of the middle")
 	assert_false(box.intersects(hud.timer_label.get_global_rect()), "clear of the timer")
 

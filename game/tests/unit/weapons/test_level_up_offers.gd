@@ -1,16 +1,17 @@
 extends GutTest
 ## Tasks T-043 and T-172: the level-up's weapon choices (two different ones drawn
-## at random from all five weapons) and applying the one taken.
+## at random from all the weapons, six since T-324 added Bricks) and applying the one taken.
 
 const RunScene := preload("res://scenes/run/run.tscn")
 const FlameScript := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const UnderglowScript := preload("res://scripts/weapons/neon_underglow.gd")
 const MolotovScript := preload("res://scripts/weapons/molotovs.gd")
 const WiperScript := preload("res://scripts/weapons/windshield_wiper.gd")
+const BricksScript := preload("res://scripts/weapons/bricks.gd")
 const RackScript := preload("res://scripts/weapons/weapons.gd")
 const OffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 
-const WEAPONS := ["gun", "flamethrower", "underglow", "molotov", "wiper"]
+const WEAPONS := ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]
 const SEEDS := 40
 
 var run: Node2D
@@ -45,6 +46,7 @@ func _switches(v: int) -> void:
 	UnderglowScript.playtest_override = v
 	MolotovScript.playtest_override = v
 	WiperScript.playtest_override = v
+	BricksScript.playtest_override = v
 
 
 func _level_up() -> void:
@@ -83,23 +85,54 @@ func _max_all_but(keep: Array) -> void:
 
 # ---- The first level-up ----------------------------------------------------------------------
 
-func test_first_level_up_offers_the_gun_upgrade_and_the_flamethrower() -> void:
-	for s in SEEDS:
+const FIRST_CHOICES := ["upgrade_gun", "get_flamethrower", "get_underglow", "get_molotov", "get_wiper", "get_bricks"]
+
+
+func test_first_level_up_is_drawn_from_every_first_choice() -> void:
+	var seen := {}
+	var fixed_pair := 0
+	for s in SEEDS * 5:
 		_new_run(s)
 		_level_up()
 		assert_eq(shown.size(), 1, "seed %d: one offer" % s)
 		assert_eq(shown[0][0], 2, "the level reached")
-		assert_eq(shown[0][1], ["upgrade_gun", "get_flamethrower"], "seed %d: exactly these two" % s)
+		var ids: Array = shown[0][1]
+		assert_eq(ids.size(), 2, "seed %d: two choices" % s)
+		assert_ne(ids[0], ids[1], "seed %d: two different ones" % s)
+		for id in ids:
+			assert_true(FIRST_CHOICES.has(id), "seed %d: %s is available" % [s, id])
+			seen[id] = true
+		if ids == ["upgrade_gun", "get_flamethrower"]:
+			fixed_pair += 1
 		assert_true(get_tree().paused, "the run waits for the choice")
-		offers.choose("upgrade_gun")
+		offers.choose(ids[0])
+	for id in FIRST_CHOICES:
+		assert_true(seen.has(id), "%s is offered at a first level-up" % id)
+	assert_lt(fixed_pair, SEEDS * 5, "the old fixed pair is not the only first offer")
 
 
-func test_the_second_level_up_after_taking_the_gun_upgrade_is_drawn() -> void:
+func test_the_first_level_up_with_the_same_seed_is_the_same() -> void:
+	var runs := []
+	for i in 2:
+		_new_run(12)
+		_level_up()
+		runs.append(shown[0][1])
+		offers.choose(shown[0][1][0])
+	assert_eq(runs[0], runs[1])
+
+
+func test_the_fixed_first_offer_is_gone() -> void:
+	assert_false("FIRST_OFFERS" in OffersScript, "no fixed first offer constant")
+	assert_false(offers.has_method("is_first_offer"), "no first-offer check")
+
+
+func test_the_second_level_up_is_drawn() -> void:
 	var seen := {}
 	for s in SEEDS:
 		_new_run(s)
+		rack.gun.set_tier(2)
 		_level_up()
-		offers.choose("upgrade_gun")
+		offers.choose(shown[0][1][0])
 		_level_up()
 		for id in shown[1][1]:
 			seen[id] = true
@@ -135,8 +168,8 @@ func test_seeded_level_ups_draw_two_different_available_ids_and_cover_them_all()
 				seen[id] = true
 			assert_true(offers.choose(ids[pick.randi_range(0, ids.size() - 1)]))
 			assert_false(state.is_waiting_for_choice())
-	# 7 gun tiers + 4 weapons x 8 tiers.
-	assert_eq(level_ups, SEEDS * 39, "every run takes every tier before the choices run out")
+	# 7 gun tiers + 5 weapons x 8 tiers.
+	assert_eq(level_ups, SEEDS * 47, "every run takes every tier before the choices run out")
 	for id in OffersScript.ALL_IDS:
 		assert_true(seen.has(id), "%s offered at least once" % id)
 
@@ -220,6 +253,7 @@ func test_nothing_to_offer_skips_the_choice_and_resumes() -> void:
 # ---- Taking a choice -------------------------------------------------------------------------
 
 func test_taking_the_gun_and_flamethrower_choices_applies_them_and_resumes() -> void:
+	_max_all_but(["gun", "flamethrower"])
 	_level_up()
 	assert_true(offers.choose("upgrade_gun"))
 	assert_eq(rack.gun.tier, 2)
@@ -271,14 +305,44 @@ func test_taking_get_and_upgrade_wiper() -> void:
 	_check_get_and_upgrade("wiper")
 
 
+func test_taking_get_and_upgrade_bricks() -> void:
+	_check_get_and_upgrade("bricks")
+
+
+func test_bricks_is_offered_and_its_upgrades_raise_t323s_numbers() -> void:
+	# T-324: Bricks on a card, taken, and each upgrade gives WeaponData.bricks_at(tier).
+	_new_run(1)
+	_max_all_but(["bricks"])
+	var b: Node = rack.bricks
+	assert_eq(b, rack.get_weapon("bricks"))
+	_level_up()
+	assert_eq(shown[-1][1], ["get_bricks"])
+	assert_true(offers.choose("get_bricks"))
+	var data := WeaponData.new()
+	for t in range(1, 9):
+		if t > 1:
+			_level_up()
+			assert_eq(shown[-1][1], ["upgrade_bricks"], "tier %d offered" % t)
+			assert_true(offers.choose("upgrade_bricks"))
+		assert_eq(b.tier, t)
+		var want: Dictionary = data.bricks_at(t)
+		for k in ["damage", "radius", "knockback_distance", "min_air_seconds", "cooldown"]:
+			assert_almost_eq(float(b.stats[k]), float(want[k]), 1e-9, "tier %d %s" % [t, k])
+	assert_true(b.is_max_tier())
+	assert_almost_eq(float(b.stats["radius"]), 4.0 * 1.2 * 1.25 * 1.3, 1e-9, "tier 8's radius is T-323's 7.8")
+	_level_up()
+	assert_eq(shown.size(), 8, "nothing left to offer at tier 8")
+
+
 func test_a_choice_not_on_offer_is_refused() -> void:
+	_max_all_but(["gun", "flamethrower", "wiper"])
+	rack.wiper.set_tier(rack.wiper.max_tier())
 	_level_up()
 	assert_false(offers.choose("upgrade_flamethrower"), "not owned yet, so not offered")
-	assert_false(offers.choose("get_wiper"), "available but not drawn")
+	assert_false(offers.choose("get_wiper"), "at its last tier, not offered")
 	assert_false(offers.choose("nonsense"))
 	assert_false(offers.choose(""))
 	assert_eq(rack.gun.tier, 1)
-	assert_false(rack.wiper.is_owned())
 	assert_true(get_tree().paused, "still waiting")
 
 
@@ -292,11 +356,13 @@ func test_weapon_of_maps_ids_to_weapons() -> void:
 	assert_eq(OffersScript.weapon_of("get_molotov"), "molotov")
 	assert_eq(OffersScript.weapon_of("upgrade_wiper"), "wiper")
 	assert_eq(OffersScript.weapon_of("get_underglow"), "underglow")
+	assert_eq(OffersScript.weapon_of("upgrade_bricks"), "bricks")
 	assert_eq(OffersScript.weapon_of("get_rocket"), "")
 	assert_eq(OffersScript.weapon_of("nonsense"), "")
 
 
 func test_two_level_ups_at_once_offer_in_turn() -> void:
+	_max_all_but(["gun", "flamethrower"])
 	state.add_xp(state.xp_needed() + RunData.new().xp_needed(2) + 0.5)
 	assert_eq(state.level, 3)
 	assert_eq(shown.size(), 1, "the first level's choice is on show")
@@ -309,16 +375,16 @@ func test_two_level_ups_at_once_offer_in_turn() -> void:
 	assert_false(get_tree().paused)
 
 
-func test_a_new_run_clears_the_offer_and_brings_back_the_first_offer() -> void:
+func test_a_new_run_clears_the_offer() -> void:
 	_level_up()
-	offers.choose("upgrade_gun")
+	offers.choose(shown[-1][1][0])
 	_level_up()
 	_new_run(3)
 	assert_false(offers.has_offers())
 	assert_false(offers.choose("upgrade_gun"))
 	assert_false(get_tree().paused)
 	_level_up()
-	assert_eq(shown[-1][1], ["upgrade_gun", "get_flamethrower"])
+	assert_eq(shown[-1][1].size(), 2, "the new run's first level-up is drawn")
 
 
 # ---- Playtest switches -----------------------------------------------------------------------
@@ -340,7 +406,7 @@ func test_flamethrower_at_the_start_leads_to_its_upgrades() -> void:
 	assert_true(seen.has("upgrade_flamethrower"), "its upgrades are offered")
 
 
-func test_all_weapons_at_start_gives_all_five_at_tier_1() -> void:
+func test_all_weapons_at_start_gives_all_six_at_tier_1() -> void:
 	RackScript.all_weapons_override = 1
 	rack.reset_for_run()
 	for id in WEAPONS:

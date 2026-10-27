@@ -15,7 +15,7 @@ extends Node2D
 ##   packages stand still and nothing is picked up.
 ## - One package per level-up; several level-ups mean several packages, each
 ##   opening its own screen. Packages stay until picked up; a new run clears them.
-## - Off-screen landed packages get an arrow at the screen's edge (gift_arrows.gd).
+## - Every package on the map (falling or landed) that is off screen gets an arrow at the screen's edge (gift_arrows.gd).
 ## - With RunState.pause_on_level_up on (tests and tools only) the old direct
 ##   flow runs and no helicopter comes.
 ##
@@ -98,6 +98,12 @@ func clear() -> void:
 ## Packages lying on the map, waiting to be driven over.
 func landed_packages() -> Array:
 	return packages.filter(func(p): return p.is_landed())
+
+
+## Packages on the map, which get an arrow when off screen: falling (from the
+## moment it is dropped) and landed; not the one still carried by the helicopter.
+func mapped_packages() -> Array:
+	return packages.filter(func(p): return p.phase != GiftPackage.CARRIED)
 
 
 ## Sends a helicopter with the package for the level-up of `level`: picks the

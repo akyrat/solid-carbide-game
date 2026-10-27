@@ -123,7 +123,7 @@ How the level-up screen is reached (task T-144; how to use it: [game/README.md](
 - The run keeps going the whole time (the clock, enemies, likes and the likes drain). The level-up moment itself (the "level up" signal, the level-up effect, the likes bar) is unchanged.
 - One package per level-up. Packages stay on the ground until picked up; a new run clears them.
 - Driving over a landed package removes it and opens the level-up screen for that level, with the same weapon choices as before; the run pauses until the choice is made. Two packages picked up together give two screens, one after the other.
-- While a landed package is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD.
+- Every package on the map gets its own arrow (board, 2026-10-28; T-314): while a package that has been dropped, falling or landed, is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD, so several arrows show when several packages are out. The package still carried by the helicopter has none yet. Arrows that would overlap are slid apart along the edge (proposal for the playtest). Proposal for the playtest: arrows only for packages off screen, none for a package on screen (the board asked for "the same one that appears today at the edge of the screen").
 
 #### The combo
 
@@ -133,6 +133,7 @@ The run also owns the combo (task T-081; how to use it: [game/README.md](../game
 - The tricks: the extended drift (paid once per drift, by its length), the 360, the alternate drift (Drifting, Decisions), the air 180 and air 360 (Drifting, Decisions, "Aerial tricks"), the airtime trick (Drifting, Decisions, "Airtime trick"), and **thread the needle** (task T-272; Level design, Decisions, "Thread the needle"): on a level made in the creator, driving through the gap between two obstacles the board paired, without touching either. When each fires is in `game/README.md`, "Tricks" (thread the needle: "Level creator", "Thread the needle (T-272)"); what each adds is in `combo.json`.
 - The multiplier multiplies all XP gained: each completed challenge's XP (the "score" signal carries the multiplied amount) and each drift second's XP.
 - Hitting a wall, a building, the map edge or a boulder cuts the combo by 80%, and so does any damage to the car (enemies, meteors). The cut applies to the part of the multiplier above "no combo".
+- A crash pays the trick in progress first (task T-315; Decisions, "A crash pays the trick in progress"): a drift under way pays its extended drift for the time it lasted until the crash, and in the air the spins and the airtime so far pay too; then the combo is cut, so the trick's popup shows just before COMBO BROKEN!. Which tricks count and why: Drifting, Content, "A crash pays the trick in progress". The order is a switch in `combo.json` (`crash_pays_trick_first`).
 - When no trick has come for 2 seconds, the combo drains, down to "no combo". A trick restarts the wait.
 - The HUD and enemy spawning read the multiplier, with a signal whenever it changes. It stops while the run is paused and resets with every new run.
 
@@ -337,6 +338,18 @@ The Decision "Drift pays once, at its end" (board, 2026-10-22), built in `trick_
 - **max: 0.5.** The same as an ALT DRIFT!, reached at 10 s of drifting, so one very long drift cannot outrun the other tricks. The old build had no cap.
 
 The popup stays the small size (a drift is a small trick). Screenshot and GIF: `art-archive/T-246/screenshots/`.
+
+#### A crash pays the trick in progress (task T-315)
+
+The Decision "A crash pays the trick in progress" (board, 2026-10-28) is in Game loop architecture, Decisions. Built in `trick_detector.gd` (`settle()`), `car.gd` (`settle_tricks()`) and `run_state.gd` (the `crashed` signal); how: `game/README.md`, "Tricks", "A crash pays the trick in progress (T-315)". A crash is anything that cuts the combo: hitting a wall, a building, a boulder, the map's edge or a side of the raised ground, or any damage to the car (minions, the kaiju, meteors).
+
+- **The extended drift:** a drift under way when the car crashes pays its `extended_drift` at once, for the time it lasted until the crash, with its LONG DRIFT! popup and amount (`drift_pay`, as for a drift that ends normally). The keys are usually still held, so the car goes on drifting: the rest of the drift after the crash is a new drift, counted from zero, and pays when it ends (or at the next crash). A drift still shorter than `drift_pay.min_seconds` is left alone and goes on counting, as before. The XP from drifting seconds is unchanged: it is paid second by second while the drift lasts, not at its end.
+- **The aerial tricks and the airtime trick:** a car in the air can crash into an obstacle or be hit by an enemy. The spins turned so far (AIR 180!, AIR 360!) and the airtime so far (HANG TIME!) pay at the crash, as if the car had landed; the rest of the airtime counts from the crash and pays on landing. An airtime still under `airtime.min_seconds` with no half turn yet is left alone.
+- **Not changed, since nothing of them is in progress:** the drift 360 (FULL 360!) and the alternate drift (ALT DRIFT!) pay the moment they are complete, so a crash never cuts one that would have paid; a 360 under way is not a trick yet and keeps counting as before. Thread the needle pays a short moment after the gap is crossed; a touch of either obstacle voids the pass by its own rule (Level design, Decisions, "Thread the needle"), and other crashes don't touch it.
+- **The order (proposal for the playtest, approved by the board):** the trick pays first, then the crash cuts the combo by 80%, so its popup shows just before COMBO BROKEN! (stacked under it). The cut then takes 80% of the trick too. The other order is a switch, `crash_pays_trick_first` in `game/data/combo.json`: `false` cuts first and then adds the trick to the cut combo, which keeps the whole trick (a 1.7 s drift from x2.0: x1.22 paid first, x1.29 cut first) and shows COMBO BROKEN! first.
+- **Feel (the agent's note for the playtest):** paying first reads as cause and effect (the drift is credited, then the crash), and both popups show at once, LONG DRIFT! under COMBO BROKEN!. The drift's amount is small (at most +0.5) and most of it is cut away, so the cost of a crash stays clear.
+
+The HUD's drift counter (T-247) is not changed: it still shows the whole drift's seconds through a crash, while the paid part starts again from zero (a question for the playtest; HUD and menus owns it). GIF and screenshot: `art-archive/T-315/screenshots/`.
 
 #### Hype speed boost (task T-275)
 
@@ -970,11 +983,11 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Neon underglow:** neon lights under the car that make a circular area around it. Enemies inside take damage every second, and an enemy takes damage as soon as it enters the area.
   - **Molotovs:** thrown from the car at random, each one makes a circular area on fire where it lands. Enemies in a fire area burn and take damage.
   - **Windshield wiper:** one wiper in front of the car that sweeps in a semicircle, like a windshield wiper. Enemies it hits take damage and are knocked back. It is the only weapon that pushes enemies (the "never push enemies back" rule above is about the gun and the flamethrower).
-  - They join the MVP, which then has 5 weapons. Each has 8 tiers like the gun and the flamethrower: getting it is tier 1, then 7 upgrades. Their numbers and what each tier changes are proposals by the agents, judged in the board's playtest.
+  - They join the MVP, which then has 5 weapons (6 with Bricks, below). Each has 8 tiers like the gun and the flamethrower: getting it is tier 1, then 7 upgrades. Their numbers and what each tier changes are proposals by the agents, judged in the board's playtest.
   - Answers to the goal runner's questions (board, 2026-10-18): an enemy burns only while it is inside a molotov's fire area, not after it leaves. The windshield wiper sweeps all the time; it damages the kaiju but pushes only minions. The garage's damage bonus multiplies the damage of every weapon, the three new ones included. The starting gun's level-up card shows a small pixel-art gun.
 - **A smaller exhaust flame that burns what it touches** (board, 2026-10-22, after playtests; replaces "a minion is in the flames when its centre is" of 2026-10-14): when the flamethrower is first picked up (tier 1) its flame is drawn 4 to 5 times smaller than today (a proposal of about a quarter of today's length and width), growing with its size tiers as before; it is drawn behind the car and behind the enemies, never over them; and its damage area is the flame as drawn, so a minion takes damage as soon as any part of it touches the visible flame (the kaiju as before, any overlap). (T-267)
 - **A stronger wiper push** (board, 2026-10-22, after playtests): the windshield wiper's first level (tier 1, when it is picked up) pushes a minion back about twice the car's size; read as twice the car's length, 6 units (the car is 1 unit wide and 3 long), against 1.5 today. The later tiers keep their multipliers, so they grow from the new base. (T-266)
-  - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has). The first level-up still offers "get the flamethrower" or "upgrade the gun".
+  - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has).
 - **The first gift pack can hold any weapon** (board, 2026-10-28; replaces "The first level-up still offers 'get the flamethrower' or 'upgrade the gun'" above): the first level-up draws its two choices at random from every choice available, like every later level-up, not only the gun and the flamethrower. (T-321)
 - **Bricks** (board, 2026-10-28): a new weapon. The car carries a load of bricks; each time the car lands on the ground after being in the air, from any height, a powerful impact wave goes out around it and damages the enemies it reaches. In the first build the wave is the same whatever the height of the fall. Its card makes it sound useless, so the player is tempted to try a jump and find out: the board's direction for the description is "Bricks - A bunch of bricks. No real use, other than making the car heavier." with a hint to jump. Text: T-322; numbers: T-323; the weapon: T-324; art: T-325.
 - **Weapons hit only enemies on the car's own level** (board, 2026-10-28; replaces "Their damage areas are unchanged" in "The underglow and the wiper at height" above, for damage): on a map with rooftops and ramps, a weapon damages only the enemies on the same height level as the weapon's hit: the car's level for the gun, the flamethrower, the underglow, the wiper and Bricks, and the fire's level for a molotov. An enemy on the street is not hit from a rooftop above it, and the other way round. How a ramp's in-between heights and the kaiju count are the agents' proposals for the playtest. (T-326)
@@ -1032,6 +1045,48 @@ Proposals by the Game Data Agent for the board's playtest; the board judges and 
 - **Molotovs:** one thrown every 3 seconds at a random spot 3 to 8 units from the car; fire area radius 1.5 lasting 3 seconds; enemies take 2 on entering and every 0.5 seconds while inside. Tiers: 2 radius x1.2; 3 throw interval x0.8; 4 damage x1.5; 5 one more molotov per throw; 6 fire lasts 1.5 seconds longer; 7 radius x1.3; 8 one more molotov per throw (final: 3 per throw every 2.4 seconds, radius 2.34, 4.5 seconds, 3 damage).
 - **Windshield wiper:** one arm 2.5 units long sweeping a 180 degree semicircle in front of the car at 240 degrees per second; 3 damage per hit, the same enemy can be hit again after 0.5 seconds; minions are pushed back 6 units (twice the car's length), the kaiju is damaged but not pushed. Tiers: 2 length x1.2; 3 damage x1.4; 4 sweep speed x1.25; 5 knockback x1.5; 6 length x1.3; 7 damage x1.4; 8 sweep speed x1.3 (final: length 3.9, damage 5.9, knockback 9).
 
+#### Bricks
+
+What the built weapon does in the game (built in task T-324). It follows Decisions ("Bricks", 2026-10-28), takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the numbers below) and shows the card texts below. How the code is put together: `game/README.md`, "Weapons", "Bricks".
+
+- **Owning it:** a run starts without it. It is one of the car's weapons, offered on level-up cards like the other five, gained and upgraded through the same call (`upgrade("bricks")`); since T-321 it can be on the very first gift pack. A playtest switch (`game/data/playtest.json`, `bricks_at_start`, off) gives it at the start of every run.
+- **The landing:** each step the weapon reads whether the car is in the air (the car's height model, the same airborne state the airtime trick uses) and counts the seconds; the step the car is back on the ground is the landing. A landing after at least the minimum time in the air (0.3 seconds) sends one impact wave; a shorter hop (a curb, a bump, a low step down) sends none. Any way of being in the air counts: a ramp's top, a rooftop's edge, any drop. Nothing is counted while the run is paused or after it ends.
+- **The wave:** one wave at the landing spot, the same whatever the height of the fall (the impact speed is not read). Every enemy whose body is within the radius (4 units at tier 1) takes the damage once (6 at tier 1, times the garage damage bonus), the kaiju too: a minion counts when its body's edge is inside, an enemy that reports its body size (the kaiju) when any part of its body is. Nothing outside the radius is touched, and the steps after the landing send nothing more. Minions that survive are pushed straight away from the landing spot by the knockback (4 units at tier 1), through the same call as the wiper's push; the kaiju is never pushed; a minion the wave kills is not pushed.
+- **Two landings close together** (the cooldown, 0.5 seconds): a landing less than the cooldown after the last wave sends none, so a bounce cannot stack two waves on the same enemies.
+- **Tiers:** as the numbers below (radius, damage and knockback multipliers), applied from code; the drawn ring follows the radius.
+- **The car:** its handling is not changed; "making the car heavier" is only the card's joke.
+- **Look:** a placeholder drawn in code, until the art task (T-325): an expanding ring on the ground at the landing spot (on a rooftop, on the roof), the circle as seen in the isometric view, growing in stepped frames from the car's size out to exactly the damage radius in about a third of a second and showing for 0.6 seconds, with a second ring right behind it while it travels; a burst of dust puffs and brick chips thrown out and up from the spot, which grow and then shrink away (no fading). City colours: a pale blue-white ring with a cool blue-grey band and a dark navy outline, blue-grey concrete dust, pale brick-brown chips; opaque hard-edged pixels, none of Greenbull's colours. The level-up card shows a placeholder image drawn in code (a small stack of pale brown bricks with a dark outline, 16 x 16 pixels) until the art task's image. No sound yet (the SFX bus has no fitting sound; a separate task can add one).
+
+**Numbers** (proposed in task T-323): proposals by the Game Data Agent for the board's playtest, for the board's decision in Decisions ("Bricks", 2026-10-28). Numbers: `bricks` in [../game/data/weapons.json](../game/data/weapons.json), read through `WeaponData.bricks_at(tier)`. The weapon itself is T-324, which turned it on at level-ups (`offered_in_level_ups` true, `bricks` in `WEAPON_ORDER` and the choice ids in `level_up_offers.gd`). Same 8 tiers as the other weapons (tier 1 is getting it, tiers 2 to 8 are 7 upgrades; the card texts, T-322, are written for that count). The garage damage bonus multiplies its damage.
+
+- **Damage 6**, once per enemy per landing. A minion has 4 health, so the first tier already kills a minion outright, as the board's "powerful impact wave" asks. A landing is rare (see below), so one hit has to be worth far more than the wiper's 3 per 0.5 seconds.
+- **Radius 4** units around the car, a disc about 50 square units against the wiper's half disc of radius 2.5 (about 10). It is wide because the wave is the point of the weapon, and a player lands rarely.
+- **Knockback 4** units, minions only, never the kaiju (the wiper's rule). Smaller than the wiper's 6: the wave is meant to clear space around the car and kill, and a minion that survives (kaiju excluded) is not thrown out of reach.
+- **Minimum time in the air 0.3 seconds**, the same as the airtime trick's `min_seconds` (`combo.json`, Drifting, Content, "Airtime trick"): a curb or a bump stays under it, a ramp hop (about 0.7 seconds) and a rooftop fall (about 1 second) are well over it. One number for "a real jump" keeps the two features agreeing.
+- **Cooldown 0.5 seconds** between waves, so a bounce or two quick landings cannot stack waves on the same enemies. It is rarely felt: a jump takes over 0.3 seconds in the air plus time on the ground.
+- **Same wave whatever the height** (first build); the height does not scale any number.
+- **Tiers:** 2 radius x1.2; 3 damage x1.5; 4 knockback x1.5; 5 radius x1.25; 6 damage x1.5; 7 knockback x1.5; 8 radius x1.3 (final: radius 7.8, damage 13.5, knockback 9). Radius and damage alternate so the weapon reads as a bigger, harder wave; the knockback steps are the wiper's tier 5 step.
+- **How it compares:** the wiper at tier 1 does about 6 damage per second to an enemy it keeps hitting; the underglow 1 per second. Landings on the elevation map come from ramps and rooftop edges only, perhaps one every 10 to 20 seconds of a run that uses them, so Bricks' average damage per second to one enemy is about 0.3 to 0.6 at tier 1, but it hits everything within 4 units at once and kills a minion, so against a crowd it matches the wiper and fires only when the player jumps. If the board finds it too weak or too strong in playtest, damage and radius are the first numbers to move.
+
+**Card texts** (task T-322; the board's line, kept word for word, with a hint to jump; scored 8 or more in the style loop). They are in [../game/scripts/ui/level_up_texts.gd](../game/scripts/ui/level_up_texts.gd). The upgrade texts follow T-323's 7 tiers (2 to 8: wider wave, harder hit, stronger knockback, wider wave, harder hit, stronger knockback, widest wave) and carry no numbers.
+
+- `get_bricks.title`: Bricks
+- `get_bricks.desc`: A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?
+- `upgrade_bricks.tier2.title`: Wider Wave
+- `upgrade_bricks.tier2.desc`: Each landing's impact wave reaches further. Greenbull calls it ground-breaking content.
+- `upgrade_bricks.tier3.title`: Harder Landing
+- `upgrade_bricks.tier3.desc`: Your landing wave hits harder. Greenbull calls it a high-impact brand activation.
+- `upgrade_bricks.tier4.title`: Shove Factor
+- `upgrade_bricks.tier4.desc`: Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback.
+- `upgrade_bricks.tier5.title`: Wider Wave II
+- `upgrade_bricks.tier5.desc`: Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint.
+- `upgrade_bricks.tier6.title`: Harder Landing II
+- `upgrade_bricks.tier6.desc`: Your landing wave hits harder again. Greenbull is trademarking the thud.
+- `upgrade_bricks.tier7.title`: Shove Factor II
+- `upgrade_bricks.tier7.desc`: Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach.
+- `upgrade_bricks.tier8.title`: Widest Wave
+- `upgrade_bricks.tier8.desc`: Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout.
+
 #### The neon underglow (built in task T-168)
 
 What the built underglow does in the game. It follows Decisions ("Three new weapons") and takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/README.md`, "Weapons", "The neon underglow".
@@ -1081,12 +1136,12 @@ What the built grow does. It follows Decisions ("Size upgrades grow on screen").
 
 What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/README.md`, "Weapons", "The level-up offers".
 
-- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the five weapons gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 9 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs and the windshield wiper.
-- Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper), not in the order drawn.
-- The first level-up of a normal run (no choice taken yet, the car has only the gun) always offers "upgrade the gun" and "get the flamethrower", as Decisions says. Every level-up after that is drawn. A run that already starts with the flamethrower (its playtest switch) is not a normal run, so its first level-up is drawn too, and the flamethrower's upgrades are among the choices.
+- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the weapons (six since T-324 added Bricks) gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 11 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs, the windshield wiper and Bricks.
+- Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper, Bricks), not in the order drawn.
+- The first level-up is drawn like every other one (Decisions, "The first gift pack can hold any weapon", T-321): two different choices at random from every choice available, so it can offer any weapon the car doesn't have (five besides the gun, with Bricks), or the gun's upgrade. A run that already starts with the flamethrower (its playtest switch) draws the same way, and the flamethrower's upgrades are among the choices.
 - Taking a choice applies it at once (the weapon at tier 1, or its next tier) and the run resumes. If several levels were reached at once, their choices follow one after another, each drawn on its own.
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
-- **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car all five weapons at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
+- **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
 
 ### References
 
@@ -1421,11 +1476,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `59a0a0fc3f46733783eac19a30c7559d92a4411ed1c7eb1ba53898cede467817` |
-| `drifting.md` | `35aa486ed94aff23eaadd5f4fccf12aecf31eaf24c9a899728fc10a19ce820ab` |
+| `game-loop-architecture.md` | `0ac1ef80b17ef8cdf1968377b5c0c8f1562303828ac7167b7ddc9ae6623f0169` |
+| `drifting.md` | `647f5dec28a9dc7136695ed11fa02712929061e20f22b1a16de17df7bd572351` |
 | `level-design.md` | `b7e96891d2276dee341714f9c5905a2cb8038a00a52dba1753ed5fc004191525` |
 | `enemies.md` | `aa43f2ec80bf2642ecd6c98eec4c505fc89bf2bbe37398736e8001b36243dd23` |
-| `weapons.md` | `42da45f90afacec35ec4f34243cd5596d3a529f96783f93aa59fabde5afd425d` |
+| `weapons.md` | `28309b10fa17f8b6c8aedd43863efc90f156f299a848f97ee7d0427315d163cf` |
 | `garage-design.md` | `0b88553049d4a95a1da8eed2b1bd7674d59a089136bad802c46c2d0d47a6a742` |
 | `visual-style.md` | `5adbc8ebabe03e60bbfc97be39660bd6edaa1a606d1151ec9f9b464ab0889f79` |
 | `extended-narrative.md` | `b81550da4d056c676cb07dfe0bc383f975ffaadc8625d8be06e5410c8553756a` |

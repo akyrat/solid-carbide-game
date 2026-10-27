@@ -1,8 +1,12 @@
 class_name GiftArrows
 extends CanvasLayer
 ## The gift pack's off-screen arrows (task T-144; the board's answer 5,
-## 2026-10-16): while a landed package is off screen, an arrow at the screen's
-## edge points to it, one arrow per package. Placeholder look: a pale cyan
+## 2026-10-16; T-314, 2026-10-28): while a package on the map (falling or
+## landed, not the one still carried by the helicopter) is off screen, an arrow
+## at the screen's edge points to it, one arrow per package. Several arrows that
+## would overlap are slid apart along the track (each later arrow keeps GAP
+## clear of the ones placed before it, in the packages' order, so they don't
+## swap places from frame to frame). None is drawn for a package on screen. Placeholder look: a pale cyan
 ## triangle with a dark outline, not the heart's red. Each arrow sits on a track
 ## MARGIN inside the screen's edges, where the line from the screen's centre to
 ## the package crosses it, slid along the track when that spot would touch a
@@ -48,19 +52,20 @@ func _process(_delta: float) -> void:
 	refresh()
 
 
-## Works out the arrows for the landed packages now and redraws them.
+## Works out the arrows for the packages on the map now and redraws them.
 func refresh() -> void:
 	shown = []
 	if drops == null:
 		return
 	var screen := screen_size()
 	var avoid := hud_rects()
-	for pkg in drops.landed_packages():
+	for pkg in drops.mapped_packages():
 		var at: Vector2 = pkg.get_global_transform_with_canvas().origin
 		var placed := place(screen, at, avoid)
 		if not placed.is_empty():
 			placed["package"] = pkg
 			shown.append(placed)
+			avoid.append(arrow_rect(placed.position))  # the next arrow keeps clear of this one
 	if _canvas != null:
 		_canvas.queue_redraw()
 

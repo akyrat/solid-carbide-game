@@ -52,6 +52,8 @@ const PLACEHOLDER_COLORS := {
 	"w": Color8(255, 250, 210), "c": Color8(60, 230, 240), "d": Color8(50, 60, 90),
 	"v": Color8(150, 200, 230), "p": Color8(230, 220, 190), "e": Color8(60, 150, 70),
 	"l": Color8(140, 210, 140),
+	# Bricks (T-324): a pale brick brown and its dark side, kept clear of the heart's red.
+	"r": Color8(160, 124, 104), "n": Color8(100, 80, 70),
 }
 const PLACEHOLDER_GRIDS := {
 	# The starting gun: a small pistol (board, 2026-10-18).
@@ -93,6 +95,14 @@ const PLACEHOLDER_GRIDS := {
 		".......ksk......", "......ksk.......", ".....ksk........",
 		"....ksk.........", "...ksk..........", "..kggk..........",
 		".kgggk..........", ".kkkk...........", "................", "................",
+	],
+	# Bricks (T-324): a small stack of bricks with pale mortar, until T-325's art.
+	"bricks": [
+		"................", "................", "................", "................",
+		".....kkkkkk.....", ".....krrrrk.....", ".....knnnnk.....",
+		"..kkkkkkkkkkk...", "..krrrrkrrrrk...", "..knnnnknnnnk...",
+		"kkkkkkkkkkkkkkkk", "krrrrkrrrrkrrrrk", "knnnnknnnnknnnnk",
+		"kkkkkkkkkkkkkkkk", "................", "................",
 	],
 }
 static var _placeholder_cache := {}

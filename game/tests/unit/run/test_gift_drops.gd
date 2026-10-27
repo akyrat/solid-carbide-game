@@ -205,7 +205,8 @@ func test_driving_over_the_landed_package_removes_it_and_opens_the_screen() -> v
 	drops.land_all()
 	var pkg: GiftPackage = drops.packages[0]
 	var expected: Array = run.weapons.offers.compute_offers()
-	assert_eq(expected, ["upgrade_gun", "get_flamethrower"], "T-043's first offers")
+	assert_eq(expected.size(), 2, "two choices")
+	assert_ne(expected[0], expected[1])
 	var picked: Array = []
 	drops.package_picked_up.connect(func(p): picked.append(p))
 	drops.check_pickups()
@@ -221,8 +222,10 @@ func test_driving_over_the_landed_package_removes_it_and_opens_the_screen() -> v
 	assert_true(get_tree().paused, "the run pauses")
 	assert_eq(state.choice_level(), 2)
 	run.level_up_screen.skip_animation()
-	run.level_up_screen.take("get_flamethrower")
-	assert_eq(run.weapons.flamethrower.tier, 1, "the choice works as before")
+	var taken: Node = run.weapons.get_weapon(run.weapons.offers.weapon_of(ids[0]))
+	var tier_before: int = taken.tier
+	run.level_up_screen.take(ids[0])
+	assert_eq(taken.tier, tier_before + 1, "the choice works as before")
 	assert_false(run.level_up_screen.visible)
 	assert_false(get_tree().paused, "the run resumes")
 
@@ -484,7 +487,7 @@ func test_answer_5_an_arrow_shows_only_while_the_landed_package_is_off_screen() 
 	_level_up()
 	var arrows: GiftArrows = drops.arrows
 	arrows.refresh()
-	assert_true(arrows.shown.is_empty(), "no arrow for a package still in the air")
+	assert_true(arrows.shown.is_empty(), "no arrow for a package still carried, on screen")
 	drops.land_all()
 	var pkg: GiftPackage = drops.packages[0]
 	arrows.refresh()
@@ -510,6 +513,97 @@ func test_answer_5_one_arrow_per_off_screen_package() -> void:
 	_package_at_drawn(Vector2(-4000, 0))
 	drops.arrows.refresh()
 	assert_eq(drops.arrows.shown.size(), 2)
+
+
+func _falling_package_at_drawn(drawn_offset: Vector2) -> GiftPackage:
+	var pkg := _package_at_drawn(drawn_offset)
+	pkg.phase = GiftPackage.FALLING
+	return pkg
+
+
+func test_t314_one_arrow_per_package_two_and_three_each_pointing_at_its_own() -> void:
+	_run_at(SIZES[0])
+	await wait_process_frames(2)
+	var pkgs: Array = [_package_at_drawn(Vector2(4000, 0)), _package_at_drawn(Vector2(-4000, 200)), _package_at_drawn(Vector2(300, -4000))]
+	for n in [2, 3]:
+		drops.arrows.refresh()
+		var live: Array = pkgs.slice(0, n)
+		var mine: Array = drops.arrows.shown.filter(func(a): return live.has(a.package))
+		assert_eq(mine.size(), n, "%d arrows for %d packages" % [n, n])
+		for a in mine:
+			var target: Vector2 = a.package.get_global_transform_with_canvas().origin
+			assert_almost_eq(Vector2.from_angle(a.angle).dot((target - a.position).normalized()), 1.0, 0.001, "points at its own package")
+		if n == 2:
+			# hide the third for the two-package round
+			pkgs[2].position = run.camera.get_screen_center_position()
+			pkgs[2].drawn_ground = pkgs[2].position
+			drops.arrows.refresh()
+			assert_eq(drops.arrows.shown.size(), 2, "two packages off screen, the third on screen: two arrows")
+			pkgs[2].position = run.camera.get_screen_center_position() + Vector2(300, -4000)
+	drops.arrows.refresh()
+	assert_eq(drops.arrows.shown.size(), 3)
+
+
+func test_t314_a_falling_package_has_its_arrow_from_the_drop() -> void:
+	_run_at(SIZES[0])
+	await wait_process_frames(2)
+	_level_up()
+	var pkg: GiftPackage = drops.packages[0]
+	assert_true(pkg.phase == GiftPackage.CARRIED)
+	pkg.position = run.camera.get_screen_center_position() + Vector2(4000, 0)
+	drops.arrows.refresh()
+	assert_true(drops.arrows.shown.is_empty(), "no arrow while the helicopter still carries it")
+	drops._drop(drops.helicopters[0])
+	assert_true(pkg.is_falling())
+	pkg.position = run.camera.get_screen_center_position() + Vector2(4000, 0)
+	drops.arrows.refresh()
+	assert_eq(drops.arrows.shown.size(), 1, "an arrow the moment it is dropped")
+	assert_eq(drops.arrows.shown[0].package, pkg)
+
+
+func test_t314_arrows_in_the_same_direction_slide_apart_and_stay_clear_of_the_hud() -> void:
+	for size in SIZES:
+		_run_at(size)
+		await wait_process_frames(2)
+		var screen := Vector2(size)
+		var parts := _hud_parts(run.hud)
+		var pkgs: Array = []
+		for i in 3:
+			pkgs.append(_package_at_drawn(Vector2(5000, i * 3.0)) if i != 1 else _falling_package_at_drawn(Vector2(5000, 1.0)))
+		drops.arrows.refresh()
+		assert_eq(drops.arrows.shown.size(), 3)
+		var boxes: Array = drops.arrows.shown.map(func(a): return GiftArrows.arrow_rect(a.position))
+		for i in boxes.size():
+			assert_true(Rect2(Vector2.ZERO, screen).encloses(boxes[i]), "%s: on screen" % [size])
+			for n in parts:
+				assert_false(boxes[i].intersects(parts[n]), "%s: clear of %s" % [size, n])
+			for j in range(i + 1, boxes.size()):
+				assert_false(boxes[i].intersects(boxes[j]), "%s: arrows %d and %d apart" % [size, i, j])
+		for p in pkgs:
+			drops.packages.erase(p)
+			p.free()
+
+
+func test_t314_picking_one_up_removes_only_its_arrow() -> void:
+	_run_at(SIZES[0])
+	await wait_process_frames(2)
+	var a := _package_at_drawn(Vector2(4000, 0))
+	var b := _package_at_drawn(Vector2(-4000, 0))
+	var c := _falling_package_at_drawn(Vector2(0, 4000))
+	drops.arrows.refresh()
+	assert_eq(drops.arrows.shown.size(), 3)
+	drops.pick_up(a)
+	drops.arrows.refresh()
+	var left: Array = drops.arrows.shown.map(func(x): return x.package)
+	assert_eq(left.size(), 2)
+	assert_true(left.has(b) and left.has(c) and not left.has(a))
+
+
+func test_t314_place_with_other_arrows_in_the_avoid_list_moves_apart() -> void:
+	var screen := Vector2(1000, 600)
+	var first := GiftArrows.place(screen, Vector2(2000, 300), [])
+	var second := GiftArrows.place(screen, Vector2(2000, 300), [GiftArrows.arrow_rect(first.position)])
+	assert_false(GiftArrows.arrow_rect(first.position).grow(GiftArrows.GAP).intersects(GiftArrows.arrow_rect(second.position)))
 
 
 func test_answer_5_arrows_stay_clear_of_the_hud_at_every_window_size() -> void:

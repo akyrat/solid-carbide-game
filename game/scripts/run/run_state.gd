@@ -78,6 +78,13 @@ signal combo_changed(multiplier: float)
 ## the multiplier down (not the drain, and not when there was no combo to cut).
 ## For the combo broken popup.
 signal combo_broken
+## The car crashed (task T-315): a collision or any damage, while the run is
+## going, whether or not there was a combo to cut. The run scene pays the
+## car's trick in progress on it (car.gd settle_tricks(): a drift so far pays
+## its LONG DRIFT!). With combo.json's crash_pays_trick_first (the default) it
+## fires before the cut, so the trick's popup comes just before COMBO BROKEN!;
+## otherwise just after the cut.
+signal crashed
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -366,14 +373,23 @@ func add_needle_trick() -> void:
 ## The car collided with something (the run scene connects the car's
 ## `hit_obstacle`; damage_car() calls it too): the combo is cut as combo.json
 ## says (80% of the part above the start value). Ignored when the run is not
-## going.
+## going. Sends `crashed` first (task T-315), so the trick in progress pays
+## before the cut; combo.json's crash_pays_trick_first false sends it after.
 func collision() -> void:
 	if not running:
 		return
+	# A crash pays the trick in progress (T-315): by default before the cut.
+	var pay_first := _combo_data.crash_pays_trick_first()
+	if pay_first:
+		crashed.emit()
+		if not running:
+			return
 	var before := combo
 	_set_combo(_combo_data.after_collision(combo))
 	if before - combo > EPSILON:
 		combo_broken.emit()
+	if not pay_first:
+		crashed.emit()
 
 
 ## How much the minion spawn rate is multiplied at the current combo

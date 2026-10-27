@@ -185,6 +185,18 @@ The Decision "Drift pays once, at its end" (board, 2026-10-22), built in `trick_
 
 The popup stays the small size (a drift is a small trick). Screenshot and GIF: `art-archive/T-246/screenshots/`.
 
+### A crash pays the trick in progress (task T-315)
+
+The Decision "A crash pays the trick in progress" (board, 2026-10-28) is in Game loop architecture, Decisions. Built in `trick_detector.gd` (`settle()`), `car.gd` (`settle_tricks()`) and `run_state.gd` (the `crashed` signal); how: `game/README.md`, "Tricks", "A crash pays the trick in progress (T-315)". A crash is anything that cuts the combo: hitting a wall, a building, a boulder, the map's edge or a side of the raised ground, or any damage to the car (minions, the kaiju, meteors).
+
+- **The extended drift:** a drift under way when the car crashes pays its `extended_drift` at once, for the time it lasted until the crash, with its LONG DRIFT! popup and amount (`drift_pay`, as for a drift that ends normally). The keys are usually still held, so the car goes on drifting: the rest of the drift after the crash is a new drift, counted from zero, and pays when it ends (or at the next crash). A drift still shorter than `drift_pay.min_seconds` is left alone and goes on counting, as before. The XP from drifting seconds is unchanged: it is paid second by second while the drift lasts, not at its end.
+- **The aerial tricks and the airtime trick:** a car in the air can crash into an obstacle or be hit by an enemy. The spins turned so far (AIR 180!, AIR 360!) and the airtime so far (HANG TIME!) pay at the crash, as if the car had landed; the rest of the airtime counts from the crash and pays on landing. An airtime still under `airtime.min_seconds` with no half turn yet is left alone.
+- **Not changed, since nothing of them is in progress:** the drift 360 (FULL 360!) and the alternate drift (ALT DRIFT!) pay the moment they are complete, so a crash never cuts one that would have paid; a 360 under way is not a trick yet and keeps counting as before. Thread the needle pays a short moment after the gap is crossed; a touch of either obstacle voids the pass by its own rule (Level design, Decisions, "Thread the needle"), and other crashes don't touch it.
+- **The order (proposal for the playtest, approved by the board):** the trick pays first, then the crash cuts the combo by 80%, so its popup shows just before COMBO BROKEN! (stacked under it). The cut then takes 80% of the trick too. The other order is a switch, `crash_pays_trick_first` in `game/data/combo.json`: `false` cuts first and then adds the trick to the cut combo, which keeps the whole trick (a 1.7 s drift from x2.0: x1.22 paid first, x1.29 cut first) and shows COMBO BROKEN! first.
+- **Feel (the agent's note for the playtest):** paying first reads as cause and effect (the drift is credited, then the crash), and both popups show at once, LONG DRIFT! under COMBO BROKEN!. The drift's amount is small (at most +0.5) and most of it is cut away, so the cost of a crash stays clear.
+
+The HUD's drift counter (T-247) is not changed: it still shows the whole drift's seconds through a crash, while the paid part starts again from zero (a question for the playtest; HUD and menus owns it). GIF and screenshot: `art-archive/T-315/screenshots/`.
+
 ### Hype speed boost (task T-275)
 
 The decision is in Decisions ("Hype speed boost"). Proposals for the board's playtest, kept in `game/data/combo.json` (`hype_speed`):

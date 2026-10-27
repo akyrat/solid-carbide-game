@@ -48,6 +48,19 @@ func airtime_add(seconds: float) -> float:
 		return 0.0
 	return snappedf(minf(s * float(a["per_second"]), float(a["max_add"])), 0.01)
 
+## Shortest airtime that pays, in seconds (airtime.min_seconds; task T-315 reads it).
+func airtime_min_seconds() -> float:
+	return float(_data["airtime"]["min_seconds"])
+
+
+## Whether a crash pays the trick in progress before it cuts the combo (task
+## T-315; combo.json, crash_pays_trick_first). true (the default): the trick's
+## popup shows, then COMBO BROKEN!; false: the cut comes first, then the trick
+## is added to the cut combo.
+func crash_pays_trick_first() -> bool:
+	return bool(_data.get("crash_pays_trick_first", true))
+
+
 ## The thread the needle trick's rules (task T-272; combo.json, "thread_the_needle"):
 ## {repeat_seconds, counts_in_air, touch_window_seconds, clear_seconds}. Its worth is
 ## trick_add("thread_the_needle").

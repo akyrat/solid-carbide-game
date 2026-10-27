@@ -1945,3 +1945,8 @@ Entry format:
 - Decision or change: the board confirmed that "Hype Lv" is gone for good (the sub goal square shows the level; T-337 now removes the text and its code). The coins counter moves to the bottom left above the clock (T-341, waits for the clock). The proposals for the live viewers (2,500 at x1, heat steps 20K / 85K / 236K, fire from 1M) and the PixelLab cap of 40 are confirmed. The "views instead of likes" tickets T-287 to T-289 are cancelled, replaced by subs and live viewers. The weapon icons column being taller than the old health bar doesn't matter. The HUD layout page moved to a new link (CSHYCDV9xZbSYwQGUt5SJ4) after the board changed accounts; the saved positions were restored.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-287, T-288, T-289, T-337, T-341
+
+## 2026-10-28: Batch 1028 merged (arrows, crash pays the trick, any first gift pack, Bricks)
+- Decision or change: the board played `playtest/batch-1028` and approved T-314 (an arrow for every gift pack), T-315 (a crash pays the trick), T-321 (the first gift pack can hold any weapon) and T-324 (the Bricks weapon, placeholder art), with T-322 and T-323 (Bricks text and numbers). Merged into master. The Weapons doc now says the MVP has six weapons with Bricks. The Bricks art (T-325) starts.
+- Documents touched: docs/weapons.md, docs/game-loop-architecture.md, docs/drifting.md
+- Tasks: T-314, T-315, T-321, T-322, T-323, T-324
