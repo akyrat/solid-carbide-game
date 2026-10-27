@@ -189,7 +189,7 @@ Every round is written in the task's `## Style review` section: the version (wit
 The script checks are in `game/tools/style_rules.py` (T-290). The loop's tool (T-291) runs the four steps with no one stepping in:
 
 ```
-python tools/style_loop/run.py art --task T-012 --brief <brief file> --out game/art/<file>.png [--size WxH] [--frames N] [--redgull] [--allow-red R,G,B] [--max-colors N]
+python tools/style_loop/run.py art --task T-012 --brief <brief file> --out game/art/<file>.png [--size WxH] [--frames N] [--greenbull] [--allow-red R,G,B] [--max-colors N]
 python tools/style_loop/run.py text --task T-012 --brief <brief file> --kind popup|card_title|card_desc|garage_name|garage_desc|label [--out <file>]
 python tools/style_loop/run.py text --task T-012 --brief tools/style_loop/fixtures/sample-brief.md --kind popup --fake tools/style_loop/fixtures/text-4-6-9.json
 ```

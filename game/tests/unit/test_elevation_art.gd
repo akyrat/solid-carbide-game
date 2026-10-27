@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-186: the PixelLab art of the elevation test scene's platform and ramp
 ## (game/art/elevation/) replaces the script drawing: the images exist with
 ## their records, follow Visual style's technical rules (hard edges, at most
-## 30 colours, transparent background, no Redgull red), are placed so their
+## 30 colours, transparent background, not the heart's red), are placed so their
 ## size matches the pieces in data/level/elevation_test.json at 32 art px per
 ## unit drawn at 0.5, and the scene keeps the depth order with the car.
 
@@ -64,7 +64,7 @@ func test_the_rules_hold_for_each_image() -> void:
 						reddish += 1
 		assert_eq(semi, 0, kind + ": no semi-transparent pixels")
 		assert_lte(colours.size(), MAX_COLORS, kind + ": colours")
-		assert_eq(reddish, 0, kind + ": no Redgull red")
+		assert_eq(reddish, 0, kind + ": not the heart's red")
 		for corner in [Vector2i(0, 0), Vector2i(img.get_width() - 1, 0), Vector2i(0, img.get_height() - 1), Vector2i(img.get_width() - 1, img.get_height() - 1)]:
 			assert_eq(img.get_pixelv(corner).a, 0.0, kind + ": transparent corner")
 

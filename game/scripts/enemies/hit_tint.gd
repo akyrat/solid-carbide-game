@@ -14,8 +14,8 @@ class_name HitTint
 ## it does not start while the sprite already has a tint, and it only puts the colour back if
 ## the sprite still has its own red tint. So an orange flash always wins and is never cut short.
 ##
-## Not Redgull red: TINT is a pale, pinkish red (about 62% green and blue left), well away from
-## Redgull's (0.86, 0.1, 0.16).
+## Not the heart's red: TINT is a pale, pinkish red (about 62% green and blue left), well away from
+## the heart's red (0.86, 0.1, 0.16).
 
 const DURATION := 0.12
 const TINT := Color(1.0, 0.62, 0.62, 1.0)

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Draws the HUD's likes heart (task T-086; no PixelLab call, 0 generations).
 
-Board, 2026-10-14: a flat Redgull-red heart in the HUD's comic look: a thick dark outline like
+Board, 2026-10-14: a flat red heart in the HUD's comic look: a thick dark outline like
 the "LIKES" text's, a little chunky. A hand-placed pixel grid: 9 x 8 fill pixels plus a 1 pixel
 outline all round = 11 x 10 art pixels. The HUD shows it at 2x (nearest), so one art pixel is
 two screen pixels, about the height of the "LIKES" text with its outline. Two colours only:
-Redgull red (the HUD's Hud.HEART_COLOR) and the HUD's dark text-outline colour
+red (the HUD's Hud.HEART_COLOR) and the HUD's dark text-outline colour
 (Hud.OUTLINE_COLOR). Transparent background, no anti-aliasing, no semi-transparent pixels.
 
 Commands (run from the repo root):
@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
+import style_rules as rules  # noqa: E402  (the sprite checks and the red check, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -31,7 +31,7 @@ OUT_DIR = GAME / "art" / "hud"
 PNG = OUT_DIR / "likes_heart.png"
 ARCHIVE = REPO / "art-archive" / "T-086"
 
-RED = rules.HEART_COLOR  # Hud.HEART_COLOR (0.86, 0.1, 0.16), Redgull red
+RED = rules.HEART_COLOR  # Hud.HEART_COLOR (0.86, 0.1, 0.16), the likes heart's red
 OUTLINE = (8, 8, 15)  # Hud.OUTLINE_COLOR (0.03, 0.03, 0.06)
 CLEAR = (0, 0, 0, 0)
 
@@ -72,8 +72,8 @@ def check_rows(icon):
     results, _ = rules.check_rows(icon, size=SIZE[0], max_colors=3)
     results[0] = ("size %dx%d" % SIZE, (len(icon[0]), len(icon)) == SIZE, "%dx%d" % (len(icon[0]), len(icon)))
     colours = {p[:3] for r in icon for p in r if p[3]}
-    results.append(("only Redgull red and the outline colour", colours == {RED, OUTLINE}, str(colours)))
-    results.append(("the red is Redgull red", rules.is_redgull_red(RED), str(RED)))
+    results.append(("only the heart's red and the outline colour", colours == {RED, OUTLINE}, str(colours)))
+    results.append(("the heart's red reads as red", rules.reads_as_red(RED), str(RED)))
     return results
 
 
@@ -110,12 +110,12 @@ def build(out_dir=OUT_DIR, archive=ARCHIVE):
     write_png(out_dir / "likes_heart.png", icon)
     record = {
         "task": "T-086",
-        "what": "The HUD likes heart: flat Redgull red, thick dark outline like the LIKES text's, a little chunky.",
+        "what": "The HUD likes heart: flat " + rules.OLD_BRAND + " red, thick dark outline like the LIKES text's, a little chunky.",
         "made_by": "game/tools/build_heart_icon.py (a hand-placed pixel grid; no PixelLab call, 0 generations, board 2026-10-14). Byte-identical every run.",
         "size": list(SIZE),
         "shown_at_scale": SHOW_SCALE,
         "palette": {"red": list(RED), "outline": list(OUTLINE)},
-        "references": ["docs/visual-style.md (technical rules, Redgull red)", "docs/hud-and-menus.md", "game/scripts/hud/hud.gd (HEART_COLOR, OUTLINE_COLOR)"],
+        "references": ["docs/visual-style.md (technical rules, " + rules.OLD_BRAND + " red)", "docs/hud-and-menus.md", "game/scripts/hud/hud.gd (HEART_COLOR, OUTLINE_COLOR)"],
         "prompt": None,
     }
     (out_dir / "likes_heart.json").write_text(json.dumps(record, indent=1) + "\n", encoding="utf-8")

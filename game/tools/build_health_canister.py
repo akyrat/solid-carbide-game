@@ -6,8 +6,8 @@ Usage, from the repo root:  python game/tools/build_health_canister.py [--width 
 Three fixes on the board-approved raw sample (art-archive/T-221/canister_raw.png):
 1. the blobby white mark is painted over with the body red and redrawn as a clean
    plus-shaped cross;
-2. the darkest red (close to Redgull's red, style_rules.REDGULL_RED) is moved to a lighter,
-   warmer red, so no colour is within MIN_REDGULL_DISTANCE of Redgull's red;
+2. the darkest red (close to the old logo's red, style_rules.OLD_LOGO_RED) is moved to a lighter,
+   warmer red, so no colour is within MIN_OLD_LOGO_RED_DISTANCE of the old logo's red;
 3. the sprite is cut to its bounding box and scaled down to about a coin's size by
    taking, for each output pixel, the most common colour of the source block
    (nearest-neighbour style: no new colours, no semi-transparent pixels).
@@ -22,12 +22,15 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style_rules import REDGULL_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
+from style_rules import OLD_BRAND, OLD_LOGO_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
+
+# The committed record's key, built from the old name so a rebuild writes it unchanged (T-312).
+DISTANCE_KEY = "min_distance_to_" + OLD_BRAND.lower() + "_red"
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "art-archive" / "T-221" / "canister_raw.png"
 OUT = ROOT / "game" / "art" / "effects" / "health_canister.png"
-MIN_REDGULL_DISTANCE = 45.0  # 0..255 RGB distance every colour keeps from the logo's red
+MIN_OLD_LOGO_RED_DISTANCE = 45.0  # 0..255 RGB distance every colour keeps from the old logo's red
 WHITE = (253, 248, 245)
 OUTLINE = (23, 14, 14)
 OUTLINE_WEIGHT = 2.2
@@ -110,11 +113,11 @@ def main():
         "file": OUT.name, "task": "T-221", "source": "art-archive/T-221/canister_raw.png",
         "generator": "game/tools/build_health_canister.py", "image": {"width": out.width, "height": out.height},
         "colours": sorted("#%02x%02x%02x" % c for c in cols),
-        "min_distance_to_redgull_red": round(min(rgb_distance(c, REDGULL_RED) for c in cols), 1),
-        "notes": "Free script on the board-approved raw sample: white mark redrawn as a plus, darkest red moved away from Redgull's red, scaled down by block majority. No PixelLab.",
+        DISTANCE_KEY: round(min(rgb_distance(c, OLD_LOGO_RED) for c in cols), 1),
+        "notes": "Free script on the board-approved raw sample: white mark redrawn as a plus, darkest red moved away from " + OLD_BRAND + "'s red, scaled down by block majority. No PixelLab.",
     }
     OUT.with_suffix(".json").write_text(json.dumps(record, indent=2) + "\n")
-    print(out.size, len(cols), "colours; min distance to Redgull red", record["min_distance_to_redgull_red"])
+    print(out.size, len(cols), "colours; min distance to the old logo's red", record[DISTANCE_KEY])
 
 
 if __name__ == "__main__":

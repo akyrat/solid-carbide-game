@@ -9,7 +9,7 @@ This script does everything around those images for free:
 
   palette   writes the forced palette image (color_image) from approved art only
             (the ground atlas's night navy and purple, the level-up particles'
-            pink, cyan and violet; no Redgull red)
+            pink, cyan and violet; no red)
   request   writes the request body JSON for one base tower
   clean     removes PixelLab's blank background (it is not transparent above a
             200 x 200 area), maps every pixel to the palette, crops and checks
@@ -38,7 +38,7 @@ TOOLS = Path(__file__).resolve().parent
 GAME = TOOLS.parent
 REPO = GAME.parent
 sys.path.insert(0, str(TOOLS))
-from style_rules import RED_MIN_DISTANCE, red_distance  # noqa: E402,F401  (Visual style rule 6)
+from style_rules import OLD_BRAND, RED_MIN_DISTANCE, red_distance  # noqa: E402,F401  (Visual style rule 6)
 
 MAX_COLORS = 30
 UNIT_W = 32   # art px for one unit along a ground axis, horizontally (iso: 1 unit = 32 x 16)
@@ -306,7 +306,7 @@ def sprite_report(img):
         "semi_transparent_pixels": sum(1 for p in px if 0 < p[3] < 255),
         "colors": len(colors),
         "opaque_pixels": sum(1 for p in px if p[3] == 255),
-        "closest_to_redgull_red": round(closest_red, 3),
+        "closest_to_" + OLD_BRAND.lower() + "_red": round(closest_red, 3),  # the record's key (T-312)
         "pass": all(c[3] == 0 for c in corners) and not any(0 < p[3] < 255 for p in px)
         and len(colors) <= MAX_COLORS and closest_red > RED_MIN_DISTANCE and len(colors) > 0,
     }

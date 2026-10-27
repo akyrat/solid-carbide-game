@@ -35,7 +35,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
+import style_rules as rules  # noqa: E402  (the sprite checks and the red check, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -373,16 +373,16 @@ def check(argv_paths=None):
             rec = json.loads(p.with_suffix(".json").read_text(encoding="utf-8"))
             res = rules.check_sheet(str(p), rec["frames"], size=CELL, max_colors=MAX_COLORS)
             bad = [(i, r) for i, (rs, _info) in enumerate(res) for r in rs if not r[1]]
-            red = _redgull_pixels(p)
-            print(p.name, "OK" if not bad and not red else (bad, "redgull-red pixels: %d" % red))
+            red = _red_pixels(p)
+            print(p.name, "OK" if not bad and not red else (bad, "red pixels: %d" % red))
             if bad or red:
                 ok = False
     return 0 if ok else 1
 
 
-def _redgull_pixels(path):
+def _red_pixels(path):
     _, _, rows = rules.decode_png(Path(path).read_bytes())
-    return sum(1 for r in rows for p in r if p[3] and rules.is_redgull_red(p[:3]))
+    return sum(1 for r in rows for p in r if p[3] and rules.reads_as_red(p[:3]))
 
 
 def main(argv=None):

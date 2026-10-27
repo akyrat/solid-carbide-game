@@ -100,7 +100,7 @@ class SampleArtTests(unittest.TestCase):
         import tempfile
         with tempfile.TemporaryDirectory() as d:
             path = os.path.join(d, "bad.png")
-            img = Image.new("RGBA", (4, 4), (120, 20, 20, 255))   # opaque corners, Redgull red
+            img = Image.new("RGBA", (4, 4), (120, 20, 20, 255))   # opaque corners, red
             img.putpixel((1, 1), (0, 0, 0, 100))                  # semi-transparent
             img.save(path)
             failed = [rule for rule, ok, _ in b.rules(path) if not ok]

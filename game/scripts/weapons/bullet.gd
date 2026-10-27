@@ -13,7 +13,7 @@ extends Node2D
 ## The drawing is the final art (task T-071): a cyan neon ball with a white-hot
 ## core and a dark outline, game/art/effects/bullet.png (two pulse frames of
 ## 12 x 12 art pixels, drawn at scale 0.5 like the rest of the world). The hit
-## circle is unchanged. No Redgull red.
+## circle is unchanged. Not the heart's red.
 
 const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)

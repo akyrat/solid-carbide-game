@@ -1,7 +1,7 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: ready-to-play
+status: done
 art_cap: 1900
 art_used: 0
 iteration: 15

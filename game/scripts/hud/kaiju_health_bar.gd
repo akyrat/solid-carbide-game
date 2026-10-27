@@ -12,7 +12,7 @@ extends Node2D
 ## the boss's signals (kaiju_boss.gd): kaiju_appeared, kaiju_health_changed and
 ## kaiju_defeated. Its absolute depth is at the top of Godot's drawing range
 ## (as the popups', T-132), so no building hides it. Drawn in code, never
-## Redgull red.
+## the heart's red.
 
 const FILL_COLOR := Color(0.72, 0.18, 1.0)  # neon purple
 const BACK_COLOR := Color.WHITE

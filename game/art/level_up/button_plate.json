@@ -1,11 +1,13 @@
 {
- "task": "T-140",
- "what": "The 'Take it' plate: gold with a red edge; the game letters the text. Shown 2x.",
+ "task": "T-303",
+ "earlier": "T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+ "what": "The 'Take it' plate: light green with a dark green edge; the game letters the text. Shown 2x.",
  "logo": "none",
  "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
  "size": [
   72,
   22
  ],
+ "emblem": null,
  "prompt": null
 }

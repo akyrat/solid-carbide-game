@@ -25,6 +25,9 @@ import task_status as ts  # noqa: E402
 from goal_agent.claude_call import FakeClaude, Pause  # noqa: E402
 from style_loop import loop, run  # noqa: E402
 
+style_rules = loop.style_rules
+OLD_BRAND = "Red" + "gull"   # the sponsor's old name, never in the loop (T-299)
+
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 TASK = """---
@@ -338,13 +341,67 @@ class ArtLoop(Base):
         self.assertEqual(sorted(p.name for p in (root / "art-archive" / "T-901" / "style-loop").iterdir()),
                          ["v1.png", "v2.png"])
 
-    def test_the_script_checks_find_a_red(self):
-        path = self.made("red.png", (219, 26, 41))
+    def test_the_script_checks_find_greenbulls_light_green(self):
+        path = self.made("green.png", style_rules.GREENBULL_LIGHT_GREEN)
         fixture = {"generate": [{"file": str(path), "changed": "first"}], "evaluate": [evaluation(9)]}
         _, rounds = loop.run(FakeClaude(fixture), self.spec("art", out=self.root / "o.png", size=(4, 4)))
         failed = [c for c in rounds[0].checks if not c["ok"]]
         self.assertEqual([c["rule"] for c in failed], [6])
-        self.assertIn("failed: rule 6, no Redgull red", self.section())
+        self.assertIn("failed: rule 6, Greenbull's light green and yellow only on Greenbull's things", self.section())
+        self.assertNotIn(OLD_BRAND, self.section())
+
+    def test_a_red_is_not_reserved_any_more(self):
+        path = self.made("red.png", (219, 26, 41))
+        fixture = {"generate": [{"file": str(path), "changed": "first"}], "evaluate": [evaluation(9)]}
+        _, rounds = loop.run(FakeClaude(fixture), self.spec("art", out=self.root / "o.png", size=(4, 4)))
+        self.assertTrue(all(c["ok"] for c in rounds[0].checks))
+
+    def art_checks_flag(self, **spec_options):
+        """The `greenbull` argument style_rules.art_checks was called with in a fake run."""
+        path = self.made("g.png", style_rules.GREENBULL_YELLOW)
+        fixture = {"generate": [{"file": str(path), "changed": "first"}], "evaluate": [evaluation(9)]}
+        with mock.patch.object(style_rules, "art_checks", wraps=style_rules.art_checks) as checks:
+            _, rounds = loop.run(FakeClaude(fixture), self.spec("art", out=self.root / "o.png", size=(4, 4),
+                                                                **spec_options))
+        return checks.call_args.args[3], rounds
+
+    def test_a_greenbull_asset_is_checked_with_the_greenbull_flag(self):
+        flag, rounds = self.art_checks_flag(greenbull=True)
+        self.assertIs(flag, True)
+        self.assertTrue(all(c["ok"] for c in rounds[0].checks), "its yellow is allowed")
+
+    def test_without_the_option_the_flag_is_not_set(self):
+        flag, rounds = self.art_checks_flag()
+        self.assertIs(flag, False)
+        self.assertEqual([c["rule"] for c in rounds[0].checks if not c["ok"]], [6])
+
+    def test_the_command_line_option_is_greenbull(self):
+        self.assertTrue(run.parser().parse_args(["art", "--task", "T-901", "--brief", "b", "--out", "o",
+                                                 "--greenbull"]).greenbull)
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            run.parser().parse_args(["art", "--task", "T-901", "--brief", "b", "--out", "o",
+                                           "--" + OLD_BRAND.lower()])
+
+    def test_the_style_guide_text_is_read_from_the_document(self):
+        guide = loop.guide_text("art")
+        self.assertIn("Greenbull's colours", guide)
+        self.assertNotIn(OLD_BRAND, guide)
+        self.assertEqual(guide, loop.guide_text("art", Path(loop.__file__).resolve().parents[2]))
+        self.assertIn("1. **Pixel art**", guide)
+        self.assertNotIn("### See-through buildings", guide, "only the Rules section")
+
+    def test_the_evaluator_is_given_the_style_guide_text(self):
+        guide = loop.guide_text("art")
+        root = self.root
+        (root / "docs").mkdir(exist_ok=True)
+        (root / "docs" / "visual-style.md").write_text("# V\n\n### Rules\n\n6. **Greenbull's colours**: x\n\n### Next\n",
+                                                       encoding="utf-8")
+        fixture, _ = self.fixture([9])
+        claude = FakeClaude(fixture)
+        loop.run(claude, self.spec("art", out=root / "o.png"))
+        self.assertIn("6. **Greenbull's colours**: x", claude.calls[1][1])
+        self.assertNotIn(OLD_BRAND, claude.calls[1][1])
+        self.assertIn("Greenbull's colours", guide)
 
     def test_no_png_stops_the_loop(self):
         with self.assertRaises(Pause):

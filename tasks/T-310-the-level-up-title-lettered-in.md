@@ -1,7 +1,7 @@
 ---
 id: T-310
 title: The level-up title lettered in cream with a dark outline, to read on a dark green ribbon
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/README.md, game/scripts/ui/level_up_screen.gd, game/tests/unit/test_level_up_screen.gd, game/tools/build_level_up_art.py, tasks/T-303-art-the-level-up-screen-in.md]
 files_expected_to_change: [game/scripts/ui/level_up_screen.gd, game/tests/unit/test_level_up_screen.gd, docs/hud-and-menus.md, game/README.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,16 +39,28 @@ The board's review: open a level-up in a run: the title is in cream with a dark 
 
 ## Acceptance criteria
 
-- [ ] The level-up screen's TitleLabel uses font colour RGB 246, 250, 232 and an outline of RGB 14, 22, 18 with an outline size above 0; test_level_up_screen.gd checks both. (QA: pass / fail)
-- [ ] The card titles, card descriptions and buttons still use black ink (test). (QA: pass / fail)
-- [ ] The title's text, size and position are unchanged, and test_level_up_screen.gd still passes: the screen opens, animates and takes cards as before. (QA: pass / fail)
-- [ ] A screenshot of the open level-up screen with the new title lettering is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md and game/README.md say the title is lettered in cream with a dark outline. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] The level-up screen's TitleLabel uses font colour RGB 246, 250, 232 and an outline of RGB 14, 22, 18 with an outline size above 0; test_level_up_screen.gd checks both. (QA: pass)
+- [ ] The card titles, card descriptions and buttons still use black ink (test). (QA: pass)
+- [ ] The title's text, size and position are unchanged, and test_level_up_screen.gd still passes: the screen opens, animates and takes cards as before. (QA: pass)
+- [ ] A screenshot of the open level-up screen with the new title lettering is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md and game/README.md say the title is lettered in cream with a dark outline. (QA: pass)
+- [ ] All three test sets pass. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-310.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -56,4 +68,8 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent. TitleLabel now has font colour 246,250,232, outline colour 14,22,18, outline size 4 (constants `TITLE_CREAM`, `TITLE_OUTLINE`, `TITLE_OUTLINE_SIZE` in level_up_screen.gd). Card titles, descriptions and buttons untouched (black ink). New test `test_the_ribbon_title_is_cream_with_a_dark_outline` checks both and the black ink. All tests pass (1420 passing, 118 scripts via `bash game/tools/run_tests.sh`). Docs updated: docs/hud-and-menus.md, game/README.md.
+
+Screenshot: `art-archive/T-310/screenshots/level_up_title_cream.png` (fixture level_up_screen_demo; cream title with dark outline on today's light green ribbon, as expected until the dark ribbon art lands). No PixelLab generations used. No refusals.
+- 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.

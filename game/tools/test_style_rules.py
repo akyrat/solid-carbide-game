@@ -77,51 +77,116 @@ class ArtChecks(unittest.TestCase):
         with self.assertRaises(ValueError):
             s.art_checks(sheet, frames=3)
 
-    def test_rule_6_redgull_red_fails_unless_redgull_or_allowed(self):
-        for red in (s.REDGULL_RED, s.HEART_COLOR, (255, 0, 0)):
-            rows = sprite(fill=red + (255,))
-            self.assertEqual({r for r, _ in failed(s.art_checks(rows))}, {6}, red)
-            self.assertEqual(failed(s.art_checks(rows, redgull=True)), set())
-            self.assertEqual(failed(s.art_checks(rows, allow_red=[red])), set())
+    def test_rule_6_red_is_not_reserved(self):
+        for red in ((255, 0, 0), s.OLD_LOGO_RED, s.HEART_COLOR):
+            self.assertEqual(failed(s.art_checks(sprite(fill=red + (255,)))), set(), red)
+
+    def test_rule_6_light_green_fails_unless_greenbull(self):
+        rows = sprite(fill=(104, 220, 96, 255))
+        self.assertEqual({r for r, _ in failed(s.art_checks(rows))}, {6})
+        self.assertEqual(failed(s.art_checks(rows, greenbull=True)), set())
+
+    def test_rule_6_yellow_fails_unless_greenbull(self):
+        rows = sprite(fill=(247, 208, 52, 255))
+        self.assertEqual({r for r, _ in failed(s.art_checks(rows))}, {6})
+        self.assertEqual(failed(s.art_checks(rows, greenbull=True)), set())
+
+    def test_rule_6_colours_that_read_as_greenbulls(self):
+        near = [(110, 214, 100), (240, 200, 60)]  # within GREENBULL_MAX_DIST
+        clear = [(255, 178, 60), (243, 180, 46), (s.GREENBULL_DARK_GREEN), (60, 140, 60), (255, 255, 255)]
+        for c in near:
+            self.assertIsNotNone(s.greenbull_colour(c), c)
+            self.assertEqual({r for r, _ in failed(s.art_checks(sprite(fill=c + (255,))))}, {6}, c)
+            self.assertEqual(failed(s.art_checks(sprite(fill=c + (255,)), allow=[c])), set(), c)
+        for c in clear:
+            self.assertIsNone(s.greenbull_colour(c), c)
 
     def test_the_red_check_keeps_the_heart_distance(self):
-        self.assertTrue(s.is_redgull_red(s.REDGULL_RED))
-        self.assertTrue(s.is_redgull_red(s.HEART_COLOR))
-        self.assertTrue(s.is_redgull_red((200, 40, 60)))
+        self.assertTrue(s.reads_as_red(s.OLD_LOGO_RED))
+        self.assertTrue(s.reads_as_red(s.HEART_COLOR))
+        self.assertTrue(s.reads_as_red((200, 40, 60)))
         for c in [(255, 64, 200), (0, 229, 255), (160, 90, 255), (255, 255, 255)]:
-            self.assertFalse(s.is_redgull_red(c), c)
+            self.assertFalse(s.reads_as_red(c), c)
         self.assertAlmostEqual(s.red_distance(s.HEART_COLOR), 0.0)
         self.assertGreater(s.red_distance((0, 229, 255)), s.RED_MIN_DISTANCE)
-        self.assertLess(s.red_distance(s.REDGULL_RED), s.RED_MIN_DISTANCE)
+        self.assertLess(s.red_distance(s.OLD_LOGO_RED), s.RED_MIN_DISTANCE)
         self.assertEqual(s.rgb_distance((0, 0, 0), (3, 4, 0)), 5.0)
 
-    def test_logo_one_colour(self):
+    def test_old_brand_red(self):
+        self.assertTrue(s.is_old_brand_red((135, 17, 27)))
+        self.assertTrue(s.is_old_brand_red((140, 22, 30)))  # within the threshold
+        self.assertFalse(s.is_old_brand_red((120, 60, 60)))  # a red-brown, far from every brand red
+        self.assertFalse(s.is_old_brand_red(s.HEART_COLOR))
+        dim = tuple(round(c * 0.4) for c in s.HEART_COLOR)  # about (88, 10, 16)
+        self.assertFalse(s.is_old_brand_red(dim), dim)
+        self.assertFalse(s.is_old_brand_red(s.GREENBULL_DARK_GREEN))
+
+    def test_old_brand_values_unchanged(self):
+        # T-312 moved the name into one constant; the values are the ones T-306 to T-309 left.
+        self.assertEqual(s.OLD_BRAND, "Red" + "gull")
+        self.assertEqual(s.OLD_LOGO_RED, (135, 17, 27))
+        self.assertEqual(s.HEART_COLOR, (219, 26, 41))
+        self.assertEqual(s.BRAND_THRESHOLD, 12)
+        self.assertEqual(len(s.BRAND_COLOURS), 10)
+        self.assertEqual(s.BRAND_COLOURS[0][1], "style_rules.OLD_LOGO_RED; art-archive/T-304/"
+                         + s.OLD_BRAND.lower() + "/package.png, art-archive/T-305/"
+                         + s.OLD_BRAND.lower() + "/helicopter_sheet.png")
+        for _, src in s.BRAND_COLOURS:
+            for path in src.replace(";", ",").split(","):
+                path = path.strip().split(" (")[0]
+                if path.startswith("art-archive/") and path.endswith(".png"):
+                    self.assertTrue((ROOT / path).is_file(), path)
+        # No function, constant or flag is named after the old brand.
+        self.assertFalse(any(s.OLD_BRAND.lower() in n.lower() for n in dir(s)))
+
+    def test_greenbull_logo_follows_rule_1(self):
         good = Image.new("RGBA", (4, 4), CLEAR)
-        good.putpixel((1, 1), s.REDGULL_RED + (255,))
+        for x, c in enumerate((s.GREENBULL_DARK_GREEN, s.GREENBULL_LIGHT_GREEN, s.GREENBULL_YELLOW)):
+            good.putpixel((x + 1, 1), c + (255,))
         self.assertEqual(failed(s.logo_checks(good)), set())
+        self.assertEqual({c["rule"] for c in s.logo_checks(good)}, {1})
         bad = good.copy()
-        bad.putpixel((2, 2), (10, 200, 10, 255))
-        self.assertEqual({r for r, _ in failed(s.logo_checks(bad))}, {6})
+        bad.putpixel((2, 2), (12, 76, 44, 128))
+        self.assertEqual(failed(s.logo_checks(bad)), {(1, "Greenbull's logo: no semi-transparent pixels")})
+        self.assertTrue(s.check_logo(bad))
+
+    def test_greenbull_logo_accepts_the_approved_emblem_and_wordmark(self):
+        for p in ["art-archive/T-294/greenbull_emblem_%d.png" % n for n in (128, 64, 32)] + [
+                "art-archive/T-295/greenbull_wordmark.png"]:
+            self.assertEqual(s.check_logo(Image.open(ROOT / p)), [], p)
+
+    def test_old_logo_check_kept(self):
         for n in (128, 64, 32):
-            self.assertEqual(s.check_logo(Image.open(ROOT / f"game/art/logo/redgull_logo_{n}.png")), [])
+            # The old logo files moved to art-archive/T-075/ (T-312).
+            p = ROOT / "art-archive/T-075" / f"{s.OLD_BRAND.lower()}_logo_{n}.png"
+            self.assertEqual(s.check_old_logo(Image.open(p)), [])
 
     def test_cli_art_prints_json_and_exits_1_on_a_fail(self):
         with tempfile.TemporaryDirectory() as d:
             good, bad = Path(d) / "good.png", Path(d) / "bad.png"
             good.write_bytes(make_png(sprite()))
-            bad.write_bytes(make_png(sprite(fill=s.HEART_COLOR + (255,))))
+            bad.write_bytes(make_png(sprite(fill=s.GREENBULL_YELLOW + (255,))))
             code, out = run_cli(["art", str(good), "--size", "8x8"])
             self.assertEqual(code, 0)
             self.assertTrue(all(set(c) == {"rule", "check", "ok", "detail"} for c in out))
             code, out = run_cli(["art", str(bad), "--size", "8x8"])
             self.assertEqual(code, 1)
             self.assertEqual({c["rule"] for c in out if not c["ok"]}, {6})
-            self.assertEqual(run_cli(["art", str(bad), "--redgull"])[0], 0)
-            self.assertEqual(run_cli(["art", str(bad), "--allow-red", "219,26,41"])[0], 0)
-            self.assertEqual(run_cli(["art", str(good), "--size", "4x8", "--frames", "2", "--redgull"])[0], 0)
-            self.assertEqual(run_cli(["art", str(good), "--size", "4", "--frames", "2", "--redgull"])[0], 1)
-            code, out = run_cli(["art", str(ROOT / "game/art/logo/redgull_logo_32.png"), "--logo"])
+            self.assertEqual(run_cli(["art", str(bad), "--greenbull"])[0], 0)
+            self.assertEqual(run_cli(["art", str(bad), "--allow-colour", "247,208,52"])[0], 0)
+            self.assertEqual(run_cli(["art", str(bad), "--allow-red", "247,208,52"])[0], 0)  # the old name
+            self.assertEqual(run_cli(["art", str(good), "--size", "4x8", "--frames", "2"])[0], 0)
+            self.assertEqual(run_cli(["art", str(good), "--size", "4", "--frames", "2"])[0], 1)
+            code, out = run_cli(["art", str(ROOT / "art-archive/T-295/greenbull_wordmark.png"), "--logo"])
             self.assertEqual(code, 0)
+            self.assertEqual(run_cli(["art", str(ROOT / "art-archive/T-294/greenbull_emblem_32.png"), "--logo"])[0], 0)
+
+    def test_cli_art_help_names_greenbull_not_the_old_flag(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
+            s.main(["art", "--help"])
+        self.assertIn("--greenbull", out.getvalue())
+        self.assertNotIn("--" + s.OLD_BRAND.lower(), out.getvalue())
 
 
 class TextChecks(unittest.TestCase):
@@ -133,14 +198,25 @@ class TextChecks(unittest.TestCase):
         self.assertIn((4, "popup: one line"), failed(s.text_checks("LONG\nDRIFT!", "popup")))
 
     def test_rule_2_banned_words(self):
+        rule2 = (2, "no banned words (XP, points, Godzilla, %s)" % s.OLD_BRAND)
         for bad in ("Gain more XP", "+50 points", "The godzilla is here"):
-            self.assertEqual(failed(s.text_checks(bad, "card_desc")), {(2, "no banned words (XP, points, Godzilla)")}, bad)
+            self.assertEqual(failed(s.text_checks(bad, "card_desc")), {rule2}, bad)
         self.assertEqual(failed(s.text_checks("Gain more likes", "card_desc")), set())
         self.assertEqual(failed(s.text_checks("Expert pointers", "card_desc")), set())  # whole words only
 
-    def test_rule_3_redgull_says(self):
-        self.assertEqual(failed(s.text_checks("Redgull says: drift!", "card_desc")), {(3, 'no "Redgull says ..." line')})
-        self.assertEqual(failed(s.text_checks("Redgull wants you to drift", "card_desc")), set())
+    def test_rule_2_old_sponsor_name_is_banned_in_any_case(self):
+        rule2 = (2, "no banned words (XP, points, Godzilla, %s)" % s.OLD_BRAND)
+        for bad in ("A gift from " + s.OLD_BRAND, "A GIFT FROM " + s.OLD_BRAND.upper(),
+                    "a gift from " + s.OLD_BRAND.lower()):
+            self.assertEqual(failed(s.text_checks(bad, "card_desc")), {rule2}, bad)
+
+    def test_rule_3_greenbull_says(self):
+        self.assertEqual(failed(s.text_checks("Greenbull says hi", "card_desc")), {(3, 'no "Greenbull says ..." line')})
+        self.assertEqual(failed(s.text_checks("Greenbull wants you to drift", "card_desc")), set())
+
+    def test_greenbull_alone_passes_rules_2_and_3(self):
+        for kind in ("card_desc", "label"):
+            self.assertEqual(failed(s.text_checks("A gift from Greenbull", kind)), set(), kind)
 
     def test_card_and_garage_lengths(self):
         cases = [("card_title", 30), ("card_desc", 90), ("garage_name", 25), ("garage_desc", 80)]
@@ -154,7 +230,7 @@ class TextChecks(unittest.TestCase):
 
     def test_label_sentence_case(self):
         self.assertEqual(failed(s.text_checks("Music volume", "label")), set())
-        self.assertEqual(failed(s.text_checks("Redgull Stunt Driver", "label")), set())
+        self.assertEqual(failed(s.text_checks("Greenbull Stunt Driver", "label")), set())
         self.assertIn((4, "label: sentence case"), failed(s.text_checks("Music Volume", "label")))
         self.assertIn((4, "label: sentence case"), failed(s.text_checks("music volume", "label")))
         self.assertIn((4, "label: sentence case"), failed(s.text_checks("MUSIC VOLUME", "label")))

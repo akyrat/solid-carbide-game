@@ -10,7 +10,7 @@ bullet, it writes to game/art/effects/ (PNG plus record JSON each):
   burning_flames.png        96x54     the flames of a burning enemy: 2 frames of 48x54 (the second the mirror)
   bullet.png                24x12     the gun's bullet: 2 pulse frames of 12x12
 
-Rules (Visual style): hard edges, alpha 0 or 255 only, at most 30 colours, no Redgull red, 32 art pixels per
+Rules (Visual style): hard edges, alpha 0 or 255 only, at most 30 colours, no red, 32 art pixels per
 unit drawn at scale 0.5. Rotation is nearest-neighbour from the raw, once, so the engine never rotates pixel art.
 
   python game/tools/build_weapon_effects.py build   # writes the PNGs and records, then checks them
@@ -26,7 +26,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import build_weapon_art as weapon_art  # noqa: E402  (hard_alpha, unred, near_redgull)
+import build_weapon_art as weapon_art  # noqa: E402  (hard_alpha, unred, near_old_logo_red)
 import reduce_palette as palette  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -48,7 +48,7 @@ LOG_ZONE_FROM_ROW = 48
 
 
 def finish(im: Image.Image) -> Image.Image:
-    """Hard alpha, no Redgull red, at most MAX_COLORS colours."""
+    """Hard alpha, no red, at most MAX_COLORS colours."""
     im = weapon_art.unred(weapon_art.hard_alpha(im))
     if len({p[:3] for p in im.getdata() if p[3] == 255}) > MAX_COLORS:
         im = palette.reduce_image(im, MAX_COLORS)
@@ -201,13 +201,13 @@ def check_png(path: Path):
     px = list(im.getdata())
     semi = sum(1 for p in px if 0 < p[3] < 255)
     colours = {p[:3] for p in px if p[3] == 255}
-    red = [c for c in colours if weapon_art.near_redgull(c)]
+    red = [c for c in colours if weapon_art.near_old_logo_red(c)]
     return [("no semi-transparent pixels", semi == 0, "%d" % semi),
             ("%d colours or fewer" % MAX_COLORS, len(colours) <= MAX_COLORS, "%d colours" % len(colours)),
             ("has opaque pixels", len(colours) > 0, ""),
             ("transparent corners", all(im.getpixel(p)[3] == 0 for p in
                                        [(0, 0), (im.width - 1, 0), (0, im.height - 1), (im.width - 1, im.height - 1)]), ""),
-            ("no Redgull red", not red, str(red))], im.size
+            ("no red", not red, str(red))], im.size
 
 
 def check():

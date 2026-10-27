@@ -5,7 +5,7 @@ extends Node2D
 ## 7 units tall, several times the car's size (Visual style, Decisions,
 ## "The kaiju"). It faces left or right, the way it walks on screen, and
 ## stomps as it walks. Dark slate green with a lighter belly, pale cyan back
-## plates and yellow eyes; no Redgull red. The final kaiju art comes from a
+## plates and yellow eyes; not the heart's red. The final kaiju art comes from a
 ## separate art task and replaces this node's drawing.
 ##
 ## Final art (task T-069): 6-frame walk sheets of 224 x 224 pixels in

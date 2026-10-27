@@ -13,8 +13,8 @@ Two designs, in the two classic sign shapes:
   body  -> prohibition circle: the long body with its tail needs the wider round sign
 Each as a building banner (front-on, and sheared onto a wall at 2:1, 1 art px per 2 across,
 sloping down to the right; flip it in the game for the other wall) and as a pavement sign
-on a post. The sign red is the only red outside Redgull's look allowed in the art
-(Visual style, Decisions): it is used on these signs and nowhere else. Colours: that red,
+on a post. The sign red is a traffic-sign red (Visual style, Decisions, "Red after the
+rebrand": red is no longer reserved); in this art it is used on these signs and nowhere else. Colours: that red,
 white, black, and the post's two greys: 5 in all.
 
 Commands (run from the repo root):
@@ -33,7 +33,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
+import style_rules as rules  # noqa: E402  (the sprite checks and the red check, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -237,7 +237,7 @@ def check_rows(rows, max_colors=MAX_COLORS):
     colors = {p[:3] for p in px if p[3] == 255}
     stray = sorted(colors - ALLOWED)
     out.append(("only the sign red, white, black and the post greys", not stray, "others: %s" % stray if stray else "none"))
-    reds = sorted(c for c in colors if rules.is_redgull_red(c) and c != SIGN_RED)
+    reds = sorted(c for c in colors if rules.reads_as_red(c) and c != SIGN_RED)
     out.append(("no red but the one sign red", not reds, "other reds: %s" % reds if reds else "none"))
     out.append(("has the sign red outline", SIGN_RED in colors, "present" if SIGN_RED in colors else "missing"))
     out.append(("at most 5 colours", len(colors) <= 5, "%d colours" % len(colors)))
@@ -353,7 +353,7 @@ def record(all_sprites):
         "made_by": "game/tools/build_kaiju_banners.py (a script; no PixelLab call, board 2026-10-14). Byte-identical every run.",
         "scale_note": "32 art px per unit; drawn in the game at scale 0.5 like the car and the ground, texture_filter nearest",
         "palette": {k: list(v) for k, v in COLOURS.items()},
-        "red_note": "SIGN_RED is the only red outside Redgull's look allowed in the art (Visual style, Decisions), only on these signs",
+        "red_note": "SIGN_RED is the only red outside " + rules.OLD_BRAND + "'s look allowed in the art (Visual style, Decisions), only on these signs",
         "rules": "no anti-aliasing, no semi-transparent pixels, transparent background, only the sign red, white, black and the post greys, no letters",
         "check": "python game/tools/build_kaiju_banners.py check",
         "archive": "art-archive/T-130/: previews; first-version/ holds the first (neon) drawings",

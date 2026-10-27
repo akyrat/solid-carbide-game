@@ -27,7 +27,7 @@ extends "res://scripts/weapons/weapon.gd"
 ## Look (T-274): a neon zone drawn in code (underglow_glow.gd) in the run's View,
 ## at the very bottom of the car's drawing (under the car sprite, the drift smoke
 ## and the flames), marking the damage circle in the isometric view, at the car's
-## height. Purple and pink, never Redgull red; its settings are in
+## height. Purple and pink, never the heart's red; its settings are in
 ## scenes/weapons/neon_underglow_look.tres.
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).

@@ -1,0 +1,3 @@
+# T-300 brief: copy the approved Greenbull emblem 64
+
+Do not generate and do not edit, no PixelLab call. The only thing to do: write a copy of the source file art-archive/T-294/greenbull_emblem_64.png, byte for byte, to the exact version path named in your prompt (it is v1-2.png in art-archive/T-300/style-loop/, because v1.png is already there from an earlier file; do not touch v1.png). Use the Read tool on the source if needed, or cp with `cp art-archive/T-294/greenbull_emblem_64.png art-archive/T-300/style-loop/v1-2.png`. The kept version must be the byte-identical copy. If the evaluator scores it below 8, do not refine it: keep the approved file.

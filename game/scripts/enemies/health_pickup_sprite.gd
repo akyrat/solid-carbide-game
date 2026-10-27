@@ -3,7 +3,7 @@ extends Node2D
 ## isometric view's screen pixels: a small red gas canister with a white cross lying
 ## on the ground, a 14 x 10 sprite (art/effects/health_canister.png, about a coin's
 ## size) built by tools/build_health_canister.py from the board-approved PixelLab
-## sample. The red is a canister red, not Redgull's red.
+## sample. The red is a canister red, kept away from the old logo's red.
 
 const CANISTER_TEXTURE := preload("res://art/effects/health_canister.png")
 const SHADOW_COLOR := Color(0.02, 0.02, 0.05, 0.55)

@@ -7,7 +7,7 @@ extends RefCounted
 ## Look (the board's playtest, 2026-10-13): a real comic popup. A white rounded
 ## rectangle (stepped corners) with a black border, every letter black (trick name and amount alike) in
 ## Bangers on one straight baseline, hard pixel edges, no semi-transparent
-## pixels, no Redgull red. Black on white reads on the dark asphalt and on the
+## pixels, not the heart's red. Black on white reads on the dark asphalt and on the
 ## dusty gravel alike, since the black border separates the burst from both.
 ## One popup pixel is shown as 2 art pixels (TrickPopups.PIXEL_SCALE). Baked
 ## once per text and size and cached.
@@ -22,7 +22,7 @@ extends RefCounted
 ## pixel flames in the likes bar fire's colours and style (LikesFire), baked
 ## in FLAME_FRAMES frames that the popup flips through so it flickers. The fill
 ## stays white and the trick names black at every step. Oranges and yellows
-## only, never Redgull red; opaque or fully transparent pixels only.
+## only, never the heart's red; opaque or fully transparent pixels only.
 
 const FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 

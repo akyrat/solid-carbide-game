@@ -6,7 +6,7 @@ redrawn by hand from the one PixelLab sample's palette (art-archive/T-072/sample
 three effects are drawn by script, within Visual style, Decisions: night neon palette
 (white-hot cores, cyan and pink sparks), glow as stepped halo pixels, hard pixel edges,
 no semi-transparent pixels, a transparent background, about 30 colours or fewer, and no
-Redgull red. Effects pop and shrink away; they never fade.
+red. Effects pop and shrink away; they never fade.
 
 Outputs in game/art/effects/ (one-row sheets of frames):
   coin.png         10 x 12, one still
@@ -30,7 +30,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import style_rules as rules  # noqa: E402
-from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+from style_rules import reads_as_red  # noqa: E402  (Visual style rule 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -257,15 +257,15 @@ def sheets():
 
 
 def check_sheet_rows(name, rows):
-    """Every frame of a sheet: the sprite rules and no Redgull red. Returns (rule, ok, detail) tuples."""
+    """Every frame of a sheet: the sprite rules and no red. Returns (rule, ok, detail) tuples."""
     frames, (fw, fh) = SETS[name]
     out = []
     for i in range(frames):
         fr = [r[i * fw:(i + 1) * fw] for r in rows]
         res, _ = rules.check_rows(fr, size=fw, max_colors=30)
         res[0] = ("frame size %dx%d" % (fw, fh), (len(fr[0]), len(fr)) == (fw, fh), "%dx%d" % (len(fr[0]), len(fr)))
-        red = [p[:3] for r in fr for p in r if p[3] and is_redgull_red(p[:3])]
-        res.append(("no Redgull red", not red, str(red[:2])))
+        red = [p[:3] for r in fr for p in r if p[3] and reads_as_red(p[:3])]
+        res.append(("no red", not red, str(red[:2])))
         out += [("%s frame %d: %s" % (name, i, a), b, c) for a, b, c in res]
     return out
 

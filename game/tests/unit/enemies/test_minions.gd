@@ -354,7 +354,7 @@ func test_draw_order_under_a_covering_building_over_the_rest() -> void:
 	assert_gt(spawner.depth.z_index_for(front, MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS), slot.z_index, "in front: over it")
 
 
-func test_placeholders_avoid_redgull_red() -> void:
+func test_placeholders_avoid_heart_red() -> void:
 	var sprite_script := preload("res://scripts/enemies/minion_sprite.gd")
 	var coin_script := preload("res://scripts/enemies/coin_sprite.gd")
 	var colors := [sprite_script.BODY_COLOR, sprite_script.BELLY_COLOR, sprite_script.LEG_COLOR,
@@ -402,18 +402,18 @@ func test_hit_tint_leaves_another_tint_alone() -> void:
 	assert_eq(m.sprite.modulate, orange)
 
 
-func test_the_kill_hit_does_not_tint_and_the_tint_is_not_redgull_red() -> void:
+func test_the_kill_hit_does_not_tint_and_the_tint_is_not_heart_red() -> void:
 	var m := _live_minion()
 	m.take_damage(1000.0)
 	assert_false(m.hit_tint.is_active())
 	var t: Color = HitTint.TINT
-	var redgull := Color(0.86, 0.1, 0.16)
+	var heart_red := Color(0.86, 0.1, 0.16)
 	var sat := (t.get_luminance() * 0.0) + (maxf(t.r, maxf(t.g, t.b)) - minf(t.r, minf(t.g, t.b))) / maxf(t.r, 0.001)
-	assert_gt(Vector3(t.r, t.g, t.b).distance_to(Vector3(redgull.r, redgull.g, redgull.b)), 0.5, "far from Redgull red")
+	assert_gt(Vector3(t.r, t.g, t.b).distance_to(Vector3(heart_red.r, heart_red.g, heart_red.b)), 0.5, "far from the heart's red")
 	assert_lt(sat, 0.4, "a slight hue, not a saturated red")
 
 
-func test_coin_art_has_no_redgull_red() -> void:
+func test_coin_art_has_no_heart_red() -> void:
 	var img: Image = preload("res://art/effects/coin.png").get_image()
 	for y in img.get_height():
 		for x in img.get_width():

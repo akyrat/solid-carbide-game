@@ -6,7 +6,7 @@ drift mark texture is drawn by a script, within the pixel style: dark rubber
 tyre marks with a visible tread pattern, readable on the MVP map's dark asphalt
 and its dusty gravel, hard pixel edges, no semi-transparent pixels, a
 transparent background, about 30 colours or fewer, the night palette and no
-Redgull red.
+red.
 
 Output: one small tile, LENGTH texels along the mark by WIDTH texels across it.
 The drift marks scene (scenes/driving/drift_marks.tscn) draws it along each
@@ -32,7 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import style_rules as rules  # noqa: E402
-from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+from style_rules import reads_as_red  # noqa: E402  (Visual style rule 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -102,8 +102,8 @@ def check_rows(rows, max_colors=MAX_COLORS):
     out += [r for r in results if not r[0].startswith("frame size")]
     px = [p for r in rows for p in r]
     colors = {p[:3] for p in px if p[3] == 255}
-    reds = sorted(c for c in colors if is_redgull_red(c))
-    out.append(("no Redgull red (nor any red)", not reds, "reds: %s" % reds if reds else "none"))
+    reds = sorted(c for c in colors if reads_as_red(c))
+    out.append(("no red", not reds, "reds: %s" % reds if reds else "none"))
     # Tiles cleanly along the mark: every row inside the mark is opaque the whole
     # length, so the tile join never opens a gap; the shoulders' gaps stay short
     # across the join too.
@@ -160,7 +160,7 @@ def record():
         "palette": {k: list(v) for k, v in PALETTE.items()},
         "colors": len(PALETTE),
         "made_by": "game/tools/build_drift_mark.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
-        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background (the shoulder rows' gaps), about 30 colours or fewer, no Redgull red; every colour darker than the asphalt and the gravel; rows inside the mark opaque so it tiles without a gap. Check: python game/tools/build_drift_mark.py check",
+        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background (the shoulder rows' gaps), about 30 colours or fewer, no " + rules.OLD_BRAND + " red; every colour darker than the asphalt and the gravel; rows inside the mark opaque so it tiles without a gap. Check: python game/tools/build_drift_mark.py check",
         "scale": "width_units 0.25 in the scene: the %d texels across are 4 flat world pixels, 32 texels per unit, the car and ground art's density; one tile is 0.25 units long" % WIDTH,
         "grounds": {"asphalt": list(ASPHALT), "gravel": list(GRAVEL)},
         "used_by": "game/scenes/driving/drift_marks.tscn (mark_texture)",

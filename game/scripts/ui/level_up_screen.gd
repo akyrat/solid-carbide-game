@@ -23,7 +23,7 @@ extends CanvasLayer
 ## Weapon image (T-173; HUD and menus, Decisions, 2026-10-18): every card shows
 ## its weapon's image in a 64 x 64 slot above the title. The image is
 ## `art/level_up/weapon_<weapon id>.png` once the art task adds it; until then a
-## placeholder drawn in code (16 x 16 pixels, never Redgull red).
+## placeholder drawn in code (16 x 16 pixels, never the heart's red).
 
 const Texts := preload("res://scripts/ui/level_up_texts.gd")
 const HudScript := preload("res://scripts/hud/hud.gd")
@@ -32,6 +32,10 @@ const HudScript := preload("res://scripts/hud/hud.gd")
 const LAYER := 15
 const DIM := Color(0, 0, 0, 0.6)
 const INK := Color(0, 0, 0)
+# The ribbon title (T-310): cream with the art's dark outline, to read on a dark ribbon.
+const TITLE_CREAM := Color8(246, 250, 232)
+const TITLE_OUTLINE := Color8(14, 22, 18)
+const TITLE_OUTLINE_SIZE := 4
 const HOVER_TINT := Color(1.15, 1.15, 1.15)
 ## T-173: 74 px taller than T-141's 360 x 300 to make room for the weapon image
 ## (64 px and its 10 px gap), so the texts keep the room they had.
@@ -41,7 +45,7 @@ const IMAGE_SIZE := Vector2(64, 64)
 ## The final images (art task), one per weapon id; missing ones use a placeholder.
 const WEAPON_ART := "res://art/level_up/weapon_%s.png"
 ## Placeholder images (T-173): 16 x 16 pixel grids, one character per pixel
-## ("." is transparent), shown 4 screen pixels per pixel. No Redgull red.
+## ("." is transparent), shown 4 screen pixels per pixel. Not the heart's red.
 const PLACEHOLDER_COLORS := {
 	"k": Color8(20, 20, 24), "g": Color8(120, 124, 132), "s": Color8(184, 188, 196),
 	"b": Color8(72, 64, 58), "o": Color8(255, 170, 40), "y": Color8(255, 230, 90),
@@ -202,6 +206,9 @@ func setup(the_rack: Node) -> void:
 	_ribbon_holder.add_child(_ribbon)
 	title_label = _label(Texts.TEXTS["levelup.title"], TITLE_SIZE)
 	title_label.name = "TitleLabel"
+	title_label.add_theme_color_override("font_color", TITLE_CREAM)
+	title_label.add_theme_color_override("font_outline_color", TITLE_OUTLINE)
+	title_label.add_theme_constant_override("outline_size", TITLE_OUTLINE_SIZE)
 	title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	title_label.position = Vector2(TITLE_X0, 0)

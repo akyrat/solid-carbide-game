@@ -69,7 +69,7 @@ func test_the_rules_hold_for_each_sprite() -> void:
 						reddish += 1
 		assert_eq(semi, 0, id + ": no semi-transparent pixels")
 		assert_lte(colours.size(), MAX_COLORS, id + ": colours")
-		assert_eq(reddish, 0, id + ": no Redgull red")
+		assert_eq(reddish, 0, id + ": not the heart's red")
 		for corner in [Vector2i(0, 0), Vector2i(img.get_width() - 1, 0), Vector2i(0, img.get_height() - 1), Vector2i(img.get_width() - 1, img.get_height() - 1)]:
 			assert_eq(img.get_pixelv(corner).a, 0.0, id + ": transparent corner")
 

@@ -1,11 +1,13 @@
 {
- "task": "T-140",
- "what": "The banner: red ribbon with gold trim and folded tails, a cream medallion with the Redgull gull at each end; the game letters the title between x 76 and 304. Shown 2x (760 wide, as wide as the two cards and their gap).",
- "logo": "logo on both medallions",
+ "task": "T-311",
+ "earlier": "T-303 (light green field, kept in art-archive/T-311/t303/); T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+ "what": "The banner (T-311): Greenbull's dark green ribbon (the game letters the cream, dark-outlined title between x 76 and 304) with light green trim, one yellow line on top, dark green folded tails, and a pale medallion with Greenbull's emblem at each end. Shown 2x (760 wide).",
+ "logo": "Greenbull emblem (32 px) on both medallions",
  "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
  "size": [
   380,
   44
  ],
+ "emblem": "game/art/logo/greenbull_emblem_32.png",
  "prompt": null
 }

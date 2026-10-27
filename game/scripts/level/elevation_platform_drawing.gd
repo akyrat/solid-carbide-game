@@ -4,7 +4,7 @@ extends Node2D
 ## script in the view's projection. Flat-coloured top face with a unit grid on
 ## it, the two side faces the isometric view shows (east, x = the rectangle's
 ## end, and south, y = its end), and light edges. No PixelLab art, no
-## semi-transparent pixels, no Redgull red. Every colour is a proposal.
+## semi-transparent pixels, not the heart's red. Every colour is a proposal.
 ##
 ## Positions: the node sits at the drawn origin; it draws in drawn pixels,
 ## PX_PER_UNIT per unit, with heights lifted straight up the screen (as the

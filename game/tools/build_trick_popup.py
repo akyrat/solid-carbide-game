@@ -7,7 +7,7 @@ anti-aliasing off, so the letters have hard pixel edges. One popup pixel is
 meant to be shown as 2 art pixels (task T-084 plan, point 4).
 
 Look (T-084 plan, point 5; Visual style, Decisions: night neon palette, glow in
-the pixels, hard edges, no semi-transparent pixels, no Redgull red):
+the pixels, hard edges, no semi-transparent pixels, no red):
 - trick name: hot pink, a white-hot top row and a darker pink bottom row;
 - amount ("+0.25"): cyan, with a light top row and a darker bottom row;
 - both: a navy outline and a deep purple drop shadow down-right;
@@ -34,7 +34,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import style_rules as rules  # noqa: E402
-# Every colour keeps farther than this from Redgull red (Visual style rule 6).
+# Every colour keeps farther than this from the heart's red (style_rules.HEART_COLOR).
 from style_rules import RED_MIN_DISTANCE as MIN_RED_DISTANCE, red_distance  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -275,7 +275,7 @@ def check_popup(rows, max_colors=MAX_COLORS):
     results.append(("transparent border", all(p[3] == 0 for p in border), ""))
     colours = {p[:3] for r in rows for p in r if p[3] == 255}
     near = [c for c in colours if red_distance(c) <= MIN_RED_DISTANCE]
-    results.append(("no Redgull red", not near, str(near)))
+    results.append(("no red", not near, str(near)))
     return results
 
 
@@ -365,7 +365,7 @@ def cmd_check():
     colours = {p[:3] for r in rows for p in r}
     near = [c for c in colours if red_distance(c) <= MIN_RED_DISTANCE]
     print("%s preview: no semi-transparent pixels (%d)" % ("PASS" if semi == 0 else "FAIL", semi))
-    print("%s preview: no Redgull red %s" % ("PASS" if not near else "FAIL", near))
+    print("%s preview: no red %s" % ("PASS" if not near else "FAIL", near))
     print("     preview: %d colours in all, %dx%d" % (len(colours), len(rows[0]), len(rows)))
     ok = ok and semi == 0 and not near
     return 0 if ok else 1

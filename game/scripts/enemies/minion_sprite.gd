@@ -6,7 +6,7 @@ extends Node2D
 ## 16 screen pixels per unit). Five directions are drawn (south, south-east,
 ## east, north-east, north); south-west, west and north-west are the south-east,
 ## east and north-east sheets mirrored. If a sheet is missing, the T-044
-## placeholder shape is drawn instead. No shadow under it (board, 2026-10-15). No Redgull red.
+## placeholder shape is drawn instead. No shadow under it (board, 2026-10-15). Not the heart's red.
 ##
 ## Falling (task T-226): while the minion falls off a rooftop's edge
 ## (set_falling, from the spawner) it plays the falling animation, and for

@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-131: the combo heats up in steps (base, x2, x3, x4+) chosen from the
 ## multiplier as the counter shows it, each step bigger than the one before,
 ## the likes bar on fire only at the top step, the look following the combo
-## down, the comic font with the words unchanged, no Redgull red, the layout
+## down, the comic font with the words unchanged, not the heart's red, the layout
 ## holding at the top step and the effects standing still while paused.
 
 const RUN := preload("res://scenes/run/run.tscn")
@@ -159,7 +159,7 @@ func _assert_not_red(c: Color, what: String) -> void:
 	assert_false(c.s > 0.3 and (c.h < 0.04 or c.h > 0.96), "%s %s not a red hue" % [what, c])
 
 
-func test_no_redgull_red() -> void:
+func test_no_heart_red() -> void:
 	for c in ComboHeat.all_colors():
 		_assert_not_red(c, "counter colour")
 	for c in LikesFire.all_colors():

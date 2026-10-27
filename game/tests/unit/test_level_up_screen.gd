@@ -83,7 +83,7 @@ func test_level_up_opens_two_cards_with_the_approved_text() -> void:
 		assert_eq(c.title.text, Texts.TEXTS[key + ".title"])
 		assert_eq(c.desc.text, Texts.TEXTS[key + ".desc"])
 		assert_eq(c.button.text, "Take it")
-	assert_eq(screen.title_label.text, "Redgull Sent a Gift Pack!")
+	assert_eq(screen.title_label.text, "Greenbull sent a gift pack!")
 
 
 func test_exact_text_for_known_cards() -> void:
@@ -286,6 +286,18 @@ func test_look_is_t140s_art_with_black_text() -> void:
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE)
 
 
+func test_the_ribbon_title_is_cream_with_a_dark_outline() -> void:
+	_level_up()
+	var l: Label = screen.title_label
+	assert_eq(l.get_theme_color("font_color"), Color8(246, 250, 232))
+	assert_eq(l.get_theme_color("font_outline_color"), Color8(14, 22, 18))
+	assert_gt(l.get_theme_constant("outline_size"), 0)
+	for c in screen.cards:
+		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
+		assert_eq(c.desc.get_theme_color("font_color"), Color.BLACK)
+		assert_eq(c.button.get_theme_color("font_color"), Color.BLACK)
+
+
 func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
 	_level_up()
 	var l: Label = screen.title_label
@@ -294,7 +306,7 @@ func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
 	var f: Font = l.get_theme_font("font")
 	var w := f.get_string_size(l.text, HORIZONTAL_ALIGNMENT_LEFT, -1, l.get_theme_font_size("font_size")).x
 	assert_lt(w, l.size.x, "the whole title fits between the medallions")
-	assert_eq(l.text, "Redgull Sent a Gift Pack!", "T-051's text unchanged")
+	assert_eq(l.text, "Greenbull sent a gift pack!", "the Greenbull title (T-301)")
 
 
 func test_card_texts_wrap_at_word_boundaries_and_fit_the_card() -> void:
@@ -589,9 +601,9 @@ func test_a_new_weapons_upgrade_card_shows_its_next_tier() -> void:
 	assert_eq(screen.cards[0].title.text, "Neon Underglow")
 
 
-## Redgull red or anything that reads as a red (as game/tools/build_drift_mark.py's
-## is_redgull_red): within 128 of (219, 26, 41), or a saturated red hue.
-func _is_redgull_red(c: Color) -> bool:
+## The heart's red or anything that reads as a red (as game/tools/build_drift_mark.py's
+## reads_as_red): within 128 of (219, 26, 41), or a saturated red hue.
+func _reads_as_red(c: Color) -> bool:
 	var red := Color8(219, 26, 41)
 	var dist := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length() * 255.0
 	if dist < 128.0:
@@ -643,7 +655,7 @@ func test_final_weapon_art_replaces_the_placeholders() -> void:
 		assert_eq(img.get_pixel(0, 0).a, 0.0, "%s: transparent background" % w)
 
 
-func test_placeholder_images_are_hard_edged_and_never_redgull_red() -> void:
+func test_placeholder_images_are_hard_edged_and_never_heart_red() -> void:
 	for w in offers.WEAPON_ORDER:
 		var tex: Texture2D = screen.placeholder_image(w)
 		assert_not_null(tex, w)
@@ -656,7 +668,7 @@ func test_placeholder_images_are_hard_edged_and_never_redgull_red() -> void:
 				assert_true(c.a == 0.0 or c.a == 1.0, "%s (%d, %d): no semi-transparent pixels" % [w, x, y])
 				if c.a > 0.0:
 					opaque += 1
-					assert_false(_is_redgull_red(c), "%s (%d, %d): %s is not Redgull red" % [w, x, y, c])
+					assert_false(_reads_as_red(c), "%s (%d, %d): %s is not the heart's red" % [w, x, y, c])
 		assert_gt(opaque, 20, "%s: something is drawn" % w)
 		assert_eq(img.get_pixel(0, 15).a, 0.0, "%s: transparent background" % w)
 	for row in screen.PLACEHOLDER_GRIDS.values():

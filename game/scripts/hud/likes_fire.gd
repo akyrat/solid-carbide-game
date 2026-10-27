@@ -4,7 +4,7 @@ extends Control
 ## top heat step (ComboHeat.FIRE_STEP, from x4). Drawn in code, in hard-edged
 ## pixels: each column of the flame is a stack of square pixels (white-hot at
 ## the bottom, then yellow, then orange at the tip) whose height flickers in
-## pixel-art frames. Never Redgull red.
+## pixel-art frames. Never the heart's red.
 ##
 ## The Hud places this node over the likes bar and the space just above it,
 ## and tells it how full the bar is (`fill_ratio`) and where the "Likes" and

@@ -1,7 +1,8 @@
 {
-  "task": "T-145",
+  "task": "T-305 (rebuilt in Greenbull's colours; first built by T-145 in Redgull's)",
   "generator": "game/tools/build_helicopter.py build (free, no PixelLab call)",
   "source": "art-archive/T-145/helicopter_sample.png (the board-approved sample, 2026-10-16)",
+  "colours": "dark green ramp led by Greenbull's dark green RGB 12, 76, 44; light green stripes; Greenbull's emblem (game/art/logo/greenbull_emblem_32.png) in its own colours on cream panels",
   "frames": 4,
   "frame_size": [
     192,
@@ -68,5 +69,7 @@
       "colours": 30,
       "opaque_pixels": 5971
     }
-  ]
+  ],
+  "sheet_colours": 30,
+  "redgull_red_pixels": 0
 }

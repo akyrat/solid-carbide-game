@@ -22,11 +22,11 @@ extends Node2D
 ## sits in a node of the map's drawing whose view applies the isometric
 ## transform, so it draws in flat world pixels and the circle shows as the
 ## ground ellipse. Opaque hard-edged orange and yellow with a dark rim, a few
-## flickering yellow tongues; never Redgull red.
+## flickering yellow tongues; never the heart's red.
 
 const PX_PER_UNIT := 16.0
 const EPS := 1e-6
-## Placeholder colours (opaque, Visual style). Orange and yellow, never Redgull red.
+## Placeholder colours (opaque, Visual style). Orange and yellow, never the heart's red.
 const FIRE_OUTLINE := Color(0.05, 0.07, 0.12, 1.0)
 const FIRE_OUTER := Color(1.0, 0.55, 0.1, 1.0)
 const FIRE_INNER := Color(1.0, 0.82, 0.25, 1.0)
@@ -163,7 +163,7 @@ func _hit(e: Node) -> void:
 	e.take_damage(damage)
 
 
-## Every colour the fire draws with (tests check none is Redgull red).
+## Every colour the fire draws with (tests check none is the heart's red).
 func colours() -> Array:
 	return [FIRE_OUTLINE, FIRE_OUTER, FIRE_INNER, FIRE_CORE]
 

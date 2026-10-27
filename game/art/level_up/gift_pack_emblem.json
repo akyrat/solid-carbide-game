@@ -1,11 +1,13 @@
 {
- "task": "T-140",
- "what": "Gift pack emblem: the PixelLab gift box (art-archive/T-140/gift_pack_raw.png, unchanged) with the Redgull logo on a cream disc on its front. Shown 1x or 2x beside the ribbon.",
- "logo": "logo on the box front",
- "made_by": "game/tools/build_level_up_art.py: art-archive/T-140/gift_pack_raw.png (PixelLab, 1 generation, T-140 sample) plus the logo by script",
+ "task": "T-303",
+ "earlier": "T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+ "what": "Gift pack emblem: T-140's PixelLab gift box (art-archive/T-140/gift_pack_raw.png, unchanged) recoloured by script to a dark green box, light green ribbon and yellow sparkles, with Greenbull's emblem on a pale disc on its front. Shown beside the ribbon.",
+ "logo": "Greenbull emblem (32 px) on the box front",
+ "made_by": "game/tools/build_level_up_art.py: art-archive/T-140/gift_pack_raw.png (PixelLab, 1 generation, T-140 sample) recoloured by script, plus the emblem by script (0 new generations)",
  "size": [
   128,
   128
  ],
+ "emblem": "game/art/logo/greenbull_emblem_32.png",
  "prompt": null
 }

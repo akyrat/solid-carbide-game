@@ -1,7 +1,7 @@
 """The style loop's command line (role: entry point; tasks/README.md, "The style loop", T-291).
 
   python tools/style_loop/run.py art --task T-NNN --brief <file> --out <png>
-         [--size WxH] [--frames N] [--redgull] [--allow-red R,G,B ...] [--max-colors N] [--fake FIXTURE]
+         [--size WxH] [--frames N] [--greenbull] [--allow-red R,G,B ...] [--max-colors N] [--fake FIXTURE]
       The Asset Generation Agent makes the PNG; every version is saved in art-archive/<task>/style-loop/,
       and the kept one is copied to --out. The script check options are style_rules.py's `art` options.
   python tools/style_loop/run.py text --task T-NNN --brief <file> --kind KIND [--out <file>] [--fake FIXTURE]
@@ -46,9 +46,10 @@ def parser():
     art, text = sub.choices["art"], sub.choices["text"]
     art.add_argument("--size", type=style_rules._parse_size, help="WxH of the image, or of each frame")
     art.add_argument("--frames", type=int, default=0, help="a one-row sheet of this many frames")
-    art.add_argument("--redgull", action="store_true", help="one of Redgull's own things (rule 6 does not apply)")
+    art.add_argument("--greenbull", action="store_true",
+                     help="one of Greenbull's own things (rule 6 allows its light green and yellow)")
     art.add_argument("--allow-red", type=style_rules._parse_rgb, action="append", default=[],
-                     help="a red rule 6 allows on this asset (R,G,B); repeatable")
+                     help="a colour near Greenbull's that rule 6 allows on this asset (R,G,B); repeatable")
     art.add_argument("--max-colors", type=int, default=30)
     text.add_argument("--kind", dest="text_kind", required=True, choices=style_rules.KINDS)
     return ap
@@ -73,7 +74,7 @@ def main(argv=None, claude=None):
         spec = loop.Spec(kind=args.kind, task=args.task, root=ts.task_checkout(args.task),
                          brief=brief, brief_name=brief_path.as_posix(), out=out,
                          text_kind=getattr(args, "text_kind", None), size=getattr(args, "size", None),
-                         frames=getattr(args, "frames", 0), redgull=getattr(args, "redgull", False),
+                         frames=getattr(args, "frames", 0), greenbull=getattr(args, "greenbull", False),
                          allow_red=getattr(args, "allow_red", []), max_colors=getattr(args, "max_colors", 30))
         claude = claude or (FakeClaude(args.fake) if args.fake else RealClaude())
         try:

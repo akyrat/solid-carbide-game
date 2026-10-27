@@ -28,7 +28,7 @@ class TileTest(unittest.TestCase):
 
     def test_no_colour_reads_as_red_and_all_are_darker_than_both_grounds(self):
         for c in b.PALETTE.values():
-            self.assertFalse(b.is_redgull_red(c), c)
+            self.assertFalse(b.reads_as_red(c), c)
             self.assertLess(b.luma(c), b.luma(b.ASPHALT), c)
             self.assertLess(b.luma(c), b.luma(b.GRAVEL), c)
 
@@ -58,7 +58,7 @@ class CheckTest(unittest.TestCase):
         rows[3][1] = (12, 10, 20, 128)
         rows[4][1] = (200, 200, 220, 255)
         failed = {r[0] for r in b.check_rows(rows) if not r[1]}
-        self.assertIn("no Redgull red (nor any red)", failed)
+        self.assertIn("no red", failed)
         self.assertIn("no semi-transparent pixels", failed)
         self.assertIn("every colour darker than the asphalt and the gravel", failed)
 

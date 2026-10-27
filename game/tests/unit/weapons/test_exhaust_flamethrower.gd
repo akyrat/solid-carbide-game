@@ -10,8 +10,8 @@ const FakeBigEnemy := preload("res://tests/fixtures/weapons/fake_big_enemy.gd")
 const Flame := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const CarTuning := preload("res://scripts/driving/car_tuning.gd")
 const DT := 0.02  # one physics step (50 per second)
-## Redgull red (Hud.HEART_COLOR): placeholders never use it.
-const REDGULL_RED := Color(0.86, 0.1, 0.16)
+## The heart's red (Hud.HEART_COLOR): placeholders never use it.
+const HEART_RED := Color(0.86, 0.1, 0.16)
 
 var run: Node2D
 var rack: Node
@@ -545,7 +545,7 @@ func test_drawing_sits_under_the_car_on_its_exhaust() -> void:
 	assert_almost_eq(d.rotation, Flame.ISO_TRANSFORM.basis_xform(back).angle(), 0.001, "pointing back")
 
 
-func test_flame_art_is_opaque_and_not_redgull_red() -> void:
+func test_flame_art_is_opaque_and_not_heart_red() -> void:
 	var img: Image = flame.flame_drawing.SHEET.get_image()
 	assert_eq(img.get_width(), 8 * 224, "8 columns of 224 px cells")
 	assert_eq(img.get_height(), 8 * 224, "8 rows: 2 frames x 32 directions")
@@ -558,9 +558,9 @@ func test_flame_art_is_opaque_and_not_redgull_red() -> void:
 				seen[c] = true
 	assert_gt(seen.size(), 5, "the art has its colours")
 	for c in seen:
-		var dh := absf(c.h - REDGULL_RED.h)
+		var dh := absf(c.h - HEART_RED.h)
 		var near_red: bool = minf(dh, 1.0 - dh) * 360.0 < 15.0 and c.s > 0.5 and c.v < 0.7 and c.v > 0.2
-		assert_false(near_red, "colour %s is not Redgull red" % c)
+		assert_false(near_red, "colour %s is not the heart's red" % c)
 
 
 func test_flame_drawing_picks_the_cell_of_its_direction() -> void:

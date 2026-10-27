@@ -40,6 +40,21 @@ EVALUATOR = "style-evaluator"
 EVALUATOR_TOOLS = "Read,Glob,Grep"   # it looks and reads; it never makes or fixes anything
 GUIDE = {"art": 'docs/visual-style.md, Content, "Rules"', "text": 'docs/extended-narrative.md, Content, "Text rules"'}
 
+GUIDE_FILE = {"art": "docs/visual-style.md", "text": "docs/extended-narrative.md"}
+GUIDE_SECTION = {"art": "### Rules", "text": "### Text rules"}
+
+
+def guide_text(kind, root=None):
+    """The style guide's rules as the document has them now, read from the document (never copied into this
+    tool): the section under `GUIDE_SECTION` up to the next heading."""
+    path = Path(root or Path(__file__).resolve().parents[2]) / GUIDE_FILE[kind]
+    text = path.read_text(encoding="utf-8")
+    start = text.index(GUIDE_SECTION[kind] + "\n")
+    rest = text[start:].split("\n", 1)[1]
+    end = next((i for i, line in enumerate(rest.splitlines(keepends=True)) if line.startswith("#")), None)
+    return rest if end is None else "".join(rest.splitlines(keepends=True)[:end]).strip()
+
+
 VERSION_SCHEMA = {
     "art": {"type": "object", "required": ["file", "changed"], "properties": {
         "file": {"type": "string", "description": "the PNG of this version"},
@@ -66,7 +81,7 @@ class Spec:
     text_kind: str = None          # style_rules text kind (popup, label, ...)
     size: tuple = None             # art: (w, h) of the image, or of each frame
     frames: int = 0
-    redgull: bool = False
+    greenbull: bool = False        # art: one of Greenbull's own things (rule 6 allows its light green and yellow)
     allow_red: list = field(default_factory=list)
     max_colors: int = 30
     earlier: tuple = None          # (text, runs) of the Style review's earlier runs, read on the first write (T-296)
@@ -189,7 +204,7 @@ def script_checks(spec, version):
         return style_rules.text_checks(version, spec.text_kind)
     try:
         _, _, rows = style_rules.decode_png((spec.root / version).read_bytes())
-        return style_rules.art_checks(rows, spec.size, spec.frames, spec.redgull, spec.allow_red, spec.max_colors)
+        return style_rules.art_checks(rows, spec.size, spec.frames, spec.greenbull,spec.allow_red, spec.max_colors)
     except ValueError as e:
         return [style_rules._result(1, "an 8-bit RGBA PNG that splits into the frames", False, str(e))]
 
@@ -262,6 +277,8 @@ def evaluate_prompt(spec, version, checks):
     return "\n".join([
         f"Score this version of {what(spec)} for task {spec.task} from 1 to 10 against {GUIDE[spec.kind]}.",
         "", "The brief it was made from:", "", spec.brief.strip(), "", shown, "",
+        *(["The style guide's rules as the document has them now:", "", guide_text("art", spec.root), ""]
+          if spec.kind == "art" and (spec.root / GUIDE_FILE["art"]).is_file() else []),
         "The script checks (game/tools/style_rules.py); take them as facts:", json.dumps(checks, indent=1), "",
         "Answer with `score`, `reason` (which rules it breaks and how, precisely enough for the agent that made it "
         "to fix it) and `rules_broken` (the rule numbers). Don't make or fix anything."])

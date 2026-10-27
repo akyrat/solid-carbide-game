@@ -3,7 +3,7 @@ extends GutTest
 ## ends within its length and leaves the bar and texts as they were, plays
 ## while the run is paused and while it keeps going, ignores other changes to
 ## the bar, stays clear of the other HUD parts at the HUD's window sizes and
-## never uses Redgull red.
+## never uses the heart's red.
 
 const RUN := preload("res://scenes/run/run.tscn")
 const SIZES: Array[Vector2i] = [
@@ -138,7 +138,7 @@ func test_a_new_run_state_stops_it() -> void:
 	assert_eq(r.hud.level_label.scale, Vector2.ONE)
 
 
-func test_no_redgull_red_and_hard_pixel_edges() -> void:
+func test_no_heart_red_and_hard_pixel_edges() -> void:
 	for c in LevelUpFlash.all_colors():
 		assert_false(c.r > 0.7 and c.g < 0.35 and c.b < 0.35, "not red: %s" % c)
 		var h := Hud.HEART_COLOR

@@ -1,46 +1,59 @@
 #!/usr/bin/env python3
-"""Builds the Redgull helicopter sprite sheet from the approved PixelLab sample (task T-145).
+"""Builds the gift pack helicopter sprite sheet from the approved PixelLab sample.
 
-No PixelLab call: every step is a script on the approved sample
-(art-archive/T-145/helicopter_sample.png). It
+T-145 built it in the old sponsor's red with the gull; T-305 rebuilds it in Greenbull's colours
+(Visual style, Decisions, "The rebrand", "Greenbull's look"; rule 6). No PixelLab call:
+every step is a script on the approved sample (art-archive/T-145/helicopter_sample.png,
+read only). It
 - mirrors the sample (the sample's nose points down-left; the helicopter flies left to right),
-- recolours the charcoal body to Redgull red (the logo's red, style_rules.REDGULL_RED, at the middle of the ramp),
+- recolours the charcoal body to a dark green ramp led by Greenbull's dark green
+  (style_rules.GREENBULL_DARK_GREEN, at the middle of the ramp), and the sample's thin accent
+  stripes to Greenbull's light green,
 - erases the four static rotor blades and draws them again, turned a step per frame (4 frames),
-- stamps the approved Redgull logo (game/art/logo/) on a pale panel on the fuselage side and the tail fin.
+- stamps Greenbull's approved emblem (game/art/logo/greenbull_emblem_32.png, the bull's head,
+  in its own colours) on a pale panel on the fuselage side and the tail fin.
 
-    python game/tools/build_helicopter.py build   # writes game/art/gift_pack/helicopter_sheet.png and its record
+    python game/tools/build_helicopter.py build          # writes game/art/gift_pack/helicopter_sheet.png and its record
     python game/tools/build_helicopter.py check
+    python game/tools/build_helicopter.py piece <png>    # the style loop's step: the sheet to <png>
+    python game/tools/build_helicopter.py archive        # copies the current sheet to OLD_ARCHIVE in art-archive/T-305/
+                                                         # (never overwrites)
 """
 from __future__ import annotations
 
 import argparse
 import json
 import math
+import shutil
 import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style_rules import REDGULL_RED  # noqa: E402
+import style_rules as rules  # noqa: E402
+from style_rules import GREENBULL_DARK_GREEN, GREENBULL_LIGHT_GREEN  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
 SAMPLE = ROOT / "art-archive" / "T-145" / "helicopter_sample.png"
-LOGO = ROOT / "game" / "art" / "logo" / "redgull_logo_32.png"
+LOGO = ROOT / "game" / "art" / "logo" / "greenbull_emblem_32.png"
 OUT_DIR = ROOT / "game" / "art" / "gift_pack"
 SHEET = OUT_DIR / "helicopter_sheet.png"
 FRAME_FILES = [OUT_DIR / f"helicopter_{i}.png" for i in range(4)]
 RECORD = OUT_DIR / "helicopter_sheet.json"
+OLD_ARCHIVE = ROOT / "art-archive" / "T-305" / rules.OLD_BRAND_DIR  # the old sheet's folder (T-312)
 
 W, H = 192, 160
 FRAMES = 4
-LOGO_RED = REDGULL_RED
-# Red ramp, dark to light, around the logo's red.
-RAMP = [(52, 6, 14), (86, 11, 20), (112, 14, 24), LOGO_RED, (166, 28, 36), (198, 52, 50), (232, 120, 104)]
-PANEL = (226, 220, 224)
-PANEL_SHADE = (176, 168, 178)
+MAX_COLOURS = 30
+BRAND = GREENBULL_DARK_GREEN
+# Dark green ramp, dark to light, around Greenbull's dark green.
+RAMP = [(4, 24, 16), (6, 38, 24), (8, 56, 33), BRAND, (22, 102, 58), (40, 132, 74), (78, 170, 98)]
+PANEL = (240, 246, 226)        # the cream of the gift pack's tag and parachute (T-304)
+PANEL_SHADE = (206, 220, 190)
+PANEL_EDGE = (6, 38, 24)
 OUTLINE = (5, 4, 8)
-STRIPE = (30, 25, 57)
+STRIPE = GREENBULL_LIGHT_GREEN
 BLADE = (54, 54, 82)
 BLADE_LIGHT = (91, 93, 112)
 
@@ -212,18 +225,39 @@ def draw_blades(img: Image.Image, theta: float) -> Image.Image:
     return out
 
 
-def logo_mask(size: int) -> list:
-    """The approved logo (the 64 px file) cut down to size x size, hard pixels (threshold, no blending)."""
-    lg = Image.open(LOGO.parent / "redgull_logo_64.png").convert("RGBA")
-    alpha = lg.split()[3].resize((size, size), Image.BOX)
-    a = alpha.load()
-    return [[a[x, y] >= 128 for x in range(size)] for y in range(size)]
+def emblem_palette() -> list:
+    """The approved emblem's own colours."""
+    lg = Image.open(LOGO).convert("RGBA")
+    return sorted({p[:3] for p in lg.getdata() if p[3] == 255})
+
+
+def emblem(size: int) -> list:
+    """The approved emblem fitted in size x size: rows of colours (None for transparent), every
+    pixel snapped to the emblem's own colours, hard pixels (threshold, no blending)."""
+    lg = Image.open(LOGO).convert("RGBA")
+    lg = lg.crop(lg.getbbox())
+    pal = emblem_palette()
+    w = h = size
+    if lg.width >= lg.height:
+        h = max(1, round(lg.height * size / lg.width))
+    else:
+        w = max(1, round(lg.width * size / lg.height))
+    small = lg.resize((w, h), Image.BOX)
+    sp = small.load()
+    ox, oy = (size - w) // 2, (size - h) // 2
+    rows = [[None] * size for _ in range(size)]
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = sp[x, y]
+            if a >= 110:
+                rows[oy + y][ox + x] = min(pal, key=lambda c: rules.rgb_distance(c, (r, g, b)))
+    return rows
 
 
 def stamp(img: Image.Image, centre, size: int, shear: float) -> None:
-    """A pale panel with the logo in Redgull red, sheared along the fuselage."""
+    """A pale panel with Greenbull's emblem in its own colours, sheared along the fuselage."""
     px = img.load()
-    m = logo_mask(size)
+    m = emblem(size)
     pad = 2
     n = size + 2 * pad
     for yy in range(n):
@@ -235,28 +269,42 @@ def stamp(img: Image.Image, centre, size: int, shear: float) -> None:
             if corner:
                 continue
             if edge:
-                px[x, y] = (52, 6, 14, 255)
+                px[x, y] = PANEL_EDGE + (255,)
                 continue
             lx, ly = xx - pad, yy - pad
-            inside = 0 <= lx < size and 0 <= ly < size and m[ly][lx]
-            px[x, y] = LOGO_RED + (255,) if inside else PANEL + (255,)
+            c = m[ly][lx] if 0 <= lx < size and 0 <= ly < size else None
+            if c is None:
+                c = PANEL_SHADE if (xx == n - 2 or yy == n - 2) else PANEL
+            px[x, y] = c + (255,)
 
 
 def build_frames(logo_spots) -> list:
     base = recolour(base_body())
+    clear_reds(base)
     for centre, size, shear in logo_spots:
         stamp(base, centre, size, shear)
     frames = [draw_blades(base, i * (math.pi / 2) / FRAMES) for i in range(FRAMES)]
-    return merge_colours(frames, 30)
+    return merge_colours(frames, MAX_COLOURS)
+
+
+def clear_reds(img: Image.Image) -> None:
+    """Any pixel the red check flags (a red left in the sample) takes the ramp's colour of the same lightness."""
+    px = img.load()
+    for y in range(H):
+        for x in range(W):
+            p = px[x, y]
+            if p[3] == 255 and rules.reads_as_red(p[:3]):
+                px[x, y] = min(RAMP, key=lambda c: abs(lum(c) - lum(p))) + (255,)
 
 
 def merge_colours(frames, limit: int):
-    """Merge the least used colours into their nearest neighbour until the sheet has `limit` colours (the logo red stays)."""
+    """Merge the least used colours into their nearest neighbour until the sheet has `limit` colours
+    (Greenbull's dark green, the panel, the outline and the emblem's own colours stay)."""
     from collections import Counter
     count = Counter()
     for f in frames:
         count.update(p[:3] for p in f.getdata() if p[3] == 255)
-    protected = {LOGO_RED, PANEL, OUTLINE}
+    protected = {BRAND, PANEL, OUTLINE, STRIPE} | set(emblem_palette())
     while len(count) > limit:
         c = min((k for k in count if k not in protected), key=lambda k: count[k])
         near = min((k for k in count if k != c), key=lambda k: sum((a - b) ** 2 for a, b in zip(k, c)))
@@ -291,23 +339,44 @@ def frame_report(img: Image.Image) -> dict:
     }
 
 
-def build() -> dict:
+def red_pixels(img: Image.Image) -> list:
+    return sorted({p[:3] for p in img.getdata() if p[3] and rules.reads_as_red(p[:3])})
+
+
+def archive() -> list:
+    """Copies the current game sheet and its record to OLD_ARCHIVE (art-archive/T-305/), never overwriting."""
+    OLD_ARCHIVE.mkdir(parents=True, exist_ok=True)
+    done = []
+    for src in (SHEET, RECORD):
+        dst = OLD_ARCHIVE / src.name
+        if src.exists() and not dst.exists():
+            shutil.copy2(src, dst)
+            done.append(dst)
+    return done
+
+
+def build(out: Path = SHEET, record: bool = True) -> dict:
     frames = build_frames(LOGO_SPOTS)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out.parent.mkdir(parents=True, exist_ok=True)
     sheet = sheet_of(frames)
-    sheet.save(SHEET)
+    sheet.save(out)
     report = {
-        "task": "T-145",
+        "task": "T-305 (rebuilt in Greenbull's colours; first built by T-145 in " + rules.OLD_BRAND + "'s)",
         "generator": "game/tools/build_helicopter.py build (free, no PixelLab call)",
         "source": "art-archive/T-145/helicopter_sample.png (the board-approved sample, 2026-10-16)",
+        "colours": "dark green ramp led by Greenbull's dark green RGB 12, 76, 44; light green stripes; "
+                   "Greenbull's emblem (game/art/logo/greenbull_emblem_32.png) in its own colours on cream panels",
         "frames": FRAMES,
         "frame_size": [W, H],
         "sheet": "helicopter_sheet.png: 4 frames side by side, the rotor turned a quarter of a blade gap per frame",
         "faces": "right (down-right in the isometric view), the way it flies",
         "logo_spots": [{"centre": list(c), "size": n, "shear": sh} for c, n, sh in LOGO_SPOTS],
         "frame_checks": [frame_report(f) for f in frames],
+        "sheet_colours": len({p[:3] for p in sheet.getdata() if p[3] == 255}),
+        rules.OLD_BRAND_DIR + "_red_pixels": len(red_pixels(sheet)),  # the record's key (T-312)
     }
-    RECORD.write_text(json.dumps(report, indent=2) + chr(10))
+    if record:
+        RECORD.write_text(json.dumps(report, indent=2) + chr(10))
     return report
 
 
@@ -316,19 +385,34 @@ def check() -> int:
     ok = sheet.size == (W * FRAMES, H)
     for i in range(FRAMES):
         r = frame_report(sheet.crop((i * W, 0, (i + 1) * W, H)))
-        good = r["transparent_corners"] and r["semi_transparent_pixels"] == 0 and r["colours"] <= 30
+        good = r["transparent_corners"] and r["semi_transparent_pixels"] == 0 and r["colours"] <= MAX_COLOURS
         print(("PASS " if good else "FAIL "), i, r)
         ok = ok and good
+    n = len({p[:3] for p in sheet.getdata() if p[3] == 255})
+    reds = red_pixels(sheet)
+    print(f"sheet: {sheet.size}, {n} colours, red pixels: {len(reds)}")
+    ok = ok and n <= MAX_COLOURS and not reds
     return 0 if ok else 1
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("command", choices=["build", "check"])
+    ap.add_argument("command", choices=["build", "check", "piece", "archive"])
+    ap.add_argument("out", nargs="?")
     a = ap.parse_args()
     if a.command == "build":
         r = build()
         print(json.dumps(r["frame_checks"]))
+        return check()
+    if a.command == "piece":
+        if not a.out:
+            ap.error("piece needs the output PNG path")
+        build(Path(a.out), record=False)
+        print(f"wrote {a.out}")
+        return 0
+    if a.command == "archive":
+        for p in archive():
+            print(f"archived {p}")
         return 0
     return check()
 
