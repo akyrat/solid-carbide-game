@@ -1,7 +1,7 @@
 ---
 id: T-278
 title: A little side slip out of a drift, to steady with counter-steer
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Coursework
@@ -64,6 +64,10 @@ Drift slip built: letting go of a drift keeps the turn going briefly (0.35 stren
 
 QA passed all 3. Ready to play on its own: drift in the prototype and a run, steady the car out of each drift, and tune the 4 sliders. Subtle at defaults; try strength 0.5 and length 0.5 s.
 
+### 2026-10-27, Needs playtest → Done
+
+Played by the board, approved, merging into master.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -112,3 +116,4 @@ I looked at frames of both GIFs. In the run, the car hops a curb once, so an air
 **Refusal:** the permission system refused one command, `rm -rf` of my own scratchpad frame folders, because the path was built from shell variables. I did not get around it. I recorded into new folders instead, and the old frame folders are still in the scratchpad.
 
 **Documents affected:** `docs/drifting.md` (Content: "Side slip out of a drift (task T-278)", and the tuning panel bullet), `game/README.md` ("Side slip out of a drift (T-278)", and the tuning panel paragraph).
+- 2026-10-27, needs-playtest → done: The board's playtest (2026-10-28): looks good.
