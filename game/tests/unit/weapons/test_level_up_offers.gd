@@ -83,23 +83,54 @@ func _max_all_but(keep: Array) -> void:
 
 # ---- The first level-up ----------------------------------------------------------------------
 
-func test_first_level_up_offers_the_gun_upgrade_and_the_flamethrower() -> void:
-	for s in SEEDS:
+const FIRST_CHOICES := ["upgrade_gun", "get_flamethrower", "get_underglow", "get_molotov", "get_wiper"]
+
+
+func test_first_level_up_is_drawn_from_every_first_choice() -> void:
+	var seen := {}
+	var fixed_pair := 0
+	for s in SEEDS * 5:
 		_new_run(s)
 		_level_up()
 		assert_eq(shown.size(), 1, "seed %d: one offer" % s)
 		assert_eq(shown[0][0], 2, "the level reached")
-		assert_eq(shown[0][1], ["upgrade_gun", "get_flamethrower"], "seed %d: exactly these two" % s)
+		var ids: Array = shown[0][1]
+		assert_eq(ids.size(), 2, "seed %d: two choices" % s)
+		assert_ne(ids[0], ids[1], "seed %d: two different ones" % s)
+		for id in ids:
+			assert_true(FIRST_CHOICES.has(id), "seed %d: %s is available" % [s, id])
+			seen[id] = true
+		if ids == ["upgrade_gun", "get_flamethrower"]:
+			fixed_pair += 1
 		assert_true(get_tree().paused, "the run waits for the choice")
-		offers.choose("upgrade_gun")
+		offers.choose(ids[0])
+	for id in FIRST_CHOICES:
+		assert_true(seen.has(id), "%s is offered at a first level-up" % id)
+	assert_lt(fixed_pair, SEEDS * 5, "the old fixed pair is not the only first offer")
 
 
-func test_the_second_level_up_after_taking_the_gun_upgrade_is_drawn() -> void:
+func test_the_first_level_up_with_the_same_seed_is_the_same() -> void:
+	var runs := []
+	for i in 2:
+		_new_run(12)
+		_level_up()
+		runs.append(shown[0][1])
+		offers.choose(shown[0][1][0])
+	assert_eq(runs[0], runs[1])
+
+
+func test_the_fixed_first_offer_is_gone() -> void:
+	assert_false("FIRST_OFFERS" in OffersScript, "no fixed first offer constant")
+	assert_false(offers.has_method("is_first_offer"), "no first-offer check")
+
+
+func test_the_second_level_up_is_drawn() -> void:
 	var seen := {}
 	for s in SEEDS:
 		_new_run(s)
+		rack.gun.set_tier(2)
 		_level_up()
-		offers.choose("upgrade_gun")
+		offers.choose(shown[0][1][0])
 		_level_up()
 		for id in shown[1][1]:
 			seen[id] = true
@@ -220,6 +251,7 @@ func test_nothing_to_offer_skips_the_choice_and_resumes() -> void:
 # ---- Taking a choice -------------------------------------------------------------------------
 
 func test_taking_the_gun_and_flamethrower_choices_applies_them_and_resumes() -> void:
+	_max_all_but(["gun", "flamethrower"])
 	_level_up()
 	assert_true(offers.choose("upgrade_gun"))
 	assert_eq(rack.gun.tier, 2)
@@ -272,13 +304,14 @@ func test_taking_get_and_upgrade_wiper() -> void:
 
 
 func test_a_choice_not_on_offer_is_refused() -> void:
+	_max_all_but(["gun", "flamethrower", "wiper"])
+	rack.wiper.set_tier(rack.wiper.max_tier())
 	_level_up()
 	assert_false(offers.choose("upgrade_flamethrower"), "not owned yet, so not offered")
-	assert_false(offers.choose("get_wiper"), "available but not drawn")
+	assert_false(offers.choose("get_wiper"), "at its last tier, not offered")
 	assert_false(offers.choose("nonsense"))
 	assert_false(offers.choose(""))
 	assert_eq(rack.gun.tier, 1)
-	assert_false(rack.wiper.is_owned())
 	assert_true(get_tree().paused, "still waiting")
 
 
@@ -297,6 +330,7 @@ func test_weapon_of_maps_ids_to_weapons() -> void:
 
 
 func test_two_level_ups_at_once_offer_in_turn() -> void:
+	_max_all_but(["gun", "flamethrower"])
 	state.add_xp(state.xp_needed() + RunData.new().xp_needed(2) + 0.5)
 	assert_eq(state.level, 3)
 	assert_eq(shown.size(), 1, "the first level's choice is on show")
@@ -309,16 +343,16 @@ func test_two_level_ups_at_once_offer_in_turn() -> void:
 	assert_false(get_tree().paused)
 
 
-func test_a_new_run_clears_the_offer_and_brings_back_the_first_offer() -> void:
+func test_a_new_run_clears_the_offer() -> void:
 	_level_up()
-	offers.choose("upgrade_gun")
+	offers.choose(shown[-1][1][0])
 	_level_up()
 	_new_run(3)
 	assert_false(offers.has_offers())
 	assert_false(offers.choose("upgrade_gun"))
 	assert_false(get_tree().paused)
 	_level_up()
-	assert_eq(shown[-1][1], ["upgrade_gun", "get_flamethrower"])
+	assert_eq(shown[-1][1].size(), 2, "the new run's first level-up is drawn")
 
 
 # ---- Playtest switches -----------------------------------------------------------------------

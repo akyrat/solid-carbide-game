@@ -15,10 +15,9 @@ extends Node
 ##
 ## Each level-up offers 2 different choices drawn at random (`rng`, which tests
 ## can seed) from every available one, shown in the order of ALL_IDS. The first
-## choice of a run whose car has only the gun is always "upgrade_gun" and
-## "get_flamethrower". With only one choice available it is offered alone;
-## with none the choice is skipped (choice_made() is called at once,
-## offers_ready is not emitted).
+## choice of a run is drawn the same way (T-321: no fixed first offer). With
+## only one choice available it is offered alone; with none the choice is
+## skipped (choice_made() is called at once, offers_ready is not emitted).
 
 const UPGRADE_GUN := "upgrade_gun"
 const GET_FLAMETHROWER := "get_flamethrower"
@@ -35,8 +34,6 @@ const WEAPON_ORDER := ["gun", "flamethrower", "underglow", "molotov", "wiper"]
 ## Every choice id, in the order they are shown.
 const ALL_IDS := [UPGRADE_GUN, GET_FLAMETHROWER, UPGRADE_FLAMETHROWER, GET_UNDERGLOW, UPGRADE_UNDERGLOW,
 		GET_MOLOTOV, UPGRADE_MOLOTOV, GET_WIPER, UPGRADE_WIPER]
-## The fixed first choice of a normal run (Weapons, Decisions).
-const FIRST_OFFERS := [UPGRADE_GUN, GET_FLAMETHROWER]
 ## How many choices a level-up offers (Weapons, Decisions: 2 in the MVP).
 const OFFER_COUNT := 2
 
@@ -50,8 +47,6 @@ var rack: Node = null
 var state: Node = null
 ## The ids on offer now; empty when no choice is waiting.
 var current_offers: Array = []
-## Choices taken this run (the first one is the fixed first offer).
-var choices_taken := 0
 ## The random draw's generator. Randomized once; tests set rng.seed.
 var rng := RandomNumberGenerator.new()
 
@@ -99,19 +94,8 @@ func compute_offers() -> Array:
 	return out
 
 
-## True when the next choice is the fixed first one: no choice taken yet this
-## run, the car has only the gun, and both first choices are available.
-func is_first_offer() -> bool:
-	if choices_taken > 0 or rack.owned_ids() != ["gun"]:
-		return false
-	var available := available_offers()
-	return available.has(UPGRADE_GUN) and available.has(GET_FLAMETHROWER)
-
-
 ## Draws the choices (advances `rng`).
 func _draw() -> Array:
-	if is_first_offer():
-		return FIRST_OFFERS.duplicate()
 	var pool := available_offers()
 	if pool.size() <= OFFER_COUNT:
 		return pool
@@ -139,7 +123,6 @@ func choose(id: String) -> bool:
 	if weapon_id == "" or not rack.upgrade(weapon_id):
 		return false
 	current_offers = []
-	choices_taken += 1
 	offer_taken.emit(id)
 	state.choice_made()
 	return true
@@ -156,4 +139,3 @@ func _on_choice_started(level: int) -> void:
 
 func _on_run_started() -> void:
 	current_offers = []
-	choices_taken = 0

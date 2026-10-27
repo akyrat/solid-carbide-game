@@ -205,7 +205,8 @@ func test_driving_over_the_landed_package_removes_it_and_opens_the_screen() -> v
 	drops.land_all()
 	var pkg: GiftPackage = drops.packages[0]
 	var expected: Array = run.weapons.offers.compute_offers()
-	assert_eq(expected, ["upgrade_gun", "get_flamethrower"], "T-043's first offers")
+	assert_eq(expected.size(), 2, "two choices")
+	assert_ne(expected[0], expected[1])
 	var picked: Array = []
 	drops.package_picked_up.connect(func(p): picked.append(p))
 	drops.check_pickups()
@@ -221,8 +222,10 @@ func test_driving_over_the_landed_package_removes_it_and_opens_the_screen() -> v
 	assert_true(get_tree().paused, "the run pauses")
 	assert_eq(state.choice_level(), 2)
 	run.level_up_screen.skip_animation()
-	run.level_up_screen.take("get_flamethrower")
-	assert_eq(run.weapons.flamethrower.tier, 1, "the choice works as before")
+	var taken: Node = run.weapons.get_weapon(run.weapons.offers.weapon_of(ids[0]))
+	var tier_before: int = taken.tier
+	run.level_up_screen.take(ids[0])
+	assert_eq(taken.tier, tier_before + 1, "the choice works as before")
 	assert_false(run.level_up_screen.visible)
 	assert_false(get_tree().paused, "the run resumes")
 
