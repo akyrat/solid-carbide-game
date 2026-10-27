@@ -1,7 +1,7 @@
 ---
 id: T-307
 title: Rebrand sweep: a check for Redgull's red, files and name in what the game loads, with screenshots of every screen
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/style_rules.py, game/tools/check_sprite_rules.py]
 files_expected_to_change: [game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-307.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -87,3 +91,4 @@ The red check is `style_rules.reads_as_red`; if these should be exempt, the Proj
 **Refused:** reverting Godot's line-ending-only `.import` noise (`git ls-files -m ... | xargs git checkout`) was refused as a compound command. Not essential: I committed only my own files and left the `.import` noise uncommitted; the Project Lead reverts it before merging.
 
 Documents affected: game/README.md.
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
