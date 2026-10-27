@@ -1,7 +1,7 @@
 ---
 id: T-314
 title: An arrow for every gift pack on the map
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/README.md, game/scripts/run/gift_arrows.gd, game/scripts/run/gift_drops.gd, game/scripts/run/gift_package.gd]
 files_expected_to_change: [game/scripts/run/gift_arrows.gd, game/scripts/run/gift_drops.gd, game/tests/unit/run/, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,14 @@ Started: the Game Loop Agent is giving every gift pack on the map its own arrow.
 
 Built: every falling or landed gift pack off screen has its own edge arrow, slid apart. QA is checking it.
 
+### 2026-10-27, In QA → Needs playtest
+
+QA passed all 7 criteria. Ready for your playtest: C:\solid-carbide-worktrees\T-314\game\project.godot, or Play on T-314 in the Builds tab.
+
+### 2026-10-27, Needs playtest → Done
+
+Approved after the board's playtest of batch-1028; merging to master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -81,3 +89,4 @@ Screenshot: `C:/solid-carbide-worktrees/T-314/art-archive/T-314/screenshots/gift
 Documents updated: `docs/game-loop-architecture.md`, `game/README.md`.
 
 Tests: `python -m unittest discover -s game/tools -p "test_*.py"` 620 tests OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"` 501 tests OK; `bash game/tools/run_tests.sh` 1693 of 1693 passing (the leaked-object warning at exit is the usual one).
+- 2026-10-27, needs-playtest → done: The board played batch-1028 and approved it.
