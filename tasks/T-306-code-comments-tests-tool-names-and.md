@@ -42,11 +42,11 @@ Show in the result notes that the diff touches only names, comments and strings.
 
 ## Acceptance criteria
 
-- [ ] `git grep -i redgull game/scripts game/tests game/tools game/README.md` finds nothing except history in art records or in tools marked as the old logo's history, each match listed in the result notes. (QA: pass / fail)
-- [ ] REDGULL_RED, is_redgull_red, the --redgull flag and any other name after Redgull are renamed, with every caller; the result notes show the diff touches only names, comments and strings, and the constants' values are unchanged. (QA: pass / fail)
-- [ ] make_logo_sizes.py and any other Redgull-only tool is renamed or marked as the old logo's history; none is deleted (git log shows no deletion). (QA: pass / fail)
-- [ ] The likes heart's colour (hud.gd HEART_COLOR) is unchanged. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] `git grep -i redgull game/scripts game/tests game/tools game/README.md` finds nothing except history in art records or in tools marked as the old logo's history, each match listed in the result notes. (QA: pass; all matches are listed and are record strings, archive/logo paths or HISTORY-marked tools; BANNED_WORDS and its tests keep the name on purpose, a Project Lead call noted in the result notes)
+- [ ] REDGULL_RED, is_redgull_red, the --redgull flag and any other name after Redgull are renamed, with every caller; the result notes show the diff touches only names, comments and strings, and the constants' values are unchanged. (QA: pass; no REDGULL_RED/is_redgull_red/--redgull left, result notes list renames and values; all three test sets pass)
+- [ ] make_logo_sizes.py and any other Redgull-only tool is renamed or marked as the old logo's history; none is deleted (git log shows no deletion). (QA: pass; make_logo_sizes.py and 4 others marked HISTORY, no deletions in git log)
+- [ ] The likes heart's colour (hud.gd HEART_COLOR) is unchanged. (QA: pass; diff changes only its comment)
+- [ ] All three test sets pass. (QA: pass; game/tools 490 OK, tools 501 OK, GUT 1419/1419)
 
 ## Updates
 
