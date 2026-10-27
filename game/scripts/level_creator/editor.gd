@@ -165,7 +165,7 @@ var pair_first: Dictionary = {}
 var pair_button: Button
 var unpair_button: Button
 ## How a pair shows in the editor (a proposal): a dashed line across the gap between the two and a
-## ring round each, in this colour (no Redgull red); the first obstacle clicked is ringed thicker.
+## ring round each, in this colour (none of Greenbull's colours); the first obstacle clicked is ringed thicker.
 const PAIR_COLOR := Color(0.35, 1.0, 0.75, 0.95)
 const PAIR_DASH_UNITS := 1.0
 
@@ -1051,7 +1051,7 @@ var spawn_dragging := false
 ## Where the dragged spawn point would land (the cell's middle under the mouse), and why it can't.
 var spawn_drop := Vector2.ZERO
 var spawn_drop_problem := ""
-## The spawn marker's colours (proposals; never Redgull red).
+## The spawn marker's colours (proposals; none of Greenbull's colours).
 const SPAWN_COLOR := Color(0.35, 0.95, 0.45, 0.95)
 const SPAWN_REFUSED_COLOR := Color(0.75, 0.75, 0.75, 0.8)
 const SPAWN_OUTLINE := Color(0.05, 0.1, 0.05, 1.0)

@@ -3,7 +3,7 @@
 Reads data/level/creator_buildings.json (the one data file that names each piece's art per view and
 mirror, with its footprint and anchor) and draws every texture it names as a flat box in the city's
 palette B (Visual style, Decisions, "City colours": cool blue-grey walls, pale lit windows, never
-Redgull red). Same input, same pixels. T-257 replaced the art (data paths now point to art/buildings/creator_final/, built by build_creator_buildings_art.py); this drawing only touches textures still under art/buildings/creator/.
+old-brand red). Same input, same pixels. T-257 replaced the art (data paths now point to art/buildings/creator_final/, built by build_creator_buildings_art.py); this drawing only touches textures still under art/buildings/creator/.
 
   python game/tools/build_creator_buildings.py          draw the PNGs
   python game/tools/build_creator_buildings.py --check  check the data (anchors, files, colours)
@@ -119,7 +119,7 @@ def check(data=None):
                     problems.append("%s: half-transparent pixel" % t["texture"])
                     break
                 if alpha and r > 200 and g_ < 80 and b < 80:
-                    problems.append("%s: Redgull red" % t["texture"])
+                    problems.append("%s: old-brand red" % t["texture"])
                     break
         else:
             problems.append("%s: missing" % t["texture"])

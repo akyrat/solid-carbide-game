@@ -12,7 +12,7 @@ It also writes the "textures" key of each prop in props.json: the PNG and "ancho
 of it that stands on the footprint's centre on the ground. Nothing else in props.json changes.
 T-256 replaces the art by changing the files and those textures.
 
-Rules for the sprites (checked by "check"): at most 30 colours, alpha 0 or 255, no Redgull red.
+Rules for the sprites (checked by "check"): at most 30 colours, alpha 0 or 255, no old-brand red.
 
 Usage (from the repo root):
     python game/tools/build_prop_art.py build   # writes the sprites and the textures key
@@ -35,7 +35,7 @@ MAX_COLORS = 30
 OUTLINE = (12, 12, 22)
 MARKER = (214, 244, 250)  # the facing arrow: a pale cyan, never red
 MARGIN = 3
-# A pixel is "Redgull red" when it is strongly red with little green and blue (orange is not).
+# A pixel is "old-brand red" when it is strongly red with little green and blue (orange is not).
 RED_MIN, RED_OVER, RED_MAX_OTHER = 150, 70, 100
 
 ROTATIONS = ["north", "east", "south", "west"]
@@ -243,7 +243,7 @@ def rules(png):
     colours = {tuple(int(v) for v in c[:3]) for c in arr[a == 255]}
     out.append(("at most %d colours" % MAX_COLORS, len(colours) <= MAX_COLORS, "%d colours" % len(colours)))
     reds = [c for c in colours if c[0] >= RED_MIN and max(c[1], c[2]) <= RED_MAX_OTHER and c[0] - max(c[1], c[2]) >= RED_OVER]
-    out.append(("no Redgull red", not reds, "%d red colours" % len(reds)))
+    out.append(("no old-brand red", not reds, "%d red colours" % len(reds)))
     return out
 
 
