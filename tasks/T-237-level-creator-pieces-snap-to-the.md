@@ -1,7 +1,7 @@
 ---
 id: T-237
 title: Level creator: pieces snap to the tile grid and to close neighbours
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -95,3 +95,4 @@ All 55 level-creator tests pass, including `test_creator_texts_only.gd`. **Full 
 
 **Documents affected:** none of the game area docs. game/README.md was updated.
 - 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
