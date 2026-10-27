@@ -1,7 +1,7 @@
 ---
 id: T-323
 title: "Game data: the Bricks weapon's numbers and upgrade tiers"
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -37,9 +37,9 @@ The board's decision (Weapons, Decisions, "Bricks", 2026-10-28). Propose Bricks'
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Bricks' numbers and tiers are in the weapon data, read through the game's data scripts like the other weapons (test that loads them). (QA: pass / fail)
-- [ ] Weapons, Content, "Bricks" lists each number with the reason for it. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [x] Bricks' numbers and tiers are in the weapon data, read through the game's data scripts like the other weapons (test that loads them). (QA: PASS. weapons.json "bricks" with 7 tiers, read by WeaponData.bricks_at(); test_bricks_numbers_and_tiers loads it. Bricks is not in level_up_offers WEAPON_ORDER/ALL_IDS and offered_in_level_ups is false, checked by test_bricks_not_offered_until_built.)
+- [x] Weapons, Content, "Bricks" lists each number with the reason for it. (QA: PASS. Damage, radius, knockback, min air time, cooldown, same-wave rule and tiers each have a reason, plus a comparison with the other weapons.)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: PASS. game/tools 620 OK (1 skipped); tools 501 OK; GUT 1690/1690.)
 
 ## Updates
 
@@ -48,6 +48,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Game Data Agent is proposing Bricks' numbers and tiers.
+
+### 2026-10-27, In progress → In QA
+
+Built: Bricks' numbers and 7 tiers are in the data, kept out of the offers until T-324 builds the weapon. QA is checking it.
 
 ## Style review
 
