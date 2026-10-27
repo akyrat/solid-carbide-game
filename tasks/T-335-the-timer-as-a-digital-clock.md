@@ -81,4 +81,4 @@ Built:
 - Docs: `docs/hud-and-menus.md` (HUD section, and a "Timer clock" bullet replacing "Top centre"), `game/README.md`.
 - Not done: the pause strip still sits at STRIP_TOP 92 (placed under the old top-centre timer); left alone, as the pause screen is not in this ticket.
 - Screenshots in `art-archive/T-335/screenshots/` (made with `game/tests/fixtures/timer_clock_shots.tscn` at 1152 x 648): `run_no_hud.png`, `clock_green.png` (5:00), `clock_yellow.png` (2:00), `clock_orange.png` (1:00), `clock_red.png` (0:20).
-- Test counts: GUT (`bash game/tools/run_tests.sh`) 1694 of 1694 passing, 143 scripts. Python sets: see the report.
+- Test counts: GUT (`bash game/tools/run_tests.sh`) 1694 of 1694 passing, 143 scripts. `game/tools` Python set 620 tests OK (1 skipped); `tools` Python set 501 tests OK.
