@@ -39,17 +39,34 @@ class CheckRebrandTest(unittest.TestCase):
     def kinds(self):
         return [(f["kind"], f["file"]) for f in check_rebrand.run(self.g)["findings"]]
 
-    def test_flags_loaded_red_png(self):
-        write_png(os.path.join(self.g, "art/effects/spark.png"), (204, 18, 28))
+    def test_flags_loaded_old_logo_red_png(self):
+        write_png(os.path.join(self.g, "art/effects/spark.png"), (135, 17, 27))
         write(os.path.join(self.g, "scripts/a.gd"), 'var t = load("res://art/effects/spark.png")\n')
         self.assertIn(("red", "art/effects/spark.png"), self.kinds())
 
+    def test_flags_colour_within_threshold(self):
+        write_png(os.path.join(self.g, "art/effects/spark.png"), (140, 20, 30))
+        write(os.path.join(self.g, "scripts/a.gd"), 'var t = load("res://art/effects/spark.png")\n')
+        self.assertIn(("red", "art/effects/spark.png"), self.kinds())
+
+    def test_fire_orange_and_wood_brown_pass(self):
+        write_png(os.path.join(self.g, "art/weapons/fire.png"), (249, 126, 3))
+        write_png(os.path.join(self.g, "art/weapons/wood.png"), (68, 33, 13))
+        write(os.path.join(self.g, "scripts/a.gd"),
+              'load("res://art/weapons/fire.png")\nload("res://art/weapons/wood.png")\n')
+        self.assertEqual(self.kinds(), [])
+
+    def test_brand_colours_name_their_archived_file(self):
+        for colour, source in check_rebrand.BRAND_COLOURS:
+            self.assertIn("art-archive/", source, colour)
+
     def test_ignores_red_png_nobody_loads(self):
-        write_png(os.path.join(self.g, "art/effects/unused.png"), (204, 18, 28))
+        write_png(os.path.join(self.g, "art/effects/unused.png"), (135, 17, 27))
         self.assertEqual(self.kinds(), [])
 
     def test_passes_kept_subject_heart(self):
-        write_png(os.path.join(self.g, "art/hud/likes_heart.png"), (219, 26, 41))
+        # a heart pixel that sits near a brand red, so the kept list is what lets it pass
+        write_png(os.path.join(self.g, "art/hud/likes_heart.png"), (135, 17, 27))
         write(os.path.join(self.g, "scripts/hud.gd"), 'var t = load("res://art/hud/likes_heart.png")\n')
         rep = check_rebrand.run(self.g)
         self.assertEqual(rep["findings"], [])
@@ -66,8 +83,8 @@ class CheckRebrandTest(unittest.TestCase):
         self.assertIn(("name", "art/logo/redgull_logo.png"), self.kinds())
 
     def test_pattern_and_folder_loads(self):
-        write_png(os.path.join(self.g, "art/kaiju/kaiju_e.png"), (204, 18, 28))
-        write_png(os.path.join(self.g, "art/banners/x/sign.png"), (204, 18, 28))
+        write_png(os.path.join(self.g, "art/kaiju/kaiju_e.png"), (135, 17, 27))
+        write_png(os.path.join(self.g, "art/banners/x/sign.png"), (135, 17, 27))
         write(os.path.join(self.g, "scripts/a.gd"),
               'load("res://art/kaiju/kaiju_%s.png" % d)\nvar dir = "res://art/banners/"\n')
         self.assertEqual(self.kinds(), [("red", "art/kaiju/kaiju_e.png")])

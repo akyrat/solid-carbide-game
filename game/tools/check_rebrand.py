@@ -5,9 +5,10 @@ Lists every PNG that game/scenes and game/scripts load (res:// paths in .tscn, .
 files; a path with %s or * stands for every file it matches, a path without an extension for
 every PNG starting with it, a folder for every PNG in it) and reports:
 
-  red     a loaded PNG with a pixel the red check flags (style_rules.reads_as_red, the heart's
-          red and its neighbours, and the old logo's red), unless the file is one of the subjects
-          whose red the docs keep (KEPT_RED below);
+  red     a loaded PNG with an opaque pixel within BRAND_THRESHOLD of one of Redgull's brand
+          colours (BRAND_COLOURS below, from the archived old Redgull art), unless the file is
+          one of the subjects whose red the docs keep (KEPT_RED below). Other reds (fire, wood)
+          are not flagged: Visual style says red is no longer reserved;
   name    a loaded file whose name contains "redgull";
   text    player-facing text containing "Redgull" in game/scripts, game/scenes and game/data
           (quoted strings and JSON values; comment lines and identifiers are not text).
@@ -39,6 +40,30 @@ KEPT_RED = {
     "art/effects/health_canister": 'Red after the rebrand: "the health canister ... warning red"; Health drop: "a red gas canister"',
     "art/effects/combo_broken": 'Red after the rebrand: "the combo broken popup\'s warning red"',
 }
+
+# Redgull's brand reds (T-308): the colours of the old Redgull art, taken from the
+# archived originals. A loaded PNG is flagged when an opaque pixel is within BRAND_THRESHOLD
+# (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not brand colours.
+BRAND_THRESHOLD = 12
+_L = "art-archive/T-303/red_gold/"
+_P = "art-archive/T-304/redgull/package.png"
+_PF = "art-archive/T-304/redgull/package_falling.png"
+_H = "art-archive/T-305/redgull/helicopter_sheet.png"
+BRAND_COLOURS = [
+    ((135, 17, 27), "style_rules.OLD_LOGO_RED; " + _P + ", " + _H),
+    ((230, 1, 2), _L + "gift_pack_emblem.png; " + _P),
+    ((221, 1, 1), _L + "gift_pack_emblem.png; " + _P + " (223, 1, 1)"),
+    ((145, 1, 2), _L + "gift_pack_emblem.png; " + _P),
+    ((124, 0, 1), _L + "gift_pack_emblem.png; " + _P + " (120, 4, 2)"),
+    ((222, 44, 52), _L + "button_plate.png, card_frame.png, header_ribbon.png"),
+    ((176, 24, 36), _L + "button_plate.png, card_frame.png, header_ribbon.png, sunburst.png"),
+    ((110, 14, 24), _L + "header_ribbon.png, sunburst.png; " + _H + " (112, 14, 24)"),
+    ((150, 24, 34), _PF),
+    ((166, 28, 36), _H),
+]
+# Left out on purpose: the old golds (240, 180, 40), (247, 175, 4), (251, 210, 11) and
+# (255, 214, 64) sit within a few units of Greenbull's own yellow and of fire yellow, and the
+# helicopter's (198, 52, 50) sits 11 from the burning flames' (208, 53, 46). The brand is the red.
 
 PATH_RE = re.compile(r"res://[A-Za-z0-9_./%*{}-]+")
 STRING_RE = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
@@ -88,14 +113,16 @@ def loaded_pngs(game_dir):
 
 
 def red_pixels(path):
-    """The distinct colours of a PNG that read as red (opaque pixels only); [] if unreadable."""
+    """The distinct opaque colours of a PNG within BRAND_THRESHOLD of a Redgull brand colour;
+    [] if unreadable."""
     try:
         with open(path, "rb") as f:
             _, _, rows = style_rules.decode_png(f.read())
     except (ValueError, OSError):
         return []
     colours = {p[:3] for r in rows for p in r if p[3] == RED_FLOOR_ALPHA}
-    return sorted(c for c in colours if style_rules.reads_as_red(c))
+    return sorted(c for c in colours
+                  if any(style_rules.rgb_distance(c, b) <= BRAND_THRESHOLD for b, _ in BRAND_COLOURS))
 
 
 def check_pngs(game_dir):
