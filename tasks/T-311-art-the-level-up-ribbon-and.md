@@ -1,7 +1,7 @@
 ---
 id: T-311
 title: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/README.md, tasks/T-303-art-the-level-up-screen-in.md, game/tools/build_level_up_art.py, game/tools/test_build_level_up_art.py, game/tools/check_level_up_shot.py, game/tools/style_rules.py, game/scripts/ui/level_up_screen.gd, game/art/level_up/, art-archive/T-307/screenshots/level_up_screen.png]
 files_expected_to_change: [game/art/level_up/, game/tools/build_level_up_art.py, game/tools/test_build_level_up_art.py, art-archive/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-311.
 ### 2026-10-27, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -127,3 +131,4 @@ Dark green leads the outline by 3,286 pixels (about 10%). That margin is clear b
 **Refusals.** In both loop runs the generator's own chained shell command was refused: it ran the piece script and then an inline `python -c` colour check, joined with `&&`. This was not essential. The loop still wrote, scored and kept each version, and I checked the colours with the pre-approved tools above. I didn't work around it.
 
 **Not committed.** Godot's line-ending-only `.import` changes across `game/` are left uncommitted.
+- 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
