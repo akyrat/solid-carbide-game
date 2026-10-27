@@ -39,15 +39,15 @@ The board's review: play a run to a level-up: the screen's ribbon, emblem, cards
 
 ## Acceptance criteria
 
-- [ ] header_ribbon.png, gift_pack_emblem.png, card_frame.png, highlight_frame.png, button_plate.png, button_plate_pressed.png and sunburst.png in game/art/level_up/ are remade with Greenbull's dark green as the main colour, with light green and a little yellow, and keep their file names and sizes. (QA: pass / fail)
-- [ ] None of the seven pieces has a pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass / fail)
-- [ ] The ribbon and the gift box show Greenbull's emblem from game/art/logo/ and no gull (screenshots). (QA: pass / fail)
-- [ ] build_level_up_art.py (or its successor) rebuilds the pieces by script, and its test passes; any PixelLab call is listed in the result notes with its reason and count, within 12 generations per asset. (QA: pass / fail)
-- [ ] Each piece passes `python game/tools/style_rules.py art <file> --greenbull` and has a style loop record in the ticket's Style review. (QA: pass / fail)
-- [ ] The old red and gold versions of all seven pieces are in art-archive/<this ticket>/. (QA: pass / fail)
-- [ ] test_level_up_screen.gd passes: the screen still opens, animates and takes cards as before. (QA: pass / fail)
-- [ ] Screenshots of the open level-up screen with two cards, the highlight on each, are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] header_ribbon.png, gift_pack_emblem.png, card_frame.png, highlight_frame.png, button_plate.png, button_plate_pressed.png and sunburst.png in game/art/level_up/ are remade with Greenbull's dark green as the main colour, with light green and a little yellow, and keep their file names and sizes. (QA: pass: sizes match, green screenshot)
+- [ ] None of the seven pieces has a pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass: `build_level_up_art.py check` PASS x7)
+- [ ] The ribbon and the gift box show Greenbull's emblem from game/art/logo/ and no gull (screenshots). (QA: pass: emblem on ribbon ends and box in screenshot)
+- [ ] build_level_up_art.py (or its successor) rebuilds the pieces by script, and its test passes; any PixelLab call is listed in the result notes with its reason and count, within 12 generations per asset. (QA: pass: game/tools 479 OK; 0 PixelLab calls)
+- [ ] Each piece passes `python game/tools/style_rules.py art <file> --greenbull` and has a style loop record in the ticket's Style review. (QA: pass: all 7 ok, runs 1-7)
+- [ ] The old red and gold versions of all seven pieces are in art-archive/<this ticket>/. (QA: pass: art-archive/T-303/red_gold/ has 7)
+- [ ] test_level_up_screen.gd passes: the screen still opens, animates and takes cards as before. (QA: pass: GUT 1419 passing, no failures)
+- [ ] Screenshots of the open level-up screen with two cards, the highlight on each, are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass: first_card and second_card present)
+- [ ] All three test sets pass. (QA: pass: GUT 1419, game/tools 479 OK, tools 501 OK)
 
 ## Updates
 
