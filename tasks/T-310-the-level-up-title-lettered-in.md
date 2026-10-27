@@ -39,12 +39,12 @@ The board's review: open a level-up in a run: the title is in cream with a dark 
 
 ## Acceptance criteria
 
-- [ ] The level-up screen's TitleLabel uses font colour RGB 246, 250, 232 and an outline of RGB 14, 22, 18 with an outline size above 0; test_level_up_screen.gd checks both. (QA: pass / fail)
-- [ ] The card titles, card descriptions and buttons still use black ink (test). (QA: pass / fail)
-- [ ] The title's text, size and position are unchanged, and test_level_up_screen.gd still passes: the screen opens, animates and takes cards as before. (QA: pass / fail)
-- [ ] A screenshot of the open level-up screen with the new title lettering is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md and game/README.md say the title is lettered in cream with a dark outline. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] The level-up screen's TitleLabel uses font colour RGB 246, 250, 232 and an outline of RGB 14, 22, 18 with an outline size above 0; test_level_up_screen.gd checks both. (QA: pass)
+- [ ] The card titles, card descriptions and buttons still use black ink (test). (QA: pass)
+- [ ] The title's text, size and position are unchanged, and test_level_up_screen.gd still passes: the screen opens, animates and takes cards as before. (QA: pass)
+- [ ] A screenshot of the open level-up screen with the new title lettering is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] docs/hud-and-menus.md and game/README.md say the title is lettered in cream with a dark outline. (QA: pass)
+- [ ] All three test sets pass. (QA: pass)
 
 ## Updates
 
