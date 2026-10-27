@@ -1,7 +1,7 @@
 ---
 id: T-235
 title: Level creator: the editor's map canvas, the side panel, placing and deleting pieces
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -113,3 +113,4 @@ Level/Challenge Design Agent, 2026-10-21.
 
 PixelLab: 0 generations. Refusals: one `sed` command to print parts of the sibling task files was refused (it needed approval). It wasn't essential: I read the files with the file reader instead. Godot's line-ending-only `.import` changes in the working copy were left uncommitted.
 - 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
