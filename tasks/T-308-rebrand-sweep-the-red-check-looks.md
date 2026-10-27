@@ -39,12 +39,12 @@ Run the script in this ticket's folder, made from playtest/G-006, and put the fu
 
 ## Acceptance criteria
 
-- [ ] game/tools/check_rebrand.py lists Redgull's brand reference colours, each with the archived file it came from, and flags a loaded PNG only when it has an opaque pixel within the stated threshold of one of them. KEPT_RED and the name and text checks are still there. (QA reads the script.) (QA: pass / fail)
-- [ ] game/tools/test_check_rebrand.py has tests showing that a loaded PNG with the old logo red (135, 17, 27) is flagged, a loaded PNG with only fire orange (249, 126, 3) and wood brown (68, 33, 13) is not flagged, the likes heart is passed as a kept subject, a loaded file named with 'redgull' is flagged and a text with 'Redgull' is flagged. All of these tests pass. (QA: pass / fail)
-- [ ] Running `python game/tools/check_rebrand.py` in this ticket's folder exits 0 and reports 0 findings. The report is in the result notes. If it can't exit 0 because a loaded PNG still carries a brand red, the result notes name the file and its colours. (QA: pass / fail)
-- [ ] The result notes say, for each of the five screenshots in art-archive/T-307/screenshots/ (main_menu.png, garage.png, run_hud.png, gift_pack_drop.png, level_up_screen.png), whether it shows a Redgull name, logo or brand red. QA opens the five images and agrees. (QA: pass / fail)
-- [ ] game/README.md's 'Rebrand sweep (T-307)' section describes the brand-red check and how to run it. (QA: pass / fail)
-- [ ] All three test sets pass in this ticket's folder: GUT, game/tools Python tests and tools/ Python tests. (QA: pass / fail)
+- [ ] game/tools/check_rebrand.py lists Redgull's brand reference colours, each with the archived file it came from, and flags a loaded PNG only when it has an opaque pixel within the stated threshold of one of them. KEPT_RED and the name and text checks are still there. (QA reads the script.) (QA: pass)
+- [ ] game/tools/test_check_rebrand.py has tests showing that a loaded PNG with the old logo red (135, 17, 27) is flagged, a loaded PNG with only fire orange (249, 126, 3) and wood brown (68, 33, 13) is not flagged, the likes heart is passed as a kept subject, a loaded file named with 'redgull' is flagged and a text with 'Redgull' is flagged. All of these tests pass. (QA: pass)
+- [ ] Running `python game/tools/check_rebrand.py` in this ticket's folder exits 0 and reports 0 findings. The report is in the result notes. If it can't exit 0 because a loaded PNG still carries a brand red, the result notes name the file and its colours. (QA: pass)
+- [ ] The result notes say, for each of the five screenshots in art-archive/T-307/screenshots/ (main_menu.png, garage.png, run_hud.png, gift_pack_drop.png, level_up_screen.png), whether it shows a Redgull name, logo or brand red. QA opens the five images and agrees. (QA: pass)
+- [ ] game/README.md's 'Rebrand sweep (T-307)' section describes the brand-red check and how to run it. (QA: pass)
+- [ ] All three test sets pass in this ticket's folder: GUT, game/tools Python tests and tools/ Python tests. (QA: pass)
 
 ## Updates
 
