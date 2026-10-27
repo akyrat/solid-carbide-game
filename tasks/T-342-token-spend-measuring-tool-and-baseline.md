@@ -1,7 +1,7 @@
 ---
 id: T-342
 title: Token spend: a measuring tool and the baseline report
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, tools/taskboard/taskboard.html]
 files_expected_to_change: [tools/token_report.py, tools/test_token_report.py, docs/token-spend/baseline-2026-10-28.md, tools/taskboard/taskboard.html, docs/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,12 +45,12 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `python tools/token_report.py --to 2026-10-28` runs without error and its numbers for sessions `88cd5834` (2,283 calls, 883M cache read) and `ac11e792` (1,237 calls, 546M) are within 2%. (QA: pass / fail)
-- [ ] `docs/token-spend/baseline-2026-10-28.md` exists and holds the four groups of measures in the description, plus the ticket measures (QA fail rate by agent and model, model counts). (QA: pass / fail)
-- [ ] The tool takes `--from` and `--to` and only counts calls inside the range (a unit test on a small fixture transcript checks it, and the deduplication by `message.id`). (QA: pass / fail)
-- [ ] The task board shows a Token spend bubble holding the `token-spend` tickets, not counted in the MVP figure. (QA: pass / fail)
-- [ ] `docs/README.md` says what the tool is and how to run it. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [x] `python tools/token_report.py --to 2026-10-28` runs without error and its numbers for sessions `88cd5834` (2,283 calls, 883M cache read) and `ac11e792` (1,237 calls, 546M) are within 2%. (QA: pass)
+- [x] `docs/token-spend/baseline-2026-10-28.md` exists and holds the four groups of measures in the description, plus the ticket measures (QA fail rate by agent and model, model counts). (QA: pass)
+- [x] The tool takes `--from` and `--to` and only counts calls inside the range (a unit test on a small fixture transcript checks it, and the deduplication by `message.id`). (QA: pass)
+- [x] The task board shows a Token spend bubble holding the `token-spend` tickets, not counted in the MVP figure. (QA: pass)
+- [x] `docs/README.md` says what the tool is and how to run it. (QA: pass)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -105,3 +105,4 @@ Nothing to picture (a tool, a report and one board bubble).
 - Criterion 4: PASS. AREAS has Token spend bubble, epics token-spend, excluded: true (code read, not rendered).
 - Criterion 5: PASS. docs/README.md has the Token spend paragraph.
 - Criterion 6: PASS. tools 507 OK; game/tools 620 OK (1 skipped); GUT 1735/1735 passing, TESTS PASSED.
+- 2026-10-27, in-qa → done: QA pass, all 6 criteria; tools 507 OK, game/tools 620 OK, GUT 1735/1735
