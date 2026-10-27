@@ -1,8 +1,8 @@
 extends Node
 ## Test fixture for a screenshot of the level-up screen (task T-052): opens the
 ## game, presses Start, then levels the car up so the run pauses and the screen
-## shows the first level-up's two cards (the gun's upgrade and the flamethrower,
-## each with its weapon image since T-173).
+## shows the first level-up's two cards (drawn at random since T-321, each with
+## its weapon image since T-173).
 ## T-173: with `offer_ids` set, the screen shows those cards instead, so the new
 ## weapons' cards and images can be shot too (screenshot only; nothing is taken).
 
@@ -10,6 +10,9 @@ extends Node
 ## T-303: after the build-up, move the highlight this many cards to the right,
 ## so the highlight frame can be shot on the second card too.
 @export var highlight_moves: int = 0
+## T-321: seeds the offers' draw (-1 leaves it random), so two shots of the first
+## level-up can show two different pairs.
+@export var rng_seed: int = -1
 
 
 func _ready() -> void:
@@ -19,6 +22,8 @@ func _ready() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var state: RunState = game.run.state
+	if rng_seed >= 0:
+		game.run.weapons.offers.rng.seed = rng_seed
 	state.add_xp(state.xp_needed())
 	game.run.gift_drops.pick_up_all()  # T-144: the screen opens when the package is picked up
 	if not offer_ids.is_empty():

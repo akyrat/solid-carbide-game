@@ -1,7 +1,7 @@
 ---
 id: T-321
 title: The first gift pack offers two random choices from every weapon
-status: open
+status: in-progress
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -50,6 +50,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-27, Open → In progress
+
+Started: the Weapon Behavior Agent is making the first gift pack draw from every weapon.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -57,3 +61,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Weapon Behavior Agent, 2026-10-27.
+
+- `level_up_offers.gd`: removed `FIRST_OFFERS`, `is_first_offer()` and the now unused `choices_taken`; `_draw()` always draws two different choices from `available_offers()` with the seedable `rng`. Later level-ups draw exactly as before.
+- Tests: `test_level_up_offers.gd` replaced the fixed-first-offer test with one over 200 seeds (all five first choices appear, always two different, never outside the available ones), a same-seed test and a test that `FIRST_OFFERS`/`is_first_offer` are gone; tests that relied on the fixed pair now max the other weapons (`_max_all_but`) or take the first drawn card; the "new run brings back the first offer" test became "a new run clears the offer". `test_level_up_screen.gd`: `before_each` puts underglow, molotov and wiper at their last tier so the screen tests keep seeing the gun's upgrade and the flamethrower, and the "normal run first level-up" test now checks a drawn first level-up over 30 seeds. `test_gift_drops.gd`: expects two different offers and takes the first drawn card. Fixture `level_up_screen_demo.gd` got an `rng_seed` export; new scenes `level_up_first_offer_1/2/3.tscn` use it.
+- Test counts: `game/tools` Python 620 tests OK (1 skipped); `tools` Python 501 tests OK; GUT 1690 of 1690 passing.
+- Screenshots (`art-archive/T-321/screenshots/`): `first_level_up_1.png` (Hot Take Exhaust and Hot Drop), `first_level_up_2.png` (Bonus Bullets and Hot Take Exhaust), `first_level_up_3.png`: three first level-ups with different pairs (seeds 7, 14, 21).
+- Documents updated: `docs/weapons.md` (Decisions line for the five-weapon offers, Content, "The level-up offers"), `game/README.md` (draw, playtest switch, tests, level-up screen switch note). The long GDD is not regenerated here (the Project Lead does it at merge).
+- Skipped: nothing.

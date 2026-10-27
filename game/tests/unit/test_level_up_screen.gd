@@ -24,11 +24,21 @@ func before_each() -> void:
 	pause = PauseScript.new()
 	run.add_child(pause)
 	pause.setup(run)
+	_only_gun_and_flamethrower_left()
 
 
 func after_each() -> void:
 	FlameScript.playtest_override = -1
 	get_tree().paused = false
+
+
+## T-321: the first level-up is drawn from every choice like the rest, so tests that want
+## the gun's upgrade and the flamethrower on the cards put the other three weapons at their
+## last tier (never offered). A new run puts them back, so call it again after start_run().
+func _only_gun_and_flamethrower_left() -> void:
+	for id in ["underglow", "molotov", "wiper"]:
+		var w: Node = run.weapons.get_weapon(id)
+		w.set_tier(w.max_tier())
 
 
 ## A level-up, then (T-144) the car picks up the gift pack's package, which opens the screen.
@@ -245,15 +255,24 @@ func test_two_waiting_level_ups_show_one_screen_after_the_other() -> void:
 	assert_true(get_tree().paused)
 
 
-func test_normal_run_first_level_up_offers_flamethrower_and_gun_upgrade() -> void:
+func test_normal_run_first_level_up_is_drawn_from_every_choice() -> void:
 	assert_false(FlameScript.playtest_switch_on(), "flamethrower_at_start is false")
 	var r := GameData.load_file("playtest")
 	assert_eq(r.data["flamethrower_at_start"], false)
-	run.start_run()
-	assert_eq(run.weapons.flamethrower.tier, 0)
-	_level_up()
-	var ids: Array = screen.cards.map(func(c): return c.id)
-	assert_eq(ids, ["upgrade_gun", "get_flamethrower"])
+	var seen := {}
+	for s in 30:
+		run.start_run()
+		offers.rng.seed = s
+		assert_eq(run.weapons.flamethrower.tier, 0)
+		_level_up()
+		var ids: Array = screen.cards.map(func(c): return c.id)
+		assert_eq(ids.size(), 2)
+		assert_ne(ids[0], ids[1])
+		for id in ids:
+			assert_true(offers.ALL_IDS.has(id))
+			seen[id] = true
+		screen.take(ids[0])
+	assert_gt(seen.size(), 2, "not always the same two cards")
 
 
 func test_a_new_run_closes_the_screen() -> void:
