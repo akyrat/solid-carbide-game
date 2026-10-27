@@ -1,7 +1,7 @@
 ---
 id: T-309
 title: Level-up screen check: a screenshot from a run started at the main menu, checked for Redgull red and for dark green leading
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -52,6 +52,10 @@ Take the screenshot on this ticket's build and run the check on it. Write its ou
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-309.
 
 ## Style review
 
