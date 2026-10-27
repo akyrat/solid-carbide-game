@@ -1,7 +1,7 @@
 ---
 id: T-311
 title: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-311.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
