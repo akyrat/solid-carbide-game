@@ -1,7 +1,7 @@
 ---
 id: T-305
 title: Art: the gift pack helicopter sheet in Greenbull's colours
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, docs/working-with-the-board.md, game/README.md, tasks/T-144-gift-pack-drop.md, tasks/T-145-art-redgull-helicopter.md, game/tools/build_helicopter.py, game/tools/test_build_helicopter.py, game/scenes/run/gift_helicopter.tscn, game/art/gift_pack/, game/art/logo/]
 files_expected_to_change: [game/art/gift_pack/helicopter_sheet.png, game/tools/build_helicopter.py, game/tools/test_build_helicopter.py, art-archive/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-305.
 ### 2026-10-27, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -137,3 +141,4 @@ sheet: (768, 160), 30 colours, Redgull red pixels: 0
 **Refusals:**
 - During the style loop, two of the generator agent's commands were refused, as listed in the Style review: a chained `mkdir ... && python ... && python -c ...` command, and a `python -m pytest ... | tail` pipe. Neither was essential: the version was built with the plain `piece` command, and I ran the tests myself.
 - Not done: Godot's line-ending-only `.import` changes from the test and screenshot runs are left uncommitted. Reverting them needs `git checkout`, which isn't pre-approved.
+- 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
