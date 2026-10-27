@@ -1,7 +1,7 @@
 ---
 id: T-306
 title: Code comments, tests, tool names and game/README.md say Greenbull, behaviour unchanged
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
