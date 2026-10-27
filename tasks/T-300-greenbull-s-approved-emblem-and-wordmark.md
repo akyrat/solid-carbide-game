@@ -1,7 +1,7 @@
 ---
 id: T-300
 title: Greenbull's approved emblem and wordmark copied into game/art/logo, with their records
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -170,3 +170,4 @@ PixelLab generations used by this ticket: 0.
 - Refused during the loop runs: the generator's own chained `cp`/`cmp`, `sha256sum` and `python -c` check commands (listed in each round's "Refused"); not essential, the copies were made and checked here with `git diff --no-index`. No PixelLab call.
 - 2026-10-26, in-qa → in-progress: QA failed: The ticket's Style review has one style loop round per file, each keeping the byte-identical copy. (QA: fail: the Style review section holds only one round (the wordmark, v1-4); the three emblem rounds are described in the result notes but not recorded as rounds there); All three test sets pass. (QA: fail: game/tools/test_check_logo_one_colour.py test_only_three_final_files fails (reran alone, same): it expects only the three redgull files in game/art/logo/, now there are seven. GUT 1419/1419 and tools/ 491 tests pass.) Back to the agent on opus.
 - 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
