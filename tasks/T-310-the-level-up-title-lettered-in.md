@@ -1,7 +1,7 @@
 ---
 id: T-310
 title: The level-up title lettered in cream with a dark outline, to read on a dark green ribbon
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -72,3 +72,4 @@ UI Agent. TitleLabel now has font colour 246,250,232, outline colour 14,22,18, o
 
 Screenshot: `art-archive/T-310/screenshots/level_up_title_cream.png` (fixture level_up_screen_demo; cream title with dark outline on today's light green ribbon, as expected until the dark ribbon art lands). No PixelLab generations used. No refusals.
 - 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
