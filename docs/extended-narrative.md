@@ -28,6 +28,7 @@ The player is Stunt Driver, sent by the sponsor Greenbull to cities hit by human
 - Weapon names, the level-up wording, descriptions and other user-facing text are written by the Narrative Theme Agent, using this document to get the tone; the board doesn't define them. That agent also chooses how likes are shown (the word, a heart icon, or both). (2026-10-08)
 - The first map is downtown Tokyo under attack from the kaiju, the final boss: a giant monster in the style of Godzilla that is not called Godzilla. Its name is still to come from the board; until then it is "the kaiju". The city has put up a few alert banners about it. (board, 2026-10-14)
 - The city's people are not shown for now: only the signs they put up (the alert banners, picture-only). (board, 2026-10-15)
+- **Subs** (board, 2026-10-28): the stream's audience shows in two ways. **Live viewers** are the hype of the moment (the combo, rising with tricks and crashing with crashes). **Subs** are what the stream builds up: drifting brings them, and every full **sub goal** gets Greenbull to send a gift pack. "Subs" replaces "likes" in every player-facing text, and in Text rules, rule 2 (the vocabulary). (T-331)
 
 ## Content
 

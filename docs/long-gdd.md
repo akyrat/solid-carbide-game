@@ -55,6 +55,9 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **More gift packs, earlier** (board, 2026-10-28): the early levels need fewer likes, so the first gift packs come more often at the start of a run. The new curve is the Game Data Agent's proposal for the playtest. (T-328)
 - **A crash cuts the combo by 50%** (board, 2026-10-28; replaces the 80% in "Combo" above): a collision or any damage to the car cuts the part of the multiplier above "no combo" by 50% instead of 80%, so the player keeps half of their combo bonus (x4 becomes x2.5). (T-329)
 - **A bigger gift pack helicopter** (board, 2026-10-28): the helicopter that drops each gift pack is drawn 30% larger on screen than today (about 125 x 104 drawn pixels instead of 96 x 80), with the same art. The package still hangs clear of its belly. (T-330)
+- **The combo shows as live viewers** (board, 2026-10-28): the combo multiplier keeps working exactly as it does (tricks raise it, crashes cut it, it drains, it multiplies what drifting earns), but the player sees it as the stream's live viewers instead of "Combo x2.00": about 20,000 at x2 and 1,000,000 at x6 (the board's anchors), on a smooth curve between them (and below x2, a proposal). The number behaves like a real stream's: it counts towards its value and keeps moving a little. The higher it is, the hotter it looks, and over a million it is on fire. (T-332, T-336)
+- **Subs instead of likes** (board, 2026-10-28): what the player earns toward the next gift pack is **subs** (the stream's subscribers), not likes: drifting brings subs, the viewers multiply them, each full **sub goal** sends a gift pack, and the drain is people unsubscribing when the stream gets dull. Only the name and the look change; the numbers and rules of the likes stay (the likes bar becomes the sub goal: HUD and menus, Decisions). Extended narrative, Decisions, "Subs". (T-331, T-337)
+- **Hearts instead of health points** (board, 2026-10-28): the car has **5 hearts**. A minion's hit and a meteor take 1 heart, the kaiju's 2. After any hit the car is invulnerable for **1 second**, blinking, so the player can escape a swarm; hits during that second do nothing and don't cut the combo. A health pickup heals 1 heart, and drops at half today's chance (15%, Enemies). The garage's car health upgrade adds 1 heart per level (Garage design). (T-333, T-334, T-338)
 
 ### Content
 
@@ -860,6 +863,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Enemies jump down off ledges** (board, 2026-10-21, after playing T-207): going down, enemies don't walk all the way round to a ramp: to chase a car below them they jump (drop) off a rooftop's edge. Going up still needs a ramp, and an edge still blocks them from below. A falling enemy plays a falling animation from the edge until it lands (board, 2026-10-21; placeholder T-226, art T-227). (T-226)
 
 - **Health drops** (board, 2026-10-21): enemies also drop health pickups, at the same drop rate as the coins. Picking one up restores 30% of the car's health (never above its maximum). It looks like a red gas canister with a white cross on it (look: Visual style, Decisions). (T-220, art T-221) **Halved** (board, 2026-10-22): health drops now drop at half that rate (0.6 to 0.3), no longer the coins' rate; the coins are unchanged. (T-277)
+- **Damage in hearts, fewer health drops, bolder outlines** (board, 2026-10-28): with hearts (Game loop architecture, Decisions, "Hearts instead of health points"), a minion's hit and a meteor take 1 heart and the kaiju's 2, once per hit, with the car's 1-second invulnerability after it instead of repeated contact hits. Health pickups drop at half today's chance (15% instead of 30%) and heal 1 heart. Every enemy's outline is a little bolder, so the player sees where they are and can steer round them. (T-333, T-334, T-340)
 
 ### Content
 
@@ -1105,6 +1109,7 @@ The garage is where coins earned in runs buy permanent upgrades for the car. It 
 - The player's coins and the upgrade levels bought are saved to disk, so they are kept between game sessions.
 - **Pickup magnet upgrade** (board, 2026-10-21): the radius within which coins, gift packs and health drops are pulled to the car (Game loop architecture, Decisions, "Pickup magnet") is a garage upgrade, starting at 1 car length; its levels, prices and how far each level reaches are the Game Data Agent's proposals. Built in T-224 (proposal): 10 levels, radius 3.0 units (1 car length) at level 0, +0.6 units (a fifth of a car length) per level, 9.0 (3 car lengths) at level 10; prices 40, 50, 60, 80, 100, 120, 155, 190, 240, 300, the same curve as the acceleration upgrade. The numbers live in `game/data/garage.json`. Its name and description in the garage: T-223. (T-224)
 - **Air turn upgrade** (board, 2026-10-22): a fifth garage upgrade raises how fast the car spins in the air (Drifting, Decisions, "Slower air turn, upgradable"), from the new base of 1.25 times the ground rate. Its levels, prices and how much each level adds are the Game Data Agent's proposals (the Project Lead's suggestion: back up to today's 2.5 at the top level). Built in T-270 (proposal): 10 levels, the value is the air turn's total multiplier of the ground rate, 1.25 at level 0 and +0.125 per level, 2.5 (today's old value) at level 10 (1.375, 1.5, 1.625, 1.75, 1.875, 2.0, 2.125, 2.25, 2.375, 2.5); prices 40, 50, 60, 80, 100, 120, 155, 190, 240, 300, the same curve as the acceleration and magnet upgrades. Reasons: an eighth of the ground rate per level is the old 2.5 split into ten even steps, so the top level gives back what T-269 took away; an air 360 off the tallest rooftop needs a total of about 1.9 (Drifting, T-269's notes), so it becomes reachable at level 6 (2.0, with a margin; level 5 gives 1.875, just short), and the air 180 is there from level 0; one shared price curve keeps the five upgrades comparable until the playtest. The run takes the bought level's value minus the base and passes it to the car's `apply_air_turn_bonus()` at every run's start (`CarTuning.apply_air_turn_upgrade`, called in `GameFlow.start_run()`); the drift prototype never gets it. The numbers live in `game/data/garage.json`. Its name and description: T-268. (T-270)
+- **The car health upgrade adds hearts** (board, 2026-10-28): with hearts (Game loop architecture, Decisions, "Hearts instead of health points"), each level of the car health upgrade adds 1 heart to the 5 the car starts with. Its description names no number, so it stays as it is. (T-333)
 
 ### Content
 
@@ -1275,6 +1280,7 @@ The player is Stunt Driver, sent by the sponsor Greenbull to cities hit by human
 - Weapon names, the level-up wording, descriptions and other user-facing text are written by the Narrative Theme Agent, using this document to get the tone; the board doesn't define them. That agent also chooses how likes are shown (the word, a heart icon, or both).
 - The first map is downtown Tokyo under attack from the kaiju, the final boss: a giant monster in the style of Godzilla that is not called Godzilla. Its name is still to come from the board; until then it is "the kaiju". The city has put up a few alert banners about it.
 - The city's people are not shown for now: only the signs they put up (the alert banners, picture-only).
+- **Subs** (board, 2026-10-28): the stream's audience shows in two ways. **Live viewers** are the hype of the moment (the combo, rising with tricks and crashing with crashes). **Subs** are what the stream builds up: drifting brings them, and every full **sub goal** gets Greenbull to send a gift pack. "Subs" replaces "likes" in every player-facing text, and in Text rules, rule 2 (the vocabulary). (T-331)
 
 ### Content
 
@@ -1353,6 +1359,8 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The level-up screen's header title is lettered in cream (RGB 246, 250, 232) with a dark outline (RGB 14, 22, 18, 4 pixels), to read on a dark green ribbon; the card titles, descriptions and buttons keep black ink on the cream cards. (T-310)
 - Level-ups are animated: the likes bar plays a short animation when the player levels up, and the level-up screen animates in. The level-up screen gets art themed on the sponsor, since the weapons it offers arrive as its gift packs; its animation uses that art. First red and gold for Redgull (board, 2026-10-15); after the rebrand, Greenbull's dark green leading, with light green and a little yellow (board, 2026-10-26; Visual style, Decisions, "Greenbull's look").
 - **Restart and Exit on the pause screen** (board, 2026-10-28): the pause screen gets two buttons, **"Restart"** and **"Exit"** (the board's names): Restart ends the run and starts a fresh one straight away; Exit ends the run and goes back to the main menu (Exit on the main menu still closes the game). Where they sit, whether they ask "are you sure?" first, and what happens to the run's coins are the agents' proposals for the playtest. (T-327)
+- **The HUD looks like a livestream** (board, 2026-10-28): the board places the pieces on its HUD layout page (https://claude.ai/artifact/U33QPUELxgZCZBjYDpBszQ), and the game follows the positions saved there. The pieces: the **timer** at the bottom left as a digital pixel-art clock whose digits start green and turn yellow, orange and red as the time nears 0:00 (the switch points are a proposal); the **live viewers counter** at the bottom right, in place of the combo counter (Game loop architecture, Decisions, "The combo shows as live viewers"); the **sub goal** at the bottom centre, in place of the likes bar and its "Likes ... Hype Lv" row: a black square that fills green from the bottom as subs come in, with the gift pack inside it greyed out until the goal is reached, when it lights up, and the subs count under it as "{subs} / {goal}" with a subs icon; the **hearts** in a row at the top left, in place of the upright health bar (Game loop architecture, Decisions, "Hearts instead of health points"). The art is generated with PixelLab (the board: "don't be stingy"). (T-331 to T-339)
+- **Tricks bring viewers, shown in one colour** (board, 2026-10-28): the live viewers counter has its own colour, used for nothing else. A trick popup keeps its name as today, and its amount shows as the viewers it brought ("+12K" with an eye icon) in that colour; that amount then flies across the screen into the counter, which bumps when it arrives. When a crash breaks the combo, the counter flashes red and a "-{viewers}" drops away from it as the number falls. (T-336)
 
 ### Content
 
@@ -1412,12 +1420,12 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `241ed4b5e6960e28c64a0f485d87545dbb2a15ff38fc60ac2429ba38e2795bda` |
+| `game-loop-architecture.md` | `59a0a0fc3f46733783eac19a30c7559d92a4411ed1c7eb1ba53898cede467817` |
 | `drifting.md` | `35aa486ed94aff23eaadd5f4fccf12aecf31eaf24c9a899728fc10a19ce820ab` |
 | `level-design.md` | `b7e96891d2276dee341714f9c5905a2cb8038a00a52dba1753ed5fc004191525` |
-| `enemies.md` | `feefaa12e88931dec67fd83ee2628c7a9a945cc6e77c72239fd5951dff78361d` |
+| `enemies.md` | `aa43f2ec80bf2642ecd6c98eec4c505fc89bf2bbe37398736e8001b36243dd23` |
 | `weapons.md` | `42da45f90afacec35ec4f34243cd5596d3a529f96783f93aa59fabde5afd425d` |
-| `garage-design.md` | `2426e0a3b4f0779d493a40041f1568126a184b9f31d31d5b3eea780318727efd` |
+| `garage-design.md` | `0b88553049d4a95a1da8eed2b1bd7674d59a089136bad802c46c2d0d47a6a742` |
 | `visual-style.md` | `5adbc8ebabe03e60bbfc97be39660bd6edaa1a606d1151ec9f9b464ab0889f79` |
-| `extended-narrative.md` | `74a6adba776d797d45c6b44738899be536559f95d30769f40eba2e536c3fe2dc` |
-| `hud-and-menus.md` | `c4bcd4482e280cf6998e0249136a9e96485498f1c551ae33b2c6ac0434f6c63f` |
+| `extended-narrative.md` | `b81550da4d056c676cb07dfe0bc383f975ffaadc8625d8be06e5410c8553756a` |
+| `hud-and-menus.md` | `d2eb6529956dfee4168807723b42fb42b949310529a9c612abe6ec59cd395bad` |

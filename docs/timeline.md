@@ -1935,3 +1935,8 @@ Entry format:
 - Decision or change: the board wants the helicopter that drops each gift pack drawn 30% larger on screen (scale 0.5 to 0.65 of its sheet, same art). Ticket written for the Game Loop Agent; not started.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-330
+
+## 2026-10-28: A livestream HUD, subs instead of likes, and hearts
+- Decision or change: the board is redesigning the HUD as a livestream, placing the pieces on its own HUD layout page (https://claude.ai/artifact/U33QPUELxgZCZBjYDpBszQ), and steering it by hand as a goal with one playtest build. The timer becomes a digital clock at the bottom left that turns from green to red. The combo shows as live viewers at the bottom right (about 20,000 at x2, 1,000,000 at x6, on fire over a million); a trick's amount shows as "+viewers" in the counter's own colour and flies into it, and a crash flashes it red as viewers drop away. What the player earns becomes subs: the likes bar becomes a sub goal square with the gift pack greyed inside it until the goal, and "likes" becomes "subs" in every text. Health becomes 5 hearts in a row at the top left: minions and meteors take 1, the kaiju 2, 1 second of blinking invulnerability after a hit (only the first hit cuts the combo), health pickups at half the chance (15%) heal 1 heart, the garage upgrade adds 1 heart per level. Enemy outlines get bolder so they're easier to avoid. The HUD art is PixelLab work with the board's go ("don't be stingy"), up to 40 generations.
+- Documents touched: docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, docs/extended-narrative.md
+- Tasks: T-331 to T-340
