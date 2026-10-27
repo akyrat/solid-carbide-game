@@ -1,7 +1,7 @@
 ---
 id: T-236
 title: Level creator: rotate between the art's views, mirror, and rooftops and ramps at heights 3 and 6
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -100,3 +100,4 @@ Level/Challenge Design Agent, 2026-10-21. An earlier session left this work unco
 - Godot's line-ending-only `.import` changes are left uncommitted.
 - Documents affected: none (game/README.md only).
 - 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
