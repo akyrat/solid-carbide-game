@@ -37,14 +37,14 @@ The board's review: play a run to a gift pack drop: the package, falling and lan
 
 ## Acceptance criteria
 
-- [ ] game/art/gift_pack/package.png and package_falling.png are rebuilt in Greenbull's colours with Greenbull's emblem from game/art/logo/ and no gull, keeping their file names and sizes. (QA: pass / fail)
-- [ ] Neither has a pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass / fail)
-- [ ] build_gift_package.py rebuilds them by script; any PixelLab call is listed in the result notes with its reason and count, within 12 generations per asset. (QA: pass / fail)
-- [ ] Both pass `python game/tools/style_rules.py art <file> --greenbull` and have a style loop record in the ticket's Style review. (QA: pass / fail)
-- [ ] The old package.png and package_falling.png are in art-archive/<this ticket>/. (QA: pass / fail)
-- [ ] test_build_gift_package.py (and test_build_gift_placeholders.py, if it covers the package) pass, as does test_gift_drops.gd. (QA: pass / fail)
-- [ ] In-run screenshots of the package falling and landed are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] game/art/gift_pack/package.png and package_falling.png are rebuilt in Greenbull's colours with Greenbull's emblem from game/art/logo/ and no gull, keeping their file names and sizes. (QA: pass: 64x64 and 64x96 kept, dark green with emblem stamp per script and style loop; art diff only)
+- [ ] Neither has a pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass: check run, 0 Redgull red pixels in both)
+- [ ] build_gift_package.py rebuilds them by script; any PixelLab call is listed in the result notes with its reason and count, within 12 generations per asset. (QA: pass: script rebuild, 0 PixelLab generations)
+- [ ] Both pass `python game/tools/style_rules.py art <file> --greenbull` and have a style loop record in the ticket's Style review. (QA: pass: 6/6 checks on each; Runs 1 and 2 at 8/10)
+- [ ] The old package.png and package_falling.png are in art-archive/<this ticket>/. (QA: pass: art-archive/T-304/redgull/)
+- [ ] test_build_gift_package.py (and test_build_gift_placeholders.py, if it covers the package) pass, as does test_gift_drops.gd. (QA: pass: game/tools unittest 483 OK; GUT 1419/1419 incl. test_gift_drops.gd)
+- [ ] In-run screenshots of the package falling and landed are in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass: drop_down_350/550/800 etc. present and listed)
+- [ ] All three test sets pass. (QA: pass: GUT 1419/1419, game/tools 483 OK, tools/ 501 OK)
 
 ## Updates
 
