@@ -1,7 +1,7 @@
 ---
 id: T-264
 title: "Level creator: closed ramps, arrows up or down, and S, M and L platforms"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -85,3 +85,4 @@ Level/Challenge Design Agent, 2026-10-23.
 **Screenshots** in `art-archive/T-264/screenshots/` (fixture `game/tests/fixtures/level_creator_ramps_demo.gd` and the `level_creator_ramps_*.tscn` and `level_creator_sizes.tscn` scenes): `ramps_up.png`, `ramps_down.png` (a 3 platform with ramps from all four sides), `ramps_up_close.png`, `ramps_down_close.png`, `ramps_up_close_west.png`, `ramps_down_close_west.png`, `sizes.png` (S, M, L at heights 3 and 6). I looked at them: arrows point up the slope and down it as chosen, S, M and L read as 8, 16 and 32. One honest limit: the tall-end wall is visible only where the ramp's tall end faces the view and is not behind a rooftop; the screenshots show it on the south-facing sides, not as a distinct feature against the rooftop.
 
 **Documents updated:** `game/README.md` ("Level creator", "Closed ramps, arrows up or down, platform sizes (T-264)"); `docs/level-design.md` (Content, "Level creator: closed ramps, arrows and platform sizes").
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
