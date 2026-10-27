@@ -23,7 +23,7 @@ func max_tier() -> int:
 	return int(_data["max_tier"])
 
 
-## The raw tier list of "gun", "flamethrower", "underglow", "molotov" or "wiper" (tiers 2 to 8).
+## The raw tier list of "gun", "flamethrower", "underglow", "molotov", "wiper" or "bricks" (tiers 2 to 8).
 func tiers(weapon: String) -> Array:
 	return _data[weapon]["tiers"]
 
@@ -142,6 +142,35 @@ func molotov_at(tier: int) -> Dictionary:
 		"tick_interval": float(m["tick_interval"]),
 		"damage_on_enter": bool(m["damage_on_enter"]),
 	}
+
+
+## What Bricks' landing wave does at `tier`: damage, radius, knockback_distance, knockback_kaiju,
+## min_air_seconds (the shortest time in the air that counts as a landing), cooldown.
+func bricks_at(tier: int) -> Dictionary:
+	var b: Dictionary = _data["bricks"]
+	var damage := float(b["damage"])
+	var radius := float(b["radius"])
+	var knock := float(b["knockback_distance"])
+	for t in tiers("bricks"):
+		if int(t["tier"]) > tier:
+			continue
+		match String(t["effect"]):
+			"radius_multiplier": radius *= float(t["value"])
+			"damage_multiplier": damage *= float(t["value"])
+			"knockback_multiplier": knock *= float(t["value"])
+	return {
+		"damage": damage,
+		"radius": radius,
+		"knockback_distance": knock,
+		"knockback_kaiju": bool(b["knockback_kaiju"]),
+		"min_air_seconds": float(b["min_air_seconds"]),
+		"cooldown": float(b["cooldown"]),
+	}
+
+
+## True when Bricks is in the level-up offers (false until the weapon is built, T-324).
+func bricks_offered() -> bool:
+	return bool(_data["bricks"]["offered_in_level_ups"])
 
 
 ## What the windshield wiper does at `tier`: damage, length, sweep_arc_degrees,

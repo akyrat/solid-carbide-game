@@ -49,7 +49,7 @@ func test_gun_missed_bullets_removed_past_range() -> void:
 func test_tier_count_is_seven_upgrades_each() -> void:
 	var w := WeaponData.new()
 	assert_eq(w.max_tier(), 8)
-	for weapon in ["gun", "flamethrower", "underglow", "molotov", "wiper"]:
+	for weapon in ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]:
 		var tiers := w.tiers(weapon)
 		assert_eq(tiers.size(), 7)
 		for i in 7:
@@ -105,7 +105,7 @@ func test_five_weapons_each_with_eight_tiers() -> void:
 		if raw[k] is Dictionary and raw[k].has("tiers"):
 			count += 1
 			assert_eq(raw[k].tiers.size() + 1, 8, "%s has base plus 7 tiers" % k)
-	assert_eq(count, 5)
+	assert_eq(count, 6, "the five MVP weapons and Bricks")
 
 
 func test_underglow_tiers() -> void:
@@ -148,6 +148,35 @@ func test_wiper_tiers_and_knockback() -> void:
 	assert_almost_eq(w8.length, 2.5 * 1.2 * 1.3, 0.0001)
 	assert_almost_eq(w8.knockback_distance, 9.0, 0.0001)
 	assert_almost_eq(w8.sweep_degrees_per_second, 240.0 * 1.25 * 1.3, 0.0001)
+
+
+func test_bricks_numbers_and_tiers() -> void:
+	var w := WeaponData.new()
+	var b1 := w.bricks_at(1)
+	assert_eq(b1.damage, 6.0)
+	assert_eq(b1.radius, 4.0)
+	assert_eq(b1.knockback_distance, 4.0)
+	assert_false(b1.knockback_kaiju)
+	assert_eq(b1.min_air_seconds, 0.3)
+	assert_eq(b1.cooldown, 0.5)
+	var b8 := w.bricks_at(8)
+	assert_almost_eq(b8.damage, 6.0 * 1.5 * 1.5, 0.0001)
+	assert_almost_eq(b8.radius, 4.0 * 1.2 * 1.25 * 1.3, 0.0001)
+	assert_almost_eq(b8.knockback_distance, 4.0 * 1.5 * 1.5, 0.0001)
+	# The wave kills a minion (health 4) outright from the first tier.
+	var minion_health := float(GameData.load_file("enemies").data.minion.health)
+	assert_true(b1.damage >= minion_health)
+	# Same tier count as the wiper; the shortest air time is the airtime trick's.
+	assert_eq(w.tiers("bricks").size(), w.tiers("wiper").size())
+	assert_eq(b1.min_air_seconds, float(GameData.load_file("combo").data.airtime.min_seconds))
+
+
+func test_bricks_not_offered_until_built() -> void:
+	# T-323 keeps it out of the level-ups; T-324 turns it on with the weapon.
+	assert_false(WeaponData.new().bricks_offered())
+	var offers := preload("res://scripts/weapons/level_up_offers.gd")
+	assert_false(offers.WEAPON_ORDER.has("bricks"))
+	assert_false(offers.ALL_IDS.has("get_bricks"))
 
 
 func test_flame_data_has_no_separate_area() -> void:
