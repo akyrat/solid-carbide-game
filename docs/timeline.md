@@ -1915,3 +1915,8 @@ Entry format:
 - Decision or change: after reading T-324's proposal that Bricks' wave ignores height, the board decided that on a map with rooftops and ramps every weapon hits only the enemies on the same height level as its hit (the car's level, or the fire's for a molotov), replacing the flat damage areas of 2026-10-21. Ticket written and kept for the next playtest batch; not started.
 - Documents touched: docs/weapons.md
 - Tasks: T-326
+
+## 2026-10-28: Restart and Exit on the pause screen
+- Decision or change: the board asked for two buttons on the pause screen, "Restart" (a fresh run straight away) and "Exit" (back to the main menu), with its own names for them. Ticket written and kept for the next playtest batch; not started.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-327

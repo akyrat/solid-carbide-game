@@ -44,6 +44,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - The level-up screen's weapon cards each show an image of the weapon. (board, 2026-10-18)
 - The level-up screen's header title is lettered in cream (RGB 246, 250, 232) with a dark outline (RGB 14, 22, 18, 4 pixels), to read on a dark green ribbon; the card titles, descriptions and buttons keep black ink on the cream cards. (T-310)
 - Level-ups are animated: the likes bar plays a short animation when the player levels up, and the level-up screen animates in. The level-up screen gets art themed on the sponsor, since the weapons it offers arrive as its gift packs; its animation uses that art. First red and gold for Redgull (board, 2026-10-15); after the rebrand, Greenbull's dark green leading, with light green and a little yellow (board, 2026-10-26; Visual style, Decisions, "Greenbull's look").
+- **Restart and Exit on the pause screen** (board, 2026-10-28): the pause screen gets two buttons, **"Restart"** and **"Exit"** (the board's names): Restart ends the run and starts a fresh one straight away; Exit ends the run and goes back to the main menu (Exit on the main menu still closes the game). Where they sit, whether they ask "are you sure?" first, and what happens to the run's coins are the agents' proposals for the playtest. (T-327)
 
 ## Content
 
