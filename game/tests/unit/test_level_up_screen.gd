@@ -286,6 +286,18 @@ func test_look_is_t140s_art_with_black_text() -> void:
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE)
 
 
+func test_the_ribbon_title_is_cream_with_a_dark_outline() -> void:
+	_level_up()
+	var l: Label = screen.title_label
+	assert_eq(l.get_theme_color("font_color"), Color8(246, 250, 232))
+	assert_eq(l.get_theme_color("font_outline_color"), Color8(14, 22, 18))
+	assert_gt(l.get_theme_constant("outline_size"), 0)
+	for c in screen.cards:
+		assert_eq(c.title.get_theme_color("font_color"), Color.BLACK)
+		assert_eq(c.desc.get_theme_color("font_color"), Color.BLACK)
+		assert_eq(c.button.get_theme_color("font_color"), Color.BLACK)
+
+
 func test_the_title_sits_between_art_x_76_and_304_of_the_ribbon() -> void:
 	_level_up()
 	var l: Label = screen.title_label

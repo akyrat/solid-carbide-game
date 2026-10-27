@@ -60,4 +60,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent. TitleLabel now has font colour 246,250,232, outline colour 14,22,18, outline size 4 (constants `TITLE_CREAM`, `TITLE_OUTLINE`, `TITLE_OUTLINE_SIZE` in level_up_screen.gd). Card titles, descriptions and buttons untouched (black ink). New test `test_the_ribbon_title_is_cream_with_a_dark_outline` checks both and the black ink. All tests pass (1420 passing, 118 scripts via `bash game/tools/run_tests.sh`). Docs updated: docs/hud-and-menus.md, game/README.md.
+
+Screenshot: `art-archive/T-310/screenshots/level_up_title_cream.png` (fixture level_up_screen_demo; cream title with dark outline on today's light green ribbon, as expected until the dark ribbon art lands). No PixelLab generations used. No refusals.
