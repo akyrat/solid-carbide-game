@@ -53,6 +53,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **Time's up screen** (board, 2026-10-28): when the 8-minute timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
 - **Recap screen in the MVP** (board, 2026-10-28; replaces "In the MVP there is no recap" above): after a run ends, the player sees a recap of the run: the enemies slain, the tricks completed, the highest combo multiplier reached and the weapons used, each shown with pictures where it can be (the enemies' and weapons' own art). Its text: HUD and menus, Content (T-318). (T-319, T-320)
 - **More gift packs, earlier** (board, 2026-10-28): the early levels need fewer likes, so the first gift packs come more often at the start of a run. The new curve is the Game Data Agent's proposal for the playtest. (T-328)
+- **A crash cuts the combo by 50%** (board, 2026-10-28; replaces the 80% in "Combo" above): a collision or any damage to the car cuts the part of the multiplier above "no combo" by 50% instead of 80%, so the player keeps half of their combo bonus (x4 becomes x2.5). (T-329)
 
 ### Content
 
@@ -1410,7 +1411,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `61d14f888ef223582e86a2f918ceeb3c23083394226ad02b105d5fb081fc4c93` |
+| `game-loop-architecture.md` | `a695aaf444342737db0fbbf9b25262763bff2ba310b4566c8390c64ed5711fdf` |
 | `drifting.md` | `35aa486ed94aff23eaadd5f4fccf12aecf31eaf24c9a899728fc10a19ce820ab` |
 | `level-design.md` | `b7e96891d2276dee341714f9c5905a2cb8038a00a52dba1753ed5fc004191525` |
 | `enemies.md` | `feefaa12e88931dec67fd83ee2628c7a9a945cc6e77c72239fd5951dff78361d` |

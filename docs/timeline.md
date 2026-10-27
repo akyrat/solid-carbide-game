@@ -1925,3 +1925,8 @@ Entry format:
 - Decision or change: after seeing the likes curve (each level 25% more than the last, 4,255 likes for all 11 gift packs, from drifting only), the board wants the early gift packs to come more often. The Game Data Agent proposes a gentler start to the curve. Ticket written; not started.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-328
+
+## 2026-10-28: A crash cuts the combo by 50%
+- Decision or change: after hearing how much a crash takes today (80% of the multiplier above x1.0, so x4 drops to x1.6), the board wants the cut reduced to 50% (x4 drops to x2.5). Ticket written for the Game Data Agent; not started.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-329
