@@ -41,10 +41,10 @@ Run it in this ticket's folder, made from playtest/G-006 once every ticket it de
 
 ## Acceptance criteria
 
-- [ ] game/tools/check_rebrand.py (or the name chosen) and its test exist; the test shows it flags a loaded PNG with a Redgull red pixel, passes one of the kept subjects (for example the likes heart), flags a loaded file named with 'redgull' and flags a text with 'Redgull'. (QA: pass / fail)
-- [ ] Screenshots of the main menu, garage, run HUD, gift pack drop and level-up screen are in art-archive/<this ticket>/screenshots/, with their full paths in the result notes. (QA: pass / fail)
-- [ ] game/README.md has a section on the script and how to run it. (QA: pass / fail)
-- [ ] All three test sets pass in this ticket's folder. (QA: pass / fail)
+- [ ] game/tools/check_rebrand.py (or the name chosen) and its test exist; the test shows it flags a loaded PNG with a Redgull red pixel, passes one of the kept subjects (for example the likes heart), flags a loaded file named with 'redgull' and flags a text with 'Redgull'. (QA: pass: script and 9 tests exist and pass, covering all four cases)
+- [ ] Screenshots of the main menu, garage, run HUD, gift pack drop and level-up screen are in art-archive/<this ticket>/screenshots/, with their full paths in the result notes. (QA: pass: 5 PNGs in art-archive/T-307/screenshots/, paths in result notes)
+- [ ] game/README.md has a section on the script and how to run it. (QA: pass: "Rebrand sweep (T-307)" section at game/README.md line 181)
+- [ ] All three test sets pass in this ticket's folder. (QA: pass: GUT 1419/1419; game/tools 499 OK (1 skipped); tools/ 501 OK)
 
 ## Updates
 
