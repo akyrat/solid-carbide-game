@@ -124,6 +124,7 @@ The run also owns the combo (task T-081; how to use it: [game/README.md](../game
 - The multiplier multiplies all XP gained: each completed challenge's XP (the "score" signal carries the multiplied amount) and each drift second's XP.
 - Hitting a wall, a building, the map edge or a boulder cuts the combo by 80%, and so does any damage to the car (enemies, meteors). The cut applies to the part of the multiplier above "no combo".
 - When no trick has come for 2 seconds, the combo drains, down to "no combo". A trick restarts the wait.
+- **Live viewers (T-332):** the player sees the multiplier as viewers. The curve, heat steps (20,000, 84,736 and 236,026, then fire from 1,000,000), the counting speed, the wobble and the number format are in [game/data/viewers.json](../game/data/viewers.json), read through `ViewersData` (`viewers_for`, `step_for_viewers`, `count_toward`, `with_wobble`, `trick_gain`, `crash_loss`, `format`). x1 = 2,500, x2 = 20,000, x6 = 1,000,000. The HUD counter is T-336.
 - The HUD and enemy spawning read the multiplier, with a signal whenever it changes. It stops while the run is paused and resets with every new run.
 
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
