@@ -1,7 +1,7 @@
 ---
 id: T-265
 title: "Level creator: skyscraper banners on or off, off by default"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -75,3 +75,4 @@ Done on T-264's branch; sent to QA. No PixelLab, nothing deleted.
 - **Screenshot:** `art-archive/T-265/screenshots/banners.png` (six towers with the banner off, two with it on; fixture `tests/fixtures/level_creator_banners_demo.gd`).
 - **Documents:** `game/README.md` ("Skyscraper banners on or off (T-265)"), `docs/level-design.md` ("Level creator: skyscraper banners on or off").
 - **Process slip:** I patched `building_towers.gd` and two test files with short inline python heredocs instead of Edit; the content is the same as an Edit would give.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
