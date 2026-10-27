@@ -8,9 +8,9 @@ const GameScene := preload("res://scenes/game/game.tscn")
 const RackScript := preload("res://scripts/weapons/weapons.gd")
 const OffersScript := preload("res://scripts/weapons/level_up_offers.gd")
 
-const WEAPONS := ["gun", "flamethrower", "underglow", "molotov", "wiper"]
+const WEAPONS := ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]
 const SWITCH_KEYS := ["flamethrower_at_start", "underglow_at_start", "molotov_at_start",
-		"wiper_at_start", "all_weapons_at_start"]
+		"wiper_at_start", "bricks_at_start", "all_weapons_at_start"]
 const RUN_SECONDS := 60.0
 const TIME_SCALE := 6.0
 

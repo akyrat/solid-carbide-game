@@ -171,12 +171,13 @@ func test_bricks_numbers_and_tiers() -> void:
 	assert_eq(b1.min_air_seconds, float(GameData.load_file("combo").data.airtime.min_seconds))
 
 
-func test_bricks_not_offered_until_built() -> void:
-	# T-323 keeps it out of the level-ups; T-324 turns it on with the weapon.
-	assert_false(WeaponData.new().bricks_offered())
+func test_bricks_offered_now_that_it_is_built() -> void:
+	# T-323 kept it out of the level-ups; T-324 turned it on with the weapon.
+	assert_true(WeaponData.new().bricks_offered())
 	var offers := preload("res://scripts/weapons/level_up_offers.gd")
-	assert_false(offers.WEAPON_ORDER.has("bricks"))
-	assert_false(offers.ALL_IDS.has("get_bricks"))
+	assert_true(offers.WEAPON_ORDER.has("bricks"))
+	assert_true(offers.ALL_IDS.has("get_bricks"))
+	assert_true(offers.ALL_IDS.has("upgrade_bricks"))
 
 
 func test_flame_data_has_no_separate_area() -> void:

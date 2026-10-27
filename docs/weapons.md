@@ -95,9 +95,19 @@ Proposals by the Game Data Agent for the board's playtest; the board judges and 
 - **Molotovs:** one thrown every 3 seconds at a random spot 3 to 8 units from the car; fire area radius 1.5 lasting 3 seconds; enemies take 2 on entering and every 0.5 seconds while inside. Tiers: 2 radius x1.2; 3 throw interval x0.8; 4 damage x1.5; 5 one more molotov per throw; 6 fire lasts 1.5 seconds longer; 7 radius x1.3; 8 one more molotov per throw (final: 3 per throw every 2.4 seconds, radius 2.34, 4.5 seconds, 3 damage).
 - **Windshield wiper:** one arm 2.5 units long sweeping a 180 degree semicircle in front of the car at 240 degrees per second; 3 damage per hit, the same enemy can be hit again after 0.5 seconds; minions are pushed back 6 units (twice the car's length), the kaiju is damaged but not pushed. Tiers: 2 length x1.2; 3 damage x1.4; 4 sweep speed x1.25; 5 knockback x1.5; 6 length x1.3; 7 damage x1.4; 8 sweep speed x1.3 (final: length 3.9, damage 5.9, knockback 9).
 
-### Bricks (numbers proposed in task T-323)
+### Bricks
 
-Proposals by the Game Data Agent for the board's playtest, for the board's decision in Decisions ("Bricks", 2026-10-28). Numbers: `bricks` in [../game/data/weapons.json](../game/data/weapons.json), read through `WeaponData.bricks_at(tier)`. The weapon itself is T-324; it is not offered at level-ups yet (`offered_in_level_ups` is false: T-324 sets it true and adds `bricks` to `WEAPON_ORDER` and the choice ids in `level_up_offers.gd`). Same 8 tiers as the other weapons (tier 1 is getting it, tiers 2 to 8 are 7 upgrades; the card texts, T-322, are written for that count). The garage damage bonus multiplies its damage.
+What the built weapon does in the game (built in task T-324). It follows Decisions ("Bricks", 2026-10-28), takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the numbers below) and shows the card texts below. How the code is put together: `game/README.md`, "Weapons", "Bricks".
+
+- **Owning it:** a run starts without it. It is one of the car's weapons, offered on level-up cards like the other five, gained and upgraded through the same call (`upgrade("bricks")`); since T-321 it can be on the very first gift pack. A playtest switch (`game/data/playtest.json`, `bricks_at_start`, off) gives it at the start of every run.
+- **The landing:** each step the weapon reads whether the car is in the air (the car's height model, the same airborne state the airtime trick uses) and counts the seconds; the step the car is back on the ground is the landing. A landing after at least the minimum time in the air (0.3 seconds) sends one impact wave; a shorter hop (a curb, a bump, a low step down) sends none. Any way of being in the air counts: a ramp's top, a rooftop's edge, any drop. Nothing is counted while the run is paused or after it ends.
+- **The wave:** one wave at the landing spot, the same whatever the height of the fall (the impact speed is not read). Every enemy whose body is within the radius (4 units at tier 1) takes the damage once (6 at tier 1, times the garage damage bonus), the kaiju too: a minion counts when its body's edge is inside, an enemy that reports its body size (the kaiju) when any part of its body is. Nothing outside the radius is touched, and the steps after the landing send nothing more. Minions that survive are pushed straight away from the landing spot by the knockback (4 units at tier 1), through the same call as the wiper's push; the kaiju is never pushed; a minion the wave kills is not pushed.
+- **Two landings close together** (the cooldown, 0.5 seconds): a landing less than the cooldown after the last wave sends none, so a bounce cannot stack two waves on the same enemies.
+- **Tiers:** as the numbers below (radius, damage and knockback multipliers), applied from code; the drawn ring follows the radius.
+- **The car:** its handling is not changed; "making the car heavier" is only the card's joke.
+- **Look:** a placeholder drawn in code, until the art task (T-325): an expanding ring on the ground at the landing spot (on a rooftop, on the roof), the circle as seen in the isometric view, growing in stepped frames from the car's size out to exactly the damage radius in about a third of a second and showing for 0.6 seconds, with a second ring right behind it while it travels; a burst of dust puffs and brick chips thrown out and up from the spot, which grow and then shrink away (no fading). City colours: a pale blue-white ring with a cool blue-grey band and a dark navy outline, blue-grey concrete dust, pale brick-brown chips; opaque hard-edged pixels, none of Greenbull's colours. The level-up card shows a placeholder image drawn in code (a small stack of pale brown bricks with a dark outline, 16 x 16 pixels) until the art task's image. No sound yet (the SFX bus has no fitting sound; a separate task can add one).
+
+**Numbers** (proposed in task T-323): proposals by the Game Data Agent for the board's playtest, for the board's decision in Decisions ("Bricks", 2026-10-28). Numbers: `bricks` in [../game/data/weapons.json](../game/data/weapons.json), read through `WeaponData.bricks_at(tier)`. The weapon itself is T-324, which turned it on at level-ups (`offered_in_level_ups` true, `bricks` in `WEAPON_ORDER` and the choice ids in `level_up_offers.gd`). Same 8 tiers as the other weapons (tier 1 is getting it, tiers 2 to 8 are 7 upgrades; the card texts, T-322, are written for that count). The garage damage bonus multiplies its damage.
 
 - **Damage 6**, once per enemy per landing. A minion has 4 health, so the first tier already kills a minion outright, as the board's "powerful impact wave" asks. A landing is rare (see below), so one hit has to be worth far more than the wiper's 3 per 0.5 seconds.
 - **Radius 4** units around the car, a disc about 50 square units against the wiper's half disc of radius 2.5 (about 10). It is wide because the wave is the point of the weapon, and a player lands rarely.
@@ -107,6 +117,25 @@ Proposals by the Game Data Agent for the board's playtest, for the board's decis
 - **Same wave whatever the height** (first build); the height does not scale any number.
 - **Tiers:** 2 radius x1.2; 3 damage x1.5; 4 knockback x1.5; 5 radius x1.25; 6 damage x1.5; 7 knockback x1.5; 8 radius x1.3 (final: radius 7.8, damage 13.5, knockback 9). Radius and damage alternate so the weapon reads as a bigger, harder wave; the knockback steps are the wiper's tier 5 step.
 - **How it compares:** the wiper at tier 1 does about 6 damage per second to an enemy it keeps hitting; the underglow 1 per second. Landings on the elevation map come from ramps and rooftop edges only, perhaps one every 10 to 20 seconds of a run that uses them, so Bricks' average damage per second to one enemy is about 0.3 to 0.6 at tier 1, but it hits everything within 4 units at once and kills a minion, so against a crowd it matches the wiper and fires only when the player jumps. If the board finds it too weak or too strong in playtest, damage and radius are the first numbers to move.
+
+**Card texts** (task T-322; the board's line, kept word for word, with a hint to jump; scored 8 or more in the style loop). They are in [../game/scripts/ui/level_up_texts.gd](../game/scripts/ui/level_up_texts.gd). The upgrade texts follow T-323's 7 tiers (2 to 8: wider wave, harder hit, stronger knockback, wider wave, harder hit, stronger knockback, widest wave) and carry no numbers.
+
+- `get_bricks.title`: Bricks
+- `get_bricks.desc`: A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?
+- `upgrade_bricks.tier2.title`: Wider Wave
+- `upgrade_bricks.tier2.desc`: Each landing's impact wave reaches further. Greenbull calls it ground-breaking content.
+- `upgrade_bricks.tier3.title`: Harder Landing
+- `upgrade_bricks.tier3.desc`: Your landing wave hits harder. Greenbull calls it a high-impact brand activation.
+- `upgrade_bricks.tier4.title`: Shove Factor
+- `upgrade_bricks.tier4.desc`: Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback.
+- `upgrade_bricks.tier5.title`: Wider Wave II
+- `upgrade_bricks.tier5.desc`: Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint.
+- `upgrade_bricks.tier6.title`: Harder Landing II
+- `upgrade_bricks.tier6.desc`: Your landing wave hits harder again. Greenbull is trademarking the thud.
+- `upgrade_bricks.tier7.title`: Shove Factor II
+- `upgrade_bricks.tier7.desc`: Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach.
+- `upgrade_bricks.tier8.title`: Widest Wave
+- `upgrade_bricks.tier8.desc`: Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout.
 
 ### The neon underglow (built in task T-168)
 
@@ -143,27 +172,6 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 - **Tiers:** as the proposal above (length, damage, sweep speed and knockback multipliers), applied from code.
 - **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never in Greenbull's colours. The final art replaces it.
 
-### Bricks
-
-The level-up card texts (task T-322; the board's line, kept word for word, with a hint to jump; scored 8 or more in the style loop). They are in [../game/scripts/ui/level_up_texts.gd](../game/scripts/ui/level_up_texts.gd). The upgrade texts follow T-323's 7 tiers (2 to 8: wider wave, harder hit, stronger knockback, wider wave, harder hit, stronger knockback, widest wave) and carry no numbers.
-
-- `get_bricks.title`: Bricks
-- `get_bricks.desc`: A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?
-- `upgrade_bricks.tier2.title`: Wider Wave
-- `upgrade_bricks.tier2.desc`: Each landing's impact wave reaches further. Greenbull calls it ground-breaking content.
-- `upgrade_bricks.tier3.title`: Harder Landing
-- `upgrade_bricks.tier3.desc`: Your landing wave hits harder. Greenbull calls it a high-impact brand activation.
-- `upgrade_bricks.tier4.title`: Shove Factor
-- `upgrade_bricks.tier4.desc`: Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback.
-- `upgrade_bricks.tier5.title`: Wider Wave II
-- `upgrade_bricks.tier5.desc`: Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint.
-- `upgrade_bricks.tier6.title`: Harder Landing II
-- `upgrade_bricks.tier6.desc`: Your landing wave hits harder again. Greenbull is trademarking the thud.
-- `upgrade_bricks.tier7.title`: Shove Factor II
-- `upgrade_bricks.tier7.desc`: Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach.
-- `upgrade_bricks.tier8.title`: Widest Wave
-- `upgrade_bricks.tier8.desc`: Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout.
-
 ### Size upgrades grow on screen (built in task T-286)
 
 What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/README.md`, "Weapons", "Size upgrades grow".
@@ -178,12 +186,12 @@ What the built grow does. It follows Decisions ("Size upgrades grow on screen").
 
 What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/README.md`, "Weapons", "The level-up offers".
 
-- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the five weapons gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 9 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs and the windshield wiper.
-- Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper), not in the order drawn.
-- The first level-up is drawn like every other one (Decisions, "The first gift pack can hold any weapon", T-321): two different choices at random from every choice available, so it can offer any of the four weapons the car doesn't have, or the gun's upgrade. A run that already starts with the flamethrower (its playtest switch) draws the same way, and the flamethrower's upgrades are among the choices.
+- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the weapons (six since T-324 added Bricks) gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 11 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs, the windshield wiper and Bricks.
+- Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper, Bricks), not in the order drawn.
+- The first level-up is drawn like every other one (Decisions, "The first gift pack can hold any weapon", T-321): two different choices at random from every choice available, so it can offer any of the five weapons the car doesn't have, or the gun's upgrade. A run that already starts with the flamethrower (its playtest switch) draws the same way, and the flamethrower's upgrades are among the choices.
 - Taking a choice applies it at once (the weapon at tier 1, or its next tier) and the run resumes. If several levels were reached at once, their choices follow one after another, each drawn on its own.
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
-- **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car all five weapons at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
+- **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
 
 ## Open questions
 

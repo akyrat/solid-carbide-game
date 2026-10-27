@@ -168,7 +168,7 @@ func bricks_at(tier: int) -> Dictionary:
 	}
 
 
-## True when Bricks is in the level-up offers (false until the weapon is built, T-324).
+## True when Bricks is in the level-up offers (true since T-324 built the weapon).
 func bricks_offered() -> bool:
 	return bool(_data["bricks"]["offered_in_level_ups"])
 

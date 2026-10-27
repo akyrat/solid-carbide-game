@@ -10,7 +10,8 @@ extends Node
 ## Choice ids (the screen maps each to its text), one pair per weapon:
 ##   "get_<weapon>"      gives the weapon (tier 1) while the car does not have it
 ##   "upgrade_<weapon>"  the owned weapon's next tier, until its last tier (8)
-## The weapons are gun, flamethrower, underglow, molotov, wiper. The gun is
+## The weapons are gun, flamethrower, underglow, molotov, wiper and (T-324)
+## bricks. The gun is
 ## always owned, so it has only "upgrade_gun".
 ##
 ## Each level-up offers 2 different choices drawn at random (`rng`, which tests
@@ -28,12 +29,15 @@ const GET_MOLOTOV := "get_molotov"
 const UPGRADE_MOLOTOV := "upgrade_molotov"
 const GET_WIPER := "get_wiper"
 const UPGRADE_WIPER := "upgrade_wiper"
+const GET_BRICKS := "get_bricks"
+const UPGRADE_BRICKS := "upgrade_bricks"
 
 ## The weapons that can be offered, in the order the choices are shown.
-const WEAPON_ORDER := ["gun", "flamethrower", "underglow", "molotov", "wiper"]
+const WEAPON_ORDER := ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]
 ## Every choice id, in the order they are shown.
 const ALL_IDS := [UPGRADE_GUN, GET_FLAMETHROWER, UPGRADE_FLAMETHROWER, GET_UNDERGLOW, UPGRADE_UNDERGLOW,
-		GET_MOLOTOV, UPGRADE_MOLOTOV, GET_WIPER, UPGRADE_WIPER]
+		GET_MOLOTOV, UPGRADE_MOLOTOV, GET_WIPER, UPGRADE_WIPER,
+		GET_BRICKS, UPGRADE_BRICKS]
 ## How many choices a level-up offers (Weapons, Decisions: 2 in the MVP).
 const OFFER_COUNT := 2
 
@@ -80,6 +84,9 @@ func available_offers() -> Array:
 	for weapon_id in WEAPON_ORDER:
 		var w: Node = rack.get_weapon(weapon_id)
 		if w == null or w.is_max_tier():
+			continue
+		# Bricks only while the data offers it (weapons.json "offered_in_level_ups", T-323).
+		if weapon_id == "bricks" and not w.data.bricks_offered():
 			continue
 		out.append(("upgrade_" if w.is_owned() else "get_") + weapon_id)
 	return out

@@ -36,7 +36,7 @@ func after_each() -> void:
 ## the gun's upgrade and the flamethrower on the cards put the other three weapons at their
 ## last tier (never offered). A new run puts them back, so call it again after start_run().
 func _only_gun_and_flamethrower_left() -> void:
-	for id in ["underglow", "molotov", "wiper"]:
+	for id in ["underglow", "molotov", "wiper", "bricks"]:
 		var w: Node = run.weapons.get_weapon(id)
 		w.set_tier(w.max_tier())
 
@@ -100,7 +100,7 @@ func test_exact_text_for_known_cards() -> void:
 	assert_eq(Texts.TEXTS["get_flamethrower.title"], "Hot Take Exhaust")
 	assert_eq(Texts.TEXTS["upgrade_gun.tier4.desc"], "Fires 20% faster again. Engagement waits for no one.")
 	assert_eq(Texts.TEXTS["levelup.take"], "Take it")
-	assert_eq(Texts.TEXTS.size(), 32 + 48, "T-051's 32 rows and T-171's 24 cards (T-173)")
+	assert_eq(Texts.TEXTS.size(), 32 + 48 + 16, "T-051's 32 rows, T-171's 24 cards (T-173) and T-322's 8 Bricks cards")
 
 
 func test_upgrade_card_shows_the_next_tier_text() -> void:
@@ -115,7 +115,7 @@ func test_flamethrower_upgrade_card_shows_its_next_tier() -> void:
 	run.weapons.flamethrower.set_tier(4)
 	# T-172: the choices are drawn from all five weapons; with the three new ones
 	# at their last tier the two left are the gun's and the flamethrower's upgrades.
-	for id in ["underglow", "molotov", "wiper"]:
+	for id in ["underglow", "molotov", "wiper", "bricks"]:
 		run.weapons.get_weapon(id).set_tier(run.weapons.get_weapon(id).max_tier())
 	_level_up()
 	var c := _card("upgrade_flamethrower")
@@ -581,7 +581,7 @@ func _set_tier(w: String, tier: int) -> void:
 
 func test_every_choice_and_tier_the_offers_can_produce_has_text() -> void:
 	var choices := _every_choice()
-	assert_eq(choices.size(), 7 + 4 * 8, "gun tiers 1-7, the others 0-7")
+	assert_eq(choices.size(), 7 + 5 * 8, "gun tiers 1-7, the others 0-7")
 	var seen_ids := {}
 	for c in choices:
 		_set_tier(c[0], c[1])
@@ -609,6 +609,36 @@ func test_t171s_texts_word_for_word() -> void:
 				assert_true(Texts.TEXTS.has("upgrade_%s.tier%d%s" % [w, tier, suffix]))
 
 
+## T-322's Bricks card texts, word for word (Weapons, Content, "Bricks").
+const BRICKS_TEXTS := {
+	"get_bricks": ["Bricks", "A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?"],
+	"upgrade_bricks.tier2": ["Wider Wave", "Each landing's impact wave reaches further. Greenbull calls it ground-breaking content."],
+	"upgrade_bricks.tier3": ["Harder Landing", "Your landing wave hits harder. Greenbull calls it a high-impact brand activation."],
+	"upgrade_bricks.tier4": ["Shove Factor", "Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback."],
+	"upgrade_bricks.tier5": ["Wider Wave II", "Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint."],
+	"upgrade_bricks.tier6": ["Harder Landing II", "Your landing wave hits harder again. Greenbull is trademarking the thud."],
+	"upgrade_bricks.tier7": ["Shove Factor II", "Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach."],
+	"upgrade_bricks.tier8": ["Widest Wave", "Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout."],
+}
+
+
+func test_the_bricks_cards_show_t322s_texts_word_for_word() -> void:
+	# T-324: the card a player sees for each Bricks choice and tier.
+	_set_tier("bricks", 0)
+	screen.show_offers(["get_bricks"])
+	screen.skip_animation()
+	assert_eq(screen.cards[0].title.text, BRICKS_TEXTS["get_bricks"][0])
+	assert_eq(screen.cards[0].desc.text, BRICKS_TEXTS["get_bricks"][1])
+	assert_eq(screen.cards[0].image.texture, screen.weapon_image("bricks"), "its own image")
+	for tier in range(1, 8):
+		_set_tier("bricks", tier)
+		screen.show_offers(["upgrade_bricks"])
+		screen.skip_animation()
+		var want: Array = BRICKS_TEXTS["upgrade_bricks.tier%d" % (tier + 1)]
+		assert_eq(screen.cards[0].title.text, want[0], "tier %d" % (tier + 1))
+		assert_eq(screen.cards[0].desc.text, want[1], "tier %d" % (tier + 1))
+
+
 func test_a_new_weapons_upgrade_card_shows_its_next_tier() -> void:
 	_set_tier("wiper", 4)
 	screen.show_offers(["upgrade_wiper"])
@@ -618,6 +648,11 @@ func test_a_new_weapons_upgrade_card_shows_its_next_tier() -> void:
 	_set_tier("underglow", 0)
 	screen.show_offers(["get_underglow"])
 	assert_eq(screen.cards[0].title.text, "Neon Underglow")
+
+
+## Weapons whose card still shows the placeholder because their art task is not done
+## (T-324's Bricks until T-325): skipped by the final art test while the file is missing.
+const AWAITING_ART := ["bricks"]
 
 
 ## The heart's red or anything that reads as a red (as game/tools/build_drift_mark.py's
@@ -656,7 +691,10 @@ func test_each_card_shows_its_weapons_image_a_different_one_per_weapon() -> void
 
 func test_final_weapon_art_replaces_the_placeholders() -> void:
 	# T-174: the five PixelLab images, 64 x 64, hard edged, shown instead of the 16 x 16 placeholders.
+	# Bricks (T-324) shows its placeholder until its art task (T-325) adds the image.
 	for w in offers.WEAPON_ORDER:
+		if AWAITING_ART.has(w) and not ResourceLoader.exists(screen.WEAPON_ART % w):
+			continue
 		var path: String = screen.WEAPON_ART % w
 		assert_true(ResourceLoader.exists(path), "%s: %s is there" % [w, path])
 		var tex: Texture2D = screen.weapon_image(w)
