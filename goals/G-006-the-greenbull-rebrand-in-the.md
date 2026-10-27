@@ -1,7 +1,7 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: building
+status: paused
 art_cap: 1900
 art_used: 0
 iteration: 14
@@ -241,6 +241,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 14: goal check: refused, got past and not blocking: Reading the end of the GUT output file in the temp folder with `tail` was blocked, because it is outside the allowed directory. I used the Grep tool on the file instead..
 - 2026-10-27, iteration 14: goal check: 10 of 11 goal criteria pass.
 - 2026-10-27, iteration 14: gap detection on the failing goal criteria: C2 missing (wrote T-312).
+- 2026-10-27, iteration 14: paused (see Pauses).
 
 ## Pauses
 
@@ -251,4 +252,5 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-26 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-301 in-qa --reply Goal runner (G-006): the agent is done; QA is checking it.: Refused. T-301 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
 - 2026-10-26 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 1:30am (Europe/London)
 - 2026-10-27 [stop]: Claude reported an error for step 'goal-check': You've hit your session limit · resets 2:40pm (Europe/London)
+- 2026-10-27 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 7:40pm (Europe/London)
 
