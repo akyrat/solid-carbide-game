@@ -1,7 +1,7 @@
 ---
 id: T-307
 title: Rebrand sweep: a check for Redgull's red, files and name in what the game loads, with screenshots of every screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Blocked → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-307.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
