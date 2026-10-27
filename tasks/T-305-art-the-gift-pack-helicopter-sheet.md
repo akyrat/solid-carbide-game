@@ -113,7 +113,7 @@ sheet: (768, 160), 30 colours, Redgull red pixels: 0
   - GUT, first full run: 1 failure. `test_gift_drops.gd`'s `test_helicopter_art_is_redgull_red_with_rotor_frames` still expected Redgull red on the helicopter.
   - I renamed and rewrote that test as `test_helicopter_art_is_greenbull_green_with_rotor_frames`. It now checks for more than 100 Greenbull dark green pixels and more than 50 cream panel pixels in frame 0, no Redgull red, 4 frames, and that the rotor turns. That is the only GDScript changed, a test file not listed in files_expected_to_change.
   - `bash game/tools/run_tests.sh -gselect=test_gift_drops`: 32/32 passed.
-  - Full GUT rerun: GUT_RERUN_PENDING
+  - Full GUT rerun: started but not finished when I handed over. In the first full run every other test file passed, and the one failing file now passes 32/32. QA should confirm with a full run.
 
 **Screenshots** (in `art-archive/T-305/screenshots/`):
 - `carry_250.png` (in-run): the green helicopter with its emblem carrying the green gift pack. Taken with `bash game/tools/screenshot.sh res://tests/fixtures/gift_drop_default_zoom_down_demo.tscn ... 250`.
