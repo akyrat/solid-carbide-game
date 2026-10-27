@@ -72,3 +72,61 @@ Run by `tools/style_loop/run.py` on 2026-10-27: art, brief `art-archive/T-305/br
 ## Result notes
 
 Written by the agent when it finishes.
+
+**What was done (2026-10-27, asset-generation):**
+- **PixelLab:** no calls planned and none made. This is a free recolour and restamp of T-145's approved sample, so 0 of the 12 allowed generations were used.
+- **Old sheet kept:** `python game/tools/build_helicopter.py archive` copied the Redgull `helicopter_sheet.png` and its `helicopter_sheet.json` to `art-archive/T-305/redgull/` before the rebuild.
+- **`game/tools/build_helicopter.py` rebuilt.** It still works from T-145's approved PixelLab sample (`art-archive/T-145/helicopter_sample.png`, read only):
+  - The body is recoloured to a dark green ramp with Greenbull's dark green (12, 76, 44) in the middle.
+  - The sample's thin accent stripes become Greenbull's light green (104, 220, 96).
+  - Greenbull's emblem (`game/art/logo/greenbull_emblem_32.png`) is fitted to 18 px on the fuselage and 12 px on the tail fin. It is snapped to the emblem's own colours and stamped on cream panels (the T-304 tag's cream) with a dark green edge, where the gull was.
+  - Any pixel `style_rules.is_redgull_red` flags is moved onto the green ramp.
+  - The colour merge protects the brand colours and the emblem's own colours.
+  - New commands: `piece <png>` (the style loop's step) and `archive`. `build` now runs `check`, and `check` also counts the whole sheet's colours and the Redgull red pixels.
+- **Same frames and size:** 4 frames of 192 x 160 (768 x 160). `gift_helicopter.tscn` is unchanged.
+- **Style loop:** run with `--greenbull --max-colors 30 --size 768x160` (Style review above). It was kept at **8/10** in round 1, with no refines.
+  - The evaluator's optional points, not done because the loop stopped at 8: the rotor blades are flat dark lines with no highlight, and the cabin glass is purple (kept from the approved sample). Left for the board's playtest.
+  - Yellow appears only as the emblem's own few pixels (8 px across the sheet), so it stays a small accent.
+
+**Redgull red check** (`python game/tools/build_helicopter.py check`, which runs `style_rules.is_redgull_red` on every opaque pixel):
+```
+PASS  0..3 {'size': [192, 160], 'transparent_corners': True, 'semi_transparent_pixels': 0, 'colours': 30, ...}
+sheet: (768, 160), 30 colours, Redgull red pixels: 0
+```
+`python game/tools/style_rules.py art game/art/gift_pack/helicopter_sheet.png --greenbull --max-colors 30`: all 5 checks pass (rule 1: transparent corners, no semi-transparent pixels, 30 colours, has opaque pixels; rule 6: one of Greenbull's own things).
+
+**Tests:**
+- `game/tools/test_build_helicopter.py`: 11 tests, all OK. They cover:
+  - the frame count and size;
+  - the sprite rules per frame, and 30 colours or fewer on the whole sheet;
+  - no Redgull red pixel;
+  - Greenbull's dark green and light green present, with green leading;
+  - the emblem in its own colours, the cream panel, no old logo red;
+  - that the emblem fits its spot;
+  - that the rotor frames differ;
+  - that the build is deterministic and matches the committed sheet;
+  - that `piece` matches the sheet and doesn't touch the record;
+  - that the Redgull sheet is archived.
+- All three test sets:
+  - game/tools Python: 490 OK, 1 skipped.
+  - tools/ Python: 501 OK.
+  - GUT (`test_gift_drops.gd` included): GUT_RESULT_PENDING
+
+**Screenshots** (in `art-archive/T-305/screenshots/`):
+- `carry_250.png` (in-run): the green helicopter with its emblem carrying the green gift pack. Taken with `bash game/tools/screenshot.sh res://tests/fixtures/gift_drop_default_zoom_down_demo.tscn ... 250`.
+- `carry_200.png` (in-run): the same, at the screen's left edge as it flies in.
+- `drop_350.png` (in-run): the package dropping under its parachute just behind the helicopter.
+- `helicopter_sheet_x4.png`: the four frames enlarged 4x, on a dark and a light background.
+
+**Other files:**
+- Style loop brief: `art-archive/T-305/briefs/helicopter_sheet.md`.
+- Loop version: `art-archive/T-305/style-loop/v1.png`.
+- Pre-loop draft: `art-archive/T-305/draft_v0.png` and its `_x4` preview.
+
+**Documents updated:**
+- `docs/visual-style.md`: Decisions, new entry "The gift pack helicopter in Greenbull's colours".
+- `game/README.md`: "The gift pack drop", the art swap paragraph (T-305 part).
+
+**Refusals:**
+- During the style loop, two of the generator agent's commands were refused, as listed in the Style review: a chained `mkdir ... && python ... && python -c ...` command, and a `python -m pytest ... | tail` pipe. Neither was essential: the version was built with the plain `piece` command, and I ran the tests myself.
+- Not done: Godot's line-ending-only `.import` changes from the test and screenshot runs are left uncommitted. Reverting them needs `git checkout`, which isn't pre-approved.
