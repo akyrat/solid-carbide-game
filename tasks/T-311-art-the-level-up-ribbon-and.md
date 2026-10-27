@@ -1,7 +1,7 @@
 ---
 id: T-311
 title: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -132,3 +132,4 @@ Dark green leads the outline by 3,286 pixels (about 10%). That margin is clear b
 
 **Not committed.** Godot's line-ending-only `.import` changes across `game/` are left uncommitted.
 - 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
