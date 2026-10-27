@@ -1,7 +1,7 @@
 ---
 id: T-311
 title: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
