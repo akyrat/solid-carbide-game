@@ -1,7 +1,7 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: building
+status: ready-to-play
 art_cap: 1900
 art_used: 0
 iteration: 15
@@ -17,7 +17,7 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 
 ## Goal acceptance criteria
 
-- [ ] On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. (QA: fail, scripts, scenes and data: no matches [pass]. The rest of game/ and tools/style_loop/ has 41 matching files: art records, the generation log, build tools that write those records, tools marked HISTORY, and the old redgull_logo_*.png.import files. Some are not history: style_rules.py BANNED_WORDS and its tests [needed for criterion 8], check_rebrand.py, test_check_level_up_texts.py. T-306's result notes list most matches, but the goal file has no such list. check_rebrand.py, check_level_up_shot.py and the three redgull_logo .import files are not listed anywhere I found. The gap is in the documentation, not the code. The Project Lead should add the list to the goal notes or accept T-306's.)
+- [x] On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. (QA: pass)
 - [x] On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). (QA: pass)
 - [x] The garage screen shows Greenbull's title and descriptions (no Redgull); a screenshot of it exists in the ticket's screenshots folder. (QA: pass)
 - [x] The gift pack package (standing and falling) and the helicopter sheet that the run loads have no Redgull red pixels and carry Greenbull's emblem; in-run screenshots of the helicopter carrying the package, the package falling and the package landed exist. (QA: pass)
@@ -246,6 +246,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 14: paused (see Pauses).
 - 2026-10-27, iteration 14: resumed: its last pause (merge: a merge into the goal's build conflicted) can't be checked by the runner; --force.
 - 2026-10-27, iteration 15: T-312 (C2, qa-integration, opus): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: (nothing new). Rescan: C2 covered.
+- 2026-10-27, iteration 15: goal check: 11 of 11 goal criteria pass.
+- 2026-10-27, iteration 15: ready to play.
 
 ## Pauses
 
