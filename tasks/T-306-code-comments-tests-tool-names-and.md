@@ -1,7 +1,7 @@
 ---
 id: T-306
 title: Code comments, tests, tool names and game/README.md say Greenbull, behaviour unchanged
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/style_rules.py, game/scripts/hud/hud.gd, game/tools/make_logo_sizes.py]
 files_expected_to_change: [game/scripts/, game/tests/, game/tools/, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-306.
 ### 2026-10-27, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -138,3 +142,4 @@ Two commits: code, tests and tools; then `game/README.md`. 97 files changed, 430
 **Refusals:** `git reset -q game/tools/_t306_rename.py`, to unstage the one-off script, was refused. It was not essential; the script is committed instead, marked HISTORY.
 
 PixelLab: 0 generations. Documents affected: `game/README.md` (updated).
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
