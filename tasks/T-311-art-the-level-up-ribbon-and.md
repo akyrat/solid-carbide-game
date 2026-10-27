@@ -41,14 +41,14 @@ The board's review: play a run from the main menu to a level-up: the ribbon is d
 
 ## Acceptance criteria
 
-- [ ] header_ribbon.png keeps its size (380x44) and has a dark green RGB 12, 76, 44 centre field with light green trim and a thin yellow line; any other changed piece keeps its file name and size; `python game/tools/build_level_up_art.py check` passes for all seven pieces. (QA: pass / fail)
-- [ ] Each changed piece passes `python game/tools/style_rules.py art <file> --greenbull` and has a style loop record in this ticket's Style review. (QA: pass / fail)
-- [ ] T-303's versions of every changed piece are in art-archive/<this ticket>/. (QA: pass / fail)
-- [ ] A screenshot from game/tests/fixtures/level_up_from_menu_demo.tscn (a run started from the main menu, the level-up screen open with both cards and the Greenbull title) is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] `python game/tools/check_level_up_shot.py` on that screenshot exits 0: no Redgull red pixel, and dark green RGB 12, 76, 44 is the most common art colour; its output is in the result notes. (QA: pass / fail)
-- [ ] test_build_level_up_art.py and test_level_up_screen.gd pass; any PixelLab call is listed in the result notes with its reason and count. (QA: pass / fail)
-- [ ] docs/visual-style.md and game/README.md describe the dark green ribbon. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] header_ribbon.png keeps its size (380x44) and has a dark green RGB 12, 76, 44 centre field with light green trim and a thin yellow line; any other changed piece keeps its file name and size; `python game/tools/build_level_up_art.py check` passes for all seven pieces. (QA: pass: check passes 7 of 7; ribbon 380x44, dark green field, only ribbon changed)
+- [ ] Each changed piece passes `python game/tools/style_rules.py art <file> --greenbull` and has a style loop record in this ticket's Style review. (QA: pass: style_rules 5 of 5 ok; two loop runs recorded, 9/10)
+- [ ] T-303's versions of every changed piece are in art-archive/<this ticket>/. (QA: pass: art-archive/T-311/t303/header_ribbon.png and .json)
+- [ ] A screenshot from game/tests/fixtures/level_up_from_menu_demo.tscn (a run started from the main menu, the level-up screen open with both cards and the Greenbull title) is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass: level_up_from_menu.png present and listed)
+- [ ] `python game/tools/check_level_up_shot.py` on that screenshot exits 0: no Redgull red pixel, and dark green RGB 12, 76, 44 is the most common art colour; its output is in the result notes. (QA: pass: reran, exit ok, 0 red, dark green 37690 leads)
+- [ ] test_build_level_up_art.py and test_level_up_screen.gd pass; any PixelLab call is listed in the result notes with its reason and count. (QA: pass: unit tests 512 OK; GUT 1420/1420; 0 PixelLab calls listed)
+- [ ] docs/visual-style.md and game/README.md describe the dark green ribbon. (QA: pass: both describe it)
+- [ ] All three test sets pass. (QA: pass: GUT 1420/1420, game/tools 512 OK, tools 501 OK)
 
 ## Updates
 
