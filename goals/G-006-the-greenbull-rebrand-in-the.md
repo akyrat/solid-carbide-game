@@ -242,6 +242,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 14: goal check: 10 of 11 goal criteria pass.
 - 2026-10-27, iteration 14: gap detection on the failing goal criteria: C2 missing (wrote T-312).
 - 2026-10-27, iteration 14: paused (see Pauses).
+- 2026-10-27, iteration 14: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-27, iteration 14: paused (see Pauses).
 
 ## Pauses
 
@@ -253,4 +255,5 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-26 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 1:30am (Europe/London)
 - 2026-10-27 [stop]: Claude reported an error for step 'goal-check': You've hit your session limit · resets 2:40pm (Europe/London)
 - 2026-10-27 [stop]: Claude reported an error for step 'agent': You've hit your session limit · resets 7:40pm (Europe/London)
+- 2026-10-27 [merge]: Merging task/T-312-no-redgull-left-in-game-outside into playtest/G-006 conflicted; the merge was aborted.
 
