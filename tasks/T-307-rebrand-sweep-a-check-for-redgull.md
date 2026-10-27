@@ -1,7 +1,7 @@
 ---
 id: T-307
 title: Rebrand sweep: a check for Redgull's red, files and name in what the game loads, with screenshots of every screen
-status: blocked
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/style_rules.py, game/tools/check_sprite_rules.py]
 files_expected_to_change: [game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,26 @@ Run it in this ticket's folder, made from playtest/G-006 once every ticket it de
 
 ## Acceptance criteria
 
-- [ ] game/tools/check_rebrand.py (or the name chosen) and its test exist; the test shows it flags a loaded PNG with a Redgull red pixel, passes one of the kept subjects (for example the likes heart), flags a loaded file named with 'redgull' and flags a text with 'Redgull'. (QA: pass / fail)
-- [ ] Screenshots of the main menu, garage, run HUD, gift pack drop and level-up screen are in art-archive/<this ticket>/screenshots/, with their full paths in the result notes. (QA: pass / fail)
-- [ ] game/README.md has a section on the script and how to run it. (QA: pass / fail)
-- [ ] All three test sets pass in this ticket's folder. (QA: pass / fail)
+- [ ] game/tools/check_rebrand.py (or the name chosen) and its test exist; the test shows it flags a loaded PNG with a Redgull red pixel, passes one of the kept subjects (for example the likes heart), flags a loaded file named with 'redgull' and flags a text with 'Redgull'. (QA: pass: script and 9 tests exist and pass, covering all four cases)
+- [ ] Screenshots of the main menu, garage, run HUD, gift pack drop and level-up screen are in art-archive/<this ticket>/screenshots/, with their full paths in the result notes. (QA: pass: 5 PNGs in art-archive/T-307/screenshots/, paths in result notes)
+- [ ] game/README.md has a section on the script and how to run it. (QA: pass: "Rebrand sweep (T-307)" section at game/README.md line 181)
+- [ ] All three test sets pass in this ticket's folder. (QA: pass: GUT 1419/1419; game/tools 499 OK (1 skipped); tools/ 501 OK)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Blocked → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-307.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -56,4 +68,27 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built `game/tools/check_rebrand.py` with `game/tools/test_check_rebrand.py` (9 tests: flags a loaded PNG with a red pixel, ignores an unloaded one, passes the likes heart as a kept subject, flags a file named 'redgull', flags 'Redgull' in a .gd string and a JSON value, skips comments, resolves %s patterns and folders, exit code 1). `KEPT_RED` names each kept subject with the doc's words (heart, alert banners, car tail lights, minion mouth, health canister, combo broken popup). Added the "Rebrand sweep (T-307)" section to game/README.md. Nothing in art or text was fixed.
+
+**Report** (run in this folder on playtest/G-006 plus T-306; `python game/tools/check_rebrand.py`): 68 loaded PNGs checked; no file name contains 'redgull'; no player-facing text contains 'Redgull'; 10 kept-red files (the 6 alert banners, car_iso, car_iso_noshadow, health_canister, likes_heart); 8 red findings, all fire/wood oranges and browns that the loose red check flags by hue (none is the old logo red or the heart red), for the Project Lead to judge:
+- art/effects/burning_flames.png ([208,53,46] and oranges)
+- art/effects/exhaust_flame_sheet.png ([153,83,6], [249,126,3])
+- art/level_up/weapon_flamethrower.png ([202,3,0], [253,116,1])
+- art/level_up/weapon_gun.png (browns [68,33,13]...[170,110,69], the gun's wood grip)
+- art/level_up/weapon_molotov.png (browns, [168,49,11])
+- art/weapons/molotov_bottle.png, molotov_fire.png, molotov_fire_flip.png (oranges, browns, [98,55,70])
+The red check is `style_rules.reads_as_red`; if these should be exempt, the Project Lead can add subjects to `KEPT_RED` or tighten the check. The minion's art is not flagged (its pink mouth is not within the red check).
+
+**Tests:** GUT 1419/1419 pass (`bash game/tools/run_tests.sh`, TESTS PASSED); Python `unittest discover -s game/tools`: 499 tests OK (1 skipped).
+
+**Screenshots** (full paths):
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\main_menu.png
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\garage.png (garage_screen_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\run_hud.png (hud_from_menu_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\gift_pack_drop.png (gift_drop_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\level_up_screen.png (level_up_screen_demo fixture)
+
+**Refused:** reverting Godot's line-ending-only `.import` noise (`git ls-files -m ... | xargs git checkout`) was refused as a compound command. Not essential: I committed only my own files and left the `.import` noise uncommitted; the Project Lead reverts it before merging.
+
+Documents affected: game/README.md.
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
