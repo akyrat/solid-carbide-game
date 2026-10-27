@@ -1,7 +1,7 @@
 ---
 id: T-322
 title: "Text: the Bricks weapon's card"
-status: in-qa
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/hud-and-menus.md, docs/extended-narrative.md, game/scripts/ui/level_up_texts.gd]
 files_expected_to_change: [game/data/, docs/weapons.md, docs/hud-and-menus.md, art-archive/T-322/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,14 @@ Started: the Narrative Theme Agent is writing the Bricks card texts.
 ### 2026-10-27, In progress → In QA
 
 Built: the Bricks card and its 7 upgrade texts, matched to T-323's tiers, all 8 or more in the style loop. QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+QA passed all 3 criteria. You'll read the cards in the shared build (playtest/batch-1028) once Bricks is in.
+
+### 2026-10-27, Needs playtest → Done
+
+Approved by the board. Done; the texts are in the shared build.
 
 ## Style review
 
@@ -456,3 +464,4 @@ Narrative Theme Agent: the Bricks card texts are written, all 16 through the sty
 - **Tiers (reworded to T-323's real tiers; the first pattern's runs stay in the Style review above):** tier 2 Wider Wave (8 desc / 9 title) and tier 3 Harder Landing (8 / 9) were kept. Reworded, each through the loop, no numbers: tier 4 "Shove Factor": "Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback." (8 / 9); tier 5 "Wider Wave II": "Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint." (9 after 1 refine / 9); tier 6 "Harder Landing II": "Your landing wave hits harder again. Greenbull is trademarking the thud." (9 / 9); tier 7 "Shove Factor II": "Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach." (9 / 9); tier 8 "Widest Wave": "Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout." (9 / 9).
 - **Tier 6 description re-scored:** Run 21 had scored it with a stray "Harder Landing II / " title prefix, so it was run again alone (the last run in the Style review): "Your landing wave hits harder again. Greenbull is trademarking the thud." scored 9 in round 1, the exact text the game shows. Also the Style review holds the old pattern's runs for tiers 4 to 8 (Runs 7 to 16), which are no longer used.
 - **Skipped:** `docs/hud-and-menus.md` is unchanged: it points to the level-up texts and the weapon's texts live in Weapons only (one decision, one document). Tests were not run: only text data changed (the length checks ran inside the loop).
+- 2026-10-27, needs-playtest → done: The board approved the Bricks card texts as written (2026-10-28).
