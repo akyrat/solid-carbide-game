@@ -44,14 +44,14 @@ In the result notes, list every file that `git grep -i redgull -- game tools/sty
 
 ## Acceptance criteria
 
-- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data` prints nothing, and `git grep -i -l redgull -- game tools/style_loop` prints only game/art/pixellab-generation-log.jsonl and .json art records under game/art. The result notes list each of these files with its reason, in one block. (QA: pass / fail)
-- [ ] game/art/logo/ holds no redgull_logo_* file, and art-archive/T-075/ holds redgull_logo_128.png, _64.png and _32.png. `git diff --diff-filter=D --name-only playtest/G-006 HEAD` lists no .png file, and `git diff -M --name-status playtest/G-006 HEAD` shows the three PNGs and _t306_rename.py as renames (R), not deletions. (QA: pass / fail)
-- [ ] `git diff playtest/G-006 HEAD -- game/art` shows no change to any .json record or other file under game/art except the moved logo files: the art records are untouched. (QA: pass / fail)
-- [ ] `python game/tools/style_rules.py text` on "A gift from Redgull" still fails rule 2 with the label "no banned words (XP, points, Godzilla, Redgull)", and passes on "A gift from Greenbull". (QA: pass / fail)
-- [ ] `python game/tools/check_rebrand.py` gives the same report as on playtest/G-006 before this ticket: no flagged PNG, no loaded file named after the old brand, and no player-facing text with it. Both outputs are in the result notes. (QA: pass / fail)
-- [ ] style_rules.py has no function, constant or flag named after the old brand (no is_redgull_red). BRAND_COLOURS, BRAND_THRESHOLD, OLD_LOGO_RED and HEART_COLOR keep the same values (shown in the result notes). (QA: pass / fail)
-- [ ] No file is deleted without being moved: every file this ticket takes out of game/ is in art-archive/T-075/ or art-archive/T-306/. (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: pass / fail)
+- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data` prints nothing, and `git grep -i -l redgull -- game tools/style_loop` prints only game/art/pixellab-generation-log.jsonl and .json art records under game/art. The result notes list each of these files with its reason, in one block. (QA: pass)
+- [ ] game/art/logo/ holds no redgull_logo_* file, and art-archive/T-075/ holds redgull_logo_128.png, _64.png and _32.png. `git diff --diff-filter=D --name-only playtest/G-006 HEAD` lists no .png file, and `git diff -M --name-status playtest/G-006 HEAD` shows the three PNGs and _t306_rename.py as renames (R), not deletions. (QA: pass)
+- [ ] `git diff playtest/G-006 HEAD -- game/art` shows no change to any .json record or other file under game/art except the moved logo files: the art records are untouched. (QA: pass)
+- [ ] `python game/tools/style_rules.py text` on "A gift from Redgull" still fails rule 2 with the label "no banned words (XP, points, Godzilla, Redgull)", and passes on "A gift from Greenbull". (QA: pass)
+- [ ] `python game/tools/check_rebrand.py` gives the same report as on playtest/G-006 before this ticket: no flagged PNG, no loaded file named after the old brand, and no player-facing text with it. Both outputs are in the result notes. (QA: pass)
+- [ ] style_rules.py has no function, constant or flag named after the old brand (no is_redgull_red). BRAND_COLOURS, BRAND_THRESHOLD, OLD_LOGO_RED and HEART_COLOR keep the same values (shown in the result notes). (QA: pass)
+- [ ] No file is deleted without being moved: every file this ticket takes out of game/ is in art-archive/T-075/ or art-archive/T-306/. (QA: pass)
+- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: pass)
 
 ## Updates
 
