@@ -1514,3 +1514,5 @@ Task T-247 (HUD and menus, Decisions, "Drift counter"). `scripts/hud/drift_count
 
 - **Tests:** `tests/unit/hud/test_hud_drift_counter.gd`.
 - **Screenshot and GIF:** `tests/fixtures/drift_counter_gif.tscn` (`DRIFT_PNG` and `DRIFT_BOTH_PNG` save screenshots), recorded with `--write-movie` and `tools/frames_to_gif.py`; results in `art-archive/T-247/screenshots/`.
+
+**Bolder enemy outlines (T-340):** the minion walk and fall sheets (`art/minion/`) and the kaiju sheets (`art/kaiju/`) have a one-pixel-thicker dark outline. `python game/tools/build_bolder_outlines.py build` (rerunnable; reads `art-archive/T-340/originals/`, grows the outline outward in each sheet's own outline colour, then runs `check`: frame sizes, alpha 0/255, colour limits) and `check`; `strip`/`apply` are the style loop's steps; `build --rim R,G,B` adds a lighter rim ring. Same names, sizes and frame counts, so no scene or script changed. 0 PixelLab generations. Test: `game/tools/test_build_bolder_outlines.py`.
