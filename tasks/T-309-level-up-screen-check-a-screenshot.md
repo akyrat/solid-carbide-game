@@ -1,7 +1,7 @@
 ---
 id: T-309
 title: Level-up screen check: a screenshot from a run started at the main menu, checked for Redgull red and for dark green leading
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-309.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
