@@ -60,4 +60,26 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built `game/tools/check_rebrand.py` with `game/tools/test_check_rebrand.py` (9 tests: flags a loaded PNG with a red pixel, ignores an unloaded one, passes the likes heart as a kept subject, flags a file named 'redgull', flags 'Redgull' in a .gd string and a JSON value, skips comments, resolves %s patterns and folders, exit code 1). `KEPT_RED` names each kept subject with the doc's words (heart, alert banners, car tail lights, minion mouth, health canister, combo broken popup). Added the "Rebrand sweep (T-307)" section to game/README.md. Nothing in art or text was fixed.
+
+**Report** (run in this folder on playtest/G-006 plus T-306; `python game/tools/check_rebrand.py`): 68 loaded PNGs checked; no file name contains 'redgull'; no player-facing text contains 'Redgull'; 10 kept-red files (the 6 alert banners, car_iso, car_iso_noshadow, health_canister, likes_heart); 8 red findings, all fire/wood oranges and browns that the loose red check flags by hue (none is the old logo red or the heart red), for the Project Lead to judge:
+- art/effects/burning_flames.png ([208,53,46] and oranges)
+- art/effects/exhaust_flame_sheet.png ([153,83,6], [249,126,3])
+- art/level_up/weapon_flamethrower.png ([202,3,0], [253,116,1])
+- art/level_up/weapon_gun.png (browns [68,33,13]...[170,110,69], the gun's wood grip)
+- art/level_up/weapon_molotov.png (browns, [168,49,11])
+- art/weapons/molotov_bottle.png, molotov_fire.png, molotov_fire_flip.png (oranges, browns, [98,55,70])
+The red check is `style_rules.reads_as_red`; if these should be exempt, the Project Lead can add subjects to `KEPT_RED` or tighten the check. The minion's art is not flagged (its pink mouth is not within the red check).
+
+**Tests:** GUT 1419/1419 pass (`bash game/tools/run_tests.sh`, TESTS PASSED); Python `unittest discover -s game/tools`: 499 tests OK (1 skipped).
+
+**Screenshots** (full paths):
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\main_menu.png
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\garage.png (garage_screen_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\run_hud.png (hud_from_menu_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\gift_pack_drop.png (gift_drop_demo fixture)
+- C:\solid-carbide-worktrees\T-307\art-archive\T-307\screenshots\level_up_screen.png (level_up_screen_demo fixture)
+
+**Refused:** reverting Godot's line-ending-only `.import` noise (`git ls-files -m ... | xargs git checkout`) was refused as a compound command. Not essential: I committed only my own files and left the `.import` noise uncommitted; the Project Lead reverts it before merging.
+
+Documents affected: game/README.md.

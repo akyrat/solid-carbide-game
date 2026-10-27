@@ -178,6 +178,21 @@ powershell -ExecutionPolicy Bypass -File game/tools/check_audio.ps1 [res://folde
 
 The folder defaults to `res://audio`. It prints one `OK` or `FAIL` line per file. Exit codes: 0 = all load; 1 = bad arguments or no audio files found; 2 = at least one file failed.
 
+## Rebrand sweep (T-307)
+
+`game/tools/check_rebrand.py` checks that nothing the player can see still carries the old sponsor (Redgull): its name, its logo or its brand red. It reads every `res://` path in `game/scenes` and `game/scripts` (a `%s` pattern stands for every file it matches, a path with no extension for every PNG starting with it, a folder for every PNG in it) and reports:
+
+- **red**: a loaded PNG with a pixel `style_rules.reads_as_red` flags, except the subjects whose red the docs keep (`KEPT_RED` in the script, each with its line from Visual style, Decisions, "Red after the rebrand": the likes heart, the alert signs, the car's tail lights, the minion's mouth, the health canister, the combo broken popup). Kept files are listed apart;
+- **name**: a loaded file whose name contains `redgull`;
+- **text**: a quoted string or JSON value containing "Redgull" in `game/scripts`, `game/scenes` or `game/data` (comments are skipped).
+
+```
+python game/tools/check_rebrand.py [--game-dir game] [--json]
+python -m unittest discover -s game/tools -p test_check_rebrand.py
+```
+
+It only reports; exit code 1 when there is any finding. The red check is loose (it also flags oranges and browns near a red hue), so fire and wood colours show up and are for the Project Lead to judge. Screenshots of every screen: `art-archive/T-307/screenshots/`.
+
 ## Generating art with PixelLab
 
 `game/tools/pixellab_client.py` (used by the Asset Generation Agent) calls the PixelLab API (https://api.pixellab.ai/v2) directly, with Python 3.9+ and the standard library only. It reads `PIXELLAB_API_KEY` from the environment or from `.env` (see [Secrets and API keys](../README.md#secrets-and-api-keys)) and never prints or stores it. Run it from the repo root.
