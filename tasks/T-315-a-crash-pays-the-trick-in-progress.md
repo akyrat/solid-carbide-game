@@ -1,7 +1,7 @@
 ---
 id: T-315
 title: A crash that breaks the combo still pays the trick in progress
-status: in-qa
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/drifting.md, game/READ
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/drifting.md, game/README.md, game/scripts/run/run_state.gd, game/data/combo.json]
 files_expected_to_change: [game/scripts/driving/, game/scripts/run/run_state.gd, game/tests/unit/, game/README.md, docs/drifting.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,14 @@ Started: the Driving & Drift Agent is making a crash pay the drift in progress b
 
 Built: a crash now pays the drift (and air spins, hang time) in progress before COMBO BROKEN!. QA is checking it.
 
+### 2026-10-27, In QA → Needs playtest
+
+QA passed all 6 criteria. Ready for your playtest: C:\solid-carbide-worktrees\T-315\game\project.godot, or Play on T-315 in the Builds tab.
+
+### 2026-10-27, Needs playtest → Done
+
+Approved after the board's playtest of batch-1028; merging to master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -100,3 +108,4 @@ Screenshots: `art-archive/T-315/screenshots/drift_into_boulder_pays_then_breaks.
 Skipped: the fixture script's `.uid` file (`crash_pays_gif_demo.gd.uid`) was not generated: the `--import` run was refused by the ticket guard hook (it can't tell a `timeout`-wrapped command won't write a ticket). Godot makes it the next time the project is imported or opened; nothing depends on it.
 
 Documents affected: `docs/drifting.md` (Content, "A crash pays the trick in progress (task T-315)"), `docs/game-loop-architecture.md` (Content, "The combo"), `game/README.md` ("Tricks", new subsection, and the combo broken popup note).
+- 2026-10-27, needs-playtest → done: The board played batch-1028 and approved it.
