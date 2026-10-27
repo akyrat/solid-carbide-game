@@ -294,15 +294,15 @@ func test_tests_do_not_depend_on_the_playtest_switch() -> void:
 	assert_eq(boss.early_arrival_seconds, -1.0, "the switch is overridden off in these tests")
 
 
-func test_placeholders_are_not_redgull_red() -> void:
-	var redgull := Color(0.86, 0.1, 0.16)
+func test_placeholders_are_not_heart_red() -> void:
+	var heart_red := Color(0.86, 0.1, 0.16)
 	for c in [MeteorsScript.WARNING_COLOR, MeteorsScript.WARNING_FILL, MeteorsScript.METEOR_COLOR,
 			MeteorsScript.METEOR_GLOW, MeteorsScript.METEOR_OUTLINE, MeteorsScript.DUST_COLOR,
 			MeteorsScript.WINDUP_COLOR]:
 		var reddish: bool = c.r > 0.6 and c.g < 0.35 and c.b < 0.35
 		assert_false(reddish, "no red: %s" % c)
-		assert_gt(Vector3(c.r, c.g, c.b).distance_to(Vector3(redgull.r, redgull.g, redgull.b)), 0.5,
-			"far from Redgull red: %s" % c)
+		assert_gt(Vector3(c.r, c.g, c.b).distance_to(Vector3(heart_red.r, heart_red.g, heart_red.b)), 0.5,
+			"far from the heart's red: %s" % c)
 
 
 # ---- Boulders fade away (task T-142) ---------------------------------------------------------

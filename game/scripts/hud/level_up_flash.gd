@@ -4,7 +4,7 @@ extends Control
 ## `level_up` the bar flashes white-hot as it "fills to the end", a burst of
 ## pixel sparks flies up off it, and "Hype Lv" pops bigger, goes white-hot,
 ## then settles back. Drawn in code, hard pixel edges, in the fire's whites,
-## yellows and oranges (LikesFire.PALETTE), never Redgull red, no text of its
+## yellows and oranges (LikesFire.PALETTE), never the heart's red, no text of its
 ## own. It plays in pixel-art frames (ComboHeat.FLICKER_FRAME, twelve a
 ## second) and lasts FRAME_COUNT frames, 0.75 s.
 ##

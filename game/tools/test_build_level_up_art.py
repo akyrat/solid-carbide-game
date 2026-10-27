@@ -55,10 +55,10 @@ class BuiltPieces(unittest.TestCase):
     def test_same_names_and_sizes_as_before(self):
         self.assertEqual({n: im.size for n, im in self.ims.items()}, SIZES)
 
-    def test_no_redgull_red_and_style_rules_pass_with_greenbull(self):
+    def test_no_red_and_style_rules_pass_with_greenbull(self):
         for name in art.FILES:
             _, _, rows = rules.decode_png((self.dir / (name + ".png")).read_bytes())
-            self.assertFalse([p for r in rows for p in r if p[3] == 255 and rules.is_redgull_red(p)], name)
+            self.assertFalse([p for r in rows for p in r if p[3] == 255 and rules.reads_as_red(p)], name)
             checks = rules.art_checks(rows, SIZES[name], greenbull=True)
             self.assertTrue(all(c["ok"] for c in checks), (name, [c for c in checks if not c["ok"]]))
 
@@ -92,7 +92,7 @@ class BuiltPieces(unittest.TestCase):
                             self.assertEqual(self.ims[name].getpixel((cx - 16 + x, cy - 16 + y)), p, (name, x, y))
 
     def test_no_gull_left(self):
-        """None of the old Redgull logo's colours survive anywhere (its black aside)."""
+        """None of the old logo's colours survive anywhere (its black aside)."""
         gull = set(opaque(Image.open(art.GAME / "art" / "logo" / "redgull_logo_32.png").convert("RGBA")))
         gull -= {(0, 0, 0)}
         for name, im in self.ims.items():

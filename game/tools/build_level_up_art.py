@@ -4,7 +4,7 @@
 No PixelLab call: every piece is script-drawn, and the gift box is the approved T-140 PixelLab box recoloured
 by script. Visual style, Decisions, "Greenbull's look": dark green leads, light green supports it, yellow is a
 small accent. The emblem is Greenbull's approved bull's head (game/art/logo/greenbull_emblem_32.png, T-294/T-300),
-stamped where the Redgull gull was. The old red and gold pieces are kept in art-archive/T-303/red_gold/.
+stamped where the old logo's gull was. The old red and gold pieces are kept in art-archive/T-303/red_gold/.
 
 Pieces (written to game/art/level_up/, each with a record JSON; shown at 2 screen pixels per art pixel,
 except the sunburst, which T-141 scales as it likes). Same names and sizes as T-140's, so level_up_screen.gd
@@ -312,12 +312,12 @@ def check_png(path):
     px = [p for r in rows for p in r]
     semi = sum(1 for p in px if 0 < p[3] < 255)
     colors = {p[:3] for p in px if p[3] == 255}
-    reds = sorted(c for c in colors if rules.is_redgull_red(c))
+    reds = sorted(c for c in colors if rules.reads_as_red(c))
     results = [("no semi-transparent pixels", semi == 0, "%d" % semi),
                ("%d colours or fewer" % MAX_COLORS, len(colors) <= MAX_COLORS, "%d colours" % len(colors)),
                ("has opaque pixels", any(p[3] == 255 for p in px), ""),
                ("transparent corners", all(r[3] == 0 for r in (rows[0][0], rows[0][-1], rows[-1][0], rows[-1][-1])), ""),
-               ("no Redgull red", not reds, "%s" % [list(c) for c in reds[:5]])]
+               ("no red", not reds, "%s" % [list(c) for c in reds[:5]])]
     return results, (w, h)
 
 

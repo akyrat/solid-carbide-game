@@ -565,7 +565,7 @@ func _assert_not_red(tex: Texture2D, what: String) -> void:
 			if _is_red(c):
 				reds += 1
 	assert_gt(opaque, 0, what + " has pixels")
-	assert_eq(reds, 0, what + ": no Redgull red, no red")
+	assert_eq(reds, 0, what + ": not the heart's red, no red")
 
 
 func test_final_art_sprites_are_not_tinted() -> void:
@@ -573,7 +573,7 @@ func test_final_art_sprites_are_not_tinted() -> void:
 	var pkg: GiftPackage = PackageScene.instantiate()
 	autofree(heli)
 	autofree(pkg)
-	# T-145 and T-146: both are final Redgull art now, so red is allowed on them;
+	# T-145 and T-146: both are final Greenbull art now (T-304, T-305), so they are not held to the no-red check;
 	# the placeholders keep their no-red check (build_gift_placeholders.py).
 	_assert_not_red(load("res://art/gift_pack/helicopter_placeholder.png"), "helicopter placeholder")
 	_assert_not_red(load("res://art/gift_pack/package_placeholder.png"), "package placeholder")
@@ -645,7 +645,7 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 
 
 func test_helicopter_art_is_greenbull_green_with_rotor_frames() -> void:
-	# T-305: the helicopter is in Greenbull's colours (dark green body, emblem on cream panels), no Redgull red.
+	# T-305: the helicopter is in Greenbull's colours (dark green body, emblem on cream panels), not the heart's red.
 	var heli: GiftHelicopter = HeliScene.instantiate()
 	autofree(heli)
 	var s := heli.sprite()
@@ -668,7 +668,7 @@ func test_helicopter_art_is_greenbull_green_with_rotor_frames() -> void:
 				logo_red += 1
 	assert_gt(dark_green, 100, "Greenbull's dark green is on the helicopter")
 	assert_gt(panel, 50, "the cream emblem panels are on the helicopter")
-	assert_eq(logo_red, 0, "no Redgull red left on the helicopter")
+	assert_eq(logo_red, 0, "not the heart's red left on the helicopter")
 	var before := s.frame
 	heli._process(0.1)
 	assert_ne(s.frame, before, "the rotor turns")

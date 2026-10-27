@@ -117,8 +117,8 @@ func test_pixel_rules_nearest_no_alpha_fade() -> void:
 
 ## T-112 checked its placeholder (a light square of one colour) here; T-074
 ## swapped in the final particle sheet, so this checks every opaque pixel of
-## the sheet against the same rule: far from Redgull red, and not any red.
-func test_particle_art_is_not_redgull_red() -> void:
+## the sheet against the same rule: far from the heart's red, and not any red.
+func test_particle_art_is_not_heart_red() -> void:
 	var burst: CPUParticles2D = BurstScene.instantiate()
 	autofree(burst)
 	var img := burst.texture.get_image()
@@ -135,7 +135,7 @@ func test_particle_art_is_not_redgull_red() -> void:
 			if dist <= 0.5 or (c.r > 0.5 and c.g < 0.4 and c.b < 0.4):
 				reds += 1
 	assert_gt(opaque, 0, "the sheet has particles")
-	assert_eq(reds, 0, "far from Redgull red, and not any red")
+	assert_eq(reds, 0, "far from the heart's red, and not any red")
 	assert_eq(burst.color, Color(1, 1, 1, 1), "white, so the sprites show their own colours")
 
 

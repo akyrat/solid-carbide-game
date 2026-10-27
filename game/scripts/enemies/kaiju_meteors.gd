@@ -43,8 +43,8 @@ const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector
 ## left out of that attack.
 const SPOT_TRIES := 40
 
-## The placeholder warning colour: a hazard amber, clearly not Redgull red
-## (Visual style allows red outside Redgull only on the kaiju alert signs).
+## The placeholder warning colour: a hazard amber, clearly not the heart's red
+## (Visual style, Decisions, "Red after the rebrand": red is no longer reserved).
 const WARNING_COLOR := Color(1.0, 0.62, 0.12)
 const WARNING_FILL := Color(1.0, 0.62, 0.12, 0.28)
 ## The placeholder meteor: the boulders' alien navy and purple, with a magenta glow.

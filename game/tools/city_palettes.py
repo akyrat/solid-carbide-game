@@ -8,7 +8,7 @@ The board: the city must not share the boulders' navy / purple / magenta glow an
 
 Every source colour of the sample body / pavement is one of the 29 palette colours, so a recolour is a
 colour map (no new shapes, no semi-transparent pixels). Neutral greys go through a brightness ramp; the
-neon, blue and purple colours are mapped by name. Each result has at most 30 colours and no Redgull red.
+neon, blue and purple colours are mapped by name. Each result has at most 30 colours and no red.
 
   python game/tools/city_palettes.py --out-dir game/art/buildings
 """

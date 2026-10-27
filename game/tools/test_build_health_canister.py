@@ -20,9 +20,9 @@ class BuildHealthCanisterTest(unittest.TestCase):
         self.assertEqual(self.out.getpixel((0, 0))[3], 0, "transparent corner")
         self.assertLessEqual(len(b.opaque_colours(self.out)), 30)
 
-    def test_no_colour_near_redgull_red(self):
+    def test_no_colour_near_old_logo_red(self):
         for c in b.opaque_colours(self.out):
-            self.assertGreaterEqual(b.rgb_distance(c, b.REDGULL_RED), b.MIN_REDGULL_DISTANCE, c)
+            self.assertGreaterEqual(b.rgb_distance(c, b.OLD_LOGO_RED), b.MIN_OLD_LOGO_RED_DISTANCE, c)
 
     def test_still_clearly_red(self):
         reds = [c for c in b.opaque_colours(self.out) if c[0] > 150 and c[0] > 2 * c[1]]

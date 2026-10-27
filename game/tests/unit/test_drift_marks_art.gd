@@ -72,7 +72,7 @@ func test_the_texture_is_dark_rubber_with_a_transparent_background() -> void:
 				continue
 			colours[c.to_html(false)] = true
 			assert_lt(c.get_luminance(), 0.2, "dark rubber")
-			assert_gt(Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length(), 0.5, "far from Redgull red")
+			assert_gt(Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length(), 0.5, "far from the heart's red")
 	assert_lte(colours.size(), 30, "about 30 colours or fewer")
 	assert_gt(colours.size(), 1, "a tread pattern, not one flat colour")
 

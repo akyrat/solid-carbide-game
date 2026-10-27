@@ -367,7 +367,7 @@ func test_the_prototype_makes_smoke_while_drifting() -> void:
 	assert_eq(_tyres_seen(proto.drift_smoke), [0, 1])
 
 
-func test_puff_art_is_nearest_opaque_cool_grey_violet_and_not_redgull_red() -> void:
+func test_puff_art_is_nearest_opaque_cool_grey_violet_and_not_heart_red() -> void:
 	var s := _smoke()
 	assert_eq(s.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "nearest filtering")
 	assert_eq(s.puff_color.a, 1.0, "no fading tint")
@@ -389,7 +389,7 @@ func test_puff_art_is_nearest_opaque_cool_grey_violet_and_not_redgull_red() -> v
 			assert_true(c.b > c.r and c.b > c.g, "violet-tinted grey (T-073 art)")
 			assert_lt(maxf(c.r, maxf(c.g, c.b)) - minf(c.r, minf(c.g, c.b)), 0.2, "greyish")
 			var d := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length()
-			assert_gt(d, 0.5, "far from Redgull red")
+			assert_gt(d, 0.5, "far from the heart's red")
 			assert_false(c.r > c.g + 0.1 and c.r > c.b + 0.1, "not any red")
 	assert_gt(opaque, 0)
 

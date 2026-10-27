@@ -1,6 +1,6 @@
 class_name GiftHelicopter
 extends Node2D
-## The helicopter Redgull sends on a level-up (task T-144; Game loop
+## The helicopter Greenbull sends on a level-up (task T-144; Game loop
 ## architecture, Decisions, "Gift pack drop"). It flies across the screen from
 ## left to right in the isometric view's drawn pixels, carrying the package
 ## (GiftPackage), and drops it over the landing spot. gift_drops.gd moves it:

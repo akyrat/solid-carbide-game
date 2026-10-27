@@ -10,8 +10,8 @@ extends Control
 ## airtime is the sum of the steps spent in the air, which is what the airtime
 ## trick (T-242) pays out for.
 ##
-## The icon is a placeholder drawn in code: white, black outline, never Redgull
-## red. The number is in the comic font (Bangers). Its size, place and look are
+## The icon is a placeholder drawn in code: white, black outline, never the
+## heart's red. The number is in the comic font (Bangers). Its size, place and look are
 ## proposals for the playtest.
 
 const FONT_SIZE := 30

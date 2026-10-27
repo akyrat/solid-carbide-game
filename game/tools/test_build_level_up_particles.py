@@ -34,7 +34,7 @@ class SheetTest(unittest.TestCase):
 
     def test_no_colour_reads_as_red(self):
         for c in b.PALETTE.values():
-            self.assertFalse(b.is_redgull_red(c), c)
+            self.assertFalse(b.reads_as_red(c), c)
 
     def test_every_frame_has_a_white_hot_core_and_a_clear_corner(self):
         for i, fr in enumerate(rules.split_sheet(self.rows, len(b.SHAPES))):
@@ -54,7 +54,7 @@ class RedCheckTest(unittest.TestCase):
         rows[5][5] = rules.HEART_COLOR + (255,)
         rows[5][16] = (0, 229, 255, 128)
         failed = {r[0] for r in b.check_rows(rows, len(b.SHAPES)) if not r[1]}
-        self.assertIn("no Redgull red (nor any red)", failed)
+        self.assertIn("no red", failed)
         self.assertIn("whole sheet: no semi-transparent pixels", failed)
 
     def test_check_fails_an_opaque_corner(self):

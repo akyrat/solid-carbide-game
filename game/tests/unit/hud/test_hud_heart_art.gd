@@ -1,6 +1,6 @@
 extends GutTest
 ## Task T-086: the likes heart is a script-drawn pixel-art icon (tools/build_heart_icon.py),
-## flat Redgull red with a dark outline like the comic text's, and the HUD shows it.
+## flat the heart's red with a dark outline like the comic text's, and the HUD shows it.
 
 const RUN := preload("res://scenes/run/run.tscn")
 
@@ -23,13 +23,13 @@ func test_transparent_background_and_no_semi_transparent_pixels() -> void:
 		assert_true(c.a == 0.0 or c.a == 1.0, "alpha %s" % c.a)
 
 
-func test_two_colours_redgull_red_and_the_text_outline() -> void:
+func test_two_colours_heart_red_and_the_text_outline() -> void:
 	var seen := {}
 	for c: Color in _pixels():
 		if c.a > 0.0:
 			seen[c.to_html(false)] = c
 	assert_eq(seen.size(), 2, "few colours: %s" % [seen.keys()])
-	assert_true(seen.has(Hud.HEART_COLOR.to_html(false)), "uses the HUD's Redgull red")
+	assert_true(seen.has(Hud.HEART_COLOR.to_html(false)), "uses the HUD's the heart's red")
 	assert_true(seen.has(Hud.OUTLINE_COLOR.to_html(false)), "uses the text outline colour")
 
 

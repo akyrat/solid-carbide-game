@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-185: the elevation test scene's drawing. The car's drawing lifts up
 ## the screen with its height (16 px per unit), its shadow stays at its map
 ## position on the ground under it, the platform and ramp placeholders are
-## drawn with no Redgull red, and the depth order puts the car under an area
+## drawn with not the heart's red, and the depth order puts the car under an area
 ## it is behind and over one it is on or above.
 ##
 ## The test data (data/level/elevation_test.json, proposals): platform 16 x 16
@@ -154,18 +154,18 @@ func test_the_shadow_keeps_its_colour_and_is_opaque() -> void:
 
 # --- Colours -----------------------------------------------------------------
 
-func _far_from_redgull(c: Color, what: String) -> void:
+func _far_from_heart_red(c: Color, what: String) -> void:
 	var red: Color = HudScript.HEART_COLOR
 	assert_eq(c.a, 1.0, what + ": opaque (no semi-transparent pixels)")
-	assert_gt(Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length(), 0.5, what + ": far from Redgull red")
+	assert_gt(Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length(), 0.5, what + ": far from the heart's red")
 
 
-func test_the_placeholders_and_the_shadow_use_no_redgull_red() -> void:
+func test_the_placeholders_and_the_shadow_use_no_heart_red() -> void:
 	var colours: Array = PlatformDrawingScript.colors_used()
 	assert_gt(colours.size(), 3)
 	for c in colours:
-		_far_from_redgull(c, "platform / ramp colour %s" % c)
-	_far_from_redgull(CarShadowScript.COLOR, "shadow")
+		_far_from_heart_red(c, "platform / ramp colour %s" % c)
+	_far_from_heart_red(CarShadowScript.COLOR, "shadow")
 	assert_lt(CarShadowScript.COLOR.get_luminance(), 0.1, "the shadow is dark")
 
 

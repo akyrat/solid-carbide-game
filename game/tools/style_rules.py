@@ -9,7 +9,7 @@ the rule it checks, so the Style Evaluator can quote it:
         rule 3 (the expected size: the whole image, or each frame of a one-row sheet) and
         rule 6 (Greenbull's light green and yellow only on Greenbull's own things; red is not
         reserved, T-298); Greenbull's logo check (flat brand art: rule 1, exempt from rule 2).
-  text  Extended narrative text rule 2 (banned words, "Redgull" among them), rule 3 (no
+  text  Extended narrative text rule 2 (banned words, the sponsor's old name among them), rule 3 (no
         "Greenbull says ..." line) and rule 4 (format and length, by kind of text).
 
 Command line (prints a JSON list of checks, each {"rule", "check", "ok", "detail"}; exits 1
@@ -21,8 +21,9 @@ when any check fails):
 
 Build scripts import from here: the PNG reader (decode_png), the sprite checks (check,
 check_rows, split_sheet, check_sheet), Greenbull's colours (GREENBULL_*, greenbull_colour),
-and the red-distance helpers the code-drawn colours still use (REDGULL_RED, HEART_COLOR,
-red_distance, RED_MIN_DISTANCE, is_redgull_red, rgb_distance; renamed in a later ticket).
+and the red-distance helpers the code-drawn colours still use (OLD_LOGO_RED, HEART_COLOR,
+red_distance, RED_MIN_DISTANCE, reads_as_red, rgb_distance; renamed by T-306, values and
+checks unchanged).
 """
 import argparse
 import colorsys
@@ -32,13 +33,15 @@ import struct
 import sys
 import zlib
 
-# ---------------------------------------------------------------- Redgull red ----
+# ------------------------------------------------------------------ the reds ----
+# Red is no longer reserved (Visual style, Decisions, "Red after the rebrand"); the build
+# scripts and GUT tests still keep their colours clear of these two reds.
 
-# Redgull red as Visual style rule 6 gives it: the logo's red (game/art/logo/).
-REDGULL_RED = (135, 17, 27)
-# Redgull red as the HUD draws the likes heart (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
+# The old logo's red (T-075; the old logo files are kept in game/art/logo/ as history).
+OLD_LOGO_RED = (135, 17, 27)
+# The likes heart's red as the HUD draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
 HEART_COLOR = (219, 26, 41)
-# Every colour that is not Redgull's keeps farther than this from HEART_COLOR (0..1 RGB
+# Every colour that is not the heart's keeps farther than this from HEART_COLOR (0..1 RGB
 # distance), as the GUT tests check the code-drawn colours.
 RED_MIN_DISTANCE = 0.5
 
@@ -49,12 +52,12 @@ def rgb_distance(a, b):
 
 
 def red_distance(rgb, ref=HEART_COLOR):
-    """Distance from `ref` (Redgull red as the HUD draws it), in 0..1 units."""
+    """Distance from `ref` (the heart's red as the HUD draws it), in 0..1 units."""
     return rgb_distance(rgb, ref) / 255.0
 
 
-def is_redgull_red(rgb, max_dist=128, hue_deg=25):
-    """True for Redgull red or anything that reads as a red: within half the colour range of
+def reads_as_red(rgb, max_dist=128, hue_deg=25):
+    """True for the heart's red or anything that reads as a red: within half the colour range of
     HEART_COLOR (0.5 in 0..1 units, as the GUT tests), or a saturated red hue."""
     if rgb_distance(rgb, HEART_COLOR) < max_dist:
         return True
@@ -189,8 +192,8 @@ def check_logo(im):
     return ["%s (%s)" % (c["check"], c["detail"]) for c in logo_checks(im) if not c["ok"]]
 
 
-def check_redgull_logo(im):
-    """The old Redgull logo's check (T-075), kept as its history since the rebrand (T-298):
+def check_old_logo(im):
+    """The old logo's check (T-075), kept as its history since the rebrand (T-298):
     exactly one visible colour, a dark red, a transparent background and no semi-transparent
     pixels. `im` is a Pillow image. Returns a list of problems (empty = pass)."""
     im = im.convert("RGBA")

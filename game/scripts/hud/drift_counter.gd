@@ -9,7 +9,7 @@ extends AirtimeCounter
 ## It is the airtime counter's look and code with another icon: Hud.bind_car()
 ## feeds step() the car's own drift state (car.model.is_drifting), one physics
 ## step at a time. The icon is a placeholder drawn in code, white with a black
-## outline, never Redgull red. Its place is a proposal for the playtest.
+## outline, never the heart's red. Its place is a proposal for the playtest.
 
 ## The two skid marks in a 30 x 22 box: curves bending to the right.
 const MARK_A := [Vector2(2, 21), Vector2(4, 14), Vector2(9, 8), Vector2(17, 4), Vector2(27, 2)]

@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-133: the trick popups heat up with the combo, on T-131's heat steps
 ## (ComboHeat). Below x2 the plain black and white popup; step 1 (x2), step 2
 ## (x3) and step 3 (x4 up, flaming) each add oranges and yellows. The fill
-## stays white and the names black; no Redgull red and no semi-transparent
+## stays white and the names black; not the heart's red and no semi-transparent
 ## pixels at any step; the drift prototype keeps the plain popup.
 
 const RunScene := preload("res://scenes/run/run.tscn")
@@ -145,7 +145,7 @@ func test_each_step_adds_its_own_warm_accent() -> void:
 				assert_false(same, "%s: step %d and step %d differ" % [c[0], a, b])
 
 
-func test_no_redgull_red_and_no_semi_transparent_pixels_at_any_step() -> void:
+func test_no_heart_red_and_no_semi_transparent_pixels_at_any_step() -> void:
 	var heart: Color = Hud.HEART_COLOR
 	var heart_v := Vector3(heart.r, heart.g, heart.b)
 	for i in range(1, Art.PALETTE.size()):
@@ -166,7 +166,7 @@ func test_no_redgull_red_and_no_semi_transparent_pixels_at_any_step() -> void:
 				if x == 0 or y == 0 or x == img.get_width() - 1 or y == img.get_height() - 1:
 					rim += p.a
 		assert_eq(bad_alpha, 0, "%s step %d frame %d: no semi-transparent pixels" % [k[0], k[2], k[3]])
-		assert_eq(red, 0, "%s step %d frame %d: no Redgull red" % [k[0], k[2], k[3]])
+		assert_eq(red, 0, "%s step %d frame %d: not the heart's red" % [k[0], k[2], k[3]])
 		assert_eq(rim, 0.0, "%s step %d frame %d: transparent rim" % [k[0], k[2], k[3]])
 
 

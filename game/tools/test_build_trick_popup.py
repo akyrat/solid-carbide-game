@@ -32,7 +32,7 @@ class PopupTest(unittest.TestCase):
             failed = [r for r in b.check_popup(rows) if not r[1]]
             self.assertEqual(failed, [], text)
 
-    def test_only_palette_colours_and_no_redgull_red(self):
+    def test_only_palette_colours_and_no_red(self):
         allowed = set(b.PALETTE.values())
         for c in allowed:
             self.assertGreater(b.red_distance(c), b.MIN_RED_DISTANCE, c)

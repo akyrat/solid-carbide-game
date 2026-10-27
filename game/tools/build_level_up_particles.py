@@ -6,7 +6,7 @@ script, within Visual style, Decisions: the night neon palette (pink, cyan and
 violet on the dark navy night), glow drawn into the pixels as a bright core with
 stepped, darker halo pixels (no engine bloom), hard pixel edges, no
 semi-transparent pixels, a transparent background, about 30 colours or fewer,
-and no Redgull red.
+and no red.
 
 Output: one row of FRAME x FRAME frames, one particle shape per frame. The
 effect scene (scenes/run/level_up_burst.tscn) reads it as a flipbook
@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import style_rules as rules  # noqa: E402
-from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+from style_rules import reads_as_red  # noqa: E402  (Visual style rule 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -169,8 +169,8 @@ def check_rows(rows, frames, size=FRAME, max_colors=MAX_COLORS):
     out.append(("whole sheet: about %d colours or fewer" % max_colors, len(colors) <= max_colors, "%d colours" % len(colors)))
     semi = sum(1 for p in px if 0 < p[3] < 255)
     out.append(("whole sheet: no semi-transparent pixels", semi == 0, "%d semi-transparent" % semi))
-    reds = sorted(c for c in colors if is_redgull_red(c))
-    out.append(("no Redgull red (nor any red)", not reds, "reds: %s" % reds if reds else "none"))
+    reds = sorted(c for c in colors if reads_as_red(c))
+    out.append(("no red", not reds, "reds: %s" % reds if reds else "none"))
     return out
 
 

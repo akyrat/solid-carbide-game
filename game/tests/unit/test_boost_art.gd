@@ -25,7 +25,7 @@ func test_sheet_imports_and_matches_its_record() -> void:
 	assert_true(rec.check.pass)
 
 
-func test_sheet_has_no_semi_transparent_pixels_and_no_redgull_red() -> void:
+func test_sheet_has_no_semi_transparent_pixels_and_no_heart_red() -> void:
 	var img: Image = (load(SHEET_PATH) as Texture2D).get_image()
 	img.decompress()
 	var heart := Color(0.86, 0.08, 0.16)
@@ -39,7 +39,7 @@ func test_sheet_has_no_semi_transparent_pixels_and_no_redgull_red() -> void:
 			if c.a > 0.0:
 				closest = minf(closest, Vector3(c.r - heart.r, c.g - heart.g, c.b - heart.b).length())
 	assert_eq(semi, 0)
-	assert_gt(closest, 0.5, "not Redgull red")
+	assert_gt(closest, 0.5, "not the heart's red")
 
 
 func test_the_effect_draws_the_pixellab_art_not_the_streaks() -> void:

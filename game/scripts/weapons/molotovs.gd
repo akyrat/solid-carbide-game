@@ -29,8 +29,8 @@ extends "res://scripts/weapons/weapon.gd"
 ## drift marks (FIRE_ROOT_NAME), so the buildings, enemies and car are drawn
 ## over them.
 ##
-## Look: placeholders drawn in code (MolotovBottle below, molotov_fire.gd). No
-## Redgull red. The art task swaps the final art in.
+## Look: placeholders drawn in code (MolotovBottle below, molotov_fire.gd). Not
+## the heart's red. The art task swaps the final art in.
 
 const FireScript := preload("res://scripts/weapons/molotov_fire.gd")
 
@@ -57,7 +57,7 @@ const ART_PATH := "res://art/weapons/molotov_bottle.png"
 const ART_TEXTURE := preload("res://art/weapons/molotov_bottle.png")
 const ART_SCALE := 0.5
 ## Placeholder bottle colours: green glass, a pale rag, an orange-yellow
-## flame on the rag, a dark outline. Opaque; never Redgull red.
+## flame on the rag, a dark outline. Opaque; never the heart's red.
 const BOTTLE_GLASS := Color(0.3, 0.72, 0.38, 1.0)
 const BOTTLE_GLASS_DARK := Color(0.16, 0.45, 0.24, 1.0)
 const BOTTLE_RAG := Color(0.92, 0.86, 0.7, 1.0)
@@ -276,7 +276,7 @@ class MolotovBottle:
 		if weapon != null and weapon.rack != null and weapon.rack.depth != null:
 			z_index = weapon.rack.depth.z_index_for(units, 0.2, height_units() + 0.3)
 
-	## Every colour the bottle draws with (tests check none is Redgull red).
+	## Every colour the bottle draws with (tests check none is the heart's red).
 	func colours() -> Array:
 		return [BOTTLE_OUTLINE, BOTTLE_GLASS, BOTTLE_GLASS_DARK, BOTTLE_RAG, BOTTLE_FLAME]
 

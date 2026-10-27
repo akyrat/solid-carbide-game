@@ -8,7 +8,7 @@ extends Node2D
 ## A circle on the ground is drawn through the view's transform, so on screen
 ## it is an ellipse twice as wide as it is tall (2:1 in the isometric view).
 ## It does not turn with the car. Pixel style: one opaque colour, no
-## semi-transparent pixels (no antialiasing), never Redgull red. Its size does
+## semi-transparent pixels (no antialiasing), never the heart's red. Its size does
 ## not change with height (a proposal).
 
 const PX_PER_UNIT := 16.0

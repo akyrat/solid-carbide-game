@@ -7,7 +7,7 @@
 
 The lines are drawn pointing right: the car is to the right of the frame (it moves
 right), the lines trail behind it on the left. `build` cleans the PixelLab frames
-(no semi-transparent pixels, snapped to the frame-0 palette, never Redgull red) and
+(no semi-transparent pixels, snapped to the frame-0 palette, never the heart's red) and
 turns each frame to DIRECTIONS screen angles by nearest-neighbour rotation (no new
 colours), one row per direction, so the game picks the row closest to the car's
 heading on screen and never rotates pixel art itself.
@@ -79,7 +79,7 @@ def clean(im: Image.Image, palette: list[tuple[int, int, int]]) -> Image.Image:
 
 
 def frame_palette(frames: list[Image.Image], cap: int = 30) -> list[tuple[int, int, int]]:
-    """Up to `cap` most-used opaque colours over all frames, never near Redgull red."""
+    """Up to `cap` most-used opaque colours over all frames, never near the heart's red."""
     counts: dict[tuple[int, int, int], int] = {}
     for f in frames:
         for r, g, b, a in f.convert("RGBA").getdata():

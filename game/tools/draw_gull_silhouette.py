@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Draw a one-colour seagull-head silhouette (side profile, facing right) by script (T-075).
+"""HISTORY: the old logo's tool. Redgull, the sponsor's old name, was replaced by Greenbull
+(Visual style, Decisions, "The rebrand", T-294, T-295); kept as a record, not used by the game.
+
+Draw a one-colour seagull-head silhouette (side profile, facing right) by script (T-075).
 Coordinates are on a 64 px grid and scale with --size. Free, no PixelLab.
 Variants: v1 (round 2, raptor-like, kept for the record), A, B, C (round 3: domed crown, long slim beak,
 gonys bump under the bill, small eye, tapering neck with a diagonal cut).

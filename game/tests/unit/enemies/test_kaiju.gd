@@ -324,7 +324,7 @@ func test_draw_order_follows_the_buildings() -> void:
 	assert_gt(k.sprite.z_index, slot.z_index, "in front: over it")
 
 
-func test_placeholder_is_large_and_not_redgull_red() -> void:
+func test_placeholder_is_large_and_not_heart_red() -> void:
 	var colors := [KaijuSpriteScript.BODY_COLOR, KaijuSpriteScript.BELLY_COLOR, KaijuSpriteScript.PLATE_COLOR,
 		KaijuSpriteScript.OUTLINE_COLOR, KaijuSpriteScript.EYE_COLOR, KaijuSpriteScript.SHADOW_COLOR]
 	for c in colors:

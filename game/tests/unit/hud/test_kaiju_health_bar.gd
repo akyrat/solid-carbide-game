@@ -2,7 +2,7 @@ extends GutTest
 ## Task T-050: the kaiju's health bar above it. Hidden before the kaiju
 ## appears, showing its health after (following the health signal), hidden when
 ## it dies; follows the kaiju, sits above it, is as wide as it is, has a divider
-## at every 10%, is drawn above buildings; no Redgull red.
+## at every 10%, is drawn above buildings; not the heart's red.
 
 const RunScene := preload("res://scenes/run/run.tscn")
 const KaijuBossScript := preload("res://scripts/enemies/kaiju_boss.gd")

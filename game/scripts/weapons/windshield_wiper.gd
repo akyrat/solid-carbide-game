@@ -29,7 +29,7 @@ extends "res://scripts/weapons/weapon.gd"
 ## units.
 ##
 ## Look: a placeholder wiper blade drawn in code (WiperDrawing, below) in the
-## run's View: a dark arm with a pale grey rubber blade, never Redgull red.
+## run's View: a dark arm with a pale grey rubber blade, never the heart's red.
 ## It is drawn over the car while the arm points down the screen and under it
 ## while it points up. The art task swaps the final art in.
 
@@ -55,7 +55,7 @@ const ART_COLS := 8
 const ART_CELL := Vector2i(256, 128)
 const ART_SCALE := 0.5
 ## Placeholder colours (opaque, hard edged: Visual style). A dark steel arm
-## and a pale grey rubber blade with a dark outline; never Redgull red.
+## and a pale grey rubber blade with a dark outline; never the heart's red.
 const ARM_COLOUR := Color(0.18, 0.2, 0.26, 1.0)
 const BLADE_COLOUR := Color(0.78, 0.82, 0.86, 1.0)
 const OUTLINE_COLOUR := Color(0.05, 0.07, 0.16, 1.0)
@@ -386,7 +386,7 @@ class WiperDrawing:
 			art_k = k
 			queue_redraw()
 
-	## Every colour the blade draws with (tests check none is Redgull red).
+	## Every colour the blade draws with (tests check none is the heart's red).
 	func colours() -> Array:
 		return [OUTLINE_COLOUR, ARM_COLOUR, BLADE_COLOUR]
 

@@ -27,7 +27,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import reduce_palette as palette  # noqa: E402
-from style_rules import REDGULL_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
+from style_rules import OLD_LOGO_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
 
 GAME = Path(__file__).resolve().parent.parent
 REPO = GAME.parent
@@ -53,21 +53,21 @@ def hard_alpha(im: Image.Image) -> Image.Image:
     return im
 
 
-RED_NEAR = 60.0  # RGB distance (0..255) from the logo's red inside which a deep flame shade is pushed to orange
+RED_NEAR = 60.0  # RGB distance (0..255) from the old logo's red inside which a deep flame shade is pushed to orange
 
 
-def near_redgull(c) -> bool:
-    return rgb_distance(c, REDGULL_RED) < RED_NEAR
+def near_old_logo_red(c) -> bool:
+    return rgb_distance(c, OLD_LOGO_RED) < RED_NEAR
 
 
 def unred(im: Image.Image) -> Image.Image:
-    """Free fix: a colour close to Redgull's red (deep flame shades) is pushed to orange
-    (green raised to 85, blue cut to 0), so the art never shows the brand red."""
+    """Free fix: a colour close to the old logo's red (deep flame shades) is pushed to orange
+    (green raised to 85, blue cut to 0), so the art never shows that red."""
     px = im.load()
     for y in range(im.height):
         for x in range(im.width):
             r, g, b, a = px[x, y]
-            if a == 255 and near_redgull((r, g, b)):
+            if a == 255 and near_old_logo_red((r, g, b)):
                 px[x, y] = (max(r, 150), max(g, 85), 0, 255)
     return im
 
@@ -158,13 +158,13 @@ def check_png(path: Path):
     px = list(im.getdata())
     semi = sum(1 for p in px if 0 < p[3] < 255)
     colours = {p[:3] for p in px if p[3] == 255}
-    red = [c for c in colours if near_redgull(c)]
+    red = [c for c in colours if near_old_logo_red(c)]
     return [("no semi-transparent pixels", semi == 0, "%d" % semi),
             ("%d colours or fewer" % MAX_COLORS, len(colours) <= MAX_COLORS, "%d colours" % len(colours)),
             ("has opaque pixels", len(colours) > 0, ""),
             ("transparent corners", all(im.getpixel(p)[3] == 0 for p in
                                        [(0, 0), (im.width - 1, 0), (0, im.height - 1), (im.width - 1, im.height - 1)]), ""),
-            ("no Redgull red", not red, str(red))], im.size
+            ("no red", not red, str(red))], im.size
 
 
 def check():

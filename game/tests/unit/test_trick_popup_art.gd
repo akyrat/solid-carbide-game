@@ -1,6 +1,6 @@
 extends GutTest
 ## Task T-084: the baked comic look (white rounded rectangle, black border, black letters) of the trick popups. Hard pixels only (no
-## semi-transparent ones), no Redgull red, a rounded rectangle that fits each text, the
+## semi-transparent ones), not the heart's red, a rounded rectangle that fits each text, the
 ## same texture for the same text.
 
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
@@ -44,7 +44,7 @@ func test_transparent_border() -> void:
 			assert_eq(img.get_pixel(img.get_width() - 1, y).a, 0.0, c[0])
 
 
-func test_no_colour_near_redgull_red() -> void:
+func test_no_colour_near_heart_red() -> void:
 	var heart: Color = Hud.HEART_COLOR
 	var heart_v := Vector3(heart.r, heart.g, heart.b)
 	for i in Art.PALETTE.size():
