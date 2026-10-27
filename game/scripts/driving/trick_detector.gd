@@ -27,6 +27,14 @@ extends RefCounted
 ##
 ## A "break" is any physics step on which the car is not drifting.
 ##
+## A crash pays the trick in progress (task T-315; Game loop architecture,
+## Decisions, "A crash pays the trick in progress"): settle() pays, at once,
+## the tricks that build up over time and would otherwise pay only at their
+## end: the drift so far (its extended_drift, if it reached drift_min_seconds)
+## and, in the air, the aerial spins and the airtime so far. Each then starts
+## again from zero, so the rest of the drift or of the airtime after the crash
+## is a new one. The run calls it when the car crashes (RunState.crashed).
+##
 ## The aerial tricks (task T-219; Drifting, Decisions, "Aerial tricks") come
 ## from observe_air(), which car.gd calls once per physics step after the
 ## car's height step, with whether the car is in the air and how far its
@@ -82,6 +90,10 @@ var last_trick := ""
 var last_trick_seconds := 0.0
 ## Shortest drift that pays, seconds (combo.json, drift_pay.min_seconds).
 var drift_min_seconds: float = ComboData.new().drift_min_seconds()
+## Shortest airtime that pays, seconds (combo.json, airtime.min_seconds). Only
+## settle() reads it (task T-315): a crash in the air pays the airtime so far
+## from this length on.
+var airtime_min_seconds: float = ComboData.new().airtime_min_seconds()
 var seconds_since_last := 0.0
 ## trick id -> how many have been found since the last reset().
 var counts := {}
@@ -224,6 +236,22 @@ func observe_air(airborne: bool, turned: float, dt := 0.0) -> void:
 			_air_turn = 0.0
 		_air_turn += turned
 		_air_best = maxf(_air_best, absf(_air_turn))
+
+
+## A crash (task T-315): pays the drift in progress and, in the air, the
+## aerial spins and the airtime so far, as if they ended now, then starts that
+## count again from zero (the car may still be drifting or in the air). A
+## drift or an airtime too short to pay yet is left alone, so a crash with no
+## trick in progress changes nothing. The drift 360 and the alternate drift are
+## not touched: they pay only once complete, so nothing of them is in progress.
+func settle() -> void:
+	if _drift_time >= drift_min_seconds - EPSILON and _drift_time > 0.0:
+		last_trick_seconds = _drift_time
+		_emit(TRICK_EXTENDED_DRIFT)
+		_drift_time = 0.0
+	if _air and (half_turns(_air_best) > 0 or _air_seconds >= airtime_min_seconds - EPSILON):
+		_land()
+		_air = true  # still in the air: the rest of the airtime counts from now
 
 
 ## Half turns in an airtime's best turn of `radians` (180 degrees each).
