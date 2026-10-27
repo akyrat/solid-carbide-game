@@ -1,7 +1,7 @@
 ---
 id: T-323
 title: "Game data: the Bricks weapon's numbers and upgrade tiers"
-status: in-qa
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/drifting.md, docs/enemies.md, game/README.md, game/data/]
 files_expected_to_change: [game/data/, game/scripts/data/, game/tests/unit/, docs/weapons.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -52,6 +52,10 @@ Started: the Game Data Agent is proposing Bricks' numbers and tiers.
 ### 2026-10-27, In progress → In QA
 
 Built: Bricks' numbers and 7 tiers are in the data, kept out of the offers until T-324 builds the weapon. QA is checking it.
+
+### 2026-10-27, In QA → Done
+
+QA passed all 3 criteria. Data only, merged into the shared build (playtest/batch-1028); it reaches master with the rest after your playtest.
 
 ## Style review
 
