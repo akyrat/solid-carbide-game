@@ -1,7 +1,7 @@
 ---
 id: T-254
 title: "Level creator: smaller and longer buildings"
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/map_building.gd, game/scripts/level/building_towers.gd, game/scripts/level_creator/, game/tools/build_creator_assets.py]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/tools/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-254/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: a small square building and a long building for the creator, placeholde
 
 Built: a small 6x6 building and a long 12x6 one (6x12 rotated), placeholder boxes in the city palette. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the creator: place the small and long buildings and drive round them. T-257 (their art) starts on this branch.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -69,3 +73,4 @@ Built (Level/Challenge agent, 2026-10-22):
 - **Screenshot:** `art-archive/T-254/screenshots/new_buildings.png` (skyscraper, short building, small, long, long rotated; fixture `tests/fixtures/level_creator_buildings_demo.tscn`). Looked at it: boxes read as buildings, both long rotations right, sit on their footprints.
 - **Documents:** `game/README.md` (Level creator section), `docs/level-design.md` (Decisions).
 - No refusals.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
