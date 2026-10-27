@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the gift pack helicopter sprite sheet from the approved PixelLab sample.
 
-T-145 built it in Redgull's red with the gull; T-305 rebuilds it in Greenbull's colours
+T-145 built it in the old sponsor's red with the gull; T-305 rebuilds it in Greenbull's colours
 (Visual style, Decisions, "The rebrand", "Greenbull's look"; rule 6). No PixelLab call:
 every step is a script on the approved sample (art-archive/T-145/helicopter_sample.png,
 read only). It
@@ -288,12 +288,12 @@ def build_frames(logo_spots) -> list:
 
 
 def clear_reds(img: Image.Image) -> None:
-    """Any pixel the Redgull red check flags (a red left in the sample) takes the ramp's colour of the same lightness."""
+    """Any pixel the red check flags (a red left in the sample) takes the ramp's colour of the same lightness."""
     px = img.load()
     for y in range(H):
         for x in range(W):
             p = px[x, y]
-            if p[3] == 255 and rules.is_redgull_red(p[:3]):
+            if p[3] == 255 and rules.reads_as_red(p[:3]):
                 px[x, y] = min(RAMP, key=lambda c: abs(lum(c) - lum(p))) + (255,)
 
 
@@ -340,7 +340,7 @@ def frame_report(img: Image.Image) -> dict:
 
 
 def red_pixels(img: Image.Image) -> list:
-    return sorted({p[:3] for p in img.getdata() if p[3] and rules.is_redgull_red(p[:3])})
+    return sorted({p[:3] for p in img.getdata() if p[3] and rules.reads_as_red(p[:3])})
 
 
 def archive() -> list:
@@ -390,7 +390,7 @@ def check() -> int:
         ok = ok and good
     n = len({p[:3] for p in sheet.getdata() if p[3] == 255})
     reds = red_pixels(sheet)
-    print(f"sheet: {sheet.size}, {n} colours, Redgull red pixels: {len(reds)}")
+    print(f"sheet: {sheet.size}, {n} colours, red pixels: {len(reds)}")
     ok = ok and n <= MAX_COLOURS and not reds
     return 0 if ok else 1
 

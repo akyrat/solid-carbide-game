@@ -7,7 +7,7 @@ extends RefCounted
 ## white with a black outline; the card has a black border; the crack runs
 ## through the lettering. Hard pixel edges, opaque or fully transparent pixels
 ## only, a transparent rim. The red is a warning red-orange, clear of
-## the HUD heart's Redgull red (RED_CLEARANCE, tested).
+## the HUD heart's red (RED_CLEARANCE, tested).
 
 const Art := preload("res://scripts/hud/trick_popup_art.gd")
 
@@ -23,7 +23,7 @@ const PALETTE := [
 	Color8(255, 80, 16),    # card: warning red-orange
 	Color8(0, 0, 0),        # border and crack edges
 ]
-## Least colour distance from the HUD heart's Redgull red.
+## Least colour distance from the HUD heart's red.
 const RED_CLEARANCE := 0.2
 ## The card's border width and the crack's gap (popup pixels).
 const BORDER := 2

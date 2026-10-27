@@ -29,9 +29,9 @@ class T(unittest.TestCase):
         self.assertEqual(f.getbbox()[3], 96)
         self.assertLessEqual(a.getbbox()[2] - a.getbbox()[0], 42)
 
-    def test_no_redgull_red(self):
+    def test_no_red(self):
         for name in b.NAMES:
-            reds = [c for c in colours(b.OUT / name) if rules.is_redgull_red(c)]
+            reds = [c for c in colours(b.OUT / name) if rules.reads_as_red(c)]
             self.assertEqual(reds, [], name)
 
     def test_greenbull_colours_lead(self):

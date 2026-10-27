@@ -36,7 +36,7 @@ class HelicopterSheetTest(unittest.TestCase):
     def test_whole_sheet_has_at_most_30_colours(self):
         self.assertLessEqual(len({p[:3] for p in self.sheet.getdata() if p[3] == 255}), 30)
 
-    def test_no_redgull_red_pixel(self):
+    def test_no_red_pixel(self):
         self.assertEqual(b.red_pixels(self.sheet), [])
 
     def test_greenbull_dark_green_leads_and_light_green_is_there(self):
@@ -53,7 +53,7 @@ class HelicopterSheetTest(unittest.TestCase):
         pal = set(b.emblem_palette())
         self.assertGreaterEqual(len(pal & cols), 3)
         self.assertIn(b.PANEL, cols)
-        self.assertNotIn(rules.REDGULL_RED, cols)
+        self.assertNotIn(rules.OLD_LOGO_RED, cols)
         self.assertIn("greenbull_emblem", b.LOGO.name)
 
     def test_emblem_fits_its_spot(self):
@@ -81,7 +81,7 @@ class HelicopterSheetTest(unittest.TestCase):
             self.assertEqual(list(Image.open(out).convert("RGBA").getdata()), list(self.sheet.getdata()))
         self.assertEqual(b.RECORD.read_text(), before)
 
-    def test_old_redgull_sheet_is_archived(self):
+    def test_old_sheet_is_archived(self):
         old = b.OLD_ARCHIVE / "helicopter_sheet.png"
         self.assertTrue(old.exists())
         with Image.open(old) as im:

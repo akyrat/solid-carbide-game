@@ -262,7 +262,7 @@ func test_the_prototype_lays_marks_while_drifting() -> void:
 	assert_eq(proto.drift_marks.marks().size(), 2)
 
 
-func test_placeholder_is_nearest_opaque_dark_and_not_redgull_red() -> void:
+func test_placeholder_is_nearest_opaque_dark_and_not_heart_red() -> void:
 	var m := _marks()
 	assert_eq(m.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	_lay_drift(m, 5)
@@ -286,7 +286,7 @@ func test_placeholder_is_nearest_opaque_dark_and_not_redgull_red() -> void:
 				continue
 			assert_lt(c.get_luminance(), 0.2, "dark")
 			var d := Vector3(c.r - red.r, c.g - red.g, c.b - red.b).length()
-			assert_gt(d, 0.5, "far from Redgull red")
+			assert_gt(d, 0.5, "far from the heart's red")
 			assert_false(c.r > c.g + 0.1 and c.r > c.b + 0.1, "not any red")
 
 

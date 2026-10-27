@@ -20,7 +20,7 @@ class MeteorFxTests(unittest.TestCase):
             self.assertEqual(len(res), n)
             for rs, _ in res:
                 self.assertTrue(all(r[1] for r in rs), rs)
-            self.assertEqual(fx._redgull_pixels(p), 0)
+            self.assertEqual(fx._red_pixels(p), 0)
 
     def test_building_is_deterministic(self):
         a = fx.sheet([fx.tail_frame(f) for f in range(fx.TAIL_FRAMES)])

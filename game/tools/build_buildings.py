@@ -9,7 +9,7 @@ This script does everything around those images for free:
 
   palette   writes the forced palette image (color_image) from approved art only
             (the ground atlas's night navy and purple, the level-up particles'
-            pink, cyan and violet; no Redgull red)
+            pink, cyan and violet; no red)
   request   writes the request body JSON for one base tower
   clean     removes PixelLab's blank background (it is not transparent above a
             200 x 200 area), maps every pixel to the palette, crops and checks

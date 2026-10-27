@@ -124,7 +124,7 @@ func test_art_is_red_cracked_and_hard_edged() -> void:
 	var heart_v := Vector3(heart.r, heart.g, heart.b)
 	for i in range(1, Art.PALETTE.size()):
 		var c: Color = Art.PALETTE[i]
-		assert_gt(Vector3(c.r, c.g, c.b).distance_to(heart_v), Art.RED_CLEARANCE, "palette %d clear of Redgull red" % i)
+		assert_gt(Vector3(c.r, c.g, c.b).distance_to(heart_v), Art.RED_CLEARANCE, "palette %d clear of the heart's red" % i)
 	var halves := Art.bake("COMBO BROKEN!", "normal")
 	var l: Image = halves[0]
 	var rt: Image = halves[1]

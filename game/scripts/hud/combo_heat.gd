@@ -14,7 +14,7 @@ extends Node
 ## The step is chosen from the multiplier as the counter shows it (two
 ## decimals), so x1.99 is the base look and x2.00 is step 1. When the combo
 ## drops, the look drops with it. Everything is drawn in code, in oranges,
-## yellows and whites, never Redgull red. The node is pausable: the pulse and
+## yellows and whites, never the heart's red. The node is pausable: the pulse and
 ## the flicker stop while the game is paused, like the rest of the HUD.
 
 ## The multipliers where steps 1, 2 and 3 start. Change them here only.

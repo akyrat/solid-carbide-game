@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """T-300: copy Greenbull's approved emblem (T-294, run 2) and wordmark (T-295, run 1) from the
 art archive into game/art/logo/ byte for byte, each with a json record beside it, and move the
-old Redgull logo files with git mv into art-archive/T-300/ (done by hand, not here).
+old logo files with git mv into art-archive/T-300/ (done by hand, not here).
 Usage: copy_greenbull_logo.py [repo root]; prints the SHA-256 of every copy."""
 import hashlib
 import json

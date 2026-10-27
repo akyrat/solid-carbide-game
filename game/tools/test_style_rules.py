@@ -78,7 +78,7 @@ class ArtChecks(unittest.TestCase):
             s.art_checks(sheet, frames=3)
 
     def test_rule_6_red_is_not_reserved(self):
-        for red in ((255, 0, 0), s.REDGULL_RED, s.HEART_COLOR):
+        for red in ((255, 0, 0), s.OLD_LOGO_RED, s.HEART_COLOR):
             self.assertEqual(failed(s.art_checks(sprite(fill=red + (255,)))), set(), red)
 
     def test_rule_6_light_green_fails_unless_greenbull(self):
@@ -102,14 +102,14 @@ class ArtChecks(unittest.TestCase):
             self.assertIsNone(s.greenbull_colour(c), c)
 
     def test_the_red_check_keeps_the_heart_distance(self):
-        self.assertTrue(s.is_redgull_red(s.REDGULL_RED))
-        self.assertTrue(s.is_redgull_red(s.HEART_COLOR))
-        self.assertTrue(s.is_redgull_red((200, 40, 60)))
+        self.assertTrue(s.reads_as_red(s.OLD_LOGO_RED))
+        self.assertTrue(s.reads_as_red(s.HEART_COLOR))
+        self.assertTrue(s.reads_as_red((200, 40, 60)))
         for c in [(255, 64, 200), (0, 229, 255), (160, 90, 255), (255, 255, 255)]:
-            self.assertFalse(s.is_redgull_red(c), c)
+            self.assertFalse(s.reads_as_red(c), c)
         self.assertAlmostEqual(s.red_distance(s.HEART_COLOR), 0.0)
         self.assertGreater(s.red_distance((0, 229, 255)), s.RED_MIN_DISTANCE)
-        self.assertLess(s.red_distance(s.REDGULL_RED), s.RED_MIN_DISTANCE)
+        self.assertLess(s.red_distance(s.OLD_LOGO_RED), s.RED_MIN_DISTANCE)
         self.assertEqual(s.rgb_distance((0, 0, 0), (3, 4, 0)), 5.0)
 
     def test_greenbull_logo_follows_rule_1(self):
@@ -128,9 +128,9 @@ class ArtChecks(unittest.TestCase):
                 "art-archive/T-295/greenbull_wordmark.png"]:
             self.assertEqual(s.check_logo(Image.open(ROOT / p)), [], p)
 
-    def test_old_redgull_logo_check_kept(self):
+    def test_old_logo_check_kept(self):
         for n in (128, 64, 32):
-            self.assertEqual(s.check_redgull_logo(Image.open(ROOT / f"game/art/logo/redgull_logo_{n}.png")), [])
+            self.assertEqual(s.check_old_logo(Image.open(ROOT / f"game/art/logo/redgull_logo_{n}.png")), [])
 
     def test_cli_art_prints_json_and_exits_1_on_a_fail(self):
         with tempfile.TemporaryDirectory() as d:
@@ -152,7 +152,7 @@ class ArtChecks(unittest.TestCase):
             self.assertEqual(code, 0)
             self.assertEqual(run_cli(["art", str(ROOT / "art-archive/T-294/greenbull_emblem_32.png"), "--logo"])[0], 0)
 
-    def test_cli_art_help_names_greenbull_not_redgull(self):
+    def test_cli_art_help_names_greenbull_not_the_old_flag(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
             s.main(["art", "--help"])
@@ -175,7 +175,7 @@ class TextChecks(unittest.TestCase):
         self.assertEqual(failed(s.text_checks("Gain more likes", "card_desc")), set())
         self.assertEqual(failed(s.text_checks("Expert pointers", "card_desc")), set())  # whole words only
 
-    def test_rule_2_redgull_is_banned_in_any_case(self):
+    def test_rule_2_old_sponsor_name_is_banned_in_any_case(self):
         rule2 = (2, "no banned words (XP, points, Godzilla, Redgull)")
         for bad in ("A gift from Redgull", "A GIFT FROM REDGULL", "a gift from redgull"):
             self.assertEqual(failed(s.text_checks(bad, "card_desc")), {rule2}, bad)

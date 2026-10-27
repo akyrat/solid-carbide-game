@@ -125,7 +125,7 @@ func test_every_heat_colour_is_opaque_and_never_red() -> void:
 	for c: Color in colors:
 		assert_eq(c.a, 1.0)
 		assert_gt(c.r, 0.9, "yellows, oranges, white-hot")
-		assert_gt(c.g, 0.55, "never Redgull red")
+		assert_gt(c.g, 0.55, "never the heart's red")
 		assert_gt(c.g, c.r * 0.55)
 
 

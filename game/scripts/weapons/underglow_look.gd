@@ -5,7 +5,7 @@ extends Resource
 ## neon_underglow_look.tres) without touching code. Used by underglow_glow.gd.
 ##
 ## All colours are opaque and from the underglow's purple and pink; never
-## Redgull red. Widths are in flat world pixels measured from the damage circle's
+## the heart's red. Widths are in flat world pixels measured from the damage circle's
 ## edge (positive outwards, negative inwards), seen through the isometric view.
 
 ## The switch back to the generated sprite (T-175, art/weapons/underglow.png).
@@ -44,7 +44,7 @@ extends Resource
 @export var shimmer_arc := 1.0
 
 
-## Every colour the zone draws with (tests check none is Redgull red).
+## Every colour the zone draws with (tests check none is the heart's red).
 func colours() -> Array:
 	return [shimmer_colour, ring_core_colour, ring_mid_colour, halo_near_colour,
 		halo_far_colour, floor_near_colour, floor_far_colour]

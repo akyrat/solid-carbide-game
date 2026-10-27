@@ -104,7 +104,7 @@ func test_rebinding_a_new_car_resets_it() -> void:
 	assert_true(p[0].airtime_counter.visible)
 
 
-func test_shows_only_the_number_and_the_icon_never_redgull_red() -> void:
+func test_shows_only_the_number_and_the_icon_never_heart_red() -> void:
 	var p := _hud()
 	var c: AirtimeCounter = p[0].airtime_counter
 	assert_eq(c.get_child_count(), 2, "the icon and the number, nothing else")

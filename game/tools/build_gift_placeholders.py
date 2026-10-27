@@ -6,8 +6,8 @@ Two simple shapes so the board can play the gift pack drop before any art exists
   tail boom, a dark rotor on top and skids below;
 - the package: a cardboard-tan box with a cyan ribbon and bow.
 Both have a 1 pixel dark outline, a transparent background and no semi-transparent pixels.
-No Redgull red and no other red (docs/working-with-the-board.md, "Placeholders never use
-Redgull red"). The final art replaces them in tasks T-145 (helicopter) and T-146 (package):
+No red (the placeholders' rule when they were made; red is no longer reserved, Visual
+style, Decisions, "Red after the rebrand", but the check is kept). The final art replaces them in tasks T-145 (helicopter) and T-146 (package):
 see game/README.md, "The gift pack drop".
 
 Commands (run from the repo root):
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-import style_rules as rules  # noqa: E402  (the sprite checks and Redgull red, Visual style rules 1 and 6)
+import style_rules as rules  # noqa: E402  (the sprite checks and the red check, Visual style rules 1 and 6)
 from remove_car_shadow import write_png  # noqa: E402
 
 GAME = Path(__file__).resolve().parent.parent
@@ -109,8 +109,8 @@ def check_rows(img, size):
     colours = {p[:3] for r in img for p in r if p[3]}
     results.append(("has opaque pixels", len(colours) > 0, str(len(colours))))
     results.append(("about 30 colours or fewer", len(colours) <= 30, str(len(colours))))
-    reds = [c for c in colours if rules.is_redgull_red(c) or (c[0] > 128 and c[1] < 100 and c[2] < 100)]
-    results.append(("no Redgull red, no red", not reds, str(reds)))
+    reds = [c for c in colours if rules.reads_as_red(c) or (c[0] > 128 and c[1] < 100 and c[2] < 100)]
+    results.append(("no red", not reds, str(reds)))
     edge = [p for p in img[0] + img[-1] + [r[0] for r in img] + [r[-1] for r in img]]
     results.append(("transparent or outline at the edge", all(p[3] == 0 or p[:3] == OUTLINE for p in edge), ""))
     return results

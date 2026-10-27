@@ -2,7 +2,7 @@ extends Node2D
 ## The coin's drawing (placeholder from T-044, final art from T-072), in the isometric view's screen
 ## pixels: a small gold coin standing on the ground with a dark outline and a
 ## pale shine, bobbing slightly. The final coin art comes from a separate art
-## task. No Redgull red.
+## task. Not the heart's red.
 
 const COIN_TEXTURE := preload("res://art/effects/coin.png")
 const FACE_COLOR := Color(1.0, 0.80, 0.25)

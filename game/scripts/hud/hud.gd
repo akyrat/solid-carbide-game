@@ -31,7 +31,8 @@ const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const LIKES_COLOR := Color(0.7, 0.45, 1.0)
 const COINS_COLOR := Color(1.0, 0.82, 0.25)
-## Redgull red: used only by the heart (its art, T-086, is drawn in this red).
+## The likes heart's red (Visual style, Decisions, "Red after the rebrand": the heart
+## stays red, as a social-media heart): used only by the heart (its art, T-086, is drawn in this red).
 const HEART_COLOR := Color(0.86, 0.1, 0.16)
 ## The heart's art (T-086, drawn by tools/build_heart_icon.py): 11 x 10 art
 ## pixels shown at 2x, about the height of "Likes" with its outline.

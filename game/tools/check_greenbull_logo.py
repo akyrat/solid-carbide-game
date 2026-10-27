@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Greenbull's logo check (T-298), in place of the old one-colour Redgull check
+"""Greenbull's logo check (T-298), in place of the old logo's one-colour check
 (check_logo_one_colour.py): the emblem and the wordmark are flat brand art, exempt from
 Visual style rule 2 but bound by rule 1 (Visual style, Content, "Rules"). The check is
 style_rules.check_logo; this runs `style_rules.py art <png> --logo`.

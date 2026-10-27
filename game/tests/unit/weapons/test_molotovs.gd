@@ -13,8 +13,8 @@ const Fire := preload("res://scripts/weapons/molotov_fire.gd")
 const Glow := preload("res://scripts/weapons/neon_underglow.gd")
 const Flame := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const DT := 0.02  # one physics step (50 per second)
-## Redgull red (Hud.HEART_COLOR) and the logo's red: placeholders never use them.
-const REDGULL_REDS := [Color(0.86, 0.1, 0.16), Color8(135, 17, 27)]
+## The heart's red (Hud.HEART_COLOR) and the old logo's red: placeholders never use them.
+const HEART_AND_OLD_LOGO_REDS := [Color(0.86, 0.1, 0.16), Color8(135, 17, 27)]
 
 var run: Node2D
 var rack: Node
@@ -460,14 +460,14 @@ func test_fire_is_drawn_on_the_ground_and_the_bottle_in_the_air() -> void:
 	assert_eq(f2.get_parent(), root)
 
 
-func test_placeholder_colours_are_opaque_and_not_redgull_red() -> void:
+func test_placeholder_colours_are_opaque_and_not_heart_red() -> void:
 	rack.upgrade("molotov")
 	var b = mol.throw_to(_car_units() + Vector2(4.0, 0.0))
 	var f = _fire_at(_car_units() + Vector2(-4.0, 0.0))
 	var colours: Array = b.colours() + f.colours()
 	for c in colours:
 		assert_eq(c.a, 1.0, "no see-through pixels")
-		for red in REDGULL_REDS:
+		for red in HEART_AND_OLD_LOGO_REDS:
 			var dh := absf(c.h - red.h)
-			assert_gt(minf(dh, 1.0 - dh) * 360.0, 25.0, "colour %s hue far from Redgull red" % c)
+			assert_gt(minf(dh, 1.0 - dh) * 360.0, 25.0, "colour %s hue far from the heart's red" % c)
 		assert_true(c.g > 0.3 or c.s < 0.6, "colour %s is not a strong red" % c)

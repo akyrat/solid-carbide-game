@@ -340,7 +340,7 @@ func test_nothing_fires_while_paused_or_after_the_run_ends() -> void:
 	assert_eq(shots.size(), 0, "nothing after the run ends")
 
 
-func test_bullet_art_is_opaque_and_avoids_redgull_red() -> void:
+func test_bullet_art_is_opaque_and_avoids_heart_red() -> void:
 	const BulletScript := preload("res://scripts/weapons/bullet.gd")
 	var img: Image = BulletScript.ART.get_image()
 	assert_eq(img.get_width(), BulletScript.ART_FRAME * BulletScript.ART_FRAMES, "two pulse frames side by side")

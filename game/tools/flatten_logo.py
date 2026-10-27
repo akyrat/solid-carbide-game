@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Flatten a logo PNG to one dark red (T-075): every visible pixel (alpha >= 128) becomes
+"""HISTORY: the old logo's tool. Redgull, the sponsor's old name, was replaced by Greenbull
+(Visual style, Decisions, "The rebrand", T-294, T-295); kept as a record, not used by the game.
+
+Flatten a logo PNG to one dark red (T-075): every visible pixel (alpha >= 128) becomes
 DARK_RED, everything else transparent. Usage: flatten_logo.py <in.png> <out.png>"""
 import sys
 from PIL import Image

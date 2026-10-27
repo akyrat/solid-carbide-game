@@ -11,8 +11,8 @@ const FakeBigEnemy := preload("res://tests/fixtures/weapons/fake_big_enemy.gd")
 const Glow := preload("res://scripts/weapons/neon_underglow.gd")
 const Flame := preload("res://scripts/weapons/flamethrower/exhaust_flamethrower.gd")
 const DT := 0.02  # one physics step (50 per second)
-## Redgull red (Hud.HEART_COLOR) and the logo's red: placeholders never use them.
-const REDGULL_REDS := [Color(0.86, 0.1, 0.16), Color8(135, 17, 27)]
+## The heart's red (Hud.HEART_COLOR) and the old logo's red: placeholders never use them.
+const HEART_AND_OLD_LOGO_REDS := [Color(0.86, 0.1, 0.16), Color8(135, 17, 27)]
 
 var run: Node2D
 var rack: Node
@@ -448,13 +448,13 @@ func test_drawn_pixels_are_opaque_and_from_the_look() -> void:
 	assert_eq(d.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "no engine smoothing")
 
 
-func test_look_colours_are_opaque_purples_and_pinks_not_redgull_red() -> void:
+func test_look_colours_are_opaque_purples_and_pinks_not_heart_red() -> void:
 	rack.upgrade("underglow")
 	for c in glow.drawing.look.colours():
 		assert_eq(c.a, 1.0, "no see-through colour")
-		for red in REDGULL_REDS:
+		for red in HEART_AND_OLD_LOGO_REDS:
 			var dh := absf(c.h - red.h)
-			assert_gt(minf(dh, 1.0 - dh) * 360.0, 30.0, "colour %s hue far from Redgull red" % c)
+			assert_gt(minf(dh, 1.0 - dh) * 360.0, 30.0, "colour %s hue far from the heart's red" % c)
 		assert_false(c.r > c.g + 0.2 and c.r > c.b + 0.2, "colour %s is not a red" % c)
 		assert_gt(c.b, c.g, "colour %s leans purple or pink" % c)
 

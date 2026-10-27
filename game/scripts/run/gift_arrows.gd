@@ -3,7 +3,7 @@ extends CanvasLayer
 ## The gift pack's off-screen arrows (task T-144; the board's answer 5,
 ## 2026-10-16): while a landed package is off screen, an arrow at the screen's
 ## edge points to it, one arrow per package. Placeholder look: a pale cyan
-## triangle with a dark outline, no Redgull red. Each arrow sits on a track
+## triangle with a dark outline, not the heart's red. Each arrow sits on a track
 ## MARGIN inside the screen's edges, where the line from the screen's centre to
 ## the package crosses it, slid along the track when that spot would touch a
 ## HUD part (the timer, the health column, the coins, the likes bar with its

@@ -1,4 +1,4 @@
-"""Tests for the old Redgull logo's one-colour check (T-075), kept as its history (T-298)."""
+"""HISTORY: tests for the old logo's tool. Tests for the old Redgull logo's one-colour check (T-075), kept as its history (T-298)."""
 import sys, unittest
 from pathlib import Path
 from PIL import Image

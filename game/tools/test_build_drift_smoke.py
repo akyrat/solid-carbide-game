@@ -36,7 +36,7 @@ class SpriteTest(unittest.TestCase):
 
     def test_no_colour_reads_as_red_and_all_are_cool(self):
         for c in b.PALETTE.values():
-            self.assertFalse(rules.is_redgull_red(c), c)
+            self.assertFalse(rules.reads_as_red(c), c)
             self.assertGreater(c[2], c[0])
             self.assertGreater(c[2], c[1])
 

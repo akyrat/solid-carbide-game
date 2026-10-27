@@ -45,7 +45,7 @@ class SpriteTest(unittest.TestCase):
             self.assertTrue(cs <= b.ALLOWED, name)
             self.assertIn(b.SIGN_RED, cs, name)
             for c in cs - {b.SIGN_RED}:
-                self.assertFalse(b.rules.is_redgull_red(c), (name, c))
+                self.assertFalse(b.rules.reads_as_red(c), (name, c))
 
     def test_building_signs_are_only_red_white_and_black(self):
         for name, (rows, info) in self.sprites.items():
@@ -100,7 +100,7 @@ class BuildTest(unittest.TestCase):
         rows[40][24] = (10, 10, 10, 128)
         self.assertTrue([r for r in b.check_rows(rows) if not r[1]])
 
-    def test_check_fails_on_redgull_red_and_on_a_neon_colour(self):
+    def test_check_fails_on_red_and_on_a_neon_colour(self):
         for bad in ((219, 26, 41, 255), (40, 190, 220, 255)):
             rows = [r[:] for r in b.sprites()["kaiju_head_triangle_sign.png"][0]]
             rows[40][24] = bad

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds the gift pack package sprites by script (no PixelLab).
 
-T-146 made them from T-140's red-and-gold gift box in Redgull's colours. T-304 rebuilds
+T-146 made them from T-140's red-and-gold gift box in the old sponsor's colours. T-304 rebuilds
 them in Greenbull's colours (Visual style, Decisions, "The rebrand", "Greenbull's look";
 rule 6): T-140's box (art-archive/T-146/gift_box_from_T-140_raw.png, read only) is
 recoloured with the level-up screen's gift box mapping (build_level_up_art.recolour_box,
@@ -186,7 +186,7 @@ def archive() -> list[Path]:
 
 
 def red_pixels(im: Image.Image) -> list:
-    return sorted({p[:3] for p in im.getdata() if p[3] and rules.is_redgull_red(p[:3])})
+    return sorted({p[:3] for p in im.getdata() if p[3] and rules.reads_as_red(p[:3])})
 
 
 def check() -> list[str]:
@@ -203,8 +203,8 @@ def check() -> list[str]:
             errs.append(f"{name}: {n} colours")
         reds = red_pixels(im)
         if reds:
-            errs.append(f"{name}: Redgull red pixels {reds}")
-        print(f"{name}: {im.size}, {n} colours, alpha {sorted(alphas)}, Redgull red pixels: {len(reds)}")
+            errs.append(f"{name}: red pixels {reds}")
+        print(f"{name}: {im.size}, {n} colours, alpha {sorted(alphas)}, red pixels: {len(reds)}")
     return errs
 
 

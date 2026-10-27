@@ -23,7 +23,7 @@ extends CanvasLayer
 ## Weapon image (T-173; HUD and menus, Decisions, 2026-10-18): every card shows
 ## its weapon's image in a 64 x 64 slot above the title. The image is
 ## `art/level_up/weapon_<weapon id>.png` once the art task adds it; until then a
-## placeholder drawn in code (16 x 16 pixels, never Redgull red).
+## placeholder drawn in code (16 x 16 pixels, never the heart's red).
 
 const Texts := preload("res://scripts/ui/level_up_texts.gd")
 const HudScript := preload("res://scripts/hud/hud.gd")
@@ -41,7 +41,7 @@ const IMAGE_SIZE := Vector2(64, 64)
 ## The final images (art task), one per weapon id; missing ones use a placeholder.
 const WEAPON_ART := "res://art/level_up/weapon_%s.png"
 ## Placeholder images (T-173): 16 x 16 pixel grids, one character per pixel
-## ("." is transparent), shown 4 screen pixels per pixel. No Redgull red.
+## ("." is transparent), shown 4 screen pixels per pixel. Not the heart's red.
 const PLACEHOLDER_COLORS := {
 	"k": Color8(20, 20, 24), "g": Color8(120, 124, 132), "s": Color8(184, 188, 196),
 	"b": Color8(72, 64, 58), "o": Color8(255, 170, 40), "y": Color8(255, 230, 90),

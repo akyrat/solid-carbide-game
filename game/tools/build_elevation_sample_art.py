@@ -37,7 +37,7 @@ import numpy as np
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from style_rules import is_redgull_red  # noqa: E402  (Visual style rule 6)
+from style_rules import reads_as_red  # noqa: E402  (Visual style rule 6)
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RAW = os.path.join(ROOT, "art-archive", "T-198")
@@ -499,12 +499,12 @@ def rules(path):
     for c in map(tuple, opaque.tolist()):
         counts[c] = counts.get(c, 0) + 1
     colors = len(counts)
-    red = sum(n for c, n in counts.items() if is_redgull_red(c))
+    red = sum(n for c, n in counts.items() if reads_as_red(c))
     return [
         ("transparent background (corners)", all(c[3] == 0 for c in corners), str([tuple(c) for c in corners])),
         ("no semi-transparent pixels", semi == 0, "%d" % semi),
         ("%d colours or fewer" % MAX_COLORS, colors <= MAX_COLORS, "%d" % colors),
-        ("no Redgull red", red == 0, "%d" % red),
+        ("no red", red == 0, "%d" % red),
     ]
 
 
