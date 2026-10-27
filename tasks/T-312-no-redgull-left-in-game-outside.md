@@ -1,7 +1,7 @@
 ---
 id: T-312
 title: No Redgull left in game/ outside the art records: old logo files to art-archive, the old name spelled once in code, behaviour unchanged
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, tasks/T-306-code-comments-tests-tool-names-and.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, game/tools/style_rules.py, game/tools/check_rebrand.py, game/tools/check_level_up_shot.py, tools/style_loop/test_loop.py]
 files_expected_to_change: [game/tools/style_rules.py, game/tools/test_style_rules.py, game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/tools/check_level_up_shot.py, game/tools/test_check_level_up_texts.py, game/tools/test_build_level_up_art.py, game/tools/test_build_boost_lines.py, game/tools/build_boost_lines.py, game/tools/build_buildings.py, game/tools/build_drift_mark.py, game/tools/build_drift_smoke.py, game/tools/build_level_up_particles.py, game/tools/build_health_canister.py, game/tools/build_heart_icon.py, game/tools/build_helicopter.py, game/tools/build_gift_package.py, game/tools/build_kaiju_banners.py, game/tools/list_brand_palette.py, game/tools/make_logo_sizes.py, game/tools/draw_gull_silhouette.py, game/tools/flatten_logo.py, game/tools/check_logo_one_colour.py, game/tools/test_check_logo_one_colour.py, game/tools/_t306_rename.py, game/art/logo/, art-archive/T-075/, art-archive/T-306/, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-312.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -111,3 +115,4 @@ game/art/hud/likes_heart.json: record of the likes heart (T-086), described as "
 **Uncommitted noise:** the GUT run left Godot's line-ending-only `.import` rewrites (about 180 files under game/) in the working tree. They are not committed. `git restore` is not on the pre-approved list, so the Project Lead or the runner should discard them.
 
 **Refusals:** `git grep -i -o -n ".{0,60}redgull.{0,40}" -- game/art` needed approval (refused); not essential, used the Grep tool for the same read-only listing.
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
