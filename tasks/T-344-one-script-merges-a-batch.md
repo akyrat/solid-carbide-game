@@ -1,7 +1,7 @@
 ---
 id: T-344
 title: Token spend: one script merges a batch of tickets and prints one line each
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started in parallel: the batch-merge script.
 
+### 2026-10-27, In QA
+
+Built: tools/merge_batch.py with 7 tests. One fix asked before QA: a stopped ticket must not stay marked done on its branch.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,4 +77,4 @@ Tests (all pass): clean batch of two (done, timeline, worktrees and branches gon
 
 Counts: `python -m unittest discover -s tools -p "test_*.py"` 508 tests OK (including the 7 new); `python -m unittest discover -s game/tools -p "test_*.py"` 620 tests OK (1 skipped); `bash game/tools/run_tests.sh` TESTS PASSED.
 
-Things to know: (1) the `done` mark is committed on the ticket's branch before the merge, so a ticket stopped later (conflict, red test) is already `done` on its branch; after the fix the agent's commits go on the same branch and the batch is rerun. (2) A worktree Godot holds open: the merge stays committed, the line says so, and the branch is kept. (3) Not run against the real repo, as asked; the script's own tests use stand-in test commands, so the three real default commands are not exercised by them. (4) Docs: "Merging (Project Lead)" in `docs/working-with-the-board.md` now starts with the script as the way to merge.
+Things to know: (1) the `done` mark is committed on the ticket's branch before the merge, but on any stop before the merge commit (conflict, red test, error) the script removes that one commit (`git reset --keep` to the tip it had before, only if its done commit is still the tip), so the ticket is back at its earlier status and the board never shows an unmerged ticket as done (change requested by the Project Lead; the conflict and red-test tests check branch tip and status). A worktree Godot holds open stops only after the merge is committed, so that ticket stays done. (2) A worktree Godot holds open: the merge stays committed, the line says so, and the branch is kept. (3) Not run against the real repo, as asked; the script's own tests use stand-in test commands, so the three real default commands are not exercised by them. (4) Docs: "Merging (Project Lead)" in `docs/working-with-the-board.md` now starts with the script as the way to merge.

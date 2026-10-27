@@ -89,7 +89,8 @@ class MergeBatchTest(unittest.TestCase):
         self.assertTrue(self.log.exists())
 
     def test_conflict_stops_and_master_stays_clean(self):
-        self.ticket("T-903", {"game/scripts/c.gd": "branch\n"})
+        w3 = self.ticket("T-903", {"game/scripts/c.gd": "branch\n"})
+        tip3 = self.git("rev-parse", "task/T-903-ticket").strip()
         write(self.root / "game/scripts/c.gd", "master\n")
         self.git("add", "-A")
         self.git("commit", "-q", "-m", "master edit")
@@ -100,6 +101,8 @@ class MergeBatchTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertRegex(lines[0], r"^T-903: stopped: merge conflict in game/scripts/c.gd")
         self.assertTrue(self.clean())
+        self.assertEqual(self.git("rev-parse", "task/T-903-ticket").strip(), tip3)   # not left marked done
+        self.assertIn("status: needs-playtest", (w3 / "tasks" / "T-903-ticket.md").read_text(encoding="utf-8"))
         self.assertEqual(self.git("rev-parse", "HEAD").strip(), head if lines[1].startswith("T-904: stopped") else self.git("rev-parse", "HEAD").strip())
         # master was clean, so the batch went on to the next ticket
         self.assertEqual(lines[1], "T-904: merged")
@@ -110,6 +113,7 @@ class MergeBatchTest(unittest.TestCase):
     def test_red_test_stops_before_commit(self):
         w = self.ticket("T-905", {"game/scripts/e.gd": "e\n"})
         head = self.git("rev-parse", "HEAD").strip()
+        tip = self.git("rev-parse", "task/T-905-ticket").strip()
         code, lines = self.run_batch("T-905", tests=FAIL)
         self.assertEqual(code, 1)
         self.assertRegex(lines[0], r"^T-905: stopped: test failed")
@@ -117,6 +121,9 @@ class MergeBatchTest(unittest.TestCase):
         self.assertTrue(self.clean())
         self.assertFalse((self.root / "game/scripts/e.gd").exists())
         self.assertNotIn("T-905", (self.root / "docs" / "timeline.md").read_text(encoding="utf-8"))
+        self.assertEqual(self.git("rev-parse", "task/T-905-ticket").strip(), tip)   # our done commit is gone
+        self.assertIn("status: needs-playtest", (w / "tasks" / "T-905-ticket.md").read_text(encoding="utf-8"))
+        self.assertEqual(self.git("status", "--porcelain", "--untracked-files=no", cwd=w).strip(), "")
         self.assertTrue(w.exists())   # worktree and branch are kept for the agent
         self.assertIn("task/T-905-ticket", self.git("branch", "--list", "task/*"))
 

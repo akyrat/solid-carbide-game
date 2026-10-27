@@ -140,11 +140,19 @@ def merge_one(r, tid, opts, tests):
     done = r.run(cmd)
     if done.returncode != 0:
         raise Stop(f"task_status refused: {(done.stderr or done.stdout).strip()[:200]}")
+    prev = marked = None
     if wt:
         files = [p for p in modified(r, cwd=wt) if p.startswith("tasks/")]
         if files:
+            prev = r.out("rev-parse", "HEAD", cwd=wt).strip()
             r.git("add", "--", *files, cwd=wt, check=True)
             r.git("commit", "-q", "-m", f"{tid}: marked done", cwd=wt, check=True)
+            marked = r.out("rev-parse", "HEAD", cwd=wt).strip()
+
+    def unmark():
+        """A stopped ticket must not stay done on its branch: drop our own done commit if it is still the tip."""
+        if marked and r.out("rev-parse", "HEAD", cwd=wt).strip() == marked:
+            r.git("reset", "-q", "--keep", prev, cwd=wt)
     tasks_touched = sorted({p for p in modified(r) if p.startswith("tasks/")} - tasks_dirty_before)
     written = list(SHARED) + tasks_touched
     try:
@@ -182,9 +190,11 @@ def merge_one(r, tid, opts, tests):
             raise Stop(f"commit failed: {(c.stderr or c.stdout).strip()[:200]}")
     except Stop:
         undo(r, written)
+        unmark()
         raise
     except Exception as e:   # never leave a half merge behind
         undo(r, written)
+        unmark()
         raise Stop(f"unexpected error: {e}; merge undone")
     # 7. remove the worktree and branch
     note = ""
