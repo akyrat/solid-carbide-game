@@ -1,7 +1,7 @@
 ---
 id: T-324
 title: "The Bricks weapon: an impact wave each time the car lands"
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -39,13 +39,13 @@ The board's review: take Bricks, jump off a ramp into a crowd of minions, and ju
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Bricks can be offered on a level-up card and taken, and its upgrades raise what T-323 says (tests). (QA: pass / fail)
-- [ ] A landing after enough time in the air sends one wave that damages each enemy within the radius once, and none outside it (tests); a shorter hop sends none (test). (QA: pass / fail)
-- [ ] The wave is the same after a short and a tall drop (test). (QA: pass / fail)
-- [ ] The card shows T-322's texts word for word. (QA: pass / fail)
-- [ ] Weapons, Content, "Bricks" and game/README.md describe how it works. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-324/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF of a jump that lands among enemies. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] Bricks can be offered on a level-up card and taken, and its upgrades raise what T-323 says (tests). (QA: PASS, test_bricks.gd and test_level_up_offers.gd cover get, tiers 2 to 8 against bricks_at())
+- [ ] A landing after enough time in the air sends one wave that damages each enemy within the radius once, and none outside it (tests); a shorter hop sends none (test). (QA: PASS, test_bricks.gd: in-radius once, outside none, 0.3 s minimum, short hop none)
+- [ ] The wave is the same after a short and a tall drop (test). (QA: PASS, test_bricks.gd short and tall real drop send the same wave)
+- [ ] The card shows T-322's texts word for word. (QA: PASS, test_the_bricks_cards_show_t322s_texts_word_for_word; texts match the Weapons doc)
+- [ ] Weapons, Content, "Bricks" and game/README.md describe how it works. (QA: PASS, docs/weapons.md "Bricks" and game/README.md "Bricks" describe it)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-324/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF of a jump that lands among enemies. (QA: PASS, GIF of a ramp jump landing in a crowd plus 6 stills; the strip shows ring and dust)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: PASS, game/tools 620 OK (1 skipped), tools 501 OK, GUT 1735/1735)
 
 ## Updates
 
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Weapon Behavior Agent is building Bricks (an impact wave on each landing), on top of the shared build.
+
+### 2026-10-27, In progress → In QA
+
+Built: Bricks sends an impact wave on each landing after 0.3 s in the air, offered on level-up cards with the approved texts. QA is checking it.
 
 ## Style review
 
