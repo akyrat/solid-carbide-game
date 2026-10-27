@@ -112,14 +112,32 @@ class ArtChecks(unittest.TestCase):
         self.assertLess(s.red_distance(s.OLD_LOGO_RED), s.RED_MIN_DISTANCE)
         self.assertEqual(s.rgb_distance((0, 0, 0), (3, 4, 0)), 5.0)
 
-    def test_redgull_red(self):
-        self.assertTrue(s.is_redgull_red((135, 17, 27)))
-        self.assertTrue(s.is_redgull_red((140, 22, 30)))  # within the threshold
-        self.assertFalse(s.is_redgull_red((120, 60, 60)))  # a red-brown, far from every brand red
-        self.assertFalse(s.is_redgull_red(s.HEART_COLOR))
+    def test_old_brand_red(self):
+        self.assertTrue(s.is_old_brand_red((135, 17, 27)))
+        self.assertTrue(s.is_old_brand_red((140, 22, 30)))  # within the threshold
+        self.assertFalse(s.is_old_brand_red((120, 60, 60)))  # a red-brown, far from every brand red
+        self.assertFalse(s.is_old_brand_red(s.HEART_COLOR))
         dim = tuple(round(c * 0.4) for c in s.HEART_COLOR)  # about (88, 10, 16)
-        self.assertFalse(s.is_redgull_red(dim), dim)
-        self.assertFalse(s.is_redgull_red(s.GREENBULL_DARK_GREEN))
+        self.assertFalse(s.is_old_brand_red(dim), dim)
+        self.assertFalse(s.is_old_brand_red(s.GREENBULL_DARK_GREEN))
+
+    def test_old_brand_values_unchanged(self):
+        # T-312 moved the name into one constant; the values are the ones T-306 to T-309 left.
+        self.assertEqual(s.OLD_BRAND, "Red" + "gull")
+        self.assertEqual(s.OLD_LOGO_RED, (135, 17, 27))
+        self.assertEqual(s.HEART_COLOR, (219, 26, 41))
+        self.assertEqual(s.BRAND_THRESHOLD, 12)
+        self.assertEqual(len(s.BRAND_COLOURS), 10)
+        self.assertEqual(s.BRAND_COLOURS[0][1], "style_rules.OLD_LOGO_RED; art-archive/T-304/"
+                         + s.OLD_BRAND.lower() + "/package.png, art-archive/T-305/"
+                         + s.OLD_BRAND.lower() + "/helicopter_sheet.png")
+        for _, src in s.BRAND_COLOURS:
+            for path in src.replace(";", ",").split(","):
+                path = path.strip().split(" (")[0]
+                if path.startswith("art-archive/") and path.endswith(".png"):
+                    self.assertTrue((ROOT / path).is_file(), path)
+        # No function, constant or flag is named after the old brand.
+        self.assertFalse(any(s.OLD_BRAND.lower() in n.lower() for n in dir(s)))
 
     def test_greenbull_logo_follows_rule_1(self):
         good = Image.new("RGBA", (4, 4), CLEAR)
@@ -139,7 +157,9 @@ class ArtChecks(unittest.TestCase):
 
     def test_old_logo_check_kept(self):
         for n in (128, 64, 32):
-            self.assertEqual(s.check_old_logo(Image.open(ROOT / f"game/art/logo/redgull_logo_{n}.png")), [])
+            # The old logo files moved to art-archive/T-075/ (T-312).
+            p = ROOT / "art-archive/T-075" / f"{s.OLD_BRAND.lower()}_logo_{n}.png"
+            self.assertEqual(s.check_old_logo(Image.open(p)), [])
 
     def test_cli_art_prints_json_and_exits_1_on_a_fail(self):
         with tempfile.TemporaryDirectory() as d:
@@ -166,7 +186,7 @@ class ArtChecks(unittest.TestCase):
         with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
             s.main(["art", "--help"])
         self.assertIn("--greenbull", out.getvalue())
-        self.assertNotIn("--redgull", out.getvalue())
+        self.assertNotIn("--" + s.OLD_BRAND.lower(), out.getvalue())
 
 
 class TextChecks(unittest.TestCase):
@@ -178,15 +198,16 @@ class TextChecks(unittest.TestCase):
         self.assertIn((4, "popup: one line"), failed(s.text_checks("LONG\nDRIFT!", "popup")))
 
     def test_rule_2_banned_words(self):
-        rule2 = (2, "no banned words (XP, points, Godzilla, Redgull)")
+        rule2 = (2, "no banned words (XP, points, Godzilla, %s)" % s.OLD_BRAND)
         for bad in ("Gain more XP", "+50 points", "The godzilla is here"):
             self.assertEqual(failed(s.text_checks(bad, "card_desc")), {rule2}, bad)
         self.assertEqual(failed(s.text_checks("Gain more likes", "card_desc")), set())
         self.assertEqual(failed(s.text_checks("Expert pointers", "card_desc")), set())  # whole words only
 
     def test_rule_2_old_sponsor_name_is_banned_in_any_case(self):
-        rule2 = (2, "no banned words (XP, points, Godzilla, Redgull)")
-        for bad in ("A gift from Redgull", "A GIFT FROM REDGULL", "a gift from redgull"):
+        rule2 = (2, "no banned words (XP, points, Godzilla, %s)" % s.OLD_BRAND)
+        for bad in ("A gift from " + s.OLD_BRAND, "A GIFT FROM " + s.OLD_BRAND.upper(),
+                    "a gift from " + s.OLD_BRAND.lower()):
             self.assertEqual(failed(s.text_checks(bad, "card_desc")), {rule2}, bad)
 
     def test_rule_3_greenbull_says(self):

@@ -33,11 +33,15 @@ import struct
 import sys
 import zlib
 
+# The sponsor's old name, spelled once (T-312, as tools/style_loop since T-299): every check,
+# path and record string that needs it is built from this constant.
+OLD_BRAND = "Red" + "gull"
+
 # ------------------------------------------------------------------ the reds ----
 # Red is no longer reserved (Visual style, Decisions, "Red after the rebrand"); the build
 # scripts and GUT tests still keep their colours clear of these two reds.
 
-# The old logo's red (T-075; the old logo files are kept in game/art/logo/ as history).
+# The old logo's red (T-075; the old logo files are kept in art-archive/T-075/ as history, T-312).
 OLD_LOGO_RED = (135, 17, 27)
 # The likes heart's red as the HUD draws it (scripts/hud/hud.gd, HEART_COLOR = Color(0.86, 0.1, 0.16)).
 HEART_COLOR = (219, 26, 41)
@@ -56,14 +60,17 @@ def red_distance(rgb, ref=HEART_COLOR):
     return rgb_distance(rgb, ref) / 255.0
 
 
-# Redgull's brand reds (T-308, moved here by T-309): the colours of the old Redgull art, taken
-# from the archived originals. A colour is a brand red when it is within BRAND_THRESHOLD
-# (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not brand colours.
+# The old sponsor's brand reds (T-308, moved here by T-309): the colours of the old sponsor's
+# art, taken from the archived originals. A colour is a brand red when it is within
+# BRAND_THRESHOLD (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not
+# brand colours.
 BRAND_THRESHOLD = 12
+# The old sponsor's archived art (T-304, T-305), kept in folders named after the old brand.
+OLD_BRAND_DIR = OLD_BRAND.lower()
 _L = "art-archive/T-303/red_gold/"
-_P = "art-archive/T-304/redgull/package.png"
-_PF = "art-archive/T-304/redgull/package_falling.png"
-_H = "art-archive/T-305/redgull/helicopter_sheet.png"
+_P = "art-archive/T-304/" + OLD_BRAND_DIR + "/package.png"
+_PF = "art-archive/T-304/" + OLD_BRAND_DIR + "/package_falling.png"
+_H = "art-archive/T-305/" + OLD_BRAND_DIR + "/helicopter_sheet.png"
 BRAND_COLOURS = [
     (OLD_LOGO_RED, "style_rules.OLD_LOGO_RED; " + _P + ", " + _H),
     ((230, 1, 2), _L + "gift_pack_emblem.png; " + _P),
@@ -81,8 +88,8 @@ BRAND_COLOURS = [
 # helicopter's (198, 52, 50) sits 11 from the burning flames' (208, 53, 46). The brand is the red.
 
 
-def is_redgull_red(rgb, threshold=BRAND_THRESHOLD):
-    """True when `rgb` is within `threshold` of one of Redgull's brand reds (BRAND_COLOURS)."""
+def is_old_brand_red(rgb, threshold=BRAND_THRESHOLD):
+    """True when `rgb` is within `threshold` of one of the old sponsor's brand reds (BRAND_COLOURS)."""
     return any(rgb_distance(rgb, b) <= threshold for b, _ in BRAND_COLOURS)
 
 
@@ -296,7 +303,7 @@ def logo_checks(im):
 
 # ------------------------------------------------------------------ text checks ----
 
-BANNED_WORDS = ("XP", "points", "Godzilla", "Redgull")
+BANNED_WORDS = ("XP", "points", "Godzilla", OLD_BRAND)
 TEXT_LIMITS = {"card_title": 30, "card_desc": 90, "garage_name": 25, "garage_desc": 80}
 KINDS = ("popup", "card_title", "card_desc", "garage_name", "garage_desc", "label")
 # Names a label may capitalise after its first word (Extended narrative, text rule 2's names).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lists the most common opaque colours of PNGs (T-308: finding Redgull's brand reds in the archived art).
+"""Lists the most common opaque colours of PNGs (T-308: finding the old sponsor's brand reds in the archived art).
 
   python game/tools/list_brand_palette.py FILE.png [FILE.png ...] [--top 12]
 """

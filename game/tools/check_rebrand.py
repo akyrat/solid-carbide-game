@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Rebrand sweep (T-307): no Redgull name, logo or brand red in what the game loads.
+"""Rebrand sweep (T-307): no old sponsor name, logo or brand red in what the game loads.
 
 Lists every PNG that game/scenes and game/scripts load (res:// paths in .tscn, .tres and .gd
 files; a path with %s or * stands for every file it matches, a path without an extension for
 every PNG starting with it, a folder for every PNG in it) and reports:
 
-  red     a loaded PNG with an opaque pixel within BRAND_THRESHOLD of one of Redgull's brand
-          colours (BRAND_COLOURS below, from the archived old Redgull art), unless the file is
-          one of the subjects whose red the docs keep (KEPT_RED below). Other reds (fire, wood)
-          are not flagged: Visual style says red is no longer reserved;
-  name    a loaded file whose name contains "redgull";
-  text    player-facing text containing "Redgull" in game/scripts, game/scenes and game/data
-          (quoted strings and JSON values; comment lines and identifiers are not text).
+  red     a loaded PNG with an opaque pixel within BRAND_THRESHOLD of one of the old sponsor's
+          brand colours (BRAND_COLOURS below, from the archived old sponsor's art), unless the
+          file is one of the subjects whose red the docs keep (KEPT_RED below). Other reds
+          (fire, wood) are not flagged: Visual style says red is no longer reserved;
+  name    a loaded file whose name contains the old brand name in lower case
+          (style_rules.OLD_BRAND, T-312);
+  text    player-facing text containing the old brand name in game/scripts, game/scenes and
+          game/data (quoted strings and JSON values; comment lines and identifiers are not text).
 
 Findings are only reported, nothing is fixed. Exit code 1 when there is any finding.
 
@@ -41,12 +42,14 @@ KEPT_RED = {
     "art/effects/combo_broken": 'Red after the rebrand: "the combo broken popup\'s warning red"',
 }
 
-# Redgull's brand reds (T-308): the colours of the old Redgull art, taken from the
+# The old sponsor's brand reds (T-308): the colours of the old sponsor's art, taken from the
 # archived originals. A loaded PNG is flagged when an opaque pixel is within BRAND_THRESHOLD
 # (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not brand colours.
 # They now live in style_rules.py (T-309); these names are kept for the tests.
 BRAND_THRESHOLD = style_rules.BRAND_THRESHOLD
 BRAND_COLOURS = style_rules.BRAND_COLOURS
+# The old name, lower case, as file names and the text check compare it (T-312).
+OLD_NAME = style_rules.OLD_BRAND.lower()
 
 PATH_RE = re.compile(r"res://[A-Za-z0-9_./%*{}-]+")
 STRING_RE = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
@@ -96,7 +99,7 @@ def loaded_pngs(game_dir):
 
 
 def red_pixels(path):
-    """The distinct opaque colours of a PNG within BRAND_THRESHOLD of a Redgull brand colour;
+    """The distinct opaque colours of a PNG within BRAND_THRESHOLD of an old brand colour;
     [] if unreadable."""
     try:
         with open(path, "rb") as f:
@@ -104,15 +107,15 @@ def red_pixels(path):
     except (ValueError, OSError):
         return []
     colours = {p[:3] for r in rows for p in r if p[3] == RED_FLOOR_ALPHA}
-    return sorted(c for c in colours if style_rules.is_redgull_red(c))
+    return sorted(c for c in colours if style_rules.is_old_brand_red(c))
 
 
 def check_pngs(game_dir):
     """Red and name findings for the loaded PNGs. Returns (findings, kept)."""
     findings, kept = [], []
     for png, sources in sorted(loaded_pngs(game_dir).items()):
-        if "redgull" in os.path.basename(png).lower():
-            findings.append({"kind": "name", "file": png, "detail": "file name contains 'redgull'",
+        if OLD_NAME in os.path.basename(png).lower():
+            findings.append({"kind": "name", "file": png, "detail": "file name contains '%s'" % OLD_NAME,
                              "loaded_by": sources[:3]})
         reds = red_pixels(os.path.join(game_dir, png))
         if not reds:
@@ -146,7 +149,7 @@ def _text_candidates(path, text):
 
 
 def check_text(game_dir):
-    """Findings for 'Redgull' in player-facing text in scripts, scenes and data."""
+    """Findings for the old brand name in player-facing text in scripts, scenes and data."""
     findings = []
     for sub in ("scripts", "scenes", "data"):
         for root, _, files in os.walk(os.path.join(game_dir, sub)):
@@ -157,7 +160,7 @@ def check_text(game_dir):
                 with open(path, encoding="utf-8", errors="replace") as f:
                     text = f.read()
                 for n, s in _text_candidates(path, text):
-                    if re.search(r"redgull", s, re.IGNORECASE) and " " in s.strip():
+                    if re.search(re.escape(OLD_NAME), s, re.IGNORECASE) and " " in s.strip():
                         findings.append({"kind": "text", "file": os.path.relpath(path, game_dir).replace("\\", "/"),
                                          "detail": "line %d: %r" % (n, s[:80])})
     return findings

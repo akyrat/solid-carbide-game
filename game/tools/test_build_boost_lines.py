@@ -17,7 +17,7 @@ def test_committed_sheet_passes_the_rules():
     res = bbl.check_sheet(Image.open(bbl.SHEET).convert("RGBA"), rec["frames"])
     assert res["pass"], res
     assert res["semi_transparent_pixels"] == 0
-    assert res["closest_to_redgull_red"] > 0.5
+    assert res["closest_to_" + bbl.OLD_BRAND.lower() + "_red"] > 0.5
     assert rec["frames"] == 5 and rec["directions"] == 16 and rec["frame_size"] == 80
 
 

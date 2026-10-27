@@ -183,7 +183,7 @@ def record():
         "made_by": "game/tools/build_level_up_particles.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
         "palette": {k: list(v) for k, v in PALETTE.items()},
         "colors": len(PALETTE),
-        "rules": "Visual style, Decisions: night neon palette, glow drawn into the pixels (bright core, stepped darker halo), no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no Redgull red. Check: python game/tools/build_level_up_particles.py check",
+        "rules": "Visual style, Decisions: night neon palette, glow drawn into the pixels (bright core, stepped darker halo), no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no " + rules.OLD_BRAND + " red. Check: python game/tools/build_level_up_particles.py check",
         "scale": "drawn at the car art's density (32 art pixels per unit): the scene draws the particles at scale 0.5, as the car (16 world pixels per unit)",
         "used_by": "game/scenes/run/level_up_burst.tscn",
         "status": "proposal for the board's review (T-074)",

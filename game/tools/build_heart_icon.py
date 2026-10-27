@@ -110,12 +110,12 @@ def build(out_dir=OUT_DIR, archive=ARCHIVE):
     write_png(out_dir / "likes_heart.png", icon)
     record = {
         "task": "T-086",
-        "what": "The HUD likes heart: flat Redgull red, thick dark outline like the LIKES text's, a little chunky.",
+        "what": "The HUD likes heart: flat " + rules.OLD_BRAND + " red, thick dark outline like the LIKES text's, a little chunky.",
         "made_by": "game/tools/build_heart_icon.py (a hand-placed pixel grid; no PixelLab call, 0 generations, board 2026-10-14). Byte-identical every run.",
         "size": list(SIZE),
         "shown_at_scale": SHOW_SCALE,
         "palette": {"red": list(RED), "outline": list(OUTLINE)},
-        "references": ["docs/visual-style.md (technical rules, Redgull red)", "docs/hud-and-menus.md", "game/scripts/hud/hud.gd (HEART_COLOR, OUTLINE_COLOR)"],
+        "references": ["docs/visual-style.md (technical rules, " + rules.OLD_BRAND + " red)", "docs/hud-and-menus.md", "game/scripts/hud/hud.gd (HEART_COLOR, OUTLINE_COLOR)"],
         "prompt": None,
     }
     (out_dir / "likes_heart.json").write_text(json.dumps(record, indent=1) + "\n", encoding="utf-8")

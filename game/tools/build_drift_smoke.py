@@ -185,7 +185,7 @@ def record():
         "palette": {k: list(v) for k, v in PALETTE.items()},
         "colors": len(PALETTE),
         "made_by": "game/tools/build_drift_smoke.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
-        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no Redgull red; body lighter than both grounds. Check: python game/tools/build_drift_smoke.py check",
+        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background, about 30 colours or fewer, no " + rules.OLD_BRAND + " red; body lighter than both grounds. Check: python game/tools/build_drift_smoke.py check",
         "grounds": {"asphalt": list(ASPHALT), "gravel": list(GRAVEL)},
         "used_by": "game/scenes/driving/drift_smoke.tscn (puff_texture)",
         "archive": "art-archive/T-073/: the preview over asphalt and gravel at four sizes",

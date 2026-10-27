@@ -4,7 +4,7 @@
   python game/tools/check_level_up_shot.py <png> [--game-dir game]
 
 Prints JSON with
-  red     every pixel style_rules.is_redgull_red flags (count, and the first positions),
+  red     every pixel style_rules.is_old_brand_red flags (count, and the first positions),
   art     the colour counts of the screenshot's pixels whose colour is exactly one of the opaque
           colours of art/level_up/header_ribbon.png, card_frame.png, highlight_frame.png and
           gift_pack_emblem.png, leaving out the cream fills (CREAM, CREAM_D of
@@ -54,7 +54,7 @@ def check(rows, art):
     for y, row in enumerate(rows):
         for x, p in enumerate(row):
             rgb = tuple(p[:3])
-            if style_rules.is_redgull_red(rgb):
+            if style_rules.is_old_brand_red(rgb):
                 red.append((x, y, rgb))
             if rgb in art:
                 counts[rgb] += 1

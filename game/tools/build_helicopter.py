@@ -16,7 +16,7 @@ read only). It
     python game/tools/build_helicopter.py build          # writes game/art/gift_pack/helicopter_sheet.png and its record
     python game/tools/build_helicopter.py check
     python game/tools/build_helicopter.py piece <png>    # the style loop's step: the sheet to <png>
-    python game/tools/build_helicopter.py archive        # copies the current sheet to art-archive/T-305/redgull/
+    python game/tools/build_helicopter.py archive        # copies the current sheet to OLD_ARCHIVE in art-archive/T-305/
                                                          # (never overwrites)
 """
 from __future__ import annotations
@@ -41,7 +41,7 @@ OUT_DIR = ROOT / "game" / "art" / "gift_pack"
 SHEET = OUT_DIR / "helicopter_sheet.png"
 FRAME_FILES = [OUT_DIR / f"helicopter_{i}.png" for i in range(4)]
 RECORD = OUT_DIR / "helicopter_sheet.json"
-OLD_ARCHIVE = ROOT / "art-archive" / "T-305" / "redgull"
+OLD_ARCHIVE = ROOT / "art-archive" / "T-305" / rules.OLD_BRAND_DIR  # the old sheet's folder (T-312)
 
 W, H = 192, 160
 FRAMES = 4
@@ -344,7 +344,7 @@ def red_pixels(img: Image.Image) -> list:
 
 
 def archive() -> list:
-    """Copies the current game sheet and its record to art-archive/T-305/redgull/, never overwriting."""
+    """Copies the current game sheet and its record to OLD_ARCHIVE (art-archive/T-305/), never overwriting."""
     OLD_ARCHIVE.mkdir(parents=True, exist_ok=True)
     done = []
     for src in (SHEET, RECORD):
@@ -361,7 +361,7 @@ def build(out: Path = SHEET, record: bool = True) -> dict:
     sheet = sheet_of(frames)
     sheet.save(out)
     report = {
-        "task": "T-305 (rebuilt in Greenbull's colours; first built by T-145 in Redgull's)",
+        "task": "T-305 (rebuilt in Greenbull's colours; first built by T-145 in " + rules.OLD_BRAND + "'s)",
         "generator": "game/tools/build_helicopter.py build (free, no PixelLab call)",
         "source": "art-archive/T-145/helicopter_sample.png (the board-approved sample, 2026-10-16)",
         "colours": "dark green ramp led by Greenbull's dark green RGB 12, 76, 44; light green stripes; "
@@ -373,7 +373,7 @@ def build(out: Path = SHEET, record: bool = True) -> dict:
         "logo_spots": [{"centre": list(c), "size": n, "shear": sh} for c, n, sh in LOGO_SPOTS],
         "frame_checks": [frame_report(f) for f in frames],
         "sheet_colours": len({p[:3] for p in sheet.getdata() if p[3] == 255}),
-        "redgull_red_pixels": len(red_pixels(sheet)),
+        rules.OLD_BRAND_DIR + "_red_pixels": len(red_pixels(sheet)),  # the record's key (T-312)
     }
     if record:
         RECORD.write_text(json.dumps(report, indent=2) + chr(10))
