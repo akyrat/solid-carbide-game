@@ -1,7 +1,7 @@
 ---
 id: T-308
 title: Rebrand sweep: the red check looks for Redgull's brand reds, not every red hue, and its report on playtest/G-006 is clean
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, tasks/T-307-rebrand-sweep-a-check-for-redgull.md, docs/visual-style.md, game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/tools/style_rules.py, game/README.md]
 files_expected_to_change: [game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-308.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -83,3 +87,4 @@ No loaded PNG still carries a brand red. (The kept list is empty now: the heart 
 **Screenshots for this ticket:** none new, tooling only; the five above are the T-307 screenshots this ticket reviewed.
 
 **Refusals:** one inline `python -` / `sed` shell command was refused; not retried, used the edit tool instead.
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
