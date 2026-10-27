@@ -1,7 +1,7 @@
 ---
 id: T-307
 title: Rebrand sweep: a check for Redgull's red, files and name in what the game loads, with screenshots of every screen
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
