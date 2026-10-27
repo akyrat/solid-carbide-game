@@ -1,7 +1,7 @@
 ---
 id: T-263
 title: "Level creator: paint roads with a brush that joins them itself"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -138,3 +138,4 @@ Level/Challenge Design Agent, 2026-10-23. No PixelLab call.
 **Documents updated:**
 - `game/README.md`, "Level creator", "The road brush (T-263)", and two T-262 lines
 - `docs/level-design.md`, Content, "Level creator: the road brush", and one T-262 line
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
