@@ -1,11 +1,13 @@
 {
- "task": "T-140",
- "what": "Backdrop: 24 rays in dark red, red and dark gold inside a circle with a black rim. Sits behind the cards over the dimmed run; T-141 may spin and scale it (4x covers the 1152x648 window).",
+ "task": "T-303",
+ "earlier": "T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+ "what": "Backdrop: 24 rays in Greenbull's dark greens inside a circle with a dark rim. Sits behind the cards over the dimmed run; T-141 spins and scales it.",
  "logo": "none",
  "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
  "size": [
   256,
   256
  ],
+ "emblem": null,
  "prompt": null
 }

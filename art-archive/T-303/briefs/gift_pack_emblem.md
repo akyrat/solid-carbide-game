@@ -1,0 +1,7 @@
+Piece: gift_pack_emblem.png (128 x 128), the gift box emblem that hangs at the left end of the level-up screen's banner. One of Greenbull's own things (Visual style, Decisions, "Greenbull's look": the weapons arrive as Greenbull gift packs; the level-up screen in Greenbull's dark green leading, light green and a little yellow).
+
+How to make it (free script, no PixelLab: task T-303 says free script work first; a recolour does it):
+  python game/tools/build_level_up_art.py piece gift_pack_emblem <the version's PNG path>
+The script takes T-140's approved PixelLab gift box (art-archive/T-140/gift_pack_raw.png, read only, never changed) and recolours it: the red box to dark greens (Greenbull's dark green RGB 12, 76, 44 leading), the gold ribbon and bow to light greens, the small sparkles on the box to yellow; then it stamps Greenbull's approved emblem (game/art/logo/greenbull_emblem_32.png, the bull's head, unchanged) on a pale disc on the box front, where the Redgull gull was. To refine, edit `BOX_MAP`, `SPARKLE_MAP`, `recolour_box()` or `gift_pack_emblem()` in game/tools/build_level_up_art.py, keeping 128 x 128 and no red. Never call PixelLab for this piece.
+
+What it must be: a gift box in Greenbull's colours, mostly dark green, with Greenbull's emblem and no gull, no Redgull red. Hard pixel edges, dark selective outline, detailed shading (from the PixelLab box), at most 30 colours, alpha 0 or 255 only, transparent background. A UI emblem shown beside the banner, not placed in the world, so the 32 px per unit scale doesn't apply.

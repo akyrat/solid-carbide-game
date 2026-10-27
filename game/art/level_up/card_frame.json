@@ -1,11 +1,13 @@
 {
- "task": "T-140",
- "what": "The card: a 9-slice frame (margin 10 art pixels) in gold and red with a cream fill and four gold studs. Replaces T-052's white rounded card; shown 2x (360x300).",
- "logo": "none (the ribbon and the gift box carry the logo)",
+ "task": "T-303",
+ "earlier": "T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+ "what": "The card: a 9-slice frame (margin 10 art pixels): a dark green outer band and a light green inner band, a pale fill and four small yellow studs. Shown 2x.",
+ "logo": "none (the ribbon and the gift box carry the emblem)",
  "made_by": "game/tools/build_level_up_art.py (script, 0 PixelLab generations)",
  "size": [
   180,
   150
  ],
+ "emblem": "game/art/logo/greenbull_emblem_32.png",
  "prompt": null
 }
