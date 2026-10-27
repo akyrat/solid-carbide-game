@@ -1,7 +1,7 @@
 ---
 id: T-321
 title: The first gift pack offers two random choices from every weapon
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -39,12 +39,12 @@ The board's review: start a few runs and check the first gift pack offers differ
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Over many seeded first level-ups, every available first choice appears (each of the four weapons the car doesn't have, and the gun upgrade), always two different ones (test). (QA: pass / fail)
-- [ ] No code path offers the old fixed pair on purpose any more: FIRST_OFFERS and is_first_offer are gone or no longer used (QA reads the diff). (QA: pass / fail)
-- [ ] Later level-ups draw exactly as before (the existing tests pass unchanged, or the result notes say why one changed). (QA: pass / fail)
-- [ ] Weapons, Content, "The level-up offers" and game/README.md describe the new first offer. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-321/screenshots/`, as `tasks/README.md`, "Screenshots", asks. Two first level-ups with different offers. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] Over many seeded first level-ups, every available first choice appears (each of the four weapons the car doesn't have, and the gun upgrade), always two different ones (test). (QA: pass, 200-seed test covers all five first choices, always two different)
+- [ ] No code path offers the old fixed pair on purpose any more: FIRST_OFFERS and is_first_offer are gone or no longer used (QA reads the diff). (QA: pass, FIRST_OFFERS, is_first_offer and choices_taken removed; only a test asserting they are gone mentions them)
+- [ ] Later level-ups draw exactly as before (the existing tests pass unchanged, or the result notes say why one changed). (QA: pass, later draw code unchanged, GUT all green, changed tests explained in the result notes)
+- [ ] Weapons, Content, "The level-up offers" and game/README.md describe the new first offer. (QA: pass, both describe the drawn first offer)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-321/screenshots/`, as `tasks/README.md`, "Screenshots", asks. Two first level-ups with different offers. (QA: pass, first_level_up_1 and _2 show different pairs; _3 is identical to _2, minor)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass, game/tools 620 OK (1 skipped), tools 501 OK, GUT 1690/1690)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Weapon Behavior Agent is making the first gift pack draw from every weapon.
+
+### 2026-10-27, In progress → In QA
+
+Built: the first gift pack now draws two random choices from every weapon. QA is checking it.
 
 ## Style review
 
