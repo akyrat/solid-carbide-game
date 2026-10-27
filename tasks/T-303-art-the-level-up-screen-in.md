@@ -179,3 +179,25 @@ Run by `tools/style_loop/run.py` on 2026-10-26: art, brief `art-archive/T-303/br
 ## Result notes
 
 Written by the agent when it finishes.
+
+**What was done (asset-generation, 2026-10-26/27).** This was picked up again after a cut-off session. The art, archive and style loop runs (commits 3df30455 and 90827e00) were already done. This session added the screenshots, the docs and these notes.
+
+- **The seven pieces** in `game/art/level_up/` are rebuilt by `game/tools/build_level_up_art.py` (`build`, `check`, and `piece <name> <path>` for the style loop). Each keeps its file name and size: card_frame 180x150, highlight_frame 192x162, header_ribbon 380x44, button_plate and button_plate_pressed 72x22, sunburst 256x256, gift_pack_emblem 128x128. The colours are Greenbull's dark green (leading), light green and a little yellow, with the outline in the emblem's near-black green. Each piece has a json record beside it.
+- **Emblem in place of the gull.** `stamp_emblem` puts `game/art/logo/greenbull_emblem_32.png` on a pale medallion at each end of the ribbon and on a pale disc on the gift box front. The gift box is T-140's PixelLab box (`art-archive/T-140/gift_pack_raw.png`, unchanged), recoloured by script (`recolour_box`).
+- **PixelLab: 0 generations.** Every piece is script work: either drawn by script or recoloured from earlier sources. No call was needed, so none was planned.
+- **Style loop:** one run per piece with `--greenbull` (Style review, runs 1 to 7). Every piece was kept on version 1: header_ribbon 8, gift_pack_emblem 8, card_frame 8, highlight_frame 8, button_plate 9, button_plate_pressed 8, sunburst 8. No refines were needed. The evaluator's optional polish ideas were not acted on: a brighter emblem disc on the box, a lower sunburst contrast, more highlight pixels on the outlines.
+- **Old red and gold versions:** all seven, each with its json, are in `art-archive/T-303/red_gold/`. There is an old-vs-new comparison sheet at `art-archive/T-303/screenshots/old_vs_new_pieces_x2.png`.
+
+**Checks (output, 2026-10-27):**
+- `python game/tools/build_level_up_art.py check`: PASS for all 7. Each passes "no semi-transparent pixels ok; 30 colours or fewer ok; has opaque pixels ok; transparent corners ok; no Redgull red ok". The red check is `style_rules.is_redgull_red`.
+- `python game/tools/style_rules.py art <file> --greenbull` for each of the 7: every check is ok. Colour counts: ribbon 11, gift box 22, card 10, highlight 5, button 6, pressed 3, sunburst 4. Rule 6: "one of Greenbull's own things".
+- Test sets: `python -m unittest discover -s game/tools -p "test_*.py"` ran 479 tests, OK (1 skipped). This includes `test_build_level_up_art.py`. `python -m unittest discover -s tools -p "test_*.py"` ran 501 tests, OK. `bash game/tools/run_tests.sh` passed 1419 of 1419, including `test_level_up_screen.gd`.
+
+**Screenshots** (`art-archive/T-303/screenshots/`), taken from the open level-up screen in the game with two cards:
+- `level_up_screen_first_card.png`: the highlight on the first card. Fixture `res://tests/fixtures/level_up_screen_demo.tscn`.
+- `level_up_screen_second_card.png`: the highlight on the second card. New fixture `res://tests/fixtures/level_up_screen_second_card_demo.tscn`, which uses a new `highlight_moves` export on `level_up_screen_demo.gd`. It skips the build-up animation, then moves the highlight.
+- `old_vs_new_pieces_x2.png`: the red and gold pieces beside the green ones, at 2x.
+
+**Documents updated:** `docs/visual-style.md` (Decisions, the level-up screen's look) and `game/README.md` ("Level-up screen art", how the pieces are built now).
+
+**Refusals:** the earlier session's style loop runs list refused Bash commands in the Style review: chained `&&` and `python -c` checks, a `/tmp` read and pytest. In each case the agent used the approved commands instead, and nothing essential was blocked. Nothing was refused in this session.
