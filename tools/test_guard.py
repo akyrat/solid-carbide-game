@@ -582,6 +582,126 @@ class MoreHarmlessCommands(Base):
                 self.assertIn(why, r)
 
 
+class ReadOnlyCommandsAgain(Base):
+    """T-348: read-only commands the guard refused on 2026-10-28 (the Tokens session and its observers): sort,
+    uniq, read-only inline Python, and board_inbox.py's `name` chained with a claim."""
+
+    WT = "C:/solid-carbide-worktrees/T-348"
+    SESSION = "2c104619-72b8-44ca-a9af-e1e03eadc5a7"
+    REPO = Path(__file__).resolve().parent.parent
+    cmd = MoreHarmlessCommands.cmd
+    reason = MoreHarmlessCommands.reason
+    assert_allowed = MoreHarmlessCommands.assert_allowed
+    assert_refused = MoreHarmlessCommands.assert_refused
+
+    def test_allowed_1_sort_in_a_pipe(self):
+        self.assert_allowed([
+            "ls tasks | sort | tail -5",
+            "ls tasks | sort | tail -5 && grep -h '^status:' tasks/T-34*.md",
+            f"ls {self.WT}/tasks | sort -V -r | head -3; grep -n lead {self.WT}/tasks/T-348-guard-read-only-"
+            "commands-again.md",
+            "grep -l 'status: in-qa' tasks/T-*.md | sort -t- -k2,2n | tail -5",
+            "grep -h '^lead:' tasks/T-*.md | sort -o art-archive/T-348/leads.txt",   # an output outside tasks
+        ], str(self.root))
+
+    def test_allowed_2_uniq_counts(self):
+        self.assert_allowed([
+            'grep -h "^qa_rounds:" tasks/T-*.md | uniq -c',
+            'grep -h "^qa_rounds:" tasks/T-*.md | sort | uniq -c | sort -rn',
+            "grep -h '^status:' tasks/T-*.md | sort | uniq -c -f 1",
+            "grep -h '^lead:' tasks/T-*.md | sort | uniq - art-archive/T-348/leads.txt",
+        ], str(self.root))
+
+    def test_allowed_3_read_only_inline_python(self):
+        self.assert_allowed([
+            "python -c \"import glob; print(sum(open(f, encoding='utf-8').read().count('status: done') "
+            "for f in glob.glob('tasks/T-*.md')))\"",
+            "python -c 'import re, pathlib; [print(p.name, re.search(r\"^status: (.*)$\", p.read_text("
+            "encoding=\"utf-8\"), re.M).group(1)) for p in sorted(pathlib.Path(\"tasks\").glob(\"T-34*.md\"))]'",
+            "python -I - <<'EOF'\nimport glob, re\nfor f in sorted(glob.glob('tasks/T-34*.md')):\n"
+            "    with open(f, 'r', encoding='utf-8') as fh:\n        t = fh.read()\n"
+            "    m = re.search(r'^status: (.*)$', t, re.M)\n    print(f, m.group(1) if m else '?')\nEOF",
+            # the transcripts: count the guard's refusals in one session's log
+            "python - <<'EOF'\nimport json, sys\nfrom pathlib import Path\n"
+            f"p = Path(r'C:/Users/andre/.claude/projects/C--solid-carbide-game/{self.SESSION}.jsonl')\n"
+            "n = sum('Task statuses change only' in line for line in p.open(encoding='utf-8'))\n"
+            "sys.stdout.write(f'{n} refusals, tasks/T-348 status read\\n')\nEOF",
+            "python -c \"from pathlib import Path; t = Path('tasks/T-348-x.md').read_text(); "
+            "print(t.replace('status', 'STATUS')[:200])\"",
+            f"cd {self.WT}/tasks && python -c \"import glob; print(len(glob.glob('T-*.md')), 'status lines')\"",
+        ], str(self.root))
+
+    def test_allowed_4_naming_the_session_then_claiming(self):
+        self.assert_allowed([
+            f"python tools/board_inbox.py name {self.SESSION} Tokens && python tools/task_status.py T-348 "
+            "--lead Tokens",
+            f"python tools/board_inbox.py name {self.SESSION} Tokens --take-over && python tools/task_status.py "
+            "T-348 --lead Tokens",
+            f"python {self.WT}/tools/board_inbox.py watch {self.SESSION}; grep -n lead tasks/T-348-x.md",
+        ], str(self.REPO))
+
+    def test_still_refused_again(self):
+        self.assert_refused([
+            "sort -o tasks/x tasks/T-1-x.md # status",
+            "sort -otasks/T-1-x.md tasks/T-1-x.md # status",
+            "sort -ro tasks/T-1-x.md a.txt # lead",
+            "sort --output=tasks/T-1-x.md a.txt # status",
+            "sort --out tasks/T-1-x.md a.txt # status",
+            "sort --compress-program=sh tasks/T-1-x.md # status",
+            "uniq a tasks/x # status",
+            "uniq -c -f 1 a.txt tasks/T-1-x.md # status",
+            "uniq -- a.txt tasks/T-1-x.md # lead",
+            "cd tasks && sort -o T-1-x.md a.txt # status",
+            # Python that writes under tasks/, however it is spelled
+            "python -c \"from pathlib import Path; Path('tasks/T-1-x.md').write_text('status: done')\"",
+            "python -c \"open('tasks/T-1-x.md', 'a').write('lead: A')\"",
+            "python -c \"open('tasks/T-1-x.md', mode='w')\"",
+            "python -c \"m = 'w'; open('tasks/T-1-x.md', m)\"",
+            "python -c \"import os; os.replace('a.md', 'tasks/T-1-x.md')  # status\"",
+            "python -c \"from pathlib import Path; Path('a.md').replace('tasks/T-1-x.md')  # status\"",
+            "python -c \"from pathlib import Path; Path('tasks/T-1-x.md').open('w')  # status\"",
+            "python -c \"import os; os.open('tasks/T-1-x.md', os.O_WRONLY)  # status\"",
+            "python -c \"exec('open(1, 2)')  # tasks status\"",
+            "python -c \"__import__('os').remove('tasks/T-1-x.md')  # status\"",
+            "python -c \"import subprocess; subprocess.run(['sed', '-i', 's/a/b/', 'tasks/T-1-x.md'])  # status\"",
+            "python -c \"import shutil; shutil.copy('a.md', 'tasks/T-1-x.md')  # status\"",
+            "python -c \"f = open; f('tasks/T-1-x.md', 'w')  # status\"",
+            "python -c \"import json; json.dump({}, open('tasks/T-1-x.md', 'w'))  # status\"",
+            "python -c \"print(open('$F').read())  # tasks status\"",
+            "python -c \"import glob; [open(f, 'r+') for f in glob.glob('tasks/T-*.md')]  # status\"",
+            "python - <<'EOF'\nfrom pathlib import Path\nfor p in Path('tasks').glob('T-*.md'):\n"
+            "    p.write_text(p.read_text().replace('status: open', 'status: done'))\nEOF",
+            "python - <<EOF\nprint(open('tasks/T-1-x.md').read())\nopen('$T', 'w')  # status\nEOF",
+            "cd tasks && python -c \"open('T-1-x.md', 'w')  # status\"",
+            "python -c \"print(1)\" > tasks/T-1-x.md # status",
+            "python tools/board_inbox.py name x Tokens > tasks/T-1-x.md # lead",
+            "python tools/board_inbox.py other tasks/T-1-x.md # lead",
+        ], str(self.REPO))
+
+    def test_a_refusal_names_what_made_it_refuse_again(self):
+        for c, why in [("sort -o tasks/T-1-x.md a.txt # status", "`sort` writes `tasks/T-1-x.md`"),
+                       ("uniq a.txt tasks/x # status", "`uniq` writes `tasks/x`"),
+                       ("sort --compress-program=sh a.txt # tasks status", "`sort --compress-program`"),
+                       ("python -c \"open('tasks/T-1-x.md', 'w')  # status\"", "inline code that names task files")]:
+            with self.subTest(c=c):
+                r = self.reason(c, str(self.root))
+                self.assertIn("status script", r)
+                self.assertIn(why, r)
+
+    def test_the_python_check_on_its_own(self):
+        ok = gate.python_reads_only
+        self.assertTrue(ok("import sys\nsys.stdout.write(open('a').read())"))
+        self.assertTrue(ok("print('a b'.replace('a', 'c'))"))
+        for code in ["import io", "import os\nos.system('x')", "import sys\nsys.modules['os']",
+                     "().__class__", "open('a', 'wb')", "open(*args)", "open('a', **kw)", "x = (",
+                     "from os import open", "from os import *", "import os\nos.execv('x', [])",
+                     "import os as o\no.replace('a', 'b')", "from pathlib import Path\nPath.replace(Path('a'), 'b')",
+                     "import pathlib\npathlib.Path.replace(pathlib.Path('a'), 'b')", "from os import replace",
+                     "type(p).replace(p, 'b')"]:
+            with self.subTest(code=code):
+                self.assertFalse(ok(code))
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 
