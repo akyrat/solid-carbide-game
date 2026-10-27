@@ -1,7 +1,7 @@
 ---
 id: G-005
 title: Build the level creator described in docs/level-design.md, Decision...
-status: ready-to-play
+status: done
 art_cap: 0
 art_used: 0
 iteration: 11

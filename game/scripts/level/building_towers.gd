@@ -23,6 +23,9 @@ const TOWERS := 6
 const VARIANTS := 2
 ## Short building bodies (task T-129): 4 designs x 2 looks.
 const SHORT_BODIES := 8
+## The small and long buildings' art data (T-254).
+const BODY_DIR := "res://art/buildings/"
+const PIECES_PATH := "res://data/level/creator_buildings.json"
 
 ## One placed skyscraper: {si, sj, tower (0..5), variant (0..1), body (index), position (screen px)}.
 var plan: Array = []
@@ -94,6 +97,96 @@ static func short_outline(w: float, h: float) -> Array:
 		Vector2(w * 0.5, h + 1.0), Vector2(0.0, h - drop + 1.0), Vector2(0.0, drop - 1.0)]
 
 
+## The one tower of a building placed in the level creator (T-235), from its map entry's "asset"
+## (a catalogue id, data/level/creator_assets.json) and "look" (which of its textures, default 0):
+## {short, index} with index into the art's bodies (skyscrapers) or short bodies. {} for a map
+## entry without an asset (a whole block of four, as on today's map) or an unknown asset.
+## Skyscraper "skyscraper-N" look L is body (N - 1) * 2 + L; short "short-N" look L is short body 2N + L.
+static func single_of(entry: Dictionary) -> Dictionary:
+	var asset := str(entry.get("asset", ""))
+	var look := int(entry.get("look", 0))
+	if asset.begins_with("building-"):
+		var piece := piece_of(entry)
+		return {"short": true, "index": 0, "piece": piece} if not piece.is_empty() else {}
+	if asset.begins_with("skyscraper-") and asset.trim_prefix("skyscraper-").is_valid_int():
+		var n := int(asset.trim_prefix("skyscraper-"))
+		if n >= 1 and n <= TOWERS and look >= 0 and look < VARIANTS:
+			# T-265: a creator skyscraper shows its banner (the vertical sign painted into the body art) only
+			# when the entry says "banner": true; without the key it is off.
+			return {"short": false, "index": (n - 1) * VARIANTS + look, "banner": bool(entry.get("banner", false))}
+	elif asset.begins_with("short-") and asset.trim_prefix("short-").is_valid_int():
+		var n := int(asset.trim_prefix("short-"))
+		if n >= 0 and 2 * n + look < SHORT_BODIES and look >= 0 and look < 2:
+			return {"short": true, "index": 2 * n + look}
+	return {}
+
+
+## The same skyscraper body without its banner (T-265): `art/buildings/nobanner/` holds the 12 bodies made by
+## game/tools/build_skyscrapers_nobanner.py (the build with the sign left out). "" for another path.
+static func nobanner_path(path: String) -> String:
+	if not path.begins_with(BODY_DIR + "skyscraper_"):
+		return ""
+	return path.replace(BODY_DIR, BODY_DIR + "nobanner/")
+
+
+## The small and long buildings of the level creator (T-254; data/level/creator_buildings.json): for a
+## map entry {asset, look, w, h} the art that fits its footprint and look: {texture, anchor, height_units}
+## (anchor = the image pixel on the footprint's front corner). {} for an unknown piece or a size no art has.
+static func piece_of(entry: Dictionary) -> Dictionary:
+	var data = JSON.parse_string(FileAccess.get_file_as_string(PIECES_PATH))
+	if not (data is Dictionary):
+		return {}
+	var w := float(entry.get("w", 0))
+	var h := float(entry.get("h", 0))
+	var look := int(entry.get("look", 0))
+	for p in data.get("pieces", []):
+		if str(p.id) != str(entry.get("asset", "")):
+			continue
+		for t in p.textures:
+			var f: Array = t.footprint_units
+			if float(f[0]) == w and float(f[1]) == h and int(str(t.variant)) == look:
+				return {"texture": str(t.texture), "anchor": Vector2(float(t.anchor_art_px[0]), float(t.anchor_art_px[1])),
+					"height_units": float(p.height_units)}
+	return {}
+
+
+## One piece of the creator's small or long buildings (piece_of): a single fade node with its sprite.
+func _setup_piece(piece: Dictionary, footprint_units: Rect2) -> void:
+	pavement_root = Node2D.new()
+	pavement_root.name = "Pavements"
+	var tex := load_texture(str(piece.texture))
+	var pos := ISO_TRANSFORM * (footprint_units.end * PX_PER_UNIT) - (piece.anchor as Vector2) * SPRITE_SCALE
+	var node = MapBuilding.new()
+	node.name = "Piece"
+	node.footprint = footprint_units
+	node.height_units = float(piece.height_units)
+	node.draw_placeholder = false
+	var art_node := Node2D.new()
+	art_node.name = "Art"
+	var sp := Sprite2D.new()
+	sp.name = "Sprite"
+	sp.texture = tex
+	sp.centered = false
+	sp.position = pos
+	sp.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
+	art_node.add_child(sp)
+	node.add_child(art_node)
+	node.towers = art_node
+	# The fade outline is the art's own bounding hexagon (a box: roof diamond on top, walls down to the front corner).
+	var a := ISO_TRANSFORM * (footprint_units.position * PX_PER_UNIT)
+	var b := ISO_TRANSFORM * (Vector2(footprint_units.end.x, footprint_units.position.y) * PX_PER_UNIT)
+	var c := ISO_TRANSFORM * (footprint_units.end * PX_PER_UNIT)
+	var d := ISO_TRANSFORM * (Vector2(footprint_units.position.x, footprint_units.end.y) * PX_PER_UNIT)
+	var up := Vector2(0.0, -float(piece.height_units) * PX_PER_UNIT)
+	outline = Geometry2D.convex_hull(PackedVector2Array([a + up, b + up, c + up, d + up, b, c, d]))
+	if not outline.is_empty() and outline[0] == outline[outline.size() - 1]:
+		outline.remove_at(outline.size() - 1)
+	node.custom_silhouette = outline
+	tallest_units = float(piece.height_units)
+	slot_nodes.append(node)
+	plan = []
+
+
 static func load_texture(path: String) -> Texture2D:
 	var t := load(path) as Texture2D
 	if t != null:
@@ -103,8 +196,12 @@ static func load_texture(path: String) -> Texture2D:
 
 
 ## Builds the pavement sprites and the slot nodes. `footprint_units` is the block's footprint (units from the map's centre).
-func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
+## With `single` (single_of, T-235) it builds one tower standing on the footprint itself, with no pavement.
+func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2, single: Dictionary = {}) -> void:
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if single.has("piece"):
+		_setup_piece(single.piece, footprint_units)
+		return
 	var slot := float(art.slot_units)
 	var foot := float(art.foot_units)
 	var margin := float(art.margin_units)
@@ -117,6 +214,12 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		for p in art.short.bodies:
 			short_texs.append(load_texture(str(p)))
 	plan = make_plan(roundi(footprint_units.position.x), roundi(footprint_units.position.y))
+	if not single.is_empty():
+		var idx := int(single.index)
+		plan = [{"si": 0, "sj": 0, "tower": idx / VARIANTS, "variant": idx % VARIANTS, "body": idx,
+			"short": bool(single.short), "short_body": idx}]
+		# The tower's footprint is the entry's rectangle: the slot starts a margin before it.
+		footprint_units = Rect2(footprint_units.position - Vector2(margin, margin), footprint_units.size)
 	plan.sort_custom(func(p, q):
 		var a: int = p.si + p.sj
 		var b: int = q.si + q.sj
@@ -135,7 +238,10 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		pv.centered = false
 		pv.position = ISO_TRANSFORM * (origin * PX_PER_UNIT) - Vector2(float(pv.texture.get_width()) * 0.5, 0.0) * SPRITE_SCALE
 		pv.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
-		pavement_root.add_child(pv)
+		if single.is_empty():
+			pavement_root.add_child(pv)
+		else:
+			pv.free()
 		var foot_rect := Rect2(origin + Vector2(margin, margin), Vector2(foot, foot))
 		var is_short: bool = e.short and not short_texs.is_empty()
 		var short_tex: Texture2D = short_texs[e.short_body] if is_short else null
@@ -160,7 +266,10 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		art_node.name = "Art"
 		var sp := Sprite2D.new()
 		sp.name = "Sprite"
-		sp.texture = short_tex if is_short else load_texture(str(art.bodies[e.body]))
+		var body_path := str(art.bodies[e.body])
+		if not single.is_empty() and not bool(single.short) and not bool(single.get("banner", false)):
+			body_path = nobanner_path(body_path) if nobanner_path(body_path) != "" else body_path
+		sp.texture = short_tex if is_short else load_texture(body_path)
 		sp.centered = false
 		sp.position = pos
 		sp.scale = Vector2(SPRITE_SCALE, SPRITE_SCALE)
@@ -170,6 +279,8 @@ func setup(art: Dictionary, _atlas: Texture2D, footprint_units: Rect2) -> void:
 		slot_nodes.append(node)
 		e["position"] = pos
 	tallest_units = float(art.height_units)
+	if not single.is_empty() and bool(single.short) and art.has("short"):
+		tallest_units = float(art.short.height_units)
 	outline = Geometry2D.convex_hull(points)
 	if not outline.is_empty() and outline[0] == outline[outline.size() - 1]:
 		outline.remove_at(outline.size() - 1)

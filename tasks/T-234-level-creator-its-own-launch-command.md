@@ -1,7 +1,7 @@
 ---
 id: T-234
 title: Level creator: its own launch command and the level list screen
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/README.md, game/data/level/creator_texts.json, game/scripts/level/level_store.gd, game/scripts/menu/main_menu.gd, game/scripts/game/game_flow.gd, game/project.godot]
 files_expected_to_change: [game/scenes/level_creator/level_creator.tscn, game/scripts/level_creator/level_creator.gd, game/scripts/level_creator/level_list_screen.gd, game/scenes/level_creator/editor.tscn, game/scripts/level_creator/editor.gd, game/tests/unit/level_creator/test_level_list.gd, game/tests/unit/level_creator/test_creator_texts_only.gd, game/tools/level_creator.ps1, game/tools/level_creator.sh, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,18 +37,36 @@ The board's review: Open the level creator with the README's command and look at
 
 ## Acceptance criteria
 
-- [ ] The command in game/README.md, 'Level creator', opens the creator scene; the scene runs headless (tools/run_scene_headless.py) with no errors in the log. (QA: pass / fail)
-- [ ] grep finds no reference to level_creator in game/scripts/menu/, game/scripts/game/ or game/scenes/menu/; project.godot's main scene is unchanged; any export_presets.cfg excludes the creator's folders, and the README says they must be excluded. (QA: pass / fail)
-- [ ] A unit test with no levels: the list screen shows only the new-level button. A unit test with two saved levels (in a temporary folder): both are listed by name, each with a play and an edit action. (QA: pass / fail)
-- [ ] A unit test: pressing new level opens the editor scene with an empty map; pressing edit on a level opens the editor with that level's data loaded. (QA: pass / fail)
-- [ ] Every label on the screen is from game/data/level/creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings passes. (QA: pass / fail)
-- [ ] Screenshots of the empty list and of a list with levels are in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] The full GUT suite passes. (QA: pass / fail)
+- [ ] The command in game/README.md, 'Level creator', opens the creator scene; the scene runs headless (tools/run_scene_headless.py) with no errors in the log. (QA: pass)
+- [ ] grep finds no reference to level_creator in game/scripts/menu/, game/scripts/game/ or game/scenes/menu/; project.godot's main scene is unchanged; any export_presets.cfg excludes the creator's folders, and the README says they must be excluded. (QA: pass)
+- [ ] A unit test with no levels: the list screen shows only the new-level button. A unit test with two saved levels (in a temporary folder): both are listed by name, each with a play and an edit action. (QA: pass)
+- [ ] A unit test: pressing new level opens the editor scene with an empty map; pressing edit on a level opens the editor with that level's data loaded. (QA: pass)
+- [ ] Every label on the screen is from game/data/level/creator_texts.json, and the test that scans the creator's scripts for hard-coded label strings passes. (QA: pass)
+- [ ] Screenshots of the empty list and of a list with levels are in art-archive/<this task's id>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] The full GUT suite passes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Blocked → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-234.
+
+### 2026-10-21, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-21, In QA → Needs playtest
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Built the creator's main scene (`scenes/level_creator/level_creator.tscn`, `scripts/level_creator/level_creator.gd`), the list screen (`level_list_screen.gd`), a stub editor (`editor.tscn`/`editor.gd`: empty map for new, loaded file for edit, a Back button), `CreatorTexts` (reads `creator_texts.json`), launch scripts `game/tools/level_creator.sh` and `.ps1`, and the README section (command, export exclusions; no export_presets.cfg exists). Play emits `LevelCreator.play_requested(path)`. Placeholder look, no Redgull red.
+
+- Tests: `tests/unit/level_creator/test_level_list.gd` (empty list, two levels, new, edit, back, play) and `test_creator_texts_only.gd` (scan for hard-coded labels, and that every key used exists). Full GUT suite: 1321 passing, none failing. `run_scene_headless.py` on the scene: no errors. grep for level_creator in scripts/menu, scripts/game, scenes/menu, project.godot: nothing.
+- Screenshots (`art-archive/T-234/screenshots/`): `list-empty.png`, `list-filled.png` (two temporary levels, since removed; no levels are committed).
+- No PixelLab used. No refusals.
+- 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.

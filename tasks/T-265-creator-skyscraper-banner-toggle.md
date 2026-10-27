@@ -1,7 +1,7 @@
 ---
 id: T-265
 title: "Level creator: skyscraper banners on or off, off by default"
-status: blocked
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/building_towers.gd, game/scripts/level/map_building.gd, game/art/banners/, game/scripts/level_creator/, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-265/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,9 +37,9 @@ Built on T-262's branch (the Project Lead makes your folder). End with a screens
 
 ## Acceptance criteria
 
-- [ ] Tests show a creator skyscraper places with no banner by default, B turns it on and off, and the choice is saved, reopened and drawn in a run (QA: pass / fail)
-- [ ] The game's own map still shows its banners as before (a test) (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-265/screenshots/`; `game/README.md` describes the toggle; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show a creator skyscraper places with no banner by default, B turns it on and off, and the choice is saved, reopened and drawn in a run (QA: pass; test_creator_banners.gd 10 tests cover default off, B toggle, save, reopen, draw in a map)
+- [ ] The game's own map still shows its banners as before (a test) (QA: pass; own-map test present and the full suite passes; original art untouched)
+- [ ] The screenshot is in `art-archive/T-265/screenshots/`; `game/README.md` describes the toggle; the full GUT suite and all Python tool tests pass (QA: pass; screenshot shows 6 plain and 2 signed, README and level-design updated, GUT all passed, game/tools 486 OK, tools 451 OK, no art deleted)
 
 The board's review: place skyscrapers with and without banners.
 Board review files: the screenshot in `art-archive/T-265/screenshots/`.
@@ -48,6 +48,31 @@ Board review files: the screenshot in `art-archive/T-265/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Blocked → In progress
+
+Started on T-264's branch: skyscraper banners on or off, off by default.
+
+### 2026-10-23, In progress → In QA
+
+Built: skyscrapers place without their sign by default, B turns it on. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the creator build: place skyscrapers with and without their sign (B). T-272 starts on it.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done on T-264's branch; sent to QA. No PixelLab, nothing deleted.
+
+- **Where the banner comes from:** it is baked into the skyscraper art. The vertical neon sign is painted into every one of the 12 bodies (`build_skyscrapers.py` `place_sign`, T-064, `build_city.py`); `art/banners/` (T-130) is a different thing, the game map's kaiju alert signs, which the creator's map never builds. So I made sign-less copies by script: `game/tools/build_skyscrapers_nobanner.py` runs the same build from the same raw pieces with an empty sign and writes `game/art/buildings/nobanner/skyscraper_N_K.png` (12 files). `--check` rebuilds the originals and confirms they equal the art in the game pixel for pixel, so the copies differ only in the sign. The originals are untouched.
+- **Data and drawing:** a skyscraper in `buildings` gets `"banner": true|false` (written explicitly, off by default; other buildings never get the key). `BuildingTowers.single_of` passes it on; `setup` draws `nobanner/` when it is not true. The game's own map (whole blocks, no `asset`) goes through none of this and keeps its 4 banners, 2 signs and signed bodies (a test).
+- **Controls:** B in `editor.gd` `KEY_ACTIONS` (`banner_pick`); top bar buttons "Banner on" / "Banner off" (T-261's labels) show with a skyscraper picked or selected. B sets the next skyscraper placed; with nothing picked and a skyscraper selected it changes that building and redraws. The preview shows the choice.
+- **Earlier saved levels (my proposal):** a skyscraper with no `banner` key opens with the banner off.
+- **Not done:** the small pictures in the Looks strip and the panel button still show the signed art (they are the family's catalogue textures); only the map and the placement preview follow the choice.
+- **Tests:** `tests/unit/level_creator/test_creator_banners.gd` (10 tests: plain bodies differ only in the sign; off by default; B on and off with the buttons; other pieces; selected building; preview; saved, reopened and drawn in a map built from the file; earlier level without the key; the game's own map keeps its banners). `test_editor_place_delete.gd` updated for the explicit `banner: false` and the plain texture. `tools/test_build_skyscrapers_nobanner.py`. Full GUT suite 1561 of 1561 (the first run exited 139, the rerun passed); `game/tools` 486 OK; `tools` 451 OK.
+- **Screenshot:** `art-archive/T-265/screenshots/banners.png` (six towers with the banner off, two with it on; fixture `tests/fixtures/level_creator_banners_demo.gd`).
+- **Documents:** `game/README.md` ("Skyscraper banners on or off (T-265)"), `docs/level-design.md` ("Level creator: skyscraper banners on or off").
+- **Process slip:** I patched `building_towers.gd` and two test files with short inline python heredocs instead of Edit; the content is the same as an Edit would give.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.

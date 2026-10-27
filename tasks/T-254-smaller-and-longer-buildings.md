@@ -1,7 +1,7 @@
 ---
 id: T-254
 title: "Level creator: smaller and longer buildings"
-status: blocked
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/map_building.gd, game/scripts/level/building_towers.gd, game/scripts/level_creator/, game/tools/build_creator_assets.py]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/tools/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-254/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -37,9 +37,9 @@ Built on the level creator's build: the Project Lead makes your folder from `pla
 
 ## Acceptance criteria
 
-- [ ] Tests show the small and long buildings (both rotations) can be placed, saved, reopened and pass `check_level.py`, collide with the car and are pathed round by enemies (QA: pass / fail)
-- [ ] Their art per rotation lives in one data file; labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass / fail)
-- [ ] The screenshot is in `art-archive/T-254/screenshots/`; `game/README.md` describes them; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show the small and long buildings (both rotations) can be placed, saved, reopened and pass `check_level.py`, collide with the car and are pathed round by enemies (QA: pass; test_small_long_buildings.gd covers place/save/reopen/check_level/car wall/enemy path, full GUT 1381/1381)
+- [ ] Their art per rotation lives in one data file; labels from `creator_texts.json`; no Redgull red; the game's own map unchanged (QA: pass; creator_buildings.json holds art per rotation, labels in creator_texts.json, no Redgull red in code/data, no game map data changed)
+- [ ] The screenshot is in `art-archive/T-254/screenshots/`; `game/README.md` describes them; the full GUT suite and all Python tool tests pass (QA: pass; screenshot shows small, long both rotations beside tall and short buildings; README updated; GUT 1381 ok, tools 439 ok, game/tools 422 ok)
 
 The board's review: place the new buildings and drive round them.
 Board review files: the screenshot in `art-archive/T-254/screenshots/`.
@@ -48,6 +48,29 @@ Board review files: the screenshot in `art-archive/T-254/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Blocked → In progress
+
+Started: a small square building and a long building for the creator, placeholder look first.
+
+### 2026-10-22, In progress → In QA
+
+Built: a small 6x6 building and a long 12x6 one (6x12 rotated), placeholder boxes in the city palette. Sent to QA.
+
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the creator: place the small and long buildings and drive round them. T-257 (their art) starts on this branch.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built (Level/Challenge agent, 2026-10-22):
+- **Pieces:** `building-small` (6 x 6) and `building-long` (12 x 6, views `ew`; 6 x 12, view `ns`, by Rotate), each with a mirror (second window pattern, written as the building's `look`). Labels `building_small` / `building_long` from `creator_texts.json` on their panel buttons.
+- **One data file** for the art per rotation and mirror: `game/data/level/creator_buildings.json` (texture, `footprint_units` of that view, `anchor_art_px`). The catalogue builder (`build_creator_assets.py`, one small function `piece_building_entries`) copies it in; T-257 swaps paths and anchors there. Placeholder PNGs in `game/art/buildings/creator/`, drawn by `game/tools/build_creator_buildings.py` (palette B, pale lit windows, no Redgull red; `--check` verifies).
+- **Code:** `LevelDocument.footprint_of` (a texture's own footprint wins), used by `place`, `LevelSnapping.placement` and the editor preview; `BuildingTowers.piece_of` / `_setup_piece` draw a map entry whose asset is one of them (a MapBuilding fade node with a box outline). Walls and pathfinding read the entry's `w`/`h`, unchanged. The game's own map is unchanged.
+- **Proposal for the board:** height **4.3 units** for both (same as today's short buildings).
+- **Tests:** `tests/unit/level_creator/test_small_long_buildings.gd` (8: catalogue, data file, labels, place/save/reopen/`check_level.py`, mirror look, car wall per footprint, fade, enemy path round), `tools/test_build_creator_buildings.py`, updated `test_build_creator_assets.py`. Full GUT suite: 1381/1381 passed. Python: game/tools 422 tests OK (1 skipped), tools 439 tests OK.
+- **Screenshot:** `art-archive/T-254/screenshots/new_buildings.png` (skyscraper, short building, small, long, long rotated; fixture `tests/fixtures/level_creator_buildings_demo.tscn`). Looked at it: boxes read as buildings, both long rotations right, sit on their footprints.
+- **Documents:** `game/README.md` (Level creator section), `docs/level-design.md` (Decisions).
+- No refusals.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.

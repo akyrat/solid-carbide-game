@@ -343,6 +343,26 @@ func add_airtime_trick(seconds: float) -> void:
 		combo_changed.emit(combo)
 
 
+## The thread the needle trick's id (task T-272): the popup's key and combo.json's trick_add key.
+const TRICK_THREAD_THE_NEEDLE := "thread_the_needle"
+
+
+## The car threaded a pair of obstacles (task T-272; the run scene connects
+## thread_the_needle.gd's `threaded`). The combo goes up by combo.json's
+## trick_add.thread_the_needle, like add_trick, and the popup gets combo_trick
+## with the id "thread_the_needle".
+func add_needle_trick() -> void:
+	if not running:
+		return
+	var before := combo
+	combo = minf(combo + _combo_data.trick_add(TRICK_THREAD_THE_NEEDLE), _combo_data.max_multiplier())
+	combo_idle = 0.0
+	likes_drain_idle = 0.0
+	combo_trick.emit(TRICK_THREAD_THE_NEEDLE, combo - before, combo)
+	if combo != before:
+		combo_changed.emit(combo)
+
+
 ## The car collided with something (the run scene connects the car's
 ## `hit_obstacle`; damage_car() calls it too): the combo is cut as combo.json
 ## says (80% of the part above the start value). Ignored when the run is not

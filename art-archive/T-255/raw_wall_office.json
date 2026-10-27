@@ -1,0 +1,37 @@
+{
+  "file": "raw_wall_office.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "seamless tileable flat front view of an office building wall at night, cool blue-grey concrete with a regular grid of windows, most windows pale white-blue lit, a few warm amber, a few dark, light overall, pixel art",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": false,
+    "outline": "lineless",
+    "shading": "medium shading",
+    "detail": "medium detail"
+  },
+  "prompt": "seamless tileable flat front view of an office building wall at night, cool blue-grey concrete with a regular grid of windows, most windows pale white-blue lit, a few warm amber, a few dark, light overall, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-22T09:35:01+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-198/requests"
+  ],
+  "task": "T-255",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

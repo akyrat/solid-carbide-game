@@ -48,6 +48,19 @@ func airtime_add(seconds: float) -> float:
 		return 0.0
 	return snappedf(minf(s * float(a["per_second"]), float(a["max_add"])), 0.01)
 
+## The thread the needle trick's rules (task T-272; combo.json, "thread_the_needle"):
+## {repeat_seconds, counts_in_air, touch_window_seconds, clear_seconds}. Its worth is
+## trick_add("thread_the_needle").
+func needle_rules() -> Dictionary:
+	var n: Dictionary = _data.get("thread_the_needle", {})
+	return {
+		"repeat_seconds": float(n.get("repeat_seconds", 3.0)),
+		"counts_in_air": bool(n.get("counts_in_air", true)),
+		"touch_window_seconds": float(n.get("touch_window_seconds", 0.5)),
+		"clear_seconds": float(n.get("clear_seconds", 0.25)),
+	}
+
+
 ## Shortest drift that pays, in seconds (drift_pay.min_seconds, task T-246).
 func drift_min_seconds() -> float:
 	return float(_data["drift_pay"]["min_seconds"])

@@ -1,7 +1,7 @@
 ---
 id: T-232
 title: Level creator: a catalogue of every placeable asset already in the game, built by script
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/art/buildings/skyscrapers.json, game/art/boulders/boulders.json, game/art/ground/ground_atlas.json, game/art/elevation_sample/roof-nw-3.json, game/art/elevation_sample/ramp-nw-0-3.json, game/scripts/level/mvp_map.gd, game/scripts/level/elevation_platform_drawing.gd, game/data/level/elevation_sample_map.json]
 files_expected_to_change: [game/tools/build_creator_assets.py, game/tools/test_build_creator_assets.py, game/data/level/creator_assets.json, game/tests/unit/test_creator_assets.gd, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -35,18 +35,35 @@ The level creator's side panel offers every asset already in the game (Level des
 
 ## Acceptance criteria
 
-- [ ] python game/tools/build_creator_assets.py writes game/data/level/creator_assets.json; running it twice gives the same file. (QA: pass / fail)
-- [ ] Each catalogue entry has an id, a kind (ground, road, building, boulder, rooftop or ramp), a footprint in units, its views and mirrors, and texture paths; rooftop entries exist at heights 3 and 6, ramp entries for 0 to 3 and 3 to 6. (QA: pass / fail)
-- [ ] A GUT test passes that checks every texture the catalogue names exists under game/art/, and that every building, boulder, ground and elevation texture the map and elevation layer draw today appears in the catalogue. (QA: pass / fail)
-- [ ] The script's Python tests pass. (QA: pass / fail)
-- [ ] git diff shows no PNG under game/art/ added or changed. (QA: pass / fail)
-- [ ] game/README.md, 'Level creator', says how to rebuild the catalogue. (QA: pass / fail)
-- [ ] The result notes say in one line that there is nothing to screenshot (data). (QA: pass / fail)
+- [ ] python game/tools/build_creator_assets.py writes game/data/level/creator_assets.json; running it twice gives the same file. (QA: pass)
+- [ ] Each catalogue entry has an id, a kind (ground, road, building, boulder, rooftop or ramp), a footprint in units, its views and mirrors, and texture paths; rooftop entries exist at heights 3 and 6, ramp entries for 0 to 3 and 3 to 6. (QA: pass)
+- [ ] A GUT test passes that checks every texture the catalogue names exists under game/art/, and that every building, boulder, ground and elevation texture the map and elevation layer draw today appears in the catalogue. (QA: pass)
+- [ ] The script's Python tests pass. (QA: pass)
+- [ ] git diff shows no PNG under game/art/ added or changed. (QA: pass)
+- [ ] game/README.md, 'Level creator', says how to rebuild the catalogue. (QA: pass)
+- [ ] The result notes say in one line that there is nothing to screenshot (data). (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-21, Open → In progress
+
+Goal runner (G-005): started, in C:\solid-carbide-worktrees\T-232.
+
+### 2026-10-21, In progress → In QA
+
+Goal runner (G-005): the agent is done; QA is checking it.
+
+### 2026-10-21, In QA → Done
+
+Goal runner (G-005): QA passed; merged into playtest/G-005.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Built `game/tools/build_creator_assets.py`, which reads the art data and writes `game/data/level/creator_assets.json`: 104 entries (3 gravel ground tiles, 84 road tiles from the atlas plus `road_tile.png`, 6 skyscrapers x 2 variants, 4 short buildings x 2 looks (look 1 mirrored), 2 boulders with mirrors, rooftops at height 3 and 6 with views nw/se, ramps 0-3 and 3-6 with views nw/se) plus `building_pavements`. Textures are named as the run draws them: `building_towers.gd` bodies, short bodies and pavements; boulder variants; the ground atlas with each tile's region; `art_dir + area id + .png` for the elevation sample. Footprints: buildings 12 x 12 (`foot_units`), boulders 3 x 3, ground and road 2 x 2, rooftops and ramps from the sample map. Running the script twice gives the same file (checked).
+
+Tests: `game/tools/test_build_creator_assets.py` (8 pass), `game/tests/unit/test_creator_assets.gd` (8 pass: textures exist, map's building, boulder, ground and elevation textures are listed). `game/README.md`, 'Level creator', has the rebuild line. No PNG changed. Documents affected: none.
+
+Screenshots: none, this is data and tooling (nothing on screen).
+- 2026-10-21, in-qa → done: QA passed every criterion (goal G-005).

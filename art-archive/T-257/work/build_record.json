@@ -1,0 +1,92 @@
+{
+ "small_0": {
+  "semi_transparent": 0,
+  "colors": 23,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   384,
+   330
+  ],
+  "anchor": [
+   192,
+   330
+  ]
+ },
+ "small_1": {
+  "semi_transparent": 0,
+  "colors": 20,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   384,
+   330
+  ],
+  "anchor": [
+   192,
+   330
+  ]
+ },
+ "long_ew_0": {
+  "semi_transparent": 0,
+  "colors": 25,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   576,
+   426
+  ],
+  "anchor": [
+   384,
+   426
+  ]
+ },
+ "long_ew_1": {
+  "semi_transparent": 0,
+  "colors": 23,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   576,
+   426
+  ],
+  "anchor": [
+   384,
+   426
+  ]
+ },
+ "long_ns_0": {
+  "semi_transparent": 0,
+  "colors": 22,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   576,
+   426
+  ],
+  "anchor": [
+   192,
+   426
+  ]
+ },
+ "long_ns_1": {
+  "semi_transparent": 0,
+  "colors": 21,
+  "colors_ok": true,
+  "red_ok": true,
+  "has_transparent": true,
+  "size": [
+   576,
+   426
+  ],
+  "anchor": [
+   192,
+   426
+  ]
+ }
+}

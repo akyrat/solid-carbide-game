@@ -36,7 +36,8 @@ extends Node2D
 ## air, and the rooftops, ramps and buildings covering it fade. Enemies,
 ## coins, pickups and effects are drawn at street level (height 0) in the
 ## depth order. Set USE_ELEVATION_MAP to false for the MVP map (mvp_map.json),
-## as before T-206.
+## as before T-206. Since T-230 the map file is `layout_path` (any file in the
+## elevation sample map's format; the sample map by default).
 
 const MapScene := preload("res://scenes/level/mvp_map.tscn")
 const MapScript := preload("res://scripts/level/mvp_map.gd")
@@ -125,6 +126,9 @@ var boost_effect: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
+## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
+## every map; it pays the trick through state.add_needle_trick().
+var needle: ThreadTheNeedle
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
 ## The camera options (task T-123): where the camera is and its size. Off by
@@ -159,6 +163,15 @@ var pickup_magnet: PickupMagnet
 ## Whether the next map built is the elevation map (USE_ELEVATION_MAP by
 ## default). Read by start_run() each time it builds a new map; tests set it.
 var use_elevation_map: bool = USE_ELEVATION_MAP
+## The map file the run plays (task T-230; Level design, Decisions, "Level
+## creator"): a res:// or user:// path to a layout in the elevation sample
+## map's format. Both the map (buildings, boulders, ground) and the elevation
+## layer (rooftops, ramps) are built from it, and the enemies' navigation is
+## built from that map. Set it before the run enters the tree, or before
+## start_run(), or pass it to start_run(); empty means
+## ELEVATION_LAYOUT_PATH (the main menu's run). Read only when
+## use_elevation_map is true.
+var layout_path: String = ELEVATION_LAYOUT_PATH
 ## The map's rooftops and ramps (elevation_layer.gd), a child "Elevation" of
 ## the map; null on the MVP map. A new run's map brings a new one.
 var elevation = null
@@ -284,7 +297,10 @@ func _ready() -> void:
 ## Starts a fresh run: a new map (every challenge open again, when challenges
 ## are on; meteor boulders from the last run gone), the car back
 ## at the start, and the state reset (full health, 8:00, 0 coins).
-func start_run() -> void:
+## `path`, when given, becomes the run's layout_path first (task T-230).
+func start_run(path: String = "") -> void:
+	if path != "":
+		layout_path = path
 	_build_world()
 	world_rebuilt.emit()
 	state.start_run()
@@ -301,8 +317,9 @@ func _build_world() -> void:
 	map = MapScene.instantiate()
 	map.name = "Map"
 	map.challenges_enabled = challenges_enabled
+	var path := current_layout_path()
 	if use_elevation_map:
-		map.layout_path = ELEVATION_LAYOUT_PATH
+		map.layout_path = path
 	add_child(map)
 	move_child(map, 0)  # drawn under the car
 	map.set_view(VIEW)
@@ -312,7 +329,7 @@ func _build_world() -> void:
 		elevation = ElevationLayerScript.new()
 		elevation.name = "Elevation"
 		map.add_child(elevation)
-		elevation.setup(map, ELEVATION_LAYOUT_PATH)
+		elevation.setup(map, path)
 	shadow.visible = elevation != null
 	# Back to the street's drawing until sync_view() places them (T-206).
 	drift_smoke.position = Vector2.ZERO
@@ -335,9 +352,16 @@ func _build_world() -> void:
 
 	car = CarScript.new()
 	car.name = "Car"
-	car.model.x = START_POSITION_UNITS.x
-	car.model.y = START_POSITION_UNITS.y
-	car.model.rotation = START_ROTATION
+	var start := START_POSITION_UNITS
+	var start_rotation := START_ROTATION
+	if LevelSpawn.has_spawn(map.layout):
+		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
+		# height there (car.ground below), facing its heading. The game's own map has none.
+		start = LevelSpawn.position_of(map.layout)
+		start_rotation = LevelSpawn.rotation_of(map.layout)
+	car.model.x = start.x
+	car.model.y = start.y
+	car.model.rotation = start_rotation
 	physics_world.add_child(car)
 	if elevation != null:
 		car.ground = elevation.ground_height  # the car's height on the rooftops and ramps
@@ -362,6 +386,18 @@ func _build_world() -> void:
 	car.trick.connect(func(trick_id: String) -> void: state.add_trick(trick_id, car.tricks.last_trick_seconds))
 	car.airtime_trick.connect(state.add_airtime_trick)
 	car.hit_obstacle.connect(_on_car_hit_obstacle)
+	# Thread the needle (T-272): the level's pairs of obstacles, a faint marker across each gap.
+	needle = ThreadTheNeedle.new(map.layout, ComboData.new().needle_rules())
+	needle.threaded.connect(func(_pair_id: String) -> void: state.add_needle_trick())
+	if not needle.gates.is_empty():
+		var hf := Callable()
+		var df := Callable()
+		if elevation != null:
+			var lay: Node2D = elevation
+			hf = func(units: Vector2) -> float: return lay.ground_height.height_at(units)
+			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
+		needle.build_markers(map, hf, df)
+	car.stepped.connect(_on_car_needle_step)
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car
@@ -371,9 +407,23 @@ func _build_world() -> void:
 	camera.reset_physics_interpolation()
 
 
+## The map file the next map is built from (task T-230): layout_path, or
+## ELEVATION_LAYOUT_PATH when it is empty.
+func current_layout_path() -> String:
+	return layout_path if layout_path != "" else ELEVATION_LAYOUT_PATH
+
+
 ## The car hit a wall, building, map edge or boulder: a collision for the combo.
-func _on_car_hit_obstacle(_collider: Object, _shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+func _on_car_hit_obstacle(collider: Object, shape_index: int, _normal: Vector2, _impact_speed: float) -> void:
+	if needle != null:
+		needle.touched(collider, shape_index)  # T-272: a touch voids a pass through a pair
 	state.collision()
+
+
+## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).
+func _on_car_needle_step() -> void:
+	if needle != null and not needle.gates.is_empty():
+		needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 
 
 ## Feeds the car's drift state to the run's likes after each physics step.

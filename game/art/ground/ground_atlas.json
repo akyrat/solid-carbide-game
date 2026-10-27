@@ -22,6 +22,309 @@
  ],
  "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
  "layout": "game/data/level/mvp_ground.json",
+ "road_pieces": "T-252: the tiles named piece_<piece>_<column><row> are the 2 x 2 tiles (4 x 4 units, the two-tile-wide roads' size) of the corners, T-junctions, crossroads and dead ends listed in pieces, drawn by script from the approved tile; no PixelLab call",
+ "brush_pieces": "T-263: the road brush's tiles, after T-252's: brush_line_<piece>_<asphalt>_<column><row> are T-252's pieces on the asphalts a0m, g6, g9, and brush_plain_<dead end>_<asphalt>_<column><row> the dead ends (kerb, no centre line) of the roads without a line on every asphalt; drawn by script, no PixelLab call",
+ "pieces": [
+  {
+   "name": "piece_corner_ne",
+   "arms": "ne",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    0,
+    0
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_corner_ne_00",
+     "piece_corner_ne_10"
+    ],
+    [
+     "piece_corner_ne_01",
+     "piece_corner_ne_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_corner_es",
+   "arms": "es",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    256,
+    0
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_corner_es_00",
+     "piece_corner_es_10"
+    ],
+    [
+     "piece_corner_es_01",
+     "piece_corner_es_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_corner_sw",
+   "arms": "sw",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    512,
+    0
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_corner_sw_00",
+     "piece_corner_sw_10"
+    ],
+    [
+     "piece_corner_sw_01",
+     "piece_corner_sw_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_corner_nw",
+   "arms": "nw",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    768,
+    0
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_corner_nw_00",
+     "piece_corner_nw_10"
+    ],
+    [
+     "piece_corner_nw_01",
+     "piece_corner_nw_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_t_nes",
+   "arms": "nes",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    0,
+    128
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_t_nes_00",
+     "piece_t_nes_10"
+    ],
+    [
+     "piece_t_nes_01",
+     "piece_t_nes_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_t_esw",
+   "arms": "esw",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    256,
+    128
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_t_esw_00",
+     "piece_t_esw_10"
+    ],
+    [
+     "piece_t_esw_01",
+     "piece_t_esw_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_t_swn",
+   "arms": "swn",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    512,
+    128
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_t_swn_00",
+     "piece_t_swn_10"
+    ],
+    [
+     "piece_t_swn_01",
+     "piece_t_swn_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_t_wne",
+   "arms": "wne",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    768,
+    128
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_t_wne_00",
+     "piece_t_wne_10"
+    ],
+    [
+     "piece_t_wne_01",
+     "piece_t_wne_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_cross",
+   "arms": "nesw",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    0,
+    256
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_cross_00",
+     "piece_cross_10"
+    ],
+    [
+     "piece_cross_01",
+     "piece_cross_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_dead_n",
+   "arms": "n",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    256,
+    256
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_dead_n_00",
+     "piece_dead_n_10"
+    ],
+    [
+     "piece_dead_n_01",
+     "piece_dead_n_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_dead_e",
+   "arms": "e",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    512,
+    256
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_dead_e_00",
+     "piece_dead_e_10"
+    ],
+    [
+     "piece_dead_e_01",
+     "piece_dead_e_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_dead_s",
+   "arms": "s",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    768,
+    256
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_dead_s_00",
+     "piece_dead_s_10"
+    ],
+    [
+     "piece_dead_s_01",
+     "piece_dead_s_11"
+    ]
+   ]
+  },
+  {
+   "name": "piece_dead_w",
+   "arms": "w",
+   "sheet": "road_pieces.png",
+   "sheet_xy": [
+    0,
+    384
+   ],
+   "sheet_size": [
+    256,
+    128
+   ],
+   "tiles": [
+    [
+     "piece_dead_w_00",
+     "piece_dead_w_10"
+    ],
+    [
+     "piece_dead_w_01",
+     "piece_dead_w_11"
+    ]
+   ]
+  }
+ ],
  "tiles": [
   {
    "index": 0,
@@ -805,6 +1108,3206 @@
     640
    ],
    "made": "along world x (mirrored): g9 + zebra stripes, road edge at wx = 2"
+  },
+  {
+   "index": 87,
+   "name": "piece_corner_ne_00",
+   "atlas_xy": [
+    896,
+    640
+   ],
+   "made": "T-252 road piece corner_ne, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 88,
+   "name": "piece_corner_ne_10",
+   "atlas_xy": [
+    0,
+    704
+   ],
+   "made": "T-252 road piece corner_ne, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 89,
+   "name": "piece_corner_ne_01",
+   "atlas_xy": [
+    128,
+    704
+   ],
+   "made": "T-252 road piece corner_ne, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 90,
+   "name": "piece_corner_ne_11",
+   "atlas_xy": [
+    256,
+    704
+   ],
+   "made": "T-252 road piece corner_ne, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 91,
+   "name": "piece_corner_es_00",
+   "atlas_xy": [
+    384,
+    704
+   ],
+   "made": "T-252 road piece corner_es, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 92,
+   "name": "piece_corner_es_10",
+   "atlas_xy": [
+    512,
+    704
+   ],
+   "made": "T-252 road piece corner_es, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 93,
+   "name": "piece_corner_es_01",
+   "atlas_xy": [
+    640,
+    704
+   ],
+   "made": "T-252 road piece corner_es, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 94,
+   "name": "piece_corner_es_11",
+   "atlas_xy": [
+    768,
+    704
+   ],
+   "made": "T-252 road piece corner_es, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 95,
+   "name": "piece_corner_sw_00",
+   "atlas_xy": [
+    896,
+    704
+   ],
+   "made": "T-252 road piece corner_sw, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 96,
+   "name": "piece_corner_sw_10",
+   "atlas_xy": [
+    0,
+    768
+   ],
+   "made": "T-252 road piece corner_sw, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 97,
+   "name": "piece_corner_sw_01",
+   "atlas_xy": [
+    128,
+    768
+   ],
+   "made": "T-252 road piece corner_sw, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 98,
+   "name": "piece_corner_sw_11",
+   "atlas_xy": [
+    256,
+    768
+   ],
+   "made": "T-252 road piece corner_sw, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 99,
+   "name": "piece_corner_nw_00",
+   "atlas_xy": [
+    384,
+    768
+   ],
+   "made": "T-252 road piece corner_nw, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 100,
+   "name": "piece_corner_nw_10",
+   "atlas_xy": [
+    512,
+    768
+   ],
+   "made": "T-252 road piece corner_nw, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 101,
+   "name": "piece_corner_nw_01",
+   "atlas_xy": [
+    640,
+    768
+   ],
+   "made": "T-252 road piece corner_nw, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 102,
+   "name": "piece_corner_nw_11",
+   "atlas_xy": [
+    768,
+    768
+   ],
+   "made": "T-252 road piece corner_nw, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 103,
+   "name": "piece_t_nes_00",
+   "atlas_xy": [
+    896,
+    768
+   ],
+   "made": "T-252 road piece t_nes, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 104,
+   "name": "piece_t_nes_10",
+   "atlas_xy": [
+    0,
+    832
+   ],
+   "made": "T-252 road piece t_nes, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 105,
+   "name": "piece_t_nes_01",
+   "atlas_xy": [
+    128,
+    832
+   ],
+   "made": "T-252 road piece t_nes, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 106,
+   "name": "piece_t_nes_11",
+   "atlas_xy": [
+    256,
+    832
+   ],
+   "made": "T-252 road piece t_nes, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 107,
+   "name": "piece_t_esw_00",
+   "atlas_xy": [
+    384,
+    832
+   ],
+   "made": "T-252 road piece t_esw, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 108,
+   "name": "piece_t_esw_10",
+   "atlas_xy": [
+    512,
+    832
+   ],
+   "made": "T-252 road piece t_esw, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 109,
+   "name": "piece_t_esw_01",
+   "atlas_xy": [
+    640,
+    832
+   ],
+   "made": "T-252 road piece t_esw, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 110,
+   "name": "piece_t_esw_11",
+   "atlas_xy": [
+    768,
+    832
+   ],
+   "made": "T-252 road piece t_esw, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 111,
+   "name": "piece_t_swn_00",
+   "atlas_xy": [
+    896,
+    832
+   ],
+   "made": "T-252 road piece t_swn, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 112,
+   "name": "piece_t_swn_10",
+   "atlas_xy": [
+    0,
+    896
+   ],
+   "made": "T-252 road piece t_swn, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 113,
+   "name": "piece_t_swn_01",
+   "atlas_xy": [
+    128,
+    896
+   ],
+   "made": "T-252 road piece t_swn, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 114,
+   "name": "piece_t_swn_11",
+   "atlas_xy": [
+    256,
+    896
+   ],
+   "made": "T-252 road piece t_swn, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 115,
+   "name": "piece_t_wne_00",
+   "atlas_xy": [
+    384,
+    896
+   ],
+   "made": "T-252 road piece t_wne, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 116,
+   "name": "piece_t_wne_10",
+   "atlas_xy": [
+    512,
+    896
+   ],
+   "made": "T-252 road piece t_wne, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 117,
+   "name": "piece_t_wne_01",
+   "atlas_xy": [
+    640,
+    896
+   ],
+   "made": "T-252 road piece t_wne, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 118,
+   "name": "piece_t_wne_11",
+   "atlas_xy": [
+    768,
+    896
+   ],
+   "made": "T-252 road piece t_wne, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 119,
+   "name": "piece_cross_00",
+   "atlas_xy": [
+    896,
+    896
+   ],
+   "made": "T-252 road piece cross, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 120,
+   "name": "piece_cross_10",
+   "atlas_xy": [
+    0,
+    960
+   ],
+   "made": "T-252 road piece cross, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 121,
+   "name": "piece_cross_01",
+   "atlas_xy": [
+    128,
+    960
+   ],
+   "made": "T-252 road piece cross, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 122,
+   "name": "piece_cross_11",
+   "atlas_xy": [
+    256,
+    960
+   ],
+   "made": "T-252 road piece cross, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 123,
+   "name": "piece_dead_n_00",
+   "atlas_xy": [
+    384,
+    960
+   ],
+   "made": "T-252 road piece dead_n, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 124,
+   "name": "piece_dead_n_10",
+   "atlas_xy": [
+    512,
+    960
+   ],
+   "made": "T-252 road piece dead_n, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 125,
+   "name": "piece_dead_n_01",
+   "atlas_xy": [
+    640,
+    960
+   ],
+   "made": "T-252 road piece dead_n, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 126,
+   "name": "piece_dead_n_11",
+   "atlas_xy": [
+    768,
+    960
+   ],
+   "made": "T-252 road piece dead_n, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 127,
+   "name": "piece_dead_e_00",
+   "atlas_xy": [
+    896,
+    960
+   ],
+   "made": "T-252 road piece dead_e, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 128,
+   "name": "piece_dead_e_10",
+   "atlas_xy": [
+    0,
+    1024
+   ],
+   "made": "T-252 road piece dead_e, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 129,
+   "name": "piece_dead_e_01",
+   "atlas_xy": [
+    128,
+    1024
+   ],
+   "made": "T-252 road piece dead_e, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 130,
+   "name": "piece_dead_e_11",
+   "atlas_xy": [
+    256,
+    1024
+   ],
+   "made": "T-252 road piece dead_e, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 131,
+   "name": "piece_dead_s_00",
+   "atlas_xy": [
+    384,
+    1024
+   ],
+   "made": "T-252 road piece dead_s, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 132,
+   "name": "piece_dead_s_10",
+   "atlas_xy": [
+    512,
+    1024
+   ],
+   "made": "T-252 road piece dead_s, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 133,
+   "name": "piece_dead_s_01",
+   "atlas_xy": [
+    640,
+    1024
+   ],
+   "made": "T-252 road piece dead_s, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 134,
+   "name": "piece_dead_s_11",
+   "atlas_xy": [
+    768,
+    1024
+   ],
+   "made": "T-252 road piece dead_s, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 135,
+   "name": "piece_dead_w_00",
+   "atlas_xy": [
+    896,
+    1024
+   ],
+   "made": "T-252 road piece dead_w, tile column 0 row 0: asphalt a0 + the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 136,
+   "name": "piece_dead_w_10",
+   "atlas_xy": [
+    0,
+    1088
+   ],
+   "made": "T-252 road piece dead_w, tile column 1 row 0: asphalt a0 + the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 137,
+   "name": "piece_dead_w_01",
+   "atlas_xy": [
+    128,
+    1088
+   ],
+   "made": "T-252 road piece dead_w, tile column 0 row 1: asphalt a0 + the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 138,
+   "name": "piece_dead_w_11",
+   "atlas_xy": [
+    256,
+    1088
+   ],
+   "made": "T-252 road piece dead_w, tile column 1 row 1: asphalt a0 + the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 139,
+   "name": "brush_line_corner_ne_a0m_00",
+   "atlas_xy": [
+    384,
+    1088
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 140,
+   "name": "brush_line_corner_ne_a0m_10",
+   "atlas_xy": [
+    512,
+    1088
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 141,
+   "name": "brush_line_corner_ne_a0m_01",
+   "atlas_xy": [
+    640,
+    1088
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 142,
+   "name": "brush_line_corner_ne_a0m_11",
+   "atlas_xy": [
+    768,
+    1088
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 143,
+   "name": "brush_line_corner_es_a0m_00",
+   "atlas_xy": [
+    896,
+    1088
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 144,
+   "name": "brush_line_corner_es_a0m_10",
+   "atlas_xy": [
+    0,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 145,
+   "name": "brush_line_corner_es_a0m_01",
+   "atlas_xy": [
+    128,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 146,
+   "name": "brush_line_corner_es_a0m_11",
+   "atlas_xy": [
+    256,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 147,
+   "name": "brush_line_corner_sw_a0m_00",
+   "atlas_xy": [
+    384,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 148,
+   "name": "brush_line_corner_sw_a0m_10",
+   "atlas_xy": [
+    512,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 149,
+   "name": "brush_line_corner_sw_a0m_01",
+   "atlas_xy": [
+    640,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 150,
+   "name": "brush_line_corner_sw_a0m_11",
+   "atlas_xy": [
+    768,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 151,
+   "name": "brush_line_corner_nw_a0m_00",
+   "atlas_xy": [
+    896,
+    1152
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 152,
+   "name": "brush_line_corner_nw_a0m_10",
+   "atlas_xy": [
+    0,
+    1216
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 153,
+   "name": "brush_line_corner_nw_a0m_01",
+   "atlas_xy": [
+    128,
+    1216
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 154,
+   "name": "brush_line_corner_nw_a0m_11",
+   "atlas_xy": [
+    256,
+    1216
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 155,
+   "name": "brush_line_t_nes_a0m_00",
+   "atlas_xy": [
+    384,
+    1216
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 156,
+   "name": "brush_line_t_nes_a0m_10",
+   "atlas_xy": [
+    512,
+    1216
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 157,
+   "name": "brush_line_t_nes_a0m_01",
+   "atlas_xy": [
+    640,
+    1216
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 158,
+   "name": "brush_line_t_nes_a0m_11",
+   "atlas_xy": [
+    768,
+    1216
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 159,
+   "name": "brush_line_t_esw_a0m_00",
+   "atlas_xy": [
+    896,
+    1216
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 160,
+   "name": "brush_line_t_esw_a0m_10",
+   "atlas_xy": [
+    0,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 161,
+   "name": "brush_line_t_esw_a0m_01",
+   "atlas_xy": [
+    128,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 162,
+   "name": "brush_line_t_esw_a0m_11",
+   "atlas_xy": [
+    256,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 163,
+   "name": "brush_line_t_swn_a0m_00",
+   "atlas_xy": [
+    384,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 164,
+   "name": "brush_line_t_swn_a0m_10",
+   "atlas_xy": [
+    512,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 165,
+   "name": "brush_line_t_swn_a0m_01",
+   "atlas_xy": [
+    640,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 166,
+   "name": "brush_line_t_swn_a0m_11",
+   "atlas_xy": [
+    768,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 167,
+   "name": "brush_line_t_wne_a0m_00",
+   "atlas_xy": [
+    896,
+    1280
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 168,
+   "name": "brush_line_t_wne_a0m_10",
+   "atlas_xy": [
+    0,
+    1344
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 169,
+   "name": "brush_line_t_wne_a0m_01",
+   "atlas_xy": [
+    128,
+    1344
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 170,
+   "name": "brush_line_t_wne_a0m_11",
+   "atlas_xy": [
+    256,
+    1344
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 171,
+   "name": "brush_line_cross_a0m_00",
+   "atlas_xy": [
+    384,
+    1344
+   ],
+   "made": "T-263 road brush: piece cross on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 172,
+   "name": "brush_line_cross_a0m_10",
+   "atlas_xy": [
+    512,
+    1344
+   ],
+   "made": "T-263 road brush: piece cross on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 173,
+   "name": "brush_line_cross_a0m_01",
+   "atlas_xy": [
+    640,
+    1344
+   ],
+   "made": "T-263 road brush: piece cross on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 174,
+   "name": "brush_line_cross_a0m_11",
+   "atlas_xy": [
+    768,
+    1344
+   ],
+   "made": "T-263 road brush: piece cross on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 175,
+   "name": "brush_line_dead_n_a0m_00",
+   "atlas_xy": [
+    896,
+    1344
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 176,
+   "name": "brush_line_dead_n_a0m_10",
+   "atlas_xy": [
+    0,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 177,
+   "name": "brush_line_dead_n_a0m_01",
+   "atlas_xy": [
+    128,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 178,
+   "name": "brush_line_dead_n_a0m_11",
+   "atlas_xy": [
+    256,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 179,
+   "name": "brush_line_dead_e_a0m_00",
+   "atlas_xy": [
+    384,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 180,
+   "name": "brush_line_dead_e_a0m_10",
+   "atlas_xy": [
+    512,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 181,
+   "name": "brush_line_dead_e_a0m_01",
+   "atlas_xy": [
+    640,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 182,
+   "name": "brush_line_dead_e_a0m_11",
+   "atlas_xy": [
+    768,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 183,
+   "name": "brush_line_dead_s_a0m_00",
+   "atlas_xy": [
+    896,
+    1408
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 184,
+   "name": "brush_line_dead_s_a0m_10",
+   "atlas_xy": [
+    0,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 185,
+   "name": "brush_line_dead_s_a0m_01",
+   "atlas_xy": [
+    128,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 186,
+   "name": "brush_line_dead_s_a0m_11",
+   "atlas_xy": [
+    256,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 187,
+   "name": "brush_line_dead_w_a0m_00",
+   "atlas_xy": [
+    384,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt a0m, tile column 0 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 188,
+   "name": "brush_line_dead_w_a0m_10",
+   "atlas_xy": [
+    512,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt a0m, tile column 1 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 189,
+   "name": "brush_line_dead_w_a0m_01",
+   "atlas_xy": [
+    640,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt a0m, tile column 0 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 190,
+   "name": "brush_line_dead_w_a0m_11",
+   "atlas_xy": [
+    768,
+    1472
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt a0m, tile column 1 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 191,
+   "name": "brush_line_corner_ne_g6_00",
+   "atlas_xy": [
+    896,
+    1472
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 192,
+   "name": "brush_line_corner_ne_g6_10",
+   "atlas_xy": [
+    0,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 193,
+   "name": "brush_line_corner_ne_g6_01",
+   "atlas_xy": [
+    128,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 194,
+   "name": "brush_line_corner_ne_g6_11",
+   "atlas_xy": [
+    256,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 195,
+   "name": "brush_line_corner_es_g6_00",
+   "atlas_xy": [
+    384,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 196,
+   "name": "brush_line_corner_es_g6_10",
+   "atlas_xy": [
+    512,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 197,
+   "name": "brush_line_corner_es_g6_01",
+   "atlas_xy": [
+    640,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 198,
+   "name": "brush_line_corner_es_g6_11",
+   "atlas_xy": [
+    768,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 199,
+   "name": "brush_line_corner_sw_g6_00",
+   "atlas_xy": [
+    896,
+    1536
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 200,
+   "name": "brush_line_corner_sw_g6_10",
+   "atlas_xy": [
+    0,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 201,
+   "name": "brush_line_corner_sw_g6_01",
+   "atlas_xy": [
+    128,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 202,
+   "name": "brush_line_corner_sw_g6_11",
+   "atlas_xy": [
+    256,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 203,
+   "name": "brush_line_corner_nw_g6_00",
+   "atlas_xy": [
+    384,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 204,
+   "name": "brush_line_corner_nw_g6_10",
+   "atlas_xy": [
+    512,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 205,
+   "name": "brush_line_corner_nw_g6_01",
+   "atlas_xy": [
+    640,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 206,
+   "name": "brush_line_corner_nw_g6_11",
+   "atlas_xy": [
+    768,
+    1600
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 207,
+   "name": "brush_line_t_nes_g6_00",
+   "atlas_xy": [
+    896,
+    1600
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 208,
+   "name": "brush_line_t_nes_g6_10",
+   "atlas_xy": [
+    0,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 209,
+   "name": "brush_line_t_nes_g6_01",
+   "atlas_xy": [
+    128,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 210,
+   "name": "brush_line_t_nes_g6_11",
+   "atlas_xy": [
+    256,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 211,
+   "name": "brush_line_t_esw_g6_00",
+   "atlas_xy": [
+    384,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 212,
+   "name": "brush_line_t_esw_g6_10",
+   "atlas_xy": [
+    512,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 213,
+   "name": "brush_line_t_esw_g6_01",
+   "atlas_xy": [
+    640,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 214,
+   "name": "brush_line_t_esw_g6_11",
+   "atlas_xy": [
+    768,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 215,
+   "name": "brush_line_t_swn_g6_00",
+   "atlas_xy": [
+    896,
+    1664
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 216,
+   "name": "brush_line_t_swn_g6_10",
+   "atlas_xy": [
+    0,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 217,
+   "name": "brush_line_t_swn_g6_01",
+   "atlas_xy": [
+    128,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 218,
+   "name": "brush_line_t_swn_g6_11",
+   "atlas_xy": [
+    256,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 219,
+   "name": "brush_line_t_wne_g6_00",
+   "atlas_xy": [
+    384,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 220,
+   "name": "brush_line_t_wne_g6_10",
+   "atlas_xy": [
+    512,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 221,
+   "name": "brush_line_t_wne_g6_01",
+   "atlas_xy": [
+    640,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 222,
+   "name": "brush_line_t_wne_g6_11",
+   "atlas_xy": [
+    768,
+    1728
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 223,
+   "name": "brush_line_cross_g6_00",
+   "atlas_xy": [
+    896,
+    1728
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 224,
+   "name": "brush_line_cross_g6_10",
+   "atlas_xy": [
+    0,
+    1792
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 225,
+   "name": "brush_line_cross_g6_01",
+   "atlas_xy": [
+    128,
+    1792
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 226,
+   "name": "brush_line_cross_g6_11",
+   "atlas_xy": [
+    256,
+    1792
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 227,
+   "name": "brush_line_dead_n_g6_00",
+   "atlas_xy": [
+    384,
+    1792
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 228,
+   "name": "brush_line_dead_n_g6_10",
+   "atlas_xy": [
+    512,
+    1792
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 229,
+   "name": "brush_line_dead_n_g6_01",
+   "atlas_xy": [
+    640,
+    1792
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 230,
+   "name": "brush_line_dead_n_g6_11",
+   "atlas_xy": [
+    768,
+    1792
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 231,
+   "name": "brush_line_dead_e_g6_00",
+   "atlas_xy": [
+    896,
+    1792
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 232,
+   "name": "brush_line_dead_e_g6_10",
+   "atlas_xy": [
+    0,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 233,
+   "name": "brush_line_dead_e_g6_01",
+   "atlas_xy": [
+    128,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 234,
+   "name": "brush_line_dead_e_g6_11",
+   "atlas_xy": [
+    256,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 235,
+   "name": "brush_line_dead_s_g6_00",
+   "atlas_xy": [
+    384,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 236,
+   "name": "brush_line_dead_s_g6_10",
+   "atlas_xy": [
+    512,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 237,
+   "name": "brush_line_dead_s_g6_01",
+   "atlas_xy": [
+    640,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 238,
+   "name": "brush_line_dead_s_g6_11",
+   "atlas_xy": [
+    768,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 239,
+   "name": "brush_line_dead_w_g6_00",
+   "atlas_xy": [
+    896,
+    1856
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g6, tile column 0 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 240,
+   "name": "brush_line_dead_w_g6_10",
+   "atlas_xy": [
+    0,
+    1920
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g6, tile column 1 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 241,
+   "name": "brush_line_dead_w_g6_01",
+   "atlas_xy": [
+    128,
+    1920
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g6, tile column 0 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 242,
+   "name": "brush_line_dead_w_g6_11",
+   "atlas_xy": [
+    256,
+    1920
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g6, tile column 1 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 243,
+   "name": "brush_line_corner_ne_g9_00",
+   "atlas_xy": [
+    384,
+    1920
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 244,
+   "name": "brush_line_corner_ne_g9_10",
+   "atlas_xy": [
+    512,
+    1920
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 245,
+   "name": "brush_line_corner_ne_g9_01",
+   "atlas_xy": [
+    640,
+    1920
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 246,
+   "name": "brush_line_corner_ne_g9_11",
+   "atlas_xy": [
+    768,
+    1920
+   ],
+   "made": "T-263 road brush: piece corner_ne on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 247,
+   "name": "brush_line_corner_es_g9_00",
+   "atlas_xy": [
+    896,
+    1920
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 248,
+   "name": "brush_line_corner_es_g9_10",
+   "atlas_xy": [
+    0,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 249,
+   "name": "brush_line_corner_es_g9_01",
+   "atlas_xy": [
+    128,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 250,
+   "name": "brush_line_corner_es_g9_11",
+   "atlas_xy": [
+    256,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_es on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 251,
+   "name": "brush_line_corner_sw_g9_00",
+   "atlas_xy": [
+    384,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 252,
+   "name": "brush_line_corner_sw_g9_10",
+   "atlas_xy": [
+    512,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 253,
+   "name": "brush_line_corner_sw_g9_01",
+   "atlas_xy": [
+    640,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 254,
+   "name": "brush_line_corner_sw_g9_11",
+   "atlas_xy": [
+    768,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_sw on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 255,
+   "name": "brush_line_corner_nw_g9_00",
+   "atlas_xy": [
+    896,
+    1984
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 256,
+   "name": "brush_line_corner_nw_g9_10",
+   "atlas_xy": [
+    0,
+    2048
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 257,
+   "name": "brush_line_corner_nw_g9_01",
+   "atlas_xy": [
+    128,
+    2048
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 258,
+   "name": "brush_line_corner_nw_g9_11",
+   "atlas_xy": [
+    256,
+    2048
+   ],
+   "made": "T-263 road brush: piece corner_nw on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the n, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 259,
+   "name": "brush_line_t_nes_g9_00",
+   "atlas_xy": [
+    384,
+    2048
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 260,
+   "name": "brush_line_t_nes_g9_10",
+   "atlas_xy": [
+    512,
+    2048
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 261,
+   "name": "brush_line_t_nes_g9_01",
+   "atlas_xy": [
+    640,
+    2048
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 262,
+   "name": "brush_line_t_nes_g9_11",
+   "atlas_xy": [
+    768,
+    2048
+   ],
+   "made": "T-263 road brush: piece t_nes on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the n, e, s arm(s)",
+   "piece": true
+  },
+  {
+   "index": 263,
+   "name": "brush_line_t_esw_g9_00",
+   "atlas_xy": [
+    896,
+    2048
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 264,
+   "name": "brush_line_t_esw_g9_10",
+   "atlas_xy": [
+    0,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 265,
+   "name": "brush_line_t_esw_g9_01",
+   "atlas_xy": [
+    128,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 266,
+   "name": "brush_line_t_esw_g9_11",
+   "atlas_xy": [
+    256,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_esw on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 267,
+   "name": "brush_line_t_swn_g9_00",
+   "atlas_xy": [
+    384,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 268,
+   "name": "brush_line_t_swn_g9_10",
+   "atlas_xy": [
+    512,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 269,
+   "name": "brush_line_t_swn_g9_01",
+   "atlas_xy": [
+    640,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 270,
+   "name": "brush_line_t_swn_g9_11",
+   "atlas_xy": [
+    768,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_swn on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the s, w, n arm(s)",
+   "piece": true
+  },
+  {
+   "index": 271,
+   "name": "brush_line_t_wne_g9_00",
+   "atlas_xy": [
+    896,
+    2112
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 272,
+   "name": "brush_line_t_wne_g9_10",
+   "atlas_xy": [
+    0,
+    2176
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 273,
+   "name": "brush_line_t_wne_g9_01",
+   "atlas_xy": [
+    128,
+    2176
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 274,
+   "name": "brush_line_t_wne_g9_11",
+   "atlas_xy": [
+    256,
+    2176
+   ],
+   "made": "T-263 road brush: piece t_wne on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the w, n, e arm(s)",
+   "piece": true
+  },
+  {
+   "index": 275,
+   "name": "brush_line_cross_g9_00",
+   "atlas_xy": [
+    384,
+    2176
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 276,
+   "name": "brush_line_cross_g9_10",
+   "atlas_xy": [
+    512,
+    2176
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 277,
+   "name": "brush_line_cross_g9_01",
+   "atlas_xy": [
+    640,
+    2176
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 278,
+   "name": "brush_line_cross_g9_11",
+   "atlas_xy": [
+    768,
+    2176
+   ],
+   "made": "T-263 road brush: piece cross on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the n, e, s, w arm(s)",
+   "piece": true
+  },
+  {
+   "index": 279,
+   "name": "brush_line_dead_n_g9_00",
+   "atlas_xy": [
+    896,
+    2176
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 280,
+   "name": "brush_line_dead_n_g9_10",
+   "atlas_xy": [
+    0,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 281,
+   "name": "brush_line_dead_n_g9_01",
+   "atlas_xy": [
+    128,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 282,
+   "name": "brush_line_dead_n_g9_11",
+   "atlas_xy": [
+    256,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_n on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the n arm(s); closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 283,
+   "name": "brush_line_dead_e_g9_00",
+   "atlas_xy": [
+    384,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 284,
+   "name": "brush_line_dead_e_g9_10",
+   "atlas_xy": [
+    512,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 285,
+   "name": "brush_line_dead_e_g9_01",
+   "atlas_xy": [
+    640,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 286,
+   "name": "brush_line_dead_e_g9_11",
+   "atlas_xy": [
+    768,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_e on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the e arm(s); closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 287,
+   "name": "brush_line_dead_s_g9_00",
+   "atlas_xy": [
+    896,
+    2240
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 288,
+   "name": "brush_line_dead_s_g9_10",
+   "atlas_xy": [
+    0,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 289,
+   "name": "brush_line_dead_s_g9_01",
+   "atlas_xy": [
+    128,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 290,
+   "name": "brush_line_dead_s_g9_11",
+   "atlas_xy": [
+    256,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_s on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the s arm(s); closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 291,
+   "name": "brush_line_dead_w_g9_00",
+   "atlas_xy": [
+    384,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g9, tile column 0 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 292,
+   "name": "brush_line_dead_w_g9_10",
+   "atlas_xy": [
+    512,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g9, tile column 1 row 0: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 293,
+   "name": "brush_line_dead_w_g9_01",
+   "atlas_xy": [
+    640,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g9, tile column 0 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 294,
+   "name": "brush_line_dead_w_g9_11",
+   "atlas_xy": [
+    768,
+    2304
+   ],
+   "made": "T-263 road brush: piece dead_w on asphalt g9, tile column 1 row 1: the straight tiles' centre line on the w arm(s); closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 295,
+   "name": "brush_plain_dead_n_a0_00",
+   "atlas_xy": [
+    896,
+    2304
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 296,
+   "name": "brush_plain_dead_n_a0_10",
+   "atlas_xy": [
+    0,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 297,
+   "name": "brush_plain_dead_n_a0_01",
+   "atlas_xy": [
+    128,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 298,
+   "name": "brush_plain_dead_n_a0_11",
+   "atlas_xy": [
+    256,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 299,
+   "name": "brush_plain_dead_e_a0_00",
+   "atlas_xy": [
+    384,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 300,
+   "name": "brush_plain_dead_e_a0_10",
+   "atlas_xy": [
+    512,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 301,
+   "name": "brush_plain_dead_e_a0_01",
+   "atlas_xy": [
+    640,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 302,
+   "name": "brush_plain_dead_e_a0_11",
+   "atlas_xy": [
+    768,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 303,
+   "name": "brush_plain_dead_s_a0_00",
+   "atlas_xy": [
+    896,
+    2368
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 304,
+   "name": "brush_plain_dead_s_a0_10",
+   "atlas_xy": [
+    0,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 305,
+   "name": "brush_plain_dead_s_a0_01",
+   "atlas_xy": [
+    128,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 306,
+   "name": "brush_plain_dead_s_a0_11",
+   "atlas_xy": [
+    256,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 307,
+   "name": "brush_plain_dead_w_a0_00",
+   "atlas_xy": [
+    384,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 308,
+   "name": "brush_plain_dead_w_a0_10",
+   "atlas_xy": [
+    512,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 309,
+   "name": "brush_plain_dead_w_a0_01",
+   "atlas_xy": [
+    640,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 310,
+   "name": "brush_plain_dead_w_a0_11",
+   "atlas_xy": [
+    768,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 311,
+   "name": "brush_plain_dead_n_a0m_00",
+   "atlas_xy": [
+    896,
+    2432
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0m, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 312,
+   "name": "brush_plain_dead_n_a0m_10",
+   "atlas_xy": [
+    0,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0m, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 313,
+   "name": "brush_plain_dead_n_a0m_01",
+   "atlas_xy": [
+    128,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0m, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 314,
+   "name": "brush_plain_dead_n_a0m_11",
+   "atlas_xy": [
+    256,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt a0m, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 315,
+   "name": "brush_plain_dead_e_a0m_00",
+   "atlas_xy": [
+    384,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0m, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 316,
+   "name": "brush_plain_dead_e_a0m_10",
+   "atlas_xy": [
+    512,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0m, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 317,
+   "name": "brush_plain_dead_e_a0m_01",
+   "atlas_xy": [
+    640,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0m, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 318,
+   "name": "brush_plain_dead_e_a0m_11",
+   "atlas_xy": [
+    768,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt a0m, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 319,
+   "name": "brush_plain_dead_s_a0m_00",
+   "atlas_xy": [
+    896,
+    2496
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0m, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 320,
+   "name": "brush_plain_dead_s_a0m_10",
+   "atlas_xy": [
+    0,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0m, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 321,
+   "name": "brush_plain_dead_s_a0m_01",
+   "atlas_xy": [
+    128,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0m, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 322,
+   "name": "brush_plain_dead_s_a0m_11",
+   "atlas_xy": [
+    256,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt a0m, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 323,
+   "name": "brush_plain_dead_w_a0m_00",
+   "atlas_xy": [
+    384,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0m, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 324,
+   "name": "brush_plain_dead_w_a0m_10",
+   "atlas_xy": [
+    512,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0m, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 325,
+   "name": "brush_plain_dead_w_a0m_01",
+   "atlas_xy": [
+    640,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0m, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 326,
+   "name": "brush_plain_dead_w_a0m_11",
+   "atlas_xy": [
+    768,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt a0m, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 327,
+   "name": "brush_plain_dead_n_g4_00",
+   "atlas_xy": [
+    896,
+    2560
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g4, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 328,
+   "name": "brush_plain_dead_n_g4_10",
+   "atlas_xy": [
+    0,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g4, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 329,
+   "name": "brush_plain_dead_n_g4_01",
+   "atlas_xy": [
+    128,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g4, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 330,
+   "name": "brush_plain_dead_n_g4_11",
+   "atlas_xy": [
+    256,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g4, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 331,
+   "name": "brush_plain_dead_e_g4_00",
+   "atlas_xy": [
+    384,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g4, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 332,
+   "name": "brush_plain_dead_e_g4_10",
+   "atlas_xy": [
+    512,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g4, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 333,
+   "name": "brush_plain_dead_e_g4_01",
+   "atlas_xy": [
+    640,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g4, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 334,
+   "name": "brush_plain_dead_e_g4_11",
+   "atlas_xy": [
+    768,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g4, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 335,
+   "name": "brush_plain_dead_s_g4_00",
+   "atlas_xy": [
+    896,
+    2624
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g4, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 336,
+   "name": "brush_plain_dead_s_g4_10",
+   "atlas_xy": [
+    0,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g4, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 337,
+   "name": "brush_plain_dead_s_g4_01",
+   "atlas_xy": [
+    128,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g4, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 338,
+   "name": "brush_plain_dead_s_g4_11",
+   "atlas_xy": [
+    256,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g4, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 339,
+   "name": "brush_plain_dead_w_g4_00",
+   "atlas_xy": [
+    384,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g4, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 340,
+   "name": "brush_plain_dead_w_g4_10",
+   "atlas_xy": [
+    512,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g4, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 341,
+   "name": "brush_plain_dead_w_g4_01",
+   "atlas_xy": [
+    640,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g4, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 342,
+   "name": "brush_plain_dead_w_g4_11",
+   "atlas_xy": [
+    768,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g4, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 343,
+   "name": "brush_plain_dead_n_g5_00",
+   "atlas_xy": [
+    896,
+    2688
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g5, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 344,
+   "name": "brush_plain_dead_n_g5_10",
+   "atlas_xy": [
+    0,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g5, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 345,
+   "name": "brush_plain_dead_n_g5_01",
+   "atlas_xy": [
+    128,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g5, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 346,
+   "name": "brush_plain_dead_n_g5_11",
+   "atlas_xy": [
+    256,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g5, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 347,
+   "name": "brush_plain_dead_e_g5_00",
+   "atlas_xy": [
+    384,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g5, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 348,
+   "name": "brush_plain_dead_e_g5_10",
+   "atlas_xy": [
+    512,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g5, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 349,
+   "name": "brush_plain_dead_e_g5_01",
+   "atlas_xy": [
+    640,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g5, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 350,
+   "name": "brush_plain_dead_e_g5_11",
+   "atlas_xy": [
+    768,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g5, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 351,
+   "name": "brush_plain_dead_s_g5_00",
+   "atlas_xy": [
+    896,
+    2752
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g5, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 352,
+   "name": "brush_plain_dead_s_g5_10",
+   "atlas_xy": [
+    0,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g5, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 353,
+   "name": "brush_plain_dead_s_g5_01",
+   "atlas_xy": [
+    128,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g5, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 354,
+   "name": "brush_plain_dead_s_g5_11",
+   "atlas_xy": [
+    256,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g5, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 355,
+   "name": "brush_plain_dead_w_g5_00",
+   "atlas_xy": [
+    384,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g5, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 356,
+   "name": "brush_plain_dead_w_g5_10",
+   "atlas_xy": [
+    512,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g5, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 357,
+   "name": "brush_plain_dead_w_g5_01",
+   "atlas_xy": [
+    640,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g5, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 358,
+   "name": "brush_plain_dead_w_g5_11",
+   "atlas_xy": [
+    768,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g5, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 359,
+   "name": "brush_plain_dead_n_g6_00",
+   "atlas_xy": [
+    896,
+    2816
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g6, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 360,
+   "name": "brush_plain_dead_n_g6_10",
+   "atlas_xy": [
+    0,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g6, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 361,
+   "name": "brush_plain_dead_n_g6_01",
+   "atlas_xy": [
+    128,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g6, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 362,
+   "name": "brush_plain_dead_n_g6_11",
+   "atlas_xy": [
+    256,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g6, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 363,
+   "name": "brush_plain_dead_e_g6_00",
+   "atlas_xy": [
+    384,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g6, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 364,
+   "name": "brush_plain_dead_e_g6_10",
+   "atlas_xy": [
+    512,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g6, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 365,
+   "name": "brush_plain_dead_e_g6_01",
+   "atlas_xy": [
+    640,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g6, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 366,
+   "name": "brush_plain_dead_e_g6_11",
+   "atlas_xy": [
+    768,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g6, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 367,
+   "name": "brush_plain_dead_s_g6_00",
+   "atlas_xy": [
+    896,
+    2880
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g6, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 368,
+   "name": "brush_plain_dead_s_g6_10",
+   "atlas_xy": [
+    0,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g6, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 369,
+   "name": "brush_plain_dead_s_g6_01",
+   "atlas_xy": [
+    128,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g6, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 370,
+   "name": "brush_plain_dead_s_g6_11",
+   "atlas_xy": [
+    256,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g6, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 371,
+   "name": "brush_plain_dead_w_g6_00",
+   "atlas_xy": [
+    384,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g6, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 372,
+   "name": "brush_plain_dead_w_g6_10",
+   "atlas_xy": [
+    512,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g6, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 373,
+   "name": "brush_plain_dead_w_g6_01",
+   "atlas_xy": [
+    640,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g6, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 374,
+   "name": "brush_plain_dead_w_g6_11",
+   "atlas_xy": [
+    768,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g6, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 375,
+   "name": "brush_plain_dead_n_g7_00",
+   "atlas_xy": [
+    896,
+    2944
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g7, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 376,
+   "name": "brush_plain_dead_n_g7_10",
+   "atlas_xy": [
+    0,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g7, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 377,
+   "name": "brush_plain_dead_n_g7_01",
+   "atlas_xy": [
+    128,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g7, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 378,
+   "name": "brush_plain_dead_n_g7_11",
+   "atlas_xy": [
+    256,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g7, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 379,
+   "name": "brush_plain_dead_e_g7_00",
+   "atlas_xy": [
+    384,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g7, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 380,
+   "name": "brush_plain_dead_e_g7_10",
+   "atlas_xy": [
+    512,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g7, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 381,
+   "name": "brush_plain_dead_e_g7_01",
+   "atlas_xy": [
+    640,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g7, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 382,
+   "name": "brush_plain_dead_e_g7_11",
+   "atlas_xy": [
+    768,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g7, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 383,
+   "name": "brush_plain_dead_s_g7_00",
+   "atlas_xy": [
+    896,
+    3008
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g7, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 384,
+   "name": "brush_plain_dead_s_g7_10",
+   "atlas_xy": [
+    0,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g7, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 385,
+   "name": "brush_plain_dead_s_g7_01",
+   "atlas_xy": [
+    128,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g7, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 386,
+   "name": "brush_plain_dead_s_g7_11",
+   "atlas_xy": [
+    256,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g7, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 387,
+   "name": "brush_plain_dead_w_g7_00",
+   "atlas_xy": [
+    384,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g7, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 388,
+   "name": "brush_plain_dead_w_g7_10",
+   "atlas_xy": [
+    512,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g7, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 389,
+   "name": "brush_plain_dead_w_g7_01",
+   "atlas_xy": [
+    640,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g7, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 390,
+   "name": "brush_plain_dead_w_g7_11",
+   "atlas_xy": [
+    768,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g7, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 391,
+   "name": "brush_plain_dead_n_g9_00",
+   "atlas_xy": [
+    896,
+    3072
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g9, tile column 0 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 392,
+   "name": "brush_plain_dead_n_g9_10",
+   "atlas_xy": [
+    0,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g9, tile column 1 row 0; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 393,
+   "name": "brush_plain_dead_n_g9_01",
+   "atlas_xy": [
+    128,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g9, tile column 0 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 394,
+   "name": "brush_plain_dead_n_g9_11",
+   "atlas_xy": [
+    256,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open n, asphalt g9, tile column 1 row 1; closed s side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 395,
+   "name": "brush_plain_dead_e_g9_00",
+   "atlas_xy": [
+    384,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g9, tile column 0 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 396,
+   "name": "brush_plain_dead_e_g9_10",
+   "atlas_xy": [
+    512,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g9, tile column 1 row 0; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 397,
+   "name": "brush_plain_dead_e_g9_01",
+   "atlas_xy": [
+    640,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g9, tile column 0 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 398,
+   "name": "brush_plain_dead_e_g9_11",
+   "atlas_xy": [
+    768,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open e, asphalt g9, tile column 1 row 1; closed w side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 399,
+   "name": "brush_plain_dead_s_g9_00",
+   "atlas_xy": [
+    896,
+    3136
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g9, tile column 0 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 400,
+   "name": "brush_plain_dead_s_g9_10",
+   "atlas_xy": [
+    0,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g9, tile column 1 row 0; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 401,
+   "name": "brush_plain_dead_s_g9_01",
+   "atlas_xy": [
+    128,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g9, tile column 0 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 402,
+   "name": "brush_plain_dead_s_g9_11",
+   "atlas_xy": [
+    256,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open s, asphalt g9, tile column 1 row 1; closed n side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 403,
+   "name": "brush_plain_dead_w_g9_00",
+   "atlas_xy": [
+    384,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g9, tile column 0 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 404,
+   "name": "brush_plain_dead_w_g9_10",
+   "atlas_xy": [
+    512,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g9, tile column 1 row 0; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 405,
+   "name": "brush_plain_dead_w_g9_01",
+   "atlas_xy": [
+    640,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g9, tile column 0 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
+  },
+  {
+   "index": 406,
+   "name": "brush_plain_dead_w_g9_11",
+   "atlas_xy": [
+    768,
+    3200
+   ],
+   "made": "T-263 road brush: dead end of a road without a centre line, open w, asphalt g9, tile column 1 row 1; closed e side: kerb (white end line) and gravel",
+   "piece": true
   }
  ]
 }

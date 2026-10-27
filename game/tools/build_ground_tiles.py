@@ -54,6 +54,7 @@ T = (0, 0, 0, 0)
 W, H = road.TILE_W, road.TILE_H
 CELL = road.UNITS_PER_TILE  # units per tile side
 ATLAS_COLS = 8
+OLD_TILES = 87  # the tiles before T-252's road pieces: gravel, asphalt, lines and crossings
 WHITE = (223, 221, 218, 255)  # the approved tile's own line white
 
 # The generated tiles used (index in the T-103 call -> role). Tiles 3 and 8 are not used (result notes).
@@ -196,6 +197,139 @@ def with_zebra(base, skip=()):
     return out
 
 
+# ---- road pieces (T-252) ----------------------------------------------------------------------
+
+# A piece is 2 x 2 tiles (4 x 4 units), the size of today's two-tile-wide roads: every open side
+# is a road's full width, and the tiles next to it carry the straight tiles' centre line (the
+# approved line on the tile edge between the two tiles across the road), so the lines continue
+# exactly. Edges: n = -y, e = +x, s = +y, w = -x. Name -> the open sides.
+PIECES = {
+    "corner_ne": "ne", "corner_es": "es", "corner_sw": "sw", "corner_nw": "nw",
+    "t_nes": "nes", "t_esw": "esw", "t_swn": "swn", "t_wne": "wne",
+    "cross": "nesw",
+    "dead_n": "n", "dead_e": "e", "dead_s": "s", "dead_w": "w",
+}
+# Where an arm's centre line lies: (tile column, tile row, edge of that tile). x2 / x0: the tile's
+# edge at wx = 2 / 0 (the straight tiles along y, line_r / line_l); y2 / y0: wy = 2 / 0 (along x).
+ARM_SEGMENTS = {
+    "n": [(0, 0, "x2"), (1, 0, "x0")],
+    "s": [(0, 1, "x2"), (1, 1, "x0")],
+    "w": [(0, 0, "y2"), (0, 1, "y0")],
+    "e": [(1, 0, "y2"), (1, 1, "y0")],
+}
+# A dead end ends in a kerb: an end line (the line white) across the road, this far from the
+# closed side (units), with gravel beyond it.
+KERB_FROM, KERB_TO = 0.75, 1.0
+PIECE_UNITS = 4
+SHEET_COLS = 4  # pieces per row in road_pieces.png (each 256 x 128)
+SHEET_PNG = REPO / "game/art/ground/road_pieces.png"
+PIECE_W, PIECE_H = 2 * W, 2 * H
+
+
+def edge_lines(mask):
+    """The straight tiles' line pixels on each tile edge, from `mask` (the line on both edges of
+    a tile along y): x2 = line_r's, x0 = line_l's, y2 / y0 = the same mirrored (along x)."""
+    right = {p for p in mask if local_units(*p)[0] > 1}
+    left = {p for p in mask if local_units(*p)[0] < 1}
+
+    def mirror(s):
+        return {(W - 1 - x, y) for x, y in s}
+
+    return {"x2": right, "x0": left, "y2": mirror(right), "y0": mirror(left)}
+
+
+def piece_tiles(a0, gravel, mask, pieces=None, lines=True, name_of=None, base_name="a0"):
+    """The pieces' tiles: [(name, rows, how)], names piece_<piece>_<column><row>.
+
+    T-263 (the road brush) draws the same pieces on other asphalts (`a0` is then that asphalt,
+    `base_name` its name) and, with lines=False, the dead ends of the roads without a centre line;
+    `name_of(piece, c, r)` names those tiles."""
+    edges = edge_lines(mask)
+    out = []
+    pieces = PIECES if pieces is None else pieces
+    for name, arm_set in pieces.items():
+        closed = {"n": "s", "s": "n", "e": "w", "w": "e"}[arm_set] if len(arm_set) == 1 else None
+        for r in range(2):
+            for c in range(2):
+                rows = [list(row) for row in a0]
+                for a in (arm_set if lines else ""):
+                    for cc, rr, key in ARM_SEGMENTS[a]:
+                        if (cc, rr) == (c, r):
+                            for (x, y) in edges[key]:
+                                rows[y][x] = WHITE
+                if closed:
+                    for y in range(H):
+                        for x in range(W):
+                            if not road.footprint(x, y):
+                                continue
+                            wx, wy = local_units(x, y)
+                            u, v = 2 * c + wx, 2 * r + wy
+                            d = {"s": PIECE_UNITS - v, "n": v, "e": PIECE_UNITS - u, "w": u}[closed]
+                            if d <= KERB_FROM:
+                                rows[y][x] = gravel[y][x]
+                            elif d <= KERB_TO:
+                                rows[y][x] = WHITE
+                if name_of is None:
+                    how = "T-252 road piece %s, tile column %d row %d: asphalt a0 + the straight tiles' centre line on the %s arm(s)" % (
+                        name, c, r, ", ".join(arm_set))
+                elif lines:
+                    how = "T-263 road brush: piece %s on asphalt %s, tile column %d row %d: the straight tiles' centre line on the %s arm(s)" % (
+                        name, base_name, c, r, ", ".join(arm_set))
+                else:
+                    how = "T-263 road brush: dead end of a road without a centre line, open %s, asphalt %s, tile column %d row %d" % (
+                        arm_set, base_name, c, r)
+                if closed:
+                    how += "; closed %s side: kerb (white end line) and gravel" % closed
+                out.append(("piece_%s_%d%d" % (name, c, r) if name_of is None else name_of(name, c, r), rows, how))
+    return out
+
+
+# ---- road brush tiles (T-263) -----------------------------------------------------------------
+
+# The road brush (game/scripts/level_creator/road_brush.gd) lays whole two-tile-wide roads and
+# picks the piece itself. T-252 drew the centre-line pieces on a0 only; the brush's centre line is
+# painted on the Road kind's asphalts, so the pieces are drawn on the others too, and roads
+# without a centre line (Road, Cracked road) get their own dead ends (the kerb, no line). Corners,
+# T-junctions and crossroads of a road without a line are its plain tiles (a closed side is just
+# the asphalt's edge). Appended after T-252's pieces, so every earlier tile keeps its index.
+BRUSH_LINE_ASPHALTS = ["a0m", "g6", "g9"]
+DEAD_ENDS = {n: a for n, a in PIECES.items() if n.startswith("dead_")}
+
+
+def brush_line_name(piece, asphalt, c, r):
+    return "brush_line_%s_%s_%d%d" % (piece, asphalt, c, r)
+
+
+def brush_dead_name(piece, asphalt, c, r):
+    return "brush_plain_%s_%s_%d%d" % (piece, asphalt, c, r)
+
+
+def brush_tiles(bases, gravel, mask):
+    out = []
+    for a in BRUSH_LINE_ASPHALTS:
+        out += piece_tiles(bases[a][0], gravel, mask, name_of=lambda p, c, r, a=a: brush_line_name(p, a, c, r),
+                           base_name=a)
+    for a in BASE_WEIGHTS:
+        out += piece_tiles(bases[a][0], gravel, mask, pieces=DEAD_ENDS, lines=False,
+                           name_of=lambda p, c, r, a=a: brush_dead_name(p, a, c, r), base_name=a)
+    return out
+
+
+def piece_sheet(tiles_by_name):
+    """road_pieces.png: each piece drawn as its four tiles (256 x 128), SHEET_COLS to a row.
+    Returns (canvas rows, [(name, [x, y])])."""
+    n = len(PIECES)
+    canvas = [[T] * (SHEET_COLS * PIECE_W) for _ in range(((n + SHEET_COLS - 1) // SHEET_COLS) * PIECE_H)]
+    where = []
+    for k, name in enumerate(PIECES):
+        ox, oy = (k % SHEET_COLS) * PIECE_W, (k // SHEET_COLS) * PIECE_H
+        where.append((name, [ox, oy]))
+        for r in range(2):
+            for c in range(2):
+                road.blit(canvas, tiles_by_name["piece_%s_%d%d" % (name, c, r)], ox + 64 + (c - r) * 64, oy + (c + r) * 32)
+    return canvas, where
+
+
 # ---- tiles ------------------------------------------------------------------------------------
 
 def raw_path(i):
@@ -229,6 +363,10 @@ def build_tiles(approved=None, raws=None):
         for kind, rows, h in kinds:
             tiles.append(("y_%s_%s" % (kind, bname), rows, "along world y: " + h))
             tiles.append(("x_%s_%s" % (kind, bname), flip(rows), "along world x (mirrored): " + h))
+    # T-252: the road pieces go last, so every earlier tile keeps its index (the game's ground).
+    tiles += piece_tiles(a0, tiles[0][1], mask)
+    # T-263: the road brush's pieces on the other asphalts, after T-252's.
+    tiles += brush_tiles(bases, tiles[0][1], mask)
     return tiles
 
 
@@ -423,7 +561,19 @@ def record(tiles):
         }],
         "size": "each tile 128 x 64 pixels = 2 x 2 units; neighbours at (+64, +32) along world x and (-64, +32) along world y; exact footprint",
         "layout": "game/data/level/mvp_ground.json",
-        "tiles": [{"index": k, "name": name, "atlas_xy": [(k % ATLAS_COLS) * W, (k // ATLAS_COLS) * H], "made": how}
+        "road_pieces": "T-252: the tiles named piece_<piece>_<column><row> are the 2 x 2 tiles (4 x 4 units, the "
+                       "two-tile-wide roads' size) of the corners, T-junctions, crossroads and dead ends listed in "
+                       "pieces, drawn by script from the approved tile; no PixelLab call",
+        "brush_pieces": "T-263: the road brush's tiles, after T-252's: brush_line_<piece>_<asphalt>_<column><row> "
+                        "are T-252's pieces on the asphalts %s, and brush_plain_<dead end>_<asphalt>_<column><row> "
+                        "the dead ends (kerb, no centre line) of the roads without a line on every asphalt; drawn by "
+                        "script, no PixelLab call" % ", ".join(BRUSH_LINE_ASPHALTS),
+        "pieces": [{"name": "piece_" + name, "arms": PIECES[name], "sheet": SHEET_PNG.name, "sheet_xy": xy,
+                    "sheet_size": [PIECE_W, PIECE_H],
+                    "tiles": [["piece_%s_%d%d" % (name, c, r) for c in range(2)] for r in range(2)]}
+                   for name, xy in piece_sheet({n: rows for n, rows, _ in tiles})[1]],
+        "tiles": [dict({"index": k, "name": name, "atlas_xy": [(k % ATLAS_COLS) * W, (k // ATLAS_COLS) * H],
+                        "made": how}, **({"piece": True} if name.startswith(("piece_", "brush_")) else {}))
                   for k, (name, _, how) in enumerate(tiles)],
     }
 
@@ -434,7 +584,7 @@ def check_atlas(atlas, n, max_colors=30):
     for k in range(n):
         t = atlas_tile(atlas, k)
         res = road.check_tile(t, max_colors)
-        g, o = road.tiling_report(t) if k < 3 or k % 12 in (3, 4) else (0, 0)
+        g, o = road.tiling_report(t) if k < 3 or (k < OLD_TILES and k % 12 in (3, 4)) else (0, 0)
         res.append(("tiles with 0 gaps and 0 overlaps", (g, o) == (0, 0), "%d gaps, %d overlaps" % (g, o)))
         results.append((k, res))
     return results
@@ -498,6 +648,7 @@ def main(argv=None):
         write_png(argv[1], mockup(atlas, ground, area))
         return 0
     write_png(ATLAS_PNG, atlas)
+    write_png(SHEET_PNG, piece_sheet({n: rows for n, rows, _ in tiles})[0])
     ATLAS_JSON.write_text(dump(record(tiles)), encoding="utf-8", newline="\n")
     GROUND_JSON.write_text(ground_text(ground), encoding="utf-8", newline="\n")
     print("wrote %s (%d tiles), %s, %s" % (ATLAS_PNG.name, len(tiles), ATLAS_JSON.name, GROUND_JSON.name))

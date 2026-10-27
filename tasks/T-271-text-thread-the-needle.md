@@ -1,7 +1,7 @@
 ---
 id: T-271
 title: "Text: the thread the needle trick's popup and its creator labels"
-status: open
+status: done
 from: project-lead
 to: narrative-theme
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, docs/level-design.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/level-design.md, game/data/level/creator_texts.json, tasks/T-241-text-airtime-trick-popup.md]
 files_expected_to_change: [docs/hud-and-menus.md, docs/level-design.md, game/data/level/creator_texts.json]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -38,13 +38,30 @@ The board's decision (Level design, Decisions, "Thread the needle", 2026-10-22):
 
 ## Acceptance criteria
 
-- [ ] HUD and menus, Content, has the popup text with this ticket's id, keeping the board's name, in the trick popups' voice with "+{amount}" (QA: pass / fail)
-- [ ] `creator_texts.json` is valid JSON with the pair labels (each with a "where it appears" note), every existing key unchanged, and they are listed in Level design, Content (QA: pass / fail)
+- [ ] HUD and menus, Content, has the popup text with this ticket's id, keeping the board's name, in the trick popups' voice with "+{amount}" (QA: pass; hud-and-menus.md Content has THREAD THE NEEDLE! with T-271 and "+{amount}", same voice as the others)
+- [ ] `creator_texts.json` is valid JSON with the pair labels (each with a "where it appears" note), every existing key unchanged, and they are listed in Level design, Content (QA: pass; JSON valid, 6 new keys each with a where note, no T-261 key changed, labels listed in level-design.md Content)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-22, Open → In progress
+
+Started at the board's request: the thread the needle popup and its creator labels.
+
+### 2026-10-22, In progress → In QA
+
+Text written: THREAD THE NEEDLE! and the pairing labels (P to pair). Sent to QA.
+
+### 2026-10-22, In QA → Done
+
+QA passed both. Done: THREAD THE NEEDLE! and the pairing labels; T-272 uses them.
+
 ## Result notes
 
 Written by the agent when it finishes.
+
+- Popup: **THREAD THE NEEDLE!** followed by "+{amount}", in HUD and menus, Content, "Trick popups", for T-272 to use word for word.
+- Creator labels added to `game/data/level/creator_texts.json` (every existing key unchanged, each with a where note) and listed in Level design, Content, "Level creator text": `pair_tool` "Pair obstacles", `pair_hint` "Pair: click two obstacles", `pair_made` "Pair made. Drive between them.", `pair_not_obstacle` "Not an obstacle. Pick a boulder, barrier, cones or crates.", `unpair_label` "Unpair", `controls_hint_pairs` (the rework hint with "P: pair." added; P is the text's proposal, the creator must use the same key).
+- Documents affected: docs/hud-and-menus.md, docs/level-design.md.
+- 2026-10-22, in-qa → done: QA passed both; text only, kept on the creator build line

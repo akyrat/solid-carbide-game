@@ -1,0 +1,15 @@
+{
+ "no_background": true,
+ "outline": "single color black outline",
+ "shading": "medium shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "isometric": true,
+ "text_guidance_scale": 8,
+ "negative_description": "text, letters, words, logo, brand, red, perspective, blur, ground, street, shadow, people, car, background",
+ "description": "a rooftop air conditioning unit, a blocky pale blue-grey metal box with a round fan grille on top and side vents, small amber indicator light, isometric view seen from above, night city, cool blue-grey steel and concrete colours, retro pixel art game sprite, a single object",
+ "image_size": {
+  "width": 128,
+  "height": 112
+ }
+}

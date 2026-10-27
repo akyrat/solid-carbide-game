@@ -1,7 +1,7 @@
 ---
 id: T-264
 title: "Level creator: closed ramps, arrows up or down, and S, M and L platforms"
-status: blocked
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, game/scripts/level/elevation_platform_drawing.gd, game/scripts/level/elevation_layer.gd, game/scripts/level_creator/, game/tools/build_creator_textures_t255.py, tasks/T-251-resizable-rooftops-and-ramps.md, tasks/T-255-art-creator-textures.md, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/tools/, game/art/creator_pieces/, game/data/level/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-264/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,10 +41,10 @@ The game's own map is unchanged. Built on T-262's branch (the Project Lead makes
 
 ## Acceptance criteria
 
-- [ ] Tests show every ramp draws a wall at its tall end, in every direction and height step (QA: pass / fail)
-- [ ] Tests show the arrows point up or down the slope as chosen, in every direction and height step, the choice is saved and reopened, and the default is up (QA: pass / fail)
-- [ ] Tests show S, M and L platforms place at 8, 16 and 32 units square at heights 3 and 6, and dragging still sizes them freely (QA: pass / fail)
-- [ ] Screenshots are in `art-archive/T-264/screenshots/`; `game/README.md` describes the three; the game's own map is unchanged; the full GUT suite and all Python tool tests pass (QA: pass / fail)
+- [ ] Tests show every ramp draws a wall at its tall end, in every direction and height step (QA: pass; 12 new tests in test_creator_ramps.gd pass; in the screenshots the tall end reads closed: east side wall is visible beside the platform in ramps_up_close, and the north/west ends meet the rooftop so the block is closed, though against a rooftop the end wall itself is hidden, as the agent noted)
+- [ ] Tests show the arrows point up or down the slope as chosen, in every direction and height step, the choice is saved and reopened, and the default is up (QA: pass; arrows up/down, saved and default-up tests pass; ramps_up_close and ramps_down_close show the arrows flipping as chosen)
+- [ ] Tests show S, M and L platforms place at 8, 16 and 32 units square at heights 3 and 6, and dragging still sizes them freely (QA: pass; S/M/L and drag tests pass)
+- [ ] Screenshots are in `art-archive/T-264/screenshots/`; `game/README.md` describes the three; the game's own map is unchanged; the full GUT suite and all Python tool tests pass (QA: pass; 7 screenshots present, README section present, map data not touched by T-264, GUT 1551/1551, game/tools 483 OK, tools 451 OK)
 
 The board's review: place ramps both ways round and S, M and L platforms.
 Board review files: the screenshots in `art-archive/T-264/screenshots/`.
@@ -53,6 +53,36 @@ Board review files: the screenshots in `art-archive/T-264/screenshots/`.
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-23, Blocked → In progress
+
+Started on T-263's branch: closed ramps, arrows up or down, S, M and L platforms.
+
+### 2026-10-23, In progress → In QA
+
+Built: walls at every ramp's tall end, arrows up or down per ramp (A), one-click S, M and L platforms. Sent to QA.
+
+### 2026-10-23, In QA → Needs playtest
+
+QA passed all 4; ramp ends read as closed in every screenshot. Ready to play in the creator build. T-265 starts on it.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Level/Challenge Design Agent, 2026-10-23.
+
+**Built (no PixelLab):**
+- **Closed ramps:** `elevation_platform_drawing.gd` `textured_faces()` now draws a wall at every ramp's tall end (`join_edge()`), down to what the ramp stands on, in the ramp side's texture, in all four directions and all height steps. The outline follows it. On the east and south ends the wall faces the view; on the west and north ends it faces away and is drawn behind the top (so against a rooftop it is mostly hidden, as geometry, but the block is closed).
+- **Arrows up or down:** a ramp of any size has an optional `arrows` (`"up"` default, `"down"`) in the map file. `GroundHeight` reads it; the drawing's `arrow_direction()` gives the flat direction, and the top face flips the texture's v for "down". Key A (in `editor.gd` `KEY_ACTIONS`, `arrows_pick`) and the top bar's "Arrows up" and "Arrows down" (T-261 labels) set it for the next ramp; with a ramp selected and none picked, A turns that ramp's. `LevelDocument.place(..., arrows)` and `set_ramp_arrows`. The preview shows the choice.
+- **Platform sizes:** top bar "S", "M", "L", "Any size (drag)" with a platform picked (`editor.gd` `PLATFORM_SIZES`: 8, 16, 32, a click places that square; default M, was 84 x 30). "Any size" is dragging, and its click gives M. Drags size freely; snapping and the overlap refusal unchanged.
+- The size buttons show only with a platform picked, the arrow buttons only with a ramp picked.
+
+**Proposals for the playtest:** A also turns a selected ramp; "Any size (drag)" plain click = M; the hidden-end walls.
+
+**Tests:** new `game/tests/unit/level_creator/test_creator_ramps.gd` (12 tests: wall at the tall end for 3 ramps x 4 directions, wall reaches the base, arrows up and down in every direction and step through the uvs, default up, key A, saved and reopened, selected ramp, S, M, L at heights 3 and 6, default M, drag keeps its size, preview, overlap refusal, buttons). Older tests that assumed the 84 x 30 and 30 x 30 plain click now pass those sizes explicitly (`test_snapping.gd`, `test_editor_save.gd`, `test_editor_rotate_heights.gd`, `test_editor_place_delete.gd`, `test_creator_end_to_end.gd`), and `test_creator_pieces_any_size.gd` was updated for the closed ramp and the M click.
+- Full GUT suite: 1551 of 1551 passed (the first full run was 15 failing from those old default sizes, now fixed).
+- `python -m unittest discover -s game/tools`: 483 OK (1 skipped). `python -m unittest discover -s tools`: 451 OK.
+- The game's own map is unchanged (its test still passes).
+
+**Screenshots** in `art-archive/T-264/screenshots/` (fixture `game/tests/fixtures/level_creator_ramps_demo.gd` and the `level_creator_ramps_*.tscn` and `level_creator_sizes.tscn` scenes): `ramps_up.png`, `ramps_down.png` (a 3 platform with ramps from all four sides), `ramps_up_close.png`, `ramps_down_close.png`, `ramps_up_close_west.png`, `ramps_down_close_west.png`, `sizes.png` (S, M, L at heights 3 and 6). I looked at them: arrows point up the slope and down it as chosen, S, M and L read as 8, 16 and 32. One honest limit: the tall-end wall is visible only where the ramp's tall end faces the view and is not behind a rooftop; the screenshots show it on the south-facing sides, not as a distinct feature against the rooftop.
+
+**Documents updated:** `game/README.md` ("Level creator", "Closed ramps, arrows up or down, platform sizes (T-264)"); `docs/level-design.md` (Content, "Level creator: closed ramps, arrows and platform sizes").
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.

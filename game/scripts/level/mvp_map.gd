@@ -157,6 +157,9 @@ var boulder_textures: Array[Texture2D] = []
 var building_art: Dictionary = {}
 ## Set false before the map enters the tree to keep the placeholder boxes (tests of the boxes).
 var building_art_enabled := true
+## The kaiju alert signs (T-130) stand at the sample map's own blocks. The level creator's
+## editor (T-235) sets this false before the map enters the tree, since its levels have other blocks.
+var alert_signs_enabled := true
 var building_atlas: Texture2D = null
 ## "flat" or "iso".
 var view := "flat"
@@ -175,6 +178,11 @@ var boulders_draw: Node2D
 var boulder_sprites_root: Node2D
 ## The boulder sprites, in the order they were made (the map's own first).
 var boulder_sprites: Array = []
+## The props of the layout (T-253, level_props.gd): their bodies, their sprites (which the depth
+## order reads like boulder_sprites, see depth_sprites) and the node that holds the sprites.
+var prop_bodies: Array[StaticBody2D] = []
+var prop_sprites: Array = []
+var prop_sprites_root: Node2D
 ## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
 var _boulder_sprite_by_key: Dictionary = {}
 var ground_draw: Node2D
@@ -257,7 +265,8 @@ func _build() -> void:
 	buildings_draw.map = self
 	view_root.add_child(buildings_draw)
 	_build_buildings()
-	alert_signs = KaijuSigns.build(self)
+	if alert_signs_enabled:
+		alert_signs = KaijuSigns.build(self)
 	arrows_root = Node2D.new()
 	arrows_root.name = "Arrows"
 	view_root.add_child(arrows_root)
@@ -273,6 +282,7 @@ func _build() -> void:
 	_build_walls()
 	_build_boulders()
 	_sync_boulder_sprites()
+	LevelProps.build(self)
 	if challenges_enabled:
 		_build_challenges()
 	set_view(view)
@@ -296,7 +306,8 @@ func _build_buildings() -> void:
 		if building_atlas != null:
 			var towers = BuildingTowers.new()
 			towers.name = "Towers"
-			towers.setup(building_art, building_atlas, b.footprint)
+			# A building placed in the level creator (T-235) names its one tower ("asset", "look").
+			towers.setup(building_art, building_atlas, b.footprint, BuildingTowers.single_of(d))
 			b.add_child(towers)
 			b.towers = towers
 			buildings_draw.add_child(towers.pavement_root)
@@ -510,10 +521,23 @@ func is_open_spot(centre: Vector2, radius: float) -> bool:
 	for o in all_boulders():
 		if centre.distance_to(Vector2(float(o.x), float(o.y))) < r + float(o.diameter) / 2.0:
 			return false
+	if prop_blocks_spot(centre, r):
+		return false
 	# T-206: with elevation, open ground is street level only (no rooftop or ramp).
 	if elevation != null and not elevation.is_street(centre, r):
 		return false
 	return true
+
+
+## True when a round thing of `radius` units at `centre` would overlap a prop (T-253).
+func prop_blocks_spot(centre: Vector2, radius: float) -> bool:
+	return LevelProps.blocks_spot(layout, centre, radius)
+
+
+## The sprites the depth order covers the car and the enemies with: the boulders', then the
+## props' (T-253). The array itself when there are no props.
+func depth_sprites() -> Array:
+	return boulder_sprites if prop_sprites.is_empty() else boulder_sprites + prop_sprites
 
 
 ## Places one plain boulder at `centre` (units from the map's centre) during a
@@ -793,7 +817,7 @@ func car_z_index(car_centre_units: Vector2, car_rotation: float) -> int:
 			z = mini(z, b.z_index - 1)
 	# Boulders (T-065): under every boulder sprite that covers the car.
 	var box := _bounds(shape)
-	for s in boulder_sprites:
+	for s in depth_sprites():
 		if s.covers(car_centre_units, shape, box):
 			z = mini(z, s.z_index - 1)
 	# T-206: and under the raised areas that cover it, at street level.
@@ -843,6 +867,12 @@ static func boulder_key(b: Dictionary) -> String:
 ## Which variant (index into boulder_art.variants) a boulder is drawn with:
 ## from its position only, so it is the same on every map and every run.
 func boulder_variant(b: Dictionary) -> int:
+	# A boulder placed in the level creator (T-235) names its variant ("a", "b_mirror", ...).
+	if b.has("variant"):
+		var vs: Array = boulder_art.get("variants", [])
+		for k in mini(vs.size(), boulder_textures.size()):
+			if str(vs[k].id) == str(b.variant):
+				return k
 	var n := maxi(boulder_textures.size(), 1)
 	return posmod(boulder_key(b).hash(), n)
 
@@ -938,6 +968,10 @@ func set_view(v: String) -> void:
 		# Boulder sprites (T-065) in screen pixels: undo the view's projection.
 		boulder_sprites_root.visible = uses_boulder_art()
 		boulder_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
+	if prop_sprites_root != null:
+		# Prop sprites (T-253) in screen pixels too; the flat view draws no props.
+		prop_sprites_root.visible = v == "iso"
+		prop_sprites_root.transform = ISO_TRANSFORM.affine_inverse() if v == "iso" else Transform2D.IDENTITY
 	if boulders_draw != null:
 		boulders_draw.queue_redraw()
 	if ground_tiles != null:
@@ -1011,6 +1045,10 @@ class _GroundDraw extends Node2D:
 class _GroundTiles extends Node2D:
 	var map
 	var atlas: Texture2D
+	## Tiles outside the atlas (T-235: the level creator's road_tile.png), from the ground
+	## layout's optional "extra" list of texture paths; a cell value EXTRA_BASE + k draws extra k.
+	var extras: Array = []
+	const EXTRA_BASE := 1000
 
 	func _init() -> void:
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -1018,6 +1056,9 @@ class _GroundTiles extends Node2D:
 	func has_art() -> bool:
 		if atlas == null and not map.ground_layout.is_empty():
 			atlas = load(str(map.ground_layout.atlas))
+			extras = []
+			for p in map.ground_layout.get("extra", []):
+				extras.append(load(str(p)))
 		return atlas != null
 
 	func _draw() -> void:
@@ -1037,6 +1078,11 @@ class _GroundTiles extends Node2D:
 				if k < 0:
 					continue
 				var top: Vector2 = map.ground_cell_top(i, j)
+				if k >= EXTRA_BASE:
+					var ex = extras[k - EXTRA_BASE] if k - EXTRA_BASE < extras.size() else null
+					if ex != null:
+						draw_texture_rect(ex, Rect2(top - Vector2(size.x / 2.0, 0.0), size), false)
+					continue
 				var src := Rect2((k % cols) * tw, (k / cols) * th, tw, th)
 				draw_texture_rect_region(atlas, Rect2(top - Vector2(size.x / 2.0, 0.0), size), src)
 

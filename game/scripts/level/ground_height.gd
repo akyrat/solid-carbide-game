@@ -28,6 +28,13 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 	var data = JSON.parse_string(f.get_as_text())
 	if typeof(data) != TYPE_DICTIONARY:
 		return false
+	return load_data(data)
+
+
+## The same from data already loaded (the level creator's level being edited, T-235).
+func load_data(data: Dictionary) -> bool:
+	platforms = []
+	ramps = []
 	for p in data.get("platforms", []):
 		platforms.append({
 			"id": str(p.get("id", "")),
@@ -37,6 +44,10 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 			# validator (tools/check_height_data.py) reads it: the highest area
 			# at a point wins anyway.
 			"on": str(p.get("on", "")),
+			# The art piece it is drawn with (T-236, the level creator's view), "" for its own id's.
+			"art": str(p.get("art", "")),
+			# The piece style it is drawn with (T-255, elevation_layer.gd piece_style_named), "" for the default.
+			"style": str(p.get("style", "")),
 		})
 	for r in data.get("ramps", []):
 		ramps.append({
@@ -46,6 +57,10 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 			"rect": Rect2(float(r.x), float(r.y), float(r.w), float(r.h)),
 			"bottom_height": float(r.get("bottom_height", 0.0)),
 			"top_height": float(r.top_height),
+			"art": str(r.get("art", "")),
+			"style": str(r.get("style", "")),
+			# T-264: which way the ramp's arrows point, "up" the slope (the default) or "down" it.
+			"arrows": "down" if str(r.get("arrows", "up")) == "down" else "up",
 		})
 	return true
 

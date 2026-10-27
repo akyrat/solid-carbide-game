@@ -71,22 +71,35 @@ func show_garage() -> void:
 ## Replaces the main menu with a fresh run.
 func start_run() -> void:
 	_clear_screens()
-	run = RunScene.instantiate()
-	run.name = "Run"
-	run.progress = progress  # the car health upgrade applies at the run's start (T-061)
-	add_child(run)  # the run starts itself in _ready()
-	run.car.tuning.apply_acceleration_upgrade(progress)  # garage upgrade (T-060)
-	run.car.tuning.apply_air_turn_upgrade(progress)  # garage upgrade (T-270)
-	run.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
-	run.set_zoom(GameSettingsScript.load_zoom())
-	run.load_camera_options()  # smoothing and the dynamic camera (T-123)
-	pause_screen = PauseScreenScript.new()
-	pause_screen.name = "PauseScreenLayer"
-	run.add_child(pause_screen)
-	pause_screen.setup(run)
-	progress.connect_run(run.state)  # banks the coins before the screen swaps
+	run = add_run(self, progress)
+	pause_screen = run.get_node("PauseScreenLayer")
 	run.state.run_ended.connect(_on_run_ended)
 	run_shown.emit()
+
+
+## Adds a fresh run under `parent`, set up as the game's own run: the garage upgrades from
+## `progress`, the saved zoom and camera options, the pause screen (child "PauseScreenLayer"),
+## and the run's coins banked into `progress` when it ends. `layout_path`, when given, is the
+## map file it plays (T-230); empty is the game's own map. The level creator's Play uses it
+## too (T-239). The run starts itself when it enters the tree.
+static func add_run(parent: Node, progress: PlayerProgress, layout_path: String = "") -> Node2D:
+	var r: Node2D = RunScene.instantiate()
+	r.name = "Run"
+	if layout_path != "":
+		r.layout_path = layout_path
+	r.progress = progress  # the car health upgrade applies at the run's start (T-061)
+	parent.add_child(r)  # the run starts itself in _ready()
+	r.car.tuning.apply_acceleration_upgrade(progress)  # garage upgrade (T-060)
+	r.car.tuning.apply_air_turn_upgrade(progress)  # garage upgrade (T-270)
+	r.weapons.set_damage_bonus(progress.current_value("damage_bonus"))  # garage upgrade (T-062)
+	r.set_zoom(GameSettingsScript.load_zoom())
+	r.load_camera_options()  # smoothing and the dynamic camera (T-123)
+	var ps: CanvasLayer = PauseScreenScript.new()
+	ps.name = "PauseScreenLayer"
+	r.add_child(ps)
+	ps.setup(r)
+	progress.connect_run(r.state)  # banks the coins before the screen swaps
+	return r
 
 
 func _on_run_ended(_result: String, _coins: int) -> void:

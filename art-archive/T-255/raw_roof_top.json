@@ -1,0 +1,37 @@
+{
+  "file": "raw_roof_top.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "seamless tileable top-down texture of a flat cool blue-grey concrete rooftop at night, subtle poured concrete slab seams, light stains and hairline cracks, even lighting, no objects, no vignette, pixel art",
+    "image_size": {
+      "width": 128,
+      "height": 128
+    },
+    "no_background": false,
+    "outline": "lineless",
+    "shading": "medium shading",
+    "detail": "medium detail"
+  },
+  "prompt": "seamless tileable top-down texture of a flat cool blue-grey concrete rooftop at night, subtle poured concrete slab seams, light stains and hairline cracks, even lighting, no objects, no vignette, pixel art",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-22T09:34:02+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-198/requests"
+  ],
+  "task": "T-255",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}
