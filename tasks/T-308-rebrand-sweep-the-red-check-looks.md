@@ -1,7 +1,7 @@
 ---
 id: T-308
 title: Rebrand sweep: the red check looks for Redgull's brand reds, not every red hue, and its report on playtest/G-006 is clean
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-308.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
