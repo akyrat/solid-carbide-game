@@ -1,7 +1,7 @@
 ---
 id: T-302
 title: The Greenbull texts in the level-up screen, its cards and the garage
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -95,3 +95,4 @@ Round 2 (fix for the failed criterion "All three test sets pass"):
 - Screenshots: unchanged from round 1 (this round changed only a Python check tool).
 - Refusals: none.
 - 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
