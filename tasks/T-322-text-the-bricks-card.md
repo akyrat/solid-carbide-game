@@ -429,6 +429,20 @@ Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:
 
 **Kept:** version 1, score 9/10 ("Widest Wave", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier8_title.txt`): it reached 8 or more.
 
+### Run 27
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier6b.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Your landing wave hits harder again. Greenbull is trademarking the thud."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 1 (tone): "Greenbull is trademarking the thud" is a satirical aside about corporate brand obsession. Greenbull stays out of touch and profit-minded, and the city's people are not the joke. Rule 2: "landing wave" has no banned words, and "Greenbull" is spelled correctly. Rule 3: it is not a "Greenbull says ..." line, and it names no real brand. Rule 4: it is 72 characters (limit 90). It says what the card does first ("hits harder again"), then adds one aside. It names no number. It matches tier 3's pattern ("Your landing wave hits harder. Greenbull calls it ...") without repeating its joke, and "again" marks the II step. Minor point, not a violation: the aside is a bit more of a gag than tier 3's "Greenbull calls it ..." phrasing, but it is still one aside and in the same voice.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Your landing wave hits harder again. Greenbull is trademarking the thud.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/q_tier6_desc.txt`): it reached 8 or more.
+
 ## Result notes
 
 Narrative Theme Agent: the Bricks card texts are written, all 16 through the style loop (each kept in round 1, scores 8 or 9, every round in the Style review above).
