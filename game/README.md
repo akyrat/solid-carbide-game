@@ -1067,6 +1067,8 @@ Task T-043 (Weapon Behavior Agent): which weapon choices a level-up gives and ap
 
 ### Level-up screen
 
+T-310: the ribbon's `TitleLabel` is lettered in cream (`TITLE_CREAM`, RGB 246, 250, 232) with a dark outline (`TITLE_OUTLINE`, RGB 14, 22, 18, `TITLE_OUTLINE_SIZE` 4) so it reads on a dark green ribbon; card titles, descriptions and buttons keep black ink (`INK`).
+
 Task T-052 (UI Agent). What the player sees and does: `docs/hud-and-menus.md`, "Level-up screen". `scripts/ui/level_up_screen.gd` (`LevelUpScreen`, a CanvasLayer at layer 15: over the HUD, under the pause screen) is a child of the run (`run.level_up_screen`, node `LevelUpScreen`), set up with the weapon rack. Since T-144 a level-up no longer opens it by itself: the car drives over the gift pack's package (see "The gift pack drop"), which calls `state.open_choice(level)` and pauses the tree (`run.gd` keeps `state.pause_on_level_up` off); the screen listens to `run.weapons.offers.offers_ready`, shows a card per id and calls `offers.choose(id)` for the one taken; it closes on `offer_taken` and on a new run. It keeps processing while the tree is paused.
 
 - `cards`: one `{id, panel, body, highlight_frame, image, title, desc, button}` per offered id; `highlight` is the highlighted index. `card_text(id)` gives `{title, desc}`: every `upgrade_<weapon>` id uses that weapon's tier now + 1 (`upgrade_gun.tier4.*` for a gun at tier 3, `upgrade_wiper.tier5.*` for a wiper at tier 4; T-173 made this work for all five weapons through `rack.get_weapon(offers.weapon_of(id))`).

@@ -42,6 +42,7 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 - Settings exposed for playtests and development (for example the flamethrower from the start, the kaiju's early arrival) go under an internal dev flag: players never see them. (board, 2026-10-14)
 - The kaiju's health bar sits on top of the kaiju in the world and follows it, instead of in a corner of the HUD: about as wide as the kaiju (it follows the kaiju's width, so it still fits the final art), neon purple on a white background with a black outline and thin black dividers at every 10% of its health, in a subtle version of the combo popups' comic style. No label. It is always drawn above buildings, so it shows even when the kaiju is behind one. (board, 2026-10-15)
 - The level-up screen's weapon cards each show an image of the weapon. (board, 2026-10-18)
+- The level-up screen's header title is lettered in cream (RGB 246, 250, 232) with a dark outline (RGB 14, 22, 18, 4 pixels), to read on a dark green ribbon; the card titles, descriptions and buttons keep black ink on the cream cards. (T-310)
 - Level-ups are animated: the likes bar plays a short animation when the player levels up, and the level-up screen animates in. The level-up screen gets art themed on the sponsor, since the weapons it offers arrive as its gift packs; its animation uses that art. First red and gold for Redgull (board, 2026-10-15); after the rebrand, Greenbull's dark green leading, with light green and a little yellow (board, 2026-10-26; Visual style, Decisions, "Greenbull's look").
 
 ## Content
