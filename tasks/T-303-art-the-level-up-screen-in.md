@@ -1,7 +1,7 @@
 ---
 id: T-303
 title: Art: the level-up screen in Greenbull's colours, with its emblem
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -210,3 +210,4 @@ Written by the agent when it finishes.
 
 **Refusals:** the earlier session's style loop runs list refused Bash commands in the Style review: chained `&&` and `python -c` checks, a `/tmp` read and pytest. In each case the agent used the approved commands instead, and nothing essential was blocked. Nothing was refused in this session.
 - 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
