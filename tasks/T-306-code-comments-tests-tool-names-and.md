@@ -1,7 +1,7 @@
 ---
 id: T-306
 title: Code comments, tests, tool names and game/README.md say Greenbull, behaviour unchanged
-status: blocked
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -51,6 +51,10 @@ Show in the result notes that the diff touches only names, comments and strings.
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Blocked → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-306.
 
 ## Style review
 
