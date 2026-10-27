@@ -1,7 +1,7 @@
 ---
 id: T-323
 title: "Game data: the Bricks weapon's numbers and upgrade tiers"
-status: open
+status: in-progress
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -45,6 +45,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-27, Open → In progress
+
+Started: the Game Data Agent is proposing Bricks' numbers and tiers.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -52,3 +56,13 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Bricks' numbers are in `game/data/weapons.json` ("bricks"), read through `WeaponData.bricks_at(tier)`. Proposals, with the reason for each in Weapons, Content, "Bricks (numbers proposed in task T-323)":
+
+- damage 6 (kills a minion, health 4, from tier 1; landings are rare so one hit is big), radius 4, knockback 4 (minions only, never the kaiju), minimum air time 0.3 s (the airtime trick's `min_seconds`, so a bump does not fire it), cooldown 0.5 s (no stacked waves from bounces).
+- 7 tiers, like the wiper: 2 radius x1.2; 3 damage x1.5; 4 knockback x1.5; 5 radius x1.25; 6 damage x1.5; 7 knockback x1.5; 8 radius x1.3 (final radius 7.8, damage 13.5, knockback 9).
+- Offers: there is no weapon list in the data; the offers' list is code (`WEAPON_ORDER` and `ALL_IDS` in `level_up_offers.gd`). Adding Bricks there would change the choices (nine to eleven) before the weapon exists, so it is kept out: the data has `offered_in_level_ups: false` (`WeaponData.bricks_offered()`). To turn it on, T-324 sets that true, adds `bricks` to `WEAPON_ORDER` and `get_bricks` / `upgrade_bricks` to `ALL_IDS`, and updates the tests that list five weapons (`test_level_up_offers.gd`, `test_all_weapons_run.gd`).
+- Tests: `game/tests/unit/test_weapon_data.gd` (new `test_bricks_numbers_and_tiers`, `test_bricks_not_offered_until_built`; the tier-count and weapon-count tests now include Bricks).
+- Test results: `game/tools` 620 tests OK (1 skipped); `tools` 501 OK; `run_tests.sh` 1690 of 1690 GUT tests pass.
+- Documents updated: docs/weapons.md, game/README.md.
+- Not done: no behaviour, no level-up card or art (T-322, T-324, T-325).
