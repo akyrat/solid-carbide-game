@@ -11,7 +11,7 @@ func _ready() -> void:
 	tp.show_popup("LONG DRIFT! +0.05", at + Vector2(0, 60), tp.SIZE_SMALL)
 	tp.show_popup("FULL 360! +0.25", at + Vector2(-190, 140))
 	tp.show_popup("ALT DRIFT! +0.5", at + Vector2(190, 140))
-	tp.show_popup("Trending! +120 Likes", at + Vector2(0, 220))
+	tp.show_popup("TRENDING! +120 SUBS!", at + Vector2(0, 220))
 	for p in tp.popups():
 		p.advance(0.3)
 		p.set_process(false)

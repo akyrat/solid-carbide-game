@@ -43,7 +43,11 @@ const HEART_SCALE := 2
 const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
-const TEXT_LIKES := "Likes"
+const TEXT_LIKES := "Subs"
+# Livestream HUD texts (T-331): {subs} and {goal} are the sub goal's numbers.
+const TEXT_SUB_GOAL := "{subs} / {goal} SUBS"
+const TEXT_LIVE_BADGE := "LIVE"
+const TEXT_VIEWERS_UNIT := "WATCHING"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
 # Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".

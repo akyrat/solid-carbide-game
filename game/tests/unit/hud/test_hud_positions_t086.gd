@@ -6,8 +6,8 @@ extends GutTest
 const HUD_SCENE := preload("res://scenes/hud/hud.tscn")
 ## Measured from master's hud.gd (f6ff2eb, before T-086) at 1152x648 with
 ## "Hype Lv 99": rects as [x, y, w, h].
-const ROW := Rect2(288, 536, 67, 26)
-const LIKES := Rect2(320, 536, 35, 26)
+const ROW := Rect2(288, 536, 66, 26)
+const LIKES := Rect2(320, 536, 34, 26)
 const LEVEL := Rect2(792, 536, 72, 26)
 const BAR := Rect2(288, 568, 576, 64)
 ## The combo counter's layout rect (position and size, before the heat's

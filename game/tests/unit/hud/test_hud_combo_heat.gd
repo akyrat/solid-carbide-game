@@ -144,10 +144,10 @@ func test_comic_font_with_the_words_unchanged() -> void:
 		assert_eq(f.get_font_name(), "Bangers", "%s in Bangers" % l.name)
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE, "%s: smoothing off" % l.name)
 	# T-048 and T-082 text, unchanged (Bangers shows it in capitals).
-	assert_eq(Hud.TEXT_LIKES, "Likes")
+	assert_eq(Hud.TEXT_LIKES, "Subs")
 	assert_eq(Hud.TEXT_LEVEL, "Hype Lv {level}")
 	assert_eq(Hud.TEXT_COMBO, "Combo x{multiplier}")
-	assert_eq(hud.likes_label.text, "Likes")
+	assert_eq(hud.likes_label.text, "Subs")
 	assert_eq(hud.level_label.text, "Hype Lv 1")
 	r.state.add_trick("alternate_drift")
 	assert_eq(hud.combo_label.text, "Combo x1.5")
