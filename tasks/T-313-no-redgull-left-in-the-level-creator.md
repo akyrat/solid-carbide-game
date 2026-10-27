@@ -1,7 +1,7 @@
 ---
 id: T-313
 title: No Redgull left in the level creator's code, tools and notes, behaviour unchanged
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, tasks/T-312-no-redgull-left-in-game-outside.md, docs/visual-style.md, game/README.md, game/tools/style_rules.py]
 files_expected_to_change: [game/scripts/level/thread_the_needle.gd, game/scripts/level_creator/editor.gd, game/tools/build_creator_buildings.py, game/tools/build_prop_art.py, game/tools/build_prop_final_art.py, game/tools/test_build_prop_art.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started: the Level/Challenge Design Agent is renaming the old sponsor in the cre
 ### 2026-10-27, In progress → In QA
 
 The agent is done: the old sponsor's name is gone from the creator's code, tools and notes, checks unchanged, all tests pass. QA is checking it.
+
+### 2026-10-27, In QA → Done
+
+QA passed all six criteria; merged into master (nothing the player sees changed).
 
 ## Style review
 
