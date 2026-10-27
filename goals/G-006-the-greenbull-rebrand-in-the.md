@@ -4,7 +4,7 @@ title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
 status: building
 art_cap: 1900
 art_used: 0
-iteration: 11
+iteration: 12
 max_iterations: 20
 created: 2026-10-26
 lead: Goal-G-006
@@ -57,7 +57,7 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 | 10 | S11 | Code comments, tests, tool names and game/README.md follow the new name | unblocks 1, value 3 | Item (5) of the goal: the code base and its README stop saying Redgull, without changing what the game does. | covered | T-306 |
 | 11 | S12 | Rebrand sweep: no Redgull left where the player can see it, with screenshots | unblocks 0, value 4 | The goal's stop condition: a run shows no Redgull name, logo or brand red anywhere, and every changed screen has screenshots. | covered | T-307, T-308 |
 | 12 | S4 | T-297: the ticket guard lets a safe sed edit of a ticket's body through (reused as it is) | unblocks 0, value 2 | Named in the goal; keeps agents from being refused for harmless ticket edits during the run. | covered | T-297 |
-| 13 | C1 | Goal criterion: On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). | goal criterion | it failed the goal check | missing | T-309, T-310, T-311 |
+| 13 | C1 | Goal criterion: On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). | goal criterion | it failed the goal check | in-flight | T-309, T-310, T-311 |
 
 ### S1: Style rules check follows the new rule 6 and text rules
 
@@ -223,6 +223,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 11: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-27, iteration 11: goal check: 10 of 11 goal criteria pass.
 - 2026-10-27, iteration 11: gap detection on the failing goal criteria: C1 missing (wrote T-309, T-310, T-311).
+- 2026-10-27, iteration 12: T-309 (C1, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: Built the T-309 level-up screen check and committed it on the task branch. Redgull's brand reds and `is_redgull_red` moved into style_rules.py, and check_rebrand.py uses them. I added the `level_up_from_menu_demo` fixture, `check_level_up_shot.py` with its tests, a two-card screenshot, and the README section. On the screenshot the check exits 1 with no red pixels, because light green (35,678 pixels) leads dark green (23,280), as the task expected. All three test sets pass: GUT 1419/1419, `game/tools` 508, and `tools` (its background run finished with exit 0). The result notes still say the `tools` set was left to QA, which is out of date. A scratch screenshot, `_wiper_ref.png`, was committed by mistake and I couldn't delete it with the allowed commands. Rescan: C1 in-flight.
 
 ## Pauses
 
