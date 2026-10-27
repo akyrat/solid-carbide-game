@@ -1,7 +1,7 @@
 ---
 id: T-272
 title: "Thread the needle: pair two obstacles in the creator, and drive between them for a trick"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -112,3 +112,4 @@ I looked at all of them. One thing to note for the playtest: the game's boulder 
 **Documents affected:** `docs/level-design.md` (Content, "Level creator: thread the needle"), `docs/game-loop-architecture.md` (The combo, the list of tricks), `game/README.md` ("Level creator", "Thread the needle (T-272)"; Tricks; the validator line).
 
 No refusals.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
