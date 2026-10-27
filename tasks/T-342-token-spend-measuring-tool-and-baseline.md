@@ -1,7 +1,7 @@
 ---
 id: T-342
 title: Token spend: a measuring tool and the baseline report
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the measuring tool and the baseline, first so the numbers are taken before anything changes.
 
+### 2026-10-27, In QA
+
+Built: tools/token_report.py and the baseline report; the two big sessions' numbers match exactly. QA is checking it now.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -93,3 +97,11 @@ Nothing to picture (a tool, a report and one board bubble).
 - The tickets carry no run date, so section 5 ignores the date range.
 - "Context size" is input plus cache creation plus cache read of each call. The weighted cost uses characters, not tokens.
 - Godot's runs touched `.import` files in the worktree (line endings); I did not stage them.
+
+### QA round 1 (2026-10-27)
+- Criterion 1: PASS. Tool runs rc=0; 88cd5834 2283 calls 883.0M, ac11e792 1237 calls 546.3M.
+- Criterion 2: PASS. Baseline has sections 1 to 5 (tokens, calls/context/compactions, context fill, failed calls, tickets with QA rounds, fail rate, model counts).
+- Criterion 3: PASS. Tool has --from/--to; unit tests cover range and message.id dedup (tools suite OK).
+- Criterion 4: PASS. AREAS has Token spend bubble, epics token-spend, excluded: true (code read, not rendered).
+- Criterion 5: PASS. docs/README.md has the Token spend paragraph.
+- Criterion 6: PASS. tools 507 OK; game/tools 620 OK (1 skipped); GUT 1735/1735 passing, TESTS PASSED.
