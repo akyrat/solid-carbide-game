@@ -61,3 +61,21 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Change.** `check_rebrand.py`: the red check now flags a loaded PNG only when an opaque pixel is within `BRAND_THRESHOLD = 12` (RGB distance) of a colour in `BRAND_COLOURS`. Each entry names the archived file it came from: old logo red (135,17,27); reds (230,1,2), (221,1,1), (145,1,2), (124,0,1) from `art-archive/T-303/red_gold/gift_pack_emblem.png` and `art-archive/T-304/redgull/package.png`; (222,44,52), (176,24,36), (110,14,24) from the T-303 red_gold pieces (header ribbon, button plate, sunburst, card frame) and the helicopter; (150,24,34) from `art-archive/T-304/redgull/package_falling.png`, (166,28,36) from `art-archive/T-305/redgull/helicopter_sheet.png`. Left out on purpose: the old golds (they sit within a few units of Greenbull's yellow (247,208,52) and fire yellows, so a first run at threshold 25 with golds gave 14 false findings) and the helicopter's (198,52,50) (11 from burning flames' (208,53,46)). Threshold 12 keeps fire reds (202,3,0), (111,16,4) clear. KEPT_RED, name and text checks and `style_rules.reads_as_red` are unchanged. New helper `game/tools/list_brand_palette.py` lists a PNG's commonest colours. No art or text edited.
+
+**Report** (`python game/tools/check_rebrand.py`, this folder, exit 0):
+```
+loaded PNGs checked: 68
+kept red (named in Visual style): 0
+findings: 0
+```
+No loaded PNG still carries a brand red. (The kept list is empty now: the heart (219,26,41) and tail-light colours are farther than 12 from every brand colour.)
+
+**Screenshots** (`art-archive/T-307/screenshots/`): main_menu.png: no Redgull name, logo or brand red (cyan title, dark buttons). garage.png: none ("Greenbull brand-safe pit stop"; the salmon "Not enough coins" text is UI text, not Redgull's red). run_hud.png: none (green helicopter and gift box, Greenbull emblem; the red likes heart is the kept HUD heart). gift_pack_drop.png: none (green helicopter and box). level_up_screen.png: none (green sunburst, ribbon and card, Greenbull emblem, "GREENBULL SENT A GIFT PACK!").
+
+**Tests.** game/tools: 502 OK (1 skipped); tools/: 501 OK; GUT: 1419/1419 passed. New tests: old logo red flagged, a colour within threshold flagged, fire orange (249,126,3) and wood brown (68,33,13) not flagged, the likes heart passed as kept, redgull-named file and "Redgull" text flagged, every brand colour names an archive file.
+
+**Screenshots for this ticket:** none new, tooling only; the five above are the T-307 screenshots this ticket reviewed.
+
+**Refusals:** one inline `python -` / `sed` shell command was refused; not retried, used the edit tool instead.

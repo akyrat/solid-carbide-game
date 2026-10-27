@@ -182,7 +182,7 @@ The folder defaults to `res://audio`. It prints one `OK` or `FAIL` line per file
 
 `game/tools/check_rebrand.py` checks that nothing the player can see still carries the old sponsor (Redgull): its name, its logo or its brand red. It reads every `res://` path in `game/scenes` and `game/scripts` (a `%s` pattern stands for every file it matches, a path with no extension for every PNG starting with it, a folder for every PNG in it) and reports:
 
-- **red**: a loaded PNG with a pixel `style_rules.reads_as_red` flags, except the subjects whose red the docs keep (`KEPT_RED` in the script, each with its line from Visual style, Decisions, "Red after the rebrand": the likes heart, the alert signs, the car's tail lights, the minion's mouth, the health canister, the combo broken popup). Kept files are listed apart;
+- **red** (the brand-red check, T-308): a loaded PNG with an opaque pixel within `BRAND_THRESHOLD` (RGB distance 12) of one of Redgull's brand reds (`BRAND_COLOURS` in the script: the old logo red 135, 17, 27 and the reds of the old level-up art, gift pack package and helicopter sheet, each with the archived file it came from). Other reds, such as fire oranges and wood or grip browns, are not flagged: Visual style says red is no longer reserved. The old golds are left out because Greenbull's yellow and fire yellow sit next to them. The subjects whose red the docs keep (`KEPT_RED`: the likes heart, the alert signs, the car's tail lights, the minion's mouth, the health canister, the combo broken popup) are listed apart when they match. `style_rules.reads_as_red` is unchanged and still used elsewhere;
 - **name**: a loaded file whose name contains `redgull`;
 - **text**: a quoted string or JSON value containing "Redgull" in `game/scripts`, `game/scenes` or `game/data` (comments are skipped).
 
@@ -191,7 +191,7 @@ python game/tools/check_rebrand.py [--game-dir game] [--json]
 python -m unittest discover -s game/tools -p test_check_rebrand.py
 ```
 
-It only reports; exit code 1 when there is any finding. The red check is loose (it also flags oranges and browns near a red hue), so fire and wood colours show up and are for the Project Lead to judge. Screenshots of every screen: `art-archive/T-307/screenshots/`.
+It only reports; exit code 1 when there is any finding. On playtest/G-006 the report is clean (0 findings). `game/tools/list_brand_palette.py FILE.png` lists a PNG's commonest colours, for finding more brand colours. Screenshots of every screen: `art-archive/T-307/screenshots/`.
 
 ## Generating art with PixelLab
 
