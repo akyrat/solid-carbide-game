@@ -1,7 +1,7 @@
 ---
 id: T-312
 title: No Redgull left in game/ outside the art records: old logo files to art-archive, the old name spelled once in code, behaviour unchanged
-status: in-progress
+status: in-qa
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -60,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-312.
+
+### 2026-10-27, In progress → In QA
+
+Goal runner (G-006): the agent is done; QA is checking it.
 
 ## Style review
 
