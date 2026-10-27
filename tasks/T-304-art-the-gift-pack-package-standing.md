@@ -1,7 +1,7 @@
 ---
 id: T-304
 title: Art: the gift pack package, standing and falling, in Greenbull's colours
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -49,6 +49,10 @@ The board's review: play a run to a gift pack drop: the package, falling and lan
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-304.
 
 ## Style review
 
