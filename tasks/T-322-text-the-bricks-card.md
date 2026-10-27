@@ -280,11 +280,161 @@ Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:
 
 **Kept:** version 1, score 9/10 ("Total Impact", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/o_tier8_title.txt`): it reached 8 or more.
 
+### Run 17
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier4.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. Rule 4: the effect comes first ("Impact waves knock minions back harder"), followed by one aside, and it is 82 characters. It names no number. Rules 2 and 3: it has no banned word, no "Greenbull says" line, and no real brand. "The kaiju" is the correct term. Rule 1: the aside plays on corporate and social-media "feedback" language, and the joke is on the kaiju, not on the city's people. It is dry and tongue-in-cheek, with no gore. It is a little weaker than the sibling cards (Wider Wave, Harder Landing). Those name Greenbull and use brand-speak ("ground-breaking content", "brand activation"). This one leaves Greenbull's out-of-touch corporate voice out of the aside. An optional fix is to tie the aside to Greenbull or marketing language, for example "Greenbull calls the kaiju's immunity 'a non-negotiable audience segment'", while keeping it within 90 characters. The card also stays distinct from tiers 2 and 3 (further reach, harder hit) because it covers knockback.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier4_desc.txt`): it reached 8 or more.
+
+### Run 18
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier4.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Shove Factor"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: The title "Shove Factor" breaks no text rule. Rule 4: 12 characters, under the 30 limit. Rules 2 and 3: no banned vocabulary, no "Greenbull says" line, no real brand. Rule 1: it is a light, tongue-in-cheek pun on "wow factor", in the same register as the other Bricks titles (Wider Wave, Harder Landing, Shockwave Reach). It doesn't repeat an existing Bricks title and fits the knockback effect. It is slightly less corporate-satirical than it could be, but that is optional for a title. The description's "does first, then one aside" and "never the kaiju" requirements are not part of this title-only version.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Shove Factor", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier4_title.txt`): it reached 8 or more.
+
+### Run 19
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier5.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Your landing wave spreads even wider. Greenbull's reach has never looked so flat."
+- Script checks: 3 of 3 pass
+- Score: 6/10
+- Reason: Rules 2, 3 and 4 pass (script facts). The effect comes first and there is one aside, which fits rule 4. Rule 1 (tone) is only weakly met. The aside "Greenbull's reach has never looked so flat" doesn't land as satire of corporate or social-media language. "Reach" is the right social-media word, but "flat" reads as a literal description of a flat wave, or as an insult to Greenbull's reach. That clashes with Greenbull being out of touch, never sincere and focused on profit. The existing Bricks cards use the clear pattern "Greenbull calls it <corporate buzzword>" (ground-breaking content, high-impact brand activation, organic reach). Fix: replace the aside with a sharper buzzword joke in that vein, for example Greenbull treating the wider wave as audience growth or a brand expansion. Keep the effect sentence as it is, or vary it slightly. It currently opens with "Your landing wave", the same wording as Harder Landing (tier 3).
+- Rules broken: 1
+
+#### Round 2
+
+- Version 2: "Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint."
+- What changed: Version 2, 89 characters (the limit is 90). I replaced the aside with the same "Greenbull calls it <corporate buzzword>" pattern the other Bricks cards use. "Expanding the brand footprint" is real marketing jargon, and here it also describes the landing's footprint getting bigger. I didn't reuse the buzzwords already on Bricks cards: ground-breaking content, high-impact brand activation, building boom, organic reach and mic drop. I also changed the effect sentence so it no longer starts with "Your landing wave", which is how Harder Landing (tier 3) starts. It still comes first and still has no numbers. The title stays "Wider Wave II". The note from version 1 still applies: level_up_texts.gd already has "Harder Landing II" at tier 5, and tier 4's text is already about radius.
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 4: the text is 90 characters (the script confirms), and it says what the card does first ("Each landing's wave spreads wider again."), then gives one aside. Rule 1: "expanding the brand footprint" is satirical, soulless corporate speak in Greenbull's out-of-touch voice, with no earnest or grim tone and no joke at the city's expense. Rule 2: no banned words. Rule 3: it is not a "Greenbull says ..." line. "Greenbull calls it ..." is the pattern the existing cards use, and no real brand is named. It carries no numbers, as the brief asks. It fits the tier 2 and 3 cards without repeating their jokes ("ground-breaking content", "high-impact brand activation"). Its "again" marks it as the follow-up to Wider Wave. The only weakness is that the effect clause is close to tier 2's, which the brief's effect requires, and the aside is a little generic. It sits exactly at the 90-character limit, so any edit must keep it within that.
+- Rules broken: none
+
+**Kept:** version 2, score 9/10 ("Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier5_desc.txt`): it reached 8 or more.
+
+### Run 20
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier5.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Wider Wave II"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: The title breaks no text rule. Rule 4: 13 characters, under the 30 limit for a level-up card title. Rules 2 and 3: no banned words, no "Greenbull says" line, no real brand. Rule 1: a title has no room for satire, and the tone of the card is carried by the description, so it is neutral and fine. It names the effect (bigger radius), builds on the existing "Wider Wave" (tier 2), and does not repeat "Harder Landing". The "II" numbering matches the file's pattern ("Harder Landing II/III"). Nothing needs fixing. I took off one point only because the existing file already has "Heavier Load" at tier 4 for a radius upgrade, so "Wider Wave II" as a tier 5 title is slightly out of order with it. Rules do not cover that.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Wider Wave II", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier5_title.txt`): it reached 8 or more.
+
+### Run 21
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier6.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Harder Landing II / Your landing wave hits harder again. Greenbull is trademarking the thud."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: The text breaks none of the Text rules. Rule 1 (tone): the aside "Greenbull is trademarking the thud." mocks corporate brand obsession, is slightly unethical, and leaves the city's people out of the joke. Rule 2 (vocabulary): no banned words. Rule 3 (who speaks): Greenbull's voice is used on a level-up card, which is its own thing. There is no "Greenbull says ..." line and no real brand. Rule 4 (format and length): the title is 17 characters (limit 30) and the description is exactly 90 (limit 90). It says what the card does first, then adds one satirical aside, and it names no number. It matches the existing Bricks cards and doesn't repeat their jokes: "ground-breaking content", "high-impact brand activation". Two small notes, neither a rule break. The description sits at the 90-character limit, so any edit has to cut something. And level_up_texts.gd already uses "Harder Landing II" for tier 5 and "Shockwave Reach" for tier 6, which differs from the brief's tier numbering. Check that the title isn't duplicated in the file when this is integrated.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Harder Landing II / Your landing wave hits harder again. Greenbull is trademarking the thud.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier6_desc.txt`): it reached 8 or more.
+
+### Run 22
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier6.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Harder Landing II"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: The title follows the Text rules. Rule 4 (level-up card title, at most 30 characters): 17 characters, so it passes. Rule 2 (vocabulary): no banned words. Rule 3: it isn't a "Greenbull says ..." line and names no real brand. Rule 1 (tone): a title carries no joke, and the satirical aside belongs in the description, so nothing here breaks the tone. It is plain, on-theme and matches the brief ("Harder Landing" tier 3 plus a numeral for the same effect). One non-blocking note: the current game/scripts/ui/level_up_texts.gd already uses "Harder Landing II" for upgrade_bricks.tier5 (and "Harder Landing III" for tier7). Two cards with the same title would confuse players. No text rule covers this, so it costs no points. If the maker wants to avoid the clash, it could pick another title for tier 6, as the file's own tier6 does with "Shockwave Reach".
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Harder Landing II", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier6_title.txt`): it reached 8 or more.
+
+### Run 23
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier7.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 1 (tone): "Greenbull calls it outreach" is a light corporate-speak joke, with Greenbull out of touch and no one sincere. The joke isn't about the city's people or their fear, and it isn't grimdark. Rule 2: the script found no banned words. The text says "kaiju" and "Greenbull" correctly and uses no XP or points wording. Rule 3: it is Greenbull's own level-up voice. "Greenbull calls it ..." is not the banned "Greenbull says ..." form, and it matches the existing Bricks cards. It names no real brand. Rule 4: the description is 87 characters, under the limit of 90. It says what the card does first (the shove grows, minions only, never the kaiju), then one satirical aside, and it names no number. Minor nit, not a rule break: "even further" is close to tier 4's "even further out", but this card is about knockback and tier 4 is about reach, so it is distinct enough. The only open point is the title: the brief suggested "Shove Factor II" and I did not score a title.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier7_desc.txt`): it reached 8 or more.
+
+### Run 24
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier7.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Shove Factor II"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No text rule is broken. Rule 4: the title is 15 characters, under the 30 limit. Rules 2 and 3: no banned vocabulary and no "Greenbull says" form. Rule 1: the title is plain and has no earnest heroics. The satire belongs in the description, which this version doesn't include. It also fits the existing Bricks titles (Wider Wave, Harder Landing II, Shockwave Reach) and doesn't repeat any. One small point, not a rule breach: no earlier Bricks card is called "Shove Factor", so the "II" refers to nothing in this weapon's tree. If the agent wants cleaner continuity it could drop the numeral or pick a title in the existing naming style.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Shove Factor II", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier7_title.txt`): it reached 8 or more.
+
+### Run 25
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier8.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. The script checks for rules 2, 3 and 4 pass (81 of 90 characters). Rule 1 (tone): "city-wide rollout" is satirical corporate jargon, and Greenbull is the one out of touch. It leans on the city, but it doesn't make fun of the people or their fear. Rule 3: Greenbull's voice is allowed on a level-up card, and it isn't a "Greenbull says ..." line. There is no real brand. Rule 4: the text says what the card does first ("Your landing wave reaches its widest yet"), then has one aside, and it names no number. It fits the existing Bricks cards and doesn't repeat Wider Wave or Harder Landing. A small, optional point: "Greenbull calls it ..." is already the pattern on most Bricks cards, and the opening sentence is close to tier 3's "Your landing wave hits harder". That is consistent with the set, so it isn't a violation.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout.", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier8_desc.txt`): it reached 8 or more.
+
+### Run 26
+
+Run by `tools/style_loop/run.py` on 2026-10-27: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/n_tier8.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Widest Wave"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: "Widest Wave" breaks none of the Text rules. Rule 1 (tone): a plain title, neutral, not earnest or grimdark. The satire belongs in the description, which isn't part of this card_title. Rule 2 (vocabulary): no banned words. Rule 3 (who speaks): no "Greenbull says" line and no real brand. Rule 4 (format): 11 characters, well under the 30 limit, and it is a title, not a description. It also fits the brief. It names the final, largest radius step. It follows the "Wider Wave" naming without repeating it, and it doesn't clash with the other Bricks titles (Harder Landing, Heavier Load, Shockwave Reach, Harder Landing II/III). One small note, not a rule break: the Bricks wave line keeps its Wider/Harder pairs, so "Widest Wave" is the natural close of the width line.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Widest Wave", copied to `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b322/p_tier8_title.txt`): it reached 8 or more.
+
 ## Result notes
 
 Narrative Theme Agent: the Bricks card texts are written, all 16 through the style loop (each kept in round 1, scores 8 or 9, every round in the Style review above).
 
 - **Where:** `game/scripts/ui/level_up_texts.gd` (`get_bricks.*` and `upgrade_bricks.tier2` to `tier8`, after the wiper's), and listed in `docs/weapons.md`, Content, "Bricks".
 - **Card:** title "Bricks" (9); description "A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?" (8, 84 characters). The board's line is word for word; the hint is the question at the end. The rule that cards say first what they do, then an aside, is not met on purpose: the board's line is the whole joke of the card, and the style loop scored it 8.
-- **Tiers:** T-323's tiers were not available, so I wrote 7 upgrade tiers (2 to 8), the same as the windshield wiper, with no numbers: tiers 2, 4, 6 widen the wave (Wider Wave, Heavier Load, Shockwave Reach), tiers 3, 5, 7 make it hit harder (Harder Landing, II, III), tier 8 is both (Total Impact). When T-323 sets its real tiers, any card whose effect differs needs rewording through the style loop.
+- **Tiers (reworded to T-323's real tiers; the first pattern's runs stay in the Style review above):** tier 2 Wider Wave (8 desc / 9 title) and tier 3 Harder Landing (8 / 9) were kept. Reworded, each through the loop, no numbers: tier 4 "Shove Factor": "Impact waves knock minions back harder. Never the kaiju; it doesn't take feedback." (8 / 9); tier 5 "Wider Wave II": "Each landing's wave spreads wider again. Greenbull calls it expanding the brand footprint." (9 after 1 refine / 9); tier 6 "Harder Landing II": "Your landing wave hits harder again. Greenbull is trademarking the thud." (9 / 9); tier 7 "Shove Factor II": "Landing waves shove minions even further, never the kaiju. Greenbull calls it outreach." (9 / 9); tier 8 "Widest Wave": "Your landing wave reaches its widest yet. Greenbull calls it a city-wide rollout." (9 / 9).
+- **One caveat:** the tier 6 description's loop run (Run 21) was scored with a stray "Harder Landing II / " title prefix in the text; I kept the description part only (the same words, 72 characters) and did not pay for another run. The prefix is in that run's record. Also the Style review holds the old pattern's runs for tiers 4 to 8 (Runs 7 to 16), which are no longer used.
 - **Skipped:** `docs/hud-and-menus.md` is unchanged: it points to the level-up texts and the weapon's texts live in Weapons only (one decision, one document). Tests were not run: only text data changed (the length checks ran inside the loop).
