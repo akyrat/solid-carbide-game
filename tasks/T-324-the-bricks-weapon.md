@@ -1,7 +1,7 @@
 ---
 id: T-324
 title: "The Bricks weapon: an impact wave each time the car lands"
-status: in-qa
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/drifting.md, game/README.md, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/level_up_offers.gd, game/scripts/weapons/windshield_wiper.gd]
 files_expected_to_change: [game/scripts/weapons/, game/scenes/, game/tests/unit/, game/README.md, docs/weapons.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,14 @@ Started: the Weapon Behavior Agent is building Bricks (an impact wave on each la
 
 Built: Bricks sends an impact wave on each landing after 0.3 s in the air, offered on level-up cards with the approved texts. QA is checking it.
 
+### 2026-10-27, In QA → Needs playtest
+
+QA passed all 7 criteria. In the shared build (playtest/batch-1028) for your playtest.
+
+### 2026-10-27, Needs playtest → Done
+
+Approved after the board's playtest of batch-1028; merging to master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -91,3 +99,4 @@ Weapon Behavior Agent, 2026-10-27.
 **Proposals for the playtest** (the docs left them open): the reach counts the enemy's body (as the other weapons), the wave is flat (enemies on another level within the radius are hit, as the underglow's "damage areas are unchanged"), the push goes from the landing spot, and the ring's look and timing.
 
 **Documents affected:** `docs/weapons.md` (the two Bricks headings merged into one Content section, "Bricks", with how it works, then T-323's numbers and T-322's texts; the level-up offers section now says six weapons; Summary and Decisions not touched), `game/README.md` ("Weapons", new "Bricks" section, and the level-up offers' ids, counts and tests).
+- 2026-10-27, needs-playtest → done: The board played batch-1028 and approved it.
