@@ -48,6 +48,10 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player.
 - **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
 - **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). Built in T-222: the radius is 3 units (the car is drawn 3 units long, Drifting, Decisions), read from `run.json`'s `pickup_magnet`, and pickups fly to the car at 30 units per second (proposals for the playtest: the pull speed, and the reach ignoring heights); `game/README.md`, "The pickup magnet (T-222)". (T-222)
+- **An arrow for every gift pack on the map** (board, 2026-10-28): every gift pack on the map gets its own arrow, the same arrow that today points at a landed package off screen, so several arrows show when several packages are out. (T-314)
+- **A crash pays the trick in progress** (board, 2026-10-28): when a crash breaks the combo, the player still gets the trick they were doing up to that moment (a drift pays for the time it lasted), instead of losing it. (T-315)
+- **Time's up screen** (board, 2026-10-28): when the 8-minute timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
+- **Recap screen in the MVP** (board, 2026-10-28; replaces "In the MVP there is no recap" above): after a run ends, the player sees a recap of the run: the enemies slain, the tricks completed, the highest combo multiplier reached and the weapons used, each shown with pictures where it can be (the enemies' and weapons' own art). Its text: HUD and menus, Content (T-318). (T-319, T-320)
 
 ### Content
 
@@ -964,6 +968,8 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 - **A smaller exhaust flame that burns what it touches** (board, 2026-10-22, after playtests; replaces "a minion is in the flames when its centre is" of 2026-10-14): when the flamethrower is first picked up (tier 1) its flame is drawn 4 to 5 times smaller than today (a proposal of about a quarter of today's length and width), growing with its size tiers as before; it is drawn behind the car and behind the enemies, never over them; and its damage area is the flame as drawn, so a minion takes damage as soon as any part of it touches the visible flame (the kaiju as before, any overlap). (T-267)
 - **A stronger wiper push** (board, 2026-10-22, after playtests): the windshield wiper's first level (tier 1, when it is picked up) pushes a minion back about twice the car's size; read as twice the car's length, 6 units (the car is 1 unit wide and 3 long), against 1.5 today. The later tiers keep their multipliers, so they grow from the new base. (T-266)
   - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has). The first level-up still offers "get the flamethrower" or "upgrade the gun".
+- **The first gift pack can hold any weapon** (board, 2026-10-28; replaces "The first level-up still offers 'get the flamethrower' or 'upgrade the gun'" above): the first level-up draws its two choices at random from every choice available, like every later level-up, not only the gun and the flamethrower. (T-321)
+- **Bricks** (board, 2026-10-28): a new weapon. The car carries a load of bricks; each time the car lands on the ground after being in the air, from any height, a powerful impact wave goes out around it and damages the enemies it reaches. In the first build the wave is the same whatever the height of the fall. Its card makes it sound useless, so the player is tempted to try a jump and find out: the board's direction for the description is "Bricks - A bunch of bricks. No real use, other than making the car heavier." with a hint to jump. Text: T-322; numbers: T-323; the weapon: T-324; art: T-325.
 
 ### Content
 
@@ -1401,11 +1407,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `df8bac5d87526888b336ae20700c250a146066f6181903a7723d7bb1d81f1486` |
+| `game-loop-architecture.md` | `b0957089cbab75147c0cf44862facf91007c767f58b7a376da1c43934a357995` |
 | `drifting.md` | `35aa486ed94aff23eaadd5f4fccf12aecf31eaf24c9a899728fc10a19ce820ab` |
 | `level-design.md` | `b7e96891d2276dee341714f9c5905a2cb8038a00a52dba1753ed5fc004191525` |
 | `enemies.md` | `feefaa12e88931dec67fd83ee2628c7a9a945cc6e77c72239fd5951dff78361d` |
-| `weapons.md` | `ced791afb4768952d6249b5d0bd58c681b216b340391308a67376cfed2487212` |
+| `weapons.md` | `8197b939ce618e7f9f64d0ce05a8fbdd58989b23c8c3d748fb88dbeb8d766ff8` |
 | `garage-design.md` | `2426e0a3b4f0779d493a40041f1568126a184b9f31d31d5b3eea780318727efd` |
 | `visual-style.md` | `5adbc8ebabe03e60bbfc97be39660bd6edaa1a606d1151ec9f9b464ab0889f79` |
 | `extended-narrative.md` | `74a6adba776d797d45c6b44738899be536559f95d30769f40eba2e536c3fe2dc` |
