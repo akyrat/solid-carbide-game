@@ -36,7 +36,8 @@ const UPGRADE_BRICKS := "upgrade_bricks"
 const WEAPON_ORDER := ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]
 ## Every choice id, in the order they are shown.
 const ALL_IDS := [UPGRADE_GUN, GET_FLAMETHROWER, UPGRADE_FLAMETHROWER, GET_UNDERGLOW, UPGRADE_UNDERGLOW,
-		GET_MOLOTOV, UPGRADE_MOLOTOV, GET_WIPER, UPGRADE_WIPER]
+		GET_MOLOTOV, UPGRADE_MOLOTOV, GET_WIPER, UPGRADE_WIPER,
+		GET_BRICKS, UPGRADE_BRICKS]
 ## How many choices a level-up offers (Weapons, Decisions: 2 in the MVP).
 const OFFER_COUNT := 2
 

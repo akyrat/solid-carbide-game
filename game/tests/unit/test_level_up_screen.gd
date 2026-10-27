@@ -36,7 +36,7 @@ func after_each() -> void:
 ## the gun's upgrade and the flamethrower on the cards put the other three weapons at their
 ## last tier (never offered). A new run puts them back, so call it again after start_run().
 func _only_gun_and_flamethrower_left() -> void:
-	for id in ["underglow", "molotov", "wiper"]:
+	for id in ["underglow", "molotov", "wiper", "bricks"]:
 		var w: Node = run.weapons.get_weapon(id)
 		w.set_tier(w.max_tier())
 

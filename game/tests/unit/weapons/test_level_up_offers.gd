@@ -85,7 +85,7 @@ func _max_all_but(keep: Array) -> void:
 
 # ---- The first level-up ----------------------------------------------------------------------
 
-const FIRST_CHOICES := ["upgrade_gun", "get_flamethrower", "get_underglow", "get_molotov", "get_wiper"]
+const FIRST_CHOICES := ["upgrade_gun", "get_flamethrower", "get_underglow", "get_molotov", "get_wiper", "get_bricks"]
 
 
 func test_first_level_up_is_drawn_from_every_first_choice() -> void:
