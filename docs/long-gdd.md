@@ -970,6 +970,7 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
   - **Level-up offers with five weapons:** each level-up still offers 2 choices, now two different ones drawn at random from every choice available (getting a weapon the car doesn't have, or the next tier of one it has). The first level-up still offers "get the flamethrower" or "upgrade the gun".
 - **The first gift pack can hold any weapon** (board, 2026-10-28; replaces "The first level-up still offers 'get the flamethrower' or 'upgrade the gun'" above): the first level-up draws its two choices at random from every choice available, like every later level-up, not only the gun and the flamethrower. (T-321)
 - **Bricks** (board, 2026-10-28): a new weapon. The car carries a load of bricks; each time the car lands on the ground after being in the air, from any height, a powerful impact wave goes out around it and damages the enemies it reaches. In the first build the wave is the same whatever the height of the fall. Its card makes it sound useless, so the player is tempted to try a jump and find out: the board's direction for the description is "Bricks - A bunch of bricks. No real use, other than making the car heavier." with a hint to jump. Text: T-322; numbers: T-323; the weapon: T-324; art: T-325.
+- **Weapons hit only enemies on the car's own level** (board, 2026-10-28; replaces "Their damage areas are unchanged" in "The underglow and the wiper at height" above, for damage): on a map with rooftops and ramps, a weapon damages only the enemies on the same height level as the weapon's hit: the car's level for the gun, the flamethrower, the underglow, the wiper and Bricks, and the fire's level for a molotov. An enemy on the street is not hit from a rooftop above it, and the other way round. How a ramp's in-between heights and the kaiju count are the agents' proposals for the playtest. (T-326)
 
 ### Content
 
@@ -1411,7 +1412,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `drifting.md` | `35aa486ed94aff23eaadd5f4fccf12aecf31eaf24c9a899728fc10a19ce820ab` |
 | `level-design.md` | `b7e96891d2276dee341714f9c5905a2cb8038a00a52dba1753ed5fc004191525` |
 | `enemies.md` | `feefaa12e88931dec67fd83ee2628c7a9a945cc6e77c72239fd5951dff78361d` |
-| `weapons.md` | `8197b939ce618e7f9f64d0ce05a8fbdd58989b23c8c3d748fb88dbeb8d766ff8` |
+| `weapons.md` | `42da45f90afacec35ec4f34243cd5596d3a529f96783f93aa59fabde5afd425d` |
 | `garage-design.md` | `2426e0a3b4f0779d493a40041f1568126a184b9f31d31d5b3eea780318727efd` |
 | `visual-style.md` | `5adbc8ebabe03e60bbfc97be39660bd6edaa1a606d1151ec9f9b464ab0889f79` |
 | `extended-narrative.md` | `74a6adba776d797d45c6b44738899be536559f95d30769f40eba2e536c3fe2dc` |

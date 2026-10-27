@@ -1910,3 +1910,8 @@ Entry format:
 - Decision or change: the board asked to clean up the old sponsor's name left in the level creator, which was built before the rebrand. Comments, docstrings, check labels and three game/README.md paragraphs now say "old-brand red", "the old sponsor's red" or "none of Greenbull's colours"; every check passes or fails exactly as before. The docs' mentions stay as the rebrand's history. Merged after QA (nothing the player sees changed).
 - Documents touched: game/README.md
 - Tasks: T-313
+
+## 2026-10-28: Weapons hit only enemies on their own level
+- Decision or change: after reading T-324's proposal that Bricks' wave ignores height, the board decided that on a map with rooftops and ramps every weapon hits only the enemies on the same height level as its hit (the car's level, or the fire's for a molotov), replacing the flat damage areas of 2026-10-21. Ticket written and kept for the next playtest batch; not started.
+- Documents touched: docs/weapons.md
+- Tasks: T-326
