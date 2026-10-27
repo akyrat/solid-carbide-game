@@ -1,7 +1,7 @@
 ---
 id: T-304
 title: Art: the gift pack package, standing and falling, in Greenbull's colours
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/game-loop-architecture.md, docs/working-with-the-board.md, game/README.md, tasks/T-144-gift-pack-drop.md, tasks/T-146-art-redgull-gift-pack-package.md, game/tools/build_gift_package.py, game/tools/test_build_gift_package.py, game/art/gift_pack/, game/art/logo/]
 files_expected_to_change: [game/art/gift_pack/package.png, game/art/gift_pack/package_falling.png, game/tools/build_gift_package.py, game/tools/test_build_gift_package.py, art-archive/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-304.
 ### 2026-10-27, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -159,3 +163,4 @@ package_falling.png: (64, 96), 28 colours, alpha [0, 255], Redgull red pixels: 0
 **Refusals:**
 - During the style loop, the generator agent's first chained shell commands were refused once in each run: a `git status; mkdir ... && python ... && python -c ...` chain in Run 1, and an `ls ...; python ... && python -c ...` chain in Run 2. They are listed in the Style review. They weren't essential: the version was still built with the plain `piece` command.
 - Not done: Godot's line-ending-only `.import` changes from the test and screenshot runs are left uncommitted, as the rules say. Reverting them needs `git checkout`, which isn't pre-approved.
+- 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
