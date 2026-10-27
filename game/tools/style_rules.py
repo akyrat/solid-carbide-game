@@ -56,6 +56,36 @@ def red_distance(rgb, ref=HEART_COLOR):
     return rgb_distance(rgb, ref) / 255.0
 
 
+# Redgull's brand reds (T-308, moved here by T-309): the colours of the old Redgull art, taken
+# from the archived originals. A colour is a brand red when it is within BRAND_THRESHOLD
+# (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not brand colours.
+BRAND_THRESHOLD = 12
+_L = "art-archive/T-303/red_gold/"
+_P = "art-archive/T-304/redgull/package.png"
+_PF = "art-archive/T-304/redgull/package_falling.png"
+_H = "art-archive/T-305/redgull/helicopter_sheet.png"
+BRAND_COLOURS = [
+    (OLD_LOGO_RED, "style_rules.OLD_LOGO_RED; " + _P + ", " + _H),
+    ((230, 1, 2), _L + "gift_pack_emblem.png; " + _P),
+    ((221, 1, 1), _L + "gift_pack_emblem.png; " + _P + " (223, 1, 1)"),
+    ((145, 1, 2), _L + "gift_pack_emblem.png; " + _P),
+    ((124, 0, 1), _L + "gift_pack_emblem.png; " + _P + " (120, 4, 2)"),
+    ((222, 44, 52), _L + "button_plate.png, card_frame.png, header_ribbon.png"),
+    ((176, 24, 36), _L + "button_plate.png, card_frame.png, header_ribbon.png, sunburst.png"),
+    ((110, 14, 24), _L + "header_ribbon.png, sunburst.png; " + _H + " (112, 14, 24)"),
+    ((150, 24, 34), _PF),
+    ((166, 28, 36), _H),
+]
+# Left out on purpose: the old golds (240, 180, 40), (247, 175, 4), (251, 210, 11) and
+# (255, 214, 64) sit within a few units of Greenbull's own yellow and of fire yellow, and the
+# helicopter's (198, 52, 50) sits 11 from the burning flames' (208, 53, 46). The brand is the red.
+
+
+def is_redgull_red(rgb, threshold=BRAND_THRESHOLD):
+    """True when `rgb` is within `threshold` of one of Redgull's brand reds (BRAND_COLOURS)."""
+    return any(rgb_distance(rgb, b) <= threshold for b, _ in BRAND_COLOURS)
+
+
 def reads_as_red(rgb, max_dist=128, hue_deg=25):
     """True for the heart's red or anything that reads as a red: within half the colour range of
     HEART_COLOR (0.5 in 0..1 units, as the GUT tests), or a saturated red hue."""

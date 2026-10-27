@@ -44,26 +44,9 @@ KEPT_RED = {
 # Redgull's brand reds (T-308): the colours of the old Redgull art, taken from the
 # archived originals. A loaded PNG is flagged when an opaque pixel is within BRAND_THRESHOLD
 # (RGB distance, 0..441) of one of them. Fire oranges and wood browns are not brand colours.
-BRAND_THRESHOLD = 12
-_L = "art-archive/T-303/red_gold/"
-_P = "art-archive/T-304/redgull/package.png"
-_PF = "art-archive/T-304/redgull/package_falling.png"
-_H = "art-archive/T-305/redgull/helicopter_sheet.png"
-BRAND_COLOURS = [
-    ((135, 17, 27), "style_rules.OLD_LOGO_RED; " + _P + ", " + _H),
-    ((230, 1, 2), _L + "gift_pack_emblem.png; " + _P),
-    ((221, 1, 1), _L + "gift_pack_emblem.png; " + _P + " (223, 1, 1)"),
-    ((145, 1, 2), _L + "gift_pack_emblem.png; " + _P),
-    ((124, 0, 1), _L + "gift_pack_emblem.png; " + _P + " (120, 4, 2)"),
-    ((222, 44, 52), _L + "button_plate.png, card_frame.png, header_ribbon.png"),
-    ((176, 24, 36), _L + "button_plate.png, card_frame.png, header_ribbon.png, sunburst.png"),
-    ((110, 14, 24), _L + "header_ribbon.png, sunburst.png; " + _H + " (112, 14, 24)"),
-    ((150, 24, 34), _PF),
-    ((166, 28, 36), _H),
-]
-# Left out on purpose: the old golds (240, 180, 40), (247, 175, 4), (251, 210, 11) and
-# (255, 214, 64) sit within a few units of Greenbull's own yellow and of fire yellow, and the
-# helicopter's (198, 52, 50) sits 11 from the burning flames' (208, 53, 46). The brand is the red.
+# They now live in style_rules.py (T-309); these names are kept for the tests.
+BRAND_THRESHOLD = style_rules.BRAND_THRESHOLD
+BRAND_COLOURS = style_rules.BRAND_COLOURS
 
 PATH_RE = re.compile(r"res://[A-Za-z0-9_./%*{}-]+")
 STRING_RE = re.compile(r'"((?:[^"\\\n]|\\.)*)"')
@@ -121,8 +104,7 @@ def red_pixels(path):
     except (ValueError, OSError):
         return []
     colours = {p[:3] for r in rows for p in r if p[3] == RED_FLOOR_ALPHA}
-    return sorted(c for c in colours
-                  if any(style_rules.rgb_distance(c, b) <= BRAND_THRESHOLD for b, _ in BRAND_COLOURS))
+    return sorted(c for c in colours if style_rules.is_redgull_red(c))
 
 
 def check_pngs(game_dir):

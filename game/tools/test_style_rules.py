@@ -112,6 +112,15 @@ class ArtChecks(unittest.TestCase):
         self.assertLess(s.red_distance(s.OLD_LOGO_RED), s.RED_MIN_DISTANCE)
         self.assertEqual(s.rgb_distance((0, 0, 0), (3, 4, 0)), 5.0)
 
+    def test_redgull_red(self):
+        self.assertTrue(s.is_redgull_red((135, 17, 27)))
+        self.assertTrue(s.is_redgull_red((140, 22, 30)))  # within the threshold
+        self.assertFalse(s.is_redgull_red((120, 60, 60)))  # a red-brown, far from every brand red
+        self.assertFalse(s.is_redgull_red(s.HEART_COLOR))
+        dim = tuple(round(c * 0.4) for c in s.HEART_COLOR)  # about (88, 10, 16)
+        self.assertFalse(s.is_redgull_red(dim), dim)
+        self.assertFalse(s.is_redgull_red(s.GREENBULL_DARK_GREEN))
+
     def test_greenbull_logo_follows_rule_1(self):
         good = Image.new("RGBA", (4, 4), CLEAR)
         for x, c in enumerate((s.GREENBULL_DARK_GREEN, s.GREENBULL_LIGHT_GREEN, s.GREENBULL_YELLOW)):
