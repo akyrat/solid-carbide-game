@@ -111,7 +111,7 @@ func ref_of_body(collider: Object, shape_index: int) -> String:
 # ---- The marker on the ground (a proposal) -----------------------------------------------------
 
 ## How a pair shows in the run (a proposal for the playtest): a faint dashed chalk line across the
-## gap, on the ground, under the cars, enemies and obstacles. Never Redgull red.
+## gap, on the ground, under the cars, enemies and obstacles. None of Greenbull's colours.
 const MARKER_COLOR := Color(0.95, 0.95, 0.88, 0.35)
 const MARKER_WIDTH_UNITS := 0.25
 const MARKER_DASH_UNITS := 0.75

@@ -1905,3 +1905,8 @@ Entry format:
 - Decision or change: the board asked for six changes. Every gift pack on the map gets its own arrow, the same one that points at a landed package off screen today. A crash that breaks the combo still pays the trick in progress. A 3-second animated failure screen plays when the 8-minute timer runs out. A recap screen after each run shows the enemies slain, the tricks completed, the highest combo and the weapons used, with pictures where possible (replacing "no recap in the MVP"). The first gift pack can hold any weapon, not only the gun upgrade or the flamethrower. A new weapon, Bricks: each landing after being in the air sends out a powerful impact wave, the same whatever the height for now, with a card that makes it sound useless ("A bunch of bricks. No real use, other than making the car heavier.") and hints at a jump. Twelve tickets written; the text tickets come first and the art waits for the board's go for PixelLab.
 - Documents touched: docs/game-loop-architecture.md, docs/weapons.md
 - Tasks: T-314, T-315, T-316, T-317, T-318, T-319, T-320, T-321, T-322, T-323, T-324, T-325
+
+## 2026-10-28: No Redgull left in the level creator
+- Decision or change: the board asked to clean up the old sponsor's name left in the level creator, which was built before the rebrand. Comments, docstrings, check labels and three game/README.md paragraphs now say "old-brand red", "the old sponsor's red" or "none of Greenbull's colours"; every check passes or fails exactly as before. The docs' mentions stay as the rebrand's history. Merged after QA (nothing the player sees changed).
+- Documents touched: game/README.md
+- Tasks: T-313

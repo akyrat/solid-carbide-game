@@ -86,7 +86,7 @@ class PropArtTest(unittest.TestCase):
             arr[...] = (220, 30, 30, 255)
             Image.fromarray(arr, "RGBA").save(png)
             failed = [r for r, good, _ in bp.rules(png) if not good]
-            self.assertEqual(failed, ["no Redgull red"])
+            self.assertEqual(failed, ["no old-brand red"])
 
     def test_orange_is_not_red(self):
         with tempfile.TemporaryDirectory() as tmp:

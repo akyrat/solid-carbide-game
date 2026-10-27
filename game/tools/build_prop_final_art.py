@@ -3,7 +3,7 @@
 
 One PixelLab generation per prop (art-archive/T-256/raw/<name>_raw.png) is turned, by script and
 for free, into the four rotations of game/data/level/props.json: the picture is cropped to its
-content, its alpha is made 0 or 255, its colours are reduced to at most 30, any Redgull red is
+content, its alpha is made 0 or 255, its colours are reduced to at most 30, any old-brand red is
 pushed to orange, and a horizontal mirror stands for the other axis (east and west; the footprint
 swaps there). North and south use the picture, east and west its mirror. Nothing is scaled up; a
 sprite wider than its footprint's diamond (+ a small margin) is scaled down with nearest neighbour.
@@ -79,7 +79,7 @@ def clean(arr):
         & (rgb[..., 0] - np.maximum(rgb[..., 1], rgb[..., 2]) >= RED_OVER)
     if red.any():
         r = rgb[red, 0]
-        arr[red, 1] = np.clip(r * 0.6, 0, 255).astype(np.uint8)  # orange, not Redgull red
+        arr[red, 1] = np.clip(r * 0.6, 0, 255).astype(np.uint8)  # orange, not old-brand red
         arr[red, 2] = np.clip(r * 0.15, 0, 255).astype(np.uint8)
     colours = {tuple(c[:3]) for c in arr[a]}
     if len(colours) > MAX_COLORS:
@@ -235,7 +235,7 @@ def rules(png):
     out = [("alpha is 0 or 255", bool(np.all((a == 0) | (a == 255))))]
     colours = {tuple(int(v) for v in c[:3]) for c in arr[a == 255]}
     out.append(("at most %d colours (%d)" % (MAX_COLORS, len(colours)), len(colours) <= MAX_COLORS))
-    out.append(("no Redgull red", not any(is_red(c) for c in colours)))
+    out.append(("no old-brand red", not any(is_red(c) for c in colours)))
     out.append(("transparent corners", bool(a[0, 0] == 0 and a[0, -1] == 0 and a[-1, 0] == 0 and a[-1, -1] == 0)))
     return out
 

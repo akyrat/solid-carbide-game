@@ -1,7 +1,7 @@
 ---
 id: T-313
 title: No Redgull left in the level creator's code, tools and notes, behaviour unchanged
-status: open
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, tasks/T-312-no-redgull-left-in-game-outside.md, docs/visual-style.md, game/README.md, game/tools/style_rules.py]
 files_expected_to_change: [game/scripts/level/thread_the_needle.gd, game/scripts/level_creator/editor.gd, game/tools/build_creator_buildings.py, game/tools/build_prop_art.py, game/tools/build_prop_final_art.py, game/tools/test_build_prop_art.py, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,16 +45,28 @@ In the result notes, show that the diff changes only comments, docstrings, label
 
 ## Acceptance criteria
 
-- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data game/tools game/README.md` prints only files under game/tools that build the name from `OLD_BRAND` without spelling it (it prints nothing if none spell it), and none of the seven files in "files expected to change" contains the word "Redgull" in any case. (QA: pass / fail)
-- [ ] `git diff master -- game/scripts` changes only lines that start with `#` or `##` (comments): no code line in thread_the_needle.gd or editor.gd changes. (QA: pass / fail)
-- [ ] Each prop and creator building tool's check gives the same pass or fail per asset before and after the change (the result notes show both outputs, and QA reruns the "after" one), with only the labels' wording different. (QA: pass / fail)
-- [ ] `git diff master --stat -- game/art art-archive docs` prints nothing: no art, archive or docs file changes. (QA: pass / fail)
-- [ ] game/README.md's three paragraphs no longer name the old sponsor and still describe the same behaviour. (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: pass / fail)
+- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data game/tools game/README.md` prints only files under game/tools that build the name from `OLD_BRAND` without spelling it (it prints nothing if none spell it), and none of the seven files in "files expected to change" contains the word "Redgull" in any case. (QA: PASS, grep prints nothing; none of the seven files has the word.)
+- [ ] `git diff master -- game/scripts` changes only lines that start with `#` or `##` (comments): no code line in thread_the_needle.gd or editor.gd changes. (QA: PASS, diff of game/scripts is three `##` comment lines only.)
+- [ ] Each prop and creator building tool's check gives the same pass or fail per asset before and after the change (the result notes show both outputs, and QA reruns the "after" one), with only the labels' wording different. (QA: PASS, build_prop_art check OK, build_prop_final_art check OK, build_creator_buildings Drew 6 textures; only labels reworded, thresholds untouched.)
+- [ ] `git diff master --stat -- game/art art-archive docs` prints nothing: no art, archive or docs file changes. (QA: PASS, `git diff master...HEAD` on game/art, art-archive, docs is empty (the two-dot diff only shows master's newer commits).)
+- [ ] game/README.md's three paragraphs no longer name the old sponsor and still describe the same behaviour. (QA: PASS, the three README paragraphs say old sponsor's red / old-brand red, behaviour text unchanged.)
+- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: PASS, game/tools 620 OK (1 skipped); tools 501 OK; GUT 142 scripts, 1688 of 1688 passing.)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Started: the Level/Challenge Design Agent is renaming the old sponsor in the creator's code, tools and notes, behaviour unchanged.
+
+### 2026-10-27, In progress → In QA
+
+The agent is done: the old sponsor's name is gone from the creator's code, tools and notes, checks unchanged, all tests pass. QA is checking it.
+
+### 2026-10-27, In QA → Done
+
+QA passed all six criteria; merged into master (nothing the player sees changed).
 
 ## Style review
 
@@ -63,3 +75,18 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done. Nothing to picture (no art or visuals changed).
+
+**What changed** (20 lines in 7 files, comments, docstrings, labels, messages and names only; no code line in thread_the_needle.gd or editor.gd changed):
+- thread_the_needle.gd, editor.gd: three `##` comments now say "None of Greenbull's colours" / "none of Greenbull's colours".
+- build_creator_buildings.py, build_prop_art.py, build_prop_final_art.py: docstrings, comments, and the labels "Redgull red" / "no Redgull red" became "old-brand red" / "no old-brand red". The pixel tests (thresholds) are untouched, so the same pixels count as red; I did not swap them for style_rules.is_old_brand_red because the thresholds differ and that would change results. No file spells the old name any more, so none needed OLD_BRAND.
+- test_build_prop_art.py: the expected label is "no old-brand red".
+- game/README.md: the spawn point paragraph says "never the old sponsor's red"; the creator textures and placeholder props paragraphs say "no old-brand red".
+- `git grep -i redgull -- game/scripts game/scenes game/data game/tools game/README.md` prints nothing.
+
+**Checks, before and after** (identical output): `build_prop_art.py check` OK; `build_prop_final_art.py check` OK; `build_creator_buildings.py` (no check mode, it draws and runs its own check): "Drew 6 textures". Before and after outputs diff clean.
+
+**Tests:** `unittest discover -s game/tools`: 620 tests, OK (1 skipped). `unittest discover -s tools`: 501 tests, OK. GUT (`bash game/tools/run_tests.sh`): 142 scripts, 1688 tests, 1688 passing, TESTS PASSED.
+
+**Housekeeping:** Godot's line-ending-only .import changes were reverted and not committed. Untracked .import files Godot created (creator_final, nobanner, road_pieces) were left uncommitted; a hook refused deleting them with xargs rm, so they are still in the folder.
