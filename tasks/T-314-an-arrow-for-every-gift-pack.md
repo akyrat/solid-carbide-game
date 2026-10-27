@@ -1,7 +1,7 @@
 ---
 id: T-314
 title: An arrow for every gift pack on the map
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -53,6 +53,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-27, Open → In progress
+
+Started: the Game Loop Agent is giving every gift pack on the map its own arrow.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -60,3 +64,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+What changed:
+- `game/scripts/run/gift_drops.gd`: new `mapped_packages()` (falling and landed packages, not the one the helicopter still carries).
+- `game/scripts/run/gift_arrows.gd`: `refresh()` now draws one arrow per mapped package that is off screen. Each placed arrow's box is added to the avoid list for the next one, so overlapping arrows slide apart along the track (8 px gap, same as for the HUD); packages are placed in their list order, so arrows do not swap places between frames. Look, track and HUD clearance are unchanged.
+- Proposals for the playtest (also in Game loop architecture, Content, "The gift pack drop", and `game/README.md`): arrows only for packages off screen, none on screen; no arrow while the helicopter still carries the package (it is over the screen then); the spacing is the 8 px gap, in package order.
+- Tests (`game/tests/unit/run/test_gift_drops.gd`, 5 new): two and three arrows each pointing at its own package; arrow from the moment of the drop (none while carried); three packages in one direction (landed and falling) slid apart, on screen and clear of the HUD at every window size; picking one up removes only its arrow; `place` with another arrow in the avoid list. One older assertion's message renamed (carried package, no arrow).
+- Fixture: `game/tests/fixtures/gift_drop_arrows_demo.tscn/.gd`.
+
+Screenshot: `C:/solid-carbide-worktrees/T-314/art-archive/T-314/screenshots/gift_arrows_three_packages.png` (two arrows on the right, slid apart, one of them for a falling package, and one on the left).
+
+Documents updated: `docs/game-loop-architecture.md`, `game/README.md`.
+
+Tests: `python -m unittest discover -s game/tools -p "test_*.py"` 620 tests OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"` 501 tests OK; `bash game/tools/run_tests.sh` 1693 of 1693 passing (the leaked-object warning at exit is the usual one).
