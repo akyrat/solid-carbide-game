@@ -1,7 +1,7 @@
 ---
 id: T-239
 title: Level creator: play a listed level as a full run, and come back to the creator
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Goal-G-005
@@ -98,3 +98,4 @@ Game Loop Agent, 2026-10-22.
 
 **Uncommitted:** Godot's line-ending-only `.import` noise in the working tree was not committed.
 - 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
