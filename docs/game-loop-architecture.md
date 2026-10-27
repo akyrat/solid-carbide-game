@@ -107,7 +107,7 @@ How the level-up screen is reached (task T-144; how to use it: [game/README.md](
 - The run keeps going the whole time (the clock, enemies, likes and the likes drain). The level-up moment itself (the "level up" signal, the level-up effect, the likes bar) is unchanged.
 - One package per level-up. Packages stay on the ground until picked up; a new run clears them.
 - Driving over a landed package removes it and opens the level-up screen for that level, with the same weapon choices as before; the run pauses until the choice is made. Two packages picked up together give two screens, one after the other.
-- While a landed package is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD.
+- Every package on the map gets its own arrow (board, 2026-10-28; T-314): while a package that has been dropped, falling or landed, is off screen, an arrow at the screen's edge points to it, one per package, kept clear of the HUD, so several arrows show when several packages are out. The package still carried by the helicopter has none yet. Arrows that would overlap are slid apart along the edge (proposal for the playtest). Proposal for the playtest: arrows only for packages off screen, none for a package on screen (the board asked for "the same one that appears today at the edge of the screen").
 
 ### The combo
 
