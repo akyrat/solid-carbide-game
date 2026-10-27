@@ -1920,3 +1920,8 @@ Entry format:
 - Decision or change: the board asked for two buttons on the pause screen, "Restart" (a fresh run straight away) and "Exit" (back to the main menu), with its own names for them. Ticket written and kept for the next playtest batch; not started.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-327
+
+## 2026-10-28: More gift packs, earlier
+- Decision or change: after seeing the likes curve (each level 25% more than the last, 4,255 likes for all 11 gift packs, from drifting only), the board wants the early gift packs to come more often. The Game Data Agent proposes a gentler start to the curve. Ticket written; not started.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-328

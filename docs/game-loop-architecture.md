@@ -42,6 +42,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **A crash pays the trick in progress** (board, 2026-10-28): when a crash breaks the combo, the player still gets the trick they were doing up to that moment (a drift pays for the time it lasted), instead of losing it. (T-315)
 - **Time's up screen** (board, 2026-10-28): when the 8-minute timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
 - **Recap screen in the MVP** (board, 2026-10-28; replaces "In the MVP there is no recap" above): after a run ends, the player sees a recap of the run: the enemies slain, the tricks completed, the highest combo multiplier reached and the weapons used, each shown with pictures where it can be (the enemies' and weapons' own art). Its text: HUD and menus, Content (T-318). (T-319, T-320)
+- **More gift packs, earlier** (board, 2026-10-28): the early levels need fewer likes, so the first gift packs come more often at the start of a run. The new curve is the Game Data Agent's proposal for the playtest. (T-328)
 
 ## Content
 
