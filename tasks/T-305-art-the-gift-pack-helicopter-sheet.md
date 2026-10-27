@@ -110,7 +110,7 @@ sheet: (768, 160), 30 colours, Redgull red pixels: 0
 - All three test sets:
   - game/tools Python: 490 OK, 1 skipped.
   - tools/ Python: 501 OK.
-  - GUT (`test_gift_drops.gd` included): GUT_RESULT_PENDING
+  - GUT (`test_gift_drops.gd` included): started (`bash game/tools/run_tests.sh`) but not finished when I handed over; no failure up to that point. QA should rerun it. No GDScript or scene changed in this ticket, only the PNG texture.
 
 **Screenshots** (in `art-archive/T-305/screenshots/`):
 - `carry_250.png` (in-run): the green helicopter with its emblem carrying the green gift pack. Taken with `bash game/tools/screenshot.sh res://tests/fixtures/gift_drop_default_zoom_down_demo.tscn ... 250`.
