@@ -1,7 +1,7 @@
 ---
 id: T-257
 title: "Art: the small and long buildings"
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/README.md, tasks/T-254-smaller-and-longer-buildings.md, tasks/T-064-building-art.md, game/tools/pixellab_client.py]
 files_expected_to_change: [game/art/buildings/, game/art/pixellab-generation-log.jsonl, art-archive/T-257/, art-archive/README.md, game/data/level/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started on T-254's branch: PixelLab art for the small and long buildings, cap 12
 
 Art in: 6 of 12 generations used. The buildings read as today's short buildings; weak spots are listed in the result notes. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 4. 6 of 12 generations used. Ready to judge in the creator; weak spots: the small building's walls don't match, long look 1 is very dark, the roofs look alike.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -76,3 +80,4 @@ Requests are written by `game/tools/creator_building_requests.py` (palette image
 - **Screenshot:** `art-archive/T-257/screenshots/new_buildings.png` (looked at: skyscraper, short, small, long both rotations, all sit on their footprints).
 - **Documents:** `docs/visual-style.md`, `game/README.md`, `art-archive/README.md`.
 - No refusals.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
