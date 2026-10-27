@@ -90,7 +90,7 @@ When the board gives a whole goal instead of a single request, the goal runner (
 
 ## Common rules for every agent
 
-- To reduce token spend, when an agent spots repeatable work that a script can do, it writes a script instead of doing the work by hand. This is each agent's own working habit, not a shared system.
+- To reduce token spend, repeatable or mechanical work is done by a script, not by an agent; agents are for judgment (code, art, text, criteria). When an agent repeats a step by hand, it writes the script. (board, 2026-10-28; token-spend epic)
 - Game decisions live in the documents, and the documents are the source of truth. Agent specifications describe roles and responsibilities only, never game details.
 - Ideas for the game always come from the board, never from the agents. Agents build and document the board's ideas and do not invent game content.
 - Every agent that writes code also writes tests for that code, and runs them before handing a task over.
