@@ -1,7 +1,7 @@
 ---
 id: T-310
 title: The level-up title lettered in cream with a dark outline, to read on a dark green ribbon
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-006
@@ -49,6 +49,10 @@ The board's review: open a level-up in a run: the title is in cream with a dark 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-310.
 
 ## Style review
 
