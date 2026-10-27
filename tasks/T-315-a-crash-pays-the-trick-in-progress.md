@@ -1,7 +1,7 @@
 ---
 id: T-315
 title: A crash that breaks the combo still pays the trick in progress
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -43,12 +43,12 @@ The board's review: drift into a wall and check the drift still pays its LONG DR
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A drift interrupted by a crash pays one extended_drift trick scaled by the time it lasted until the crash, with its popup, before the combo is cut (tests: a wall hit, a boulder hit and an enemy hit during a drift). (QA: pass / fail)
-- [ ] A drift that ends normally pays exactly as before, and a crash with no trick in progress behaves exactly as before (tests). (QA: pass / fail)
-- [ ] The result notes list every trick checked for this, with what changed or why it doesn't apply. (QA: pass / fail)
-- [ ] Drifting, Content and game/README.md describe the change and the order. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-315/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows a drift ending in a crash, with its LONG DRIFT! popup and COMBO BROKEN!. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] A drift interrupted by a crash pays one extended_drift trick scaled by the time it lasted until the crash, with its popup, before the combo is cut (tests: a wall hit, a boulder hit and an enemy hit during a drift). (QA: PASS: test_crash_pays_trick.gd covers wall, boulder and enemy hit; LONG DRIFT! comes before COMBO BROKEN!)
+- [ ] A drift that ends normally pays exactly as before, and a crash with no trick in progress behaves exactly as before (tests). (QA: PASS: normal drift end and no-trick crash tests present and green)
+- [ ] The result notes list every trick checked for this, with what changed or why it doesn't apply. (QA: PASS: extended drift, air spins, airtime, 360, alt drift, thread the needle all listed)
+- [ ] Drifting, Content and game/README.md describe the change and the order. (QA: PASS: all three docs updated, order and switch described)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-315/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows a drift ending in a crash, with its LONG DRIFT! popup and COMBO BROKEN!. (QA: PASS: GIF and PNG present; PNG shows LONG DRIFT! +0.09 under COMBO BROKEN!)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: PASS: 620 OK, 501 OK, GUT 143 scripts 1705/1705; one first GUT run exited 1 while run in parallel with the other sets, a clean rerun passed)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Driving & Drift Agent is making a crash pay the drift in progress before the combo is cut.
+
+### 2026-10-27, In progress → In QA
+
+Built: a crash now pays the drift (and air spins, hang time) in progress before COMBO BROKEN!. QA is checking it.
 
 ## Style review
 
