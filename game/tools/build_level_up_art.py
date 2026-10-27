@@ -13,9 +13,10 @@ loads them unchanged:
                                      four small yellow studs
   highlight_frame.png       192x162  hollow bright frame (pale and light green, one yellow line);
                                      the card sits at (6, 6) inside it
-  header_ribbon.png         380x44   light green ribbon (the game letters the black title on it, x 76..304),
-                                     dark green trim with one yellow line, dark green folded tails,
-                                     a pale medallion with Greenbull's emblem at each end
+  header_ribbon.png         380x44   dark green ribbon (T-311; the game letters the cream, dark-outlined
+                                     title on it, x 76..304), light green trim with one yellow line,
+                                     dark green folded tails, a pale medallion with Greenbull's emblem at
+                                     each end. T-303's light green version: art-archive/T-311/t303/
   button_plate.png / button_plate_pressed.png   72x22  "Take it" plate, text added by the game
   sunburst.png              256x256  dark green rays in a circle, behind the cards
   gift_pack_emblem.png      128x128  T-140's PixelLab gift box (art-archive/T-140/gift_pack_raw.png, read, never
@@ -30,6 +31,8 @@ alpha 0 or 255 only, transparent background where the piece needs one; no red. B
   python game/tools/build_level_up_art.py piece <name> <png>    # writes one piece to <png> (the style loop's step)
   python game/tools/build_level_up_art.py archive               # copies the pieces in game/art/level_up/ to
                                                                 # art-archive/T-303/red_gold/ (never overwrites)
+  python game/tools/build_level_up_art.py archive-t303          # copies the pieces T-311 changed to
+                                                                # art-archive/T-311/t303/ (never overwrites)
 """
 from __future__ import annotations
 
@@ -50,6 +53,9 @@ OUT = GAME / "art" / "level_up"
 RAW_BOX = REPO / "art-archive" / "T-140" / "gift_pack_raw.png"
 EMBLEM_32 = GAME / "art" / "logo" / "greenbull_emblem_32.png"
 OLD_ARCHIVE = REPO / "art-archive" / "T-303" / "red_gold"
+# T-311: the pieces it changed to put dark green in the lead; their T-303 versions are kept here.
+DARK_FIELD = ("header_ribbon",)
+T303_ARCHIVE = REPO / "art-archive" / "T-311" / "t303"
 MAX_COLORS = 30
 
 # The outline is the emblem's own near-black green, so the logo sits in the art without a seam.
@@ -157,10 +163,11 @@ def header_ribbon():
                     continue
                 edge = y in (8, 43) or dx == notch
                 put(im, x, y, OUTLINE if edge else (DG if y < 26 else DG_D))
-    # The body, row by row from the top and from the bottom: dark green trim (one yellow line on top),
-    # then the light green field the game letters the black title on.
-    upper = [OUTLINE, YEL, DG_L, DG, DG, OUTLINE, LG_P, LG_L] + [LG] * 14
-    lower = [OUTLINE, DG_D, DG, DG, DG, OUTLINE, MG, MG] + [LG] * 14
+    # The body, row by row from the top and from the bottom (T-311): light green trim (one yellow line
+    # on top), then Greenbull's dark green field the game letters the cream, dark-outlined title on.
+    # One bevel row each side of the field, so dark green itself leads on screen by a clear margin.
+    upper = [OUTLINE, YEL, LG_L, LG, LG, OUTLINE, DG_L] + [DG] * 15
+    lower = [OUTLINE, MG, LG, LG, MG, OUTLINE, DG_D] + [DG] * 15
     for i in range(len(upper)):
         hline(im, 14, w - 15, 2 + i, upper[i])
         hline(im, 14, w - 15, 41 - i, lower[i])
@@ -283,7 +290,7 @@ def gift_pack_emblem():
 BUILDERS = {
     "card_frame": (card_frame, "The card: a 9-slice frame (margin 10 art pixels): a dark green outer band and a light green inner band, a pale fill and four small yellow studs. Shown 2x.", "none (the ribbon and the gift box carry the emblem)"),
     "highlight_frame": (highlight_frame, "The highlighted card's frame, hollow: pale and light green with one yellow line, a mid-green glow ring and dark lines. The card sits 6 art pixels inside it (shown 2x).", "none"),
-    "header_ribbon": (header_ribbon, "The banner: light green ribbon (the game letters the black title between x 76 and 304) with dark green trim, one yellow line on top, dark green folded tails, and a pale medallion with Greenbull's emblem at each end. Shown 2x (760 wide).", "Greenbull emblem (32 px) on both medallions"),
+    "header_ribbon": (header_ribbon, "The banner (T-311): Greenbull's dark green ribbon (the game letters the cream, dark-outlined title between x 76 and 304) with light green trim, one yellow line on top, dark green folded tails, and a pale medallion with Greenbull's emblem at each end. Shown 2x (760 wide).", "Greenbull emblem (32 px) on both medallions"),
     "button_plate": (lambda: button(False), "The 'Take it' plate: light green with a dark green edge; the game letters the text. Shown 2x.", "none"),
     "button_plate_pressed": (lambda: button(True), "The 'Take it' plate pressed: mid green, flat, darkest green edge. Shown 2x.", "none"),
     "sunburst": (sunburst, "Backdrop: 24 rays in Greenbull's dark greens inside a circle with a dark rim. Sits behind the cards over the dimmed run; T-141 spins and scales it.", "none"),
@@ -300,7 +307,11 @@ def made_by(name):
 
 def record(name, im):
     what, logo = BUILDERS[name][1], BUILDERS[name][2]
-    return {"task": "T-303", "earlier": "T-140 (red and gold, kept in art-archive/T-303/red_gold/)",
+    task, earlier = "T-303", "T-140 (red and gold, kept in art-archive/T-303/red_gold/)"
+    if name in DARK_FIELD:
+        task, earlier = "T-311", ("T-303 (light green field, kept in art-archive/T-311/t303/); "
+                                  "T-140 (red and gold, kept in art-archive/T-303/red_gold/)")
+    return {"task": task, "earlier": earlier,
             "what": what, "logo": logo, "made_by": made_by(name), "size": list(im.size),
             "emblem": "game/art/logo/greenbull_emblem_32.png" if "emblem" in logo.lower() else None,
             "prompt": None}
@@ -336,12 +347,12 @@ def build():
         (OUT / (name + ".json")).write_text(json.dumps(record(name, im), indent=1) + "\n", encoding="utf-8")
 
 
-def archive_old(src=None, dst=None):
+def archive_old(src=None, dst=None, names=None):
     """Copies each piece's PNG and JSON to the archive, never overwriting one already there."""
     src, dst = Path(src or OUT), Path(dst or OLD_ARCHIVE)
     dst.mkdir(parents=True, exist_ok=True)
     copied = []
-    for name in FILES:
+    for name in (names or FILES):
         for ext in (".png", ".json"):
             if (src / (name + ext)).exists() and not (dst / (name + ext)).exists():
                 shutil.copyfile(src / (name + ext), dst / (name + ext))
@@ -369,6 +380,9 @@ if __name__ == "__main__":
         sys.exit(0 if all(r[1] for r in res) else 1)
     if cmd == "archive":
         print("archived: %s" % (archive_old() or "nothing new"))
+        sys.exit(0)
+    if cmd == "archive-t303":
+        print("archived: %s" % (archive_old(dst=T303_ARCHIVE, names=DARK_FIELD) or "nothing new"))
         sys.exit(0)
     if cmd == "build":
         build()

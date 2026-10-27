@@ -72,6 +72,37 @@ class BuiltPieces(unittest.TestCase):
             self.assertGreater(greens, sum(cols.values()) / 2, name)
         self.assertIn(art.DG, opaque(self.ims["sunburst"]))
 
+    def test_ribbon_field_is_dark_green_with_light_green_trim(self):
+        """T-311: Greenbull's dark green is the ribbon's centre field and its most common colour;
+        light green stays in the trim, with the thin yellow line on top."""
+        im = self.ims["header_ribbon"]
+        cols = opaque(im)
+        self.assertEqual(cols.most_common(1)[0][0], art.DG)
+        # The title area (art x 76..304) is plain dark green across the field's middle rows.
+        for y in range(10, 34):
+            for x in range(76, 305):
+                self.assertEqual(im.getpixel((x, y))[:3], art.DG, (x, y))
+        # Light green trim above and below the field, and the yellow line on top.
+        for x in range(76, 305):
+            self.assertEqual(im.getpixel((x, 3))[:3], art.YEL, x)
+            self.assertEqual(im.getpixel((x, 5))[:3], art.LG, x)
+            self.assertEqual(im.getpixel((x, 38))[:3], art.LG, x)
+        # Light green only in the trim: no light green below row 7 or above row 36 in the body.
+        for y in range(8, 36):
+            for x in range(76, 305):
+                self.assertNotEqual(im.getpixel((x, y))[:3], art.LG, (x, y))
+
+    def test_ribbon_record_names_t311(self):
+        import json
+        rec = json.loads((self.dir / "header_ribbon.json").read_text(encoding="utf-8"))
+        self.assertEqual(rec["task"], "T-311")
+        self.assertIn("art-archive/T-311/t303/", rec["earlier"])
+        self.assertIsNone(rec["prompt"])
+        for name in art.FILES:
+            if name not in art.DARK_FIELD:
+                rec = json.loads((self.dir / (name + ".json")).read_text(encoding="utf-8"))
+                self.assertEqual(rec["task"], "T-303", name)
+
     def test_yellow_is_a_small_accent(self):
         for name in art.FILES:
             cols = opaque(self.ims[name])
@@ -144,6 +175,26 @@ class Archive(unittest.TestCase):
             copied = art.archive_old(src, dst)
             self.assertEqual((dst / "card_frame.png").read_bytes(), b"old")
             self.assertEqual(copied, ["sunburst.png"])
+
+    def test_archive_only_the_named_pieces(self):
+        with tempfile.TemporaryDirectory() as t:
+            src, dst = Path(t) / "src", Path(t) / "dst"
+            src.mkdir()
+            for name in ("header_ribbon", "card_frame"):
+                (src / (name + ".png")).write_bytes(name.encode())
+            self.assertEqual(art.archive_old(src, dst, names=("header_ribbon",)), ["header_ribbon.png"])
+            self.assertFalse((dst / "card_frame.png").exists())
+
+    def test_t303_light_green_ribbon_kept_in_the_archive(self):
+        """T-311 changed only the ribbon; T-303's light green version is kept, never overwritten."""
+        for name in art.DARK_FIELD:
+            path = art.T303_ARCHIVE / (name + ".png")
+            self.assertTrue(path.exists(), name)
+            self.assertTrue((art.T303_ARCHIVE / (name + ".json")).exists(), name)
+            with Image.open(path) as im:
+                im = im.convert("RGBA")
+                self.assertEqual(im.size, SIZES[name])
+                self.assertEqual(im.getpixel((190, 22))[:3], art.LG)
 
     def test_old_red_and_gold_kept_in_the_archive(self):
         for name in art.FILES:
