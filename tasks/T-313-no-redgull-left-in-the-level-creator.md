@@ -1,7 +1,7 @@
 ---
 id: T-313
 title: No Redgull left in the level creator's code, tools and notes, behaviour unchanged
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -45,12 +45,12 @@ In the result notes, show that the diff changes only comments, docstrings, label
 
 ## Acceptance criteria
 
-- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data game/tools game/README.md` prints only files under game/tools that build the name from `OLD_BRAND` without spelling it (it prints nothing if none spell it), and none of the seven files in "files expected to change" contains the word "Redgull" in any case. (QA: pass / fail)
-- [ ] `git diff master -- game/scripts` changes only lines that start with `#` or `##` (comments): no code line in thread_the_needle.gd or editor.gd changes. (QA: pass / fail)
-- [ ] Each prop and creator building tool's check gives the same pass or fail per asset before and after the change (the result notes show both outputs, and QA reruns the "after" one), with only the labels' wording different. (QA: pass / fail)
-- [ ] `git diff master --stat -- game/art art-archive docs` prints nothing: no art, archive or docs file changes. (QA: pass / fail)
-- [ ] game/README.md's three paragraphs no longer name the old sponsor and still describe the same behaviour. (QA: pass / fail)
-- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: pass / fail)
+- [ ] `git grep -i -l redgull -- game/scripts game/scenes game/data game/tools game/README.md` prints only files under game/tools that build the name from `OLD_BRAND` without spelling it (it prints nothing if none spell it), and none of the seven files in "files expected to change" contains the word "Redgull" in any case. (QA: PASS, grep prints nothing; none of the seven files has the word.)
+- [ ] `git diff master -- game/scripts` changes only lines that start with `#` or `##` (comments): no code line in thread_the_needle.gd or editor.gd changes. (QA: PASS, diff of game/scripts is three `##` comment lines only.)
+- [ ] Each prop and creator building tool's check gives the same pass or fail per asset before and after the change (the result notes show both outputs, and QA reruns the "after" one), with only the labels' wording different. (QA: PASS, build_prop_art check OK, build_prop_final_art check OK, build_creator_buildings Drew 6 textures; only labels reworded, thresholds untouched.)
+- [ ] `git diff master --stat -- game/art art-archive docs` prints nothing: no art, archive or docs file changes. (QA: PASS, `git diff master...HEAD` on game/art, art-archive, docs is empty (the two-dot diff only shows master's newer commits).)
+- [ ] game/README.md's three paragraphs no longer name the old sponsor and still describe the same behaviour. (QA: PASS, the three README paragraphs say old sponsor's red / old-brand red, behaviour text unchanged.)
+- [ ] All three test sets pass: `python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"` and the GUT suite (`bash game/tools/run_tests.sh`). Their counts are in the result notes. (QA: PASS, game/tools 620 OK (1 skipped); tools 501 OK; GUT 142 scripts, 1688 of 1688 passing.)
 
 ## Updates
 
@@ -59,6 +59,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Level/Challenge Design Agent is renaming the old sponsor in the creator's code, tools and notes, behaviour unchanged.
+
+### 2026-10-27, In progress → In QA
+
+The agent is done: the old sponsor's name is gone from the creator's code, tools and notes, checks unchanged, all tests pass. QA is checking it.
 
 ## Style review
 
