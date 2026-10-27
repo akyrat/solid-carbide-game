@@ -37,14 +37,14 @@ The board's review: play a run to a gift pack drop: the helicopter in Greenbull'
 
 ## Acceptance criteria
 
-- [ ] game/art/gift_pack/helicopter_sheet.png is rebuilt in Greenbull's colours with Greenbull's emblem on its logo spots and no gull, with the same frame count and size as before (gift_helicopter.tscn unchanged). (QA: pass / fail)
-- [ ] It has no pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass / fail)
-- [ ] build_helicopter.py rebuilds it by script; any PixelLab call is listed in the result notes with its reason and count, within 12 generations. (QA: pass / fail)
-- [ ] It passes `python game/tools/style_rules.py art game/art/gift_pack/helicopter_sheet.png --greenbull --max-colors 30` and has a style loop record in the ticket's Style review. (QA: pass / fail)
-- [ ] The old helicopter_sheet.png is in art-archive/<this ticket>/. (QA: pass / fail)
-- [ ] test_build_helicopter.py and test_gift_drops.gd pass. (QA: pass / fail)
-- [ ] An in-run screenshot of the helicopter carrying the package is in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass / fail)
-- [ ] All three test sets pass. (QA: pass / fail)
+- [ ] game/art/gift_pack/helicopter_sheet.png is rebuilt in Greenbull's colours with Greenbull's emblem on its logo spots and no gull, with the same frame count and size as before (gift_helicopter.tscn unchanged). (QA: pass: 768x160, 4 frames of 192x160, tscn not in diff, emblem/no-red per check)
+- [ ] It has no pixel the Redgull red check (style_rules.is_redgull_red, or its renamed successor) flags (output in the result notes). (QA: pass: build_helicopter.py check gives 0 Redgull red pixels)
+- [ ] build_helicopter.py rebuilds it by script; any PixelLab call is listed in the result notes with its reason and count, within 12 generations. (QA: pass: script rebuild, 0 PixelLab calls listed)
+- [ ] It passes `python game/tools/style_rules.py art game/art/gift_pack/helicopter_sheet.png --greenbull --max-colors 30` and has a style loop record in the ticket's Style review. (QA: pass: all 5 checks ok, 30 colours; loop record 8/10)
+- [ ] The old helicopter_sheet.png is in art-archive/<this ticket>/. (QA: pass: art-archive/T-305/redgull/helicopter_sheet.png)
+- [ ] test_build_helicopter.py and test_gift_drops.gd pass. (QA: pass: 11 OK; 32/32)
+- [ ] An in-run screenshot of the helicopter carrying the package is in art-archive/<this ticket>/screenshots/, listed in the result notes. (QA: pass: carry_250.png, carry_200.png, drop_350.png present and listed)
+- [ ] All three test sets pass. (QA: pass: game/tools 490 OK; tools 501 OK; GUT 1419/1419)
 
 ## Updates
 
