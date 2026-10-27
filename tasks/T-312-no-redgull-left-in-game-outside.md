@@ -1,7 +1,7 @@
 ---
 id: T-312
 title: No Redgull left in game/ outside the art records: old logo files to art-archive, the old name spelled once in code, behaviour unchanged
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -56,6 +56,10 @@ In the result notes, list every file that `git grep -i redgull -- game tools/sty
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-312.
 
 ## Style review
 
