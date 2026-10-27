@@ -41,13 +41,13 @@ Take the screenshot on this ticket's build and run the check on it. Write its ou
 
 ## Acceptance criteria
 
-- [ ] style_rules.py has a Redgull red function (for example is_redgull_red) using the brand reds and the threshold moved from check_rebrand.py; test_style_rules.py tests that it flags RGB 135, 17, 27 and a colour within the threshold of it, and does not flag HEART_COLOR (219, 26, 41) or the heart dimmed to 40% (about 88, 10, 16). (QA: pass / fail)
-- [ ] check_rebrand.py imports the brand reds from style_rules.py, and test_check_rebrand.py passes unchanged. (QA: pass / fail)
-- [ ] game/tests/fixtures/level_up_from_menu_demo.tscn starts at the main menu, starts a run and takes a screenshot of the open level-up screen with both cards shown; the screenshot is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass / fail)
-- [ ] game/tools/check_level_up_shot.py reports the Redgull red pixels and the most common art colour (ribbon, card frame, highlight frame, gift pack emblem; cream and text left out) as JSON; test_check_level_up_shot.py covers a clean image, an image with a Redgull red pixel, and an image where light green leads (exit 1). (QA: pass / fail)
-- [ ] The check's output on this ticket's screenshot is written in the result notes. (QA: pass / fail)
-- [ ] game/README.md, 'Level-up screen art', describes the fixture and the check. (QA: pass / fail)
-- [ ] All three test sets pass (GUT, python -m unittest discover -s game/tools, python -m unittest discover -s tools). (QA: pass / fail)
+- [ ] style_rules.py has a Redgull red function (for example is_redgull_red) using the brand reds and the threshold moved from check_rebrand.py; test_style_rules.py tests that it flags RGB 135, 17, 27 and a colour within the threshold of it, and does not flag HEART_COLOR (219, 26, 41) or the heart dimmed to 40% (about 88, 10, 16). (QA: pass)
+- [ ] check_rebrand.py imports the brand reds from style_rules.py, and test_check_rebrand.py passes unchanged. (QA: pass)
+- [ ] game/tests/fixtures/level_up_from_menu_demo.tscn starts at the main menu, starts a run and takes a screenshot of the open level-up screen with both cards shown; the screenshot is in art-archive/<this ticket>/screenshots/ and listed in the result notes. (QA: pass)
+- [ ] game/tools/check_level_up_shot.py reports the Redgull red pixels and the most common art colour (ribbon, card frame, highlight frame, gift pack emblem; cream and text left out) as JSON; test_check_level_up_shot.py covers a clean image, an image with a Redgull red pixel, and an image where light green leads (exit 1). (QA: pass)
+- [ ] The check's output on this ticket's screenshot is written in the result notes. (QA: pass)
+- [ ] game/README.md, 'Level-up screen art', describes the fixture and the check. (QA: pass)
+- [ ] All three test sets pass (GUT, python -m unittest discover -s game/tools, python -m unittest discover -s tools). (QA: pass: GUT all passed, game/tools 508 OK, tools 501 OK. Screenshots rule met: art-archive/T-309/screenshots/. Note: stray scratch file _wiper_ref.png left there.)
 
 ## Updates
 
