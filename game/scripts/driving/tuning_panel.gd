@@ -21,6 +21,10 @@ var sliders := {}
 ## key -> HSlider, for the collision settings (CarTuning.COLLISION_SETTINGS),
 ## shown in their own group after the driving sliders.
 var collision_sliders := {}
+## key -> HSlider, for the side slip out of a drift (CarTuning.SLIP_SETTINGS,
+## task T-278), shown in an "Out of a drift" group right after the driving
+## sliders.
+var slip_sliders := {}
 ## key -> HSlider, for the trick settings (CarTuning.TRICK_SETTINGS, task
 ## T-079), shown in a "Tricks" group at the bottom.
 var trick_sliders := {}
@@ -82,6 +86,12 @@ func setup(p: Node) -> void:
 	_add_slider(box, ZOOM_SETTING, UNITY_ZOOM)
 	for s in CarTuning.SETTINGS:
 		_add_slider(box, s, prototype.car.tuning.get(s.key))
+	var slip_title := Label.new()
+	slip_title.text = "Out of a drift: side slip (not in the Unity prototype)"
+	box.add_child(HSeparator.new())
+	box.add_child(slip_title)
+	for s in CarTuning.SLIP_SETTINGS:
+		_add_slider(box, s, prototype.car.tuning.get(s.key), true, false, slip_sliders)
 	var collisions_title := Label.new()
 	collisions_title.text = "Collisions (not in the Unity prototype)"
 	box.add_child(HSeparator.new())
@@ -119,8 +129,10 @@ func _add_toggle(box: VBoxContainer, s: Dictionary) -> void:
 	trick_toggles[s.key] = toggle
 
 
-func _add_slider(box: VBoxContainer, s: Dictionary, value: float, collision := false, trick := false) -> void:
+func _add_slider(box: VBoxContainer, s: Dictionary, value: float, collision := false, trick := false, group = null) -> void:
 	var into: Dictionary = collision_sliders if collision else (trick_sliders if trick else sliders)
+	if group != null:
+		into = group
 	var label := Label.new()
 	label.text = s.label
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -170,6 +182,8 @@ func _on_slider(key: String, v: float) -> void:
 func _slider(key: String) -> HSlider:
 	if sliders.has(key):
 		return sliders[key]
+	if slip_sliders.has(key):
+		return slip_sliders[key]
 	return collision_sliders[key] if collision_sliders.has(key) else trick_sliders[key]
 
 
@@ -184,7 +198,7 @@ func reset_to_defaults() -> void:
 
 ## Moves every control to match the current values, without re-applying them.
 func refresh() -> void:
-	for key in sliders.keys() + collision_sliders.keys() + trick_sliders.keys():
+	for key in sliders.keys() + slip_sliders.keys() + collision_sliders.keys() + trick_sliders.keys():
 		var v: float = prototype.zoom if key == "camera_zoom" else prototype.car.tuning.get(key)
 		_slider(key).set_value_no_signal(v)
 		_value_labels[key].text = _fmt(v, _slider(key).step)
@@ -202,9 +216,9 @@ func _process(_delta: float) -> void:
 	if not visible or prototype == null:
 		return
 	var m = prototype.car.model
-	readout.text = "Speed %.1f   forward %.1f   sideways %.1f\nDrift angle %.0f deg   drift amount %.2f\n%s" % [
+	readout.text = "Speed %.1f   forward %.1f   sideways %.1f\nDrift angle %.0f deg   drift amount %.2f\nSide slip %.0f deg/s\n%s" % [
 		m.total_speed(), m.forward_speed(), m.sideways_speed(), m.drift_angle_deg(), m.drift_amount,
-		trick_text(prototype.car.tricks)]
+		absf(m.exit_slip), trick_text(prototype.car.tricks)]
 
 
 ## Readout names for the trick ids (a tuning tool, not the game's text).
