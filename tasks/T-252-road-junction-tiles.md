@@ -1,7 +1,7 @@
 ---
 id: T-252
 title: "Level creator: road corners, T-junctions, crossroads and dead ends"
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/tools/build_ground_tiles.py, game/art/ground/ground_atlas.json, game/tools/build_creator_assets.py, game/data/level/creator_assets.json]
 files_expected_to_change: [game/tools/, game/art/ground/, game/data/level/creator_assets.json, game/scripts/level/, game/scripts/level_creator/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-252/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Started: road corners, T-junctions, crossroads and dead ends, drawn by script.
 
 Built: corners, T-junctions, a crossroads and dead ends at the wide road's size, joining today's straights. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 3. Ready to play in the creator: lay out a street grid with corners, T-junctions, a crossroads and dead ends.
+
 ## Result notes
 
 Level/Challenge agent, done (no PixelLab call, no cost).
@@ -70,3 +74,4 @@ Level/Challenge agent, done (no PixelLab call, no cost).
 - **Tests:** `RoadPieceTests` in `tools/test_build_ground_tiles.py` (old tiles and cells unchanged by hash; every rotation; open-side tiles carry exactly the straight tiles' line pixels over plain asphalt; lines reach only open edges; dead-end kerb and gravel; sprite rules and tiling for all 52 tiles; the sheet matches), `tools/test_build_creator_assets.py`, `tests/unit/level_creator/test_road_pieces.gd` (placing all four tiles, atlas indexes, ground rows, edge clamp, panel labels and hidden parts, the game's ground unchanged). The existing panel test now uses `panel_entries`. Full GUT suite and both Python sets pass (see the final run in the report).
 - **Screenshot:** `art-archive/T-252/screenshots/street_grid.png` (fixture `tests/fixtures/level_creator_roads_demo.tscn`): a street grid of today's two-tile straights plus every piece (a ring with four corners and four T-junctions around a crossroads), and two short roads closed with dead ends in all four rotations. Seen: the lines run straight across every join and the dead-end kerbs show clearly.
 - **Process notes:** one command (`sha256sum` on a file) and one scratchpad script run were refused by the status guard and skipped; I did not work around them. One early edit of the builder used an inline Python heredoc by mistake.
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
