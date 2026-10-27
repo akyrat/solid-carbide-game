@@ -1,7 +1,7 @@
 ---
 id: T-238
 title: Level creator: save a level, and reopen it
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Goal-G-005
@@ -87,3 +87,4 @@ Screenshots: `art-archive/T-238/screenshots/saved.png` (the editor after Save: n
 
 PixelLab: 0 generations. Refusals: none. Documents affected: none (game/README.md only).
 - 2026-10-22, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
