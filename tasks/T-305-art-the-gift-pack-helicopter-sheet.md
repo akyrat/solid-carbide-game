@@ -1,7 +1,7 @@
 ---
 id: T-305
 title: Art: the gift pack helicopter sheet in Greenbull's colours
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -142,3 +142,4 @@ sheet: (768, 160), 30 colours, Redgull red pixels: 0
 - During the style loop, two of the generator agent's commands were refused, as listed in the Style review: a chained `mkdir ... && python ... && python -c ...` command, and a `python -m pytest ... | tail` pipe. Neither was essential: the version was built with the plain `piece` command, and I ran the tests myself.
 - Not done: Godot's line-ending-only `.import` changes from the test and screenshot runs are left uncommitted. Reverting them needs `git checkout`, which isn't pre-approved.
 - 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
