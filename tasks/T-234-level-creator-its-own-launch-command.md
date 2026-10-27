@@ -1,7 +1,7 @@
 ---
 id: T-234
 title: Level creator: its own launch command and the level list screen
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-005
@@ -69,3 +69,4 @@ Built the creator's main scene (`scenes/level_creator/level_creator.tscn`, `scri
 - Screenshots (`art-archive/T-234/screenshots/`): `list-empty.png`, `list-filled.png` (two temporary levels, since removed; no levels are committed).
 - No PixelLab used. No refusals.
 - 2026-10-21, in-qa → needs-playtest: QA passed every criterion (goal G-005).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
