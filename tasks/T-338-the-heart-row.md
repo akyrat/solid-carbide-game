@@ -33,7 +33,7 @@ A task is not done until every document listed in documents_affected has been up
 
 The board's decisions (2026-10-28): HUD and menus, Decisions, "The HUD looks like a livestream"; Game loop architecture, Decisions, "Hearts instead of health points". The upright health bar and its heart at the top left are replaced by a **row of hearts**, like Zelda's, at the **top left**: one heart per heart the car can have (5, plus the garage's), full ones for the hearts left and empty ones for the hearts lost (no half hearts). A heart lost does a small break or flash (your proposal); a heart healed pops back in. Past one row's width (a proposal: 10), a second row starts under it.
 
-- **Position and size:** from the board's HUD layout page (https://claude.ai/artifact/U33QPUELxgZCZBjYDpBszQ); the Project Lead writes the saved numbers in this ticket's Updates when it starts. The weapon icons column moves to the page's position for it too.
+- **Position and size:** from the board's HUD layout page (https://claude.ai/artifact/CSHYCDV9xZbSYwQGUt5SJ4); the Project Lead writes the saved numbers in this ticket's Updates when it starts. The weapon icons column moves to the page's position for it too.
 - If T-339's heart art (full and empty) is in the branch you start from, use it; otherwise today's heart picture for full hearts and a dark outline of it for empty ones.
 
 The board's review: play a run, get hit and heal: the hearts empty and fill.

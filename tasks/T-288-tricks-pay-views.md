@@ -1,10 +1,10 @@
 ---
 id: T-288
 title: "Each trick pays views, multiplied by the combo"
-status: planning
+status: cancelled
 from: project-lead
 to: game-loop
-lead: Coursework
+lead: Greenbull
 epic: game-loop
 milestone: mvp
 goal:
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 On hold at the board's request: needs refining before work starts. Open questions are in the ticket.
 
+### 2026-10-27, Planning → Cancelled
+
+Cancelled on the board's say-so: subs and live viewers (T-331 to T-340) replace it.
+
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-27, planning → cancelled: Cancelled by the board: subs and live viewers (T-331 to T-340) replace it.

@@ -39,7 +39,7 @@ The board's decisions (2026-10-28): Game loop architecture, Decisions, "The comb
 4. **The "+12K" flies to the counter:** after the popup shows, its amount detaches and flies across the screen into the counter, which **bumps** (a quick pop and flash) when it lands.
 5. **Crashes:** when a crash cuts the combo, the counter **flashes red** and a "-{viewers lost}" **drops away** from it as the number falls (with the COMBO BROKEN! popup as today).
 
-- **Position and size:** from the board's HUD layout page (https://claude.ai/artifact/U33QPUELxgZCZBjYDpBszQ); the Project Lead writes the saved numbers in this ticket's Updates when it starts; anchor it to the bottom-right corner.
+- **Position and size:** from the board's HUD layout page (https://claude.ai/artifact/CSHYCDV9xZbSYwQGUt5SJ4); the Project Lead writes the saved numbers in this ticket's Updates when it starts; anchor it to the bottom-right corner.
 - If T-339's art (counter frame, LIVE badge, eye icon, fire) is in the branch you start from, use it; otherwise placeholders in code.
 - Today's combo heat elsewhere (the popups' rings and flames, the drift marks) stays as it is.
 
