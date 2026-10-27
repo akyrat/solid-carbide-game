@@ -130,6 +130,27 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 - **Tiers:** as the proposal above (length, damage, sweep speed and knockback multipliers), applied from code.
 - **Look:** a placeholder wiper drawn in code: a dark steel arm with a pale grey rubber blade and a dark outline, from the car's nose out to the arm's tip, drawn over the car while it points down the screen and under it while it points up. Never in Greenbull's colours. The final art replaces it.
 
+### Bricks
+
+The level-up card texts (task T-322; the board's line, kept word for word, with a hint to jump; scored 8 or more in the style loop). They are in [../game/scripts/ui/level_up_texts.gd](../game/scripts/ui/level_up_texts.gd). The upgrade texts are for the same 7 tiers as the windshield wiper (2 to 8) and say only in general words what grows (the wave's reach, its damage); T-323's real tiers may need them reworded.
+
+- `get_bricks.title`: Bricks
+- `get_bricks.desc`: A bunch of bricks. No real use, other than making the car heavier. Maybe try a jump?
+- `upgrade_bricks.tier2.title`: Wider Wave
+- `upgrade_bricks.tier2.desc`: Each landing's impact wave reaches further. Greenbull calls it ground-breaking content.
+- `upgrade_bricks.tier3.title`: Harder Landing
+- `upgrade_bricks.tier3.desc`: Your landing wave hits harder. Greenbull calls it a high-impact brand activation.
+- `upgrade_bricks.tier4.title`: Heavier Load
+- `upgrade_bricks.tier4.desc`: Landing waves reach even further out. Greenbull calls it a building boom.
+- `upgrade_bricks.tier5.title`: Harder Landing II
+- `upgrade_bricks.tier5.desc`: Your landing wave hits even harder. Every landing is a product launch.
+- `upgrade_bricks.tier6.title`: Shockwave Reach
+- `upgrade_bricks.tier6.desc`: Every landing sends the impact wave out much wider. Greenbull calls it organic reach.
+- `upgrade_bricks.tier7.title`: Harder Landing III
+- `upgrade_bricks.tier7.desc`: Your landing wave hits harder still. Greenbull's insurers have stopped returning calls.
+- `upgrade_bricks.tier8.title`: Total Impact
+- `upgrade_bricks.tier8.desc`: Landings send out the biggest, hardest-hitting wave yet. Greenbull calls it a mic drop.
+
 ### Size upgrades grow on screen (built in task T-286)
 
 What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/README.md`, "Weapons", "Size upgrades grow".
