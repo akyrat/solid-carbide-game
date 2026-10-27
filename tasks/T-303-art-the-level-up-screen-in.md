@@ -1,7 +1,7 @@
 ---
 id: T-303
 title: Art: the level-up screen in Greenbull's colours, with its emblem
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/README.md, tasks/T-140-art-level-up-screen.md, tasks/T-141-level-up-screen-animation.md, game/tools/build_level_up_art.py, game/tools/test_build_level_up_art.py, game/scripts/ui/level_up_screen.gd, game/tests/unit/test_level_up_screen.gd, game/art/level_up/, game/art/logo/]
 files_expected_to_change: [game/art/level_up/, game/tools/build_level_up_art.py, game/tools/test_build_level_up_art.py, art-archive/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -60,6 +60,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-303.
 ### 2026-10-27, In progress → In QA
 
 Goal runner (G-006): the agent is done; QA is checking it.
+
+### 2026-10-27, In QA → Needs playtest
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
 
 ## Style review
 
@@ -205,3 +209,4 @@ Written by the agent when it finishes.
 **Documents updated:** `docs/visual-style.md` (Decisions, the level-up screen's look) and `game/README.md` ("Level-up screen art", how the pieces are built now).
 
 **Refusals:** the earlier session's style loop runs list refused Bash commands in the Style review: chained `&&` and `python -c` checks, a `/tmp` read and pytest. In each case the agent used the approved commands instead, and nothing essential was blocked. Nothing was refused in this session.
+- 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
