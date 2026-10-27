@@ -1,7 +1,7 @@
 ---
 id: T-251
 title: "Level creator: rooftops of any size, and ramps in every direction"
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/elevation_layer.gd, game/scripts/level/elevation_platform_drawing.gd, game/tools/build_elevation_sample_art.py, game/tools/build_creator_assets.py, game/tools/check_height_data.py, game/scripts/level_creator/, tasks/T-198-art-rooftops-and-parking-garage-ramps.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/scenes/level_creator/, game/tools/, game/data/level/creator_assets.json, game/tests/, game/README.md, docs/level-design.md, art-archive/T-251/screenshots/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started: rooftops of any size and ramps in all four directions, drawn in the eng
 
 Built: rooftops of any size by dragging (heights 3 and 6, a 6 on a 3 or on the street), ramps in all four directions including 0 to 6, drawn in the engine. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the creator: drag rooftops to size, place ramps in every direction, play the level. T-253 and T-255 start on this branch.
+
 ## Result notes
 
 Level/Challenge Design Agent, 2026-10-22. Built on the branch's G-005 creator plus T-250's text.
@@ -107,3 +111,4 @@ Level/Challenge Design Agent, 2026-10-22. Built on the branch's G-005 creator pl
 **Refusals:** one. A standalone `timeout ... godot --headless --import` was refused by the ticket-guard hook. I skipped it; the test runner and `screenshot.sh` import first anyway.
 
 **Documents affected:** `docs/level-design.md` (new Content section), `game/README.md` (Level creator: catalogue line, the T-236 note, the new "Rooftops and ramps of any size (T-251)" point).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
