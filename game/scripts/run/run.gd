@@ -239,6 +239,8 @@ func _ready() -> void:
 	add_child(state)
 	state.level_up.connect(_on_level_up)
 	state.car_damaged.connect(_on_car_damaged)
+	# A crash pays the car's trick in progress (T-315), before the cut by default.
+	state.crashed.connect(_on_crashed)
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -418,6 +420,12 @@ func _on_car_hit_obstacle(collider: Object, shape_index: int, _normal: Vector2, 
 	if needle != null:
 		needle.touched(collider, shape_index)  # T-272: a touch voids a pass through a pair
 	state.collision()
+
+
+## T-315: the car crashed (RunState.crashed): its trick in progress pays now.
+func _on_crashed() -> void:
+	if car != null and is_instance_valid(car):
+		car.settle_tricks()
 
 
 ## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).

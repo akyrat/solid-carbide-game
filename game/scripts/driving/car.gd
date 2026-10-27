@@ -203,6 +203,15 @@ func physics_step() -> void:
 	stepped.emit()
 
 
+## The car crashed (task T-315; the run scene calls it on RunState.crashed):
+## the trick in progress pays now, as if it ended (TrickDetector.settle()), so
+## a drift cut short by a crash still pays its LONG DRIFT!. Nothing when trick
+## detection is off. Reads and changes only the trick detector, never the car.
+func settle_tricks() -> void:
+	if detect_tricks:
+		tricks.settle()
+
+
 ## Knocks the car back: adds direction (normalized here) x strength, in units
 ## per second, to the car's velocity on the next physics step, after the driving
 ## model's own update for that step. Several calls before one step add up. The
