@@ -1,7 +1,7 @@
 ---
 id: T-322
 title: "Text: the Bricks weapon's card"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -41,9 +41,9 @@ The board's review: read the Bricks card texts in Weapons, Content, "Bricks".
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The Bricks card title, its description and each tier's text are in the level-up texts data file, next to the other weapons'. (QA: pass / fail)
-- [ ] The description keeps the board's line "A bunch of bricks. No real use, other than making the car heavier." (or says in the result notes which rule made a change necessary) and hints at a jump. (QA: pass / fail)
-- [ ] Each line scored at least 8 in the style loop, with every round in the Style review, and fits the card's length rules. (QA: pass / fail)
+- [ ] The Bricks card title, its description and each tier's text are in the level-up texts data file, next to the other weapons'. (QA: PASS - get_bricks and upgrade_bricks tier2 to tier8, title and desc, are in game/scripts/ui/level_up_texts.gd after the wiper's.)
+- [ ] The description keeps the board's line "A bunch of bricks. No real use, other than making the car heavier." (or says in the result notes which rule made a change necessary) and hints at a jump. (QA: PASS - the board's line is word for word, followed by "Maybe try a jump?".)
+- [ ] Each line scored at least 8 in the style loop, with every round in the Style review, and fits the card's length rules. (QA: PASS - all 16 texts the game now shows match an exact recorded run of 8 or more: Runs 1-2, 3-4, 5-6, 17-18, 19-20, 22+27, 23-24, 25-26; titles are 6 to 17 characters (limit 30), descriptions 70 to 90 (limit 90); the old-pattern runs 7-16 and 21 are unused.)
 
 ## Updates
 
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the Narrative Theme Agent is writing the Bricks card texts.
+
+### 2026-10-27, In progress → In QA
+
+Built: the Bricks card and its 7 upgrade texts, matched to T-323's tiers, all 8 or more in the style loop. QA is checking it.
 
 ## Style review
 
