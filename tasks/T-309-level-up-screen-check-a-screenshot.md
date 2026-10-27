@@ -1,7 +1,7 @@
 ---
 id: T-309
 title: Level-up screen check: a screenshot from a run started at the main menu, checked for Redgull red and for dark green leading
-status: in-qa
+status: done
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -15,7 +15,7 @@ documents_affected: [game/README.md]
 files_to_read_first: [tasks/README.md, game/README.md, game/tools/style_rules.py, game/tools/check_rebrand.py, game/tools/test_check_rebrand.py, game/tools/build_level_up_art.py, game/scripts/ui/level_up_screen.gd, game/tests/fixtures/hud_from_menu_demo.gd, game/tests/fixtures/level_up_screen_demo.gd, art-archive/T-307/screenshots/level_up_screen.png, tasks/T-303-art-the-level-up-screen-in.md, tasks/T-308-rebrand-sweep-the-red-check-looks.md]
 files_expected_to_change: [game/tools/style_rules.py, game/tools/test_style_rules.py, game/tools/check_rebrand.py, game/tools/check_level_up_shot.py, game/tools/test_check_level_up_shot.py, game/tests/fixtures/level_up_from_menu_demo.gd, game/tests/fixtures/level_up_from_menu_demo.tscn, game/README.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -61,6 +61,10 @@ Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-309.
 
 Goal runner (G-006): the agent is done; QA is checking it.
 
+### 2026-10-27, In QA → Done
+
+Goal runner (G-006): QA passed; merged into playtest/G-006.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -78,3 +82,4 @@ Done, no change to the game or its art. 0 PixelLab generations.
 - `game/README.md`, "Level-up screen art", describes the fixture and the check.
 - Tests: GUT 1419/1419 pass; `python -m unittest discover -s game/tools` passes (one failure on my first run, my own test's bad "beyond threshold" colour, fixed); `python -m unittest discover -s tools` see the QA run.
 - Refusals: none.
+- 2026-10-27, in-qa → done: QA passed every criterion (goal G-006).
