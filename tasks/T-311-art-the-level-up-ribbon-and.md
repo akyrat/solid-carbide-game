@@ -1,7 +1,7 @@
 ---
 id: T-311
 title: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -53,6 +53,10 @@ The board's review: play a run from the main menu to a level-up: the ribbon is d
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-311.
 
 ## Style review
 
