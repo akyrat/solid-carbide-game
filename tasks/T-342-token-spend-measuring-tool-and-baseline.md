@@ -1,7 +1,7 @@
 ---
 id: T-342
 title: Token spend: a measuring tool and the baseline report
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -56,6 +56,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-27, Open → In progress
+
+Started: the measuring tool and the baseline, first so the numbers are taken before anything changes.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -63,3 +67,29 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Nothing to picture (a tool, a report and one board bubble).
+
+**Built**
+- `tools/token_report.py`: streams every transcript line by line (main `<id>.jsonl` and `<id>/subagents/agent-*.jsonl` with the `.meta.json` agent type), `--from`/`--to` (dates of the calls, both ends inclusive), `--dir`, `--tasks`, `--out`, `--session <id prefix>` (repeatable). The full run takes a few seconds. Usage is deduplicated by `message.id`: per file for the per-session figures (this reproduces the known numbers), and across files for the totals, so a forked session's copied messages are not counted twice. It prints five groups: (1) tokens by kind, scope, model and subagent type; (2) calls, average and peak context, compactions per session; (3) what fills the main sessions' context (share and weighted cost, Bash results by command kind); (4) failed tool calls (edit before read, hook refusal, sleep blocked, permission refusal, other) and top tools; (5) from the tickets, QA rounds and fail rate by agent and model, and model counts.
+- `tools/test_token_report.py`: 6 tests on a small fixture (dedup by message id, date range, compactions, subagent type, error kinds, report headings, ticket reading).
+- `docs/token-spend/baseline-2026-10-28.md`: `python tools/token_report.py --to 2026-10-28 --out docs/token-spend/baseline-2026-10-28.md`.
+- Task board: a `Token spend` bubble in `AREAS` (`tools/taskboard/taskboard.html`), `excluded: true`, so it is not in the MVP figure.
+- `docs/README.md`: a "Token spend" paragraph (what it is, how to run it).
+
+**Baseline, headline numbers (everything to 2026-10-28)**
+- 20,248 calls, cache read 3,406M, cache creation 110M, output 5.7M (input tokens are about 0). Main sessions 2,032M cache read (6,566 calls), subagents 1,373M.
+- By model: opus 2,805M cache read (12,879 calls), sonnet 592M (7,096 calls).
+- Largest subagent types by cache read: asset-generation 271M, level-challenge 225M, qa-integration 200M, driving-drift 175M.
+- Check figures: `88cd5834` 2,283 calls, 883.0M cache read (known 2,283 / 883M); `ac11e792` 1,237 calls, 546.3M (known 1,237 / 546M). Exact match.
+- What fills main-session context (share of weighted cost): tool inputs 25%, Bash results 23%, system reminders and hooks 21%, subagent reports 14%, assistant text 7%.
+- Failed tool calls: 1,178 of 23,184 (5.1%): edit before read 390 (only 8 in main sessions), hook refusals 287, other 372, sleep blocked 74, permission refusals 55.
+- Tickets: 352; model counts sonnet 210, opus 112, unset 30; 286 went to QA.
+
+**Tests**: `python -m unittest discover -s tools -p "test_*.py"` 507 OK (includes the 6 new tests); `python -m unittest discover -s game/tools -p "test_*.py"` 620 OK (1 skipped); `bash game/tools/run_tests.sh` TESTS PASSED (GUT "All tests passed"; I only kept the last lines of its output, so no test count).
+
+**Unsure / notes**
+- QA fail counts from the tickets are a lower bound: QA replaces a fail mark with its later pass, so only 9 tickets still show a fail mark; the QA rounds column shows retries.
+- The tickets carry no run date, so section 5 ignores the date range.
+- "Context size" is input plus cache creation plus cache read of each call. The weighted cost uses characters, not tokens.
+- Godot's runs touched `.import` files in the worktree (line endings); I did not stage them.
