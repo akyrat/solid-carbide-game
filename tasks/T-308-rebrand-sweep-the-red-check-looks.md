@@ -1,7 +1,7 @@
 ---
 id: T-308
 title: Rebrand sweep: the red check looks for Redgull's brand reds, not every red hue, and its report on playtest/G-006 is clean
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Goal-G-006
@@ -49,6 +49,10 @@ Run the script in this ticket's folder, made from playtest/G-006, and put the fu
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-308.
 
 ## Style review
 
