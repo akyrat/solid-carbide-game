@@ -1,7 +1,7 @@
 ---
 id: T-304
 title: Art: the gift pack package, standing and falling, in Greenbull's colours
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -164,3 +164,4 @@ package_falling.png: (64, 96), 28 colours, alpha [0, 255], Redgull red pixels: 0
 - During the style loop, the generator agent's first chained shell commands were refused once in each run: a `git status; mkdir ... && python ... && python -c ...` chain in Run 1, and an `ls ...; python ... && python -c ...` chain in Run 2. They are listed in the Style review. They weren't essential: the version was still built with the plain `piece` command.
 - Not done: Godot's line-ending-only `.import` changes from the test and screenshot runs are left uncommitted, as the rules say. Reverting them needs `git checkout`, which isn't pre-approved.
 - 2026-10-27, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
