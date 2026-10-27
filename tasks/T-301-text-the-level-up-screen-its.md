@@ -1,7 +1,7 @@
 ---
 id: T-301
 title: Text: the level-up screen, its cards and the garage, rewritten for Greenbull
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Goal-G-006
@@ -402,3 +402,4 @@ Refusals: none.
 - 2026-10-26, in-progress → flagged-for-review: the style loop kept version 2 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 - 2026-10-26, flagged-for-review → in-progress: The board (2026-10-26): drop the numbers from the two garage descriptions, following Text rules rule 4 (a garage description names no number; the garage shows the real stats). Rerun car_health and damage_bonus through the style loop with the new briefs art-archive/T-301/briefs/garage_car_health_run2.md and garage_damage_bonus_run2.md, and put the kept texts in place of the old ones. The style loop now keeps earlier runs' records (T-296 is in this branch), so don't restore records by hand. The board accepts the other ten texts as they are, including the 'calls it' forms and the molotov tier 4 card.
 - 2026-10-26, in-qa → needs-playtest: QA passed every criterion (goal G-006).
+- 2026-10-27, needs-playtest → done: The board's playtest of G-006 (2026-10-28): everything LGTM after playtesting and reviewing the assets.
