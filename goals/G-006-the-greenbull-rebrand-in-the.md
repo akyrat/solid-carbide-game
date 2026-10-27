@@ -1,7 +1,7 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: paused
+status: building
 art_cap: 1900
 art_used: 0
 iteration: 11
@@ -17,17 +17,17 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 
 ## Goal acceptance criteria
 
-- [ ] On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. (QA: pass / fail)
-- [ ] On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). (QA: pass / fail)
-- [ ] The garage screen shows Greenbull's title and descriptions (no Redgull); a screenshot of it exists in the ticket's screenshots folder. (QA: pass / fail)
-- [ ] The gift pack package (standing and falling) and the helicopter sheet that the run loads have no Redgull red pixels and carry Greenbull's emblem; in-run screenshots of the helicopter carrying the package, the package falling and the package landed exist. (QA: pass / fail)
-- [ ] game/art/logo/ (or the folder the tickets name) holds greenbull_emblem_128.png, greenbull_emblem_64.png, greenbull_emblem_32.png and greenbull_wordmark.png, byte-identical to art-archive/T-294/ and art-archive/T-295/; no game scene or script loads a redgull_logo_*.png file. (QA: pass / fail)
-- [ ] The HUD's likes heart is unchanged: game/art/hud/ heart files and hud.gd's heart colour are identical to master. (QA: pass / fail)
-- [ ] `git diff --diff-filter=D --name-only master playtest/G-006` lists no .png file: every old Redgull art file is still in game/art or moved (renamed) into art-archive/. (QA: pass / fail)
-- [ ] `python game/tools/style_rules.py text` fails rule 2 on a text containing "Redgull" and passes on the same text with "Greenbull"; the art check no longer fails a sprite for red pixels. (QA: pass / fail)
-- [ ] Every changed screen (level-up screen, garage, the gift pack drop in the run) has screenshots in its ticket's screenshots folder, listed with full paths in the ticket. (QA: pass / fail)
-- [ ] T-296 and T-297 pass all their own acceptance criteria. (QA: pass / fail)
-- [ ] All three test sets (Godot unit tests, Python tool tests, per-run tests) pass on playtest/G-006. (QA: pass / fail)
+- [x] On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. (QA: pass)
+- [ ] On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). (QA: fail, Text and art are green. I used art-archive/T-307/screenshots/level_up_screen.png [a fixture shot, not a run started from the menu]. It has 196 px of [88,10,16], which reads_as_red flags [hue 355, sat .89, val .35]. It is probably the dimmed likes heart, which the docs keep red, but the criterion as written has no exemption. Palette checks: header_ribbon.png has light green [104,220,96] 7172 px against dark green [12,76,44] 2410 px, so light green is the most common. highlight_frame.png has no dark green at all. card_frame.png passes [dark green leads once the cream and near-black are excluded]. gift_pack_emblem.png has a dark-green variant [24,112,60] first, with [12,76,44] second. As written, the criterion fails.)
+- [x] The garage screen shows Greenbull's title and descriptions (no Redgull); a screenshot of it exists in the ticket's screenshots folder. (QA: pass)
+- [x] The gift pack package (standing and falling) and the helicopter sheet that the run loads have no Redgull red pixels and carry Greenbull's emblem; in-run screenshots of the helicopter carrying the package, the package falling and the package landed exist. (QA: pass)
+- [x] game/art/logo/ (or the folder the tickets name) holds greenbull_emblem_128.png, greenbull_emblem_64.png, greenbull_emblem_32.png and greenbull_wordmark.png, byte-identical to art-archive/T-294/ and art-archive/T-295/; no game scene or script loads a redgull_logo_*.png file. (QA: pass)
+- [x] The HUD's likes heart is unchanged: game/art/hud/ heart files and hud.gd's heart colour are identical to master. (QA: pass)
+- [x] `git diff --diff-filter=D --name-only master playtest/G-006` lists no .png file: every old Redgull art file is still in game/art or moved (renamed) into art-archive/. (QA: pass)
+- [x] `python game/tools/style_rules.py text` fails rule 2 on a text containing "Redgull" and passes on the same text with "Greenbull"; the art check no longer fails a sprite for red pixels. (QA: pass)
+- [x] Every changed screen (level-up screen, garage, the gift pack drop in the run) has screenshots in its ticket's screenshots folder, listed with full paths in the ticket. (QA: pass)
+- [x] T-296 and T-297 pass all their own acceptance criteria. (QA: pass)
+- [x] All three test sets (Godot unit tests, Python tool tests, per-run tests) pass on playtest/G-006. (QA: pass)
 
 ## Open questions
 
@@ -57,6 +57,7 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 | 10 | S11 | Code comments, tests, tool names and game/README.md follow the new name | unblocks 1, value 3 | Item (5) of the goal: the code base and its README stop saying Redgull, without changing what the game does. | covered | T-306 |
 | 11 | S12 | Rebrand sweep: no Redgull left where the player can see it, with screenshots | unblocks 0, value 4 | The goal's stop condition: a run shows no Redgull name, logo or brand red anywhere, and every changed screen has screenshots. | covered | T-307, T-308 |
 | 12 | S4 | T-297: the ticket guard lets a safe sed edit of a ticket's body through (reused as it is) | unblocks 0, value 2 | Named in the goal; keeps agents from being refused for harmless ticket edits during the run. | covered | T-297 |
+| 13 | C1 | Goal criterion: On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). | goal criterion | it failed the goal check | missing | T-309, T-310, T-311 |
 
 ### S1: Style rules check follows the new rule 6 and text rules
 
@@ -159,6 +160,12 @@ Needs: nothing.
 
 - T-297's own acceptance criteria all pass (QA on the T-297 ticket).
 
+### C1: Goal criterion: On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text).
+
+Needs: nothing.
+
+- On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text).
+
 ## Scoring
 
 Ranked by code, not by Claude: first by how many other sub-goals wait on it (directly or further down the chain), then by value (Claude's estimate, 1 to 5), then by Claude's order. A sub-goal is therefore always ranked before every sub-goal that needs it. A dependency cycle is refused. Score column: unblocks N (sub-goals waiting on it), value V.
@@ -178,6 +185,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - T-307: Rebrand sweep: a check for Redgull's red, files and name in what the game loads, with screenshots of every screen (S12, written)
 - T-297: "Ticket guard: a shell edit of a ticket's body passes when it can't write a guarded line" (S4, in-flight, reused)
 - T-308: Rebrand sweep: the red check looks for Redgull's brand reds, not every red hue, and its report on playtest/G-006 is clean (S12, written)
+- T-309: Level-up screen check: a screenshot from a run started at the main menu, checked for Redgull red and for dark green leading (C1, written)
+- T-310: The level-up title lettered in cream with a dark outline, to read on a dark green ribbon (C1, written)
+- T-311: Art: the level-up ribbon (and frames if needed) with dark green leading, checked on a screenshot from the main menu (C1, written)
 
 ## Iteration log
 
@@ -210,6 +220,9 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 10: T-307 (S12, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: I added game/tools/check_rebrand.py with a 9-test file, and a "Rebrand sweep (T-307)" section in game/README.md. The report finds no 'redgull' file names and no 'Redgull' text. It flags 8 of the 68 loaded PNGs for red, all fire, wood and gun-grip oranges and browns that the loose red check picks up by hue. Nothing was fixed, so those 8 go back to the Project Lead. The five screenshots are in art-archive/T-307/screenshots/ (main menu, garage, run HUD, gift pack drop, level-up). I viewed the main menu and gift drop shots; the other three were saved but not checked. All tests pass: GUT 1419/1419 and Python 499 OK (1 skipped). Everything is committed except Godot's `.import` line-ending noise, which is still uncommitted in the worktree. Refused, got past and not blocking: qa-integration: {"tool_input": {"command": "git ls-files -m \"*.import\" -z | xargs -0 git checkout --"}, "tool_name": "Bash", "tool_use_id": "toolu_01PaHGymeWb59TwToPwT8ciM"} / qa-integration: Reverting Godot's line-ending-only .import noise with `git ls-files -m "*.import" -z | xargs -0 git checkout --` was refused as a compound command. It wasn't essential: I committed only my own files and left the noise uncommitted, so the Project Lead needs to revert it before merging.. Rescan: S12 missing (wrote T-308).
 - 2026-10-27, iteration 11: T-308 (S12, qa-integration, sonnet): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: The red check in game/tools/check_rebrand.py now flags a loaded PNG only when an opaque pixel is within 12 RGB distance of one of Redgull's brand reds. Each reference colour names its archived file. The report on playtest/G-006 shows 0 findings, so the script exits 0. All five T-307 screenshots are clean of Redgull. The README section, the new tests and the result notes are done and committed on the task branch. The game/tools Python tests (502), the tools/ Python tests (501) and GUT (1419 of 1419) all pass. Refused, got past and not blocking: qa-integration: {"tool_input": {"command": "python -c \"\nimport sys,glob,collections,colorsys\nsys.path.insert(0,'game/tools')\nimport style_rules as s\nfor pat in ['art-archive/T-303/red_gold/*.png','art-archive/T-304/redgull/*.png','art-archive/T-305/redgull/*.png']:\n  for f in sorted(glob.glob(pat)):\n    _,_,rows=s.decode_png(open(f,'rb').read())\n    c=collections.Counter(tuple(p[:3]) for r in rows for p in r if p[3]==255)\n    red=[(k,v) for k,v in c.most_common() if s.reads_as_red(k)]\n    print(f,len(c),red[:6])\n\""}, "tool_name": "Bash", "tool_use_id": "toolu_01FH2XRgFiiAoSEhNd4GgG3c"} / qa-integration: {"tool_input": {"command": "python - 2>/dev/null; sed -i 's/(204, 18, 28)/(135, 17, 27)/g' game/tools/test_check_rebrand.py; grep -c \"135, 17, 27\" game/tools/test_check_rebrand.py"}, "tool_name": "Bash", "tool_use_id": "toolu_01TZNJWvMVf22om3z5RMuPDR"} / qa-integration: An inline `python -` / `sed` shell command to edit the tests was refused; I did not retry it and made the same edit with the Edit tool.. Rescan: S12 covered.
 - 2026-10-27, iteration 11: paused (see Pauses).
+- 2026-10-27, iteration 11: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
+- 2026-10-27, iteration 11: goal check: 10 of 11 goal criteria pass.
+- 2026-10-27, iteration 11: gap detection on the failing goal criteria: C1 missing (wrote T-309, T-310, T-311).
 
 ## Pauses
 
