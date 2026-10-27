@@ -1930,3 +1930,8 @@ Entry format:
 - Decision or change: after hearing how much a crash takes today (80% of the multiplier above x1.0, so x4 drops to x1.6), the board wants the cut reduced to 50% (x4 drops to x2.5). Ticket written for the Game Data Agent; not started.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-329
+
+## 2026-10-28: A bigger gift pack helicopter
+- Decision or change: the board wants the helicopter that drops each gift pack drawn 30% larger on screen (scale 0.5 to 0.65 of its sheet, same art). Ticket written for the Game Loop Agent; not started.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-330
