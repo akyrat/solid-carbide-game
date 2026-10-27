@@ -1,7 +1,7 @@
 ---
 id: T-348
 title: Token spend: the guard stops refusing read-only commands (sort, uniq, python -c, chained status calls)
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -76,6 +76,6 @@ Written by the agent when it finishes.
 - All existing guard tests pass unchanged (only a new class was added).
 - Known limits (as in T-248, the commit check is the backstop): the Python check is a static reading, so a determined write through a path it doesn't list (for example a class aliased into a variable, then `.replace(a, b)`) can still slip by; a module not on the list makes the code count as a writer.
 - `tasks/README.md` ("Changing a task's status"): one sentence after T-248's rule.
-- Tests: `python -m unittest discover -s tools -p "test_*.py"`: 508 OK (`tools.test_guard`: 71 OK). `python -m unittest discover -s game/tools -p "test_*.py"`: 620 OK (1 skipped). `bash game/tools/run_tests.sh`: TESTS PASSED (exit 0).
-- Refusal while working: a Bash command that wrote a probe script with a heredoc and ran it in the same command was refused by the main checkout's guard ("can't find or read that script"). I didn't retry it; the cases went into the unit tests instead.
+- Tests: `python -m unittest discover -s tools -p "test_*.py"`: 508 OK (`tools.test_guard`: 71 OK). `python -m unittest discover -s game/tools -p "test_*.py"`: 620 OK (1 skipped). `bash game/tools/run_tests.sh`: 1735 of 1735 tests passed, TESTS PASSED (exit 0).
+- Refusals while working (from the main checkout's guard, the old one): (1) a Bash command that wrote a probe script with a heredoc and ran it in the same command ("can't find or read that script"). I didn't retry it; the cases went into the unit tests instead. (2) A `sed -i` adding the GDScript test count to these notes (its script held backticks, so the guard couldn't read it). I made the same one-line note edit with the Edit tool, the normal tool for a ticket's notes, whose check passed it; strictly that is another tool for the same edit, so I'm listing it.
 - Nothing to picture: a hook change with no screen.
