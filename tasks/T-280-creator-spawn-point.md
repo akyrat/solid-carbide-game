@@ -1,7 +1,7 @@
 ---
 id: T-280
 title: "Level creator: a spawn point every level has, always visible and movable"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -81,3 +81,4 @@ QA passed all 4. Ready to play in the creator build: drag the Start marker onto 
 No refusals.
 - 2026-10-23, in-progress → in-qa: Built: spawn point (8 headings, drag to move, refused in buildings/obstacles/off map, can't delete, saved, run starts there). Click-to-place not built (drag only).
 - 2026-10-23, in-qa → needs-playtest: QA round 1: all pass. 18 older test changes keep intent. Click-to-place not built (drag only).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
