@@ -4,7 +4,7 @@ title: The gift pack helicopter 30% bigger on screen
 status: open
 from: project-lead
 to: game-loop
-lead:
+lead: Tokens
 epic: game-loop
 milestone: mvp
 goal:

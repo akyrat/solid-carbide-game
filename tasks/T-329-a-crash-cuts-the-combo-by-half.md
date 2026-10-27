@@ -4,7 +4,7 @@ title: A crash cuts the combo by 50%, not 80%
 status: open
 from: project-lead
 to: game-data
-lead:
+lead: Tokens
 epic: game-loop
 milestone: mvp
 goal:
