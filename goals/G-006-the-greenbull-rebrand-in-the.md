@@ -1,10 +1,10 @@
 ---
 id: G-006
 title: The Greenbull rebrand in the game (board, 2026-10-26): the sponsor...
-status: paused
+status: building
 art_cap: 1900
 art_used: 0
-iteration: 14
+iteration: 15
 max_iterations: 20
 created: 2026-10-26
 lead: Goal-G-006
@@ -58,7 +58,7 @@ The Greenbull rebrand in the game (board, 2026-10-26): the sponsor Redgull is no
 | 11 | S12 | Rebrand sweep: no Redgull left where the player can see it, with screenshots | unblocks 0, value 4 | The goal's stop condition: a run shows no Redgull name, logo or brand red anywhere, and every changed screen has screenshots. | covered | T-307, T-308 |
 | 12 | S4 | T-297: the ticket guard lets a safe sed edit of a ticket's body through (reused as it is) | unblocks 0, value 2 | Named in the goal; keeps agents from being refused for harmless ticket edits during the run. | covered | T-297 |
 | 13 | C1 | Goal criterion: On playtest/G-006, a run started from the main menu shows the level-up screen with its Greenbull title text (from the Narrative Theme Agent's approved text) and Greenbull art: a screenshot of the open screen, checked by script, has no pixel within the Redgull red check of style_rules.py (Redgull red RGB 135, 17, 27 and the reds that read as it), and Greenbull's dark green RGB 12, 76, 44 is the most common colour in the ribbon, frame and emblem art (of the colours other than the dim and the cream or text). | goal criterion | it failed the goal check | covered | T-309, T-310, T-311, T-303, T-301, T-302 |
-| 14 | C2 | Goal criterion: On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. | goal criterion | it failed the goal check | missing | T-312 |
+| 14 | C2 | Goal criterion: On playtest/G-006, `git grep -i redgull` over game/scripts, game/scenes and game/data finds nothing, and over the rest of game/ and tools/style_loop/ finds only history (game/art/pixellab-generation-log.jsonl and art records that describe how old art was made), each remaining file listed in the goal's notes with its reason. | goal criterion | it failed the goal check | covered | T-312, T-306 |
 
 ### S1: Style rules check follows the new rule 6 and text rules
 
@@ -244,6 +244,8 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-27, iteration 14: paused (see Pauses).
 - 2026-10-27, iteration 14: resumed: its last pause (stop: another stop) can't be checked by the runner; --force.
 - 2026-10-27, iteration 14: paused (see Pauses).
+- 2026-10-27, iteration 14: resumed: its last pause (merge: a merge into the goal's build conflicted) can't be checked by the runner; --force.
+- 2026-10-27, iteration 15: T-312 (C2, qa-integration, opus): passed (done, QA rounds 1), merged into playtest/G-006; art 0; agent: (nothing new). Rescan: C2 covered.
 
 ## Pauses
 
