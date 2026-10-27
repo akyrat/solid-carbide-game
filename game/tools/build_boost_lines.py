@@ -23,7 +23,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style_rules import RED_MIN_DISTANCE, red_distance  # noqa: E402  (Visual style rule 6)
+from style_rules import OLD_BRAND, RED_MIN_DISTANCE, red_distance  # noqa: E402  (Visual style rule 6)
 
 REPO = Path(__file__).resolve().parents[2]
 ARCHIVE = REPO / "art-archive" / "T-009"
@@ -166,7 +166,7 @@ def check_sheet(sheet: Image.Image, frame_count: int) -> dict:
         "size": list(sheet.size),
         "semi_transparent_pixels": semi,
         "colors": len(colors),
-        "closest_to_redgull_red": round(closest, 3),
+        "closest_to_" + OLD_BRAND.lower() + "_red": round(closest, 3),  # the record's key (T-312)
         "opaque_pixels_per_frame_row0": opaque_per_frame,
     }
     result["pass"] = semi == 0 and len(colors) <= 30 and closest > RED_MIN_DISTANCE and all(opaque_per_frame)

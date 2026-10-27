@@ -124,7 +124,9 @@ class BuiltPieces(unittest.TestCase):
 
     def test_no_gull_left(self):
         """None of the old logo's colours survive anywhere (its black aside)."""
-        gull = set(opaque(Image.open(art.GAME / "art" / "logo" / "redgull_logo_32.png").convert("RGBA")))
+        # The old logo files are in art-archive/T-075/ since T-312.
+        old_logo = art.GAME.parent / "art-archive" / "T-075" / (rules.OLD_BRAND.lower() + "_logo_32.png")
+        gull = set(opaque(Image.open(old_logo).convert("RGBA")))
         gull -= {(0, 0, 0)}
         for name, im in self.ims.items():
             self.assertFalse(gull & set(opaque(im)), name)

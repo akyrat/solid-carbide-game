@@ -5,6 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_level_up_texts as check  # noqa: E402
+from style_rules import OLD_BRAND  # noqa: E402  (the old name, spelled once, T-312)
 
 TABLE = """| Key | Title | Description |
 |---|---|---|
@@ -23,7 +24,7 @@ GD = '''const TEXTS := {
 NEWER = """| Key | File / where it appears | Old | New (final) | Rounds, score |
 |---|---|---|---|---|
 | upgrade_wiper.tier2.desc | level_up_texts.gd | Wiper length up 20%. | Wiper length up 20%. Greenbull approves. | 1 round |
-| TITLE | garage_screen.gd | Redgull Pit Stop | Greenbull pit stop | 1 round |
+| TITLE | garage_screen.gd | """ + OLD_BRAND + """ Pit Stop | Greenbull pit stop | 1 round |
 """
 
 

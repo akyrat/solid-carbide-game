@@ -22,7 +22,10 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style_rules import OLD_LOGO_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
+from style_rules import OLD_BRAND, OLD_LOGO_RED, rgb_distance  # noqa: E402  (Visual style rule 6)
+
+# The committed record's key, built from the old name so a rebuild writes it unchanged (T-312).
+DISTANCE_KEY = "min_distance_to_" + OLD_BRAND.lower() + "_red"
 
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "art-archive" / "T-221" / "canister_raw.png"
@@ -110,11 +113,11 @@ def main():
         "file": OUT.name, "task": "T-221", "source": "art-archive/T-221/canister_raw.png",
         "generator": "game/tools/build_health_canister.py", "image": {"width": out.width, "height": out.height},
         "colours": sorted("#%02x%02x%02x" % c for c in cols),
-        "min_distance_to_redgull_red": round(min(rgb_distance(c, OLD_LOGO_RED) for c in cols), 1),
-        "notes": "Free script on the board-approved raw sample: white mark redrawn as a plus, darkest red moved away from Redgull's red, scaled down by block majority. No PixelLab.",
+        DISTANCE_KEY: round(min(rgb_distance(c, OLD_LOGO_RED) for c in cols), 1),
+        "notes": "Free script on the board-approved raw sample: white mark redrawn as a plus, darkest red moved away from " + OLD_BRAND + "'s red, scaled down by block majority. No PixelLab.",
     }
     OUT.with_suffix(".json").write_text(json.dumps(record, indent=2) + "\n")
-    print(out.size, len(cols), "colours; min distance to the old logo's red", record["min_distance_to_redgull_red"])
+    print(out.size, len(cols), "colours; min distance to the old logo's red", record[DISTANCE_KEY])
 
 
 if __name__ == "__main__":

@@ -16,7 +16,7 @@ same box under a dark green and cream parachute.
     python game/tools/build_gift_package.py check
     python game/tools/build_gift_package.py piece package|package_falling <png>   # the style loop's step
     python game/tools/build_gift_package.py archive    # copies the current game files to
-                                                       # art-archive/T-304/redgull/ (never overwrites)
+                                                       # OLD_ARCHIVE in art-archive/T-304/ (never overwrites)
 
 Output: game/art/gift_pack/package.png (on the ground, 64 x 64) and package_falling.png
 (under the parachute, 64 x 96). Hard pixels only: alpha 0 or 255.
@@ -35,7 +35,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "art-archive/T-146/gift_box_from_T-140_raw.png"
 LOGO = ROOT / "game/art/logo/greenbull_emblem_32.png"
 OUT = ROOT / "game/art/gift_pack"
-OLD_ARCHIVE = ROOT / "art-archive/T-304/redgull"
+OLD_ARCHIVE = ROOT / "art-archive/T-304" / rules.OLD_BRAND_DIR  # the old files' folder (T-312)
 NAMES = ("package.png", "package_falling.png")
 CANVAS = 64
 FALL_H = 96
@@ -174,7 +174,7 @@ def build() -> None:
 
 
 def archive() -> list[Path]:
-    """Copies the current game files to art-archive/T-304/redgull/, never overwriting."""
+    """Copies the current game files to OLD_ARCHIVE (art-archive/T-304/), never overwriting."""
     OLD_ARCHIVE.mkdir(parents=True, exist_ok=True)
     done = []
     for name in NAMES:

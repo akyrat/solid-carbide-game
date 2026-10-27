@@ -353,7 +353,7 @@ def record(all_sprites):
         "made_by": "game/tools/build_kaiju_banners.py (a script; no PixelLab call, board 2026-10-14). Byte-identical every run.",
         "scale_note": "32 art px per unit; drawn in the game at scale 0.5 like the car and the ground, texture_filter nearest",
         "palette": {k: list(v) for k, v in COLOURS.items()},
-        "red_note": "SIGN_RED is the only red outside Redgull's look allowed in the art (Visual style, Decisions), only on these signs",
+        "red_note": "SIGN_RED is the only red outside " + rules.OLD_BRAND + "'s look allowed in the art (Visual style, Decisions), only on these signs",
         "rules": "no anti-aliasing, no semi-transparent pixels, transparent background, only the sign red, white, black and the post greys, no letters",
         "check": "python game/tools/build_kaiju_banners.py check",
         "archive": "art-archive/T-130/: previews; first-version/ holds the first (neon) drawings",

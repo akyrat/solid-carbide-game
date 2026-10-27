@@ -7,6 +7,7 @@ import zlib
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import check_rebrand  # noqa: E402
+from style_rules import OLD_BRAND as OLD  # noqa: E402  (the old name, spelled once, T-312)
 
 
 def write_png(path, colour, size=4):
@@ -77,10 +78,13 @@ class CheckRebrandTest(unittest.TestCase):
         write(os.path.join(self.g, "scenes/a.tscn"), '[ext_resource path="res://art/effects/coin.png"]\n')
         self.assertEqual(self.kinds(), [])
 
-    def test_flags_file_named_redgull(self):
-        write_png(os.path.join(self.g, "art/logo/redgull_logo.png"), (12, 76, 44))
-        write(os.path.join(self.g, "scripts/a.gd"), 'var t = load("res://art/logo/redgull_logo.png")\n')
-        self.assertIn(("name", "art/logo/redgull_logo.png"), self.kinds())
+    def test_flags_file_named_after_old_brand(self):
+        rel = "art/logo/%s_logo.png" % OLD.lower()
+        write_png(os.path.join(self.g, rel), (12, 76, 44))
+        write(os.path.join(self.g, "scripts/a.gd"), 'var t = load("res://%s")\n' % rel)
+        self.assertIn(("name", rel), self.kinds())
+        detail = [f["detail"] for f in check_rebrand.run(self.g)["findings"] if f["kind"] == "name"]
+        self.assertEqual(detail, ["file name contains '%s'" % OLD.lower()])
 
     def test_pattern_and_folder_loads(self):
         write_png(os.path.join(self.g, "art/kaiju/kaiju_e.png"), (135, 17, 27))
@@ -89,17 +93,17 @@ class CheckRebrandTest(unittest.TestCase):
               'load("res://art/kaiju/kaiju_%s.png" % d)\nvar dir = "res://art/banners/"\n')
         self.assertEqual(self.kinds(), [("red", "art/kaiju/kaiju_e.png")])
 
-    def test_flags_redgull_text(self):
-        write(os.path.join(self.g, "scripts/a.gd"), 'label.text = "Sponsored by Redgull"\n')
-        write(os.path.join(self.g, "data/t.json"), '{"title": "Redgull gives wings"}\n')
+    def test_flags_old_brand_text(self):
+        write(os.path.join(self.g, "scripts/a.gd"), 'label.text = "Sponsored by %s"\n' % OLD)
+        write(os.path.join(self.g, "data/t.json"), '{"title": "%s gives wings"}\n' % OLD.upper())
         self.assertEqual(sorted(self.kinds()), [("text", "data/t.json"), ("text", "scripts/a.gd")])
 
     def test_comments_are_not_text(self):
-        write(os.path.join(self.g, "scripts/a.gd"), '# the old "Redgull logo" is history\nvar x = 1\n')
+        write(os.path.join(self.g, "scripts/a.gd"), '# the old "%s logo" is history\nvar x = 1\n' % OLD)
         self.assertEqual(self.kinds(), [])
 
     def test_exit_code(self):
-        write(os.path.join(self.g, "scripts/a.gd"), 'label.text = "Sponsored by Redgull"\n')
+        write(os.path.join(self.g, "scripts/a.gd"), 'label.text = "Sponsored by %s"\n' % OLD)
         self.assertEqual(check_rebrand.main(["--game-dir", self.g]), 1)
 
 

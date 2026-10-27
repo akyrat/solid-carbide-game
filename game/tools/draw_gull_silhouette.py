@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HISTORY: the old logo's tool. Redgull, the sponsor's old name, was replaced by Greenbull
+"""HISTORY: the old logo's tool. The old sponsor was replaced by Greenbull
 (Visual style, Decisions, "The rebrand", T-294, T-295); kept as a record, not used by the game.
 
 Draw a one-colour seagull-head silhouette (side profile, facing right) by script (T-075).

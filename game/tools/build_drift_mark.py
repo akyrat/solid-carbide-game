@@ -160,7 +160,7 @@ def record():
         "palette": {k: list(v) for k, v in PALETTE.items()},
         "colors": len(PALETTE),
         "made_by": "game/tools/build_drift_mark.py (a script; no PixelLab call, board 2026-10-13). Byte-identical every run.",
-        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background (the shoulder rows' gaps), about 30 colours or fewer, no Redgull red; every colour darker than the asphalt and the gravel; rows inside the mark opaque so it tiles without a gap. Check: python game/tools/build_drift_mark.py check",
+        "rules": "Visual style, Decisions: night palette, no anti-aliasing, no semi-transparent pixels, transparent background (the shoulder rows' gaps), about 30 colours or fewer, no " + rules.OLD_BRAND + " red; every colour darker than the asphalt and the gravel; rows inside the mark opaque so it tiles without a gap. Check: python game/tools/build_drift_mark.py check",
         "scale": "width_units 0.25 in the scene: the %d texels across are 4 flat world pixels, 32 texels per unit, the car and ground art's density; one tile is 0.25 units long" % WIDTH,
         "grounds": {"asphalt": list(ASPHALT), "gravel": list(GRAVEL)},
         "used_by": "game/scenes/driving/drift_marks.tscn (mark_texture)",

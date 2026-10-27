@@ -1,21 +1,28 @@
 #!/usr/bin/env python3
-"""HISTORY: the old logo's tool. Redgull, the sponsor's old name, was replaced by Greenbull
+"""HISTORY: the old logo's tool. The old sponsor was replaced by Greenbull
 (Visual style, Decisions, "The rebrand", T-294, T-295); kept as a record, not used by the game.
 
-Build the final Redgull logo files (T-075) from the board's pick.
+Build the final old logo files (T-075) from the board's pick. Their output folder is now
+art-archive/T-075/ (OLD_LOGO_DIR; T-312 moved the three files there from game/art/logo/).
 128: the raw PixelLab output flattened to its own main red (style_rules.OLD_LOGO_RED).
 64 and 32: made from the 128 by area-averaging the alpha, then a hard threshold (no semi-transparent
 pixels), then a small tidy so the eye cut-out and the beak tip survive:
   - the eye hole is kept at least 2x1 px (a 1-pixel hole is widened by one pixel to the right);
-Usage: make_logo_sizes.py <raw.png> <out_dir>"""
+Usage: make_logo_sizes.py <raw.png> [<out_dir>]   (out_dir defaults to art-archive/T-075/)"""
 import sys
 from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from style_rules import OLD_LOGO_RED  # noqa: E402
+from style_rules import OLD_BRAND, OLD_LOGO_RED  # noqa: E402
 
 RED = OLD_LOGO_RED + (255,)
+OLD_LOGO_DIR = Path(__file__).resolve().parents[2] / "art-archive" / "T-075"
+
+
+def logo_name(size: int) -> str:
+    """The old logo file's name at one size (built from the old name, T-312)."""
+    return f"{OLD_BRAND.lower()}_logo_{size}.png"
 
 
 def flatten(im: Image.Image) -> Image.Image:
@@ -81,10 +88,11 @@ def tidy_eye(small: Image.Image, big: Image.Image) -> str:
 
 
 if __name__ == "__main__":
-    raw, out = Path(sys.argv[1]), Path(sys.argv[2])
+    raw = Path(sys.argv[1])
+    out = Path(sys.argv[2]) if len(sys.argv) > 2 else OLD_LOGO_DIR
     big = flatten(Image.open(raw))
-    big.save(out / "redgull_logo_128.png")
+    big.save(out / logo_name(128))
     for s in (64, 32):
         small = downscale(big, s)
         print(s, tidy_eye(small, big))
-        small.save(out / f"redgull_logo_{s}.png")
+        small.save(out / logo_name(s))
