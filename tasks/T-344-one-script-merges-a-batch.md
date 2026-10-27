@@ -1,7 +1,7 @@
 ---
 id: T-344
 title: Token spend: one script merges a batch of tickets and prints one line each
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -51,6 +51,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-27, Open → In progress
+
+Started in parallel: the batch-merge script.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -58,3 +62,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built `tools/merge_batch.py`, with `tools/test_merge_batch.py` (7 tests, on throwaway repos made by `tools/goal_agent/temp_repo.py`). Nothing to picture (a script and a doc line).
+
+How to call it, from the main checkout on master: `python tools/merge_batch.py T-101 T-102 --note T-101="review note" --title T-101="Timeline title" --entry T-101="Decision or change" [--docs T-101="a.md, b.md"] [--log FILE] [--root DIR] [--test-cmd "cmd" ...] [--no-tests]`. Defaults: title = the ticket's title, entry = "merged T-NNN (title).", docs = the docs/ files the merge changed, tests = the three real sets, log = `.board/merge_batch-<time>.log` (the last printed line names it). One line per ticket: `T-101: merged` or `T-101: stopped: <why>`. Exit 0 only if all merged.
+
+Per ticket: refuse if MERGE_HEAD exists, master has staged changes, or the long GDD, short GDD README or timeline have uncommitted edits; revert line-ending-only .import noise; `task_status.py <id> done [--note]` (committed on the branch); `merge --no-ff --no-commit` and check; regenerate the long GDD and fingerprint; run the tests; append the timeline entry; `git add` only the merge's staged result plus the long GDD, short GDD README, timeline and any task files task_status touched; commit; `worktree remove` (no --force) and `branch -d`. Any stop (conflict, red test, failed regeneration, error) runs `merge --abort` and restores the files the script wrote, so master is as before. The batch goes on only if no merge is in progress and the index is empty after the stop.
+
+Tests (all pass): clean batch of two (done, timeline, worktrees and branches gone, one line each, log); a conflict stops with master clean and the next ticket then merges; a red test stops before the commit, HEAD unchanged, worktree and branch kept; a foreign merge in progress is left untouched, nothing committed, batch stops; an unrelated dirty tracked file is never staged or committed; .import line-ending noise is reverted; a refused `done` stops the ticket.
+
+Counts: `python -m unittest discover -s tools -p "test_*.py"` 508 tests OK (including the 7 new); `python -m unittest discover -s game/tools -p "test_*.py"` 620 tests OK (1 skipped); `bash game/tools/run_tests.sh` TESTS PASSED.
+
+Things to know: (1) the `done` mark is committed on the ticket's branch before the merge, so a ticket stopped later (conflict, red test) is already `done` on its branch; after the fix the agent's commits go on the same branch and the batch is rerun. (2) A worktree Godot holds open: the merge stays committed, the line says so, and the branch is kept. (3) Not run against the real repo, as asked; the script's own tests use stand-in test commands, so the three real default commands are not exercised by them. (4) Docs: "Merging (Project Lead)" in `docs/working-with-the-board.md` now starts with the script as the way to merge.
