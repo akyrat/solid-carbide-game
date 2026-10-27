@@ -1,7 +1,7 @@
 ---
 id: T-305
 title: Art: the gift pack helicopter sheet in Greenbull's colours
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-006
@@ -49,6 +49,10 @@ The board's review: play a run to a gift pack drop: the helicopter in Greenbull'
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Goal runner (G-006): started, in C:\solid-carbide-worktrees\T-305.
 
 ## Style review
 
