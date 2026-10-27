@@ -1,0 +1,60 @@
+---
+id: T-344
+title: Token spend: one script merges a batch of tickets and prints one line each
+status: open
+from: project-lead
+to: project-lead
+lead: Tokens
+epic: token-spend
+milestone: mvp
+goal:
+user_facing_text: no
+changes_visuals: no
+depends_on: []
+documents_affected: [docs/working-with-the-board.md]
+files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/task_status.py, tools/update_short_gdd_fingerprint.py]
+files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, docs/working-with-the-board.md]
+model: sonnet
+qa_rounds: 0
+---
+
+<!--
+status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
+epic and milestone: one of the ids listed in tasks/README.md.
+goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+Merging by hand put about 640k characters of git output into one Project Lead session (about 11% of its weighted cost). The board wants scripts in place of agents wherever possible (board, 2026-10-28). Write `tools/merge_batch.py T-NNN [T-NNN ...]` that does what `docs/working-with-the-board.md`, "Merging (Project Lead)" lists, for each ticket in turn: check no merge is in progress (`MERGE_HEAD`), mark the task done on its branch through `task_status.py` (with the board's note when given, `--note`), merge with `--no-ff --no-commit` and check it happened, revert Godot's line-ending-only `.import` noise, regenerate the long GDD and the short GDD's fingerprint, run all three test sets, add the timeline entry (from a short text given per ticket), commit only its own files, then remove the worktree and branch. It prints one line per ticket (merged, or stopped and why) and keeps full logs in a file it names. On a conflict, a red test or a worktree Godot holds open, it stops that ticket cleanly, leaves the state for the Project Lead to hand to an agent, and goes on to the next only if the stop left `master` clean.
+
+Then update "Merging (Project Lead)" to say the script is the way to merge.
+
+Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and milestones"). The evidence behind it is the Tokens session's recon of 2026-10-28 (summarised in `docs/timeline.md`, "2026-10-28: The token-spend epic"). Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes. Nothing to picture: the result notes say so in one line. If an edit to `.claude/` is refused by the permission system or a safety check, stop and say so; don't work around it.
+
+## Acceptance criteria
+
+Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
+
+- [ ] Tests on a throwaway repo (as `tools/goal_agent/temp_repo.py` does) show a clean batch of two tickets merged, each marked done, timeline entries added, worktrees and branches removed, and one output line per ticket. (QA: pass / fail)
+- [ ] Tests show a conflicting ticket stopped with `master` left clean and no merge in progress, and a red test stopping its ticket before the commit. (QA: pass / fail)
+- [ ] The script never commits while another merge is in progress, and stages only the files its merge changed (a test checks both). (QA: pass / fail)
+- [ ] "Merging (Project Lead)" in `docs/working-with-the-board.md` points to the script. (QA: pass / fail)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+## Style review
+
+Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+
+## Result notes
+
+Written by the agent when it finishes.
