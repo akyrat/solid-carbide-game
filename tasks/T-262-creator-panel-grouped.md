@@ -1,7 +1,7 @@
 ---
 id: T-262
 title: "Level creator: one button per kind of piece, in six groups, with looks chosen by keys"
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -126,3 +126,4 @@ At the 1152 x 648 screenshot size, the top bar wraps onto an empty second line. 
 **Documents updated:**
 - `game/README.md`, "Level creator", "The side panel: one button per kind of piece (T-262)"
 - `docs/level-design.md`, Content, "Level creator: one button per kind of piece"
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
