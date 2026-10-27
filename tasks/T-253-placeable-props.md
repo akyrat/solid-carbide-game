@@ -1,7 +1,7 @@
 ---
 id: T-253
 title: "Level creator: props (barriers, cones, crates, rooftop kit) as obstacles, in four rotations"
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Coursework
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, game/README.md, game/scripts/level/mvp_map.gd, game/scripts/level_creator/, game/tools/build_creator_assets.py, docs/game-loop-architecture.md]
 files_expected_to_change: [game/scripts/level/, game/scripts/level_creator/, game/scenes/, game/tools/, game/data/level/, game/art/props/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-253/screenshots/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -62,6 +62,10 @@ Started on T-251's branch: eight props as obstacles in four rotations, placehold
 
 Built: eight props in four rotations, solid like boulders, on the street or rooftops, placeholder look. Sent to QA.
 
+### 2026-10-22, In QA → Needs playtest
+
+QA passed all 4. Ready to play in the creator: place props on streets and rooftops and drive into them. T-256 (their art) starts on this branch.
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -77,3 +81,4 @@ Written by the agent when it finishes.
 **Tests:** `tests/unit/level_creator/test_creator_props.gd` (16 tests: the catalogue, data file and labels, all 8 x 4 on the ground and on a rooftop, saved, reopened, `check_level.py` exit 0, outside-the-map refusal, select and delete, preview, height, the car crashing into a rectangular and a round prop and each of the eight with the combo cut by `ComboData.after_collision`, enemies' path round a barrier, spawn spots, no red), `tools/test_build_prop_art.py`, `tools/test_check_level.py` (`TestCheckProps`); `test_creator_assets.gd` and `test_build_creator_assets.py` know the new kind.
 
 **Screenshots and GIF** (`art-archive/T-253/screenshots/`): `creator_street.png`, `creator_roof.png`, `creator_close.png` (every prop in four rotations, rows = props, columns north/east/south/west, on the street and on a rooftop at height 3), `creator_panel.png` (the Props category in the panel, the water tank's preview under the mouse), `drive.gif` and `drive_end.png` (the car driving into a barrier, a crate stack and a lamp in a run, crashing at each).
+- 2026-10-27, needs-playtest → done: The board's playtest of the creator build (playtest/creator-set, 2026-10-28): every check ticked on the playtest page, everything works fine.
