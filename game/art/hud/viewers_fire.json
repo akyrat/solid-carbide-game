@@ -1,0 +1,55 @@
+{
+ "task": "T-339",
+ "what": "The viewers counter's fire over a million: 12 looping frames (12 a second) of flames round the viewers panel, which sits at (8, 24) in each frame and is left clear.",
+ "size": [
+  1632,
+  64
+ ],
+ "frames": 12,
+ "frame_size": [
+  136,
+  64
+ ],
+ "shown_at_scale": 2,
+ "made_by": "game/tools/build_hud_livestream_art.py (script); the style loop kept the script version",
+ "style_loop": {
+  "brief": "art-archive/T-339/briefs/viewers_fire.md",
+  "kept": {
+   "version": 1,
+   "score": 7,
+   "file": "art-archive/T-339/style-loop/v1-5.png",
+   "round_scores": [
+    7,
+    6,
+    7,
+    6
+   ]
+  },
+  "versions": "art-archive/T-339/style-loop/",
+  "review": "tasks/T-339-art-the-livestream-hud.md, Style review"
+ },
+ "pixellab_generations": 0,
+ "pixellab_candidates_not_kept": [],
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/hud-and-menus.md (Decisions, The HUD looks like a livestream)",
+  "docs/extended-narrative.md",
+  "the board's HUD layout page (sizes, at 1152 x 648)",
+  "game/art/hud/likes_heart.png",
+  "game/scripts/hud/likes_fire.gd (PALETTE)"
+ ],
+ "split_into": [
+  "game/art/hud/viewers_fire_00.png",
+  "game/art/hud/viewers_fire_01.png",
+  "game/art/hud/viewers_fire_02.png",
+  "game/art/hud/viewers_fire_03.png",
+  "game/art/hud/viewers_fire_04.png",
+  "game/art/hud/viewers_fire_05.png",
+  "game/art/hud/viewers_fire_06.png",
+  "game/art/hud/viewers_fire_07.png",
+  "game/art/hud/viewers_fire_08.png",
+  "game/art/hud/viewers_fire_09.png",
+  "game/art/hud/viewers_fire_10.png",
+  "game/art/hud/viewers_fire_11.png"
+ ]
+}

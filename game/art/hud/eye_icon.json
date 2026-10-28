@@ -1,0 +1,49 @@
+{
+ "task": "T-339",
+ "what": "The viewers' eye icon (on the viewers counter and on the trick popups).",
+ "size": [
+  16,
+  11
+ ],
+ "frames": 1,
+ "frame_size": [
+  16,
+  11
+ ],
+ "shown_at_scale": 2,
+ "made_by": "game/tools/build_hud_livestream_art.py eye (script); the style loop's generator made one PixelLab candidate (not kept: the script version read better at this size)",
+ "style_loop": {
+  "brief": "art-archive/T-339/briefs/eye_icon.md",
+  "kept": {
+   "version": 1,
+   "score": 8,
+   "file": "art-archive/T-339/style-loop/v1-9.png",
+   "round_scores": [
+    8
+   ]
+  },
+  "versions": "art-archive/T-339/style-loop/",
+  "review": "tasks/T-339-art-the-livestream-hud.md, Style review"
+ },
+ "pixellab_generations": 1,
+ "pixellab_candidates_not_kept": [
+  {
+   "name": "eye_icon_c1",
+   "result": "saved",
+   "usage": {
+    "type": "generations",
+    "generations": 1.0
+   },
+   "prompt": "tiny pixel art eye icon, small and centred with empty space around, cyan eye shape, dark iris ring, black pupil, white catchlight, thick dark outline, flat transparent background",
+   "time": "2026-10-27T23:13:36+00:00"
+  }
+ ],
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/hud-and-menus.md (Decisions, The HUD looks like a livestream)",
+  "docs/extended-narrative.md",
+  "the board's HUD layout page (sizes, at 1152 x 648)",
+  "game/art/hud/likes_heart.png",
+  "game/scripts/hud/likes_fire.gd (PALETTE)"
+ ]
+}
