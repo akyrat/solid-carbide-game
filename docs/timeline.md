@@ -2070,3 +2070,8 @@ Entry format:
 - Decision or change: The board played it: the combo counter became the live viewers counter at the bottom right; tricks' +viewers fly into it, crashes drop it, fire at a million.
 - Documents touched: none
 - Tasks: T-336
+
+## 2026-10-28: The guard refuses only real ticket writes
+- Decision or change: The guard now refuses only commands that really write a ticket's guarded header fields; the repo's ticket tools, inline scripts that only mention tasks, read-only commands and date pass. The night's seven false refusals, plus qa_check.py, are tests; real writes, including a tool's --log= into a ticket, stay refused. Overwriting a ticket with cp, mv or tee when the command names no header word moves to a follow-up ticket.
+- Documents touched: tasks/README.md
+- Tasks: T-354
