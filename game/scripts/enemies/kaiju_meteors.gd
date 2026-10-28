@@ -296,7 +296,9 @@ func is_good_spot(units: Vector2) -> bool:
 func land(units: Vector2) -> bool:
 	var hit := false
 	var car_units: Vector2 = car.position / PX_PER_UNIT
-	if car_units.distance_to(units) <= stat("impact_radius_units"):
+	# The car's invulnerability after a hit (T-334): a meteor landing on it then does nothing.
+	var invulnerable: bool = state != null and state.has_method("is_invulnerable") and state.is_invulnerable()
+	if not invulnerable and car_units.distance_to(units) <= stat("impact_radius_units"):
 		hit = true
 		if state != null:
 			state.damage_car(stat("impact_damage"))

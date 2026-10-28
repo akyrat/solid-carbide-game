@@ -52,7 +52,7 @@ var max_health := 1.0
 var health := 1.0
 var move_speed := 0.0
 var contact_damage := 0.0
-var contact_damage_interval := 1.0
+var contact_damage_interval := 0.0
 var knockback := 0.0
 ## The isometric drawing, owned by this kaiju (freed with it).
 var sprite: Node2D = null
@@ -89,7 +89,7 @@ func setup(stats: Dictionary) -> void:
 	health = max_health
 	move_speed = float(stats.get("move_speed", 0.0))
 	contact_damage = float(stats.get("contact_damage", 0.0))
-	contact_damage_interval = float(stats.get("contact_damage_interval", 1.0))
+	contact_damage_interval = float(stats.get("contact_damage_interval", 0.0))
 	knockback = float(stats.get("knockback", 0.0))
 
 
@@ -253,8 +253,8 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 
 
 ## One physics step of contact damage, as a minion's: while touching the car
-## it hits once every contact_damage_interval seconds (the first hit as soon
-## as it touches): `state.damage_car(contact_damage)` and
+## it hits it unless the car is still invulnerable from a hit (T-334; then no
+## hit and no knockback): `state.damage_car(contact_damage)` and
 ## `car.apply_knockback(away from the kaiju, knockback)`. True when it hit.
 func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	contact_cooldown = maxf(contact_cooldown - dt, 0.0)
@@ -264,6 +264,10 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	if not touches_car(car_units, car.rotation):
 		return false
 	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
+		return false
+	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
+	# car can drive out of a swarm. It is what spaces the hits now.
+	if state != null and state.has_method("is_invulnerable") and state.is_invulnerable():
 		return false
 	if contact_cooldown > 0.0:
 		return false

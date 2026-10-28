@@ -57,7 +57,7 @@ var max_health := 1.0
 var health := 1.0
 var move_speed := 0.0
 var contact_damage := 0.0
-var contact_damage_interval := 1.0
+var contact_damage_interval := 0.0
 var knockback := 0.0
 ## The isometric drawing, owned by this minion (freed with it).
 var sprite: Node2D = null
@@ -97,7 +97,7 @@ func setup(stats: Dictionary) -> void:
 	health = max_health
 	move_speed = float(stats.get("move_speed", 0.0))
 	contact_damage = float(stats.get("contact_damage", 0.0))
-	contact_damage_interval = float(stats.get("contact_damage_interval", 1.0))
+	contact_damage_interval = float(stats.get("contact_damage_interval", 0.0))
 	knockback = float(stats.get("knockback", 0.0))
 
 
@@ -307,9 +307,11 @@ func touches_car(car_centre_units: Vector2, car_rotation: float) -> bool:
 	return local.distance_to(nearest) <= RADIUS_UNITS
 
 
-## One physics step of contact damage: while touching the car, it hits once
-## every contact_damage_interval seconds (the first hit as soon as it
-## touches): the car loses contact_damage through `state.damage_car()` and is
+## One physics step of contact damage: while touching the car, it hits it
+## (the first hit as soon as it touches) unless the car is still invulnerable
+## from a hit (T-334: RunState.is_invulnerable(), 1 s; then no hit and no
+## knockback). contact_damage_interval is an optional own repeat on top
+## (0, none: enemies.json no longer has it, T-333): the car loses contact_damage through `state.damage_car()` and is
 ## knocked back away from the minion through `car.apply_knockback()`.
 ## On a map with heights (T-207) only when the car is at its level
 ## (EnemyHeight.at_car_level: a car on a rooftop above it, or high in the air,
@@ -322,6 +324,10 @@ func contact_step(dt: float, car: Node2D, state: Node) -> bool:
 	if not touches_car(car_units, car.rotation):
 		return false
 	if ground != null and not EnemyHeightScript.at_car_level(body_height(), EnemyHeightScript.car_height(car)):
+		return false
+	# The car's invulnerability after a hit (T-334): no hit and no knockback, so the
+	# car can drive out of a swarm. It is what spaces the hits now.
+	if state != null and state.has_method("is_invulnerable") and state.is_invulnerable():
 		return false
 	if contact_cooldown > 0.0:
 		return false

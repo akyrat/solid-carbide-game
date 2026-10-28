@@ -25,7 +25,7 @@ Task T-044 (Enemy Behavior Agent): the MVP minion as Enemies, Decisions describe
 
 **Movement:** straight towards the car's centre at `move_speed` (6 units/s), plus a small push away from other minions closer than 1.2 units (`Minion.SEPARATION_UNITS`), so a crowd spreads round the car.
 
-**Contact damage:** a minion touches the car when its circle overlaps the car's 1 x 1 unit body (`touches_car()`). While touching, it hits once every `contact_damage_interval` (the data's 0.5 s is gone since T-333; the code keeps its 1 s default until T-334 replaces the repeat with the invulnerability), the first hit as soon as it touches: `RunState.damage_car(contact_damage)` (1 heart; this also cuts the combo) and `car.apply_knockback(away from the minion, knockback)` (8 units/s). Each minion keeps its own interval, so two minions touching hit twice as often.
+**Contact damage:** a minion touches the car when its circle overlaps the car's 1 x 1 unit body (`touches_car()`). While touching, it hits as soon as it touches: `RunState.damage_car(contact_damage)` (1 heart; this also cuts the combo) and `car.apply_knockback(away from the minion, knockback)` (8 units/s). Since T-334 the car's invulnerability spaces the hits: while `RunState.is_invulnerable()` (1 s after any hit) `contact_step()` does nothing, no hit and no knockback, for every minion (and the kaiju), so a swarm takes one heart a second at most and the car can drive out of it. `contact_damage_interval` stays as an optional per-minion repeat on top, 0 (none) by default; the data's 0.5 s is gone since T-333.
 
 **Damaging a minion (for the weapon tasks, T-041 and T-042):**
 
