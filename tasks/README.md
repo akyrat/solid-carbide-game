@@ -75,6 +75,14 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 - **When the board marks the task done,** the Project Lead merges the branch into `master`, then removes the worktree and deletes the branch.
 - **Documentation-only work** (for example the Project Lead's own document edits) is committed straight to `master`.
 
+## Handing back
+
+The rule for every agent, QA included (board, 2026-10-28, T-343; the agent definitions and the goal runner's prompts point here). Subagent reports pasted into the Project Lead's conversation were the largest single cost in long sessions.
+
+- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
+- **Tests run in the foreground,** and no background jobs are left running when the agent hands back (a finished agent with a leftover background run wakes up again and re-sends its hand-back).
+- **The ticket is committed before handing back,** result notes and QA results included, so the merge is never held up by uncommitted work in the folder.
+
 ## Goal runs
 
 The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:

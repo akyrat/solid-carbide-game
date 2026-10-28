@@ -1,7 +1,7 @@
 ---
 id: T-343
 title: Token spend: agents write their full report on the ticket and hand back one short line
-status: open
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Open → In progress
+
+Started: the agent is changing the hand-back rule (one short line, foreground tests, commit before handing back).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+- `tasks/README.md`: new section "Handing back" states the rule once (full report in result notes, one-line hand-back of about 300 characters, foreground tests with no background jobs, commit the ticket before handing back).
+- `.claude/agents/*.md` (all 12): one added bullet in "Common rules for every agent" with the rule in short and a pointer to the README section; nothing else touched (12 insertions, CRLF kept).
+- `tools/goal_agent/build.py`: new `HAND_BACK_RULE`, included in `agent_prompt` and `qa_prompt`. Test: `test_both_prompts_carry_the_hand_back_rule` in `tools/goal_agent/test_build.py`.
+- Tests: `game/tools` unittest 620 tests OK (1 skipped); `tools` unittest 530 tests OK; `bash game/tools/run_tests.sh` TESTS PASSED.
+- Note: the guard refused Bash inline python and sed for the agent-file edits (they name `tasks/`); I used the Edit tool instead and did not work around it any other way.
+- Nothing to picture: docs, prompts and tests only.

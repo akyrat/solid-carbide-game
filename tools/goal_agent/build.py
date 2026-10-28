@@ -283,6 +283,11 @@ SCREENSHOTS_RULE = ("End with screenshots, as tasks/README.md, \"Screenshots\" s
                     "the data by a script when nothing is on screen yet (a map of a layout, a side view of a motion, a "
                     "plot of a curve); none only for tooling, docs or text-only work, saying so in one line.")
 
+HAND_BACK_RULE = ("Handing back (tasks/README.md, \"Handing back\"): put your full report in the ticket's result notes; "
+                  "your answer's summary is one short line of about 300 characters at most. Run tests in the "
+                  "foreground and leave no background jobs. Commit the ticket, result notes and QA results "
+                  "included, before you answer.")
+
 STYLE_LOOP_RULE = ("Every asset and every piece of player-facing text is made through the style loop (tasks/README.md, "
                    "\"The style loop\"): python tools/style_loop/run.py art|text --task <ticket id> --brief <file> ...; "
                    "it writes the ticket's \"## Style review\". PixelLab generates only inside a loop run, and an art "
@@ -303,6 +308,7 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Write tests for your code and run them. Write your result notes in the task file's "## Result notes".
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - {EDIT_TICKETS_RULE}
+- {HAND_BACK_RULE}
 - {SCREENSHOTS_RULE}
 - {STYLE_LOOP_RULE} PixelLab: this goal has {art_left(b)} generations left under its art cap; never go over it
   (one loop run can use up to 4).
@@ -324,6 +330,7 @@ Replace the criterion's old mark (the `(QA: pass / fail)` placeholder, or an ear
 never add a second mark after it. Only the last mark on a criterion counts.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 {EDIT_TICKETS_RULE}
+{HAND_BACK_RULE}
 {QA_SCREENSHOTS_RULE}
 If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
 check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
