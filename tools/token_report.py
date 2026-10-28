@@ -1,10 +1,11 @@
 """Token spend report: reads Claude Code transcripts and the tickets, prints tables (T-342).
 
-Usage: python tools/token_report.py [--from YYYY-MM-DD] [--to YYYY-MM-DD] [--dir TRANSCRIPT_DIR]
+Usage: python tools/token_report.py [--from DATE_OR_TIME] [--to DATE_OR_TIME] [--dir TRANSCRIPT_DIR]
                                     [--tasks TASKS_DIR] [--out FILE] [--session ID ...]
 
 Transcripts are streamed line by line (never loaded whole). Usage is deduplicated by message.id;
 a call counts when its timestamp's date is inside the range (both ends inclusive).
+A bound may carry a time (2026-10-28T01:43:02Z, UTC); then the full timestamp is compared.
 Layout: <dir>/<session>.jsonl for main sessions, <dir>/<session>/subagents/agent-*.jsonl (+ .meta.json) for subagents.
 """
 import argparse
@@ -22,8 +23,10 @@ KINDS = ("input", "cache_creation", "cache_read", "output")
 def in_range(ts, lo, hi):
     if not ts:
         return True
-    d = ts[:10]
-    return (not lo or d >= lo) and (not hi or d <= hi)
+    # A bound given as a date compares the call's date; given with a time (2026-10-28T01:43:02Z) it compares the full timestamp.
+    lo_ok = not lo or (ts[:len(lo)] if len(lo) <= 10 else ts) >= lo
+    hi_ok = not hi or (ts[:len(hi)] if len(hi) <= 10 else ts) <= hi
+    return lo_ok and hi_ok
 
 
 def bash_kind(c):
