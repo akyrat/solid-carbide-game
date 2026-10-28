@@ -1,7 +1,7 @@
 ---
 id: T-325
 title: "Art: the Bricks card image and the impact wave"
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: the board approved Bricks (T-324) and gave the go for the art. Card first, then the wave, script work before PixelLab, up to 8 generations.
+
+### 2026-10-28, Needs playtest → Done
+
+The board approved it; merging to master next.
 
 ## Style review
 
@@ -205,3 +209,4 @@ The board's go: up to 8 PixelLab generations for this ticket; the board said (20
 ### QA (round 1)
 
 qa_check.py: tests, documents and screenshots all pass. Every criterion passes: card and four wave sheets are in game/art (card in level_up/, where the screen loads it) and bricks.gd uses the sheets; card 8/10 and wave 9/10 with all rounds in the Style review; 1 PixelLab generation of 8; visual-style.md and game/README.md record the art; card screenshot seen (Bricks card on the level-up screen), GIF and stills present; test counts in the notes and new tests exist. Ticket file is well-formed.
+- 2026-10-28, needs-playtest → done: The board approved it (2026-10-28).
