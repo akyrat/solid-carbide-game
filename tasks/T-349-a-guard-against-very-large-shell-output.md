@@ -59,6 +59,12 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the agent is adding the guard against very large shell output.
 
+### 2026-10-28, In QA
+
+Built: the guard now refuses printing whole files over 20 KB and names the cheaper ways to read them. All three test sets pass. QA is checking it now.
+
+**QA (round 1): pass on all five criteria.** Counts: tools 532 OK, game/tools 620 OK (1 skipped), GUT 1735/1735. BigOutput tests cover cat big/small, head, grep; hooks doc cited; Haiku idea documented, not built; existing guard tests unchanged and passing.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
