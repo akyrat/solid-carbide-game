@@ -1,7 +1,7 @@
 ---
 id: T-336
 title: "The live viewers counter at the bottom right, and tricks that bring viewers"
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -67,6 +67,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started from the playtest build (T-331, T-332 approved). Layout from the board's page (1152x648): viewers x896 y560 w240 h72, anchored bottom right.
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -106,3 +110,4 @@ Screenshots (`art-archive/T-336/screenshots/`, 1152x648 stills; made with `bash 
 Documents affected: `docs/hud-and-menus.md` (Content: new "Live viewers counter" entry; Livestream HUD texts: badge art, unit placement, "+{amount}"/"-{amount}"); `game/docs/hud-and-menus/hud.md` (note that the combo counter is gone, new section "Live viewers counter (HUD)"); `game/docs/hud-and-menus/popups.md` (new section "Viewers on the trick popups"). game/README.md is an index now, so not changed. The long GDD needs regenerating at merge.
 
 **QA, 2026-10-28 (round 1): 9 of 9 criteria pass.** qa_check: tests PASS (3 sets), screenshots PASS (7 files; counter_fire.png viewed, fire and "1.00M WATCHING" at bottom right), documents line flagged only game/README.md unchanged, which the Project Lead said to count via game/docs/hud-and-menus/ (hud.md, popups.md) plus docs/hud-and-menus.md. "-{amount}" is a constant in trick_popups.gd (LOST_TEXT, the board's wording, as the Project Lead allowed) with the same pattern as ADDED_TEXT. Agent's test counts (643, 545, 1759) confirmed by the passing run.
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

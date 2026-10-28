@@ -2065,3 +2065,8 @@ Entry format:
 - Decision or change: The board played it: the likes bar became the sub goal square with the gift pack inside; Hype Lv is gone. Fill, glow and grey were the agent's proposals.
 - Documents touched: none
 - Tasks: T-337
+
+## 2026-10-28: The live viewers counter
+- Decision or change: The board played it: the combo counter became the live viewers counter at the bottom right; tricks' +viewers fly into it, crashes drop it, fire at a million.
+- Documents touched: none
+- Tasks: T-336
