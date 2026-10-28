@@ -53,13 +53,16 @@ func _spawn_times(step: int, seconds: float, seed_value := 7) -> Array:
 
 func test_the_numbers_are_in_hud_json_with_the_proposed_shape() -> void:
 	var r := _reactions()
-	assert_eq(r.cap(), 12)
-	assert_almost_eq(float(r.cfg["alpha"]), 0.7, 0.001)
+	assert_eq(r.cap(), 60)
+	assert_almost_eq(float(r.cfg["alpha"]), 0.9, 0.001)
+	assert_eq(int(r.cfg["icon_scale"]), 4)
 	var rates: Array = r.cfg["rates_per_second"]
 	assert_eq(rates.size(), 5, "one rate per look step")
 	assert_eq(rates[0], 0.0, "none at the base step")
+	assert_gte(rates[1], 2.0, "a lively flow from the first heat step")
 	for i in range(1, rates.size()):
 		assert_gt(rates[i], rates[i - 1], "more often at each higher step")
+	assert_gt(rates[4], 7.0, "a real stream at fire")
 	assert_eq(r.rate_for_step(99), rates[4], "the fire step's rate goes on")
 
 
@@ -69,6 +72,13 @@ func test_nothing_floats_below_the_first_heat_step() -> void:
 		r.advance(0.05)
 	assert_eq(r.count(), 0)
 	assert_eq(r.next_in, -1.0)
+
+
+func test_the_first_heat_step_is_already_a_flow() -> void:
+	var r := _reactions(1)
+	for i in 200:
+		r.advance(0.05)
+	assert_gte(r.count(), 5, "several on screen after 10 s")
 
 
 func test_higher_steps_float_more_often() -> void:
@@ -98,35 +108,61 @@ func test_same_seed_same_floaters() -> void:
 	assert_eq(a, b)
 
 
-func test_floaters_start_below_the_screen_in_the_left_or_right_third() -> void:
+func test_floaters_start_below_the_screen_at_random_x_across_the_whole_width() -> void:
 	var r := _reactions(4)
 	r.set_process(false)
-	for i in 40:
+	var xs: Array = []
+	for i in 60:
 		r.items.clear()
 		r.spawn_group()
 		for it in r.items:
 			assert_gt(it["pos"].y, SIZE.y, "starts below the bottom edge")
-			var x: float = it["pos"].x
-			assert_true(x < SIZE.x / 3.0 or x > SIZE.x * 2.0 / 3.0, "in a side third: %f" % x)
-			assert_false(absf(x - SIZE.x / 2.0) < SIZE.x * 0.2, "not over the car")
+			xs.append(it["pos"].x)
+	assert_lt(float(xs.min()), SIZE.x * 0.2, "some at the left")
+	assert_gt(float(xs.max()), SIZE.x * 0.8, "some at the right")
+	var mid := 0
+	for x: float in xs:
+		if absf(x - SIZE.x / 2.0) < SIZE.x * 0.2:
+			mid += 1
+	assert_gt(mid, 0, "they may pass by the car in the middle")
 
 
-func test_floaters_rise_and_sway_but_stay_out_of_the_middle() -> void:
+func test_floaters_rise_and_sway_up_to_near_the_top() -> void:
 	var r := _reactions(4)
 	r.set_process(false)
 	r.spawn_group()
-	var y0: float = r.items[0]["pos"].y
-	var xs: Array = []
-	for i in 400:
-		r.advance(0.02)
-		for it in r.items:
-			if it["floater"]:
-				xs.append(it["pos"].x)
-				assert_true(it["pos"].x < SIZE.x * 0.35 or it["pos"].x > SIZE.x * 0.65, "never near the middle")
-	assert_lt(r.items[0]["pos"].y, y0 - 100.0, "rises") if not r.items.is_empty() else pass_test("gone already")
-	var lo: float = xs.min()
-	var hi: float = xs.max()
-	assert_gt(hi - lo, 20.0, "some sideways sway across the group")
+	var it: Dictionary = r.items[0]
+	var y0: float = it["pos"].y
+	var x0: float = it["pos"].x
+	var xmin := x0
+	var xmax := x0
+	var top: float = y0
+	for i in 600:
+		r.advance(0.01)
+		if it["age"] >= it["life"]:
+			break
+		xmin = minf(xmin, it["pos"].x)
+		xmax = maxf(xmax, it["pos"].x)
+		top = minf(top, it["pos"].y)
+	assert_lt(top, SIZE.y * 0.2, "climbs to near the top")
+	assert_gt(xmax - xmin, 10.0, "some sideways sway")
+
+
+func test_a_floater_pops_in_and_is_gone_before_the_top() -> void:
+	var r := _reactions(4)
+	r.set_process(false)
+	r.spawn_group()
+	var it: Dictionary = r.items[0]
+	assert_almost_eq(r.scale_of(it), float(r.cfg["pop_from"]), 0.001)
+	it["age"] = 1.0
+	assert_eq(r.scale_of(it), 1.0)
+	r.items.clear()
+	r.spawn_group()
+	for i in 300:
+		r.advance(0.01)
+		for f in r.items:
+			if f["floater"] and f["age"] >= f["life"] - 0.05:
+				assert_lt(r.alpha_of(f), 0.1, "faded out at the end")
 
 
 func test_they_fade_in_and_out_and_are_partly_transparent() -> void:
@@ -134,9 +170,9 @@ func test_they_fade_in_and_out_and_are_partly_transparent() -> void:
 	var it := r._new_item(Vector2(100, 100), Vector2.ZERO, 2.0, true)
 	assert_eq(r.alpha_of(it), 0.0, "starts invisible")
 	it["age"] = 0.5
-	assert_almost_eq(r.alpha_of(it), 0.7, 0.001, "holds at 0.7, not opaque")
+	assert_almost_eq(r.alpha_of(it), 0.9, 0.001, "holds at 0.9, not opaque")
 	it["age"] = 1.5
-	assert_lt(r.alpha_of(it), 0.7, "fading")
+	assert_lt(r.alpha_of(it), 0.9, "fading")
 	it["age"] = 2.0
 	assert_eq(r.alpha_of(it), 0.0, "gone at the end")
 
@@ -182,6 +218,7 @@ func test_a_burst_fades_out_and_stays_clear_of_the_middle() -> void:
 			for it in r.items:
 				assert_gt(it["pos"].x, SIZE.x * 0.6, "never over the car in the middle")
 	r.items.clear()
+	r.cfg["rates_per_second"] = [0.0]  # only the burst
 	r.burst(Vector2(1052, 430))
 	for i in 250:
 		r.advance(0.01)

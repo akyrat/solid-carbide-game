@@ -6,10 +6,10 @@ extends Control
 ## icons floating up from the bottom of the screen at uneven gaps (the rate per look
 ## step in hud.json reactions.rates_per_second; none below the first heat step).
 ##
-## They must not get in the way: small, partly transparent, floaters kept to the left
-## and right thirds, never starting over the middle where the car is, faded out
-## before the middle, at most `cap` on screen at once. The Hud makes this its first
-## child, so everything else is drawn over it. Pausable; clear() on a new run.
+## Like live reactions on a real stream, the floaters rise from random spots along the
+## whole bottom edge (they may pass by the car), a lively flow that gets busier at each
+## look step, with a little sway, a scale pop and a fade near the top. Never more than
+## `cap` on screen at once.
 ## The pictures are placeholders drawn in code (pixel hearts and thumbs up) until
 ## T-352's art. Numbers: res://data/hud.json, reactions.
 
@@ -36,11 +36,11 @@ const KINDS := [HEART, THUMB]
 ## Colours of the placeholders: none is the viewers cyan, the heart red or Greenbull's.
 const COLORS := [Color("#ff6fae"), Color("#ff8c3a"), Color("#b58cff"), Color("#f4f4ff")]
 const DEFAULT_CFG := {
-	"cap": 12, "alpha": 0.7, "icon_scale": 3,
-	"rates_per_second": [0.0, 0.2, 0.4, 0.7, 1.2],
-	"group_min": 1, "group_max": 3, "gap_min_share": 0.4, "gap_max_share": 1.8,
-	"rise_min": 70.0, "rise_max": 130.0, "wobble_px": 14.0, "wobble_hz": 0.6,
-	"lane_edge": 0.03, "lane_inner": 0.28, "fade_in": 0.25,
+	"cap": 60, "alpha": 0.9, "icon_scale": 4,
+	"rates_per_second": [0.0, 2.0, 3.5, 5.0, 7.5],
+	"group_min": 1, "group_max": 2, "gap_min_share": 0.4, "gap_max_share": 1.8,
+	"rise_min": 90.0, "rise_max": 160.0, "wobble_px": 16.0, "wobble_hz": 0.6,
+	"edge_margin": 24.0, "fade_out_from": 0.55, "pop_seconds": 0.25, "pop_from": 0.5, "fade_in": 0.2,
 	"burst_count": 10, "burst_speed_min": 200.0, "burst_speed_max": 420.0,
 	"burst_drag": 1.5, "burst_rise": 30.0, "burst_seconds_min": 1.3, "burst_seconds_max": 1.9,
 }
@@ -118,20 +118,19 @@ func _new_item(pos: Vector2, vel: Vector2, life: float, floater: bool) -> Dictio
 	}
 
 
-## A group of floaters entering from the bottom, in the left or right third.
+## A group of floaters entering from random spots along the whole bottom edge, as on a
+## real stream's live reactions, rising up the screen (they may pass by the car).
 func spawn_group() -> int:
 	var a := area()
 	var n := rng.randi_range(int(cfg["group_min"]), int(cfg["group_max"]))
-	var left := rng.randf() < 0.5
 	var added := 0
 	for i in n:
-		var u := rng.randf_range(float(cfg["lane_edge"]), float(cfg["lane_inner"]))
-		var x := a.x * (u if left else 1.0 - u)
+		var m := float(cfg["edge_margin"])
+		var x := rng.randf_range(m, maxf(m, a.x - m))
 		var rise := rng.randf_range(float(cfg["rise_min"]), float(cfg["rise_max"]))
-		var half := 4.0 * float(cfg["icon_scale"])
-		var y := a.y + half + rng.randf() * 40.0
-		# Climbs the whole screen, so it is long gone before it is done.
-		var life := (a.y + 2.0 * half) / rise
+		var y := a.y + 16.0 + rng.randf() * 24.0
+		# Climbs to near the top, fading out as it gets there.
+		var life := (a.y * 0.92) / rise
 		if _add(_new_item(Vector2(x, y), Vector2(0, -rise), life, true)):
 			added += 1
 	return added
@@ -155,14 +154,21 @@ func burst(origin: Vector2) -> int:
 	return added
 
 
+## The pop at the start: grows from `pop_from` to 1 over `pop_seconds`.
+func scale_of(it: Dictionary) -> float:
+	var k := clampf(float(it["age"]) / maxf(float(cfg["pop_seconds"]), 0.01), 0.0, 1.0)
+	return lerpf(float(cfg["pop_from"]), 1.0, k)
+
+
 ## Opacity of an item at its age: eases in, holds, fades out over the last half.
 func alpha_of(it: Dictionary) -> float:
 	var t: float = it["age"]
 	var life: float = it["life"]
 	var a := minf(1.0, t / maxf(float(cfg["fade_in"]), 0.01))
 	var f := t / maxf(life, 0.01)
-	if f > 0.5:
-		a *= clampf(1.0 - (f - 0.5) / 0.5, 0.0, 1.0)
+	var from: float = float(cfg["fade_out_from"]) if it["floater"] else 0.5
+	if f > from:
+		a *= clampf(1.0 - (f - from) / (1.0 - from), 0.0, 1.0)
 	return a * float(cfg["alpha"])
 
 
@@ -207,8 +213,8 @@ func _process(dt: float) -> void:
 
 
 func _draw() -> void:
-	var s: int = int(cfg["icon_scale"])
 	for it in items:
+		var s: float = float(cfg["icon_scale"]) * scale_of(it)
 		var grid: Array = KINDS[it["kind"]]
 		var c: Color = it["color"]
 		c.a = alpha_of(it)
@@ -218,4 +224,4 @@ func _draw() -> void:
 			var row: String = grid[y]
 			for x in row.length():
 				if row[x] == "1":
-					draw_rect(Rect2(origin + Vector2(x, y) * s, Vector2(s, s)), c)
+					draw_rect(Rect2(origin + Vector2(x, y) * s, Vector2(s, s)).grow(0.5), c)
