@@ -1,7 +1,7 @@
 ---
 id: T-351
 title: Reaction icons burst out on a sub goal and float up at high viewer counts
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -84,3 +84,4 @@ QA (round 1): all 7 criteria pass. qa_check: tests PASS (3 sets; counts per the 
 Quick tuning (board, 2026-10-28; its first message was garbled by dictation, corrected to: "floating up from anywhere at the bottom of the screen, because that's how Instagram, Facebook, TikTok lives do it", chosen option "Anywhere along the bottom ... busier and more noticeable ... They would pass by the car"): merged `playtest/livestream-hud` first (T-338's heart row; clean merge). Floaters now start at a random x across the whole bottom edge (no thirds, no keep-off-the-car rule), 1 or 2 at a time at uneven gaps, rise to near the top with sway, a scale pop (0.5 to 1 over 0.25 s) and fade out from 55 percent of their life. Rates per look step [0, 2, 3.5, 5, 7.5] groups per second (none at the base step, a lively flow from the first heat step, a real stream at fire); alpha 0.9, icon_scale 4 (was 3), cap 60 (was 12). The burst is unchanged. New keys in `hud.json` `reactions`: `edge_margin`, `fade_out_from`, `pop_seconds`, `pop_from` (the lane keys are gone). Tests updated (19 in `test_hud_reactions.gd`: whole-width spawn, flow at the first heat step, none below it, sway up to near the top, the pop). Docs: `docs/hud-and-menus.md` (the bullet says the board's choice replaces the thirds and the off-the-car rule) and `game/docs/hud-and-menus/hud.md`. Full runs: GUT 1812/1812 (148 scripts), `game/tools` 645 OK, `tools` 545 OK. Screenshots retaken: `art-archive/T-351/screenshots/reactions_float.png` and `.gif` (burst files regenerated too, same behaviour). The numbers are proposals for the playtest.
 
 - 2026-10-28, needs-playtest → in-progress: The board: I think there aren't enough reactions floating up. I didn't want them to be floating up from anywhere at the bottom of the screen towards the top. I want to look more like a live stream when you get live interactions, and the reactions kind of float up. They're too discrete at the moment for me to make them a bit more noticeable. Other than that, everything is okay.
+- 2026-10-28, in-progress → in-qa: Ready for the board to play (quick tuning)
