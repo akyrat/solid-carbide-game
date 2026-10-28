@@ -254,17 +254,18 @@ func test_a_new_run_resets_the_drain_wait() -> void:
 	assert_eq(state.likes_drain_idle, 0.0)
 
 
-func test_the_hud_likes_bar_empties_in_a_run() -> void:
+func test_the_hud_sub_goal_empties_in_a_run() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
 	var s: RunState = run.state
 	s.add_xp(s.xp_needed() * 0.5)
 	run.hud.settle_likes()
-	var bar: ProgressBar = run.hud.likes_bar
-	var start_value := bar.value
-	# The bar rounds to whole likes (its step is 1), so allow 1 either way.
-	assert_almost_eq(start_value, s.xp, 1.0)
+	# Since T-337 the subs show in the sub goal square (its fill is a share).
+	var sg: SubGoal = run.hud.sub_goal
+	var start_value := sg.fill
+	assert_almost_eq(start_value, s.xp / s.xp_needed(), 0.01)
 	await wait_seconds(1.5)
-	assert_lt(bar.value, start_value, "the likes bar goes down with no tricks")
-	assert_almost_eq(bar.value, s.xp, 1.0, "the bar follows the run's XP")
+	assert_lt(sg.fill, start_value, "the square empties with no tricks")
+	assert_almost_eq(sg.fill, s.xp / s.xp_needed(), 0.01, "the square follows the run's XP")
+	assert_eq(sg.subs, int(floorf(s.xp)), "and so does its label")
 	assert_eq(s.level, 1)

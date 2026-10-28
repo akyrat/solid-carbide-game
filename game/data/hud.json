@@ -8,5 +8,9 @@
       { "name": "orange", "above_seconds": 30.0, "color": "#ff8a1f" },
       { "name": "red", "above_seconds": -1.0, "color": "#ff2a2a" }
     ]
+  },
+  "sub_goal": {
+    "_comment": "T-337, the sub goal square (HUD and menus, Decisions, 'The HUD looks like a livestream'): game pixels at 1152 x 648 from the board's layout page, the 128 x 128 square with its label under it; anchored to the right edge, at the same share of the height.",
+    "layout": { "x": 988, "y": 340, "w": 128, "h": 180, "reference_w": 1152, "reference_h": 648 }
   }
 }

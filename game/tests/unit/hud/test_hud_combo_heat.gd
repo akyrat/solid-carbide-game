@@ -138,17 +138,13 @@ func test_a_collision_cuts_the_heat() -> void:
 func test_comic_font_with_the_words_unchanged() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	for l: Label in [hud.combo_label, hud.likes_label, hud.level_label]:
+	for l: Label in [hud.combo_label, hud.sub_goal.label]:
 		var f := l.get_theme_font("font") as FontFile
 		assert_not_null(f, "%s has a font file" % l.name)
 		assert_eq(f.get_font_name(), "Bangers", "%s in Bangers" % l.name)
 		assert_eq(f.antialiasing, TextServer.FONT_ANTIALIASING_NONE, "%s: smoothing off" % l.name)
 	# T-048 and T-082 text, unchanged (Bangers shows it in capitals).
-	assert_eq(Hud.TEXT_LIKES, "Subs")
-	assert_eq(Hud.TEXT_LEVEL, "Hype Lv {level}")
 	assert_eq(Hud.TEXT_COMBO, "Combo x{multiplier}")
-	assert_eq(hud.likes_label.text, "Subs")
-	assert_eq(hud.level_label.text, "Hype Lv 1")
 	r.state.add_trick("alternate_drift")
 	assert_eq(hud.combo_label.text, "Combo x1.5")
 
@@ -188,7 +184,9 @@ func test_flames_drawn_in_pixels_in_the_fire_palette() -> void:
 	_show(hud, 6.0)
 	await get_tree().process_frame
 	var fire := hud.likes_fire
-	assert_almost_eq(fire.fill_ratio, hud.likes_bar.value / hud.likes_bar.max_value, 0.01)
+	# T-337: on the sub goal square's top edge, tall all along it.
+	assert_eq(fire.fill_ratio, 1.0)
+	assert_eq(fire.get_parent(), hud.sub_goal)
 	var columns := int(fire.size.x / LikesFire.PIXEL)
 	var tall_filled := 0
 	for frame in 20:
@@ -212,29 +210,24 @@ func test_layout_holds_at_the_top_step() -> void:
 	for size in SIZES:
 		var hud: Hud = HUD_SCENE.instantiate()
 		_screen(size).add_child(hud)
-		hud.level_label.text = Hud.TEXT_LEVEL.format({"level": 99})
 		_show(hud, 5.75)
 		await get_tree().process_frame
 		var where := "%dx%d" % [size.x, size.y]
 		var view := Rect2(Vector2.ZERO, Vector2(size))
-		var bar := hud.likes_bar.get_global_rect()
+		var square := hud.sub_goal.get_global_rect()
+		var square_top := square.position.y
 		# Over the whole pulse, at its biggest and smallest.
 		for f in 12:
 			hud.combo_heat.time = f * ComboHeat.FLICKER_FRAME
 			hud.combo_heat._animate()
 			var combo := hud.combo_label.get_global_rect()
-			var row := hud.likes_row.get_global_rect()
-			var level := hud.level_label.get_global_rect()
-			for n: String in ["combo", "likes row", "Hype Lv"]:
-				var rect: Rect2 = {"combo": combo, "likes row": row, "Hype Lv": level}[n]
-				assert_true(view.encloses(rect), "%s: %s inside the screen" % [where, n])
-			assert_false(combo.intersects(row), "%s: combo clear of Likes" % where)
-			assert_false(combo.intersects(level), "%s: combo clear of Hype Lv" % where)
-			assert_almost_eq(combo.get_center().x, bar.get_center().x, 1.0, "%s: combo still centred" % where)
+			assert_true(view.encloses(combo), "%s: combo inside the screen" % where)
+			assert_almost_eq(combo.get_center().x, size.x / 2.0, 1.0, "%s: combo still centred" % where)
 			var fire := hud.likes_fire.get_global_rect()
+			assert_true(view.encloses(fire), "%s: the flames inside the screen" % where)
 			assert_false(fire.intersects(combo), "%s: the flames stay clear of the counter" % where)
-			assert_lte(fire.end.y, bar.position.y + LikesFire.INTO_BAR + 0.5,
-				"%s: the flames reach only the top of the bar" % where)
+			assert_lte(fire.end.y, square_top + LikesFire.INTO_BAR + 0.5,
+				"%s: the flames reach only the top of the square" % where)
 
 
 func test_effects_stand_still_while_paused() -> void:

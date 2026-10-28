@@ -117,5 +117,5 @@ func test_health_bar_size_and_heart() -> void:
 	assert_eq(hud.health_bar.size, Vector2(72, 320))
 	assert_eq(hud.health_bar.fill_mode, ProgressBar.FILL_BOTTOM_TO_TOP)
 	assert_null(hud.get("health_label"), "the Car Health label is gone")
-	assert_eq(hud.health_heart.texture, hud.heart.texture, "the likes bar's heart picture")
+	assert_eq(hud.health_heart.texture.resource_path, Hud.HEART_PATH, "the likes heart's picture")
 	assert_eq(hud.weapon_icons.order, [], "a bare HUD shows no weapons")
