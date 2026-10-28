@@ -2080,3 +2080,8 @@ Entry format:
 - Decision or change: Split out of T-354: the guard let cp, mv, tee and dd overwrite a ticket when the command held no guard word, which changes its status outside task_status.py. T-354's agent wrote the fix, but the old guard refused its edit; with T-354 live it can be applied.
 - Documents touched: tasks/README.md
 - Tasks: T-355
+
+## 2026-10-28: The heart row
+- Decision or change: The board played it: the health bar became a row of hearts at the top left, the weapon icons below it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-338
