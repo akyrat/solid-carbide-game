@@ -57,6 +57,10 @@ Started: the guard will refuse cp, mv, tee, dd and the like onto a ticket whatev
 
 In QA: overwriting a ticket with cp, mv, tee, dd and the like is now refused whatever the command says; git checkout/restore stay allowed.
 
+### 2026-10-28, Done
+
+Merged: overwriting a ticket is now refused whatever the command says. Known gap: >| is not refused.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
