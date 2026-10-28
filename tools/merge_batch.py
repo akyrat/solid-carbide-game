@@ -20,6 +20,9 @@ last line printed names it.
 A ticket that can't be merged is stopped cleanly: a merge in progress, a dirty file it needs, a conflict, a red
 test. The merge is undone, master is as it was, the reason is printed, and the next ticket is tried only if
 master is clean. A worktree that can't be removed (Godot has it open) leaves the merge committed and is reported.
+A ticket already marked done on its branch (QA does that) skips the status step. *.import and *.uid files the
+branch added, which master does not track, are dropped from the branch first and left out of the merge; the
+ticket's line says so (T-347).
 Exit code 0 when every ticket merged, 1 otherwise.
 """
 
@@ -35,6 +38,7 @@ DEFAULT_TESTS = [
     f'"{sys.executable}" -m unittest discover -s tools -p "test_*.py"',
     "bash game/tools/run_tests.sh",
 ]
+GENERATED = (".import", ".uid")   # Godot writes these; a branch that added any leaves them out of the merge (T-347)
 SHARED = ["docs/long-gdd.md", "docs/short-gdd/README.md", "docs/timeline.md"]
 
 
@@ -109,6 +113,21 @@ def ticket_title(r, tid):
     return tid
 
 
+def ticket_status(r, branch, tid):
+    """The ticket's status line on its branch ("" if not found)."""
+    for name in r.out("ls-tree", "--name-only", branch, "--", "tasks/").splitlines():
+        if re.fullmatch(rf"tasks/{tid}-.*\.md", name):
+            m = re.search(r"^status:\s*(\S+)", r.out("show", f"{branch}:{name}"), re.M)
+            return m.group(1) if m else ""
+    return ""
+
+
+def generated_added(r, branch):
+    """Godot-generated files (*.import, *.uid) the branch added that master does not track."""
+    names = r.out("diff", "--name-only", "--diff-filter=A", f"HEAD...{branch}").splitlines()
+    return [n for n in names if n.endswith(GENERATED)]
+
+
 def undo(r, extra):
     """Back to how master was: abort the merge, restore the files this script regenerated or wrote."""
     if merge_in_progress(r):
@@ -133,15 +152,24 @@ def merge_one(r, tid, opts, tests):
     wt = find_worktree(r, branch)
     tasks_dirty_before = {p for p in modified(r) if p.startswith("tasks/")}
     title = opts["title"].get(tid) or ticket_title(r, tid)
-    # 1. mark done on the branch (and commit that there)
-    cmd = [sys.executable, str(root / "tools" / "task_status.py"), tid, "done"]
-    if tid in opts["note"]:
-        cmd += ["--note", opts["note"][tid]]
-    done = r.run(cmd)
-    if done.returncode != 0:
-        raise Stop(f"task_status refused: {(done.stderr or done.stdout).strip()[:200]}")
+    # 0. Godot-generated files the branch added are left out of the merge
+    left_out = generated_added(r, branch)
+    if left_out and wt:
+        r.git("rm", "-q", "--cached", "--ignore-unmatch", "--", *left_out, cwd=wt, check=True)
+        r.git("commit", "-q", "-m", f"{tid}: drop Godot-generated files swept into the branch", cwd=wt, check=True)
+        for n in left_out:
+            (wt / n).unlink(missing_ok=True)
+    # 1. mark done on the branch (and commit that there); a ticket QA already marked done keeps its status
+    already_done = ticket_status(r, branch, tid) == "done"
+    if not already_done:
+        cmd = [sys.executable, str(root / "tools" / "task_status.py"), tid, "done"]
+        if tid in opts["note"]:
+            cmd += ["--note", opts["note"][tid]]
+        done = r.run(cmd)
+        if done.returncode != 0:
+            raise Stop(f"task_status refused: {(done.stderr or done.stdout).strip()[:200]}")
     prev = marked = None
-    if wt:
+    if wt and not already_done:
         files = [p for p in modified(r, cwd=wt) if p.startswith("tasks/")]
         if files:
             prev = r.out("rev-parse", "HEAD", cwd=wt).strip()
@@ -165,6 +193,10 @@ def merge_one(r, tid, opts, tests):
             raise Stop(f"merge conflict in {', '.join(conflicts) or 'unknown files'}; merge undone, master clean")
         if not merge_in_progress(r):
             raise Stop("nothing to merge (branch already in master)")
+        if left_out and not wt:   # no worktree to edit: unstage what the merge brought in
+            for n in left_out:
+                r.git("rm", "-q", "-f", "--cached", "--ignore-unmatch", "--", n)
+                (root / n).unlink(missing_ok=True)
         revert_import_noise(r)
         staged = [p for p in r.out("diff", "--cached", "--name-only").splitlines() if p]
         # 3. regenerate the long GDD and the short GDD's fingerprint
@@ -206,7 +238,12 @@ def merge_one(r, tid, opts, tests):
     if not note:
         if r.git("branch", "-d", branch).returncode != 0:
             note = f" (branch {branch} not deleted)"
-    return f"merged{note}"
+    extras = ""
+    if already_done:
+        extras += " (already done)"
+    if left_out:
+        extras += f" (left out {len(left_out)} Godot-generated .import/.uid files the branch added)"
+    return f"merged{extras}{note}"
 
 
 def parse(argv):

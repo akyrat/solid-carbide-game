@@ -85,6 +85,15 @@ The rule for every agent, QA included (board, 2026-10-28, T-343; the agent defin
 - **Tests run in the foreground,** and no background jobs are left running when the agent hands back (a finished agent with a leftover background run wakes up again and re-sends its hand-back).
 - **The ticket is committed before handing back,** result notes and QA results included, so the merge is never held up by uncommitted work in the folder.
 
+## QA
+
+QA is the acceptance criteria and the tests, nothing else (board, 2026-10-28, T-347). Agents aren't trying to fail tickets; QA makes sure the work holds up to the standards already defined. Two steps:
+
+1. **Run `python tools/qa_check.py T-NNN`** in the ticket's folder. It prints one PASS or FAIL line each for: the three test sets pass on the branch; every file in `documents_affected` changed on the branch; screenshots exist in `art-archive/<id>/screenshots/` when the ticket shows anything (`changes_visuals` or `user_facing_text` is yes, or it has a `The board's review:` line); every acceptance criterion carries a pass or fail mark. QA runs it with `--no-marks` first, marks the criteria, then runs it once more without.
+2. **Judge each acceptance criterion** and mark it `(QA: pass)`, `(QA: fail: code - <reason>)` (the work is wrong or a test is red) or `(QA: fail: paperwork - <reason>)` (the work is fine but a record, note or screenshot is missing). The tag decides the retry model in goal runs: code failures go to opus, failures where every failed criterion is tagged paperwork stay on the ticket's own model (`tools/goal_agent/build.py`, `retry_model`); an untagged failure counts as code. The Project Lead picks the model by hand outside goal runs.
+
+A ticket fails only on a criterion or a red check. QA adds no requirements of its own, and a second round and the flag for review work as in "Status rules" and "Changing a task's status".
+
 ## Goal runs
 
 The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:
@@ -189,7 +198,7 @@ The task board shows them on the ticket (T-201): every image and recording (`.pn
 Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:
 
 - **sonnet:** clearly scoped work: art, sound, data files, simple screens, reports, and QA checks.
-- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA once. QA always runs on sonnet, whatever the task's model (board, 2026-10-15, to cut QA's token use; it was opus for tasks the board was about to playtest).
+- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA on its code (a task that failed only on paperwork keeps its model; T-347). QA always runs on sonnet, whatever the task's model (board, 2026-10-15, to cut QA's token use; it was opus for tasks the board was about to playtest).
 
 The hooks enforce it (board, 2026-10-13; `.claude/hooks/board_gate.py`): an agent whose prompt names a task (its first `T-` id) starts only when the Agent call passes that task's model. The QA/Integration Agent always needs sonnet. To run a task on another model, change its `model` line first.
 

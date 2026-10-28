@@ -98,7 +98,7 @@ class HeadlessRuns(GoalRepo):
         step, prompt, options = next(c for c in b.claude.calls if c[0] == "qa")
         self.assertTrue(prompt.startswith("QA round 1 for task T-001"))
         self.assertIn("- [ ] It works (QA: pass / fail)", prompt)        # the ticket's criteria are listed
-        self.assertIn("`(QA: pass)` or `(QA: fail: <reason>)`", prompt)
+        self.assertIn("`(QA: pass)` or `(QA: fail: code - <reason>)`", prompt)
         self.assertEqual((options["agent"], options["model"]), ("qa-integration", "sonnet"))
 
     def test_each_session_names_the_activity_log_it_writes_to(self):

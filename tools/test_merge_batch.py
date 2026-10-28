@@ -175,6 +175,39 @@ class MergeBatchTest(unittest.TestCase):
         self.assertIn("task_status refused", lines[0])
         self.assertTrue(self.clean())
 
+    def test_a_ticket_already_done_on_its_branch_is_merged(self):
+        w = self.ticket("T-911", {"game/scripts/k.gd": "k\n"}, base_status="done")
+        code, lines = self.run_batch("T-911")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(lines[0], "T-911: merged (already done)")
+        self.assertTrue((self.root / "game/scripts/k.gd").exists())
+        self.assertIn("status: done", (self.root / "tasks" / "T-911-ticket.md").read_text(encoding="utf-8"))
+        self.assertFalse(w.exists())
+        self.assertTrue(self.clean())
+
+    def test_godot_generated_files_a_branch_added_are_left_out(self):
+        self.ticket("T-912", {"game/scripts/l.gd": "l\n", "game/scripts/l.gd.uid": "uid://x\n",
+                              "game/art/new.png": "png", "game/art/new.png.import": "a=1\n"})
+        write(self.root / "game/art/new.png.import", "local copy\n")   # untracked on master: would block a plain merge
+        code, lines = self.run_batch("T-912")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(lines[0], "T-912: merged (left out 2 Godot-generated .import/.uid files the branch added)")
+        self.assertTrue((self.root / "game/scripts/l.gd").exists() and (self.root / "game/art/new.png").exists())
+        tracked = self.git("ls-files").split()
+        self.assertNotIn("game/scripts/l.gd.uid", tracked)
+        self.assertNotIn("game/art/new.png.import", tracked)
+        self.assertTrue(self.clean())
+
+    def test_generated_files_master_already_tracks_still_merge(self):
+        write(self.root / "game/art/x.png.import", "a=1\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "import")
+        self.ticket("T-913", {"game/art/x.png.import": "a=2\n"})
+        code, lines = self.run_batch("T-913")
+        self.assertEqual(code, 0, lines)
+        self.assertEqual(lines[0], "T-913: merged")
+        self.assertEqual((self.root / "game/art/x.png.import").read_text(encoding="utf-8"), "a=2\n")
+
 
 if __name__ == "__main__":
     unittest.main()

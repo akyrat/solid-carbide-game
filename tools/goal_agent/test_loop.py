@@ -437,6 +437,38 @@ class GoalCheck(GoalRepo):
         self.assertEqual(ctx.exception.kind, "command")
 
 
+class RetryModel(GoalRepo):
+    """T-347: a ticket that failed QA on paperwork is retried on its own model, one that failed in code on opus."""
+
+    def run_with(self, first_mark):
+        f = {"plan": [plan(sub("S1"), criteria=["criterion 1"])],
+             "gaps": [gaps(missing("S1", draft("D1", title="Ticket one"))),
+                      gaps(named("S1", "covered", "Ticket one"))],
+             "agent": [agent(), agent()], "qa": [qa(first_mark), qa()], "goal-check": [check("pass")]}
+        b = self.planned(f)
+        self.run_loop(b)
+        return [c[2]["model"] for c in b.claude.calls if c[0] == "agent"], self.now()["T-001"]
+
+    def test_a_paperwork_failure_is_retried_on_the_tickets_own_model(self):
+        models, ticket = self.run_with("paperwork")
+        self.assertEqual(models, ["sonnet", "sonnet"])
+        self.assertEqual(ticket["model"], "sonnet")
+
+    def test_a_code_failure_is_retried_on_opus(self):
+        models, ticket = self.run_with("fail")
+        self.assertEqual(models, ["sonnet", "opus"])
+        self.assertEqual(ticket["model"], "opus")
+
+    def test_retry_model_needs_every_failure_tagged_paperwork(self):
+        paper = "- [ ] A (QA: fail: paperwork - no screenshots)"
+        code = "- [ ] B (QA: fail: code - test red)"
+        self.assertEqual(build.retry_model([paper], "sonnet"), "sonnet")
+        self.assertEqual(build.retry_model([paper], "opus"), "opus")
+        self.assertEqual(build.retry_model([paper, code], "sonnet"), "opus")
+        self.assertEqual(build.retry_model(["- [ ] C (QA: fail, untagged)"], "sonnet"), "opus")
+        self.assertEqual(build.retry_model([], "sonnet"), "opus")
+
+
 class ReusedTickets(GoalRepo):
     def test_a_reused_ticket_is_waited_on_not_built(self):
         temp_repo.add_ticket(self.root, "T-001", status="open", title="Someone else's ticket")

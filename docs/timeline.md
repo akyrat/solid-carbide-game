@@ -1995,3 +1995,8 @@ Entry format:
 - Decision or change: the guard (`.claude/hooks/board_gate.py`) refuses printing a whole file over 20 KB (cat, type, Get-Content, sed -n over the whole file) and names the cheaper ways to read it (grep, a line range, the Read tool with a range). A Haiku summary of large output was assessed and not built (the reasons are in the ticket). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 533, GUT 1735.
 - Documents touched: tasks/README.md
 - Tasks: T-349
+
+## 2026-10-28: T-347 merged, QA is the criteria and the tests
+- Decision or change: `tools/qa_check.py T-NNN` does QA's mechanical part (the three test sets, every affected document changed, screenshots when the ticket shows anything, every criterion marked), one line per check. The QA agent and tasks/README.md's QA section now say: run the script, then judge each acceptance criterion, nothing else. The goal runner retries a ticket that failed on paperwork on its own model and only a code failure on Opus. `merge_batch.py` now accepts a ticket QA already marked done and leaves out Godot-generated `.import`/`.uid` files a branch added. The handover requirements that are not criteria or tests are listed in the ticket with a proposal each, for the board to decide; none was removed. One refused inline-python edit was redone with the Edit tool; listed for the board. QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 545, GUT 1735.
+- Documents touched: tasks/README.md, .claude/agents/qa-integration.md
+- Tasks: T-347

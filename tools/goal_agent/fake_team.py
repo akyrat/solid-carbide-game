@@ -70,7 +70,9 @@ class FakeTeam(FakeClaude):
     def qa(self, folder, prompt, mark, acts):
         path = task_file(folder, prompt)
         round_no = (re.search(r"QA round (\d+)", prompt) or [None, "1"])[1]
-        new = "(QA: pass)" if mark == "pass" else f"(QA: fail, the fake QA says no in round {round_no})"
+        new = ("(QA: pass)" if mark == "pass" else
+               "(QA: fail: paperwork - the fake QA found a missing record)" if mark == "paperwork" else
+               f"(QA: fail, the fake QA says no in round {round_no})")
         box = "x" if mark == "pass" else " "
         text = path.read_bytes().decode("utf-8")
         text = CRITERION_RE.sub(lambda m: f"{m.group(1)}[{box}]{m.group(2)} {new}", text)

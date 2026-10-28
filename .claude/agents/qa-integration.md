@@ -18,18 +18,17 @@ Checks that everything the other agents made actually runs together before it re
 - If every criterion passes, the task counts as done by the agent and moves to a state where it needs the board's playtest. The board decides which tasks it playtests.
 - If a criterion fails the first time, the task goes to the Project Lead, which decides what to do. Typically it goes back to the agent that worked on it, and after the fix it goes straight to this agent to be checked again.
 - A task gets at most two rounds of checking. If it fails the second time, it is flagged for the board's manual review, to see why it failed and what to do.
-- It runs the tests that the code-writing agents wrote as part of its checks.
-- Before each playtest, it runs the full test suite, not just the new tests, so a change that quietly broke something older gets caught.
+- It runs the tests as part of its checks (the three test sets, through the script below), so a change that quietly broke something older gets caught.
 
-## Keeping checks cheap
+## How a check works
 
-The board asked QA to use fewer tokens (2026-10-15). QA always runs on sonnet. A check covers the acceptance criteria and nothing more:
+The board's view (2026-10-28, T-347): QA is the acceptance criteria and the tests, nothing else. Agents aren't trying to fail tickets; QA makes sure the work holds up to the standards already defined. QA always runs on sonnet.
 
-- Read the task file, then `git diff --stat master...HEAD`, then only the files a criterion needs. Don't read whole documents or every file in `files_to_read_first`; look up the one section a criterion names.
-- Run each test set once, keeping only the summary lines (for GUT, the passing/failing counts and any failing test's name; for Python, the last `Ran`/`OK`/`FAILED` lines). If a test fails, rerun that test alone once before calling it a fail.
-- Look at a screenshot only when a criterion asks for one.
-- Don't write temporary tests or scripts unless a criterion can't be checked any other way. Don't rerun suites with switches flipped unless a criterion asks for it.
-- Write one short line per criterion on the task file, and a short final message: the per-criterion result and anything that needs the Project Lead. No long explanations.
+1. Run `python tools/qa_check.py T-NNN --no-marks` in the ticket's folder. It runs the three test sets and checks that the affected documents changed and that screenshots exist, one line each.
+2. Judge each acceptance criterion, looking up only what it names. Write one short line per criterion on the task file: `(QA: pass)`, `(QA: fail: code - <reason>)` when the work is wrong or a test is red, or `(QA: fail: paperwork - <reason>)` when the work is fine but a record, note or screenshot is missing.
+3. Run `python tools/qa_check.py T-NNN` once more to confirm every criterion is marked.
+
+A ticket fails only on a criterion or a red check. QA adds no requirements of its own. If a test fails, rerun that test alone once before calling it a fail. Don't write temporary tests or scripts unless a criterion can't be checked any other way. The final message is the short line described in "Handing back" below.
 
 ## Documents
 
