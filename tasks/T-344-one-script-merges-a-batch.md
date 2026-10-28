@@ -1,7 +1,7 @@
 ---
 id: T-344
 title: Token spend: one script merges a batch of tickets and prints one line each
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/task_status.py, tools/update_short_gdd_fingerprint.py]
 files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, docs/working-with-the-board.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,11 +41,15 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Tests on a throwaway repo (as `tools/goal_agent/temp_repo.py` does) show a clean batch of two tickets merged, each marked done, timeline entries added, worktrees and branches removed, and one output line per ticket. (QA: pass / fail)
-- [ ] Tests show a conflicting ticket stopped with `master` left clean and no merge in progress, and a red test stopping its ticket before the commit. (QA: pass / fail)
-- [ ] The script never commits while another merge is in progress, and stages only the files its merge changed (a test checks both). (QA: pass / fail)
-- [ ] "Merging (Project Lead)" in `docs/working-with-the-board.md` points to the script. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Tests on a throwaway repo (as `tools/goal_agent/temp_repo.py` does) show a clean batch of two tickets merged, each marked done, timeline entries added, worktrees and branches removed, and one output line per ticket. (QA: pass)
+- [ ] Tests show a conflicting ticket stopped with `master` left clean and no merge in progress, and a red test stopping its ticket before the commit. (QA: pass)
+- [ ] The script never commits while another merge is in progress, and stages only the files its merge changed (a test checks both). (QA: pass)
+- [ ] "Merging (Project Lead)" in `docs/working-with-the-board.md` points to the script. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; 508 + 620 + GUT 1735)
+
+## QA result (round 1, sonnet)
+
+All 5 criteria PASS: batch of two, conflict/red-test stops, no commit during foreign merge and own-files staging, done-commit removed on stop (7 merge_batch tests OK); doc line present; tools 508 OK, game/tools 620 OK (1 skipped), GUT 1735/1735 passed.
 
 ## Updates
 
@@ -78,3 +82,4 @@ Tests (all pass): clean batch of two (done, timeline, worktrees and branches gon
 Counts: `python -m unittest discover -s tools -p "test_*.py"` 508 tests OK (including the 7 new); `python -m unittest discover -s game/tools -p "test_*.py"` 620 tests OK (1 skipped); `bash game/tools/run_tests.sh` TESTS PASSED.
 
 Things to know: (1) the `done` mark is committed on the ticket's branch before the merge, but on any stop before the merge commit (conflict, red test, error) the script removes that one commit (`git reset --keep` to the tip it had before, only if its done commit is still the tip), so the ticket is back at its earlier status and the board never shows an unmerged ticket as done (change requested by the Project Lead; the conflict and red-test tests check branch tip and status). A worktree Godot holds open stops only after the merge is committed, so that ticket stays done. (2) A worktree Godot holds open: the merge stays committed, the line says so, and the branch is kept. (3) Not run against the real repo, as asked; the script's own tests use stand-in test commands, so the three real default commands are not exercised by them. (4) Docs: "Merging (Project Lead)" in `docs/working-with-the-board.md` now starts with the script as the way to merge.
+- 2026-10-28, in-qa → done: QA pass, all 5 criteria
