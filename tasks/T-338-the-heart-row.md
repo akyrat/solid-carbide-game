@@ -1,7 +1,7 @@
 ---
 id: T-338
 title: The hearts in a row at the top left, in place of the health bar
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started from the playtest build (T-334 approved). Layout from the board's page (1152x648): hearts x36 y24 w220 h40.
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -69,3 +73,4 @@ Tests: new `tests/unit/hud/test_hud_heart_row.gd` (5 hearts, hit, heal, garage h
 Screenshots: `art-archive/T-338/screenshots/hearts_full.png`, `hearts_hit.png`, `hearts_garage.png` (`bash game/tools/record_heart_row.sh`, fixture `heart_row_demo`). No GIF (animation covered by tests). Note: a second row (11+ hearts) reaches y108 and would touch the top of the weapon icons column; only matters if hearts pass 10.
 
 QA (2026-10-28, round 1): all 5 criteria pass. qa_check --no-marks: tests PASS (3 sets), screenshots PASS (3 files, viewed: hearts full/empty in a row top left, weapon icon below), documents FAIL only for game/README.md, which is an index now (docs live in game/docs/hud-and-menus/hud.md and docs/hud-and-menus.md; counted as the README criterion per the Project Lead). No flaky test failure in this run.
+- 2026-10-28, needs-playtest → done: The board played it in the livestream HUD build: okay (2026-10-28).
