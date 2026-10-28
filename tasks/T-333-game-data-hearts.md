@@ -1,7 +1,7 @@
 ---
 id: T-333
 title: "Game data: hearts, damage in hearts, invulnerability, health drops and the garage upgrade"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/enemies.md, docs/garag
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/data/run.json, game/data/, game/scripts/data/]
 files_expected_to_change: [game/data/, game/scripts/data/, game/tests/unit/, game/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
