@@ -1,7 +1,7 @@
 ---
 id: T-341
 title: The coins counter moves to the bottom left, above the clock
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started from the playtest build (T-335 approved). Layout from the board's page (1152x648): coins x16 y496 w108 h36, anchored bottom left.
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -64,3 +68,4 @@ Written by the agent when it finishes.
 Built by the UI Agent. The coins box (`Hud._build_coins`) is anchored bottom left with offsets from `Hud.COINS_POS` (16, 496) and `Hud.COINS_SIZE` (108 x 36) at 1152 x 648, 28 px above the clock; gone from the top right. Text and look unchanged. Tests: new `game/tests/unit/hud/test_hud_coins_position.gd` (anchors, position, 28 px gap, larger window, not top right); `test_hud_layout.gd` now checks the clock (not only its label) and the coins at 4 window sizes for no overlap. Screenshots: `art-archive/T-341/screenshots/hud_1152x648.png`, `hud_1920x1080.png`. Docs: docs/hud-and-menus.md (Content), game/docs/hud-and-menus/hud.md. Tests: GUT all passed; game/tools python 643 OK (1 skipped); tools python 545 OK.
 
 QA round 1: qa_check: tests PASS (3 sets, counts as the agent reported), screenshots PASS (viewed hud_1152x648: coins above the clock at bottom left, no overlap). Its documents line flagged game/README.md unchanged; accepted because that file is now an index and the text lives in game/docs/hud-and-menus/hud.md (changed, describes T-341). New test_hud_coins_position.gd and updated test_hud_layout.gd exist. All 5 criteria pass.
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).
