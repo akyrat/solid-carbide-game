@@ -1,7 +1,7 @@
 ---
 id: T-348
 title: Token spend: the guard stops refusing read-only commands (sort, uniq, python -c, chained status calls)
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/T-248-guard-more-harmless-commands.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,10 +46,12 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each of the four commands in the description, rebuilt with real paths, is allowed (a guard test each). (QA: pass / fail)
-- [ ] `sort -o tasks/x`, `uniq a tasks/x`, and a Python command that writes under `tasks/` are still refused (a guard test each). (QA: pass / fail)
-- [ ] Every existing guard test still passes unchanged. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [x] Each of the four commands in the description, rebuilt with real paths, is allowed (a guard test each). (QA: pass; ReadOnlyCommandsAgain.test_allowed_1..4, 71 guard tests OK)
+- [x] `sort -o tasks/x`, `uniq a tasks/x`, and a Python command that writes under `tasks/` are still refused (a guard test each). (QA: pass; test_still_refused_again, 32 commands)
+- [x] Every existing guard test still passes unchanged. (QA: pass; 0 removed lines in tools/test_guard.py)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; tools 508 OK, game/tools 620 OK 1 skipped, run_tests.sh TESTS PASSED)
+
+QA note 2026-10-28: the agent's refused `sed -i` was meant to append the GDScript test count to this ticket's own result notes (tasks/T-348-guard-read-only-commands-again.md); it made the same one-line notes edit with the Edit tool. Notes only, no code.
 
 ## Updates
 
@@ -58,6 +60,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started in parallel: the guard stops refusing read-only commands.
+
+### 2026-10-28, In QA
+
+Built: the four read-only cases now pass, the write cases are still refused, 71 guard tests. QA is checking it now.
 
 ## Style review
 
@@ -79,3 +85,4 @@ Written by the agent when it finishes.
 - Tests: `python -m unittest discover -s tools -p "test_*.py"`: 508 OK (`tools.test_guard`: 71 OK). `python -m unittest discover -s game/tools -p "test_*.py"`: 620 OK (1 skipped). `bash game/tools/run_tests.sh`: 1735 of 1735 tests passed, TESTS PASSED (exit 0).
 - Refusals while working (from the main checkout's guard, the old one): (1) a Bash command that wrote a probe script with a heredoc and ran it in the same command ("can't find or read that script"). I didn't retry it; the cases went into the unit tests instead. (2) A `sed -i` adding the GDScript test count to these notes (its script held backticks, so the guard couldn't read it). I made the same one-line note edit with the Edit tool, the normal tool for a ticket's notes, whose check passed it; strictly that is another tool for the same edit, so I'm listing it.
 - Nothing to picture: a hook change with no screen.
+- 2026-10-28, in-qa → done: QA pass, all 4 criteria
