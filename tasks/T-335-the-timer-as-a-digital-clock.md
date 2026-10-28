@@ -1,7 +1,7 @@
 ---
 id: T-335
 title: The timer at the bottom left as a digital clock that turns from green to red
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, game/README.md, game/scripts/hud/]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-335/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,13 +43,13 @@ The board's review: play a run and watch the clock turn yellow, orange and red.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The timer shows at the bottom left at the layout page's position and size (at 1152 x 648), anchored to that corner, and no longer at the top centre (test). (QA: pass / fail)
-- [ ] Its colour is green, yellow, orange and red at the data's switch points (tests at each boundary). (QA: pass / fail)
-- [ ] It counts down exactly as before and stops while paused (the existing timer tests pass). (QA: pass / fail)
-- [ ] `art-archive/T-335/screenshots/run_no_hud.png` is a 1152 x 648 run with no HUD. (QA: pass / fail)
-- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots of the clock in green, yellow, orange and red are in `art-archive/T-335/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] The timer shows at the bottom left at the layout page's position and size (at 1152 x 648), anchored to that corner, and no longer at the top centre (test). (QA: pass)
+- [ ] Its colour is green, yellow, orange and red at the data's switch points (tests at each boundary). (QA: pass)
+- [ ] It counts down exactly as before and stops while paused (the existing timer tests pass). (QA: pass)
+- [ ] `art-archive/T-335/screenshots/run_no_hud.png` is a 1152 x 648 run with no HUD. (QA: pass)
+- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass)
+- [ ] Screenshots of the clock in green, yellow, orange and red are in `art-archive/T-335/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -62,6 +62,10 @@ Started in the livestream HUD build.
 ### 2026-10-27, In progress
 
 Layout from the board's page (1152x648): clock x16 y560 w200 h72. Also saved: viewers x896 y560 240x72, hearts x36 y24 220x40, weapons x12 y88 40x308, coins x16 y496 108x36, subgoal x988 y340 128x180.
+
+### 2026-10-28, In progress → In QA
+
+Built; QA running now (the board's go to finish without stopping).
 
 ## Style review
 
@@ -82,3 +86,7 @@ Built:
 - Not done: the pause strip still sits at STRIP_TOP 92 (placed under the old top-centre timer); left alone, as the pause screen is not in this ticket.
 - Screenshots in `art-archive/T-335/screenshots/` (made with `game/tests/fixtures/timer_clock_shots.tscn` at 1152 x 648): `run_no_hud.png`, `clock_green.png` (5:00), `clock_yellow.png` (2:00), `clock_orange.png` (1:00), `clock_red.png` (0:20).
 - Test counts: GUT (`bash game/tools/run_tests.sh`) 1694 of 1694 passing, 143 scripts. `game/tools` Python set 620 tests OK (1 skipped); `tools` Python set 501 tests OK.
+
+### QA round 1 (2026-10-28)
+
+All 6 criteria pass. qa_check: 3 test sets pass, documents changed, 5 screenshots present (all 1152x648; clock_red.png shows red 0:20 at bottom left; run_no_hud.png has no HUD). Docs describe the clock and switch points (180/90/30 s).
