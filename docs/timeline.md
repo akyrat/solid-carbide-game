@@ -2010,3 +2010,8 @@ Entry format:
 - Decision or change: The board played the livestream HUD build: the enemies' bolder outlines look good.
 - Documents touched: none
 - Tasks: T-340
+
+## 2026-10-28: The timer as a digital clock
+- Decision or change: The board played it: the bottom-left clock turning green, yellow, orange and red looks good.
+- Documents touched: none
+- Tasks: T-335
