@@ -48,8 +48,10 @@ signal run_ended(result: String, coins: int)
 signal time_left_changed(seconds_left: float)
 ## The car took damage (T-072: the car sprite shakes).
 signal car_damaged(amount: float)
-## The car's health changed (damage, or a new run).
+## The car's health changed (damage, or a new run). In hearts since T-334.
 signal health_changed(health: float, max_health: float)
+## The car's invulnerability after a hit started (T-334): `seconds` long. For the blink.
+signal invulnerability_started(seconds: float)
 ## The coins collected this run changed.
 signal coins_changed(coins: int)
 ## XP or the level changed (XP gained, a level-up, or a new run). For the
@@ -88,8 +90,26 @@ signal crashed
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
+## The car's health in hearts (T-334; Game loop architecture, Decisions, "Hearts
+## instead of health points"): run.json's car.starting_hearts, plus the car health
+## upgrade's hearts. Kept as a number named health, so everything that read the old
+## health (the HUD, the run's end) keeps working; `hearts` and `max_hearts` read it.
 var health := 0.0
 var max_health := 0.0
+## The car's health in whole hearts (the same as health).
+var hearts: int:
+	get:
+		return int(round(health))
+var max_hearts: int:
+	get:
+		return int(round(max_health))
+## Seconds of invulnerability left after the last hit (T-334): while above 0,
+## damage_car() does nothing at all, and the enemies neither hit nor knock back
+## the car. Counts down in advance(), with the clock.
+var invulnerable_left := 0.0
+## The full length of the current invulnerability (run.json's car.invulnerability_seconds),
+## for the blink's phase.
+var invulnerable_total := 0.0
 ## Coins collected this run.
 var coins := 0
 ## The pickup magnet's reach in units (run.json's pickup_magnet; the garage upgrade, T-224, sets it
@@ -148,13 +168,15 @@ func start_run() -> void:
 		_run_data = RunData.new()
 	if _combo_data == null:
 		_combo_data = ComboData.new()
-	max_health = _run_data.starting_health()
+	max_health = _run_data.starting_hearts()
 	pickup_magnet_radius_units = _run_data.pickup_magnet_radius_units()
 	pickup_pull_speed = _run_data.pickup_pull_speed_units_per_second()
 	if progress != null:
 		max_health = progress.current_value("car_health")
 		pickup_magnet_radius_units = progress.current_value("pickup_magnet")  # garage upgrade (T-224)
 	health = max_health
+	invulnerable_left = 0.0
+	invulnerable_total = 0.0
 	time_left = RUN_SECONDS
 	coins = 0
 	result = ""
@@ -187,6 +209,7 @@ func _process(delta: float) -> void:
 func advance(seconds: float) -> void:
 	if not running or seconds <= 0.0:
 		return
+	invulnerable_left = maxf(invulnerable_left - seconds, 0.0)
 	var shown_before := shown_seconds()
 	time_left -= seconds
 	if time_left <= EPSILON:
@@ -221,22 +244,50 @@ func time_left_text() -> String:
 	return "%d:%02d" % [s / 60, s % 60]
 
 
-## Damages the car by `amount` (enemies call this). At 0 health the run ends
-## as a loss. Ignored when the run is not going or `amount` is not positive.
+## Damages the car by `amount` hearts (enemies call this). At 0 hearts the run
+## ends as a loss. Ignored when the run is not going, `amount` is not positive,
+## or the car is still invulnerable from the last hit (T-334: a hit inside that
+## second takes no hearts and does not cut the combo). A hit that counts starts
+## run.json's car.invulnerability_seconds of invulnerability.
 func damage_car(amount: float) -> void:
-	if not running or amount <= 0.0:
+	if not running or amount <= 0.0 or is_invulnerable():
 		return
 	# Enemies and meteors damage the car by hitting it: any damage counts as
 	# a collision and cuts the combo (Game loop architecture, Decisions).
 	collision()
+	if not running:
+		return
 	health = maxf(health - amount, 0.0)
+	invulnerable_total = _run_data.invulnerability_seconds()
+	invulnerable_left = invulnerable_total
 	health_changed.emit(health, max_health)
 	car_damaged.emit(amount)
 	if health <= 0.0:
 		_end(RESULT_LOSS)
+		return
+	if invulnerable_left > 0.0:
+		invulnerability_started.emit(invulnerable_left)
 
 
-## Restores `amount` health points to the car, never above the maximum (health pickups,
+## True while the car is invulnerable after a hit (T-334).
+func is_invulnerable() -> bool:
+	return invulnerable_left > EPSILON
+
+
+## Whether the drawn car shows now (T-334): during the invulnerability it blinks,
+## off and on, each phase run.json's car.blink_interval_seconds long, starting off
+## so the hit shows at once; otherwise always shown.
+func car_blink_visible() -> bool:
+	if not is_invulnerable() or not running:
+		return true
+	var interval := _run_data.blink_interval_seconds()
+	if interval <= 0.0:
+		return true
+	var elapsed := invulnerable_total - invulnerable_left
+	return int(floor(elapsed / interval + EPSILON)) % 2 == 1
+
+
+## Restores `amount` hearts to the car, never above the maximum (health pickups,
 ## T-220). Not damage: it does not touch the combo. Ignored when the run is not going or
 ## `amount` is not positive. Returns the points actually restored.
 func heal_car(amount: float) -> float:

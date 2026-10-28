@@ -168,11 +168,12 @@ func test_touching_minion_damages_the_car_at_the_data_rate_and_knocks_it_back() 
 		m.set_position_units(_car_units() + offset)  # keep it touching
 		if m.contact_step(DT, run.car, run.state):
 			hits += 1
+		run.state.advance(DT)  # the car's invulnerability counts down (T-334)
 	push = run.car.pending_knockback()
 	var lost: float = health_before - run.state.health
-	var interval: float = m.contact_damage_interval  # no longer in the data (T-333); the code default until T-334
+	var interval: float = RunData.new().invulnerability_seconds()  # the car's invulnerability spaces the hits (T-334)
 	var rate: float = st["contact_damage"] / interval
-	assert_eq(hits, int(seconds / interval), "one hit per interval, the first at once")
+	assert_eq(hits, int(seconds / interval), "one hit per invulnerability, the first at once")
 	assert_almost_eq(lost, st["contact_damage"] * hits, 0.0001, "the data's damage per hit")
 	assert_almost_eq(lost / seconds, rate, st["contact_damage"] / seconds, "about the data's rate")
 	assert_almost_eq(push.length(), st["knockback"] * hits, 0.001, "knocked back with the data's strength each hit")

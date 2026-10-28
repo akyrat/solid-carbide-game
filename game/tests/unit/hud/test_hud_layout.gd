@@ -1,9 +1,9 @@
 extends GutTest
 ## Task T-113 (round 2): the car's health bar stands upright at the top left
-## (T-276: 72 x 320, the heart under it, weapon icons beside it); the likes bar lies across the bottom
-## centre, half the screen wide, with the likes row (heart and "Likes" at the
-## left end, "Hype Lv" at the right end, on one line) directly above it and
-## the combo counter centred above that. No HUD element overlaps another, the
+## (T-276: 72 x 320, the heart under it, weapon icons beside it); since T-337
+## the sub goal square sits on the right edge at the board's layout (x988 y340,
+## 128 x 180 at 1152 x 648) in place of the likes bar and its row, and the combo
+## counter is centred at the bottom. No HUD element overlaps another, the
 ## pause strip's content or the middle of the screen (the car and its trick
 ## popups).
 
@@ -52,8 +52,8 @@ func _run() -> Node2D:
 func _hud_at(size: Vector2i) -> Hud:
 	var hud: Hud = HUD_SCENE.instantiate()
 	_screen(size).add_child(hud)
-	hud.level_label.text = Hud.TEXT_LEVEL.format({"level": 99})
-	hud.combo_label.text = Hud.combo_text(5.75)
+	hud.sub_goal.set_numbers(9999, 9999)
+	hud._on_combo_changed(5.75)
 	hud.coins_value_label.text = "99999"
 	# All five weapons at mixed tiers (T-276), the tallest the icon column gets.
 	var rack: Node = WeaponsScript.new()
@@ -68,14 +68,11 @@ func _hud_at(size: Vector2i) -> Hud:
 func _parts(hud: Hud) -> Dictionary:
 	return {
 		"health bar": hud.health_bar.get_global_rect(),
-		"likes bar": hud.likes_bar.get_global_rect(),
+		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"heart": hud.heart.get_global_rect(),
-		"Likes": hud.likes_label.get_global_rect(),
-		"Hype Lv": hud.level_label.get_global_rect(),
-		"combo": hud.combo_label.get_global_rect(),
-		"timer": hud.timer_label.get_global_rect(),
+		"viewers": hud.viewers_counter.get_global_rect(),
+		"clock": hud.timer_clock.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
 
@@ -102,38 +99,24 @@ func _assert_health(hud: Hud, where: String) -> void:
 	assert_true(hud.get_node_or_null("Left/HealthLabel") == null, "%s: no Car Health label" % where)
 
 
-func _assert_likes(hud: Hud, where: String) -> void:
+func _assert_sub_goal(hud: Hud, where: String) -> void:
 	var view := hud.get_viewport().get_visible_rect().size
-	var bar := hud.likes_bar.get_global_rect()
-	assert_eq(hud.likes_bar.fill_mode, ProgressBar.FILL_BEGIN_TO_END, "%s: likes fills left to right" % where)
-	assert_gt(bar.size.x, bar.size.y * 5.0, "%s: likes bar horizontal" % where)
-	assert_almost_eq(bar.size.x, view.x * 0.5, 1.0, "%s: likes bar half the screen wide" % where)
-	assert_almost_eq(bar.get_center().x, view.x * 0.5, 1.0, "%s: likes bar centred" % where)
-	assert_almost_eq(view.y - bar.end.y, float(Hud.MARGIN), 0.5, "%s: likes bar near the bottom edge" % where)
-
-	var row := hud.likes_row.get_global_rect()
-	var heart := hud.heart.get_global_rect()
-	var likes := hud.likes_label.get_global_rect()
-	var level := hud.level_label.get_global_rect()
-	assert_almost_eq(heart.position.x, bar.position.x, 0.5, "%s: heart at the bar's left end" % where)
-	assert_lt(heart.end.x, likes.position.x, "%s: Likes right of the heart" % where)
-	assert_almost_eq(level.end.x, bar.end.x, 0.5, "%s: Hype Lv ends at the bar's right end" % where)
-	assert_lt(likes.end.x, level.position.x, "%s: Likes left of Hype Lv" % where)
-	# Same baseline: same top, same height, same font size.
-	assert_almost_eq(likes.position.y, level.position.y, 0.5, "%s: Likes and Hype Lv on one line" % where)
-	assert_almost_eq(likes.size.y, level.size.y, 0.5, "%s: Likes and Hype Lv same height" % where)
-	assert_lte(row.end.y, bar.position.y, "%s: row above the bar" % where)
-	assert_lte(level.end.y, bar.position.y, "%s: Hype Lv above the bar" % where)
-	assert_lt(bar.position.y - row.end.y, NEAR, "%s: row directly above the bar" % where)
-	assert_lt(bar.position.y - level.end.y, NEAR, "%s: Hype Lv directly above the bar" % where)
-	assert_gte(heart.position.y, row.position.y, "%s: heart within the row" % where)
-	assert_lte(heart.end.y, row.end.y, "%s: heart within the row" % where)
-	assert_almost_eq(heart.get_center().y, likes.get_center().y, 2.0, "%s: heart level with Likes" % where)
-
-	var combo := hud.combo_label.get_global_rect()
-	assert_almost_eq(combo.get_center().x, bar.get_center().x, 1.0, "%s: combo centred over the bar" % where)
-	assert_lte(combo.end.y, minf(row.position.y, level.position.y), "%s: combo above the row" % where)
-	assert_lt(row.position.y - combo.end.y, NEAR, "%s: combo just above the row" % where)
+	var sg := hud.sub_goal
+	var r := sg.get_global_rect()
+	assert_almost_eq(r.size, Vector2(128, 180), Vector2(0.5, 0.5), "%s: the sub goal is 128 x 180" % where)
+	assert_almost_eq(view.x - r.end.x, 1152.0 - 988.0 - 128.0, 0.5, "%s: anchored to the right edge" % where)
+	assert_almost_eq(r.position.y, roundf(view.y * 340.0 / 648.0), 1.0, "%s: about two thirds down" % where)
+	var square := Rect2(r.position, sg.square_size)
+	assert_almost_eq(sg.square_size, Vector2(128, 128), Vector2(0.5, 0.5), "%s: the square is 128 x 128" % where)
+	var label := sg.label_row.get_global_rect()
+	assert_gte(label.position.y, square.end.y, "%s: the label is under the square" % where)
+	assert_lte(label.end.y, r.end.y + 0.5, "%s: the label fits in the 180" % where)
+	assert_almost_eq(label.get_center().x, square.get_center().x, 1.0, "%s: the label centred under it" % where)
+	assert_true(Rect2(Vector2.ZERO, view).encloses(label), "%s: the label on screen" % where)
+	var vc := hud.viewers_counter.get_global_rect()
+	assert_true(Rect2(Vector2.ZERO, view).encloses(vc), "%s: viewers counter on screen" % where)
+	assert_almost_eq(view.x - vc.end.x, 0.0, 40.0, "%s: viewers counter at the right edge" % where)
+	assert_almost_eq(view.y - vc.end.y, 0.0, 40.0, "%s: viewers counter at the bottom edge" % where)
 
 
 func _assert_no_overlaps(hud: Hud, where: String) -> void:
@@ -153,10 +136,10 @@ func test_layout_in_a_run() -> void:
 	for i in 30:
 		r.state.add_trick("alternate_drift")
 	r.state.add_coins(999)
-	r.hud.level_up_flash.stop()  # the pop of "Hype Lv" is tested in T-139's own tests
+	r.hud.sub_goal.stop()
 	await get_tree().process_frame
 	_assert_health(r.hud, "run")
-	_assert_likes(r.hud, "run")
+	_assert_sub_goal(r.hud, "run")
 	_assert_no_overlaps(r.hud, "run")
 
 
@@ -166,7 +149,7 @@ func test_layout_at_every_window_size() -> void:
 		await get_tree().process_frame
 		var where := "%dx%d" % [size.x, size.y]
 		_assert_health(hud, where)
-		_assert_likes(hud, where)
+		_assert_sub_goal(hud, where)
 		_assert_no_overlaps(hud, where)
 
 
@@ -175,7 +158,7 @@ func test_layout_follows_a_window_resize() -> void:
 	await get_tree().process_frame
 	(hud.get_parent() as SubViewport).size = Vector2i(1920, 1080)
 	await get_tree().process_frame
-	_assert_likes(hud, "resized to 1920x1080")
+	_assert_sub_goal(hud, "resized to 1920x1080")
 	_assert_no_overlaps(hud, "resized to 1920x1080")
 
 
@@ -185,18 +168,18 @@ func test_layout_follows_longer_texts() -> void:
 	r.state.add_xp(r.state.xp_needed() * 1.4)
 	for i in 30:
 		r.state.add_trick("alternate_drift")
-	# The level-up animation pops "Hype Lv" bigger for a moment (T-139,
-	# test_hud_level_up_flash.gd); this test is about the layout, so it ends.
-	r.hud.level_up_flash.stop()
+	# The square's celebration bounces the gift for a moment (T-337,
+	# test_hud_sub_goal.gd); this test is about the layout, so it ends.
+	r.hud.sub_goal.stop()
+	r.hud.settle_likes()
 	await get_tree().process_frame
-	_assert_likes(r.hud, "after a level-up and a combo")
+	_assert_sub_goal(r.hud, "after a level-up and a combo")
 
 
-func test_same_font_size_within_each_group() -> void:
+func test_label_font_size() -> void:
 	var hud := _hud_at(Vector2i(1152, 648))
 	await get_tree().process_frame
-	assert_eq(_font_size(hud.likes_label), _font_size(hud.level_label), "Likes and Hype Lv the same size")
-	assert_eq(_font_size(hud.likes_label), Hud.LABEL_FONT_SIZE, "Likes")
+	assert_eq(_font_size(hud.sub_goal.label), SubGoal.LABEL_FONT_SIZE, "the sub goal label")
 
 
 func test_clear_of_the_middle() -> void:
@@ -206,7 +189,7 @@ func test_clear_of_the_middle() -> void:
 		await get_tree().process_frame
 		var view := Vector2(size)
 		var middle := Rect2(view * 0.5 - Vector2(250, 150), Vector2(500, 250))
-		for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo"]:
+		for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers"]:
 			assert_false(_parts(hud)[n].intersects(middle),
 				"%dx%d: %s clear of the car and popups" % [size.x, size.y, n])
 
@@ -223,6 +206,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo", "timer"]:
+	for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers", "clock", "coins"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()

@@ -509,6 +509,7 @@ func test_contact_damage_only_hits_the_car_at_its_level() -> void:
 	assert_lt(run.state.health, health)
 	# The car high in the air over it: no hit.
 	m.contact_cooldown = 0.0
+	run.state.invulnerable_left = 0.0  # past the car's invulnerability after the hit (T-334)
 	run.car.height_model.height = 2.5
 	run.car.height_model.airborne = true
 	assert_false(m.contact_step(DT, run.car, run.state), "the car jumps over it")

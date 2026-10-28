@@ -26,7 +26,7 @@ func starting_hearts() -> float:
 	return float(_data["car"]["starting_hearts"])
 
 
-## Same as starting_hearts(): the run still keeps its health as a number, now in hearts (T-333; T-334 renames the run's health).
+## Same as starting_hearts(): the run still keeps its health as a number, now in hearts (T-333). RunState keeps it in `health`, in hearts (T-334).
 func starting_health() -> float:
 	return starting_hearts()
 

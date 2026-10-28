@@ -116,8 +116,8 @@ func test_callers_without_dt_get_no_airtime() -> void:
 
 func test_popup_text_word_for_word() -> void:
 	assert_eq(TrickPopups.TEXTS["airtime"], "HANG TIME!")
-	assert_eq(TrickPopups.trick_text("airtime", 0.2), "HANG TIME! +0.2")
-	assert_eq(TrickPopups.trick_text("airtime", 0.25), "HANG TIME! +0.25")
+	assert_eq(TrickPopups.trick_text("airtime", 850.0), "HANG TIME! +850", "T-336: +{viewers}")
+	assert_eq(TrickPopups.trick_text("airtime", 2500.0), "HANG TIME! +2,500")
 	assert_eq(TrickPopups.TEXTS["air_one_eighty"], "AIR 180!")
 	assert_eq(TrickPopups.TEXTS["air_three_sixty"], "AIR 360!")
 
@@ -131,7 +131,8 @@ func test_run_pays_the_combo_and_shows_the_popup() -> void:
 		r.car.airtime_trick.emit(seconds)
 		assert_almost_eq(r.state.combo, before + c.airtime_add(seconds), 0.000001, str(seconds))
 		var pop = r.trick_popups.popups().back()
-		assert_eq(pop.text, "HANG TIME! +%s" % String.num(c.airtime_add(seconds), 2))
+		# T-336: the amount is the viewers the airtime brought.
+		assert_eq(pop.text, "HANG TIME! +%s" % ViewersData.new().format(TrickPopups.trick_viewers(c.airtime_add(seconds), r.state.combo)))
 
 
 func test_run_short_hop_pays_nothing() -> void:

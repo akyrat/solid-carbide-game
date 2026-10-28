@@ -7,7 +7,8 @@ extends Node
 ##
 ## When the bar fills completely, `fill_then` springs it to full first and,
 ## the moment it is full, starts it again from empty towards the leftover
-## (`restarted` fires then). It never shows below the level it started from
+## (`restarted` fires then); since T-337 it can stay full for a `hold` first,
+## while the sub goal square celebrates. It never shows below the level it started from
 ## and the Hud clamps the picture at full. Pausable: it stands still while the
 ## game is paused. The Hud owns the numbers and draws them; this node only
 ## moves `shown`.
@@ -31,6 +32,8 @@ var active := false
 ## True while it springs to full before starting again.
 var has_follow := false
 var follow := 0.0
+## Seconds it stays full before starting again (T-337), for `fill_then`.
+var hold := 0.0
 var _from := 0.0
 var _t := 0.0
 
@@ -67,10 +70,12 @@ func spring_to(ratio: float) -> void:
 	_start(ratio)
 
 
-## Springs to full, then (once full) starts again from empty towards `ratio`.
-func fill_then(ratio: float) -> void:
+## Springs to full, then (once full, after `hold_seconds` more) starts again
+## from empty towards `ratio`.
+func fill_then(ratio: float, hold_seconds := 0.0) -> void:
 	has_follow = true
 	follow = ratio
+	hold = maxf(hold_seconds, 0.0)
 	_start(1.0)
 
 
@@ -113,6 +118,8 @@ func advance(delta: float) -> void:
 	if _t >= DURATION:
 		shown = target
 		changed.emit(shown)
+		if has_follow and _t < DURATION + hold:
+			return  # full, held while the square celebrates
 		if has_follow:
 			# Full now: start again from empty, springing to the leftover.
 			_restart()
@@ -127,6 +134,7 @@ func advance(delta: float) -> void:
 
 func _restart() -> void:
 	has_follow = false
+	hold = 0.0
 	shown = 0.0
 	target = follow
 	restarted.emit()

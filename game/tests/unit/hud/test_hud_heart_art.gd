@@ -37,8 +37,7 @@ func test_hud_shows_the_art_crisp_and_about_text_height() -> void:
 	var r: Node2D = RUN.instantiate()
 	add_child_autofree(r)
 	var hud: Hud = r.hud
-	assert_eq(hud.heart.texture.resource_path, Hud.HEART_PATH)
-	assert_eq(hud.heart.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
-	assert_eq(hud.heart.custom_minimum_size, hud.heart.texture.get_size() * Hud.HEART_SCALE)
-	var likes_h := hud.likes_label.get_combined_minimum_size().y
-	assert_almost_eq(hud.heart.custom_minimum_size.y, likes_h, 8.0, "about the height of Likes")
+	# Since T-337 the likes row is gone: the heart shows under the health bar (T-276).
+	assert_eq(hud.health_heart.texture.resource_path, Hud.HEART_PATH)
+	assert_eq(hud.health_heart.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
+	assert_eq(hud.health_heart.custom_minimum_size, hud.health_heart.texture.get_size() * Hud.HEART_SCALE)

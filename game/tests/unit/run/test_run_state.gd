@@ -80,6 +80,7 @@ func test_damage_to_zero_is_a_loss_once() -> void:
 	state.damage_car(2.0)
 	assert_eq(state.health, state.max_health - 2.0)
 	assert_eq(ended.size(), 0)
+	state.advance(1.01)  # past the car's invulnerability after the hit (T-334)
 	state.damage_car(state.max_health)
 	assert_eq(state.health, 0.0, "health stops at 0")
 	assert_eq(ended, [["loss", 5]], "loss with the coins so far")

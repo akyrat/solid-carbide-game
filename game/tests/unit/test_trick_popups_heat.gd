@@ -54,7 +54,7 @@ func test_step_comes_from_the_multiplier_after_the_trick() -> void:
 		run.state.combo_trick.emit("alternate_drift", 0.5, m)
 		var shown: Array = run.trick_popups.popups()
 		var p = shown[shown.size() - 1]
-		assert_eq(p.text, "ALT DRIFT! +0.5")
+		assert_eq(p.text, Popups.trick_text("alternate_drift", Popups.trick_viewers(0.5, m)), "T-336: the viewers it brought")
 		assert_eq(p.heat, expect[m], "a trick to x%s shows step %d" % [m, expect[m]])
 		assert_eq(p.heat, ComboHeat.step_for(m), "the same step as the HUD counter")
 
