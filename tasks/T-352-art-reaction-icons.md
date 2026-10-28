@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-351]
 documents_affected: [docs/visual-style.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/README.md, tasks/T-351-reaction-bursts-on-a-sub-goal-and-at-high-viewers.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/docs/hud-and-menus/hud.md, game/docs/art/pixellab.md, tasks/T-351-reaction-bursts-on-a-sub-goal-and-at-high-viewers.md]
 files_expected_to_change: [game/art/hud/, art-archive/T-352/, docs/visual-style.md, game/README.md]
 model: sonnet
 qa_rounds: 0

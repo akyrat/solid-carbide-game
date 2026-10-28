@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-044, T-068]
 documents_affected: [docs/enemies.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/enemies.md, docs/visual-style.md, tasks/T-044-minions.md, tasks/T-068-minion-art.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/enemies.md, docs/visual-style.md, tasks/T-044-minions.md, tasks/T-068-minion-art.md, game/docs/enemies/minions.md]
 files_expected_to_change: [the enemy code, tests, docs/enemies.md, game/README.md]
 model: opus
 qa_rounds: 0

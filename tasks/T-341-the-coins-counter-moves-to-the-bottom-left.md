@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-335]
 documents_affected: [docs/hud-and-menus.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/README.md, game/scripts/hud/, tasks/T-335-the-timer-as-a-digital-clock.md]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/, tasks/T-335-the-timer-as-a-digital-clock.md]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-341/]
 model: sonnet
 qa_rounds: 0

@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-066]
 documents_affected: [docs/level-design.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-066-challenge-arrow-art.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/level-design.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-066-challenge-arrow-art.md, game/docs/art/pixellab.md, game/docs/level/mvp-map.md]
 files_expected_to_change: [the challenge code, tests, docs/level-design.md, game/README.md]
 model: sonnet
 qa_rounds: 0

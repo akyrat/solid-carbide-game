@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: []
 documents_affected: [docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md, game/scripts/ui/pause_screen.gd, game/scripts/game/game_flow.gd, game/scripts/run/run_state.gd]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/pause-screen.md, game/docs/game-loop/screen-flow.md, game/scripts/ui/pause_screen.gd, game/scripts/game/game_flow.gd, game/scripts/run/run_state.gd]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md]
 model: sonnet
 qa_rounds: 0

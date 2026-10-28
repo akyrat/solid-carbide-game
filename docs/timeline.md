@@ -2030,3 +2030,8 @@ Entry format:
 - Decision or change: The board played it: likes became subs in the game's text.
 - Documents touched: none
 - Tasks: T-331
+
+## 2026-10-28: Open tickets list the area files; T-347's proposals accepted
+- Decision or change: The board ran the checked fix script: 27 open or blocked tickets now list their area files under game/docs/ in files_to_read_first instead of game/README.md (T-353, split out of T-346). The board accepted T-347's proposals on handover rules: ten stay as they are; QA no longer judges whether screenshots show what the notes say (qa_check.py checks they exist, and a ticket that shows something says in its criteria what its screenshots must show); the style-loop record is enforced by task_status.py before QA, so QA judges only the criteria.
+- Documents touched: tasks/README.md
+- Tasks: T-353, T-347

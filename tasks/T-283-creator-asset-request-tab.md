@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: [T-282, T-284, T-285]
 documents_affected: [docs/level-design.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/level-design.md, game/README.md, docs/README.md, game/scripts/level_creator/, game/data/level/creator_texts.json, tasks/T-262-creator-panel-grouped.md, tasks/T-284-creator-request-inbox.md, tasks/T-285-add-generated-creator-piece.md]
+files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, docs/README.md, game/scripts/level_creator/, game/data/level/creator_texts.json, tasks/T-262-creator-panel-grouped.md, tasks/T-284-creator-request-inbox.md, tasks/T-285-add-generated-creator-piece.md]
 files_expected_to_change: [game/scripts/level_creator/, game/scenes/, game/tests/, game/README.md, docs/level-design.md, art-archive/T-283/screenshots/]
 model: sonnet
 qa_rounds: 0

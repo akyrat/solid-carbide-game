@@ -189,7 +189,7 @@ Every task ends with screenshots of its work wherever anything can be shown (boa
 - **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
 - **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
 
-They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say. Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
+They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; `tools/qa_check.py` checks they exist, and a ticket that shows something says in its acceptance criteria what its screenshots must show (board, 2026-10-28, T-347's proposals). Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
 
 The task board shows them on the ticket (T-201): every image and recording (`.png`, `.jpg`, `.gif`, `.webp`, `.mp4`, `.webm`) in that folder, and any media file on the `Board review files:` line, appears in the ticket's "Screenshots and recordings" section, read from the task folder while the branch is open (`docs/README.md`, "The task board").
 
@@ -228,7 +228,7 @@ Every asset and every piece of player-facing text is made through the style loop
 3. **Refine:** below 8, the agent that made it rewrites or remakes it from the reason, and the new version is evaluated again. For art, free script fixes come before a paid regeneration.
 4. **Stop:** at 8 or more the version is kept. After 3 refines still below 8, the best-scoring version is kept and the task is flagged for the board's review, with every version.
 
-Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. QA fails an art or text task without it. The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
+Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. `task_status.py` refuses to move an art or text task to QA without it (T-292), so QA judges only the criteria (board, 2026-10-28, T-347's proposals). The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
 
 The script checks are in `game/tools/style_rules.py` (T-290). The loop's tool (T-291) runs the four steps with no one stepping in:
 

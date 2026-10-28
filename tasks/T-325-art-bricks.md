@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-324]
 documents_affected: [docs/visual-style.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/README.md, docs/working-with-the-board.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/docs/weapons/bricks.md, game/docs/weapons/shared.md, game/docs/art/pixellab.md, docs/working-with-the-board.md]
 files_expected_to_change: [game/art/weapons/, art-archive/T-325/, docs/visual-style.md, game/README.md]
 model: opus
 qa_rounds: 0

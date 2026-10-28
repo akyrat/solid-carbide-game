@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: [T-318, T-319]
 documents_affected: [docs/hud-and-menus.md, docs/game-loop-architecture.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/visual-style.md, game/README.md, game/scripts/game/game_flow.gd, game/scripts/ui/level_up_screen.gd]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/visual-style.md, game/docs/game-loop/screen-flow.md, game/docs/hud-and-menus/level-up-screen.md, game/scripts/game/game_flow.gd, game/scripts/ui/level_up_screen.gd]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md]
 model: opus
 qa_rounds: 0
