@@ -10,7 +10,7 @@ const Art := preload("res://scripts/hud/trick_popup_art.gd")
 const ROWS := [
 	["ALT DRIFT! +0.5", "normal"],
 	["LONG DRIFT! +0.05", "small"],
-	["Trending! +120 Likes", "normal"],
+	["TRENDING! +120 SUBS!", "normal"],
 ]
 const BACKGROUNDS := [Color8(30, 30, 38), Color8(196, 190, 176)]
 const GAP := 6

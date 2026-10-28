@@ -120,13 +120,13 @@ func test_a_falling_gift_pack_is_not_pulled() -> void:
 
 
 func test_a_health_drop_inside_the_reach_is_pulled_and_outside_stays() -> void:
-	state.health = 10.0
+	state.health = 2.0
 	var near := _health_drop(Vector2(-2.5, 0))
 	var far := _health_drop(Vector2(-4.0, 0))
 	var far_at: Vector2 = far.position
 	_steps(60)
 	assert_true(near.is_taken(), "picked up")
-	assert_gt(state.health, 10.0, "healed")
+	assert_gt(state.health, 2.0, "healed")
 	assert_eq(far.position, far_at)
 
 

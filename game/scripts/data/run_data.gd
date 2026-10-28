@@ -22,8 +22,23 @@ func max_level() -> int:
 	return int(_data["max_level"])
 
 
+func starting_hearts() -> float:
+	return float(_data["car"]["starting_hearts"])
+
+
+## Same as starting_hearts(): the run still keeps its health as a number, now in hearts (T-333; T-334 renames the run's health).
 func starting_health() -> float:
-	return float(_data["car"]["starting_health"])
+	return starting_hearts()
+
+
+## Seconds the car cannot be hurt after a hit (1 s, T-333).
+func invulnerability_seconds() -> float:
+	return float(_data["car"]["invulnerability_seconds"])
+
+
+## How long each on or off phase of the car's blink lasts during the invulnerability, seconds.
+func blink_interval_seconds() -> float:
+	return float(_data["car"]["blink_interval_seconds"])
 
 
 func drift_xp_per_second() -> float:

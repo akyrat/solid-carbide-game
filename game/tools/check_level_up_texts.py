@@ -20,6 +20,9 @@ DEFAULT_TASK = ROOT / "tasks" / "T-171-text-level-up-cards-for-the.md"
 # Later text tasks that replaced some of T-171's texts; their "New (final)" column wins.
 NEWER_TASKS = [ROOT / "tasks" / "T-301-text-the-level-up-screen-its.md"]
 
+# T-331: "subs" replaces "likes" in player-facing text; one card text named likes.
+LATER_TEXTS = {"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for subs."}
+
 ROW = re.compile(r"^\|\s*([a-z_]+(?:\.tier\d+)?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$")
 ENTRY = re.compile(r'^\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)",?\s*$')
 
@@ -87,7 +90,7 @@ def expected_rows(task: Path = DEFAULT_TASK, newer_tasks=NEWER_TASKS) -> dict:
     rows = table_rows(task.read_text(encoding="utf-8"))
     for newer in newer_tasks:
         rows = apply_newer(rows, newer_texts(newer.read_text(encoding="utf-8")))
-    return rows
+    return apply_newer(rows, LATER_TEXTS)
 
 
 def main(argv) -> int:

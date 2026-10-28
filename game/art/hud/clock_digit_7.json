@@ -1,0 +1,33 @@
+{
+ "task": "T-339",
+ "what": "Frame 7 of game/art/hud/clock_digits.png, as its own PNG.",
+ "size": [
+  16,
+  26
+ ],
+ "shown_at_scale": 2,
+ "frame_of": "game/art/hud/clock_digits.png",
+ "frame": 7,
+ "made_by": "game/tools/build_hud_livestream_art.py split (a crop of the kept sheet, no new pixels)",
+ "style_loop": {
+  "brief": "art-archive/T-339/briefs/clock_digits.md",
+  "kept": {
+   "version": 1,
+   "score": 8,
+   "file": "art-archive/T-339/style-loop/v1.png",
+   "round_scores": [
+    8
+   ]
+  },
+  "versions": "art-archive/T-339/style-loop/",
+  "review": "tasks/T-339-art-the-livestream-hud.md, Style review"
+ },
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/hud-and-menus.md (Decisions, The HUD looks like a livestream)",
+  "docs/extended-narrative.md",
+  "the board's HUD layout page (sizes, at 1152 x 648)",
+  "game/art/hud/likes_heart.png",
+  "game/scripts/hud/likes_fire.gd (PALETTE)"
+ ]
+}

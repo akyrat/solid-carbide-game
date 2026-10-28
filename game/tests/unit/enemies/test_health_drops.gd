@@ -30,10 +30,11 @@ func _car_units() -> Vector2:
 
 func test_data_has_the_numbers() -> void:
 	var d := data.health_drops()
-	assert_eq(d["drop_chance"], 0.3)
+	assert_eq(d["drop_chance"], 0.15)
 	assert_eq(data.coins()["drop_chance"], 0.6, "the coins' rate is unchanged")
-	assert_almost_eq(float(d["drop_chance"]) * 2.0, float(data.coins()["drop_chance"]), 0.0001, "half the coins' rate")
-	assert_eq(d["restore_fraction"], 0.3)
+	assert_almost_eq(float(d["drop_chance"]) * 4.0, float(data.coins()["drop_chance"]), 0.0001, "a quarter of the coins' rate")
+	assert_eq(d["restore_hearts"], 1)
+	assert_false(d.has("restore_fraction"), "the 30% heal is gone")
 
 
 func test_drops_at_about_the_data_chance_where_it_died() -> void:
@@ -54,7 +55,7 @@ func test_drops_at_about_the_data_chance_where_it_died() -> void:
 		assert_lt(off.length(), 0.001, "dropped where the minion died")
 
 
-func test_health_drops_are_about_half_the_coins_over_many_kills() -> void:
+func test_health_drops_are_about_a_quarter_of_the_coins_over_many_kills() -> void:
 	var kills := 1000
 	var coin_drops := 0
 	var health_drops := 0
@@ -67,19 +68,19 @@ func test_health_drops_are_about_half_the_coins_over_many_kills() -> void:
 		coin_drops += 1 if spawner.coins.size() > c0 else 0
 		health_drops += 1 if spawner.health_pickups.size() > h0 else 0
 	gut.p("coin drops %d, health drops %d of %d" % [coin_drops, health_drops, kills])
-	assert_almost_eq(float(health_drops) / maxf(1.0, float(coin_drops)), 0.5, 0.12)
+	assert_almost_eq(float(health_drops) / maxf(1.0, float(coin_drops)), 0.25, 0.08)
 
 
 func test_the_chance_is_read_from_the_data() -> void:
-	spawner._health_drops = {"drop_chance": 0.0, "restore_fraction": 0.3}
+	spawner._health_drops = {"drop_chance": 0.0, "restore_hearts": 1}
 	for i in 50:
 		spawner.spawn_minion_at(_car_units() + Vector2(6.0, 0.0)).take_damage(1000.0)
 	assert_eq(spawner.health_pickups.size(), 0, "chance 0: none")
-	spawner._health_drops = {"drop_chance": 1.0, "restore_fraction": 0.5}
+	spawner._health_drops = {"drop_chance": 1.0, "restore_hearts": 2}
 	for i in 5:
 		spawner.spawn_minion_at(_car_units() + Vector2(6.0, 0.0)).take_damage(1000.0)
 	assert_eq(spawner.health_pickups.size(), 5, "chance 1: always")
-	assert_eq(spawner.health_pickups[0].restore_fraction, 0.5, "the fraction from the data too")
+	assert_eq(spawner.health_pickups[0].restore_hearts, 2.0, "the hearts from the data too")
 
 
 func test_drop_sits_at_the_height_it_died_at() -> void:
@@ -90,13 +91,13 @@ func test_drop_sits_at_the_height_it_died_at() -> void:
 	assert_eq(p.sprite.position, expected, "drawn at the ground's height")
 
 
-func test_healing_is_30_percent_of_max_and_capped() -> void:
+func test_healing_is_one_heart_and_capped() -> void:
 	var st: Node = run.state
-	st.health = 20.0
+	st.health = 2.0
 	var pickup: Node = spawner.spawn_health_pickup_at(_car_units() + Vector2(20.0, 0.0))
-	var want: float = 0.3 * st.max_health
+	var want: float = 1.0
 	pickup.collect()
-	assert_almost_eq(st.health, 20.0 + want, 0.001, "30% of the maximum")
+	assert_almost_eq(st.health, 2.0 + want, 0.001, "1 heart")
 	st.health = st.max_health - 1.0
 	spawner.spawn_health_pickup_at(_car_units() + Vector2(20.0, 0.0)).collect()
 	assert_eq(st.health, st.max_health, "never above the maximum")
@@ -106,7 +107,7 @@ func test_healing_is_30_percent_of_max_and_capped() -> void:
 
 func test_collects_once_and_does_not_cut_the_combo() -> void:
 	var st: Node = run.state
-	st.health = 10.0
+	st.health = 2.0
 	var pickup: Node = spawner.spawn_health_pickup_at(_car_units() + Vector2(20.0, 0.0))
 	assert_eq(pickup.collision_layer, 8, "pickups layer")
 	assert_eq(pickup.collision_mask, 2, "notices only the car")
@@ -118,7 +119,7 @@ func test_collects_once_and_does_not_cut_the_combo() -> void:
 
 func test_driving_over_it_heals() -> void:
 	run.car.use_keyboard = false
-	run.state.health = 10.0
+	run.state.health = 2.0
 	var p: Node = spawner.spawn_health_pickup_at(_car_units() + Vector2(0.0, -5.0))
 	var sprite: Node2D = p.sprite
 	run.car.scripted_input = [true, false, 0.0]
@@ -127,7 +128,7 @@ func test_driving_over_it_heals() -> void:
 		await wait_physics_frames(1)
 		run.state.health = minf(run.state.health, run.state.health)
 		frames += 1
-	assert_gt(run.state.health, 10.0, "health went up")
+	assert_gt(run.state.health, 2.0, "health went up")
 	await wait_process_frames(2)
 	assert_false(is_instance_valid(p), "the pickup is gone")
 	assert_false(is_instance_valid(sprite), "and its drawing")

@@ -23,6 +23,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/art/pixellab.md](docs/art/pixellab.md): Generating art with PixelLab. The PixelLab client and its rules.
 - [docs/art/car-sprites.md](docs/art/car-sprites.md): Car sprites. The final car, 32 directions, the final sheet, placeholder sheets.
 - [docs/art/ground-and-props.md](docs/art/ground-and-props.md): Ground and props. The first road tile, the map's ground, the boulders.
+- [docs/art/bolder-enemy-outlines.md](docs/art/bolder-enemy-outlines.md): Bolder enemy outlines. The thicker outline on minion and kaiju sheets (T-340).
 
 ## hud-and-menus/
 
@@ -31,6 +32,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/hud-and-menus/pause-screen.md](docs/hud-and-menus/pause-screen.md): Pause screen. The pause screen.
 - [docs/hud-and-menus/camera.md](docs/hud-and-menus/camera.md): Camera options. The two camera options.
 - [docs/hud-and-menus/hud.md](docs/hud-and-menus/hud.md): HUD. The HUD in the run, the likes bar, the airtime and drift counters.
+- [docs/hud-and-menus/livestream-hud-art.md](docs/hud-and-menus/livestream-hud-art.md): Livestream HUD art. The clock, viewers, sub-goal and heart pieces in art/hud/ and the script that builds them (T-339).
 - [docs/hud-and-menus/level-up-screen.md](docs/hud-and-menus/level-up-screen.md): Level-up screen. The level-up screen, its art and animation.
 
 ## garage/

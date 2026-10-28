@@ -1,0 +1,44 @@
+{
+  "file": "subs_icon_c1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "tiny pixel art icon of a subscriber: person head and shoulders in pale grey with shading, small round hot pink badge with white plus at lower right, thick dark outline, small and centred, empty transparent space around",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA/klEQVR4nGNgGAWjYBQMMGAkRxMHB/9/GPvHj49kmUE24ODg///mww84RnYMOYCJVMufvHiJIgbiU+IIJkosB4EjJy4xrNiwm2xHMJGjCdlySgHTQFpOkgNAqV1GQhyr5REBrmTnBiZSFCM7ghqWgwBVywGalw8cHPz/YbihYx6cDcP/e47AMbG5gpGcbIgtDXx3mAjhbI9nYPBcCGZyHsgnGBJMpFqODlAsRwMgcUIhwUKJ5SgA5HN0NjQkKHIAMeDogxsMDJqVYLb19XaGo1A2MYCJUt+DimGXB9OxyoHEqZIGCAFkR8B8T4zlIEBQAbmVDN3bCaNgFIyCIQsAdWmU82pXvv8AAAAASUVORK5CYII="
+    },
+    "init_image_strength": 400
+  },
+  "prompt": "tiny pixel art icon of a subscriber: person head and shoulders in pale grey with shading, small round hot pink badge with white plus at lower right, thick dark outline, small and centred, empty transparent space around",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-27T23:15:00+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/hud-and-menus.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-339",
+  "job_status": null,
+  "notes": "subs icon candidate 1, init from script version",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -235,7 +235,7 @@ func test_contact_damages_the_car_and_knocks_it_back() -> void:
 		if k.contact_step(DT, run.car, run.state):
 			hits += 1
 	var push: Vector2 = run.car.pending_knockback()
-	assert_eq(hits, int(seconds / st["contact_damage_interval"]), "one hit per interval, the first at once")
+	assert_eq(hits, int(seconds / k.contact_damage_interval), "one hit per interval, the first at once")
 	assert_almost_eq(health_before - run.state.health, st["contact_damage"] * hits, 0.0001, "the data's damage")
 	assert_almost_eq(push.length(), st["knockback"] * hits, 0.001, "the data's knockback each hit")
 	assert_almost_eq(push.normalized().dot(-offset.normalized()), 1.0, 0.001, "away from the kaiju")

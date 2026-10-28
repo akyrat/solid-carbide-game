@@ -14,7 +14,7 @@ func test_score_signal_shows_text_with_likes_near_car_then_goes() -> void:
 	var shown: Array = tp.popups()
 	assert_eq(shown.size(), before + 1)
 	var pop = shown.back()
-	assert_eq(pop.text, "Trending! +25 Likes")
+	assert_eq(pop.text, "TRENDING! +25 SUBS!")
 	assert_lt(pop.position.distance_to(run.car_sprite.position), 80.0, "near the car")
 	var start: Vector2 = pop.position
 	pop.advance(0.5)
@@ -31,5 +31,5 @@ func test_completed_challenge_in_the_run_shows_the_popup() -> void:
 	run.map.challenge_completed.emit(str(run.map.layout.challenges[0].id))
 	var texts: Array = run.trick_popups.popups().map(func(x) -> String: return x.text)
 	assert_eq(texts.size(), 1)
-	assert_true(texts[0].begins_with("Trending! +"), texts[0])
-	assert_true(texts[0].ends_with(" Likes"))
+	assert_true(texts[0].begins_with("TRENDING! +"), texts[0])
+	assert_true(texts[0].ends_with(" SUBS!"))

@@ -1,0 +1,12 @@
+{
+  "_comment": "T-335, the HUD's numbers. The run timer's clock (HUD and menus, Decisions, 'The HUD looks like a livestream'): its digits are green above the first switch point, then yellow, orange and red as the time nears 0:00. Proposals from the board's layout page; the board judges them in playtests. above_seconds: the colour holds while the time left is strictly above this; the last step (red) has no limit. layout: game pixels at 1152 x 648 (the board's saved page), anchored to the bottom-left corner.",
+  "timer_clock": {
+    "layout": { "x": 16, "y": 560, "w": 200, "h": 72, "reference_w": 1152, "reference_h": 648 },
+    "steps": [
+      { "name": "green", "above_seconds": 180.0, "color": "#38f26b" },
+      { "name": "yellow", "above_seconds": 90.0, "color": "#ffe23a" },
+      { "name": "orange", "above_seconds": 30.0, "color": "#ff8a1f" },
+      { "name": "red", "above_seconds": -1.0, "color": "#ff2a2a" }
+    ]
+  }
+}
