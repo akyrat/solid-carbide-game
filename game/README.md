@@ -23,6 +23,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/art/pixellab.md](docs/art/pixellab.md): Generating art with PixelLab. The PixelLab client and its rules.
 - [docs/art/car-sprites.md](docs/art/car-sprites.md): Car sprites. The final car, 32 directions, the final sheet, placeholder sheets.
 - [docs/art/ground-and-props.md](docs/art/ground-and-props.md): Ground and props. The first road tile, the map's ground, the boulders.
+- [docs/art/bolder-enemy-outlines.md](docs/art/bolder-enemy-outlines.md): Bolder enemy outlines. The thicker outline on minion and kaiju sheets (T-340).
 
 ## hud-and-menus/
 

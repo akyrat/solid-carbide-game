@@ -1,0 +1,3 @@
+# Bolder enemy outlines
+
+**Bolder enemy outlines (T-340):** the minion walk and fall sheets (`art/minion/`) and the kaiju sheets (`art/kaiju/`) have a one-pixel-thicker dark outline. `python game/tools/build_bolder_outlines.py build` (rerunnable; reads `art-archive/T-340/originals/`, grows the outline outward in each sheet's own outline colour, then runs `check`: frame sizes, alpha 0/255, colour limits) and `check`; `strip`/`apply` are the style loop's steps; `build --rim R,G,B` adds a lighter rim ring. Same names, sizes and frame counts, so no scene or script changed. 0 PixelLab generations. Test: `game/tools/test_build_bolder_outlines.py`.
