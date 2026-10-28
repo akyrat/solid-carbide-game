@@ -702,6 +702,163 @@ class ReadOnlyCommandsAgain(Base):
                 self.assertFalse(ok(code))
 
 
+class OnlyRealTicketWrites(Base):
+    """T-354: the seven refusals of 2026-10-28 that wrote no ticket (each now allowed, with the refusal it got
+    before), and the real writes of a ticket's status, lead or qa_rounds that stay refused."""
+
+    REPO = Path(__file__).resolve().parent.parent
+    cmd = MoreHarmlessCommands.cmd
+    reason = MoreHarmlessCommands.reason
+    assert_refused = MoreHarmlessCommands.assert_refused
+
+    def assert_now_allowed(self, commands, refused_before, cwd=None):
+        for c in commands:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, cwd), "allow",
+                                 f"refused before T-354 because of {refused_before}; now: {self.reason(c, cwd)}")
+
+    def test_allowed_1_merge_batch_with_a_task_and_lead_in_its_arguments(self):
+        self.assert_now_allowed([
+            "python tools/merge_batch.py T-350 T-351 --note T-350=\"the board's go\" --title T-350=\"Token spend: "
+            "the after report\" --entry T-350=\"The after report, written by the Project Lead from "
+            "tasks/T-350-token-spend-the-after-report.md\" --docs T-350=docs/token-spend/after-2026-10-28-early.md",
+            # the other tools that change tickets only through task_status.py
+            "python tools/new_ticket.py art-archive/T-354/spec.json  # lead Tokens, tasks/T-354",
+            "python C:/solid-carbide-game/tools/qa_check.py T-354 --root C:/solid-carbide-worktrees/T-354 "
+            "--test-cmd \"python -m unittest discover -s tools -p 'test_*.py'\"  # status, tasks/",
+        ], "`tools/merge_batch.py`: its arguments name a task file (`T-350=...tasks/T-350-...md`) and hold a "
+           "`Lead` line or field name", str(self.REPO))
+
+    def test_allowed_2_inline_python_editing_a_tools_file_that_mentions_tasks(self):
+        self.assert_now_allowed([
+            "cd C:/solid-carbide-worktrees/T-347 && python - <<'EOF'\nfrom pathlib import Path\n"
+            "p = Path('tools/merge_batch.py')\nt = p.read_text(encoding='utf-8')\n"
+            "t = t.replace('root / \"tasks\"', 'root / TASKS')\np.write_text(t, encoding='utf-8')\n"
+            "print('merge_batch.py: the status step reads tasks/ through TASKS')\nEOF",
+            "python -c \"import os; p = os.path.join('tools', 'merge_batch.py'); t = open(p, encoding='utf-8').read();"
+            " open(p, 'w', encoding='utf-8').write(t.replace('tasks/', 'tasks' + '/'))\"  # status",
+        ], "inline code that names task files (`tasks`)", str(self.REPO))
+
+    def test_allowed_3_inline_python_or_sed_editing_the_agent_files(self):
+        self.assert_now_allowed([
+            "python - <<'EOF'\nfrom pathlib import Path\nfor p in sorted(Path('.claude/agents').glob('*.md')):\n"
+            "    t = p.read_text(encoding='utf-8')\n"
+            "    t = t.replace('Report to the Project Lead.', 'Hand back one short line (tasks/README.md).')\n"
+            "    with open(p, 'w', encoding='utf-8') as f:\n        f.write(t)\nEOF",
+            "sed -i 's/Report back to the Project Lead when the work is done/Hand back one short line "
+            "(tasks\\/README.md, \"Hand-back\")/' .claude/agents/*.md",
+            "sed -i 's/each time QA writes the status/when QA writes its verdict (tasks\\/README.md)/' "
+            ".claude/agents/qa-integration.md .claude/agents/ui.md",
+        ], "inline code that names task files (`tasks`), and for sed: a sed script that writes a file or runs a "
+           "command (the words `each`, `when` and `work` were read as sed's e and w commands) and `.claude/agents/"
+           "*.md`, a glob that could be a ticket", str(self.REPO))
+
+    def test_allowed_4_a_read_only_python_c_that_opens_a_ticket(self):
+        self.assert_now_allowed([
+            "python -c \"t = open('tasks/T-347-qa-checks-the-criteria-and-the-tests.md', encoding='utf-8').read(); "
+            "i = t.find('## Acceptance criteria'); print(t[i:i + 2500].replace('\\n\\n', '\\n'))\"  # status",
+        ], "inline code that names task files (`tasks`): a backslash inside double quotes made the code unreadable",
+            str(self.REPO))
+
+    def test_allowed_5_a_read_then_date(self):
+        self.assert_now_allowed([
+            "grep -n '^status:' tasks/T-35*.md; date +%H:%M",
+            "grep -h '^lead:' tasks/T-*.md | sort | uniq -c && date -u +%Y-%m-%dT%H:%MZ",
+        ], "`date`: a command the guard can't tell won't write a ticket", str(self.root))
+
+    def test_allowed_6_a_read_only_loop_that_skips_finished_tickets_with_case(self):
+        self.assert_now_allowed([
+            "for f in tasks/T-*.md; do s=$(grep -m1 '^status:' \"$f\" | cut -d' ' -f2); "
+            "case $s in done|cancelled) continue;; esac; echo \"$f $s\"; done",
+            "for f in tasks/T-*.md; do\n  s=$(sed -n 's/^status: //p' \"$f\")\n  case $s in\n"
+            "    done|cancelled) continue ;;\n    *) echo \"$f: $s\" ;;\n  esac\ndone",
+        ], "`case`: a command the guard can't tell won't write a ticket", str(self.root))
+
+    def test_allowed_7_the_shared_master_commit_guard_with_braces(self):
+        self.assert_now_allowed([
+            "git rev-parse -q --verify MERGE_HEAD || { git add docs/timeline.md "
+            "tasks/T-353-open-tickets-list-the-area-docs.md && git commit -m \"T-353: open tickets list the area "
+            "files (status done, lead Tokens)\"; }",
+        ], "`{`: a command the guard can't tell won't write a ticket", str(self.root))
+
+    def test_still_refused_real_writes(self):
+        notes = self.root / "notes"
+        notes.mkdir()
+        (notes / "T-1-copy.md").write_text("status: open\n", encoding="utf-8")
+        self.assert_refused([
+            # cp or mv onto a ticket
+            "cp /tmp/x.md tasks/T-1-x.md  # status",
+            "mv notes.md tasks/T-1-x.md  # lead",
+            # a redirection into one
+            "echo 'status: done' > tasks/T-1-x.md",
+            "printf 'lead: Tokens\\n' >> tasks/T-1-x.md",
+            "grep x tasks/T-1-x.md; date +%H:%M > tasks/T-1-x.md  # status",
+            # sed -i on one, or sed writing one
+            "sed -i 's/^status: open/status: done/' tasks/T-1-x.md",
+            "sed -n 's/when/then/w tasks/T-1-x.md' docs/x.md  # status",
+            "sed -i 's/a/b/' notes/*.md  # status",   # a glob over a folder that holds a T-nnn file
+            # an inline script that writes a tasks/T-*.md path
+            "python - <<'EOF'\nfrom pathlib import Path\np = Path('tasks/T-1-x.md')\n"
+            "p.write_text(p.read_text().replace('status: open', 'status: done'))\nEOF",
+            "python - <<'EOF'\nfrom pathlib import Path\nfor p in Path('tasks').glob('T-*.md'):\n"
+            "    p.write_text(p.read_text().replace('lead: ', 'lead: Tokens'))\nEOF",
+            "python -c \"with open('tasks/T-1-x.md', 'a') as f: f.write('qa_rounds: 1')\"",
+            "python -c \"import os; p = os.path.join('tasks', 'T-1-x.md'); open(p, 'w').write('status: done')\"",
+            "python -c \"p = 'docs/x.md'; p = 'tasks/T-1-x.md'; open(p, 'w').write('status: done')\"",
+            "python -c \"import sys; open(sys.argv[1], 'w').write('status: done')\" tasks/T-1-x.md",
+            # the ticket tools don't excuse what they are handed to run or write
+            "python tools/merge_batch.py T-1 --log tasks/T-1-x.md  # status",
+            "python tools/qa_check.py T-1 --test-cmd \"sed -i 's/status: open/status: done/' tasks/T-1-x.md\"",
+            "python tools/merge_batch.py T-1 > tasks/T-1-x.md  # status",
+            # braces and case patterns don't hide a write
+            "git rev-parse -q --verify MERGE_HEAD || { sed -i 's/status: open/status: done/' tasks/T-1-x.md; }",
+            "case $s in done) sed -i 's/status: open/status: done/' tasks/T-1-x.md;; esac",
+            "for f in tasks/T-*.md; do case $f in *) echo 'status: done' > $f;; esac; done",
+            "{ echo 'status: done'; } > tasks/T-1-x.md",
+            "case x in a) rm tasks/T-1-x.md;; esac  # status",
+            "sed 's/x/y/;w tasks/T-1-x.md' docs/a.md  # status",
+            "cd tasks && python -c \"open('docs/x.md', 'w').write('status: done')\"",
+            "python -c \"from pathlib import Path; [p.write_text('status: done') for p in Path('.').rglob('*.md')]\"",
+            "python -c \"from pathlib import Path; Path('tasks', 'T-1-x.md').write_text('status: done')\"",
+            "python -c \"from pathlib import Path; (Path('tasks') / 'T-1-x.md').write_text('status: done')\"",
+            "python -c \"import glob; [open(f, 'w') for f in glob.glob('task*/T-1*')]\"  # status",
+            "python -c \"print('status: done', file=open('tasks/T-1-x.md', 'w'))\"",
+        ], str(self.root))
+        # what the same checks let through: writes that can't reach a ticket, and a sed that only prints
+        self.assert_now_allowed([
+            "sed -n '/when/p;/each/p' tasks/T-1-x.md",
+            "python -c \"open('docs/x.md', 'w').write('status: done')\"  # tasks",
+            "python -c \"from pathlib import Path; [p.write_text(p.read_text() + 'status') for p in "
+            "Path('docs').glob('*.md')]\"  # tasks",
+        ], "the sed `w`/`e` word check, or inline code that names task files", str(self.REPO))
+
+    def test_still_refused_an_edit_of_a_guarded_line_outside_the_status_script(self):
+        path = self.put("T-001", status="in-progress", lead="")
+        for old, new in [("status: in-progress", "status: done"), ("qa_rounds: 0", "qa_rounds: 1"),
+                         ("lead:\n", "lead: Tokens\n")]:
+            with self.subTest(old=old):
+                self.assertEqual(decide(gate.pre_edit, "Edit", {"file_path": str(path), "old_string": old,
+                                                                "new_string": new}), "deny")
+
+    def test_the_parts_on_their_own(self):
+        effects = gate.sed_script_effects
+        self.assertEqual(effects("s/when we/each time/g"), ([], False))
+        self.assertEqual(effects("/when/p"), ([], False))
+        self.assertEqual(effects("s/a/b/w out.txt"), (["out.txt"], False))
+        self.assertEqual(effects("1,3d;w log.txt"), (["log.txt"], False))
+        self.assertEqual(effects("s/a/b/e"), ([], True))
+        self.assertEqual(effects("$a\\\nwrite this\n"), ([], False))
+        self.assertIsNone(effects("s/[/]/x/"))     # a bracket: falls back on the old word check
+        targets = gate.python_write_targets
+        self.assertEqual(targets("from pathlib import Path\nPath('docs/a.md').write_text('x')"), ["docs/a.md"])
+        self.assertEqual(targets("print(open('a').read())"), [])
+        for code in ["import sys\nopen(sys.argv[1], 'w')", "m = 'w'\nopen('a', m)", "f = open\nf('a', 'w')",
+                     "import shutil\nshutil.copy('a', 'b')", "x.write('a')", "from pathlib import Path\n"
+                     "for p in Path('d').glob('*.md'):\n    p = p.parent\n    p.write_text('x')"]:
+            with self.subTest(code=code):
+                self.assertIsNone(targets(code))
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 

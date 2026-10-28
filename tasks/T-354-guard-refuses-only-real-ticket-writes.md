@@ -1,7 +1,7 @@
 ---
 id: T-354
 title: Token spend: the guard refuses only commands that really write a ticket
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -64,6 +64,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Open → In progress
+
+Started: the agent teaches the guard to refuse only real writes of a ticket's status, lead or qa_rounds, with the seven real refusals from 2026-10-28 as tests.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -71,3 +75,43 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**What changed** (`.claude/hooks/board_gate.py`): the guard now judges what a command writes, not what its text mentions.
+- Ticket tools: `merge_batch.py`, `new_ticket.py` and `qa_check.py` (any path ending in `tools/<name>`) pass whatever their argument text says (`TICKET_TOOLS`, `ticket_tool_reason`). `task_status.py` already passed. Each `--test-cmd` is still judged as a command of its own, a `--log` into a possible ticket is refused, and a redirection of their output is checked as before.
+- Inline Python: new `python_write_targets` reads every write (`open(..., '<w/a/x/+>')`, `.open('w')`, `write_text`, `write_bytes`, `.write` on a file opened that way or on stdout). Each target must be a literal path: a string, `Path(...)`, `a / b`, `os.path.join`, a name set once to one of those, or a loop name over `.glob`, `.rglob`, `glob.glob` or a literal list. When no target can be a ticket the code passes, even if it mentions `tasks` or `lead`. Anything else that could write, move, delete or run something gives None, and the code is refused as before.
+- sed: new `sed_script_effects` reads a script command by command, so words like `when`, `each` and `work` in a pattern are no longer taken for the `w`/`e` commands. A `w` into a file that can't be a ticket passes, an `e` is refused, and a script it can't read (a `[` in a regex, an unknown command) falls back on the old word check.
+- Globs: `.claude/agents/*.md`-style globs of `.md` files pass when their folder is written out (no glob, no `..`, not a tasks folder), exists, and holds no `T-nnn*.md` file that matches.
+- Shell: `date`, `basename`, `dirname`, `realpath`, `readlink`, `stat`, `du`, `diff`, `cmp`, `seq`, `which`, `continue`, `break` and `:` count as read-only. `{` and a lone `}` of a command group are read through. So are a `case` head and its patterns (`done|cancelled) continue`). Inline `python -c "..."` with a backslash the shell leaves alone (`'\n'`) is now read exactly.
+
+**Tests** (`tools/test_guard.py`, new class `OnlyRealTicketWrites`): one test per real refusal, each naming the refusal text it got before (`test_allowed_1` to `test_allowed_7`). Run against master's copy of the hook (in a scratch copy), all seven were refused. They also cover the other two ticket tools and the sed and Python variants. `test_still_refused_real_writes` checks that these stay refused:
+- `cp` or `mv` onto a ticket
+- `>` and `>>` into a ticket
+- `sed -i`, and a sed `w` into a ticket
+- a glob over a folder that holds a T-nnn file
+- inline Python writing `tasks/T-*.md` in eight spellings
+- the ticket tools with `--log`, `--test-cmd` or `>` aimed at a ticket
+- braces and case patterns that hide a write
+
+`test_still_refused_an_edit_of_a_guarded_line_outside_the_status_script` covers the Edit tool changing status, qa_rounds and lead. `test_the_parts_on_their_own` unit-tests the sed reader and the Python target reader. Every guard test that existed before is unchanged and passes.
+
+**Reproductions:** the exact text of refusals 2 to 6 is not in the ticket. I wrote faithful reconstructions from its descriptions. For refusal 4 (the read-only `python -c` of T-347) I assumed the cause was a `'\n'` inside double quotes, which made the old guard give up on the code. I tried to pull the exact commands from the session transcripts with a scratch script, but the live guard refused that command (it couldn't read a script the same command was creating), so I didn't retry it. A later probe run (`python -` with a here-document naming `tasks`) was refused for the same kind of reason; I turned those probes into tests instead.
+
+**Cases that stay refused, and why:**
+- Writes into a ticket by `cp`, `mv`, `rm`, `tee`, `Set-Content`, `>`, a `>>` of a header line, a `sed -i` that could change a header line, or inline Python or a script that writes a `tasks/T-*.md` path or a glob that could match one: these really can change `status`, `lead` or `qa_rounds` outside the status script.
+- A computed file name (`$f`, backticks, a substitution that names task files): the guard can't know the target.
+- Python whose write target isn't a literal path (`open(sys.argv[1], 'w')`, a name set twice, `shutil`, `subprocess`, `exec`, `json.dump`): the guard can't know what it writes.
+- A sed `e` (it runs a command), and sed scripts it can't read.
+- Subshells `( ... )`: not parsed, and the `cd` checks don't see a `(cd tasks`.
+- Any writing command run inside a tasks folder.
+- Unknown commands.
+
+In doubt it still refuses: a false refusal costs one call, an unrecorded status change costs the record.
+
+**Docs:** `tasks/README.md`, "Changing a task's status", has a new "What the ticket guard refuses and allows, in short (T-354)" block. The sed sentence in the long paragraph is updated for `w` into non-ticket files.
+
+**Tests run** (foreground, from the worktree):
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 643 tests, OK (1 skipped)
+- `python -m unittest discover -s tools -p "test_*.py"`: 556 tests, OK
+- `bash game/tools/run_tests.sh`: 1757/1757 passing, TESTS PASSED
+
+Nothing to picture: tooling only.
