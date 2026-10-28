@@ -72,6 +72,10 @@ Started: the agent teaches the guard to refuse only real writes of a ticket's st
 
 In QA: the guard now refuses only real writes of a ticket's status, lead or qa_rounds; the seven refusals are tests. QA by a qa-integration agent.
 
+### 2026-10-28, Done
+
+Merged: the guard now refuses only real ticket writes. The cp/mv overwrite gap moves to T-355.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
