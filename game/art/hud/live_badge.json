@@ -1,0 +1,39 @@
+{
+ "task": "T-339",
+ "what": "The red LIVE badge: a white dot and LIVE in bold white pixel letters on a red plate.",
+ "size": [
+  34,
+  13
+ ],
+ "frames": 1,
+ "frame_size": [
+  34,
+  13
+ ],
+ "shown_at_scale": 2,
+ "made_by": "game/tools/build_hud_livestream_art.py (script); the style loop kept the script version",
+ "style_loop": {
+  "brief": "art-archive/T-339/briefs/live_badge.md",
+  "kept": {
+   "version": 2,
+   "score": 8,
+   "file": "art-archive/T-339/style-loop/v2.png",
+   "round_scores": [
+    7,
+    8
+   ]
+  },
+  "versions": "art-archive/T-339/style-loop/",
+  "review": "tasks/T-339-art-the-livestream-hud.md, Style review"
+ },
+ "pixellab_generations": 0,
+ "pixellab_candidates_not_kept": [],
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/hud-and-menus.md (Decisions, The HUD looks like a livestream)",
+  "docs/extended-narrative.md",
+  "the board's HUD layout page (sizes, at 1152 x 648)",
+  "game/art/hud/likes_heart.png",
+  "game/scripts/hud/likes_fire.gd (PALETTE)"
+ ]
+}

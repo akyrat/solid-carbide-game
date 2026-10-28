@@ -4,7 +4,7 @@ title: The gift pack helicopter 30% bigger on screen
 status: open
 from: project-lead
 to: game-loop
-lead:
+lead: Tokens
 epic: game-loop
 milestone: mvp
 goal:
@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: []
 documents_affected: [docs/game-loop-architecture.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/README.md, game/data/gift_pack.json, game/scripts/data/gift_pack_data.gd, game/scripts/run/gift_helicopter.gd, game/scripts/run/gift_drops.gd, game/scenes/run/gift_helicopter.tscn]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/gift-pack-and-pickups.md, game/data/gift_pack.json, game/scripts/data/gift_pack_data.gd, game/scripts/run/gift_helicopter.gd, game/scripts/run/gift_drops.gd, game/scenes/run/gift_helicopter.tscn]
 files_expected_to_change: [game/data/gift_pack.json, game/scripts/data/gift_pack_data.gd, game/scripts/run/gift_helicopter.gd, game/scenes/run/gift_helicopter.tscn, game/tests/unit/, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
 qa_rounds: 0

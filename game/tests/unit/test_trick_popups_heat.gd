@@ -17,7 +17,7 @@ const CASES := [
 	["FULL 360! +0.25", "normal"],
 	["ALT DRIFT! +0.5", "normal"],
 	["ALT DRIFT!", "normal"],
-	["Trending! +120 Likes", "normal"],
+	["TRENDING! +120 SUBS!", "normal"],
 ]
 
 

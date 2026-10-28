@@ -8,7 +8,8 @@ The goal's build is the branch playtest/<goal id>, made from master as a worktre
   3. its agent, headless: `claude -p --agent <to> --model <model>` in the ticket's folder;
   4. `in-qa`, and the QA/Integration Agent, headless on sonnet, marks every criterion on the ticket;
   5. passed: `needs-playtest` or `done`, then merged into the goal's build (Godot's line-ending-only
-     .import noise reverted). First fail: back to `in-progress` on opus, the agent and QA again.
+     .import noise reverted). First fail: back to `in-progress`, on opus if QA tagged it a code failure and on the ticket's own model if it
+     tagged every failure paperwork (T-347), the agent and QA again.
      Second fail: `flagged-for-review`.
 Every headless session first takes the name Goal-<goal id> on the task board, under a session id the
 runner chooses, so it hears only the goal's own tickets. PixelLab generations are counted from the new
@@ -31,7 +32,18 @@ from goal_agent.claude_call import Pause
 
 ART_LOG = "game/art/pixellab-generation-log.jsonl"
 QA_MODEL = "sonnet"            # QA always runs on sonnet (tasks/README.md, "Models")
-RETRY_MODEL = "opus"           # a ticket that failed QA once
+RETRY_MODEL = "opus"           # a ticket whose QA failure was in code (T-347)
+PAPERWORK_TAG = re.compile(r"\(QA:\s*fail\s*[:,;-]?\s*paperwork\b", re.I)
+
+
+def retry_model(failed, current):
+    """The model for a ticket's second round (T-347). A failure on paperwork (a missing record, note, mark or
+    screenshot, work that is otherwise fine) stays on the ticket's own model; a failure in code, or any failure QA
+    didn't tag, goes to RETRY_MODEL. QA tags it: its prompt asks for `(QA: fail: paperwork - ...)` or
+    `(QA: fail: code - ...)`. Every failed criterion must be tagged paperwork for the ticket to keep its model."""
+    if failed and all(PAPERWORK_TAG.search(l) for l in failed):
+        return current or "sonnet"
+    return RETRY_MODEL
 PERMISSION_MODE = "acceptEdits"   # a headless agent may edit files in its folder; Bash still follows the settings
 AGENT_TIMEOUT = 4 * 3600       # seconds for one headless agent or QA session
 PASSED = ("needs-playtest", "done")
@@ -283,6 +295,11 @@ SCREENSHOTS_RULE = ("End with screenshots, as tasks/README.md, \"Screenshots\" s
                     "the data by a script when nothing is on screen yet (a map of a layout, a side view of a motion, a "
                     "plot of a curve); none only for tooling, docs or text-only work, saying so in one line.")
 
+HAND_BACK_RULE = ("Handing back (tasks/README.md, \"Handing back\"): put your full report in the ticket's result notes; "
+                  "your answer's summary is one short line of about 300 characters at most. Run tests in the "
+                  "foreground and leave no background jobs. Commit the ticket, result notes and QA results "
+                  "included, before you answer.")
+
 STYLE_LOOP_RULE = ("Every asset and every piece of player-facing text is made through the style loop (tasks/README.md, "
                    "\"The style loop\"): python tools/style_loop/run.py art|text --task <ticket id> --brief <file> ...; "
                    "it writes the ticket's \"## Style review\". PixelLab generates only inside a loop run, and an art "
@@ -303,6 +320,7 @@ It is part of goal {b.gid}, which the goal runner builds without the board's rev
 - Write tests for your code and run them. Write your result notes in the task file's "## Result notes".
 - Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 - {EDIT_TICKETS_RULE}
+- {HAND_BACK_RULE}
 - {SCREENSHOTS_RULE}
 - {STYLE_LOOP_RULE} PixelLab: this goal has {art_left(b)} generations left under its art cap; never go over it
   (one loop run can use up to 4).
@@ -319,11 +337,13 @@ def qa_prompt(b, ticket, folder, text):
 Its task file there is {ticket['file']}. It is part of goal {b.gid} (tasks/README.md, "Goal runs").
 Check every acceptance criterion, running the tests it names:
 {chr(10).join(criteria)}
-Mark each one in the task file as `(QA: pass)` or `(QA: fail: <reason>)`, and commit the task file in that folder.
+Mark each one in the task file as `(QA: pass)` or `(QA: fail: code - <reason>)` (the work is wrong or a test is red)
+or `(QA: fail: paperwork - <reason>)` (the work is fine but a record, note, mark or screenshot is missing), and commit the task file in that folder.
 Replace the criterion's old mark (the `(QA: pass / fail)` placeholder, or an earlier round's mark) with your new one;
 never add a second mark after it. Only the last mark on a criterion counts.
 Don't change the task's status, qa_rounds or lead lines: the goal runner moves the task.
 {EDIT_TICKETS_RULE}
+{HAND_BACK_RULE}
 {QA_SCREENSHOTS_RULE}
 If the permission system or a hook refuses anything, never work around it. If the action isn't essential, skip that
 check and carry on; list it in refusals. Set blocked to true only when the refused action was essential and you
@@ -424,10 +444,11 @@ def build_ticket(b, tid):
                 return result(b, tid, "flagged", summaries, refusals=skipped)
             else:
                 why = "; ".join(re.sub(r"^\s*- \[[ xX]\] ", "", l) for l in failed)[:600]
-                move(b, tid, "in-progress", note=f"QA failed: {why} Back to the agent on {RETRY_MODEL}.",
-                     reply=f"Goal runner ({b.gid}): failed QA once; back to the agent on {RETRY_MODEL}.")
+                again = retry_model(failed, t["model"])
+                move(b, tid, "in-progress", note=f"QA failed: {why} Back to the agent on {again}.",
+                     reply=f"Goal runner ({b.gid}): failed QA once; back to the agent on {again}.")
                 path = tickets_now(b.root)[tid]["path"]
-                path.write_bytes(set_field(path.read_bytes().decode("utf-8"), "model", RETRY_MODEL).encode("utf-8"))
+                path.write_bytes(set_field(path.read_bytes().decode("utf-8"), "model", again).encode("utf-8"))
             commit_ticket(b, t, f"{tid}: QA round {t['qa_rounds'] + 1} (goal runner, {b.gid})")
         elif status in PASSED:
             commit_ticket(b, t, f"{tid}: {status} (goal runner, {b.gid})")

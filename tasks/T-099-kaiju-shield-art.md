@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-069]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/README.md, docs/enemies.md, tasks/T-069-kaiju-and-shield-art.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, tasks/T-003-pixellab-test-generation.md, tasks/T-014-car-sprites-16-directions.md, game/docs/art/pixellab.md, game/docs/enemies/kaiju.md, docs/enemies.md, tasks/T-069-kaiju-and-shield-art.md]
 files_expected_to_change: [art files under game/art/ and their records, the scenes that used the placeholders, game/README.md]
 model: sonnet
 qa_rounds: 0

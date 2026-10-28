@@ -1,0 +1,30 @@
+{
+  "_comment": "The combo shown as the stream's live viewers (T-332; Game loop architecture, Decisions, 'The combo shows as live viewers'). The combo multiplier (combo.json) is unchanged; this file turns it into the number the counter shows. The anchors x2 = 20,000 and x6 = 1,000,000 are the board's; every other number is a proposal for the HUD playtest.",
+  "curve": {
+    "_comment": "Between two neighbouring anchors the viewers follow a power law (a straight line on a log-log chart), so the curve is smooth, rises everywhere and passes every anchor exactly. Below the first anchor and above the last it is held flat. x1 = 2,500 is the Project Lead's proposal: a quiet stream with no combo. From x1 to x2 the power is exactly 3 (2,500 * m^3), from x2 to x6 it is about 3.56 (20,000 * 50^(ln(m/2)/ln 3): about 84.7K at x3, 236K at x4, 522K at x5). The result is rounded to whole viewers.",
+    "anchors": [
+      {"multiplier": 1.0, "viewers": 2500},
+      {"multiplier": 2.0, "viewers": 20000},
+      {"multiplier": 6.0, "viewers": 1000000}
+    ]
+  },
+  "heat_steps": {
+    "_comment": "Viewers where the counter's look heats up. Steps 1, 2 and 3 are today's combo heat steps (ComboHeat.THRESHOLDS: x2, x3, x4) put through the curve, so the counter and the old multiplier steps change at the same moment (a test checks they agree); the numbers are the curve's values at those multipliers. The fire step is the board's: over 1,000,000. The curve reaches exactly 1,000,000 at the x6 cap, so fire starts at 1,000,000 inclusive, and the counter judges the step by the target, not by the wobbling shown number, so it does not flicker in and out of fire.",
+    "thresholds_viewers": [20000, 84736, 236026],
+    "fire_viewers": 1000000
+  },
+  "motion": {
+    "_comment": "How the shown number follows its target. up_rate_per_second and down_rate_per_second: each second the number closes this share of the gap in an exponential ease (4.0 closes about 63% of the gap in a quarter of a second). Up is quicker than down because a trick should feel like a surge, while a crash or the drain lets the crowd leave over a moment. snap_viewers: inside this gap the number lands on the target so it never crawls the last few viewers. wobble: a constant small movement so the number never sits still, like a real stream: up to +-wobble_fraction (0.5%) of the value, with a new random-looking offset every wobble_interval_seconds (0.15 s), eased between offsets.",
+    "up_rate_per_second": 4.0,
+    "down_rate_per_second": 2.0,
+    "snap_viewers": 1.0,
+    "wobble_fraction": 0.005,
+    "wobble_interval_seconds": 0.15
+  },
+  "format": {
+    "_comment": "How a viewers number shortens: under 1,000 as is (850); 1,000 to 9,999 with a comma (2,500); 10,000 to 99,999 as thousands with one decimal (20.4K, 84.7K); 100,000 to 999,999 as whole thousands (236K); a million and over with two decimals (1.02M). A number that rounds up to the next unit moves to it (999,960 shows as 1.00M).",
+    "comma_below": 10000,
+    "one_decimal_k_below": 100000,
+    "million_from": 1000000
+  }
+}

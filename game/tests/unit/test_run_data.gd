@@ -4,7 +4,7 @@ func test_loads_through_loader() -> void:
 	var r := GameData.load_file("run")
 	assert_true(r.ok, r.error)
 	assert_true(r.data is Dictionary)
-	assert_eq(float(GameData.unwrap(GameData.get_value(r.data, "car.starting_health"))), 100.0)
+	assert_eq(float(GameData.unwrap(GameData.get_value(r.data, "car.starting_hearts"))), 5.0)
 
 
 func test_level_1_threshold_is_one_challenge() -> void:
@@ -71,3 +71,32 @@ func test_likes_drain_scales_with_the_level_bar() -> void:
 		assert_almost_eq(rd.likes_drain_xp_per_second(l), share * rd.xp_needed(l), 0.0001)
 	assert_eq(rd.likes_drain_xp_per_second(rd.max_level()), 0.0, "no bar at max level")
 	assert_almost_eq(rd.likes_drain_xp_per_second(1), share * rd.xp_needed(1), 0.0001)
+
+
+func test_hearts_numbers() -> void:
+	var rd := RunData.new()
+	assert_eq(rd.starting_hearts(), 5.0, "5 starting hearts")
+	assert_eq(rd.starting_health(), 5.0, "the old name reads the same")
+	assert_eq(rd.invulnerability_seconds(), 1.0, "1 s of invulnerability after a hit")
+	assert_gt(rd.blink_interval_seconds(), 0.0)
+	assert_lt(rd.blink_interval_seconds(), rd.invulnerability_seconds())
+	assert_false(GameData.load_file("run").data["car"].has("starting_health"), "the 100 health is gone")
+
+
+func test_damage_in_hearts() -> void:
+	var e := EnemyData.new()
+	assert_eq(float(e.minion()["contact_damage"]), 1.0, "minion hit: 1 heart")
+	assert_eq(float(e.meteor_attack()["impact_damage"]), 1.0, "meteor: 1 heart")
+	assert_eq(float(e.kaiju()["contact_damage"]), 2.0, "kaiju: 2 hearts")
+	assert_false(e.minion().has("contact_damage_interval"), "the 0.5 s contact repeat is gone")
+	assert_false(e.kaiju().has("contact_damage_interval"), "the 1 s contact repeat is gone")
+
+
+func test_health_drops_and_garage_hearts() -> void:
+	var d := EnemyData.new().health_drops()
+	assert_eq(float(d["drop_chance"]), 0.15)
+	assert_eq(float(d["restore_hearts"]), 1.0)
+	var g := GarageData.new()
+	assert_eq(g.value("car_health", 0), 5.0, "level 0: 5 hearts")
+	for l in range(1, g.max_level() + 1):
+		assert_eq(g.value("car_health", l), 5.0 + l, "+1 heart per level (level %d)" % l)

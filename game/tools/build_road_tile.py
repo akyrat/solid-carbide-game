@@ -3,7 +3,7 @@
 
 PixelLab's /create-tiles-pro returned flat "top-down" diamonds on a 128 x 128
 canvas (a square diamond, 1:1). The game's ground is a 2:1 isometric diamond
-(Visual style, Decisions; game/README.md: screen = (x - y, (x + y) / 2)), so a
+(Visual style, Decisions; game/docs/art/ground-and-props.md: screen = (x - y, (x + y) / 2)), so a
 top-down square seen at 45 degrees is squashed to half its height: every second
 pixel row is kept (nearest row, no new colours, no new pixels) to give 128 x 64.
 

@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: no
 depends_on: []
 documents_affected: [docs/game-loop-architecture.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/README.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/scripts/weapons/weapons.gd]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd, game/scripts/weapons/weapons.gd]
 files_expected_to_change: [game/scripts/run/, game/tests/unit/run/, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
 qa_rounds: 0

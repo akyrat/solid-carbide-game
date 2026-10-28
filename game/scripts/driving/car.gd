@@ -9,7 +9,7 @@ extends CharacterBody2D
 ## Position here is in pixels, PX_PER_UNIT pixels per unit; the model works in
 ## units.
 ##
-## Collisions (task T-033; layers in game/README.md, "Collision layers"): the
+## Collisions (task T-033; layers in game/docs/driving/collisions.md, "Collision layers"): the
 ## body is on layer 2 (the car) and collides only with layer 1 (walls,
 ## buildings, the map's edge and boulders). It bounces off them slightly
 ## (tuning.wall_bounce) and emits hit_obstacle once per hit. Enemies (layer 3)
@@ -31,7 +31,7 @@ const ACTION_REVERSE := "car_reverse"
 const ACTION_STEER_LEFT := "car_steer_left"
 const ACTION_STEER_RIGHT := "car_steer_right"
 
-## Collision layer bits (game/README.md, "Collision layers").
+## Collision layer bits (game/docs/driving/collisions.md, "Collision layers").
 const LAYER_OBSTACLES := 1 << 0  # layer 1: walls, buildings, the map's edge, boulders
 const LAYER_CAR := 1 << 1        # layer 2: the player's car
 const LAYER_ENEMIES := 1 << 2    # layer 3: enemies (minions, the kaiju, meteors)

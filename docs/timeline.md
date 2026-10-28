@@ -1950,3 +1950,93 @@ Entry format:
 - Decision or change: the board played `playtest/batch-1028` and approved T-314 (an arrow for every gift pack), T-315 (a crash pays the trick), T-321 (the first gift pack can hold any weapon) and T-324 (the Bricks weapon, placeholder art), with T-322 and T-323 (Bricks text and numbers). Merged into master. The Weapons doc now says the MVP has six weapons with Bricks. The Bricks art (T-325) starts.
 - Documents touched: docs/weapons.md, docs/game-loop-architecture.md, docs/drifting.md
 - Tasks: T-314, T-315, T-321, T-322, T-323, T-324
+
+## 2026-10-28: The token-spend epic
+- Decision or change: the board asked for an analysis of where the studio's tokens go, based on what actually happened. Four read-only Haiku observers measured the history: about 3.4 billion tokens, 98% of them context re-sent with every call; two Project Lead sessions (88cd5834, ac11e792) were 43% of all of it, both reaching 966k of context; what filled them was work output, not the conversation (the board's typed prompts were about 1%): subagent reports pasted back (about 11% of the weighted cost), ticket and doc writing (16 to 24%), git and merge output (about 11%), searches and whole-file prints (about 10%). Also: game/README.md is about 100k tokens and listed in 246 of 341 tickets; 15% of tickets needed a second QA round (30% of art), many on paperwork, and every QA retry ran on Opus; the guard refused read-only commands. The board keeps its long conversations and batch playtests (it rejected clearing the session after each merge), set auto-compact to 500k, and wants scripts in place of agents wherever possible. A new epic, token-spend, groups the work: a measuring tool and baseline (T-342), one-line agent hand-backs (T-343), a batch-merge script (T-344), a ticket-paperwork script (T-345), game/README.md split into area folders (T-346), simpler QA with a check script (T-347), guard fixes (T-348, T-349), and an after report compared with the baseline (T-350). Tickets written, to be built in the Tokens session.
+- Documents touched: tasks/README.md
+- Tasks: T-342, T-343, T-344, T-345, T-346, T-347, T-348, T-349, T-350
+
+## 2026-10-28: Reaction icons burst on a sub goal and float up at high viewers
+- Decision or change: the board wants livestream-style reaction icons (likes, thumbs up, hearts): a burst out of the sub goal square when the goal is reached and the gift pack comes, and icons floating up from the bottom of the screen now and then at high viewer counts, never hiding the road. Two tickets: the behaviour with placeholder icons (UI Agent, after the viewers counter and the sub goal square) and the art (Asset Generation Agent, no PixelLab go yet). Both wait; they start with the HUD agents when the board says to resume.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-351, T-352
+
+## 2026-10-28: T-342 merged, the token-spend baseline
+- Decision or change: the measuring tool (`tools/token_report.py`) and the baseline (`docs/token-spend/baseline-2026-10-28.md`) are in. Everything up to 2026-10-28: 20,248 calls, 3,406M cache-read tokens (main sessions 2,032M, subagents 1,373M), 5.1% of tool calls failed. The task board shows a Token spend bubble for the epic. QA passed all criteria; merged after QA (nothing the player sees).
+- Documents touched: docs/README.md
+- Tasks: T-342
+
+## 2026-10-28: T-345 merged, one script writes a ticket's paperwork
+- Decision or change: `tools/new_ticket.py` writes new tickets from one JSON input file: the next free numbers, the template's sections, the lead claimed, one timeline entry each and a single commit with only those files; it refuses to commit while a merge is in progress. `tasks/README.md` describes it ("Writing new tickets with a script"). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 515, GUT 1735.
+- Documents touched: tasks/README.md
+- Tasks: T-345
+
+## 2026-10-28: T-344 and T-348 merged, the batch-merge script and the guard fixes
+- Decision or change: `tools/merge_batch.py` merges a batch of tickets in one call, one line per ticket, the full output in a log file; on a stop it leaves master clean and removes its own done commit. It is now the way to merge (Working with the board, "Merging"). The guard (`.claude/hooks/board_gate.py`) now lets through read-only commands it used to refuse: `sort`, `uniq`, read-only `python -c` and a chained `board_inbox.py` call. Both passed QA and merged after QA (nothing the player sees). Tests on master: 620, 529, GUT 1735.
+- Documents touched: docs/working-with-the-board.md, tasks/README.md
+- Tasks: T-344, T-348
+
+## 2026-10-28: T-346's ticket references split into a follow-up
+- Decision or change: The guard refused T-346's bulk rewrite of open tickets' files_to_read_first; nothing worked around it. The Project Lead moved that criterion into this follow-up ticket for the board to decide how it may be done; T-346 goes to QA without it. Open tickets that list game/README.md still work through its new short index.
+- Documents touched: tasks/README.md
+- Tasks: T-353
+
+## 2026-10-28: T-343 merged, agents hand back one short line
+- Decision or change: every agent definition, the goal runner's prompts and tasks/README.md ("Handing back") now say: the full report goes in the ticket's result notes, the hand-back is one line of about 300 characters, tests run in the foreground with no background jobs left, and the ticket is committed before handing back. QA passed all criteria (the agent-file diffs are the hand-back line only). The guard refused the agent's inline python/sed edits and it made them with the Edit tool; listed for the board. `merge_batch.py` stopped on this ticket because QA had already marked it done; merged by hand, and the fix goes into T-347. Tests on master: 620, 530, GUT 1735.
+- Documents touched: tasks/README.md, .claude/agents/
+- Tasks: T-343
+
+## 2026-10-28: T-346 merged, game/README.md split into area folders
+- Decision or change: game/README.md (about 400 KB) is now a short index; its content lives in area files under game/docs/ (setup, driving, enemies, weapons with one file per weapon, level, game-loop, hud-and-menus, garage, art, sound, data), none over 40 KB, with no section lost and no broken link (the scripts' checks are in the ticket). The last step, rewriting open tickets' reading lists, was refused by the guard; nothing worked around it, and it moved to T-353 for the board to decide. Godot-generated .import files the branch had swept in were dropped before merging. QA passed the other criteria; merged after QA (nothing the player sees). Tests on master: 620, 530, GUT 1735.
+- Documents touched: game/README.md, game/docs/, docs/README.md, docs/long-gdd.md
+- Tasks: T-346, T-353
+
+## 2026-10-28: T-349 merged, a guard against very large shell output
+- Decision or change: the guard (`.claude/hooks/board_gate.py`) refuses printing a whole file over 20 KB (cat, type, Get-Content, sed -n over the whole file) and names the cheaper ways to read it (grep, a line range, the Read tool with a range). A Haiku summary of large output was assessed and not built (the reasons are in the ticket). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 533, GUT 1735.
+- Documents touched: tasks/README.md
+- Tasks: T-349
+
+## 2026-10-28: T-347 merged, QA is the criteria and the tests
+- Decision or change: `tools/qa_check.py T-NNN` does QA's mechanical part (the three test sets, every affected document changed, screenshots when the ticket shows anything, every criterion marked), one line per check. The QA agent and tasks/README.md's QA section now say: run the script, then judge each acceptance criterion, nothing else. The goal runner retries a ticket that failed on paperwork on its own model and only a code failure on Opus. `merge_batch.py` now accepts a ticket QA already marked done and leaves out Godot-generated `.import`/`.uid` files a branch added. The handover requirements that are not criteria or tests are listed in the ticket with a proposal each, for the board to decide; none was removed. One refused inline-python edit was redone with the Edit tool; listed for the board. QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 545, GUT 1735.
+- Documents touched: tasks/README.md, .claude/agents/qa-integration.md
+- Tasks: T-347
+
+## 2026-10-28: T-350 merged, the token-spend early read
+- Decision or change: docs/token-spend/after-2026-10-28-early.md compares the two hours after the new tools merged (01:43 to 03:55 UTC, 299 calls) with the baseline, per merged ticket and per call. Too small and too different to credit an effect: 5.0M tokens per merged ticket against 12.5M (different work); git merge output 199 characters per call against 1,849 (the one plausible effect, T-344); failed calls 9.7% against 5.1% and hook refusals 4.3% against 1.2% (mostly the guard refusing scripts that mention tasks); subagent reports 18.5% of context against 14.3%. The real comparison is a rerun after the HUD batch (the command is in the report). The agent's own write of its result notes was refused, so they were written in the Tokens session on the board's go. With this the token-spend epic's tickets are done; T-353 waits for the board.
+- Documents touched: docs/token-spend/after-2026-10-28-early.md, docs/README.md
+- Tasks: T-350
+
+## 2026-10-28: Bolder enemy outlines
+- Decision or change: The board played the livestream HUD build: the enemies' bolder outlines look good.
+- Documents touched: none
+- Tasks: T-340
+
+## 2026-10-28: The timer as a digital clock
+- Decision or change: The board played it: the bottom-left clock turning green, yellow, orange and red looks good.
+- Documents touched: none
+- Tasks: T-335
+
+## 2026-10-28: The live viewers curve
+- Decision or change: The viewers numbers, approved by the board as data; judged again in the viewers counter (T-336).
+- Documents touched: none
+- Tasks: T-332
+
+## 2026-10-28: Hearts numbers
+- Decision or change: The hearts numbers, approved by the board as data; judged again in hearts in the run (T-334).
+- Documents touched: none
+- Tasks: T-333
+
+## 2026-10-28: Likes become subs
+- Decision or change: The board played it: likes became subs in the game's text.
+- Documents touched: none
+- Tasks: T-331
+
+## 2026-10-28: Open tickets list the area files; T-347's proposals accepted
+- Decision or change: The board ran the checked fix script: 27 open or blocked tickets now list their area files under game/docs/ in files_to_read_first instead of game/README.md (T-353, split out of T-346). The board accepted T-347's proposals on handover rules: ten stay as they are; QA no longer judges whether screenshots show what the notes say (qa_check.py checks they exist, and a ticket that shows something says in its criteria what its screenshots must show); the style-loop record is enforced by task_status.py before QA, so QA judges only the criteria.
+- Documents touched: tasks/README.md
+- Tasks: T-353, T-347
+
+## 2026-10-28: A ticket so the guard refuses only real ticket writes
+- Decision or change: The board's go, from the token-spend early read: hook refusals rose to 4.3% of calls, most of them the ticket guard refusing commands that only mention tasks or the word Lead, and three agents redid a refused edit with the Edit tool. A ticket makes the guard refuse only commands that really write a ticket's status, lead or qa_rounds, with the night's real refusals as tests; anything it can't be sure of stays refused.
+- Documents touched: tasks/README.md
+- Tasks: T-354

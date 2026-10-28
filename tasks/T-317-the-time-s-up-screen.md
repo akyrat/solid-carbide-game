@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: [T-316]
 documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/README.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/docs/game-loop/the-run.md, game/docs/game-loop/screen-flow.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md]
 model: opus
 qa_rounds: 0

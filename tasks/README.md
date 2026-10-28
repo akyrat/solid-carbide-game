@@ -16,7 +16,9 @@ The board follows these tasks on its local task board (`docs/README.md`, "The ta
 
 ## Changing a task's status
 
-A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit). The hooks recognise a task file by its path in any spelling (relative, other case, `..`) and by its header, and they look at every `status`, `qa_rounds` or `lead` line in the header, so a repeated line is caught too. Shell commands may mention those lines as long as they can't write them (T-181): reads (`grep -n "^status:" tasks/T-012*.md`, `sed -n` without `-i`, `head`, `cat`, `git log`, `Select-String`, `Get-Content`), status script calls, git, test runs, writes to files that can't be tickets, and appends of plain text to a ticket's notes with no line starting `status:`, `qa_rounds:` or `lead:`. A command that could write those lines into a ticket (`sed -i`, `>`, `>>` of such a line, `tee`, `perl -i`, Python or PowerShell writes that name a task file), or that the hook can't read (a computed file name or folder, a substitution that names task files), is refused; so is a script run whose arguments name a task file or the tasks folder and also hold a `status`, `qa_rounds` or `lead` line or field name (T-213), whatever the script's own code looks like. A `sed` is judged by its scripts, not its file names, so `sed -n '1,40p'` passes, and `-f`, a `w` or `e` command and a script the guard can't read (from a variable or substitution) are refused. A `sed -i` on a ticket passes when all its scripts are read in full and none can write a guarded line (T-297): only `s` commands (and `d`, `a`, `i`, `c` with a `/regex/` address and literal text) whose pattern, replacement, text and address don't name `status`, `qa_rounds` or `lead` (nor hold `stat`, `round`, `lead` or `qa`), with no colon in a pattern or address, no numeric address below line 2 and no `w` or `e` flag, so `sed -i 's/teh/the/' tasks/T-012-x.md` and ticking a box `sed -i 's/- \[ \] The wordmark/- [x] The wordmark/' tasks/T-012-x.md` pass, while a range starting at line 1, `1d`, `y` and other commands stay refused. The guard also tries the script on each ticket's current text, without writing, and refuses when any `status`, `qa_rounds` or `lead` line would change (`s/open/done/`, `s/0/1/`), or when the file can't be read, an option other than `-i`/`-e` is given or the script can't be simulated exactly. The second guard still catches a guarded line changed by any tool; a glob that ends in a fixed extension other than `.md` (`rm -f art-archive/T-102/capture/*.png`) can't be a ticket; `source x.sh` is judged like `bash x.sh`; `pip list`, `pip show`, `git check-ignore` and other printing commands pass; and `xargs <command>` is judged as that command run on unknown files, so `git ls-files -m | xargs git checkout --` passes as git does and `xargs rm` is refused (T-216). A `find` only reads unless it deletes, runs or writes: `-delete` or an `-exec` of anything but a read under a folder that could hold tickets, and `-fprint` into one, are refused; shell variables (`tmp=...`, or `X=1 cmd`, judged as `cmd`) pass, and a variable set once to a literal path is read as that path; Godot runs, `--write-movie` recordings and `--import` pass unless they write into a tasks folder or take an option the guard doesn't know; and `**` in inline code counts as a glob only next to a blank, quote or path separator, not as Markdown bold (T-248).
+A task changes status only through the status script, never by editing its `status`, `qa_rounds` or `lead` line (hooks refuse that edit). The hooks recognise a task file by its path in any spelling (relative, other case, `..`) and by its header, and they look at every `status`, `qa_rounds` or `lead` line in the header, so a repeated line is caught too. Shell commands may mention those lines as long as they can't write them (T-181): reads (`grep -n "^status:" tasks/T-012*.md`, `sed -n` without `-i`, `head`, `cat`, `git log`, `Select-String`, `Get-Content`), status script calls, git, test runs, writes to files that can't be tickets, and appends of plain text to a ticket's notes with no line starting `status:`, `qa_rounds:` or `lead:`. A command that could write those lines into a ticket (`sed -i`, `>`, `>>` of such a line, `tee`, `perl -i`, Python or PowerShell writes that name a task file), or that the hook can't read (a computed file name or folder, a substitution that names task files), is refused; so is a script run whose arguments name a task file or the tasks folder and also hold a `status`, `qa_rounds` or `lead` line or field name (T-213), whatever the script's own code looks like. A `sed` is judged by its scripts, not its file names, so `sed -n '1,40p'` passes, and `-f`, a `w` or `e` command and a script the guard can't read (from a variable or substitution) are refused. A `sed -i` on a ticket passes when all its scripts are read in full and none can write a guarded line (T-297): only `s` commands (and `d`, `a`, `i`, `c` with a `/regex/` address and literal text) whose pattern, replacement, text and address don't name `status`, `qa_rounds` or `lead` (nor hold `stat`, `round`, `lead` or `qa`), with no colon in a pattern or address, no numeric address below line 2 and no `w` or `e` flag, so `sed -i 's/teh/the/' tasks/T-012-x.md` and ticking a box `sed -i 's/- \[ \] The wordmark/- [x] The wordmark/' tasks/T-012-x.md` pass, while a range starting at line 1, `1d`, `y` and other commands stay refused. The guard also tries the script on each ticket's current text, without writing, and refuses when any `status`, `qa_rounds` or `lead` line would change (`s/open/done/`, `s/0/1/`), or when the file can't be read, an option other than `-i`/`-e` is given or the script can't be simulated exactly. The second guard still catches a guarded line changed by any tool; a glob that ends in a fixed extension other than `.md` (`rm -f art-archive/T-102/capture/*.png`) can't be a ticket; `source x.sh` is judged like `bash x.sh`; `pip list`, `pip show`, `git check-ignore` and other printing commands pass; and `xargs <command>` is judged as that command run on unknown files, so `git ls-files -m | xargs git checkout --` passes as git does and `xargs rm` is refused (T-216). A `find` only reads unless it deletes, runs or writes: `-delete` or an `-exec` of anything but a read under a folder that could hold tickets, and `-fprint` into one, are refused; shell variables (`tmp=...`, or `X=1 cmd`, judged as `cmd`) pass, and a variable set once to a literal path is read as that path; Godot runs, `--write-movie` recordings and `--import` pass unless they write into a tasks folder or take an option the guard doesn't know; and `**` in inline code counts as a glob only next to a blank, quote or path separator, not as Markdown bold (T-248). `sort` and `uniq` only read (T-348) unless their output file (`sort -o`, `uniq`'s second file) could be a ticket, or `sort` is given `--compress-program`; inline Python (`python -c '...'`, or `python -` with a here-document) passes, whatever it names, when it can only read and print: it imports only plain modules (`glob`, `re`, `json`, `pathlib`, `os`, ...), opens files only with a literal read mode, and names nothing that writes, deletes, moves or runs anything; a script the guard knows writes no ticket passes too (`python tools/board_inbox.py name|watch ...`).
+
+The guard also protects the conversation's size (T-349, token-spend epic): a shell command that prints a whole file over 20 KB (`cat`, `type`, `Get-Content`/`gc`, `more`, or `sed -n` over more than 300 lines or plain `p`) is refused with a message naming the alternatives: the Read tool with an offset and limit, a search (`grep -n`, Grep), or a line range of at most 300 lines. Small files, output piped on (`| head`, `| grep`), redirected to a file, or capped (`head`, `tail`, `Get-Content -TotalCount`, `sed -n '10,60p'`) pass.
 
 A command cannot be checked in every way a file can be written, so there is a second guard (T-149, `tools/guard_ledger.py`). The status script records in `.board/blessed-states.jsonl` (in the main checkout, shared by every task folder) each state of those three lines it writes, and refuses to move or claim a task whose lines are neither in that record nor what git has committed ("changed by hand"). The hook runs the same check on `git commit`, so a hand-edited line cannot be committed, whichever tool edited it. If a merge conflict in a task's header was resolved by hand, run the status script to set the line it should have; the commit is refused until then. The record is created by the first script run, which trusts the task files as they are.
 
@@ -75,6 +77,23 @@ Work that changes the game, its tools or its assets is done on its own branch, s
 - **When the board marks the task done,** the Project Lead merges the branch into `master`, then removes the worktree and deletes the branch.
 - **Documentation-only work** (for example the Project Lead's own document edits) is committed straight to `master`.
 
+## Handing back
+
+The rule for every agent, QA included (board, 2026-10-28, T-343; the agent definitions and the goal runner's prompts point here). Subagent reports pasted into the Project Lead's conversation were the largest single cost in long sessions.
+
+- **The full report goes in the ticket's result notes** (QA's pass or fail per criterion stays on the ticket). The hand-back is one short line, about 300 characters at most: the ticket id, done or blocked, and what the Project Lead must act on.
+- **Tests run in the foreground,** and no background jobs are left running when the agent hands back (a finished agent with a leftover background run wakes up again and re-sends its hand-back).
+- **The ticket is committed before handing back,** result notes and QA results included, so the merge is never held up by uncommitted work in the folder.
+
+## QA
+
+QA is the acceptance criteria and the tests, nothing else (board, 2026-10-28, T-347). Agents aren't trying to fail tickets; QA makes sure the work holds up to the standards already defined. Two steps:
+
+1. **Run `python tools/qa_check.py T-NNN`** in the ticket's folder. It prints one PASS or FAIL line each for: the three test sets pass on the branch; every file in `documents_affected` changed on the branch; screenshots exist in `art-archive/<id>/screenshots/` when the ticket shows anything (`changes_visuals` or `user_facing_text` is yes, or it has a `The board's review:` line); every acceptance criterion carries a pass or fail mark. QA runs it with `--no-marks` first, marks the criteria, then runs it once more without.
+2. **Judge each acceptance criterion** and mark it `(QA: pass)`, `(QA: fail: code - <reason>)` (the work is wrong or a test is red) or `(QA: fail: paperwork - <reason>)` (the work is fine but a record, note or screenshot is missing). The tag decides the retry model in goal runs: code failures go to opus, failures where every failed criterion is tagged paperwork stay on the ticket's own model (`tools/goal_agent/build.py`, `retry_model`); an untagged failure counts as code. The Project Lead picks the model by hand outside goal runs.
+
+A ticket fails only on a criterion or a red check. QA adds no requirements of its own, and a second round and the flag for review work as in "Status rules" and "Changing a task's status".
+
 ## Goal runs
 
 The board can give a whole goal to the goal runner (`tools/goal_agent/`, board, 2026-10-18), which plans, writes and builds the tickets for it in a loop. The board's side of it is in `docs/working-with-the-board.md`, "Goal runs". On the ticket side:
@@ -103,6 +122,30 @@ The board's way of building the game (2026-10-10): always aim for the smallest p
 6. **Map tiles:** generating the map's tile art (board, 2026-10-12).
 7. **Later:** minions, then the weapons, then the kaiju, the garage and sound. The board moved enemies much later on 2026-10-12.
 
+## Writing new tickets with a script
+
+`tools/new_ticket.py` does a new ticket's paperwork (T-345, token-spend epic). The Project Lead first writes the decision in the game area doc and the acceptance criteria, then puts the rest in one JSON file and runs, from the main checkout on `master`:
+
+```
+python tools/new_ticket.py tickets.json [--dry-run]
+```
+
+It picks the next free number (the highest T-NNN in `tasks/`, in `git log` on `master` and in `task/T-NNN` branches, plus one), writes each ticket from `tasks/_TEMPLATE.md` (its comment and sections copied), claims it for the lead through `task_status.py`, appends one entry per ticket to `docs/timeline.md`, and, when `decision_docs` is given, regenerates the long GDD and the short GDD's fingerprint. It then commits only those files in one commit, after checking that no merge is in progress (`MERGE_HEAD`); with a merge in progress it writes nothing. It prints one line per ticket. Bad input is refused before anything is written. `--dry-run` only prints the numbers.
+
+Input (top level: `lead`, `commit_message`, `tickets` are required; `decision_docs`, `date`, `common_description`, `common_criteria` are optional and apply to every ticket):
+
+```
+{"lead": "Tokens", "commit_message": "T-360: ticket (the board's decision)",
+ "decision_docs": ["docs/weapons.md"], "date": "2026-10-28",
+ "common_criteria": ["All three test sets pass, with the counts in the result notes."],
+ "tickets": [{"title": "Short title", "slug": "short-title", "to": "weapon-behavior", "epic": "weapons", "model": "sonnet",
+   "depends_on": [], "documents_affected": ["docs/weapons.md"], "files_to_read_first": ["tasks/README.md"],
+   "files_expected_to_change": ["game/x.gd"], "description": "What and why.", "criteria": ["Something QA can check."],
+   "timeline": {"title": "Entry title", "decision": "What the board decided.", "documents": ["docs/weapons.md"]}}]}
+```
+
+A ticket also takes `milestone` (default `mvp`), `user_facing_text` and `changes_visuals` (default `no`), and its own `lead`. Tickets that show text or art still need their linked tasks written as the rules above say.
+
 ## Epics and milestones
 
 Every task file has an `epic` and a `milestone` in its header.
@@ -122,6 +165,7 @@ Every task file has an `epic` and a `milestone` in its header.
 | `game-loop` | The run itself: timer, likes and levels, level-up flow, win and loss, the main menu and the flow between screens | Game loop architecture |
 | `narrative` | Story and user-facing text: tone, wording, names | Extended narrative |
 | `tooling` | Project setup, test tools and documentation tooling | (not a game area) |
+| `token-spend` | Cutting the studio's token spend: scripts in place of agent work, shorter reads and reports, and measuring the effect (board, 2026-10-28) | (not a game area) |
 | `local-coop` | Local co-op for 2 players (screen split in halves) and 4 players (split in quarters). Future release | Game loop architecture |
 
 **Milestone:** the release the work is needed for.
@@ -141,11 +185,11 @@ When a task needs the board to look at, read, listen to or play something, its t
 
 Every task ends with screenshots of its work wherever anything can be shown (board, 2026-10-19), whether or not it has a `The board's review:` line:
 
-- **Something on screen** (a scene, an effect, a screen, art in the game): screenshots of it in the game, taken with the screenshot tool (`game/README.md`), enough to show the change (for motion, a few frames or a strip).
+- **Something on screen** (a scene, an effect, a screen, art in the game): screenshots of it in the game, taken with the screenshot tool (`game/docs/setup/screenshots.md`), enough to show the change (for motion, a few frames or a strip).
 - **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
 - **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
 
-They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; QA checks they exist and show what the notes say. Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
+They go in `art-archive/<task id>/screenshots/` (subfolders are fine) and are listed in the result notes (and on the `Board review files:` line, when there is one). The agent that does the work takes them; `tools/qa_check.py` checks they exist, and a ticket that shows something says in its acceptance criteria what its screenshots must show (board, 2026-10-28, T-347's proposals). Where a still doesn't show the change (motion, an effect, a camera move), add a short recording, a GIF or an MP4, in the same folder.
 
 The task board shows them on the ticket (T-201): every image and recording (`.png`, `.jpg`, `.gif`, `.webp`, `.mp4`, `.webm`) in that folder, and any media file on the `Board review files:` line, appears in the ticket's "Screenshots and recordings" section, read from the task folder while the branch is open (`docs/README.md`, "The task board").
 
@@ -154,7 +198,7 @@ The task board shows them on the ticket (T-201): every image and recording (`.pn
 Every task says in its header which model the agent runs on: `model: sonnet` or `model: opus` (board, 2026-10-09). The Project Lead picks it per task and launches the agent with it:
 
 - **sonnet:** clearly scoped work: art, sound, data files, simple screens, reports, and QA checks.
-- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA once. QA always runs on sonnet, whatever the task's model (board, 2026-10-15, to cut QA's token use; it was opus for tasks the board was about to playtest).
+- **opus:** tricky work: code that ties several agents' work together, complex behaviour, porting from the Unity prototype, and any task that failed QA on its code (a task that failed only on paperwork keeps its model; T-347). QA always runs on sonnet, whatever the task's model (board, 2026-10-15, to cut QA's token use; it was opus for tasks the board was about to playtest).
 
 The hooks enforce it (board, 2026-10-13; `.claude/hooks/board_gate.py`): an agent whose prompt names a task (its first `T-` id) starts only when the Agent call passes that task's model. The QA/Integration Agent always needs sonnet. To run a task on another model, change its `model` line first.
 
@@ -184,7 +228,7 @@ Every asset and every piece of player-facing text is made through the style loop
 3. **Refine:** below 8, the agent that made it rewrites or remakes it from the reason, and the new version is evaluated again. For art, free script fixes come before a paid regeneration.
 4. **Stop:** at 8 or more the version is kept. After 3 refines still below 8, the best-scoring version is kept and the task is flagged for the board's review, with every version.
 
-Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. QA fails an art or text task without it. The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
+Every round is written in the task's `## Style review` section: the version (with its file or text), the score, the reason and what the refine changed. That record is how the board sees how an asset was made. `task_status.py` refuses to move an art or text task to QA without it (T-292), so QA judges only the criteria (board, 2026-10-28, T-347's proposals). The loop runs without anyone stepping in; the board still judges the result in the playtest. Art regenerations count against the task's PixelLab go: one asset can cost up to 4 generations (`docs/working-with-the-board.md`, "Art and money").
 
 The script checks are in `game/tools/style_rules.py` (T-290). The loop's tool (T-291) runs the four steps with no one stepping in:
 

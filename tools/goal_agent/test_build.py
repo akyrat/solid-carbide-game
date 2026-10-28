@@ -98,7 +98,7 @@ class HeadlessRuns(GoalRepo):
         step, prompt, options = next(c for c in b.claude.calls if c[0] == "qa")
         self.assertTrue(prompt.startswith("QA round 1 for task T-001"))
         self.assertIn("- [ ] It works (QA: pass / fail)", prompt)        # the ticket's criteria are listed
-        self.assertIn("`(QA: pass)` or `(QA: fail: <reason>)`", prompt)
+        self.assertIn("`(QA: pass)` or `(QA: fail: code - <reason>)`", prompt)
         self.assertEqual((options["agent"], options["model"]), ("qa-integration", "sonnet"))
 
     def test_each_session_names_the_activity_log_it_writes_to(self):
@@ -121,6 +121,12 @@ class HeadlessRuns(GoalRepo):
         for words in ("screenshots rule", "could be pictured", "art-archive/<ticket id>/screenshots/",
                       "fails, whatever its criteria say"):
             self.assertIn(words, qa)
+
+    def test_both_prompts_carry_the_hand_back_rule(self):
+        for prompt in self.prompts(self.planned(one_ticket())):
+            for words in ("Handing back", "full report in the ticket's result notes", "300 characters",
+                          "foreground and leave no background jobs", "Commit the ticket"):
+                self.assertIn(words, prompt)
 
     def test_prompts_list_the_pre_approved_commands_from_the_settings(self):
         (self.root / ".claude").mkdir(exist_ok=True)

@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: [T-331]
 documents_affected: [docs/hud-and-menus.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/README.md, game/scripts/hud/, game/art/gift_pack/package.png]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/, game/art/gift_pack/package.png]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-337/]
 model: opus
 qa_rounds: 0

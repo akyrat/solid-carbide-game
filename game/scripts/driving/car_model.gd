@@ -182,7 +182,7 @@ func update_velocity(w: bool, s: bool, steer: float) -> void:
 	rotation = new_rotation
 
 
-## The side slip out of a drift (task T-278; game/README.md, "Side slip out of
+## The side slip out of a drift (task T-278; game/docs/driving/drift.md, "Side slip out of
 ## a drift"). Returns this step's extra body turn in degrees per second, signed
 ## like steer, and fades the slip. Called once per ground step, after is_drifting
 ## is set for this step.

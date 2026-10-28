@@ -1,0 +1,10 @@
+Task T-339 (read tasks/T-339-art-the-livestream-hud.md, its planned calls in the result notes, and docs/hud-and-menus.md, Decisions, "The HUD looks like a livestream"). The board's layout page has the pieces at 1152 x 648 game pixels.
+
+What kind of art this is: **screen-space HUD art**, not a world sprite. Visual style rule 3's isometric view and 32 art px per unit don't apply to it; it is shown at **2x** (one art pixel = two screen pixels), like the likes heart (`game/art/hud/likes_heart.png`). Rule 4 (night, retro) means it must read over the dark night street. Rule 6: none of Greenbull's light green (104, 220, 96) or yellow (247, 208, 52): the HUD is not one of Greenbull's things (the fire's own yellow 255, 224, 77 is allowed, it is the burning likes bar's). The HUD's comic look (HUD and menus): hard pixel edges, a thick dark outline in the HUD's outline colour (8, 8, 15), clear shapes that read at a glance.
+
+The tool: `python game/tools/build_hud_livestream_art.py` (read its docstring and the function for this piece). Write each version only to the path the loop gives you; never overwrite or delete a file. Change nothing outside `game/tools/build_hud_livestream_art.py`, `game/tools/test_build_hud_livestream_art.py` and `art-archive/T-339/`. If a refine changes the script, keep its tests passing: `python -m unittest discover -s game/tools -p test_build_hud_livestream_art.py`. Free script fixes always come before a paid PixelLab regeneration.
+
+**The asset: the empty heart**, the lost heart in the row of 5: the same size and outline as the kept full heart (`game/art/hud/heart_full.png`), with the red replaced by a dark slate ramp, so a lost heart still shows as a dark heart shape that reads over the street, and the full and empty hearts look like one pair.
+
+Version 1: `python game/tools/build_hud_livestream_art.py heart-empty --from game/art/hud/heart_full.png --out <the version path>`.
+**PixelLab:** none (script, 0 generations): it is derived from the kept full heart, so the pair always matches.

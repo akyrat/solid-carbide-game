@@ -75,7 +75,7 @@ func test_max_level_keeps_the_bar_full() -> void:
 func test_labels_are_exactly_the_approved_text() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	assert_eq(hud.likes_label.text, "Likes")
+	assert_eq(hud.likes_label.text, "Subs")
 	assert_eq(hud.coins_label.text, "Coins")
 	assert_eq(Hud.TEXT_LEVEL, "Hype Lv {level}")
 	assert_eq(hud.level_label.text, "Hype Lv 1")
@@ -86,6 +86,6 @@ func test_heart_is_the_only_red_part() -> void:
 	var r := _run()
 	assert_eq(r.hud.heart.get_child_count(), 0, "the heart is its art, no drawn shape")
 	assert_eq(r.hud.heart.texture.resource_path, Hud.HEART_PATH)
-	for c: Color in [Hud.HEALTH_COLOR, Hud.LIKES_COLOR, Hud.COINS_COLOR, Hud.TIMER_COLOR]:
+	for c: Color in [Hud.HEALTH_COLOR, Hud.LIKES_COLOR, Hud.COINS_COLOR]:
 		var red: bool = c.h < 0.04 or c.h > 0.96
 		assert_false(red, "not red: %s" % c)

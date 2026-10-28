@@ -1,0 +1,44 @@
+{
+  "file": "eye_icon_c1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "tiny pixel art eye icon, small and centred with empty space around, cyan eye shape, dark iris ring, black pupil, white catchlight, thick dark outline, flat transparent background",
+    "image_size": {
+      "width": 32,
+      "height": 32
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8,
+    "init_image": {
+      "type": "base64",
+      "base64": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAA0klEQVR4nGNgGAWjYBSMgpEOGMnRxMHB/x+b+I8fH0k2j5Ecy/d8+oBVzoVPgGRHMFFieURjLxjDAEgOV+jgAozkWA6z9NPpK2Caz1QHTK+oLyY5JFiItVz75geG/OcIscctxQycnAIQh0AdAZMHqb2qLvCfGEcwEWs5OuB3T8SrD6SHmOhgIqQA5Iur6hCfkgJAeogJAUZiDQT5RqS4FkUMPQ3AwJveZqLTACOxDsDlCHRAiuUgQFI2BBkMsoBaloPAgJeEo2AUjIJRMAoYBhoAAORpX8ZiiC/fAAAAAElFTkSuQmCC"
+    },
+    "init_image_strength": 700
+  },
+  "prompt": "tiny pixel art eye icon, small and centred with empty space around, cyan eye shape, dark iris ring, black pupil, white catchlight, thick dark outline, flat transparent background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-27T23:13:56+00:00",
+  "image": {
+    "width": 32,
+    "height": 32,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/hud-and-menus.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-339",
+  "job_status": null,
+  "notes": "eye icon candidate 1, script eye as init",
+  "generator": "game/tools/pixellab_client.py"
+}

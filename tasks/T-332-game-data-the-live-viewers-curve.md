@@ -1,7 +1,7 @@
 ---
 id: T-332
 title: "Game data: the live viewers curve, its heat steps and how the number moves"
-status: open
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/data/combo.json, game/scripts/data/combo_data.gd, game/scripts/hud/combo_heat.gd]
 files_expected_to_change: [game/data/, game/scripts/data/, game/tests/unit/, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,14 +45,26 @@ The board's review: none needed (data); judged in the HUD playtest.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The curve gives 20,000 at x2 and 1,000,000 at x6 (±1%), rises with the multiplier everywhere, and its x1 value is in the data (tests). (QA: pass / fail)
-- [ ] The heat thresholds in viewers, the fire threshold (1,000,000), the counting speed and the wobble are in the data with a reason each (Game loop architecture, Content). (QA: pass / fail)
-- [ ] The trick gain and crash loss functions and the number format have tests. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The curve gives 20,000 at x2 and 1,000,000 at x6 (±1%), rises with the multiplier everywhere, and its x1 value is in the data (tests). (QA: pass)
+- [ ] The heat thresholds in viewers, the fire threshold (1,000,000), the counting speed and the wobble are in the data with a reason each (Game loop architecture, Content). (QA: pass)
+- [ ] The trick gain and crash loss functions and the number format have tests. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-27, Open → In progress
+
+Started in the livestream HUD build.
+
+### 2026-10-28, In progress → In QA
+
+Built; QA running now (the board's go to finish without stopping).
+
+### 2026-10-28, Needs playtest → Done
+
+The board approved it; merging to master next.
 
 ## Style review
 
@@ -61,3 +73,16 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done by the Game Data Agent. Commit on the branch: "T-332: live viewers curve...".
+
+- New `game/data/viewers.json` (every number with its reason in a `_comment`) and `game/scripts/data/viewers_data.gd` (`ViewersData`). Curve: a power law between anchors x1 = 2,500, x2 = 20,000, x6 = 1,000,000 (about 84.7K at x3, 236K at x4, 522K at x5), flat outside, rounded. The board confirmed 2,500 at x1, heat steps 20K / 85K / 236K and fire only from 1M.
+- Heat thresholds in viewers: 20,000, 84,736, 236,026 (a test checks they agree with `ComboHeat.THRESHOLDS` through the curve); fire from 1,000,000 (step 4). Judge the step on the target, not the wobbling number.
+- Motion: up 4.0 and down 2.0 per second (exponential ease), snap within 1 viewer, wobble +-0.5% with a new offset every 0.15 s.
+- Functions for T-336: `viewers_for`, `step_for_viewers`, `step_for_multiplier`, `count_toward`, `with_wobble`, `trick_gain`, `crash_loss`, `format` (850, 2,500, 20.4K, 236K, 1.02M; 999,960 shows 1.00M).
+- Tests: `game/tests/unit/test_viewers_data.gd` (13 tests: anchors, x1, rising everywhere, heat agreement, fire, counting, wobble, gain/loss, format).
+- Test runs: `game/tools` unittest 620 tests OK (1 skipped); `tools` unittest 501 tests OK; GUT (`run_tests.sh`) 1701 tests, all passing.
+- Documents updated: docs/game-loop-architecture.md (combo section), game/README.md (data section). The long GDD was not regenerated; the Project Lead does that when merging.
+
+QA round 1: all 4 criteria pass. qa_check: tests PASS (3 sets), documents PASS (2 changed). The screenshots check flags only because the ticket is data-only (changes_visuals: no, no HUD): nothing can be shown and no criterion asks for one. Curve, anchors and x1 are in viewers.json with 13 GUT tests; thresholds, fire, motion and wobble each have a _comment reason; trick gain, crash loss and format have tests. Test counts (agent's, all passing in qa_check): unittest game/tools 620, unittest tools 501, GUT 1701.
+- 2026-10-28, needs-playtest → done: The board approved it (2026-10-28).

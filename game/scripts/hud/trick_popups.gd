@@ -38,7 +38,7 @@ const BROKEN_TEXT := "COMBO BROKEN!"
 ## Combo amount text approved in task T-082 (combo.added); {amount} is what the trick added.
 const ADDED_TEXT := "+{amount}"
 ## Challenge popup text approved in task T-048 (hud.score_flash); {likes} is the likes gained.
-const SCORE_TEXT := "Trending! +{likes} Likes"
+const SCORE_TEXT := "TRENDING! +{subs} SUBS!"
 ## Sizes: SIZE_SMALL or less bakes the small popup, anything more the normal one
 ## (the numbers are the old drawn font sizes). Extended drift comes every
 ## second, so it is smaller.
@@ -275,7 +275,7 @@ func _on_score(amount: float, _challenge_id: String) -> void:
 	var heat := 0
 	if _score_state != null and is_instance_valid(_score_state) and "combo" in _score_state:
 		heat = heat_for(_score_state.combo)
-	show_popup(SCORE_TEXT.format({"likes": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL, _score_car_position, heat)
+	show_popup(SCORE_TEXT.format({"subs": int(roundf(amount))}), _score_car_position.call(), SIZE_NORMAL, _score_car_position, heat)
 
 
 func _on_trick(trick_id: String) -> void:

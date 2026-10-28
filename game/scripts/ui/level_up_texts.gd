@@ -66,7 +66,7 @@ const TEXTS := {
 	"upgrade_molotov.tier5.title": "Double Drop",
 	"upgrade_molotov.tier5.desc": "Throw 2 molotovs at once. Twice the content.",
 	"upgrade_molotov.tier6.title": "Slow Burn",
-	"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for likes.",
+	"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for subs.",
 	"upgrade_molotov.tier7.title": "Bigger Blaze II",
 	"upgrade_molotov.tier7.desc": "Fire radius up another 30%. Think bigger.",
 	"upgrade_molotov.tier8.title": "Triple Drop",

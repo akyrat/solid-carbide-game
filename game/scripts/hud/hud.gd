@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## The run's HUD (tasks T-090, T-049 and T-113): the timer at the top centre,
+## The run's HUD (tasks T-090, T-049 and T-113): the timer as a digital clock at the bottom left (T-335),
 ## the car's health bar upright at the top left (T-276: 72 x 320, the heart
 ## under it, the weapon icons beside it), the coins
 ## at the top right, and the likes bar lying across the bottom centre with the
@@ -12,8 +12,6 @@ extends CanvasLayer
 ## and the counter heats up in steps as the combo climbs (ComboHeat), with
 ## the likes bar on fire at the top step (LikesFire).
 
-const TIMER_FONT_SIZE := 56
-const TIMER_COLOR := Color(0.3, 0.9, 1.0)
 const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
@@ -43,7 +41,11 @@ const HEART_SCALE := 2
 const HEART_BOX := 26.0
 
 # Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
-const TEXT_LIKES := "Likes"
+const TEXT_LIKES := "Subs"
+# Livestream HUD texts (T-331): {subs} and {goal} are the sub goal's numbers.
+const TEXT_SUB_GOAL := "{subs} / {goal} SUBS"
+const TEXT_LIVE_BADGE := "LIVE"
+const TEXT_VIEWERS_UNIT := "WATCHING"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
 # Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".
@@ -64,6 +66,8 @@ const AIRTIME_OFFSET := Vector2(70, -10)
 const DRIFT_OFFSET := Vector2(70, 30)
 
 var timer_label: Label
+## The digital clock panel holding timer_label (T-335), bottom left.
+var timer_clock: TimerClock
 var health_bar: ProgressBar
 var likes_label: Label
 var likes_bar: ProgressBar
@@ -169,18 +173,9 @@ func _on_car_stepped() -> void:
 
 
 func _build_timer() -> void:
-	timer_label = Label.new()
-	timer_label.name = "Timer"
-	timer_label.text = "8:00"
-	timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	timer_label.add_theme_font_size_override("font_size", TIMER_FONT_SIZE)
-	timer_label.add_theme_color_override("font_color", TIMER_COLOR)
-	timer_label.add_theme_color_override("font_outline_color", OUTLINE_COLOR)
-	timer_label.add_theme_constant_override("outline_size", 12)
-	timer_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	timer_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	timer_label.offset_top = 12
-	add_child(timer_label)
+	timer_clock = TimerClock.new()
+	add_child(timer_clock)
+	timer_label = timer_clock.label
 
 
 func _build_left() -> void:
@@ -416,6 +411,7 @@ func bind(state: RunState) -> void:
 	_likes_level = 0
 	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
+	timer_clock.set_time_left(_state.time_left)
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
 	_on_coins_changed(_state.coins)
@@ -424,6 +420,7 @@ func bind(state: RunState) -> void:
 
 func _on_time_left_changed(_seconds_left: float) -> void:
 	timer_label.text = _state.time_left_text()
+	timer_clock.set_time_left(_state.time_left)
 
 
 func _on_health_changed(health: float, max_health: float) -> void:

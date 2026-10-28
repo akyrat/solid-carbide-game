@@ -1,0 +1,7 @@
+# Bricks' art
+
+(The index is [../../README.md](../../README.md). What the weapon does: [../weapons/bricks.md](../weapons/bricks.md).)
+
+## Bricks' card image and impact wave (T-325)
+
+Task T-325 (Asset Generation Agent). the card image `art/level_up/weapon_bricks.png` (PixelLab pixflux, 64 x 64, record `weapon_bricks.json`; `level_up_screen.gd` loads it by `WEAPON_ART`, and the HUD's weapon icon reuses it). The wave: `art/weapons/bricks_wave_r<radius>.png` (+ `.json` record), one one-row sheet of 12 frames per tier radius (4.0, 4.8, 6.0, 7.8 units), drawn by `tools/build_bricks_wave.py` (`python game/tools/build_bricks_wave.py build` rebuilds all four from `data/weapons.json`'s radii, byte for byte; `check` checks the committed sheets; `preview --png X --out Y [--frames 4-5]` makes enlarged previews on dark and light ground). `BricksWave.setup()` loads the sheet for its radius (`art_path()`: the radius to one decimal, `.` as `_`); `_draw()` shows frame `frame_index()` (0.05 s each) at scale 0.5 with the ring's centre at (frame width / 2, (frame height + `ART_TOP`) / 2); with no sheet it draws T-324's placeholder. If the tiers' radii change, rebuild the sheets. Tests: `tools/test_build_bricks_wave.py` (radii, names, timing against `bricks.gd`, the pixel rules, a deterministic rebuild equal to the committed sheet) and, in `tests/unit/weapons/test_bricks.gd`, a sheet for every tier, frames shown in order, a wider sheet at tier 8; `tests/unit/test_level_up_screen.gd` checks the card image.

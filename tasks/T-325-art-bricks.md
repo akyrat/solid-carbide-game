@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-324]
 documents_affected: [docs/visual-style.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/README.md, docs/working-with-the-board.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/docs/weapons/bricks.md, game/docs/weapons/shared.md, game/docs/art/pixellab.md, docs/working-with-the-board.md]
 files_expected_to_change: [game/art/weapons/, art-archive/T-325/, docs/visual-style.md, game/README.md]
 model: opus
 qa_rounds: 1
@@ -205,6 +205,7 @@ The board's go: up to 8 PixelLab generations for this ticket; the board said (20
 - **Documents:** `docs/visual-style.md` (Decisions, "Bricks' art"), `game/README.md` (Weapons, Bricks: "Bricks' art"), and `docs/weapons.md` (Content, "Bricks", the Look line, which still described the placeholder; not in `documents_affected`, so listed here).
 - **Refusals:** the PreToolUse hook refused one command of mine that began with `time` (it can't tell `time` won't write a ticket); I ran the command without `time`, as the refusal message suggested. In the loops the headless generator had some read-only Bash commands refused (listed in the Style review's "Refused" lines); none stopped its work.
 - **For the board's playtest:** if the tiers' radii change in `weapons.json`, rerun `python game/tools/build_bricks_wave.py build` (the tests catch a missing sheet).
+- **Merge with master (after the board's approval):** master's `game/README.md` became an index (T-346), so the "Bricks' art" text moved to `game/docs/art/bricks-art.md` with an index line in `game/README.md`, and `game/docs/weapons/bricks.md` now points to it instead of calling the art placeholders. The PixelLab log keeps both sides' lines in time order.
 
 ### QA (round 1)
 

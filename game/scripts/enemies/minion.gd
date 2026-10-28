@@ -8,13 +8,13 @@ extends CharacterBody2D
 ## position in pixels, PX_PER_UNIT per unit), like the car. It is on collision
 ## layer 3 (enemies) so weapons can find it, and its mask is layer 1 only
 ## (walls, buildings, the map's edge, boulders): it slides along obstacles and
-## never pushes or blocks the car (game/README.md, "Collision layers").
+## never pushes or blocks the car (game/docs/driving/collisions.md, "Collision layers").
 ## It draws nothing itself: `sprite` (minion_sprite.gd) draws it in the
 ## isometric view. The spawner (minion_spawner.gd) moves it once per physics
 ## step through step(), so pausing the tree stops it.
 ##
 ## Weapons damage it through take_damage() and push it through
-## apply_knockback() (game/README.md, "Minions").
+## apply_knockback() (game/docs/enemies/minions.md, "Minions").
 ##
 ## Heights (task T-207, enemy_height.gd): with `ground` set (the map's
 ## GroundHeight, on the elevation map) it stands on the ground under its

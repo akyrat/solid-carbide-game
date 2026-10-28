@@ -55,6 +55,8 @@ The task files in `tasks/` are the board's only data. The server reads them, and
 
 **Which tickets to do next:** `python tools/ticket_impact.py` lists the unfinished MVP tickets with the most other tickets waiting on them, directly and down the chain (`--top N` for more rows, `--all` to include later milestones).
 
+**Token spend:** `python tools/token_report.py [--from DATE_OR_TIME] [--to DATE_OR_TIME] [--out FILE]` (a bound may carry a UTC time, `2026-10-28T01:43:02Z`) (T-342) reads the Claude Code transcripts of this project (`~/.claude/projects/C--solid-carbide-game/`, streamed, never modified) and the tickets, and prints tables: tokens by kind, model and subagent type; calls, context size and compactions per session; what fills the main sessions' context (share and weighted cost); failed tool calls; QA rounds, fail rate and model choice by agent. Run it with the same range before and after a change to compare. The baseline taken before the token-spend epic is `docs/token-spend/baseline-2026-10-28.md`; the early read after the new tools (T-350, with the rerun command) is `docs/token-spend/after-2026-10-28-early.md`.
+
 **The style loop:** `python tools/style_loop/run.py art|text --task T-012 --brief <file> ...` makes an asset or a text through the style loop with no one stepping in (generate, score, refine below 8, at most 3 refines) and writes every round in the task's `## Style review`; `--fake <fixture>` runs it free on a copy of the task (T-291; the commands are in `tasks/README.md`, "The style loop").
 
 ## How separate documents are written
@@ -102,3 +104,4 @@ A section with nothing in it yet says `(To be written.)` or, for Open questions 
 - Mermaid diagrams and relative image links are fine.
 - One home for each fact: if a fact belongs in another document, link to it.
 - The board's drawings and sketches are stored in a folder named after the game area doc they belong to (for example `docs/level-design/`), and linked from that doc's References.
+- How the game is built (the code side) is in `game/docs/`, one folder per game area, with `game/README.md` as the index (T-346). A game area document points to the file it needs there; agents read only that file, not the whole folder.

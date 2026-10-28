@@ -37,7 +37,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - The final release adds a recap screen right after a run ends, win or loss: how many of each enemy type the player killed, and other stats the board will choose (task T-017). In the MVP there is no recap: the run ends at the main menu. (2026-10-07; corrected 2026-10-09, it said the MVP goes to the Garage)
 - The final release adds local co-op for 2 players (screen split in halves) and 4 players (screen split in quarters). The MVP is single-player. (2026-10-07)
 - **Music** (board, 2026-10-20): the board's own two tracks, "DEMO BEAT 1 (ANDY GAME)" and "DEMO BEAT 2 (ANDY GAME)" (made by the board; the music is human-made), play through the whole game, menus and runs alike, without stopping between screens: one track, then the other, alternating and looping. Its volume is the pause screen's music volume slider (HUD and menus, Decisions). Built in T-209: one music player, a child of the game flow, so the screens changing never restarts it; it plays on its own "Music" bus, and the setting is `music_volume` in `game_settings.gd` (0 to 100, saved with the SFX volume, starting at 40 as a proposal for the playtest). (tasks T-209, T-210)
-- **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). Built in T-222: the radius is 3 units (the car is drawn 3 units long, Drifting, Decisions), read from `run.json`'s `pickup_magnet`, and pickups fly to the car at 30 units per second (proposals for the playtest: the pull speed, and the reach ignoring heights); `game/README.md`, "The pickup magnet (T-222)". (T-222)
+- **Pickup magnet** (board, 2026-10-21): coins, level-up gift packs and health drops are pulled towards the car once they are within a radius of 1 car length, so they are easier to pick up. The radius is a garage upgrade (Garage design, Decisions). Built in T-222: the radius is 3 units (the car is drawn 3 units long, Drifting, Decisions), read from `run.json`'s `pickup_magnet`, and pickups fly to the car at 30 units per second (proposals for the playtest: the pull speed, and the reach ignoring heights); `game/docs/game-loop/gift-pack-and-pickups.md`, "The pickup magnet (T-222)". (T-222)
 - **An arrow for every gift pack on the map** (board, 2026-10-28): every gift pack on the map gets its own arrow, the same arrow that today points at a landed package off screen, so several arrows show when several packages are out. (T-314)
 - **A crash pays the trick in progress** (board, 2026-10-28): when a crash breaks the combo, the player still gets the trick they were doing up to that moment (a drift pays for the time it lasted), instead of losing it. (T-315)
 - **Time's up screen** (board, 2026-10-28): when the 8-minute timer runs out (the kaiju survived it, a loss), a 3-second animated failure screen plays before the run ends. Its text: HUD and menus, Content (T-316). (T-317)
@@ -47,7 +47,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **A bigger gift pack helicopter** (board, 2026-10-28): the helicopter that drops each gift pack is drawn 30% larger on screen than today (about 125 x 104 drawn pixels instead of 96 x 80), with the same art. The package still hangs clear of its belly. (T-330)
 - **The combo shows as live viewers** (board, 2026-10-28): the combo multiplier keeps working exactly as it does (tricks raise it, crashes cut it, it drains, it multiplies what drifting earns), but the player sees it as the stream's live viewers instead of "Combo x2.00": about 20,000 at x2 and 1,000,000 at x6 (the board's anchors), on a smooth curve between them (and below x2, a proposal). The number behaves like a real stream's: it counts towards its value and keeps moving a little. The higher it is, the hotter it looks, and over a million it is on fire. (T-332, T-336)
 - **Subs instead of likes** (board, 2026-10-28): what the player earns toward the next gift pack is **subs** (the stream's subscribers), not likes: drifting brings subs, the viewers multiply them, each full **sub goal** sends a gift pack, and the drain is people unsubscribing when the stream gets dull. Only the name and the look change; the numbers and rules of the likes stay (the likes bar becomes the sub goal: HUD and menus, Decisions). Extended narrative, Decisions, "Subs". (T-331, T-337)
-- **Hearts instead of health points** (board, 2026-10-28): the car has **5 hearts**. A minion's hit and a meteor take 1 heart, the kaiju's 2. After any hit the car is invulnerable for **1 second**, blinking, so the player can escape a swarm; hits during that second do nothing and don't cut the combo. A health pickup heals 1 heart, and drops at half today's chance (15%, Enemies). The garage's car health upgrade adds 1 heart per level (Garage design). (T-333, T-334, T-338)
+- **Hearts instead of health points** (board, 2026-10-28): the car has **5 hearts**. A minion's hit and a meteor take 1 heart, the kaiju's 2. After any hit the car is invulnerable for **1 second**, blinking, so the player can escape a swarm; hits during that second do nothing and don't cut the combo. A health pickup heals 1 heart, and drops at half today's chance (15%, Enemies). The garage's car health upgrade adds 1 heart per level (Garage design). (T-333, T-334, T-338) Numbers (T-333, `game/data/run.json` `car`): `starting_hearts` 5, `invulnerability_seconds` 1.0, `blink_interval_seconds` 0.1 (a proposal: each on or off phase of the blink). The old `starting_health` 100 is gone.
 
 ## Content
 
@@ -79,9 +79,9 @@ flowchart TD
 
 ### The run scene
 
-The run is one Godot scene (task T-036; how to use it: [game/README.md](../game/README.md), section "The run"). It loads the run's map and puts the drift car (Drifting) on it, at the centre of the map, in the gravel square, with the camera following the car in the isometric view, as in the drift prototype.
+The run is one Godot scene (task T-036; how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), section "The run"). It loads the run's map and puts the drift car (Drifting) on it, at the centre of the map, in the gravel square, with the camera following the car in the isometric view, as in the drift prototype.
 
-The run's map (task T-206; Level design, Decisions, "The elevation sample map becomes the run's map") is the elevation sample map's layout with its rooftops and ramps (Level design, Content, "Elevation sample map", "The run on this map"): the car has its height there, and everything else in the run (enemies, weapons, pickups, coins, the HUD, the pause screen) works on it as on the MVP map. The MVP map (Level design, Content, "MVP map") stays in the project; one constant in the run switches back to it ([game/README.md](../game/README.md), "The run").
+The run's map (task T-206; Level design, Decisions, "The elevation sample map becomes the run's map") is the elevation sample map's layout with its rooftops and ramps (Level design, Content, "Elevation sample map", "The run on this map"): the car has its height there, and everything else in the run (enemies, weapons, pickups, coins, the HUD, the pause screen) works on it as on the MVP map. The MVP map (Level design, Content, "MVP map") stays in the project; one constant in the run switches back to it ([game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The run").
 
 The run owns its state: the clock (8:00 counting down, stopping while the game is paused), the car's health (starting at the value in [game/data/run.json](../game/data/run.json)), and the coins collected in the run. Other parts of the game plug into it:
 
@@ -93,7 +93,7 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 
 ### Likes and levels
 
-The run also owns the likes (XP) and the level (task T-037; how to use it: [game/README.md](../game/README.md), section "The run"; the numbers: [game/data/run.json](../game/data/run.json)):
+The run also owns the likes (XP) and the level (task T-037; how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), section "The run"; the numbers: [game/data/run.json](../game/data/run.json)):
 
 - Every completed challenge, preset or the kaiju's meteor challenges, gives the current level's challenge XP, and the run sends a "score" signal with it for the challenge popup.
 - The run follows the car's drift state step by step: once an unbroken drift reaches 1 second it gives the drift XP for that second, then for each further full second.
@@ -106,7 +106,7 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 
 ### The gift pack drop
 
-How the level-up screen is reached (task T-144; how to use it: [game/README.md](../game/README.md), section "The gift pack drop"; the numbers: [game/data/gift_pack.json](../game/data/gift_pack.json)):
+How the level-up screen is reached (task T-144; how to use it: [game/docs/game-loop/gift-pack-and-pickups.md](../game/docs/game-loop/gift-pack-and-pickups.md), section "The gift pack drop"; the numbers: [game/data/gift_pack.json](../game/data/gift_pack.json)):
 
 - On every level-up the run sends a helicopter. It flies across the screen from beyond one edge to beyond the other, carrying the package, and drops it over the landing spot; the package falls and lands. Built with placeholder art for now (the final art: tasks T-145 and T-146).
 - The landing spot is a short way ahead of the car, along the way it is moving, on open road: never in a building, a boulder or past the map's edge. If straight ahead is blocked, the nearest open spot around it is used.
@@ -117,21 +117,22 @@ How the level-up screen is reached (task T-144; how to use it: [game/README.md](
 
 ### The combo
 
-The run also owns the combo (task T-081; how to use it: [game/README.md](../game/README.md), section "The run"; the numbers: [game/data/combo.json](../game/data/combo.json)):
+The run also owns the combo (task T-081; how to use it: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), section "The run"; the numbers: [game/data/combo.json](../game/data/combo.json)):
 
 - Each trick the car does raises the combo multiplier by that trick's amount, up to a cap. The run sends a signal with the trick, the amount added and the new multiplier, for the trick popups.
-- The tricks: the extended drift (paid once per drift, by its length), the 360, the alternate drift (Drifting, Decisions), the air 180 and air 360 (Drifting, Decisions, "Aerial tricks"), the airtime trick (Drifting, Decisions, "Airtime trick"), and **thread the needle** (task T-272; Level design, Decisions, "Thread the needle"): on a level made in the creator, driving through the gap between two obstacles the board paired, without touching either. When each fires is in `game/README.md`, "Tricks" (thread the needle: "Level creator", "Thread the needle (T-272)"); what each adds is in `combo.json`.
+- The tricks: the extended drift (paid once per drift, by its length), the 360, the alternate drift (Drifting, Decisions), the air 180 and air 360 (Drifting, Decisions, "Aerial tricks"), the airtime trick (Drifting, Decisions, "Airtime trick"), and **thread the needle** (task T-272; Level design, Decisions, "Thread the needle"): on a level made in the creator, driving through the gap between two obstacles the board paired, without touching either. When each fires is in `game/docs/driving/tricks.md`, "Tricks" (thread the needle: "Level creator", "Thread the needle (T-272)"); what each adds is in `combo.json`.
 - The multiplier multiplies all XP gained: each completed challenge's XP (the "score" signal carries the multiplied amount) and each drift second's XP.
 - Hitting a wall, a building, the map edge or a boulder cuts the combo by 80%, and so does any damage to the car (enemies, meteors). The cut applies to the part of the multiplier above "no combo".
 - A crash pays the trick in progress first (task T-315; Decisions, "A crash pays the trick in progress"): a drift under way pays its extended drift for the time it lasted until the crash, and in the air the spins and the airtime so far pay too; then the combo is cut, so the trick's popup shows just before COMBO BROKEN!. Which tricks count and why: Drifting, Content, "A crash pays the trick in progress". The order is a switch in `combo.json` (`crash_pays_trick_first`).
 - When no trick has come for 2 seconds, the combo drains, down to "no combo". A trick restarts the wait.
+- **Live viewers (T-332):** the player sees the multiplier as viewers. The curve, heat steps (20,000, 84,736 and 236,026, then fire from 1,000,000), the counting speed, the wobble and the number format are in [game/data/viewers.json](../game/data/viewers.json), read through `ViewersData` (`viewers_for`, `step_for_viewers`, `count_toward`, `with_wobble`, `trick_gain`, `crash_loss`, `format`). x1 = 2,500, x2 = 20,000, x6 = 1,000,000. The HUD counter is T-336.
 - The HUD and enemy spawning read the multiplier, with a signal whenever it changes. It stops while the run is paused and resets with every new run.
 
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
 ### Screen flow
 
-One screen is on show at a time (task T-055; how to use it: [game/README.md](../game/README.md), section "Screen flow"):
+One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
 
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
@@ -150,6 +151,6 @@ The drift prototype is not part of the flow; it stays as a tuning tool, opened o
 
 - Final GDD (historical; superseded by the game area docs): [short-gdd/Solid_Carbide_-_Final_GDD.pdf](short-gdd/Solid_Carbide_-_Final_GDD.pdf), sections "Game Specificity" and "Player Experience".
 - Unity prototype report: [drifting/unity-prototype-report.md](drifting/unity-prototype-report.md), for the definition of drifting used for XP.
-- Run numbers (XP per challenge, XP per level, drift XP, car starting health): [game/data/run.json](../game/data/run.json), read through `game/scripts/data/run_data.gd`.
+- Run numbers (XP per challenge, XP per level, drift XP, car starting hearts, invulnerability, blink): [game/data/run.json](../game/data/run.json), read through `game/scripts/data/run_data.gd`.
 - Combo numbers (what each trick adds, the cap, the collision cut, the drain, how the combo raises spawning): [game/data/combo.json](../game/data/combo.json), read through `game/scripts/data/combo_data.gd`.
 - Gift pack numbers (the helicopter's speed, height and margin; the package's fall time, landing distance, clearance and pickup radius): [game/data/gift_pack.json](../game/data/gift_pack.json), read through `game/scripts/data/gift_pack_data.gd`.

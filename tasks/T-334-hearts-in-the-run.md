@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-333]
 documents_affected: [docs/game-loop-architecture.md, docs/enemies.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/README.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/docs/game-loop/the-run.md, game/docs/hud-and-menus/hud.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/scripts/run/, game/scripts/enemies/, game/scripts/driving/, game/scripts/garage/, game/tests/unit/, game/README.md, docs/game-loop-architecture.md, docs/enemies.md]
 model: opus
 qa_rounds: 0
