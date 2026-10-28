@@ -1,7 +1,7 @@
 ---
 id: T-340
 title: "Art: bolder enemy outlines, so the player sees and avoids them"
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -57,6 +57,10 @@ Started: script pass, no PixelLab.
 ### 2026-10-28, In progress → In QA
 
 Built; QA running now (the board's go to finish without stopping).
+
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
 
 ## Style review
 
@@ -115,3 +119,4 @@ Screenshots before and after (street, rooftop, kaiju on a rooftop) and enlarged 
 
 Tests: `game/tools` unittest and `tools` unittest both OK (626 tests with 1 skipped, and 501), new `game/tools/test_build_bolder_outlines.py` has 6 tests. Docs updated: Visual style, game/README.md.
 QA round 1 (sonnet): qa_check all pass (3 test sets, 2 docs changed, 8 screenshots). Criteria 1-6 pass: rerunnable script, pixel rules ok, three style-loop runs 8/10 recorded, docs updated, screenshots present, tests green.
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

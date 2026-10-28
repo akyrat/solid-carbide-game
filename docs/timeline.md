@@ -2005,3 +2005,8 @@ Entry format:
 - Decision or change: docs/token-spend/after-2026-10-28-early.md compares the two hours after the new tools merged (01:43 to 03:55 UTC, 299 calls) with the baseline, per merged ticket and per call. Too small and too different to credit an effect: 5.0M tokens per merged ticket against 12.5M (different work); git merge output 199 characters per call against 1,849 (the one plausible effect, T-344); failed calls 9.7% against 5.1% and hook refusals 4.3% against 1.2% (mostly the guard refusing scripts that mention tasks); subagent reports 18.5% of context against 14.3%. The real comparison is a rerun after the HUD batch (the command is in the report). The agent's own write of its result notes was refused, so they were written in the Tokens session on the board's go. With this the token-spend epic's tickets are done; T-353 waits for the board.
 - Documents touched: docs/token-spend/after-2026-10-28-early.md, docs/README.md
 - Tasks: T-350
+
+## 2026-10-28: Bolder enemy outlines
+- Decision or change: The board played the livestream HUD build: the enemies' bolder outlines look good.
+- Documents touched: none
+- Tasks: T-340
