@@ -1,7 +1,7 @@
 ---
 id: T-331
 title: "Text: likes become subs, the sub goal's label and the LIVE badge"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/extended-narrative.md, docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, game/scripts/ui/level_up_texts.gd, game/data/]
 files_expected_to_change: [game/data/, game/scripts/ui/level_up_texts.gd, docs/extended-narrative.md, docs/hud-and-menus.md, art-archive/T-331/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
