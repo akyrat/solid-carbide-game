@@ -1,7 +1,7 @@
 ---
 id: T-336
 title: "The live viewers counter at the bottom right, and tricks that bring viewers"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/README.md, game/scripts/hud/, game/scripts/hud/combo_heat.gd]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-336/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -49,15 +49,15 @@ The board's review: play a run: do tricks and watch the "+viewers" fly into the 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The combo counter is gone and the live viewers counter shows at the layout page's position (at 1152 x 648), anchored bottom right, with T-331's badge (test). (QA: pass / fail)
-- [ ] The shown number moves toward T-332's target for the current multiplier and never sits still while the run is going; it stops while paused (tests). (QA: pass / fail)
-- [ ] The counter's look changes at T-332's heat steps and is on fire at 1,000,000 or more (tests). (QA: pass / fail)
-- [ ] A trick popup shows "+{viewers}" with an eye icon in the viewers colour, and that amount flies to the counter, which bumps on arrival (tests for the text and the flight's end). (QA: pass / fail)
-- [ ] A crash flashes the counter red and shows "-{viewers lost}" dropping from it (test). (QA: pass / fail)
-- [ ] Every label comes from the game's text data; no text is written in the code. (QA: pass / fail)
-- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-336/screenshots/`: a GIF of a trick's "+viewers" flying in, one of a crash, and a still of the counter on fire. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] The combo counter is gone and the live viewers counter shows at the layout page's position (at 1152 x 648), anchored bottom right, with T-331's badge (test). (QA: pass)
+- [ ] The shown number moves toward T-332's target for the current multiplier and never sits still while the run is going; it stops while paused (tests). (QA: pass)
+- [ ] The counter's look changes at T-332's heat steps and is on fire at 1,000,000 or more (tests). (QA: pass)
+- [ ] A trick popup shows "+{viewers}" with an eye icon in the viewers colour, and that amount flies to the counter, which bumps on arrival (tests for the text and the flight's end). (QA: pass)
+- [ ] A crash flashes the counter red and shows "-{viewers lost}" dropping from it (test). (QA: pass)
+- [ ] Every label comes from the game's text data; no text is written in the code. (QA: pass)
+- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass; docs are in docs/hud-and-menus.md and game/docs/hud-and-menus/, game/README.md is an index and that counts as the README criterion per the Project Lead)
+- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-336/screenshots/`: a GIF of a trick's "+viewers" flying in, one of a crash, and a still of the counter on fire. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass; qa_check: 3 test sets passed; 643, 545 and 1759 tests)
 
 ## Updates
 
@@ -104,3 +104,5 @@ Test runs (foreground, all passing):
 Screenshots (`art-archive/T-336/screenshots/`, 1152x648 stills; made with `bash game/tools/record_viewers_counter.sh`, fixture `game/tests/fixtures/viewers_counter_demo.tscn`): `counter_base.png` (x1), `counter_step1.png`, `counter_step2.png`, `counter_step3.png`, `counter_fire.png` (on fire, 1.00M); `viewers_trick.gif` (three tricks, each "+viewers" flying in), `viewers_crash.gif` (red flash, "-226K" dropping, number falling).
 
 Documents affected: `docs/hud-and-menus.md` (Content: new "Live viewers counter" entry; Livestream HUD texts: badge art, unit placement, "+{amount}"/"-{amount}"); `game/docs/hud-and-menus/hud.md` (note that the combo counter is gone, new section "Live viewers counter (HUD)"); `game/docs/hud-and-menus/popups.md` (new section "Viewers on the trick popups"). game/README.md is an index now, so not changed. The long GDD needs regenerating at merge.
+
+**QA, 2026-10-28 (round 1): 9 of 9 criteria pass.** qa_check: tests PASS (3 sets), screenshots PASS (7 files; counter_fire.png viewed, fire and "1.00M WATCHING" at bottom right), documents line flagged only game/README.md unchanged, which the Project Lead said to count via game/docs/hud-and-menus/ (hud.md, popups.md) plus docs/hud-and-menus.md. "-{amount}" is a constant in trick_popups.gd (LOST_TEXT, the board's wording, as the Project Lead allowed) with the same pattern as ADDED_TEXT. Agent's test counts (643, 545, 1759) confirmed by the passing run.
