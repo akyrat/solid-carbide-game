@@ -1,7 +1,7 @@
 ---
 id: T-331
 title: "Text: likes become subs, the sub goal's label and the LIVE badge"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -45,10 +45,10 @@ The board's review: read the renamed lines and the new labels in the result note
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] No player-facing text the game shows still says "likes" for what the player earns (QA greps the text data and scripts and lists any match with its reason). (QA: pass / fail)
-- [ ] Text rules, rule 2 says "subs" and "live viewers", and the result notes list every changed line, old and new. (QA: pass / fail)
-- [ ] The sub goal label, the LIVE badge and any viewers unit are in the game's text data and in HUD and menus, Content, "Livestream HUD texts". (QA: pass / fail)
-- [ ] Each new or changed line scored at least 8 in the style loop, with every round in the Style review. (QA: pass / fail)
+- [ ] No player-facing text the game shows still says "likes" for what the player earns (QA greps the text data and scripts and lists any match with its reason). (QA: pass)
+- [ ] Text rules, rule 2 says "subs" and "live viewers", and the result notes list every changed line, old and new. (QA: pass)
+- [ ] The sub goal label, the LIVE badge and any viewers unit are in the game's text data and in HUD and menus, Content, "Livestream HUD texts". (QA: pass)
+- [ ] Each new or changed line scored at least 8 in the style loop, with every round in the Style review. (QA: pass)
 
 ## Updates
 
@@ -57,6 +57,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started in the livestream HUD build.
+
+### 2026-10-28, In progress → In QA
+
+Built; QA running now (the board's go to finish without stopping).
+
+## QA
+
+Round 1 (QA: fail: paperwork - screenshots check red, no file in art-archive/T-331/screenshots/; the four criteria themselves pass) (greps: remaining "likes" are identifiers, comments, run.json comments and art file names only; rule 2 and Livestream HUD texts present; style loop rounds all >= 8). Tests: 3 sets pass; documents check pass. Screenshots check red: text-only work (tasks/README.md, Screenshots: "Nothing to picture: none"), nothing to capture; no criterion asks for one.
 
 ## Style review
 
