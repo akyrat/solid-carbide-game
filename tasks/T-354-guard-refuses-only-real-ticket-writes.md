@@ -1,7 +1,7 @@
 ---
 id: T-354
 title: Token spend: the guard refuses only commands that really write a ticket
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/T-348-guard-read-only-commands-again.md, tasks/T-349-a-guard-against-very-large-shell-output.md, docs/token-spend/after-2026-10-28-early.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -135,3 +135,4 @@ Nothing to picture: tooling only.
 2. `cp`/`mv`/`install`/`dd of=`/`tee` onto a ticket with no guard word: **not done, blocked by a refusal.** I wrote the change, an `overwrite_reason` check in `pre_shell`. It runs before the guard-word gate and refuses `cp`, `mv`, `install`, `ln`, `tee`, `dd of=`, the PowerShell copy/move/set-content family, `>` and a ticket tool's output options whenever a target is a `tasks/T-*.md` file, a glob in a tasks folder, or the tasks folder itself, and leaves `git checkout`/`git restore` allowed. I applied it with an inline `python -` here-document, and the live guard refused it: "inline code that names task files (`tasks`)", the very false refusal this ticket fixes, because master's hook is still the old one. Under the rule against working around a refusal, I did not redo it with the Edit tool or any other way. Fix 2 can be done once this branch's guard is live, or by an Edit the Project Lead allows explicitly. The README block is unchanged for now; the git checkout/restore note goes in with fix 2.
 
 Tests after the fix (foreground): game/tools 643 OK (1 skipped); tools 556 OK; run_tests.sh 1757/1757 passing, TESTS PASSED.
+- 2026-10-28, in-qa → done: QA passed 5/5; the --log= regression QA found was fixed and tested after. The cp/mv overwrite gap (older than this ticket) moves to a follow-up ticket, since the old guard refused that edit.
