@@ -1,7 +1,7 @@
 ---
 id: T-351
 title: Reaction icons burst out on a sub goal and float up at high viewer counts
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Greenbull
