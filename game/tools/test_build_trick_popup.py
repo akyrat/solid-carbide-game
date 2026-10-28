@@ -12,7 +12,7 @@ TEXTS = [
     ("FULL 360! +0.25", "normal"),
     ("ALT DRIFT! +0.5", "normal"),
     ("LONG DRIFT! +0.05", "small"),
-    ("Trending! +120 Likes", "normal"),
+    ("TRENDING! +120 SUBS!", "normal"),
     ("FULL 360!", "normal"),
 ]
 
@@ -75,7 +75,7 @@ class PopupTest(unittest.TestCase):
     def test_split_text(self):
         self.assertEqual(b.split_text("FULL 360! +0.25"), ("FULL 360!", "+0.25"))
         self.assertEqual(b.split_text("FULL 360!"), ("FULL 360!", ""))
-        self.assertEqual(b.split_text("Trending! +120 Likes"), ("Trending!", "+120 Likes"))
+        self.assertEqual(b.split_text("TRENDING! +120 SUBS!"), ("TRENDING!", "+120 SUBS!"))
 
 
 class SampleTest(unittest.TestCase):

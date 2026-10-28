@@ -15,8 +15,8 @@ const CASES := [
 	["FULL 360! +0.25", "normal"],
 	["ALT DRIFT!", "normal"],
 	["ALT DRIFT! +0.5", "normal"],
-	["Trending! +1 Likes", "normal"],
-	["Trending! +120 Likes", "normal"],
+	["TRENDING! +1 SUBS!", "normal"],
+	["TRENDING! +120 SUBS!", "normal"],
 ]
 
 
@@ -88,7 +88,7 @@ func test_bubble_fits_the_text() -> void:
 
 
 func test_longer_text_gets_a_wider_bubble() -> void:
-	assert_gt(Art.bake("Trending! +120 Likes", "normal").get_width(), Art.bake("FULL 360! +0.25", "normal").get_width())
+	assert_gt(Art.bake("TRENDING! +120 SUBS!", "normal").get_width(), Art.bake("FULL 360! +0.25", "normal").get_width())
 	assert_lt(Art.bake("LONG DRIFT! +0.05", "small").get_height(), Art.bake("FULL 360! +0.25", "normal").get_height())
 
 

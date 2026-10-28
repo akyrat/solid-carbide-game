@@ -21,7 +21,7 @@ func _ready() -> void:
 		var y := -120.0 + heat * ROW_GAP
 		_show(tp, "ALT DRIFT! +0.5", at + Vector2(-210, y), tp.SIZE_NORMAL, heat)
 		_show(tp, "LONG DRIFT! +0.05", at + Vector2(-50, y), tp.SIZE_SMALL, heat)
-		_show(tp, "Trending! +120 Likes", at + Vector2(140, y), tp.SIZE_NORMAL, heat)
+		_show(tp, "TRENDING! +120 SUBS!", at + Vector2(140, y), tp.SIZE_NORMAL, heat)
 
 
 func _show(tp: Node2D, text: String, at: Vector2, size: int, heat: int) -> void:

@@ -64,7 +64,7 @@ func test_challenge_popup_follows_the_car() -> void:
 	add_child_autofree(run)
 	run.state.score.emit(120.0, "c")
 	var pop = run.trick_popups.popups().back()
-	assert_true(pop.text.begins_with("Trending"))
+	assert_true(pop.text.begins_with("TRENDING"))
 	run.car_sprite.position += Vector2(300, 0)
 	pop.advance(0.2)
 	assert_eq(pop.position - run.car_sprite.position, pop.offset())
