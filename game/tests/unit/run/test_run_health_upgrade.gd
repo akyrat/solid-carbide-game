@@ -64,8 +64,8 @@ func test_a_run_from_the_game_flow_uses_the_saved_level_and_the_hud_matches() ->
 	var want := GarageData.new().value("car_health", 3)
 	assert_eq(game.run.state.max_health, want)
 	assert_eq(game.run.state.health, want)
-	assert_eq(game.run.hud.health_bar.max_value, want, "the HUD's maximum")
-	assert_eq(game.run.hud.health_bar.value, want)
+	assert_eq(game.run.hud.heart_row.max_hearts, int(want), "the HUD's hearts")
+	assert_eq(game.run.hud.heart_row.full_count, int(want))
 
 
 func test_a_new_run_picks_up_a_level_bought_since() -> void:

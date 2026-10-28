@@ -67,9 +67,8 @@ func _hud_at(size: Vector2i) -> Hud:
 ## Every HUD element with a rectangle on screen, by name.
 func _parts(hud: Hud) -> Dictionary:
 	return {
-		"health bar": hud.health_bar.get_global_rect(),
+		"hearts": hud.heart_row.get_global_rect(),
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
-		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
 		"viewers": hud.viewers_counter.get_global_rect(),
 		"clock": hud.timer_clock.get_global_rect(),
@@ -82,21 +81,13 @@ func _font_size(l: Label) -> int:
 
 
 func _assert_health(hud: Hud, where: String) -> void:
-	var view := hud.get_viewport().get_visible_rect().size
-	var bar := hud.health_bar.get_global_rect()
-	var heart := hud.health_heart.get_global_rect()
-	assert_eq(hud.health_bar.fill_mode, ProgressBar.FILL_BOTTOM_TO_TOP, "%s: health fills bottom up" % where)
-	assert_gt(bar.size.y, bar.size.x * 4.0, "%s: health bar upright" % where)
-	assert_almost_eq(bar.position.x, float(Hud.MARGIN), 0.5, "%s: health bar at the left edge" % where)
-	assert_lt(bar.end.x, view.x * 0.25, "%s: health bar in the left quarter" % where)
-	assert_lt(bar.end.y, view.y * 0.6, "%s: health bar in the top 60 percent" % where)
-	assert_almost_eq(bar.size.x, 72.0, 0.5, "%s: health bar 72 wide" % where)
-	assert_almost_eq(bar.size.y, 320.0, 0.5, "%s: health bar 320 tall" % where)
-	assert_almost_eq(bar.position.y, float(Hud.MARGIN), 0.5, "%s: health bar at the top" % where)
-	assert_almost_eq(heart.get_center().x, bar.get_center().x, 1.0, "%s: heart centred under the bar" % where)
-	assert_gte(heart.position.y, bar.end.y, "%s: heart under the bar" % where)
-	assert_lt(heart.position.y - bar.end.y, NEAR, "%s: heart directly under the bar" % where)
+	var row := hud.heart_row.get_global_rect()
+	assert_almost_eq(row.position, Vector2(36, 24), Vector2(0.5, 0.5), "%s: the hearts at x36 y24" % where)
+	assert_almost_eq(row.size, Vector2(220, 40), Vector2(0.5, 0.5), "%s: the hearts 220 x 40" % where)
+	var icons := hud.weapon_icons.get_global_rect()
+	assert_almost_eq(icons.position, Vector2(12, 88), Vector2(0.5, 0.5), "%s: weapon icons at x12 y88" % where)
 	assert_true(hud.get_node_or_null("Left/HealthLabel") == null, "%s: no Car Health label" % where)
+	assert_null(hud.get("health_bar"), "%s: the health bar is gone" % where)
 
 
 func _assert_sub_goal(hud: Hud, where: String) -> void:
@@ -189,7 +180,7 @@ func test_clear_of_the_middle() -> void:
 		await get_tree().process_frame
 		var view := Vector2(size)
 		var middle := Rect2(view * 0.5 - Vector2(250, 150), Vector2(500, 250))
-		for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers"]:
+		for n: String in ["hearts", "sub goal", "weapon icons", "viewers"]:
 			assert_false(_parts(hud)[n].intersects(middle),
 				"%dx%d: %s clear of the car and popups" % [size.x, size.y, n])
 
@@ -206,6 +197,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers", "clock", "coins"]:
+	for n: String in ["hearts", "sub goal", "weapon icons", "viewers", "clock", "coins"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()

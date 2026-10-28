@@ -16,12 +16,10 @@ const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
 const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
 const MARGIN := 16
-## The health bar (T-113): upright, filling from the bottom up.
-const HEALTH_BAR_SIZE := Vector2(72, 320)
-## T-276: the weapon icons start this far right of the bar, and the heart sits this far under it.
-const WEAPON_ICONS_GAP := 12
-const HEART_UNDER_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
+## T-338: the hearts row and the weapon icons column at 1152 x 648 (the board's layout page).
+const HEART_ROW_POS := Vector2(36, 24)
+const WEAPON_ICONS_POS := Vector2(12, 88)
 ## Coins counter place at 1152 x 648 (T-341).
 const COINS_POS := Vector2(16, 496)
 const COINS_SIZE := Vector2(108, 36)
@@ -52,7 +50,6 @@ const DRIFT_OFFSET := Vector2(70, 30)
 var timer_label: Label
 ## The digital clock panel holding timer_label (T-335), bottom left.
 var timer_clock: TimerClock
-var health_bar: ProgressBar
 ## The sub goal square (T-337): fills as subs come in, the gift lights up at the goal.
 var sub_goal: SubGoal
 ## Springs the square's fill to its new level (T-273); the square shows its `shown`.
@@ -64,11 +61,13 @@ var coins_label: Label
 var coins_value_label: Label
 ## The live viewers counter at the bottom right (T-336): the combo shown as viewers.
 var viewers_counter: ViewersCounter
-## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
+## The top-left area: the hearts row and the weapon icons (T-113, T-276, T-338).
 var left_column: Control
-## The red heart centred under the health bar (T-276; the likes bar's heart picture).
-var health_heart: TextureRect
-## The car's weapons as icons beside the health bar (T-276).
+## The car's hearts in a row (T-338), in place of the health bar.
+var heart_row: HeartRow
+## False until the first show of a run: the first show does not animate.
+var _health_shown := false
+## The car's weapons as a column of icons under the hearts (T-276, T-338).
 var weapon_icons: WeaponIcons
 ## A full-screen area (empty since T-337 and T-336 took the likes bar and the combo counter away).
 var bottom_area: Control
@@ -160,29 +159,19 @@ func _build_timer() -> void:
 func _build_left() -> void:
 	left_column = Control.new()
 	left_column.name = "Left"
-	left_column.position = Vector2(MARGIN, MARGIN)
 	left_column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(left_column)
-	health_bar = _make_bar("HealthBar", HEALTH_COLOR, ProgressBar.FILL_BOTTOM_TO_TOP)
-	left_column.add_child(health_bar)
-	health_heart = _make_heart()
-	health_heart.name = "HealthHeart"
-	left_column.add_child(health_heart)
+	heart_row = HeartRow.new()
+	left_column.add_child(heart_row)
 	weapon_icons = WeaponIcons.new()
 	left_column.add_child(weapon_icons)
 	_layout_left()
 
 
-## The upright health bar at the corner, the heart centred directly under it,
-## and the weapon icons' column to its right, starting at the bar's top.
+## The hearts row and the weapon icons' column at the layout page's places.
 func _layout_left() -> void:
-	health_bar.size = HEALTH_BAR_SIZE
-	health_bar.position = Vector2.ZERO
-	health_heart.size = health_heart.custom_minimum_size
-	health_heart.position = Vector2(
-		floorf((HEALTH_BAR_SIZE.x - health_heart.size.x) / 2.0),
-		HEALTH_BAR_SIZE.y + HEART_UNDER_GAP)
-	weapon_icons.position = Vector2(HEALTH_BAR_SIZE.x + WEAPON_ICONS_GAP, 0.0)
+	heart_row.position = HEART_ROW_POS
+	weapon_icons.position = WEAPON_ICONS_POS
 
 
 ## Shows the weapon rack's weapons as icons (T-276); the run scene calls it once the rack is bound.
@@ -261,38 +250,6 @@ func _make_label(label_name: String, text: String) -> Label:
 	return l
 
 
-func _make_bar(bar_name: String, fill: Color, fill_mode: int) -> ProgressBar:
-	var b := ProgressBar.new()
-	b.name = bar_name
-	b.fill_mode = fill_mode
-	b.show_percentage = false
-	b.min_value = 0.0
-	b.max_value = 1.0
-	b.value = 0.0
-	var back := StyleBoxFlat.new()
-	back.bg_color = Color(0.05, 0.06, 0.12, 0.85)
-	back.set_border_width_all(2)
-	back.border_color = Color(0.3, 0.9, 1.0, 0.8)
-	var front := StyleBoxFlat.new()
-	front.bg_color = fill
-	b.add_theme_stylebox_override("background", back)
-	b.add_theme_stylebox_override("fill", front)
-	return b
-
-
-## The heart icon (T-086): the art at HEART_SCALE, hard pixel edges.
-static func _make_heart() -> TextureRect:
-	var tex: Texture2D = load(HEART_PATH)
-	var h := TextureRect.new()
-	h.name = "Heart"
-	h.texture = tex
-	h.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	h.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	h.stretch_mode = TextureRect.STRETCH_SCALE
-	h.custom_minimum_size = tex.get_size() * HEART_SCALE
-	h.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return h
-
 
 ## Shows the given run state's values, and follows them from now on.
 func bind(state: RunState) -> void:
@@ -317,6 +274,7 @@ func bind(state: RunState) -> void:
 	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
 	timer_clock.set_time_left(_state.time_left)
+	_health_shown = false
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
 	_on_coins_changed(_state.coins)
@@ -330,8 +288,8 @@ func _on_time_left_changed(_seconds_left: float) -> void:
 
 
 func _on_health_changed(health: float, max_health: float) -> void:
-	health_bar.max_value = maxf(max_health, 1.0)
-	health_bar.value = health
+	heart_row.set_hearts(int(round(health)), int(round(max_health)), _health_shown)
+	_health_shown = true
 
 
 func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
