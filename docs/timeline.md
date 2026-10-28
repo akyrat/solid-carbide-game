@@ -2015,3 +2015,8 @@ Entry format:
 - Decision or change: The board played it: the bottom-left clock turning green, yellow, orange and red looks good.
 - Documents touched: none
 - Tasks: T-335
+
+## 2026-10-28: The live viewers curve
+- Decision or change: The viewers numbers, approved by the board as data; judged again in the viewers counter (T-336).
+- Documents touched: none
+- Tasks: T-332
