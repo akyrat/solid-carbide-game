@@ -75,7 +75,7 @@ func _parts(hud: Hud) -> Dictionary:
 		"Likes": hud.likes_label.get_global_rect(),
 		"Hype Lv": hud.level_label.get_global_rect(),
 		"combo": hud.combo_label.get_global_rect(),
-		"timer": hud.timer_label.get_global_rect(),
+		"clock": hud.timer_clock.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
 
@@ -223,6 +223,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo", "timer"]:
+	for n: String in ["health bar", "likes bar", "health heart", "weapon icons", "heart", "Likes", "Hype Lv", "combo", "clock"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()

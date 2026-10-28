@@ -28,6 +28,9 @@ const LIKES_BAR_HEIGHT := 64.0
 const LABEL_GAP := 6
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
 const LIKES_COLOR := Color(0.7, 0.45, 1.0)
+## Coins counter place at 1152 x 648 (T-341).
+const COINS_POS := Vector2(16, 496)
+const COINS_SIZE := Vector2(108, 36)
 const COINS_COLOR := Color(1.0, 0.82, 0.25)
 ## The likes heart's red (Visual style, Decisions, "Red after the rebrand": the heart
 ## stays red, as a social-media heart): used only by the heart (its art, T-086, is drawn in this red).
@@ -318,10 +321,14 @@ func _build_coins() -> void:
 	var box := HBoxContainer.new()
 	box.name = "Coins"
 	box.add_theme_constant_override("separation", 10)
-	box.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	box.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	box.offset_top = MARGIN
-	box.offset_right = -MARGIN
+	# T-341: bottom left, just above the clock (board's layout at 1152 x 648:
+	# x16 y496, 108 x 36), anchored to the corner so it keeps its margins.
+	box.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	box.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	box.offset_left = COINS_POS.x
+	box.offset_right = COINS_POS.x + COINS_SIZE.x
+	box.offset_top = COINS_POS.y - 648.0
+	box.offset_bottom = COINS_POS.y + COINS_SIZE.y - 648.0
 	add_child(box)
 	coins_label = _make_label("CoinsLabel", TEXT_COINS)
 	coins_label.add_theme_color_override("font_color", COINS_COLOR)
