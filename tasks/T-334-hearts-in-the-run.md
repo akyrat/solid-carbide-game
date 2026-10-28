@@ -1,7 +1,7 @@
 ---
 id: T-334
 title: "Hearts in the run: damage in hearts, 1 second of invulnerability with a blink, health drops"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/enemies.md, game/READM
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/README.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/scripts/run/, game/scripts/enemies/, game/scripts/driving/, game/scripts/garage/, game/tests/unit/, game/README.md, docs/game-loop-architecture.md, docs/enemies.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,13 +45,13 @@ The board's review: play a run and get hit: you lose a heart, the car blinks for
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A run starts with 5 hearts (plus 1 per garage level); a minion and a meteor take 1, the kaiju 2 (tests). (QA: pass / fail)
-- [ ] After a hit the car is invulnerable for 1 s (±0.05) and blinks; a second hit inside it takes nothing and doesn't cut the combo, and one after it does (tests). (QA: pass / fail)
-- [ ] A health pickup heals 1 heart and never goes above the maximum; it drops at T-333's chance (tests). (QA: pass / fail)
-- [ ] The run ends at 0 hearts with the same result as at 0 health before (test). (QA: pass / fail)
-- [ ] Game loop architecture, Enemies and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-334/screenshots/`, as `tasks/README.md`, "Screenshots", asks: a GIF of a hit, the blink and the car driving out of a swarm. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] A run starts with 5 hearts (plus 1 per garage level); a minion and a meteor take 1, the kaiju 2 (tests). (QA: pass)
+- [ ] After a hit the car is invulnerable for 1 s (±0.05) and blinks; a second hit inside it takes nothing and doesn't cut the combo, and one after it does (tests). (QA: pass)
+- [ ] A health pickup heals 1 heart and never goes above the maximum; it drops at T-333's chance (tests). (QA: pass)
+- [ ] The run ends at 0 hearts with the same result as at 0 health before (test). (QA: pass)
+- [ ] Game loop architecture, Enemies and game/README.md describe it. (QA: pass; README part met by game/docs/game-loop and game/docs/enemies, per the Project Lead)
+- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-334/screenshots/`, as `tasks/README.md`, "Screenshots", asks: a GIF of a hit, the blink and the car driving out of a swarm. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -93,3 +93,5 @@ Screenshots in `art-archive/T-334/screenshots/`: `hearts_hit_blink_swarm.gif` (5
 Documents affected: `docs/game-loop-architecture.md` (Decisions, "Hearts instead of health points": built in T-334 plus the proposals; the run section in hearts), `docs/enemies.md` (minion contact: built, no knockback while invulnerable), and in place of `game/README.md` (now an index): `game/docs/game-loop/the-run.md` (new "Hearts and the invulnerability (T-334)" bullet and the API tables), `game/docs/enemies/minions.md`, `game/docs/enemies/kaiju.md` (also fixed the stale "20"/"1 s"), `game/docs/enemies/meteors.md`.
 
 Nothing was refused. `game/tests/fixtures/crash_pays_gif_demo.gd.uid` was an untracked uid file Godot made in this worktree; I left it out of the commit.
+
+**QA (2026-10-28, qa-integration).** qa_check: tests PASS (3 sets), screenshots PASS (6 files; the contact sheet shows the hit, the bar at 4/5, the hidden blink phase and the car driving out). Documents FAIL only for game/README.md, which is now an index; the hearts text is in game/docs/game-loop/the-run.md, game/docs/enemies/{minions,kaiju,meteors}.md, docs/game-loop-architecture.md and docs/enemies.md, counted as the README criterion per the Project Lead. All 7 criteria pass.
