@@ -1960,3 +1960,8 @@ Entry format:
 - Decision or change: the board wants livestream-style reaction icons (likes, thumbs up, hearts): a burst out of the sub goal square when the goal is reached and the gift pack comes, and icons floating up from the bottom of the screen now and then at high viewer counts, never hiding the road. Two tickets: the behaviour with placeholder icons (UI Agent, after the viewers counter and the sub goal square) and the art (Asset Generation Agent, no PixelLab go yet). Both wait; they start with the HUD agents when the board says to resume.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-351, T-352
+
+## 2026-10-28: T-342 merged, the token-spend baseline
+- Decision or change: the measuring tool (`tools/token_report.py`) and the baseline (`docs/token-spend/baseline-2026-10-28.md`) are in. Everything up to 2026-10-28: 20,248 calls, 3,406M cache-read tokens (main sessions 2,032M, subagents 1,373M), 5.1% of tool calls failed. The task board shows a Token spend bubble for the epic. QA passed all criteria; merged after QA (nothing the player sees).
+- Documents touched: docs/README.md
+- Tasks: T-342

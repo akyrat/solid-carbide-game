@@ -55,6 +55,8 @@ The task files in `tasks/` are the board's only data. The server reads them, and
 
 **Which tickets to do next:** `python tools/ticket_impact.py` lists the unfinished MVP tickets with the most other tickets waiting on them, directly and down the chain (`--top N` for more rows, `--all` to include later milestones).
 
+**Token spend:** `python tools/token_report.py [--from YYYY-MM-DD] [--to YYYY-MM-DD] [--out FILE]` (T-342) reads the Claude Code transcripts of this project (`~/.claude/projects/C--solid-carbide-game/`, streamed, never modified) and the tickets, and prints tables: tokens by kind, model and subagent type; calls, context size and compactions per session; what fills the main sessions' context (share and weighted cost); failed tool calls; QA rounds, fail rate and model choice by agent. Run it with the same range before and after a change to compare. The baseline taken before the token-spend epic is `docs/token-spend/baseline-2026-10-28.md`.
+
 **The style loop:** `python tools/style_loop/run.py art|text --task T-012 --brief <file> ...` makes an asset or a text through the style loop with no one stepping in (generate, score, refine below 8, at most 3 refines) and writes every round in the task's `## Style review`; `--fake <fixture>` runs it free on a copy of the task (T-291; the commands are in `tasks/README.md`, "The style loop").
 
 ## How separate documents are written
