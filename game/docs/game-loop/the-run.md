@@ -14,6 +14,7 @@ The run itself (task T-036): `scenes/run/run.tscn` puts the run's map (the eleva
 - Children: `Map` (the MVP map scene, `scenes/level/mvp_map.tscn`, with the elevation sample map's layout since T-206, drawn in the isometric view, with the drift marks inside its drawing, see "Drift marks"), `PhysicsWorld` (the `Car`, never drawn, in the same flat world pixels as the map), `View` (the drift smoke, see "Drift smoke", then the car's sprite and the `Camera`) and `RunState` (the state, below).
 - The car starts at the centre of the map (0, 0 units, in the gravel square), nose along -y, as in the drift prototype. The camera sits exactly on the drawn car, zoom 14.4, as in the drift prototype, unless a camera option is on (see "Camera options"). The map checks its challenges against the car (`map.car`).
 - **The car health upgrade (T-061):** at the start of every run the car's starting and maximum health are the garage's car health upgrade at its current level, `PlayerProgress.current_value("car_health")` (level 0 is run.json's `starting_hearts`, 5; +1 heart per level, T-333). `GameFlow.start_run()` sets `run.progress = progress` before adding the run; `run.gd` hands it to `state.progress`, and `RunState.start_run()` uses it for `max_health` and `health`, so the HUD's health bar maximum follows. A run on its own (no `progress`, null) uses run.json's value. Test: `tests/unit/run/test_run_health_upgrade.gd`.
+- **Hearts and the invulnerability (T-334)** (Game loop architecture, Decisions, "Hearts instead of health points"): `RunState.health` and `max_health` count hearts (5, plus 1 per car health level; `hearts` and `max_hearts` read them as whole numbers). Every hit takes its hearts at once through `damage_car()` (a minion and a meteor 1, the kaiju 2: `contact_damage` and `impact_damage` in `data/enemies.json`), cuts the combo (and pays the trick in progress first, T-315), and starts `run.json`'s `car.invulnerability_seconds` (1 s) of invulnerability (`invulnerable_left`, counting down in `advance()` with the clock, so it stops while paused). During it `damage_car()` does nothing at all: no hearts, no combo cut, no `car_damaged` (no shake), and the second is not restarted. The minions', the kaiju's and the meteors' hit code also check `is_invulnerable()` and give no knockback then (a proposal for the playtest, so the car drives out of a swarm); their own contact repeat is gone (`contact_damage_interval` 0 by default). **The blink:** `car_blink_visible()` hides the drawn car for the first `car.blink_interval_seconds` (0.1 s) of the second, shows it for the next, and so on (5 blinks), and shows it once the second is over; `run.gd`'s `apply_blink()` sets `car_sprite.visible` from it after every physics step and on a new run (the shadow and everything else stay). A health pickup heals 1 heart through `heal_car()`, never above the maximum. 0 hearts ends the run as a loss, as 0 health did. The HUD's health bar shows the hearts as a fraction of the maximum (unchanged code) until T-338's heart row. Tests: `tests/unit/run/test_run_hearts.gd`. GIF (a hit, the blink, the car driving out of a swarm): `bash game/tools/record_hearts_gif.sh <out.gif> [seconds] [skip]` with the fixture `tests/fixtures/hearts_gif_demo.tscn`; result in `art-archive/T-334/screenshots/`.
 - `run.start_run()` starts a fresh run: it replaces the map (meteor boulders gone; every challenge open again when challenges are on) and the car (back at the start, standing still), emits `world_rebuilt`, then resets the state. The scene calls it once in `_ready()`. Anything holding the old `run.map` or `run.car` picks up the new ones on `world_rebuilt`.
 
 **The run's map (T-206)** (Level design, Decisions, "The elevation sample map becomes the run's map"; Content, "Elevation sample map", "The run on this map"):
@@ -36,8 +37,11 @@ Tests: `tests/unit/run/test_run_elevation_map.gd` (the switch both ways, one dra
 
 | Function | Does |
 | --- | --- |
-| `start_run()` | Resets the state for a fresh run: health = max health = the starting health in `data/run.json`, 8:00 on the clock, 0 coins. Use `run.start_run()` to reset the map and car too |
-| `damage_car(amount: float)` | Takes `amount` off the car's health (stops at 0). At 0 the run ends as a loss. Ignored when the run is over or `amount` is not positive |
+| `start_run()` | Resets the state for a fresh run: health = max health = the starting hearts in `data/run.json` (plus the garage upgrade's), no invulnerability, 8:00 on the clock, 0 coins. Use `run.start_run()` to reset the map and car too |
+| `damage_car(amount: float)` | Takes `amount` hearts off the car (stops at 0), cuts the combo and starts the 1 s invulnerability. At 0 the run ends as a loss. Ignored when the run is over, `amount` is not positive, or the car is still invulnerable (T-334) |
+| `heal_car(amount: float)` | Adds `amount` hearts, never above the maximum; returns the hearts added (health pickups) |
+| `is_invulnerable()` | True during the 1 s after a hit (T-334) |
+| `car_blink_visible()` | Whether the drawn car shows now: blinking during the invulnerability, always otherwise (T-334) |
 | `add_coins(amount: int)` | Adds coins collected this run. Ignored when the run is over or `amount` is not positive |
 | `kaiju_killed()` | The Enemy Behavior Agent calls it when the kaiju dies: the run ends at once as a win. Ignored when the run is over |
 | `advance(seconds: float)` | Moves the clock forward by hand (tests). The clock otherwise runs on its own in `_process` |
@@ -48,7 +52,9 @@ Tests: `tests/unit/run/test_run_elevation_map.gd` (the switch both ways, one dra
 | Value | Is |
 | --- | --- |
 | `time_left` | Seconds left, 480 at the start, 0 at the end |
-| `health`, `max_health` | The car's health now, and its full health |
+| `health`, `max_health` | The car's health now, and its full health, in hearts (T-334; floats, kept under these names so the HUD and everything else that read the old health still work) |
+| `hearts`, `max_hearts` | The same as whole numbers (read-only) |
+| `invulnerable_left` | Seconds of invulnerability left after the last hit (0 when none) |
 | `coins` | Coins collected this run |
 | `result` | "" while the run is going, then "win" or "loss" |
 
@@ -58,7 +64,8 @@ Tests: `tests/unit/run/test_run_elevation_map.gd` (the switch both ways, one dra
 | `boss_time()` | Once per run, when 7 minutes have passed (1:00 left). The kaiju spawns on it |
 | `run_ended(result: String, coins: int)` | Once per run: "win" (kaiju killed) or "loss" (health at 0, or the clock reaching 0:00), with this run's coins, kept either way. Saving them is a Game Data task that listens here |
 | `time_left_changed(seconds_left: float)` | When the clock shows a different whole second (and on start) |
-| `health_changed(health: float, max_health: float)` | When the car takes damage (and on start) |
+| `health_changed(health: float, max_health: float)` | When the car takes damage or heals (and on start), in hearts |
+| `invulnerability_started(seconds: float)` | After a hit that counts and leaves the car alive: the invulnerability (and the blink) starts, `seconds` long (T-334) |
 | `coins_changed(coins: int)` | When coins are added (and on start) |
 
 **Likes (XP) and levels** (task T-037; the rules are Game loop architecture, Decisions, the numbers are `data/run.json` through `RunData`). The run scene connects the map's `challenge_completed` and `meteor_challenge_completed` to `state.challenge_completed` (neither fires while challenges are off in the MVP, so likes come from drifting only), and after every car physics step calls `state.drift_step(car.model.is_drifting, car.model.dt)`. Drifting is the driving model's `is_drifting` (the Unity definition: W, or S without W, held with A or D). All XP gained is multiplied by the combo (below).

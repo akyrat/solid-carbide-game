@@ -306,6 +306,7 @@ func start_run(path: String = "") -> void:
 	_build_world()
 	world_rebuilt.emit()
 	state.start_run()
+	apply_blink()
 
 
 func _build_world() -> void:
@@ -455,6 +456,13 @@ func _on_level_up(_new_level: int) -> void:
 ## After each physics step: the drawn car, and the camera one step on.
 func _on_car_moved() -> void:
 	sync_view(false)
+	apply_blink()
+
+
+## The car's blink while it is invulnerable after a hit (T-334): the drawn car
+## hides and shows as RunState.car_blink_visible() says; shown otherwise.
+func apply_blink() -> void:
+	car_sprite.visible = state.car_blink_visible()
 
 
 ## Places the drawn car on the car's current position, and the camera: straight
