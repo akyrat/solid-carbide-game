@@ -26,7 +26,7 @@ func test_missing_file_gives_clear_error() -> void:
 
 func test_every_section_has_its_numbers() -> void:
 	var e := EnemyData.new()
-	var keys := ["health", "move_speed", "contact_damage", "contact_damage_interval", "knockback"]
+	var keys := ["health", "move_speed", "contact_damage", "knockback"]
 	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys))
 	assert_eq_deep(_sorted(e.kaiju().keys()), _sorted(keys))
 	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["minions_at_start", "minions_at_boss_time",
@@ -68,7 +68,7 @@ func test_minion_stats_do_not_change_over_time() -> void:
 	e.minions_wanted(420.0)
 	assert_eq_deep(e.minion(), early)
 	assert_eq(early.health, 4.0)
-	assert_eq(early.contact_damage, 5.0)
+	assert_eq(early.contact_damage, 1.0)
 	var r := GameData.load_file("enemies")
 	for k in r.data["minion"]:
 		assert_false(String(k).contains("growth") or String(k).contains("scale") or String(k).contains("per_minute"),

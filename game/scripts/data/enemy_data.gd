@@ -33,7 +33,7 @@ func _section(name: String) -> Dictionary:
 	return out
 
 
-## health, move_speed, contact_damage, contact_damage_interval, knockback.
+## health, move_speed, contact_damage (hearts, 1), knockback.
 func minion() -> Dictionary:
 	return _section("minion")
 
@@ -48,13 +48,13 @@ func coins() -> Dictionary:
 	return _section("coins")
 
 
-## Health pickups a killed minion drops (T-220): drop_chance (0 to 1), restore_fraction
-## (the share of the car's maximum health one pickup restores).
+## Health pickups a killed minion drops (T-220): drop_chance (0 to 1), restore_hearts
+## (how many hearts one pickup restores, 1).
 func health_drops() -> Dictionary:
 	return _section("health_drops")
 
 
-## health, move_speed, contact_damage, contact_damage_interval, knockback.
+## health, move_speed, contact_damage (hearts, 2), knockback.
 func kaiju() -> Dictionary:
 	return _section("kaiju")
 
@@ -72,7 +72,7 @@ func kaiju_coins_on_defeat() -> int:
 
 
 ## first_attack_after_seconds, seconds_between_attacks, windup_seconds, meteors_per_attack,
-## warning_seconds, land_within_units_of_car, impact_radius_units, impact_damage, knockback.
+## warning_seconds, land_within_units_of_car, impact_radius_units, impact_damage (hearts, 1), knockback.
 func meteor_attack() -> Dictionary:
 	return _section("meteor_attack")
 

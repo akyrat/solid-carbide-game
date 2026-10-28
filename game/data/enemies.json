@@ -1,10 +1,9 @@
 {
-  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health and damage in the same points as the car's health (run.json) and the weapons' damage (weapons.json). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
+  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health in the same points as the weapons' damage (weapons.json); damage to the car in hearts (run.json car.starting_hearts). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
   "minion": {
     "health": 4,
     "move_speed": 6,
-    "contact_damage": 5,
-    "contact_damage_interval": 0.5,
+    "contact_damage": 1,
     "knockback": 8
   },
   "spawning": {
@@ -20,15 +19,14 @@
     "coins_per_drop": 2
   },
   "health_drops": {
-    "_comment": "Health pickups a killed minion drops (Enemies, Decisions, Health drops, 2026-10-21; T-220). drop_chance is rolled separately from the coins' (half the coins' rate by the board's decision, 2026-10-22, T-277: 0.3 against the coins' 0.6), restore_fraction is the share of the car's maximum health one pickup restores (0.3 = 30%), never above the maximum. The kaiju drops none (a proposal for the playtest). Proposed numbers; the board judges them in playtests.",
-    "drop_chance": 0.3,
-    "restore_fraction": 0.3
+    "_comment": "Health pickups a killed minion drops (Enemies, Decisions, Health drops, 2026-10-21; T-220). drop_chance is rolled separately from the coins' (half the coins' rate by the board's decision, 2026-10-22, T-277: 0.3 against the coins' 0.6), restore_hearts is how many hearts one pickup restores (1), never above the maximum (T-333, hearts, 2026-10-28: drop_chance halved from 0.3 to 0.15, the heal from 30% of the health to 1 heart). The kaiju drops none (a proposal for the playtest). Proposed numbers; the board judges them in playtests.",
+    "drop_chance": 0.15,
+    "restore_hearts": 1
   },
   "kaiju": {
     "health": 500,
     "move_speed": 3,
-    "contact_damage": 20,
-    "contact_damage_interval": 1.0,
+    "contact_damage": 2,
     "knockback": 16
   },
   "kaiju_coins": {
@@ -45,7 +43,7 @@
     "warning_seconds": 2.0,
     "land_within_units_of_car": 10,
     "impact_radius_units": 1.5,
-    "impact_damage": 15,
+    "impact_damage": 1,
     "knockback": 20,
     "boulder_lifetime_seconds": 10,
     "boulder_fade_seconds": 2.0,

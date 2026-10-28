@@ -327,12 +327,12 @@ func spawn_coin_at(units: Vector2, value: int = 1) -> Node:
 	return c
 
 
-## Adds a health pickup at `units`, with its sprite. It restores `fraction` of the car's
-## maximum health (the data's restore_fraction unless given).
-func spawn_health_pickup_at(units: Vector2, fraction: float = -1.0) -> Node:
+## Adds a health pickup at `units`, with its sprite. It restores `hearts` hearts
+## (the data's restore_hearts unless given).
+func spawn_health_pickup_at(units: Vector2, hearts: float = -1.0) -> Node:
 	var p: Area2D = HealthPickupScript.new()
 	p.name = "HealthPickup"
-	p.restore_fraction = float(_health_drops["restore_fraction"]) if fraction < 0.0 else fraction
+	p.restore_hearts = float(_health_drops["restore_hearts"]) if hearts < 0.0 else hearts
 	p.state = state
 	p.position = units * PX_PER_UNIT
 	bodies_root.add_child(p, true)
