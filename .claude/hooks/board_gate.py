@@ -1656,6 +1656,8 @@ def known_script_ok(script, words):
 # it), so their argument text can name tasks and hold the header words. What they run or write besides is
 # judged: each --test-cmd as a command of its own, and the file of --log.
 TICKET_TOOLS = {"tools/merge_batch.py", "tools/new_ticket.py", "tools/qa_check.py"}
+# the options through which a ticket tool writes a file of its own (T-354, after QA: `--log=x` as well as `--log x`)
+TOOL_OUTPUT_OPTIONS = {"--log", "--log-file", "--out", "--output", "-o"}
 
 
 def ticket_tool_reason(script, words, cwd, in_tasks, bases, godot_var_ok):
@@ -1668,8 +1670,13 @@ def ticket_tool_reason(script, words, cwd, in_tasks, bases, godot_var_ok):
         if a.startswith("#"):
             break
         value = args[i + 1] if i + 1 < len(args) else ""
-        if a == "--log" and ticket_path(value, cwd, in_tasks):
-            return f"`{path.rsplit('/', 1)[-1]} --log` writes `{value or '?'}`, which could be a ticket"
+        opt, eq, inline = a.partition("=")
+        if opt in TOOL_OUTPUT_OPTIONS:
+            target = inline if eq else value
+            if ticket_path(target, cwd, in_tasks):
+                # ends like a script refusal, so it is refused even when the command holds no guard word
+                return (f"`{path.rsplit('/', 1)[-1]} {opt}` writes `{target or '?'}`, which could be a ticket, "
+                        f"{SCRIPT_WRITES_LINES}")
         if a == "--test-cmd":
             segments, unsafe = shell_segments(value, cwd, in_tasks)
             if unsafe:

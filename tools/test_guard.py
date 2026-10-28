@@ -808,6 +808,11 @@ class OnlyRealTicketWrites(Base):
             "python -c \"import sys; open(sys.argv[1], 'w').write('status: done')\" tasks/T-1-x.md",
             # the ticket tools don't excuse what they are handed to run or write
             "python tools/merge_batch.py T-1 --log tasks/T-1-x.md  # status",
+            # after QA round 1: the `=` form of a ticket tool's output option
+            "python tools/merge_batch.py T-1 --log=tasks/T-001-x.md  # status",
+            "python tools/merge_batch.py T-1 --log=tasks/T-001-x.md",
+            "python tools/merge_batch.py T-1 --log tasks/T-001-x.md",
+            "python tools/qa_check.py T-1 --log=tasks/T-001-x.md  # lead",
             "python tools/qa_check.py T-1 --test-cmd \"sed -i 's/status: open/status: done/' tasks/T-1-x.md\"",
             "python tools/merge_batch.py T-1 > tasks/T-1-x.md  # status",
             # braces and case patterns don't hide a write
