@@ -1,7 +1,7 @@
 ---
 id: T-325
 title: "Art: the Bricks card image and the impact wave"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/weapons.md, game/README.md, docs/working-with-the-board.md]
 files_expected_to_change: [game/art/weapons/, art-archive/T-325/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ The board's review: look at the Bricks card and a landing wave in a run.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The card image and the wave art are in game/art/weapons/ and replace T-324's placeholders in the game. (QA: pass / fail)
-- [ ] Each asset scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] The PixelLab generations used are within the board's go and listed in the result notes (or none, if all script work). (QA: pass / fail)
-- [ ] Visual style and game/README.md record the art. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-325/screenshots/`, as `tasks/README.md`, "Screenshots", asks. The card on the level-up screen and a GIF of the wave. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] The card image and the wave art are in game/art/weapons/ and replace T-324's placeholders in the game. (QA: pass)
+- [ ] Each asset scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass)
+- [ ] The PixelLab generations used are within the board's go and listed in the result notes (or none, if all script work). (QA: pass)
+- [ ] Visual style and game/README.md record the art. (QA: pass)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-325/screenshots/`, as `tasks/README.md`, "Screenshots", asks. The card on the level-up screen and a GIF of the wave. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -201,3 +201,7 @@ The board's go: up to 8 PixelLab generations for this ticket; the board said (20
 - **Documents:** `docs/visual-style.md` (Decisions, "Bricks' art"), `game/README.md` (Weapons, Bricks: "Bricks' art"), and `docs/weapons.md` (Content, "Bricks", the Look line, which still described the placeholder; not in `documents_affected`, so listed here).
 - **Refusals:** the PreToolUse hook refused one command of mine that began with `time` (it can't tell `time` won't write a ticket); I ran the command without `time`, as the refusal message suggested. In the loops the headless generator had some read-only Bash commands refused (listed in the Style review's "Refused" lines); none stopped its work.
 - **For the board's playtest:** if the tiers' radii change in `weapons.json`, rerun `python game/tools/build_bricks_wave.py build` (the tests catch a missing sheet).
+
+### QA (round 1)
+
+qa_check.py: tests, documents and screenshots all pass. Every criterion passes: card and four wave sheets are in game/art (card in level_up/, where the screen loads it) and bricks.gd uses the sheets; card 8/10 and wave 9/10 with all rounds in the Style review; 1 PixelLab generation of 8; visual-style.md and game/README.md record the art; card screenshot seen (Bricks card on the level-up screen), GIF and stills present; test counts in the notes and new tests exist. Ticket file is well-formed.
