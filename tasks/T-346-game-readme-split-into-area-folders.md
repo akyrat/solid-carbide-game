@@ -1,7 +1,7 @@
 ---
 id: T-346
 title: Token spend: split game/README.md into one folder per game area
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] No section of the old README is lost: every old `## ` heading is found in a new file or named in the index as shrunk (a script's check, its output in the result notes). (QA: pass / fail)
 - [ ] No file under `game/docs/` is over 40 KB, and `weapons/` holds one file per weapon. (QA: pass / fail)
 - [ ] No link in the repo points to a removed README anchor (a link check's output in the result notes). (QA: pass / fail)
-- [ ] No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs. (QA: pass / fail)
+- [ ] ~~No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs.~~ Moved to T-353 by the Project Lead (2026-10-28): the guard refused the bulk ticket edit, and the board decides how it may be done. QA skips this one. (QA: moved)
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
 
 ## Updates
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-28, Open → In progress
 
 Started: the agent is splitting game/README.md into area folders.
+
+### 2026-10-28, In progress → In QA
+
+Built: game/README.md is now a short index with area files under game/docs/. The guard refused the bulk rewrite of other tickets' reading lists; nothing worked around it. I moved that step into T-353 for you to decide. QA is checking the rest.
 
 ## Style review
 
