@@ -2085,3 +2085,8 @@ Entry format:
 - Decision or change: The board played it: the health bar became a row of hearts at the top left, the weapon icons below it.
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-338
+
+## 2026-10-28: The guard refuses overwriting a ticket
+- Decision or change: The guard refuses cp, mv, install, ln, tee, dd, PowerShell copy, move and set-content, and > onto a ticket whatever the command says, since overwriting a whole ticket changes its status outside task_status.py. git checkout and git restore of tickets stay allowed for resolving merges. Known gap: >| is not refused.
+- Documents touched: tasks/README.md
+- Tasks: T-355

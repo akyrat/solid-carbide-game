@@ -864,6 +864,85 @@ class OnlyRealTicketWrites(Base):
                 self.assertIsNone(targets(code))
 
 
+class OverwritingATicket(Base):
+    """T-355: copying, moving or writing a whole file onto a ticket is refused whatever the command says (no guard
+    word needed); git checkout/restore of a ticket and copies of a ticket elsewhere stay allowed."""
+
+    cmd = MoreHarmlessCommands.cmd
+    reason = MoreHarmlessCommands.reason
+    assert_allowed = MoreHarmlessCommands.assert_allowed
+    assert_refused = MoreHarmlessCommands.assert_refused
+
+    REFUSED = [
+        "cp /tmp/x.md tasks/T-001-x.md",
+        "cp -f notes.md ./tasks/T-001-x.md",
+        "cp -t tasks notes.md",
+        "cp notes.md tasks/",
+        "cp notes.md tasks",
+        "mv notes.md tasks/T-001-x.md",
+        "mv tasks/T-001-x.md tasks/T-001-y.md",
+        "install -m 644 notes.md tasks/T-001-x.md",
+        "ln -sf /tmp/x.md tasks/T-001-x.md",
+        "echo hi | tee tasks/T-001-x.md",
+        "echo hi | tee -a docs/a.md tasks/T-001-x.md",
+        "dd if=/tmp/x.md of=tasks/T-001-x.md",
+        "Copy-Item notes.md tasks/T-001-x.md",
+        "Copy-Item -Path notes.md -Destination tasks\\T-001-x.md -Force",
+        "Move-Item notes.md tasks/T-001-x.md",
+        "Set-Content tasks/T-001-x.md 'hello'",
+        "Set-Content -Path:tasks/T-001-x.md -Value 'hello'",
+        "Get-Content docs/a.md | Out-File tasks/T-001-x.md",
+        "echo hi > tasks/T-001-x.md",
+        "cat docs/a.md > tasks/T-001-x.md",
+        "cp /tmp/*.md tasks/T-*.md",
+        "f=tasks/T-001-x.md; cp notes.md $f",
+        "cd tasks && cp /tmp/x.md T-001-x.md",
+        "C:/Windows/cp.exe notes.md tasks/T-001-x.md",
+        "echo hi | tee '#x' tasks/T-001-x.md",
+    ]
+
+    def test_refused_with_no_guard_word(self):
+        for c in self.REFUSED:
+            self.assertNotRegex(c, r"(?i)status|lead|qa[\W_]*rounds")
+        self.assert_refused(self.REFUSED, str(self.root))
+
+    def test_the_refusal_says_why(self):
+        r = self.reason("cp /tmp/x.md tasks/T-001-x.md", str(self.root))
+        self.assertIn("Overwriting a ticket", r)
+        self.assertIn("status script", r)
+        self.assertIn("`cp` overwrites `tasks/T-001-x.md`", r)
+        self.assertIn("git checkout", r)
+        self.assertIn("`>` overwrites", self.reason("echo hi > tasks/T-001-x.md", str(self.root)))
+
+    def test_git_checkout_restore_and_copies_elsewhere_stay_allowed(self):
+        self.assert_allowed([
+            "git checkout master -- tasks/T-001-x.md",
+            "git checkout --theirs tasks/T-001-x.md",
+            "git restore tasks/T-001-x.md",
+            "git restore --source=master --staged --worktree tasks/T-001-x.md",
+            "cp tasks/T-001-x.md /tmp/T-001-copy.txt",
+            "cp tasks/T-001-x.md art-archive/T-001/ticket.txt",
+            "Copy-Item tasks/T-001-x.md -Destination art-archive/T-001/ticket.txt",
+            "cat tasks/T-001-x.md | tee /tmp/out.txt",
+            "grep -n x tasks/T-001-x.md > /tmp/hits.txt",
+            "echo note >> tasks/T-001-x.md",
+            "mv art-archive/T-1/a.png art-archive/T-1/b.png  # tasks",
+        ], str(self.root))
+
+    def test_the_parts_on_their_own(self):
+        t = gate.overwrite_targets
+        self.assertEqual(t(["cp", "-r", "a", "b", "dest"]), ("cp", ["dest"]))
+        self.assertEqual(t(["cp", "--target-directory=d", "a"]), ("cp", ["d"]))
+        self.assertEqual(t(["dd", "if=a", "of=b", "bs=1"]), ("dd", ["b"]))
+        self.assertEqual(t(["Copy-Item", "-Path", "a", "-Destination", "b"]), ("copy-item", ["b"]))
+        self.assertEqual(t(["Out-File", "-FilePath", "a", "-Append"]), ("out-file", []))
+        self.assertEqual(t(["git", "checkout", "--", "tasks/T-1-x.md"]), ("git", []))
+        self.assertTrue(gate.ticket_target("tasks/T-1-x.md"))
+        self.assertTrue(gate.ticket_target("tasks/*.md"))
+        self.assertFalse(gate.ticket_target("$f"))
+        self.assertFalse(gate.ticket_target("art-archive/T-1/x.png"))
+
+
 class Git(Base):
     """The commit check and the script's own check, in a real git repository."""
 

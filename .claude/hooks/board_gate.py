@@ -1958,6 +1958,130 @@ def big_read_reason(cmd, cwd=None):
     return ""
 
 
+# --- Overwriting a ticket is refused whatever the command says (T-355) ---
+
+# commands that copy or move a file onto their last operand (or the folder of -t/--target-directory)
+COPY_LIKE = {"cp", "mv", "install", "ln"}
+PS_COPY_LIKE = {"copy-item", "copy", "cpi", "move-item", "move", "mi"}
+# PowerShell commands that overwrite the file of -Path/-LiteralPath/-FilePath or their first positional argument
+PS_OVERWRITERS = {"set-content", "sc", "out-file", "clear-content", "clc"}
+# PowerShell switches (no value): every other -Name takes the next word as its value
+PS_SWITCHES = {"-recurse", "-force", "-passthru", "-container", "-whatif", "-confirm", "-nonewline", "-append",
+               "-noclobber", "-asbytestream", "-stream"}
+TICKET_NAME_GLOB_RE = re.compile(r"(^|[\\/])T-\d*[*?\[][^\\/]*$", re.I)
+
+
+def ticket_target(path, cwd=None, in_tasks=False):
+    """Whether a file a command overwrites is surely a ticket, a glob in a tasks folder or the tasks folder itself
+    (T-355). Unlike ticket_path, a name the guard can't read ($var, no name) does not count: those stay with the
+    guard-word check, so harmless commands that merely name tasks are not refused."""
+    path = path.strip()
+    if not path or re.search(r"[$`{]", path):
+        return False
+    if TICKET_PATH_RE.search(path) or task_path_match(path, cwd) or TICKET_NAME_GLOB_RE.search(path):
+        return True
+    return in_tasks and (path.rstrip("\\/") in (".", "") or bool(re.search(r"[*?\[]", path)))
+
+
+def _strip_name(word):
+    name = word.lstrip("\\").replace("\\", "/").rsplit("/", 1)[-1].lower()
+    return name[:-4] if name.endswith(".exe") else name
+
+
+def overwrite_targets(words):
+    """(command name, [files it overwrites]) of one simple command: cp, mv, install, ln (their destination), tee
+    (its files), dd (of=), the PowerShell copy, move and set-content family. [] for any other command, git
+    included: `git checkout`/`git restore` of a ticket is how a merge resolves a conflict."""
+    while words and ASSIGNMENT_RE.match(words[0]):
+        words = words[1:]
+    if not words:
+        return "", []
+    name, args = _strip_name(words[0]), words[1:]
+    if name in COPY_LIKE:
+        targets, operands, i = [], [], 0
+        while i < len(args):
+            a = args[i]
+            if a == "--":
+                operands += args[i + 1:]
+                break
+            if a in ("-t", "--target-directory"):
+                targets.append(args[i + 1] if i + 1 < len(args) else "")
+                i += 2
+                continue
+            if a.startswith("--target-directory="):
+                targets.append(a.split("=", 1)[1])
+            elif a.startswith("-t") and len(a) > 2 and not a.startswith("--"):
+                targets.append(a[2:])
+            elif a in ("-S", "--suffix", "-m", "--mode", "-o", "--owner", "-g", "--group") and name == "install" \
+                    or a in ("-S", "--suffix") and name != "install":
+                i += 2
+                continue
+            elif not a.startswith("-") or a == "-":
+                operands.append(a)
+            i += 1
+        if not targets and len(operands) > 1:
+            targets.append(operands[-1])
+        return name, targets
+    if name == "tee":
+        return name, [a for a in args if not a.startswith("-")]
+    if name == "dd":
+        return name, [a[3:] for a in args if a.startswith("of=")]
+    if name in PS_COPY_LIKE or name in PS_OVERWRITERS:
+        named, positional, i = {}, [], 0
+        while i < len(args):
+            a = args[i]
+            if a.startswith("-") and len(a) > 1:
+                opt, colon, value = a.partition(":")
+                opt = opt.lower()
+                if not colon and opt not in PS_SWITCHES and i + 1 < len(args):
+                    value = args[i + 1]
+                    i += 1
+                named.setdefault(opt, []).append(value)
+            else:
+                positional.append(a)
+            i += 1
+        if name in PS_COPY_LIKE:
+            dest = [v for k, vs in named.items() if "-destination".startswith(k) and len(k) > 1 for v in vs]
+            return name, dest or positional[1:2]
+        paths = [v for k, vs in named.items() if k in ("-path", "-literalpath", "-filepath", "-lp", "-pspath")
+                 for v in vs]
+        if name == "out-file" and any("-append".startswith(k) and len(k) > 2 for k in named):
+            return name, []
+        return name, paths or positional[:1]
+    return name, []
+
+
+def without_comment(text):
+    """A command's text without its shell comment (an unquoted `#` at a word's start)."""
+    quote = None
+    for i, c in enumerate(text):
+        if quote:
+            quote = None if c == quote else quote
+        elif c in "'\"":
+            quote = c
+        elif c == "#" and (i == 0 or text[i - 1] in " \t"):
+            return text[:i]
+    return text
+
+
+def overwrite_reason(cmd, cwd=None):
+    """Why a shell command overwrites a ticket, or "" (T-355): cp, mv, install, ln, tee, dd of=, the PowerShell
+    copy, move and set-content family or `>` with a ticket file, a glob in a tasks folder or the tasks folder
+    itself as a target. Overwriting a whole ticket changes its status outside the status script, so it is
+    refused whatever words the command holds."""
+    in_tasks = runs_in_tasks(cmd, cwd)
+    segments, _ = shell_segments(cmd, cwd, in_tasks)
+    for seg in with_literal_vars(cmd, segments, cwd, in_tasks):
+        for op, target in seg.redirects:
+            if op == ">" and ticket_target(target, cwd, in_tasks):
+                return seg.text or cmd, f"`>` overwrites `{target}`"
+        name, targets = overwrite_targets(words_of(without_comment(seg.text)))
+        hit = next((t for t in targets if ticket_target(t, cwd, in_tasks)), None)
+        if hit is not None:
+            return seg.text, f"`{name}` overwrites `{hit}`"
+    return ""
+
+
 def pre_shell(tool_input, cwd=None):
     cmd = tool_input.get("command") or ""
     big = big_read_reason(cmd, cwd)
@@ -1968,6 +2092,14 @@ def pre_shell(tool_input, cwd=None):
         return refused
     if not touches_tasks(cmd, cwd):
         return 0
+    over = overwrite_reason(cmd, cwd)
+    if over:
+        part, why = over
+        short = part if len(part) <= 160 else part[:157] + "..."
+        return deny(f"Overwriting a ticket changes its status outside the status script ({STATUS_SCRIPT} <T-id> "
+                    f"<status>), so it is refused whatever the command says. Refused because of `{short}`: {why}, "
+                    "a ticket file, a glob in a tasks folder or the tasks folder itself. Change a ticket's text with "
+                    "the Edit tool; `git checkout`/`git restore` of a ticket stay allowed for merges.")
     mentions = bool(GUARD_WORD_RE.search(cmd) or INLINE_CODE_RE.search(cmd))
     if not mentions and not SCRIPT_RUN_RE.search(cmd):
         return 0
