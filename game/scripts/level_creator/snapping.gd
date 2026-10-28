@@ -21,7 +21,7 @@ extends RefCounted
 ## (run by check_level.py) refuses is not placed; the editor shows creator_texts.json's
 ## "overlap_message".
 
-## Proposal (game/README.md, "Level creator"): how close, in units, an edge must be to a neighbour's
+## Proposal (game/docs/level/level-creator.md, "Level creator"): how close, in units, an edge must be to a neighbour's
 ## edge to snap onto it. Two cells: a near miss of one or two tiles lines up, a gap of three stays.
 const SNAP_DISTANCE := 4.0
 const CELL := LevelDocument.CELL

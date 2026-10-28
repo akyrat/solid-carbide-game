@@ -13,7 +13,7 @@ extends CharacterBody2D
 ## the map's edge, boulders), so it slides along obstacles and never pushes or
 ## blocks the car. In the group "enemies" (not "minions"), and also "kaiju".
 ## The same take_damage(amount), position_units(), health, max_health and
-## is_dead() as a minion (game/README.md, "Minions" and "The kaiju").
+## is_dead() as a minion (game/docs/enemies/minions.md, "Minions" and "The kaiju").
 ##
 ## It draws nothing itself: `sprite` (kaiju_sprite.gd) draws it in the
 ## isometric view. The controller moves it once per physics step through

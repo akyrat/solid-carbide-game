@@ -4,7 +4,7 @@ extends Node
 ## climbing one heat step every `step_seconds` seconds to x4 and dropping back
 ## to x1 at the end. A label shows the combo, the car's top speed and its
 ## real speed, so the boost can be read off the GIF. Record with Godot's movie
-## maker (game/README.md, "Hype speed boost").
+## maker (game/docs/driving/effects.md, "Hype speed boost").
 
 @export var step_seconds := 2.5
 ## True: a drift circle (the default); false: straight up the street from the start.

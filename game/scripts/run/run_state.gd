@@ -11,7 +11,7 @@ extends Node
 ## current level slowly goes down, never below 0, so the level never goes
 ## down (numbers: res://data/run.json's likes_drain, RunData). Other agents'
 ## work plugs in through the signals and public
-## functions below; game/README.md, "The run", lists them.
+## functions below; game/docs/game-loop/the-run.md, "The run", lists them.
 ##
 ## The clock counts down in _process, so it stops whenever the scene tree is
 ## paused (this node uses the default, pausable process mode). advance() moves

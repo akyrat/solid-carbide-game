@@ -63,7 +63,7 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 
 ### The starting gun (built in task T-041)
 
-What the built gun does in the game. It follows Decisions and the Unity prototype weapons report; the numbers are T-040's ([../game/data/weapons.json](../game/data/weapons.json)). How the code is put together: `game/README.md`, "Weapons".
+What the built gun does in the game. It follows Decisions and the Unity prototype weapons report; the numbers are T-040's ([../game/data/weapons.json](../game/data/weapons.json)). How the code is put together: `game/docs/weapons/shared.md` and `game/docs/weapons/starting-gun.md`.
 
 - Every run starts with the gun at tier 1 and no other weapon; a new run puts it back to tier 1 and removes any bullets in flight. Nothing is drawn on the car, only the bullets.
 - Every 1.26 seconds (at tier 1) the gun looks for living enemies whose centre is within 12 units of the car's centre. With none, it does nothing until the next check; with some, it fires a volley. It checks only at those moments, so an enemy that comes into range just after a check is shot at the next one.
@@ -76,7 +76,7 @@ What the built gun does in the game. It follows Decisions and the Unity prototyp
 
 ### The exhaust flamethrower (built in task T-042)
 
-What the built flamethrower does in the game. It follows Decisions (the prototype's Flame Exhaust with the board's fixes) and takes every number from [../game/data/weapons.json](../game/data/weapons.json). How the code is put together: `game/README.md`, "Weapons", "The exhaust flamethrower".
+What the built flamethrower does in the game. It follows Decisions (the prototype's Flame Exhaust with the board's fixes) and takes every number from [../game/data/weapons.json](../game/data/weapons.json). How the code is put together: `game/docs/weapons/flamethrower.md`, "The exhaust flamethrower".
 
 - **Owning it:** a run starts without it. It is one of the car's weapons next to the gun, gained at a level-up (the level-up offers, below), which also applies its upgrade tiers. A playtest switch (`game/data/playtest.json`, `flamethrower_at_start`) gives it to the car at the start of every run.
 - **On and off:** on while the car is drifting (W, or S, held with A or D: the car's own drift state) at 0.85 units per second or more, and for 0.2 seconds after the drift ends. Driving straight, steering while standing still, or drifting slower than that never lights it. From tier 8 it is always on. It stops while the run is paused.
@@ -98,7 +98,7 @@ Proposals by the Game Data Agent for the board's playtest; the board judges and 
 
 ### Bricks
 
-What the built weapon does in the game (built in task T-324). It follows Decisions ("Bricks", 2026-10-28), takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the numbers below) and shows the card texts below. How the code is put together: `game/README.md`, "Weapons", "Bricks".
+What the built weapon does in the game (built in task T-324). It follows Decisions ("Bricks", 2026-10-28), takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the numbers below) and shows the card texts below. How the code is put together: `game/docs/weapons/bricks.md`, "Bricks".
 
 - **Owning it:** a run starts without it. It is one of the car's weapons, offered on level-up cards like the other five, gained and upgraded through the same call (`upgrade("bricks")`); since T-321 it can be on the very first gift pack. A playtest switch (`game/data/playtest.json`, `bricks_at_start`, off) gives it at the start of every run.
 - **The landing:** each step the weapon reads whether the car is in the air (the car's height model, the same airborne state the airtime trick uses) and counts the seconds; the step the car is back on the ground is the landing. A landing after at least the minimum time in the air (0.3 seconds) sends one impact wave; a shorter hop (a curb, a bump, a low step down) sends none. Any way of being in the air counts: a ramp's top, a rooftop's edge, any drop. Nothing is counted while the run is paused or after it ends.
@@ -140,7 +140,7 @@ What the built weapon does in the game (built in task T-324). It follows Decisio
 
 ### The neon underglow (built in task T-168)
 
-What the built underglow does in the game. It follows Decisions ("Three new weapons") and takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/README.md`, "Weapons", "The neon underglow".
+What the built underglow does in the game. It follows Decisions ("Three new weapons") and takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/docs/weapons/neon-underglow.md`, "The neon underglow".
 
 - **Owning it:** a run starts without it. It is one of the car's weapons, gained and upgraded through the same call as the flamethrower (`upgrade("underglow")`), offered at a level-up (the level-up offers, below). A playtest switch (`game/data/playtest.json`, `underglow_at_start`, off) gives it at the start of every run.
 - **Area:** a circle around the car's centre (radius 2.5 at tier 1), the same in every direction, moving with the car. A minion is inside when its centre is; an enemy that reports its body size, such as the kaiju, when any part of its body overlaps the circle (the flamethrower's rule).
@@ -151,7 +151,7 @@ What the built underglow does in the game. It follows Decisions ("Three new weap
 
 ### The molotovs (built in task T-169)
 
-What the built molotovs do in the game. They follow Decisions ("Three new weapons" and the board's answer that an enemy burns only while inside) and take every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/README.md`, "Weapons", "The molotovs".
+What the built molotovs do in the game. They follow Decisions ("Three new weapons" and the board's answer that an enemy burns only while inside) and take every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/docs/weapons/molotovs.md`, "The molotovs".
 
 - **Owning them:** a run starts without them. They are one of the car's weapons, gained and upgraded through the same call as the others (`upgrade("molotov")`), offered at a level-up (the level-up offers, below). A playtest switch (`game/data/playtest.json`, `molotov_at_start`, off) gives them at the start of every run.
 - **Throwing** (the Weapon Behavior Agent's proposal, for the board's playtest): a clock starts when the car gets them; each time it reaches the throw interval (3 seconds at tier 1), that tier's number of bottles leave the car's centre at once. Each lands at its own random spot: any direction around the car, at a distance picked evenly between 3 and 8 units. Where enemies are plays no part. A bottle takes half a second to land, along a small arc; this flight time is in the code, not the data.
@@ -163,7 +163,7 @@ What the built molotovs do in the game. They follow Decisions ("Three new weapon
 
 ### The windshield wiper (built in task T-170)
 
-What the built wiper does in the game. It follows Decisions ("Three new weapons" and the board's answers: it sweeps all the time, damages the kaiju, pushes only minions) and takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/README.md`, "Weapons", "The windshield wiper".
+What the built wiper does in the game. It follows Decisions ("Three new weapons" and the board's answers: it sweeps all the time, damages the kaiju, pushes only minions) and takes every number from [../game/data/weapons.json](../game/data/weapons.json) (the proposal above). How the code is put together: `game/docs/weapons/windshield-wiper.md`, "The windshield wiper".
 
 - **Owning it:** a run starts without it. It is one of the car's weapons, gained and upgraded through the same call as the others (`upgrade("wiper")`), offered at a level-up (the level-up offers, below). A playtest switch (`game/data/playtest.json`, `wiper_at_start`, off) gives it at the start of every run.
 - **The arm** (the Weapon Behavior Agent's proposal, for the board's playtest): one arm turning round a point on the nose of the car's body (half a unit ahead of its centre), 2.5 units long at tier 1. It sweeps from one side of the car to the other and back across the semicircle in front of the car (180 degrees) at 240 degrees per second, all the time, turning back at each end. The semicircle is fixed to the car, so it turns when the car turns.
@@ -175,7 +175,7 @@ What the built wiper does in the game. It follows Decisions ("Three new weapons"
 
 ### Size upgrades grow on screen (built in task T-286)
 
-What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/README.md`, "Weapons", "Size upgrades grow".
+What the built grow does. It follows Decisions ("Size upgrades grow on screen"). The numbers and reasons are the Weapon Behavior Agent's proposal for the board's playtest; the code is in `game/docs/weapons/shared.md`, "Weapons", "Size upgrades grow".
 
 - **Which tiers grow:** the ones whose effect in `weapons.json` is a size. The windshield wiper's tiers 2 and 6 (arm length x1.2 and x1.3), the neon underglow's tiers 2, 5 and 8 (radius x1.2, x1.25, x1.3) and the exhaust flamethrower's tiers 2, 4 and 6 (flame size x1.2, x1.2, x1.3). Every other tier, and getting a weapon, plays no grow. The molotovs' tiers 2 and 7 (fire radius) play none either: each fire area is made when a bottle lands and keeps its size, so the next bottle just makes a bigger one and there is no standing weapon to grow (the board can ask for the fires on the ground to grow too).
 - **When:** when the card or gift pack that raises the size is picked. The run is paused for the pick, so the grow starts as the game resumes and stands still while it is paused.
@@ -185,7 +185,7 @@ What the built grow does. It follows Decisions ("Size upgrades grow on screen").
 
 ### The level-up offers (built in tasks T-043 and T-172)
 
-What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/README.md`, "Weapons", "The level-up offers".
+What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/docs/weapons/shared.md`, "Weapons", "The level-up offers".
 
 - When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the weapons (six since T-324 added Bricks) gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 11 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs, the windshield wiper and Bricks.
 - Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper, Bricks), not in the order drawn.

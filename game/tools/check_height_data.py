@@ -1,6 +1,6 @@
 """Checks a ground-height data file (task T-193).
 
-The format is game/README.md, "Elevation sample map", "Height data": a list of
+The format is game/docs/level/elevation-sample-map.md, "Elevation sample map", "Height data": a list of
 platforms (axis-aligned rectangles with a height, optionally standing on
 another platform with "on") and a list of ramps (a footprint next to the side
 of the platform it climbs, rising from bottom_height at its foot to

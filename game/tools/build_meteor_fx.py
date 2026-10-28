@@ -2,7 +2,7 @@
 """Draws the kaiju meteor attack's comet tail and impact animation (task T-070).
 
 Two animations, in three versions (the game's setting `data/meteor_fx.json`
-picks one; see game/README.md, "Meteor effects"):
+picks one; see game/docs/enemies/meteors.md, "Meteor effects"):
 
   pixel      sprite sheets drawn here by script (no PixelLab).
   pixellab   sprite sheets animated by PixelLab (/animate-with-text-v3) from

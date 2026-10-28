@@ -7,7 +7,7 @@ extends Control
 ## and ramps. The drawing is rebuilt when a piece changes (only the ground tiles are redrawn for a
 ## ground or road tile).
 ##
-## Controls (game/README.md, "Level creator"): pick an asset in the side panel, left-click the map
+## Controls (game/docs/level/level-creator.md, "Level creator"): pick an asset in the side panel, left-click the map
 ## to place it at the clicked tile; with nothing picked, left-click selects the piece under the
 ## cursor (right-click selects too and drops the pick); the Delete button or the Del key removes the
 ## selected piece; Esc drops the pick and the selection. Pan: drag with the middle mouse button, or

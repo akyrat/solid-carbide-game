@@ -5,7 +5,7 @@ extends RefCounted
 ## Drawn by kaiju_meteors.gd's sky drawing; this file only knows how.
 ##
 ## Three versions for the board to compare, picked by one setting,
-## res://data/meteor_fx.json {"version": ...} (game/README.md, "Meteor effects"):
+## res://data/meteor_fx.json {"version": ...} (game/docs/enemies/meteors.md, "Meteor effects"):
 ##   "pixel"     sprite sheets drawn by script (art/effects/meteor_*_pixel.png)
 ##   "pixellab"  sprite sheets animated by PixelLab (art/effects/meteor_*_pixellab.png)
 ##   "particles" no sprites: square pixel particles computed here every frame
