@@ -1,0 +1,24 @@
+{
+  "file": "bricks_wave_r7_8.png",
+  "task": "T-325",
+  "generator": "game/tools/build_bricks_wave.py (script-drawn, no PixelLab)",
+  "radius_units": 7.8,
+  "frames": 12,
+  "frame_width": 726,
+  "frame_height": 418,
+  "centre": [
+    363,
+    231
+  ],
+  "frame_seconds": 0.05,
+  "ring_seconds": 0.35,
+  "start_radius_units": 0.6,
+  "art_px_per_unit": 32,
+  "draw_scale": 0.5,
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md",
+    "docs/extended-narrative.md",
+    "game/scripts/weapons/bricks.gd"
+  ]
+}

@@ -318,7 +318,7 @@ func test_the_cars_handling_does_not_change() -> void:
 	assert_almost_eq(ends[0][2], ends[1][2], 1e-9, "the same heading")
 
 
-# --- The placeholder drawing ---------------------------------------------------------
+# --- The drawing ---------------------------------------------------------------------
 
 func test_the_wave_is_drawn_growing_to_the_radius_then_gone() -> void:
 	rack.upgrade("bricks")
@@ -366,3 +366,50 @@ func test_the_waves_colours_are_opaque_and_none_of_greenbulls() -> void:
 		for g in GREENBULL:
 			var d := Vector3(c.r - g.r, c.g - g.g, c.b - g.b).length() * 255.0
 			assert_gt(d, GREENBULL_MAX_DIST, "%s is not Greenbull's %s" % [c, g])
+
+
+# --- T-325's art -----------------------------------------------------------------------
+
+func test_every_tiers_radius_has_its_wave_sheet() -> void:
+	for t in range(1, 9):
+		var r: float = data.bricks_at(t)["radius"]
+		var path: String = Bricks.BricksWave.art_path(r)
+		assert_true(ResourceLoader.exists(path), "tier %d (radius %.2f): %s" % [t, r, path])
+		var tex: Texture2D = Bricks.BricksWave.sheet_for(r)
+		assert_not_null(tex)
+		assert_eq(tex.get_width() % Bricks.BricksWave.FRAMES, 0, "%s splits into the frames" % path)
+	assert_null(Bricks.BricksWave.sheet_for(123.4), "no sheet for a radius no tier has")
+
+
+func test_the_wave_shows_its_sheet_frame_by_frame() -> void:
+	rack.upgrade("bricks")
+	bricks.send_wave(_car())
+	var w: Node2D = bricks.last_wave
+	assert_not_null(w.sheet, "the art, not the placeholder")
+	assert_eq(w.sheet, Bricks.BricksWave.sheet_for(bricks.radius()))
+	assert_eq(w.frame_size.x * Bricks.BricksWave.FRAMES, float(w.sheet.get_width()))
+	# The ring's centre in the frame: half the width, below the room left for the dust.
+	assert_almost_eq(w.art_centre.x, w.frame_size.x / 2.0, 1e-6)
+	assert_gt(w.art_centre.y, float(Bricks.BricksWave.ART_TOP))
+	# The ellipse of the radius fits the frame: half-width radius * sqrt(2) * 32 art px.
+	assert_gte(w.art_centre.x, bricks.radius() * sqrt(2.0) * 32.0, "the ring fits at full radius")
+	var seen := []
+	while is_instance_valid(w) and not w.is_done():
+		var f: int = w.frame_index()
+		if seen.is_empty() or seen[-1] != f:
+			seen.append(f)
+		rack.step(DT)
+	assert_eq(seen[0], 0, "starts on the first frame")
+	assert_eq(seen[-1], Bricks.BricksWave.FRAMES - 1, "ends on the last frame")
+	for i in range(1, seen.size()):
+		assert_eq(seen[i], seen[i - 1] + 1, "frames in order, none skipped")
+
+
+func test_a_wider_tier_shows_a_wider_sheet() -> void:
+	rack.upgrade("bricks")
+	bricks.send_wave(_car())
+	var small: Vector2 = bricks.last_wave.frame_size
+	bricks.set_tier(8)
+	bricks.send_wave(_car() + Vector2(20, 0))
+	assert_gt(bricks.last_wave.frame_size.x, small.x)
+	assert_eq(bricks.last_wave.sheet, Bricks.BricksWave.sheet_for(7.8))
