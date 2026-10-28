@@ -1,7 +1,7 @@
 ---
 id: T-351
 title: Reaction icons burst out on a sub goal and float up at high viewer counts
-status: blocked
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -58,10 +58,20 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Blocked → In progress
+
+Started from the playtest build (T-336 and T-337 approved).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the UI Agent. `game/scripts/hud/reactions.gd` (`Reactions`, `hud.reactions`): the Hud's first child so every HUD piece draws over it; placeholder pixel hearts and thumbs up drawn in code (pink, orange, violet, white; none cyan, heart red or Greenbull). Burst: 10 icons out of the sub goal square's centre from `Hud._on_level_up()` (once per goal). Floaters: groups of 1 to 3 from below the bottom edge in the left or right third, uneven gaps, rate by the viewers counter's look step (`rates_per_second` [0, 0.2, 0.4, 0.7, 1.2]: none below 20K). Cap 12, alpha 0.7, pausable, `Hud.bind()` clears. All numbers (proposals) in `game/data/hud.json` `reactions`. Burst speeds were raised to 200 to 420 px/s after the first screenshot showed the icons hiding behind the square. No T-352 art in the branch, so none used; no new text, no PixelLab.
+
+Documents: docs/hud-and-menus.md (Content, new bullet), game/docs/hud-and-menus/hud.md (new section, since game/README.md is now an index).
+
+Tests: new `tests/unit/hud/test_hud_reactions.gd` (17). Full runs: GUT 1803/1803 passed (147 scripts); `python -m unittest discover -s game/tools` 645 OK (1 skipped); `python -m unittest discover -s tools` 545 OK.
+
+Screenshots and GIFs (`bash game/tools/record_reactions.sh`, fixture `tests/fixtures/reactions_demo.tscn`): `art-archive/T-351/screenshots/reactions_burst.png`, `reactions_float.png`, `reactions_burst.gif`, `reactions_float.gif` (the float GIF steps the viewer step 0 to 4 every 3 s). The floaters are faint at 0.7 alpha on the grey road; the board may want a different alpha or bigger icons.
