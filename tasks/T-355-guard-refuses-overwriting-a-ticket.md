@@ -1,7 +1,7 @@
 ---
 id: T-355
 title: Token spend: the guard refuses cp, mv, tee and dd onto a ticket whatever the command says
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/T-354-guard-refuses-only-real-ticket-writes.md, .claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -95,3 +95,4 @@ Nothing was refused by a hook or the permission system.
 - Foreground runs: game/tools 655 tests OK (1 skipped); tools 560 tests OK; `bash game/tools/run_tests.sh` takes over an hour here, so I stopped waiting at 140 of 150 scripts: 1671 of 1671 checks passed, no failure line. qa_check's own run of the three sets passed. No game code changed.
 - Probe (27 refused spellings, 22 allowed commands, through `OverwritingATicket` as test_guard does, also with cwd in the worktree): quoted paths, backslashes, absolute worktree paths, globs (`T-0*.md`, `T-00?-x.md`), `/bin/cp`, `cp.exe`, `sc`, `cp --`, chained `&&`/`;`, `tee -a`, `dd of="..."`, `1>`, `cd tasks && cat x > T-001-x.md` all refused. Allowed as required: `git checkout master -- tasks/T-001-x.md`, `git restore` (also `--staged`), `git mv`, cp/Copy-Item of a ticket out of tasks, cat/grep/head of tickets, `>>` plain text, merge_batch (also `--log`), new_ticket, qa_check, task_status, git add/commit.
 - One gap, not a criterion: `echo hi >| tasks/T-001-x.md` (noclobber override) is not refused when the command has no guard word. Obscure; possible follow-up.
+- 2026-10-28, in-qa → done: QA passed 5/5. Gap noted, not a criterion: bash's force-overwrite redirect >| onto a ticket is not refused.
