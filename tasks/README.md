@@ -103,6 +103,30 @@ The board's way of building the game (2026-10-10): always aim for the smallest p
 6. **Map tiles:** generating the map's tile art (board, 2026-10-12).
 7. **Later:** minions, then the weapons, then the kaiju, the garage and sound. The board moved enemies much later on 2026-10-12.
 
+## Writing new tickets with a script
+
+`tools/new_ticket.py` does a new ticket's paperwork (T-345, token-spend epic). The Project Lead first writes the decision in the game area doc and the acceptance criteria, then puts the rest in one JSON file and runs, from the main checkout on `master`:
+
+```
+python tools/new_ticket.py tickets.json [--dry-run]
+```
+
+It picks the next free number (the highest T-NNN in `tasks/`, in `git log` on `master` and in `task/T-NNN` branches, plus one), writes each ticket from `tasks/_TEMPLATE.md` (its comment and sections copied), claims it for the lead through `task_status.py`, appends one entry per ticket to `docs/timeline.md`, and, when `decision_docs` is given, regenerates the long GDD and the short GDD's fingerprint. It then commits only those files in one commit, after checking that no merge is in progress (`MERGE_HEAD`); with a merge in progress it writes nothing. It prints one line per ticket. Bad input is refused before anything is written. `--dry-run` only prints the numbers.
+
+Input (top level: `lead`, `commit_message`, `tickets` are required; `decision_docs`, `date`, `common_description`, `common_criteria` are optional and apply to every ticket):
+
+```
+{"lead": "Tokens", "commit_message": "T-360: ticket (the board's decision)",
+ "decision_docs": ["docs/weapons.md"], "date": "2026-10-28",
+ "common_criteria": ["All three test sets pass, with the counts in the result notes."],
+ "tickets": [{"title": "Short title", "slug": "short-title", "to": "weapon-behavior", "epic": "weapons", "model": "sonnet",
+   "depends_on": [], "documents_affected": ["docs/weapons.md"], "files_to_read_first": ["tasks/README.md"],
+   "files_expected_to_change": ["game/x.gd"], "description": "What and why.", "criteria": ["Something QA can check."],
+   "timeline": {"title": "Entry title", "decision": "What the board decided.", "documents": ["docs/weapons.md"]}}]}
+```
+
+A ticket also takes `milestone` (default `mvp`), `user_facing_text` and `changes_visuals` (default `no`), and its own `lead`. Tickets that show text or art still need their linked tasks written as the rules above say.
+
 ## Epics and milestones
 
 Every task file has an `epic` and a `milestone` in its header.

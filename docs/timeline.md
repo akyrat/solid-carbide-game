@@ -1965,3 +1965,8 @@ Entry format:
 - Decision or change: the measuring tool (`tools/token_report.py`) and the baseline (`docs/token-spend/baseline-2026-10-28.md`) are in. Everything up to 2026-10-28: 20,248 calls, 3,406M cache-read tokens (main sessions 2,032M, subagents 1,373M), 5.1% of tool calls failed. The task board shows a Token spend bubble for the epic. QA passed all criteria; merged after QA (nothing the player sees).
 - Documents touched: docs/README.md
 - Tasks: T-342
+
+## 2026-10-28: T-345 merged, one script writes a ticket's paperwork
+- Decision or change: `tools/new_ticket.py` writes new tickets from one JSON input file: the next free numbers, the template's sections, the lead claimed, one timeline entry each and a single commit with only those files; it refuses to commit while a merge is in progress. `tasks/README.md` describes it ("Writing new tickets with a script"). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 515, GUT 1735.
+- Documents touched: tasks/README.md
+- Tasks: T-345
