@@ -1,7 +1,7 @@
 ---
 id: T-345
 title: Token spend: one script writes a new ticket's paperwork
-status: in-progress
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, tasks/_TEMPLATE.md, tools/task_status.py]
 files_expected_to_change: [tools/new_ticket.py, tools/test_new_ticket.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,10 +41,10 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Tests on a throwaway repo show two tickets from one input file written with the next free numbers, the template's sections intact, the header parseable by `tools/task_status.py`, the lead claimed, one timeline entry each, and a single commit with only those files. (QA: pass / fail)
-- [ ] A test shows the script refusing to commit while a merge is in progress. (QA: pass / fail)
-- [ ] `tasks/README.md` describes the script and its input. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [x] Tests on a throwaway repo show two tickets from one input file written with the next free numbers, the template's sections intact, the header parseable by `tools/task_status.py`, the lead claimed, one timeline entry each, and a single commit with only those files. (QA: pass)
+- [x] A test shows the script refusing to commit while a merge is in progress. (QA: pass)
+- [x] `tasks/README.md` describes the script and its input. (QA: pass)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started in parallel: the ticket-paperwork script.
+
+### 2026-10-27, In QA
+
+Built: tools/new_ticket.py with 8 tests; all three test sets pass. QA is checking it now.
 
 ## Style review
 
@@ -80,3 +84,11 @@ Tests (throwaway repos in temp folders only; the real repo's tasks were never to
 Test counts: `python -m unittest discover -s tools -p "test_*.py"`: 509 tests OK (includes the 8 new). `python -m unittest discover -s game/tools -p "test_*.py"`: 620 tests OK (1 skipped). `bash game/tools/run_tests.sh`: 1735 of 1735 passing, TESTS PASSED.
 
 Unsure or notes: (1) the commit message has no attribution line unless the Project Lead puts it in `commit_message`. (2) Timeline entries go at the end of `docs/timeline.md` with the given date; each ticket gets its own entry as the ticket asked, so a batch from one decision repeats the entry text unless the lead varies it. (3) The script does not write the Decisions line or criteria: those stay the Project Lead's. (4) Linked Narrative/art tasks are not generated; list them as separate tickets in the same file.
+
+### QA (round 1)
+
+- Criterion 1 (two tickets, one commit, throwaway repo): PASS. tools/test_new_ticket.py, 8 tests OK.
+- Criterion 2 (refuses during merge): PASS. test_refuses_while_merge_in_progress OK.
+- Criterion 3 (README describes script and input): PASS. Section "Writing new tickets with a script".
+- Criterion 4 (three test sets): PASS. tools 509 OK; game/tools 620 OK (1 skipped); run_tests.sh TESTS PASSED.
+- 2026-10-28, in-qa → done: QA pass, all 4 criteria
