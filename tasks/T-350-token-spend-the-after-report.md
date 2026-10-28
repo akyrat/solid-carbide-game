@@ -1,7 +1,7 @@
 ---
 id: T-350
 title: Token spend: the after report, compared with the baseline
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -55,10 +55,25 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started on your go to finish the epic tonight: an early read of the period since the new tools merged, with the command to rerun it after the next playtest batch.
 
+### 2026-10-28, In progress
+
+Report written and committed on the branch: docs/token-spend/after-2026-10-28-early.md (an early read; tests pass). Waiting for the board: the agent's write of its result notes was refused (guard) and its Edit denied (auto mode), so it can't move to QA. Nothing worked around it.
+
+### 2026-10-28, In progress → In QA
+
+Result notes written on the board's go; the early read is in QA now. It merges straight after QA (a report, nothing the player sees).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the Project Lead from the agent's hand-back, on the board's go (2026-10-28): the agent's own write of these notes was refused by the guard (inline Python) and its Edit was denied by auto mode; it did not work around either.
+
+An early read, not the full after report: the board asked for the epic to finish overnight, before any playtest batch went through the new tools. Nothing to picture.
+
+- `docs/token-spend/after-2026-10-28-early.md` (new): covers 2026-10-28T01:43:02Z (the commit "Merge T-344 and T-348") to about 03:55Z, 299 calls, six tickets merged, and the Tokens session (`2c104619`) on its own. It opens by saying the sample is small and unlike the baseline; gives each measure next to the baseline's, per merged ticket and per call; has a line for each of T-343 to T-349; names the other changes (the 500k auto-compact limit, different work, model mix, the guard changes) and what can't be told apart; and ends with the command to rerun it after the HUD batch.
+- Headline: 5.0M tokens per merged ticket against 12.5M (different work; not credited to the tickets); git merge/push output 199 characters per call against 1,849 (the one plausible effect, T-344, 11 calls); failed calls 9.7% against 5.1%, hook refusals 4.3% against 1.2%; subagent reports 18.5% of weighted context against 14.3%; the 500k limit untested (no session passed 206k).
+- `tools/token_report.py`: `--from`/`--to` also accept a UTC time, since a date can't split the day at 01:43Z; `tools/test_token_report.py` has a test for it. `docs/README.md`: the rerun note and a pointer to the early read.
+- Tests (foreground): `python -m unittest discover -s game/tools -p "test_*.py"`: Ran 620, OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"`: Ran 546, OK. `bash game/tools/run_tests.sh`: TESTS PASSED.
