@@ -2075,3 +2075,8 @@ Entry format:
 - Decision or change: The guard now refuses only commands that really write a ticket's guarded header fields; the repo's ticket tools, inline scripts that only mention tasks, read-only commands and date pass. The night's seven false refusals, plus qa_check.py, are tests; real writes, including a tool's --log= into a ticket, stay refused. Overwriting a ticket with cp, mv or tee when the command names no header word moves to a follow-up ticket.
 - Documents touched: tasks/README.md
 - Tasks: T-354
+
+## 2026-10-28: A ticket so the guard refuses overwriting a ticket
+- Decision or change: Split out of T-354: the guard let cp, mv, tee and dd overwrite a ticket when the command held no guard word, which changes its status outside task_status.py. T-354's agent wrote the fix, but the old guard refused its edit; with T-354 live it can be applied.
+- Documents touched: tasks/README.md
+- Tasks: T-355
