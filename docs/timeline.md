@@ -2055,3 +2055,8 @@ Entry format:
 - Decision or change: The board played it: the coins counter sits above the clock at the bottom left.
 - Documents touched: none
 - Tasks: T-341
+
+## 2026-10-28: Hearts in the run
+- Decision or change: The board played it: hits take hearts, 1 s invulnerability with a blink, no knockback or combo cut during it (the agent's proposal, accepted with the playtest).
+- Documents touched: none
+- Tasks: T-334
