@@ -1,7 +1,7 @@
 ---
 id: T-352
 title: "Art: the reaction icons (likes, thumbs up, hearts) for the livestream bursts"
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -52,9 +52,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Open → In progress
+
+Started: script-drawn reaction icons (no PixelLab go), to replace T-351's placeholders.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+All six icons are script-drawn 16 x 16 (0 PixelLab generations); every script check (style_rules.py art) passed each round.
+
+### Round 1 (v2, art-archive/T-352/v2/)
+heart 9, thumbs up 8, fire 9, star 8, smile 7, clapping 5 (reads as a bunny or bow, blob). Refine: clapping redrawn, smile thicker features.
+
+### Round 2 (v4, art-archive/T-352/v4/)
+clapping 7 (A-shaped pressed palms with sparks, flat interior), smile 8. Refine: highlight pixels on the clapping palm.
+
+### Round 3 (v5, art-archive/T-352/v5/)
+clapping 8 (a little tent-like). Kept.
+
+Kept: heart 9, thumbs up 8, fire 9, clapping 8, star 8, smile 8 (game/art/hud/).
 
 ## Result notes
 

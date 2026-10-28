@@ -10,33 +10,20 @@ extends Control
 ## where the viewers counter is (the right side, a lane over the counter's width), a
 ## lively flow that gets busier at each look step, with a little sway, a scale pop and
 ## a fade near the top. They never drift into the middle. Never more than `cap` on screen.
-## The pictures are placeholders drawn in code (pixel hearts and thumbs up) until
-## T-352's art. Numbers: res://data/hud.json, reactions.
+## The pictures are T-352's art (heart, thumbs up, fire, clapping, star, smile). Numbers: res://data/hud.json, reactions.
 
-## 1 is a filled pixel, 0 is empty; drawn at `icon_scale` pixels per cell.
-const HEART := [
-	"0110110",
-	"1111111",
-	"1111111",
-	"0111110",
-	"0011100",
-	"0001000",
+## The icons (T-352, script-drawn 16 x 16 pixel art in game/art/hud/), drawn at `icon_scale`
+## screen pixels per art pixel. None uses the viewers cyan or Greenbull's colours.
+const ICONS := [
+	preload("res://art/hud/reaction_heart.png"),
+	preload("res://art/hud/reaction_thumbs_up.png"),
+	preload("res://art/hud/reaction_fire.png"),
+	preload("res://art/hud/reaction_clapping.png"),
+	preload("res://art/hud/reaction_star.png"),
+	preload("res://art/hud/reaction_smile.png"),
 ]
-const THUMB := [
-	"0001100",
-	"0001100",
-	"0011100",
-	"1111110",
-	"1111111",
-	"1111111",
-	"1111110",
-	"0111100",
-]
-const KINDS := [HEART, THUMB]
-## Colours of the placeholders: none is the viewers cyan, the heart red or Greenbull's.
-const COLORS := [Color("#ff6fae"), Color("#ff8c3a"), Color("#b58cff"), Color("#f4f4ff")]
 const DEFAULT_CFG := {
-	"cap": 60, "alpha": 0.9, "icon_scale": 4,
+	"cap": 60, "alpha": 0.9, "icon_scale": 2,
 	"rates_per_second": [0.0, 2.0, 3.5, 5.0, 7.5],
 	"group_min": 1, "group_max": 2, "gap_min_share": 0.4, "gap_max_share": 1.8,
 	"rise_min": 180.0, "rise_max": 320.0, "wobble_px": 16.0, "wobble_hz": 0.6,
@@ -46,7 +33,7 @@ const DEFAULT_CFG := {
 }
 
 var cfg: Dictionary = DEFAULT_CFG.duplicate()
-## Each: {kind, color, pos (centre), vel, age, life, base_x, phase, floater}.
+## Each: {kind, pos (centre), vel, age, life, base_x, phase, floater}.
 var items: Array = []
 var rng := RandomNumberGenerator.new()
 ## Called each frame for the live viewers counter's look step (0 base ... 4 fire).
@@ -112,7 +99,7 @@ func _add(it: Dictionary) -> bool:
 
 func _new_item(pos: Vector2, vel: Vector2, life: float, floater: bool) -> Dictionary:
 	return {
-		"kind": rng.randi() % KINDS.size(), "color": COLORS[rng.randi() % COLORS.size()],
+		"kind": rng.randi() % ICONS.size(),
 		"pos": pos, "vel": vel, "age": 0.0, "life": life, "base_x": pos.x,
 		"phase": rng.randf() * TAU, "floater": floater,
 	}
@@ -215,13 +202,6 @@ func _process(dt: float) -> void:
 func _draw() -> void:
 	for it in items:
 		var s: float = float(cfg["icon_scale"]) * scale_of(it)
-		var grid: Array = KINDS[it["kind"]]
-		var c: Color = it["color"]
-		c.a = alpha_of(it)
-		var w: int = (grid[0] as String).length()
-		var origin: Vector2 = (it["pos"] - Vector2(w, grid.size()) * s / 2.0).round()
-		for y in grid.size():
-			var row: String = grid[y]
-			for x in row.length():
-				if row[x] == "1":
-					draw_rect(Rect2(origin + Vector2(x, y) * s, Vector2(s, s)).grow(0.5), c)
+		var tex: Texture2D = ICONS[it["kind"]]
+		var sz := tex.get_size() * s
+		draw_texture_rect(tex, Rect2((it["pos"] - sz / 2.0).round(), sz), false, Color(1, 1, 1, alpha_of(it)))
