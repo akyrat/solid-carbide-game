@@ -1,7 +1,7 @@
 ---
 id: T-333
 title: "Game data: hearts, damage in hearts, invulnerability, health drops and the garage upgrade"
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -63,6 +63,10 @@ Started in the livestream HUD build.
 
 Built (hearts numbers); QA running now, overnight HUD work.
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -89,3 +93,4 @@ Game Data Agent, T-333.
 **Test runs:** GUT (`bash game/tools/run_tests.sh`): 142 scripts, 1691 tests, 1691 passing (after fixing 2 tests that assumed 100 health). `python -m unittest discover -s tools -p "test_*.py"`: 501 tests OK. `python -m unittest discover -s game/tools -p "test_*.py"`: NOT RUN to a result: my first attempt hit the 120 s timeout and went to the background with no counts, and my foreground retry was refused by the board, so I did not retry or work around it. It tests art and tool scripts this ticket does not touch; the Project Lead should run it.
 
 **QA (round 1):** all 4 criteria pass. qa_check: the three test sets pass (game/tools now finishes, so the build agent's refusal no longer matters), 4 documents changed. README change committed as "T-333: README hearts section". Criterion 1: data and tests (test_hearts_numbers, test_damage_in_hearts, test_health_drops_and_garage_hearts) cover every number. Criterion 2: old-number list is in the notes. Criterion 3: the three docs and game/README.md list the hearts numbers. Criterion 4: GUT (1691) and tools (501) counts are in the notes; the game/tools count was not recorded but qa_check shows it passing. qa_check's screenshots line fails, but this is a data-only ticket (changes_visuals: no), nothing to show, and no criterion asks for one, so it is not counted.
+- 2026-10-28, needs-playtest → done: The board approved it (2026-10-28).
