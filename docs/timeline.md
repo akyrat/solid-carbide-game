@@ -2025,3 +2025,8 @@ Entry format:
 - Decision or change: The hearts numbers, approved by the board as data; judged again in hearts in the run (T-334).
 - Documents touched: none
 - Tasks: T-333
+
+## 2026-10-28: Likes become subs
+- Decision or change: The board played it: likes became subs in the game's text.
+- Documents touched: none
+- Tasks: T-331
