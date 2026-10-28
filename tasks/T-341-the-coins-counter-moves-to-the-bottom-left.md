@@ -1,7 +1,7 @@
 ---
 id: T-341
 title: The coins counter moves to the bottom left, above the clock
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
