@@ -1975,3 +1975,8 @@ Entry format:
 - Decision or change: `tools/merge_batch.py` merges a batch of tickets in one call, one line per ticket, the full output in a log file; on a stop it leaves master clean and removes its own done commit. It is now the way to merge (Working with the board, "Merging"). The guard (`.claude/hooks/board_gate.py`) now lets through read-only commands it used to refuse: `sort`, `uniq`, read-only `python -c` and a chained `board_inbox.py` call. Both passed QA and merged after QA (nothing the player sees). Tests on master: 620, 529, GUT 1735.
 - Documents touched: docs/working-with-the-board.md, tasks/README.md
 - Tasks: T-344, T-348
+
+## 2026-10-28: T-346's ticket references split into a follow-up
+- Decision or change: The guard refused T-346's bulk rewrite of open tickets' files_to_read_first; nothing worked around it. The Project Lead moved that criterion into this follow-up ticket for the board to decide how it may be done; T-346 goes to QA without it. Open tickets that list game/README.md still work through its new short index.
+- Documents touched: tasks/README.md
+- Tasks: T-353
