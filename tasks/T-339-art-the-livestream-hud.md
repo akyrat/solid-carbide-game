@@ -1,7 +1,7 @@
 ---
 id: T-339
 title: "Art: the livestream HUD (clock, live viewers counter and its fire, sub goal, hearts, icons)"
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, docs/extended-narrative.md, docs/working-with-the-board.md, game/README.md, game/art/gift_pack/package.png]
 files_expected_to_change: [game/art/hud/, art-archive/T-339/, docs/visual-style.md, game/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -67,6 +67,10 @@ Board's go (overnight HUD work, no stopping): the fire at 7/10 after 3 refines i
 ### 2026-10-28, In progress → In QA
 
 QA running now; the fire (7/10) is listed for the board's playtest.
+
+### 2026-10-28, In QA → Done
+
+QA passed 5/5; into the playtest build, not master, until the board has played it.
 
 ## Style review
 
@@ -407,3 +411,4 @@ Every PNG in `game/art/hud/` has a json record beside it (35 PNGs, 35 records; w
 - The heart reads as a heart but its top dip between the lobes is shallow, and the kept subs icon is chunky (a "pawn" figure); the unused PixelLab subs candidate (`art-archive/T-339/pixellab/subs_icon_c1_post.png`) is arguably nicer. The evaluator judged these tiny images at their own size (it could not enlarge them), so its 8s are coarse.
 - The board asked for PixelLab art ("don't be stingy"); the loop's generator kept script art and used only 2 generations. 38 generations of the go are unused.
 - The clock's green tint is the UI ticket's: the mock-up used 69, 224, 90, which is clear of Greenbull's light green by the script check (distance about 36).
+- 2026-10-28, in-qa → done: QA passed; merged into the playtest build playtest/livestream-hud for the board's morning playtest (fire 7/10 noted)
