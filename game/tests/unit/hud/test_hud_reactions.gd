@@ -108,7 +108,7 @@ func test_same_seed_same_floaters() -> void:
 	assert_eq(a, b)
 
 
-func test_floaters_start_below_the_screen_at_random_x_across_the_whole_width() -> void:
+func test_floaters_start_below_the_screen_in_the_right_side_lane() -> void:
 	var r := _reactions(4)
 	r.set_process(false)
 	var xs: Array = []
@@ -118,13 +118,19 @@ func test_floaters_start_below_the_screen_at_random_x_across_the_whole_width() -
 		for it in r.items:
 			assert_gt(it["pos"].y, SIZE.y, "starts below the bottom edge")
 			xs.append(it["pos"].x)
-	assert_lt(float(xs.min()), SIZE.x * 0.2, "some at the left")
-	assert_gt(float(xs.max()), SIZE.x * 0.8, "some at the right")
-	var mid := 0
-	for x: float in xs:
-		if absf(x - SIZE.x / 2.0) < SIZE.x * 0.2:
-			mid += 1
-	assert_gt(mid, 0, "they may pass by the car in the middle")
+	assert_gte(float(xs.min()), SIZE.x * 0.75, "right side only")
+	assert_lte(float(xs.max()), SIZE.x * 0.99)
+	assert_gt(float(xs.max()) - float(xs.min()), 120.0, "spread over the counter's width")
+
+
+func test_floaters_never_drift_into_the_middle() -> void:
+	var r := _reactions(4)
+	r.set_process(false)
+	for i in 1500:
+		r.advance(0.01)
+		for it in r.items:
+			if it["floater"]:
+				assert_gt(it["pos"].x, SIZE.x * 0.7, "stays on the right side")
 
 
 func test_floaters_rise_and_sway_up_to_near_the_top() -> void:

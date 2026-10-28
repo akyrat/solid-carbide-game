@@ -6,10 +6,10 @@ extends Control
 ## icons floating up from the bottom of the screen at uneven gaps (the rate per look
 ## step in hud.json reactions.rates_per_second; none below the first heat step).
 ##
-## Like live reactions on a real stream, the floaters rise from random spots along the
-## whole bottom edge (they may pass by the car), a lively flow that gets busier at each
-## look step, with a little sway, a scale pop and a fade near the top. Never more than
-## `cap` on screen at once.
+## Like live reactions on a real stream, the floaters rise from the side of the screen
+## where the viewers counter is (the right side, a lane over the counter's width), a
+## lively flow that gets busier at each look step, with a little sway, a scale pop and
+## a fade near the top. They never drift into the middle. Never more than `cap` on screen.
 ## The pictures are placeholders drawn in code (pixel hearts and thumbs up) until
 ## T-352's art. Numbers: res://data/hud.json, reactions.
 
@@ -40,7 +40,7 @@ const DEFAULT_CFG := {
 	"rates_per_second": [0.0, 2.0, 3.5, 5.0, 7.5],
 	"group_min": 1, "group_max": 2, "gap_min_share": 0.4, "gap_max_share": 1.8,
 	"rise_min": 180.0, "rise_max": 320.0, "wobble_px": 16.0, "wobble_hz": 0.6,
-	"edge_margin": 24.0, "fade_out_from": 0.55, "pop_seconds": 0.25, "pop_from": 0.5, "fade_in": 0.2,
+	"lane_from": 0.76, "lane_to": 0.99, "fade_out_from": 0.55, "pop_seconds": 0.25, "pop_from": 0.5, "fade_in": 0.2,
 	"burst_count": 10, "burst_speed_min": 200.0, "burst_speed_max": 420.0,
 	"burst_drag": 1.5, "burst_rise": 30.0, "burst_seconds_min": 1.3, "burst_seconds_max": 1.9,
 }
@@ -118,15 +118,15 @@ func _new_item(pos: Vector2, vel: Vector2, life: float, floater: bool) -> Dictio
 	}
 
 
-## A group of floaters entering from random spots along the whole bottom edge, as on a
-## real stream's live reactions, rising up the screen (they may pass by the car).
+## A group of floaters entering below the bottom edge at random x in the right-side lane
+## (over the viewers counter, `lane_from` to `lane_to` of the width), rising up the right
+## side as on a real stream's live reactions.
 func spawn_group() -> int:
 	var a := area()
 	var n := rng.randi_range(int(cfg["group_min"]), int(cfg["group_max"]))
 	var added := 0
 	for i in n:
-		var m := float(cfg["edge_margin"])
-		var x := rng.randf_range(m, maxf(m, a.x - m))
+		var x := a.x * rng.randf_range(float(cfg["lane_from"]), float(cfg["lane_to"]))
 		var rise := rng.randf_range(float(cfg["rise_min"]), float(cfg["rise_max"]))
 		var y := a.y + 16.0 + rng.randf() * 24.0
 		# Climbs to near the top, fading out as it gets there.
