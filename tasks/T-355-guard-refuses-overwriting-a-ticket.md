@@ -1,7 +1,7 @@
 ---
 id: T-355
 title: Token spend: the guard refuses cp, mv, tee and dd onto a ticket whatever the command says
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -48,6 +48,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-28, Open → In progress
+
+Started: the guard will refuse cp, mv, tee, dd and the like onto a ticket whatever the command says; git checkout/restore stay allowed.
 
 ## Style review
 
