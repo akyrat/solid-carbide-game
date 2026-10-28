@@ -73,4 +73,9 @@ Kept: heart 9, thumbs up 8, fire 9, clapping 8, star 8, smile 8 (game/art/hud/).
 
 ## Result notes
 
-Written by the agent when it finishes.
+Six script-drawn 16 x 16 reaction icons (heart, thumbs up, fire, clapping, star, smile) in game/art/hud/reaction_*.png with json records, built by game/tools/build_hud_reaction_icons.py (grids, 1 px dark outline, deterministic). PixelLab: none, 0 generations. Style loop: heart 9, thumbs up 8, fire 9, clapping 8 (after 3 refines; weakest, reads a bit like a tent), star 8, smile 8 (1 refine). Style Evaluator was run by hand per round (not the run.py tool, which would call an agent to regenerate); rounds in Style review.
+reactions.gd: placeholders (HEART/THUMB grids, COLORS) replaced by ICONS textures drawn with draw_texture_rect at icon_scale 2 (hud.json icon_scale 4 -> 2, so about 32 px, the placeholders' size); behaviour and other numbers unchanged. Tests: placeholder-colour test replaced by an icons test (6 textures of 16 x 16, each kind drawn); icon_scale assertion updated; new game/tools/test_build_hud_reaction_icons.py.
+Docs: Visual style, game/docs/hud-and-menus/livestream-hud-art.md and hud.md (game/README.md already indexes the art file).
+Tests: game/tools unittest 657 OK (1 skipped); tools unittest 560 OK; GUT 1816/1816 passing (all passed).
+Archive: art-archive/T-352/ (contact_sheet.png enlarged dark and light, reactions_burst.png screenshot of a run, v1..v5 versions and sheets). The burst screenshot catches the right-side floaters small at the screen edge.
+Note: untracked Godot .import files under game/art/buildings/creator_final are noise from Godot and not committed.
