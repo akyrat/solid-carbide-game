@@ -60,3 +60,28 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**What changed (2026-10-28):**
+- `.claude/hooks/board_gate.py`: a new `overwrite_reason` check in `pre_shell`, run right after `touches_tasks` and before the guard-word gate, so it holds whatever words the command has. It reads each simple command (`shell_segments`, with variables set once to a literal path filled in, shell comments dropped quote-aware) and refuses when a target is a ticket file, a glob in a tasks folder (`tasks/*.md`, `T-*.md`) or the tasks folder itself:
+  - `cp`, `mv`, `install`, `ln`: the last operand, or `-t`/`--target-directory`. The source is not a target, so copying a ticket elsewhere passes.
+  - `tee`: every file operand. `dd`: `of=`.
+  - PowerShell `Copy-Item`/`copy`/`cpi`, `Move-Item`/`move`/`mi`: `-Destination` (or the second positional). `Set-Content`/`sc`, `Out-File` (not with `-Append`), `Clear-Content`/`clc`: `-Path`/`-LiteralPath`/`-FilePath` (also `-Path:x`) or the first positional.
+  - `>` (not `>>`, which still goes through the existing plain-text append check).
+  - Command names are read with their folder and `.exe` taken off (`C:/Windows/cp.exe`).
+  - `git` is never a target, so `git checkout`/`git restore` of a ticket stay allowed. A target the guard can't read (`$f` set in a loop, a backtick) doesn't count here; the existing guard-word check still covers those.
+  - The refusal names the part and the target, says why, and points to the status script, the Edit tool and git checkout/restore.
+  - Ticket tools' `--log=`/`--log` onto a ticket were already refused with no guard word (T-354, fix 1), so they are unchanged.
+- `tools/test_guard.py`: a new class `OverwritingATicket` with 4 tests:
+  - 25 commands refused with no guard word, which the test checks itself: every command and form in the criteria, plus `cp -t tasks`, `cp x tasks/`, `cp /tmp/*.md tasks/T-*.md`, `f=tasks/T-001-x.md; cp notes.md $f`, `cd tasks && cp x T-001-x.md` and a quoted `'#x'` that doesn't hide a target.
+  - The refusal message.
+  - What stays allowed: `git checkout master -- tasks/T-001-x.md`, `git checkout --theirs`, `git restore` (also `--source=master --staged --worktree`), `cp`/`Copy-Item` of a ticket to `/tmp` or `art-archive/`, `tee`/`>` into non-ticket files, and a `>>` plain-text append.
+  - The parts on their own (`overwrite_targets`, `ticket_target`).
+- No T-354 test was changed; all 84 earlier guard tests still pass (88 now).
+- `tasks/README.md`: a new **Overwriting a ticket** bullet in the guard's "in short" list. It says the refusal holds whatever the command says, and why, and that `git checkout`/`git restore` stay allowed: merges use them for conflicts, and `git commit` still checks the result against the status script's record.
+
+Nothing was refused by a hook or the permission system.
+
+**Tests (foreground, in this worktree):**
+- game/tools: 655 OK (1 skipped).
+- tools: 560 OK (556 before, +4).
+- `bash game/tools/run_tests.sh`: TESTS PASSED, exit 0. The usual "resources still in use at exit" lines also appeared. I kept only the tail of the output, so the per-test count was not captured. No game code changed.
