@@ -1,7 +1,7 @@
 ---
 id: T-351
 title: Reaction icons burst out on a sub goal and float up at high viewer counts
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -92,3 +92,4 @@ Quick tuning 3 (board, 2026-10-28: "it doesn't look good to be all over the scre
 
 QA (round 2, final, after quick tuning 1 to 3, board approved "351 lgtm"): all 7 criteria pass. qa_check: tests PASS (3 sets), screenshots PASS (4 files); the documents line fails only because game/README.md is an index (content in game/docs/hud-and-menus/hud.md and docs/hud-and-menus.md, counted per the Project Lead). Criterion 3 judged against the board's changes: floaters start below the bottom edge in the right-side lane (0.76 to 0.99 of the width; tests: lane, never the middle), alpha 0.9 (below full), cap 60 held (test), drawn under every HUD piece (test). Criteria 1, 2, 4 covered by tests: burst once per goal, rates per step with a fixed seed and uneven gaps, pause and new run.
 - 2026-10-28, in-qa → needs-playtest: QA final round passed; the board already approved it (351 lgtm).
+- 2026-10-28, needs-playtest → done: The board played it after quick tuning and approved it: 351 lgtm (2026-10-28).
