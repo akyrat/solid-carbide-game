@@ -61,60 +61,60 @@
       ]
     },
     "car_health": {
-      "_comment": "The car's starting health. Replaces car.starting_health in run.json.",
+      "_comment": "The car's starting hearts (Garage design, Decisions, \"The car health upgrade adds hearts\", 2026-10-28; T-333): base 5 hearts (run.json car.starting_hearts), +1 heart per level. Prices unchanged from the health-points version; the proposal for the playtest.",
       "stat": "starting_health",
-      "unit": "health",
-      "base_value": 100,
+      "unit": "hearts",
+      "base_value": 5,
       "levels": [
         {
           "level": 1,
           "price": 40,
-          "value": 110
+          "value": 6
         },
         {
           "level": 2,
           "price": 50,
-          "value": 120
+          "value": 7
         },
         {
           "level": 3,
           "price": 60,
-          "value": 130
+          "value": 8
         },
         {
           "level": 4,
           "price": 80,
-          "value": 140
+          "value": 9
         },
         {
           "level": 5,
           "price": 100,
-          "value": 150
+          "value": 10
         },
         {
           "level": 6,
           "price": 120,
-          "value": 160
+          "value": 11
         },
         {
           "level": 7,
           "price": 155,
-          "value": 170
+          "value": 12
         },
         {
           "level": 8,
           "price": 190,
-          "value": 180
+          "value": 13
         },
         {
           "level": 9,
           "price": 240,
-          "value": 190
+          "value": 14
         },
         {
           "level": 10,
           "price": 300,
-          "value": 200
+          "value": 15
         }
       ]
     },

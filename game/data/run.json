@@ -66,7 +66,10 @@
     }
   ],
   "car": {
-    "starting_health": 100
+    "_comment": "Hearts (Game loop architecture, Decisions, 'Hearts instead of health points', 2026-10-28; T-333). starting_hearts replaces starting_health (100). After any hit the car is invulnerable for invulnerability_seconds (1 s, the board's number), blinking: blink_interval_seconds is how long each on or off phase of the blink lasts (0.1 s, 5 full blinks in the second; a proposal for the playtest, T-334 builds the behaviour). The old contact repeat (a hit every 0.5 s while touching) is gone: the invulnerability is what spaces the hits.",
+    "starting_hearts": 5,
+    "invulnerability_seconds": 1.0,
+    "blink_interval_seconds": 0.1
   },
   "pickup_magnet": {
     "_comment": "Pickup magnet (Game loop architecture, Decisions, 2026-10-21): coins, landed gift packs and health drops within radius_units of the car's centre are pulled towards it at pull_speed_units_per_second. radius_units 3.0 is 1 car length (the car is drawn 3 units long, Drifting, Decisions); the garage upgrade (T-224) sets RunState.pickup_magnet_radius_units from it. The pull speed is a proposal: faster than the car's top speed (27.5), so a pickup always catches the car.",

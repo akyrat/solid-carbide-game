@@ -1,6 +1,6 @@
 extends Area2D
 ## A health pickup a minion dropped (task T-220). Driving over it restores
-## `restore_fraction` of the car's maximum health through RunState.heal_car(),
+## `restore_hearts` hearts through RunState.heal_car(),
 ## never above the maximum, and the pickup is gone (also at full health: a
 ## proposal for the playtest).
 ##
@@ -18,8 +18,8 @@ const RADIUS_UNITS := 0.5
 ## Emitted once when the car collects it, with the health points restored.
 signal collected(pickup: Node, restored: float)
 
-## The share of the car's maximum health it restores (enemies.json, health_drops).
-var restore_fraction := 0.3
+## The hearts it restores (enemies.json, health_drops).
+var restore_hearts := 1.0
 var state: Node = null
 var sprite: Node2D = null
 var _taken := false
@@ -61,7 +61,7 @@ func collect() -> void:
 	_taken = true
 	var restored := 0.0
 	if state != null:
-		restored = state.heal_car(restore_fraction * state.max_health)
+		restored = state.heal_car(restore_hearts)
 	remove_from_group("health_pickups")
 	if sprite != null and is_instance_valid(sprite):
 		sprite.queue_free()
