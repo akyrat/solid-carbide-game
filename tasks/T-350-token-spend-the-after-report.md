@@ -41,11 +41,11 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `docs/token-spend/after-<date>.md` exists, names the date range it covers, and gives each measure next to the baseline's with the change. (QA: pass / fail)
-- [ ] Every comparison is per unit of work (per ticket merged, per call or per typed prompt), not only totals. (QA: pass / fail)
-- [ ] Each of T-343 to T-349 has a line saying what it was meant to cut and what the numbers show. (QA: pass / fail)
-- [ ] The report names the other changes in the period (at least the 500k auto-compact limit) and what can't be told apart. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `docs/token-spend/after-<date>.md` exists, names the date range it covers, and gives each measure next to the baseline's with the change. (QA: pass)
+- [ ] Every comparison is per unit of work (per ticket merged, per call or per typed prompt), not only totals. (QA: pass)
+- [ ] Each of T-343 to T-349 has a line saying what it was meant to cut and what the numbers show. (QA: pass)
+- [ ] The report names the other changes in the period (at least the 500k auto-compact limit) and what can't be told apart. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
