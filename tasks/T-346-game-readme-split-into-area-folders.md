@@ -1,7 +1,7 @@
 ---
 id: T-346
 title: Token spend: split game/README.md into one folder per game area
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, game/README.md]
 files_expected_to_change: [game/README.md, game/docs/, tasks/, docs/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -48,7 +48,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] No section of the old README is lost: every old `## ` heading is found in a new file or named in the index as shrunk (a script's check, its output in the result notes). (QA: pass)
 - [ ] No file under `game/docs/` is over 40 KB, and `weapons/` holds one file per weapon. (QA: pass)
 - [ ] No link in the repo points to a removed README anchor (a link check's output in the result notes). (QA: pass)
-- [ ] ~~No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs.~~ Moved to T-353 by the Project Lead (2026-10-28): the guard refused the bulk ticket edit, and the board decides how it may be done. QA skips this one. (QA: moved)
+- [ ] ~~No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs.~~ Moved to T-353 by the Project Lead (2026-10-28): the guard refused the bulk ticket edit, and the board decides how it may be done. QA skips this one. (QA: pass, skipped: moved to T-353)
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
@@ -82,3 +82,4 @@ Written by the agent (Sonnet) at the end of the build. No screenshots: nothing t
 - Check 1: index 5612 bytes, every `game/docs` file listed, none unlisted. Check 2: every old `## ` heading found in the new files, 0 missing. Check 3: largest file 30 KB (level-creator-pieces.md), none over 40 KB; weapons/ has one file per weapon (6) plus shared.md.
 - Links: the old README was linked only without anchors. Every reference to `game/README.md` with a named section, in docs/, agent-notes/, README.md, tasks/README.md, game code, tools and data, now points at the right area file. Left on purpose: docs/timeline.md, docs/long-gdd.md (regenerated at merge), the art-archive/T-306 script, goals/ and tools/goal_agent tests (history, or the index is right). `test_snapping.gd` read `res://README.md` for SNAP_DISTANCE; it now reads `res://docs/level/level-creator.md`. `docs/README.md` got one line about `game/docs/`.
 - Tests: `python -m unittest discover -s game/tools` 620 OK (1 skipped); `python -m unittest discover -s tools` 529 OK; `bash game/tools/run_tests.sh` all GUT tests passed.
+- 2026-10-28, in-qa → done: QA pass
