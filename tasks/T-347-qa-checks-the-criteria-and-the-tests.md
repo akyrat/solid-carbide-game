@@ -1,7 +1,7 @@
 ---
 id: T-347
 title: Token spend: QA checks the acceptance criteria and the tests, with a script for the mechanical part
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/agents/qa-integration.md, tools/goal_agent/build.py]
 files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, tools/qa_check.py, tools/test_qa_check.py, .claude/agents/qa-integration.md, tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -103,3 +103,4 @@ Built on branch task/T-347-qa-checks-the-criteria-and-the-tests. Nothing to pict
 **Tests:** `python -m unittest discover -s game/tools -p "test_*.py"`: Ran 620, OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"`: Ran 545, OK. `bash game/tools/run_tests.sh`: 1735 tests, 1735 passing, TESTS PASSED (one earlier run reported 1 failing test without a name in the tail and passed on the straight rerun; unrelated to these changes, which touch no game files).
 
 **Refusals:** one inline `python -` edit of `tools/merge_batch.py` was refused by the ticket-name guard (the script text mentioned `tasks`); I made the same edits with the Edit tool on a normal source file. A read-only `python -c` that opened the ticket was also refused and skipped.
+- 2026-10-28, in-qa → done: QA pass
