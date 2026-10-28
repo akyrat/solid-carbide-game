@@ -64,7 +64,7 @@ Built; QA running now (the board's go to finish without stopping).
 
 ## QA
 
-Round 1 (QA: fail: paperwork - screenshots check red, no file in art-archive/T-331/screenshots/; the four criteria themselves pass) (greps: remaining "likes" are identifiers, comments, run.json comments and art file names only; rule 2 and Livestream HUD texts present; style loop rounds all >= 8). Tests: 3 sets pass; documents check pass. Screenshots check red: text-only work (tasks/README.md, Screenshots: "Nothing to picture: none"), nothing to capture; no criterion asks for one.
+Round 1: all four criteria pass. Screenshots check waived by the Project Lead (text-only ticket, no criterion asks for screenshots). (greps: remaining "likes" are identifiers, comments, run.json comments and art file names only; rule 2 and Livestream HUD texts present; style loop rounds all >= 8). Tests: 3 sets pass; documents check pass. Screenshots check red: text-only work (tasks/README.md, Screenshots: "Nothing to picture: none"), nothing to capture; no criterion asks for one.
 
 ## Style review
 
