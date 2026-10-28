@@ -2050,3 +2050,8 @@ Entry format:
 - Decision or change: The HUD art for the livestream HUD (clock digits and panel, viewers panel, LIVE badge, viewers fire, sub goal frame, full and empty hearts, eye icon, subs icon), all drawn by script after the style loop; 2 of 40 PixelLab generations used. The fire stayed at 7/10 after 3 refines and was sent on under the board's overnight go, noted for its playtest. Reached master with the livestream HUD playtest build; placed by T-336 to T-338.
 - Documents touched: docs/visual-style.md
 - Tasks: T-339
+
+## 2026-10-28: The coins counter at the bottom left
+- Decision or change: The board played it: the coins counter sits above the clock at the bottom left.
+- Documents touched: none
+- Tasks: T-341
