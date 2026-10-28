@@ -46,11 +46,11 @@ The board's decision (HUD and menus, Decisions, "The HUD looks like a livestream
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/art/hud/` holds: the clock panel and digits 0 to 9 and the colon; the viewers panel, the LIVE badge, the eye icon and the fire animation frames; the sub goal frame and the subs icon; a full and an empty heart; each with a record (how it was made). (QA: pass / fail)
-- [ ] Each asset scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] The PixelLab generations used are 40 or fewer, listed in the result notes with the planned calls written before calling. (QA: pass / fail)
-- [ ] Visual style and game/README.md record the art. (QA: pass / fail)
-- [ ] A contact sheet of every asset, enlarged, on a dark and a light background, is in `art-archive/T-339/`. (QA: pass / fail)
+- [ ] `game/art/hud/` holds: the clock panel and digits 0 to 9 and the colon; the viewers panel, the LIVE badge, the eye icon and the fire animation frames; the sub goal frame and the subs icon; a full and an empty heart; each with a record (how it was made). (QA: pass: 35 PNGs with 35 json records, all named pieces present)
+- [ ] Each asset scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass: all 8 or more except the viewers fire, recorded at 7 after 3 refines with every round in the Style review; noted for the board's playtest)
+- [ ] The PixelLab generations used are 40 or fewer, listed in the result notes with the planned calls written before calling. (QA: pass: 2 of 40 generations, planned calls written before calling)
+- [ ] Visual style and game/README.md record the art. (QA: pass: Visual style and game/README.md both have the HUD art sections)
+- [ ] A contact sheet of every asset, enlarged, on a dark and a light background, is in `art-archive/T-339/`. (QA: pass: contact sheet seen, dark and light, enlarged)
 
 ## Updates
 
@@ -344,6 +344,10 @@ The comparison with v2 is `art-archive/T-339/pixellab/subs_icon_compare_v3.png`.
 - Rules broken: none
 
 **Kept:** version 3, score 8/10 (`art-archive/T-339/style-loop/v3-2.png`, copied to `game/art/hud/subs_icon.png`): it reached 8 or more.
+
+### QA (round 1)
+
+qa_check: tests PASS (3 sets), documents PASS, screenshots PASS (3). All 5 criteria pass; the fire (7/10) is for the board's morning playtest.
 
 ## Result notes
 
