@@ -64,6 +64,8 @@ var coins_label: Label
 var coins_value_label: Label
 ## The live viewers counter at the bottom right (T-336): the combo shown as viewers.
 var viewers_counter: ViewersCounter
+## The reaction icons (T-351): the Hud's first child, so every HUD piece is drawn over them.
+var reactions: Reactions
 ## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
 var left_column: Control
 ## The red heart centred under the health bar (T-276; the likes bar's heart picture).
@@ -92,6 +94,7 @@ var _popups: Node
 func _ready() -> void:
 	layer = 10
 	_combo_data = ComboData.new()
+	_build_reactions()
 	_build_timer()
 	_build_left()
 	_build_bottom()
@@ -99,6 +102,14 @@ func _ready() -> void:
 	_build_viewers()
 	_build_airtime()
 	_build_drift()
+
+
+## The reaction icons (T-351): under every other HUD piece, fed the viewers counter's step.
+func _build_reactions() -> void:
+	reactions = Reactions.new()
+	reactions.step_source = func() -> int:
+		return viewers_counter.step if viewers_counter != null else 0
+	add_child(reactions)
 
 
 ## The airtime counter (T-243): hidden until the car is airborne. It sits right
@@ -313,6 +324,7 @@ func bind(state: RunState) -> void:
 	_state.combo_broken.connect(_on_combo_broken)
 	_state.level_up.connect(_on_level_up)
 	sub_goal.stop()
+	reactions.clear()
 	_likes_level = 0
 	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
@@ -397,6 +409,7 @@ func settle_likes() -> void:
 ## at the moment it fills, whatever the run does next.
 func _on_level_up(_new_level: int) -> void:
 	sub_goal.celebrate()
+	reactions.burst(sub_goal.get_global_rect().get_center())
 
 
 func _on_coins_changed(coins: int) -> void:
