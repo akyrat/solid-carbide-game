@@ -1,7 +1,7 @@
 ---
 id: T-337
 title: The sub goal square in place of the likes bar, with the gift pack inside it
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -63,6 +63,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started from the playtest build (T-331 approved). Layout from the board's page (1152x648): subgoal x988 y340 w128 h180, anchored to the right edge.
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -113,3 +117,4 @@ UI Agent, 2026-10-28. Built in `C:\solid-carbide-worktrees\T-337` on `task/T-337
 - `game/README.md`: the index line for hud.md.
 
 **QA, round 1 (QA agent, 2026-10-28):** all 7 criteria pass. qa_check: 3 test sets pass, documents changed, 3 screenshots present. Square, grey gift, label and the part-filled screenshot checked by eye. No "Hype Lv" or likes-bar code is left except comments and tests that assert its absence. The README criterion is met by game/docs/hud-and-menus/hud.md, the index in game/README.md and docs/hud-and-menus.md. Test counts as reported by the agent: 645 / 545 / 1763 (qa_check confirmed all sets pass).
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

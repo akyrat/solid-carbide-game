@@ -2060,3 +2060,8 @@ Entry format:
 - Decision or change: The board played it: hits take hearts, 1 s invulnerability with a blink, no knockback or combo cut during it (the agent's proposal, accepted with the playtest).
 - Documents touched: none
 - Tasks: T-334
+
+## 2026-10-28: The sub goal square
+- Decision or change: The board played it: the likes bar became the sub goal square with the gift pack inside; Hype Lv is gone. Fill, glow and grey were the agent's proposals.
+- Documents touched: none
+- Tasks: T-337
