@@ -1,7 +1,7 @@
 ---
 id: T-352
 title: "Art: the reaction icons (likes, thumbs up, hearts) for the livestream bursts"
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Greenbull

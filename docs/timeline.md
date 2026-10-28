@@ -2090,3 +2090,8 @@ Entry format:
 - Decision or change: The guard refuses cp, mv, install, ln, tee, dd, PowerShell copy, move and set-content, and > onto a ticket whatever the command says, since overwriting a whole ticket changes its status outside task_status.py. git checkout and git restore of tickets stay allowed for resolving merges. Known gap: >| is not refused.
 - Documents touched: tasks/README.md
 - Tasks: T-355
+
+## 2026-10-28: Reaction bursts and floating reactions
+- Decision or change: The board played it: a burst of reactions from the sub goal square at each goal; floating reactions rise up the right side from the viewers counter, faster and more noticeable (the board's tweaks: more of them, bigger, 0.9 alpha, double speed, only the viewers counter's side).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-351
