@@ -1,7 +1,7 @@
 ---
 id: T-349
 title: Token spend: a guard against very large shell output
-status: open
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -55,6 +55,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Open → In progress
+
+Started: the agent is adding the guard against very large shell output.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -62,3 +66,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Built (agent).** Nothing to picture (no visuals).
+
+1. What hooks can do (source: Claude Code hooks reference, https://code.claude.com/docs/en/hooks). PreToolUse runs before the command: it can refuse it (`hookSpecificOutput.permissionDecision: "deny"` plus `permissionDecisionReason`, which Claude sees), or rewrite the input (`updatedInput`, replaces the whole input object, so a hook could wrap a command in `| head -n 300`). PostToolUse runs after the command and cannot undo it, but can replace what Claude sees: `updatedToolOutput` "replaces the tool's output ... before it is sent to Claude" and works for built-in tools; for Bash the value must match the output shape `{stdout, stderr, interrupted, isImage}`, otherwise it is ignored. It can also add `additionalContext` (max 10,000 chars). So both refusing before and shortening after are possible; I built only the refusal, as asked.
+2. Built: `big_read_reason()` in `.claude/hooks/board_gate.py`, called first in `pre_shell`. Refuses `cat`, `type`, `Get-Content`/`gc`, `more`, `bat` on a file over 20 KB, and `sed -n` with a range over 300 lines (or plain `p`) on such a file. The message names the Read tool with offset and limit, grep/Grep, and a line range of at most 300 lines. Passes: small files, a printer followed by a pipe (`| head`, `| grep`), output redirected to a file, `Get-Content -TotalCount/-Tail/-Head`, `head`, `tail`, `grep`, `sed -n '10,60p'`, missing files. Files are looked up in the working folder and any `cd` target.
+3. Proposed limits: file over 20 KB (about 5,000 tokens); sed ranges over 300 lines. Constants `BIG_FILE_BYTES` and `BIG_SED_LINES`. Known gaps (cheap guard only): output of other commands (test runs, `git merge` warnings, `git diff`) is not limited; `cat a b` of many small files, and `python -c` printing a file, pass.
+4. Haiku-summary idea (not built). Possible: a PostToolUse command hook can run `claude -p --model haiku` on the stdout and return `updatedToolOutput` with the summary (plus the saved full output's path), or a `prompt`/`agent` hook type could do it. Cost: each large output is paid once more as Haiku input (cheap per token, but a call adds seconds of latency), and the main agent sees a summary it cannot trust to be complete, so it must re-read parts. Risks: hiding error lines, and the original output is gone from the conversation unless the hook saves it to a file. Worth trying only for a threshold such as output over 20 KB, after the refusal guard has shown how often large output remains. The better first step is likely a PostToolUse truncation (head and tail with a pointer to a saved file) with no model call.
+5. Tests: `BigOutput` class in `tools/test_guard.py` (3 tests: big cat refused with alternatives named; type/Get-Content/gc/sed wide/multi-file/cd refused; small cat, head -50, tail, grep, piped, sed range, TotalCount, redirect, missing file, git log pass). All earlier guard tests unchanged and pass (74 in test_guard). Docs: `tasks/README.md` gets one paragraph before the second-guard paragraph.
+6. Test sets: `game/tools` 620 tests OK (1 skipped); `tools` 532 tests OK; `bash game/tools/run_tests.sh` TESTS PASSED (Godot leak warnings at exit are pre-existing).
