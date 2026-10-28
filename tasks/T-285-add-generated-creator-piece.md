@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: no
 depends_on: []
 documents_affected: [game/README.md, docs/visual-style.md]
-files_to_read_first: [tasks/README.md, game/README.md, docs/visual-style.md, docs/level-design.md, game/tools/build_creator_assets.py, game/data/level/creator_assets.json, game/scripts/level_creator/, game/tools/check_level.py, tasks/T-262-creator-panel-grouped.md]
+files_to_read_first: [tasks/README.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/docs/art/pixellab.md, docs/visual-style.md, docs/level-design.md, game/tools/build_creator_assets.py, game/data/level/creator_assets.json, game/scripts/level_creator/, game/tools/check_level.py, tasks/T-262-creator-panel-grouped.md]
 files_expected_to_change: [game/tools/, game/data/level/, game/tests/, game/README.md, docs/visual-style.md]
 model: sonnet
 qa_rounds: 0

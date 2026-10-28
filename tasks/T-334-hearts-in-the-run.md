@@ -1,7 +1,7 @@
 ---
 id: T-334
 title: "Hearts in the run: damage in hearts, 1 second of invulnerability with a blink, health drops"
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-333]
 documents_affected: [docs/game-loop-architecture.md, docs/enemies.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/README.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/enemies.md, docs/garage-design.md, game/docs/game-loop/the-run.md, game/docs/hud-and-menus/hud.md, game/scripts/run/run_state.gd, game/scripts/run/run.gd]
 files_expected_to_change: [game/scripts/run/, game/scripts/enemies/, game/scripts/driving/, game/scripts/garage/, game/tests/unit/, game/README.md, docs/game-loop-architecture.md, docs/enemies.md]
 model: opus
 qa_rounds: 1
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started from the playtest build (T-333 approved).
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -95,3 +99,4 @@ Documents affected: `docs/game-loop-architecture.md` (Decisions, "Hearts instead
 Nothing was refused. `game/tests/fixtures/crash_pays_gif_demo.gd.uid` was an untracked uid file Godot made in this worktree; I left it out of the commit.
 
 **QA (2026-10-28, qa-integration).** qa_check: tests PASS (3 sets), screenshots PASS (6 files; the contact sheet shows the hit, the bar at 4/5, the hidden blink phase and the car driving out). Documents FAIL only for game/README.md, which is now an index; the hearts text is in game/docs/game-loop/the-run.md, game/docs/enemies/{minions,kaiju,meteors}.md, docs/game-loop-architecture.md and docs/enemies.md, counted as the README criterion per the Project Lead. All 7 criteria pass.
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

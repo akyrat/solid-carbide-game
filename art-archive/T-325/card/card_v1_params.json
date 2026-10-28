@@ -1,0 +1,9 @@
+{
+  "description": "a small neat stack of old clay bricks, four rows staggered like a brick wall, warm terracotta brown bricks with darker shaded side faces and lighter lit top edges, thin grey-white mortar lines between them, one loose brick leaning against the side of the stack, a chip broken off one corner, seen from a 3/4 view from above showing the top and one side, retro pixel art, game icon",
+  "image_size": {"width": 64, "height": 64},
+  "no_background": true,
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 8
+}

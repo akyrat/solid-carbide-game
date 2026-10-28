@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: no
 depends_on: [T-055, T-052, T-050, T-046, T-061, T-060, T-062]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/garage-design.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/garage-design.md, game/docs/game-loop/the-run.md, game/docs/setup/tests.md]
 files_expected_to_change: [an end-to-end test or script, game/README.md]
 model: opus
 qa_rounds: 0

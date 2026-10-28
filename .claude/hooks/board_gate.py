@@ -13,7 +13,10 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
   line to a ticket may mention them (T-143, T-161, T-181). A script run from a file (python x.py, bash x.sh)
   is judged by its own code: it passes unless that code writes or matches a guarded header line, or names
   task files and writes files; the game's test runner counts as a test run. A refusal names the part of the
-  command that caused it and why (T-212). On `git commit` it also checks every ticket
+  command that caused it and why (T-212). Since T-354 it judges what a command writes, not what it mentions:
+  the ticket tools (merge_batch.py, new_ticket.py, qa_check.py) pass whatever their argument text says, inline
+  Python and sed pass when every file they write is one that can't be a ticket, and `date`, `{ ...; }` groups and
+  `case` patterns are read. On `git commit` it also checks every ticket
   that would be committed against the status script's record (tools/guard_ledger.py, T-149): the backstop
   for any write the command check can't see.
 - PreToolUse Bash/PowerShell: also refuses a command that prints a whole file over 20 KB (cat, type, Get-Content,
@@ -32,6 +35,7 @@ on the page within a couple of seconds, and the board's drags are real status ch
 """
 
 import ast
+import glob
 import json
 import os
 import re
@@ -147,6 +151,9 @@ READ_ONLY_COMMANDS = {
     "echo", "cd", "ls", "type", "findstr", "git",
     "select-string", "sls", "get-content", "gc", "select-object", "select", "where-object", "where",
     "measure-object", "get-childitem", "write-output", "test", "[", "true", "false", "printf", "pwd",
+    # T-354: commands that print or only steer a loop, and write no file
+    "date", "basename", "dirname", "realpath", "readlink", "stat", "du", "diff", "cmp", "seq", "which",
+    "continue", "break", ":",
 }
 GIT_READ_ONLY = {"diff", "log", "show", "grep", "blame", "status", "merge-base", "rev-parse", "rev-list", "ls-files",
                  "cat-file", "for-each-ref", "check-ignore", "check-attr", "ls-tree", "describe", "show-ref",
@@ -457,12 +464,28 @@ def ticket_path(path, cwd=None, in_tasks=False):
     if re.search(r"[*?\[]", path):
         # a glob can be a ticket unless its last part ends in a fixed extension other than .md (T-216: *.png)
         name = re.split(r"[\\/]", path)[-1]
+        folder = path[:len(path) - len(name)]
         m = re.search(r"\.([A-Za-z0-9]+)$", name)
         if not m or m.group(1).lower() == "md" or re.search(r"[*?\[\]]", name[m.start():]):
-            return True
-        folder = path[:len(path) - len(name)]
+            return glob_may_hold_tickets(path, folder, cwd)
         return bool(re.search(r"[*?\[]", folder) or TICKET_PATH_RE.search(folder))
     return bool(TICKET_PATH_RE.search(path) or task_path_match(path, cwd))
+
+
+def glob_may_hold_tickets(path, folder, cwd=None):
+    """T-354: whether a glob of .md files (or of any name) could match a ticket. False only when its folder is
+    written out (no glob, no `..`, not a tasks folder), exists, and holds no T-nnn*.md file the glob matches now
+    (`.claude/agents/*.md`); a folder the guard can't find, or the current folder, counts as one that could."""
+    if (not folder.strip("\\/") or re.search(r"[*?\[]", folder) or TICKET_PATH_RE.search(folder)
+            or re.search(r"(^|[\\/])\.\.([\\/]|$)", folder)):
+        return True
+    full = os.path.join(cwd or os.getcwd(), windows_path(path))
+    if not os.path.isdir(os.path.dirname(full)):
+        return True
+    try:
+        return any(task_path_match(f) or TICKET_PATH_RE.search(f) for f in glob.glob(full))
+    except (OSError, re.error):
+        return True
 
 
 def words_of(text):
@@ -657,18 +680,36 @@ def shell_segments(cmd, cwd=None, in_tasks=None):
     return [s for s in segments if s.text or s.redirects], unsafe or quote is not None or bool(pending)
 
 
-SHELL_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "!"}
+SHELL_KEYWORDS = {"if", "then", "else", "elif", "while", "until", "do", "!", "{"}
+# T-354: the head of a case, `case $s in done` (its patterns run up to a `)`), and a pattern before its command,
+# `cancelled) continue`: outside a case an unquoted `)` there is a syntax error, so it can only be a pattern
+CASE_HEAD_RE = re.compile(r"case\s+\S+\s+in\b([^)]*\)\s*)?", re.S)
+CASE_PATTERN_RE = re.compile(r"\(?[^\s()'\"`$;&|<>]*\)\s*")
 
 
 def drop_keyword(seg):
     """A segment without its leading shell keyword: `if git merge x` is the command `git merge x`; a lone
-    fi, done or esac is no command, and neither is the head of a loop, `for t in T-1 T-2` (T-181)."""
+    fi, done or esac is no command, and neither is the head of a loop, `for t in T-1 T-2` (T-181). Since T-354
+    also the `{` of a command group and its lone `}`, and a case's head and patterns (`case $s in done|x) cmd`
+    is the command `cmd`)."""
     seg = seg.strip()
-    while seg.split(None, 1) and seg.split(None, 1)[0] in SHELL_KEYWORDS:
-        seg = seg.split(None, 1)[1].strip() if len(seg.split(None, 1)) > 1 else ""
+    while True:
+        while seg.split(None, 1) and seg.split(None, 1)[0] in SHELL_KEYWORDS:
+            seg = seg.split(None, 1)[1].strip() if len(seg.split(None, 1)) > 1 else ""
+        m = CASE_HEAD_RE.match(seg)
+        if m:
+            if not m.group(1):
+                return ""   # the rest of the head is a pattern that goes on after a `|`
+            seg = seg[m.end():].strip()
+            continue
+        m = CASE_PATTERN_RE.match(seg)
+        if m and m.end() > 1:
+            seg = seg[m.end():].strip()
+            continue
+        break
     if re.fullmatch(r"for\s+\w+(\s+in\b.*)?", seg, re.S):
         return ""
-    return "" if seg in ("fi", "done", "esac") else seg
+    return "" if seg in ("fi", "done", "esac", "}") else seg
 
 
 def git_subcommand(words):
@@ -694,8 +735,16 @@ def read_only_segment(seg):
         return False
     if name == "sed":
         parsed = sed_parse(words_of(seg))
-        return parsed is not None and not parsed[0] and not any(SED_WRITES_RE.search(s) for s in parsed[1])
+        return parsed is not None and not parsed[0] and not any(sed_may_write(s) for s in parsed[1])
     return True
+
+
+def sed_may_write(script):
+    """Whether a sed script writes any file or runs a command (T-354: read command by command when it can be)."""
+    effects = sed_script_effects(script)
+    if effects is None:
+        return bool(SED_WRITES_RE.search(script))
+    return bool(effects[0]) or effects[1]
 
 
 # a sed command that writes a file (w, W, the s///w flag) or runs one (e, the s///e flag)
@@ -746,6 +795,136 @@ def sed_parse(words):
     if not scripts:
         scripts, files = files[:1], files[1:]
     return in_place, scripts, files
+
+
+def sed_script_effects(script):
+    """T-354: (files the script writes, whether it runs a command) of a sed script read command by command, so a
+    word like `when` or `each` in a pattern is not taken for a `w` or `e` command; None when the script holds
+    anything the parser doesn't know, or a bracket expression (where a delimiter may not end the regex): the
+    caller then falls back on SED_WRITES_RE."""
+    writes, runs, i, n = [], False, 0, len(script)
+
+    def to_eol(j):
+        k = script.find("\n", j)
+        return n if k < 0 else k
+
+    def delimited(j, delim, regex=True):
+        """The index just past the next unescaped delim from j, or None; a `[` in a regex makes it unreadable."""
+        while j < n:
+            c = script[j]
+            if c == "\\":
+                j += 2
+                continue
+            if c == "[" and regex:
+                return None
+            if c == delim:
+                return j + 1
+            j += 1
+        return None
+
+    while True:
+        while i < n and script[i] in " \t\n;":
+            i += 1
+        if i >= n:
+            return writes, runs
+        for k in range(2):   # an address, or a range
+            if i < n and (script[i].isdigit() or (k == 1 and script[i] in "+~")):
+                i += 1
+                while i < n and (script[i].isdigit() or script[i] == "~"):
+                    i += 1
+            elif i < n and script[i] == "$":
+                i += 1
+            elif i < n and script[i] in "/\\":
+                delim = "/"
+                if script[i] == "\\":
+                    if i + 1 >= n:
+                        return None
+                    delim, i = script[i + 1], i + 1
+                end = delimited(i + 1, delim)
+                if end is None:
+                    return None
+                i = end
+                while i < n and script[i] in "IM":
+                    i += 1
+            elif k == 1:
+                return None   # a comma with no second address
+            else:
+                break
+            if k == 0 and i < n and script[i] == ",":
+                i += 1
+            else:
+                break
+        while i < n and script[i] in " \t!":
+            i += 1
+        if i >= n:
+            return None
+        c = script[i]
+        i += 1
+        if c in "{}":
+            continue
+        if c in "aic":
+            j = i
+            while j < n and script[j] in " \t":
+                j += 1
+            if script.startswith("\\\n", j) or script.startswith("\\\r\n", j):
+                # POSIX text: the lines after it, each ending in a backslash but the last
+                i = to_eol(j) + 1
+                while i < n and script[i:to_eol(i)].rstrip("\r").endswith("\\"):
+                    i = to_eol(i) + 1
+            i = to_eol(i)   # GNU one-line text, or the text's last line
+            continue
+        if c == "#" or c in "rR":
+            i = to_eol(i)   # a comment, or a file read
+            continue
+        if c in ":bBtTv":
+            while i < n and script[i] not in ";\n":
+                i += 1
+            continue
+        if c in "wW":
+            writes.append(script[i:to_eol(i)].strip())
+            i = to_eol(i)
+            continue
+        if c == "e":
+            return writes, True
+        if c in "sy":
+            if i >= n or script[i] in "\\\n":
+                return None
+            delim = script[i]
+            mid = delimited(i + 1, delim, regex=(c == "s"))
+            end = delimited(mid, delim, regex=False) if mid is not None else None
+            if end is None:
+                return None
+            i = end
+            if c == "s":
+                while i < n and script[i] not in ";\n}":
+                    f = script[i]
+                    if f == "w":
+                        writes.append(script[i + 1:to_eol(i)].strip())
+                        i = to_eol(i)
+                        break
+                    if f == "e":
+                        runs = True
+                    elif f not in "gpiImM0123456789 \t":
+                        return None
+                    i += 1
+            continue
+        if c in "dDgGhHnNpPxz=FlLqQ":
+            while i < n and script[i] in "0123456789 \t":
+                i += 1
+            continue
+        return None
+
+
+def sed_writes_or_runs(script, cwd=None, in_tasks=False):
+    """T-354: why a sed script could write a ticket or run a command, or "" when it can't."""
+    effects = sed_script_effects(script)
+    if effects is None:
+        return "a sed script that writes a file or runs a command" if SED_WRITES_RE.search(script) else ""
+    files, runs = effects
+    if runs:
+        return "a sed script that runs a command"
+    hit = next((f for f in files if ticket_path(f, cwd, in_tasks)), None)
+    return f"a sed script that writes `{hit or '?'}`, which could be a ticket" if hit is not None else ""
 
 
 SED_GUARD_FRAGMENT_RE = re.compile(r"stat|round|lead|qa", re.I)
@@ -1085,7 +1264,8 @@ def python_code(seg, words):
         end = seg.text.find(m.group(1), m.end())
         if end < 0 or seg.text[m.end():end] != code or seg.text[end + 1:end + 2].strip():
             return None   # not one quoted word, as the shell reads it
-        if m.group(1) == '"' and (SHELL_EXPANDS_RE.search(code) or "\\" in code):
+        # inside double quotes the shell changes a backslash only before $ ` " \ or a newline (T-354: '\n' stays)
+        if m.group(1) == '"' and (SHELL_EXPANDS_RE.search(code) or re.search(r'\\([$`"\\\n]|$)', code)):
             return None
         return code
     if i == len(words) and len(seg.heredocs) == 1:
@@ -1162,6 +1342,197 @@ def python_reads_only(code):
             elif a in PY_BAD_ATTRS:
                 return False
     return True
+
+
+PY_PATH_CALLS = {"Path", "PurePath", "PosixPath", "WindowsPath", "PurePosixPath", "PureWindowsPath"}
+PY_WRITE_ATTRS = {"write_text", "write_bytes"}
+PY_STREAM_WRITES = {"write", "writelines"}
+
+
+def python_write_targets(code):
+    """T-354: the files Python source writes, as literal paths (globs allowed), when every write can be read:
+    `open(<path>, '<literal mode>')`, `<path>.open('<mode>')`, `<path>.write_text(...)`/`write_bytes(...)`, and
+    `.write` on a file opened that way, where <path> is a literal, `Path(...)`, `a / b`, `os.path.join(...)` or
+    a name set once to one of those, or a loop name over `<path>.glob('<pattern>')`, `glob.glob('<pattern>')` or
+    a literal list. None when anything else could write, delete, move or run something (the same names as
+    python_reads_only), or a write's file can't be read."""
+    try:
+        tree = ast.parse(code)
+    except (SyntaxError, ValueError):
+        return None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import) and any(a.name not in PY_SAFE_MODULES for a in node.names):
+            return None
+        if isinstance(node, ast.ImportFrom) and (node.level or node.module not in PY_SAFE_MODULES or any(
+                a.name in ("*", "open", "replace") or a.name in PY_BAD_ATTRS or a.name.startswith("_")
+                or a.name.startswith(("exec", "spawn", "posix_spawn")) for a in node.names)):
+            return None
+    parent = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            parent[id(child)] = node
+    binds = {}   # name -> [(kind, node)]: every place that sets it
+
+    def bind(name, kind, value):
+        binds.setdefault(name, []).append((kind, value))
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, (ast.Store, ast.Del)):
+            p = parent.get(id(node))
+            if isinstance(p, ast.Assign) and p.targets == [node]:
+                bind(node.id, "value", p.value)
+            elif isinstance(p, (ast.For, ast.comprehension)) and p.target is node:
+                bind(node.id, "each", p.iter)
+            elif isinstance(p, ast.withitem) and p.optional_vars is node:
+                bind(node.id, "with", p.context_expr)
+            else:
+                bind(node.id, "other", None)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            for a in node.names:
+                bind((a.asname or a.name).split(".")[0], "import", None)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)):
+            if not isinstance(node, ast.Lambda):
+                bind(node.name, "other", None)
+            for a in ast.walk(node.args) if not isinstance(node, ast.ClassDef) else ():
+                if isinstance(a, ast.arg):
+                    bind(a.arg, "other", None)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            bind(node.name, "other", None)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            for name in node.names:
+                bind(name, "other", None)
+    imported = {name for name, bs in binds.items() if any(k == "import" for k, _ in bs)}
+
+    def joined(parts):
+        out = [""]
+        for options in parts:
+            if options is None:
+                return None
+            out = [os.path.join(a, b) if a else b for a in out for b in options]
+        return out
+
+    def paths(node, depth=0):
+        """The literal paths an expression can be, or None."""
+        if depth > 20:
+            return None
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return [node.value]
+        if isinstance(node, ast.Name):
+            bs = binds.get(node.id, [])
+            if len(bs) != 1:
+                return None
+            kind, value = bs[0]
+            return paths(value, depth + 1) if kind == "value" else each(value, depth + 1) if kind == "each" else None
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            return joined([paths(node.left, depth + 1), paths(node.right, depth + 1)])
+        if isinstance(node, (ast.List, ast.Tuple)):
+            return None
+        if isinstance(node, ast.Call) and not node.keywords:
+            f = node.func
+            if (isinstance(f, ast.Name) and f.id in PY_PATH_CALLS and f.id in imported) or (
+                    isinstance(f, ast.Attribute) and f.attr in PY_PATH_CALLS and isinstance(f.value, ast.Name)
+                    and f.value.id == "pathlib" and "pathlib" in imported):
+                return joined([paths(a, depth + 1) for a in node.args]) if node.args else ["."]
+            if (isinstance(f, ast.Attribute) and f.attr == "join" and isinstance(f.value, ast.Attribute)
+                    and f.value.attr == "path" and isinstance(f.value.value, ast.Name) and f.value.value.id == "os"):
+                return joined([paths(a, depth + 1) for a in node.args])
+            if isinstance(f, ast.Attribute) and f.attr in ("resolve", "absolute") and not node.args:
+                return paths(f.value, depth + 1)
+        return None
+
+    def each(node, depth=0):
+        """The literal paths a loop over an expression goes through (globs allowed), or None."""
+        if depth > 20:
+            return None
+        if isinstance(node, (ast.List, ast.Tuple)):
+            found = [paths(e, depth + 1) for e in node.elts]
+            return None if any(p is None for p in found) else [p for ps in found for p in ps]
+        if not isinstance(node, ast.Call):
+            return None
+        f = node.func
+        if isinstance(f, ast.Name) and f.id in ("sorted", "list", "reversed") and len(node.args) == 1 \
+                and not node.keywords:
+            return each(node.args[0], depth + 1)
+        if not isinstance(f, ast.Attribute):
+            return None
+        pattern = node.args[0].value if len(node.args) == 1 and isinstance(node.args[0], ast.Constant) \
+            and isinstance(node.args[0].value, str) else None
+        if isinstance(f.value, ast.Name) and f.value.id == "glob" and "glob" in imported:
+            # glob.glob('<pattern>'[, recursive=...])
+            ok = f.attr in ("glob", "iglob") and all(k.arg == "recursive" for k in node.keywords)
+            return [pattern] if ok and pattern is not None else None
+        if node.keywords:
+            return None
+        if f.attr == "iterdir" and not node.args:
+            return joined([paths(f.value, depth + 1), ["*"]])
+        if f.attr == "glob" and pattern is not None:
+            return joined([paths(f.value, depth + 1), [pattern]])
+        if f.attr == "rglob" and pattern is not None:
+            return joined([paths(f.value, depth + 1), ["**"], [pattern]])
+        return None
+
+    def opened_by_with(node):
+        """Whether a name is set only by `with open(...) as name` or `with <path>.open(...) as name`."""
+        bs = binds.get(node.id, []) if isinstance(node, ast.Name) else []
+        return bool(bs) and all(k == "with" and isinstance(v, ast.Call) and id(v.func) in approved for k, v in bs)
+
+    def is_std_stream(node):
+        return (isinstance(node, ast.Attribute) and node.attr in ("stdout", "stderr")
+                and isinstance(node.value, ast.Name) and node.value.id == "sys")
+
+    targets, approved, writes_on = [], set(), []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        f, kw = node.func, {k.arg: k.value for k in node.keywords}
+        if None in kw or any(isinstance(a, ast.Starred) for a in node.args):
+            continue
+        if (isinstance(f, ast.Name) and f.id == "open" and "open" not in binds) or (
+                isinstance(f, ast.Attribute) and f.attr == "open"):
+            plain = isinstance(f, ast.Name)
+            if len(node.args) > (2 if plain else 1) or not set(kw) <= PY_OPEN_KEYWORDS:
+                return None
+            mode = (node.args[1] if len(node.args) > 1 else kw.get("mode")) if plain else \
+                (node.args[0] if node.args else kw.get("mode"))
+            if mode is not None and not (isinstance(mode, ast.Constant) and isinstance(mode.value, str)):
+                return None
+            if mode is not None and set(mode.value) & set("wax+"):
+                where = paths(node.args[0]) if plain and node.args else paths(f.value) if not plain else None
+                if where is None:
+                    return None
+                targets.extend(where)
+            approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr in PY_WRITE_ATTRS:
+            where = paths(f.value)
+            if where is None:
+                return None
+            targets.extend(where)
+            approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr == "replace":
+            if len(node.args) >= 2 and "target" not in kw and not (
+                    isinstance(f.value, ast.Name) and f.value.id in imported):
+                approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr in PY_STREAM_WRITES:
+            writes_on.append((f, f.value))
+    for f, on in writes_on:   # `.write` on standard output, or on a file opened (and judged) above
+        if is_std_stream(on) or (isinstance(on, ast.Call) and id(on.func) in approved) or opened_by_with(on):
+            approved.add(id(f))
+        else:
+            return None
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            if node.id in PY_BAD_NAMES or (node.id == "open" and id(node) not in approved):
+                return None
+        elif isinstance(node, ast.Attribute):
+            a = node.attr
+            if a.startswith("_") or a.startswith(("exec", "spawn", "posix_spawn")):
+                return None
+            if a in ("open", "replace") or a in PY_WRITE_ATTRS or a in PY_STREAM_WRITES:
+                if id(node) not in approved:
+                    return None
+            elif a in PY_BAD_ATTRS:
+                return None
+    return targets
 
 
 TEST_RUNNERS = {"game/tools/run_tests.sh", "game/tools/run_tests.ps1"}
@@ -1280,6 +1651,43 @@ def known_script_ok(script, words):
     return False
 
 
+# T-354: the project's own tools that change a ticket's status, lead or qa_rounds only through task_status.py
+# (new_ticket.py writes new tickets in their starting state, open with an empty lead, then claims them through
+# it), so their argument text can name tasks and hold the header words. What they run or write besides is
+# judged: each --test-cmd as a command of its own, and the file of --log.
+TICKET_TOOLS = {"tools/merge_batch.py", "tools/new_ticket.py", "tools/qa_check.py"}
+# the options through which a ticket tool writes a file of its own (T-354, after QA: `--log=x` as well as `--log x`)
+TOOL_OUTPUT_OPTIONS = {"--log", "--log-file", "--out", "--output", "-o"}
+
+
+def ticket_tool_reason(script, words, cwd, in_tasks, bases, godot_var_ok):
+    """None when `script` is not one of TICKET_TOOLS; otherwise why its call could write a ticket, or ""."""
+    path = script.replace("\\", "/")
+    if not any(path == t or path.endswith("/" + t) for t in TICKET_TOOLS):
+        return None
+    args = words[words.index(script) + 1:]
+    for i, a in enumerate(args):
+        if a.startswith("#"):
+            break
+        value = args[i + 1] if i + 1 < len(args) else ""
+        opt, eq, inline = a.partition("=")
+        if opt in TOOL_OUTPUT_OPTIONS:
+            target = inline if eq else value
+            if ticket_path(target, cwd, in_tasks):
+                # ends like a script refusal, so it is refused even when the command holds no guard word
+                return (f"`{path.rsplit('/', 1)[-1]} {opt}` writes `{target or '?'}`, which could be a ticket, "
+                        f"{SCRIPT_WRITES_LINES}")
+        if a == "--test-cmd":
+            segments, unsafe = shell_segments(value, cwd, in_tasks)
+            if unsafe:
+                return f"its --test-cmd `{value[:80]}` can't be read"
+            for s in segments:
+                why = why_risky(s, cwd, in_tasks, bases, godot_var_ok)
+                if why:
+                    return f"its --test-cmd runs {why}"
+    return ""
+
+
 def cd_bases(cmd, cwd=None):
     """The folders a command's relative paths could be read from: the working folder and every folder it cds into."""
     base = cwd or os.getcwd()
@@ -1339,6 +1747,9 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
         src = python_code(seg, words)
         if src is not None and python_reads_only(src):
             return ""   # T-348: Python that can only read and print
+        targets = python_write_targets(src) if src is not None else None
+        if targets is not None and not any(ticket_path(t, cwd, in_tasks) for t in targets):
+            return ""   # T-354: Python whose every write goes to a file that can't be a ticket
         if in_tasks:
             return "inline code run inside a tasks folder"
         m = CODE_TOUCHES_RE.search(code)
@@ -1350,8 +1761,10 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
             return "a sed script read from a file"
         # T-297: a script read in full that can't write a status, qa_rounds or lead line (it also has no w or e)
         body_ok = bool(parsed[1]) and all(sed_body_script_ok(s) for s in parsed[1])
-        if not body_ok and any(SED_WRITES_RE.search(s) for s in parsed[1]):
-            return "a sed script that writes a file or runs a command"
+        if not body_ok:
+            why = next((w for w in (sed_writes_or_runs(s, cwd, in_tasks) for s in parsed[1]) if w), "")
+            if why:
+                return why
         hit = next((f for f in parsed[2] if ticket_path(f, cwd, in_tasks)), None)
         if hit and body_ok:
             # the script is also tried on each ticket's text (nothing is written): a header line that would change,
@@ -1380,6 +1793,9 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
     if script and not in_tasks:
         if known_script_ok(script, words):
             return ""
+        tool = ticket_tool_reason(script, words, cwd, in_tasks, bases, godot_var_ok)
+        if tool is not None:
+            return tool
         return script_args_reason(script, words) or script_reason(script, bases or [cwd or os.getcwd()])
     return f"`{words[0]}`: a command the guard can't tell won't write a ticket"
 
@@ -1542,6 +1958,130 @@ def big_read_reason(cmd, cwd=None):
     return ""
 
 
+# --- Overwriting a ticket is refused whatever the command says (T-355) ---
+
+# commands that copy or move a file onto their last operand (or the folder of -t/--target-directory)
+COPY_LIKE = {"cp", "mv", "install", "ln"}
+PS_COPY_LIKE = {"copy-item", "copy", "cpi", "move-item", "move", "mi"}
+# PowerShell commands that overwrite the file of -Path/-LiteralPath/-FilePath or their first positional argument
+PS_OVERWRITERS = {"set-content", "sc", "out-file", "clear-content", "clc"}
+# PowerShell switches (no value): every other -Name takes the next word as its value
+PS_SWITCHES = {"-recurse", "-force", "-passthru", "-container", "-whatif", "-confirm", "-nonewline", "-append",
+               "-noclobber", "-asbytestream", "-stream"}
+TICKET_NAME_GLOB_RE = re.compile(r"(^|[\\/])T-\d*[*?\[][^\\/]*$", re.I)
+
+
+def ticket_target(path, cwd=None, in_tasks=False):
+    """Whether a file a command overwrites is surely a ticket, a glob in a tasks folder or the tasks folder itself
+    (T-355). Unlike ticket_path, a name the guard can't read ($var, no name) does not count: those stay with the
+    guard-word check, so harmless commands that merely name tasks are not refused."""
+    path = path.strip()
+    if not path or re.search(r"[$`{]", path):
+        return False
+    if TICKET_PATH_RE.search(path) or task_path_match(path, cwd) or TICKET_NAME_GLOB_RE.search(path):
+        return True
+    return in_tasks and (path.rstrip("\\/") in (".", "") or bool(re.search(r"[*?\[]", path)))
+
+
+def _strip_name(word):
+    name = word.lstrip("\\").replace("\\", "/").rsplit("/", 1)[-1].lower()
+    return name[:-4] if name.endswith(".exe") else name
+
+
+def overwrite_targets(words):
+    """(command name, [files it overwrites]) of one simple command: cp, mv, install, ln (their destination), tee
+    (its files), dd (of=), the PowerShell copy, move and set-content family. [] for any other command, git
+    included: `git checkout`/`git restore` of a ticket is how a merge resolves a conflict."""
+    while words and ASSIGNMENT_RE.match(words[0]):
+        words = words[1:]
+    if not words:
+        return "", []
+    name, args = _strip_name(words[0]), words[1:]
+    if name in COPY_LIKE:
+        targets, operands, i = [], [], 0
+        while i < len(args):
+            a = args[i]
+            if a == "--":
+                operands += args[i + 1:]
+                break
+            if a in ("-t", "--target-directory"):
+                targets.append(args[i + 1] if i + 1 < len(args) else "")
+                i += 2
+                continue
+            if a.startswith("--target-directory="):
+                targets.append(a.split("=", 1)[1])
+            elif a.startswith("-t") and len(a) > 2 and not a.startswith("--"):
+                targets.append(a[2:])
+            elif a in ("-S", "--suffix", "-m", "--mode", "-o", "--owner", "-g", "--group") and name == "install" \
+                    or a in ("-S", "--suffix") and name != "install":
+                i += 2
+                continue
+            elif not a.startswith("-") or a == "-":
+                operands.append(a)
+            i += 1
+        if not targets and len(operands) > 1:
+            targets.append(operands[-1])
+        return name, targets
+    if name == "tee":
+        return name, [a for a in args if not a.startswith("-")]
+    if name == "dd":
+        return name, [a[3:] for a in args if a.startswith("of=")]
+    if name in PS_COPY_LIKE or name in PS_OVERWRITERS:
+        named, positional, i = {}, [], 0
+        while i < len(args):
+            a = args[i]
+            if a.startswith("-") and len(a) > 1:
+                opt, colon, value = a.partition(":")
+                opt = opt.lower()
+                if not colon and opt not in PS_SWITCHES and i + 1 < len(args):
+                    value = args[i + 1]
+                    i += 1
+                named.setdefault(opt, []).append(value)
+            else:
+                positional.append(a)
+            i += 1
+        if name in PS_COPY_LIKE:
+            dest = [v for k, vs in named.items() if "-destination".startswith(k) and len(k) > 1 for v in vs]
+            return name, dest or positional[1:2]
+        paths = [v for k, vs in named.items() if k in ("-path", "-literalpath", "-filepath", "-lp", "-pspath")
+                 for v in vs]
+        if name == "out-file" and any("-append".startswith(k) and len(k) > 2 for k in named):
+            return name, []
+        return name, paths or positional[:1]
+    return name, []
+
+
+def without_comment(text):
+    """A command's text without its shell comment (an unquoted `#` at a word's start)."""
+    quote = None
+    for i, c in enumerate(text):
+        if quote:
+            quote = None if c == quote else quote
+        elif c in "'\"":
+            quote = c
+        elif c == "#" and (i == 0 or text[i - 1] in " \t"):
+            return text[:i]
+    return text
+
+
+def overwrite_reason(cmd, cwd=None):
+    """Why a shell command overwrites a ticket, or "" (T-355): cp, mv, install, ln, tee, dd of=, the PowerShell
+    copy, move and set-content family or `>` with a ticket file, a glob in a tasks folder or the tasks folder
+    itself as a target. Overwriting a whole ticket changes its status outside the status script, so it is
+    refused whatever words the command holds."""
+    in_tasks = runs_in_tasks(cmd, cwd)
+    segments, _ = shell_segments(cmd, cwd, in_tasks)
+    for seg in with_literal_vars(cmd, segments, cwd, in_tasks):
+        for op, target in seg.redirects:
+            if op == ">" and ticket_target(target, cwd, in_tasks):
+                return seg.text or cmd, f"`>` overwrites `{target}`"
+        name, targets = overwrite_targets(words_of(without_comment(seg.text)))
+        hit = next((t for t in targets if ticket_target(t, cwd, in_tasks)), None)
+        if hit is not None:
+            return seg.text, f"`{name}` overwrites `{hit}`"
+    return ""
+
+
 def pre_shell(tool_input, cwd=None):
     cmd = tool_input.get("command") or ""
     big = big_read_reason(cmd, cwd)
@@ -1552,6 +2092,14 @@ def pre_shell(tool_input, cwd=None):
         return refused
     if not touches_tasks(cmd, cwd):
         return 0
+    over = overwrite_reason(cmd, cwd)
+    if over:
+        part, why = over
+        short = part if len(part) <= 160 else part[:157] + "..."
+        return deny(f"Overwriting a ticket changes its status outside the status script ({STATUS_SCRIPT} <T-id> "
+                    f"<status>), so it is refused whatever the command says. Refused because of `{short}`: {why}, "
+                    "a ticket file, a glob in a tasks folder or the tasks folder itself. Change a ticket's text with "
+                    "the Edit tool; `git checkout`/`git restore` of a ticket stay allowed for merges.")
     mentions = bool(GUARD_WORD_RE.search(cmd) or INLINE_CODE_RE.search(cmd))
     if not mentions and not SCRIPT_RUN_RE.search(cmd):
         return 0

@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-068, T-134]
 documents_affected: [game/README.md]
-files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/enemies.md, tasks/T-068-minion-art.md, tasks/T-134-minions-knock-each-other-down.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/enemies.md, tasks/T-068-minion-art.md, tasks/T-134-minions-knock-each-other-down.md, game/docs/enemies/minions.md, game/docs/art/pixellab.md]
 files_expected_to_change: [art files under game/art/ and their records, the minion's scenes and scripts that show the animations, game/README.md]
 model: sonnet
 qa_rounds: 0

@@ -1,7 +1,7 @@
 ---
 id: T-337
 title: The sub goal square in place of the likes bar, with the gift pack inside it
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -12,7 +12,7 @@ user_facing_text: yes
 changes_visuals: yes
 depends_on: [T-331]
 documents_affected: [docs/hud-and-menus.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/README.md, game/scripts/hud/, game/art/gift_pack/package.png]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/, game/art/gift_pack/package.png]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-337/]
 model: opus
 qa_rounds: 1
@@ -62,6 +62,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-28, Open → In progress
 
 Started from the playtest build (T-331 approved). Layout from the board's page (1152x648): subgoal x988 y340 w128 h180, anchored to the right edge.
+
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
 
 ## Style review
 
@@ -113,3 +117,4 @@ UI Agent, 2026-10-28. Built in `C:\solid-carbide-worktrees\T-337` on `task/T-337
 - `game/README.md`: the index line for hud.md.
 
 **QA, round 1 (QA agent, 2026-10-28):** all 7 criteria pass. qa_check: 3 test sets pass, documents changed, 3 screenshots present. Square, grey gift, label and the part-filled screenshot checked by eye. No "Hype Lv" or likes-bar code is left except comments and tests that assert its absence. The README criterion is met by game/docs/hud-and-menus/hud.md, the index in game/README.md and docs/hud-and-menus.md. Test counts as reported by the agent: 645 / 545 / 1763 (qa_check confirmed all sets pass).
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

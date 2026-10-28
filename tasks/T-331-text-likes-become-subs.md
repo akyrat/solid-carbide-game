@@ -1,7 +1,7 @@
 ---
 id: T-331
 title: "Text: likes become subs, the sub goal's label and the LIVE badge"
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -61,6 +61,10 @@ Started in the livestream HUD build.
 ### 2026-10-28, In progress → In QA
 
 Built; QA running now (the board's go to finish without stopping).
+
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
 
 ## QA
 
@@ -189,3 +193,4 @@ Text rule 2 now says "subs" and "live viewers", never "likes", and no "Hype Lv" 
 Hype Lv: no text in the game says it after this ticket except TEXT_LEVEL ("Hype Lv {level}") and its label and tests in hud.gd, left for T-337 to remove with the row. The older HUD and menus paragraphs that describe the old row are marked as old in the new section; T-337 should rewrite them.
 
 Remaining "likes" in game/: code identifiers, comments, run.json comments and the heart art file name only; no player-facing text. Tests and fixtures updated to the new strings.
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

@@ -12,7 +12,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-324]
 documents_affected: [docs/weapons.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, docs/drifting.md, game/README.md, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/bricks.gd, game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/windshield_wiper.gd, game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/bullet.gd, game/scripts/weapons/flamethrower/]
+files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, docs/drifting.md, game/docs/weapons/shared.md, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/bricks.gd, game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/windshield_wiper.gd, game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/bullet.gd, game/scripts/weapons/flamethrower/]
 files_expected_to_change: [game/scripts/weapons/, game/tests/unit/weapons/, game/tests/unit/, game/README.md, docs/weapons.md]
 model: opus
 qa_rounds: 0

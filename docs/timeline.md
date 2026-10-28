@@ -2000,3 +2000,93 @@ Entry format:
 - Decision or change: `tools/qa_check.py T-NNN` does QA's mechanical part (the three test sets, every affected document changed, screenshots when the ticket shows anything, every criterion marked), one line per check. The QA agent and tasks/README.md's QA section now say: run the script, then judge each acceptance criterion, nothing else. The goal runner retries a ticket that failed on paperwork on its own model and only a code failure on Opus. `merge_batch.py` now accepts a ticket QA already marked done and leaves out Godot-generated `.import`/`.uid` files a branch added. The handover requirements that are not criteria or tests are listed in the ticket with a proposal each, for the board to decide; none was removed. One refused inline-python edit was redone with the Edit tool; listed for the board. QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 545, GUT 1735.
 - Documents touched: tasks/README.md, .claude/agents/qa-integration.md
 - Tasks: T-347
+
+## 2026-10-28: T-350 merged, the token-spend early read
+- Decision or change: docs/token-spend/after-2026-10-28-early.md compares the two hours after the new tools merged (01:43 to 03:55 UTC, 299 calls) with the baseline, per merged ticket and per call. Too small and too different to credit an effect: 5.0M tokens per merged ticket against 12.5M (different work); git merge output 199 characters per call against 1,849 (the one plausible effect, T-344); failed calls 9.7% against 5.1% and hook refusals 4.3% against 1.2% (mostly the guard refusing scripts that mention tasks); subagent reports 18.5% of context against 14.3%. The real comparison is a rerun after the HUD batch (the command is in the report). The agent's own write of its result notes was refused, so they were written in the Tokens session on the board's go. With this the token-spend epic's tickets are done; T-353 waits for the board.
+- Documents touched: docs/token-spend/after-2026-10-28-early.md, docs/README.md
+- Tasks: T-350
+
+## 2026-10-28: Bolder enemy outlines
+- Decision or change: The board played the livestream HUD build: the enemies' bolder outlines look good.
+- Documents touched: none
+- Tasks: T-340
+
+## 2026-10-28: The timer as a digital clock
+- Decision or change: The board played it: the bottom-left clock turning green, yellow, orange and red looks good.
+- Documents touched: none
+- Tasks: T-335
+
+## 2026-10-28: The live viewers curve
+- Decision or change: The viewers numbers, approved by the board as data; judged again in the viewers counter (T-336).
+- Documents touched: none
+- Tasks: T-332
+
+## 2026-10-28: Hearts numbers
+- Decision or change: The hearts numbers, approved by the board as data; judged again in hearts in the run (T-334).
+- Documents touched: none
+- Tasks: T-333
+
+## 2026-10-28: Likes become subs
+- Decision or change: The board played it: likes became subs in the game's text.
+- Documents touched: none
+- Tasks: T-331
+
+## 2026-10-28: Open tickets list the area files; T-347's proposals accepted
+- Decision or change: The board ran the checked fix script: 27 open or blocked tickets now list their area files under game/docs/ in files_to_read_first instead of game/README.md (T-353, split out of T-346). The board accepted T-347's proposals on handover rules: ten stay as they are; QA no longer judges whether screenshots show what the notes say (qa_check.py checks they exist, and a ticket that shows something says in its criteria what its screenshots must show); the style-loop record is enforced by task_status.py before QA, so QA judges only the criteria.
+- Documents touched: tasks/README.md
+- Tasks: T-353, T-347
+
+## 2026-10-28: A ticket so the guard refuses only real ticket writes
+- Decision or change: The board's go, from the token-spend early read: hook refusals rose to 4.3% of calls, most of them the ticket guard refusing commands that only mention tasks or the word Lead, and three agents redid a refused edit with the Edit tool. A ticket makes the guard refuse only commands that really write a ticket's status, lead or qa_rounds, with the night's real refusals as tests; anything it can't be sure of stays refused.
+- Documents touched: tasks/README.md
+- Tasks: T-354
+
+## 2026-10-28: Bricks art
+- Decision or change: The Bricks card image (8/10) and impact wave (9/10), 1 PixelLab generation; the board approved it.
+- Documents touched: docs/visual-style.md
+- Tasks: T-325
+
+## 2026-10-28: The livestream HUD art
+- Decision or change: The HUD art for the livestream HUD (clock digits and panel, viewers panel, LIVE badge, viewers fire, sub goal frame, full and empty hearts, eye icon, subs icon), all drawn by script after the style loop; 2 of 40 PixelLab generations used. The fire stayed at 7/10 after 3 refines and was sent on under the board's overnight go, noted for its playtest. Reached master with the livestream HUD playtest build; placed by T-336 to T-338.
+- Documents touched: docs/visual-style.md
+- Tasks: T-339
+
+## 2026-10-28: The coins counter at the bottom left
+- Decision or change: The board played it: the coins counter sits above the clock at the bottom left.
+- Documents touched: none
+- Tasks: T-341
+
+## 2026-10-28: Hearts in the run
+- Decision or change: The board played it: hits take hearts, 1 s invulnerability with a blink, no knockback or combo cut during it (the agent's proposal, accepted with the playtest).
+- Documents touched: none
+- Tasks: T-334
+
+## 2026-10-28: The sub goal square
+- Decision or change: The board played it: the likes bar became the sub goal square with the gift pack inside; Hype Lv is gone. Fill, glow and grey were the agent's proposals.
+- Documents touched: none
+- Tasks: T-337
+
+## 2026-10-28: The live viewers counter
+- Decision or change: The board played it: the combo counter became the live viewers counter at the bottom right; tricks' +viewers fly into it, crashes drop it, fire at a million.
+- Documents touched: none
+- Tasks: T-336
+
+## 2026-10-28: The guard refuses only real ticket writes
+- Decision or change: The guard now refuses only commands that really write a ticket's guarded header fields; the repo's ticket tools, inline scripts that only mention tasks, read-only commands and date pass. The night's seven false refusals, plus qa_check.py, are tests; real writes, including a tool's --log= into a ticket, stay refused. Overwriting a ticket with cp, mv or tee when the command names no header word moves to a follow-up ticket.
+- Documents touched: tasks/README.md
+- Tasks: T-354
+
+## 2026-10-28: A ticket so the guard refuses overwriting a ticket
+- Decision or change: Split out of T-354: the guard let cp, mv, tee and dd overwrite a ticket when the command held no guard word, which changes its status outside task_status.py. T-354's agent wrote the fix, but the old guard refused its edit; with T-354 live it can be applied.
+- Documents touched: tasks/README.md
+- Tasks: T-355
+
+## 2026-10-28: The heart row
+- Decision or change: The board played it: the health bar became a row of hearts at the top left, the weapon icons below it.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-338
+
+## 2026-10-28: The guard refuses overwriting a ticket
+- Decision or change: The guard refuses cp, mv, install, ln, tee, dd, PowerShell copy, move and set-content, and > onto a ticket whatever the command says, since overwriting a whole ticket changes its status outside task_status.py. git checkout and git restore of tickets stay allowed for resolving merges. Known gap: >| is not refused.
+- Documents touched: tasks/README.md
+- Tasks: T-355

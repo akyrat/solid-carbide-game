@@ -91,6 +91,12 @@ class TokenReportTest(unittest.TestCase):
         for h in ("## 1.", "## 2.", "## 3.", "## 4.", "## 5.", "fail rate"):
             self.assertIn(h, text)
 
+    def test_in_range_with_time(self):
+        self.assertTrue(tr.in_range("2026-10-28T01:43:02Z", "2026-10-28T01:43:02Z", None))
+        self.assertFalse(tr.in_range("2026-10-28T01:43:01Z", "2026-10-28T01:43:02Z", None))
+        self.assertTrue(tr.in_range("2026-10-28T05:00:00Z", "2026-10-28", "2026-10-28T06:00:00Z"))
+        self.assertFalse(tr.in_range("2026-10-28T07:00:00Z", "2026-10-28", "2026-10-28T06:00:00Z"))
+
     def test_in_range(self):
         self.assertTrue(tr.in_range("2026-10-03T00:00:00Z", "2026-10-03", "2026-10-03"))
         self.assertFalse(tr.in_range("2026-10-04T00:00:00Z", None, "2026-10-03"))

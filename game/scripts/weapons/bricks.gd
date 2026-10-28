@@ -22,12 +22,14 @@ extends "res://scripts/weapons/weapon.gd"
 ## "bricks"): a run starts without it (tier 0); `run.weapons.upgrade("bricks")`
 ## gives it (0 to 1) and applies tiers 2 to 8.
 ##
-## Look: a placeholder wave drawn in code (BricksWave, below), a projectile of
-## the rack: an expanding ring on the ground at the landing spot (at the ground's
-## height there, so on a rooftop it is on the roof) that grows out to exactly the
-## damage radius, with a burst of dust puffs and brick chips. City colours (pale
-## blue-white, cool blue-grey concrete, a brick brown), opaque hard-edged pixels,
-## none of Greenbull's colours. The art task (T-325) swaps the final art in.
+## Look: the wave (BricksWave, below), a projectile of the rack: an expanding
+## ring on the ground at the landing spot (at the ground's height there, so on a
+## rooftop it is on the roof) that grows out to exactly the damage radius, with a
+## burst of dust puffs and brick chips. T-325's art: one script-drawn sheet per
+## damage radius the tiers reach (res://art/weapons/bricks_wave_r<radius>.png,
+## game/tools/build_bricks_wave.py), 12 stepped frames at 32 art px per unit,
+## drawn at 0.5. A radius with no sheet falls back to T-324's code-drawn
+## placeholder. City colours, opaque hard-edged pixels, none of Greenbull's.
 
 ## Flat world pixels per unit (Car.PX_PER_UNIT).
 const PX_PER_UNIT := 16.0
@@ -228,7 +230,7 @@ func _hit(e: Node, centre: Vector2) -> void:
 	enemy_hit.emit(e, amount, push)
 
 
-# --- Drawing (placeholder) -------------------------------------------------
+# --- Drawing ----------------------------------------------------------------
 
 ## Adds the wave's drawing to the rack's draw root (a projectile: it stops while
 ## paused and is removed when done or at a new run).
@@ -244,13 +246,22 @@ func _draw_wave(centre: Vector2) -> void:
 	last_wave = w
 
 
-## The placeholder impact wave: an expanding ring on the ground, drawn as the
+## The impact wave: T-325's sheet for its radius (see ART), or, for a radius
+## with no sheet, T-324's placeholder: an expanding ring on the ground, drawn as the
 ## isometric ellipse of a circle, growing in stepped frames from the car's size
 ## to the damage radius in WAVE_SECONDS, plus dust puffs and brick chips thrown
 ## out from the landing spot that grow and then shrink away (no fading: every
 ## pixel is opaque). Drawn in the run's screen pixels, at the ground's height.
 class BricksWave:
 	extends Node2D
+
+	## T-325's sheets: one per radius, named by the radius to one decimal
+	## (bricks_wave_r4_0.png), FRAMES frames in one row, ART_TOP art px above the
+	## ring's ellipse, drawn at ART_SCALE (32 art px per unit on 16 screen px).
+	const ART := "res://art/weapons/bricks_wave_r%s.png"
+	const FRAMES := 12
+	const ART_TOP := 44
+	const ART_SCALE := 0.5
 
 	## How long the wave shows, in seconds; the ring reaches the radius at RING_SECONDS.
 	const WAVE_SECONDS := 0.6
@@ -282,12 +293,34 @@ class BricksWave:
 	var puffs: Array = []
 	var chips: Array = []
 	var _frame := -1
+	## The sheet for this radius (null: the placeholder drawing), one frame's size
+	## and the landing spot's place in a frame, in art pixels.
+	var sheet: Texture2D = null
+	var frame_size := Vector2.ZERO
+	var art_centre := Vector2.ZERO
+
+	## The sheet's path for a damage radius of `r` units.
+	static func art_path(r: float) -> String:
+		return ART % ("%.1f" % r).replace(".", "_")
+
+	## The sheet for a radius of `r` units, or null when there is none.
+	static func sheet_for(r: float) -> Texture2D:
+		var path := art_path(r)
+		return load(path) if ResourceLoader.exists(path) else null
+
+	## The frame of the sheet shown now (0 to FRAMES - 1).
+	func frame_index() -> int:
+		return clampi(int(floor(age / FRAME_SECONDS + EPS)), 0, FRAMES - 1)
 
 	func setup(at: Vector2, r: float, height: float, seed_value: int) -> void:
 		centre = at
 		radius = r
 		ground_h = height
 		position = ISO_TRANSFORM * (centre * PX_PER_UNIT) + Vector2(0.0, -ground_h * PX_PER_UNIT)
+		sheet = sheet_for(r)
+		if sheet != null:
+			frame_size = Vector2(float(sheet.get_width()) / FRAMES, float(sheet.get_height()))
+			art_centre = Vector2(frame_size.x / 2.0, (frame_size.y + ART_TOP) / 2.0)
 		var rng := RandomNumberGenerator.new()
 		rng.seed = 7919 * seed_value + 13
 		for i in PUFFS:
@@ -336,6 +369,15 @@ class BricksWave:
 		return out
 
 	func _draw() -> void:
+		if sheet != null:
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2(ART_SCALE, ART_SCALE))
+			draw_texture_rect_region(sheet, Rect2(-art_centre, frame_size),
+				Rect2(Vector2(frame_index() * frame_size.x, 0.0), frame_size))
+			return
+		_draw_placeholder()
+
+	## T-324's placeholder drawing, for a radius with no sheet.
+	func _draw_placeholder() -> void:
 		var t := stepped_age()
 		# The ring: thick while it travels, thinner once it reaches the radius.
 		var r := ring_radius()

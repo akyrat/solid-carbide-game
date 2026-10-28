@@ -1,7 +1,7 @@
 ---
 id: T-335
 title: The timer at the bottom left as a digital clock that turns from green to red
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -67,6 +67,10 @@ Layout from the board's page (1152x648): clock x16 y560 w200 h72. Also saved: vi
 
 Built; QA running now (the board's go to finish without stopping).
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it in the playtest build; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -90,3 +94,4 @@ Built:
 ### QA round 1 (2026-10-28)
 
 All 6 criteria pass. qa_check: 3 test sets pass, documents changed, 5 screenshots present (all 1152x648; clock_red.png shows red 0:20 at bottom left; run_no_hud.png has no HUD). Docs describe the clock and switch points (180/90/30 s).
+- 2026-10-28, needs-playtest → done: The board played the livestream HUD build and approved it (2026-10-28).

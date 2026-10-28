@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: yes
 depends_on: [T-050, T-019, T-035]
 documents_affected: [docs/hud-and-menus.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/level-design.md, tasks/T-049-hud-run-values.md, tasks/T-019-build-mvp-map.md, tasks/T-035-runtime-meteor-challenges.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/level-design.md, tasks/T-049-hud-run-values.md, tasks/T-019-build-mvp-map.md, tasks/T-035-runtime-meteor-challenges.md, game/docs/hud-and-menus/hud.md, game/docs/level/mvp-map.md]
 files_expected_to_change: [the HUD scene and script, tests, docs/hud-and-menus.md, game/README.md]
 model: sonnet
 qa_rounds: 0

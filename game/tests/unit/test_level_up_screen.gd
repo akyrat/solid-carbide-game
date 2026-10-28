@@ -650,9 +650,9 @@ func test_a_new_weapons_upgrade_card_shows_its_next_tier() -> void:
 	assert_eq(screen.cards[0].title.text, "Neon Underglow")
 
 
-## Weapons whose card still shows the placeholder because their art task is not done
-## (T-324's Bricks until T-325): skipped by the final art test while the file is missing.
-const AWAITING_ART := ["bricks"]
+## Weapons whose card still shows the placeholder because their art task is not done:
+## skipped by the final art test while the file is missing. Empty since T-325 added Bricks' image.
+const AWAITING_ART := []
 
 
 ## The heart's red or anything that reads as a red (as game/tools/build_drift_mark.py's
@@ -691,7 +691,7 @@ func test_each_card_shows_its_weapons_image_a_different_one_per_weapon() -> void
 
 func test_final_weapon_art_replaces_the_placeholders() -> void:
 	# T-174: the five PixelLab images, 64 x 64, hard edged, shown instead of the 16 x 16 placeholders.
-	# Bricks (T-324) shows its placeholder until its art task (T-325) adds the image.
+	# Bricks: T-325's PixelLab image, the same size and rules.
 	for w in offers.WEAPON_ORDER:
 		if AWAITING_ART.has(w) and not ResourceLoader.exists(screen.WEAPON_ART % w):
 			continue

@@ -11,7 +11,7 @@ user_facing_text: no
 changes_visuals: no
 depends_on: [T-035]
 documents_affected: [docs/level-design.md, game/README.md]
-files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-035-runtime-meteor-challenges.md, game/README.md]
+files_to_read_first: [tasks/README.md, docs/level-design.md, tasks/T-035-runtime-meteor-challenges.md, game/docs/level/mvp-map.md, game/docs/enemies/meteors.md]
 files_expected_to_change: [the challenge code, tests, docs/level-design.md, game/README.md]
 model: sonnet
 qa_rounds: 0
