@@ -64,7 +64,8 @@ func test_popups_follow_the_new_car_after_a_second_run() -> void:
 	add_child_autofree(run)
 	run.start_run()
 	run.car.trick.emit("three_sixty")
-	assert_eq(_popup_texts(run.trick_popups), ["FULL 360! +0.25"])
+	# T-336: the amount is the viewers the 360 brought (x1.0 to x1.25 on T-332's curve).
+	assert_eq(_popup_texts(run.trick_popups), [TrickPopups.trick_text("three_sixty", TrickPopups.trick_viewers(0.25, 1.25))])
 
 
 func test_any_text_can_be_shown() -> void:

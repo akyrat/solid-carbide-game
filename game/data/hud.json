@@ -1,5 +1,21 @@
 {
   "_comment": "T-335, the HUD's numbers. The run timer's clock (HUD and menus, Decisions, 'The HUD looks like a livestream'): its digits are green above the first switch point, then yellow, orange and red as the time nears 0:00. Proposals from the board's layout page; the board judges them in playtests. above_seconds: the colour holds while the time left is strictly above this; the last step (red) has no limit. layout: game pixels at 1152 x 648 (the board's saved page), anchored to the bottom-left corner.",
+  "viewers_counter": {
+    "_comment": "T-336, the live viewers counter (HUD and menus, Decisions, 'The HUD looks like a livestream' and 'Tricks bring viewers, shown in one colour'). layout: the board's layout page at 1152 x 648, anchored to the bottom-right corner. color: the viewers colour (T-339's panel rim and eye, #33e1ff), used for nothing else in the HUD. The rest are proposals for the playtest: number_sizes per look step (0 base, 1 to 3 the heat steps; the fire step uses the last), detach_seconds (how long after a trick popup shows its amount leaves it), flight_seconds and flight_arc (the arc's height in pixels), bump_seconds and bump_scale (the pop when an amount lands), flash_seconds, crash_flash_seconds, drop_seconds and drop_px (the '-{viewers}' falling away on a crash), crash_color (the combo broken popup's warning red-orange).",
+    "layout": { "x": 896, "y": 560, "w": 240, "h": 72, "reference_w": 1152, "reference_h": 648 },
+    "color": "#33e1ff",
+    "crash_color": "#ff5010",
+    "number_sizes": [28, 30, 32, 34],
+    "detach_seconds": 0.3,
+    "flight_seconds": 0.55,
+    "flight_arc": 90.0,
+    "bump_seconds": 0.25,
+    "bump_scale": 0.18,
+    "flash_seconds": 0.25,
+    "crash_flash_seconds": 0.45,
+    "drop_seconds": 0.9,
+    "drop_px": 70.0
+  },
   "timer_clock": {
     "layout": { "x": 16, "y": 560, "w": 200, "h": 72, "reference_w": 1152, "reference_h": 648 },
     "steps": [

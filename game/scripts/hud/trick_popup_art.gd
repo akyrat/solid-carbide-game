@@ -23,6 +23,13 @@ extends RefCounted
 ## in FLAME_FRAMES frames that the popup flips through so it flickers. The fill
 ## stays white and the trick names black at every step. Oranges and yellows
 ## only, never the heart's red; opaque or fully transparent pixels only.
+##
+## Viewers (task T-336): a trick's amount is the viewers it brought ("+12.0K"):
+## with `viewers` the amount is lettered in the viewers colour (the live viewers
+## counter's, ViewersCounter) with a black outline at every heat step, and the
+## viewers' eye (T-339's eye_icon.png) follows it. With `hide_amount` the bubble
+## keeps its size but the amount and the eye are gone: they have flown off to the
+## counter.
 
 const FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
 
@@ -39,6 +46,8 @@ const AMOUNT_HOT := 7
 const FLAME_0 := 8
 ## The "+amount" glyphs while lettering, before they are coloured (black at heat 0 and 1).
 const AMOUNT := 12
+## The viewers amount (T-336): the viewers colour.
+const AMOUNT_VIEWERS := 13
 const PALETTE := [
 	Color(0, 0, 0, 0),
 	Color8(0, 0, 0),        # letters
@@ -53,7 +62,13 @@ const PALETTE := [
 	Color8(255, 184, 41),   # flame: orange-yellow
 	Color8(255, 153, 20),   # flame: orange
 	Color8(0, 0, 0),        # "+amount" at heat 0 and 1
+	Color8(51, 225, 255),   # the viewers amount: the viewers colour (hud.json viewers_counter.color)
 ]
+## The viewers' eye after a viewers amount (T-336): T-339's art, at EYE_SCALE popup
+## pixels per art pixel per size style, EYE_GAP popup pixels after the amount.
+const EYE_PATH := "res://art/hud/eye_icon.png"
+const EYE_SCALE := {"normal": 2, "small": 1}
+const EYE_GAP := 3
 ## The heat steps (0 to 3, ComboHeat.step_for).
 const HEAT_STEPS := 4
 ## The rings round the white fill per heat step, from the outside in:
@@ -105,12 +120,14 @@ static func style_for(font_size: int) -> String:
 
 ## The baked texture for `text` at a size style ("normal" or "small"), a heat
 ## step (0 to 3) and, at the flaming step, a flame frame; cached.
-static func texture(text: String, style: String, heat := 0, frame := 0) -> ImageTexture:
+## `viewers` letters the amount as viewers with the eye (T-336); `hide_amount`
+## leaves the amount and the eye out (flown to the counter).
+static func texture(text: String, style: String, heat := 0, frame := 0, viewers := false, hide_amount := false) -> ImageTexture:
 	heat = clampi(heat, 0, HEAT_STEPS - 1)
 	frame = posmod(frame, FLAME_FRAMES) if heat >= FLAME_STEP else 0
-	var key := "%s|%d|%d|%s" % [style, heat, frame, text]
+	var key := "%s|%d|%d|%s|%s|%s" % [style, heat, frame, viewers, hide_amount, text]
 	if not _cache.has(key):
-		_cache[key] = ImageTexture.create_from_image(bake(text, style, heat, frame))
+		_cache[key] = ImageTexture.create_from_image(bake(text, style, heat, frame, viewers, hide_amount))
 	return _cache[key]
 
 
@@ -133,13 +150,19 @@ static func split_text(text: String) -> Array:
 ## One popup as an RGBA image: opaque pixels or fully transparent ones only,
 ## with a transparent border. `heat` is the combo heat step (0 to 3, task
 ## T-133) and `frame` the flame frame at the flaming step.
-static func bake(text: String, style: String, heat := 0, frame := 0) -> Image:
+static func bake(text: String, style: String, heat := 0, frame := 0, viewers := false, hide_amount := false) -> Image:
 	heat = clampi(heat, 0, HEAT_STEPS - 1)
 	var parts := split_text(text)
 	var amount_at := -1
 	if parts[1] != "":
 		amount_at = (parts[0] as String).length() + 1
+	viewers = viewers and amount_at >= 0
 	var letters := _letter(text, style, amount_at)  # {"idx": PackedByteArray, "w", "h"}
+	var eye_rect := Rect2i()
+	if viewers:
+		var with_eye := _add_eye(letters, style)
+		letters = with_eye.letters
+		eye_rect = with_eye.eye
 	var tw: int = letters.w
 	var th: int = letters.h
 	var extra := ring_extra(heat)
@@ -164,16 +187,23 @@ static func bake(text: String, style: String, heat := 0, frame := 0) -> Image:
 	var ox := (w - tw) / 2
 	var oy := (h - th) / 2
 	var li: PackedByteArray = letters.idx
-	var hot_amount := heat >= AMOUNT_HOT_STEP
+	var hot_amount := heat >= AMOUNT_HOT_STEP and not viewers
 	for y in th:
 		for x in tw:
 			var c := li[y * tw + x]
 			if c == AMOUNT:
-				c = AMOUNT_HOT if hot_amount else TEXT
+				if hide_amount:
+					c = NONE
+				elif viewers:
+					c = AMOUNT_VIEWERS
+				else:
+					c = AMOUNT_HOT if hot_amount else TEXT
 			if c != NONE:
 				idx[(oy + y) * w + ox + x] = c
-	if hot_amount:
+	if hot_amount and not hide_amount:
 		_outline(idx, w, h, AMOUNT_HOT, TEXT)
+	if viewers and not hide_amount:
+		_outline(idx, w, h, AMOUNT_VIEWERS, TEXT)
 	if flames:
 		_flames(idx, w, h, frame)
 	var data := PackedByteArray()
@@ -184,13 +214,79 @@ static func bake(text: String, style: String, heat := 0, frame := 0) -> Image:
 		data[i * 4 + 1] = int(round(col.g * 255.0))
 		data[i * 4 + 2] = int(round(col.b * 255.0))
 		data[i * 4 + 3] = 255 if idx[i] != NONE else 0
-	return Image.create_from_data(w, h, false, Image.FORMAT_RGBA8, data)
+	var img := Image.create_from_data(w, h, false, Image.FORMAT_RGBA8, data)
+	if viewers and not hide_amount:
+		_draw_eye(img, Rect2i(eye_rect.position + Vector2i(ox, oy), eye_rect.size), style)
+	return img
+
+
+## The letters widened to hold the viewers' eye after the amount, vertically centred
+## on the letters: {"letters": {"idx", "w", "h"}, "eye": Rect2i in the letters' box}.
+## The eye's place is left empty in `idx` (drawn after, from the art).
+static func _add_eye(letters: Dictionary, style: String) -> Dictionary:
+	var esz := eye_size(style)
+	var tw: int = letters.w
+	var th: int = letters.h
+	var nw := tw + EYE_GAP + esz.x
+	var nh := maxi(th, esz.y)
+	var ly := (nh - th) / 2
+	var out := PackedByteArray()
+	out.resize(nw * nh)
+	var li: PackedByteArray = letters.idx
+	for y in th:
+		for x in tw:
+			out[(ly + y) * nw + x] = li[y * tw + x]
+	var eye := Rect2i(tw + EYE_GAP, (nh - esz.y) / 2, esz.x, esz.y)
+	return {"letters": {"idx": out, "w": nw, "h": nh}, "eye": eye}
+
+
+## The eye's size in popup pixels for a size style.
+static func eye_size(style: String) -> Vector2i:
+	var img := _eye_image()
+	var k: int = EYE_SCALE.get(style, 1)
+	return Vector2i(img.get_width() * k, img.get_height() * k)
+
+
+static var _eye: Image = null
+
+
+static func _eye_image() -> Image:
+	if _eye == null:
+		_eye = (load(EYE_PATH) as Texture2D).get_image()
+		_eye.convert(Image.FORMAT_RGBA8)
+	return _eye
+
+
+## Draws the eye's opaque pixels into `rect` (popup pixels), scaled up, hard-edged.
+static func _draw_eye(img: Image, rect: Rect2i, style: String) -> void:
+	var src := _eye_image()
+	var k: int = EYE_SCALE.get(style, 1)
+	for y in rect.size.y:
+		for x in rect.size.x:
+			var c := src.get_pixel(x / k, y / k)
+			if c.a > 0.5:
+				img.set_pixel(rect.position.x + x, rect.position.y + y, Color(c.r, c.g, c.b, 1.0))
+
+
+## Where the amount (and the eye) sits in a baked viewers popup, in popup pixels:
+## the part that flies off to the counter (T-336). Empty when there is no amount.
+static func amount_box(text: String, style: String, heat := 0) -> Rect2i:
+	heat = clampi(heat, 0, HEAT_STEPS - 1)
+	var parts := split_text(text)
+	if parts[1] == "":
+		return Rect2i()
+	var full := text_box(text, style, heat, true)
+	var amount := _letter(parts[1], style)
+	var w: int = amount.w + EYE_GAP + eye_size(style).x
+	return Rect2i(full.position.x + full.size.x - w, full.position.y, w, full.size.y)
 
 
 ## The text box of a baked popup (x, y, w, h in popup pixels) at a heat step.
-static func text_box(text: String, style: String, heat := 0) -> Rect2i:
+static func text_box(text: String, style: String, heat := 0, viewers := false) -> Rect2i:
 	heat = clampi(heat, 0, HEAT_STEPS - 1)
 	var letters := _letter(text, style)
+	if viewers and split_text(text)[1] != "":
+		letters = _add_eye(letters, style).letters
 	var grow := ring_extra(heat)
 	if heat >= FLAME_STEP:
 		return Rect2i(MARGIN_X + grow + FLAME_SIDE, MARGIN_Y + grow + FLAME_UP, letters.w, letters.h)

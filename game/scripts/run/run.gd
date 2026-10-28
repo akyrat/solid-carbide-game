@@ -248,6 +248,7 @@ func _ready() -> void:
 	hud = HudScene.instantiate()
 	add_child(hud)
 	hud.bind(state)
+	hud.bind_popups(trick_popups)
 
 	camera_follow.base_size = zoom
 	camera_follow.size = zoom

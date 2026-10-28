@@ -471,7 +471,7 @@ func _hud_parts(hud: Hud) -> Dictionary:
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"combo": hud.combo_label.get_global_rect(),
+		"viewers": hud.viewers_counter.get_global_rect(),
 		"timer": hud.timer_label.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 		"fire": hud.likes_fire.get_global_rect(),

@@ -53,7 +53,7 @@ func _hud_at(size: Vector2i) -> Hud:
 	var hud: Hud = HUD_SCENE.instantiate()
 	_screen(size).add_child(hud)
 	hud.sub_goal.set_numbers(9999, 9999)
-	hud.combo_label.text = Hud.combo_text(5.75)
+	hud._on_combo_changed(5.75)
 	hud.coins_value_label.text = "99999"
 	# All five weapons at mixed tiers (T-276), the tallest the icon column gets.
 	var rack: Node = WeaponsScript.new()
@@ -71,7 +71,7 @@ func _parts(hud: Hud) -> Dictionary:
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
 		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"combo": hud.combo_label.get_global_rect(),
+		"viewers": hud.viewers_counter.get_global_rect(),
 		"clock": hud.timer_clock.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
@@ -113,9 +113,10 @@ func _assert_sub_goal(hud: Hud, where: String) -> void:
 	assert_lte(label.end.y, r.end.y + 0.5, "%s: the label fits in the 180" % where)
 	assert_almost_eq(label.get_center().x, square.get_center().x, 1.0, "%s: the label centred under it" % where)
 	assert_true(Rect2(Vector2.ZERO, view).encloses(label), "%s: the label on screen" % where)
-	var combo := hud.combo_label.get_global_rect()
-	assert_almost_eq(combo.get_center().x, view.x * 0.5, 1.0, "%s: combo centred" % where)
-	assert_almost_eq(view.y - combo.end.y, Hud.COMBO_BOTTOM, 0.5, "%s: combo at its place" % where)
+	var vc := hud.viewers_counter.get_global_rect()
+	assert_true(Rect2(Vector2.ZERO, view).encloses(vc), "%s: viewers counter on screen" % where)
+	assert_almost_eq(view.x - vc.end.x, 0.0, 40.0, "%s: viewers counter at the right edge" % where)
+	assert_almost_eq(view.y - vc.end.y, 0.0, 40.0, "%s: viewers counter at the bottom edge" % where)
 
 
 func _assert_no_overlaps(hud: Hud, where: String) -> void:
@@ -188,7 +189,7 @@ func test_clear_of_the_middle() -> void:
 		await get_tree().process_frame
 		var view := Vector2(size)
 		var middle := Rect2(view * 0.5 - Vector2(250, 150), Vector2(500, 250))
-		for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "combo"]:
+		for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers"]:
 			assert_false(_parts(hud)[n].intersects(middle),
 				"%dx%d: %s clear of the car and popups" % [size.x, size.y, n])
 
@@ -205,6 +206,6 @@ func test_clear_of_the_pause_strip_content() -> void:
 	await get_tree().process_frame
 	assert_true(pause.visible, "paused")
 	var content: Rect2 = pause.title_label.get_parent().get_global_rect()
-	for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "combo", "clock", "coins"]:
+	for n: String in ["health bar", "sub goal", "health heart", "weapon icons", "viewers", "clock", "coins"]:
 		assert_false(_parts(hud)[n].intersects(content), "%s clear of the pause strip's text and slider" % n)
 	pause.toggle()
