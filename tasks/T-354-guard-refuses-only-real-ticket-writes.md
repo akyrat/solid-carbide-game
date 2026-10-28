@@ -1,7 +1,7 @@
 ---
 id: T-354
 title: Token spend: the guard refuses only commands that really write a ticket
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -54,11 +54,11 @@ If the guard can't be sure whether a script writes a ticket, it still refuses: f
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `tools/test_guard.py` has a test for each of the seven real refusals in the description: each command is now allowed, with the refusal text from before named in the test. (QA: pass / fail)
-- [ ] Tests show the guard still refusing: a `cp` or `mv` onto a `tasks/T-*.md` file, a redirection into one, `sed -i` on one, an inline script that writes a `tasks/T-*.md` path, and an edit of a ticket's status, lead or qa_rounds outside task_status.py. (QA: pass / fail)
-- [ ] Every guard test that existed before still passes, unchanged unless the result notes say why. (QA: pass / fail)
-- [ ] `tasks/README.md` says in one place what the guard refuses and what it allows, and the result notes list the cases that stay refused with the reason. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `tools/test_guard.py` has a test for each of the seven real refusals in the description: each command is now allowed, with the refusal text from before named in the test. (QA: pass; test_allowed_1 to _7 in OnlyRealTicketWrites, each names its earlier refusal; 2 to 6 are reconstructions but faithful to the wording)
+- [ ] Tests show the guard still refusing: a `cp` or `mv` onto a `tasks/T-*.md` file, a redirection into one, `sed -i` on one, an inline script that writes a `tasks/T-*.md` path, and an edit of a ticket's status, lead or qa_rounds outside task_status.py. (QA: pass; test_still_refused_real_writes and the Edit-tool test for status, qa_rounds and lead all deny; see the --log= note below)
+- [ ] Every guard test that existed before still passes, unchanged unless the result notes say why. (QA: pass; the diff of tools/test_guard.py removes no line; all 84 guard tests pass)
+- [ ] `tasks/README.md` says in one place what the guard refuses and what it allows, and the result notes list the cases that stay refused with the reason. (QA: pass; README block "What the ticket guard refuses and allows, in short (T-354)" plus the result notes list)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; QA reran all three, game/tools 643 OK (1 skipped), tools 556 OK, run_tests.sh result below; counts match the notes)
 
 ## Updates
 
@@ -67,6 +67,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-28, Open → In progress
 
 Started: the agent teaches the guard to refuse only real writes of a ticket's status, lead or qa_rounds, with the seven real refusals from 2026-10-28 as tests.
+
+### 2026-10-28, In progress → In QA
+
+In QA: the guard now refuses only real writes of a ticket's status, lead or qa_rounds; the seven refusals are tests. QA by a qa-integration agent.
 
 ## Style review
 
@@ -115,3 +119,13 @@ In doubt it still refuses: a false refusal costs one call, an unrecorded status 
 - `bash game/tools/run_tests.sh`: 1757/1757 passing, TESTS PASSED
 
 Nothing to picture: tooling only.
+
+**QA notes (round 1):** all five criteria pass.
+- Tests rerun in the foreground: game/tools 643 OK (1 skipped); tools 556 OK; run_tests.sh "TESTS PASSED" (the 1757 count was cut off by QA's tail, the pass line is what QA saw); tools.test_guard alone 84 OK. The diff of tools/test_guard.py removes no line.
+- `qa_check.py` was not run: the live (master) guard refuses it, so the items were checked by hand (criteria marked, notes, test counts).
+- Reproductions 2 to 6 are reconstructions from the ticket wording; each is faithful (merge_batch with a task and Lead in the arguments, inline python editing tools/merge_batch.py that names tasks, python/sed on .claude/agents/*.md, a read-only `python -c` with `'\n'`, `grep ...; date`, a `case ... done|cancelled) continue;; esac` loop, the `{ ...; }` commit guard).
+- Eighth false refusal: `python tools/qa_check.py T-354 2>&1 | tail -8` is allowed by the branch's guard (fed to board_gate.pre_shell, with and without a `# status` suffix). Not a criterion.
+- Real writes probed on the branch (about 45 commands): refused are sed -i / perl -i on a ticket, `>` into one, inline Python in many spellings (open w/r+/wb/mode=, io.open, codecs.open, shutil, os.rename/replace/system, Path().open, joinpath, f-string path, concatenated path, chdir, subprocess), and the ticket tools with `--log tasks/T-x.md`, `--test-cmd "cp ... tasks/T-x.md"`, or `> ticket` / `| tee ticket` when a guard word is present.
+- Findings that are not criteria, for the Project Lead:
+  1. New hole: `python tools/merge_batch.py T-1 --log=tasks/T-1-x.md` (the `=` form) is allowed on the branch; master refused it. The log overwrites the ticket file, so it can drop its header. The README says a ticket tool's `--log` "must not be a ticket", which the `--log tasks/...` (space) form honours but the `=` form does not. Small fix: judge `--log=VALUE` like `--log VALUE`.
+  2. Old behaviour, unchanged by T-354 (master behaves the same): `cp`, `mv`, `install`, `dd of=` and `tee` onto a `tasks/T-*.md` file are allowed when the command text holds no guard word (status, lead, qa_rounds) and no inline code; with a guard word they are refused. The same for `git checkout master -- tasks/T-x.md`. Those can still change a header by copying a whole ticket file over another.
