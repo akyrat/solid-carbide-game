@@ -1980,3 +1980,8 @@ Entry format:
 - Decision or change: The guard refused T-346's bulk rewrite of open tickets' files_to_read_first; nothing worked around it. The Project Lead moved that criterion into this follow-up ticket for the board to decide how it may be done; T-346 goes to QA without it. Open tickets that list game/README.md still work through its new short index.
 - Documents touched: tasks/README.md
 - Tasks: T-353
+
+## 2026-10-28: T-343 merged, agents hand back one short line
+- Decision or change: every agent definition, the goal runner's prompts and tasks/README.md ("Handing back") now say: the full report goes in the ticket's result notes, the hand-back is one line of about 300 characters, tests run in the foreground with no background jobs left, and the ticket is committed before handing back. QA passed all criteria (the agent-file diffs are the hand-back line only). The guard refused the agent's inline python/sed edits and it made them with the Edit tool; listed for the board. `merge_batch.py` stopped on this ticket because QA had already marked it done; merged by hand, and the fix goes into T-347. Tests on master: 620, 530, GUT 1735.
+- Documents touched: tasks/README.md, .claude/agents/
+- Tasks: T-343

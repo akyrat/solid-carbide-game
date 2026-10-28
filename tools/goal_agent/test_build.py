@@ -122,6 +122,12 @@ class HeadlessRuns(GoalRepo):
                       "fails, whatever its criteria say"):
             self.assertIn(words, qa)
 
+    def test_both_prompts_carry_the_hand_back_rule(self):
+        for prompt in self.prompts(self.planned(one_ticket())):
+            for words in ("Handing back", "full report in the ticket's result notes", "300 characters",
+                          "foreground and leave no background jobs", "Commit the ticket"):
+                self.assertIn(words, prompt)
+
     def test_prompts_list_the_pre_approved_commands_from_the_settings(self):
         (self.root / ".claude").mkdir(exist_ok=True)
         allow = ["Bash(git add *)", "Bash(python -m unittest discover *)"]

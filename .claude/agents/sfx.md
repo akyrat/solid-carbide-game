@@ -46,6 +46,7 @@ Your working copy of these relationships is in `agent-notes/sfx.md`. Keep the or
 - The "gets work from", "hands work to" and "collaborates with" relationships are guidelines for how agents are typically expected to work, not strict rules. Receiving work from an agent doesn't prevent sending work to it, and the other way around.
 - Each agent keeps these relationships as originally written and also keeps its own working copy, which it updates from experience so it reflects how it actually works. Over time the working copy may move away from hand-offs toward naming the areas where agents overlap and how they interact.
 - An agent can update its working copy on its own. Its original definition changes only with the board's approval. The Project Lead tells the board when a pattern keeps showing up, and the board decides whether to promote it into the definition.
+- Handing back (board, 2026-10-28; `tasks/README.md`, "Handing back"): put your full report in the ticket's result notes and hand back one short line of about 300 characters at most (ticket id, done or blocked, what the Project Lead must act on). Run tests in the foreground and leave no background jobs. Commit the ticket, result notes and QA results included, before handing back.
 
 ## Task files
 
