@@ -31,7 +31,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/hud-and-menus/popups.md](docs/hud-and-menus/popups.md): Trick popups. The trick popups.
 - [docs/hud-and-menus/pause-screen.md](docs/hud-and-menus/pause-screen.md): Pause screen. The pause screen.
 - [docs/hud-and-menus/camera.md](docs/hud-and-menus/camera.md): Camera options. The two camera options.
-- [docs/hud-and-menus/hud.md](docs/hud-and-menus/hud.md): HUD. The HUD in the run, the likes bar, the airtime and drift counters.
+- [docs/hud-and-menus/hud.md](docs/hud-and-menus/hud.md): HUD. The HUD in the run, the sub goal square (T-337), the airtime and drift counters.
 - [docs/hud-and-menus/livestream-hud-art.md](docs/hud-and-menus/livestream-hud-art.md): Livestream HUD art. The clock, viewers, sub-goal and heart pieces in art/hud/ and the script that builds them (T-339).
 - [docs/hud-and-menus/level-up-screen.md](docs/hud-and-menus/level-up-screen.md): Level-up screen. The level-up screen, its art and animation.
 

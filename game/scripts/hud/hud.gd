@@ -3,14 +3,14 @@ extends CanvasLayer
 ## The run's HUD (tasks T-090, T-049 and T-113): the timer as a digital clock at the bottom left (T-335),
 ## the car's health bar upright at the top left (T-276: 72 x 320, the heart
 ## under it, the weapon icons beside it), the coins
-## at the top right, and the likes bar lying across the bottom centre with the
-## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
-## (hidden at no combo, T-116). The HUD only shows values: the run
+## at the top right, the sub goal square on the right edge (T-337, SubGoal: it
+## replaced the likes bar and its row) and the combo counter at the bottom
+## centre (hidden at no combo, T-116). The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
-## `coins_changed`). The texts are from T-048. Since T-131 the combo counter,
-## "Likes" and "Hype Lv" are in the comic font (Bangers, hard pixel edges),
-## and the counter heats up in steps as the combo climbs (ComboHeat), with
-## the likes bar on fire at the top step (LikesFire).
+## `coins_changed`). The texts are from T-048 and T-331. Since T-131 the combo
+## counter is in the comic font (Bangers, hard pixel edges) and heats up in
+## steps as the combo climbs (ComboHeat), with the sub goal square on fire at
+## the top step (LikesFire, on the square's top edge since T-337).
 
 const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
@@ -21,13 +21,10 @@ const HEALTH_BAR_SIZE := Vector2(72, 320)
 ## T-276: the weapon icons start this far right of the bar, and the heart sits this far under it.
 const WEAPON_ICONS_GAP := 12
 const HEART_UNDER_GAP := 6
-## The likes bar (T-113): horizontal, this share of the screen's width.
-const LIKES_BAR_WIDTH := 0.5
-const LIKES_BAR_HEIGHT := 64.0
-## Space between a bar and the text line next to it.
-const LABEL_GAP := 6
+## The combo counter's bottom edge, this far above the screen's bottom (where
+## it sat above the likes bar's row before T-337 took the bar away).
+const COMBO_BOTTOM := 116.0
 const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
-const LIKES_COLOR := Color(0.7, 0.45, 1.0)
 ## Coins counter place at 1152 x 648 (T-341).
 const COINS_POS := Vector2(16, 496)
 const COINS_SIZE := Vector2(108, 36)
@@ -36,20 +33,15 @@ const COINS_COLOR := Color(1.0, 0.82, 0.25)
 ## stays red, as a social-media heart): used only by the heart (its art, T-086, is drawn in this red).
 const HEART_COLOR := Color(0.86, 0.1, 0.16)
 ## The heart's art (T-086, drawn by tools/build_heart_icon.py): 11 x 10 art
-## pixels shown at 2x, about the height of "Likes" with its outline.
+## pixels shown at 2x.
 const HEART_PATH := "res://art/hud/likes_heart.png"
 const HEART_SCALE := 2
-## The heart's box in the row keeps the placeholder's 26 px square (T-049), the
-## art centred in it, so nothing else on the HUD moves (T-086).
-const HEART_BOX := 26.0
 
-# Text from T-048 (hud.health, hud.likes, hud.level, hud.coins).
-const TEXT_LIKES := "Subs"
+# Text from T-048 (hud.health, hud.coins).
 # Livestream HUD texts (T-331): {subs} and {goal} are the sub goal's numbers.
 const TEXT_SUB_GOAL := "{subs} / {goal} SUBS"
 const TEXT_LIVE_BADGE := "LIVE"
 const TEXT_VIEWERS_UNIT := "WATCHING"
-const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
 # Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".
 const TEXT_COMBO := "Combo x{multiplier}"
@@ -58,10 +50,8 @@ const TEXT_COMBO := "Combo x{multiplier}"
 const COMBO_FONT_SIZE := 30
 const COMBO_COLOR := Color(1.0, 0.25, 0.75)
 ## The comic font of the trick popups (T-084), used since T-131 by the combo
-## counter, "Likes" and "Hype Lv". It has capitals only.
+## counter and the sub goal label. It has capitals only.
 const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
-## Space between the combo counter and the likes row under it.
-const COMBO_GAP := 4
 ## The airtime counter's top left corner from the screen's centre (T-243).
 const AIRTIME_OFFSET := Vector2(70, -10)
 ## The drift counter's top left corner from the screen's centre (T-247): under
@@ -72,19 +62,16 @@ var timer_label: Label
 ## The digital clock panel holding timer_label (T-335), bottom left.
 var timer_clock: TimerClock
 var health_bar: ProgressBar
-var likes_label: Label
-var likes_bar: ProgressBar
-## Springs the bar's fill to its new level (T-273); the bar shows its `shown`.
+## The sub goal square (T-337): fills as subs come in, the gift lights up at the goal.
+var sub_goal: SubGoal
+## Springs the square's fill to its new level (T-273); the square shows its `shown`.
 var likes_spring: LikesSpring
 var _likes_level := 0
-var _follow_max := 1.0
-var level_label: Label
+## The label's numbers for after a level-up's restart: [subs, goal].
+var _follow_numbers := [0, 0]
 var coins_label: Label
 var coins_value_label: Label
-var heart: TextureRect
-## The heart's fixed-size box in the likes row; holds `heart`.
-var heart_box: Control
-## The combo counter (T-083), centred above the likes row. Hidden at no
+## The combo counter (T-083), at the bottom centre. Hidden at no
 ## combo (T-116): see show_combo().
 var combo_label: Label
 ## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
@@ -93,16 +80,12 @@ var left_column: Control
 var health_heart: TextureRect
 ## The car's weapons as icons beside the health bar (T-276).
 var weapon_icons: WeaponIcons
-## A full-screen area holding the likes bar, its row and the combo counter.
+## A full-screen area holding the combo counter.
 var bottom_area: Control
-## The heart and "Likes", at the left end of the row above the likes bar.
-var likes_row: HBoxContainer
 ## The combo's heat steps (T-131): restyles combo_label, lights likes_fire.
 var combo_heat: ComboHeat
-## The flames along the likes bar at the top heat step (T-131).
+## The flames along the sub goal square's top edge at the top heat step (T-131, T-337).
 var likes_fire: LikesFire
-## The likes bar's level-up animation (T-139).
-var level_up_flash: LevelUpFlash
 ## The live airtime counter (T-243), shown only while the car is airborne.
 var airtime_counter: AirtimeCounter
 ## The live drift counter (T-247), shown only while the car is drifting.
@@ -220,43 +203,17 @@ func _build_bottom() -> void:
 	bottom_area.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	bottom_area.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bottom_area)
-	likes_bar = _make_bar("LikesBar", LIKES_COLOR, ProgressBar.FILL_BEGIN_TO_END)
-	bottom_area.add_child(likes_bar)
-	# Over the bar, under the texts, so the texts stay on top of the flames.
+	sub_goal = SubGoal.new()
+	add_child(sub_goal)
+	# On the square's top edge, over the frame and the gift (T-131, T-337).
 	likes_fire = LikesFire.new()
-	bottom_area.add_child(likes_fire)
-	likes_bar.value_changed.connect(func(_v: float) -> void: _update_fire_fill())
+	sub_goal.add_child(likes_fire)
+	likes_fire.place(sub_goal.square_rect())
+	likes_fire.fill_ratio = 1.0
 	likes_spring = LikesSpring.new()
 	add_child(likes_spring)
 	likes_spring.changed.connect(func(_s: float) -> void: _show_likes())
 	likes_spring.restarted.connect(_on_spring_restarted)
-	level_up_flash = LevelUpFlash.new()
-	bottom_area.add_child(level_up_flash)
-	likes_row = HBoxContainer.new()
-	likes_row.name = "LikesRow"
-	likes_row.alignment = BoxContainer.ALIGNMENT_BEGIN
-	likes_row.add_theme_constant_override("separation", 6)
-	bottom_area.add_child(likes_row)
-	heart = _make_heart()
-	heart_box = Control.new()
-	heart_box.name = "HeartBox"
-	heart_box.custom_minimum_size = Vector2(HEART_BOX, HEART_BOX)
-	heart_box.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	heart_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	heart_box.add_child(heart)
-	# At the box's left edge (the bar's left end), 2 px above centre so it sits
-	# level with the letters of "Likes" (they sit above the row's middle).
-	heart.position = Vector2(0.0, floorf((HEART_BOX - heart.custom_minimum_size.y) / 2.0) - 2.0)
-	heart.size = heart.custom_minimum_size
-	likes_row.add_child(heart_box)
-	likes_label = _make_label("LikesLabel", TEXT_LIKES)
-	likes_label.add_theme_font_override("font", comic_font())
-	# The row's full height, like "Hype Lv", so both share a baseline.
-	likes_label.size_flags_vertical = Control.SIZE_FILL
-	likes_row.add_child(likes_label)
-	level_label = _make_label("LevelLabel", TEXT_LEVEL.format({"level": 1}))
-	level_label.add_theme_font_override("font", comic_font())
-	bottom_area.add_child(level_label)
 	combo_label = _make_label("ComboLabel", combo_text(1.0))
 	combo_label.add_theme_font_override("font", comic_font())
 	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
@@ -266,55 +223,27 @@ func _build_bottom() -> void:
 	# A run starts with no combo: hidden until a trick raises it (T-116).
 	combo_label.visible = false
 	bottom_area.add_child(combo_label)
-	level_up_flash.setup(level_label)
 	combo_heat = ComboHeat.new()
 	add_child(combo_heat)
 	combo_heat.setup(combo_label, likes_fire)
 	_layout_bottom()
-	for c: Control in [bottom_area, likes_row, level_label, combo_label]:
+	for c: Control in [bottom_area, combo_label]:
 		c.resized.connect(_layout_bottom)
+	# A shorter combo text shrinks the counter too (the likes row's resizes did this before T-337).
+	combo_label.minimum_size_changed.connect(_layout_bottom)
 
 
-## The likes bar centred at the bottom, half the screen wide; the likes row
-## directly above it (heart and "Likes" from its left edge, "Hype Lv" ending
-## at its right edge, both labels on the same line); the combo counter
-## centred above the row.
+## The combo counter centred at the bottom, its bottom edge COMBO_BOTTOM above
+## the screen's bottom (where it was before T-337).
 func _layout_bottom() -> void:
 	var view := bottom_area.size
-	var bar_w := roundf(view.x * LIKES_BAR_WIDTH)
-	likes_bar.size = Vector2(bar_w, LIKES_BAR_HEIGHT)
-	likes_bar.position = Vector2(
-		roundf((view.x - bar_w) / 2.0), view.y - MARGIN - LIKES_BAR_HEIGHT)
-	var row_h := maxf(likes_row.get_combined_minimum_size().y,
-		level_label.get_combined_minimum_size().y)
-	var row_y := likes_bar.position.y - LABEL_GAP - row_h
-	likes_row.size = Vector2(likes_row.get_combined_minimum_size().x, row_h)
-	likes_row.position = Vector2(likes_bar.position.x, row_y)
-	level_label.size = Vector2(level_label.get_combined_minimum_size().x, row_h)
-	level_label.position = Vector2(likes_bar.position.x + bar_w - level_label.size.x, row_y)
 	combo_label.size = combo_label.get_combined_minimum_size()
 	combo_label.position = Vector2(
-		roundf(likes_bar.position.x + (bar_w - combo_label.size.x) / 2.0),
-		row_y - COMBO_GAP - combo_label.size.y)
+		roundf((view.x - combo_label.size.x) / 2.0),
+		view.y - COMBO_BOTTOM - combo_label.size.y)
 	# The heat's pulse grows the counter from its bottom centre: up and to
-	# both sides, never down into the row, and it stays centred (T-131).
+	# both sides, and it stays centred (T-131).
 	combo_label.pivot_offset = Vector2(combo_label.size.x / 2.0, combo_label.size.y)
-	likes_fire.place(likes_bar.get_rect())
-	level_up_flash.place(likes_bar.get_rect())
-	# "Hype Lv" pops from its bottom right corner: up and to the left, never
-	# down onto the bar or right past the bar's end (T-139).
-	level_label.pivot_offset = level_label.size
-	var spans: Array[Vector2] = []
-	for l: Control in [likes_row, level_label]:
-		spans.append(Vector2(l.position.x - likes_bar.position.x,
-			l.position.x + l.size.x - likes_bar.position.x))
-	likes_fire.low_spans = spans
-	_update_fire_fill()
-
-
-func _update_fire_fill() -> void:
-	var span := likes_bar.max_value - likes_bar.min_value
-	likes_fire.fill_ratio = (likes_bar.value - likes_bar.min_value) / span if span > 0.0 else 0.0
 
 
 func _build_coins() -> void:
@@ -414,7 +343,7 @@ func bind(state: RunState) -> void:
 	_state.coins_changed.connect(_on_coins_changed)
 	_state.combo_changed.connect(_on_combo_changed)
 	_state.level_up.connect(_on_level_up)
-	level_up_flash.stop()
+	sub_goal.stop()
 	_likes_level = 0
 	likes_spring.snap(0.0)
 	timer_label.text = _state.time_left_text()
@@ -436,54 +365,68 @@ func _on_health_changed(health: float, max_health: float) -> void:
 
 
 func _on_xp_changed(xp: float, xp_needed: float, level: int) -> void:
-	# At the top level xp_needed is 0: the bar stays full.
-	var max_v := xp_needed if xp_needed > 0.0 else 1.0
+	# At the top level xp_needed is 0: the square stays full.
 	var ratio := clampf(xp / xp_needed, 0.0, 1.0) if xp_needed > 0.0 else 1.0
-	level_label.text = TEXT_LEVEL.format({"level": level})
-	if likes_spring.has_follow:
-		# Still springing to full for the last level-up: only the leftover and
-		# the next level's size change.
-		_follow_max = max_v
+	var numbers := sub_numbers(xp, xp_needed)
+	if level < _likes_level:
+		# A new run (the level went back): drop any level-up still showing.
+		sub_goal.stop()
+		_likes_level = 0
+	if likes_spring.has_follow and _likes_level > 0:
+		# Still full for the last level-up: only the leftover and the next
+		# goal's numbers change, shown when it starts again.
+		_follow_numbers = numbers
 		likes_spring.set_follow(ratio)
 		_likes_level = level
 		return
 	if _likes_level > 0 and level > _likes_level:
-		# The bar fills completely (the old size stays), then starts again.
-		_follow_max = max_v
-		likes_spring.fill_then(ratio)
+		# The square fills completely (the old goal reached), stays full while
+		# it celebrates, then starts again.
+		_follow_numbers = numbers
+		sub_goal.set_numbers(sub_goal.goal, sub_goal.goal)
+		likes_spring.fill_then(ratio, maxf(SubGoal.celebrate_length() - LikesSpring.DURATION, 0.0))
 	elif _likes_level > 0 and ratio >= likes_spring.target:
-		_set_likes_max(max_v)
+		sub_goal.set_numbers(numbers[0], numbers[1])
 		likes_spring.spring_to(ratio)
 	else:
-		# A new run, or the likes draining: no spring.
-		_set_likes_max(max_v)
+		# A new run, or the subs draining: no spring.
+		sub_goal.set_numbers(numbers[0], numbers[1])
 		likes_spring.snap(ratio)
 	_likes_level = level
-
-
-func _set_likes_max(max_v: float) -> void:
-	likes_bar.max_value = max_v
 	_show_likes()
 
 
-## Draws the spring's fill on the bar, never past full.
+## The label's numbers, [subs, goal] in whole subs; at the top level (no next
+## goal, xp_needed 0) the goal is the subs, so the label reads full.
+static func sub_numbers(xp: float, xp_needed: float) -> Array:
+	var subs := int(floorf(maxf(xp, 0.0)))
+	if xp_needed <= 0.0:
+		return [subs, subs]
+	var goal := int(ceilf(xp_needed))
+	return [mini(subs, goal), goal]
+
+
+## Draws the spring's fill in the square, never past full; the gift is lit
+## while the square is (or is springing to) full.
 func _show_likes() -> void:
-	likes_bar.value = clampf(likes_spring.shown, 0.0, 1.0) * likes_bar.max_value
+	sub_goal.fill = likes_spring.shown
+	sub_goal.lit = likes_spring.target >= 1.0 or likes_spring.has_follow
 
 
 func _on_spring_restarted() -> void:
-	likes_bar.max_value = _follow_max
+	sub_goal.set_numbers(_follow_numbers[0], _follow_numbers[1])
 
 
-## Ends the likes bar's spring at once (tests and tools).
+## Ends the square's spring (and its hold at full) at once (tests and tools).
 func settle_likes() -> void:
 	likes_spring.finish()
+	_show_likes()
 
 
-## The player levelled up (T-139): the likes bar's animation plays now, at
-## the moment the bar fills, whatever the run does next.
+## The player levelled up (T-139, T-337): the sub goal square celebrates now,
+## at the moment it fills, whatever the run does next.
 func _on_level_up(_new_level: int) -> void:
-	level_up_flash.start()
+	sub_goal.celebrate()
 
 
 func _on_coins_changed(coins: int) -> void:
@@ -501,7 +444,7 @@ func combo_step() -> int:
 	return combo_heat.step
 
 
-## Whether the likes bar is on fire now (the top heat step, T-131).
+## Whether the sub goal square is on fire now (the top heat step, T-131).
 func fire_on() -> bool:
 	return likes_fire.burning and likes_fire.visible
 

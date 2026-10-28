@@ -27,11 +27,8 @@ func _others(hud: Hud) -> Dictionary:
 		"health bar": hud.health_bar.get_global_rect(),
 		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
-		"likes bar": hud.likes_bar.get_global_rect(),
-		"likes row": hud.likes_row.get_global_rect(),
-		"heart": hud.heart.get_global_rect(),
-		"Likes": hud.likes_label.get_global_rect(),
-		"Hype Lv": hud.level_label.get_global_rect(),
+		"sub goal": hud.sub_goal.get_global_rect(),
+		"sub goal label": hud.sub_goal.label.get_global_rect(),
 		"timer": hud.timer_label.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 	}
@@ -140,6 +137,6 @@ func test_in_a_run_started_from_the_main_menu() -> void:
 	await wait_process_frames(2)
 	var hud: Hud = game.run.hud
 	assert_false(hud.combo_label.is_visible_in_tree(), "hidden with no combo")
-	assert_true(hud.likes_bar.is_visible_in_tree(), "the likes bar still shows")
+	assert_true(hud.sub_goal.is_visible_in_tree(), "the sub goal still shows")
 	game.run.state.add_trick("three_sixty")
 	assert_true(hud.combo_label.is_visible_in_tree(), "shown with a combo")
