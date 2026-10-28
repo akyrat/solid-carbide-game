@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started: the agent is changing the hand-back rule (one short line, foreground tests, commit before handing back).
 
+### 2026-10-28, In QA
+
+Built: hand-back rule (one short line, foreground tests, commit before handing back) in tasks/README.md, the 12 agent files and the goal runner's prompts. All three test sets pass. QA is checking it now. Note: the guard refused the agent's inline python/sed edits, and it made them with the Edit tool instead; listed for the board.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -70,3 +74,5 @@ Written by the agent when it finishes.
 - Tests: `game/tools` unittest 620 tests OK (1 skipped); `tools` unittest 530 tests OK; `bash game/tools/run_tests.sh` TESTS PASSED.
 - Note: the guard refused Bash inline python and sed for the agent-file edits (they name `tasks/`); I used the Edit tool instead and did not work around it any other way.
 - Nothing to picture: docs, prompts and tests only.
+
+- QA (round 1): all four criteria PASS. Agent-definition diffs are 12 identical one-line additions, nothing else. build.py prompts plus test_build.py test present; README "Handing back" states the rule once. Re-run counts: game/tools 620 OK (1 skipped), tools 530 OK, GUT 1735/1735 passed.
