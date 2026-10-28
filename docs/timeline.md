@@ -1970,3 +1970,8 @@ Entry format:
 - Decision or change: `tools/new_ticket.py` writes new tickets from one JSON input file: the next free numbers, the template's sections, the lead claimed, one timeline entry each and a single commit with only those files; it refuses to commit while a merge is in progress. `tasks/README.md` describes it ("Writing new tickets with a script"). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 515, GUT 1735.
 - Documents touched: tasks/README.md
 - Tasks: T-345
+
+## 2026-10-28: T-344 and T-348 merged, the batch-merge script and the guard fixes
+- Decision or change: `tools/merge_batch.py` merges a batch of tickets in one call, one line per ticket, the full output in a log file; on a stop it leaves master clean and removes its own done commit. It is now the way to merge (Working with the board, "Merging"). The guard (`.claude/hooks/board_gate.py`) now lets through read-only commands it used to refuse: `sort`, `uniq`, read-only `python -c` and a chained `board_inbox.py` call. Both passed QA and merged after QA (nothing the player sees). Tests on master: 620, 529, GUT 1735.
+- Documents touched: docs/working-with-the-board.md, tasks/README.md
+- Tasks: T-344, T-348

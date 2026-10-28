@@ -29,6 +29,7 @@ The task board reads the task files directly, so it is never behind: an agent's 
 on the page within a couple of seconds, and the board's drags are real status changes.
 """
 
+import ast
 import json
 import os
 import re
@@ -162,6 +163,61 @@ def pip_read_only(words):
         return False
     sub = next((w for w in rest if not w.startswith("-") or w in PIP_READ_ONLY), None)
     return sub in PIP_READ_ONLY
+
+
+SORT_VALUE_SHORT = set("ktSTo")   # sort's short options that take a value (-o: the output file)
+SORT_VALUE_LONG = ("--key", "--field-separator", "--buffer-size", "--temporary-directory", "--parallel",
+                   "--batch-size", "--files0-from", "--random-source", "--output", "--sort")
+UNIQ_VALUE_SHORT = set("fsw")
+UNIQ_VALUE_LONG = ("--skip-fields", "--skip-chars", "--check-chars")
+
+
+def _long_option(word, names):
+    """The long option of `names` that `word` spells (GNU tools take any unambiguous prefix), or None."""
+    opt = word.split("=", 1)[0]
+    hits = [n for n in names if len(opt) >= 3 and n.startswith(opt)]
+    return hits[0] if len(hits) == 1 else (opt if opt in names else None)
+
+
+def sort_uniq_reason(words, cwd, in_tasks):
+    """Why a sort or uniq could write a ticket (T-348): sort writes only the file of `-o`/`--output`, uniq only
+    its second file operand; refused when that file could be a ticket, or when sort is handed a program to run
+    (`--compress-program`). "" otherwise: both only read their input and print."""
+    name = words[0].lower().removesuffix(".exe")
+    short_values = SORT_VALUE_SHORT if name == "sort" else UNIQ_VALUE_SHORT
+    long_values = SORT_VALUE_LONG if name == "sort" else UNIQ_VALUE_LONG
+    outs, operands, i = [], [], 1
+    while i < len(words):
+        w = words[i]
+        if w == "--":
+            operands += words[i + 1:]
+            break
+        if w.startswith("--"):
+            if name == "sort" and len(w) > 3 and "--compress-program".startswith(w.split("=", 1)[0]):
+                return "`sort --compress-program` runs a program the guard can't judge"
+            opt = _long_option(w, long_values)
+            value = w.split("=", 1)[1] if "=" in w else (words[i + 1] if opt and i + 1 < len(words) else "")
+            if opt and "=" not in w:
+                i += 1
+            if opt == "--output":
+                outs.append(value)
+        elif w.startswith("-") and len(w) > 1:
+            for k, ch in enumerate(w[1:], 1):
+                if ch in short_values:
+                    value = w[k + 1:]
+                    if not value:
+                        value = words[i + 1] if i + 1 < len(words) else ""
+                        i += 1
+                    if ch == "o":
+                        outs.append(value)
+                    break
+        else:
+            operands.append(w)
+        i += 1
+    if name == "uniq" and len(operands) > 1:
+        outs.append(operands[1])
+    hit = next((o for o in outs if ticket_path(o, cwd, in_tasks)), None)
+    return f"`{name}` writes `{hit or '?'}`, which could be a ticket" if hit is not None else ""
 
 
 XARGS_VALUE_OPTIONS = {"-n", "-L", "-P", "-s", "-d", "-E", "-I", "-a", "-l"}
@@ -991,6 +1047,121 @@ def inline_code(seg, words):
     return None
 
 
+PY_FLAGS_RE = re.compile(r"-[IuBEsSOqbdvR]+|-")    # python options without a value, and - (the code on stdin)
+SHELL_EXPANDS_RE = re.compile(r"\$[\w{(?!#*@$-]|`")  # what a shell expands inside double quotes or a here-document
+PY_SAFE_MODULES = {
+    "sys", "os", "os.path", "re", "json", "glob", "pathlib", "collections", "itertools", "functools", "datetime",
+    "time", "math", "statistics", "fnmatch", "textwrap", "string", "csv", "difflib", "pprint", "operator",
+    "unicodedata", "hashlib", "typing", "heapq", "bisect", "decimal", "fractions", "html", "base64"}
+# names and attributes through which Python code could write, delete, move or run something
+PY_BAD_NAMES = {"exec", "eval", "compile", "__import__", "getattr", "setattr", "delattr", "globals", "locals",
+                "vars", "breakpoint", "__builtins__", "type"}
+PY_BAD_ATTRS = {
+    "write", "writelines", "write_text", "write_bytes", "rename", "renames", "unlink", "touch", "mkdir", "makedirs",
+    "rmdir", "removedirs", "remove", "symlink", "symlink_to", "hardlink_to", "link", "link_to", "chmod", "lchmod",
+    "chown", "lchown", "truncate", "ftruncate", "system", "popen", "startfile", "fork", "forkpty", "kill", "killpg",
+    "utime", "fdopen", "dup", "dup2", "putenv", "unsetenv", "mkfifo", "mknod", "modules", "copy", "copyfile",
+    "copy2", "copytree", "move", "rmtree", "dump", "mkstemp", "mkdtemp", "run", "call", "check_call",
+    "check_output", "Popen"}
+PY_READ_MODE_RE = re.compile(r"[rbtU]*")
+PY_OPEN_KEYWORDS = {"mode", "encoding", "errors", "newline", "buffering"}
+
+
+def python_code(seg, words):
+    """The exact Python source a segment runs inline (`python [-I] -c '<code>'`, or `python [-I] - <<'EOF'`), or
+    None when it is not Python or the shell could change the code (an expansion, an escape, mixed quoting)."""
+    if not words or words[0].lower() not in PYTHON_NAMES:
+        return None
+    i = 1
+    while i < len(words) and words[i] != "-c" and PY_FLAGS_RE.fullmatch(words[i]):
+        i += 1
+    if i < len(words) and words[i] == "-c" and i + 1 < len(words):
+        code = words[i + 1]
+        m = re.search(r"(?:^|\s)-c\s+(['\"])", seg.text)
+        if not m:
+            return None
+        end = seg.text.find(m.group(1), m.end())
+        if end < 0 or seg.text[m.end():end] != code or seg.text[end + 1:end + 2].strip():
+            return None   # not one quoted word, as the shell reads it
+        if m.group(1) == '"' and (SHELL_EXPANDS_RE.search(code) or "\\" in code):
+            return None
+        return code
+    if i == len(words) and len(seg.heredocs) == 1:
+        body, quoted = seg.heredocs[0]
+        return body if quoted or not (SHELL_EXPANDS_RE.search(body) or "\\" in body) else None
+    return None
+
+
+def _py_mode_ok(node):
+    return node is None or (isinstance(node, ast.Constant) and isinstance(node.value, str)
+                            and bool(PY_READ_MODE_RE.fullmatch(node.value)))
+
+
+def python_reads_only(code):
+    """Whether Python source can only read files and print (T-348): it parses, imports only modules from
+    PY_SAFE_MODULES, opens files only with a literal read mode, and names nothing that writes, deletes, moves or
+    runs anything (PY_BAD_NAMES, PY_BAD_ATTRS, any `_` attribute, a one-argument `.replace`, the target form of
+    Path.replace). Anything the check can't read counts as a writer."""
+    try:
+        tree = ast.parse(code)
+    except (SyntaxError, ValueError):
+        return False
+    approved = set()   # the `open` and `.replace` names used in calls that only read
+    imported = {(a.asname or a.name).split(".")[0] for n in ast.walk(tree) if isinstance(n, (ast.Import, ast.ImportFrom))
+                for a in n.names}
+
+    def root(node):   # the name an attribute chain starts from (os in os.path.x), or None past a call
+        while isinstance(node, ast.Attribute):
+            node = node.value
+        return node.id if isinstance(node, ast.Name) else None
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        f, kw = node.func, {k.arg: k.value for k in node.keywords}
+        if None in kw or any(isinstance(a, ast.Starred) for a in node.args):
+            continue   # **kwargs or *args: the mode can't be read
+        if isinstance(f, ast.Name) and f.id == "open":
+            if len(node.args) <= 2 and set(kw) <= PY_OPEN_KEYWORDS and \
+                    _py_mode_ok(node.args[1] if len(node.args) > 1 else kw.get("mode")):
+                approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr == "open":
+            # Path.open(mode): one positional at most (os.open needs its flags, so it never qualifies)
+            if len(node.args) <= 1 and set(kw) <= PY_OPEN_KEYWORDS and \
+                    _py_mode_ok(node.args[0] if node.args else kw.get("mode")):
+                approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr == "replace":
+            # str.replace(old, new) on a value, not Path.replace(target), os.replace(src, dst) or Path.replace(p, t)
+            if len(node.args) >= 2 and "target" not in kw and root(f.value) not in imported:
+                approved.add(id(f))
+        elif isinstance(f, ast.Attribute) and f.attr == "write" and isinstance(f.value, ast.Attribute) \
+                and f.value.attr in ("stdout", "stderr") and isinstance(f.value.value, ast.Name) \
+                and f.value.value.id == "sys":
+            approved.add(id(f))   # sys.stdout.write: printing
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            if any(a.name not in PY_SAFE_MODULES for a in node.names):
+                return False
+        elif isinstance(node, ast.ImportFrom):
+            if node.level or node.module not in PY_SAFE_MODULES or any(
+                    a.name in ("*", "open", "replace") or a.name in PY_BAD_ATTRS or a.name.startswith("_")
+                    or a.name.startswith(("exec", "spawn", "posix_spawn")) for a in node.names):
+                return False
+        elif isinstance(node, ast.Name):
+            if node.id in PY_BAD_NAMES or (node.id == "open" and id(node) not in approved):
+                return False
+        elif isinstance(node, ast.Attribute):
+            a = node.attr
+            if a.startswith("_") or a.startswith(("exec", "spawn", "posix_spawn")):
+                return False
+            if a in ("open", "replace", "write"):
+                if id(node) not in approved:
+                    return False
+            elif a in PY_BAD_ATTRS:
+                return False
+    return True
+
+
 TEST_RUNNERS = {"game/tools/run_tests.sh", "game/tools/run_tests.ps1"}
 
 
@@ -1091,6 +1262,22 @@ def script_args_reason(script, words):
     return ""
 
 
+# the project's own scripts, with the subcommands that write no ticket although the script's code names the
+# header fields (T-348: board_inbox.py reads a ticket's lead to route the board's moves; `name` and `watch` write
+# only .board/ files)
+NO_TICKET_SUBCOMMANDS = {"tools/board_inbox.py": {"name", "watch"}}
+
+
+def known_script_ok(script, words):
+    """Whether `python <project script> <subcommand> ...` is a call listed in NO_TICKET_SUBCOMMANDS."""
+    path = script.replace("\\", "/")
+    for known, subs in NO_TICKET_SUBCOMMANDS.items():
+        if path == known or path.endswith("/" + known):
+            rest = words[words.index(script) + 1:]
+            return bool(rest) and rest[0] in subs
+    return False
+
+
 def cd_bases(cmd, cwd=None):
     """The folders a command's relative paths could be read from: the working folder and every folder it cds into."""
     base = cwd or os.getcwd()
@@ -1143,8 +1330,13 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
             i += 1
         hit = next((a for a in args if ticket_path(a, cwd, in_tasks)), None)
         return f"`mktemp` makes `{hit or '?'}`, which could be a ticket" if hit is not None else ""
+    if words[0].lower() in ("sort", "uniq", "sort.exe", "uniq.exe"):
+        return sort_uniq_reason(words, cwd, in_tasks)
     code = inline_code(seg, words)
     if code is not None:
+        src = python_code(seg, words)
+        if src is not None and python_reads_only(src):
+            return ""   # T-348: Python that can only read and print
         if in_tasks:
             return "inline code run inside a tasks folder"
         m = CODE_TOUCHES_RE.search(code)
@@ -1184,6 +1376,8 @@ def why_risky(seg, cwd=None, in_tasks=False, bases=None, godot_var_ok=True):
         return f"`{name}` on `{hit}`, which could be a ticket" if hit else ""
     script = words[1] if name in ("source", ".") and len(words) > 1 else script_of(words)
     if script and not in_tasks:
+        if known_script_ok(script, words):
+            return ""
         return script_args_reason(script, words) or script_reason(script, bases or [cwd or os.getcwd()])
     return f"`{words[0]}`: a command the guard can't tell won't write a ticket"
 
