@@ -16,6 +16,8 @@ Wired in .claude/settings.json. One script for every event; it reads the hook's 
   command that caused it and why (T-212). On `git commit` it also checks every ticket
   that would be committed against the status script's record (tools/guard_ledger.py, T-149): the backstop
   for any write the command check can't see.
+- PreToolUse Bash/PowerShell: also refuses a command that prints a whole file over 20 KB (cat, type, Get-Content,
+  sed -n over 300+ lines) and names the alternatives (T-349).
 - PreToolUse Agent: refuses to start an agent on a task unless it runs on the task's model
   (tasks/README.md, "Models").
 - UserPromptSubmit, PostToolUse Agent: hands the Project Lead the board's moves on the task
@@ -1476,8 +1478,75 @@ def commit_check(cmd, cwd=None):
     return 0
 
 
+# --- A command that prints a whole big file is refused (T-349, token-spend epic) ---
+
+BIG_FILE_BYTES = 20_000     # a file over this is "big"
+BIG_SED_LINES = 300         # `sed -n 'A,Bp'` over more lines than this on a big file is refused
+WHOLE_FILE_PRINTERS = {"cat", "type", "get-content", "gc", "more", "bat"}
+BIG_PIECE_SPLIT_RE = re.compile(r"(\|\||&&|[;&\n]|\|)")
+
+
+def big_read_reason(cmd, cwd=None):
+    """A message when `cmd` prints a whole file over BIG_FILE_BYTES (cat, type, Get-Content, or sed -n over more
+    than BIG_SED_LINES lines) into the conversation; "" otherwise. A printer whose output goes into a pipe
+    (`| head`, `| grep`), a redirect, or that is capped (`Get-Content -TotalCount/-Tail/-Head`) passes."""
+    parts = BIG_PIECE_SPLIT_RE.split(cmd)
+    bases = cd_bases(cmd, cwd)
+    for i in range(0, len(parts), 2):
+        piece = parts[i].strip()
+        sep = parts[i + 1] if i + 1 < len(parts) else ""
+        if sep == "|" or ">" in piece or "<<" in piece:
+            continue   # the output is consumed by another command, or goes to a file
+        words = words_of(piece)
+        while words and ASSIGNMENT_RE.match(words[0]):
+            words = words[1:]
+        if not words:
+            continue
+        name = os.path.basename(words[0]).lower()
+        name = re.sub(r"\.exe$", "", name)
+        args = words[1:]
+        capped = False
+        if name in WHOLE_FILE_PRINTERS:
+            capped = any(re.fullmatch(r"-(totalcount|head|tail|first|last|readcount|n\d*)", a, re.I) for a in args)
+            files = [a for a in args if not a.startswith("-")]
+        elif name == "sed":
+            if "-n" not in args and not any(re.fullmatch(r"-[a-zA-Z]*n[a-zA-Z]*", a) for a in args):
+                continue
+            files, span = [], 0
+            for a in args:
+                m = re.fullmatch(r"(\d+),(\d+)p", a)
+                if m:
+                    span = max(span, int(m.group(2)) - int(m.group(1)) + 1)
+                elif a == "p":
+                    span = 10 ** 9
+                elif not a.startswith("-") and not re.fullmatch(r"[\d,$]*p", a):
+                    files.append(a)
+            capped = span <= BIG_SED_LINES
+        else:
+            continue
+        if capped:
+            continue
+        for f in files:
+            for base in bases:
+                path = os.path.join(base, windows_path(f))
+                try:
+                    size = os.path.getsize(path) if os.path.isfile(path) else 0
+                except OSError:
+                    size = 0
+                if size > BIG_FILE_BYTES:
+                    return (f"`{piece[:120]}` would print all of {f} ({size // 1000} KB) into the conversation, and "
+                            "everything printed is re-sent on every later call. Use the Read tool with an offset and "
+                            "limit, a search (grep -n / Grep) for the part you need, or a line range of at most "
+                            f"{BIG_SED_LINES} lines (head -n, tail -n, sed -n 'A,Bp'). Files under "
+                            f"{BIG_FILE_BYTES // 1000} KB, and output piped to head, tail or grep, pass.")
+    return ""
+
+
 def pre_shell(tool_input, cwd=None):
     cmd = tool_input.get("command") or ""
+    big = big_read_reason(cmd, cwd)
+    if big:
+        return deny(big)
     refused = commit_check(cmd, cwd)
     if refused:
         return refused

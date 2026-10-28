@@ -1990,3 +1990,8 @@ Entry format:
 - Decision or change: game/README.md (about 400 KB) is now a short index; its content lives in area files under game/docs/ (setup, driving, enemies, weapons with one file per weapon, level, game-loop, hud-and-menus, garage, art, sound, data), none over 40 KB, with no section lost and no broken link (the scripts' checks are in the ticket). The last step, rewriting open tickets' reading lists, was refused by the guard; nothing worked around it, and it moved to T-353 for the board to decide. Godot-generated .import files the branch had swept in were dropped before merging. QA passed the other criteria; merged after QA (nothing the player sees). Tests on master: 620, 530, GUT 1735.
 - Documents touched: game/README.md, game/docs/, docs/README.md, docs/long-gdd.md
 - Tasks: T-346, T-353
+
+## 2026-10-28: T-349 merged, a guard against very large shell output
+- Decision or change: the guard (`.claude/hooks/board_gate.py`) refuses printing a whole file over 20 KB (cat, type, Get-Content, sed -n over the whole file) and names the cheaper ways to read it (grep, a line range, the Read tool with a range). A Haiku summary of large output was assessed and not built (the reasons are in the ticket). QA passed all criteria; merged after QA (nothing the player sees). Tests on master: 620, 533, GUT 1735.
+- Documents touched: tasks/README.md
+- Tasks: T-349

@@ -875,6 +875,48 @@ class SedBodyEdits(Base):
                 self.assertEqual(self.cmd(c), "deny")
 
 
+class BigOutput(Base):
+    """T-349: a command that prints a whole file over 20 KB is refused; small files and capped output pass."""
+
+    def cmd(self, command, cwd=None):
+        return decide(gate.pre_shell, {"command": command}, cwd)
+
+    def setUp(self):
+        super().setUp()
+        import tempfile
+        self.dir = tempfile.mkdtemp()
+        (Path(self.dir) / "big.md").write_text("line of text\n" * 3000, encoding="utf-8")
+        (Path(self.dir) / "small.md").write_text("line\n" * 20, encoding="utf-8")
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.dir, ignore_errors=True)
+        super().tearDown()
+
+    def test_cat_of_a_big_file_is_refused_with_the_alternatives(self):
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            gate.pre_shell({"command": "cat big.md"}, self.dir)
+        out = json.loads(buf.getvalue())["hookSpecificOutput"]
+        self.assertEqual(out["permissionDecision"], "deny")
+        for word in ("Read tool", "offset", "grep"):
+            self.assertIn(word, out["permissionDecisionReason"])
+
+    def test_other_whole_file_printers_and_wide_sed_are_refused(self):
+        for c in ["type big.md", "Get-Content big.md", "gc big.md", "sed -n '1,2000p' big.md", "sed -n p big.md",
+                  "cat big.md small.md", "cd . && cat big.md"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, self.dir), "deny")
+
+    def test_small_files_and_capped_output_pass(self):
+        for c in ["cat small.md", "head -50 big.md", "tail -n 20 big.md", "grep -n line big.md",
+                  "cat big.md | head -50", "cat big.md | grep line", "sed -n '10,60p' big.md",
+                  "Get-Content big.md -TotalCount 40", "Get-Content big.md | Select-Object -First 40",
+                  "cat big.md > out.txt", "cat missing.md", "git log --oneline"]:
+            with self.subTest(c=c):
+                self.assertEqual(self.cmd(c, self.dir), "allow")
+
+
 class LedgerUnits(unittest.TestCase):
     def test_state_sees_every_line_and_ignores_the_comment_block(self):
         text = "---\nid: T-1\nstatus: open\nqa_rounds: 0\nlead:\nStatus : done\n---\n<!--\nstatus: x\n-->\n"
