@@ -1,7 +1,7 @@
 ---
 id: T-334
 title: "Hearts in the run: damage in hearts, 1 second of invulnerability with a blink, health drops"
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
