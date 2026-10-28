@@ -33,6 +33,8 @@ A task is not done until every document listed in documents_affected has been up
 
 Subagent reports pasted back into the Project Lead's conversation were the largest single cost in the long sessions (about 880k characters, 11% of the weighted cost in session 88cd). From now on (board's go, 2026-10-28) an agent writes its full report in the ticket's result notes and hands back at most about 300 characters: the ticket id, done or blocked, and one line on what the Project Lead must act on. The same for QA: the pass or fail per criterion stays on the ticket, the hand-back is one line.
 
+Two more lines go in the same hand-back wording (board's go, 2026-10-28, through the Tokens session's recommendations): run tests in the foreground and leave no background jobs when handing back (finished agents with leftover background test runs woke up again and re-sent their hand-back, 60k to 150k tokens each time); and commit the ticket, result notes and QA results included, before handing back (the wave-1 QA agents left their pass results uncommitted in the worktree, which held up the merges).
+
 Change the hand-back rule where the agents get it: the common hand-back wording in each agent definition (`.claude/agents/*.md`; only that wording, not their roles), the goal runner's agent and QA prompts (`tools/goal_agent/build.py`), and `tasks/README.md`. The board approved this change to the agent definitions for this ticket. Don't touch anything else in the definitions.
 
 Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and milestones"). The evidence behind it is the Tokens session's recon of 2026-10-28 (summarised in `docs/timeline.md`, "2026-10-28: The token-spend epic"). Work on your own branch and folder, as `tasks/README.md` ("Git branches") describes. Nothing to picture: the result notes say so in one line. If an edit to `.claude/` is refused by the permission system or a safety check, stop and say so; don't work around it.
@@ -41,7 +43,7 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every agent definition in `.claude/agents/` tells the agent to put its full report in the ticket's result notes and to hand back one short line (about 300 characters at most); the diff touches nothing else in them. (QA: pass / fail)
+- [ ] Every agent definition in `.claude/agents/` tells the agent to put its full report in the ticket's result notes and to hand back one short line (about 300 characters at most), to run tests in the foreground and leave no background jobs, and to commit the ticket (result notes and QA results included) before handing back; the diff touches nothing else in them. (QA: pass / fail)
 - [ ] The goal runner's agent and QA prompts say the same, and a test in `tools/goal_agent/test_build.py` checks it. (QA: pass / fail)
 - [ ] `tasks/README.md` states the rule once, and the other places point to it. (QA: pass / fail)
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
