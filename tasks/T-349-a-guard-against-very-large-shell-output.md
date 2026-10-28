@@ -1,7 +1,7 @@
 ---
 id: T-349
 title: Token spend: a guard against very large shell output
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/hooks/board_gate.py, tools/test_guard.py, .claude/settings.json]
 files_expected_to_change: [.claude/hooks/board_gate.py, tools/test_guard.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -45,11 +45,11 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The result notes say what PreToolUse and PostToolUse hooks can do with shell output, citing the documentation. (QA: pass / fail)
-- [ ] `cat` of a file over the limit is refused with a message naming the alternatives; `cat` of a small file, `head -50` of a big one and `grep` on a big one pass (a guard test each). (QA: pass / fail)
-- [ ] The result notes cover the Haiku-summary idea (possible or not, cost) without building it. (QA: pass / fail)
-- [ ] Every existing guard test still passes unchanged. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The result notes say what PreToolUse and PostToolUse hooks can do with shell output, citing the documentation. (QA: pass)
+- [ ] `cat` of a file over the limit is refused with a message naming the alternatives; `cat` of a small file, `head -50` of a big one and `grep` on a big one pass (a guard test each). (QA: pass)
+- [ ] The result notes cover the Haiku-summary idea (possible or not, cost) without building it. (QA: pass)
+- [ ] Every existing guard test still passes unchanged. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -81,3 +81,4 @@ Written by the agent when it finishes.
 4. Haiku-summary idea (not built). Possible: a PostToolUse command hook can run `claude -p --model haiku` on the stdout and return `updatedToolOutput` with the summary (plus the saved full output's path), or a `prompt`/`agent` hook type could do it. Cost: each large output is paid once more as Haiku input (cheap per token, but a call adds seconds of latency), and the main agent sees a summary it cannot trust to be complete, so it must re-read parts. Risks: hiding error lines, and the original output is gone from the conversation unless the hook saves it to a file. Worth trying only for a threshold such as output over 20 KB, after the refusal guard has shown how often large output remains. The better first step is likely a PostToolUse truncation (head and tail with a pointer to a saved file) with no model call.
 5. Tests: `BigOutput` class in `tools/test_guard.py` (3 tests: big cat refused with alternatives named; type/Get-Content/gc/sed wide/multi-file/cd refused; small cat, head -50, tail, grep, piped, sed range, TotalCount, redirect, missing file, git log pass). All earlier guard tests unchanged and pass (74 in test_guard). Docs: `tasks/README.md` gets one paragraph before the second-guard paragraph.
 6. Test sets: `game/tools` 620 tests OK (1 skipped); `tools` 532 tests OK; `bash game/tools/run_tests.sh` TESTS PASSED (Godot leak warnings at exit are pre-existing).
+- 2026-10-28, in-qa → done: QA pass
