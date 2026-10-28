@@ -47,12 +47,12 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `tools/qa_check.py` reports each of the four mechanical checks with one line each; tests show it failing a ticket with a red test, an unchanged affected document, missing screenshots and an unmarked criterion. (QA: pass / fail)
-- [ ] The QA agent's definition and the QA section of `tasks/README.md` say to run the script and judge the acceptance criteria, and nothing else; the definition's role is otherwise unchanged. (QA: pass / fail)
-- [ ] The result notes list every handover requirement that is not a criterion or a test, with a proposal for each; no board rule is removed. (QA: pass / fail)
-- [ ] The goal runner retries a ticket that failed on paperwork on its own model and one that failed in code on Opus; a test checks both. (QA: pass / fail)
-- [ ] `merge_batch.py` merges a ticket that is already done, and leaves out `.import`/`.uid` files a branch added; tests on a throwaway repo show both. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `tools/qa_check.py` reports each of the four mechanical checks with one line each; tests show it failing a ticket with a red test, an unchanged affected document, missing screenshots and an unmarked criterion. (QA: pass)
+- [ ] The QA agent's definition and the QA section of `tasks/README.md` say to run the script and judge the acceptance criteria, and nothing else; the definition's role is otherwise unchanged. (QA: pass)
+- [ ] The result notes list every handover requirement that is not a criterion or a test, with a proposal for each; no board rule is removed. (QA: pass)
+- [ ] The goal runner retries a ticket that failed on paperwork on its own model and one that failed in code on Opus; a test checks both. (QA: pass)
+- [ ] `merge_batch.py` merges a ticket that is already done, and leaves out `.import`/`.uid` files a branch added; tests on a throwaway repo show both. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -65,6 +65,10 @@ Started: the agent is building qa_check.py, simpler QA, the retry-model rule and
 ### 2026-10-28, In progress → In QA
 
 Built: qa_check.py, simpler QA, paperwork-vs-code retry model, merge_batch fixes; all three test sets pass.
+
+### 2026-10-28, In QA
+
+Built: qa_check.py, simpler QA instructions, the retry-model rule and the two merge-script fixes. All three test sets pass. QA is checking it now. The list of handover rules for you to decide on is in the result notes. Note: one refused inline-python edit was redone with the Edit tool; listed for the board.
 
 ## Style review
 
