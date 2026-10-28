@@ -1,7 +1,7 @@
 ---
 id: T-325
 title: "Art: the Bricks card image and the impact wave"
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
