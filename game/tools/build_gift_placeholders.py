@@ -8,7 +8,7 @@ Two simple shapes so the board can play the gift pack drop before any art exists
 Both have a 1 pixel dark outline, a transparent background and no semi-transparent pixels.
 No red (the placeholders' rule when they were made; red is no longer reserved, Visual
 style, Decisions, "Red after the rebrand", but the check is kept). The final art replaces them in tasks T-145 (helicopter) and T-146 (package):
-see game/README.md, "The gift pack drop".
+see game/docs/game-loop/gift-pack-and-pickups.md, "The gift pack drop".
 
 Commands (run from the repo root):
   python game/tools/build_gift_placeholders.py build    # game/art/gift_pack/*_placeholder.png

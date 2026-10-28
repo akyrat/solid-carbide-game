@@ -1,7 +1,7 @@
 ---
 id: T-346
 title: Token spend: split game/README.md into one folder per game area
-status: open
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, game/README.md]
 files_expected_to_change: [game/README.md, game/docs/, tasks/, docs/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,16 +44,28 @@ Part of the token-spend epic (board, 2026-10-28; `tasks/README.md`, "Epics and m
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/README.md` is under 10 KB and lists every file under `game/docs/`; the folders match the layout in the description. (QA: pass / fail)
-- [ ] No section of the old README is lost: every old `## ` heading is found in a new file or named in the index as shrunk (a script's check, its output in the result notes). (QA: pass / fail)
-- [ ] No file under `game/docs/` is over 40 KB, and `weapons/` holds one file per weapon. (QA: pass / fail)
-- [ ] No link in the repo points to a removed README anchor (a link check's output in the result notes). (QA: pass / fail)
-- [ ] No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `game/README.md` is under 10 KB and lists every file under `game/docs/`; the folders match the layout in the description. (QA: pass)
+- [ ] No section of the old README is lost: every old `## ` heading is found in a new file or named in the index as shrunk (a script's check, its output in the result notes). (QA: pass)
+- [ ] No file under `game/docs/` is over 40 KB, and `weapons/` holds one file per weapon. (QA: pass)
+- [ ] No link in the repo points to a removed README anchor (a link check's output in the result notes). (QA: pass)
+- [ ] ~~No ticket that is not done or cancelled still lists `game/README.md` alone; each lists the area file(s) it needs.~~ Moved to T-353 by the Project Lead (2026-10-28): the guard refused the bulk ticket edit, and the board decides how it may be done. QA skips this one. (QA: pass, skipped: moved to T-353)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-28, Open → In progress
+
+Started: the agent is splitting game/README.md into area folders.
+
+### 2026-10-28, In progress → In QA
+
+Built: game/README.md is now a short index with area files under game/docs/. The guard refused the bulk rewrite of other tickets' reading lists; nothing worked around it. I moved that step into T-353 for you to decide. QA is checking the rest.
+
+## QA result (round 1)
+
+1 PASS (index 5612 B, 43 files all listed, folders match). 2 PASS (0 old headings missing). 3 PASS (none over 40 KB, 6 weapon files plus shared). 4 PASS (no links to removed anchors; remaining `../../../README.md#secrets...` target the root README). 5 moved to T-353. 6 PASS (game/tools 620 OK, tools 529 OK, GUT TESTS PASSED).
 
 ## Style review
 
@@ -61,4 +73,13 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Written by the agent (Sonnet) at the end of the build. No screenshots: nothing to picture (docs only).
+
+**Status: blocked on one criterion (the ticket list).** A hook refused the one command that rewrites other tickets' `files_to_read_first` (`PreToolUse:Bash`: "inline code that names task files"). I did not work around it. The script is ready at `C:\Users\andre\AppData\Local\Temp\claude\C--solid-carbide-game\2c104619-72b8-44ca-a9af-e1e03eadc5a7\scratchpad\fix_tickets.py` (maps 33 open/blocked tickets to area files; run from the worktree). The Project Lead must run it or hand it to someone allowed, then QA criterion 5.
+
+**What was done**
+- `game/README.md` is now a 5.6 KB index (one line per file). The old text is in `game/docs/`, moved by script, not rewritten: `setup/` (4 files), `driving/` (drift, collisions, tricks, effects), `enemies/` (minions, ledges-and-rooftops, kaiju, meteors), `weapons/` (shared plus starting-gun, flamethrower, neon-underglow, molotovs, windshield-wiper, bricks), `level/` (mvp-map, challenge-check, elevation-test-scene, elevation-sample-map, level-creator, level-creator-pieces), `game-loop/` (screen-flow, the-run, gift-pack-and-pickups), `hud-and-menus/` (main-menu, hud, popups, pause-screen, camera, level-up-screen), `garage/`, `art/` (pixellab, car-sprites, ground-and-props, rebrand-sweep), `sound/` (3), `data/`. 43 files. The rebrand sweep and first-road-tile sections were kept whole, not shrunk.
+- Check 1: index 5612 bytes, every `game/docs` file listed, none unlisted. Check 2: every old `## ` heading found in the new files, 0 missing. Check 3: largest file 30 KB (level-creator-pieces.md), none over 40 KB; weapons/ has one file per weapon (6) plus shared.md.
+- Links: the old README was linked only without anchors. Every reference to `game/README.md` with a named section, in docs/, agent-notes/, README.md, tasks/README.md, game code, tools and data, now points at the right area file. Left on purpose: docs/timeline.md, docs/long-gdd.md (regenerated at merge), the art-archive/T-306 script, goals/ and tools/goal_agent tests (history, or the index is right). `test_snapping.gd` read `res://README.md` for SNAP_DISTANCE; it now reads `res://docs/level/level-creator.md`. `docs/README.md` got one line about `game/docs/`.
+- Tests: `python -m unittest discover -s game/tools` 620 OK (1 skipped); `python -m unittest discover -s tools` 529 OK; `bash game/tools/run_tests.sh` all GUT tests passed.
+- 2026-10-28, in-qa → done: QA pass

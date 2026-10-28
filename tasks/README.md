@@ -174,7 +174,7 @@ When a task needs the board to look at, read, listen to or play something, its t
 
 Every task ends with screenshots of its work wherever anything can be shown (board, 2026-10-19), whether or not it has a `The board's review:` line:
 
-- **Something on screen** (a scene, an effect, a screen, art in the game): screenshots of it in the game, taken with the screenshot tool (`game/README.md`), enough to show the change (for motion, a few frames or a strip).
+- **Something on screen** (a scene, an effect, a screen, art in the game): screenshots of it in the game, taken with the screenshot tool (`game/docs/setup/screenshots.md`), enough to show the change (for motion, a few frames or a strip).
 - **Nothing on screen yet** (data, a layout, physics numbers): a picture drawn from the data by a script where it helps (a map of a layout, a plot of a curve), saying what it shows.
 - **Nothing to picture** (tooling, docs, text-only work): none; the result notes say so in one line.
 

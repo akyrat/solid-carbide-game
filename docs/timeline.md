@@ -1985,3 +1985,8 @@ Entry format:
 - Decision or change: every agent definition, the goal runner's prompts and tasks/README.md ("Handing back") now say: the full report goes in the ticket's result notes, the hand-back is one line of about 300 characters, tests run in the foreground with no background jobs left, and the ticket is committed before handing back. QA passed all criteria (the agent-file diffs are the hand-back line only). The guard refused the agent's inline python/sed edits and it made them with the Edit tool; listed for the board. `merge_batch.py` stopped on this ticket because QA had already marked it done; merged by hand, and the fix goes into T-347. Tests on master: 620, 530, GUT 1735.
 - Documents touched: tasks/README.md, .claude/agents/
 - Tasks: T-343
+
+## 2026-10-28: T-346 merged, game/README.md split into area folders
+- Decision or change: game/README.md (about 400 KB) is now a short index; its content lives in area files under game/docs/ (setup, driving, enemies, weapons with one file per weapon, level, game-loop, hud-and-menus, garage, art, sound, data), none over 40 KB, with no section lost and no broken link (the scripts' checks are in the ticket). The last step, rewriting open tickets' reading lists, was refused by the guard; nothing worked around it, and it moved to T-353 for the board to decide. Godot-generated .import files the branch had swept in were dropped before merging. QA passed the other criteria; merged after QA (nothing the player sees). Tests on master: 620, 530, GUT 1735.
+- Documents touched: game/README.md, game/docs/, docs/README.md, docs/long-gdd.md
+- Tasks: T-346, T-353

@@ -10,7 +10,7 @@ extends RefCounted
 ## With no ground the height stays 0. The ground's sides (task T-184) can stop
 ## the move: step() returns the wall for car.gd to bounce off (see _walk).
 ##
-## Every number below is a proposal for the board's playtest (game/README.md,
+## Every number below is a proposal for the board's playtest (game/docs/level/elevation-test-scene.md,
 ## "Elevation test scene", "The car's height").
 
 ## Gravity in the air, units/s^2 (proposal).

@@ -90,8 +90,8 @@ func test_a_boulder_goes_on_the_cell_under_the_cursor() -> void:
 # ---- Close neighbours ---------------------------------------------------------------------------
 
 func test_the_snap_distance_is_documented() -> void:
-	var readme := FileAccess.get_file_as_string("res://README.md")
-	assert_true(readme.contains("SNAP_DISTANCE"), "game/README.md names the snap distance")
+	var readme := FileAccess.get_file_as_string("res://docs/level/level-creator.md")
+	assert_true(readme.contains("SNAP_DISTANCE"), "game/docs/level/level-creator.md names the snap distance")
 	assert_true(readme.contains("%d units" % int(LevelSnapping.SNAP_DISTANCE)), "and gives its value")
 
 

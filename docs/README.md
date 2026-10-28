@@ -104,3 +104,4 @@ A section with nothing in it yet says `(To be written.)` or, for Open questions 
 - Mermaid diagrams and relative image links are fine.
 - One home for each fact: if a fact belongs in another document, link to it.
 - The board's drawings and sketches are stored in a folder named after the game area doc they belong to (for example `docs/level-design/`), and linked from that doc's References.
+- How the game is built (the code side) is in `game/docs/`, one folder per game area, with `game/README.md` as the index (T-346). A game area document points to the file it needs there; agents read only that file, not the whole folder.

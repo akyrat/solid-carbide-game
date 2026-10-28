@@ -215,7 +215,7 @@ def build(mvp_layout):
     layout["generated_by"] = "python game/tools/build_elevation_sample_map.py"
     layout["based_on"] = "game/data/level/mvp_map.json"
     layout["elevation_note"] = (
-        "Height data (platforms, ramps) in the format of game/README.md, 'Elevation sample map', "
+        "Height data (platforms, ramps) in the format of game/docs/level/elevation-sample-map.md, "
         "'Height data'; checked with game/tools/check_height_data.py. Every rooftop and ramp is a "
         "proposal for the board's playtest. Left out from the MVP map: %d buildings under rooftops, "
         "%d boulders on rooftops, ramps or in front of a ramp's foot, %d pattern copies left with no "

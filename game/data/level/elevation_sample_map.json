@@ -8480,7 +8480,7 @@
   }
  ],
  "based_on": "game/data/level/mvp_map.json",
- "elevation_note": "Height data (platforms, ramps) in the format of game/README.md, 'Elevation sample map', 'Height data'; checked with game/tools/check_height_data.py. Every rooftop and ramp is a proposal for the board's playtest. Left out from the MVP map: 4 buildings under rooftops, 8 boulders on rooftops, ramps or in front of a ramp's foot, 4 pattern copies left with no boulder and 1 challenges whose copy lost a boulder.",
+ "elevation_note": "Height data (platforms, ramps) in the format of game/docs/level/elevation-sample-map.md, 'Height data'; checked with game/tools/check_height_data.py. Every rooftop and ramp is a proposal for the board's playtest. Left out from the MVP map: 4 buildings under rooftops, 8 boulders on rooftops, ramps or in front of a ramp's foot, 4 pattern copies left with no boulder and 1 challenges whose copy lost a boulder.",
  "platforms": [
   {
    "id": "roof-nw-3",

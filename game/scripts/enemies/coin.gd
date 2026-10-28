@@ -4,7 +4,7 @@ extends Area2D
 ##
 ## It lives in the flat top-down physics world like the car, as an Area2D on
 ## collision layer 4 (pickups) with mask 2 (the car), so it notices the car
-## driving over it (game/README.md, "Collision layers"). `sprite`
+## driving over it (game/docs/driving/collisions.md, "Collision layers"). `sprite`
 ## (coin_sprite.gd) draws it in the isometric view; it is freed with the coin.
 
 const PX_PER_UNIT := 16.0

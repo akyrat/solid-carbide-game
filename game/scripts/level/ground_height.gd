@@ -1,7 +1,7 @@
 class_name GroundHeight
 extends RefCounted
 ## Ground height of the elevation test scene (T-182): a query over data only,
-## no nodes and no physics. Format: game/README.md, "Elevation test scene".
+## no nodes and no physics. Format: game/docs/level/elevation-test-scene.md, "Elevation test scene".
 ## World units, x east, y south (north = -y). Every number in the data is a proposal.
 
 const DEFAULT_PATH := "res://data/level/elevation_test.json"

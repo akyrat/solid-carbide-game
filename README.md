@@ -67,7 +67,7 @@ The board (the game's designer) talks to the Project Lead, which turns requests 
    python tools/generate_agent_diagrams.py --check            # the agent diagrams are up to date
    ```
 
-   `game/README.md` has the PowerShell versions and the other game tools.
+   `game/docs/setup/tests.md` has the PowerShell versions and the other game tools.
 
 **Working on the game:**
 
@@ -86,7 +86,7 @@ Godot is not on the PATH. The test and screenshot scripts in `game/tools/` read 
 GODOT_BIN=C:/Tools/Godot/Godot_v4.6.2-stable_win64_console.exe   # full path to the Godot console executable
 ```
 
-If `GODOT_BIN` is already set in the environment, the scripts use that value instead of `.env`. How to run the tests and take screenshots: `game/README.md`.
+If `GODOT_BIN` is already set in the environment, the scripts use that value instead of `.env`. How to run the tests and take screenshots: `game/docs/setup/tests.md` and `game/docs/setup/screenshots.md`.
 
 ### Freesound (used by the SFX Agent)
 

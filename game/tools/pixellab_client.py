@@ -15,7 +15,7 @@ with an error and is logged. `generate` runs only inside a live style loop run
 started by tools/style_loop/run.py (T-292; require_style_loop below); outside
 one it is refused before anything is sent. `balance` works anywhere.
 
-Usage, from the repo root (see game/README.md for details):
+Usage, from the repo root (see game/docs/art/pixellab.md for details):
 
     python game/tools/pixellab_client.py balance
     python game/tools/pixellab_client.py generate \

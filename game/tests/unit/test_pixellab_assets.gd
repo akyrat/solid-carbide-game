@@ -2,7 +2,7 @@ extends GutTest
 ## Checks every PixelLab-generated image in res://art/: each PNG with a
 ## record JSON next to it (written by tools/pixellab_client.py)
 ## must load as a texture in Godot with the size its record gives.
-## The client script's own tests are Python: see game/README.md.
+## The client script's own tests are Python: see game/docs/setup/tests.md.
 
 const ART_ROOT := "res://art"
 
