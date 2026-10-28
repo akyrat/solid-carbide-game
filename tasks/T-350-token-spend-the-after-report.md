@@ -1,7 +1,7 @@
 ---
 id: T-350
 title: Token spend: the after report, compared with the baseline
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -50,6 +50,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-28, Open → In progress
+
+Started on your go to finish the epic tonight: an early read of the period since the new tools merged, with the command to rerun it after the next playtest batch.
 
 ## Style review
 
