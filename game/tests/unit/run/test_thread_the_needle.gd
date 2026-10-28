@@ -198,7 +198,8 @@ func test_a_run_pays_the_trick_with_the_popup() -> void:
 	assert_almost_eq(float(tricks[0][1]), ComboData.new().trick_add("thread_the_needle"), 0.000001)
 	assert_almost_eq(run.state.combo, before + 0.5, 0.000001)
 	var pop = run.trick_popups.popups().back()
-	assert_eq(pop.text, "THREAD THE NEEDLE! +0.5", "T-271's text word for word, with +{amount}")
+	assert_eq(pop.text, TrickPopups.trick_text("thread_the_needle", TrickPopups.trick_viewers(0.5, before + 0.5)), "T-271's text word for word, with +{amount}")
+	assert_true(pop.text.begins_with("THREAD THE NEEDLE! +"))
 
 
 func test_a_run_crash_into_either_obstacle_pays_nothing_and_cuts_the_combo() -> void:
@@ -218,7 +219,7 @@ func test_a_run_crash_into_either_obstacle_pays_nothing_and_cuts_the_combo() -> 
 
 func test_the_popup_text_word_for_word() -> void:
 	assert_eq(TrickPopups.TEXTS["thread_the_needle"], "THREAD THE NEEDLE!")
-	assert_eq(TrickPopups.trick_text("thread_the_needle", 0.5), "THREAD THE NEEDLE! +0.5")
+	assert_eq(TrickPopups.trick_text("thread_the_needle", 12000.0), "THREAD THE NEEDLE! +12.0K", "T-336: +{viewers}")
 	assert_eq(TrickPopups.trick_text("thread_the_needle", 0.0), "THREAD THE NEEDLE!", "at the cap: the name only")
 
 

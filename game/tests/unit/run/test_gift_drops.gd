@@ -474,7 +474,7 @@ func _hud_parts(hud: Hud) -> Dictionary:
 		"heart": hud.heart.get_global_rect(),
 		"Likes": hud.likes_label.get_global_rect(),
 		"Hype Lv": hud.level_label.get_global_rect(),
-		"combo": hud.combo_label.get_global_rect(),
+		"viewers": hud.viewers_counter.get_global_rect(),
 		"timer": hud.timer_label.get_global_rect(),
 		"coins": hud.coins_label.get_parent().get_global_rect(),
 		"fire": hud.likes_fire.get_global_rect(),

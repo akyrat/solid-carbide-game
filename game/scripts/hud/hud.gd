@@ -4,13 +4,14 @@ extends CanvasLayer
 ## the car's health bar upright at the top left (T-276: 72 x 320, the heart
 ## under it, the weapon icons beside it), the coins
 ## at the top right, and the likes bar lying across the bottom centre with the
-## likes row (heart, "Likes", "Hype Lv") and the combo counter above it
-## (hidden at no combo, T-116). The HUD only shows values: the run
+## likes row (heart, "Likes", "Hype Lv") above it, and the live viewers counter at
+## the bottom right (T-336, in place of the combo counter). The HUD only shows values: the run
 ## state owns them (`time_left_changed`, `health_changed`, `xp_changed`,
 ## `coins_changed`). The texts are from T-048. Since T-131 the combo counter,
 ## "Likes" and "Hype Lv" are in the comic font (Bangers, hard pixel edges),
-## and the counter heats up in steps as the combo climbs (ComboHeat), with
-## the likes bar on fire at the top step (LikesFire).
+## and the combo heats up in steps as it climbs (ComboHeat), with
+## the likes bar on fire at the top step (LikesFire). Since T-336 the combo shows
+## as live viewers (ViewersCounter), with its own heat steps and fire.
 
 const LABEL_FONT_SIZE := 20
 const LABEL_COLOR := Color(0.92, 0.95, 1.0)
@@ -48,17 +49,9 @@ const TEXT_LIVE_BADGE := "LIVE"
 const TEXT_VIEWERS_UNIT := "WATCHING"
 const TEXT_LEVEL := "Hype Lv {level}"
 const TEXT_COINS := "Coins"
-# Text from T-082 (combo.label); {multiplier} is the current multiplier, e.g. "2.5".
-const TEXT_COMBO := "Combo x{multiplier}"
-## Combo counter base look (not red: only the heart is); the hotter steps are
-## in ComboHeat.STEPS (T-131).
-const COMBO_FONT_SIZE := 30
-const COMBO_COLOR := Color(1.0, 0.25, 0.75)
-## The comic font of the trick popups (T-084), used since T-131 by the combo
-## counter, "Likes" and "Hype Lv". It has capitals only.
+## The comic font of the trick popups (T-084), used since T-131 by the HUD's
+## texts and since T-336 by the live viewers counter. It has capitals only.
 const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
-## Space between the combo counter and the likes row under it.
-const COMBO_GAP := 4
 ## The airtime counter's top left corner from the screen's centre (T-243).
 const AIRTIME_OFFSET := Vector2(70, -10)
 ## The drift counter's top left corner from the screen's centre (T-247): under
@@ -81,20 +74,19 @@ var coins_value_label: Label
 var heart: TextureRect
 ## The heart's fixed-size box in the likes row; holds `heart`.
 var heart_box: Control
-## The combo counter (T-083), centred above the likes row. Hidden at no
-## combo (T-116): see show_combo().
-var combo_label: Label
+## The live viewers counter at the bottom right (T-336): the combo shown as viewers.
+var viewers_counter: ViewersCounter
 ## The top-left area: the health bar, the heart under it and the weapon icons (T-113, T-276).
 var left_column: Control
 ## The red heart centred under the health bar (T-276; the likes bar's heart picture).
 var health_heart: TextureRect
 ## The car's weapons as icons beside the health bar (T-276).
 var weapon_icons: WeaponIcons
-## A full-screen area holding the likes bar, its row and the combo counter.
+## A full-screen area holding the likes bar and its row.
 var bottom_area: Control
 ## The heart and "Likes", at the left end of the row above the likes bar.
 var likes_row: HBoxContainer
-## The combo's heat steps (T-131): restyles combo_label, lights likes_fire.
+## The combo's heat steps (T-131): lights likes_fire (the counter has its own, T-336).
 var combo_heat: ComboHeat
 ## The flames along the likes bar at the top heat step (T-131).
 var likes_fire: LikesFire
@@ -109,6 +101,8 @@ var _state: RunState
 static var _comic_font: FontFile = null
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
 var _combo_data: ComboData
+## The trick popups whose amounts fly into the viewers counter (bind_popups, T-336).
+var _popups: Node
 
 
 func _ready() -> void:
@@ -118,6 +112,7 @@ func _ready() -> void:
 	_build_left()
 	_build_bottom()
 	_build_coins()
+	_build_viewers()
 	_build_airtime()
 	_build_drift()
 
@@ -254,28 +249,18 @@ func _build_bottom() -> void:
 	level_label = _make_label("LevelLabel", TEXT_LEVEL.format({"level": 1}))
 	level_label.add_theme_font_override("font", comic_font())
 	bottom_area.add_child(level_label)
-	combo_label = _make_label("ComboLabel", combo_text(1.0))
-	combo_label.add_theme_font_override("font", comic_font())
-	combo_label.add_theme_font_size_override("font_size", COMBO_FONT_SIZE)
-	combo_label.add_theme_color_override("font_color", COMBO_COLOR)
-	combo_label.add_theme_constant_override("outline_size", 10)
-	combo_label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	# A run starts with no combo: hidden until a trick raises it (T-116).
-	combo_label.visible = false
-	bottom_area.add_child(combo_label)
 	level_up_flash.setup(level_label)
 	combo_heat = ComboHeat.new()
 	add_child(combo_heat)
-	combo_heat.setup(combo_label, likes_fire)
+	combo_heat.setup(null, likes_fire)
 	_layout_bottom()
-	for c: Control in [bottom_area, likes_row, level_label, combo_label]:
+	for c: Control in [bottom_area, likes_row, level_label]:
 		c.resized.connect(_layout_bottom)
 
 
 ## The likes bar centred at the bottom, half the screen wide; the likes row
 ## directly above it (heart and "Likes" from its left edge, "Hype Lv" ending
-## at its right edge, both labels on the same line); the combo counter
-## centred above the row.
+## at its right edge, both labels on the same line).
 func _layout_bottom() -> void:
 	var view := bottom_area.size
 	var bar_w := roundf(view.x * LIKES_BAR_WIDTH)
@@ -289,13 +274,6 @@ func _layout_bottom() -> void:
 	likes_row.position = Vector2(likes_bar.position.x, row_y)
 	level_label.size = Vector2(level_label.get_combined_minimum_size().x, row_h)
 	level_label.position = Vector2(likes_bar.position.x + bar_w - level_label.size.x, row_y)
-	combo_label.size = combo_label.get_combined_minimum_size()
-	combo_label.position = Vector2(
-		roundf(likes_bar.position.x + (bar_w - combo_label.size.x) / 2.0),
-		row_y - COMBO_GAP - combo_label.size.y)
-	# The heat's pulse grows the counter from its bottom centre: up and to
-	# both sides, never down into the row, and it stays centred (T-131).
-	combo_label.pivot_offset = Vector2(combo_label.size.x / 2.0, combo_label.size.y)
 	likes_fire.place(likes_bar.get_rect())
 	level_up_flash.place(likes_bar.get_rect())
 	# "Hype Lv" pops from its bottom right corner: up and to the left, never
@@ -342,9 +320,10 @@ static func comic_font() -> FontFile:
 	return _comic_font
 
 
-## "Combo x2.5": the multiplier without trailing zeros.
-static func combo_text(multiplier: float) -> String:
-	return TEXT_COMBO.format({"multiplier": String.num(multiplier, 2)})
+## The live viewers counter (T-336), anchored to the bottom-right corner (hud.json).
+func _build_viewers() -> void:
+	viewers_counter = ViewersCounter.new()
+	add_child(viewers_counter)
 
 
 func _make_label(label_name: String, text: String) -> Label:
@@ -399,6 +378,7 @@ func bind(state: RunState) -> void:
 		_state.xp_changed.disconnect(_on_xp_changed)
 		_state.coins_changed.disconnect(_on_coins_changed)
 		_state.combo_changed.disconnect(_on_combo_changed)
+		_state.combo_broken.disconnect(_on_combo_broken)
 		_state.level_up.disconnect(_on_level_up)
 	_state = state
 	_state.time_left_changed.connect(_on_time_left_changed)
@@ -406,6 +386,7 @@ func bind(state: RunState) -> void:
 	_state.xp_changed.connect(_on_xp_changed)
 	_state.coins_changed.connect(_on_coins_changed)
 	_state.combo_changed.connect(_on_combo_changed)
+	_state.combo_broken.connect(_on_combo_broken)
 	_state.level_up.connect(_on_level_up)
 	level_up_flash.stop()
 	_likes_level = 0
@@ -415,6 +396,7 @@ func bind(state: RunState) -> void:
 	_on_health_changed(_state.health, _state.max_health)
 	_on_xp_changed(_state.xp, _state.xp_needed(), _state.level)
 	_on_coins_changed(_state.coins)
+	viewers_counter.reset(_state.combo)
 	_on_combo_changed(_state.combo)
 
 
@@ -484,9 +466,40 @@ func _on_coins_changed(coins: int) -> void:
 
 
 func _on_combo_changed(multiplier: float) -> void:
-	combo_label.text = combo_text(multiplier)
-	combo_label.visible = show_combo(multiplier)
+	viewers_counter.set_multiplier(multiplier)
 	combo_heat.set_multiplier(multiplier)
+
+
+## A crash cut the combo (T-336): the counter flashes red and drops the viewers lost.
+func _on_combo_broken() -> void:
+	viewers_counter.crash(viewers_counter.last_loss())
+
+
+## Flies the trick popups' "+viewers" into the viewers counter from now on (T-336):
+## the counter holds a trick's viewers back until its amount lands. The run scene
+## calls it once the popups exist.
+func bind_popups(popups: Node) -> void:
+	if _popups != null and is_instance_valid(_popups):
+		_popups.viewers_popup.disconnect(_on_viewers_popup)
+		_popups.amount_detached.disconnect(_on_amount_detached)
+	_popups = popups
+	popups.fly_amounts = true
+	popups.viewers_popup.connect(_on_viewers_popup)
+	popups.amount_detached.connect(_on_amount_detached)
+
+
+func _on_viewers_popup(p: Node2D) -> void:
+	viewers_counter.hold(p.viewers_gain)
+	# A popup pushed out before its amount left (the three-popup limit): no flight,
+	# the viewers count in at once.
+	p.tree_exiting.connect(func() -> void:
+		if not p.amount_gone:
+			viewers_counter.release(p.viewers_gain))
+
+
+func _on_amount_detached(p: Node2D, screen_at: Vector2) -> void:
+	var amount: String = TrickPopupArt.split_text(p.text)[1]
+	viewers_counter.fly_in(amount, p.viewers_gain, screen_at)
 
 
 ## The combo's heat step now (0 base, 1 from x2, 2 from x3, 3 from x4; T-131).
@@ -499,10 +512,3 @@ func fire_on() -> bool:
 	return likes_fire.burning and likes_fire.visible
 
 
-## Whether the combo counter shows at this multiplier (T-116): only above "no
-## combo", combo.json's start_multiplier. Compared at the two decimals the
-## counter shows, so a combo that would read "x1.0" stays hidden. Hiding it
-## moves nothing else: every HUD element has its own fixed place.
-func show_combo(multiplier: float) -> bool:
-	var no_combo := _combo_data.start_multiplier() if _combo_data != null else 1.0
-	return snappedf(multiplier, 0.01) > snappedf(no_combo, 0.01)

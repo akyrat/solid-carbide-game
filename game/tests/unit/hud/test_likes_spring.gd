@@ -137,11 +137,11 @@ func test_the_bar_is_64_px_tall_and_clear_of_everything_at_every_size() -> void:
 		assert_eq(bar.size.y, 64.0, "%s" % size)
 		assert_almost_eq(bar.size.x, size.x * 0.5, 1.0)
 		assert_almost_eq(size.y - bar.end.y, float(Hud.MARGIN), 0.5, "same distance from the bottom")
-		for part in [hud.likes_row, hud.level_label, hud.combo_label]:
+		for part in [hud.likes_row, hud.level_label]:
 			var rect: Rect2 = part.get_global_rect()
 			assert_true(view.encloses(rect), "on screen %s" % size)
 			assert_lte(rect.end.y, bar.position.y + 0.01, "above the bar %s" % size)
 		for name in ["airtime_counter", "drift_counter"]:
 			var c: Control = hud.get(name)
 			if c != null and c.visible:
-				assert_false(c.get_global_rect().intersects(hud.combo_label.get_global_rect()), name)
+				assert_false(c.get_global_rect().intersects(hud.viewers_counter.get_global_rect()), name)

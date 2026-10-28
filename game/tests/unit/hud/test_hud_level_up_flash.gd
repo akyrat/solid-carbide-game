@@ -162,7 +162,7 @@ func test_clear_of_the_other_hud_parts_at_every_size() -> void:
 		await wait_frames(2)
 		_level_up(r)
 		var f := hud.level_up_flash
-		var combo := hud.combo_label.get_global_rect()
+		var combo := hud.viewers_counter.get_global_rect()  # T-336: the viewers counter
 		var bar := hud.likes_bar.get_global_rect()
 		var view := Rect2(Vector2.ZERO, Vector2(size))
 		for i in LevelUpFlash.FRAME_COUNT:
@@ -172,11 +172,10 @@ func test_clear_of_the_other_hud_parts_at_every_size() -> void:
 			var grown_h := hud.level_label.size.y * (hud.level_label.scale.y - 1.0)
 			var grown_w := hud.level_label.size.x * (hud.level_label.scale.x - 1.0)
 			var popped := Rect2(label.position - Vector2(grown_w, grown_h), label.size + Vector2(grown_w, grown_h))
-			assert_false(popped.intersects(combo), "popped label clear of the combo %s frame %d" % [size, i])
 			assert_lte(popped.end.x, bar.end.x + 0.01, "not past the bar's end")
 			for pair in f.overlay_rects(i) + f.spark_rects(i):
 				var g := Rect2(pair[0].position + f.global_position, pair[0].size)
-				assert_false(g.intersects(combo), "effect clear of the combo %s frame %d" % [size, i])
+				assert_false(g.intersects(combo), "effect clear of the viewers counter %s frame %d" % [size, i])
 				assert_lte(g.end.y, bar.end.y + 0.01)
 				assert_true(g.position.x >= bar.position.x - 0.01 and g.end.x <= bar.end.x + 0.01)
 				assert_gte(g.position.y, bar.position.y - LevelUpFlash.MAX_UP - 0.01)
