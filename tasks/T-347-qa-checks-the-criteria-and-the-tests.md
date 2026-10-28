@@ -13,7 +13,7 @@ changes_visuals: no
 depends_on: []
 documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/agents/qa-integration.md, tools/goal_agent/build.py]
-files_expected_to_change: [tools/qa_check.py, tools/test_qa_check.py, .claude/agents/qa-integration.md, tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/test_build.py]
+files_expected_to_change: [tools/merge_batch.py, tools/test_merge_batch.py, tools/qa_check.py, tools/test_qa_check.py, .claude/agents/qa-integration.md, tasks/README.md, tools/goal_agent/build.py, tools/goal_agent/test_build.py]
 model: sonnet
 qa_rounds: 0
 ---
@@ -37,6 +37,7 @@ A task is not done until every document listed in documents_affected has been up
 2. Simplify the QA agent's instructions and the QA section of `tasks/README.md`: run `qa_check.py`, then judge each acceptance criterion, nothing else. A ticket fails only on a criterion or a red check.
 3. List every handover requirement in `tasks/README.md` that is not an acceptance criterion or a test, in the result notes, with a proposal for each (keep, fold into the criteria, or drop). Don't drop any board rule yourself (the style loop's records are a board rule, 2026-10-25): the board decides from the list.
 4. In the goal runner (`tools/goal_agent/build.py`, `RETRY_MODEL`), retry a failed ticket on its own model unless the failure was in code; say how the runner tells the two apart.
+5. Added by the Project Lead (2026-10-28, from merging wave 2): QA now marks a passing ticket done on its branch, and `tools/merge_batch.py` stops on such a ticket ("T-343 is already done"). Make `merge_batch.py` accept a ticket that is already done (skip the status step, keep the rest). Also, a branch that added Godot-generated files (`*.import`, `*.uid`) not tracked on `master` blocked a merge (T-346, 20 files); have `merge_batch.py` leave such added files out of the merge, as it already does with `.import` line-ending noise, and say so in its line.
 
 The board approved the change to the QA agent's definition for this ticket.
 
@@ -50,6 +51,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] The QA agent's definition and the QA section of `tasks/README.md` say to run the script and judge the acceptance criteria, and nothing else; the definition's role is otherwise unchanged. (QA: pass / fail)
 - [ ] The result notes list every handover requirement that is not a criterion or a test, with a proposal for each; no board rule is removed. (QA: pass / fail)
 - [ ] The goal runner retries a ticket that failed on paperwork on its own model and one that failed in code on Opus; a test checks both. (QA: pass / fail)
+- [ ] `merge_batch.py` merges a ticket that is already done, and leaves out `.import`/`.uid` files a branch added; tests on a throwaway repo show both. (QA: pass / fail)
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
 
 ## Updates
