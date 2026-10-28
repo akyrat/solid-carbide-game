@@ -1,7 +1,7 @@
 ---
 id: T-339
 title: "Art: the livestream HUD (clock, live viewers counter and its fire, sub goal, hearts, icons)"
-status: flagged-for-review
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -59,6 +59,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: PixelLab go, up to 40 generations.
+
+### 2026-10-28, Flagged for review → In progress
+
+Board's go (overnight HUD work, no stopping): the fire at 7/10 after 3 refines is kept and noted for the morning playtest, as in a goal run; sending to QA.
+
+### 2026-10-28, In progress → In QA
+
+QA running now; the fire (7/10) is listed for the board's playtest.
 
 ## Style review
 
