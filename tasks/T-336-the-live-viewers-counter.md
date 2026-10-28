@@ -1,7 +1,7 @@
 ---
 id: T-336
 title: "The live viewers counter at the bottom right, and tricks that bring viewers"
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
