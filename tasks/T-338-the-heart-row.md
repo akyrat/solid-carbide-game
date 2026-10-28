@@ -1,7 +1,7 @@
 ---
 id: T-338
 title: The hearts in a row at the top left, in place of the health bar
-status: open
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -52,10 +52,18 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-28, Open → In progress
+
+Started from the playtest build (T-334 approved). Layout from the board's page (1152x648): hearts x36 y24 w220 h40.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built by the UI Agent (2026-10-28). The health bar and the heart under it are gone; `HeartRow` (`game/scripts/hud/heart_row.gd`, `hud.heart_row`) shows one T-339 heart per heart the car can have, full or empty, at x36 y24 (220 x 40 at 1152 x 648, 44 x 40 cells). A lost heart flashes white and shakes (0.4 s), a healed one pops (0.3 s); a second row starts past 10 (max 30 drawn). Weapon icons moved to x12 y88. Gift arrows keep clear of the row. Only the health display changed (T-351 untouched). Docs: `docs/hud-and-menus.md` (Decisions, top-left passage), `game/docs/hud-and-menus/hud.md` ("The hearts row"); game/README.md is an index, so no change there.
+
+Tests: new `tests/unit/hud/test_hud_heart_row.gd` (5 hearts, hit, heal, garage heart, second row, new run, weapon icons clear); updated layout, values, weapon icons, heart art, gift drops and health upgrade tests. Counts: GUT 1791 passing in the full run (one flaky failure in `test_run_likes` drift payment, a timing test under load; it passes alone, 35/35, and is not about the HUD); game/tools unittest 545 OK; tools unittest OK.
+
+Screenshots: `art-archive/T-338/screenshots/hearts_full.png`, `hearts_hit.png`, `hearts_garage.png` (`bash game/tools/record_heart_row.sh`, fixture `heart_row_demo`). No GIF (animation covered by tests). Note: a second row (11+ hearts) reaches y108 and would touch the top of the weapon icons column; only matters if hearts pass 10.
