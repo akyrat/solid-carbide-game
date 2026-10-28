@@ -1,7 +1,7 @@
 ---
 id: T-332
 title: "Game data: the live viewers curve, its heat steps and how the number moves"
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -62,6 +62,10 @@ Started in the livestream HUD build.
 
 Built; QA running now (the board's go to finish without stopping).
 
+### 2026-10-28, Needs playtest → Done
+
+The board approved it; merging to master next.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -81,3 +85,4 @@ Done by the Game Data Agent. Commit on the branch: "T-332: live viewers curve...
 - Documents updated: docs/game-loop-architecture.md (combo section), game/README.md (data section). The long GDD was not regenerated; the Project Lead does that when merging.
 
 QA round 1: all 4 criteria pass. qa_check: tests PASS (3 sets), documents PASS (2 changed). The screenshots check flags only because the ticket is data-only (changes_visuals: no, no HUD): nothing can be shown and no criterion asks for one. Curve, anchors and x1 are in viewers.json with 13 GUT tests; thresholds, fire, motion and wobble each have a _comment reason; trick gain, crash loss and format have tests. Test counts (agent's, all passing in qa_check): unittest game/tools 620, unittest tools 501, GUT 1701.
+- 2026-10-28, needs-playtest → done: The board approved it (2026-10-28).
