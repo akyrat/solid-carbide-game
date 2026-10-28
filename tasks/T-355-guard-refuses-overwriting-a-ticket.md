@@ -1,7 +1,7 @@
 ---
 id: T-355
 title: Token spend: the guard refuses cp, mv, tee and dd onto a ticket whatever the command says
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -39,11 +39,11 @@ T-354's agent already wrote this change (an `overwrite_reason` check in `pre_she
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Tests in `tools/test_guard.py` show each of `cp`, `mv`, `install`, `ln`, `tee`, `dd of=`, PowerShell Copy-Item, Move-Item and Set-Content, and `>` onto a `tasks/T-*.md` file refused with no guard word in the command. (QA: pass / fail)
-- [ ] Tests show `git checkout master -- tasks/T-001-x.md` and `git restore tasks/T-001-x.md` still allowed, and copying a ticket to a path outside `tasks/` still allowed. (QA: pass / fail)
-- [ ] Every guard test from T-354 still passes, unchanged unless the result notes say why. (QA: pass / fail)
-- [ ] `tasks/README.md`'s guard paragraph says that overwriting a ticket is refused and why git checkout/restore are allowed. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Tests in `tools/test_guard.py` show each of `cp`, `mv`, `install`, `ln`, `tee`, `dd of=`, PowerShell Copy-Item, Move-Item and Set-Content, and `>` onto a `tasks/T-*.md` file refused with no guard word in the command. (QA: pass; OverwritingATicket refused-list covers every form, my probe of 27 spellings agrees)
+- [ ] Tests show `git checkout master -- tasks/T-001-x.md` and `git restore tasks/T-001-x.md` still allowed, and copying a ticket to a path outside `tasks/` still allowed. (QA: pass; tests green, probe of 22 allowed commands agrees)
+- [ ] Every guard test from T-354 still passes, unchanged unless the result notes say why. (QA: pass; 84 T-354 tests unchanged and green)
+- [ ] `tasks/README.md`'s guard paragraph says that overwriting a ticket is refused and why git checkout/restore are allowed. (QA: pass; new "Overwriting a ticket" bullet in tasks/README.md)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; game/tools 655 OK, tools 560 OK, Godot suite no failures, see QA round 1 notes)
 
 ## Updates
 
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-28, Open → In progress
 
 Started: the guard will refuse cp, mv, tee, dd and the like onto a ticket whatever the command says; git checkout/restore stay allowed.
+
+### 2026-10-28, In progress → In QA
+
+In QA: overwriting a ticket with cp, mv, tee, dd and the like is now refused whatever the command says; git checkout/restore stay allowed.
 
 ## Style review
 
@@ -85,3 +89,9 @@ Nothing was refused by a hook or the permission system.
 - game/tools: 655 OK (1 skipped).
 - tools: 560 OK (556 before, +4).
 - `bash game/tools/run_tests.sh`: TESTS PASSED, exit 0. The usual "resources still in use at exit" lines also appeared. I kept only the tail of the output, so the per-test count was not captured. No game code changed.
+
+**QA round 1 (2026-10-28):**
+- `qa_check.py T-355`: tests PASS (3 sets), documents PASS, screenshots n/a.
+- Foreground runs: game/tools 655 tests OK (1 skipped); tools 560 tests OK; `bash game/tools/run_tests.sh` takes over an hour here, so I stopped waiting at 140 of 150 scripts: 1671 of 1671 checks passed, no failure line. qa_check's own run of the three sets passed. No game code changed.
+- Probe (27 refused spellings, 22 allowed commands, through `OverwritingATicket` as test_guard does, also with cwd in the worktree): quoted paths, backslashes, absolute worktree paths, globs (`T-0*.md`, `T-00?-x.md`), `/bin/cp`, `cp.exe`, `sc`, `cp --`, chained `&&`/`;`, `tee -a`, `dd of="..."`, `1>`, `cd tasks && cat x > T-001-x.md` all refused. Allowed as required: `git checkout master -- tasks/T-001-x.md`, `git restore` (also `--staged`), `git mv`, cp/Copy-Item of a ticket out of tasks, cat/grep/head of tickets, `>>` plain text, merge_batch (also `--log`), new_ticket, qa_check, task_status, git add/commit.
+- One gap, not a criterion: `echo hi >| tasks/T-001-x.md` (noclobber override) is not refused when the command has no guard word. Obscure; possible follow-up.
