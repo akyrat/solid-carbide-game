@@ -1,7 +1,7 @@
 ---
 id: T-343
 title: Token spend: agents write their full report on the ticket and hand back one short line
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md]
 files_to_read_first: [tasks/README.md, .claude/agents/qa-integration.md, tools/goal_agent/build.py]
 files_expected_to_change: [.claude/agents/, tools/goal_agent/build.py, tools/goal_agent/test_build.py, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -76,3 +76,4 @@ Written by the agent when it finishes.
 - Nothing to picture: docs, prompts and tests only.
 
 - QA (round 1): all four criteria PASS. Agent-definition diffs are 12 identical one-line additions, nothing else. build.py prompts plus test_build.py test present; README "Handing back" states the rule once. Re-run counts: game/tools 620 OK (1 skipped), tools 530 OK, GUT 1735/1735 passed.
+- 2026-10-28, in-qa → done: QA pass
