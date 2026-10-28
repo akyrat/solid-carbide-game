@@ -1,0 +1,40 @@
+{
+  "file": "card_v1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "a small neat stack of old clay bricks, four rows staggered like a brick wall, warm terracotta brown bricks with darker shaded side faces and lighter lit top edges, thin grey-white mortar lines between them, one loose brick leaning against the side of the stack, a chip broken off one corner, seen from a 3/4 view from above showing the top and one side, retro pixel art, game icon",
+    "image_size": {
+      "width": 64,
+      "height": 64
+    },
+    "no_background": true,
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 8
+  },
+  "prompt": "a small neat stack of old clay bricks, four rows staggered like a brick wall, warm terracotta brown bricks with darker shaded side faces and lighter lit top edges, thin grey-white mortar lines between them, one loose brick leaning against the side of the stack, a chip broken off one corner, seen from a 3/4 view from above showing the top and one side, retro pixel art, game icon",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-28T03:53:18+00:00",
+  "image": {
+    "width": 64,
+    "height": 64,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/weapons.md",
+    "game/art/level_up/weapon_molotov.json",
+    "game/art/level_up/weapon_wiper.json"
+  ],
+  "task": "T-325",
+  "job_status": null,
+  "notes": "Style loop v1 of the Bricks level-up card (brief art-archive/T-325/briefs/card.md)",
+  "generator": "game/tools/pixellab_client.py"
+}

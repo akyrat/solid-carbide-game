@@ -2040,3 +2040,8 @@ Entry format:
 - Decision or change: The board's go, from the token-spend early read: hook refusals rose to 4.3% of calls, most of them the ticket guard refusing commands that only mention tasks or the word Lead, and three agents redid a refused edit with the Edit tool. A ticket makes the guard refuse only commands that really write a ticket's status, lead or qa_rounds, with the night's real refusals as tests; anything it can't be sure of stays refused.
 - Documents touched: tasks/README.md
 - Tasks: T-354
+
+## 2026-10-28: Bricks art
+- Decision or change: The Bricks card image (8/10) and impact wave (9/10), 1 PixelLab generation; the board approved it.
+- Documents touched: docs/visual-style.md
+- Tasks: T-325
