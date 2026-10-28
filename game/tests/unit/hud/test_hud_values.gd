@@ -12,14 +12,14 @@ func _run() -> Node2D:
 	return r
 
 
-func test_health_bar_follows_health() -> void:
+func test_hearts_follow_health() -> void:
 	var r := _run()
 	var hud: Hud = r.hud
-	assert_almost_eq(hud.health_bar.value, r.state.max_health, 0.001)
-	assert_almost_eq(hud.health_bar.max_value, r.state.max_health, 0.001)
-	r.state.damage_car(r.state.max_health * 0.25)
-	assert_almost_eq(hud.health_bar.value, r.state.health, 0.001)
-	assert_lt(hud.health_bar.value, hud.health_bar.max_value)
+	assert_eq(hud.heart_row.max_hearts, int(r.state.max_health))
+	assert_eq(hud.heart_row.full_count, int(r.state.max_health))
+	r.state.damage_car(1.0)
+	assert_eq(hud.heart_row.full_count, int(r.state.health))
+	assert_lt(hud.heart_row.full_count, hud.heart_row.max_hearts)
 
 
 func test_sub_goal_follows_xp() -> void:
@@ -54,7 +54,7 @@ func test_fresh_run_resets_the_values() -> void:
 	r.state.add_xp(r.state.xp_needed() * 1.2)
 	r.start_run()
 	assert_eq(r.hud.coins_value_label.text, "0")
-	assert_almost_eq(r.hud.health_bar.value, r.state.max_health, 0.001)
+	assert_eq(r.hud.heart_row.full_count, int(r.state.max_health))
 	assert_eq(r.hud.sub_goal.fill, 0.0)
 	assert_eq(r.hud.sub_goal.subs, 0)
 	assert_false(r.hud.sub_goal.lit)
@@ -103,8 +103,7 @@ func _texts_with(n: Node, word: String) -> Array:
 
 func test_heart_is_the_only_red_part() -> void:
 	var r := _run()
-	assert_eq(r.hud.health_heart.get_child_count(), 0, "the heart is its art, no drawn shape")
-	assert_eq(r.hud.health_heart.texture.resource_path, Hud.HEART_PATH)
+	assert_eq(r.hud.heart_row.hearts[0].texture.resource_path, HeartRow.FULL_PATH)
 	for c: Color in [Hud.HEALTH_COLOR, SubGoal.FILL_COLOR, Hud.COINS_COLOR]:
 		var red: bool = c.h < 0.04 or c.h > 0.96
 		assert_false(red, "not red: %s" % c)

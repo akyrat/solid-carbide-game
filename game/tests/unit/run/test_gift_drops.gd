@@ -467,9 +467,8 @@ func _package_at_drawn(drawn_offset: Vector2) -> GiftPackage:
 
 func _hud_parts(hud: Hud) -> Dictionary:
 	return {
-		"health bar": hud.health_bar.get_global_rect(),
+		"hearts": hud.heart_row.get_global_rect(),
 		"sub goal": hud.sub_goal.get_global_rect().merge(hud.sub_goal.label_row.get_global_rect()),
-		"health heart": hud.health_heart.get_global_rect(),
 		"weapon icons": hud.weapon_icons.get_global_rect(),
 		"viewers": hud.viewers_counter.get_global_rect(),
 		"timer": hud.timer_label.get_global_rect(),
