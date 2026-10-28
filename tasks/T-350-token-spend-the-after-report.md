@@ -1,7 +1,7 @@
 ---
 id: T-350
 title: Token spend: the after report, compared with the baseline
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/README.md]
 files_to_read_first: [tasks/README.md, docs/token-spend/baseline-2026-10-28.md, tools/token_report.py]
 files_expected_to_change: [docs/token-spend/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -77,3 +77,4 @@ An early read, not the full after report: the board asked for the epic to finish
 - Headline: 5.0M tokens per merged ticket against 12.5M (different work; not credited to the tickets); git merge/push output 199 characters per call against 1,849 (the one plausible effect, T-344, 11 calls); failed calls 9.7% against 5.1%, hook refusals 4.3% against 1.2%; subagent reports 18.5% of weighted context against 14.3%; the 500k limit untested (no session passed 206k).
 - `tools/token_report.py`: `--from`/`--to` also accept a UTC time, since a date can't split the day at 01:43Z; `tools/test_token_report.py` has a test for it. `docs/README.md`: the rerun note and a pointer to the early read.
 - Tests (foreground): `python -m unittest discover -s game/tools -p "test_*.py"`: Ran 620, OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"`: Ran 546, OK. `bash game/tools/run_tests.sh`: TESTS PASSED.
+- 2026-10-28, in-qa → done: QA pass
