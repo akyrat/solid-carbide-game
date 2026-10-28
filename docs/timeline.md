@@ -2035,3 +2035,8 @@ Entry format:
 - Decision or change: The board ran the checked fix script: 27 open or blocked tickets now list their area files under game/docs/ in files_to_read_first instead of game/README.md (T-353, split out of T-346). The board accepted T-347's proposals on handover rules: ten stay as they are; QA no longer judges whether screenshots show what the notes say (qa_check.py checks they exist, and a ticket that shows something says in its criteria what its screenshots must show); the style-loop record is enforced by task_status.py before QA, so QA judges only the criteria.
 - Documents touched: tasks/README.md
 - Tasks: T-353, T-347
+
+## 2026-10-28: A ticket so the guard refuses only real ticket writes
+- Decision or change: The board's go, from the token-spend early read: hook refusals rose to 4.3% of calls, most of them the ticket guard refusing commands that only mention tasks or the word Lead, and three agents redid a refused edit with the Edit tool. A ticket makes the guard refuse only commands that really write a ticket's status, lead or qa_rounds, with the night's real refusals as tests; anything it can't be sure of stays refused.
+- Documents touched: tasks/README.md
+- Tasks: T-354
