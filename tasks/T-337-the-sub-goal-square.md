@@ -1,7 +1,7 @@
 ---
 id: T-337
 title: The sub goal square in place of the likes bar, with the gift pack inside it
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md, docs/visual-style.md, game/README.md, game/scripts/hud/, game/art/gift_pack/package.png]
 files_expected_to_change: [game/scripts/hud/, game/scenes/, game/tests/unit/hud/, game/README.md, docs/hud-and-menus.md, art-archive/T-337/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -47,13 +47,13 @@ The board's review: play a run: the square fills as you drift, the gift lights u
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The likes bar and its row are gone; the sub goal square shows at the layout page's position (at 1152 x 648), anchored to the right edge, and no "Hype Lv" text or code is left (test). (QA: pass / fail)
-- [ ] The square's fill is the share of the current goal, with the spring on gains, and empties with the drain (tests). (QA: pass / fail)
-- [ ] The gift is centred at 80% of the square, greyed until the goal and in full colour at it; the level-up and gift pack drop work as before (tests). (QA: pass / fail)
-- [ ] The label under it shows "{subs} / {goal}" from T-331's text (test). (QA: pass / fail)
-- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-337/screenshots/`: the square part-filled with the grey gift, and a GIF of it reaching the goal. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] The likes bar and its row are gone; the sub goal square shows at the layout page's position (at 1152 x 648), anchored to the right edge, and no "Hype Lv" text or code is left (test). (QA: pass)
+- [ ] The square's fill is the share of the current goal, with the spring on gains, and empties with the drain (tests). (QA: pass)
+- [ ] The gift is centred at 80% of the square, greyed until the goal and in full colour at it; the level-up and gift pack drop work as before (tests). (QA: pass)
+- [ ] The label under it shows "{subs} / {goal}" from T-331's text (test). (QA: pass)
+- [ ] HUD and menus, Content and game/README.md describe it. (QA: pass)
+- [ ] Screenshots (or a GIF for anything that moves) are in `art-archive/T-337/screenshots/`: the square part-filled with the grey gift, and a GIF of it reaching the goal. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -111,3 +111,5 @@ UI Agent, 2026-10-28. Built in `C:\solid-carbide-worktrees\T-337` on `task/T-337
 - `docs/hud-and-menus.md` (Content): the Bottom centre bullet is replaced by "Sub goal (task T-337)". The level-up animation bullet is marked replaced. The combo heat's fire is now on the square. The texts section is updated (subs icon, and the Subs word no longer shown on its own).
 - `game/docs/hud-and-menus/hud.md`: in place of `game/README.md`. A new "The sub goal (task T-337)" paragraph, and the HUD, heart, spring and level-up paragraphs are marked updated or removed.
 - `game/README.md`: the index line for hud.md.
+
+**QA, round 1 (QA agent, 2026-10-28):** all 7 criteria pass. qa_check: 3 test sets pass, documents changed, 3 screenshots present. Square, grey gift, label and the part-filled screenshot checked by eye. No "Hype Lv" or likes-bar code is left except comments and tests that assert its absence. The README criterion is met by game/docs/hud-and-menus/hud.md, the index in game/README.md and docs/hud-and-menus.md. Test counts as reported by the agent: 645 / 545 / 1763 (qa_check confirmed all sets pass).
