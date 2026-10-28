@@ -39,7 +39,7 @@ const DEFAULT_CFG := {
 	"cap": 60, "alpha": 0.9, "icon_scale": 4,
 	"rates_per_second": [0.0, 2.0, 3.5, 5.0, 7.5],
 	"group_min": 1, "group_max": 2, "gap_min_share": 0.4, "gap_max_share": 1.8,
-	"rise_min": 90.0, "rise_max": 160.0, "wobble_px": 16.0, "wobble_hz": 0.6,
+	"rise_min": 180.0, "rise_max": 320.0, "wobble_px": 16.0, "wobble_hz": 0.6,
 	"edge_margin": 24.0, "fade_out_from": 0.55, "pop_seconds": 0.25, "pop_from": 0.5, "fade_in": 0.2,
 	"burst_count": 10, "burst_speed_min": 200.0, "burst_speed_max": 420.0,
 	"burst_drag": 1.5, "burst_rise": 30.0, "burst_seconds_min": 1.3, "burst_seconds_max": 1.9,
