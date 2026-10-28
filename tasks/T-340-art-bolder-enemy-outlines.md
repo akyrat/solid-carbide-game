@@ -1,7 +1,7 @@
 ---
 id: T-340
 title: "Art: bolder enemy outlines, so the player sees and avoids them"
-status: in-progress
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/enemies.md, game/README.md]
 files_expected_to_change: [game/art/, game/tools/, art-archive/T-340/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ The board's review: play a run and see whether the enemies stand out more agains
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every enemy sprite (all minion kinds, frames and directions, and the kaiju) has the bolder outline, made by a script in game/tools/ that is rerunnable, with the originals in art-archive/T-340/. (QA: pass / fail)
-- [ ] The sprites still pass the pixel rules (`style_rules.py art`: colours, alpha, size), and the game loads them (the existing enemy and art tests pass). (QA: pass / fail)
-- [ ] Each sprite set scored at least 8 in the style loop, with every round in the Style review. (QA: pass / fail)
-- [ ] Visual style and game/README.md record it. (QA: pass / fail)
-- [ ] Before and after screenshots of enemies on the street and a rooftop are in `art-archive/T-340/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Every enemy sprite (all minion kinds, frames and directions, and the kaiju) has the bolder outline, made by a script in game/tools/ that is rerunnable, with the originals in art-archive/T-340/. (QA: pass)
+- [ ] The sprites still pass the pixel rules (`style_rules.py art`: colours, alpha, size), and the game loads them (the existing enemy and art tests pass). (QA: pass)
+- [ ] Each sprite set scored at least 8 in the style loop, with every round in the Style review. (QA: pass)
+- [ ] Visual style and game/README.md record it. (QA: pass)
+- [ ] Before and after screenshots of enemies on the street and a rooftop are in `art-archive/T-340/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-27, Open → In progress
 
 Started: script pass, no PixelLab.
+
+### 2026-10-28, In progress → In QA
+
+Built; QA running now (the board's go to finish without stopping).
 
 ## Style review
 
@@ -110,3 +114,4 @@ Style loop (each set as one strip, all 8/10 in round 1, no refines): minion walk
 Screenshots before and after (street, rooftop, kaiju on a rooftop) and enlarged comparisons on dark and light backgrounds: `art-archive/T-340/screenshots/`. Outlines read clearly on the street.
 
 Tests: `game/tools` unittest and `tools` unittest both OK (626 tests with 1 skipped, and 501), new `game/tools/test_build_bolder_outlines.py` has 6 tests. Docs updated: Visual style, game/README.md.
+QA round 1 (sonnet): qa_check all pass (3 test sets, 2 docs changed, 8 screenshots). Criteria 1-6 pass: rerunnable script, pixel rules ok, three style-loop runs 8/10 recorded, docs updated, screenshots present, tests green.
