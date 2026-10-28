@@ -1,7 +1,7 @@
 ---
 id: T-352
 title: "Art: the reaction icons (likes, thumbs up, hearts) for the livestream bursts"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/hud-and-menus.md, docs/working-with-the-board.md, game/docs/hud-and-menus/hud.md, game/docs/art/pixellab.md, tasks/T-351-reaction-bursts-on-a-sub-goal-and-at-high-viewers.md]
 files_expected_to_change: [game/art/hud/, art-archive/T-352/, docs/visual-style.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,12 +41,12 @@ The board's review: see the icons in the burst and floating up in a run.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/art/hud/` holds the reaction icons (about 6), each its own PNG with a record, and they replace T-351's placeholders in the game. (QA: pass / fail)
-- [ ] Each icon scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] The PixelLab generations used are within the board's go and listed in the result notes (or none, if all script work). (QA: pass / fail)
-- [ ] Visual style and game/README.md record the art. (QA: pass / fail)
-- [ ] A contact sheet, enlarged, on a dark and a light background, and a screenshot of the burst in a run are in `art-archive/T-352/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `game/art/hud/` holds the reaction icons (about 6), each its own PNG with a record, and they replace T-351's placeholders in the game. (QA: pass: 6 PNGs with json, reactions.gd uses them)
+- [ ] Each icon scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass: all >=8, rounds listed)
+- [ ] The PixelLab generations used are within the board's go and listed in the result notes (or none, if all script work). (QA: pass: zero PixelLab calls)
+- [ ] Visual style and game/README.md record the art. (QA: pass: visual-style.md plus game/docs art record (README index exempt per brief))
+- [ ] A contact sheet, enlarged, on a dark and a light background, and a screenshot of the burst in a run are in `art-archive/T-352/`. (QA: pass: contact sheet and burst screenshot present)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: 657/560/1816 green)
 
 ## Updates
 
@@ -72,6 +72,9 @@ clapping 8 (a little tent-like). Kept.
 Kept: heart 9, thumbs up 8, fire 9, clapping 8, star 8, smile 8 (game/art/hud/).
 
 ## Result notes
+
+QA round 1: all criteria pass. qa_check flags documents (game/README.md unchanged, accepted per brief: art record in game/docs) and screenshots (no screenshots/ subfolder; burst screenshot is art-archive/T-352/reactions_burst.png). Tests green.
+
 
 Six script-drawn 16 x 16 reaction icons (heart, thumbs up, fire, clapping, star, smile) in game/art/hud/reaction_*.png with json records, built by game/tools/build_hud_reaction_icons.py (grids, 1 px dark outline, deterministic). PixelLab: none, 0 generations. Style loop: heart 9, thumbs up 8, fire 9, clapping 8 (after 3 refines; weakest, reads a bit like a tent), star 8, smile 8 (1 refine). Style Evaluator was run by hand per round (not the run.py tool, which would call an agent to regenerate); rounds in Style review.
 reactions.gd: placeholders (HEART/THUMB grids, COLORS) replaced by ICONS textures drawn with draw_texture_rect at icon_scale 2 (hud.json icon_scale 4 -> 2, so about 32 px, the placeholders' size); behaviour and other numbers unchanged. Tests: placeholder-colour test replaced by an icons test (6 textures of 16 x 16, each kind drawn); icon_scale assertion updated; new game/tools/test_build_hud_reaction_icons.py.
