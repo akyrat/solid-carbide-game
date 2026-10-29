@@ -1,7 +1,7 @@
 ---
 id: T-320
 title: The recap screen after every run, with pictures
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
