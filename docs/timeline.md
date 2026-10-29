@@ -2150,3 +2150,8 @@ Entry format:
 - Decision or change: The board: a new main menu button opens a list of past runs with their recap stats. UI ticket, waiting on the recap screen, the run history and its text.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-364
+
+## 2026-10-29: Where a QA run spends its calls
+- Decision or change: tools/qa_calls.py groups the QA agents' calls by kind. In the HUD batch, waiting for the three test sets (about 15 minutes, over the 10-minute foreground limit) took 11.3 tool calls per QA run against 1.7 in the baseline, and writing the marks 6.5 against 2.7, mostly refused script writes followed by one Edit per criterion. QA reads and looks at less than before. Two of the 20 runs were playtest-build merges, 111 calls. Proposed: wait for the tests in one call, write the marks in one command, move playtest merges off the QA agent; together about 10 calls per QA run.
+- Documents touched: docs/token-spend/qa-calls-2026-10-29.md, docs/README.md
+- Tasks: T-358
