@@ -80,7 +80,9 @@ func step(dt: float) -> void:
 		return
 	fire_clock = 0.0
 	checks += 1
-	var targets: Array = rack.enemies_within(rack.car_units(), float(stats["range"]))
+	# T-326: only enemies on the car's level are aimed at, so no volley is wasted
+	# on one on another level.
+	var targets: Array = rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level())
 	if targets.is_empty():
 		return
 	volleys += 1
@@ -119,7 +121,7 @@ func fire_at(aim: Vector2, target: Node = null) -> Node:
 		dir = Vector2.RIGHT.rotated(rack.car.rotation)
 	var b: Node2D = BulletScript.new()
 	b.name = "Bullet"
-	b.setup(rack, from, dir.normalized(), stats)
+	b.setup(rack, from, dir.normalized(), stats, rack.car_level())
 	b.weapon_id = weapon_id
 	rack.add_projectile(b)
 	fired.emit(b, target)

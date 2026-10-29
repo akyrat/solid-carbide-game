@@ -75,7 +75,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 
 ## weapons/
 
-- [docs/weapons/shared.md](docs/weapons/shared.md): Weapons: shared. How weapons plug into the run, targets, size upgrades, level-up offers.
+- [docs/weapons/shared.md](docs/weapons/shared.md): Weapons: shared. How weapons plug into the run, targets, levels (weapons hit only their own height level), size upgrades, level-up offers.
 - [docs/weapons/starting-gun.md](docs/weapons/starting-gun.md): The starting gun. The gun and its bullet.
 - [docs/weapons/flamethrower.md](docs/weapons/flamethrower.md): The exhaust flamethrower. The exhaust flamethrower.
 - [docs/weapons/neon-underglow.md](docs/weapons/neon-underglow.md): The neon underglow. The neon underglow.

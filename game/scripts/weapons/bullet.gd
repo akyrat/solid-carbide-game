@@ -9,6 +9,8 @@ extends Node2D
 ## hit per enemy per bullet, closest first): take_damage(damage). It is done
 ## after 1 + pierce_hits hits, or once it has flown missed_bullet_max_travel
 ## (the gun's range). It never pushes enemies and passes through walls.
+## T-326: it hits only enemies on the level it was fired on (`level`), and flies
+## past the rest.
 ##
 ## The drawing is the final art (task T-071): a cyan neon ball with a white-hot
 ## core and a dark outline, game/art/effects/bullet.png (two pulse frames of
@@ -42,6 +44,9 @@ var max_travel := 0.0
 var travelled := 0.0
 var drawn_size := 0.32
 var hits := 0
+## The level it hits on (T-326): the car's level when fired (rack.car_level());
+## NAN, the default, hits every level (a map without heights).
+var level := NAN
 var rack: Node = null
 ## The weapon that fired it (for the recap, T-319).
 var weapon_id := ""
@@ -53,8 +58,9 @@ var frame := 0
 
 
 ## Sets the bullet up from the gun's stats (WeaponData.gun_at).
-func setup(the_rack: Node, from_units: Vector2, dir: Vector2, stats: Dictionary) -> void:
+func setup(the_rack: Node, from_units: Vector2, dir: Vector2, stats: Dictionary, on_level: float = NAN) -> void:
 	rack = the_rack
+	level = on_level
 	units = from_units
 	direction = dir.normalized()
 	speed = float(stats["bullet_speed"])
@@ -96,7 +102,7 @@ func _check_hits() -> void:
 	if rack == null:
 		return
 	var touching := []
-	for e in rack.living_enemies():
+	for e in rack.enemies_at_level(level):
 		if _hit_ids.has(e.get_instance_id()):
 			continue
 		var d: float = units.distance_to(e.position_units())

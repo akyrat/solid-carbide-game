@@ -2235,3 +2235,8 @@ Entry format:
 - Decision or change: The board approved the gentler likes curve: 30 likes for the first level-up, 3,501 in all (was 4,255).
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-328
+
+## 2026-10-29: Weapons hit only enemies on their own level
+- Decision or change: The board approved weapons hitting only enemies on their own height level (ramp tolerance 1.5, the kaiju reachable from every level, in the air the level under the car).
+- Documents touched: `docs/enemies.md`, `docs/weapons.md`
+- Tasks: T-326

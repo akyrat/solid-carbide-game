@@ -99,7 +99,7 @@ What the game does on a map with rooftops and ramps (the elevation map, Level de
 - **Pushing apart:** minions push apart only from minions at their own level (proposal).
 - **The kaiju (proposal):** the same rules as the minions: it climbs the ramps (its 4-unit body fits the 10-unit ramps), edges stop it, it is drawn at its height and only hits the car at its level, although it is taller than the highest rooftop.
 - **Coins:** a coin is drawn at the height where its minion died, and stays on that level. Picking one up is unchanged: driving over it, at any height (proposal).
-- **Weapons:** unchanged by this task: the weapons find and hit enemies at any height (proposal; a later weapons task can change it).
+- **Weapons:** since T-326 (board, 2026-10-28) a weapon hits only enemies on its own height level (Weapons, Decisions, "Weapons hit only enemies on the car's own level"); at the time of this task they hit enemies at any height.
 
 ### Enemies drop off ledges (built in task T-226)
 
