@@ -32,6 +32,9 @@ const EPSILON := 0.000001
 
 const RESULT_WIN := "win"
 const RESULT_LOSS := "loss"
+## Why a run was lost (the recap's "loss_reason"): the clock ran out, or the last heart went.
+const LOSS_TIME := "time"
+const LOSS_HEALTH := "health"
 
 const TrickDetector := preload("res://scripts/driving/trick_detector.gd")
 
@@ -138,6 +141,8 @@ var pending_choices: Array[int] = []
 var running := false
 ## "" while the run is going (or before the first one), then "win" or "loss".
 var result := ""
+## "time" or "health" after a loss (LOSS_*), "" otherwise.
+var loss_reason := ""
 var boss_time_sent := false
 ## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
 ## start_multiplier (1.0, no combo) at the start of a run.
@@ -152,6 +157,18 @@ var likes_drain_idle := 0.0
 ## The player's saved upgrades (T-061), or null (a run on its own): the car's
 ## starting and maximum health use the car health upgrade's current level.
 var progress: PlayerProgress = null
+
+## The run's stats for the recap (T-319); read them through recap().
+var _slain := {}  # enemy type -> kills
+var _tricks_done := {}  # trick id -> times completed
+var _weapon_kills := {}  # weapon id -> kills
+var _highest_combo := 1.0
+var _likes_total := 0.0
+## Set by the weapon rack (weapons.gd bind): returns {weapon id: tier} for the
+## weapons the car owns now. Empty Callable when no rack is bound.
+var weapons_source := Callable()
+## The recap as it stood when the run ended (empty while a run is going).
+var _final_recap := {}
 
 var _run_data: RunData
 var _combo_data: ComboData
@@ -180,6 +197,12 @@ func start_run() -> void:
 	time_left = RUN_SECONDS
 	coins = 0
 	result = ""
+	loss_reason = ""
+	_slain = {}
+	_tricks_done = {}
+	_weapon_kills = {}
+	_final_recap = {}
+	_likes_total = 0.0
 	boss_time_sent = false
 	xp = 0.0
 	level = 1
@@ -188,6 +211,7 @@ func start_run() -> void:
 	combo = _combo_data.start_multiplier()
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
+	_highest_combo = combo
 	var was_waiting := not pending_choices.is_empty()
 	pending_choices.clear()
 	if was_waiting:
@@ -224,7 +248,7 @@ func advance(seconds: float) -> void:
 	if time_left <= 0.0 and running:
 		# The clock ran out: the kaiju is still alive, or the run would have
 		# ended already when it was killed.
-		_end(RESULT_LOSS)
+		_end(RESULT_LOSS, LOSS_TIME)
 
 
 ## Seconds into the run.
@@ -263,7 +287,7 @@ func damage_car(amount: float) -> void:
 	health_changed.emit(health, max_health)
 	car_damaged.emit(amount)
 	if health <= 0.0:
-		_end(RESULT_LOSS)
+		_end(RESULT_LOSS, LOSS_HEALTH)
 		return
 	if invulnerable_left > 0.0:
 		invulnerability_started.emit(invulnerable_left)
@@ -374,6 +398,7 @@ func add_trick(trick_id: String, seconds := 0.0) -> void:
 		return
 	var before := combo
 	combo = _combo_data.after_trick(combo, trick_id, seconds)
+	_record_trick(trick_id)
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(trick_id, combo - before, combo)
@@ -394,6 +419,7 @@ func add_airtime_trick(seconds: float) -> void:
 		return
 	var before := combo
 	combo = minf(combo + amount, _combo_data.max_multiplier())
+	_record_trick(TrickDetector.TRICK_AIRTIME)
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(TrickDetector.TRICK_AIRTIME, combo - before, combo)
@@ -414,6 +440,7 @@ func add_needle_trick() -> void:
 		return
 	var before := combo
 	combo = minf(combo + _combo_data.trick_add(TRICK_THREAD_THE_NEEDLE), _combo_data.max_multiplier())
+	_record_trick(TRICK_THREAD_THE_NEEDLE)
 	combo_idle = 0.0
 	likes_drain_idle = 0.0
 	combo_trick.emit(TRICK_THREAD_THE_NEEDLE, combo - before, combo)
@@ -538,6 +565,7 @@ func _gain_xp(amount: float) -> void:
 	if not running or amount <= 0.0 or is_max_level():
 		return
 	xp += amount
+	_likes_total += amount
 	var reached: Array[int] = []
 	while not is_max_level() and xp >= xp_needed() - EPSILON:
 		xp = maxf(xp - xp_needed(), 0.0) if _run_data.carries_over() else 0.0
@@ -600,7 +628,65 @@ func _set_paused(paused: bool) -> void:
 		get_tree().paused = paused
 
 
-func _end(r: String) -> void:
+func _end(r: String, reason := "") -> void:
 	running = false
 	result = r
+	loss_reason = reason if r == RESULT_LOSS else ""
+	_final_recap = _build_recap()
 	run_ended.emit(r, coins)
+
+
+## A kill by the car's weapons (the minion spawner and the kaiju boss call it
+## when an enemy dies): `enemy_type` is "minion" or "kaiju" (the enemy's
+## ENEMY_TYPE), `weapon_id` the weapon that struck the last blow ("" if
+## unknown). Ignored when the run is not going.
+func enemy_slain(enemy_type: String, weapon_id := "") -> void:
+	if not running or enemy_type == "":
+		return
+	_slain[enemy_type] = int(_slain.get(enemy_type, 0)) + 1
+	if weapon_id != "":
+		_weapon_kills[weapon_id] = int(_weapon_kills.get(weapon_id, 0)) + 1
+
+
+func _record_trick(trick_id: String) -> void:
+	_tricks_done[trick_id] = int(_tricks_done.get(trick_id, 0)) + 1
+	_highest_combo = maxf(_highest_combo, combo)
+
+
+## The run's stats for the recap screen and the runs history (T-319): a plain
+## Dictionary (numbers, strings, nested Dictionaries, so it serialises to
+## JSON), a copy the caller may keep. While the run is going it is live; once
+## it has ended it is the final summary, still readable after run_ended until
+## the next start_run() clears it. Fields:
+##   result: "win" | "loss" | "" (still going)
+##   loss_reason: "time" | "health" | ""
+##   time_survived: seconds into the run at its end (or so far)
+##   coins: coins collected; likes: likes (XP) gained in total; level: level reached
+##   enemies_slain: {enemy type: kills}, e.g. {"minion": 40, "kaiju": 1}
+##   tricks: {trick id: times completed} (every id the combo counts)
+##   highest_combo: the highest multiplier reached
+##   weapons: {weapon id: {"tier": tier it ended on, "kills": kills it made}}
+func recap() -> Dictionary:
+	if not _final_recap.is_empty():
+		return _final_recap.duplicate(true)
+	return _build_recap()
+
+
+func _build_recap() -> Dictionary:
+	var weapons_out := {}
+	if weapons_source.is_valid():
+		var tiers: Dictionary = weapons_source.call()
+		for id in tiers:
+			weapons_out[id] = {"tier": int(tiers[id]), "kills": int(_weapon_kills.get(id, 0))}
+	return {
+		"result": result,
+		"loss_reason": loss_reason,
+		"time_survived": time_elapsed(),
+		"coins": coins,
+		"likes": _likes_total,
+		"level": level,
+		"enemies_slain": _slain.duplicate(),
+		"tricks": _tricks_done.duplicate(),
+		"highest_combo": _highest_combo,
+		"weapons": weapons_out,
+	}

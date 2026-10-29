@@ -44,6 +44,12 @@ const HEIGHT_UNITS := 7.0
 
 ## Emitted on every change of health (damage), with the new values. For the HUD.
 signal health_changed(health: float, max_health: float)
+## The recap's key for this enemy (T-319).
+const ENEMY_TYPE := "kaiju"
+
+## The id of the weapon that hit it last (take_damage's `source`), "" if none told.
+var last_hit_by := ""
+
 ## Emitted once, when health reaches 0. `kaiju` is this node (freed at the end
 ## of the frame), `position_units` where it died (flat world, units).
 signal died(kaiju: Node, position_units: Vector2)
@@ -181,9 +187,11 @@ func hit_radius_units() -> float:
 ## damaged at any time. `health_changed` fires; at 0 health it dies: `died`
 ## fires once and the node is freed at the end of the frame. Ignored when
 ## `amount` is not positive or the kaiju is already dead.
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, source := "") -> void:
 	if _dead or amount <= 0.0:
 		return
+	if source != "":
+		last_hit_by = source
 	health = maxf(health - amount, 0.0)
 	health_changed.emit(health, max_health)
 	if health <= 0.0:

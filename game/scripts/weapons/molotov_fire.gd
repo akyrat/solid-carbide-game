@@ -47,6 +47,8 @@ const FLICKER_SECONDS := 0.1
 signal enemy_hit(enemy: Node, amount: float)
 
 var rack: Node = null
+## The weapon that lit it (for the recap, T-319).
+var weapon_id := ""
 ## Flat world, units.
 var centre := Vector2.ZERO
 var radius := 1.5
@@ -160,7 +162,7 @@ func is_inside(e: Node) -> bool:
 func _hit(e: Node) -> void:
 	hits += 1
 	enemy_hit.emit(e, damage)
-	e.take_damage(damage)
+	e.take_damage(damage, weapon_id)
 
 
 ## Every colour the fire draws with (tests check none is the heart's red).

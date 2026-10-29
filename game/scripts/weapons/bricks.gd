@@ -224,7 +224,7 @@ func _hit(e: Node, centre: Vector2) -> void:
 		var car := _car()
 		var rot := float(car.model.rotation) if car != null else 0.0
 		away = Vector2(cos(rot), sin(rot))
-	e.take_damage(amount)
+	e.take_damage(amount, weapon_id)
 	if push and is_instance_valid(e) and not (e.has_method("is_dead") and e.is_dead()):
 		e.apply_knockback(away, float(stats["knockback_distance"]))
 	enemy_hit.emit(e, amount, push)

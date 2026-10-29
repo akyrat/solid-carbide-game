@@ -104,6 +104,7 @@ var bricks: Node:
 func bind(the_run: Node) -> void:
 	run = the_run
 	state = run.state
+	state.weapons_source = owned_tiers  # the recap lists the weapons (T-319)
 	draw_root = Node2D.new()
 	draw_root.name = "WeaponShots"
 	run.add_child(draw_root)
@@ -195,6 +196,15 @@ func owned_ids() -> Array:
 	for id in weapons:
 		if weapons[id].is_owned():
 			out.append(id)
+	return out
+
+
+## {weapon id: tier} of the owned weapons (the run's recap, T-319).
+func owned_tiers() -> Dictionary:
+	var out := {}
+	for id in weapons:
+		if weapons[id].is_owned():
+			out[id] = weapons[id].tier
 	return out
 
 

@@ -1,7 +1,7 @@
 ---
 id: T-319
 title: "The run keeps its stats for the recap: enemies slain, tricks, highest combo, weapons used"
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -54,6 +54,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started overnight (build B, End of a run): the Game Loop Agent is making the run keep its stats for the recap.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -61,3 +65,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Done (Game Loop Agent).** `RunState.recap()` returns a plain, JSON-ready Dictionary (a copy each call): live while the run goes, the final snapshot after `run_ended` (still readable until the next `start_run()` clears it). Fields: `result` (win/loss/""), `loss_reason` (time/health/""), `time_survived`, `coins`, `likes` (total XP gained), `level`, `enemies_slain` {type: kills}, `tricks` {id: count}, `highest_combo`, `weapons` {id: {tier, kills}}. T-360, T-320 and T-363 can use it as is.
+
+My choices (the board is asleep): enemy types are "minion" and "kaiju" (`ENEMY_TYPE` const on each script); kills are credited to the weapon that struck the last blow (`take_damage(amount, source)`, the enemy keeps `last_hit_by`; bullet and molotov fire carry `weapon_id`); damage per weapon is not counted (kills only); weapons are the owned ones at the end, read through `state.weapons_source` (set by the rack, `Weapons.owned_tiers()`); the highest combo is tracked at every trick, so a crash cut does not lower it; tricks are counted by the id the combo uses, including airtime and thread_the_needle.
+
+Changed: run_state.gd, minion.gd, kaiju.gd, minion_spawner.gd, kaiju_boss.gd, weapons.gd and the weapons' hit calls, bullet.gd, molotov_fire.gd. Test doubles of `take_damage` and the kaiju test's fake state were updated for the new signature. New tests: `game/tests/unit/run/test_run_recap.gd` (11). Docs: Game loop architecture (Content, "The run's stats for the recap"), `game/docs/game-loop/the-run.md`, `game/README.md`.
+
+Tests (foreground): game/tools unittest 657 OK (1 skipped); tools unittest 573 OK; `bash game/tools/run_tests.sh` 1827/1827 passing. No screenshots: nothing the player sees changes.
