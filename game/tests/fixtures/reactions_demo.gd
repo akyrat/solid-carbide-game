@@ -5,6 +5,8 @@ extends Node
 ##   float_still - the floaters at a high viewer count (a screenshot)
 ##   burst_gif   - the goal is reached 0.5 s in (record with --write-movie)
 ##   float_gif   - the viewer count steps up; floaters appear more often
+##   bad_still   - a moment into the bad reactions after a crash cuts the combo (T-356)
+##   bad_gif     - a trick, then a crash 0.5 s in (record with --write-movie)
 ## Record them with game/tools/record_reactions.sh.
 
 var _mode := "burst_still"
@@ -39,6 +41,12 @@ func _ready() -> void:
 			_hud.reactions.set_process(false)
 			for i in 260:
 				_hud.reactions.advance(0.05)
+		"bad_still":
+			_state.add_trick("alternate_drift")
+			_hud.reactions.set_process(false)
+			_state.collision()
+			for i in 70:
+				_hud.reactions.advance(1.0 / 60.0)
 		"float_gif":
 			_hud.reactions.step_source = func() -> int: return _step
 	set_process(_mode.ends_with("gif"))
@@ -49,6 +57,10 @@ func _process(delta: float) -> void:
 	if _mode == "burst_gif" and not _fired and _t >= 0.5:
 		_fired = true
 		_state.add_xp(_state.xp_needed() * 1.1)
+	elif _mode == "bad_gif" and not _fired and _t >= 0.5:
+		_fired = true
+		_state.add_trick("alternate_drift")
+		_state.collision()
 	elif _mode == "float_gif":
 		# Steps up as the stream grows: none, 20K, 84K, 236K, fire.
 		_step = clampi(int(_t / 3.0), 0, 4)

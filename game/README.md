@@ -45,7 +45,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 ## game-loop/
 
 - [docs/game-loop/screen-flow.md](docs/game-loop/screen-flow.md): Screen flow. How the screens follow each other.
-- [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock, and the recap summary (`RunState.recap()`).
+- [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock, and the recap summary (`RunState.recap()`). The likes curve (T-328): 30 likes for the first gift pack, 3,501 in total for the 11 level-ups.
 - [docs/game-loop/gift-pack-and-pickups.md](docs/game-loop/gift-pack-and-pickups.md): Gift pack and pickup magnet. The gift pack drop and the pickup magnet.
 
 ## driving/
@@ -77,7 +77,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 
 ## weapons/
 
-- [docs/weapons/shared.md](docs/weapons/shared.md): Weapons: shared. How weapons plug into the run, targets, size upgrades, level-up offers.
+- [docs/weapons/shared.md](docs/weapons/shared.md): Weapons: shared. How weapons plug into the run, targets, levels (weapons hit only their own height level), size upgrades, level-up offers.
 - [docs/weapons/starting-gun.md](docs/weapons/starting-gun.md): The starting gun. The gun and its bullet.
 - [docs/weapons/flamethrower.md](docs/weapons/flamethrower.md): The exhaust flamethrower. The exhaust flamethrower.
 - [docs/weapons/neon-underglow.md](docs/weapons/neon-underglow.md): The neon underglow. The neon underglow.

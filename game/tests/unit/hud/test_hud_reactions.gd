@@ -307,3 +307,131 @@ func test_the_hud_feeds_the_viewers_step_and_a_new_run_clears_them() -> void:
 	assert_gt(hud.reactions.count(), 0)
 	hud.bind(r.state)
 	assert_eq(hud.reactions.count(), 0, "a new run starts with none")
+
+
+# ---- T-356: bad reactions when the combo breaks ----
+
+func _bad_kinds(r: Reactions) -> Array:
+	var kinds: Array = []
+	for it in r.items:
+		kinds.append(it["kind"])
+	return kinds
+
+
+func _play_bad(r: Reactions, seconds := 1.6) -> void:
+	r.set_process(false)
+	var t := 0.0
+	while t < seconds:
+		r.advance(0.05)
+		t += 0.05
+
+
+func test_bad_numbers_are_in_hud_json() -> void:
+	var r := _reactions()
+	assert_eq(int(r.cfg["bad_count"]), 10)
+	assert_almost_eq(float(r.cfg["bad_seconds"]), 1.5, 0.001)
+	assert_gt(float(r.cfg["bad_rise_min"]), float(r.cfg["rise_max"]) * 0.8, "a little faster than the floaters")
+	assert_eq(Reactions.BAD_ICONS.size(), 6)
+	for t: Texture2D in Reactions.BAD_ICONS:
+		assert_eq(t.get_size(), Vector2(16, 16))
+
+
+func test_a_bad_burst_starts_count_icons_over_the_time_in_the_lane() -> void:
+	var r := _reactions()
+	r.bad_burst(560.0)
+	assert_eq(r.count(), 0, "they start one after another, none at once")
+	assert_eq(r.pending_bad.size(), 10)
+	var seen := 0
+	r.set_process(false)
+	for i in 40:
+		r.advance(0.05)
+		seen = maxi(seen, r.count())
+	assert_eq(r.pending_bad.size(), 0)
+	assert_gt(seen, 0)
+	r.clear()
+	r.bad_burst(560.0)
+	_play_bad(r)
+	assert_eq(r.count(), 10, "all started within bad_seconds")
+	for it in r.items:
+		assert_gte(it["kind"], Reactions.ICONS.size(), "only bad reactions")
+		assert_gte(it["base_x"], SIZE.x * 0.76 - 0.01)
+		assert_lte(it["base_x"], SIZE.x * 0.99 + 0.01)
+		assert_lt(float(it["pos"].y), 560.0 + 1.0, "they rise")
+		assert_lt(float(it["vel"].y), -250.0)
+
+
+func test_a_bad_burst_mixes_the_six_with_a_fixed_seed() -> void:
+	var r := _reactions(0, 11)
+	r.cfg["bad_count"] = 40
+	r.cfg["cap"] = 100
+	r.bad_burst(560.0)
+	_play_bad(r)
+	var kinds := {}
+	for k in _bad_kinds(r):
+		kinds[k] = true
+	assert_eq(kinds.size(), 6, "all six bad kinds in a big burst")
+	var a := _reactions(0, 11)
+	a.bad_burst(560.0)
+	_play_bad(a)
+	var b := _reactions(0, 11)
+	b.bad_burst(560.0)
+	_play_bad(b)
+	assert_eq(_bad_kinds(a), _bad_kinds(b), "same seed, same burst")
+
+
+func test_the_count_comes_from_the_data() -> void:
+	var r := _reactions()
+	r.cfg["bad_count"] = 4
+	r.bad_burst(560.0)
+	_play_bad(r)
+	assert_eq(r.count(), 4)
+
+
+func test_bad_reactions_count_toward_the_cap() -> void:
+	var r := _reactions()
+	r.cfg["cap"] = 6
+	r.bad_burst(560.0)
+	_play_bad(r)
+	assert_lte(r.count(), 6)
+
+
+func test_bad_reactions_freeze_on_pause_and_clear_on_a_new_run() -> void:
+	var r := _run()
+	await get_tree().process_frame
+	var hud: Hud = r.hud
+	hud.reactions.bad_burst(560.0)
+	get_tree().paused = true
+	var before: Array = hud.reactions.pending_bad.duplicate(true)
+	for i in 10:
+		await get_tree().process_frame
+	assert_eq(hud.reactions.pending_bad, before, "frozen while paused")
+	assert_eq(hud.reactions.count(), 0)
+	get_tree().paused = false
+	hud.bind(r.state)
+	assert_eq(hud.reactions.pending_bad.size(), 0, "a new run clears them")
+	assert_eq(hud.reactions.count(), 0)
+
+
+func test_only_a_crash_that_cuts_the_combo_starts_a_bad_burst() -> void:
+	var r := _run()
+	await get_tree().process_frame
+	var hud: Hud = r.hud
+	r.state.collision()
+	assert_eq(hud.reactions.bad_bursts_started, 0, "no combo, nothing cut")
+	r.state.add_trick("alternate_drift")
+	assert_eq(hud.reactions.bad_bursts_started, 0)
+	r.state.collision()
+	assert_eq(hud.reactions.bad_bursts_started, 1, "once per crash")
+	assert_eq(hud.reactions.pending_bad.size(), 10)
+	var y: float = hud.viewers_counter.get_global_rect().get_center().y
+	assert_almost_eq(float(hud.reactions.pending_bad[0]["y"]), y, 0.01, "from the viewers counter")
+
+
+func test_the_combo_draining_away_starts_none() -> void:
+	var r := _run()
+	await get_tree().process_frame
+	r.state.add_trick("alternate_drift")
+	for _i in 60:
+		r.state.advance(0.5)
+	assert_true(r.state.has_no_combo())
+	assert_eq(r.hud.reactions.bad_bursts_started, 0)

@@ -38,6 +38,7 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 
 - **Health drops** (board, 2026-10-21): enemies also drop health pickups, at the same drop rate as the coins. Picking one up restores 30% of the car's health (never above its maximum). It looks like a red gas canister with a white cross on it (look: Visual style, Decisions). (T-220, art T-221) **Halved** (board, 2026-10-22): health drops now drop at half that rate (0.6 to 0.3), no longer the coins' rate; the coins are unchanged. (T-277)
 - **Damage in hearts, fewer health drops, bolder outlines** (board, 2026-10-28): with hearts (Game loop architecture, Decisions, "Hearts instead of health points"), a minion's hit and a meteor take 1 heart and the kaiju's 2, once per hit, with the car's 1-second invulnerability after it instead of repeated contact hits. Health pickups drop at half today's chance (15% instead of 30%) and heal 1 heart. Every enemy's outline is a little bolder, so the player sees where they are and can steer round them. (T-333, T-334, T-340)
+- **Health drops 1.5 times as often** (board, 2026-10-29): "increase the drop rate of health items by enemies by 1.5 times of what it is now": a killed minion drops a health pickup with a chance of 22.5% instead of 15%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-371)
 
 ## Content
 
@@ -98,7 +99,7 @@ What the game does on a map with rooftops and ramps (the elevation map, Level de
 - **Pushing apart:** minions push apart only from minions at their own level (proposal).
 - **The kaiju (proposal):** the same rules as the minions: it climbs the ramps (its 4-unit body fits the 10-unit ramps), edges stop it, it is drawn at its height and only hits the car at its level, although it is taller than the highest rooftop.
 - **Coins:** a coin is drawn at the height where its minion died, and stays on that level. Picking one up is unchanged: driving over it, at any height (proposal).
-- **Weapons:** unchanged by this task: the weapons find and hit enemies at any height (proposal; a later weapons task can change it).
+- **Weapons:** since T-326 (board, 2026-10-28) a weapon hits only enemies on its own height level (Weapons, Decisions, "Weapons hit only enemies on the car's own level"); at the time of this task they hit enemies at any height.
 
 ### Enemies drop off ledges (built in task T-226)
 

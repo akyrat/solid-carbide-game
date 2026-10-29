@@ -45,7 +45,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **Wrecked: the stream keeps rolling** (board, 2026-10-29; replaces the time's up screen's proposal that losing all health ends the run as before): when the car loses its last heart, the run doesn't end at once. The controls go dead, the car keeps whatever movement it had and slides or rolls to a stop, and it sits there crashed, smoking and burning (pixel art smoke and flames), for **3 seconds**, with the stream (the HUD, the live viewers) still on screen. It is like the end of a stream that doesn't cut away. Then the recap screen shows. No text. (T-360, T-361)
 - **The recap always closes a run** (board, 2026-10-29): every run ends on the recap screen (a win, the time's up screen, the wreck), and the player leaves it with a Continue button or an X at the top right, both to the main menu. (T-320)
 - **The runs list** (board, 2026-10-29): each run's recap stats are saved on this computer, and a new button on the main menu opens a list of the player's past runs. Its text: HUD and menus, Content (T-362). (T-363, T-364)
-- **More gift packs, earlier** (board, 2026-10-28): the early levels need fewer likes, so the first gift packs come more often at the start of a run. The new curve is the Game Data Agent's proposal for the playtest. (T-328)
+- **More gift packs, earlier** (board, 2026-10-28): the early levels need fewer likes, so the first gift packs come more often at the start of a run. The new curve is the Game Data Agent's proposal for the playtest, built in T-328: 30, 45, 65, 95, 140, 200, 290, 400, 560, 745 and 931 likes for levels 2 to 12 (total 3,501, was 4,255); the table and reasons are in Content, "Likes and levels". (T-328)
 - **A crash cuts the combo by 50%** (board, 2026-10-28; replaces the 80% in "Combo" above): a collision or any damage to the car cuts the part of the multiplier above "no combo" by 50% instead of 80%, so the player keeps half of their combo bonus (x4 becomes x2.5). (T-329)
 - **A bigger gift pack helicopter** (board, 2026-10-28): the helicopter that drops each gift pack is drawn 30% larger on screen than today (about 125 x 104 drawn pixels instead of 96 x 80), with the same art. The package still hangs clear of its belly. (T-330)
 - **The combo shows as live viewers** (board, 2026-10-28): the combo multiplier keeps working exactly as it does (tricks raise it, crashes cut it, it drains, it multiplies what drifting earns), but the player sees it as the stream's live viewers instead of "Combo x2.00": about 20,000 at x2 and 1,000,000 at x6 (the board's anchors), on a smooth curve between them (and below x2, a proposal). The number behaves like a real stream's: it counts towards its value and keeps moving a little. The higher it is, the hotter it looks, and over a million it is on fire. (T-332, T-336)
@@ -105,6 +105,23 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 - The HUD reads the XP, the level's threshold and the level, with a signal whenever they change.
 - A level-up does not pause the run by itself: it sends the gift pack (below, task T-144). The run pauses (clock and car) when the car drives over the gift pack's package and the level-up screen opens (task T-052), until the weapon choice is made, one choice after another when several packages are picked up at once.
 - **Likes drain** (task T-115; the speed: [game/data/run.json](../game/data/run.json), `likes_drain`, task T-114): once the combo has fully drained back to "no combo", the XP in the current level goes down, stopping at the start of the level, so the level never goes down. Any trick raises the combo and stops it; it starts again once the combo has drained again. It stops while the run is paused (pause screen, level-up screen) and after the run ends. At the top level there is nothing to drain. The HUD's likes bar follows it, so the bar visibly empties.
+- **The curve (T-328, proposal for the playtest; the numbers: `levels` in [game/data/run.json](../game/data/run.json)):** the early levels need far fewer likes so the first gift packs come quickly, and the last two levels are unchanged. One drift second is 10 likes at x1, so the seconds below are drift seconds at that combo (a drift pays whole seconds only):
+
+  | Level up to | Likes needed | Seconds at x1 | at x2 | at x4 | Likes in total |
+  |---|---|---|---|---|---|
+  | 2 | 30 (was 100) | 3.0 | 1.5 | 0.75 | 30 |
+  | 3 | 45 (was 125) | 4.5 | 2.25 | 1.1 | 75 |
+  | 4 | 65 (was 156) | 6.5 | 3.25 | 1.6 | 140 |
+  | 5 | 95 (was 195) | 9.5 | 4.75 | 2.4 | 235 |
+  | 6 | 140 (was 244) | 14 | 7 | 3.5 | 375 |
+  | 7 | 200 (was 305) | 20 | 10 | 5 | 575 |
+  | 8 | 290 (was 381) | 29 | 14.5 | 7.3 | 865 |
+  | 9 | 400 (was 477) | 40 | 20 | 10 | 1,265 |
+  | 10 | 560 (was 596) | 56 | 28 | 14 | 1,825 |
+  | 11 | 745 (same) | 74.5 | 37 | 18.6 | 2,570 |
+  | 12 | 931 (same) | 93 | 47 | 23 | 3,501 |
+
+  The total for all 11 level-ups is 3,501 likes, 18% under today's 4,255; the level cap stays 12. Reasons for the shape: each level needs about 1.4 to 1.5 times the one before at the start (the old curve's 1.25 from a much higher start), easing to 1.25 at the end, so the first gift pack comes after about 3 seconds of drifting (the board's "a few seconds") and the first four within about 10 seconds of drift at x2 (140 likes), against about 38 s at x1 before; the gaps then stretch so the middle and late run keep the old pace, and levels 10 and 11 are exactly today's. Time to each gift pack in a typical run, my estimate from the formula only (not a scripted run): drifting about half the time at an average x2 earns about 10 likes a second, so levels 2 to 5 arrive at about 3, 7, 14 and 24 s, level 8 at about 87 s and level 12 at about 350 s of an 8-minute run (480 s); the old curve reached level 5 at about 70 s and level 12 at about 430 s. The board judges it in the playtest. The likes drain is a share of the level's bar (8% a second), so a full bar still empties in 12.5 s at every level: 2.4 likes a second at level 2's 30-like bar, against 10 likes earned for each drifted second, so it only eats the progress made inside the level. The challenge XP of the old MVP map keeps its share of the level's bar (30, 40, 50, 65, 84, 106, 135, 164, 201, then the old 236, 259, 285), so one challenge never skips levels it did not skip before.
 - A new run starts back at level 1 with no XP.
 
 ### The gift pack drop
@@ -170,6 +187,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 - When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the **recap screen** shows its stats (task T-320; Decisions, "The recap always closes a run"; the look: HUD and menus, Content, "Recap screen"). Its Continue button and the X at its top right both bring the main menu back. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
+- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 

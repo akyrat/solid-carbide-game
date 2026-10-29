@@ -98,6 +98,8 @@ Tests: `tests/unit/run/test_run_elevation_map.gd` (the switch both ways, one dra
 
 A new run (`start_run()`) resets XP to 0 and the level to 1, forgets the drift in progress and any waiting choice (unpausing if it was waiting). Nothing is added after the run ends.
 
+**The curve (T-328):** `data/run.json` `levels` needs 30, 45, 65, 95, 140, 200, 290, 400, 560, 745 and 931 likes for levels 2 to 12 (total 3,501; was 100 to 931, total 4,255), cap 12; the table and reasons are in Game loop architecture, Content, "Likes and levels". Nothing in code changed: `RunData.xp_needed(level)` reads it. Tests: `tests/unit/run/test_run_likes.gd` (`test_t328_*`).
+
 **The likes drain** (task T-115; the rule is Game loop architecture, Decisions, "Likes drain", the numbers are `likes_drain` in `data/run.json` through `RunData`, task T-114). Once the combo is back at "no combo" (`combo` at `start_multiplier`, after the combo's own wait and drain), and after `likes_drain_extra_wait_seconds` (0 for now), `xp` goes down by `RunData.likes_drain_xp_per_second(level)` per second, stopping at 0: the level never goes down. Any trick raises the combo, which stops the drain until the combo has drained again. It runs inside `advance()` (`_drain_likes()`), so it stops while the tree is paused (pause screen, level-up screen) and after the run ends; it also skips while a weapon choice is waiting. At the top level there is nothing to drain: XP stays at 0 there and the HUD shows the bar full. Each frame it takes XP away it sends `xp_changed`, so the HUD's likes bar empties (the bar rounds to whole likes, its step being 1, so it moves one like at a time).
 
 | Function or value | Is |

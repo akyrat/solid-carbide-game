@@ -225,3 +225,32 @@ func test_a_run_from_the_main_menu_still_plays_the_sample_map() -> void:
 	assert_eq(game.run.map.layout_path, SAMPLE)
 	assert_not_null(game.pause_screen)
 	assert_eq(game.pause_screen.get_parent(), game.run)
+
+
+# --- Restart and Exit on the pause screen (T-327) ---------------------------------
+
+func test_pause_restart_replays_the_same_level_and_keeps_coins() -> void:
+	var c := _creator()
+	var run := _play(c)
+	var before: int = c.progress.coins
+	run.state.add_coins(7)
+	c.pause_screen.pause()
+	c.pause_screen.restart_button.pressed.emit()
+	assert_ne(c.run, run, "a fresh run")
+	assert_eq(c.run.layout_path, level_path)
+	assert_eq(c.progress.coins, before + 7)
+	assert_false(get_tree().paused)
+	assert_null(c.list_screen, "no list while replaying")
+
+
+func test_pause_exit_returns_to_the_creator_list_and_keeps_coins() -> void:
+	var c := _creator()
+	var run := _play(c)
+	var before: int = c.progress.coins
+	run.state.add_coins(5)
+	c.pause_screen.pause()
+	c.pause_screen.exit_button.pressed.emit()
+	assert_null(c.run)
+	assert_not_null(c.list_screen)
+	assert_eq(c.progress.coins, before + 5)
+	assert_false(get_tree().paused)

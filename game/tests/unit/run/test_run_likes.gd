@@ -77,9 +77,9 @@ func test_drift_under_a_second_gives_nothing_three_seconds_gives_three() -> void
 	_drift(0.9)
 	assert_eq(state.xp, 0.0, "0.9 s of drift: no XP")
 	assert_eq(bars.size(), 0)
-	_drift(3.0)
-	assert_almost_eq(state.xp, 3.0 * data.drift_xp_per_second(), 0.0001,
-		"3 s of drift: exactly 3 seconds' worth")
+	_drift(2.0)  # T-328: 3 s now fills level 1's 30 and levels up, so 2 s is checked
+	assert_almost_eq(state.xp, 2.0 * data.drift_xp_per_second(), 0.0001,
+		"2 s of drift: exactly 2 seconds' worth")
 
 
 func test_drift_xp_counts_each_second_as_it_passes() -> void:
@@ -258,3 +258,29 @@ func test_top_level_bar_stops() -> void:
 	state.challenge_completed("c")
 	assert_eq(state.level, data.max_level(), "no level past the top")
 	assert_eq(scores.size(), 1, "the challenge still sends its score")
+
+
+## Task T-328: the new curve. The first four level-ups need clearly fewer likes
+## than the old 100, 125, 156, 195; the total is 3,501 (was 4,255).
+func test_t328_early_levels_need_fewer_likes() -> void:
+	var old := [100.0, 125.0, 156.0, 195.0]
+	for i in 4:
+		assert_lt(data.xp_needed(i + 1), old[i] * 0.7, "level %d needs clearly fewer likes" % (i + 1))
+	assert_eq(data.xp_needed(1), 30.0)
+	var total := 0.0
+	for l in range(1, data.max_level()):
+		total += data.xp_needed(l)
+		if l > 1:
+			assert_gt(data.xp_needed(l), data.xp_needed(l - 1), "the curve only rises")
+	assert_eq(total, 3501.0, "total for all 11 level-ups")
+	assert_eq(data.max_level(), 12, "the cap is unchanged")
+
+
+func test_t328_one_level_up_per_threshold_and_stops_at_the_cap() -> void:
+	for l in range(1, data.max_level()):
+		state.add_xp(state.xp_needed())
+		assert_eq(state.level, l + 1, "one gift pack's level-up per threshold")
+	assert_eq(levels, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "one level_up each, in order")
+	state.add_xp(5000.0)
+	assert_eq(state.level, data.max_level(), "stops at the cap")
+	assert_eq(levels.size(), 11, "no level-up past the cap")

@@ -14,6 +14,17 @@ extends Node
 ## position_units() (flat world, units) and its size with
 ## hit_radius_units() when it has one, else from its first CollisionShape2D.
 ##
+## Levels (task T-326; Weapons, Decisions, "Weapons hit only enemies on the
+## car's own level"): on a map with heights (the car has a `ground`, a
+## GroundHeight) a weapon's hit counts only the enemies on the hit's level:
+## enemies_at_level(level), enemies_within(centre, radius, level). car_level()
+## is the ground under the car's centre (in the air too: the level under it);
+## level_at(units) the ground at any point (a molotov's fire). An enemy is on a
+## level when its body_height() is within LEVEL_TOLERANCE units of it; the
+## kaiju (group "kaiju") is on every level, and a target that reports no height
+## counts as on every level. With no ground (the MVP map) the level is NAN and
+## every enemy counts, as before.
+##
 ## Drawing: projectiles live in `draw_root` (node "WeaponShots", just before
 ## the car's View, in the isometric view), each placed in the buildings'
 ## depth order with the minions' rule (enemy_depth.gd).
@@ -34,6 +45,12 @@ const PX_PER_UNIT := 16.0
 const ISO_TRANSFORM := Transform2D(Vector2(1.0, 0.5), Vector2(-1.0, 0.5), Vector2.ZERO)
 ## Group every damageable enemy is in (minions now, the kaiju later).
 const ENEMY_GROUP := "enemies"
+## How far (units) an enemy's height may be from a hit's level and still be
+## hit (T-326, a proposal for the playtest): an enemy part way up a ramp next to
+## the car is hit; one on a rooftop (3 units or more above the street) is not.
+const LEVEL_TOLERANCE := 1.5
+## The kaiju's group: it is tall enough to be hit from every level (T-326, proposal).
+const KAIJU_GROUP := "kaiju"
 ## Used when a target has neither hit_radius_units() nor a collision shape.
 const DEFAULT_TARGET_RADIUS_UNITS := 0.5
 ## The playtest switch file (res://data/playtest.json) and the key that gives
@@ -275,15 +292,76 @@ static func is_target(e) -> bool:
 	return not (e.has_method("is_dead") and e.is_dead())
 
 
-## Living enemies whose centre is within `radius` units of `centre`, closest first.
-func enemies_within(centre: Vector2, radius: float) -> Array:
+## Living enemies whose centre is within `radius` units of `centre`, closest
+## first; with `level` (T-326) only those on that level (NAN: every one).
+func enemies_within(centre: Vector2, radius: float, level: float = NAN) -> Array:
 	var found := []
-	for e in living_enemies():
+	for e in enemies_at_level(level):
 		var d: float = centre.distance_to(e.position_units())
 		if d <= radius:
 			found.append([d, e])
 	found.sort_custom(func(a, b) -> bool: return a[0] < b[0])
 	return found.map(func(pair): return pair[1])
+
+
+# --- Levels (T-326) ----------------------------------------------------------
+
+## The map's ground heights (the car's GroundHeight), or null on a map without
+## heights (the MVP map).
+func ground():
+	if car == null or not is_instance_valid(car):
+		return null
+	return car.get("ground")
+
+
+## The ground's height at `units` (flat world), or NAN with no ground.
+func level_at(units: Vector2) -> float:
+	var g = ground()
+	if g == null:
+		return NAN
+	return float(g.height_at(units))
+
+
+## The level the car's weapons hit: the ground under the car's centre, on the
+## ground and in the air alike (NAN with no ground).
+func car_level() -> float:
+	if car == null or not is_instance_valid(car):
+		return NAN
+	return level_at(car_units())
+
+
+## An enemy's height (units): body_height() (in the air while it falls), else
+## ground_height(), else NAN (it does not say).
+static func enemy_level(e: Node) -> float:
+	if e.has_method("body_height"):
+		return float(e.body_height())
+	if e.has_method("ground_height"):
+		return float(e.ground_height())
+	return NAN
+
+
+## True when a hit on `level` counts this enemy: no level (NAN), the kaiju, an
+## enemy that reports no height, or one within LEVEL_TOLERANCE of the level.
+static func on_level(e: Node, level: float) -> bool:
+	if is_nan(level) or e.is_in_group(KAIJU_GROUP):
+		return true
+	var h := enemy_level(e)
+	if is_nan(h):
+		return true
+	return absf(h - level) <= LEVEL_TOLERANCE + 0.000001
+
+
+## Every living, damageable enemy on `level` (NAN: every one, as living_enemies()).
+func enemies_at_level(level: float) -> Array:
+	var all := living_enemies()
+	if is_nan(level):
+		return all
+	return all.filter(func(e) -> bool: return on_level(e, level))
+
+
+## Every living, damageable enemy on the car's level (car_level()).
+func enemies_at_car_level() -> Array:
+	return enemies_at_level(car_level())
 
 
 ## How far from its centre an enemy's body reaches, in units.

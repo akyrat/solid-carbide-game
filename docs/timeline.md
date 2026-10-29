@@ -2185,3 +2185,63 @@ Entry format:
 - Decision or change: The board approved the runs list's text and its main menu button.
 - Documents touched: none
 - Tasks: T-362
+
+## 2026-10-29: Bad reactions when the combo breaks
+- Decision or change: The board approved the burst of bad reactions from the viewers counter when a crash cuts the combo (placeholder icons; art next, T-357).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-356
+
+## 2026-10-29: Restart and Exit on the pause screen
+- Decision or change: The board approved Restart and Exit on the pause screen (coins kept, no confirm prompt).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-327
+
+## 2026-10-29: Pixel art icons for the garage upgrades
+- Decision or change: The board: make pixel art for each garage upgrade, as small icons. A UI ticket shows an icon beside each upgrade (placeholders first, read from game/art/garage/<key>.png), and one art ticket per upgrade draws its icon.
+- Documents touched: docs/garage-design.md
+- Tasks: T-365
+
+## 2026-10-29: Art: the acceleration icon
+- Decision or change: Art ticket for the acceleration upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-366
+
+## 2026-10-29: Art: the car health icon
+- Decision or change: Art ticket for the car health upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-367
+
+## 2026-10-29: Art: the damage bonus icon
+- Decision or change: Art ticket for the damage bonus upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-368
+
+## 2026-10-29: Art: the pickup magnet icon
+- Decision or change: Art ticket for the pickup magnet upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-369
+
+## 2026-10-29: Art: the air turn icon
+- Decision or change: Art ticket for the air turn upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-370
+
+## 2026-10-29: Health drops 1.5 times as often
+- Decision or change: The board: health drops 1.5 times as often (drop chance 0.15 to 0.225).
+- Documents touched: docs/enemies.md
+- Tasks: T-371
+
+## 2026-10-29: More gift packs, earlier
+- Decision or change: The board approved the gentler likes curve: 30 likes for the first level-up, 3,501 in all (was 4,255).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-328
+
+## 2026-10-29: Weapons hit only enemies on their own level
+- Decision or change: The board approved weapons hitting only enemies on their own height level (ramp tolerance 1.5, the kaiju reachable from every level, in the air the level under the car).
+- Documents touched: `docs/enemies.md`, `docs/weapons.md`
+- Tasks: T-326
+
+## 2026-10-29: The board's level becomes the game's map
+- Decision or change: The board will build a level in the level creator and hand it over; a ticket makes it the map Start plays, waiting for the board's file.
+- Documents touched: docs/level-design.md
+- Tasks: T-372

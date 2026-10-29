@@ -382,6 +382,8 @@ func _on_combo_changed(multiplier: float) -> void:
 ## A crash cut the combo (T-336): the counter flashes red and drops the viewers lost.
 func _on_combo_broken() -> void:
 	viewers_counter.crash(viewers_counter.last_loss())
+	# T-356: the stream reacts badly, from the counter's lane.
+	reactions.bad_burst(viewers_counter.get_global_rect().get_center().y)
 
 
 ## Flies the trick popups' "+viewers" into the viewers counter from now on (T-336):

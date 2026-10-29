@@ -24,6 +24,9 @@ const TEXT_SMOOTHING := "Camera smoothing"
 const TEXT_DYNAMIC := "Dynamic camera"
 const TEXT_SET_MIN := "Set min zoom"
 const TEXT_SET_MAX := "Set max zoom"
+## The two run buttons use the board's own names (T-327, board 2026-10-28).
+const TEXT_RESTART := "Restart"
+const TEXT_EXIT := "Exit"
 ## The strip's background. Nearly opaque, so the controls read over any ground,
 ## the run's bright asphalt included (T-124, QA round 1).
 const STRIP_COLOR := Color(0, 0, 0, 0.85)
@@ -36,6 +39,11 @@ const CONTROL_FILL_PRESSED := Color(0.08, 0.08, 0.08)
 const CHECK_ICON_SIZE := 16
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
+
+## Restart was pressed: the owner banks the run's coins and starts a fresh run (T-327).
+signal restart_pressed
+## Exit was pressed: the owner banks the run's coins and leaves the run (T-327).
+signal exit_pressed
 
 ## The scene whose camera zoom this slider sets (needs `zoom` and set_zoom()).
 var target: Node
@@ -58,6 +66,8 @@ var set_min_button: Button
 var set_max_button: Button
 var min_label: Label
 var max_label: Label
+var restart_button: Button
+var exit_button: Button
 var _root: Control
 var strip: PanelContainer
 var _saved_cam: Array = []
@@ -128,7 +138,24 @@ func setup(t: Node) -> void:
 	_build_sfx_slider(box)
 	_build_music_slider(box)
 	_build_camera_controls(box)
+	_build_run_buttons(box)
 	visible = false
+
+
+## The "Restart" and "Exit" buttons (T-327): a row at the bottom of the strip, in its look.
+## They only emit signals; the run's owner does the rest. No confirm prompt.
+func _build_run_buttons(box: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "RunButtonsRow"
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 24)
+	box.add_child(row)
+	restart_button = _make_button("RestartButton", TEXT_RESTART)
+	restart_button.pressed.connect(func(): restart_pressed.emit())
+	row.add_child(restart_button)
+	exit_button = _make_button("ExitButton", TEXT_EXIT)
+	exit_button.pressed.connect(func(): exit_pressed.emit())
+	row.add_child(exit_button)
 
 
 ## The "SFX volume" slider (T-077): 0 to 100, saved, applied to the SFX bus at once.
@@ -370,6 +397,7 @@ func pause() -> void:
 	refresh_camera_controls()
 	get_tree().paused = true
 	visible = true
+	restart_button.grab_focus()  # keyboard: arrows move between the buttons, Enter presses
 	_camera_follows_while_paused(true)
 
 
