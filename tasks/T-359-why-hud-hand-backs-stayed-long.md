@@ -1,7 +1,7 @@
 ---
 id: T-359
 title: Token spend: why the HUD batch's hand-backs stayed long
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -41,12 +41,12 @@ Run it for the Greenbull session (`--session 0a239fb3`) and the Tokens session (
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `tools/hand_backs.py` runs with `--from`, `--to`, `--session` and `--dir`, and `tools/test_hand_backs.py` tests it on small made-up transcripts (at least: a SubagentHandback, an Agent tool result, a task notification, a prompt that asks for one line and one that doesn't). (QA: pass / fail)
-- [ ] `docs/token-spend/hand-backs-2026-10-29.md` has the tables for both sessions, with Greenbull's total subagent-report characters within 10% of token_report.py's figure for the same range, or the difference explained. (QA: pass / fail)
-- [ ] The doc gives the ten longest results in Greenbull's session with a cause for each. (QA: pass / fail)
-- [ ] The doc says what the agent definitions and tasks/README.md ask of a hand-back, and lists proposed fixes with the characters each would have saved, as proposals for the board. (QA: pass / fail)
-- [ ] `docs/README.md` links the new doc and the script in its token-spend line. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `tools/hand_backs.py` runs with `--from`, `--to`, `--session` and `--dir`, and `tools/test_hand_backs.py` tests it on small made-up transcripts (at least: a SubagentHandback, an Agent tool result, a task notification, a prompt that asks for one line and one that doesn't). (QA: pass; --from/--to/--session/--dir present, 8 tests cover the listed cases, rerun OK)
+- [ ] `docs/token-spend/hand-backs-2026-10-29.md` has the tables for both sessions, with Greenbull's total subagent-report characters within 10% of token_report.py's figure for the same range, or the difference explained. (QA: pass; both sessions' tables match my own hand_backs.py runs; Greenbull 56,275 + 30,628 = 86,903 matches the agent's token_report comparison (token_report prints tokens/percent only, so the character figure was taken from the script's own reproduction of its rule))
+- [ ] The doc gives the ten longest results in Greenbull's session with a cause for each. (QA: pass; ten longest each have a cause. Nit: row 2 (14:08:06) is called a resumed agent, but the script's resumed column marks only 14:08:24, so 'two of ten resumed' reads as one by the script)
+- [ ] The doc says what the agent definitions and tasks/README.md ask of a hand-back, and lists proposed fixes with the characters each would have saved, as proposals for the board. (QA: pass; definitions and README summarised; fixes are labelled proposals, and 35,158 (18,105+11,781+5,272), 53,179 and 7,242 follow from the tables)
+- [ ] `docs/README.md` links the new doc and the script in its token-spend line. (QA: pass; docs/README.md token-spend line links doc and script)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; tools 568 OK (my run), counts for the other two in the result notes)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-29, Open → In progress
 
 Started: a script lists each hand-back with its length and prompt, and a doc gives the causes and proposes fixes.
+
+### 2026-10-29, In progress → In QA
+
+In QA: the agents did hand back one line (266 characters on average); the harness frame around each hand-back adds about 1,200 more.
 
 ## Style review
 
@@ -74,3 +78,6 @@ Headline findings (Greenbull, 2026-10-28T03:55Z to 2026-10-29T01:10Z):
 - Biggest proposed saving: QA agents in the foreground, 35,158 characters (40%); all-foreground upper bound 53,179. Fixes are proposals only.
 
 Tests: `game/tools` 657 tests OK (1 skipped); `tools` 568 tests OK; `bash game/tools/run_tests.sh` all scripts passed (TESTS PASSED, with the usual leak-at-exit warning).
+
+
+QA (round 1): all 6 criteria pass. Headline checks: 29 hand-backs, own words 7,721 (avg 266), frame 1,473-266 = 1,207, six over 300 totalling 263 excess, all confirmed from the script output. Nit only: the resumed label on top-ten row 2.
