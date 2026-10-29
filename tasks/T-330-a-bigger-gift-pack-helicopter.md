@@ -1,10 +1,10 @@
 ---
 id: T-330
 title: The gift pack helicopter 30% bigger on screen
-status: open
+status: in-qa
 from: project-lead
 to: game-loop
-lead: Tokens
+lead: Greenbull
 epic: game-loop
 milestone: mvp
 goal:
@@ -54,10 +54,22 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Taken over from Tokens on the board's word. Started: the gift pack helicopter 30% bigger.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (Game Loop Agent, commit d1fb86af). 0 PixelLab calls.
+- `gift_pack.json` `helicopter.draw_scale` 0.65 (was a 0.5 in the scene), read via `GiftPackData.helicopter_scale()`; `GiftHelicopter._ready` applies it (or `send_helicopter` sets `draw_scale` from the drops' data first); the scene default is also 0.65. Drawn size 124.8 x 104.
+- Numbers changed: `package.hang_below_px` 80 -> 88 (the existing "box hangs clearly below the belly" test failed at 80: the opaque belly now reaches 37 px below the centre and the box top was at 37). Unchanged: `screen_margin_px` 12 and `offscreen_margin_px` 80, because the top margin and the off-screen start/end are measured from the drawn size (`helicopter_top`, `fly_y`); new tests confirm it starts and ends fully off screen at the new size.
+- 0.65 against the nearest clean scale: nearest filtering keeps edges hard; 0.65 gives slightly uneven pixel sizes next to a clean 0.5 or 1.0, not visibly rough at game zoom in the screenshots.
+- Tests: two new `test_t330_*` in `game/tests/unit/run/test_gift_drops.gd` (scale 1.3 times today, 125 x 104, read from the data file; off-screen start/end, top margin, package below the belly); the data-file tests now include `draw_scale`.
+- Test counts: `game/tools` unittest 668 OK (1 skipped); `tools` unittest 573 OK; `run_tests.sh` GUT 1932 of 1932 passing.
+- Screenshots (same fixture, same frame): before `C:\solid-carbide-worktrees\T-330\screenshots\T-330_before_250.png` and `T-330_before_300.png`; after `T-330_after_250.png` and `T-330_after_300.png` (same folder, git-ignored).
+- Docs: `docs/game-loop-architecture.md` (Content, "The gift pack drop" bullet; the Decisions entry was already there), `game/docs/game-loop/gift-pack-and-pickups.md` (numbers and art), `game/README.md` index line.
+- The board's review: play to a level-up and look at the helicopter.
