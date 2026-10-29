@@ -1,7 +1,7 @@
 ---
 id: T-359
 title: Token spend: why the HUD batch's hand-backs stayed long
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/token-spend/hand-backs-2026-10-29.md, docs/README.md]
 files_to_read_first: [docs/token-spend/after-2026-10-29.md, tasks/T-343-agents-hand-back-one-short-line.md, tools/token_report.py, .claude/agents/, tasks/README.md]
 files_expected_to_change: [tools/hand_backs.py, tools/test_hand_backs.py, docs/token-spend/hand-backs-2026-10-29.md, docs/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -81,3 +81,4 @@ Tests: `game/tools` 657 tests OK (1 skipped); `tools` 568 tests OK; `bash game/t
 
 
 QA (round 1): all 6 criteria pass. Headline checks: 29 hand-backs, own words 7,721 (avg 266), frame 1,473-266 = 1,207, six over 300 totalling 263 excess, all confirmed from the script output. Nit only: the resumed label on top-ten row 2.
+- 2026-10-29, in-qa → done: QA passed 6/6; analysis only, the fixes are proposals for the board. QA's nit: the doc calls top-ten row 2 a resumed agent, which the script's resumed column doesn't mark.
