@@ -2280,3 +2280,8 @@ Entry format:
 - Decision or change: The board approved the icon slot beside each garage upgrade (placeholders until the five art tickets add their PNGs).
 - Documents touched: `docs/garage-design.md`
 - Tasks: T-365
+
+## 2026-10-29: Art: the air turn icon
+- Decision or change: The board approved the air turn icon (a blue car under a spin arrow, 7/10 after 3 refines), script-drawn, 0 PixelLab.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-370
