@@ -1,7 +1,7 @@
 ---
 id: T-320
 title: The recap screen after every run, with pictures
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, docs/game-loop-architecture.md, game
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/visual-style.md, game/docs/game-loop/screen-flow.md, game/docs/hud-and-menus/level-up-screen.md, game/scripts/game/game_flow.gd, game/scripts/ui/level_up_screen.gd]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md, docs/game-loop-architecture.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -101,3 +101,4 @@ Board review files: art-archive/T-320/screenshots/recap_win.png, art-archive/T-3
 - No QA agent: ready for the board to play.
 
 **QA (sonnet), final round after the peak engagement tweak:** qa_check: tests (3 sets) PASS, documents PASS, screenshots PASS. All seven criteria pass; criterion 2's "highest combo" is met by the peak viewers number (tests in test_recap_screen.gd and test_run_recap.gd).
+- 2026-10-29, in-qa → needs-playtest: QA passed all 7 after the peak engagement tweak; the board already played build B and approved it: build B lgtm now (2026-10-29).
