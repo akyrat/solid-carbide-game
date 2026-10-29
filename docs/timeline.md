@@ -2165,3 +2165,8 @@ Entry format:
 - Decision or change: RunState.recap() keeps each run's result, loss reason, time, coins, likes, kills per enemy, tricks, highest combo and weapons with tiers, for the recap screen (T-320) and the runs list (T-363).
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-319
+
+## 2026-10-29: Every run's recap stats are saved
+- Decision or change: The board: each run's recap stats are saved on this computer. RunHistory keeps every run's summary in user://run_history.json, newest first, up to 200 runs, saved once when the run ends, for the runs list (T-364).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-363
