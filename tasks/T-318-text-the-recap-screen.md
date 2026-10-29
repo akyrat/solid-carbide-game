@@ -1,7 +1,7 @@
 ---
 id: T-318
 title: "Text: the recap screen"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/extended-narrative.md, docs/weapons.md, docs/enemies.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md, art-archive/T-318/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,9 +41,9 @@ The board's review: read the recap screen's text in HUD and menus, Content.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every label the recap needs is in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Recap screen". (QA: pass / fail)
-- [ ] Each new line scored at least 8 in the style loop, with every round in the Style review; names reused from existing texts are listed as reused. (QA: pass / fail)
-- [ ] The labels follow Text rules (vocabulary, no banned word, lengths). (QA: pass / fail)
+- [ ] Every label the recap needs is in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Recap screen". (QA: pass)
+- [ ] Each new line scored at least 8 in the style loop, with every round in the Style review; names reused from existing texts are listed as reused. (QA: pass)
+- [ ] The labels follow Text rules (vocabulary, no banned word, lengths). (QA: pass)
 
 ## Updates
 
@@ -287,3 +287,8 @@ New lines (kind label, each kept at 8 or more; rounds in the Style review): titl
 Reused, not rescored: the trick names (trick popups: LONG DRIFT!, FULL 360!, ALT DRIFT!, AIR 180!, AIR 360!, HANG TIME!, THREAD THE NEEDLE!) and the weapon names from the level-up cards' get_<weapon>.title (Hot Take Exhaust, Neon Underglow, Hot Drop, Wiper Blade, Bricks). These are Title Case card titles, so the label script's sentence-case check flags them; they are card titles, not labels.
 
 Choices made without the board: three titles (win, time's up, wreck, since every run ends on the recap). The style loop's own pick for the button was "End stream" (9); I used "Continue" because the board named it, so the loop was rerun for it (9). The kaiju's name is "The kaiju" (text rule 2: never named). Briefs are in art-archive/T-318/. No code changed, no tests added.
+
+
+### QA
+
+Round 1: qa_check: tests pass (3 sets), documents pass; screenshots line waived (text-only ticket, the screen is T-320). Criterion 1 pass: all labels in game/data/recap_text.json and in HUD and menus, Content, Recap screen. Criterion 2 pass: every new line scored 8 or more (rounds in Style review, Continue rerun at 9 per the board's word); reused names listed. Criterion 3 pass: the style loop's label checks pass for every new line; reused Title Case card titles are reused names, not new labels.
