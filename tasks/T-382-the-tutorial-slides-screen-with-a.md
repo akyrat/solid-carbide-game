@@ -1,7 +1,7 @@
 ---
 id: T-382
 title: The tutorial slides screen, with a reusable trick list scene (placeholder illustrations)
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-007

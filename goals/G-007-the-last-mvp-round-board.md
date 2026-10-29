@@ -1,10 +1,10 @@
 ---
 id: G-007
 title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
-status: paused
+status: building
 art_cap: 40
 art_used: 0
-iteration: 0
+iteration: 1
 max_iterations: 20
 created: 2026-10-29
 lead: Goal-G-007
@@ -47,15 +47,15 @@ The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'The last MVP r
 
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
-| 1 | S1 | Text ticket: every text in the tutorial slides and the pause trick list (Narrative Theme) | unblocks 4, value 5 | The board requires all slide text to come from a text ticket first. Text never uses placeholders, so the slides and the trick list panel cannot be built without it. | missing | T-381 |
-| 2 | S5 | Tutorial slides screen with a reusable trick list (UI) | unblocks 3, value 5 | This is the core of part (1): the three slides, arrows, Start and the checkbox. The trick list is built as its own component so the pause panel shows the same list. | missing | T-382 |
-| 3 | S2 | Script-drawn trick illustrations, one set of seven | unblocks 3, value 4 | This is one of the two candidate sets the board asked for, so QA can compare it against PixelLab. It costs no generations. | missing | T-383 |
-| 4 | S3 | PixelLab trick illustrations, one set of seven (art cap 40) | unblocks 2, value 4 | This is the second candidate set the board asked for, made with PixelLab. | missing | T-384 |
-| 5 | S4 | QA compares the two sets and the better one goes into game/art | unblocks 1, value 5 | The board asked QA to compare which set reads better and to use the better one. | missing | T-385 |
-| 6 | S7 | Trick list button and sub-panel in the pause screen (UI) | unblocks 1, value 4 | This is part (3): the same trick list, reachable from the pause screen, with a way back. | missing | T-386 |
-| 7 | S6 | Start shows the slides before the run (Game Loop) | unblocks 0, value 5 | The slides must sit between the main menu's Start and the run, before the clock and everything else begins, and must respect 'Don't show again'. | missing | T-387 |
-| 8 | S8 | Sound effects off for the MVP and the SFX slider hidden (SFX / UI) | unblocks 0, value 5 | This is part (4): every sound effect silent and the slider hidden, with the music and the sound code kept. | missing | T-388, T-389 |
-| 9 | S9 | Swap the chosen illustrations into the slides and the pause trick list | unblocks 0, value 5 | The functional work starts with placeholders, so the chosen art has to replace them in both places. | missing | T-390 |
+| 1 | S1 | Text ticket: every text in the tutorial slides and the pause trick list (Narrative Theme) | unblocks 4, value 5 | The board requires all slide text to come from a text ticket first. Text never uses placeholders, so the slides and the trick list panel cannot be built without it. | covered | T-381 |
+| 2 | S5 | Tutorial slides screen with a reusable trick list (UI) | unblocks 3, value 5 | This is the core of part (1): the three slides, arrows, Start and the checkbox. The trick list is built as its own component so the pause panel shows the same list. | in-flight | T-382 |
+| 3 | S2 | Script-drawn trick illustrations, one set of seven | unblocks 3, value 4 | This is one of the two candidate sets the board asked for, so QA can compare it against PixelLab. It costs no generations. | in-flight | T-383 |
+| 4 | S3 | PixelLab trick illustrations, one set of seven (art cap 40) | unblocks 2, value 4 | This is the second candidate set the board asked for, made with PixelLab. | in-flight | T-384 |
+| 5 | S4 | QA compares the two sets and the better one goes into game/art | unblocks 1, value 5 | The board asked QA to compare which set reads better and to use the better one. | in-flight | T-385 |
+| 6 | S7 | Trick list button and sub-panel in the pause screen (UI) | unblocks 1, value 4 | This is part (3): the same trick list, reachable from the pause screen, with a way back. | in-flight | T-386 |
+| 7 | S6 | Start shows the slides before the run (Game Loop) | unblocks 0, value 5 | The slides must sit between the main menu's Start and the run, before the clock and everything else begins, and must respect 'Don't show again'. | in-flight | T-387 |
+| 8 | S8 | Sound effects off for the MVP and the SFX slider hidden (SFX / UI) | unblocks 0, value 5 | This is part (4): every sound effect silent and the slider hidden, with the music and the sound code kept. | in-flight | T-388, T-389 |
+| 9 | S9 | Swap the chosen illustrations into the slides and the pause trick list | unblocks 0, value 5 | The functional work starts with placeholders, so the chosen art has to replace them in both places. | in-flight | T-390 |
 
 ### S1: Text ticket: every text in the tutorial slides and the pause trick list (Narrative Theme)
 
@@ -168,6 +168,11 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-29, iteration 0: gap detection: 0 covered, 0 in flight, 9 missing; wrote 10 tickets.
 - 2026-10-29, iteration 0: building.
 - 2026-10-29, iteration 0: paused (see Pauses).
+- 2026-10-29, iteration 0: resumed: its last pause (command: a command the runner ran was refused or failed) can't be checked by the runner; --force.
+- 2026-10-29, iteration 0: resumed by the session Greenbull.
+- 2026-10-29, iteration 0: resumed from building.
+- 2026-10-29, iteration 0: resumed by the session Greenbull.
+- 2026-10-29, iteration 1: T-381 (S1, narrative-theme, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: (nothing new). Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-381 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_019rKCDYVgFnVQ5gCWTtwcXb"} / QA: {"tool_input": {"command": "python -c \"import json;json.load(open('game/data/tutorial_text.json'));print('ok')\""}, "tool_name": "Bash", "tool_use_id": "toolu_011vj6dXbHa8qkukSJzuzHkr"} / QA: python tools/qa_check.py T-381 --no-marks (not pre-approved, needs approval) / QA: python -c json.load parse of game/data/tutorial_text.json (not pre-approved). Rescan: S1 covered, S5 in-flight, S2 in-flight, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
 
 ## Pauses
 
