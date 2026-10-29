@@ -1,7 +1,7 @@
 ---
 id: T-366
 title: Art: the acceleration upgrade's icon
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -85,3 +85,4 @@ Done: the acceleration garage icon, a blue speedometer dial (white ticks, needle
 - Docs: Visual style (Content, new entry) and `game/docs/art/garage-icons.md` (created; other garage icon agents may add sections, expect a trivial merge on that file).
 - Screenshots in `art-archive/T-366/screenshots/`: `icon_dark_light.png` (enlarged on dark and light) and `garage.png` (garage screen, the icon on the acceleration row "Energy Throttle"; taken with v3).
 - Tests: `python -m unittest discover -s game/tools -p "test_*.py"` run; result below.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: garage icons lgtm (2026-10-29).
