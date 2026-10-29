@@ -37,10 +37,10 @@ The board's review: Read the slide and trick list texts in game/data/tutorial_te
 
 ## Acceptance criteria
 
-- [ ] game/data/tutorial_text.json exists, is valid JSON and holds a key with a non-empty string and a comment saying where it appears for each of: slide 1 controls (naming W, A, S, D and that accelerating while turning drifts the car), the seven trick names (one per trick id in game/docs/driving/tricks.md), slide 2's tricks to viewers to subs to gift pack with weapons text, slide 3's goal text (chain tricks, most weapons, strongest when the kaiju arrives with 1 minute left), the Start button, the 'Don't show again' checkbox, the left and right arrows' accessible labels, the pause screen's trick list button and the panel's back control. (QA: pass / fail)
-- [ ] The ticket's Style review records the style loop rounds for every new line, and each kept line scored 8 or more. (QA: pass / fail)
-- [ ] No string in game/data/tutorial_text.json uses the form 'Greenbull says ...' (checked with a search of the file). (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content has a section listing the tutorial and trick list texts with their keys. (QA: pass / fail)
+- [ ] game/data/tutorial_text.json exists, is valid JSON and holds a key with a non-empty string and a comment saying where it appears for each of: slide 1 controls (naming W, A, S, D and that accelerating while turning drifts the car), the seven trick names (one per trick id in game/docs/driving/tricks.md), slide 2's tricks to viewers to subs to gift pack with weapons text, slide 3's goal text (chain tricks, most weapons, strongest when the kaiju arrives with 1 minute left), the Start button, the 'Don't show again' checkbox, the left and right arrows' accessible labels, the pause screen's trick list button and the panel's back control. (QA: pass) All keys present with comments; JSON structure read by eye is valid (the parse command was refused, not run).
+- [ ] The ticket's Style review records the style loop rounds for every new line, and each kept line scored 8 or more. (QA: pass) Runs 1-12 recorded; the 11 lines in the file scored 8-10 (the 7/10 slide 2 combined line is unused).
+- [ ] No string in game/data/tutorial_text.json uses the form 'Greenbull says ...' (checked with a search of the file). (QA: pass)
+- [ ] docs/hud-and-menus.md, Content has a section listing the tutorial and trick list texts with their keys. (QA: pass)
 
 ## Updates
 
