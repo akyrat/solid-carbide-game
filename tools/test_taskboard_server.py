@@ -6,6 +6,7 @@ Godot is never started: the process start is replaced by a stub.
 """
 
 import json
+import subprocess
 import sys
 import tempfile
 import threading
@@ -611,6 +612,55 @@ class ActivityPageTests(unittest.TestCase):
                      "data-goal-now=", "chip quiet", "QUIET_S = 600", "class=\"timeline\"", "ticket ${n.ticket_index} of ${n.tickets_total}, iteration ${n.iteration}",
                      "last activity", "tickNow"]:
             self.assertIn(part, page, part)
+
+
+class GoalTicketLaneTests(unittest.TestCase):
+    """T-392: a goal run's tickets show their real lane. A real temporary repository, with the folders and
+    branch names the goal runner makes (tools/goal_agent/build.py: task/<file stem> beside playtest/<goal id>)."""
+
+    def git(self, *args):
+        subprocess.run(["git", "-C", str(self.main), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                       check=True, capture_output=True, text=True)
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        self.main, self.wts = base / "repo", base / "wts"
+        self.main.mkdir()
+        self.git("init", "-q", "-b", "master")
+        for tid in ("T-931", "T-932", "T-933"):
+            MediaTests.write(self.main, f"tasks/{tid}-t.md", goal_task(tid, "" if tid == "T-933" else "G-009", "open").encode())
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "tickets")
+        self.git("worktree", "add", "-q", "-b", "playtest/G-009", str(self.wts / "G-009"), "master")
+        for p in [mock.patch.object(server.tb, "ROOT", self.main),
+                  mock.patch.object(server.tb, "TASKS_DIR", self.main / "tasks"),
+                  mock.patch.object(server.tb, "STATE_DIR", base / "state")]:
+            p.start()
+            self.addCleanup(p.stop)
+
+    def set_status(self, folder, tid, status):
+        f = next((Path(folder) / "tasks").glob(f"{tid}-*.md"))
+        f.write_text(f.read_text(encoding="utf-8").replace("status: open", f"status: {status}"), encoding="utf-8")
+
+    def shown(self):
+        return {t["id"]: t["status"] for t in server.tickets_payload()["tickets"]}
+
+    def test_a_goal_tickets_own_folder_shows_its_status(self):
+        self.git("worktree", "add", "-q", "-b", "task/T-931-t", str(self.wts / "T-931"), "playtest/G-009")
+        self.set_status(self.wts / "T-931", "T-931", "needs-playtest")
+        self.assertEqual(self.shown(), {"T-931": "needs-playtest", "T-932": "open", "T-933": "open"})
+
+    def test_a_merged_goal_ticket_with_its_folder_removed_shows_the_builds_status(self):
+        self.set_status(self.wts / "G-009", "T-932", "needs-playtest")
+        self.set_status(self.wts / "G-009", "T-933", "needs-playtest")   # no goal line: master's copy stays
+        self.assertEqual(self.shown(), {"T-931": "open", "T-932": "needs-playtest", "T-933": "open"})
+
+    def test_the_version_changes_when_a_build_copy_changes(self):
+        before = server.version()
+        self.set_status(self.wts / "G-009", "T-932", "needs-playtest")
+        self.assertNotEqual(server.version(), before)
 
 
 if __name__ == "__main__":

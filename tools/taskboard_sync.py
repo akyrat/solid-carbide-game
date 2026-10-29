@@ -223,8 +223,18 @@ def task_folders(root=None):
     return folders
 
 
-def tickets_now(tasks_dir=None, folders=None):
-    """Every task as the board shows it, reading open tasks from their branch folders."""
+def build_copy(path, goal_id, builds):
+    """T-392: the task file in the goal's build folder (the worktree on playtest/<goal id>), or None.
+    `builds`: {goal id: build folder}. Used for a goal's ticket whose own folder is gone, because it was
+    merged into the build and the build is where its status now lives."""
+    folder = (builds or {}).get(goal_id)
+    copy = Path(folder) / "tasks" / path.name if folder else None
+    return copy if copy and copy.exists() else None
+
+
+def tickets_now(tasks_dir=None, folders=None, builds=None):
+    """Every task as the board shows it, reading open tasks from their branch folders; a goal's ticket
+    with no folder of its own from its goal's build folder (`builds`: {goal id: folder}), when that has it."""
     folders = task_folders() if folders is None else folders
     tickets = []
     for path in task_files(tasks_dir):
@@ -233,6 +243,9 @@ def tickets_now(tasks_dir=None, folders=None):
             t = ticket(folder / "tasks" / path.name, str(folder))
         else:
             t = ticket(path)
+            copy = build_copy(path, t["goal"], builds) if t and t["goal"] else None
+            if copy:
+                t = ticket(copy) or t
         if t:
             tickets.append(t)
     return tickets

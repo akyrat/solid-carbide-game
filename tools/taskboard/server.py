@@ -99,11 +99,17 @@ def goals_dir():
     return main_checkout() / "goals"
 
 
+def build_folders():
+    """{goal id: build folder} for every worktree on a playtest/<goal id> branch (T-392)."""
+    return {b.split("/", 1)[1]: Path(f) for f, b in worktrees() if re.fullmatch(r"playtest/G-\d+", b)}
+
+
 def version(folders=None):
     """Changes whenever a task file the board shows changes, a task branch opens or closes, a
     screenshot is added to, changed in or removed from a ticket's art-archive/<id>/screenshots/,
     or a goal file in the main checkout's goals/ is added, changed or removed."""
     folders = tb.task_folders() if folders is None else folders
+    builds = build_folders()
     h = hashlib.sha256()
     for path in tb.goal_files(goals_dir()):
         try:
@@ -119,6 +125,13 @@ def version(folders=None):
         except OSError:
             continue
         h.update(f"{real}|{st.st_mtime_ns}|{st.st_size}\n".encode("utf-8"))
+        if real == path:   # a goal ticket with no folder may be read from its build (T-392)
+            for build in builds.values():
+                try:
+                    bst = (build / "tasks" / path.name).stat()
+                except OSError:
+                    continue
+                h.update(f"{build}|{bst.st_mtime_ns}|{bst.st_size}\n".encode("utf-8"))
         for shot in tb.screenshot_files(real.parent.parent, path.name[:5]):
             try:
                 sst = shot.stat()
@@ -160,7 +173,7 @@ def worktree_head_log(folder):
 def tickets_payload():
     folders = tb.task_folders()
     stamp = time.time()
-    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    tickets = with_now(tb.tickets_now(folders=folders, builds=build_folders()), stamp)
     return {"version": version(folders), "generated_at": iso(stamp), "tickets": tickets}
 
 
@@ -171,7 +184,7 @@ def goals_payload():
     folders = tb.task_folders()
     stamp = time.time()
     builds_by_name = {Path(f).name: Path(f) for f, _ in worktrees()[1:]}
-    tickets = with_now(tb.tickets_now(folders=folders), stamp)
+    tickets = with_now(tb.tickets_now(folders=folders, builds=build_folders()), stamp)
     goals = tb.goals_now(goals_dir(), tickets, builds_by_name)
     logs = activity_files()
     for g in goals:
