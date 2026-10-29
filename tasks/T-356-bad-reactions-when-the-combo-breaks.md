@@ -1,7 +1,7 @@
 ---
 id: T-356
 title: Bad reactions burst out when the combo breaks
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -80,3 +80,4 @@ Docs updated: `docs/hud-and-menus.md` (Content), `game/docs/hud-and-menus/hud.md
 ### QA, 2026-10-29 (round 1)
 
 All pass; held in in-qa for T-357. qa_check: tests (3 sets) PASS, documents PASS, screenshots PASS. Criteria 1-3: the 8 new GUT tests in test_hud_reactions.gd cover cut vs drain, six-kind mix with fixed seed, data-driven numbers, lane, cap, pause, new run; GUT suite green. Criterion 4: Content in docs/hud-and-menus.md and game/docs/hud-and-menus/hud.md describe it. Criterion 5: reactions_bad.png shows COMBO BROKEN! with bad icons (broken heart, scream face) on the right over the counter lane; GIF present. Criterion 6: counts as reported by the agent, check green.
+- 2026-10-29, needs-playtest → done: The board played build A: LGTM (2026-10-29).
