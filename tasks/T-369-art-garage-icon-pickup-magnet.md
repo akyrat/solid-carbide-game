@@ -1,7 +1,7 @@
 ---
 id: T-369
 title: Art: the pickup magnet upgrade's icon
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/art/]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/garage-design.md, tasks/T-352-art-reaction-icons.md]
 files_expected_to_change: [game/art/garage/, game/tools/, art-archive/, docs/visual-style.md, game/docs/art/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,11 +41,11 @@ The board's review: open the garage and see the pickup magnet icon.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/art/garage/pickup_magnet.png` exists with a record, and the garage shows it on the pickup magnet row. (QA: pass / fail)
-- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] No PixelLab generations were used (the result notes say so). (QA: pass / fail)
-- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass / fail)
-- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
+- [ ] `game/art/garage/pickup_magnet.png` exists with a record, and the garage shows it on the pickup magnet row. (QA: pass)
+- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass)
+- [ ] No PixelLab generations were used (the result notes say so). (QA: pass)
+- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass)
+- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass)
 
 ## Updates
 
@@ -65,5 +65,7 @@ Script-drawn 16 x 16 (0 PixelLab generations); every script check (style_rules.p
 Score 8 (Style Evaluator). Reason: a clear horseshoe magnet, thick dark outline, white tips, blue body with highlight and shade, readable on dark and light, no Greenbull colours. Minor: the outline is a closed ring (rule 2 wants it broken by highlights), the grey band under the tips is a flat stripe. Kept at 8, no refine.
 
 ## Result notes
+
+QA report (round 1): qa_check run with --no-tests (no test-set criterion): screenshots PASS; its documents check names the directory game/docs/art/ and cannot match it, but game/docs/art/garage-icons.md and docs/visual-style.md both changed on the branch, so the docs criterion passes. All five criteria pass: 16x16 PNG and json; style 8 in round 1, recorded; 0 PixelLab calls stated; screenshots present. Set check: the five garage icons share the black comic outline, flat colours and highlight/shade and read as one set; air turn is the lightest in weight but fits.
 
 Done: `game/art/garage/pickup_magnet.png` (16 x 16, a blue horseshoe magnet with white pole tips and the HUD's dark outline) and `pickup_magnet.json`, drawn by `game/tools/build_garage_icon_pickup_magnet.py` (reuses the HUD outline helpers; deterministic) with `test_build_garage_icon_pickup_magnet.py`. 0 PixelLab generations. Style loop: one round, score 8, kept (Style review). Docs: Visual style and `game/docs/art/garage-icons.md`. Screenshots in `art-archive/T-369/screenshots/`: `icon_dark_light.png` and `garage.png` (garage demo scene, after Godot's import). Tests: `python -m unittest discover -s game/tools -p "test_*.py"` run in the foreground (660 tests, OK). No .uid/.import files committed.
