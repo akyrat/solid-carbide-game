@@ -2095,3 +2095,8 @@ Entry format:
 - Decision or change: The board played it: a burst of reactions from the sub goal square at each goal; floating reactions rise up the right side from the viewers counter, faster and more noticeable (the board's tweaks: more of them, bigger, 0.9 alpha, double speed, only the viewers counter's side).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-351
+
+## 2026-10-29: The reaction icons
+- Decision or change: The board loved the six script-drawn reaction icons (heart, thumbs up, fire, clapping hands, star, smiling face), 0 PixelLab generations.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-352

@@ -8,7 +8,6 @@ extends GutTest
 
 const RUN := preload("res://scenes/run/run.tscn")
 const SIZE := Vector2(1152, 648)
-const GREENBULL := [Color8(104, 220, 96), Color8(247, 208, 52), Color8(12, 76, 44)]
 
 
 func after_each() -> void:
@@ -55,7 +54,7 @@ func test_the_numbers_are_in_hud_json_with_the_proposed_shape() -> void:
 	var r := _reactions()
 	assert_eq(r.cap(), 60)
 	assert_almost_eq(float(r.cfg["alpha"]), 0.9, 0.001)
-	assert_eq(int(r.cfg["icon_scale"]), 4)
+	assert_eq(int(r.cfg["icon_scale"]), 2)
 	var rates: Array = r.cfg["rates_per_second"]
 	assert_eq(rates.size(), 5, "one rate per look step")
 	assert_eq(rates[0], 0.0, "none at the base step")
@@ -259,17 +258,15 @@ func test_clear_empties_it() -> void:
 	assert_eq(r.next_in, -1.0)
 
 
-func test_the_placeholder_colours_avoid_the_viewers_cyan_the_heart_red_and_greenbull() -> void:
-	for c: Color in Reactions.COLORS:
-		assert_ne(c, Color("#33e1ff"))
-		assert_gt(_dist(c, Hud.HEART_COLOR), 0.05, "not the heart's red")
-		assert_gt(_dist(c, Color("#33e1ff")), 0.05)
-		for g: Color in GREENBULL:
-			assert_gt(_dist(c, g), 0.05, "not Greenbull's")
-
-
-func _dist(a: Color, b: Color) -> float:
-	return (a.r - b.r) * (a.r - b.r) + (a.g - b.g) * (a.g - b.g) + (a.b - b.b) * (a.b - b.b)
+func test_six_icons_are_16_pixel_pngs_and_each_kind_can_be_drawn() -> void:
+	assert_eq(Reactions.ICONS.size(), 6)
+	for t: Texture2D in Reactions.ICONS:
+		assert_eq(t.get_size(), Vector2(16, 16))
+	var r := _reactions(4)
+	r.burst(Vector2(500, 300))
+	r.items[0]["kind"] = 5
+	r.advance(0.1)
+	assert_gt(r.count(), 0)
 
 
 func test_the_hud_draws_them_under_every_other_piece() -> void:
