@@ -95,7 +95,7 @@ func test_damage_in_hearts() -> void:
 
 func test_health_drops_and_garage_hearts() -> void:
 	var d := EnemyData.new().health_drops()
-	assert_eq(float(d["drop_chance"]), 0.15)
+	assert_eq(float(d["drop_chance"]), 0.225)
 	assert_eq(float(d["restore_hearts"]), 1.0)
 	var g := GarageData.new()
 	assert_eq(g.value("car_health", 0), 5.0, "level 0: 5 hearts")

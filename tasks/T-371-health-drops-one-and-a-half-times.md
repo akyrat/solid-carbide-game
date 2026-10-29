@@ -1,7 +1,7 @@
 ---
 id: T-371
 title: Health drops 1.5 times as often
-status: open
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/data/enemies.json]
 files_expected_to_change: [game/data/enemies.json, game/tests/unit/, game/docs/, docs/enemies.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,14 +39,18 @@ The board's review: play a run and feel the health drops.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `health_drops.drop_chance` in game/data/enemies.json is 0.225 and nothing else in the file changed except its comment (diff). (QA: pass / fail)
-- [ ] A test checks the drop chance is read from the data (no number pinned in code), and tests that pinned 0.15 are updated. (QA: pass / fail)
-- [ ] Enemies, Content and the game docs give the new number. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `health_drops.drop_chance` in game/data/enemies.json is 0.225 and nothing else in the file changed except its comment (diff). (QA: pass)
+- [ ] A test checks the drop chance is read from the data (no number pinned in code), and tests that pinned 0.15 are updated. (QA: pass)
+- [ ] Enemies, Content and the game docs give the new number. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Started: health drops 1.5 times as often (0.15 to 0.225).
 
 ## Style review
 
@@ -55,3 +59,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (game-data). `health_drops.drop_chance` 0.15 to 0.225 in game/data/enemies.json; only that value and its `_comment` history changed. Tests updated: test_health_drops.gd (reads the data, 0.225, ratio to the old 0.15 is 1.5; the statistical test now expects 3/8 of the coins' rate, renamed `..._about_three_eighths_of_the_coins...`), test_run_hearts.gd, test_run_data.gd. Docs: docs/enemies.md (Health pickups line; the Decisions entry was already there), game/docs/enemies/minions.md. No separate Content doc gives the number. The long GDD is regenerated at merge.
+Tests: game/tools unittest 573 OK; tools unittest OK; GUT 1849 tests: first run 1848 pass and 1 fail (the old quarter-ratio test, then fixed); test_health_drops rerun 11/11 pass. The full GUT was not rerun after that fix (about 9 min).
+
+QA (round 1): all four criteria pass. Full qa_check: 3 test sets passed (full GUT included). Documents line flags only game/docs/ (README index quirk; game/docs/enemies/minions.md carries 0.225, checked); screenshots waived (data-only).
+QA rerun: the second qa_check showed one red GUT exit (Godot 'resources still in use at exit', a shutdown warning); run_tests.sh rerun alone: exit 0, 1849/1849 pass. First qa_check: all 3 test sets passed. Counts: game/tools unittest 573 OK, tools unittest OK, GUT 1849 pass.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: lgtm (2026-10-29).

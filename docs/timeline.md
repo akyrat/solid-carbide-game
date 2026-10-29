@@ -2270,3 +2270,8 @@ Entry format:
 - Decision or change: The board approved the six script-drawn bad reaction icons (crying-laughing, thumbs down, peeking, broken heart, skull, screaming face), 0 PixelLab generations.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-357
+
+## 2026-10-29: Health drops 1.5 times as often
+- Decision or change: The board approved health drops at 22.5% (was 15%).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-371
