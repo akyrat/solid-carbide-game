@@ -1,7 +1,7 @@
 ---
 id: T-327
 title: Restart and Exit buttons on the pause screen
-status: open
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -64,6 +64,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started (build C, Pause and your runs): the UI Agent is adding Restart and Exit to the pause screen.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -71,3 +75,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+(UI Agent, 2026-10-29) Built. `pause_screen.gd` has `restart_button` ("Restart") and `exit_button` ("Exit") in a centred row at the bottom of the strip, emitting `restart_pressed` / `exit_pressed`. `game_flow.gd` (small: two connects and two handlers) banks `run.state.coins` with `progress.bank_run("loss", coins)` then calls `start_run()` (Restart) or `show_menu()` (Exit); neither goes through `run_ended`, so a time's up screen or the recap (T-320, T-360's wreck) never sees them. `level_creator.gd` `play_level` does the same: Restart replays the same level, Exit returns to the creator's list; coins kept.
+Proposals (also in HUD and menus, Content): buttons in a bottom row; no confirm prompt (a prompt would need a Narrative Theme text ticket); coins kept; keyboard focus starts on Restart when paused, Tab/arrows move, Enter/Space press.
+Two existing layout tests had loose height bounds raised for the extra row (strip bottom < 380, strip height < 40% of screen).
+Tests: game/tools 657 OK (1 skipped); tools 573 OK; GUT 1822/1822 pass. New: tests/unit/game/test_pause_restart_exit.gd (4), two in test_play_level.gd.
+Screenshot: art-archive/T-327/screenshots/pause_with_restart_exit.png.
+Docs updated: docs/hud-and-menus.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/pause-screen.md, game/docs/game-loop/screen-flow.md (game/README.md index unchanged: topic files hold it).
