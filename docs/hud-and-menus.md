@@ -109,6 +109,28 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 
 The checkboxes and buttons work with the mouse and the keyboard (Tab to move, Space to switch or press). The strip's dark band runs over the lower part of the car's health bar while paused. How it is built is in `game/docs/hud-and-menus/pause-screen.md`, "Pause screen".
 
+### Runs list
+
+Text task T-362 (the board's decision: Game loop architecture, Decisions, "The runs list"); the screen is T-364 and reads the text from `game/data/runs_list_text.json` (keys in the file's `_comment`). Every new line scored 8 or more in the style loop. The columns are the recap's stats; the first run's rows read left to right.
+
+| Where | Key | Text |
+|---|---|---|
+| Main menu button (with Start, Garage, Exit) | `menu_button` | Past streams |
+| Screen title | `title` | Past livestreams |
+| Column: the day | `column.date` | Stream date |
+| Column: how it ended | `column.result` | Result |
+| Column: survived | `column.time` | Time survived |
+| Column: highest combo | `column.combo` | Peak engagement (reused: recap `heading.combo`) |
+| Column: enemies | `column.enemies` | Takedowns (reused: recap `heading.enemies`) |
+| Result, win | `result.win` | Kaiju clipped |
+| Result, time's up | `result.time_up` | Out of airtime |
+| Result, wreck | `result.wreck` | Peak content |
+| No saved runs | `empty` | No runs yet, so go drift: the content won't make itself |
+| Back to the main menu | `button.back` | Back to menu |
+| The X's accessible label | `button.close` | Close (reused: recap `button.close`) |
+
+Proposals for the board to judge: "Peak content" for a wreck is the weakest line (it risks reading like the "Peak engagement" column); "Past livestreams" and "Past streams" could be one word. The empty line is long for a label.
+
 ### Level-up screen
 
 Task T-052 (decisions: Decisions, 2026-10-15). When the player levels up the run pauses and this screen shows over it: a white rounded banner at the top with "Greenbull sent a gift pack!" (rewritten for the rebrand in T-301/T-302: Extended narrative, Decisions, "The rebrand"), and under it the 2 choices the weapons give (Weapons, Content, "The level-up offers") as plain cards side by side, each with a title, a description and a "Take it" button (all text approved in T-051). The run behind it is dimmed. An upgrade card shows the text of the tier it would give (the weapon's tier now plus 1); "get the flamethrower" has one text. With only one choice left, one card shows. The look is the comic look of the trick popups and the combo counter: white rounded cards with black borders, black Bangers text with hard pixel edges, none of Greenbull's colours. The highlighted card has a thicker border in the combo counter's yellow with a black outline round it; the first card starts highlighted. A/D or the left and right arrow keys move the highlight, Enter or Space takes the highlighted card, and clicking a card's "Take it" button takes that card. Only a fresh key press counts: a key held down from driving when the screen opens (or its key-repeat) does nothing until it is let go. Taking a card applies it and resumes the run; when several level-ups are waiting the next one's cards show straight after. Escape does not resume the run or open the pause screen while the choice is open. Hovering a card with the mouse does not move the highlight. (T-141) The screen wears T-140's red and gold art (Visual style, Decisions): cream cards in a gold and red 9-slice frame, the highlighted card in a bright gold frame instead of the yellow ring, the red ribbon with the title lettered between its two gull medallions, gold "Take it" plates (a darker, flat one while pressed), the gift box emblem at the ribbon's left end, and a red and gold sunburst behind the cards that turns slowly in steps. The card text wraps at word boundaries on the cream. The screen builds up in 0.54 seconds (0.64 with three cards) in whole-pixel frames of 0.04 seconds, with no smoothing, and it runs while the run is paused: the dim fades in over four frames, the sunburst grows from small with a small overshoot, the ribbon drops in from above with a bounce, the emblem drops just after it, and the cards slide up and settle one after the other, left first. Nothing can be taken or moved while it builds up: keys do nothing (a key pressed then and still held when it ends takes nothing until it is let go, as for a key held at the start), and the buttons ignore the mouse. Keyboard and mouse then work as above. The screen opens at the package pickup, so the likes bar's level-up animation normally is over; if both overlap, they play on their own, the screen above the HUD. The numbers are proposals for the board's playtest. (T-173) Every card shows an image of its weapon (Decisions, 2026-10-18) in a 64 x 64 pixel slot centred above the title: the gun (a small gun), the exhaust flamethrower, the neon underglow, the molotovs or the windshield wiper; an upgrade card shows the same weapon's image as its "get" card. The cards grew from 360 x 300 to 360 x 374 pixels so the image does not take the texts' room, and the highlight frame grows with them. Until the art task (T-174) adds the final images, each weapon has a placeholder drawn in code (16 x 16 pixels at 4 screen pixels each, hard-edged, none of Greenbull's colours). The three new weapons' cards use T-171's text. How it is built is in `game/docs/hud-and-menus/level-up-screen.md`, "Level-up screen".
