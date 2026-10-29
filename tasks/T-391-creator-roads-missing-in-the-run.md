@@ -1,7 +1,7 @@
 ---
 id: T-391
 title: Bug: roads painted in the level creator don't show up when the level is played
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/, game/scripts/level/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ The board's review: paint some roads in the creator, press Play and drive on the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] A test paints roads of every kind (with a junction and a crossing) in a level, saves it, builds the run from it and checks each painted cell is drawn with its road tile (it fails before the fix, named in the result notes). (QA: pass / fail)
-- [ ] The cause is written in the result notes, and the board's levels in game/data/levels/ are unchanged and uncommitted. (QA: pass / fail)
-- [ ] The game's own map and an earlier level still build the same ground as before (tests). (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ describe the fix. (QA: pass / fail)
-- [ ] A screenshot of a run on a level with painted roads is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] A test paints roads of every kind (with a junction and a crossing) in a level, saves it, builds the run from it and checks each painted cell is drawn with its road tile (it fails before the fix, named in the result notes). (QA: pass: the 6-test file covers every road kind, junction and crossing, and fails before the fix per the notes)
+- [ ] The cause is written in the result notes, and the board's levels in game/data/levels/ are unchanged and uncommitted. (QA: pass: cause written; game/data/levels/ is untracked)
+- [ ] The game's own map and an earlier level still build the same ground as before (tests). (QA: pass: tests for the game's own map and an earlier level are green)
+- [ ] Level design, Content and game/docs/level/ describe the fix. (QA: pass: level-design.md and level/level-creator.md changed and committed; qa_check's documents line flagged only the folder name)
+- [ ] A screenshot of a run on a level with painted roads is in `art-archive/<id>/screenshots/`. (QA: pass: run_painted_roads.png shows painted roads, rooftop and ramp)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass: qa_check ran all three sets green; counts 668 / 573 / 1939 in the notes)
 
 ## Updates
 
@@ -81,3 +81,8 @@ Written by the agent when it finishes.
 **Test counts (run once at the end, foreground).** `python -m unittest discover -s game/tools -p "test_*.py"`: 668 tests, OK (1 skipped). `python -m unittest discover -s tools -p "test_*.py"`: 573 tests, OK. `bash game/tools/run_tests.sh`: 1939 tests, 1939 passing, 1246782 asserts, TESTS PASSED.
 
 Documents affected: `docs/level-design.md`, `game/docs/level/level-creator.md`.
+
+### QA, 2026-10-29
+
+All six criteria pass. qa_check: tests PASS (three sets), screenshots PASS; its documents line failed only because the ticket lists the folder game/docs/level/ and not a file (the file in it changed and is committed). The board played it and approved ("road fix lgtm").
+- 2026-10-29, needs-playtest → done: The board played it: road fix lgtm (2026-10-29).
