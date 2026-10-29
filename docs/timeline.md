@@ -2305,3 +2305,8 @@ Entry format:
 - Decision or change: The board approved the pickup magnet icon (a blue horseshoe magnet), script-drawn, 0 PixelLab.
 - Documents touched: none
 - Tasks: T-369
+
+## 2026-10-29: The last MVP round
+- Decision or change: The board set the last features for the MVP and holds itself to no new scope after them, apart from polish: tutorial slides before the first run (three slides: the controls; the tricks with pixel art illustrations and how tricks, viewers, subs and gift packs lead to weapons; the goal of being strongest when the kaiju arrives with 1 minute left), with arrows, a Start button and a "Don't show again" checkbox; a trick list in the pause screen; and no sound effects in the MVP (the slider hidden, the code kept, the music stays). Built as one goal reviewed in one playtest at the end, PixelLab cap 40 for the trick illustrations, which are made both with PixelLab and by script for QA to compare.
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: the goal's tickets
