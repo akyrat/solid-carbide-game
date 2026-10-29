@@ -1,7 +1,7 @@
 ---
 id: T-317
 title: The 3-second animated time's up screen when the timer runs out
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
