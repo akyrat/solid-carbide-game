@@ -1,7 +1,7 @@
 ---
 id: T-329
 title: A crash cuts the combo by 50%, not 80%
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -72,3 +72,4 @@ Done (Game Data). `collision_cut` 0.8 -> 0.5 in `game/data/combo.json`; the form
 QA round 1: criteria 1,2,3,5 pass; 4 fails (paperwork): docs/drifting.md:195 still says 80%. Three test sets passed per qa_check (counts not printed by its summary; builder reported GUT 1931/1931, Python 573 tests). README criterion met via game/docs/game-loop/the-run.md; screenshots waived (data-only).
 
 QA round 2: all criteria pass. Criterion 4 fixed (drifting.md:195, commit d8f06460). Tests not rerun (only a doc changed since the green sets of round 1). qa_check documents (game/README.md) and screenshots lines are the same waived items as round 1 (README is an index; data-only ticket).
+- 2026-10-29, needs-playtest → done: The board played the feel tweaks build: t329 lgtm (2026-10-29).
