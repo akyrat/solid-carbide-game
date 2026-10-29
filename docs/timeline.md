@@ -2315,3 +2315,8 @@ Entry format:
 - Decision or change: The board approved a crash cutting the combo by 50% instead of 80% (taken over from Tokens on the board's word).
 - Documents touched: `docs/drifting.md`, `docs/game-loop-architecture.md`
 - Tasks: T-329
+
+## 2026-10-29: The gift pack helicopter 30% bigger
+- Decision or change: The board approved the gift pack helicopter drawn 30% bigger (0.65 instead of 0.5), the package hanging a little lower (taken over from Tokens on the board's word).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-330

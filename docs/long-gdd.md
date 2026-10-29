@@ -139,6 +139,7 @@ The run also owns the likes (XP) and the level (task T-037; how to use it: [game
 How the level-up screen is reached (task T-144; how to use it: [game/docs/game-loop/gift-pack-and-pickups.md](../game/docs/game-loop/gift-pack-and-pickups.md), section "The gift pack drop"; the numbers: [game/data/gift_pack.json](../game/data/gift_pack.json)):
 
 - On every level-up the run sends a helicopter. It flies across the screen from beyond one edge to beyond the other, carrying the package, and drops it over the landing spot; the package falls and lands. Built with placeholder art for now (the final art: tasks T-145 and T-146).
+- The helicopter is drawn 30% bigger than its first size (T-330): scale 0.65 on its 192 x 160 sheet frames, about 125 x 104 drawn pixels, set as `helicopter.draw_scale` in `gift_pack.json`. The package hangs `hang_below_px` 88 (was 80) under its centre, so it still hangs clear of the bigger belly; the top margin and the off-screen margin are read from the drawn size and did not change.
 - The landing spot is a short way ahead of the car, along the way it is moving, on open road: never in a building, a boulder or past the map's edge. If straight ahead is blocked, the nearest open spot around it is used.
 - The run keeps going the whole time (the clock, enemies, likes and the likes drain). The level-up moment itself (the "level up" signal, the level-up effect, the likes bar) is unchanged.
 - One package per level-up. Packages stay on the ground until picked up; a new run clears them.
@@ -1621,7 +1622,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `c309e87d14cf07f2ee3e1118a6d4ec5c674231374548dfe335e39d6825007f86` |
+| `game-loop-architecture.md` | `4faf337de125919ad6f0876d4be08f98a44b0da85cd65639657e0598f54d885d` |
 | `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
 | `level-design.md` | `40ac1475ef0a25d13c14ce27bb5a376b967540e9828c944d933c0b3e6ecac9b8` |
 | `enemies.md` | `fea63c8867c9665c245a1aa7634f8513799f0254bc44f8d32b929340abae9bf3` |
