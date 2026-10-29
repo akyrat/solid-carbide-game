@@ -2185,3 +2185,8 @@ Entry format:
 - Decision or change: The board approved the runs list's text and its main menu button.
 - Documents touched: none
 - Tasks: T-362
+
+## 2026-10-29: Bad reactions when the combo breaks
+- Decision or change: The board approved the burst of bad reactions from the viewers counter when a crash cuts the combo (placeholder icons; art next, T-357).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-356

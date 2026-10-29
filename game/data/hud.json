@@ -26,7 +26,7 @@
     ]
   },
   "reactions": {
-    "_comment": "T-351, the reaction icons (HUD and menus, Decisions, 'The HUD looks like a livestream'). All proposals for the playtest; the board asked for more and more noticeable ones, from the side where the viewers counter is (quick tuning, 2026-10-28). cap: most icons on screen at once. alpha: their opacity. icon_scale: screen pixels per art pixel. rates_per_second: groups of floaters per second for each look step of the live viewers counter (0 base, 1 to 3 the heat steps, 4 fire at 1,000,000); 0 means none. Each group is group_min to group_max icons, and the gap to the next is the mean (1 / rate) times a random share between gap_min_share and gap_max_share, so the gaps are uneven. Floaters start below the bottom edge at a random x between lane_from and lane_to of the screen width (about the viewers counter's width, 0.76 to 0.99 of it, so the right side only), rise at rise_min to rise_max pixels per second up to near the top, swaying wobble_px at wobble_hz, popping from pop_from to full size over pop_seconds, fading in over fade_in and out from fade_out_from of their life. The burst: burst_count icons out of the sub goal square at burst_speed_min to burst_speed_max pixels per second, slowed by burst_drag, drifting up at burst_rise, lasting burst_seconds_min to burst_seconds_max.",
+    "_comment": "T-351, the reaction icons (HUD and menus, Decisions, 'The HUD looks like a livestream'). All proposals for the playtest; the board asked for more and more noticeable ones, from the side where the viewers counter is (quick tuning, 2026-10-28). cap: most icons on screen at once. alpha: their opacity. icon_scale: screen pixels per art pixel. rates_per_second: groups of floaters per second for each look step of the live viewers counter (0 base, 1 to 3 the heat steps, 4 fire at 1,000,000); 0 means none. Each group is group_min to group_max icons, and the gap to the next is the mean (1 / rate) times a random share between gap_min_share and gap_max_share, so the gaps are uneven. Floaters start below the bottom edge at a random x between lane_from and lane_to of the screen width (about the viewers counter's width, 0.76 to 0.99 of it, so the right side only), rise at rise_min to rise_max pixels per second up to near the top, swaying wobble_px at wobble_hz, popping from pop_from to full size over pop_seconds, fading in over fade_in and out from fade_out_from of their life. The burst: burst_count icons out of the sub goal square at burst_speed_min to burst_speed_max pixels per second, slowed by burst_drag, drifting up at burst_rise, lasting burst_seconds_min to burst_seconds_max. The bad reactions (T-356, when a crash cuts the combo): bad_count icons, a mix of the six bad ones, start one after another over bad_seconds from the viewers counter's height in the same lane, rising bad_rise_min to bad_rise_max pixels per second (faster than the floaters), lasting bad_life_min to bad_life_max, swaying bad_wobble_px.",
     "cap": 60,
     "alpha": 0.9,
     "icon_scale": 2,
@@ -51,7 +51,14 @@
     "burst_drag": 1.5,
     "burst_rise": 30.0,
     "burst_seconds_min": 1.3,
-    "burst_seconds_max": 1.9
+    "burst_seconds_max": 1.9,
+    "bad_count": 10,
+    "bad_seconds": 1.5,
+    "bad_rise_min": 260.0,
+    "bad_rise_max": 420.0,
+    "bad_life_min": 1.4,
+    "bad_life_max": 2.0,
+    "bad_wobble_px": 12.0
   },
   "sub_goal": {
     "_comment": "T-337, the sub goal square (HUD and menus, Decisions, 'The HUD looks like a livestream'): game pixels at 1152 x 648 from the board's layout page, the 128 x 128 square with its label under it; anchored to the right edge, at the same share of the height.",
