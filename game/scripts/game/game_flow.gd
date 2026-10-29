@@ -13,6 +13,7 @@ const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
+const TimeUpScreenScript := preload("res://scripts/ui/time_up_screen.gd")
 const MusicPlayerScript := preload("res://scripts/game/music_player.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 
@@ -81,6 +82,7 @@ func start_run() -> void:
 
 ## Adds a fresh run under `parent`, set up as the game's own run: the garage upgrades from
 ## `progress`, the saved zoom and camera options, the pause screen (child "PauseScreenLayer"),
+## the time's up screen (child "TimeUpScreenLayer", T-317),
 ## and the run's coins banked into `progress` when it ends. `layout_path`, when given, is the
 ## map file it plays (T-230); empty is the game's own map. The level creator's Play uses it
 ## too (T-239). The run starts itself when it enters the tree.
@@ -100,6 +102,11 @@ static func add_run(parent: Node, progress: PlayerProgress, layout_path: String 
 	ps.name = "PauseScreenLayer"
 	r.add_child(ps)
 	ps.setup(r)
+	# The time's up screen (T-317): plays over the frozen run when the timer runs out.
+	var tu: CanvasLayer = TimeUpScreenScript.new()
+	tu.name = "TimeUpScreenLayer"
+	r.add_child(tu)
+	tu.bind(r.state)
 	progress.connect_run(r.state)  # banks the coins before the screen swaps
 	if history != null:
 		history.connect_run(r.state)  # saves the run's recap (T-363)

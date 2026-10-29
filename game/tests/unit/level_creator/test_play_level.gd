@@ -188,7 +188,9 @@ func _lose_on_health(s: RunState) -> void:
 
 
 func test_a_run_lost_on_the_clock_returns_to_the_level_list() -> void:
-	await _end_and_check_list(func(s): s.advance(RunState.RUN_SECONDS + 1.0), "loss")
+	await _end_and_check_list(func(s):
+		s.advance(RunState.RUN_SECONDS + 1.0)
+		s.advance(s.time_up_seconds), "loss")  # the time's up screen first (T-317)
 
 
 func test_a_run_ending_while_paused_returns_unpaused() -> void:

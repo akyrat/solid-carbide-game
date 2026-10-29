@@ -103,7 +103,13 @@ func _lose_on_health(s: RunState) -> void:
 
 
 func test_a_run_lost_on_the_clock_returns_to_the_main_menu() -> void:
-	await _end_run_and_check_menu(func(s): s.advance(RunState.RUN_SECONDS + 1.0), "loss")
+	await _end_run_and_check_menu(_lose_on_the_clock, "loss")
+
+
+## Runs the clock out and lets the time's up screen (T-317) play out.
+func _lose_on_the_clock(s: RunState) -> void:
+	s.advance(RunState.RUN_SECONDS + 1.0)
+	s.advance(s.time_up_seconds)
 
 
 func test_a_second_run_from_the_menu_is_fresh() -> void:
