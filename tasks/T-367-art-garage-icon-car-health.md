@@ -1,7 +1,7 @@
 ---
 id: T-367
 title: Art: the car health upgrade's icon
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
