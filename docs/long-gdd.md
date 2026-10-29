@@ -503,6 +503,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **The car's spawn point** (board, 2026-10-22): every level has a spawn point, where the car starts a run on it. It is visible in the editor from the moment a level opens and the board can move it anywhere the car can stand (dragging it, and turning it for the car's starting heading, a proposal). It can never be deleted: a level always has exactly one. A new level starts with it at the map's centre; a level saved before this has it there too. (T-279, T-280)
 - **Thread the needle** (board, 2026-10-22): in the level creator the board can mark two obstacles (anything the car crashes into and that cuts the combo: boulders, barriers, cones, crates) as a pair. In a run on that level, driving through the gap between a marked pair is a trick, **thread the needle**, that raises the combo like the other tricks (Game loop architecture, Decisions, "The combo"). What it is worth, whether it pays again on the next pass, and how the pair shows in the editor and in the run are the agents' proposals for the playtest. Its popup text: HUD and menus, Content (T-271). (T-272)
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
+- **The board's own level becomes the game's map** (board, 2026-10-29): the board builds a level by hand in the level creator over several hours, then hands it over; that level becomes the map the game's Start plays, in place of the elevation sample map. Until the board names the file, nothing changes. (T-372)
 
 ### Content
 
@@ -1590,7 +1591,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `e0b95c972da907791f801534c8d1e0eb6079d4ff76780bfc8435d35e02b1247e` |
 | `drifting.md` | `5f83e83085e4d7271846d900010bc83d59bf08696c3cb59bd89f0a8f3e02c381` |
-| `level-design.md` | `3cd75622909a0f858c1562b72b430448e84b0cfb5c44d4115a82c5a9f4045340` |
+| `level-design.md` | `40ac1475ef0a25d13c14ce27bb5a376b967540e9828c944d933c0b3e6ecac9b8` |
 | `enemies.md` | `07e2bb4afaaf455463646a1cc7750959353db4b67e3e237fa4cb2eef6639d496` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
 | `garage-design.md` | `b077bf5d337d83e9485ff68a939f54c366db4a205143407d4561e549794d9194` |

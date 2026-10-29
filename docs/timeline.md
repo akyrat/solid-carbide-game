@@ -2240,3 +2240,8 @@ Entry format:
 - Decision or change: The board approved weapons hitting only enemies on their own height level (ramp tolerance 1.5, the kaiju reachable from every level, in the air the level under the car).
 - Documents touched: `docs/enemies.md`, `docs/weapons.md`
 - Tasks: T-326
+
+## 2026-10-29: The board's level becomes the game's map
+- Decision or change: The board will build a level in the level creator and hand it over; a ticket makes it the map Start plays, waiting for the board's file.
+- Documents touched: docs/level-design.md
+- Tasks: T-372
