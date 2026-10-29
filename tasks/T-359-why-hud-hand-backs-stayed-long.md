@@ -60,6 +60,10 @@ Started: a script lists each hand-back with its length and prompt, and a doc giv
 
 In QA: the agents did hand back one line (266 characters on average); the harness frame around each hand-back adds about 1,200 more.
 
+### 2026-10-29, Done
+
+Merged: agents kept their hand-backs short; the harness frame and launch notices make up most of it. Proposed fixes are in docs/token-spend/hand-backs-2026-10-29.md for the board.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.

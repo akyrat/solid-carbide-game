@@ -60,6 +60,10 @@ Started: a script groups the QA agents' calls by kind, and a doc names the deare
 
 In QA: QA's calls go mostly to polling the three test sets (about 15 min, over the 10-min foreground limit), then to writing the marks.
 
+### 2026-10-29, Done
+
+Merged: QA's calls go to waiting for the tests and writing marks; proposed cuts are in docs/token-spend/qa-calls-2026-10-29.md for the board.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
