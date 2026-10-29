@@ -1,0 +1,6 @@
+Label of the button that leaves the recap screen to the main menu (the Continue button). 1 to 2 words, sentence case.
+
+Context: the recap screen shown after every run, in Solid Carbide, a drift-driving roguelite where the player is Stunt Driver, livestreaming to Greenbull's audience in a city under kaiju attack. The screen is white rounded panels, Bangers font. Greenbull is the sponsor voice (out of touch, profit-minded, never evil). Use the game vocabulary: subs, live viewers, the stream, the kaiju. Do not mock the city's people. Output exactly one line, sentence case, no quotes.
+
+
+The board decided the button is called Continue; the label must be the word Continue, optionally with a few words after it (for example 'Continue' alone is fine). Output one line.
