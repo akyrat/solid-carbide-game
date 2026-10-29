@@ -70,7 +70,7 @@ Done (Game Loop Agent, commit d1fb86af). 0 PixelLab calls.
 - 0.65 against the nearest clean scale: nearest filtering keeps edges hard; 0.65 gives slightly uneven pixel sizes next to a clean 0.5 or 1.0, not visibly rough at game zoom in the screenshots.
 - Tests: two new `test_t330_*` in `game/tests/unit/run/test_gift_drops.gd` (scale 1.3 times today, 125 x 104, read from the data file; off-screen start/end, top margin, package below the belly); the data-file tests now include `draw_scale`.
 - Test counts: `game/tools` unittest 668 OK (1 skipped); `tools` unittest 573 OK; `run_tests.sh` GUT 1932 of 1932 passing.
-- Screenshots (same fixture, same frame): before `C:\solid-carbide-worktrees\T-330\screenshots\T-330_before_250.png` and `T-330_before_300.png`; after `T-330_after_250.png` and `T-330_after_300.png` (same folder, git-ignored).
+- Screenshots (same fixture, same frame): before `C:\solid-carbide-worktrees\T-330\art-archive\T-330\screenshots\T-330_before_250.png` and `T-330_before_300.png`; after `T-330_after_250.png` and `T-330_after_300.png` (same folder, committed).
 - Docs: `docs/game-loop-architecture.md` (Content, "The gift pack drop" bullet; the Decisions entry was already there), `game/docs/game-loop/gift-pack-and-pickups.md` (numbers and art), `game/README.md` index line.
 - The board's review: play to a level-up and look at the helicopter.
 
