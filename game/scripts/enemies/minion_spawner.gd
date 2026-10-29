@@ -373,6 +373,8 @@ func _on_minion_died(m: Node, at_units: Vector2) -> void:
 		spawn_coin_at(at_units + offset, 1)
 	if roll_health_drop():
 		spawn_health_pickup_at(at_units)
+	if state != null:
+		state.enemy_slain(m.ENEMY_TYPE, m.last_hit_by)
 	minion_killed.emit(m, n)
 
 

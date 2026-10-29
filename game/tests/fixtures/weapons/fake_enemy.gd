@@ -18,7 +18,7 @@ func position_units() -> Vector2:
 	return position / 16.0
 
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, _source := "") -> void:
 	damage_taken.append(amount)
 	health -= amount
 

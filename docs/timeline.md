@@ -2160,3 +2160,8 @@ Entry format:
 - Decision or change: tools/hand_backs.py lists every subagent result in a main session. The agents obeyed T-343 (266 characters of their own on average); the harness frame adds 1,207 characters to every background hand-back, plus a launch acknowledgement (1,071) and sometimes a notice (877). 35% of what token_report counts as subagent reports isn't subagent results. Greenbull's share was higher because it ran 43 agents against 13. Proposed: QA agents in the foreground when the Project Lead waits anyway, fewer separate QA runs, and token_report splitting the category.
 - Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
 - Tasks: T-359
+
+## 2026-10-29: The run keeps its stats for the recap
+- Decision or change: RunState.recap() keeps each run's result, loss reason, time, coins, likes, kills per enemy, tricks, highest combo and weapons with tiers, for the recap screen (T-320) and the runs list (T-363).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-319

@@ -120,6 +120,7 @@ func fire_at(aim: Vector2, target: Node = null) -> Node:
 	var b: Node2D = BulletScript.new()
 	b.name = "Bullet"
 	b.setup(rack, from, dir.normalized(), stats)
+	b.weapon_id = weapon_id
 	rack.add_projectile(b)
 	fired.emit(b, target)
 	return b

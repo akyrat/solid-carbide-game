@@ -314,7 +314,7 @@ func _hit(e: Node) -> void:
 	var away := enemy_units(e) - car_units()
 	if away.length() < 0.001:
 		away = forward()
-	e.take_damage(amount)
+	e.take_damage(amount, weapon_id)
 	if push and is_instance_valid(e) and not (e.has_method("is_dead") and e.is_dead()):
 		e.apply_knockback(away, float(stats["knockback_distance"]))
 	enemy_hit.emit(e, amount, push)
