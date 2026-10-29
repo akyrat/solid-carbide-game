@@ -1,7 +1,7 @@
 ---
 id: T-383
 title: Art: the seven trick illustrations, drawn by script
-status: blocked
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -47,6 +47,10 @@ The board's review: Look at the script-drawn trick illustrations on the preview 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-383.
 
 ## Style review
 
