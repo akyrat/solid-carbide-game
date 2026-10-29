@@ -1,7 +1,7 @@
 ---
 id: T-382
 title: The tutorial slides screen, with a reusable trick list scene (placeholder illustrations)
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -50,6 +50,10 @@ The board's review: Look at the three slides and the trick list with its placeho
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-382.
 
 ## Style review
 
