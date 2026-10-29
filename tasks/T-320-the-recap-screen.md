@@ -1,7 +1,7 @@
 ---
 id: T-320
 title: The recap screen after every run, with pictures
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -102,3 +102,4 @@ Board review files: art-archive/T-320/screenshots/recap_win.png, art-archive/T-3
 
 **QA (sonnet), final round after the peak engagement tweak:** qa_check: tests (3 sets) PASS, documents PASS, screenshots PASS. All seven criteria pass; criterion 2's "highest combo" is met by the peak viewers number (tests in test_recap_screen.gd and test_run_recap.gd).
 - 2026-10-29, in-qa → needs-playtest: QA passed all 7 after the peak engagement tweak; the board already played build B and approved it: build B lgtm now (2026-10-29).
+- 2026-10-29, needs-playtest → done: The board played build B after the peak engagement tweak: build B lgtm now, 320 lgtm (2026-10-29).
