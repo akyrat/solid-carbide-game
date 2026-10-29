@@ -1,7 +1,7 @@
 ---
 id: T-362
 title: Text: the runs list and its main menu button
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
