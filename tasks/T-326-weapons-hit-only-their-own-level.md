@@ -1,7 +1,7 @@
 ---
 id: T-326
 title: Weapons hit only enemies on their own height level
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -115,3 +115,4 @@ Written by the agent when it finishes.
 **QA (2026-10-29, round 1): all 7 criteria pass.** qa_check: tests (3 sets) pass, documents changed, screenshot present. New test file test_weapon_levels.gd covers the six weapons, molotov fire level, gun with a lone off-level enemy, tolerance, kaiju, air, no-ground. Existing weapon tests unchanged. Proposals are in the result notes and docs/weapons.md (Content section); game/docs/weapons/shared.md and the README index describe it. Screenshot shows the rooftop car with one minion beside it and three on the street below. Note: molotov fires are still drawn on the street plane (visual only, not a criterion). Also docs/enemies.md line 101 is out of date (the agent flagged it).
 
 **Merged master (2026-10-29):** one conflict, in starting_gun.gd. Resolved by keeping both sides: the bullet keeps its level (T-326) and master's `weapon_id`. Tests pass: game/tools 657 OK (1 skipped), tools 573 OK, GUT 1864/1864.
+- 2026-10-29, needs-playtest → done: The board played build A: LGTM (2026-10-29).
