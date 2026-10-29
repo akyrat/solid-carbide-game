@@ -23,7 +23,7 @@ class ReactionIcons(unittest.TestCase):
                 r = subprocess.run([sys.executable, str(Path(style_rules.__file__)), "art", str(p), "--size", "16x16"],
                                    capture_output=True, text=True)
                 self.assertEqual(r.returncode, 0, (p, r.stdout))
-                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-352")
+                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-356" if p.stem.removeprefix("reaction_") in b.BAD_NAMES else "T-352")
 
     def test_deterministic(self):
         self.assertEqual(b.draw("star").tobytes(), b.draw("star").tobytes())

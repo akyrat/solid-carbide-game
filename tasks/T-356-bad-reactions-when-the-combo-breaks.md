@@ -63,3 +63,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### UI Agent, 2026-10-29
+
+Built. `Hud._on_combo_broken()` (the `combo_broken` signal, same moment as the popup and the counter's red flash, so a cut only, not the drain) calls new `Reactions.bad_burst(y)` with the viewers counter's centre height. 10 entries are queued in `pending_bad` and start over about 1.5 s (in `advance()`, so pause freezes them) at random x in the lane_from..lane_to lane, rising 260..420 px/s, living 1.4..2 s, through `_add()` (cap). Kinds past `ICONS.size()` index `BAD_ICONS`: six script-drawn 16 x 16 placeholders (crying-laughing face, thumbs down, face peeking between hands, broken heart, skull, screaming face; none in Greenbull's colours) in `game/art/hud/reaction_*.png`, built by `game/tools/build_hud_reaction_icons.py` (`BAD_NAMES`); T-357 swaps the PNGs. Numbers: `game/data/hud.json` `reactions.bad_*`. Same size and alpha as the good icons.
+
+Tests: 8 new in `game/tests/unit/hud/test_hud_reactions.gd` (numbers, count/lane/rise, six-kind mix and same-seed repeat, count from data, cap, pause and new run, cut starts one and drain none and from the counter's height). Python icon test updated for 12 icons.
+Test counts: game/tools unittest 657 OK (1 skipped); tools unittest 560 OK; GUT 148 scripts, 1824 tests, all passing.
+Screenshot and GIF: `art-archive/T-356/screenshots/reactions_bad.png` and `.gif` (via `record_reactions.sh`, new `bad` mode and fixture modes `bad_still`, `bad_gif`).
+Docs updated: `docs/hud-and-menus.md` (Content), `game/docs/hud-and-menus/hud.md`. Placeholder art look is rough (faces are orange blobs); T-357 is the real art.
