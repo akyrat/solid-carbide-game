@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: open
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -58,6 +58,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Started (build B, End of a run): the Game Loop Agent is making the car slide on with dead controls and sit smoking and burning for 3 seconds when its last heart is gone, with placeholders, on top of the run stats (T-319).
 
 ## Style review
 
