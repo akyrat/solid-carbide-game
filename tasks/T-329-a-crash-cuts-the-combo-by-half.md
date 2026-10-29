@@ -44,7 +44,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] `combo.json`'s `collision_cut` is 0.5. (QA: pass)
 - [ ] A test checks that a collision at x4.0 leaves x2.5 and at x6.0 leaves x3.5, and that a collision at x1.0 leaves x1.0 with no "combo broken" signal. (QA: pass (x4->2.5, x6->3.5 in test_run_combo.gd/test_combo_data.gd; x1.0 no combo_broken in test_combo_broken_popup.gd))
 - [ ] Every test that assumed 0.8 is updated, and none is weakened beyond the number change (the result notes list them). (QA: pass)
-- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: fail: paperwork - docs/drifting.md line 195 still says the crash cuts the combo by 80% ('The order' bullet; also copied in docs/long-gdd.md 31, 155, 399, which regeneration will fix). Game loop architecture Content, the-run.md and run_state.gd say 50%)
+- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: pass (round 2: docs/drifting.md:195 now says 50% since T-329; no other live 80% mention outside Decisions history))
 - [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass (all three sets passed in qa_check))
 
 ## Updates
@@ -70,3 +70,5 @@ Done (Game Data). `collision_cut` 0.8 -> 0.5 in `game/data/combo.json`; the form
 - Refused once: a hook refused an inline Python edit of this ticket file; I used the Edit tool instead.
 
 QA round 1: criteria 1,2,3,5 pass; 4 fails (paperwork): docs/drifting.md:195 still says 80%. Three test sets passed per qa_check (counts not printed by its summary; builder reported GUT 1931/1931, Python 573 tests). README criterion met via game/docs/game-loop/the-run.md; screenshots waived (data-only).
+
+QA round 2: all criteria pass. Criterion 4 fixed (drifting.md:195, commit d8f06460). Tests not rerun (only a doc changed since the green sets of round 1). qa_check documents (game/README.md) and screenshots lines are the same waived items as round 1 (README is an index; data-only ticket).
