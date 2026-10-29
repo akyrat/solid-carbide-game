@@ -1,7 +1,7 @@
 ---
 id: T-382
 title: The tutorial slides screen, with a reusable trick list scene (placeholder illustrations)
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -54,6 +54,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-29, Blocked → In progress
 
 Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-382.
+
+### 2026-10-29, In progress → In QA
+
+Goal runner (G-007): the agent is done; QA is checking it.
 
 ## Style review
 
