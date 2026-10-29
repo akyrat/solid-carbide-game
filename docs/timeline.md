@@ -2195,3 +2195,38 @@ Entry format:
 - Decision or change: The board approved Restart and Exit on the pause screen (coins kept, no confirm prompt).
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
 - Tasks: T-327
+
+## 2026-10-29: Pixel art icons for the garage upgrades
+- Decision or change: The board: make pixel art for each garage upgrade, as small icons. A UI ticket shows an icon beside each upgrade (placeholders first, read from game/art/garage/<key>.png), and one art ticket per upgrade draws its icon.
+- Documents touched: docs/garage-design.md
+- Tasks: T-365
+
+## 2026-10-29: Art: the acceleration icon
+- Decision or change: Art ticket for the acceleration upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-366
+
+## 2026-10-29: Art: the car health icon
+- Decision or change: Art ticket for the car health upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-367
+
+## 2026-10-29: Art: the damage bonus icon
+- Decision or change: Art ticket for the damage bonus upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-368
+
+## 2026-10-29: Art: the pickup magnet icon
+- Decision or change: Art ticket for the pickup magnet upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-369
+
+## 2026-10-29: Art: the air turn icon
+- Decision or change: Art ticket for the air turn upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-370
+
+## 2026-10-29: Health drops 1.5 times as often
+- Decision or change: The board: health drops 1.5 times as often (drop chance 0.15 to 0.225).
+- Documents touched: docs/enemies.md
+- Tasks: T-371
