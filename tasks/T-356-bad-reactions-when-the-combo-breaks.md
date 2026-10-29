@@ -1,7 +1,7 @@
 ---
 id: T-356
 title: Bad reactions burst out when the combo breaks
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
