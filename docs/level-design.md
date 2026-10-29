@@ -61,6 +61,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 - **The board's own level becomes the game's map** (board, 2026-10-29): the board builds a level by hand in the level creator over several hours, then hands it over; that level becomes the map the game's Start plays, in place of the elevation sample map. Until the board names the file, nothing changes. (T-372)
 - **Roads painted in the creator show in the run** (board, 2026-10-29; a bug, fixed at once): roads the board places on the ground in the level creator don't show up when the level is played. What is painted in the editor must be what the run draws. (T-391)
+- **Obstacles and decorations respect the buildings' and rooftops' heights** (board, 2026-10-29; a bug, fixed at once): in the level creator, barriers placed by a building or a rooftop ignore its height (they draw over it as if it weren't there), and the board suspects other objects do the same. Every placed object must sit at the height of what it stands on and be drawn in front of or behind buildings and rooftops correctly, in the editor and in the run. (T-393)
 
 ## Content
 

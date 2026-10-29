@@ -2375,3 +2375,8 @@ Entry format:
 - Decision or change: The board saw G-007's tickets in To do while they were being built. Tooling bug ticket.
 - Documents touched: docs/README.md
 - Tasks: T-392
+
+## 2026-10-29: Bug: creator objects ignore heights
+- Decision or change: The board: barriers (and maybe other objects) in the level creator ignore buildings' and rooftops' heights. Bug ticket, root cause and fix, started at once.
+- Documents touched: docs/level-design.md
+- Tasks: T-393
