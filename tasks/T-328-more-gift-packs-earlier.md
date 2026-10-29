@@ -1,7 +1,7 @@
 ---
 id: T-328
 title: More gift packs, earlier in the run (a gentler start to the likes curve)
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -51,10 +51,24 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started overnight (build A, Stream reacts): the Game Data Agent is making gift packs come more often early in the run.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done by the Game Data Agent. Data only, no code change (`RunData.xp_needed()` reads `run.json`).
+
+New curve (`game/data/run.json`, `levels`), likes for levels 2 to 12: 30, 45, 65, 95, 140, 200, 290, 400, 560, 745, 931 (was 100, 125, 156, 195, 244, 305, 381, 477, 596, 745, 931). Total 3,501, was 4,255 (-18%). Cap stays 12. Full table (seconds at x1, x2, x4, running total) and the reasons are in Game loop architecture, Content, "Likes and levels". Short form (seconds at x1 / x2 / x4): level 2 at 30 = 3 / 1.5 / 0.75; level 3 at 45 = 4.5 / 2.25 / 1.1; level 4 at 65 = 6.5 / 3.25 / 1.6; level 5 at 95 = 9.5 / 4.75 / 2.4; then 140, 200, 290, 400, 560, 745, 931.
+Shape: growth about x1.45 per level at the start, easing to x1.25 at the end; levels 10 and 11 unchanged, so the late run keeps its pace. Estimate (from the formula, not a scripted run): at about 10 likes a second on average (drifting half the time at x2), gift packs for levels 2 to 5 at about 3, 7, 14 and 24 s; level 12 at about 350 s of 480 (old curve: level 5 at about 70 s). Drain: still 8% of the bar a second (a full bar empties in 12.5 s), so 2.4 likes a second at level 2's 30 bar against 10 earned per drifted second: fine.
+challenge_xp (old MVP map only): I had to touch it. The old values (100, 110, ...) would skip levels with the new small bars and break "one challenge fills the bar", so each keeps its old share of the bar, capped at the old value: 30, 40, 50, 65, 84, 106, 135, 164, 201, then 236, 259, 285 unchanged.
+
+Tests changed (number changes only, none weakened): `tests/unit/test_run_data.gd` (a drift second is 10 likes, no longer "10% of level 1"; drain at level 1 is 2.4, not 8); `tests/unit/run/test_run_likes.gd` (3 s of drift now levels up, so that test drifts 2 s and expects 2 s worth); `tests/unit/hud/test_hud_sub_goal.gd` (label test adds 20.4 likes instead of 42.4, which now levels up). New in test_run_likes.gd: `test_t328_early_levels_need_fewer_likes` (first four under 70% of the old, curve rising, total 3,501, cap 12) and `test_t328_one_level_up_per_threshold_and_stops_at_the_cap` (11 level-ups in order, none past the cap).
+
+Docs: docs/game-loop-architecture.md (Decisions entry and Content table), game/docs/game-loop/the-run.md, game/README.md (index line). The long GDD is not regenerated: the merge script does it.
+
+Tests (foreground): GUT 1818/1818 pass (a first run had 11 failures from the old numbers, fixed; a later run had 1 timing flake in a physics-frame clock test, green on the rerun); `game/tools` unittest 657 OK (1 skipped); `tools` unittest 560 OK.
