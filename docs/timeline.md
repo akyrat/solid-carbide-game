@@ -2370,3 +2370,8 @@ Entry format:
 - Decision or change: Fixed: the run always drew the game's own MVP ground under every level; it now draws each level's own ground, so roads painted in the creator show (a level saved without roads plays on its own plain gravel).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-391
+
+## 2026-10-29: Bug: goal tickets in the wrong lane on the task board
+- Decision or change: The board saw G-007's tickets in To do while they were being built. Tooling bug ticket.
+- Documents touched: docs/README.md
+- Tasks: T-392
