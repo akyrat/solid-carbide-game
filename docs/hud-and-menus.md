@@ -166,6 +166,27 @@ Task T-318 (decision: Game loop architecture, Decisions, "Recap screen in the MV
 
 **The screen (task T-320).** Right after a run ends (after the wreck's 3 seconds on a health loss) the run makes way for the recap, full screen over the main menu's dark background, in the game's comic look: white rounded panels with black borders, black Bangers lettering with hard pixel edges, no generated art. From the top: the **title** for how the run ended in its own panel, with the **X** (a black pixel X on a white rounded square) at the top right; then **Takedowns** (each enemy type killed, its sprite, the first frame of its south-facing sheet, its name and "x{count}", e.g. "x47") beside **Peak engagement** (the board's quick tuning, 2026-10-29: "peak engagement needs to be the max current views number, not a multiplier": the run's peak live viewers, written as the live viewers counter writes it, e.g. "236K" or "1.02M", with the viewers' eye before it, in the counter's look for that number: the viewers colour at the base, then the heat colours, glow and pulse; Live viewers counter, above); then **Tricks landed** (each trick as its plain trick popup, followed by "x{count}", wrapping onto a second row when needed); then **Weapons used** (each weapon the car ended with, its level-up card image, its name and "Tier {tier}"); and **Continue** at the bottom centre. "x{n}" is the HUD's own count form (the weapon icons'). A trick or an enemy with a count of 0 is left out. Proposals for the playtest: a section with nothing to show (no kills, no tricks) is left out; peak engagement always shows (2,500 viewers, the base, with no tricks); a run saved before the peak viewers were kept shows the viewers for its highest combo on the same curve; enemies and tricks are in the text file's order, weapons in the order taken; the panels pop in one after another (the title first) in stepped frames, about 0.7 seconds in all, while Continue and the X work at once; Enter also continues, and the buttons take no keyboard focus, so a key held from driving presses nothing. The screen can show any run's summary, also one read back from the run history, so the runs list (T-364) can reopen a saved run in it. How it is built: `game/docs/hud-and-menus/recap-screen.md`.
 
+### Tutorial slides and trick list
+
+Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick list in the pause screen"); the UI tickets read `game/data/tutorial_text.json` (each entry has a `_comment` line saying where it appears). Every new line scored 8 or more in the style loop (T-381's Style review). No line takes the form "Greenbull says ...".
+
+| Where | Key | Text |
+|---|---|---|
+| Slide 1, controls | `slide1.controls` | W accelerate, S brake/reverse, A left, D right. Live viewers want confidence. Fake it. |
+| Slide 1, drift | `slide1.drift` | Accelerate while turning and the car drifts on its own. No drift button, zero friction. |
+| Slide 2, under the trick list | `slide2.chain` | Tricks bring live viewers. Live viewers bring subs. |
+| Slide 2, under the trick list | `slide2.gift` | Every sub goal brings a gift pack: a weapon that keeps enemies away and the stream alive. |
+| Slide 3, the goal | `slide3.goal` | Chain tricks for gift packs. Be maxed out for the kaiju at 1 minute left. Peak content. |
+| Trick names (slide 2 and the trick list panel) | `trick.<id>` | LONG DRIFT!, FULL 360!, ALT DRIFT!, AIR 180!, AIR 360!, HANG TIME!, THREAD THE NEEDLE! (reused from the popups, one per trick id) |
+| Slide 3 button | `button.start` | Go live |
+| Slide 3 checkbox | `checkbox.dont_show` | Don't show again |
+| Left arrow, accessible label | `arrow.left` | Previous slide |
+| Right arrow, accessible label | `arrow.right` | Next slide |
+| Pause screen button | `button.trick_list` | Trick list |
+| Trick list panel, back control | `button.back` | Back |
+
+Proposals for the board to judge: the Start button reads "Go live" (loop score 9) where the board's word is "Start"; swap it in `button.start` if "Start" is wanted, like the main menu. Slide 2's single line failed the loop (card_desc is 90 characters at most; best 7), so it is two lines.
+
 ## Open questions
 
 - (After MVP) The visual style of the HUD, the level-up screen, the main menu and the pause menu.
