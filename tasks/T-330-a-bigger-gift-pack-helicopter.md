@@ -43,12 +43,12 @@ The board's review: play a run to a level-up and look at the helicopter's size.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `gift_pack.json` holds the helicopter's draw scale, set to 0.65, and the game reads it from there: a test checks the helicopter sprite is drawn at 1.3 times today's size (about 125 x 104 drawn pixels). (QA: pass / fail)
-- [ ] A test checks the carried package's top sits below the helicopter's bottom edge at the new size, and the helicopter's top stays at least `screen_margin_px` from the screen's top edge. (QA: pass / fail)
-- [ ] The helicopter starts and ends fully off screen at the new size (a test, or the existing test updated). (QA: pass / fail)
-- [ ] Before and after screenshots of the helicopter carrying the package are in the result notes, with their paths. (QA: pass / fail)
-- [ ] Game loop architecture, Content and `game/README.md` ("The gift pack drop") describe the new size and where it is set. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `gift_pack.json` holds the helicopter's draw scale, set to 0.65, and the game reads it from there: a test checks the helicopter sprite is drawn at 1.3 times today's size (about 125 x 104 drawn pixels). (QA: pass)
+- [ ] A test checks the carried package's top sits below the helicopter's bottom edge at the new size, and the helicopter's top stays at least `screen_margin_px` from the screen's top edge. (QA: pass)
+- [ ] The helicopter starts and ends fully off screen at the new size (a test, or the existing test updated). (QA: pass)
+- [ ] Before and after screenshots of the helicopter carrying the package are in the result notes, with their paths. (QA: fail: paperwork - screenshots are in C:\solid-carbide-worktrees\T-330\screenshots\ (git-ignored), not art-archive/T-330/screenshots/; the images themselves show the change correctly)
+- [ ] Game loop architecture, Content and `game/README.md` ("The gift pack drop") describe the new size and where it is set. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -73,3 +73,5 @@ Done (Game Loop Agent, commit d1fb86af). 0 PixelLab calls.
 - Screenshots (same fixture, same frame): before `C:\solid-carbide-worktrees\T-330\screenshots\T-330_before_250.png` and `T-330_before_300.png`; after `T-330_after_250.png` and `T-330_after_300.png` (same folder, git-ignored).
 - Docs: `docs/game-loop-architecture.md` (Content, "The gift pack drop" bullet; the Decisions entry was already there), `game/docs/game-loop/gift-pack-and-pickups.md` (numbers and art), `game/README.md` index line.
 - The board's review: play to a level-up and look at the helicopter.
+
+QA round 1: criteria 1-3, 5, 6 pass (qa_check tests PASS, 2 docs changed). Criterion 4 fails on paperwork only: the before/after screenshots exist and show the bigger helicopter clearly, but sit in the git-ignored screenshots/ folder; move them to art-archive/T-330/screenshots/ and list those paths.
