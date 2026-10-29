@@ -2365,3 +2365,8 @@ Entry format:
 - Decision or change: The board: roads painted in the level creator don't show in the played level. Bug ticket, fixed at once.
 - Documents touched: docs/level-design.md
 - Tasks: T-391
+
+## 2026-10-29: Roads painted in the creator show in the run
+- Decision or change: Fixed: the run always drew the game's own MVP ground under every level; it now draws each level's own ground, so roads painted in the creator show (a level saved without roads plays on its own plain gravel).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-391

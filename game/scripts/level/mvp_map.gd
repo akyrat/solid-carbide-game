@@ -147,7 +147,8 @@ var challenges_enabled := CHALLENGES_ENABLED
 var layout_path := LAYOUT_PATH
 ## The layout data, as loaded from layout_path.
 var layout: Dictionary = {}
-## The ground tiles' layout, as loaded from GROUND_PATH ({} if missing).
+## The ground tiles' layout: the level's own ground (LevelGround.layout_of, T-391), else as loaded
+## from GROUND_PATH ({} if missing).
 var ground_layout: Dictionary = {}
 ## The boulder sprites' list, as loaded from BOULDER_ART_PATH ({} if missing).
 var boulder_art: Dictionary = {}
@@ -231,6 +232,10 @@ static func points_of(arr: Array) -> PackedVector2Array:
 func _ready() -> void:
 	if layout.is_empty():
 		layout = load_layout(layout_path)
+	if ground_layout.is_empty():
+		# A level made in the level creator draws its own ground and roads (T-391, LevelGround);
+		# the game's own map, which has none, draws GROUND_PATH as before.
+		ground_layout = LevelGround.layout_of(layout)
 	if ground_layout.is_empty():
 		ground_layout = load_layout(GROUND_PATH)
 	if boulder_art.is_empty():

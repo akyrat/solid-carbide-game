@@ -517,7 +517,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Thread the needle** (board, 2026-10-22): in the level creator the board can mark two obstacles (anything the car crashes into and that cuts the combo: boulders, barriers, cones, crates) as a pair. In a run on that level, driving through the gap between a marked pair is a trick, **thread the needle**, that raises the combo like the other tricks (Game loop architecture, Decisions, "The combo"). What it is worth, whether it pays again on the next pass, and how the pair shows in the editor and in the run are the agents' proposals for the playtest. Its popup text: HUD and menus, Content (T-271). (T-272)
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 - **The board's own level becomes the game's map** (board, 2026-10-29): the board builds a level by hand in the level creator over several hours, then hands it over; that level becomes the map the game's Start plays, in place of the elevation sample map. Until the board names the file, nothing changes. (T-372)
-- **Roads painted in the creator show in the run** (board, 2026-10-29; a bug, fixed at once): roads the board places on the ground in the level creator don't show up when the level is played. What is painted in the editor must be what the run draws. (T-390)
+- **Roads painted in the creator show in the run** (board, 2026-10-29; a bug, fixed at once): roads the board places on the ground in the level creator don't show up when the level is played. What is painted in the editor must be what the run draws. (T-391)
 
 ### Content
 
@@ -732,6 +732,9 @@ Task T-263 (Decisions, "Level creator rework"). How it works and where its code 
 - **Proposals:** roads lie on a 4-unit grid (blocks of 2 x 2 tiles). Every road block joins every road block next to it, so two roads painted side by side become one wide road. A single block on its own is plain asphalt. Where a centre-line road meets a road without a line, the line runs to the edge of its own block. A crossing has four stripes evenly across the road (the full zebra tile on both tiles). The game's map leaves out the stripe at each edge, which on a road this narrow would leave only two.
 - **New tiles, drawn by script (no PixelLab):** T-252's centre-line pieces on the asphalts a0m, g6 and g9, and the dead ends of roads without a line on all seven asphalts. 268 tiles, appended to the ground atlas, so every earlier tile keeps its index.
 - **Saved levels** write the same ground data as before (a road tile per cell), so a painted level passes the level check and plays. Earlier levels open unchanged, and a road saved earlier joins a newly painted one when its tiles fill whole blocks. The old single road tiles are no longer panel looks; they stay in the catalogue so old levels draw.
+- **In the run (T-391; Decisions, "Roads painted in the creator show in the run"):** a level played from the creator draws exactly the ground and road tiles painted in the editor, roads beside rooftops and ramps included. Before the fix the run always drew the game's own map's ground, whatever the level held, so painted roads never showed. A level saved with the creator's ground (every level the creator saves) now shows its own: a level that is all gravel, like `level_01`, plays on plain gravel instead of the game's streets. The game's own map, and a level file without the creator's ground, draw the game's ground as before. Where the code is: `game/docs/level/level-creator.md`, "Painted roads in the run (T-391)".
+
+![A run on a level with painted roads: a centre-line road crossing a plain road, a rooftop and its ramp beside it](../art-archive/T-391/screenshots/run_painted_roads.png)
 
 ![A street grid painted with the road brush in a few drags: corners, T-junctions, crossroads, dead ends and zebra crossings](../art-archive/T-263/screenshots/street_grid.png)
 
@@ -1632,7 +1635,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `4faf337de125919ad6f0876d4be08f98a44b0da85cd65639657e0598f54d885d` |
 | `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
-| `level-design.md` | `5db90c415cca04aff922eb761b66b17c126a4f0af0b2ddef07ed6839569b05e3` |
+| `level-design.md` | `3c33b1fcd0d36a895535052e4960f4fa440e2b530ccddf4048ae8cb0ffa67a8c` |
 | `enemies.md` | `c1b835099f5495781686713fa8bb1c0a03b3af302316fbeadf18ce709a31099c` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
 | `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |
