@@ -2100,3 +2100,13 @@ Entry format:
 - Decision or change: The board loved the six script-drawn reaction icons (heart, thumbs up, fire, clapping hands, star, smiling face), 0 PixelLab generations.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-352
+
+## 2026-10-29: Bad reactions when the combo breaks
+- Decision or change: The board: when the combo breaks, the stream reacts badly: crying-laughing faces, a dislike, a face peeking between its hands, and three of the Project Lead's choice (broken heart, skull, screaming face) burst up from the viewers counter. Ticket for the behaviour, with placeholders; a linked art ticket draws the six icons by script.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-356
+
+## 2026-10-29: Art: the bad reaction icons
+- Decision or change: Art ticket for the six bad reaction icons, script-drawn like T-352's (no PixelLab go), linked to the behaviour ticket.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-357
