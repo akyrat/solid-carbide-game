@@ -10,6 +10,10 @@ static func progress_path() -> String:
 	return RunPaths.file("test_save_progress.json")
 
 
+static func history_path() -> String:
+	return RunPaths.file("test_save_run_history.json")
+
+
 static func settings_path() -> String:
 	return RunPaths.file("test_save_settings.cfg")
 
@@ -18,6 +22,7 @@ static func settings_path() -> String:
 static func isolate() -> void:
 	DirAccess.remove_absolute(progress_path())
 	DirAccess.remove_absolute(settings_path())
+	DirAccess.remove_absolute(history_path())
 	restore()
 
 
@@ -25,6 +30,7 @@ static func isolate() -> void:
 static func restore() -> void:
 	restore_progress()
 	restore_settings()
+	RunHistory.path = history_path()
 
 
 static func restore_progress() -> void:
@@ -37,4 +43,4 @@ static func restore_settings() -> void:
 
 ## True when either save path is the real player save.
 static func touches_real_save() -> bool:
-	return PlayerProgress.path == PlayerProgress.DEFAULT_PATH or GameSettings.path == GameSettings.DEFAULT_PATH
+	return PlayerProgress.path == PlayerProgress.DEFAULT_PATH or GameSettings.path == GameSettings.DEFAULT_PATH or RunHistory.path == RunHistory.DEFAULT_PATH

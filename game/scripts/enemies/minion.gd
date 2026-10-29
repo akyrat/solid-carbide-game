@@ -49,6 +49,12 @@ const SEPARATION_UNITS := 1.2
 ## not a balancing number: the distance comes from the weapon.
 const KNOCKBACK_SECONDS := 0.15
 
+## The recap's key for this enemy (T-319).
+const ENEMY_TYPE := "minion"
+
+## The id of the weapon that hit it last (take_damage's `source`), "" if none told.
+var last_hit_by := ""
+
 ## Emitted once, when health reaches 0. `minion` is this node (freed at the
 ## end of the frame), `position_units` where it died (flat world, units).
 signal died(minion: Node, position_units: Vector2)
@@ -181,9 +187,11 @@ func _move(motion: Vector2) -> KinematicCollision2D:
 ## Damages the minion by `amount` (weapons call this). At 0 health it dies:
 ## `died` fires once and the node is freed. Ignored when `amount` is not
 ## positive or the minion is already dead.
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, source := "") -> void:
 	if _dead or amount <= 0.0:
 		return
+	if source != "":
+		last_hit_by = source
 	health = maxf(health - amount, 0.0)
 	if health <= 0.0:
 		_die()

@@ -43,7 +43,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 ## game-loop/
 
 - [docs/game-loop/screen-flow.md](docs/game-loop/screen-flow.md): Screen flow. How the screens follow each other.
-- [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock.
+- [docs/game-loop/the-run.md](docs/game-loop/the-run.md): The run. The run scene, its state, likes, combo, clock, and the recap summary (`RunState.recap()`).
 - [docs/game-loop/gift-pack-and-pickups.md](docs/game-loop/gift-pack-and-pickups.md): Gift pack and pickup magnet. The gift pack drop and the pickup magnet.
 
 ## driving/

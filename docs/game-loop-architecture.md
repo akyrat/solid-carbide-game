@@ -133,6 +133,22 @@ The run also owns the combo (task T-081; how to use it: [game/docs/game-loop/the
 
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
+### The run's stats for the recap
+
+The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap screen in the MVP"; how to read them: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The run's recap summary"). One read-only summary, a plain dictionary that also serialises to JSON (so the runs list, T-363, can save it), is cleared when a new run starts and stays readable after the run ends:
+
+- **enemies_slain:** kills per enemy type ("minion", "kaiju"), counted when the car's weapons kill one.
+- **tricks:** how many times each trick was completed, by the id the combo uses (the drifts, 360s, alternate drifts, air tricks, airtime, thread the needle).
+- **highest_combo:** the highest multiplier reached.
+- **weapons:** every weapon the car owned at the end, with the tier it ended on and the kills it made (the kills are a proposal, since they were cheap to count).
+- **Also kept, for the recap and the runs list:** the result (win or loss), why a loss happened (the clock ran out, or health), the time survived, the coins, the likes gained in total and the level reached.
+
+Nothing in this changes what the player sees.
+
+### The run history
+
+Every run's recap stats are kept on this computer (task T-363; Decisions, "The runs list"), for the runs list screen (T-364). When a run ends, win or loss, its final recap summary (the section above) is added to a history file, once, on `run_ended`; how the ending is reached (including the wreck's wait) makes no difference. Each entry is that summary plus the date and time the run ended (`ended_at`, local, and `ended_unix`). The result (win, loss by health, loss by time), the time survived, the coins and the likes are in it. The history keeps the newest 200 runs and drops older ones (a proposal; the board can change the cap). A missing or broken file is an empty history. The list is read newest first. Only the game's own runs are saved, not the level creator's Play. The file, fields and functions: [game/docs/data/game-data.md](../game/docs/data/game-data.md), "Run history". Nothing the player sees changes.
+
 ### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
@@ -142,6 +158,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
+- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 

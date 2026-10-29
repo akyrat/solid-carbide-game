@@ -48,6 +48,8 @@ var hits := 0
 ## NAN, the default, hits every level (a map without heights).
 var level := NAN
 var rack: Node = null
+## The weapon that fired it (for the recap, T-319).
+var weapon_id := ""
 ## Enemies this bullet has hit already (instance ids).
 var _hit_ids := {}
 var _done := false
@@ -111,7 +113,7 @@ func _check_hits() -> void:
 		var e: Node = pair[1]
 		_hit_ids[e.get_instance_id()] = true
 		hits += 1
-		e.take_damage(damage)
+		e.take_damage(damage, weapon_id)
 		hit.emit(e, damage)
 		if hits >= max_hits:
 			_done = true

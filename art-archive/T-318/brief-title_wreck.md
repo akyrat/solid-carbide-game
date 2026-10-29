@@ -1,0 +1,3 @@
+Title of the recap screen after the car was WRECKED (lost its last heart; it smoked for 3 seconds). One short line, sentence case, 2 to 5 words; the car is wrecked, the people are never the joke.
+
+Context: the recap screen shown after every run, in Solid Carbide, a drift-driving roguelite where the player is Stunt Driver, livestreaming to Greenbull's audience in a city under kaiju attack. The screen is white rounded panels, Bangers font. Greenbull is the sponsor voice (out of touch, profit-minded, never evil). Use the game vocabulary: subs, live viewers, the stream, the kaiju. Do not mock the city's people. Output exactly one line, sentence case, no quotes.

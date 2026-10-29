@@ -207,7 +207,7 @@ func _hit(e: Node) -> void:
 	var amount: float = stats["damage"]
 	hits += 1
 	enemy_hit.emit(e, amount)
-	e.take_damage(amount)
+	e.take_damage(amount, weapon_id)
 
 
 # --- Drawing -------------------------------------------------

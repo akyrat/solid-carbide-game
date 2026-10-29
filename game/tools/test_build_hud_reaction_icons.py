@@ -14,7 +14,7 @@ class ReactionIcons(unittest.TestCase):
     def test_every_icon_is_16x16_binary_alpha_and_passes_the_style_rules(self):
         with tempfile.TemporaryDirectory() as d:
             paths = b.build(Path(d))
-            self.assertEqual(len(paths), 6)
+            self.assertEqual(len(paths), 12)
             for p in paths:
                 im = b.hud.Image.open(p).convert("RGBA")
                 self.assertEqual(im.size, (16, 16))
@@ -23,7 +23,7 @@ class ReactionIcons(unittest.TestCase):
                 r = subprocess.run([sys.executable, str(Path(style_rules.__file__)), "art", str(p), "--size", "16x16"],
                                    capture_output=True, text=True)
                 self.assertEqual(r.returncode, 0, (p, r.stdout))
-                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-352")
+                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-356" if p.stem.removeprefix("reaction_") in b.BAD_NAMES else "T-352")
 
     def test_deterministic(self):
         self.assertEqual(b.draw("star").tobytes(), b.draw("star").tobytes())
