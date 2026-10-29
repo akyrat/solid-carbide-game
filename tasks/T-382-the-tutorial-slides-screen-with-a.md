@@ -37,15 +37,15 @@ The board's review: Look at the three slides and the trick list with its placeho
 
 ## Acceptance criteria
 
-- [ ] game/scenes/menu/tutorial_slides.tscn shows three slides; slide 1 has no left arrow and slide 3 no right arrow (or pressing them does nothing); slide 3 has the Start button and the 'Don't show again' checkbox; pressing Start emits a signal carrying the checkbox state. Scene tests cover arrow navigation in both directions and the Start signal with the checkbox on and off. (QA: pass / fail)
-- [ ] game/scenes/menu/trick_list.tscn is a separate scene used by slide 2, showing the seven tricks, each with its name from game/data/tutorial_text.json and an illustration loaded from game/art/tutorial/tricks/<trick id>.png; with the file missing a code-drawn placeholder shows, not in Greenbull's colours. A test checks the placeholder shows when the files are missing, and that a PNG at the fixed path is loaded when present. (QA: pass / fail)
-- [ ] The illustration size in pixels and the trick list's illustration folder property are written in game/docs/hud-and-menus/tutorial-slides.md. (QA: pass / fail)
-- [ ] No player-facing string is hard-coded in tutorial_slides.gd or trick_list.gd: a search finds no literal text shown on screen, and a test checks each visible label's text matches its key in game/data/tutorial_text.json. (QA: pass / fail)
-- [ ] The arrows and Start work with the mouse and with the keyboard; the keyboard controls and focus order are written in the result notes and the doc, and a test drives them with keyboard input events. (QA: pass / fail)
-- [ ] game_settings.gd has tutorial_hidden, false by default, saved and loaded with the other settings; a unit test covers the save and load round trip and the default. (QA: pass / fail)
-- [ ] Screenshots of all three slides at 1152 x 648 are saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content describes the slides screen, and game/docs/hud-and-menus/tutorial-slides.md says how it is built, linked from game/README.md. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] game/scenes/menu/tutorial_slides.tscn shows three slides; slide 1 has no left arrow and slide 3 no right arrow (or pressing them does nothing); slide 3 has the Start button and the 'Don't show again' checkbox; pressing Start emits a signal carrying the checkbox state. Scene tests cover arrow navigation in both directions and the Start signal with the checkbox on and off. (QA: pass)
+- [ ] game/scenes/menu/trick_list.tscn is a separate scene used by slide 2, showing the seven tricks, each with its name from game/data/tutorial_text.json and an illustration loaded from game/art/tutorial/tricks/<trick id>.png; with the file missing a code-drawn placeholder shows, not in Greenbull's colours. A test checks the placeholder shows when the files are missing, and that a PNG at the fixed path is loaded when present. (QA: pass)
+- [ ] The illustration size in pixels and the trick list's illustration folder property are written in game/docs/hud-and-menus/tutorial-slides.md. (QA: pass)
+- [ ] No player-facing string is hard-coded in tutorial_slides.gd or trick_list.gd: a search finds no literal text shown on screen, and a test checks each visible label's text matches its key in game/data/tutorial_text.json. (QA: pass)
+- [ ] The arrows and Start work with the mouse and with the keyboard; the keyboard controls and focus order are written in the result notes and the doc, and a test drives them with keyboard input events. (QA: pass)
+- [ ] game_settings.gd has tutorial_hidden, false by default, saved and loaded with the other settings; a unit test covers the save and load round trip and the default. (QA: pass)
+- [ ] Screenshots of all three slides at 1152 x 648 are saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content describes the slides screen, and game/docs/hud-and-menus/tutorial-slides.md says how it is built, linked from game/README.md. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -76,3 +76,7 @@ Done (UI Agent). No PixelLab used (0 generations); placeholders are code-made. T
 - **Screenshots (1152 x 648):** `art-archive/T-382/screenshots/slide1.png`, `slide2.png`, `slide3.png` (fixtures `tests/fixtures/tutorial_slides_demo.tscn`, `_2`, `_3`).
 - **Notes for the board:** slide 1 text sits slightly left of centre because the hidden left arrow gives the room to the centre column; slide 2's grid is 4 + 3. The Game Loop ticket must wire `start_pressed` to the main menu's Start, skip the slides when `tutorial_hidden`, and save it.
 - No refusals.
+
+### QA round 1
+
+All 9 criteria pass. Re-ran: GUT 1951/1951 (159 scripts; new tests 10 + 5 + 3 pass), `unittest -s tools` 573 OK, `-s game/tools` 668 OK (1 skipped). Screenshots slide1-3.png present. Code search found no on-screen literals in the two scripts. Docs and README link present. Refusal: `python tools/qa_check.py` needed approval and was not run; checked by hand.
