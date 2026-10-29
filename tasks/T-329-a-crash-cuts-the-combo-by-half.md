@@ -1,7 +1,7 @@
 ---
 id: T-329
 title: A crash cuts the combo by 50%, not 80%
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/data/combo.json, game/scripts/data/combo_data.gd, game/scripts/run/run_state.gd]
 files_expected_to_change: [game/data/combo.json, game/scripts/run/run_state.gd, game/tests/unit/, game/README.md, docs/game-loop-architecture.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,10 +42,10 @@ The board's review: play a run, crash with a high combo and feel how much is lef
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [ ] `combo.json`'s `collision_cut` is 0.5. (QA: pass)
-- [ ] A test checks that a collision at x4.0 leaves x2.5 and at x6.0 leaves x3.5, and that a collision at x1.0 leaves x1.0 with no "combo broken" signal. (QA: pass (x4->2.5, x6->3.5 in test_run_combo.gd/test_combo_data.gd; x1.0 no combo_broken in test_combo_broken_popup.gd))
+- [ ] A test checks that a collision at x4.0 leaves x2.5 and at x6.0 leaves x3.5, and that a collision at x1.0 leaves x1.0 with no "combo broken" signal. (QA: pass)
 - [ ] Every test that assumed 0.8 is updated, and none is weakened beyond the number change (the result notes list them). (QA: pass)
-- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: pass (round 2: docs/drifting.md:195 now says 50% since T-329; no other live 80% mention outside Decisions history))
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass (all three sets passed in qa_check))
+- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
