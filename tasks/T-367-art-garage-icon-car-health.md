@@ -1,7 +1,7 @@
 ---
 id: T-367
 title: Art: the car health upgrade's icon
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/art/]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/garage-design.md, tasks/T-352-art-reaction-icons.md]
 files_expected_to_change: [game/art/garage/, game/tools/, art-archive/, docs/visual-style.md, game/docs/art/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,11 +41,11 @@ The board's review: open the garage and see the car health icon.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/art/garage/car_health.png` exists with a record, and the garage shows it on the car health row. (QA: pass / fail)
-- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] No PixelLab generations were used (the result notes say so). (QA: pass / fail)
-- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass / fail)
-- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
+- [ ] `game/art/garage/car_health.png` exists with a record, and the garage shows it on the car health row. (QA: pass)
+- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass)
+- [ ] No PixelLab generations were used (the result notes say so). (QA: pass)
+- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass)
+- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass)
 
 ## Updates
 
@@ -63,6 +63,8 @@ Script-drawn art, so the loop was run by hand: I drew, the Style Evaluator agent
 Version v1 (`game/art/garage/car_health.png`, kept). Score 9. Reason: follows the rules (hard edges, flat opaque colours, outline all round, highlight and shade); matches the comic look of reaction_heart; no Greenbull colours. Taste note only: the white plus is large and covers about half the heart's face. No refine needed. Kept: v1, 9.
 
 ## Result notes
+
+QA report (round 1): qa_check run with --no-tests (no test-set criterion): screenshots PASS; its documents check names the directory game/docs/art/ and cannot match it, but game/docs/art/garage-icons.md and docs/visual-style.md both changed on the branch, so the docs criterion passes. All five criteria pass: 16x16 PNG and json; style 9 in one round, recorded; 0 PixelLab calls stated; screenshots present. Set check: the five garage icons share the black comic outline, flat colours and highlight/shade and read as one set; air turn is the lightest in weight but fits.
 
 - Drew `game/art/garage/car_health.png` (16 x 16) and `car_health.json` with `game/tools/build_garage_icon_car_health.py` (hand-placed grid, deterministic, reuses `build_hud_livestream_art` helpers and the reaction icons' outline). Red heart with a bold white plus, pink highlight, crimson shade, 5 colours, no Greenbull colours. The garage shows it on the Reinforced Chassis row (`art-archive/T-367/screenshots/garage.png`).
 - Style loop: 1 round, score 9, no refines (see Style review).
