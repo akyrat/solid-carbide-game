@@ -1,7 +1,7 @@
 ---
 id: T-392
 title: Bug: the task board shows a running goal's tickets in To do instead of their real lane
-status: open
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -49,10 +49,16 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started on your word: fixing the task board so a running goal's tickets show in their real lanes.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Cause: a ticket with an open folder was already read from it (the runner's `task/<file stem>` branches match the lookup; against the live G-007 the running server returned needs-playtest for T-381/T-382 and flagged-for-review for T-383). The gap was a goal ticket merged into `playtest/<goal id>` whose own folder is gone: it fell back to master's copy (open, To do) although the build holds the real status. So criterion 1's test passes before the fix too (it guards the folder case); the build-fallback tests fail before it.
+Fix: `taskboard_sync.build_copy` and a `builds` argument to `tickets_now`; the server passes `build_folders()` (worktrees on `playtest/G-NNN`) in /api/tickets and /api/goals, and `version()` hashes the build copy so the page refreshes. Only tickets with a `goal:` line use a build. Docs: docs/README.md, The task board.
+Tests: 3 new (GoalTicketLaneTests, real temporary git repo); full suite `python -m unittest discover -s tools -p "test_*.py"`: 576 tests, OK.
