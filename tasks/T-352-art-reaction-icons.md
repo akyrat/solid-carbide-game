@@ -1,7 +1,7 @@
 ---
 id: T-352
 title: "Art: the reaction icons (likes, thumbs up, hearts) for the livestream bursts"
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -82,3 +82,4 @@ Docs: Visual style, game/docs/hud-and-menus/livestream-hud-art.md and hud.md (ga
 Tests: game/tools unittest 657 OK (1 skipped); tools unittest 560 OK; GUT 1816/1816 passing (all passed).
 Archive: art-archive/T-352/ (contact_sheet.png enlarged dark and light, reactions_burst.png screenshot of a run, v1..v5 versions and sheets). The burst screenshot catches the right-side floaters small at the screen edge.
 Note: untracked Godot .import files under game/art/buildings/creator_final are noise from Godot and not committed.
+- 2026-10-29, needs-playtest → done: The board played it: I love the new icons (2026-10-29).
