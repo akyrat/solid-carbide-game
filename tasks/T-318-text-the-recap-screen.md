@@ -1,7 +1,7 @@
 ---
 id: T-318
 title: "Text: the recap screen"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
