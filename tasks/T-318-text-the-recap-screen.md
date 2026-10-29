@@ -1,7 +1,7 @@
 ---
 id: T-318
 title: "Text: the recap screen"
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -292,3 +292,4 @@ Choices made without the board: three titles (win, time's up, wreck, since every
 ### QA
 
 Round 1: qa_check: tests pass (3 sets), documents pass; screenshots line waived (text-only ticket, the screen is T-320). Criterion 1 pass: all labels in game/data/recap_text.json and in HUD and menus, Content, Recap screen. Criterion 2 pass: every new line scored 8 or more (rounds in Style review, Continue rerun at 9 per the board's word); reused names listed. Criterion 3 pass: the style loop's label checks pass for every new line; reused Title Case card titles are reused names, not new labels.
+- 2026-10-29, needs-playtest → done: The board approved the texts waiting for its approval (2026-10-29).

@@ -143,6 +143,22 @@ The run also owns the combo (task T-081; how to use it: [game/docs/game-loop/the
 
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
+#### The run's stats for the recap
+
+The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap screen in the MVP"; how to read them: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The run's recap summary"). One read-only summary, a plain dictionary that also serialises to JSON (so the runs list, T-363, can save it), is cleared when a new run starts and stays readable after the run ends:
+
+- **enemies_slain:** kills per enemy type ("minion", "kaiju"), counted when the car's weapons kill one.
+- **tricks:** how many times each trick was completed, by the id the combo uses (the drifts, 360s, alternate drifts, air tricks, airtime, thread the needle).
+- **highest_combo:** the highest multiplier reached.
+- **weapons:** every weapon the car owned at the end, with the tier it ended on and the kills it made (the kills are a proposal, since they were cheap to count).
+- **Also kept, for the recap and the runs list:** the result (win or loss), why a loss happened (the clock ran out, or health), the time survived, the coins, the likes gained in total and the level reached.
+
+Nothing in this changes what the player sees.
+
+#### The run history
+
+Every run's recap stats are kept on this computer (task T-363; Decisions, "The runs list"), for the runs list screen (T-364). When a run ends, win or loss, its final recap summary (the section above) is added to a history file, once, on `run_ended`; how the ending is reached (including the wreck's wait) makes no difference. Each entry is that summary plus the date and time the run ended (`ended_at`, local, and `ended_unix`). The result (win, loss by health, loss by time), the time survived, the coins and the likes are in it. The history keeps the newest 200 runs and drops older ones (a proposal; the board can change the cap). A missing or broken file is an empty history. The list is read newest first. Only the game's own runs are saved, not the level creator's Play. The file, fields and functions: [game/docs/data/game-data.md](../game/docs/data/game-data.md), "Run history". Nothing the player sees changes.
+
 #### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
@@ -1472,6 +1488,10 @@ Task T-244 (decision: Decisions, "Combo broken popup", 2026-10-21). When a crash
 
 Task T-245 builds it (proposals for the playtest, the board decides the look): it appears only when a collision or any damage actually takes a combo down (the run state's `combo_broken`), never with no combo to cut and never when the combo drains away. It is the trick popups' card (same size, same place above the car, follows the car, stacks with the trick popups, same one second and fade) but a warning red-orange card (255, 80, 16, clear of the heart's red) with a black border and white lettering with a black outline, cracked in two along a jagged line through the text. It shakes for the first 0.3 seconds, and from 0.08 seconds the right half falls away (down and a little right) while it fades. Hard pixel edges, no semi-transparent pixels. How it is built: `game/docs/hud-and-menus/popups.md`, "Trick popups".
 
+#### Time's up screen
+
+Task T-316 (decision: Decisions, "Time's up screen", 2026-10-28). When the timer runs out with the kaiju alive, the 3-second failure screen shows this exact headline, for T-317 to use word for word: **STREAM OVER, KAIJU STILL TRENDING!**. It is in the trick popups' voice (capitals, ending in "!"), reads at a glance, and has no second line: the headline says the time is up and that the kaiju is still standing, in the stream's own language, a little out of touch about the disaster, and never makes fun of the city's people. The style loop scored it 9/10 in one round. It is stored in `game/data/screen_texts.json`, key `time_up.headline`.
+
 #### Pause screen
 
 Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the pause screen; Escape again resumes from exactly where the car was. The screen is a compact, nearly opaque black strip across the whole width, starting just below the HUD timer and only as tall as its content, over a light dim of the rest of the screen, so as much of the map as possible stays visible. It works in the run (including runs started from the main menu) and in the drift prototype. From top to bottom, centred in the strip:
@@ -1486,9 +1506,43 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 
 The checkboxes and buttons work with the mouse and the keyboard (Tab to move, Space to switch or press). The strip's dark band runs over the lower part of the car's health bar while paused. How it is built is in `game/docs/hud-and-menus/pause-screen.md`, "Pause screen".
 
+#### Runs list
+
+Text task T-362 (the board's decision: Game loop architecture, Decisions, "The runs list"); the screen is T-364 and reads the text from `game/data/runs_list_text.json` (keys in the file's `_comment`). Every new line scored 8 or more in the style loop. The columns are the recap's stats; the first run's rows read left to right.
+
+| Where | Key | Text |
+|---|---|---|
+| Main menu button (with Start, Garage, Exit) | `menu_button` | Past streams |
+| Screen title | `title` | Past livestreams |
+| Column: the day | `column.date` | Stream date |
+| Column: how it ended | `column.result` | Result |
+| Column: survived | `column.time` | Time survived |
+| Column: highest combo | `column.combo` | Peak engagement (reused: recap `heading.combo`) |
+| Column: enemies | `column.enemies` | Takedowns (reused: recap `heading.enemies`) |
+| Result, win | `result.win` | Kaiju clipped |
+| Result, time's up | `result.time_up` | Out of airtime |
+| Result, wreck | `result.wreck` | Peak content |
+| No saved runs | `empty` | No runs yet, so go drift: the content won't make itself |
+| Back to the main menu | `button.back` | Back to menu |
+| The X's accessible label | `button.close` | Close (reused: recap `button.close`) |
+
+Proposals for the board to judge: "Peak content" for a wreck is the weakest line (it risks reading like the "Peak engagement" column); "Past livestreams" and "Past streams" could be one word. The empty line is long for a label.
+
 #### Level-up screen
 
 Task T-052 (decisions: Decisions, 2026-10-15). When the player levels up the run pauses and this screen shows over it: a white rounded banner at the top with "Greenbull sent a gift pack!" (rewritten for the rebrand in T-301/T-302: Extended narrative, Decisions, "The rebrand"), and under it the 2 choices the weapons give (Weapons, Content, "The level-up offers") as plain cards side by side, each with a title, a description and a "Take it" button (all text approved in T-051). The run behind it is dimmed. An upgrade card shows the text of the tier it would give (the weapon's tier now plus 1); "get the flamethrower" has one text. With only one choice left, one card shows. The look is the comic look of the trick popups and the combo counter: white rounded cards with black borders, black Bangers text with hard pixel edges, none of Greenbull's colours. The highlighted card has a thicker border in the combo counter's yellow with a black outline round it; the first card starts highlighted. A/D or the left and right arrow keys move the highlight, Enter or Space takes the highlighted card, and clicking a card's "Take it" button takes that card. Only a fresh key press counts: a key held down from driving when the screen opens (or its key-repeat) does nothing until it is let go. Taking a card applies it and resumes the run; when several level-ups are waiting the next one's cards show straight after. Escape does not resume the run or open the pause screen while the choice is open. Hovering a card with the mouse does not move the highlight. (T-141) The screen wears T-140's red and gold art (Visual style, Decisions): cream cards in a gold and red 9-slice frame, the highlighted card in a bright gold frame instead of the yellow ring, the red ribbon with the title lettered between its two gull medallions, gold "Take it" plates (a darker, flat one while pressed), the gift box emblem at the ribbon's left end, and a red and gold sunburst behind the cards that turns slowly in steps. The card text wraps at word boundaries on the cream. The screen builds up in 0.54 seconds (0.64 with three cards) in whole-pixel frames of 0.04 seconds, with no smoothing, and it runs while the run is paused: the dim fades in over four frames, the sunburst grows from small with a small overshoot, the ribbon drops in from above with a bounce, the emblem drops just after it, and the cards slide up and settle one after the other, left first. Nothing can be taken or moved while it builds up: keys do nothing (a key pressed then and still held when it ends takes nothing until it is let go, as for a key held at the start), and the buttons ignore the mouse. Keyboard and mouse then work as above. The screen opens at the package pickup, so the likes bar's level-up animation normally is over; if both overlap, they play on their own, the screen above the HUD. The numbers are proposals for the board's playtest. (T-173) Every card shows an image of its weapon (Decisions, 2026-10-18) in a 64 x 64 pixel slot centred above the title: the gun (a small gun), the exhaust flamethrower, the neon underglow, the molotovs or the windshield wiper; an upgrade card shows the same weapon's image as its "get" card. The cards grew from 360 x 300 to 360 x 374 pixels so the image does not take the texts' room, and the highlight frame grows with them. Until the art task (T-174) adds the final images, each weapon has a placeholder drawn in code (16 x 16 pixels at 4 screen pixels each, hard-edged, none of Greenbull's colours). The three new weapons' cards use T-171's text. How it is built is in `game/docs/hud-and-menus/level-up-screen.md`, "Level-up screen".
+
+#### Recap screen
+
+Task T-318 (decision: Game loop architecture, Decisions, "Recap screen in the MVP" and "The recap always closes a run"). Every run ends on the recap: a win, the time's up screen's loss and a wreck (the car's last heart). T-320 builds the screen and reads every label from `game/data/recap_text.json` (no text in code); the player leaves it with Continue or the X at the top right, both to the main menu. Each new line scored 8 or more in the style loop (rounds in T-318's Style review). Labels follow Extended narrative, Text rules, kind "label" (sentence case); the board reads them in the morning.
+
+- **Title**, by how the run ended (`title.win`, `title.time_up`, `title.wreck`): "Kaiju sunsetted, record engagement!" (a win), "Time's up, kaiju still trending" (time ran out), "Car wrecked, great content" (a wreck).
+- **Section headings** (`heading.*`): "Takedowns" (enemies slain), "Tricks landed" (tricks completed), "Peak engagement" (highest combo), "Weapons used".
+- **Buttons** (`button.continue`, `button.close`): "Continue" (the board's word; the loop's own pick was "End stream", 9/10, not used) and "Close" (the X's accessible label).
+- **Weapon tier** (`tier`): "Tier {tier}", {tier} being 1 to 8.
+- **Enemy names** (`enemy.*`): "Kaiju minion" (new), "The kaiju" (new).
+- **Weapon names** (`weapon.*`): "Promo pistol" (new, the gun has no card title), and reused from the level-up cards' titles: "Hot Take Exhaust" (flamethrower), "Neon Underglow", "Hot Drop" (molotov), "Wiper Blade", "Bricks".
+- **Trick names** (`trick.*`), all reused word for word from the trick popups: LONG DRIFT!, FULL 360!, ALT DRIFT!, AIR 180!, AIR 360!, HANG TIME!, THREAD THE NEEDLE!.
 
 ### References
 
@@ -1501,7 +1555,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `7521c78064f2bf3a22a0af5a378cb4f359936a62ccfdafaec9aa48f42f3093ee` |
+| `game-loop-architecture.md` | `826c65eb2f58d28eca7d15f3e3c713212ad5f76f1f0b99b4f4d93727ea4fc424` |
 | `drifting.md` | `5f83e83085e4d7271846d900010bc83d59bf08696c3cb59bd89f0a8f3e02c381` |
 | `level-design.md` | `3cd75622909a0f858c1562b72b430448e84b0cfb5c44d4115a82c5a9f4045340` |
 | `enemies.md` | `672502ecfd82df9f93b3ab9cd110c707d661697e52c47c5bd87e5ae0a1fb1544` |
@@ -1509,4 +1563,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `c8ab841a1ffd26c8aff28fbdf09f8903c8800ffb5cd6baed1decb04d3c2f2861` |
 | `visual-style.md` | `95bbb5cbe07305aefcf6d785b86c73f5f24c957efbb93f84ae903247e65e7d9f` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `25e8afd0e5f0789ee9ec57d85305fe1b67865d77a89570f4588d2eb27b6e2e72` |
+| `hud-and-menus.md` | `124917986e44e82c345bdb46b6c5fcd4591e31fac032b9e8906ca7cde272fe08` |

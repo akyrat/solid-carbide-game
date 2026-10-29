@@ -1,7 +1,7 @@
 ---
 id: T-316
 title: "Text: the time's up failure screen"
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -82,3 +82,4 @@ Headline (no second line, so it reads in 3 seconds): **STREAM OVER, KAIJU STILL 
 - Criterion 2: pass. One line, round 1, 9/10, recorded in the Style review.
 - Criterion 3: pass. Capitals, ends in "!", no banned word (no likes/XP/points/Redgull/Godzilla; no "Greenbull says").
 - Final qa_check rerun not repeated (it would only repeat the waived screenshots failure).
+- 2026-10-29, needs-playtest → done: The board approved the texts waiting for its approval (2026-10-29).

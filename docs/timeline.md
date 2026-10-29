@@ -2160,3 +2160,28 @@ Entry format:
 - Decision or change: tools/hand_backs.py lists every subagent result in a main session. The agents obeyed T-343 (266 characters of their own on average); the harness frame adds 1,207 characters to every background hand-back, plus a launch acknowledgement (1,071) and sometimes a notice (877). 35% of what token_report counts as subagent reports isn't subagent results. Greenbull's share was higher because it ran 43 agents against 13. Proposed: QA agents in the foreground when the Project Lead waits anyway, fewer separate QA runs, and token_report splitting the category.
 - Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
 - Tasks: T-359
+
+## 2026-10-29: The run keeps its stats for the recap
+- Decision or change: RunState.recap() keeps each run's result, loss reason, time, coins, likes, kills per enemy, tricks, highest combo and weapons with tiers, for the recap screen (T-320) and the runs list (T-363).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-319
+
+## 2026-10-29: Every run's recap stats are saved
+- Decision or change: The board: each run's recap stats are saved on this computer. RunHistory keeps every run's summary in user://run_history.json, newest first, up to 200 runs, saved once when the run ends, for the runs list (T-364).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-363
+
+## 2026-10-29: Text: the time's up screen
+- Decision or change: The board approved the time's up headline: STREAM OVER, KAIJU STILL TRENDING!
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-316
+
+## 2026-10-29: Text: the recap screen
+- Decision or change: The board approved the recap screen's text (titles for a win, a time's up loss and a wreck, the four headings, names, Continue and the X).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-318
+
+## 2026-10-29: Text: the runs list
+- Decision or change: The board approved the runs list's text and its main menu button.
+- Documents touched: none
+- Tasks: T-362
