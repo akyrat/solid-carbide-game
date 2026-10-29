@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md, game
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/driving/, tasks/T-317-the-time-s-up-screen.md, tasks/T-320-the-recap-screen.md]
 files_expected_to_change: [game/scripts/run/, game/scripts/driving/, game/scripts/game/game_flow.gd, game/data/, game/tests/unit/, game/docs/game-loop/the-run.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -47,13 +47,13 @@ The board's review: lose all your hearts at speed: the car slides on, uncontroll
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Losing the last heart starts a 3-second wreck (±0.1 s, from a data file) and the run ends after it with the same result and signal as before; a kaiju kill and the time's up loss are unchanged (tests). (QA: pass / fail)
-- [ ] During the wreck no player input moves the car, the car keeps its velocity and slows with its normal physics, and handling while alive is unchanged (tests). (QA: pass / fail)
-- [ ] During the wreck the car takes no damage and collects no coins, likes, gift packs or tricks; pause freezes the wreck (tests). (QA: pass / fail)
-- [ ] Smoke and flames show on the car for the whole wreck (placeholders in code, drawn in the right place as the car moves). (QA: pass / fail)
-- [ ] Game loop architecture, HUD and menus and game/docs/game-loop/the-run.md describe it. (QA: pass / fail)
-- [ ] A screenshot and a GIF of the whole wreck after losing the last heart at speed are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] Losing the last heart starts a 3-second wreck (±0.1 s, from a data file) and the run ends after it with the same result and signal as before; a kaiju kill and the time's up loss are unchanged (tests). (QA: pass)
+- [ ] During the wreck no player input moves the car, the car keeps its velocity and slows with its normal physics, and handling while alive is unchanged (tests). (QA: pass)
+- [ ] During the wreck the car takes no damage and collects no coins, likes, gift packs or tricks; pause freezes the wreck (tests). (QA: pass)
+- [ ] Smoke and flames show on the car for the whole wreck (placeholders in code, drawn in the right place as the car moves). (QA: pass)
+- [ ] Game loop architecture, HUD and menus and game/docs/game-loop/the-run.md describe it. (QA: pass)
+- [ ] A screenshot and a GIF of the whole wreck after losing the last heart at speed are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -97,5 +97,7 @@ Test runs (foreground, all green):
 Screenshots: `art-archive/T-360/screenshots/wreck.png` (1.2 s into the wreck: the car on fire with its smoke trail, the HUD with empty hearts and the clock stopped) and `wreck.gif` (from 1.0 s to 5.0 s: drive into a drift, the last heart, the slide, 3 s smoking and burning, back to the main menu). Made by `bash game/tools/record_wreck.sh` with the fixture `game/tests/fixtures/wreck_demo.tscn`.
 
 Weak spots, honestly: the placeholder smoke reads as stacked grey blobs and the flames as a small square bonfire; fine as a stand-in for T-361's art. The frozen minions look a little odd next to a sliding car; that is the cheapest proposal, and the enemies carrying on is the alternative.
+
+**QA round 1, 2026-10-29: all 7 criteria pass.** qa_check: 3 test sets pass, 3 documents changed, 2 screenshots (wreck.png shows flames on the car and a smoke trail with the HUD kept; wreck.gif present). New tests in test_wreck.gd cover each behaviour criterion. Proposals (HUD, clock, enemies) left to the board's playtest.
 
 Documents affected: `docs/game-loop-architecture.md` (flowchart, the run scene bullet, Content "Wrecked", Screen flow), `docs/hud-and-menus.md` (The HUD, "During the wreck"), `game/docs/game-loop/the-run.md` (hearts bullet, "Wrecked (T-360)"). No refusals.
