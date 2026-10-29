@@ -29,7 +29,7 @@ func _sample() -> Dictionary:
 		"likes": 900, "level": 5,
 		"enemies_slain": {"minion": 42, "kaiju": 1},
 		"tricks": {"three_sixty": 3, "alternate_drift": 0, "airtime": 7, "thread_the_needle": 1},
-		"highest_combo": 3.4,
+		"highest_combo": 3.4, "peak_viewers": 236026.0,
 		"weapons": {"gun": {"tier": 4, "kills": 30}, "wiper": {"tier": 2, "kills": 12}},
 	}
 
@@ -110,16 +110,46 @@ func test_the_enemies_show_their_own_sprites() -> void:
 	assert_eq(screen.enemy_rows.minion.image.custom_minimum_size, RecapScreen.SLOT)
 
 
-func test_the_highest_combo_takes_the_counters_heated_look() -> void:
+## Quick tuning (board, 2026-10-29): Peak engagement is the peak live viewers, not a multiplier.
+func test_peak_engagement_shows_the_peak_viewers_as_the_counter_writes_them() -> void:
+	var curve := ViewersData.new()
 	_show(_sample())
-	assert_eq(screen.combo_label.text, "x3.40")
-	assert_eq(screen.combo_heat.step, ComboHeat.step_for(3.4))
-	assert_eq(screen.combo_label.get_theme_color("font_color"), ComboHeat.STEPS[2].color)
+	assert_eq(screen.peak_label.text, curve.format(236026.0))
+	assert_eq(screen.peak_label.text, "236K")
+	assert_false(screen.peak_label.text.begins_with("x"), "not a multiplier")
+	var heat := mini(curve.step_for_viewers(236026.0), ComboHeat.STEPS.size() - 1)
+	assert_eq(screen.combo_heat.step, heat, "the counter's heat step for that number")
+	assert_eq(screen.peak_label.get_theme_color("font_color"), ComboHeat.STEPS[heat].color)
 	var s := _sample()
-	s.highest_combo = 1.0
+	s.peak_viewers = 1234567.0
 	_show(s)
-	assert_eq(screen.combo_label.text, "x1.00")
+	assert_eq(screen.peak_label.text, curve.format(1234567.0))
+	assert_eq(screen.combo_heat.step, ComboHeat.STEPS.size() - 1, "the fire number takes the top look")
+
+
+func test_a_low_peak_takes_the_viewers_colour() -> void:
+	var s := _sample()
+	s.peak_viewers = 2500.0
+	_show(s)
+	assert_eq(screen.peak_label.text, ViewersData.new().format(2500.0))
 	assert_eq(screen.combo_heat.step, 0)
+	assert_eq(screen.peak_label.get_theme_color("font_color"), RecapScreen.viewers_color())
+	assert_eq(RecapScreen.viewers_color(), Color("#33e1ff"))
+
+
+func test_an_older_summary_without_peak_viewers_uses_its_highest_combo() -> void:
+	var s := _sample()
+	s.erase("peak_viewers")
+	_show(s)
+	var curve := ViewersData.new()
+	assert_eq(screen.peak_label.text, curve.format(curve.viewers_for(3.4)))
+
+
+func test_the_eye_shows_beside_the_number() -> void:
+	_show(_sample())
+	var eye: TextureRect = screen.sections.combo.find_child("Eye", true, false)
+	assert_not_null(eye)
+	assert_eq(eye.texture.resource_path, RecapScreen.EYE_PATH)
 
 
 func test_a_run_with_no_kills_or_tricks_leaves_those_sections_out() -> void:
@@ -147,10 +177,11 @@ func test_every_label_comes_from_the_text_file() -> void:
 	for n in range(1, 9):
 		allowed.append((_file_texts().tier as String).format({"tier": n}))
 	_show(_sample())
-	var count_form := RegEx.create_from_string("^x[0-9]+(\\.[0-9]{2})?$")
+	var count_form := RegEx.create_from_string("^x[0-9]+$")
+	var viewers_number := ViewersData.new().format(236026.0)
 	for l: Label in _labels(screen):
-		var ok: bool = l.text in allowed or count_form.search(l.text) != null
-		assert_true(ok, "label '%s' is from recap_text.json or the HUD's x{n} form" % l.text)
+		var ok: bool = l.text in allowed or count_form.search(l.text) != null or l.text == viewers_number
+		assert_true(ok, "label '%s' is from recap_text.json, the HUD's x{n} form or the viewers number" % l.text)
 	assert_eq(screen.continue_button.text, _file_texts().button.continue)
 	assert_eq(screen.close_button.tooltip_text, _file_texts().button.close)
 	assert_eq(screen.close_button.text, "", "the X is a picture, not text")
@@ -252,7 +283,8 @@ func test_a_scripted_run_shows_its_own_sample() -> void:
 	assert_eq(screen.trick_rows.three_sixty.count.text, "x2")
 	assert_eq(screen.trick_rows.alternate_drift.count.text, "x1")
 	assert_eq(screen.trick_rows.thread_the_needle.count.text, "x1")
-	assert_eq(screen.combo_label.text, RecapScreen.combo_text(r.highest_combo))
+	assert_eq(r.peak_viewers, RunState.peak_viewers_for(r.highest_combo))
+	assert_eq(screen.peak_label.text, ViewersData.new().format(r.peak_viewers))
 	assert_eq(screen.weapon_rows.keys(), ["gun", "molotov"])
 	assert_eq(screen.weapon_rows.gun.tier.text, _file_texts().tier.format({"tier": 3}))
 	assert_eq(screen.weapon_rows.molotov.image.texture, LevelUpScreen.weapon_image("molotov"))

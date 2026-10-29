@@ -1,7 +1,7 @@
 ---
 id: T-320
 title: The recap screen after every run, with pictures
-status: needs-playtest
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started (build B): the UI Agent is building the recap screen that closes every run, with Continue and the X, from your approved text.
 
+### 2026-10-29, Needs playtest → In progress
+
+Quick tuning: Peak engagement will show the run's highest live viewers count instead of the combo multiplier.
+
 ## QA report
 
 QA (sonnet), round 1: all seven criteria pass. qa_check: tests (3 sets) PASS, documents PASS, screenshots PASS (recap_win, recap_wreck, recap_time_up; viewed win and wreck: panels, sprites, card images, tiers, X top right, Continue present). Tests cover each ending (win, health, time at today's 0:00 behaviour) with Continue and X to the menu. Docs (HUD and menus, Game loop architecture, game/README.md index plus game/docs topic file) describe the screen. The T-317 hand-off is wired when the branches merge.
@@ -82,3 +86,16 @@ Written by the agent when it finishes.
 - **Docs updated:** `docs/hud-and-menus.md` (Content, "Recap screen": the built screen), `docs/game-loop-architecture.md` (flowchart recap node; Content, "Screen flow"), `game/docs/game-loop/screen-flow.md`, new `game/docs/hud-and-menus/recap-screen.md`, `game/README.md` (index line). Left for the Project Lead: Game loop architecture's old decision "In the MVP there is no recap" (already superseded) and its open question "(After MVP) Which stats does the recap screen show...", which the board's 2026-10-28 decision now answers.
 
 Board review files: art-archive/T-320/screenshots/recap_win.png, art-archive/T-320/screenshots/recap_wreck.png, art-archive/T-320/screenshots/recap_time_up.png
+- 2026-10-29, needs-playtest → in-progress: The board (2026-10-29, after playing build B): for build B, peak engagement needs to be the max current views number, not a multiplier.
+
+**Quick tuning (board, 2026-10-29).** The board's words: "for build B, peak engagement needs to be the max current views number, not a multiplier."
+
+- Merged `playtest/end-of-a-run` first (a fast-forward; it brings T-317's time's up screen, which already hands over to `show_recap`).
+- **Summary:** `RunState.recap()` gains `peak_viewers` (`highest_combo` is kept): `RunState.peak_viewers_for(highest_combo)`, i.e. `ViewersData.viewers_for` on T-332's curve. That is the number the live viewers counter counts up to at the run's highest combo (whole viewers, without its ±0.5% wobble). It is computed from the highest combo rather than read from the HUD, so it is the same with or without a HUD and in tests. It is saved with the run history (T-363 stores the whole summary).
+- **Screen:** "Peak engagement" (approved label kept) now shows that number, written the way the counter writes it (`ViewersData.format`: e.g. 236K, 777K, 1.02M), after the viewers' eye (`art/hud/eye_icon.png`, existing art), in the counter's look for that number: the viewers colour (#33e1ff) at the base step, the heat colours, glow and pulse at steps 1 to 3, and the top step for the fire number. No "x" multiplier any more.
+- **Older saved runs** without `peak_viewers` (my call): they show the viewers for their `highest_combo` on the same curve, so every run shows the same kind of number and the list never shows a multiplier.
+- **Tests:** `test_recap_screen.gd` now 18 (peak viewers as the counter writes them and its heat look, a low peak in the viewers colour, an older summary falling back to its highest combo, the eye beside the number; the label check accepts the viewers number); `test_run_recap.gd` +1 (`peak_viewers` is the peak after a crash cut and survives JSON).
+- **Test counts (foreground, all pass):** game/tools 657 OK (1 skipped); tools 573 OK; GUT 1894/1894 passing, TESTS PASSED.
+- **Screenshots retaken:** `art-archive/T-320/screenshots/recap_win.png` (777K, fire-step look), `recap_wreck.png` and `recap_time_up.png` (236K).
+- **Docs updated:** `docs/hud-and-menus.md` (Content, "Recap screen"), `docs/game-loop-architecture.md` (Content, "The run's stats for the recap": `peak_viewers`), `game/docs/hud-and-menus/recap-screen.md`, `game/docs/game-loop/the-run.md` (summary table), `game/docs/data/game-data.md` (run history fields).
+- No QA agent: ready for the board to play.

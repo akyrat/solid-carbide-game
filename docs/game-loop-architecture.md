@@ -140,6 +140,7 @@ The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap sc
 - **enemies_slain:** kills per enemy type ("minion", "kaiju"), counted when the car's weapons kill one.
 - **tricks:** how many times each trick was completed, by the id the combo uses (the drifts, 360s, alternate drifts, air tricks, airtime, thread the needle).
 - **highest_combo:** the highest multiplier reached.
+- **peak_viewers:** the live viewers counter's highest number in the run (T-320, the board's quick tuning of 2026-10-29: the recap's "Peak engagement" shows viewers, not a multiplier): the viewers for the highest combo on the viewers curve (Decisions, "The combo shows as live viewers"), the number the counter counts up to, without its small wobble. Saved with the run history like the rest.
 - **weapons:** every weapon the car owned at the end, with the tier it ended on and the kills it made (the kills are a proposal, since they were cheap to count).
 - **Also kept, for the recap and the runs list:** the result (win or loss), why a loss happened (the clock ran out, or health), the time survived, the coins, the likes gained in total and the level reached.
 
