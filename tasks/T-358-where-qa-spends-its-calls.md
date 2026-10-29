@@ -1,7 +1,7 @@
 ---
 id: T-358
 title: Token spend: where a QA run spends its calls
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: a script groups the QA agents' calls by kind, and a doc names the dearest runs and proposes cuts.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,18 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**T-358, 2026-10-29 (opus).** Done: `tools/qa_calls.py`, `tools/test_qa_calls.py` (5 tests), `docs/token-spend/qa-calls-2026-10-29.md`, and the token-spend line in `docs/README.md` now links the script and the doc.
+
+- `tools/qa_calls.py` takes `--from`, `--to`, `--dir` like token_report.py (reuses its `in_range`, `usage_of`, `error_kind`, default dir), plus `--out`, `--top N` and `--detail AGENT_ID` (one run's tool calls in order, with failures, so a dear run can be read without reading its transcript). Kinds: test run, poll / wait, qa_check.py, ticket and diff, screenshots / images, git, ticket edit, read / search other files, other. Tests cover each kind (test run, Monitor/sleep/echo/output-file polls, qa_check.py, screenshot read and script, ticket read/diff, git commit, ticket edits), dedup of streamed messages, the range, two failures (sleep blocked, edit before read), the ticket from description or prompt, the report and `main --out`.
+- Totals match token_report.py exactly for the same ranges: period 533 qa-integration calls, baseline 3,656. The baseline doc's 3,507 was token_report's count when the baseline was taken; rerun today over the same range token_report itself gives 3,656 (explained in the doc).
+
+Headline findings:
+1. Two of the 20 "QA" runs were playtest-build merges given to the qa-integration agent (111 of 533 calls); real QA: 18 runs, 23.4 calls each against 13.3 in the baseline.
+2. Waiting for the tests is the biggest cost: tests, qa_check and polling 13.3 tool calls per run (polling alone 11.3) against 4.5 in the baseline. The three sets take about 15 min in a row (87 s + 337 s + 472 s here), over one foreground command's 10-minute limit, so QA backgrounds them and polls; the final `qa_check.py` also reruns all tests.
+3. Writing the marks is second: 6.5 ticket edits per run, 40 failed (python/sed writes refused by the guard, then Edit before Read).
+4. Proposed cuts (board's call): tests waited on in one call and last check `--no-tests` (about 160 calls), one command for the marks (about 86), playtest merges off the QA agent (111 out of QA's count). With the first two, about 10 calls per QA run.
+
+Observation for the Project Lead: while running T-358's own tests, a foreground Bash command (the tools set, 337 s) was moved to the background after 180 s even with a 600 s timeout; the Godot suite (472 s, 517 s) was not. This likely also pushes QA into polling.
+
+Tests (all green, foreground): game/tools 657 tests OK (1 skipped); tools 565 tests OK (this ran past 180 s and was moved to the background by the tool, result read from its output file; after the docs edits test_new_ticket, test_guard and test_qa_calls were rerun: 101 OK); Godot suite 148 scripts, 1816 tests, 1816 passing, TESTS PASSED.
