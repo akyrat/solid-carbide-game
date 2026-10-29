@@ -1,7 +1,7 @@
 ---
 id: T-317
 title: The 3-second animated time's up screen when the timer runs out
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started (build B): the UI Agent is building the 3-second time's up screen with your approved headline.
 
+### 2026-10-29, Needs playtest → Done
+
+Approved in build B. Done.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -106,3 +110,4 @@ Tests after the merge:
 - `bash game/tools/run_tests.sh`: 1890/1890 passed, 153 scripts.
 
 **QA, 2026-10-29: all 7 criteria pass.** qa_check: tests (3 sets), documents (3 changed), screenshots (2 files) all PASS. New test_time_up_screen.gd covers the 3 s hold, freeze, kill/wreck without the screen, text from screen_texts.json (time_up.headline), and the recap then menu. Docs: hud-and-menus.md Content "Time's up screen", game/README.md index line, game/docs/hud-and-menus/time-up-screen.md. The screenshot shows the cracked headline over the dimmed frozen run at 0:00; the GIF is 7 frames, 3.46 s. Look and motion are for the board's playtest.
+- 2026-10-29, needs-playtest → done: The board played build B and approved it (2026-10-29); its only change was to the recap screen.
