@@ -95,6 +95,10 @@ Task T-244 (decision: Decisions, "Combo broken popup", 2026-10-21). When a crash
 
 Task T-245 builds it (proposals for the playtest, the board decides the look): it appears only when a collision or any damage actually takes a combo down (the run state's `combo_broken`), never with no combo to cut and never when the combo drains away. It is the trick popups' card (same size, same place above the car, follows the car, stacks with the trick popups, same one second and fade) but a warning red-orange card (255, 80, 16, clear of the heart's red) with a black border and white lettering with a black outline, cracked in two along a jagged line through the text. It shakes for the first 0.3 seconds, and from 0.08 seconds the right half falls away (down and a little right) while it fades. Hard pixel edges, no semi-transparent pixels. How it is built: `game/docs/hud-and-menus/popups.md`, "Trick popups".
 
+### Time's up screen
+
+Task T-316 (decision: Decisions, "Time's up screen", 2026-10-28). When the timer runs out with the kaiju alive, the 3-second failure screen shows this exact headline, for T-317 to use word for word: **STREAM OVER, KAIJU STILL TRENDING!**. It is in the trick popups' voice (capitals, ending in "!"), reads at a glance, and has no second line: the headline says the time is up and that the kaiju is still standing, in the stream's own language, a little out of touch about the disaster, and never makes fun of the city's people. The style loop scored it 9/10 in one round. It is stored in `game/data/screen_texts.json`, key `time_up.headline`.
+
 ### Pause screen
 
 Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the pause screen; Escape again resumes from exactly where the car was. The screen is a compact, nearly opaque black strip across the whole width, starting just below the HUD timer and only as tall as its content, over a light dim of the rest of the screen, so as much of the map as possible stays visible. It works in the run (including runs started from the main menu) and in the drift prototype. From top to bottom, centred in the strip:

@@ -2170,3 +2170,8 @@ Entry format:
 - Decision or change: The board: each run's recap stats are saved on this computer. RunHistory keeps every run's summary in user://run_history.json, newest first, up to 200 runs, saved once when the run ends, for the runs list (T-364).
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
 - Tasks: T-363
+
+## 2026-10-29: Text: the time's up screen
+- Decision or change: The board approved the time's up headline: STREAM OVER, KAIJU STILL TRENDING!
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-316

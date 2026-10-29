@@ -1,0 +1,6 @@
+{
+  "_comment": "T-316, text on the run's end screens, read by the screens' scripts. time_up.headline: the time's up failure screen (HUD and menus, Content, 'Time's up screen'), shown for 3 seconds when the 8-minute timer runs out with the kaiju still alive. Text approved in the style loop (score 9).",
+  "time_up": {
+    "headline": "STREAM OVER, KAIJU STILL TRENDING!"
+  }
+}
