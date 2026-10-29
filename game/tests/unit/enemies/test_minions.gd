@@ -305,10 +305,33 @@ func test_new_run_clears_minions_and_coins() -> void:
 func test_nothing_moves_after_the_run_ends() -> void:
 	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(10.0, 0.0))
 	run.state.damage_car(10000.0)
+	run.state.advance(run.state.wreck_seconds)  # past the wreck (T-360)
 	assert_false(run.state.is_running())
 	var at: Vector2 = m.position
 	spawner.step(DT)
 	assert_eq(m.position, at)
+
+
+## T-360, the board's quick tuning (2026-10-29): during the wreck the minions keep
+## coming and swarm the car, with no interaction.
+func test_minions_swarm_the_wreck_without_touching_it() -> void:
+	spawner.enabled = false
+	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(6.0, 0.0))
+	run.state.damage_car(10000.0)
+	assert_true(run.state.is_wrecked())
+	spawner.enabled = true
+	var d0: float = m.position_units().distance_to(_car_units())
+	var hearts: float = run.state.health
+	for i in 150:
+		spawner.step(DT)
+	assert_lt(m.position_units().distance_to(_car_units()), d0 - 2.0, "it walks to the wreck")
+	assert_eq(run.state.health, hearts, "no damage")
+	assert_eq(run.car.pending_knockback(), Vector2.ZERO, "no knockback")
+	assert_eq(m.contact_cooldown, 0.0, "it never made contact")
+	run.state.advance(run.state.wreck_seconds)
+	var at: Vector2 = m.position
+	spawner.step(DT)
+	assert_eq(m.position, at, "still once the run has ended")
 
 
 func test_minions_far_behind_are_removed() -> void:

@@ -206,9 +206,17 @@ func _live() -> bool:
 
 ## One physics step of `dt` seconds: the arrival (boss time, or the playtest
 ## switch), walking towards the car, contact damage, the drawing.
-## Nothing happens once the run is over.
+## Nothing happens once the run is over, except during the wreck (T-360, the
+## board's quick tuning, 2026-10-29): a kaiju already there keeps walking to
+## the wrecked car, with no contact (no damage, no knockback).
 func step(dt: float) -> void:
 	if not enabled or car == null or not is_instance_valid(car):
+		return
+	var swarming: bool = state != null and state.has_method("is_wrecked") and state.is_wrecked()
+	if swarming:
+		if _live():
+			_walk_to_car(dt)
+			update_drawing()
 		return
 	if state != null and not state.is_running():
 		return
@@ -219,14 +227,18 @@ func step(dt: float) -> void:
 			try_appear()
 	if not _live():
 		return
+	_walk_to_car(dt)
+	kaiju.contact_step(dt, car, state)
+	update_drawing()
+
+
+func _walk_to_car(dt: float) -> void:
 	var car_units: Vector2 = car.position / PX_PER_UNIT
 	var target := car_units
 	if navigation != null and kaiju.follower != null:
 		target = kaiju.follower.target(navigation, kaiju.position_units(), car_units, dt, false)
 		kaiju.may_drop = kaiju.follower.dropping(navigation, kaiju.position_units(), kaiju.body_height())
 	kaiju.walk(dt, target)
-	kaiju.contact_step(dt, car, state)
-	update_drawing()
 
 
 ## Makes the kaiju appear just off-screen, if a free spot is found now.
