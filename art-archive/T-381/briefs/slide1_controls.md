@@ -1,0 +1,1 @@
+Tutorial slide 1 of 3, shown before the first run, on one 1152x648 screen. One line saying what the keys do: W accelerates, S brakes and reverses, A steers left, D steers right. Must name W, A, S, D. Plain, short, in the game's voice.
