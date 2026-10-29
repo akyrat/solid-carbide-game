@@ -185,6 +185,8 @@ Text task T-381 (Decisions, "Tutorial slides before the first run" and "A trick 
 | Pause screen button | `button.trick_list` | Trick list |
 | Trick list panel, back control | `button.back` | Back |
 
+**The slides screen (task T-382).** Three full-screen slides on the main menu's dark background, a pale pink arrow triangle on each side (hidden where there is no slide to go to) and three squares at the bottom showing which slide it is. Slide 1: the two controls lines, centred. Slide 2: the seven tricks in a grid of four columns, each a still illustration (64 x 48 pixels drawn at 3 times, nearest) with its name below, then the two loop lines; until the art tickets' PNGs are in, each shows a code-made placeholder (blue picture, pink arrow). Slide 3: the goal line, the "Don't show again" checkbox and the Start button. Pressing Start sends the checkbox state to the screen flow, which starts the run and, when it is ticked, saves `tutorial_hidden` in the settings. Keys: left/right arrow or A/D move between slides, Enter presses the focused control (proposal). The trick list is its own scene so the pause screen can reuse it. How it is built: `game/docs/hud-and-menus/tutorial-slides.md`.
+
 Proposals for the board to judge: the Start button reads "Go live" (loop score 9) where the board's word is "Start"; swap it in `button.start` if "Start" is wanted, like the main menu. Slide 2's single line failed the loop (card_desc is 90 characters at most; best 7), so it is two lines.
 
 ## Open questions
