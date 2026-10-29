@@ -2125,3 +2125,28 @@ Entry format:
 - Decision or change: The board's go, from the token read after the HUD batch: subagent reports were 24.6% of Greenbull's context against 8.8% in the Tokens session. A script lists each hand-back with its length and prompt, and a doc gives the causes and proposes fixes for the board.
 - Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
 - Tasks: T-359
+
+## 2026-10-29: Wrecked: the stream keeps rolling
+- Decision or change: The board: when the car loses its last heart the run doesn't end at once: the controls go dead, the car keeps its movement, and it sits crashed, smoking and burning, for 3 seconds with the stream still on screen, then the recap. Ticket for the behaviour with placeholders; a linked art ticket makes pixel art smoke and flames (PixelLab go, cap 16), played together.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-360
+
+## 2026-10-29: Art: the wreck's smoke and flames
+- Decision or change: Art ticket for the wrecked car's pixel art smoke and flames animations, the board's PixelLab go (up to 16 generations), played together with the behaviour ticket.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-361
+
+## 2026-10-29: Text: the runs list
+- Decision or change: Text ticket for the runs list screen and its main menu button.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-362
+
+## 2026-10-29: Saving every run's recap
+- Decision or change: The board: each run's recap stats are saved on this computer. Data ticket for the run history.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-363
+
+## 2026-10-29: The runs list
+- Decision or change: The board: a new main menu button opens a list of past runs with their recap stats. UI ticket, waiting on the recap screen, the run history and its text.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-364
