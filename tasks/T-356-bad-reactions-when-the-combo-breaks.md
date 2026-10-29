@@ -1,7 +1,7 @@
 ---
 id: T-356
 title: Bad reactions burst out when the combo breaks
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/reactions.gd, game/data/hud.json]
 files_expected_to_change: [game/scripts/hud/, game/data/hud.json, game/tests/unit/hud/, game/docs/hud-and-menus/hud.md, docs/hud-and-menus.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-29, Open → In progress
 
 Started overnight (build A, Stream reacts): the UI Agent is making the bad reactions burst when a crash cuts the combo, with placeholders.
+
+### 2026-10-29, In QA → Needs playtest
+
+QA passed. Ready to play in build A (Stream reacts) with placeholder icons; the art (T-357) can only start once you've approved this one.
 
 ## Style review
 
