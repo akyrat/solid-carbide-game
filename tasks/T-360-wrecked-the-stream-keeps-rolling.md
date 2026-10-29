@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: needs-playtest
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -63,6 +63,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Started (build B, End of a run): the Game Loop Agent is making the car slide on with dead controls and sit smoking and burning for 3 seconds when its last heart is gone, with placeholders, on top of the run stats (T-319).
 
+### 2026-10-29, Needs playtest → In progress
+
+Quick tuning: the enemies keep coming and swarm the wrecked car during the 3 seconds, with no damage or likes.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -101,3 +105,13 @@ Weak spots, honestly: the placeholder smoke reads as stacked grey blobs and the 
 **QA round 1, 2026-10-29: all 7 criteria pass.** qa_check: 3 test sets pass, 3 documents changed, 2 screenshots (wreck.png shows flames on the car and a smoke trail with the HUD kept; wreck.gif present). New tests in test_wreck.gd cover each behaviour criterion. Proposals (HUD, clock, enemies) left to the board's playtest.
 
 Documents affected: `docs/game-loop-architecture.md` (flowchart, the run scene bullet, Content "Wrecked", Screen flow), `docs/hud-and-menus.md` (The HUD, "During the wreck"), `game/docs/game-loop/the-run.md` (hearts bullet, "Wrecked (T-360)"). No refusals.
+- 2026-10-29, needs-playtest → in-progress: The board (2026-10-29, after playing build B): I don't want the monsters to stop moving when I die, when the car gets destroyed. I want them to keep coming and swarming the car. But with no like interaction or anything, they just come and swarm over the car.
+
+**Quick tuning (board, 2026-10-29)**, the board's words: "I don't want the monsters to stop moving when I die, when the car gets destroyed. I want them to keep coming and swarming the car. But with no like interaction or anything, they just come and swarm over the car." Done (commit 774c395c):
+- `game/scripts/enemies/minion_spawner.gd` (Enemy Behavior's code, changed on the board's request): `step()` carries on while `state.is_wrecked()`: it prunes, spawns and walks the minions to the car, but through `move_step(dt, false)`, which skips `contact_step()` (no damage, no knockback). `move_step()`'s new `contacts` argument defaults to true, so every other caller is unchanged.
+- `game/scripts/enemies/kaiju_boss.gd`: during the wreck a kaiju already there walks to the car (new `_walk_to_car()`, the same walking as before, factored out) with no contact and no arrival.
+- Everything else stays: the weapons don't fire, so nothing dies (no coins, likes or kills); meteors, gift drops and pickups stand still; once `run_ended` fires the enemies stand still as before.
+- Tests: new `test_minions_swarm_the_wreck_without_touching_it` and `test_the_kaiju_swarms_the_wreck_without_touching_it` (they close in, no damage, no knockback; still after the run ends). The two "nothing moves after the run ends" tests that pinned the freeze now step past the wreck first.
+- Docs: Game loop architecture, Content, "Wrecked" (the freeze proposal replaced by "The enemies swarm the wreck", with the board's words) and `game/docs/game-loop/the-run.md`, "Wrecked (T-360)".
+- GIF and screenshot retaken (`art-archive/T-360/screenshots/wreck.gif`, `wreck.png`): the fixture now drops a ring of 10 minions round the car just before the last heart, so the swarm closing in on the burning wreck shows.
+- Test runs (foreground, all green): game/tools 657 OK (1 skipped); tools 573 OK; GUT 150 scripts, 1846/1846 passing, 1245413 asserts. No refusals.

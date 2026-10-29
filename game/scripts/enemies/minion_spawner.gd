@@ -199,16 +199,20 @@ func minions_wanted_now() -> int:
 
 
 ## One physics step of `dt` seconds: spawn, walk, contact damage, remove the
-## ones left far behind, place the drawings. Nothing happens once the run is over.
+## ones left far behind, place the drawings. Nothing happens once the run is over,
+## except during the wreck (T-360, the board's quick tuning, 2026-10-29): the
+## minions keep coming and swarm the wrecked car, with no contact (no damage, no
+## knockback).
 func step(dt: float) -> void:
 	if not enabled or car == null or not is_instance_valid(car):
 		return
-	if state != null and not state.is_running():
+	var swarming: bool = _wreck_swarm()
+	if state != null and not state.is_running() and not swarming:
 		return
 	var t0 := Time.get_ticks_usec()
 	_prune()
 	_spawn_step(dt)
-	move_step(dt)
+	move_step(dt, not swarming)
 	_despawn_far()
 	update_drawing()
 	last_step_usec = Time.get_ticks_usec() - t0
@@ -216,8 +220,9 @@ func step(dt: float) -> void:
 
 ## One physics step of the minions already there: each walks (straight at the
 ## car, or by its follower's path on a map with heights) and deals its contact
-## damage. No spawning, no removing (step() does those).
-func move_step(dt: float) -> void:
+## damage (only walking when `contacts` is false: the wreck, T-360). No
+## spawning, no removing (step() does those).
+func move_step(dt: float, contacts := true) -> void:
 	if car == null or not is_instance_valid(car):
 		return
 	var car_units: Vector2 = car.position / PX_PER_UNIT
@@ -235,9 +240,16 @@ func move_step(dt: float) -> void:
 		if not was_falling and m.is_falling():
 			drops_total += 1
 		i += 1
+		if not contacts:
+			continue
 		m.contact_step(dt, car, state)
 		if state != null and not state.is_running():
 			break
+
+
+## True during the wreck (T-360): the last heart is gone and the run has not ended yet.
+func _wreck_swarm() -> bool:
+	return state != null and state.has_method("is_wrecked") and state.is_wrecked()
 
 
 func _prune() -> void:

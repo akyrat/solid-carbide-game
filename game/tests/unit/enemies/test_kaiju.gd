@@ -275,9 +275,24 @@ func test_kaiju_stands_still_while_paused() -> void:
 	assert_ne(k.position, frozen, "unpaused: it walks again")
 
 
+## T-360, the board's quick tuning (2026-10-29): during the wreck the kaiju keeps
+## walking to the car, with no interaction.
+func test_the_kaiju_swarms_the_wreck_without_touching_it() -> void:
+	var k: Node = boss.appear_at(_free_spot_near(12.0))
+	run.state.damage_car(100000.0)
+	assert_true(run.state.is_wrecked())
+	var d0: float = k.position_units().distance_to(_car_units())
+	for i in 100:
+		boss.step(DT)
+	assert_lt(k.position_units().distance_to(_car_units()), d0 - 1.0, "it walks to the wreck")
+	assert_eq(run.state.health, 0.0)
+	assert_eq(run.car.pending_knockback(), Vector2.ZERO, "no knockback")
+
+
 func test_nothing_moves_after_the_run_ends() -> void:
 	var k: Node = boss.appear_at(_free_spot_near(12.0))
 	run.state.damage_car(100000.0)
+	run.state.advance(run.state.wreck_seconds)  # past the wreck (T-360)
 	var at: Vector2 = k.position
 	boss.step(DT)
 	assert_eq(k.position, at)
