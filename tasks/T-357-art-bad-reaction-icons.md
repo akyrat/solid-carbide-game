@@ -1,7 +1,7 @@
 ---
 id: T-357
 title: Art: the six bad reaction icons for a broken combo
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -80,3 +80,4 @@ Done. Zero PixelLab calls (script-drawn). The six bad icons (`game/art/hud/react
 
 
 QA round 1: all six criteria pass. qa_check tests passed (3 sets); screenshots present; contact sheet and burst reviewed by eye. qa_check flagged documents for game/docs/art/ though reaction-icons.md changed on the branch (checked with git diff); treated as pass.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: lgtm (2026-10-29).
