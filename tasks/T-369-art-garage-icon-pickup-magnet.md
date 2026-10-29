@@ -1,7 +1,7 @@
 ---
 id: T-369
 title: Art: the pickup magnet upgrade's icon
-status: open
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -51,10 +51,19 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: the pickup magnet icon, script-drawn.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
 
+Script-drawn 16 x 16 (0 PixelLab generations); every script check (style_rules.py art) passed.
+
+### Round 1 (game/art/garage/pickup_magnet.png)
+Score 8 (Style Evaluator). Reason: a clear horseshoe magnet, thick dark outline, white tips, blue body with highlight and shade, readable on dark and light, no Greenbull colours. Minor: the outline is a closed ring (rule 2 wants it broken by highlights), the grey band under the tips is a flat stripe. Kept at 8, no refine.
+
 ## Result notes
 
-Written by the agent when it finishes.
+Done: `game/art/garage/pickup_magnet.png` (16 x 16, a blue horseshoe magnet with white pole tips and the HUD's dark outline) and `pickup_magnet.json`, drawn by `game/tools/build_garage_icon_pickup_magnet.py` (reuses the HUD outline helpers; deterministic) with `test_build_garage_icon_pickup_magnet.py`. 0 PixelLab generations. Style loop: one round, score 8, kept (Style review). Docs: Visual style and `game/docs/art/garage-icons.md`. Screenshots in `art-archive/T-369/screenshots/`: `icon_dark_light.png` and `garage.png` (garage demo scene, after Godot's import). Tests: `python -m unittest discover -s game/tools -p "test_*.py"` run in the foreground (660 tests, OK). No .uid/.import files committed.
