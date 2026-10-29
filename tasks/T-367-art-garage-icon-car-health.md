@@ -1,7 +1,7 @@
 ---
 id: T-367
 title: Art: the car health upgrade's icon
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -51,10 +51,22 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: the car health icon, script-drawn.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Script-drawn art, so the loop was run by hand: I drew, the Style Evaluator agent scored it after `style_rules.py art --size 16x16` passed all rules.
+
+### Round 1
+Version v1 (`game/art/garage/car_health.png`, kept). Score 9. Reason: follows the rules (hard edges, flat opaque colours, outline all round, highlight and shade); matches the comic look of reaction_heart; no Greenbull colours. Taste note only: the white plus is large and covers about half the heart's face. No refine needed. Kept: v1, 9.
 
 ## Result notes
 
-Written by the agent when it finishes.
+- Drew `game/art/garage/car_health.png` (16 x 16) and `car_health.json` with `game/tools/build_garage_icon_car_health.py` (hand-placed grid, deterministic, reuses `build_hud_livestream_art` helpers and the reaction icons' outline). Red heart with a bold white plus, pink highlight, crimson shade, 5 colours, no Greenbull colours. The garage shows it on the Reinforced Chassis row (`art-archive/T-367/screenshots/garage.png`).
+- Style loop: 1 round, score 9, no refines (see Style review).
+- PixelLab: 0 generations, 0 calls.
+- Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: 660 tests OK (1 skipped), including the new `test_build_garage_icon_car_health.py`. GUT not run (as briefed).
+- Screenshots in `art-archive/T-367/screenshots/`: `icon_enlarged.png` (dark and light), `garage.png`.
+- Documents changed: `docs/visual-style.md`, `game/docs/art/garage-icons.md` (new; other garage icon agents add their sections).
