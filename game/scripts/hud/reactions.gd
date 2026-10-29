@@ -22,7 +22,7 @@ const ICONS := [
 	preload("res://art/hud/reaction_star.png"),
 	preload("res://art/hud/reaction_smile.png"),
 ]
-## The bad reactions (T-356, placeholders drawn by script like the good ones): crying-laughing
+## The bad reactions (T-356 behaviour; T-357 art, script-drawn like the good ones): crying-laughing
 ## face, thumbs down, face peeking between hands, broken heart, skull, screaming face. An item's
 ## `kind` indexes ICONS, then these: kind >= ICONS.size() is a bad reaction.
 const BAD_ICONS := [
