@@ -1,7 +1,7 @@
 ---
 id: T-328
 title: More gift packs, earlier in the run (a gentler start to the likes curve)
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -74,3 +74,4 @@ Docs: docs/game-loop-architecture.md (Decisions entry and Content table), game/d
 QA (round 1): all five criteria pass. Tests 3/3 sets pass; docs changed. Screenshots check red but waived: data-only ticket, nothing to show. Table with x1/x2/x4 and total 3,501 vs 4,255 is in Game loop architecture Content; tests and README index/the-run.md match run.json.
 
 Tests (foreground): GUT 1818/1818 pass (a first run had 11 failures from the old numbers, fixed; a later run had 1 timing flake in a physics-frame clock test, green on the rerun); `game/tools` unittest 657 OK (1 skipped); `tools` unittest 560 OK.
+- 2026-10-29, needs-playtest → done: The board played build A: LGTM (2026-10-29).
