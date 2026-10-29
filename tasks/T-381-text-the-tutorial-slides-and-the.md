@@ -1,7 +1,7 @@
 ---
 id: T-381
 title: Text: the tutorial slides and the pause screen's trick list
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/driving/tricks.md, game/data/recap_text.json, game/data/screen_texts.json]
 files_expected_to_change: [game/data/tutorial_text.json, docs/hud-and-menus.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-381.
 ### 2026-10-29, In progress → In QA
 
 Goal runner (G-007): the agent is done; QA is checking it.
+
+### 2026-10-29, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
 
 ## Style review
 
@@ -298,3 +302,4 @@ Narrative Theme Agent report. Wrote `game/data/tutorial_text.json` (each entry h
 - Documents affected: docs/hud-and-menus.md.
 - PixelLab generations: 0. Refusal: the JSON parse command (non-essential).
 - 2026-10-29, flagged-for-review → in-progress: Goal run G-007 (board, 2026-10-29: one goal, reviewed at the end): the slide 2 loop line kept at 7/10 after 3 refines is noted for the board's final playtest, as goal runs do; the run carries on.
+- 2026-10-29, in-qa → needs-playtest: QA passed every criterion (goal G-007).
