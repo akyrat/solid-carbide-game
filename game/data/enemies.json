@@ -19,8 +19,8 @@
     "coins_per_drop": 2
   },
   "health_drops": {
-    "_comment": "Health pickups a killed minion drops (Enemies, Decisions, Health drops, 2026-10-21; T-220). drop_chance is rolled separately from the coins' (half the coins' rate by the board's decision, 2026-10-22, T-277: 0.3 against the coins' 0.6), restore_hearts is how many hearts one pickup restores (1), never above the maximum (T-333, hearts, 2026-10-28: drop_chance halved from 0.3 to 0.15, the heal from 30% of the health to 1 heart). The kaiju drops none (a proposal for the playtest). Proposed numbers; the board judges them in playtests.",
-    "drop_chance": 0.15,
+    "_comment": "Health pickups a killed minion drops (Enemies, Decisions, Health drops, 2026-10-21; T-220). drop_chance is rolled separately from the coins' (half the coins' rate by the board's decision, 2026-10-22, T-277: 0.3 against the coins' 0.6), restore_hearts is how many hearts one pickup restores (1), never above the maximum (T-333, hearts, 2026-10-28: drop_chance halved from 0.3 to 0.15, the heal from 30% of the health to 1 heart; T-371, 2026-10-29: drop_chance 1.5 times as often, 0.15 to 0.225). The kaiju drops none (a proposal for the playtest). Proposed numbers; the board judges them in playtests.",
+    "drop_chance": 0.225,
     "restore_hearts": 1
   },
   "kaiju": {

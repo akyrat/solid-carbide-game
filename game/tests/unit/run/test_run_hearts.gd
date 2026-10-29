@@ -223,7 +223,7 @@ func test_the_run_scene_hides_and_shows_the_drawn_car() -> void:
 func test_a_pickup_heals_1_heart_never_above_the_maximum() -> void:
 	var d := EnemyData.new().health_drops()
 	assert_eq(d["restore_hearts"], 1)
-	assert_eq(d["drop_chance"], 0.15, "T-333's chance")
+	assert_eq(d["drop_chance"], 0.225, "T-371's chance (T-333's 0.15 x 1.5)")
 	state.damage_car(1.0)
 	state.advance(1.1)
 	state.damage_car(1.0)
