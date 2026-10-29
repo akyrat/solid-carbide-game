@@ -74,6 +74,8 @@ func start_run() -> void:
 	run = add_run(self, progress)
 	pause_screen = run.get_node("PauseScreenLayer")
 	run.state.run_ended.connect(_on_run_ended)
+	pause_screen.restart_pressed.connect(_on_pause_restart)
+	pause_screen.exit_pressed.connect(_on_pause_exit)
 	run_shown.emit()
 
 
@@ -105,6 +107,18 @@ static func add_run(parent: Node, progress: PlayerProgress, layout_path: String 
 func _on_run_ended(_result: String, _coins: int) -> void:
 	# The run ends from inside its own processing; swap screens afterwards.
 	show_menu.call_deferred()
+
+
+## Restart from the pause screen (T-327): keeps the coins collected so far, then a fresh run.
+func _on_pause_restart() -> void:
+	progress.bank_run("loss", run.state.coins)
+	start_run()
+
+
+## Exit from the pause screen (T-327): keeps the coins collected so far, then the main menu.
+func _on_pause_exit() -> void:
+	progress.bank_run("loss", run.state.coins)
+	show_menu()
 
 
 func _on_exit_pressed() -> void:

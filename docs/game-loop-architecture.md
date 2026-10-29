@@ -142,6 +142,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
+- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 
