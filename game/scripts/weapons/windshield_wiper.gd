@@ -215,9 +215,10 @@ func length() -> float:
 	return grow.value
 
 
-## Every living, damageable enemy in the run (the rack's rule).
+## Every living, damageable enemy in the run on the car's level (the rack's
+## rule; T-326: the enemies on another height level are never hit).
 func targets() -> Array:
-	return rack.living_enemies() if rack != null else []
+	return rack.enemies_at_car_level() if rack != null else []
 
 
 ## The car's centre in units (flat world), from its driving model.

@@ -151,9 +151,10 @@ func step(dt: float) -> void:
 	_update_drawing()
 
 
-## Every living, damageable enemy in the run (the rack's rule).
+## Every living, damageable enemy in the run on the car's level (the rack's
+## rule; T-326: the enemies on another height level are never hit).
 func targets() -> Array:
-	return rack.living_enemies() if rack != null else []
+	return rack.enemies_at_car_level() if rack != null else []
 
 
 ## The damage circle's radius now, in units: as drawn, so the hit area follows

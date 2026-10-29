@@ -13,6 +13,9 @@ extends Node2D
 ## each (the agent's proposal, judged in the playtest). The values are the
 ## molotovs' tier when the bottle landed, damage already times the garage bonus.
 ##
+## Levels (T-326): it burns only the enemies on its own level, the ground's
+## height where the bottle landed (`level`), wherever the car is.
+##
 ## Who is inside: the rack's target rule, as the flamethrower's and the
 ## underglow's. A minion is inside when its centre is within `radius` of the
 ## fire's centre; an enemy that reports its body size with hit_radius_units()
@@ -61,6 +64,9 @@ var hits := 0
 var inside: Dictionary = {}
 ## Seconds since each recently hit enemy's last hit: instance id -> seconds.
 var since_hit: Dictionary = {}
+## The level it burns on (T-326): the ground's height where the bottle landed
+## (rack.level_at(centre)); NAN on a map without heights (every level).
+var level := NAN
 var _done := false
 var _flicker := 0
 
@@ -70,6 +76,7 @@ var _flicker := 0
 func setup(the_rack: Node, at: Vector2, stats: Dictionary) -> void:
 	rack = the_rack
 	centre = at
+	level = rack.level_at(at) if rack != null and rack.has_method("level_at") else NAN
 	radius = float(stats["fire_radius"])
 	duration = float(stats["fire_duration"])
 	damage = float(stats["damage"])
@@ -106,7 +113,7 @@ func step(dt: float) -> void:
 		since_hit[id] += dt
 	var now_inside := {}
 	if rack != null:
-		for e in rack.living_enemies():
+		for e in rack.enemies_at_level(level):
 			if is_inside(e):
 				now_inside[e.get_instance_id()] = e
 	for id in now_inside:

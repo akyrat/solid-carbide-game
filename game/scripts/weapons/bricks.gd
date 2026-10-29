@@ -158,7 +158,7 @@ func send_wave(centre: Vector2) -> Array:
 	since_wave = 0.0
 	waves += 1
 	var hit := []
-	for e in targets():
+	for e in targets(centre):
 		if reaches(centre, e):
 			hit.append(e)
 	for e in hit:
@@ -179,9 +179,11 @@ func radius() -> float:
 	return float(stats["radius"])
 
 
-## Every living, damageable enemy in the run (the rack's rule).
-func targets() -> Array:
-	return rack.living_enemies() if rack != null else []
+## Every living, damageable enemy in the run on the level of the ground at
+## `centre`, where the car lands (the rack's rule; T-326: the enemies on another
+## height level are neither hit nor pushed).
+func targets(centre: Vector2) -> Array:
+	return rack.enemies_at_level(rack.level_at(centre)) if rack != null else []
 
 
 ## The car's centre in units (flat world), from its driving model.
