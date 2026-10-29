@@ -1,7 +1,7 @@
 ---
 id: T-327
 title: Restart and Exit buttons on the pause screen
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -84,3 +84,4 @@ Screenshot: art-archive/T-327/screenshots/pause_with_restart_exit.png.
 Docs updated: docs/hud-and-menus.md, docs/game-loop-architecture.md, game/docs/hud-and-menus/pause-screen.md, game/docs/game-loop/screen-flow.md (game/README.md index unchanged: topic files hold it).
 
 (QA, 2026-10-29) qa_check: tests PASS (3 sets), screenshots PASS; documents flagged game/README.md unchanged, accepted (README is an index; topic files pause-screen.md and screen-flow.md carry the content). Screenshot viewed: Restart and Exit in a bottom row, Restart focused. Counts as in notes above (657 / 573 / GUT 1822). Open proposals left to the board's playtest. All 8 criteria pass.
+- 2026-10-29, needs-playtest → done: The board played build C: looks good (2026-10-29).
