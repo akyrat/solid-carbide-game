@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -67,6 +67,10 @@ Started (build B, End of a run): the Game Loop Agent is making the car slide on 
 
 Quick tuning: the enemies keep coming and swarm the wrecked car during the 3 seconds, with no damage or likes.
 
+### 2026-10-29, Needs playtest → Done
+
+Approved in build B. Done; the pixel art smoke and flames (T-361) start now.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -117,3 +121,4 @@ Documents affected: `docs/game-loop-architecture.md` (flowchart, the run scene b
 - Test runs (foreground, all green): game/tools 657 OK (1 skipped); tools 573 OK; GUT 150 scripts, 1846/1846 passing, 1245413 asserts. No refusals.
 
 **QA final round, 2026-10-29 (after the swarm tweak): all 7 criteria pass.** qa_check: 3 test sets, 3 documents, 2 screenshots pass. The retaken wreck.png shows the minions closing in on the burning, smoking wreck with the HUD kept; criteria 1-3 hold with the swarm (tests: no damage, no knockback, no coins, likes or kills). Docs describe the swarm.
+- 2026-10-29, needs-playtest → done: The board played build B after the swarm tweak and approved it (2026-10-29); its only change was to the recap screen.
