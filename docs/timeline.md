@@ -2285,3 +2285,8 @@ Entry format:
 - Decision or change: The board approved the air turn icon (a blue car under a spin arrow, 7/10 after 3 refines), script-drawn, 0 PixelLab.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-370
+
+## 2026-10-29: Art: the acceleration icon
+- Decision or change: The board approved the acceleration icon (a blue speedometer), script-drawn, 0 PixelLab.
+- Documents touched: none
+- Tasks: T-366
