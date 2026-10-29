@@ -1,7 +1,7 @@
 ---
 id: T-367
 title: Art: the car health upgrade's icon
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -72,3 +72,4 @@ QA report (round 1): qa_check run with --no-tests (no test-set criterion): scree
 - Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: 660 tests OK (1 skipped), including the new `test_build_garage_icon_car_health.py`. GUT not run (as briefed).
 - Screenshots in `art-archive/T-367/screenshots/`: `icon_enlarged.png` (dark and light), `garage.png`.
 - Documents changed: `docs/visual-style.md`, `game/docs/art/garage-icons.md` (new; other garage icon agents add their sections).
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: garage icons lgtm (2026-10-29).
