@@ -59,6 +59,8 @@ func test_clock_runs_out_is_a_loss() -> void:
 	assert_eq(state.time_left_text(), "0:01")
 	_simulate(0.5)
 	assert_eq(state.time_left, 0.0)
+	assert_eq(ended.size(), 0, "the time's up screen first (T-317)")
+	state.advance(state.time_up_seconds)
 	assert_eq(ended, [["loss", 7]], "one run ended signal, loss, with the coins")
 	assert_eq(boss_count, 1)
 	_simulate(5.0)
@@ -69,6 +71,7 @@ func test_clock_runs_out_is_a_loss() -> void:
 func test_big_step_still_sends_boss_time_and_ends() -> void:
 	state.advance(1000.0)
 	assert_eq(boss_count, 1)
+	state.advance(state.time_up_seconds)  # the time's up screen (T-317)
 	assert_eq(ended, [["loss", 0]])
 
 

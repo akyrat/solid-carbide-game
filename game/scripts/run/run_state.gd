@@ -97,6 +97,12 @@ signal crashed
 ## run_ended follows when they are over. The run scene turns the car's input off
 ## and starts the smoke and flames on it.
 signal wreck_started(seconds: float)
+## The timer ran out with the kaiju alive (T-317; Game loop architecture,
+## Decisions, "Time's up screen"): the run is lost from this moment (result
+## "loss", loss_reason "time", nothing more counts) and frozen (the scene tree
+## is paused) while the time's up screen plays for `seconds`; run_ended follows
+## when they are over.
+signal time_up_started(seconds: float)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -157,6 +163,12 @@ var boss_time_sent := false
 var wrecked := false
 var wreck_left := 0.0
 var wreck_seconds := 3.0
+## The time's up hold (T-317): true from 0:00 until run_ended, `time_up_left`
+## seconds still to go. `time_up_seconds` is run.json's time_up.seconds, set at
+## start_run(); tests may change it (0 ends the run at once, as before T-317).
+var timed_out := false
+var time_up_left := 0.0
+var time_up_seconds := 3.0
 ## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
 ## start_multiplier (1.0, no combo) at the start of a run.
 var combo := 1.0
@@ -214,6 +226,12 @@ func start_run() -> void:
 	wrecked = false
 	wreck_left = 0.0
 	wreck_seconds = _run_data.wreck_seconds()
+	if timed_out:  # a new run during the time's up screen: unfreeze first
+		process_mode = Node.PROCESS_MODE_INHERIT
+		_set_paused(false)
+	timed_out = false
+	time_up_left = 0.0
+	time_up_seconds = _run_data.time_up_seconds()
 	_slain = {}
 	_tricks_done = {}
 	_weapon_kills = {}
@@ -253,6 +271,9 @@ func advance(seconds: float) -> void:
 	if wrecked:
 		_advance_wreck(seconds)
 		return
+	if timed_out:
+		_advance_time_up(seconds)
+		return
 	if not running or seconds <= 0.0:
 		return
 	invulnerable_left = maxf(invulnerable_left - seconds, 0.0)
@@ -269,8 +290,8 @@ func advance(seconds: float) -> void:
 		boss_time.emit()
 	if time_left <= 0.0 and running:
 		# The clock ran out: the kaiju is still alive, or the run would have
-		# ended already when it was killed.
-		_end(RESULT_LOSS, LOSS_TIME)
+		# ended already when it was killed. The time's up screen plays first (T-317).
+		_time_up()
 
 
 ## Seconds into the run.
@@ -690,6 +711,46 @@ func _finish_wreck() -> void:
 	wrecked = false
 	wreck_left = 0.0
 	run_ended.emit(result, coins)
+
+
+## The clock ran out (T-317): the run is lost now (nothing more counts) and
+## frozen: the scene tree is paused, and this node alone keeps processing so it
+## can count the time's up seconds. run_ended follows after time_up_seconds (at
+## once when it is 0), with the tree unpaused first.
+func _time_up() -> void:
+	_decide(RESULT_LOSS, LOSS_TIME)
+	timed_out = true
+	time_up_left = maxf(time_up_seconds, 0.0)
+	if time_up_left <= EPSILON:
+		_finish_time_up()
+		return
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_paused(true)
+	time_up_started.emit(time_up_left)
+
+
+func _advance_time_up(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	time_up_left = maxf(time_up_left - seconds, 0.0)
+	if time_up_left <= EPSILON:
+		_finish_time_up()
+
+
+func _finish_time_up() -> void:
+	if not timed_out:
+		return
+	timed_out = false
+	time_up_left = 0.0
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_set_paused(false)
+	run_ended.emit(result, coins)
+
+
+## True while the time's up screen plays (T-317): the clock ran out and
+## run_ended has not been sent yet.
+func is_timed_out() -> bool:
+	return timed_out
 
 
 ## True during the wreck (T-360): the last heart is gone and run_ended has not

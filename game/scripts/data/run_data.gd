@@ -111,3 +111,10 @@ func wreck_seconds() -> float:
 ## flame numbers), {} when it is missing.
 func wreck() -> Dictionary:
 	return _data.get("wreck", {})
+
+
+## Seconds the time's up screen plays over the frozen run when the timer runs out
+## with the kaiju alive, before the run ends (T-317; 3 s, the board's number).
+## 3.0 when the file has no time_up section.
+func time_up_seconds() -> float:
+	return float(_data.get("time_up", {}).get("seconds", 3.0))

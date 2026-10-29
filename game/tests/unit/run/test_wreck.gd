@@ -108,12 +108,13 @@ func test_nothing_counts_during_the_wreck() -> void:
 	assert_eq(ended, [["loss", 2]], "still the health loss")
 
 
-func test_a_kaiju_kill_and_the_time_up_end_at_once_as_before() -> void:
+func test_a_kaiju_kill_ends_at_once_and_the_time_up_has_no_wreck() -> void:
 	state.kaiju_killed()
 	assert_eq(ended, [["win", 0]])
 	assert_eq(wrecks, [])
 	state.start_run()
 	state.advance(RunState.RUN_SECONDS + 1.0)
+	state.advance(state.time_up_seconds)  # its own time's up screen (T-317)
 	assert_eq(ended, [["win", 0], ["loss", 0]])
 	assert_eq(state.loss_reason, "time")
 	assert_eq(wrecks, [], "no wreck for the time's up")

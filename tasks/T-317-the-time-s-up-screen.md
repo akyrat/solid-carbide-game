@@ -1,7 +1,7 @@
 ---
 id: T-317
 title: The 3-second animated time's up screen when the timer runs out
-status: open
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md, game
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/docs/game-loop/the-run.md, game/docs/game-loop/screen-flow.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,17 +41,21 @@ The board's review: let a run reach 8:00 without killing the kaiju and watch the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] When the timer reaches 0:00 with the kaiju alive, the screen shows T-316's text for 3 seconds (±0.1 s), animated, then the run ends with the same result as before (test with the run's time advanced to the end). (QA: pass / fail)
-- [ ] During the 3 seconds the run is frozen: the timer, enemies, damage and pickups don't change (test). (QA: pass / fail)
-- [ ] Killing the kaiju, and losing all health, end the run exactly as before, without this screen (tests). (QA: pass / fail)
-- [ ] Every label comes from T-316's data file; no text is written in the code. (QA: pass / fail)
-- [ ] HUD and menus, Content, "Time's up screen" and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-317/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows the whole 3 seconds. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] When the timer reaches 0:00 with the kaiju alive, the screen shows T-316's text for 3 seconds (±0.1 s), animated, then the run ends with the same result as before (test with the run's time advanced to the end). (QA: pass)
+- [ ] During the 3 seconds the run is frozen: the timer, enemies, damage and pickups don't change (test). (QA: pass)
+- [ ] Killing the kaiju, and losing all health, end the run exactly as before, without this screen (tests). (QA: pass)
+- [ ] Every label comes from T-316's data file; no text is written in the code. (QA: pass)
+- [ ] HUD and menus, Content, "Time's up screen" and game/README.md describe it. (QA: pass)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-317/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows the whole 3 seconds. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Started (build B): the UI Agent is building the 3-second time's up screen with your approved headline.
 
 ## Style review
 
@@ -60,3 +64,45 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**UI Agent, 2026-10-29: done, ready for QA.** Build and docs: `game/docs/hud-and-menus/time-up-screen.md`.
+
+What it does: at 0:00 with the kaiju alive the run is lost and frozen (the scene tree paused), the time's up screen plays for 3 s, then the same `run_ended("loss", coins)` as before is sent, so whatever follows it (main menu now, the recap later) follows it. A kaiju kill ends at once as before; a health loss keeps its T-360 wreck, with no screen.
+
+- **Hold, in `game/scripts/run/run_state.gd`** (small addition next to the wreck, since `run_ended` must come after the screen): `_time_up()` decides the loss at 0:00, pauses the tree, sets the state alone to `PROCESS_MODE_ALWAYS` and sends the new signal `time_up_started(seconds)`. `advance()` counts `time_up_left` down; at 0 it restores the process mode, unpauses and sends `run_ended`. `is_timed_out()`. `start_run()` during it unfreezes. The 3 s are data: `game/data/run.json` `time_up.seconds` (new section) via `RunData.time_up_seconds()`. 0 ends at once as before.
+- **Screen:** `game/scripts/ui/time_up_screen.gd` (`TimeUpScreen`, CanvasLayer 16, plays while paused). `game/scripts/game/game_flow.gd`: 5 self-contained lines in `add_run()` add it as `TimeUpScreenLayer` and bind it to the state (no change to `_on_run_ended`). Text from `game/data/screen_texts.json` `time_up.headline`, word for word, none in code (tested).
+- **Pause screen:** `toggle()` ignores Escape during the hold, so it can't pause or unfreeze it.
+- **Look (placeholder in code, no PixelLab):** the COMBO BROKEN! cracked red-orange card (`ComboBrokenArt`), 2x on the default window, nearest filter, over a 55 % black dim. I added an optional `in_gap` argument to `ComboBrokenArt.textures()/bake()` so the crack runs through the space between "OVER," and "KAIJU". At first it ran through the J of KAIJU. The combo broken popup is unchanged (its tests pass).
+- **Animation proposal (for the playtest; also in HUD and menus, Content):** 0 to 0.25 s dim in. 0 to 0.18 s slam in from 2.6x size. 0.18 to 0.6 s impact shake dying away. 0.9 to 1.3 s the crack opens (halves part, right half drops 6 px and tilts 5 degrees). It holds to 3 s. Stepped at 30 fps.
+- **Skip:** none (the proposal). A skip key would be cheap: an input handler calling a state method that ends the hold at once.
+- **Notes for QA and the Project Lead:** a run scene used on its own (without `GameFlow.add_run`) still freezes 3 s but has no screen. The dim covers the HUD too, so 0:00 shows dimmed. T-320 handoff: the coordinator says T-320 wants `GameFlow.show_recap(summary)` called when the 3 s end. Not wired here, as briefed. Since the hold ends with `run_ended`, the recap can follow `run_ended` the same way it does for the wreck.
+
+Tests: new `game/tests/unit/test_time_up_screen.gd` (16 tests). These tests ran the clock out and expected an instant end, so they now let the 3 s play: `run/test_run_state.gd` (2), `run/test_wreck.gd` (1, renamed), `game/test_screen_flow.gd`, `level_creator/test_play_level.gd`.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 657 tests OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 573 tests OK.
+- `bash game/tools/run_tests.sh`: 1870/1870 passed, 152 scripts.
+
+Screenshots: `art-archive/T-317/screenshots/time_up.png` (1.5 s in, crack open, run frozen at 0:00) and `time_up.gif` (from just before 0:00, the whole 3 s, then the main menu). Made by `bash game/tools/record_time_up.sh` with the fixture `game/tests/fixtures/time_up_demo.tscn`.
+
+Documents affected: `docs/hud-and-menus.md` (Content, "Time's up screen"), `docs/game-loop-architecture.md` (the wreck's "decided at once" line no longer says the time's up ends at once), `game/README.md` (index line), `game/docs/hud-and-menus/time-up-screen.md` (new), `game/docs/game-loop/the-run.md` (same correction).
+
+**Merged with T-320 (UI Agent, 2026-10-29).** I merged `playtest/end-of-a-run`, which includes the recap screen, into this branch. There were two conflicts, both resolved keeping both sides:
+- `game/README.md`: both index lines are kept.
+- `game/tests/unit/game/test_screen_flow.gd`: T-320's two clock-loss recap tests now run the clock out through `_lose_on_the_clock`, which lets the 3 s play.
+
+The recap needed no wiring. T-320's `GameFlow._on_run_ended` calls `show_recap(run.state.recap())`, and the time's up screen ends with that same `run_ended`. The order is 0:00, then 3 s of the time's up screen over the frozen run, then the recap with the "time_up" title, then Continue or X to the main menu. `game_flow.gd` merged cleanly.
+
+The in-game test in `test_time_up_screen.gd` is now `test_in_the_game_the_run_freezes_then_the_recap_then_the_menu`. It checks four things:
+- no recap at 2.9 s;
+- the recap at 3 s, with loss_reason "time" and the time's up title;
+- the coins banked;
+- Continue goes to the main menu.
+
+The GIF was re-recorded because its end changed: it now ends on the recap, not the main menu. The docs and the recorder comments now say "then the recap".
+
+Tests after the merge:
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 657 OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 573 OK.
+- `bash game/tools/run_tests.sh`: 1890/1890 passed, 153 scripts.
+
+**QA, 2026-10-29: all 7 criteria pass.** qa_check: tests (3 sets), documents (3 changed), screenshots (2 files) all PASS. New test_time_up_screen.gd covers the 3 s hold, freeze, kill/wreck without the screen, text from screen_texts.json (time_up.headline), and the recap then menu. Docs: hud-and-menus.md Content "Time's up screen", game/README.md index line, game/docs/hud-and-menus/time-up-screen.md. The screenshot shows the cracked headline over the dimmed frozen run at 0:00; the GIF is 7 frames, 3.46 s. Look and motion are for the board's playtest.

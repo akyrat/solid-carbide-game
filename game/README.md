@@ -35,6 +35,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/hud-and-menus/hud.md](docs/hud-and-menus/hud.md): HUD. The HUD in the run, the sub goal square (T-337), the airtime and drift counters.
 - [docs/hud-and-menus/livestream-hud-art.md](docs/hud-and-menus/livestream-hud-art.md): Livestream HUD art. The clock, viewers, sub-goal and heart pieces in art/hud/ and the script that builds them (T-339).
 - [docs/hud-and-menus/level-up-screen.md](docs/hud-and-menus/level-up-screen.md): Level-up screen. The level-up screen, its art and animation.
+- [docs/hud-and-menus/time-up-screen.md](docs/hud-and-menus/time-up-screen.md): Time's up screen. The 3-second screen over the frozen run when the timer runs out (T-317).
 - [docs/hud-and-menus/recap-screen.md](docs/hud-and-menus/recap-screen.md): Recap screen. The recap screen that closes every run (T-320).
 
 ## garage/
