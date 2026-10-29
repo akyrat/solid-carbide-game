@@ -2320,3 +2320,43 @@ Entry format:
 - Decision or change: The board approved the gift pack helicopter drawn 30% bigger (0.65 instead of 0.5), the package hanging a little lower (taken over from Tokens on the board's word).
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-330
+
+## 2026-10-29: Text: the HUD size slider
+- Decision or change: Text ticket for the HUD size slider's label.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-373
+
+## 2026-10-29: The HUD scales with the window
+- Decision or change: The board: the HUD must be predictable and sized sensibly at any window size (it is tiny on an ultrawide), and a pause screen slider sets its size. UI ticket, after its text ticket.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-374
+
+## 2026-10-29: Art: a consistent HUD
+- Decision or change: The board: the HUD pieces look like they came from different games. An art ticket writes one HUD style sheet and redraws the pieces that break it; a UI ticket applies the code side.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-375
+
+## 2026-10-29: The HUD follows its style sheet
+- Decision or change: UI ticket applying the HUD style sheet's fonts, colours and outlines in code.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-376
+
+## 2026-10-29: Main menu polish
+- Decision or change: The board: a pixel-art title, the work in progress line kept, and a splash cover behind the main menu. UI ticket with a placeholder; a linked art ticket makes the cover.
+- Documents touched: docs/hud-and-menus.md
+- Tasks: T-377
+
+## 2026-10-29: Art: the splash cover
+- Decision or change: Art ticket for the main menu's splash cover, PixelLab up to 20 generations, very consistent with the game's style, palette and car.
+- Documents touched: docs/visual-style.md
+- Tasks: T-378
+
+## 2026-10-29: Minions twice as big
+- Decision or change: The board: minions twice as big, their hitbox too; the kaiju unchanged.
+- Documents touched: docs/enemies.md
+- Tasks: T-379
+
+## 2026-10-29: Bug: minions stuck at ramps
+- Decision or change: The board: minions get stuck on walls at the bottom end of ramps. Bug ticket.
+- Documents touched: docs/enemies.md
+- Tasks: T-380
