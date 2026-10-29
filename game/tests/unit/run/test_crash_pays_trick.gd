@@ -200,7 +200,7 @@ func _check_drift_then_crash(run: Node2D, c0: float) -> void:
 	var seconds: float = _drift_seconds[0]
 	assert_between(seconds, 1.5, 2.3, "the drift's time up to the crash")
 	var expected := combo_data.after_collision(c0 + combo_data.drift_amount(seconds))
-	assert_almost_eq(run.state.combo, expected, 0.000001, "paid, then cut by 80%")
+	assert_almost_eq(run.state.combo, expected, 0.000001, "paid, then cut by 50%")
 
 
 func test_a_wall_hit_during_a_drift_pays_it_before_the_cut() -> void:

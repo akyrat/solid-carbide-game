@@ -493,7 +493,7 @@ func add_needle_trick() -> void:
 
 ## The car collided with something (the run scene connects the car's
 ## `hit_obstacle`; damage_car() calls it too): the combo is cut as combo.json
-## says (80% of the part above the start value). Ignored when the run is not
+## says (50% of the part above the start value). Ignored when the run is not
 ## going. Sends `crashed` first (task T-315), so the trick in progress pays
 ## before the cut; combo.json's crash_pays_trick_first false sends it after.
 func collision() -> void:

@@ -16,14 +16,16 @@ func test_trick_order() -> void:
 
 func test_decided_values() -> void:
 	var c := ComboData.new()
-	assert_eq(c.collision_cut(), 0.8)
+	assert_eq(c.collision_cut(), 0.5)
 	assert_eq(c.drain_wait_seconds(), 2.0)
 	assert_eq(c.start_multiplier(), 1.0)
 
 
 func test_collision_cuts_part_above_start() -> void:
 	var c := ComboData.new()
-	assert_almost_eq(c.after_collision(5.0), 1.8, 0.0001)
+	assert_almost_eq(c.after_collision(5.0), 3.0, 0.0001)
+	assert_almost_eq(c.after_collision(4.0), 2.5, 0.0001)
+	assert_almost_eq(c.after_collision(6.0), 3.5, 0.0001)
 	assert_eq(c.after_collision(1.0), 1.0)
 
 

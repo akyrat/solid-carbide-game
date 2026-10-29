@@ -123,7 +123,7 @@ A screenshot fixture, `tests/fixtures/likes_drain_demo.tscn`, starts a run from 
 | Function | Does |
 | --- | --- |
 | `add_trick(trick_id: String)` | The car did a trick: the multiplier goes up by `trick_add[trick_id]`, held at `max_multiplier`, and the drain wait starts again. Sends `combo_trick`, then `combo_changed` (if it changed). An id that is not one of `TrickDetector.TRICK_IDS` is ignored |
-| `collision()` | The car collided with something: the multiplier is cut by `collision_cut` (80%) of the part above `start_multiplier` (`ComboData.after_collision`) |
+| `collision()` | The car collided with something: the multiplier is cut by `collision_cut` (50%) of the part above `start_multiplier` (`ComboData.after_collision`) |
 | `combo_spawn_multiplier()` | How much the minion spawn rate is multiplied at the current combo (`ComboData.spawn_multiplier`, 1.0 with no combo). For enemy spawning (T-085) |
 
 | Value | Is |
