@@ -1,7 +1,7 @@
 ---
 id: T-370
 title: Art: the air turn upgrade's icon
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -81,3 +81,4 @@ Built `game/art/garage/air_turn.png` (+ `.json`), 16 x 16, a blue car under a wh
 Docs: Visual style, `game/docs/art/garage-icons.md` (new; other agents may add sections on their branches, expect a trivial merge).
 Screenshots: `art-archive/T-370/screenshots/` (`air_turn_enlarged.png` dark and light, `garage_screen.png`, `v1..v4_sheet.png`).
 Tests: game/tools unittest 660 OK (1 skipped); GUT not run, per the brief.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: garage icons lgtm (2026-10-29).
