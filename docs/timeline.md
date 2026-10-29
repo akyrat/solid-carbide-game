@@ -2110,3 +2110,8 @@ Entry format:
 - Decision or change: Art ticket for the six bad reaction icons, script-drawn like T-352's (no PixelLab go), linked to the behaviour ticket.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-357
+
+## 2026-10-29: Token spend after the HUD batch
+- Decision or change: The board asked for the token report's rerun after the HUD batch (2026-10-28 03:55Z to 2026-10-29 about 01:00Z, 1,415 calls, 16 tickets merged). T-354's guard brought failed tool calls from 9.4% to 5.2% and hook refusals from 3.7% to 1.7% of tool calls, back to about the baseline. Tokens per merged ticket 11.0M (8.8M per HUD ticket) against 12.5M, on cheaper work. Average main context 177k against 317k, peak 291k. Not improved: QA took about 33 calls per merged ticket against 12.3, and subagent reports were 24.6% of Greenbull's context. The board asked for two analysis tickets on those.
+- Documents touched: docs/token-spend/after-2026-10-29.md, docs/token-spend/after-2026-10-29-raw.md, docs/README.md
+- Tasks: T-350, T-354
