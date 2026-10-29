@@ -4,7 +4,7 @@ title: Meteor challenges never land on another challenge's arrow
 status: open
 from: project-lead
 to: level-challenge
-lead:
+lead: Greenbull
 epic: level-challenges
 milestone: final-release
 user_facing_text: no
@@ -43,6 +43,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] A test shows a free spot is still accepted, and T-035's tests still pass (QA: pass / fail)
 - [ ] `game/README.md` and `docs/level-design.md` (Content) describe the stricter check, without changing Summary, Decisions or Open questions (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
+
+## Updates
+
+### 2026-10-29, Open → In progress
+
+Started (build D, Challenges): the Level/Challenge Design Agent is keeping meteor challenges off other challenges' arrows.
+
+### 2026-10-29, In progress → Open
+
+Not started after all: challenges are out of the MVP and the ticket says to wait until the board brings them back.
 
 ## Result notes
 
