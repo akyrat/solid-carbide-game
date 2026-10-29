@@ -1,7 +1,7 @@
 ---
 id: T-317
 title: The 3-second animated time's up screen when the timer runs out
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md, game
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, game/docs/game-loop/the-run.md, game/docs/game-loop/screen-flow.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/ui/, game/scenes/, game/scripts/game/game_flow.gd, game/tests/unit/, game/README.md, docs/hud-and-menus.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,13 +41,13 @@ The board's review: let a run reach 8:00 without killing the kaiju and watch the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] When the timer reaches 0:00 with the kaiju alive, the screen shows T-316's text for 3 seconds (±0.1 s), animated, then the run ends with the same result as before (test with the run's time advanced to the end). (QA: pass / fail)
-- [ ] During the 3 seconds the run is frozen: the timer, enemies, damage and pickups don't change (test). (QA: pass / fail)
-- [ ] Killing the kaiju, and losing all health, end the run exactly as before, without this screen (tests). (QA: pass / fail)
-- [ ] Every label comes from T-316's data file; no text is written in the code. (QA: pass / fail)
-- [ ] HUD and menus, Content, "Time's up screen" and game/README.md describe it. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-317/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows the whole 3 seconds. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] When the timer reaches 0:00 with the kaiju alive, the screen shows T-316's text for 3 seconds (±0.1 s), animated, then the run ends with the same result as before (test with the run's time advanced to the end). (QA: pass)
+- [ ] During the 3 seconds the run is frozen: the timer, enemies, damage and pickups don't change (test). (QA: pass)
+- [ ] Killing the kaiju, and losing all health, end the run exactly as before, without this screen (tests). (QA: pass)
+- [ ] Every label comes from T-316's data file; no text is written in the code. (QA: pass)
+- [ ] HUD and menus, Content, "Time's up screen" and game/README.md describe it. (QA: pass)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-317/screenshots/`, as `tasks/README.md`, "Screenshots", asks. A GIF shows the whole 3 seconds. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -104,3 +104,5 @@ Tests after the merge:
 - `python -m unittest discover -s game/tools -p "test_*.py"`: 657 OK (1 skipped).
 - `python -m unittest discover -s tools -p "test_*.py"`: 573 OK.
 - `bash game/tools/run_tests.sh`: 1890/1890 passed, 153 scripts.
+
+**QA, 2026-10-29: all 7 criteria pass.** qa_check: tests (3 sets), documents (3 changed), screenshots (2 files) all PASS. New test_time_up_screen.gd covers the 3 s hold, freeze, kill/wreck without the screen, text from screen_texts.json (time_up.headline), and the recap then menu. Docs: hud-and-menus.md Content "Time's up screen", game/README.md index line, game/docs/hud-and-menus/time-up-screen.md. The screenshot shows the cracked headline over the dimmed frozen run at 0:00; the GIF is 7 frames, 3.46 s. Look and motion are for the board's playtest.
