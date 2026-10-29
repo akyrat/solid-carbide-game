@@ -2290,3 +2290,8 @@ Entry format:
 - Decision or change: The board approved the acceleration icon (a blue speedometer), script-drawn, 0 PixelLab.
 - Documents touched: none
 - Tasks: T-366
+
+## 2026-10-29: Art: the car health icon
+- Decision or change: The board approved the car health icon (a red heart with a white plus), script-drawn, 0 PixelLab.
+- Documents touched: none
+- Tasks: T-367
