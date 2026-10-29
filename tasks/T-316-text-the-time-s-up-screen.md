@@ -1,7 +1,7 @@
 ---
 id: T-316
 title: "Text: the time's up failure screen"
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/extended-narrative.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md, art-archive/T-316/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,9 +41,9 @@ The board's review: read the time's up text in HUD and menus, Content.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The headline (and any second line) are in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Time's up screen". (QA: pass / fail)
-- [ ] Each line scored at least 8 in the style loop, with every round in the Style review. (QA: pass / fail)
-- [ ] The headline follows Text rules: capitals, ends in "!", no banned word. (QA: pass / fail)
+- [ ] The headline (and any second line) are in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Time's up screen". (QA: pass)
+- [ ] Each line scored at least 8 in the style loop, with every round in the Style review. (QA: pass)
+- [ ] The headline follows Text rules: capitals, ends in "!", no banned word. (QA: pass)
 
 ## Updates
 
@@ -74,3 +74,11 @@ Headline (no second line, so it reads in 3 seconds): **STREAM OVER, KAIJU STILL 
 - Docs: `docs/hud-and-menus.md`, Content, "Time's up screen".
 - Brief: `art-archive/T-316/brief.md`.
 - Tests: the ticket has no test criterion and changes no code, so the three test sets were not run (the JSON loads).
+
+### QA (round 1)
+
+- qa_check: tests PASS (3 sets), documents PASS (1 changed), screenshots FAIL waived by the Project Lead (text-only ticket; the screen is T-317).
+- Criterion 1: pass. `game/data/screen_texts.json` key `time_up.headline` holds it; named in the result notes; present in HUD and menus, Content, "Time's up screen".
+- Criterion 2: pass. One line, round 1, 9/10, recorded in the Style review.
+- Criterion 3: pass. Capitals, ends in "!", no banned word (no likes/XP/points/Redgull/Godzilla; no "Greenbull says").
+- Final qa_check rerun not repeated (it would only repeat the waived screenshots failure).
