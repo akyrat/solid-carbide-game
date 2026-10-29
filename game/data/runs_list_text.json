@@ -1,0 +1,22 @@
+{
+  "_comment": "T-362, the runs list's text (HUD and menus, Content, 'Runs list'); T-364 reads it, no text in code. Every new line scored 8 or more in the style loop. Keys: menu_button (the main menu's button, next to Start, Garage and Exit); title; column.<id> (date, result, time, combo, enemies); result.<ending> for win, time_up, wreck; empty (no saved runs); button.back (back to the main menu) and button.close (the X's accessible label). Reused word for word from game/data/recap_text.json (T-318, on branch task/T-318): column.combo = heading.combo, column.enemies = heading.enemies, button.close = button.close. All the rest is new.",
+  "menu_button": "Past streams",
+  "title": "Past livestreams",
+  "column": {
+    "date": "Stream date",
+    "result": "Result",
+    "time": "Time survived",
+    "combo": "Peak engagement",
+    "enemies": "Takedowns"
+  },
+  "result": {
+    "win": "Kaiju clipped",
+    "time_up": "Out of airtime",
+    "wreck": "Peak content"
+  },
+  "empty": "No runs yet, so go drift: the content won't make itself",
+  "button": {
+    "back": "Back to menu",
+    "close": "Close"
+  }
+}

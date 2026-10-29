@@ -2150,3 +2150,83 @@ Entry format:
 - Decision or change: The board: a new main menu button opens a list of past runs with their recap stats. UI ticket, waiting on the recap screen, the run history and its text.
 - Documents touched: docs/hud-and-menus.md
 - Tasks: T-364
+
+## 2026-10-29: Where a QA run spends its calls
+- Decision or change: tools/qa_calls.py groups the QA agents' calls by kind. In the HUD batch, waiting for the three test sets (about 15 minutes, over the 10-minute foreground limit) took 11.3 tool calls per QA run against 1.7 in the baseline, and writing the marks 6.5 against 2.7, mostly refused script writes followed by one Edit per criterion. QA reads and looks at less than before. Two of the 20 runs were playtest-build merges, 111 calls. Proposed: wait for the tests in one call, write the marks in one command, move playtest merges off the QA agent; together about 10 calls per QA run.
+- Documents touched: docs/token-spend/qa-calls-2026-10-29.md, docs/README.md
+- Tasks: T-358
+
+## 2026-10-29: Why the HUD batch's hand-backs stayed long
+- Decision or change: tools/hand_backs.py lists every subagent result in a main session. The agents obeyed T-343 (266 characters of their own on average); the harness frame adds 1,207 characters to every background hand-back, plus a launch acknowledgement (1,071) and sometimes a notice (877). 35% of what token_report counts as subagent reports isn't subagent results. Greenbull's share was higher because it ran 43 agents against 13. Proposed: QA agents in the foreground when the Project Lead waits anyway, fewer separate QA runs, and token_report splitting the category.
+- Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
+- Tasks: T-359
+
+## 2026-10-29: The run keeps its stats for the recap
+- Decision or change: RunState.recap() keeps each run's result, loss reason, time, coins, likes, kills per enemy, tricks, highest combo and weapons with tiers, for the recap screen (T-320) and the runs list (T-363).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-319
+
+## 2026-10-29: Every run's recap stats are saved
+- Decision or change: The board: each run's recap stats are saved on this computer. RunHistory keeps every run's summary in user://run_history.json, newest first, up to 200 runs, saved once when the run ends, for the runs list (T-364).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-363
+
+## 2026-10-29: Text: the time's up screen
+- Decision or change: The board approved the time's up headline: STREAM OVER, KAIJU STILL TRENDING!
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-316
+
+## 2026-10-29: Text: the recap screen
+- Decision or change: The board approved the recap screen's text (titles for a win, a time's up loss and a wreck, the four headings, names, Continue and the X).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-318
+
+## 2026-10-29: Text: the runs list
+- Decision or change: The board approved the runs list's text and its main menu button.
+- Documents touched: none
+- Tasks: T-362
+
+## 2026-10-29: Bad reactions when the combo breaks
+- Decision or change: The board approved the burst of bad reactions from the viewers counter when a crash cuts the combo (placeholder icons; art next, T-357).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-356
+
+## 2026-10-29: Restart and Exit on the pause screen
+- Decision or change: The board approved Restart and Exit on the pause screen (coins kept, no confirm prompt).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-327
+
+## 2026-10-29: Pixel art icons for the garage upgrades
+- Decision or change: The board: make pixel art for each garage upgrade, as small icons. A UI ticket shows an icon beside each upgrade (placeholders first, read from game/art/garage/<key>.png), and one art ticket per upgrade draws its icon.
+- Documents touched: docs/garage-design.md
+- Tasks: T-365
+
+## 2026-10-29: Art: the acceleration icon
+- Decision or change: Art ticket for the acceleration upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-366
+
+## 2026-10-29: Art: the car health icon
+- Decision or change: Art ticket for the car health upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-367
+
+## 2026-10-29: Art: the damage bonus icon
+- Decision or change: Art ticket for the damage bonus upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-368
+
+## 2026-10-29: Art: the pickup magnet icon
+- Decision or change: Art ticket for the pickup magnet upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-369
+
+## 2026-10-29: Art: the air turn icon
+- Decision or change: Art ticket for the air turn upgrade's icon, script-drawn (no PixelLab go).
+- Documents touched: docs/garage-design.md
+- Tasks: T-370
+
+## 2026-10-29: Health drops 1.5 times as often
+- Decision or change: The board: health drops 1.5 times as often (drop chance 0.15 to 0.225).
+- Documents touched: docs/enemies.md
+- Tasks: T-371

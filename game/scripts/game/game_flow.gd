@@ -32,6 +32,7 @@ var music: Node
 ## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
 ## into it when the run ends, win or loss.
 var progress: PlayerProgress
+var history: RunHistory  # every finished run's recap stats (T-363)
 ## The run's pause screen, while a run is on screen.
 var pause_screen: CanvasLayer
 ## What Exit does. Tests replace it so the test run is not closed.
@@ -40,6 +41,7 @@ var quit_game: Callable = func(): get_tree().quit()
 
 func _ready() -> void:
 	progress = PlayerProgress.new()
+	history = RunHistory.new()
 	# The music (T-209) is a child of this node, so it outlives every screen change.
 	music = MusicPlayerScript.new()
 	add_child(music)
@@ -71,9 +73,11 @@ func show_garage() -> void:
 ## Replaces the main menu with a fresh run.
 func start_run() -> void:
 	_clear_screens()
-	run = add_run(self, progress)
+	run = add_run(self, progress, "", history)
 	pause_screen = run.get_node("PauseScreenLayer")
 	run.state.run_ended.connect(_on_run_ended)
+	pause_screen.restart_pressed.connect(_on_pause_restart)
+	pause_screen.exit_pressed.connect(_on_pause_exit)
 	run_shown.emit()
 
 
@@ -82,7 +86,7 @@ func start_run() -> void:
 ## and the run's coins banked into `progress` when it ends. `layout_path`, when given, is the
 ## map file it plays (T-230); empty is the game's own map. The level creator's Play uses it
 ## too (T-239). The run starts itself when it enters the tree.
-static func add_run(parent: Node, progress: PlayerProgress, layout_path: String = "") -> Node2D:
+static func add_run(parent: Node, progress: PlayerProgress, layout_path: String = "", history: RunHistory = null) -> Node2D:
 	var r: Node2D = RunScene.instantiate()
 	r.name = "Run"
 	if layout_path != "":
@@ -99,12 +103,26 @@ static func add_run(parent: Node, progress: PlayerProgress, layout_path: String 
 	r.add_child(ps)
 	ps.setup(r)
 	progress.connect_run(r.state)  # banks the coins before the screen swaps
+	if history != null:
+		history.connect_run(r.state)  # saves the run's recap (T-363)
 	return r
 
 
 func _on_run_ended(_result: String, _coins: int) -> void:
 	# The run ends from inside its own processing; swap screens afterwards.
 	show_menu.call_deferred()
+
+
+## Restart from the pause screen (T-327): keeps the coins collected so far, then a fresh run.
+func _on_pause_restart() -> void:
+	progress.bank_run("loss", run.state.coins)
+	start_run()
+
+
+## Exit from the pause screen (T-327): keeps the coins collected so far, then the main menu.
+func _on_pause_exit() -> void:
+	progress.bank_run("loss", run.state.coins)
+	show_menu()
 
 
 func _on_exit_pressed() -> void:
