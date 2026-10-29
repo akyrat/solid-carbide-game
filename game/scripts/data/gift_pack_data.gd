@@ -28,6 +28,11 @@ func _num(section: String, key: String) -> float:
 	return float(r.data)
 
 
+## The scale the helicopter's sheet is drawn at (T-330).
+func helicopter_scale() -> float:
+	return _num("helicopter", "draw_scale")
+
+
 ## Drawn pixels per second the helicopter flies across the screen.
 func helicopter_speed() -> float:
 	return _num("helicopter", "speed_px_per_second")

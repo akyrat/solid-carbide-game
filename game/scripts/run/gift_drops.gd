@@ -120,6 +120,7 @@ func send_helicopter(level: int) -> GiftHelicopter:
 	pkg.z_index = SKY_Z
 	var heli: GiftHelicopter = HelicopterScene.instantiate()
 	heli.name = "GiftHelicopter%d" % level
+	heli.draw_scale = data.helicopter_scale()
 	heli.speed = data.helicopter_speed()
 	heli.drop_x = pkg.drawn_ground.x
 	var view := visible_rect()

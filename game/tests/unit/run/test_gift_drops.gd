@@ -692,6 +692,7 @@ func test_tuning_numbers_come_from_the_data_file() -> void:
 	assert_true(r.ok, r.error)
 	var d := GiftPackData.new()
 	assert_true(d.is_ok(), d.error)
+	assert_eq(d.helicopter_scale(), float(r.data.helicopter.draw_scale))
 	assert_eq(d.helicopter_speed(), float(r.data.helicopter.speed_px_per_second))
 	assert_eq(d.drop_height(), float(r.data.helicopter.drop_height_px))
 	assert_eq(d.offscreen_margin(), float(r.data.helicopter.offscreen_margin_px))
@@ -710,7 +711,7 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	var path := RunPaths.file("gift_pack_t144.json")
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	f.store_string(JSON.stringify({
-		"helicopter": {"speed_px_per_second": 300, "drop_height_px": 77, "screen_margin_px": 5, "offscreen_margin_px": 33},
+		"helicopter": {"draw_scale": 0.8, "speed_px_per_second": 300, "drop_height_px": 77, "screen_margin_px": 5, "offscreen_margin_px": 33},
 		"package": {"hang_below_px": 20, "fall_seconds": 1.25, "min_fall_px": 10, "land_ahead_units": 9, "clearance_units": 0.5, "pickup_radius_units": 3}}))
 	f.close()
 	drops.data = GiftPackData.new(path)
@@ -720,6 +721,7 @@ func test_the_run_uses_whatever_the_data_file_says() -> void:
 	var heli: GiftHelicopter = drops.helicopters[0]
 	var pkg: GiftPackage = drops.packages[0]
 	assert_eq(heli.speed, 300.0)
+	assert_eq(heli.sprite().scale, Vector2(0.8, 0.8), "drawn at the file's draw_scale")
 	assert_almost_eq(pkg.drawn_ground.y - heli.position.y, 77.0, 0.001)
 	assert_almost_eq(drops.visible_rect().position.x - heli.from_x, 33.0 + maxf(0.0, drops.visible_rect().get_center().x - pkg.drawn_ground.x), 0.01)
 	assert_eq(pkg.fall_seconds, 1.25)
@@ -776,3 +778,34 @@ func test_package_uses_the_parachute_look_only_while_falling() -> void:
 	pkg.phase = GiftPackage.LANDED
 	pkg.refresh_look()
 	assert_eq(pkg.sprite().texture.resource_path, GiftPackage.GROUND_ART)
+
+
+## T-330: the helicopter is drawn 30% bigger than the 0.5 it had (0.65, 192 x 160 frames
+## -> about 125 x 104 drawn pixels), the scale set in gift_pack.json.
+func test_t330_the_helicopter_is_drawn_30_percent_bigger_from_the_data_file() -> void:
+	assert_eq(data.helicopter_scale(), 0.65)
+	_place_car(Vector2.ZERO, 0.0)
+	var heli := drops.send_helicopter(2)
+	var s := heli.sprite()
+	assert_almost_eq(s.scale.x, 0.5 * 1.3, 0.0001)
+	var frame := s.texture.get_size() / Vector2(s.hframes, s.vframes)
+	assert_eq(frame, Vector2(192, 160))
+	assert_almost_eq(frame.x * s.scale.x, 124.8, 0.01)
+	assert_almost_eq(frame.y * s.scale.y, 104.0, 0.01)
+	assert_eq(heli.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
+
+
+func test_t330_the_bigger_helicopter_starts_and_ends_off_screen_and_stays_under_the_top_edge() -> void:
+	_place_car(Vector2.ZERO, 0.0)
+	var heli := drops.send_helicopter(2)
+	var pkg: GiftPackage = drops.packages.back()
+	var view := drops.visible_rect()
+	var w := 192.0 * heli.sprite().scale.x
+	assert_lt(heli.from_x + w / 2.0, view.position.x, "starts fully beyond the left edge")
+	assert_gt(heli.to_x - w / 2.0, view.end.x, "ends fully beyond the right edge")
+	assert_lt(heli.position.x + w / 2.0, view.position.x, "enters out of sight")
+	assert_gte(heli.position.y - drops.helicopter_top(heli), view.position.y + data.screen_margin() - 0.01)
+	var belly := heli.position.y + 160.0 * heli.sprite().scale.y / 2.0
+	var box_top := pkg.position.y - drops.art_height(pkg.sprite())
+	assert_gt(pkg.position.y, belly - 1.0, "the package's bottom hangs below the helicopter's frame")
+	assert_not_null(box_top)

@@ -8,11 +8,26 @@ extends Node2D
 ##
 ## The art: the child Sprite2D "Sprite" (res://scenes/run/gift_helicopter.tscn).
 ## T-145 swapped its texture for the final art (res://art/gift_pack/helicopter_sheet.png,
-## 4 rotor frames of 192 x 160, drawn at scale 0.5); how it moves stays in gift_drops.gd.
+## 4 rotor frames of 192 x 160, drawn at the scale in gift_pack.json, 0.65 since T-330); how it moves stays in gift_drops.gd.
 
 ## The rotor spin: frames per second (art only, no effect on the flight).
 const ROTOR_FPS := 24.0
 var _rotor_time := 0.0
+## How big the sheet is drawn (gift_pack.json, helicopter.draw_scale; T-330).
+## Negative: not set yet, _ready reads it from the data file.
+var draw_scale := -1.0
+
+
+func _ready() -> void:
+	if draw_scale < 0.0:
+		draw_scale = GiftPackData.new().helicopter_scale()
+	apply_draw_scale()
+
+
+func apply_draw_scale() -> void:
+	var s := sprite()
+	if s != null and draw_scale > 0.0:
+		s.scale = Vector2(draw_scale, draw_scale)
 
 
 func _process(delta: float) -> void:
