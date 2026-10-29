@@ -269,7 +269,7 @@ func _cleanup_game() -> void:
 	TestSave.restore_progress()
 
 
-func test_in_the_game_the_run_freezes_and_the_menu_follows_after_the_screen() -> void:
+func test_in_the_game_the_run_freezes_then_the_recap_then_the_menu() -> void:
 	var g := _game()
 	var run: Node2D = g.run
 	var s: CanvasLayer = run.get_node("TimeUpScreenLayer")
@@ -298,12 +298,23 @@ func test_in_the_game_the_run_freezes_and_the_menu_follows_after_the_screen() ->
 	assert_true(get_tree().paused)
 	assert_false(ps.visible, "no pause screen over it")
 	assert_true(s.visible)
-	st.advance(st.time_up_left)
+	st.advance(st.time_up_left - 0.1)
+	await wait_process_frames(2)
+	assert_null(g.recap, "no recap before the 3 s are over")
+	assert_not_null(g.run)
+	st.advance(0.1)
 	await wait_process_frames(2)
 	assert_null(g.run, "the run ended as before")
-	assert_not_null(g.menu, "back to the main menu")
+	# Then the recap (T-320), as after every run end, and its Continue to the menu.
+	assert_not_null(g.recap, "the recap follows the time's up screen")
+	assert_null(g.menu)
+	assert_eq(g.recap.summary.loss_reason, "time")
+	assert_eq(g.recap.title_label.text, RecapScreen.text("title.time_up"))
 	assert_false(get_tree().paused)
 	assert_eq(g.progress.coins, 3, "the coins banked as before")
+	g.recap.continue_button.pressed.emit()
+	await wait_process_frames(2)
+	assert_not_null(g.menu, "then the main menu")
 	await _cleanup_game()
 
 

@@ -73,7 +73,7 @@ flowchart TD
     win -- yes --> won([Win])
     win -- no --> lost([Loss])
     drive -- Last heart gone --> wreck[Wrecked: controls dead, the car slides on, smoking and burning, 3 s] --> lost
-    won --> recap[Recap screen: kills per enemy type and other stats, final release only]
+    won --> recap[Recap screen: the run's stats with pictures; Continue or X]
     lost --> recap
     recap --> menu[Main menu: Start, Garage, Exit]
     menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
@@ -166,7 +166,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
-- When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
+- When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the **recap screen** shows its stats (task T-320; Decisions, "The recap always closes a run"; the look: HUD and menus, Content, "Recap screen"). Its Continue button and the X at its top right both bring the main menu back. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 

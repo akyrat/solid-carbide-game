@@ -2,7 +2,7 @@ extends Node
 ## Fixture for the time's up screen's screenshot and GIF (task T-317): a run
 ## from the main menu, the car driving with minions around it, the clock set to
 ## 0:01 so it runs out at about 2 s. The run freezes at 0:00 while the time's
-## up screen plays for its 3 seconds, then the game goes back to the main menu.
+## up screen plays for its 3 seconds, then the recap screen shows (T-320).
 ## game/tools/record_time_up.sh records it.
 
 ## Seconds of driving before the clock is set to its last second.

@@ -85,3 +85,22 @@ Tests: new `game/tests/unit/test_time_up_screen.gd` (16 tests). These tests ran 
 Screenshots: `art-archive/T-317/screenshots/time_up.png` (1.5 s in, crack open, run frozen at 0:00) and `time_up.gif` (from just before 0:00, the whole 3 s, then the main menu). Made by `bash game/tools/record_time_up.sh` with the fixture `game/tests/fixtures/time_up_demo.tscn`.
 
 Documents affected: `docs/hud-and-menus.md` (Content, "Time's up screen"), `docs/game-loop-architecture.md` (the wreck's "decided at once" line no longer says the time's up ends at once), `game/README.md` (index line), `game/docs/hud-and-menus/time-up-screen.md` (new), `game/docs/game-loop/the-run.md` (same correction).
+
+**Merged with T-320 (UI Agent, 2026-10-29).** I merged `playtest/end-of-a-run`, which includes the recap screen, into this branch. There were two conflicts, both resolved keeping both sides:
+- `game/README.md`: both index lines are kept.
+- `game/tests/unit/game/test_screen_flow.gd`: T-320's two clock-loss recap tests now run the clock out through `_lose_on_the_clock`, which lets the 3 s play.
+
+The recap needed no wiring. T-320's `GameFlow._on_run_ended` calls `show_recap(run.state.recap())`, and the time's up screen ends with that same `run_ended`. The order is 0:00, then 3 s of the time's up screen over the frozen run, then the recap with the "time_up" title, then Continue or X to the main menu. `game_flow.gd` merged cleanly.
+
+The in-game test in `test_time_up_screen.gd` is now `test_in_the_game_the_run_freezes_then_the_recap_then_the_menu`. It checks four things:
+- no recap at 2.9 s;
+- the recap at 3 s, with loss_reason "time" and the time's up title;
+- the coins banked;
+- Continue goes to the main menu.
+
+The GIF was re-recorded because its end changed: it now ends on the recap, not the main menu. The docs and the recorder comments now say "then the recap".
+
+Tests after the merge:
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 657 OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 573 OK.
+- `bash game/tools/run_tests.sh`: 1890/1890 passed, 153 scripts.
