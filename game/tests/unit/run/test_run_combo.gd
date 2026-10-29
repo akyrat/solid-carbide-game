@@ -1,6 +1,6 @@
 extends GutTest
 ## Task T-081: the combo. Tricks raise a multiplier on all likes (XP) gained,
-## collisions and damage to the car cut it by 80%, it drains when no trick
+## collisions and damage to the car cut it by 50%, it drains when no trick
 ## follows within 2 seconds, it resets with a new run and stops while paused.
 
 const RunStateScript := preload("res://scripts/run/run_state.gd")
@@ -123,7 +123,7 @@ func test_add_xp_is_multiplied_too() -> void:
 	assert_almost_eq(state.xp, 2.0 * state.combo, 0.000001)
 
 
-func test_a_wall_hit_cuts_the_combo_by_80_percent() -> void:
+func test_a_wall_hit_cuts_the_combo_by_50_percent() -> void:
 	for i in 4:
 		state.add_trick("alternate_drift")
 	var before := state.combo  # 3.0
@@ -134,13 +134,22 @@ func test_a_wall_hit_cuts_the_combo_by_80_percent() -> void:
 	assert_almost_eq(changes[changes.size() - 1], expected, 0.000001)
 
 
-func test_damage_to_the_car_cuts_the_combo_by_80_percent() -> void:
+func test_damage_to_the_car_cuts_the_combo_by_50_percent() -> void:
 	for i in 4:
 		state.add_trick("alternate_drift")
 	var before := state.combo
 	state.damage_car(1.0)
 	assert_almost_eq(state.combo, combo_data.after_collision(before), 0.000001)
 	assert_lt(state.health, state.max_health)
+
+
+func test_a_crash_leaves_half_the_bonus_x4_and_the_cap() -> void:
+	state.combo = 4.0
+	state.collision()
+	assert_almost_eq(state.combo, 2.5, 0.000001, "x4 leaves x2.5")
+	state.combo = 6.0
+	state.collision()
+	assert_almost_eq(state.combo, 3.5, 0.000001, "x6 leaves x3.5")
 
 
 func test_a_collision_with_no_combo_changes_nothing() -> void:
