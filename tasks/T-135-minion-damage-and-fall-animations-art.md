@@ -6,7 +6,7 @@ from: project-lead
 to: asset-generation
 lead: Enemies
 epic: art
-milestone: mvp
+milestone: final-release
 user_facing_text: no
 changes_visuals: yes
 depends_on: [T-068, T-134]

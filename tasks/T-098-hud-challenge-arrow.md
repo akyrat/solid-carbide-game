@@ -1,7 +1,7 @@
 ---
 id: T-098
 title: HUD: the arrow to the nearest challenge
-status: open
+status: cancelled
 from: project-lead
 to: ui
 lead: Greenbull
@@ -54,6 +54,10 @@ Started (build D, Challenges): the UI Agent is adding the HUD arrow to the neare
 
 Not started after all: challenges are out of the MVP and the ticket says to wait until the board brings them back.
 
+### 2026-10-29, Open → Cancelled
+
+Cancelled as you asked: a duplicate.
+
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-29, open → cancelled: The board (2026-10-29): cancel t098 (duplicate).

@@ -6,7 +6,7 @@ from: project-lead
 to: board
 lead:
 epic: tooling
-milestone: mvp
+milestone: final-release
 user_facing_text: no
 changes_visuals: no
 depends_on: []

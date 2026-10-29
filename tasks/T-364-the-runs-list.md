@@ -6,7 +6,7 @@ from: project-lead
 to: ui
 lead: Greenbull
 epic: hud-menus
-milestone: mvp
+milestone: final-release
 goal:
 user_facing_text: yes
 changes_visuals: yes

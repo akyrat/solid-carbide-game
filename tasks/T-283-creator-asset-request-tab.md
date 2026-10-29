@@ -6,7 +6,7 @@ from: project-lead
 to: level-challenge
 lead: Coursework
 epic: level-challenges
-milestone: mvp
+milestone: final-release
 goal:
 user_facing_text: yes
 changes_visuals: yes

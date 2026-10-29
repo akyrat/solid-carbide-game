@@ -6,7 +6,7 @@ from: project-lead
 to: enemy-behavior
 lead: Enemies
 epic: enemies
-milestone: mvp
+milestone: final-release
 user_facing_text: no
 changes_visuals: yes
 depends_on: [T-044, T-068]

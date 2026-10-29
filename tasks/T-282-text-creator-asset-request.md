@@ -6,7 +6,7 @@ from: project-lead
 to: narrative-theme
 lead: Coursework
 epic: narrative
-milestone: mvp
+milestone: final-release
 goal:
 user_facing_text: yes
 changes_visuals: no

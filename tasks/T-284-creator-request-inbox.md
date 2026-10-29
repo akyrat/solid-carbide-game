@@ -6,7 +6,7 @@ from: project-lead
 to: project-lead
 lead: Coursework
 epic: tooling
-milestone: mvp
+milestone: final-release
 goal:
 user_facing_text: no
 changes_visuals: no

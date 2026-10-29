@@ -1,10 +1,10 @@
 ---
 id: T-078
 title: QA: a full run from the main menu, before the MVP playtest
-status: open
+status: cancelled
 from: project-lead
 to: qa-integration
-lead:
+lead: Greenbull
 epic: game-loop
 milestone: mvp
 user_facing_text: no
@@ -42,6 +42,12 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] `game/README.md` says how to run the end-to-end test and has the manual checklist (QA: pass / fail)
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
+## Updates
+
+### 2026-10-29, Open → Cancelled
+
+Cancelled as you asked.
+
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-29, open → cancelled: The board (2026-10-29): cancel t078.
