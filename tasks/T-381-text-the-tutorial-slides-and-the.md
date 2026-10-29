@@ -1,7 +1,7 @@
 ---
 id: T-381
 title: Text: the tutorial slides and the pause screen's trick list
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-007
@@ -293,3 +293,4 @@ Narrative Theme Agent report. Wrote `game/data/tutorial_text.json` (each entry h
 - Screenshots: none, text-only work.
 - Documents affected: docs/hud-and-menus.md.
 - PixelLab generations: 0. Refusal: the JSON parse command (non-essential).
+- 2026-10-29, flagged-for-review → in-progress: Goal run G-007 (board, 2026-10-29: one goal, reviewed at the end): the slide 2 loop line kept at 7/10 after 3 refines is noted for the board's final playtest, as goal runs do; the run carries on.
