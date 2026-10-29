@@ -2360,3 +2360,8 @@ Entry format:
 - Decision or change: The board: minions get stuck on walls at the bottom end of ramps. Bug ticket.
 - Documents touched: docs/enemies.md
 - Tasks: T-380
+
+## 2026-10-29: Bug: creator roads missing in the run
+- Decision or change: The board: roads painted in the level creator don't show in the played level. Bug ticket, fixed at once.
+- Documents touched: docs/level-design.md
+- Tasks: T-391

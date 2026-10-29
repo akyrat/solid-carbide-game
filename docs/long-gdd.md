@@ -517,6 +517,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **Thread the needle** (board, 2026-10-22): in the level creator the board can mark two obstacles (anything the car crashes into and that cuts the combo: boulders, barriers, cones, crates) as a pair. In a run on that level, driving through the gap between a marked pair is a trick, **thread the needle**, that raises the combo like the other tricks (Game loop architecture, Decisions, "The combo"). What it is worth, whether it pays again on the next pass, and how the pair shows in the editor and in the run are the agents' proposals for the playtest. Its popup text: HUD and menus, Content (T-271). (T-272)
 - **Tutorial levels** (board, 2026-10-20, "not a request now"): short tutorial levels that show the player the tricks, one trick at a time. The board will describe them later; nothing is built until then (task T-211).
 - **The board's own level becomes the game's map** (board, 2026-10-29): the board builds a level by hand in the level creator over several hours, then hands it over; that level becomes the map the game's Start plays, in place of the elevation sample map. Until the board names the file, nothing changes. (T-372)
+- **Roads painted in the creator show in the run** (board, 2026-10-29; a bug, fixed at once): roads the board places on the ground in the level creator don't show up when the level is played. What is painted in the editor must be what the run draws. (T-390)
 
 ### Content
 
@@ -1631,7 +1632,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `4faf337de125919ad6f0876d4be08f98a44b0da85cd65639657e0598f54d885d` |
 | `drifting.md` | `9ba4b029c7b6d02d38bd17161e8158ba72e3105b63af8d7df37ca57c58a03b22` |
-| `level-design.md` | `40ac1475ef0a25d13c14ce27bb5a376b967540e9828c944d933c0b3e6ecac9b8` |
+| `level-design.md` | `5db90c415cca04aff922eb761b66b17c126a4f0af0b2ddef07ed6839569b05e3` |
 | `enemies.md` | `c1b835099f5495781686713fa8bb1c0a03b3af302316fbeadf18ce709a31099c` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
 | `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |
