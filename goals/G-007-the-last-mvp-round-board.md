@@ -1,7 +1,7 @@
 ---
 id: G-007
 title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
-status: building
+status: paused
 art_cap: 40
 art_used: 0
 iteration: 2
@@ -174,8 +174,10 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-29, iteration 0: resumed by the session Greenbull.
 - 2026-10-29, iteration 1: T-381 (S1, narrative-theme, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: (nothing new). Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-381 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_019rKCDYVgFnVQ5gCWTtwcXb"} / QA: {"tool_input": {"command": "python -c \"import json;json.load(open('game/data/tutorial_text.json'));print('ok')\""}, "tool_name": "Bash", "tool_use_id": "toolu_011vj6dXbHa8qkukSJzuzHkr"} / QA: python tools/qa_check.py T-381 --no-marks (not pre-approved, needs approval) / QA: python -c json.load parse of game/data/tutorial_text.json (not pre-approved). Rescan: S1 covered, S5 in-flight, S2 in-flight, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
 - 2026-10-29, iteration 2: T-382 (S5, ui, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-382 done and committed. The three-slide tutorial screen, a separate trick list scene with code-made placeholders, and the tutorial_hidden setting are built. Illustration size is 64x48 at scale 3. Keyboard keys, focus order and docs are written up. All three test sets pass and screenshots are in art-archive/T-382/screenshots/. Refused, got past and not blocking: ui: {"tool_input": {"command": "python - <<'EOF'\np='game/scripts/menu/tutorial_slides.gd'\ns=open(p).read()\ns=s.replace(\"c + Vector2(-18 * d, 0), c + Vector2(18 * d, -32), c + Vector2(18 * d, 32)\",\"c + Vector2(18 * d, 0), c + Vector2(-18 * d, -32), c + Vector2(-18 * d, 32)\")\nopen(p,'w').write(s)\nEOF"}, "tool_name": "Bash", "tool_use_id": "toolu_01DgdsMSBoWg1iY6SSiHH1aW"} / QA: {"tool_input": {"command": "python tools/qa_check.py T-382 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_01DUx49fTsTMnPULvY8uVWo3"} / QA: `python tools/qa_check.py T-382 --no-marks` was refused ("requires approval"); not worked around, criteria checked by hand.. Rescan: S5 covered, S2 in-flight, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
+- 2026-10-29, iteration 2: paused (see Pauses).
 
 ## Pauses
 
 - 2026-10-29 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-381 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-381 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
+- 2026-10-29 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-383 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-383 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
 
