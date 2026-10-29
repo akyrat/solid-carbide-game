@@ -31,6 +31,16 @@ const DESCRIPTIONS := {
 	"air_turn": "Spin faster in the air per level. More flips, more views.",
 }
 
+## T-365: the icon beside each upgrade is `<ICON_DIR>/<upgrade key>.png` (16 x 16 art drawn at ICON_SCALE, the
+## art tickets T-366 to T-370 only add these files), or a placeholder drawn in code when the file is missing.
+## Read with Image.load_from_file so no .import file is needed. Tests point ICON_DIR elsewhere.
+static var icon_dir := "res://art/garage"
+const ICON_SCALE := 3
+const ICON_SIZE := 16
+## Neutral grey placeholder colours (never Greenbull's).
+const PLACEHOLDER_DARK := Color(0.35, 0.37, 0.42)
+const PLACEHOLDER_LIGHT := Color(0.72, 0.74, 0.8)
+
 ## The save/buy object. When null at _ready, the game's own (GameFlow.progress is passed in by
 ## the flow) or, standalone, one read from the save file.
 var progress: PlayerProgress
@@ -101,6 +111,16 @@ func _build_row(id: String) -> Control:
 	line.add_theme_constant_override("separation", 20)
 	panel.add_child(line)
 
+	var icon := TextureRect.new()
+	icon.name = "Icon"
+	icon.texture = icon_texture(id)
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.custom_minimum_size = Vector2(ICON_SIZE, ICON_SIZE) * ICON_SCALE
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	line.add_child(icon)
+
 	var text_col := VBoxContainer.new()
 	text_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	line.add_child(text_col)
@@ -131,6 +151,31 @@ func _build_row(id: String) -> Control:
 
 	rows[id] = {"level": level_label, "price": price_label, "buy": buy, "status": status_label}
 	return panel
+
+
+## The upgrade's icon: its PNG when the file exists and loads, else the placeholder.
+static func icon_texture(id: String) -> Texture2D:
+	var path := "%s/%s.png" % [icon_dir, id]
+	var real := ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
+	if FileAccess.file_exists(real):
+		var img := Image.load_from_file(real)
+		if img != null and not img.is_empty():
+			return ImageTexture.create_from_image(img)
+	return placeholder_texture()
+
+
+## A 16 x 16 grey pixel square with a lighter diamond in the middle (no letter, no text).
+static func placeholder_texture() -> ImageTexture:
+	var img := Image.create(ICON_SIZE, ICON_SIZE, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for y in range(1, ICON_SIZE - 1):
+		for x in range(1, ICON_SIZE - 1):
+			var edge := x == 1 or y == 1 or x == ICON_SIZE - 2 or y == ICON_SIZE - 2
+			var c := PLACEHOLDER_DARK if edge else PLACEHOLDER_DARK.darkened(0.3)
+			if abs(x - 7.5) + abs(y - 7.5) <= 4.0:
+				c = PLACEHOLDER_LIGHT
+			img.set_pixel(x, y, c)
+	return ImageTexture.create_from_image(img)
 
 
 func _on_buy(id: String) -> void:
