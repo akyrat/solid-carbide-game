@@ -1,7 +1,7 @@
 ---
 id: T-358
 title: Token spend: where a QA run spends its calls
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -15,7 +15,7 @@ documents_affected: [docs/token-spend/qa-calls-2026-10-29.md, docs/README.md]
 files_to_read_first: [docs/token-spend/after-2026-10-29.md, docs/token-spend/baseline-2026-10-28.md, tools/token_report.py, tools/qa_check.py, .claude/agents/qa-integration.md, tasks/README.md]
 files_expected_to_change: [tools/qa_calls.py, tools/test_qa_calls.py, docs/token-spend/qa-calls-2026-10-29.md, docs/README.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -84,3 +84,4 @@ Observation for the Project Lead: while running T-358's own tests, a foreground 
 Tests (all green, foreground): game/tools 657 tests OK (1 skipped); tools 565 tests OK (this ran past 180 s and was moved to the background by the tool, result read from its output file; after the docs edits test_new_ticket, test_guard and test_qa_calls were rerun: 101 OK); Godot suite 148 scripts, 1816 tests, 1816 passing, TESTS PASSED.
 
 **QA, 2026-10-29 (sonnet).** All 6 criteria pass. Reran qa_calls.py for the period: tables match the doc and token_report's qa-integration count (533). tools test set: 565 OK in the foreground.
+- 2026-10-29, in-qa → done: QA passed 6/6; analysis only, the cuts are proposals for the board.
