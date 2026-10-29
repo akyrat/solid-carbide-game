@@ -1,17 +1,19 @@
 class_name GameFlow
 extends Node
 ## The screen flow (task T-055): the game's main scene. It opens on the main
-## menu; Start begins a fresh run; when the run ends, win or loss, it goes
-## straight back to the main menu with no message; Exit closes the game.
+## menu; Start begins a fresh run; when the run ends, win or loss, the recap
+## screen shows the run's stats (T-320), and its Continue or X goes back to the main
+## menu; Exit closes the game.
 ## Garage opens the garage screen (task T-089); its back button returns to the menu.
 ## Game loop architecture, Decisions and Content.
 ##
-## Only one screen exists at a time, as a child of this node: `menu`, `garage` or `run`.
+## Only one screen exists at a time, as a child of this node: `menu`, `garage`, `run` or `recap`.
 ## During a run the pause screen (Escape) is a child of the run.
 
 const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
+const RecapScene := preload("res://scenes/menu/recap_screen.tscn")
 const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const MusicPlayerScript := preload("res://scripts/game/music_player.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
@@ -20,6 +22,8 @@ const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
 signal menu_shown
 ## Emitted after a fresh run has started.
 signal run_shown
+## Emitted after the recap screen is shown (T-320).
+signal recap_shown
 
 ## The main menu while it is on screen, otherwise null.
 var menu: Control
@@ -27,6 +31,8 @@ var menu: Control
 var garage: Control
 ## The run while one is on screen, otherwise null.
 var run: Node2D
+## The recap screen while it is on screen, otherwise null (T-320).
+var recap: RecapScreen
 ## The music, from launch to exit (task T-209). Not a screen.
 var music: Node
 ## The player's saved coins and upgrade levels (task T-057). A run's coins are banked
@@ -106,9 +112,22 @@ static func add_run(parent: Node, progress: PlayerProgress, layout_path: String 
 	return r
 
 
+## Replaces the screen on show with the recap of `summary` (a RunState.recap(),
+## T-319); its Continue and X go to the main menu (T-320).
+func show_recap(summary: Dictionary) -> void:
+	_clear_screens()
+	recap = RecapScene.instantiate()
+	recap.name = "Recap"
+	add_child(recap)
+	recap.show_summary(summary)
+	recap.closed.connect(show_menu)
+	recap_shown.emit()
+
+
 func _on_run_ended(_result: String, _coins: int) -> void:
-	# The run ends from inside its own processing; swap screens afterwards.
-	show_menu.call_deferred()
+	# The run ends from inside its own processing; swap screens afterwards. The
+	# summary is read now (it stays readable after run_ended) for the recap (T-320).
+	show_recap.call_deferred(run.state.recap())
 
 
 func _on_exit_pressed() -> void:
@@ -125,6 +144,10 @@ func _clear_screens() -> void:
 		remove_child(garage)
 		garage.queue_free()
 		garage = null
+	if recap != null:
+		remove_child(recap)
+		recap.queue_free()
+		recap = null
 	if run != null:
 		remove_child(run)
 		run.queue_free()
