@@ -1,7 +1,7 @@
 ---
 id: T-357
 title: Art: the six bad reaction icons for a broken combo
-status: open
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -52,10 +52,28 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: script-drawn art for the six bad reactions, now that you approved the burst (T-356).
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Script-drawn art, so the loop was run by hand: I drew, the Style Evaluator agent scored from `style_rules.py art --size 16x16` (all passed every round) and by eye on the enlarged sheet. Versions: `art-archive/T-357/screenshots/before.png` (T-356 placeholders), `v1.png` to `v5.png` (the sheets of all twelve).
+
+### Round 1
+Version v2 (cry_laugh, thumbs_down, peek, broken_heart, skull, scream). Scores: cry_laugh 8, thumbs_down 8, peek 5, broken_heart 9, skull 8, scream 7. Reason: peek read as a blob with side lumps; scream's eyes and mouth were weak. Refine: peek redrawn as eyes over hands; scream bigger eyes, highlights and a pink mouth line. (cry_laugh was redrawn before v2 with tears on both sides, squinting eyes and a tongue.)
+
+### Round 2
+Version v3. peek 6 (hands a plain tan band), scream 7 (mouth small with fang-like pixels). Refine: peek with finger-bump hands at the lower corners and a gap; scream with a taller mouth, tongue, no fangs, hands on cheeks.
+
+### Round 3
+Version v4. peek 7 (hands nearly the face's orange), scream 7 (shading flat). Refine: peek hands in pale cream with finger lines.
+
+### Round 4
+Version v5 (kept). peek 8, scream 7 (rule 2 only, minor; below 8 but reads clearly; two refines used, the third left unused). Kept: cry_laugh 8, thumbs_down 8, peek 8, broken_heart 9, skull 8, scream 7.
 
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done. Zero PixelLab calls (script-drawn). The six bad icons (`game/art/hud/reaction_{cry_laugh,thumbs_down,peek,broken_heart,skull,scream}.png` + `.json`, now task T-357) are redrawn in `game/tools/build_hud_reaction_icons.py` (same helpers, outline and palette as T-352; no Greenbull colours). The PNGs `reactions.gd` already loads (`BAD_ICONS`) are replaced by the new art, so behaviour and numbers are unchanged; only a comment changed. Final scores: cry_laugh 8, thumbs_down 8, peek 8 (3 refines), broken_heart 9, skull 8, scream 7 (minor rule 2 shading; 2 refines); every round is in the Style review. Docs: `docs/visual-style.md`, `game/docs/art/reaction-icons.md` (new), `game/docs/hud-and-menus/hud.md`. Test added in `game/tools/test_build_hud_reaction_icons.py` (twelve icons all differ, none blank; record names T-357). Screenshots in `art-archive/T-357/screenshots/`: `contact_sheet.png` (dark and light, x8), `bad_burst.png` (the burst after a crash), `before.png`, `v1.png` to `v5.png`. Tests, run in the foreground: game/tools unittest 658 OK (1 skipped), tools unittest 573 OK, GUT 1849/1849 passing. No .import or .uid files committed.
