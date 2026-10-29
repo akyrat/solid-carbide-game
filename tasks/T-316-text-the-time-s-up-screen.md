@@ -69,4 +69,8 @@ Run by `tools/style_loop/run.py` on 2026-10-29: text, kind popup, brief `art-arc
 
 ## Result notes
 
-Written by the agent when it finishes.
+Headline (no second line, so it reads in 3 seconds): **STREAM OVER, KAIJU STILL TRENDING!** Style loop: round 1, score 9/10, 5 of 5 script checks pass (see Style review).
+- Data file: `game/data/screen_texts.json`, key `time_up.headline` (T-317 reads it there).
+- Docs: `docs/hud-and-menus.md`, Content, "Time's up screen".
+- Brief: `art-archive/T-316/brief.md`.
+- Tests: the ticket has no test criterion and changes no code, so the three test sets were not run (the JSON loads).
