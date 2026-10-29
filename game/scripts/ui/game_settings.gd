@@ -178,6 +178,26 @@ static func save_music_volume(v: float) -> bool:
 	return cfg.save(path) == OK
 
 
+## Whether the tutorial slides are hidden (task T-382), in section "tutorial": true after the
+## player ticked "Don't show again" and pressed Start. False by default.
+const DEFAULT_TUTORIAL_HIDDEN := false
+
+
+static func load_tutorial_hidden() -> bool:
+	var cfg := ConfigFile.new()
+	if cfg.load(path) != OK:
+		return DEFAULT_TUTORIAL_HIDDEN
+	var v = cfg.get_value("tutorial", "hidden", DEFAULT_TUTORIAL_HIDDEN)
+	return v if v is bool else DEFAULT_TUTORIAL_HIDDEN
+
+
+static func save_tutorial_hidden(hidden: bool) -> bool:
+	var cfg := ConfigFile.new()
+	cfg.load(path)
+	cfg.set_value("tutorial", "hidden", hidden)
+	return cfg.save(path) == OK
+
+
 ## Makes sure the "Music" audio bus exists (the music plays on it) and returns its index.
 static func ensure_music_bus() -> int:
 	var i := AudioServer.get_bus_index(MUSIC_BUS)
