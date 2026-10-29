@@ -1,0 +1,16 @@
+{
+ "task": "T-369",
+ "what": "The pickup magnet's garage icon: a blue horseshoe magnet with white pole tips and a dark outline.",
+ "made_by": "game/tools/build_garage_icon_pickup_magnet.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  16,
+  16
+ ],
+ "shown_at_scale": 3,
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/garage-design.md",
+  "game/tools/build_hud_reaction_icons.py (the outline and palette approach)"
+ ],
+ "prompt": null
+}
