@@ -56,6 +56,8 @@ const CameraFollowScript := preload("res://scripts/driving/camera_follow.gd")
 const DriftSmokeScene := preload("res://scenes/driving/drift_smoke.tscn")
 ## The placeholder boost effect (task T-008, boost_effect.gd).
 const BoostEffectScript := preload("res://scripts/driving/boost_effect.gd")
+## The wreck's smoke and flames (task T-360, wreck_effect.gd; placeholders in code).
+const WreckEffectScript := preload("res://scripts/run/wreck_effect.gd")
 ## The minions (task T-044): spawning, chasing, contact damage, coins.
 const MinionSpawnerScript := preload("res://scripts/enemies/minion_spawner.gd")
 ## The kaiju (task T-045): arrives at boss time, chases the car, ends the run when killed.
@@ -123,6 +125,9 @@ var drift_smoke: Node2D
 ## The placeholder boost effect (task T-008): streaks behind the car when W
 ## snaps it to cruise speed. Child "BoostEffect" of the View, under the car.
 var boost_effect: Node2D
+## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
+## the last heart to the run's end. Child "WreckEffect" of the View.
+var wreck_effect: Node2D
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -220,6 +225,9 @@ func _ready() -> void:
 	level_up_burst.name = "LevelUpBurst"
 	view_root.add_child(level_up_burst)
 
+	wreck_effect = WreckEffectScript.new()
+	view_root.add_child(wreck_effect)  # above the car sprite
+
 	trick_popups = TrickPopupsScript.new()
 	trick_popups.name = "TrickPopups"
 	view_root.add_child(trick_popups)
@@ -241,6 +249,8 @@ func _ready() -> void:
 	state.car_damaged.connect(_on_car_damaged)
 	# A crash pays the car's trick in progress (T-315), before the cut by default.
 	state.crashed.connect(_on_crashed)
+	# The wreck (T-360): the last heart is gone; run_ended follows after its seconds.
+	state.wreck_started.connect(_on_wreck_started)
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -305,8 +315,10 @@ func start_run(path: String = "") -> void:
 	if path != "":
 		layout_path = path
 	_build_world()
+	wreck_effect.stop()
 	world_rebuilt.emit()
 	state.start_run()
+	wreck_effect.configure(RunData.new().wreck())
 	apply_blink()
 
 
@@ -458,6 +470,16 @@ func _on_level_up(_new_level: int) -> void:
 func _on_car_moved() -> void:
 	sync_view(false)
 	apply_blink()
+	wreck_effect.follow(car_sprite.position)
+
+
+## The car lost its last heart (T-360; Game loop architecture, Decisions,
+## "Wrecked: the stream keeps rolling"): its controls go dead, so it keeps the
+## movement it had and coasts with its normal physics, and it smokes and burns
+## until the run ends. The camera keeps following it (sync_view on every step).
+func _on_wreck_started(_seconds: float) -> void:
+	car.input_enabled = false
+	wreck_effect.start(car_sprite.position)
 
 
 ## The car's blink while it is invulnerable after a hit (T-334): the drawn car

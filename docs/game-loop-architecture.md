@@ -72,7 +72,7 @@ flowchart TD
     kaiju --> win{Kaiju defeated before 8:00?}
     win -- yes --> won([Win])
     win -- no --> lost([Loss])
-    drive -- HP reaches 0 --> lost
+    drive -- Last heart gone --> wreck[Wrecked: controls dead, the car slides on, smoking and burning, 3 s] --> lost
     won --> recap[Recap screen: kills per enemy type and other stats, final release only]
     lost --> recap
     recap --> menu[Main menu: Start, Garage, Exit]
@@ -90,7 +90,7 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 
 - At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
 - Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
-- The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss.
+- The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss. At 0 hearts the car is wrecked first, for 3 seconds (Wrecked, below).
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
 
@@ -145,13 +145,23 @@ The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap sc
 
 Nothing in this changes what the player sees.
 
+### Wrecked
+
+When the car loses its last heart (Decisions, "Wrecked: the stream keeps rolling"; task T-360; how it is built: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Wrecked (T-360)"):
+
+- **The loss is decided at once.** From that moment the run is lost (on health, which the recap keeps as the reason) and nothing more counts: no damage, coins, likes, gift packs, tricks or kills, and a kaiju kill can no longer turn it into a win. The run then ends after **3 seconds** (the board's number, in [game/data/run.json](../game/data/run.json), `wreck.seconds`) with the same "run ended" as before, so the next screen follows as for any other end. The time's up (the clock) and a kaiju kill still end the run at once.
+- **The controls go dead.** No steering, throttle or brake reaches the car. It keeps the movement it had and slows to a stop with its normal physics: it can still slide, spin, bounce off walls or land a jump. The camera keeps following it. Its handling while alive is unchanged.
+- **Smoke and flames** come out of the car for the 3 seconds: placeholders drawn in code (grey pixel puffs that rise, grow and shrink, left behind as the car slides, and flickering flames on the car in red, orange and a white-hot core, none of Greenbull's colours) until T-361's pixel art animations replace them.
+- **Pause** still works: it freezes the wreck, and the 3 seconds carry on when the game resumes.
+- **Proposals for the playtest** (the board's questions left open, settled by the Game Loop Agent; T-360): the **HUD stays on screen** as it was at the last heart (the hearts empty, the coins, the viewers counter and the sub goal) so the stream still feels live; the **clock stops** at the moment the last heart goes (that is the time survived the recap shows); the **enemies, the kaiju and its meteors, the weapons and the gift pack helicopter stand still**, as they do at any end of the run today, so nothing hits the wreck; the engine sound stops. Letting the enemies carry on (swarming the wreck) would need a small change in the enemies' code (Enemy Behavior), if the board prefers it after playing.
+
 ### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
 
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
-- When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
+- When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 

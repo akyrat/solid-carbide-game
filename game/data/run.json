@@ -81,5 +81,18 @@
     "enabled": true,
     "bar_share_per_second": 0.08,
     "extra_wait_seconds": 0.0
+  },
+  "wreck": {
+    "_comment": "Wrecked (Game loop architecture, Decisions, 'Wrecked: the stream keeps rolling', board, 2026-10-29; T-360): when the last heart is gone the controls go dead and the car smokes and burns for seconds (3 s, the board's number) before the run ends. The smoke and flame numbers are the placeholder look drawn in code (scripts/run/wreck_effect.gd), proposals for the playtest; T-361's pixel art animations replace the drawing. Pixel sizes are screen pixels at zoom 1.",
+    "seconds": 3.0,
+    "smoke_puffs_per_second": 12.0,
+    "smoke_life_seconds": 1.4,
+    "smoke_rise_px_per_second": 16.0,
+    "smoke_drift_px_per_second": 4.0,
+    "smoke_max_radius_px": 9.0,
+    "flame_tongues": 5,
+    "flame_height_px": 16.0,
+    "flame_flickers_per_second": 12.0,
+    "pixel_px": 2.0
   }
 }

@@ -61,6 +61,7 @@ func test_second_run_resets_world_and_state() -> void:
 	await wait_physics_frames(20)
 	run.state.add_coins(5)
 	run.state.damage_car(1000.0)
+	run.state.advance(run.state.wreck_seconds)  # the wreck (T-360)
 	assert_eq(ended, [["loss", 5]])
 	var old_map = run.map
 	run.start_run()

@@ -178,7 +178,13 @@ func test_a_won_run_returns_to_the_level_list() -> void:
 
 
 func test_a_run_lost_on_health_returns_to_the_level_list() -> void:
-	await _end_and_check_list(func(s): s.damage_car(s.max_health), "loss")
+	await _end_and_check_list(_lose_on_health, "loss")
+
+
+## Takes the last heart and lets the wreck (T-360) play out.
+func _lose_on_health(s: RunState) -> void:
+	s.damage_car(s.max_health)
+	s.advance(s.wreck_seconds)
 
 
 func test_a_run_lost_on_the_clock_returns_to_the_level_list() -> void:
