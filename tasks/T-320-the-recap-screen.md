@@ -42,7 +42,7 @@ The board's review: play a run to its end and read the recap.
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
 - [ ] When a run ends (a win, a loss by health, a loss by time), the recap screen shows before the main menu, and its Continue button and the X at the top right both return to the main menu (tests for each ending). (QA: pass)
-- [ ] It shows each enemy type and each trick with a count above 0 with the right number, the highest combo, and each weapon used with its tier, from T-319's summary (test with a scripted run). (QA: pass)
+- [ ] It shows each enemy type and each trick with a count above 0 with the right number, the highest combo, and each weapon used with its tier, from T-319's summary (test with a scripted run). (QA: pass; round 2: "the highest combo" is now the peak viewers number at the run's highest combo, per the board's tweak; tests cover it)
 - [ ] Enemies and weapons are shown with their existing art (sprite, card image). (QA: pass)
 - [ ] Every label comes from T-318's data file; no text is written in the code. (QA: pass)
 - [ ] Game loop architecture's screen flow, HUD and menus, Content, "Recap screen" and game/README.md describe it. (QA: pass)
@@ -99,3 +99,5 @@ Board review files: art-archive/T-320/screenshots/recap_win.png, art-archive/T-3
 - **Screenshots retaken:** `art-archive/T-320/screenshots/recap_win.png` (777K, fire-step look), `recap_wreck.png` and `recap_time_up.png` (236K).
 - **Docs updated:** `docs/hud-and-menus.md` (Content, "Recap screen"), `docs/game-loop-architecture.md` (Content, "The run's stats for the recap": `peak_viewers`), `game/docs/hud-and-menus/recap-screen.md`, `game/docs/game-loop/the-run.md` (summary table), `game/docs/data/game-data.md` (run history fields).
 - No QA agent: ready for the board to play.
+
+**QA (sonnet), final round after the peak engagement tweak:** qa_check: tests (3 sets) PASS, documents PASS, screenshots PASS. All seven criteria pass; criterion 2's "highest combo" is met by the peak viewers number (tests in test_recap_screen.gd and test_run_recap.gd).
