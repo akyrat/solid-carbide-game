@@ -2250,3 +2250,8 @@ Entry format:
 - Decision or change: The board approved the recap after every run, closed with Continue or the X; Peak engagement shows the run's highest live viewers count (the board's tweak), not the combo multiplier.
 - Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
 - Tasks: T-320
+
+## 2026-10-29: The time's up screen
+- Decision or change: The board approved the 3-second time's up screen at 0:00 (STREAM OVER, KAIJU STILL TRENDING!), followed by the recap.
+- Documents touched: none
+- Tasks: T-317
