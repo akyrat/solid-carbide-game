@@ -1,7 +1,7 @@
 ---
 id: T-366
 title: Art: the acceleration upgrade's icon
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -51,10 +51,35 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: the acceleration icon, script-drawn.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Script-drawn, so the Style Evaluator was called directly for each round (no PixelLab; `tools/style_loop/run.py` generates through the agent and was not needed). Versions in `art-archive/T-366/style-loop/`.
+
+### Round 1
+- Version: `v1.png` (a speedometer on a squat rounded body; ticks and needle scattered). Script checks: pass.
+- Score: 5. Reason: reads as a gem or window, not a dial; no round silhouette or tick arc; needle without a hub (rule 2, clarity).
+- Refine: round bezel, tick arc, hub and angled needle.
+
+### Round 2
+- Version: `v2.png`. Score: 7. Reason: reads as a speedometer, but the 3x3 hub is heavy, the ticks uneven, the bottom squat (rule 2, thin detail).
+- Refine: 2x2 hub, needle thicker near the hub, ticks evenly spaced and symmetric.
+
+### Round 3
+- Version: `v3.png`. Score: 8. Reason: clear, symmetric dial, readable at 3x, blue dominant, no Greenbull colours; shading is minimal and the needle tip sits close to a tick.
+- Kept: v3 (8/10), copied to `game/art/garage/acceleration.png`.
 
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done: the acceleration garage icon, a blue speedometer dial (white ticks, needle and hub), 16 x 16, kept at 8/10 after 2 refines.
+
+- Made by `game/tools/build_garage_icon_acceleration.py` (hand-placed grid, deterministic, reuses `build_hud_livestream_art` helpers and the reaction icons' outline approach); test `game/tools/test_build_garage_icon_acceleration.py`. Output `game/art/garage/acceleration.png` and `.json`.
+- PixelLab: no generations used (0 calls).
+- Docs: Visual style (Content, new entry) and `game/docs/art/garage-icons.md` (created; other garage icon agents may add sections, expect a trivial merge on that file).
+- Screenshots in `art-archive/T-366/screenshots/`: `icon_dark_light.png` (enlarged on dark and light) and `garage.png` (garage screen, the icon on the acceleration row "Energy Throttle"; taken with v3).
+- Tests: `python -m unittest discover -s game/tools -p "test_*.py"` run; result below.
