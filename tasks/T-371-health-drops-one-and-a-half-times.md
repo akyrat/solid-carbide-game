@@ -1,7 +1,7 @@
 ---
 id: T-371
 title: Health drops 1.5 times as often
-status: needs-playtest
+status: done
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -65,3 +65,4 @@ Tests: game/tools unittest 573 OK; tools unittest OK; GUT 1849 tests: first run 
 
 QA (round 1): all four criteria pass. Full qa_check: 3 test sets passed (full GUT included). Documents line flags only game/docs/ (README index quirk; game/docs/enemies/minions.md carries 0.225, checked); screenshots waived (data-only).
 QA rerun: the second qa_check showed one red GUT exit (Godot 'resources still in use at exit', a shutdown warning); run_tests.sh rerun alone: exit 0, 1849/1849 pass. First qa_check: all 3 test sets passed. Counts: game/tools unittest 573 OK, tools unittest OK, GUT 1849 pass.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: lgtm (2026-10-29).
