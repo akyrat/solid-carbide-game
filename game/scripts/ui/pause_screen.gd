@@ -375,8 +375,15 @@ func _choice_open() -> bool:
 	return st != null and st.has_method("is_waiting_for_choice") and st.is_waiting_for_choice()
 
 
+## True while the time's up screen plays (T-317): the run is frozen at 0:00 and
+## Escape must neither pause nor unfreeze it.
+func _time_up_playing() -> bool:
+	var st = target.get("state") if target != null else null
+	return st != null and st.has_method("is_timed_out") and st.is_timed_out()
+
+
 func toggle() -> void:
-	if _choice_open():
+	if _choice_open() or _time_up_playing():
 		return
 	if get_tree().paused:
 		resume()

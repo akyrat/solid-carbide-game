@@ -98,3 +98,23 @@ func pickup_magnet_radius_units() -> float:
 ## How fast a pickup inside the reach flies to the car, units per second.
 func pickup_pull_speed_units_per_second() -> float:
 	return float(_data["pickup_magnet"]["pull_speed_units_per_second"])
+
+
+## Seconds the wrecked car stays on screen, smoking and burning, after its last
+## heart is gone, before the run ends (T-360; 3 s, the board's number). 3.0 when
+## the file has no wreck section.
+func wreck_seconds() -> float:
+	return float(wreck().get("seconds", 3.0))
+
+
+## run.json's whole wreck section (the seconds and the placeholder smoke and
+## flame numbers), {} when it is missing.
+func wreck() -> Dictionary:
+	return _data.get("wreck", {})
+
+
+## Seconds the time's up screen plays over the frozen run when the timer runs out
+## with the kaiju alive, before the run ends (T-317; 3 s, the board's number).
+## 3.0 when the file has no time_up section.
+func time_up_seconds() -> float:
+	return float(_data.get("time_up", {}).get("seconds", 3.0))

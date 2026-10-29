@@ -59,6 +59,8 @@ func test_clock_runs_out_is_a_loss() -> void:
 	assert_eq(state.time_left_text(), "0:01")
 	_simulate(0.5)
 	assert_eq(state.time_left, 0.0)
+	assert_eq(ended.size(), 0, "the time's up screen first (T-317)")
+	state.advance(state.time_up_seconds)
 	assert_eq(ended, [["loss", 7]], "one run ended signal, loss, with the coins")
 	assert_eq(boss_count, 1)
 	_simulate(5.0)
@@ -69,6 +71,7 @@ func test_clock_runs_out_is_a_loss() -> void:
 func test_big_step_still_sends_boss_time_and_ends() -> void:
 	state.advance(1000.0)
 	assert_eq(boss_count, 1)
+	state.advance(state.time_up_seconds)  # the time's up screen (T-317)
 	assert_eq(ended, [["loss", 0]])
 
 
@@ -83,6 +86,8 @@ func test_damage_to_zero_is_a_loss_once() -> void:
 	state.advance(1.01)  # past the car's invulnerability after the hit (T-334)
 	state.damage_car(state.max_health)
 	assert_eq(state.health, 0.0, "health stops at 0")
+	assert_eq(ended.size(), 0, "the wreck first (T-360)")
+	state.advance(state.wreck_seconds)
 	assert_eq(ended, [["loss", 5]], "loss with the coins so far")
 	state.damage_car(10.0)
 	state.kaiju_killed()
@@ -140,6 +145,7 @@ func test_second_run_resets_everything() -> void:
 	_simulate(425.0)
 	state.add_coins(9)
 	state.damage_car(state.max_health)
+	state.advance(state.wreck_seconds)  # the wreck (T-360)
 	assert_eq(ended.size(), 1)
 	state.start_run()
 	assert_eq(state.time_left, 480.0)

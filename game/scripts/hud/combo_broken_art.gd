@@ -41,22 +41,53 @@ const FALL_DRIFT := 6.0
 static var _cache := {}
 
 
-## [left, right] textures for `text` at a size style; cached.
-static func textures(text: String, style: String) -> Array:
-	var key := "%s|%s" % [style, text]
+## [left, right] textures for `text` at a size style; cached. `in_gap` puts the
+## crack in the space between words nearest the middle (the time's up screen,
+## T-317, so no letter is cut away) instead of the middle.
+static func textures(text: String, style: String, in_gap := false) -> Array:
+	var key := "%s|%s|%s" % [style, text, in_gap]
 	if not _cache.has(key):
-		var imgs := bake(text, style)
+		var imgs := bake(text, style, in_gap)
 		_cache[key] = [ImageTexture.create_from_image(imgs[0]), ImageTexture.create_from_image(imgs[1])]
 	return _cache[key]
 
 
-## The crack's x (popup pixels) on row `y` of a card `w` wide.
-static func crack_x(w: int, y: int) -> int:
-	return w / 2 + CRACK[(y / CRACK_STEP) % CRACK.size()]
+## The crack's x (popup pixels) on row `y` of a card `w` wide, around `mid`
+## (the card's middle when it is negative).
+static func crack_x(w: int, y: int, mid := -1) -> int:
+	return (w / 2 if mid < 0 else mid) + CRACK[(y / CRACK_STEP) % CRACK.size()]
+
+
+## The middle of the letter-free column run (a space between words) nearest the
+## card's middle, in card pixels; the card's middle when there is none. `li` is
+## the letters' index image (tw x th) placed at x `ox` on a card `w` wide.
+static func gap_mid(li: PackedByteArray, tw: int, th: int, ox: int, w: int) -> int:
+	var best := -1
+	var x := 0
+	while x < tw:
+		if _column_has_letter(li, tw, th, x):
+			x += 1
+			continue
+		var start := x
+		while x < tw and not _column_has_letter(li, tw, th, x):
+			x += 1
+		if start == 0 or x >= tw:
+			continue  # the margins either side, not a space between words
+		var mid := ox + (start + x) / 2
+		if best < 0 or absi(mid - w / 2) < absi(best - w / 2):
+			best = mid
+	return best if best >= 0 else w / 2
+
+
+static func _column_has_letter(li: PackedByteArray, tw: int, th: int, x: int) -> bool:
+	for y in th:
+		if li[y * tw + x] != NONE:
+			return true
+	return false
 
 
 ## [left, right] RGBA images, the same size, opaque or fully transparent pixels only.
-static func bake(text: String, style: String) -> Array:
+static func bake(text: String, style: String, in_gap := false) -> Array:
 	var letters := Art._letter(text, style)
 	var tw: int = letters.w
 	var th: int = letters.h
@@ -70,6 +101,7 @@ static func bake(text: String, style: String) -> Array:
 	var ox := (w - tw) / 2
 	var oy := (h - th) / 2
 	var li: PackedByteArray = letters.idx
+	var mid := gap_mid(li, tw, th, ox, w) if in_gap else -1
 	for y in th:
 		for x in tw:
 			if li[y * tw + x] != NONE:
@@ -88,7 +120,7 @@ static func bake(text: String, style: String) -> Array:
 	var left := idx.duplicate()
 	var right := idx.duplicate()
 	for y in h:
-		var cx := crack_x(w, y)
+		var cx := crack_x(w, y, mid)
 		for x in w:
 			var i := y * w + x
 			if x >= cx + GAP:

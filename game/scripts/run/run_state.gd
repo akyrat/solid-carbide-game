@@ -90,6 +90,19 @@ signal combo_broken
 ## fires before the cut, so the trick's popup comes just before COMBO BROKEN!;
 ## otherwise just after the cut.
 signal crashed
+## The car lost its last heart (T-360; Game loop architecture, Decisions,
+## "Wrecked: the stream keeps rolling"): the run is lost from this moment (result
+## "loss", loss_reason "health", nothing more counts), but the scene stays for
+## `seconds` while the car slides on with dead controls, smoking and burning.
+## run_ended follows when they are over. The run scene turns the car's input off
+## and starts the smoke and flames on it.
+signal wreck_started(seconds: float)
+## The timer ran out with the kaiju alive (T-317; Game loop architecture,
+## Decisions, "Time's up screen"): the run is lost from this moment (result
+## "loss", loss_reason "time", nothing more counts) and frozen (the scene tree
+## is paused) while the time's up screen plays for `seconds`; run_ended follows
+## when they are over.
+signal time_up_started(seconds: float)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -144,6 +157,18 @@ var result := ""
 ## "time" or "health" after a loss (LOSS_*), "" otherwise.
 var loss_reason := ""
 var boss_time_sent := false
+## The wreck (T-360): true from the last heart until run_ended, `wreck_left`
+## seconds still to go. `wreck_seconds` is run.json's wreck.seconds, set at
+## start_run(); tests may change it (0 ends the run at once, as before T-360).
+var wrecked := false
+var wreck_left := 0.0
+var wreck_seconds := 3.0
+## The time's up hold (T-317): true from 0:00 until run_ended, `time_up_left`
+## seconds still to go. `time_up_seconds` is run.json's time_up.seconds, set at
+## start_run(); tests may change it (0 ends the run at once, as before T-317).
+var timed_out := false
+var time_up_left := 0.0
+var time_up_seconds := 3.0
 ## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
 ## start_multiplier (1.0, no combo) at the start of a run.
 var combo := 1.0
@@ -198,6 +223,15 @@ func start_run() -> void:
 	coins = 0
 	result = ""
 	loss_reason = ""
+	wrecked = false
+	wreck_left = 0.0
+	wreck_seconds = _run_data.wreck_seconds()
+	if timed_out:  # a new run during the time's up screen: unfreeze first
+		process_mode = Node.PROCESS_MODE_INHERIT
+		_set_paused(false)
+	timed_out = false
+	time_up_left = 0.0
+	time_up_seconds = _run_data.time_up_seconds()
 	_slain = {}
 	_tricks_done = {}
 	_weapon_kills = {}
@@ -230,7 +264,16 @@ func _process(delta: float) -> void:
 
 
 ## Moves the clock forward by `seconds`. Does nothing once the run has ended.
+## During the wreck (T-360) it counts the wreck down instead: the clock is
+## stopped at the moment the last heart went, and run_ended follows when the
+## wreck's seconds are over. Pausing the tree stops both (_process).
 func advance(seconds: float) -> void:
+	if wrecked:
+		_advance_wreck(seconds)
+		return
+	if timed_out:
+		_advance_time_up(seconds)
+		return
 	if not running or seconds <= 0.0:
 		return
 	invulnerable_left = maxf(invulnerable_left - seconds, 0.0)
@@ -247,8 +290,8 @@ func advance(seconds: float) -> void:
 		boss_time.emit()
 	if time_left <= 0.0 and running:
 		# The clock ran out: the kaiju is still alive, or the run would have
-		# ended already when it was killed.
-		_end(RESULT_LOSS, LOSS_TIME)
+		# ended already when it was killed. The time's up screen plays first (T-317).
+		_time_up()
 
 
 ## Seconds into the run.
@@ -287,7 +330,7 @@ func damage_car(amount: float) -> void:
 	health_changed.emit(health, max_health)
 	car_damaged.emit(amount)
 	if health <= 0.0:
-		_end(RESULT_LOSS, LOSS_HEALTH)
+		_wreck()
 		return
 	if invulnerable_left > 0.0:
 		invulnerability_started.emit(invulnerable_left)
@@ -629,11 +672,91 @@ func _set_paused(paused: bool) -> void:
 
 
 func _end(r: String, reason := "") -> void:
+	_decide(r, reason)
+	run_ended.emit(r, coins)
+
+
+## Decides the run's result: it stops counting anything from here on, and the
+## recap's summary is taken now.
+func _decide(r: String, reason := "") -> void:
 	running = false
 	result = r
 	loss_reason = reason if r == RESULT_LOSS else ""
 	_final_recap = _build_recap()
-	run_ended.emit(r, coins)
+
+
+## The last heart is gone (T-360): the run is lost now (the clock, coins, likes,
+## tricks, damage and kills all stop counting, as after any end), and the wreck
+## starts. run_ended follows after wreck_seconds (at once when it is 0).
+func _wreck() -> void:
+	_decide(RESULT_LOSS, LOSS_HEALTH)
+	wrecked = true
+	wreck_left = maxf(wreck_seconds, 0.0)
+	wreck_started.emit(wreck_left)
+	if wreck_left <= EPSILON:
+		_finish_wreck()
+
+
+func _advance_wreck(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	wreck_left = maxf(wreck_left - seconds, 0.0)
+	if wreck_left <= EPSILON:
+		_finish_wreck()
+
+
+func _finish_wreck() -> void:
+	if not wrecked:
+		return
+	wrecked = false
+	wreck_left = 0.0
+	run_ended.emit(result, coins)
+
+
+## The clock ran out (T-317): the run is lost now (nothing more counts) and
+## frozen: the scene tree is paused, and this node alone keeps processing so it
+## can count the time's up seconds. run_ended follows after time_up_seconds (at
+## once when it is 0), with the tree unpaused first.
+func _time_up() -> void:
+	_decide(RESULT_LOSS, LOSS_TIME)
+	timed_out = true
+	time_up_left = maxf(time_up_seconds, 0.0)
+	if time_up_left <= EPSILON:
+		_finish_time_up()
+		return
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_set_paused(true)
+	time_up_started.emit(time_up_left)
+
+
+func _advance_time_up(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	time_up_left = maxf(time_up_left - seconds, 0.0)
+	if time_up_left <= EPSILON:
+		_finish_time_up()
+
+
+func _finish_time_up() -> void:
+	if not timed_out:
+		return
+	timed_out = false
+	time_up_left = 0.0
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_set_paused(false)
+	run_ended.emit(result, coins)
+
+
+## True while the time's up screen plays (T-317): the clock ran out and
+## run_ended has not been sent yet.
+func is_timed_out() -> bool:
+	return timed_out
+
+
+## True during the wreck (T-360): the last heart is gone and run_ended has not
+## been sent yet.
+func is_wrecked() -> bool:
+	return wrecked
 
 
 ## A kill by the car's weapons (the minion spawner and the kaiju boss call it
@@ -665,11 +788,25 @@ func _record_trick(trick_id: String) -> void:
 ##   enemies_slain: {enemy type: kills}, e.g. {"minion": 40, "kaiju": 1}
 ##   tricks: {trick id: times completed} (every id the combo counts)
 ##   highest_combo: the highest multiplier reached
+##   peak_viewers: the live viewers counter's highest number (T-320 quick tuning,
+##     board 2026-10-29): the viewers for highest_combo on T-332's curve
+##     (ViewersData.viewers_for), the number the counter counts up to, without its wobble
 ##   weapons: {weapon id: {"tier": tier it ended on, "kills": kills it made}}
 func recap() -> Dictionary:
 	if not _final_recap.is_empty():
 		return _final_recap.duplicate(true)
 	return _build_recap()
+
+
+## The live viewers for a combo multiplier (T-332's curve, the counter's target), for
+## the recap's peak viewers (T-320). Whole viewers.
+static func peak_viewers_for(multiplier: float) -> float:
+	if _viewers_curve == null:
+		_viewers_curve = ViewersData.new()
+	return _viewers_curve.viewers_for(maxf(multiplier, 1.0))
+
+
+static var _viewers_curve: ViewersData = null
 
 
 func _build_recap() -> Dictionary:
@@ -688,5 +825,6 @@ func _build_recap() -> Dictionary:
 		"enemies_slain": _slain.duplicate(),
 		"tricks": _tricks_done.duplicate(),
 		"highest_combo": _highest_combo,
+		"peak_viewers": peak_viewers_for(_highest_combo),
 		"weapons": weapons_out,
 	}

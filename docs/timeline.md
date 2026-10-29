@@ -2245,3 +2245,8 @@ Entry format:
 - Decision or change: The board will build a level in the level creator and hand it over; a ticket makes it the map Start plays, waiting for the board's file.
 - Documents touched: docs/level-design.md
 - Tasks: T-372
+
+## 2026-10-29: The recap screen
+- Decision or change: The board approved the recap after every run, closed with Continue or the X; Peak engagement shows the run's highest live viewers count (the board's tweak), not the combo multiplier.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-320

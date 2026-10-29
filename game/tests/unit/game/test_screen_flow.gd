@@ -1,6 +1,7 @@
 extends GutTest
 ## Task T-055: the screen flow. The game opens on the main menu, Start begins
-## a fresh run, a won or lost run goes back to the main menu, Garage opens
+## a fresh run, a won or lost run shows the recap screen (T-320), whose Continue
+## and X go back to the main menu, Garage opens
 ## the garage screen and its back button returns to the menu, Exit closes the game, and Escape pauses a run started from
 ## the menu.
 
@@ -72,32 +73,96 @@ func test_start_begins_a_fresh_run() -> void:
 	assert_eq(game.run.car.position, game.run.START_POSITION_UNITS * 16.0, "the car at the start")
 
 
-func _end_run_and_check_menu(end: Callable, expected_result: String) -> void:
+## Ends the run with `end`, checks the recap screen (T-320) shows its summary, then
+## leaves it with `leave` ("continue" or "x") and checks the main menu is back.
+func _end_run_and_check_menu(end: Callable, expected_result: String, expected_title: String, leave := "continue") -> void:
 	_press(game.menu.start_button)
 	var run = game.run
 	var s: RunState = run.state
 	watch_signals(s)
+	watch_signals(game)
 	end.call(s)
 	assert_eq(s.result, expected_result)
 	assert_signal_emitted(s, "run_ended")
 	await wait_process_frames(2)
-	assert_not_null(game.menu, "back on the main menu")
-	assert_eq(_only_screen(), game.menu, "only the menu, no message")
+	assert_signal_emitted(game, "recap_shown")
+	assert_not_null(game.recap, "the recap screen shows")
+	assert_eq(_only_screen(), game.recap, "only the recap")
+	assert_null(game.menu, "not the menu yet")
 	assert_null(game.run)
 	assert_false(is_instance_valid(run), "the old run is freed")
+	assert_eq(game.recap.summary.result, expected_result, "it shows this run's summary")
+	assert_eq(game.recap.title_label.text, RecapScreen.text("title." + expected_title))
+	assert_false(get_tree().paused)
+	var recap = game.recap
+	_press(recap.continue_button if leave == "continue" else recap.close_button)
+	await wait_process_frames(2)
+	assert_not_null(game.menu, "back on the main menu")
+	assert_eq(_only_screen(), game.menu, "only the menu")
+	assert_null(game.recap)
+	assert_false(is_instance_valid(recap), "the recap is freed")
 	assert_false(get_tree().paused)
 
 
-func test_a_won_run_returns_to_the_main_menu() -> void:
-	await _end_run_and_check_menu(func(s): s.kaiju_killed(), "win")
+func test_a_won_run_shows_the_recap_then_continue_returns_to_the_main_menu() -> void:
+	await _end_run_and_check_menu(func(s): s.kaiju_killed(), "win", "win")
 
 
-func test_a_run_lost_on_health_returns_to_the_main_menu() -> void:
-	await _end_run_and_check_menu(func(s): s.damage_car(s.max_health), "loss")
+func test_a_won_run_shows_the_recap_then_the_x_returns_to_the_main_menu() -> void:
+	await _end_run_and_check_menu(func(s): s.kaiju_killed(), "win", "win", "x")
 
 
-func test_a_run_lost_on_the_clock_returns_to_the_main_menu() -> void:
-	await _end_run_and_check_menu(func(s): s.advance(RunState.RUN_SECONDS + 1.0), "loss")
+func test_a_run_lost_on_health_shows_the_recap_after_the_wreck() -> void:
+	await _end_run_and_check_menu(_lose_on_health, "loss", "wreck")
+
+
+func test_a_run_lost_on_health_recap_x_returns_to_the_main_menu() -> void:
+	await _end_run_and_check_menu(_lose_on_health, "loss", "wreck", "x")
+
+
+func test_the_recap_waits_for_the_wreck() -> void:
+	_press(game.menu.start_button)
+	var s: RunState = game.run.state
+	s.damage_car(s.max_health)
+	await wait_process_frames(2)
+	assert_null(game.recap, "no recap during the wreck")
+	assert_not_null(game.run, "the run stays on screen")
+	s.advance(s.wreck_seconds)
+	await wait_process_frames(2)
+	assert_not_null(game.recap, "the recap right after the wreck")
+
+
+func test_the_recap_shows_what_the_run_counted() -> void:
+	_press(game.menu.start_button)
+	var s: RunState = game.run.state
+	s.enemy_slain("minion", "gun")
+	s.enemy_slain("minion", "gun")
+	s.add_trick("three_sixty")
+	s.kaiju_killed()
+	await wait_process_frames(2)
+	assert_eq(game.recap.enemy_rows.minion.count.text, "x2")
+	assert_eq(game.recap.trick_rows.three_sixty.count.text, "x1")
+	assert_true(game.recap.weapon_rows.has("gun"), "the starting gun")
+
+
+## Takes the last heart and lets the wreck (T-360) play out.
+func _lose_on_health(s: RunState) -> void:
+	s.damage_car(s.max_health)
+	s.advance(s.wreck_seconds)
+
+
+func test_a_run_lost_on_the_clock_shows_the_recap_then_the_main_menu() -> void:
+	await _end_run_and_check_menu(_lose_on_the_clock, "loss", "time_up")
+
+
+func test_a_run_lost_on_the_clock_recap_x_returns_to_the_main_menu() -> void:
+	await _end_run_and_check_menu(_lose_on_the_clock, "loss", "time_up", "x")
+
+
+## Runs the clock out and lets the time's up screen (T-317) play out.
+func _lose_on_the_clock(s: RunState) -> void:
+	s.advance(RunState.RUN_SECONDS + 1.0)
+	s.advance(s.time_up_seconds)
 
 
 func test_a_second_run_from_the_menu_is_fresh() -> void:
@@ -105,6 +170,8 @@ func test_a_second_run_from_the_menu_is_fresh() -> void:
 	game.run.state.add_coins(5)
 	game.run.state.damage_car(1.0)
 	game.run.state.kaiju_killed()
+	await wait_process_frames(2)
+	_press(game.recap.continue_button)
 	await wait_process_frames(2)
 	_press(game.menu.start_button)
 	var s: RunState = game.run.state
@@ -232,7 +299,7 @@ func test_a_run_ending_while_paused_still_returns_unpaused() -> void:
 	game.pause_screen.pause()
 	game.run.state.kaiju_killed()
 	await wait_process_frames(2)
-	assert_not_null(game.menu)
+	assert_not_null(game.recap, "the recap shows")
 	assert_false(get_tree().paused)
 
 

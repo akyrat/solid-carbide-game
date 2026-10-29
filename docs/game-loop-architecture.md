@@ -72,8 +72,8 @@ flowchart TD
     kaiju --> win{Kaiju defeated before 8:00?}
     win -- yes --> won([Win])
     win -- no --> lost([Loss])
-    drive -- HP reaches 0 --> lost
-    won --> recap[Recap screen: kills per enemy type and other stats, final release only]
+    drive -- Last heart gone --> wreck[Wrecked: controls dead, the car slides on, smoking and burning, 3 s] --> lost
+    won --> recap[Recap screen: the run's stats with pictures; Continue or X]
     lost --> recap
     recap --> menu[Main menu: Start, Garage, Exit]
     menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
@@ -90,7 +90,7 @@ The run owns its state: the clock (8:00 counting down, stopping while the game i
 
 - At 1:00 left the run sends "boss time"; the kaiju spawns on it (Enemies).
 - Enemies damage the car and add coins through the run; the kaiju's death ends the run as a win.
-- The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss.
+- The car reaching 0 hearts, or the clock reaching 0:00, ends the run as a loss. At 0 hearts the car is wrecked first, for 3 seconds (Wrecked, below).
 - Either way, the run sends one "run ended" signal with the result and the coins collected, which are saved (Garage design).
 - The HUD reads the time left, the health and the coins from the run (HUD and menus).
 
@@ -157,10 +157,22 @@ The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap sc
 - **enemies_slain:** kills per enemy type ("minion", "kaiju"), counted when the car's weapons kill one.
 - **tricks:** how many times each trick was completed, by the id the combo uses (the drifts, 360s, alternate drifts, air tricks, airtime, thread the needle).
 - **highest_combo:** the highest multiplier reached.
+- **peak_viewers:** the live viewers counter's highest number in the run (T-320, the board's quick tuning of 2026-10-29: the recap's "Peak engagement" shows viewers, not a multiplier): the viewers for the highest combo on the viewers curve (Decisions, "The combo shows as live viewers"), the number the counter counts up to, without its small wobble. Saved with the run history like the rest.
 - **weapons:** every weapon the car owned at the end, with the tier it ended on and the kills it made (the kills are a proposal, since they were cheap to count).
 - **Also kept, for the recap and the runs list:** the result (win or loss), why a loss happened (the clock ran out, or health), the time survived, the coins, the likes gained in total and the level reached.
 
 Nothing in this changes what the player sees.
+
+### Wrecked
+
+When the car loses its last heart (Decisions, "Wrecked: the stream keeps rolling"; task T-360; how it is built: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Wrecked (T-360)"):
+
+- **The loss is decided at once.** From that moment the run is lost (on health, which the recap keeps as the reason) and nothing more counts: no damage, coins, likes, gift packs, tricks or kills, and a kaiju kill can no longer turn it into a win. The run then ends after **3 seconds** (the board's number, in [game/data/run.json](../game/data/run.json), `wreck.seconds`) with the same "run ended" as before, so the next screen follows as for any other end. A kaiju kill still ends the run at once; the time's up (the clock) has its own 3 seconds, its screen over the frozen run (T-317; HUD and menus, Content, "Time's up screen").
+- **The controls go dead.** No steering, throttle or brake reaches the car. It keeps the movement it had and slows to a stop with its normal physics: it can still slide, spin, bounce off walls or land a jump. The camera keeps following it. Its handling while alive is unchanged.
+- **Smoke and flames** come out of the car for the 3 seconds: placeholders drawn in code (grey pixel puffs that rise, grow and shrink, left behind as the car slides, and flickering flames on the car in red, orange and a white-hot core, none of Greenbull's colours) until T-361's pixel art animations replace them.
+- **Pause** still works: it freezes the wreck, and the 3 seconds carry on when the game resumes.
+- **Proposals for the playtest** (the board's questions left open, settled by the Game Loop Agent; T-360): the **HUD stays on screen** as it was at the last heart (the hearts empty, the coins, the viewers counter and the sub goal) so the stream still feels live; the **clock stops** at the moment the last heart goes (that is the time survived the recap shows); the weapons, the kaiju's meteors and the gift pack helicopter stand still, as they do at any end of the run; the engine sound stops.
+- **The enemies swarm the wreck** (board, quick tuning, 2026-10-29: "I don't want the monsters to stop moving when I die, when the car gets destroyed. I want them to keep coming and swarming the car. But with no like interaction or anything, they just come and swarm over the car."): during the 3 seconds the minions keep coming (they still spawn) and walk to the wrecked car as they normally would, and a kaiju already there keeps walking to it too, but nothing interacts: no damage or knockback to the car, no damage to them (the weapons don't fire), and no likes, coins or kills. Once the run has ended they stand still. (Replaces the first proposal, that they freeze.)
 
 ### The run history
 
@@ -172,7 +184,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 
 - The game opens on the main menu (HUD and menus, Content).
 - **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
-- When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
+- When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the **recap screen** shows its stats (task T-320; Decisions, "The recap always closes a run"; the look: HUD and menus, Content, "Recap screen"). Its Continue button and the X at its top right both bring the main menu back. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
 - **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
