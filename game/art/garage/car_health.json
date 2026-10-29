@@ -1,0 +1,15 @@
+{
+ "task": "T-367",
+ "what": "The car health upgrade's garage icon: a heart with a plus (each level adds a heart).",
+ "made_by": "game/tools/build_garage_icon_car_health.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  16,
+  16
+ ],
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/garage-design.md",
+  "game/art/hud/reaction_heart.png (the comic outline)"
+ ],
+ "prompt": null
+}

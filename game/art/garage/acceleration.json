@@ -1,0 +1,16 @@
+{
+ "task": "T-366",
+ "what": "The acceleration upgrade's garage icon: a speedometer dial with the needle swung up to the right.",
+ "made_by": "game/tools/build_garage_icon_acceleration.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  16,
+  16
+ ],
+ "shown_at_scale": 3,
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/garage-design.md",
+  "game/tools/build_hud_reaction_icons.py (the outline and palette approach)"
+ ],
+ "prompt": null
+}

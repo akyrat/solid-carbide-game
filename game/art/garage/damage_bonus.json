@@ -1,0 +1,15 @@
+{
+ "task": "T-368",
+ "what": "The damage bonus upgrade icon: a red comic burst with a white up arrow, dark outline.",
+ "made_by": "game/tools/build_garage_icon_damage_bonus.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  16,
+  16
+ ],
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/garage-design.md",
+  "game/tools/build_hud_reaction_icons.py (outline and helpers)"
+ ],
+ "prompt": null
+}
