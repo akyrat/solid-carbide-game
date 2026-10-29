@@ -451,6 +451,9 @@ class KaijuKilledCounter:
 	var coins := 0
 	var coins_before_killed := -1
 
+	func enemy_slain(_type: String, _weapon := "") -> void:
+		pass
+
 	func is_running() -> bool:
 		return killed_calls == 0
 

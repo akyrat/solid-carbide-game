@@ -380,5 +380,5 @@ class FakeEnemy:
 	func hit_radius_units() -> float:
 		return 2.0
 
-	func take_damage(amount: float) -> void:
+	func take_damage(amount: float, _source := "") -> void:
 		damage_taken += amount

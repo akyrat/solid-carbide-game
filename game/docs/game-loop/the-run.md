@@ -136,7 +136,24 @@ A screenshot fixture, `tests/fixtures/likes_drain_demo.tscn`, starts a run from 
 
 The drain runs with the clock (`advance()`), so it stops while the run is paused, and the drain wait does not count paused time. A new run resets the multiplier and the drain wait. Nothing changes after the run ends.
 
+### The run's recap summary
+
+`RunState.recap()` (T-319) returns the run's stats as a plain Dictionary (numbers, strings, nested Dictionaries: `JSON.stringify` works on it). Each call returns a copy. Going: live. After the run ends: the final one, still readable after `run_ended` until the next `start_run()` clears it.
+
+| Field | Is |
+| --- | --- |
+| `result` | `"win"`, `"loss"`, or `""` while the run goes |
+| `loss_reason` | `"time"` (clock ran out) or `"health"` after a loss, else `""` |
+| `time_survived` | Seconds into the run (at its end once it ended) |
+| `coins`, `likes`, `level` | Coins collected, likes (XP, after the combo) gained in total, level reached |
+| `enemies_slain` | `{enemy type: kills}`, types `"minion"` and `"kaiju"` (`ENEMY_TYPE` on each enemy script) |
+| `tricks` | `{trick id: count}`, every id the combo counts, including `"airtime"` and `"thread_the_needle"` |
+| `highest_combo` | The highest multiplier reached |
+| `weapons` | `{weapon id: {"tier": tier it ended on, "kills": kills}}` for the owned weapons |
+
+Feeding it: `enemy_slain(enemy_type, weapon_id)` (the minion spawner and the kaiju boss call it when an enemy dies; ignored once the run ended), `add_trick`, `add_airtime_trick` and `add_needle_trick` count tricks. Weapons pass their id to `take_damage(amount, source)`, so an enemy knows `last_hit_by`; the kill goes to the weapon that struck the last blow. The weapon list comes from `state.weapons_source` (set by the rack: `Weapons.owned_tiers()`). Damage per weapon is not counted.
+
 **Pause:** the clock runs in `_process` with the default (pausable) process mode, so setting `get_tree().paused = true` stops it. Anything that pauses the run (the pause screen, the level-up choice) does it that way. The run's length (8 minutes) and the boss's arrival (7 minutes in) are constants in `run_state.gd`, `RUN_SECONDS` and `BOSS_TIME_LEFT`, because they are Decisions, not balancing numbers.
 
-**Tests:** `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu) and `tests/unit/run/test_run_likes_drain.gd` (T-115: no drain with a combo, the drain at T-114's speed once it is gone, a trick stopping it, never below the level's start even over a long drain, no drain while paused, while a choice waits, after the run ends or at the top level, the extra wait, the switch, `xp_changed` firing and the HUD's likes bar emptying in a run), part of the GUT suite.
+**Tests:** `tests/unit/run/test_run_recap.gd` (T-319: the summary's counts, the empty start, readable and final after the run ended, JSON, a copy), `tests/unit/run/test_run_state.gd` (the clock, boss time, health, coins, win and loss, pause, a second run), `tests/unit/run/test_run_scene.gd` (the map and car loaded, the start position, the camera following the car, a second run resetting the map and car) and `tests/unit/run/test_run_likes.gd` (challenge and meteor challenge XP, drift seconds, level-ups and leftovers, the pause switch off and on, two level-ups at once, the top level, a new run resetting XP) and `tests/unit/run/test_run_combo.gd` (tricks raising the multiplier, the cap, likes multiplied, collisions and damage cutting it, the drain and a trick stopping it, a new run, pause, a run started from the main menu) and `tests/unit/run/test_run_likes_drain.gd` (T-115: no drain with a combo, the drain at T-114's speed once it is gone, a trick stopping it, never below the level's start even over a long drain, no drain while paused, while a choice waits, after the run ends or at the top level, the extra wait, the switch, `xp_changed` firing and the HUD's likes bar emptying in a run), part of the GUT suite.
 

@@ -176,6 +176,7 @@ func land(centre: Vector2) -> Node:
 	var f: Node2D = FireScript.new()
 	f.name = "MolotovFire"
 	f.setup(rack, centre, stats)
+	f.weapon_id = weapon_id
 	rack.add_projectile(f, fire_root())
 	fires += 1
 	fire_started.emit(f)
