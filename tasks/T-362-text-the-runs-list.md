@@ -1,7 +1,7 @@
 ---
 id: T-362
 title: Text: the runs list and its main menu button
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/extended-narrative.md, tasks/T-318-text-the-recap-screen.md]
 files_expected_to_change: [game/data/, docs/hud-and-menus.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,9 +41,9 @@ The board's review: read the runs list text in HUD and menus, Content.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Every label the runs list and its main menu button need is in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Runs list". (QA: pass / fail)
-- [ ] Each new line scored at least 8 in the style loop, with every round in the Style review; lines reused from T-318 or the main menu are listed as reused. (QA: pass / fail)
-- [ ] The labels follow Text rules (vocabulary, no banned word, lengths). (QA: pass / fail)
+- [ ] Every label the runs list and its main menu button need is in a data file the game reads, named in the result notes, and in HUD and menus, Content, "Runs list". (QA: pass - game/data/runs_list_text.json has all 13 keys and matches the Runs list table in docs/hud-and-menus.md)
+- [ ] Each new line scored at least 8 in the style loop, with every round in the Style review; lines reused from T-318 or the main menu are listed as reused. (QA: pass - Runs 1 to 10 all kept at 8 or more; reused keys match T-318 recap_text.json word for word and are listed)
+- [ ] The labels follow Text rules (vocabulary, no banned word, lengths). (QA: pass - no banned words, sentence case, labels short; the empty line is long but scored 8 and is flagged as a proposal)
 
 ## Updates
 
@@ -218,3 +218,7 @@ Proposals for the board (it was asleep, so these are my choices): "Peak content"
 Refusal: in Run 6 the generator tried a direct style-evaluator call that a hook refused; it is logged in that round, the loop's own evaluator then scored it, nothing was worked around.
 
 Documents affected: docs/hud-and-menus.md.
+
+### QA, round 1 (2026-10-29)
+
+qa_check: tests PASS (3 sets), documents PASS (1 changed), screenshots FAIL: waived by the Project Lead (text-only ticket; the screen is T-364). Criteria: 1 pass (13 keys in game/data/runs_list_text.json, match the "Runs list" table in docs/hud-and-menus.md); 2 pass (Runs 1 to 10 all at 8 or more; reused keys equal T-318 recap_text.json heading.combo, heading.enemies, button.close, verified on its branch); 3 pass (no banned words, sentence case, lengths ok). Note for the board: the empty line is long for a label (scored 8).
