@@ -1,7 +1,7 @@
 ---
 id: T-326
 title: Weapons hit only enemies on their own height level
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/README.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, docs/drifting.md, game/docs/weapons/shared.md, game/scripts/weapons/weapons.gd, game/scripts/weapons/weapon.gd, game/scripts/weapons/bricks.gd, game/scripts/weapons/neon_underglow.gd, game/scripts/weapons/windshield_wiper.gd, game/scripts/weapons/molotovs.gd, game/scripts/weapons/molotov_fire.gd, game/scripts/weapons/starting_gun.gd, game/scripts/weapons/bullet.gd, game/scripts/weapons/flamethrower/]
 files_expected_to_change: [game/scripts/weapons/, game/tests/unit/weapons/, game/tests/unit/, game/README.md, docs/weapons.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -48,13 +48,13 @@ The board's review: on the elevation map, fight from a rooftop with minions belo
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] For each of the six weapons, a test puts one enemy on the car's level and one on another level, both within reach, and only the one on the same level is damaged (and, for the wiper and Bricks, pushed). (QA: pass / fail)
-- [ ] A molotov's fire burns only enemies on the fire's level (test with the car on another level). (QA: pass / fail)
-- [ ] The starting gun doesn't fire at an enemy on another level when it's the only one in range (test). (QA: pass / fail)
-- [ ] On the flat MVP map every weapon hits exactly as before (the existing weapon tests pass unchanged, or the result notes say why one changed). (QA: pass / fail)
-- [ ] The proposals (ramps' in-between heights, the kaiju, the car in the air) are in the result notes and in Weapons, Content, and game/README.md describes how it works. (QA: pass / fail)
-- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-326/screenshots/`, as `tasks/README.md`, "Screenshots", asks: a weapon on a rooftop hitting a minion beside the car and not one on the street below. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] For each of the six weapons, a test puts one enemy on the car's level and one on another level, both within reach, and only the one on the same level is damaged (and, for the wiper and Bricks, pushed). (QA: pass)
+- [ ] A molotov's fire burns only enemies on the fire's level (test with the car on another level). (QA: pass)
+- [ ] The starting gun doesn't fire at an enemy on another level when it's the only one in range (test). (QA: pass)
+- [ ] On the flat MVP map every weapon hits exactly as before (the existing weapon tests pass unchanged, or the result notes say why one changed). (QA: pass)
+- [ ] The proposals (ramps' in-between heights, the kaiju, the car in the air) are in the result notes and in Weapons, Content, and game/README.md describes how it works. (QA: pass)
+- [ ] Screenshots (or a GIF for anything that moves) of the change in a run are in `art-archive/T-326/screenshots/`, as `tasks/README.md`, "Screenshots", asks: a weapon on a rooftop hitting a minion beside the car and not one on the street below. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -110,3 +110,6 @@ Written by the agent when it finishes.
 - `docs/enemies.md` line 101 ("Weapons: unchanged by this task: the weapons find and hit enemies at any height") is now out of date. Enemies is not this ticket's document, so I left it alone; it could point to Weapons, Content, "Weapons hit only their own level".
 - Found while building, and not changed: a molotov fire is always drawn on the street's plane (Decisions, "The underglow and the wiper at height": the molotov fire "is not lifted"). A bottle thrown from a rooftop that lands on the roof now burns the rooftop, as the board decided, but its fire is drawn where the street would be under the roof. The board may notice this when fighting with molotovs from a rooftop. Lifting the fire's drawing would be a separate visual ticket.
 - One refusal, not worked around: a hook refused an inline Python command that would have written these result notes. I wrote them with the Edit tool instead, as the brief asked.
+
+
+**QA (2026-10-29, round 1): all 7 criteria pass.** qa_check: tests (3 sets) pass, documents changed, screenshot present. New test file test_weapon_levels.gd covers the six weapons, molotov fire level, gun with a lone off-level enemy, tolerance, kaiju, air, no-ground. Existing weapon tests unchanged. Proposals are in the result notes and docs/weapons.md (Content section); game/docs/weapons/shared.md and the README index describe it. Screenshot shows the rooftop car with one minion beside it and three on the street below. Note: molotov fires are still drawn on the street plane (visual only, not a criterion). Also docs/enemies.md line 101 is out of date (the agent flagged it).
