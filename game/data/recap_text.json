@@ -1,0 +1,40 @@
+{
+  "_comment": "T-318, the recap screen's text (HUD and menus, Content, 'Recap screen'); T-320 reads it, no text in code. Every new line scored 8 or more in the style loop. Keys: title.<ending> for win, time_up, wreck; heading.<section>; button.continue and button.close (the X's accessible label); tier ('{tier}' is 1 to 8); enemy.<id>; weapon.<id>; trick.<id> (reused word for word from the trick popups, game/scripts/hud/trick_popups.gd TEXTS); weapon names marked reused come from the level-up cards' get_<weapon>.title (game/scripts/ui/level_up_texts.gd).",
+  "title": {
+    "win": "Kaiju sunsetted, record engagement!",
+    "time_up": "Time's up, kaiju still trending",
+    "wreck": "Car wrecked, great content"
+  },
+  "heading": {
+    "enemies": "Takedowns",
+    "tricks": "Tricks landed",
+    "combo": "Peak engagement",
+    "weapons": "Weapons used"
+  },
+  "button": {
+    "continue": "Continue",
+    "close": "Close"
+  },
+  "tier": "Tier {tier}",
+  "enemy": {
+    "minion": "Kaiju minion",
+    "kaiju": "The kaiju"
+  },
+  "weapon": {
+    "gun": "Promo pistol",
+    "flamethrower": "Hot Take Exhaust",
+    "underglow": "Neon Underglow",
+    "molotov": "Hot Drop",
+    "wiper": "Wiper Blade",
+    "bricks": "Bricks"
+  },
+  "trick": {
+    "extended_drift": "LONG DRIFT!",
+    "three_sixty": "FULL 360!",
+    "alternate_drift": "ALT DRIFT!",
+    "air_one_eighty": "AIR 180!",
+    "air_three_sixty": "AIR 360!",
+    "airtime": "HANG TIME!",
+    "thread_the_needle": "THREAD THE NEEDLE!"
+  }
+}
