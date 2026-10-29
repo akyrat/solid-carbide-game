@@ -1,7 +1,7 @@
 ---
 id: G-007
 title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
-status: planned
+status: paused
 art_cap: 40
 art_used: 0
 iteration: 0
@@ -166,8 +166,10 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-29, iteration 0: started: planning, by the session Greenbull.
 - 2026-10-29, iteration 0: priority scoring: 9 sub-goals ranked, 10 goal criteria, 12 open questions.
 - 2026-10-29, iteration 0: gap detection: 0 covered, 0 in flight, 9 missing; wrote 10 tickets.
+- 2026-10-29, iteration 0: building.
+- 2026-10-29, iteration 0: paused (see Pauses).
 
 ## Pauses
 
-None yet.
+- 2026-10-29 [command]: A command the runner ran was refused or failed: C:\Users\andre\AppData\Local\Programs\Python\Python313\python.exe C:\solid-carbide-game\tools\task_status.py T-381 in-qa --reply Goal runner (G-007): the agent is done; QA is checking it.: Refused. T-381 can't move flagged-for-review → in-qa: flagged-for-review can't move to in-qa. Allowed now: in-progress, open, done, cancelled.
 
