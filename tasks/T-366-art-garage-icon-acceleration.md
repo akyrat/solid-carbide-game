@@ -1,7 +1,7 @@
 ---
 id: T-366
 title: Art: the acceleration upgrade's icon
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
