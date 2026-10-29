@@ -1,6 +1,6 @@
 # Garage icons
 
-The pixel art icons beside the garage's upgrade rows (Garage design, Decisions, "Pixel art icons for the upgrades"; the garage loads `game/art/garage/<upgrade key>.png`, else a grey placeholder, T-365). Script-drawn 16 x 16 icons, a 1 pixel dark outline, flat fills, one highlight, one dominant colour each plus white and the outline, no Greenbull colours, 0 PixelLab generations.
+The pixel art icons beside the garage's upgrade rows (Garage design, Decisions, "Pixel art icons for the upgrades", 2026-10-29; tasks T-366 to T-370). One 16 x 16 icon per upgrade in `game/art/garage/<upgrade key>.png`, each with a `.json` record; the garage loads them on its own and shows them at 3x, with a grey placeholder for any that is missing (T-365). Script-drawn like the HUD reaction icons (`reaction-icons.md`, T-352): a hand-placed grid, the HUD's 1 pixel dark outline, flat fills, one highlight, one dominant colour plus white, no Greenbull colours, 0 PixelLab generations.
 
 ## Acceleration (T-366)
 
@@ -8,16 +8,13 @@ The pixel art icons beside the garage's upgrade rows (Garage design, Decisions, 
 - Rebuild: `python game/tools/build_garage_icon_acceleration.py build --force` (byte-identical every run).
 - Tests: `game/tools/test_build_garage_icon_acceleration.py`.
 - Screenshots (the icon on dark and light, the garage screen) and the style loop versions: `art-archive/T-366/`.
-The five upgrade icons in `game/art/garage/<upgrade key>.png` (Garage design, Decisions, "Pixel art icons for the upgrades"; the garage loads them, T-365). All 16 x 16, script-drawn, 0 PixelLab generations, comic look of the reaction icons (T-352): 1 pixel dark outline, flat fills, one highlight, one dominant colour plus white; no Greenbull colours.
 
-## car_health (T-367)
+## Car health (T-367)
 
-A red heart with a bold white plus (each level adds a heart), close to the HUD heart. `game/art/garage/car_health.png` plus `car_health.json`.
-
+- `game/art/garage/car_health.png` and `.json`: a red heart with a bold white plus (each level adds a heart), close to the HUD heart.
 - Rebuild: `python game/tools/build_garage_icon_car_health.py build --force`.
 - Tests: `game/tools/test_build_garage_icon_car_health.py`.
 - Screenshots: `art-archive/T-367/screenshots/` (`icon_enlarged.png` on dark and light, `garage.png`).
-Tasks T-366 to T-370 (Garage design, Decisions, "Pixel art icons for the upgrades"): one 16 x 16 icon per upgrade in `game/art/garage/<upgrade key>.png`, each with a `.json` record, script-drawn (0 PixelLab generations) in the reaction icons' comic look (1 pixel dark outline, flat fills, one highlight; no Greenbull colours). The garage loads them on its own (T-365).
 
 ## Damage bonus (T-368)
 
@@ -25,15 +22,16 @@ Tasks T-366 to T-370 (Garage design, Decisions, "Pixel art icons for the upgrade
 - Rebuild: `python game/tools/build_garage_icon_damage_bonus.py build --out-dir game/art/garage --force` (hand-placed grid, byte-identical every run; reuses the helpers of `build_hud_livestream_art.py`).
 - Tests: `game/tools/test_build_garage_icon_damage_bonus.py`.
 - Screenshots and the style-loop versions: `art-archive/T-368/screenshots/` (`icon_enlarged.png`, `garage.png`, `v1.png`, `v2.png`).
-Tasks T-366 to T-370 (Garage design, Decisions, "Pixel art icons for the upgrades"): one 16 x 16 icon per upgrade in `game/art/garage/<upgrade key>.png` with a `.json` record, shown beside the garage row at 3x (T-365). Script-drawn, 0 PixelLab generations.
 
 ## Pickup magnet (T-369)
 
-`game/art/garage/pickup_magnet.png`: a horseshoe magnet, blue body (highlight left, shade right), white pole tips, the HUD's 1 pixel dark outline, no Greenbull colours. Rebuild: `python game/tools/build_garage_icon_pickup_magnet.py build --out-dir game/art/garage --force`. Test: `game/tools/test_build_garage_icon_pickup_magnet.py`. Style score 8 (one round). Screenshots: `art-archive/T-369/screenshots/`.
-Garage design, Decisions, "Pixel art icons for the upgrades" (2026-10-29). One 16 x 16 icon per upgrade in `game/art/garage/<upgrade key>.png`, each with a `.json` record, shown by the garage at 3x (T-365). Script-drawn like the HUD reaction icons (`reaction-icons.md`): hand-placed grid, 1 pixel dark HUD outline, flat fills, one highlight, one dominant colour plus white, no Greenbull colours, 0 PixelLab generations.
+- `game/art/garage/pickup_magnet.png`: a horseshoe magnet, blue body (highlight left, shade right), white pole tips. Style score 8 (one round).
+- Rebuild: `python game/tools/build_garage_icon_pickup_magnet.py build --out-dir game/art/garage --force`.
+- Tests: `game/tools/test_build_garage_icon_pickup_magnet.py`.
+- Screenshots: `art-archive/T-369/screenshots/`.
 
 ## Air turn (T-370)
 
-- `game/art/garage/air_turn.png`: a blue car under a thin white curved spin arrow (the car spins in the air).
+- `game/art/garage/air_turn.png`: a blue car under a thin white curved spin arrow (the car spins in the air). Kept at 7 after 3 refines, noted for the board.
 - Build: `python game/tools/build_garage_icon_air_turn.py build --out-dir game/art/garage --force` (deterministic). Test: `game/tools/test_build_garage_icon_air_turn.py`.
 - Versions and the enlarged dark and light sheets, plus the garage screenshot: `art-archive/T-370/` (`v1`, `v2`, ..., `screenshots/`). Every style loop round is in T-370's Style review.
