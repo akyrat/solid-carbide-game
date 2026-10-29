@@ -1,7 +1,7 @@
 ---
 id: T-316
 title: "Text: the time's up failure screen"
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -49,9 +49,23 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started overnight (build B, End of a run): the Narrative Theme Agent is writing the time's up screen's text.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-10-29: text, kind popup, brief `art-archive/T-316/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "STREAM OVER, KAIJU STILL TRENDING!"
+- Script checks: 5 of 5 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 4: one line, capitals, ends in "!" (script facts). Rule 2: it says "stream" and "kaiju" and uses no banned words. Rule 3: Greenbull is not quoted. Rule 1: "KAIJU STILL TRENDING" is a satirical social-media aside, and it turns the failure into engagement-bait without joking about the city's people or their fear. It fits the brief: the stream's time is over and the kaiju is still standing. The one small point is length. At 34 characters it is longer than LONG DRIFT! or COMBO BROKEN!, so it is a bit less instant at a glance. Nothing needs fixing.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("STREAM OVER, KAIJU STILL TRENDING!", copied to `art-archive/T-316/headline.txt`): it reached 8 or more.
 
 ## Result notes
 
