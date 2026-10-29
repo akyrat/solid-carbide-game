@@ -1,7 +1,7 @@
 ---
 id: T-383
 title: Art: the seven trick illustrations, drawn by script
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-007

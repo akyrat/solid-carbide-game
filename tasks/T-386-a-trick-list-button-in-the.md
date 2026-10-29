@@ -1,7 +1,7 @@
 ---
 id: T-386
 title: A trick list button in the pause screen, opening a panel with the trick list
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-007

@@ -4,7 +4,7 @@ title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
 status: building
 art_cap: 40
 art_used: 0
-iteration: 1
+iteration: 2
 max_iterations: 20
 created: 2026-10-29
 lead: Goal-G-007
@@ -48,7 +48,7 @@ The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'The last MVP r
 | rank | id | title | score | why | verdict | tickets |
 |---|---|---|---|---|---|---|
 | 1 | S1 | Text ticket: every text in the tutorial slides and the pause trick list (Narrative Theme) | unblocks 4, value 5 | The board requires all slide text to come from a text ticket first. Text never uses placeholders, so the slides and the trick list panel cannot be built without it. | covered | T-381 |
-| 2 | S5 | Tutorial slides screen with a reusable trick list (UI) | unblocks 3, value 5 | This is the core of part (1): the three slides, arrows, Start and the checkbox. The trick list is built as its own component so the pause panel shows the same list. | in-flight | T-382 |
+| 2 | S5 | Tutorial slides screen with a reusable trick list (UI) | unblocks 3, value 5 | This is the core of part (1): the three slides, arrows, Start and the checkbox. The trick list is built as its own component so the pause panel shows the same list. | covered | T-382, T-381 |
 | 3 | S2 | Script-drawn trick illustrations, one set of seven | unblocks 3, value 4 | This is one of the two candidate sets the board asked for, so QA can compare it against PixelLab. It costs no generations. | in-flight | T-383 |
 | 4 | S3 | PixelLab trick illustrations, one set of seven (art cap 40) | unblocks 2, value 4 | This is the second candidate set the board asked for, made with PixelLab. | in-flight | T-384 |
 | 5 | S4 | QA compares the two sets and the better one goes into game/art | unblocks 1, value 5 | The board asked QA to compare which set reads better and to use the better one. | in-flight | T-385 |
@@ -173,6 +173,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-29, iteration 0: resumed from building.
 - 2026-10-29, iteration 0: resumed by the session Greenbull.
 - 2026-10-29, iteration 1: T-381 (S1, narrative-theme, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: (nothing new). Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-381 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_019rKCDYVgFnVQ5gCWTtwcXb"} / QA: {"tool_input": {"command": "python -c \"import json;json.load(open('game/data/tutorial_text.json'));print('ok')\""}, "tool_name": "Bash", "tool_use_id": "toolu_011vj6dXbHa8qkukSJzuzHkr"} / QA: python tools/qa_check.py T-381 --no-marks (not pre-approved, needs approval) / QA: python -c json.load parse of game/data/tutorial_text.json (not pre-approved). Rescan: S1 covered, S5 in-flight, S2 in-flight, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
+- 2026-10-29, iteration 2: T-382 (S5, ui, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-382 done and committed. The three-slide tutorial screen, a separate trick list scene with code-made placeholders, and the tutorial_hidden setting are built. Illustration size is 64x48 at scale 3. Keyboard keys, focus order and docs are written up. All three test sets pass and screenshots are in art-archive/T-382/screenshots/. Refused, got past and not blocking: ui: {"tool_input": {"command": "python - <<'EOF'\np='game/scripts/menu/tutorial_slides.gd'\ns=open(p).read()\ns=s.replace(\"c + Vector2(-18 * d, 0), c + Vector2(18 * d, -32), c + Vector2(18 * d, 32)\",\"c + Vector2(18 * d, 0), c + Vector2(-18 * d, -32), c + Vector2(-18 * d, 32)\")\nopen(p,'w').write(s)\nEOF"}, "tool_name": "Bash", "tool_use_id": "toolu_01DgdsMSBoWg1iY6SSiHH1aW"} / QA: {"tool_input": {"command": "python tools/qa_check.py T-382 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_01DUx49fTsTMnPULvY8uVWo3"} / QA: `python tools/qa_check.py T-382 --no-marks` was refused ("requires approval"); not worked around, criteria checked by hand.. Rescan: S5 covered, S2 in-flight, S3 in-flight, S4 in-flight, S7 in-flight, S6 in-flight, S8 in-flight, S9 in-flight.
 
 ## Pauses
 

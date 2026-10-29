@@ -1,7 +1,7 @@
 ---
 id: T-387
 title: Start shows the tutorial slides before the run, unless hidden
-status: blocked
+status: open
 from: project-lead
 to: game-loop
 lead: Goal-G-007

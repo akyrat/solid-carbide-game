@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: blocked
+status: open
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
