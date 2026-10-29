@@ -1,7 +1,7 @@
 ---
 id: T-326
 title: Weapons hit only enemies on their own height level
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
