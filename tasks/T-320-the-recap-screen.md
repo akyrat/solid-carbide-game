@@ -33,7 +33,7 @@ A task is not done until every document listed in documents_affected has been up
 
 The board's decision (Game loop architecture, Decisions, "Recap screen in the MVP", 2026-10-28; it replaces "In the MVP there is no recap"): after a run ends, win or loss, the recap screen shows the run's stats (T-319's summary) before the main menu: the enemies slain, the tricks completed, the highest combo multiplier reached and the weapons used, **all shown visually where possible**: each enemy type with its own sprite and its count, each weapon with its level-up card image and its tier, the highest combo in the combo counter's heated look for that multiplier (HUD and menus, "Combo counter"), the tricks with their counts (in the trick popups' look, a proposal). A trick or enemy with a count of 0 is left out.
 
-The look is the game's comic look (white rounded panels, black borders, the Bangers font, hard pixel edges, like the level-up screen). The stats may count up or pop in one by one (your proposal). One button (T-318's text) goes to the main menu. After a time's up loss it comes after the time's up screen (T-317) if that is merged first. All text from T-318, word for word; the art is the game's existing sprites; no PixelLab.
+The look is the game's comic look (white rounded panels, black borders, the Bangers font, hard pixel edges, like the level-up screen). The stats may count up or pop in one by one (your proposal). The player leaves it with a Continue button (T-318's text) or an **X at the top right**, both to the main menu (board, 2026-10-29: Game loop architecture, Decisions, "The recap always closes a run"). Every run ends on it: after a time's up loss it comes after the time's up screen (T-317), and after a health loss after the 3-second wreck (T-360), whichever of those is merged first. The runs list (T-364) will reopen a saved run's recap in this screen, so keep it able to show a summary it is given. All text from T-318, word for word; the art is the game's existing sprites; no PixelLab.
 
 The board's review: play a run to its end and read the recap.
 
@@ -41,7 +41,7 @@ The board's review: play a run to its end and read the recap.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] When a run ends (a win, a loss by health, a loss by time), the recap screen shows before the main menu, and its button returns to the main menu (tests for each ending). (QA: pass / fail)
+- [ ] When a run ends (a win, a loss by health, a loss by time), the recap screen shows before the main menu, and its Continue button and the X at the top right both return to the main menu (tests for each ending). (QA: pass / fail)
 - [ ] It shows each enemy type and each trick with a count above 0 with the right number, the highest combo, and each weapon used with its tier, from T-319's summary (test with a scripted run). (QA: pass / fail)
 - [ ] Enemies and weapons are shown with their existing art (sprite, card image). (QA: pass / fail)
 - [ ] Every label comes from T-318's data file; no text is written in the code. (QA: pass / fail)
