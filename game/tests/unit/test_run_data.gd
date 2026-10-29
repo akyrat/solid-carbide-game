@@ -15,7 +15,8 @@ func test_level_1_threshold_is_one_challenge() -> void:
 
 func test_drift_second_is_10_percent_of_level_1_and_constant() -> void:
 	var rd := RunData.new()
-	assert_almost_eq(rd.drift_xp_per_second(), rd.xp_needed(1) * 0.1, 0.0001)
+	# T-328: level 1 needs 30 now, so a drift second is a third of it (was 10% of 100); still 10 a second.
+	assert_almost_eq(rd.drift_xp_per_second(), 10.0, 0.0001)
 	# One fixed value for every level: the data has a single drift number, none per level.
 	for row in GameData.unwrap(GameData.get_value(GameData.load_file("run").data, "levels")):
 		assert_false(row.has("drift_xp"))
@@ -60,8 +61,8 @@ func test_likes_drain_is_the_boards_playtest_speed() -> void:
 	assert_almost_eq(rd.likes_drain_bar_share_per_second(), 0.08, 0.0001)
 	# A full bar empties in 12.5 seconds, at every level.
 	assert_almost_eq(1.0 / rd.likes_drain_bar_share_per_second(), 12.5, 0.0001)
-	# 8 likes a second at level 1.
-	assert_almost_eq(rd.likes_drain_xp_per_second(1), 8.0, 0.0001)
+	# T-328: 2.4 likes a second at level 1 (8% of its 30 bar; was 8 of 100).
+	assert_almost_eq(rd.likes_drain_xp_per_second(1), 2.4, 0.0001)
 
 
 func test_likes_drain_scales_with_the_level_bar() -> void:

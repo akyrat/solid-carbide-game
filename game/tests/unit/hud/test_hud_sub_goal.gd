@@ -166,8 +166,8 @@ func test_label_under_the_square_from_t331s_text() -> void:
 	await get_tree().process_frame
 	var need := int(ceilf(r.state.xp_needed()))
 	assert_eq(hud.sub_goal.label.text, "0 / %d SUBS" % need)
-	r.state.add_xp(42.4)
-	assert_eq(hud.sub_goal.label.text, Hud.TEXT_SUB_GOAL.format({"subs": 42, "goal": need}))
+	r.state.add_xp(20.4)  # T-328: under level 1's 30, was 42.4 under the old 100
+	assert_eq(hud.sub_goal.label.text, Hud.TEXT_SUB_GOAL.format({"subs": 20, "goal": need}))
 	assert_eq(SubGoal.label_text(42, 156), "42 / 156 SUBS")
 	var label := hud.sub_goal.label_row.get_global_rect()
 	var square := Rect2(hud.sub_goal.get_global_rect().position, hud.sub_goal.square_size)

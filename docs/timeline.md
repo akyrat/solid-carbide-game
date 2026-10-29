@@ -2230,3 +2230,8 @@ Entry format:
 - Decision or change: The board: health drops 1.5 times as often (drop chance 0.15 to 0.225).
 - Documents touched: docs/enemies.md
 - Tasks: T-371
+
+## 2026-10-29: More gift packs, earlier
+- Decision or change: The board approved the gentler likes curve: 30 likes for the first level-up, 3,501 in all (was 4,255).
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-328
