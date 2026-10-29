@@ -1,7 +1,7 @@
 ---
 id: T-365
 title: The garage shows an icon beside each upgrade
-status: open
+status: in-qa
 from: project-lead
 to: ui
 lead: Greenbull
@@ -51,6 +51,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: the garage shows an icon beside each upgrade, placeholders first; the five art tickets fill them in.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -58,3 +62,8 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (UI Agent). `GarageScreen` rows now start with an `Icon` TextureRect (48 x 48 = 16 art px at 3x, nearest filter). `GarageScreen.icon_texture(id)` reads `res://art/garage/<key>.png` with `Image.load_from_file` (no .import needed) and falls back to `placeholder_texture()`, a grey 16 x 16 pixel square with a lighter diamond (no text, no green). Art tickets T-366 to T-370 only add `game/art/garage/<key>.png`. Rows' layout, buying and text unchanged.
+- Files: `game/scripts/menu/garage_screen.gd`, `game/tests/unit/test_garage_icons.gd` (5 tests: placeholder when missing, no green, file picked up, nearest and size, buying/text unchanged), docs `docs/garage-design.md` (Content, "Upgrade icons") and `game/docs/garage/garage-screen.md`.
+- Screenshot: `art-archive/T-365/screenshots/garage.png` (placeholders).
+- Tests: game/tools unittest 657 (OK, 1 skipped); tools unittest 573 OK; Godot GUT 1854/1854 in 152 scripts, TESTS PASSED. Note: the shell moved the long runs to the background, so a duplicate GUT run may still be finishing; a `pkill` to stop it was refused by the hook, so I left it alone.
