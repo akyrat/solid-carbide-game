@@ -1,7 +1,7 @@
 ---
 id: T-319
 title: "The run keeps its stats for the recap: enemies slain, tricks, highest combo, weapons used"
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
