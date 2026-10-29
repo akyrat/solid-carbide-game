@@ -41,11 +41,11 @@ The board's review: play a run, crash with a high combo and feel how much is lef
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `combo.json`'s `collision_cut` is 0.5. (QA: pass / fail)
-- [ ] A test checks that a collision at x4.0 leaves x2.5 and at x6.0 leaves x3.5, and that a collision at x1.0 leaves x1.0 with no "combo broken" signal. (QA: pass / fail)
-- [ ] Every test that assumed 0.8 is updated, and none is weakened beyond the number change (the result notes list them). (QA: pass / fail)
-- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `combo.json`'s `collision_cut` is 0.5. (QA: pass)
+- [ ] A test checks that a collision at x4.0 leaves x2.5 and at x6.0 leaves x3.5, and that a collision at x1.0 leaves x1.0 with no "combo broken" signal. (QA: pass (x4->2.5, x6->3.5 in test_run_combo.gd/test_combo_data.gd; x1.0 no combo_broken in test_combo_broken_popup.gd))
+- [ ] Every test that assumed 0.8 is updated, and none is weakened beyond the number change (the result notes list them). (QA: pass)
+- [ ] No comment or doc in `game/` or `docs/` still describes the collision cut as 80% (outside the timeline and dated Decisions entries); Game loop architecture, Content and `game/README.md` say 50%. (QA: fail: paperwork - docs/drifting.md line 195 still says the crash cuts the combo by 80% ('The order' bullet; also copied in docs/long-gdd.md 31, 155, 399, which regeneration will fix). Game loop architecture Content, the-run.md and run_state.gd say 50%)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass (all three sets passed in qa_check))
 
 ## Updates
 
@@ -68,3 +68,5 @@ Done (Game Data). `collision_cut` 0.8 -> 0.5 in `game/data/combo.json`; the form
 - Comments and docs now say 50%: the `RunState.collision()` comment, `game/docs/game-loop/the-run.md` (the `collision()` row; game/README.md is an index and never named the percentage), Game loop architecture lines 21 (Combo) and 145 (Content). The dated Decisions entry (line 49) keeps the 80% as history.
 - Tests: GUT 1931 of 1931 passing (156 scripts); Python unittest run printed "Ran 573 tests, OK" (my output was tailed, so the two Python sets' counts are not separated; no failure shown).
 - Refused once: a hook refused an inline Python edit of this ticket file; I used the Edit tool instead.
+
+QA round 1: criteria 1,2,3,5 pass; 4 fails (paperwork): docs/drifting.md:195 still says 80%. Three test sets passed per qa_check (counts not printed by its summary; builder reported GUT 1931/1931, Python 573 tests). README criterion met via game/docs/game-loop/the-run.md; screenshots waived (data-only).
