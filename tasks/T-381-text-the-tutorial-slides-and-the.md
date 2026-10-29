@@ -1,7 +1,7 @@
 ---
 id: T-381
 title: Text: the tutorial slides and the pause screen's trick list
-status: open
+status: in-progress
 from: project-lead
 to: narrative-theme
 lead: Goal-G-007
@@ -45,6 +45,10 @@ The board's review: Read the slide and trick list texts in game/data/tutorial_te
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-381.
 
 ## Style review
 
