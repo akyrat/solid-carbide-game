@@ -1251,6 +1251,10 @@ The fifth upgrade's text, in the form of the other four (name up to 25 character
 | garage.air_turn.name | Spin Doctor | 11/25 |
 | garage.air_turn.desc | Spin faster in the air per level. More flips, more views. | 57/80 |
 
+#### Upgrade icons (T-365)
+
+Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade key>.png` (a proposal: 16 x 16, drawn at 3x with hard pixel edges), one file per upgrade (`acceleration`, `car_health`, `damage_bonus`, `pickup_magnet`, `air_turn`); the art tickets T-366 to T-370 each add only their file and the garage picks it up with no code change. A missing file shows a grey pixel-square placeholder drawn in code, without text or Greenbull's colours. The rest of the row is unchanged. (Built in T-365: `game/docs/garage/garage-screen.md`.)
+
 #### Saving
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/docs/data/game-data.md` ("Game data", "Saving and buying").
@@ -1613,7 +1617,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `level-design.md` | `40ac1475ef0a25d13c14ce27bb5a376b967540e9828c944d933c0b3e6ecac9b8` |
 | `enemies.md` | `fea63c8867c9665c245a1aa7634f8513799f0254bc44f8d32b929340abae9bf3` |
 | `weapons.md` | `c4cfed2009e9920760b091106cac32fe91e76f0a4c98854e238e10d2adb3a913` |
-| `garage-design.md` | `b077bf5d337d83e9485ff68a939f54c366db4a205143407d4561e549794d9194` |
+| `garage-design.md` | `502e17a5ab2ec68190e79bbe2d5b5b671bd3db476e63526750cc306a6efed0e9` |
 | `visual-style.md` | `73ea646184941b192d145bc7a84a77fc123e6962da88b5e87911c3617b01b1e6` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
 | `hud-and-menus.md` | `febdc7ed11207d12658cafd06fb8b6e23f9b2de815c60ebd857fdb6c9f61ca4f` |

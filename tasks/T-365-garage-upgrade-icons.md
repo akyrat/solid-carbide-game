@@ -1,7 +1,7 @@
 ---
 id: T-365
 title: The garage shows an icon beside each upgrade
-status: open
+status: done
 from: project-lead
 to: ui
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/garage-design.md, game/docs/]
 files_to_read_first: [tasks/README.md, docs/garage-design.md, game/scripts/menu/garage_screen.gd, game/data/garage.json]
 files_expected_to_change: [game/scripts/menu/, game/scenes/menu/, game/tests/unit/, game/docs/, docs/garage-design.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,15 +41,19 @@ The board's review: open the garage and see an icon beside each upgrade.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each upgrade row shows an icon: the PNG from game/art/garage/<key>.png when it exists, else a placeholder drawn in code (tests with and without a file). (QA: pass / fail)
-- [ ] Icons are scaled with hard pixel edges (nearest filter) and don't change the rows' layout, buying or text (tests). (QA: pass / fail)
-- [ ] Garage design, Content and the game docs describe it, including where the art tickets put their files. (QA: pass / fail)
-- [ ] A screenshot of the garage with the placeholders is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] Each upgrade row shows an icon: the PNG from game/art/garage/<key>.png when it exists, else a placeholder drawn in code (tests with and without a file). (QA: pass)
+- [ ] Icons are scaled with hard pixel edges (nearest filter) and don't change the rows' layout, buying or text (tests). (QA: pass)
+- [ ] Garage design, Content and the game docs describe it, including where the art tickets put their files. (QA: pass)
+- [ ] A screenshot of the garage with the placeholders is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Started: the garage shows an icon beside each upgrade, placeholders first; the five art tickets fill them in.
 
 ## Style review
 
@@ -58,3 +62,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (UI Agent). `GarageScreen` rows now start with an `Icon` TextureRect (48 x 48 = 16 art px at 3x, nearest filter). `GarageScreen.icon_texture(id)` reads `res://art/garage/<key>.png` with `Image.load_from_file` (no .import needed) and falls back to `placeholder_texture()`, a grey 16 x 16 pixel square with a lighter diamond (no text, no green). Art tickets T-366 to T-370 only add `game/art/garage/<key>.png`. Rows' layout, buying and text unchanged.
+- Files: `game/scripts/menu/garage_screen.gd`, `game/tests/unit/test_garage_icons.gd` (5 tests: placeholder when missing, no green, file picked up, nearest and size, buying/text unchanged), docs `docs/garage-design.md` (Content, "Upgrade icons") and `game/docs/garage/garage-screen.md`.
+- Screenshot: `art-archive/T-365/screenshots/garage.png` (placeholders).
+- Tests: game/tools unittest 657 (OK, 1 skipped); tools unittest 573 OK; Godot GUT 1854/1854 in 152 scripts, TESTS PASSED. Note: the shell moved the long runs to the background, so a duplicate GUT run may still be finishing; a `pkill` to stop it was refused by the hook, so I left it alone.
+
+QA round 1 (QA agent): all 5 criteria pass. qa_check tests: 3 sets passed; screenshots OK. qa_check 'documents' line reads FAIL only because documents_affected lists the directory `game/docs/` and the tool matches exact file names; the file game/docs/garage/garage-screen.md did change (commit 33b5095b). Tool gap, not a ticket fault.
+QA rerun: GUT set 3 failed once on a Godot exit-time leak message, rerun alone passed (All tests passed, exit 0). The documents FAIL is the directory-entry tool gap noted above.
+- 2026-10-29, needs-playtest → done: The board approved it: 365 lgtm (2026-10-29).

@@ -44,6 +44,10 @@ The fifth upgrade's text, in the form of the other four (name up to 25 character
 | garage.air_turn.name | Spin Doctor | 11/25 |
 | garage.air_turn.desc | Spin faster in the air per level. More flips, more views. | 57/80 |
 
+### Upgrade icons (T-365)
+
+Each upgrade row begins with a small icon. The art is `game/art/garage/<upgrade key>.png` (a proposal: 16 x 16, drawn at 3x with hard pixel edges), one file per upgrade (`acceleration`, `car_health`, `damage_bonus`, `pickup_magnet`, `air_turn`); the art tickets T-366 to T-370 each add only their file and the garage picks it up with no code change. A missing file shows a grey pixel-square placeholder drawn in code, without text or Greenbull's colours. The rest of the row is unchanged. (Built in T-365: `game/docs/garage/garage-screen.md`.)
+
 ### Saving
 
 The player's coins and the level of each upgrade are kept in one small file under `user://` (`progress.json`), so they last between game sessions. A missing file means a new player: 0 coins, every upgrade at level 0. When a run ends, win or loss, the coins it collected are added to the total and saved. Buying an upgrade spends its price, raises its level by one and saves; it is refused, with nothing changed, when the player has too few coins or the upgrade is at its last level. The functions the garage screen and the run call are in `game/docs/data/game-data.md` ("Game data", "Saving and buying").

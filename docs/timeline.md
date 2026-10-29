@@ -2275,3 +2275,8 @@ Entry format:
 - Decision or change: The board approved health drops at 22.5% (was 15%).
 - Documents touched: `docs/enemies.md`
 - Tasks: T-371
+
+## 2026-10-29: The garage shows an icon beside each upgrade
+- Decision or change: The board approved the icon slot beside each garage upgrade (placeholders until the five art tickets add their PNGs).
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-365
