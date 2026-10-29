@@ -1,7 +1,7 @@
 ---
 id: T-330
 title: The gift pack helicopter 30% bigger on screen
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -77,3 +77,4 @@ Done (Game Loop Agent, commit d1fb86af). 0 PixelLab calls.
 QA round 1: criteria 1-3, 5, 6 pass (qa_check tests PASS, 2 docs changed). Criterion 4 fails on paperwork only: the before/after screenshots exist and show the bigger helicopter clearly, but sit in the git-ignored screenshots/ folder; move them to art-archive/T-330/screenshots/ and list those paths.
 
 QA round 2 (final): all 6 criteria pass. qa_check (--no-tests) passes: documents changed, 4 screenshots in art-archive/T-330/screenshots/, listed in the result notes. The after image shows the larger helicopter carrying the package. Test sets were green in round 1 and only screenshot files changed since.
+- 2026-10-29, needs-playtest → done: The board played the feel tweaks build: t330 lgtm (2026-10-29).
