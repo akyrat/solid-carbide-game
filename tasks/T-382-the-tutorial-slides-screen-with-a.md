@@ -1,7 +1,7 @@
 ---
 id: T-382
 title: The tutorial slides screen, with a reusable trick list scene (placeholder illustrations)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/tutorial-sli
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/main-menu.md, game/docs/hud-and-menus/recap-screen.md, game/docs/driving/tricks.md, game/scripts/ui/game_settings.gd, game/scripts/ui/recap_screen.gd, game/data/tutorial_text.json, game/docs/setup/screenshots.md]
 files_expected_to_change: [game/scenes/menu/tutorial_slides.tscn, game/scripts/menu/tutorial_slides.gd, game/scenes/menu/trick_list.tscn, game/scripts/menu/trick_list.gd, game/scripts/ui/game_settings.gd, game/tests/unit/test_tutorial_slides.gd, game/tests/unit/test_trick_list.gd, game/tests/unit/test_tutorial_setting.gd, game/tests/fixtures/tutorial_slides_demo.gd, game/tests/fixtures/tutorial_slides_demo.tscn, docs/hud-and-menus.md, game/docs/hud-and-menus/tutorial-slides.md, game/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-382.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-29, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -80,3 +84,4 @@ Done (UI Agent). No PixelLab used (0 generations); placeholders are code-made. T
 ### QA round 1
 
 All 9 criteria pass. Re-ran: GUT 1951/1951 (159 scripts; new tests 10 + 5 + 3 pass), `unittest -s tools` 573 OK, `-s game/tools` 668 OK (1 skipped). Screenshots slide1-3.png present. Code search found no on-screen literals in the two scripts. Docs and README link present. Refusal: `python tools/qa_check.py` needed approval and was not run; checked by hand.
+- 2026-10-29, in-qa → needs-playtest: QA passed every criterion (goal G-007).
