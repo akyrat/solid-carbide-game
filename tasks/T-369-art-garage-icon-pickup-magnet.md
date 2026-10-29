@@ -1,7 +1,7 @@
 ---
 id: T-369
 title: Art: the pickup magnet upgrade's icon
-status: needs-playtest
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -69,3 +69,4 @@ Score 8 (Style Evaluator). Reason: a clear horseshoe magnet, thick dark outline,
 QA report (round 1): qa_check run with --no-tests (no test-set criterion): screenshots PASS; its documents check names the directory game/docs/art/ and cannot match it, but game/docs/art/garage-icons.md and docs/visual-style.md both changed on the branch, so the docs criterion passes. All five criteria pass: 16x16 PNG and json; style 8 in round 1, recorded; 0 PixelLab calls stated; screenshots present. Set check: the five garage icons share the black comic outline, flat colours and highlight/shade and read as one set; air turn is the lightest in weight but fits.
 
 Done: `game/art/garage/pickup_magnet.png` (16 x 16, a blue horseshoe magnet with white pole tips and the HUD's dark outline) and `pickup_magnet.json`, drawn by `game/tools/build_garage_icon_pickup_magnet.py` (reuses the HUD outline helpers; deterministic) with `test_build_garage_icon_pickup_magnet.py`. 0 PixelLab generations. Style loop: one round, score 8, kept (Style review). Docs: Visual style and `game/docs/art/garage-icons.md`. Screenshots in `art-archive/T-369/screenshots/`: `icon_dark_light.png` and `garage.png` (garage demo scene, after Godot's import). Tests: `python -m unittest discover -s game/tools -p "test_*.py"` run in the foreground (660 tests, OK). No .uid/.import files committed.
+- 2026-10-29, needs-playtest → done: The board played the garage and art build: garage icons lgtm (2026-10-29).

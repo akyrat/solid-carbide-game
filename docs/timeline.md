@@ -2300,3 +2300,8 @@ Entry format:
 - Decision or change: The board approved the damage bonus icon (a red burst with a white up arrow), script-drawn, 0 PixelLab.
 - Documents touched: none
 - Tasks: T-368
+
+## 2026-10-29: Art: the pickup magnet icon
+- Decision or change: The board approved the pickup magnet icon (a blue horseshoe magnet), script-drawn, 0 PixelLab.
+- Documents touched: none
+- Tasks: T-369
