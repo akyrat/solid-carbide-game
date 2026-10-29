@@ -2295,3 +2295,8 @@ Entry format:
 - Decision or change: The board approved the car health icon (a red heart with a white plus), script-drawn, 0 PixelLab.
 - Documents touched: none
 - Tasks: T-367
+
+## 2026-10-29: Art: the damage bonus icon
+- Decision or change: The board approved the damage bonus icon (a red burst with a white up arrow), script-drawn, 0 PixelLab.
+- Documents touched: none
+- Tasks: T-368
