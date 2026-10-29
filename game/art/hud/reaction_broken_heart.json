@@ -1,5 +1,5 @@
 {
- "task": "T-356",
+ "task": "T-357",
  "what": "The broken heart reaction icon: a small comic HUD pixel icon with a dark outline.",
  "made_by": "game/tools/build_hud_reaction_icons.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
  "size": [

@@ -128,32 +128,33 @@ GRIDS = {
 }
 
 GRIDS["cry_laugh"] = [
-    "....ssssssss...",
-    "..sssssssssssS.",
-    ".ssskssssskssSS",
-    ".sssskssskssSSS",
-    ".ssskssssskssSS",
-    "bssssssssssssSS",
-    "bbsskkkkkkksssS",
-    "bbsdddddddddssS",
-    ".bsdWWWWWWWdssS",
-    "..sdddddddddsS.",
-    "...ssdddddssS..",
-    "....SSSSSSSS...",
+    "....ssssssss....",
+    "..ssssssssssss..",
+    ".sskssssssskss..",
+    ".bsskssssskssb..",
+    "bbsssksssksssbb.",
+    "bbssssssssssSbb.",
+    ".bskkkkkkkkksb..",
+    ".bsdddddddddsb..",
+    "..sdWWWWWWWdsS..",
+    "..sddmmmmmddsS..",
+    "...sdddddddSS...",
+    "....SSSSSSSS....",
 ]
 GRIDS["thumbs_down"] = GRIDS["thumbs_up"][::-1]
 GRIDS["peek"] = [
     "....ssssssss...",
-    "..sssssssssssS.",
-    ".sssssssssssssS",
-    ".ssWWsssssWWssS",
-    ".ssWkssssskWssS",
-    ".ppppppsppppppP",
-    ".ppppppsppppppP",
-    ".pppPPPsPPPpppP",
-    ".ppppppsppppppP",
-    "..PPPPPsPPPPPP.",
-    "....SSSSSSSS...",
+    "..sllssssssssS.",
+    ".sskkssssskkssS",
+    ".sWWWWsssWWWWsS",
+    ".sWkkWsssWkkWsS",
+    "hWWkkWsssWkkWWh",
+    "hhlWWsssssWWlhh",
+    "hhhlssssssslhhh",
+    "hphphsskssphphp",
+    "hphphpsssphphpp",
+    ".hhhhhpSSphhhp.",
+    "..ppppp..pppp..",
 ]
 GRIDS["broken_heart"] = [
     "..rrrr...rrrr..",
@@ -186,16 +187,16 @@ GRIDS["skull"] = [
 ]
 GRIDS["scream"] = [
     "....ssssssss...",
-    "..sssssssssssS.",
-    ".sssssssssssssS",
-    ".sWWWsssssWWWsS",
-    ".sWkWsssssWkWsS",
-    ".sWWWsssssWWWsS",
-    "ssssssssssssssS",
-    "ssssskkkkksssSS",
-    ".sssskdddkssssS",
-    ".sssskdddkssssS",
-    "..ssskkkkksssS.",
+    "..sllssssssssS.",
+    ".sskksssssksssS",
+    ".sWWWWsssWWWWsS",
+    ".sWkkWsssWkkWsS",
+    "psWkkWsssWkkWsp",
+    "ppsWWsskksWWsSp",
+    "ppsssskdddkssSP",
+    "PpsssskdddkssSP",
+    ".PssskdmmmkSSP.",
+    "..sssskkkkSSS..",
     "....SSSSSSSS...",
 ]
 
@@ -219,7 +220,7 @@ def draw(name: str) -> Image.Image:
 
 def record(name: str) -> dict:
     return {
-        "task": "T-356" if name in BAD_NAMES else "T-352",
+        "task": "T-357" if name in BAD_NAMES else "T-352",
         "what": f"The {name.replace('_', ' ')} reaction icon: a small comic HUD pixel icon with a dark outline.",
         "made_by": "game/tools/build_hud_reaction_icons.py (hand-placed pixel grid; no PixelLab call, 0 generations). "
                    "Byte-identical every run.",

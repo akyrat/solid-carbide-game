@@ -2265,3 +2265,8 @@ Entry format:
 - Decision or change: The board approved the 3-second wreck when the last heart goes: dead controls, the car keeps its slide, placeholder smoke and flames, and the monsters keep swarming the wreck with no interaction (the board's tweak). Its art ticket (T-361) was cancelled: the board is happy with the placeholder smoke.
 - Documents touched: none
 - Tasks: T-360
+
+## 2026-10-29: Art: the bad reaction icons
+- Decision or change: The board approved the six script-drawn bad reaction icons (crying-laughing, thumbs down, peeking, broken heart, skull, screaming face), 0 PixelLab generations.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-357

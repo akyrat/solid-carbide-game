@@ -23,7 +23,14 @@ class ReactionIcons(unittest.TestCase):
                 r = subprocess.run([sys.executable, str(Path(style_rules.__file__)), "art", str(p), "--size", "16x16"],
                                    capture_output=True, text=True)
                 self.assertEqual(r.returncode, 0, (p, r.stdout))
-                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-356" if p.stem.removeprefix("reaction_") in b.BAD_NAMES else "T-352")
+                self.assertEqual(json.loads(p.with_suffix(".json").read_text())["task"], "T-357" if p.stem.removeprefix("reaction_") in b.BAD_NAMES else "T-352")
+
+    def test_bad_icons_are_all_different_and_not_blank(self):
+        data = {n: b.draw(n).tobytes() for n in b.NAMES + b.BAD_NAMES}
+        self.assertEqual(len(set(data.values())), 12)
+        for n in b.BAD_NAMES:
+            im = b.draw(n)
+            self.assertGreater(sum(1 for *_, a in im.getdata() if a), 80, n)
 
     def test_deterministic(self):
         self.assertEqual(b.draw("star").tobytes(), b.draw("star").tobytes())
