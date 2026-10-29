@@ -2,6 +2,7 @@
 # Screenshots and GIFs of the reaction icons (task T-351): a moment of the sub goal's
 # burst, the floaters at a high viewer count, a GIF of the burst and a GIF of the
 # floaters as the viewer count steps up.
+# T-356 added the bad reactions after a crash (bad_still, bad_gif).
 # Usage, from the repo root:  bash game/tools/record_reactions.sh [out_dir, default art-archive/T-351/screenshots]
 # Needs a real window (not headless) and Python with Pillow.
 set -u
@@ -10,14 +11,15 @@ source "$here/godot_env.sh"
 out="${1:-art-archive/T-351/screenshots}"
 mkdir -p "$out"
 scene=res://tests/fixtures/reactions_demo.tscn
-for m in burst float; do
+for m in burst float bad; do
   REACTIONS_MODE=${m}_still bash "$here/screenshot.sh" $scene "$out/reactions_${m}.png" 40
 done
 fps=30
-for m in burst float; do
+for m in burst float bad; do
   tmp="$(mktemp -d)"
   secs=4
   [ "$m" = float ] && secs=16
+  [ "$m" = bad ] && secs=4
   REACTIONS_MODE=${m}_gif "$GODOT_BIN" --path "$GAME_DIR" --write-movie "$(cygpath -m "$tmp")/f.png" --fixed-fps $fps --quit-after $((secs * fps)) $scene
   # Every third frame (10 fps) keeps the GIF small.
   python - "$tmp" "$out/reactions_${m}.gif" "$here" <<'PY'

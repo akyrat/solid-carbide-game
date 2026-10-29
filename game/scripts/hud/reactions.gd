@@ -22,6 +22,17 @@ const ICONS := [
 	preload("res://art/hud/reaction_star.png"),
 	preload("res://art/hud/reaction_smile.png"),
 ]
+## The bad reactions (T-356, placeholders drawn by script like the good ones): crying-laughing
+## face, thumbs down, face peeking between hands, broken heart, skull, screaming face. An item's
+## `kind` indexes ICONS, then these: kind >= ICONS.size() is a bad reaction.
+const BAD_ICONS := [
+	preload("res://art/hud/reaction_cry_laugh.png"),
+	preload("res://art/hud/reaction_thumbs_down.png"),
+	preload("res://art/hud/reaction_peek.png"),
+	preload("res://art/hud/reaction_broken_heart.png"),
+	preload("res://art/hud/reaction_skull.png"),
+	preload("res://art/hud/reaction_scream.png"),
+]
 const DEFAULT_CFG := {
 	"cap": 60, "alpha": 0.9, "icon_scale": 2,
 	"rates_per_second": [0.0, 2.0, 3.5, 5.0, 7.5],
@@ -30,6 +41,8 @@ const DEFAULT_CFG := {
 	"lane_from": 0.76, "lane_to": 0.99, "fade_out_from": 0.55, "pop_seconds": 0.25, "pop_from": 0.5, "fade_in": 0.2,
 	"burst_count": 10, "burst_speed_min": 200.0, "burst_speed_max": 420.0,
 	"burst_drag": 1.5, "burst_rise": 30.0, "burst_seconds_min": 1.3, "burst_seconds_max": 1.9,
+	"bad_count": 10, "bad_seconds": 1.5, "bad_rise_min": 260.0, "bad_rise_max": 420.0,
+	"bad_life_min": 1.4, "bad_life_max": 2.0, "bad_wobble_px": 12.0,
 }
 
 var cfg: Dictionary = DEFAULT_CFG.duplicate()
@@ -41,6 +54,9 @@ var step_source: Callable = Callable()
 ## Seconds until the next group, -1 while the rate is 0.
 var next_in := -1.0
 var bursts_started := 0
+## T-356: bad reactions waiting to start: each {t (seconds until it starts), y (the start height)}.
+var pending_bad: Array = []
+var bad_bursts_started := 0
 ## Tests set the screen size here (a headless viewport is 64 x 64).
 var area_override := Vector2.ZERO
 
@@ -82,6 +98,7 @@ func rate_for_step(step: int) -> float:
 
 func clear() -> void:
 	items.clear()
+	pending_bad.clear()
 	next_in = -1.0
 	queue_redraw()
 
@@ -141,6 +158,30 @@ func burst(origin: Vector2) -> int:
 	return added
 
 
+## The bad reactions when a crash cuts the combo (T-356): `bad_count` icons, a mix of the six
+## bad ones, start one after another over `bad_seconds` at random x in the right-side lane (over
+## the viewers counter) from height `from_y` (the counter's), and rise faster than the good
+## floaters. They start in advance() so they follow pause, and count toward the cap.
+func bad_burst(from_y: float) -> int:
+	bad_bursts_started += 1
+	var n := int(cfg["bad_count"])
+	for i in n:
+		pending_bad.append({"t": rng.randf() * float(cfg["bad_seconds"]), "y": from_y})
+	pending_bad.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["t"] < b["t"])
+	return n
+
+
+func _start_bad(y: float) -> void:
+	var a := area()
+	var x := a.x * rng.randf_range(float(cfg["lane_from"]), float(cfg["lane_to"]))
+	var rise := rng.randf_range(float(cfg["bad_rise_min"]), float(cfg["bad_rise_max"]))
+	var life := rng.randf_range(float(cfg["bad_life_min"]), float(cfg["bad_life_max"]))
+	var it := _new_item(Vector2(x, y), Vector2(0, -rise), life, true)
+	it["kind"] = ICONS.size() + rng.randi() % BAD_ICONS.size()
+	it["wobble"] = float(cfg["bad_wobble_px"])
+	_add(it)
+
+
 ## The pop at the start: grows from `pop_from` to 1 over `pop_seconds`.
 func scale_of(it: Dictionary) -> float:
 	var k := clampf(float(it["age"]) / maxf(float(cfg["pop_seconds"]), 0.01), 0.0, 1.0)
@@ -173,13 +214,21 @@ func advance(dt: float) -> void:
 		if next_in <= 0.0:
 			spawn_group()
 			next_in = _gap(rate)
+	var k := 0
+	while k < pending_bad.size():
+		pending_bad[k]["t"] -= dt
+		if pending_bad[k]["t"] <= 0.0:
+			_start_bad(float(pending_bad[k]["y"]))
+			pending_bad.remove_at(k)
+		else:
+			k += 1
 	var drag: float = float(cfg["burst_drag"])
 	var i := items.size() - 1
 	while i >= 0:
 		var it: Dictionary = items[i]
 		it["age"] += dt
 		if it["floater"]:
-			var sway := sin(it["phase"] + it["age"] * TAU * float(cfg["wobble_hz"])) * float(cfg["wobble_px"])
+			var sway := sin(it["phase"] + it["age"] * TAU * float(cfg["wobble_hz"])) * float(it.get("wobble", cfg["wobble_px"]))
 			it["pos"] = Vector2(it["base_x"] + sway, it["pos"].y + it["vel"].y * dt)
 		else:
 			it["vel"] = it["vel"] * maxf(0.0, 1.0 - drag * dt) + Vector2(0, -float(cfg["burst_rise"])) * dt
@@ -202,6 +251,12 @@ func _process(dt: float) -> void:
 func _draw() -> void:
 	for it in items:
 		var s: float = float(cfg["icon_scale"]) * scale_of(it)
-		var tex: Texture2D = ICONS[it["kind"]]
+		var tex: Texture2D = texture_of(it)
 		var sz := tex.get_size() * s
 		draw_texture_rect(tex, Rect2((it["pos"] - sz / 2.0).round(), sz), false, Color(1, 1, 1, alpha_of(it)))
+
+
+## The picture for an item: a good reaction's, or (kind past ICONS) a bad one's.
+func texture_of(it: Dictionary) -> Texture2D:
+	var k: int = it["kind"]
+	return ICONS[k] if k < ICONS.size() else BAD_ICONS[k - ICONS.size()]

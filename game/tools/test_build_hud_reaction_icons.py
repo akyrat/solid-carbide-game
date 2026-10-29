@@ -14,7 +14,7 @@ class ReactionIcons(unittest.TestCase):
     def test_every_icon_is_16x16_binary_alpha_and_passes_the_style_rules(self):
         with tempfile.TemporaryDirectory() as d:
             paths = b.build(Path(d))
-            self.assertEqual(len(paths), 6)
+            self.assertEqual(len(paths), 12)
             for p in paths:
                 im = b.hud.Image.open(p).convert("RGBA")
                 self.assertEqual(im.size, (16, 16))

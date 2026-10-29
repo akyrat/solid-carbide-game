@@ -1,0 +1,16 @@
+{
+ "task": "T-356",
+ "what": "The peek reaction icon: a small comic HUD pixel icon with a dark outline.",
+ "made_by": "game/tools/build_hud_reaction_icons.py (hand-placed pixel grid; no PixelLab call, 0 generations). Byte-identical every run.",
+ "size": [
+  16,
+  16
+ ],
+ "shown_at_scale": 2,
+ "references": [
+  "docs/visual-style.md (Content, Rules)",
+  "docs/hud-and-menus.md",
+  "game/art/hud/likes_heart.png (the HUD outline)"
+ ],
+ "prompt": null
+}

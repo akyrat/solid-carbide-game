@@ -1,7 +1,7 @@
 ---
 id: T-356
 title: Bad reactions burst out when the combo breaks
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Greenbull
@@ -51,6 +51,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-29, Open → In progress
+
+Started overnight (build A, Stream reacts): the UI Agent is making the bad reactions burst when a crash cuts the combo, with placeholders.
 
 ## Style review
 
