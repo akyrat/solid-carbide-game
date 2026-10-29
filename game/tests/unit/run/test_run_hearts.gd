@@ -246,6 +246,7 @@ func test_0_hearts_ends_the_run_as_a_loss_with_the_coins() -> void:
 		state.damage_car(1.0)
 		state.advance(1.01)
 	assert_eq(state.hearts, 0)
+	state.advance(state.wreck_seconds)  # the wreck (T-360); 1.01 s of it passed already
 	assert_eq(ended, [["loss", 9]], "a loss with the coins, as at 0 health")
 	assert_false(state.is_running())
 
@@ -255,5 +256,6 @@ func test_a_kaiju_hit_from_2_hearts_ends_the_run() -> void:
 	state.run_ended.connect(func(r: String, c: int) -> void: ended.append([r, c]))
 	state.health = 2.0
 	state.damage_car(2.0)
+	state.advance(state.wreck_seconds)  # the wreck (T-360)
 	assert_eq(ended, [["loss", 0]])
 	assert_eq(state.hearts, 0)

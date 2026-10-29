@@ -71,6 +71,9 @@ func test_the_engine_stops_when_the_run_ends() -> void:
 	assert_true(snd.is_playing("engine"))
 	run.state.damage_car(100000.0)
 	assert_false(run.state.is_running())
+	snd.sync_loops()  # the next physics frame: the wreck (T-360) is silent too
+	assert_false(snd.is_playing("engine"), "silent once the last heart is gone")
+	run.state.advance(run.state.wreck_seconds)
 	assert_false(snd.is_playing("engine"), "silent after the run ended")
 
 

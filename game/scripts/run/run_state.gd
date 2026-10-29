@@ -90,6 +90,13 @@ signal combo_broken
 ## fires before the cut, so the trick's popup comes just before COMBO BROKEN!;
 ## otherwise just after the cut.
 signal crashed
+## The car lost its last heart (T-360; Game loop architecture, Decisions,
+## "Wrecked: the stream keeps rolling"): the run is lost from this moment (result
+## "loss", loss_reason "health", nothing more counts), but the scene stays for
+## `seconds` while the car slides on with dead controls, smoking and burning.
+## run_ended follows when they are over. The run scene turns the car's input off
+## and starts the smoke and flames on it.
+signal wreck_started(seconds: float)
 
 ## Seconds left on the clock (RUN_SECONDS at the start, 0 at the end).
 var time_left := RUN_SECONDS
@@ -144,6 +151,12 @@ var result := ""
 ## "time" or "health" after a loss (LOSS_*), "" otherwise.
 var loss_reason := ""
 var boss_time_sent := false
+## The wreck (T-360): true from the last heart until run_ended, `wreck_left`
+## seconds still to go. `wreck_seconds` is run.json's wreck.seconds, set at
+## start_run(); tests may change it (0 ends the run at once, as before T-360).
+var wrecked := false
+var wreck_left := 0.0
+var wreck_seconds := 3.0
 ## The combo multiplier now (T-081): multiplies all XP gained. combo.json's
 ## start_multiplier (1.0, no combo) at the start of a run.
 var combo := 1.0
@@ -198,6 +211,9 @@ func start_run() -> void:
 	coins = 0
 	result = ""
 	loss_reason = ""
+	wrecked = false
+	wreck_left = 0.0
+	wreck_seconds = _run_data.wreck_seconds()
 	_slain = {}
 	_tricks_done = {}
 	_weapon_kills = {}
@@ -230,7 +246,13 @@ func _process(delta: float) -> void:
 
 
 ## Moves the clock forward by `seconds`. Does nothing once the run has ended.
+## During the wreck (T-360) it counts the wreck down instead: the clock is
+## stopped at the moment the last heart went, and run_ended follows when the
+## wreck's seconds are over. Pausing the tree stops both (_process).
 func advance(seconds: float) -> void:
+	if wrecked:
+		_advance_wreck(seconds)
+		return
 	if not running or seconds <= 0.0:
 		return
 	invulnerable_left = maxf(invulnerable_left - seconds, 0.0)
@@ -287,7 +309,7 @@ func damage_car(amount: float) -> void:
 	health_changed.emit(health, max_health)
 	car_damaged.emit(amount)
 	if health <= 0.0:
-		_end(RESULT_LOSS, LOSS_HEALTH)
+		_wreck()
 		return
 	if invulnerable_left > 0.0:
 		invulnerability_started.emit(invulnerable_left)
@@ -629,11 +651,51 @@ func _set_paused(paused: bool) -> void:
 
 
 func _end(r: String, reason := "") -> void:
+	_decide(r, reason)
+	run_ended.emit(r, coins)
+
+
+## Decides the run's result: it stops counting anything from here on, and the
+## recap's summary is taken now.
+func _decide(r: String, reason := "") -> void:
 	running = false
 	result = r
 	loss_reason = reason if r == RESULT_LOSS else ""
 	_final_recap = _build_recap()
-	run_ended.emit(r, coins)
+
+
+## The last heart is gone (T-360): the run is lost now (the clock, coins, likes,
+## tricks, damage and kills all stop counting, as after any end), and the wreck
+## starts. run_ended follows after wreck_seconds (at once when it is 0).
+func _wreck() -> void:
+	_decide(RESULT_LOSS, LOSS_HEALTH)
+	wrecked = true
+	wreck_left = maxf(wreck_seconds, 0.0)
+	wreck_started.emit(wreck_left)
+	if wreck_left <= EPSILON:
+		_finish_wreck()
+
+
+func _advance_wreck(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	wreck_left = maxf(wreck_left - seconds, 0.0)
+	if wreck_left <= EPSILON:
+		_finish_wreck()
+
+
+func _finish_wreck() -> void:
+	if not wrecked:
+		return
+	wrecked = false
+	wreck_left = 0.0
+	run_ended.emit(result, coins)
+
+
+## True during the wreck (T-360): the last heart is gone and run_ended has not
+## been sent yet.
+func is_wrecked() -> bool:
+	return wrecked
 
 
 ## A kill by the car's weapons (the minion spawner and the kaiju boss call it

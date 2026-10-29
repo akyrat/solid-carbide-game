@@ -110,6 +110,11 @@ var airborne: bool:
 var use_keyboard := true
 ## [W held, S held, steer] used when use_keyboard is false.
 var scripted_input := [false, false, 0.0]
+## When false, no input reaches the car (T-360, the wreck: the controls go
+## dead when the last heart is gone): every step runs as if no key were held,
+## so the car keeps the movement it had and coasts with its normal physics.
+## True by default; it changes nothing else.
+var input_enabled := true
 
 ## Knockback waiting for the next physics step, in units/s (apply_knockback).
 var _pending_knockback := Vector2.ZERO
@@ -159,6 +164,10 @@ func physics_step() -> void:
 		w = scripted_input[0]
 		s = scripted_input[1]
 		steer = scripted_input[2]
+	if not input_enabled:
+		w = false
+		s = false
+		steer = 0.0
 	var rotation_before: float = model.rotation
 	# Task T-219 (the board's tweak): the model turns faster while the car is in the air.
 	model.airborne = height_model.airborne
