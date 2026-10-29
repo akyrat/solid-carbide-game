@@ -2260,3 +2260,8 @@ Entry format:
 - Decision or change: The board sorted the open tickets on its MVP cut page (https://claude.ai/artifact/ARgGoxmhrFo29MZ8FCzBjU) and moved seven to Post-MVP (final release): T-030 (the design pillars), T-134 and T-135 (minions knocking each other down, and its art), and T-282 to T-285 (the level creator's asset requests). It also deferred the runs list screen (T-364) to the final release, and cancelled T-078 (QA's full-run check) and T-098 (the HUD challenge arrow, a duplicate).
 - Documents touched: none
 - Tasks: T-030, T-134, T-135, T-282, T-283, T-284, T-285, T-364, T-078, T-098
+
+## 2026-10-29: Wrecked: the stream keeps rolling
+- Decision or change: The board approved the 3-second wreck when the last heart goes: dead controls, the car keeps its slide, placeholder smoke and flames, and the monsters keep swarming the wreck with no interaction (the board's tweak). Its art ticket (T-361) was cancelled: the board is happy with the placeholder smoke.
+- Documents touched: none
+- Tasks: T-360
