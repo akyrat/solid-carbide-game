@@ -910,29 +910,10 @@ func map_layout() -> Dictionary:
 
 
 ## The ground layout mvp_map.gd draws (the format of data/level/mvp_ground.json): the game's
-## ground atlas, one atlas tile per cell; tiles outside the atlas (road_tile.png) as "extra".
+## ground atlas, one atlas tile per cell; tiles outside the atlas (road_tile.png) as "extra". Built
+## by LevelGround (T-391), the same function the run draws a saved level's ground with.
 func ground_layout() -> Dictionary:
-	var gg := game_ground()
-	var extra: Array = []
-	var value := {}
-	for e in entries():
-		if not (str(e.kind) in ["ground", "road"]) or e.has("parts"):
-			continue
-		if e.has("atlas_index"):
-			value[str(e.id)] = int(e.atlas_index)
-		else:
-			value[str(e.id)] = EXTRA_BASE + extra.size()
-			extra.append(str(e.textures[0].texture))
-	var out_rows: Array = []
-	for row in cells:
-		var out: Array = []
-		for id in row:
-			out.append(int(value.get(id, -1)))
-		out_rows.append(out)
-	var m := map_rect()
-	return {"atlas": gg.get("atlas", "res://art/ground/ground_atlas.png"), "tile_px": gg.get("tile_px", [128, 64]),
-		"atlas_columns": gg.get("atlas_columns", 8), "cell_units": CELL, "origin": [m.position.x, m.position.y],
-		"cols": cols(), "rows": rows(), "extra": extra, "cells": out_rows}
+	return LevelGround.layout_from_ids(cells, map_rect().position)
 
 
 ## Every placed piece except the ground and road tiles: [{kind, item[, copy]}].
