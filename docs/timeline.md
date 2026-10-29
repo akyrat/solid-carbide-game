@@ -2180,3 +2180,8 @@ Entry format:
 - Decision or change: The board approved the recap screen's text (titles for a win, a time's up loss and a wreck, the four headings, names, Continue and the X).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-318
+
+## 2026-10-29: Text: the runs list
+- Decision or change: The board approved the runs list's text and its main menu button.
+- Documents touched: none
+- Tasks: T-362

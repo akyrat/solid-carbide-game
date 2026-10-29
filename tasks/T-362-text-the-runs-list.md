@@ -1,7 +1,7 @@
 ---
 id: T-362
 title: Text: the runs list and its main menu button
-status: needs-playtest
+status: done
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -222,3 +222,4 @@ Documents affected: docs/hud-and-menus.md.
 ### QA, round 1 (2026-10-29)
 
 qa_check: tests PASS (3 sets), documents PASS (1 changed), screenshots FAIL: waived by the Project Lead (text-only ticket; the screen is T-364). Criteria: 1 pass (13 keys in game/data/runs_list_text.json, match the "Runs list" table in docs/hud-and-menus.md); 2 pass (Runs 1 to 10 all at 8 or more; reused keys equal T-318 recap_text.json heading.combo, heading.enemies, button.close, verified on its branch); 3 pass (no banned words, sentence case, lengths ok). Note for the board: the empty line is long for a label (scored 8).
+- 2026-10-29, needs-playtest → done: The board approved the texts waiting for its approval (2026-10-29).
