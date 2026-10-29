@@ -1,7 +1,7 @@
 ---
 id: T-368
 title: Art: the damage bonus upgrade's icon
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/art/]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/garage-design.md, tasks/T-352-art-reaction-icons.md]
 files_expected_to_change: [game/art/garage/, game/tools/, art-archive/, docs/visual-style.md, game/docs/art/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,11 +41,11 @@ The board's review: open the garage and see the damage bonus icon.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `game/art/garage/damage_bonus.png` exists with a record, and the garage shows it on the damage bonus row. (QA: pass / fail)
-- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass / fail)
-- [ ] No PixelLab generations were used (the result notes say so). (QA: pass / fail)
-- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass / fail)
-- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
+- [ ] `game/art/garage/damage_bonus.png` exists with a record, and the garage shows it on the damage bonus row. (QA: pass)
+- [ ] It scored at least 8 in the style loop (or is noted below 8 after 3 refines), with every round in the Style review. (QA: pass)
+- [ ] No PixelLab generations were used (the result notes say so). (QA: pass)
+- [ ] Visual style and the art docs under game/docs/art/ record it. (QA: pass)
+- [ ] The icon enlarged on a dark and a light background, and a screenshot of the garage, are in `art-archive/<id>/screenshots/`. (QA: pass)
 
 ## Updates
 
@@ -70,6 +70,8 @@ Version v2 (kept). Score 8. Reason: all rules pass; the arrow reads at 3x, red a
 Kept version v2, score 8.
 
 ## Result notes
+
+QA report (round 1): qa_check run with --no-tests (no test-set criterion): screenshots PASS; its documents check names the directory game/docs/art/ and cannot match it, but game/docs/art/garage-icons.md and docs/visual-style.md both changed on the branch, so the docs criterion passes. All five criteria pass: 16x16 PNG and json; style 8 after 2 rounds, both recorded; 0 PixelLab calls stated; screenshots present. Set check: the five garage icons share the black comic outline, flat colours and highlight/shade and read as one set; air turn is the lightest in weight but fits.
 
 Written by the agent when it finishes.
 
