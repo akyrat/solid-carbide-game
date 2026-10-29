@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -70,3 +70,32 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Game Loop Agent, 2026-10-29: built, ready for QA** (commit c7aff363 on `task/T-360-wrecked-the-stream-keeps-rolling`, on top of T-319).
+
+What it does:
+- `RunState` (`game/scripts/run/run_state.gd`): `damage_car()` taking the last heart now calls `_wreck()` instead of ending the run. It decides the loss at once (`result` "loss", `loss_reason` "health", the recap summary taken, `running` false, so the clock, coins, likes, tricks, gift packs, damage, healing, kills and a kaiju kill all stop counting), sends the new `wreck_started(seconds)`, and counts `wreck_left` down in `advance()` (from `_process`, pausable, so pause freezes it). At 0 it sends the same `run_ended(result, coins)` as before. `is_wrecked()`, `wreck_seconds` (from data; 0 ends at once, as before). A kaiju kill and the time's up still end the run at once with no wreck. `recap().loss_reason` is "health" (T-319's tests green).
+- Data: `game/data/run.json`, new `wreck` section: `seconds` 3.0 (the board's number) and the placeholder smoke and flame numbers (proposals). `RunData.wreck_seconds()` and `RunData.wreck()` (`game/scripts/data/run_data.gd`).
+- The car (`game/scripts/driving/car.gd`, Driving & Drift's): only `var input_enabled := true`; when false, `physics_step()` replaces W, S and steer with no input. Nothing else changed, so live handling is identical and every driving test stays green. A dead car coasts exactly like a car with no keys held (tested step by step).
+- The run scene (`game/scripts/run/run.gd`): on `wreck_started` it sets `car.input_enabled = false` and starts the effect; the effect follows `car_sprite.position` after every car step; a new run stops it (and builds a new car with input on). The camera keeps following through the normal `sync_view`.
+- Smoke and flames: `game/scripts/run/wreck_effect.gd` (child `WreckEffect` of the View, above the car sprite). Placeholders drawn in code with opaque 2 px squares: grey puffs (three greys, lit from the top left) that leave the car, stay where they were left, rise, grow and shrink, 12 a second; five flickering flame tongues on the car in red, orange, light orange and a white-hot core, 16 px high. No Greenbull colours (tested: every colour more than 40 RGB steps from each of Greenbull's three). **Swap seam for T-361:** set `smoke_frames` / `flame_frames` (SpriteFrames, animation "default"): a puff draws the frame for its age, the flames loop at the animation speed; the placeholder is used only while they are null.
+
+Proposals for the playtest (the board's open questions; also in Game loop architecture, Content, "Wrecked", and HUD and menus, Content, "During the wreck"):
+- **HUD stays on screen** as it was at the last heart (empty hearts, coins, sub goal, viewers counter), nothing new on it, no text.
+- **The clock stops** at the last heart (= the recap's time survived).
+- **Enemies, the kaiju, meteors, weapons, gift drops and pickups freeze** for the 3 s: they already stop when `is_running()` is false, so this needed no change in other agents' code. Letting the enemies swarm the wreck instead would need a small Enemy Behavior change; offered as an alternative after the playtest.
+- **The car's slide:** no input at all (no throttle, brake or steering), normal coasting physics, walls still bounce it, jumps still land.
+- The engine sound stops at the last heart (run_sounds already follows `is_running()`).
+
+Tests changed because the loss on health now waits for the wreck (each now calls `state.advance(state.wreck_seconds)` after the last heart): `test_run_state.gd` (2), `test_run_hearts.gd` (2), `test_run_scene.gd` (1), `test_screen_flow.gd` (1), `level_creator/test_play_level.gd` (1), `test_run_sounds.gd` (1: the engine is silent from the next frame after the last heart, and after the run ends). New: `game/tests/unit/run/test_wreck.gd`, 17 tests (3 s from data and ended within 0.1 s, same result and coins, clock stopped, nothing counting, kaiju kill and time's up unchanged, pause freezing the wreck, a new run, 0 s, dead controls = coasting with no keys, live controls unchanged, the effect's puffs/flames/colours/follow, the art swap, the whole wreck in the run scene).
+
+Test runs (foreground, all green):
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 657 tests, OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 573 tests, OK.
+- `bash game/tools/run_tests.sh`: 150 scripts, 1844 tests, 1844 passing, 1245401 asserts, TESTS PASSED.
+
+Screenshots: `art-archive/T-360/screenshots/wreck.png` (1.2 s into the wreck: the car on fire with its smoke trail, the HUD with empty hearts and the clock stopped) and `wreck.gif` (from 1.0 s to 5.0 s: drive into a drift, the last heart, the slide, 3 s smoking and burning, back to the main menu). Made by `bash game/tools/record_wreck.sh` with the fixture `game/tests/fixtures/wreck_demo.tscn`.
+
+Weak spots, honestly: the placeholder smoke reads as stacked grey blobs and the flames as a small square bonfire; fine as a stand-in for T-361's art. The frozen minions look a little odd next to a sliding car; that is the cheapest proposal, and the enemies carrying on is the alternative.
+
+Documents affected: `docs/game-loop-architecture.md` (flowchart, the run scene bullet, Content "Wrecked", Screen flow), `docs/hud-and-menus.md` (The HUD, "During the wreck"), `game/docs/game-loop/the-run.md` (hearts bullet, "Wrecked (T-360)"). No refusals.
