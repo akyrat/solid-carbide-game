@@ -1,7 +1,7 @@
 ---
 id: T-360
 title: Wrecked: the car smokes and burns for 3 seconds when its last heart is gone
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, docs/hud-and-menus.md, game
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/scripts/run/run_state.gd, game/scripts/game/game_flow.gd, game/scripts/driving/, tasks/T-317-the-time-s-up-screen.md, tasks/T-320-the-recap-screen.md]
 files_expected_to_change: [game/scripts/run/, game/scripts/driving/, game/scripts/game/game_flow.gd, game/data/, game/tests/unit/, game/docs/game-loop/the-run.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, art-archive/]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -115,3 +115,5 @@ Documents affected: `docs/game-loop-architecture.md` (flowchart, the run scene b
 - Docs: Game loop architecture, Content, "Wrecked" (the freeze proposal replaced by "The enemies swarm the wreck", with the board's words) and `game/docs/game-loop/the-run.md`, "Wrecked (T-360)".
 - GIF and screenshot retaken (`art-archive/T-360/screenshots/wreck.gif`, `wreck.png`): the fixture now drops a ring of 10 minions round the car just before the last heart, so the swarm closing in on the burning wreck shows.
 - Test runs (foreground, all green): game/tools 657 OK (1 skipped); tools 573 OK; GUT 150 scripts, 1846/1846 passing, 1245413 asserts. No refusals.
+
+**QA final round, 2026-10-29 (after the swarm tweak): all 7 criteria pass.** qa_check: 3 test sets, 3 documents, 2 screenshots pass. The retaken wreck.png shows the minions closing in on the burning, smoking wreck with the HUD kept; criteria 1-3 hold with the swarm (tests: no damage, no knockback, no coins, likes or kills). Docs describe the swarm.
