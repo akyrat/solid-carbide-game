@@ -1,7 +1,7 @@
 ---
 id: T-358
 title: Token spend: where a QA run spends its calls
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -41,12 +41,12 @@ Run it for the period from 2026-10-28T03:55:00Z to 2026-10-29T01:10:00Z and for 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] `tools/qa_calls.py` runs with `--from`, `--to` and `--dir` like token_report.py, and `tools/test_qa_calls.py` tests its grouping on small made-up transcripts (at least: a test run, a poll, a qa_check.py call, a screenshot read, a failure). (QA: pass / fail)
-- [ ] `docs/token-spend/qa-calls-2026-10-29.md` has per-run and by-kind tables for the period and for the baseline, with total QA calls matching token_report.py's qa-integration count for the same range within 5%, or the difference explained. (QA: pass / fail)
-- [ ] The doc names the three dearest QA runs in the period and what took their calls. (QA: pass / fail)
-- [ ] The doc lists proposed cuts, each with the calls it would have saved in the period, and says which are proposals for the board. (QA: pass / fail)
-- [ ] `docs/README.md` links the new doc and the script in its token-spend line. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] `tools/qa_calls.py` runs with `--from`, `--to` and `--dir` like token_report.py, and `tools/test_qa_calls.py` tests its grouping on small made-up transcripts (at least: a test run, a poll, a qa_check.py call, a screenshot read, a failure). (QA: pass; script takes --from/--to/--dir, 5 tests cover test run, polls, qa_check, screenshot, failures)
+- [ ] `docs/token-spend/qa-calls-2026-10-29.md` has per-run and by-kind tables for the period and for the baseline, with total QA calls matching token_report.py's qa-integration count for the same range within 5%, or the difference explained. (QA: pass; tables match my rerun (533 calls, 610 tool calls, 73 failed) and token_report's 533 exactly; baseline difference explained)
+- [ ] The doc names the three dearest QA runs in the period and what took their calls. (QA: pass; a1575a33, acaa27b3, a3e6e13f named with what took their calls)
+- [ ] The doc lists proposed cuts, each with the calls it would have saved in the period, and says which are proposals for the board. (QA: pass; four cuts, arithmetic follows (240-54=186 ~160, 117-18=99 ~86, 422-246=176, 10/run), labelled proposals)
+- [ ] `docs/README.md` links the new doc and the script in its token-spend line. (QA: pass; token-spend line links script and doc)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; tools set rerun by me: 565 OK; other two counts recorded in notes (657, 1816))
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-29, Open → In progress
 
 Started: a script groups the QA agents' calls by kind, and a doc names the dearest runs and proposes cuts.
+
+### 2026-10-29, In progress → In QA
+
+In QA: QA's calls go mostly to polling the three test sets (about 15 min, over the 10-min foreground limit), then to writing the marks.
 
 ## Style review
 
@@ -78,3 +82,5 @@ Headline findings:
 Observation for the Project Lead: while running T-358's own tests, a foreground Bash command (the tools set, 337 s) was moved to the background after 180 s even with a 600 s timeout; the Godot suite (472 s, 517 s) was not. This likely also pushes QA into polling.
 
 Tests (all green, foreground): game/tools 657 tests OK (1 skipped); tools 565 tests OK (this ran past 180 s and was moved to the background by the tool, result read from its output file; after the docs edits test_new_ticket, test_guard and test_qa_calls were rerun: 101 OK); Godot suite 148 scripts, 1816 tests, 1816 passing, TESTS PASSED.
+
+**QA, 2026-10-29 (sonnet).** All 6 criteria pass. Reran qa_calls.py for the period: tables match the doc and token_report's qa-integration count (533). tools test set: 565 OK in the foreground.
