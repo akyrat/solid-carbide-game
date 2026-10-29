@@ -1,7 +1,7 @@
 ---
 id: T-370
 title: Art: the air turn upgrade's icon
-status: open
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -51,10 +51,31 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: the air turn icon, script-drawn.
+
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Script-drawn 16 x 16, 0 PixelLab generations; the script checks (style_rules.py art) passed every round. The Style Evaluator was run per round on the enlarged sheets (art-archive/T-370/screenshots/vN_sheet.png, versions in art-archive/T-370/vN/).
+
+### Round 1 (v1)
+5. Blocky white arch for an arrow that reads as a cloud or handle, no air feel, dark wheels merge with the outline. Refine: thin 1 px arrow with a head, lighter wheels.
+
+### Round 2 (v2)
+6. Arrow still a flat bar reading as a handle, blocky head, muddy gap. Refine: a big loop over the car with an open tail and pointed head.
+
+### Round 3 (v3)
+7. Reads as an air turn icon; outline heavy round the arrow, arch a little flat, car near the bottom edge. Refine: gap between arrow and car, car lifted, shade pixels.
+
+### Round 4 (v4)
+7. Arrow reads as a bridge, head a flat block. No refines left.
+
+Kept: v3 (7, the earliest of the tied best; its arrowhead reads better than v4's). Below 8 after 3 refines, noted for the board's playtest (game/art/garage/air_turn.png).
 
 ## Result notes
 
-Written by the agent when it finishes.
+Built `game/art/garage/air_turn.png` (+ `.json`), 16 x 16, a blue car under a white curved spin arrow, by `game/tools/build_garage_icon_air_turn.py` (hand-placed grid, 1 px dark outline via the HUD helpers, deterministic; test `game/tools/test_build_garage_icon_air_turn.py`). PixelLab: none, 0 generations. Style loop: 5, 6, 7, 7 over 3 refines; kept v3 at 7 (below 8: the arrow is a little flat and the outline heavy round it). The garage shows it on the Spin Doctor row (T-365's loader, no code change).
+Docs: Visual style, `game/docs/art/garage-icons.md` (new; other agents may add sections on their branches, expect a trivial merge).
+Screenshots: `art-archive/T-370/screenshots/` (`air_turn_enlarged.png` dark and light, `garage_screen.png`, `v1..v4_sheet.png`).
+Tests: game/tools unittest 660 OK (1 skipped); GUT not run, per the brief.
