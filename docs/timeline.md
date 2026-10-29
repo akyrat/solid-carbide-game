@@ -2115,3 +2115,13 @@ Entry format:
 - Decision or change: The board asked for the token report's rerun after the HUD batch (2026-10-28 03:55Z to 2026-10-29 about 01:00Z, 1,415 calls, 16 tickets merged). T-354's guard brought failed tool calls from 9.4% to 5.2% and hook refusals from 3.7% to 1.7% of tool calls, back to about the baseline. Tokens per merged ticket 11.0M (8.8M per HUD ticket) against 12.5M, on cheaper work. Average main context 177k against 317k, peak 291k. Not improved: QA took about 33 calls per merged ticket against 12.3, and subagent reports were 24.6% of Greenbull's context. The board asked for two analysis tickets on those.
 - Documents touched: docs/token-spend/after-2026-10-29.md, docs/token-spend/after-2026-10-29-raw.md, docs/README.md
 - Tasks: T-350, T-354
+
+## 2026-10-29: A ticket to find where QA spends its calls
+- Decision or change: The board's go, from the token read after the HUD batch: QA took about 33 calls per merged ticket against 12.3 in the baseline. A script reads the QA agents' transcripts and groups their calls by kind, and a doc names the dearest runs and proposes cuts for the board.
+- Documents touched: docs/token-spend/qa-calls-2026-10-29.md, docs/README.md
+- Tasks: T-358
+
+## 2026-10-29: A ticket to find why the HUD batch's hand-backs stayed long
+- Decision or change: The board's go, from the token read after the HUD batch: subagent reports were 24.6% of Greenbull's context against 8.8% in the Tokens session. A script lists each hand-back with its length and prompt, and a doc gives the causes and proposes fixes for the board.
+- Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
+- Tasks: T-359
