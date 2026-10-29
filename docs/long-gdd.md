@@ -143,6 +143,18 @@ The run also owns the combo (task T-081; how to use it: [game/docs/game-loop/the
 
 Starting a new run resets the map, the car and the state. The run's camera zoom can be changed from the pause screen.
 
+#### The run's stats for the recap
+
+The run keeps the stats the recap screen shows (task T-319; Decisions, "Recap screen in the MVP"; how to read them: [game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "The run's recap summary"). One read-only summary, a plain dictionary that also serialises to JSON (so the runs list, T-363, can save it), is cleared when a new run starts and stays readable after the run ends:
+
+- **enemies_slain:** kills per enemy type ("minion", "kaiju"), counted when the car's weapons kill one.
+- **tricks:** how many times each trick was completed, by the id the combo uses (the drifts, 360s, alternate drifts, air tricks, airtime, thread the needle).
+- **highest_combo:** the highest multiplier reached.
+- **weapons:** every weapon the car owned at the end, with the tier it ended on and the kills it made (the kills are a proposal, since they were cheap to count).
+- **Also kept, for the recap and the runs list:** the result (win or loss), why a loss happened (the clock ran out, or health), the time survived, the coins, the likes gained in total and the level reached.
+
+Nothing in this changes what the player sees.
+
 #### Screen flow
 
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
@@ -1501,7 +1513,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `7521c78064f2bf3a22a0af5a378cb4f359936a62ccfdafaec9aa48f42f3093ee` |
+| `game-loop-architecture.md` | `cfc4f3485387af2f7a8a2b763ba8a19b8e1b0dd75c75006a0d3934f5e5b8abec` |
 | `drifting.md` | `5f83e83085e4d7271846d900010bc83d59bf08696c3cb59bd89f0a8f3e02c381` |
 | `level-design.md` | `3cd75622909a0f858c1562b72b430448e84b0cfb5c44d4115a82c5a9f4045340` |
 | `enemies.md` | `672502ecfd82df9f93b3ab9cd110c707d661697e52c47c5bd87e5ae0a1fb1544` |

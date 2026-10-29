@@ -281,6 +281,8 @@ func _on_kaiju_health_changed(health: float, max_health: float) -> void:
 ## kaiju_killed() ends the run as a win.
 func _on_kaiju_died(_k: Node, _at_units: Vector2) -> void:
 	kaiju = null
+	if state != null:
+		state.enemy_slain(_k.ENEMY_TYPE, _k.last_hit_by)  # recap (T-319)
 	var n := data.kaiju_coins_on_defeat()
 	if state != null:
 		state.add_coins(n)
