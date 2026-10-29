@@ -1,7 +1,7 @@
 ---
 id: T-316
 title: "Text: the time's up failure screen"
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
