@@ -1,7 +1,7 @@
 ---
 id: T-359
 title: Token spend: why the HUD batch's hand-backs stayed long
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Tokens
@@ -52,6 +52,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: a script lists each hand-back with its length and prompt, and a doc gives the causes and proposes fixes.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -59,3 +63,14 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built `tools/hand_backs.py` (`--session`, `--from`, `--to`, `--dir`, `--top`, `--out`), `tools/test_hand_backs.py` (8 tests: SubagentHandback, Agent tool result, task notifications as pointer/failed, one-line prompt and one that does not, resumed agent, range, report, CLI) and `docs/token-spend/hand-backs-2026-10-29.md`; `docs/README.md` links both in the token-spend line.
+
+Headline findings (Greenbull, 2026-10-28T03:55Z to 2026-10-29T01:10Z):
+- The agents obeyed T-343: 29 hand-backs average 266 characters of their own words (6 over 300, 263 characters over in all); 40 of 43 prompts asked for one line.
+- Each hand-back is about 1,470 characters because the harness frame around it is a fixed 1,207; plus launch acknowledgements (1,071 each) and pointer task notices (877, after 7 of 29).
+- token_report.py's "subagent reports" (86,903) matches the script exactly (56,275 results + 30,628 that are not results: acknowledgements, cross-session messages, background notices); own words are only 7,845.
+- Greenbull's higher share is the count (43 results vs 13), not length.
+- Biggest proposed saving: QA agents in the foreground, 35,158 characters (40%); all-foreground upper bound 53,179. Fixes are proposals only.
+
+Tests: `game/tools` 657 tests OK (1 skipped); `tools` 568 tests OK; `bash game/tools/run_tests.sh` all scripts passed (TESTS PASSED, with the usual leak-at-exit warning).
