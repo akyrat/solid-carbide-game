@@ -4,7 +4,7 @@ title: HUD: the arrow to the nearest challenge
 status: open
 from: project-lead
 to: ui
-lead:
+lead: Greenbull
 epic: hud-menus
 milestone: final-release
 user_facing_text: no
@@ -43,6 +43,16 @@ Work on your own branch and folder, as `tasks/README.md` ("Git branches") descri
 - [ ] The full GUT suite and all Python tool tests pass (QA: pass / fail)
 
 The board's review: playtest it before it is merged (board, 2026-10-13: nothing user-facing merges before the board has played it).
+
+## Updates
+
+### 2026-10-29, Open → In progress
+
+Started (build D, Challenges): the UI Agent is adding the HUD arrow to the nearest challenge.
+
+### 2026-10-29, In progress → Open
+
+Not started after all: challenges are out of the MVP and the ticket says to wait until the board brings them back.
 
 ## Result notes
 
