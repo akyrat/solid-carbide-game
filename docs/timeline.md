@@ -2155,3 +2155,8 @@ Entry format:
 - Decision or change: tools/qa_calls.py groups the QA agents' calls by kind. In the HUD batch, waiting for the three test sets (about 15 minutes, over the 10-minute foreground limit) took 11.3 tool calls per QA run against 1.7 in the baseline, and writing the marks 6.5 against 2.7, mostly refused script writes followed by one Edit per criterion. QA reads and looks at less than before. Two of the 20 runs were playtest-build merges, 111 calls. Proposed: wait for the tests in one call, write the marks in one command, move playtest merges off the QA agent; together about 10 calls per QA run.
 - Documents touched: docs/token-spend/qa-calls-2026-10-29.md, docs/README.md
 - Tasks: T-358
+
+## 2026-10-29: Why the HUD batch's hand-backs stayed long
+- Decision or change: tools/hand_backs.py lists every subagent result in a main session. The agents obeyed T-343 (266 characters of their own on average); the harness frame adds 1,207 characters to every background hand-back, plus a launch acknowledgement (1,071) and sometimes a notice (877). 35% of what token_report counts as subagent reports isn't subagent results. Greenbull's share was higher because it ran 43 agents against 13. Proposed: QA agents in the foreground when the Project Lead waits anyway, fewer separate QA runs, and token_report splitting the category.
+- Documents touched: docs/token-spend/hand-backs-2026-10-29.md, docs/README.md
+- Tasks: T-359
