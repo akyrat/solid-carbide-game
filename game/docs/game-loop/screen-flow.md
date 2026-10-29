@@ -10,6 +10,7 @@ Task T-055 (Game Loop Agent). `scenes/game/game.tscn` (script `scripts/game/game
 - **When the run ends,** win or loss (`RunState.run_ended`), the run is removed and the main menu comes back straight away, with no message.
 - **Garage** (T-089) replaces the menu with the garage screen (`game.garage`, given `game.progress`); its back button (`back_pressed`) brings the main menu back.
 - **Exit** closes the game (`get_tree().quit()`, through `quit_game`, which tests replace).
+- **Pause screen Restart and Exit** (T-327): `GameFlow` connects the run's `pause_screen.restart_pressed` and `exit_pressed`. Restart banks `run.state.coins` into `progress` (`bank_run("loss", coins)`, so the coins are kept) and calls `start_run()`; Exit banks them and calls `show_menu()`. Neither goes through `run_ended`, so a screen listening for it (the recap) never sees them. The level creator's `play_level` connects the same signals: Restart replays the same level, Exit returns to its list. Tests: `tests/unit/game/test_pause_restart_exit.gd`, `tests/unit/level_creator/test_play_level.gd`.
 - Only one screen is on show at a time, as the only child of `Game`: `game.menu`, `game.garage` or `game.run` (the others are null). `game.pause_screen` is the run's pause screen. The signals `menu_shown` and `run_shown` fire after each switch.
 - **Tests:** `tests/unit/game/test_screen_flow.gd`, part of the GUT suite: the first screen, Start, a win and both kinds of loss back to the menu, a second run, Garage and its back button, Exit, Escape during a run, and the zoom.
 

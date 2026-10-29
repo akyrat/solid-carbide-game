@@ -2190,3 +2190,8 @@ Entry format:
 - Decision or change: The board approved the burst of bad reactions from the viewers counter when a crash cuts the combo (placeholder icons; art next, T-357).
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-356
+
+## 2026-10-29: Restart and Exit on the pause screen
+- Decision or change: The board approved Restart and Exit on the pause screen (coins kept, no confirm prompt).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-327

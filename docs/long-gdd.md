@@ -168,6 +168,7 @@ One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop
 - When the run ends, win or loss, the run is removed and the main menu comes straight back, with no message. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
+- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 
@@ -1503,6 +1504,7 @@ Tasks T-015, T-093, T-095 and T-124. Escape pauses the whole game and shows the 
 - **Music volume slider** (T-208): "Music volume", one short plain settings line at the left of the slider, the sibling of "SFX volume" and "Camera zoom level". T-210 uses this text word for word. The slider sits on its own row directly under the SFX volume slider, laid out like it. Built in T-210: it starts from the saved music setting (T-209, starting value 40, a proposal for the playtest), changes the music at once while the music keeps playing under the pause, and is saved between sessions. The strip is one row taller (it ends about 290 pixels from the top at 1152x648, about 325 with the dynamic-camera buttons), still below the HUD timer.
 - **Camera checkboxes** (T-124): "Camera smoothing" and "Dynamic camera" side by side, the board's own names (what they do: Drifting, Content, "Camera options"). Each starts from the saved setting, applies at once when switched and is saved. Placeholder look: a light square frame on a dark fill, with a light square inside when checked, so both states show over any ground.
 - **Tuning buttons** (T-124), shown only while "Dynamic camera" is on: "Set min zoom" and "Set max zoom", each followed by the stored value as a number (for example 11.0 and 17.0, the proposed starting values). Pressing one stores the zoom slider's current value as the dynamic camera's zoom at a standstill (min) or at top forward speed (max), saves it, and updates the number. The board can move the slider, press a button and resume to try it. They are a temporary tuning tool for the board, plain labels rather than game text, and are removed once the board has settled the values. Placeholder look: a light frame round a dark fill.
+- **Restart and Exit** (T-327; Decisions, "Restart and Exit on the pause screen"): two buttons, **"Restart"** and **"Exit"** (the board's own names, word for word), in a row centred at the bottom of the strip under the camera controls, in the strip's placeholder button look. The proposals for the playtest: **no "are you sure?" prompt** (keep it quick; a prompt would need a Narrative Theme ticket for its text, so none is built); **the coins collected so far are kept**, as on any loss (banked into the saved total before the run goes); **no time's up screen and no recap** (T-317 and T-320 are not built yet: Restart and Exit never end the run through `run_ended`, so a screen listening for it never sees them; when the recap is built it must be skipped the same way, by the pause screen's own `restart_pressed` and `exit_pressed` signals doing the leaving, and no run is recorded in the runs list); **keyboard:** the focus starts on Restart when the screen opens, the arrow keys or Tab move between the two and Enter or Space presses (Escape still resumes). In a run started from the level creator (T-239): Restart replays the same level and Exit returns to the creator's level list (coins kept). How it is built: `game/docs/hud-and-menus/pause-screen.md`.
 
 The checkboxes and buttons work with the mouse and the keyboard (Tab to move, Space to switch or press). The strip's dark band runs over the lower part of the car's health bar while paused. How it is built is in `game/docs/hud-and-menus/pause-screen.md`, "Pause screen".
 
@@ -1555,7 +1557,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `826c65eb2f58d28eca7d15f3e3c713212ad5f76f1f0b99b4f4d93727ea4fc424` |
+| `game-loop-architecture.md` | `5c3ae3042f7ba11361d007bbcb4a9b2e480cecd7052e343d41467bf51cf50767` |
 | `drifting.md` | `5f83e83085e4d7271846d900010bc83d59bf08696c3cb59bd89f0a8f3e02c381` |
 | `level-design.md` | `3cd75622909a0f858c1562b72b430448e84b0cfb5c44d4115a82c5a9f4045340` |
 | `enemies.md` | `672502ecfd82df9f93b3ab9cd110c707d661697e52c47c5bd87e5ae0a1fb1544` |
@@ -1563,4 +1565,4 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `garage-design.md` | `c8ab841a1ffd26c8aff28fbdf09f8903c8800ffb5cd6baed1decb04d3c2f2861` |
 | `visual-style.md` | `95bbb5cbe07305aefcf6d785b86c73f5f24c957efbb93f84ae903247e65e7d9f` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
-| `hud-and-menus.md` | `a5695171773f470c425acb69b56519ae7a0a5282f258defb3d3f55de8963a12f` |
+| `hud-and-menus.md` | `e822d44fbacae8ab3ff77ca33d8c22323d4161f23d4d6e9a845d7b6edd0ab21e` |
