@@ -1,7 +1,7 @@
 ---
 id: T-371
 title: Health drops 1.5 times as often
-status: open
+status: in-qa
 from: project-lead
 to: game-data
 lead: Greenbull
@@ -48,6 +48,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-29, Open → In progress
+
+Started: health drops 1.5 times as often (0.15 to 0.225).
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -55,3 +59,6 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Done (game-data). `health_drops.drop_chance` 0.15 to 0.225 in game/data/enemies.json; only that value and its `_comment` history changed. Tests updated: test_health_drops.gd (reads the data, 0.225, ratio to the old 0.15 is 1.5; the statistical test now expects 3/8 of the coins' rate, renamed `..._about_three_eighths_of_the_coins...`), test_run_hearts.gd, test_run_data.gd. Docs: docs/enemies.md (Health pickups line; the Decisions entry was already there), game/docs/enemies/minions.md. No separate Content doc gives the number. The long GDD is regenerated at merge.
+Tests: game/tools unittest 573 OK; tools unittest OK; GUT 1849 tests: first run 1848 pass and 1 fail (the old quarter-ratio test, then fixed); test_health_drops rerun 11/11 pass. The full GUT was not rerun after that fix (about 9 min).
