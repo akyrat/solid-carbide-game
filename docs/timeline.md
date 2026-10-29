@@ -2175,3 +2175,8 @@ Entry format:
 - Decision or change: The board approved the time's up headline: STREAM OVER, KAIJU STILL TRENDING!
 - Documents touched: `docs/hud-and-menus.md`
 - Tasks: T-316
+
+## 2026-10-29: Text: the recap screen
+- Decision or change: The board approved the recap screen's text (titles for a win, a time's up loss and a wreck, the four headings, names, Continue and the X).
+- Documents touched: `docs/hud-and-menus.md`
+- Tasks: T-318
