@@ -1,7 +1,7 @@
 ---
 id: T-399
 title: Art: the full sidewalk and curb set and the parked and broken cars at four facings, swapped into the creator
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -787,3 +787,4 @@ Board review files: art-archive/T-399/screenshots/editor_cars_facings.png, art-a
 **Refused:** a PreToolUse hook refused my inline `python -` that appended these notes to the ticket ("inline code that names task files"); per the Project Lead, written with the Edit tool instead.
 
 **Documents affected (final):** `docs/visual-style.md` (Decisions, "Sidewalks, parked cars and meteor craters", the full set: sidewalks, craters, the five cars and the front-lamp repaint), `game/docs/art/sidewalk-parked-cars.md` ("The full set (T-399)").
+- 2026-10-30, in-progress → in-qa: All art in: 47 sidewalk/curb tiles 8/10, 3 craters 8/10, 5 cars at four facings (8/8/9/8/8; PixelLab 8 rotations, front lamps repainted grey). 21 of 50 generations used. Tests: 745, 579, GUT 2058 pass. Screenshots in art-archive/T-399/screenshots/.
