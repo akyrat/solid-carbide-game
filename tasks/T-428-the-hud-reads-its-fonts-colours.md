@@ -35,12 +35,12 @@ Goal G-008, 'A consistent HUD' (HUD and menus, Decisions): the HUD's code follow
 
 ## Acceptance criteria
 
-- [ ] One shared HUD style place exists (Theme, style script or data file), named in the result notes, and every HUD script listed in the description reads its fonts, font colours, outline widths and colours from it; a grep of game/scripts/hud/ for add_theme_color_override and add_theme_font_size_override with literal values finds none outside that place, or the result notes justify each one left. (QA: pass / fail)
-- [ ] A GUT test loads the shared style and checks the HUD's labels use its values. (QA: pass / fail)
-- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass unchanged. (QA: pass / fail)
-- [ ] A screenshot of a run with the whole HUD visible is in art-archive/<id>/screenshots/, matching the look before the change. (QA: pass / fail)
-- [ ] game/docs/hud-and-menus/hud.md names the shared style place and how HUD scripts read it. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] One shared HUD style place exists (Theme, style script or data file), named in the result notes, and every HUD script listed in the description reads its fonts, font colours, outline widths and colours from it; a grep of game/scripts/hud/ for add_theme_color_override and add_theme_font_size_override with literal values finds none outside that place, or the result notes justify each one left. (QA: pass)
+- [ ] A GUT test loads the shared style and checks the HUD's labels use its values. (QA: pass)
+- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass unchanged. (QA: pass)
+- [ ] A screenshot of a run with the whole HUD visible is in art-archive/<id>/screenshots/, matching the look before the change. (QA: pass)
+- [ ] game/docs/hud-and-menus/hud.md names the shared style place and how HUD scripts read it. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -106,3 +106,12 @@ The viewers counter still swaps its number's `font_color` between `crash_color` 
 **Documents affected:** `game/docs/hud-and-menus/hud.md` (new paragraph "The HUD's shared style").
 
 **PixelLab:** 0 generations. **Refusals:** none.
+
+### QA round 1, 2026-10-30
+
+All six criteria pass. `python tools/qa_check.py` was refused (needs approval, not on the allow list), so I checked by hand.
+- Grep of `game/scripts` for theme overrides: in the HUD files only `hud_style.gd` sets literal fonts, sizes, colours and outline widths. The others are `HudStyle.glow_color(...)`, `color_for()` (data), the viewers' `crash_color` (from data or HudStyle) and layout separations, none of them style literals. Pause and level-up screens have only `separation` constants.
+- `test_hud_style.gd`: 11/11 pass. The existing HUD folder: 18 scripts, 180/180 pass.
+- Full GUT: 2135/2136 on the first run (took 662 s under load). The one failure was `test_run_likes.gd`, a timing-based drift test with no link to the HUD. On rerun alone it failed with different counts, then passed 18/18 on a third run, so it is load-dependent flakiness, not T-428. Python sets: game/tools 722 OK (1 skipped), tools 582 OK.
+- Screenshots `hud_run.png`, `pause.png` and `level_up.png` exist in `art-archive/T-428/screenshots/`. The "before" match rests on the pinned-values test and the archived shots, as the notes say.
+- `hud.md` has the "HUD's shared style" paragraph naming `scripts/hud/hud_style.gd` and how scripts read it.
