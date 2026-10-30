@@ -1,7 +1,7 @@
 ---
 id: T-407
 title: A falling gift pack casts a shadow where it will land, like the car's shadow in the air
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/docs/game-loop/]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, tasks/T-402-gift-pack-below-platform.md, game/scripts/run/, game/docs/game-loop/]
 files_expected_to_change: [game/scripts/run/, game/tests/unit/, game/docs/game-loop/, docs/game-loop-architecture.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -59,6 +59,10 @@ Started in build E, on top of T-402 (pickups at their height).
 ### 2026-10-30, In progress → In QA
 
 A falling gift pack now shows the car's air shadow at its landing spot, at the ground's or platform's height, gone on landing; tests green, GIFs in art-archive/T-407/screenshots/.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed: shadow tests, docs, both GIFs and all three test sets green (Godot 2007, Python 686 + 579); ready for your playtest.
 
 ## Style review
 
