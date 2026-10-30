@@ -111,7 +111,7 @@ func test_switch_off_level_up_keeps_clock_running() -> void:
 	assert_false(state.is_waiting_for_choice())
 	assert_eq(choices_started, [])
 	var before := state.time_left
-	await wait_physics_frames(5)
+	state.advance(0.1)  # T-434: the clock stepped by hand, not by waiting on frames
 	assert_lt(state.time_left, before, "the clock keeps running")
 
 
@@ -129,7 +129,7 @@ func test_switch_on_pauses_until_choice_made() -> void:
 	assert_eq(choices_made, [2])
 	assert_false(get_tree().paused, "resumed after the choice")
 	assert_false(state.is_waiting_for_choice())
-	await wait_physics_frames(5)
+	await wait_until(func() -> bool: return state.time_left < frozen, 5.0)  # T-434: not a fixed frame count
 	assert_lt(state.time_left, frozen, "the clock runs again")
 
 
@@ -146,7 +146,7 @@ func test_switch_on_freezes_the_car() -> void:
 	await wait_physics_frames(10)
 	assert_eq(run.car.position, at, "the car does not move while the choice waits")
 	run.state.choice_made()
-	await wait_physics_frames(5)
+	await wait_until(func() -> bool: return run.car.position != at, 5.0)  # T-434: not a fixed frame count
 	assert_ne(run.car.position, at, "the car moves again")
 
 
@@ -192,7 +192,9 @@ func test_run_scene_drift_gives_xp() -> void:
 	run.car.use_keyboard = false
 	run.car.scripted_input = [true, false, 1.0]  # W with D: drifting
 	var steps := int(ceil(1.0 / run.car.model.dt)) + 3
-	await wait_physics_frames(steps)
+	run.car.set_physics_process(false)  # T-434: the car stepped by hand, a known number of times
+	for i in steps:
+		run.car.physics_step()
 	assert_true(run.car.model.is_drifting)
 	# T-246: a drift pays its combo once, when it ends, so the drift's own
 	# second is paid at combo 1: the XP from drifting seconds is unchanged.

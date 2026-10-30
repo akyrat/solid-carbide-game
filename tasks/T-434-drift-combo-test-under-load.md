@@ -1,7 +1,7 @@
 ---
 id: T-434
 title: The drift-pays-its-combo test fails when the machine is busy
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -63,6 +63,11 @@ Written by the agent when it finishes.
 
 Root cause: the test waited `wait_physics_frames(75)` and assumed each waited frame was one car step. Under load the engine's physics ticks and GUT's frame count drift apart, so the car got fewer steps than frames waited: the drift's own clock (`_drift_time`, +1 `dt` per car step) read about 1.1 s, not 1.5 s.
 Fix (test only, no game code): the car's own physics process is switched off in the test (`run.car.set_physics_process(false)`) and `run.car.physics_step()` (the car's public step) is called 75 times, then 3 times after the drift ends. Same run, same code path, a known step count. No assert removed or loosened.
-Load check: the file (`-gselect=test_run_likes`) run 10 times while the full GUT suite ran in a second Godot process (other agents' runs added load): the drift test passed 10 of 10. The file as a whole passed 7 of 10: the other 3 runs failed on a different test in the same file, `test_switch_off_level_up_keeps_clock_running` ("the clock keeps running": `await wait_physics_frames(5)`, then expects time_left to drop; the same wall-clock-frame flaw). Out of this ticket's scope; needs its own ticket with the same fix pattern.
-Three sets: game/tools python OK (582 tests), tools python OK, GUT 2172/2172 passing.
+Round 2 (widened by the Project Lead): a first load check (file 10 times, full suite in a second Godot process) gave the drift test 10 of 10 but the file 7 of 10: `test_switch_off_level_up_keeps_clock_running` failed 3 times ("the clock keeps running"; the clock follows `_process`, and 5 physics frames do not guarantee a process frame under load). Fixed in the same file, test only, no assert changed or removed:
+- `test_switch_off_level_up_keeps_clock_running`: `state.advance(0.1)` (the clock's own public step) instead of `await wait_physics_frames(5)`.
+- `test_switch_on_pauses_until_choice_made` ("the clock runs again") and `test_switch_on_freezes_the_car` ("the car moves again"): the real unpaused tree must run, so `await wait_until(<condition>, 5.0)` replaces the fixed 5 frames; the asserts after it are unchanged. The "stopped" waits of 10 frames (nothing may move) are safe under load and left.
+- `test_run_scene_drift_gives_xp`: the car is stepped by hand (`set_physics_process(false)` + `physics_step()` for the same count) instead of `wait_physics_frames(steps)`, same flaw as the combo test.
+Load check, round 2 (GUT option `-gselect=test_run_likes`, checked: it runs the one file, 37 tests): the file run 10 times while the full GUT suite ran in a second Godot process: 10 of 10 passed (all 37 tests each); the full suite alongside also passed.
+Three sets: game/tools python OK (752 tests, 1 skipped), tools python OK (582 tests), GUT 2172/2172 passing.
 Changed: game/tests/unit/run/test_run_likes.gd. Documents affected: none.
+- 2026-10-30, in-progress → in-qa: Test steps the car 75 times by hand; drift test 10/10 under load; three sets pass
