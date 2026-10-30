@@ -1,7 +1,7 @@
 ---
 id: T-408
 title: Gun: one-shots a minion from tier 1; upgrades are +1 bullet x2, faster x2, 3 targets, +1 bullet x2, faster x2, 5 targets
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -122,3 +122,4 @@ The proposal above (×1.25 per "faster" tier) is superseded: the Project Lead's 
 **Doomed-target fix (Project Lead, 2026-10-30, before QA):** below tier 6 each bullet, as it leaves, skips a target that is dead or doomed (the gun's bullets still in flight at it carry at least its health: `starting_gun.gd` `is_doomed()` / `damage_in_flight()`, tracking `[bullet, target]` pairs in `_in_flight`) and goes to the closest living, not doomed enemy in range; when every enemy in range is doomed it keeps its target. Against one-shot minions, bullet 1 goes to the closest, bullet 2 to the next closest and so on, so each +1 bullet upgrade kills one more minion per volley. A tough enemy (the kaiju) still takes the whole volley. From tier 6 the fan is unchanged. New tests: `test_below_tier_6_bullets_skip_a_minion_already_doomed` (3 real minions at tier 3: one bullet each, all three die) and `test_below_tier_6_a_tough_target_keeps_the_whole_volley`. The GIF is unchanged: tier 1 fires one bullet, and tiers 6 and 11 use the fan. Tests after the fix: game/tools 678 run, OK (1 skipped); tools 579 run, OK; GUT 158 scripts, 1954 tests, 1954 passing, 1247839 asserts.
 
 **Documents affected:** `docs/weapons.md` (Content, "The starting gun": targeting rule, damage, tiers 2 to 11, the kaiju; "The level-up offers": each weapon's own last tier; Open questions: the fire-rate question closed), `game/docs/weapons/starting-gun.md`.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board
