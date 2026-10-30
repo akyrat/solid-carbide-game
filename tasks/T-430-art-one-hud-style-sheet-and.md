@@ -37,13 +37,13 @@ The board's review: Compare the before and after screenshots in art-archive/<id>
 
 ## Acceptance criteria
 
-- [ ] docs/visual-style.md holds one HUD style sheet: outline thickness and colour, palette, panel shapes and corners, the number font and the word font, and the pixel scale. (QA: pass / fail)
-- [ ] The result notes list every HUD piece named in the description, saying for each what differs from the sheet and what changed, or why it already fits. (QA: pass / fail)
-- [ ] Every redrawn piece is in game/art/hud/ (or its existing folder) with its record, the old versions are in art-archive/<id>/, and no PixelLab generations were used (or any used are listed with the reason). (QA: pass / fail)
-- [ ] Each redrawn piece went through the style loop, with every round in the Style review; python game/tools/style_rules.py finds no Greenbull colour in any HUD piece outside Greenbull's things. (QA: pass / fail)
-- [ ] The result notes list, piece by piece, the code changes the UI ticket needs (fonts, colours, outline widths). (QA: pass / fail)
-- [ ] Before and after screenshots of the same moment in a run, the after one showing the redrawn art in the game, are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass / fail)
+- [ ] docs/visual-style.md holds one HUD style sheet: outline thickness and colour, palette, panel shapes and corners, the number font and the word font, and the pixel scale. (QA: pass)
+- [ ] The result notes list every HUD piece named in the description, saying for each what differs from the sheet and what changed, or why it already fits. (QA: pass)
+- [ ] Every redrawn piece is in game/art/hud/ (or its existing folder) with its record, the old versions are in art-archive/<id>/, and no PixelLab generations were used (or any used are listed with the reason). (QA: pass)
+- [ ] Each redrawn piece went through the style loop, with every round in the Style review; python game/tools/style_rules.py finds no Greenbull colour in any HUD piece outside Greenbull's things. (QA: pass)
+- [ ] The result notes list, piece by piece, the code changes the UI ticket needs (fonts, colours, outline widths). (QA: pass)
+- [ ] Before and after screenshots of the same moment in a run, the after one showing the redrawn art in the game, are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass)
 
 ## Updates
 
@@ -108,5 +108,7 @@ Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-430/br
 **Checks:** `python game/tools/style_rules.py art game/art/hud/subgoal_frame.png`: all pass, no Greenbull colour. `hud_sheet_check.py` over every piece in `game/art/hud/`: all ok. `python -m unittest discover -s game/tools -p "test_*.py"`: 727 tests OK (1 skipped), including 5 new ones.
 
 **Screenshots** (`art-archive/T-430/screenshots/`): `hud_run_before.png` (T-428's run shot, the old frame), `hud_run_after.png` (the same fixture `t428_hud_style_demo.tscn`, the new frame; the popup and viewers number differ because they animate), `subgoal_frame_before_after.png` (enlarged 4x, dark and light). Contact sheet of all pieces: `art-archive/T-430/before/contact_before.png`.
+
+**QA round 1:** all 7 criteria pass. Tests: 727 run, OK (1 skipped). style_rules on subgoal_frame.png: all pass, no Greenbull colour. Sheet is in docs/visual-style.md (rules 1 to 7); old frame and record in art-archive/T-430/before/; three screenshots present. `tools/qa_check.py` was refused (needs approval), so its paperwork lines were checked by hand.
 
 **Weak spot for the board:** the redraw is a 3-pixel change at the corners, small to see; the real inconsistencies left are the weapon icons' scale and the code-side fonts and outlines.
