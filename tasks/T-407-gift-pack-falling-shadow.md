@@ -1,7 +1,7 @@
 ---
 id: T-407
 title: A falling gift pack casts a shadow where it will land, like the car's shadow in the air
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -41,12 +41,12 @@ The board's review: level up, watch the helicopter drop the gift pack on the gro
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] While a gift pack falls, a shadow shows at its landing spot, made with the car's air shadow (tests). (QA: pass / fail)
-- [ ] On a platform the shadow sits at the platform's height, on the ground at the ground's (tests). (QA: pass / fail)
-- [ ] The shadow goes when the package lands (test). (QA: pass / fail)
-- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass / fail)
-- [ ] A GIF of a gift pack falling with its shadow, on the ground and on a platform, is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] While a gift pack falls, a shadow shows at its landing spot, made with the car's air shadow (tests). (QA: pass - test 1 uses car_shadow.gd at the landing spot)
+- [ ] On a platform the shadow sits at the platform's height, on the ground at the ground's (tests). (QA: pass - platform-height test)
+- [ ] The shadow goes when the package lands (test). (QA: pass - freed on landing test)
+- [ ] Game loop architecture (Content) and game/docs/game-loop/ describe it. (QA: pass - both docs updated)
+- [ ] A GIF of a gift pack falling with its shadow, on the ground and on a platform, is in `art-archive/<id>/screenshots/`. (QA: pass - two GIFs present (street, roof))
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - Godot 162 scripts/2007 tests, game/tools 686 OK, tools 579 OK)
 
 ## Updates
 
@@ -55,6 +55,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build E, on top of T-402 (pickups at their height).
+
+### 2026-10-30, In progress → In QA
+
+A falling gift pack now shows the car's air shadow at its landing spot, at the ground's or platform's height, gone on landing; tests green, GIFs in art-archive/T-407/screenshots/.
 
 ## Style review
 
