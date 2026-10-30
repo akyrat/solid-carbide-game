@@ -1,7 +1,7 @@
 ---
 id: T-431
 title: The HUD scales with the window, and a HUD size slider on the pause screen
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/hud.md, game/docs/hud-and-menus/pause-screen.md, game/data/pause_text.json, game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd, game/project.godot]
 files_expected_to_change: [game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, game/scripts/ui/pause_screen.gd, game/scripts/ui/game_settings.gd, game/project.godot, game/tests/unit/hud/test_hud_scaling.gd, game/tests/unit/test_hud_size_slider.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game/docs/hud-and-menus/pause-screen.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-431.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-008): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
 
 ## Style review
 
@@ -107,3 +111,4 @@ Written by the agent when it finishes.
 **Refusals:** none.
 
 **QA round 1 (2026-10-30): all 7 criteria pass.** `python tools/qa_check.py` was refused (not on the pre-approved list), so I ran the three test sets directly: GUT 2170/2170 passing (run_tests.sh), `game/tools` unittest 736 OK (1 skipped), `tools` unittest 582 OK. Each criterion was judged from the test files, the code and the docs by grep, not by re-reading every line. Test names in test_hud_scaling.gd cover the five sizes, nearest filtering and camera zoom. test_hud_size_slider.gd covers the label, the drag and the saved value. The grep finds `hud_size_label` only as a key and variable, and the text itself is only in pause_text.json. Nine screenshots are in art-archive/T-431/screenshots/: five sizes and four slider-end shots. The three docs mention the rule, range and covered screens. The qa_check marks run was skipped.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
