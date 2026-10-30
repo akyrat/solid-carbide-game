@@ -1,7 +1,7 @@
 ---
 id: T-422
 title: Each weapon has its own top tier
-status: in-progress
+status: in-qa
 from: project-lead
 to: weapon-behavior
 lead: Audit
@@ -39,10 +39,10 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Each weapon's top tier comes from its own data; the gun reaches its T-408 top tier while the others keep theirs. (QA: pass / fail)
-- [ ] A weapon at its own top tier is never offered in a gift pack. (QA: pass / fail)
-- [ ] A gun with bullets 0 in the data doesn't crash and reports an error. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Each weapon's top tier comes from its own data; the gun reaches its T-408 top tier while the others keep theirs. (QA: pass)
+- [ ] A weapon at its own top tier is never offered in a gift pack. (QA: pass)
+- [ ] A gun with bullets 0 in the data doesn't crash and reports an error. (QA: pass)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-worktrees\T-422, Weapon Behavior Agent. It goes to master with build J.
+
+### 2026-10-30, In progress → In QA
+
+Build J (Audit): the agent finished. T-408's per-weapon top tier already worked everywhere; added the gift pack check's tests and a bullets 0 error. In QA now.
 
 ## Style review
 
@@ -74,3 +78,10 @@ Test counts:
 - `python -m unittest discover -s tools`: 582 tests OK.
 
 Screenshots: none, nothing here is on screen.
+
+QA round 1, 2026-10-30:
+- Criterion 1 pass: weapons.json has shared max_tier 8 and the gun's own 11; WeaponData.max_tier(weapon) is used by weapon.gd; new tests assert gun 11, molotov 8, clamp per weapon.
+- Criterion 2 pass: gift pack test covers all six weapons over 10 seeds; the gun at 10 is still offered.
+- Criterion 3 pass: starting_gun.gd returns without firing on bullets 0 and does one push_error per run; test_no_bullets_fires_nothing asserts no volleys and exactly one error.
+- Criterion 4 pass: new tests present; qa_check ran all three test sets (GUT, game/tools, tools) on the branch and they passed, including the full GUT suite after the test fix.
+- qa_check: tests PASS, documents PASS (none listed), screenshots PASS (nothing to picture).
