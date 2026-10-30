@@ -2680,3 +2680,8 @@ Entry format:
 - Decision or change: The car's whole 1 by 3 outline meets raised sides, turns included; the board kept today's behaviour on the four open questions (roof-edge tip-off, bumper bounce, slow ramp tops, skyscraper nose).
 - Documents touched: none
 - Tasks: T-411
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: test_run_likes.gd steps the car and the run's clock directly instead of waiting on frames, so it no longer fails when the machine is busy.
+- Documents touched: none
+- Tasks: T-434
