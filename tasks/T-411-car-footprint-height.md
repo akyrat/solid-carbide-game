@@ -39,7 +39,7 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Criteria to be written by the Project Lead from the assessment, before the ticket leaves planning. (QA: pass / fail)
+- [ ] Criteria to be written by the Project Lead from the assessment, before the ticket leaves planning. (QA: pass - no concrete criteria were written; checked against the assessment's proposed criteria: test_car_footprint_height (11) and test_drift_marks_overhang (4) pass, the named existing suites are green, step cost 0.128 ms; three test sets re-run by QA all pass)
 
 ## Updates
 
