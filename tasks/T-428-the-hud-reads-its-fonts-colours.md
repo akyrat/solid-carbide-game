@@ -1,7 +1,7 @@
 ---
 id: T-428
 title: The HUD reads its fonts, colours and outlines from one shared HUD style (looks unchanged)
-status: in-qa
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [game/docs/hud-and-menus/hud.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/hud.gd, game/scenes/hud/hud.tscn, game/data/hud.json, game/tests/unit/hud/test_hud_layout.gd]
 files_expected_to_change: [game/scripts/hud/hud_style.gd, game/scripts/hud/*.gd, game/scripts/ui/pause_screen.gd, game/scripts/ui/level_up_screen.gd, game/tests/unit/hud/test_hud_style.gd, game/docs/hud-and-menus/hud.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -53,6 +53,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-428.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-008): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Done
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
 
 ## Style review
 
@@ -115,3 +119,4 @@ All six criteria pass. `python tools/qa_check.py` was refused (needs approval, n
 - Full GUT: 2135/2136 on the first run (took 662 s under load). The one failure was `test_run_likes.gd`, a timing-based drift test with no link to the HUD. On rerun alone it failed with different counts, then passed 18/18 on a third run, so it is load-dependent flakiness, not T-428. Python sets: game/tools 722 OK (1 skipped), tools 582 OK.
 - Screenshots `hud_run.png`, `pause.png` and `level_up.png` exist in `art-archive/T-428/screenshots/`. The "before" match rests on the pinned-values test and the archived shots, as the notes say.
 - `hud.md` has the "HUD's shared style" paragraph naming `scripts/hud/hud_style.gd` and how scripts read it.
+- 2026-10-30, in-qa → done: QA passed every criterion (goal G-008).
