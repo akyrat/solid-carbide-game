@@ -1,7 +1,7 @@
 ---
 id: T-433
 title: Art: the splash cover behind the main menu (PixelLab)
-status: open
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -47,6 +47,10 @@ The board's review: Open the main menu with the splash cover behind it, and look
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-433.
 
 ## Style review
 
