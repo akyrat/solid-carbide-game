@@ -15,8 +15,8 @@ extends RefCounted
 ## wall" means. AStarGrid2D cannot leave out a link between two open cells,
 ## which is why it is AStar2D.
 ##
-## One per map, built on first use and kept on the map (for_map), so the
-## minions and the kaiju share it. The build is about 14 400 points; the
+## One per map and body size, built on first use and kept on the map (for_map):
+## the minions share one, the kaiju has its own (T-419, below). The build is about 14 400 points; the
 ## enemies only ask it for a path when they are not on the car's surface
 ## (surface_at), about once a second each (enemy_path_follower.gd).
 ##
@@ -24,6 +24,22 @@ extends RefCounted
 ## the ramp's centre line, RAMP_OUT units beyond its foot and beyond its top,
 ## so every enemy (the kaiju is 4 units wide, a ramp 10) goes up and down a
 ## ramp along its middle and not along its sides.
+##
+## Body size (task T-419; Enemies, Decisions, "The kaiju only takes paths it
+## fits through"): a navigation plans for one body radius, its
+## building_margin. Buildings, boulders and props close every cell whose
+## centre is nearer than that to them, so each path point is at least the
+## body's radius off them and a gap narrower than the body is closed. Each
+## enemy asks for_map() with its own radius: the minions with theirs
+## (minion_radius(), T-379's size), the kaiju with its 2 units. Before, every
+## enemy shared the minion's grid and the kaiju was sent through gaps it does
+## not fit and to points 1 unit off a wall, which it never reached.
+## A navigation can also keep the body off the ground's edges (edge_radius,
+## the kaiju's: a rooftop's edge stops its whole 2-unit radius, enemy_height.gd
+## fits): a cell where the body would hang over an edge is closed too, and a
+## drop then links the last cell it fits on the rooftop to the first it fits
+## on below, a few cells apart (drop_span). The minions keep edge_radius 0,
+## their grid as before (their edges use the old 0.5-unit radius, T-379).
 ##
 ## Drops (task T-226; Enemies, Decisions, "Enemies jump down off ledges"):
 ## each open rooftop cell beside lower ground (more than MAX_STEP lower, on
@@ -62,10 +78,21 @@ const _EDGE_DIRS := [Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1
 ## climbs 0.25 units per unit, well under MAX_STEP over this step).
 const SIGHT_FINE := 0.25
 
-## T-379: the margin grows with the minion's size (BASE_MARGIN times
-## enemies.json minion.size_scale), so a bigger minion still fits the gaps it is
-## sent through. Set from the data in build_for_map().
+## The body radius this navigation plans for (units): how far every open
+## cell's centre is from the buildings, boulders and props. T-379: the
+## minions' grows with their size (minion_radius()); T-419: the kaiju's is its
+## own radius. Set in build_for_map().
 var building_margin := BASE_MARGIN
+## T-419: what closes cells, kept for clearance(): the rectangles (buildings,
+## props) and the circles ([centre, radius]: boulders, round props).
+var block_rects: Array = []
+var block_circles: Array = []
+## T-419: the body's radius kept off the ground's edges (0: none, the
+## minions); per cell, 1 where only that closed it (the body hangs over an
+## edge there; not a building's); and how many cells a drop link may span.
+var edge_radius := 0.0
+var unfit := PackedByteArray()
+var drop_span := 1
 var ground
 var astar := AStar2D.new()
 var origin := Vector2.ZERO
@@ -93,25 +120,46 @@ var drop_links := 0
 
 
 ## The navigation of `map` (built by mvp_map.gd) on a map with elevation
-## (map.elevation, elevation_layer.gd), built once and kept on the map; null
-## on a map without heights (the MVP map: enemies walk straight at the car).
-static func for_map(map: Node) -> RefCounted:
+## (map.elevation, elevation_layer.gd) for a body of `radius` units (T-419;
+## below 0: the minion's, minion_radius()), built once per radius and kept on
+## the map; null on a map without heights (the MVP map: enemies walk straight
+## at the car). `fit_edges`: the body also keeps `radius` off the ground's
+## edges (edge_radius; the kaiju).
+static func for_map(map: Node, radius: float = -1.0, fit_edges: bool = false) -> RefCounted:
 	if map == null or not is_instance_valid(map):
 		return null
 	var elevation = map.get("elevation")
 	if elevation == null:
 		return null
-	if map.has_meta(META_KEY):
-		return map.get_meta(META_KEY)
-	var nav = build_for_map(map)
-	map.set_meta(META_KEY, nav)
+	var margin := radius if radius > 0.0 else minion_radius()
+	var key := meta_key(margin, fit_edges)
+	if map.has_meta(key):
+		return map.get_meta(key)
+	var nav = build_for_map(map, true, margin, fit_edges)
+	map.set_meta(key, nav)
 	return nav
 
 
+## The map's meta key for the navigation of a body of `radius` units (and
+## `fit_edges`): the minions' keeps META_KEY, other bodies get their own.
+static func meta_key(radius: float, fit_edges: bool = false) -> String:
+	if is_equal_approx(radius, minion_radius()) and not fit_edges:
+		return META_KEY
+	return "%s_%d%s" % [META_KEY, int(round(radius * 1000.0)), "_fit" if fit_edges else ""]
+
+
+## The minions' body radius, units (T-379: BASE_MARGIN, the old minion radius,
+## times enemies.json minion.size_scale; minion.gd radius_units()).
+static func minion_radius() -> float:
+	return BASE_MARGIN * float(EnemyData.new().minion().get("size_scale", 1.0))
+
+
 ## A new navigation for `map` (which must have elevation), not kept on the
-## map. `drops` false leaves out the drop links (T-226), for comparison with
-## the paths before T-226 (tests, the soak).
-static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
+## map, for a body of `radius` units (below 0: the minion's), kept off the
+## ground's edges too with `fit_edges` (edge_radius). `drops` false
+## leaves out the drop links (T-226), for comparison with the paths before
+## T-226 (tests, the soak).
+static func build_for_map(map: Node, drops: bool = true, radius: float = -1.0, fit_edges: bool = false) -> RefCounted:
 	var elevation = map.get("elevation")
 	var blocks: Array = []
 	# T-405: only what stays a building closes cells (short_platforms.gd wall_rects); the short
@@ -126,7 +174,8 @@ static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
 	blocks.append_array(prop_obstacles.rects)
 	boulders.append_array(prop_obstacles.circles)
 	var nav = load("res://scripts/enemies/enemy_navigation.gd").new()
-	nav.building_margin = BASE_MARGIN * float(EnemyData.new().minion().get("size_scale", 1.0))
+	nav.building_margin = radius if radius > 0.0 else minion_radius()
+	nav.edge_radius = nav.building_margin if fit_edges else 0.0
 	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders, drops)
 	return nav
 
@@ -138,6 +187,8 @@ static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
 func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], drops: bool = true) -> void:
 	var t0 := Time.get_ticks_usec()
 	ground = the_ground
+	block_rects = blocks.duplicate()
+	block_circles = boulders.duplicate()
 	origin = map_rect.position
 	cols = int(floor(map_rect.size.x / CELL))
 	rows = int(floor(map_rect.size.y / CELL))
@@ -150,6 +201,10 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 	ramp_of.fill(-1)
 	rough.resize(n)
 	rough.fill(0)
+	unfit.resize(n)
+	unfit.fill(0)
+	# T-419: a drop from the last cell the body fits on above to the first below.
+	drop_span = 1 + ceili(2.0 * edge_radius / CELL) if edge_radius > 0.0 else 1
 	# Heights: only cells inside an area can be above 0.
 	var areas: Array = []
 	for p in ground.platforms:
@@ -170,6 +225,15 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 		var reach: float = float(bo[1]) + building_margin
 		_for_cells_in(Rect2(centre - Vector2(reach, reach), Vector2(reach, reach) * 2.0),
 			func(k: int, c: Vector2) -> void: if c.distance_to(centre) < reach: open[k] = 0)
+	# T-419: the map's edge stops a body like a wall; cells nearer to it than the
+	# body's radius are closed (strictly nearer: the minions' cells, 1 unit off it, stay).
+	for k in n:
+		var c := cell_centre(k)
+		if minf(minf(c.x - map_rect.position.x, map_rect.end.x - c.x),
+				minf(c.y - map_rect.position.y, map_rect.end.y - c.y)) < building_margin - 0.0001:
+			open[k] = 0
+	if edge_radius > 0.0:
+		_close_unfit(areas)
 	astar.clear()
 	astar.reserve_space(n)
 	for k in n:
@@ -201,9 +265,30 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 	build_usec = Time.get_ticks_usec() - t0
 
 
+## T-419: closes (open 0, unfit 1) every open cell where a body of
+## edge_radius hangs over an edge of the ground (enemy_height.gd, fits). Only
+## the cells within edge_radius of an area's (a rooftop's, a platform's, a
+## ramp's) boundary are checked: elsewhere the ground under the body is flat.
+func _close_unfit(areas: Array) -> void:
+	var near := PackedByteArray()
+	near.resize(open.size())
+	near.fill(0)
+	for rect in areas:
+		var inner: Rect2 = (rect as Rect2).grow(-edge_radius)
+		_for_cells_in((rect as Rect2).grow(edge_radius),
+			func(k: int, c: Vector2) -> void: if not (inner.size.x > 0.0 and inner.size.y > 0.0 and inner.has_point(c)): near[k] = 1)
+	for k in open.size():
+		if near[k] == 1 and open[k] == 1 and not EnemyHeightScript.fits(ground, cell_centre(k), edge_radius):
+			open[k] = 0
+			unfit[k] = 1
+
+
 ## The one-way drop links (T-226): from every open cell off the ramps down to
 ## each of its four neighbours that is open, off the ramps and more than
-## MAX_STEP lower.
+## MAX_STEP lower. T-419, with edge_radius: to the first open cell up to
+## drop_span cells away in each of the four directions, the cells between
+## closed only because the body hangs over the edge there (not a building's)
+## and off the ramps.
 func _add_drops() -> void:
 	var step := EnemyHeightScript.MAX_STEP
 	for j in rows:
@@ -213,23 +298,31 @@ func _add_drops() -> void:
 				continue
 			var h := heights[k]
 			for d in [[1, 0], [-1, 0], [0, 1], [0, -1]]:
-				var ni: int = i + int(d[0])
-				var nj: int = j + int(d[1])
-				if ni < 0 or nj < 0 or ni >= cols or nj >= rows:
-					continue
-				var e := nj * cols + ni
-				if open[e] == 0 or ramp_of[e] >= 0 or h - heights[e] <= step:
-					continue
-				astar.connect_points(k, e, false)
-				drop_links += 1
+				for s in range(1, drop_span + 1):
+					var ni: int = i + int(d[0]) * s
+					var nj: int = j + int(d[1]) * s
+					if ni < 0 or nj < 0 or ni >= cols or nj >= rows:
+						break
+					var e := nj * cols + ni
+					if ramp_of[e] >= 0:
+						break
+					if open[e] == 0:
+						if unfit[e] == 1:
+							continue
+						break
+					if h - heights[e] > step:
+						astar.connect_points(k, e, false)
+						drop_links += 1
+					break
 
 
 ## True when going from path point `a` to the next one, `b`, drops off an
-## edge: they are neighbouring cells (a drop link) and `b`'s ground is more
-## than MAX_STEP lower than `a`'s. A ramp's two points (top, then foot) are
-## much farther apart, so going down a ramp is not a drop.
+## edge: they are neighbouring cells, or up to drop_span cells apart (T-419; a
+## drop link), and `b`'s ground is more than MAX_STEP lower than `a`'s. A
+## ramp's two points (top, then foot) are much farther apart (a ramp is 12
+## units long), so going down a ramp is not a drop.
 func is_drop(a: Vector2, b: Vector2) -> bool:
-	return a.distance_to(b) <= CELL * 1.01 		and ground.height_at(a) - ground.height_at(b) > EnemyHeightScript.MAX_STEP
+	return a.distance_to(b) <= CELL * drop_span * 1.01 		and ground.height_at(a) - ground.height_at(b) > EnemyHeightScript.MAX_STEP
 
 
 ## True when the four cells are open and their heights within MAX_STEP of each
@@ -448,7 +541,11 @@ func through_ramps(ids: PackedInt64Array) -> PackedVector2Array:
 		var h_out := heights[ids[j + 1]] if j + 1 < n else heights[ids[j]]
 		var ramp: Dictionary = ground.ramps[r]
 		var mid := (float(ramp.bottom_height) + float(ramp.top_height)) / 2.0
-		if i > 0 and j + 1 < n and absf(h_out - h_in) < CLIMB_MIN:
+		var skim := i > 0 and j + 1 < n and absf(h_out - h_in) < CLIMB_MIN
+		# T-419: where the body does not fit at an end point, the path's own cells.
+		var blocked := (i > 0 and not _fits_at(ramp_end(r, h_in >= mid))) \
+			or (j + 1 < n and not _fits_at(ramp_end(r, h_out >= mid)))
+		if skim or blocked:
 			for k in range(i, j + 1):
 				out.append(cell_centre(ids[k]))
 		else:
@@ -460,6 +557,30 @@ func through_ramps(ids: PackedInt64Array) -> PackedVector2Array:
 				out.append(cell_centre(ids[j]))
 		i = j + 1
 	return out
+
+
+## T-419: true when the body fits at `units`: building_margin off every
+## building, prop and boulder, and (with edge_radius) off the ground's edges.
+## A ramp's end point can fail it (a rooftop's air-conditioning unit right at
+## a ramp's top); the path then keeps its own cells over that ramp, which the
+## body fits by the grid's construction.
+func _fits_at(units: Vector2) -> bool:
+	if clearance(units) < building_margin:
+		return false
+	return edge_radius <= 0.0 or EnemyHeightScript.fits(ground, units, edge_radius)
+
+
+## T-419: how far `units` is from the nearest building, prop or boulder that
+## closes cells (INF with none).
+func clearance(units: Vector2) -> float:
+	var best := INF
+	for r in block_rects:
+		var rr: Rect2 = r
+		var q := Vector2(clampf(units.x, rr.position.x, rr.end.x), clampf(units.y, rr.position.y, rr.end.y))
+		best = minf(best, units.distance_to(q))
+	for c in block_circles:
+		best = minf(best, units.distance_to(c[0]) - float(c[1]))
+	return best
 
 
 ## A ramp's path point: on its centre line, RAMP_OUT units beyond its top

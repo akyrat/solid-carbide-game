@@ -108,10 +108,12 @@ func _chase(ms: Array, limit: float) -> Dictionary:
 
 # --- The navigation -------------------------------------------------------------
 
-func test_one_navigation_per_map_shared_by_minions_and_kaiju() -> void:
+func test_one_navigation_per_map_for_the_minions_and_one_for_the_kaiju() -> void:
 	var nav = spawner.navigation
 	assert_not_null(nav, "the elevation map has a navigation")
-	assert_eq(run.kaiju_boss.navigation, nav, "the kaiju uses the same one")
+	# T-419: the kaiju plans for its own body, on its own navigation of the same map.
+	assert_ne(run.kaiju_boss.navigation, nav, "the kaiju has its own (T-419)")
+	assert_eq(run.kaiju_boss.navigation, EnemyNavigationScript.for_map(run.map, KaijuScript.RADIUS_UNITS, true))
 	assert_eq(EnemyNavigationScript.for_map(run.map), nav, "kept on the map")
 	assert_eq(spawner.ground, ground)
 	gut.p("navigation build: %d points, %.1f ms" % [nav.astar.get_point_count(), nav.build_usec / 1000.0])

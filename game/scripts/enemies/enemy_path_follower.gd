@@ -88,7 +88,13 @@ func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = 
 		_forget()
 		return car_units
 	clock -= dt
-	if (car_s != car_surface or clock <= 0.0) and (not budgeted or nav.can_find_path()):
+	# T-419: once on its way off an edge (its target is a drop's landing) it keeps the path
+	# for up to another REPATH_SECONDS: the kaiju's drop starts 3 units back from the edge
+	# (enemy_navigation.gd, drop_span), and a new path from over the edge led back up to that
+	# point, so it walked to and fro there and never dropped.
+	var committed: bool = index > 0 and index < path.size() and nav.is_drop(path[index - 1], path[index]) \
+		and clock > -REPATH_SECONDS
+	if (car_s != car_surface or clock <= 0.0) and not committed and (not budgeted or nav.can_find_path()):
 		path = nav.find_path(from, car_units)
 		index = 0
 		clock = REPATH_SECONDS

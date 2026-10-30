@@ -1,7 +1,7 @@
 ---
 id: T-419
 title: The kaiju only takes paths it fits through
-status: open
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/kaiju_boss.gd, game/scripts/enemies/kaiju.gd, game/scripts/enemies/enemy_path_follower.gd, tasks/T-379-minions-twice-as-big.md]
 files_expected_to_change: [game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/kaiju_boss.gd]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,14 +41,26 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] On the board's level, every waypoint of the kaiju's planned path is at least its radius from every building (test over 50 start/target pairs). (QA: pass / fail)
-- [ ] A gap narrower than the kaiju's diameter is never on its path; minions still use it. (QA: pass / fail)
-- [ ] In a scripted run, the kaiju reaches a target behind two buildings within 30 s without stopping for more than 2 s. (QA: pass / fail)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] On the board's level, every waypoint of the kaiju's planned path is at least its radius from every building (test over 50 start/target pairs). (QA: pass - 50 pairs, 3094 waypoints, nearest building 2.00, none over an edge (test_kaiju_path_size).)
+- [ ] A gap narrower than the kaiju's diameter is never on its path; minions still use it. (QA: pass - synthetic 3 and 3.5-unit gaps: minions cross, kaiju goes round; 6-unit gap still used by kaiju.)
+- [ ] In a scripted run, the kaiju reaches a target behind two buildings within 30 s without stopping for more than 2 s. (QA: pass - see report: car on a rooftop, two buildings on the straight line (own roof excluded), reached 20.7 s, longest stop 0.72 s.)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass - new test file (6 tests) covers 1 to 3; qa_check: three test sets pass.)
 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-worktrees\T-419, Enemy Behavior Agent.
+
+### 2026-10-30, In progress → In QA
+
+Build J (Audit): the agent finished; each enemy plans for its own size. Beyond the ticket: the kaiju's grid also keeps its body off rooftop and ramp edges (drops start 3 units back), and enemy_path_follower.gd keeps a drop's path for up to 1 s. In QA now.
+
+### 2026-10-30, In QA → Needs playtest
+
+Build J (Audit): QA passed all 4 criteria (criterion 3 tested with the car on a rooftop, two buildings between). Merged into playtest/audit-world, waiting for the board's playtest of build J.
 
 ## Style review
 
@@ -57,3 +69,33 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+**Enemy Behavior Agent, 2026-10-30: done.**
+
+What changed:
+- `game/scripts/enemies/enemy_navigation.gd`: one navigation per body size. `for_map(map, radius = -1, fit_edges = false)` keeps each on the map (`meta_key()`; the minions' keeps the old key). `building_margin` = the body's radius: the minions' from `minion_radius()` (BASE_MARGIN x `minion.size_scale`, T-379), the kaiju's `RADIUS_UNITS` (2). Cells strictly nearer than the radius to the map's edge are closed too (minions unchanged: their cells sit exactly 1 unit off it). With `fit_edges` (the kaiju) cells where its body would hang over a rooftop's or ramp's edge are closed (`EnemyHeight.fits`, only near area boundaries), and drop links span up to `drop_span` (3) cells, from the last cell it fits on above to the first below (`is_drop` allows that distance). Where a ramp's end point doesn't fit (Kaiju City: an AC unit prop sits right on ramp-12's top point), the path keeps its own cells over that ramp. `clearance()` / `_fits_at()` added.
+- `game/scripts/enemies/kaiju_boss.gd`: `for_map(map, KaijuScript.RADIUS_UNITS, true)`.
+- `game/scripts/enemies/enemy_path_follower.gd` (not in files_expected_to_change; needed): while the target is a drop's landing, the follower keeps its path for up to another REPATH_SECONDS. Without it the kaiju's drop (which starts 3 units back from the edge, over a second's walk) re-planned from over the edge back up to the top point and walked to and fro (caught by the existing kaiju drop test).
+- Why the edges too: with only the building margin the 50-pair check passed, but 139 of 2640 kaiju waypoints still put its body over a rooftop edge, and 5 of 10 scripted runs to a car on roof-1 jammed for the whole 60 s (the reported "stuck when the car is on a rooftop"). With the edge fit: 0, and 10 of 10 reach the car.
+- Minions: their grid is unchanged (edge_radius 0, drop_span 1); the only change they see is the ramp-end fallback where a prop is on the ramp's end point, and the drop commitment.
+- Build time on Kaiju City: minions about 75 ms, kaiju about 115 ms, both at the run's start.
+- Tool: `game/tools/draw_kaiju_nav.gd` / `.sh` draws a level's kaiju grid and paths (old in red, new in cyan).
+- Docs: `docs/enemies.md`, Content, "Enemies on rooftops and ramps": a bullet for T-419 (the decision itself unchanged). `game/docs/enemies/ledges-and-rooftops.md`: new section "A way planned for each body's size (T-419)".
+
+Tests: `game/tests/unit/enemies/test_kaiju_path_size.gd` (new, 6 tests; the board's level tests skip with a message when `res://data/levels/kaiju_city.json` is missing):
+- Criterion 1: 50 seeded start/target pairs on Kaiju City (9 to rooftops, 3094 waypoints): nearest waypoint to any building, prop or boulder 2.00 units; 0 waypoints over an edge.
+- Criterion 2: synthetic map, 3 and 3.5-unit gaps: minions go through, the kaiju goes round the wall's end; a 6-unit gap is used by the kaiju through its middle.
+- Criterion 3: a street spot to a car on a rooftop with two buildings on the line between (searched, seeded): reached in 20.7 s, longest stop (staying within 1 unit of a spot) 0.72 s. Also a car on roof-1 from ten street spots: all reached, longest stop under 0.8 s. Kaiju City has no street-to-street pair with two buildings between and a path under 78 units, so the target is on a rooftop (the reported case).
+- `test_enemies_on_heights.gd`: the navigation test now checks that the kaiju has its own (renamed `test_one_navigation_per_map_for_the_minions_and_one_for_the_kaiju`).
+
+Test runs (all three sets, on this branch): Godot GUT 2131/2131 passed (173 scripts, 752 s; test_run_likes passed in the full run); `game/tools` Python 722 OK (1 skipped); `tools` Python 582 OK.
+
+Screenshots: `art-archive/T-419/screenshots/kaiju_nav_roof.png`, drawn from the data by `bash game/tools/draw_kaiju_nav.sh` (Kaiju City, 4 px per unit, the car on roof-1 as the white square): orange cells are open to minions and closed to the kaiju; red lines are the kaiju's paths on the old (minions') grid, hugging walls and edges; cyan the paths now, at least 2 units off.
+
+Board review files: art-archive/T-419/screenshots/kaiju_nav_roof.png
+
+**QA round 1, 2026-10-30: pass.** qa_check (--base playtest/audit-world): tests PASS (three sets), documents PASS (1 changed), screenshots PASS (1 file). All four criteria pass.
+- Criterion 3: the test's start is a street spot, the target a car on a rooftop; _buildings_between samples the straight line and counts distinct building rects it passes over, excluding the one the car stands in, and the search requires at least 2. So two buildings do lie between start and target and the path must go round them, but it is a rooftop target, not the literal street-to-street case (the level has none). Accepted as the reported case.
+- Beyond the ticket: minions' test coverage unchanged (criterion 2 test shows they still use 3 and 3.5-unit gaps; minion grid edge_radius 0, drop_span 1). The kaiju drop and ledge tests in test_enemies_on_heights pass in the full run (one test renamed to match the kaiju's own navigation). enemy_path_follower.gd change is a drop commitment, covered by that existing drop test.
+- Level file in game/data/levels/ was only read.
+- Test counts (QA rerun of the GUT set alone): 173 scripts, 2131/2131 passing, exit 0. The first qa_check run passed all three sets; the second run's set 3 exited 1 only on an exit-time message ('1 resources still in use at exit', also printed by the passing rerun), no test failed; the rerun alone passed. Python sets passed in both qa_check runs (agent reported 722 and 582).
