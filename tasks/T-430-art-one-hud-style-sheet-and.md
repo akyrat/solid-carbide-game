@@ -1,7 +1,7 @@
 ---
 id: T-430
 title: Art: one HUD style sheet, and script redraws of the HUD pieces that break it
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/hud-and-menus/livestream-hu
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md, game/docs/hud-and-menus/livestream-hud-art.md, game/tools/build_hud_livestream_art.py, game/tools/style_rules.py]
 files_expected_to_change: [docs/visual-style.md, game/art/hud/, game/tools/build_hud_livestream_art.py, game/tools/test_build_hud_livestream_art.py, game/docs/hud-and-menus/livestream-hud-art.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-430.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-008): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
 
 ## Style review
 
@@ -112,3 +116,4 @@ Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-430/br
 **QA round 1:** all 7 criteria pass. Tests: 727 run, OK (1 skipped). style_rules on subgoal_frame.png: all pass, no Greenbull colour. Sheet is in docs/visual-style.md (rules 1 to 7); old frame and record in art-archive/T-430/before/; three screenshots present. `tools/qa_check.py` was refused (needs approval), so its paperwork lines were checked by hand.
 
 **Weak spot for the board:** the redraw is a 3-pixel change at the corners, small to see; the real inconsistencies left are the weapon icons' scale and the code-side fonts and outlines.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
