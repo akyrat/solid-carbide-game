@@ -2710,3 +2710,8 @@ Entry format:
 - Decision or change: The car really bounces off walls even with W held, scaled by how hard it hits and capped so fast hits are not comical; no throttle cut. Replaces the 2026-10-10 rule that W keeps the car pressed against the wall.
 - Documents touched: docs/drifting.md
 - Tasks: T-435
+
+## 2026-10-30: The kaiju gets stuck from one street spot on the board's latest level
+- Decision or change: After the board saved kaiju_city.json at 21:12, T-419's test shows the kaiju never reaching a rooftop car from street spot (-79, 47), and every merge into master stops on it (T-420's merge stopped twice). A fix ticket for the Enemy Behavior Agent: fix the kaiju's planning, not the level, and don't loosen the test without the board.
+- Documents touched: docs/enemies.md
+- Tasks: T-436
