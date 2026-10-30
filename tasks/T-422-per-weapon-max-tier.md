@@ -4,7 +4,7 @@ title: Each weapon has its own top tier
 status: open
 from: project-lead
 to: weapon-behavior
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

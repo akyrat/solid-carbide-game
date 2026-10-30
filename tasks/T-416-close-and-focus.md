@@ -4,7 +4,7 @@ title: Closing the game mid-run, and pausing when the window loses focus
 status: open
 from: project-lead
 to: game-loop
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

@@ -4,7 +4,7 @@ title: A broken save never wipes progress
 status: open
 from: project-lead
 to: game-data
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

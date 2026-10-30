@@ -4,7 +4,7 @@ title: Meteors hit minions and push pickups aside
 status: open
 from: project-lead
 to: enemy-behavior
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

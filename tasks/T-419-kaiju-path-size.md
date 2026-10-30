@@ -4,7 +4,7 @@ title: The kaiju only takes paths it fits through
 status: open
 from: project-lead
 to: enemy-behavior
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

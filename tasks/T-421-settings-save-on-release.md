@@ -4,7 +4,7 @@ title: Settings sliders save once, on release
 status: open
 from: project-lead
 to: ui
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

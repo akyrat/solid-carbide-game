@@ -4,7 +4,7 @@ title: Pickups at full hearts, the combo's hit window, and the run's base values
 status: open
 from: project-lead
 to: game-loop
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

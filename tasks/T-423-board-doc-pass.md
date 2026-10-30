@@ -4,7 +4,7 @@ title: The board slims the docs and fixes what the audit found
 status: open
 from: project-lead
 to: board
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

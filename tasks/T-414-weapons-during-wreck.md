@@ -4,7 +4,7 @@ title: Weapons during the wreck, and molotovs land where enemies can be
 status: open
 from: project-lead
 to: weapon-behavior
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:

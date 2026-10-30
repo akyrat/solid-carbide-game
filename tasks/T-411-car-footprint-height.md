@@ -1,10 +1,10 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: planning
+status: open
 from: project-lead
 to: driving-drift
-lead: Preemptive-bug-bash
+lead: Greenbull
 epic: audit
 milestone: mvp
 goal:
@@ -49,6 +49,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Audit epic. A Driving & Drift agent is assessing the root cause read-only; criteria follow from its findings.
 
+### 2026-10-30, Planning → Open
+
+Back to open: the session that started it was stopped. It overlaps T-405's altitude audit, so I'll fold it in there or start it after build E.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -68,3 +72,4 @@ Written by the agent when it finishes.
 **Board decisions needed** (drifting.md, Decisions, Elevation): (a) roof-edge hang: tip off when the middle passes the edge (today), when the front wheels leave, or as soon as the nose leaves; (b) the drawn body bounces off a rooftop's or ramp's side as soon as the bumper touches; (c) does a crawling car (under 4 u/s) launch off a ramp's top too, or is there a minimum speed; (d) optional: keep the nose entering skyscrapers by 1 unit (the 1x1 body, 2026-10-07)?
 
 **Proposed criteria** (headless tests on the real `car.gd` with a GroundHeight): no outline point more than 0.05 inside a height-3 side, head-on and at 45°, one `hit_obstacle`; same when steering into a side from standing; roof edge at 2 u/s takes off per (a); 0-to-3 and T-400 ramps at 4, 11, 16.5 u/s give no false wall and follow the slope within 0.01; a free-standing ramp's top launches (`from_ramp=true`, vz>0), higher at 16.5 than 11, the long side still falls; touching T-405 platforms cross with no wall and height 3 ± 0.01; height 3 next to 6 bounces at the bumper; tyre marks along a roof edge never drop below the car's height minus 0.1 and the overhanging line ends; existing suites (`test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map`, the T-195 drive) stay green; `CarHeight.step` averages under 0.5 ms on the largest saved map.
+- 2026-10-30, planning → open: Reset to open by Greenbull: the board stopped the Preemptive-bug-bash session (2026-10-30). Its root-cause assessment stays in the notes.
