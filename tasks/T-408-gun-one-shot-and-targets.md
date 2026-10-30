@@ -10,7 +10,7 @@ milestone: mvp
 goal:
 user_facing_text: no
 changes_visuals: yes
-depends_on: []
+depends_on: [T-412]
 documents_affected: [docs/weapons.md, game/docs/weapons/starting-gun.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, game/docs/weapons/starting-gun.md, game/docs/weapons/shared.md, game/data/weapons.json, game/data/enemies.json]
 files_expected_to_change: [game/scripts/weapons/, game/data/weapons.json, game/tests/unit/, game/docs/weapons/, docs/weapons.md, art-archive/]
