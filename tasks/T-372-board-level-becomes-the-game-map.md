@@ -43,12 +43,12 @@ The board's review: press Start and play a run on your level.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Start on the main menu plays the board's level (a copy in game/data/level/), and the board's original file in game/data/levels/ is unchanged and not committed (test for the layout path; git status). (QA: pass / fail)
-- [ ] The level passes `python game/tools/check_level.py` and `python game/tools/check_height_data.py`, with the output in the result notes. (QA: pass / fail)
-- [ ] A scripted run on it builds the map, spawns minions that reach the car, and the kaiju and gift packs land (tests), or the result notes list what the level lacks. (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ say which file the game plays. (QA: pass / fail)
-- [ ] Screenshots of a run on the level are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Start on the main menu plays the board's level (a copy in game/data/level/), and the board's original file in game/data/levels/ is unchanged and not committed (test for the layout path; git status). (QA: pass)
+- [ ] The level passes `python game/tools/check_level.py` and `python game/tools/check_height_data.py`, with the output in the result notes. (QA: pass)
+- [ ] A scripted run on it builds the map, spawns minions that reach the car, and the kaiju and gift packs land (tests), or the result notes list what the level lacks. (QA: pass)
+- [ ] Level design, Content and game/docs/level/ say which file the game plays. (QA: pass)
+- [ ] Screenshots of a run on the level are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; QA rerun: game/tools 752 OK, tools 582 OK, GUT all passed)
 
 ## Updates
 
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Your level kaiju_city.json is going into the game: the Level/Challenge agent copies it into the game's own data and makes Start play it. Your original stays untouched.
+
+### 2026-10-30, In QA
+
+Your map is in: Start plays kaiju_city_map.json (an exact copy). Three level gaps for you: roof-13 has no ramp up, no minion spawns around a few rooftops, kaiju alert signs misplaced. QA running.
 
 ## Style review
 
