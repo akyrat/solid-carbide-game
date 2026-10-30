@@ -1,7 +1,7 @@
 ---
 id: T-404
 title: Enemies flash red when they take damage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/game-loop-architecture.md, tasks/T-403-car-red-damage-flash.md, game/scripts/enemies/]
 files_expected_to_change: [game/scripts/enemies/, game/tests/unit/, game/docs/enemies/, docs/enemies.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started in build F, on top of T-403's HitFlash helper.
 ### 2026-10-30, In progress → In QA
 
 Minions and the kaiju now flash the car's red (T-072's tint unified with HitFlash); kills skip it, kaiju flashes on every hit; frame time unchanged; GIF in art-archive/T-404.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria; GUT 1946 passing, all tests green. Ready for the board: hit minions with each weapon and the car, and the kaiju.
 
 ## Style review
 
