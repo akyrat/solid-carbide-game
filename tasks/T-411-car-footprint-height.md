@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -122,3 +122,4 @@ Written by the agent when it finishes.
 The gap QA found under "Ramps" is closed. The new test is `test_up_it_at_three_speeds_no_false_wall_and_the_height_follows_the_slope` in `game/tests/unit/level_creator/test_creator_jump_ramps.gd`. It places the real level creator's small ramp ("ramp-0-2": 1 tile, 4 long, 0 to 2, slope 0.5) in all four directions and drives the real car up it at 4, 11 (W held, cruise) and 16.5 u/s. For 4 and 16.5 the test sets the velocity on every ground step. Results: no `hit_obstacle` (no false wall), and on the ramp the height stays within 0.01 of the slope at every step (it is exact, because the centre takes the ground's height). At 11 and 16.5 the car launches off the open top (`from_ramp` true). At 4 it does not launch: the model's own drag brings 4.0 down to 3.90 within the step, which is under `RAMP_TAKEOFF_MIN_SPEED` (4), so it rolls off and falls. That is today's rule and the board's open question (c). The test asserts it as a fall and gives this reason. The 0.01 tolerance was not loosened.
 
 Test sets: GUT 2040 passing, 0 failing (1262245 asserts). `game/tools` unittest OK (701, 1 skipped). `tools` unittest OK (579).
+- 2026-10-30, in-progress → in-qa: Small ramp (T-400, 0 to 2) test added: 4/11/16.5 u/s, all four directions, no false wall, slope within 0.01. At 4 it rolls off rather than launching (drag puts it at 3.90, under the 4 u/s minimum; open question (c)). Three test sets green.
