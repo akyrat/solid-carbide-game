@@ -2555,3 +2555,8 @@ Entry format:
 - Decision or change: Level-up card text for the gun's tiers 2 to 11 and the stronger neon underglow (Weapons, Content).
 - Documents touched: `docs/weapons.md`
 - Tasks: T-412
+
+## 2026-10-30: Meteor craters: the name
+- Decision or change: The level creator's name for the meteor crater: Meteor crater (Level design, Content).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-401

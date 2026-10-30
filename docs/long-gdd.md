@@ -731,6 +731,11 @@ Added for sidewalks and parked cars (task T-396; same file, every earlier key un
 - **Looks strip under a selected car:** model counter "Model {n} of {count}" (`model_counter`), shown only if T-398 gives the cars several models; the facing labels "Facing top right", "Facing bottom right", "Facing bottom left", "Facing top left" (`facing_top_right`, `facing_bottom_right`, `facing_bottom_left`, `facing_top_left`), shown only if T-398 shows the facing.
 - Style loop: score 9/10 in round 1 (Style review, T-396). The script's complaints about one line and sentence case came from checking all eight labels as one block; each label alone is short, plain and in the existing voice.
 
+Added for meteor craters (task T-401; same file, every earlier key unchanged; Decisions, "Sidewalks and parked cars in the level creator", Meteor craters; T-398 copies it into `creator_texts.json`):
+
+- **Ground (side panel):** "Meteor crater", after "Sidewalk" (`piece_meteor_crater`). The looks strip reuses T-396's "Model {n} of {count}" (`model_counter`).
+- Style loop: score 10/10 in round 1 (Style review, T-401).
+
 #### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -1689,7 +1694,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `c657d4ae23f9862f3db6f5113e856db9415d13d0dc521b81038d1c3df6acc135` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
-| `level-design.md` | `d166f2e16d32166f6c2c33b7e8b603fc6e1fb4d77836cd0338e7165d834a742c` |
+| `level-design.md` | `5b942b92c60d2d0ff2a45a23a3c1e1c53f9589eb858c4989dd0859d1b01b78e1` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
 | `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |

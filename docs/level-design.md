@@ -265,6 +265,11 @@ Added for sidewalks and parked cars (task T-396; same file, every earlier key un
 - **Looks strip under a selected car:** model counter "Model {n} of {count}" (`model_counter`), shown only if T-398 gives the cars several models; the facing labels "Facing top right", "Facing bottom right", "Facing bottom left", "Facing top left" (`facing_top_right`, `facing_bottom_right`, `facing_bottom_left`, `facing_top_left`), shown only if T-398 shows the facing.
 - Style loop: score 9/10 in round 1 (Style review, T-396). The script's complaints about one line and sentence case came from checking all eight labels as one block; each label alone is short, plain and in the existing voice.
 
+Added for meteor craters (task T-401; same file, every earlier key unchanged; Decisions, "Sidewalks and parked cars in the level creator", Meteor craters; T-398 copies it into `creator_texts.json`):
+
+- **Ground (side panel):** "Meteor crater", after "Sidewalk" (`piece_meteor_crater`). The looks strip reuses T-396's "Model {n} of {count}" (`model_counter`).
+- Style loop: score 10/10 in round 1 (Style review, T-401).
+
 ### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
