@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, docs/level-design.md, game/docs/level/elevation-sample-map.md, game/scripts/enemies/]
 files_expected_to_change: [game/scripts/enemies/, game/scripts/level/, game/data/, game/tests/unit/, game/docs/enemies/, docs/enemies.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -42,7 +42,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] A test reproduces a minion stuck at the bottom end of a ramp before the fix (named in the result notes) and passes after it. (QA: pass)
 - [ ] Over a scripted chase on the elevation map, no minion stays stuck against a wall for more than 2 seconds (test). (QA: pass)
 - [ ] Enemies, Content and the game docs describe the cause and the fix. (QA: pass)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the fix has its own tests. (QA: pass: 159 scripts, 1961/1961 Godot tests; 678 OK in game/tools; 579 OK in tools)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes, and the fix has its own tests. (QA: pass, round 2: 165 scripts, 2062 Godot tests; first run 2061, the one failure the known test_wreck revive flake, 23/23 on rerun alone; test_minions_round_ramps 13/13 and test_minions 53/53 alone; Python sets green per qa_check; qa_check's "documents: game/docs/enemies/ not changed" is a folder-path false positive, minions.md and ledges-and-rooftops.md did change)
 
 ## Updates
 
@@ -118,3 +118,4 @@ Refused: a hook refused `export $(grep GODOT_BIN .env | xargs)` (it can't tell `
 
 **Documents affected (this round):** `docs/enemies.md` (Content, "Finding the way"), `game/docs/enemies/minions.md` ("After T-405 and T-379"), `game/docs/enemies/ledges-and-rooftops.md` (`line_clear`, `off_edges`).
 - 2026-10-30, in-progress → in-qa: Fixed on top of master: line_clear checks true ground near T-405's half-unit platform edges, paths keep off them, far-off keep only on another surface. All three test sets green. test_wreck flake not touched (own ticket).
+- 2026-10-30, in-qa → needs-playtest: QA round 2 passed: ramp/corner tests, scripted chase and far-behind removal green on top of master; test_wreck flake passed on rerun alone.
