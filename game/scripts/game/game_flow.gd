@@ -180,15 +180,27 @@ func _on_run_ended(_result: String, _coins: int) -> void:
 
 
 ## Restart from the pause screen (T-327): keeps the coins collected so far, then a fresh run.
+## During the wreck it cancels the run instead (T-413): no coins kept, no runs-list entry.
 func _on_pause_restart() -> void:
-	progress.bank_run("loss", run.state.coins)
+	bank_left_run(progress, run)
 	start_run()
 
 
 ## Exit from the pause screen (T-327): keeps the coins collected so far, then the main menu.
+## During the wreck it cancels the run instead (T-413).
 func _on_pause_exit() -> void:
-	progress.bank_run("loss", run.state.coins)
+	bank_left_run(progress, run)
 	show_menu()
+
+
+## Banks the coins of run `r` left from the pause screen into `progress`, unless the car is
+## wrecked (T-413; Game loop architecture, Decisions, "The wreck decides the loss at its end":
+## leaving during the wreck cancels the run, no coins kept). A run left this way never sends
+## run_ended, so it never goes into the runs list either way. The level creator's Play uses it too.
+static func bank_left_run(progress: PlayerProgress, r: Node) -> void:
+	if r.state.is_wrecked():
+		return
+	progress.bank_run("loss", r.state.coins)
 
 
 func _on_exit_pressed() -> void:
