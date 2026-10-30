@@ -21,7 +21,11 @@ DEFAULT_TASK = ROOT / "tasks" / "T-171-text-level-up-cards-for-the.md"
 NEWER_TASKS = [ROOT / "tasks" / "T-301-text-the-level-up-screen-its.md"]
 
 # T-331: "subs" replaces "likes" in player-facing text; one card text named likes.
-LATER_TEXTS = {"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for subs."}
+LATER_TEXTS = {"upgrade_molotov.tier6.desc": "Fire lasts 1.5 seconds longer, 4.5 in all. Linger for subs.",
+               # T-409 (texts of T-412): the underglow's new damage and its push.
+               "get_underglow.desc": "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic.",
+               "upgrade_underglow.tier3.desc": "Glow damage up 50%, to 3. Looks expensive.",
+               "upgrade_underglow.tier6.desc": "Glow damage up another 50%, to 4.5. Peak aesthetic."}
 
 ROW = re.compile(r"^\|\s*([a-z_]+(?:\.tier\d+)?)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|\s*$")
 ENTRY = re.compile(r'^\s*"([^"]+)":\s*"((?:[^"\\]|\\.)*)",?\s*$')

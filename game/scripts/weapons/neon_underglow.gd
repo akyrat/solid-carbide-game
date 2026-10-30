@@ -206,8 +206,28 @@ static func enemy_units(e: Node) -> Vector2:
 func _hit(e: Node) -> void:
 	var amount: float = stats["damage"]
 	hits += 1
+	var away := enemy_units(e) - car_units()
+	if away.length() < 0.001:
+		away = Vector2.RIGHT
 	enemy_hit.emit(e, amount)
 	e.take_damage(amount, weapon_id)
+	# T-409: every tick also pushes a surviving minion a little away from the car;
+	# the kaiju (board, 2026-10-30) only gets a very small nudge.
+	if is_instance_valid(e) and not (e.has_method("is_dead") and e.is_dead()):
+		if pushes(e):
+			e.apply_knockback(away, float(stats["knockback_distance"]))
+		elif nudges(e):
+			e.apply_nudge(away, float(stats["kaiju_nudge_distance"]))
+
+
+## True when the glow pushes this enemy: it has the knockback call (the minions).
+func pushes(e: Node) -> bool:
+	return e.has_method("apply_knockback") and not e.is_in_group("kaiju")
+
+
+## True when the glow only nudges this enemy (the kaiju).
+func nudges(e: Node) -> bool:
+	return e.has_method("apply_nudge")
 
 
 # --- Drawing -------------------------------------------------

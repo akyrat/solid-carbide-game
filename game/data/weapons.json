@@ -45,10 +45,12 @@
     ]
   },
   "underglow": {
-    "damage": 1,
+    "damage": 2,
     "radius": 2.5,
     "tick_interval": 1,
     "damage_on_enter": true,
+    "knockback_distance": 0.5,
+    "kaiju_nudge_distance": 0.1,
     "tiers": [
       { "tier": 2, "effect": "radius_multiplier", "value": 1.2 },
       { "tier": 3, "effect": "damage_multiplier", "value": 1.5 },
