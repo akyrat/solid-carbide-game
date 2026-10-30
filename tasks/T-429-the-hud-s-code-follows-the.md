@@ -37,12 +37,12 @@ The board's review: Play a run and check every HUD piece (clock, coins, hearts, 
 
 ## Acceptance criteria
 
-- [ ] Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: pass / fail)
-- [ ] The HUD's style values (fonts, colours, outline widths) are defined in the one shared place D3 made, named in the result notes, and the test for it checks the new values. (QA: pass / fail)
-- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass. (QA: pass / fail)
-- [ ] A screenshot of a run with the whole HUD is in art-archive/<id>/screenshots/, next to a copy of D4's before shot of the same moment. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content and game/docs/hud-and-menus/hud.md describe the style each HUD piece now uses. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: fail: code - the checklist leaves clock digits (art swap), weapon icon size and pause-strip capitals unticked/not done; the agent's notes say "Partly done")
+- [ ] The HUD's style values (fonts, colours, outline widths) are defined in the one shared place D3 made, named in the result notes, and the test for it checks the new values. (QA: pass)
+- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass. (QA: pass - every Godot file in the full run passed so far, none failed)
+- [ ] A screenshot of a run with the whole HUD is in art-archive/<id>/screenshots/, next to a copy of D4's before shot of the same moment. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content and game/docs/hud-and-menus/hud.md describe the style each HUD piece now uses. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: fail: paperwork - the result notes give no full Godot count and say the third set (docs/tools checks) was not run; QA's own full Godot run exceeded the 600 s foreground limit, no failures seen before that)
 
 ## Updates
 
@@ -81,3 +81,5 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Screenshots** (`art-archive/T-429/screenshots/`): `hud_run_after.png` (the T-428 demo scene, whole HUD), `hud_run_before_d4.png` (D4's before shot, a copy of `art-archive/T-430/screenshots/hud_run_before.png`).
 
 **Docs:** `docs/hud-and-menus.md` (Content, "The HUD's style in code"), `game/docs/hud-and-menus/hud.md`.
+
+**QA round 1:** Criteria 2, 3, 4, 5 pass. Criterion 1 fails (code): D4's list is only partly made (clock digits, weapon icon size, pause capitals not done). Criterion 6 fails (paperwork): no full counts in the notes. `python tools/qa_check.py` was refused (needs approval), so I checked each criterion by hand. The full Godot run went past 600 s; no failures appeared in the files that finished. The docs/tools test set was not run by QA.
