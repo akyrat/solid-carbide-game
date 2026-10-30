@@ -51,6 +51,7 @@ Solid Carbide is played in 8-minute runs. The player only drives: drifting earns
 - **The combo shows as live viewers** (board, 2026-10-28): the combo multiplier keeps working exactly as it does (tricks raise it, crashes cut it, it drains, it multiplies what drifting earns), but the player sees it as the stream's live viewers instead of "Combo x2.00": about 20,000 at x2 and 1,000,000 at x6 (the board's anchors), on a smooth curve between them (and below x2, a proposal). The number behaves like a real stream's: it counts towards its value and keeps moving a little. The higher it is, the hotter it looks, and over a million it is on fire. (T-332, T-336)
 - **Subs instead of likes** (board, 2026-10-28): what the player earns toward the next gift pack is **subs** (the stream's subscribers), not likes: drifting brings subs, the viewers multiply them, each full **sub goal** sends a gift pack, and the drain is people unsubscribing when the stream gets dull. Only the name and the look change; the numbers and rules of the likes stay (the likes bar becomes the sub goal: HUD and menus, Decisions). Extended narrative, Decisions, "Subs". (T-331, T-337)
 - **Hearts instead of health points** (board, 2026-10-28): the car has **5 hearts**. A minion's hit and a meteor take 1 heart, the kaiju's 2. After any hit the car is invulnerable for **1 second**, blinking, so the player can escape a swarm; hits during that second do nothing and don't cut the combo. A health pickup heals 1 heart, and drops at half today's chance (15%, Enemies). The garage's car health upgrade adds 1 heart per level (Garage design). (T-333, T-334, T-338) Numbers (T-333, `game/data/run.json` `car`): `starting_hearts` 5, `invulnerability_seconds` 1.0, `blink_interval_seconds` 0.1 (a proposal: each on or off phase of the blink). The old `starting_health` 100 is gone. Built in T-334 ([game/docs/game-loop/the-run.md](../game/docs/game-loop/the-run.md), "Hearts and the invulnerability (T-334)"); proposals for the playtest: a hit during the second also gives **no knockback** (so the car drives out of the swarm), a hit ignored during it does not restart the second, and the blink starts with the car hidden, so the hit shows at once.
+- **The tutorial slides come between Start and the run** (board, 2026-10-29; the slides, their text and the "Don't show again" checkbox: HUD and menus, Decisions, "Tutorial slides before the first run"): the main menu's Start shows the tutorial slides first, and the run begins (its clock starts at 8:00) only when the slides' own Start is pressed. If "Don't show again" was ticked then, that is saved, and every later Start, also after restarting the game, goes straight into the run. The pause screen's Restart starts a fresh run directly, without the slides. (T-382, T-387)
 
 ## Content
 
@@ -77,7 +78,10 @@ flowchart TD
     lost --> recap
     recap --> menu[Main menu: Start, Garage, Exit]
     menu -- Garage --> garage[Garage: spend coins on permanent car upgrades] --> menu
-    menu -- Start --> start
+    menu -- Start --> hidden{Tutorial hidden?}
+    hidden -- yes --> start
+    hidden -- no --> slides[Tutorial slides: controls, tricks, goal; no run yet]
+    slides -- "Slides' Start (Don't show again saved if ticked)" --> start
 ```
 
 ### The run scene
@@ -184,11 +188,11 @@ Every run's recap stats are kept on this computer (task T-363; Decisions, "The r
 One screen is on show at a time (task T-055; how to use it: [game/docs/game-loop/screen-flow.md](../game/docs/game-loop/screen-flow.md), section "Screen flow"):
 
 - The game opens on the main menu (HUD and menus, Content).
-- **Start** replaces the menu with a fresh run. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
+- **Start** replaces the menu with the **tutorial slides** (task T-387; Decisions, "The tutorial slides come between Start and the run"; the slides: HUD and menus, Content, "Tutorial slides and trick list"). No run exists while they are up, so its clock has not started. The slides' own Start replaces them with a fresh run, after saving "Don't show again" when it is ticked. Once it has been saved, Start replaces the menu with a fresh run straight away. During the run, Escape pauses and resumes it (the pause screen, HUD and menus).
 - When the run ends, win or loss (a loss on health after the wreck's 3 seconds, Wrecked, above), the run is removed and the **recap screen** shows its stats (task T-320; Decisions, "The recap always closes a run"; the look: HUD and menus, Content, "Recap screen"). Its Continue button and the X at its top right both bring the main menu back. Another Start begins a fresh run.
 - **Garage** opens the garage, and leaving the garage goes back to the main menu (Garage design). Wired in task T-089: the garage's back button returns to the main menu.
 - **Exit** closes the game.
-- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, as Start does (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
+- **Restart and Exit on the pause screen** (board, 2026-10-28; T-327): the pause screen's **Restart** keeps the coins collected so far (banked as on a loss), removes the run and starts a fresh one straight away, never showing the tutorial slides (T-387) (level 1, the same map, the garage upgrades applied). Its **Exit** keeps the coins, removes the run and shows the main menu (Exit on the main menu still closes the game). Neither shows a time's up screen or a recap, and neither goes through the run's `run_ended` signal; the recap (T-320) must skip them the same way. HUD and menus, Content, has the buttons' look and the proposals.
 
 The drift prototype is not part of the flow; it stays as a tuning tool, opened on its own.
 

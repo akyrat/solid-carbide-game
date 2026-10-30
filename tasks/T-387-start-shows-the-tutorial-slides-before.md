@@ -58,4 +58,34 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Game Loop Agent, 2026-10-30. Done.
+
+**What changed**
+- `game/scripts/game/game_flow.gd`: the main menu's Start now calls `_on_menu_start()`. If `GameSettings.load_tutorial_hidden()` is false, `show_tutorial()` swaps the menu for `scenes/menu/tutorial_slides.tscn` (`game.tutorial`, new signal `tutorial_shown`). No run is created while the slides are up, so no clock runs. The slides' `start_pressed(dont_show_again)` goes to `_on_tutorial_start()`, which saves `tutorial_hidden = true` when the box is ticked and then calls `start_run()`. If the setting is already true, Start calls `start_run()` at once. `start_run()` never shows the slides, so the pause screen's Restart (`_on_pause_restart` → `start_run()`) still starts a fresh run directly. `_clear_screens()` also removes the slides.
+- **Test seam:** `static var GameFlow.tutorial_enabled := true` (always true in the game). `game/tests/helpers/pre_run.gd` (not in files_expected_to_change) sets it to false for the GUT run. About 40 existing test files press the menu's Start to get a run, and each uses a fresh settings file, so without this they would all have landed on the slides. The new tests turn it on in before_each and off in after_each.
+- **Screenshot fixtures:** `tests/fixtures/tutorial_from_menu_demo.tscn` and `_3.tscn` open the game with a fresh settings file (`user://t387_screenshot_settings.cfg`, never the real save) and press Start. Note for the Project Lead: the older screenshot fixtures press the menu's Start and run outside GUT on the real save. Until the board ticks "Don't show again" (or a fixture calls `game.start_run()`), those fixtures will now show the slides instead of a run. Nothing in the test sets depends on them.
+
+**Tests:** `game/tests/unit/game/test_tutorial_flow.gd`, 8 tests, 49 asserts, all on test save files (T-148; one test checks `TestSave.touches_real_save()` is false):
+- Start shows only the slides: no run and no run_state in the tree.
+- The clock does not start while the slides are up: after 2 s plus 30 physics frames there is still no run, and the run then starts at 8:00 (time_left ≈ RUN_SECONDS).
+- The slides' Start begins the run (run_shown, the slides freed, the clock running after 1 s).
+- Ticked saves `tutorial_hidden` true in the test file. A new game instance, as after a restart, then goes straight into the run from Start. It also skips the slides after the pause screen's Exit sends the player back to the menu.
+- Unticked leaves it false, and a new game shows the slides again.
+- The pause screen's Restart starts a fresh run (8:00, 0 coins, unpaused) with no slides, and doesn't change the setting.
+
+**Test sets (all pass):**
+- GUT `bash game/tools/run_tests.sh`: 161 scripts, 1965/1965 tests passing, 1,246,681 asserts (516 s).
+- `python -m unittest discover -s game/tools -p "test_*.py"`: 675 tests, OK (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: 573 tests, OK.
+- The test logs `art-archive/T-387/gut_full.log` and `py_game_tools.log` are left in the folder but not committed.
+
+**Screenshots** (`art-archive/T-387/screenshots/`):
+- `slides_after_start.png`: slide 1, shown right after the main menu's Start.
+- `slides_after_start_slide3.png`: slide 3, with "Don't show again" and Go live.
+- Both made with `bash game/tools/screenshot.sh res://tests/fixtures/tutorial_from_menu_demo[_3].tscn ... 20`.
+
+**Documents affected:**
+- `docs/game-loop-architecture.md`: a new Decision, "The tutorial slides come between Start and the run", pointing to HUD and menus for the slides themselves. The "One run" flowchart now goes Main menu → Tutorial hidden? → slides → Run starts. Content, "Screen flow" has the Start and Restart bullets updated.
+- `game/docs/game-loop/screen-flow.md`: Start, `start_run()`, `tutorial_enabled`, the screens and signals, and the tutorial tests.
+
+PixelLab: 0 generations. No player-facing text was added. No refusals.
