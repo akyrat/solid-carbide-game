@@ -1,7 +1,7 @@
 ---
 id: T-428
 title: The HUD reads its fonts, colours and outlines from one shared HUD style (looks unchanged)
-status: open
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -45,6 +45,10 @@ Goal G-008, 'A consistent HUD' (HUD and menus, Decisions): the HUD's code follow
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → In progress
+
+Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-428.
 
 ## Style review
 
