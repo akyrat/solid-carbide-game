@@ -60,3 +60,8 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Root cause: the test plays a real Run scene, and the run's starting gun (stronger since T-408) and the minion spawner were live during the 40 + 90 physics frames. Gun kills dropped coins and hearts (changing coins, hearts, or which pickup the magnet pulled) and minion bodies hit the car (damage, a loss recorded).
+Fix (test only, no game code): right after the run is added, `run.minions.enabled = false` and `run.weapons.enabled = false` (switches the run already has, used by the fixtures). Everything else stays real; no assert removed or changed.
+Checks: test_wreck.gd alone, 20 runs in a row: 20 of 20 passed (23 tests each). All three sets pass: game/tools python unittest OK, tools python unittest OK (579 tests), GUT 2067/2067.
+Changed: game/tests/unit/run/test_wreck.gd. Documents affected: none.
