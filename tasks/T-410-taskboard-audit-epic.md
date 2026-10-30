@@ -1,7 +1,7 @@
 ---
 id: T-410
 title: The task board shows the audit epic
-status: in-progress
+status: in-qa
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -39,9 +39,9 @@ Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] tools/taskboard/taskboard.html's AREAS has an entry named Audit with epics ["audit"], doc null, not excluded, and a colour no other entry uses. (QA: pass / fail)
-- [ ] With the task board served, a ticket with epic: audit appears in the Audit bubble (screenshot in the result notes). (QA: pass / fail)
-- [ ] The task board's tests (if any under tools/) pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] tools/taskboard/taskboard.html's AREAS has an entry named Audit with epics ["audit"], doc null, not excluded, and a colour no other entry uses. (QA: pass)
+- [ ] With the task board served, a ticket with epic: audit appears in the Audit bubble (screenshot in the result notes). (QA: fail: paperwork - no screenshot in the result notes; serving a copy on port 8799 was refused by the command guard so QA could not take one. Code check: areaOf matches epic "audit" to the Audit bubble and T-410 has epic: audit)
+- [ ] The task board's tests (if any under tools/) pass, with the counts in the result notes. (QA: pass - 582 tests OK, rerun by QA; tools/test_taskboard_areas.py 3 tests OK)
 
 ## Updates
 
@@ -50,6 +50,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: tooling, merges after QA.
+
+### 2026-10-30, In progress → In QA
+
+Audit bubble added to the task board (counted in MVP), tests added, 582 pass.
 
 ## Style review
 
