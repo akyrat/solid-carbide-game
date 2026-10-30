@@ -27,7 +27,7 @@ func test_missing_file_gives_clear_error() -> void:
 func test_every_section_has_its_numbers() -> void:
 	var e := EnemyData.new()
 	var keys := ["health", "move_speed", "contact_damage", "knockback"]
-	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys))
+	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys + ["size_scale"]))  # T-379
 	assert_eq_deep(_sorted(e.kaiju().keys()), _sorted(keys))
 	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["minions_at_start", "minions_at_boss_time",
 		"growth_until_seconds", "spawn_interval_seconds", "spawn_margin_units"]))
@@ -71,6 +71,8 @@ func test_minion_stats_do_not_change_over_time() -> void:
 	assert_eq(early.contact_damage, 1.0)
 	var r := GameData.load_file("enemies")
 	for k in r.data["minion"]:
+		if k == "size_scale":
+			continue  # T-379: a fixed size, not growth over time
 		assert_false(String(k).contains("growth") or String(k).contains("scale") or String(k).contains("per_minute"),
 			"minion has no time scaling key (%s)" % k)
 	for k in r.data["kaiju"]:

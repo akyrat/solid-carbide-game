@@ -38,7 +38,7 @@ const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 ## Cell size, units. Every edge in the map file lies on even units.
 const CELL := 2.0
 ## A building blocks the cells within this many units of it (the minion's radius).
-const BUILDING_MARGIN := 0.5
+const BASE_MARGIN := 0.5
 ## How far beyond a ramp's ends its two path points are, units.
 const RAMP_OUT := 1.5
 ## A run of ramp cells changing the path's height by less than this (units)
@@ -50,6 +50,10 @@ const META_KEY := "enemy_navigation"
 ## for them over a few steps instead of in one.
 const PATHS_PER_STEP := 4
 
+## T-379: the margin grows with the minion's size (BASE_MARGIN times
+## enemies.json minion.size_scale), so a bigger minion still fits the gaps it is
+## sent through. Set from the data in build_for_map().
+var building_margin := BASE_MARGIN
 var ground
 var astar := AStar2D.new()
 var origin := Vector2.ZERO
@@ -104,6 +108,7 @@ static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
 	blocks.append_array(prop_obstacles.rects)
 	boulders.append_array(prop_obstacles.circles)
 	var nav = load("res://scripts/enemies/enemy_navigation.gd").new()
+	nav.building_margin = BASE_MARGIN * float(EnemyData.new().minion().get("size_scale", 1.0))
 	nav.build(map.rect_of(map.layout.map.rect), blocks, elevation.ground_height, boulders, drops)
 	return nav
 
@@ -137,10 +142,10 @@ func build(map_rect: Rect2, blocks: Array, the_ground, boulders: Array = [], dro
 		var ri: int = i
 		_for_cells_in(ground.ramps[i].rect, func(k: int, _c: Vector2) -> void: ramp_of[k] = ri)
 	for b in blocks:
-		_for_cells_in((b as Rect2).grow(BUILDING_MARGIN), func(k: int, _c: Vector2) -> void: open[k] = 0)
+		_for_cells_in((b as Rect2).grow(building_margin), func(k: int, _c: Vector2) -> void: open[k] = 0)
 	for bo in boulders:
 		var centre: Vector2 = bo[0]
-		var reach: float = float(bo[1]) + BUILDING_MARGIN
+		var reach: float = float(bo[1]) + building_margin
 		_for_cells_in(Rect2(centre - Vector2(reach, reach), Vector2(reach, reach) * 2.0),
 			func(k: int, c: Vector2) -> void: if c.distance_to(centre) < reach: open[k] = 0)
 	astar.clear()

@@ -118,3 +118,15 @@ func wreck() -> Dictionary:
 ## 3.0 when the file has no time_up section.
 func time_up_seconds() -> float:
 	return float(_data.get("time_up", {}).get("seconds", 3.0))
+
+
+## How long the red hit flash lasts, seconds (T-403; a proposal for the playtest).
+## 0.4 s when the file has no hit_flash section.
+func hit_flash_seconds() -> float:
+	return float(_data.get("hit_flash", {}).get("seconds", 0.4))
+
+
+## The hit flash's tint (a multiply on the drawing), from hit_flash.color [r, g, b].
+func hit_flash_color() -> Color:
+	var c: Array = _data.get("hit_flash", {}).get("color", [1.0, 0.25, 0.25])
+	return Color(float(c[0]), float(c[1]), float(c[2]))

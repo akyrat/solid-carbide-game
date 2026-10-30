@@ -2595,3 +2595,8 @@ Entry format:
 - Decision or change: A wrecked car still rolling that reaches a health pickup picks it up and revives with 1 heart.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-406
+
+## 2026-10-30: Minions twice as big
+- Decision or change: Minions are drawn twice as big.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
+- Tasks: T-379

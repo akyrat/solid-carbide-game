@@ -128,6 +128,8 @@ var boost_effect: Node2D
 ## The wreck's smoke and flames (task T-360): on the drawn car, above it, from
 ## the last heart to the run's end. Child "WreckEffect" of the View.
 var wreck_effect: Node2D
+## The car's red flash when it loses a heart (T-403, hit_flash.gd).
+var car_flash: HitFlash = HitFlash.from_data()
 ## The camera zoom now, as Unity's orthographic size. The pause screen's zoom
 ## slider changes it through set_zoom() (task T-055).
 var zoom := ZOOM
@@ -320,6 +322,8 @@ func start_run(path: String = "") -> void:
 	world_rebuilt.emit()
 	state.start_run()
 	wreck_effect.configure(RunData.new().wreck())
+	car_flash = HitFlash.from_data()
+	car_flash.apply_to(car_sprite)
 	apply_blink()
 
 
@@ -463,6 +467,7 @@ func _on_car_stepped() -> void:
 ## T-072: the car took damage: the drawn car shakes briefly (its drawing only).
 func _on_car_damaged(_amount: float) -> void:
 	car_sprite.shake()
+	car_flash.trigger()  # only hits that count reach here; ignored ones never do (T-403)
 
 
 ## The player levelled up: the car gives off the level-up burst (T-112).
@@ -475,6 +480,8 @@ func _on_level_up(_new_level: int) -> void:
 func _on_car_moved() -> void:
 	sync_view(false)
 	apply_blink()
+	car_flash.advance(car.model.dt)
+	car_flash.apply_to(car_sprite)
 	wreck_effect.follow(car_sprite.position)
 
 

@@ -170,17 +170,17 @@ func test_bullet_flies_at_the_data_speed_from_the_car_centre() -> void:
 
 
 func test_bullet_hits_within_its_hit_radius() -> void:
-	# The bullet's hit circle (1 unit) plus the minion's body (0.5): a minion
-	# beside the bullet's line, 1.4 units off it, is hit.
+	# The bullet's hit circle (1 unit) plus the minion's body (1.0 since T-379):
+	# a minion beside the bullet's line, 1.4 units off it, is hit.
 	gun.fire_clock = -100.0  # no volley of its own: one bullet aimed by hand along +x
 	var target: Node = _minion(Vector2(8.0, 0.0), 100.0)
 	var beside: Node = _minion(Vector2(4.0, 1.4), 100.0)
-	var missed: Node = _minion(Vector2(2.0, -1.6), 100.0)
+	var missed: Node = _minion(Vector2(2.0, -2.1), 100.0)
 	gun.fire_at(_car_units() + Vector2(8.0, 0.0), target)
 	_run_for(0.3)
 	assert_eq(beside.health, 100.0 - float(data.gun_at(1)["damage"]), "hit 1.4 units off the line")
 	assert_eq(target.health, 100.0, "the bullet stopped at the first hit")
-	assert_eq(missed.health, 100.0, "1.6 units off the line: missed")
+	assert_eq(missed.health, 100.0, "2.1 units off the line: missed")
 
 
 func test_a_bullet_that_misses_is_removed_past_the_range() -> void:

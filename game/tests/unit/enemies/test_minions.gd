@@ -371,7 +371,7 @@ func test_draw_order_under_a_covering_building_over_the_rest() -> void:
 	var slot = map.fade_items()[0]
 	var f: Rect2 = slot.footprint
 	var behind := Vector2(f.get_center().x, f.position.y - 1.0)
-	var z: int = spawner.depth.z_index_for(behind, MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS)
+	var z: int = spawner.depth.z_index_for(behind, (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale)), (MinionScript.BASE_HEIGHT_UNITS * float(EnemyData.new().minion().size_scale)))
 	assert_true(z <= slot.z_index - 1, "under the building that covers it")
 	assert_eq(z, map.car_z_index(behind, 0.0), "the same place the car gets there")
 	m.set_position_units(behind)
@@ -380,7 +380,7 @@ func test_draw_order_under_a_covering_building_over_the_rest() -> void:
 	assert_eq(m.sprite.position, run.ISO_TRANSFORM * m.position, "drawn at its body in the isometric view")
 	# In front of the same slot: over it.
 	var front := Vector2(f.get_center().x, f.end.y + 1.0)
-	assert_gt(spawner.depth.z_index_for(front, MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS), slot.z_index, "in front: over it")
+	assert_gt(spawner.depth.z_index_for(front, (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale)), (MinionScript.BASE_HEIGHT_UNITS * float(EnemyData.new().minion().size_scale))), slot.z_index, "in front: over it")
 
 
 func test_placeholders_avoid_heart_red() -> void:
@@ -409,10 +409,10 @@ func test_a_damaged_minion_is_tinted_briefly_then_back_to_normal() -> void:
 	var m := _live_minion()
 	assert_eq(m.sprite.modulate, Color.WHITE)
 	m.take_damage(1.0)
-	assert_eq(m.sprite.modulate, HitTint.TINT, "tinted at once")
-	m.hit_tint._process(HitTint.DURATION * 0.5)
-	assert_eq(m.sprite.modulate, HitTint.TINT, "still tinted halfway")
-	m.hit_tint._process(HitTint.DURATION)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "tinted at once")
+	m.hit_tint._process(HitTint.proto().seconds * 0.5)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "still tinted halfway")
+	m.hit_tint._process(HitTint.proto().seconds)
 	assert_eq(m.sprite.modulate, Color.WHITE, "back to normal")
 	assert_false(m.hit_tint.is_active())
 
@@ -431,15 +431,40 @@ func test_hit_tint_leaves_another_tint_alone() -> void:
 	assert_eq(m.sprite.modulate, orange)
 
 
-func test_the_kill_hit_does_not_tint_and_the_tint_is_not_heart_red() -> void:
+func test_the_kill_hit_does_not_flash_and_the_flash_is_the_cars() -> void:
 	var m := _live_minion()
 	m.take_damage(1000.0)
-	assert_false(m.hit_tint.is_active())
-	var t: Color = HitTint.TINT
-	var heart_red := Color(0.86, 0.1, 0.16)
-	var sat := (t.get_luminance() * 0.0) + (maxf(t.r, maxf(t.g, t.b)) - minf(t.r, minf(t.g, t.b))) / maxf(t.r, 0.001)
-	assert_gt(Vector3(t.r, t.g, t.b).distance_to(Vector3(heart_red.r, heart_red.g, heart_red.b)), 0.5, "far from the heart's red")
-	assert_lt(sat, 0.4, "a slight hue, not a saturated red")
+	assert_false(m.hit_tint.is_active(), "T-404 proposal: a kill skips the flash")
+	var d := RunData.new()
+	assert_eq(HitTint.proto().color, d.hit_flash_color(), "the car's red, from run.json")
+	assert_eq(HitTint.proto().seconds, d.hit_flash_seconds(), "the car's length")
+
+
+func test_many_minions_flash_with_one_shared_proto_and_stop_processing() -> void:
+	var list: Array = []
+	for i in 30:
+		list.append(spawner.spawn_minion_at(run.car.position / 16.0 + Vector2(4 + i, 0)))
+	var proto_before := HitTint.proto()
+	for m in list:
+		m.take_damage(1.0)
+	for m in list:
+		assert_eq(m.sprite.modulate, proto_before.color)
+		assert_true(m.hit_tint.is_processing())
+	for m in list:
+		m.hit_tint._process(proto_before.seconds + 0.1)
+		m.hit_tint._process(0.0)
+		assert_eq(m.sprite.modulate, Color.WHITE)
+		assert_false(m.hit_tint.is_processing(), "idle: no per-frame cost")
+	assert_same(HitTint.proto(), proto_before, "the numbers are read once")
+
+
+func test_a_new_hit_restarts_the_flash() -> void:
+	var m := _live_minion()
+	m.take_damage(1.0)
+	m.hit_tint._process(HitTint.proto().seconds * 0.9)
+	m.take_damage(1.0)
+	m.hit_tint._process(HitTint.proto().seconds * 0.9)
+	assert_eq(m.sprite.modulate, HitTint.proto().color, "restarted, still red")
 
 
 func test_coin_art_has_no_heart_red() -> void:
@@ -478,7 +503,7 @@ func _walk_checking(m: Node, target: Vector2, steps: int, rect := Rect2()) -> vo
 			var p: Vector2 = m.position_units()
 			var nearest := Vector2(clampf(p.x, rect.position.x, rect.end.x), clampf(p.y, rect.position.y, rect.end.y))
 			assert_false(rect.has_point(p), "centre never inside the building")
-			assert_gt(p.distance_to(nearest), MinionScript.RADIUS_UNITS - 0.05, "body never inside the building")
+			assert_gt(p.distance_to(nearest), (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale)) - 0.05, "body never inside the building")
 
 
 ## Walks `m` (as the spawner does) for as long as its knockback lasts, which
@@ -526,7 +551,7 @@ func test_knockback_into_a_building_stops_at_its_wall() -> void:
 	m.apply_knockback(Vector2.RIGHT, 6.0)  # far more than the 1 unit gap
 	_walk_while_pushed(m, start, b)
 	var p: Vector2 = m.position_units()
-	assert_almost_eq(p.x, b.position.x - MinionScript.RADIUS_UNITS, 0.05, "stopped against the wall")
+	assert_almost_eq(p.x, b.position.x - (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale)), 0.05, "stopped against the wall")
 	assert_almost_eq(p.y, start.y, 0.05, "not slid along a wall it hit head-on")
 
 
@@ -535,7 +560,7 @@ func test_knockback_into_a_boulder_stops_at_it() -> void:
 	var bl: Dictionary = run.map.all_boulders()[0]
 	var centre := Vector2(float(bl.x), float(bl.y))
 	var r: float = float(bl.diameter) / 2.0
-	var touching := r + MinionScript.RADIUS_UNITS
+	var touching := r + (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale))
 	var start := Vector2.ZERO
 	var found := false
 	for d in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
@@ -584,3 +609,35 @@ func test_only_minions_can_be_pushed() -> void:
 	kaiju.free()
 	var m: Node = _live_minion()
 	assert_true(m.has_method("apply_knockback"))
+
+
+## T-379: minions are twice as big, from enemies.json's minion.size_scale.
+func test_minion_size_comes_from_the_data_and_is_a_whole_number() -> void:
+	var sc: float = data.minion().size_scale
+	assert_eq(sc, 2.0, "twice as big")
+	assert_eq(sc, floorf(sc), "whole number: hard pixel edges")
+	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(10.0, 0.0))
+	assert_eq(m.size_scale, sc)
+	assert_eq(m.sprite.size_scale, sc, "the drawing follows")
+	assert_almost_eq(m.radius_units(), MinionScript.BASE_RADIUS_UNITS * sc, 0.0001)
+	assert_almost_eq(m.hit_radius_units(), 1.0, 0.0001, "weapons see the bigger body")
+	var shape: CircleShape2D = m.get_node("Body").shape
+	assert_almost_eq(shape.radius, 1.0 * 16.0, 0.0001, "collision circle grew")
+
+
+func test_bigger_minion_touches_the_car_from_farther() -> void:
+	var m: Node = spawner.spawn_minion_at(Vector2(0.0, 0.0))
+	# Car body half-width 0.5: touching reaches 0.5 + radius 1.0 = 1.5 centre to centre.
+	assert_true(m.touches_car(Vector2(1.4, 0.0), 0.0), "old reach was 1.0; now touches at 1.4")
+	assert_false(m.touches_car(Vector2(1.6, 0.0), 0.0))
+
+
+func test_weapon_target_radius_is_the_bigger_body() -> void:
+	var m: Node = spawner.spawn_minion_at(_car_units() + Vector2(10.0, 0.0))
+	assert_almost_eq(preload("res://scripts/weapons/weapons.gd").radius_of(m), 1.0, 0.0001)
+
+
+func test_the_navigation_margin_grows_with_the_minion() -> void:
+	var nav = preload("res://scripts/enemies/enemy_navigation.gd").new()
+	assert_eq(nav.building_margin, 0.5, "default is the old margin")
+	assert_eq(preload("res://scripts/enemies/enemy_navigation.gd").BASE_MARGIN * data.minion().size_scale, 1.0)

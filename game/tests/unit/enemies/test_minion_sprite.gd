@@ -44,3 +44,10 @@ func test_the_walk_advances_with_process_time() -> void:
 	var before: float = s._walk
 	s._process(0.05)
 	assert_ne(s._walk, before)
+
+
+func test_art_is_drawn_at_a_whole_number_of_screen_pixels_per_art_pixel() -> void:
+	# ART_SCALE 0.5 times the data's size_scale 2 = 1 screen pixel per art pixel.
+	var k: float = SpriteScript.ART_SCALE * float(EnemyData.new().minion().size_scale)
+	assert_eq(k, floorf(k), "whole-number scale keeps hard pixel edges")
+	assert_eq(k, 1.0)

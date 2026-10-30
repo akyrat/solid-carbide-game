@@ -276,7 +276,7 @@ func _spawn_step(dt: float) -> void:
 ## heights only minions at the same level push apart (T-207).
 func _separation() -> Array:
 	var out := []
-	var sep: float = MinionScript.SEPARATION_UNITS
+	var sep: float = MinionScript.SEPARATION_UNITS * float(_stats.get("size_scale", 1.0))
 	var pos := []
 	var hs := []
 	for m in minions:
@@ -311,6 +311,7 @@ func spawn_minion_at(units: Vector2) -> Node:
 	s.name = "MinionSprite"
 	draw_root.add_child(s, true)
 	m.sprite = s
+	s.size_scale = m.size_scale
 	m.died.connect(_on_minion_died)
 	minions.append(m)
 	_place_sprite(m)
@@ -434,7 +435,7 @@ func pick_spawn_point():
 func is_free_spot(units: Vector2) -> bool:
 	if map == null:
 		return true
-	var rad: float = MinionScript.RADIUS_UNITS
+	var rad: float = MinionScript.BASE_RADIUS_UNITS * float(_stats.get("size_scale", 1.0))
 	var m: Rect2 = map.rect_of(map.layout.map.rect)
 	if not m.grow(-rad).has_point(units):
 		return false
@@ -485,4 +486,4 @@ func _place_sprite(m: Node) -> void:
 	s.position = ISO_TRANSFORM * m.position + Vector2(0.0, -h * PX_PER_UNIT)
 	s.face(m.heading)
 	s.set_falling(m.is_falling())
-	s.z_index = depth.z_index_for(m.position_units(), MinionScript.RADIUS_UNITS, MinionScript.HEIGHT_UNITS, h)
+	s.z_index = depth.z_index_for(m.position_units(), m.radius_units(), m.height_units(), h)
