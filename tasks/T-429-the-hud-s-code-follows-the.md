@@ -1,7 +1,7 @@
 ---
 id: T-429
 title: The HUD's code follows the HUD style sheet (fonts, colours, outlines)
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -59,6 +59,10 @@ Goal runner (G-008): the agent is done; QA is checking it.
 ### 2026-10-30, In QA → In progress
 
 Goal runner (G-008): failed QA once; back to the agent on opus.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-008): the agent is done; QA is checking it.
 
 ## Style review
 
