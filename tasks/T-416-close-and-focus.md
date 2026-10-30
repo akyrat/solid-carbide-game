@@ -1,7 +1,7 @@
 ---
 id: T-416
 title: Closing the game mid-run, and pausing when the window loses focus
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/game/game_flow.gd]
 model: sonnet
-qa_rounds: 2
+qa_rounds: 3
 ---
 
 <!--
@@ -86,3 +86,4 @@ Done (game-loop agent).
 - Tests round 2: GUT 2202 tests, all pass after fixing one assert of mine (test_wreck_decides_loss, shared history count; rerun file alone 14/14); tools python 582 OK; game/tools python unchanged since round 1 (722 OK).
 - 2026-10-30, needs-playtest → in-progress: The board, after playing build I (2026-10-30): Restart or Exit on the pause screen and closing the window cancel the run at any point, the wreck included: coins lost, nothing saved to the run history, no recap. Replaces closing as a loss with coins kept, and T-327's coins kept on Restart and Exit (Game loop architecture, Decisions, 'Restart, Exit or closing cancels the run').
 - 2026-10-30, in-progress → in-qa: Restart, Exit and close cancel the run: no coins, no history; tests updated and green.
+- 2026-10-30, in-qa → needs-playtest: QA: all 4 criteria pass against the cancel decision; GUT 2202/2202, tools 582 OK, game/tools 752 OK
