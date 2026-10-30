@@ -1,7 +1,7 @@
 ---
 id: T-426
 title: Text: the HUD size slider's label
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: narrative-theme
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen
 files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/data/pause_text.json, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-426.
 
 Goal runner (G-008): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
+
 ## Style review
 
 Run by `tools/style_loop/run.py` on 2026-10-30: text, kind label, brief `art-archive/T-426/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
@@ -80,3 +84,4 @@ Label: "HUD size", scored 9/10 in round 1 of the style loop (see Style review; b
 - PixelLab generations: 0. Refusals: none.
 
 QA round 1: all 5 criteria pass. JSON valid with hud_size_label "HUD size"; text present in both docs; style loop 9/10 round 1 recorded; form matches siblings; unittest 736 OK (1 skipped), re-run by QA. No screenshots needed (text only). `python tools/qa_check.py` was refused (not pre-approved), so checks were done by hand.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
