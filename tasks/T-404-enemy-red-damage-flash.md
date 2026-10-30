@@ -1,7 +1,7 @@
 ---
 id: T-404
 title: Enemies flash red when they take damage
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build F, on top of T-403's HitFlash helper.
+
+### 2026-10-30, In progress → In QA
+
+Minions and the kaiju now flash the car's red (T-072's tint unified with HitFlash); kills skip it, kaiju flashes on every hit; frame time unchanged; GIF in art-archive/T-404.
 
 ## Style review
 
