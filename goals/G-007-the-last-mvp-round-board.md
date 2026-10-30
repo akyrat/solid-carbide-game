@@ -4,7 +4,7 @@ title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
 status: building
 art_cap: 40
 art_used: 28
-iteration: 7
+iteration: 8
 max_iterations: 20
 created: 2026-10-29
 lead: Goal-G-007
@@ -188,6 +188,7 @@ Ranked by code, not by Claude: first by how many other sub-goals wait on it (dir
 - 2026-10-30, iteration 5: resumed by the session Greenbull.
 - 2026-10-30, iteration 6: T-386 (S7, ui, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-386 done: "Trick list" button and Back panel in the pause screen. Escape in the panel goes back, not resume. 6 new tests; all three sets pass (GUT 1957/1957). Screenshots and docs done, committed. Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-386 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_019PpFyVRouw2h6eqQQNupJp"} / QA: python tools/qa_check.py T-386 --no-marks: requires approval, not pre-approved; skipped, checked docs and screenshots manually. Rescan: S7 covered, S6 in-flight, S8 in-flight, S9 in-flight.
 - 2026-10-30, iteration 7: T-387 (S6, game-loop, opus): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-387 done. Start shows the tutorial slides, and the slides' Start begins the run; a ticked box saves tutorial_hidden; Restart skips the slides. 8 new tests; GUT 1965/1965, Python 675 OK and 573 OK. Screenshots and both docs done. PL: older screenshot fixtures now show the slides unless hidden is saved (result notes). Refused, got past and not blocking: QA: {"tool_input": {"command": "python tools/qa_check.py T-387 --no-marks"}, "tool_name": "Bash", "tool_use_id": "toolu_01MFBGNtuktsiP6cpa941v8d"} / QA: python tools/qa_check.py T-387 --no-marks: requires approval (not in pre-approved list); skipped, checked criteria by hand. Rescan: S6 covered, S8 in-flight, S9 in-flight.
+- 2026-10-30, iteration 8: T-388 (S8, sfx, sonnet): passed (needs-playtest, QA rounds 1), merged into playtest/G-007; art 0; agent: T-388 is done and committed. "sfx_enabled": false in game/data/sfx.json mutes the SFX bus and stops RunSounds starting any player, whatever the saved volume. The music is unaffected. All three test sets pass: Godot 1972/1972, game/tools 675 OK, tools 573 OK. No screenshots, since the change is audio only. Details are in the ticket's result notes. Refused, got past and not blocking: sfx: {"tool_input": {"command": "git reset -q"}, "tool_name": "Bash", "tool_use_id": "toolu_018QqHRAj7vqo84cxGN6T1qK"} / sfx: `git reset -q` (to unstage .import/.uid noise I had staged by accident with `git add -A`) needed approval and was refused. I skipped it and committed only my own files by path. The noise files remain staged but uncommitted in the worktree. / QA: python tools/qa_check.py T-388 --no-marks: requires approval, not in the allowed list; skipped and checked the criteria by hand. Rescan: S8 in-flight, S9 in-flight.
 
 ## Pauses
 
