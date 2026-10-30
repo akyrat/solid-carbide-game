@@ -1,7 +1,7 @@
 ---
 id: T-406
 title: A wrecked car that slides into a health pickup's range picks it up and revives with 1 heart
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -83,3 +83,4 @@ Proposals for the playtest:
 Tests: `test_wreck.gd` 23 of 23 (6 new: revive with 1 heart and no recap, invulnerability, combo and viewers, no revive after the recap starts / without a pickup, a sliding wreck in the run scene picking up a pickup and driving again, the magnet pulling only health pickups; the old "heal_car during the wreck does nothing" line was removed). Three sets: GUT 1945 of 1945 passed; `game/tools` unittest 668 (OK, 1 skipped); `tools` unittest 579 OK.
 GIF and screenshot: `art-archive/T-406/screenshots/revive.gif`, `revive.png` (`bash game/tools/record_revive.sh`, fixture `tests/fixtures/revive_demo.tscn`).
 Docs: Game loop architecture (Content, "Wrecked", new bullet) and `game/docs/game-loop/the-run.md`.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board
