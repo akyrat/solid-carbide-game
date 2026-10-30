@@ -1,0 +1,59 @@
+---
+id: T-417
+title: A broken save never wipes progress
+status: open
+from: project-lead
+to: game-data
+lead: Preemptive-bug-bash
+epic: audit
+milestone: mvp
+goal:
+user_facing_text: no
+changes_visuals: no
+depends_on: []
+documents_affected: [docs/garage-design.md]
+files_to_read_first: [tasks/README.md, docs/garage-design.md, game/scripts/data/player_progress.gd, game/scripts/data/run_history.gd]
+files_expected_to_change: [game/scripts/data/player_progress.gd, game/scripts/data/run_history.gd]
+model: sonnet
+qa_rounds: 0
+---
+
+<!--
+status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
+epic and milestone: one of the ids listed in tasks/README.md.
+goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+Garage design, Decisions: "A broken save never wipes progress". Today save() writes over user://progress.json directly; a crash mid-write or a hand edit gives invalid JSON, the next launch treats it as a new player, and the next save overwrites the old file for good. No version field, so a renamed upgrade id drops to 0. run_history.gd has the same behaviour. Write to a temp file and rename; keep the last good save as a backup and load it when the main file fails; never overwrite a file that failed to load; add a version and a way to map old ids.
+
+Part of the audit epic: the preemptive bug bash of 2026-10-30. A read-only audit of the game and its docs looked for situations the game can reach whose behaviour no doc decides, and for code holes, so they are fixed before they become bugs. Every ticket from it carries epic: audit.
+
+## Acceptance criteria
+
+Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
+
+- [ ] A truncated progress.json loads the backup's coins and levels. (QA: pass / fail)
+- [ ] After a failed load with no backup, the broken file is kept (renamed aside), not overwritten. (QA: pass / fail)
+- [ ] A save writes a temp file and renames it (a save interrupted before the rename leaves the old file intact). (QA: pass / fail)
+- [ ] Saves carry a version; a file without one loads as version 1. (QA: pass / fail)
+- [ ] run_history.gd follows the same rules (same tests). (QA: pass / fail)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass / fail)
+
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+## Style review
+
+Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+
+## Result notes
+
+Written by the agent when it finishes.
