@@ -301,18 +301,24 @@ func top_z_index() -> int:
 ## A boulder sprite's z_index: the map's (under the buildings that cover it),
 ## and under every raised area it is behind and overlaps on screen. A boulder
 ## nothing covers goes over every item, areas included.
+##
+## T-393: the buildings' z_index here is this layer's (restack), so a boulder no
+## building covers starts at this layer's top, never at the map's own top: that
+## one is lower than the restacked buildings, and comparing with it took a
+## covering building for none (a barrier behind a low-rise was drawn over it).
 func boulder_z(sp) -> int:
-	var z: int = map._boulder_z_buildings(sp.centre_units, sp.outline)
-	if z >= map.own_top_z_index():
-		z = top_z_index()
-	return boulder_z_under_areas(z, sp.centre_units, sp.outline)
+	var z: int = map._boulder_z_buildings(sp.centre_units, sp.outline, top_z_index())
+	var ground = sp.get("ground_units")
+	return boulder_z_under_areas(z, sp.centre_units, sp.outline, float(ground) if ground != null else 0.0)
 
 
 ## Lowers a boulder's z_index `z` under every raised area it is behind and
-## overlaps on screen (outline in the map's screen pixels).
-func boulder_z_under_areas(z: int, centre_units: Vector2, outline: PackedVector2Array) -> int:
+## overlaps on screen (outline in the map's screen pixels). `ground` (T-393) is
+## the height it stands on: an area whose top is not above it covers nothing of
+## it.
+func boulder_z_under_areas(z: int, centre_units: Vector2, outline: PackedVector2Array, ground: float = 0.0) -> int:
 	for a in areas:
-		if a.is_behind(centre_units, 0.0, 0.0) \
+		if a.is_behind(centre_units, 0.0, ground) \
 				and not Geometry2D.intersect_polygons(a.silhouette(), outline).is_empty():
 			z = mini(z, a.z_index - 1)
 	return z

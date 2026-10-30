@@ -186,6 +186,9 @@ var prop_sprites: Array = []
 var prop_sprites_root: Node2D
 ## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
 var _boulder_sprite_by_key: Dictionary = {}
+## The ground height of the layout's rooftops and ramps (ground_height.gd), read once for the
+## boulders' sprites (T-393); null until first asked. Untyped, like elevation_layer.gd's.
+var _ground = null
 var ground_draw: Node2D
 var ground_tiles: Node2D
 ## The container of the building nodes (named "Buildings"); it also draws the map's outline.
@@ -844,6 +847,15 @@ func own_top_z_index() -> int:
 	return BUILDING_Z_BASE + BUILDING_Z_STEP * fade_items().size()
 
 
+## The ground height (units) at a point of the layout: its rooftop's or ramp's (ground_height.gd),
+## 0 on the street and on a map without rooftops (T-393).
+func ground_height_at(units: Vector2) -> float:
+	if _ground == null:
+		_ground = load("res://scripts/level/ground_height.gd").new()
+		_ground.load_data(layout)
+	return _ground.height_at(units)
+
+
 # ---- Boulder art (task T-065) ---------------------------------------------------------------
 
 func _load_boulder_textures() -> void:
@@ -896,7 +908,9 @@ func boulder_sprite_rect(b: Dictionary, variant: int) -> Dictionary:
 	var h := y1 - float(bb[1])
 	var d := float(b.diameter) * PX_PER_UNIT
 	var s := d * sqrt(2.0) / w
-	var c := ISO_TRANSFORM * (Vector2(float(b.x), float(b.y)) * PX_PER_UNIT)
+	# T-393: a boulder on a rooftop or a ramp stands at the height under its centre, as a prop does.
+	var lift := ground_height_at(Vector2(float(b.x), float(b.y))) * PX_PER_UNIT
+	var c := ISO_TRANSFORM * (Vector2(float(b.x), float(b.y)) * PX_PER_UNIT) - Vector2(0.0, lift)
 	var bottom := c + Vector2(0.0, d * sqrt(2.0) / 4.0)
 	var pos := Vector2(bottom.x - (x0 + w / 2.0) * s, bottom.y - y1 * s)
 	var rect := Rect2(Vector2(bottom.x - w * s / 2.0, bottom.y - h * s), Vector2(w * s, h * s))
@@ -922,34 +936,38 @@ func _sync_boulder_sprites() -> void:
 		sp.scale = Vector2(r.scale, r.scale)
 		sp.variant = str(boulder_art.variants[k].id)
 		sp.centre_units = Vector2(float(b.x), float(b.y))
+		sp.ground_units = ground_height_at(sp.centre_units)
 		var outline := PackedVector2Array()
 		for p in boulder_art.variants[k].hull:
 			outline.append(r.position + Vector2(float(p[0]), float(p[1])) * r.scale)
 		sp.outline = outline
 		sp.box = r.rect
-		sp.z_index = _boulder_z(sp.centre_units, outline)
+		sp.z_index = _boulder_z(sp.centre_units, outline, sp.ground_units)
 		boulder_sprites_root.add_child(sp)
 		boulder_sprites.append(sp)
 		_boulder_sprite_by_key[key] = sp
 
 
-## A boulder's z_index: just under the lowest building that covers it (the
+## A boulder's (or a prop's, T-253) z_index: just under the lowest building that covers it (the
 ## boulder is behind the building and they overlap on screen), or over every
 ## building. The car's level for that place, so the car in front of the
-## boulder (later in the tree) is drawn over it.
-func _boulder_z(centre_units: Vector2, outline: PackedVector2Array) -> int:
-	var z := _boulder_z_buildings(centre_units, outline)
-	# T-206: with elevation, over the areas too, and under the ones covering it.
+## boulder (later in the tree) is drawn over it. `ground` is the height (units)
+## it stands on (T-393).
+func _boulder_z(centre_units: Vector2, outline: PackedVector2Array, ground: float = 0.0) -> int:
+	# T-206: with elevation, over the areas too, and under the ones covering it. T-393: the
+	# buildings' z_index then comes from the elevation's depth order, so "covered by none" is its
+	# top, not the map's own (which is lower than the restacked buildings: a covering building
+	# was taken for none, and the boulder drawn over it).
 	if elevation != null:
-		if z >= own_top_z_index():
-			z = elevation.top_z_index()
-		z = elevation.boulder_z_under_areas(z, centre_units, outline)
-	return z
+		var z: int = _boulder_z_buildings(centre_units, outline, elevation.top_z_index())
+		return elevation.boulder_z_under_areas(z, centre_units, outline, ground)
+	return _boulder_z_buildings(centre_units, outline)
 
 
-## A boulder's z_index among the buildings only.
-func _boulder_z_buildings(centre_units: Vector2, outline: PackedVector2Array) -> int:
-	var z := own_top_z_index()
+## A boulder's z_index among the buildings only: just under the lowest one that covers it, else
+## `top` (the map's own top z_index when not given).
+func _boulder_z_buildings(centre_units: Vector2, outline: PackedVector2Array, top: int = -1) -> int:
+	var z := own_top_z_index() if top < 0 else top
 	for b in fade_items():
 		if b.is_behind(centre_units) and not Geometry2D.intersect_polygons(b.iso_silhouette(), outline).is_empty():
 			z = mini(z, b.z_index - 1)
@@ -1126,6 +1144,8 @@ class _BoulderSprite extends Sprite2D:
 	var variant := ""
 	## The boulder's centre on the ground, in units.
 	var centre_units := Vector2.ZERO
+	## The height it stands on, units (a rooftop's, a ramp's; T-393).
+	var ground_units := 0.0
 	## The outline of its opaque pixels on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()
