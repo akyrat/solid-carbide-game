@@ -57,3 +57,48 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+### UI Agent, 2026-10-30
+
+**Done.** The shared HUD style place is a style script: **`game/scripts/hud/hud_style.gd` (`class_name HudStyle`)**. I chose a script over a Godot Theme because most of the HUD is built in code and some of it is drawn, not made of Controls (baked popup palettes, flames, the kaiju's bar). A Theme could not hold those values, and a script can.
+
+**How the HUD reads it** (also in `game/docs/hud-and-menus/hud.md`, "The HUD's shared style"):
+- Labels: `HudStyle.apply(control, "<role>"[, colour])` sets the font, size, colour (all four button states on a Button), outline colour and outline width from `HudStyle.LABELS`. The roles are `coins`, `clock_digits`, `sub_goal`, `weapon_count`, `air_counter`, `viewers_number`, `viewers_unit`, `viewers_flight`, `viewers_drop`, `pause_title`, `pause_text`, `level_up_title`, `level_up_card_title`, `level_up_card_desc` and `level_up_button`.
+- Heat looks: `HudStyle.HEAT_STEPS` (formerly `ComboHeat.STEPS`) with `apply_heat()` and `glow_color()`, used by the combo heat and the viewers counter.
+- Drawn pieces read these constants: `FIRE_PALETTE`, `SUB_GOAL_GLOW`, `HEALTH_*`, `CLOCK_PANEL_*`, `POPUP_PALETTE`/`POPUP_TEXT` (trick popups), `BROKEN_PALETTE` (combo broken popup), `KAIJU_*`, `PAUSE_*` and `LEVEL_UP_*`.
+- Fonts: `HudStyle.comic_font()` (`Hud.comic_font()` now returns it), `clock_font()`, and `new_comic_font()` (the popups bake from their own copy, as before).
+- Every old constant name (`Hud.LABEL_COLOR`, `ComboHeat.STEPS`, `LikesFire.PALETTE`, `TrickPopupArt.PALETTE`/`STYLES`, `ComboBrokenArt.PALETTE`, `WeaponIcons.COUNT_*`, `AirtimeCounter.*`, `ViewersCounter.DARK`/`UNIT_FONT_SIZE`, `TimerClock.PANEL_*`, `KaijuHealthBar.*`, the pause screen's `STRIP_COLOR`/`CONTROL_*`, `LevelUpScreen.TITLE_*`/`DIM`/`INK`/sizes) is kept and points at `HudStyle`. Existing tests and callers work unchanged, and each value is now set in one file.
+
+**Covered:** the clock (digits and panel), coins, hearts (they have no font or colour style; the row is art), weapon icons' counts, sub goal label/fill/glow, live viewers counter (number, unit, flight, drop) and its fire, reactions (no style values: art only), trick and combo broken popups, kaiju health bar, pause strip and level-up screen.
+
+**All values are the ones from before T-428**, so nothing on screen changes. `test_values_are_the_ones_before_t428` pins them to master's literals.
+
+**Left in the scripts on purpose (criterion 1 justification).** A grep of `game/scripts/hud/` (plus `pause_screen.gd` and `level_up_screen.gd`) for `add_theme_color_override`/`add_theme_font_size_override` with a literal value finds none outside `hud_style.gd`. The test `test_no_style_literals_in_hud_scripts` scans for exactly that, outline widths included. The remaining `Color(...)` uses aren't style; they're per-frame or computed values:
+- the heart row's loss flash `modulate`;
+- the reactions' fade alpha;
+- the viewers counter's flash rectangle and its transparent start;
+- `Color(color, alpha)` flashes;
+- the gift's grey copy;
+- the popup baker's opaque-pixel copy;
+- transparent image fills;
+- the level-up card's placeholder weapon pixel grids (art placeholders that the weapon art replaces, not HUD style).
+
+The viewers counter still swaps its number's `font_color` between `crash_color` and `color` at runtime. Both are variables that come from `hud.json` or `HudStyle`. The timer colour per step is data (`hud.json` `timer_clock.steps`) and is set through `color_for()`.
+
+**Small extra:** `LevelUpScreen` keeps its `HudScript` preload, because `test_level_up_screen.gd` reaches the HUD through it.
+
+**Tests** (all run in the foreground on the branch):
+- GUT `bash game/tools/run_tests.sh`: **2136/2136 passed** (173 scripts, 1,267,985 asserts). New: `game/tests/unit/hud/test_hud_style.gd`, 11 tests: the style loads and every role is well formed, the fonts, the pre-T-428 values, the scripts' constants are the style's, the HUD's labels, weapon counts, viewers number, flight and drop use it, the heat look, a button's four colours, and no literals left. The existing HUD layout and behaviour tests (`test_hud_layout.gd` and the rest) are unchanged and pass.
+- `python -m unittest discover -s game/tools -p "test_*.py"`: **722 tests OK** (1 skipped).
+- `python -m unittest discover -s tools -p "test_*.py"`: **582 tests OK**.
+
+**Screenshots** (`art-archive/T-428/screenshots/`):
+- `hud_run.png`: a run with the whole HUD visible: hearts, the gun with "X3", coins, the clock, the sub goal square and "18 / 30 SUBS", the live viewers counter, and a trick popup. Fixture: `game/tests/fixtures/t428_hud_style_demo.tscn`.
+- `pause.png`: the pause strip (fixture `pause_from_menu_demo.tscn`). It is identical to `art-archive/T-389/screenshots/pause.png` from the same fixture before T-428.
+- `level_up.png`: the level-up screen (fixture `t428_level_up_demo.tscn`). The text look (cream ribbon title with dark outline, black Bangers card text, "TAKE IT" plates) matches `art-archive/T-310/screenshots/level_up_title_cream.png`; the ribbon art and card texts have changed since T-310 through other tickets.
+- About "before": I could not render master in this folder (that needs a checkout or a file write outside the approved commands). The look match therefore rests on the pinned-value test, plus these comparisons with archived shots of the same screens. The coins and clock also match `art-archive/T-341/screenshots/hud_1152x648.png`.
+- The old `hud_from_menu_demo.tscn` now stops on the tutorial slides (T-389 put them in front of Start), so I wrote the new T-428 fixture, which uses `game.start_run()` as `pause_from_menu_demo` does.
+
+**Documents affected:** `game/docs/hud-and-menus/hud.md` (new paragraph "The HUD's shared style").
+
+**PixelLab:** 0 generations. **Refusals:** none.
