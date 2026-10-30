@@ -37,13 +37,13 @@ The board's review: Pause a run, open the trick list and go back.
 
 ## Acceptance criteria
 
-- [ ] The pause screen has a trick list button whose text is its key in game/data/tutorial_text.json; pressing it shows a panel holding an instance of game/scenes/menu/trick_list.tscn with the seven tricks, and none of slide 2's other text. (QA: pass / fail)
-- [ ] The back control, with its text from game/data/tutorial_text.json, returns to the pause screen with its sliders, checkboxes and buttons unchanged, and the tree stays paused while the panel is open and after going back; scene tests cover opening, going back and the paused state. (QA: pass / fail)
-- [ ] At 1152 x 648 the panel's rectangle lies inside the screen and does not overlap the HUD timer or clock (checked in a test or from the screenshot). (QA: pass / fail)
-- [ ] Mouse and keyboard both open and close the panel; what Escape does while the panel is open is written in the result notes and the doc, and a test covers it. (QA: pass / fail)
-- [ ] Screenshots of the pause screen with the new button and of the open panel are saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content, 'Pause screen' and game/docs/hud-and-menus/pause-screen.md list the new button and panel. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] The pause screen has a trick list button whose text is its key in game/data/tutorial_text.json; pressing it shows a panel holding an instance of game/scenes/menu/trick_list.tscn with the seven tricks, and none of slide 2's other text. (QA: pass)
+- [ ] The back control, with its text from game/data/tutorial_text.json, returns to the pause screen with its sliders, checkboxes and buttons unchanged, and the tree stays paused while the panel is open and after going back; scene tests cover opening, going back and the paused state. (QA: pass)
+- [ ] At 1152 x 648 the panel's rectangle lies inside the screen and does not overlap the HUD timer or clock (checked in a test or from the screenshot). (QA: pass)
+- [ ] Mouse and keyboard both open and close the panel; what Escape does while the panel is open is written in the result notes and the doc, and a test covers it. (QA: pass)
+- [ ] Screenshots of the pause screen with the new button and of the open panel are saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content, 'Pause screen' and game/docs/hud-and-menus/pause-screen.md list the new button and panel. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -70,4 +70,5 @@ UI Agent, done. Trick list button ("Trick list") in the pause screen's run butto
 - **Tests:** new `tests/unit/test_pause_trick_list.gd` (6 tests). Three sets: GUT 1957/1957 passed (160 scripts); `game/tools` unittest 675 OK (1 skipped); `tools` unittest 573 OK.
 - **Screenshots** in `art-archive/T-386/screenshots/`: `pause_screen.png` (with the new button), `pause_trick_list_panel.png` (open panel). Fixture: `pause_trick_list_demo.tscn`.
 - **Docs updated:** `docs/hud-and-menus.md` (Pause screen), `game/docs/hud-and-menus/pause-screen.md`.
+- QA round 1: all seven criteria pass. I ran the three test sets myself: GUT 160 scripts, 1957/1957 passed (test_pause_trick_list 6/6); game/tools 675 OK (1 skipped); tools 573 OK. The panel screenshot shows the panel inside the screen and clear of the timer. Both screenshots exist. Both docs describe the button, the panel and Escape. `python tools/qa_check.py` was refused (not pre-approved), so its paperwork check was skipped and I checked the files by hand.
 - No PixelLab generations; no refusals. Godot's `.import` line-ending noise in the folder was left uncommitted.
