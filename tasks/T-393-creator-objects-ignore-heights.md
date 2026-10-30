@@ -1,7 +1,7 @@
 ---
 id: T-393
 title: Bug: barriers and other objects in the level creator ignore the heights of buildings and rooftops
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/docs/level/elevation-sample-map.md, game/scripts/level_creator/, game/scripts/level/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-29, Open → In progress
 
 Started at once on your word: the Level/Challenge Design Agent is finding why placed objects ignore buildings' and rooftops' heights.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all seven criteria; barriers by a rooftop now draw under it, in the editor and the run. Ready for your playtest.
 
 ## Style review
 
