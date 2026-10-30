@@ -55,4 +55,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, T-427.
+
+- `pause_screen.gd`: the zoom, SFX and music sliders apply live in `value_changed` and only mark themselves in `_dirty`. They save on `drag_ended` with value_changed true (`_wire_save_on_release()`); `save_pending()` saves what is left on `resume()` (Escape), Restart and Exit (called before the signal).
+- `game_settings.gd`: `slider_writes` counter, +1 per zoom, SFX or music save, for the tests.
+- New `tests/unit/test_pause_slider_saves.gd`: a 20-value drag per slider gives no write during the drag, live zoom / SFX bus / Music bus values, and exactly one write at the end; no write when nothing changed; no double write on close after a saved drag; Escape, Restart and Exit save undragged changes.
+- Existing tests that set a slider value and expected an immediate save now emit `drag_ended(true)` (test_pause_screen, test_sfx_volume, test_music_volume_slider).
+- Docs: `docs/hud-and-menus.md` (Pause screen, new bullet) and `game/docs/hud-and-menus/pause-screen.md` state save on release and on close.
+- Tests: GUT 2153/2153 passed; `python -m unittest discover -s game/tools -p "test_*.py"` 736 tests OK (1 skipped); tools tests (`python -m unittest discover -s tools -p "test_*.py"`) 582 tests OK.
+- Screenshots: none; a slider write-count change shows nothing new on screen.

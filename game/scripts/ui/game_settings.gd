@@ -28,6 +28,9 @@ const MUSIC_BUS := "Music"
 
 ## Where the settings are read and written. Tests point this at a test file.
 static var path := DEFAULT_PATH
+## How many times a slider setting (zoom, SFX volume, music volume) was written to the file
+## (T-427): tests count the pause sliders' writes with it.
+static var slider_writes := 0
 
 
 ## The saved camera zoom, or DEFAULT_ZOOM when there is no file or no valid value.
@@ -46,6 +49,7 @@ static func save_zoom(zoom: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("camera", "zoom", clampf(zoom, MIN_ZOOM, MAX_ZOOM))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 
@@ -137,6 +141,7 @@ static func save_sfx_volume(v: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("audio", "sfx_volume", clampf(v, 0.0, 100.0))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 
@@ -193,6 +198,7 @@ static func save_music_volume(v: float) -> bool:
 	var cfg := ConfigFile.new()
 	cfg.load(path)
 	cfg.set_value("audio", "music_volume", clampf(v, 0.0, 100.0))
+	slider_writes += 1
 	return cfg.save(path) == OK
 
 
