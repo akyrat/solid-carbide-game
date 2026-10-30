@@ -39,12 +39,12 @@ The board's review: play a run, hit minions with each weapon and the car, and hi
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Minions and the kaiju flash red when a weapon or the car damages them, using T-403's helper (tests). (QA: pass / fail)
-- [ ] The proposals for kills and the kaiju are in the result notes, and behave as written (tests). (QA: pass / fail)
-- [ ] Many minions flashing at once keep the frame time as before, measured in the result notes. (QA: pass / fail)
-- [ ] Enemies (Content) and game/docs/enemies/ describe it. (QA: pass / fail)
-- [ ] A GIF of minions and the kaiju being hit is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [x] Minions and the kaiju flash red when a weapon or the car damages them, using T-403's helper (tests). (QA: pass - tests in test_minions/test_kaiju green)
+- [x] The proposals for kills and the kaiju are in the result notes, and behave as written (tests). (QA: pass)
+- [x] Many minions flashing at once keep the frame time as before, measured in the result notes. (QA: pass - 4.166 vs 4.180 ms in the notes)
+- [x] Enemies (Content) and game/docs/enemies/ describe it. (QA: pass - docs/enemies.md and game/docs/enemies/minions.md changed; qa_check's "documents" line is a directory-path false alarm)
+- [x] A GIF of minions and the kaiju being hit is in `art-archive/<id>/screenshots/`. (QA: pass - enemy_red_flash.gif present, 11.6 MB)
+- [x] All three test sets pass, with the counts in the result notes. (QA: pass - rerun by QA: GUT 1946 passing, 158 scripts, TESTS PASSED, exit 0; counts match the notes)
 
 ## Updates
 
