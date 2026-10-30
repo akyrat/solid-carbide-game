@@ -208,6 +208,11 @@ func test_no_pickup_no_revive_and_the_wreck_ends_as_before() -> void:
 func test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
+	# T-424: the test is about the wreck, the slide, the pickup and the revive. The starting gun
+	# and the minions (kills drop coins and hearts, bodies hit the car) would change what it
+	# watches, so they are off before the first frame (minions.enabled, weapons.enabled).
+	run.minions.enabled = false
+	run.weapons.enabled = false
 	var run_ended: Array = []
 	run.state.run_ended.connect(func(r: String, c: int) -> void: run_ended.append([r, c]))
 	run.car.use_keyboard = false
