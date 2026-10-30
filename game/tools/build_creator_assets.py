@@ -79,6 +79,26 @@ def piece_building_entries(pieces):
     return out
 
 
+def platform_art(entries, record):
+    """T-405: the short buildings (short-N, building-small, building-long) are platforms 3 units high: each of
+    their textures shows its platform art (game/art/buildings/platforms/, build_short_platform_art.py) with its
+    own anchor, so the panel's button and the editor's preview show what is placed. A texture without platform
+    art is left as it is."""
+    textures = record.get("textures", {}) if record else {}
+    for e in entries:
+        eid = e["id"]
+        if not (eid.startswith("short-") or eid in ("building-small", "building-long")):
+            continue
+        e["height_units"] = float(record.get("height_units", 3)) if record else e["height_units"]
+        for t in e["textures"]:
+            art = textures.get(t["texture"])
+            if art:
+                t["texture"] = art["full"]
+                t["footprint_units"] = list(art["footprint_units"])
+                t["anchor_art_px"] = list(art["anchor_art_px"])
+    return entries
+
+
 def boulder_entries(boulders):
     by_base = {}
     for v in boulders["variants"]:
@@ -351,6 +371,8 @@ def build():
     entries += ground_entries(load("art/ground/ground_atlas.json"), load("art/ground/road_tile.json"))
     entries += building_entries(sky)
     entries += piece_building_entries(load("data/level/creator_buildings.json"))
+    platform_art(entries, load("art/buildings/platforms/platforms.json")
+                 if os.path.isfile(os.path.join(GAME, "art/buildings/platforms/platforms.json")) else {})
     entries += boulder_entries(load("art/boulders/boulders.json"))
     entries += elevation_entries(load("data/level/elevation_sample_map.json"))
     entries += prop_entries(load("data/level/props.json"))

@@ -123,7 +123,8 @@ func test_kaiju_walks_straight_at_the_car_in_the_open() -> void:
 
 
 func test_kaiju_walks_round_a_building() -> void:
-	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[0])
+	# T-405: a block with no short building (the first one's short slots are platforms now, open street round them).
+	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[1])
 	var r: float = KaijuScript.RADIUS_UNITS
 	var start := Vector2(b.position.x - r - 0.5, b.get_center().y)
 	var target := Vector2(b.end.x + 12.0, b.get_center().y)

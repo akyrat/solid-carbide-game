@@ -75,7 +75,9 @@ func test_the_rules_hold_for_each_sprite() -> void:
 
 
 func test_every_area_shows_its_art_sprite() -> void:
-	assert_eq(scene.areas.size(), _ids().size())
+	# T-405: and one per short building of its blocks (drawn from their own platform art).
+	assert_eq(scene.areas.size(), _ids().size() + load("res://scripts/level/short_platforms.gd").platforms_of(
+		JSON.parse_string(FileAccess.get_file_as_string("res://data/level/elevation_sample_map.json"))).size())
 	for id in _ids():
 		var a = _area(id)
 		assert_not_null(a, id)

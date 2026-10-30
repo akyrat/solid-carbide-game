@@ -880,7 +880,7 @@ Task T-253 (Decisions, "Level creator piece set"). Every number here is the Leve
 - **The set** (category "Props", names from T-250): concrete barrier, traffic cones, crate stack, AC unit, water tank, roof vent, street lamp, rooftop sign. Footprints (north-facing, units): barrier 4 by 1, rooftop sign 4 by 1, water tank 4 by 4, the rest 2 by 2. Heights drawn: barrier 1.2, cones 0.9, crates 2.2, AC unit 1.5, roof vent 1.45, sign 3.3, tank 3.3, lamp 5.35.
 - **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping other objects, and is refused where its footprint would leave the map, reach into a building or stand across a rooftop's or ramp's edge (T-393, below).
 - **Ground or rooftop:** a prop stands at the height under the centre of its footprint (the street, a rooftop, a ramp's slope), drawn lifted by it.
-- **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Proposal: the physics is flat, so a car in the air above a rooftop prop crashes into it too.
+- **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Since T-405 a prop blocks the car only at its own heights, from the ground it stands on to its top ("Short buildings as platforms", below).
 - **Placeholder look:** code-drawn boxes and cylinders (a top and two visible faces, a dark outline, none of Greenbull's colours), one sprite per prop and rotation. Everything about a prop is in `game/data/level/props.json` (footprint, collision, height, the sprite of each rotation and its anchor), so T-256's art changes only that file and the PNGs.
 - **Saved levels** keep their props in a `props` list; `check_level.py` checks that each names a known prop and rotation, has the right turned footprint and lies inside the map.
 
@@ -892,12 +892,40 @@ Task T-393 (Decisions, "Obstacles and decorations respect the buildings' and roo
 
 - **Heights:** every placed object, the boulders and the eight props, stands at the height under the centre of its footprint: the street (0), a rooftop (3 or 6) or a ramp's slope, in the editor and in the run. Boulders used to stand on the street even on a rooftop; now they are lifted like the props.
 - **Depth:** an object behind a building or a rooftop and overlapping it on screen is drawn under it; one in front of it, or standing on it, is drawn over it. The board's barriers by the low-rise were drawn over it on any level with rooftops, because the buildings' order there was read wrongly; that is fixed for every kind of object.
-- **Edges (the Level/Challenge Design Agent's proposal for the board's playtest):** an object stands wholly on one surface. One whose footprint would reach into a building, or across the edge of a rooftop or a ramp, is not placed, with the same message as a piece that overlaps another ("Can't place here: it overlaps another piece."); touching a building or an edge is fine. The other way round, a building placed over an object, or a rooftop or ramp whose edge would cut through one, is not placed either; a rooftop or ramp placed wholly over an object lifts it to its height. Levels saved before keep what they have (the board's Kaiju City barrier inside its low-rise stays, drawn under the low-rise).
+- **Edges (the Level/Challenge Design Agent's proposal for the board's playtest):** an object stands wholly on one surface. One whose footprint would reach into a building, or across the edge of a rooftop or a ramp, is not placed, with the same message as a piece that overlaps another ("Can't place here: it overlaps another piece."); touching a building or an edge is fine. The other way round, a building placed over an object, or a rooftop or ramp whose edge would cut through one, is not placed either; a rooftop or ramp placed wholly over an object lifts it to its height. Levels saved before keep what they have (the board's Kaiju City barrier inside its low-rise stays; since T-405 the low-rise is a platform, so it stands on its roof). Since T-405 "a building" here means a skyscraper: the short buildings are platforms and take objects like rooftops.
 - **As before:** the game's own map and levels without rooftops draw their objects exactly as before.
 
 ![Before: the board's barriers drawn over the low-rise in the editor](../art-archive/T-393/screenshots/before_editor.png)
 
 ![After: the barrier behind the low-rise is hidden by it](../art-archive/T-393/screenshots/after_editor.png)
+
+#### Short buildings as platforms
+
+Task T-405 (Decisions, "Short buildings become platforms"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)". The art: Visual style, Content, "Short buildings as platforms".
+
+- **Which buildings:** the low-rise (4 designs, 2 looks each), the small (6 by 6) and the long (12 by 6, turned 6 by 12) building are platforms at **height 3**. Only the skyscrapers stay solid buildings. Nothing changes in how they are placed, mirrored or saved: a level file still lists them under `buildings`, so every level saved before loads them as platforms.
+- **Driving:** the car drives on a short building's roof like on a rooftop, reaches it by a 0-to-3 ramp (the creator links a ramp to it like to a rooftop at 3), meets its sides from the street as walls, and falls off its edges. A rooftop at 6 may stand on it.
+- **Joins:** two short buildings side by side, or one beside (or overlapping) a 3-high rooftop, make one surface: the same height, so no bump and no wall, and no wall or roof edge drawn along the join. A parapet breaks where a ramp meets the edge, as on the rooftops. A short building beside a higher rooftop draws no wall or edge against it either.
+- **Enemies** treat them as rooftops: they walk up the ramps onto them and drop off their edges (the enemies' paths, T-226).
+- **Objects:** props and boulders go on them like on a rooftop, at height 3; one across a short building's edge, or across the join between two of them, is not placed (T-393's edge rule; a proposal: the join could be allowed later). The car's spawn point may stand on one.
+- **See-through (proposal):** a short building fades while it covers the car behind it, as the rooftops do (the car on its roof, or in front of it, never fades it).
+- **The game's own map:** each short building of its blocks (about one per block) is a platform on its 12 by 12 footprint; the block's other three slots stay solid skyscrapers with their pavement, and the pavement round the short building is open street (proposal: before, the whole block was solid). It has no ramp to them, so they are reached only from the air. The old MVP map without heights is unchanged.
+
+**The altitude audit (proposals for the board's playtest).** Every collider of a level and how it works at height:
+
+| Collider | How it blocks the car |
+|---|---|
+| Skyscraper (and a block's skyscraper slot) | A wall at any height, on the street, on a rooftop and in the air. |
+| Map edge | A wall at any height. |
+| Short building, rooftop | No body: its sides stop a car below its top (a car that drives into a 3 from the street bounces off its side); a car at or above its top drives or lands on it. |
+| Ramp | No body: its sides stop a car below the slope; its foot and top end are open. |
+| Prop (barrier, cones, crates, AC unit, water tank, roof vent, street lamp, rooftop sign) | Only from the ground it stands on (the height under its centre) up to its top (its drawn height): a car on a rooftop passes over a street prop at the rooftop's edge, a car in the air passes over a prop it clears, a car on the street never touches a prop up on a roof. |
+| Boulder (placed, a meteor's) | The same, from its ground up by its diameter (3 units). |
+| Spawn point | Not a body: the car starts at the ground's height there (a short building's 3 included). |
+
+The car's own height model treats the car as its centre point (car_height.gd): a car that lands overlapping a prop or boulder keeps passing through it until it is clear of it rather than being pushed out (a proposal); T-411 (the car's whole footprint) would make the sides and edges meet the drawn car instead.
+
+![Short buildings joined side by side and to a rooftop, in the level creator](../art-archive/T-405/screenshots/editor_joined.png)
 
 #### Elevation test scene
 
@@ -1468,6 +1496,12 @@ The visual style guide: every generated or script-drawn asset is checked against
 
 Greenbull's logo (emblem and wordmark) is flat brand art: exempt from rule 2's shading and detail, but it follows rule 1 (Decisions, "Greenbull's look").
 
+#### Short buildings as platforms
+
+Task T-405 (Level design, Decisions, "Short buildings become platforms": the same art, its walls trimmed by script to height 3, no new generations): `game/tools/build_short_platform_art.py` cuts each short building's art to a platform 3 units high, with no PixelLab call: the 8 low-rise bodies (T-129) and the 6 small and long textures (T-257) into `game/art/buildings/platforms/`, four images each (the platform alone; its roof with no parapet; with only the north and south parapets; with only the west and east ones) and a record, `platforms.json`. Each wall loses a band of rows under its lit top lip (134 or 138 rows become 96), keeping its ground floor; the small and long buildings, which stood half a unit inside their footprint, are widened to fill it by repeating one unit in the middle of each roof and wall, and lose their pavement; the parapets come out by reading the roof one unit further in. The rooftop props are never cut: the art is built again without them from the PixelLab pieces in `art-archive/T-129/raw/` and `art-archive/T-257/raw/` (the rebuild is checked to equal today's files pixel for pixel), the box is cut from that, and the props' own pixels are put back whole. Every pixel is moved whole, never resampled. In the game a platform is drawn from those pieces so that two side by side, or one beside a rooftop, show no wall or roof edge along the join (`game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)"). The originals stay in place (the old MVP map still draws them) and are copied in `art-archive/T-405/originals/`.
+
+![Short buildings joined, in the level creator](../art-archive/T-405/screenshots/editor_joined.png)
+
 #### See-through buildings
 
 Task T-020 researched how buildings can turn see-through when the car is behind them: it compares three approaches and builds a demo with the recommended one (fading the whole building while the car is behind it) and a cut-out variant. The demo, the screenshots with several fade strengths and the questions for the board are in the report (References).
@@ -1736,10 +1770,10 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `c657d4ae23f9862f3db6f5113e856db9415d13d0dc521b81038d1c3df6acc135` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
-| `level-design.md` | `1820a5b82deb8d2017eb0afb707f0db19957ad9059ddba193691fd7f714170f6` |
+| `level-design.md` | `5506db905d79cdbc6c95a343bb69b0a840ff7151d568d17f4bd92eebabdd86c7` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
 | `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |
-| `visual-style.md` | `83a9f16fc5def7d4ee935d0aad41b1b81c0194d438b411e7e6eb352b5ae6e512` |
+| `visual-style.md` | `cd013468c7074ae218aad47c2f01c59e2c1d50bbd80a7bcde8d60da1764809d8` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
 | `hud-and-menus.md` | `22dbcd48e153b3d345ab29dbb4de87a87a76fd2da69d1fd22c25c981c460cb92` |

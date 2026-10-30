@@ -127,7 +127,8 @@ static func neighbour_shift(rect: Rect2, near: Array) -> Vector2:
 static func ramp_snap(doc: LevelDocument, rect: Rect2, side: String, top_height: float) -> Dictionary:
 	var best: Dictionary = {}
 	var best_d := INF
-	for p in doc.data.get("platforms", []):
+	# T-405: a short building is a platform at 3 a ramp climbs to (LevelDocument.surfaces).
+	for p in doc.surfaces():
 		if absf(float(p.height) - top_height) > E:
 			continue
 		var a := Rect2(float(p.x), float(p.y), float(p.w), float(p.h))
@@ -251,10 +252,12 @@ static func _ramp_problem(ramp: Dictionary, platforms: Array, by_id: Dictionary,
 ## go, else a short description. Touching a building or an edge is allowed.
 static func object_problem(doc: LevelDocument, rect: Rect2) -> String:
 	for b in doc.data.get("buildings", []):
-		if _overlap(rect, _rect(b)):
+		# T-405: a short building is a platform: an object stands on it like on a rooftop (below).
+		if not LevelDocument.ShortPlatformsScript.is_platform_entry(b) and _overlap(rect, _rect(b)):
 			return "the object reaches into a building"
-	for key in ["platforms", "ramps"]:
-		for a in doc.data.get(key, []):
+	for key in ["platforms", "ramps", "short"]:
+		var items: Array = LevelDocument.ShortPlatformsScript.platforms_of(doc.data) if key == "short" else doc.data.get(key, [])
+		for a in items:
 			var ar := _rect(a)
 			if _overlap(rect, ar) and not _holds(ar, rect):
 				return "the object stands across the edge of %s" % str(a.get("id", ""))
@@ -272,6 +275,8 @@ static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictiona
 		var o := doc.piece_rect(piece)
 		if not _overlap(r, o):
 			continue
-		if kind == "building" or not _holds(r, o):
+		# T-405: a short building is a platform: placed wholly over an object it lifts it, like a rooftop.
+		var solid: bool = kind == "building" and not LevelDocument.ShortPlatformsScript.is_platform_entry(item)
+		if solid or not _holds(r, o):
 			return "the %s cuts through an object" % kind
 	return ""

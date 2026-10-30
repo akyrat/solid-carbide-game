@@ -1,0 +1,205 @@
+{
+ "about": "T-405: the short buildings as platforms 3 units high, cut by game/tools/build_short_platform_art.py from their art (no PixelLab). Per source texture: the four images (full: standing alone; clean: the roof with no parapet; ns: only the north and south parapets; ew: only the west and east ones), the footprint in units and the anchor (the art pixel on the footprint's front corner).",
+ "height_units": 3,
+ "edge_units": 1.0,
+ "lip_units": 0.15,
+ "art_px_per_unit": 32,
+ "textures": {
+  "res://art/buildings/short_body_0.png": {
+   "full": "res://art/buildings/platforms/short_body_0.png",
+   "clean": "res://art/buildings/platforms/short_body_0_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_0_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_0_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_1.png": {
+   "full": "res://art/buildings/platforms/short_body_1.png",
+   "clean": "res://art/buildings/platforms/short_body_1_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_1_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_1_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_2.png": {
+   "full": "res://art/buildings/platforms/short_body_2.png",
+   "clean": "res://art/buildings/platforms/short_body_2_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_2_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_2_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_3.png": {
+   "full": "res://art/buildings/platforms/short_body_3.png",
+   "clean": "res://art/buildings/platforms/short_body_3_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_3_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_3_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_4.png": {
+   "full": "res://art/buildings/platforms/short_body_4.png",
+   "clean": "res://art/buildings/platforms/short_body_4_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_4_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_4_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_5.png": {
+   "full": "res://art/buildings/platforms/short_body_5.png",
+   "clean": "res://art/buildings/platforms/short_body_5_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_5_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_5_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_6.png": {
+   "full": "res://art/buildings/platforms/short_body_6.png",
+   "clean": "res://art/buildings/platforms/short_body_6_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_6_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_6_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/short_body_7.png": {
+   "full": "res://art/buildings/platforms/short_body_7.png",
+   "clean": "res://art/buildings/platforms/short_body_7_clean.png",
+   "ns": "res://art/buildings/platforms/short_body_7_ns.png",
+   "ew": "res://art/buildings/platforms/short_body_7_ew.png",
+   "footprint_units": [
+    12,
+    12
+   ],
+   "anchor_art_px": [
+    384,
+    480
+   ]
+  },
+  "res://art/buildings/creator_final/small_0.png": {
+   "full": "res://art/buildings/platforms/small_0.png",
+   "clean": "res://art/buildings/platforms/small_0_clean.png",
+   "ns": "res://art/buildings/platforms/small_0_ns.png",
+   "ew": "res://art/buildings/platforms/small_0_ew.png",
+   "footprint_units": [
+    6,
+    6
+   ],
+   "anchor_art_px": [
+    192,
+    308
+   ]
+  },
+  "res://art/buildings/creator_final/small_1.png": {
+   "full": "res://art/buildings/platforms/small_1.png",
+   "clean": "res://art/buildings/platforms/small_1_clean.png",
+   "ns": "res://art/buildings/platforms/small_1_ns.png",
+   "ew": "res://art/buildings/platforms/small_1_ew.png",
+   "footprint_units": [
+    6,
+    6
+   ],
+   "anchor_art_px": [
+    192,
+    308
+   ]
+  },
+  "res://art/buildings/creator_final/long_ew_0.png": {
+   "full": "res://art/buildings/platforms/long_ew_0.png",
+   "clean": "res://art/buildings/platforms/long_ew_0_clean.png",
+   "ns": "res://art/buildings/platforms/long_ew_0_ns.png",
+   "ew": "res://art/buildings/platforms/long_ew_0_ew.png",
+   "footprint_units": [
+    12,
+    6
+   ],
+   "anchor_art_px": [
+    384,
+    404
+   ]
+  },
+  "res://art/buildings/creator_final/long_ew_1.png": {
+   "full": "res://art/buildings/platforms/long_ew_1.png",
+   "clean": "res://art/buildings/platforms/long_ew_1_clean.png",
+   "ns": "res://art/buildings/platforms/long_ew_1_ns.png",
+   "ew": "res://art/buildings/platforms/long_ew_1_ew.png",
+   "footprint_units": [
+    12,
+    6
+   ],
+   "anchor_art_px": [
+    384,
+    404
+   ]
+  },
+  "res://art/buildings/creator_final/long_ns_0.png": {
+   "full": "res://art/buildings/platforms/long_ns_0.png",
+   "clean": "res://art/buildings/platforms/long_ns_0_clean.png",
+   "ns": "res://art/buildings/platforms/long_ns_0_ns.png",
+   "ew": "res://art/buildings/platforms/long_ns_0_ew.png",
+   "footprint_units": [
+    6,
+    12
+   ],
+   "anchor_art_px": [
+    192,
+    404
+   ]
+  },
+  "res://art/buildings/creator_final/long_ns_1.png": {
+   "full": "res://art/buildings/platforms/long_ns_1.png",
+   "clean": "res://art/buildings/platforms/long_ns_1_clean.png",
+   "ns": "res://art/buildings/platforms/long_ns_1_ns.png",
+   "ew": "res://art/buildings/platforms/long_ns_1_ew.png",
+   "footprint_units": [
+    6,
+    12
+   ],
+   "anchor_art_px": [
+    192,
+    404
+   ]
+  }
+ }
+}

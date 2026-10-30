@@ -414,6 +414,10 @@ func _build_world() -> void:
 			df = func(units: Vector2, rot: float, h: float) -> int: return lay.z_for(units, rot, h)
 		needle.build_markers(map, hf, df)
 	car.stepped.connect(_on_car_needle_step)
+	# T-405 (altitude audit): props and boulders block the car only at their own heights.
+	var the_map: Node2D = map
+	var the_car = car
+	car.stepped.connect(func() -> void: the_map.update_car_obstacles(the_car, the_car.height))
 	trick_popups.bind(car, func() -> Vector2: return car_sprite.position)
 	hud.bind_car(car)  # the airtime counter (T-243)
 	map.car = car

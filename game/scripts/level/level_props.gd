@@ -158,6 +158,12 @@ static func build(map: Node2D) -> void:
 		var body := StaticBody2D.new()
 		body.name = "Prop_%s" % str(it.get("id", k)).replace("-", "_")
 		body.set_meta("prop_id", str(it.get("id", "")))
+		# T-405: the heights it blocks the car at (mvp_map.gd update_car_obstacles): from the ground
+		# under its centre (a rooftop's, a short building's, a ramp's) up by its own height.
+		var foot_h := ground.height_at(rect_of(it).get_center())
+		var pdata := prop(str(it.get("asset", "")))
+		body.set_meta("base_units", foot_h)
+		body.set_meta("top_units", foot_h + float(pdata.get("height_units", 1.0)) if not pdata.is_empty() else foot_h + 1.0)
 		map.physics_root.add_child(body)
 		var cs := CollisionShape2D.new()
 		cs.name = "Shape"

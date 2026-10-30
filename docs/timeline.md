@@ -2575,3 +2575,8 @@ Entry format:
 - Decision or change: A one-tile jump ramp, 2 high, in three height steps (build E).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-400
+
+## 2026-10-30: Short buildings become platforms
+- Decision or change: Low-rise, small and long buildings are connectable platforms at height 3; colliders work at their height (build E).
+- Documents touched: `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-405
