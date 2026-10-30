@@ -1,7 +1,7 @@
 ---
 id: T-429
 title: The HUD's code follows the HUD style sheet (fonts, colours, outlines)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/scripts/hud/hud_style.gd, game/scripts/hud/*.gd, game/scripts/ui/pause_screen.gd, game/scripts/ui/level_up_screen.gd, game/tests/unit/hud/test_hud_style.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
 model: opus
-qa_rounds: 1
+qa_rounds: 2
 ---
 
 <!--
@@ -63,6 +63,10 @@ Goal runner (G-008): failed QA once; back to the agent on opus.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-008): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
 
 ## Style review
 
@@ -268,3 +272,4 @@ A bug found by screenshot: the first `ClockDigits` drew with `draw_texture_rect`
 - QA round 2: all six criteria pass. Screenshots present in art-archive/T-429/screenshots/. QA did not rerun the full Godot suite (over 600 s); it ran the hud folder (185/185), and the two Python sets. Refusals: none.
 - QA round 2: all six criteria pass. Screenshots are in art-archive/T-429/screenshots/. QA reran game/tools (736 OK, 1 skipped), tools (582 OK) and the Godot hud folder (185/185). QA did not rerun the full Godot suite (over 600 s); it relies on the agent's reported 2141 green. Refusals: none.
 - 2026-10-30, style loop: version 1 kept at 7/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
