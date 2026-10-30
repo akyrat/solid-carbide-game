@@ -2430,3 +2430,8 @@ Entry format:
 - Decision or change: The board adds meteor craters to the creator: ground pieces the car drives over, not obstacles, with their art inside the sidewalk and car set's 50-generation cap (T-397 to T-399); text ticket for the name.
 - Documents touched: docs/level-design.md
 - Tasks: T-401
+
+## 2026-10-30: Bug: gift pack below a platform
+- Decision or change: The board: a gift pack that falls on a platform is drawn below it. Bug ticket, root cause and fix, started at once.
+- Documents touched: docs/level-design.md
+- Tasks: T-402
