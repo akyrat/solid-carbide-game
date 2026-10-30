@@ -1,7 +1,7 @@
 ---
 id: T-431
 title: The HUD scales with the window, and a HUD size slider on the pause screen
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-008
