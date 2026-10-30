@@ -2425,3 +2425,8 @@ Entry format:
 - Decision or change: The level creator's names for the sidewalk, the parked and broken cars, and their model and facing labels (Level design, Content).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-396
+
+## 2026-10-30: Meteor craters in the level creator
+- Decision or change: The board adds meteor craters to the creator: ground pieces the car drives over, not obstacles, with their art inside the sidewalk and car set's 50-generation cap (T-397 to T-399); text ticket for the name.
+- Documents touched: docs/level-design.md
+- Tasks: T-401
