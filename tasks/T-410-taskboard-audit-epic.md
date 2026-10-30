@@ -1,7 +1,7 @@
 ---
 id: T-410
 title: The task board shows the audit epic
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, tools/taskboard/taskboard.html]
 files_expected_to_change: [tools/taskboard/taskboard.html]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -75,3 +75,4 @@ Written by the agent when it finishes.
 - New tests: tools/test_taskboard_areas.py (Audit entry shape, unique colours, no epic in two areas).
 - `python -m unittest discover -s tools -p "test_*.py"`: 582 tests, OK.
 - No screenshot taken: the running board on port 8765 was left alone and no browser was driven; the bubble comes from the same areaOf/AREAS code as every other epic, so QA can confirm it on a served copy.
+- 2026-10-30, in-qa → done: QA passed; the board waived the screenshot criterion (2026-10-30)
