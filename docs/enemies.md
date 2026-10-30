@@ -41,9 +41,13 @@ Each level ends with its own final boss; in the first level, Crash City, it is t
 - **Health drops 1.5 times as often** (board, 2026-10-29): "increase the drop rate of health items by enemies by 1.5 times of what it is now": a killed minion drops a health pickup with a chance of 22.5% instead of 15%. The coins, the heal (1 heart) and the kaiju (none) are unchanged. (T-371)
 - **Minions twice as big** (board, 2026-10-29, an MVP nice-to-have): the minions are drawn twice as big, and the size they hit and get hit with grows to match, so what the player sees is what touches the car. The kaiju stays as it is.
 - **Minions don't get stuck on ramps** (board, 2026-10-29, an MVP nice-to-have; a bug): chasing the car, minions sometimes get stuck on walls as they try to go round a corner, mostly at the bottom end of a ramp. They should find their way round.
-- **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. (T-404)
+- **A red flash when an enemy takes damage** (board, 2026-10-30): every enemy (minions and the kaiju) flashes red when a weapon or the car hits it, the same red flash the car shows when it loses a heart (Game loop architecture, Decisions). Its length and shade match the car's; for the kaiju, whether it flashes on every hit or only in its vulnerable window is a proposal. Built in T-404 (see Content, "The red flash").
 
 ## Content
+
+### The red flash (built in task T-404)
+
+Every minion and the kaiju flash the car's red (Game loop architecture, Decisions) when a weapon or the car damages them and they survive: same colour and length, read from `hit_flash` in `game/data/run.json` (0.4 s, red [1, 0.25, 0.25], proposals). It replaces T-072's pale 0.12 s tint. Proposals: a hit that kills skips the flash (the enemy is gone at once); the kaiju flashes on every hit, not only in its vulnerable window; a new hit restarts the flash; the flamethrower's orange burn flash still wins over red. How: `game/docs/enemies/minions.md`.
 
 ### The minion (built in task T-044)
 
