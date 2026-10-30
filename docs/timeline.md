@@ -2415,3 +2415,8 @@ Entry format:
 - Decision or change: The full sidewalk, curb and parked and broken car set from the approved sample, swapped into the creator.
 - Documents touched: docs/visual-style.md
 - Tasks: T-399
+
+## 2026-10-30: A small jump ramp
+- Decision or change: The board wants a small ramp, one tile long and about 2 units high, for small jumps, besides the 0-3, 3-6 and 0-6 ramps.
+- Documents touched: docs/level-design.md
+- Tasks: T-400
