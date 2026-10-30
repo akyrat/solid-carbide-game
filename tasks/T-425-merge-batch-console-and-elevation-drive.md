@@ -1,7 +1,7 @@
 ---
 id: T-425
 title: merge_batch.py crashes printing on the Windows console, and drive_elevation_sample.sh stops before driving
-status: open
+status: in-progress
 from: project-lead
 to: qa-integration
 lead: Greenbull
@@ -49,6 +49,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started: tooling, merges after QA.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -56,3 +60,10 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Agent notes (builder):
+
+- Bug 1: `merge_batch.py` now calls `safe_output()` (stdout and stderr reconfigured to UTF-8, errors replaced) at the start of `main`. `qa_check.py` had the same gap; its `main` now calls `tb.utf8_output()`. `task_status.py` and `board_inbox.py` already did, so they are safe. Test: `ConsoleEncodingTest` in `tools/test_merge_batch.py` runs with PYTHONIOENCODING=cp1252: the crash without the fix, the arrow printed with `safe_output()`, and the other three tools checked.
+- Bug 2 cause: in a `-s` script the root is not ready during `_initialize`, so the scene's `_ready` (which creates `scene.car`) has not run when `prepare()` was called; the car was null. GUT's tree is already ready, so the test passed. Fix in `game/tools/drive_elevation_sample.gd`: `prepare()` runs on physics frame 1 (the drive still starts at frame 3).
+- Drive output now: layers 0, 3 at 1.82 s, 6 at 5.40 s, 0 at 7.28 s; max height 6.85; "PASS: the street, height 3 and height 6 reached, and the car landed off the height-6 edge", exit 0.
+- Tests (after merging master): `game/tools` python 752 OK (1 skipped); `tools` python 585 OK; `run_tests.sh` 2172/2172 passing, TESTS PASSED.
