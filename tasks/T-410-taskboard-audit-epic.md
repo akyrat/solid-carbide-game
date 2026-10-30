@@ -1,7 +1,7 @@
 ---
 id: T-410
 title: The task board shows the audit epic
-status: open
+status: in-progress
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -47,6 +47,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
 
+### 2026-10-30, Open → In progress
+
+Started: tooling, merges after QA.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -54,3 +58,8 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+- Added `{ name: "Audit", doc: null, epics: ["audit"], color: "#f2e55c" }` to AREAS in tools/taskboard/taskboard.html (before Tooling; not excluded, so it counts in the MVP figure; the colour is used by no other area).
+- New tests: tools/test_taskboard_areas.py (Audit entry shape, unique colours, no epic in two areas).
+- `python -m unittest discover -s tools -p "test_*.py"`: 582 tests, OK.
+- No screenshot taken: the running board on port 8765 was left alone and no browser was driven; the bubble comes from the same areaOf/AREAS code as every other epic, so QA can confirm it on a served copy.
