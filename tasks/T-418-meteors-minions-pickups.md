@@ -1,7 +1,7 @@
 ---
 id: T-418
 title: Meteors hit minions and push pickups aside
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/scripts/enemies/kaiju_meteors.gd, game/scripts/enemies/enemy_data.gd, game/scripts/enemies/minion_spawner.gd]
 files_expected_to_change: [game/scripts/enemies/kaiju_meteors.gd, game/scripts/enemies/enemy_data.gd, game/scripts/enemies/minion_spawner.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -58,6 +58,10 @@ Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-work
 ### 2026-10-30, In progress → In QA
 
 Build J (Audit): the agent finished (meteors damage minions, minion_damage 2 is its proposal; pickups pushed out of boulders; data guards). Pickup code only in minion_spawner.gd. In QA now.
+
+### 2026-10-30, In QA → Needs playtest
+
+Build J (Audit): QA passed all 5 criteria and the tests; screenshots in art-archive/T-418/screenshots/. Merged into playtest/audit-world, waiting for the board's playtest of build J.
 
 ## Style review
 
