@@ -1,7 +1,7 @@
 ---
 id: T-387
 title: Start shows the tutorial slides before the run, unless hidden
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Goal-G-007
@@ -100,3 +100,4 @@ PixelLab: 0 generations. No player-facing text was added. No refusals.
 
 **QA round 1 (qa-integration):** all six criteria pass. Reran: GUT full run exit 0, TESTS PASSED, test_tutorial_flow.gd 8/8; tools unittest 573 OK; game/tools unittest 675 OK (1 skipped). Both screenshots exist; docs mention the slides step (flow diagram lines 83-84). `python tools/qa_check.py` was refused (not pre-approved), so skipped.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
