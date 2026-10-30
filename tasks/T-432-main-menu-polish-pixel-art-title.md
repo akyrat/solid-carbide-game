@@ -58,4 +58,12 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+Done (UI Agent). 0 PixelLab generations; no style loop (a free font, no new text, no generated art).
+
+- Title and "(work in progress)" now use Press Start 2P (SIL OFL 1.1) in `game/fonts/press_start_2p/` (TTF, OFL.txt, `press_start_2p.json` record with hashes), fetched by `game/tools/fetch_pixel_font.py`. Title 56 px cyan, line 16 px pale; both with a near-black outline and nearest filtering. Texts unchanged.
+- Splash slot in `main_menu.gd`: if `res://art/menu/splash.png` exists, a `TextureRect` (keep-aspect-covered, ignore-size expand, nearest filtering) fills the screen behind the menu under a 35% black scrim; else the plain dark navy `background` shows. `splash_path` can be set before entering the tree (tests). Menu layers now use `set_anchors_and_offsets_preset` so they really fill the screen.
+- Tests (`test_main_menu.gd`): font and licence files, placeholder, splash cropped/nearest/fills at 1152x648 and 3440x1440, focus on Start, texts and signals. test_main_menu: 9/9 passed (35 asserts).
+- Full suite: GUT 2145/2145 passed; `unittest discover -s game/tools` 736 tests OK (1 skipped); `unittest discover -s tools` 582 tests OK.
+- Docs updated: docs/hud-and-menus.md (Main menu), game/docs/hud-and-menus/main-menu.md.
+- Screenshots: art-archive/T-432/screenshots/menu_placeholder.png and menu_test_image.png (test image from `game/tools/menu_splash_shots.py`, removed again; no splash.png is committed).
+- Refusals: none.
