@@ -225,6 +225,29 @@ Rule 3: the view is roughly 3/4 isometric, which is acceptable.
 
 **Kept:** version 4, score 6/10 (`art-archive/T-384/style-loop/v4-2.png`, copied to `art-archive/T-384/pixellab/three_sixty.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
 
+### Run 3
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-384/briefs/alternate_drift.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-384/style-loop/v1-3.png`
+- Script checks: 6 of 6 pass
+- Score: 4/10
+- Reason: The script checks pass (64x48, transparent corners, 30 colours, no Greenbull light green or yellow). I viewed the image at its native 64x48, so some detail is hard to judge.
+
+Rule 10: the car body reads as blue/purple and grey, not Greenbull's dark green (12,76,44). I can't make out two centred white stripes with a gap between them, and the silhouette is not clearly a Mustang fastback. Repaint the body in the dark green by script, then add two white stripes down the middle with a one-pixel gap.
+
+Rule 2: the car has no clear dark, almost-black selective outline broken by highlight pixels, and the shading is muddy. Add a near-black outline around the car, with a few lighter highlight pixels along the roof and edges.
+
+Rule 5 and the brief: the pink trail is a soft swirl or loop of mixed pinks. It is not a clean S with the car at the bend. The glow halos are not clear stepped bands; the edges look blurry. Redraw the trail as two opposite curves, in a bright core pixel line with 1-2 darker stepped halo bands, no gradient.
+
+Rule 3: the view is more top-down than a 3/4 isometric view showing the top and one side. Show one side of the car.
+
+Rule 4: the dusk feel comes only from the pink and blue colours, and there is no ground shadow. Add a small dark shadow under the car in navy.
+- Rules broken: 2, 3, 5, 10
+- Refused: {"tool_input": {"command": "sed -n 249,300p tasks/T-384*.md; echo \"LOOP=$SOLID_CARBIDE_STYLE_LOOP_RUN\"; cat art-archive/T-384/pixellab/three_sixty_v4_req.json; python game/tools/pixellab_client.py --help 2>&1 | head -40; grep -c T-384 game/art/pixellab-generation-log.jsonl", "description": "Read call log tail and client usage"}, "tool_name": "Bash", "tool_use_id": "toolu_01DPGu9EHbhRmejiwC5T4VZj"}; {"tool_input": {"command": "sed -n 249,300p tasks/T-384*.md; printenv SOLID_CARBIDE_STYLE_LOOP_RUN; cat art-archive/T-384/pixellab/three_sixty_v4_req.json; grep -c T-384 game/art/pixellab-generation-log.jsonl", "description": "Read call log tail, loop marker, last request"}, "tool_name": "Bash", "tool_use_id": "toolu_01MUGzY3GgC4nT2ZFpnN9oMv"}; {"tool_input": {"command": "printenv SOLID_CARBIDE_STYLE_LOOP_RUN", "description": "Show style loop run marker"}, "tool_name": "Bash", "tool_use_id": "toolu_016AMyzn1L6qAVtgmSLgHKXs"}; {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-384/style-loop/v1-3.png').convert('RGBA'); print(im.mode, im.size)\nbig=im.resize((384,288),Image.NEAREST)\nout=Image.new('RGBA',(784,288),(20,20,30,255)); out.paste((235,235,235,255),(400,0,784,288))\nout.alpha_composite(big,(0,0)); out.alpha_composite(big,(400,0)); out.save('art-archive/T-384/style-loop/v1-3_preview.png')\"", "description": "Build enlarged dark/light preview of v1-3"}, "tool_name": "Bash", "tool_use_id": "toolu_01LfuLGLso3wdrJWJ7gHMVAz"}; {"tool_input": {"command": "python art-archive/T-384/scripts/palette_dump.py art-archive/T-384/style-loop/v1-3.png", "description": "List v1-3 colours with counts and extents"}, "tool_name": "Bash", "tool_use_id": "toolu_01A9zizS3UeUocuRpQ81Coz7"}
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -252,3 +275,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 8: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v4.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v4-2.png (preview v4-2_preview.png). Script checks: all 6 pass. Running total: 8 / 40; three_sixty has used all 4 of its generations (1 + 3 refines). My own look: the best car of the four. It shows a clear 3/4 top and side, a black outline, white stripe and highlight pixels, a purple shadow, and pale lilac smoke puffs at last. But the body is teal-green rather than 12,76,44, the car is big rather than tiny, and the loop has broken into scattered dotted pink arcs instead of v3's clean closed ring.
 - Call 9 (planned): alternate_drift v1, create-image-pixflux 64x48, no_background true, high top-down view (which gave the clean curve for extended_drift v2/v4), an S-shaped neon pink trail with stepped halo, a small dark forest green fastback with white stripes at the S bend. 1 generation. Loop output: art-archive/T-384/style-loop/v1-3.png.
 - Call 9: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v1.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v1-3.png. Script checks: all 6 pass (transparent corners included). Running total: 9 / 40; alternate_drift has used 1 of its 4. The enlarged preview (v1-3_preview.png) and the palette dump were refused by the permission system, so they were not made; I did not work around it. My own look at actual size: neon pink curved trail strokes with purple halos sweep past a sliding car, but the car is large and reads blue-navy rather than dark green 12,76,44, and the S shape is only partly readable.
+- Call 10 (planned): alternate_drift v2 refine (v1 scored 4: car blue not dark green, no stripes/outline, trail a soft swirl not an S, too top-down, no shadow). The trail shape and the view are composition, and my own pixel-edit scripts are refused in this ticket, so this is a paid refine: create-image-pixflux 64x48, low top-down 3/4 view (which gave the readable car in three_sixty v4), a thin S trail of two opposite curves, a smaller dark green car at the bend. 1 generation. Loop output: art-archive/T-384/style-loop/v2-3.png.
+- Call 10: done, usage 1 generation (raw: art-archive/T-384/pixellab/alternate_drift_v2.png, request next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-3.png. Script checks: all 6 pass. Running total: 10 / 40; alternate_drift has used 2 of its 4. My own look at actual size: the trail is now a clear S (a curve one way, then the other) with the car sitting at the bend, and the car is darker and greener than v1. Still wrong: the trail reads violet-purple rather than bright neon pink, and the car still leans teal and is fairly large.
