@@ -1,7 +1,7 @@
 ---
 id: T-414
 title: Weapons during the wreck, and molotovs land where enemies can be
-status: needs-playtest
+status: done
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -56,6 +56,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 T-413 approved; the weapon-behavior agent starts.
 
+### 2026-10-30, Needs playtest → Done
+
+You approved it; merging into master.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Tests: new tests/unit/weapons/test_weapons_wreck.gd (12 tests: fire and burning 
 Screenshots: art-archive/T-414/screenshots/wreck_fires_20.png and wreck_fires_90.png (wrecked car, fires and underglow; made with tests/fixtures/weapons/wreck_shot.tscn). Documents: docs/weapons.md (built notes and proposals). docs/game-loop-architecture.md line 191 still says "T-414's"; left for the Project Lead.
 - 2026-10-30, in-progress → in-qa: Weapons during the wreck and molotov landings built; tests pass
 - 2026-10-30, in-qa → needs-playtest: QA passed 6/6, all 3 test sets green (12 new tests); 3 older tests changed only to end the run via kaiju_killed(); proposals labelled in docs/weapons.md
+- 2026-10-30, needs-playtest → done: Build I LGTM by the board (2026-10-30)
