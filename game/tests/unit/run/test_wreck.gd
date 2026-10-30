@@ -1,7 +1,8 @@
 extends GutTest
-## Task T-360: wrecked. When the last heart is gone the run is lost at once, but
-## run_ended waits for the wreck's seconds (run.json's wreck.seconds, 3 s) while
-## the car slides on with dead controls, smoking and burning.
+## Task T-360: wrecked. When the last heart is gone the wreck starts: run_ended
+## waits for the wreck's seconds (run.json's wreck.seconds, 3 s) while the car
+## slides on with dead controls, smoking and burning. Since T-413 the loss itself
+## is decided at the wreck's end too (test_wreck_decides_loss.gd).
 
 const RunStateScript := preload("res://scripts/run/run_state.gd")
 const RunScene := preload("res://scenes/run/run.tscn")
@@ -42,16 +43,20 @@ func test_the_wreck_lasts_3_seconds_from_the_data_file() -> void:
 	assert_eq(state.wreck_seconds, 3.0)
 
 
-func test_the_last_heart_starts_the_wreck_and_decides_the_loss() -> void:
+func test_the_last_heart_starts_the_wreck_and_the_loss_waits_for_its_end() -> void:
 	state.add_coins(4)
 	_lose_last_heart()
 	assert_eq(wrecks, [3.0])
 	assert_true(state.is_wrecked())
-	assert_false(state.is_running(), "nothing counts any more")
+	assert_false(state.is_running(), "the clock, likes and tricks stop")
+	# T-413: the result is decided when the wreck ends, not at the last heart.
+	assert_eq(state.result, "", "not decided yet")
+	assert_eq(state.recap().result, "")
+	assert_eq(ended, [], "run_ended waits for the wreck")
+	state.advance(3.0)
 	assert_eq(state.result, "loss")
 	assert_eq(state.recap().result, "loss")
 	assert_eq(state.recap().loss_reason, "health")
-	assert_eq(ended, [], "run_ended waits for the wreck")
 
 
 func test_run_ended_comes_3_seconds_later_with_the_same_result_and_coins() -> void:
@@ -78,13 +83,12 @@ func test_the_clock_stops_at_the_last_heart() -> void:
 	assert_almost_eq(float(state.recap().time_survived), 100.0, 0.001)
 
 
-func test_nothing_counts_during_the_wreck() -> void:
+func test_likes_tricks_damage_and_gift_packs_do_not_count_during_the_wreck() -> void:
 	state.add_coins(2)
 	var xp := state.xp
 	var combo := state.combo
 	var level := state.level
 	_lose_last_heart()
-	state.add_coins(5)
 	state.damage_car(1.0)
 	state.add_xp(500.0)
 	state.challenge_completed("c")
@@ -93,18 +97,14 @@ func test_nothing_counts_during_the_wreck() -> void:
 	state.add_airtime_trick(3.0)
 	state.add_needle_trick()
 	state.open_choice(2)  # a gift pack picked up
-	state.enemy_slain("minion", "gun")
-	state.kaiju_killed()
-	assert_eq(state.coins, 2, "no coins")
-	assert_eq(state.health, 0.0, "no damage, no healing")
+	assert_eq(state.health, 0.0, "no damage")
 	assert_eq(state.xp, xp, "no likes")
 	assert_eq(state.level, level)
 	assert_eq(state.combo, combo, "no tricks")
 	assert_false(state.is_waiting_for_choice(), "no gift pack")
-	assert_eq(state.recap().enemies_slain, {})
-	assert_eq(ended, [], "a kaiju kill does not end it early")
+	assert_eq(ended, [])
 	state.advance(3.0)
-	assert_eq(ended, [["loss", 2]], "still the health loss")
+	assert_eq(ended, [["loss", 2]], "the health loss, at the wreck's end")
 
 
 func test_a_kaiju_kill_ends_at_once_and_the_time_up_has_no_wreck() -> void:
@@ -239,7 +239,7 @@ func test_in_the_run_a_sliding_wreck_picks_up_a_health_pickup_and_drives_again()
 	assert_eq(run.state.coins, coin_state)
 
 
-func test_coins_stand_still_during_the_wreck_but_health_is_pulled() -> void:
+func test_coins_and_health_are_pulled_during_the_wreck() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
 	run.state.damage_car(1000.0)
@@ -249,7 +249,7 @@ func test_coins_stand_still_during_the_wreck_but_health_is_pulled() -> void:
 	far.position = at + Vector2(48.0, 0.0)
 	run.add_child(far)
 	run.pickup_magnet.step(0.1)
-	assert_eq(far.position, at + Vector2(48.0, 0.0), "a coin is not pulled")
+	assert_lt(far.position.distance_to(at), 48.0, "a coin is pulled (T-413, replaces T-406's standing still)")
 	var h := Node2D.new()
 	h.add_to_group("health_pickups")
 	h.position = at + Vector2(48.0, 0.0)
@@ -416,11 +416,13 @@ func test_in_the_run_the_car_slides_on_with_dead_controls_smoking() -> void:
 	assert_lt(run.car.model.get_velocity().length(), speed, "slowing down, no throttle")
 	assert_almost_eq(run.car.model.rotation, rot, 0.0001, "no steering")
 	assert_eq(fx.emitter, run.car_sprite.position, "the fire is where the car is drawn")
+	var coins: int = run.state.coins
 	run.state.add_coins(5)
-	assert_eq(run.state.coins, 0, "no coins")
+	assert_eq(run.state.coins, coins + 5, "coins count during the wreck (T-413)")
 	assert_eq(run_ended, [])
 	run.state.advance(run.state.wreck_left)
-	assert_eq(run_ended, [["loss", 0]])
+	assert_eq(run_ended.size(), 1)
+	assert_eq(run_ended[0][0], "loss")
 	run.start_run()
 	assert_true(run.car.input_enabled, "a new car, controls live")
 	assert_false(fx.is_playing())

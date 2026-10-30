@@ -2660,3 +2660,8 @@ Entry format:
 - Decision or change: Saves are written to a temp file and swapped in, with a backup of the last good save; a file that fails to load is kept aside and the backup loads; every save carries a version.
 - Documents touched: `docs/garage-design.md`
 - Tasks: T-417
+
+## 2026-10-30: The wreck decides the loss at its end
+- Decision or change: The run is lost only when the wreck's 3 seconds end; a kaiju kill during the wreck wins; coins and health pickups count; Restart or Exit during the wreck keeps no coins and adds no runs-list entry.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-413
