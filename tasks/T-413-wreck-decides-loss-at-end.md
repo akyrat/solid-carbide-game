@@ -1,7 +1,7 @@
 ---
 id: T-413
 title: The wreck decides the loss at its end
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -90,3 +90,4 @@ Screenshots, in `art-archive/T-413/screenshots/` (made with `bash game/tools/rec
 - `3_kaiju_kill_win_recap.png`: a kaiju kill during the wreck shows the win recap.
 
 Documents: `docs/game-loop-architecture.md` (Content, "Wrecked": the loss is decided at the wreck's end; the T-406 bullet updated for coins). Code docs: `game/docs/game-loop/the-run.md`, `game/docs/game-loop/screen-flow.md`, `game/docs/hud-and-menus/time-up-screen.md`.
+- 2026-10-30, in-progress → in-qa: Wreck decides the loss at its end; kaiju kill in wreck wins; coins pulled and count; pause Restart/Exit in wreck cancels; tie at 0:00 wins. GUT 2139/2139, tools 582, game/tools 722 OK. Screenshots in art-archive/T-413/screenshots.
