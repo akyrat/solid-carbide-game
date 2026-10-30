@@ -1,7 +1,7 @@
 ---
 id: T-429
 title: The HUD's code follows the HUD style sheet (fonts, colours, outlines)
-status: in-qa
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -14,8 +14,8 @@ depends_on: [T-430]
 documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/hud.md, game/scripts/hud/hud_style.gd]
 files_expected_to_change: [game/scripts/hud/hud_style.gd, game/scripts/hud/*.gd, game/scripts/ui/pause_screen.gd, game/scripts/ui/level_up_screen.gd, game/tests/unit/hud/test_hud_style.gd, docs/hud-and-menus.md, game/docs/hud-and-menus/hud.md]
-model: sonnet
-qa_rounds: 0
+model: opus
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-429.
 
 Goal runner (G-008): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → In progress
+
+Goal runner (G-008): failed QA once; back to the agent on opus.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -83,3 +87,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Docs:** `docs/hud-and-menus.md` (Content, "The HUD's style in code"), `game/docs/hud-and-menus/hud.md`.
 
 **QA round 1:** Criteria 2, 3, 4, 5 pass. Criterion 1 fails (code): D4's list is only partly made (clock digits, weapon icon size, pause capitals not done). Criterion 6 fails (paperwork): no full counts in the notes. `python tools/qa_check.py` was refused (needs approval), so I checked each criterion by hand. The full Godot run went past 600 s; no failures appeared in the files that finished. The docs/tools test set was not run by QA. Update: the full Godot run later finished green (173 scripts, 2136 tests, all passing, 686 s), so criterion 3 holds; criterion 6 still fails on the missing counts and the unrun third set.
+- 2026-10-30, in-qa → in-progress: QA failed: Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: fail: code - the checklist leaves clock digits (art swap), weapon icon size and pause-strip capitals unticked/not done; the agent's notes say "Partly done"); All three test sets pass, with the counts in the result notes. (QA: fail: paperwork - the result notes give no full Godot count and say the third set (docs/tools checks) was not run; QA's own full Godot run exceeded the 600 s foreground limit, no failures seen before that) Back to the agent on opus.
