@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: open
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -53,6 +53,10 @@ Audit epic. A Driving & Drift agent is assessing the root cause read-only; crite
 
 Back to open: the session that started it was stopped. It overlaps T-405's altitude audit, so I'll fold it in there or start it after build E.
 
+### 2026-10-30, Open → In progress
+
+Build G (street) started: the driving-drift agent is on it in C:\solid-carbide-worktrees\T-411.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,29 @@ Written by the agent when it finishes.
 
 **Proposed criteria** (headless tests on the real `car.gd` with a GroundHeight): no outline point more than 0.05 inside a height-3 side, head-on and at 45°, one `hit_obstacle`; same when steering into a side from standing; roof edge at 2 u/s takes off per (a); 0-to-3 and T-400 ramps at 4, 11, 16.5 u/s give no false wall and follow the slope within 0.01; a free-standing ramp's top launches (`from_ramp=true`, vz>0), higher at 16.5 than 11, the long side still falls; touching T-405 platforms cross with no wall and height 3 ± 0.01; height 3 next to 6 bounces at the bumper; tyre marks along a roof edge never drop below the car's height minus 0.1 and the overhanging line ends; existing suites (`test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map`, the T-195 drive) stay green; `CarHeight.step` averages under 0.5 ms on the largest saved map.
 - 2026-10-30, planning → open: Reset to open by Greenbull: the board stopped the Preemptive-bug-bash session (2026-10-30). Its root-cause assessment stays in the notes.
+
+### 2026-10-30, work done (Driving & Drift)
+
+**Root cause.** `car_height.gd _walk` treated the car as one point, its centre, but the car is drawn 1 x 3 (nose and tail 1.5 from the centre). Raised areas (rooftops, ramps, T-405 platforms) have no physics body: their sides exist only in `_walk`, which tested the centre's path and never the heading, so the drawn front 1.5 units entered a side before the centre stopped, and turning beside a side swept the nose or tail in. Tyre marks: `drift_marks.gd point_px` lifts each rear tyre by its own ground, so a tyre over a roof edge was drawn at street height (a streak down the wall).
+
+**Test that fails before the fix:** `game/tests/unit/test_car_footprint_height.gd`. On the old code (checked before the fix): head-on the drawn car sat 1.477 inside the side (step 18 on), 45° 0.29+, steering from standing 0.18+, air spin 0.16+, height 3 next to 6 0.45+; 6 of 11 tests failed. All 11 pass after.
+
+**Fix (approach A of the assessment):**
+- `car_height.gd`: `OUTLINE`, 10 points of the drawn 1 x 3 outline; `step(prev, pos, velocity, dt, rot_prev, rot_new)` and `_walk` walk every point with the centre, the heading turning evenly, in pieces where no point moves more than 0.05. A point meets a side by the centre's rule against its own ground, compared with the car's body there (its height, along the ramp's slope when the centre is on a ramp, so the ramp under the car is never a wall). A wall also returns `rotation` (the heading before the piece that hit). Without headings (NAN) it is centre-only as before, so bare-model callers are unchanged.
+- `car.gd`: passes the headings; on a wall also puts the heading back (a turn into a side stops).
+- `ground_height.gd`: `areas_near`, `height_among`, `area_among` (outline points test only the areas near the move; none near, the outline is skipped). Cost: 0.128 ms per step average on the elevation sample map (criterion < 0.5).
+- `drift_marks.gd`: `lay(..., car_height)` (bind passes the car's height); a rear tyre more than `STEP_CLIMB_MAX` below the car lays nothing, its mark ends, a new one starts back on the ground.
+- Ramp launch off a free-standing ramp's top: already built by T-400 (`step`'s drop branch); new test confirms `from_ramp`, vz > 0, higher at 16.5 than 11.
+- Kept as today (board's open questions (a)-(d), written in drifting.md, Content, "The car's footprint (task T-411)"): falling and landing go by the centre (roof-edge hang up to 1.5 stays); under 4 u/s no ramp launch; 1x1 physics body for skyscrapers and boulders.
+
+**Behaviour changes to note for the playtest:** the car now stops with its centre up to 1.58 from a raised side (nose at the side); a side near a ramp's foot is a curb only where it is under 0.1 under every point of the car (a car 0.15 in from the foot's corner now bounces off the side with its flank). Marginal jumps whose nose meets a platform's side below its top bounce back (by design of the rule).
+
+**Tests updated** (they encoded the centre-only stop): `test_elevation_edges.gd` (stop point, ramp-side wall height at the nose, curb test moved to x = 20.1 plus a new flank-wall test), `test_elevation_see_through.gd` and `test_elevation_sample_see_through.gd` (the centre's closest gap at a hit is now under the outline's reach 1.63, not 0.5; the depth-order checks are unchanged and pass). New: `test_car_footprint_height.gd` (11), `test_drift_marks_overhang.gd` (4).
+
+**Test sets:** `bash game/tools/run_tests.sh`: 2039 passing, 0 failing (1262200 asserts), TESTS PASSED. `python -m unittest discover -s game/tools`: OK. `python -m unittest discover -s tools`: 579 tests OK. `test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map`, `test_drive_elevation_sample` (the T-195 drive inside GUT) all green. Note: the CLI `game/tools/drive_elevation_sample.sh` stops at `prepare` with `scene.car` null (`drive_elevation_sample.gd:89`), before any driving, so it is unrelated to this change (the same drive passes inside GUT); worth a separate small ticket.
+
+**Screenshots** (`art-archive/T-411/screenshots/`): `compare_before_after.png` (before vs after, the car pressed against the platform's south, north and west sides and the ramp's side in the elevation test scene; the south one shows the nose inside the wall before and the bumper at it after), plus `before_*.png` and `after_*.png`. Fixtures: `game/tests/fixtures/elevation_test_footprint_{south,north,west,ramp_side}.tscn`.
+
+**Documents affected:** `docs/drifting.md` (Content, "The car's footprint (task T-411)", with the open questions); `game/docs/level/elevation-test-scene.md` ("The car's footprint (T-411)", and the T-191 depth-rule note).
+
+**Files changed:** `game/scripts/driving/car_height.gd`, `car.gd`, `drift_marks.gd`, `game/scripts/level/ground_height.gd`, `elevation_platform_drawing.gd` (comment only), the tests and fixtures above.
