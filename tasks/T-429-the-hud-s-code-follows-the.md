@@ -37,12 +37,12 @@ The board's review: Play a run and check every HUD piece (clock, coins, hearts, 
 
 ## Acceptance criteria
 
-- [ ] Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: fail: code - the checklist leaves clock digits (art swap), weapon icon size and pause-strip capitals unticked/not done; the agent's notes say "Partly done")
+- [ ] Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: pass - round 2 checklist ticks every D4 item, incl. clock art, 2x weapon icons, pause capitals; tests pin them)
 - [ ] The HUD's style values (fonts, colours, outline widths) are defined in the one shared place D3 made, named in the result notes, and the test for it checks the new values. (QA: pass)
-- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass. (QA: pass - every Godot file in the full run passed so far, none failed)
+- [ ] Positions, sizes and behaviour are unchanged: the existing HUD layout and behaviour tests still pass. (QA: pass - hud layout/behaviour tests pass, 185/185 in the hud folder; agent reports full suite 2141 green)
 - [ ] A screenshot of a run with the whole HUD is in art-archive/<id>/screenshots/, next to a copy of D4's before shot of the same moment. (QA: pass)
 - [ ] docs/hud-and-menus.md, Content and game/docs/hud-and-menus/hud.md describe the style each HUD piece now uses. (QA: pass)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: fail: paperwork - the result notes give no full Godot count and say the third set (docs/tools checks) was not run; QA's own full Godot run exceeded the 600 s foreground limit, no failures seen before that)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass - round 2 notes give counts; QA reran game/tools 736 OK, tools 582 OK, Godot hud folder 185/185)
 
 ## Updates
 
@@ -265,4 +265,6 @@ A bug found by screenshot: the first `ClockDigits` drew with `draw_texture_rect`
 
 **QA round 1:** Criteria 2, 3, 4, 5 pass. Criterion 1 fails (code): D4's list is only partly made (clock digits, weapon icon size, pause capitals not done). Criterion 6 fails (paperwork): no full counts in the notes. `python tools/qa_check.py` was refused (needs approval), so I checked each criterion by hand. The full Godot run went past 600 s; no failures appeared in the files that finished. The docs/tools test set was not run by QA. Update: the full Godot run later finished green (173 scripts, 2136 tests, all passing, 686 s), so criterion 3 holds; criterion 6 still fails on the missing counts and the unrun third set.
 - 2026-10-30, in-qa → in-progress: QA failed: Every code change listed in D4's result notes is made, ticked off one by one in a checklist in the result notes. (QA: fail: code - the checklist leaves clock digits (art swap), weapon icon size and pause-strip capitals unticked/not done; the agent's notes say "Partly done"); All three test sets pass, with the counts in the result notes. (QA: fail: paperwork - the result notes give no full Godot count and say the third set (docs/tools checks) was not run; QA's own full Godot run exceeded the 600 s foreground limit, no failures seen before that) Back to the agent on opus.
+- QA round 2: all six criteria pass. Screenshots present in art-archive/T-429/screenshots/. QA did not rerun the full Godot suite (over 600 s); it ran the hud folder (185/185), and the two Python sets. Refusals: none.
+- QA round 2: all six criteria pass. Screenshots are in art-archive/T-429/screenshots/. QA reran game/tools (736 OK, 1 skipped), tools (582 OK) and the Godot hud folder (185/185). QA did not rerun the full Godot suite (over 600 s); it relies on the agent's reported 2141 green. Refusals: none.
 - 2026-10-30, style loop: version 1 kept at 7/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
