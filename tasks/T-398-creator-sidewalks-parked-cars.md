@@ -1,7 +1,7 @@
 ---
 id: T-398
 title: Level creator: sidewalks painted with automatic curbs, and parked and broken cars as obstacles at four facings (placeholders)
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -63,6 +63,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 
 Build G (street) started: the level-challenge agent is on it in C:\solid-carbide-worktrees\T-398.
 
+### 2026-10-30, Needs playtest
+
+The board: T-398 LGTM; curbs stay drawn only. Merges into master after build F, then T-399's art starts.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -94,3 +98,4 @@ Board review files: art-archive/T-398/screenshots/editor_sidewalks.png, art-arch
 **Documents affected:** `docs/level-design.md` (Content, new "Level creator: sidewalks, parked cars and meteor craters"), `game/docs/level/level-creator-pieces.md` (new "Sidewalks, parked cars and meteor craters (T-398)").
 - 2026-10-30, in-progress → in-qa: Built with placeholders: sidewalk brush with automatic curbs (47 pieces), parked (3) and broken (2) cars at four facings as pairable obstacles, meteor craters (3) as ground decals. Tests: game/tools 715 OK, tools 579 OK, GUT 2041/2041. Screenshots and GIF in art-archive/T-398/screenshots/.
 - 2026-10-30, in-qa → needs-playtest: QA round 1: all 8 criteria pass; curb is drawn only with no lift, which no criterion requires
+- 2026-10-30, needs-playtest → done: LGTM by the board (2026-10-30); curbs stay drawn only
