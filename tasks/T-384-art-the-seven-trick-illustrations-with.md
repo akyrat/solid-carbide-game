@@ -851,6 +851,30 @@ The brief also asked for tire smoke, and I can't see any. Add a few stepped smok
 - Rules broken: 2, 3, 5, 10
 - Refused: {"tool_input": {"command": "python C:/solid-carbide-worktrees/T-384/art-archive/T-384/scripts/extended_drift_fix8.py C:/solid-carbide-worktrees/T-384/art-archive/T-384/style-loop/v1-8.png C:/solid-carbide-worktrees/T-384/art-archive/T-384/style-loop/v2-8_try.png", "description": "Run the recolour and halo fix on version 1"}, "tool_name": "Bash", "tool_use_id": "toolu_01JN2UuMvxvyaTosae875sgh"}
 
+#### Round 3
+
+- Version 3: `art-archive/T-384/style-loop/v3-8.png`
+- What changed: Still blocked, so there is no version 3: v3-8.png does not exist, and the file above is version 1, unchanged. The "version 2" scored 6/10 was this same v1-8.png, because v2-8.png was never made.
+
+Every fix the evaluator names (car recolour and stripes, dark outline, stepped halo bands, smoke pixels, clearer 3/4 view) needs either my own pixel-edit script or a new PixelLab generation. The script (art-archive\T-384\scripts\extended_drift_fix8.py) is refused by the permission system, and I did not retry it or work around it. A paid call would be extended_drift's 5th generation, over the cap of 4 per illustration, so I made none. The running total stays 28 of 40.
+
+Options for the Project Lead or the board:
+(a) Allow that script. It is free, and I recommend it.
+(b) Give the go for one more paid generation.
+(c) Keep v1-8 at 6/10 and note it for the final playtest.
+
+This is written in the ticket's result notes, committed as 6c353ee0.
+- Script checks: 6 of 6 pass
+- Score: 7/10
+- Reason: The image is only 64x48, so I judged it at that size. The script checks pass: size, transparent corners, no semi-transparent pixels, 30 colours, and no Greenbull light green or yellow. Rule 1 is met. Rule 4 is met: the purple and pink night palette feels retro. Rule 5 is mostly met: the pink neon trail is a wide arc with stepped darker halos and no blur. The car reads as a dark green fastback seen from above, sideways at the end of the arc, in an isometric 3/4 view, so rule 3 holds.
+
+Remaining issues:
+- Rule 10: the two centred white stripes with a gap between them are hard to see. Make them clearly visible as two distinct white pixel lines running along the bonnet and roof.
+- Rule 2: the outline is not clearly dark and selective, and the car's highlights are weak. Add an almost-black outline on the car with a few lighter highlight pixels breaking it.
+- Rule 10: the car body looks teal or cyan in places. Keep it at the dark green (12,76,44) family.
+- The brief's tire smoke is not clearly drawn. This is not a numbered rule, but it weakens the extended-drift read. Add a few stepped grey-purple smoke puffs along the arc.
+- Rules broken: 2, 10
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -912,3 +936,4 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Run 8, extended_drift v1 (transparent-background brief): no PixelLab call. extended_drift already used all 4 of its generations in run 1, so a new paid call would exceed the per-illustration cap. Running total stays 28 / 40. Free fix only, with game tools: game/tools/reduce_palette.py on art-archive/T-384/pixellab/extended_drift_v4.png (50 → 30 colours, v1-8_step1.png). Then game/tools/remove_sprite_shadow.py flood-removed the road colours from the edges (navy and purple road, grey lane dashes: 1778 px, v1-8_step2.png), then edge-connected white lane specks (45 px, v1-8_step3.png), then the trail pixels in the bottom-left corner (201,78,136, 23 px, v1-8_step4.png). The result is art-archive/T-384/style-loop/v1-8.png (8-bit RGBA, preview v1-8_preview.png). Script checks: all 6 pass, transparent corners included. My own recolour and halo script (art-archive/T-384/scripts/extended_drift_fix8.py) was refused by the permission system and was not run; I did not work around it. As a result, the car is still teal rather than 12,76,44, and there is no added outline or halo step. My own look: a long wide pink arc with smoke, ending at the sideways car. The car reads split and dark, and a few single purple specks remain. Any further refine of extended_drift needs either the board's say-so for paid calls beyond the cap, or permission for the recolour script.
 - Run 8, extended_drift v2 (v1-8 scored 6; rules 2, 5 and 10): blocked, and no v2-8 was made. The fixes the evaluator names are a recolour of the car to 12,76,44 with two white stripes, a near-black outline, and a 1-2 px stepped halo around the trail. No game tool does them (game/tools has only palette reduction, flood removal, and an outline tool hard-wired to the T-340 enemy sheets). Running my own fix script (art-archive/T-384/scripts/extended_drift_fix8.py, as a single plain command) was refused by the permission system again, and I did not work around it. A paid regeneration would be extended_drift's 5th generation, which is beyond the 4-per-illustration cap in the goal's go. For the Project Lead or the board, pick one: (a) allow `python art-archive/T-384/scripts/extended_drift_fix8.py` (free), (b) give the go for one more paid generation, or (c) keep v1-8 (6/10) and note it for the final playtest.
 - Run 8, round 3: the "version 2" the evaluator scored (6/10; rules 2, 3, 5 and 10) was v1-8 again, because no v2-8 exists. Nothing has changed since round 2: the fix script is still refused and the paid cap is still reached, so v3-8 was not made either. I did not retry the refused command or work around it. The block and options (a) to (c) above still stand.
+- Run 8, round 4: the "version 3" the evaluator scored (7/10; rules 2 and 10) was v1-8 again. The evaluator's scores for this same file were 6, 6 and 7. No v4-8 was made, for the same reasons: the fix script is refused and the 4-generation cap is reached. I did not retry or work around the refusal. The only real version in run 8 is v1-8.png (art-archive/T-384/style-loop/v1-8.png); its best score is 7/10, which is below 8, so it is noted for the final playtest unless the Project Lead or the board picks option (a) or (b) above.
