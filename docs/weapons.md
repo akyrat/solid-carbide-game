@@ -44,6 +44,9 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 - **Weapons hit only enemies on the car's own level** (board, 2026-10-28; replaces "Their damage areas are unchanged" in "The underglow and the wiper at height" above, for damage): on a map with rooftops and ramps, a weapon damages only the enemies on the same height level as the weapon's hit: the car's level for the gun, the flamethrower, the underglow, the wiper and Bricks, and the fire's level for a molotov. An enemy on the street is not hit from a rooftop above it, and the other way round. How a ramp's in-between heights and the kaiju count are the agents' proposals for the playtest. (T-326)
 - **The gun one-shots minions and grows in bullets, speed and targets** (board, 2026-10-30; replaces the gun's tier plan in "The starting gun" below and answers the open question on upgrading how often it fires): from tier 1 one bullet kills a minion. Its upgrades go to how many bullets it fires and how fast, in this order: **+1 bullet** twice, **faster attack** twice, then at the halfway upgrade it **targets up to 3 enemies at once** (it has 3 bullets by then); then **+1 bullet** twice and **faster attack** twice, and at its last upgrade it **targets up to 5 enemies at once**. That makes 10 upgrades (tiers 2 to 11) against today's 7; the range and pass-through tiers go. What "targets up to N" means against today's closest-first spread, and the speeds, are the agents' proposals for the playtest. (T-408)
 - **The neon underglow kills a minion in 2 ticks and pushes from tier 1** (board, 2026-10-30): each tick deals half a minion's maximum health at tier 1, so 2 ticks kill it, and from tier 1 it knocks enemies back a little (today it never pushes). How far, and whether the push grows with the tiers, are proposals. (T-409)
+- **Weapons during the wreck** (board, 2026-10-30, audit): while the car is wrecked (Game loop architecture, Decisions, "The wreck decides the loss at its end"), damage already on the map keeps going (molotov fires, burning enemies) and the neon underglow keeps ticking; the bricks still go off if the wrecked car lands from the air. Nothing new is fired: no gun, no molotov throws, no wiper, no exhaust flamethrower.
+- **Molotovs land where enemies can be** (board, 2026-10-30, audit): a molotov whose landing spot is inside a building or off the map picks another spot.
+- **The underglow barely pushes the kaiju** (board, 2026-10-30, audit; answers T-409's open point): the kaiju is pushed very little, just a slight stop at each damage tick. Minions are pushed as T-409 says.
 
 ## Content
 
@@ -207,6 +210,24 @@ What the built level-up offers do. It follows Decisions ("Level-up flow in the M
 - Taking a choice applies it at once (the weapon at tier 1, or its next tier) and the run resumes. If several levels were reached at once, their choices follow one after another, each drawn on its own.
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
 - **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
+
+### Level-up card text (T-412)
+
+Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets.
+
+- `upgrade_gun.tier2`: "Extra Bullet" [9] / "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull." [8]
+- `upgrade_gun.tier3`: "Another Extra Bullet" [9] / "+1 bullet per volley, 3 in all. Greenbull feels generous on camera." [8]
+- `upgrade_gun.tier4`: "Quicker Trigger" [9] / "Fires 20% faster. The audience is getting restless." [9]
+- `upgrade_gun.tier5`: "Quicker Trigger II" [9] / "Fires 20% faster again. Engagement waits for no one." [8]
+- `upgrade_gun.tier6`: "Multi-Target Mode" [8] / "Aims at up to 3 enemies at once. Multitasking is a brand value." [8]
+- `upgrade_gun.tier7`: "Bullet Bundle" [9] / "+1 bullet per volley, 4 in all. Buy more, shoot more." [8]
+- `upgrade_gun.tier8`: "Bulk Bullets" [9] / "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies." [9]
+- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." [8]
+- `upgrade_gun.tier10`: "Quicker Trigger IV" [9] / "Fires 20% faster again. Viewers blink less, so we sell more ads." [9, after 1 refine]
+- `upgrade_gun.tier11`: "Everyone Gets Exposure" [9] / "Aims at up to 5 enemies at once. Nobody is left unengaged." [8]
+- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." [8]
+- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." [9]
+- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." [9]
 
 ## Open questions
 
