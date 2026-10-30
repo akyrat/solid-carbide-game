@@ -2615,3 +2615,13 @@ Entry format:
 - Decision or change: The car flashes red when it takes damage.
 - Documents touched: none
 - Tasks: T-403
+
+## 2026-10-30: The flaky wreck-revive test
+- Decision or change: The in-run wreck-revive test is made deterministic: it no longer depends on minions and the gun near the wreck.
+- Documents touched: game/tests/unit/run/test_wreck.gd
+- Tasks: T-424
+
+## 2026-10-30: Tooling: merge script on the Windows console, the elevation drive
+- Decision or change: merge_batch.py no longer crashes on the Windows console, and the command-line elevation drive works again.
+- Documents touched: tools/merge_batch.py, game/tools/drive_elevation_sample.gd
+- Tasks: T-425
