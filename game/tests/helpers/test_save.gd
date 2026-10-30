@@ -20,9 +20,9 @@ static func settings_path() -> String:
 
 ## Points both saves at fresh, empty test files.
 static func isolate() -> void:
-	DirAccess.remove_absolute(progress_path())
+	SafeSave.remove_all(progress_path())
 	DirAccess.remove_absolute(settings_path())
-	DirAccess.remove_absolute(history_path())
+	SafeSave.remove_all(history_path())
 	restore()
 
 
