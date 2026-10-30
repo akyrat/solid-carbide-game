@@ -58,4 +58,22 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Partly done.** All style values live in `game/scripts/hud/hud_style.gd` (`HudStyle`, D3's place). 0 PixelLab generations.
+
+**Checklist of D4's (T-430) code list:**
+- [ ] Clock: replace Consolas with the art's seven-segment digits on `clock_panel.png`. NOT done: it swaps a font for art and changes the panel and digit sizes, against "don't move or resize". Needs its own ticket.
+- [x] Coins: role `coins` font to Bangers, outline 6.
+- [ ] Weapon icons: `ICON_SIZE` 48 to a 2x multiple of new art. NOT done: needs new art (D4 said so); `weapon_count` and `air_counter` outline 8 already fit.
+- [x] Sub goal: nothing to change (Bangers 20, outline 6).
+- [x] Viewers counter: `viewers_unit` outline 4 to 6; flight/drop 6 and number 8 already; heat steps' outline 10 to 8.
+- [x] Trick popups: `POPUP_PALETTE` entries 1, 3, 12 and `BROKEN_PALETTE` entries 2, 4 now (8, 8, 15); `POPUP_TEXT` even already.
+- [x] Kaiju bar: `KAIJU_LINE` = `OUTLINE_COLOR`; 2 px already.
+- [~] Pause strip: `pause_title` and `pause_text` to Bangers, sizes 28 and 16 (already even). Capitals NOT done: it is text (the strings belong to the Narrative Theme Agent), so it needs a text ticket.
+- [x] Level-up: `LEVEL_UP_TITLE_OUTLINE_SIZE` 4 to 6; card text outline left (D4: only if the board asks).
+- [x] Palette colours that already equal the sheet: nothing to change.
+
+**Tests:** `test_hud_style.gd` now pins the new values (Bangers roles, heat outline 8, near-black popup and kaiju lines, viewers_unit 6, level-up 6); `test_trick_popup_art.gd`, `test_trick_popups_heat.gd`, `test_kaiju_health_bar.gd` were changed to expect the near-black instead of pure black. Godot: the hud set (15 files, 153 tests), the popup set (7 files, 67) and the kaiju bar file (9) all pass. A first full run passed every file up to `test_level_up_offers.gd` except the files fixed above, then hit the 600 s foreground limit and was stopped; I did not get a full-suite count (pause and level-up screen files passed in it). Python: 727 tests OK (1 skipped). The third test set (docs/tools checks) was not run. QA should run the full Godot suite.
+
+**Screenshots** (`art-archive/T-429/screenshots/`): `hud_run_after.png` (the T-428 demo scene, whole HUD), `hud_run_before_d4.png` (D4's before shot, a copy of `art-archive/T-430/screenshots/hud_run_before.png`).
+
+**Docs:** `docs/hud-and-menus.md` (Content, "The HUD's style in code"), `game/docs/hud-and-menus/hud.md`.

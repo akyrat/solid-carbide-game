@@ -131,6 +131,6 @@ func test_colours() -> void:
 	assert_gt(KaijuHealthBar.FILL_COLOR.b, 0.9)
 	assert_gt(KaijuHealthBar.FILL_COLOR.r, KaijuHealthBar.FILL_COLOR.g)
 	assert_eq(KaijuHealthBar.BACK_COLOR, Color.WHITE)
-	assert_eq(KaijuHealthBar.LINE_COLOR, Color.BLACK)
+	assert_eq(KaijuHealthBar.LINE_COLOR, HudStyle.OUTLINE_COLOR)
 	var c := KaijuHealthBar.FILL_COLOR
 	assert_false(c.r > 0.8 and c.g < 0.3 and c.b < 0.3, "not red")

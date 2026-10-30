@@ -62,6 +62,10 @@ During a run the HUD shows the car's HP, a timer counting down from 8:00, the XP
 
 ## Content
 
+### The HUD's style in code (T-429, goal G-008; proposals for the playtest)
+
+The HUD pieces follow the HUD style sheet (Visual style, Decisions, "The HUD style sheet"); the values sit in `hud_style.gd` (`game/docs/hud-and-menus/hud.md`). Words are Bangers with the near-black outline (8, 8, 15): outline 6 on the coins, the sub goal, "WATCHING" and the flight and drop numbers; 8 on the big numbers (weapon counts, airtime and drift counters, the viewers number, the combo heat steps). The trick and combo broken popups use that near-black for letters and borders, the kaiju bar for its outline and dividers (2 px). The pause strip's title and text are Bangers; the level-up title has outline 6. Still to do, because they would move or resize things: the clock's digits (a system font, the sheet wants the drawn digits), the weapon icons' scale, the pause strip in capitals.
+
 ### Main menu
 
 A plain screen (task T-054) with a dark navy background. The title "SOLID CARBIDE" is in big cyan letters, with a small grey "(work in progress)" under it. Below are three buttons in a column: Start, Garage and Exit (text approved in T-053). The menu only shows the screen: pressing a button sends the signal `start_pressed`, `garage_pressed` or `exit_pressed`, and what happens next is the screen flow (T-055). Keyboard focus starts on Start. The scene is `game/scenes/menu/main_menu.tscn`; how to open it is in `game/docs/hud-and-menus/main-menu.md`, "Main menu".

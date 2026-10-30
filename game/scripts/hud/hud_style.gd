@@ -65,7 +65,7 @@ const LEVEL_UP_CARD_DESC_SIZE := 24
 const LEVEL_UP_BUTTON_SIZE := 30
 const LEVEL_UP_TITLE_CREAM := Color8(246, 250, 232)
 const LEVEL_UP_TITLE_OUTLINE := Color8(14, 22, 18)
-const LEVEL_UP_TITLE_OUTLINE_SIZE := 4
+const LEVEL_UP_TITLE_OUTLINE_SIZE := 6
 
 ## Each label's look: `font` ("comic", "clock", or "" for the theme's default),
 ## `size` (font size), `color` (font colour), `outline_color` and `outline`
@@ -73,7 +73,7 @@ const LEVEL_UP_TITLE_OUTLINE_SIZE := 4
 ## the clock's colour per time step, the viewers number's size per heat step).
 const LABELS := {
 	# The coins counter's two labels (T-090, T-341): the default font.
-	"coins": {"font": "", "size": LABEL_FONT_SIZE, "color": COINS_COLOR, "outline_color": OUTLINE_COLOR, "outline": LABEL_OUTLINE},
+	"coins": {"font": "comic", "size": LABEL_FONT_SIZE, "color": COINS_COLOR, "outline_color": OUTLINE_COLOR, "outline": LABEL_OUTLINE},
 	# The clock's digits (T-335); the colour comes from data/hud.json, timer_clock.steps.
 	"clock_digits": {"font": "clock", "size": CLOCK_FONT_SIZE, "outline_color": Color(0, 0, 0, 0.6), "outline": 6},
 	# The sub goal's "42 / 156 SUBS" (T-337).
@@ -85,14 +85,14 @@ const LABELS := {
 	# The live viewers counter's number (T-336): its size and colour follow the heat step.
 	"viewers_number": {"font": "comic", "outline_color": DARK, "outline": 8},
 	# "WATCHING" under it, in the viewers colour.
-	"viewers_unit": {"font": "comic", "size": VIEWERS_UNIT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 4},
+	"viewers_unit": {"font": "comic", "size": VIEWERS_UNIT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 6},
 	# A trick's "+12K" flying into the counter, in the viewers colour.
 	"viewers_flight": {"font": "comic", "size": VIEWERS_FLIGHT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 6},
 	# A crash's "-12K" dropping off the counter, in the crash colour.
 	"viewers_drop": {"font": "comic", "size": VIEWERS_DROP_SIZE, "color": VIEWERS_CRASH_COLOR, "outline_color": DARK, "outline": 6},
 	# The pause strip (T-015, T-124): the default font, the theme's colours.
-	"pause_title": {"font": "", "size": 28},
-	"pause_text": {"font": "", "size": 16},
+	"pause_title": {"font": "comic", "size": 28},
+	"pause_text": {"font": "comic", "size": 16},
 	# The level-up screen (T-141, T-310): black Bangers on the cream cards, the
 	# ribbon title cream with the art's dark outline.
 	"level_up_title": {"font": "comic", "size": LEVEL_UP_TITLE_SIZE, "color": LEVEL_UP_TITLE_CREAM,
@@ -106,13 +106,13 @@ const LABELS := {
 ## width, the glow ring (width and colours, flickering when several) and the pulse.
 ## The viewers counter's number and the popups' rings follow the same steps.
 const HEAT_STEPS: Array[Dictionary] = [
-	{"font_size": 30, "color": Color(1.0, 0.25, 0.75), "outline": 10,
+	{"font_size": 30, "color": Color(1.0, 0.25, 0.75), "outline": 8,
 		"glow": 0, "glow_colors": [], "pulse": 0.0, "pulse_hz": 0.0},
-	{"font_size": 36, "color": Color(1.0, 0.86, 0.25), "outline": 10,
+	{"font_size": 36, "color": Color(1.0, 0.86, 0.25), "outline": 8,
 		"glow": 0, "glow_colors": [], "pulse": 0.06, "pulse_hz": 1.2},
-	{"font_size": 42, "color": Color(1.0, 0.62, 0.12), "outline": 10,
+	{"font_size": 42, "color": Color(1.0, 0.62, 0.12), "outline": 8,
 		"glow": 18, "glow_colors": [Color(1.0, 0.86, 0.25)], "pulse": 0.10, "pulse_hz": 2.0},
-	{"font_size": 50, "color": Color(1.0, 0.98, 0.82), "outline": 10,
+	{"font_size": 50, "color": Color(1.0, 0.98, 0.82), "outline": 8,
 		"glow": 22, "glow_colors": [Color(1.0, 0.6, 0.08), Color(1.0, 0.72, 0.16), Color(1.0, 0.86, 0.25)],
 		"pulse": 0.14, "pulse_hz": 3.0},
 ]
@@ -140,9 +140,9 @@ const CLOCK_PANEL_CORNER := 2
 ## flame colours, the plain amount, the viewers amount.
 const POPUP_PALETTE := [
 	Color(0, 0, 0, 0),
-	Color8(0, 0, 0),        # letters
+	Color8(8, 8, 15),       # letters (the sheet's outline colour)
 	Color8(255, 255, 255),  # burst fill
-	Color8(0, 0, 0),        # burst border
+	Color8(8, 8, 15),       # burst border
 	Color8(255, 224, 77),   # step 1 ring: yellow (LikesFire; the HUD counter is yellow at step 1)
 	Color8(255, 153, 20),   # step 2 and 3 ring: orange (LikesFire)
 	Color8(255, 224, 77),   # step 2 and 3 inner ring: yellow (LikesFire)
@@ -151,7 +151,7 @@ const POPUP_PALETTE := [
 	Color8(255, 224, 77),   # flame: yellow
 	Color8(255, 184, 41),   # flame: orange-yellow
 	Color8(255, 153, 20),   # flame: orange
-	Color8(0, 0, 0),        # "+amount" at heat 0 and 1
+	Color8(8, 8, 15),       # "+amount" at heat 0 and 1
 	Color8(51, 225, 255),   # the viewers amount: the viewers colour (hud.json viewers_counter.color)
 ]
 ## The popups' lettering per size style: font pixel size, text outline and shadow
@@ -165,15 +165,15 @@ const POPUP_TEXT := {
 const BROKEN_PALETTE := [
 	Color(0, 0, 0, 0),
 	Color8(255, 255, 255),  # letters
-	Color8(0, 0, 0),        # letter outline
+	Color8(8, 8, 15),       # letter outline
 	Color8(255, 80, 16),    # card: warning red-orange
-	Color8(0, 0, 0),        # border and crack edges
+	Color8(8, 8, 15),       # border and crack edges
 ]
 
 ## The kaiju's health bar (T-050): neon purple on white, black outline and dividers.
 const KAIJU_FILL := Color(0.72, 0.18, 1.0)
 const KAIJU_BACK := Color.WHITE
-const KAIJU_LINE := Color.BLACK
+const KAIJU_LINE := OUTLINE_COLOR
 const KAIJU_OUTLINE := 2.0
 
 ## The pause strip (T-015, T-124): its background, the dim over the run, and

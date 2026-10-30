@@ -76,10 +76,10 @@ func test_values_are_the_ones_before_t428() -> void:
 		"sub_goal": [20, Color(0.92, 0.95, 1.0), Color(0.03, 0.03, 0.06), 6],
 		"weapon_count": [32, Color(1, 1, 1), Color(0, 0, 0), 8],
 		"air_counter": [30, Color(1, 1, 1), Color(0, 0, 0), 8],
-		"viewers_unit": [14, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 4],
+		"viewers_unit": [14, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 6],
 		"viewers_flight": [30, Color("#33e1ff"), Color(0.03, 0.03, 0.06), 6],
 		"viewers_drop": [24, Color("#ff5010"), Color(0.03, 0.03, 0.06), 6],
-		"level_up_title": [40, Color8(246, 250, 232), Color8(14, 22, 18), 4],
+		"level_up_title": [40, Color8(246, 250, 232), Color8(14, 22, 18), 6],
 	}
 	for role_name in old:
 		var r: Dictionary = HudStyle.role(role_name)
@@ -100,6 +100,17 @@ func test_values_are_the_ones_before_t428() -> void:
 	assert_eq(HudStyle.CLOCK_PANEL_COLOR, Color(0.04, 0.05, 0.08, 0.92))
 	assert_eq(HudStyle.KAIJU_FILL, Color(0.72, 0.18, 1.0))
 	assert_eq(HudStyle.PAUSE_STRIP_COLOR, Color(0, 0, 0, 0.85))
+	# T-429: the HUD style sheet's values.
+	for role_name in ["coins", "pause_title", "pause_text"]:
+		assert_eq(HudStyle.role(role_name)["font"], "comic", role_name + " is in Bangers")
+	for step in HudStyle.HEAT_STEPS:
+		assert_eq(int(step["outline"]), 8)
+	var sheet_outline := Color8(8, 8, 15)
+	assert_eq(HudStyle.KAIJU_LINE, HudStyle.OUTLINE_COLOR)
+	for i in [1, 3, 12]:
+		assert_eq(HudStyle.POPUP_PALETTE[i], sheet_outline)
+	for i in [2, 4]:
+		assert_eq(HudStyle.BROKEN_PALETTE[i], sheet_outline)
 	assert_eq(HudStyle.POPUP_PALETTE[13], Color8(51, 225, 255))
 	assert_eq(HudStyle.BROKEN_PALETTE[3], Color8(255, 80, 16))
 	assert_eq(HudStyle.POPUP_TEXT["normal"]["font_px"], 32)
