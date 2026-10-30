@@ -2680,3 +2680,13 @@ Entry format:
 - Decision or change: The car's whole 1 by 3 outline meets raised sides, turns included; the board kept today's behaviour on the four open questions (roof-edge tip-off, bumper bounce, slow ramp tops, skyscraper nose).
 - Documents touched: none
 - Tasks: T-411
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: test_run_likes.gd steps the car and the run's clock directly instead of waiting on frames, so it no longer fails when the machine is busy.
+- Documents touched: none
+- Tasks: T-434
+
+## 2026-10-30: Restart, Exit or closing cancels the run
+- Decision or change: The board, after playing build I: Restart or Exit on the pause screen and closing the game window cancel the run at any point, the wreck included; its coins are lost, nothing goes into the run history and no recap shows. Replaces T-327's coins kept on Restart and Exit, and the audit's loss with coins kept on closing. The board also pointed out there is no runs list screen yet (T-364, parked for the final release): the Project Lead's build I checklist wrongly asked it to check one.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416
