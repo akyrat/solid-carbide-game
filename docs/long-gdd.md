@@ -806,16 +806,29 @@ Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it 
 
 - **Which pieces are obstacles:** the four of the panel's Obstacles group, boulders, barriers, cones and crates. Decoration (street lamps, AC units, water tanks, roof vents, rooftop signs) is refused with "Not an obstacle...", as are buildings, rooftops, ramps and the ground.
 - **Pairing:** the top bar's "Pair obstacles", or **P**, turns the pair tool on (it drops the picked piece); click one obstacle, then another: the top bar says "Pair made. Drive between them." The tool stays on for the next pair until P, Esc, a right-click or picking a piece. Clicking the same obstacle twice lets it go.
-- **One pair per obstacle:** pairing an obstacle that is already in a pair replaces its old pair (a proposal: the new pair wins).
-- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the first obstacle clicked with the tool on is ringed thicker.
-- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair", or delete either obstacle.
-- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles and no obstacle is in two.
+- **An obstacle in several pairs (T-394, below):** pairing an obstacle that is already in a pair keeps its old pair too; T-272's "one pair per obstacle" is gone.
+- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the obstacles picked with the tool on are ringed thicker.
+- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair" (since T-394 this removes all of its pairs), or delete either obstacle.
+- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles (since T-394 an obstacle can be in several pairs, but the same two obstacles make one pair at most).
 - **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
 - **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
 - **The game's own map** has no pairs and is unchanged.
 
 ![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
 ![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+
+#### Level creator: a row paired as a chain
+
+Task T-394 (Decisions, "A row of obstacles can be threaded gap after gap"). It changes the pair tool above; no new text (the labels and messages are T-271's). How it works: `game/docs/level/level-creator-pieces.md`, "Thread the needle (T-272)", "Several pairs and chains (T-394)".
+- **Two ways to pair a row.** One pair at a time, as before: click A, then B; click B, then C; and so on. Each new pair keeps the earlier ones, so the row ends up paired A-B, B-C, C-D. Or the whole row in one go: with the pair tool on, **Shift+click** the obstacles in order (each is ringed thicker and numbered 1, 2, 3 above it; Shift+click a numbered one again to take it out), then press **P** or **Pair obstacles**: each is paired with the next (A with B, B with C, C with D) and the tool stays on. A plain click after a Shift+click row adds that obstacle as the last one and pairs the row straight away. Shift+click on an obstacle with the pair tool off (and nothing picked) turns the tool on and starts a row with it.
+- **The same two obstacles are one pair at most:** pairing them again (in either order) changes nothing.
+- **Unpair removes only the pair aimed at.** With the pair tool on, Shift+click to aim, then "Unpair": two picked removes their pair; a row picked removes only the pairs between consecutive picked ones (A-B, B-C), and the obstacles' other pairs stay; one picked removes all of its pairs. With the tool off, a selected obstacle's "Unpair" removes all of its pairs (the proposal for one obstacle: all its pairs, rather than a choice). "Unpair" shows only when there is something to remove. Deleting an obstacle removes its pairs; the rest of a chain stays.
+- **In the editor** every pair shows its own dashed line, so a chain reads as a row of links.
+- **In the run** each pair is its own gap: threading a row gap after gap pays thread the needle for each gap, each gap with its own 3-second cool-down; a touch of an obstacle voids the passes of every gap it is part of, and the crash pays nothing and cuts the combo as always.
+- **Saved levels:** the level file keeps its `pairs` list, one pair per entry, so a level saved before opens with its pairs, and `check_level.py` accepts an obstacle in several pairs.
+
+![A row of five boulders paired as a chain along a road, and a second row of three obstacles picked and numbered 1, 2, 3](../art-archive/T-394/screenshots/chain_in_editor.png)
+![The car after threading the third gap of a chained row in a run, with the popup](../art-archive/T-394/screenshots/chain_popup.png)
 
 #### Level creator: the spawn point
 
@@ -1707,7 +1720,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `c657d4ae23f9862f3db6f5113e856db9415d13d0dc521b81038d1c3df6acc135` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
-| `level-design.md` | `c368272b8176c6f2eafd2cb977a7847a9c3cfdc77112c737d3ec6e67516b3fea` |
+| `level-design.md` | `1e912874aafce8c7402f354713ac8f1da832eaaed3109b55987b5b7db941f4eb` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
 | `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |

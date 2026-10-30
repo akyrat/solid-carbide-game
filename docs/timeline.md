@@ -2565,3 +2565,8 @@ Entry format:
 - Decision or change: Objects sit and draw at the height they stand on; none across an edge (the board's playtest of build E).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-393
+
+## 2026-10-30: Thread the needle through a row
+- Decision or change: An obstacle in several pairs; a row chained in one go; each gap pays (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-394
