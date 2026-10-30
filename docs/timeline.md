@@ -2390,3 +2390,8 @@ Entry format:
 - Decision or change: The board: in a goal run a score below 8 after the refines is noted for the final playtest instead of flagging the ticket and pausing the goal (G-007 paused twice on it).
 - Documents touched: tasks/README.md
 - Tasks: T-395
+
+## 2026-10-30: A goal's tickets show their real lane
+- Decision or change: The task board reads a merged goal ticket from its goal's build folder, so goal tickets no longer show in To do.
+- Documents touched: `docs/README.md`
+- Tasks: T-392
