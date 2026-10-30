@@ -58,4 +58,27 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+**Outcome: the script set (T-383) is chosen.** 0 PixelLab generations used.
+
+**Comparison sheet:** `art-archive/T-385/comparison.png` (built by `game/tools/compare_trick_sets.py`): one row per trick, script and PixelLab side by side, 5x nearest, on dark and light backgrounds.
+
+**Verdict per trick** (judged on how clearly the movement reads at the trick list's 64 x 48 size):
+- extended_drift: PixelLab. Its wide pink curve with the car sliding in a 3/4 view reads as a drift and the car is better painted. The script's band is clean but the car is a flat block beside the trail.
+- three_sixty: script. A clear loop in the trail with the car coming out of it. PixelLab's is a speckle of dotted rings and smoke; the loop is hard to see.
+- alternate_drift: script. A bold S with the car at the bend. PixelLab's S is thin, murky purple and the car is small.
+- air_one_eighty: script. Jump arc, half-turn arrow and the car twice (takeoff, landing). PixelLab shows one tiny car on a diagonal line with a stray arrow; no arc reads.
+- air_three_sixty: PixelLab. The pink ring round a floating car over a ramp reads as a spin at once. The script's ring and arc overlap and look cluttered.
+- airtime: script. A high arc with a height arrow. PixelLab shows a rooftop scene with a swoosh; it doesn't say "long time in the air".
+- thread_the_needle: script. The car on a path between two boulders. PixelLab puts the car beside the boulders, not between them.
+
+**Overall:** script wins 5 of 7, PixelLab 2. Style loop averages agree: script 7.0 (all seven kept at 7), PixelLab 5.9 (7, 6, 6, 6, 6, 5, 5). Chosen: one whole set (the proposal), the script set, so the slide keeps one look.
+
+**Open question for the playtest:** one whole set or a mix? A mix would take PixelLab's extended_drift and air_three_sixty, but the painted look differs from the flat script look next to it on slide 2.
+
+**Files:** `game/art/tutorial/tricks/<trick id>.png` (7 PNGs, copied from `art-archive/T-383/script/`, same bytes); the PixelLab set is still in `art-archive/T-384/pixellab/`. Documents updated: `docs/visual-style.md` (Decisions) and `game/docs/hud-and-menus/tutorial-slides.md`.
+
+**Screenshots** (`art-archive/T-385/screenshots/`): `slide2.png` (slide 2 with the chosen set, shown with `res://tests/fixtures/tutorial_slides_demo_2.tscn`). The comparison sheet is `art-archive/T-385/comparison.png`.
+
+**Tests:** all three sets pass: `game/tools` unittest 675 tests OK (1 skipped); `tools` unittest 573 tests OK; Godot GUT 159 scripts, 1951 tests, 1951 passing (log `art-archive/T-385/gut.log`; the first GUT run in a pipe-less foreground call exited 1 with its output cut off, the rerun was all green). `python tools/qa_check.py` was refused (needs approval), so I ran the three sets by hand.
+
+**Refusals:** `python tools/qa_check.py T-385 --no-marks` (not essential; ran the three sets directly instead).
