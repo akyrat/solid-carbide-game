@@ -1,7 +1,7 @@
 ---
 id: T-435
 title: The car bounces off walls instead of sticking to them
-status: in-progress
+status: in-qa
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -100,3 +100,4 @@ Updated existing tests: `test_car_collisions.gd` (default 0.4; top-speed hit now
 **Nothing under game/data/levels/** was written, moved or committed.
 
 **Documents affected:** `docs/drifting.md` (Content, Collisions, task T-033 paragraph), `game/docs/driving/collisions.md` ("Bounce": the cause, how the bounce wins over W, the settings table; "Knockback" sentence).
+- 2026-10-30, in-progress → in-qa: Done: W no longer snaps the car back into a wall it bounced off; bounce = 0.4 x hit speed capped at 16.5, W pulls back at 12 u/s2 (proposals). Tests: GUT 2207/2207, game/tools 752 OK, tools 582 OK. Details in result notes.
