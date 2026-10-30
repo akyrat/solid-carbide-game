@@ -1,7 +1,7 @@
 ---
 id: T-400
 title: Level creator: a small jump ramp, one tile long and about 2 units high
-status: in-progress
+status: in-qa
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -57,6 +57,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the level agent builds the small jump ramp.
+
+### 2026-10-30, In progress → In QA
+
+Small jump ramp built: Ramp 0 to 2 / 3 to 5 / 6 to 8 (key H), 4 units long, top open so the car flies off; all three test sets pass, screenshots and GIF in art-archive/T-400.
 
 ## Style review
 
