@@ -1,7 +1,7 @@
 ---
 id: T-390
 title: The chosen trick illustrations in slide 2 and the pause trick list, placeholders retired
-status: blocked
+status: in-progress
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -46,6 +46,10 @@ The board's review: Check the trick illustrations on slide 2 and in the pause sc
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-390.
 
 ## Style review
 
