@@ -1,7 +1,7 @@
 ---
 id: T-386
 title: A trick list button in the pause screen, opening a panel with the trick list
-status: needs-playtest
+status: done
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -77,3 +77,4 @@ UI Agent, done. Trick list button ("Trick list") in the pause screen's run butto
 - QA round 1: all seven criteria pass. I ran the three test sets myself: GUT 160 scripts, 1957/1957 passed (test_pause_trick_list 6/6); game/tools 675 OK (1 skipped); tools 573 OK. The panel screenshot shows the panel inside the screen and clear of the timer. Both screenshots exist. Both docs describe the button, the panel and Escape. `python tools/qa_check.py` was refused (not pre-approved), so its paperwork check was skipped and I checked the files by hand.
 - No PixelLab generations; no refusals. Godot's `.import` line-ending noise in the folder was left uncommitted.
 - 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
+- 2026-10-30, needs-playtest → done: G-007 LGTM by the board (2026-10-30)
