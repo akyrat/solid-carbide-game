@@ -1,7 +1,7 @@
 ---
 id: T-401
 title: Text: the level creator's name for the meteor crater
-status: in-progress
+status: in-qa
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -47,6 +47,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the crater's name.
+
+### 2026-10-30, In progress → In QA
+
+The crater's side-panel name is "Meteor crater" (under Ground), 10/10 in the style loop; listed in Level design.
 
 ## Style review
 
