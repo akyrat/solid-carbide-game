@@ -54,9 +54,11 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-384.
 
 ## Style review
 
+### Run 1
+
 Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-384/briefs/extended_drift.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
 
-### Round 1
+#### Round 1
 
 - Version 1: `art-archive/T-384/style-loop/v1.png`
 - Script checks: 5 of 6 pass; failed: rule 1, transparent background (corners) ([(9, 12, 43, 255), (56, 47, 96, 255), (172, 205, 211, 255), (56, 47, 96, 255)])
@@ -75,7 +77,7 @@ Rule 4 (night and retro) is met: the scene is dark navy and purple with neon acc
 - Rules broken: 1, 2, 3, 5, 10
 - Refused: {"tool_input": {"command": "ls tasks | grep 384; cat tasks/T-384*.md | head -120; ls art-archive/T-384 2>/dev/null -R | head", "description": "Read the T-384 task file and archive"}, "tool_name": "Bash", "tool_use_id": "toolu_0113dhFBG4gyG4WudC9n5kGD"}; {"tool_input": {"command": "echo \"LOOP=$SOLID_CARBIDE_STYLE_LOOP_RUN\"; grep -c '\"T-384\"' game/art/pixellab-generation-log.jsonl; grep -n -i -A30 \"pixflux\" game/docs/art/pixellab.md | head -60", "description": "Check loop marker, log count, pixflux docs"}, "tool_name": "Bash", "tool_use_id": "toolu_01TrcMEs665ZaCLdmrPase1G"}; {"tool_input": {"command": "\"LOOP=$env:SOLID_CARBIDE_STYLE_LOOP_RUN\"; (Select-String -Path game/art/pixellab-generation-log.jsonl -Pattern 'T-384' | Measure-Object).Count", "description": "Show loop marker and T-384 log count"}, "tool_name": "PowerShell", "tool_use_id": "toolu_01WU33DwSr9PgKPbTYpk5FQf"}; {"tool_input": {"command": "printenv SOLID_CARBIDE_STYLE_LOOP_RUN; grep -c 'T-384' game/art/pixellab-generation-log.jsonl", "description": "Show loop marker and T-384 log count"}, "tool_name": "Bash", "tool_use_id": "toolu_01VSCoSZ71JxpWTeKYcxtfu6"}; {"tool_input": {"command": "printenv SOLID_CARBIDE_STYLE_LOOP_RUN", "description": "Show style loop run marker"}, "tool_name": "Bash", "tool_use_id": "toolu_01DZbX86Kbe3NRFqiLLa1tV2"}; {"tool_input": {"command": "mkdir -p art-archive/T-384/style-loop && python game/tools/reduce_palette.py reduce art-archive/T-384/pixellab/extended_drift_v1.png art-archive/T-384/style-loop/v1.png --max-colors 30 && python game/tools/style_rules.py art art-archive/T-384/style-loop/v1.png --size 64x48 && python -c \"from PIL import Image; im=Image.open('art-archive/T-384/style-loop/v1.png'); print(im.mode, im.size)\"", "description": "Reduce palette to 30 colours into v1 and recheck"}, "tool_name": "Bash", "tool_use_id": "toolu_01K8BbyAZ34hRY5vQbw2VxJn"}
 
-### Round 2
+#### Round 2
 
 - Version 2: `art-archive/T-384/style-loop/v2.png`
 - What changed: Version 2 is a paid regeneration (create-image-pixflux 64x48, 1 generation; running total 2 of 40). A script fix couldn't solve version 1's composition problems, so I rewrote the prompt: a high top-down view, a very small car, a large curved neon pink trail with smoke, and banned straight lines and close-ups. A script then cut the colours from 67 to 30. What improved over v1: the view is high, the car is small and sideways, and the pink trail is a stepped, curved band with no blur. The stray pale cyan corner pixel is gone. Script checks: size, opacity, 30 colours and Rule 6 pass. What is still wrong: the trail closes into a full ring instead of an arc that ends at the car, so it reads more like the 360 trick. The car is teal rather than dark green (12,76,44), and its stripes don't show. There are muted orange lane dashes. I could not fix these for free because running my own recolour or erase script was refused by the permission system, and I did not work around it. That refusal is recorded in the ticket's result notes for the Project Lead. Rule 1 conflict, reported to the Project Lead in the result notes: the brief asks for an opaque night background, but the transparent-corners check wants a transparent one, so that check will fail for every illustration in this set until one of them changes.
@@ -100,7 +102,7 @@ Problems:
 - Rules broken: 2, 3, 10
 - Refused: {"tool_input": {"command": "python game/tools/style_rules.py art art-archive/T-384/pixellab/extended_drift_v2.png --size 64x48 > /dev/null; mkdir -p ../T-384-scripts 2>/dev/null; cat > art-archive/T-384/style-loop/palette_dump.py <<'EOF'\nimport sys\nfrom collections import Counter\nfrom PIL import Image\nim = Image.open(sys.argv[1]).convert(\"RGBA\")\nw, h = im.size\npx = im.load()\nc = Counter(px[x, y] for y in range(h) for x in range(w))\nfor col, n in c.most_common():\n    xs = [x for y in range(h) for x in range(w) if px[x, y] == col]\n    ys = [y for y in range(h) for x in range(w) if px[x, y] == col]\n    print(col, n, \"x\", min(xs), max(xs), \"y\", min(ys), max(ys))\nEOF\npython art-archive/T-384/style-loop/palette_dump.py art-archive/T-384/pixellab/extended_drift_v2.png", "description": "Dump v2 palette with pixel counts and extents"}, "tool_name": "Bash", "tool_use_id": "toolu_018SPZHZkX6hLy2nCaAhcPUP"}; {"tool_input": {"command": "python art-archive/T-384/scripts/palette_dump.py art-archive/T-384/pixellab/extended_drift_v2.png", "description": "Dump v2 palette with counts and extents"}, "tool_name": "Bash", "tool_use_id": "toolu_01V2RYF7KnV6zxgC5f7GZPrk"}
 
-### Round 3
+#### Round 3
 
 - Version 3: `art-archive/T-384/style-loop/v3.png`
 - What changed: Version 3 is a paid refine (create-image-pixflux 64x48, 1 generation; running total 3 of 40), cut to 30 colours by script. Free pixel fixes were not possible because my own recolour/erase script is refused, so the changes are all in the prompt: a "low top-down" view to get an isometric 3/4 face, a request for an open half-circle arc with full circles and rings banned, a car with a lighter green rim and bold white stripes, grey-purple smoke, and orange and teal banned. Script checks: size, opacity, 30 colours and Rule 6 pass; the transparent-corners check fails because of the known conflict with the brief's opaque background. Result: the car is now larger and reads in 3/4 view, showing its top and one side, with a black outline and some white highlight and stripe pixels. The scene has more texture, with tiled asphalt and specks. But it is weaker than v2 on the trick itself: the pink trail came back as a straight diagonal band, not an arc. The car is still teal rather than dark green (12,76,44). Faint orange dashes remain. There are no clear smoke puffs. On my own look, v2's curved trail shows the extended drift better and v3's car reads better; neither has both.
@@ -121,7 +123,7 @@ The extended drift should show a wide, smooth arc of tire smoke along the trail.
 Rule 4 (night and retro) is satisfied. Rule 6 passes, and there is no text.
 - Rules broken: 1, 2, 3, 5, 10
 
-### Round 4
+#### Round 4
 
 - Version 4: `art-archive/T-384/style-loop/v4.png`
 - What changed: Version 4 is the last paid refine for extended_drift (create-image-pixflux 64x48, 1 generation). It uses all 4 of this illustration's generations; running total 4 of 40. A script cut it to 30 colours. Free pixel fixes were still not possible because my own pixel-edit script is refused. The prompt went back to v2's high top-down view, which gave the curve. It asks for a wide U-shaped curve, not a ring; grey-purple smoke clouds along it; a very dark forest-green fastback with white stripes, black outline and white highlight pixels; and it bans teal, orange and closed rings. Script checks: size, opacity, 30 colours and Rule 6 pass; the transparent-corners check fails only because of the known conflict with the brief's opaque background. What improved on my own look: this is the best version so far. A wide, smooth neon pink drift arc sweeps across the frame with stepped darker purple bands beside it as halos, and there are grey-purple smoke puffs where the arc meets the car. The car is darker green than in v2 and v3, slides sideways at the end of the arc, and shows its top and one side with a near-black outline and white highlights. What is still wrong: the car is large, not the tiny sprite the brief asks for. Its green still leans slightly teal rather than exactly 12,76,44. The two white stripes read as scattered highlight pixels rather than two clean stripes.
@@ -138,6 +140,29 @@ Weaknesses, to fix by script before regenerating:
 - Rules broken: 2, 5
 
 **Kept:** version 4, score 7/10 (`art-archive/T-384/style-loop/v4.png`, copied to `art-archive/T-384/pixellab/extended_drift.png`): still below 8 after 3 refines, so the task is flagged for the board's review.
+
+### Run 2
+
+Run by `tools/style_loop/run.py` on 2026-10-30: art, brief `art-archive/T-384/briefs/three_sixty.md`. Generator: asset-generation (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: `art-archive/T-384/style-loop/v1-2.png`
+- Script checks: 6 of 6 pass
+- Score: 5/10
+- Reason: The script checks pass (size, transparency, 30 colours, no Greenbull light green or yellow), and the image has a transparent background and a neon pink closed loop around the car. Two rules are broken.
+
+Rule 10: the car does not read as the subject. Its body looks dark navy or teal with cyan and blue highlights, not Greenbull dark green (12,76,44). The two centred white stripes with a gap between them are missing or unreadable. The shape is a generic low coupe or boxy block, not a 1967 Mustang GT fastback. Fix: repaint the body in dark green, add two clear white stripes with a gap, and give it a fastback silhouette.
+
+Rule 2: the outline is not a clear dark selective outline broken by highlights. The car's shading is muddy, with little detail and few highlight pixels. Fix: outline the car in near-black and add light highlight pixels on the roof, hood and edges.
+
+Rule 3: the view is nearly top-down and flat. Fix: show the top and one side in a 3/4 isometric view.
+
+Rule 5 is partly met. The pink ring has some stepped glow, but it is thin and flat and has no clear halo steps. Fix: add 1 to 2 darker stepped halo rings inside and outside the neon line.
+
+The brief's tire smoke ring is not visible. Fix: add a ring of grey-purple smoke puffs around the loop.
+- Rules broken: 2, 3, 5, 10
+- Refused: {"tool_input": {"command": "sed -n 148,400p tasks/T-384-*.md; python game/tools/pixellab_client.py --help 2>&1 | head -60; grep -c T-384 game/art/pixellab-generation-log.jsonl"}, "tool_name": "Bash", "tool_use_id": "toolu_01TP52MLBjr5SQbHoPj7AqtQ"}; {"tool_input": {"command": "python -c \"\nfrom PIL import Image\nim=Image.open('art-archive/T-384/style-loop/v1-2.png').convert('RGBA'); print(im.mode, im.size)\nbig=im.resize((384,288),Image.NEAREST)\nout=Image.new('RGBA',(784,288),(20,20,30,255)); out.paste((235,235,235,255),(400,0,784,288))\nout.alpha_composite(big,(0,0)); out.alpha_composite(big,(400,0)); out.save('art-archive/T-384/style-loop/v1-2_preview.png')\""}, "tool_name": "Bash", "tool_use_id": "toolu_012JXsXs54p3X4s6a7sw7YMg"}
 
 ## Result notes
 
@@ -158,3 +183,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - 2026-10-30, in-progress → flagged-for-review: the style loop kept version 4 (score 7/10), still below 8 after 3 refines; every version is in its Style review
 - Call 5 (planned): three_sixty v1 (brief now asks for a transparent background), create-image-pixflux 64x48, no_background true. 1 generation. Loop output: art-archive/T-384/style-loop/v1-2.png.
 - Call 5: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v1.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v1-2.png (preview v1-2_preview.png). Script checks: all 6 pass, transparent corners included. Running total: 5 / 40; three_sixty has used 1 of its 4. My own look: a closed neon pink loop with stepped bands, but the car is large and inside the ring rather than on it, its body reads teal and mint rather than dark green 12,76,44, and there is no clear smoke ring.
+- Call 6 (planned): three_sixty v2 refine (v1 scored 5: car not a dark green fastback, flat top-down view, thin halo, no smoke ring). The fixes are composition (view, car shape and size), so no free script can do them and this is a paid refine: create-image-pixflux 64x48, low top-down view, a small dark green fastback on the ring's edge, a smoke puff ring, wider stepped halos. 1 generation. Loop output: art-archive/T-384/style-loop/v2-2.png.
+- Call 6: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v2.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-2.png (preview v2-2_preview.png). Script checks: all 6 pass. Running total: 6 / 40; three_sixty has used 2 of its 4. My own look: the car now shows its top and one side in 3/4 view and has dark green on it, but it is still big and in the middle of the ring, it has lime-ish yellow-green highlight pixels (not Greenbull's exact colours, the script passes), and the stripes are unclear. The ring is now a thinner ellipse with weaker halos, and there is still no smoke ring. Mixed: better view and colour than v1, worse ring.
