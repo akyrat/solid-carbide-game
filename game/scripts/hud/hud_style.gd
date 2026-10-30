@@ -19,8 +19,29 @@ extends RefCounted
 
 ## The comic font (Bangers, T-084): the popups, the counters and the level-up screen.
 const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
-## The clock's digits (T-335): a monospaced system font, no smoothing.
-const CLOCK_FONT_NAMES: Array[String] = ["Consolas", "Courier New", "monospace"]
+## No system font any more (T-429, the HUD style sheet's rule 6): the clock's
+## digits are the drawn seven-segment art below (ClockDigits), and its
+## (undrawn) label keeps Bangers for its measures.
+
+# ---------------------------------------------------------------- HUD art
+
+## The HUD style sheet's pixel scale (rule 1): one art pixel is two screen pixels.
+const HUD_ART_SCALE := 2
+## The clock panel art (T-339): 100 x 36, shown at 2x = the layout's 200 x 72.
+const CLOCK_PANEL_ART := "res://art/hud/clock_panel.png"
+## Its content margin: the 3 screen pixels the old drawn border kept, so the
+## label's rect inside the panel is unchanged.
+const CLOCK_PANEL_CONTENT_MARGIN := 3
+## The clock's digit frames (T-339): `%s` is 0 to 9, "colon" or "off" (the unlit 8).
+const CLOCK_DIGIT_ART := "res://art/hud/clock_digit_%s.png"
+const CLOCK_DIGIT_FRAME := Vector2i(16, 26)
+## The unlit 8's shade: the time step's colour times this, fully opaque.
+const CLOCK_DIGIT_OFF_SHADE := 0.22
+## The weapon column's icons (T-429): one row sheet of 24 x 24 frames, shown at
+## 2x in the 48 px slot, in this order.
+const WEAPON_ICON_ART := "res://art/hud/weapon_icons.png"
+const WEAPON_ICON_FRAME := 24
+const WEAPON_ICON_ORDER: Array[String] = ["gun", "flamethrower", "molotov", "bricks", "wiper", "underglow"]
 
 # ---------------------------------------------------------------- shared colours
 
@@ -67,15 +88,18 @@ const LEVEL_UP_TITLE_CREAM := Color8(246, 250, 232)
 const LEVEL_UP_TITLE_OUTLINE := Color8(14, 22, 18)
 const LEVEL_UP_TITLE_OUTLINE_SIZE := 6
 
-## Each label's look: `font` ("comic", "clock", or "" for the theme's default),
+## Each label's look: `font` ("comic", or "" for the theme's default),
 ## `size` (font size), `color` (font colour), `outline_color` and `outline`
-## (outline width). A key left out is not set (the script sets it as it changes:
+## (outline width), `caps` (a Label shown in capitals, the sheet's rule 5; the
+## text itself is unchanged, and Bangers draws a Button's lowercase as capitals
+## anyway). A key left out is not set (the script sets it as it changes:
 ## the clock's colour per time step, the viewers number's size per heat step).
 const LABELS := {
 	# The coins counter's two labels (T-090, T-341): the default font.
 	"coins": {"font": "comic", "size": LABEL_FONT_SIZE, "color": COINS_COLOR, "outline_color": OUTLINE_COLOR, "outline": LABEL_OUTLINE},
-	# The clock's digits (T-335); the colour comes from data/hud.json, timer_clock.steps.
-	"clock_digits": {"font": "clock", "size": CLOCK_FONT_SIZE, "outline_color": Color(0, 0, 0, 0.6), "outline": 6},
+	# The clock's label (T-335); the colour comes from data/hud.json, timer_clock.steps.
+	# ClockDigits draws its text in the digit art (T-429); the label itself draws nothing.
+	"clock_digits": {"font": "comic", "size": CLOCK_FONT_SIZE, "outline_color": Color(0, 0, 0, 0.6), "outline": 6},
 	# The sub goal's "42 / 156 SUBS" (T-337).
 	"sub_goal": {"font": "comic", "size": LABEL_FONT_SIZE, "color": LABEL_COLOR, "outline_color": OUTLINE_COLOR, "outline": LABEL_OUTLINE},
 	# A weapon's "x3" (T-276).
@@ -90,9 +114,9 @@ const LABELS := {
 	"viewers_flight": {"font": "comic", "size": VIEWERS_FLIGHT_SIZE, "color": VIEWERS_COLOR, "outline_color": DARK, "outline": 6},
 	# A crash's "-12K" dropping off the counter, in the crash colour.
 	"viewers_drop": {"font": "comic", "size": VIEWERS_DROP_SIZE, "color": VIEWERS_CRASH_COLOR, "outline_color": DARK, "outline": 6},
-	# The pause strip (T-015, T-124): the default font, the theme's colours.
-	"pause_title": {"font": "comic", "size": 28},
-	"pause_text": {"font": "comic", "size": 16},
+	# The pause strip (T-015, T-124): Bangers in capitals (T-429), the theme's colours.
+	"pause_title": {"font": "comic", "size": 28, "caps": true},
+	"pause_text": {"font": "comic", "size": 16, "caps": true},
 	# The level-up screen (T-141, T-310): black Bangers on the cream cards, the
 	# ribbon title cream with the art's dark outline.
 	"level_up_title": {"font": "comic", "size": LEVEL_UP_TITLE_SIZE, "color": LEVEL_UP_TITLE_CREAM,
@@ -128,12 +152,6 @@ const FIRE_PALETTE: Array[Color] = [
 ]
 ## The sub goal's celebration glow (T-337): white, pale mint, the fill's green.
 const SUB_GOAL_GLOW: Array[Color] = [WHITE, HEALTH_TOP_COLOR, HEALTH_COLOR]
-
-## The clock's panel (T-335): fill, border, border width, corner radius.
-const CLOCK_PANEL_COLOR := Color(0.04, 0.05, 0.08, 0.92)
-const CLOCK_PANEL_BORDER := Color(0.25, 0.28, 0.36)
-const CLOCK_PANEL_BORDER_WIDTH := 3
-const CLOCK_PANEL_CORNER := 2
 
 ## The trick popups' baked palette (T-084, T-133, T-336), by index: transparent,
 ## letters, the white fill, its border, the heat rings, the hot amount, the four
@@ -195,7 +213,6 @@ const LEVEL_UP_HOVER_TINT := Color(1.15, 1.15, 1.15)
 # ---------------------------------------------------------------- reading it
 
 static var _comic_font: FontFile = null
-static var _clock_font: SystemFont = null
 
 
 ## The comic font (Bangers) with smoothing off: hard pixel edges (T-131).
@@ -216,22 +233,35 @@ static func new_comic_font() -> FontFile:
 	return f
 
 
-## The clock's digits font: monospaced, no smoothing (T-335).
-static func clock_font() -> SystemFont:
-	if _clock_font == null:
-		_clock_font = SystemFont.new()
-		_clock_font.font_names = PackedStringArray(CLOCK_FONT_NAMES)
-		_clock_font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
-	return _clock_font
+## The clock's panel: the panel art at 2x (StyleBoxTexture, stretched exactly
+## 2x into the 200 x 72 layout), with the old border's 3 px content margin.
+static func clock_panel_box() -> StyleBoxTexture:
+	var box := StyleBoxTexture.new()
+	box.texture = load(CLOCK_PANEL_ART) as Texture2D
+	box.set_content_margin_all(CLOCK_PANEL_CONTENT_MARGIN)
+	return box
 
 
-## The font of a role's `font` key ("comic", "clock"); null for the theme's default.
+## The weapon column's 24 x 24 icon for a weapon id, cut from the icon sheet;
+## null when the sheet or the id is missing (the caller falls back).
+static func weapon_icon(weapon_id: String) -> Texture2D:
+	var i := WEAPON_ICON_ORDER.find(weapon_id)
+	if i < 0 or not ResourceLoader.exists(WEAPON_ICON_ART):
+		return null
+	var sheet := load(WEAPON_ICON_ART) as Texture2D
+	if sheet == null or sheet.get_width() < (i + 1) * WEAPON_ICON_FRAME:
+		return null
+	var atlas := AtlasTexture.new()
+	atlas.atlas = sheet
+	atlas.region = Rect2(i * WEAPON_ICON_FRAME, 0, WEAPON_ICON_FRAME, WEAPON_ICON_FRAME)
+	return atlas
+
+
+## The font of a role's `font` key ("comic"); null for the theme's default.
 static func font_for(kind: String) -> Font:
 	match kind:
 		"comic":
 			return comic_font()
-		"clock":
-			return clock_font()
 	return null
 
 
@@ -262,6 +292,8 @@ static func apply(control: Control, role_name: String, color: Variant = null) ->
 		control.add_theme_color_override("font_outline_color", r["outline_color"] as Color)
 	if r.has("outline"):
 		control.add_theme_constant_override("outline_size", int(r["outline"]))
+	if bool(r.get("caps", false)) and control is Label:
+		(control as Label).uppercase = true
 
 
 ## A role's font size (for layouts that measure the font before a label exists).

@@ -4,14 +4,22 @@ extends PanelContainer
 ## glowing digits that go green, yellow, orange and red as the time nears 0:00.
 ## The switch points and the layout come from res://data/hud.json (timer_clock).
 ## It only shows: `label` holds the M:SS text, set by the HUD; `set_time_left()`
-## picks the colour. Placeholder look drawn in code until the clock art (T-339).
+## picks the colour.
+##
+## The look follows the HUD style sheet (T-429; Visual style, Decisions, "The HUD
+## style sheet", rules 1, 4 and 6): the panel is the clock panel art
+## (`clock_panel.png`, 100 x 36 at 2x, exactly the layout's 200 x 72), and the
+## digits are the drawn seven-segment frames (`clock_digits.png` cut into
+## `clock_digit_*.png`, 16 x 26 at 2x), tinted with the step's colour over the
+## dim unlit 8. `label` stays (the HUD and the tests read its text and colour)
+## but draws nothing: `digits` draws its text.
 
-## The look is HudStyle's (T-428): "clock_digits" and the clock panel's colours.
+## The look is HudStyle's (T-428, T-429): "clock_digits" and the clock art.
 const DIGIT_FONT_SIZE := HudStyle.CLOCK_FONT_SIZE
-const PANEL_COLOR := HudStyle.CLOCK_PANEL_COLOR
-const PANEL_BORDER := HudStyle.CLOCK_PANEL_BORDER
 
 var label: Label
+## The control that draws `label`'s text in the digit art.
+var digits: ClockDigits
 var color_name := ""
 var _steps: Array = []
 var _layout: Dictionary = {}
@@ -24,12 +32,8 @@ func _init() -> void:
 	_steps = cfg.get("steps", [])
 	name = "TimerClock"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var box := StyleBoxFlat.new()
-	box.bg_color = PANEL_COLOR
-	box.border_color = PANEL_BORDER
-	box.set_border_width_all(HudStyle.CLOCK_PANEL_BORDER_WIDTH)
-	box.set_corner_radius_all(HudStyle.CLOCK_PANEL_CORNER)
-	add_theme_stylebox_override("panel", box)
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_theme_stylebox_override("panel", HudStyle.clock_panel_box())
 	# Anchored to the bottom-left corner, keeping its margins at other window sizes.
 	set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	var ref_h: float = float(_layout["reference_h"])
@@ -44,7 +48,13 @@ func _init() -> void:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	HudStyle.apply(label, "clock_digits")
+	# Visible (so it is in the tree's layout) but drawn by `digits` instead.
+	label.self_modulate = Color(1, 1, 1, 0)
 	add_child(label)
+	digits = ClockDigits.new()
+	digits.name = "Digits"
+	digits.source = label
+	add_child(digits)
 	set_time_left(480.0)
 
 
@@ -66,3 +76,5 @@ func set_time_left(seconds_left: float) -> void:
 	color_name = String(s["name"])
 	# The colour is data (hud.json timer_clock.steps), not style.
 	label.add_theme_color_override("font_color", color_for(seconds_left))
+	if digits != null:
+		digits.refresh()
