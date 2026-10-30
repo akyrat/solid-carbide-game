@@ -53,6 +53,10 @@ const LAND_SQUASH := Vector2(1.3, 0.7)
 
 static var _textures := {}
 
+## T-379: how many times the art's size it is drawn (enemies.json minion.size_scale,
+## set by the spawner). A whole number keeps the pixel edges hard (nearest filter).
+var size_scale := 1.0
+
 ## Screen direction it faces (normalized); set by the spawner from heading.
 var facing := Vector2.RIGHT
 ## Walk cycle, 0..1, for the legs (and the frame).
@@ -151,7 +155,7 @@ static func _sheet_at(path: String) -> Texture2D:
 
 func _draw() -> void:
 	var entry: Array = SHEETS[compass_index(facing)]
-	var pivot := Vector2(0.0, -LIFT)
+	var pivot := Vector2(0.0, -LIFT * size_scale)
 	if falling:
 		var fall_tex := fall_sheet(entry[0])
 		if fall_tex != null:
@@ -165,18 +169,20 @@ func _draw() -> void:
 	if tex != null:
 		_draw_art(tex, entry[1], frame_for(_walk))
 	else:
+		draw_set_transform_matrix(anim_transform(pivot) * Transform2D.IDENTITY.scaled(Vector2(size_scale, size_scale)))
 		_draw_placeholder()
 	draw_set_transform_matrix(Transform2D.IDENTITY)
 
 
 func _draw_art(tex: Texture2D, mirrored: bool, frame: int) -> void:
 	var src := Rect2(frame * FRAME_SIZE, 0, FRAME_SIZE, FRAME_SIZE)
-	var size := FRAME_SIZE * ART_SCALE
+	var size := FRAME_SIZE * ART_SCALE * size_scale
+	var lift := LIFT * size_scale
 	var w := -size if mirrored else size
 	# A negative width flips the frame in place: Godot draws it from the
 	# rect's x to x + size, so x is -size / 2 both ways (T-226 fix: it was
 	# -w / 2, which put every mirrored frame one frame width to the right).
-	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -size / 2.0 - LIFT), Vector2(w, size)), src)
+	draw_texture_rect_region(tex, Rect2(Vector2(-size / 2.0, -size / 2.0 - lift), Vector2(w, size)), src)
 
 
 func _draw_placeholder() -> void:

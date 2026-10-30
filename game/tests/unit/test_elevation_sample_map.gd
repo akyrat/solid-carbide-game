@@ -80,7 +80,8 @@ func test_one_drawing_per_raised_area_and_ramp() -> void:
 		ids.append(str(p.id))
 	for r in data.ramps:
 		ids.append(str(r.id))
-	assert_eq(scene.areas.size(), ids.size())
+	# T-405: and one per short building of its blocks (drawn from their own platform art).
+	assert_eq(scene.areas.size(), ids.size() + load("res://scripts/level/short_platforms.gd").platforms_of(data).size())
 	for id in ids:
 		var a = _area(id)
 		assert_not_null(a, "a drawing for %s" % id)
@@ -98,7 +99,7 @@ func test_the_car_has_its_sprite_and_its_shadow() -> void:
 	assert_eq(scene.car_sprite.sheet, "iso")
 	assert_eq(scene.shadow.get_script(), CarShadowScript)
 	assert_eq(scene.car.ground, scene.ground_height, "the car's height reads the sample map's ground")
-	assert_eq(scene.ground_height.platforms.size(), data.platforms.size())
+	assert_eq(scene.ground_height.platforms.size(), data.platforms.size() + load("res://scripts/level/short_platforms.gd").platforms_of(data).size())
 	assert_eq(scene.ground_height.ramps.size(), data.ramps.size())
 
 

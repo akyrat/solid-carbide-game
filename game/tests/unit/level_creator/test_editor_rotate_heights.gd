@@ -123,7 +123,12 @@ func test_the_mirror_places_the_mirrored_art() -> void:
 	e.mirror_pick()
 	_click(e, Vector2(-40.5, -40.5))
 	assert_eq(e.level_data.buildings[0].look, 1, "a short building's mirror is its look 1")
-	assert_eq(e.map.slots[0].towers.get_node("Sprite").texture.resource_path, "res://art/buildings/short_body_5.png",
+	# T-405: a low-rise is a platform drawn from its platform art (of the mirrored body, short_body_5).
+	var area: Node2D = null
+	for a in e.elevation.areas:
+		if bool(a.block.get("short", false)):
+			area = a
+	assert_eq(area.building_art.full.resource_path, "res://art/buildings/platforms/short_body_5.png",
 		"the mirrored art of the catalogue")
 
 

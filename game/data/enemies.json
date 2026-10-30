@@ -1,6 +1,7 @@
 {
-  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health in the same points as the weapons' damage (weapons.json); damage to the car in hearts (run.json car.starting_hearts). Knockback is a speed added to the car (the car's knockback function). Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
+  "_comment": "Enemy numbers (task T-039): the minion, minion spawning, coin drops, the kaiju, its coins when defeated (task T-119) and its meteor attack. Distances in units (1 unit = the car's width), speeds in units per second, times in seconds, health in the same points as the weapons' damage (weapons.json); damage to the car in hearts (run.json car.starting_hearts). Knockback is a speed added to the car (the car's knockback function). Minion size_scale (T-379, board 2026-10-29): the minion is drawn this many times its old size (a whole number, so the pixel edges stay hard) and its body, hits and navigation radius grow to match; the kaiju is unchanged. Enemies never get tougher over a run: only the number of minions grows (Enemies, Decisions). Proposed numbers; the board judges them in playtests. Reasons for each number: tasks/T-039-enemy-data.md, Result notes (kaiju_coins: tasks/T-119-kaiju-coins-data.md, Result notes).",
   "minion": {
+    "size_scale": 2,
     "health": 4,
     "move_speed": 6,
     "contact_damage": 1,

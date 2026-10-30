@@ -27,7 +27,7 @@ func test_missing_file_gives_clear_error() -> void:
 func test_every_section_has_its_numbers() -> void:
 	var e := EnemyData.new()
 	var keys := ["health", "move_speed", "contact_damage", "knockback"]
-	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys))
+	assert_eq_deep(_sorted(e.minion().keys()), _sorted(keys + ["size_scale"]))  # T-379
 	assert_eq_deep(_sorted(e.kaiju().keys()), _sorted(keys))
 	assert_eq_deep(_sorted(e.spawning().keys()), _sorted(["minions_at_start", "minions_at_boss_time",
 		"growth_until_seconds", "spawn_interval_seconds", "spawn_margin_units"]))
@@ -71,6 +71,8 @@ func test_minion_stats_do_not_change_over_time() -> void:
 	assert_eq(early.contact_damage, 1.0)
 	var r := GameData.load_file("enemies")
 	for k in r.data["minion"]:
+		if k == "size_scale":
+			continue  # T-379: a fixed size, not growth over time
 		assert_false(String(k).contains("growth") or String(k).contains("scale") or String(k).contains("per_minute"),
 			"minion has no time scaling key (%s)" % k)
 	for k in r.data["kaiju"]:
@@ -115,14 +117,17 @@ func test_meteor_attacks_in_the_kaiju_minute() -> void:
 
 
 func test_kaiju_time_to_kill_matches_result_notes() -> void:
-	# [gun tier, flame tier (0 = no flame), garage damage bonus level, seconds in the result notes]
+	# [gun tier, flame tier (0 = no flame), garage damage bonus level, seconds]
+	# T-408 (2026-10-30): the gun's damage 4 (a minion's health) and its new tiers
+	# (11, bullets/speed/targets) roughly halve the gun's share; numbers in T-408's result notes.
 	var cases := [
-		[1, 0, 0, 315.0],   # start of a run: the gun alone, never upgraded
-		[4, 4, 0, 48.5],    # average run (level 8): flame, gun tier 4, flame tier 4
-		[4, 4, 5, 38.8],    # the same with garage damage bonus level 5 (+25%)
-		[6, 6, 0, 33.8],    # top level (12): gun tier 6, flame tier 6
-		[8, 0, 0, 37.7],    # every pick on the gun, no flame
-		[8, 4, 10, 19.8],   # gun tier 8, flame tier 4, garage bonus maxed (+50%)
+		[1, 0, 0, 157.5],   # start of a run: the gun alone, never upgraded
+		[4, 4, 0, 33.5],    # average run (level 8): flame, gun tier 4, flame tier 4
+		[4, 4, 5, 26.8],    # the same with garage damage bonus level 5 (+25%)
+		[6, 6, 0, 29.4],    # top level (12): gun tier 6, flame tier 6
+		[8, 0, 0, 22.3],    # gun tier 8, no flame
+		[8, 4, 10, 12.8],   # gun tier 8, flame tier 4, garage bonus maxed (+50%)
+		[11, 0, 0, 16.0],   # the gun's last tier alone
 	]
 	for c in cases:
 		assert_almost_eq(_kaiju_seconds(c[0], c[1], c[2]), c[3], 0.05,

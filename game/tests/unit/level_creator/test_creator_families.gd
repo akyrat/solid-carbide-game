@@ -143,6 +143,11 @@ func test_r_turns_m_mirrors_and_h_changes_height() -> void:
 	assert_eq(e.pick_view, "east", "H keeps the direction")
 	_key(e, KEY_H)
 	assert_eq(e.panel.picked, "ramp-0-6")
+	# T-400: then the small jump ramps, 0 to 2, 3 to 5 and 6 to 8, before going round.
+	for small in ["ramp-0-2", "ramp-3-5", "ramp-6-8"]:
+		_key(e, KEY_H)
+		assert_eq(e.panel.picked, small)
+		assert_eq(e.pick_view, "east", "H keeps the direction")
 	_key(e, KEY_H)
 	assert_eq(e.panel.picked, "ramp-0-3")
 	e.panel.pick("platform")

@@ -201,7 +201,7 @@ func _linked_across(nav, a: Vector2, b: Vector2) -> int:
 
 func test_a_path_from_the_street_to_height_6_goes_by_both_ramps() -> void:
 	var nav = spawner.navigation
-	var path: PackedVector2Array = nav.find_path(Vector2(-81, -40), Vector2(-27, -81))
+	var path: PackedVector2Array = nav.find_path(Vector2(-81, -48), Vector2(-27, -81))
 	assert_gt(path.size(), 2)
 	var foot_0_3: Vector2 = nav.ramp_end(0, false)
 	var top_0_3: Vector2 = nav.ramp_end(0, true)
@@ -441,7 +441,7 @@ func test_minions_spawn_on_the_street() -> void:
 		run.state.health = run.state.max_health
 	assert_gt(at.size(), 5)
 	for p in at:
-		assert_true(run.elevation.is_street(p, MinionScript.RADIUS_UNITS), "spawned on the street: %s" % p)
+		assert_true(run.elevation.is_street(p, (MinionScript.BASE_RADIUS_UNITS * float(EnemyData.new().minion().size_scale))), "spawned on the street: %s" % p)
 
 
 # --- AC 3: drawn at their height, damage at the car's level --------------------------

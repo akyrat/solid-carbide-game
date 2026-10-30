@@ -1,5 +1,8 @@
 class_name LevelSpawn
 extends RefCounted
+
+## T-405: the short buildings are platforms (short_platforms.gd).
+const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 ## The car's spawn point of a level (task T-280; Level design, Decisions, "The car's spawn point").
 ## A level file's "spawn" is {x, y, heading}: the cell's middle the car starts on (units) and its
 ## heading in degrees, the car model's rotation (0 faces +x, 270 faces -y, the run's own start).
@@ -66,7 +69,8 @@ static func turned(heading: int) -> int:
 
 
 ## "" when a car can stand at `units` (inside the map, clear of every building, prop and boulder),
-## else OFF_MAP or BLOCKED. Rooftops and ramps are fine: the car stands at their height.
+## else OFF_MAP or BLOCKED. Rooftops and ramps are fine: the car stands at their height (and since
+## T-405 the short buildings, which are platforms).
 static func problem(data: Dictionary, units: Vector2) -> String:
 	if not _map_rect(data).has_point(units):
 		return OFF_MAP
@@ -74,6 +78,9 @@ static func problem(data: Dictionary, units: Vector2) -> String:
 		var items = data.get(key, [])
 		if items is Array:
 			for b in items:
+				# T-405: a short building is a platform the car can stand on, like a rooftop.
+				if key == "buildings" and b is Dictionary and ShortPlatformsScript.is_platform_entry(b):
+					continue
 				if b is Dictionary and _rect(b).grow(CLEARANCE).has_point(units) \
 						and not _on_edge(_rect(b).grow(CLEARANCE), units):
 					return BLOCKED

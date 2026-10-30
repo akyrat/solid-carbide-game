@@ -63,7 +63,9 @@ func test_switched_off_the_run_builds_the_mvp_map() -> void:
 
 func test_one_drawing_per_rooftop_and_ramp() -> void:
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(ELEVATION_LAYOUT))
-	assert_eq(run.elevation.areas.size(), data.platforms.size() + data.ramps.size())
+	# T-405: and the platforms its blocks' short buildings make.
+	assert_eq(run.elevation.areas.size(), data.platforms.size() + data.ramps.size()
+		+ load("res://scripts/level/short_platforms.gd").platforms_of(data).size())
 	assert_eq(run.elevation.depth_items.size(),
 		run.map.fade_items().size() + run.elevation.areas.size())
 

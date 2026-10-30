@@ -1,7 +1,7 @@
 ---
 id: T-389
 title: The pause screen hides the SFX volume slider for the MVP
-status: blocked
+status: open
 from: project-lead
 to: ui
 lead: Goal-G-007
