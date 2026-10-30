@@ -1,7 +1,7 @@
 ---
 id: T-434
 title: The drift-pays-its-combo test fails when the machine is busy
-status: in-qa
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: []
 files_to_read_first: [tasks/README.md, game/tests/unit/run/test_run_likes.gd, tasks/T-424-wreck-revive-test-flaky.md]
 files_expected_to_change: [game/tests/unit/run/test_run_likes.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,11 +39,11 @@ Make it deterministic, the way T-424 fixed the wreck test: drive the drift by th
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The root cause is in the result notes: why the measured drift is shorter under load. (QA: pass / fail)
-- [ ] The test passes while the CPU is loaded: run its file 10 times while the full GUT suite runs in another Godot process at the same time (or an equivalent load the agent names), all 10 passing; the counts in the result notes. (QA: pass / fail)
-- [ ] The test still asserts what it did before (no assert removed or loosened). (QA: pass / fail)
-- [ ] No game code changes, or, if any were needed, the agent stopped and asked first (result notes). (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The root cause is in the result notes: why the measured drift is shorter under load. (QA: pass)
+- [ ] The test passes while the CPU is loaded: run its file 10 times while the full GUT suite runs in another Godot process at the same time (or an equivalent load the agent names), all 10 passing; the counts in the result notes. (QA: pass - QA ran the file 6 times with -gselect=test_run_likes while a full GUT suite ran in a second Godot process: 6 of 6 passed, 37/37 each; the full suite alongside 2172/2172)
+- [ ] The test still asserts what it did before (no assert removed or loosened). (QA: pass - diff against the merge base shows only waits replaced; physics_step() is the car's real step, RunState.advance() the run's real clock)
+- [ ] No game code changes, or, if any were needed, the agent stopped and asked first (result notes). (QA: pass - only game/tests/unit/run/test_run_likes.gd changed)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - game/tools python 752 OK (1 skipped), tools python 582 OK, GUT 2172/2172)
 
 ## Updates
 
@@ -71,3 +71,4 @@ Load check, round 2 (GUT option `-gselect=test_run_likes`, checked: it runs the 
 Three sets: game/tools python OK (752 tests, 1 skipped), tools python OK (582 tests), GUT 2172/2172 passing.
 Changed: game/tests/unit/run/test_run_likes.gd. Documents affected: none.
 - 2026-10-30, in-progress → in-qa: Test steps the car 75 times by hand; drift test 10/10 under load; three sets pass
+- 2026-10-30, in-qa → done: QA pass: all five criteria; test-only, no board review
