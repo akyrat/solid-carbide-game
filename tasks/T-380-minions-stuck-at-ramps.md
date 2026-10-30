@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -51,6 +51,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build F, on top of T-379's bigger minions.
+
+### 2026-10-30, In progress → In QA
+
+Fixed: minions now walk straight only when the way to the car is clear, otherwise by a path round ramps and corners; stuck minions in a scripted chase went from 8 to 0. GIF in art-archive/T-380/screenshots.
 
 ## Style review
 
