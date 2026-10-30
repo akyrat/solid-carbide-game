@@ -71,7 +71,8 @@ func test_start_begins_a_fresh_run() -> void:
 	assert_eq(s.health, s.max_health)
 	assert_eq(s.coins, 0)
 	assert_eq(s.result, "")
-	assert_eq(game.run.car.position, game.run.START_POSITION_UNITS * 16.0, "the car at the start")
+	# T-372: Start plays the game map, whose car starts on the level's spawn point.
+	assert_eq(game.run.car.position, LevelSpawn.position_of(game.run.map.layout) * 16.0, "the car at the start")
 
 
 ## Ends the run with `end`, checks the recap screen (T-320) shows its summary, then

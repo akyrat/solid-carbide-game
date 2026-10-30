@@ -102,10 +102,14 @@ func test_empty_creator_to_playing_the_level() -> void:
 	assert_gt(run.minions.minions.size(), 0, "minions spawned")
 
 
-func test_the_main_menu_run_uses_the_elevation_sample_map() -> void:
+## T-372: the main menu's Start plays the board's level (GameFlow.GAME_MAP_PATH), no longer the
+## elevation sample map, which stays in the repo for the tests and the creator.
+func test_the_main_menu_run_uses_the_game_map() -> void:
 	var game: GameFlow = GameScene.instantiate()
 	game.quit_game = func(): pass
 	add_child_autofree(game)
 	game.menu.start_button.pressed.emit()
-	assert_eq(game.run.layout_path, SAMPLE)
-	assert_eq(game.run.map.layout_path, SAMPLE)
+	assert_eq(game.run.layout_path, GameFlow.GAME_MAP_PATH)
+	assert_eq(game.run.map.layout_path, GameFlow.GAME_MAP_PATH)
+	assert_ne(GameFlow.GAME_MAP_PATH, SAMPLE)
+	assert_true(FileAccess.file_exists(SAMPLE), "the elevation sample map stays")

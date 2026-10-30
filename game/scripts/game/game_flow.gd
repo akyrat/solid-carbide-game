@@ -23,6 +23,11 @@ const PauseScreenScript := preload("res://scripts/ui/pause_screen.gd")
 const TimeUpScreenScript := preload("res://scripts/ui/time_up_screen.gd")
 const MusicPlayerScript := preload("res://scripts/game/music_player.gd")
 const GameSettingsScript := preload("res://scripts/ui/game_settings.gd")
+## The map the main menu's Start plays (T-372; Level design, Decisions, "The board's own level
+## becomes the game's map"): a copy of the board's level from the level creator, kept in the
+## game's own data. The elevation sample map stays the run's default (run.gd
+## ELEVATION_LAYOUT_PATH) for the tests and the creator.
+const GAME_MAP_PATH := "res://data/level/kaiju_city_map.json"
 
 ## Emitted after the main menu is shown (at launch and after every run).
 signal menu_shown
@@ -120,7 +125,7 @@ func show_garage() -> void:
 ## Start, the main menu's Start when they are hidden, and the pause screen's Restart).
 func start_run() -> void:
 	_clear_screens()
-	run = add_run(self, progress, "", history)
+	run = add_run(self, progress, GAME_MAP_PATH, history)
 	pause_screen = run.get_node("PauseScreenLayer")
 	run.state.run_ended.connect(_on_run_ended)
 	pause_screen.restart_pressed.connect(_on_pause_restart)

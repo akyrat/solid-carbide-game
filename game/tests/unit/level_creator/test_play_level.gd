@@ -217,14 +217,15 @@ func test_play_again_after_a_run_starts_a_fresh_run() -> void:
 
 # --- The game's own flow is unchanged ---------------------------------------------
 
-func test_a_run_from_the_main_menu_still_plays_the_sample_map() -> void:
+## T-372: the main menu's Start plays the game map (GameFlow.GAME_MAP_PATH), the creator its own levels.
+func test_a_run_from_the_main_menu_plays_the_game_map() -> void:
 	var game: GameFlow = GameScene.instantiate()
 	game.quit_game = func(): pass
 	add_child_autofree(game)
 	game.menu.start_button.pressed.emit()
 	assert_not_null(game.run)
-	assert_eq(game.run.layout_path, SAMPLE)
-	assert_eq(game.run.map.layout_path, SAMPLE)
+	assert_eq(game.run.layout_path, GameFlow.GAME_MAP_PATH)
+	assert_eq(game.run.map.layout_path, GameFlow.GAME_MAP_PATH)
 	assert_not_null(game.pause_screen)
 	assert_eq(game.pause_screen.get_parent(), game.run)
 
