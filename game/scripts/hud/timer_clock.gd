@@ -6,9 +6,10 @@ extends PanelContainer
 ## It only shows: `label` holds the M:SS text, set by the HUD; `set_time_left()`
 ## picks the colour. Placeholder look drawn in code until the clock art (T-339).
 
-const DIGIT_FONT_SIZE := 52
-const PANEL_COLOR := Color(0.04, 0.05, 0.08, 0.92)
-const PANEL_BORDER := Color(0.25, 0.28, 0.36)
+## The look is HudStyle's (T-428): "clock_digits" and the clock panel's colours.
+const DIGIT_FONT_SIZE := HudStyle.CLOCK_FONT_SIZE
+const PANEL_COLOR := HudStyle.CLOCK_PANEL_COLOR
+const PANEL_BORDER := HudStyle.CLOCK_PANEL_BORDER
 
 var label: Label
 var color_name := ""
@@ -26,8 +27,8 @@ func _init() -> void:
 	var box := StyleBoxFlat.new()
 	box.bg_color = PANEL_COLOR
 	box.border_color = PANEL_BORDER
-	box.set_border_width_all(3)
-	box.set_corner_radius_all(2)
+	box.set_border_width_all(HudStyle.CLOCK_PANEL_BORDER_WIDTH)
+	box.set_corner_radius_all(HudStyle.CLOCK_PANEL_CORNER)
 	add_theme_stylebox_override("panel", box)
 	# Anchored to the bottom-left corner, keeping its margins at other window sizes.
 	set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -42,13 +43,7 @@ func _init() -> void:
 	label.text = "8:00"
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	var font := SystemFont.new()
-	font.font_names = PackedStringArray(["Consolas", "Courier New", "monospace"])
-	font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
-	label.add_theme_font_override("font", font)
-	label.add_theme_font_size_override("font_size", DIGIT_FONT_SIZE)
-	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.6))
-	label.add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(label, "clock_digits")
 	add_child(label)
 	set_time_left(480.0)
 
@@ -69,4 +64,5 @@ func color_for(seconds_left: float) -> Color:
 func set_time_left(seconds_left: float) -> void:
 	var s := step_for(seconds_left)
 	color_name = String(s["name"])
-	label.add_theme_color_override("font_color", Color(String(s["color"])))
+	# The colour is data (hud.json timer_clock.steps), not style.
+	label.add_theme_color_override("font_color", color_for(seconds_left))

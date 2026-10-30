@@ -14,10 +14,11 @@ const ICON_SIZE := 48
 ## Space between two rows, and between an icon and its count.
 const ROW_GAP := 8
 const COUNT_GAP := 6
-const COUNT_FONT_SIZE := 32
-const COUNT_COLOR := Color(1.0, 1.0, 1.0)
-const COUNT_OUTLINE := Color(0.0, 0.0, 0.0)
-const COUNT_OUTLINE_SIZE := 8
+## The count's look is HudStyle's "weapon_count" (T-428).
+const COUNT_FONT_SIZE := HudStyle.WEAPON_COUNT_SIZE
+const COUNT_COLOR := HudStyle.WHITE
+const COUNT_OUTLINE := HudStyle.BLACK
+const COUNT_OUTLINE_SIZE := HudStyle.WEAPON_COUNT_OUTLINE
 ## The count's text, the combo counter's "x{n}" form.
 const TEXT_COUNT := "x{tier}"
 
@@ -98,11 +99,7 @@ func _make_row(weapon_id: String) -> Dictionary:
 	add_child(icon)
 	var count := Label.new()
 	count.name = "Count_%s" % weapon_id
-	count.add_theme_font_override("font", Hud.comic_font())
-	count.add_theme_font_size_override("font_size", COUNT_FONT_SIZE)
-	count.add_theme_color_override("font_color", COUNT_COLOR)
-	count.add_theme_color_override("font_outline_color", COUNT_OUTLINE)
-	count.add_theme_constant_override("outline_size", COUNT_OUTLINE_SIZE)
+	HudStyle.apply(count, "weapon_count")
 	count.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(count)

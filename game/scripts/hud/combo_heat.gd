@@ -25,20 +25,10 @@ const FIRE_STEP := 3
 ## hand-drawn pixel-art frames rather than a smooth fade.
 const FLICKER_FRAME := 1.0 / 12.0
 
-const DARK := Color(0.03, 0.03, 0.06)
+const DARK := HudStyle.DARK
 ## The base look is the counter's look before T-131 (pink, Hud.COMBO_COLOR),
-## now in the comic font.
-const STEPS: Array[Dictionary] = [
-	{"font_size": 30, "color": Color(1.0, 0.25, 0.75), "outline": 10,
-		"glow": 0, "glow_colors": [], "pulse": 0.0, "pulse_hz": 0.0},
-	{"font_size": 36, "color": Color(1.0, 0.86, 0.25), "outline": 10,
-		"glow": 0, "glow_colors": [], "pulse": 0.06, "pulse_hz": 1.2},
-	{"font_size": 42, "color": Color(1.0, 0.62, 0.12), "outline": 10,
-		"glow": 18, "glow_colors": [Color(1.0, 0.86, 0.25)], "pulse": 0.10, "pulse_hz": 2.0},
-	{"font_size": 50, "color": Color(1.0, 0.98, 0.82), "outline": 10,
-		"glow": 22, "glow_colors": [Color(1.0, 0.6, 0.08), Color(1.0, 0.72, 0.16), Color(1.0, 0.86, 0.25)],
-		"pulse": 0.14, "pulse_hz": 3.0},
-]
+## now in the comic font. The looks are HudStyle's (T-428).
+const STEPS: Array[Dictionary] = HudStyle.HEAT_STEPS
 
 ## The current step, 0 to 3.
 var step := 0
@@ -98,17 +88,8 @@ func _apply_step() -> void:
 		fire.burning = is_burning()
 	if label == null:
 		return
-	var st: Dictionary = STEPS[step]
-	label.add_theme_font_size_override("font_size", st.font_size)
-	label.add_theme_color_override("font_color", st.color)
-	label.add_theme_color_override("font_outline_color", DARK)
-	label.add_theme_constant_override("outline_size", st.outline)
 	# The glow is the label's shadow, drawn as a wider ring round the outline.
-	label.add_theme_constant_override("shadow_offset_x", 0)
-	label.add_theme_constant_override("shadow_offset_y", 0)
-	label.add_theme_constant_override("shadow_outline_size", st.glow)
-	label.add_theme_color_override("font_shadow_color",
-		st.glow_colors[0] if st.glow > 0 else Color(0, 0, 0, 0))
+	HudStyle.apply_heat(label, STEPS[step])
 	_animate()
 
 
@@ -139,4 +120,4 @@ func _animate() -> void:
 		var frame := int(floorf(time / FLICKER_FRAME))
 		# A jumpy, not cyclic, pick of the glow colour each frame.
 		var pick := int(abs(sin(frame * 12.9898) * 43758.5453)) % colors.size()
-		label.add_theme_color_override("font_shadow_color", colors[pick])
+		label.add_theme_color_override("font_shadow_color", HudStyle.glow_color(st, pick))

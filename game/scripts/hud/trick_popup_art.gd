@@ -31,7 +31,8 @@ extends RefCounted
 ## keeps its size but the amount and the eye are gone: they have flown off to the
 ## counter.
 
-const FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
+## The font, the palette and the lettering sizes are HudStyle's (T-428).
+const FONT_PATH := HudStyle.COMIC_FONT_PATH
 
 ## Palette entries; index 0 is transparent.
 const NONE := 0
@@ -48,22 +49,7 @@ const FLAME_0 := 8
 const AMOUNT := 12
 ## The viewers amount (T-336): the viewers colour.
 const AMOUNT_VIEWERS := 13
-const PALETTE := [
-	Color(0, 0, 0, 0),
-	Color8(0, 0, 0),        # letters
-	Color8(255, 255, 255),  # burst fill
-	Color8(0, 0, 0),        # burst border
-	Color8(255, 224, 77),   # step 1 ring: yellow (LikesFire; the HUD counter is yellow at step 1)
-	Color8(255, 153, 20),   # step 2 and 3 ring: orange (LikesFire)
-	Color8(255, 224, 77),   # step 2 and 3 inner ring: yellow (LikesFire)
-	Color8(255, 153, 20),   # step 2 and 3 "+amount": orange
-	Color8(255, 250, 209),  # flame: white-hot (LikesFire.PALETTE)
-	Color8(255, 224, 77),   # flame: yellow
-	Color8(255, 184, 41),   # flame: orange-yellow
-	Color8(255, 153, 20),   # flame: orange
-	Color8(0, 0, 0),        # "+amount" at heat 0 and 1
-	Color8(51, 225, 255),   # the viewers amount: the viewers colour (hud.json viewers_counter.color)
-]
+const PALETTE := HudStyle.POPUP_PALETTE
 ## The viewers' eye after a viewers amount (T-336): T-339's art, at EYE_SCALE popup
 ## pixels per art pixel per size style, EYE_GAP popup pixels after the amount.
 const EYE_PATH := "res://art/hud/eye_icon.png"
@@ -97,10 +83,7 @@ const FLAME_FRAMES := 6
 
 ## Per size: font pixel size, text outline and shadow thickness. No text
 ## outline or shadow: black letters on white need none.
-const STYLES := {
-	"normal": {"font_px": 32, "outline": 0, "shadow": 0},
-	"small": {"font_px": 20, "outline": 0, "shadow": 0},
-}
+const STYLES := HudStyle.POPUP_TEXT
 ## Rounded rectangle (board, 2026-10-14): space between the text and the image
 ## edge (a 1 pixel transparent rim, the 2 pixel border, then padding), the
 ## border width and the corner radius, all in popup pixels.
@@ -294,12 +277,9 @@ static func text_box(text: String, style: String, heat := 0, viewers := false) -
 
 
 static func _get_font() -> FontFile:
+	# Its own copy of HudStyle's comic font, as before T-428: the baking keeps its glyph cache apart.
 	if _font == null:
-		_font = (load(FONT_PATH) as FontFile).duplicate()
-		_font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
-		_font.hinting = TextServer.HINTING_NONE
-		_font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
-		_font.generate_mipmaps = false
+		_font = HudStyle.new_comic_font()
 	return _font
 
 

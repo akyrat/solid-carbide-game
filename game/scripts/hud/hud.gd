@@ -12,21 +12,22 @@ extends CanvasLayer
 ## steps as the combo climbs (ComboHeat), with the sub goal square on fire at
 ## the top step (LikesFire, on the square's top edge since T-337).
 
-const LABEL_FONT_SIZE := 20
-const LABEL_COLOR := Color(0.92, 0.95, 1.0)
-const OUTLINE_COLOR := Color(0.03, 0.03, 0.06)
+## The look is HudStyle's (T-428): these names point at it.
+const LABEL_FONT_SIZE := HudStyle.LABEL_FONT_SIZE
+const LABEL_COLOR := HudStyle.LABEL_COLOR
+const OUTLINE_COLOR := HudStyle.OUTLINE_COLOR
 const MARGIN := 16
-const HEALTH_COLOR := Color(0.25, 0.85, 0.45)
+const HEALTH_COLOR := HudStyle.HEALTH_COLOR
 ## T-338: the hearts row and the weapon icons column at 1152 x 648 (the board's layout page).
 const HEART_ROW_POS := Vector2(36, 24)
 const WEAPON_ICONS_POS := Vector2(12, 88)
 ## Coins counter place at 1152 x 648 (T-341).
 const COINS_POS := Vector2(16, 496)
 const COINS_SIZE := Vector2(108, 36)
-const COINS_COLOR := Color(1.0, 0.82, 0.25)
+const COINS_COLOR := HudStyle.COINS_COLOR
 ## The likes heart's red (Visual style, Decisions, "Red after the rebrand": the heart
 ## stays red, as a social-media heart): used only by the heart (its art, T-086, is drawn in this red).
-const HEART_COLOR := Color(0.86, 0.1, 0.16)
+const HEART_COLOR := HudStyle.HEART_COLOR
 ## The heart's art (T-086, drawn by tools/build_heart_icon.py): 11 x 10 art
 ## pixels shown at 2x.
 const HEART_PATH := "res://art/hud/likes_heart.png"
@@ -40,7 +41,7 @@ const TEXT_VIEWERS_UNIT := "WATCHING"
 const TEXT_COINS := "Coins"
 ## The comic font of the trick popups (T-084), used since T-131 by the combo
 ## counter and the sub goal label. It has capitals only.
-const COMIC_FONT_PATH := "res://fonts/bangers/Bangers-Regular.ttf"
+const COMIC_FONT_PATH := HudStyle.COMIC_FONT_PATH
 ## The airtime counter's top left corner from the screen's centre (T-243).
 const AIRTIME_OFFSET := Vector2(70, -10)
 ## The drift counter's top left corner from the screen's centre (T-247): under
@@ -83,7 +84,6 @@ var airtime_counter: AirtimeCounter
 var drift_counter: DriftCounter
 var _car: Node
 var _state: RunState
-static var _comic_font: FontFile = null
 ## The combo's numbers (combo.json): its start value is "no combo" (T-116).
 var _combo_data: ComboData
 ## The trick popups whose amounts fly into the viewers counter (bind_popups, T-336).
@@ -232,32 +232,21 @@ func _build_coins() -> void:
 	box.offset_bottom = COINS_POS.y + COINS_SIZE.y - 648.0
 	add_child(box)
 	coins_label = _make_label("CoinsLabel", TEXT_COINS)
-	coins_label.add_theme_color_override("font_color", COINS_COLOR)
 	box.add_child(coins_label)
 	coins_value_label = _make_label("CoinsValue", "0")
-	coins_value_label.add_theme_color_override("font_color", COINS_COLOR)
 	box.add_child(coins_value_label)
 
 
-## The comic font (Bangers) with smoothing off: hard pixel edges (T-131).
+## The comic font (Bangers) with smoothing off: hard pixel edges (T-131). HudStyle's (T-428).
 static func comic_font() -> FontFile:
-	if _comic_font == null:
-		_comic_font = (load(COMIC_FONT_PATH) as FontFile).duplicate()
-		_comic_font.antialiasing = TextServer.FONT_ANTIALIASING_NONE
-		_comic_font.hinting = TextServer.HINTING_NONE
-		_comic_font.subpixel_positioning = TextServer.SUBPIXEL_POSITIONING_DISABLED
-		_comic_font.generate_mipmaps = false
-	return _comic_font
+	return HudStyle.comic_font()
 
 
 func _make_label(label_name: String, text: String) -> Label:
 	var l := Label.new()
 	l.name = label_name
 	l.text = text
-	l.add_theme_font_size_override("font_size", LABEL_FONT_SIZE)
-	l.add_theme_color_override("font_color", LABEL_COLOR)
-	l.add_theme_color_override("font_outline_color", OUTLINE_COLOR)
-	l.add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(l, "coins")
 	return l
 
 

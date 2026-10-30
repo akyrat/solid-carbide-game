@@ -7,7 +7,7 @@ extends Control
 
 signal arrived
 
-const FONT_SIZE := 30
+const FONT_SIZE := HudStyle.VIEWERS_FLIGHT_SIZE
 const EYE_PATH := "res://art/hud/eye_icon.png"
 const EYE_GAP := 3
 ## The scale at the end of the flight.
@@ -40,11 +40,7 @@ func setup(text: String, color: Color, start: Vector2, target: Callable, flight_
 	label = Label.new()
 	label.name = "Amount"
 	label.text = text
-	label.add_theme_font_override("font", Hud.comic_font())
-	label.add_theme_font_size_override("font_size", FONT_SIZE)
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_color_override("font_outline_color", ViewersCounter.DARK)
-	label.add_theme_constant_override("outline_size", 6)
+	HudStyle.apply(label, "viewers_flight", color)
 	label.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(label)
 	var ls := label.get_combined_minimum_size()
