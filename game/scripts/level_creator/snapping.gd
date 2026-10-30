@@ -239,3 +239,39 @@ static func _ramp_problem(ramp: Dictionary, platforms: Array, by_id: Dictionary,
 		if _overlap(rr, _rect(p)):
 			return "ramp %s overlaps %s" % [str(ramp.get("id", "")), pid]
 	return ""
+
+
+# ---- Objects stand wholly on one surface (T-393) ------------------------------------------------
+
+## Proposal (T-393; Level design, Decisions, "Obstacles and decorations respect the buildings' and
+## rooftops' heights"): a placed object (a boulder or a prop) stands wholly on one surface, the
+## street, one rooftop or one ramp, so it has one height to stand at and one place in the depth
+## order. An object whose footprint (`rect`, units) reaches into a building, or across the edge of
+## a rooftop or a ramp, is not placed, like a rooftop that overlaps another piece: "" when it may
+## go, else a short description. Touching a building or an edge is allowed.
+static func object_problem(doc: LevelDocument, rect: Rect2) -> String:
+	for b in doc.data.get("buildings", []):
+		if _overlap(rect, _rect(b)):
+			return "the object reaches into a building"
+	for key in ["platforms", "ramps"]:
+		for a in doc.data.get(key, []):
+			var ar := _rect(a)
+			if _overlap(rect, ar) and not _holds(ar, rect):
+				return "the object stands across the edge of %s" % str(a.get("id", ""))
+	return ""
+
+
+## The same rule seen from the other side: a building placed over an object, or a rooftop or ramp
+## whose edge would cut through one (`item` is the piece just placed, of `kind`), is not placed.
+## A rooftop or ramp placed wholly over an object lifts it (the object stands at its height).
+static func cuts_object_problem(doc: LevelDocument, kind: String, item: Dictionary) -> String:
+	var r := _rect(item)
+	for piece in doc.placed_pieces():
+		if not str(piece.kind) in ["boulder", "prop"]:
+			continue
+		var o := doc.piece_rect(piece)
+		if not _overlap(r, o):
+			continue
+		if kind == "building" or not _holds(r, o):
+			return "the %s cuts through an object" % kind
+	return ""

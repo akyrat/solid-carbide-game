@@ -491,6 +491,18 @@ func place_asset(asset_id: String, units: Vector2, size: Vector2 = Vector2.ZERO)
 			document.delete(piece)
 			_show_message(CreatorTexts.get_text("overlap_message"))
 			return {}
+	# T-393 (proposal): an object stands wholly on one surface (street, one rooftop, one ramp) and
+	# never inside a building; a building, rooftop or ramp never cuts through an object.
+	var why := ""
+	if str(piece.kind) in ["boulder", "prop"]:
+		why = LevelSnapping.object_problem(document, document.piece_rect(piece))
+	elif str(piece.kind) in ["building", "rooftop", "ramp"]:
+		why = LevelSnapping.cuts_object_problem(document, str(piece.kind), piece.item)
+	if why != "":
+		last_problem = why
+		document.delete(piece)
+		_show_message(CreatorTexts.get_text("overlap_message"))
+		return {}
 	if str(piece.kind) in ["building", "boulder", "prop"] and document.spawn_problem(LevelSpawn.position_of(level_data)) != "":
 		# T-280: a piece never goes over the start: the car must always be able to stand there.
 		document.delete(piece)
@@ -1326,6 +1338,9 @@ func preview_of(corner: Vector2) -> Dictionary:
 	var max_x: float = pts.map(func(p): return p.x).max()
 	var bottom: float = pts.map(func(p): return p.y).max()
 	var size := icon.get_size() * ((max_x - min_x) / maxf(icon.get_size().x, 1.0))
+	# T-393: a boulder stands at the height under its centre (a rooftop's, a ramp's), as placed.
+	if str(e.kind) == "boulder":
+		bottom -= document.height_at(corner + foot / 2.0) * PX_PER_UNIT
 	return {"texture": icon, "rect": Rect2(Vector2((min_x + max_x - size.x) / 2.0, bottom - size.y), size)}
 
 
