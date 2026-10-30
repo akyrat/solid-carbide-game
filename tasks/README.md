@@ -171,6 +171,7 @@ Every task file has an `epic` and a `milestone` in its header.
 | `narrative` | Story and user-facing text: tone, wording, names | Extended narrative |
 | `tooling` | Project setup, test tools and documentation tooling | (not a game area) |
 | `token-spend` | Cutting the studio's token spend: scripts in place of agent work, shorter reads and reports, and measuring the effect (board, 2026-10-28) | (not a game area) |
+| `audit` | The preemptive bug bash: closing the undefined-behaviour gaps a read-only audit of the game and its docs found, and the doc fixes that come out of it (board, 2026-10-30) | (not a game area; each ticket's decision lives in its area's doc) |
 | `local-coop` | Local co-op for 2 players (screen split in halves) and 4 players (split in quarters). Future release | Game loop architecture |
 
 **Milestone:** the release the work is needed for.

@@ -2480,3 +2480,13 @@ Entry format:
 - Decision or change: The board approved the sample (sidewalk with curb, parked car, meteor crater); the full set (T-399) is built from it.
 - Documents touched: `docs/visual-style.md`
 - Tasks: T-397
+
+## 2026-10-30: The audit epic
+- Decision or change: The board asked for every ticket from the preemptive bug bash (session Preemptive-bug-bash) to be grouped under one epic, so it is clear they come from the same process. A new epic, audit, in tasks/README.md; this ticket gives it a bubble on the task board. Also from the audit: Game loop architecture no longer says a run ends with no win or loss message (the recap shows).
+- Documents touched: tasks/README.md, docs/game-loop-architecture.md
+- Tasks: T-410
+
+## 2026-10-30: Bug: the car hangs over roof edges
+- Decision or change: The board asked for a bug ticket on the car's height being judged from its centre point only, and for an agent to assess the root cause and the best approach before it is built.
+- Documents touched: tasks
+- Tasks: T-411
