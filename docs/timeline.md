@@ -2670,3 +2670,8 @@ Entry format:
 - Decision or change: The full sidewalk and curb set, five parked and broken cars at four facings (PixelLab's rotations with the front lamps repainted grey by script, as the board asked), and three crater looks, swapped into the level creator; 21 of 50 generations used.
 - Documents touched: `docs/drifting.md`, `docs/visual-style.md`
 - Tasks: T-399
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: The drift-pays-its-combo test no longer depends on how busy the machine is.
+- Documents touched: game/tests/unit/run/test_run_likes.gd
+- Tasks: T-434
