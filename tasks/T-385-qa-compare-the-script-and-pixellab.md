@@ -1,7 +1,7 @@
 ---
 id: T-385
 title: QA: compare the script and PixelLab trick illustrations, and copy the better set into game/art
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: qa-integration
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/hud-and-menus/tutorial-slid
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/tutorial-slides.md, game/docs/driving/tricks.md, game/tools/review_sheet.py, game/tools/style_rules.py]
 files_expected_to_change: [art-archive/<task id>/comparison.png, game/art/tutorial/tricks/, docs/visual-style.md, game/docs/hud-and-menus/tutorial-slides.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-385.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -88,3 +92,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Refusals:** `python tools/qa_check.py T-385 --no-marks` (not essential; ran the three sets directly instead).
 
 **QA round 1:** all six criteria pass. `python tools/qa_check.py` was refused again (needs approval), so I checked by hand: comparison sheet viewed (7 rows, both sets, dark and light); seven PNGs in game/art/tutorial/tricks (one byte-compared with the script set, `cmp` clean; the others by name); the PixelLab set is still in art-archive/T-384; slide2.png shows the script set; both docs name the choice. Tests rerun: Godot GUT 159 scripts, 1951 tests, 1951 passing; game/tools unittest 675 OK (1 skipped); tools unittest 573 OK. Screenshots rule met.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
