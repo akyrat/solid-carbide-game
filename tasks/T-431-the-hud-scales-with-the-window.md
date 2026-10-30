@@ -1,7 +1,7 @@
 ---
 id: T-431
 title: The HUD scales with the window, and a HUD size slider on the pause screen
-status: in-progress
+status: in-qa
 from: project-lead
 to: ui
 lead: Goal-G-008
@@ -52,6 +52,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-431.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-008): the agent is done; QA is checking it.
 
 ## Style review
 
