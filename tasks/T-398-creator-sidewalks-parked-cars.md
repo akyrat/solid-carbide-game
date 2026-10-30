@@ -1,7 +1,7 @@
 ---
 id: T-398
 title: Level creator: sidewalks painted with automatic curbs, and parked and broken cars as obstacles at four facings (placeholders)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/level/creator_texts.json]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/level/, game/tools/check_level.py, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -46,14 +46,14 @@ The board's decision (Level design, Decisions, "Sidewalks and parked cars in the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The sidewalk paints like a road and the curb appears by itself on every edge where it meets a road, straights and corners (tests). (QA: pass / fail)
-- [ ] In a run the car drives up over the curb onto the sidewalk and back down, with no crash or bump to a stop (test). (QA: pass / fail)
-- [ ] Parked and broken cars place at the four facings and each look, crash the car, cut the combo, and can be paired for thread the needle (tests). (QA: pass / fail)
-- [ ] The new pieces save and reopen, an earlier level opens unchanged, check_level.py accepts them, and the game's own map builds as before (tests). (QA: pass / fail)
-- [ ] The side panel shows T-396's names, read from `creator_texts.json`. (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ describe the pieces and their controls. (QA: pass / fail)
-- [ ] Screenshots of sidewalks with curbs and cars at each facing in the editor, and a GIF of driving over a curb in a run, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The sidewalk paints like a road and the curb appears by itself on every edge where it meets a road, straights and corners (tests). (QA: pass - tests cover straights, outer and inner corners, curb follows road changes)
+- [ ] In a run the car drives up over the curb onto the sidewalk and back down, with no crash or bump to a stop (test). (QA: pass - drive test, no crash or slowing; a visible lift is not required by the criterion or the 0.1 curb rule)
+- [ ] Parked and broken cars place at the four facings and each look, crash the car, cut the combo, and can be paired for thread the needle (tests). (QA: pass - facing, model, crash, combo and pairing tests)
+- [ ] The new pieces save and reopen, an earlier level opens unchanged, check_level.py accepts them, and the game's own map builds as before (tests). (QA: pass - save/reopen, old level, check_level and own-map tests)
+- [ ] The side panel shows T-396's names, read from `creator_texts.json`. (QA: pass - panel names test)
+- [ ] Level design, Content and game/docs/level/ describe the pieces and their controls. (QA: pass - level-design.md and game/docs/level/level-creator-pieces.md both changed; qa_check's documents line is a directory-match artefact)
+- [ ] Screenshots of sidewalks with curbs and cars at each facing in the editor, and a GIF of driving over a curb in a run, are in `art-archive/<id>/screenshots/`. (QA: pass - 4 files incl. curb_drive.gif)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - qa_check ran all three sets green: 715, 579, GUT 2041)
 
 ## Updates
 
@@ -93,3 +93,4 @@ Board review files: art-archive/T-398/screenshots/editor_sidewalks.png, art-arch
 
 **Documents affected:** `docs/level-design.md` (Content, new "Level creator: sidewalks, parked cars and meteor craters"), `game/docs/level/level-creator-pieces.md` (new "Sidewalks, parked cars and meteor craters (T-398)").
 - 2026-10-30, in-progress → in-qa: Built with placeholders: sidewalk brush with automatic curbs (47 pieces), parked (3) and broken (2) cars at four facings as pairable obstacles, meteor craters (3) as ground decals. Tests: game/tools 715 OK, tools 579 OK, GUT 2041/2041. Screenshots and GIF in art-archive/T-398/screenshots/.
+- 2026-10-30, in-qa → needs-playtest: QA round 1: all 8 criteria pass; curb is drawn only with no lift, which no criterion requires
