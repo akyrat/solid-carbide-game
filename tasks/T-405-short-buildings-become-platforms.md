@@ -1,7 +1,7 @@
 ---
 id: T-405
 title: Short buildings (low-rise, small, long) become connectable platforms at height 3, and everything on platforms works at its height
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, docs/visual-style.md, game/docs/level
 files_to_read_first: [tasks/README.md, docs/level-design.md, docs/drifting.md, docs/visual-style.md, tasks/T-393-creator-objects-ignore-heights.md, game/docs/level/level-creator.md, game/docs/level/level-creator-pieces.md, game/docs/level/elevation-sample-map.md, game/scripts/level_creator/, game/scripts/level/, game/data/level/]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/level/, game/scripts/run/, game/data/level/, game/art/buildings/, game/tools/, game/tests/unit/, game/docs/level/, docs/level-design.md, docs/visual-style.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -65,6 +65,10 @@ Started in build E (Platforms & heights), on top of T-393 and T-394.
 ### 2026-10-30, In progress → In QA
 
 Short buildings are now platforms at 3 that join seamlessly, plus the altitude audit; all three test sets green apart from the known timing flake. Ready for QA.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all 7 criteria; game tests 1985/1985. Ready for your playtest: joined short platforms, drive across, jump off.
 
 ## Style review
 
