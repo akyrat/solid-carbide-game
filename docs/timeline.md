@@ -2570,3 +2570,8 @@ Entry format:
 - Decision or change: An obstacle in several pairs; a row chained in one go; each gap pays (build E).
 - Documents touched: `docs/level-design.md`
 - Tasks: T-394
+
+## 2026-10-30: A small jump ramp
+- Decision or change: A one-tile jump ramp, 2 high, in three height steps (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-400

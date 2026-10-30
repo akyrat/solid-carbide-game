@@ -777,6 +777,22 @@ Task T-264 (Decisions, "Level creator rework"). How it works: `game/docs/level/l
 ![The same ramps with their arrows down](../art-archive/T-264/screenshots/ramps_down.png)
 ![S, M and L platforms at heights 3 and 6](../art-archive/T-264/screenshots/sizes.png)
 
+#### Level creator: the small jump ramp
+
+Task T-400 (Decisions, "A small jump ramp"). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "The small jump ramp (T-400)". Every point below is the Level/Challenge Design Agent's proposal for the board's playtest.
+
+- **The piece:** three more height steps of the Ramp family, after 0 to 6: **Ramp 0 to 2** (on the street), **Ramp 3 to 5** (on a height 3 rooftop) and **Ramp 6 to 8** (on a height 6 rooftop), so it rises 2 units from whatever it stands on, as the other ramps are raised by their height step. Key **H** steps 0 to 3, 3 to 6, 0 to 6, 0 to 2, 3 to 5, 6 to 8; **R** turns it to climb north, east, south or west; dragging sets its width (default 10, at least 4 units), like the other ramps.
+- **Size:** one tile long, 4 units (a third of a 12-unit ramp), and 2 units high, so its slope (1 in 2) is twice a 0 to 3 ramp's.
+- **Its tall end is open:** it climbs to no rooftop. Nothing stands above its lip, so the car drives up it and flies off the top, taking off along the slope (the ramp's own vertical speed, as at a ramp's top) when it climbs at 4 units/s or more; slower it just rolls off. The face under the lip is drawn as the ramp's back in the ramp side's texture (as the other ramps' tall ends), so it doesn't look hollow; from behind it is a 2-unit step the car can't climb, like any raised side. A jump counts for the airtime trick and the air tricks like a ramp hop: after a 22-unit run-up from a standstill the car spends about 1.6 seconds in the air and rises to about 4.7 units (2.7 over the lip) on a Ramp 0 to 2.
+- **Its slope:** shown by today's arrows on its top, up the slope by default, turned with key A.
+- **Enemies** go round it or over it as the height rules decide (it is a ramp like the others: up from its foot, down off its top or its sides).
+
+![Ramp 0 to 2 on the street climbing north, east, south and west](../art-archive/T-400/screenshots/editor_street.png)
+![Ramp 3 to 5 on a height 3 rooftop in the four directions](../art-archive/T-400/screenshots/editor_roof3.png)
+![Ramp 6 to 8 on a height 6 rooftop in the four directions](../art-archive/T-400/screenshots/editor_roof6.png)
+
+GIF of the car jumping off the small ramps in a run: `art-archive/T-400/screenshots/jump_drive.gif`.
+
 #### Level creator: skyscraper banners on or off
 
 Task T-265 (Decisions, "Level creator rework"). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "Skyscraper banners on or off (T-265)". The choices marked here are the Level/Challenge Design Agent's proposals for the board's playtest.
@@ -1720,7 +1736,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 |---|---|
 | `game-loop-architecture.md` | `c657d4ae23f9862f3db6f5113e856db9415d13d0dc521b81038d1c3df6acc135` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
-| `level-design.md` | `1e912874aafce8c7402f354713ac8f1da832eaaed3109b55987b5b7db941f4eb` |
+| `level-design.md` | `1820a5b82deb8d2017eb0afb707f0db19957ad9059ddba193691fd7f714170f6` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |
 | `weapons.md` | `eeef070f50a7e5635d3ebb1b18c4ae51fdd3aef8044cc61424620ae1703b52cc` |
 | `garage-design.md` | `697e864f36365a62d2303425a6c209e9fadeb40d797455bd53021907369cb4df` |

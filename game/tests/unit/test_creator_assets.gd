@@ -62,7 +62,8 @@ func test_rooftop_and_ramp_heights() -> void:
 	roofs.sort()
 	ramps.sort()
 	assert_eq(roofs, [3, 6])
-	assert_eq(ramps, ["0-3", "0-6", "3-6"])
+	# T-400 adds the small jump ramps 0 to 2, 3 to 5 and 6 to 8.
+	assert_eq(ramps, ["0-2", "0-3", "0-6", "3-5", "3-6", "6-8"])
 
 
 func test_buildings_the_map_draws_are_listed() -> void:
@@ -104,7 +105,7 @@ func test_rooftops_and_ramps_name_the_piece_style_they_are_drawn_with() -> void:
 		n += 1
 		assert_true(bool(e.get("resizable", false)), "%s is resizable" % e.id)
 		assert_eq(str(e.style), "res://art/creator_pieces/piece_style.tres", str(e.id))
-	assert_eq(n, 5, "two rooftops and three ramps")
+	assert_eq(n, 8, "two rooftops, three ramps and T-400's three small jump ramps")
 	var style = load("res://art/creator_pieces/piece_style.tres")
 	for key in ["roof_top", "wall", "ramp_top", "ramp_side", "parapet"]:
 		assert_not_null(style.get(key), "the style has its %s texture" % key)

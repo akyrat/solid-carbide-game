@@ -144,6 +144,12 @@ RAMP_LENGTH_PER_3 = 12.0
 # The direction a ramp climbs (its view) -> the side of the rooftop it climbs (the height data's
 # "side"): climbing north, it goes up the rooftop's south side.
 RAMP_DIRECTIONS = [("north", "south"), ("east", "west"), ("south", "north"), ("west", "east")]
+# T-400 (Level design, Decisions, "A small jump ramp"; proposals for the board's playtest): a small
+# jump ramp one tile (4 units, a third of a 12-unit ramp) long, rising 2 units from what it stands
+# on: the street (0 to 2) or a rooftop at 3 (3 to 5) or 6 (6 to 8). It climbs to no rooftop
+# ("jump": its tall end is open, the car flies off it), in the same four directions and widths.
+SMALL_RAMPS = [(0, 2), (3, 5), (6, 8)]
+SMALL_RAMP_LENGTH = 4.0
 
 
 def piece_icon(entry_id):
@@ -170,6 +176,14 @@ def elevation_entries(sample_map):
         length = RAMP_LENGTH_PER_3 * (hi - lo) / 3.0
         out.append({"id": eid, "kind": "ramp", "footprint_units": [RAMP_WIDTH, length],
                     "heights": [lo, hi], "resizable": True, "length_units": length,
+                    "width_units": RAMP_WIDTH, "min_width_units": MIN_RAMP_WIDTH, "style": PIECE_STYLE,
+                    "views": [d for d, _ in RAMP_DIRECTIONS], "mirrors": [False],
+                    "textures": [{"view": d, "mirror": False, "variant": "", "side": s,
+                                  "texture": piece_icon(eid)} for d, s in RAMP_DIRECTIONS]})
+    for lo, hi in SMALL_RAMPS:
+        eid = "ramp-%d-%d" % (lo, hi)
+        out.append({"id": eid, "kind": "ramp", "footprint_units": [RAMP_WIDTH, SMALL_RAMP_LENGTH],
+                    "heights": [lo, hi], "jump": True, "resizable": True, "length_units": SMALL_RAMP_LENGTH,
                     "width_units": RAMP_WIDTH, "min_width_units": MIN_RAMP_WIDTH, "style": PIECE_STYLE,
                     "views": [d for d, _ in RAMP_DIRECTIONS], "mirrors": [False],
                     "textures": [{"view": d, "mirror": False, "variant": "", "side": s,
@@ -240,7 +254,8 @@ SIMPLE_FAMILIES = [
 # Families stepped by height (H): the entry for each height, in order.
 HEIGHT_FAMILIES = [
     ("platform", "levels", "piece_platform", [("3", "rooftop-3"), ("6", "rooftop-6")]),
-    ("ramp", "levels", "piece_ramp", [("0-3", "ramp-0-3"), ("3-6", "ramp-3-6"), ("0-6", "ramp-0-6")]),
+    ("ramp", "levels", "piece_ramp", [("0-3", "ramp-0-3"), ("3-6", "ramp-3-6"), ("0-6", "ramp-0-6"),
+                                         ("0-2", "ramp-0-2"), ("3-5", "ramp-3-5"), ("6-8", "ramp-6-8")]),
 ]
 # The panel's order: by group, buildings smallest to tallest.
 FAMILY_ORDER = ["road", "centre-line", "zebra-crossing", "cracked-road", "gravel", "platform", "ramp",

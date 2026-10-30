@@ -5,6 +5,8 @@ platforms (axis-aligned rectangles with a height, optionally standing on
 another platform with "on") and a list of ramps (a footprint next to the side
 of the platform it climbs, rising from bottom_height at its foot to
 top_height at that side). Units are the flat world's (x east, y south).
+A ramp with "jump": true (T-400, the level creator's small jump ramp) climbs to no platform: its
+"platform" is empty and its top is open, so only its foot and its rise are checked.
 
 Usage, from the repo root:
 
@@ -135,16 +137,25 @@ def check_data(data):
         if side not in SIDES:
             problems.append("%s: unknown side %r (north, east, south or west)" % (name, side))
         target = str(r.get("platform", ""))
-        if target not in platforms:
+        if r.get("jump") is True:
+            # T-400: a small jump ramp climbs to no rooftop; its tall end is open (the car flies
+            # off it), so it needs no platform, only a top above its bottom.
+            if target:
+                problems.append("%s: a jump ramp climbs to no area, but names %r" % (name, target))
+            if top <= bottom + EPS:
+                problems.append("%s: a jump ramp's top_height %g must be above its bottom_height %g"
+                                % (name, top, bottom))
+        elif target not in platforms:
             problems.append("%s: climbs to unknown area %r" % (name, target))
             continue
-        area = platforms[target]
-        if side in SIDES and not _top_touches(side, rect, area["rect"]):
-            problems.append("%s: its top (the %s side of %r) doesn't touch area %r along that side"
-                            % (name, side, target, target))
-        if not _same(top, area["height"]):
-            problems.append("%s: top_height %g doesn't match area %r's height %g"
-                            % (name, top, target, area["height"]))
+        else:
+            area = platforms[target]
+            if side in SIDES and not _top_touches(side, rect, area["rect"]):
+                problems.append("%s: its top (the %s side of %r) doesn't touch area %r along that side"
+                                % (name, side, target, target))
+            if not _same(top, area["height"]):
+                problems.append("%s: top_height %g doesn't match area %r's height %g"
+                                % (name, top, target, area["height"]))
         # The ground at its foot: the street, or the highest area holding the whole footprint.
         foot_id, foot_h = None, 0.0
         for pid in order:
