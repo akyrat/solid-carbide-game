@@ -1,0 +1,11 @@
+T-397, added by the board (2026-10-30): one meteor crater for the sample. It is a hole a meteor left in the ground, and the car drives over it: a ground piece, not an obstacle.
+
+What it must be
+- A flat ground decal of 128 x 64 art px: the road tiles' 2 x 2 unit diamond, isometric angle (2:1) and pixel scale (32 art px per unit, drawn at 0.5), as `game/art/ground/ground_atlas.png` (for example `y_plain_a0`). Transparent round the crater, so it can lie on the road, the gravel or the sidewalk; nothing outside the diamond.
+- It sits in the ground: it reads as a hole seen from above at the road's angle (the far inner wall shows, the near wall hides under the rim), not a mound and not an object standing on the ground. Nothing tall: the car drives over it.
+- In the meteors' and the city's palette (Visual style, Content, "Rules", rules 7 and 8): the road's own asphalt (broken, lifted slabs round the rim, a scorched band) and the boulders' alien rock and glow (navy rock fragments, magenta and purple glowing cracks; `game/art/boulders/boulder_a.png`). The glow is drawn: bright pixels with small stepped halos, no blur (rule 5). Light to medium damage, no fire. No Greenbull colours.
+- Rules 1 to 5, 7, 8 and 10 apply: a dark selective outline where the rim drops into the hole, detailed shading, at most 30 colours, alpha 0 or 255.
+
+How it is made (free, no PixelLab for this piece unless the reason truly needs a new picture; the sample's whole cap is 10 generations and 1 is used)
+- `python game/tools/build_sidewalk_car_sample.py crater --out <the version's PNG>` draws it (`draw_crater`). Refines change that function (rim, wall bands, floor glow, fragments, cracks) and run it again; keep `python -m unittest game/tools/test_build_sidewalk_car_sample.py` passing.
+- After each version, write the composed preview: `python game/tools/build_sidewalk_car_sample.py preview --sidewalk art-archive/T-397/sidewalk_curb_se.png --car art-archive/T-397/parked_car_ne.png --crater <the version's PNG> --out-dir art-archive/T-397/style-loop/crater_v<N>_preview` (the crater on the road next to the curb, the parked car, a building and a boulder; dark and light; plus `crater_zoom.png`, the crater on asphalt, on the sidewalk and alone, 6x). Say the preview's path in `changed`, so the evaluator can open it.

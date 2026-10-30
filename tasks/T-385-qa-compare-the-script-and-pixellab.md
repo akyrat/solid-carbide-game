@@ -1,7 +1,7 @@
 ---
 id: T-385
 title: QA: compare the script and PixelLab trick illustrations, and copy the better set into game/art
-status: blocked
+status: open
 from: project-lead
 to: qa-integration
 lead: Goal-G-007
