@@ -1,7 +1,7 @@
 ---
 id: T-379
 title: Minions twice as big, hitbox included
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -82,3 +82,4 @@ Done by the Enemy Behavior Agent, 2026-10-30.
 - Screenshot: `art-archive/T-379/screenshots/minions_twice_as_big.png` (the minions demo: bigger minions around the car).
 - Documents updated: `docs/enemies.md` (Decisions note, Look line), `game/docs/enemies/minions.md` (Size section, minion.gd line).
 - Not done / for the playtest: crowd density looks heavier with the same count (12 to 20); the board judges the feel.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board
