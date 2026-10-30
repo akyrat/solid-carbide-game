@@ -1,7 +1,7 @@
 ---
 id: T-416
 title: Closing the game mid-run, and pausing when the window loses focus
-status: in-qa
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md]
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/scripts/game/game_flow.gd, game/scripts/ui/pause_screen.gd]
 files_expected_to_change: [game/scripts/game/game_flow.gd]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -44,8 +44,7 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 - [ ] A close request during a run banks its coins and adds a loss to the runs list before quitting (test sends NOTIFICATION_WM_CLOSE_REQUEST). (QA: pass)
 - [ ] A close request outside a run quits as today. (QA: pass)
 - [ ] Focus out during a run opens the pause screen; during the level-up choice or the time's up screen it does nothing. (QA: pass)
-- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: pass; 9 new tests, three sets green, tests use RunPaths files and restore the real save)
-- QA note (QA: fail: paperwork - docs/game-loop-architecture.md "Closing the game mid-run" states as fact the open choices: closing during the wreck decides the loss on the spot with reason health, closing in the time's up screen sends the time loss. Label them "proposals for the playtest".)
+- [ ] New headless tests cover each criterion below that describes behaviour, and all three test sets pass, with the counts in the result notes. (QA: fail: paperwork - tests pass (9 new, three sets green, real save untouched), but docs/game-loop-architecture.md "Closing the game mid-run" states as fact the open choices: closing during the wreck decides the loss on the spot with reason health, closing in the time's up screen sends the time loss. Label them "proposals for the playtest".)
 
 ## Updates
 
@@ -70,3 +69,4 @@ Done (game-loop agent).
 - Tests: game/tools python 722 OK (1 skipped); tools python 582 OK; GUT 2160 tests, 2159 passing; the one failure is the known test_run_likes drift-timing flake, rerun alone: 37/37 pass. New file alone: 9/9.
 - Screenshot: art-archive/T-416/screenshots/focus_out_pauses.png (pause screen after focus out).
 - 2026-10-30, in-progress → in-qa: Close request banks coins and logs a loss; focus out pauses; 9 new tests pass.
+- 2026-10-30, in-qa → in-progress: QA round 1: criteria 1-3 pass, tests green. Criterion 4 fail paperwork: Closing the game mid-run in game-loop-architecture.md states as fact the open choices (close during wreck: loss decided on the spot, reason health; close in time's up: time loss). Label them proposals for the playtest.
