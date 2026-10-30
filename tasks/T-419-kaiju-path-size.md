@@ -1,7 +1,7 @@
 ---
 id: T-419
 title: The kaiju only takes paths it fits through
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/kaiju_boss.gd, game/scripts/enemies/kaiju.gd, game/scripts/enemies/enemy_path_follower.gd, tasks/T-379-minions-twice-as-big.md]
 files_expected_to_change: [game/scripts/enemies/enemy_navigation.gd, game/scripts/enemies/kaiju_boss.gd]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Build J (Audit): started on playtest/audit-world, worktree C:\solid-carbide-work
 ### 2026-10-30, In progress → In QA
 
 Build J (Audit): the agent finished; each enemy plans for its own size. Beyond the ticket: the kaiju's grid also keeps its body off rooftop and ramp edges (drops start 3 units back), and enemy_path_follower.gd keeps a drop's path for up to 1 s. In QA now.
+
+### 2026-10-30, In QA → Needs playtest
+
+Build J (Audit): QA passed all 4 criteria (criterion 3 tested with the car on a rooftop, two buildings between). Merged into playtest/audit-world, waiting for the board's playtest of build J.
 
 ## Style review
 
