@@ -1,7 +1,7 @@
 ---
 id: T-400
 title: Level creator: a small jump ramp, one tile long and about 2 units high
-status: needs-playtest
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -111,3 +111,4 @@ The board's levels in `C:\solid-carbide-game\game\data\levels\` were neither rea
 Not done (a safety check refused it): while building the icons, a path mix-up made Python write 13 PNGs into `C:\c\Users\andre\AppData\Local\Temp\claude\C--solid-carbide-game\0a239fb3-1579-4ac6-90b2-13f2ab42e3c7\scratchpad\icons\` instead of the scratchpad. The `C:\c` folder already existed with another session's files. Removing it was refused, so I left it alone. Only that `icons` folder is mine, and the board can delete it.
 
 Documents affected: `docs/level-design.md` (Content, "Level creator: the small jump ramp"), `game/docs/level/level-creator-pieces.md` ("The small jump ramp (T-400)"), `game/docs/level/level-creator.md` (key H).
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board
