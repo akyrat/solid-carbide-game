@@ -1,7 +1,7 @@
 ---
 id: T-436
 title: The kaiju reaches a rooftop car on the board's latest level
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -39,11 +39,11 @@ The board's review: on its level, drive onto a rooftop with the kaiju out on the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] test_kaiju_path_size.gd passes in full on the board's current kaiju_city.json, including the kaiju reaching the rooftop car from (-79, 47). (QA: pass / fail) (QA: pass / fail)
-- [ ] The result notes name the cause: what on the new level stopped the kaiju, and where. (QA: pass / fail) (QA: pass / fail)
-- [ ] The T-419 rules still hold: no kaiju path point closer than 2 units to a building, no gap narrower than 4 units on its path, and minions still use narrow gaps (the existing T-419 tests pass). (QA: pass / fail) (QA: pass / fail)
-- [ ] Nothing in game/data/levels/ is added or changed on the branch (git diff --stat). (QA: pass / fail) (QA: pass / fail)
-- [ ] New or changed headless tests cover the fix, and all three test sets pass, with the counts in the result notes. Screenshots: a picture of the kaiju's path from (-79, 47) before and after, in art-archive/<id>/screenshots/. (QA: pass / fail) (QA: pass / fail)
+- [ ] test_kaiju_path_size.gd passes in full on the board's current kaiju_city.json, including the kaiju reaching the rooftop car from (-79, 47). (QA: pass)
+- [ ] The result notes name the cause: what on the new level stopped the kaiju, and where. (QA: pass)
+- [ ] The T-419 rules still hold: no kaiju path point closer than 2 units to a building, no gap narrower than 4 units on its path, and minions still use narrow gaps (the existing T-419 tests pass). (QA: pass)
+- [ ] Nothing in game/data/levels/ is added or changed on the branch (git diff --stat). (QA: pass)
+- [ ] New or changed headless tests cover the fix, and all three test sets pass, with the counts in the result notes. Screenshots: a picture of the kaiju's path from (-79, 47) before and after, in art-archive/<id>/screenshots/. (QA: pass)
 
 ## Updates
 
@@ -52,6 +52,18 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Audit: started from master in C:\solid-carbide-worktrees\T-436 with T-419's Enemy Behavior Agent. Master's tests fail on this until it lands; Greenbull is holding its merges.
+
+### 2026-10-30, In progress → In QA
+
+Audit: the agent finished. Cause: the kaiju looped re-planning at the foot of ramp-12 near (-79, 46), not cut off; fixed in enemy_navigation.gd through_ramps(). Also changed T-380's reproduction test, which reproduced the same loop (now stricter). In QA now.
+
+## QA report (round 1)
+
+QA/Integration, 2026-10-30. qa_check --no-marks: PASS tests (3 sets), PASS documents (none listed), PASS screenshots (4 files). Criteria 1, 3, 5 rest on the green full suite; the T-419 tests (path size, 2 units from buildings, 4-unit gaps, minions through narrow gaps) pass.
+- Fix reviewed: one rule in through_ramps(): a ramp run with height change under CLIMB_MIN counts as skimmed even when the path starts on the ramp. This removes the cause (path sent back to the ramp's foot point, then re-planned over the foot again), not just the symptom; a path that really climbs still goes by the top point (own test).
+- T-380 test: the old reproduction asserted stuck; it now asserts reached and no stop over STUCK_SECONDS, which is stricter. T-380's reproductions on the building side and pocket, the scripted chase and the 'no longer stuck' tests are untouched, so T-380's coverage stays.
+- Criterion 4: no path under game/data/levels/ in git diff master...HEAD --stat.
+- Screenshots: before zoom shows a cyan loop at the foot of ramp-12; after zoom shows a short straight segment then north. Matches the cause.
 
 ## Style review
 
