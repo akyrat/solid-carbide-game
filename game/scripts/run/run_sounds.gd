@@ -104,7 +104,7 @@ func has_sound(id: String) -> bool:
 ## seconds ago. Returns true when it started. `from` is where in the file to
 ## start, in seconds. Uses a free player, or the first one when all are busy.
 func play(id: String, from: float = 0.0) -> bool:
-	if not sounds.has(id):
+	if not sounds.has(id) or not GameSettings.sfx_enabled():
 		return false
 	var s: Dictionary = sounds[id]
 	var now := Time.get_ticks_msec()
@@ -137,6 +137,7 @@ func _set_loop(id: String, on: bool) -> void:
 		return
 	var s: Dictionary = sounds[id]
 	var p: AudioStreamPlayer = s["players"][0]
+	on = on and GameSettings.sfx_enabled()  # the MVP switch (T-388)
 	s["wanted"] = on
 	if on and not p.playing:
 		p.play()
