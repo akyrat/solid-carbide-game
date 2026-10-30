@@ -1,7 +1,7 @@
 ---
 id: T-395
 title: In a goal run, the style loop notes a score below 8 instead of flagging the ticket and pausing the goal
-status: in-qa
+status: done
 from: project-lead
 to: project-lead
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [tasks/README.md, docs/working-with-the-board.md]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, tools/style_loop/loop.py, tools/style_loop/run.py, tools/style_loop/test_loop.py, tools/goal_agent/build.py]
 files_expected_to_change: [tools/style_loop/, tools/goal_agent/, tasks/README.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -41,11 +41,11 @@ Tools only; nothing in the game changes.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] With a fixture that never reaches 8 (`text-never-8.json`) on a task with a `goal:` line, the task stays in-progress and the Style review and result notes say the version is kept below 8 and noted for the final playtest (test). (QA: pass / fail)
-- [ ] Without a `goal:` line the task is still moved to flagged-for-review as before (existing test). (QA: pass / fail)
-- [ ] The goal runner's tests cover a ticket whose style loop kept a version below 8: it goes on to QA without a pause (test with the fake team). (QA: pass / fail)
-- [ ] tasks/README.md ("The style loop") and docs/working-with-the-board.md ("Goal runs") agree with the behaviour. (QA: pass / fail)
-- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with the count in the result notes. (QA: pass / fail)
+- [ ] With a fixture that never reaches 8 (`text-never-8.json`) on a task with a `goal:` line, the task stays in-progress and the Style review and result notes say the version is kept below 8 and noted for the final playtest (test). (QA: pass)
+- [ ] Without a `goal:` line the task is still moved to flagged-for-review as before (existing test). (QA: pass)
+- [ ] The goal runner's tests cover a ticket whose style loop kept a version below 8: it goes on to QA without a pause (test with the fake team). (QA: pass)
+- [ ] tasks/README.md ("The style loop") and docs/working-with-the-board.md ("Goal runs") agree with the behaviour. (QA: pass)
+- [ ] `python -m unittest discover -s tools -p "test_*.py"` passes, with the count in the result notes. (QA: pass: 576 tests OK; the Godot test set could not run in the worktree, GODOT_BIN not set there, an environment gap and not a code failure)
 
 ## Updates
 
@@ -64,3 +64,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 Written by the agent when it finishes.
 
 Done. In loop.py, `run` sets `spec.goal` from the ticket's `goal:` line; with it, the default step is the new `note_task` (a dated line in the result notes through the new `task_status.add_result_note`) instead of the flag, and the Style review's Kept line says "kept below 8 ... noted for the board's final playtest (goal run, not flagged)". Status stays in-progress. run.py exits 0 in that case with a message (still 1 when flagged outside goal runs). The goal runner needed no change: the ticket is in-progress with a Style review round, so the existing in-qa path applies; covered by a fake-team test (fake agent option `_style_score`) where the art ticket goes through QA to needs-playtest and only the art cap pauses. New tests: style loop in a goal run (stays in-progress, notes in review and result notes), CLI exit 0 in a goal run, goal runner test. Non-goal flagging tests unchanged and pass. tasks/README.md (exit codes) and docs/working-with-the-board.md ("Goal runs") updated; "The style loop" already described it. Full suite: 576 tests OK.
+- 2026-10-30, in-qa → done: QA passed
