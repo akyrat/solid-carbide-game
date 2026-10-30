@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: in-qa
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/working-with-the-board.md, game/docs/hud-and-menus/tutorial-slides.md, game/docs/driving/tricks.md, game/tools/style_rules.py, game/tools/pixellab_client.py, game/tools/review_sheet.py, game/docs/setup/screenshots.md]
 files_expected_to_change: [art-archive/<task id>/pixellab/, art-archive/<task id>/style-loop/, art-archive/<task id>/screenshots/, docs/visual-style.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-384.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-007): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → In progress
+
+Goal runner (G-007): failed QA once; back to the agent on sonnet.
 
 ## Style review
 
@@ -996,3 +1000,4 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Run 8, round 3: the "version 2" the evaluator scored (6/10; rules 2, 3, 5 and 10) was v1-8 again, because no v2-8 exists. Nothing has changed since round 2: the fix script is still refused and the paid cap is still reached, so v3-8 was not made either. I did not retry the refused command or work around it. The block and options (a) to (c) above still stand.
 - Run 8, round 4: the "version 3" the evaluator scored (7/10; rules 2 and 10) was v1-8 again. The evaluator's scores for this same file were 6, 6 and 7. No v4-8 was made, for the same reasons: the fix script is refused and the 4-generation cap is reached. I did not retry or work around the refusal. The only real version in run 8 is v1-8.png (art-archive/T-384/style-loop/v1-8.png); its best score is 7/10, which is below 8, so it is noted for the final playtest unless the Project Lead or the board picks option (a) or (b) above.
 - 2026-10-30, flagged-for-review → in-progress: Goal run: kept below 8 after the refines (scores 5-7/10), noted for the board's final playtest, as the goal-run rules say (docs/working-with-the-board.md, Goal runs; T-395). Moved back by the Project Lead so the run goes on to QA.
+- 2026-10-30, in-qa → in-progress: QA failed: The result notes list each PixelLab call and the running total: no more than 40 generations in all and at most 4 per illustration, matching the generation log. (QA: fail: paperwork - result notes say 32 of 40 and extended_drift 8 gens (Run 8 counted as 4 paid), but game/art/pixellab-generation-log.jsonl has only 28 T-384 entries (4 per illustration, extended_drift 4). Run 8's Round 2 text also says the total stays 28. Correct the notes to match the log.) Back to the agent on sonnet.
