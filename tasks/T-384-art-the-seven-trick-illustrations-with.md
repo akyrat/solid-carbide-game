@@ -712,6 +712,43 @@ Rule 4 (night and retro): the colours are navy and purple, so the night feel hol
 - Rules broken: 2, 3, 5, 10
 - Refused: {"tool_input": {"command": "sed -n 686,800p tasks/T-384-*.md | grep -v \"^- Call [0-9]:\\|^- Call 1[0-9]:\\|^- Call 20:\"; sed -n 573,600p tasks/T-384-*.md", "description": "Read result notes tail and run 6 start"}, "tool_name": "Bash", "tool_use_id": "toolu_016qr4kHT6QVtUD3p5LePssC"}; {"tool_input": {"command": "python game/tools/review_sheet.py art-archive/T-384/style-loop/v1-7_preview.png art-archive/T-384/style-loop/v1-7.png --scale 8 && python -c \"from PIL import Image; im=Image.open('art-archive/T-384/style-loop/v1-7.png'); print(im.mode, im.size, len(im.getcolors(9999)))\"", "description": "Make enlarged preview and check mode"}, "tool_name": "Bash", "tool_use_id": "toolu_01LMwTDcMR1gxJS1UHbjoHNv"}
 
+#### Round 2
+
+- Version 2: `art-archive/T-384/style-loop/v2-7.png`
+- What changed: Version 2 is refine 1 of thread_the_needle, a paid PixelLab regeneration: create-image-pixflux at 64x48 with no_background true. It is call 26 of the goal's 40 and the second of this illustration's 4. A script couldn't fix the composition for free, and my own pixel-edit scripts were refused earlier.
+
+The new prompt asked for:
+- two separate boulders with a narrow centre gap
+- a straight hot-pink trail with stepped halos running through the gap
+- the car inside the gap
+It banned platforms, bases, ground plates and merged rocks. The only free fix was reduce_palette.py, cutting it to 30 colours, saved as an 8-bit RGBA PNG. All 6 script checks pass.
+
+Improved over v1:
+- The two boulders are clearly separate dark navy and purple rocks, with bright glowing hot-pink and magenta cracks, a near-black outline and a narrow gap between them, glowing pink.
+- The flat ground plate is gone.
+
+Still wrong:
+- PixelLab put the car on top of the left boulder, not in the gap.
+- No straight trail line runs through the gap.
+- The car is teal-green, not 12,76,44.
+- The shadows are neutral grey ellipses rather than navy.
+
+The raw output and request are at art-archive/T-384/pixellab/thread_the_needle_v2*, and the call and running total (26 / 40) are in the ticket's result notes. Committed as 8a951839.
+- Script checks: 6 of 6 pass
+- Score: 4/10
+- Reason: The image shows only two boulders side by side. I can't see the car or its neon trail.
+
+Rule 10: the 1967 Mustang fastback in dark green with two centred white stripes and a gap between them is missing. If it is there, it is too small or too dark to read. Draw it as a clear tiny sprite with the stripes visible.
+
+Rule 5: the neon trail with small stepped glow halos is missing. It should be a straight pink or cyan line running through the gap between the boulders. The boulders' cracks glow, but no stepped halos are visible.
+
+Rule 8: the boulders are partly right, with dark rock and magenta cracks. Their tops and highlights look teal or cyan and pinkish, and the body reads more as bright purple-pink than dark navy rock. Darken the rock to navy and purple, and keep cyan out of the rock itself.
+
+Rule 2: the outline and shading are only partly readable at this size. Strengthen the almost-black selective outline and break it with highlight pixels.
+
+The scripted checks (rules 1, 3 and 6) pass, so there is nothing to fix there.
+- Rules broken: 2, 5, 8, 10
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -766,3 +803,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 25: done, usage 1 generation (raw: art-archive/T-384/pixellab/thread_the_needle_v1.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v1-7.png (preview v1-7_preview.png, game/tools/review_sheet.py). Script checks: all 6 pass, transparent corners included. Running total: 25 / 40; thread_the_needle has used 1 of its 4. My own look: two dark purple boulders with pink-magenta lit facets and a blue-cyan stepped trail on a transparent background, but the trail runs diagonally under the boulders, not clearly through a narrow gap. The car (teal-green with white stripe pixels, near-black outline) sits beside the right boulder rather than just past a gap, and its green leans teal rather than 12,76,44. The boulders' cracks read as pink facets more than glowing magenta cracks.
 - Call 26 (planned): thread_the_needle v2, refine 1 (v1 scored 5: boulders merge with no clear gap, car beside them not between, weak trail glow, ground plate under the scene). A script can't fix the composition, so this is a paid refine: create-image-pixflux 64x48, no_background true. The prompt asks for two clearly separate boulders, left and right, with a narrow vertical gap in the centre, a bright straight neon pink trail with stepped halos running left to right through the gap, and the small car on the trail inside the gap. It bans platforms, bases and ground plates. 1 generation. Loop output: art-archive/T-384/style-loop/v2-7.png.
 - Call 26: done, usage 1 generation (raw: art-archive/T-384/pixellab/thread_the_needle_v2.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-7.png (preview v2-7_preview.png). Script checks: all 6 pass. Running total: 26 / 40; thread_the_needle has used 2 of its 4. My own look: the boulders are much better. There are two clearly separate dark navy and purple rocks with bright glowing hot pink and magenta cracks, a near-black outline and a narrow diagonal gap between them, with a pink-magenta glow in the gap. The flat ground plate is gone; only small grey ellipse shadows remain. Still wrong: PixelLab put the car on top of the left boulder instead of in the gap; there is no straight trail line running through the gap; the car is teal-green rather than 12,76,44; and the shadows are neutral grey rather than navy.
+- Call 27 (planned): thread_the_needle v3, refine 2 (v2 scored 4: car and trail not readable, rock too bright and pink with cyan tops, weak outline). Adding a car and trail is not a free fix, so this is a paid refine: create-image-pixflux 64x48, no_background true. The prompt now leads with the car and the trail: a long straight neon cyan trail across the middle with a pale core and stepped blue halos, and the car on it in the centre with white stripes. The two boulders are smaller, very dark navy rock with thin magenta cracks, one just above the car and one just below it. Cyan rock, pink rock, platforms and car-on-rock are banned. 1 generation. Loop output: art-archive/T-384/style-loop/v3-7.png.
+- Call 27: done, usage 1 generation (raw: art-archive/T-384/pixellab/thread_the_needle_v3.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v3-7.png (preview v3-7_preview.png). Script checks: all 6 pass. Running total: 27 / 40; thread_the_needle has used 3 of its 4, so one refine is left. My own look: weaker than v2 on the trick. The car is now clearly readable in 3/4 view (roof and one side, near-black outline, white roof and hood highlights that read as stripes, navy shadow), but it is large and teal rather than tiny and 12,76,44. The boulders shrank to two small dark specks well away from the car, and there is no neon trail at all. v2 has the boulders and gap; v3 has the car.
