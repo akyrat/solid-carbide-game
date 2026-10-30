@@ -41,7 +41,22 @@ class CatalogueTest(unittest.TestCase):
         roofs = sorted(e["height"] for e in self.entries if e["kind"] == "rooftop")
         self.assertEqual(roofs, [3, 6])
         ramps = sorted(e["heights"] for e in self.entries if e["kind"] == "ramp")
-        self.assertEqual(ramps, [[0, 3], [0, 6], [3, 6]])
+        self.assertEqual(ramps, [[0, 2], [0, 3], [0, 6], [3, 5], [3, 6], [6, 8]])
+
+    def test_small_jump_ramps(self):
+        # T-400: one tile (4 units) long, rising 2 from the street or a rooftop at 3 or 6, "jump"
+        # (no rooftop at the top); the other ramps are not jump ramps.
+        by_id = {e["id"]: e for e in self.entries}
+        for eid, heights in (("ramp-0-2", [0, 2]), ("ramp-3-5", [3, 5]), ("ramp-6-8", [6, 8])):
+            e = by_id[eid]
+            self.assertEqual(e["heights"], heights)
+            self.assertIs(e["jump"], True)
+            self.assertEqual(e["length_units"], 4.0)
+            self.assertEqual(e["footprint_units"], [10.0, 4.0])
+            self.assertEqual(e["views"], ["north", "east", "south", "west"])
+            self.assertTrue(bc.res_exists(e["textures"][0]["texture"]))
+        for eid in ("ramp-0-3", "ramp-3-6", "ramp-0-6"):
+            self.assertNotIn("jump", by_id[eid])
 
     def test_rooftops_and_ramps_are_resizable(self):
         # T-251: any even size from 4 x 4 for a rooftop; a ramp in four directions, its width
@@ -56,7 +71,8 @@ class CatalogueTest(unittest.TestCase):
                 self.assertEqual(e["views"], ["iso"])
             else:
                 lo, hi = e["heights"]
-                self.assertEqual(e["length_units"], 12.0 * (hi - lo) / 3)
+                if not e.get("jump"):
+                    self.assertEqual(e["length_units"], 12.0 * (hi - lo) / 3)
                 self.assertEqual(e["min_width_units"], 4.0)
                 self.assertEqual(e["views"], ["north", "east", "south", "west"])
                 sides = {t["view"]: t["side"] for t in e["textures"]}
@@ -166,7 +182,7 @@ class FamilyTest(unittest.TestCase):
         self.assertEqual(fams["boulder"]["looks"], 2)
         self.assertEqual(fams["boulder"]["mirrors"], [False, True])
         self.assertEqual(fams["platform"]["heights"], ["3", "6"])
-        self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6"])
+        self.assertEqual(fams["ramp"]["heights"], ["0-3", "3-6", "0-6", "0-2", "3-5", "6-8"])
         self.assertEqual(fams["ramp"]["turns"], 4)
         self.assertEqual(fams["road"]["turns"], 1)
         self.assertEqual(fams["barrier"]["turns"], 4)

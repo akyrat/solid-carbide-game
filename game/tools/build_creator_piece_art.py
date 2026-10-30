@@ -49,6 +49,13 @@ ICONS = {
                           "bottom_height": 3, "top_height": 6}),
     "ramp-0-6": ("ramp", {"id": "icon", "x": 0, "y": 0, "w": 10, "h": 24, "side": "south",
                           "bottom_height": 0, "top_height": 6}),
+    # T-400: the small jump ramps, one tile (4 units) long, rising 2 from what they stand on.
+    "ramp-0-2": ("ramp", {"id": "icon", "x": 0, "y": 0, "w": 10, "h": 4, "side": "south",
+                          "bottom_height": 0, "top_height": 2}),
+    "ramp-3-5": ("ramp", {"id": "icon", "x": 0, "y": 0, "w": 10, "h": 4, "side": "south",
+                          "bottom_height": 3, "top_height": 5}),
+    "ramp-6-8": ("ramp", {"id": "icon", "x": 0, "y": 0, "w": 10, "h": 4, "side": "south",
+                          "bottom_height": 6, "top_height": 8}),
 }
 
 
