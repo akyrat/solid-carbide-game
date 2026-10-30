@@ -41,13 +41,13 @@ The board's review: place barriers and other objects next to and on a rooftop in
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The root cause is written in the result notes for each kind of object, with a test that fails before the fix (named) for the barrier next to a rooftop. (QA: pass / fail)
-- [ ] Every kind of placed object sits at the height of what it stands on (street, rooftop 3 and 6, ramp) and draws in front of or behind buildings and rooftops correctly, in the editor and in the run (tests). (QA: pass / fail)
-- [ ] Placing an object across a rooftop's edge does what the result notes propose (test). (QA: pass / fail)
-- [ ] The game's own map and an earlier level build as before (tests), and the board's level files are unchanged and uncommitted. (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ describe the fix and the proposal. (QA: pass / fail)
-- [ ] Screenshots of the board's case (barriers by a rooftop) before and after, in the editor and in the run, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The root cause is written in the result notes for each kind of object, with a test that fails before the fix (named) for the barrier next to a rooftop. (QA: pass)
+- [ ] Every kind of placed object sits at the height of what it stands on (street, rooftop 3 and 6, ramp) and draws in front of or behind buildings and rooftops correctly, in the editor and in the run (tests). (QA: pass)
+- [ ] Placing an object across a rooftop's edge does what the result notes propose (test). (QA: pass)
+- [ ] The game's own map and an earlier level build as before (tests), and the board's level files are unchanged and uncommitted. (QA: pass)
+- [ ] Level design, Content and game/docs/level/ describe the fix and the proposal. (QA: pass; qa_check's documents line flags game/docs/level/ as a directory, but level-creator-pieces.md changed on the branch)
+- [ ] Screenshots of the board's case (barriers by a rooftop) before and after, in the editor and in the run, are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; qa_check ran all three sets green)
 
 ## Updates
 
