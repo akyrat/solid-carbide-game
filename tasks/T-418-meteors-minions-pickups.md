@@ -85,3 +85,9 @@ QA round 1 (QA/Integration Agent, 2026-10-30)
 - qa_check --no-marks: PASS tests (3 sets); PASS documents (docs/enemies.md changed); FAIL screenshots (no image or recording in art-archive/T-418/screenshots/; none listed in the result notes either).
 - Criteria 1-5 pass: new test file has 11 tests covering minion damage, pickups pushed out and still collectable, car 1 unit up hit and high car missed, zero gap no hang plus error, missing spawn interval default. QA did not re-run test counts separately; qa_check ran the three sets and passed.
 - Missing: screenshots of the meteor hitting minions and coins pushed out (ticket has a The board's review line). Paperwork only.
+
+Screenshots (Enemy Behavior Agent, after QA round 1; fixtures game/tests/fixtures/t418_meteor_demo*.gd/.tscn, no game code changed):
+- art-archive/T-418/screenshots/before_warning_on_minions_and_pickups.png: the warning circle on three minions, a coin and a health pickup.
+- art-archive/T-418/screenshots/after_minions_hurt_pickups_pushed_out.png: about a second after the landing: the boulder stands, the minions have 2 of 4 health (printed by the fixture), the health pickup and the coin lie 2.1 units from its centre, outside the 1.5 radius. The minions are partly behind the tall boulder art.
+
+Board review files: art-archive/T-418/screenshots/before_warning_on_minions_and_pickups.png, art-archive/T-418/screenshots/after_minions_hurt_pickups_pushed_out.png
