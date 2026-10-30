@@ -1,7 +1,7 @@
 ---
 id: T-387
 title: Start shows the tutorial slides before the run, unless hidden
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/docs/game-loop/screen-
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/game-loop/screen-flow.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/game/game_flow.gd, game/scripts/menu/main_menu.gd, game/scripts/ui/game_settings.gd, game/tests/unit/game/test_screen_flow.gd, game/tests/unit/game/test_pause_restart_exit.gd, game/tests/helpers/test_save.gd]
 files_expected_to_change: [game/scripts/game/game_flow.gd, game/tests/unit/game/test_tutorial_flow.gd, docs/game-loop-architecture.md, game/docs/game-loop/screen-flow.md]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -56,6 +56,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-387.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -95,3 +99,4 @@ Game Loop Agent, 2026-10-30. Done.
 PixelLab: 0 generations. No player-facing text was added. No refusals.
 
 **QA round 1 (qa-integration):** all six criteria pass. Reran: GUT full run exit 0, TESTS PASSED, test_tutorial_flow.gd 8/8; tools unittest 573 OK; game/tools unittest 675 OK (1 skipped). Both screenshots exist; docs mention the slides step (flow diagram lines 83-84). `python tools/qa_check.py` was refused (not pre-approved), so skipped.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
