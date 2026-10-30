@@ -1,7 +1,7 @@
 ---
 id: G-007
 title: The last MVP round (board, 2026-10-29; HUD and menus, Decisions: 'T...
-status: ready-to-play
+status: done
 art_cap: 40
 art_used: 28
 iteration: 10
