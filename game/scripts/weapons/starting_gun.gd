@@ -50,6 +50,7 @@ var _queue_wait := 0.0
 ## Bullets in flight and what they were fired at: [bullet, target] (T-408, doomed targets).
 var _in_flight: Array = []
 var _drawn_size := -1.0
+var _bullets_error_reported := false
 
 
 func _init() -> void:
@@ -74,6 +75,7 @@ func reset_for_run() -> void:
 	_queue.clear()
 	_queue_wait = 0.0
 	_in_flight.clear()
+	_bullets_error_reported = false
 	super.reset_for_run()
 
 
@@ -93,7 +95,14 @@ func step(dt: float) -> void:
 	# on one on another level.
 	var targets: Array = rack.enemies_within(rack.car_units(), float(stats["range"]), rack.car_level())
 	var bullets := int(stats["bullets"])
-	if targets.is_empty() or bullets <= 0:
+	if targets.is_empty():
+		return
+	if bullets <= 0:
+		# A data hole (weapons.json gives the gun no bullets): no volley, and the
+		# error is reported once per run, not at every check (T-422).
+		if not _bullets_error_reported:
+			_bullets_error_reported = true
+			push_error("starting_gun: bullets is %d at tier %d in weapons.json; the gun fires nothing" % [bullets, tier])
 		return
 	volleys += 1
 	_queue.clear()

@@ -2700,3 +2700,8 @@ Entry format:
 - Decision or change: Built and merged (audit epic, build J): each enemy plans its way for its own size; the kaiju keeps 2 units off buildings, never takes a gap narrower than its body, and keeps off rooftop, ramp and map edges, dropping from 3 units back. The board played it and kept the edge rule (2026-10-30).
 - Documents touched: `docs/enemies.md`
 - Tasks: T-419
+
+## 2026-10-30: Each weapon has its own top tier
+- Decision or change: Built and merged (audit epic, build J): each weapon's top tier comes from its own data (T-408's, kept: the gun 11, the others 8), a weapon at its top tier is never in a gift pack, a gun with bullets 0 reports an error instead of crashing.
+- Documents touched: none
+- Tasks: T-422
