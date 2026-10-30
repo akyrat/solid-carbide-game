@@ -763,3 +763,27 @@ Written by the agent when it finishes.
 - Parked car 1: **0** (the board accepted its 8 rotations; the free `repaint-front` script greys the front lamps). At most 2 if a refine truly needs a new set.
 - Parked cars 2 and 3, broken cars 1 and 2: **3 each** (pixflux for the first picture, 1; `generate-8-rotations-v3` from it, 2), then the same pick, repaint and strip, free = **12**. Refines free first; at most 3 more per car.
 - **Planned 12; worst case 2 + 12 + 12 = 26** (running total at most 34 for T-399, 35 with T-397, of 50). If a call would take the total past 49, I stop and ask.
+
+**Done after the board's decision (asset-generation, 2026-10-30).** All five cars are in, at all four facings, in place of T-398's placeholders, in the creator and the run.
+
+*Generations: 20 for T-399 in all* (balance 4735 to 4715; the log's `usage` adds up to 20): the 7 from before, then 13: parked car 2, 3 (pixflux 1 + 8 rotations 2); parked car 3, 3; broken car 1, 4 (one extra pixflux picture in round 3); broken car 2, 3; parked car 1, 0. **With T-397: 21 of the 50; 29 left.** Within the plan (worst case 26 more).
+
+- **Parked car 1** (Run 5): **8/10 in round 1**, 0 generations. PixelLab's 8 rotations, set v1: picture 0 (top left) and picture 4 (bottom left), its front lamps repainted grey by `repaint-front`; mirrors give top right and bottom right.
+- **Parked car 2** (slate grey-blue hatchback; Run 9): 6, **8/10**. A first run stopped before round 1 with no PNG and no call (no generation spent); the second run went through.
+- **Parked car 3** (off-white kei van; Run 6): 7, **9/10**.
+- **Broken car 1** (dusty beige wrecked sedan; Run 7): 6, 7, 7, **8/10**; one new pixflux picture in round 3, the rest script touch-ups.
+- **Broken car 2** (dark grey wrecked hatchback; Run 8): 5, 6, 7, **8/10**; script touch-ups only after version 1.
+- Every car's front lamps are grey and its rear lamps red. The originals stay in `art-archive/T-399/raw/` and `cars/` (`*_clean.png` next to `*_front_grey.png`).
+- No loop scored below 8 on things the board had accepted, so nothing needed noting against the board's acceptance.
+- Script fixes and their hand: the asset-generation agent added free touch-ups to `game/tools/build_street_cars.py` in the loop (`touch_up`, `wreck` and helpers: duller paint, a dark outline, cracked glass, crushes, dents, scorch, rust, a flat tyre, a missing wheel), with tests; recorded in `game/docs/art/sidewalk-parked-cars.md`.
+- Installed with `python game/tools/build_street_cars.py install --model <model>` for all five; `check` passes (the files match the kept strips `art-archive/T-399/<model>_facings.png`). Anchors 29 px above each sprite's lowest row (checked against the 2 x 3 footprints in each preview's `footprints.png`).
+
+**Screenshots** (`art-archive/T-399/screenshots/`, retaken with the final cars): `editor_cars_facings.png` (the creator: every car model at each of the four facings, one model to a row in the order north, east, south, west, by the crossing's sidewalks, boulders and craters; top bar "Facing top right"), `car_facings_keyed.png` (each car's four facings with their keys), `editor_sidewalks_curbs.png` (sidewalks and curbs round the crossing next to the building and boulders), `editor_craters.png` (the three craters by the building and boulders), `run_sidewalk_cars.png` (the level in a run: the player's car beside the parked and broken cars, the sidewalks, a crater by a boulder), `sidewalk_preview.png`, `craters_preview.png`, and the earlier `car1_rotate_try.png`, `car1_pixellab_8_rotations_x3.png`.
+
+Board review files: art-archive/T-399/screenshots/editor_cars_facings.png, art-archive/T-399/screenshots/car_facings_keyed.png, art-archive/T-399/screenshots/editor_sidewalks_curbs.png, art-archive/T-399/screenshots/run_sidewalk_cars.png
+
+**Tests (final):** `python -m unittest discover -s game/tools -p "test_*.py"` 745 OK (1 skipped); `python -m unittest discover -s tools -p "test_*.py"` 579 OK; `bash game/tools/run_tests.sh` 2058/2058 passed.
+
+**Refused:** a PreToolUse hook refused my inline `python -` that appended these notes to the ticket ("inline code that names task files"); per the Project Lead, written with the Edit tool instead.
+
+**Documents affected (final):** `docs/visual-style.md` (Decisions, "Sidewalks, parked cars and meteor craters", the full set: sidewalks, craters, the five cars and the front-lamp repaint), `game/docs/art/sidewalk-parked-cars.md` ("The full set (T-399)").
