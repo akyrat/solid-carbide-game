@@ -60,6 +60,8 @@ func step(delta: float) -> void:
 				continue
 			if not PickupHeightScript.same_level(_height_of(p), car_level):
 				continue  # T-402: only pickups on the car's level
+			if p.has_method("wants_health") and not p.wants_health():
+				continue  # T-415: a health pickup at full hearts stays where it is
 			var d := _pull(p, p.position / PX_PER_UNIT, at, delta)
 			if d != Vector2.ZERO:
 				p.position += d * PX_PER_UNIT

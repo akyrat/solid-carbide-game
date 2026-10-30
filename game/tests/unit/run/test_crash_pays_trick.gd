@@ -273,6 +273,7 @@ func test_a_crash_with_no_trick_in_progress_is_as_before() -> void:
 	run.car.hit_obstacle.emit(autofree(StaticBody2D.new()), 0, Vector2.UP, 10.0)
 	assert_eq(_events, ["broken"])
 	assert_almost_eq(run.state.combo, combo_data.after_collision(c0), 0.000001)
+	run.state.advance(0.6)  # T-415: past the combo's collision window
 	run.state.damage_car(1.0)
 	assert_eq(_events, ["broken", "broken"])
 
