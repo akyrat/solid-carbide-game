@@ -98,8 +98,10 @@ static func for_map(map: Node) -> RefCounted:
 static func build_for_map(map: Node, drops: bool = true) -> RefCounted:
 	var elevation = map.get("elevation")
 	var blocks: Array = []
-	for b in map.layout.buildings:
-		blocks.append(map.rect_of(b))
+	# T-405: only what stays a building closes cells (short_platforms.gd wall_rects); the short
+	# buildings are platforms, which the ground height gives their heights like rooftops.
+	for w in load("res://scripts/level/short_platforms.gd").wall_rects(map.layout):
+		blocks.append(w.rect)
 	var boulders: Array = []
 	for b in map.all_boulders():
 		boulders.append([Vector2(float(b.x), float(b.y)), float(b.diameter) / 2.0])

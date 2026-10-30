@@ -2,8 +2,10 @@ extends GutTest
 ## Task T-272: pairs of obstacles in the level creator, for the thread the needle trick. Two placed
 ## obstacles (boulders, barriers, cones, crates) are paired with the pair tool (the top bar's Pair
 ## obstacles, key P) and T-271's labels; anything else is refused with T-271's message; a pair shows
-## in the editor, is removed by Unpair or by deleting either obstacle, an obstacle is in at most one
-## pair, and pairs are saved in the level file, reopened and checked by check_level.py.
+## in the editor, is removed by Unpair or by deleting either obstacle, and pairs are saved in the
+## level file, reopened and checked by check_level.py.
+## T-394: an obstacle can be in several pairs; Shift+click picks a row in order and Pair or P pairs
+## it as a chain; Unpair removes only the pairs aimed at.
 
 const EDITOR_SCENE := preload("res://scenes/level_creator/editor.tscn")
 
@@ -149,20 +151,152 @@ func test_clicking_the_same_obstacle_twice_lets_it_go() -> void:
 	assert_eq(e.document.pairs().size(), 0)
 
 
-func test_an_obstacle_is_in_at_most_one_pair() -> void:
+func test_an_obstacle_can_be_in_several_pairs() -> void:
+	# T-394: pairing B with C keeps A with B (T-272 moved B to the new pair).
 	var e := _editor()
 	var a := _place(e, "boulder-a", Vector2(-5, -39))
 	var b := _place(e, "boulder-b", Vector2(3, -39))
 	var c := _place(e, "prop-crates", Vector2(12, -39))
 	e.set_pair_tool(true)
 	e.pair_click(_mid(e, a))
+	assert_eq(e.pair_click(_mid(e, b)), "made")
 	e.pair_click(_mid(e, b))
-	e.pair_click(_mid(e, a))
 	assert_eq(e.pair_click(_mid(e, c)), "made")
 	var pairs := e.document.pairs()
-	assert_eq(pairs.size(), 1, "the new pair replaces a's old one")
-	assert_eq([pairs[0].a, pairs[0].b], [str(a.copy.id), str(c.item.id)])
-	assert_true(e.document.pair_of(b).is_empty(), "b is free again")
+	assert_eq(pairs.size(), 2, "A-B stays")
+	assert_eq([pairs[0].a, pairs[0].b], [str(a.copy.id), str(b.copy.id)])
+	assert_eq([pairs[1].a, pairs[1].b], [str(b.copy.id), str(c.item.id)])
+	assert_eq(e.document.pairs_with(b).size(), 2, "b is in both")
+	assert_eq(e.document.pairs_with(a).size(), 1)
+
+
+func test_the_same_two_are_one_pair_at_most() -> void:
+	var e := _editor()
+	var a := _place(e, "boulder-a", Vector2(-5, -39))
+	var b := _place(e, "boulder-b", Vector2(3, -39))
+	e.set_pair_tool(true)
+	e.pair_click(_mid(e, a))
+	e.pair_click(_mid(e, b))
+	e.pair_click(_mid(e, b))
+	e.pair_click(_mid(e, a))
+	assert_eq(e.document.pairs().size(), 1, "B with A again: still the one pair")
+	assert_true(is_same(e.document.pair_between(a, b), e.document.pair_between(b, a)))
+
+
+## Four obstacles in a row, west to east, with gaps between them.
+func _row(e: LevelCreatorEditor) -> Array:
+	return [_place(e, "boulder-a", Vector2(-12, -39)), _place(e, "prop-crates", Vector2(-4, -39)),
+		_place(e, "boulder-b", Vector2(4, -39)), _place(e, "prop-barrier", Vector2(12, -39))]
+
+
+func _refs(row: Array) -> Array:
+	return row.map(func(p): return LevelDocument.obstacle_ref(p))
+
+
+func _pair_refs(e: LevelCreatorEditor) -> Array:
+	return e.document.pairs().map(func(p): return [p.a, p.b])
+
+
+func test_shift_click_picks_a_row_and_p_pairs_it_as_a_chain() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	for i in row.size():
+		assert_eq(e.pair_click(_mid(e, row[i]), true), "added", "Shift+click %d" % i)
+	assert_eq(e.pair_picks.size(), 4, "picked in order")
+	assert_eq(e.document.pairs().size(), 0, "nothing paired yet")
+	_key(e, KEY_P)
+	assert_true(e.pair_mode, "P with a row picked pairs it; the tool stays on")
+	assert_eq(_pair_refs(e), [[r[0], r[1]], [r[1], r[2]], [r[2], r[3]]], "A-B, B-C, C-D")
+	assert_true(e.pair_picks.is_empty(), "the pick is dropped")
+	assert_eq(e.message_label.text, CreatorTexts.get_text("pair_made"))
+
+
+func test_the_pair_button_pairs_a_picked_row() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	for i in 3:
+		e.pair_click(_mid(e, row[i]), true)
+	e.pair_button.button_pressed = false  # a click on the pressed toggle
+	e.pair_button.pressed.emit()
+	assert_true(e.pair_mode, "still on")
+	assert_true(e.pair_button.button_pressed)
+	assert_eq(_pair_refs(e), [[r[0], r[1]], [r[1], r[2]]])
+
+
+func test_a_plain_click_ends_a_row_and_pairs_it() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	e.pair_click(_mid(e, row[0]), true)
+	e.pair_click(_mid(e, row[1]), true)
+	assert_eq(e.pair_click(_mid(e, row[2])), "made", "a plain click adds the last and pairs")
+	assert_eq(_pair_refs(e), [[r[0], r[1]], [r[1], r[2]]])
+
+
+func test_picking_two_one_by_one_chains_too() -> void:
+	# The other way: two at a time, each pair keeps the ones before.
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	for i in 3:
+		e.pair_click(_mid(e, row[i]))
+		e.pair_click(_mid(e, row[i + 1]))
+	assert_eq(_pair_refs(e), [[r[0], r[1]], [r[1], r[2]], [r[2], r[3]]])
+
+
+func test_shift_click_on_a_picked_one_takes_it_out() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	for i in 3:
+		e.pair_click(_mid(e, row[i]), true)
+	assert_eq(e.pair_click(_mid(e, row[1]), true), "removed")
+	assert_eq(_refs(e.pair_picks), [r[0], r[2]])
+	e.pair_picked_row()
+	assert_eq(_pair_refs(e), [[r[0], r[2]]])
+
+
+func test_shift_click_with_the_tool_off_starts_a_row() -> void:
+	var e := _editor()
+	var row := _row(e)
+	assert_false(e.pair_mode)
+	assert_true(e.shift_pick_obstacle(_mid(e, row[0])))
+	assert_true(e.pair_mode, "the pair tool comes on")
+	assert_eq(e.pair_picks.size(), 1)
+	assert_false(e.shift_pick_obstacle(Vector2(-60, 60)), "not on bare ground")
+
+
+func test_a_mouse_shift_click_reaches_the_row() -> void:
+	var e := _editor()
+	var row := _row(e)
+	e.set_pair_tool(true)
+	for i in 2:
+		var mb := InputEventMouseButton.new()
+		mb.button_index = MOUSE_BUTTON_LEFT
+		mb.pressed = true
+		mb.shift_pressed = true
+		mb.position = e.units_to_screen(_mid(e, row[i]))
+		e._on_map_input(mb)
+	assert_eq(e.pair_picks.size(), 2, "both picked, nothing paired")
+	assert_eq(e.document.pairs().size(), 0)
+
+
+func test_the_picked_row_is_drawn_numbered() -> void:
+	var e := _editor()
+	var row := _row(e)
+	e.set_pair_tool(true)
+	for p in row:
+		e.pair_click(_mid(e, p), true)
+	e._overlay.queue_redraw()
+	await get_tree().process_frame
+	assert_eq(e.pair_picks.size(), 4, "drawn without error")
 
 
 # ---- Unpairing ----------------------------------------------------------------------------------
@@ -187,6 +321,78 @@ func test_unpair_removes_the_selected_obstacles_pair() -> void:
 	assert_eq(e.document.pairs().size(), 0)
 	assert_false(e.unpair_button.visible)
 	assert_false(e.unpair_selected(), "nothing left to unpair")
+
+
+func test_unpair_of_one_selected_removes_all_its_pairs() -> void:
+	var e := _editor()
+	var row := _row(e)
+	e.document.make_chain(row)
+	e.select_at(_mid(e, row[1]))
+	assert_true(e.unpair_button.visible)
+	assert_true(e.unpair_selected())
+	var r := _refs(row)
+	assert_eq(_pair_refs(e), [[r[2], r[3]]], "both of B's pairs go, C-D stays")
+
+
+func test_unpair_with_two_picked_removes_only_their_pair() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.document.make_chain(row)
+	e.set_pair_tool(true)
+	e.pair_click(_mid(e, row[1]), true)
+	assert_true(e.unpair_button.visible, "one picked with pairs")
+	e.pair_click(_mid(e, row[2]), true)
+	assert_true(e.unpair_button.visible, "two picked that are a pair")
+	e.unpair_button.pressed.emit()
+	assert_eq(_pair_refs(e), [[r[0], r[1]], [r[2], r[3]]], "only B-C goes")
+	assert_true(e.pair_picks.is_empty())
+
+
+func test_unpair_with_one_picked_removes_all_its_pairs() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.document.make_chain(row)
+	e.set_pair_tool(true)
+	e.pair_click(_mid(e, row[2]), true)
+	assert_true(e.unpair_selected())
+	assert_eq(_pair_refs(e), [[r[0], r[1]]])
+
+
+func test_unpair_with_a_picked_row_undoes_the_chain_only() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.document.make_chain(row)
+	e.document.make_pair(row[0], row[3])
+	e.set_pair_tool(true)
+	for p in row:
+		e.pair_click(_mid(e, p), true)
+	assert_true(e.unpair_selected())
+	assert_eq(_pair_refs(e), [[r[0], r[3]]], "A-D was not between consecutive picks: it stays")
+
+
+func test_unpair_hides_for_two_picked_that_are_no_pair() -> void:
+	var e := _editor()
+	var row := _row(e)
+	e.document.make_pair(row[0], row[1])
+	e.set_pair_tool(true)
+	e.pair_click(_mid(e, row[2]), true)
+	e.pair_click(_mid(e, row[3]), true)
+	assert_false(e.unpair_button.visible)
+	assert_false(e.unpair_selected())
+	assert_eq(e.document.pairs().size(), 1)
+
+
+func test_deleting_the_middle_of_a_chain_keeps_the_rest() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.document.make_chain(row)
+	e.select_at(_mid(e, row[1]))
+	e.delete_selected()
+	assert_eq(_pair_refs(e), [[r[2], r[3]]])
 
 
 func test_deleting_either_obstacle_removes_the_pair() -> void:
@@ -261,6 +467,43 @@ func test_pairs_are_saved_reopened_and_pass_check_level() -> void:
 	assert_false(e2.document.pair_of(p).is_empty(), "the reopened boulder is still paired")
 	var q := e2.document.piece_at(_mid(e, ab[1]))
 	assert_true(is_same(e2.document.pair_of(p), e2.document.pair_of(q)))
+
+
+func test_a_chain_is_saved_reopened_and_passes_check_level() -> void:
+	var e := _editor()
+	var row := _row(e)
+	var r := _refs(row)
+	e.set_pair_tool(true)
+	for p in row:
+		e.pair_click(_mid(e, p), true)
+	e.pair_picked_row()
+	e.name_field.text = "T-394 chain"
+	assert_eq(e.save(), OK)
+	var saved := LevelStore.load_level(e.level_path)
+	assert_eq(saved.pairs.map(func(p): return [p.a, p.b]), [[r[0], r[1]], [r[1], r[2]], [r[2], r[3]]], "a pair per entry")
+	var res := _check_level(e.level_path)
+	assert_eq(res[0], 0, res[1])
+	var e2 := _editor()
+	e2.open_level(e.level_path)
+	assert_eq(_pair_refs(e2), _pair_refs(e))
+	assert_eq(e2.document.pairs_with(e2.document.piece_at(_mid(e, row[1]))).size(), 2)
+
+
+func test_a_level_saved_before_opens_with_its_pairs() -> void:
+	# A T-272 file: {id, a, b} entries, each obstacle in one pair.
+	var d := LevelDocument.new_level_data("T-272 old")
+	d.pattern_copies = [{"id": "boulder-1", "boulders": [{"x": -3.0, "y": -40.0, "diameter": 3.0, "variant": "a"}]},
+		{"id": "boulder-2", "boulders": [{"x": 3.0, "y": -40.0, "diameter": 3.0, "variant": "b"}]}]
+	d["pairs"] = [{"id": "pair-1", "a": "boulder-1", "b": "boulder-2"}]
+	var path := RunPaths.file("t394_old_level.json")
+	assert_eq(LevelStore.save_level(path, d), OK)
+	var e := _editor()
+	e.open_level(path)
+	assert_eq(_pair_refs(e), [["boulder-1", "boulder-2"]])
+	var c := _place(e, "prop-crates", Vector2(10, -39))
+	e.document.make_pair(e.document.piece_of_ref("boulder-2"), c)
+	assert_eq(e.document.pairs().size(), 2, "and it chains on")
+	assert_eq(e.document.pairs()[1].id, "pair-2")
 
 
 func test_check_level_refuses_a_pair_naming_a_missing_obstacle() -> void:

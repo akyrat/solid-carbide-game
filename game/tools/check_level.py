@@ -11,8 +11,9 @@ also checks that:
   one of its rotations, has the footprint of that prop turned to that rotation, and lies inside the map;
 - every pair (pairs: {id, a, b}, T-272, thread the needle) names two different obstacles that exist:
   a boulder by its pattern copy's id (a copy of one boulder) or "<copy id>/<index>", or a prop of the
-  Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; and no
-  obstacle is in more than one pair (scripts/level/obstacle_pairs.gd, the same rules);
+  Obstacles group (data/level/creator_assets.json's families in group "obstacles") by its id; an
+  obstacle can be in several pairs (T-394, a row paired as a chain), but the same two obstacles make
+  one pair at most (scripts/level/obstacle_pairs.gd, the same rules);
 - the level has a spawn point (spawn: {x, y, heading}, T-280): a heading that is a multiple of 45
   degrees, inside the map and where a car can stand (clear of every building, prop and boulder; a
   rooftop or ramp is fine), the same rules as scripts/level/level_spawn.gd;
@@ -147,13 +148,15 @@ def _obstacle_exists(data, ref, obstacle_ids):
 
 
 def check_pairs(data):
-    """Problems with the level's pairs of obstacles (T-272)."""
+    """Problems with the level's pairs of obstacles (T-272): each names two different obstacles that
+    exist. An obstacle can be in several pairs (T-394, a row paired as a chain), but the same two
+    obstacles make one pair at most (in either order)."""
     pairs = data.get("pairs", [])
     if not isinstance(pairs, list):
         return ["pairs: must be a list"]
     problems = []
     obstacle_ids = obstacle_props()
-    used = {}
+    used = {}  # T-394: an obstacle may be in several pairs; the same two obstacles in one pair at most
     for i, p in enumerate(pairs):
         name = "pair %r" % p.get("id") if isinstance(p, dict) and p.get("id") else "pair #%d" % i
         if not isinstance(p, dict):
@@ -167,11 +170,12 @@ def check_pairs(data):
         if refs[0] == refs[1]:
             problems.append("%s: pairs an obstacle with itself" % name)
             continue
-        for ref in refs:
-            if isinstance(ref, str) and ref in used:
-                problems.append("%s: %r is already in %s" % (name, ref, used[ref]))
-            elif isinstance(ref, str):
-                used[ref] = name
+        if all(isinstance(r, str) for r in refs):
+            key = frozenset(refs)
+            if key in used:
+                problems.append("%s: pairs %r and %r again (already %s)" % (name, refs[0], refs[1], used[key]))
+            else:
+                used[key] = name
     return problems
 
 
@@ -183,7 +187,8 @@ SPAWN_HEADING_STEP = 45  # level_spawn.gd's HEADING_STEP (degrees)
 def check_spawn(data, map_rect, require=True):
     """Problems with the level's spawn point (T-280): present ({x, y, heading}), a heading that is a
     multiple of 45 degrees, inside the map, and a place a car can stand: clear of every building,
-    prop and boulder (scripts/level/level_spawn.gd, the same rules). Rooftops and ramps are fine."""
+    prop and boulder (scripts/level/level_spawn.gd, the same rules). Rooftops and ramps are fine, and since T-405
+    the short buildings (platforms)."""
     s = data.get("spawn")
     if s is None and not require:
         return []  # the game's own map has none: its run starts the car at its own start
@@ -202,6 +207,8 @@ def check_spawn(data, map_rect, require=True):
         return ["spawn: lies outside the map"]
     for key in ("buildings", "props"):
         for i, it in enumerate(data.get(key, []) or []):
+            if key == "buildings" and check_height_data.short_platforms.is_platform_entry(it):
+                continue  # T-405: a short building is a platform the car can stand on, like a rooftop
             try:
                 r = _rect(it)
             except (KeyError, TypeError, ValueError, AttributeError):

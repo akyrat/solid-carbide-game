@@ -147,5 +147,37 @@ class TestCheckHeightData(unittest.TestCase):
         self.assertEqual(c.check_data(good), [])
 
 
+
+class TestJumpRamps(unittest.TestCase):
+    """T-400: a small jump ramp ("jump": true) climbs to no area; its top is open."""
+
+    def level(self, **ramp):
+        r = {"id": "jump-1", "platform": "", "side": "south", "x": 0.0, "y": 0.0, "w": 10.0, "h": 4.0,
+             "bottom_height": 0.0, "top_height": 2.0, "jump": True}
+        r.update(ramp)
+        return {"platforms": [{"id": "roof", "x": 20.0, "y": 0.0, "w": 16.0, "h": 16.0, "height": 3.0}],
+                "ramps": [r]}
+
+    def test_a_jump_ramp_on_the_street_and_on_a_rooftop_is_valid(self):
+        self.assertEqual(c.check_data(self.level()), [])
+        for side in ("north", "east", "south", "west"):
+            self.assertEqual(c.check_data(self.level(side=side)), [], side)
+        on_roof = self.level(x=22.0, y=2.0, bottom_height=3.0, top_height=5.0)
+        self.assertEqual(c.check_data(on_roof), [])
+
+    def test_its_foot_must_still_match_the_ground(self):
+        problems = c.check_data(self.level(x=22.0, y=2.0))  # on the 3 but from 0
+        self.assertTrue(any("bottom_height" in p for p in problems), problems)
+
+    def test_it_must_rise_and_names_no_area(self):
+        self.assertTrue(any("must be above" in p for p in c.check_data(self.level(top_height=0.0))))
+        self.assertTrue(any("climbs to no area" in p for p in c.check_data(self.level(platform="roof"))))
+
+    def test_without_the_jump_flag_an_unlinked_ramp_is_still_refused(self):
+        d = self.level()
+        del d["ramps"][0]["jump"]
+        self.assertTrue(any("unknown area" in p for p in c.check_data(d)))
+
+
 if __name__ == "__main__":
     unittest.main()

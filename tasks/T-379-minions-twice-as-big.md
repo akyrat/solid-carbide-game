@@ -1,7 +1,7 @@
 ---
 id: T-379
 title: Minions twice as big, hitbox included
-status: in-progress
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/data/enemies.json, game/scripts/enemies/minion.gd]
 files_expected_to_change: [game/data/enemies.json, game/scripts/enemies/, game/scenes/, game/tests/unit/, game/docs/enemies/, docs/enemies.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -39,12 +39,12 @@ The board's review: play a run and see the bigger minions.
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Minions are drawn at twice today's size with hard pixel edges, from a number in game/data/enemies.json (test and screenshot). (QA: pass / fail)
-- [ ] Their collision with the car and the weapons' hits grow to match the new size (tests). (QA: pass / fail)
-- [ ] Minions still reach the car on the elevation map, rooftops and ramps included (test). (QA: pass / fail)
-- [ ] Enemies, Content and the game docs give the new size. (QA: pass / fail)
-- [ ] A screenshot of a run with the bigger minions next to the car is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] Minions are drawn at twice today's size with hard pixel edges, from a number in game/data/enemies.json (test and screenshot). (QA: pass)
+- [ ] Their collision with the car and the weapons' hits grow to match the new size (tests). (QA: pass)
+- [ ] Minions still reach the car on the elevation map, rooftops and ramps included (test). (QA: pass)
+- [ ] Enemies, Content and the game docs give the new size. (QA: pass; docs/enemies.md and game/docs/enemies/minions.md changed, qa_check's directory check is a false negative)
+- [ ] A screenshot of a run with the bigger minions next to the car is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; GUT 158 scripts, 1951/1951; python sets OK; one first-run exit 1 "resource in use at exit" did not repeat, rerun exit 0)
 
 ## Updates
 
@@ -53,6 +53,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started in build F.
+
+### 2026-10-30, In progress → In QA
+
+Minions are drawn twice as big (size_scale 2 in enemies.json) with body, hits and paths grown to match; kaiju unchanged. All three test sets pass; screenshot in art-archive/T-379/screenshots/.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria; bigger minions ready for the board to play.
 
 ## Style review
 
@@ -74,3 +82,4 @@ Done by the Enemy Behavior Agent, 2026-10-30.
 - Screenshot: `art-archive/T-379/screenshots/minions_twice_as_big.png` (the minions demo: bigger minions around the car).
 - Documents updated: `docs/enemies.md` (Decisions note, Look line), `game/docs/enemies/minions.md` (Size section, minion.gd line).
 - Not done / for the playtest: crowd density looks heavier with the same count (12 to 20); the board judges the feel.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board

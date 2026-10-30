@@ -5,6 +5,8 @@ platforms (axis-aligned rectangles with a height, optionally standing on
 another platform with "on") and a list of ramps (a footprint next to the side
 of the platform it climbs, rising from bottom_height at its foot to
 top_height at that side). Units are the flat world's (x east, y south).
+A ramp with "jump": true (T-400, the level creator's small jump ramp) climbs to no platform: its
+"platform" is empty and its top is open, so only its foot and its rise are checked.
 
 Usage, from the repo root:
 
@@ -15,6 +17,10 @@ exits 0 otherwise. Standard library only.
 """
 import json
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import short_platforms  # noqa: E402  (T-405: the short buildings are platforms)
 
 SIDES = ("north", "east", "south", "west")
 EPS = 1e-6
@@ -66,7 +72,11 @@ def check_data(data):
     platforms = {}
     order = []
     on_of = {}
-    for i, p in enumerate(data.get("platforms", [])):
+    # T-405: the short buildings (low-rise, small, long) are platforms at 3, after the file's rooftops
+    # (short_platforms.py); ramps may climb to them and rooftops stand on them ("on").
+    listed = list(data.get("platforms", []) or []) + short_platforms.platforms_of(data)
+    shorts = set()
+    for i, p in enumerate(listed):
         pid = str(p.get("id", "")) if isinstance(p, dict) else ""
         name = "platform %r" % pid if pid else "platform #%d" % i
         try:
@@ -84,6 +94,8 @@ def check_data(data):
         if rect[2] - rect[0] <= 0 or rect[3] - rect[1] <= 0:
             problems.append("%s: w and h must be positive" % name)
         platforms[pid] = {"rect": rect, "height": height, "on": p.get("on")}
+        if p.get("short"):
+            shorts.add(pid)
         order.append(pid)
         if p.get("on"):
             on_of[pid] = str(p["on"])
@@ -111,6 +123,8 @@ def check_data(data):
                 continue
             if b in _ancestors(a, on_of) or a in _ancestors(b, on_of):
                 continue
+            if a in shorts or b in shorts:
+                continue  # T-405: a short building may overlap a rooftop or another (the highest wins)
             problems.append("platforms %r and %r overlap, and neither is marked as standing on the other ('on')" % (a, b))
 
     ramp_ids = set()
@@ -135,16 +149,25 @@ def check_data(data):
         if side not in SIDES:
             problems.append("%s: unknown side %r (north, east, south or west)" % (name, side))
         target = str(r.get("platform", ""))
-        if target not in platforms:
+        if r.get("jump") is True:
+            # T-400: a small jump ramp climbs to no rooftop; its tall end is open (the car flies
+            # off it), so it needs no platform, only a top above its bottom.
+            if target:
+                problems.append("%s: a jump ramp climbs to no area, but names %r" % (name, target))
+            if top <= bottom + EPS:
+                problems.append("%s: a jump ramp's top_height %g must be above its bottom_height %g"
+                                % (name, top, bottom))
+        elif target not in platforms:
             problems.append("%s: climbs to unknown area %r" % (name, target))
             continue
-        area = platforms[target]
-        if side in SIDES and not _top_touches(side, rect, area["rect"]):
-            problems.append("%s: its top (the %s side of %r) doesn't touch area %r along that side"
-                            % (name, side, target, target))
-        if not _same(top, area["height"]):
-            problems.append("%s: top_height %g doesn't match area %r's height %g"
-                            % (name, top, target, area["height"]))
+        else:
+            area = platforms[target]
+            if side in SIDES and not _top_touches(side, rect, area["rect"]):
+                problems.append("%s: its top (the %s side of %r) doesn't touch area %r along that side"
+                                % (name, side, target, target))
+            if not _same(top, area["height"]):
+                problems.append("%s: top_height %g doesn't match area %r's height %g"
+                                % (name, top, target, area["height"]))
         # The ground at its foot: the street, or the highest area holding the whole footprint.
         foot_id, foot_h = None, 0.0
         for pid in order:
@@ -159,7 +182,7 @@ def check_data(data):
         # A ramp may stand on its foot area (and what that stands on), nothing else.
         allowed = set([foot_id] + _ancestors(foot_id, on_of)) if foot_id else set()
         for pid in order:
-            if pid == target or pid in allowed:
+            if pid == target or pid in allowed or pid in shorts:
                 continue
             if _overlap(rect, platforms[pid]["rect"]):
                 problems.append("%s: overlaps area %r without standing wholly on it" % (name, pid))

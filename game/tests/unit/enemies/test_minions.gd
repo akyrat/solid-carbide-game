@@ -140,7 +140,8 @@ func test_minion_moves_towards_the_car() -> void:
 
 
 func test_minion_walks_round_a_building() -> void:
-	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[0])
+	# T-405: a block with no short building (the first one's short slots are platforms now, open street round them).
+	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[1])
 	# Just outside the building's left wall, the car's x far to the right of it.
 	var start := Vector2(b.position.x - 1.0, b.get_center().y)
 	var target := Vector2(b.end.x + 10.0, b.get_center().y)
@@ -339,6 +340,9 @@ func test_minions_far_behind_are_removed() -> void:
 	var vis: Rect2 = spawner.visible_rect()
 	var far_screen := vis.end + vis.size * 1.5
 	var far_units: Vector2 = (run.ISO_TRANSFORM.affine_inverse() * far_screen) / 16.0
+	# T-405: on the street (a block's short building is a platform now; a minion up there keeps its way to a ramp).
+	while not run.map.is_open_spot(far_units, 1.0):
+		far_units += Vector2(2.0, 0.0)
 	var m: Node = spawner.spawn_minion_at(far_units)
 	var near: Node = spawner.spawn_minion_at(_car_units() + Vector2(8.0, 0.0))
 	spawner.enabled = true
