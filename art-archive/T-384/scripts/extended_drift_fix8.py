@@ -50,7 +50,10 @@ def classify(src):
     keep = {}
     for y in range(H):
         for x in range(W):
-            c = src.getpixel((x, y))[:3]
+            c4 = src.getpixel((x, y))
+            if c4[3] == 0:
+                continue
+            c = c4[:3]
             h, s, v = hsv(c)
             if in_box(x, y, CAR_BOX) and not is_road(c):
                 keep[(x, y)] = "car"
