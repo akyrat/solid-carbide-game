@@ -1,7 +1,7 @@
 ---
 id: T-433
 title: Art: the splash cover behind the main menu (PixelLab)
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: asset-generation
 lead: Goal-G-008
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/hud-and-menus/main-menu.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/hud-and-menus/main-menu.md, game/scripts/menu/main_menu.gd, game/tools/pixellab_client.py, game/tools/style_rules.py]
 files_expected_to_change: [game/art/menu/splash.png, game/art/menu/splash.json, docs/visual-style.md, game/docs/hud-and-menus/main-menu.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-433.
 ### 2026-10-30, In progress → In QA
 
 Goal runner (G-008): the agent is done; QA is checking it.
+
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-008): QA passed; merged into playtest/G-008.
 
 ## Style review
 
@@ -234,3 +238,4 @@ Total at most 6 calls (cap 8, only if a call fails). Cost: 1 generation each, so
 **QA round 1 (2026-10-30):** all 6 criteria pass. Unit tests 737 OK (1 skipped), rerun by QA. style_rules on splash.png: only the by-design opaque-background check fails; no Greenbull colour. Screenshots and docs present; menu screenshot shows title and buttons readable. Quality is weak (6/10, kept below 8 after 3 refines, noted for the board's playtest). `python tools/qa_check.py` was refused (not pre-approved), so skipped.
 
 - 2026-10-30, style loop: version 2 kept at 6/10, still below 8 after 3 refines; noted for the board's final playtest (goal run, not flagged)
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-008).
