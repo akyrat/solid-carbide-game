@@ -1,7 +1,7 @@
 ---
 id: T-386
 title: A trick list button in the pause screen, opening a panel with the trick list
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/pause-screen.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/ui/pause_screen.gd, game/scenes/menu/trick_list.tscn, game/data/tutorial_text.json, game/docs/setup/screenshots.md]
 files_expected_to_change: [game/scripts/ui/pause_screen.gd, game/tests/unit/test_pause_trick_list.gd, game/tests/fixtures/pause_trick_list_demo.gd, game/tests/fixtures/pause_trick_list_demo.tscn, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-386.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -72,3 +76,4 @@ UI Agent, done. Trick list button ("Trick list") in the pause screen's run butto
 - **Docs updated:** `docs/hud-and-menus.md` (Pause screen), `game/docs/hud-and-menus/pause-screen.md`.
 - QA round 1: all seven criteria pass. I ran the three test sets myself: GUT 160 scripts, 1957/1957 passed (test_pause_trick_list 6/6); game/tools 675 OK (1 skipped); tools 573 OK. The panel screenshot shows the panel inside the screen and clear of the timer. Both screenshots exist. Both docs describe the button, the panel and Escape. `python tools/qa_check.py` was refused (not pre-approved), so its paperwork check was skipped and I checked the files by hand.
 - No PixelLab generations; no refusals. Godot's `.import` line-ending noise in the folder was left uncommitted.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
