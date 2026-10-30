@@ -1,7 +1,7 @@
 ---
 id: T-380
 title: Bug: minions get stuck on walls at the bottom end of ramps
-status: in-progress
+status: in-qa
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -117,3 +117,4 @@ Tests: game/tools 701 OK (1 skipped), tools 579 OK, GUT 2062 of 2062 passing.
 Refused: a hook refused `export $(grep GODOT_BIN .env | xargs)` (it can't tell `export $SUB` won't write a ticket). I passed the path as `GODOT_BIN='...' bash game/tools/run_tests.sh` instead, which runs only the test script.
 
 **Documents affected (this round):** `docs/enemies.md` (Content, "Finding the way"), `game/docs/enemies/minions.md` ("After T-405 and T-379"), `game/docs/enemies/ledges-and-rooftops.md` (`line_clear`, `off_edges`).
+- 2026-10-30, in-progress → in-qa: Fixed on top of master: line_clear checks true ground near T-405's half-unit platform edges, paths keep off them, far-off keep only on another surface. All three test sets green. test_wreck flake not touched (own ticket).
