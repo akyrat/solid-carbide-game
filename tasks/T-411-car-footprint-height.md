@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: in-qa
+status: in-progress
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/drifting.md]
 files_to_read_first: [tasks/README.md, docs/drifting.md, game/scripts/driving/car_height.gd, game/scripts/driving/car.gd, game/scripts/driving/drift_marks.gd]
 files_expected_to_change: [game/scripts/driving/car_height.gd]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -42,13 +42,13 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 QA round 1 (2026-10-30) ran with no concrete criteria written (the Project Lead's miss: the placeholder line below). Its mark is kept as the record; the criteria after it were written by the Project Lead from the assessment's proposed criteria (Result notes) after round 1, and QA round 2 checks them.
 
 - [x] ~~Criteria to be written by the Project Lead from the assessment, before the ticket leaves planning.~~ (QA: pass - no concrete criteria were written; checked against the assessment's proposed criteria: test_car_footprint_height (11) and test_drift_marks_overhang (4) pass, the named existing suites are green, step cost 0.128 ms; three test sets re-run by QA all pass)
-- [ ] The root cause is written in the result notes, with a named test that fails before the fix (checked by running it with the fix stashed or on the base commit).
-- [ ] Headless tests on the real `car.gd` with a GroundHeight: driving into a height-3 side head-on and at 45°, no outline point of the 1 by 3 car ends more than 0.05 inside the side, with exactly one `hit_obstacle`; the same when steering into a side from standing.
-- [ ] Ramps: the 0-to-3 ramp and the T-400 small ramp at 4, 11 and 16.5 u/s give no false wall, and the car follows the slope within 0.01; a free-standing ramp's top launches (`from_ramp=true`, vz > 0), higher at 16.5 than at 11, and its long side still lets the car fall.
-- [ ] Platforms: touching T-405 platforms are crossed with no wall at height 3 ± 0.01; a height-3 platform next to a height-6 one bounces at the bumper.
-- [ ] Roof edges: a car at 2 u/s takes off at the edge as today (open question (a), today's choice kept); tyre marks along a roof edge never drop below the car's height minus 0.1, and the overhanging line ends.
-- [ ] Existing suites stay green: `test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map` and the T-195 drive inside GUT; `CarHeight.step` averages under 0.5 ms on the largest saved map.
-- [ ] `docs/drifting.md` records the change and open questions (a) to (d) for the board, and the three test sets pass.
+- [ ] The root cause is written in the result notes, with a named test that fails before the fix (checked by running it with the fix stashed or on the base commit). (QA: pass - root cause is in the 2026-10-30 result notes; test_car_footprint_height.gd run on base efbde4c6 does not even parse (step() takes 4 arguments there, the test passes 6), so it fails without the fix; the notes also record 6 of 11 failing on old behaviour)
+- [ ] Headless tests on the real `car.gd` with a GroundHeight: driving into a height-3 side head-on and at 45°, no outline point of the 1 by 3 car ends more than 0.05 inside the side, with exactly one `hit_obstacle`; the same when steering into a side from standing. (QA: pass - test_head_on_the_bumper_stops_at_the_side, test_at_45_degrees_no_corner_enters and test_steering_into_a_side_from_standing_never_sweeps_the_nose_in check every outline point is at most 0.05 inside after every step; head-on and 45 deg assert exactly one hit_obstacle, the standing-steer test asserts at least one hit)
+- [ ] Ramps: the 0-to-3 ramp and the T-400 small ramp at 4, 11 and 16.5 u/s give no false wall, and the car follows the slope within 0.01; a free-standing ramp's top launches (`from_ramp=true`, vz > 0), higher at 16.5 than at 11, and its long side still lets the car fall. (QA: fail: code - not fully covered by tests. Covered: the 0-to-3 ramp at 4/11/16.5 (test_up_the_ramp_at_three_speeds_no_false_wall_and_follows_the_slope, slope 0.01, no hits); the free-standing ramp launch (test_a_free_standing_ramp_launches_higher_when_faster: from_ramp, vz > 0, higher at 16.5); the long side falls (test_driving_off_the_ramps_side_falls_to_the_ground). Not covered: the T-400 small ramp with the real car at 4, 11 and 16.5 u/s, no false wall and slope within 0.01; the free-standing ramp test runs only 11 and 16.5 and checks no slope, and test_creator_jump_ramps drives one speed with 0.3 tolerance)
+- [ ] Platforms: touching T-405 platforms are crossed with no wall at height 3 ± 0.01; a height-3 platform next to a height-6 one bounces at the bumper. (QA: pass - test_touching_platforms_cross_with_no_wall (height 3 +- 0.01, no hits, three angles) and test_height_3_next_to_6_bounces_at_the_bumper (outline within 0.05 of the 6 area, height stays 3, one hit))
+- [ ] Roof edges: a car at 2 u/s takes off at the edge as today (open question (a), today's choice kept); tyre marks along a roof edge never drop below the car's height minus 0.1, and the overhanging line ends. (QA: pass - test_roof_edge_at_low_speed_tips_off_when_the_centre_passes (2 u/s, takes off as a fall at the edge); test_drift_marks_overhang: test_a_tyre_over_the_roof_edge_lays_nothing_and_its_line_ends and test_a_tyre_leaving_the_roof_ends_its_mark_and_starts_a_new_one_back_on assert no point below the roof and the open line ends)
+- [ ] Existing suites stay green: `test_car_height`, `test_car_height_layers`, `test_elevation_edges`, `test_run_elevation_map` and the T-195 drive inside GUT; `CarHeight.step` averages under 0.5 ms on the largest saved map. (QA: pass - the full GUT run is green and includes the named suites; test_a_step_costs_under_half_a_millisecond_on_the_sample_map passes)
+- [ ] `docs/drifting.md` records the change and open questions (a) to (d) for the board, and the three test sets pass. (QA: pass - docs/drifting.md changed with the footprint section and questions (a)-(d); qa_check: 3 test sets pass)
 
 The board's review: in the build, drive into rooftop and ramp sides head-on, at an angle and while turning, cross joined platforms, drift along a roof edge and roll off one slowly.
 
@@ -115,3 +115,4 @@ Written by the agent when it finishes.
 
 **Files changed:** `game/scripts/driving/car_height.gd`, `car.gd`, `drift_marks.gd`, `game/scripts/level/ground_height.gd`, `elevation_platform_drawing.gd` (comment only), the tests and fixtures above.
 - 2026-10-30, in-progress → in-qa: Done: the car's whole drawn 1x3 outline meets raised sides (turning too); tyres over a roof edge lay no marks. Root cause and failing-before test in the result notes. All three test sets green. Open board questions (a)-(d) in drifting.md.
+- 2026-10-30, in-qa → in-progress: QA round 2: ramps criterion fails (code): no test drives the T-400 small ramp with the real car at 4, 11, 16.5 u/s checking slope within 0.01; the other six criteria pass, three test sets green.
