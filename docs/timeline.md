@@ -2675,3 +2675,8 @@ Entry format:
 - Decision or change: The drift-pays-its-combo test no longer depends on how busy the machine is.
 - Documents touched: game/tests/unit/run/test_run_likes.gd
 - Tasks: T-434
+
+## 2026-10-30: The car's height uses its whole footprint
+- Decision or change: The car's whole 1 by 3 outline meets raised sides, turns included; the board kept today's behaviour on the four open questions (roof-edge tip-off, bumper bounce, slow ramp tops, skyscraper nose).
+- Documents touched: none
+- Tasks: T-411

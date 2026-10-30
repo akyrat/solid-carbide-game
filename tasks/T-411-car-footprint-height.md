@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: needs-playtest
+status: done
 from: project-lead
 to: driving-drift
 lead: Greenbull
@@ -124,3 +124,4 @@ The gap QA found under "Ramps" is closed. The new test is `test_up_it_at_three_s
 Test sets: GUT 2040 passing, 0 failing (1262245 asserts). `game/tools` unittest OK (701, 1 skipped). `tools` unittest OK (579).
 - 2026-10-30, in-progress → in-qa: Small ramp (T-400, 0 to 2) test added: 4/11/16.5 u/s, all four directions, no false wall, slope within 0.01. At 4 it rolls off rather than launching (drag puts it at 3.90, under the 4 u/s minimum; open question (c)). Three test sets green.
 - 2026-10-30, in-qa → needs-playtest: QA passed all criteria
+- 2026-10-30, needs-playtest → done: Build G LGTM by the board (2026-10-30); open questions (a)-(d) keep today's behaviour
