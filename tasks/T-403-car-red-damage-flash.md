@@ -1,7 +1,7 @@
 ---
 id: T-403
 title: The car flashes red when it takes damage
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -77,3 +77,4 @@ The car: `run.gd` has `car_flash`, triggered on `state.car_damaged` (never emitt
 Tests: new `game/tests/unit/run/test_hit_flash.gd` (5 tests: numbers from the file, helper timing and restart, car flashes with the blink working, ignored hit does not flash, new run clears it). Results: Godot/GUT 1944 tests passing (158 scripts); `game/tools` unittest 668 OK (1 skipped); `tools` unittest 576 OK.
 
 Screenshot: `art-archive/T-403/screenshots/car_red_flash.gif` (the hearts demo, 75 frames; red shows at frames 10 and 13, checked by counting red pixels). Docs updated: `docs/game-loop-architecture.md`, `game/docs/game-loop/the-run.md`. Note: the worktree has no `.env`, so I passed `GODOT_BIN` (the line from the main checkout's `.env`) as an environment variable.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board
