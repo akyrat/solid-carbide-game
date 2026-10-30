@@ -1136,6 +1136,7 @@ What the game does on a map with rooftops and ramps (the elevation map, Level de
 - **Contact damage at the car's level:** a minion or the kaiju only hits the car when the car's height (in the air too) is within 1 unit of the ground the enemy stands on: a car on a rooftop is safe from the minions on the street below its edge, and a car that jumps higher than 1 unit over a minion is not hit (proposal for the 1 unit).
 - **Pushing apart:** minions push apart only from minions at their own level (proposal).
 - **The kaiju (proposal):** the same rules as the minions: it climbs the ramps (its 4-unit body fits the 10-unit ramps), edges stop it, it is drawn at its height and only hits the car at its level, although it is taller than the highest rooftop.
+- **The kaiju's way is planned for its size (built in task T-419):** following the decision "The kaiju only takes paths it fits through", the kaiju's way to the car is planned for its own 2-unit body, the minions' for theirs: every point of its way stays at least 2 units off buildings, props and boulders, a gap narrower than its 4-unit body is never on it (minions still go through), and it keeps 2 units off rooftops' and ramps' edges and the map's edge. Where its way drops off a rooftop it walks to a point 3 units back from the edge and drops from there, and it keeps to that way until it has dropped. Where a prop stands at a ramp's end, its way goes over the ramp cell by cell instead of along the ramp's middle. How: `game/docs/enemies/ledges-and-rooftops.md`.
 - **Coins:** a coin is drawn at the height where its minion died, and stays on that level. Picking one up is unchanged: driving over it, at any height (proposal).
 - **Weapons:** since T-326 (board, 2026-10-28) a weapon hits only enemies on its own height level (Weapons, Decisions, "Weapons hit only enemies on the car's own level"); at the time of this task they hit enemies at any height.
 
@@ -1845,7 +1846,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | `game-loop-architecture.md` | `0e99c0e71e1238b8ee43e613796a5401597fe21421362290b4dd03e112ce60dc` |
 | `drifting.md` | `99ac393e1897198069b3f8cb5f936357382b87a55b7e8b01c2e88eb936546f9f` |
 | `level-design.md` | `1df2ad169580f84a2a15614d5309e11b9627e7259b8b624d89d2190c73272579` |
-| `enemies.md` | `9c7f857b594afb343765e58ed7367844730fa858993772d17fb787418be6de04` |
+| `enemies.md` | `f5de4d83c56e028eb20088c11c3aeb8be9777c80b5d2c1c59f884e108e00a3c9` |
 | `weapons.md` | `d9f6f69d6b8d84e1656454eb605cbed8c681dfc2204b0ffa45bf74c0590d5dcf` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
 | `visual-style.md` | `91c5d48416ceaf9cfb1da72c6ec8ef75a27eb11094bfcf76df1251b264d8f2cc` |

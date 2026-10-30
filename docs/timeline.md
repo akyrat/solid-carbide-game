@@ -2695,3 +2695,8 @@ Entry format:
 - Decision or change: Built and merged (audit epic, build J): a meteor landing on minions damages them (minion_damage 2, the agent's proposal, played by the board), coins and health pickups on a new boulder's spot are pushed out, a car more than 1 unit above a landing is missed; data guards for seconds_between_attacks and spawn_interval_seconds.
 - Documents touched: `docs/enemies.md`
 - Tasks: T-418
+
+## 2026-10-30: The kaiju only takes paths it fits through
+- Decision or change: Built and merged (audit epic, build J): each enemy plans its way for its own size; the kaiju keeps 2 units off buildings, never takes a gap narrower than its body, and keeps off rooftop, ramp and map edges, dropping from 3 units back. The board played it and kept the edge rule (2026-10-30).
+- Documents touched: `docs/enemies.md`
+- Tasks: T-419
