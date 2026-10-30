@@ -1,7 +1,7 @@
 ---
 id: T-418
 title: Meteors hit minions and push pickups aside
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Audit
@@ -95,3 +95,4 @@ Screenshots (Enemy Behavior Agent, after QA round 1; fixtures game/tests/fixture
 - art-archive/T-418/screenshots/after_minions_hurt_pickups_pushed_out.png: about a second after the landing: the boulder stands, the minions have 2 of 4 health (printed by the fixture), the health pickup and the coin lie 2.1 units from its centre, outside the 1.5 radius. The minions are partly behind the tall boulder art.
 
 Board review files: art-archive/T-418/screenshots/before_warning_on_minions_and_pickups.png, art-archive/T-418/screenshots/after_minions_hurt_pickups_pushed_out.png
+- 2026-10-30, needs-playtest → done: The board played build J: lgtm (2026-10-30)
