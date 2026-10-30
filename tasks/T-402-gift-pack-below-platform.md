@@ -1,7 +1,7 @@
 ---
 id: T-402
 title: Bug: a gift pack that falls on a platform is drawn below the platform
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -58,6 +58,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: root cause and fix for the gift pack drawn below a platform.
+
+### 2026-10-30, In progress → In QA
+
+Fixed: a pack with no street spot in reach fell back to the car's spot on a rooftop with no height; now it lands on the rooftop at its height, and every pickup is picked up only at its height. Tests 668/576/1958 green.
 
 ## Style review
 
