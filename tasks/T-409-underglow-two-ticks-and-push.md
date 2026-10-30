@@ -1,7 +1,7 @@
 ---
 id: T-409
 title: Neon underglow: each tick deals half a minion's health (2 ticks kill), and it knocks enemies back a little from tier 1
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: weapon-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/weapons.md, game/docs/weapons/neon-underglow.md]
 files_to_read_first: [tasks/README.md, docs/weapons.md, docs/enemies.md, game/docs/weapons/neon-underglow.md, game/docs/weapons/shared.md, game/data/weapons.json, game/data/enemies.json]
 files_expected_to_change: [game/scripts/weapons/, game/data/weapons.json, game/tests/unit/, game/docs/weapons/, docs/weapons.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -63,6 +63,10 @@ Started in build F with T-412's card text.
 ### 2026-10-30, In progress → In QA
 
 Underglow tier 1 deals 2 (two ticks kill a minion), pushes minions 0.5 per tick and nudges the kaiju 0.1; tests green, GIF in art-archive/T-409/screenshots.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria (GUT 1950/1950, unittest sets green); ready for the board to play.
 
 ## Style review
 
