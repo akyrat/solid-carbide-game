@@ -1,0 +1,41 @@
+{
+  "file": "air_three_sixty_v2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art tutorial diagram of a car doing a 360 spin in mid-air during a jump, a small very dark forest green 1967 Mustang fastback car high in the air in the upper middle, almost black green body, two bold white racing stripes with a gap along hood and roof, roof seen from above and one side, near black outline, white highlight pixels, a tilted glowing neon pink spin ring wrapped around the car, back half of the ring passing behind the car and front half passing in front of it, the ring with a bright pale pink core and 1 pixel magenta then dark purple stepped halo, a short neon cyan dotted jump arc rising from a tiny dark purple ramp wedge at the bottom left up to the car, a dark navy purple oval shadow on the ground far below the car at the bottom centre, empty gap between car and shadow, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, brown, lime, bright green, mint, teal, cyan car, blue car, grey shadow, flat ring on the ground, car on the ground, large car, bridge, background, ground tiles, road, sky, gradient, photo, buildings",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art tutorial diagram of a car doing a 360 spin in mid-air during a jump, a small very dark forest green 1967 Mustang fastback car high in the air in the upper middle, almost black green body, two bold white racing stripes with a gap along hood and roof, roof seen from above and one side, near black outline, white highlight pixels, a tilted glowing neon pink spin ring wrapped around the car, back half of the ring passing behind the car and front half passing in front of it, the ring with a bright pale pink core and 1 pixel magenta then dark purple stepped halo, a short neon cyan dotted jump arc rising from a tiny dark purple ramp wedge at the bottom left up to the car, a dark navy purple oval shadow on the ground far below the car at the bottom centre, empty gap between car and shadow, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:23:34+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-384/briefs/air_three_sixty.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop run 5, version 2 (v2-5)",
+  "generator": "game/tools/pixellab_client.py"
+}

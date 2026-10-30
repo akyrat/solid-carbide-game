@@ -1,0 +1,41 @@
+{
+  "file": "alternate_drift_v3.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art, a glowing hot neon pink tire trail on the ground forming a clear S shape from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, the trail has a 1 pixel very bright hot pink and white core line, then a 1 pixel magenta stepped halo, then a 1 pixel dark purple outer band, crisp stepped neon glow, a small very dark forest green 1967 Mustang fastback car sliding sideways exactly at the middle bend of the S, dark bottle green body, two bold white racing stripes with a gap along hood and roof, sloped fastback roof, roof and one side of the car visible, dark windows, black wheels, black outline around the car, white highlight pixels on roof edge, small navy shadow under the car, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, soft glow, gradient, muted colors, dull purple trail, swirl, spiral, closed ring, circle, loop, yellow, orange, lime, bright green, mint, teal car, cyan car, blue car, purple car, grey car, big car, background, ground tiles, road, sky, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "detailed shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art, a glowing hot neon pink tire trail on the ground forming a clear S shape from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, the trail has a 1 pixel very bright hot pink and white core line, then a 1 pixel magenta stepped halo, then a 1 pixel dark purple outer band, crisp stepped neon glow, a small very dark forest green 1967 Mustang fastback car sliding sideways exactly at the middle bend of the S, dark bottle green body, two bold white racing stripes with a gap along hood and roof, sloped fastback roof, roof and one side of the car visible, dark windows, black wheels, black outline around the car, white highlight pixels on roof edge, small navy shadow under the car, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:15:01+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/alternate_drift.md",
+    "art-archive/T-384/pixellab/alternate_drift_v2_req.json"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v3-3, alternate drift refine after 6/10",
+  "generator": "game/tools/pixellab_client.py"
+}

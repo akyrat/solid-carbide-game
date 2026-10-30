@@ -1,0 +1,11 @@
+{
+  "description": "isometric pixel art seen from high above, dark navy and purple night asphalt, one huge wide curved neon pink drift trail sweeping in a long smooth C-shaped arc from the bottom left corner across the whole image to the right, with puffs of grey tire smoke along the arc, and at the end of the arc a very tiny dark green muscle car with two white stripes on its hood, turned sideways, small in the frame, black outline, synthwave night",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, bright green, straight lines, large car, close-up, side view, photo, gradient",
+  "image_size": {"width": 64, "height": 48},
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "low detail",
+  "text_guidance_scale": 10,
+  "no_background": false
+}

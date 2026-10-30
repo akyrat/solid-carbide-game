@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art tutorial icon on a transparent background, mostly empty space. a tiny blue-grey steel launch ramp at the far left middle, a thin 1 pixel neon pink dotted jump trail curving from the ramp up to a very high peak near the top center then dropping far down to the bottom right, a small dark forest green 1967 Mustang fastback car with two white stripes and near black outline floating at the very top of the arc, far below at the bottom right a small flat blue-grey steel and glass rooftop with pale lit windows and a tiny amber light, a small dark navy oval shadow on that rooftop directly under the car, big empty gap between car and shadow",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, bright green, background, filled background, sky, wall, arch, bridge, thick band, large shapes, purple buildings, magenta buildings, gradient, photo",
+  "image_size": {"width": 64, "height": 48},
+  "view": "low top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 12,
+  "no_background": true
+}

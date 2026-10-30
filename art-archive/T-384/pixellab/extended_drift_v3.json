@@ -1,0 +1,40 @@
+{
+  "file": "extended_drift_v3.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art at night, dark navy and purple asphalt with subtle tile pattern, an open curved neon pink drift trail like a half circle arc starting at the bottom left edge and sweeping up and right, ending at a small dark green 1967 Mustang fastback car with two bold white racing stripes on the roof and hood and a lighter green rim, the car sliding sideways at the end of the arc showing its top and one side, grey purple tire smoke puffs along the arc, black outline, cyan neon highlights, synthwave",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, bright green, full circle, closed ring, oval loop, straight lines, teal car, photo, gradient",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "medium detail",
+    "text_guidance_scale": 10,
+    "no_background": false
+  },
+  "prompt": "isometric 3/4 pixel art at night, dark navy and purple asphalt with subtle tile pattern, an open curved neon pink drift trail like a half circle arc starting at the bottom left edge and sweeping up and right, ending at a small dark green 1967 Mustang fastback car with two bold white racing stripes on the roof and hood and a lighter green rim, the car sliding sideways at the end of the arc showing its top and one side, grey purple tire smoke puffs along the arc, black outline, cyan neon highlights, synthwave",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:04:55+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/extended_drift.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v3 refine: open arc, low top-down 3/4, larger readable car",
+  "generator": "game/tools/pixellab_client.py"
+}
