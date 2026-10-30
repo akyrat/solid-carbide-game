@@ -1,7 +1,7 @@
 ---
 id: T-390
 title: The chosen trick illustrations in slide 2 and the pause trick list, placeholders retired
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: ui
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [game/docs/hud-and-menus/tutorial-slides.md]
 files_to_read_first: [tasks/README.md, docs/visual-style.md, docs/extended-narrative.md, game/docs/hud-and-menus/tutorial-slides.md, game/scripts/menu/trick_list.gd, game/tests/unit/test_trick_list.gd, game/docs/setup/screenshots.md]
 files_expected_to_change: [game/scripts/menu/trick_list.gd, game/tests/unit/test_trick_list.gd, game/docs/hud-and-menus/tutorial-slides.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-390.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -73,3 +77,4 @@ Done (UI Agent, sonnet). No PixelLab generations used.
 
 ### QA round 1
 All five criteria pass. GUT 162 scripts / 1974 tests / 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` 675 OK (1 skipped). Tests test_every_trick_texture_loads_from_its_file, test_no_placeholder_code_left and test_illustration_is_drawn_nearest_at_a_whole_scale exist; the placeholder code is gone from trick_list.gd; both screenshots exist in art-archive/T-390/screenshots/ and the seven PNGs are in game/art/tutorial/tricks/. Refused: `python tools/qa_check.py T-390 --no-marks` (needs approval), so I ran the test sets and checks by hand.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
