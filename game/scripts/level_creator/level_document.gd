@@ -30,7 +30,9 @@ extends RefCounted
 ##   on a 3), as in the elevation sample map's height data.
 ## - ramp: {id, platform, side, x, y, w, h, bottom_height, top_height, view, art, arrows} in ramps (arrows, T-264: "up" or "down" the slope, a ramp of any size; none is up): side =
 ##   the side of the rooftop it climbs, from the view's art; platform = the rooftop at its top
-##   height whose side its top end touches ("" while there is none).
+##   height whose side its top end touches ("" while there is none). A small jump ramp (T-400, its
+##   entry's "jump": ramp-0-2, ramp-3-5, ramp-6-8) also writes "jump": true: it climbs to no
+##   rooftop, its tall end is open and the car flies off it (check_height_data.py accepts it so).
 ## - prop (T-253; data/level/props.json): {id, asset, rotation, x, y, w, h} in props: rotation = the
 ##   view it was placed in (north, east, south, west: the direction it faces), x, y, w, h = its
 ##   footprint turned to that rotation (east and west swap the two numbers). Placed on the ground or on
@@ -460,10 +462,17 @@ func place(asset_id: String, units: Vector2, view: String = "", mirror: bool = f
 				r["style"] = style
 			if resizable:
 				r["arrows"] = "down" if arrows == "down" else "up"
+			if is_jump_ramp(asset_id):
+				r["jump"] = true
 			_list("ramps").append(r)
 			_relink()
 			return {"kind": kind, "item": r}
 	return {}
+
+
+## True for a small jump ramp's catalogue id (T-400; its entry's "jump"): it climbs to no rooftop.
+static func is_jump_ramp(asset_id: String) -> bool:
+	return bool(entry(asset_id).get("jump", false))
 
 
 ## True for a skyscraper's catalogue id (T-265: the only building with a banner).

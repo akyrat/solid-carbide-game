@@ -282,5 +282,23 @@ class TestSpawn(unittest.TestCase):
         self.assertTrue(any("needs numbers" in p for p in self.problems(d)))
 
 
+
+class TestJumpRampLevel(unittest.TestCase):
+    """T-400: a level with a small jump ramp on the street and one on its rooftop passes."""
+
+    def test_a_level_with_jump_ramps_passes(self):
+        d = small_level()
+        d["ramps"].append({"id": "ramp-2", "platform": "", "side": "west", "x": -8.0, "y": 2.0, "w": 4.0,
+                           "h": 6.0, "bottom_height": 0.0, "top_height": 2.0, "arrows": "up", "jump": True})
+        d["ramps"].append({"id": "ramp-3", "platform": "", "side": "north", "x": 0.0, "y": -8.0, "w": 4.0,
+                           "h": 4.0, "bottom_height": 3.0, "top_height": 5.0, "arrows": "up", "jump": True})
+        self.assertEqual(c.check_level(d), [])
+        with tempfile.TemporaryDirectory() as tmp:
+            p = Path(tmp) / "level.json"
+            p.write_text(json.dumps(d), encoding="utf-8")
+            res = run_tool(p)
+        self.assertEqual((res.returncode, res.stdout.strip()), (0, "OK"))
+
+
 if __name__ == "__main__":
     unittest.main()
