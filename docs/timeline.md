@@ -2450,3 +2450,8 @@ Entry format:
 - Decision or change: In a goal run the style loop keeps a version below 8 as a note for the final playtest and leaves the task in progress, instead of flagging it and pausing the goal.
 - Documents touched: `docs/working-with-the-board.md`
 - Tasks: T-395
+
+## 2026-10-30: Short buildings become platforms
+- Decision or change: The board: low-rise, small and long buildings become connectable platforms at height 3 with the same art (trimmed by script); only skyscrapers stay solid; every collider and pickup works at its height.
+- Documents touched: docs/level-design.md
+- Tasks: T-405
