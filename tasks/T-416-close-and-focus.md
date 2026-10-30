@@ -1,7 +1,7 @@
 ---
 id: T-416
 title: Closing the game mid-run, and pausing when the window loses focus
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -62,6 +62,14 @@ Back to the agent: you want Restart, Exit and closing to cancel the run, with th
 
 Reworked so Restart, Exit and closing cancel the run (coins lost, nothing saved). QA round 2 running now.
 
+### 2026-10-30, Needs playtest
+
+QA passed (4/4). Ready for you to play: Restart, Exit or closing mid-run cancels it, coins lost, nothing saved.
+
+### 2026-10-30, Needs playtest → Done
+
+LGTM from you. Merging with T-414 and T-415 as build I once master is free.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -87,3 +95,4 @@ Done (game-loop agent).
 - 2026-10-30, needs-playtest → in-progress: The board, after playing build I (2026-10-30): Restart or Exit on the pause screen and closing the window cancel the run at any point, the wreck included: coins lost, nothing saved to the run history, no recap. Replaces closing as a loss with coins kept, and T-327's coins kept on Restart and Exit (Game loop architecture, Decisions, 'Restart, Exit or closing cancels the run').
 - 2026-10-30, in-progress → in-qa: Restart, Exit and close cancel the run: no coins, no history; tests updated and green.
 - 2026-10-30, in-qa → needs-playtest: QA: all 4 criteria pass against the cancel decision; GUT 2202/2202, tools 582 OK, game/tools 752 OK
+- 2026-10-30, needs-playtest → done: Build I: T-416 LGTM by the board (2026-10-30)
