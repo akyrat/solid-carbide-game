@@ -61,6 +61,10 @@ const ALL_WEAPONS_KEY := "all_weapons_at_start"
 ## Tests set this to 0 (off) or 1 (on) to override "all_weapons_at_start"; -1 reads the file.
 static var all_weapons_override := -1
 
+const MODE_RUNNING := 0
+const MODE_WRECKED := 1
+const MODE_STOPPED := 2
+
 ## False stops the weapons and projectiles (tests).
 var enabled := true
 ## Bound by bind(): the run scene, its state and car.
@@ -241,7 +245,7 @@ func _physics_process(delta: float) -> void:
 func step(dt: float) -> void:
 	if not enabled or car == null or not is_instance_valid(car):
 		return
-	if state != null and not state.is_running():
+	if _mode() == MODE_STOPPED:
 		return
 	# Projectiles first, so one fired this step starts moving on the next
 	# (as the prototype's bullets do).
@@ -249,13 +253,34 @@ func step(dt: float) -> void:
 		if not is_instance_valid(p):
 			projectiles.erase(p)
 			continue
+		if _mode() == MODE_STOPPED:
+			return  # the run ended in this step (T-414): nothing later damages anything
 		p.step(dt)
 		if p.is_done():
 			projectiles.erase(p)
 			p.queue_free()
 	for w in weapons.values():
+		var mode := _mode()
+		if mode == MODE_STOPPED:
+			return
 		if w.is_owned():
-			w.step(dt)
+			if mode == MODE_WRECKED:
+				w.step_wrecked(dt)
+			else:
+				w.step(dt)
+
+
+## How the weapons step now (T-414): MODE_RUNNING while the run is going,
+## MODE_WRECKED while the car is wrecked (Weapons, Decisions, "Weapons during the
+## wreck"), MODE_STOPPED once the run is over. Checked before every projectile
+## and weapon, not once per step, so a kaiju kill that ends the run in this step
+## stops the rest.
+func _mode() -> int:
+	if state == null or state.is_running():
+		return MODE_RUNNING
+	if state.has_method("is_wrecked") and state.is_wrecked():
+		return MODE_WRECKED
+	return MODE_STOPPED
 
 
 ## Adds a projectile (a Node2D with step(dt) and is_done()) to the drawing and the step.

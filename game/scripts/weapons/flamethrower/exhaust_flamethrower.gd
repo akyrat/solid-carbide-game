@@ -176,6 +176,14 @@ func _reset_flame() -> void:
 
 # --- Each step -----------------------------------------------------------
 
+## While the car is wrecked (T-414) no new flame is made; the burn tints already
+## on enemies run out.
+func step_wrecked(dt: float) -> void:
+	_age_burns(dt)
+	_reset_flame()
+	_update_drawing()
+
+
 ## One physics step of `dt` seconds (the rack calls it while owned, after the car has moved).
 func step(dt: float) -> void:
 	grow.advance(dt)

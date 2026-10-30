@@ -250,7 +250,7 @@ func test_no_damage_while_paused() -> void:
 
 func test_no_damage_after_the_run_ends() -> void:
 	rack.upgrade("underglow")
-	run.state.damage_car(1e9)  # the car is destroyed: the run is lost
+	run.state.kaiju_killed()  # the run is won and over (T-414: a wreck is not over)
 	assert_false(run.state.is_running())
 	var e := _enemy_at(_off(1.0))
 	_step(60)
