@@ -1,7 +1,7 @@
 ---
 id: T-388
 title: Every sound effect off for the MVP, with one switch; the music stays
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: sfx
 lead: Goal-G-007
@@ -15,7 +15,7 @@ documents_affected: [game/docs/sound/sound-effects.md]
 files_to_read_first: [tasks/README.md, docs/hud-and-menus.md, game/docs/sound/sound-effects.md, game/data/sfx.json, game/scripts/run/run_sounds.gd, game/scripts/ui/game_settings.gd, game/scripts/game/music_player.gd, game/tests/unit/run/test_run_sounds.gd, game/tests/unit/test_sfx_volume.gd, game/tests/unit/game/test_music.gd]
 files_expected_to_change: [game/data/sfx.json, game/scripts/run/run_sounds.gd, game/scripts/ui/game_settings.gd, game/tests/unit/run/test_sfx_off.gd, game/docs/sound/sound-effects.md]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -55,6 +55,10 @@ Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-388.
 
 Goal runner (G-007): the agent is done; QA is checking it.
 
+### 2026-10-30, In QA → Needs playtest
+
+Goal runner (G-007): QA passed; merged into playtest/G-007.
+
 ## Style review
 
 Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
@@ -72,3 +76,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 **Refusals:** none.
 
 **QA round 1:** GUT 1972/1972 (162 scripts) re-run, matches the notes. `game/tools` 675 OK (1 skipped). `tools` set: ran 60+ dots with no failure before I stopped waiting (very slow); no `tools/` file changed in this ticket, so I accept the 573 OK in the notes. test_sfx_off.gd read: covers every id at volume 100 (not started, bus muted), music in menu and run at 65, nothing deleted. git diff shows no deleted files. Doc records the switch. No screenshots needed (audio only). `tools/qa_check.py` was refused (not pre-approved), so skipped.
+- 2026-10-30, in-qa → needs-playtest: QA passed every criterion (goal G-007).
