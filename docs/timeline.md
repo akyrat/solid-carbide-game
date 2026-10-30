@@ -2455,3 +2455,8 @@ Entry format:
 - Decision or change: The board: low-rise, small and long buildings become connectable platforms at height 3 with the same art (trimmed by script); only skyscrapers stay solid; every collider and pickup works at its height.
 - Documents touched: docs/level-design.md
 - Tasks: T-405
+
+## 2026-10-30: A health pickup revives a wreck
+- Decision or change: The board: a wrecked car still sliding that reaches a health pickup's range picks it up and revives with 1 heart.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-406
