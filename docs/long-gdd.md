@@ -348,6 +348,17 @@ How the sides of a raised area and its ramp meet the car, in the elevation test 
 - **The ramp's sides** (its two long sides, not its climbing end or its top; proposal): the same as a drop-off edge, a step of the ramp's height at that point. Driving off a side from on the ramp, the car leaves the ground at the ramp's height there and falls to the ground with gravity. From the ground beside the ramp, the side is a wall as high as the ramp at that point.
 - **Curbs** (proposal): a step of the ground no higher than 0.1 units is driven over, not a wall or a drop; near the ramp's foot, where its sides are that low, the car drives onto the ramp from the side.
 
+#### The car's footprint (task T-411)
+
+How the car's drawn size meets the sides of raised areas (rooftops, ramps, T-405's platforms) (Decisions, "Elevation", and the drawn size, 2026-10-07). Before, only the car's centre met them: the drawn front half drove into a rooftop's or ramp's side before the car bounced, turning beside a side swept the nose into it, and tyre marks streaked down the wall at a roof edge. How it is built: `game/docs/level/elevation-test-scene.md`, "The car's footprint (T-411)".
+
+- **The drawn car stops at a side** (proposal for the board's playtest; open question (b) below): the whole drawn outline, 1 wide and 3 long, meets the sides by the rule of "Elevation: the platform's sides" (above), so the bumper, a corner or a flank bounces off as soon as it touches, head-on, at an angle and while turning: a turn into a side stops like a drive into it. The ramp the car is on is never a wall for its own nose or tail, and touching platforms of the same height have no wall between them.
+- **Unchanged:** the 1 by 1 physics body for buildings, boulders and the map's edge (Decisions, 2026-10-07); falling off a roof edge and landing, which still go by the centre (open question (a) below); the curb height. Near a ramp's foot, a side is a curb only where it is under 0.1 high under every point of the car, so the car can no longer slip on over the side with its centre at the lowest 0.4 units and its flank over a taller part.
+- **Ramp tops** (Decisions, "Every ramp launches the car off its top"): already built by T-400; T-411 checks a free-standing ramp launches, higher at 16.5 units/s than at 11.
+- **Tyre marks at a roof edge:** a rear tyre hanging over an edge (its ground more than 0.1 below the car) lays no mark and its mark ends; a new one starts when it is back on the ground, as after a jump (Decisions, "No drift smoke or tyre marks in the air").
+- **Open questions for the board** (the T-411 assessment; today's choices kept): (a) when a car crawling off a roof edge tips off: when its middle passes the edge (today), when its front wheels leave, or as soon as the nose leaves; (b) whether the drawn body should bounce off a rooftop's or ramp's side as soon as the bumper touches (built, as a proposal); (c) whether a crawling car (under 4 units/s) launches off a ramp's top too, or whether there is a minimum speed (today: under 4 it rolls off and falls); (d) whether the nose may still enter skyscrapers by 1 unit (the 1 by 1 body, today).
+- **Screenshots:** before and after, the car pressed against the platform's south, north and west sides and the ramp's side in the elevation test scene: `art-archive/T-411/screenshots/compare_before_after.png` (and the `before_*.png`, `after_*.png` frames).
+
 #### Elevation: the three layers of the sample map (task T-195)
 
 The car's height (above) checked on the elevation sample map's three layers, the street (0), the first-floor rooftops (3) and the second-floor rooftops (6) (Level design, "Elevation sample map"). It works there unchanged: the ramps whose foot is on a rooftop (3 to 6) need no special case, since the car's height always follows, leaves and lands on the ground under it, whatever that ground's height. The numbers (gravity, the takeoff speed and factor, the curb height) are unchanged. How it is tested and run: `game/docs/level/elevation-sample-map.md`, "The car's height on the three layers (T-195)".
@@ -1511,6 +1522,7 @@ Solid Carbide is retro-feeling 2D pixel art in a 3/4 isometric view, set at nigh
   - **Parked cars:** plain, boring everyday city cars (the sample: a pale silver-grey four-door sedan), clearly not the player's car: no Mustang shape, no stripes, never dark green or any of Greenbull's colours; dull paint in the city's colours, unlit lights, no glow; in the player car's 128 x 128 frame at the same scale. Four facings (top right, bottom right, bottom left, top left); a facing and its mirror come from one picture (top right is top left mirrored). PixelLab, then cleaned by script.
   - **Meteor crater** (added by the board, 2026-10-30): a flat ground decal at the road tiles' size, transparent round it, so it lies on asphalt, gravel or sidewalk; a hole seen at the road's angle (its far inner wall shows, the near wall hides under the rim), with broken, lifted asphalt round the rim, a dithered scorched band, glowing magenta cracks running out over the ground and meteor fragments glowing on the floor: the road's own asphalt with the boulders' own rock and glow colours. The car drives over it. Script-drawn, no PixelLab.
   - How they are made: `game/docs/art/sidewalk-parked-cars.md`; every version and its score: T-397's Style review.
+  - **The full set** (T-399): the 47 sidewalk tiles (every curb piece: straights, outer and inner corners) and three meteor crater looks, script-drawn from the sample and refined by script in the style loop (sidewalk 8/10, craters 8/10). The five cars (parked 1 to 3: the sample's silver-grey sedan, a slate grey-blue hatchback, an off-white kei van; broken 1 and 2: a dusty beige sedan and a dark grey hatchback, wrecked) at the four facings: each from PixelLab's 8 rotations of one picture (the board liked them, 2026-10-30), a car facing up the screen and one facing down it, the other two their mirrors. PixelLab paints the headlights red like the rear lights, so a free script repaints the front lamps grey, unlit (the board: "Only its rear lights are supposed to be red"). The broken cars' damage is partly script-drawn (cracked glass, dents, rust, scorch, a flat or missing wheel).
 
 ### Content
 
@@ -1829,11 +1841,11 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `89803244905ce8819841b722a5309c2f6764ea705c999fa46f46456b98d11bf0` |
-| `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
+| `drifting.md` | `99ac393e1897198069b3f8cb5f936357382b87a55b7e8b01c2e88eb936546f9f` |
 | `level-design.md` | `1df2ad169580f84a2a15614d5309e11b9627e7259b8b624d89d2190c73272579` |
 | `enemies.md` | `3cbe1d82bf16269b1991ce8b96102a155d2d613f6b1fc796d605dad37b612bc2` |
 | `weapons.md` | `d9f6f69d6b8d84e1656454eb605cbed8c681dfc2204b0ffa45bf74c0590d5dcf` |
 | `garage-design.md` | `e4bd53c1be4bf77aa465f6e8653b2901e117112f6f849f07078480f5cb800c02` |
-| `visual-style.md` | `9e1cf8c06515f834ccbc675f3c5dc08afb4703249bb362799a71065e2385c817` |
+| `visual-style.md` | `91c5d48416ceaf9cfb1da72c6ec8ef75a27eb11094bfcf76df1251b264d8f2cc` |
 | `extended-narrative.md` | `db8cd37e45e2a79347b0122c544f2e2a42be2126e335f9445d3b98cc20e7cf2f` |
 | `hud-and-menus.md` | `86075a1fef744fd1acbb24f7847eabc5ebebac95e7cfd1195d78b24a7c75d93f` |

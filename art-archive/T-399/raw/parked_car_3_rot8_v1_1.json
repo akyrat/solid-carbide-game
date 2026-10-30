@@ -1,0 +1,124 @@
+{
+  "file": "parked_car_3_rot8_v1_1.png",
+  "endpoint": "/generate-8-rotations-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "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",
+      "format": "png"
+    },
+    "description": "a plain boring small boxy japanese kei minivan, tall box shape, parked, dull off-white paint with grey bumpers, dark tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday delivery van, no text, no logos, no stripes, isometric pixel art game sprite, same camera and same size in every direction",
+    "no_background": true
+  },
+  "prompt": "a plain boring small boxy japanese kei minivan, tall box shape, parked, dull off-white paint with grey bumpers, dark tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday delivery van, no text, no logos, no stripes, isometric pixel art game sprite, same camera and same size in every direction",
+  "job_id": "c9c186a6-63ef-4ff8-969c-6ecc4fd1f607",
+  "usage": {
+    "type": "generations",
+    "generations": 2.0
+  },
+  "generated_at": "2026-10-30T13:34:21+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-397/parked_car_ne.png",
+    "game/art/ground/ground_atlas.png",
+    "game/art/boulders/boulder_a.png"
+  ],
+  "task": "T-399",
+  "job_status": "completed",
+  "notes": "T-399 parked car 3 (plain off-white kei box minivan), version 1, 8 rotations from the first picture",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 1,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "parked_car_3_rot8_v1_0.png",
+    "parked_car_3_rot8_v1_1.png",
+    "parked_car_3_rot8_v1_2.png",
+    "parked_car_3_rot8_v1_3.png",
+    "parked_car_3_rot8_v1_4.png",
+    "parked_car_3_rot8_v1_5.png",
+    "parked_car_3_rot8_v1_6.png",
+    "parked_car_3_rot8_v1_7.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 2.0
+    },
+    "id": "c9c186a6-63ef-4ff8-969c-6ecc4fd1f607",
+    "status": "completed",
+    "created_at": "2026-10-30T13:32:33.452537+00:00",
+    "last_response": {
+      "seed": 3273562021,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 2,
+        "cost_if_paid": 0.028359424246682058
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<7908 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<11088 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7784 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<11868 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7444 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<11828 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<7360 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<11600 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.7333333333333333,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 2.0
+      },
+      "generation_id": "8321dc97-8c3e-4a2d-a142-5af294b34b3b",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-30T13:32:53.197771+00:00"
+    }
+  }
+}

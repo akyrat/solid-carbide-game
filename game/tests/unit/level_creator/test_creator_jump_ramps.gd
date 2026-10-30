@@ -259,6 +259,54 @@ func test_the_car_drives_up_it_and_flies_off_its_top_in_every_direction_and_the_
 		car.queue_free()
 
 
+## T-411 (the car's whole drawn outline meets the sides): up the small ramp (4 long, 0 to 2, slope
+## 0.5, the steepest ramp in the game) at 4, 11 and 16.5 units/s in every direction, the drawn nose and
+## tail never meet a false wall, and on the ramp the height follows its slope within 0.01.
+## 11 is cruise speed with W held; 4 and 16.5 are held by setting the velocity each step on the ground.
+func test_up_it_at_three_speeds_no_false_wall_and_the_height_follows_the_slope() -> void:
+	var world := Node2D.new()
+	add_child_autofree(world)
+	for view in DIRECTIONS:
+		var e := _editor()
+		var r := _place(e, "ramp-0-2", view, Vector2(-11, -11))
+		var rect := Rect2(float(r.item.x), float(r.item.y), float(r.item.w), float(r.item.h))
+		var ground := GroundHeight.new()
+		ground.load_data(e.level_data)
+		for speed in [4.0, 11.0, 16.5]:
+			var car := _car(ground, rect.get_center() - UNIT[view] * 8.0, view, world)
+			car.detect_tricks = false
+			var hits := []
+			car.hit_obstacle.connect(func(_c, _i, _n, _s): hits.append(1))
+			var held: bool = speed != 11.0
+			car.scripted_input = [not held, false, 0.0]
+			var on_ramp := 0
+			var worst := 0.0
+			var took := []
+			car.height_model.took_off.connect(func(from_ramp, _vz): took.append(from_ramp))
+			for i in 150:
+				if held and not car.airborne:
+					car.model.set_velocity(UNIT[view] * speed)
+				car.physics_step()
+				var p: Vector2 = car.model.get_position()
+				if not car.airborne and ground.is_ramp(p):
+					on_ramp += 1
+					worst = maxf(worst, absf(car.height - ground.height_at(p)))
+				if took.size() > 0:
+					break
+			var what := "%s at %.1f u/s" % [view, speed]
+			assert_gt(on_ramp, 0, "%s: it drove on the ramp" % what)
+			assert_lt(worst, 0.01, "%s: the height follows the slope (worst %.4f)" % [what, worst])
+			assert_eq(hits.size(), 0, "%s: no false wall" % what)
+			if speed >= 11.0:
+				assert_eq(took, [true], "%s: it left through the open top, launched" % what)
+			else:
+				# Held at 4 before each step, the model's own drag brings it to 3.90 within the step,
+				# under RAMP_TAKEOFF_MIN_SPEED (4): it rolls off the top and falls (the board's open
+				# question (c), Drifting, Content, "The car's footprint (task T-411)").
+				assert_eq(took, [false], "%s: under the launch speed it rolls off and falls" % what)
+			car.queue_free()
+
+
 func test_from_behind_its_tall_end_is_a_wall_like_any_raised_side() -> void:
 	var world := Node2D.new()
 	add_child_autofree(world)

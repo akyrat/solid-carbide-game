@@ -2665,3 +2665,8 @@ Entry format:
 - Decision or change: The run is lost only when the wreck's 3 seconds end; a kaiju kill during the wreck wins; coins and health pickups count; Restart or Exit during the wreck keeps no coins and adds no runs-list entry.
 - Documents touched: `docs/game-loop-architecture.md`
 - Tasks: T-413
+
+## 2026-10-30: The street art: sidewalks, curbs, parked and broken cars, craters
+- Decision or change: The full sidewalk and curb set, five parked and broken cars at four facings (PixelLab's rotations with the front lamps repainted grey by script, as the board asked), and three crater looks, swapped into the level creator; 21 of 50 generations used.
+- Documents touched: `docs/drifting.md`, `docs/visual-style.md`
+- Tasks: T-399
