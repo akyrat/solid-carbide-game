@@ -37,13 +37,13 @@ The board's review: Play a run in a small window, at full screen and on the ultr
 
 ## Acceptance criteria
 
-- [ ] Headless tests at 1152 x 648, 1920 x 1080, 2560 x 1440, 3440 x 1440 and 960 x 540 check that every HUD piece keeps its corner or edge, has a size in proportion to the window, overlaps no other piece and is fully on screen. (QA: pass / fail)
-- [ ] Tests show the HUD's scale is a whole number or its textures use nearest filtering, and the world camera's zoom is the same with and without the HUD's scaling. (QA: pass / fail)
-- [ ] The pause screen has a HUD size slider laid out like the other sliders, its label read from game/data/pause_text.json (a test checks the label equals the file's text, and grep finds no literal of it in the scripts). (QA: pass / fail)
-- [ ] Tests show moving the slider changes the HUD's scale at once while paused, saves to GameSettings only when the drag ends, and the saved value is applied at the next start. (QA: pass / fail)
-- [ ] Screenshots at the five window sizes, and with the slider at both ends, are in art-archive/<id>/screenshots/. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md, Content and game/docs/hud-and-menus/hud.md and pause-screen.md describe the scaling rule, the slider's range and default, and which screens it covers. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes, and the new behaviour has its own tests. (QA: pass / fail)
+- [ ] Headless tests at 1152 x 648, 1920 x 1080, 2560 x 1440, 3440 x 1440 and 960 x 540 check that every HUD piece keeps its corner or edge, has a size in proportion to the window, overlaps no other piece and is fully on screen. (QA: pass)
+- [ ] Tests show the HUD's scale is a whole number or its textures use nearest filtering, and the world camera's zoom is the same with and without the HUD's scaling. (QA: pass)
+- [ ] The pause screen has a HUD size slider laid out like the other sliders, its label read from game/data/pause_text.json (a test checks the label equals the file's text, and grep finds no literal of it in the scripts). (QA: pass)
+- [ ] Tests show moving the slider changes the HUD's scale at once while paused, saves to GameSettings only when the drag ends, and the saved value is applied at the next start. (QA: pass)
+- [ ] Screenshots at the five window sizes, and with the slider at both ends, are in art-archive/<id>/screenshots/. (QA: pass)
+- [ ] docs/hud-and-menus.md, Content and game/docs/hud-and-menus/hud.md and pause-screen.md describe the scaling rule, the slider's range and default, and which screens it covers. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes, and the new behaviour has its own tests. (QA: pass)
 
 ## Updates
 
@@ -105,3 +105,5 @@ Written by the agent when it finishes.
 **Documents updated:** `docs/hud-and-menus.md` (Content: the new section "The HUD scales with the window" with the rule, range, default and covered screens; the HUD size slider bullet in "Pause screen"), `game/docs/hud-and-menus/hud.md`, `game/docs/hud-and-menus/pause-screen.md`.
 
 **Refusals:** none.
+
+**QA round 1 (2026-10-30): all 7 criteria pass.** `python tools/qa_check.py` was refused (not on the pre-approved list), so I ran the three test sets directly: GUT 2170/2170 passing (run_tests.sh), `game/tools` unittest 736 OK (1 skipped), `tools` unittest 582 OK. Each criterion was judged from the test files, the code and the docs by grep, not by re-reading every line. Test names in test_hud_scaling.gd cover the five sizes, nearest filtering and camera zoom. test_hud_size_slider.gd covers the label, the drag and the saved value. The grep finds `hud_size_label` only as a key and variable, and the text itself is only in pause_text.json. Nine screenshots are in art-archive/T-431/screenshots/: five sizes and four slider-end shots. The three docs mention the rule, range and covered screens. The qa_check marks run was skipped.
