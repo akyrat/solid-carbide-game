@@ -1,0 +1,41 @@
+{
+  "file": "three_sixty_v4.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art, a closed neon pink tire trail loop drawn as an isometric ellipse on the ground with a 1 pixel darker purple stepped halo, the trail overlapping a little where it closes, the middle empty, pale grey lilac tire smoke puffs around the loop, a small dark forest green 1967 Mustang fastback car drifting on the loop, deep dark green body color, two bold white racing stripes with a gap along hood roof and trunk, sloped fastback roof, roof and one side of the car clearly visible, dark windows, black wheels, near black outline, light highlight pixels on roof and hood edges, navy purple shadow under the car, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, teal car, navy car, blue car, purple car, flat car, filled ellipse, background, ground tiles, road, sky, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 12,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art, a closed neon pink tire trail loop drawn as an isometric ellipse on the ground with a 1 pixel darker purple stepped halo, the trail overlapping a little where it closes, the middle empty, pale grey lilac tire smoke puffs around the loop, a small dark forest green 1967 Mustang fastback car drifting on the loop, deep dark green body color, two bold white racing stripes with a gap along hood roof and trunk, sloped fastback roof, roof and one side of the car clearly visible, dark windows, black wheels, near black outline, light highlight pixels on roof and hood edges, navy purple shadow under the car, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:11:10+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/three_sixty.md",
+    "art-archive/T-384/briefs/common.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v4 (last refine) for three_sixty: v3 ring + v2 low 3/4 view, dark green striped fastback, smoke puffs",
+  "generator": "game/tools/pixellab_client.py"
+}

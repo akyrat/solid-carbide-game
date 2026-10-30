@@ -183,6 +183,25 @@ Rule 4: the dusk or night mood is weak, because the ellipse fill is bright and s
 Rule 3: the isometric view showing the top and one side is only roughly there. The car needs a clear top face and one side face.
 - Rules broken: 2, 3, 4, 5, 10
 
+#### Round 3
+
+- Version 3: `art-archive/T-384/style-loop/v3-2.png`
+- What changed: Version 3 is a paid PixelLab refine (create-image-pixflux, 64x48, no_background true). It is call 7 of the goal's 40, and the 360 has now used 3 of its 4, so one refine is left. No free script can move or redraw the car, the ring or the smoke, and my own pixel-edit scripts were refused earlier in this ticket, so I skipped the script fix. A script still cut the colours to 30. The prompt asked for a tiny car about 14 px long on the ring's edge, a thin ring trail with a 1 px halo and an empty middle, separate pale lilac smoke puffs, and the neon only on the trail. All 6 style_rules.py checks pass. What improved over v2: the glowing filled ellipse is gone, and the ring is a bold closed neon pink loop with stepped bands again, with an empty middle. The car is a little smaller and reads more clearly dark green, with white highlight and stripe pixels. What is still wrong: PixelLab still puts the car in the middle of the loop, not on its edge. There is still no visible smoke ring. Two extra trail lines leave the loop to the top right. The raw output, request and record are in art-archive/T-384/pixellab/three_sixty_v3*, and the preview is style-loop/v3-2_preview.png. The result notes are updated and the work is committed (623e8ad1).
+- Script checks: 6 of 6 pass
+- Score: 5/10
+- Reason: The script checks all pass: size 64x48, transparent corners, no semi-transparent pixels, 30 colours, and no Greenbull light green or yellow. The visual rules are only partly met. I could only view the image at its native 64x48.
+
+Rule 10: the car reads as dark navy or teal, not Greenbull's dark green (12,76,44). The two centred white stripes with a gap between them are not clearly visible. Recolour the body to the dark green and draw two clear white stripes along the hood and roof, with a gap between them. The fastback Mustang silhouette is also hard to read. Make the hood, roof slope and tail more distinct.
+
+Rule 3: the 3/4 isometric view showing the top and one side is weak. The car looks nearly flat. Show the roof and one flank clearly, and draw the ring as an isometric ellipse, which it roughly is.
+
+Rule 2: the outline and shading are thin. The car is a small blob with little highlight detail. Add a dark near-black selective outline broken by lighter highlight pixels, plus more shading on the body, wheels and windows.
+
+Brief and rule 5: the tire smoke ring the brief asks for is missing or unreadable. Add a ring of pale purple or grey smoke puffs around the loop. The neon pink trail is drawn as a clean closed ring with a stepped halo, which is acceptable. Keep the glow as stepped halos with no blur. Also make the loop path read as a trail the car has driven, for example with a slight tail or overlap at the closing point.
+
+Rule 4: the dusk feel comes only from the colours. Strengthen the navy and purple night tones on the shadow and props.
+- Rules broken: 2, 3, 10
+
 ## Result notes
 
 Written by the agent when it finishes.
@@ -206,3 +225,5 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Call 6: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v2.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v2-2.png (preview v2-2_preview.png). Script checks: all 6 pass. Running total: 6 / 40; three_sixty has used 2 of its 4. My own look: the car now shows its top and one side in 3/4 view and has dark green on it, but it is still big and in the middle of the ring, it has lime-ish yellow-green highlight pixels (not Greenbull's exact colours, the script passes), and the stripes are unclear. The ring is now a thinner ellipse with weaker halos, and there is still no smoke ring. Mixed: better view and colour than v1, worse ring.
 - Call 7 (planned): three_sixty v3 refine (v2 scored 5: car a teal-purple blob in the middle, filled glowing ellipse instead of a thin trail, no smoke ring). These are composition problems, so no free script can fix them. Paid refine: create-image-pixflux 64x48 with a tiny car on the ring's edge, a thin ring trail with an empty middle, separate smoke puffs, and the neon only on the trail. 1 generation. Loop output: art-archive/T-384/style-loop/v3-2.png.
 - Call 7: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v3.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v3-2.png (preview v3-2_preview.png). Script checks: all 6 pass. Running total: 7 / 40; three_sixty has used 3 of its 4, so one refine is left. My own look: the ring is back to a bold closed neon pink loop with stepped bands (as in v1), and two trail lines lead out of it to the top right like an exit path. The middle is no longer a glowing fill. The car is a little smaller and more clearly dark green with white highlight and stripe pixels, but PixelLab still puts it in the middle of the loop, not on the edge. There is still no visible smoke ring.
+- Call 8 (planned): three_sixty v4, last refine (v3 scored 5: car not dark green, flat, no stripes, no smoke ring). The car can't be redrawn by a free script, so this is a paid refine: create-image-pixflux 64x48 with v3's ring, v2's low top-down 3/4 view, and a stronger dark green fastback with stripes plus smoke puffs. 1 generation. Loop output: art-archive/T-384/style-loop/v4-2.png.
+- Call 8: done, usage 1 generation (raw: art-archive/T-384/pixellab/three_sixty_v4.png, request and record next to it). Free fix: palette reduced to 30 → art-archive/T-384/style-loop/v4-2.png (preview v4-2_preview.png). Script checks: all 6 pass. Running total: 8 / 40; three_sixty has used all 4 of its generations (1 + 3 refines). My own look: the best car of the four. It shows a clear 3/4 top and side, a black outline, white stripe and highlight pixels, a purple shadow, and pale lilac smoke puffs at last. But the body is teal-green rather than 12,76,44, the car is big rather than tiny, and the loop has broken into scattered dotted pink arcs instead of v3's clean closed ring.
