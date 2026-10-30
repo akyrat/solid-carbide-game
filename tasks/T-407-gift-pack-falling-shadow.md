@@ -1,7 +1,7 @@
 ---
 id: T-407
 title: A falling gift pack casts a shadow where it will land, like the car's shadow in the air
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -77,3 +77,4 @@ Tests: new `game/tests/unit/run/test_gift_drops_shadow.gd` (4 tests: the car's s
 Docs: `docs/game-loop-architecture.md` (the falling shadow, under "The gift pack drop"), `game/docs/game-loop/gift-pack-and-pickups.md` ("Falling shadow (T-407)").
 
 GIFs (fixture `game/tests/fixtures/gift_pack_shadow_demo.tscn`): `art-archive/T-407/screenshots/gift_shadow_street.gif` (ground) and `gift_shadow_roof.gif` (rooftop, height 6). A contact sheet of the roof one shows the shadow under the parachute on the rooftop.
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board
