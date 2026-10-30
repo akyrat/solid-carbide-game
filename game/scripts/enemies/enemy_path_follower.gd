@@ -25,6 +25,29 @@ const REACH := 1.0
 const DROP_NEAR := 3.0
 const EnemyHeightScript := preload("res://scripts/enemies/enemy_height.gd")
 
+## T-380 (Enemies, Decisions, "Minions don't get stuck on ramps"): with
+## `by_sight` (the minions; the kaiju keeps the surface rule) the enemy walks
+## straight at the car only while the line to it is clear on the navigation's
+## grid (enemy_navigation.gd, line_clear), on any surface, and otherwise by a
+## path. Before, "the car's surface" decided: on the street a ramp's high side,
+## a rooftop's edge or a building between them was walked into head-on (stuck
+## in the pocket where a ramp's side meets its rooftop), and at a ramp's foot
+## a minion went back and forth between the street (straight) and the ramp (a
+## path back to the foot's point).
+var by_sight := false
+## Seconds between two sight checks, and the half width (units) of the line
+## checked: the body's distance off an edge (minion.gd, BASE_RADIUS_UNITS).
+const SIGHT_SECONDS := 0.1
+const SIGHT_HALF_WIDTH := 0.5
+## With `by_sight`, a path point counts as reached this close (units) instead
+## of REACH: a minion of 1 unit (T-379) that turned for the next point 1 unit
+## early cut a building's corner and jammed on it.
+const SIGHT_REACH := 0.5
+var sight := true
+var sight_clock := 0.0
+## How many sight checks it made (tests).
+var sight_checks := 0
+
 var path := PackedVector2Array()
 var index := 0
 ## Seconds until the next path.
@@ -51,7 +74,17 @@ func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = 
 	if nav == null:
 		return car_units
 	var car_s: int = nav.surface_at(car_units)
-	if nav.surface_at(from) == car_s:
+	if by_sight:
+		# T-380: straight only while nothing stands between it and the car.
+		sight_clock -= dt
+		if sight_clock <= 0.0:
+			sight = nav.line_clear(from, car_units, SIGHT_HALF_WIDTH)
+			sight_clock = SIGHT_SECONDS
+			sight_checks += 1
+		if sight:
+			_forget()
+			return car_units
+	elif nav.surface_at(from) == car_s:
 		_forget()
 		return car_units
 	clock -= dt
@@ -61,7 +94,8 @@ func target(nav, from: Vector2, car_units: Vector2, dt: float, budgeted: bool = 
 		clock = REPATH_SECONDS
 		car_surface = car_s
 		paths_found += 1
-	while index < path.size() and from.distance_to(path[index]) <= REACH:
+	var reach := SIGHT_REACH if by_sight else REACH
+	while index < path.size() and from.distance_to(path[index]) <= reach:
 		index += 1
 	if index >= path.size():
 		return car_units

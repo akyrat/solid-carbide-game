@@ -13,6 +13,7 @@ var snd: Node
 
 
 func before_each() -> void:
+	GameSettings.sfx_enabled_override = 1  # these tests are about the sounds, not the MVP switch (T-388)
 	Flame.playtest_override = 0
 	run = RunScene.instantiate()
 	add_child_autofree(run)
@@ -24,6 +25,7 @@ func before_each() -> void:
 
 
 func after_each() -> void:
+	GameSettings.sfx_enabled_override = -1
 	Flame.playtest_override = -1
 	get_tree().paused = false
 

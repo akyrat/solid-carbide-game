@@ -94,7 +94,8 @@ func test_drop_off_edge_from_below_bounces_like_a_wall() -> void:
 			var impact: float = _hits[0][3]
 			assert_gt(impact, 5.0, "it hit at speed")
 			assert_almost_eq(car.model.get_velocity().y, -impact * float(car.tuning.wall_bounce), 1e-4)
-			assert_gt(pos.y, -8.0 - CarHeight.SAMPLE_STEP - EPS, "stopped at the side")
+			# T-411: the drawn nose (1.5 ahead of the centre) stops at the side.
+			assert_gt(pos.y, -8.0 - CarHeight.HALF_LENGTH - CarHeight.SAMPLE_STEP - EPS, "stopped at the side")
 	assert_gt(hit_step, 0, "it reached the side")
 	assert_eq(_hits.size(), 1, "pressed against the side with W held: one hit")
 	assert_eq(_hits[0][0], _ground, "the collider is the ground")
@@ -282,7 +283,8 @@ func test_driving_into_the_ramps_side_from_the_ground_is_a_wall() -> void:
 	var side_heights := []
 	for i in 120:
 		var before: Vector2 = car.model.get_position()
-		var res: Dictionary = car.height_model._walk(before, before + car.model.get_velocity() * car.model.dt, car.model.dt)
+		var rot: float = car.model.rotation
+		var res: Dictionary = car.height_model._walk(before, before + car.model.get_velocity() * car.model.dt, car.model.dt, rot, rot)
 		if res.wall:
 			side_heights.append(res.wall_height)
 		car.physics_step()
@@ -292,21 +294,35 @@ func test_driving_into_the_ramps_side_from_the_ground_is_a_wall() -> void:
 	assert_eq(_hits.size(), 1)
 	assert_eq(_hits[0][1], 1, "the ramp's area index")
 	assert_eq(_hits[0][2], Vector2.UP)
-	assert_almost_eq(side_heights[0], (20.0 - 14.0) / 4.0, 0.02, "as high as the ramp there")
+	# T-411: the drawn nose (x 13.5 to 14.5) meets it: the ramp's height there.
+	assert_almost_eq(side_heights[0], (20.0 - 14.0) / 4.0, 0.125 + 0.02, "as high as the ramp there")
 
 
 func test_ramp_side_lower_than_a_curb_is_driven_over() -> void:
 	# Near the ramp's foot the side is lower than STEP_CLIMB_MAX: the car drives on.
-	var car := _car(Vector2(19.85, -6), PI / 2.0)
-	var on_ramp := false
+	# T-411: every point of the drawn car must meet it there, so the car's
+	# left flank (x - 0.5) runs over the ramp's lowest 0.4 units.
+	var car := _car(Vector2(20.1, -6), PI / 2.0)
+	var flank_on_ramp := false
 	for i in 30:
 		car.physics_step()
-		if _ground.is_ramp(car.model.get_position()):
-			on_ramp = true
+		var pos: Vector2 = car.model.get_position()
+		if _ground.is_ramp(pos + Vector2(-0.45, 0)):
+			flank_on_ramp = true
+		if _ground.is_ramp(pos):
 			assert_false(car.airborne)
-			assert_almost_eq(car.height, _ground.height_at(car.model.get_position()), EPS)
-	assert_true(on_ramp)
+			assert_almost_eq(car.height, _ground.height_at(pos), EPS)
+	assert_true(flank_on_ramp)
 	assert_eq(_hits.size(), 0)
+
+
+func test_ramp_side_higher_than_a_curb_stops_the_flank() -> void:
+	# T-411: further up, the side under the drawn flank is more than a curb: a wall.
+	var car := _car(Vector2(19.85, -6), PI / 2.0)
+	for i in 30:
+		car.physics_step()
+	assert_eq(_hits.size(), 1)
+	assert_eq(_hits[0][2], Vector2.UP)
 
 
 func test_climbing_and_going_down_the_ramp_are_not_walls_or_drops() -> void:

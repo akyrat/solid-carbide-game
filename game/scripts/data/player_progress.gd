@@ -11,6 +11,11 @@ const DEFAULT_PATH := "user://progress.json"
 ## The save file. Tests point this at RunPaths.file(...) (task T-137).
 static var path: String = DEFAULT_PATH
 
+## Renamed upgrade ids (T-417): save version -> {old id: new id}. A save written at that
+## version or earlier has its levels moved to the new id when it loads. Empty: no
+## upgrade has been renamed yet; when one is, bump SafeSave.CURRENT_VERSION and add it here.
+const ID_RENAMES := {}
+
 ## Why buy() refused (OK means it did not).
 const OK := ""
 const NOT_ENOUGH_COINS := "not_enough_coins"
@@ -23,6 +28,10 @@ signal changed
 var coins: int = 0
 var levels: Dictionary = {}  # upgrade id -> level
 var garage: GarageData
+## Where the last load came from: "main", "backup" or "none" (a new player), and the
+## save's version (a file without one is version 1). T-417.
+var loaded_from: String = "none"
+var loaded_version: int = 1
 var _path: String
 
 
@@ -39,37 +48,45 @@ func _reset() -> void:
 		levels[id] = 0
 
 
-## Reads the save file. Missing or broken file: a new player. Returns true if a file was read.
+## Reads the save file (SafeSave: a broken file is kept aside and the backup is loaded;
+## neither: a new player). Returns true if a save was read.
 func load_from_disk() -> bool:
 	_reset()
-	if not FileAccess.file_exists(_path):
+	var res := SafeSave.read(_path, "coins")
+	loaded_from = res["source"]
+	loaded_version = res["version"]
+	if loaded_from == "none":
 		return false
-	var f := FileAccess.open(_path, FileAccess.READ)
-	if f == null:
-		return false
-	var json := JSON.new()
-	if json.parse(f.get_as_text()) != Error.OK:
-		return false
-	var parsed: Variant = json.data
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return false
+	var parsed: Dictionary = res["data"]
 	coins = maxi(0, int(parsed.get("coins", 0)))
 	var saved: Variant = parsed.get("levels", {})
 	if typeof(saved) != TYPE_DICTIONARY:
 		saved = {}
+	saved = _map_old_ids(saved, loaded_version)
 	for id in GarageData.UPGRADES:
 		levels[id] = clampi(int(saved.get(id, 0)), 0, garage.max_level())
 	return true
 
 
-## Writes the save file. Returns true on success.
+## Maps the ids of an older save to today's: ID_RENAMES[version] is {old id: new id} for
+## a save written at that version or earlier. Levels already under the new id win.
+static func _map_old_ids(saved: Dictionary, version: int, renames: Dictionary = ID_RENAMES) -> Dictionary:
+	var out := saved.duplicate()
+	for v in renames:
+		if version > int(v):
+			continue
+		for old_id in renames[v]:
+			if out.has(old_id):
+				var new_id: String = renames[v][old_id]
+				if not out.has(new_id):
+					out[new_id] = out[old_id]
+				out.erase(old_id)
+	return out
+
+
+## Writes the save file safely (temp file, rename, backup; SafeSave). Returns true on success.
 func save() -> bool:
-	var f := FileAccess.open(_path, FileAccess.WRITE)
-	if f == null:
-		push_error("Could not write the save file %s" % _path)
-		return false
-	f.store_string(JSON.stringify({"coins": coins, "levels": levels}, "\t"))
-	return true
+	return SafeSave.write(_path, {"coins": coins, "levels": levels}, "coins")
 
 
 ## The coin total.

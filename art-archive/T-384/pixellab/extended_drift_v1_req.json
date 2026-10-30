@@ -1,0 +1,10 @@
+{
+  "description": "tiny isometric pixel art scene at night, dark navy and purple asphalt background, a tiny dark green 1967 Mustang fastback car with two white racing stripes drifting sideways at the end of a long wide smooth curved arc, the arc drawn as a glowing neon pink trail with white tire smoke puffs along it, cyan neon accents, hard pixel edges, dark outline, cyberpunk synthwave",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, bright green, gradient, photo",
+  "image_size": {"width": 64, "height": 48},
+  "view": "high top-down",
+  "outline": "selective outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "no_background": false
+}

@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art tutorial icon on a transparent background with empty space. in the center: one small car sprite about 14 pixels long driving to the right on flat ground, seen from above at an angle showing its roof and one side, dark forest green body with two bold white stripes down the middle of the roof and hood, near black outline, white highlight pixels. behind the car: a long straight neon cyan trail line from the left edge to the car, bright pale cyan core with stepped darker blue halo pixels on each side. squeezing the car: two small very dark navy rock boulders with thin glowing magenta cracks, one boulder just above the car and one boulder just below the car, almost touching the car on both sides. small dark navy shadows. near black selective outline, few highlight pixels",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, light green, teal car, large car, close-up, two cars, car on rock, car on top of boulder, background, filled background, ground plate, platform, base, floor, sky, pastel, pink rock, cyan rock, bright rock, orange, gradient, photo, curve, grey shadow",
+  "image_size": {"width": 64, "height": 48},
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 14,
+  "no_background": true
+}

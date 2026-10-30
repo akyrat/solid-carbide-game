@@ -1,0 +1,47 @@
+{
+  "_comment": "T-381, the tutorial slides' and the pause screen's trick list's text (HUD and menus, Content, 'Tutorial slides and trick list'); the UI tickets read it, no text in code. Every line scored 8 or more in the style loop (T-381's Style review). Keys: slide1.*, slide2.*, slide3.*, trick.<id> (reused word for word from the trick popups and recap_text.json), button.*, checkbox.*, arrow.*. Each entry has a '<key>_comment' line saying where it appears.",
+  "slide1": {
+    "controls": "W accelerate, S brake/reverse, A left, D right. Live viewers want confidence. Fake it.",
+    "controls_comment": "Slide 1 (the controls), first line: what W, A, S and D do.",
+    "drift": "Accelerate while turning and the car drifts on its own. No drift button, zero friction.",
+    "drift_comment": "Slide 1 (the controls), second line under the controls: accelerating while turning drifts the car."
+  },
+  "slide2": {
+    "chain": "Tricks bring live viewers. Live viewers bring subs.",
+    "chain_comment": "Slide 2 (the loop), first line under the trick list: tricks bring viewers, viewers bring subs.",
+    "gift": "Every sub goal brings a gift pack: a weapon that keeps enemies away and the stream alive.",
+    "gift_comment": "Slide 2 (the loop), second line under the trick list: a sub goal brings a gift pack with a weapon that helps survive and keeps enemies away."
+  },
+  "slide3": {
+    "goal": "Chain tricks for gift packs. Be maxed out for the kaiju at 1 minute left. Peak content.",
+    "goal_comment": "Slide 3 (the goal): chain tricks to get the most weapons and be strongest when the kaiju arrives with 1 minute left."
+  },
+  "trick": {
+    "extended_drift": "LONG DRIFT!",
+    "three_sixty": "FULL 360!",
+    "alternate_drift": "ALT DRIFT!",
+    "air_one_eighty": "AIR 180!",
+    "air_three_sixty": "AIR 360!",
+    "airtime": "HANG TIME!",
+    "thread_the_needle": "THREAD THE NEEDLE!",
+    "comment": "Slide 2 (the loop) and the pause screen's trick list panel: the name beside each trick's illustration, one per trick id in game/docs/driving/tricks.md. Reused word for word from the trick popups (recap_text.json trick.*), so each trick has one name."
+  },
+  "button": {
+    "start": "Go live",
+    "start_comment": "Slide 3's button that starts the run (the board's word is 'Start'; the style loop's pick 'Go live' scored 9, a proposal for the playtest).",
+    "trick_list": "Trick list",
+    "trick_list_comment": "The pause screen's button that opens the trick list panel.",
+    "back": "Back",
+    "back_comment": "The trick list panel's back control, returning to the pause screen."
+  },
+  "checkbox": {
+    "dont_show": "Don't show again",
+    "dont_show_comment": "Slide 3, the checkbox label beside the Start button: ticked, the slides don't appear on later Starts."
+  },
+  "arrow": {
+    "left": "Previous slide",
+    "left_comment": "The left arrow's accessible label (tooltip) on the tutorial slides.",
+    "right": "Next slide",
+    "right_comment": "The right arrow's accessible label (tooltip) on the tutorial slides."
+  }
+}

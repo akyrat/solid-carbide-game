@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tests/fixtures/enemies_drop_demo.gd" id="1_demo"]
+
+[node name="MinionsRoundRampsGif" type="Node"]
+script = ExtResource("1_demo")
+car_units = Vector2(-68, -58)
+car_rotation = 0.0
+minion_spots = Array[Vector2]([Vector2(-92, -58), Vector2(-91, -64.5), Vector2(-91, -51), Vector2(-95, -62), Vector2(-89, -60), Vector2(-94, -54)])
+walk_seconds = 0.0
+zoom = 22.0
+quit_after_seconds = 7.0

@@ -1,0 +1,42 @@
+{
+  "file": "alternate_drift_v4.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art, a long open hot neon pink tire trail on the ground forming a big clear letter S across the whole image from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, both ends open, the trail a 1 pixel bright pale pink core line, then a 1 pixel hot pink step, then a 1 pixel dark magenta step, then a 1 pixel dark purple outer band, crisp stepped neon glow, a tiny car about 16 pixels long sliding sideways exactly at the middle bend of the S, the car is a dark forest green 1967 Mustang fastback, dark olive bottle green paint, two white racing stripes along hood and roof, roof and one side of the car visible, black outline around the car, white highlight pixels on the roof edge, small navy shadow under the car, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, soft glow, gradient, muted colors, closed oval, ring, circle, loop around the car, swirl, spiral, yellow, orange, lime, bright green, mint, teal car, cyan car, blue car, navy car, grey car, silver car, purple car, big car, background, ground tiles, road, sky, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "low top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art, a long open hot neon pink tire trail on the ground forming a big clear letter S across the whole image from the top left to the bottom right: first a curve bending left, then an opposite curve bending right, both ends open, the trail a 1 pixel bright pale pink core line, then a 1 pixel hot pink step, then a 1 pixel dark magenta step, then a 1 pixel dark purple outer band, crisp stepped neon glow, a tiny car about 16 pixels long sliding sideways exactly at the middle bend of the S, the car is a dark forest green 1967 Mustang fastback, dark olive bottle green paint, two white racing stripes along hood and roof, roof and one side of the car visible, black outline around the car, white highlight pixels on the roof edge, small navy shadow under the car, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:16:14+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/alternate_drift.md",
+    "art-archive/T-384/pixellab/alternate_drift_v2_req.json",
+    "art-archive/T-384/pixellab/alternate_drift_v3_req.json"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v4-3, last refine after 4/10",
+  "generator": "game/tools/pixellab_client.py"
+}

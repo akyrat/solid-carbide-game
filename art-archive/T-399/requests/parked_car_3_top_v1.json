@@ -1,0 +1,15 @@
+{
+ "image_size": {
+  "width": 128,
+  "height": 128
+ },
+ "no_background": true,
+ "isometric": true,
+ "outline": "single color black outline",
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "direction": "north-east",
+ "text_guidance_scale": 8,
+ "description": "a plain boring small boxy japanese kei minivan, tall box shape, parked, dull off-white paint with grey bumpers, dark tinted windows, unlit headlights, small black tyres, slightly dusty, an ordinary everyday delivery van, no text, no logos, no stripes, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object"
+}

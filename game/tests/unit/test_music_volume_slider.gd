@@ -7,11 +7,13 @@ var TEST_PATH := RunPaths.file("test_settings_t210.cfg")
 
 
 func before_each() -> void:
+	GameSettings.sfx_enabled_override = 1  # the bus maths, not the MVP switch (T-388)
 	GameSettings.path = TEST_PATH
 	DirAccess.remove_absolute(TEST_PATH)
 
 
 func after_each() -> void:
+	GameSettings.sfx_enabled_override = -1
 	get_tree().paused = false
 	DirAccess.remove_absolute(TEST_PATH)
 	TestSave.restore_settings()

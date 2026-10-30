@@ -1,0 +1,41 @@
+{
+  "file": "airtime_v4.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 top-down pixel art diagram of a long car jump on a transparent background, mostly empty space. bottom left: a small cool blue-grey steel launch ramp. a long thin neon pink dotted arc with dark magenta stepped glow pixels rises from the ramp to a very high peak at the top center and falls to the bottom right. at the peak: a very small car sprite about 12 pixels long, seen from above at an angle showing its roof, dark forest green body with two white stripes down the center, near black outline. bottom right: a small low cool blue-grey steel and glass rooftop with pale lit windows and one tiny amber light. on the ground directly under the peak, far below the car: a tiny dark navy oval shadow. dusk navy and purple shading",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, large car, close-up, side view, two cars, many cars, background, filled background, sky, pastel, mint, purple buildings, magenta buildings, arch, thick band, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 top-down pixel art diagram of a long car jump on a transparent background, mostly empty space. bottom left: a small cool blue-grey steel launch ramp. a long thin neon pink dotted arc with dark magenta stepped glow pixels rises from the ramp to a very high peak at the top center and falls to the bottom right. at the peak: a very small car sprite about 12 pixels long, seen from above at an angle showing its roof, dark forest green body with two white stripes down the center, near black outline. bottom right: a small low cool blue-grey steel and glass rooftop with pale lit windows and one tiny amber light. on the ground directly under the peak, far below the car: a tiny dark navy oval shadow. dusk navy and purple shading",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:31:34+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-384/briefs/airtime.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop run 6, version 4 (refine 3, last): scene-first prompt, tiny car at peak, blue-grey ramp and rooftop, tiny shadow far below",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -38,6 +38,7 @@ This file is an index only (T-346). The text that used to be here is in one file
 - [docs/hud-and-menus/level-up-screen.md](docs/hud-and-menus/level-up-screen.md): Level-up screen. The level-up screen, its art and animation.
 - [docs/hud-and-menus/time-up-screen.md](docs/hud-and-menus/time-up-screen.md): Time's up screen. The 3-second screen over the frozen run when the timer runs out (T-317).
 - [docs/hud-and-menus/recap-screen.md](docs/hud-and-menus/recap-screen.md): Recap screen. The recap screen that closes every run (T-320).
+- [docs/hud-and-menus/tutorial-slides.md](docs/hud-and-menus/tutorial-slides.md): Tutorial slides. The three slides before a run, the reusable trick list scene and the `tutorial_hidden` setting (T-382).
 
 ## garage/
 

@@ -5,11 +5,11 @@ var PATH := RunPaths.file("test_progress_t057.json")
 
 
 func before_each() -> void:
-	DirAccess.remove_absolute(PATH)
+	SafeSave.remove_all(PATH)
 
 
 func after_each() -> void:
-	DirAccess.remove_absolute(PATH)
+	SafeSave.remove_all(PATH)
 
 
 func _new() -> PlayerProgress:

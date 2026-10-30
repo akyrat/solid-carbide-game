@@ -7,10 +7,15 @@ extends Node
 ## Garage opens the garage screen (task T-089); its back button returns to the menu.
 ## Game loop architecture, Decisions and Content.
 ##
-## Only one screen exists at a time, as a child of this node: `menu`, `garage`, `run` or `recap`.
-## During a run the pause screen (Escape) is a child of the run.
+## The tutorial slides (T-387): the main menu's Start shows them first, unless the player
+## ticked "Don't show again" (GameSettings tutorial_hidden); the slides' Start begins the run.
+## The pause screen's Restart starts a fresh run directly, without the slides.
+##
+## Only one screen exists at a time, as a child of this node: `menu`, `garage`, `tutorial`,
+## `run` or `recap`. During a run the pause screen (Escape) is a child of the run.
 
 const MainMenuScene := preload("res://scenes/menu/main_menu.tscn")
+const TutorialScene := preload("res://scenes/menu/tutorial_slides.tscn")
 const GarageScene := preload("res://scenes/menu/garage_screen.tscn")
 const RunScene := preload("res://scenes/run/run.tscn")
 const RecapScene := preload("res://scenes/menu/recap_screen.tscn")
@@ -25,9 +30,18 @@ signal menu_shown
 signal run_shown
 ## Emitted after the recap screen is shown (T-320).
 signal recap_shown
+## Emitted after the tutorial slides are shown (T-387).
+signal tutorial_shown
+
+## Whether the main menu's Start can show the tutorial slides (T-387). Always true in the
+## game; the test run turns it off (tests/helpers/pre_run.gd) so tests that only need a run
+## get one from Start, and the tutorial's own tests turn it back on.
+static var tutorial_enabled := true
 
 ## The main menu while it is on screen, otherwise null.
 var menu: Control
+## The tutorial slides while they are on screen, otherwise null (T-387).
+var tutorial: TutorialSlides
 ## The garage screen while it is on screen, otherwise null.
 var garage: Control
 ## The run while one is on screen, otherwise null.
@@ -61,10 +75,35 @@ func show_menu() -> void:
 	menu = MainMenuScene.instantiate()
 	menu.name = "MainMenu"
 	add_child(menu)
-	menu.start_pressed.connect(start_run)
+	menu.start_pressed.connect(_on_menu_start)
 	menu.exit_pressed.connect(_on_exit_pressed)
 	menu.garage_pressed.connect(show_garage)
 	menu_shown.emit()
+
+
+## The main menu's Start (T-387): the tutorial slides first, unless they were hidden.
+func _on_menu_start() -> void:
+	if tutorial_enabled and not GameSettingsScript.load_tutorial_hidden():
+		show_tutorial()
+	else:
+		start_run()
+
+
+## Replaces the main menu with the tutorial slides (T-387). No run exists while they are up;
+## their Start saves "Don't show again" when ticked, then begins the run.
+func show_tutorial() -> void:
+	_clear_screens()
+	tutorial = TutorialScene.instantiate()
+	tutorial.name = "TutorialSlides"
+	add_child(tutorial)
+	tutorial.start_pressed.connect(_on_tutorial_start)
+	tutorial_shown.emit()
+
+
+func _on_tutorial_start(dont_show_again: bool) -> void:
+	if dont_show_again:
+		GameSettingsScript.save_tutorial_hidden(true)
+	start_run()
 
 
 ## Replaces the main menu with the garage screen (T-089).
@@ -77,7 +116,8 @@ func show_garage() -> void:
 	garage.back_pressed.connect(show_menu)
 
 
-## Replaces the main menu with a fresh run.
+## Replaces the screen on show with a fresh run, without the tutorial slides (the slides'
+## Start, the main menu's Start when they are hidden, and the pause screen's Restart).
 func start_run() -> void:
 	_clear_screens()
 	run = add_run(self, progress, "", history)
@@ -140,15 +180,27 @@ func _on_run_ended(_result: String, _coins: int) -> void:
 
 
 ## Restart from the pause screen (T-327): keeps the coins collected so far, then a fresh run.
+## During the wreck it cancels the run instead (T-413): no coins kept, no runs-list entry.
 func _on_pause_restart() -> void:
-	progress.bank_run("loss", run.state.coins)
+	bank_left_run(progress, run)
 	start_run()
 
 
 ## Exit from the pause screen (T-327): keeps the coins collected so far, then the main menu.
+## During the wreck it cancels the run instead (T-413).
 func _on_pause_exit() -> void:
-	progress.bank_run("loss", run.state.coins)
+	bank_left_run(progress, run)
 	show_menu()
+
+
+## Banks the coins of run `r` left from the pause screen into `progress`, unless the car is
+## wrecked (T-413; Game loop architecture, Decisions, "The wreck decides the loss at its end":
+## leaving during the wreck cancels the run, no coins kept). A run left this way never sends
+## run_ended, so it never goes into the runs list either way. The level creator's Play uses it too.
+static func bank_left_run(progress: PlayerProgress, r: Node) -> void:
+	if r.state.is_wrecked():
+		return
+	progress.bank_run("loss", r.state.coins)
 
 
 func _on_exit_pressed() -> void:
@@ -165,6 +217,10 @@ func _clear_screens() -> void:
 		remove_child(garage)
 		garage.queue_free()
 		garage = null
+	if tutorial != null:
+		remove_child(tutorial)
+		tutorial.queue_free()
+		tutorial = null
 	if recap != null:
 		remove_child(recap)
 		recap.queue_free()

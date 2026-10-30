@@ -1,0 +1,124 @@
+{
+  "file": "parked_car_1_rot8_v1_3.png",
+  "endpoint": "/generate-8-rotations-v3",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "first_frame": {
+      "type": "base64",
+      "base64": "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",
+      "format": "png"
+    },
+    "description": "a plain boring compact four-door city sedan car, parked, dull pale silver-grey paint, dark blue-grey tinted windows, unlit headlights, small black tyres, isometric pixel art game sprite, same camera and same size in every direction",
+    "no_background": true
+  },
+  "prompt": "a plain boring compact four-door city sedan car, parked, dull pale silver-grey paint, dark blue-grey tinted windows, unlit headlights, small black tyres, isometric pixel art game sprite, same camera and same size in every direction",
+  "job_id": "16cfeece-a1ea-49c7-af6d-1be0db6c206c",
+  "usage": {
+    "type": "generations",
+    "generations": 2.0
+  },
+  "generated_at": "2026-10-30T12:56:43+00:00",
+  "image": {
+    "width": 128,
+    "height": 128,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/level-design.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-397/parked_car_ne.png",
+    "game/art/ground/ground_atlas.png",
+    "game/art/boulders/boulder_a.png"
+  ],
+  "task": "T-399",
+  "job_status": "completed",
+  "notes": "Parked car 1 (T-397's pale silver-grey sedan), 8 directions from the cleaned top picture, to pick the bottom picture for the four-facing strip, style loop version 1",
+  "generator": "game/tools/pixellab_client.py",
+  "result_index": 3,
+  "result_label": null,
+  "usage_note": "usage is for the whole call, shared by all its images",
+  "call_files": [
+    "parked_car_1_rot8_v1_0.png",
+    "parked_car_1_rot8_v1_1.png",
+    "parked_car_1_rot8_v1_2.png",
+    "parked_car_1_rot8_v1_3.png",
+    "parked_car_1_rot8_v1_4.png",
+    "parked_car_1_rot8_v1_5.png",
+    "parked_car_1_rot8_v1_6.png",
+    "parked_car_1_rot8_v1_7.png"
+  ],
+  "response_meta": {
+    "usage": {
+      "type": "generations",
+      "generations": 2.0
+    },
+    "id": "16cfeece-a1ea-49c7-af6d-1be0db6c206c",
+    "status": "completed",
+    "created_at": "2026-10-30T12:54:56.165750+00:00",
+    "last_response": {
+      "seed": 3626072954,
+      "type": "message_done",
+      "usage": {
+        "usd": 0.0,
+        "type": "generations",
+        "generations": 2,
+        "cost_if_paid": 0.028017211251788667
+      },
+      "images": [
+        {
+          "type": "base64",
+          "base64": "<7636 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<10240 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<6600 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<10680 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<10316 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<9328 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<5148 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        },
+        {
+          "type": "base64",
+          "base64": "<9984 characters of base64 image data, saved as the PNG>",
+          "format": "png"
+        }
+      ],
+      "status": "completed",
+      "progress": 0.9333333333333333,
+      "flow_kind": "animation",
+      "billing_usage": {
+        "type": "generations",
+        "generations": 2.0
+      },
+      "generation_id": "37f7dd81-ebf5-4b39-bf4b-3f58949bf1ed",
+      "queue_position": 0,
+      "billing_charged": true,
+      "generation_started_at": "2026-10-30T12:55:12.187826+00:00"
+    }
+  }
+}

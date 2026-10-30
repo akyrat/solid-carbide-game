@@ -138,6 +138,51 @@ func area_index_at(point: Vector2) -> int:
 	return best
 
 
+## The areas whose rectangles touch box (task T-411, the car's footprint):
+## {"ramps": [index in ramps, in order], "platforms": [index in platforms]}.
+## height_among and area_among answer height_at and area_index_at from only
+## these, so the car's outline points test a few rectangles, not the whole map.
+func areas_near(box: Rect2) -> Dictionary:
+	var out := {"ramps": [], "platforms": []}
+	for i in ramps.size():
+		if ramps[i].rect.intersects(box, true):
+			out.ramps.append(i)
+	for i in platforms.size():
+		if platforms[i].rect.intersects(box, true):
+			out.platforms.append(i)
+	return out
+
+
+## height_at, from the areas near (areas_near) only. The same everywhere inside
+## the box areas_near was given.
+func height_among(point: Vector2, near: Dictionary) -> float:
+	for i in near.ramps:
+		var r: Dictionary = ramps[i]
+		if _contains(r.rect, point):
+			return lerpf(r.bottom_height, r.top_height, _ramp_t(r, point))
+	var best := 0.0
+	for i in near.platforms:
+		var p: Dictionary = platforms[i]
+		if _contains(p.rect, point):
+			best = maxf(best, p.height)
+	return best
+
+
+## area_index_at, from the areas near (areas_near) only.
+func area_among(point: Vector2, near: Dictionary) -> int:
+	for i in near.ramps:
+		if _contains(ramps[i].rect, point):
+			return platforms.size() + int(i)
+	var best := -1
+	var best_h := 0.0
+	for i in near.platforms:
+		var p: Dictionary = platforms[i]
+		if _contains(p.rect, point) and p.height > best_h:
+			best = int(i)
+			best_h = p.height
+	return best
+
+
 ## The rectangle of area index (see area_index_at).
 func area_rect(index: int) -> Rect2:
 	if index < platforms.size():

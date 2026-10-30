@@ -1,0 +1,1 @@
+Tutorial slide 2 of 3, a short line under the list of the seven tricks. Says: tricks bring viewers, viewers bring subs, and each sub goal brings a gift pack from Greenbull with a weapon that helps you survive and keeps enemies away. Use "subs", "viewers" and "gift pack". Short.

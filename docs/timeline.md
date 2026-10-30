@@ -2625,3 +2625,68 @@ Entry format:
 - Decision or change: merge_batch.py no longer crashes on the Windows console, and the command-line elevation drive works again.
 - Documents touched: tools/merge_batch.py, game/tools/drive_elevation_sample.gd
 - Tasks: T-425
+
+## 2026-10-30: The flaky wreck-revive test
+- Decision or change: The in-run wreck-revive test switches off minions and weapons, so it no longer fails at random.
+- Documents touched: none
+- Tasks: T-424
+
+## 2026-10-30: The task board shows the audit epic
+- Decision or change: The task board has an Audit bubble for the audit epic's tickets.
+- Documents touched: none
+- Tasks: T-410
+
+## 2026-10-30: A red flash when an enemy takes damage
+- Decision or change: Enemies flash red when they take damage.
+- Documents touched: none
+- Tasks: T-404
+
+## 2026-10-30: Bug fixed: minions stuck at ramps
+- Decision or change: Minions go straight at the car only with a clear line, and the path grid reads the half-unit edges of the new platforms; no minion stuck in the scripted chase.
+- Documents touched: `docs/enemies.md`
+- Tasks: T-380
+
+## 2026-10-30: The neon underglow kills a minion in 2 ticks and pushes from tier 1
+- Decision or change: The underglow deals half a minion's health per tick and pushes enemies a little from tier 1.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-409
+
+## 2026-10-30: Goal G-007, the last MVP round, merged after the board's playtest
+- Decision or change: The board played goal G-007's build and approved it ("g007 also lgtm"). Merged: tutorial slides before a run (with "Don't show again" on the last slide, unticked; Restart doesn't show them; no early skip), a trick list button on the pause screen, the seven trick illustrations (both sets made; the script-drawn set chosen over PixelLab's, 7.0 vs 5.9), every sound effect off for the MVP with one switch (the music stays), and the SFX volume slider hidden on the pause screen. Noted in the goal run (not yet a ticket): the pause screen's trick list panel is see-through.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`, `docs/visual-style.md`
+- Tasks: T-381, T-382, T-383, T-384, T-385, T-386, T-387, T-388, T-389, T-390 (goal G-007)
+
+## 2026-10-30: A broken save never wipes progress
+- Decision or change: Saves are written to a temp file and swapped in, with a backup of the last good save; a file that fails to load is kept aside and the backup loads; every save carries a version.
+- Documents touched: `docs/garage-design.md`
+- Tasks: T-417
+
+## 2026-10-30: The wreck decides the loss at its end
+- Decision or change: The run is lost only when the wreck's 3 seconds end; a kaiju kill during the wreck wins; coins and health pickups count; Restart or Exit during the wreck keeps no coins and adds no runs-list entry.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-413
+
+## 2026-10-30: The street art: sidewalks, curbs, parked and broken cars, craters
+- Decision or change: The full sidewalk and curb set, five parked and broken cars at four facings (PixelLab's rotations with the front lamps repainted grey by script, as the board asked), and three crater looks, swapped into the level creator; 21 of 50 generations used.
+- Documents touched: `docs/drifting.md`, `docs/visual-style.md`
+- Tasks: T-399
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: The drift-pays-its-combo test no longer depends on how busy the machine is.
+- Documents touched: game/tests/unit/run/test_run_likes.gd
+- Tasks: T-434
+
+## 2026-10-30: The car's height uses its whole footprint
+- Decision or change: The car's whole 1 by 3 outline meets raised sides, turns included; the board kept today's behaviour on the four open questions (roof-edge tip-off, bumper bounce, slow ramp tops, skyscraper nose).
+- Documents touched: none
+- Tasks: T-411
+
+## 2026-10-30: The drift-pays-its-combo test under load
+- Decision or change: test_run_likes.gd steps the car and the run's clock directly instead of waiting on frames, so it no longer fails when the machine is busy.
+- Documents touched: none
+- Tasks: T-434
+
+## 2026-10-30: Restart, Exit or closing cancels the run
+- Decision or change: The board, after playing build I: Restart or Exit on the pause screen and closing the game window cancel the run at any point, the wreck included; its coins are lost, nothing goes into the run history and no recap shows. Replaces T-327's coins kept on Restart and Exit, and the audit's loss with coins kept on closing. The board also pointed out there is no runs list screen yet (T-364, parked for the final release): the Project Lead's build I checklist wrongly asked it to check one.
+- Documents touched: `docs/game-loop-architecture.md`, `docs/hud-and-menus.md`
+- Tasks: T-416

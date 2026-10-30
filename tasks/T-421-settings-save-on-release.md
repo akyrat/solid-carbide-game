@@ -1,7 +1,7 @@
 ---
 id: T-421
 title: Settings sliders save once, on release
-status: open
+status: cancelled
 from: project-lead
 to: ui
 lead: Greenbull
@@ -54,4 +54,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-30, open → cancelled: Replaced by goal G-008 (HUD and main menu): the settings sliders saving on release is part of the goal, which writes its own ticket (2026-10-30).

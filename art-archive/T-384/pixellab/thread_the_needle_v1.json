@@ -1,0 +1,40 @@
+{
+  "file": "thread_the_needle_v1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 top-down pixel art tutorial icon on a transparent background, mostly empty space. two large dark rock boulders, navy and purple stone with glowing magenta cracks, one on the left and one on the right in the middle of the frame, with a very narrow gap between them. a straight thin neon cyan trail line with small stepped darker blue glow pixels runs from the bottom left corner diagonally through the narrow gap between the two boulders. just past the gap at the upper right: one very small car sprite about 12 pixels long, seen from above at an angle showing its roof and one side, dark forest green body with two white stripes down the center, near black outline, small dark navy shadow under it. dusk navy and purple shading",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, light green, large car, close-up, side view, two cars, background, filled background, ground, road, sky, pastel, teal car, orange, gradient, photo, curve",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 top-down pixel art tutorial icon on a transparent background, mostly empty space. two large dark rock boulders, navy and purple stone with glowing magenta cracks, one on the left and one on the right in the middle of the frame, with a very narrow gap between them. a straight thin neon cyan trail line with small stepped darker blue glow pixels runs from the bottom left corner diagonally through the narrow gap between the two boulders. just past the gap at the upper right: one very small car sprite about 12 pixels long, seen from above at an angle showing its roof and one side, dark forest green body with two white stripes down the center, near black outline, small dark navy shadow under it. dusk navy and purple shading",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:33:07+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

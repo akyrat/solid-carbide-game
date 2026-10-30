@@ -2,6 +2,10 @@
 
 (From the old `game/README.md`; the index is [../../README.md](../../README.md).)
 
+## Sound effects are OFF for the MVP (T-388, board 2026-10-29)
+
+**The switch: `"sfx_enabled": false` at the top of `data/sfx.json`** (read by `GameSettings.sfx_enabled()`). While it is false every sound effect is off whatever the saved SFX volume: `GameSettings.apply_sfx_volume` keeps the "SFX" bus muted and `RunSounds.play` / its loops start no player. The music is unaffected (own "Music" bus, `MusicPlayer`). Nothing was deleted: the scripts, `data/sfx.json`'s sounds and the saved SFX volume setting stay. **To turn the sound effects back on, set `"sfx_enabled": true` in `data/sfx.json`**; everything below then applies as written (the SFX volume slider default is still 0, so turn it up). Hiding the pause screen's SFX slider is a separate UI ticket. Tests: `tests/unit/run/test_sfx_off.gd`; the older sound tests set `GameSettings.sfx_enabled_override = 1` (a test hook; -1 = read the data file).
+
 ## Sound effects in the game (T-077)
 
 `scripts/run/run_sounds.gd` (child "Sounds" of the run scene) plays the approved sounds. **Files, per-sound volumes and limits are in `data/sfx.json`: tune the sound by ear there** (`volume_db` per sound, 0 = as the file is, more negative = quieter; the engine's pitch and volume range follow the car's speed; `min_interval` and `max_players` keep bursts from turning into noise). All sounds follow the pause (a level-up or the pause screen silences them) and stop when the run ends.

@@ -1,0 +1,14 @@
+T-399, the meteor craters for the level creator: 3 crater looks for the creator's crater piece, built from the crater the board approved in the sample (T-397, `art-archive/T-397/meteor_crater.png`, its 7/10 accepted by the board 2026-10-30). A crater is a hole a meteor left in the ground; the car drives over it: a ground decal, not an obstacle. The board's review places them next to buildings and boulders.
+
+What it must be
+- The version is one row of three 128 x 64 frames (384 x 64), each the road tiles' 2 x 2 unit diamond at the isometric 2:1 angle and pixel scale (32 art px per unit, drawn at 0.5), transparent round the crater, so it lies on road, gravel or sidewalk. Three clearly different looks of the same crater family (size of the hole, shape of the rim, how the cracks run), not three copies.
+- Each reads as a hole seen from above at the road's angle: the far inner wall shows, the near wall hides under the rim, a dark floor; not a mound, dome or lid. Nothing tall.
+- The road's own asphalt (broken, lifted slabs round the rim, a dithered scorched band) with the boulders' alien rock and glow (`game/art/boulders/boulder_a.png`: navy rock fragments, magenta and purple glowing cracks). Glow drawn as bright pixels with small stepped halos of darker shades, no blur (rule 5). Light to medium damage, no fire. No Greenbull colours.
+- Rules 1 to 5, 7, 8 and 10 of Visual style, Content, "Rules": a dark selective outline where the rim drops into the hole, detailed shading, at most 30 colours per frame, alpha 0 or 255.
+- The sample's known weak points (its Style review): thin glow halos round the cracks, thin rim and scorch shading, the far wall barely separating from the floor, and a look that partly reads as a lid; it is small on the road.
+
+How it is made (free, no PixelLab for this piece)
+- Version 1: `python game/tools/build_street_pieces.py crater-strip --out <the version's PNG>` (the three looks as T-398 draws them: T-397's `draw_crater` with the seeds and hole sizes in `CRATER_LOOKS`).
+- Refines: change `CRATER_LOOKS` in `game/tools/build_street_pieces.py`, or copy `draw_crater` from `game/tools/build_sidewalk_car_sample.py` into `build_street_pieces.py` as its own function and change that copy (never change `build_sidewalk_car_sample.py`: T-397's sample must stay reproducible), pointing `build_craters` at it. Then run the same `crater-strip` command for the new version.
+- After each version, write the preview: `python game/tools/build_street_pieces.py preview-craters --strip <the version's PNG> --out-dir art-archive/T-399/style-loop/craters_v<N>_preview` (each look on asphalt, sidewalk and gravel next to a boulder, dark and light, 4x). Evaluator: the newest `art-archive/T-399/style-loop/craters_v*_preview/` folder shows the version in place; open it.
+- Do not run `build` (the task's agent does it with the kept version).

@@ -306,6 +306,7 @@ func spawn_minion_at(units: Vector2) -> Node:
 	m.detour_side = 1.0 if rng.randf() < 0.5 else -1.0
 	m.ground = ground
 	m.follower = FollowerScript.new(rng.randf() * FollowerScript.REPATH_SECONDS)
+	m.follower.by_sight = true  # T-380: straight only while the way to the car is clear
 	bodies_root.add_child(m, true)
 	var s: Node2D = MinionSpriteScript.new()
 	s.name = "MinionSprite"
@@ -458,15 +459,19 @@ func is_free_spot(units: Vector2) -> bool:
 ## A minion on its way to the car by the ramps (T-207: its follower has a
 ## path) is removed only when it is more than ON_PATH_KEEP_UNITS from the car,
 ## so it is not removed while it walks round to a ramp far from the car (a
-## proposal).
+## proposal). T-380: a minion walking by sight also has a path when it only goes
+## round something on the car's own surface (a building, or a short building's
+## platform of T-405); that one is removed as before, so the rule is "has a path
+## and is on another surface than the car" (before T-380 a path meant just that).
 func _despawn_far() -> void:
 	var v := visible_rect()
 	var keep := v.grow_individual(v.size.x, v.size.y, v.size.x, v.size.y)
 	var car_units: Vector2 = car.position / PX_PER_UNIT
+	var car_surface: int = navigation.surface_at(car_units) if navigation != null else -1
 	for m in minions.duplicate():
 		if keep.has_point(ISO_TRANSFORM * m.position):
 			continue
-		if m.follower != null and m.follower.has_path() 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
+		if m.follower != null and m.follower.has_path() 				and navigation != null and navigation.surface_at(m.position_units()) != car_surface 				and m.position_units().distance_to(car_units) <= ON_PATH_KEEP_UNITS:
 			continue
 		minions.erase(m)
 		m.queue_free()

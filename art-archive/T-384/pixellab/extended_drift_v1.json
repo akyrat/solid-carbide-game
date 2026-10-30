@@ -1,0 +1,41 @@
+{
+  "file": "extended_drift_v1.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "tiny isometric pixel art scene at night, dark navy and purple asphalt background, a tiny dark green 1967 Mustang fastback car with two white racing stripes drifting sideways at the end of a long wide smooth curved arc, the arc drawn as a glowing neon pink trail with white tire smoke puffs along it, cyan neon accents, hard pixel edges, dark outline, cyberpunk synthwave",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, bright green, gradient, photo",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "selective outline",
+    "shading": "basic shading",
+    "detail": "medium detail",
+    "no_background": false
+  },
+  "prompt": "tiny isometric pixel art scene at night, dark navy and purple asphalt background, a tiny dark green 1967 Mustang fastback car with two white racing stripes drifting sideways at the end of a long wide smooth curved arc, the arc drawn as a glowing neon pink trail with white tire smoke puffs along it, cyan neon accents, hard pixel edges, dark outline, cyberpunk synthwave",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:02:32+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md",
+    "art-archive/T-384/briefs/extended_drift.md",
+    "game/docs/driving/tricks.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop v1, extended drift",
+  "generator": "game/tools/pixellab_client.py"
+}

@@ -136,6 +136,8 @@ var zoom := ZOOM
 ## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
 ## every map; it pays the trick through state.add_needle_trick().
 var needle: ThreadTheNeedle
+## The car's trick detection before the wreck turned it off (T-413), given back on a revive.
+var _tricks_before_wreck := true
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
 ## The camera options (task T-123): where the camera is and its size. Off by
@@ -489,15 +491,23 @@ func _on_car_moved() -> void:
 ## "Wrecked: the stream keeps rolling"): its controls go dead, so it keeps the
 ## movement it had and coasts with its normal physics, and it smokes and burns
 ## until the run ends. The camera keeps following it (sync_view on every step).
+## The trick in progress is dropped, not paid (T-413; Decisions, "The wreck decides
+## the loss at its end"): the trick detector forgets it and stays off while wrecked,
+## so nothing the sliding car does is a trick, not even after a revive.
 func _on_wreck_started(_seconds: float) -> void:
 	car.input_enabled = false
+	_tricks_before_wreck = car.detect_tricks
+	car.tricks.reset()
+	car.detect_tricks = false
 	wreck_effect.start(car_sprite.position)
 
 
-## A health pickup revived the wrecked car (T-406): the controls come back and
-## the smoke and flames stop.
+## A health pickup revived the wrecked car (T-406): the controls come back, the
+## trick detection starts afresh (T-413) and the smoke and flames stop.
 func _on_revived() -> void:
 	car.input_enabled = true
+	car.tricks.reset()
+	car.detect_tricks = _tricks_before_wreck
 	wreck_effect.stop()
 	apply_blink()
 

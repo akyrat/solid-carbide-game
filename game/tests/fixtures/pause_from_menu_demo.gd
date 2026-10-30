@@ -9,7 +9,7 @@ var _frames := 0
 func _ready() -> void:
 	game = preload("res://scenes/game/game.tscn").instantiate()
 	add_child(game)
-	game.menu.start_button.pressed.emit()
+	game.start_run()  # the menu's Start opens the tutorial slides first (T-389)
 
 
 func _process(_delta: float) -> void:

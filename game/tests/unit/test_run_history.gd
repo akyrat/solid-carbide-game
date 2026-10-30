@@ -7,11 +7,11 @@ var PATH := RunPaths.file("test_run_history_t363.json")
 
 
 func before_each() -> void:
-	DirAccess.remove_absolute(PATH)
+	SafeSave.remove_all(PATH)
 
 
 func after_each() -> void:
-	DirAccess.remove_absolute(PATH)
+	SafeSave.remove_all(PATH)
 
 
 func _recap(result := "win", coins := 10) -> Dictionary:

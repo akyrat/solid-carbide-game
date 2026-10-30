@@ -1,0 +1,40 @@
+{
+  "file": "air_one_eighty_v2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art tutorial icon, a tiny dark forest green 1967 Mustang fastback car floating high in mid-air, very dark green body, two white racing stripes with a gap along hood and roof, roof and one side visible, near black outline, white highlight pixels, the car rotated half way round so it faces backwards, a thin 1 pixel neon pink dotted jump trail line rising in a high arc from a tiny dark purple wedge ramp at the lower left, passing under the car and dropping to the lower right, the trail with a 1 pixel darker magenta and purple stepped halo, a small thin cyan half-circle curved arrow around the car showing the spin, a separate small flat dark navy purple oval shadow on the ground far below the car with empty space between car and shadow, no background",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, mint, teal car, blue car, bridge, arch, solid ramp structure, thick band, car sitting on the trail, background, ground tiles, road, sky, gradient, photo, buildings",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 12,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art tutorial icon, a tiny dark forest green 1967 Mustang fastback car floating high in mid-air, very dark green body, two white racing stripes with a gap along hood and roof, roof and one side visible, near black outline, white highlight pixels, the car rotated half way round so it faces backwards, a thin 1 pixel neon pink dotted jump trail line rising in a high arc from a tiny dark purple wedge ramp at the lower left, passing under the car and dropping to the lower right, the trail with a 1 pixel darker magenta and purple stepped halo, a small thin cyan half-circle curved arrow around the car showing the spin, a separate small flat dark navy purple oval shadow on the ground far below the car with empty space between car and shadow, no background",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:18:50+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "art-archive/T-384/briefs/air_one_eighty.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "style loop run 4, version 2 (v2-4), refine after score 5",
+  "generator": "game/tools/pixellab_client.py"
+}

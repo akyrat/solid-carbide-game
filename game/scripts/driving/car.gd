@@ -194,12 +194,17 @@ func physics_step() -> void:
 		model.set_position(position / PX_PER_UNIT)
 		_bounce(hit)
 	_update_contacts(hit)
-	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt)
+	# T-411: the whole drawn outline meets the ground's sides, turning included.
+	var side: Dictionary = height_model.step(flat_before, model.get_position(), model.get_velocity(), model.dt,
+		rotation_before, model.rotation)
 	if side.wall:
 		# A side of the ground higher than the car (task T-184): stop at it and
-		# bounce like off any wall.
+		# bounce like off any wall. A turn into it stops too (T-411).
 		model.set_position(side.point)
 		position = model.get_position() * PX_PER_UNIT
+		if not is_nan(float(side.rotation)):
+			model.rotation = side.rotation
+			rotation = model.rotation
 		_bounce_off_side(side)
 	_update_side_contacts()
 	if detect_tricks:

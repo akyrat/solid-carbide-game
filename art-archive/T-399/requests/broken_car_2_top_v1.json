@@ -1,0 +1,15 @@
+{
+ "image_size": {
+  "width": 128,
+  "height": 128
+ },
+ "no_background": true,
+ "isometric": true,
+ "outline": "single color black outline",
+ "shading": "detailed shading",
+ "detail": "highly detailed",
+ "view": "high top-down",
+ "direction": "north-east",
+ "text_guidance_scale": 8,
+ "description": "a wrecked abandoned small hatchback car, dull dark grey paint, roof caved in and crushed by falling concrete rubble, broken glass, one wheel missing so it sits tilted, rust and black scorch marks, dents, unlit, no fire, no smoke, no stripes, isometric view seen from above, facing up and to the right, night city, cool blue-grey steel colours, retro pixel art game sprite, a single object"
+}

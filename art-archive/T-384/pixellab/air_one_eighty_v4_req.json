@@ -1,0 +1,11 @@
+{
+  "description": "isometric 3/4 pixel art tutorial diagram of a car jump trick filling the image, a thin glowing neon pink trajectory parabola 2 pixels wide from a small dark purple ramp wedge at the bottom left up to the top center and down to the bottom right, a 1 pixel magenta and 1 pixel dark purple stepped halo on both sides of the line, a dark forest green 1967 Mustang fastback car floating at the very top of the arc on the line, turned sideways across the arc, very dark green body, roof lighter green and side darker green, two white racing stripes with a gap along hood and roof, sloped fastback roofline, near black outline, white highlight pixels on roof and hood edges, a small neon cyan half-circle curved arrow wrapped around the car showing the half spin, a dark navy purple oval shadow on the ground at the bottom center below the car, empty space between car and shadow, no background",
+  "negative_description": "text, letters, blur, anti-aliasing, yellow, orange, lime, bright green, grass green, mint, teal car, blue car, grey shadow, car on the ground, car under the arc, bridge, solid ramp structure, thick band, background, ground tiles, road, sky, gradient, photo, buildings",
+  "image_size": {"width": 64, "height": 48},
+  "view": "low top-down",
+  "outline": "single color black outline",
+  "shading": "medium shading",
+  "detail": "highly detailed",
+  "text_guidance_scale": 14,
+  "no_background": true
+}

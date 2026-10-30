@@ -93,6 +93,7 @@ func test_loss_reason_time_and_health() -> void:
 	assert_eq(state.recap().loss_reason, "time")
 	state.start_run()
 	state.damage_car(state.max_health + 1.0)
+	state.advance(state.wreck_left)  # T-413: the loss is decided when the wreck ends
 	assert_eq(state.recap().loss_reason, "health")
 
 

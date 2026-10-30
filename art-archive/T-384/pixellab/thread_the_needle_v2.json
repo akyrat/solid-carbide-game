@@ -1,0 +1,40 @@
+{
+  "file": "thread_the_needle_v2.png",
+  "endpoint": "/create-image-pixflux",
+  "api_base": "https://api.pixellab.ai/v2",
+  "request_params": {
+    "description": "isometric 3/4 pixel art tutorial icon on a transparent background with empty space around it. two separate round dark rock boulders, dark navy and purple stone with bright glowing magenta cracks: one boulder at the left of center, one boulder at the right of center, with a narrow empty vertical gap between them in the exact center. a straight bright neon hot pink trail line, 2 pixels thick with a pale pink core and stepped darker magenta and purple halo pixels on each side, runs straight from the left edge to the right edge through the narrow gap. one small car sprite about 12 pixels long sits on the trail inside the gap, squeezed between the two boulders, seen from above at an angle showing its roof and one side: dark forest green body with two white stripes down the center, near black outline, white highlight pixels. tiny dark navy shadows under the boulders and car. near black outline on everything, lighter highlight pixels",
+    "negative_description": "text, letters, blur, anti-aliasing, yellow, lime, light green, teal car, large car, close-up, side view, two cars, background, filled background, ground, ground plate, platform, base, slab, floor, road, sky, pastel, orange, gradient, photo, curve, merged rocks, one rock",
+    "image_size": {
+      "width": 64,
+      "height": 48
+    },
+    "view": "high top-down",
+    "outline": "single color black outline",
+    "shading": "medium shading",
+    "detail": "highly detailed",
+    "text_guidance_scale": 14,
+    "no_background": true
+  },
+  "prompt": "isometric 3/4 pixel art tutorial icon on a transparent background with empty space around it. two separate round dark rock boulders, dark navy and purple stone with bright glowing magenta cracks: one boulder at the left of center, one boulder at the right of center, with a narrow empty vertical gap between them in the exact center. a straight bright neon hot pink trail line, 2 pixels thick with a pale pink core and stepped darker magenta and purple halo pixels on each side, runs straight from the left edge to the right edge through the narrow gap. one small car sprite about 12 pixels long sits on the trail inside the gap, squeezed between the two boulders, seen from above at an angle showing its roof and one side: dark forest green body with two white stripes down the center, near black outline, white highlight pixels. tiny dark navy shadows under the boulders and car. near black outline on everything, lighter highlight pixels",
+  "job_id": null,
+  "usage": {
+    "type": "generations",
+    "generations": 1.0
+  },
+  "generated_at": "2026-10-30T00:34:27+00:00",
+  "image": {
+    "width": 64,
+    "height": 48,
+    "bit_depth": 8,
+    "color_type": 6
+  },
+  "resources_consulted": [
+    "docs/visual-style.md",
+    "docs/extended-narrative.md"
+  ],
+  "task": "T-384",
+  "job_status": null,
+  "notes": "",
+  "generator": "game/tools/pixellab_client.py"
+}

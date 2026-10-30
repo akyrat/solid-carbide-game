@@ -1,7 +1,7 @@
 ---
 id: T-373
 title: Text: the HUD size slider's label
-status: open
+status: cancelled
 from: project-lead
 to: narrative-theme
 lead: Greenbull
@@ -53,4 +53,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-30, open → cancelled: Replaced by goal G-008 (HUD and main menu), which writes its own tickets from the same decisions (2026-10-30).
