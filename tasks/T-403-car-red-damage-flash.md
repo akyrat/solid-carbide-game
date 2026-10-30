@@ -1,7 +1,7 @@
 ---
 id: T-403
 title: The car flashes red when it takes damage
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/game-loop-architecture.md, game/docs/game-loop/the-run
 files_to_read_first: [tasks/README.md, docs/game-loop-architecture.md, game/docs/game-loop/the-run.md, game/data/run.json, game/scripts/data/run_data.gd]
 files_expected_to_change: [game/scripts/, game/data/run.json, game/tests/unit/, game/docs/game-loop/the-run.md, docs/game-loop-architecture.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started: the car's red flash on damage.
 ### 2026-10-30, In progress → In QA
 
 The car now flashes red when it loses a heart (0.4 s, from run.json), shown on the blink's visible phases; reusable HitFlash helper for the enemies; tests pass, GIF in art-archive/T-403.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria (3 test sets green, GIF and docs present); ready for the board to play.
 
 ## Style review
 
