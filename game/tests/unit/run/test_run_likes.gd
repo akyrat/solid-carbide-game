@@ -205,11 +205,16 @@ func test_run_scene_drift_pays_its_combo_once_when_it_ends() -> void:
 	var run: Node2D = RunScene.instantiate()
 	add_child_autofree(run)
 	run.car.use_keyboard = false
+	# T-434: the car is stepped by hand, a known number of times, not by waiting on
+	# physics frames (a busy machine runs fewer car steps per frame waited).
+	run.car.set_physics_process(false)
 	run.car.scripted_input = [true, false, 1.0]
-	await wait_physics_frames(int(ceil(1.5 / run.car.model.dt)))  # under a full 360, which pays at once
+	for i in int(ceil(1.5 / run.car.model.dt)):  # under a full 360, which pays at once
+		run.car.physics_step()
 	assert_eq(run.state.combo, 1.0, "nothing paid while it lasts")
 	run.car.scripted_input = [false, false, 0.0]
-	await wait_physics_frames(3)
+	for i in 3:
+		run.car.physics_step()
 	var seconds: float = run.car.tricks.last_trick_seconds
 	assert_between(seconds, 1.5, 1.7, "the drift's length")
 	var c := ComboData.new()
