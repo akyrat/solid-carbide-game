@@ -136,6 +136,8 @@ var zoom := ZOOM
 ## Thread the needle (task T-272, thread_the_needle.gd): the map's pairs of obstacles, rebuilt with
 ## every map; it pays the trick through state.add_needle_trick().
 var needle: ThreadTheNeedle
+## T-420: "" when the car's start is a place it can stand, else LevelSpawn.OFF_MAP or BLOCKED.
+var spawn_problem := ""
 ## The pause screen refreshes a tuning panel when there is one; the run has none.
 var panel: CanvasLayer = null
 ## The camera options (task T-123): where the camera is and its size. Off by
@@ -375,11 +377,17 @@ func _build_world() -> void:
 	car.name = "Car"
 	var start := START_POSITION_UNITS
 	var start_rotation := START_ROTATION
-	if LevelSpawn.has_spawn(map.layout):
+	# T-420: a level from a file (the creator's) with no spawn starts the car where LevelSpawn says
+	# (the map's centre, snapped to a cell); the game's own map keeps START_POSITION_UNITS.
+	spawn_problem = ""
+	if LevelSpawn.has_spawn(map.layout) or current_layout_path() != ELEVATION_LAYOUT_PATH:
 		# A level made in the creator (T-280): the car starts on its spawn point, at the ground's
 		# height there (car.ground below), facing its heading. The game's own map has none.
 		start = LevelSpawn.position_of(map.layout)
 		start_rotation = LevelSpawn.rotation_of(map.layout)
+		spawn_problem = LevelSpawn.problem(map.layout, start)
+		if spawn_problem != "":
+			push_warning("Level spawn at %s is not a place a car can stand: %s" % [start, spawn_problem])
 	car.model.x = start.x
 	car.model.y = start.y
 	car.model.rotation = start_rotation
@@ -454,6 +462,7 @@ func _on_crashed() -> void:
 ## T-272: after each physics step, the car's centre to thread the needle (the pairs' gates).
 func _on_car_needle_step() -> void:
 	if needle != null and not needle.gates.is_empty():
+		needle.touching(car.held_contacts())  # T-420: still scraping a paired obstacle is a touch
 		needle.observe(car.model.get_position(), car.airborne, car.model.dt)
 
 
