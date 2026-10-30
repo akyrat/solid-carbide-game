@@ -49,13 +49,13 @@ The board's review: in the creator, pair a row of obstacles as a chain, press Pl
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] In the creator an obstacle can be in several pairs (pairing B with C keeps A with B), and picking several obstacles in order then Pair makes the chain of consecutive pairs (tests). (QA: pass / fail)
-- [ ] Unpair removes only the pair aimed at, as the result notes describe (tests). (QA: pass / fail)
-- [ ] In a run, threading a row of three gaps one after another pays thread the needle three times, each gap with its own cool-down, and a crash pays nothing (tests). (QA: pass / fail)
-- [ ] A level saved before opens with its pairs, the new pairs save and reopen, and check_level.py accepts them (tests). (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ describe the controls and the rules. (QA: pass / fail)
-- [ ] Screenshots of a chained row in the editor and a GIF of threading it in a run are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] In the creator an obstacle can be in several pairs (pairing B with C keeps A with B), and picking several obstacles in order then Pair makes the chain of consecutive pairs (tests). (QA: pass)
+- [ ] Unpair removes only the pair aimed at, as the result notes describe (tests). (QA: pass)
+- [ ] In a run, threading a row of three gaps one after another pays thread the needle three times, each gap with its own cool-down, and a crash pays nothing (tests). (QA: pass)
+- [ ] A level saved before opens with its pairs, the new pairs save and reopen, and check_level.py accepts them (tests). (QA: pass)
+- [ ] Level design, Content and game/docs/level/ describe the controls and the rules. (QA: pass; qa_check flags game/docs/level/ as a folder, but level-creator.md and level-creator-pieces.md changed on the branch)
+- [ ] Screenshots of a chained row in the editor and a GIF of threading it in a run are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; GUT all passed, 3 sets passed via qa_check)
 
 ## Updates
 
