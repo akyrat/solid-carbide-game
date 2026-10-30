@@ -2385,3 +2385,8 @@ Entry format:
 - Decision or change: The board wants to thread a row of obstacles gap after gap; the Project Lead's design: an obstacle in several pairs, a row paired as a chain in one go, each gap paying its own trick.
 - Documents touched: docs/level-design.md
 - Tasks: T-394
+
+## 2026-10-30: The style loop in goal runs
+- Decision or change: The board: in a goal run a score below 8 after the refines is noted for the final playtest instead of flagging the ticket and pausing the goal (G-007 paused twice on it).
+- Documents touched: tasks/README.md
+- Tasks: T-395
