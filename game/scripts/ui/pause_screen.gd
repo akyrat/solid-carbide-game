@@ -38,6 +38,11 @@ const CONTROL_FILL := HudStyle.PAUSE_CONTROL_FILL
 const CONTROL_FILL_HOVER := HudStyle.PAUSE_CONTROL_FILL_HOVER
 const CONTROL_FILL_PRESSED := HudStyle.PAUSE_CONTROL_FILL_PRESSED
 const CHECK_ICON_SIZE := 16
+## The pause screen's slider labels written as data (T-426): the HUD size slider's label.
+const PAUSE_TEXT_FILE := "pause_text"
+const HUD_SIZE_LABEL_KEY := "hud_size_label"
+## The HUD size slider's step, in percent (T-431, a proposal for the playtest).
+const HUD_SIZE_STEP := 5.0
 ## Width of the slider rows' labels, so the zoom, SFX and music sliders have the same width.
 const LABEL_WIDTH := 170.0
 
@@ -58,6 +63,10 @@ var _sfx_value_label: Label
 var music_slider: HSlider
 var music_label: Label
 var _music_value_label: Label
+## The HUD size slider (T-431): sets the run HUD's size, in percent.
+var hud_size_slider: HSlider
+var hud_size_label: Label
+var _hud_size_value_label: Label
 var _value_label: Label
 var smoothing_check: CheckBox
 var dynamic_check: CheckBox
@@ -146,6 +155,7 @@ func setup(t: Node) -> void:
 	_update_value_label()
 	_build_sfx_slider(box)
 	_build_music_slider(box)
+	_build_hud_size_slider(box)
 	_build_camera_controls(box)
 	_build_run_buttons(box)
 	_build_trick_panel()
@@ -295,6 +305,59 @@ func _on_music_changed(v: float) -> void:
 	_mark_dirty("music")
 	GameSettingsScript.apply_music_volume(v)
 	_music_value_label.text = "%d" % int(v)
+
+
+## The HUD size slider's label, read from data/pause_text.json (T-426's text); empty if missing.
+static func hud_size_text() -> String:
+	var data = GameData.unwrap(GameData.load_file(PAUSE_TEXT_FILE))
+	if data is Dictionary:
+		return str(data.get(HUD_SIZE_LABEL_KEY, ""))
+	return ""
+
+
+## The HUD the HUD size slider scales: the target's `hud` (a run has one, the drift prototype not).
+func _hud():
+	var h = target.get("hud") if target != null else null
+	return h if h != null and is_instance_valid(h) and h.has_method("set_hud_size") else null
+
+
+## The HUD size slider (T-431): GameSettings' range in percent, its value a bare number at the
+## right end. Its own row directly under the music row, laid out like it. Moving it scales the
+## HUD at once while paused; it saves on release and on close (T-427's rule).
+func _build_hud_size_slider(box: VBoxContainer) -> void:
+	var row := HBoxContainer.new()
+	row.name = "HudSizeRow"
+	box.add_child(row)
+	hud_size_label = Label.new()
+	hud_size_label.text = hud_size_text()
+	HudStyle.apply(hud_size_label, "pause_text")
+	hud_size_label.custom_minimum_size.x = LABEL_WIDTH
+	row.add_child(hud_size_label)
+	hud_size_slider = HSlider.new()
+	hud_size_slider.name = "HudSizeSlider"
+	hud_size_slider.min_value = GameSettingsScript.MIN_HUD_SIZE
+	hud_size_slider.max_value = GameSettingsScript.MAX_HUD_SIZE
+	hud_size_slider.step = HUD_SIZE_STEP
+	var h = _hud()
+	hud_size_slider.value = h.hud_size if h != null else GameSettingsScript.load_hud_size()
+	hud_size_slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hud_size_slider.focus_mode = Control.FOCUS_NONE
+	hud_size_slider.value_changed.connect(_on_hud_size_changed)
+	_wire_save_on_release(hud_size_slider, "hud_size")
+	row.add_child(hud_size_slider)
+	_hud_size_value_label = Label.new()
+	_hud_size_value_label.custom_minimum_size.x = 50.0
+	_hud_size_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(_hud_size_value_label)
+	_hud_size_value_label.text = "%d" % int(hud_size_slider.value)
+
+
+func _on_hud_size_changed(v: float) -> void:
+	_mark_dirty("hud_size")
+	var h = _hud()
+	if h != null:
+		h.set_hud_size(v)
+	_hud_size_value_label.text = "%d" % int(v)
 
 
 func _cam():
@@ -467,6 +530,10 @@ func toggle() -> void:
 func pause() -> void:
 	zoom_slider.set_value_no_signal(target.zoom)
 	_update_value_label()
+	var h = _hud()
+	if h != null:
+		hud_size_slider.set_value_no_signal(h.hud_size)
+		_hud_size_value_label.text = "%d" % int(h.hud_size)
 	refresh_camera_controls()
 	get_tree().paused = true
 	visible = true
@@ -522,6 +589,7 @@ func _save_slider(key: String) -> void:
 		"zoom": GameSettingsScript.save_zoom(zoom_slider.value)
 		"sfx": GameSettingsScript.save_sfx_volume(sfx_slider.value)
 		"music": GameSettingsScript.save_music_volume(music_slider.value)
+		"hud_size": GameSettingsScript.save_hud_size(hud_size_slider.value)
 
 
 ## Saves every slider that changed since its last save: the screen closing (Escape, Restart,

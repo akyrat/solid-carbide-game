@@ -117,6 +117,16 @@ func _anchor() -> void:
 	offset_bottom = float(_layout["h"])
 
 
+## Keeps the bottom at or above `max_bottom` in an area `area_h` tall (T-431): a HUD size
+## above 100 makes the layout page shorter than 648, and the square, kept at its share of the
+## height, would reach the viewers counter below it; it moves up just enough instead.
+func keep_above(max_bottom: float, area_h: float) -> void:
+	var h := float(_layout["h"])
+	var shift := maxf(0.0, anchor_top * area_h + h - max_bottom)
+	offset_top = -shift
+	offset_bottom = h - shift
+
+
 ## The frame's black inside, from its centre pixel's colour: per art row, the
 ## first and last inside pixel (the rounded corners make the rows differ).
 static func inside_rows(img: Image) -> Array[Vector3i]:

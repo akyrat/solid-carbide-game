@@ -256,6 +256,8 @@ func release(gain: float) -> void:
 ## on arrival the held viewers count in and the counter bumps.
 func fly_in(text: String, gain: float, from: Vector2) -> ViewersFlight:
 	var f := ViewersFlight.new()
+	if is_inside_tree():
+		f.base_scale = get_global_transform().get_scale().x  # the HUD's scale (T-431)
 	f.setup(text, color, from, Callable(self, "number_center"),
 		float(cfg.get("flight_seconds", 0.55)), float(cfg.get("flight_arc", 90.0)))
 	f.gain = gain
