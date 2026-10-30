@@ -926,8 +926,8 @@ Rules 4 and 5: the night and retro feel (navy and purple base, pink and cyan neo
 5. air_three_sixty, Run 5: 4 (total 20), kept v2, 6/10.
 6. airtime, Run 6: 4 (total 24), kept v2, 5/10.
 7. thread_the_needle, Run 7: 4 (total 28), kept v1, 5/10.
-8. extended_drift again, Run 8, with the corrected (transparent background) brief: 4 (total 32), kept v3, 7/10. This replaces Run 1's file in `pixellab/extended_drift.png`; Run 1's version stays in style-loop/.
-Total **32 of 40**, 4 per run; extended_drift got two runs (8 gens) because of my brief mistake, the other six 4 each. (The per-illustration limit of 4 holds per run; the extra run was a corrected restart, not a refine.)
+8. extended_drift again, Run 8, with the corrected (transparent background) brief: **0 paid generations** (total stays 28). It worked only by free script fixes on the existing PixelLab output (style-loop/v1-8..v4-8), and a fifth paid call would have gone over the cap of 4 per illustration, so none was made. Kept v3, 7/10. This replaces Run 1's file in `pixellab/extended_drift.png`; Run 1's version stays in style-loop/.
+Total **28 of 40**, matching `game/art/pixellab-generation-log.jsonl` (28 T-384 entries; 4 per illustration, extended_drift 4). (Earlier text in this file saying 32 of 40, or 8 for extended_drift, was wrong: corrected after QA round 1.)
 
 **Kept set:** `art-archive/T-384/pixellab/<trick id>.png`, all 64x48; all seven pass `style_rules.py art --size 64x48` (rules 1, 3, 6).
 
