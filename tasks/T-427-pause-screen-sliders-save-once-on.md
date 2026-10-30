@@ -35,11 +35,11 @@ From the audit epic (formerly T-421, now part of goal G-008): the pause screen's
 
 ## Acceptance criteria
 
-- [ ] A headless GUT test drags each of the zoom, SFX volume and music volume sliders through 20 values and counts the settings file writes: at most one per drag, made when the drag ends. (QA: pass / fail)
-- [ ] Tests show the value is still applied live during the drag: the camera zoom and the SFX and Music bus volumes change on each value, before the drag ends. (QA: pass / fail)
-- [ ] Tests show that closing the pause screen with Escape, Restart and Exit saves the current slider values. (QA: pass / fail)
-- [ ] docs/hud-and-menus.md and game/docs/hud-and-menus/pause-screen.md state that the pause sliders save on release and on close. (QA: pass / fail)
-- [ ] All three test sets pass (GUT, python -m unittest discover -s game/tools -p "test_*.py", and the tools tests), with the counts in the result notes. (QA: pass / fail)
+- [ ] A headless GUT test drags each of the zoom, SFX volume and music volume sliders through 20 values and counts the settings file writes: at most one per drag, made when the drag ends. (QA: pass)
+- [ ] Tests show the value is still applied live during the drag: the camera zoom and the SFX and Music bus volumes change on each value, before the drag ends. (QA: pass)
+- [ ] Tests show that closing the pause screen with Escape, Restart and Exit saves the current slider values. (QA: pass)
+- [ ] docs/hud-and-menus.md and game/docs/hud-and-menus/pause-screen.md state that the pause sliders save on release and on close. (QA: pass)
+- [ ] All three test sets pass (GUT, python -m unittest discover -s game/tools -p "test_*.py", and the tools tests), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -68,3 +68,5 @@ UI Agent, T-427.
 - Docs: `docs/hud-and-menus.md` (Pause screen, new bullet) and `game/docs/hud-and-menus/pause-screen.md` state save on release and on close.
 - Tests: GUT 2153/2153 passed; `python -m unittest discover -s game/tools -p "test_*.py"` 736 tests OK (1 skipped); tools tests (`python -m unittest discover -s tools -p "test_*.py"`) 582 tests OK.
 - Screenshots: none; a slider write-count change shows nothing new on screen.
+
+QA round 1 (sonnet): all five criteria pass. New test_pause_slider_saves.gd 8/8 pass alone. Full GUT: 2153 tests, first full run 2152 passing; test_run_likes.gd `test_run_scene_drift_pays_its_combo_once_when_it_ends` failed (a frame-timing test, unrelated to the pause screen, under load); rerun alone, test_run_likes 18/18 pass. game/tools unittest 736 OK (1 skipped); tools unittest 582 OK. Docs: both state save on release and on close. No screenshots needed (nothing to picture). `python tools/qa_check.py` was refused (needs approval, not on the allow list), so not run; criteria checked by hand.
