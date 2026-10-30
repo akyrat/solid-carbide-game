@@ -43,12 +43,12 @@ The board's review: place the small ramp on the ground and on a rooftop in each 
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The creator places the small ramp in all four directions, on the ground and on a rooftop, one tile long and 2 units high, or as the result notes propose (tests). (QA: pass / fail)
-- [ ] In a run the car drives up it and leaves the ground off its top, and a jump long enough counts for airtime as a ramp hop does (tests). (QA: pass / fail)
-- [ ] The small ramp saves and reopens, an earlier level opens unchanged, check_level.py accepts it, and the game's own map builds as before (tests). (QA: pass / fail)
-- [ ] Level design, Content and game/docs/level/ describe the piece, its keys and the proposals. (QA: pass / fail)
-- [ ] Screenshots of the small ramp in each direction in the editor, and a GIF of jumping off it in a run, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] The creator places the small ramp in all four directions, on the ground and on a rooftop, one tile long and 2 units high, or as the result notes propose (tests). (QA: pass)
+- [ ] In a run the car drives up it and leaves the ground off its top, and a jump long enough counts for airtime as a ramp hop does (tests). (QA: pass)
+- [ ] The small ramp saves and reopens, an earlier level opens unchanged, check_level.py accepts it, and the game's own map builds as before (tests). (QA: pass)
+- [ ] Level design, Content and game/docs/level/ describe the piece, its keys and the proposals. (QA: pass; qa_check's documents line flagged game/docs/level/ but level-creator.md and level-creator-pieces.md did change on the branch; the car_height.gd change is described in the result notes and docs)
+- [ ] Screenshots of the small ramp in each direction in the editor, and a GIF of jumping off it in a run, are in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; all three sets passed in qa_check, car height tests included)
 
 ## Updates
 
