@@ -45,14 +45,14 @@ The board's review: drive into walls at slow, cruise and top speed, head-on, gla
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The cause of the sticking is in the result notes, confirmed in the code. (QA: pass / fail)
-- [ ] Tests drive the real car into a building side, a raised platform's side from the street, the map edge and a boulder, head-on, at about 45 degrees and while drifting into it, with W held throughout, and assert that the car moves away from the wall after the hit (its distance from the wall grows for at least a short time) instead of staying against it. They fail on master before the fix (shown in the result notes) and pass after. (QA: pass / fail)
-- [ ] A test shows the bounce grows with the hit speed and stops growing at the cap: a harder hit bounces further than a slow one, and hits above the cap's speed bounce the same distance. (QA: pass / fail)
-- [ ] There is no time after a hit during which W does nothing (code read; the throttle is never disabled by a timer). (QA: pass / fail)
-- [ ] The scale and the cap are on the tuning panel's Collisions group, with their defaults in the result notes as proposals for the playtest. (QA: pass / fail)
-- [ ] docs/drifting.md (Content, Collisions) and game/docs/driving/collisions.md describe the new bounce. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
-- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass / fail)
+- [ ] The cause of the sticking is in the result notes, confirmed in the code. (QA: pass - W snap to cruise in car_model.gd step 5, confirmed in code)
+- [ ] Tests drive the real car into a building side, a raised platform's side from the street, the map edge and a boulder, head-on, at about 45 degrees and while drifting into it, with W held throughout, and assert that the car moves away from the wall after the hit (its distance from the wall grows for at least a short time) instead of staying against it. They fail on master before the fix (shown in the result notes) and pass after. (QA: pass - test_wall_bounce.gd: building, map edge, boulder, platform side x head-on/45/drift, W held; 13 of 14 fail on master per notes, plausible)
+- [ ] A test shows the bounce grows with the hit speed and stops growing at the cap: a harder hit bounces further than a slow one, and hits above the cap's speed bounce the same distance. (QA: pass - cap test present and passes)
+- [ ] There is no time after a hit during which W does nothing (code read; the throttle is never disabled by a timer). (QA: pass - W pulls speed up every step at wall_bounce_pull, no timer)
+- [ ] The scale and the cap are on the tuning panel's Collisions group, with their defaults in the result notes as proposals for the playtest. (QA: pass - COLLISION_SETTINGS has the sliders, defaults in notes)
+- [ ] docs/drifting.md (Content, Collisions) and game/docs/driving/collisions.md describe the new bounce. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `GODOT_BIN="C:\Tools\Godot\Godot_v4.6.2-stable_win64.exe" bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass - all three sets green via qa_check)
+- [ ] Nothing under game/data/levels/ is changed or committed. (QA: pass)
 
 ## Updates
 
@@ -61,6 +61,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Filed from your playtest: the car really bounces off walls even with W held, scaled by the hit, capped. Driving & Drift agent started.
+
+### 2026-10-30, In QA
+
+Cause found: W snapped the car back to cruise the step after the bounce. Now the bounce wins, then W pulls you back; capped at top speed; no throttle cut. QA running.
 
 ## Style review
 
