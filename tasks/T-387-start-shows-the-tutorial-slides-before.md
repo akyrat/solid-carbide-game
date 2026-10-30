@@ -1,7 +1,7 @@
 ---
 id: T-387
 title: Start shows the tutorial slides before the run, unless hidden
-status: blocked
+status: in-progress
 from: project-lead
 to: game-loop
 lead: Goal-G-007
@@ -47,6 +47,10 @@ The board's review: Press Start from the main menu, go through the slides, tick 
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Blocked → In progress
+
+Goal runner (G-007): started, in C:\solid-carbide-worktrees\T-387.
 
 ## Style review
 
