@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: flagged-for-review
+status: in-progress
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -989,3 +989,4 @@ Plan: 7 illustrations, 1 create-image-pixflux generation each (64x48) plus up to
 - Run 8, extended_drift v2 (v1-8 scored 6; rules 2, 5 and 10): blocked, and no v2-8 was made. The fixes the evaluator names are a recolour of the car to 12,76,44 with two white stripes, a near-black outline, and a 1-2 px stepped halo around the trail. No game tool does them (game/tools has only palette reduction, flood removal, and an outline tool hard-wired to the T-340 enemy sheets). Running my own fix script (art-archive/T-384/scripts/extended_drift_fix8.py, as a single plain command) was refused by the permission system again, and I did not work around it. A paid regeneration would be extended_drift's 5th generation, which is beyond the 4-per-illustration cap in the goal's go. For the Project Lead or the board, pick one: (a) allow `python art-archive/T-384/scripts/extended_drift_fix8.py` (free), (b) give the go for one more paid generation, or (c) keep v1-8 (6/10) and note it for the final playtest.
 - Run 8, round 3: the "version 2" the evaluator scored (6/10; rules 2, 3, 5 and 10) was v1-8 again, because no v2-8 exists. Nothing has changed since round 2: the fix script is still refused and the paid cap is still reached, so v3-8 was not made either. I did not retry the refused command or work around it. The block and options (a) to (c) above still stand.
 - Run 8, round 4: the "version 3" the evaluator scored (7/10; rules 2 and 10) was v1-8 again. The evaluator's scores for this same file were 6, 6 and 7. No v4-8 was made, for the same reasons: the fix script is refused and the 4-generation cap is reached. I did not retry or work around the refusal. The only real version in run 8 is v1-8.png (art-archive/T-384/style-loop/v1-8.png); its best score is 7/10, which is below 8, so it is noted for the final playtest unless the Project Lead or the board picks option (a) or (b) above.
+- 2026-10-30, flagged-for-review → in-progress: Goal run: kept below 8 after the refines (scores 5-7/10), noted for the board's final playtest, as the goal-run rules say (docs/working-with-the-board.md, Goal runs; T-395). Moved back by the Project Lead so the run goes on to QA.
