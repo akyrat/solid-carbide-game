@@ -37,11 +37,11 @@ The board's review: Check the trick illustrations on slide 2 and in the pause sc
 
 ## Acceptance criteria
 
-- [ ] Slide 2 and the pause trick list panel both show the seven PNGs from game/art/tutorial/tricks/ with no placeholder drawn; a test checks each trick's texture is loaded from its file. (QA: pass / fail)
-- [ ] The illustrations use nearest filtering and a whole-number scale; a test checks the filter and scale. (QA: pass / fail)
-- [ ] The placeholder drawing code is removed or no longer reached, and game/docs/hud-and-menus/tutorial-slides.md documents the illustration files. (QA: pass / fail)
-- [ ] Screenshots of slide 2 and the open pause trick list panel are saved in art-archive/<task id>/screenshots/. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] Slide 2 and the pause trick list panel both show the seven PNGs from game/art/tutorial/tricks/ with no placeholder drawn; a test checks each trick's texture is loaded from its file. (QA: pass)
+- [ ] The illustrations use nearest filtering and a whole-number scale; a test checks the filter and scale. (QA: pass)
+- [ ] The placeholder drawing code is removed or no longer reached, and game/docs/hud-and-menus/tutorial-slides.md documents the illustration files. (QA: pass)
+- [ ] Screenshots of slide 2 and the open pause trick list panel are saved in art-archive/<task id>/screenshots/. (QA: pass)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass)
 
 ## Updates
 
@@ -70,3 +70,6 @@ Done (UI Agent, sonnet). No PixelLab generations used.
 - Tests: GUT 162 scripts, 1974 tests, 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` Python tests OK.
 - Screenshots: `art-archive/T-390/screenshots/slide2.png`, `art-archive/T-390/screenshots/pause_trick_list.png`.
 - Refusals: a heredoc python script I tried was refused; I did the edits with the edit tool instead.
+
+### QA round 1
+All five criteria pass. GUT 162 scripts / 1974 tests / 1974 passing; `python -m unittest discover -s tools` 573 OK; `game/tools` 675 OK (1 skipped). Tests test_every_trick_texture_loads_from_its_file, test_no_placeholder_code_left and test_illustration_is_drawn_nearest_at_a_whole_scale exist; the placeholder code is gone from trick_list.gd; both screenshots exist in art-archive/T-390/screenshots/ and the seven PNGs are in game/art/tutorial/tricks/. Refused: `python tools/qa_check.py T-390 --no-marks` (needs approval), so I ran the test sets and checks by hand.
