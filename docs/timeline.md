@@ -2590,3 +2590,8 @@ Entry format:
 - Decision or change: Every pickup is drawn and picked up at its own height; a gift pack that falls on a platform shows on it, and the magnet pulls only on the car's level.
 - Documents touched: none
 - Tasks: T-402
+
+## 2026-10-30: A health pickup revives a wrecked car
+- Decision or change: A wrecked car still rolling that reaches a health pickup picks it up and revives with 1 heart.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-406

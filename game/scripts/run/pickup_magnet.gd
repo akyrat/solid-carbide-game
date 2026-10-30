@@ -42,7 +42,10 @@ func _physics_process(delta: float) -> void:
 
 ## Pulls every pickup inside the reach `delta` seconds closer to the car. Tests call it by hand.
 func step(delta: float) -> void:
-	if state == null or not state.is_running() or run == null:
+	# T-406: during the wreck only health pickups are pulled (and picked up: they
+	# revive the car); coins and gift packs stand still.
+	var wrecked: bool = state != null and state.is_wrecked()
+	if state == null or not (state.is_running() or wrecked) or run == null:
 		return
 	var car: Node2D = run.car
 	if car == null or not is_instance_valid(car):
@@ -51,6 +54,8 @@ func step(delta: float) -> void:
 	var ground = _ground()
 	var car_level := PickupHeightScript.ground_at(ground, at)
 	for group in GROUPS:
+		if wrecked and group != "health_pickups":
+			continue
 		for p in get_tree().get_nodes_in_group(group):
 			if not is_instance_valid(p) or (p.has_method("is_taken") and p.is_taken()):
 				continue
@@ -64,7 +69,7 @@ func step(delta: float) -> void:
 					if not p.has_method("can_be_picked_up_by") or p.can_be_picked_up_by(car):
 						p.collect()
 	var drops: GiftDrops = run.gift_drops
-	if drops != null:
+	if drops != null and not wrecked:
 		for pkg in drops.landed_packages():
 			if not PickupHeightScript.same_level(pkg.ground_height, car_level):
 				continue  # T-402: only packages on the car's level

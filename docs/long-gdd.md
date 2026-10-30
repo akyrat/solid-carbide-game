@@ -195,6 +195,7 @@ When the car loses its last heart (Decisions, "Wrecked: the stream keeps rolling
 - **Pause** still works: it freezes the wreck, and the 3 seconds carry on when the game resumes.
 - **Proposals for the playtest** (the board's questions left open, settled by the Game Loop Agent; T-360): the **HUD stays on screen** as it was at the last heart (the hearts empty, the coins, the viewers counter and the sub goal) so the stream still feels live; the **clock stops** at the moment the last heart goes (that is the time survived the recap shows); the weapons, the kaiju's meteors and the gift pack helicopter stand still, as they do at any end of the run; the engine sound stops.
 - **The enemies swarm the wreck** (board, quick tuning, 2026-10-29: "I don't want the monsters to stop moving when I die, when the car gets destroyed. I want them to keep coming and swarming the car. But with no like interaction or anything, they just come and swarm over the car."): during the 3 seconds the minions keep coming (they still spawn) and walk to the wrecked car as they normally would, and a kaiju already there keeps walking to it too, but nothing interacts: no damage or knockback to the car, no damage to them (the weapons don't fire), and no likes, coins or kills. Once the run has ended they stand still. (Replaces the first proposal, that they freeze.)
+- **A health pickup revives the wreck** (board, 2026-10-30; task T-406; Decisions, "A health pickup revives a wrecked car"): during the 3 seconds a health pickup still flies to the sliding car inside its usual pickup range (the magnet) and is picked up as it touches it. The car comes back with **1 heart**: the controls return, the smoke and flames stop, the run is lost no more (the result and the recap's summary are cleared, the recap does not show and `run_ended` is not sent), the clock runs on from where it stopped, and coins, likes, tricks and kills count again. Proposals for the playtest: the usual **1-second invulnerability** follows the revive (with the blink), so the swarm round the wreck does not finish it at once; the **combo** stays cut as the fatal hit left it and the **live viewers** follow it as always (the recap's peak is kept); **coins and gift packs** stay still during the wreck (only health pickups are pulled and picked up), so nothing else can be collected while wrecked. Without a pickup in reach, the wreck ends with the recap as before.
 
 #### The run history
 
@@ -1771,7 +1772,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 
 | Game area doc | SHA-256 |
 |---|---|
-| `game-loop-architecture.md` | `d55767ca5c466d9541de3aa6217499485464181b61b6c6973fcc7562d5c447df` |
+| `game-loop-architecture.md` | `12a67aa2e293d5ecf70fc7d4040423baaa3061c7b097801498bfa9d551298110` |
 | `drifting.md` | `2d566d60da1df2da543b94a0ca791f766b35a245d43b464353ecca9c1da2476f` |
 | `level-design.md` | `44fb277d6be543e617e7e3fd24a98be14483dfbd08654aa1b7ec79ab02e20032` |
 | `enemies.md` | `08ba68f792b4ebeaa83534c6e7e82dd5ddb9920dba2598427f59acfdb502b24d` |

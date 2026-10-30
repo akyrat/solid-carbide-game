@@ -251,6 +251,7 @@ func _ready() -> void:
 	state.crashed.connect(_on_crashed)
 	# The wreck (T-360): the last heart is gone; run_ended follows after its seconds.
 	state.wreck_started.connect(_on_wreck_started)
+	state.revived.connect(_on_revived)  # T-406: a health pickup revives the wreck
 
 	trick_popups.bind_score(state, func() -> Vector2: return car_sprite.position)
 	trick_popups.bind_combo(state, func() -> Vector2: return car_sprite.position)
@@ -484,6 +485,14 @@ func _on_car_moved() -> void:
 func _on_wreck_started(_seconds: float) -> void:
 	car.input_enabled = false
 	wreck_effect.start(car_sprite.position)
+
+
+## A health pickup revived the wrecked car (T-406): the controls come back and
+## the smoke and flames stop.
+func _on_revived() -> void:
+	car.input_enabled = true
+	wreck_effect.stop()
+	apply_blink()
 
 
 ## The car's blink while it is invulnerable after a hit (T-334): the drawn car
