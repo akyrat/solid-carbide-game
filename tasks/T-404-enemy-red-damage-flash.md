@@ -61,3 +61,15 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 ## Result notes
 
 Written by the agent when it finishes.
+
+Built. T-072's pale 0.12 s tint (`HitTint`, `scripts/enemies/hit_tint.gd`) already did most of it, so it is unified with T-403's `HitFlash` rather than doubled: `HitTint` keeps its API (`attach`, `flash`, `is_active`) but now runs one `HitFlash` per enemy (made at its first hit). Minions and the kaiju flash the car's red, 0.4 s, `run.json` `hit_flash`. `DURATION` and `TINT` are removed; `HitTint.proto()` reads the numbers once for all enemies (no run.json load per minion). Cheap: no material, `_process` switched off when idle. Another tint on the sprite (the flamethrower's orange burn) still wins.
+
+Proposals (for the playtest): (1) a hit that kills skips the flash, the enemy is gone at once; (2) the kaiju flashes on every hit, not only in its vulnerable window (it can be damaged at any time); (3) a new hit restarts the flash, so a weapon that hits every tick keeps an enemy red; (4) 0.4 s is the car's length, so it is longer than the old 0.12 s; if it is too much on minions, `hit_flash.seconds` is one number (it also changes the car).
+
+Tests: updated T-072 tests in `test_minions.gd` and `test_kaiju.gd` (red from run.json, back to white, kaiju flashes, orange left alone) and new ones (kill skips flash and uses the car's numbers; 30 minions share one proto, flash, and stop processing; a new hit restarts). Results: GUT 1946 passing (158 scripts); `game/tools` unittest 668 OK (1 skipped); `tools` unittest 579 OK. No .env in the worktree, GODOT_BIN passed from the main checkout.
+
+Frame time (windowed, 100 minions, `FLASH_MEASURE=100` on `enemy_flash_gif_demo.tscn`, 300 frames each): 4.166 ms with no flashes, 4.180 ms with all 100 re-hit every 0.3 s and flashing (the window is capped near 240 Hz, so the cost is below what shows); same on a second run.
+
+GIF: `art-archive/T-404/screenshots/enemy_red_flash.gif` (6 minions hit one by one, the kaiju twice, then all together; red-pixel count jumps at the kaiju hits, frames 24 and 26). Recorder: `game/tools/record_enemy_flash_gif.sh`, fixture `game/tests/fixtures/enemy_flash_gif_demo.*`.
+
+Documents: `docs/enemies.md` (Decisions, new Content section "The red flash"), `game/docs/enemies/minions.md`.
