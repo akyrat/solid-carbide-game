@@ -46,13 +46,13 @@ The board's review: in a run, take the gun's upgrades one by one (the playtest s
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] At tier 1 one bullet kills a minion (test). (QA: pass / fail)
-- [ ] Tiers 2 to 11 follow the order in the description, read from `weapons.json` (tests), and the level-ups offer the gun up to tier 11. (QA: pass / fail)
-- [ ] The targeting rule below tier 6, from tier 6 (up to 3) and at tier 11 (up to 5) behaves as the result notes propose (tests). (QA: pass / fail)
-- [ ] The gun still aims only at enemies on the car's level and stops when the run is paused or over (existing tests). (QA: pass / fail)
-- [ ] Weapons (Content, "The starting gun") and game/docs/weapons/starting-gun.md describe the new tiers and the targeting rule; the open question on fire rate is closed. (QA: pass / fail)
-- [ ] A GIF of the gun at tier 1, tier 6 and tier 11 against a swarm is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [x] At tier 1 one bullet kills a minion (test). (QA: pass)
+- [x] Tiers 2 to 11 follow the order in the description, read from `weapons.json` (tests), and the level-ups offer the gun up to tier 11. (QA: pass)
+- [x] The targeting rule below tier 6, from tier 6 (up to 3) and at tier 11 (up to 5) behaves as the result notes propose (tests). (QA: pass)
+- [x] The gun still aims only at enemies on the car's level and stops when the run is paused or over (existing tests). (QA: pass)
+- [x] Weapons (Content, "The starting gun") and game/docs/weapons/starting-gun.md describe the new tiers and the targeting rule; the open question on fire rate is closed. (QA: pass)
+- [x] A GIF of the gun at tier 1, tier 6 and tier 11 against a swarm is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [x] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass)
 
 ## Updates
 
