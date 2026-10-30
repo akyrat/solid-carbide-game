@@ -2610,3 +2610,8 @@ Entry format:
 - Decision or change: Sidewalks are painted like roads with curbs drawn automatically (drawn only, no step: the board, 2026-10-30); parked and broken cars are solid obstacles at four facings and can be paired; meteor craters are ground pieces the car drives over. Placeholder art.
 - Documents touched: `docs/level-design.md`
 - Tasks: T-398
+
+## 2026-10-30: A red flash when the car takes damage
+- Decision or change: The car flashes red when it takes damage.
+- Documents touched: none
+- Tasks: T-403
