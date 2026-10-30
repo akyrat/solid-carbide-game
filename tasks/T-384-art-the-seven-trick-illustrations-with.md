@@ -1,7 +1,7 @@
 ---
 id: T-384
 title: Art: the seven trick illustrations with PixelLab (art cap 40)
-status: in-progress
+status: in-qa
 from: project-lead
 to: asset-generation
 lead: Goal-G-007
@@ -59,6 +59,10 @@ Goal runner (G-007): the agent is done; QA is checking it.
 ### 2026-10-30, In QA → In progress
 
 Goal runner (G-007): failed QA once; back to the agent on sonnet.
+
+### 2026-10-30, In progress → In QA
+
+Goal runner (G-007): the agent is done; QA is checking it.
 
 ## Style review
 
