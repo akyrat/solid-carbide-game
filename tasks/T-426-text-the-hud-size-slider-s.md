@@ -53,8 +53,24 @@ Goal runner (G-008): started, in C:\solid-carbide-worktrees\T-426.
 
 ## Style review
 
-Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind label, brief `art-archive/T-426/brief.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+### Round 1
+
+- Version 1: "HUD size"
+- Script checks: 4 of 4 pass
+- Score: 9/10
+- Reason: "HUD size" follows rule 4 for menu and settings labels. It is short, plain and in sentence case ("HUD" is the board's own word, so the capitals are fine). It has no end punctuation and no story flavour, so rule 1 doesn't apply to it. It uses no banned or old vocabulary (rule 2) and has no "Greenbull says" line or brand (rule 3). It reads as a sibling of "Camera zoom level", "Music volume" and "SFX volume". It is one point short of 10 because "size" names the control but not the thing it sizes. That is fine for a label on the pause strip, so no fix is needed.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("HUD size", copied to `art-archive/T-426/label.txt`): it reached 8 or more.
 
 ## Result notes
 
-Written by the agent when it finishes.
+Label: "HUD size", scored 9/10 in round 1 of the style loop (see Style review; brief in art-archive/T-426/brief.md, kept text in art-archive/T-426/label.txt). Same form as "Camera zoom level" and "Music volume".
+
+- File: `game/data/pause_text.json` (valid JSON, key `hud_size_label`). No `hud_size_value`: the slider's value reads as a bare number at the right end like the other sliders, so no value text exists.
+- Docs: docs/hud-and-menus.md (Content, Pause screen, "HUD size slider" entry) and game/docs/hud-and-menus/pause-screen.md.
+- Tests: `python -m unittest discover -s game/tools -p "test_*.py"`: 736 tests, OK (1 skipped).
+- Screenshots: none, text-only work (nothing on screen until the slider's UI ticket).
+- PixelLab generations: 0. Refusals: none.
