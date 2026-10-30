@@ -1,7 +1,7 @@
 ---
 id: T-411
 title: The car's height uses its whole footprint, not its centre
-status: open
+status: planning
 from: project-lead
 to: driving-drift
 lead: Preemptive-bug-bash
@@ -44,6 +44,10 @@ Written by the Project Lead. Each one must be something the QA/Integration Agent
 ## Updates
 
 The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+### 2026-10-30, Open → Planning
+
+Audit epic. A Driving & Drift agent is assessing the root cause read-only; criteria follow from its findings.
 
 ## Style review
 
