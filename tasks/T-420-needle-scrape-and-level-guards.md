@@ -4,7 +4,7 @@ title: Thread the needle while scraping, and level data guards
 status: open
 from: project-lead
 to: level-challenge
-lead: Greenbull
+lead: Audit
 epic: audit
 milestone: mvp
 goal:
@@ -32,6 +32,8 @@ A task is not done until every document listed in documents_affected has been up
 ## Description
 
 Code holes, no new decisions. 1) Level design, Decisions, "Thread the needle": a touch within half a second before the crossing voids the pass. But touched() only runs on a new contact (car.gd hit_obstacle fires once per contact), so scraping along a paired barrier for more than 0.5 s and crossing while still touching pays. 2) ground_height.gd reads p.x, p.height and r.top_height without defaults (a missing key is a script error with half-loaded ground), an unknown ramp side falls through the match (a flat ramp), and a ramp with zero width or height divides by zero (NaN reaches car.height). 3) run.gd starts a level with no spawn at (0,0), while level_spawn.gd says the map's centre snapped to a cell, and never runs LevelSpawn.problem().
+
+Bad level files for the tests go in a test fixtures folder under game/tests/, never in game/data/levels/ (the board's levels: nothing there is written, moved or committed).
 
 The board's review: scrape along a paired barrier through its gap and see no pass paid.
 
