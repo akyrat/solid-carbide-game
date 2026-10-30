@@ -2460,3 +2460,8 @@ Entry format:
 - Decision or change: The board: a wrecked car still sliding that reaches a health pickup's range picks it up and revives with 1 heart.
 - Documents touched: docs/game-loop-architecture.md
 - Tasks: T-406
+
+## 2026-10-30: A falling gift pack's shadow
+- Decision or change: The board: a falling gift pack shows a shadow where it will land, the same as the car's shadow in the air.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-407
