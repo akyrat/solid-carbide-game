@@ -1,7 +1,7 @@
 ---
 id: T-402
 title: Bug: a gift pack that falls on a platform is drawn below the platform
-status: needs-playtest
+status: done
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -119,3 +119,4 @@ Fixtures: `game/tests/fixtures/gift_pack_rooftop_demo.tscn` and `_default.tscn`.
 Note: the worktree has no `.env`. The tests ran with `GODOT_BIN` set on the command line from the main checkout's value.
 
 Board review files: art-archive/T-402/screenshots/before.png, art-archive/T-402/screenshots/after.png, art-archive/T-402/screenshots/before_default_map.png, art-archive/T-402/screenshots/after_default_map.png
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board

@@ -2585,3 +2585,8 @@ Entry format:
 - Decision or change: A falling gift pack shows its landing shadow (build E).
 - Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`
 - Tasks: T-407
+
+## 2026-10-30: Bug fixed: pickups on platforms
+- Decision or change: Every pickup is drawn and picked up at its own height; a gift pack that falls on a platform shows on it, and the magnet pulls only on the car's level.
+- Documents touched: none
+- Tasks: T-402
