@@ -68,6 +68,11 @@ var min_label: Label
 var max_label: Label
 var restart_button: Button
 var exit_button: Button
+## The trick list button (T-386) and its sub-panel, with the back control and the trick list scene.
+var trick_list_button: Button
+var trick_panel: PanelContainer
+var trick_back_button: Button
+var trick_list: TrickList
 var _root: Control
 var strip: PanelContainer
 var _saved_cam: Array = []
@@ -139,7 +144,55 @@ func setup(t: Node) -> void:
 	_build_music_slider(box)
 	_build_camera_controls(box)
 	_build_run_buttons(box)
+	_build_trick_panel()
 	visible = false
+
+
+## The trick list sub-panel (T-386): the same trick list scene as slide 2 and a back control,
+## in the strip's look, centred below the HUD timer strip line. Hidden until the button opens it.
+func _build_trick_panel() -> void:
+	trick_panel = PanelContainer.new()
+	trick_panel.name = "TrickListPanel"
+	trick_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	trick_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	trick_panel.offset_top = STRIP_TOP
+	trick_panel.offset_bottom = STRIP_TOP
+	var style := StyleBoxFlat.new()
+	style.bg_color = STRIP_COLOR
+	style.set_content_margin_all(12.0)
+	trick_panel.add_theme_stylebox_override("panel", style)
+	trick_panel.visible = false
+	_root.add_child(trick_panel)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 10)
+	trick_panel.add_child(col)
+	trick_list = (load("res://scenes/menu/trick_list.tscn") as PackedScene).instantiate()
+	trick_list.name = "TrickList"
+	trick_list.name_font_size = 18
+	trick_list.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	col.add_child(trick_list)
+	trick_back_button = _make_button("TrickBackButton", TrickList.text("button.back"))
+	trick_back_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	trick_back_button.pressed.connect(close_trick_list)
+	col.add_child(trick_back_button)
+
+
+func is_trick_list_open() -> bool:
+	return trick_panel != null and trick_panel.visible
+
+
+## Shows the trick list panel in place of the strip; the run stays paused.
+func open_trick_list() -> void:
+	strip.visible = false
+	trick_panel.visible = true
+	trick_back_button.grab_focus()
+
+
+## Back to the pause screen; its controls were never touched.
+func close_trick_list() -> void:
+	trick_panel.visible = false
+	strip.visible = true
+	trick_list_button.grab_focus()
 
 
 ## The "Restart" and "Exit" buttons (T-327): a row at the bottom of the strip, in its look.
@@ -150,6 +203,9 @@ func _build_run_buttons(box: VBoxContainer) -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 24)
 	box.add_child(row)
+	trick_list_button = _make_button("TrickListButton", TrickList.text("button.trick_list"))
+	trick_list_button.pressed.connect(open_trick_list)
+	row.add_child(trick_list_button)
 	restart_button = _make_button("RestartButton", TEXT_RESTART)
 	restart_button.pressed.connect(func(): restart_pressed.emit())
 	row.add_child(restart_button)
@@ -360,7 +416,11 @@ func _on_set_max() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(ACTION_PAUSE):
-		toggle()
+		# While the trick list panel is open, Escape goes back to the pause screen (T-386).
+		if visible and is_trick_list_open():
+			close_trick_list()
+		else:
+			toggle()
 		get_viewport().set_input_as_handled()
 
 
@@ -402,6 +462,8 @@ func pause() -> void:
 
 
 func resume() -> void:
+	if is_trick_list_open():
+		close_trick_list()
 	_camera_follows_while_paused(false)
 	get_tree().paused = false
 	visible = false

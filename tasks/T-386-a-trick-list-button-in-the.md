@@ -59,4 +59,11 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+UI Agent, done. Trick list button ("Trick list") in the pause screen's run buttons row; it opens `TrickListPanel` with the slide-2 trick list scene (seven tricks only) and a "Back" button (texts from `game/data/tutorial_text.json`). The tree stays paused; back leaves the sliders/checkboxes untouched.
+
+- **Escape while the panel is open (proposal):** goes back to the pause screen, does not resume; a second Escape resumes. Written in both docs and covered by `test_escape_goes_back_instead_of_resuming`.
+- **Layout:** panel centred, starts at y=92 (below the HUD timer), 864 x 421 at 1152 x 648, ends at y=513, clear of the clock (bottom-left) and viewers panel. The test measures with the headless window forced to 1152 x 648 (it is tiny by default; my first run failed on that, not on the layout).
+- **Tests:** new `tests/unit/test_pause_trick_list.gd` (6 tests). Three sets: GUT 1957/1957 passed (160 scripts); `game/tools` unittest 675 OK (1 skipped); `tools` unittest 573 OK.
+- **Screenshots** in `art-archive/T-386/screenshots/`: `pause_screen.png` (with the new button), `pause_trick_list_panel.png` (open panel). Fixture: `pause_trick_list_demo.tscn`.
+- **Docs updated:** `docs/hud-and-menus.md` (Pause screen), `game/docs/hud-and-menus/pause-screen.md`.
+- No PixelLab generations; no refusals. Godot's `.import` line-ending noise in the folder was left uncommitted.
