@@ -12,6 +12,7 @@ const LAYER_CAR := 1 << 1
 const LAYER_PICKUPS := 1 << 3
 ## The pickup circle's radius, in units (a size, not a balancing number).
 const RADIUS_UNITS := 0.5
+const PickupHeightScript := preload("res://scripts/run/pickup_height.gd")
 
 ## Emitted once when the car collects it.
 signal collected(coin: Node, value: int)
@@ -20,6 +21,9 @@ var value := 1
 ## The run's state (RunState): add_coins() is called on it.
 var state: Node = null
 var sprite: Node2D = null
+## The height of the ground it lies on, units (T-402): a rooftop's on a rooftop. The spawner sets
+## it; the car picks it up only from that height or above (pickup_height.gd).
+var ground_height := 0.0
 var _taken := false
 
 
@@ -48,8 +52,13 @@ func position_units() -> Vector2:
 
 
 func _on_body_entered(body: Node) -> void:
-	if body.collision_layer & LAYER_CAR:
+	if body.collision_layer & LAYER_CAR and can_be_picked_up_by(body):
 		collect()
+
+
+## True when `car` is high enough to pick it up (T-402): not from the street below a rooftop.
+func can_be_picked_up_by(car: Node) -> bool:
+	return PickupHeightScript.car_reaches(PickupHeightScript.height_of(car), ground_height)
 
 
 ## Collects the coin: adds `value` to the run's coins and removes it. Once only.

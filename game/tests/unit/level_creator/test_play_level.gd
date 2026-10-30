@@ -85,7 +85,9 @@ func test_the_run_map_holds_the_level_buildings_platforms_and_ramps() -> void:
 	var run := _play(_creator())
 	assert_eq(run.map.buildings.size(), level_data.buildings.size(), "the level's buildings")
 	var gh = run.elevation.ground_height
-	assert_eq(_ids(gh.platforms), _ids(level_data.platforms), "the level's rooftops")
+	# T-405: the level's rooftops, then the platforms of its short buildings.
+	var rooftops: Array = gh.platforms.filter(func(p): return not bool(p.get("short", false)))
+	assert_eq(_ids(rooftops), _ids(level_data.platforms), "the level's rooftops")
 	assert_eq(_ids(gh.ramps), _ids(level_data.ramps), "the level's ramps")
 	assert_false(_ids(gh.platforms).has(REMOVED_PLATFORM))
 	assert_eq(run.car.ground, gh, "the car drives on the level's heights")

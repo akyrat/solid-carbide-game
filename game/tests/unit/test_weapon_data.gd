@@ -12,7 +12,8 @@ func test_loads_through_loader() -> void:
 
 func test_gun_base_values_match_report() -> void:
 	var g := WeaponData.new().gun_at(1)
-	assert_eq(g.damage, 2.0)
+	assert_eq(g.damage, 4.0, "T-408: a minion's health, one bullet kills one")
+	assert_eq(g.targets, 1)
 	assert_eq(g.range, 12.0)
 	assert_almost_eq(g.fire_interval, 1.26, 0.0001)
 	assert_eq(g.bullets, 1)
@@ -22,34 +23,43 @@ func test_gun_base_values_match_report() -> void:
 	assert_eq(g.pierce_hits, 0)
 
 
-func test_gun_tiers_match_report_table() -> void:
+## T-408 (Weapons, Decisions, 2026-10-30): tiers 2-3 +1 bullet, 4-5 20% faster, 6 up to 3
+## targets, 7-8 +1 bullet, 9-10 20% faster, 11 up to 5 targets; range and pierce never change.
+func test_gun_tiers_match_the_board_order() -> void:
 	var w := WeaponData.new()
-	# tier: [bullets, fire interval, range, pierce]
+	# tier: [bullets, fire interval, targets]
 	var expected := {
-		1: [1, 1.26, 12.0, 0], 2: [3, 1.26, 12.0, 0], 3: [3, 1.06, 12.0, 0],
-		4: [3, 0.893, 12.0, 0], 5: [3, 0.893, 18.0, 0], 6: [5, 0.893, 18.0, 0],
-		7: [5, 0.754, 18.0, 0], 8: [5, 0.754, 18.0, 1],
+		1: [1, 1.26, 1], 2: [2, 1.26, 1], 3: [3, 1.26, 1], 4: [3, 1.06, 1], 5: [3, 0.893, 1],
+		6: [3, 0.893, 3], 7: [4, 0.893, 3], 8: [5, 0.893, 3], 9: [5, 0.754, 3], 10: [5, 0.639, 3],
+		11: [5, 0.639, 5],
 	}
 	for tier in expected:
 		var g := w.gun_at(tier)
 		var e: Array = expected[tier]
 		assert_eq(g.bullets, e[0], "bullets tier %d" % tier)
 		assert_almost_eq(g.fire_interval, e[1], 0.001, "interval tier %d" % tier)
-		assert_eq(g.range, e[2], "range tier %d" % tier)
-		assert_eq(g.pierce_hits, e[3], "pierce tier %d" % tier)
-		assert_eq(g.damage, 2.0)
+		assert_eq(g.targets, e[2], "targets tier %d" % tier)
+		assert_eq(g.range, 12.0, "range tier %d" % tier)
+		assert_eq(g.missed_bullet_max_travel, 12.0)
+		assert_eq(g.pierce_hits, 0, "pierce tier %d" % tier)
+		assert_eq(g.damage, 4.0)
 
 
-func test_gun_missed_bullets_removed_past_range() -> void:
+func test_gun_damage_one_shots_a_minion() -> void:
+	var minion_health := float(GameData.unwrap(GameData.get_value(GameData.unwrap(GameData.load_file("enemies")), "minion.health")))
+	assert_gte(WeaponData.new().gun_at(1).damage, minion_health, "tier 1 bullet >= a minion's health")
+
+
+func test_tier_count_per_weapon() -> void:
 	var w := WeaponData.new()
-	assert_eq(w.gun_at(1).missed_bullet_max_travel, 12.0)
-	assert_eq(w.gun_at(5).missed_bullet_max_travel, 18.0)
-
-
-func test_tier_count_is_seven_upgrades_each() -> void:
-	var w := WeaponData.new()
-	assert_eq(w.max_tier(), 8)
-	for weapon in ["gun", "flamethrower", "underglow", "molotov", "wiper", "bricks"]:
+	assert_eq(w.max_tier(), 8, "the shared last tier")
+	assert_eq(w.max_tier("gun"), 11, "the gun's own (T-408)")
+	var gun_tiers := w.tiers("gun")
+	assert_eq(gun_tiers.size(), 10)
+	for i in 10:
+		assert_eq(int(gun_tiers[i].tier), i + 2)
+	for weapon in ["flamethrower", "underglow", "molotov", "wiper", "bricks"]:
+		assert_eq(w.max_tier(weapon), 8, weapon)
 		var tiers := w.tiers(weapon)
 		assert_eq(tiers.size(), 7)
 		for i in 7:
@@ -104,7 +114,9 @@ func test_five_weapons_each_with_eight_tiers() -> void:
 	for k in raw:
 		if raw[k] is Dictionary and raw[k].has("tiers"):
 			count += 1
-			assert_eq(raw[k].tiers.size() + 1, 8, "%s has base plus 7 tiers" % k)
+			var last := int(raw[k].get("max_tier", raw["max_tier"]))
+			assert_eq(raw[k].tiers.size() + 1, last, "%s has base plus its upgrade tiers" % k)
+			assert_eq(last, 11 if k == "gun" else 8, "%s's last tier (T-408: the gun 11)" % k)
 	assert_eq(count, 6, "the five MVP weapons and Bricks")
 
 

@@ -65,6 +65,7 @@ The MVP has one map: a city laid out as a grid of building blocks, with roads of
 - **A row of obstacles can be threaded gap after gap** (board, 2026-10-29): the board wants to thread the needle through every gap in a row of obstacles, one after another, but an obstacle can be in only one pair today (pairing it again unpairs it from the other). The board asked the Project Lead for an intuitive way that works both ways; the Project Lead's design: an obstacle can be in several pairs (pairing B with C keeps A with B), several obstacles can be picked in order and paired in one go as a chain (A with B, B with C, C with D), Unpair removes only the pair it is aimed at, and in the run each gap pays its own thread the needle, so a row threaded gap after gap pays each one. The board judges it in the playtest. (T-394)
 - **Sidewalks and parked cars in the level creator** (board, 2026-10-30): new pieces for the creator, with art that fits the roads, the buildings and the other assets. **Sidewalks** are painted like roads; wherever a sidewalk meets a road the editor adds the curb edge itself. In the run the car drives up over the curb (it is a step under the 0.1-unit curb rule, Drifting, Decisions). **Parked cars**: a few normal, boring city cars and some broken (wrecked) ones, each at four facings (top right, bottom right, bottom left, top left). They are solid obstacles like boulders: the car crashes into them, and two of them can be paired for thread the needle. PixelLab up to 50 generations for the whole set, sample first (one sidewalk tile with its curb, one parked car facing) for the board's review. **Meteor craters** (board, 2026-10-30, the same day): holes the meteors left in the ground, placed in the creator as ground pieces, not obstacles: the car drives over them with no crash. A few looks, made inside the same 50-generation cap, one crater in the sample. This reopens the pavement question for the creator's levels only (Open questions); the game's own map is unchanged. (T-396 to T-399, T-401)
 - **A gift pack that falls on a platform shows on it** (board, 2026-10-30; a bug, fixed at once): a gift pack dropped onto a platform (rooftop) is drawn below the platform, hidden under it. It must be drawn at the height of what it lands on. Whether a gift pack may land on a platform at all (today's rule, Content, "Elevation sample map": street-level spots only) or is drawn on the platform and picked up there is the agent's proposal, written with the root cause, for the board's playtest. (T-402)
+- **Short buildings become platforms** (board, 2026-10-30): on platforms "a lot of stuff seems not to be working": a gift pack's pickup is in the wrong place, a low-rise under a platform is drawn correctly but its invisible body still stops the car, so it can't reach the platform's end, and nothing says what happens when the car jumps off a platform over a building. The board's decision: the low-rise, small and long buildings no longer exist as buildings; each is a **platform at height 3** with the same art (walls trimmed by script to height 3, no new generations), driven on like a rooftop and reached by today's 0-to-3 ramps. Placed side by side they **connect** into one larger platform (no walls or roof edges drawn between them). Only skyscrapers stay solid buildings. Every collider and pickup works at the height it is at (nothing below a platform stops the car on top of it; a pickup on a platform is picked up there), and the car that jumps off a platform falls to the ground or a lower platform; a skyscraper blocks it at any height. Levels saved before, and the game's own map, turn their short buildings into these platforms. (T-402, T-405)
 - **A small jump ramp** (board, 2026-10-30): besides today's ramps (0 to 3, 3 to 6 and 0 to 6, each about three tiles long), a small ramp only one tile long that rises about 2 units from the ground it stands on, for small jumps: the car drives up it and flies off its top. It is placed, turned and raised like the other ramps (on the ground or on a rooftop). Its exact length, height and whether its tall end is open or closed are proposals for the playtest. (T-400)
 
 ## Content
@@ -264,6 +265,11 @@ Added for sidewalks and parked cars (task T-396; same file, every earlier key un
 - **Looks strip under a selected car:** model counter "Model {n} of {count}" (`model_counter`), shown only if T-398 gives the cars several models; the facing labels "Facing top right", "Facing bottom right", "Facing bottom left", "Facing top left" (`facing_top_right`, `facing_bottom_right`, `facing_bottom_left`, `facing_top_left`), shown only if T-398 shows the facing.
 - Style loop: score 9/10 in round 1 (Style review, T-396). The script's complaints about one line and sentence case came from checking all eight labels as one block; each label alone is short, plain and in the existing voice.
 
+Added for meteor craters (task T-401; same file, every earlier key unchanged; Decisions, "Sidewalks and parked cars in the level creator", Meteor craters; T-398 copies it into `creator_texts.json`):
+
+- **Ground (side panel):** "Meteor crater", after "Sidewalk" (`piece_meteor_crater`). The looks strip reuses T-396's "Model {n} of {count}" (`model_counter`).
+- Style loop: score 10/10 in round 1 (Style review, T-401).
+
 ### Level creator: one button per kind of piece
 
 Task T-262 (Decisions, "Level creator rework"). How it works and where its data is: `game/docs/level/level-creator.md`, "Level creator", "The side panel: one button per kind of piece (T-262)". The groupings of looks are the Level/Challenge Design Agent's **proposals for the board's playtest**.
@@ -305,6 +311,22 @@ Task T-264 (Decisions, "Level creator rework"). How it works: `game/docs/level/l
 ![The same ramps with their arrows down](../art-archive/T-264/screenshots/ramps_down.png)
 ![S, M and L platforms at heights 3 and 6](../art-archive/T-264/screenshots/sizes.png)
 
+### Level creator: the small jump ramp
+
+Task T-400 (Decisions, "A small jump ramp"). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "The small jump ramp (T-400)". Every point below is the Level/Challenge Design Agent's proposal for the board's playtest.
+
+- **The piece:** three more height steps of the Ramp family, after 0 to 6: **Ramp 0 to 2** (on the street), **Ramp 3 to 5** (on a height 3 rooftop) and **Ramp 6 to 8** (on a height 6 rooftop), so it rises 2 units from whatever it stands on, as the other ramps are raised by their height step. Key **H** steps 0 to 3, 3 to 6, 0 to 6, 0 to 2, 3 to 5, 6 to 8; **R** turns it to climb north, east, south or west; dragging sets its width (default 10, at least 4 units), like the other ramps.
+- **Size:** one tile long, 4 units (a third of a 12-unit ramp), and 2 units high, so its slope (1 in 2) is twice a 0 to 3 ramp's.
+- **Its tall end is open:** it climbs to no rooftop. Nothing stands above its lip, so the car drives up it and flies off the top, taking off along the slope (the ramp's own vertical speed, as at a ramp's top) when it climbs at 4 units/s or more; slower it just rolls off. The face under the lip is drawn as the ramp's back in the ramp side's texture (as the other ramps' tall ends), so it doesn't look hollow; from behind it is a 2-unit step the car can't climb, like any raised side. A jump counts for the airtime trick and the air tricks like a ramp hop: after a 22-unit run-up from a standstill the car spends about 1.6 seconds in the air and rises to about 4.7 units (2.7 over the lip) on a Ramp 0 to 2.
+- **Its slope:** shown by today's arrows on its top, up the slope by default, turned with key A.
+- **Enemies** go round it or over it as the height rules decide (it is a ramp like the others: up from its foot, down off its top or its sides).
+
+![Ramp 0 to 2 on the street climbing north, east, south and west](../art-archive/T-400/screenshots/editor_street.png)
+![Ramp 3 to 5 on a height 3 rooftop in the four directions](../art-archive/T-400/screenshots/editor_roof3.png)
+![Ramp 6 to 8 on a height 6 rooftop in the four directions](../art-archive/T-400/screenshots/editor_roof6.png)
+
+GIF of the car jumping off the small ramps in a run: `art-archive/T-400/screenshots/jump_drive.gif`.
+
 ### Level creator: skyscraper banners on or off
 
 Task T-265 (Decisions, "Level creator rework"). How it works: `game/docs/level/level-creator-pieces.md`, "Level creator", "Skyscraper banners on or off (T-265)". The choices marked here are the Level/Challenge Design Agent's proposals for the board's playtest.
@@ -334,16 +356,29 @@ Task T-272 (Decisions, "Thread the needle"; the text is T-271's, above). How it 
 
 - **Which pieces are obstacles:** the four of the panel's Obstacles group, boulders, barriers, cones and crates. Decoration (street lamps, AC units, water tanks, roof vents, rooftop signs) is refused with "Not an obstacle...", as are buildings, rooftops, ramps and the ground.
 - **Pairing:** the top bar's "Pair obstacles", or **P**, turns the pair tool on (it drops the picked piece); click one obstacle, then another: the top bar says "Pair made. Drive between them." The tool stays on for the next pair until P, Esc, a right-click or picking a piece. Clicking the same obstacle twice lets it go.
-- **One pair per obstacle:** pairing an obstacle that is already in a pair replaces its old pair (a proposal: the new pair wins).
-- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the first obstacle clicked with the tool on is ringed thicker.
-- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair", or delete either obstacle.
-- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles and no obstacle is in two.
+- **An obstacle in several pairs (T-394, below):** pairing an obstacle that is already in a pair keeps its old pair too; T-272's "one pair per obstacle" is gone.
+- **How a pair shows in the editor (a proposal):** a dashed mint-green line across the gap, from one obstacle's edge to the other's, and a ring round each; the obstacles picked with the tool on are ringed thicker.
+- **Removing a pair:** select a paired obstacle (nothing picked) and press "Unpair" (since T-394 this removes all of its pairs), or delete either obstacle.
+- **In the level file:** a `pairs` list, saved and reopened with the level; `check_level.py` checks every pair names two different existing obstacles (since T-394 an obstacle can be in several pairs, but the same two obstacles make one pair at most).
 - **In a run on the level:** when the car's centre crosses the line between the two obstacles' centres without touching either, it is the **thread the needle** trick: the combo goes up and THREAD THE NEEDLE! "+{amount}" pops. Proposals: worth **0.5**, like ALT DRIFT! and AIR 360!; the same pair pays again on a later pass in either direction once **3 seconds** have gone by since it last paid; it **counts in the air** (a jump through the gap); a touch of either obstacle from half a second before the crossing until a quarter second after it voids the pass, and the crash cuts the combo as always. The trick pops a quarter second after the crossing, once the car is clear.
 - **How a pair shows in the run (a proposal):** a faint dashed chalk-white line on the ground across the gap, under the car and the obstacles, drawn in code.
 - **The game's own map** has no pairs and is unchanged.
 
 ![Two pairs in the editor, a boulder pair across a road and a barrier with cones, with a crate stack held as the first of a new pair](../art-archive/T-272/screenshots/pair_in_editor.png)
 ![The car threading the boulder pair in a run, with the popup](../art-archive/T-272/screenshots/popup.png)
+
+### Level creator: a row paired as a chain
+
+Task T-394 (Decisions, "A row of obstacles can be threaded gap after gap"). It changes the pair tool above; no new text (the labels and messages are T-271's). How it works: `game/docs/level/level-creator-pieces.md`, "Thread the needle (T-272)", "Several pairs and chains (T-394)".
+- **Two ways to pair a row.** One pair at a time, as before: click A, then B; click B, then C; and so on. Each new pair keeps the earlier ones, so the row ends up paired A-B, B-C, C-D. Or the whole row in one go: with the pair tool on, **Shift+click** the obstacles in order (each is ringed thicker and numbered 1, 2, 3 above it; Shift+click a numbered one again to take it out), then press **P** or **Pair obstacles**: each is paired with the next (A with B, B with C, C with D) and the tool stays on. A plain click after a Shift+click row adds that obstacle as the last one and pairs the row straight away. Shift+click on an obstacle with the pair tool off (and nothing picked) turns the tool on and starts a row with it.
+- **The same two obstacles are one pair at most:** pairing them again (in either order) changes nothing.
+- **Unpair removes only the pair aimed at.** With the pair tool on, Shift+click to aim, then "Unpair": two picked removes their pair; a row picked removes only the pairs between consecutive picked ones (A-B, B-C), and the obstacles' other pairs stay; one picked removes all of its pairs. With the tool off, a selected obstacle's "Unpair" removes all of its pairs (the proposal for one obstacle: all its pairs, rather than a choice). "Unpair" shows only when there is something to remove. Deleting an obstacle removes its pairs; the rest of a chain stays.
+- **In the editor** every pair shows its own dashed line, so a chain reads as a row of links.
+- **In the run** each pair is its own gap: threading a row gap after gap pays thread the needle for each gap, each gap with its own 3-second cool-down; a touch of an obstacle voids the passes of every gap it is part of, and the crash pays nothing and cuts the combo as always.
+- **Saved levels:** the level file keeps its `pairs` list, one pair per entry, so a level saved before opens with its pairs, and `check_level.py` accepts an obstacle in several pairs.
+
+![A row of five boulders paired as a chain along a road, and a second row of three obstacles picked and numbered 1, 2, 3](../art-archive/T-394/screenshots/chain_in_editor.png)
+![The car after threading the third gap of a chained row in a run, with the popup](../art-archive/T-394/screenshots/chain_popup.png)
 
 ### Level creator: the spawn point
 
@@ -377,13 +412,54 @@ Task T-251 (Decisions, "Level creator piece set"). Every number here is the Leve
 Task T-253 (Decisions, "Level creator piece set"). Every number here is the Level/Challenge Design Agent's **proposal for the board's playtest**. How it works and how to rebuild the placeholder art: `game/docs/level/level-creator-pieces.md`, "Level creator", "Props (T-253)".
 
 - **The set** (category "Props", names from T-250): concrete barrier, traffic cones, crate stack, AC unit, water tank, roof vent, street lamp, rooftop sign. Footprints (north-facing, units): barrier 4 by 1, rooftop sign 4 by 1, water tank 4 by 4, the rest 2 by 2. Heights drawn: barrier 1.2, cones 0.9, crates 2.2, AC unit 1.5, roof vent 1.45, sign 3.3, tank 3.3, lamp 5.35.
-- **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping, and is refused only where its footprint would leave the map.
+- **Four rotations** (R steps north, east, south, west; the facing is the direction a small pale arrow on the placeholder points). East and west swap the footprint's two numbers. A prop goes on the 2 by 2 tile grid like the other pieces, is not refused for overlapping other objects, and is refused where its footprint would leave the map, reach into a building or stand across a rooftop's or ramp's edge (T-393, below).
 - **Ground or rooftop:** a prop stands at the height under the centre of its footprint (the street, a rooftop, a ramp's slope), drawn lifted by it.
-- **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Proposal: the physics is flat, so a car in the air above a rooftop prop crashes into it too.
+- **Solid obstacles:** each is a static body like a boulder: the car crashes into it (the combo is cut as for a boulder) and the minions and the kaiju are stopped by it; the enemies' paths close the cells it takes. Collision: a rectangle (the footprint) for the barrier, crates, AC unit and sign, a circle for the cones (radius 0.9), tank (1.8), roof vent (0.9) and lamp (0.4). Since T-405 a prop blocks the car only at its own heights, from the ground it stands on to its top ("Short buildings as platforms", below).
 - **Placeholder look:** code-drawn boxes and cylinders (a top and two visible faces, a dark outline, none of Greenbull's colours), one sprite per prop and rotation. Everything about a prop is in `game/data/level/props.json` (footprint, collision, height, the sprite of each rotation and its anchor), so T-256's art changes only that file and the PNGs.
 - **Saved levels** keep their props in a `props` list; `check_level.py` checks that each names a known prop and rotation, has the right turned footprint and lies inside the map.
 
 ![Every prop in its four rotations on the street, in the level creator](../art-archive/T-253/screenshots/creator_street.png)
+
+### Level creator: objects, heights and depth
+
+Task T-393 (Decisions, "Obstacles and decorations respect the buildings' and rooftops' heights"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Props (T-253)", "Heights and depth of placed objects (T-393)".
+
+- **Heights:** every placed object, the boulders and the eight props, stands at the height under the centre of its footprint: the street (0), a rooftop (3 or 6) or a ramp's slope, in the editor and in the run. Boulders used to stand on the street even on a rooftop; now they are lifted like the props.
+- **Depth:** an object behind a building or a rooftop and overlapping it on screen is drawn under it; one in front of it, or standing on it, is drawn over it. The board's barriers by the low-rise were drawn over it on any level with rooftops, because the buildings' order there was read wrongly; that is fixed for every kind of object.
+- **Edges (the Level/Challenge Design Agent's proposal for the board's playtest):** an object stands wholly on one surface. One whose footprint would reach into a building, or across the edge of a rooftop or a ramp, is not placed, with the same message as a piece that overlaps another ("Can't place here: it overlaps another piece."); touching a building or an edge is fine. The other way round, a building placed over an object, or a rooftop or ramp whose edge would cut through one, is not placed either; a rooftop or ramp placed wholly over an object lifts it to its height. Levels saved before keep what they have (the board's Kaiju City barrier inside its low-rise stays; since T-405 the low-rise is a platform, so it stands on its roof). Since T-405 "a building" here means a skyscraper: the short buildings are platforms and take objects like rooftops.
+- **As before:** the game's own map and levels without rooftops draw their objects exactly as before.
+
+![Before: the board's barriers drawn over the low-rise in the editor](../art-archive/T-393/screenshots/before_editor.png)
+
+![After: the barrier behind the low-rise is hidden by it](../art-archive/T-393/screenshots/after_editor.png)
+
+### Short buildings as platforms
+
+Task T-405 (Decisions, "Short buildings become platforms"). How it works in the code: `game/docs/level/level-creator-pieces.md`, "Short buildings as platforms (T-405)". The art: Visual style, Content, "Short buildings as platforms".
+
+- **Which buildings:** the low-rise (4 designs, 2 looks each), the small (6 by 6) and the long (12 by 6, turned 6 by 12) building are platforms at **height 3**. Only the skyscrapers stay solid buildings. Nothing changes in how they are placed, mirrored or saved: a level file still lists them under `buildings`, so every level saved before loads them as platforms.
+- **Driving:** the car drives on a short building's roof like on a rooftop, reaches it by a 0-to-3 ramp (the creator links a ramp to it like to a rooftop at 3), meets its sides from the street as walls, and falls off its edges. A rooftop at 6 may stand on it.
+- **Joins:** two short buildings side by side, or one beside (or overlapping) a 3-high rooftop, make one surface: the same height, so no bump and no wall, and no wall or roof edge drawn along the join. A parapet breaks where a ramp meets the edge, as on the rooftops. A short building beside a higher rooftop draws no wall or edge against it either.
+- **Enemies** treat them as rooftops: they walk up the ramps onto them and drop off their edges (the enemies' paths, T-226).
+- **Objects:** props and boulders go on them like on a rooftop, at height 3; one across a short building's edge, or across the join between two of them, is not placed (T-393's edge rule; a proposal: the join could be allowed later). The car's spawn point may stand on one.
+- **See-through (proposal):** a short building fades while it covers the car behind it, as the rooftops do (the car on its roof, or in front of it, never fades it).
+- **The game's own map:** each short building of its blocks (about one per block) is a platform on its 12 by 12 footprint; the block's other three slots stay solid skyscrapers with their pavement, and the pavement round the short building is open street (proposal: before, the whole block was solid). It has no ramp to them, so they are reached only from the air. The old MVP map without heights is unchanged.
+
+**The altitude audit (proposals for the board's playtest).** Every collider of a level and how it works at height:
+
+| Collider | How it blocks the car |
+|---|---|
+| Skyscraper (and a block's skyscraper slot) | A wall at any height, on the street, on a rooftop and in the air. |
+| Map edge | A wall at any height. |
+| Short building, rooftop | No body: its sides stop a car below its top (a car that drives into a 3 from the street bounces off its side); a car at or above its top drives or lands on it. |
+| Ramp | No body: its sides stop a car below the slope; its foot and top end are open. |
+| Prop (barrier, cones, crates, AC unit, water tank, roof vent, street lamp, rooftop sign) | Only from the ground it stands on (the height under its centre) up to its top (its drawn height): a car on a rooftop passes over a street prop at the rooftop's edge, a car in the air passes over a prop it clears, a car on the street never touches a prop up on a roof. |
+| Boulder (placed, a meteor's) | The same, from its ground up by its diameter (3 units). |
+| Spawn point | Not a body: the car starts at the ground's height there (a short building's 3 included). |
+
+The car's own height model treats the car as its centre point (car_height.gd): a car that lands overlapping a prop or boulder keeps passing through it until it is clear of it rather than being pushed out (a proposal); T-411 (the car's whole footprint) would make the sides and edges meet the drawn car instead.
+
+![Short buildings joined side by side and to a rooftop, in the level creator](../art-archive/T-405/screenshots/editor_joined.png)
 
 ### Elevation test scene
 
@@ -428,7 +504,7 @@ The file is `game/data/level/elevation_sample_map.json`, made by `python game/to
 **The run on this map** (task T-206; Decisions, "The elevation sample map becomes the run's map"): a run started from the main menu plays on this layout, with the rooftops, ramps, the car's height, its round shadow, its shadowless frames in the air, see-through and the depth order exactly as in the drive-only scene (the same code, `game/scripts/level/elevation_layer.gd`), and with the whole run on top: enemies, weapons, the timer, likes and levels, the gift pack drop and the kaiju. The drive-only scene stays as it is (F6). Proposals for the playtest:
 
 - **Start:** the run's start is unchanged, the centre of the gravel square (0, 0), nose north; the gravel square is the MVP map's and lies at street level on this layout.
-- **Enemies, coins, pickups and effects** are drawn at street level (height 0) in the depth order: under a rooftop or ramp that covers them, like the car on the street. Gift packages, meteors and other things that look for an open spot on the ground only pick street-level spots (no rooftop or ramp). How enemies deal with heights is task T-207's.
+- **Enemies, coins, pickups and effects** are drawn at street level (height 0) in the depth order: under a rooftop or ramp that covers them, like the car on the street. Gift packages, meteors and other things that look for an open spot on the ground only pick street-level spots (no rooftop or ramp). One exception, the gift package (T-402; Decisions, "A gift pack that falls on a platform shows on it"): when no street spot is open within its search, because the car is well inside a large rooftop, it lands on open, flat ground of that rooftop, drawn at the rooftop's height and picked up there (Game loop architecture, "The gift pack drop"). Every pickup (gift package, coin, health pickup) is drawn and picked up at the height of the ground it lies on: on a rooftop only from the rooftop, never from the street below (board, 2026-10-30, T-402). How enemies deal with heights is task T-207's.
 - **The car's drift smoke and boost** are lifted with the ground under the car, so on a rooftop they stay at its tyres; in the air they stay on the rooftop or street under it.
 - **Switching back to the MVP map:** one constant, `USE_ELEVATION_MAP` in `game/scripts/run/run.gd` (`game/docs/game-loop/the-run.md`, "The run").
 

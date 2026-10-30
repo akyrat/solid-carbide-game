@@ -504,6 +504,16 @@ class ArtCap(GoalRepo):
         self.assertPaused(goal, "command", "style loop", "tools/style_loop/run.py art --task T-002")
         self.assertEqual(self.status("T-002"), "in-progress")
 
+    def test_a_style_loop_version_kept_below_8_goes_on_to_qa_without_a_pause(self):
+        """T-395: in a goal run the loop notes a score below 8 and leaves the ticket in progress; QA follows."""
+        f = self.fixture()
+        f["agent"][1]["_style_score"] = 5
+        b = self.planned(f, art_cap=2)
+        goal = self.run_loop(b)
+        self.assertPaused(goal, "art-cap", "T-003")   # only the cap pauses it, not the kept-below-8 ticket
+        self.assertEqual(self.status("T-002"), "needs-playtest")
+        self.assertEqual(self.steps(b)[:7], ["plan", "gaps", "agent", "qa", "gaps", "agent", "qa"])
+
     def test_art_used_counts_the_new_log_lines_and_the_cap_blocks_the_next_art_ticket(self):
         log = self.root / build.ART_LOG
         log.parent.mkdir(parents=True, exist_ok=True)

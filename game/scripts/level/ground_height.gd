@@ -7,6 +7,8 @@ extends RefCounted
 const DEFAULT_PATH := "res://data/level/elevation_test.json"
 ## Step length when walking a segment in edge_between (units).
 const SAMPLE_STEP := 0.05
+## T-405: the layout's short buildings are platforms (short_platforms.gd).
+const ShortPlatformsScript := preload("res://scripts/level/short_platforms.gd")
 
 var platforms: Array = []
 var ramps: Array = []
@@ -35,7 +37,11 @@ func load_file(path: String = DEFAULT_PATH) -> bool:
 func load_data(data: Dictionary) -> bool:
 	platforms = []
 	ramps = []
-	for p in data.get("platforms", []):
+	var listed: Array = data.get("platforms", []).duplicate()
+	# T-405: the short buildings (low-rise, small, long) are platforms at ShortPlatforms.HEIGHT,
+	# after the file's own rooftops (so the rooftops keep their area indices).
+	listed.append_array(ShortPlatformsScript.platforms_of(data))
+	for p in listed:
 		platforms.append({
 			"id": str(p.get("id", "")),
 			"rect": Rect2(float(p.x), float(p.y), float(p.w), float(p.h)),
@@ -48,6 +54,10 @@ func load_data(data: Dictionary) -> bool:
 			"art": str(p.get("art", "")),
 			# The piece style it is drawn with (T-255, elevation_layer.gd piece_style_named), "" for the default.
 			"style": str(p.get("style", "")),
+			# T-405: a short building's platform: its entry's index in `buildings` and its source art.
+			"short": bool(p.get("short", false)),
+			"building": int(p.get("building", -1)),
+			"texture": str(p.get("texture", "")),
 		})
 	for r in data.get("ramps", []):
 		ramps.append({

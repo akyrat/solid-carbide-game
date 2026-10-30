@@ -123,7 +123,8 @@ func test_kaiju_walks_straight_at_the_car_in_the_open() -> void:
 
 
 func test_kaiju_walks_round_a_building() -> void:
-	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[0])
+	# T-405: a block with no short building (the first one's short slots are platforms now, open street round them).
+	var b: Rect2 = run.map.rect_of(run.map.layout.buildings[1])
 	var r: float = KaijuScript.RADIUS_UNITS
 	var start := Vector2(b.position.x - r - 0.5, b.get_center().y)
 	var target := Vector2(b.end.x + 12.0, b.get_center().y)
@@ -493,8 +494,8 @@ func test_a_damaged_kaiju_is_tinted_briefly_then_back_to_normal() -> void:
 	assert_not_null(k.sprite)
 	assert_eq(k.sprite.modulate, Color.WHITE)
 	k.take_damage(1.0)
-	assert_eq(k.sprite.modulate, HitTint.TINT, "tinted at once")
-	k.hit_tint._process(HitTint.DURATION * 0.5)
-	assert_eq(k.sprite.modulate, HitTint.TINT, "still tinted halfway")
-	k.hit_tint._process(HitTint.DURATION)
+	assert_eq(k.sprite.modulate, HitTint.proto().color, "tinted at once")
+	k.hit_tint._process(HitTint.proto().seconds * 0.5)
+	assert_eq(k.sprite.modulate, HitTint.proto().color, "still tinted halfway")
+	k.hit_tint._process(HitTint.proto().seconds)
 	assert_eq(k.sprite.modulate, Color.WHITE, "back to normal")

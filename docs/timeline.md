@@ -2445,3 +2445,163 @@ Entry format:
 - Decision or change: The board: enemies flash red when they take damage, the same flash as the car.
 - Documents touched: docs/enemies.md
 - Tasks: T-404
+
+## 2026-10-30: The style loop in goal runs
+- Decision or change: In a goal run the style loop keeps a version below 8 as a note for the final playtest and leaves the task in progress, instead of flagging it and pausing the goal.
+- Documents touched: `docs/working-with-the-board.md`
+- Tasks: T-395
+
+## 2026-10-30: Short buildings become platforms
+- Decision or change: The board: low-rise, small and long buildings become connectable platforms at height 3 with the same art (trimmed by script); only skyscrapers stay solid; every collider and pickup works at its height.
+- Documents touched: docs/level-design.md
+- Tasks: T-405
+
+## 2026-10-30: A health pickup revives a wreck
+- Decision or change: The board: a wrecked car still sliding that reaches a health pickup's range picks it up and revives with 1 heart.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-406
+
+## 2026-10-30: A falling gift pack's shadow
+- Decision or change: The board: a falling gift pack shows a shadow where it will land, the same as the car's shadow in the air.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-407
+
+## 2026-10-30: The gun one-shots and grows
+- Decision or change: The board: the gun kills a minion in one hit from tier 1; its upgrades become +1 bullet x2, faster x2, 3 targets at the halfway, +1 bullet x2, faster x2, 5 targets at the last.
+- Documents touched: docs/weapons.md
+- Tasks: T-408
+
+## 2026-10-30: The underglow kills in 2 ticks and pushes
+- Decision or change: The board: the neon underglow's tick deals half a minion's health at tier 1, and it knocks enemies back a little from tier 1.
+- Documents touched: docs/weapons.md
+- Tasks: T-409
+
+## 2026-10-30: Sidewalks and parked cars: art sample approved
+- Decision or change: The board approved the sample (sidewalk with curb, parked car, meteor crater); the full set (T-399) is built from it.
+- Documents touched: `docs/visual-style.md`
+- Tasks: T-397
+
+## 2026-10-30: The audit epic
+- Decision or change: The board asked for every ticket from the preemptive bug bash (session Preemptive-bug-bash) to be grouped under one epic, so it is clear they come from the same process. A new epic, audit, in tasks/README.md; this ticket gives it a bubble on the task board. Also from the audit: Game loop architecture no longer says a run ends with no win or loss message (the recap shows).
+- Documents touched: tasks/README.md, docs/game-loop-architecture.md
+- Tasks: T-410
+
+## 2026-10-30: Bug: the car hangs over roof edges
+- Decision or change: The board asked for a bug ticket on the car's height being judged from its centre point only, and for an agent to assess the root cause and the best approach before it is built.
+- Documents touched: tasks
+- Tasks: T-411
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Text ticket for the gun's tiers 2 to 11 and the stronger underglow's cards, ahead of T-408 and T-409 (the level-up cards show a line per tier).
+- Documents touched: docs/weapons.md
+- Tasks: T-412
+
+## 2026-10-30: The audit's answers (the run)
+- Decision or change: The board answered the bug bash's questions on the run: the wreck is a 3-second window and the loss is decided at its end; a kaiju kill during it wins, coins and health pickups count, Restart or Exit during it cancels the run with no coins; a kaiju kill at 0:00 wins; closing the window mid-run is a loss with coins kept, and switching windows pauses; a health pickup at full hearts stays; hits within 0.5 s cut the combo once.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-413
+
+## 2026-10-30: Audit ticket: Weapons during the wreck, and molotovs land where enemies can be
+- Decision or change: From the preemptive bug bash (audit epic): weapons during the wreck, and molotovs land where enemies can be. The board's answer is in docs/weapons.md.
+- Documents touched: docs/weapons.md
+- Tasks: T-414
+
+## 2026-10-30: Audit ticket: Pickups at full hearts, the combo's hit window, and the run's base values
+- Decision or change: From the preemptive bug bash (audit epic): pickups at full hearts, the combo's hit window, and the run's base values. The board's answer is in docs/game-loop-architecture.md.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-415
+
+## 2026-10-30: Audit ticket: Closing the game mid-run, and pausing when the window loses focus
+- Decision or change: From the preemptive bug bash (audit epic): closing the game mid-run, and pausing when the window loses focus. The board's answer is in docs/game-loop-architecture.md.
+- Documents touched: docs/game-loop-architecture.md
+- Tasks: T-416
+
+## 2026-10-30: Audit ticket: A broken save never wipes progress
+- Decision or change: From the preemptive bug bash (audit epic): a broken save never wipes progress. The board's answer is in docs/garage-design.md.
+- Documents touched: docs/garage-design.md
+- Tasks: T-417
+
+## 2026-10-30: Audit ticket: Meteors hit minions and push pickups aside
+- Decision or change: From the preemptive bug bash (audit epic): meteors hit minions and push pickups aside. The board's answer is in docs/enemies.md.
+- Documents touched: docs/enemies.md
+- Tasks: T-418
+
+## 2026-10-30: Audit ticket: The kaiju only takes paths it fits through
+- Decision or change: From the preemptive bug bash (audit epic): the kaiju only takes paths it fits through. The board's answer is in docs/enemies.md.
+- Documents touched: docs/enemies.md
+- Tasks: T-419
+
+## 2026-10-30: Audit ticket: Thread the needle while scraping, and level data guards
+- Decision or change: From the preemptive bug bash (audit epic): thread the needle while scraping, and level data guards. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-420
+
+## 2026-10-30: Audit ticket: Settings sliders save once, on release
+- Decision or change: From the preemptive bug bash (audit epic): settings sliders save once, on release. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-421
+
+## 2026-10-30: Audit ticket: Each weapon has its own top tier
+- Decision or change: From the preemptive bug bash (audit epic): each weapon has its own top tier. A code hole or doc fix the audit found; no new decision.
+- Documents touched: tasks
+- Tasks: T-422
+
+## 2026-10-30: Audit ticket: The board slims the docs and fixes what the audit found
+- Decision or change: From the preemptive bug bash (audit epic): the board slims the docs and fixes what the audit found. A code hole or doc fix the audit found; no new decision.
+- Documents touched: docs/game-loop-architecture.md, docs/enemies.md, docs/weapons.md, docs/hud-and-menus.md, docs/drifting.md, docs/level-design.md, docs/garage-design.md, docs/visual-style.md, docs/extended-narrative.md
+- Tasks: T-423
+
+## 2026-10-30: Weapon card text for the new tiers
+- Decision or change: Level-up card text for the gun's tiers 2 to 11 and the stronger neon underglow (Weapons, Content).
+- Documents touched: `docs/weapons.md`
+- Tasks: T-412
+
+## 2026-10-30: Meteor craters: the name
+- Decision or change: The level creator's name for the meteor crater: Meteor crater (Level design, Content).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-401
+
+## 2026-10-30: Bug fixed: creator objects respect heights
+- Decision or change: Objects sit and draw at the height they stand on; none across an edge (the board's playtest of build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-393
+
+## 2026-10-30: Thread the needle through a row
+- Decision or change: An obstacle in several pairs; a row chained in one go; each gap pays (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-394
+
+## 2026-10-30: A small jump ramp
+- Decision or change: A one-tile jump ramp, 2 high, in three height steps (build E).
+- Documents touched: `docs/level-design.md`
+- Tasks: T-400
+
+## 2026-10-30: Short buildings become platforms
+- Decision or change: Low-rise, small and long buildings are connectable platforms at height 3; colliders work at their height (build E).
+- Documents touched: `docs/level-design.md`, `docs/visual-style.md`
+- Tasks: T-405
+
+## 2026-10-30: A falling gift pack's shadow
+- Decision or change: A falling gift pack shows its landing shadow (build E).
+- Documents touched: `docs/game-loop-architecture.md`, `docs/level-design.md`
+- Tasks: T-407
+
+## 2026-10-30: Bug fixed: pickups on platforms
+- Decision or change: Every pickup is drawn and picked up at its own height; a gift pack that falls on a platform shows on it, and the magnet pulls only on the car's level.
+- Documents touched: none
+- Tasks: T-402
+
+## 2026-10-30: A health pickup revives a wrecked car
+- Decision or change: A wrecked car still rolling that reaches a health pickup picks it up and revives with 1 heart.
+- Documents touched: `docs/game-loop-architecture.md`
+- Tasks: T-406
+
+## 2026-10-30: Minions twice as big
+- Decision or change: Minions are drawn twice as big.
+- Documents touched: `docs/enemies.md`, `docs/game-loop-architecture.md`
+- Tasks: T-379
+
+## 2026-10-30: The gun one-shots minions and grows in bullets, speed and targets
+- Decision or change: The gun kills a minion in one hit; its upgrades add bullets and attack speed, and up to 3 then 5 targets.
+- Documents touched: `docs/weapons.md`
+- Tasks: T-408

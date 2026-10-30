@@ -97,6 +97,12 @@ signal crashed
 ## run_ended follows when they are over. The run scene turns the car's input off
 ## and starts the smoke and flames on it.
 signal wreck_started(seconds: float)
+## A health pickup revived the wrecked car (T-406): back with 1 heart, the run
+## goes on, run_ended does not come. The run scene gives the controls back and
+## stops the smoke and flames.
+signal revived
+## Hearts a revived car comes back with (the board: "one life").
+const REVIVE_HEARTS := 1.0
 ## The timer ran out with the kaiju alive (T-317; Game loop architecture,
 ## Decisions, "Time's up screen"): the run is lost from this moment (result
 ## "loss", loss_reason "time", nothing more counts) and frozen (the scene tree
@@ -358,6 +364,8 @@ func car_blink_visible() -> bool:
 ## T-220). Not damage: it does not touch the combo. Ignored when the run is not going or
 ## `amount` is not positive. Returns the points actually restored.
 func heal_car(amount: float) -> float:
+	if wrecked and amount > 0.0:
+		return revive()  # T-406: a health pickup picked up during the wreck revives the car
 	if not running or amount <= 0.0:
 		return 0.0
 	var before := health
@@ -695,6 +703,32 @@ func _wreck() -> void:
 	wreck_started.emit(wreck_left)
 	if wreck_left <= EPSILON:
 		_finish_wreck()
+
+
+## A health pickup reached the wrecked car (T-406; Game loop architecture,
+## Decisions, "A health pickup revives a wrecked car"): the car comes back with
+## 1 heart (REVIVE_HEARTS, at most the maximum), the run is going again (result
+## and recap cleared, the clock where it stopped) and run_ended is not sent. The
+## usual invulnerability after a hit follows (a proposal). The combo stays cut by
+## the fatal hit, and the live viewers follow the combo, as always. Returns the
+## hearts given; 0 when the car is not wrecked.
+func revive() -> float:
+	if not wrecked:
+		return 0.0
+	wrecked = false
+	wreck_left = 0.0
+	running = true
+	result = ""
+	loss_reason = ""
+	_final_recap = {}
+	health = minf(REVIVE_HEARTS, max_health)
+	invulnerable_total = _run_data.invulnerability_seconds()
+	invulnerable_left = invulnerable_total
+	health_changed.emit(health, max_health)
+	revived.emit()
+	if invulnerable_left > 0.0:
+		invulnerability_started.emit(invulnerable_left)
+	return health
 
 
 func _advance_wreck(seconds: float) -> void:

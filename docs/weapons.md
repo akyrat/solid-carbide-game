@@ -42,6 +42,11 @@ The car's weapons fire on their own, so the player only drives. The MVP has five
 - **The first gift pack can hold any weapon** (board, 2026-10-28; replaces "The first level-up still offers 'get the flamethrower' or 'upgrade the gun'" above): the first level-up draws its two choices at random from every choice available, like every later level-up, not only the gun and the flamethrower. (T-321)
 - **Bricks** (board, 2026-10-28): a new weapon. The car carries a load of bricks; each time the car lands on the ground after being in the air, from any height, a powerful impact wave goes out around it and damages the enemies it reaches. In the first build the wave is the same whatever the height of the fall. Its card makes it sound useless, so the player is tempted to try a jump and find out: the board's direction for the description is "Bricks - A bunch of bricks. No real use, other than making the car heavier." with a hint to jump. Text: T-322; numbers: T-323; the weapon: T-324; art: T-325.
 - **Weapons hit only enemies on the car's own level** (board, 2026-10-28; replaces "Their damage areas are unchanged" in "The underglow and the wiper at height" above, for damage): on a map with rooftops and ramps, a weapon damages only the enemies on the same height level as the weapon's hit: the car's level for the gun, the flamethrower, the underglow, the wiper and Bricks, and the fire's level for a molotov. An enemy on the street is not hit from a rooftop above it, and the other way round. How a ramp's in-between heights and the kaiju count are the agents' proposals for the playtest. (T-326)
+- **The gun one-shots minions and grows in bullets, speed and targets** (board, 2026-10-30; replaces the gun's tier plan in "The starting gun" below and answers the open question on upgrading how often it fires): from tier 1 one bullet kills a minion. Its upgrades go to how many bullets it fires and how fast, in this order: **+1 bullet** twice, **faster attack** twice, then at the halfway upgrade it **targets up to 3 enemies at once** (it has 3 bullets by then); then **+1 bullet** twice and **faster attack** twice, and at its last upgrade it **targets up to 5 enemies at once**. That makes 10 upgrades (tiers 2 to 11) against today's 7; the range and pass-through tiers go. What "targets up to N" means against today's closest-first spread, and the speeds, are the agents' proposals for the playtest. (T-408)
+- **The neon underglow kills a minion in 2 ticks and pushes from tier 1** (board, 2026-10-30): each tick deals half a minion's maximum health at tier 1, so 2 ticks kill it, and from tier 1 it knocks enemies back a little (today it never pushes). How far, and whether the push grows with the tiers, are proposals. (T-409)
+- **Weapons during the wreck** (board, 2026-10-30, audit): while the car is wrecked (Game loop architecture, Decisions, "The wreck decides the loss at its end"), damage already on the map keeps going (molotov fires, burning enemies) and the neon underglow keeps ticking; the bricks still go off if the wrecked car lands from the air. Nothing new is fired: no gun, no molotov throws, no wiper, no exhaust flamethrower.
+- **Molotovs land where enemies can be** (board, 2026-10-30, audit): a molotov whose landing spot is inside a building or off the map picks another spot.
+- **The underglow barely pushes the kaiju** (board, 2026-10-30, audit; answers T-409's open point): the kaiju is pushed very little, just a slight stop at each damage tick. Minions are pushed as T-409 says.
 
 ## Content
 
@@ -63,14 +68,18 @@ Facts from the Unity prototype weapons report (sections 1 to 5). No new decision
 
 ### The starting gun (built in task T-041)
 
-What the built gun does in the game. It follows Decisions and the Unity prototype weapons report; the numbers are T-040's ([../game/data/weapons.json](../game/data/weapons.json)). How the code is put together: `game/docs/weapons/shared.md` and `game/docs/weapons/starting-gun.md`.
+What the built gun does in the game. It follows Decisions and the Unity prototype weapons report, with the board's T-408 rework (Decisions, "The gun one-shots minions and grows in bullets, speed and targets"); the numbers are T-040's and T-408's ([../game/data/weapons.json](../game/data/weapons.json)). How the code is put together: `game/docs/weapons/shared.md` and `game/docs/weapons/starting-gun.md`.
 
 - Every run starts with the gun at tier 1 and no other weapon; a new run puts it back to tier 1 and removes any bullets in flight. Nothing is drawn on the car, only the bullets.
 - Every 1.26 seconds (at tier 1) the gun looks for living enemies whose centre is within 12 units of the car's centre. With none, it does nothing until the next check; with some, it fires a volley. It checks only at those moments, so an enemy that comes into range just after a check is shot at the next one.
-- **Targeting rule:** the prototype's, closest first. Bullet 1 of a volley goes to the closest enemy in range, bullet 2 to the second closest, and so on, going round them again from the closest when there are more bullets than enemies. Bullets in a volley leave 0.05 seconds apart. Each leaves the car's centre aimed at its target's centre at that moment, with no leading, and flies straight on.
-- Bullets fly at 15 units per second and hit an enemy whose body comes within 1 unit of the bullet's centre, dealing 2 damage through the enemy's damage function. A bullet is gone after its hit (after its second hit at tier 8), or once it has flown as far as the gun's range without hitting anything. Bullets never push enemies and pass through walls and boulders.
+- **Targeting rule** (T-408, a proposal for the playtest): the enemies in range are sorted closest first, and the tier says how many of them a volley aims at: 1 below tier 6, up to 3 from tier 6, up to 5 at tier 11.
+  - **Below tier 6 (one target):** the volley's bullets leave 0.05 seconds apart, each at the closest enemy in range that is alive and not already doomed: an enemy counts as doomed when the gun's bullets in flight at it carry at least its health. So against minions (one bullet each) bullet 1 goes to the closest, bullet 2 to the next closest and so on, and each +1 bullet upgrade kills one more minion a volley; a tough enemy (the kaiju) takes the whole volley. When every enemy in range is doomed, the bullet goes at its first target anyway.
+  - **From tier 6 (up to 3, at tier 11 up to 5):** the volley aims at that many of the closest enemies; bullet 1 goes to the closest, bullet 2 to the second closest and so on, going round them again from the closest when there are more bullets than targets. The whole volley leaves at the same moment, a fan of bullets.
+  - Each bullet leaves the car's centre aimed at its target's centre at that moment, with no leading, and flies straight on.
+- Bullets fly at 15 units per second and hit an enemy whose body comes within 1 unit of the bullet's centre, dealing 4 damage through the enemy's damage function (a minion's health, so one bullet kills a minion from tier 1; the garage's damage bonus only adds to it). A bullet is gone after its first hit, or once it has flown as far as the gun's range without hitting anything. Bullets never push enemies and pass through walls and boulders.
 - The gun targets every damageable enemy, not only minions, so the kaiju will be shot as soon as it exists.
-- The upgrade tiers (2 to 8) can be applied from code and change the gun as T-040's data says: 3 bullets a volley at tier 2 and 5 at tier 6, a shorter interval at tiers 3, 4 and 7 (1.06, 0.893 and 0.754 seconds), an 18-unit range at tier 5, and bullets passing through their first enemy at tier 8. Offering them at a level-up is built too (the level-up offers, below).
+- The upgrade tiers (2 to 11, T-408; the gun's own last tier in the data, while the other weapons stop at 8) change the gun in the board's order: +1 bullet at tiers 2 and 3 (2, then 3 bullets a volley), 20% faster at tiers 4 and 5 (1.26 s at tier 1, then 1.06 and 0.893 s), up to 3 targets at tier 6, +1 bullet at tiers 7 and 8 (4, then 5), 20% faster at tiers 9 and 10 (0.754 and 0.639 s), and up to 5 targets at tier 11. The range stays 12 units and bullets never pass through an enemy. "20% faster" multiplies the fire rate by 1.2, as the level-up cards say; the interval is 1.2 s divided by the rate, plus the prototype's 0.06 s. The level-ups offer the gun's upgrades until tier 11 (the level-up offers, below).
+- **The kaiju** takes the same 4 damage a bullet. With the gun alone that roughly halves its fight against T-039's numbers: about 158 s at tier 1 (was 315), 22 s at tier 8 (was 38) and 16 s at tier 11 (the kaiju's 500 health; flame and garage bonus shorten it further). A proposal for the playtest; Enemies' kaiju numbers are unchanged.
 - The gun stops while the run is paused and once the run has ended.
 - The bullets are a small cyan neon ball with a white-hot core, pulsing in 2 frames, drawn about half a unit above the ground (art: T-071, drawn by script, `game/art/effects/bullet.png`).
 
@@ -199,16 +208,34 @@ What the built grow does. It follows Decisions ("Size upgrades grow on screen").
 
 What the built level-up offers do. It follows Decisions ("Level-up flow in the MVP" and "Level-up offers with five weapons"). The screen that shows them is a separate UI task; how the code is put together: `game/docs/weapons/shared.md`, "Weapons", "The level-up offers".
 
-- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the weapons (six since T-324 added Bricks) gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8). The gun is always owned, so it only has "upgrade the gun". That makes 11 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs, the windshield wiper and Bricks.
+- When a level-up's weapon choice starts (the run is paused for it, Game loop architecture), the car's weapons decide the choices. Each of the weapons (six since T-324 added Bricks) gives at most one available choice: "get" it while the car does not have it, or "upgrade" it (its next tier) once it does, until its last tier (8; the gun's 11 since T-408, each weapon's own last tier in the data). The gun is always owned, so it only has "upgrade the gun". That makes 11 possible choices: upgrade the gun, and get or upgrade the flamethrower, the neon underglow, the molotovs, the windshield wiper and Bricks.
 - Each level-up offers 2 different choices drawn at random, all equally likely, from every choice available at that moment. They are shown in a fixed order (gun, flamethrower, underglow, molotovs, wiper, Bricks), not in the order drawn.
 - The first level-up is drawn like every other one (Decisions, "The first gift pack can hold any weapon", T-321): two different choices at random from every choice available, so it can offer any weapon the car doesn't have (five besides the gun, with Bricks), or the gun's upgrade. A run that already starts with the flamethrower (its playtest switch) draws the same way, and the flamethrower's upgrades are among the choices.
 - Taking a choice applies it at once (the weapon at tier 1, or its next tier) and the run resumes. If several levels were reached at once, their choices follow one after another, each drawn on its own.
 - A weapon at its last tier is not offered. If only one choice is left, the level-up offers just that one (the docs say nothing here; the simplest case was taken). If none is left, the choice is skipped and the run goes on, as Decisions says.
 - **Playtest switch** `all_weapons_at_start` (`game/data/playtest.json`, false, never visible to players): true gives the car every weapon (all six) at tier 1 at the start of every run, for the integration check and the board's playtest; the level-ups then offer only upgrades.
 
+### Level-up card text (T-412)
+
+Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets.
+
+- `upgrade_gun.tier2`: "Extra Bullet" [9] / "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull." [8]
+- `upgrade_gun.tier3`: "Another Extra Bullet" [9] / "+1 bullet per volley, 3 in all. Greenbull feels generous on camera." [8]
+- `upgrade_gun.tier4`: "Quicker Trigger" [9] / "Fires 20% faster. The audience is getting restless." [9]
+- `upgrade_gun.tier5`: "Quicker Trigger II" [9] / "Fires 20% faster again. Engagement waits for no one." [8]
+- `upgrade_gun.tier6`: "Multi-Target Mode" [8] / "Aims at up to 3 enemies at once. Multitasking is a brand value." [8]
+- `upgrade_gun.tier7`: "Bullet Bundle" [9] / "+1 bullet per volley, 4 in all. Buy more, shoot more." [8]
+- `upgrade_gun.tier8`: "Bulk Bullets" [9] / "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies." [9]
+- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." [8]
+- `upgrade_gun.tier10`: "Quicker Trigger IV" [9] / "Fires 20% faster again. Viewers blink less, so we sell more ads." [9, after 1 refine]
+- `upgrade_gun.tier11`: "Everyone Gets Exposure" [9] / "Aims at up to 5 enemies at once. Nobody is left unengaged." [8]
+- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." [8]
+- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." [9]
+- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." [9]
+
 ## Open questions
 
-- (After MVP) Upgrading how often the starting gun fires.
+- None. (Upgrading how often the starting gun fires was answered by the board on 2026-10-30: Decisions, "The gun one-shots minions and grows in bullets, speed and targets".)
 
 ## References
 

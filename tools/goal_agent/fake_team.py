@@ -5,7 +5,8 @@ session would do in its folder, so layer 3 and 4 run for real on git without cal
 - step "agent": writes the files in the answer's "_files" ({path: text}) and "_art" lines in the PixelLab
   generation log, writes its summary into the task file's result notes, and commits in the folder; on an art or
   narrative ticket it also writes one style loop round in `## Style review`, as the loop would, so the status
-  script lets it go to QA (T-292; "_no_style_review": true leaves it out);
+  script lets it go to QA (T-292; "_no_style_review": true leaves it out; "_style_score": 5 writes a version kept below 8 and noted for the
+  final playtest, as the loop does in a goal run, T-395);
 - step "qa": marks every acceptance criterion "(QA: pass)" or "(QA: fail, ...)" ("_marks": pass or fail,
   default pass) and commits the task file;
 - step "gaps": a ticket named "title:<ticket title>" in an answer is replaced by that ticket's id, so a

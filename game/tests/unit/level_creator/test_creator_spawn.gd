@@ -167,7 +167,8 @@ func test_it_can_be_moved_onto_a_ramp() -> void:
 
 func test_it_is_refused_inside_a_building_with_the_message() -> void:
 	var e := _editor()
-	var b := _place(e, "building-small", Vector2(51, 51))
+	# T-405: a skyscraper (a small building is a platform the car may start on).
+	var b := _place(e, "skyscraper-1", Vector2(51, 51))
 	var before := _at(e)
 	assert_false(e.move_spawn(e.document.piece_rect(b).get_center()))
 	assert_eq(_at(e), before, "it stays where it was")
@@ -240,8 +241,9 @@ func test_delete_shows_the_message_and_keeps_it() -> void:
 
 func test_a_piece_is_not_placed_over_the_start() -> void:
 	var e := _editor()
-	e.panel.pick("building-small")
-	var p := e.place_asset("building-small", _at(e))
+	# T-405: a skyscraper (a small building is a platform the car may start on).
+	e.panel.pick("skyscraper-1")
+	var p := e.place_asset("skyscraper-1", _at(e))
 	assert_true(p.is_empty(), "a building over the start is refused")
 	assert_eq(e.message_label.text, CreatorTexts.get_text("spawn_blocked"))
 	assert_eq(e.level_data.buildings.size(), 0)

@@ -91,6 +91,8 @@ const BOULDER_ART_PATH := "res://art/boulders/boulders.json"
 const BUILDING_ART_PATH := "res://art/buildings/skyscrapers.json"
 const BuildingTowers := preload("res://scripts/level/building_towers.gd")
 const KaijuSigns := preload("res://scripts/level/kaiju_signs.gd")
+## T-405: the short buildings are platforms (short_platforms.gd): no wall, no building art.
+const ShortPlatforms := preload("res://scripts/level/short_platforms.gd")
 ## See-through buildings (Visual style, Decisions, 2026-10-10): how visible a
 ## building is while it covers the car (0.15 = 15%), and how long the fade
 ## takes, in seconds (both ways).
@@ -186,6 +188,9 @@ var prop_sprites: Array = []
 var prop_sprites_root: Node2D
 ## Boulder key (boulder_key) -> its sprite, so each boulder gets one sprite.
 var _boulder_sprite_by_key: Dictionary = {}
+## The ground height of the layout's rooftops and ramps (ground_height.gd), read once for the
+## boulders' sprites (T-393); null until first asked. Untyped, like elevation_layer.gd's.
+var _ground = null
 var ground_draw: Node2D
 var ground_tiles: Node2D
 ## The container of the building nodes (named "Buildings"); it also draws the map's outline.
@@ -308,9 +313,20 @@ func _build_buildings() -> void:
 		b.edge_color = building_edge_color
 		buildings_draw.add_child(b)
 		buildings.append(b)
+		if ShortPlatforms.is_platform_entry(d):
+			# T-405: a short building is a platform: the elevation layer draws it (its art cut to the
+			# platform's height) and the ground height carries it. Its node stays, empty and hidden, so
+			# `buildings` keeps the layout's order; it never fades or sorts (fade_items).
+			b.platform = true
+			b.visible = false
+			b.draw_placeholder = false
+			i += 1
+			continue
 		if building_atlas != null:
 			var towers = BuildingTowers.new()
 			towers.name = "Towers"
+			# T-405: a whole block's short slots are platforms on a map with heights (no slot node).
+			towers.skip_short = ShortPlatforms.block_short_slots_are_platforms(layout, d)
 			# A building placed in the level creator (T-235) names its one tower ("asset", "look").
 			towers.setup(building_art, building_atlas, b.footprint, BuildingTowers.single_of(d))
 			b.add_child(towers)
@@ -339,10 +355,10 @@ func _build_walls() -> void:
 	walls = StaticBody2D.new()
 	walls.name = "Walls"
 	physics_root.add_child(walls)
-	var i := 0
-	for b in layout.buildings:
-		_add_rect_shape(walls, rect_of(b), "Building%02d" % (i + 1))
-		i += 1
+	# T-405: only what stays a building is a wall (a skyscraper, a block's skyscraper slots); the
+	# short buildings are platforms, whose sides the ground height makes (short_platforms.gd).
+	for w in ShortPlatforms.wall_rects(layout):
+		_add_rect_shape(walls, w.rect, str(w.name))
 	# The hard stop at the map's edges: four thick walls just outside the map.
 	var m := rect_of(layout.map.rect)
 	var t := EDGE_WALL_THICKNESS
@@ -367,6 +383,13 @@ func _build_boulders() -> void:
 		var body := StaticBody2D.new()
 		body.name = "Boulders_%s" % str(copy.id).replace("-", "_")
 		body.set_meta("copy_id", copy.id)
+		# T-405: the heights it blocks the car at (update_car_obstacles): from the ground under it
+		# (a rooftop's, a short building's) up by a boulder's diameter.
+		if not copy.boulders.is_empty():
+			var b0: Dictionary = copy.boulders[0]
+			var g := ground_height_at(Vector2(float(b0.x), float(b0.y)))
+			body.set_meta("base_units", g)
+			body.set_meta("top_units", g + float(b0.diameter))
 		physics_root.add_child(body)
 		var j := 0
 		for b in copy.boulders:
@@ -512,8 +535,9 @@ func can_place_meteor_boulder(centre: Vector2) -> bool:
 ## any boulder on the map (the pattern copies', meteor challenges' or meteor
 ## boulders'): open ground the car can drive on. Touching is allowed. Used by
 ## the meteor boulders' placement check and by the gift pack (T-144) to land
-## its package on open road.
-func is_open_spot(centre: Vector2, radius: float) -> bool:
+## its package on open road. street_only false (the gift pack on a rooftop,
+## T-402) leaves out the street-level check: the caller checks the heights.
+func is_open_spot(centre: Vector2, radius: float, street_only: bool = true) -> bool:
 	var r := radius
 	var m := rect_of(layout.map.rect)
 	if centre.x - r < m.position.x or centre.x + r > m.end.x:
@@ -529,7 +553,7 @@ func is_open_spot(centre: Vector2, radius: float) -> bool:
 	if prop_blocks_spot(centre, r):
 		return false
 	# T-206: with elevation, open ground is street level only (no rooftop or ramp).
-	if elevation != null and not elevation.is_street(centre, r):
+	if street_only and elevation != null and not elevation.is_street(centre, r):
 		return false
 	return true
 
@@ -784,7 +808,10 @@ static func car_screen_shape_at(centre: Vector2, rotation: float, lift_px: float
 
 ## What fades and sorts with the car: the skyscraper slots when the art is loaded, else the blocks.
 func fade_items() -> Array:
-	return slots if not slots.is_empty() else buildings
+	if not slots.is_empty():
+		return slots
+	# T-405: a short building's node is a placeholder for a platform: it never fades or sorts.
+	return buildings.filter(func(b) -> bool: return not b.platform)
 
 
 ## Fades the buildings covering the car (centre in units, rotation in
@@ -844,6 +871,96 @@ func own_top_z_index() -> int:
 	return BUILDING_Z_BASE + BUILDING_Z_STEP * fade_items().size()
 
 
+# ---- Obstacles at their height (task T-405) ----------------------------------------------------
+
+## How much (units) the car's height may be under an obstacle's top and still pass over it, and
+## over its foot and still pass under it.
+const OBSTACLE_HEIGHT_MARGIN := 0.05
+## The obstacles the car is passing over or under now (update_car_obstacles): body -> true.
+var _passing: Dictionary = {}
+
+
+## The heights (units) a body of the map blocks the car at: [from, to]. The walls (skyscrapers, the
+## map's edges) block at any height; a prop or a boulder from the ground it stands on (meta
+## base_units) up to its top (top_units); a meteor boulder from the street up by its diameter.
+func obstacle_heights(body: Node) -> Array:
+	if body.has_meta("base_units"):
+		return [float(body.get_meta("base_units")), float(body.get_meta("top_units"))]
+	if body in meteor_boulder_bodies:
+		return [0.0, boulder_diameter()]
+	return [-INF, INF]
+
+
+## Every body whose heights are not "any height" (props, boulders, meteor boulders).
+func height_bodies() -> Array:
+	var out: Array = []
+	for list in [prop_bodies, boulder_bodies, meteor_boulder_bodies]:
+		for b in list:
+			if is_instance_valid(b):
+				out.append(b)
+	return out
+
+
+## T-405 (the altitude audit): lets the car (a physics body) pass over or under every obstacle that
+## is not at its height (`height`, units: the car's height, car.height), as a collision exception,
+## and makes it solid again once the car is at its height and clear of it. An obstacle the car is
+## still overlapping stays passable (a car that lands on a boulder slides off it instead of being
+## pushed out through it). The run calls it after every physics step of the car.
+func update_car_obstacles(the_car: PhysicsBody2D, height: float) -> void:
+	if the_car == null or not is_instance_valid(the_car):
+		return
+	var overlapping := _overlapping(the_car)
+	for body in height_bodies():
+		var hr := obstacle_heights(body)
+		var over: bool = height >= float(hr[1]) - OBSTACLE_HEIGHT_MARGIN
+		var under: bool = height + CAR_HEIGHT_UNITS <= float(hr[0]) + OBSTACLE_HEIGHT_MARGIN
+		var away := over or under
+		var pass_it: bool = away or (_passing.has(body) and overlapping.has(body))
+		if pass_it and not _passing.has(body):
+			the_car.add_collision_exception_with(body)
+			_passing[body] = true
+		elif not pass_it and _passing.has(body):
+			the_car.remove_collision_exception_with(body)
+			_passing.erase(body)
+	for body in _passing.keys():
+		if not is_instance_valid(body):
+			_passing.erase(body)
+
+
+## True while the car passes over or under `body` (update_car_obstacles).
+func is_passing(body: Node) -> bool:
+	return _passing.has(body)
+
+
+## The obstacle bodies the car's collision shapes overlap now: body -> true.
+func _overlapping(the_car: PhysicsBody2D) -> Dictionary:
+	var out := {}
+	if not the_car.is_inside_tree():
+		return out
+	var space := the_car.get_world_2d().direct_space_state
+	for cs in the_car.get_children():
+		if not (cs is CollisionShape2D) or cs.shape == null:
+			continue
+		var q := PhysicsShapeQueryParameters2D.new()
+		q.shape = cs.shape
+		q.transform = (cs as CollisionShape2D).global_transform
+		q.collision_mask = the_car.collision_mask
+		q.exclude = [the_car.get_rid()]
+		for hit in space.intersect_shape(q, 32):
+			if hit.collider != null:
+				out[hit.collider] = true
+	return out
+
+
+## The ground height (units) at a point of the layout: its rooftop's or ramp's (ground_height.gd),
+## 0 on the street and on a map without rooftops (T-393).
+func ground_height_at(units: Vector2) -> float:
+	if _ground == null:
+		_ground = load("res://scripts/level/ground_height.gd").new()
+		_ground.load_data(layout)
+	return _ground.height_at(units)
+
+
 # ---- Boulder art (task T-065) ---------------------------------------------------------------
 
 func _load_boulder_textures() -> void:
@@ -896,7 +1013,9 @@ func boulder_sprite_rect(b: Dictionary, variant: int) -> Dictionary:
 	var h := y1 - float(bb[1])
 	var d := float(b.diameter) * PX_PER_UNIT
 	var s := d * sqrt(2.0) / w
-	var c := ISO_TRANSFORM * (Vector2(float(b.x), float(b.y)) * PX_PER_UNIT)
+	# T-393: a boulder on a rooftop or a ramp stands at the height under its centre, as a prop does.
+	var lift := ground_height_at(Vector2(float(b.x), float(b.y))) * PX_PER_UNIT
+	var c := ISO_TRANSFORM * (Vector2(float(b.x), float(b.y)) * PX_PER_UNIT) - Vector2(0.0, lift)
 	var bottom := c + Vector2(0.0, d * sqrt(2.0) / 4.0)
 	var pos := Vector2(bottom.x - (x0 + w / 2.0) * s, bottom.y - y1 * s)
 	var rect := Rect2(Vector2(bottom.x - w * s / 2.0, bottom.y - h * s), Vector2(w * s, h * s))
@@ -922,34 +1041,38 @@ func _sync_boulder_sprites() -> void:
 		sp.scale = Vector2(r.scale, r.scale)
 		sp.variant = str(boulder_art.variants[k].id)
 		sp.centre_units = Vector2(float(b.x), float(b.y))
+		sp.ground_units = ground_height_at(sp.centre_units)
 		var outline := PackedVector2Array()
 		for p in boulder_art.variants[k].hull:
 			outline.append(r.position + Vector2(float(p[0]), float(p[1])) * r.scale)
 		sp.outline = outline
 		sp.box = r.rect
-		sp.z_index = _boulder_z(sp.centre_units, outline)
+		sp.z_index = _boulder_z(sp.centre_units, outline, sp.ground_units)
 		boulder_sprites_root.add_child(sp)
 		boulder_sprites.append(sp)
 		_boulder_sprite_by_key[key] = sp
 
 
-## A boulder's z_index: just under the lowest building that covers it (the
+## A boulder's (or a prop's, T-253) z_index: just under the lowest building that covers it (the
 ## boulder is behind the building and they overlap on screen), or over every
 ## building. The car's level for that place, so the car in front of the
-## boulder (later in the tree) is drawn over it.
-func _boulder_z(centre_units: Vector2, outline: PackedVector2Array) -> int:
-	var z := _boulder_z_buildings(centre_units, outline)
-	# T-206: with elevation, over the areas too, and under the ones covering it.
+## boulder (later in the tree) is drawn over it. `ground` is the height (units)
+## it stands on (T-393).
+func _boulder_z(centre_units: Vector2, outline: PackedVector2Array, ground: float = 0.0) -> int:
+	# T-206: with elevation, over the areas too, and under the ones covering it. T-393: the
+	# buildings' z_index then comes from the elevation's depth order, so "covered by none" is its
+	# top, not the map's own (which is lower than the restacked buildings: a covering building
+	# was taken for none, and the boulder drawn over it).
 	if elevation != null:
-		if z >= own_top_z_index():
-			z = elevation.top_z_index()
-		z = elevation.boulder_z_under_areas(z, centre_units, outline)
-	return z
+		var z: int = _boulder_z_buildings(centre_units, outline, elevation.top_z_index())
+		return elevation.boulder_z_under_areas(z, centre_units, outline, ground)
+	return _boulder_z_buildings(centre_units, outline)
 
 
-## A boulder's z_index among the buildings only.
-func _boulder_z_buildings(centre_units: Vector2, outline: PackedVector2Array) -> int:
-	var z := own_top_z_index()
+## A boulder's z_index among the buildings only: just under the lowest one that covers it, else
+## `top` (the map's own top z_index when not given).
+func _boulder_z_buildings(centre_units: Vector2, outline: PackedVector2Array, top: int = -1) -> int:
+	var z := own_top_z_index() if top < 0 else top
 	for b in fade_items():
 		if b.is_behind(centre_units) and not Geometry2D.intersect_polygons(b.iso_silhouette(), outline).is_empty():
 			z = mini(z, b.z_index - 1)
@@ -1126,6 +1249,8 @@ class _BoulderSprite extends Sprite2D:
 	var variant := ""
 	## The boulder's centre on the ground, in units.
 	var centre_units := Vector2.ZERO
+	## The height it stands on, units (a rooftop's, a ramp's; T-393).
+	var ground_units := 0.0
 	## The outline of its opaque pixels on screen (convex), and its box.
 	var outline := PackedVector2Array()
 	var box := Rect2()

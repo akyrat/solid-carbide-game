@@ -79,6 +79,21 @@ static func ramp_vertical_speed(r: Dictionary, velocity: Vector2) -> float:
 	return velocity.dot(dir) * rise / maxf(0.0001, length)
 
 
+## True when `point` lies beyond ramp r's top end (past the edge where it is tallest), T-400.
+static func past_top(r: Dictionary, point: Vector2) -> bool:
+	var rect: Rect2 = r.rect
+	match str(r.side):
+		"east":   # the top is at the ramp's west end
+			return point.x < rect.position.x
+		"west":
+			return point.x > rect.end.x
+		"south":  # the top is at the ramp's north end
+			return point.y < rect.position.y
+		"north":
+			return point.y > rect.end.y
+	return false
+
+
 ## One physics step of dt seconds: the car moved from prev to pos (flat units)
 ## with flat velocity (units/s).
 ##
@@ -102,6 +117,14 @@ func step(prev: Vector2, pos: Vector2, velocity: Vector2, dt: float) -> Dictiona
 		return walk
 	# On the ground. Falling off a step down: a drop-off edge, or a ramp's side.
 	if walk.drop:
+		# T-400: off the open top of a ramp that climbs to no rooftop (the level creator's small
+		# jump ramp), climbing fast enough, the car takes off along the slope as at a ramp's top.
+		var top: Dictionary = ground.ramp_at(prev)
+		if not top.is_empty() and past_top(top, pos) and velocity.length() >= RAMP_TAKEOFF_MIN_SPEED:
+			var vz_top := ramp_vertical_speed(top, velocity) * RAMP_TAKEOFF_FACTOR
+			if vz_top > 0.0:
+				_take_off(true, vz_top, walk.drop_height)
+				return walk
 		_take_off(false, 0.0, walk.drop_height)
 		return walk
 	# Leaving the ramp at its top, climbing, fast enough.

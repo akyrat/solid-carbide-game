@@ -56,6 +56,7 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
   - **A round shadow.** The shadow is a circle right under the centre of the car, in the same colour and feel as now, instead of the rectangle, so the player sees where the car is on the ground when it is in the air.
 - **No sprite shadow in the air** (board, 2026-10-20, from the elevation sample map's screenshots): the car's sprite has a drop shadow drawn into most of its 16 frames, which travels up with the car when it is in the air, beside the round shadow. In the air the car is drawn without it, so only the round shadow shows; on the ground it keeps the sprite's own shadow, as now. The shadowless frames are made by a free script, not PixelLab (Visual style, Decisions, "The car without its shadow").
 - **No drift smoke or tyre marks in the air** (board, 2026-10-21, after playing the full game on the elevation map): while the car is airborne it leaves no drift smoke and no tyre marks, even if the drift keys are held; both come back when it lands (tyre marks: board, 2026-10-21, same day). (T-206)
+- **Every ramp launches the car off its top** (board, 2026-10-30, audit): leaving a ramp through its top end launches the car, whether or not anything stands at the top, and the faster the car, the higher it flies, so a fast car reaches roofs it couldn't before. Leaving a ramp over its long side is still a fall. (T-411)
 
 ## Content
 

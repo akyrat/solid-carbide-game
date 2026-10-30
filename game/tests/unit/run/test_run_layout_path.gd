@@ -11,9 +11,16 @@ const NavScript := preload("res://scripts/enemies/enemy_navigation.gd")
 const DEFAULT_LAYOUT := "res://data/level/elevation_sample_map.json"
 const REMOVED_PLATFORM := "roof-se-6"
 const REMOVED_RAMP := "ramp-se-3-6"
+const ShortPlatforms := preload("res://scripts/level/short_platforms.gd")
 
 var copy_path := ""
 var default_data: Dictionary
+var copy_data: Dictionary
+
+
+## The rooftops and, since T-405, the platforms the short buildings make (the first block's two).
+func _platform_count(data: Dictionary) -> int:
+	return data.platforms.size() + ShortPlatforms.platforms_of(data).size()
 
 
 func before_all() -> void:
@@ -23,6 +30,7 @@ func before_all() -> void:
 	data.platforms = data.platforms.filter(func(p): return str(p.id) != REMOVED_PLATFORM)
 	data.ramps = data.ramps.filter(func(r): return str(r.id) != REMOVED_RAMP)
 	data.name = "T-230 test copy"
+	copy_data = data
 	copy_path = RunPaths.file("t230_custom_map.json")
 	var f := FileAccess.open(copy_path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(data, " "))
@@ -52,7 +60,7 @@ func test_with_no_path_the_run_plays_the_elevation_sample_map() -> void:
 	assert_eq(run.current_layout_path(), DEFAULT_LAYOUT)
 	assert_eq(run.map.layout_path, DEFAULT_LAYOUT)
 	assert_eq(run.map.buildings.size(), default_data.buildings.size())
-	assert_eq(run.elevation.ground_height.platforms.size(), default_data.platforms.size())
+	assert_eq(run.elevation.ground_height.platforms.size(), _platform_count(default_data))
 
 
 func test_an_empty_path_falls_back_to_the_default() -> void:
@@ -76,11 +84,11 @@ func test_a_run_set_before_the_tree_plays_the_copy() -> void:
 	assert_eq(str(run.map.layout.name), "T-230 test copy")
 	assert_eq(run.map.buildings.size(), default_data.buildings.size() - 1, "one building fewer")
 	assert_eq(run.map.layout.buildings.size(), default_data.buildings.size() - 1)
-	assert_eq(run.elevation.ground_height.platforms.size(), default_data.platforms.size() - 1,
-		"the elevation layer read the copy: one platform fewer")
+	assert_eq(run.elevation.ground_height.platforms.size(), _platform_count(copy_data),
+		"the elevation layer read the copy: one rooftop fewer (and the removed block's short buildings)")
 	assert_false(_platform_ids(run).has(REMOVED_PLATFORM))
 	assert_eq(run.elevation.areas.size(),
-		default_data.platforms.size() - 1 + default_data.ramps.size() - 1, "one drawing per area")
+		_platform_count(copy_data) + default_data.ramps.size() - 1, "one drawing per area")
 	assert_eq(run.car.ground, run.elevation.ground_height, "the car drives on the copy's heights")
 
 
@@ -99,7 +107,7 @@ func test_start_run_with_a_path_switches_maps() -> void:
 	assert_eq(run.layout_path, copy_path)
 	assert_eq(run.map.layout_path, copy_path)
 	assert_eq(run.map.buildings.size(), default_data.buildings.size() - 1)
-	assert_eq(run.elevation.ground_height.platforms.size(), default_data.platforms.size() - 1)
+	assert_eq(run.elevation.ground_height.platforms.size(), _platform_count(copy_data))
 	run.start_run()
 	assert_eq(run.map.layout_path, copy_path, "a new run keeps the run's map file")
 

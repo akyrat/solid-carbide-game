@@ -16,6 +16,9 @@ extends RefCounted
 ##   direction);
 ## - with counts_in_air false, a crossing while the car is in the air does not count.
 ## A level without pairs (the game's own map) has no gates and nothing happens.
+## T-394: an obstacle can be in several pairs (a row paired as a chain): each pair is its own gate,
+## with its own cool-down, so a row threaded gap after gap pays each gap; a touch of an obstacle
+## voids every gate it is part of.
 
 ## Emitted once per paid pass, with the pair's id.
 signal threaded(pair_id: String)

@@ -1,7 +1,8 @@
 class_name LevelUpTexts
 extends RefCounted
 ## The level-up screen's approved text (task T-051, keyed as in its table; the
-## three new weapons' 24 cards from T-171's table, added in T-173).
+## three new weapons' 24 cards from T-171's table, added in T-173; the gun's
+## tiers 2 to 11 from T-412, copied in T-408).
 ## Card keys: "<choice id>.title" / ".desc" (get_<weapon>), and
 ## "<choice id>.tier<N>.title" / ".desc" for an upgrade giving tier N.
 
@@ -10,20 +11,26 @@ const TEXTS := {
 	"levelup.take": "Take it",
 	"get_flamethrower.title": "Hot Take Exhaust",
 	"get_flamethrower.desc": "Flames from your tailpipe while you drift. Great content. Mind the neighbours.",
-	"upgrade_gun.tier2.title": "Bonus Bullets",
-	"upgrade_gun.tier2.desc": "Two extra bullets per volley, 3 in all. Generosity, as Greenbull's lawyers define it.",
-	"upgrade_gun.tier3.title": "Quicker Trigger",
-	"upgrade_gun.tier3.desc": "Fires 20% faster. The audience is getting restless.",
-	"upgrade_gun.tier4.title": "Quicker Trigger II",
-	"upgrade_gun.tier4.desc": "Fires 20% faster again. Engagement waits for no one.",
-	"upgrade_gun.tier5.title": "Long Reach",
-	"upgrade_gun.tier5.desc": "Bullet range grows by half, from 12 to 18. Shoot from a safe distance.",
-	"upgrade_gun.tier6.title": "More Bonus Bullets",
-	"upgrade_gun.tier6.desc": "Two more bullets per volley, 5 in all. Greenbull feels generous while the cameras roll.",
-	"upgrade_gun.tier7.title": "Quicker Trigger III",
-	"upgrade_gun.tier7.desc": "Fires 20% faster once more. Content never sleeps.",
-	"upgrade_gun.tier8.title": "Through and Through",
-	"upgrade_gun.tier8.desc": "Bullets pass through the first enemy and hit a second. Twice the impact.",
+	"upgrade_gun.tier2.title": "Extra Bullet",
+	"upgrade_gun.tier2.desc": "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull.",
+	"upgrade_gun.tier3.title": "Another Extra Bullet",
+	"upgrade_gun.tier3.desc": "+1 bullet per volley, 3 in all. Greenbull feels generous on camera.",
+	"upgrade_gun.tier4.title": "Quicker Trigger",
+	"upgrade_gun.tier4.desc": "Fires 20% faster. The audience is getting restless.",
+	"upgrade_gun.tier5.title": "Quicker Trigger II",
+	"upgrade_gun.tier5.desc": "Fires 20% faster again. Engagement waits for no one.",
+	"upgrade_gun.tier6.title": "Multi-Target Mode",
+	"upgrade_gun.tier6.desc": "Aims at up to 3 enemies at once. Multitasking is a brand value.",
+	"upgrade_gun.tier7.title": "Bullet Bundle",
+	"upgrade_gun.tier7.desc": "+1 bullet per volley, 4 in all. Buy more, shoot more.",
+	"upgrade_gun.tier8.title": "Bulk Bullets",
+	"upgrade_gun.tier8.desc": "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies.",
+	"upgrade_gun.tier9.title": "Quicker Trigger III",
+	"upgrade_gun.tier9.desc": "Fires 20% faster. Content never sleeps.",
+	"upgrade_gun.tier10.title": "Quicker Trigger IV",
+	"upgrade_gun.tier10.desc": "Fires 20% faster again. Viewers blink less, so we sell more ads.",
+	"upgrade_gun.tier11.title": "Everyone Gets Exposure",
+	"upgrade_gun.tier11.desc": "Aims at up to 5 enemies at once. Nobody is left unengaged.",
 	"upgrade_flamethrower.tier2.title": "Wider Burn",
 	"upgrade_flamethrower.tier2.desc": "The flame area grows 20%. More reach, more views.",
 	"upgrade_flamethrower.tier3.title": "Hotter Burn",

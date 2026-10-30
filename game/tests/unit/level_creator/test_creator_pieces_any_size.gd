@@ -231,8 +231,9 @@ func test_the_game_map_still_draws_its_own_art() -> void:
 	var layer = ElevationLayerScript.new()
 	map.add_child(layer)
 	layer.setup(map, "res://data/level/elevation_sample_map.json")
-	assert_eq(layer.areas.size(), 8)
-	for a in layer.areas:
+	# T-405: the 8 rooftops and ramps, then the 5 platforms of its blocks' short buildings (their own art).
+	assert_eq(layer.areas.size(), 13)
+	for a in layer.areas.filter(func(x): return not bool(x.block.get("short", false))):
 		assert_not_null(a.art_sprite, "%s keeps its art" % a.block.id)
 		assert_false(a.is_textured())
 		assert_eq(a.art_sprite.texture.resource_path, "res://art/elevation_sample/%s.png" % a.block.id)

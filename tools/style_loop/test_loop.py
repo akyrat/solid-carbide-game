@@ -184,6 +184,18 @@ class TextLoop(Base):
         self.assertIn("**Kept:** version 2, score 7/10", self.section())
         self.assertIn("flagged for the board's review", self.section())
 
+    def test_in_a_goal_run_below_8_is_noted_not_flagged(self):
+        """T-395: a ticket with a `goal:` line stays in-progress; the Style review and result notes say so."""
+        path = self.ticket()
+        path.write_bytes(path.read_bytes().replace(b"lead: Tools\n", b"lead: Tools\ngoal: G-900\n", 1))
+        kept, rounds = loop.run(FakeClaude(FIXTURES / "text-never-8.json"), self.spec())
+        self.assertEqual((kept.n, kept.score), (2, 7))
+        self.assertEqual(self.status(), "in-progress")
+        self.assertIn("noted for the board's final playtest", self.section())
+        self.assertNotIn("flagged for the board's review", self.section())
+        self.assertIn("style loop: version 2 kept at 7/10", self.text().split("## Result notes", 1)[1])
+        self.assertIn("noted for the board's final playtest", self.text().split("## Result notes", 1)[1])
+
     def test_a_tie_keeps_the_earliest_version(self):
         fixture = {"generate": [{"text": "A!", "changed": "c"}], "refine": [{"text": "B!", "changed": "c"}] * 3,
                    "evaluate": [evaluation(5), evaluation(6), evaluation(6), evaluation(3)]}
@@ -439,6 +451,15 @@ class CommandLine(Base):
         self.assertIn("flagged for the board's review", out)
         self.assertEqual(ts.header(self.copy_of_ticket(out)).get("status"), "flagged-for-review")
         self.assertEqual(self.status(), "in-progress")
+
+    def test_a_fake_run_below_8_in_a_goal_run_exits_0_and_flags_nothing(self):
+        path = self.ticket()
+        path.write_bytes(path.read_bytes().replace(b"lead: Tools\n", b"lead: Tools\ngoal: G-900\n", 1))
+        code, out = self.cli("text", "--task", "T-901", "--brief", str(FIXTURES / "sample-brief.md"),
+                             "--kind", "popup", "--fake", str(FIXTURES / "text-never-8.json"))
+        self.assertEqual(code, 0, out)
+        self.assertIn("noted for the board's final playtest", out)
+        self.assertEqual(ts.header(self.copy_of_ticket(out)).get("status"), "in-progress")
 
     def test_a_fake_art_run_archives_in_the_copy(self):
         made = self.root / "made.png"
