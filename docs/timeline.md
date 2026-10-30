@@ -2705,3 +2705,8 @@ Entry format:
 - Decision or change: Built and merged (audit epic, build J): each weapon's top tier comes from its own data (T-408's, kept: the gun 11, the others 8), a weapon at its top tier is never in a gift pack, a gun with bullets 0 reports an error instead of crashing.
 - Documents touched: none
 - Tasks: T-422
+
+## 2026-10-30: The car bounces off walls
+- Decision or change: The car really bounces off walls even with W held, scaled by how hard it hits and capped so fast hits are not comical; no throttle cut. Replaces the 2026-10-10 rule that W keeps the car pressed against the wall.
+- Documents touched: docs/drifting.md
+- Tasks: T-435

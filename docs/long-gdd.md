@@ -243,7 +243,8 @@ Drifting is the one core skill of Solid Carbide. The car's driving and drifting 
 - The car is drawn 3 times as long as it is wide: 1 unit wide and 3 units long. This is the drawing only: the car's physics body stays a 1 by 1 unit square, as in the Unity prototype, so collisions behave the same. The drawing sticks out past the body at the front and back.
 - The car bounces off walls slightly (buildings and the map's edges), and off boulders the same way.
 - The car does not bounce off enemies: they only damage it.
-- The bounce off walls and boulders sends the car back at a quarter of the speed it hit with (bounce strength 0.25). While W is held the car stays pressed against the wall, and a knockback against the car's nose is cancelled, because W keeps snapping the car back to cruise speed; the board is fine with both.
+- ~~The bounce off walls and boulders sends the car back at a quarter of the speed it hit with (bounce strength 0.25). While W is held the car stays pressed against the wall, and a knockback against the car's nose is cancelled, because W keeps snapping the car back to cruise speed; the board is fine with both. (2026-10-10)~~ Replaced by the next line.
+- **The car bounces off walls** (board, 2026-10-30, after playing master: "the wall grabs me when I keep accelerating on it"; drifting into a wall with W held, the car stayed stuck on it and the drift kept climbing): the car really bounces off walls, buildings, raised areas' sides, the map's edges and boulders, even while W is held, instead of being pressed against them. The bounce grows with how hard the car hits, up to a maximum, so a very fast hit is not a comically big bounce. No throttle cut: the board rejected switching W off for a time after a hit. The scale and the maximum are proposals for the playtest. Replaces the 2026-10-10 line above. (T-435)
 - The MVP has three **tricks**, all done with the car's existing driving (what tricks are worth: Game loop architecture, Decisions):
   - **Extended drift:** every second of drifting counts as one low-value trick.
   - **360:** the car's heading turns a full 360 degrees in one direction during one unbroken drift; a mid-value trick. 720 degrees counts as two.
@@ -1844,7 +1845,7 @@ Used by `python tools/generate_long_gdd.py --check` to tell which game area docs
 | Game area doc | SHA-256 |
 |---|---|
 | `game-loop-architecture.md` | `0e99c0e71e1238b8ee43e613796a5401597fe21421362290b4dd03e112ce60dc` |
-| `drifting.md` | `99ac393e1897198069b3f8cb5f936357382b87a55b7e8b01c2e88eb936546f9f` |
+| `drifting.md` | `3454273e8130b390f7fec8f77995acad9e9b36d1598e4f3a6d8954069153d2a7` |
 | `level-design.md` | `1df2ad169580f84a2a15614d5309e11b9627e7259b8b624d89d2190c73272579` |
 | `enemies.md` | `f5de4d83c56e028eb20088c11c3aeb8be9777c80b5d2c1c59f884e108e00a3c9` |
 | `weapons.md` | `d9f6f69d6b8d84e1656454eb605cbed8c681dfc2204b0ffa45bf74c0590d5dcf` |
