@@ -1,7 +1,7 @@
 ---
 id: T-399
 title: Art: the full sidewalk and curb set and the parked and broken cars at four facings, swapped into the creator
-status: in-qa
+status: done
 from: project-lead
 to: asset-generation
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/visual-style.md, game/docs/art/]
 files_to_read_first: [tasks/README.md, docs/working-with-the-board.md, docs/visual-style.md, docs/level-design.md, game/docs/level/level-creator-pieces.md]
 files_expected_to_change: [game/art/, game/data/level/, game/docs/art/, docs/visual-style.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -43,12 +43,12 @@ The board's decision (Level design, Decisions, "Sidewalks and parked cars in the
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] The sidewalk and every curb piece T-398 uses, and each car look at all four facings, are in `game/art/` and used by the creator and the run in place of the placeholders. (QA: pass / fail)
-- [ ] Each asset went through the style loop, with its score in the Style review; the generations used for T-397 and T-399 together are at most 50, listed in the result notes. (QA: pass / fail)
-- [ ] Curbs join the road tiles with no gap or seam, and each car's facing matches its key (screenshots). (QA: pass / fail)
-- [ ] Screenshots of the full set in the editor and in a run, next to roads, buildings and boulders, are in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] Visual style and game/docs/art/ record the set and the hand of any script fixes. (QA: pass / fail)
-- [ ] All three test sets pass, with the counts in the result notes. (QA: pass / fail)
+- [ ] The sidewalk and every curb piece T-398 uses, and each car look at all four facings, are in `game/art/` and used by the creator and the run in place of the placeholders. (QA: pass: 47 tiles, 3 craters, 5 cars x 4 facings installed and used in creator and run)
+- [ ] Each asset went through the style loop, with its score in the Style review; the generations used for T-397 and T-399 together are at most 50, listed in the result notes. (QA: pass: every asset has a Style review run; log usage sums to 20 for T-399, 21 with T-397; nothing deleted)
+- [ ] Curbs join the road tiles with no gap or seam, and each car's facing matches its key (screenshots). (QA: pass: no curb seam in the previews and editor shot; facings match keys; front lamps grey and rear lamps red at every facing, checked in images and pixel counts)
+- [ ] Screenshots of the full set in the editor and in a run, next to roads, buildings and boulders, are in `art-archive/<id>/screenshots/`. (QA: pass: 9 screenshots, editor and run)
+- [ ] Visual style and game/docs/art/ record the set and the hand of any script fixes. (QA: pass: both files changed on the branch; qa_check's documents line fails only on the directory entry game/docs/art/, the file sidewalk-parked-cars.md did change)
+- [ ] All three test sets pass, with the counts in the result notes. (QA: pass: qa_check ran all three sets, passed)
 
 ## Updates
 
@@ -61,6 +61,10 @@ T-398 is approved and merged; the asset-generation agent starts the full art set
 ### 2026-10-30, Flagged for review → In progress
 
 Back in progress: keep the PixelLab facings you liked, a script turns the front lights grey, then the other four cars the same way.
+
+### 2026-10-30, Needs playtest
+
+Build G LGTM by the board (2026-10-30). Merging after T-417.
 
 ## Style review
 
@@ -788,3 +792,5 @@ Board review files: art-archive/T-399/screenshots/editor_cars_facings.png, art-a
 
 **Documents affected (final):** `docs/visual-style.md` (Decisions, "Sidewalks, parked cars and meteor craters", the full set: sidewalks, craters, the five cars and the front-lamp repaint), `game/docs/art/sidewalk-parked-cars.md` ("The full set (T-399)").
 - 2026-10-30, in-progress → in-qa: All art in: 47 sidewalk/curb tiles 8/10, 3 craters 8/10, 5 cars at four facings (8/8/9/8/8; PixelLab 8 rotations, front lamps repainted grey). 21 of 50 generations used. Tests: 745, 579, GUT 2058 pass. Screenshots in art-archive/T-399/screenshots/.
+- 2026-10-30, in-qa → needs-playtest: QA pass: all 6 criteria (qa_check documents line is a directory-entry false negative); board review next
+- 2026-10-30, needs-playtest → done: Build G LGTM by the board (2026-10-30)
