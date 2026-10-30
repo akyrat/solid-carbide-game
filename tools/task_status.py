@@ -313,6 +313,14 @@ def write_section(task_id, heading, body, folders=None):
     return path
 
 
+def add_result_note(task_id, line, folders=None):
+    """Adds a line to a task's result notes (add_note), in the file found by its id; returns the file's path.
+    The style loop notes a version kept below 8 in a goal run through it (T-395); the header is untouched."""
+    path, _ = find(task_id, folders)
+    write(path, add_note(path.read_bytes().decode("utf-8"), line))
+    return path
+
+
 def task_checkout(task_id, folders=None):
     """The checkout a task's file lives in: its task folder while its branch is open, else the main checkout."""
     return find(task_id, folders)[0].parent.parent
