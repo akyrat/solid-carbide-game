@@ -210,7 +210,7 @@ What the built level-up offers do. It follows Decisions ("Level-up flow in the M
 
 ### Level-up card text (T-412)
 
-Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets; "pending" = not yet scored (usage limit hit).
+Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) and the changed neon underglow lines, keyed as in `game/scripts/ui/level_up_texts.gd`; T-408 and T-409 copy them. Numbers are the Project Lead's, for the playtest. Style loop scores in brackets.
 
 - `upgrade_gun.tier2`: "Extra Bullet" [9] / "+1 bullet per volley, 2 in all. A free sample, courtesy of Greenbull." [8]
 - `upgrade_gun.tier3`: "Another Extra Bullet" [9] / "+1 bullet per volley, 3 in all. Greenbull feels generous on camera." [8]
@@ -219,12 +219,12 @@ Titles and lines for the gun's tiers 2 to 11 (replacing today's tiers 2 to 8) an
 - `upgrade_gun.tier6`: "Multi-Target Mode" [8] / "Aims at up to 3 enemies at once. Multitasking is a brand value." [8]
 - `upgrade_gun.tier7`: "Bullet Bundle" [9] / "+1 bullet per volley, 4 in all. Buy more, shoot more." [8]
 - `upgrade_gun.tier8`: "Bulk Bullets" [9] / "+1 bullet per volley, 5 in all. Terms and conditions apply to enemies." [9]
-- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." (pending)
-- `upgrade_gun.tier10`: "Quicker Trigger IV" / "Fires 20% faster again. The feed refreshes for no one." (pending)
-- `upgrade_gun.tier11`: "Everyone Gets Exposure" / "Aims at up to 5 enemies at once. Nobody is left unengaged." (pending)
-- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." (pending)
-- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." (pending)
-- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." (pending)
+- `upgrade_gun.tier9`: "Quicker Trigger III" / "Fires 20% faster. Content never sleeps." [8]
+- `upgrade_gun.tier10`: "Quicker Trigger IV" [9] / "Fires 20% faster again. Viewers blink less, so we sell more ads." [9, after 1 refine]
+- `upgrade_gun.tier11`: "Everyone Gets Exposure" [9] / "Aims at up to 5 enemies at once. Nobody is left unengaged." [8]
+- `get_underglow.desc`: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic." [8]
+- `upgrade_underglow.tier3.desc`: "Glow damage up 50%, to 3. Looks expensive." [9]
+- `upgrade_underglow.tier6.desc`: "Glow damage up another 50%, to 4.5. Peak aesthetic." [9]
 
 ## Open questions
 

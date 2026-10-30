@@ -252,6 +252,141 @@ Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/
 
 **Kept:** version 1, score 9/10 ("+1 bullet per volley, 5 in all. Terms and conditions apply to enemies."): it reached 8 or more.
 
+### Run 15
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun9t.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Quicker Trigger III"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: The title breaks no rule. Rule 4: it is 19 characters, under the 30 limit, and a title needs no aside. Rule 2: it has no banned vocabulary and no real brand. Rule 3: it has no "Greenbull says" form. Rule 1: it is plain and neutral, and it has no earnest heroics or grimdark. It names the effect (faster fire) and the tier (III) clearly. It is not satirical, but the rules put the satirical aside in the description, not the title. Nothing needs fixing.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Quicker Trigger III"): it reached 8 or more.
+
+### Run 16
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun9d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Fires 20% faster. Content never sleeps."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. Rule 4: 39 characters, under the 90 limit, and the card says what it does first ("Fires 20% faster.") and then adds one aside. The number is kept exactly. Rule 1: "Content never sleeps." mocks hustle-culture and brand-obsessed corporate language, and it never targets the city's people or their fear. Rule 2: no banned words. The stream and content framing fits. Rule 3: Greenbull's voice is allowed on level-up cards, and there is no "Greenbull says" line and no real brand. The only reason for not giving a 9 or 10 is that the aside is a mild, generic slogan. It doesn't tie to the gun or the fire rate, and it isn't clearly "slightly unethical". That isn't a rule break, so no fix is needed.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("Fires 20% faster. Content never sleeps."): it reached 8 or more.
+
+### Run 17
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun10t.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Quicker Trigger IV"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 4: the title is 18 characters, under the 30 limit, and the description rule doesn't apply to a title. Rule 2: it uses no banned or old vocabulary. Rule 3: it has no "Greenbull says" line, no real brand and no city voice. Rule 1: it is short and neutral, and a title needs no satire because the aside belongs in the description. "Quicker Trigger IV" matches the tier-10 "again" progression. The one point off is that the title is a plain gameplay label with no Greenbull flavour. The rules don't ask for flavour here, so no fix is required.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Quicker Trigger IV"): it reached 8 or more.
+
+### Run 18
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun10d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Fires 20% faster again. The feed refreshes for no one."
+- Script checks: 3 of 3 pass
+- Score: 7/10
+- Reason: No hard rule is broken. Rule 2: no banned words. Rule 3: no "Greenbull says" line and no real brand. Rule 4: 54 characters, under the 90 limit, and the effect comes first, followed by exactly one aside. "Fires 20% faster again." keeps the brief's number. The only weakness is rule 1 (tone). The aside "The feed refreshes for no one." reads as lonely or bleak, not as Greenbull's out-of-touch, profit-minded corporate voice. It mocks nothing specific (brand obsession, engagement, content) and has no slightly unethical edge. This is a minor tone fault, so the draft can be kept. An optional fix is to make the aside clearly Greenbull's, for example about engagement or content being monetised, so the joke lands on the sponsor and not on an empty feed. Keep the effect sentence and the aside under 90 characters in total.
+- Rules broken: 1
+
+#### Round 2
+
+- Version 2: "Fires 20% faster again. Viewers blink less, so we sell more ads."
+- What changed: I kept the effect sentence "Fires 20% faster again." exactly as it was. I replaced the bleak aside with one in Greenbull's voice. The sponsor now says plainly that a faster gun keeps viewers' eyes on the stream so it can sell more ads. That is the slightly unethical, profit-minded tone rule 1 asks for, and the joke now lands on Greenbull, not on an empty feed. The text is 64 characters, under the 90 limit, with one aside and no banned words or real brands.
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: Passes all the rules. Rule 4: effect first ("Fires 20% faster again."), then one satirical aside, 64 characters, number kept exactly. Rule 1: the aside mocks corporate ad-selling and profit focus, and Greenbull is out of touch and slightly unethical in it. It doesn't joke about the city's people. Rule 2: no banned words. Rule 3: it is a level-up card, so Greenbull's voice fits, and it has no "Greenbull says" form and no real brands. The only small weakness is that the aside is a bit literal and generic ("so we sell more ads"). The brief said to keep the draft ("The feed refreshes for no one.") unless there is a fault, and the evaluator finds no rule fault in the draft. The agent should have kept the draft. This version is acceptable, but the draft would be the safer choice.
+- Rules broken: none
+
+**Kept:** version 2, score 9/10 ("Fires 20% faster again. Viewers blink less, so we sell more ads."): it reached 8 or more.
+
+### Run 19
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_title, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun11t.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Everyone Gets Exposure"
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 1 (tone): "Everyone Gets Exposure" mocks corporate creator-economy language ("paid in exposure") in Greenbull's out-of-touch, slightly unethical voice. It isn't earnest or grim, and it doesn't make the city's people or their fear the joke. Rule 2: no banned or old terms. Rule 3: it is in Greenbull's voice, which fits a level-up card, it has no "Greenbull says" form, and it names no real brand. Rule 4: it is a title of 22 characters, under the 30 limit. The "effect first" order applies to the description, so the title can be the aside. The title doesn't state the effect itself ("up to 5 enemies"), so the description must carry that effect and the number 5 exactly. The only weak point is that "Exposure" is a slightly familiar joke, but no rule covers that.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Everyone Gets Exposure"): it reached 8 or more.
+
+### Run 20
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/gun11d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Aims at up to 5 enemies at once. Nobody is left unengaged."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. Rule 4: the effect comes first and the text has one aside, at 58 of 90 characters. The numbers are kept ("up to 5 enemies at once"). Rules 2 and 3: the script checks pass, and there are no banned words, no "Greenbull says" line and no real brands. Rule 1: "Nobody is left unengaged" plays on engagement metrics, which is soulless corporate and social-media language. It is dry rather than sincere, and it makes no joke at the city's people. It doesn't read as clearly Greenbull and slightly unethical, so it is a little mild. This is a nitpick, not a fault, and the brief says to keep the draft unless there is a fault. Optional sharpening only: a more openly profit-minded or audience-minded aside, for example about every target being a viewer-friendly opportunity. The aside must stay under 90 characters in total.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("Aims at up to 5 enemies at once. Nobody is left unengaged."): it reached 8 or more.
+
+### Run 21
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/ug1d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic."
+- Script checks: 3 of 3 pass
+- Score: 8/10
+- Reason: No rule is broken. Rule 4: 88 characters (limit 90), and the effect comes first with exactly one aside ("So aesthetic."). The brief's numbers are kept. Rule 1: the aside mocks social-media and brand-obsessed talk and doesn't joke about the city or its people. It is also not earnest or grimdark. Rule 2: no banned or old vocabulary. Rule 3: it is a level-up card, which is Greenbull's voice, with no "Greenbull says" line and no real brand. One small note, not a violation: the aside is mild and doesn't show Greenbull's profit-minded, slightly unethical edge. That is optional polish, and the draft should stay unless a sharper aside fits within 90 characters.
+- Rules broken: none
+
+**Kept:** version 1, score 8/10 ("A neon ring burns nearby enemies, 2 damage a second, and nudges them back. So aesthetic."): it reached 8 or more.
+
+### Run 22
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/ug3d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Glow damage up 50%, to 3. Looks expensive."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 4: the effect comes first ("Glow damage up 50%, to 3."), then one satirical aside ("Looks expensive."), at 42 characters, under the 90 limit. Rule 1: the aside mocks brand and status obsession lightly, is not sincere, and doesn't joke about the city's people. Rule 2: the script found no banned words, and no off-vocabulary terms appear. Rule 3: it is in Greenbull's voice, appropriate for a level-up card, with no "Greenbull says" line and no real brand. The numbers match the brief exactly. The only reason for not giving 10 is that the aside is mild and could be sharper on corporate language, but the rules don't require that.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Glow damage up 50%, to 3. Looks expensive."): it reached 8 or more.
+
+### Run 23
+
+Run by `tools/style_loop/run.py` on 2026-10-30: text, kind card_desc, brief `C:/Users/andre/AppData/Local/Temp/claude/C--solid-carbide-game/0a239fb3-1579-4ac6-90b2-13f2ab42e3c7/scratchpad/b/ug6d.md`. Generator: narrative-theme (one session, resumed for each refine); evaluator: style-evaluator. Kept at 8/10 or more, at most 3 refines.
+
+#### Round 1
+
+- Version 1: "Glow damage up another 50%, to 4.5. Peak aesthetic."
+- Script checks: 3 of 3 pass
+- Score: 9/10
+- Reason: No rule is broken. Rule 4: the card says what it does first ("Glow damage up another 50%, to 4.5"), then gives one short satirical aside ("Peak aesthetic."). It is 51 characters, under the 90 limit, and the numbers match the brief exactly. Rule 1: the aside mocks brand and social-media aesthetics and does not make fun of the city's people. Rule 2: no banned words. Rule 3: Greenbull's voice is allowed on level-up cards, and there is no "Greenbull says" line and no real brand. The only reason for 9 and not 10 is that the aside is mild and generic, with little corporate-profit bite. That is a matter of taste the rules don't cover, so no change is needed.
+- Rules broken: none
+
+**Kept:** version 1, score 9/10 ("Glow damage up another 50%, to 4.5. Peak aesthetic."): it reached 8 or more.
+
 ## Result notes
 
-Written by the agent when it finishes.
+All 13 cards (gun tiers 2 to 11, title and line; get_underglow.desc; underglow tier3 and tier6 desc) are in Weapons, Content, "Level-up card text (T-412)", keyed as in level_up_texts.gd. Each piece went through the style loop alone: all kept at 8 or 9; only tier 10's line needed one refine (7 to 9). Documents affected: docs/weapons.md.
