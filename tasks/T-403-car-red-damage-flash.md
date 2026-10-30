@@ -1,7 +1,7 @@
 ---
 id: T-403
 title: The car flashes red when it takes damage
-status: in-progress
+status: in-qa
 from: project-lead
 to: game-loop
 lead: Greenbull
@@ -39,12 +39,12 @@ The board's review: play a run, take hits from minions and a meteor, and watch t
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] When the car loses a heart it flashes red, with the length and colour read from `game/data/run.json` (tests). (QA: pass / fail)
-- [ ] A hit ignored during the invulnerability does not flash (test), and the blink still works as before (existing tests). (QA: pass / fail)
-- [ ] The flash is a reusable helper, named in the result notes for T-404. (QA: pass / fail)
-- [ ] Game loop architecture (Content) and game/docs/game-loop/the-run.md describe it and its numbers. (QA: pass / fail)
-- [ ] A GIF of the car taking a hit is in `art-archive/<id>/screenshots/`. (QA: pass / fail)
-- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass / fail)
+- [ ] When the car loses a heart it flashes red, with the length and colour read from `game/data/run.json` (tests). (QA: pass)
+- [ ] A hit ignored during the invulnerability does not flash (test), and the blink still works as before (existing tests). (QA: pass)
+- [ ] The flash is a reusable helper, named in the result notes for T-404. (QA: pass)
+- [ ] Game loop architecture (Content) and game/docs/game-loop/the-run.md describe it and its numbers. (QA: pass)
+- [ ] A GIF of the car taking a hit is in `art-archive/<id>/screenshots/`. (QA: pass)
+- [ ] All three test sets pass (`python -m unittest discover -s game/tools -p "test_*.py"`, `python -m unittest discover -s tools -p "test_*.py"`, `bash game/tools/run_tests.sh`), with the counts in the result notes. (QA: pass; all three sets green on rerun, counts as in the result notes: 1944 / 668 / 576)
 
 ## Updates
 
@@ -53,6 +53,10 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: the car's red flash on damage.
+
+### 2026-10-30, In progress → In QA
+
+The car now flashes red when it loses a heart (0.4 s, from run.json), shown on the blink's visible phases; reusable HitFlash helper for the enemies; tests pass, GIF in art-archive/T-403.
 
 ## Style review
 
