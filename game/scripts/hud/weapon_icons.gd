@@ -1,16 +1,18 @@
 class_name WeaponIcons
 extends Control
 ## The car's weapons as a column of small icons beside the health bar (T-276).
-## One row per weapon the car has, in the order taken: the weapon's level-up
-## card picture (LevelUpScreen.weapon_image, nearest filtering, no new art),
+## One row per weapon the car has, in the order taken: the weapon's HUD icon
+## (`art/hud/weapon_icons.png`, 24 x 24 at 2x, nearest filtering, T-429; the
+## level-up card picture for a weapon without one),
 ## and next to it "x2", "x3" ... (its tier, up to x8) once it is above tier 1,
 ## in the HUD's comic font (Bangers with a black outline) like the combo
 ## counter. It only shows what the weapon rack holds: it follows each weapon's
 ## `tier_changed`, so a weapon taken or upgraded at a gift pack shows at once,
 ## and a new run (tier back to 0) empties the column.
 
-## The icon's side in screen pixels: the 16 px card picture at 3x.
-const ICON_SIZE := 48
+## The icon's side in screen pixels: the HUD's 24 x 24 weapon icon at 2x
+## (T-429, the HUD style sheet's rule 1), the same 48 px slot as before.
+const ICON_SIZE := HudStyle.WEAPON_ICON_FRAME * HudStyle.HUD_ART_SCALE
 ## Space between two rows, and between an icon and its count.
 const ROW_GAP := 8
 const COUNT_GAP := 6
@@ -90,7 +92,7 @@ func _column_height() -> float:
 func _make_row(weapon_id: String) -> Dictionary:
 	var icon := TextureRect.new()
 	icon.name = "Icon_%s" % weapon_id
-	icon.texture = LevelUpScreen.weapon_image(weapon_id)
+	icon.texture = icon_texture(weapon_id)
 	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	icon.stretch_mode = TextureRect.STRETCH_SCALE
@@ -104,6 +106,13 @@ func _make_row(weapon_id: String) -> Dictionary:
 	count.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(count)
 	return {"icon": icon, "count": count}
+
+
+## A weapon's icon: its frame of the HUD icon sheet (24 x 24, shown at 2x); a
+## weapon the sheet has no frame for falls back to its level-up card picture.
+static func icon_texture(weapon_id: String) -> Texture2D:
+	var t := HudStyle.weapon_icon(weapon_id)
+	return t if t != null else LevelUpScreen.weapon_image(weapon_id)
 
 
 static func count_text(tier: int) -> String:

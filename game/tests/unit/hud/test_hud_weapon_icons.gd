@@ -48,7 +48,12 @@ func test_icon_per_weapon_in_the_order_taken() -> void:
 	assert_eq(icons.order, ["gun", "wiper", "flamethrower", "molotov"])
 	assert_eq(_icon_order(icons), icons.order, "the rows run top to bottom in that order")
 	for id: String in icons.order:
-		assert_eq(icons.rows[id].icon.texture, LevelUpScreen.weapon_image(id), "%s uses its card picture" % id)
+		# T-429: the HUD's own 24 x 24 icon (a frame of the icon sheet), shown at 2x.
+		var tex: Texture2D = icons.rows[id].icon.texture
+		assert_true(tex is AtlasTexture, "%s uses its HUD icon" % id)
+		assert_eq((tex as AtlasTexture).region,
+			Rect2(HudStyle.WEAPON_ICON_ORDER.find(id) * 24, 0, 24, 24), "%s: its frame" % id)
+		assert_eq(icons.rows[id].icon.size, Vector2(tex.get_size()) * 2.0, "%s at exactly 2x" % id)
 		assert_eq(icons.rows[id].icon.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST)
 	assert_false(icons.rows.has("underglow"), "a weapon the car does not have has no icon")
 

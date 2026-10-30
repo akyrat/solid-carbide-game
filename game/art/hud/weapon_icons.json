@@ -1,0 +1,47 @@
+{
+ "task": "T-429",
+ "what": "The HUD weapon column's icons: one row sheet of six 24 x 24 frames, small redraws of the weapons' level-up card pictures, shown at 2x in the 48 px slot.",
+ "size": [
+  144,
+  24
+ ],
+ "frames": 6,
+ "frame_size": [
+  24,
+  24
+ ],
+ "frame_order": [
+  "gun",
+  "flamethrower",
+  "molotov",
+  "bricks",
+  "wiper",
+  "underglow"
+ ],
+ "shown_at_scale": 2,
+ "made_by": "game/tools/build_hud_weapon_icons.py (script, from game/art/level_up/weapon_<id>.png); the style loop kept version 1",
+ "style_loop": {
+  "brief": "art-archive/T-429/briefs/weapon_icons.md",
+  "kept": {
+   "version": 1,
+   "score": 7,
+   "file": "art-archive/T-429/style-loop/v1.png",
+   "round_scores": [
+    7,
+    7,
+    7,
+    7
+   ]
+  },
+  "below_8": "kept below 8 after 3 refines in a goal run (G-008), noted for the board's final playtest",
+  "versions": "art-archive/T-429/style-loop/",
+  "review": "tasks/T-429-the-hud-s-code-follows-the.md, Style review"
+ },
+ "pixellab_generations": 0,
+ "references": [
+  "docs/visual-style.md (Content, Rules; Decisions, The HUD style sheet)",
+  "docs/extended-narrative.md",
+  "game/art/level_up/weapon_*.png",
+  "game/art/hud/heart_full.png"
+ ]
+}

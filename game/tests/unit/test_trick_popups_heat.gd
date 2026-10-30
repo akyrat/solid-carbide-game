@@ -122,7 +122,7 @@ func test_below_x2_is_the_plain_look() -> void:
 		for y in step0.get_height():
 			for x in step0.get_width():
 				var p := step0.get_pixel(x, y)
-				if p.a > 0.0 and p != Color.WHITE and p != Color.BLACK:
+				if p.a > 0.0 and p != Color.WHITE and p != HudStyle.POPUP_PALETTE[1]:
 					other += 1
 		assert_eq(other, 0, "%s: step 0 is black, white and transparent only" % c[0])
 	assert_same(Art.texture("FULL 360!", "normal", 0), Art.texture("FULL 360!", "normal"), "same cached texture")
@@ -187,7 +187,7 @@ func test_fill_stays_white_and_names_stay_black() -> void:
 			for y in box.size.y:
 				for x in name_box.size.x - 1:
 					var p := img.get_pixel(box.position.x + x, box.position.y + y)
-					if p == Color.BLACK:
+					if p == HudStyle.POPUP_PALETTE[1]:
 						black += 1
 					elif p != Color.WHITE:
 						other += 1
