@@ -1,0 +1,56 @@
+---
+id: T-426
+title: Text: the HUD size slider's label
+status: open
+from: project-lead
+to: narrative-theme
+lead: Goal-G-008
+epic: narrative
+milestone: mvp
+goal: G-008
+user_facing_text: yes
+changes_visuals: no
+depends_on: []
+documents_affected: [docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
+files_to_read_first: [tasks/README.md, docs/extended-narrative.md, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md, game/scripts/ui/pause_screen.gd]
+files_expected_to_change: [game/data/pause_text.json, docs/hud-and-menus.md, game/docs/hud-and-menus/pause-screen.md]
+model: sonnet
+qa_rounds: 0
+---
+
+<!--
+status: open | planning | in-progress | in-qa | needs-playtest | blocked | flagged-for-review | done | cancelled
+lead: the name of the Project Lead session that owns the task; empty until a session claims it with python tools/task_status.py T-NNN --lead <Name> (tasks/README.md, "Owners").
+epic and milestone: one of the ids listed in tasks/README.md.
+goal: the goal id (G-001) when the goal runner wrote or reused the task; empty otherwise (tasks/README.md, "Goal runs").
+user_facing_text and changes_visuals: yes or no; see "User-facing text and visuals" in tasks/README.md.
+model: sonnet or opus, the model the agent runs on for this task; set by the Project Lead (tasks/README.md, "Models").
+qa_rounds: how many times QA has checked this task. The maximum is 2.
+A task is not done until every document listed in documents_affected has been updated.
+-->
+
+## Description
+
+The board's goal G-008 adds a HUD size slider to the pause screen (HUD and menus, Decisions, 'The HUD scales with the window, and a HUD size slider'). Write its label, and how its value reads if the slider shows one, through the style loop (kind label). It sits on the pause strip next to the other slider labels, 'Camera zoom level' and 'Music volume', and must have the same form (a short noun phrase, sentence case, no punctuation). Today the pause screen's texts are constants in game/scripts/ui/pause_screen.gd; put the new label in a new data file game/data/pause_text.json (key hud_size_label, plus hud_size_value if a value reads), which the UI ticket for the slider will make the pause screen read. Also write the text into HUD and menus, Content, 'Pause screen', and game/docs/hud-and-menus/pause-screen.md. Write no other text.
+
+The board's review: Read the HUD size slider's label in game/data/pause_text.json; you meet it in the pause screen once the slider's ticket is in.
+
+## Acceptance criteria
+
+- [ ] game/data/pause_text.json exists, is valid JSON and holds the HUD size slider's label (and its value format, if any); the file is named in the result notes. (QA: pass / fail)
+- [ ] The same text is in docs/hud-and-menus.md, Content, 'Pause screen', and in game/docs/hud-and-menus/pause-screen.md. (QA: pass / fail)
+- [ ] Each new line scored at least 8 in the style loop (or is noted below 8 after 3 refines in a goal run), with every round in the ticket's Style review. (QA: pass / fail)
+- [ ] The label follows Extended narrative's Text rules and has the same form as 'Camera zoom level' and 'Music volume' (short noun phrase, sentence case, no end punctuation). (QA: pass / fail)
+- [ ] python -m unittest discover -s game/tools -p "test_*.py" passes, with the count in the result notes. (QA: pass / fail)
+
+## Updates
+
+The Project Lead's replies to the board on this ticket, newest last, one entry per lane change. Written only through `task_status.py --reply`; leave it empty here.
+
+## Style review
+
+Only for art and text tasks: one entry per round of the style loop (`tasks/README.md`, "The style loop"), written by the loop's tool.
+
+## Result notes
+
+Written by the agent when it finishes.
