@@ -1,7 +1,7 @@
 ---
 id: T-394
 title: Level creator: an obstacle in several pairs, and a row paired as a chain, so a row can be threaded gap after gap
-status: in-qa
+status: done
 from: project-lead
 to: level-challenge
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/level-design.md, game/docs/level/]
 files_to_read_first: [tasks/README.md, docs/level-design.md, game/docs/level/level-creator-pieces.md, game/scripts/level_creator/, game/scripts/run/, tasks/T-272-thread-the-needle.md]
 files_expected_to_change: [game/scripts/level_creator/, game/scripts/run/, game/tests/unit/, game/docs/level/, docs/level-design.md, art-archive/]
 model: opus
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -64,6 +64,14 @@ The Project Lead's replies to the board on this ticket, newest last, one entry p
 ### 2026-10-30, Open → In progress
 
 Started: an obstacle in several pairs, a row paired as a chain in one go, and each gap paying its own thread the needle.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all 7 criteria; ready for the board to play (chained pairs in the creator and a run).
+
+### 2026-10-30, Needs playtest
+
+Passed QA, ready for your playtest: open C:\solid-carbide-worktrees\T-394\game\project.godot. Shift+click obstacles in order, then P (or Pair) to chain them; Unpair removes only the pair aimed at; each gap pays thread the needle.
 
 ## Style review
 
@@ -139,3 +147,4 @@ Written by the agent when it finishes.
 - `game/docs/level/level-creator.md` (the validator line)
 
 I kept to the pairing code, the pair overlay and the run's thread-the-needle code, to stay clear of T-393. No refusals.
+- 2026-10-30, needs-playtest → done: Build E (Platforms & heights) LGTM by the board
