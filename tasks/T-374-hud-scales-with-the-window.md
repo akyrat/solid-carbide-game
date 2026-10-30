@@ -1,7 +1,7 @@
 ---
 id: T-374
 title: The HUD scales with the window, and a HUD size slider in the pause screen
-status: open
+status: cancelled
 from: project-lead
 to: ui
 lead: Greenbull
@@ -59,4 +59,4 @@ Only for art and text tasks: one entry per round of the style loop (`tasks/READM
 
 ## Result notes
 
-Written by the agent when it finishes.
+- 2026-10-30, open → cancelled: Replaced by goal G-008 (HUD and main menu), which writes its own tickets from the same decisions (2026-10-30).
