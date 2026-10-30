@@ -31,7 +31,7 @@ A task is not done until every document listed in documents_affected has been up
 
 ## Description
 
-The level-up cards show a title and a line per weapon tier (`game/scripts/weapons/level_up_texts.gd`, `upgrade_gun.tier2` to `tier8`, `get_underglow`, `upgrade_underglow.*`), so the board's weapon changes of 2026-10-30 (Weapons, Decisions, "The gun one-shots minions ..." and "The neon underglow kills a minion in 2 ticks ..."; T-408, T-409) need new text before the code. Write it in the same voice and length as today's lines, in Weapons, Content, under a new "Level-up card text (T-410)" heading, keyed as in `level_up_texts.gd`, where T-408 and T-409 copy it.
+The level-up cards show a title and a line per weapon tier (`game/scripts/weapons/level_up_texts.gd`, `upgrade_gun.tier2` to `tier8`, `get_underglow`, `upgrade_underglow.*`), so the board's weapon changes of 2026-10-30 (Weapons, Decisions, "The gun one-shots minions ..." and "The neon underglow kills a minion in 2 ticks ..."; T-408, T-409) need new text before the code. Write it in the same voice and length as today's lines, in Weapons, Content, under a new "Level-up card text (T-412)" heading, keyed as in `level_up_texts.gd`, where T-408 and T-409 copy it.
 
 The numbers (the Project Lead's, for the playtest; the code follows them):
 - **Gun, tiers 2 to 11 (titles and lines):** 2: +1 bullet (2 a volley); 3: +1 bullet (3); 4: fires 20% faster; 5: fires 20% faster again; 6: aims at up to 3 enemies at once; 7: +1 bullet (4); 8: +1 bullet (5); 9: fires 20% faster; 10: fires 20% faster again; 11 (the last): aims at up to 5 enemies at once. Replace today's tier 2 to 8 lines.
@@ -43,7 +43,7 @@ Run each line through the style loop (pass each title and line alone).
 
 Written by the Project Lead. Each one must be something the QA/Integration Agent can realistically verify. QA writes a pass or fail next to each.
 
-- [ ] Weapons, Content, "Level-up card text (T-410)" lists titles and lines for the gun's tiers 2 to 11 and the changed underglow lines, keyed as in level_up_texts.gd, with the numbers in the description. (QA: pass / fail)
+- [ ] Weapons, Content, "Level-up card text (T-412)" lists titles and lines for the gun's tiers 2 to 11 and the changed underglow lines, keyed as in level_up_texts.gd, with the numbers in the description. (QA: pass / fail)
 - [ ] Each went through the style loop, with its score in the Style review. (QA: pass / fail)
 
 ## Updates
