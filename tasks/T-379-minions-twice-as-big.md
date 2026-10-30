@@ -1,7 +1,7 @@
 ---
 id: T-379
 title: Minions twice as big, hitbox included
-status: in-qa
+status: needs-playtest
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -15,7 +15,7 @@ documents_affected: [docs/enemies.md, game/docs/enemies/]
 files_to_read_first: [tasks/README.md, docs/enemies.md, game/data/enemies.json, game/scripts/enemies/minion.gd]
 files_expected_to_change: [game/data/enemies.json, game/scripts/enemies/, game/scenes/, game/tests/unit/, game/docs/enemies/, docs/enemies.md, art-archive/]
 model: sonnet
-qa_rounds: 0
+qa_rounds: 1
 ---
 
 <!--
@@ -57,6 +57,10 @@ Started in build F.
 ### 2026-10-30, In progress → In QA
 
 Minions are drawn twice as big (size_scale 2 in enemies.json) with body, hits and paths grown to match; kaiju unchanged. All three test sets pass; screenshot in art-archive/T-379/screenshots/.
+
+### 2026-10-30, In QA → Needs playtest
+
+QA passed all six criteria; bigger minions ready for the board to play.
 
 ## Style review
 
