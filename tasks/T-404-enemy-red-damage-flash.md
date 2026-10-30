@@ -1,7 +1,7 @@
 ---
 id: T-404
 title: Enemies flash red when they take damage
-status: needs-playtest
+status: done
 from: project-lead
 to: enemy-behavior
 lead: Greenbull
@@ -81,3 +81,4 @@ Frame time (windowed, 100 minions, `FLASH_MEASURE=100` on `enemy_flash_gif_demo.
 GIF: `art-archive/T-404/screenshots/enemy_red_flash.gif` (6 minions hit one by one, the kaiju twice, then all together; red-pixel count jumps at the kaiju hits, frames 24 and 26). Recorder: `game/tools/record_enemy_flash_gif.sh`, fixture `game/tests/fixtures/enemy_flash_gif_demo.*`.
 
 Documents: `docs/enemies.md` (Decisions, new Content section "The red flash"), `game/docs/enemies/minions.md`.
+- 2026-10-30, needs-playtest → done: Build F LGTM by the board
